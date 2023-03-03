@@ -59,10 +59,8 @@
    all of the MIDI data into the 17th pattern (pattern 16), in case it is
    needed.  Note that this slot is used no matter which screen-set one imports
    the file into.  Bug, or feature?
-
    Also note that, since the file information has been modified by the import,
    the user will be prompted to save the file when exiting \textsl{Seq66}.
-
    Finally, conversion to SMF 1 for SMF 0 files can be disabled using the
    'usr' option \texttt{[user-midi-settings] convert-to-smf-1}.
 
@@ -94,7 +92,6 @@
    It then copies all of the MIDI files that were referenced in the
    original playlist into this new directory, preserving
    the directory structure.
-
    It then wires in and activates the new playlist in the
    'rc' file, and sets the new base directory for the MIDI files.
 
@@ -230,7 +227,6 @@
    (see \sectionref{subsubsec:midi_export_song_export}),
    the tracks to be exported (combined into a single track) must be unmuted
    and have layouts in the song editor.
-
    The \textbf{File / Export / Export SMF 0 } menu
    action removes all the existing tracks and merges them into track 0.
 

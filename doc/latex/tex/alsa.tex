@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-06-16
-% \update      2022-05-30
+% \update      2023-03-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -25,7 +25,8 @@
 \label{subsec:alsa_through_ports}
 
    When running the commands \texttt{aplaymidi -l} or \texttt{arecordmidi -l},
-   one sees something like:
+   one sees something like the following.
+   (The MIDI Through port is useful for...? See \cite{alsathru}.)
 
    \begin{verbatim}
     Port    Client name                      Port name
@@ -33,8 +34,6 @@
     28:0    nanoKEY2                         nanoKEY2 MIDI 1
      . . .
    \end{verbatim}
-
-   The MIDI Through port is useful for...? See \cite{alsathru}.
 
    \begin{quote}
    "ALSA always creates 1 MIDI through port. Since I work with Windows music
@@ -60,15 +59,12 @@
    Edit this file (create it if necessary) to add a line to change the number
    of Thru ports.  We use the '\#' prompt to indicate root access or usage of
    \texttt{sudo}.
+   Save it.  No need to reboot, just remove and reinsert the module with the
+   "mod" commands:
 
    \begin{verbatim}
       # vi /etc/modprobe.d/alsa-base.conf
       options snd-seq-dummy ports=2
-   \end{verbatim}
-
-   Save it.  No need to reboot, just remove and reinsert the module:
-
-   \begin{verbatim}
       # rmmod snd_seq_dummy
       # modprobe snd_seq_dummy
    \end{verbatim}
@@ -125,11 +121,17 @@
 \subsubsection{ALSA / Trouble-Shooting / MIDI Clock}
 \label{subsubsec:alsa_testing_midi_clock}
 
+   MIDI clock is a signal broadcast to ensure
+   several MIDI-enabled synthesizers or sequencer stay in
+   synchronization. Clock events are sent at a rate of 24 pulses per quarter
+   note.  THey maintain a synchronized tempo for synthesizers
+   that have BPM-dependent voices, and for arpeggiator synchronization.
+
 \paragraph{ALSA MIDI Clock Send}
 \label{paragraph:alsa_testing_midi_clock_send}
 
-   To verify that \textsl{Seq66} is sending MIDI clock, the easiest way (using
-   ALSA) is to start the following command and set \textsl{Seq66} to send
+   To verify that \textsl{Seq66} sends MIDI clock, the easiest way in
+   ALSA is to run the following command and set \textsl{Seq66} to send
    MIDI Clock to the \texttt{aseqdump} port that appears after restarting
    \textsl{Seq66}:
 
@@ -146,7 +148,6 @@
    To verify that \textsl{Seq66} receives MIDI clock in ALSA, use a sequencer
    that can emit MIDI Clock in ALSA.  The precursor to \textsl{Seq66},
    \textsl{Seq24}, can be used, as well as \textsl{Seq66}.
-
    First, run one of the following commands:
 
    \begin{verbatim}
@@ -167,8 +168,7 @@
    This sets up to auto-connect ALSA MIDI ports.  In
    \textbf{Edit / Preferences / MIDI Input}, check-mark the first
    "seq24" port.  There should be no need to restart.
-
-   Now start playback in \textsl{Seq24}.
+   Then start playback in \textsl{Seq24}.
    \textsl{Seq66} should display a rapid stream of MIDI Clock messages.
    If not, check the setup and, if correct, report a bug!
 
@@ -188,11 +188,9 @@
    In addition, we find a massive spewage of events in the pattern.
    This does not occur on our \textsl{Ubuntu 20} system with
    \textsl{VMPK v. 0.7.2}.
-
    However, with that version, one must go to its \textbf{Edit / Preferences}
    dialog and make sure that MIDI I/O is enabled and that both input
    and output are set to ALSA.
-
    See the \textsl{VMPK} website (\cite{vmpk}).
    The current version one can download there is 0.8.7!
 

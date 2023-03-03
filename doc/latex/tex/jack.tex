@@ -51,15 +51,9 @@
    with JACK MIDI, one needs to expose the USB ports to JACK using the
    command \texttt{a2jmidid -{}-export-hw}.
 
-   If \texttt{jackdbus} (Linux) is installed on the system, it is recommend
+   If \texttt{jackdbus} (Linux) is installed on the system, it is recommended
    to use \texttt{jack\_control} or the wrapper script \texttt{jackctl}
    provided by \textsl{Seq66}.
-
-%  This is wrong:
-%
-%  and connect the resultant MIDI JACK ports
-%  oneself, using \textsl{QJackCtl}, for example.
-
    The following sections discuss the JACK transport support and the native
    JACK MIDI support.
 
@@ -88,7 +82,6 @@
    Taking over the timebase may be done conditionally, in which case the takeover
    fails when there is a master already. The existing master can release it
    voluntarily, if desired.
-
    There are some playback functions that JACK transport does not address:
 
    \begin{itemize}
@@ -191,7 +184,6 @@
 
    Note that the ports in \textsl{Seq66} are named after the devices to which
    they are connected.
-
 	The output ports available are shown in \textsl{seq66}'s
 	\textbf{Edit / Preferences / MIDI Clock} tab.
    If USB devices are not shown, that means
@@ -235,11 +227,8 @@
 
    When the check-box for a buss is selected, that input can be captured by
    \texttt{seq66}.
-
-   A feature new with version 0.98.5 is that an output port can be enabled or
-   disabled in the 
-	\textbf{Edit / Preferences / MIDI Input} tab,
-   and the change in status takes effect immediately.
+   An output port can be enabled or disabled in the 
+	\textbf{Edit / Preferences / MIDI Input} tab.
 
 \subsubsection{JACK / MIDI Virtual Ports}
 \label{subsubsec:jack_midi_virtual_ports}
@@ -265,7 +254,6 @@
    \texttt{-m}/\texttt{-{}-manual-ports} option... use the
    \texttt{-a}/\texttt{-{}-auto-ports} option.  Both options apply to both
    ALSA and JACK.
-
    The \textbf{MIDI Clock} and \textbf{MIDI Input} tabs reflect
    what is seen in \textsl{QJackCtl}.
 
@@ -274,11 +262,9 @@
 
    One thing we saw is that \texttt{seq66} can deal with the odd naming
    of JACK ports created by the \textsl{a2jmidid} application.
-
    One can see in the input and output lists shown earlier
    that that the \texttt{a2j} client creates entries for "Midi Through",
    software clients, and bridged USB MIDI devices.
-
    Again, if these automatic connections get in the way, run \texttt{seq66} in
    manual/virtual mode.
 
@@ -395,7 +381,6 @@
    \texttt{a2jmidid -{}-export-hw} can be used to bridge USB MIDI
    hardware to JACK.  However, on some systems, this bridge can be
    avoided, at the expense of a little confusion.
-
    For example, look at this partial output of the \texttt{jack\_lsp}
    command:
 
@@ -426,7 +411,6 @@
    So system MIDI device 2 is the \textsl{Launchpad Mini}, and
    will show up in \textsl{Seq66} as an I/O device on port 1.
    (Port 0 is usually the system MIDI Thru port).
-
    Of course, with this arrangement, port-mapping cannot be used.
    In the future, we may be able to ensure the aliases are always
    present in \textsl{Seq66}.
@@ -437,12 +421,10 @@
    This section is a placeholder for discussion of \textsl{QJackCtl},
    its usage of the (deprecated) \textsl{JACK Session API}, and
    its "patchbay" (see \cite{patchbay}).
-
-   True?
-
    Its a good idea to put "jackd -S" instead of just "jackd" for the server
    path. Running JACK in synchronous mode creates less Xruns in JACK2, which
    is now the default.
+   
 
 \subsection{JACK / PulseAudio}
 \label{subsec:jack_pulseaudio}
@@ -486,13 +468,11 @@
    \end{itemize}
 
    Other executable locations can be used if desired.
-
    These steps configure \textsl{qjackctl} to run those commands at
    the appropriate time.
    \textsl{PulseAudio} will recognize (via D-Bus) that \textsl{JACK} started,
    and will route audio to it. When \textsl{JACK} is stopped,
    \textsl{PulseAudio} reverts to normal routing.
-
    Other \textsl{qjackctl} options from the \textbf{Misc} tab:
 
    \begin{itemize}
@@ -527,8 +507,6 @@
    This will silence \textsl{mpd} again.
    Then we have to restart \textsl{PulseAudio} (e.g. via the
    \texttt{repulse} script supplied in \texttt{data/linux/jack/pulseaudio}).
-
-   What happens on your system?
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

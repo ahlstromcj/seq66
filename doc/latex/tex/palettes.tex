@@ -22,7 +22,6 @@
    the Qt theme in force, and they have their own coloring.  Also, patterns can
    be colored, and the color is stored (as a color number) in the pattern when
    the tune is saved.
-
    There are four palettes:
 
    \begin{itemize}
@@ -57,8 +56,7 @@
    \end{verbatim}
 
    If this palette file is active, it is loaded, changing all of the palettes,
-   and thus the coloring of \textsl{Seq64}.
-
+   and thus the coloring of \textsl{Seq66}.
    In \sectionref{subsec:palettes_theming}, some weird behavior with
    the \texttt{qt5ct} configuration application and non-Qt-based window managers
    is discussed.
@@ -138,8 +136,8 @@ project.
 
    \begin{verbatim}
       [brushes]
-      empty = nobrush
-      note = solid
+      empty = solid              # preferred
+      note = lineargradient      # default
       scale = dense3
       backseq = dense2
    \end{verbatim}
@@ -148,12 +146,13 @@ project.
    right side is the \textsl{Qt} brush to be used.  The defaults for most are
    solid fill.
 
-   The entry \texttt{empty} isn't used yet.
+   The entry \texttt{empty} isn't too useful; best to leave it set to 'solid'.
    The entry \texttt{note} affects the fill of normal/selected notes.
-   The entry \texttt{note} affects the fill for the piano roll scale.  The
+   The best values are either 'lineargradient' (the default) or 'solid'.
+   The entry \texttt{scale} affects the fill for the piano roll scale.  The
    hatching used here makes it easier to recognize that the scale is just there
    for orientation.
-   The entry \texttt{note} affects the fill of the background sequence.  The
+   The entry \texttt{backseq} affects the fill of the background sequence.  The
    hatching used here helps further distinguish the real notes from the
    background notes.
 
@@ -189,12 +188,9 @@ project.
 
    One might still encounter the issue that, with a Gtk theme, applications
    take about 20 to 30 seconds to start up!
-
    More information to come.
-
    Also see the style-sheet discussion in
    \sectionref{sec:configuration}.
-
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

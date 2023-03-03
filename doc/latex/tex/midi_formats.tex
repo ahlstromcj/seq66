@@ -83,8 +83,6 @@
    the Tempo and Time Signature events are saved as MIDI events in
    the first track.
    This allows other sequencers to read a \textsl{Seq66} MIDI file.
-%  This addition of Tempo can fix imported tracks that don't have a
-%  measure value.
 
    An example of an SMF 0 file, \texttt{CountryStrum.mid}, is included with
    the source code in the \texttt{contrib/midi} directory.
@@ -423,7 +421,6 @@
 \label{subsubsec:midi_format_track_seqspec_mutegroups}
 
    \index{SeqSpec!c\_mutegroups}
-
    Legacy format (for \textsl{Seq24} and early versions of \textsl{Seq66}:
 
    \begin{description}
@@ -452,7 +449,6 @@
 
    In the new format, we combine the group-count and pattern-count into
    one long value. This value is split, when read, into these counts.
-
    By default, the groupdata is formatted as follows, where all data items are
    encoded as bytes:
 
@@ -483,7 +479,6 @@
 \label{subsubsec:midi_format_track_seqspec_gap_abcdef}
 
    \index{SeqSpec!c\_gap\_(ABCDEF) (unused)}
-
    This set of six
    \texttt{SeqSpec} values is a gap created by skipping from
    \texttt{0x24240009} to \texttt{0x24240010} as if the numbers were
@@ -494,7 +489,6 @@
 \label{subsubsec:midi_format_track_seqspec_midictrl}
 
    \index{SeqSpec!c\_midictrl (obsolete)}
-
    \begin{description}
       \item \texttt{c\_midictrl}: specifies the MIDI controls to be used.
       \item \textsl{Length}: 4 + 8 * ctrls
@@ -514,7 +508,6 @@
 \label{subsubsec:midi_format_track_seqspec_musickey}
 
    \index{SeqSpec!c\_musickey}
-
    \begin{description}
       \item \texttt{c\_musickey}: specifies the musical key for the song.
       \item \textsl{Length}: 5
@@ -532,7 +525,6 @@
 \label{subsubsec:midi_format_track_seqspec_musicscale}
 
    \index{SeqSpec!c\_musicscale}
-
    \begin{description}
       \item \texttt{c\_musicscale}: specifies the musical scale for the song.
       \item \textsl{Length}: 5
@@ -551,7 +543,6 @@
 \label{subsubsec:midi_format_track_seqspec_backsequence}
 
    \index{SeqSpec!c\_backsequence}
-
    \begin{description}
       \item \texttt{c\_backsequence}:
          specifies the background sequence to be shown.
@@ -571,7 +562,6 @@
 \label{subsubsec:midi_format_track_seqspec_transpose}
 
    \index{SeqSpec!c\_transpose}
-
    \begin{description}
       \item \texttt{c\_transpose}: specifies if a pattern can be transposed.
       \item \textsl{Length}: 5
@@ -593,20 +583,18 @@
    The user must temporarily enable transposition in the pattern editor, and
    then press the \textbf{Map}.  This should be done only once, otherwise the
    drum pattern will sound like a random set of percussive instruments.
-
    This section is always saved with the pattern.
 
 \subsubsection{SeqSpec c\_perf\_bp\_mes}
 \label{subsubsec:midi_format_track_seqspec_perf_bp_mes}
 
    \index{SeqSpec!c\_perf\_bp\_mes}
-
-    \begin{description}
-       \item \texttt{c\_perf\_bp\_mes}:
+   \begin{description}
+      \item \texttt{c\_perf\_bp\_mes}:
          specifies the beats-per-bar for the performance.
-       \item \textsl{Length}: 5
-       \item \textsl{Format}: \texttt{0x24240015 bpb:L}
-    \end{description}
+      \item \textsl{Length}: 5
+      \item \textsl{Format}: \texttt{0x24240015 bpb:L}
+   \end{description}
 
    Provides an override for the beats-per-bar from the Time Signature in track
    0.  Note that the beats-per-bar is currently settable from this value,
@@ -617,7 +605,6 @@
 \label{subsubsec:midi_format_track_seqspec_perf_bw}
 
    \index{SeqSpec!c\_perf\_bw}
-
    \begin{description}
       \item \texttt{c\_perf\_bw}:
          specifies the beat-width for the performance.
@@ -634,7 +621,6 @@
 \label{subsubsec:midi_format_track_seqspec_tempo_map}
 
    \index{SeqSpec!c\_tempo\_map}
-
    \begin{description}
       \item \texttt{c\_tempo\_map}: Not implemented.
       \item \textsl{Length}: 5
@@ -647,7 +633,6 @@
 \label{subsubsec:midi_format_track_seqspec_reserved_1_2}
 
    \index{SeqSpec!c\_reserved\_(12)}
-
    \begin{description}
       \item \texttt{c\_reserved\_1\_2}: Reserved for expansion.
       \item \textsl{Length}: Indeterminate
@@ -658,7 +643,6 @@
 \label{subsubsec:midi_format_track_seqspec_tempo_track}
 
    \index{SeqSpec!c\_tempo\_track}
-
    \begin{description}
       \item \texttt{c\_tempo\_track}:
          specifies the alternate tempo track for a song.
@@ -673,7 +657,6 @@
 \label{subsubsec:midi_format_track_seqspec_seq_color}
 
    \index{SeqSpec!c\_seq\_color}
-
    \begin{description}
       \item \texttt{c\_seq\_color}: specifies the color for a pattern.
       \item \textsl{Length}: 5
@@ -692,7 +675,6 @@
 \label{subsubsec:midi_format_track_seqspec_seq_edit_mode}
 
    \index{SeqSpec!c\_seq\_edit\_mode (Kepler34)}
-
    \begin{description}
       \item \texttt{c\_seq\_edit\_mode}:
          specifies the editing mode of each pattern.
@@ -710,7 +692,6 @@
 \label{subsubsec:midi_format_track_seqspec_seq_loopcount}
 
    \index{SeqSpec!c\_seq\_loopcount}
-
    \begin{description}
       \item \texttt{c\_seq\_loopcount}:
          specifies the number of times a pattern should play.
@@ -726,9 +707,8 @@
    A loop-count is used in the one-shot step-edit feature used in
    recording a device's drum pattern.
    See \sectionref{subsec:pattern_editor_bottom}.
-
    Note that setting a non-zero loop-count for a pattern is
-   not compatible with playing the tune in \textbf{Song} mode.
+   \textsl{not compatible} with playing the tune in \textbf{Song} mode.
 
 \subsection{MIDI Information}
 \label{subsec:midi_information}
@@ -894,7 +874,6 @@
 
    \textsl{Windows MP} in this application table is the
    built-in \textsl{Windows Media Player}.
-
    The next sections describe the events that \textsl{Sequencer} tries to
    handle.  These are:
 
@@ -949,13 +928,7 @@
    After the delta time, this event consists of six bytes of data:
 
    \begin{verbatim}
-      FF 51 03 tt tt tt
-   \end{verbatim}
-
-   Example:
-
-   \begin{verbatim}
-      FF 51 03 07 A1 20
+      FF 51 03 tt tt tt       Example: FF 51 03 07 A1 20
    \end{verbatim}
 
    \begin{enumber}
@@ -1000,7 +973,6 @@
    \texttt{cc} parameter expresses the number of MIDI clocks in a metronome
    click.  The \texttt{bb} parameter expresses the number of notated 32nd-notes
    in a MIDI quarter- note (24 MIDI Clocks).
-
    Example:
 
    \begin{verbatim}
@@ -1030,12 +1002,10 @@
 
    If a time signature event is not present in a MIDI sequence, a 4/4 signature
    is assumed.
-
    In \textsl{Seq66},
    the \texttt{c\_timesig}
    \texttt{SeqSpec} event is given priority.  The
    conventional time signature is used only if the \texttt{c\_timesig}
-  
   \texttt{SeqSpec} is not present in the file.
 
 \subsubsection{SysEx Event (0xF0)}
@@ -1043,7 +1013,6 @@
 
    If the meta event status value is 0xF0, it is called a "System-exclusive",
    or "SysEx" event.
-
    \textsl{Seq66} has some code in place to store these messages, but the
    data is currently not actually stored or used.  Although there is some
    infrastructure to support storing the SysEx event within a sequence, the
@@ -1068,11 +1037,9 @@
 
    Any other statuses are deemed unsupportable in \textsl{Seq66}, and
    abort parsing with an error.
-
    If the \texttt{-{}-bus} option is in force, it overrides the buss number (if
    any) stored with the sequence.  This option is useful for testing a setup.
    Note that it also applies to new sequences.
-
    At the end, \textsl{Seq66} adds the sequence to the encoded tune.
 
 \subsection{More MIDI Information}
@@ -1129,7 +1096,6 @@
 
    The track length is the number of bytes that need to be read in order to get
    all of the data in the track.
-
    In SMF 1 format, each track is assumed to cover a different MIDI channel,
    but the same MIDI buss.
    The MIDI buss \textsl{is} an important data item in the sequencer-specific
@@ -1180,7 +1146,6 @@
    data byte 0 is read.
    The one or two data bytes are added to the event,
    the event is added to the current sequence.
-
    When the event is played,
    and the MIDI channel of the sequence is used, unless
    the MIDI channel for the sequence is "Any".
@@ -1235,10 +1200,8 @@
 
    Note that the sequence number might be modified latter to account for the
    current \textsl{Seq24} screenset in force for a file import operation.
-
    Any other \texttt{SeqSpec} type is simply skipped by reading the "length"
    number of bytes.
-
    The remaining sections simply describe MIDI meta events in more detail, for
    reference.
 

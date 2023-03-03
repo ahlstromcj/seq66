@@ -1026,28 +1026,41 @@ gui_palette_qt5::set_brushes
     bool result = temp != Qt::TexturePattern;   /* used as illegal value    */
     if (result)
     {
+        /*
+         * Empty brush
+         */
+
         (void) make_brush(m_empty_brush, m_empty_brush_style, temp);
         temp = get_brush_style(notebrush);
         result = temp != Qt::TexturePattern;
         if (result)
         {
+            /*
+             * Note brush
+             */
+
             m_use_gradient_brush = temp == Qt::LinearGradientPattern;
             (void) make_brush(m_note_brush, m_note_brush_style, temp);
             temp = get_brush_style(scalebrush);
             result = temp != Qt::TexturePattern;
-            if (result)
-            {
-                (void) make_brush(m_scale_brush, m_scale_brush_style, temp);
-                temp = get_brush_style(backseqbrush);
-                result = temp != Qt::TexturePattern;
-                if (result)
-                {
-                    (void) make_brush
-                    (
-                        m_backseq_brush, m_backseq_brush_style, temp
-                    );
-                }
-            }
+        }
+        if (result)
+        {
+            /*
+             * Scale brush
+             */
+
+            (void) make_brush(m_scale_brush, m_scale_brush_style, temp);
+            temp = get_brush_style(backseqbrush);
+            result = temp != Qt::TexturePattern;
+        }
+        if (result)
+        {
+            /*
+             * Background sequence brush
+             */
+
+///////     (void) make_brush(m_backseq_brush, m_backseq_brush_style, temp);
         }
     }
     return result;

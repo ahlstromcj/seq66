@@ -62,10 +62,8 @@
 
    The palette file is not automatically generated.  It can be saved from the
    \textbf{Edit / Preferences / Display} tab.
-
    The style-sheet file can be specified in the 'usr' file's "user UI tweaks"
    section.
-
    There are also some 'keymap' files.  They are not yet used, but may become a
    feature of \textsl{Seq66} in the future.
 
@@ -86,16 +84,14 @@
 
    There is no palette file by default, but the user can create one.
    The color palettes are discussed in \sectionref{sec:palettes}.
-
-   These files contain the the data for remote MIDI control, computer keyboard
+   Other files contain the the data for remote MIDI control, computer keyboard
    control, MIDI clock, JACK transport, and a many other settings.
+   Some of the settings can be modified in the \textbf{Edit / Preferences}
+   dialog, or overridden from the command line.
 
    \textsl{Seq66} \textsl{always} overwrites the most of these files upon
    exiting.  One must therefore quit \textsl{Seq66} before making
    manual modifications to these files.
-
-   Some of the settings can be modified in the \textbf{Edit / Preferences}
-   dialog, or overridden from the command line.
 
 \subsection{Configuration File Commonalities}
 \label{subsec:configuration_file_commonalities}
@@ -590,8 +586,7 @@
 
    The mutes-groups themselves are loaded from the 'mutes' file dependent on
    the \texttt{load-mute-groups} option in the mute-groups file.
-
-   The mutes-groups sections is written on exit dependent on the
+   The mutes-groups section is written on exit dependent on the
    \texttt{save-mutes-to} option in the mute-groups file.
    It can go to the MIDI file, the 'mutes' file, or both.
 
@@ -633,19 +628,18 @@
 \label{subsec:configuration_rc_midi_clock}
 
    \index{[midi-clock]}
-   The MIDI Clock fields contain the clocking state from the last 
+   The MIDI Clock tab contains the clocking state from the last 
    time \textsl{Seq66} was run, and their status, and their names.
-   Turn off the clock with a 0, or on
-   with a 1 (which means to send
+   It also specifies the MIDI output ports, which can be disabled.
+   Disable the port with a -1, turn off the clock with a 0,
+   or turn it on with a 1 (which means to send
    \textbf{MIDI Song Position}, and
    \textbf{MIDI Continue} if
    starting after tick 0), or on with positioning with a 2, which sends
    \textbf{MIDI Start}
    and then begins clocking after the position reaches a modulo of the
-   \textbf{Clock Start Modulo value)}.  Luckily, the user-interface makes it
+   \textbf{Clock Start Modulo value}.  Luckily, the user-interface makes it
    easy to select the desire value, and has tool-tips to instruct the user.
-   This section has entries for each MIDI output buss.
-
    This configuration item is represented in the
    \textbf{Edit / Preferences / MIDI Clock} tab.
 
@@ -681,11 +675,10 @@
    applications such as \textsl{Qsynth} do not have JACK aliases. Ports
    created by ALSA or \textsl{Windows} do not have aliases.
 
-   On some \textsl{Linux} systems (or all?),
+   On some recent \textsl{Linux} systems,
    these USB system ports can be accessed without
-   exposing the ports via \texttt{a2jmidid}.
-
-   One can see all the aliases on a JACK setup, if desired, using the following
+   exposing the ports via \texttt{a2jmidid}, since JACK does it.
+   One can see all the aliases on a JACK setup with the following
    command:
 
    \begin{verbatim}
@@ -806,7 +799,7 @@
 
    These definitions can be used by JACK for connection, and these
    definitions can be used to specifically rename the ports that exist in the
-   system.
+   system. (Roughly similar to the MIDInam feature, but not compatible.)
    This option is misleading if one wants to have access to the
    actual ALSA/JACK ports that exist on the system.
    The next option gets around that issue.
@@ -845,11 +838,9 @@
 
    This section holds the settings for both JACK transport and for native JACK
    MIDI mode.
-
    \index{[jack-transport]}
    The JACK Transport options are also command-line options.
    See \sectionref{subsec:configuration_command_line}.
-
    For \textsl{Seq66} \textsl{before} 0.94.0, a number of boolean digit settings
    were used.
    For \textsl{Seq66} \textsl{after} 0.94.0, the settings are more elegant.
@@ -862,12 +853,11 @@
       jack-auto-connect = true  # 'true' or 'false', default is true
    \end{verbatim}
 
-   \texttt{transport-type} is independent of the MIDI playback/record engine
-   (ALSA versus JACK). The 'conditional' value tells \textsl{Seq66} to try to
+   'conditional' value tells \textsl{Seq66} to try to
    become JACK Master.  If a master already exists, then \textsl{Seq66} falls
    back to JACK Slave.
    Note that JACK transport is separately configurable from
-   JACK MIDI, and each uses a different JACK client internally.
+   JACK MIDI. Transport and MIDI use different JACK clients internally.
 
    \texttt{song-start-mode} is set to 'true' or 'song' to force the usage of the
    track layout in the song editor (see \sectionref{sec:song_editor}).
@@ -878,9 +868,9 @@
    It is probably best to leave it at 'auto'.
 
    \texttt{jack-midi} set to 'true' turns on the usage of JACK for MIDI
-   playback.  If running in normal mode (not in "manual/virtual" port mode),
-   then \textsl{Seq66} will connect automatically to all JACK MIDI ports it
-   finds on the system.
+   playback.  If running in normal (not "manual/virtual" port) mode,
+   then \textsl{Seq66} connects automatically to all JACK MIDI ports it
+   finds on the system at startup.
 
    \texttt{jack-auto-connect} is normally set to 'true'.  If set to false, then
    the automatic connect discussed in the previous paragraph will not be
@@ -947,11 +937,9 @@
 
    The \texttt{sub} settings apply to the rest of the notes of the metronome,
    but are otherwise the same.
-
    The settings \texttt{count-in-active} and \texttt{count-in-measures}
    control metronome count-in, where the metronome starts playing before the
    song.
-
    The rest of the settings are discussed in the following section on
    \textbf{Background Recording}.
 
@@ -1100,7 +1088,7 @@
    informative names to the MIDI busses, MIDI channels, and MIDI controllers of
    a given system setup.
    This configuration overrides the default values
-   of the \textbf{Event} drop-down list and menu items in the pattern editor,
+   of the \textbf{Event} drop-down list and the menu items in the pattern editor,
    and makes them reflect the names of the MIDI Control (CC) values of one's
    devices.
 
@@ -1424,10 +1412,8 @@
 
    Compare it to the layout shown in
    \sectionref{paragraph:patterns_pattern_keys}.
-
    Note that \texttt{progress-bar-thick} also applies to the box that hold the
    notes and progress-bar in the Live grid buttons.
- 
    There are a number of additional user-interface options.  See the generated
    or sample 'usr' file for descriptions.  Also see the chapter on palettes.
 
@@ -1725,10 +1711,8 @@
    Also included is a flag to allow notes to wrap around, where the Note On
    comes near the end of the pattern, but the Note Off appears after the
    pattern loops back to the beginning.
-
    If false, then two unlinked note events appear in the piano roll, colored
    magenta.  The "u" command in the piano roll will remove them.
-
    If one does not want to deal with wrap-around at all, then set the pattern
    length to the desired measure count \textsl{plus one} while recording, until
    satisfied with the recording.  Shrink or delete any notes that bleed into
@@ -1899,11 +1883,9 @@
    \textbf{D1 (data1)} field provides the actual MIDI event message number to
    detect, in decimal.  This item could be a Note On/Off event or a
    Control/Mode change event, for example.
-
    The \textbf{D2min (data2 min)} field is the minimum value of the event for
    the filter to match. For Note On/Off events, this would be the velocity
    value, for example.
-
    The \textbf{D2max (data2 max)} field is the maximum value of the event for
    the filter to match.
 
@@ -1952,8 +1934,7 @@
    All this section does is set up the controls to be used; the actual
    mute-group patterns are defined in the 'mutes' configuration file (or in the
    \textsl{Seq66} MIDI file itself.
-
-   Again, a key name of \texttt{Blank} can be used to disable a keystroke for
+   A key name of \texttt{Blank} can be used to disable a keystroke for
    that line.
 
    The mutes MIDI control setup resembles a matrix match the shifted versions
@@ -2002,10 +1983,8 @@
    Note that "Quit" is not a real keystroke.  It is a placeholder in the internal
    keystroke map for the functionality of quitting \textsl{Seq66} via MIDI
    control.  Qt provides other ways to quit via keystroke.
-
-   Again, a key name of \texttt{Blank} can be used to disable a keystroke for
+   A key name of \texttt{Blank} can be used to disable a keystroke for
    a line.
-
    The stanzas meaning can change depending on the type of control.  Here are
    the important styles:
 
@@ -2096,8 +2075,7 @@
 
    So when the Sustain button is held down, and one presses one of the pads
    on the \textsl{MPK Mini}, the corresponding sequence gets queued.
-
-   Also include in the data directory are sample 'ctrl' files for other devices.
+   Also included in the data directory are sample 'ctrl' files for other devices.
 
 \paragraph{Automation / Mute Group}
 \label{paragraph:configuration_midi_ctrl_modgmute}
@@ -2114,7 +2092,6 @@
    user-interface.
    \index{keys!l}
    It can also be accessed by the default hot-key, \texttt{l}.
-
    Note that, once in learn-mode, there is no way to cancel learn-mode
    except by selecting an illegal mute-group keystroke.
    Also see \sectionref{sec:mutes_master}.
@@ -2128,9 +2105,7 @@
    \textbf{grid modes} have been introduced.
    The \textbf{Record} and \textbf{Quan Record} automation controls have been
    refactored to cycle through these modes.
-
-   In release 0.98, additional automation commands provide direct access to
-   each mode.
+   Additional automation commands provide direct access to each mode.
 
    Grid mode changes the function of the main window's patterns panel so that
    it can be used to initiate record instead of toggling mute status,
@@ -2153,7 +2128,6 @@
    A click or a hot-key will cause the selected function above to be applied to
    the pattern denoted by the click/key.
    For details, see \sectionref{paragraph:patterns_recording_modes}.
-
    In \textbf{Record} mode, the following settings are enabled:
 
    \begin{itemize}
@@ -2165,7 +2139,6 @@
    \end{itemize}
 
    For details, see \sectionref{paragraph:patterns_recording_modes}.
-
    Also supported is changing the mode of recording:
 
    \begin{itemize}
@@ -2245,7 +2218,6 @@ This MIDI control sets the playing screen-set.
    status is to be shown.
    There are samples in the \texttt{data/linux} directory for some devices that
    one can adapt to other equipment.
-
    The mute-group buttons and their status can also be shown:
 
    \begin{verbatim}
@@ -2280,7 +2252,6 @@ This MIDI control sets the playing screen-set.
    detail here, but this feature can be used to put a device into
    "programmer" mode at \textsl{Seq66} startup and back into
    "normal" mode at \textsl{Seq66} shutdown.
-
    Here is a hypothetical sample for the Mk3:
 
    \begin{verbatim}
@@ -2300,11 +2271,9 @@ This MIDI control sets the playing screen-set.
    The first three are useful in other macros, while "startup" and
    "shutdown", if defined with actual data, are sent at the launch
    and shutdown, respectively, of \textsl{Seq66}.
-
-   Also note that these macros can be re-used in other macros, to
+   Note that these macros can be re-used in other macros, to
    increase the readability of the macros and to reduce the
    chance for mistakes.
-
    Note, too, that many devices required a device-specific
    SysEx header to precede the command-data, and the 0xf7
    End-of-SysEx "footer" to end the command.
@@ -2314,7 +2283,6 @@ This MIDI control sets the playing screen-set.
    \textbf{Session} tab and select a macro from the drop-down list.
 
    There is currently no way to send them via MIDI control.
-   That could be a feature of the future.
 
 \input{defaultkeys}
 

@@ -119,7 +119,6 @@
    capable programs. It enables the use of programs supporting LADISH Level 0
    and 1, and programs which accept their configuration via command-line
    arguments.  There is a command-line version and a graphical version.
-
    More to come on how to use \texttt{nsm-proxy}.
 
 \subsection{Session Management / JACK Session}
@@ -175,7 +174,6 @@
 
    Then start \textsl{Qsynth} so it uses \textsl{jack} for MIDI and
    \textsl{jack} (or \textsl{pulseaudio}) for audio.
-
    Then run \textsl{Seq66} with \textsl{JACK} for slave transport and for MIDI
    (either command works the same):
 
@@ -186,7 +184,6 @@
 
    Load a file, make sure its MIDI output goes to "fluidsynth" or "qsynth", and
    plays.
-
    In your desired location (e.g. \texttt{~/.config/seq66/sessions},
    create a new session directory (e.g. \texttt{qtest}).
 
@@ -210,16 +207,12 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    or \texttt{seq66slave} directory, and a
    \texttt{sessions.xml} configuration file containing the information shown in
    the sessions dialog.
-
    Exit \textsl{Seq66}, \textsl{QSynth} and \textsl{QjackCtl}
    (in that order).
 
    One issue is that \textsl{QSynth}
    does not support \textsl{JACK Session}.
    Try it with \textsl{Yoshimi}, which does support it.
-
-% /usr/local/bin/qseq66 --jack-session-uuid 8589934670 --home
-% /home/ahlstrom/Home/ca/mls/git/seq66/sessions/qsynth-test-2/seq66_transport/
 
 \subsection{Seq66 Session Management / NSM}
 \label{subsec:sessions_nsm}
@@ -324,25 +317,11 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    It is then important to start \texttt{qseq66} in the normal manner again,
    and verify that everything works as expected.
 
-%  \textbf{Warning}.
-%  As the next section shows, if one wants to start with a
-%  \textsl{blank} NSM configuration,
-%  simply \textsl{move or hide}
-%  any existing \textsl{Seq66} configuration files from the
-%  "HOME" (\texttt{/home/user/.config/seq66})
-%  configuration directory before
-%  creating an NSM session and adding \textsl{Seq66} to it.
-
    We have added a command, \textbf{File / Import / Import Project}
    command to import the configuration files from one directory into the
    current \textsl{NSM} session configuration directory.
    This import used to be automatic, but is too surprising to an unsuspecting
    user.
-
-%  \index{NSM!template}
-%  On the other hand, the user can use the configuration
-%  in \texttt{/home/user/.config/seqq66} as a stock configuration
-%  to use as a \textsl{template} when creating a new session.
 
 \subsubsection{Seq66 Session Management / NSM / Run in NSM}
 \label{subsec:sessions_nsm_first_run_in_nsm}
@@ -355,39 +334,6 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    Now, the user must use the
    \textbf{File / Import / Import Project...}
    command.
-
-%  When \textsl{Seq66} is run in \textsl{NSM} for the first time,
-%  what happens to the new configuration depends on whether or not 
-%  the normal configuration files exist in the normal (no session)
-%  default configuration location.
-
-%  If \textsl{no} configuration files exist,
-%  then new configuration files are created
-%  in the \textsl{NSM} session directory.
-%  If these configuration files \textsl{do} exist,
-%  then they are \textsl{replicated} in the \textsl{NSM} session directory.
-%  If the configuration specifies play-lists, the whole play-list, including
-%  the MIDI files, are replicated in the NSM session.
-
-%  \textbf{No existing normal configuration}.
-%  Here, we have just installed \textsl{Seq66}, but have not
-%  yet run it.  We start the \textsl{non-session-manager}, create a new session,
-%  and add \texttt{qseq66} to this session.  This starts \texttt{qseq66}, and,
-%  after a short delay to get the session information from the daemon, a new
-%  configuration is created in the session directory.
-
-%  \textbf{Existing normal configuration}.
-%  If there is an existing \textsl{Seq66} configuration,
-%  then running \texttt{qseq66} in a new
-%  session will cause the normal configuration to be recreated in the new
-%  session directory, including play-lists and MIDI files.
-%  If a play-list has been configured, it is also
-%  copied, and so are the MIDI files it requires. (Their relative directory
-%  structure is preserved.)
-
-%  If \textsl{JACK} has been configured to be
-%  used by \textsl{Seq66}, be sure \textsl{JACK} is started (e.g. by running
-%  the \textsl{qjackctl} application.)
 
    For illustration, we run \textsl{NSM} from a terminal window, which can be
    very helpful when problems occur.
@@ -511,8 +457,6 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    One can also add valid play-list, palette, and drums/note-mapping files to
    that directory later.
 
-% TODO:  fix for Import Playlist command
-
    If before running \textsl{NSM},
    one had set up a play-list file and provided the proper "MIDI
    base directory" in the 'rc' file, then all the MIDI files are copied to
@@ -565,7 +509,6 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 
    The \texttt{url} is not used if running \textsl{Seq66} from the \textsl{NSM}
    GUI... the application will get the URL from the \textsl{NSM} environment.
-
    Note that \texttt{qseq66} can still be run outside of a
    session manager.  It will detect the absense of the session manager and run
    normally.
@@ -580,7 +523,6 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    information received from \textsl{NSM} is displayed.
    It is meant to display information to
    help the user understand what is happening in the run.
-
    This tab is not yet fully functional.
    In particular, \textbf{Session Log} does not yet work.
 
@@ -639,7 +581,6 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.65]{tabs/session/nsm-qseq66-menus.png}
    \includegraphics[scale=0.65]{tabs/session/nsm-qseq66-menus-2.png}
    \caption*{File Menu Under NSM, Composite View}
 \end{figure}
@@ -648,7 +589,6 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    \textbf{Hide}, as per the NSM protocol.  Also have fixed a bug that disables
    the load-most-recent option under NSM.
    We will update the figure above eventually.
-
    The following items describe the menu entries.
 
    \begin{itemize}
@@ -684,13 +624,6 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          Prompts the user for a MIDI file to
          be imported (copied) into the current session.  The path to the file
          is then adjusted to use the \textsl{NSM} \texttt{midi} subdirectory.
-%     \item \textbf{Open Playlist}.
-%        Works the same as without session
-%        management, but gets the list from the session directory.
-%     \item \textbf{Save Session}.
-%        This function saves the main configuration
-%        files (except for the 'usr' file), saves the play-list and note-mapper
-%        files, if in use, and saves the current MIDI file, if any.
       \item \textbf{Export / Export Song...}
          Allows exporting the current song as a stock MIDI file, using the
          performance information (triggers) to write the MIDI data as it would
@@ -705,25 +638,13 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
       \item \textbf{Export / Export SMF 0...}
          This action works the same as in normal mode.
          It converts the destination file to SMF 0 format.
-%     \item \textbf{Detach}.
-%        Allows \textsl{Seq66} to detach from session management.
-%        This process simply disconnects from \textsl{NSM} and restores the
-%        normal \textsl{File} menu.
-%        Currently, it is disabled because it causes issues that we cannot yet
-%        solve.
       \item \textbf{Hide}.
          This menu item replaces the \textbf{Quit} item.
          It hides the main window and tells NSM about it.
-%     \item \textbf{Quit}.
-%        Quits \textsl{Seq66}.
-%        There are no messages to send to \textsl{NSM} in this case.
-%        The \texttt{nsmd} daemon detects that the \textsl{Seq66} client has
-%        disappeared (and notes that on the console output, if available).
    \end{itemize}
 
    At some point we would like to present a small tutorial showing a session
    under \textsl{JACK}.
-
    Also note that NSM can invoke or kill applications via
    \textsl{signals}, as explained in 
    \sectionref{subsec:sessions_signals}.

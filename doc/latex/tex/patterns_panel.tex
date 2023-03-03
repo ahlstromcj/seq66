@@ -76,17 +76,14 @@
    in keyboard focus.
    There are a total of 32 sets, for a total of 1024 loops/patterns. 
    Only one screen-set can be controlled at a time, in general.
-%  have found; have not yet tried to verify this assertion.
    Multiple screensets can be playing at the same time, depending on
    configuration.
 
    The \texttt{Page Up} and \texttt{Page Down}, and \texttt{Up/Down Arrow}
    keystrokes can be used inside of the \textbf{Set} spin-button.
-
    It is important to note that, currently, incrementing or decrementing
    the screen-set will \textsl{not} wrap-around.
    We consider this a feature rather than a bug, at this time.
-
    There are some other important considerations for set-handling.
    See \sectionref{sec:setmaster}.
 
@@ -415,12 +412,6 @@
          tracks the position of the playback of the pattern or loop; it
          returns to the beginning of the box every time the pattern starts
          over.
-%        \index{todo:one-shot pattern}
-%        It might be good to have some patterns marked as one-shot patterns.
-%        They play once at the start of playback, and that is it.
-%        They could be marked with a cyan background.
-%        Currently, it is easy enough to use the Song Editor for this purpose,
-%        but then one cannot play the patterns in live mode.
       \item \textbf{Sequence Number}. Bottom left.
          This number is shown at the bottom left of the pattern slot.
          Pattern numbers, by default, range from 0 to 31.
@@ -471,17 +462,6 @@
    the pattern stop playing or start playing.  The armed status
    can also be toggled using hot-keys and MIDI controls.
 
-%  \itempar{Cut}{pattern!cut}
-%  Deletes and copies an existing loop or pattern.
-
-% =========================================================================
-
-%  \itempar{MIDI Bus}{pattern!midi bus}
-%  Selecting this filled-box right-click menu item brings up a list
-%  of the up to 16 MIDI output busses that \textsl{Seq66} supports.
-%  For each of these buss items, another pop-up menu allows one
-%  to specify the MIDI output channel for that buss.
-
 \subsubsection{Pattern Keys and Click}
 \label{subsubsec:patterns_pattern_keys_and_clicks}
 
@@ -514,7 +494,6 @@
    There is an alternate (and fairly new) mapping that can be enabled
    using the \texttt{swap-coordinates} option in the 'usr' file.
    See \sectionref{subsubsec:usr_file_user_interface_settings}.
-
    Below is the default keyboard "grid" that is
    mapped to the loops/patterns on the screen-set.
 
@@ -583,7 +562,6 @@
    immediately, but will kick in when the pattern restarts.
    This pending state is indicated by coloring the central box of the
    pattern grey.
-%  Once queing finishes, the queue mode is automatically exited.
    Please note the "keep queue" functionality and
    the "one-shot queue" functionality described below.
 
@@ -592,17 +570,11 @@
    will force the pattern off after one play.
    Queue also works for mute/unmute pattern sets ("groups"); in this case,
    every sequence will toggle its status after its individual loop ends. 
-
    \index{keys!avoid ctrl/alt}
    We do \textbf{not}
    recommend using \texttt{Ctrl} or \texttt{Alt}
    keys for pattern control.  They conflict with application or desktop
    settings.
-%  However, if one insists on such hot-key combinations,
-%  use the \textbf{Menu} button in the main
-%  window to disable the menu.
-%  One can also use normal keys to enable queuing.
-%  For example, the minus key or the keypad's slash key can be used.
 
    \index{keys!keep queue}
    \index{queue!keep}
@@ -614,11 +586,6 @@
    same time.
    Keep-queue persists until one clicks the queue hot-key again,
    or changes the active (viewed) screen-set. 
-%  After pressing the "keep queue" hot-key, individual pattern
-%  toggles are queued rather than happening immediately.
-%  While in queue mode, pressing a patterns hot-key, or clicking on the
-%  pattern, queues that pattern to change state at the beginning of the next
-%  loop.
    \index{queue!cancel}
    “Keep queue” mode is cancelled by pressing the normal queue hot-key.
    There is also a \textbf{Q} button for the same purpose.
@@ -639,7 +606,6 @@
    When the "replace" hot-key is
    pressed, then pressing a pattern's hot-key,
    that sequence is unmuted, and all of the other sequences are muted.
-
    "Replace" is a form of "solo".
    "Replace" is also implemented via MIDI control,
    where the MIDI control can be activated, but then the user has to select
@@ -678,14 +644,6 @@
          One needs to clear the queue mode in order to select another pattern
          to solo.
    \end{enumber}
-
-% \begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.75]{new/queued_replace.png}
-%  \includegraphics[scale=0.65]{roll.png}
-%  \caption{Queued-Replace (Queued-Solo) In Action}
-%  \label{fig:queued_replace}
-% \end{figure}
 
    Before pressing the "keep queue" key, patterns 33 ("\textbf{q}")
    and 34 ("\textbf{a}") are
@@ -775,7 +733,6 @@
 Also shown in the figure is a \textbf{Metronome} button.
 This is a feature new with \textsl{Seq66} version 0.99.0, and still has a few
 minor issues to work out, but it works.
-
 The metronome has a number of configurable items.
 See \sectionref{subsubsec:configuration_rc_metronome}.
 
@@ -807,7 +764,6 @@ click the background-recording button again.
 If any events have been recorded, then they are pasted into a new pattern in
 the next available pattern slot.
 There, they can be edited or deleted.
-
 Note that the background pattern is muted while recording.
 We will change how it works based on user feedback.
 
@@ -905,8 +861,8 @@ We will change how it works based on user feedback.
             \item All the (note) events just recorded are \textsl{erased}.
             \item One-short counters/flags are \textsl{reset}.
             \item Recording is turned \textsl{back on}.
+               Thus, one can easily re-do a one-shot recording.
          \end{itemize}
-         Thus, one can easily re-do a one-short recording.
    \end{itemize}
 
    Once the recording mode is turned on, then the recording type comes into
@@ -1049,7 +1005,6 @@ We will change how it works based on user feedback.
    supported value, and if one right-clicks on the Down button, the BPM
    advances to its lowest value.
    MIDI control for this value is also available.
-
    The precision of the BPM value can be set to 0, 1, or 2
    decimal places, and the increment values for the step size (small)
    or page size (large) of the BPM spinner can be configured in the 'usr' file.
@@ -1083,17 +1038,6 @@ We will change how it works based on user feedback.
    tab.  The live set-up and set-down keystrokes, as well as their MIDI control
    counterparts (both defined in a 'ctrl' file).
    apply only to the main window.
-
-%  Of course, if the "mainwnds" are synced, then all are affected by these
-%  keystrokes.
-%
-%  In multi-wid mode, each "mainwnd" frame shows the corresponding set number
-%  and, if present, the set name text for each "mainwnd" set.
-%
-%  The \texttt{-o wid=3x2,i} option can be used to set this mode.
-%  These settings can be made permanent in the 'usr' file.
-%  In that file, the options modified are \texttt{block\_rows} and
-%  \texttt{block\_columns}.
 
 \subsection{Patterns / Variable Set Size}
 \label{subsec:patterns_panel_variset}

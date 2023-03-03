@@ -72,7 +72,6 @@
    playback moves the progress bar outside of the current frame of data.  This
    feature makes it easier to follow patterns that are longer than a measure or
    two.
-
    One might want to print out the following figure to follow along.  There is
    a lot of functionality in this window.
 
@@ -156,13 +155,6 @@
    The pattern is not extended until events come in.
    Thus, the pattern is only as long as the last measure when a note comes in.
 
-%  See \sectionref{subsec:pattern_editor_bottom} below.
-
-%  WHAT IS THIS? A feature where a short loop plays only once.
-%
-%  (Also nice would be a "one-shot"
-%  pattern, useful for live intro patterns, for example.)
-
    \itempar{Chord Types}{pattern editor!chord types}
    \index{chord generation}
    This setting allows one to select a chord type (e.g. "major" or "minor").
@@ -170,9 +162,6 @@
    type, and extra notes are generated to create that chord.
    The \textbf{Chord Generation Reset} button is at the left of the
    \textbf{Data Panel}.
-
-   \itempar{Chord Generation}{pattern editor!chord generation}
-   \index{chord generation}
 
    \itempar{MIDI Out Device (Buss)}{pattern editor!midi out device}
    This setting specifies a virtual MIDI output buss or a
@@ -353,14 +342,13 @@
          notes are simply reversed in place.
    \end{itemize}
 
-   Question:  would a "pattern flip" (of the note values themselves) be useful?
+%  Question:  would a "pattern flip" (of the note values themselves) be useful?
 
    \textbf{Effect} does not do anything except show the effect of the changes.
    (Making it read-only might make it almost invisible in some themes.)
    Note the \textbf{Truncated!} check-box.  If checked, then
    the length of the pattern has reduced enough to drop some events.
    This only happens with the time-signature option.
-
    The process followed is:
 
    \begin{enumerate}
@@ -428,7 +416,6 @@
    increases for higher PPQN values, so that the default zoom looks sensible.
    As the right number (ticks) goes higher,
    the effect is to zoom out, and show more of the pattern.
-%  Also see \sectionref{subsubsec:pattern_editor_zoom_keys}.
 
    \itempar{Key of Sequence}{pattern editor!key}
    Selects the desired musical key for the pattern.  The following keys are
@@ -453,7 +440,6 @@
    so that opening another sequence
    will apply the same settings to that sequence.  This is an optional feature,
    supported as noted below.
-
    Also see \textbf{Musical Scale} below for the scale-identification feature.
 
    \index{global-sequence}
@@ -633,12 +619,8 @@
    for editing.  Buttons and keystrokes enhance the ease of editing.
 
    The piano roll can show notes, a background pattern, and a scale.
-%  and tempo events.
    Notes are shown as narrow rectanges; the pattern and scale are
    shown as bars running the whole length of the piano roll.
-%  Tempo events are shown as small circles accompanied by a number.
-%  (We're still considering whether showing tempos in the piano roll is a good
-%  thing).
 
    When the piano roll has keyboard focus, the \texttt{Space} key
    starts and stops playback, rewinding to the beginning when stopped.
@@ -651,10 +633,6 @@
    One can page vertically in the piano roll using the
    \index{keys!page-up} \texttt{Page Up} and 
    \index{keys!page-down} \texttt{Page Down} keys.
-%  One can go to the top using the 
-%  \index{keys!home} Home key, and
-%  to the bottom using the
-%  \index{keys!end} End key.
    One can go to the leftmost position using the 
    \index{keys!ctrl-home} \texttt{Ctrl-Home} key,
    and to the rightmost position using the
@@ -719,8 +697,6 @@
    The virtual keyboard is a fairly powerful interface.  It shows,
    by shadowing, which note on the keyboard will be drawn. It can be
    played with a mouse, using left-clicks, to preview a short motif.
-%  It can show marks to indicate off-scale notes, to make them easy to
-%  avoid.
    Every octave, a note letter and octave number are shown, as in
    "C4".  If there is a difference scale in force, then the letter changes to
    match, as in "F\#5".
@@ -1131,10 +1107,8 @@
    then hit the \texttt{p} key to go into "paint" mode,
    \index{keys!x}
    and hit the \texttt{x} key to escape that mode.
-
    Note that the "finger" button \textsl{does not} apply to the event panel (it
    applies only to the piano-roll).
-
    Should one want more of the same event, continue to hold both buttons and
    drag the mouse.  One event should appear at each beat (16th note) position
    that is crossed.
@@ -1154,7 +1128,6 @@
    beat size; temporarily reduce the beat size if desired.
    Also, for regularly-spaced events, selected events can be hidden when moved
    into the next non-selected event.
-
    The event values can be edited via the data panel, described in the next
    section.
 
@@ -1247,12 +1220,6 @@
    Both of these events' values can be modified by dragging a line as discussed
    above.
 
-%  \textbf{Bug:}
-%  \index{bugs!event editing can fail}
-%  Sometimes the editing of event values in the event data section will not work.
-%  The workaround is to do a \texttt{Ctrl-A}, and the click in the roll
-%  to deselect the selection; that makes the event value editing work again.
-   
    \index{event data editor!mouse wheel}
    Any events that are selected in the piano roll or event strip can have
    their values modified with the mouse wheel.
@@ -1330,8 +1297,6 @@
    \caption{Pattern Editor LFO}
    \label{fig:pattern_editor_bottom_lfo}
 \end{figure}
-
-%  Note the controls in this window:
 
    \begin{enumber}
       \item \textbf{Use Measures (vs Length)}.
@@ -1434,7 +1399,6 @@
    Note, though, that if MIDI Record is toggled on and off, the
    Thru function is effectively disabled.  To restore it,
    toggle the Thru off, then on, again.
-
    Also note that Thru will remain enabled when the pattern editor is closed.
 
    \itempar{MIDI Record Toggle}{pattern editor!record midi data}
@@ -1553,8 +1517,7 @@
    the snap determines where the next note
    begins, and the length determines the length of the note to create.
    However, the note-length is a property of the piano roll, not the pattern
-   itself.  The pattern uses the snap-length during auto-step/setp-edit.
-
+   itself.  The pattern uses the snap-length during auto-step/step-edit.
    This kind of note recording can be done in two ways:
 
    \begin{enumerate}
@@ -1605,7 +1568,6 @@
 
    \textsl{We still need to work out whether or not to use the scroll wheel.
    in Seq66, as we need to keep multiple event panes in sync while scrolling.}
-
    Let us describe the actions that can be performed with a
    scroll wheel, or with the scrolling features of multi-touch touchpads.
    There are three major scrolling actions available when using mouse

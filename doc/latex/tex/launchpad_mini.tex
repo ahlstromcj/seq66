@@ -41,7 +41,6 @@
    message is 3 bytes, and is of type Note Off (80h), Note On (90h), or a
    controller change (B0h).  However, on our Mini, we do not receive Note Offs
    (in ALSA)... we receive Note Ons with velocity 0.
-
    The Mini has a top row of circular buttons numbered from 1 to 8.
    The next 8 rows start with 8 unlabeled square buttons on the left side
    with a circular button on the right, labelled with letters A through H.
@@ -79,7 +78,6 @@
    There are two layouts available, \textbf{X-Y} and \textbf{Drum}.
    In \textsl{Seq66}, the drum layout is not used; see the
    file \texttt{contrib/notes/launchpad.txt}.
-
    X-Y Key Layout (mapping mode 1):
 
    \begin{verbatim}
@@ -331,7 +329,7 @@
    so that the lights on the Mini match the unmuted loops and 
    some of the \textsl{Seq66} controls.  Here are the changes to make to the
    output settings (while \textsl{Seq64} is \textsl{not} running).
-   Change
+   Change these entries to the next ones:
 
    \begin{verbatim}
       [midi-control-out-settings]
@@ -339,16 +337,14 @@
       midi-enabled = false
    \end{verbatim}
 
-   to
-
    \begin{verbatim}
       [midi-control-out-settings]
       output-buss = 1
       midi-enabled = true
    \end{verbatim}
 
-   If the device starts lighting up mysteriousy while playback is happen, make
-   sure the music is not being played to the control device channe.
+   If the device starts lighting up mysteriously while playback is happen, make
+   sure the music is not being played to the control device channel.
    Or, if your synth makes weird noises at startup/exit, make
    sure the output-buss setting is not pointing to your synth.
    (Been there, done that! \smiley{})
@@ -370,7 +366,6 @@
    For the \texttt{qseq66-lp-mini.ctrl} file, only the upper 32 buttons and
    LEDS are used for this purpose, so there are 32 lines of data in this
    section.
-
    The four stanzas (numbers in square brackets) are:
 
    \begin{itemize}

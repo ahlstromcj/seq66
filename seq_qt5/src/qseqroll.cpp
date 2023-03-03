@@ -580,7 +580,6 @@ qseqroll::draw_notes
     bool background
 )
 {
-//  QBrush brush(Qt::white);            /* Qt::NoBrush  breaks selection    */
     QBrush brush(note_brush());
     QBrush error_brush(Qt::magenta);    /* for unlinked notes               */
     QPen pen(fore_color());
@@ -673,19 +672,46 @@ qseqroll::draw_notes
                 painter.setBrush(note_brush());
             }
             painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
-            if (use_gradient() && ! background)
+            if (use_gradient())
             {
-                QLinearGradient grad
-                (
-                    m_note_x, m_note_y, m_note_x, m_note_y + noteheight
-                );
-                grad.setColorAt(0.05, fore_color());
-                grad.setColorAt(0.5,  note_in_color());
-                grad.setColorAt(0.95, fore_color());
-                painter.fillRect
-                (
-                    m_note_x, m_note_y, m_note_width, noteheight, grad
-                );
+                if (background)
+                {
+                    length_add = 1;
+                    painter.setBrush(backseq_brush());
+                    painter.drawRect
+                    (
+                        m_note_x, m_note_y, m_note_width, noteheight
+                    );
+                }
+                else
+                {
+                    QLinearGradient grad
+                    (
+                        m_note_x, m_note_y, m_note_x, m_note_y + noteheight
+                    );
+                    grad.setColorAt(0.05, fore_color());
+                    grad.setColorAt(0.5,  note_in_color());
+                    grad.setColorAt(0.95, fore_color());
+                    painter.fillRect
+                    (
+                        m_note_x, m_note_y, m_note_width, noteheight, grad
+                    );
+                }
+            }
+            else
+            {
+#if COMMENTED_CODE_WAS_NOT_MOVED_TO_HERE
+                if (background)                     /* draw background note */
+                {
+                    length_add = 1;
+                    painter.setBrush(backseq_brush());
+                }
+                else
+                {
+                    painter.setBrush(note_brush());
+                }
+                painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
+#endif
             }
             if (m_link_wraparound)
             {
@@ -705,6 +731,7 @@ qseqroll::draw_notes
 
             if (m_note_width > 3)
             {
+#if COMMENTED_CODE_WAS_NOT_MOVED_BELOW
                 if (ni.selected())
                     brush.setColor(sel_color());        /* was "orange"    */
                 else
@@ -714,6 +741,7 @@ qseqroll::draw_notes
                     painter.setBrush(error_brush);
                 else
                     painter.setBrush(brush);
+#endif
 
                 if (! background)
                 {
@@ -739,6 +767,16 @@ qseqroll::draw_notes
                     }
                     else
                     {
+                        if (ni.selected())
+                            brush.setColor(sel_color());     /* was "orange"  */
+                        else
+                            brush.setColor(note_in_color()); /* was Qt::white */
+
+                        if (bad)
+                            painter.setBrush(error_brush);
+                        else
+                            painter.setBrush(brush);
+
                         if (ni.finish() >= ni.start())  /* note highlight   */
                         {
                             painter.drawRect
@@ -1356,7 +1394,6 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
 
                         done = true;
-                        //perf().set_tick(0, true);   /* no reset will occur  */
                         track().set_last_tick(0);   /* sets it to beginning */
                         if (not_nullptr(frame64()))
                             frame64()->scroll_to_tick(0);
@@ -1365,7 +1402,6 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     case Qt::Key_End:
 
                         done = true;
-                        // perf().set_tick(len, true); /* no reset will occur  */
                         track().set_last_tick();    /* sets it to length    */
                         if (not_nullptr(frame64()))
                             frame64()->scroll_to_tick(len);

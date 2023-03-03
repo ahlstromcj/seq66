@@ -33,7 +33,6 @@
    sub-menus for import and export functions, which have expanded quite a bit.
 
    The \textsl{Seq66} \textbf{File} menu contains the sub-items shown below.
-%  \figureref{fig:menu_file_items}.
    The next few sub-sections discuss
    the sub-items in the \textbf{File} menu.
    Please note that these entries are different
@@ -154,7 +153,6 @@
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.65]{main-menu/file/dark-menu-recent-files.png}
    \includegraphics[scale=0.65]{main-menu/file/menu-recent-files-long.png}
    \caption{Seq66 Menu File Recent Files, Full Paths}
    \label{fig:menu_file_recent_files_full_paths}
@@ -226,15 +224,11 @@
    \index{Meta events}
    Meta events are now partially handled by \textsl{Seq66}.
    Meta events \textbf{Set Tempo}
-%  (\texttt{FF 51 03 tt tt tt}),
    and \textbf{Time Signature}
-%  (\texttt{FF 58 04 nn dd cc bb}),
    are now fully supported.
    Other meta events,
    such as \textbf{Meta MIDI Channel}
-%  (\texttt{FF 20 01 cc}),
    and \textbf{Meta MIDI Port}
-%  (\texttt{FF 21 01 pp}),
    are now read as events, and are saved back when the file is saved.
    They cannot be edited in \textsl{Seq66}, but they are not lost.
    (Channel and port meta events are
@@ -270,7 +264,6 @@
    Even without a session manager, it can be useful to move a playlist to a
    subdirectory in order to separate it and its MIDI files from other
    playlists.
-
    This menu entry does a lot of things; here are the steps:
 
    \begin{itemize}
@@ -370,7 +363,6 @@
    For the setting of global song transpose, see
    \sectionref{sec:song_editor}.
    Note that transpose can be enabled in the
-%  patterns panel (see \sectionref{subsubsec:patterns_pattern_filled}) and
    in the sequence editor
    (see \sectionref{sec:pattern_editor}).
 
@@ -384,8 +376,6 @@
    mute-group information.  And then, if the
    application exits, the cleared mute-group information is also saved to
    the 'rc' file.
-%  We'd like to be able to handle the 'rc' and "MIDI"
-%  mute-groups separately in the future.
 
    \itempar{Reload Mute Groups}{edit!load mute groups}
    \index{rc!mute groups}
@@ -427,9 +417,6 @@
    Move to the desired set (whether empty or note), and then
    click this menu item.
    All of the patterns in the original set are pasted into the current set.
-
-%  \textsl{Do not confuse it with the main \textbf{Mute} button, which toggles the
-%  status only of the tracks that are armed and remembers them.}
 
 \subsubsection{Menu / Edit / Preferences}
 \label{subsubsec:menu_edit_preferences}
@@ -759,7 +746,6 @@
    If you define these sections, they should match your
    hardware exactly, and your hardware should not change from session to
    session.
-
    If the "auto ALSA ports" option is turned on, via the \texttt{-a} or
    \texttt{-{}-auto-ports} option, then
    the input ports from the system are shown.
@@ -821,7 +807,6 @@
    \texttt{data/linux} and
    \texttt{data/samples} directory.
    Also see \sectionref{sec:launchpad_mini}.
-
    For more information on keystrokes, see
    \sectionref{subsec:kbd_mouse_keyboard_control}.
 
@@ -874,7 +859,6 @@
    as well.
 
    \textbf{Warning}:
-
    A different set size alter the 'ctrl' file radically.
    We still have to work through all the implications of changing the set size,
    so back up your configuration and proceed with caution!
@@ -945,7 +929,6 @@
    This setting makes the font in the live grid bold, and it allows
    make the progress-bar thick in the grid and in the Live and Song piano
    rolls.
-
    It is the same as the \texttt{progress-bar-thick = true} option in the 'usr'
    file. See \sectionref{subsubsec:usr_file_user_interface_settings}.
 
@@ -1039,15 +1022,6 @@
          manual/virtual ports.
    \end{itemize}
 
-%  Note that there are long-standing issues with the JACK support of
-%  \textsl{Seq24}, and \textsl{Seq66} currently inherits some of them,
-%  in spite of some bug fixes.  Generally, if one experiences issues in
-%  transport control, try making one of the other sequencer applications the
-%  JACK Master.
-%  If one starts \textsl{Seq66} in JACK mode without JACK running,
-%  it will take a little while for \textsl{Seq66} to start up, and it
-%  will fall back to ALSA usage.
-
    If one makes a change in the JACK transport settings, it is best to
    then press the \textbf{JACK Transport Disconnect} button, then the
    \textbf{JACK Transport Connect} button.
@@ -1094,7 +1068,6 @@
    \itempar{Disconnect}{jack sync!disconnect}
    Disconnect from JACK Sync.
    This button is useful to stop JACK sync when making changes to it.
-
    JACK connection and disconnection are disabled during playback, but the
    buttons don't yet reflect that status.
 
@@ -1290,7 +1263,6 @@
    JACK Session provides a location for file and a record of applications and
    connections, but otherwise lets the user mess things up.  It is
    provided because some people still use it.
-
    For more information about session management, see
    \sectionref{sec:sessions}.
 
@@ -1378,10 +1350,8 @@
    channel), the time signature, buss number (and any mapping), the length in
    pulses, the event and trigger count, transposability, key and scale, and
    color number (if any).
-
    For each trigger in the pattern, its start, stop, offset, and transposition
    values are shown.
-
    This file can be helpful for trouble-shooting or solving puzzling effects in
    the tune.
 
@@ -1392,7 +1362,6 @@
    This entry brings up a short tutorial of \textsl{Seq66} in the default
    browser. This tutorial is meant only to jump-start a new user of
    \textsl{Seq66}, and is a work in progress.
-
    It does not cover nearly as much as the user manual, so....
 
 \subsubsection{Menu / Help / User Manual}
@@ -1402,7 +1371,6 @@
    This entry brings up the full \textsl{Seq66} user manual in the default
    PDF viewer.  It currently looks in the possible installation areas and in
    the \textsl{Seq66} source tree to find the PDF.
-
    It currently does not try to locate the user manual on the internet.
 
 %-------------------------------------------------------------------------------
