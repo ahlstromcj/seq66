@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-06-16
-% \update      2023-03-02
+% \update      2023-03-03
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -26,7 +26,8 @@
 
    When running the commands \texttt{aplaymidi -l} or \texttt{arecordmidi -l},
    one sees something like the following.
-   (The MIDI Through port is useful for...? See \cite{alsathru}.)
+   Notice that there is only one Thru port.
+   The MIDI Through port is useful for...? See \cite{alsathru}.
 
    \begin{verbatim}
     Port    Client name                      Port name
@@ -41,7 +42,6 @@
    how can I increase the amount of MIDI through ports created by ALSA?"
    \end{quote}
 
-   Notice that there is only one Thru port.
    To add more Thru ports, first use \texttt{modinfo} to see information about
    the kernel module \texttt{snd-seq-dummy}.  Part of the output is shown here:
 
@@ -80,13 +80,13 @@
    \end{verbatim}
 
    This will, of course, throw off the \textsl{Seq66} port numbering, unless
-   one has implemented port-mapping.
+   one has implemented port-mapping (\sectionref{sec:port_mapping}).
 
 \subsection{ALSA / Virtual MIDI Devices}
 \label{subsec:alsa_virtual_midi_devices}
 
-   The "manual" ports of \textsl{Seq66} are actually "virtual" ports.
-   From \url{https://tldp.org/HOWTO/MIDI-HOWTO-10.html}:
+   The "manual" ports of \textsl{Seq66} are "virtual" ports.
+   From \cite{midihowto}:
 
    \begin{quote}
    MIDI sequencers like to output their notes to MIDI devices that normally
@@ -96,7 +96,7 @@
    HOWTO describes all that is necessary to achieve this goal.
    \end{quote}
 
-   To use ALSA's virtual MIDI card the
+   To use ALSA's virtual MIDI the
    \texttt{snd-card-virmidi} module must be present. 
 
    \begin{verbatim}
@@ -110,8 +110,7 @@
    \end{verbatim}
 
    More to come, such as an explanation of \texttt{aconnectgui}....
-
-   \url{https://freeshell.de/~murks/posts/ALSA_and_JACK_MIDI_explained_(by_a_dummy_for_dummies)/}
+   Also see \cite{midilinux}.
 
 \subsection{ALSA / Trouble-Shooting}
 \label{subsec:alsa_testing}
@@ -137,6 +136,9 @@
 
    \begin{verbatim}
       $ aseqdump
+      Waiting for data at port 129:0. Press Ctrl+C to end.
+      Source  Event                  Ch  Data
+        0:1   Port subscribed            128:0 -> 129:0
    \end{verbatim}
 
    Once set up, start playback on \textsl{Seq66}.
@@ -192,7 +194,7 @@
    dialog and make sure that MIDI I/O is enabled and that both input
    and output are set to ALSA.
    See the \textsl{VMPK} website (\cite{vmpk}).
-   The current version one can download there is 0.8.7!
+   The current version one can download there is 0.8.8.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

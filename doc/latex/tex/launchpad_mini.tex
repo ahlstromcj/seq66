@@ -25,7 +25,6 @@
    We will describe one of the 'ctrl' files provided with \textsl{Seq66},
    the setup of ports and connections 
    under ALSA and under JACK, and some related topics.
-
    A picture of the Mini appears at the end of this section.
    Supplemental information is documented in
    \texttt{contrib/notes/launchpad.txt} and
@@ -424,18 +423,16 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=2.00]{configuration/ctrl/launchpad-mute-group-2.png}
-   \caption{Launchpad Minu Running with Seq66}
+   \caption{Launchpad Mini Running with Seq66}
    \label{fig:launchpad_mute_group_perspective}
 \end{figure}
 
    This picture shows that playback is paused (yellow), that mute-group 7 is
    active, and that all the patterns in that mute-group are green, except for
    one that got muted accidentally while taking the pictre.
-
    If the \textbf{File / New} option is selected, all the patterns are turned
    off, but the four mute-group buttons at the bottom left remain, as the
    mute-groups are not erased.  (Bug or feature?)
-
    What's next?  First, add more controls and statuses to the configuration.
    Second, start working on a MIDI file to produce a light show!
 
@@ -446,7 +443,6 @@
    First peruse \sectionref{sec:jack}, to understand the basics about
    \textsl{JACK}, including the last section there that describes how to set up
    \textsl{ALSA}-to-\textsl{JACK} bridging.
-
    Run one of the following commands (they are identical in function),
    then verify the ports in
    \textbf{Edit / Preferences / MIDI Clock} and \textbf{MIDI Input}, and then

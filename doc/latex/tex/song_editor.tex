@@ -151,13 +151,11 @@
    \itempar{Undo}{song editor!undo}
    The \textbf{Undo} button rolls back the last change in the layout of a
    pattern.  Each time it is clicked, the most recent change is undone.
-%  It is inactive if there is nothing to undo.
    Also implemented via \texttt{Ctrl-Z}.
 
    \itempar{Redo}{song editor!redo}
    The \textbf{Redo} button reapplies the last change undone by
    the \textbf{Undo} button.
-%  It is inactive if there is nothing to redo.
    Also implemented via \texttt{Shift-Ctrl-Z}.
 
    \itempar{Zoom Out and Zoom In}{song editor!zoom}
@@ -189,12 +187,10 @@
    It also enables the grid snap functionality,
    which ndicates the horizontal grid snap for movement actions and trigger
    drawing.
-
    If disabled, it allows the trigger to be placed and to be smoothly extended
    in either direction, without snapping, when the mouse is moved left or
    right. It allows exact recording of the musician's arming/muting of
    patterns.
-
    Unlike the \textbf{Grid Snap} of the pattern editor, the units
    of the song editor snap value are in fractions of a measure length.
    The following values are supported:
@@ -202,7 +198,7 @@
    \textsl{1/1, 1/2, 1/4, 1/8, 1/16, and 1/32}
 
    Note that arming/muting can be done in the "names" panel using a
-   right-click on the pattern name.
+   \textsl{right-click} on the pattern name.
    Also note that changes that occur within the snap value will 
    cause odd recording, so be sure to set the snap value low enough.
 
@@ -232,7 +228,7 @@
    and a \textbf{TT} button to reset the transposition value to 0.
    Transposition ranges from -60 to +60, or five octaves either way.
    Transpostion is applied by setting the value, and then doing
-   a \texttt{Shift}-Left-click on each trigger that needs that
+   a \texttt{Shift-left-click} on each trigger that needs that
    transposition value.
 
    \itempar{L/R Loop}{song editor!play loop}
@@ -249,8 +245,7 @@
    continues past the \textbf{R marker}.
    Note that these markers can be placed using Left
    and Right mouse clicks, respectively, in the time/measures ruler.
-
-   Also note that, as of version 0.93.0, this button has been added to the main
+   Also note that this button has been added to the main
    window, and appears only in the "external" version of the song editor.
    Furthermore, the \textbf{L/R} markers can also be set in a pattern editor,
    where they can be used to focus in on a small section of notes.
@@ -289,9 +284,9 @@
    points.
    The transposition value ranges from -60 to 0 to +60, in units of semitones.
    The button resets the value to 0.
-
    To apply a transposition value, first set it in the spin-box.
-   Then carefully Shift-Left-click on the desired segment(s) to transpose.
+   Then carefully \textsl{shift-left-click}
+   on the desired segment(s) to transpose.
    A number with a plus-or-minus will appear at the left of the segment to
    indicate a non-zero transposition.
    The transposition value will be saved with the trigger when the song is
@@ -304,7 +299,6 @@
    The measures ruler ("bar indicator", or "Time")
    consists of a \textsl{timeline} at the top and the 
    \textbf{L marker} and \textbf{R marker} mentioned above.
-
    The \textsl{measures ruler} is the ruled and numbered section at the top
    of the arrangement panel.  It provides a place to put the left and right
    markers.  In the \textsl{Seq24} documentation, it is called the "bar
@@ -319,21 +313,23 @@
          This is useful for review.
       \item \textbf{In the lower half} of the time-line,
          the mouse pointer changes to a "finger" icon.
-         Left-clicking there then moves the "L" marker to that point.
-         Right-clicking there moves the "R" marker to that point.
-         ("R" will never precede "L", though).
+         \textsl{Left-clicking} there then moves the \textbf{L}
+         marker to that point.
+         \textsl{Right-clicking} there moves the \textbf{R} marker to that point.
+         (\textbf{R} will never precede \textbf{L}, though).
          If the \textbf{Loop} button in the main window is active, then
-         playback will loop between the "L" and "R" buttons.
+         playback will loop between the \textbf{L} and \textbf{R} buttons.
          This looping now works with both Live and Song modes.
    \end{itemize}
 
    \index{measures ruler!left-click}
-   Left-click in the bottom-half of the measures ruler to move and drop an
+   \textsl{Left-click} in the bottom-half of the
+   measures ruler to move and drop an
    \index{L anchor}
    \index{L marker}
    \textbf{L marker} (\textbf{L anchor}) on the measures ruler.
    \index{measures ruler!right-click}
-   Right-click in the bottom-half of the measures ruler to drop an
+   \textsl{Right-click} in the bottom-half of the measures ruler to drop an
    \index{R anchor}
    \index{R marker}
    \textbf{L marker} (\textbf{R anchor}) on the measures ruler.
@@ -350,9 +346,10 @@
 
    \index{marker!mode}
    \index{marker!movement}
-   Another way to move the "L" and "R" markers has been added.
+   Another way to move the \textbf{L} and \textbf{R} markers has been added.
    To select which marker will move, click the upper half of the time
-   strip (otherwise, the "L" will move, prematurely) to give it keyboard focus.
+   strip (otherwise, the \textbf{L} will move,
+   prematurely) to give it keyboard focus.
    Then press the lower-case
    \index{keys!l}
    \texttt{l} key or the lower-case
@@ -362,7 +359,8 @@
    Then press the \texttt{Left-Arrow} or \texttt{Right-Arrow}
    key to move the selected marker.
    Also included at the same level as the measures ruler are the buttons
-   "-", "0", and "+", which are used for vertical zoom, as described below.
+   \textbf{-}, \textbf{0}, and \textbf{+},
+   which are used for vertical zoom, as described below.
 
 \subsection{Song Editor / Patterns (Names) Panel}
 \label{subsec:song_editor_patterns_panel}
@@ -400,20 +398,21 @@
          The letter \textbf{M} is in a grey box if the track/pattern
          is muted via song playback,
          and a white (or colored) box if it is unmuted in song playback.
-         Left-clicking on the "M" (or the name of the pattern)
+         \textsl{Left-clicking} on the \textbf{M} (or the name of the pattern)
          mutes/unmutes the pattern.
          \index{left click}
-         Song muting is effected via a left-click on the pattern name.
+         Song muting is effected via a \textsl{left-click} on the pattern name.
          This is also useful in song-recording (where the triggers are recorded).
          \index{shift left click}
-         If the Shift key is held while left-clicking on the M or the pattern
-         name, then
+         If the Shift key is held while \textsl{left-clicking}
+         on the M or the pattern name, then
          the mute/unmute state of every other active pattern is toggled.
          This feature is useful for isolating a single track or pattern.
          \index{right click}
          Normally, one records song triggers using the grid buttons or MIDI
          control to turn patterns on and off.
-         One can also right-click on the pattern name during song-record and
+         One can also \textsl{right-click} on the pattern
+         name during song-record and
          thereby see the trigger(s) being created.
       \item \textbf{Empty Track}.
          Completely empty tracks (no track events or meta events)
@@ -429,7 +428,7 @@
    \index{patterns column!left-click}
    \index{patterns column!ctrl-left-click}
    \index{song editor!muting}
-   Left-clicking on the pattern name or the "M" toggles the muting
+   \textsl{Left-clicking} on the pattern name or the \textbf{M} toggles the muting
    (arming) status of the track.
    It does the same thing if the \texttt{Ctrl} key is held at the same time.
 
@@ -437,13 +436,15 @@
    \index{song editor!inverse muting}
    \index{song editor!solo}
    \index{shift-left-click solo}
-   Shift-left-clicking on the pattern name or the "M" button toggles the muting
+   \textsl{Shift-left-clicking} on the pattern name
+   or the \textbf{M} button toggles the muting
    (arming) status of \textsl{all other tracks} except the track that was
    selected.  This action is useful for quickly listening to a single sequence
    in isoloation.
 
    \index{patterns column!right-click}
-   Right-clicking on the pattern name or the "M" button brings up the same
+   \textsl{Right-clicking} on the pattern name or
+   the \textbf{M} button brings up the same
    pattern editing menu as discussed in
    \sectionref{subsubsec:patterns_pattern_filled}.
    Recall that this context menu has the following entries:
@@ -486,11 +487,12 @@
          keystrokes.
       \item \textbf{De-selection}.
          \index{song editor!section deselection}
-         Left-clicking or right-clicking in an empty area of the song roll
+         \textsl{Left-clicking} or \textsl{right-clicking} in
+         an empty area of the song roll
          will deselect the selection.
       \item \textbf{Selection Movement}.
          \index{song editor!selection movement}
-         If one grabs (left-click) inside
+         If one grabs (\textsl{left-click}) inside
          the pattern or pattern subsection, that item can be moved
          horizontally, as long as there is room.
       \item \textbf{Section Length ("handle")}.
@@ -498,14 +500,15 @@
          \index{song editor!section length}
          The small squares in two corners of the patterns are the section
          "handles".
-         By grabbing a handle with a left-click, the handle can be moved
+         By grabbing a handle with a \textsl{left-click},
+         the handle can be moved
          horizontally to either lengthen or shorten the pattern to the nearest
          snap position, if there is room to move in the desired direction.
       \item \textbf{Pattern Subsectioning}.
          \index{song editor!split pattern}
          \index{song editor!middle click}
          \index{pattern subsection}
-         A middle-click (or ctrl-left-click)
+         A \textsl{middle-click} (or \textsl{ctrl-left-click})
          inside a pattern inserts a selection position
          marker in it, breaking the pattern into two equal pieces.
          We call each piece a \textsl{pattern subsection}.
@@ -529,12 +532,12 @@
    \index{song editor!right-click-hold}
    \index{song editor!draw}
    \index{paint mode}
-	Right-click on the arrangement panel (roll) to enter
+	\textsl{Right-click} on the arrangement panel (roll) to enter
    paint mode, and hold the button.
    Paint mode does not work while the sequence is playing.
    Another way to turn on painting is to
    make sure that the performance editor piano roll has the
-   keyboard focus by left-clicking in it, then press the
+   keyboard focus by \textsl{left-clicking} in it, then press the
    \texttt{p} key to enter the paint mode, and
    \texttt{x} escape it.
    See \sectionref{subsubsec:song_editor_song_roll_keystrokes}.
@@ -543,18 +546,20 @@
    \index{song editor!horizontal zoom}
    The song editor supports horizontal zoom in the piano roll.
    This feature is accessible via the "magnifying glass" buttons, and also
-   accessible via the keystrokes "z", "0", and "Z".
+   accessible via the keystrokes \textbf{z}, \textbf{0}, and \textbf{Z}.
    The zoom feature also modifies the time-line.
 
    \index{zoom}
    \index{song editor!vertical zoom}
    The song editor supports limited vertical zoom in the piano roll.
-   This feature is accessible via the "-", "0", and "+" buttons, and also
-   accessible via the keystrokes "v", "0", and "V".
+   This feature is accessible via the \textbf{-}, \textbf{0}, and
+   \textbf{+} buttons, and also
+   accessible via the keystrokes \textbf{v}, \textbf{0}, and \textbf{V}.
 
    \index{song editor!left-click-right-hold}
    \index{song editor!insert}
-   A left-click with a simultaneous right-click-hold inserts one copy of the
+   A \textsl{left-click} with a simultaneous
+   \textsl{right-click-hold} inserts one copy of the
    pattern.  The inserted pattern shows up as a box with a tiny
    representation of the notes visible inside.  Some patterns can
    be less than a measure in length, resulting in a tiny box.
@@ -564,12 +569,13 @@
    and drag the mouse rightward.
 
    \index{song editor!middle-click}
-   Middle-click (or ctrl-left-click) on a trigger in a pattern row
+   \textsl{Middle-click} (or \textsl{ctrl-left-click})
+   on a trigger in a pattern row
    to splits the trigger into two triggers.
    \index{pattern!split}
    \index{song editor!pattern subsection}
    This splits the pattern into two equal \textsl{pattern subsections}.
-   Each middle-click on the pattern adds a new selection position,
+   Each \textsl{middle-click} on the pattern adds a new selection position,
    halving the size of the subsections as more pattern subsections are
    added.  The \texttt{allow\_snap\_split} option in the 'rc' file
    allows the split to be made at the nearest snap point instead of in the
@@ -577,14 +583,16 @@
 
    \index{song editor!left-click}
    \index{song editor!selection}
-   When a pattern or a pattern subsection is left-clicked in the piano
+   When a pattern or a pattern subsection is
+   \textsl{left-clicked} in the piano
    roll, it is marked with a dark gray filling.
    It can then be moved horizontally if there is room, or be deleted or copied
    for later pasting.
 
    \index{song editor!right left click}
    \index{song editor!deletion}
-   When a right-left-click action is done in this gray area, the result
+   When a 
+   \textsl{right-left-click} action is done in this gray area, the result
    is to \textsl{delete} that pattern section or subsection.
    \index{keys!delete}
    One can also hit the \texttt{Delete} key.

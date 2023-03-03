@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2021-12-24
+% \update      2023-03-03
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -27,22 +27,23 @@
 \subsection{Concepts / Reload Session}
 \label{subsec:concepts_reload_session}
 
-   While \textsl{Seq66} is fairly flexible, changes in devices setups and other
+   While \textsl{Seq66} is flexible, changes in devices setups and other
    settings generally required the user to \textsl{reload session}.
-   This reload can be done in two ways:
+   This reload can be done in two ways.
 
    \begin{itemize}
-      \item \textbf{Restart Seq66}.
+      \item \textbf{Manual Restart}
          Once a setting is changed, or a new arrangement of devices occurs,
          exit \textsl{Seq66}, examine or edit the various configuration files (if
          desired), and start \textsl{Seq66} again.
-      \item \textbf{Session / Reload Session}.
+      \item \textbf{Edit / Preferences / Restart Seq66}.
          When settings in \textbf{Edit / Preferences} are changed, the
          \textbf{Reload Session} button becomes enabled.
          Click it, and the result is basically like restarting \textsl{Seq66}.
    \end{itemize}
 
-   In the future, we will make \textsl{Seq66} able to better detect and
+   In the future (version 2?), we will make \textsl{Seq66}
+   able to better detect and
    reconfigure for system changes and preferences changes.
 
 \subsection{Concepts / Terms}
@@ -60,12 +61,12 @@
    \textsl{Loop} is a synonym for \textsl{pattern}, \textsl{track},
    or \textsl{sequence}; the terms are used interchangeably.
    Each loop is represented by a box (pattern slot) in the Pattern (main)
-   Window.
+   window, also known as the "Patterns Panel" or "Live Grid"..
 
    A loop is a unit of melody or rhythm
    extending for a small number of measures (in most cases).
    Each loop is represented by a box in the patterns panel.
-   Each loo is editable.  All patterns can be layed out in
+   Each loop is editable.  All patterns can be layed out in
    a particular arrangement to generate a more complex song.
    \index{slot}
    A \textsl{slot} is a box in a pattern grid that holds a loop.
@@ -79,39 +80,40 @@
    \index{armed}
    An armed sequence is a MIDI pattern that will be heard.
    "Armed" is the opposite of "muted", and the same as "unmuted".
+   An unarmed sequence will not be heard, and it has a normal background.
    Performing an \textsl{arm} operation in \textsl{Seq66}
    means clicking on an "unarmed" sequence in the patterns panel (the main
    window of \textsl{Seq66}).
-   An unarmed sequence will not be heard, and it has a normal background.
    When the sequence is \textsl{armed}, it will be heard, and it has a
-   more noticeable  background.
+   more noticeable background.
    A sequence can be armed or unarmed in many ways:
 
    \begin{itemize}
       \item Clicking on a sequence/pattern box.
       \item Pressing the hot-key for that sequence/pattern box.
+      \item Setting up a mute-group containing that pattern, and then
+         activating it with its hot-key.
       \item Opening up the Song Editor and starting playback; the
          sequences arm/unarm depending on the layout of the
          sequences and triggers in the piano roll of the Song Editor.
       \item Using a MIDI control, as configured in a 'ctrl' file, to
-         toggle the armed status of a pattern.
+         toggle the armed status of a pattern or select a mute-group.
    \end{itemize}
 
 \subsubsection{Concepts / Terms / bank, screenset, play-screen}
 \label{subsubsec:concepts_terms_bank}
 
    \index{screenset}
-   The \textsl{screenset}
+   A \textsl{screenset}
    is a set of patterns that fit within the \textbf{4 x 8}
    grid of loops/patterns in the patterns panel.
    \textsl{Seq66} supports multiple screens sets, up to 32 of them,
    and a name can be given to each for clarity.
    Some other sizes, such as \textbf{8 x 8} and \textbf{12 x 8}, are
-   partly supported.  For the most part, the column number is best left at 8.
+   partly supported.
    \index{bank}
    The term "bank" is \textsl{Kepler34}'s name for "screenset".
    The term "scenes" from \textsl{Ableton Live} is very similar as well.
-
    \index{play screen}
    By default, only one set is active and playing at a time.  This set is
    informally termed the "play screen".  There are options to let more than one
@@ -122,7 +124,7 @@
 
    \index{bus}
    \index{buss}
-   A \textsl{buss} (also spelled "bus" these days;
+   A \textsl{buss} (also spelled "bus" these days, see
    \url{https://en.wikipedia.org/wiki/Busbar}) is an entity onto which
    MIDI events can be placed, in order to be heard or to affect the
    playback, or into which MIDI events can be received, for recording.
@@ -137,7 +139,7 @@
    \index{performance}
    \index{song}
    \textsl{performance} or
-   \textsl{song}is an organized collection of patterns that play a tune
+   \textsl{song} is an organized collection of patterns that play a full tune
    automatically.
    This layout of patterns is created using the song editor, sometimes
    called the "performance editor".
@@ -157,13 +159,15 @@
 
    \index{auto-step}
    \index{step-edit}
-   Auto-step (step-edit) provide a way to add notes easily when a pattern is
+   Auto-step (step-edit) provides a way to add notes easily when a pattern is
    not playing.  It works in two ways.  In the first way, when drawing notes on
    the pattern-editor's piano roll, dragging the mouse automatically inserts
    notes of the configured length at intervals of the configured snap.
    In the second way, incoming MIDI notes (including chords)
    are automatically logged at the given snap interval, with a length a little
    less than the configured snap interval.
+   There is also a one-shot step-edit mode that is useful for recording a drum
+   pattern emitted by a machine.
 
 \subsubsection{Concepts / Terms / export}
 \label{subsubsec:concepts_terms_export}
@@ -176,14 +180,14 @@
    performance information (triggers) associated with them, and creates one
    larger trigger for each track, repeating the events as indicated by the
    original performance.
+   MIDI can also be exported to SMF 0 format.
 
 \subsubsection{Concepts / Terms / group, mute-group}
 \label{subsubsec:concepts_terms_group}
 
    \index{group}
    A \textsl{group} in \textsl{Seq66} is a
-   set of patterns, that can arm (unmute) their playing state
-   together.
+   set of patterns, that can arm/disarm all together.
    Every group contains all sequences in the active screen set. 
    This concept is similar to mute/unmute groups in hardware
    sequencers.
@@ -191,8 +195,6 @@
    Also known as a "mute-group".
    Mute-groups can be stored in the MIDI file or in a 'mutes' file.
    Each mute-group is associated with a keystroke or a MIDI control.
-   When applied, the mute-group enables one or more patterns in the current
-   screenset.
 
 \subsubsection{Concepts / Terms / play-set}
 \label{subsubsec:concepts_terms_playset}
@@ -219,7 +221,7 @@
    And, when JACK is involved, one must remember that JACK "ticks" come at 10
    times the rate of MIDI ticks.
    A full description of all these terms, and how they are calculated, is
-   beyond the scope of this document.  Check out the source code.
+   beyond the scope of this document.
 
 \subsubsection{Concepts / Terms / queue, keep queue, snapshot, oneshot}
 \label{subsubsec:concepts_terms_queue_mode}
@@ -230,7 +232,7 @@
    To "queue" a pattern means to ready it for playback on the next repeat of
    a pattern.  A pattern can be armed immediately, or it can be queued to
    play back the next time the pattern restarts.
-   Pattern toggle occurs at the end of the pattern,
+   Pattern toggle occurs at the next play of the pattern,
    rather than being set immediately.
 
    A set of queued patterns can be temporarily stored, so that a different
@@ -258,7 +260,6 @@
    \index{playback!one-shot}
    \textsl{Seq66} \textsl{one-shot playback} is a way to enable a pattern to be
    queued and then played only once.
-
    For recording, 
    \index{oneshot}
    \index{oneshot!recording}

@@ -49,11 +49,6 @@
       \item There is no support for dragging and dropping of events.
    \end{enumerate}
 
-%  If, some day, we find ourselves needing
-%  that kind of functionality, then we can add it.
-%  There may also be issues with interactions between the event editor and
-%  things like the performance editor and triggers.
-
    The event editor is a good way to see the events in a sequence,
    and to delete or modify problematic events.
    Additionally, it can be used to add \textbf{Set Tempo} meta events.
@@ -284,15 +279,10 @@
       \item \textbf{Tempo}
    \end{enumber}
 
-%  \textbf{Note that these are all MIDI \textsl{channel events}.
-%  Support for MIDI \textsl{system events} is in place, but is not
-%  ready for exposure to the user.}
-
    Selecting one of these names from the dropdown changes the kind of event if
    the event is modified.  Abbreviations and case-insensitivity can be used to
    reduce the effort of typing.
-
-   Also, as of \textsl{Seq66} 0.96.1, if \textbf{Control Change} or
+   Also, if \textbf{Control Change} or
    \textbf{Program Change} are selected, then a data drop-down box is available
    to select either the controller or
    the instrument patch (program), and it can fill in the data values.
@@ -333,12 +323,6 @@
    \texttt{Delete} and \texttt{Insert} keys to
    supplement the buttons; the \texttt{Delete}
    key is needed for editing the event data fields.
-
-%  The current structure of the dialog prevents using it for both
-%  the frame and the edit fields.
-%  Therefore, \textsl{Seq66} allows the
-%  usage of the \textbf{asterisk} keys (regular and keypad) for
-%  deletion.
 
 \subsection{Event Editor / Bottom Buttons}
 \label{subsec:event_editor_buttons}
@@ -402,7 +386,7 @@
 
    \texttt{/home/user/miditunes/The\_Wild\_Bull-pattern-9.text}.
 
-   Again, good luck with this tab.  Bug reports are appreciated.
+   Good luck with this tab.  Bug reports are appreciated.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

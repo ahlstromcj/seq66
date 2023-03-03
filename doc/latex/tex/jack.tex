@@ -154,9 +154,10 @@
    \textsl{Seq66}, which will detect JACK and use it.
    If it instead opts to run with ALSA, edit the 'rc' file to set up
    \texttt{midi\_jack}, or add the
-   \texttt{-t} or \texttt{-{}-jack-midi}
-   option to the command-line.
-   If \textsl{Seq66} doesn't find JACK, it will still fall back to ALSA.
+   \texttt{-t}, \texttt{-{}-jack-midi},
+   \texttt{-{}-jack}
+   or option to the command-line.
+   If \textsl{Seq66} doesn't find JACK, it will fall back to ALSA.
 
 	\index{sticky options}
    The JACK (\texttt{-t}) and ALSA (\texttt{-A}) options are sticky options.
@@ -425,7 +426,6 @@
    path. Running JACK in synchronous mode creates less Xruns in JACK2, which
    is now the default.
    
-
 \subsection{JACK / PulseAudio}
 \label{subsec:jack_pulseaudio}
 
@@ -496,7 +496,6 @@
    The following scenario describes what we are seeing on
    \textsl{Ubuntu 20.04.3}; the main anomaly is that playback of
    an application through \textsl{PulseAudio} doesn't resume on its own.
-
    Let's assume we are running \textsl{mpd} and it is playing tunes via
    \textsl{PulseAudio}.
    Then we start \textsl{QJackctl} configured as above.

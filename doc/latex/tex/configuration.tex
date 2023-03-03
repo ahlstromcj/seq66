@@ -18,8 +18,8 @@
 \label{sec:configuration}
 
    \textsl{Seq66} configuration has become more elaborate with time, with more
-   configuration files (\textsl{feature-itis?}).
-   Fortunately, configuration items are well documented in the
+   configuration files.
+   Configuration items are well documented in the
    \textsl{Seq66} "man" page and in the configuration files.
    Therefore, this new discussion will merely summarize the options and
    go into a few details about the configuration files.
@@ -46,10 +46,9 @@
       of theme-drawn elements (e.g. the pattern-grid buttons and text controls).
    \end{itemize}
 
-   After the first run of \textsl{Seq66},
-   it will generate a set of configration files in the default
-   \textsl{configuration} directory, with names dependent on the version of
-   \textsl{Seq66} being run:
+   After the first run and exit of \textsl{Seq66},
+   it generates a set of default configration files in the default
+   \textsl{configuration} directory:
 
    \begin{verbatim}
       /home/user/.config/seq66/qseq66.rc
@@ -66,7 +65,6 @@
    section.
    There are also some 'keymap' files.  They are not yet used, but may become a
    feature of \textsl{Seq66} in the future.
-
    For \textsl{Microsoft Windows}, the default base name of the files is
    \texttt{qpseq66}, and the default configuration directory is
 
@@ -89,8 +87,8 @@
    Some of the settings can be modified in the \textbf{Edit / Preferences}
    dialog, or overridden from the command line.
 
-   \textsl{Seq66} \textsl{always} overwrites the most of these files upon
-   exiting.  One must therefore quit \textsl{Seq66} before making
+   \textsl{Seq66} overwrites the most of these files upon exiting.
+   One must therefore quit \textsl{Seq66} before making
    manual modifications to these files.
 
 \subsection{Configuration File Commonalities}
@@ -115,7 +113,7 @@
 \subsubsection{[Seq66] Section}
 \label{subsec:configuration_common_seq66_section}
 
-   This section is generally just informational.  At a minimum, it holds two
+   This section is informational.  At a minimum, it holds two
    variables:
 
    \begin{itemize}
@@ -155,7 +153,7 @@
 
    We have been replacing these kinds of settings with the
    \texttt{name = value} style described below, but there are a few places
-   where the old style persists.
+   where the old style persists, or is more convenient.
 
 \subsubsection{Boolean Settings}
 \label{subsec:configuration_common_boolean_settings}
@@ -168,7 +166,7 @@
    \end{verbatim}
 
    We have been trying to replace these kinds of settings with the
-   \texttt{name = value} style described below, but there are a few places
+   \texttt{name = true/false} style described below, but there are a few places
    where the old style persists.
 
 \subsubsection{Variables}
@@ -192,24 +190,20 @@
    directory or path, it must be surrounded with quotes, in case the path has
    spaces in it.
 
-   Also note that there are still a lot of old-style variable specifications in
-   place.  As time allows, they will be fixed, one-by-one, in a manner that
-   does not break old configurations.
-
 \subsubsection{Stanzas}
 \label{subsec:configuration_common_stanzas}
 
-   Please note that, as of version 0.92.0 of \textsl{Seq66}, we have
-   streamlined the control-file stanza by eliminating the "enabled" and
-   "channel" columns in a stanza, since they can be encoded in the event/status
+   We have streamlined the control-file stanza by eliminating the "enabled" and
+   "channel" columns, since they can be encoded in the event/status
    byte (e.g. 0x90) instead.  Older versions of the 'ctrl' file will be
    upgraded automatically.
 
    A stanza in a \textsl{Seq66} configuration file consists of some data at the
-   beginning, a set of values bracketed by square brackets, and a comment
+   beginning, a set of values inside square brackets, and a comment
    at the end.  The values inside the square brackets are numeric, and can
-   be in decimal format, sometimes hexadecimal format, or in binary "0/1"
-   format.
+   be in decimal format, hexadecimal format, or binary "0/1" format.
+   See \sectionref{subsubsec:configuration_ctrl_loop_control}, which describes
+   the details of this layout.
 
    \begin{verbatim}
       0 "1" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 0
@@ -218,9 +212,6 @@
       3 "z" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 3
       . . .
    \end{verbatim}
-
-   See \sectionref{subsubsec:configuration_ctrl_loop_control}, which describes
-   the details of this layout.
 
 \subsection{Command Line}
 \label{subsec:configuration_command_line}
@@ -454,9 +445,9 @@
          \item \texttt{log=filename.log}.
             \index{log}
             Reroutes standard error and standard
-            output messages to the given log-file.  This file is located in
+            output messages to a log-file located in
             the configuration directory.
-            If this file is present, additional log information is appended.
+            If this file is present, log information is appended.
             The default log-file name is specified in the
             \texttt{[user-options]} section of the 'usr' file.
          \item \texttt{sets=8x8}.
@@ -485,9 +476,6 @@
             output ports and 'i' input ports.
       \end{itemize}
 
-      Many of the above options are including in the relevant configuration
-      files.  We will point to them in the future.
-
 \subsection{'rc' File}
 \label{subsec:configuration_rc}
 
@@ -509,15 +497,6 @@
       sets-mode = normal
       port-namng = short
    \end{verbatim}
-
-% We save, but no longer read, this option from the 'rc' file.
-%
-%     verbose = false
-%
-%  \index{verbose}
-%  \texttt{verbose} is the same as the \texttt{-{}-verbose} command-line
-%  option, except that, if set to "true", it affects every invocation of
-%  \textsl{Seq66}.
 
    \index{sets-mode}
    The \texttt{sets-mode} option determines how patterns are muted when the
@@ -599,10 +578,10 @@
       name = "qseq66.palette"
    \end{verbatim}
 
-   The only need for a palette file is when the user is not satisfied with the
+   The only need for a palette file is when not satisfied with the
    default palette for the patterns, inverse colors, hatching,
-   or grid-lines for some
-   pattern piano roll items.  There is a button to save the current/default
+   or grid-lines for some pattern piano roll items.
+   There is a button to save the current/default
    palette for later modification in the \textbf{Edit / Preferences / Display}
    tab.
 
@@ -629,7 +608,7 @@
 
    \index{[midi-clock]}
    The MIDI Clock tab contains the clocking state from the last 
-   time \textsl{Seq66} was run, and their status, and their names.
+   time \textsl{Seq66} was run, their status, and their names.
    It also specifies the MIDI output ports, which can be disabled.
    Disable the port with a -1, turn off the clock with a 0,
    or turn it on with a 1 (which means to send
@@ -669,6 +648,7 @@
    The appended label is \textsl{not} part of the port name;
    it is there simply to help the user select the correct system port.
    This same setup applies to MIDI input ports as well.
+   Note that the 'rc' file has a port-mapping option, described elsewhere.
 
    Ports created by \texttt{a2jmidid --export-hw} do not have JACK aliases.
    Ports created by Seq66 do not have JACK aliases.  Ports created by MIDI
@@ -685,8 +665,6 @@
       $ jack_lsp --aliases
    \end{verbatim}
 
-   Note that the 'rc' file has a port-mapping option, as described earlier.
-
 \subsubsection{'rc' File / MIDI Clock Mod Ticks}
 \label{subsubsec:configuration_rc_midi_cmt}
 
@@ -700,20 +678,19 @@
       record-by-channel = false
    \end{verbatim}
 
-   The record-flag is kind of an outcast.  Not sure why it is here, as
-   opposed to the 'usr' file;
+   The record-flag should be in the 'usr' file;
    something to rectify later.
 
 \subsubsection{'rc' File / MIDI-Meta-Events Section}
 \label{subsubsec:configuration_rc_midi_meta_events}
 
    \index{[midi-meta-events]}
-   The new MIDI Meta events section is the start of additional options
-   supporting meta events as normal events in \textsl{Seq66}.
-   This section defines just one feature of MIDI meta-event handling at present.
+   The MIDI Meta events section is the start of additional options
+   supporting meta events as normal events in \textsl{Seq66};
+   it defines only the tempo MIDI meta-event at present.
    Normally, tempo events are supposed to occur in the first track (pattern 0).
    But one can move this track elsewhere to accomodate one's existing body of
-   tunes.  If affects where tempo events are recorded.  The default value is 0,
+   tunes.  It affects where tempo events are recorded.  The default value is 0,
    the maximum is 1023.  A pattern must exist at this number for it to work.
    \index{tempo-track-number}
 
@@ -727,9 +704,7 @@
    official track for certain MIDI meta events, such as
    \textbf{Set Tempo} and
    \textbf{Time Signature}.
-   However, to accommodate existing tunes and their set
-   arrangement, we allow the user to
-   and change the tempo track to another pattern.
+   But we allow the user to and change the tempo track to another pattern.
 
 \subsubsection{'rc' File / MIDI Input}
 \label{subsubsec:configuration_rc_midi_input}
@@ -737,7 +712,7 @@
    \index{[midi-input]}
    This configuration item is represented in the
    \textbf{MIDI Input} tab in the \textbf{Edit / Preferences}.
-   The first number is a line count, and would equal the number of
+   The first number is a line count, and equals the number of
    supported input ports.
    After that, this 'rc' entry here has two variables;
    the first is the port number,
@@ -765,8 +740,8 @@
    \index{ports!virtual}
    \index{ports!manual}
    \begin{enumerate}
-      \item It actually refers to the usage of \textsl{virtual} MIDI ports.
-         These are ports that are set up by the application so that other
+      \item It refers to the usage of \textsl{virtual} MIDI ports.
+         These are ports set up by the application so that other
          devices, applications, or session managers can connect
          \textsl{manually} to the MIDI application.
       \item This option is not just for ALSA.  It can also be used when
@@ -788,7 +763,6 @@
    which is the normal mode of running \textsl{Seq66}.
    In this mode, system MIDI input/output devices are discovered and
    automatically connected.
-
    It will create port names as per the settings in the 'usr' configuration
    file's sections:
 
@@ -900,9 +874,9 @@
 \subsubsection{'rc' File / Metronome}
 \label{subsubsec:configuration_rc_metronome}
 
-   As of \textsl{Seq66} version 0.99.0, a very configurable metronome is
-   supported.  After running that version for the first time, and then
-   exiting, the following new section is present:
+   A very configurable metronome is supported.
+   After running \textsl{Seq66} and then
+   exiting, the following section is present:
 
    \begin{verbatim}
       [metronome]
@@ -968,12 +942,10 @@
    The \texttt{recording-buss}
    setting specifies the input buss/port. That
    buss \textsl{must be enabled} (in the 'rc' file).
-
    The \texttt{recording-measures} sets the number of measures to
    record.  The style of recording is currently \textsl{merged},
    where notes accumulate as each loop occurs.
    We might adjust that feaure per user feedback.
-
    If \texttt{recording-measures} is set to 0, then the
    \textsl{expanding} mode of recording is used, where
    the sequence gets longer and longers as playback and playing continues.
@@ -1108,7 +1080,6 @@
    \end{verbatim}
 
    In a session manager, the files will be created in the session directory.
-
    \index{usr!-u}
    \index{usr!--user-save}
    Unlike the 'rc' file, the 'usr' file is \textsl{not} written every time
@@ -1423,10 +1394,12 @@
    The long-standing PPQN for \textsl{Seq24} was a value of 192, and
    \textsl{Seq66} sticks with that default.
    This value is good for most tunes. But other sequencers allow for higher
-   values. And \textsl{Seq66} allows for some crazy values, ranging from
+   values. \textsl{Seq66} allows for some crazy values, ranging from
    32 to 19200.  If a MIDI file has a different PPQN, it will be rescaled to
    the default PPQN.  However, one might want to stick with the PPQN
    specified in the MIDI file, so \textsl{Seq66} allows that as well.
+   It is probably best to set \texttt{use-file-ppqn = true}, but that is
+   up to the user.
 
    \index{usr!midi-ppqn}
    \index{default PPQN}
@@ -1434,11 +1407,8 @@
    \begin{verbatim}
       [user-midi-ppqn]
       default-ppqn = 192
-      use-file-ppqn = false
+      use-file-ppqn = true
    \end{verbatim}
-
-   It is probably best to set \texttt{use-file-ppqn = true}, but that is
-   up to the user.
 
 \subsubsection{'usr' File / User MIDI Settings}
 \label{subsubsec:usr_file_user_midi_settings}
@@ -1630,7 +1600,6 @@
 
    Note the blue text fields. Also note the larger tabs, which could be useful
    on a touch-screen.
-
    There is a full-scale dark theme stored in
    \texttt{data/win/dark-theme.qss}.
    One might want to save and tweak the 'palette' file to match.
@@ -1678,15 +1647,14 @@
 
    \texttt{[user-session]} provides a way to cooperate with the
    \textsl{Non Session Manager}.
+   See \sectionref{subsec:sessions_nsm_before_using_nsm}; it goes into great
+   detail.
 
    \begin{verbatim}
       [user-session]
       session = none
       url = ""
    \end{verbatim}
-
-   See \sectionref{subsec:sessions_nsm_before_using_nsm}; it goes into great
-   detail.
 
 \paragraph{'usr' File / Additional Options / [new-pattern-editor]}
 \label{paragraph:user_file_added_options_pattern_editor}
@@ -1829,9 +1797,8 @@
       31 ","     [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] # Loop 31
    \end{verbatim}
 
-   The first number is an index number, starting at 0.  It indicates what
+   The first column is an index number, starting at 0.  It indicates what
    loop the control line will affect.
-
    \index{keys!control}
    The second column is the name of the keystroke that will act as a toggle or
    action key.
@@ -1893,7 +1860,6 @@
 
    For each pattern, we can set up MIDI events to turn a 
    pattern on, off, or to toggle it.
-
    The loop MIDI control setup resembles a matrix.  The default matrix
    uses the central keys on the keyboard, laid out in a 4 x 8 grid matching the
    pattern buttons:
@@ -2169,6 +2135,7 @@ This MIDI control sets the playing screen-set.
    This section provides a way to have a MIDI device, such as the
    \textsl{Novation Launchpad Mini}, show the status
    of the patterns that are active, as well as other information.
+   The first sub-section sets up some general settings.
 
    \begin{verbatim}
       [midi-control-out-settings]
@@ -2179,8 +2146,6 @@ This MIDI control sets the playing screen-set.
       button-rows = 8
       button-columns = 8
    \end{verbatim}
-
-   The first section sets up some general settings.
 
    \begin{itemize}
       \item \texttt{set-size}.
@@ -2267,7 +2232,7 @@ This MIDI control sets the playing screen-set.
 
    The macros "footer", "header", "reset", "startup", and "shutdown"
    are written to the 'ctrl' file if not already present, though
-   they won't have any definition.
+   they won't have any useful definition.
    The first three are useful in other macros, while "startup" and
    "shutdown", if defined with actual data, are sent at the launch
    and shutdown, respectively, of \textsl{Seq66}.
@@ -2283,6 +2248,8 @@ This MIDI control sets the playing screen-set.
    \textbf{Session} tab and select a macro from the drop-down list.
 
    There is currently no way to send them via MIDI control.
+
+% For editability, the default keys are specified in another TeX file.
 
 \input{defaultkeys}
 
@@ -2351,8 +2318,7 @@ This MIDI control sets the playing screen-set.
    One issue with some keyboard layouts are "dead keys".  These keys do
    nothing but modify the next key that follows, and will not emit
    a useable key code.
-
-   Lastly, one will see some sample files with the extension 'keymap'.
+   One will see some sample files with the extension 'keymap'.
    These files are not yet useful, but we anticipate calling them into play
    when more people are asking for support for their non-US keyboards.
 
@@ -2398,14 +2364,6 @@ This MIDI control sets the playing screen-set.
    support for larger sets is completely worked out) sequences
    in the playing screen set when a group is selected.
    Each set of brackets defines a group.
-%  After the list of sequences and their MIDI events, one can 
-%  set \textsl{Seq66} to handle MIDI events and change some more settings
-%  in \texttt{seq66.rc}.
-%
-%  What is the different between the \textbf{mute-in group}
-%  section and the \textbf{mute group} section?  The former defines the MIDI
-%  control values that can affect the muting of a group, while the latter
-%  specifies the patterns that are part of a group.
 
 \subsection{'drums' File}
 \label{subsec:configuration_drums}
