@@ -1,7 +1,7 @@
 # README for Seq66 0.99.2
 
 Chris Ahlstrom
-2015-09-10 to 2023-03-02
+2015-09-10 to 2023-03-04
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets, triggers, and playlists for song management,
@@ -99,8 +99,9 @@ Windows, and using a conventional source tarball.
         *   Fixed background sequence not displaying when running with
             linear-gradient brush.
         *   Fixes to brushes and making the linear gradient (notes and triggers)
-            a run-time option.
-        *   Other minor fixes and documentation updates.
+            a default run-time option.  See the 'palette' file.
+        *   Other minor fixes and documentation updates, including the manual,
+            as per issue #104.
     *   Version 0.99.1:
         *   Issue #44. Revisited to fix related additional issues. Can now
             toggle a pattern's song record in perfnames. Record button:
