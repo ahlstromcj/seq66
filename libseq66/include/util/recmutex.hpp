@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-16
+ * \updates       2023-03-09
  * \license       GNU GPLv2 or above
  *
  *  This recursive mutex is implemented in pthreads due to difficulties we had
@@ -115,11 +115,12 @@ private:
 public:
 
     recmutex ();
-    ~recmutex () = default;
     recmutex (recmutex &&) = default;
     recmutex (const recmutex &) = delete;
     recmutex & operator = (recmutex &&) = default;
     recmutex & operator = (const recmutex &) = delete;
+
+    ~recmutex ();       //  = default;
 
     void lock () const;
     void unlock () const;
@@ -136,6 +137,8 @@ public:
 private:
 
     static void init_global_mutex ();
+    void init ();
+    void destroy ();
 
 };          // class recmutex
 

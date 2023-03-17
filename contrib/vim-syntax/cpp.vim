@@ -4,7 +4,7 @@
 "
 "  Language:      C/C++
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-09-04 to 2022-12-29
+"  Last Change:   2006-09-04 to 2023-03-16
 "  Project:       XPC Suite library project
 "  Usage:
 "
@@ -36,8 +36,8 @@
 
 syn keyword XPCC midibytes midistring midi_message seq64 seq66 tokenization
 syn keyword XPCC boolean booleans bpm buffer byte bytes bytestring ppqn pulse
-syn keyword XPCC container ctrl meta seqspec status tag ulong ushort
-syn keyword XPCC cfg cfg66 cli midi rtl rtl66 seq66 session util xpc xpc66
+syn keyword XPCC audio container ctrl meta seqspec status tag ulong ushort
+syn keyword XPCC cfg cfg66 cli midi rtl rtl66 seq seq66 session util xpc xpc66
 syn keyword XPCC action clock clocking e_clock jack transport synch
 syn keyword XPCC recmutex automutex
 
@@ -59,7 +59,8 @@ syn keyword cTodo contained pure singleton virtual
 " Our type definitions that are basically standard C++
 "------------------------------------------------------------------------------
 
-syn keyword cType auto_ptr bad_alloc begin c_str cbegin cend clear const_iterator
+syn keyword cType array atomic auto_ptr bad_alloc begin c_str cbegin cend
+syn keyword cType clear const_iterator
 syn keyword cType const_reverse_iterator cbegin cend rbegin rend
 syn keyword cType difference_type iterator_category pointer
 syn keyword cType empty end erase exception find first fstream future

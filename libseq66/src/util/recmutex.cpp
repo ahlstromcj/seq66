@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-16
+ * \updates       2023-03-09
  * \license       GNU GPLv2 or above
  *
  *  Seq66 needs a mutex for sequencer operations. We have finally, after a
@@ -34,6 +34,13 @@
 
 #include "seq66_platform_macros.h"      /* pick the compiler and platform   */
 #include "util/recmutex.hpp"            /* seq66::recmutex                  */
+
+/**
+ *  Using the init()/destroy() paradigm with an automutex seems to hang
+ *  things up, so we define this macro to do it the old way.
+ */
+
+#define SEQ66_USE_MUTEX_INITIALIZER
 
 /**
  *  The MingW compiler (at least on Windows) and the Microsoft Visual Studio
@@ -83,7 +90,12 @@ recmutex::init_global_mutex ()
 recmutex::recmutex () : m_mutex_lock () /* uninitialized pthread_mutex_t    */
 {
     init_global_mutex();                /* might not need global mutex, tho */
-    m_mutex_lock = MUTEX_INITIALIZER;
+    init();                             /* m_mutex_lock = MUTEX_INITIALIZER */
+}
+
+recmutex::~recmutex ()
+{
+    destroy();
 }
 
 /**
@@ -104,6 +116,48 @@ void
 recmutex::unlock () const
 {
     pthread_mutex_unlock(&m_mutex_lock);
+}
+
+/**
+ *  Unlocks the recmutex.
+ *
+ *  From https://pages.cs.wisc.edu/~remzi/OSTEP/
+ *      "Operating Systems: Three Easy Pieces":
+ *
+ *  With POSIX threads, there are two ways to initialize locks. One way to do
+ *  this is to use PTHREAD_MUTEX_INITIALIZER, as follows: pthread_mutex_t lock
+ *  = PTHREAD_MUTEX_INITIALIZER;
+ *
+ *  Doing so sets the lock to the default values and thus makes the lock
+ *  usable.  The dynamic way to do it (i.e., at run time) is to make a call to
+ *  pthread_mutex_init() as noted below.
+ *
+ *  The first argument to this routine is the address of the lock itself,
+ *  whereas the second is an optional set of attributes. Read more about the
+ *  attributes yourself; passing NULL in simply uses the defaults. Either way
+ *  works, but we usually use the dynamic (latter) method.
+ */
+
+void
+recmutex::init ()
+{
+#if defined SEQ66_USE_MUTEX_INITIALIZER
+    m_mutex_lock = MUTEX_INITIALIZER;
+#else
+    int rc = pthread_mutex_init(&m_mutex_lock, NULL);
+    if (rc != 0)
+    {
+        // what to do?
+    }
+#endif
+}
+
+void
+recmutex::destroy ()
+{
+#if ! defined SEQ66_USE_MUTEX_INITIALIZER
+    pthread_mutex_unlock(&m_mutex_lock);
+#endif
 }
 
 }           // namespace seq66

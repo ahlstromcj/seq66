@@ -1,6 +1,6 @@
-TO DO for Seq66 0.99.2 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.99.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-03-02
+2019-04-13 to 2023-03-17
 
 Some of these issues will be pushed of until the distant Seq66v2.
 
@@ -475,6 +475,10 @@ ISSUES:
     This requires some improvements to the LaTeX documentation and the HTML
     tutorial.  One issue is Pipewire, which is unsupported; the user system
     employs pulseaudio-pw.
+
+#017 Can't increase clip length while transport is running
+    Somehow disabled this feature on 2022-08-20, with no note why.
+    STATUS: Undoing that changed and commenting on it.
      
 PATTERNS:
 

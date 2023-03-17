@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-08-31
+ * \updates       2023-03-17
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1511,11 +1511,25 @@ qseqeditframe64::set_measures (int m, qbase::status qs)
         }
         else
         {
-            m_measures = m;
-            if (! perf().is_pattern_playing())      /* ca 2022-08-20        */
+            bool ok = m > 0;
+
+#if defined DO_NOT_DISABLE_FOR_ISSUE_107
+
+            /*
+             * The check for the pattern playing causes issue #107, and
+             * we're not sure why this check was put here in the first place.
+             */
+
+            if (ok)
+                ok = ! perf().is_pattern_playing()  /* ca 2022-08-20        */
+#endif
+            if (ok)
             {
                 if (track().apply_length(m))
+                {
+                    m_measures = m;
                     set_track_change();             /* to solve issue #90   */
+                }
             }
         }
     }
