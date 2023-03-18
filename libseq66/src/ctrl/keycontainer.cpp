@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2022-08-08
+ * \updates       2023-03-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -386,7 +386,7 @@ keycontainer::keys_automation ()
         { "PageUp",    automation::action::on      },  // 14 bpm_page_up
         { "PageDn",    automation::action::on      },  // 15 bpm_page_dn
         { "KP_.",      automation::action::on      },  // 16 ss_set
-        { "KP_*",      automation::action::on      },  // 17 record
+        { "KP_*",      automation::action::on      },  // 17 record_style
         { "KP_-",      automation::action::on      },  // 18 quan_record
         { "KP_+",      automation::action::on      },  // 19 reset_sets
         { "|",         automation::action::on      },  // 20 mod_oneshot
@@ -423,30 +423,30 @@ keycontainer::keys_automation ()
          * Proposed massive expansion in automation. Grid mode selection.
          */
 
-        { "Sh_F11",    automation::action::off     },  // 49 record_overdub
-        { "Sh_F12",    automation::action::off     },  // 50 record_overwrite
-        { "0xe0",      automation::action::off     },  // 51 record_expand
-        { "0xe1",      automation::action::off     },  // 52 record_oneshot
-        { "Sh_F1",     automation::action::off     },  // 53 grid_loop
-        { "Sh_F2",     automation::action::off     },  // 54 grid_record
-        { "Sh_F3",     automation::action::off     },  // 55 grid_copy
-        { "Sh_F4",     automation::action::off     },  // 56 grid_paste
-        { "Sh_F5",     automation::action::off     },  // 57 grid_clear
-        { "Sh_F6",     automation::action::off     },  // 58 grid_delete
-        { "Sh_F7",     automation::action::off     },  // 59 grid_thru
-        { "Sh_F8",     automation::action::off     },  // 60 grid_solo
-        { "Sh_F9",     automation::action::off     },  // 61 grid_cut
-        { "Sh_F10",    automation::action::off     },  // 62 grid_double
+        { "Sh_F11",    automation::action::on      },  // 49 record_overdub
+        { "Sh_F12",    automation::action::on      },  // 50 record_overwrite
+        { "0xe0",      automation::action::on      },  // 51 record_expand
+        { "0xe1",      automation::action::on      },  // 52 record_oneshot
+        { "Sh_F1",     automation::action::on      },  // 53 grid_loop
+        { "Sh_F2",     automation::action::on      },  // 54 grid_record
+        { "Sh_F3",     automation::action::on      },  // 55 grid_copy
+        { "Sh_F4",     automation::action::on      },  // 56 grid_paste
+        { "Sh_F5",     automation::action::on      },  // 57 grid_clear
+        { "Sh_F6",     automation::action::on      },  // 58 grid_delete
+        { "Sh_F7",     automation::action::on      },  // 59 grid_thru
+        { "Sh_F8",     automation::action::on      },  // 60 grid_solo
+        { "Sh_F9",     automation::action::on      },  // 61 grid_cut
+        { "Sh_F10",    automation::action::on      },  // 62 grid_double
 
         /*
          * Grid quantization type selection.
          */
 
-        { "0xe2",      automation::action::off     },  // 63 grid_quant_none,
-        { "0xe3",      automation::action::off     },  // 64 grid_quant_full,
-        { "0xe4",      automation::action::off     },  // 65 grid_quant_tighten,
-        { "0xe5",      automation::action::off     },  // 66 grid_quant_random,
-        { "0xe6",      automation::action::off     },  // 67 grid_quant_jitter,
+        { "0xe2",      automation::action::on      },  // 63 grid_quant_none,
+        { "0xe3",      automation::action::on      },  // 64 grid_quant_full,
+        { "0xe4",      automation::action::on      },  // 65 grid_quant_tighten,
+        { "0xe5",      automation::action::on      },  // 66 grid_quant_random,
+        { "0xe6",      automation::action::on      },  // 67 grid_quant_jitter,
         { "0xe7",      automation::action::off     },  // 68 grid_quant_68,
 
         /*

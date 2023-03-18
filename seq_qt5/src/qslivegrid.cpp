@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-02-26
+ * \updates       2023-03-18
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -295,6 +295,17 @@ qslivegrid::slot_grid_mode (int index)
 }
 
 /**
+ *  At some point we might add coloring to this button to show a status of
+ *  reeording or not.
+ */
+
+void
+qslivegrid::show_grid_mode ()
+{
+    set_grid_mode();
+}
+
+/**
  *  Sets the name of the play-list.
  */
 
@@ -351,6 +362,7 @@ qslivegrid::conditional_update ()
     {
         show_grid_record_style();
         show_record_mode();
+        show_grid_mode();
         for (auto pb : m_loop_buttons)
         {
             if (not_nullptr(pb))

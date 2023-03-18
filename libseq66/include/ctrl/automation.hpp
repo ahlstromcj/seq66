@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-12-10
+ * \updates       2023-03-18
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -517,6 +517,7 @@ extern std::string category_to_string (category c);
 extern category string_to_category (const std::string & s);
 extern std::string action_to_string (action c);
 extern action string_to_action (const std::string & s);
+extern bool actionable (action a);
 
 #if defined SEQ66_USE_SLOT_STRING_CONVERSIONS
 extern std::string slot_to_string (slot s);

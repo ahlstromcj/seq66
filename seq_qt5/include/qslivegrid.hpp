@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2022-08-15
+ * \updates       2023-03-18
  * \license       GNU GPLv2 or above
  *
  *
@@ -173,6 +173,7 @@ private:
     void sequence_key_check ();
     void show_grid_record_style ();
     void show_record_mode ();
+    void show_grid_mode ();
     void populate_grid_mode ();
     void set_grid_mode ();
 

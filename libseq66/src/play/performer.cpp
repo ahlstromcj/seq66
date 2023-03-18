@@ -6320,8 +6320,28 @@ performer::midi_control_keystroke (const keystroke & k)
                         result = false;
                     }
                 }
+                /*
+                 * ca 2023-03-18.
+                 * If the control is usable, but fails, we still want to return
+                 * true, so that the grid-base keystroke * doesn't fall through
+                 * to the main window, causing toggles to be done twice.
+                 * Use "ok" instead of "result".
+                 */
+
                 if (result)
-                    result = mop.call(a, d0, d1, index, invert);
+                {
+                    bool ok = mop.call(a, d0, d1, index, invert);
+                    if (! ok)
+                    {
+#if defined SEQ66_PLATFORM_DEBUG
+                        printf
+                        (
+                            "Action %d: code %d, d0 %d, d1 %d failed\n",
+                            index, static_cast<int>(a), d0, d1
+                        );
+#endif
+                    }
+                }
 
                 if (result)
                 {
@@ -6762,6 +6782,8 @@ performer::learn_mutes (mutegroup::number group)
 
 /*
  *  For the next two functions, compare to performer::set_record_style().
+ *  These function move between recording style of merge, expand, overwrite,
+ *  etc.
  */
 
 void
@@ -8704,7 +8726,13 @@ performer::automation_save_session
 }
 
 /**
- *  Values are none, merge, overwrite, expand, and one-shot.
+ *  Values are in the recordstyle enumeration in the usersettings module:
+ *
+ *      -   merge
+ *      -   overwrite
+ *      -   expand
+ *      -   oneshot
+ *      -   oneshot_reset
  */
 
 void
@@ -8716,6 +8744,11 @@ performer::set_record_style (recordstyle rs)
         notify_automation_change(automation::slot::record_style);
     }
 }
+
+/**
+ *  Selects the style of recording: recordstyle::merge, overwrite, expand,
+ *  oneshot, and oneshot_reset.
+ */
 
 bool
 performer::automation_record_style_select
@@ -8759,7 +8792,8 @@ performer::automation_record_style_select
 }
 
 /**
- *  Values are loop, record, copy, ... double (length).
+ *  Values are specified in the gridmode enumeration in the usersettings
+ *  module: loop, record, copy, paste, clear, remove, ... double (length).
  */
 
 void
@@ -8787,7 +8821,7 @@ performer::automation_grid_mode
     std::string name = "Grid Mode";
     bool result = true;
     print_parameters(name, a, d0, d1, index, inverse);
-    if (a == automation::action::on && ! inverse)
+    if (automation::actionable(a) && ! inverse)
     {
         automation::slot s = int_to_slot_cast(index);
         gridmode gm;

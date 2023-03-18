@@ -207,6 +207,17 @@ string_to_action (const std::string & s)
         return action::none;
 }
 
+/**
+ *  Some actions should work whether the user defined it as "on" or
+ *  a "toggle".  For example, seee performer::automation_grid_mode().
+ */
+
+bool
+actionable (action a)
+{
+    return (a == action::on || a == action::toggle);
+}
+
 /*
  *  This code is currently unused.  We currently don't need to lookup by a
  *  slots string name, and use performer::print_parameters() on a

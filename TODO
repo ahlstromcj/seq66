@@ -476,9 +476,27 @@ ISSUES:
     tutorial.  One issue is Pipewire, which is unsupported; the user system
     employs pulseaudio-pw.
 
-#017 Can't increase clip length while transport is running
+#107 Can't increase clip length while transport is running
     Somehow disabled this feature on 2022-08-20, with no note why.
-    STATUS: Undoing that changed and commenting on it.
+
+    Tried recording using "Expand", and it failed in a spectacular way.  Lets
+    say I have Jack transport running for a while, so that the transport
+    indicator says 096:X:xxx. (Had it running up to 800 or so and the same
+    happens:
+
+    When arming a pattern for recording using "Expand", the pattern becomes as
+    long as the number (96 bars in this case) where I press down the keys on my
+    keyboard.  It then loops being 96 bars, until I press down a couple other
+    keys, where it again expands to whatever the transport indicates at that
+    point (for example 142:X:xxx).
+
+    When no more keys are being pressed, the pattern becomes 142 bars long,
+    until I press some more keys.  And it seems to repeat like that until I
+    press the Stop button, when it starts over on 001:X:xxx. The pattern length
+    remains the same though.
+
+    STATUS: Undoing the change and commenting on it. Investigating the second
+            part.
      
 PATTERNS:
 

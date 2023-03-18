@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2021-12-08
+ * \updates       2023-03-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -225,23 +225,28 @@ opcontrol::automation_slot_name (slot s)
         "Reserved 48",          // 48 reserved_48
 
         /*
-         * Proposed massive expansion in automation. Grid mode selection.
+         * Record mode selection. Changed labels on 2023-03-18.
          */
 
-        "Overdub",              // 49: record_overdub
-        "Overwrite",            // 50: record_overwrite
-        "Expand",               // 51: record_expand
-        "Oneshot",              // 52: record_oneshot
-        "Loop",                 // 53: grid_loop
-        "Record",               // 54: grid_record
-        "Copy",                 // 55: grid_copy
-        "Paste",                // 56: grid_paste
-        "Clear",                // 57: grid_clear
-        "Delete",               // 58: grid_delete
-        "Thru",                 // 59: grid_thru
-        "Solo",                 // 60: grid_solo
-        "Cut",                  // 61: grid_velocity
-        "Double",               // 62: grid_double
+        "Record Overdub",       // 49: record_overdub
+        "Record Overwrite",     // 50: record_overwrite
+        "Record Expand",        // 51: record_expand
+        "Record Oneshot",       // 52: record_oneshot
+
+        /*
+         * Grid mode selection. Changed labels on 2023-03-18.
+         */
+
+        "Grid Loop",            // 53: grid_loop
+        "Grid Record",          // 54: grid_record
+        "Grid Copy",            // 55: grid_copy
+        "Grid Paste",           // 56: grid_paste
+        "Grid Clear",           // 57: grid_clear
+        "Grid Delete",          // 58: grid_delete
+        "Grid Thru",            // 59: grid_thru
+        "Grid Solo",            // 60: grid_solo
+        "Grid Cut",             // 61: grid_velocity
+        "Grid Double",          // 62: grid_double
 
         /*
          * Grid quantization type selection.

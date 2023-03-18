@@ -698,15 +698,15 @@ usrsettings::grid_mode_label (gridmode gm) const
     switch (gm)
     {
     case gridmode::loop:            result = "Loop";            break;
-    case gridmode::record:          result = "Record";          break;
-    case gridmode::copy:            result = "Copy pattern";    break;
-    case gridmode::paste:           result = "Paste pattern";   break;
-    case gridmode::clear:           result = "Clear events";    break;
-    case gridmode::remove:          result = "Delete pattern";  break;
+    case gridmode::record:          result = "RECORD";          break;
+    case gridmode::copy:            result = "Copy";            break;
+    case gridmode::paste:           result = "Paste";           break;
+    case gridmode::clear:           result = "Clear";           break;
+    case gridmode::remove:          result = "Delete";          break;
     case gridmode::thru:            result = "Thru";            break;
     case gridmode::solo:            result = "Solo";            break;
     case gridmode::cut:             result = "Cut";             break;
-    case gridmode::double_length:   result = "Double length";   break;
+    case gridmode::double_length:   result = "Double";          break;
     default:                        result = "Error";           break;
     }
     return result;
