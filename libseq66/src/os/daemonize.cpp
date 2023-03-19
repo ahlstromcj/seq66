@@ -21,15 +21,34 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2022-05-15
+ * \updates       2023-03-19
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
- *  Copyright (C) 2005-2021 by Chris Ahlstrom
+ *  Copyright (C) 2005-2023 by Chris Ahlstrom
  *
  *  Provides a function to make it easy to run an application as a (Linux)
  *  daemon.  There are large differences between POSIX daemons and Win32
  *  services.  Thus, this module is currently Linux-specific.
+ *
+ *  ca 2023-03-19:
+ *
+ *      Updating daemonize().  Instead of calling exit on error, it now
+ *      returns the error code; the return value is now int instead of
+ *      uint32_t, and uint32_t is now mode_t to reflect the return type of
+ *      umask(2). Note that digging reveals that mode_t is an unsigned 32-bit
+ *      type anyway.
+ *
+ *      We also calls fork() again to insure that the application is not
+ *      the session leader, and implement the "flags" parameters; both steps
+ *      are described in Michael Kerrisk's book, "The Linux Programming
+ *      Interface", 2010.
+ *
+ *  Questions:
+ *
+ *      -   Do we also want to add some code to insure that the application
+ *          can run only one instance?
+ *      -   Do we want to handle SIGHUP?
  *
  *  The quick-and-dirty story on creating a daemon.
  *
@@ -52,7 +71,7 @@
  *      -#  Thorough handling of user IDs and groups.
  *      -#  Redirection of the standard outputs to files.
  *
- *  See this project for an application that does all of the above:
+ *  See this project for an application that does all or most of the above:
  *
  *      https://github.com/bmc/daemonize
  *
@@ -169,6 +188,14 @@ namespace seq66
  *  -# If the server is stopped normally, we go ahead and call closelog(),
  *     even though it is optional.
  *
+ * \param [inout] previousmask
+ *      Returns the previous mask for storage.  It should be saved for later
+ *      restoration.
+ *
+ * \param flags
+ *      Provides potential bitmask values (daemonize_flags) for the call
+ *      to this function, as per Kerrisk's book.
+ *
  * \param appname
  *      Name of the application to daemonize.
  *
@@ -179,58 +206,128 @@ namespace seq66
  *      The umask value to set.  Defaults to 0.
  *
  * \return
- *      The previous umask is returned, and should be saved for later
- *      restoration.
+ *      Returns either EXIT_FAILURE or EXIT_SUCCESS. If EXIT_SUCCESS is
+ *      returned, the application (the parent) should call exit().
  */
 
-uint32_t
+int
 daemonize
 (
+    mode_t & previousmask,
     const std::string & appname,
+    int flags,
     const std::string & cwd,
     int mask
 )
 {
     static std::string s_app_name;          /* to survive forking?           */
-    uint32_t result = 0;
+    previousmask = 0;
     s_app_name.clear();                     /* blank out the base app name   */
     if (! appname.empty())
         s_app_name = appname;               /* copy the base app name        */
 
-    pid_t pid = fork();                     /* 1. fork the parent process    */
+    /*
+     *  fork():
+     *
+     *      -   On success, the PID of the child is returned in the parent,
+     *          and 0 is returned in the child.
+     *      -   On failure, -1 is returned in the parent, and there is no
+     *          child.
+     */
+
+    pid_t pid = fork();                     /* 1. Fork the parent process    */
     if (is_posix_error(pid))                /*    -1 process creation failed */
     {
         errprint("fork() failed");
-        exit(EXIT_FAILURE);                 /*    exit parent as a failure   */
+        return EXIT_FAILURE;                /*    exit parent as a failure   */
     }
-    else if (pid > 0)                       /*    process creation succeeded */
+    else if (pid != 0)                      /*    child creation succeeded   */
     {
-        exit(EXIT_SUCCESS);                 /*    exit parent successfully   */
+        return EXIT_SUCCESS;                /*    exit() parent successfully */
     }
     else                                    /*    now we're in child process */
     {
-        bool cwdgood = ! cwd.empty();
-        result = uint32_t(umask(mask));     /* 2. save and set the user mask */
-        pid_t sid = setsid();               /* 3. get a new session ID       */
-        if (sid < 0)                        /*    couldn't get one           */
-            exit(EXIT_FAILURE);             /*    exit the child process     */
+        /*
+         *  Create a new session and set the process group ID. This succeeds
+         *  if the calling process is not a process group leader. If it fails,
+         *  then we become the leader of the new session and exit with
+         *  EXIT_FAILURE.
+         */
+
+        pid_t sid = setsid();               /* 2. Get a new session ID...    */
+        if (sid < 0)                        /*    ... couldn't get one       */
+            return EXIT_FAILURE;            /*    exit the child process     */
+
+        if (! (flags & d_flag_no_fork_twice))
+        {
+            /*
+             *  Now ensure that we are not the session leader. This eliminates
+             *  the possibility of the application/device does not become a
+             *  controlling terminal.
+             */
+
+            pid = fork();                     /* fork you again!            */
+            if (is_posix_error(pid))
+                return EXIT_FAILURE;
+            else if (pid != 0)
+                return EXIT_SUCCESS;
+        }
+        if (! (flags & d_flag_no_umask))
+        {
+            if (mask > 0)
+                previousmask = umask(mask); /* 3. Save and set user mask    */
+            else
+                (void) umask(0);            /* 3. clear file creation mask  */
+        }
+        if (! (flags & d_flag_no_chdir))
+        {
+            int rc = chdir("/");
+            if (rc != 0)
+            {
+                errprint("chdir('/') failed");
+            }
+        }
+        if (! (flags & d_flag_no_close_files))
+        {
+            int maxfd = sysconf(_SC_OPEN_MAX);
+            if (maxfd == (-1))
+                maxfd = c_daemonize_max_fd; /* this is just a guess         */
+
+            for (int fd = 0; fd < maxfd; ++fd)
+                (void) close(fd);
+        }
+        if (! (flags & d_flag_no_reopen_stdio))
+        {
+            reroute_stdio_to_dev_null();
+        }
 
         if (s_app_name.empty())
-            s_app_name = "bad daemon";
+            s_app_name = "anonymous daemon";
 
-        openlog(s_app_name.c_str(), LOG_CONS|LOG_PID, LOG_USER); /* 4. log it   */
-        if (cwdgood)
-            cwdgood = cwd != ".";           /*    don't bother with "."      */
+        if (! (flags & d_flag_no_syslog))   /* system log                   */
+            openlog(s_app_name.c_str(), LOG_CONS|LOG_PID, LOG_USER);
 
-        if (cwdgood)
+        if (! (flags & d_flag_no_set_directory))
         {
-            if (! set_current_directory(cwd))
-                exit(EXIT_FAILURE);         /*    bug out royally!           */
+            bool cwdgood = cwd != ".";      /*    don't bother with "."     */
+            if (cwdgood)
+            {
+                if (! set_current_directory(cwd))
+                    exit(EXIT_FAILURE);     /*    bug out royally!          */
+            }
         }
-        (void) reroute_stdio("", true);     /* 6. close standard files       */
-        syslog(LOG_NOTICE, "seq66 daemon started");
+
+        /*
+         * No longer needed.  Caller can use it. Also see
+         * d_flag_no_reopen_stdio.
+         *
+         * (void) reroute_stdio("", true);  // 6. close standard files      //
+         */
+
+        if (! (flags & d_flag_no_syslog))   /* system log                   */
+            syslog(LOG_NOTICE, "daemon started");
     }
-    return result;
+    return EXIT_SUCCESS;
 }
 
 /*
@@ -245,7 +342,7 @@ daemonize
  */
 
 void
-undaemonize (uint32_t previous_umask)
+undaemonize (mode_t previous_umask)
 {
    syslog(LOG_NOTICE, "seq66 daemon exited");
    closelog();
@@ -261,6 +358,38 @@ undaemonize (uint32_t previous_umask)
  *    Windows Event Log.  Still need to figure out a way to do this very
  *    simply, a la' Microsoft's 'svchost' executable.
  */
+
+/**
+ *  Route the standard terminal file descriptors to "/dev/null".
+ */
+
+bool
+reroute_stdio_to_dev_null ()
+{
+    int rc = STD_CLOSE(STDIN_FILENO);
+    bool result = rc == 0;
+    if (result)
+    {
+        int fd = STD_OPEN(DEV_NULL, STD_O_RDWR);
+        result = fd == STDIN_FILENO;
+        if (result)
+        {
+            if (dup2(STDIN_FILENO, STDOUT_FILENO) != STDOUT_FILENO)
+                result = false;
+
+            if (result)
+            {
+                if (dup2(STDIN_FILENO, STDOUT_FILENO) != STDOUT_FILENO)
+                    result = false;
+            }
+        }
+        else
+        {
+            errprint("reroute_stdio_to_dev_null() failed.");
+        }
+    }
+    return result;
+}
 
 /**
  *  Alters the standard terminal file descriptors so that they either route to
@@ -281,71 +410,69 @@ undaemonize (uint32_t previous_umask)
  */
 
 bool
-reroute_stdio (const std::string & logfile, bool closem)
+close_stdio ()
+{
+    bool result = true;
+    int rc = STD_CLOSE(STDIN_FILENO);
+    if (rc == (-1))
+        result = false;
+
+    rc = STD_CLOSE(STDOUT_FILENO);
+    if (rc == (-1))
+        result = false;
+
+    rc = STD_CLOSE(STDERR_FILENO);
+    if (rc == (-1))
+        result = false;
+
+    return result;
+}
+
+bool
+reroute_stdio (const std::string & logfile)
 {
     bool result = false;
-    if (closem)
+    if (logfile.empty())                    /* route output to /dev/null    */
     {
-        int rc = STD_CLOSE(STDIN_FILENO);
-        if (rc == (-1))
-            result = false;
-
-        rc = STD_CLOSE(STDOUT_FILENO);
-        if (rc == (-1))
-            result = false;
-
-        rc = STD_CLOSE(STDERR_FILENO);
-        if (rc == (-1))
-            result = false;
+        result = reroute_stdio_to_dev_null();
     }
     else
     {
-        result = true;
-        (void) STD_CLOSE(STDIN_FILENO);
-
-        int fd = STD_OPEN(DEV_NULL, STD_O_RDWR);
-        if (fd != STDIN_FILENO)
-            result = false;
-
+        int rc = STD_CLOSE(STDOUT_FILENO);
+        result = rc == 0;
         if (result)
         {
-            if (logfile.empty())            /* route output to /dev/null    */
+            int flags = O_WRONLY | O_CREAT | O_APPEND;
+            mode_t mode = S_IRUSR;
+            int fd = open(logfile.c_str(), flags, mode);
+            result = fd != (-1);
+            if (result)
             {
-                if (dup2(STDIN_FILENO, STDOUT_FILENO) != STDOUT_FILENO)
-                    result = false;
-
+                int newfd = dup2(fd, STDOUT_FILENO);
+                result = newfd == STDOUT_FILENO;
                 if (result)
                 {
-                    if (dup2(STDIN_FILENO, STDERR_FILENO) != STDERR_FILENO)
-                        result = false;
-                }
-            }
-            else                            /* route output to log-file     */
-            {
-                FILE * fp = freopen(logfile.c_str(), "a", stdout);
-                if (not_nullptr(fp))
-                {
-#if defined SEQ66_PLATFORM_WINDOWS
-                    (void) dup2(STDOUT_FILENO, STDERR_FILENO);
-#else
-                    if (dup2(STDOUT_FILENO, STDERR_FILENO) != STDERR_FILENO)
-                        result = false;
-#endif
+                    newfd = dup2(fd, STDERR_FILENO);
+                    result = newfd == STDERR_FILENO;
+                    if (result)
+                    {
+                        std::string logpath = get_full_path(logfile);
+                        std::string normedpath = normalize_path(logpath);
+                        printf
+                        (
+                            "\n'%s' \n'%s' \n'%s' \n",
+                            seq_app_name().c_str(), normedpath.c_str(),
+                            current_date_time().c_str()
+                        );
+                    }
+                    else
+                        file_error("Dup2 failed", "stderr");
                 }
                 else
-                    result = false;
+                    file_error("Dup2 failed", "stdout");
             }
-        }
-        if (result)
-        {
-            std::string logpath = get_full_path(logfile);
-            std::string normedpath = normalize_path(logpath);
-            printf
-            (
-                "\n'%s' \n'%s' \n'%s' \n",
-                seq_app_name().c_str(), normedpath.c_str(),
-                current_date_time().c_str()
-            );
+            else
+                file_error("Open failed", logfile);
         }
     }
     return result;

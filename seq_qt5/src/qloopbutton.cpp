@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2023-02-27
+ * \updates       2023-03-18
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -578,7 +578,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             }
             if (loop()->recording())
             {
-                int radius = usr().scale_size(s_radius_record);
+                int radius = usr().scale_size(s_radius_record) + 2;
                 int clx = m_top_right.m_x + m_top_right.m_w - radius - 2;
                 int cly = m_top_right.m_y + m_top_right.m_h;
                 int tlx = clx + usr().scale_size(2);

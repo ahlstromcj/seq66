@@ -4614,7 +4614,7 @@ _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define APP_BUILD_ISSUE "Ubuntu 20.04.5 LTS"
+#define APP_BUILD_ISSUE "Ubuntu 20.04.6 LTS"
 _ACEOF
 
 

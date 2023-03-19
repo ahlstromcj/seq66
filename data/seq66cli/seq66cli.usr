@@ -169,7 +169,7 @@ bpm-maximum = 127
 
 [user-options]
 
-daemonize = false
+daemonize = true
 log = ""
 
 # [user-ui-tweaks]

@@ -24,7 +24,7 @@
  * \library       seq66rtcli application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-02-09
- * \updates       2022-05-10
+ * \updates       2023-03-19
  * \license       GNU GPLv2 or above
  *
  *  This application is seq66 without a GUI, control must be done via MIDI.
@@ -77,13 +77,31 @@
 int
 main (int argc, char * argv [])
 {
-#if defined SEQ66_PLATFORM_LINUX
-    uint32_t usermask = 0;                  /* used in daemonization        */
-#endif
-    int exit_status = EXIT_SUCCESS;         /* EXIT_FAILURE                 */
-    seq66::clinsmanager sm;
+    int exit_status = EXIT_SUCCESS;         /* EXIT_FAILURE might happen    */
+    bool success = true;
     seq66::usr().app_is_headless(true);
     seq66::set_app_cli(true);               /* used in smanager             */
+
+    /*
+     * Move the daemonize() call to up here so that the configuration
+     * files will be reread.  Note that currently the 'usr' option
+     * is not read.  We will need to make a special function to do that.
+     */
+
+#if defined SEQ66_PLATFORM_LINUX
+    mode_t usermask = 0;                    /* used in daemonization        */
+    int flags = d_flag_no_to_all;           /* see daemonize.hpp            */
+    if (seq66::usr().option_daemonize())
+    {
+        seq66::set_app_type("daemon");
+        seq66::set_app_name("seq66daemon");
+        infoprint("Forking to background...");
+
+        int rc = seq66::daemonize(usermask, seq66::seq_app_name(), flags, ".");
+        if (rc == EXIT_SUCCESS)
+            exit(EXIT_SUCCESS);
+    }
+#endif
     if (seq66::cmdlineopts::parse_o_options(argc, argv))
     {
         std::string logfile = seq66::usr().option_logfile();
@@ -91,23 +109,15 @@ main (int argc, char * argv [])
             (void) seq66::reroute_stdio(logfile);
     }
 
-    bool result = sm.create(argc, argv);
-    if (result)
+    seq66::clinsmanager sm;
+    success = sm.create(argc, argv);
+    if (success)
     {
-#if defined SEQ66_PLATFORM_LINUX
-        if (seq66::usr().option_daemonize())
-        {
-            seq66::set_app_type("daemon");
-            seq66::set_app_name("seq66daemon");
-            infoprint("Forking to background...");
-            usermask = seq66::daemonize(seq66::seq_app_name(), ".");
-        }
-#endif
 
         std::string msg;
-        bool result = sm.run();
-        exit_status = result ? EXIT_SUCCESS : EXIT_FAILURE ;
-        (void) sm.close_session(msg, result);
+        bool ok = sm.run();
+        exit_status = ok ? EXIT_SUCCESS : EXIT_FAILURE ;
+        (void) sm.close_session(msg, ok);
     }
     else
         exit_status = EXIT_FAILURE;

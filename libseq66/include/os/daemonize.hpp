@@ -23,11 +23,11 @@
  * \file          daemonize.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2021-10-27
+ * \updates       2023-03-19
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
- *    Copyright (C) 2005-2020 by Chris Ahlstrom
+ *    Copyright (C) 2005-2023 by Chris Ahlstrom
  *
  *    This module provides a function to make it easy to run an application
  *    as a daemon.
@@ -42,8 +42,31 @@
  */
 
 #if defined SEQ66_PLATFORM_32_BIT
-using uint32_t = unsigned int;
+using mode_t = unsigned int;
 #endif
+
+/*
+ *  The "flags" parameters described in Michael Kerrisk's book,
+ *  "The Linux Programming Interface", 2010. We also add a flag to avoid
+ *  a second fork, plus some other flags.
+ */
+
+enum d_flags_t
+{
+    d_flag_none             = 0x00, /**< No flags provided.                 */
+    d_flag_no_chdir         = 0x01, /**< Don't chdir() to file root '/'.    */
+    d_flag_no_close_files   = 0x02, /**< Don't close all open files.        */
+    d_flag_no_reopen_stdio  = 0x04, /**< No stdin etc. sent to /dev/null.   */
+    d_flag_no_umask         = 0x08, /**< Don't call umask(0).               */
+    d_flag_no_fork_twice    = 0x10, /**< Don't call fork() a second time.   */
+    d_flag_no_set_directory = 0x20, /**< Don't change current directory.    */
+    d_flag_no_syslog        = 0x40, /**< Do not open a system log file.     */
+    d_flag_no_to_all        = 0x1F  /**< All of the above!                  */
+};
+
+using daemonize_flags = enum d_flags_t;
+
+const int c_daemonize_max_fd = 8192; /**< Max. file-descriptors to close.   */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -53,28 +76,28 @@ namespace seq66
 {
 
 /*
- *  Free functions.
- *    These functions do a lot of the work of dealing with UNIX daemons.
+ *  Free functions.  These functions do a lot of the work of dealing with UNIX
+ *  daemons.
  */
 
 extern bool check_daemonize (int argc, char * argv []);
-extern uint32_t daemonize
+extern int daemonize
 (
+    mode_t & previousmask,
     const std::string & appname,
+    int flags,
     const std::string & cwd         = ".",
     int mask                        = 0
 );
-extern void undaemonize (uint32_t previous_umask);
+extern void undaemonize (mode_t previous_umask);
 
 /*
  * Linux and Windows support.
  */
 
-extern bool reroute_stdio
-(
-    const std::string & logfile = "",
-    bool closem = false
-);
+extern bool close_stdio ();
+extern bool reroute_stdio (const std::string & logfile = "");
+extern bool reroute_stdio_to_dev_null ();
 
 #if defined SEQ66_USE_PID_EXISTS
 extern bool pid_exists (const std::string & exename);
