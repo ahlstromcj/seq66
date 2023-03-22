@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-08-06
+ * \updates       2023-03-22
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -738,6 +738,14 @@ private:
      */
 
     bool m_user_option_daemonize;
+
+    /**
+     * This option is set only from the command-line.  If set, then
+     * the user-save flag is raised, and the application does nothing
+     * but save the user-file and exit with a message to that effect.
+     */
+
+    bool m_user_save_daemonize;
 
     /**
      *  If true, this value means that "-o log=..." (where the "..." is an
@@ -1486,6 +1494,11 @@ public:
         return m_user_option_daemonize;
     }
 
+    bool save_daemonize () const
+    {
+        return m_user_save_daemonize;
+    }
+
     bool option_use_logfile () const
     {
         return m_user_use_logfile;
@@ -1758,24 +1771,8 @@ public:         // used in main application module and the usrfile class
         m_app_is_headless = flag;
     }
 
-    void option_daemonize (bool flag)
-    {
-        if (! test_option_bit(option_daemon))
-        {
-            m_user_option_daemonize = flag;
-            set_option_bit(option_daemon);
-        }
-    }
-
-    void option_use_logfile (bool flag)
-    {
-        if (! test_option_bit(option_log))
-        {
-            m_user_use_logfile = flag;
-            set_option_bit(option_log);
-        }
-    }
-
+    void option_daemonize (bool flag, bool setup = false);
+    void option_use_logfile (bool flag);
     void option_logfile (const std::string & file);
 
     /*

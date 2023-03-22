@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2022-09-03
+ * \updates       2023-03-22
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -365,6 +365,7 @@ usrsettings::usrsettings () :
     m_mainwnd_y                 (c_default_window_height),  /* 412 */
     m_app_is_headless           (false),
     m_user_option_daemonize     (false),
+    m_user_save_daemonize       (false),
     m_user_use_logfile          (false),
     m_user_option_logfile       (),
     m_user_pdf_viewer           (),
@@ -462,6 +463,7 @@ usrsettings::set_defaults ()
     m_mainwnd_y = c_default_window_height;
     m_app_is_headless = false;
     m_user_option_daemonize = false;
+    m_user_save_daemonize = false;
     m_user_use_logfile = false;
     m_user_option_logfile.clear();
     m_user_pdf_viewer.clear();
@@ -1532,6 +1534,31 @@ usrsettings::is_variset () const
         (m_mainwnd_rows != screenset::c_default_rows) ||
         (m_mainwnd_cols != screenset::c_default_columns)
     );
+}
+
+void
+usrsettings::option_daemonize (bool flag, bool setup)
+{
+    if (! test_option_bit(option_daemon))
+    {
+        m_user_option_daemonize = flag;
+        set_option_bit(option_daemon);
+        if (setup)
+        {
+            m_user_save_daemonize = true;
+            rc().auto_usr_save(true);
+        }
+    }
+}
+
+void
+usrsettings::option_use_logfile (bool flag)
+{
+    if (! test_option_bit(option_log))
+    {
+        m_user_use_logfile = flag;
+        set_option_bit(option_log);
+    }
 }
 
 bool

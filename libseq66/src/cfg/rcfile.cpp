@@ -664,17 +664,6 @@ rcfile::parse ()
     return true;
 }
 
-/*
- * Moved to midicontrolfile as read_midi_control_file().
- *
-bool
-rcfile::parse_midi_control_section (const std::string & fname)
-{
-    midicontrolfile mcf(fname, rc_ref());
-    return mcf.parse();
-}
- */
-
 /**
  *  This options-writing function is just about as complex as the
  *  options-reading function.

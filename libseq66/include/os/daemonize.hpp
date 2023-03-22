@@ -23,7 +23,7 @@
  * \file          daemonize.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2023-03-19
+ * \updates       2023-03-22
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
@@ -66,6 +66,27 @@ enum d_flags_t
 
 using daemonize_flags = enum d_flags_t;
 
+/**
+ *  Status of the daemonize() call.  The following actions should be taken
+ *  based on the result.
+ *
+ *      -   failure. The parent process should exit with a return value of
+ *          EXIT_FAILURE.
+ *      -   child. We're in the child process, so that normal operation of
+ *          the child application, including reading all the configuration
+ *          files, should proceed.
+ *      -   parent. We're in the parent process, and the fork succeeded,
+ *          so that the parent should exit with a return value of
+ *          EXIT_SUCCESS.
+ */
+
+enum class daemonization
+{
+    failure = (-1),                 /**< The call to fork() failed.         */
+    child   = 0,                    /**< Result of fork() in child process. */
+    parent  = 1                     /**< Result of fork() is child's PID.   */
+};
+
 const int c_daemonize_max_fd = 8192; /**< Max. file-descriptors to close.   */
 
 /*
@@ -80,8 +101,9 @@ namespace seq66
  *  daemons.
  */
 
-extern bool check_daemonize (int argc, char * argv []);
-extern int daemonize
+// extern bool check_daemonize (int argc, char * argv []);
+
+extern daemonization daemonize
 (
     mode_t & previousmask,
     const std::string & appname,

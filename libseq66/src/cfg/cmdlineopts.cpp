@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2022-08-29
+ * \updates       2023-03-22
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -323,11 +323,12 @@ static const std::string s_help_4b =
 "                    input ports are specified. Defaults are 8 & 4.\n"
 "\n"
 " seq66cli:\n"
-"      daemonize     Makes this application fork to the background.\n"
-"      no-daemonize  Or not.  These options do not apply to Windows.\n"
+"      daemonize     Sets this application up to fork to the background.\n"
+"      no-daemonize  Or not. These options do not apply to Windows. If given,\n"
+"                    the application writes these options to the 'usr' file\n"
+"                    and exits. Subsequent runs are thus affected. Tricky!\n"
 "\n"
-"'daemonize' works only in the CLI build. 'sets' works in all builds. Add\n"
-"'--user-save' to make these options permanent in the qseq66.usr file.\n"
+"Add '--user-save' to make these options permanent in the 'usr' file.\n"
 "\n"
 ;
 
@@ -493,12 +494,12 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                             if (arg == "daemonize")
                             {
                                 result = true;
-                                usr().option_daemonize(true);
+                                usr().option_daemonize(true, true);  // setup!
                             }
                             else if (arg == "no-daemonize")
                             {
                                 result = true;
-                                usr().option_daemonize(false);
+                                usr().option_daemonize(false, true); // setup!
                             }
                             else if (arg == "log")
                             {
@@ -711,6 +712,25 @@ cmdlineopts::parse_usr_file
     else
         file_message("No file", filespec);
 
+    return result;
+}
+
+bool
+cmdlineopts::parse_daemonization (bool & startdaemon, std::string & logfile)
+{
+    std::string usrn = rc().user_filespec();   /* ALWAYS default 'usr' file */
+    bool result = file_readable(usrn);
+    if (result)
+    {
+        usrfile ufile(usrn, rc());
+        result = ufile.parse_daemonization(startdaemon, logfile);
+    }
+    else
+    {
+        result = false;
+        startdaemon = false;
+        logfile = "";
+    }
     return result;
 }
 

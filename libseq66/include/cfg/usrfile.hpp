@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2021-06-08
+ * \updates       2023-03-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -74,6 +74,8 @@ public:
 
     virtual bool parse () override;
     virtual bool write () override;
+
+    bool parse_daemonization (bool & startdaemon, std::string & logfile);
 
 private:
 

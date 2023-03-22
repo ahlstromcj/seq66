@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-07-21
+ * \updates       2023-03-22
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -359,18 +359,7 @@ usrfile::parse ()
     usr().option_daemonize(flag);
 
     std::string fname = get_variable(file, tag, "log");
-    if (fname.empty())
-    {
-        /*
-         * Why did we put this feature in? To cause the usr()
-         * file to be saved if the setting was not found. But it can
-         * be empty normally.  We need a better way to flag the
-         * user's configuration files for upgrading. Commenting it out!
-         *
-         * rc().auto_usr_save(true);
-         */
-    }
-    else
+    if (! fname.empty())
     {
         fname = strip_quotes(fname);
         usr().option_logfile(fname);
@@ -479,6 +468,49 @@ usrfile::parse ()
     dump_setting_summary();
     file.close();                       /* End Of File, EOF, done! */
     return true;
+}
+
+/**
+ *  Parses a "usr" file, but only for options important to start
+ *  the daemonization process.
+ *
+ * \param [out] startdaemon
+ *      Set to true if the function succeed and [user-options] daemonize is
+ *      true.  Set to false otherwize, so it can still be checked.
+ *
+ * \param [out] logfile
+ *      Set to the log-file specified in [user-options].  Set to empty
+ *      if parsing failed.
+ *
+ * \return
+ *      Returns true if the parsing succeeded.
+ */
+
+bool
+usrfile::parse_daemonization (bool & startdaemon, std::string & logfile)
+{
+    std::ifstream file(name().c_str(), std::ios::in | std::ios::ate);
+    bool result = set_up_ifstream(file);  /* verifies [Seq66]: version    */
+    if (result)
+    {
+        std::string tag = "[user-options]";
+        bool flag = get_boolean(file, tag, "daemonize");
+        usr().option_daemonize(flag);
+
+        std::string fname = get_variable(file, tag, "log");
+        if (! fname.empty())
+        {
+            fname = strip_quotes(fname);
+            usr().option_logfile(fname);
+        }
+    }
+    else
+    {
+        result = false;
+        startdaemon = false;
+        logfile = "";
+    }
+    return result;
 }
 
 /**

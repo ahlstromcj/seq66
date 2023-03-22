@@ -27,7 +27,7 @@
  *
  * \author  Chris Ahlstrom
  * \date    2015-11-20
- * \updates 2022-07-27
+ * \updates 2023-03-22
  * \version $Revision$
  *
  *    Also see the filefunctions.cpp and strfunctions modules.
@@ -90,6 +90,11 @@ public:
     (
         const std::string & filespec,
         std::string & errmessage
+    );
+    static bool parse_daemonization
+    (
+        bool & startdaemon,
+        std::string & logfile
     );
     static bool parse_o_options (int argc, char * argv []);
     static bool parse_o_sets (const std::string & arg);

@@ -31,7 +31,7 @@
  *  daemon.  There are large differences between POSIX daemons and Win32
  *  services.  Thus, this module is currently Linux-specific.
  *
- *  ca 2023-03-19:
+ *  ca 2023-03-22:
  *
  *      Updating daemonize().  Instead of calling exit on error, it now
  *      returns the error code; the return value is now int instead of
@@ -210,7 +210,7 @@ namespace seq66
  *      returned, the application (the parent) should call exit().
  */
 
-int
+daemonization
 daemonize
 (
     mode_t & previousmask,
@@ -238,16 +238,18 @@ daemonize
     pid_t pid = fork();                     /* 1. Fork the parent process    */
     if (is_posix_error(pid))                /*    -1 process creation failed */
     {
-        errprint("fork() failed");
-        return EXIT_FAILURE;                /*    exit parent as a failure   */
+        errprint("parent fork() failed");
+        return daemonization::failure;      /*    exit() parent as a failure */
     }
     else if (pid != 0)                      /*    child creation succeeded   */
     {
-        return EXIT_SUCCESS;                /*    exit() parent successfully */
+        return daemonization::parent;       /*    exit() parent successfully */
     }
     else                                    /*    now we're in child process */
     {
         /*
+         *  Now we are the child process.
+         *
          *  Create a new session and set the process group ID. This succeeds
          *  if the calling process is not a process group leader. If it fails,
          *  then we become the leader of the new session and exit with
@@ -256,7 +258,7 @@ daemonize
 
         pid_t sid = setsid();               /* 2. Get a new session ID...    */
         if (sid < 0)                        /*    ... couldn't get one       */
-            return EXIT_FAILURE;            /*    exit the child process     */
+            return daemonization::failure;  /*    exit() child as a failure     */
 
         if (! (flags & d_flag_no_fork_twice))
         {
@@ -266,32 +268,38 @@ daemonize
              *  controlling terminal.
              */
 
-            pid = fork();                     /* fork you again!            */
+            pid = fork();                       /* fork you again!          */
             if (is_posix_error(pid))
-                return EXIT_FAILURE;
+            {
+                errprint("child fork() failed");
+                return daemonization::failure;
+            }
             else if (pid != 0)
-                return EXIT_SUCCESS;
+            {
+                return daemonization::parent;
+            }
         }
         if (! (flags & d_flag_no_umask))
         {
             if (mask > 0)
-                previousmask = umask(mask); /* 3. Save and set user mask    */
+                previousmask = ::umask(mask);   /* 3. Save & set user mask  */
             else
-                (void) umask(0);            /* 3. clear file creation mask  */
+                (void) ::umask(0);              /* 3. clear file mask       */
         }
-        if (! (flags & d_flag_no_chdir))
+        if (! (flags & d_flag_no_chdir))        /* this is only for ROOT    */
         {
             int rc = chdir("/");
             if (rc != 0)
             {
                 errprint("chdir('/') failed");
+                return daemonization::failure;
             }
         }
         if (! (flags & d_flag_no_close_files))
         {
-            int maxfd = sysconf(_SC_OPEN_MAX);
+            int maxfd = ::sysconf(_SC_OPEN_MAX);
             if (maxfd == (-1))
-                maxfd = c_daemonize_max_fd; /* this is just a guess         */
+                maxfd = c_daemonize_max_fd;     /* this is just a guess     */
 
             for (int fd = 0; fd < maxfd; ++fd)
                 (void) close(fd);
@@ -304,16 +312,16 @@ daemonize
         if (s_app_name.empty())
             s_app_name = "anonymous daemon";
 
-        if (! (flags & d_flag_no_syslog))   /* system log                   */
+        if (! (flags & d_flag_no_syslog))       /* system log               */
             openlog(s_app_name.c_str(), LOG_CONS|LOG_PID, LOG_USER);
 
         if (! (flags & d_flag_no_set_directory))
         {
-            bool cwdgood = cwd != ".";      /*    don't bother with "."     */
+            bool cwdgood = cwd != "." && ! cwd.empty();
             if (cwdgood)
             {
                 if (! set_current_directory(cwd))
-                    exit(EXIT_FAILURE);     /*    bug out royally!          */
+                    return daemonization::failure;
             }
         }
 
@@ -327,7 +335,7 @@ daemonize
         if (! (flags & d_flag_no_syslog))   /* system log                   */
             syslog(LOG_NOTICE, "daemon started");
     }
-    return EXIT_SUCCESS;
+    return daemonization::child;
 }
 
 /*
