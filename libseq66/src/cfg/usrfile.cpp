@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-03-22
+ * \updates       2023-03-23
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -490,18 +490,19 @@ bool
 usrfile::parse_daemonization (bool & startdaemon, std::string & logfile)
 {
     std::ifstream file(name().c_str(), std::ios::in | std::ios::ate);
-    bool result = set_up_ifstream(file);  /* verifies [Seq66]: version    */
+    bool result = set_up_ifstream(file);    /* verifies [Seq66]: version    */
     if (result)
     {
         std::string tag = "[user-options]";
         bool flag = get_boolean(file, tag, "daemonize");
-        usr().option_daemonize(flag);
+        startdaemon = flag;                 /* set this side-effect         */
+        usr().option_daemonize(flag);       /* set the 'usr' flag as well   */
 
         std::string fname = get_variable(file, tag, "log");
         if (! fname.empty())
         {
-            fname = strip_quotes(fname);
-            usr().option_logfile(fname);
+            fname = strip_quotes(fname);    /* set this side-effect         */
+            usr().option_logfile(fname);    /* set the 'usr' flag as well   */
         }
     }
     else

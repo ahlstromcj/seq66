@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2022-05-15
+ * \updates       2023-03-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -131,7 +131,7 @@ notemapfile::parse_stream (std::ifstream & file)
     {
         for (int in_note = note; in_note < int(c_midibyte_data_max); ++in_note)
         {
-            char tagtmp[16];
+            char tagtmp[24];
             snprintf(tagtmp, sizeof tagtmp, "[Drum %d]", in_note);
             std::string tag = tagtmp;
             std::string gmname = get_variable(file, tag, "gm-name");

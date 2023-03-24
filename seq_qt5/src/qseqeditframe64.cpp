@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-03-17
+ * \updates       2023-03-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2293,7 +2293,7 @@ qseqeditframe64::set_background_sequence (int seqnum, qbase::status qs)
             }
             else
             {
-                char n[24];
+                char n[32];
                 snprintf(n, sizeof n, "[%d] %.13s", seqnum, s->name().c_str());
                 m_bgsequence = seqnum;
                 ui->m_entry_sequence->setText(n);

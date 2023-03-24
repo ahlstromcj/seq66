@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-12-29
-% \update      2022-04-11
+% \update      2023-03-23
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -174,7 +174,7 @@ project.
    First, if using a Gtk theme setter (e.g. \textsl{gtk-chtheme}), one wants to
    use \textsl{qt5ct} to set Qt to work with Gtk themes.
    For this to work well, use this setting in the \texttt{.bashrc} or
-   \texttt{.profile}:
+   \texttt{.profile} file:
 
    \begin{verbatim}
       export QT_QPA_PLATFORMTHEME=gtk2
@@ -184,6 +184,17 @@ project.
 
    \begin{verbatim}
       export QT_QPA_PLATFORMTHEME=qt5ct
+   \end{verbatim}
+
+   Another option is to provide an executable script like the following,
+   giving it a name such as \texttt{dseq66}
+   (for a dark themed \textsl{Seq66}) to
+   distinguish it from the normal-themed \texttt{qseq66}.
+
+   \begin{verbatim}
+      #!/bin/sh
+      # Use dark coloring on qseq66, as we have configured in qt5ct.
+      QT_QPA_PLATFORMTHEME=qt5ct qseq66
    \end{verbatim}
 
    One might still encounter the issue that, with a Gtk theme, applications

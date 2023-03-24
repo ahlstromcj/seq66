@@ -24,7 +24,7 @@
  * \library       seq66rtcli application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-02-09
- * \updates       2023-03-22
+ * \updates       2023-03-23
  * \license       GNU GPLv2 or above
  *
  *  This application is seq66 without a GUI, control must be done via MIDI.

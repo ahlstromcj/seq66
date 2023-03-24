@@ -61,7 +61,7 @@ enum d_flags_t
     d_flag_no_fork_twice    = 0x10, /**< Don't call fork() a second time.   */
     d_flag_no_set_directory = 0x20, /**< Don't change current directory.    */
     d_flag_no_syslog        = 0x40, /**< Do not open a system log file.     */
-    d_flag_no_to_all        = 0x1F  /**< All of the above!                  */
+    d_flag_no_to_all        = 0xFF  /**< All of the above!                  */
 };
 
 using daemonize_flags = enum d_flags_t;

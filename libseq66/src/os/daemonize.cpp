@@ -305,9 +305,7 @@ daemonize
                 (void) close(fd);
         }
         if (! (flags & d_flag_no_reopen_stdio))
-        {
             reroute_stdio_to_dev_null();
-        }
 
         if (s_app_name.empty())
             s_app_name = "anonymous daemon";

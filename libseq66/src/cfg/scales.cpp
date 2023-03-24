@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2022-05-16
+ * \updates       2023-03-22
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of many scale interval patterns if working with
@@ -483,7 +483,7 @@ musical_note_name (int n)
     std::string result = "Xb";
     if (legal_note(n))
     {
-        char note[8];
+        char note[16];
         int key = n % c_octave_size;
         int octave = (n / c_octave_size) - 1;
         if (octave >= 0)
