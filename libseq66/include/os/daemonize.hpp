@@ -23,7 +23,7 @@
  * \file          daemonize.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2023-03-22
+ * \updates       2023-03-24
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
@@ -53,15 +53,19 @@ using mode_t = unsigned int;
 
 enum d_flags_t
 {
-    d_flag_none             = 0x00, /**< No flags provided.                 */
-    d_flag_no_chdir         = 0x01, /**< Don't chdir() to file root '/'.    */
-    d_flag_no_close_files   = 0x02, /**< Don't close all open files.        */
-    d_flag_no_reopen_stdio  = 0x04, /**< No stdin etc. sent to /dev/null.   */
-    d_flag_no_umask         = 0x08, /**< Don't call umask(0).               */
-    d_flag_no_fork_twice    = 0x10, /**< Don't call fork() a second time.   */
-    d_flag_no_set_directory = 0x20, /**< Don't change current directory.    */
-    d_flag_no_syslog        = 0x40, /**< Do not open a system log file.     */
-    d_flag_no_to_all        = 0xFF  /**< All of the above!                  */
+    d_flag_none            = 0x000, /**< No flags provided.                 */
+    d_flag_no_chdir        = 0x001, /**< Don't chdir() to file root '/'.    */
+    d_flag_no_close_files  = 0x002, /**< Don't close all open files.        */
+    d_flag_no_reopen_stdio = 0x004, /**< No stdin etc. sent to /dev/null.   */
+    d_flag_no_umask        = 0x008, /**< Don't call umask(0).               */
+    d_flag_no_fork_twice   = 0x010, /**< Don't call fork() a second time.   */
+    d_flag_no_set_currdir  = 0x020, /**< Don't change current directory.    */
+    d_flag_no_syslog       = 0x040, /**< Do not open a system log file.     */
+    d_flag_no_reserved     = 0x080, /**< Reserved for expansion.            */
+    d_flag_seq66cli        = 0x01D, /**< No chdir, stdio, umask, two-forks. */
+    d_flag_fake_fork_flags = 0x057, /**< For speed in debugging.            */
+    d_flag_no_to_all       = 0x0FF, /**< All of the above!                  */
+    d_flag_fake_fork       = 0x100  /**< For debugging only.                */
 };
 
 using daemonize_flags = enum d_flags_t;

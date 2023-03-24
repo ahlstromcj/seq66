@@ -24,7 +24,7 @@
  * \library       seq66rtcli application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-02-09
- * \updates       2023-03-23
+ * \updates       2023-03-24
  * \license       GNU GPLv2 or above
  *
  *  This application is seq66 without a GUI, control must be done via MIDI.
@@ -119,7 +119,7 @@ main (int argc, char * argv [])
         );
         if (startdaemon)
         {
-            int flags = d_flag_no_to_all;       /* see daemonize.hpp        */
+            int flags = d_flag_seq66cli;        /* see daemonize.hpp        */
             std::string appname = seq66::seq_app_name();
             seq66::set_app_type("daemon");
             seq66::set_app_name("seq66daemon");

@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2023-03-19
+ * \updates       2023-03-24
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -29,7 +29,7 @@
  *
  *  Provides a function to make it easy to run an application as a (Linux)
  *  daemon.  There are large differences between POSIX daemons and Win32
- *  services.  Thus, this module is currently Linux-specific.
+ *  services.  Thus, this module is currently Linux/POSIX-specific.
  *
  *  ca 2023-03-22:
  *
@@ -235,17 +235,25 @@ daemonize
      *          child.
      */
 
-    pid_t pid = fork();                     /* 1. Fork the parent process    */
-    if (is_posix_error(pid))                /*    -1 process creation failed */
+    pid_t pid;
+    if ((flags & d_flag_fake_fork) != 0)    /* just pretend a fork occurred */
+    {
+        pid = 0;                            /* pretend we're in the child   */
+        flags = d_flag_fake_fork_flags;
+    }
+    else
+        pid = fork();                       /* 1. Fork the parent process   */
+
+    if (is_posix_error(pid))  /* -1 */      /*    process creation failed   */
     {
         errprint("parent fork() failed");
-        return daemonization::failure;      /*    exit() parent as a failure */
+        return daemonization::failure;      /*    exit() parent as failure  */
     }
-    else if (pid != 0)                      /*    child creation succeeded   */
+    else if (pid != 0)                      /*    child creation succeeded  */
     {
-        return daemonization::parent;       /*    exit() parent successfully */
+        return daemonization::parent;       /*    exit() parent w/success   */
     }
-    else                                    /*    now we're in child process */
+    else                                    /*    we're in child process    */
     {
         /*
          *  Now we are the child process.
@@ -260,7 +268,7 @@ daemonize
         if (sid < 0)                        /*    ... couldn't get one       */
             return daemonization::failure;  /*    exit() child as a failure     */
 
-        if (! (flags & d_flag_no_fork_twice))
+        if ((flags & d_flag_no_fork_twice) == 0)
         {
             /*
              *  Now ensure that we are not the session leader. This eliminates
@@ -279,14 +287,14 @@ daemonize
                 return daemonization::parent;
             }
         }
-        if (! (flags & d_flag_no_umask))
+        if ((flags & d_flag_no_umask) == 0)
         {
             if (mask > 0)
                 previousmask = ::umask(mask);   /* 3. Save & set user mask  */
             else
                 (void) ::umask(0);              /* 3. clear file mask       */
         }
-        if (! (flags & d_flag_no_chdir))        /* this is only for ROOT    */
+        if ((flags & d_flag_no_chdir) == 0)     /* this is only for ROOT    */
         {
             int rc = chdir("/");
             if (rc != 0)
@@ -295,7 +303,7 @@ daemonize
                 return daemonization::failure;
             }
         }
-        if (! (flags & d_flag_no_close_files))
+        if ((flags & d_flag_no_close_files) == 0)
         {
             int maxfd = ::sysconf(_SC_OPEN_MAX);
             if (maxfd == (-1))
@@ -304,16 +312,16 @@ daemonize
             for (int fd = 0; fd < maxfd; ++fd)
                 (void) close(fd);
         }
-        if (! (flags & d_flag_no_reopen_stdio))
+        if ((flags & d_flag_no_reopen_stdio) == 0)
             reroute_stdio_to_dev_null();
 
         if (s_app_name.empty())
             s_app_name = "anonymous daemon";
 
-        if (! (flags & d_flag_no_syslog))       /* system log               */
+        if ((flags & d_flag_no_syslog) == 0)    /* system log               */
             openlog(s_app_name.c_str(), LOG_CONS|LOG_PID, LOG_USER);
 
-        if (! (flags & d_flag_no_set_directory))
+        if ((flags & d_flag_no_set_currdir) == 0)
         {
             bool cwdgood = cwd != "." && ! cwd.empty();
             if (cwdgood)
@@ -330,7 +338,7 @@ daemonize
          * (void) reroute_stdio("", true);  // 6. close standard files      //
          */
 
-        if (! (flags & d_flag_no_syslog))   /* system log                   */
+        if ((flags & d_flag_no_syslog) == 0)    /* system log               */
             syslog(LOG_NOTICE, "daemon started");
     }
     return daemonization::child;
