@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+# Run an application using Qt coloring as configured in qt5ct.
+
+QT_QPA_PLATFORMTHEME=qt5ct "$1" &
+

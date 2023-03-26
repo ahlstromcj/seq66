@@ -24,7 +24,7 @@
  * \library       seq66rtcli application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-02-09
- * \updates       2023-03-24
+ * \updates       2023-03-26
  * \license       GNU GPLv2 or above
  *
  *  This application is seq66 without a GUI, control must be done via MIDI.
@@ -107,20 +107,22 @@ main (int argc, char * argv [])
 #endif
     seq66::usr().app_is_headless(true);
     seq66::set_app_cli(true);                   /* used in smanager         */
+    seq66::set_app_name("seq66cli");            /* also done in smanager!!  */
     (void) seq66::cmdlineopts::parse_o_options(argc, argv);
     if (! seq66::usr().save_daemonize())
     {
 #if defined SEQ66_PLATFORM_LINUX
-        bool startdaemon;
+        bool startdaemon = false;
         std::string logfile;
+        std::string appname = seq66::seq_app_name();
+        seq66::rc().set_config_files(appname);
         (void) seq66::cmdlineopts::parse_daemonization
         (
             startdaemon, logfile                /* two side-effects         */
         );
         if (startdaemon)
         {
-            int flags = d_flag_seq66cli;        /* see daemonize.hpp        */
-            std::string appname = seq66::seq_app_name();
+            int flags = d_flags_seq66cli;       /* see daemonize.hpp        */
             seq66::set_app_type("daemon");
             seq66::set_app_name("seq66daemon");
             warnprint("Forking to background...");

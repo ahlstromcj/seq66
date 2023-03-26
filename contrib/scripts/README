@@ -1,28 +1,33 @@
 Contributed Scripts Directory for Seq66
 Chris Ahlstrom
-2021-04-17 to 2021-10-12
+2021-04-17 to 2023-03-26
 
 This directory contains scripts that may be useful.  Not all of them will
 work without some system setup.
 
-binfuncs:        Defines some bash functions that may be useful.
-bluejack:        Meant to send JACK audio to Bluetooth via "bluealsa". Painful.
-debug:           Provides a way to run the cgdb debugger via libtool.
-htmldoc:         Builds seq66.html from the user-manual's TeX files. Needs pandoc.
-Jack:            Stops mpd and starts JACK; uses binfuncs. No longer used.
-make-checkout:   Checks out Makefile.ins to preserve the canonical makes.
-mutetest:        Runs a test of mute groups using Yoshimi.
-naming:          Fixes up the names of MP3 obtained via youtube-dl.
-ordercp:         Copies files while preserving their name ordering a la 'ls'.
-qbuild:          Rebuilds portmidi or rtmidi Seq66 using qmake on Linux.
-reconf:          Reconstructs the GNU Autotools project files for Seq66.
-seq66-nsm-proxy: A script to try to run Seq66 via nsm-proxy. No guarantees.
-seq66.sed:       Sed script to convert Seq64 names to Seq66 names. No longer needed.
-session:         A new version of the Jack script above. Mostly of tutorial value.
-strap_functions: Provides the functions used by the bootstrap script.
-timid:           Starts Timidity++ using JACK/ALSA, also will kill it.
-ystart:          Starts Yoshimi with a GM state file from yoshimi-cookbook.
-windows/VMS_fixes:  Fixes the Registry for the MIDI Mapper. Use at your own risk.
+binfuncs         Defines some bash functions that may be useful.
+bluejack         Meant to send JACK audio to Bluetooth via "bluealsa". Painful.
+debug            Provides a way to run the cgdb debugger via libtool.
+htmldoc          Builds seq66.html from the TeX files of the user-manual.
+                 Needs pandoc.
+Jack             Stops mpd and starts JACK; uses binfuncs. No longer used.
+make-checkout    Checks out Makefile.ins to preserve the canonical makes.
+mutetest         Runs a test of mute groups using Yoshimi.
+naming           Fixes up the names of MP3 obtained via youtube-dl.
+ordercp          Copies files while preserving their name ordering a la 'ls'.
+qbuild           Rebuilds portmidi or rtmidi Seq66 using qmake on Linux.
+qtctrun          Runs an application using the qt5ct platform theming.
+reconf           Reconstructs the GNU Autotools project files for Seq66.
+seq66-nsm-proxy  A script to try to run Seq66 via nsm-proxy. No guarantees.
+seq66.sed        Sed script to convert Seq64 names to Seq66 names.
+                 No longer needed.
+session          A new version of the Jack script above. Mostly of tutorial
+                 value.
+strap_functions  Provides the functions used by the bootstrap script.
+timid            Starts Timidity++ using JACK/ALSA, also will kill it.
+ystart           Starts Yoshimi with a GM state file from yoshimi-cookbook.
+windows/VMS_fixes   Fixes the Registry for the MIDI Mapper. Use at your
+                 own risk.
 
 Also see some scripts installed in data/linux/jack.
 

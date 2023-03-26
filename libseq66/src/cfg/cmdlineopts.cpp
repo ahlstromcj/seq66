@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-03-22
+ * \updates       2023-03-26
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -670,7 +670,7 @@ cmdlineopts::parse_rc_file
     std::string & errmessage
 )
 {
-    bool result = true;
+    bool result = true;                         /* file_readable(filespec)  */
     if (file_readable(filespec))
     {
         rcfile options(filespec, rc());
@@ -687,6 +687,32 @@ cmdlineopts::parse_rc_file
         file_message("No file", filespec);
         rc().create_config_names();
     }
+    return result;
+}
+
+/**
+ *  Get only the 'usr' file and its active flags from the 'rc' file. This
+ *  function supports testing to see if the application should be
+ *  daemonized.  See cmdlineopts::parse_daemonization() and
+ *  userfile::parse_daemonization().
+ */
+
+bool
+cmdlineopts::get_usr_file ()
+{
+    std::string rcn = rc().config_filespec();
+    bool result = file_readable(rcn);
+    if (result)
+    {
+        rcfile options(rcn, rc());
+        file_message("Reading rc to get 'usr' file", rcn);
+        result = options.get_usr_file();
+        if (! result)
+            file_error("Getting 'usr' file failed", rcn);
+    }
+    else
+        file_message("No file", rcn);
+
     return result;
 }
 
@@ -715,21 +741,36 @@ cmdlineopts::parse_usr_file
     return result;
 }
 
+/**
+ *  This function figures out if the application is to be daemonized. It needs
+ *  to do the following:
+ *
+ *      -#  Read the 'usr' file "[usr-file]" section:
+ *          -   "active" flag
+ *          -   "name" of the 'usr' file.
+ *      -#  Make sure the 'usr' file is active and readable.
+ *      -#  Parse the daemonization and logging values from the 'usr' file.
+ */
+
 bool
 cmdlineopts::parse_daemonization (bool & startdaemon, std::string & logfile)
 {
-    std::string usrn = rc().user_filespec();   /* ALWAYS default 'usr' file */
-    bool result = file_readable(usrn);
+    bool result = seq66::cmdlineopts::get_usr_file();   /* daemon values    */
     if (result)
     {
-        usrfile ufile(usrn, rc());
-        result = ufile.parse_daemonization(startdaemon, logfile);
-    }
-    else
-    {
-        result = false;
-        startdaemon = false;
-        logfile = "";
+        std::string usrn = rc().user_filespec();
+        result = file_readable(usrn);
+        if (result)
+        {
+            usrfile ufile(usrn, rc());
+            result = ufile.parse_daemonization(startdaemon, logfile);
+        }
+        else
+        {
+            result = false;
+            startdaemon = false;
+            logfile = "";
+        }
     }
     return result;
 }

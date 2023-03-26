@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-10-02
+ * \updates       2023-03-26
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -245,6 +245,10 @@ rcfile::parse ()
     rc_ref().mute_group_filename(pfname);   /* [[/]path/] basename.ext  */
     fullpath = rc_ref().mute_group_filespec();
     file_message("Reading mutes", fullpath);
+
+    /*
+     *  See get_usr_file() below.
+     */
 
     tag = "[usr-file]";
     active = get_file_status(file, tag, pfname);
@@ -662,6 +666,32 @@ rcfile::parse ()
     rc_ref().save_old_mutes(f);
     file.close();               /* done parsing the "rc" file               */
     return true;
+}
+
+/**
+ *  Get only the 'usr' file and its active flags from the 'rc' file. This
+ *  function supports testing to see if the application should be
+ *  daemonized.  See cmdlineopts::parse_daemonization() and
+ *  userfile::parse_daemonization().
+ *
+ * \return
+ *      Returns true if the file is active.
+ */
+
+bool
+rcfile::get_usr_file ()
+{
+    std::ifstream file(name(), std::ios::in | std::ios::ate);
+    bool result = set_up_ifstream(file);
+    if (result)
+    {
+        std::string tag = "[usr-file]";
+        std::string usrfilename;
+        result = get_file_status(file, tag, usrfilename);
+        rc_ref().user_file_active(result);
+        rc_ref().user_filename(usrfilename);
+    }
+    return result;
 }
 
 /**

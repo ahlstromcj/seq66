@@ -28,11 +28,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-06-28
+ * \updates       2023-03-26
  * \license       GNU GPLv2 or above
  *
- *  The ~/.seq66rc or ~/.config/seq66.rc files are
- *  referred to as the "rc" files.
+ *  The ~/.seq66rc or ~/.config/seq66.rc files are referred to as the "rc"
+ *  files.
  */
 
 #include "cfg/configfile.hpp"
@@ -70,6 +70,7 @@ public:
     virtual bool parse () override;
     virtual bool write () override;
     bool parse_midi_control_section (const std::string & fname);
+    bool get_usr_file ();
 
 };          // class rcfile
 

@@ -23,7 +23,7 @@
  * \file          daemonize.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2023-03-24
+ * \updates       2023-03-26
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
@@ -62,7 +62,7 @@ enum d_flags_t
     d_flag_no_set_currdir  = 0x020, /**< Don't change current directory.    */
     d_flag_no_syslog       = 0x040, /**< Do not open a system log file.     */
     d_flag_no_reserved     = 0x080, /**< Reserved for expansion.            */
-    d_flag_seq66cli        = 0x01D, /**< No chdir, stdio, umask, two-forks. */
+    d_flags_seq66cli       = 0x00D, /**< No chdir, stdio, umask             */
     d_flag_fake_fork_flags = 0x057, /**< For speed in debugging.            */
     d_flag_no_to_all       = 0x0FF, /**< All of the above!                  */
     d_flag_fake_fork       = 0x100  /**< For debugging only.                */

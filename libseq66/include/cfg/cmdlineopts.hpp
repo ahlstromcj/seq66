@@ -27,7 +27,7 @@
  *
  * \author  Chris Ahlstrom
  * \date    2015-11-20
- * \updates 2023-03-22
+ * \updates 2023-03-26
  * \version $Revision$
  *
  *    Also see the filefunctions.cpp and strfunctions modules.
@@ -86,6 +86,7 @@ public:
         const std::string & filespec,
         std::string & errmessage
     );
+    static bool get_usr_file ();
     static bool parse_usr_file
     (
         const std::string & filespec,
