@@ -1,9 +1,7 @@
-# README for Seq66 0.99.3
+# README for Seq66 0.99.3 2023-03-27
 
-Chris Ahlstrom
-2015-09-10 to 2023-03-27
 
-__Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler-like
+__Seq66__: MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets, triggers, and playlists for song management,
 a scale and chord-aware piano-roll interface, song editor for creative
 composition, and control and display via MIDI automation for live performance.
@@ -11,7 +9,7 @@ Mute-groups enable/disable multiple patterns with one keystroke/MIDI-control.
 Supports NSM (Non/New Session Manager) on Linux; can also run headless.
 It does not support audio samples, just MIDI.
 
-__Seq66__ is a major refactoring of Sequencer64/Kepler34, rebooting __Seq24__
+__Seq66__ is a major refactoring of Sequencer64/Kepler34/Seq24
 with modern C++ and new features.  Linux and Windows users can build this
 application from source code.  See the extensive INSTALL file.  Windows users
 can get an installer package on GitHub.  It has a comprehensive PDF user-manual.
@@ -191,5 +189,7 @@ Windows, and using a conventional source tarball.
             *   Implement clear-events and double-length grid modes.
 
     See the "NEWS" file for changes in earlier versions.
+
+C. Ahlstrom 2015-09-10 to 2023-03-27
 
 // vim: sw=4 ts=4 wm=2 et ft=markdown

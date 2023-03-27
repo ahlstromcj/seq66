@@ -85,10 +85,6 @@ From Testing:
 
     Tempo display needs to be worked on for the perfroll and qloopbuttons.
 
-CLI:
-
-    Get daemonize to load the configuration after forking.
-
 Build:
 
     -   Try using Clang as the compiler.

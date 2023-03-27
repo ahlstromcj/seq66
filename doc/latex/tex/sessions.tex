@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2022-06-02
+% \update      2023-03-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -534,8 +534,9 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 
    \index{sessions!ui}
    This section describes the \textsl{Session} tab in the main
-   \textsl{Seq66} window.  This tab is mostly informative and
-   \textsl{read-only}.
+   \textsl{Seq66} window.  This tab displays mostly informative and
+   \textsl{read-only} information (except for the name of the log file
+   to use).
    It displays the following bits of information that \textsl{Seq66} has received
    from \textsl{NSM} via the \texttt{nmsd} daemon:
 
@@ -550,8 +551,10 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          possible to configure \textsl{NSM} to use a specific port number.
       \item Display-name for the session.
       \item The generated client ID for the session.
-      \item The log of action of the session manager. Not yet supported,
-         though one can see what is happening by running in a console window.
+      \item The editable name of the log file to which to redirect warning
+         and error messages during the of action of \textsl{qseq66}.
+         Normally, the text is shown in the console window (when running in a
+         console window).
       \item Macro Execution.
          This drop-down contains all of the macros defined in the 'ctrl' file's
          \texttt{[macro-control-out]} section.

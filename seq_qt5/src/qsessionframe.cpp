@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2022-08-08
+ * \updates       2023-03-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -84,9 +84,13 @@ qsessionframe::qsessionframe
     ui->sessionUrlText->setEnabled(false);
     ui->displayNameText->setEnabled(false);
     ui->clientIdText->setEnabled(false);
-    ui->sessionLogText->setEnabled(false);
-    ui->sessionLogText->setEnabled(false);
     ui->songPathText->setEnabled(false);
+    session_log_file(usr().option_logfile());
+    connect
+    (
+        ui->lineEditLogFile, SIGNAL(editingFinished()),
+        this, SLOT(slot_log_file())
+    );
     ui->pushButtonReload->setEnabled(false);
     connect
     (
@@ -219,16 +223,23 @@ qsessionframe::session_URL (const std::string & text)
 }
 
 void
-qsessionframe::session_log (const std::string & text)
+qsessionframe::session_log_file (const std::string & text)
 {
-    ui->sessionLogText->setText(qt(text));
+    ui->lineEditLogFile->setText(qt(text));
 }
 
 void
-qsessionframe::session_log_append (const std::string & text)
+qsessionframe::slot_log_file ()
 {
-    ui->sessionLogText->append("<br>");            // need a newline?
-    ui->sessionLogText->append(qt(text));
+    QString text = ui->lineEditLogFile->text();
+    std::string temp = text.toStdString();
+    if (temp != usr().option_logfile())
+    {
+        usr().option_logfile(temp);
+        usr().option_use_logfile(! temp.empty());
+        rc().auto_usr_save(true);
+        usr().modify();
+    }
 }
 
 void
