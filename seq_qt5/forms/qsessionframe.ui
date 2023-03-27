@@ -142,9 +142,9 @@ p, li { white-space: pre-wrap; }
   <widget class="QLabel" name="sessionLogLabel">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>188</y>
-     <width>93</width>
+     <x>48</x>
+     <y>176</y>
+     <width>125</width>
      <height>32</height>
     </rect>
    </property>
@@ -161,38 +161,7 @@ p, li { white-space: pre-wrap; }
     </font>
    </property>
    <property name="text">
-    <string>Session Log</string>
-   </property>
-  </widget>
-  <widget class="QTextEdit" name="sessionLogText">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>180</x>
-     <y>180</y>
-     <width>480</width>
-     <height>130</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>420</width>
-     <height>130</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>480</width>
-     <height>130</height>
-    </size>
-   </property>
-   <property name="undoRedoEnabled">
-    <bool>false</bool>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
+    <string>Session Log File</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtonReload">
@@ -201,22 +170,22 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>240</y>
+     <x>272</x>
+     <y>280</y>
      <width>137</width>
-     <height>56</height>
+     <height>40</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
      <width>100</width>
-     <height>56</height>
+     <height>40</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
      <width>16777215</width>
-     <height>56</height>
+     <height>40</height>
     </size>
    </property>
    <property name="toolTip">
@@ -404,7 +373,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>316</y>
+     <y>232</y>
      <width>630</width>
      <height>30</height>
     </rect>
@@ -481,6 +450,16 @@ p, li { white-space: pre-wrap; }
     <string/>
    </property>
   </widget>
+  <widget class="QLineEdit" name="lineEditLogFile">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>180</y>
+     <width>477</width>
+     <height>30</height>
+    </rect>
+   </property>
+  </widget>
  </widget>
  <tabstops>
   <tabstop>sessionManagerNameText</tabstop>
@@ -489,7 +468,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>displayNameText</tabstop>
   <tabstop>clientIdText</tabstop>
   <tabstop>macroComboBox</tabstop>
-  <tabstop>sessionLogText</tabstop>
   <tabstop>pushButtonReload</tabstop>
   <tabstop>songPathText</tabstop>
  </tabstops>

@@ -24,7 +24,7 @@
  * \library       seq66rtcli application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-02-09
- * \updates       2023-03-26
+ * \updates       2023-03-27
  * \license       GNU GPLv2 or above
  *
  *  This application is seq66 without a GUI, control must be done via MIDI.
@@ -141,8 +141,8 @@ main (int argc, char * argv [])
             warnprint("Child continues normal operations...");
         }
 #endif
-        if (! logfile.empty())
-            (void) seq66::reroute_stdio(logfile);
+        std::string destination = logfile.empty() ? "/dev/null" : logfile ;
+        (void) seq66::reroute_stdio(logfile);
     }
 
     seq66::clinsmanager sm;

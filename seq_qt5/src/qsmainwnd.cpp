@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-10-05
+ * \updates       2023-03-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -3993,17 +3993,10 @@ qsmainwnd::session_URL (const std::string & text)
 }
 
 void
-qsmainwnd::session_log (const std::string & text)
+qsmainwnd::session_log_file (const std::string & text)
 {
     if (not_nullptr(m_session_frame))
-        m_session_frame->session_log(text);
-}
-
-void
-qsmainwnd::session_log_append (const std::string & text)
-{
-    if (not_nullptr(m_session_frame))
-        m_session_frame->session_log_append(text);
+        m_session_frame->session_log_file(text);
 }
 
 void

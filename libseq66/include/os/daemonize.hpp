@@ -23,7 +23,7 @@
  * \file          daemonize.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2023-03-26
+ * \updates       2023-03-27
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
@@ -46,9 +46,9 @@ using mode_t = unsigned int;
 #endif
 
 /*
- *  The "flags" parameters described in Michael Kerrisk's book,
- *  "The Linux Programming Interface", 2010. We also add a flag to avoid
- *  a second fork, plus some other flags.
+ *  The "flags" parameters described in Michael Kerrisk's book, "The Linux
+ *  Programming Interface", 2010. We also add a flag to avoid a second fork,
+ *  plus some other flags.
  */
 
 enum d_flags_t
@@ -105,8 +105,6 @@ namespace seq66
  *  daemons.
  */
 
-// extern bool check_daemonize (int argc, char * argv []);
-
 extern daemonization daemonize
 (
     mode_t & previousmask,
@@ -118,17 +116,15 @@ extern daemonization daemonize
 extern void undaemonize (mode_t previous_umask);
 
 /*
- * Linux and Windows support.
+ * Linux and Windows support. The pid_exists() and get_pid_by_name()
+ * functions currently do nothing.  Still thinking about them
  */
 
 extern bool close_stdio ();
 extern bool reroute_stdio (const std::string & logfile = "");
 extern bool reroute_stdio_to_dev_null ();
-
-#if defined SEQ66_USE_PID_EXISTS
 extern bool pid_exists (const std::string & exename);
-#endif
-
+extern pid_t get_pid_by_name (const std::string & exename);
 extern std::string get_pid ();
 
 /*

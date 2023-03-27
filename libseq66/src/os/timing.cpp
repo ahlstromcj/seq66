@@ -43,8 +43,7 @@
 #elif defined SEQ66_PLATFORM_WINDOWS
 
 /*
- * For Windows, only the reroute_stdio() and microsleep() functions are
- * defined, currently.
+ * For Windows, only the microsleep() function is defined, currently.
  */
 
 #include <windows.h>                    /* WaitForSingleObject(), INFINITE  */

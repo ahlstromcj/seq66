@@ -27,7 +27,7 @@
  *
  * \author  Chris Ahlstrom
  * \date    2015-11-20
- * \updates 2023-03-26
+ * \updates 2023-03-27
  * \version $Revision$
  *
  *    Also see the filefunctions.cpp and strfunctions modules.
@@ -80,6 +80,7 @@ public:
     ~cmdlineopts () = default;
 
     static bool help_check (int argc, char * argv []);
+    static bool kill_check (int argc, char * argv []);
     static bool parse_options_files (std::string & errmessage);
     static bool parse_rc_file
     (

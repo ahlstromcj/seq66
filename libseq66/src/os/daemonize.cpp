@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2023-03-24
+ * \updates       2023-03-27
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -313,7 +313,7 @@ daemonize
                 (void) close(fd);
         }
         if ((flags & d_flag_no_reopen_stdio) == 0)
-            reroute_stdio_to_dev_null();
+            (void) reroute_stdio_to_dev_null();
 
         if (s_app_name.empty())
             s_app_name = "anonymous daemon";
@@ -397,10 +397,10 @@ reroute_stdio_to_dev_null ()
                     result = false;
             }
         }
+        if (result)
+            warnprint("Standard I/O rerouted to /dev/null");
         else
-        {
-            errprint("reroute_stdio_to_dev_null() failed.");
-        }
+            file_error("Failed to reroute standard I/O to ", "/dev/null");
     }
     return result;
 }
@@ -456,8 +456,8 @@ reroute_stdio (const std::string & logfile)
         result = rc == 0;
         if (result)
         {
-            int flags = O_WRONLY | O_CREAT | O_APPEND;
-            mode_t mode = S_IRUSR;
+            int flags = O_WRONLY | O_CREAT | O_APPEND ;
+            mode_t mode = S_IWUSR | S_IRUSR | S_IWGRP | S_IRGRP ;
             int fd = open(logfile.c_str(), flags, mode);
             result = fd != (-1);
             if (result)
@@ -485,9 +485,9 @@ reroute_stdio (const std::string & logfile)
                 else
                     file_error("Dup2 failed", "stdout");
             }
-            else
-                file_error("Open failed", logfile);
         }
+        if (! result)
+            file_error("Failed to reroute standard I/O to ", logfile);
     }
     return result;
 }
@@ -632,8 +632,6 @@ session_setup ()
     sigaction(SIGUSR1, &action, NULL);                  /* SIGUSR1 is 10    */
 }
 
-#if defined SEQ66_USE_PID_EXISTS
-
 /**
  *  Looks up an executable in the process list using the pidof program.  This
  *  function copies the pidof command line, then opens a pipe to that process
@@ -647,9 +645,10 @@ session_setup ()
  *  such as RaySession.
  */
 
-static pid_t
+pid_t
 get_pid_by_name (const std::string & exename)
 {
+#if defined SEQ66_DEFINE_GET_PID_BY_NAME
     static const int s_pid_size = 200;      /* really only need about 10!   */
     pid_t result = 0;
     char cmd[s_pid_size + 1];
@@ -666,6 +665,10 @@ get_pid_by_name (const std::string & exename)
         }
     }
     return result;
+#else
+    (void) exename;
+    return 0;
+#endif
 }
 
 bool
@@ -673,8 +676,6 @@ pid_exists (const std::string & exename)
 {
     return get_pid_by_name(exename) > 0;
 }
-
-#endif  // SEQ66_USE_PID_EXISTS
 
 std::string
 get_pid ()
@@ -697,15 +698,17 @@ session_setup ()
     sg_needs_close = sg_needs_save = sg_restart = false;
 }
 
-#if defined SEQ66_USE_PID_EXISTS
-
 bool
-pid_exists (const std::string & exename)
+pid_exists (const std::string & /*exename*/)
 {
     return false;       /* to do, if possible */
 }
 
-#endif  // SEQ66_USE_PID_EXISTS
+pid_t
+get_pid_by_name (const std::string & /*exename*/)
+{
+    return 0;
+}
 
 std::string
 get_pid ()

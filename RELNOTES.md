@@ -1,33 +1,40 @@
-# Seq66 Release Notes 0.99.1 2022-09-04
+# Seq66 Release Notes 0.99.3 2023-03-28
 
-This file lists __major__ changes from version 9.98.0 to 0.99.0 (to catch up).
-
-For version 0.99.0, a raft of updates and fixes were made as we work through
-some of the items in the TODO file. This version series will add no new major
-features, but will follow up on the remaining issues and any new issues that
-come up. New features will be pushed off to Seq66v2; see the bottom of the TODO
-file.
+This file lists __major__ changes from version 9.99.1 to 0.99.3 (to catch up).
 
 ## Changes
 
-*   Version 0.99.0:
-    *   Issue #54. Updated ax_have_qt_min.m4 to detect qmake-qt5.
-    *   Issue #78 revisited to tighten pattern box display.
-    *   Added a --locale option.
-    *   Issue #82 allows buttons and fields to expand better in some tabs.
-    *   Issue #89 fixed so that MIDI control display reflects queuing status.
-    *   Issue #90 improvements so that Save is activated for changes.
-    *   Issue #93 fixed. The window of a deleted pattern now closes.
-    *   Issue #94. Improvements to scrolling in the song editor.
-    *   Added a button to expand the song editor in time.
-    *   Issue #97. Added a paste box when pasting notes. Added a metronome.
-    *   Added L/R arrow keys to move the selected trigger in song editor.
-    *   Improved the handling of the MIDI 'ctrl' file.
-    *   Tightened up pattern arming/disarming processing.
-    *   Issue #98.
-        *   Added a metronome with count-in and 'rc' configuration.
-        *   Background automatic recording added.
-    *   Various fixes, too numerous to call out here.
+    *   Version 0.99.3:
+        *   Issue #107.  Expand-pattern functionality.
+        *   Automation fixes.
+        *   Fixed the daemonization and log-file functionality.
+    *   Version 0.99.2:
+        *   Issue #103.  Some improvements to pattern loop-count.
+        *   Pull request #106. User phuel added checkmarks for active buss and
+            channel in grid-slot menu.
+        *   Fixed background sequence not displaying when running with
+            linear-gradient brush.
+        *   Fixes to brushes; made the linear gradient (notes and triggers)
+            a default run-time option.
+        *   Other minor fixes and documentation updates, including the manual.
+    *   Version 0.99.1:
+        *   Issue #44. Revisited to fix related additional issues. Can now
+            toggle a pattern's song record in perfnames. Record button:
+            Ctrl disables snap, Shift enables record at playback start.
+        *   Issue #93. Revisited to fix related open pattern-editor issues.
+        *   Issue #100. Partly mitigated. Added a custom ringbuffer for MIDI
+            message objects to replace JACK's ringbuffer.
+        *   Various fixes:
+            *   Fixed partial breakage of pattern-merge function.
+            *   Fixed odd breakage of ALSA playback in release mode.
+            *   Fixed Stop button when another Master has started playback.
+            *   Shift-click on Stop button rewinds JACK transport when running
+                as JACK Slave.
+            *   Display of some JACK server settings in Edit / Preferences.
+            *   Fixed handling of Ctrl vs non-Ctrl zoom keys in perfroll.
+            *   Event-dump now prompts for a text-file name.
+        *   Added linear-gradient compile-time option for displaying notes
+            and triggers.
 
 ## Final Notes
 

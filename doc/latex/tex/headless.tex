@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-09-30
-% \update      2021-12-28
+% \update      2023-03-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -19,12 +19,15 @@
 \label{sec:headless}
 
    \textsl{Seq66} can be built as a command-line application.
-   See the \texttt{INSTALL} file provided with the source code distribution.
    That is, \textsl{Seq66}
    can be run from the command-line, with no visible user interface.
+   See the \texttt{INSTALL} file provided with the source code distribution.
+   Note the \texttt{--both} bootstrap option to build the GUI and CLI
+   versions of \textsl{Seq66} at the same time.
+
    It can also be instantiated as a Linux daemon, for totally headless usage.
-   Because there is not a lot of visibility into a headless process, the
-   setup for \texttt{seq66cli} is a little complex, and the musician must get
+   Because there is no visibility into a headless process, the
+   setup for \texttt{seq66cli} is tricky, and the musician must get
    used to blind MIDI control.
 
 \subsection{Seq66 Headless Setup}
@@ -38,31 +41,47 @@
       \item Access the correct inputs, especially a keyboard or pad controller
          that can be used for controlling the sequencer via MIDI, as well as
          inputing notes.
-      \item The desired input buss must be \textsl{enabled} by setting
-         the active bit to "1" for that device.
-      \item The MIDI input must be configured with some
+      \item The desired MIDI controller input buss must be \textsl{enabled}
+         by setting the active bit to "1" for that device.
+      \item The MIDI controller input must be configured with some
          \texttt{[automation-control]}
          values, so that the headless sequencer can stop and
          start playback, select the next playlist or song, or activate other
-         sequencer controls.  This is done by providing the name of a 
-         suitable
-         \texttt{[midi-control-file]} ('ctrl') specified in the 'rc' file.
+         sequencer controls.
+         This is done by providing the name of a suitable
+         \texttt{[midi-control-file]} ('ctrl') specified in the 'rc' file,
+         and making sure it is marked as \texttt{active = true}.
+      \item Configure a separate MIDI buss to use to record from another
+         MIDI instrument.
       \item Access the desired outputs, in order to play sounds.  This can
          sometimes be tricky, because \textsl{Seq66} can route all
          patterns to the same output, or can let the patterns decide the
          outputs for themselves.
-      \item The desired outpuit buss must be \textsl{enabled} by setting
-         the active bit to "1" for that device.
-      \item Use the desired play-list.  The headless sequencer can only select
-         songs to play via a pre-configured play-list.
+      \item The desired output busses must be \textsl{enabled} by setting
+         the active bit to "1" for those device.
+         Note that some MIDI controllers can be used to show
+         the status of the music, and would also be configured in
+         the 'ctrl' file.
+      \item Create a play-list.  The headless sequencer can only select
+         songs to play via a pre-configured play-list, or by placing
+         a single song file on the command line.
+      \item Run \texttt{seq66cli} and then stop it (Ctrl-C) to regenerate
+         and verify the initial configuration files,
+         \texttt{HOME/.config/seq66/seq66cli.*}.
    \end{enumerate}
 
    Once the above steps are proven for the \texttt{qseq66} configuration files,
    then the same settings can be made for the \texttt{seq66cli} configuration
    files.
+   The easiest way to do this is to use a difference editor to
+   make the settings match.  For example:
 
-   Sometimes odd problems, such as the output synthesizer not working, not
-   appearing in the list of outputs, can prove a real puzzle.
+   \begin{verbatim}
+      $ gvimdiff ~/.config/seq66/seq66cli.rc ~/.config/seq66/qseq66.rc
+   \end{verbatim}
+
+   Sometimes odd problems, such as the output synthesizer not working
+   or not appearing in the list of outputs, can be a real puzzle.
    Here are the steps used in this test, based on sample files provided in the
    \texttt{contrib/midi}, \texttt{data/midi}, and \texttt{data/samples}
    directory; adapt them to your setup.  For
@@ -73,12 +92,13 @@
    (For a more powerful and exhaustive setup, see
    \sectionref{sec:launchpad_mini}.)
 
-   \textbf{Second}, start the desired (software) synthesizer.  We will use the
-   synth \textsl{Yoshimi}, with a stock setup from the
+   \textbf{Second}, start the desired (software) synthesizer.
+   Here we use the synth \textsl{Yoshimi}, with a stock setup from the
    \textsl{Yoshimi Cookbook} project.
    The order of starting the keyboard/pad and the synthesiser
    will alter the port numbers of these items.  Best to do things in the same
-   order every time... be consistent.
+   order every time... be consistent (or use the port-mapping feature
+   described in \sectionref{sec:port_mapping}).
    Run the following command in order to verify the ALSA buss numbers for
    the controller and the synthesizer:
 
@@ -87,15 +107,16 @@
       $ arecordmidi -l     # list ALSA input ports (except the 'announce' port)
    \end{verbatim}
 
-   Another way is to start the program, exit it, and see the results in the
-   'rc' file.
+   Another way is to start \texttt{qseq66}, exit it,
+   and see the results in the \texttt{qseq66.rc} file.
+
    \textbf{Third}, edit the \texttt{seq66cli.rc}
    file as described below so that the correct settings of
    \texttt{[midi-clock]}, \texttt{[midi-input]} and
    \texttt{[midi-control-file]} are entered into the 'rc' configuration.
    For this discussion, we use a MIDI-control file 
    (\texttt{nanomap.ctrl}), which we set up
-   in the 'rc' file to be read.
+   in the \texttt{seq66cli.rc} file to be read.
    The \texttt{nanomap.ctrl} file sets up the \textsl{nanoKEY2} as
    shown in this figure:
 
@@ -106,19 +127,23 @@
    \label{fig:headless_nanokey2_setup}
 \end{figure}
 
-   In this figure, the \textbf{OCT -} button on the nanoKEY2 is pressed until
+   In this figure, the \textbf{OCT -} button on the
+   \textsl{nanoKEY2} is pressed until
    it is flashing (not seen in the figure).
-   This means that the lowest note on the nanoKEY2 is MIDI note 0, the lowest
-   note possible.  With these settings, the playlists and songs can be loaded
+   This means that the lowest note on the
+   \textsl{nanoKEY2} is MIDI note 0, the lowest
+   note possible.
+   With these settings, the playlists and songs can be loaded,
    and then played and paused.
    The \texttt{seq66cli.rc} file is edited to specify the desired 'ctrl' file:
 
    \begin{verbatim}
       [midi-control-file]
-      "nanomap.ctrl"
+      active = true
+      name = "nanomap.ctrl"      # assumed to reside in ~/.config/seq66
    \end{verbatim}
 
-   The \texttt{seq66cli.rc} file should also enabled the desired MIDI input
+   The \texttt{seq66cli.rc} file should also enable the desired MIDI input
    control device:
 
    \begin{verbatim}
@@ -138,18 +163,15 @@
    \end{verbatim}
 
    The various "midi-control-out" settings are not relevant for this test since
-   the nanoKEY2 cannot display statuses.
+   the \texttt{nanoKEY2} cannot display statuses.
    For the rest of the setup, do these steps:
 
    \begin{enumerate}
-      \item Run \texttt{seq66cli} and then stop it (Ctrl-C) to generate the
-         initial configuration files,
-         \texttt{\$HOME/.config/seq66/seq66cli.*}.
       \item Copy the contents of of \texttt{data/seq66cli/} to
-         \texttt{\$HOME/.config/seq66}.
+         \texttt{HOME/.config/seq66}.
       \item Copy \texttt{data/samples/sample.playlist} and
          \texttt{data/samples/sample.playlist} to
-         \texttt{\$HOME/.config/seq66}.
+         \texttt{HOME/.config/seq66}.
       \item In your HOME directory, create a soft link to the Seq66 project
          (source code and data) directory: \texttt{ln -s path/to/seq66}.
    \end{enumerate}
@@ -164,15 +186,19 @@
 %  --playlist data/sample.playlist
 
    The buss number ("2") may need to be different on your setup to get sound
-   routed to the correct synthesizer.  Also, the path to the playlist might
+   routed to the correct synthesizer.
+   Also, the path to the playlist might
    need to be an absolute path; normally playlists are stored in the
    \texttt{HOME/.config/seq66} directory and accessed from there.
-   Verify that the main window shows the playlist name, and that the arrow keys
-   modify the play-list or song selection.  If that works, verify that the MIDI
-   keyboard or pad controller works to change the selection.
-   Verify that the current song plays through the synthesizer that was started.
-   Also verify that all songs have been directed to the desired port(s) for
-   each song.
+   Verify that the main window shows the playlist name,
+   and that the arrow keys modify the
+   play-list and song selection.
+   If that works, verify that the MIDI keyboard
+   or pad controller works to change the selection.
+   Verify that the current
+   song plays through the synthesizer that was started.
+   Also verify that all
+   songs have been directed to the desired port(s) for each song.
    If this setup works (MIDI controls have the proper effect and the tunes play
    through the synthesizer), proceed to the next step.
 
@@ -202,7 +228,23 @@
    [exec] (Seq66 Headless) {/usr/bin/seq66cli --jack-midi --jack-master --bus 6}
    \end{verbatim}
 
-   For a more sophisticated setup, see \sectionref{sec:launchpad_mini}.
+   For a much more sophisticated setup, see \sectionref{sec:launchpad_mini}.
+
+\subsection{Seq66 Headless Stopping}
+\label{subsec:headless_stopping}
+
+   If running \textsl{seq66cli} from a console, a simple
+   \texttt{Ctrl-C} will stop the application.
+
+   If it is running as a daemon, use the following command from a console,
+   or set up a menu entry to run this command:
+
+   \begin{verbatim}
+      $ killall seq66cli
+   \end{verbatim}
+
+   (Not sure if it is worth adding a "--kill" option to
+   \textsl{seq66cli}... killall is fairly complex.)
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

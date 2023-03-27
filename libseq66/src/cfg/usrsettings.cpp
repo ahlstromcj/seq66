@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2023-03-22
+ * \updates       2023-03-27
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -1503,9 +1503,10 @@ void
 usrsettings::option_logfile (const std::string & logfile)
 {
     if (logfile.empty())
-        return;                         /* will never null out the logfile  */
-
-    if (name_has_root_path(logfile))
+    {
+        m_user_option_logfile.clear();
+    }
+    else if (name_has_root_path(logfile))
     {
         m_user_option_logfile = logfile;
     }

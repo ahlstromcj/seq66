@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2022-04-20
+ * \updates       2023-03-27
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -228,7 +228,6 @@ qt5nsmanager::create_window ()
                 m_window->session_path(path);
                 m_window->session_display_name(name);
                 m_window->session_client_id(clid);
-                m_window->session_log("No log entries.");
                 m_window->song_path(rc().midi_filename());
                 if (rc().investigate_disabled())
                 {
