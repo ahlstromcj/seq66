@@ -438,10 +438,15 @@
       \begin{itemize}
          \item \texttt{daemonize} and \texttt{no-daemonize}.
             \index{daemonize}
-            Makes the \texttt{seq66cli} application fork to the background, or
+            Sets up the \texttt{seq66cli} application to fork to the background
+            the next time it is run.
+            This is done by modifying the \texttt{seq66cli.usr}
+            file to specify daemon runs.
+            It is good to specify a log-file as well.
             \index{no-daemonize}
-            makes the \texttt{seq66cli} application
-            run in the foreground so that console output can be seen.
+            undoes the setup of \texttt{seq66cli} daemonization.
+            The application can then be run in
+            a console so that log output can be seen.
          \item \texttt{log=filename.log}.
             \index{log}
             Reroutes standard error and standard
@@ -450,11 +455,14 @@
             If this file is present, log information is appended.
             The default log-file name is specified in the
             \texttt{[user-options]} section of the 'usr' file.
+            If using daemonization, it pays to also set up a log
+            file with the same command.
          \item \texttt{sets=8x8}.
             \index{variset}
             This option, informally known as "variset", allow some changes in
             the set size and layout from the default 4x8 = 32 sets layout.
-            Consider this option to be experimental. Expect problems.
+            Consider this option to be experimental.
+            Expect problems (and please report them).
             To save these options to the 'usr' file, add the
             \texttt{-{}-user-save} option to the command line, or edit the
             'usr' file before running \textsl{Seq66}.

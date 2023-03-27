@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-03-26
+ * \updates       2023-03-27
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -446,6 +446,26 @@ cmdlineopts::help_check (int argc, char * argv [])
             result = true;
             break;
         }
+    }
+    return result;
+}
+
+/**
+ *  Like help_check(), but accepts only 1 argument.  Anything else
+ *  is ignored.
+ *
+ * \return
+ *      Returns true only if a single argument, "--kill", was found.
+ */
+
+bool
+cmdlineopts::kill_check (int argc, char * argv [])
+{
+    bool result = argc == 2;
+    if (result)
+    {
+        std::string arg = argv[1];
+        result = arg == "--kill" || "kill";
     }
     return result;
 }

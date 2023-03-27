@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-03-23
+ * \updates       2023-03-27
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -363,6 +363,7 @@ usrfile::parse ()
     {
         fname = strip_quotes(fname);
         usr().option_logfile(fname);
+        usr().option_use_logfile(true);
     }
     fname = get_variable(file, tag, "pdf-viewer");
     if (fname.empty())
@@ -503,6 +504,7 @@ usrfile::parse_daemonization (bool & startdaemon, std::string & logfile)
         {
             fname = strip_quotes(fname);    /* set this side-effect         */
             usr().option_logfile(fname);    /* set the 'usr' flag as well   */
+            usr().option_use_logfile(true); /* an easy flag to use, man!    */
         }
     }
     else
@@ -741,7 +743,7 @@ usrfile::write ()
     write_boolean(file, "use-file-ppqn", usr().use_file_ppqn());
 
     /*
-     * [user-midi-settings] and [user-options]
+     * [user-midi-settings]
      */
 
     file << "\n"
@@ -807,7 +809,7 @@ usrfile::write ()
 "# in seq66cli to indicate the application should run as a service. 'log'\n"
 "# specifies a log-file that gets output to standard output/error.  For no\n"
 "# log-file, use \"\".  This option also works from the command line:\n"
-"# '-o log=filename.log'. The name here is the default name.\n"
+"# '-o log=filename.log'.\n"
 "\n[user-options]\n\n"
         ;
 
