@@ -1204,7 +1204,7 @@ Range: 0.5 to 3.0</string>
          <string>JACK Server Settings</string>
         </property>
        </widget>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidgetJackServer">
         <property name="geometry">
          <rect>
           <x>350</x>
@@ -2160,7 +2160,7 @@ Seq66 exits.</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidgetMetro">
        <property name="geometry">
         <rect>
          <x>21</x>

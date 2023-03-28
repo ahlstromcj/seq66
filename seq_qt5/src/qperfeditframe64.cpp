@@ -195,7 +195,11 @@ qperfeditframe64::qperfeditframe64
      */
 
     m_palette = new QPalette();
+#if QT_DEPRECATED_SINCE(5,13)
     m_palette->setColor(QPalette::Background, Qt::darkGray);
+#else
+    m_palette->setColor(QPalette::Window, Qt::darkGray);
+#endif
 
     /*
      * Undo and Redo buttons.

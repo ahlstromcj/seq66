@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2022-05-19
+# \update      2023-03-28`
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -152,6 +152,9 @@ seq_portmidi_incdir = $(top_srcdir)/seq_portmidi/include
 #     -  None of ALSA or JACK CFLAGS seem to be defined.
 #     -  We include "-I.." and require that the Qt5-generated modules be
 #        included as:   "#include "qt/generated_module.h".
+#     -  -DQT_DISABLE_DEPRECATED_BEFORE=0x050F00 causes warnings due to
+#        mismatches, mostly in qnamespace.h.  So we put it only in
+#        seq_qt5.pro for now.
 #
 #------------------------------------------------------------------------------
 
@@ -176,9 +179,10 @@ AM_CXXFLAGS = \
 
 MOC_CPPFLAGS = -I$(top_srcdir)/include
 
-if BUILD_QTMIDI
-   MOC_CPPFLAGS += -DQ_OS_MAC
-endif
+# Deprecated synonym ofr Q_OS_DARWIN. Do not use.
+# if BUILD_QTMIDI
+#    MOC_CPPFLAGS += -DQ_OS_MAC
+# endif
 
 #******************************************************************************
 # Qt 5 rules
