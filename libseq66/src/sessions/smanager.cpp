@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2022-08-25
+ * \updates       2023-03-29
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -67,7 +67,7 @@
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/playlist.hpp"            /* seq66::playlist class            */
 #include "sessions/smanager.hpp"        /* seq66::smanager()                */
-#include "os/daemonize.hpp"             /* seq66::reroute_stdio()           */
+#include "os/daemonize.hpp"             /* seq66::reroute_stdio(), etc.     */
 #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
 #include "util/filefunctions.hpp"       /* seq66::file_readable() etc.      */
 
@@ -145,7 +145,10 @@ smanager::~smanager ()
 bool
 smanager::main_settings (int argc, char * argv [])
 {
-    bool result = false;                /* false --> EXIT_FAILURE           */
+    static const std::string s_nsm_name{"nsmd"};
+    bool result = true;                 /* false --> EXIT_FAILURE           */
+    std::string parentname = get_parent_process_name();
+    bool in_nsm = contains(parentname, s_nsm_name); /* this is tentative!   */
     if (seq_app_cli())
     {
         set_app_name("seq66cli");
@@ -169,94 +172,110 @@ smanager::main_settings (int argc, char * argv [])
      * performer::launch() function.
      */
 
-    bool ishelp = cmdlineopts::help_check(argc, argv);
-    int optionindex = -1;
-    bool sessionmodified = false;
-    if (ishelp)
+    if (in_nsm)
     {
-        (void) cmdlineopts::parse_command_line_options(argc, argv);
-        is_help(true);
-        result = false;
+        std::string msg = "Parent process is '";
+        msg += parentname;
+        msg += "'";
+        (void) session_message(msg);    /* might comfort the developer :-)  */
     }
     else
     {
-        int rcode = cmdlineopts::parse_command_line_options(argc, argv);
-        result = rcode != (-1);
-        if (! result)
-            is_help(true);              /* a hack to avoid create_window()  */
-    }
-    if (result)
-    {
-        if (rc().inspecting())
+        bool ishelp = cmdlineopts::help_check(argc, argv);
+        if (ishelp)
         {
-            std::string sessionfilename = rc().make_config_filespec("session.rc");
-            if (file_readable(sessionfilename))
-            {
-                sessionfile sf(sessionfilename, rc().inspection_tag(), rc());
-                sessionmodified = sf.parse();
-            }
+            (void) cmdlineopts::parse_command_line_options(argc, argv);
+            is_help(true);
+            result = false;
         }
-
-        /*
-         * If "-o log=file.ext" occurred, handle it early on in startup.
-         */
-
-        if (! sessionmodified)
-            (void) cmdlineopts::parse_log_option(argc, argv);
-
-        /*
-         *  If parsing fails, report it and disable usage of the application and
-         *  saving bad garbage out when exiting.  Still must launch, otherwise a
-         *  segfault occurs via dependencies in the qsmainwnd.
-         */
-
-        std::string errmessage;                     /* just in case!        */
-        result = cmdlineopts::parse_options_files(errmessage);
-        if (! result)
+        else
         {
-            errprint(errmessage);
-            append_error_message(errmessage);       /* raises the message   */
+            int rcode = cmdlineopts::parse_command_line_options(argc, argv);
+            result = rcode != (-1);
+            if (! result)
+                is_help(true);          /* a hack to avoid create_window()  */
         }
-        optionindex = cmdlineopts::parse_command_line_options(argc, argv);
-        result = optionindex >= 0;
         if (result)
         {
-            (void) cmdlineopts::parse_o_options(argc, argv);
+            int optionindex = (-1);
+            bool sessionmodified = false;
+            if (rc().inspecting())
+            {
+                std::string sessionfilename =
+                    rc().make_config_filespec("session.rc");
+
+                if (file_readable(sessionfilename))
+                {
+                    sessionfile sf
+                    (
+                        sessionfilename, rc().inspection_tag(), rc()
+                    );
+                    sessionmodified = sf.parse();
+                }
+            }
 
             /*
-             * The user migh specify -o options that are also set up in the
-             * 'usr' file; the command line must take precedence. The "log"
-             * option is processed early in the startup sequence.  These same
-             * settings are made in the cmdlineopts module.
+             * If "-o log=file.ext" occurred, handle it early on in startup.
              */
 
-            std::string logfile = usr().option_logfile();
-            if (usr().option_use_logfile())
-                (void) reroute_stdio(logfile);
+            if (! sessionmodified)
+                (void) cmdlineopts::parse_log_option(argc, argv);
 
-            m_midi_filename.clear();
-            if (optionindex < argc)                 /* MIDI filename given? */
+            /*
+             *  If parsing fails, report it and disable usage of the
+             *  application and saving bad garbage out when exiting.  Still
+             *  must launch, otherwise a segfault occurs via dependencies in
+             *  the qsmainwnd.
+             */
+
+            std::string errmessage;                 /* just in case!        */
+            result = cmdlineopts::parse_options_files(errmessage);
+            if (! result)
             {
-                std::string fname = argv[optionindex];
-                std::string errmsg;
-                if (file_readable(fname))
+                errprint(errmessage);
+                append_error_message(errmessage);   /* raises the message   */
+            }
+            optionindex = cmdlineopts::parse_command_line_options(argc, argv);
+            result = optionindex >= 0;
+            if (result)
+            {
+                (void) cmdlineopts::parse_o_options(argc, argv);
+
+                /*
+                 * The user migh specify -o options that are also set up in the
+                 * 'usr' file; the command line must take precedence. The "log"
+                 * option is processed early in the startup sequence.  These same
+                 * settings are made in the cmdlineopts module.
+                 */
+
+                std::string logfile = usr().option_logfile();
+                if (usr().option_use_logfile())
+                    (void) reroute_stdio(logfile);
+
+                m_midi_filename.clear();
+                if (optionindex < argc)                 /* MIDI filename given? */
                 {
-                    std::string path;               /* not used here        */
-                    std::string basename;
-                    m_midi_filename = fname;
-                    if (filename_split(fname, path, basename))
-                        rc().midi_filename(basename);
-                }
-                else
-                {
-                    char temp[512];
-                    (void) snprintf
-                    (
-                        temp, sizeof temp,
-                        "MIDI file not readable: '%s'", fname.c_str()
-                    );
-                    append_error_message(temp);     /* raises the message   */
-                    m_midi_filename.clear();
+                    std::string fname = argv[optionindex];
+                    std::string errmsg;
+                    if (file_readable(fname))
+                    {
+                        std::string path;               /* not used here        */
+                        std::string basename;
+                        m_midi_filename = fname;
+                        if (filename_split(fname, path, basename))
+                            rc().midi_filename(basename);
+                    }
+                    else
+                    {
+                        char temp[512];
+                        (void) snprintf
+                        (
+                            temp, sizeof temp,
+                            "MIDI file not readable: '%s'", fname.c_str()
+                        );
+                        append_error_message(temp);     /* raises the message   */
+                        m_midi_filename.clear();
+                    }
                 }
             }
         }
@@ -494,47 +513,6 @@ smanager::close_session (std::string & msg, bool ok)
     (void) session_close();                    /* daemonize signals exit   */
     return result;
 }
-
-#if defined SEQ66_SESSION_DETACHABLE
-
-/**
- *  Detaches the session, with an option to handle errors in the session.
- *  It does not stop the performer.
- *
- *  Compare to close_session().  Note sure where to go with this one.
- *
- * \param [out] msg
- *      Provides a place to store any error message for the caller to use.
- *
- * \param ok
- *      Indicates if an error occurred, or not.  The default is true, which
- *      indicates "no problem".
- *
- * \return
- *      Returns the ok parameter if false, otherwise, the result of finishing
- *      up is returned.
- */
-
-bool
-smanager::detach_session (std::string & /*msg*/, bool ok)
-{
-    bool result = not_nullptr(perf());
-    if (result)
-    {
-        result = ok;
-
-        /*
-         * Possible code:
-         *
-         *  if (result && perf()->modified())
-         *      (void) save_session(msg, result);
-         */
-    }
-    usr().in_nsm_session(false);                        /* global flag      */
-    return result;
-}
-
-#endif
 
 /**
  *  This function saves the following files (so far):
@@ -1157,15 +1135,14 @@ smanager::make_path_names
 }
 
 /**
- *  Function for the main window to call.
+ *  Function for the main window to call. It deletes the existing
+ *  configuration, copies the source configuration, then calls
+ *  import_configuration().
  *
  *  When this function succeeds, we need to signal a session-reload and the
- *  following settings:
+ *  make settings as done in qsmainwnd::import_project().
  *
- *  rc().load_most_recent(false);               // don't load MIDI  //
- *  rc().set_save_list(true);                   // save all configs //
- *
- *  We don't really need to care that NSM is active here
+ *  We don't really need to care if NSM is active here, do we?
  */
 
 bool
@@ -1204,7 +1181,7 @@ smanager::import_into_session
  *  This function is like create_configuration(), but the source is not the
  *  standard configuration-file directory, but a directory chosen by the user.
  *  This function should be called only for importing a configuration into an
- *  NSM session directory.
+ *  NSM session directory. Called by import_into_session() above.
  *
  * \param sourcepath
  *      The source path is the path to the configuration files chosen for

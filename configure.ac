@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2023-03-28
+dnl \update        2023-03-29
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -19,7 +19,7 @@ dnl   INSTALL file.
 dnl
 dnl ---------------------------------------------------------------------------
 
-AC_PREREQ([2.71])
+AC_PREREQ([2.69])
 AC_REVISION($Revision: 0.96$)
 AC_INIT([Seq66],[0.99.3],[ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])

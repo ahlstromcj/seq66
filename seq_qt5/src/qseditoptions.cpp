@@ -1819,7 +1819,7 @@ qseditoptions::show_session (usrsettings::session sm)
         }
 #endif
 #if defined SEQ66_JACK_SESSION
-        else if (usr().want_jack_session())
+        if (usr().want_jack_session())
         {
             tenturl = rc().jack_session();          /* JACK session UUID    */
         }

@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2022-01-09
+ * \updates       2023-03-28
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -219,32 +219,6 @@ clinsmanager::close_session (std::string & msg, bool ok)
 #endif
     return smanager::close_session(msg, ok);
 }
-
-#if defined SEQ66_SESSION_DETACHABLE
-
-/**
- *  Somewhat of the inverse of create_session().
- */
-
-bool
-clinsmanager::detach_session (std::string & msg, bool ok)
-{
-#if defined SEQ66_NSM_SUPPORT
-    if (usr().in_nsm_session())
-    {
-        warnprint("Detaching (closing) NSM session");
-        nsm_active(false);                              /* class flag       */
-        m_nsm_client->detach_session();
-
-        /*
-         * Freezes in the lo_server_thread_stop() call: m_nsm_client.reset();
-         */
-    }
-#endif
-    return smanager::detach_session(msg, ok);
-}
-
-#endif
 
 /**
  *  Saves the active MIDI file, and then calls the base-class version of

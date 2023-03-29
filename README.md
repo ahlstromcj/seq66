@@ -1,4 +1,4 @@
-# README for Seq66 0.99.3 2023-03-27
+# README for Seq66 0.99.3 2023-03-29
 
 
 __Seq66__: MIDI sequencer and live-looper with a hardware-sampler-like
@@ -93,6 +93,7 @@ Windows, and using a conventional source tarball.
     *   Version 0.99.3:
         *   Issue #107.  The basic fix is made. Still need to rehabilitate
             the Expand-pattern functionality.
+        *   Issue #40.  Revisited, still in progress.
         *   Automation fixes:
             *   Fixed processing grid keystrokes twice.
             *   Renamed record-mode and grid-model control labels.

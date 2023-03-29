@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-03-27
+ * \updates       2023-03-29
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1906,84 +1906,6 @@ qsmainwnd::save_session ()
     return result;
 }
 
-#if defined SEQ66_SESSION_DETACHABLE
-
-/*
- *  Note that the "use NSM" flag is set at construction time.
- */
-
-void
-qsmainwnd::attach_session (smanager * sp)
-{
-    if (not_nullptr(sp))
-        m_session_mgr_ptr = sp;
-    else
-        use_nsm(false);
-}
-
-/**
- *  Not yet ready for prime time.
- */
-
-bool
-qsmainwnd::detach_session ()
-{
-    bool result = false;
-    if (use_nsm())
-    {
-        if (not_nullptr(session()))
-        {
-            std::string msg;
-            result = session()->detach_session(msg);
-            if (result)
-            {
-                m_session_mgr = nullptr;        /* dangerous */
-                use_nsm(false);
-            }
-            else
-                show_message_box(msg);
-
-        }
-    }
-    return result;
-}
-
-/**
- *  Calls check(), and if it checks out (heh heh), removes all of the editor
- *  windows and then calls for an exit of the application.  It "detaches" from
- *  the session.  To do that, we need to:
- *
- *      -   Tell the session manager that we are leaving the session.  Is this
- *          permanent or just temporary?
- *      -   Detach from the session:  nullify the pointer and reset the
- *          session flag.
- *      -   Recreate the main window menus.
- *
- *  From the NSM API:
- *
- *      This option MUST be disabled unless its meaning is to disconnect
- *      the application from session management.
- */
-
-void
-qsmainwnd::quit_session ()
-{
-    if (use_nsm())
-    {
-        if (check())
-        {
-            if (detach_session()) // currently causes an INCOMPLETE Quit later
-            {
-                use_nsm(false);
-                disconnect_nsm_slots();
-                connect_normal_slots();
-            }
-        }
-    }
-}
-
-#endif  // defined SEQ66_SESSION_DETACHABLE
-
 bool
 qsmainwnd::save_file (const std::string & fname, bool updatemenu)
 {
@@ -2192,7 +2114,7 @@ qsmainwnd::import_midi_into_set ()
 }
 
 void
-qsmainwnd::import_project()
+qsmainwnd::import_project ()
 {
     std::string selecteddir;
     std::string selectedfile;
@@ -2200,7 +2122,15 @@ qsmainwnd::import_project()
     if (selected && not_nullptr(session()))
     {
         if (session()->import_into_session(selecteddir, selectedfile))
+        {
+            /*
+             * ca 2023-03-29 Added the following two 'rc' settings.
+             */
+
+            rc().load_most_recent(false);       /* don't load a MIDI file   */
+            rc().set_save_list(true);           /* save all configs at exit */
             signal_for_restart();               /* "reboot" the application */
+        }
     }
 }
 
@@ -3259,64 +3189,8 @@ qsmainwnd::connect_nsm_slots ()
      */
 
     ui->actionQuit->setText("Hide");
-
-#if defined SEQ66_SESSION_DETACHABLE
-
-    /*
-     * File / Close. The original author of NSM asked us what the heck "detach
-     * session" meant, but his own documentation says this:
-     *
-     *      :::: Close (as distinguished from Quit or Exit)
-     *      This option *MUST* be disabled unless its meaning is to disconnect
-     *      the application from session management.
-     */
-
-    ui->actionClose->setText("&Detach Session");
-    ui->actionClose->setToolTip("Detach from session management.");
-    connect
-    (
-        ui->actionClose, SIGNAL(triggered(bool)),
-        this, SLOT(quit_session())
-    );
-    ui->actionClose->setEnabled(false);
-
-#else
-
     ui->actionClose->setVisible(false); // ui->actionClose->hide();
-
-#endif
-
 }
-
-#if defined SEQ66_SESSION_DETACHABLE
-
-void
-qsmainwnd::disconnect_nsm_slots ()
-{
-    disconnect
-    (
-        ui->actionNew, SIGNAL(triggered(bool)), this, SLOT(new_session())
-    );
-    disconnect
-    (
-        ui->actionImportMIDIIntoSession, SIGNAL(triggered(bool)),
-        this, SLOT(import_midi_into_session())
-    );
-    disconnect
-    (
-        ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(save_session())
-    );
-    disconnect
-    (
-        ui->actionSave_As, SIGNAL(triggered(bool)), this, SLOT(save_file_as())
-    );
-    disconnect
-    (
-        ui->actionClose, SIGNAL(triggered(bool)), this, SLOT(quit_session())
-    );
-}
-
-#endif
 
 void
 qsmainwnd::connect_normal_slots ()
@@ -3382,17 +3256,6 @@ qsmainwnd::connect_normal_slots ()
         this, SLOT(save_file_as())
     );
 
-#if defined SEQ66_SESSION_DETACHABLE
-
-    /*
-     * File / Close.  Hide it.  Used only for NSM; otherwise the stock
-     * Quit enty is used.
-     */
-
-    ui->actionClose->setVisible(false);
-
-#endif
-
     /*
      * File / Recent MIDI files
      */
@@ -3401,35 +3264,6 @@ qsmainwnd::connect_normal_slots ()
     create_action_menu();
     update_recent_files_menu();
 }
-
-#if defined SEQ66_SESSION_DETACHABLE
-
-void
-qsmainwnd::disconnect_normal_slots ()
-{
-    disconnect(ui->actionNew, SIGNAL(triggered(bool)), this, SLOT(new_file()));
-    disconnect
-    (
-        ui->actionOpen, SIGNAL(triggered(bool)),
-        this, SLOT(select_and_load_file())
-    );
-    disconnect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(save_file()));
-    disconnect
-    (
-        ui->actionSave_As, SIGNAL(triggered(bool)), this, SLOT(save_file_as())
-    );
-
-    /*
-     *  The opposite of create_action_connections().  We hope clear()
-     *  disconnects everything.  Similar for create_action_menu();
-     */
-
-    m_recent_action_list.clear();
-    if (not_nullptr(m_menu_recent) && m_menu_recent->isWidgetType())
-        delete m_menu_recent;
-}
-
-#endif
 
 /**
  *  Opens the Performance Editor (Song Editor).

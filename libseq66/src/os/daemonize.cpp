@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2023-03-27
+ * \updates       2023-03-29
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -83,7 +83,7 @@
 
 #include <atomic>                       /* std::atomic<bool>                */
 #include <stdlib.h>                     /* EXIT_FAILURE for 32-bit builds   */
-#include <string.h>                     /* strlen() etc.                    */
+#include <string.h>                     /* memset()                         */
 
 #include "seq66_features.hpp"           /* seq66::seq_app_name()            */
 #include "os/daemonize.hpp"             /* daemonization functions & macros */
@@ -653,6 +653,7 @@ get_pid_by_name (const std::string & exename)
     pid_t result = 0;
     char cmd[s_pid_size + 1];
     snprintf(cmd, s_pid_size, "pidof %s", exename.c_str());
+
     FILE * fp = popen(cmd, "r");
     if (not_nullptr(fp))
     {
@@ -682,6 +683,52 @@ get_pid ()
 {
     long p = long(getpid());
     return std::to_string(p);
+}
+
+std::string
+get_process_name ()
+{
+    pid_t pid = getpid();
+    return get_process_name(pid);
+}
+
+/**
+ *  This Linux-only function reads /proc/PID/comm to get the (short) name of
+ *  the process with the give PID.
+ *
+ *  It has been stated that the size of the process name in /proc/PID/comm is
+ *  less than TASK_COMM_LEN = 16.  Thus, the return value might be a truncated
+ *  process name.
+ */
+
+std::string
+get_process_name (pid_t pid)
+{
+    std::string result;
+    char temp[32];
+    snprintf(temp, sizeof temp, "/proc/%d/comm", int(pid));
+
+    FILE * f = fopen(temp, "r");
+    if (not_nullptr(f))
+    {
+        size_t sz = fread(temp, sizeof(char), sizeof temp , f);
+        if (sz > 0)
+        {
+            if (temp[sz - 1] == '\n')
+                temp[sz - 1] = 0;
+
+            result = std::string(temp);
+        }
+        fclose(f);
+    }
+    return result;
+}
+
+std::string
+get_parent_process_name ()
+{
+    pid_t parentpid = getppid();
+    return get_process_name(parentpid);
 }
 
 #else
@@ -715,6 +762,31 @@ get_pid ()
 {
     long p = long(_getpid());
     return std::to_string(p);
+}
+
+std::string
+get_process_name ()
+{
+    pid_t pid = _getpid();
+    return get_process_name(pid);
+}
+
+std::string
+get_process_name (pid_t /*pid*/)
+{
+    std::string result;
+    return result;              /* TO DO */
+}
+
+/*
+ * See https://stackoverflow.com/questions/29939893/get-parent-process-name-windows
+ */
+
+std::string
+get_parent_process_name ()
+{
+    long parentpid = long(_getppid());
+    return "TODO";
 }
 
 #endif  // defined SEQ66_PLATFORM_LINUX

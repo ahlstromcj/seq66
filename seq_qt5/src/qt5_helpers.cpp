@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2022-10-19
+ * \updates       2023-03-29
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -57,6 +57,7 @@
 #include <QStandardItemModel>
 #include <QTimer>
 
+#include "cfg/settings.hpp"             /* seq66::rc().home_config_dir...() */
 #include "util/filefunctions.hpp"       /* seq66 file-name manipulations    */
 #include "qt5_helpers.hpp"              /* these cool helper functions!     */
 

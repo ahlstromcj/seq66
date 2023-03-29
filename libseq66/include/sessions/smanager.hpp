@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2022-07-22
+ * \updates       2023-03-28
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -201,9 +201,6 @@ public:
 
     virtual bool create_session (int argc = 0, char * argv [] = nullptr);
     virtual bool close_session (std::string & msg, bool ok = true);
-#if defined SEQ66_SESSION_DETACHABLE
-    virtual bool detach_session (std::string & msg, bool ok = true);
-#endif
     virtual bool save_session (std::string & msg, bool ok = true);
     virtual bool create_window ();
     virtual bool create_project

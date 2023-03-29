@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2023-03-27
+ * \updates       2023-03-29
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -155,9 +155,6 @@ qt5nsmanager::create_window ()
         if (result)
         {
             m_window.reset(qm);
-#if defined SEQ66_SESSION_DETACHABLE
-            m_window->attach_session(this);         /* ATTACH/DETACH        */
-#endif
 #if defined SEQ66_NSM_SUPPORT
             if (not_nullptr(nsm_client()))
             {
@@ -282,20 +279,6 @@ qt5nsmanager::close_session (std::string & msg, bool ok)
     bool closed = clinsmanager::close_session(msg, ok);
     return saved && closed;
 }
-
-#if defined SEQ66_SESSION_DETACHABLE
-
-/**
- *  Will do more with this later.  Currently we just call the base class.
- */
-
-bool
-qt5nsmanager::detach_session (std::string & msg, bool ok)
-{
-    return clinsmanager::detach_session(msg, ok);
-}
-
-#endif
 
 bool
 qt5nsmanager::run ()

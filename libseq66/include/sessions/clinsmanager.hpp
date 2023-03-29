@@ -28,7 +28,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2022-01-09
+ * \updates       2023-03-28
  * \license       GNU GPLv2 or above
  *
  *  Provides a base class that can be used to manage the command-line version
@@ -127,9 +127,6 @@ public:
         char * argv [] = nullptr
     ) override;
     virtual bool close_session (std::string & msg, bool ok = true) override;
-#if defined SEQ66_SESSION_DETACHABLE
-    virtual bool detach_session (std::string & msg, bool ok = true) override;
-#endif
     virtual bool save_session (std::string & msg, bool ok = true) override;
     virtual bool create_project
     (

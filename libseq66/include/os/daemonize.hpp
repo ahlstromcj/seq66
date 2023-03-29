@@ -23,7 +23,7 @@
  * \file          daemonize.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2023-03-27
+ * \updates       2023-03-29
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
@@ -126,6 +126,9 @@ extern bool reroute_stdio_to_dev_null ();
 extern bool pid_exists (const std::string & exename);
 extern pid_t get_pid_by_name (const std::string & exename);
 extern std::string get_pid ();
+extern std::string get_process_name ();
+extern std::string get_process_name (pid_t pid);
+extern std::string get_parent_process_name ();
 
 /*
  * Basic session handling from use falkTX, circa 2020-02-02.  The following

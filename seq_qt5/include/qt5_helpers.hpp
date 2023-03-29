@@ -28,12 +28,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2022-04-28
+ * \updates       2023-03-29
  * \license       GNU GPLv2 or above
  *
  */
 
-#include "cfg/settings.hpp"             /* seq66::rc().home_config_dir...() */
 #include "ctrl/keymap.hpp"              /* seq66::qt_modkey_ordinal()       */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke wrapper class   */
 
@@ -51,6 +50,8 @@ class QWidget;
 
 namespace seq66
 {
+
+class combolist;
 
 /*
  *  Free constants in the seq66 namespace.  These values are simply visible
