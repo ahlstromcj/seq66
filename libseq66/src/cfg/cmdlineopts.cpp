@@ -124,7 +124,7 @@ cmdlineopts::s_long_options [] =
 #endif
     {"no-jack-midi",        0, 0, 'N'},
     {"jack-midi",           0, 0, 't'},
-    {"jack",                0, 0, '9'},         /* the same as --jack-midi  */
+    {"jack",                0, 0, '1'},         /* the same as --jack-midi  */
     {"no-jack-connect",     0, 0, 'w'},
     {"jack-connect",        0, 0, 'W'},
 #endif
@@ -174,7 +174,7 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         0123456789#@AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz
-        x         x xx::x:xx  :: x:x:xxxxx::xxxx *xx :xxxxxxx:xxxx::  aa
+        xx       xx xx::x:xx  :: x:x:xxxxx::xxxx *xx :xxxxxxx:xxxx::  aa
 \endverbatim
  *
  *  * Note that 'o' options arguments cannot be included here due to issues
@@ -196,9 +196,11 @@ cmdlineopts::s_long_options [] =
  */
 
 #if defined SEQ66_JACK_SUPPORT      // how to handle no SEQ66_NSM_SUPPORT?
-#define CMD_OPTS "09#AaB:b:Cc:DdF:f:gH:hI:iJjKkL:l:M:mNnoPpq:RrSsTtU:uVvWwX:x:Zz#"
+#define CMD_OPTS \
+    "09#AaB:b:Cc:DdF:f:gH:hI:iJjKkL:l:M:mNnoPpq:RrSsTtU:uVvWwX:x:Zz#"
 #else
-#define CMD_OPTS "0#AaB:b:c:DdF:f:H:hI:iKkL:l:M:mnoPpq:RrsTuVvX:x:Zz#"
+#define CMD_OPTS \
+    "0#AaB:b:c:DdF:f:H:hI:iKkL:l:M:mnoPpq:RrsTuVvX:x:Zz#"
 #endif
 
 const std::string cmdlineopts::s_arg_list = CMD_OPTS;
@@ -213,7 +215,7 @@ static const std::string s_help_1a =
 "   -V, --version, #         Show program version/build and exit.\n"
 "   -v, --verbose            Verbose mode, show more data to the console.\n"
 #if defined SEQ66_NSM_SUPPORT
-"   -n, --nsm                Activate Non/New Session Manager support.\n"
+"   -n, --nsm                Activate NSM support (for debugging).\n"
 "   -T, --no-nsm             Ignore NSM in 'usr' file. T for 'typical'.\n"
 #endif
 "   -X, --playlist filename  Load playlists from the configuration directory.\n"
@@ -932,7 +934,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
 #if defined SEQ66_JACK_SUPPORT
-        case '9':                   /* added for consistency with --alsa    */
+        case '1':                   /* added for consistency with --alsa    */
             rc().with_jack_midi(true);
             break;
 #endif
@@ -1058,7 +1060,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
 #if defined SEQ66_NSM_SUPPORT
         case 'n':
-            usr().session_manager("nsm");
+            usr().session_manager("nsm");       /* mostly for debugging     */
             break;
 #endif
 

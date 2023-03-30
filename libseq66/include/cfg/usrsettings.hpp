@@ -865,6 +865,13 @@ private:
      *  This value indicates to create and use a Non Session Manager (or New
      *  Session Manager) client.  The name of the option in the "usr" file is
      *  "session", as in "session = nsm".
+     *
+     *  However, at the moment we actually detect if the application is a
+     *  child of the NSM daemon, and then later set the "in-nsm-session" flag
+     *  once connected and acknowledged by it.
+     *
+     *  So currently this value is used as a flag to indicate we want to
+     *  process as if running under NSM, for easier debugging.
      */
 
     session m_session_manager;

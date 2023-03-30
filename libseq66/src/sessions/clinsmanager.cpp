@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2023-03-28
+ * \updates       2023-03-30
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -149,6 +149,17 @@ clinsmanager::create_session (int argc, char * argv [])
 #if defined SEQ66_NSM_SUPPORT
     std::string url;
     bool ok = detect_session(url);                  /* side-effect          */
+#if defined SEQ66_PLATFORM_DEBUG
+    if (! ok)
+    {
+        if (usr().want_nsm_session())               /* want to debug NSM?   */
+        {
+            nsm_active(true);                       /* class flag           */
+            usr().in_nsm_session(true);             /* global flag          */
+        }
+        return true;
+    }
+#endif
     if (ok)
     {
         std::string nsmfile = "dummy/file";
@@ -210,7 +221,8 @@ clinsmanager::close_session (std::string & msg, bool ok)
         warnprint("Closing NSM session");
         nsm_active(false);                              /* class flag       */
         usr().in_nsm_session(false);                    /* global flag      */
-        m_nsm_client->close_session();
+        if (m_nsm_client)                               /* double check     */
+            m_nsm_client->close_session();
 
         /*
          * Freezes in the lo_server_thread_stop() call: m_nsm_client.reset();

@@ -192,7 +192,17 @@ smanager::main_settings (int argc, char * argv [])
         {
             int rcode = cmdlineopts::parse_command_line_options(argc, argv);
             result = rcode != (-1);
-            if (! result)
+            if (result)
+            {
+#if defined SEQ66_PLATFORM_DEBUG
+                if (usr().want_nsm_session())
+                {
+                    usr().in_nsm_session(true);
+                    in_nsm = true;
+                }
+#endif
+            }
+            else
                 is_help(true);          /* a hack to avoid create_window()  */
         }
         if (result)
@@ -228,15 +238,18 @@ smanager::main_settings (int argc, char * argv [])
              *  the qsmainwnd.
              */
 
-            std::string errmessage;                 /* just in case!        */
-            result = cmdlineopts::parse_options_files(errmessage);
-            if (! result)
+            if (! in_nsm)
             {
-                errprint(errmessage);
-                append_error_message(errmessage);   /* raises the message   */
+                std::string errmessage;             /* just in case!        */
+                result = cmdlineopts::parse_options_files(errmessage);
+                if (! result)
+                {
+                    errprint(errmessage);
+                    append_error_message(errmessage); /* raises the message */
+                }
+                optionindex = cmdlineopts::parse_command_line_options(argc, argv);
+                result = optionindex >= 0;
             }
-            optionindex = cmdlineopts::parse_command_line_options(argc, argv);
-            result = optionindex >= 0;
             if (result)
             {
                 (void) cmdlineopts::parse_o_options(argc, argv);
@@ -253,7 +266,7 @@ smanager::main_settings (int argc, char * argv [])
                     (void) reroute_stdio(logfile);
 
                 m_midi_filename.clear();
-                if (optionindex < argc)                 /* MIDI filename given? */
+                if (optionindex > 0 && optionindex < argc) /* MIDI filename?    */
                 {
                     std::string fname = argv[optionindex];
                     std::string errmsg;
