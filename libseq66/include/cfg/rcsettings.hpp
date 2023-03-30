@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2022-10-02
+ * \updates       2023-03-30
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -1415,6 +1415,7 @@ public:
 
     void create_config_names (const std::string & base = "");
     void set_save_list (bool state);
+    void disable_save_list ();
     void set_save (const std::string & name, bool value);
 
 private:

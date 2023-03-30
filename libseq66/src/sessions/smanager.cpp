@@ -1111,14 +1111,11 @@ smanager::make_path_names
     {
         std::string cfgpath = path;
         std::string midipath = path;
-        std::string subdir = "midi";
-        if (! midisubdir.empty())
-            subdir = midisubdir;
-
+        std::string subdir = midisubdir.empty() ? "midi" : midisubdir ;
         if (usr().in_nsm_session())         // nsm_active()
         {
             midipath = pathname_concatenate(cfgpath, subdir);
-            cfgpath = pathname_concatenate(cfgpath, "config");
+            /////cfgpath = pathname_concatenate(cfgpath, "config");
         }
         else
         {
@@ -1159,19 +1156,28 @@ smanager::import_into_session
         std::string destbase = rc().config_filename();
         std::string cfgpath;
         std::string midipath;
+        std::string source = "Source: ";
+        std::string destination = "Destination: ";
+        source += sourcepath;
+        source += sourcebase;
+        destination += destdir;
+        session_message(source);
+        session_message(destination);
         result = make_path_names(destdir, cfgpath, midipath);
         if (result)
-            result = delete_configuration(cfgpath, destbase);
-
-        if (result)
-            result = copy_configuration(sourcepath, sourcebase, cfgpath);
-
-        if (result)
         {
-            result = import_configuration
-            (
-                sourcepath, sourcebase, cfgpath, midipath
-            );
+            result = delete_configuration(cfgpath, destbase);
+            if (result)
+            {
+                result = copy_configuration(sourcepath, sourcebase, cfgpath);
+                if (result)
+                {
+                    result = import_configuration
+                    (
+                        sourcepath, sourcebase, cfgpath, midipath
+                    );
+                }
+            }
         }
     }
     return result;

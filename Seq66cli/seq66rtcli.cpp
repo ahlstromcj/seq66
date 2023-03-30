@@ -130,15 +130,15 @@ main (int argc, char * argv [])
             daemonization rc = seq66::daemonize(usermask, appname, flags, ".");
             if (rc == daemonization::parent)
             {
-                warnprint("Parent exits with success...");
+                seq66::session_message("Parent exits with success...");
                 exit(EXIT_SUCCESS);
             }
             else if (rc == daemonization::failure)
             {
-                errprint("Parent exits with failure...");
+                seq66::session_message("Parent exits with failure...");
                 exit(EXIT_FAILURE);
             }
-            warnprint("Child continues normal operations...");
+            seq66::session_message("Child continues normal operations...");
         }
 #endif
         std::string destination = logfile.empty() ? "/dev/null" : logfile ;
@@ -152,7 +152,12 @@ main (int argc, char * argv [])
         if (seq66::usr().save_daemonize())
         {
             if (seq66::cmdlineopts::write_usr_file())
-                warnprint("Daemon setup: saved 'usr' settings, exiting...");
+            {
+                seq66::session_message
+                (
+                    "Daemon setup: saved 'usr' settings, exiting..."
+                );
+            }
         }
         else
         {
@@ -160,7 +165,7 @@ main (int argc, char * argv [])
             bool ok = sm.run();
             exit_status = ok ? EXIT_SUCCESS : EXIT_FAILURE ;
             (void) sm.close_session(msg, ok);
-            infoprint(msg);
+            seq66::session_message(msg);
         }
     }
     else
@@ -171,9 +176,9 @@ main (int argc, char * argv [])
     {
         seq66::undaemonize(usermask);
         if (exit_status == EXIT_FAILURE)
-            warnprint("Child exits with failure...");
+            seq66::session_message("Child exits with failure...");
         else
-            warnprint("Child does normal exit...");
+            seq66::session_message("Child does normal exit...");
     }
 #endif
 

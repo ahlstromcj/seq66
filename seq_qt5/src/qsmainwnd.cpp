@@ -1279,7 +1279,11 @@ qsmainwnd::import_playlist ()
             if (ok)
             {
                 rc().set_imported_playlist(sourcepath, midipath);
-                signal_for_restart();           /* "reboot" the application */
+                if (! use_nsm())
+                {
+                    session_message("Resarting with imported playlist");
+                    signal_for_restart();       /* "reboot" the application */
+                }
             }
         }
     }
@@ -2124,12 +2128,17 @@ qsmainwnd::import_project ()
         if (session()->import_into_session(selecteddir, selectedfile))
         {
             /*
-             * ca 2023-03-29 Added the following two 'rc' settings.
+             * ca 2023-03-30
+             * We do not want to save any configuration after the import.
+             * We need to restart the app to load the new configuration.
              */
 
-            rc().load_most_recent(false);       /* don't load a MIDI file   */
-            rc().set_save_list(true);           /* save all configs at exit */
-            signal_for_restart();               /* "reboot" the application */
+            rc().disable_save_list();           /* save all configs at exit */
+            if (! use_nsm())
+            {
+                session_message("Resarting with imported configuration");
+                signal_for_restart();           /* "reboot" the application */
+            }
         }
     }
 }

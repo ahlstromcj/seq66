@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-01-01
+ * \updates       2023-03-30
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -276,6 +276,25 @@ rcsettings::set_save_list (bool state)
     m_save_list.add("drums", state);
     m_save_list.add("ctrl", state);
     m_save_list.add("qss", state);
+}
+
+/**
+ *  This function is useful when importing a session into NSM. It prevents
+ *  any saves when exiting the application.
+ */
+
+void
+rcsettings::disable_save_list ()
+{
+    m_save_list.clear();
+    m_save_list.add("rc", false);
+    m_save_list.add("usr", false);
+    m_save_list.add("mutes", false);
+    m_save_list.add("playlist", false);
+    m_save_list.add("palette", false);
+    m_save_list.add("drums", false);
+    m_save_list.add("ctrl", false);
+    m_save_list.add("qss", false);
 }
 
 void

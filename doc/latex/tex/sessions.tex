@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2023-03-27
+% \update      2023-03-30
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -411,6 +411,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    one can see what has been created to support the session;
    the directory that \textsl{NSM}
    creates by default is \texttt{/home/user/NSM Sessions}.
+   \index{nsm!old session}
 
 \begin{verbatim}
    $ pwd
@@ -430,12 +431,33 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
      +-- session.nsm
 \end{verbatim}
 
+   Important: If one is running a recent "New" version of the 
+   \textsl{Non Session Manager}, then the session data is not stored
+   in \texttt{/home/user/NSM Sessions},
+   but in
+   in \texttt{/home/user/.local/share/nsm},
+   Thus the above would be located differently:
+   \index{nsm!new session}
+
+\begin{verbatim}
+   $ cd ~/.local/share/nsm    # the value of $XDG_DATA_HOME
+   Seq66/
+     +-- seq66.nGJDW/
+     [ the rest is the same as above ]
+\end{verbatim}
+
    So \textsl{NSM} has created a directory with the session name we gave it:
-   \texttt{Seq66}.  Under that directory is a file, \texttt{session.nsm}, which
+   \texttt{Seq66}.
+
+   \textsl{Side note: the \texttt{nsmd} daemon creates a file named after its
+   process ID in \texttt{\$XDG\_RUNTIME\_DIR/nsm/d}, e.g.
+   \texttt{/run/usr/1000/nsm/d/2170}.}
+
+   Under that directory is a file, \texttt{session.nsm}, which
    contains information like the following:
 
 \begin{verbatim}
-   seq66:qseq66:nXYZT
+   seq66:qseq66:nGJDW
 \end{verbatim}
 
    The format of this text is \texttt{appname:exename:nXYZT}, where
