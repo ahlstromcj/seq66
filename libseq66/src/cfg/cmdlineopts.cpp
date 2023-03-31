@@ -996,10 +996,8 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case 'H':
-            rc().full_config_directory(soptarg, true);  /* add HOME perhaps */
-            file_message("Set home config to", rc().home_config_directory());
-            if (! make_directory_path(rc().home_config_directory()))
-                errprint("Could not create that directory");
+
+            rc().set_config_directory(soptarg);
             break;
 
         case 'h':

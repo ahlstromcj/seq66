@@ -344,7 +344,11 @@ midi_alsa_info::get_all_port_info
                 {
                     /*
                      * When VMPK is running, we get this message for a
-                     * client-name of 'VMPK Output'.
+                     * client-name of 'VMPK Output'.  We also get this
+                     * as some kind of weird leftover from NSM with
+                     * clientnames of seq66.nOIJQ and seq66.nYAUV.
+                     * The capabilities include SND_SEQ_PORT_CAP_NO_EXPORT:
+                     * Subscription management from 3rd client is disallowed.
                      */
 
                     warnprintf("Non-I/O port '%s'", clientname.c_str());

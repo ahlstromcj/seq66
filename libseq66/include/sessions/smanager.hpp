@@ -226,19 +226,9 @@ public:
         m_session_manager_name = mgrname;
     }
 
-    const std::string & manager_name () const
-    {
-        return m_session_manager_name;
-    }
-
     virtual void session_manager_path (const std::string & pathname)
     {
         m_session_manager_path = pathname;
-    }
-
-    const std::string & manager_path () const
-    {
-        return m_session_manager_path;
     }
 
     virtual void session_display_name (const std::string & dispname)
@@ -246,14 +236,24 @@ public:
         m_session_display_name = dispname;
     }
 
-    const std::string & display_name () const
-    {
-        return m_session_display_name;
-    }
-
     virtual void session_client_id (const std::string & clid)
     {
         m_session_client_id = clid;
+    }
+
+    const std::string & manager_name () const
+    {
+        return m_session_manager_name;
+    }
+
+    const std::string & manager_path () const
+    {
+        return m_session_manager_path;
+    }
+
+    const std::string & display_name () const
+    {
+        return m_session_display_name;
     }
 
     const std::string & client_id () const

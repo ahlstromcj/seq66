@@ -174,10 +174,7 @@ smanager::main_settings (int argc, char * argv [])
 
     if (in_nsm)
     {
-        std::string msg = "Parent process is '";
-        msg += parentname;
-        msg += "'";
-        (void) session_message(msg);    /* might comfort the developer :-)  */
+        session_message("Parent process", parentname);
     }
     else
     {
@@ -197,8 +194,10 @@ smanager::main_settings (int argc, char * argv [])
 #if defined SEQ66_PLATFORM_DEBUG
                 if (usr().want_nsm_session())
                 {
-                    usr().in_nsm_session(true);
+                    // nsm_active(true);               /* class flag           */
+                    // usr().in_nsm_session(true);
                     in_nsm = true;
+                    // rc().config_subdirectory("config");
                 }
 #endif
             }
@@ -801,20 +800,20 @@ smanager::create (int argc, char * argv [])
     bool result = main_settings(argc, argv);
     if (result)
     {
-        bool ok = create_session(argc, argv);   /* get path, client ID, etc */
+        bool ok = create_session(argc, argv);       /* path, client ID, etc */
         if (ok)
         {
-            std::string homedir = manager_path();
+            std::string homedir = manager_path();   /* session manager path */
             if (homedir == "None")
-                homedir = rc().home_config_directory();
+                homedir = rc().default_session_path();
 
-            file_message("Session manager path", homedir);
+            session_message("Session manager path", homedir);
             (void) create_project(argc, argv, homedir);
         }
         if (ok)
             (void) open_midi_control_file();
 
-        result = create_performer();        /* fails if performer not made  */
+        result = create_performer();
         if (result)
         {
             result = open_playlist();
@@ -932,19 +931,16 @@ smanager::create_configuration
             result = make_directory_path(mainpath);
             if (result)
             {
-                file_message("Ready", mainpath);
+                file_message("Main path", mainpath);
                 result = make_directory_path(cfgfilepath);
                 if (result)
-                {
-                    file_message("Ready", cfgfilepath);
                     rc().full_config_directory(cfgfilepath);
-                }
             }
             if (result && ! midifilepath.empty())
             {
                 result = make_directory_path(midifilepath);
                 if (result)
-                    file_message("Ready", midifilepath);
+                    file_message("MIDI path", midifilepath);
             }
             rc().set_save_list(true);                   /* save all configs */
             if (usr().in_nsm_session())
@@ -1128,7 +1124,7 @@ smanager::make_path_names
         if (usr().in_nsm_session())         // nsm_active()
         {
             midipath = pathname_concatenate(cfgpath, subdir);
-            /////cfgpath = pathname_concatenate(cfgpath, "config");
+////        cfgpath = pathname_concatenate(cfgpath, "config");
         }
         else
         {
@@ -1169,13 +1165,8 @@ smanager::import_into_session
         std::string destbase = rc().config_filename();
         std::string cfgpath;
         std::string midipath;
-        std::string source = "Source: ";
-        std::string destination = "Destination: ";
-        source += sourcepath;
-        source += sourcebase;
-        destination += destdir;
-        session_message(source);
-        session_message(destination);
+        session_message("Source", sourcepath + sourcebase);
+        session_message("Destination", destdir);
         result = make_path_names(destdir, cfgpath, midipath);
         if (result)
         {

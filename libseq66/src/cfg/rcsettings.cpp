@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-03-30
+ * \updates       2023-03-31
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -110,13 +110,14 @@ rcsettings::rcsettings () :
     m_jack_session_active       (false),
     m_last_used_dir             (),                     /* double_quotes()  */
 #if defined SEQ66_PLATFORM_WINDOWS      /* but see home_config_directory()  */
-    m_config_directory          (SEQ66_CLIENT_NAME),
+    m_session_directory         (SEQ66_CLIENT_NAME),
 #else
-    m_config_directory
+    m_session_directory
     (
         std::string(".config/") + std::string(SEQ66_CLIENT_NAME)
     ),
 #endif
+    m_config_subdirectory       (),
     m_config_filename           (SEQ66_CONFIG_NAME),    /* updated in body  */
     m_full_config_directory     (),
     m_user_file_active          (true),
@@ -217,10 +218,11 @@ rcsettings::set_defaults ()
     m_jack_session_active       = false;
     m_last_used_dir.clear();                /* double_quotes()              */
 #if defined SEQ66_PLATFORM_WINDOWS          /* see home_config_directory()  */
-    m_config_directory          = SEQ66_CLIENT_NAME;
+    m_session_directory         = SEQ66_CLIENT_NAME;
 #else
-    m_config_directory = std::string(".config/") + std::string(SEQ66_CLIENT_NAME);
+    m_session_directory = std::string(".config/") + std::string(SEQ66_CLIENT_NAME);
 #endif
+    m_config_subdirectory.clear(),
     m_config_filename           = SEQ66_CONFIG_NAME;
     m_config_filename           += ".rc";
     m_full_config_directory.clear();
@@ -445,6 +447,26 @@ rcsettings::app_client_name (const std::string & n) const
     set_client_name(n);
 }
 
+std::string
+rcsettings::default_session_path () const
+{
+    std::string result = user_home();
+    if (result.empty())
+    {
+        result += session_directory();          /* seq66 directory      */
+    }
+    else
+    {
+        result += path_slash();                 /* e.g. /home/username/ */
+        result += session_directory();          /* seq66 directory      */
+
+#if defined SEQ66_PLATFORM_UNIX                 /* TODO: make robust    */
+        result += path_slash();
+#endif
+    }
+    return result;
+}
+
 /**
  *  Provides the directory for the configuration file, and also creates the
  *  directory if necessary.
@@ -453,8 +475,8 @@ rcsettings::app_client_name (const std::string & n) const
  *  the configuration file is "qseq66.rc".
  *
  *  This function should also adapt to Windows conventions automatically.
- *  We shall see.  No, it does not.  But all we have to do is replace
- *  Window's HOMEPATH with its LOCALAPPDATA value.
+ *  No, it does not. But all we have to do is replace Window's HOMEPATH with
+ *  its LOCALAPPDATA value.
  *
  * \return
  *      Returns the selected home configuration directory.  If it does not
@@ -471,8 +493,11 @@ rcsettings::home_config_directory () const
         if (! home.empty())
         {
             result = home + path_slash();           /* e.g. /home/username/ */
-            result += config_directory();           /* seq66 directory      */
-#if defined SEQ66_PLATFORM_UNIX
+            result += session_directory();           /* seq66 directory      */
+            if (! m_config_subdirectory.empty())
+                result = filename_concatenate(result, m_config_subdirectory);
+
+#if defined SEQ66_PLATFORM_UNIX                     /* TODO: make robust    */
             result += path_slash();
 #endif
             bool ok = make_directory_path(result);
@@ -481,7 +506,8 @@ rcsettings::home_config_directory () const
 #if defined SEQ66_PLATFORM_WINDOWS
                 result += path_slash();
 #endif
-                m_full_config_directory = normalize_path(result);
+                result = normalize_path(result);
+                m_full_config_directory = result;
             }
             else
             {
@@ -1010,7 +1036,7 @@ rcsettings::last_used_dir (const std::string & value)
 }
 
 /**
- * \setter m_config_directory
+ * \setter m_session_directory
  *
  * \param value
  *      The value to use to make the setting.  Currently, we do not handle
@@ -1018,10 +1044,43 @@ rcsettings::last_used_dir (const std::string & value)
  */
 
 void
-rcsettings::config_directory (const std::string & value)
+rcsettings::session_directory (const std::string & value)
 {
     if (! value.empty())
-        m_config_directory = value;
+        m_session_directory = value;
+}
+
+/**
+ * \setter m_config_subdirectory
+ *
+ * \param value
+ *      The value to use to make the setting. This should be a relative path.
+ */
+
+void
+rcsettings::config_subdirectory (const std::string & value)
+{
+    if (! value.empty())
+        m_config_subdirectory = value;
+}
+
+/**
+ *  New processing (2023-03-31) of the -H, --home option and of setting the
+ *  sub-directory for a session manager.
+ *
+ *  If the name has a root path (either the user's home directory or a full
+ *  path from root), then the configuration directory becomes the value
+ *  parameter. Otherwise, we merely set the sub-directory for later use.
+ */
+
+void
+rcsettings::set_config_directory (const std::string & value)
+{
+    bool rooted = name_has_root_path(value);
+    if (rooted)
+        full_config_directory(value);
+    else
+        config_subdirectory(value);
 }
 
 /**
@@ -1032,29 +1091,23 @@ rcsettings::config_directory (const std::string & value)
  *      locates are relative to home.
  *
  * \param value
- *      Provides the directory name, either an actual full path, or a path
- *      meant to be relative to the $HOME directory.
- *
- * \param addhome
- *      If true, the user's $HOME is prepended to the path, if not already
- *      there.
+ *      Provides the directory name, which should be an actual full path.
  */
 
 void
-rcsettings::full_config_directory (const::std::string & value, bool addhome)
+rcsettings::full_config_directory (const::std::string & value)
 {
     std::string tv = value;
-    if (name_has_root_path(tv))
-        addhome = false;
+    if (! m_config_subdirectory.empty())
+        tv = filename_concatenate(tv, m_config_subdirectory);
 
-    if (addhome)
-    {
-        tv = trim(tv, SEQ66_TRIM_CHARS_PATHS);
-        config_directory(tv);
-        m_full_config_directory.clear();
-        tv = home_config_directory();
-    }
     m_full_config_directory = normalize_path(tv, true, true);
+
+    std::string homedir = rc().home_config_directory();
+    if (make_directory_path(homedir))                   // REDUNDANT
+        file_message("Config directory", homedir);
+    else
+        file_error("Could not create", homedir);
 }
 
 /**

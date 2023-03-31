@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2023-01-01
+ * \updates       2023-03-31
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -1110,13 +1110,10 @@ get_url ()
 
     bool active = ! result.empty();
     usr().in_nsm_session(active);
-    if (rc().verbose())
+    if (active)
     {
-        if (active)
-        {
-            std::string msg = "NSM URL " + result;
-            session_message(msg);
-        }
+        std::string msg = "NSM URL " + result;
+        session_message(msg);
     }
     return result;
 }

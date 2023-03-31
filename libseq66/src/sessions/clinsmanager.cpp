@@ -156,6 +156,7 @@ clinsmanager::create_session (int argc, char * argv [])
         {
             nsm_active(true);                       /* class flag           */
             usr().in_nsm_session(true);             /* global flag          */
+            rc().config_subdirectory("config");
         }
         return true;
     }
@@ -164,6 +165,7 @@ clinsmanager::create_session (int argc, char * argv [])
     {
         std::string nsmfile = "dummy/file";
         std::string nsmext = nsm::default_ext();
+        rc().config_subdirectory("config");         /* NEW 2023-03-31       */
         m_nsm_client.reset(create_nsmclient(*this, url, nsmfile, nsmext));
         bool result = bool(m_nsm_client);
         if (result)
@@ -341,6 +343,11 @@ clinsmanager::create_project
     {
         std::string cfgpath;
         std::string midipath;
+
+        /*
+         * Appends "midi" and "config" (with NSM)
+         */
+
         result = make_path_names(path, cfgpath, midipath);
         if (result)
             result = create_configuration(argc, argv, path, cfgpath, midipath);

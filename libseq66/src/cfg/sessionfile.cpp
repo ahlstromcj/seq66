@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-12-29
- * \updates       2022-01-09
+ * \updates       2023-03-31
  * \license       GNU GPLv2 or above
  *
  *  This file is a read-only file created manually by the user in order
@@ -117,7 +117,7 @@ sessionfile::parse ()
         std::string s = get_variable(file, tag, "home");
         if (! s.empty())
         {
-            rc_ref().full_config_directory(s, true);  /* add HOME perhaps */
+            rc_ref().full_config_directory(s);
             file_message("Set home config to", rc_ref().home_config_directory());
             if (make_directory_path(rc_ref().home_config_directory()))
                 result = true;

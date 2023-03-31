@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-03-30
+ * \updates       2023-03-31
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -325,10 +325,16 @@ private:
     /**
      *  Holds the current 'rc' and 'usr' configuration base directory.  This
      *  value is ".config/seq66" by default.  For usage, it is normally
-     *  expanded.
+     *  expanded.  For NSM usage, it is the path returned by the NSM daemon.
      */
 
-    std::string m_config_directory;
+    std::string m_session_directory;
+
+    /**
+     *  An optional appendage to the base configuration directory.
+     */
+
+    std::string m_config_subdirectory;
 
     /**
      *  Holds the current 'rc' configuration filename.  This value is
@@ -341,7 +347,7 @@ private:
      *  The full expanded path to the configuration directory.  This value is
      *  created, by default, by concatenating $HOME and ".config/seq66".
      *  However it can be reset completely by the full_config_directory()
-     *  function to what ever the user needs (e.g. for usage with the Non
+     *  function to what ever the user needs (e.g. for usage with the Non/New
      *  Session Manager).
      */
 
@@ -379,7 +385,7 @@ private:
     /**
      *  The base name of the MIDI control file, if applicable.  This file is
      *  located only in the specific 'rc'/'usr' HOME directory,
-     *  m_config_directory.
+     *  m_session_directory.
      */
 
     std::string m_midi_control_filename;
@@ -404,7 +410,7 @@ private:
     /**
      *  The base name of the mute-group file, if applicable.  This file is
      *  located only in the specific 'rc'/'usr' HOME directory,
-     *  m_config_directory.
+     *  m_session_directory.
      */
 
     std::string m_mute_group_filename;
@@ -1031,13 +1037,14 @@ public:
         return m_portmaps_active;
     }
 
-    const std::string & config_directory () const
+    const std::string & session_directory () const
     {
-        return m_config_directory;
+        return m_session_directory;
     }
 
     void set_config_files (const std::string & value);
     bool has_home_config_path (const std::string & name);
+    std::string default_session_path () const;
     std::string home_config_directory () const;
     std::string trim_home_directory (const std::string & filepath);
 
@@ -1385,8 +1392,10 @@ public:
         m_jack_session_active = true;
     }
 
-    void full_config_directory (const std::string & value, bool addhome = false);
-    void config_directory (const std::string & value);
+    void set_config_directory (const std::string & value);
+    void full_config_directory (const std::string & value);
+    void session_directory (const std::string & value);
+    void config_subdirectory (const std::string & value);
     void config_filename (const std::string & value);
     void playlist_filename (const std::string & value);
     bool playlist_filename_checked (const std::string & value);

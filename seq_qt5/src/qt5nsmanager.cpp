@@ -183,8 +183,6 @@ qt5nsmanager::create_window ()
                  * Let the application stay active; let the user decide what to
                  * do about the error here.  For example, if a playlist doesn't
                  * load, why just exit?
-                 *
-                 * result = false;
                  */
             }
             else
@@ -194,9 +192,9 @@ qt5nsmanager::create_window ()
                 std::string clid;               /* config/session client ID */
                 if (usensm)
                 {
-                    path = manager_path();
-                    name = display_name();
-                    clid = client_id();
+                    path = manager_path();      /* session manager path     */
+                    name = display_name();      /* session display name     */
+                    clid = client_id();         /* session client ID        */
                 }
                 else
                 {
