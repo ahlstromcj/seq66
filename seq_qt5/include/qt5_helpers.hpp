@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-03-29
+ * \updates       2023-04-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -74,6 +74,8 @@ extern bool qt_prompt_ok
     const std::string & text,
     const std::string & info
 );
+extern void qt_info_box (QWidget * self, const std::string & msg);
+extern void qt_error_box (QWidget * self, const std::string & msg);
 extern keystroke qt_keystroke
 (
     QKeyEvent * event,

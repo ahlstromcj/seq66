@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-03-29
+ * \updates       2023-04-01
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -193,12 +193,7 @@ smanager::main_settings (int argc, char * argv [])
             {
 #if defined SEQ66_PLATFORM_DEBUG
                 if (usr().want_nsm_session())
-                {
-                    // nsm_active(true);               /* class flag           */
-                    // usr().in_nsm_session(true);
                     in_nsm = true;
-                    // rc().config_subdirectory("config");
-                }
 #endif
             }
             else
@@ -1121,19 +1116,7 @@ smanager::make_path_names
         std::string cfgpath = path;
         std::string midipath = path;
         std::string subdir = midisubdir.empty() ? "midi" : midisubdir ;
-        if (usr().in_nsm_session())         // nsm_active()
-        {
-            midipath = pathname_concatenate(cfgpath, subdir);
-////        cfgpath = pathname_concatenate(cfgpath, "config");
-        }
-        else
-        {
-            /*
-             * There's no "config" subdirectory outside of an NSM session.
-             */
-
-            midipath = pathname_concatenate(midipath, subdir);
-        }
+        midipath = pathname_concatenate(cfgpath, subdir);
         outcfgpath = cfgpath;
         outmidipath = midipath;
     }
@@ -1143,7 +1126,7 @@ smanager::make_path_names
 /**
  *  Function for the main window to call. It deletes the existing
  *  configuration, copies the source configuration, then calls
- *  import_configuration().
+ *  import_configuration_items().
  *
  *  When this function succeeds, we need to signal a session-reload and the
  *  make settings as done in qsmainwnd::import_project().
@@ -1176,7 +1159,7 @@ smanager::import_into_session
                 result = copy_configuration(sourcepath, sourcebase, cfgpath);
                 if (result)
                 {
-                    result = import_configuration
+                    result = import_configuration_items
                     (
                         sourcepath, sourcebase, cfgpath, midipath
                     );
@@ -1218,7 +1201,7 @@ smanager::import_into_session
  */
 
 bool
-smanager::import_configuration
+smanager::import_configuration_items
 (
     const std::string & sourcepath,
     const std::string & sourcebase,

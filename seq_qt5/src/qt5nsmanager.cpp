@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2023-03-30
+ * \updates       2023-04-01
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -311,6 +311,8 @@ qt5nsmanager::quit ()
     }
 }
 
+#if USE_THIS_FUNCTION
+
 void
 qt5nsmanager::show_message
 (
@@ -324,6 +326,8 @@ qt5nsmanager::show_message
         m_window->show_message_box(text);
     }
 }
+
+#endif
 
 /**
  *  Shows the collected messages in the message-box, and recommends the user
@@ -351,7 +355,7 @@ qt5nsmanager::show_error
             std::string html = tag + " ";
             html += string_replace(error_message(), "\n", "<br>");
             html += "<br>Please exit and fix the configuration.";
-            m_window->show_message_box(html);
+            m_window->show_error_box(html);
         }
         else
         {
@@ -367,7 +371,7 @@ qt5nsmanager::show_error
                 text += " ";
 
             text += msg;
-            m_window->show_message_box(text);
+            m_window->show_error_box(text);
         }
     }
 }

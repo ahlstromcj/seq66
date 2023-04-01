@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2023-03-30
+ * \updates       2023-03-31
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It

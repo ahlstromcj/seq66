@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-03-29
+ * \updates       2023-04-01
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -49,6 +49,7 @@
 
 #include <QAction>
 #include <QComboBox>
+#include <QErrorMessage>
 #include <QFileDialog>                  /* prompt for full MIDI file's path */
 #include <QIcon>
 #include <QKeyEvent>
@@ -184,6 +185,16 @@ qt_icon_theme ()
 }
 
 /**
+ *  Encapsulates a common conversion from C++ string to QString.
+ */
+
+QString
+qt (const std::string & text)
+{
+    return QString::fromStdString(text);
+}
+
+/**
  *  Provide an OK/Cancel prompt and return the result, true if Ok.
  */
 
@@ -205,13 +216,38 @@ qt_prompt_ok
 }
 
 /**
- *  Encapsulates a common conversion from C++ string to QString.
+ *  Provides an informative message box, no decision necessary.
+ *
+ *  Do we need to delete the message box here, or risk them accumulating?`
  */
 
-QString
-qt (const std::string & text)
+void
+qt_info_box (QWidget * self, const std::string & msg)
 {
-    return QString::fromStdString(text);
+    QMessageBox * mbox = new QMessageBox(self);
+    if (not_nullptr(mbox))
+    {
+        mbox->setText(qt(msg));
+        mbox->setStandardButtons(QMessageBox::Ok);
+        (void) mbox->exec();
+        delete mbox;
+    }
+}
+
+/**
+ *  Provides an informative error message box, no decision necessary.
+ */
+
+void
+qt_error_box (QWidget * self, const std::string & msg)
+{
+    QErrorMessage * mbox = new QErrorMessage(self);
+    if (not_nullptr(mbox))
+    {
+        mbox->showMessage(qt(msg));
+        (void) mbox->exec();
+        delete mbox;
+    }
 }
 
 /**

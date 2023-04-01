@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-03-28
+2019-04-13 to 2023-04-01
 
 Some of these issues will be pushed of until the distant Seq66v2.
 
@@ -154,6 +154,11 @@ ISSUES:
     Currently it imports the previously used MIDI file.
     STATUS: We no longer read the existing configuration.
     Still working on configuration management.
+    Remaining issue: We need to read the configuration if it already exists
+    in the NSM session directory.  This is not happening when started under
+    NSM. And "qseq66 --config ./local/share/.../seq66.nXYZT/config" is not
+    working, it yields the default configuration directory. Same for
+    --home. SIGH.
 
 #41 NSM: hide seq66 on closing window, don't exit?
     STATUS: Fixed.

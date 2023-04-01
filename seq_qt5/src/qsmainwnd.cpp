@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-03-29
+ * \updates       2023-04-01
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1202,7 +1202,7 @@ qsmainwnd::load_into_session (const std::string & selectedfile)
                 "Saved: " : "Failed to save: ";
 
             msg += rc().midi_filename();
-            show_message_box(msg);
+            show_error_box(msg);
             result = true;
             if (not_nullptr(m_mute_master))
                 m_mute_master->group_needs_update();
@@ -1315,7 +1315,7 @@ qsmainwnd::open_list_dialog ()
         {
             result = m_playlist_frame->load_playlist(fname);
             if (! result)
-                show_message_box(cb_perf().playlist_error_message());
+                show_error_box(cb_perf().playlist_error_message());
         }
     }
     return result;
@@ -1347,7 +1347,7 @@ qsmainwnd::save_list_dialog ()
             /* performer will handle rc().playlist_filename(fname) */
         }
         else
-            show_message_box(cb_perf().playlist_error_message());
+            show_error_box(cb_perf().playlist_error_message());
     }
     return result;
 }
@@ -1378,7 +1378,7 @@ qsmainwnd::open_mutes_dialog ()
         {
             result = m_mute_master->load_mutegroups(fname);
             if (! result)
-                show_message_box("Mute-groups loading error");  // TODO
+                show_error_box("Mute-groups loading error");  // TODO
         }
         else
         {
@@ -1411,7 +1411,7 @@ qsmainwnd::save_mutes_dialog (const std::string & basename)
         {
             result = m_mute_master->save_mutegroups(fname);
             if (! result)
-                show_message_box("Mute-groups saving error");  // TODO
+                show_error_box("Mute-groups saving error");  // TODO
         }
         else
         {
@@ -1481,7 +1481,7 @@ qsmainwnd::open_file (const std::string & fn)
     }
     else
     {
-        show_message_box(errmsg);
+        show_error_box(errmsg);
         update_recent_files_menu();
     }
     return result;
@@ -1904,7 +1904,7 @@ qsmainwnd::save_session ()
             std::string msg;
             result = session()->save_session(msg);
             if (! result)
-                show_message_box(msg);
+                show_error_box(msg);
         }
     }
     return result;
@@ -1945,7 +1945,7 @@ qsmainwnd::save_file (const std::string & fname, bool updatemenu)
                     update_recent_files_menu(); /* add the recent file-name */
             }
             else
-                show_message_box(errmsg);
+                show_error_box(errmsg);
         }
     }
     if (result)
@@ -2023,7 +2023,7 @@ qsmainwnd::export_file_as_midi (const std::string & fname)
         midifile f(filename, choose_ppqn());
         result = f.write(cb_perf(), false);           /* no SeqSpec       */
         if (! result)
-            show_message_box(f.error_message());
+            show_error_box(f.error_message());
     }
     return result;
 }
@@ -2073,7 +2073,7 @@ qsmainwnd::export_song (const std::string & fname)
             update_recent_files_menu();
         }
         else
-            show_message_box(f.error_message());
+            show_error_box(f.error_message());
     }
     return result;
 }
@@ -2111,11 +2111,17 @@ qsmainwnd::import_midi_into_set ()
             {
                 std::string p = path.toStdString();
                 std::string msg = "Error reading MIDI data from file: " + p;
-                show_message_box(msg);
+                show_error_box(msg);
             }
         }
     }
 }
+
+/*
+ *  We do not want to save any configuration after the import.  We need to
+ *  restart the app to load the new configuration; we tell the user that this
+ *  needs to be done..
+ */
 
 void
 qsmainwnd::import_project ()
@@ -2127,18 +2133,27 @@ qsmainwnd::import_project ()
     {
         if (session()->import_into_session(selecteddir, selectedfile))
         {
-            /*
-             * ca 2023-03-30
-             * We do not want to save any configuration after the import.
-             * We need to restart the app to load the new configuration.
-             */
-
-            rc().disable_save_list();           /* save all configs at exit */
-            if (! use_nsm())
+            rc().disable_save_list();           /* save no configs at exit  */
+            if (use_nsm())
             {
-                session_message("Resarting with imported configuration");
+                std::string msg = "Stop and then restart Seq66 in NSM GUI";
+                qt_info_box(this, msg);
+
+//              QMessageBox * mbox = new QMessageBox(this);
+//              mbox->setText(qt(msg));
+//              mbox->setStandardButtons(QMessageBox::Ok);
+//              (void) mbox->exec();
+            }
+            else
+            {
+                session_message("Restarting with imported configuration");
                 signal_for_restart();           /* "reboot" the application */
             }
+        }
+        else
+        {
+            std::string msg = "Could not import from " + selecteddir;
+            show_error_box(msg);
         }
     }
 }
@@ -3043,7 +3058,7 @@ qsmainwnd::update_bank_text ()
 }
 
 void
-qsmainwnd::show_message_box (const std::string & msg_text)
+qsmainwnd::show_error_box (const std::string & msg_text)
 {
     if (! msg_text.empty())
     {
@@ -3321,7 +3336,7 @@ qsmainwnd::reload_mute_groups ()
     std::string errmessage;
     bool result = cb_perf().reload_mute_groups(errmessage);
     if (! result)
-        show_message_box("Reload of mute-groups failed");
+        show_error_box("Reload of mute-groups failed");
 }
 
 /**
@@ -3502,7 +3517,7 @@ qsmainwnd::export_file_as_smf_0 (const std::string & fname)
                 m_is_title_dirty = true;
             }
             else
-                show_message_box(f.error_message());
+                show_error_box(f.error_message());
         }
         else
         {
@@ -3510,7 +3525,7 @@ qsmainwnd::export_file_as_smf_0 (const std::string & fname)
                 "Could not convert to SMF 0. Verify desired tracks are "
                 "unmuted and have song triggers."
                 ;
-            show_message_box(msg);
+            show_error_box(msg);
         }
         if (cb_perf().smf_format() != 0)
             ui->smf0Button->hide();

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2023-03-28
+ * \updates       2023-04-01
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -189,7 +189,7 @@ public:
         const std::string & path,
         const std::string & sourcebase
     );
-    bool import_configuration
+    bool import_configuration_items
     (
         const std::string & sourcepath,
         const std::string & sourcebase,
