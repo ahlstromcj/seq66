@@ -1,4 +1,4 @@
-# README for Seq66 0.99.3 2023-03-29
+# README for Seq66 0.99.3 2023-04-03
 
 
 __Seq66__: MIDI sequencer and live-looper with a hardware-sampler-like
@@ -93,7 +93,12 @@ Windows, and using a conventional source tarball.
     *   Version 0.99.3:
         *   Issue #107.  The basic fix is made. Still need to rehabilitate
             the Expand-pattern functionality.
-        *   Issue #40.  Revisited, still in progress.
+        *   Issue #40.  Still in progress. With NSM in force:
+            *   Seq66 detects nsmd as parent early in startup.
+            *   Close ("X") button disabled and hidden.  Xcfe4 "close window"
+                action works, though, as does response to a SIGTERM from nsmd.
+            *   Handling "config" subdirectory improved.
+            *   --nsm option is now for debugging only.
         *   Automation fixes:
             *   Fixed processing grid keystrokes twice.
             *   Renamed record-mode and grid-model control labels.

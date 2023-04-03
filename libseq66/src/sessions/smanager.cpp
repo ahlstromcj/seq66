@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-04-01
+ * \updates       2023-04-03
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -193,7 +193,11 @@ smanager::main_settings (int argc, char * argv [])
             {
 #if defined SEQ66_PLATFORM_DEBUG
                 if (usr().want_nsm_session())
+                {
                     in_nsm = true;
+                    session_manager_name("Simulated NSM");
+                    session_manager_path(rc().home_config_directory());
+                }
 #endif
             }
             else
@@ -800,7 +804,7 @@ smanager::create (int argc, char * argv [])
         {
             std::string homedir = manager_path();   /* session manager path */
             if (homedir == "None")
-                homedir = rc().default_session_path();
+                homedir = rc().session_directory();
 
             session_message("Session manager path", homedir);
             (void) create_project(argc, argv, homedir);
@@ -900,12 +904,15 @@ smanager::create_configuration
     if (result)
     {
         std::string rcbase = rc().config_filename();
-        std::string rcfile = filename_concatenate(cfgfilepath, rcbase);
-        bool already_created = file_exists(rcfile);
         rc().midi_filepath(midifilepath);               /* do this first    */
+        rc().full_config_directory(cfgfilepath);        /* set session dir. */
+
+        std::string rcpath = rc().session_directory();
+        std::string rcfile = filename_concatenate(rcpath, rcbase);
+        bool already_created = file_exists(rcfile);
         if (already_created)
         {
-            file_message("File exists", rcfile);        /* comforting       */
+            session_message("File exists", rcfile);     /* comforting       */
             result = read_configuration(argc, argv, cfgfilepath, midifilepath);
             if (result)
             {
@@ -926,7 +933,7 @@ smanager::create_configuration
             result = make_directory_path(mainpath);
             if (result)
             {
-                file_message("Main path", mainpath);
+                session_message("Main path", mainpath);
                 result = make_directory_path(cfgfilepath);
                 if (result)
                     rc().full_config_directory(cfgfilepath);
@@ -935,7 +942,7 @@ smanager::create_configuration
             {
                 result = make_directory_path(midifilepath);
                 if (result)
-                    file_message("MIDI path", midifilepath);
+                    session_message("MIDI path", midifilepath);
             }
             rc().set_save_list(true);                   /* save all configs */
             if (usr().in_nsm_session())

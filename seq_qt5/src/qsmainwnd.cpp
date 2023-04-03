@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-01
+ * \updates       2023-04-03
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -408,7 +408,18 @@ qsmainwnd::qsmainwnd
     );
 
     if (use_nsm())
+    {
+        /*
+         * Xfce4 doesn't seem to respect this flag change!
+         */
+
+        Qt::WindowFlags f = windowFlags();
+        Qt::WindowFlags c = Qt::WindowCloseButtonHint;
+        f = f & (~c);
+        setWindowFlags(f);
+
         connect_nsm_slots();
+    }
     else
         connect_normal_slots();
 
@@ -899,6 +910,11 @@ qsmainwnd::set_ppqn_text (int ppq)
  *  Handles closing this window by calling check(), and, if it returns false,
  *  ignoring the close event.
  *
+ *  If running under NSM, we need to respect a SIGTERM signal.  This can come
+ *  from the window manager or from nsmd.  To reduce (but not eliminate) the
+ *  chance of the user killing the application, we have hidden/disabled the "X"
+ *  button and the File / Exit menu entry.
+ *
  * \param event
  *      Provides a pointer to the close event to be checked.
  */
@@ -906,15 +922,30 @@ qsmainwnd::set_ppqn_text (int ppq)
 void
 qsmainwnd::closeEvent (QCloseEvent * event)
 {
-    if (check())
+    if (usr().in_nsm_session())
     {
-        remove_all_editors();
-        remove_qperfedit();
-        remove_all_live_frames();
-        remove_set_master();
+        /*
+         *  We need to give NSM a way to quit, I think.
+         *
+         *      quit();
+         *      event->ignore();
+         */
+
+        session_message("Close event with NSM");
     }
     else
-        event->ignore();
+    {
+        session_message("Close event");
+        if (check())
+        {
+            remove_all_editors();
+            remove_qperfedit();
+            remove_all_live_frames();
+            remove_set_master();
+        }
+        else
+            event->ignore();
+    }
 }
 
 /**
@@ -2138,11 +2169,6 @@ qsmainwnd::import_project ()
             {
                 std::string msg = "Stop and then restart Seq66 in NSM GUI";
                 qt_info_box(this, msg);
-
-//              QMessageBox * mbox = new QMessageBox(this);
-//              mbox->setText(qt(msg));
-//              mbox->setStandardButtons(QMessageBox::Ok);
-//              (void) mbox->exec();
             }
             else
             {

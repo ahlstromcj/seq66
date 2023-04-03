@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2023-03-31
+ * \updates       2023-04-02
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -106,7 +106,6 @@ clinsmanager::detect_session (std::string & url)
         result = usr().want_nsm_session();          /* user wants NSM usage */
         if (result)
         {
-            session_message("Checking 'usr' for NSM URL");
             tenturl = usr().session_url();          /* try 'usr' file's URL */
             if (tenturl.empty())                    /* configured NSM URL?  */
             {
@@ -116,7 +115,10 @@ clinsmanager::detect_session (std::string & url)
             {
                 result = contains(tenturl, "osc.udp://");   /* sanity check */
                 if (result)
+                {
+                    session_message("NSM URL", tenturl);
                     url = tenturl;                  /* configured NSM URL   */
+                }
                 else
                     tenturl.clear();
             }

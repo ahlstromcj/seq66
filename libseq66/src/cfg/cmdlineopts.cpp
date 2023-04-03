@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-03-27
+ * \updates       2023-04-02
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -215,8 +215,8 @@ static const std::string s_help_1a =
 "   -V, --version, #         Show program version/build and exit.\n"
 "   -v, --verbose            Verbose mode, show more data to the console.\n"
 #if defined SEQ66_NSM_SUPPORT
-"   -n, --nsm                Activate NSM support (for debugging).\n"
-"   -T, --no-nsm             Ignore NSM in 'usr' file. T for 'typical'.\n"
+"   -n, --nsm                Activate debugging NSM support.\n"
+"   -T, --no-nsm             Ignore NSM in 'usr' file. 'T' for 'typical'.\n"
 #endif
 "   -X, --playlist filename  Load playlists from the configuration directory.\n"
 "   -m, --manual-ports       Don't auto-connect MIDI ports; use virtual ports.\n"
@@ -291,18 +291,16 @@ static const std::string s_help_3 =
 "   -u, --user-save          Save 'usr' settings, usually saved only if they\n"
 "                            do not exist; 'usr' command-line options are not\n"
 "                            permanent otherwise.\n"
-"   -H, --home dir           Set directory for configuration files. It is\n"
-"                            $HOME/.config/seq66 by default.\n"
+"   -H, --home dir           Directory for configuration. $HOME/.config/seq66\n"
+"                            by default. If not a full path, it is appended.\n"
 "   -f, --rc filename        An alternate 'rc' file, in $HOME/.config/seq66 or\n"
 "                            the --home directory. '.rc' extension is enforced.\n"
-"   -F, --usr filename       Use a different 'usr' configuration file.  Same\n"
-"                            rules as for the --rc option.\n"
-"   -c, --config basename    Change 'rc', 'usr', ... base file names. Any\n"
-"                            extension is stripped starting at the last period.\n"
-"   -L, --locale lname       Set the global locale, if installed on the system.\n"
+"   -F, --usr filename       An alternate 'usr' file.  Same rules as for --rc.\n"
+"   -c, --config basename    Change base name of the 'rc' and 'usr' files. The\n"
+"                            extension is stripped. ['qseq66' is default].\n"
+"   -L, --locale lname       Set global locale, if installed on the system.\n"
 "   -o, --option optoken     Provides app-specific options for expansion.  The\n"
-"                            options supported are:\n"
-"\n"
+"                            options supported are:\n\n"
     ;
 
 /**
@@ -1059,6 +1057,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 #if defined SEQ66_NSM_SUPPORT
         case 'n':
             usr().session_manager("nsm");       /* mostly for debugging     */
+            usr().in_nsm_session();             /* definitely debugging     */
             break;
 #endif
 

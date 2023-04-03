@@ -1,8 +1,11 @@
 TO DO for Seq66 0.99.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-04-01
+2019-04-13 to 2023-04-02
 
 Some of these issues will be pushed of until the distant Seq66v2.
+
+Minor:  Why Gtk-Message: 06:26:56.523: Failed to load module "atk-bridge"
+        When doing ./Seq66qt5/qseq66 --H xyz
 
 Ongoing efforts:
 
@@ -158,10 +161,12 @@ ISSUES:
     in the NSM session directory.  This is not happening when started under
     NSM. And "qseq66 --config ./local/share/.../seq66.nXYZT/config" is not
     working, it yields the default configuration directory. Same for
-    --home. SIGH.
+    --home. SIGH.  --config just changes the base name of 'rc' and 'usr',
+    but the 'usr' file can be set in the 'rc' file.
 
 #41 NSM: hide seq66 on closing window, don't exit?
     STATUS: Fixed.
+    However, now we need to have the X button do the same thing.
 
 #43 Extended MIDI Format / Type?
     STATUS: Fixed in documentation.

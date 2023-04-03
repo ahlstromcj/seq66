@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-03-31
+ * \updates       2023-04-03
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -140,6 +140,9 @@ rcsettings::rcsettings () :
     m_full_recent_paths         (false),
     m_portmaps_active           (false)
 {
+#if ! defined SEQ66_PLATFORM_WINDOWS
+    m_session_directory = default_session_path();       /* tricky */
+#endif
     m_midi_control_in.inactive_allowed(true);
     m_config_filename += ".rc";
     m_user_filename += ".usr";
@@ -221,6 +224,7 @@ rcsettings::set_defaults ()
     m_session_directory         = SEQ66_CLIENT_NAME;
 #else
     m_session_directory = std::string(".config/") + std::string(SEQ66_CLIENT_NAME);
+    m_session_directory = default_session_path();   /* tricky */
 #endif
     m_config_subdirectory.clear(),
     m_config_filename           = SEQ66_CONFIG_NAME;
@@ -489,11 +493,10 @@ rcsettings::home_config_directory () const
     if (m_full_config_directory.empty())
     {
         std::string result;
-        std::string home = user_home();
+
+        std::string home = default_session_path();
         if (! home.empty())
         {
-            result = home + path_slash();           /* e.g. /home/username/ */
-            result += session_directory();           /* seq66 directory      */
             if (! m_config_subdirectory.empty())
                 result = filename_concatenate(result, m_config_subdirectory);
 
@@ -1061,7 +1064,11 @@ void
 rcsettings::config_subdirectory (const std::string & value)
 {
     if (! value.empty())
+    {
         m_config_subdirectory = value;
+
+        // Should we concatenate this to the current home directory?
+    }
 }
 
 /**
@@ -1105,7 +1112,10 @@ rcsettings::full_config_directory (const::std::string & value)
 
     std::string homedir = rc().home_config_directory();
     if (make_directory_path(homedir))                   // REDUNDANT
+    {
         file_message("Config directory", homedir);
+        session_directory(homedir);
+    }
     else
         file_error("Could not create", homedir);
 }

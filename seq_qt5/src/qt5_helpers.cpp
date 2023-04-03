@@ -236,6 +236,7 @@ qt_info_box (QWidget * self, const std::string & msg)
 
 /**
  *  Provides an informative error message box, no decision necessary.
+ *  Qt::WA_DeleteOnClose?
  */
 
 void
