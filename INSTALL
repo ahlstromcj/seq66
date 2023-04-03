@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.99.3 and above
 Chris Ahlstrom
-2015-09-10 to 2023-03-02
+2015-09-10 to 2023-04-03
 
 Getting Seq66 requires building the code or going to "sequencer64-packages/seq66"
 on GitHub to get an installation package.  The bootstrap setup is primarily
@@ -519,8 +519,6 @@ DEPENDENCIES:
 
         -   libatk-adaptor (and its dependencies)
         -   libgail-common (and its dependencies)
-        -   Some distros (Arch?) may need a gambas3-gb-qt5-opengl package to
-            be installed.  Not sure what is up with that.
 
    Documentation (now optional, must be built manually):
 

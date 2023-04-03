@@ -236,10 +236,14 @@
       trouble-shooting.
    
    \optionline{-n}{-{}-nsm}
-      Activate the built-in NSM (\textsl{Non Session Manager}) support.
+      Activate a simple simulation of the built-in NSM
+      (\textsl{Non Session Manager}) support, for debugging.
+      As of version 0.99.3, \textsl{Seq66} detects if its parent process
+      is the \texttt{nsmd} daemon automatically (on Linux).
 
    \optionline{-T}{-{}-no-nsm}
       Ignore the NSM setting in the 'usr' file. ('T' for 'typical').
+      Not too useful at this time.
 
    \optionline{-X}{-{}-playlist [filename]}
       This option loads the given file-name as a play-list file.
@@ -303,6 +307,13 @@
    \optionline{-H}{-{}-home [directory]}
       Change the "home" configuration directory from \texttt{\$HOME.config/seq66}
       The configuration files are loaded from or saved to the specified directory.
+      If the directory is a full path (such as 
+      \texttt{\textasciitilde/test/import}), then
+      the directory is used as is.
+      If the directory is a simple directory (such as \texttt{test}
+      or \texttt{test/import}), then it
+      is placed in the normal "home" configuration directory and is used
+      to contain the configuration.
 
    \optionline{-s}{-{}-show-midi}
       Dumps incoming MIDI to the screen.
@@ -417,7 +428,8 @@
 
    \optionline{-F}{-{}-usr filename}
       Use a different 'usr' configuration file.  Similar to the \texttt{-{}-rc}
-      option.
+      option. But note that this can be controlled in the 'rc' file as
+      well.
 
    \optionline{-c}{-{}-config basename}
       Use a different configuration file base name for the 'rc' and 'usr'
@@ -426,6 +438,9 @@
       \texttt{testing.rc} and \texttt{testing.usr},
       \texttt{jack.rc} and \texttt{jack.usr},
       \texttt{alsa.rc} and \texttt{alsa.usr}.
+      But note that recent versions of \textsl{Seq66} use the 'rc' file
+      to control the names and active state of all the other configuration
+      files.
 
    \optionline{-L}{-{}-locale localename}
       Set a different locale for running \textsl{Seq66}.
@@ -439,7 +454,7 @@
          \item \texttt{daemonize} and \texttt{no-daemonize}.
             \index{daemonize}
             Sets up the \texttt{seq66cli} application to fork to the background
-            the next time it is run.
+            the \textsl{next time} it is run.
             This is done by modifying the \texttt{seq66cli.usr}
             file to specify daemon runs.
             It is good to specify a log-file as well.
