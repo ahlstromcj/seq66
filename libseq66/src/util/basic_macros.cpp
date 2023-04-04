@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2022-05-16
+ * \updates       2023-04-03
  * \license       GNU GPLv2 or above
  *
  *  One of the big new feature of some of these functions is writing the name of
@@ -278,7 +278,7 @@ async_safe_utoa (char * destination, unsigned number, bool spacebefore)
  *      status at the same time.
  */
 
-bool
+void
 info_message (const std::string & msg, const std::string & data)
 {
     if (verbose())
@@ -290,10 +290,9 @@ info_message (const std::string & msg, const std::string & data)
         if (! msg.empty())
             std::cout << std::endl;
     }
-    return true;
 }
 
-bool
+void
 status_message (const std::string & msg, const std::string & data)
 {
     std::cout << seq_client_tag(msglevel::status) << " " << msg;
@@ -302,11 +301,9 @@ status_message (const std::string & msg, const std::string & data)
 
     if (! msg.empty())
         std::cout << std::endl;
-
-    return true;
 }
 
-bool
+void
 session_message (const std::string & msg, const std::string & data)
 {
     std::cout << seq_client_tag(msglevel::session) << " " << msg;
@@ -315,8 +312,6 @@ session_message (const std::string & msg, const std::string & data)
 
     if (! msg.empty())
         std::cout << std::endl;
-
-    return true;
 }
 
 /**
@@ -333,7 +328,7 @@ session_message (const std::string & msg, const std::string & data)
  *      status at the same time.
  */
 
-bool
+void
 warn_message (const std::string & msg, const std::string & data)
 {
     std::cerr << seq_client_tag(msglevel::warn) << " " << msg;
@@ -342,8 +337,6 @@ warn_message (const std::string & msg, const std::string & data)
 
     if (! msg.empty())
         std::cerr << std::endl;
-
-    return true;
 }
 
 /**
@@ -393,7 +386,7 @@ static const char * s_normal = "\033[0m";
  *      Returns true.  The return value here is rarely used, if at all.
  */
 
-bool
+void
 debug_message (const std::string & msg, const std::string & data)
 {
     if (investigate())
@@ -414,7 +407,6 @@ debug_message (const std::string & msg, const std::string & data)
                 std::cerr << std::endl;
         }
     }
-    return true;
 }
 
 /**

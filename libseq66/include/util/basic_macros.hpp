@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2022-05-16
+ * \updates       2023-04-03
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -130,17 +130,17 @@ extern bool not_nullptr_assert (void * ptr, const std::string & context);
 #define infoprintfunc() seq66::msgprintf(seq66::msglevel::info, "%s", __func__)
 #endif
 
-extern bool info_message
+extern void info_message
 (
     const std::string & msg,
     const std::string & data = ""
 );
-extern bool status_message
+extern void status_message
 (
     const std::string & msg,
     const std::string & data = ""
 );
-extern bool warn_message
+extern void warn_message
 (
     const std::string & msg,
     const std::string & data = ""
@@ -150,12 +150,12 @@ extern bool error_message
     const std::string & msg,
     const std::string & data = ""
 );
-extern bool debug_message
+extern void debug_message
 (
     const std::string & msg,
     const std::string & data = ""
 );
-extern bool session_message
+extern void session_message
 (
     const std::string & msg,
     const std::string & data = ""

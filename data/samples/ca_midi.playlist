@@ -28,9 +28,8 @@ version = 1
 [comments]
 
 This playlist points to files on my Debian laptop.  I created these files
-long, long ago.
-  
-Ah, such memories.
+long, long ago.  Ah, such memories.  Added them to the install to make live
+testing easier.
 
 [playlist-options]
 
@@ -47,7 +46,7 @@ deep-verify = false
 
 number = 0
 name = "CA's Legacy Midi Files"
-directory = "/pub/Audio/MIDI/archives/Ca/mid/FM Synth/"
+directory = "/usr/local/share/seq66-0.99/midi/FM/
 
 0 "b4uacufm.mid"
 1 "brecluse.mid"
@@ -72,7 +71,7 @@ directory = "/pub/Audio/MIDI/archives/Ca/mid/FM Synth/"
 
 number = 1
 name = "CA's PSS-790 Midi Files"
-directory = "/pub/Audio/MIDI/PSS-790/"
+directory = "/usr/local/share/seq66-0.99/midi/PSS-790/
 
 0 "ancestor.mid"
 10 "carptsun.mid"

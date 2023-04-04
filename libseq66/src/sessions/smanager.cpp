@@ -37,8 +37,8 @@
  *      -# Call main_settings(argc, argv).  It sets defaults, does some parsing
  *         of command-line options and files.  It saves the MIDI file-name, if
  *         provided.
- *      -# Call create_performer(), which could delete an existing performer.
- *         It then launches the performer.  Save the unique-pointer.
+ *      -# Call create_performer(), which then launches the performer and saves
+ *         the unique-pointer.
  *      -# Call open_playlist().  It will open it, if specified and possible.
  e      -# Call open_note_mapper().  It will open it, if specified and possible.
  *      -# If the MIDI file-name is set, open it via a call to open_midi_file().
@@ -52,15 +52,8 @@
 #include "seq66_features.hpp"           /* set_app_name()                   */
 #include "cfg/cmdlineopts.hpp"          /* static command-line functions    */
 #include "cfg/midicontrolfile.hpp"      /* seq66::midicontrolfile functions */
-
-/*
- * These files are handled by performer, but also by "global" functions
- * in this module. Probably something to tighten up.
- */
-
 #include "cfg/notemapfile.hpp"          /* seq66::notemapfile functions     */
 #include "cfg/playlistfile.hpp"         /* seq66::playlistfile functions    */
-
 #include "cfg/sessionfile.hpp"          /* seq66::sessionfile               */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "midi/midifile.hpp"            /* seq66::write_midi_file()         */
@@ -86,6 +79,9 @@ namespace seq66
  *  Does the usual construction.  It also calls set_defaults() from the
  *  settings.cpp module in order to guarantee that we have rc() and usr()
  *  available.  See that function for more information.
+ *
+ *  create_performer() has to wait until after the calls to
+ *  main_settings(), create_session(), create_project(),
  */
 
 smanager::smanager (const std::string & caps) :
@@ -101,10 +97,6 @@ smanager::smanager (const std::string & caps) :
     m_extant_errmsg         (),
     m_extant_msg_active     (false)
 {
-    /*
-     * This has to wait: m_perf_pointer = create_performer();
-     */
-
     set_configuration_defaults();
 }
 
@@ -118,17 +110,13 @@ smanager::smanager (const std::string & caps) :
 smanager::~smanager ()
 {
     if (! is_help())
-        (void) session_message("Exiting session manager");
+        session_message("Exiting session manager");
 }
 
 /**
- *  The standard C/C++ entry point to this application.  The first thing is to
- *  set the various settings defaults, and then try to read the "user" and
- *  "rc" configuration files, in that order.  There are currently no options
- *  to change the names of those files.  If we add that code, we'll move the
- *  parsing code to where the configuration file-names are changed from the
- *  command-line.  The last thing is to override any other settings via the
- *  command-line parameters.
+ *  The first thing is to set the various settings defaults, and then read
+ *  the 'usr' and 'rc' configuration files, in that order.  The last thing
+ *  is to override any other settings via the command-line parameters.
  *
  * \param argc
  *      The number of command-line parameters, including the name of the
@@ -191,14 +179,12 @@ smanager::main_settings (int argc, char * argv [])
             result = rcode != (-1);
             if (result)
             {
-#if defined SEQ66_PLATFORM_DEBUG
                 if (usr().want_nsm_session())
                 {
                     in_nsm = true;
                     session_manager_name("Simulated NSM");
                     session_manager_path(rc().home_config_directory());
                 }
-#endif
             }
             else
                 is_help(true);          /* a hack to avoid create_window()  */
@@ -467,7 +453,7 @@ smanager::open_midi_file (const std::string & fname)
     {
         std::string infomsg = "PPQN set to ";
         infomsg += std::to_string(perf()->ppqn());
-        (void) seq66::info_message(infomsg);
+        info_message(infomsg);
         midifname = fname;
         (void) perf()->apply_session_mutes();
     }

@@ -6,7 +6,7 @@
 # \library     seq66/data
 # \author      Chris Ahlstrom
 # \date        2018-01-02
-# \updates     2022-05-23
+# \updates     2023-04-04
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -34,7 +34,7 @@ MAINTAINERCLEANFILES = Makefile.in Makefile $(AUX_DIST)
 #
 #------------------------------------------------------------------------------
 
-EXTRA_DIST = readme.* license.* linux/*.* midi/*.* samples/*.* win/*.* share/*
+EXTRA_DIST = readme.* license.* linux/*.* midi/*.* midi/FM/*.* midi/PSS-790/*.* samples/*.* win/*.* share/*
 
 #*****************************************************************************
 #	Macros
