@@ -46,7 +46,7 @@ deep-verify = false
 
 number = 0
 name = "Legacy Midi Files"
-directory = "/usr/local/share/seq66-0.99/midi/FM/
+directory = "/usr/local/share/seq66-0.99/midi/FM/"
 
 0 "brecluse.mid"
 1 "carptsun.mid"
@@ -70,12 +70,21 @@ directory = "/usr/local/share/seq66-0.99/midi/FM/
 
 number = 1
 name = "PSS-790 Midi Files"
-directory = "/usr/local/share/seq66-0.99/midi/PSS-790/
+directory = "/usr/local/share/seq66-0.99/midi/PSS-790/"
 
 0 "ancestor.mid"
 10 "carptsun.mid"
 20 "cbflite.mid"
 30 "old_love.mid"
+
+[playlist]
+
+number = 3
+name = "Live vs Song Files"
+directory = "/usr/local/share/seq66-0.99/midi/"
+
+0 "carptsun.midi"
+1 "Peter_Gunn-reconstructed.midi"
 
 # End of /home/user/.config/seq66/ca_midi.playlist
 #

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2021-05-28
+ * \updates       2023-04-05
  * \license       GNU GPLv2 or above
  *
  * \todo
@@ -245,7 +245,7 @@ private:
      *  various patterns.  This is an option stored in the playlist file.
      */
 
-    bool m_unmute_set_now;
+    bool m_auto_arm;
 
     /**
      *  If non-empty, this provides the base directory for all MIDI files in
@@ -314,14 +314,14 @@ public:
         m_deep_verify = flag;
     }
 
-    bool unmute_set_now () const
+    bool auto_arm () const
     {
-        return m_unmute_set_now;
+        return m_auto_arm;
     }
 
-    void unmute_set_now (bool u)
+    void auto_arm (bool u)
     {
-        m_unmute_set_now = u;
+        m_auto_arm = u;
     }
 
     void midi_base_directory (const std::string & basedir);

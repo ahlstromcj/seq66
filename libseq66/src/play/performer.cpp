@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-03-01
+ * \updates       2023-04-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -7915,6 +7915,16 @@ performer::playlist_activate (bool on)
     }
     else
         rc().playlist_active(false);
+}
+
+void
+performer::playlist_auto_arm (bool on)
+{
+    if (m_play_list)
+    {
+        if (m_play_list->mode())                /* loaded successfully? */
+            m_play_list->auto_arm(on);
+    }
 }
 
 bool

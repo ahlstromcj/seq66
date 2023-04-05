@@ -1,6 +1,6 @@
-TO DO for Seq66 0.99.3 (Sequencer64 refactored for C++14 and Qt)
+T-O DO for Seq66 0.99.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-04-02
+2019-04-13 to 2023-04-05
 
 Some of these issues will be pushed of until the distant Seq66v2.
 
@@ -14,16 +14,6 @@ Ongoing efforts:
         -   File / Save handling with various modifications.
     -   Verify setmapper/setmaster for odd set sizes.
     -   Perfect the "background recording" feature.
-
-Windows:
-
-    -   mastermidibase::activate() fails at m_outbus_array.initialize().
-        Error initing port 1; it should be disabled?
-    -   Change to creating a 64-bit installer and adjust the instructions.
-    -   In the live grid, move the top text up 1 pixel.  Move the bottom text
-        up 2 pixels. Maybe reduce the font size by 1. Also consist the for the
-        piano rolls.
-    -   The default Qt theme pushes the seqtime rightward by about 6 pixels.
 
 UI:
 
@@ -45,6 +35,18 @@ UI:
         tune.
     -   Add pattern and event editor instantiation to the grid mode?
         Probably not worth the effort.
+
+Playlists:
+
+    -   Sometimes the first load of a (new) playlist fails.
+    -   Changing to next song mutes the previous one, but the Arm checkbox
+        is not beoing obeyed. Actually, need a couple of actual "Song" layout
+        tunes.
+    -   When changing the buss with override, then do a Save-As, the new buss
+        is not saved in the file.
+    -   Make sure that otherwise changing the buss during playlist processing
+        does not raise the save/dirty flag.
+
 
 Port-Mapping:
 
@@ -83,6 +85,16 @@ From Testing:
     "L"-then-snap-then-move mamba?
 
     Tempo display needs to be worked on for the perfroll and qloopbuttons.
+
+Windows:
+
+    -   mastermidibase::activate() fails at m_outbus_array.initialize().
+        Error initing port 1; it should be disabled?
+    -   Change to creating a 64-bit installer and adjust the instructions.
+    -   In the live grid, move the top text up 1 pixel.  Move the bottom text
+        up 2 pixels. Maybe reduce the font size by 1. Also consist the for the
+        piano rolls.
+    -   The default Qt theme pushes the seqtime rightward by about 6 pixels.
 
 Macros to "finalize":
 

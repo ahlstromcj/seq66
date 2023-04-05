@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2022-08-21
+% \update      2023-04-05
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -57,6 +57,7 @@
       /home/user/.config/seq66/qseq66.mutes
       /home/user/.config/seq66/qseq66.drums
       /home/user/.config/seq66/qseq66.playlist
+      /home/user/.config/seq66/qseq66.palette
    \end{verbatim}
 
    The palette file is not automatically generated.  It can be saved from the
@@ -285,7 +286,8 @@
 
    \optionline{-b}{-{}-bus [buss]}
       Modifies the output buss number on \textsl{all} tracks when a MIDI file is
-      read.  Useful for testing or quick-and-dirty setup.
+      read. Useful for testing or quick-and-dirty setup, and for adapting a
+      playlist to route to a specific MIDI output.
 
    \optionline{-l}{-{}-client-name}
       Replaces the normal client-name, \texttt{seq66}, with the given name.

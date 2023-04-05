@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2021-07-29
+ * \updates       2023-04-05
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -86,7 +86,7 @@ playlist::playlist
     m_deep_verify               (false),
     m_current_list              (m_play_lists.end()),
     m_current_song              (sm_dummy.end()),   // song-list iterator
-    m_unmute_set_now            (false),
+    m_auto_arm                  (false),
     m_midi_base_directory       (rc().midi_base_directory()),
     m_show_on_stdout            (show_on_stdout)
 {

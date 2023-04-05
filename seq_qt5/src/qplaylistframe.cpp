@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2021-11-18
+ * \updates       2023-04-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -202,6 +202,11 @@ qplaylistframe::qplaylistframe
     );
     connect
     (
+        ui->checkBoxAutoArm, SIGNAL(clicked(bool)),
+        this, SLOT(handle_auto_arm_click())
+    );
+    connect
+    (
         ui->entry_playlist_file, SIGNAL(textEdited(QString)),
         this, SLOT(list_modify(QString))
     );
@@ -326,6 +331,7 @@ qplaylistframe::set_current_playlist ()
 {
     std::string temp;
     ui->checkBoxPlaylistActive->setChecked(perf().playlist_active());
+    ui->checkBoxAutoArm->setChecked(perf().playlist_auto_arm());
     temp = perf().playlist_filename();
     if (temp.empty())
         temp = "None";
@@ -846,6 +852,16 @@ qplaylistframe::handle_playlist_active_click ()
         perf().playlist_activate(on);       /* sets rc().playlist_active()  */
         if (on)                             /* leave patterns in if off     */
             m_parent->recreate_all_slots();
+    }
+}
+
+void
+qplaylistframe::handle_auto_arm_click ()
+{
+    if (not_nullptr(m_parent))
+    {
+        bool on = ui->checkBoxAutoArm->isChecked();
+        perf().playlist_auto_arm(on);       /* sets rc().playlist_active()  */
     }
 }
 

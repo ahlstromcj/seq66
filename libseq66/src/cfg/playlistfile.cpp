@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2022-05-15
+ * \updates       2023-04-05
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -231,7 +231,7 @@ playlistfile::parse ()
         else
         {
             bool flag = get_boolean(file, tag, "unmute-new-song");
-            play_list().unmute_set_now(flag);
+            play_list().auto_arm(flag);
             flag = get_boolean(file, tag, "deep-verify");
             play_list().deep_verify(flag);
         }
@@ -478,7 +478,7 @@ playlistfile::write ()
      */
 
     file << "\n[playlist-options]\n\n";
-    write_boolean(file, "unmute-new-song", play_list().unmute_set_now());
+    write_boolean(file, "unmute-new-song", play_list().auto_arm());
     write_boolean(file, "deep-verify", play_list().deep_verify());
     file << "\n"
 "# First provide the playlist settings, its default storage folder, and then list\n"

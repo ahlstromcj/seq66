@@ -92,7 +92,6 @@
          <font>
           <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <italic>false</italic>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
@@ -295,7 +294,6 @@ It does not change Seq66's default PPQN.</string>
          <font>
           <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -352,8 +350,8 @@ It does not change Seq66's default PPQN.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
+          <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
         <property name="frameShape">
@@ -687,7 +685,7 @@ It does not change Seq66's default PPQN.</string>
        <widget class="QLabel" name="setNameLabel">
         <property name="minimumSize">
          <size>
-          <width>72</width>
+          <width>76</width>
           <height>28</height>
          </size>
         </property>
@@ -699,8 +697,8 @@ It does not change Seq66's default PPQN.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
+          <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
         <property name="text">
@@ -724,7 +722,6 @@ It does not change Seq66's default PPQN.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -757,8 +754,8 @@ It does not change Seq66's default PPQN.</string>
         <property name="font">
          <font>
           <pointsize>9</pointsize>
-          <weight>50</weight>
           <bold>false</bold>
+          <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
         <property name="text">
@@ -808,8 +805,8 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
+          <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
         <property name="text">
@@ -839,7 +836,6 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -884,8 +880,8 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
+          <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
         <property name="text">
@@ -912,7 +908,6 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1307,7 +1302,6 @@ Shift key enables recording at start of playback.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1382,7 +1376,7 @@ Shift key enables recording at start of playback.</string>
          <widget class="QLabel" name="label">
           <property name="minimumSize">
            <size>
-            <width>32</width>
+            <width>34</width>
             <height>28</height>
            </size>
           </property>
@@ -1394,8 +1388,8 @@ Shift key enables recording at start of playback.</string>
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
+            <stylestrategy>PreferDefault</stylestrategy>
            </font>
           </property>
           <property name="text">
@@ -1425,7 +1419,6 @@ Shift key enables recording at start of playback.</string>
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
