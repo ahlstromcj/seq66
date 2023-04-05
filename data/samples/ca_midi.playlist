@@ -45,40 +45,37 @@ deep-verify = false
 [playlist]
 
 number = 0
-name = "CA's Legacy Midi Files"
+name = "Legacy Midi Files"
 directory = "/usr/local/share/seq66-0.99/midi/FM/
 
-0 "b4uacufm.mid"
-1 "brecluse.mid"
-2 "carptsun.mid"
-3 "cbflitfm.mid"
-4 "dasmodel.mid"
-5 "grntamb.mid"
-6 "hapwandr.mid"
-7 "judyblue.mid"
-8 "k_seq11.mid"
-9 "longhair.mid"
-10 "marraksh.mid"
-11 "oxyg4bfm.mid"
-12 "pirates.mid"
-13 "pss680.mid"
-14 "qufrency.mid"
-15 "stdemo3.mid"
-16 "viceuk.mid"
-17 "wallstsm.mid"
+0 "brecluse.mid"
+1 "carptsun.mid"
+2 "cbflitfm.mid"
+3 "dasmodel.mid"
+4 "grntamb.mid"
+5 "hapwandr.mid"
+6 "judyblue.mid"
+7 "k_seq11.mid"
+8 "longhair.mid"
+9 "marraksh.mid"
+10 "oxyg4bfm.mid"
+11 "pirates.mid"
+12 "pss680.mid"
+13 "qufrency.mid"
+14 "stdemo3.mid"
+15 "viceuk.mid"
+16 "wallstsm.mid"
 
 [playlist]
 
 number = 1
-name = "CA's PSS-790 Midi Files"
+name = "PSS-790 Midi Files"
 directory = "/usr/local/share/seq66-0.99/midi/PSS-790/
 
 0 "ancestor.mid"
 10 "carptsun.mid"
 20 "cbflite.mid"
 30 "old_love.mid"
-40 "pss790_1.mid"
-50 "pss790_2.mid"
 
 # End of /home/user/.config/seq66/ca_midi.playlist
 #
