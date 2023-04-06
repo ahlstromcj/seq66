@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-05
+ * \updates       2023-04-06
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2136,7 +2136,16 @@ performer::jack_set_beats_per_minute (midibpm bp)
 
         m_bpm = bp;
         m_us_per_quarter_note = tempo_us_from_bpm(bp);  /* seqfault cause?  */
+
+        /*
+         * ca 2023-04-06 During playlist, changing the BPM by loading the
+         * next song triggers a bogus modify() call.
+         */
+
         change ch = rc().midi_filename().empty() ? change::no : change::yes ;
+        if (rc().playlist_active())
+            ch = change::no;
+
         notify_resolution_change(ppq, bp, ch);          /* get_ppqn()       */
     }
     return result;
@@ -4358,6 +4367,14 @@ performer::start_playing ()
                 seqi->resume_note_ons(get_tick());
         }
     }
+
+    /*
+     * When play starts, enabled the tracks if auto-arm is true.
+     */
+
+    if (m_play_list && m_play_list->auto_arm())
+        set_song_mute(mutegroups::action::off);
+
     start_jack();
     start();
     for (auto notify : m_notify)
@@ -8021,6 +8038,25 @@ performer::open_select_song_by_midi (int ctrl, bool opensong)
 
             notify_song_action(false);
         }
+    }
+    return result;
+}
+
+/*
+ * Make sure first song is enabled, if applicable.
+ */
+
+bool
+performer::open_current_song ()
+{
+    bool result = m_play_list->open_current_song();
+    if (result)
+    {
+        /*
+         * Does not work.
+        if (m_play_list->auto_arm())
+            set_song_mute(mutegroups::action::off);
+         */
     }
     return result;
 }

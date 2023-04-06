@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-04-05
+ * \updates       2023-04-06
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1274,11 +1274,6 @@ public:
 
     std::string playlist_song_basename () const;
 
-    bool open_current_song ()
-    {
-        return m_play_list->open_current_song();
-    }
-
     bool open_select_list_by_index (int index, bool opensong = true)
     {
         return m_play_list->open_select_list(index, opensong);
@@ -1348,6 +1343,7 @@ public:
     bool open_previous_list (bool opensong = true);
     bool open_select_song_by_index (int index, bool opensong = true);
     bool open_select_song_by_midi (int ctrl, bool opensong = true);
+    bool open_current_song ();
     bool open_next_song (bool opensong = true);
     bool open_previous_song (bool opensong = true);
 
