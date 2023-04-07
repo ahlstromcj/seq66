@@ -398,7 +398,7 @@ protected:
     void write_track (const midi_vector & lst);
     void write_track_name (const std::string & trackname);
     void write_track_end ();
-    std::string read_track_name();
+    std::string read_track_name ();
     long track_name_size (const std::string & trackname) const;
     void write_seq_number (midishort seqnum);
     int read_seq_number ();

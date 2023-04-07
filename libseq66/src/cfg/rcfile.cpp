@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-03-26
+ * \updates       2023-04-07
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -592,6 +592,41 @@ rcfile::parse ()
     else
          (void) make_error_message(tag, "section missing");
 
+    rc_ref().playlist_active(false);
+
+    /*
+     * [playlist]
+     */
+
+    tag = "[playlist]";
+    active = get_file_status(file, tag, pfname);
+    rc_ref().playlist_active(active);
+    rc_ref().playlist_filename(pfname);                 /* base name    */
+    pfname = get_variable(file, tag, "base-directory");
+    if (! is_missing_string(pfname))
+    {
+        file_message("Playlist MIDI base directory", pfname);
+        rc_ref().midi_base_directory(pfname);
+    }
+    rc_ref().notemap_active(false);
+
+    /*
+     * [note-mapper]
+     */
+
+    tag = "[note-mapper]";
+    active = get_file_status(file, tag, pfname);
+    rc_ref().notemap_active(active);
+    rc_ref().notemap_filename(pfname);                  /* base name    */
+
+    tag = "[auto-option-save]";
+    flag = get_boolean(file, tag, "auto-save-rc");
+    rc_ref().auto_rc_save(flag);
+
+    /*
+     * [recent-files]
+     */
+
     tag = "[recent-files]";
 
     bool gotrf = line_after(file, tag);
@@ -599,11 +634,14 @@ rcfile::parse ()
     if (gotrf)
     {
         bool fullpaths = get_boolean(file, tag, "full-paths");
-        bool loadem = get_boolean(file, tag, "load-most-recent");
+        bool loadem = ! rc_ref().playlist_active();
+        if (loadem)
+            loadem = get_boolean(file, tag, "load-most-recent");
+
         recentcount = get_integer(file, tag, "count");
         rc_ref().load_most_recent(loadem);
         rc_ref().full_recent_paths(fullpaths);
-        (void) next_data_line(file);    /* skip "load-most-recent" line */
+        (void) next_data_line(file);        /* skip "load-most-recent" line */
     }
     else
         (void) make_error_message(tag, "section missing");
@@ -639,26 +677,6 @@ rcfile::parse ()
             }
         }
     }
-
-    rc_ref().playlist_active(false);
-    tag = "[playlist]";
-    active = get_file_status(file, tag, pfname);
-    rc_ref().playlist_active(active);
-    rc_ref().playlist_filename(pfname);                 /* base name    */
-    pfname = get_variable(file, tag, "base-directory");
-    if (! is_missing_string(pfname))
-    {
-        file_message("Playlist MIDI base directory", pfname);
-        rc_ref().midi_base_directory(pfname);
-    }
-    rc_ref().notemap_active(false);
-    tag = "[note-mapper]";
-    active = get_file_status(file, tag, pfname);
-    rc_ref().notemap_active(active);
-    rc_ref().notemap_filename(pfname);                  /* base name    */
-    tag = "[auto-option-save]";
-    flag = get_boolean(file, tag, "auto-save-rc");
-    rc_ref().auto_rc_save(flag);
 
     bool f = get_boolean(file, tag, "save-old-triggers");
     rc_ref().save_old_triggers(f);

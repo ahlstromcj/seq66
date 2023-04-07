@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-09-29
+ * \updates       2023-04-07
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -995,9 +995,38 @@ editable_event::ex_data_string () const
             snprintf(tmp, sizeof tmp, "%2X ", get_sysex()[i]);
             result += tmp;
         }
-        if (sysex_size() > 4)
+        if (sysex_size() > limit)
             result += "...";
     }
+    return result;
+}
+
+/**
+ *  Assuming the event is a Meta text event, this function returns a
+ *  short string representation of the event data in ASCII text.
+ *  Only a few characters are shown, at present.
+ *
+ * \return
+ *      Returns the data string.  If empty, the data is bad in some way, or
+ *      the event is not a Meta event.
+ */
+
+std::string
+editable_event::ex_text_string () const
+{
+    std::string result;
+    int limit = sysex_size();
+    if (limit > 24)
+        limit = 24;                          /* we have space limits     */
+
+    for (int i = 0; i < limit; ++i)
+    {
+        char ch = char(get_sysex()[i]);
+        result += ch;
+    }
+    if (sysex_size() > limit)
+        result += "...";
+
     return result;
 }
 

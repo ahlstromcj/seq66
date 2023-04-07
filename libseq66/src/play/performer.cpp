@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-06
+ * \updates       2023-04-07
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -8248,8 +8248,9 @@ performer::import_playlist
  */
 
 bool
-performer::open_playlist (const std::string & pl, bool show_on_stdout)
+performer::open_playlist (const std::string & pl)
 {
+    bool show_on_stdout = rc().verbose();
     if (m_play_list)
         m_play_list->mode(false);                           /* just in case */
 
@@ -8264,13 +8265,23 @@ performer::open_playlist (const std::string & pl, bool show_on_stdout)
         result = seq66::open_playlist(*m_play_list, pl, show_on_stdout);
         if (result)
         {
-            clear_all();                    /* reset, not clear, playlist   */
+            if (rc().playlist_active())
+            {
+                clear_all();                /* reset, not clear, playlist   */
+            }
+            else                            /* something more important?    */
+            {
+                rc().auto_rc_save(false);   /* could be TRICKY!             */
+                m_play_list->mode(false);   /* disable it by choice         */
+            }
         }
         else
         {
             /*
-             * set_error_message(m_play_list->error_message());
+             * set_error_message(m_play_list->error_messaget)
              */
+
+            m_play_list->mode(false);       /* disable it by error          */
         }
     }
     else

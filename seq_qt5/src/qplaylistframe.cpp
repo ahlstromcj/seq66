@@ -530,7 +530,7 @@ qplaylistframe::load_playlist (const std::string & fullfilespec)
     bool result = ! fullfilespec.empty();
     if (result)
     {
-        bool playlistmode = perf().open_playlist(fullfilespec, rc().verbose());
+        bool playlistmode = perf().open_playlist(fullfilespec);
         if (playlistmode)
             playlistmode = perf().open_current_song();
 

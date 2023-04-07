@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-09-10
+ * \updates       2023-04-07
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -197,13 +197,13 @@ const midibyte EVENT_MIDI_META           = 0xFFu;   // an escape code
  */
 
 const midibyte EVENT_META_SEQ_NUMBER     = 0x00u;
-const midibyte EVENT_META_TEXT_EVENT     = 0x01u;   // skipped
-const midibyte EVENT_META_COPYRIGHT      = 0x02u;   // skipped
-const midibyte EVENT_META_TRACK_NAME     = 0x03u;
-const midibyte EVENT_META_INSTRUMENT     = 0x04u;   // skipped
-const midibyte EVENT_META_LYRIC          = 0x05u;   // skipped
-const midibyte EVENT_META_MARKER         = 0x06u;   // skipped
-const midibyte EVENT_META_CUE_POINT      = 0x07u;   // skipped
+const midibyte EVENT_META_TEXT_EVENT     = 0x01u;   // meta text
+const midibyte EVENT_META_COPYRIGHT      = 0x02u;   // meta text
+const midibyte EVENT_META_TRACK_NAME     = 0x03u;   // meta text
+const midibyte EVENT_META_INSTRUMENT     = 0x04u;   // meta text
+const midibyte EVENT_META_LYRIC          = 0x05u;   // meta text
+const midibyte EVENT_META_MARKER         = 0x06u;   // meta text
+const midibyte EVENT_META_CUE_POINT      = 0x07u;   // meta text
 const midibyte EVENT_META_MIDI_CHANNEL   = 0x20u;   // skipped, obsolete
 const midibyte EVENT_META_MIDI_PORT      = 0x21u;   // skipped, obsolete
 const midibyte EVENT_META_END_OF_TRACK   = 0x2Fu;
@@ -363,9 +363,14 @@ private:
 
     /**
      *  The data buffer for SYSEX messages.  Adapted from Stazed's Seq32
-     *  project on GitHub.  This object will also hold the generally small
-     *  amounts of data needed for Meta events.  Compare is_sysex() to
-     *  is_meta() and is_ex_data() [which tests for both].
+     *  project on GitHub.
+     *
+     * Note:
+     *
+     *  This object will also hold the generally small amounts of data needed
+     *  for Meta events.  Compare is_sysex() to is_meta() and is_ex_data()
+     *  [which tests for both]. In addition, detect and handle the other
+     *  Meta message that hold variable amounts of bytes.
      */
 
     sysex m_sysex;
@@ -710,6 +715,16 @@ public:
     static bool is_meta_status (midibyte m)
     {
         return m <= EVENT_META_SEQSPEC;
+    }
+
+    /*
+     *  This currently include Meta Track Name, which is handled differently.
+     *  handled differently.
+     */
+
+    static bool is_meta_text_msg (midibyte m)
+    {
+        return m >= EVENT_META_TEXT_EVENT && m <= EVENT_META_CUE_POINT;
     }
 
     static bool is_tempo_status (midibyte m)
@@ -1382,6 +1397,11 @@ public:
     bool is_meta () const
     {
         return is_meta_msg(m_status);
+    }
+
+    bool is_meta_text () const
+    {
+        return is_meta() && is_meta_text_msg(m_channel);
     }
 
     /**

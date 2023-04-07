@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2023-04-01
+ * \updates       2023-04-07
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -288,7 +288,11 @@ protected:
         m_is_help = flag;
     }
 
-    void append_error_message (const std::string & message = "") const;
+    void append_error_message
+    (
+        const std::string & message,
+        const std::string & data = ""
+    ) const;
     bool create_configuration
     (
         int argc, char * argv [],

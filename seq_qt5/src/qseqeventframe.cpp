@@ -20,15 +20,16 @@
  * \file          qseqeventframe.cpp
  *
  *  This module declares/defines the base class for plastering
- *  pattern/sequence data information in the data area of the pattern
- *  editor.
+ *  pattern/sequence data information into a table widget for potential event
+ *  editing.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-10-20
+ * \updates       2023-04-07
  * \license       GNU GPLv2 or above
  *
+ *  This class is the "Event Editor".
  */
 
 #include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */

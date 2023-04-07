@@ -879,7 +879,8 @@ cmdlineopts::parse_o_virtual (const std::string & arg)
  *      extern int optind, opterr, optopt;
  *
  *  At the end, optind is the index in argv of the first argv element that is
- *  not an option.
+ *  not an option.  This is used in smanager::main_settings() to detect that
+ *  a MIDI file has been specified on the command-line.
  *
  * \param argc
  *      The number of command-line arguments.

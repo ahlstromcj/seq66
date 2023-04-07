@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-04-03
+ * \updates       2023-04-07
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -252,6 +252,10 @@ smanager::main_settings (int argc, char * argv [])
                 m_midi_filename.clear();
                 if (optionindex > 0 && optionindex < argc) /* MIDI filename?    */
                 {
+                    /****
+                     * DO WE NEED THIS CODE???
+                     */
+
                     std::string fname = argv[optionindex];
                     std::string errmsg;
                     if (file_readable(fname))
@@ -260,7 +264,10 @@ smanager::main_settings (int argc, char * argv [])
                         std::string basename;
                         m_midi_filename = fname;
                         if (filename_split(fname, path, basename))
+                        {
                             rc().midi_filename(basename);
+                            rc().playlist_active(false);
+                        }
                     }
                     else
                     {
@@ -390,7 +397,7 @@ smanager::open_playlist ()
     if (result)
     {
         std::string playlistname = rc().playlist_filespec();
-        result = perf()->open_playlist(playlistname, rc().verbose());
+        result = perf()->open_playlist(playlistname);
         if (result)
         {
             result = perf()->open_current_song();
@@ -446,22 +453,30 @@ smanager::open_note_mapper ()
 std::string
 smanager::open_midi_file (const std::string & fname)
 {
-    std::string midifname;                          /* start out blank      */
-    std::string errmsg;
-    bool result = perf()->read_midi_file(fname, errmsg);
-    if (result)
+    std::string result = fname;
+    bool ok = file_readable(result);
+    midi_filename("");                                      /* side-effect  */
+    if (ok)
     {
-        std::string infomsg = "PPQN set to ";
-        infomsg += std::to_string(perf()->ppqn());
-        info_message(infomsg);
-        midifname = fname;
-        (void) perf()->apply_session_mutes();
+        std::string errmsg;
+        ok = perf()->read_midi_file(result, errmsg);
+        if (ok)
+        {
+            std::string infomsg = "PPQN set to ";
+            infomsg += std::to_string(perf()->ppqn());
+            info_message(infomsg);
+            (void) perf()->apply_session_mutes();
+            file_message("MIDI opened", result);
+            midi_filename(result);                          /* side-effect  */
+            rc().playlist_active(false);                    /* disable it   */
+        }
+        else
+            append_error_message(errmsg);
     }
     else
-    {
-        append_error_message(errmsg); // errmsg = "Open failed: '" + fname + "'";
-    }
-    return midifname;
+        append_error_message("MIDI unreadable", result);
+
+    return result;
 }
 
 /**
@@ -626,10 +641,17 @@ smanager::create_window ()
  * \param message
  *      Provides the message to be set. If empty, the message-active flag and
  *      the message are both cleared.
+ *
+ * \param data
+ *      Optional additional data for the message.
  */
 
 void
-smanager::append_error_message (const std::string & msg) const
+smanager::append_error_message
+(
+    const std::string & msg,
+    const std::string & data
+) const
 {
     if (msg.empty())
     {
@@ -638,15 +660,18 @@ smanager::append_error_message (const std::string & msg) const
     }
     else
     {
-        m_extant_msg_active = true;
-        if (m_extant_errmsg.empty())
+        std::string fullmessage = msg;
+        if (! data.empty())
         {
-            /* m_extant_errmsg += "? "; */
+            fullmessage += ": '";
+            fullmessage += data;
+            fullmessage += "'";
         }
-        else
+        m_extant_msg_active = true;
+        if (! m_extant_errmsg.empty())
             m_extant_errmsg += "\n";
 
-        m_extant_errmsg += msg;
+        m_extant_errmsg += fullmessage;
     }
 }
 
@@ -801,45 +826,22 @@ smanager::create (int argc, char * argv [])
         result = create_performer();
         if (result)
         {
-            result = open_playlist();
-            if (result)
-                result = open_note_mapper();
-        }
-        if (result)
-        {
             std::string fname = midi_filename();
             if (fname.empty())
             {
-                if (result && rc().load_most_recent())
+                if (rc().load_most_recent())        /* disabled if playlist */
                 {
                     std::string midifname = rc().recent_file(0, false);
                     if (! midifname.empty())
-                    {
-                        std::string errmsg;
-                        std::string tmp = open_midi_file(midifname);
-                        if (! tmp.empty())
-                        {
-                            file_message("Opened", tmp);
-                            midi_filename(midifname);
-                        }
-                    }
+                        (void) open_midi_file(midifname);
                 }
             }
             else
-            {
-                /*
-                 * No window at this time; should save the message for later.
-                 * For now, write to the console.
-                 */
+                (void) open_midi_file(fname);
 
-                std::string errormessage;
-                std::string tmp = open_midi_file(fname);
-                if (! tmp.empty())
-                {
-                    file_message("Opened", tmp);
-                    midi_filename(fname);
-                }
-            }
+            result = open_playlist();
+            if (result)
+                result = open_note_mapper();
         }
         if (result)
         {
@@ -852,11 +854,8 @@ smanager::create (int argc, char * argv [])
             {
                 std::string msg;                        /* maybe errmsg? */
                 result = close_session(msg, false);
+                session_message("Startup error", msg);
             }
-
-            /*
-             * TODO:  expose the error message to the user here
-             */
         }
         if (! is_help())
             cmdlineopts::show_locale();

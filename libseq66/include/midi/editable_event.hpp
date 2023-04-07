@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2025-05-15
+ * \updates       2023-04-07
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -377,6 +377,7 @@ public:
     std::string format_timestamp ();
     std::string stock_event_string ();
     std::string ex_data_string () const;
+    std::string ex_text_string () const;
 
     std::string status_string () const
     {

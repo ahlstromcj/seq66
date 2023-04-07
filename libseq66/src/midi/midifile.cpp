@@ -1084,7 +1084,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
         midilong TrackLength = read_long();         /* get track length     */
         if (ID == c_mtrk_tag)                       /* magic number 'MTrk'  */
         {
-            char trackname[c_trackname_max];        /* track name from file */
+//          char trackname[c_trackname_max];        /* various meta text    */
             bool timesig_set = false;               /* seq66 style wins     */
             midipulse runningtime = 0;              /* reset time           */
             midipulse currenttime = 0;              /* adjusted by PPQN     */
@@ -1206,6 +1206,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             if (checklen(len, mtype))
                             {
                                 int count = 0;
+                                char trackname[c_trackname_max];
                                 for (int i = 0; i < int(len); ++i)
                                 {
                                     char ch = char(read_byte());
@@ -1470,25 +1471,28 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                         case EVENT_META_MARKER:          /* FF 06 ...       */
                         case EVENT_META_CUE_POINT:       /* FF 07 ...       */
 
-                            if (rc().verbose())
+                            if (checklen(len, mtype))
                             {
-                                int index = int(mtype);
-                                if (index >= 0 && index < 8)
+                                int count = 0;
+                                midibyte mt[c_trackname_max];
+                                for (int i = 0; i < int(len); ++i)
                                 {
-                                    std::string text;
-                                    if (read_string(text, len))
+                                    char ch = char(read_byte());
+                                    if (count < c_trackname_max)
                                     {
-                                        std::string m = "Skipping meta: ";
-                                        m += sm_meta_text_labels[index];
-                                        m += " '";
-                                        m += text;
-                                        m += "'";
-                                        (void) set_error_dump(m);
+                                        mt[count] = ch;
+                                        ++count;
                                     }
                                 }
+                                mt[count] = '\0';
+
+                                bool ok = e.append_meta_data(mtype, mt, count);
+                                if (ok)
+                                    s.append_event(e);
                             }
                             else
-                                skip(len);              /* eat it           */
+                                return false;
+
                             break;
 
                         case EVENT_META_MIDI_CHANNEL:   /* FF 20 01 cc      */

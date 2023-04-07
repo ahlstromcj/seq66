@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-09-24
+ * \updates       2023-04-07
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -263,7 +263,11 @@ qseventslots::set_table_event (editable_event & ev, int row)
     std::string tstring = m_show_time_as_pulses ?
         std::to_string(long(ev.timestamp())) : ev.timestamp_string() ;
 
-    if (ev.is_ex_data())
+    if (ev.is_meta_text())
+    {
+        data_0 = ev.ex_text_string();
+    }
+    else if (ev.is_ex_data())
     {
         data_0 = ev.ex_data_string();
     }
