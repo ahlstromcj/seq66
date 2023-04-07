@@ -2095,7 +2095,7 @@ performer::needs_update (seq::number seqno) const
 bool
 performer::set_beats_per_minute (midibpm bp)
 {
-    bool result = usr().bpm_is_valid(int(bp));
+    bool result = usr().bpm_is_valid(bp);
     if (result)
     {
         bp = fix_tempo(bp);
@@ -5418,7 +5418,6 @@ performer::offset_triggers
         {
             result = true;
             seq->offset_triggers(offset, tg);
-            // notify_trigger_change(seqid); ???
         }
     }
     if (result)
@@ -7852,9 +7851,8 @@ performer::read_midi_file
     usr().clear_global_seq_features();
     bool result = seq66::read_midi_file(*this, fn, ppqn(), errmsg, addtorecent);
     if (result)
-    {
         next_song_mode();
-    }
+
     return result;
 }
 
@@ -8054,8 +8052,10 @@ performer::open_current_song ()
     {
         /*
          * Does not work.
+         *
         if (m_play_list->auto_arm())
             set_song_mute(mutegroups::action::off);
+         *
          */
     }
     return result;

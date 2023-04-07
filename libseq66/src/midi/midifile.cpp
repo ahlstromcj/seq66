@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-11-20
+ * \updates       2023-04-07
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1056,6 +1056,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
     midibyte buss_override = usr().midi_buss_override();
     midishort track_count = read_short();
     midishort fileppqn = read_short();
+    bool gotfirst_bpm = false;
     file_ppqn(int(fileppqn));                       /* original file PPQN   */
     if (usr().use_file_ppqn())
     {
@@ -1084,7 +1085,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
         midilong TrackLength = read_long();         /* get track length     */
         if (ID == c_mtrk_tag)                       /* magic number 'MTrk'  */
         {
-//          char trackname[c_trackname_max];        /* various meta text    */
             bool timesig_set = false;               /* seq66 style wins     */
             midipulse runningtime = 0;              /* reset time           */
             midipulse currenttime = 0;              /* adjusted by PPQN     */
@@ -1246,13 +1246,12 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 double tt = tempo_us_from_bytes(bt);
                                 if (tt > 0)
                                 {
-                                    static bool gotfirst = false;
                                     if (track == 0)
                                     {
                                         midibpm bpm = bpm_from_tempo_us(tt);
-                                        if (! gotfirst)
+                                        if (! gotfirst_bpm)
                                         {
-                                            gotfirst = true;
+                                            gotfirst_bpm = true;
                                             p.set_beats_per_minute(bpm);
                                             p.us_per_quarter_note(int(tt));
                                             s.us_per_quarter_note(int(tt));

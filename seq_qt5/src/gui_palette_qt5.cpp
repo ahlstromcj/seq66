@@ -1059,8 +1059,6 @@ gui_palette_qt5::set_brushes
             /*
              * Background sequence brush
              */
-
-///////     (void) make_brush(m_backseq_brush, m_backseq_brush_style, temp);
         }
     }
     return result;

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-04-03
+ * \updates       2023-04-07
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -1107,7 +1107,6 @@ rcsettings::full_config_directory (const::std::string & value)
     std::string tv = value;
     if (! m_config_subdirectory.empty())
         tv = pathname_concatenate(tv, m_config_subdirectory);
-//      tv = filename_concatenate(tv, m_config_subdirectory);
 
     m_full_config_directory = normalize_path(tv, true, true);
 
