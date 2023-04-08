@@ -1,11 +1,10 @@
 T-O DO for Seq66 0.99.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-04-05
+2019-04-13 to 2023-04-08
 
 Some of these issues will be pushed of until the distant Seq66v2.
 
-Minor:  Why Gtk-Message: 06:26:56.523: Failed to load module "atk-bridge"
-        When doing ./Seq66qt5/qseq66 --H xyz
+Next issue to attack: #48.
 
 Ongoing efforts:
 
@@ -38,15 +37,10 @@ UI:
 
 Playlists:
 
-    -   Sometimes the first load of a (new) playlist fails.
-    -   Changing to next song mutes the previous one, but the Arm checkbox
-        is not beoing obeyed. Actually, need a couple of actual "Song" layout
-        tunes.
     -   When changing the buss with override, then do a Save-As, the new buss
         is not saved in the file.
     -   Make sure that otherwise changing the buss during playlist processing
         does not raise the save/dirty flag.
-
 
 Port-Mapping:
 
@@ -63,10 +57,6 @@ MIDI:
         It also yields an ALSA unsubscribe error when disabling an input.
     -   Use const char * snd_asoundlib_version () to get the ALSA version.
 
-    JACK:
-
-    -   Would it be useful to provide a way to better name each virtual port?
-
 Automation:
 
     Can we leverage continuous controllers (CC) to support modifying synth
@@ -82,7 +72,7 @@ From Testing:
     the tracks are shown in the bright color.
 
     Can we distinguish note-insertion from movement snap, to avoid the
-    "L"-then-snap-then-move mamba?
+    "L"-then-snap-then-move samba?
 
     Tempo display needs to be worked on for the perfroll and qloopbuttons.
 
@@ -99,23 +89,15 @@ Windows:
 Macros to "finalize":
 
     SEQ66_SHOW_TEMPO_IN_PIANO_ROLL: leave code in place just in case.
-    SEQ66_SEQUENCE_EDIT_MODE and
-    SEQ66_SEQUENCE_EDIT_MODE_GLOBAL: Kepler34, but may be pattern-specific.
     SEQ66_USE_JACK_SYNC_CALLBACK (saved only for reference).
     USE_C_MILLISLEEP (related to high CPU in Windows/portmidi builds).
     USE_SONG_BOX_SELECT (this will require a lot of work to perfect).
-    USE_FILL_TIME_SIG_AND_TEMPO (see sequencer64 issue 141).
-    USE_WRITE_START_TEMPO and USE_WRITE_TIME_SIG (midifile only).
     USE_UNICODE_SUPPORT (used only in Cakewalk WRK file support).
-    USE_THESE_SEQSPECS (unimplemented Seq32/Stazed SeqSpecs)
-    USE_SETMAPPER_RESET_SEQUENCES (no code uses this function yet).
-    USE_SCREENSET_RESET_SEQUENCES (no code uses this function yet).
     USE_ACTIVE_SENSE_AND_RESET (handled in JACK, but not ALSA or portmidi).
     USE_SEQUENCE_REMOVE_EVENTS (no code uses this function yet).
     USE_ADJUST_DATA_HANDLE (no code uses this function yet).
     USE_INTERSECT_FUNCTIONS (could be used for trigger lookup at some point).
     USE_TIMEBASE_MASTER (functionality from Hydrogen, not used).
-    USE_STAZED_SHIFT_SUPPORT (investigate and understand at some point).
 
 Others to Consider:
 
@@ -167,18 +149,10 @@ ISSUES:
 
 #40 NSM: seq66 in a new session should provide a blank project
     Currently it imports the previously used MIDI file.
-    STATUS: We no longer read the existing configuration.
-    Still working on configuration management.
-    Remaining issue: We need to read the configuration if it already exists
-    in the NSM session directory.  This is not happening when started under
-    NSM. And "qseq66 --config ./local/share/.../seq66.nXYZT/config" is not
-    working, it yields the default configuration directory. Same for
-    --home. SIGH.  --config just changes the base name of 'rc' and 'usr',
-    but the 'usr' file can be set in the 'rc' file.
+    STATUS: Many fixes made.
 
 #41 NSM: hide seq66 on closing window, don't exit?
-    STATUS: Fixed.
-    However, now we need to have the X button do the same thing.
+    STATUS: Fixed. Also we hide the "X" button.
 
 #43 Extended MIDI Format / Type?
     STATUS: Fixed in documentation.
@@ -209,7 +183,7 @@ ISSUES:
     in the perfnames pane, but there are still issues to resolve.
 
 #46 JACK port groups / order?
-    STATUS: To examine.
+    STATUS: Probably a future feature (version 2).
 
 #47 change key map
     STATUS: Fixed for now.

@@ -5686,7 +5686,7 @@ sequence::transpose_notes (int steps, int scale, int key)
     return result;
 }
 
-#if defined USE_STAZED_SHIFT_SUPPORT
+#if defined SEQ66_SEQ32_SHIFT_SUPPORT
 
 /**
  *  We need to look into this function.
@@ -5721,7 +5721,7 @@ sequence::shift_notes (midipulse ticks)
     }
 }
 
-#endif  // USE_STAZED_SHIFT_SUPPORT
+#endif  // SEQ66_SEQ32_SHIFT_SUPPORT
 
 /**
  *  Applies the transpose value held by the master MIDI buss object, if

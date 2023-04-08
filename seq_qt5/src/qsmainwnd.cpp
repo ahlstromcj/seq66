@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-03
+ * \updates       2023-04-08
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -81,6 +81,7 @@
 #include <sstream>                      /* std::ostringstream               */
 #include <utility>                      /* std::make_pair()                 */
 
+#include "cfg/cmdlineopts.hpp"          /* write_options_files()            */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
 #include "os/daemonize.hpp"             /* seq66::signal_for_restart()      */
@@ -913,7 +914,9 @@ qsmainwnd::set_ppqn_text (int ppq)
  *  If running under NSM, we need to respect a SIGTERM signal.  This can come
  *  from the window manager or from nsmd.  To reduce (but not eliminate) the
  *  chance of the user killing the application, we have hidden/disabled the "X"
- *  button and the File / Exit menu entry.
+ *  button and the File / Exit menu entry. Note that sending a SIGTERM must
+ *  still work to support NSM, and note that a window manager will likely have
+ *  other ways to send a SIGTERM.  See issue #41.
  *
  * \param event
  *      Provides a pointer to the close event to be checked.
@@ -1310,9 +1313,16 @@ qsmainwnd::import_playlist ()
             if (ok)
             {
                 rc().set_imported_playlist(sourcepath, midipath);
-                if (! use_nsm())
+                if (! cmdlineopts::write_options_files())
+                    session_message("Configuration write failed");
+
+                if (use_nsm())
                 {
-                    session_message("Resarting with imported playlist");
+                    session_message("Restart via NSM UI needed");
+                }
+                else
+                {
+                    session_message("Restarting with imported playlist");
                     signal_for_restart();       /* "reboot" the application */
                 }
             }

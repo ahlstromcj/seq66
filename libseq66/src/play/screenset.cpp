@@ -1015,7 +1015,7 @@ screenset::unselect_triggers (seq::number seqno)
     }
 }
 
-#if defined USE_SETMAPPER_RESET_SEQUENCES               /* currently unused */
+#if defined SEQ66_USE_SCREENSET_RESET_SEQUENCES         /* currently unused */
 
 /**
  *  For all active patterns/sequences, get its playing state, turn off the

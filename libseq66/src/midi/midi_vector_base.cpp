@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2022-05-15
+ * \updates       2023-04-08
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -51,7 +51,7 @@
             c_backsequence (ditto)
             c_transpose
             c_seq_color (performance colors for a sequence)
-            c_seq_edit_mode (currently macroed out, SEQ66_SEQUENCE_EDIT_MODE)
+            c_seq_edit_mode (unused by Seq66)
             c_seq_loopcount
 \endverbatim
  *
@@ -73,7 +73,6 @@
             c_tempo_map   (seq32's tempo map)
             c_reserved_1 and c_reserved_2
             c_tempo_track (holds the song's particular tempo track)
-            c_seq_edit_mode (a potential future feature from Kepler34).
 \endverbatim
  *
  *  Also see the PDF file in the following project for more information about
@@ -540,13 +539,6 @@ midi_vector_base::fill_proprietary ()
         put_seqspec(c_seq_color, 1);                            /* byte     */
         put(midibyte(seq().color()));
     }
-#if defined SEQ66_SEQUENCE_EDIT_MODE                            /* useful?  */
-    if (seq().edit_mode() != sequence::editmode::note)
-    {
-        put_seqspec(c_seq_edit_mode, 1);                        /* byte     */
-        put(seq().edit_mode_byte());
-    }
-#endif
     if (seq().loop_count_max() > 0)
     {
         put_seqspec(c_seq_loopcount, 2);                        /* short    */

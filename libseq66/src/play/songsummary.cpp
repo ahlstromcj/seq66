@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2023-02-28
+ * \updates       2023-04-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -78,8 +78,8 @@ s_tag_names_container
     { c_reserved_2   ,  "Reserved 2" },
     { c_tempo_track  ,  "Alternate tempo track number" },
     { c_seq_color    ,  "Color" },
-    { c_seq_edit_mode,  "Normal/drum edit mode, not implemented" },
-    { c_seq_loopcount,  "Future: N-play pattern" },
+    { c_seq_edit_mode,  "Normal/drum edit mode, not saved/used" },
+    { c_seq_loopcount,  "N-repeat for pattern" },
     { c_reserved_3,     "Reserved 3" },
     { c_reserved_4,     "Reserved 4" },
     { c_trig_transpose, "Transposable trigger" }

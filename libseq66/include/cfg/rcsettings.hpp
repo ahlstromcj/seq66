@@ -1181,14 +1181,13 @@ public:
             m_clock_mod = clockmod;
     }
 
-    void verbose (bool flag);
-    void investigate (bool flag);
-
     void inspection_tag (const std::string & t)
     {
         m_inspection_tag = t;
     }
 
+    void verbose (bool flag);
+    void investigate (bool flag);
     void set_imported_playlist
     (
         const std::string & sourcepath,

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-07
+ * \updates       2023-04-08
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -8218,6 +8218,9 @@ performer::import_playlist
 
             if (result)
                 result = copy_playlist_songs(*m_play_list, filespec, midipath);
+
+            if (result)
+                m_play_list->mode(true);
         }
     }
     return result;

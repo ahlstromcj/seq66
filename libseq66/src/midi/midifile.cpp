@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-07
+ * \updates       2023-04-08
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1427,14 +1427,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 s.set_color(read_byte());
                                 --len;
                             }
-#if defined SEQ66_SEQUENCE_EDIT_MODE        /* same as "not transposable"?  */
-                            else if (seqspec == c_seq_edit_mode)
-                            {
-                                sequence::edit_mode m = (read_byte());
-                                s.edit_mode(read_byte());
-                                --len;
-                            }
-#endif
                             else if (seqspec == c_seq_loopcount)
                             {
                                 s.loop_count_max(int(read_short()));
@@ -1818,29 +1810,26 @@ midifile::parse_seqspec_track (performer & p, int file_size)
 
 /**
  *  This section used to depend on the ordering and presence of all supported
- * SeqSpecs, and hence was kind of brittle.  Now we loop
- * here and use a switch-statement to figure out which code to
- * execute.
+ *  SeqSpecs, and hence was kind of brittle.  Now we loop here and use a
+ *  switch-statement to figure out which code to execute.
  *
- *  Seq24 would store the MIDI control setting in the MIDI file.  While
- * this could be a useful feature, it seems a bit confusing, since the
- * user/musician will more likely define those controls for his set of
- * equipment to apply to all songs.
+ *  Seq24 would store the MIDI control setting in the MIDI file.  While this
+ *  could be a useful feature, it seems a bit confusing, since the
+ *  user/musician will more likely define those controls for his set of
+ *  equipment to apply to all songs.
  *
  *  Furthermore, we would need to load these control settings into a
- * midicontrolin (see ctrl/midicontrolin modules).
- * And, lastly, Seq24 never wrote these controls to the file.  It
- * merely wrote the c_midictrl code, followed by a long 0.
- * For now, we are going to evade this functionality.  We will
- * continue to write this section, and try to read it, but expect it
- * to be empty.
+ *  midicontrolin (see ctrl/midicontrolin modules).  And, lastly, Seq24 never
+ *  wrote these controls to the file.  It merely wrote the c_midictrl code,
+ *  followed by a long 0.  For now, we are going to evade this functionality.
+ *  We will continue to write this section, and try to read it, but expect it
+ *  to be empty.
  *
  * Track-specific SeqSpecs handled in parse_smf_1():
  *
  *      c_midibus          c_timesig         c_midichannel    c_musickey *
  *      c_musicscale *     c_backsequence *  c_transpose *    c_seq_color
- *      c_seq_edit_mode !  c_seq_loopcount   c_triggers       c_triggers_ex
- *      c_trig_transpose
+ *      c_seq_loopcount   c_triggers       c_triggers_ex      c_trig_transpose
  *
  * Global SeqSpecs handled here:
  *
@@ -1848,11 +1837,10 @@ midifile::parse_seqspec_track (performer & p, int file_size)
  *      c_mutegroups       c_musickey *      c_musicscale *
  *      c_backsequence *   c_perf_bp_mes     c_perf_bw        c_tempo_map !
  *      c_reserved_1 !     c_reserved_2 !    c_tempo_track
- *      c_seq_edit_mode !
  *
  * Not handled:
  *
- *      c_gap_A to _F      c_reserved_3      c_reserved_4
+ *      c_gap_A to _F      c_reserved_3      c_reserved_4     c_seq_edit_mode
  */
 
 bool
@@ -1878,15 +1866,14 @@ midifile::prop_header_loop (performer & p, int file_size)
             case c_perf_bp_mes:     ok = parse_c_perf_bp_mes(p);    break;
             case c_perf_bw:         ok = parse_c_perf_bw(p);        break;
             case c_tempo_track:     ok = parse_c_tempo_track();     break;
-#if defined SEQ66_SEQUENCE_EDIT_MODE_GLOBAL
-            case c_seq_edit_mode:   ok = parse_c_seq_edit_mode(p);  break;
-#endif
-#if defined USE_THESE_SEQSPECS      /* stazed features not implemented */
+#if defined USE_SEQ32_SEQSPECS      /* stazed features not implemented */
             case c_tempo_map:
             case c_reserved_1:
             case c_reserved_2:
                 break;
 #endif
+            default:
+                break;
             }
         }
     }
@@ -2184,29 +2171,6 @@ midifile::parse_c_tempo_track ()
 
     return true;
 }
-
-#if defined SEQ66_SEQUENCE_EDIT_MODE_GLOBAL
-
-/*
- * Sequence editing mode are a feature of Kepler34.  We don't know what these
- * modes do, yet, but let's leave room for them.
- *
- * We will eventually store this in the MIDI file. Also the current code below
- * will SKIP DATA, so we are disabling it!
- */
-
-bool
-midifile::parse_c_seq_edit_mode (performer & p)
-{
-    for (int track = 0; track < p.sequence_high(); ++track)
-    {
-        if (p.is_seq_active(track))
-            p.edit_mode(track, sequence::editmode(read_long()));
-    }
-    return true;
-}
-
-#endif
 
 /**
  *  For each groups in the mute-groups, write the status bits to the
@@ -2522,7 +2486,7 @@ midifile::write_header (int numtracks, int smfformat)
     return numtracks > 0;
 }
 
-#if defined USE_WRITE_START_TEMPO
+#if defined SEQ66_USE_WRITE_START_TEMPO
 
 /**
  *  Writes the initial or only tempo, occurring at the beginning of a MIDI
@@ -2541,9 +2505,9 @@ midifile::write_start_tempo (midibpm start_tempo)
     write_triple(midilong(60000000.0 / start_tempo));
 }
 
-#endif  // USE_WRITE_START_TEMPO
+#endif  // SEQ66_USE_WRITE_START_TEMPO
 
-#if defined USE_WRITE_TIME_SIG
+#if defined SEQ66_USE_WRITE_TIME_SIG
 
 /**
  *  Writes the main time signature, in a more simplistic manner than
@@ -2572,7 +2536,7 @@ midifile::write_time_sig (int beatsperbar, int beatwidth)
     write_short(0x1808);                    /* cc bb                        */
 }
 
-#endif  // USE_WRITE_TIME_SIG
+#endif  // SEQ66_USE_WRITE_TIME_SIG
 
 /**
  *  Writes a "proprietary" (SeqSpec) Seq24 footer header in the new

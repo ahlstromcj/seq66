@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-04-03
+% \update      2023-04-08
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -44,7 +44,6 @@
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.75]{main-menu/file/livegrid-dark-menu-file.png}
    \includegraphics[scale=0.75]{main-menu/file/livegrid-dark-menu-file-2.png}
    \caption{Seq66 Menu File Items, Composite View}
    \label{fig:menu_file_items}
@@ -245,11 +244,19 @@
    into a new NSM session, but this was deemed confusing by some users, and
    properly so!
 
+   This command brings up a file dialog box. Navigate to the desired
+   source directory and then select the desired 'rc' file.
+
    If importing into an NSM session, one must use the NSM user-interface
    (\textsl{agordejo}, \textsl{RaySession}, or \textsl{nsm-legacy-gui}}
-   to stop and then start \textsl{Seq66}.
-   If importing into a normal session, \textsl{Seq66} will
-   restart itself automatically. Be aware!
+   to \textsl{Stop} and then \textsl{Start} \textsl{Seq66}.
+   This saves and rereads the configuration.
+   If importing into a normal (i.e. not NSM) session, \textsl{Seq66} will
+   restart itself automatically to save and reread the configuration.
+   Be aware!
+
+   Also note that importing a playlist is a separate operation (see
+   below).
 
 \subsubsection{Menu / File / Import / Import MIDI to Current Set}
 \label{subsubsec:menu_file_import}
@@ -266,14 +273,19 @@
    A user can create a playlist that accesses MIDI files anywhere in the file
    system.
    However, in a session manager, it is preferable to have the configuration
-   self-contained if possible.
-   Even without a session manager, it can be useful to move a playlist to a
+   self-contained.
+   Even without a session manager, it can be useful to copy a playlist to a
    subdirectory in order to separate it and its MIDI files from other
    playlists.
-   This menu entry does a lot of things; here are the steps:
+   Once a project has been imported or saved, then a playlist can also be
+   imported, along with all of the MIDI files it references.
+
+   This command brings up a file dialog box. Navigate to the desired
+   source directory and then select the desired 'playlist' file.
+   This menu entry does a lot of things; here are the steps it performs:
 
    \begin{itemize}
-      \item Copy the selected playlist file into the current configuration
+      \item Copies the selected playlist file into the current configuration
          directory.  This directory is one of the following:
          \begin{itemize}
             \item The default "home" directory,
@@ -282,8 +294,8 @@
             \item The session directory created by \textsl{NSM}.
          \end{itemize}
          For discussion, this directory is called "HOME".
-      \item In HOME, create a directory called \texttt{playlist/listname}, where
-         "listname" is the base part of the playlist name, as in
+      \item In HOME, creates a directory called \texttt{playlist/listname},
+         where "listname" is the base part of the playlist name, as in
          \texttt{listname.playlist}.
       \item The playlist is opened, parsed, and all of the MIDI tunes specified
          in that file are copied into the new playlist directory, preserving
@@ -292,10 +304,12 @@
          specify that it is \texttt{active},
          to specify the new \texttt{base-directory} for all of the tunes,
          and to specify that the playlist will be saved at exit.
-      \item Lastly, \textsl{Seq66} will be
+      \item Lastly, if not running within NSM, \textsl{Seq66} will be
          \index{restart!automatic}
-         \textsl{\textbf{restarted}} automatically to load the new playlist.
-         You have been warned!
+         \textsl{\textbf{restarted}} automatically to load the new,
+         active playlist.
+         Within NSM, the user must stop and restart \textsl{Seq66}
+         manually in the NSM user-interface..
    \end{itemize}
 
 \subsubsection{Menu / File / Export / Export Song as MIDI}

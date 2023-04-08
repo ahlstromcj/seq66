@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-04
+ * \updates       2022-04-08
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -346,13 +346,7 @@ protected:
     bool parse_c_perf_bp_mes (performer & p);
     bool parse_c_perf_bw (performer & p);
     bool parse_c_tempo_track ();
-#if defined SEQ66_SEQUENCE_EDIT_MODE_GLOBAL
-    bool parse_c_seq_edit_mode (performer & p);
-#endif
-
-
     bool write_c_mutegroups (const performer & p);
-
     bool checklen (midilong len, midibyte type);
     void add_trigger (sequence & seq, midishort ppqn, bool tposable);
     void add_old_trigger (sequence & seq);
@@ -403,10 +397,10 @@ protected:
     void write_seq_number (midishort seqnum);
     int read_seq_number ();
     bool write_header (int numtracks, int smfformat = 1);
-#if defined USE_WRITE_START_TEMPO
+#if defined SEQ66_USE_WRITE_START_TEMPO
     void write_start_tempo (midibpm start_tempo);
 #endif
-#if defined USE_WRITE_TIME_SIG
+#if defined SEQ66_USE_WRITE_TIME_SIG
     void write_time_sig (int beatsperbar, int beatwidth);
 #endif
     void write_seqspec_header (midilong tag, long len);

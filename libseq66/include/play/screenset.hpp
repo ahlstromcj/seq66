@@ -543,7 +543,7 @@ private:
 
     bool add (sequence *, seq::number & seqno);
     bool remove (seq::number seqno);
-#if defined USE_SCREENSET_RESET_SEQUENCES               /* currently unused */
+#if defined SEQ66_USE_SCREENSET_RESET_SEQUENCES     /* currently unused */
     void reset_sequences (bool pause, sequence::playback mode);
 #endif
     bool any_modified_sequences () const;

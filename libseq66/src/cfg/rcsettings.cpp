@@ -339,7 +339,7 @@ rcsettings::investigate (bool flag)
 
 /**
  *  After importing a playlist, call this function to make it permanent (but
- *  will need to reload the sesson.
+ *  will still need to reload the sesson).
  */
 
 void
@@ -353,6 +353,7 @@ rcsettings::set_imported_playlist
     playlist_filename(filename_base(sourcepath));
     midi_base_directory(midipath);
     auto_playlist_save(true);
+    auto_rc_save(true);
 }
 
 void

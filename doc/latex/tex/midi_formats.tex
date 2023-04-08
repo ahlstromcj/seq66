@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2023-02-28
+% \update      2023-04-28
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -18,7 +18,7 @@
 \section{MIDI Format and Other MIDI Notes}
 \label{sec:midi_format_and_midi_notes}
 
-   \textsl{Seq66} tries to handle the most common MIDI files, and to provide
+   \textsl{Seq66} tries to handle most MIDI files, and to provide
    song information in a format that does not break other MIDI-compliant
    sequencers.  It can read SMF 0, 1, and \textsl{Cakewalk} WRK files.
    (SMF 2 is a series of SMF 0 files for multiple songs.  The MIDI data is
@@ -677,16 +677,16 @@
    \index{SeqSpec!c\_seq\_edit\_mode (Kepler34)}
    \begin{description}
       \item \texttt{c\_seq\_edit\_mode}:
-         specifies the editing mode of each pattern.
+         specifies the editing mode (normal vs. drum) of a pattern.
       \item \textsl{Length}: Indeterminate
       \item \textsl{Format}: \texttt{0x2424001C}
    \end{description}
 
-   This looks like a way to specify that a pattern should be edited in drum
-   mote (1) or normal mode (0).  This is a \textsl{Kepler34} feature. However,
-   in \textsl{Seq66} it is currently not implemented, nor read nor written.
-   It is more suited to a transitory status; it is also better determined
-   by the transposable status of a pattern.
+   This would specify that a pattern should be edited in drum
+   mote (1) or normal mode (0), a \textsl{Kepler34} feature.
+   However, in \textsl{Seq66} it is not implemented, nor read nor written.
+   It is also better determined by the transposable status of a pattern,
+   which the user can change with a button click.
 
 \subsubsection{SeqSpec c\_seq\_loopcount}
 \label{subsubsec:midi_format_track_seqspec_seq_loopcount}

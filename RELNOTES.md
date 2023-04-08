@@ -1,4 +1,4 @@
-# Seq66 Release Notes 0.99.3 2023-03-28
+# Seq66 Release Notes 0.99.3 2023-04-08
 
 This file lists __major__ changes from version 9.99.1 to 0.99.3 (to catch up).
 
@@ -6,7 +6,10 @@ This file lists __major__ changes from version 9.99.1 to 0.99.3 (to catch up).
 
     *   Version 0.99.3:
         *   Issue #107.  Expand-pattern functionality.
+        *   Issue #40.  Enhanced NSM handling.
         *   Automation fixes.
+        *   Added reading/writing/displaying Meta "text" events.
+        *   Improvements to playlist handling.
         *   Fixed the daemonization and log-file functionality.
     *   Version 0.99.2:
         *   Issue #103.  Some improvements to pattern loop-count.
@@ -38,5 +41,5 @@ This file lists __major__ changes from version 9.99.1 to 0.99.3 (to catch up).
 
 ## Final Notes
 
-Read the NEWS, README, and TODO files.  Never-ending!
+Read the NEWS, README.md, and TODO files.  Never-ending!
 

@@ -1832,7 +1832,7 @@ public:
     );
     bool transpose_notes (int steps, int scale, int key = 0);
 
-#if defined USE_STAZED_SHIFT_SUPPORT
+#if defined SEQ66_SEQ32_SHIFT_SUPPORT
     void shift_notes (midipulse ticks);
 #endif
 

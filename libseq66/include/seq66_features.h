@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-02-28
+ * \updates       2023-04-09
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -68,13 +68,6 @@
  *
  *      #define SEQ66_USE_STD_THREADING
  */
-
-/**
- *  Kepler34 has a drum edit mode that we have added, but it is also
- *  tied to the pattern being non-transposable.
- */
-
-#undef SEQ66_SEQUENCE_EDIT_MODE
 
 /**
  *  Adds more SYSEX processing, plus the ability to read SYSEX information
