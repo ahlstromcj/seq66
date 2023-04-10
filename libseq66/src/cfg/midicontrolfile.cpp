@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2022-08-26
+ * \updates       2023-04-10
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -588,8 +588,8 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                 read_triples(file, mco, midicontrolout::uiaction::queue);
                 read_triples(file, mco, midicontrolout::uiaction::oneshot);
                 read_triples(file, mco, midicontrolout::uiaction::replace);
-                read_triples(file, mco, midicontrolout::uiaction::snap);
-                read_triples(file, mco, midicontrolout::uiaction::song);
+                read_triples(file, mco, midicontrolout::uiaction::snapshot);
+                read_triples(file, mco, midicontrolout::uiaction::song_mode);
                 read_triples(file, mco, midicontrolout::uiaction::learn);
                 read_triples(file, mco, midicontrolout::uiaction::bpm_up);
                 read_triples(file, mco, midicontrolout::uiaction::bpm_dn);
@@ -1133,8 +1133,8 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         write_triples(file, mco, midicontrolout::uiaction::queue);
         write_triples(file, mco, midicontrolout::uiaction::oneshot);
         write_triples(file, mco, midicontrolout::uiaction::replace);
-        write_triples(file, mco, midicontrolout::uiaction::snap);
-        write_triples(file, mco, midicontrolout::uiaction::song);
+        write_triples(file, mco, midicontrolout::uiaction::snapshot);
+        write_triples(file, mco, midicontrolout::uiaction::song_mode);
         write_triples(file, mco, midicontrolout::uiaction::learn);
         write_triples(file, mco, midicontrolout::uiaction::bpm_up);
         write_triples(file, mco, midicontrolout::uiaction::bpm_dn);

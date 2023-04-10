@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2022-08-08
+ * \updates       2023-04-10
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -124,8 +124,8 @@ public:
         queue,                              /* button A */
         oneshot,                            /* button B */
         replace,                            /* button C */
-        snap,                               /* button D */
-        song,                               /* button E */
+        snapshot,                           /* button D */
+        song_mode,                          /* button E */
         learn,                              /* button F */
         bpm_up,                             /* button G */
         bpm_dn,                             /* button H */

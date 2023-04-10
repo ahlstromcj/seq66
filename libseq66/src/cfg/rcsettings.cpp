@@ -1016,7 +1016,7 @@ rcsettings::jack_session (const std::string & uuid)
         }
     }
     if (save_config)
-        rc().auto_usr_save(true);
+        rc().auto_usr_save(true);           /* hmmmm, why the rc() here?    */
 
     if (clear_uuid)
         m_jack_session_uuid.clear();
@@ -1034,9 +1034,16 @@ void
 rcsettings::last_used_dir (const std::string & value)
 {
     if (value.empty())
-        m_last_used_dir = empty_string();       /* "" from strfunctions */
+        m_last_used_dir = empty_string();           /* "" from strfunctions */
     else
-        m_last_used_dir = get_full_path(value); /* might end up empty   */
+    {
+        std::string last = get_full_path(value);    /* might end up empty   */
+        if (last != m_last_used_dir)                /* new directory?       */
+        {
+            m_last_used_dir = get_full_path(value); /* might end up empty   */
+            auto_rc_save(true);                     /* need to write it     */
+        }
+    }
 }
 
 /**

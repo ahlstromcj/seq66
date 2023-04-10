@@ -1,10 +1,14 @@
-T-O DO for Seq66 0.99.3 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.99.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-04-08
+2019-04-13 to 2023-04-09
 
 Some of these issues will be pushed of until the distant Seq66v2.
 
-Next issue to attack: #48.
+Immediate issues to attack:
+
+    ALSA/JACK issues with LaunchPad "alt" configuration.
+    Issue #48
+    Port-map testing.
 
 Ongoing efforts:
 
@@ -56,6 +60,13 @@ MIDI:
         number gets created.  Looks like this bug has been around for awhile.
         It also yields an ALSA unsubscribe error when disabling an input.
     -   Use const char * snd_asoundlib_version () to get the ALSA version.
+
+    JACK:
+
+    -   Pulseaudio gone, so now the USB devices (without a2jmidid running)
+        show up as "0:n system:midi_playback_n+1 'Device name'" (similar
+        for 'playback') and qsynth as "1:4 qsynth:midi_00". True even if
+        short port-naming.
 
 Automation:
 
@@ -137,9 +148,6 @@ ISSUES:
     STATUS: Will push off to version 2, if it is worth doing. At least the
     protocol is "open".
 
-#17 Connect MIDI devices by name
-    STATUS: Not an issue, fixed by the portmap feature.
-
 #24 Release notes in release tag message?
     STATUS: Will try to create a GitHub release using the "hub" program and
     the RELNOTES.md file.
@@ -150,12 +158,6 @@ ISSUES:
 #40 NSM: seq66 in a new session should provide a blank project
     Currently it imports the previously used MIDI file.
     STATUS: Many fixes made.
-
-#41 NSM: hide seq66 on closing window, don't exit?
-    STATUS: Fixed. Also we hide the "X" button.
-
-#43 Extended MIDI Format / Type?
-    STATUS: Fixed in documentation.
 
 #44 "Record live sequence changes" functionality
     Currently the "record live sequence changes" only adds patterns into the
@@ -185,9 +187,6 @@ ISSUES:
 #46 JACK port groups / order?
     STATUS: Probably a future feature (version 2).
 
-#47 change key map
-    STATUS: Fixed for now.
-
 #48 JACK-midi self connections
     With NSM and [manual ports] enabled, inputs ports are not created when I
     load the session.  Steps to reproduce :
@@ -210,17 +209,11 @@ ISSUES:
     Note:  Probably need an option to not auto-connect while NSM is running.
     However, this can be set in the 'rc' file.
 
-#49 Unable to unmute loops after group learn.
-    STATUS: Done.  Needs more testing.
-
 #52 Community / discussion place?
     STATUS: Partly supported now by using github.io, but much more to be done.
 
 #53 MIDI CC sequencing
     STATUS: See the thread on GitHub. Verify that CCs can be used.
-
-#54 Qt5 include errors
-    STATUS: Fixed (probably)
 
 #62 PipeWire compatibility
     STATUS: Will push off to version 2
@@ -228,9 +221,6 @@ ISSUES:
 #63 Option to rotate pattern numbers?
     STATUS: It works for the live grid.
     New issue: Verify that it works in other settings.
-
-#64 NSM: UI show up after restarting the app
-    STATUS: Fixed.
 
 #65 Control pattern length via MIDI CC
     STATUS: Nothing done yet, though the Expand option for recording works
@@ -261,9 +251,7 @@ ISSUES:
     STATUS: Partly fulfilled.
 
 #68 MIDI controller initialization step
-    The Launchpad Pro MK3 needs to be put in a special programmer mode before
-    it can  work nicely with Seq66.
-    STATUS: Fixed, some follow-on suggestions:
+    STATUS: Closed, some follow-on suggestions:
 
     Actually I have been thinking about the mode transition logic and it would
     be nice to have support for temporary transition.
@@ -309,9 +297,6 @@ ISSUES:
 #77 For building without JACK
     STATUS: Will push off to version 2
 
-#79 NSM: starts always with a blank pattern
-    STATUS: Fixed.
-
 #80 Launchpad MIDI on input bus
     ..., in order to use my Launchpad Mini with Seq66, it needs to be both
     checked in the "Input Buses" list and selected in the "MIDI Control
@@ -336,8 +321,6 @@ ISSUES:
     New Issue: "Get control/display ports to work without auto-connect".
     This involves being able to set up the controls after the fact without
     being stymied by start-up errors. An ALSA issue.
-
-#85 Segfaults and extra windows
     STATUS: Fixed.
 
 #86 The mousewheel doesn't works to scroll or zoom in Editor.

@@ -32,6 +32,36 @@
  * send feedback to an external control surface in order to reflect the state
  * of seq66. This includes updates on the playing and queueing status of the
  * sequences.
+ *
+ * Automation buttons (uiactions): This is a TO DO, to follow these rules.
+ *
+ *      panic:              Always red.
+ *      stop:               Always red. Making it green when pressed is confusing.
+ *      pause:              Red normally, amber when paused.
+ *      play:               Red normally, green when playing.
+ *      toggle_mutes:       Always green (for "enabled")?
+ *      song_record:        Green when on, red when off.
+ *      slot_shift:         Green when on, red when done.
+ *      free:               Unused, always red.
+ *      queue:              Always green? Can we do momentary coloring via thread?
+ *      oneshot:            Ditto?
+ *      replace:            Need to investigate.
+ *      snapshot:           Green while held, red while released.
+ *      song:           *   Red (or yellow?) in live mode, green in song mode.
+ *      learn:          *   Red normally, green in learn mode.
+ *      bpm_up:             Always green when configured.
+ *      bpm_dn:             Ditto.
+ *      list_up:            Ditto.
+ *      list_dn:            Ditto.
+ *      song_up:            Ditto.
+ *      song_dn:            Ditto.
+ *      set_up:             Ditto.
+ *      set_dn:             Ditto.
+ *      tap_bpm:            Green while tapping.
+ *      quit:               Keep it red or amber (warning!)
+ *      visibility:         Hmmmmm.
+ *      alt_2 to alt_7      Unused at present.
+ *
  */
 
 #include <iomanip>                      /* std::setw() manipulator          */
@@ -98,7 +128,7 @@ midicontrolout::initialize (int buss, int rows, int columns)
         int count = rows * columns;
         event dummy_event;
         actions actionstemp;
-        dummy_event.set_channel_status(0, 0);       /* set status & channel */
+        dummy_event.set_channel_status(0, 0);   /* set status and channel   */
         actionpair apt;
         apt.apt_action_status = false;
         apt.apt_action_event = dummy_event;
@@ -120,7 +150,7 @@ midicontrolout::initialize (int buss, int rows, int columns)
             m_mutes_events.push_back(att);
 
         m_screenset_size = count;
-        is_enabled(true);                           /* master bus???        */
+        is_enabled(true);                       /* master bus???            */
     }
     else
     {
@@ -181,24 +211,24 @@ action_to_string (midicontrolout::uiaction a)
     case midicontrolout::uiaction::pause:           return "Pause";
     case midicontrolout::uiaction::play:            return "Play";
     case midicontrolout::uiaction::toggle_mutes:    return "Toggle_mutes";
-    case midicontrolout::uiaction::song_record:     return "Song_record";
-    case midicontrolout::uiaction::slot_shift:      return "Slot_shift";
+    case midicontrolout::uiaction::song_record:     return "Song-record";
+    case midicontrolout::uiaction::slot_shift:      return "Slot-shift";
     case midicontrolout::uiaction::free:            return "Free";
     case midicontrolout::uiaction::queue:           return "Queue";
     case midicontrolout::uiaction::oneshot:         return "One-shot";
     case midicontrolout::uiaction::replace:         return "Replace";
-    case midicontrolout::uiaction::snap:            return "Snap";
-    case midicontrolout::uiaction::song:            return "Song";
+    case midicontrolout::uiaction::snapshot:        return "Snapshot";
+    case midicontrolout::uiaction::song_mode:       return "Song-mode";
     case midicontrolout::uiaction::learn:           return "Learn";
-    case midicontrolout::uiaction::bpm_up:          return "BPM_Up";
-    case midicontrolout::uiaction::bpm_dn:          return "BPM_Dn";
-    case midicontrolout::uiaction::list_up:         return "List_Up";
-    case midicontrolout::uiaction::list_dn:         return "List_Dn";
-    case midicontrolout::uiaction::song_up:         return "Song_Up";
-    case midicontrolout::uiaction::song_dn:         return "Song_Dn";
-    case midicontrolout::uiaction::set_up:          return "Set_Up";
-    case midicontrolout::uiaction::set_dn:          return "Set_Dn";
-    case midicontrolout::uiaction::tap_bpm:         return "Tap_BPM";
+    case midicontrolout::uiaction::bpm_up:          return "BPM-Up";
+    case midicontrolout::uiaction::bpm_dn:          return "BPM-Dn";
+    case midicontrolout::uiaction::list_up:         return "List-Up";
+    case midicontrolout::uiaction::list_dn:         return "List-Dn";
+    case midicontrolout::uiaction::song_up:         return "Song-Up";
+    case midicontrolout::uiaction::song_dn:         return "Song-Dn";
+    case midicontrolout::uiaction::set_up:          return "Set-Up";
+    case midicontrolout::uiaction::set_dn:          return "Set-Dn";
+    case midicontrolout::uiaction::tap_bpm:         return "Tap-BPM";
     case midicontrolout::uiaction::quit:            return "Quit";
     case midicontrolout::uiaction::visibility:      return "Visibility";
     case midicontrolout::uiaction::alt_2:           return "Alt_2";

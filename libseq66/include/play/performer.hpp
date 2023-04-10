@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-04-07
+ * \updates       2023-04-10
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3493,18 +3493,8 @@ public:
         return m_slot_shift;
     }
 
-    int increment_slot_shift () const
-    {
-        if (++m_slot_shift > 2)
-            clear_slot_shift();
-
-        return slot_shift();
-    }
-
-    void clear_slot_shift () const
-    {
-        m_slot_shift = 0;               /* mutable */
-    }
+    int increment_slot_shift (); // const;
+    void clear_slot_shift (); // const;
 
     bool hidden () const
     {

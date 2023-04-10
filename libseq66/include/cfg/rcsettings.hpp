@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-03-31
+ * \updates       2023-04-09
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -1004,7 +1004,11 @@ public:
 
     bool add_recent_file (const std::string & filename)
     {
-        return m_recent_files.add(filename);
+        bool result = m_recent_files.add(filename);
+        if (result)
+            auto_rc_save(true);                 /* fix on 2023-04-09 by ca  */
+
+        return result;
     }
 
     bool append_recent_file (const std::string & filename)

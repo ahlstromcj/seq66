@@ -8,7 +8,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2022-09-25
-# \update         2022-11-27
+# \update         2023-04-09
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -61,7 +61,7 @@ JCTL_PERIOD="256"      # for TESTING
 if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
 
    cat << E_O_F
-Usage v. 2022-11-27:
+Usage v. 2023-04-09:
 
    jackctl [--start] [options]    Start with the usual parameters (TBD).
 
@@ -166,6 +166,7 @@ elif [ "$JCTL_OPERATION" == "kill" ] ; then
 elif [ "$JCTL_OPERATION" == "start" ] ; then
 
    jack_control start
+   jack_lsp
 
 elif [ "$JCTL_OPERATION" == "setperiod" ] ; then
 

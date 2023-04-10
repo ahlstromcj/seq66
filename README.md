@@ -105,6 +105,7 @@ Windows, and using a conventional source tarball.
             *   Fixed accident disabling of grid-mode controls.
         *   Added reading/writing/displaying Meta text events such as Text
             and Cue Point.
+        *   Fixed broken "recent-files" features (by forcing 'rc' save).
         *   Improvements made to playlist handling.
         *   Fixed the daemonization and log-file functionality.
         *   Revisited the recmutex implementation.

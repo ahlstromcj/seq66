@@ -1,7 +1,7 @@
-# Seq66 0.98.11 MIDI control configuration file
+# Seq66 0.99.3 MIDI control configuration file
 #
 # /home/ahlstrom/.config/seq66/qseq66-lp-mini-alt.ctrl
-# Written 2022-07-21 15:00:33
+# Written 2023-04-09 08:49:56
 #
 # Sets up MIDI I/O control. The format is like the 'rc' file. To use it, set it
 # active in the 'rc' [midi-control-file] section. It adds loop, mute, &
@@ -20,6 +20,14 @@ version = 6
 This file is similar to qseq66-lp-mini.ctrl, except that is uses the
 buttons for mute-groups 24 to 31 for handling playlists and sets,
 allowing 8 fewer mute-groups in return for enhanced automation control.
+As a quick note, the following color numbers are used:
+  
+    12 = Off
+    15 = Red
+    46 = Amber
+    60 = Green
+    62 = Yellow
+    63 = Amber
   
 See doc/launchpad-mini.ods for the mappings implemented by this 'ctrl' file.
 
@@ -36,7 +44,7 @@ See doc/launchpad-mini.ods for the mappings implemented by this 'ctrl' file.
 # 'azerty'. AZERTY turns off auto-shift for group-learn.
 
 drop-empty-controls = false
-control-buss = 4
+control-buss = 3
 midi-enabled = true
 button-offset = 0
 button-rows = 4
@@ -201,20 +209,20 @@ keyboard-layout = qwerty
 46 "0xfc"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 46
 47 "0xfd"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 47
 48 "0xfe"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 48
-49 "Sh_F1"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Overdub
-50 "Sh_F2"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Overwrite
-51 "Sh_F3"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Expand
-52 "Sh_F4"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Oneshot
-53 "Sh_F5"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Loop
-54 "Sh_F6"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Record
-55 "Sh_F7"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Copy
-56 "Sh_F8"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Paste
-57 "Sh_F9"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Clear
-58 "Sh_F10"      [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Delete
-59 "Sh_F11"      [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Thru
-60 "Sh_F12"      [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Solo
-61 "0xe0"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Cut
-62 "0xe1"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Double
+49 "Sh_F1"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Record Overdub
+50 "Sh_F2"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Record Overwrite
+51 "Sh_F3"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Record Expand
+52 "Sh_F4"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Record Oneshot
+53 "Sh_F5"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Loop
+54 "Sh_F6"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Record
+55 "Sh_F7"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Copy
+56 "Sh_F8"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Paste
+57 "Sh_F9"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Clear
+58 "Sh_F10"      [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Delete
+59 "Sh_F11"      [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Thru
+60 "Sh_F12"      [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Solo
+61 "0xe0"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Cut
+62 "0xe1"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Grid Double
 63 "0xe2"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Q None
 64 "0xe3"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Q Full
 65 "0xe4"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Q Tighten
@@ -237,7 +245,7 @@ keyboard-layout = qwerty
 [midi-control-out-settings]
 
 set-size = 32
-output-buss = 3
+output-buss = 2
 midi-enabled = true
 button-offset = 0
 button-rows = 4
@@ -347,13 +355,13 @@ button-columns = 8
 # active-flag, not an index number. The stanzas are are on / off / inactive,
 # except for 'snap', which is store /  restore / inactive.
 
-1 [ 0xb0 104  60 ] [ 0xb0 104  15 ] [ 0xb0 104  12 ]  # Panic
-1 [ 0xb0 105  60 ] [ 0xb0 105  15 ] [ 0xb0 105  12 ]  # Stop
-1 [ 0xb0 106  60 ] [ 0xb0 106  15 ] [ 0xb0 106  12 ]  # Pause
+1 [ 0xb0 104  15 ] [ 0xb0 104  15 ] [ 0xb0 104  12 ]  # Panic
+1 [ 0xb0 105  15 ] [ 0xb0 105  15 ] [ 0xb0 105  12 ]  # Stop
+1 [ 0xb0 106  62 ] [ 0xb0 106  15 ] [ 0xb0 106  12 ]  # Pause
 1 [ 0xb0 107  60 ] [ 0xb0 107  15 ] [ 0xb0 107  12 ]  # Play
 1 [ 0xb0 108  60 ] [ 0xb0 108  15 ] [ 0xb0 108  12 ]  # Toggle_mutes
 1 [ 0xb0 109  60 ] [ 0xb0 109  15 ] [ 0xb0 109  12 ]  # Song_record
-0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Slot_shift
+1 [ 0xb0 110  60 ] [ 0xb0 110  15 ] [ 0xb0 110  12 ]  # Slot_shift
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Free
 1 [ 0x90   8  60 ] [ 0x90   8  15 ] [ 0x90   8  12 ]  # Queue
 1 [ 0x90  24  60 ] [ 0x90  24  15 ] [ 0x90  24  12 ]  # One-shot

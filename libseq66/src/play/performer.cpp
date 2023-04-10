@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-08
+ * \updates       2023-04-10
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -255,6 +255,12 @@
 #include "os/daemonize.hpp"             /* seq66::signal_for_exit()         */
 #include "os/timing.hpp"                /* seq66::microsleep(), microtime() */
 #include "util/filefunctions.hpp"       /* seq66::filename_base(), etc.     */
+
+/**
+ *  Flags code to improve (we hope) the behavior of lighting.
+ */
+
+#define SEQ66_CONTROL_OUT_UPDATES
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -1964,6 +1970,10 @@ performer::inner_start ()
             cv().signal();                      /* signal we are running    */
             send_onoff_event(midicontrolout::uiaction::play, true);
             send_onoff_event(midicontrolout::uiaction::panic, false);
+#if defined SEQ66_CONTROL_OUT_UPDATES
+            send_onoff_event(midicontrolout::uiaction::pause, false);
+            send_onoff_event(midicontrolout::uiaction::stop, false);
+#endif
         }
     }
 }
@@ -1992,6 +2002,33 @@ performer::inner_stop (bool midiclock)
     m_usemidiclock = midiclock;
     send_onoff_event(midicontrolout::uiaction::stop, true);
     send_onoff_event(midicontrolout::uiaction::panic, true);
+#if defined SEQ66_CONTROL_OUT_UPDATES
+    send_onoff_event(midicontrolout::uiaction::pause, false);
+    send_onoff_event(midicontrolout::uiaction::play, false);
+#endif
+}
+
+int
+performer::increment_slot_shift () // const
+{
+    if (++m_slot_shift > 2)
+        clear_slot_shift();
+
+    if (slot_shift() > 0)
+#if defined SEQ66_CONTROL_OUT_UPDATES
+        send_onoff_event(midicontrolout::uiaction::slot_shift, true);
+#endif
+
+    return slot_shift();
+}
+
+void
+performer::clear_slot_shift () // const
+{
+    m_slot_shift = 0;               /* mutable */
+#if defined SEQ66_CONTROL_OUT_UPDATES
+        send_onoff_event(midicontrolout::uiaction::slot_shift, false);
+#endif
 }
 
 /**
@@ -4515,7 +4552,11 @@ performer::auto_pause ()
     {
         pause_playing();
         send_onoff_event(midicontrolout::uiaction::play, false);
-        send_onoff_event(midicontrolout::uiaction::panic, true);
+        send_onoff_event(midicontrolout::uiaction::panic, false);
+#if defined SEQ66_CONTROL_OUT_UPDATES
+        send_onoff_event(midicontrolout::uiaction::stop, false);
+        send_onoff_event(midicontrolout::uiaction::pause, true);
+#endif
     }
     else
     {
@@ -4523,6 +4564,10 @@ performer::auto_pause ()
         isplaying = true;
         send_onoff_event(midicontrolout::uiaction::play, true);
         send_onoff_event(midicontrolout::uiaction::panic, false);
+#if defined SEQ66_CONTROL_OUT_UPDATES
+        send_onoff_event(midicontrolout::uiaction::stop, false);
+        send_onoff_event(midicontrolout::uiaction::pause, false);
+#endif
     }
     is_pattern_playing(isplaying);
 }
@@ -4546,6 +4591,9 @@ performer::auto_stop (bool rewind)
     {
         stop_playing(rewind);
         is_pattern_playing(false);
+#if defined SEQ66_CONTROL_OUT_UPDATES
+        send_onoff_event(midicontrolout::uiaction::pause, false);
+#endif
 
         /*
          * Is problematic because metronome count-in calls auto_stop().
@@ -5778,7 +5826,7 @@ performer::display_ctrl_status (automation::ctrlstatus s, bool on)
         send_onoff_event(midicontrolout::uiaction::replace, on);
 
     if (midi_control_in().is_snapshot(s))
-        send_onoff_event(midicontrolout::uiaction::snap, on);
+        send_onoff_event(midicontrolout::uiaction::snapshot, on);
 }
 
 /**
@@ -6121,6 +6169,10 @@ performer::song_recording (bool on, bool atstart)
         }
         else
             mapper().song_recording_stop(pad().js_current_tick);
+
+#if defined SEQ66_CONTROL_OUT_UPDATES
+        send_onoff_event(midicontrolout::uiaction::song_record, on);
+#endif
     }
 }
 
@@ -8274,6 +8326,12 @@ performer::open_playlist (const std::string & pl)
             }
             else                            /* something more important?    */
             {
+                /*
+                 * ca 2023-04-09.
+                 * This disables saving (for example) the recent files
+                 * list.  But let's fix that problem elsewhere first.
+                 */
+
                 rc().auto_rc_save(false);   /* could be TRICKY!             */
                 m_play_list->mode(false);   /* disable it by choice         */
             }
