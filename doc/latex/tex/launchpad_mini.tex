@@ -454,10 +454,10 @@
    Here is the complete table. The color is indicated by R, G, Y, or A,
    while "Inactive"
    is the most common entry for the third stanza and represents a darkened button.
-   An asterisk "*" indicates we don't like something about the behavior and
-   might fix it. See the notes about those after the table.
-   For example, currently, pressing "Panic" causes the \textbr{Panic}
-   and \textbr{Stop buttons} to turn green, which seems silly in hindsight.
+   An number indicates we don't like something about the behavior and
+   might fix it, or explain it. See the notes about those after the table.
+   For example, currently, pressing "Panic" causes the \textbf{Panic}
+   and \textbf{Stop buttons} to turn green, which seems silly in hindsight.
 
    \begin{table}[H]
       \centering
@@ -465,17 +465,35 @@
       \label{table:status_announcement Stanzas}
       \begin{tabular}{l l l l}
          \textbf{Action} & \textbf{Stanza 1} & \textbf{Stanza 2} & \textbf{Stanza 3} \\
-         \textbf{Panic *} & On (R) & Off (R) & Inactive \\
-         \textbf{Stop *} & On (R) & Off (R) & Inactive \\
-         \textbf{Pause *} & On (Y) & Off (R) & Inactive \\
-         \textbf{Play *} & On (G) & Off (R) & Inactive \\
-         \textbf{Toggle Mutes *} & On (G) & Off (R) & Inactive \\
+         \textbf{Panic 1} & On (R) & Off (R) & Inactive \\
+         \textbf{Stop 1} & On (R) & Off (R) & Inactive \\
+         \textbf{Pause 1} & On (Y) & Off (R) & Inactive \\
+         \textbf{Play 1} & On (G) & Off (R) & Inactive \\
+         \textbf{Toggle Mutes 2} & On (G) & Off (R) & Inactive \\
+         \textbf{Song Record 3} & On (G) & Off (R) & Inactive \\
+         \textbf{Queue 4} & On (G) & Off (R) & Inactive \\
+         \textbf{One-short 4} & On (G) & Off (R) & Inactive \\
+         \textbf{Replace 4} & On (G) & Off (R) & Inactive \\
+         \textbf{Snapshot 4} & On (G) & Off (R) & Inactive \\
+         \textbf{Song-mode 3} & On (G) & Off (R) & Inactive \\
+         \textbf{Learn 3} & On (G) & Off (R) & Inactive \\
+         \textbf{BPM-Up 5} & On (G) & Off (G) & Inactive \\
+         \textbf{BPM-Dn 5} & On (G) & Off (Y) & Inactive \\
+         \textbf{List-Up 5} & On (G) & Off (G) & Inactive \\
+         \textbf{List-Dn 5} & On (G) & Off (Y) & Inactive \\
+         \textbf{Song-Up 5} & On (G) & Off (G) & Inactive \\
+         \textbf{Song-Dn 5} & On (G) & Off (Y) & Inactive \\
+         \textbf{Set-Up 5} & On (G) & Off (G) & Inactive \\
+         \textbf{Set-Dn 5} & On (G) & Off (Y) & Inactive \\
+         \textbf{Tap\_BPM} & On (G) & Off (G) & Inactive \\
+         \textbf{Quit} & On (R) & Off (R) & Inactive \\
+         \textbf{Visibility} & On (A) & Off (A) & Inactive \\
       \end{tabular}
    \end{table}
 
    Notes (*):
 
-   \begin{itemize}
+   \begin{enumerate}
 
       \item \textsl{Panic}, \textsl{Stop}, \textsl{Pause}, and \textsl{Play}.
          These needed improved coordination and appearance.
@@ -486,7 +504,25 @@
          this status is reflected in the loop buttons and is obvious.
          We could consider just toggling the color between two colors.
 
-   \end{itemize}
+      \item \textsl{Song Record}, \textsl{Slot Shift}, \textsl{Song-mode},
+         \textsl{Learn}.
+         These are state indicators, so it is green when in that state,
+         and red when not in that state.
+
+      \item \textsl{Queue}, \textsl{One-shot}, \textsl{One-shot},
+      \textsl{Replace}. 
+         These operate by striking the appropriate key and then selecting
+         the pattern hot-key to effect.  So we could turn the key green
+         until the hot-key/pattern is selected.
+
+      \item \textsl{BPM-Up}, \textsl{BPM-Dn}, \textsl{List-Up},
+      \textsl{List-Dn}, \textsl{Song-Up}, \textsl{Song-Dn}, \textsl{Set-Up},
+      \textsl{Set-Dn}.
+         These are up-down pairs.
+         We currently just show them in red, but probably more informative to
+         show Up in green and Dn in yellow.
+
+   \end{enumerate}
 
 \subsection{Test Run, ALSA}
 \label{subsubsec:launchpad_mini_test_run_alsa}

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-10
+ * \updates       2023-04-11
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -591,7 +591,7 @@ performer::notify_resolution_change (int ppqn, midibpm bpm, change mod)
 {
     m_resolution_change = true;
     for (auto notify : m_notify)
-        (void) notify->on_resolution_change(ppqn, bpm);
+        (void) notify->on_resolution_change(ppqn, bpm, mod);
 
     if (mod == change::yes)
         modify();
@@ -2127,16 +2127,29 @@ performer::needs_update (seq::number seqno) const
  * \param bp
  *      Provides the beats/minute value to be set.  Checked for validity.  It
  *      is a wide range of speeds, well beyond what normal music needs.
+ *
+ * \param user_change
+ *      True if the user (as opposed to the tune) is making a tempo change.
+ *
+ * \return
+ *      Returns true if the tempo was changed.
  */
 
 bool
-performer::set_beats_per_minute (midibpm bp)
+performer::set_beats_per_minute (midibpm bp, bool user_change)
 {
     bool result = usr().bpm_is_valid(bp);
     if (result)
+        result = bp != get_beats_per_minute();
+
+    if (result)
     {
+        /*
+         * Not just JACK though.
+         */
+
         bp = fix_tempo(bp);
-        result = jack_set_beats_per_minute(bp);     /* not just JACK though */
+        result = jack_set_beats_per_minute(bp, user_change);
     }
     return result;
 }
@@ -2156,10 +2169,20 @@ performer::set_beats_per_minute (midibpm bp)
  *  parameter list of notify_resolution_change(), the master-bus pointer is
  *  bad and we get a segfault. And this, only in debug code!  Valgrind does
  *  not help in tracking this down.
+ *
+ * \param bp
+ *      Provides the beats/minute value to be set.  Checked for validity.  It
+ *      is a wide range of speeds, well beyond what normal music needs.
+ *
+ * \param user_change
+ *      True if the user (as opposed to the tune) is making a tempo change.
+ *
+ * \return
+ *      Returns true if the tempo was changed.
  */
 
 bool
-performer::jack_set_beats_per_minute (midibpm bp)
+performer::jack_set_beats_per_minute (midibpm bp, bool user_change)
 {
     bool result = bp != m_bpm && usr().bpm_is_valid(bp);
     if (result)
@@ -2180,7 +2203,7 @@ performer::jack_set_beats_per_minute (midibpm bp)
          */
 
         change ch = rc().midi_filename().empty() ? change::no : change::yes ;
-        if (rc().playlist_active())
+        if (rc().playlist_active() || ! user_change)
             ch = change::no;
 
         notify_resolution_change(ppq, bp, ch);          /* get_ppqn()       */
@@ -2200,7 +2223,7 @@ midibpm
 performer::decrement_beats_per_minute ()
 {
     midibpm result = get_beats_per_minute() - usr().bpm_step_increment();
-    set_beats_per_minute(result);
+    set_beats_per_minute(result, true);
     return result;
 }
 
@@ -2216,7 +2239,7 @@ midibpm
 performer::increment_beats_per_minute ()
 {
     midibpm result = get_beats_per_minute() + usr().bpm_step_increment();
-    set_beats_per_minute(result);
+    set_beats_per_minute(result, true);
     return result;
 }
 
@@ -2235,7 +2258,7 @@ midibpm
 performer::page_decrement_beats_per_minute ()
 {
     midibpm result = get_beats_per_minute() - usr().bpm_page_increment();
-    set_beats_per_minute(result);
+    set_beats_per_minute(result, true);
     return result;
 }
 
@@ -2254,7 +2277,7 @@ midibpm
 performer::page_increment_beats_per_minute ()
 {
     midibpm result = get_beats_per_minute() + usr().bpm_page_increment();
-    set_beats_per_minute(result);
+    set_beats_per_minute(result, true);
     return result;
 }
 
@@ -4591,15 +4614,15 @@ performer::auto_stop (bool rewind)
     {
         stop_playing(rewind);
         is_pattern_playing(false);
-#if defined SEQ66_CONTROL_OUT_UPDATES
-        send_onoff_event(midicontrolout::uiaction::pause, false);
-#endif
 
         /*
          * Is problematic because metronome count-in calls auto_stop().
          * (void) finish_recorder();
          */
     }
+#if defined SEQ66_CONTROL_OUT_UPDATES
+    send_onoff_event(midicontrolout::uiaction::pause, false);
+#endif
 }
 
 void
@@ -8452,7 +8475,7 @@ performer::automation_tap_bpm
     {
         midibpm bpm = update_tap_bpm();
         if (bpm != get_beats_per_minute())
-            set_beats_per_minute(bpm);
+            set_beats_per_minute(bpm, true);
     }
     return true;
 }

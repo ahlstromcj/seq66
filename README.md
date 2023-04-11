@@ -1,4 +1,4 @@
-# README for Seq66 0.99.3 2023-04-09
+# README for Seq66 0.99.3 2023-04-11
 
 __Seq66__: MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets, triggers, and playlists for song management,
@@ -103,10 +103,13 @@ Windows, and using a conventional source tarball.
             *   Fixed processing grid keystrokes twice.
             *   Renamed record-mode and grid-model control labels.
             *   Fixed accident disabling of grid-mode controls.
+            *   Making MIDI control-out handling more reasonable.
         *   Added reading/writing/displaying Meta text events such as Text
             and Cue Point.
         *   Fixed broken "recent-files" features (by forcing 'rc' save).
-        *   Improvements made to playlist handling.
+        *   Improvements made to playlist handling. It wasn't displaying
+            the BPM of the next tune.  Still have issue with the BPM spinbox
+            not causing a file modification. Editing the BPM works.
         *   Fixed the daemonization and log-file functionality.
         *   Revisited the recmutex implementation.
     *   Version 0.99.2:

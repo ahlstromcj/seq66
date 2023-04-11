@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-01
+ * \updates       2023-04-11
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -198,7 +198,10 @@ protected:                              // performer callbacks
         screenset::number setno,
         performer::change ctype
     ) override;
-    virtual bool on_resolution_change (int ppqn, midibpm bpm) override;
+    virtual bool on_resolution_change
+    (
+        int ppqn, midibpm bp, performer::change ch
+    ) override;
     virtual bool on_song_action (bool signal, playlist::action) override;
 
 private:                                // overrides of event handlers
@@ -248,6 +251,7 @@ private:
     void remove_all_editors ();
     void remove_all_live_frames ();
     void set_tap_button (int beats);
+    void set_beats_per_minute (double bp, bool blockchange = false);
     void redo_live_frame ();
     bool handle_key_press (const keystroke & k);
     bool handle_key_release (const keystroke & k);

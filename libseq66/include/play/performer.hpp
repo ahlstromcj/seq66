@@ -275,35 +275,35 @@ public:
             return false;
         }
 
-        virtual bool on_sequence_change
+        virtual bool on_sequence_change (seq::number, change)
+        {
+            return false;
+        }
+
+        virtual bool on_automation_change (automation::slot)
+        {
+            return false;
+        }
+
+        virtual bool on_ui_change (seq::number)
+        {
+            return false;
+        }
+
+        virtual bool on_trigger_change (seq::number)
+        {
+            return false;
+        }
+
+        virtual bool on_resolution_change
         (
-            seq::number, change /*ctype*/       // bool /* recreate */
+            int /* ppqn */, midibpm, performer::change
         )
         {
             return false;
         }
 
-        virtual bool on_automation_change (automation::slot /* s */)
-        {
-            return false;
-        }
-
-        virtual bool on_ui_change (seq::number /* seqno */)
-        {
-            return false;
-        }
-
-        virtual bool on_trigger_change (seq::number /* seqno */)
-        {
-            return false;
-        }
-
-        virtual bool on_resolution_change (int /* ppqn */, midibpm /* bpm */)
-        {
-            return false;
-        }
-
-        virtual bool on_song_action (bool /* sig */, playlist::action /* a */)
+        virtual bool on_song_action (bool, playlist::action)
         {
             return false;
         }
@@ -1833,7 +1833,7 @@ public:
 #endif
     }
 
-    bool jack_set_beats_per_minute (midibpm bpm);
+    bool jack_set_beats_per_minute (midibpm bpm, bool user_change = false);
 
     bool jack_set_ppqn (int p)
     {
@@ -3200,7 +3200,7 @@ public:         /* GUI-support functions */
         mutes().toggle_group_mode();
     }
 
-    bool set_beats_per_minute (midibpm bpm);        /* more than a setter   */
+    bool set_beats_per_minute (midibpm bp, bool user_change = false);
     bool set_ppqn (int p);
     bool change_ppqn (int p);
     bool ui_change_set_bus (int b);

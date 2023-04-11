@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with refactoring by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2022-08-08
+ * \updates       2023-04-10
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to

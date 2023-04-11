@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-08
+ * \updates       2023-04-10
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -657,10 +657,10 @@ qsmainwnd::qsmainwnd
      * BPM (beats-per-minute) spin-box.
      */
 
+    ui->spinBpm->setReadOnly(false);
     ui->spinBpm->setDecimals(usr().bpm_precision());
     ui->spinBpm->setSingleStep(usr().bpm_step_increment());
     ui->spinBpm->setValue(cb_perf().bpm());
-    ui->spinBpm->setReadOnly(false);
     connect
     (
         ui->spinBpm, SIGNAL(valueChanged(double)),
@@ -1114,19 +1114,28 @@ qsmainwnd::set_ppqn_combo ()
     return result;
 }
 
+/**
+ *  This gets called when just typing numbers into the BPM field! It gets
+ *  called before edit_bpm().
+ */
+
 void
-qsmainwnd::update_bpm (double bpm)
+qsmainwnd::update_bpm (double bp)
 {
-    cb_perf().set_beats_per_minute(midibpm(bpm));
-    enable_save();
+    midibpm bpold = ui->spinBpm->value();
+    if (bp != bpold)
+    {
+        if (cb_perf().set_beats_per_minute(midibpm(bp), true))
+            enable_save();
+    }
 }
 
 void
 qsmainwnd::edit_bpm ()
 {
-    midibpm bpm = ui->spinBpm->value();
-    cb_perf().set_beats_per_minute(bpm);
-    enable_save();
+    midibpm bp = ui->spinBpm->value();
+    if (cb_perf().set_beats_per_minute(bp, true))
+        enable_save();
 }
 
 void
@@ -2141,9 +2150,14 @@ qsmainwnd::import_midi_into_set ()
 
                 if (f->parse(cb_perf(), setno, true))  /* true-->importing  */
                 {
-                    ui->spinBpm->setValue(cb_perf().bpm());
                     ui->spinBpm->setDecimals(usr().bpm_precision());
                     ui->spinBpm->setSingleStep(usr().bpm_step_increment());
+
+                    /*
+                     * ui->spinBpm->setValue(cb_perf().bpm());
+                     */
+
+                    set_beats_per_minute(cb_perf().bpm(), true);
                     update_bank(setno);
                     (void) refresh_captions();
                 }
@@ -3475,16 +3489,16 @@ qsmainwnd::learn_toggle ()
 void
 qsmainwnd::tap ()
 {
-    midibpm bpm = cb_perf().update_tap_bpm();
-    update_tap(bpm);
+    midibpm bp = cb_perf().update_tap_bpm();
+    update_tap(bp);
 }
 
 void
-qsmainwnd::update_tap (midibpm bpm)
+qsmainwnd::update_tap (midibpm bp)
 {
     set_tap_button(cb_perf().current_beats());
-    if (cb_perf().current_beats() > 1)             /* first one is useless  */
-        ui->spinBpm->setValue(bpm);
+    if (cb_perf().current_beats() > 1)      /* first one is useless         */
+        set_beats_per_minute(bp);           /* ui->spinBpm->setValue(bp)    */
 }
 
 /**
@@ -3501,6 +3515,17 @@ qsmainwnd::set_tap_button (int beats)
     snprintf(temp, sizeof temp, "%d", beats);
     ui->button_tap_bpm->setText(temp);
     enable_save();
+}
+
+void
+qsmainwnd::set_beats_per_minute (double bp, bool blockchange)
+{
+    if (blockchange)
+        ui->spinBpm->blockSignals(true);
+
+    ui->spinBpm->setValue(bp);
+    if (blockchange)
+        ui->spinBpm->blockSignals(false);
 }
 
 /**
@@ -3720,12 +3745,18 @@ qsmainwnd::update_set_change (int setno)
 }
 
 bool
-qsmainwnd::on_resolution_change (int ppqn, midibpm bpm)
+qsmainwnd::on_resolution_change (int ppqn, midibpm bp, performer::change ch)
 {
     std::string pstring = std::to_string(ppqn);
     set_ppqn_text(pstring);
-    ui->spinBpm->setValue(bpm);
-    m_is_title_dirty = true;                        /* 2022-04-25           */
+
+    /*
+     * if (ch == performer::change::yes)
+     *      ui->spinBpm->setValue(bp);
+     */
+
+    set_beats_per_minute(bp, ch == performer::change::no);
+    m_is_title_dirty = true;
     return true;
 }
 
