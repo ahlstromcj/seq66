@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-11
+ * \updates       2023-04-12
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -5948,14 +5948,6 @@ performer::unset_queued_replace (bool clearbits)
  * \param learning
  *      If true, sets group-learn mode, otherwise, unsets it.  If false, the
  *      "good" status will refer to the success of memorizing the mute status.
- *
- * \param good
- *      If true, either the learning or the mute-setting succeed.  Otherwise,
- *      the operation failed.
- *
- * \param k
- *      Inidates the keystroke involved in the transaction, useful for
- *      reporting.
  */
 
 void
@@ -5970,6 +5962,21 @@ performer::group_learn (bool learning)
     for (auto notify : m_notify)
         (void) notify->on_group_learn(learning);
 }
+
+/**
+ *  TODO:  We need to:
+ *
+ *      -   Update the Mutes tab.
+ *      -   Activate (red) the selected mute button.
+ *
+ * \param k
+ *      Inidates the keystroke involved in the transaction, useful for
+ *      reporting.
+ *
+ * \param good
+ *      If true, either the learning or the mute-setting succeeded.  Otherwise,
+ *      the operation failed.
+ */
 
 void
 performer::group_learn_complete (const keystroke & k, bool good)
@@ -6407,7 +6414,6 @@ performer::midi_control_keystroke (const keystroke & k)
                     else if (learning)
                     {
                         group_learn_complete(kkey, false);      /* fail     */
-                        group_learn(false);
                         result = false;
                     }
                 }
@@ -6854,7 +6860,7 @@ performer::apply_session_mutes ()
 bool
 performer::learn_mutes (mutegroup::number group)
 {
-    bool result =  mapper().learn_mutes(true, group);   /* true == learn */
+    bool result = mapper().learn_mutes(true, group);    /* true == learn    */
     if (result)
     {
         change c = mutes().group_save_to_midi() ?
@@ -7101,7 +7107,26 @@ performer::mute_group_control
             {
                 result = learn_mutes(gn);
             }
+            /*
+             * This causes a message to popup with the parent in a
+             * different thread, causing a crash. However, if all works,
+             * the MIDI controller will display the new mutegroup.
+             *
+             * keystroke k = m_key_controls.mute_keystroke(gn);
+             * group_learn_complete(k, result);
+             */
+
+            std::string statusmsg = result ? "Succeeded" : "Failed" ;
+            std::string msg = "Learning of mute-group key ";
+            msg += m_key_controls.mute_key(gn);
+            session_message(statusmsg, msg);
             group_learn(false);
+            announce_mutes();
+            if (result)
+            {
+                // TODO: can we update qmutemaster?
+                modify();
+            }
         }
         else
         {
@@ -7420,7 +7445,7 @@ performer::automation_gmute
  *
  *  Another avenue for this is the learn_toggle() function, which a GUI like
  *  qsmainwnd can call directly, either via the "Learn" button or a keystroke
- *  like Ctrl-L.
+ *  like "L".
  */
 
 bool

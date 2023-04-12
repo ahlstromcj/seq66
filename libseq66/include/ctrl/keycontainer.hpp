@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-12-04
+ * \updates       2023-04-12
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of keycontrol objects keyed by a key ordinal
@@ -42,6 +42,7 @@
 
 #include "ctrl/keymap.hpp"              /* seq66::keyboard::layout, etc.    */
 #include "ctrl/keycontrol.hpp"          /* seq66::keycontrol                */
+#include "ctrl/keystroke.hpp"           /* seq66::keystroke                 */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -181,6 +182,7 @@ public:
     const keycontrol & control (ctrlkey ordinal) const;
     std::string slot_key (int pattern_offset) const;
     std::string mute_key (int mute_offset) const;
+    keystroke mute_keystroke (int mute_offset) const;
 
     bool loaded_from_rc () const
     {

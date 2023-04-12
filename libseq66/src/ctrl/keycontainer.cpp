@@ -277,6 +277,27 @@ keycontainer::mute_key (int mute_offset) const
 }
 
 /**
+ *  This function was added in order to be able to get the keystroke from
+ *  the mute-group in order to try to display that the mute-group learn worked
+ *  via MIDI control.
+ */
+
+keystroke
+keycontainer::mute_keystroke (int mute_offset) const
+{
+    static keystroke s_empty;
+    std::string keyname = mute_key(mute_offset);
+    if (keyname != "?")
+    {
+        bool press = true;                  /* doesn't matter which */
+        ctrlkey ordinal = qt_keyname_ordinal(keyname);
+        return keystroke(ordinal, press);
+    }
+    else
+        return s_empty;
+}
+
+/**
  *  If verbose is set, shows the contents of the keycontainer.
  */
 

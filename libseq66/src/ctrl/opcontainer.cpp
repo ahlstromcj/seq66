@@ -71,7 +71,7 @@ opcontainer::opcontainer (const std::string & name) :
  *
  * \param op
  *      The operation's object, which provides the op-number, the automation
- *      slot number to use.  The "max" value will never be encounterd, and
+ *      slot number to use.  The "max" value will never be encountered, and
  *      the "automation" value is ignored.  The "reserved" numbers should use
  *      a no-op midioperation.
  *
