@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-12
+ * \updates       2023-04-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -330,7 +330,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_key_controls          ("Key controls"),
     m_midi_control_in       ("Perf ctrl in"),
     m_midi_control_out      ("Perf ctrl out"),
-    m_mute_groups           ("Mute groups", rows, columns),
+    m_mute_groups           ("Mute groups", rows, columns),     /* mutes()  */
     m_operations            ("Performer ops"),
     m_set_master            (rows, columns),    /* 32 row x column sets     */
     m_set_mapper                                /* accessed via mapper()    */
@@ -693,8 +693,11 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
 
     m_midi_control_out = rcs.midi_control_out();
 
-    const std::string & mgf = rc().mute_group_filespec();
-    (void) open_mutegroups(mgf);
+    if (rc().mute_group_file_active())
+    {
+        const std::string & mgf = rc().mute_group_filespec();
+        (void) open_mutegroups(mgf);
+    }
     if (! rc().song_start_auto())
         song_start_mode(rcs.get_song_start_mode());      /* force the mode   */
 
@@ -745,7 +748,7 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     rcs.key_controls() = m_key_controls;
     rcs.midi_control_in() = m_midi_control_in;
     rcs.midi_control_out() = m_midi_control_out;
-    if (mutes().is_modified())
+    if (mutes().is_modified() && rc().mute_group_file_active())
     {
         const std::string & mgf = rc().mute_group_filespec();
         (void) save_mutegroups(mgf);
@@ -5983,7 +5986,10 @@ performer::group_learn_complete (const keystroke & k, bool good)
 {
     group_learn(false);
     for (auto notify : m_notify)
+    {
         (void) notify->on_group_learn_complete(k, good);
+        // (void) notify->on_mutes_change();
+    }
 }
 
 /**
@@ -6846,14 +6852,16 @@ bool
 performer::apply_session_mutes ()
 {
     bool result = mutes().any() && mutes().group_valid();
-    if (rc().song_start_auto())
-        result = mapper().trigger_count() == 0; /* triggers imply song mode */
-    else
-        result = ! rc().song_start_mode();      /* don't apply in song mode */
-
     if (result)
-        result = apply_mutes(mutes().group_selected());
+    {
+        if (rc().song_start_auto())
+            result = mapper().trigger_count() == 0; /* triggers = song mode */
+        else
+            result = ! rc().song_start_mode();      /* don't use in "song"  */
 
+        if (result)
+            result = apply_mutes(mutes().group_selected());
+    }
     return result;
 }
 

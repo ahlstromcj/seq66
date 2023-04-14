@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-08-05
+ * \updates       2023-04-13
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -1001,6 +1001,13 @@ setmapper::toggle_active_mutes (mutegroup::number group)
  *  of all of the sequences in the current play-screen, and copies them into
  *  the desired mute-group.  Then, no matter what, it makes the desired
  *  mute-group the selected mute-group.
+ *
+ * \param learnmode
+ *      Set to true if we are learning a mute-group.
+ *
+ * \param group
+ *      The number of the mute-group to add or to update.
+ *
  */
 
 bool
@@ -1010,14 +1017,24 @@ setmapper::learn_mutes (bool learnmode, mutegroup::number group)
     if (result)
     {
         auto mgiterator = mutes().list().find(clamp_group(group));
-        bool result = mgiterator != mutes().list().end();
+        bool update = mgiterator != mutes().list().end();
+        midibooleans bits;
+        result = play_screen()->learn_bits(bits);
         if (result)
         {
-            midibooleans bits;
-            result = play_screen()->learn_bits(bits);
+            if (update)
+            {
+                result =  mgiterator->second.set(bits);
+            }
+            else
+            {
+                mutegroup mg(group);            /* default rows, columns    */
+                result = mg.set(bits);
+                if (result)
+                    result = mutes().add(group, mg);
+            }
             if (result)
             {
-                mgiterator->second.set(bits);
                 mutes().group_selected(group);
                 mutes().group_learn(true);
                 m_tracks_mute_state = bits;     /* save playscreen vector   */

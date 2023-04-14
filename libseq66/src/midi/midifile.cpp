@@ -2207,28 +2207,40 @@ midifile::write_c_mutegroups (const performer & p)
         }
         else
         {
+#if defined SKIP_EMPTY_MUTE_GROUPS
+            bool strip = mutes.strip_empty();
+#else
+#endif
             for (const auto & stz : mutes.list())
             {
                 int groupnumber = stz.first;
                 const mutegroup & m = stz.second;
-                midibooleans mutebits = m.get();
-                result = mutebits.size() > 0;
-                if (result)
+#if defined SKIP_EMPTY_MUTE_GROUPS
+                bool ok = m.any() || ! strip;
+                if (ok)
                 {
-                    write_byte(groupnumber);
-                    for (auto mutestatus : mutebits)
-                        write_byte(bool(mutestatus) ? 1 : 0);   /* better!  */
-
-                    std::string gname = m.name();
-                    if (! gname.empty())
+#endif
+                    midibooleans mutebits = m.get();
+                    result = mutebits.size() > 0;
+                    if (result)
                     {
-                        write_byte(midibyte('"'));
-                        for (auto ch : gname)
-                            write_byte(midibyte(ch));
+                        write_byte(groupnumber);
+                        for (auto mutestatus : mutebits)
+                            write_byte(bool(mutestatus) ? 1 : 0);   /* better!  */
 
-                        write_byte(midibyte('"'));
+                        std::string gname = m.name();
+                        if (! gname.empty())
+                        {
+                            write_byte(midibyte('"'));
+                            for (auto ch : gname)
+                                write_byte(midibyte(ch));
+
+                            write_byte(midibyte('"'));
+                        }
                     }
+#if defined SKIP_EMPTY_MUTE_GROUPS
                 }
+#endif
                 else
                     break;
             }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2023-04-08
+ * \updates       2023-04-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -216,30 +216,40 @@ songsummary::write_mute_groups
     std::ofstream & file, const performer & p
 )
 {
+    bool got_mutes = false;
     const mutegroups & mutes = p.mutes();
     for (const auto & stz : mutes.list())
     {
         int groupnumber = stz.first;
         const mutegroup & m = stz.second;
-        midibooleans mutebits = m.get();
-        bool ok = mutebits.size() > 0;
+        bool ok = m.any();
         if (ok)
         {
-            int count = 0;
-            file << "Mute group #" << std::setw(2) << groupnumber << ": ";
-            for (auto mutestatus : mutebits)
+            midibooleans mutebits = m.get();
+            ok = mutebits.size() > 0;
+            if (ok)
             {
-                file << (bool(mutestatus) ? "1" : "0");
-                if (++count % 8 == 0)
-                    file << " ";
+                int count = 0;
+                got_mutes = true;
+                file << "Mute group #" << std::setw(2) << groupnumber << ": ";
+                for (auto mutestatus : mutebits)
+                {
+                    file << (bool(mutestatus) ? "1" : "0");
+                    if (++count % 8 == 0)
+                        file << " ";
+                }
+                file << " \"" << m.name() << "\"" << std::endl;
             }
-            file << " \"" << m.name() << "\"" << std::endl;
+            else
+                file << "Mute group #" << groupnumber << " error" << std::endl;
         }
         else
         {
             file << "Mute group #" << groupnumber << " empty" << std::endl;
         }
     }
+    if (! got_mutes)
+        file << "All mute-groups are of size 0" << std::endl;
 }
 
 bool
@@ -317,7 +327,7 @@ songsummary::write_prop_header
 
     file
         << "0xFF 0x7F " << std::hex << control_tag << std::dec
-        << " (" << ctagname << ") = "
+        << " " << ctagname << " = "
         << value << "\n"
         ;
 }
@@ -367,8 +377,8 @@ songsummary::write_mutes
         setsize = unsigned(mutes.group_count());
     }
 
-    file << "Mute Groups: " << groupcount << " of size " << setsize << "\n";
     write_prop_header(file, c_mutegroups, c_max_groups);
+    file << "Mute Groups: " << groupcount << " of size " << setsize << "\n";
     write_mute_groups(file, p);
 }
 

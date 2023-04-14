@@ -211,7 +211,10 @@ private:                                // overrides of event handlers
 
 protected:
 
-    bool report_message (const std::string & msg, bool good);
+    bool report_message
+    (
+        const std::string & msg, bool good, bool showcancel = true
+    );
 
 private:
 

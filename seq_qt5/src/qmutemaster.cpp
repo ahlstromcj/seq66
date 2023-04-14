@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2022-06-28
+ * \updates       2023-04-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -60,7 +60,7 @@
 
 static const int c_table_row_height = 18;
 static const int c_table_fix        = 16;
-static const int c_button_size      = 26; // 24;
+static const int c_button_size      = 26;   // 28; // 26; // 24;
 
 /*
  * Don't document the namespace.
@@ -104,7 +104,6 @@ qmutemaster::qmutemaster
     m_trigger_active        (false),
     m_needs_update          (true),
     m_pattern_mutes         (),
-    m_trigger_mode          (false),
     m_pattern_offset        (0)
 {
     ui->setupUi(this);
@@ -198,7 +197,11 @@ qmutemaster::qmutemaster
         ui->m_button_clear_all, SIGNAL(clicked()),
         this, SLOT(slot_clear_all_mutes())
     );
-
+    connect
+    (
+        ui->m_button_fill, SIGNAL(clicked()),
+        this, SLOT(slot_fill_mutes())
+    );
     ui->m_check_strip_empty->setEnabled(true);
     ui->m_check_strip_empty->setChecked(cb_perf().strip_empty());
     connect
@@ -206,7 +209,6 @@ qmutemaster::qmutemaster
         ui->m_check_strip_empty, SIGNAL(stateChanged(int)),
         this, SLOT(slot_strip_empty())
     );
-
     ui->m_check_from_mutes->setEnabled(true);
     ui->m_check_from_mutes->setChecked
     (
@@ -217,7 +219,6 @@ qmutemaster::qmutemaster
         ui->m_check_from_mutes, SIGNAL(stateChanged(int)),
         this, SLOT(slot_load_mutes())
     );
-
     ui->m_check_from_midi->setEnabled(true);
     ui->m_check_from_midi->setChecked
     (
@@ -245,12 +246,12 @@ qmutemaster::qmutemaster
     );
 
     QString mgfname = qt(rc().mute_group_filename());
+    bool mgfactive = rc().mute_group_file_active();
     ui->m_mute_basename->setPlainText(mgfname);
-    ui->m_mute_basename->setEnabled(false);
+    ui->m_mute_basename->setEnabled(mgfactive);
     handle_group_button(0, 0);          /* guaranteed to be present         */
-    handle_group(0);                    /* select the first group           */
+    handle_group_change(0);             /* select the first group           */
     ui->m_button_save->setEnabled(false);
-
     cb_perf().enregister(this);         /* register this for notifications  */
     group_needs_update();               /* guarantee the initial load       */
     m_timer = qt_timer(this, "qmutemaster", 3, SLOT(conditional_update()));
@@ -289,12 +290,23 @@ qmutemaster::slot_clear_all_mutes ()
 }
 
 void
+qmutemaster::slot_fill_mutes ()
+{
+    // cb_perf().clear_mutes();
+    // ui->m_button_save->setEnabled(true);
+    if (cb_perf().mutegroup_reset())
+    {
+        initialize_table();
+        group_needs_update();
+    }
+}
+
+void
 qmutemaster::clear_pattern_mutes ()
 {
     m_pattern_mutes.clear();                                /* midibooleans */
     m_pattern_mutes.resize(cb_perf().mutegroup_count());    /* always 32    */
     m_pattern_offset = 0;
-    m_trigger_mode = false;
 }
 
 void
@@ -354,6 +366,7 @@ qmutemaster::set_current_group (int group)
 
     if (result)
     {
+        int lastgroup = current_group();
         int gridrow, gridcolumn;
         if (mutegroups::group_to_grid(group, gridrow, gridcolumn))
         {
@@ -363,6 +376,13 @@ qmutemaster::set_current_group (int group)
 
             QPushButton * temp = m_group_buttons[group];
             temp->setEnabled(true);
+            temp->setChecked(false);
+            if (lastgroup != seq::unassigned())
+            {
+                temp = m_group_buttons[lastgroup];
+                temp->setEnabled(false);
+                temp->setChecked(false);
+            }
         }
     }
     return result;
@@ -371,10 +391,10 @@ qmutemaster::set_current_group (int group)
 bool
 qmutemaster::initialize_table ()
 {
-    bool result = false;
     int rows = cb_perf().mutegroup_count();
+    bool result = rows > 0;
     ui->m_group_table->clearContents();
-    if (rows > 0)
+    if (result)
     {
         for (int row = 0; row < rows; ++row)
         {
@@ -384,6 +404,7 @@ qmutemaster::initialize_table ()
             std::string groupname = cb_perf().group_name(row);
             (void) group_line(g, mutecount, keyname, groupname);
         }
+        ui->m_group_table->clearSelection();
     }
     return result;
 }
@@ -471,19 +492,29 @@ qmutemaster::slot_table_click
     if (! trigger())
     {
         int rows = cb_perf().mutegroup_count();             /* always 32    */
-        if (rows > 0 && row >= 0 && row < rows)
+        if (rows > 0)
         {
-            if (set_current_group(row))
+            if (row >= 0 && row < rows)
             {
-                ui->m_button_trigger->setEnabled(true);
-                ui->m_button_set_mutes->setEnabled(false);
+                if (set_current_group(row))
+                {
+                    ui->m_button_trigger->setEnabled(true);
+                    ui->m_button_set_mutes->setEnabled(false);
 
 #if defined READY_FOR_PRIME_TIME
-                ui->m_button_down->setEnabled(true);
-                ui->m_button_up->setEnabled(true);
+                    ui->m_button_down->setEnabled(true);
+                    ui->m_button_up->setEnabled(true);
 #endif
-                group_needs_update();
+                    group_needs_update();
+                }
             }
+        }
+        else
+        {
+#if 0
+            if (cb_perf().mutegroup_reset())
+                initialize_table();
+#endif
         }
     }
 }
@@ -527,6 +558,13 @@ qmutemaster::create_group_buttons ()
             temp->show();
             temp->setCheckable(true);
             temp->setEnabled(false);
+#if 0
+            if (group == 0)
+            {
+                temp->setChecked(true);
+                temp->setEnabled(true);
+            }
+#endif
             m_group_buttons[group] = temp;
         }
     }
@@ -637,7 +675,7 @@ qmutemaster::slot_set_mutes ()
 }
 
 /**
- *  A slot for handle_group(), meant to move a table row down.
+ *  A slot for handle_group_change(), meant to move a table row down.
  *  Not yet ready for primetime.
  */
 
@@ -645,11 +683,11 @@ void
 qmutemaster::slot_down ()
 {
     if (set_current_group(current_group() + 1))
-        handle_group(current_group());
+        handle_group_change(current_group());
 }
 
 /**
- *  A slot for handle_group(), meant to move a table row up.
+ *  A slot for handle_group_change(), meant to move a table row up.
  *  Not yet ready for primetime.
  */
 
@@ -657,7 +695,7 @@ void
 qmutemaster::slot_up ()
 {
     if (set_current_group(current_group() - 1))
-        handle_group(current_group());
+        handle_group_change(current_group());
 }
 
 /**
@@ -728,7 +766,7 @@ qmutemaster::slot_save ()
 }
 
 /**
- *  Currently not in use!
+ *  Currently not in use!  See slot_save() instead.
  */
 
 bool
@@ -768,6 +806,13 @@ qmutemaster::slot_write_to_midi ()
         enable_save();
 }
 
+/**
+ *  Do we want to set this here? The user should use the Session tab in
+ *  Preferences to set this, IMHO.
+ *
+ *      bool mgfactive = rc().mute_group_file_active();
+ */
+
 void
 qmutemaster::slot_write_to_mutes ()
 {
@@ -783,6 +828,13 @@ qmutemaster::slot_strip_empty ()
     if (cb_perf().strip_empty(ischecked))
         enable_save();
 }
+
+/**
+ *  Do we want to set this here? The user should use the Session tab in
+ *  Preferences to set this, IMHO.
+ *
+ *      bool mgfactive = rc().mute_group_file_active();
+ */
 
 void
 qmutemaster::slot_load_mutes ()
@@ -842,16 +894,15 @@ qmutemaster::handle_group_button (int row, int column)
 }
 
 void
-qmutemaster::handle_group (int groupno)
+qmutemaster::handle_group_change (int groupno)
 {
     if (groupno != m_current_group)
     {
         set_current_group(groupno);
-        ui->m_group_table->selectRow(0);
         update_group_buttons();
         update_pattern_buttons();
-
-        // ui->m_button_save->setEnabled(true);
+        if (cb_perf().mutegroup_count() > 0)
+            ui->m_group_table->selectRow(0);
     }
 }
 
@@ -863,12 +914,15 @@ qmutemaster::handle_group (int groupno)
 bool
 qmutemaster::on_mutes_change (mutegroup::number group)
 {
-    bool result = ! mutegroup::none(group);     /* only "all sets" changes  */
+    bool result = ! mutegroup::none(group);
     if (result)
     {
         result = initialize_table();
         if (result)
+        {
+            update_group_buttons(enabling::enable);
             group_needs_update();
+        }
     }
     return result;
 }
@@ -963,7 +1017,7 @@ qmutemaster::group_control
 {
     bool result = a == automation::action::toggle;
     if (result && ! inverse)
-        handle_group(index);
+        handle_group_change(index);
 
     return result;
 }

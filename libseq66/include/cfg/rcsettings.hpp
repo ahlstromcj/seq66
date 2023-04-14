@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-04-09
+ * \updates       2023-04-13
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -402,10 +402,11 @@ private:
 
     /**
      *  Indicates if the mute-group file is actually to be used.
-     *  Useful for temporarily disabling a 'mutes' file.
+     *  Useful for enabling/disabling a 'mutes' file as opposed to
+     *  using the mutes stored in a Seq66 file.
      */
 
-    bool m_mute_group_active;
+    bool m_mute_group_file_active;
 
     /**
      *  The base name of the mute-group file, if applicable.  This file is
@@ -1114,9 +1115,9 @@ public:
         return m_midi_control_filename;
      }
 
-     bool mute_group_active () const
+     bool mute_group_file_active () const
      {
-        return m_mute_group_active;
+        return m_mute_group_file_active;
      }
 
      const std::string & mute_group_filename () const
@@ -1328,9 +1329,9 @@ public:
        m_midi_control_filename = name;
     }
 
-    void mute_group_active (bool flag)
+    void mute_group_file_active (bool flag)
     {
-        m_mute_group_active = flag;
+        m_mute_group_file_active = flag;
     }
 
     void mute_group_filename (const std::string & name)

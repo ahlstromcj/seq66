@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2022-03-07
+ * \updates       2022-04-13
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -156,8 +156,8 @@ mutegroups::mutegroups (int rows, int columns) :
     m_group_learn               (false),
     m_group_selected            (c_null_mute_group),
     m_group_present             (false),
-    m_group_save                (saving::both),     /* midi or mutes files  */
-    m_group_load                (loading::both),    /* midi or mutes files  */
+    m_group_save                (saving::midi),     /* midi or mutes files? */
+    m_group_load                (loading::midi),    /* midi or mutes files? */
     m_toggle_active_only        (false),
     m_strip_empty               (true),
     m_legacy_mutes              (false)
@@ -191,12 +191,12 @@ mutegroups::mutegroups (const std::string & name, int rows, int columns) :
     m_loaded_from_mutes         (false),
     m_group_event               (false),
     m_group_error               (false),
-    m_group_mode                (true),         /* see its description  */
+    m_group_mode                (true),
     m_group_learn               (false),
     m_group_selected            (c_null_mute_group),
     m_group_present             (false),
-    m_group_save                (saving::both),
-    m_group_load                (loading::both),    /* midi and mutes files */
+    m_group_save                (saving::midi),
+    m_group_load                (loading::midi),
     m_toggle_active_only        (false),
     m_legacy_mutes              (false)
 {
@@ -675,7 +675,7 @@ mutegroups::clear ()
 
 /**
  *  Loads all empty mute-groups.  Useful in writing an "empty" mutegroups
- *  file.
+ *  file. Also useful when needing to create a blank group in qmutemaster.
  *
  *  Hmmm, rows x columns isn't the way to count the mute groups -- that is the
  *  size of one mute group.  Generally, we support only 32 mute-groups.
@@ -686,7 +686,7 @@ mutegroups::reset_defaults ()
 {
     bool result = false;
     int count = c_mute_groups_max;              /* not m_rows * m_columns   */
-    clear();
+    clear();                                    /* remove all mutegroups    */
     for (int gmute = 0; gmute < count; ++gmute)
     {
         mutegroup m(gmute);     /* m(mutegroup::number(gmute)) bad, why?    */

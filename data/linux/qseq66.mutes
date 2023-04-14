@@ -49,8 +49,8 @@ This file goes with contrib/midi/mutes-test.midi
 
 [mute-group-flags]
 
-load-mute-groups = both
-save-mutes-to = both
+load-mute-groups = midi
+save-mutes-to = midi
 strip-empty = true
 mute-group-rows = 4
 mute-group-columns = 8

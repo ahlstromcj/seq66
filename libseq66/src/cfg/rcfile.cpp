@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-04-07
+ * \updates       2023-04-13
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -122,26 +122,12 @@ rcfile::rcfile (const std::string & name, rcsettings & rcs) :
  *      between different setups without having to mess with editing the "rc"
  *      file so much.
  *
- *  [mute-group]
- *
- *      See mutegroupsfile::parse_stream().
- *
  *  [midi-clock]
  *
  *      The MIDI-clock section defines the clocking value for up to 16 output
  *      busses.  The first number indicates how many busses are specified.
  *      Generally, these busses are shown to the user with names such as "[1]
  *      seq66 1".
- *
- *  [keyboard-control]
- *  [keyboard-group]
- *  [extended-keys]
- *  [New-keys]
- *
- *      The [keyboard-control] section, and related sections, of Seq64 has been
- *      replaced by moving the keystroke settings to the MIDI control section,
- *      thus unifying keyboard and MIDI control of patterns/loops, mute-groups,
- *      and application automation.
  *
  *  [jack-transport]
  *
@@ -241,7 +227,7 @@ rcfile::parse ()
     std::string fullpath;
     std::string pfname;
     bool active = get_file_status(file, tag, pfname);
-    rc_ref().mute_group_active(active);
+    rc_ref().mute_group_file_active(active);
     rc_ref().mute_group_filename(pfname);   /* [[/]path/] basename.ext  */
     fullpath = rc_ref().mute_group_filespec();
     file_message("Reading mutes", fullpath);
@@ -801,7 +787,7 @@ rcfile::write ()
     write_file_status
     (
         file, "[mute-group-file]",
-        rc_ref().mute_group_filename(), rc_ref().mute_group_active()
+        rc_ref().mute_group_filename(), rc_ref().mute_group_file_active()
     );
 
     std::string usrname = rc_ref().user_filespec();

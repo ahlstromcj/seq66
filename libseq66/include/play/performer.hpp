@@ -3321,6 +3321,11 @@ public:                                 /* access functions for the containers *
      * Start of mute-groups accessors.
      */
 
+    bool mutegroup_reset ()
+    {
+        return mutes().reset_defaults();
+    }
+
     int mutegroup_count () const
     {
         return mutes().count();

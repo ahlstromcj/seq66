@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-10
+ * \updates       2023-04-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1374,6 +1374,8 @@ qsmainwnd::open_list_dialog ()
 /**
  *  Opens the dialog to save a playlist file.  This action should be allowed
  *  in an NSM session, but defaults to the configuration directory.
+ *
+ *  NOT YET CONNECTED.
  */
 
 void
@@ -1404,6 +1406,8 @@ qsmainwnd::save_list_dialog ()
 
 /**
  *  Opens the dialog to request a mutegroups file.
+ *
+ *  NOT YET CONNECTED.
  */
 
 void
@@ -1437,6 +1441,10 @@ qsmainwnd::open_mutes_dialog ()
     }
     return result;
 }
+
+/**
+ * NOT YET CONNECTED.
+ */
 
 void
 qsmainwnd::show_save_mutes_dialog ()
@@ -3596,8 +3604,12 @@ qsmainwnd::export_file_as_smf_0 (const std::string & fname)
     return result;
 }
 
+/**
+ *  Shows a message.  Returns true if the user clicked OK.
+ */
+
 bool
-qsmainwnd::report_message (const std::string & msg, bool good)
+qsmainwnd::report_message (const std::string & msg, bool good, bool showcancel)
 {
     bool result = false;
     if (! msg.empty())
@@ -3606,11 +3618,16 @@ qsmainwnd::report_message (const std::string & msg, bool good)
         {
             QMessageBox * mbox = new QMessageBox(this);
             mbox->setText(qt(msg));
-            mbox->setInformativeText
-            (
-                tr("Click OK to save, or Cancel (then Save As)")
-            );
-            mbox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+            if (showcancel)
+            {
+                mbox->setInformativeText(tr("Click OK to save, or Cancel"));
+                mbox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+            }
+            else
+            {
+                mbox->setInformativeText(tr("Action complete"));
+                mbox->setStandardButtons(QMessageBox::Ok);
+            }
 
             int choice = mbox->exec();
             result = choice == QMessageBox::Ok;
@@ -3655,7 +3672,11 @@ qsmainwnd::on_group_learn_complete (const keystroke & k, bool good)
             << "To add it, edit the 'ctrl' file."
            ;
     }
-    (void) report_message(os.str(), good);
+
+    bool dirty = good && report_message(os.str(), good, false); /* no Cancel */
+    if (dirty)
+        m_is_title_dirty = true;
+
     return good;
 }
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-04-07
+ * \updates       2023-04-13
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -63,7 +63,7 @@ rcsettings::rcsettings () :
     m_clocks                    (),         /* vector wrapper class     */
     m_inputs                    (),         /* vector wrapper class     */
     m_metro_settings            (),
-    m_mute_group_save           (mutegroups::saving::both),
+    m_mute_group_save           (mutegroups::saving::midi),
     m_keycontainer              ("rc"),
     m_drop_empty_in_controls    (false),    /* the legacy value         */
     m_midi_control_buss         (null_buss()),
@@ -124,7 +124,7 @@ rcsettings::rcsettings () :
     m_user_filename             (SEQ66_CONFIG_NAME),    /* updated in body  */
     m_midi_control_active       (false),
     m_midi_control_filename     (SEQ66_CONFIG_NAME),    /* updated in body  */
-    m_mute_group_active         (false),
+    m_mute_group_file_active    (false),
     m_mute_group_filename       (SEQ66_CONFIG_NAME),    /* updated in body  */
     m_playlist_active           (false),
     m_playlist_filename         (SEQ66_CONFIG_NAME),    /* updated in body  */
@@ -155,32 +155,24 @@ rcsettings::rcsettings () :
 
 /**
  *  Sets the default values.
+ *
+ * Not altered:
+ *
+ *      m_clocks.clear();
+ *      m_inputs.clear();
+ *      m_mute_groups.clear();
+ *      m_keycontainer.clear();              // what is best?
+ *      m_midi_control_in.clear();           // what is best?
+ *      m_midi_control_out.clear();          // does not exist
  */
 
 void
 rcsettings::set_defaults ()
 {
-    /*
-     * m_clocks.clear();
-     * m_inputs.clear();
-     */
-
     m_metro_settings.set_defaults();
-
-    /*
-     * m_mute_groups.clear();
-     * m_keycontainer.clear();              // what is best?
-     */
-
-    m_mute_group_save           = mutegroups::saving::both;
+    m_mute_group_save           = mutegroups::saving::midi;
     m_drop_empty_in_controls    = false;
     m_midi_control_buss         = null_buss();
-
-    /*
-     * m_midi_control_in.clear();           // what is best?
-     * m_midi_control_out.clear();          // does not exist
-     */
-
     m_clock_mod                 = 64;
     m_verbose                   = false;
     m_investigate               = false;
@@ -221,9 +213,11 @@ rcsettings::set_defaults ()
     m_jack_session_active       = false;
     m_last_used_dir.clear();                /* double_quotes()              */
 #if defined SEQ66_PLATFORM_WINDOWS          /* see home_config_directory()  */
-    m_session_directory         = SEQ66_CLIENT_NAME;
+    m_session_directory = SEQ66_CLIENT_NAME;
 #else
-    m_session_directory = std::string(".config/") + std::string(SEQ66_CLIENT_NAME);
+    m_session_directory = std::string(".config/") +
+        std::string(SEQ66_CLIENT_NAME);
+
     m_session_directory = default_session_path();   /* tricky */
 #endif
     m_config_subdirectory.clear(),
@@ -234,7 +228,7 @@ rcsettings::set_defaults ()
     m_user_filename = SEQ66_CONFIG_NAME;
     m_midi_control_active = false;
     m_midi_control_filename = SEQ66_CONFIG_NAME;
-    m_mute_group_active = false;
+    m_mute_group_file_active = false;
     m_mute_group_filename = SEQ66_CONFIG_NAME;
     m_playlist_active = false;
     m_playlist_filename = SEQ66_CONFIG_NAME;

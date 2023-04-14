@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2022-06-27
+ * \updates       2023-04-14
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -145,7 +145,7 @@ private:
     void create_group_buttons ();
     void update_group_buttons (enabling tomodify = enabling::leave);
     void handle_group_button (int row, int column);     /* in lambda slot   */
-    void handle_group (int setno);
+    void handle_group_change (int groupno);
     bool group_control
     (
         automation::action a, int /*d0*/, int index, bool inverse
@@ -157,7 +157,6 @@ private:
     }
 
     bool set_current_group (int row);
-
     void create_pattern_buttons ();
     void update_pattern_buttons (enabling tomodify = enabling::leave);
     void handle_pattern_button (int row, int column);  /* in lambda slot    */
@@ -208,6 +207,7 @@ private slots:
         int /*prevrow*/, int /*prevcolumn*/
     );
     void slot_clear_all_mutes ();
+    void slot_fill_mutes ();
     void slot_cell_changed (int row, int column);
     void slot_mutes_file_modify ();
     void slot_bin_mode (bool ischecked);
@@ -291,6 +291,8 @@ private:
 
     /**
      *  If true, button click can activate existing mute groups.
+     *  Indicates that the group buttons are enabled, but will "only" trigger
+     *  the clicked mute-group.
      */
 
     bool m_trigger_active;
@@ -307,13 +309,6 @@ private:
      */
 
     midibooleans m_pattern_mutes;
-
-    /**
-     *  Indicates that the group buttons are enabled, but will "only" trigger
-     *  the clicked mute-group.
-     */
-
-    bool m_trigger_mode;
 
     /**
      *  A future feature to allow for slot shifting to handle set sizes like 64

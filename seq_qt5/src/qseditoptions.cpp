@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-09-30
+ * \updates       2023-04-13
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -2079,7 +2079,7 @@ qseditoptions::sync_rc ()
 
     filename = qt(rc().mute_group_filename());
     ui->checkBoxSaveMutes->setChecked(rc().auto_mutes_save());
-    ui->checkBoxActiveMutes->setChecked(rc().mute_group_active());
+    ui->checkBoxActiveMutes->setChecked(rc().mute_group_file_active());
     ui->lineEditMutes->setText(filename);
 
     filename = qt(rc().playlist_filename());
@@ -2687,7 +2687,7 @@ void
 qseditoptions::slot_mutes_active_click ()
 {
     bool on = ui->checkBoxActiveMutes->isChecked();
-    rc().mute_group_active(on);
+    rc().mute_group_file_active(on);
     modify_rc();
 }
 
