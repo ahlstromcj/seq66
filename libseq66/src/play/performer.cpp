@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-13
+ * \updates       2023-04-15
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1157,8 +1157,12 @@ performer::client_id_string () const
     if (rc().with_jack_midi() && ! rc().jack_session().empty())
         result += rc().jack_session();
     else
-        result += std::to_string(m_master_bus->client_id());
-
+    {
+        if (m_master_bus)
+            result += std::to_string(m_master_bus->client_id());
+        else
+            result += "no master bus";
+    }
     return result;
 }
 
@@ -2706,17 +2710,27 @@ performer::create_master_bus ()
          * constructor is deleted.
          *
          *  Also, at this point, do we have the actual complement of inputs and
-         *  clocks, as opposed to what's in the rc file?
+         *  clocks, as opposed to what's in the rc file? Not if an rtmidi
+         *  error is thrown.  We catch that now (2023-04-15).
          */
 
-        m_master_bus.reset(new (std::nothrow) mastermidibus(m_ppqn, m_bpm));
-        if (m_master_bus)
+        try
         {
-            mastermidibus * mmb = m_master_bus.get();
-            mmb->filter_by_channel(m_filter_by_channel);
-            mmb->set_port_statuses(m_clocks, m_inputs);
-            midi_control_out().set_master_bus(mmb);
-            result = true;
+            m_master_bus.reset(new (std::nothrow) mastermidibus(m_ppqn, m_bpm));
+            if (m_master_bus)
+            {
+                mastermidibus * mmb = m_master_bus.get();
+                mmb->filter_by_channel(m_filter_by_channel);
+                mmb->set_port_statuses(m_clocks, m_inputs);
+                midi_control_out().set_master_bus(mmb);
+                result = true;
+            }
+        }
+        catch (...)
+        {
+            /*
+             * We will improve this error handling later. :-D
+             */
         }
     }
     return result;

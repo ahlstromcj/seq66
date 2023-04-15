@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-01-13
-% \update      2020-02-12
+% \update      2023-04-14
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -21,9 +21,31 @@
    The \textbf{Mutes} tab is a way to get a global view of all the mutegroups in
    a \textsl{Seq66} MIDI file or global configuration, and to be able to do
    some simple operations with the mute groups.
+   A mute-group holds the statuses (armed/muted) of all of the patterns in
+   a screenset (see \sectionref{subsubsec:concepts_terms_bank}).
+   A mute-group can be associated with a hot-key (or MIDI control), so that,
+   when the mute-group is selected, the patterns that are armed changes.
+   This makes it easy to change what the tune is playing in a big way.
+   Mute-groups are \textsl{learned} by
+
+   \begin{enumerate}
+      \item Arming all of the desired pattern in the set.
+      \item Clicking the \textbf{Learn} ("L") button.
+      \item Clicking the keystroke, which is almost always the shifted version
+         of the hot-key to arm/mute the pattern.
+         This is accomplished in the default keyboard configuration via the
+         \index{auto-shift}
+         auto-shift function, which shifts the keystroke automatically
+         for group-learn.
+   \end{enumerate}
+
+   These steps can also be done via MIDI control.
+
    To learn more about mute-groups, see
    \sectionref{subsubsec:introduction_mute_group_learn_button}, and
    \sectionref{subsubsec:concepts_terms_group}.
+
+% TODO: UPDATE THIS FIGURE WITH THE LATEST.
 
 \begin{figure}[H]
    \centering 
@@ -142,13 +164,22 @@
             \textsl{Seq66} configuration file (e.g. \texttt{qseq66.mutes}).
       \end{itemize}
 
-   \itempar{Clear All Mutes}{mutes!clear all mutes}
-      This button will clear every mute group. Use it carefully!
-
    \itempar{Trigger Mode}{mutes!trigger mode}
       When activated, this option will enable the \textbf{Mute-Groups} buttons,
       deactive them all, and turn them into standard push-buttons.  When clicked
       the mute-group will be actived during playback.
+
+   \itempar{Clear}{mutes!clear all mutes}
+      This button will clear every mute group. Use it carefully!
+
+   \itempar{Fill}{mutes!fill mutes}
+      This button will create a set of empty mute-groups.
+      Currently, this alters the current MIDI tune, forcing a prompt to save.
+      This action creates 32 empty mute-groups.
+      If a single mute-group is created in the patterns panel,
+      then only that mute-groups is saved.
+
+% INVESTIGATE!!!
 
    \itempar{Pattern Offset}{mutes!pattern offset}
       If the user has selected a larger set size that is a multiple of 32, this

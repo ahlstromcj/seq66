@@ -1,4 +1,4 @@
-# README for Seq66 0.99.3 2023-04-13
+# README for Seq66 0.99.3 2023-04-15
 
 __Seq66__: MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets, triggers, and playlists for song management,
@@ -113,6 +113,8 @@ Windows, and using a conventional source tarball.
         *   Improvements to mute-group and its MIDI control in progress.
         *   Fixed the daemonization and log-file functionality.
         *   Revisited the recmutex implementation.
+        *   Weird error where ALSA not found! We now avoid a crash, but
+            qseq66 currently exits with only console messages.
     *   Version 0.99.2:
         *   Issue #103.  Some improvements to pattern loop-count.
         *   Pull request #106. User phuel added checkmarks for active buss and

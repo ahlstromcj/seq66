@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-08
- * \updates       2022-03-26
+ * \updates       2023-04-15
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.  This class
@@ -140,7 +140,7 @@ rtmidi_info::rtmidi_info
         }
         else
         {
-            errprintfunc("no support for specified API");
+            errprintfunc("No support for default MIDI API");
         }
     }
 
@@ -171,7 +171,7 @@ rtmidi_info::rtmidi_info
     }
     if (is_nullptr(get_api_info()))
     {
-        std::string errortext = "no rtmidi API found";
+        std::string errortext = "No rtmidi API found";
         throw(rterror(errortext, rterror::kind::unspecified));
     }
 }
@@ -261,11 +261,17 @@ rtmidi_info::openmidi_api
 #if defined SEQ66_BUILD_LINUX_ALSA
     if (api == rtmidi_api::alsa)
     {
+        /*
+         * ca 2023-04-15
+         * Encountered a weird "No such device" error (even though MPD could
+         * play music through pulseaudio. So now we check the handle.
+         */
+
         midi_alsa_info * maip = new (std::nothrow) midi_alsa_info
         (
             appname, ppqn, bpm
         );
-        result = not_nullptr(maip);
+        result = not_nullptr_2(maip, maip->midi_handle());
         if (result)
             result = set_api_info(maip);
     }

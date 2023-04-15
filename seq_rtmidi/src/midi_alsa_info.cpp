@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-08-05
+ * \updates       2023-04-15
  * \license       See above.
  *
  *  API information found at:
@@ -144,7 +144,9 @@ midi_alsa_info::midi_alsa_info
     );
     if (rcode < 0)
     {
-        m_error_string = "error opening ALSA seq client";
+        const char * errmsg = snd_strerror(rcode);
+        m_error_string = "ALSA seq open error: ";
+        m_error_string += errmsg;
         error(rterror::kind::driver_error, m_error_string);
     }
     else

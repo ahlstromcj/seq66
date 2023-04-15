@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-04-07
+ * \updates       2023-04-15
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -829,7 +829,7 @@ smanager::create (int argc, char * argv [])
             std::string fname = midi_filename();
             if (fname.empty())
             {
-                if (rc().load_most_recent())        /* disabled if playlist */
+                if (rc().load_most_recent())
                 {
                     std::string midifname = rc().recent_file(0, false);
                     if (! midifname.empty())
@@ -843,6 +843,26 @@ smanager::create (int argc, char * argv [])
             if (result)
                 result = open_note_mapper();
         }
+
+#if defined USE_CRIPPLED_RUN
+
+        /*
+         * This code is currently disabled because too many null pointers
+         * end up being found, causing crashes.  For now we rely on
+         * console error messages.
+         */
+
+        else                                            /* ca 2023-04-15    */
+        {
+            std::string msg;
+            (void) create_window();
+            error_handling();
+            (void) create_session();
+            (void) run();
+            (void) close_session(msg, false);
+        }
+#endif
+
         if (result)
         {
             result = create_window();
@@ -852,7 +872,7 @@ smanager::create (int argc, char * argv [])
             }
             else
             {
-                std::string msg;                        /* maybe errmsg? */
+                std::string msg;                        /* maybe errmsg?    */
                 result = close_session(msg, false);
                 session_message("Startup error", msg);
             }
