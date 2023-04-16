@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-04-13
+ * \updates       2023-04-15
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -456,12 +456,19 @@ rcsettings::default_session_path () const
     }
     else
     {
-        result += path_slash();                 /* e.g. /home/username/ */
-        result += session_directory();          /* seq66 directory      */
+        if (name_has_root_path(session_directory()))
+        {
+            result = session_directory();      /* seq66 directory      */
+        }
+        else
+        {
+            result += path_slash();             /* e.g. /home/username/ */
+            result += session_directory();      /* seq66 directory      */
 
 #if defined SEQ66_PLATFORM_UNIX                 /* TODO: make robust    */
-        result += path_slash();
+            result += path_slash();
 #endif
+        }
     }
     return result;
 }
@@ -487,17 +494,13 @@ rcsettings::home_config_directory () const
 {
     if (m_full_config_directory.empty())
     {
-        std::string result;
-
         std::string home = default_session_path();
+        std::string result = home;
         if (! home.empty())
         {
             if (! m_config_subdirectory.empty())
                 result = filename_concatenate(result, m_config_subdirectory);
 
-#if defined SEQ66_PLATFORM_UNIX                     /* TODO: make robust    */
-            result += path_slash();
-#endif
             bool ok = make_directory_path(result);
             if (ok)
             {

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-04-14
+ * \updates       2023-04-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -667,6 +667,7 @@ qmutemaster::slot_set_mutes ()
     if (ok)
     {
         ui->m_button_save->setEnabled(true);
+        ui->m_button_set_mutes->setEnabled(false);
     }
     else
     {

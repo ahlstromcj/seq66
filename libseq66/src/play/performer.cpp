@@ -6000,10 +6000,9 @@ performer::group_learn_complete (const keystroke & k, bool good)
 {
     group_learn(false);
     for (auto notify : m_notify)
-    {
         (void) notify->on_group_learn_complete(k, good);
-        // (void) notify->on_mutes_change();
-    }
+
+    notify_mutes_change(0, change::yes);
 }
 
 /**
@@ -7973,8 +7972,10 @@ performer::read_midi_file
     usr().clear_global_seq_features();
     bool result = seq66::read_midi_file(*this, fn, ppqn(), errmsg, addtorecent);
     if (result)
+    {
         next_song_mode();
-
+        notify_mutes_change(0, change::no);
+    }
     return result;
 }
 

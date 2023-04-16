@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-04-02
+ * \updates       2023-04-15
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -704,7 +704,7 @@ cmdlineopts::parse_rc_file
     }
     else
     {
-        file_message("No file", filespec);
+        file_message("No such file", filespec);
         rc().create_config_names();
     }
     return result;
@@ -731,7 +731,7 @@ cmdlineopts::get_usr_file ()
             file_error("Getting 'usr' file failed", rcn);
     }
     else
-        file_message("No file", rcn);
+        file_message("No such file", rcn);
 
     return result;
 }
@@ -756,7 +756,7 @@ cmdlineopts::parse_usr_file
         }
     }
     else
-        file_message("No file", filespec);
+        file_message("No such file", filespec);
 
     return result;
 }

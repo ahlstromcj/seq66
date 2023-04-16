@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-08
+ * \updates       2023-04-16
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -2017,35 +2017,7 @@ midifile::parse_c_mutegroups (performer & p)
             p.mutes().clear();                      /* makes it empty       */
             if (legacyformat)
             {
-                mutes.legacy_mutes(true);
-                for (unsigned g = 0; g < groupcount; ++g)
-                {
-                    midibooleans mutebits;
-                    midilong group = read_long();
-                    for (unsigned s = 0; s < groupsize; ++s)
-                    {
-                        midilong gmutestate = read_long();  /* long bit !?  */
-                        bool status = gmutestate != 0;
-                        mutebits.push_back(midibool(status));
-                    }
-                    if (mutes.load(group, mutebits))
-                    {
-                        /*
-                         * Related to issue #87.
-                         */
-
-                        if (mutebits.size() != size_t(p.group_count()))
-                        {
-                            mutebits = fix_midibooleans
-                            (
-                                mutebits, p.group_count()
-                            );
-                            rc().auto_mutes_save(true);
-                        }
-                    }
-                    else
-                        break;                              /* a duplicate? */
-                }
+                result = parse_c_mutegroups_legacy(p, groupcount, groupsize);
             }
             else
             {
@@ -2097,6 +2069,51 @@ midifile::parse_c_mutegroups (performer & p)
                         break;                              /* a duplicate  */
                 }
             }
+        }
+    }
+    return result;
+}
+
+bool
+midifile::parse_c_mutegroups_legacy
+(
+    performer & p,
+    unsigned groupcount,
+    unsigned groupsize
+)
+{
+    bool result = true;
+    mutegroups & mutes = p.mutes();
+    mutes.legacy_mutes(true);
+    for (unsigned g = 0; g < groupcount; ++g)
+    {
+        midibooleans mutebits;
+        midilong group = read_long();
+        for (unsigned s = 0; s < groupsize; ++s)
+        {
+            midilong gmutestate = read_long();  /* long bit !?      */
+            bool status = gmutestate != 0;
+            mutebits.push_back(midibool(status));
+        }
+        if (mutes.load(group, mutebits))
+        {
+            /*
+             * Related to issue #87.
+             */
+
+            if (mutebits.size() != size_t(p.group_count()))
+            {
+                mutebits = fix_midibooleans
+                (
+                    mutebits, p.group_count()
+                );
+                rc().auto_mutes_save(true);
+            }
+        }
+        else
+        {
+            result = false;
+            break;                              /* a duplicate?     */
         }
     }
     return result;
@@ -2178,6 +2195,20 @@ midifile::parse_c_tempo_track ()
  *
  *  The mutegroups class has rows and columns for each group, but doesn't have
  *  a way to iterate through all the groups.
+ *
+ *  The format of the c_mutegroups section:
+ *
+ *      a.  32 mute-group specifications.
+ *      b.  Each specification has the format:
+ *          -   1 byte for group number.
+ *          -   1 byte per pattern status (usually 32 patterns).
+ *          -   1 double-quote, any name bytes if present, and 1 double quote.
+ *
+ *  By default, then, the size of each group, ignoring the group name, is
+ *  1 + 32, so the total size is 32 * 33 = 1056.
+ *
+ *  The default names are "Group 0" (10 * 9 bytes) through "Group 31" (22 * 10
+ *  bytes which is 310 bytes.  So the default total is 1366 bytes.
  */
 
 bool
@@ -2207,40 +2238,28 @@ midifile::write_c_mutegroups (const performer & p)
         }
         else
         {
-#if defined SKIP_EMPTY_MUTE_GROUPS
-            bool strip = mutes.strip_empty();
-#else
-#endif
             for (const auto & stz : mutes.list())
             {
                 int groupnumber = stz.first;
                 const mutegroup & m = stz.second;
-#if defined SKIP_EMPTY_MUTE_GROUPS
-                bool ok = m.any() || ! strip;
-                if (ok)
+                midibooleans mutebits = m.get();
+                size_t bitcount = mutebits.size();
+                result = bitcount > 0;
+                if (result)
                 {
-#endif
-                    midibooleans mutebits = m.get();
-                    result = mutebits.size() > 0;
-                    if (result)
+                    write_byte(groupnumber);
+                    for (auto mutestatus : mutebits)
+                        write_byte(bool(mutestatus) ? 1 : 0);   /* better!  */
+
+                    std::string gname = m.name();
+                    write_byte(midibyte('"'));
+                    if (! gname.empty())
                     {
-                        write_byte(groupnumber);
-                        for (auto mutestatus : mutebits)
-                            write_byte(bool(mutestatus) ? 1 : 0);   /* better!  */
-
-                        std::string gname = m.name();
-                        if (! gname.empty())
-                        {
-                            write_byte(midibyte('"'));
-                            for (auto ch : gname)
-                                write_byte(midibyte(ch));
-
-                            write_byte(midibyte('"'));
-                        }
+                        for (auto ch : gname)
+                            write_byte(midibyte(ch));
                     }
-#if defined SKIP_EMPTY_MUTE_GROUPS
+                    write_byte(midibyte('"'));
                 }
-#endif
                 else
                     break;
             }
@@ -2991,9 +3010,9 @@ midifile::write_seqspec_track (performer & p)
         if (rc().save_old_mutes())
             gmutesz = 4 + groupcount * (4 + groupsize * 4); /* 4-->longs    */
         else
-            gmutesz = 4 + groupcount * (1 + groupsize);     /* 1-->bytes    */
+            gmutesz = groupcount * (1 + groupsize);         /* 1-->bytes    */
 
-        gmutesz += mutes.group_names_letter_count();        /* NEW NEW NEW  */
+        gmutesz += mutes.group_names_letter_count();        /* "Group 22"   */
     }
     tracklength += seq_number_size();           /* bogus sequence number    */
     tracklength += track_name_size(c_prop_track_name);

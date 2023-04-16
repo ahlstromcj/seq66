@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2022-04-13
+ * \updates       2022-04-16
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -701,23 +701,20 @@ mutegroups::reset_defaults ()
  *  Counts the letters of each mute-group name, adding 2 to account for the
  *  double-quote characters used in specifying a mute-group name.  The names
  *  are written to the 'mutes' file and to the MIDI file, but, for the latter,
- *  we have to check for the names byte-by-byte.  Also, if empty, the quotes
- *  aren't written (and counted here).
+ *  we have to check for the names byte-by-byte.  Also, even if empty, the
+ *  quotes are still  written (and counted here).  Otherwise we cannot
+ *  determine the end of the group safely.
  */
 
 int
 mutegroups::group_names_letter_count () const
 {
     int result = 0;
-    int group = 0;
     for (const auto & mgpair : m_container)
     {
         const mutegroup & m = mgpair.second;
         const std::string & gname = m.name();
-        if (! gname.empty())
-            result += gname.length() + 2;
-
-        ++group;
+        result += gname.length() + 2;
     }
     return result;
 }

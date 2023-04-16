@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-04-08
+ * \updates       2023-04-16
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -340,6 +340,12 @@ protected:
     bool parse_c_notes (performer & p);
     bool parse_c_bpmtag (performer & p);
     bool parse_c_mutegroups (performer & p);
+    bool parse_c_mutegroups_legacy
+    (
+        performer & p,
+        unsigned groupcount,
+        unsigned groupsize
+    );
     bool parse_c_musickey ();
     bool parse_c_musicscale ();
     bool parse_c_backsequence ();

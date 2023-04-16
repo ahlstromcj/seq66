@@ -1,4 +1,4 @@
-# README for Seq66 0.99.3 2023-04-15
+# README for Seq66 0.99.3 2023-04-16
 
 __Seq66__: MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets, triggers, and playlists for song management,
@@ -110,7 +110,8 @@ Windows, and using a conventional source tarball.
         *   Improvements made to playlist handling. It wasn't displaying
             the BPM of the next tune.  Still have issue with the BPM spinbox
             not causing a file modification. Editing the BPM works.
-        *   Improvements to mute-group and its MIDI control in progress.
+        *   Improvements and important fixes to mute-group and its MIDI
+            control still in progress.
         *   Fixed the daemonization and log-file functionality.
         *   Revisited the recmutex implementation.
         *   Weird error where ALSA not found! We now avoid a crash, but
