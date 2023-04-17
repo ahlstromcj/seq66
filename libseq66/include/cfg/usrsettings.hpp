@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-03-22
+ * \updates       2023-04-17
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -959,6 +959,13 @@ private:
 
     gridmode m_grid_mode;
 
+    /**
+     *  If true (the default), then a prompt is shown (in the GUI) when
+     *  a mute-group learn operation succeeds.
+     */
+
+    bool m_enable_learn_confirmation;
+
 public:
 
     usrsettings ();
@@ -1738,6 +1745,16 @@ public:
     }
 
     std::string grid_mode_label (gridmode gm = gridmode::max) const;
+
+    bool enable_learn_confirmation () const
+    {
+        return m_enable_learn_confirmation;
+    }
+
+    void enable_learn_confirmation (bool flag)
+    {
+        m_enable_learn_confirmation = flag;
+    }
 
 public:         // used in main application module and the usrfile class
 

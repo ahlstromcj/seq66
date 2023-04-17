@@ -3655,12 +3655,15 @@ qsmainwnd::on_group_learn_complete (const keystroke & k, bool good)
     std::ostringstream os;
     if (good)
     {
-        os
-            << "MIDI mute-group learn success, mute-group key '" << k.name()
-            << "' (code = " << int(k.key())
-            << " [0x" << std::hex << std::setw(2) << unsigned(k.key())
-            << "]) mapped."
-           ;
+        if (usr().enable_learn_confirmation())
+        {
+            os
+                << "MIDI mute-group learn success, mute-group key '" << k.name()
+                << "' (code = " << int(k.key())
+                << " [0x" << std::hex << std::setw(2) << unsigned(k.key())
+                << "]) mapped."
+               ;
+        }
     }
     else
     {

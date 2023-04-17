@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-03-27
+ * \updates       2023-04-17
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -297,6 +297,11 @@ usrfile::parse ()
         double scale = get_float(file, tag, "window-scale");
         double scaley = get_float(file, tag, "window-scale-y");
         usr().window_scale(scale, scaley, true);        /* x & y the same   */
+        flag = get_boolean
+        (
+            file, tag, "enable-learn-confirmation", 0, true
+        );
+        usr().enable_learn_confirmation(flag);
     }
     usr().normalize();                                  /* recalculate      */
 
@@ -714,6 +719,9 @@ usrfile::write ()
 "# Window-scale (option '-o scale=m.n[xp.q]') specifies scaling the main\n"
 "# window at startup. Defaults to 1.0 x 1.0. If between 0.5 and 3.0, it\n"
 "# changes the size of the main window proportionately.\n"
+"#\n"
+"# 'enable-learn-confirmation' can be set to false to disable the prompt that\n"
+"# the mute-group learn action succeeded. Can be annoying.\n"
 "\n[user-interface-settings]\n\n"
         ;
     write_boolean(file, "swap-coordinates", usr().swap_coordinates());
@@ -728,6 +736,10 @@ usrfile::write ()
     write_integer(file, "window-redraw-rate", usr().window_redraw_rate());
     write_float(file, "window-scale", usr().window_scale());
     write_float(file, "window-scale-y", usr().window_scale_y());
+    write_boolean
+    (
+        file, "enable-learn-confirmation", usr().enable_learn_confirmation()
+    );
 
     /*
      * [user-midi-ppqn]

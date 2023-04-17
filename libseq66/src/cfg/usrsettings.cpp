@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2023-03-27
+ * \updates       2023-04-17
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -400,7 +400,8 @@ usrsettings::usrsettings () :
     m_new_pattern_wraparound    (false),
     m_record_mode               (recordmode::normal),
     m_grid_record_style         (recordstyle::merge),
-    m_grid_mode                 (gridmode::loop)
+    m_grid_mode                 (gridmode::loop),
+    m_enable_learn_confirmation (true)
 {
     // Empty body; it's no use to call normalize() here, see set_defaults().
 }
@@ -494,6 +495,7 @@ usrsettings::set_defaults ()
     m_record_mode = recordmode::normal;
     m_grid_record_style = recordstyle::merge;
     m_grid_mode = gridmode::loop;
+    m_enable_learn_confirmation = true;
     normalize();                            /* recalculate derived values   */
 }
 
