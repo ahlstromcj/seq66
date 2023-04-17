@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2022-04-16
+ * \updates       2022-04-17
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -131,15 +131,16 @@ mutegroups::grid_to_group (int row, int column)
 
 /**
  *  Creates an empty, default mutegroups object.  The default size is 4 x 8,
- *  but this is currently the only size we will support.  32 mute-groups.
+ *  but this is currently the only size we will support: 32 mute-groups.
+ *  (The size of a mute-group can vary, however.)
  *
  * \param rows
- *      Provides the number of virtual rows in the set of mute-groups.
- *      This value is treated like a constant.
+ *      Provides the number of virtual rows in a mute-group. This value
+ *      ultimately comes from usr().mainwnd_rows().
  *
  * \param columns
- *      Provides the number of virtual columns the set of mute-groups.
- *      This value is treated like a constant.
+ *      Provides the number of virtual columns in a mute-group. This value
+ *      ultimately comes from usr().mainwnd_rows().
  */
 
 mutegroups::mutegroups (int rows, int columns) :
@@ -163,6 +164,7 @@ mutegroups::mutegroups (int rows, int columns) :
     m_legacy_mutes              (false)
 {
     s_swap_coordinates = usr().swap_coordinates();
+    create_empty_mutes();
 }
 
 /**
@@ -201,6 +203,7 @@ mutegroups::mutegroups (const std::string & name, int rows, int columns) :
     m_legacy_mutes              (false)
 {
     s_swap_coordinates = usr().swap_coordinates();
+    create_empty_mutes();
 }
 
 /**
@@ -214,9 +217,13 @@ mutegroups::load (mutegroup::number gmute, const midibooleans & bits)
     bool result = gmute >= 0;
     if (result)
     {
+#if defined USE_OLD_CODE
         mutegroup m(gmute, m_rows, m_columns);
         m.set(bits);                        // there is no load(bits)
         result = add(gmute, m);
+#else
+        result = update(gmute, bits);
+#endif
     }
     return result;
 }
@@ -288,6 +295,30 @@ mutegroups::get_active_groups () const
     }
     return result;
 }
+
+/**
+ *  Creates a mute-group container with the full set of 32 mute-groups that
+ *  Seq66 supports. Meant to be called only in the constructors. We need
+ *  to pre-create the container to avoid issues with partial sets of groups
+ *  in different situations.
+ */
+
+void
+mutegroups::create_empty_mutes ()
+{
+    if (list().empty())
+    {
+        for (mutegroup::number group = 0; group < Size(); ++group)
+        {
+            mutegroup empty_mg(group, rows(), columns());
+            (void) add(group, empty_mg);
+        }
+    }
+}
+
+/**
+ *  Conditionally adds a mute-group to the container.
+ */
 
 bool
 mutegroups::add (mutegroup::number gmute, const mutegroup & m)
@@ -670,6 +701,7 @@ mutegroups::clear ()
 {
     bool result = const_cast<mutegroups *>(this)->any();
     m_container.clear();
+    create_empty_mutes();
     return result;
 }
 

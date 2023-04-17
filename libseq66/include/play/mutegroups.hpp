@@ -65,11 +65,13 @@ namespace seq66
 
 class mutegroups final : public basesettings
 {
+#if 0
     friend class midifile;
-    friend class performer;
-    friend class mutegroupsfile;
     friend class qmutemaster;
+    friend class mutegroupsfile;
+    friend class performer;
     friend class setmapper;
+#endif
 
 public:
 
@@ -540,6 +542,11 @@ public:
 
     bool clear ();
 
+    container & list ()
+    {
+        return m_container;
+    }
+
     const container & list () const
     {
         return m_container;
@@ -633,15 +640,10 @@ public:
         return m_strip_empty;
     }
 
-private:
+public:         // setters that need to be public
 
-    bool add (mutegroup::number gmute, const mutegroup & m);
     bool update (mutegroup::number gmute, const midibooleans & bits);
-
-    container & list ()
-    {
-        return m_container;
-    }
+    void group_learn (bool flag);
 
     void group_event (bool flag)
     {
@@ -653,22 +655,9 @@ private:
         m_group_error = flag;
     }
 
-    void group_mode (bool flag)
+    void legacy_mutes (bool flag)
     {
-        m_group_mode = flag;
-    }
-
-    void toggle_group_mode ()
-    {
-        m_group_mode = ! m_group_mode;
-    }
-
-    void group_learn (bool flag);
-
-    void group_selected (mutegroup::number mg)
-    {
-        if (group_valid(mg) || mg == c_null_mute_group)
-            m_group_selected = mg;
+        m_legacy_mutes = flag;
     }
 
     void toggle_active_only (bool flag)
@@ -676,15 +665,31 @@ private:
         m_toggle_active_only = flag;
     }
 
-    void legacy_mutes (bool flag)
+    void toggle_group_mode ()
     {
-        m_legacy_mutes = flag;
+        m_group_mode = ! m_group_mode;
     }
 
     void strip_empty (bool flag)
     {
         m_strip_empty = flag;
     }
+
+    void group_selected (mutegroup::number mg)
+    {
+        if (group_valid(mg) || mg == c_null_mute_group)
+            m_group_selected = mg;
+    }
+
+    void group_mode (bool flag)
+    {
+        m_group_mode = flag;
+    }
+
+private:
+
+    void create_empty_mutes ();
+    bool add (mutegroup::number gmute, const mutegroup & m);
 
 };              // class mutegroups
 

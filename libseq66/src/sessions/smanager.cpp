@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-04-15
+ * \updates       2023-04-17
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -347,10 +347,14 @@ smanager::create_performer ()
     result = bool(p);
     if (result)
     {
-        (void) p->get_settings(rc(), usr());
         m_perf_pointer = std::move(p);              /* change the ownership */
+        (void) perf()->get_settings(rc(), usr());
         result = perf()->launch(ppqn);
-        if (! result)
+        if (result)
+        {
+            // Anything to do?
+        }
+        else
         {
             errprint("performer launch failed");
         }
@@ -374,6 +378,8 @@ smanager::open_midi_control_file ()
     if (result)
     {
         result = read_midi_control_file(fullpath, rc());
+        if (! result)
+            append_error_message("Read failed", fullpath);
     }
     return result;
 }
@@ -821,7 +827,7 @@ smanager::create (int argc, char * argv [])
             (void) create_project(argc, argv, homedir);
         }
         if (ok)
-            (void) open_midi_control_file();
+            ok = open_midi_control_file();
 
         result = create_performer();
         if (result)

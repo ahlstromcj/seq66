@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2023-04-07
+ * \updates       2023-04-17
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and

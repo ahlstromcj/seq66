@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2023-04-10
+ * \updates       2023-04-17
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -817,8 +817,8 @@ midicontrolfile::write_midi_control (std::ofstream & file)
 "\n[midi-control-settings]\n\n"
 "# Input settings to control Seq66. 'control-buss' ranges from 0 to the highest\n"
 "# system input buss. If set, that buss can send MIDI control. 255 (0xFF) means\n"
-"# any enabled input device can send control. ALSA provides an extra 'announce'\n"
-"# buss, altering port numbering vice JACK. With port-mapping enabled, the port\n"
+"# any ENABLED MIDI input can send control. ALSA has an extra 'announce' buss,\n"
+"# so add 1 to the port number with ALSA. With port-mapping enabled, the port\n"
 "# nick-name can be provided.\n"
 "#\n"
 "# 'midi-enabled' applies to the MIDI controls; keystroke controls are always\n"
@@ -1206,7 +1206,11 @@ read_midi_control_file
 )
 {
     midicontrolfile mcf(fname, rcs);
-    return mcf.parse();
+    bool result = mcf.parse();
+    if (! result)
+        file_error("Read failed", fname);
+
+    return result;
 }
 
 /**

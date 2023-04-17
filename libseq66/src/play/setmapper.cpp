@@ -1028,10 +1028,14 @@ setmapper::learn_mutes (bool learnmode, mutegroup::number group)
             }
             else
             {
+#if defined USE_OLD_CODE
                 mutegroup mg(group);            /* default rows, columns    */
                 result = mg.set(bits);
                 if (result)
                     result = mutes().add(group, mg);
+#else
+                result = mutes().update(group, bits);
+#endif
             }
             if (result)
             {

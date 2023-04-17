@@ -53,7 +53,31 @@ the "example1" file.
    mutes-test.midi:
 
       This is the same tune as above, but saved in the new mute-group
-      format, where only a byte is used.  Saves 3168 bytes!
+      format, where only a byte is used.  Saves 3168 bytes!  This
+      file is meant to be used with qseq66-lp-mini-alt.ctrl, which
+      supports only 16 mute-groups.
+
+      The mute groups for each (default) keystroke:
+
+      !  -  Enable column 0
+      Q  -  Enable column 1
+      A  -  Enable column 2
+      Z  -  Enable column 3
+
+      @  -  Enable column 4
+      W  -  Enable column 5
+      S  -  Enable column 6
+      X  -  Enable column 7
+
+      #  -  Enable row 0
+      E  -  Enable row 1
+      D  -  Enable row 2
+      C  -  Enable row 3
+
+      $  -  Enable columns 0 and 1
+      R  -  Enable columns 2 and 3
+      F  -  Enable columns 4 and 5
+      V  -  Enable columns 6 and 7
 
    reset.mid:
    

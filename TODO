@@ -1,12 +1,16 @@
 TO DO for Seq66 0.99.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-04-09
+2019-04-13 to 2023-04-17
 
-Some of these issues will be pushed of until the distant Seq66v2.
+Some of these issues will be pushed off for the distant Seq66v2.
 
 Immediate issues to attack:
 
-    ALSA/JACK issues with LaunchPad "alt" configuration.
+    -   MIDI control/display:
+        -   ALSA/JACK issues with LaunchPad "alt" configuration.
+        -   Fix MIDI control setting in ALSA by adding disabled announce buss
+        -   Automatically enable the control-buss in the 'rc' file.
+        -   Fix control/display selection not showing in Preferences.
     Issue #48
     Port-map testing.
 

@@ -90,6 +90,17 @@ namespace seq66
 
 /**
  *  Principal constructor.
+ *
+ * \param group
+ *      Provides the group number. Group numbers range from 0 to 31;
+ *      only 32 mute-groups, no more, no less, are supported.  But
+ *      each mute-group does not have to be restricted to this size.
+ *
+ * \param rows
+ *      Provides the number of virtual rows in a single mute-group.
+ *
+ * \param columns
+ *      Provides the number of virtual columns in a single mute-group.
  */
 
 mutegroup::mutegroup (mutegroup::number group, int rows, int columns) :

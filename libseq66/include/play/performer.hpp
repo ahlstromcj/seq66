@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-04-10
+ * \updates       2023-04-17
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -102,6 +102,7 @@ class performer
     friend class qt5nsmanager;
     friend class qsmainwnd;
     friend class sequence;
+    friend class smanager;
     friend class wrkfile;
 
 #if defined SEQ66_JACK_SUPPORT

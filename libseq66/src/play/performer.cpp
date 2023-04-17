@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-15
+ * \updates       2023-04-17
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -466,7 +466,7 @@ void
 performer::set_error_message (const std::string & msg)
 {
     m_error_pending = true;
-    error_message("performer", msg);
+    seq66::error_message("performer", msg);
 }
 
 void

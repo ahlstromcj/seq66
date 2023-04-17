@@ -175,15 +175,16 @@ qt5nsmanager::create_window ()
             (
                 this, "qt5nsmanager", 5, SLOT(conditional_update())
             );
+
+            /*
+             * Let the application stay active; let the user decide what to
+             * do about the error here.  For example, if a playlist doesn't
+             * load, why just exit?
+             */
+
             if (error_active())
             {
                 show_error("", error_message());
-
-                /*
-                 * Let the application stay active; let the user decide what to
-                 * do about the error here.  For example, if a playlist doesn't
-                 * load, why just exit?
-                 */
             }
             else
             {
