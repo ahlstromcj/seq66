@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-09-11
+ * \updates       2023-04-18
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -846,7 +846,7 @@ event::append_sysex (midibyte data)
  */
 
 void
-event::print (const std::string tag) const
+event::print (const std::string & tag) const
 {
     std::string buffer = to_string();
     if (tag.empty())
@@ -908,6 +908,7 @@ event::to_string () const
     char tmp[64];
     (void) snprintf(tmp, sizeof tmp, "[%06ld] (", long(m_timestamp));
 
+    const char * label = is_meta() ? "type" : "channel" ;
     std::string result = tmp;
     result += is_linked() ? "L" : " ";
     result += is_marked() ? "M" : " ";
@@ -916,8 +917,8 @@ event::to_string () const
     result += ") ";
     (void) snprintf
     (
-        tmp, sizeof tmp, "status 0x%02X chan/type 0x%02X d0=%d d1=%d\n",
-        unsigned(m_status), unsigned(m_channel),
+        tmp, sizeof tmp, "event 0x%02X %s 0x%02X d0=%d d1=%d\n",
+        unsigned(m_status), label, unsigned(m_channel),
         int(m_data[0]), int(m_data[1])
     );
     result += tmp;

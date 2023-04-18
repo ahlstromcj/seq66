@@ -104,6 +104,7 @@ Windows, and using a conventional source tarball.
             *   Renamed record-mode and grid-model control labels.
             *   Fixed accident disabling of grid-mode controls.
             *   Making MIDI control-out handling more reasonable.
+            *   Added some LaunchPad Mini macros.
         *   Added reading/writing/displaying Meta text events such as Text
             and Cue Point.
         *   Fixed broken "recent-files" features (by forcing 'rc' save).

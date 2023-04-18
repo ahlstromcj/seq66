@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-07
+ * \updates       2023-04-18
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -1447,7 +1447,7 @@ public:
         return is_meta() && m_channel == EVENT_META_KEY_SIGNATURE;  /* 0x59 */
     }
 
-    void print (const std::string tag = "") const;
+    void print (const std::string & tag = "") const;
     void print_note (bool showlink = true) const;
     std::string to_string () const;
     int get_rank () const;

@@ -1,7 +1,7 @@
 # Seq66 0.99.3 MIDI control configuration file
 #
 # /home/ahlstrom/.config/seq66/qseq66-lp-mini-alt.ctrl
-# Written 2023-04-09 08:49:56
+# Written 2023-04-18 08:45:50
 #
 # Sets up MIDI I/O control. The format is like the 'rc' file. To use it, set it
 # active in the 'rc' [midi-control-file] section. It adds loop, mute, &
@@ -35,8 +35,8 @@ See doc/launchpad-mini.ods for the mappings implemented by this 'ctrl' file.
 
 # Input settings to control Seq66. 'control-buss' ranges from 0 to the highest
 # system input buss. If set, that buss can send MIDI control. 255 (0xFF) means
-# any enabled input device can send control. ALSA provides an extra 'announce'
-# buss, altering port numbering vice JACK. With port-mapping enabled, the port
+# any ENABLED MIDI input can send control. ALSA has an extra 'announce' buss,
+# so add 1 to the port number with ALSA. With port-mapping enabled, the port
 # nick-name can be provided.
 #
 # 'midi-enabled' applies to the MIDI controls; keystroke controls are always
@@ -44,7 +44,7 @@ See doc/launchpad-mini.ods for the mappings implemented by this 'ctrl' file.
 # 'azerty'. AZERTY turns off auto-shift for group-learn.
 
 drop-empty-controls = false
-control-buss = 3
+control-buss = 4
 midi-enabled = true
 button-offset = 0
 button-rows = 4
@@ -160,8 +160,8 @@ keyboard-layout = qwerty
 
 [automation-control]
 
- 0 "'"           [ 0 0x00   0   0   0 ] [ 0 0x90 104   1 127 ] [ 0 0x00   0   0   0 ] # BPM Up
- 1 ";"           [ 0 0x00   0   0   0 ] [ 0 0x90 120   1 127 ] [ 0 0x00   0   0   0 ] # BPM Dn
+ 0 "'"           [ 0 0x00   0   0   0 ] [ 0 0x90 103   1 127 ] [ 0 0x00   0   0   0 ] # BPM Up
+ 1 ";"           [ 0 0x00   0   0   0 ] [ 0 0x90 119   1 127 ] [ 0 0x00   0   0   0 ] # BPM Dn
  2 "]"           [ 0 0x00   0   0   0 ] [ 0 0x90  71   1 127 ] [ 0 0x00   0   0   0 ] # Set Up
  3 "["           [ 0 0x00   0   0   0 ] [ 0 0x90  87   1 127 ] [ 0 0x00   0   0   0 ] # Set Dn
  4 "KP_Home"     [ 0 0x00   0   0   0 ] [ 0 0x90  40   1 127 ] [ 0 0x00   0   0   0 ] # Replace
@@ -186,7 +186,7 @@ keyboard-layout = qwerty
 23 "F1"          [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Top
 24 "F2"          [ 0 0x00   0   0   0 ] [ 0 0x90  70   1 127 ] [ 0 0x90  86   1 127 ] # Play List
 25 "F3"          [ 0 0x00   0   0   0 ] [ 0 0x90 102   1 127 ] [ 0 0x90 118   1 127 ] # Play Song
-26 "F9"          [ 0 0x90 103   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Tap BPM
+26 "F9"          [ 0 0x90 104   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Tap BPM
 27 "Space"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Start
 28 "Esc"         [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Stop
 29 "KP_Ins"      [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 29
@@ -195,7 +195,7 @@ keyboard-layout = qwerty
 32 "\"           [ 0 0x90   8 127 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Keep Queue
 33 "/"           [ 0 0x00   0   0   0 ] [ 0 0xb0 110   1 127 ] [ 0 0x00   0   0   0 ] # Slot Shift
 34 "0"           [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mutes Clear
-35 "Quit"        [ 0 0x00   0   0   0 ] [ 0 0x90 119   1 127 ] [ 0 0x00   0   0   0 ] # Quit
+35 "Quit"        [ 0 0x00   0   0   0 ] [ 0 0x90 120   1 127 ] [ 0 0x00   0   0   0 ] # Quit
 36 "="           [ 0 0x00   0   0   0 ] [ 0 0xb0 111   1 127 ] [ 0 0x00   0   0   0 ] # Loop Edit
 37 "-"           [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Event Edit
 38 "F10"         [ 0 0x90  72 127 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Song Mode
@@ -203,7 +203,7 @@ keyboard-layout = qwerty
 40 "F12"         [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Menu Mode
 41 "F4"          [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Follow JACK
 42 "~"           [ 0 0x00   0   0   0 ] [ 0 0xb0 104   1 127 ] [ 0 0x00   0   0   0 ] # Panic
-43 ">"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Visibility
+43 ">"           [ 0 0x00   0   0   0 ] [ 0 0xb0 111   1 127 ] [ 0 0x00   0   0   0 ] # Visibility
 44 "0xfa"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Save Session
 45 "0xfb"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 45
 46 "0xfc"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 46
@@ -245,7 +245,7 @@ keyboard-layout = qwerty
 [midi-control-out-settings]
 
 set-size = 32
-output-buss = 2
+output-buss = 3
 midi-enabled = true
 button-offset = 0
 button-rows = 4
@@ -377,7 +377,7 @@ button-columns = 8
 1 [ 0x90 118  62 ] [ 0x90 118  62 ] [ 0x90 118  12 ]  # Song-Dn
 1 [ 0x90  71  60 ] [ 0x90  71  60 ] [ 0x90  71  12 ]  # Set-Up
 1 [ 0x90  87  62 ] [ 0x90  87  62 ] [ 0x90  87  12 ]  # Set-Dn
-1 [ 0x90 104  60 ] [ 0x90 104  60 ] [ 0x90 104  12 ]  # Tap_BPM
+1 [ 0x90 104  60 ] [ 0x90 104  60 ] [ 0x90 104  12 ]  # Tap-BPM
 1 [ 0x90 120  15 ] [ 0x90 120  15 ] [ 0x90 120  12 ]  # Quit
 1 [ 0xb0 111  46 ] [ 0xb0 111  46 ] [ 0xb0 111  12 ]  # Visibility
 0 [ 0x00   0   0 ] [ 0x00   0   0 ] [ 0x00   0   0 ]  # Alt_2
@@ -394,11 +394,17 @@ button-columns = 8
 # are macro-names preceded by a '$'.  Some values should always be defined, even
 # if empty: footer, header, reset, startup, and shutdown.
 
+all-leds-high = 0xB0 0x00 0x7F
+all-leds-low = 0xB0 0x00 0x7D
+all-leds-med = 0xB0 0x00 0x7E
+drum-layout = 0xB0 0x00 0x02
+duty-cycle-default = 0xB0 0x1E 0x02
 footer = 0xF7
 header = 0xF0 0x00 0x00
-reset = $header 0x00 $footer
+reset = 0xB0 0x00 0x00
 shutdown = $header 0x00 $footer
 startup = $header 0x00 $footer
+xy-layout = 0xB0 0x00 0x01
 
 
 # End of /home/ahlstrom/.config/seq66/qseq66-lp-mini-alt.ctrl

@@ -238,10 +238,8 @@ qseditoptions::setup_tab_midi_clock ()
         }
 
         /*
-         * Output MIDI control buss combo-box population. We now use a
-         * check-box instead of a "Disabled" item, as per issue #83 revisited.
-         *
-         * out->addItem("Disabled");
+         * Output MIDI control buss combo-box population. We use a check-box
+         * instead of a "Disabled" item, as per issue #83 revisited.
          */
 
         for (int bus = 0; bus < buses; ++bus)
@@ -2844,12 +2842,11 @@ qseditoptions::slot_output_bus (int index)
         if (enable)
         {
             /*
-             * Don't call is_enabled, as this will disable the control display
-             * at exit.
+             * Don't call is_enabled(), as this will disable the control
+             * display at exit.
              *
              * perf().midi_control_out().is_enabled(enable);
-             * perf().midi_control_out().nominal_buss(index
-             *
+             * perf().midi_control_out().nominal_buss(index);
              * perf().midi_control_out().configure_enabled(true);
              */
 
@@ -2898,12 +2895,18 @@ qseditoptions::slot_input_bus (int index)
             /*
              * perf().midi_control_in().is_enabled(enable);
              * perf().midi_control_in().nominal_buss(index);
-             *
              * perf().midi_control_in().configure_enabled(enable);
              */
 
             perf().midi_control_in().configured_buss(index);
             rc().midi_control_active(true);
+
+            /*
+             * EXPERIMENTAL
+             */
+
+            perf().ui_set_input(index, true);   /* auto-enable the input    */
+            reload_needed(true);
         }
     }
     modify_ctrl();

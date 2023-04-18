@@ -1,0 +1,48 @@
+# Seq66 0.99.3 main ('rc') configuration file
+#
+# /home/ahlstrom/.config/seq66/qseq66.rc
+# Written 2023-04-18 14:15:12
+
+[midi-input]
+
+ 4      # number of input MIDI buses
+
+ 0  1   "[0] 0:0 system:midi_capture_1"           # 'Midi Through'
+ 1  1   "[1] 0:1 system:midi_capture_2"           # 'nanoKEY2'
+ 2  1   "[2] 0:2 system:midi_capture_3"           # 'Launchpad Mini'
+ 3  1   "[3] 0:3 system:midi_capture_4"           # 'E MU XMidi1X1 Tab'
+
+[midi-input-map]
+
+ 1      # map is active
+
+ 0  1   "Midi Through"
+ 1  1   "nanoKEY2"
+ 2  1   "Launchpad Mini"
+ 3  1   "E MU XMidi1X1 Tab"
+
+[midi-clock]
+
+ 6      # number of MIDI clocks (output buses)
+
+ 0  0   "[0] 0:0 system:midi_playback_1"          # 'Midi Through'
+ 1  0   "[1] 0:1 system:midi_playback_2"          # 'nanoKEY2'
+ 2  0   "[2] 0:2 system:midi_playback_3"          # 'Launchpad Mini'
+ 3  0   "[3] 0:3 system:midi_playback_4"          # 'E MU XMidi1X1 Tab'
+ 4  0   "[4] 1:4 yoshimi:midi in"
+ 5  0   "[5] 2:5 qsynth:midi_00"
+
+[midi-clock-map]
+
+ 1      # map is active
+
+ 0  0   "Midi Through"
+ 1  0   "nanoKEY2"
+ 2  0   "Launchpad Mini"
+ 3  0   "E MU XMidi1X1 Tab"
+ 4  0   "yoshimi:midi in"
+ 5  0   "qsynth:midi_00"
+
+# End of /home/ahlstrom/.config/seq66/qseq66.rc
+#
+# vim: sw=4 ts=4 wm=4 et ft=dosini

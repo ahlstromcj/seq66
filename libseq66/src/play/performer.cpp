@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-17
+ * \updates       2023-04-18
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -7974,6 +7974,7 @@ performer::read_midi_file
     if (result)
     {
         next_song_mode();
+        announce_mutes();                       /* cannot forget this one!  */
         notify_mutes_change(0, change::no);
     }
     return result;
