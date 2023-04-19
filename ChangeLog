@@ -1,5 +1,467 @@
+2023-04-19  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/configuration.tex,
+	doc/latex/tex/pattern_editor.tex, doc/latex/tex/patterns_panel.tex: 
+	Merged portfix and updated documentation for version 0.99.3
+	* README.md, RELNOTES.md, TODO, VERSION, configure.ac,
+	contrib/scripts/gdarkseq66, contrib/scripts/qtctrun,
+	doc/latex/tex/port_mapping.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	seq_qt5/forms/qplaylistframe.ui, seq_qt5/forms/qseditoptions.ui: 
+	Time to put version 0.99.3 to bed.
+
+2023-04-18  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, contrib/notes/launchpad.text,
+	contrib/scripts/timid, data/linux/alsa_ports.rc,
+	data/linux/jack_ports.rc, data/linux/qseq66-lp-mini-alt.ctrl,
+	doc/latex/tex/launchpad_mini.tex, libseq66/include/midi/event.hpp,
+	libseq66/src/midi/event.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/src/qseditoptions.cpp: Tweak mutes-test and added LaunchPad
+	Mini macros.
+
+2023-04-17  ahlstrom <ahlstromcj@gmail.com>
+
+	* data/linux/qseq66.usr, doc/latex/tex/configuration.tex,
+	libseq66/include/cfg/usrsettings.hpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/cfg/usrsettings.cpp, seq_qt5/src/qsmainwnd.cpp: Added
+	usr option to disable learn-complete prompt.
+	* TODO, contrib/midi/README, libseq66/include/play/mutegroups.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/sessions/smanager.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/play/mutegroup.cpp, libseq66/src/play/mutegroups.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/setmapper.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/src/qt5nsmanager.cpp: 
+	Refactoring mutes internals in progress, yeesh.
+
+2023-04-16  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/midi/midifile.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/mutegroups.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/src/qmutemaster.cpp: Fixed
+	big bug in MIDI-only mute-groups.
+
+2023-04-15  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, doc/latex/tex/mutes.tex,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	seq_rtmidi/src/midi_alsa_info.cpp, seq_rtmidi/src/rtmidi_info.cpp: 
+	Better handling of failure to open ALSA client.
+
+2023-04-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, data/linux/qseq66.mutes,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/play/performer.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/play/mutegroups.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/setmapper.cpp, libseq66/src/play/songsummary.cpp,
+	seq_qt5/forms/qmutemaster.ui, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/qmutemaster.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qmutemaster.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qsmainwnd.cpp: More work improving mute-group handling.
+
+2023-04-12  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, contrib/scripts/jackctl,
+	data/linux/qseq66-lp-mini-alt.ctrl,
+	libseq66/include/ctrl/keycontainer.hpp,
+	libseq66/src/ctrl/keycontainer.cpp,
+	libseq66/src/ctrl/opcontainer.cpp, libseq66/src/play/performer.cpp: 
+	Working on improving mute-group handling.
+
+2023-04-11  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, data/linux/qseq66-lp-mini-alt.ctrl,
+	doc/latex/tex/launchpad_mini.tex, doc/latex/tex/menu.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/ctrl/midicontrolout.cpp,
+	libseq66/src/play/performer.cpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsmainwnd.cpp: 
+	Updated/documented LaunchPad Mini handling.
+
+2023-04-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, contrib/git/git.text, contrib/scripts/jackctl,
+	data/linux/qseq66-lp-mini-alt.ctrl,
+	doc/latex/tex/launchpad_mini.tex, doc/latex/tex/patterns_panel.tex,
+	include/config.h.in, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/ctrl/midicontrolout.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/ctrl/midicontrolout.cpp,
+	libseq66/src/play/performer.cpp: Improving launchpad display, but
+	play causes file change, so be aware.
+
+2023-04-08  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES.md, TODO, VERSION, configure.ac,
+	doc/dox/doxy-common.cfg, doc/latex/tex/menu.tex,
+	doc/latex/tex/midi_formats.tex, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/midi_vector_base.hpp,
+	libseq66/include/midi/midifile.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/include/seq66_features.h, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/screenset.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/play/songsummary.cpp, seq_qt5/src/qsmainwnd.cpp: Date
+	bump, fixed activating imported playlist.
+
+2023-04-07  ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/src/cfg/rcsettings.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/src/gui_palette_qt5.cpp: 
+	Fixed persistence of BPM in playlist via a static boolean.
+	* README.md, libseq66/include/midi/editable_event.hpp,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/midi/midifile.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/sessions/smanager.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/midi/editable_event.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/src/qplaylistframe.cpp,
+	seq_qt5/src/qseqeventframe.cpp, seq_qt5/src/qseventslots.cpp: Fixed
+	CLI vs playlists and added Meta text handling.
+
+2023-04-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp: Fixed unintended file change when
+	BPM changes during playlist usage.
+
+2023-04-05  ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, data/samples/ca_midi.playlist,
+	doc/latex/tex/configuration.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/playlist.hpp,
+	libseq66/src/cfg/playlistfile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/playlist.cpp, seq_qt5/forms/qplaylistframe.ui,
+	seq_qt5/forms/qsmainwnd.ui, seq_qt5/include/qplaylistframe.hpp,
+	seq_qt5/src/qplaylistframe.cpp: Still more tweaks to playlist
+	handling.
+	* data/Makefile.in, data/samples/ca_midi.playlist: Removed a couple
+	of Yamaha demo tunes.
+
+2023-04-04  ahlstrom <ahlstromcj@gmail.com>
+
+	* data/Makefile.am, data/Makefile.in,
+	data/samples/ca_midi.playlist,
+	libseq66/include/util/basic_macros.hpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/basic_macros.cpp: Added playlist material to the
+	installer.
+
+2023-04-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, doc/latex/tex/configuration.tex,
+	doc/latex/tex/headless.tex, doc/latex/tex/menu.tex,
+	include/config.h.in, libseq66/src/cfg/rcsettings.cpp: Fixed the
+	--home option.
+	* README.md, TODO, VERSION, configure.ac,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qt5_helpers.cpp: Fixed setting of config subdirectory.
+
+2023-04-01  ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/sessions/smanager.hpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/include/qt5nsmanager.hpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5_helpers.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: Working on reading config for NSM and
+	--home in progress.
+
+2023-03-31  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/sessions/smanager.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/cfg/sessionfile.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libsessions/src/nsm/nsmbase.cpp, seq_qt5/src/qt5nsmanager.cpp,
+	seq_rtmidi/src/midi_alsa_info.cpp: Still trying to simplify config
+	files with nsm.
+
+2023-03-30  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure.ac, include/config.h.in,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/forms/qsessionframe.ui: 
+	Added nsm debugging code.
+	* Seq66cli/seq66rtcli.cpp, Seq66qt5/seq66qt5.cpp,
+	doc/latex/tex/sessions.tex, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: More progress on issue #40.
+
+2023-03-29  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.in, README.md, Seq66cli/Makefile.in,
+	Seq66qt5/Makefile.in, TODO, aux-files/compile, aux-files/depcomp,
+	aux-files/ltmain.sh, aux-files/missing, configure, configure.ac,
+	data/Makefile.in, doc/Makefile.in, doc/latex/Makefile.in,
+	doc/latex/tex/Makefile.in, include/config.h.in,
+	libseq66/Makefile.in, libseq66/include/Makefile.in,
+	libseq66/include/os/daemonize.hpp,
+	libseq66/include/sessions/clinsmanager.hpp,
+	libseq66/include/sessions/smanager.hpp, libseq66/src/Makefile.in,
+	libseq66/src/os/daemonize.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp, libsessions/Makefile.in,
+	libsessions/include/Makefile.in,
+	libsessions/include/nsm/nsmbase.hpp, libsessions/src/Makefile.in,
+	m4/Makefile.in, man/Makefile.in, resources/pixmaps/Makefile.in,
+	seq_portmidi/Makefile.in, seq_portmidi/include/Makefile.in,
+	seq_portmidi/src/Makefile.in, seq_qt5/Makefile.in,
+	seq_qt5/forms/Makefile.in, seq_qt5/forms/qsabout.ui,
+	seq_qt5/include/Makefile.in, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/include/qt5nsmanager.hpp,
+	seq_qt5/src/Makefile.in, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5_helpers.cpp,
+	seq_qt5/src/qt5nsmanager.cpp, seq_rtmidi/Makefile.in,
+	seq_rtmidi/include/Makefile.in, seq_rtmidi/src/Makefile.in: Work on
+	improving issue #40 for NSM support, still in progress.
+
+2023-03-28  ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_qt5/forms/qseditoptions.ui, seq_qt5/seq_qt5.pro,
+	seq_qt5/src/Makefile.am, seq_qt5/src/qperfeditframe64.cpp: Adding Qt
+	5.15 disabling checks.
+
+2023-03-27  ahlstrom <ahlstromcj@gmail.com>
+
+	* : commit 72bb4f9b782eb075261c34efca6d564f3a0d03c2 Author: ahlstrom
+	<ahlstromcj@gmail.com> Date:   Mon Mar 27 17:23:14 2023 -0400
+
+2023-03-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES.md, TODO, VERSION, configure.ac,
+	doc/latex/tex/sessions.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/cfg/usrsettings.cpp, seq_qt5/forms/qsessionframe.ui,
+	seq_qt5/include/qsessionframe.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qsessionframe.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: Date bump, log-file name now editable.
+	* README.md, Seq66cli/seq66rtcli.cpp,
+	doc/latex/tex/configuration.tex, doc/latex/tex/headless.tex,
+	doc/latex/tex/jack.tex, libseq66/include/cfg/cmdlineopts.hpp,
+	libseq66/include/os/daemonize.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/os/daemonize.cpp, libseq66/src/os/timing.cpp: Fixed
+	handling of log files.
+
+2023-03-26  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, Seq66cli/seq66rtcli.cpp, contrib/VMPK.conf,
+	contrib/scripts/README, contrib/scripts/qtctrun,
+	libseq66/include/cfg/cmdlineopts.hpp,
+	libseq66/include/cfg/rcfile.hpp, libseq66/include/os/daemonize.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcfile.cpp: Fixed
+	daemonization, still need fix to reroute_stdio().
+
+2023-03-24  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Seq66cli/seq66rtcli.cpp, libseq66/include/os/daemonize.hpp,
+	libseq66/src/os/daemonize.cpp: Daemoniztion works, functional
+	testing needed.
+
+2023-03-23  ahlstrom <ahlstromcj@gmail.com>
+
+	* Seq66cli/seq66rtcli.cpp, arch/package/PKGBUILD, contrib/gvim.rc,
+	doc/latex/tex/palettes.tex, libseq66/include/os/daemonize.hpp,
+	libseq66/src/cfg/notemapfile.cpp, libseq66/src/cfg/scales.cpp,
+	libseq66/src/cfg/usrfile.cpp, libseq66/src/os/daemonize.cpp,
+	seq_qt5/src/qseqeditframe64.cpp: More dicking with daemonization.
+
+2023-03-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Seq66cli/seq66rtcli.cpp, libseq66/include/cfg/cmdlineopts.hpp,
+	libseq66/include/cfg/usrfile.hpp,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/os/daemonize.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/usrfile.cpp, libseq66/src/cfg/usrsettings.cpp,
+	libseq66/src/os/daemonize.cpp: Improvements to daemonization/logs,
+	more debugging needed.
+
+2023-03-19  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, Seq66cli/seq66rtcli.cpp, configure,
+	contrib/vim-syntax/c.vim, data/seq66cli/seq66cli.usr,
+	libseq66/include/os/daemonize.hpp, libseq66/src/os/daemonize.cpp,
+	seq_qt5/src/qloopbutton.cpp: Work on daemonization and log files in
+	progress.
+
+2023-03-18  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, data/linux/qseq66.ctrl,
+	libseq66/include/ctrl/automation.hpp,
+	libseq66/src/cfg/usrsettings.cpp, libseq66/src/ctrl/automation.cpp,
+	libseq66/src/ctrl/keycontainer.cpp,
+	libseq66/src/ctrl/opcontrol.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/include/qslivegrid.hpp, seq_qt5/src/qslivegrid.cpp: Many
+	fixes related to issue #107.
+
+2023-03-17  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, README.md, TODO, VERSION, configure, configure.ac,
+	contrib/vim-syntax/cpp.vim, doc/latex/tex/seq66-user-manual.tex,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/util/recmutex.hpp, libseq66/src/util/recmutex.cpp,
+	seq_qt5/src/qseqeditframe64.cpp: Work on issue #107 and
+	documentation, versioning.
+
+2023-03-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* : Updated main-windows image for GitHub.
+	* README.md, VERSION, configure.ac,
+	doc/latex/tex/seq66-user-manual.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h: Version 0.99.2 pending.
+
+2023-03-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/alsa.tex, doc/latex/tex/concepts.tex,
+	doc/latex/tex/configuration.tex, doc/latex/tex/defaultkeys.tex,
+	doc/latex/tex/event_editor.tex, doc/latex/tex/jack.tex,
+	doc/latex/tex/kbd_mouse.tex, doc/latex/tex/kudos.tex,
+	doc/latex/tex/launchpad_mini.tex, doc/latex/tex/live_grid.tex,
+	doc/latex/tex/menu.tex, doc/latex/tex/midi_export.tex,
+	doc/latex/tex/pattern_editor.tex, doc/latex/tex/patterns_panel.tex,
+	doc/latex/tex/port_mapping.tex, doc/latex/tex/references.tex,
+	doc/latex/tex/sessions.tex, doc/latex/tex/song_editor.tex: Still
+	more documentation fixups.
+	* doc/latex/tex/alsa.tex, doc/latex/tex/concepts.tex,
+	doc/latex/tex/configuration.tex, doc/latex/tex/defaultkeys.tex,
+	doc/latex/tex/event_editor.tex, doc/latex/tex/first_start.tex,
+	doc/latex/tex/headless.tex, doc/latex/tex/jack.tex,
+	doc/latex/tex/kbd_mouse.tex, doc/latex/tex/launchpad_mini.tex,
+	doc/latex/tex/live_grid.tex, doc/latex/tex/menu.tex,
+	doc/latex/tex/meta_events.tex, doc/latex/tex/midi_export.tex,
+	doc/latex/tex/midi_formats.tex, doc/latex/tex/palettes.tex,
+	doc/latex/tex/pattern_editor.tex, doc/latex/tex/patterns_panel.tex,
+	doc/latex/tex/playlist.tex, doc/latex/tex/port_mapping.tex,
+	doc/latex/tex/seq66-user-manual.tex, doc/latex/tex/sessions.tex,
+	doc/latex/tex/setmaster.tex, doc/latex/tex/song_editor.tex,
+	doc/latex/tex/windows.tex, seq_qt5/src/gui_palette_qt5.cpp,
+	seq_qt5/src/qseqroll.cpp: Optimizing latex documentation in
+	progress.
+
+2023-03-02  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, README.md, TODO, doc/latex/tex/configuration.tex,
+	doc/latex/tex/docs-structure.tex, doc/latex/tex/first_start.tex,
+	doc/latex/tex/kudos.tex, doc/latex/tex/live_grid.tex,
+	doc/latex/tex/menu.tex, doc/latex/tex/mutes.tex,
+	doc/latex/tex/seq66-user-manual.tex: Significant modification to
+	user manual layout.
+
+2023-03-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, doc/dox/doxy-common.cfg,
+	libseq66/include/midi/jack_assistant.hpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp: 
+	More TODO cleanup.
+
+2023-03-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, TODO, doc/latex/tex/midi_formats.tex,
+	libseq66/include/play/songsummary.hpp,
+	libseq66/include/seq66_features.h,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/play/songsummary.cpp, seq_portmidi/include/portmidi.h,
+	seq_portmidi/src/pmwinmm.c, seq_portmidi/src/portmidi.c,
+	seq_qt5/src/qperfeditframe64.cpp, seq_qt5/src/qseqbase.cpp,
+	seq_rtmidi/src/midi_alsa.cpp: Interim check-in, investigating
+	macros.
+
+2023-02-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/linux/qseq66.palette, seq_qt5/src/gui_palette_qt5.cpp: Fixed
+	some Qt gradient warnings.
+
+2023-02-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* : commit 7206c497d2e533ab42a02ee3f55653e6a0ca7f84 Author: Chris
+	Ahlstrom <ahlstromcj@gmail.com> Date:   Mon Feb 27 19:47:10 2023
+	-0500
+	* : commit d66be924a37902246978a79d4f662b33f9fba62d Author: Chris
+	Ahlstrom <ahlstromcj@gmail.com> Date:   Mon Feb 27 07:49:58 2023
+	-0500
+	* README.md, seq_qt5/include/gui_palette_qt5.hpp,
+	seq_qt5/src/gui_palette_qt5.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qseqroll.cpp: Fixed palette file brush settings getting
+	reset.
+
+2023-02-26  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* : commit 204ab0622fabc59c409f45061811f410025f6372 Merge: b1967d12
+	0047f5eb Author: Chris Ahlstrom <ahlstromcj@gmail.com> Date:   Sun
+	Feb 26 08:52:25 2023 -0500
+	* seq_qt5/src/qslivegrid.cpp: Added credit for phuel fix #106.
+	* TODO, doc/latex/tex/references.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/play/setmapper.hpp,
+	seq_qt5/src/gui_palette_qt5.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qseqroll.cpp: Minor docu tweaks and starting making
+	linear gradient an option.
+	* seq_qt5/src/qslivegrid.cpp: Mark the selected MIDI bus and channel
+	in the pattern dropdown menu.
+
+2023-01-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, seq_qt5/src/qseqroll.cpp: Fixed background seq display
+	with linear gradients.
+
+2023-01-17  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, VERSION, configure.ac,
+	doc/latex/tex/seq66-user-manual.tex,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/src/play/sequence.cpp: 
+	Work on issue #103 under JACK slave transport.
+
+2023-01-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/DIR_COLORS, contrib/vim-syntax/c.vim,
+	contrib/vim-syntax/cpp.vim, contrib/vim.rc, include/config.h.in,
+	libseq66/include/util/filefunctions.hpp,
+	libseq66/src/cfg/comments.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/util/filefunctions.cpp,
+	libsessions/src/nsm/nsmbase.cpp: Minor tweaks to contrib and source
+	files.
+
 2022-11-27  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* ChangeLog, README.md, VERSION, configure.ac,
+	contrib/code/ttymidi.c, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h: Version 0.99.1 pending.
 	* README.md, contrib/scripts/jackctl, doc/latex/tex/jack.tex,
 	libseq66/include/cfg/rcsettings.hpp,
 	seq_qt5/forms/qseditoptions.ui, seq_rtmidi/src/midi_jack.cpp,
