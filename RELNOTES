@@ -1,0 +1,39 @@
+Release Notes for Seq66 v. 0.99.4
+
+This file lists __major__ changes from version 0.99.1 to 0.99.4.
+These notes are not complete, just trying to get it to work.
+
+*   Version 0.99.4:
+    *   Issue #xyz.  Expand-pattern functionality.
+
+*   Previous changes:
+
+    *   Issue #40.  Enhanced NSM handling and debugging.
+    *   Issue #44. Revisited to fix related additional issues.
+    *   Issue #93. Revisited to fix related open pattern-editor issues.
+    *   Issue #100. Partly mitigated. Added a custom JACK ringbuffer.
+    *   Issue #103.  Some improvements to pattern loop-count.
+    *   Pull request #106. User phuel added checkmarks for active buss.
+    *   Issue #107.  Expand-pattern functionality.
+    *   A raft of MIDI automation/display fixes.
+    *   Added reading/writing/displaying Meta textual events.
+    *   Improvements to playlist handling.
+    *   Fixes to mute-group handling.
+    *   Fixed the daemonization and log-file functionality.
+    *   Fixed broken "recent-files" feature.
+    *   Improved error reporting.
+    *   Fixed background sequence not displaying with linear-gradient brush.
+    *   Fixes to brushes; made the linear gradient the default.
+    *   Other minor fixes and documentation updates, including the manual.
+    *   Fixed partial breakage of pattern-merge function.
+    *   Fixed odd breakage of ALSA playback in release mode.
+    *   Fixed Stop button when another Master has started playback.
+    *   Shift-click on Stop button rewinds JACK transport when running
+        as JACK Slave.
+    *   Display of some JACK server settings in Edit / Preferences.
+    *   Fixed handling of Ctrl vs non-Ctrl zoom keys in perfroll.
+    *   Event-dump now prompts for a text-file name.
+    *   Added linear-gradient compile-time option for displaying notes
+        and triggers.
+
+Read the NEWS, README.md, and TODO files.  Never-ending!
