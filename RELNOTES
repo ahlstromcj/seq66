@@ -4,7 +4,7 @@ This file lists __major__ changes from version 0.99.1 to 0.99.4.
 These notes are not complete, just trying to get it to work.
 
 *   Version 0.99.4:
-    *   Issue #xyz.  Expand-pattern functionality.
+    *   Fixed minor bug in reporting trying map a "null" buss.
 
 *   Previous changes:
 

@@ -854,10 +854,13 @@ performer::ui_get_input
 bussbyte
 performer::true_input_bus (bussbyte nominalbuss) const
 {
-    bussbyte result = seq66::true_input_bus(m_inputs, nominalbuss);
-    if (is_null_buss(result))
-        set_error_message("missing input buss");
-
+    bussbyte result = nominalbuss;
+    if (! is_null_buss(result))
+    {
+        result = seq66::true_input_bus(m_inputs, nominalbuss);
+        if (is_null_buss(result))
+            set_error_message("missing input buss");
+    }
     return result;
 }
 
@@ -930,10 +933,13 @@ performer::ui_get_clock
 bussbyte
 performer::true_output_bus (bussbyte nominalbuss) const
 {
-    bussbyte result = seq66::true_output_bus(m_clocks, nominalbuss);
-    if (is_null_buss(result))
-        set_error_message("missing output buss");
-
+    bussbyte result = nominalbuss;
+    if (! is_null_buss(result))
+    {
+        bussbyte result = seq66::true_output_bus(m_clocks, nominalbuss);
+        if (is_null_buss(result))
+            set_error_message("missing output buss");
+    }
     return result;
 }
 

@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.99.3 and above
+INSTALL for Seq66 v. 0.99.4 and above
 Chris Ahlstrom
-2015-09-10 to 2023-04-03
+2015-09-10 to 2023-04-20
 
 Getting Seq66 requires building the code or going to "sequencer64-packages/seq66"
 on GitHub to get an installation package.  The bootstrap setup is primarily
@@ -519,6 +519,7 @@ DEPENDENCIES:
 
         -   libatk-adaptor (and its dependencies)
         -   libgail-common (and its dependencies)
+        -   jack_control (optional; jack-example-tools on Arch Linux)
 
    Documentation (now optional, must be built manually):
 
@@ -538,11 +539,16 @@ DEPENDENCIES:
             -   latexmk
             -   pdf2latex
 
-      To build the documentation manually, change to the doc/dox directory and
-      run:
+      To build the PDF user manual, change to the doc/latex directory and
+      run "make".  The PDF is found in data/share/doc.
+
+      To build the Doxygen documentation manually, change to the doc/dox
+      directory and run:
 
          ./make_dox reference
          ./make_dox clean
+
+      Currently, we do not care if this works.  Too much information.
 
       To install the documentation to /usr/local/doc/seq66-0.90:
 

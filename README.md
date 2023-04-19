@@ -87,7 +87,7 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.99.4:
-        *   To do.
+        *   Fixed minor bug in reporting trying map a "null" buss.
     *   Version 0.99.3:
         *   Issue #107.  The basic fix is made. Still need to rehabilitate
             the Expand-pattern functionality.

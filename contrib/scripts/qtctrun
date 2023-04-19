@@ -1,10 +1,20 @@
-#!/bin/sh
+#!/bin/bash
 #
-# Run an application using Qt coloring as configured in qt5ct. As an example,
-# on a system that uses Terminus as the window-manager font, one can
-# instead configure qt5ct to use a different theme engine than gtk2, and
-# thus use a nicer looking font in Seq66.
+# Run an application using Qt coloring as configured in qt5ct.
 
-QT_QPA_PLATFORMTHEME=qt5ct "$1" &
-
-# vim: ts=3 sw=3 et ft=sh
+QTXCT="none"
+type qt6ct &> /dev/null
+if [ $? == 0 ] ; then
+    QTXCT="qt6ct"
+else
+    type qt5ct &> /dev/null
+    if [ $? == 0 ] ; then
+        QTXCT="qt5ct"
+    fi
+fi
+if [ "$QTXCT" != "none" ] ; then
+    QT_QPA_PLATFORMTHEME=$QTXCT $* &
+else
+    echo "No qt6ct or qt5ct application is installed."
+    exit 1
+fi
