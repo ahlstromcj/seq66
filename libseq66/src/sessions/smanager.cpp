@@ -239,10 +239,10 @@ smanager::main_settings (int argc, char * argv [])
                 (void) cmdlineopts::parse_o_options(argc, argv);
 
                 /*
-                 * The user migh specify -o options that are also set up in the
-                 * 'usr' file; the command line must take precedence. The "log"
-                 * option is processed early in the startup sequence.  These same
-                 * settings are made in the cmdlineopts module.
+                 * The user migh specify -o options that are also set up in
+                 * the 'usr' file; the command line must take precedence. The
+                 * "log" option is processed early in the startup sequence.
+                 * These same settings are made in the cmdlineopts module.
                  */
 
                 std::string logfile = usr().option_logfile();
@@ -250,9 +250,9 @@ smanager::main_settings (int argc, char * argv [])
                     (void) reroute_stdio(logfile);
 
                 m_midi_filename.clear();
-                if (optionindex > 0 && optionindex < argc) /* MIDI filename?    */
+                if (optionindex > 0 && optionindex < argc) /* MIDI filename? */
                 {
-                    /****
+                    /**
                      * DO WE NEED THIS CODE???
                      */
 
@@ -260,7 +260,7 @@ smanager::main_settings (int argc, char * argv [])
                     std::string errmsg;
                     if (file_readable(fname))
                     {
-                        std::string path;               /* not used here        */
+                        std::string path;           /* not used here        */
                         std::string basename;
                         m_midi_filename = fname;
                         if (filename_split(fname, path, basename))
@@ -277,7 +277,7 @@ smanager::main_settings (int argc, char * argv [])
                             temp, sizeof temp,
                             "MIDI file not readable: '%s'", fname.c_str()
                         );
-                        append_error_message(temp);     /* raises the message   */
+                        append_error_message(temp); /* raises the message   */
                         m_midi_filename.clear();
                     }
                 }

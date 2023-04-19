@@ -1,22 +1,11 @@
 TO DO for Seq66 0.99.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-04-18
+2019-04-13 to 2023-04-19
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
-Immediate issues to attack:
-
-    -   MIDI control/display:
-        -   Automatically enable the control-buss in the 'rc' file. Done,
-            but requires a restart.
-    Issue #48
-    Port-map testing.
-
 Ongoing efforts:
 
-    -   Verify no bugs remaining in:
-        -   Pattern fix dialog.
-        -   File / Save handling with various modifications.
     -   Verify setmapper/setmaster for odd set sizes.
     -   Perfect the "background recording" feature.
 
@@ -156,10 +145,6 @@ ISSUES:
 
 #37 Song editor scrolling?
     STATUS: To be investigated.
-
-#40 NSM: seq66 in a new session should provide a blank project
-    Currently it imports the previously used MIDI file.
-    STATUS: Many fixes made.
 
 #44 "Record live sequence changes" functionality
     Currently the "record live sequence changes" only adds patterns into the

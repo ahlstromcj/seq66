@@ -223,7 +223,7 @@
 Each port number can be found by name-lookup.</string>
        </property>
        <property name="text">
-        <string>Save Maps</string>
+        <string>Make Maps</string>
        </property>
       </widget>
       <widget class="QLabel" name="label">
@@ -300,9 +300,15 @@ Each port number can be found by name-lookup.</string>
         <rect>
          <x>10</x>
          <y>10</y>
-         <width>161</width>
+         <width>240</width>
          <height>17</height>
         </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>240</width>
+         <height>0</height>
+        </size>
        </property>
        <property name="font">
         <font>
@@ -430,7 +436,7 @@ Each port number can be found by name-lookup.</string>
         </rect>
        </property>
        <property name="text">
-        <string>Remove Maps</string>
+        <string>Clear Maps</string>
        </property>
       </widget>
       <widget class="QCheckBox" name="inPortsMappedCheck">
@@ -731,7 +737,7 @@ slot by channel number (0 to 15).</string>
          <rect>
           <x>8</x>
           <y>4</y>
-          <width>565</width>
+          <width>570</width>
           <height>225</height>
          </rect>
         </property>
@@ -847,7 +853,7 @@ slot by channel number (0 to 15).</string>
         <rect>
          <x>16</x>
          <y>38</y>
-         <width>445</width>
+         <width>513</width>
          <height>167</height>
         </rect>
        </property>
@@ -1102,7 +1108,7 @@ Range: 0.5 to 3.0</string>
         </font>
        </property>
        <property name="text">
-        <string>Restart required for most settings</string>
+        <string>Restart needed for most settings</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_6">
@@ -1310,7 +1316,7 @@ beat, normally PPQN/10.</string>
          <item row="5" column="0">
           <widget class="QLabel" name="label_18">
            <property name="text">
-            <string>Period Override</string>
+            <string>Period override</string>
            </property>
           </widget>
          </item>
@@ -1361,7 +1367,7 @@ beat, normally PPQN/10.</string>
         <rect>
          <x>30</x>
          <y>40</y>
-         <width>319</width>
+         <width>323</width>
          <height>161</height>
         </rect>
        </property>
@@ -1424,9 +1430,9 @@ connects to the MIDI I/O ports it finds.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>250</y>
+         <y>252</y>
          <width>349</width>
-         <height>91</height>
+         <height>113</height>
         </rect>
        </property>
        <property name="title">
@@ -1460,7 +1466,7 @@ connects to the MIDI I/O ports it finds.</string>
           <x>168</x>
           <y>54</y>
           <width>173</width>
-          <height>17</height>
+          <height>49</height>
          </rect>
         </property>
         <property name="font">
@@ -1471,7 +1477,8 @@ connects to the MIDI I/O ports it finds.</string>
          </font>
         </property>
         <property name="text">
-         <string>(applies to current run)</string>
+         <string>(mode applies to
+ current run)</string>
         </property>
        </widget>
       </widget>
@@ -2399,7 +2406,7 @@ Seq66 exits.</string>
          </rect>
         </property>
         <property name="text">
-         <string>None. Normal application operation.</string>
+         <string>None. Normal Seq66 operation.</string>
         </property>
        </widget>
        <widget class="QRadioButton" name="radio_session_nsm">
@@ -2412,7 +2419,7 @@ Seq66 exits.</string>
          </rect>
         </property>
         <property name="text">
-         <string>NSM. New/Non Session Manager.</string>
+         <string>NSM. NSM debug mode.</string>
         </property>
        </widget>
        <widget class="QRadioButton" name="radio_session_jack">
@@ -2465,15 +2472,16 @@ Seq66 exits.</string>
         </font>
        </property>
        <property name="text">
-        <string>NSM is used automatically if Seq66 is
-running in an NSM session.  The check-
-mark indicates that Seq66 wants to attach
-to an NSM session at the given URL.
+        <string>NSM use is automatic if Seq66 runs
+in an NSM session.  The check-mark
+causes Seq66 to run as if in NSM,
+for debugging.
 
-JACK session management will occur only
-if checked, even if Seq66 is spawned by it.
+JACK session management occurs only
+if checked, even if Seq66 is run
+by it.
 
-As usual for many changes, a restart is
+As usual for many changes, restart
 required.</string>
        </property>
       </widget>
@@ -2481,7 +2489,7 @@ required.</string>
        <property name="geometry">
         <rect>
          <x>16</x>
-         <y>148</y>
+         <y>152</y>
          <width>149</width>
          <height>17</height>
         </rect>
@@ -2503,7 +2511,7 @@ required.</string>
        <property name="geometry">
         <rect>
          <x>44</x>
-         <y>172</y>
+         <y>176</y>
          <width>233</width>
          <height>25</height>
         </rect>

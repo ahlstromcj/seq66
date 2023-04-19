@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-12-29
-% \update      2023-03-03
+% \update      2023-04-19
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -19,30 +19,33 @@
 \label{sec:port_mapping}
 
    \textsl{Seq66}, like \textsl{Seq24}, bases its I/O port scheme on buss/port
-   numbers.
+   \textsl{numbers}.
    This numbering scheme applies whether
    \textsl{ALSA}, \textsl{JACK}, or \textsl{Windows Multimedia}
    are used as the MIDI engine, and whether \textsl{Seq66} is running with
-   "automatic" ports or "manual" (virtual software-created) ports.
+   "automatic" ports or "manual" (virtual, software-created) ports.
    These buss numbers range from 0 on upward
-   based on the I/O MIDI ports active in the system.
+   based on the number of I/O MIDI ports active in the system.
    In "automatic" (non-virtual, non-manual) mode
-   these ports represent the hardware ports and application ports.
-   In "manual" mode, these ports represent virtual ports that the user
+   these ports represent the hardware MIDI ports and application MIDI ports.
+   In "manual" mode, these ports represent virtual MIDI ports that the user
    can connect manually (on Linux).
 
    A pattern/loop/sequence is assigned to output to a given port via
-   a buss number saved with the pattern.  When a tune is loaded,
+   a buss number saved \textsl{in the pattern}, in the tune.
+   When a tune is loaded,
    each pattern outputs to the port number specified in the pattern.
    A problem is that MIDI device setups can change, with devices being
    reordered, removed, or added to the MIDI devices available on the system.
    Or if the song is opened on someone else's computer.
    We do not want to store port names in the MIDI file.
-   They are too long and change between the systems of each user.
+   They can be too long, but, more importantly,
+   they will differ between the systems of each user.
+   They can even differ when switching from ALSA to JACK.
    Better to let the user determine the port-mapping.
    Mapping allows the buss number stored with a pattern to be
-   remapped to another buss number based on the "nick-name" (or alias)
-   of the port.
+   remapped to another buss number based on the "nick-name"
+   (or JACK alias) of the port.
    It uses a simple lookup to map names to numbers.
 
    The "nick-name" is a shortened version of the MIDI device name assigned
@@ -55,14 +58,15 @@
    returned.  The user can edit the 'rc' file to shorten the nick-name, if
    desired; a nick-name \texttt{E-MU XMidi1X1} would work.
 
-   In addition, under recent version \textsl{JACK},
-   there is a facility to get the "alias" of
-   USB MIDI ports.  This allows the user to see that the port name
+   In addition, under recent versions of \textsl{JACK},
+   there is a facility to get the "alias" of USB MIDI ports,
+   even if the \textsl{a2jmidid} process is not running.
+   This allows the user to see that the port name
    \texttt{system:midi\_capture\_5} is actually a "nanoKEY2" device.
 
-   So, with port-mapping enabled, one can set up the tune to record and play MIDI
-   using the mapped ports, and later move to another computer, modify the
-   port-maps to match, and record and play without issue.
+   So, with port-mapping enabled, one can set up the tune to record and play
+   MIDI using the mapped ports, and later move to another computer, modify the
+   port-maps int the 'rc' file to match, and record and play without issue.
 
    The easiest way to start port-mapping is to go to
    \textbf{Edit / Preferences / MIDI Clock}.
@@ -77,11 +81,12 @@
    \label{fig:clocks_list_before_port_mapping}
 \end{figure}
 
-   Click on the \textbf{Save Maps} button.
+   Click on the \textbf{Make Maps} button.
+   This creates the initial I/O maps internally.
    Then either restart \textsl{Seq66} or go to the \textbf{Restart Seq66}
-   button.
+   button; this will save the new version of the 'rc' file..
    Back in \textbf{Edit / Preferences / MIDI Clock},
-   one sees that the simpler names are in use.
+   one sees that the remapped names are in use.
 
 \begin{figure}[H]
    \centering 
@@ -92,13 +97,15 @@
 
    At startup, \textsl{Seq66} matches the port-map to the ports that exist on
    the system.  If there is no matching system port for a mapped port, then
-   that mapped port will show up as disabled in the port lists.
-   To remove the port mappings, click the \textbf{Remove Maps} button.
-   To reconstruct the current setup, click on the \textbf{Save Maps} button to
+   that mapped port will show up as disabled in the port lists,
+   and a warning should appear.
+   To remove the port mappings, click the \textbf{Clear Maps} button.
+   To reconstruct the current setup, click on the \textbf{Make Maps} button to
    get the new mapping.
-   As with the normal port listings, the port-mappings are managed in the
-   \textsl{Seq66} 'rc' file.
-   One can also edit that file to rearrange the mapped ports.
+   As with the normal port listings, the port-mappings are saved and
+   managed in the \textsl{Seq66} 'rc' file.
+   One can also edit that file in a text editor to
+   rearrange the mapped ports.
 
 \subsection{Output Port Mapping}
 \label{subsec:output_port_mapping}
@@ -120,7 +127,7 @@
    If some items are unplugged, then this list will change, so we save it while
    still running \textsl{Seq66}:
    click the
-   \textbf{Save Maps} button in the
+   \textbf{Make Maps} button in the
    \textbf{Edit / Preferences/ MIDI Clock} dialog. 
    The result is are new sections in the 'rc' file (one for clocks, one for
    inputs).  Here is the clock map:
@@ -137,8 +144,7 @@
    
    It is simpler, showing the nick-names (or aliases) of the ports.
    These index numbers can be used as buss numbers: they can be stored
-   in a pattern, and used to direct output to a
-   device by name.
+   in a pattern, and used to direct output to a specific device.
 
    If a pattern has stored a missing item as its output
    buss number, this number will not be found in the system list, so that the

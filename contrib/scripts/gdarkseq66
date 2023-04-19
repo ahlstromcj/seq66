@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+# Use dark coloring on qseq66, as configured in qt5ct.
+
+QT_QPA_PLATFORMTHEME=gtk2 qseq66
+
+# vim: ts=3 sw=3 et ft=sh

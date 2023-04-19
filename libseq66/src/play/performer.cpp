@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-18
+ * \updates       2023-04-19
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -463,16 +463,17 @@ performer::unregister (callbacks * pfcb)
 }
 
 void
-performer::set_error_message (const std::string & msg)
+performer::set_error_message (const std::string & msg) const
 {
-    m_error_pending = true;
-    seq66::error_message("performer", msg);
+    m_error_pending = true;                         /* a mutable boolean    */
+    if (! msg.empty())
+        seq66::error_message("Performer", msg);
 }
 
 void
 performer::unmodify ()
 {
-    m_is_modified = false;                  /* m_needs_update = false;  */
+    m_is_modified = false;
     mapper().unmodify_all_sequences();
 }
 
@@ -850,6 +851,16 @@ performer::ui_get_input
     return ! name.empty() && ! disabled;
 }
 
+bussbyte
+performer::true_input_bus (bussbyte nominalbuss) const
+{
+    bussbyte result = seq66::true_input_bus(m_inputs, nominalbuss);
+    if (is_null_buss(result))
+        set_error_message("missing input buss");
+
+    return result;
+}
+
 /**
  *  Sets the main input bus, and handles the special "key labels on sequence"
  *  and "sequence numbers on sequence" functionality.  This function is called
@@ -914,6 +925,16 @@ performer::ui_get_clock
 
     n = name;
     return ! name.empty();
+}
+
+bussbyte
+performer::true_output_bus (bussbyte nominalbuss) const
+{
+    bussbyte result = seq66::true_output_bus(m_clocks, nominalbuss);
+    if (is_null_buss(result))
+        set_error_message("missing output buss");
+
+    return result;
 }
 
 /**

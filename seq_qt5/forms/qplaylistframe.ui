@@ -28,6 +28,7 @@
       <property name="font">
        <font>
         <pointsize>10</pointsize>
+        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -367,6 +368,7 @@ to select an existing song.</string>
         <property name="font">
          <font>
           <pointsize>10</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -404,6 +406,7 @@ play-list section. Edit to enable Add List and Modify List.
         <property name="font">
          <font>
           <pointsize>10</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -785,7 +788,8 @@ songs will be loaded when the arrow keys are pressed or
 the configured MIDI control comes in.</string>
           </property>
           <property name="text">
-           <string>List active</string>
+           <string>Lists
+active</string>
           </property>
          </widget>
         </item>

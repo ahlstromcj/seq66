@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-04-17
+ * \updates       2023-04-19
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -389,7 +389,7 @@ private:
      *  "rc" file correctly.
      */
 
-    bool m_error_pending;
+    mutable bool m_error_pending;
 
     /**
      *  When the screenset changes, we put only the existing sequences in this
@@ -2608,10 +2608,7 @@ public:
         activate_output_port_map(active);
     }
 
-    bussbyte true_output_bus (bussbyte nominalbuss) const
-    {
-        return seq66::true_output_bus(m_clocks, nominalbuss);
-    }
+    bussbyte true_output_bus (bussbyte nominalbuss) const;
 
     void store_input_map ()
     {
@@ -2628,10 +2625,7 @@ public:
         activate_input_port_map(active);
     }
 
-    bussbyte true_input_bus (bussbyte nominalbuss) const
-    {
-        return seq66::true_input_bus(m_inputs, nominalbuss);
-    }
+    bussbyte true_input_bus (bussbyte nominalbuss) const;
 
     /**
      *  Sets a single clock item, if in the currently existing range.
@@ -3218,7 +3212,7 @@ private:
     void show_cpu ();
     void playlist_activate (bool on);
     void playlist_auto_arm (bool on);
-    void set_error_message (const std::string & msg);
+    void set_error_message (const std::string & msg = "") const; /* mutable */
     bool set_recording (seq::number seqno, bool active, bool toggle);
     bool set_quantized_recording (seq::number seqno, bool active, bool toggle);
     bool set_tightened_recording (seq::number seqno, bool active, bool toggle);

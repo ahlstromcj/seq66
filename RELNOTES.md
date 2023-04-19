@@ -1,4 +1,4 @@
-# Seq66 Release Notes 0.99.3 2023-04-08
+# Seq66 Release Notes 0.99.3 2023-04-19
 
 This file lists __major__ changes from version 9.99.1 to 0.99.3 (to catch up).
 
@@ -6,11 +6,14 @@ This file lists __major__ changes from version 9.99.1 to 0.99.3 (to catch up).
 
     *   Version 0.99.3:
         *   Issue #107.  Expand-pattern functionality.
-        *   Issue #40.  Enhanced NSM handling.
-        *   Automation fixes.
-        *   Added reading/writing/displaying Meta "text" events.
+        *   Issue #40.  Enhanced NSM handling and debugging.
+        *   A raft of MIDI automation/display fixes.
+        *   Added reading/writing/displaying Meta textual events.
         *   Improvements to playlist handling.
+        *   Fixes to mute-group handling.
         *   Fixed the daemonization and log-file functionality.
+        *   Fixed broken "recent-files" feature.
+        *   Improved error reporting.
     *   Version 0.99.2:
         *   Issue #103.  Some improvements to pattern loop-count.
         *   Pull request #106. User phuel added checkmarks for active buss and
