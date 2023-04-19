@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2023-01-27
+2015-09-09 to 2023-04-20
 
 Creating a GitHub Repository:
 
@@ -12,10 +12,10 @@ project:
     $ git add .
     $ git commit -m "Created this new and wonderful project."
 
-Or, to use a large pre-written message file:
-
-    $ git commit -F RELNOTE.md
-    $ git tag -a v0.99 -m "$(cat RELNOTES.md)"
+# Or, to use a large pre-written message file:
+# 
+#     $ git commit -F RELNOTE.md
+#     $ git tag -a v0.99 -m "$(cat RELNOTES.md)"
 
 In GitHub, create the new repository (without the LICENSE and README
 files, which one can create locally).  Then copy the repository URL to the
@@ -234,6 +234,31 @@ Trial merge:
     $ git merge --abort
 
     This still modifies the working copy.
+
+Release:
+
+    Steps for making a release (unofficial, does not yet include
+    instructions for a GitHub relese):
+
+    -   Make sure the working branch builds and runs properly for
+        the rtmidi, portmidi, debug, and command-line versions,
+        and all changes pushed to GitHub.
+    -   Check out the master branch and merge the working branch
+        into it.
+    -   Make sure the version numbering and dates are current in
+        configure.ac and other places.
+    -   Update the README.md and RELNOTES files.
+    -   Verify the master branch builds and runs.
+    -   Go to doc/latex and run make to rebuild the PDF manual.
+    -   Run "git2cl > cl.txt" and use it to update the Changelog file.
+    -   Commit and push with a short message.
+    -   Get the HEAD checksum and use it to create the tag.
+        Leave off the -m option and instead load RELNOTES into
+        the commit message.
+
+    Later we will discuss how to build and verify the Windows
+    version and make the installer part of the release (instead
+    of using the "packages" repository.
 
 Tagging:
 
