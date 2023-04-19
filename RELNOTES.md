@@ -1,4 +1,4 @@
-# Seq66 Release Notes 0.99.3 2023-04-19
+# Seq66 Release Notes 0.99.4 2023-04-20
 
 This file lists __major__ changes from version 9.99.1 to 0.99.3 (to catch up).
 

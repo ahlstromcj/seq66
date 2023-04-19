@@ -1,4 +1,4 @@
-# README for Seq66 0.99.3 2023-04-19
+# README for Seq66 0.99.3 2023-04-20
 
 __Seq66__: MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets, triggers, and playlists for song management,
@@ -86,6 +86,8 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.99.4:
+        *   To do.
     *   Version 0.99.3:
         *   Issue #107.  The basic fix is made. Still need to rehabilitate
             the Expand-pattern functionality.
@@ -114,94 +116,6 @@ Windows, and using a conventional source tarball.
         *   Revisited the recmutex implementation.
         *   Weird error where ALSA not found! We now avoid a crash, but
             qseq66 currently exits with only console messages.
-    *   Version 0.99.2:
-        *   Issue #103.  Some improvements to pattern loop-count.
-        *   Pull request #106. User phuel added checkmarks for active buss and
-            channel in grid-slot menu.
-        *   Fixed background sequence not displaying when running with
-            linear-gradient brush.
-        *   Fixes to brushes and making the linear gradient (notes and triggers)
-            a default run-time option.  See the 'palette' file.
-        *   Other minor fixes and documentation updates, including the manual,
-            as per issue #104.
-    *   Version 0.99.1:
-        *   Issue #44. Revisited to fix related additional issues. Can now
-            toggle a pattern's song record in perfnames. Record button:
-            Ctrl disables snap, Shift enables record at playback start.
-            Still minor issues.
-        *   Issue #93. Revisited to fix related open pattern-editor issues.
-        *   Issue #100. Partly mitigated. Added a custom ringbuffer for MIDI
-            message objects to replace JACK's ringbuffer. Adapted work from
-            the ttymidi.c module.  Also added configuration to
-            calculate the sample offset.
-        *   Various fixes:
-            *   Fixed partial breakage of pattern-merge function.
-            *   Fixed odd breakage of ALSA playback in release mode.
-            *   Fixed Stop button when another Master has started playback.
-            *   Shift-click on Stop button rewinds JACK transport when running
-                as JACK Slave.
-            *   Display of some JACK server settings in Edit / Preferences.
-            *   Fixed handling of Ctrl vs non-Ctrl zoom keys in perfroll.
-            *   The pernames panel now matches the layout of a grid button
-                better.  Other cosmetic changes.
-            *   Event-dump now prompts for a text-file name.
-        *   Added linear-gradient compile-time option (seq_features.h) for
-            displaying notes and triggers. Enabled by default, edit to disable.
-            Does not seem to add noticeable overhead.
-    *   Version 0.99.0:
-        *   Issue #44. Record live sequence changes functionality beefed up
-            to handle recording without snapping.
-        *   Issue #54. Updated the ax_have_qt_min.m4 file to detect
-            qmake-qt5, etc.
-        *   Issue #78 revisited. Pattern-box sizes would become 0 and the
-            progress boxes disappear. Now the 'usr' show option is boolean
-            ("pattern-boxes-shown", default = true), and the sizes are kept
-            within reasonable limits.  Also added a "--locale" option so that
-            the user can, for example, set the Seq66 global locale to
-            "en_US.UTF-8".
-        *   Issue #82 allows buttons and fields to expand better.
-            Fixed for main window and the song & pattern editors only.
-        *   Issue #89 fixed. The MIDI control display not quite reflecting the
-            status of each pattern, especially during queuing.
-        *   Issue #90 improvements. Save was not always enabled. Surely some
-            issues remain.  Also, in some cases there is no way to "unmodify".
-        *   Issue #93 fixed. The window of a deleted pattern now closes.
-        *   Issue #94. Long song in song editor could not be scrolled to the
-            right.  Added more padding and a button to expand the grid when
-            when desired. For the pattern editor, the workaround is to increase
-            the "length" in the pattern editor.
-        *   Issue #97. Investigate/resolve differences from Seq24.
-            *   Pattern editor fixes.
-            *   Added paste box when pasting notes, an oversight from the Seq24
-                reboot.
-            *   Added Ctrl-Left/Right to move the progress bar in the pattern
-                editor. (Left/Right scrolls the piano roll.)
-        *   Issue #98. Feature requests (metronome and background recording).
-            *   Added an initial metronome facility and 'rc' configuration.
-            *   Metronome count-in added.
-            *   Background automatic recording added.
-        *   Various fixes:
-            *   Muted pattern slots show a short progress bar, to aid in the
-                timing of queuing.
-            *   Improved the handling of the MIDI 'ctrl' file and control
-                states upon a restart.
-            *   Tightened up pattern arming/disarming processing.
-            *   Implemented left/right arrow keys to move the selected trigger
-                in the song editor. Ctrl moves multiple triggers. Moving a
-                trigger past END moves END.
-            *   Fixed error in painting tempo events in triggers (perfroll).
-            *   Improved keystroke movement of "L"/"R" markers in song and
-                pattern editor time bars.
-            *   The global time signature is now applied to new patterns.
-            *   Added a try-catch to showing the locale.
-            *   Ctrl-Z removes all mouse-painted notes at once (like Seq24).
-                Single-note removal is macroed out.
-            *   Error in parsing "--option sets=RxC" fixed.
-            *   Improved the handling of grid font sizes re window size.
-            *   Fixed the response to incoming MIDI Continue.
-            *   PPQN != 192 : handle snapping when adding notes; bugs in
-                perfroll and perftime.
-            *   Implement clear-events and double-length grid modes.
 
     See the "NEWS" file for changes in earlier versions.
 
