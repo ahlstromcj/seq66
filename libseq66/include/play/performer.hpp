@@ -1657,6 +1657,11 @@ public:
         m_is_pattern_playing = flag;
     }
 
+    bool is_pattern_paused () const
+    {
+        return m_dont_reset_ticks;
+    }
+
     bool done () const
     {
         return ! m_io_active;

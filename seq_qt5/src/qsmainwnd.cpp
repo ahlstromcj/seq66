@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-13
+ * \updates       2023-04-20
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -527,6 +527,7 @@ qsmainwnd::qsmainwnd
      * Stop button.
      */
 
+    ui->btnStop->setCheckable(true);
     connect(ui->btnStop, SIGNAL(clicked(bool)), this, SLOT(stop_playing()));
     qt_set_icon(stop_xpm, ui->btnStop);
 
@@ -534,6 +535,7 @@ qsmainwnd::qsmainwnd
      * Pause button.
      */
 
+    ui->btnPause->setCheckable(true);
     connect(ui->btnPause, SIGNAL(clicked(bool)), this, SLOT(pause_playing()));
     qt_set_icon(pause_xpm, ui->btnPause);
 
@@ -541,6 +543,7 @@ qsmainwnd::qsmainwnd
      * Play button.
      */
 
+    ui->btnPlay->setCheckable(true);
     connect(ui->btnPlay, SIGNAL(clicked(bool)), this, SLOT(start_playing()));
     qt_set_icon(play2_xpm, ui->btnPlay);
 
@@ -927,13 +930,6 @@ qsmainwnd::closeEvent (QCloseEvent * event)
 {
     if (usr().in_nsm_session())
     {
-        /*
-         *  We need to give NSM a way to quit, I think.
-         *
-         *      quit();
-         *      event->ignore();
-         */
-
         session_message("Close event with NSM");
     }
     else
@@ -988,8 +984,8 @@ qsmainwnd::stop_playing ()
     else
         cb_perf().auto_stop();
 
-    ui->btnPause->setChecked(false);
-    ui->btnPlay->setChecked(false);
+    ui->btnPause->setChecked(false);    /* force off */
+    ui->btnPlay->setChecked(false);     /* force off */
 }
 
 /**
@@ -999,8 +995,7 @@ qsmainwnd::stop_playing ()
 void
 qsmainwnd::pause_playing ()
 {
-    cb_perf().auto_pause();
-    ui->btnPlay->setChecked(cb_perf().is_pattern_playing());
+    cb_perf().auto_pause();             /* update_play_status() */
 }
 
 /**
@@ -1011,8 +1006,44 @@ void
 qsmainwnd::start_playing ()
 {
     cb_perf().auto_play();
-    ui->btnPause->setChecked(false);
-    ui->btnPlay->setChecked(true);
+    ui->btnPause->setChecked(false);    /* force off */
+    ui->btnStop->setChecked(false);     /* force off */
+}
+
+/**
+ *  This function handles the status of the Stop, Pause, and Play buttons.
+ *  It is needed especially when the user uses the Space bar, Period, or
+ *  Escape to change the playing status.
+ */
+
+void
+qsmainwnd::update_play_status ()
+{
+    bool in_play = cb_perf().is_pattern_playing();
+    bool in_pause = cb_perf().is_pattern_paused();
+    bool playstate_change = in_play != m_is_playing_now;
+    if (playstate_change)
+    {
+        m_is_playing_now = in_play;
+        if (in_play)
+        {
+            ui->btnStop->setChecked(false);
+            ui->btnPause->setChecked(false);
+            ui->btnPlay->setChecked(true);
+        }
+        else if (in_pause)                           /* as opposed to stopped    */
+        {
+            ui->btnStop->setChecked(false);
+            ui->btnPause->setChecked(true);
+            ui->btnPlay->setChecked(false);
+        }
+        else
+        {
+            ui->btnStop->setChecked(true);
+            ui->btnPause->setChecked(false);
+            ui->btnPlay->setChecked(false);
+        }
+    }
 }
 
 void
@@ -1713,13 +1744,14 @@ qsmainwnd::conditional_update ()
         (void) refresh_captions();
         update_window_title();          /* puts current MIDI file in title  */
     }
-    if (m_is_playing_now != cb_perf().is_pattern_playing())
-    {
-        m_is_playing_now = cb_perf().is_pattern_playing();
-        ui->btnStop->setChecked(false);
-        ui->btnPause->setChecked(false);
-        ui->btnPlay->setChecked(m_is_playing_now);
-    }
+//  if (m_is_playing_now != cb_perf().is_pattern_playing())
+//  {
+//      m_is_playing_now = cb_perf().is_pattern_playing();
+//      ui->btnStop->setChecked(false);
+//      ui->btnPause->setChecked(false);
+//      ui->btnPlay->setChecked(m_is_playing_now);
+//  }
+    update_play_status();
     if (! m_shrunken)
     {
         if (m_is_playing_now)
@@ -3058,9 +3090,9 @@ qsmainwnd::panic()
 {
     if (cb_perf().panic())
     {
-        ui->btnStop->setChecked(false);
-        ui->btnPause->setChecked(false);
-        ui->btnPlay->setChecked(false);
+        ui->btnStop->setChecked(true);  //false);
+        ui->btnPause->setChecked(true); //false);
+        ui->btnPlay->setChecked(true);  //false);
     }
 }
 

@@ -1,4 +1,4 @@
-# README for Seq66 0.99.3 2023-04-20
+# README for Seq66 0.99.4 2023-04-20
 
 __Seq66__: MIDI sequencer and live-looper with a hardware-sampler-like
 grid-pattern interface, sets, triggers, and playlists for song management,
@@ -87,7 +87,10 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.99.4:
+        *   Issue #48: For a new NSM session configuration, disable "JACK"
+            port auto-connect.
         *   Fixed minor bug in reporting trying map a "null" buss.
+        *   Improved state-appearance of Stop, Pause, and Play buttons.
     *   Version 0.99.3:
         *   Issue #107.  The basic fix is made. Still need to rehabilitate
             the Expand-pattern functionality.
@@ -118,7 +121,5 @@ Windows, and using a conventional source tarball.
             qseq66 currently exits with only console messages.
 
     See the "NEWS" file for changes in earlier versions.
-
-C. Ahlstrom 2015-09-10 to 2023-03-27
 
 // vim: sw=4 ts=4 wm=2 et ft=markdown

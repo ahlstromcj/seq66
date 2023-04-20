@@ -1,6 +1,6 @@
-TO DO for Seq66 0.99.3 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.99.4 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-04-19
+2019-04-13 to 2023-04-20
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
@@ -24,11 +24,6 @@ UI:
         -   Config Options: (new)
             -   Log-file
         -   Reset does not update the GUI elements.
-
-    -   Underrun display not consistent with console output with Chameleon
-        tune.
-    -   Add pattern and event editor instantiation to the grid mode?
-        Probably not worth the effort.
 
 Playlists:
 
@@ -76,8 +71,6 @@ From Testing:
     Can we distinguish note-insertion from movement snap, to avoid the
     "L"-then-snap-then-move samba?
 
-    Tempo display needs to be worked on for the perfroll and qloopbuttons.
-
 Windows:
 
     -   mastermidibase::activate() fails at m_outbus_array.initialize().
@@ -102,9 +95,6 @@ Macros to "finalize":
     USE_TIMEBASE_MASTER (functionality from Hydrogen, not used).
 
 Others to Consider:
-
-    In main frame, try to highlight the start/stop/pause buttons
-    appropriately.
 
     On a Debian Sid box, ALSA puts out *two* events into Qsynth for every note
     event. On an Ubuntu box, just one event is emitted. Why?  Try it under JACK
@@ -141,7 +131,7 @@ ISSUES:
 
 #24 Release notes in release tag message?
     STATUS: Will try to create a GitHub release using the "hub" program and
-    the RELNOTES.md file.
+    the RELNOTES (not .md) file.
 
 #37 Song editor scrolling?
     STATUS: To be investigated.
@@ -193,8 +183,9 @@ ISSUES:
 
     (I have used Ray-Session , but I guess it acts as others NSM managers)
 
-    Note:  Probably need an option to not auto-connect while NSM is running.
-    However, this can be set in the 'rc' file.
+    Probably need an option to not auto-connect while NSM is running.
+    The current fix is to disable auto-connect when first creating the
+    new session configuration.  This can be changed later in the 'rc' file.
 
 #52 Community / discussion place?
     STATUS: Partly supported now by using github.io, but much more to be done.

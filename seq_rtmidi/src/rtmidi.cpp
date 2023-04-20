@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-02-01
+ * \updates       2023-04-20
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.
@@ -102,7 +102,12 @@ rtmidi::rtmidi (midibus & parentbus, rtmidi_info & info) :
      * that can be obtained from snd_asoundlib_version().
      */
 
-    set_alsa_version(std::string(SND_LIB_VERSION_STR));
+    std::string ver{std::string(SND_LIB_VERSION_STR)};
+    std::string runtime{snd_asoundlib_version()};
+    ver += " (runtime ";
+    ver += runtime;
+    ver += ")";
+    set_alsa_version(ver);
 
 #endif
 }

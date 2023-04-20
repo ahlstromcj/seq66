@@ -965,6 +965,7 @@ smanager::create_configuration
 #else
                 rc().load_most_recent(true);            /* issue #41        */
 #endif
+                rc().jack_auto_connect(false);          /* issue #48        */
             }
 #if defined DO_NOT_BELAY_UNTIL_EXIT
             if (result)
