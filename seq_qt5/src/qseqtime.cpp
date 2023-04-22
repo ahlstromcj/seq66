@@ -375,6 +375,26 @@ qseqtime::sizeHint() const
     return QSize(len, 22);
 }
 
+/**
+ *  We don't want the scroll wheel to accidentally scroll the time
+ *  horizontally, so this override does nothing but accept() the event.
+ *
+ *  ignore() just let's the parent handle the event, which allows scrolling to
+ *  occur. For issue #3, we have enabled the scroll wheel in the piano roll
+ *  [see qscrollmaster::wheelEvent()], but we disable it here. So this is a
+ *  partial solution to the issue.
+ */
+
+void
+qseqtime::wheelEvent (QWheelEvent * qwep)
+{
+#if defined SEQ66_ENABLE_SCROLL_WHEEL_ALL           /* see qscrollmaster.h  */
+    qwep->ignore();
+#else
+    qwep->accept();
+#endif
+}
+
 }           // namespace seq66
 
 /*

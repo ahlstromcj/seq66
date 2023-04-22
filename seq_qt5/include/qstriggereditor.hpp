@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-28
+ * \updates       2023-04-22
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -112,6 +112,7 @@ protected:
     virtual void keyPressEvent (QKeyEvent *) override;
     virtual void keyReleaseEvent (QKeyEvent *) override;
     virtual QSize sizeHint () const override;
+    virtual void wheelEvent (QWheelEvent *) override;
 
 private:
 

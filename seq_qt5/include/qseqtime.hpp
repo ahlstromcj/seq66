@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-17
+ * \updates       2023-04-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -81,12 +81,13 @@ protected:
     virtual void mouseMoveEvent (QMouseEvent *) override;
     virtual void keyPressEvent (QKeyEvent *) override;
     virtual QSize sizeHint() const override;
+    virtual void wheelEvent (QWheelEvent *) override;
 
 private:
 
     virtual void update_midi_buttons () override
     {
-        // TODO
+        // no code needed, no buttons or statuses to update at this time
     }
 
 signals:

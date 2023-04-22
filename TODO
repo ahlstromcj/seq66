@@ -1,13 +1,8 @@
 TO DO for Seq66 0.99.4 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-04-20
+2019-04-13 to 2023-04-22
 
 Some of these issues will be pushed off for the distant Seq66v2.
-
-Ongoing efforts:
-
-    -   Verify setmapper/setmaster for odd set sizes.
-    -   Perfect the "background recording" feature.
 
 UI:
 
@@ -17,13 +12,15 @@ UI:
         -   Display:
             -   Global seq feature (global vs pattern background pattern, key,
                 and scale).
-            -   Tempo / BPM min and max.
+            -   Tempo / BPM min and max. Might want to add a "Meta" or "Tempo"
+                tab to Preferences and move the MIDI Clock meta stuff to it.
+                There are BPM options in 'rc' and 'usr'!
         -   Play Options:
             -   New-pattern editor options (check-boxes)
-            -   Add song-start-mode radio buttons.
+            -   Add song-start-mode radio buttons. Already have Live and Song
+                in Preferences / JACK.  Add "Auto" (as default).
         -   Config Options: (new)
-            -   Log-file
-        -   Reset does not update the GUI elements.
+            -   Log-file. Add this CLI option to Preferences / Session.
 
 Playlists:
 
@@ -37,22 +34,6 @@ Port-Mapping:
     Running qpseq66 on Linux:  "QSynth" is named "PortMidi"! See
     seq_portmidi/src/midibus.cpp.  The workaround is to specify long port
     names in the 'rc' file.
-
-MIDI:
-
-    ALSA:
-
-    -   When toggling a virtual input port, another port with the same
-        number gets created.  Looks like this bug has been around for awhile.
-        It also yields an ALSA unsubscribe error when disabling an input.
-    -   Use const char * snd_asoundlib_version () to get the ALSA version.
-
-    JACK:
-
-    -   Pulseaudio gone, so now the USB devices (without a2jmidid running)
-        show up as "0:n system:midi_playback_n+1 'Device name'" (similar
-        for 'playback') and qsynth as "1:4 qsynth:midi_00". True even if
-        short port-naming.
 
 Automation:
 
@@ -81,7 +62,7 @@ Windows:
         piano rolls.
     -   The default Qt theme pushes the seqtime rightward by about 6 pixels.
 
-Macros to "finalize":
+Pending Macros:
 
     SEQ66_SHOW_TEMPO_IN_PIANO_ROLL: leave code in place just in case.
     SEQ66_USE_JACK_SYNC_CALLBACK (saved only for reference).
@@ -103,13 +84,12 @@ Others to Consider:
     pattern editor!  This occurs during the buss flush after the event is
     sent.  Does not seem to be due to the MIDI thru ALSA port.
 
-ISSUES:
+Ongoing efforts:
 
-#1  JACK Metadata MIDINAM support.  LV2 MIDNAM has been around for a
-    while. There has been discussion on #lad, and, now JACK 2 has metadata
-    implemented, Carla has started offering that MIDNAM information as
-    metadata on the midi-in port for a connecting sequencer to use.
-    STATUS: Will push off to version 2
+    -   Verify setmapper/setmaster for odd set sizes.
+    -   Perfect the "background recording" feature.
+
+ISSUES:
 
 #3  Open loop Pattern Editor window.
     On mouse wheel scroll event we expect the piano-roll and notes sheet to
@@ -118,16 +98,11 @@ ISSUES:
     qseqkeys, we did not want the scroll wheel to accidentally scroll the
     piano keys vertically.  Same for qscrollmaster, qseqeditframe64, except
     that we note wheelEvent() is not called for some reason.  One way around
-    this issue might be to some pass child scrolling up to the qscrollmaster
-    class.
-
-#12 Note rendering problem
-    STATUS: Cannot duplicate at this time.
-
-#16 Ableton Live transport support?
-    Go to this issue in Github to see the thread.
-    STATUS: Will push off to version 2, if it is worth doing. At least the
-    protocol is "open".
+    this issue might be to somehow pass child scrolling up to the
+    qscrollmaster class, e.g. via a signal. For now, we have mitigated
+    this issue by enabling the scroll wheel in the pattern and song piano
+    rolls, and disabled it in qseqdata, qseqtime, qstriggereditor,
+    qperfnames, and qpertime.
 
 #24 Release notes in release tag message?
     STATUS: Will try to create a GitHub release using the "hub" program and
@@ -187,22 +162,14 @@ ISSUES:
     The current fix is to disable auto-connect when first creating the
     new session configuration.  This can be changed later in the 'rc' file.
 
+    STATUS: Mitigated, should close with release 0.99.4.
+
 #52 Community / discussion place?
     STATUS: Partly supported now by using github.io, but much more to be done.
-
-#53 MIDI CC sequencing
-    STATUS: See the thread on GitHub. Verify that CCs can be used.
-
-#62 PipeWire compatibility
-    STATUS: Will push off to version 2
 
 #63 Option to rotate pattern numbers?
     STATUS: It works for the live grid.
     New issue: Verify that it works in other settings.
-
-#65 Control pattern length via MIDI CC
-    STATUS: Nothing done yet, though the Expand option for recording works
-    better now.
 
 #66 Toggle MIDI Recording via CC message
     
@@ -264,9 +231,6 @@ ISSUES:
     The idea is that with a MIDI controller you could assign different
     functions to a single button.  It would also fit nicely with a Launchpad
     where apart from the grid buttons, there are "mode" buttons on the side.
-
-#75 JACK_METADATA_ICON_NAME icon?
-    STATUS: Need to finalize and close this one out.
 
 #76 MIDI Tempo Sync & Real Time Messages Not Behaving As Expected When SEQ66
     is a MIDI Slave
@@ -415,12 +379,7 @@ PATTERNS:
 
 To close as fixed (and remove from TODO):
 
-    17 Connect MIDI devices by name
-    18 Mute Group does not toggle
     24 Release notes in release tag message?
-    40 NSM: seq66 in a new session should provide a blank project
-    41 NSM: hide seq66 on closing window, do not exit?
-    43 Extended MIDI Format / Type?
     47 change key map
     54 Qt5 include errors
     63 Option to rotate pattern numbers?
@@ -446,12 +405,29 @@ To close as pushed off to version 2:
     82 Tabs do not scale to window
     96 MIDI Learn/Wizard as separate (?) app
 
+MIDI version 2 considerations::
+
+    ALSA:
+
+    -   When toggling a virtual input port, another port with the same
+        number gets created.  Looks like this bug has been around for awhile.
+        It also yields an ALSA unsubscribe error when disabling an input.
+    -   Use const char * snd_asoundlib_version () to get the ALSA version.
+
+    JACK:
+
+    -   Pulseaudio gone, so now the USB devices (without a2jmidid running)
+        show up as "0:n system:midi_playback_n+1 'Device name'" (similar
+        for 'playback') and qsynth as "1:4 qsynth:midi_00". True even if
+        short port-naming.
+
 Version 2 features:
 
     -   Use Meson/Ninja as the build system.
     -   See the issue noted above as "pushed off to version 2".
     -   Port refresh in ALSA and JACK at a minimum.
     -   Live note mapping?
+    -   Abletone Link support?
     -   Support for audio-clip patterns?
     -   Add keyboard configuration to MIDI Learn/Wizard.
     -   Move the Events, Playlist, Sets, and Mutes to a separate window
@@ -470,5 +446,8 @@ Version 2 features:
     -   Weak JACK support.  Seq66 dependence on the JACK ringbuffer is an
         issue here.
     -   Use std::numeric_limits instead of macros.
+    -   LV2 MIDINAM support.
+    -   JACK port groups and order.
+    -   Pipewire support.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

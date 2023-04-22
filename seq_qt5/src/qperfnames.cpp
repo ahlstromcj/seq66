@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-02-27
+ * \updates       2023-04-22
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -392,13 +392,23 @@ qperfnames::set_preview_row (int row)
 }
 
 /**
- *  Prevent qperfnames from scrolling on its own via the scroll-wheel event.
+ *  Prevent qperfnames from scrolling on its own via the scroll-wheel event;
+ *  this override does nothing but accept() the event.
+ *
+ *  ignore() just let's the parent handle the event, which allows scrolling to
+ *  occur. For issue #3, we have enabled the scroll wheel in the piano roll
+ *  [see qscrollmaster::wheelEvent()], but we disable it here. So this is a
+ *  partial solution to the issue.
  */
 
 void
 qperfnames::wheelEvent (QWheelEvent * ev)
 {
+#if defined SEQ66_ENABLE_SCROLL_WHEEL_QPERFNAMES    /* see qscrollmaster.h  */
+    qwep->ignore();
+#else
     ev->accept();
+#endif
 }
 
 }           // namespace seq66

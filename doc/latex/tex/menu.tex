@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-04-08
+% \update      2023-04-20
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1159,8 +1159,8 @@
 \paragraph{Menu / Edit / Preferences / Metronome Options}
 \label{paragraph:menu_edit_preferences_metronom_options}
 
-   This new tab contains options for the new (v. 0.99.0)
-   "metronome" and "background recording" features:
+   This tab contains options for the "metronome" and
+   "background recording" features:
 
 \begin{figure}[H]
    \centering 
@@ -1191,15 +1191,19 @@
 
    \itempar{Beat width}{metronome!beat width}
    This setting sets the beat width for the metronome only.
-   The following setting are provided for the main note and the "sub" notes:
+   The following settings are provided for the "main" note
+   (the note that occurs on the beginning of the measure)
+   and the "sub" notes (the notes that occur on each beat):
 
    \itempar{Patch}{metronome!patch}
    This item sets the program (patch) number for the note, which sets the
-   instrument to be play for the notes.
+   instrument to play for the notes.
    We currently do not have a drop-down box to select the patch by name.
    The default patch is 0.
    As noted below, the default channel is 10, so this
    patch is the "Standard Drum Kit" for the device.
+   Thus, by default the metronome can be implemented by two different
+   drums.
 
    \itempar{Note}{metronome!note}
    This item provides the note value to be played.  Recall that 60 is the same
@@ -1222,7 +1226,7 @@
    It is \textsl{not} enabled when the status/configuration of background
    recording changes.
 
-   \itempar{MIDI Buss}{metronome!buss}
+   \itempar{Metro Buss}{metronome!buss}
    This value selects the output MIDI device to use to play the metronome.
    It \textsl{must} be enabled in the \textbf{MIDI Clock} list.
 
@@ -1233,10 +1237,10 @@
    \index{background recorder}
    This value selects the input device to use to record events into the
    background pattern.
-   Note that this device \textsl{must} be enabled in the \textbf{MIDI Input}
+   Note that this device \textsl{must be enabled} in the \textbf{MIDI Input}
    buss list.
 
-   \itempar{MIDI Buss}{record!thru buss}
+   \itempar{Thru Buss}{record!thru buss}
    This value selects the output MIDI device to use to play the incoming
    background record notes.  Otherwise they will not be heard.
    It \textsl{must} be enabled in the \textbf{MIDI Clock} list.

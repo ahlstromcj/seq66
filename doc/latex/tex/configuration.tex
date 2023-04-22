@@ -951,7 +951,9 @@
 \label{subsubsec:configuration_rc_background_recording}
 
    Background recording allows recording to be made without having to create a
-   pattern and turn on recording.  The following setting activate this feature
+   pattern and turn on recording.
+   It is useful when using a metronome and count-in measures.
+   The following settings activate this feature
    and determine the input port to be used.
 
    \begin{verbatim}
@@ -962,18 +964,17 @@
       recording-measures = 0
    \end{verbatim}
 
-   The \texttt{count-in-recording}
-   setting enables or disables background recording.
-   The \texttt{recording-buss}
-   setting specifies the input buss/port. That
-   buss \textsl{must be enabled} (in the 'rc' file).
-   The \texttt{recording-measures} sets the number of measures to
-   record.  The style of recording is currently \textsl{merged},
+   The \texttt{count-in-recording} setting enables/disables background recording.
+   The \texttt{recording-buss} setting specifies the input buss/port.
+   That buss \textsl{must be enabled} (in the 'rc' file).
+   The \texttt{recording-measures} sets the number of measures to record.
+   The style of recording is currently \textsl{merge},
    where notes accumulate as each loop occurs.
    We might adjust that feaure per user feedback.
    If \texttt{recording-measures} is set to 0, then the
    \textsl{expanding} mode of recording is used, where
-   the sequence gets longer and longers as playback and playing continues.
+   the background-recording sequence gets longer and longers
+   as playback and playing continues.
 
 \subsubsection{'rc' File / Interaction Method}
 \label{subsubsec:configuration_rc_interaction}
@@ -1590,16 +1591,13 @@
    this on the fly, but those changes are not saved.
 
    \index{new seqedit}
-   \textsl{Seq66} now uses the new pattern editor in the 'Edit' tab.
+   \textsl{Seq66} can present the pattern editor in the 'Edit' tab
+   versus an external window..
    When used in the \textbf{Edit} tab instead of an external window,
-   it is shrunk slight vertically, but the bottom row of buttons is invisible
-   unless the user makes the window taller.
-   The old smaller pattern editor is less functional and a bit more buggy.
-   It has gone away completely.
+   it is shrunk slight vertically to fit controls in the smaller window.
 
    The following options adopt the new convention for setting variables, in
    which the format is \texttt{item-name = value}.
-   This style will eventually be used for all settings.
 
    \index{note resume}
    The \texttt{note-resume} option, if active, causes any notes in progress

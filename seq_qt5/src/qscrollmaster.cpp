@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-18
- * \updates       2021-07-08
+ * \updates       2023-04-22
  * \license       GNU GPLv2 or above
  *
  *  When inheriting QAbstractScrollArea, you need to do the following:
@@ -215,7 +215,11 @@ qscrollmaster::scroll_y_by_step (dir d)
 void
 qscrollmaster::wheelEvent (QWheelEvent * qwep)
 {
-    qwep->ignore();                         /* QScrollArea::wheelEvent(qwep)  */
+#if defined SEQ66_ENABLE_SCROLL_WHEEL               /* EXPERIMENTAL         */
+    QScrollArea::wheelEvent(qwep);
+#else
+    qwep->ignore();
+#endif
 }
 
 /*

@@ -434,8 +434,6 @@ private:
      *  settings overlap with metro_settings.
      */
 
-    // std::shared_ptr<recorder> m_recorder;
-
     recorder * m_recorder;
 
     /**

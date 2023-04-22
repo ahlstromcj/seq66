@@ -1,17 +1,17 @@
-# README for Seq66 0.99.4 2023-04-20
+# README for Seq66 0.99.4 2023-04-22
 
-__Seq66__: MIDI sequencer and live-looper with a hardware-sampler-like
-grid-pattern interface, sets, triggers, and playlists for song management,
-a scale and chord-aware piano-roll interface, song editor for creative
-composition, and control and display via MIDI automation for live performance.
-Mute-groups enable/disable multiple patterns with one keystroke/MIDI-control.
+__Seq66__: MIDI sequencer and live-looper with a hardware-sampler grid
+interface, pattern sets/banks, pattern triggers, and playlists for song
+management. Includes a scale and chord-aware piano-roll, song editor for
+creative composition, and control and display via MIDI automation for live
+performance.  Mute-groups enable/disable multiple patterns with one control.
 Supports NSM (Non/New Session Manager) on Linux; can also run headless.
 It does not support audio samples, just MIDI.
 
 __Seq66__ is a major refactoring of Sequencer64/Kepler34/Seq24
 with modern C++ and new features.  Linux and Windows users can build this
-application from source code.  See the extensive INSTALL file.  Windows users
-can get an installer package on GitHub.  A comprehensive PDF user-manual.
+application from source code.  See the extensive INSTALL file.
+Includes a comprehensive PDF user-manual.
 
 Some proposed features will be pushed off to Seq66v2; see the bottom of
 the TODO file.
@@ -87,6 +87,7 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.99.4:
+        *   Issue #3: The scroll wheel is enabled in the piano rolls (only).
         *   Issue #48: For a new NSM session configuration, disable "JACK"
             port auto-connect.
         *   Fixed minor bug in reporting trying map a "null" buss.

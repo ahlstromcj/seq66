@@ -318,7 +318,7 @@ recorder::~recorder ()
 }
 
 /**
- *  Fills the event list for the recordernome.  Requires that all the setting
+ *  Fills the event list for the recorder.  Requires that all the setting
  *  functions noted above be called first.
  *
  *  For finding the length, can use measures_to_ticks() or

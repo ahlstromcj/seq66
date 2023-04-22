@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-07
+ * \updates       2023-04-22
  * \license       GNU GPLv2 or above
  *
  *  We've added the feature of a right-click toggling between showing the main
@@ -312,7 +312,9 @@ qseqkeys::convert_y (int y, int & note)
  *  vertically, so this override does nothing but accept() the event.
  *
  *  ignore() just let's the parent handle the event, which allows scrolling to
- *  occur.
+ *  occur. For issue #3, we have enabled the scroll wheel in the piano roll
+ *  [see qscrollmaster::wheelEvent()], but we disable it here. So this is a
+ *  partial solution to the issue.
  *
  *  The best solution would be to pass the event along to the qscrollmaster.
  *  But this class doesn't have access to the scroll-master.  We might also
@@ -322,9 +324,13 @@ qseqkeys::convert_y (int y, int & note)
  */
 
 void
-qseqkeys::wheelEvent (QWheelEvent * ev)
+qseqkeys::wheelEvent (QWheelEvent * qwep)
 {
-    ev->accept();
+#if defined SEQ66_ENABLE_SCROLL_WHEEL_ALL           /* see qscrollmaster.h  */
+    qwep->ignore();
+#else
+    qwep->accept();
+#endif
 }
 
 void
