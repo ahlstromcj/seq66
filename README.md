@@ -1,4 +1,4 @@
-# README for Seq66 0.99.4 2023-04-22
+# README for Seq66 0.99.4 2023-04-24
 
 __Seq66__: MIDI sequencer and live-looper with a hardware-sampler grid
 interface, pattern sets/banks, pattern triggers, and playlists for song
@@ -90,7 +90,8 @@ Windows, and using a conventional source tarball.
         *   Issue #3: The scroll wheel is enabled in the piano rolls (only).
         *   Issue #48: For a new NSM session configuration, disable "JACK"
             port auto-connect.
-        *   Fixed minor bug in reporting trying map a "null" buss.
+        *   Issue #108.  Fixed trying to remove Event tab after deleting it.
+        *   Fixed minor-but-annoying bug in reporting trying map a "null" buss.
         *   Improved state-appearance of Stop, Pause, and Play buttons.
     *   Version 0.99.3:
         *   Issue #107.  The basic fix is made. Still need to rehabilitate

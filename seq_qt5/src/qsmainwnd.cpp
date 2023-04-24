@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-20
+ * \updates       2023-04-24
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1584,10 +1584,11 @@ qsmainwnd::open_file (const std::string & fn)
 void
 qsmainwnd::redo_live_frame ()
 {
-    ui->LiveTabLayout->removeWidget(m_live_frame);
     if (not_nullptr(m_live_frame))
+    {
+        ui->LiveTabLayout->removeWidget(m_live_frame);
         delete m_live_frame;
-
+    }
     m_live_frame = new (std::nothrow) qslivegrid
     (
         cb_perf(), this, screenset::unassigned(), ui->LiveTab
@@ -2299,17 +2300,21 @@ qsmainwnd::load_editor (int seqid)
 
     if (ok)
     {
-        ui->EditTabLayout->removeWidget(m_edit_frame);      /* no ptr check */
         if (not_nullptr(m_edit_frame))
+        {
+            ui->EditTabLayout->removeWidget(m_edit_frame);  /* no ptr check */
             delete m_edit_frame;
-
+        }
         m_edit_frame = new (std::nothrow) qseqeditframe64
         (
             cb_perf(), *s, ui->EditTab, true                /* short frame  */
         );
-        ui->EditTabLayout->addWidget(m_edit_frame);
-        m_edit_frame->show();
-        ui->tabWidget->setCurrentIndex(Tab_Editor);
+        if (not_nullptr(m_edit_frame))
+        {
+            ui->EditTabLayout->addWidget(m_edit_frame);
+            m_edit_frame->show();
+            ui->tabWidget->setCurrentIndex(Tab_Editor);
+        }
     }
 }
 
@@ -2462,9 +2467,14 @@ qsmainwnd::remove_all_editors ()
 
     if (not_nullptr(m_event_frame))
     {
+        /*
+         * We were removing the frame AFTER deleting it. Might be a fix
+         * for issue #108 where the Event tab is missing (empty).
+         */
+
+        ui->EventTabLayout->removeWidget(m_event_frame);
         delete m_event_frame;
         m_event_frame = nullptr;
-        ui->EventTabLayout->removeWidget(m_event_frame);
         ui->tabWidget->setTabEnabled(Tab_Events, false);
     }
     for (auto ei = m_open_editors.begin(); ei != m_open_editors.end(); /*++ei*/)
