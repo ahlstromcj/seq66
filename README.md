@@ -1,4 +1,4 @@
-# README for Seq66 0.99.4 2023-04-24
+# README for Seq66 0.99.4 2023-04-25
 
 __Seq66__: MIDI sequencer and live-looper with a hardware-sampler grid
 interface, pattern sets/banks, pattern triggers, and playlists for song
@@ -93,6 +93,11 @@ Windows, and using a conventional source tarball.
         *   Issue #108.  Fixed trying to remove Event tab after deleting it.
         *   Fixed minor-but-annoying bug in reporting trying map a "null" buss.
         *   Improved state-appearance of Stop, Pause, and Play buttons.
+        *   Fixed issue opening an non-standard-length pattern in its window.
+        *   Fixed note events not getting linked after recording.
+        *   Fixed drawing of wrap-around notes with linear gradient.
+        *   Seq66 now prevents opening the event editor if recording is in
+            progress. Cannot update event editor live with new events.
     *   Version 0.99.3:
         *   Issue #107.  The basic fix is made. Still need to rehabilitate
             the Expand-pattern functionality.

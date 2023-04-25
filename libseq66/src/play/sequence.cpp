@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-01-17
+ * \updates       2023-04-25
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -378,6 +378,33 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
         verify_and_link();                          /* NoteOn <---> NoteOff */
         if (! toclipboard)
             modify();
+    }
+}
+
+/*
+ *  These two functions are an attempt to remove a seqfault that can occur
+ *  in qseqdata, qseqroll, qloopbutton, etc. when processing multiple
+ *  inputs hitting keys wildly.  May need to update all event-drawing GUI
+ *  classes if the segfaults keep occuring.
+ */
+
+void
+sequence::draw_lock () const
+{
+    if (recording() && ! m_draw_locked)
+    {
+        m_mutex.lock();
+        m_draw_locked = true;       /* mutable */
+    }
+}
+
+void
+sequence::draw_unlock () const
+{
+    if (m_draw_locked)
+    {
+        m_draw_locked = false;      /* mutable */
+        m_mutex.unlock();
     }
 }
 
@@ -4427,6 +4454,9 @@ sequence::stop (bool songmode)
     bool state = armed();
     off_playing_notes();
     zero_markers();                         /* sets the "last-tick" value   */
+    if (recording())                        /* ca 2023-04-25                */
+        verify_and_link();
+
     set_armed(songmode ? false : state);
 #endif
 }
@@ -4449,6 +4479,9 @@ sequence::pause (bool song_mode)
     off_playing_notes();
     if (! song_mode)
         set_armed(state);
+
+    if (recording())                        /* ca 2023-04-25                */
+        verify_and_link();
 }
 
 /**

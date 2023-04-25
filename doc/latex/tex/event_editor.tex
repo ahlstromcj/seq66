@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-02
-% \update      2021-07-23
+% \update      2023-04-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -24,6 +24,9 @@
 
    The event editor is not very sophisticated.
    It is a basic editor for simple edits, viewing, and trouble-shooting.
+   It is disabled if recording a pattern, to avoid refresh issues while
+   recording.
+
    Viewing and scrolling work;
    editing, deleting, and inserting events work.
    But there are many possible interactions between event links

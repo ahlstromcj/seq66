@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2022-05-15
+ * \updates       2023-04-24
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -463,14 +463,21 @@ eventlist::clear ()
 }
 
 /**
- *  Clears all event links and unmarks them all.
+ *  Clears all event links and unmarks them all. We get a segfault here
+ *  pretty regulary when recording is enabled and the pattern's event list
+ *  is showing.
  */
 
 void
 eventlist::clear_links ()
 {
     for (auto & e : m_events)
-        e.clear_links();                    /* does unmark() and unlink()   */
+    {
+#if 0
+        if (not_nullptr(&e))                /* ca 2023-04-24                */
+#endif
+            e.clear_links();                /* does unmark() and unlink()   */
+    }
 }
 
 int

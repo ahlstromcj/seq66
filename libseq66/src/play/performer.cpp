@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-19
+ * \updates       2023-04-24
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -3452,7 +3452,11 @@ performer::set_sequence_name (seq::ref s, const std::string & name)
 bool
 performer::set_recording (seq::ref s, bool recordon, bool toggle)
 {
-    return s.set_recording(recordon, toggle);
+    bool result = s.set_recording(recordon, toggle);
+    if (result)
+        set_needs_update();                             /* ca 2023-04-24    */
+
+    return result;
 }
 
 /**
@@ -6320,7 +6324,7 @@ performer::sequence_playing_change (seq::number seqno, bool on)
  */
 
 /**
- *  Sets the edit-pending flags to false, and disabled the pending sequence
+ *  Sets the edit-pending flags to false, and disables the pending sequence
  *  number.
  */
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-01-27
+ * \updates       2023-04-25
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -687,40 +687,46 @@ qseqroll::draw_notes
                 {
                     QLinearGradient grad
                     (
-                        m_note_x, m_note_y, m_note_x, m_note_y + noteheight
+                        m_note_x, m_note_y,
+                        m_note_x, m_note_y + noteheight
                     );
                     grad.setColorAt(0.05, fore_color());
                     grad.setColorAt(0.5,  note_in_color());
                     grad.setColorAt(0.95, fore_color());
                     painter.fillRect
                     (
-                        m_note_x, m_note_y, m_note_width, noteheight, grad
+                        m_note_x + 1, m_note_y + 1, m_note_width - 1,
+                        noteheight - 1, grad
                     );
                 }
             }
-            else
+            if (m_link_wraparound)
             {
-#if COMMENTED_CODE_WAS_NOT_MOVED_TO_HERE
-                if (background)                     /* draw background note */
+                int len = tix_to_pix(ni.finish()) - m_note_off_margin;
+                if (use_gradient())
                 {
-                    length_add = 1;
-                    painter.setBrush(backseq_brush());
+                    QLinearGradient grad
+                    (
+                        m_keypadding_x, m_note_y,
+                        m_keypadding_x, m_note_y + noteheight
+                    );
+                    grad.setColorAt(0.05, fore_color());
+                    grad.setColorAt(0.5,  Qt::magenta);
+                    grad.setColorAt(0.95, fore_color());
+                    painter.fillRect
+                    (
+                        m_keypadding_x, m_note_y,
+                        len + 1, noteheight + 1, grad
+                    );
                 }
                 else
                 {
-                    painter.setBrush(note_brush());
-                }
-                painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
-#endif
-            }
-            if (m_link_wraparound)
-            {
-                if (ni.finish() < ni.start())       /* shadow these notes   */
-                {
-                    int len = tix_to_pix(ni.finish()) - m_note_off_margin;
-                    painter.setPen(error_pen);
-                    painter.drawRect(m_keypadding_x, m_note_y, len, noteheight);
-                    painter.setPen(pen);
+                    if (ni.finish() < ni.start())   /* shadow these notes   */
+                    {
+                        painter.setPen(error_pen);
+                        painter.drawRect(m_keypadding_x, m_note_y, len, noteheight);
+                        painter.setPen(pen);
+                    }
                 }
             }
 

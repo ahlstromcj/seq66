@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-08-06
+ * \updates       2023-04-24
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -340,6 +340,11 @@ public:
     bool active () const
     {
         return m_seq_active;
+    }
+
+    bool recording () const
+    {
+        return m_seq_active && m_seq->recording();
     }
 
     bool armed_status () const

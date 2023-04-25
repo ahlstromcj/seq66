@@ -1,8 +1,20 @@
 TO DO for Seq66 0.99.4 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-04-22
+2019-04-13 to 2023-04-25
 
 Some of these issues will be pushed off for the distant Seq66v2.
+
+Hot:
+
+    Open No_name.midi.  Open the pattern in the pattern editor and enable
+    record. Open the pattern in the event editor.  Start playing notes
+    on VMPK. Segfault! The event being linked has this == nullptr; see
+    eventlist::clear_links().
+
+    Also, some notes do not get linked, and the red record indicator does not
+    appear until later. verify_and_link()'s wrap parameter defaults to false!
+
+    Make event editor table read only.
 
 UI:
 
@@ -45,9 +57,6 @@ From Testing:
     When zooming, try to keep the same viewport in view.  Got this working
     for horizontal seqroll and perfroll, but not for vertical (refactoring
     needed).  Try to center vertically on notes in the viewport.
-
-    When muting/unmuting a pattern in the song editor, when focus changes
-    the tracks are shown in the bright color.
 
     Can we distinguish note-insertion from movement snap, to avoid the
     "L"-then-snap-then-move samba?
@@ -109,7 +118,7 @@ ISSUES:
     the RELNOTES (not .md) file.
 
 #37 Song editor scrolling?
-    STATUS: To be investigated.
+    STATUS: Closed, refer to issue #3 instead.
 
 #44 "Record live sequence changes" functionality
     Currently the "record live sequence changes" only adds patterns into the
@@ -266,31 +275,12 @@ ISSUES:
     STATUS: Fixed.
 
 #86 The mousewheel doesn't works to scroll or zoom in Editor.
-    STATUS: Still have not thought up a way around this with the
-    scroll-master.
-
-#89 MIDI control output queue events
-    STATUS: Fixed.
+    STATUS: Closed, see issue #3 instead.
 
 #90 seq66 does not recognize some changes for the save entry in the file menu.
     STATUS: Ongoing improvements.
     Fix pattern is DONE, but needs a way to allow user to back out more easily.
     LFO: Reset needs to undo modify, if no modification already in place.
-
-#91 No colors in live view with xfce/xubuntu
-    STATUS: Mitigated by adding a --locale option to handle numbers.
-
-#92 Segfault when recording to a 32 beat pattern.
-    STATUS: See 2021-02-16 or issue #85. Still need to duplicate.
-
-#93 The window of a deleted pattern remains open
-    STATUS: The deleted pattern window closes now.  Unfortunately I discovered
-    a similar problem with the "new pattern" function.  Again, the old pattern
-    content remains in an open window and can still be edited.  But all (new)
-    changes are lost if the window is closed afterwards.
-
-#94 Long song cannot be scrolled to the right
-    STATUS: Mitigated by adding an expansion button to the Song editor.
 
 #95 Velocity screen does not fully refresh when scrolling left or right.
     STATUS: Still need to duplicate.

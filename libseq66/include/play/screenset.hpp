@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-10-05
+ * \updates       2023-04-24
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -395,6 +395,11 @@ public:
     bool active (seq::number seqno) const
     {
         return seqinfo(seqno).active();
+    }
+
+    bool recording (seq::number seqno) const
+    {
+        return seqinfo(seqno).recording();
     }
 
     bool is_seq_in_edit (seq::number seqno) const;

@@ -69,11 +69,11 @@
  *  Alpha values for various states, not yet members, not yet configurable.
  */
 
-static const int s_alpha_playing       = 255;
-static const int s_alpha_muted         = 100;
-static const int s_alpha_qsnap         = 180;
-static const int s_alpha_queued        =  64;       // 148;
-static const int s_alpha_oneshot       =  64;       // 148;
+static const int s_alpha_playing    = 255;
+static const int s_alpha_muted      = 100;
+static const int s_alpha_qsnap      = 180;
+static const int s_alpha_queued     =  64;       // 148;
+static const int s_alpha_oneshot    =  64;       // 148;
 
 /**
  *  Font and annunciator sizes.  These are for normal size, and get scaled for

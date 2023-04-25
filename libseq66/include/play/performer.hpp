@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-04-19
+ * \updates       2023-04-24
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2196,6 +2196,11 @@ public:
     bool is_seq_active (seq::number seqno) const
     {
         return mapper().is_seq_active(seqno);
+    }
+
+    bool is_seq_recording (seq::number seqno) const
+    {
+        return mapper().is_seq_recording(seqno);
     }
 
     bool is_metronome (seq::number seqno) const;

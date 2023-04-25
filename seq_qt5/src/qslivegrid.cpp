@@ -1638,11 +1638,19 @@ qslivegrid::popup_menu ()
                 tr("Edit e&vents in tab"), m_popup
             );
             m_popup->addAction(editevents);
-            connect
-            (
-                editevents, SIGNAL(triggered(bool)),
-                this, SLOT(edit_events())
-            );
+
+            if (perf().is_seq_recording(m_current_seq))
+            {
+                editevents->setDisabled(true);
+            }
+            else
+            {
+                connect
+                (
+                    editevents, SIGNAL(triggered(bool)),
+                    this, SLOT(edit_events())
+                );
+            }
         }
 
         /**

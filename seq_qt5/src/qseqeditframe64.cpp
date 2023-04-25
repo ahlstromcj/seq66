@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-04-10
+ * \updates       2023-04-24
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1305,8 +1305,11 @@ qseqeditframe64::conditional_update ()
         std::string mstring = std::to_string(m_measures);
         int lenindex = measures_list().index(m_measures);
         if (lenindex >= 0)
-            ui->m_combo_length->setCurrentIndex(lenindex);
-
+        {
+            int curindex = ui->m_combo_length->currentIndex();
+            if (lenindex != curindex)
+                ui->m_combo_length->setCurrentIndex(lenindex);
+        }
         ui->m_combo_length->setEditText(qt(mstring));
     }
     if (m_beats_per_bar != track().get_beats_per_bar())
@@ -1316,8 +1319,11 @@ qseqeditframe64::conditional_update ()
         std::string mstring = std::to_string(m_beats_per_bar);
         int lenindex = beats_per_bar_list().index(m_beats_per_bar);
         if (lenindex >= 0)
-            ui->m_combo_bpm->setCurrentIndex(lenindex);
-
+        {
+            int curindex = ui->m_combo_bpm->currentIndex();
+            if (lenindex != curindex)
+                ui->m_combo_bpm->setCurrentIndex(lenindex);
+        }
         ui->m_combo_bpm->setEditText(qt(mstring));
     }
     if (m_beat_width != track().get_beat_width())
@@ -1327,8 +1333,11 @@ qseqeditframe64::conditional_update ()
         std::string mstring = std::to_string(m_beat_width);
         int lenindex = beatwidth_list().index(m_beat_width);
         if (lenindex >= 0)
-            ui->m_combo_bw->setCurrentIndex(lenindex);
-
+        {
+            int curindex = ui->m_combo_bw->currentIndex();
+            if (lenindex != curindex)
+                ui->m_combo_bw->setCurrentIndex(lenindex);
+        }
         ui->m_combo_bw->setEditText(qt(mstring));
     }
     if (m_is_looping != perf().looping())
