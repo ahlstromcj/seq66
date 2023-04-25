@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2023-04-08
+ * \updates       2023-04-25
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -239,6 +239,11 @@ midi_vector_base::add_short (midishort x)
  *  SysEx and Meta events are detected and passed to the new add_ex_event()
  *  function for proper dumping.
  *
+ * Issue #109:
+ *
+ *      Had commented out the application of the channel to the event.
+ *      Has every earmark of a classic Ahlstrom brainfart.
+ *
  * \param e
  *      Provides the event to be added to the container.
  *
@@ -257,18 +262,13 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
     {
         midibyte d0 = e.data(0);
         midibyte d1 = e.data(1);
+        midibyte channel = seq().seq_midi_channel();
         midibyte st = e.get_status();
         add_varinum(deltatime);                     /* encode delta_time    */
-
-#if defined SEQ66_DO_NOT_KEEP_CHANNEL
-        midibyte channel = seq().seq_midi_channel();
         if (seq().free_channel() || is_null_channel(channel))
             put(st | e.channel());                  /* channel from event   */
         else
             put(st | channel);                      /* the sequence channel */
-#else
-        put(st);
-#endif
 
         if (e.has_channel())
         {

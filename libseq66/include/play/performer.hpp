@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-04-24
+ * \updates       2023-04-25
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -248,6 +248,15 @@ public:
             /* Empty body */
         }
 
+        static bool true_change (performer::change mod)
+        {
+            return
+            (
+                mod == performer::change::yes ||
+                mod == performer::change::removed
+            );
+        }
+
         /**
          *  Derived classes should override these function to perform work, if
          *  needed, and to return true if the work was done successfully.
@@ -266,7 +275,7 @@ public:
             return false;
         }
 
-        virtual bool on_mutes_change (mutegroup::number /* group */)
+        virtual bool on_mutes_change (mutegroup::number, performer::change)
         {
             return false;
         }
@@ -276,7 +285,7 @@ public:
             return false;
         }
 
-        virtual bool on_sequence_change (seq::number, change)
+        virtual bool on_sequence_change (seq::number, performer::change)
         {
             return false;
         }
@@ -2070,6 +2079,7 @@ public:
         return new_sequence(s_dummy, seq);
     }
 
+    bool channelize_sequence (seq::number seq, int channel);
     bool clear_sequence (seq::number seq);
     bool double_sequence (seq::number seq);
     bool remove_sequence (seq::number seq);

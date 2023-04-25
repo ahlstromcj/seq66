@@ -1494,6 +1494,7 @@ public:
     void set_dirty_mp ();
     void set_dirty ();
     std::string channel_string () const;            /* "F" or "<channel+1>" */
+    bool set_channels (int channel);                /* modifies event list  */
 
     midibyte seq_midi_channel () const
     {

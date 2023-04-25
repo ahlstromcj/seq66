@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-04-14
+ * \updates       2023-04-25
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -114,7 +114,11 @@ public:
 
 protected:
 
-    virtual bool on_mutes_change (mutegroup::number setno) override;
+    virtual bool on_mutes_change
+    (
+        mutegroup::number setno,
+        performer::change mod
+    ) override;
 
     /*
      * virtual bool on_group_learn (bool state) override;

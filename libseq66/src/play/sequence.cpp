@@ -109,7 +109,7 @@ const std::string sequence::sm_default_name = "Untitled";
 /**
  *  A static clipboard for holding pattern/sequence events.  Being static
  *  allows for copy/paste between patterns.  Please note that this is used
- *  only for selected event.  For whole patterns, see the sequence object
+ *  only for selected events.  For whole patterns, see the sequence object
  *  performer::m_seq_clipboard.
  */
 
@@ -5554,6 +5554,27 @@ sequence::channel_string () const
 {
     return m_free_channel ?
         std::string("F") : std::to_string(m_midi_channel + 1) ;
+}
+
+/**
+ *  Modifies all the channel events in the pattern.  This also
+ *  changes the pattern to use the "Free" channel.
+ */
+
+bool
+sequence::set_channels (int channel)
+{
+    bool result = channel != c_midichannel_null;
+    if (result)
+    {
+        result = m_events.set_channels(channel);
+        if (result)
+        {
+            m_midi_channel = c_midichannel_null;
+            m_free_channel = true;
+        }
+    }
+    return result;
 }
 
 /**

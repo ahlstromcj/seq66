@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2022-05-14
+ * \updates       2023-04-25
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -399,6 +399,7 @@ private:                                /* functions for friend sequence    */
     void select_all ();
     void select_by_channel (int channel);
     void select_notes_by_channel (int channel);
+    bool set_channels (int channel);
     void unselect_all ();
     int select_events
     (

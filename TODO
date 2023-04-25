@@ -6,15 +6,11 @@ Some of these issues will be pushed off for the distant Seq66v2.
 
 Hot:
 
-    Open No_name.midi.  Open the pattern in the pattern editor and enable
-    record. Open the pattern in the event editor.  Start playing notes
-    on VMPK. Segfault! The event being linked has this == nullptr; see
-    eventlist::clear_links().
+    Disabling wrap-around causes unlinked notes.
 
-    Also, some notes do not get linked, and the red record indicator does not
-    appear until later. verify_and_link()'s wrap parameter defaults to false!
+    The red record indicator does not appear until later.
 
-    Make event editor table read only.
+    verify_and_link() wrap parameter defaults to false!
 
 UI:
 

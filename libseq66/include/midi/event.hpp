@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-18
+ * \updates       2023-04-25
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -1069,6 +1069,11 @@ public:
         return is_note_on() && ! is_linked();
     }
 
+    bool off_linkable () const
+    {
+        return is_note_off() && get_note() == get_note() && ! is_linked();
+    }
+
     /**
      *  Determines if a Note Off event is linkable to this event (which is
      *  assumed to be a Note On event).  A test used in verify_and_link().
@@ -1083,11 +1088,14 @@ public:
 
     bool off_linkable (buffer::iterator & eoff) const
     {
+        return eoff->off_linkable();
+#if 0
         return
         (
             eoff->is_note_off() && eoff->get_note() == get_note() &&
             ! eoff->is_linked()
         );
+#endif
     }
 
     /**

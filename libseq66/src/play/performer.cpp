@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-24
+ * \updates       2023-04-25
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -527,7 +527,7 @@ void
 performer::notify_mutes_change (mutegroup::number mutesno, change mod)
 {
     for (auto notify : m_notify)
-        (void) notify->on_mutes_change(mutesno);
+        (void) notify->on_mutes_change(mutesno, mod);
 
     if (mod == change::yes)
         modify();
@@ -1575,6 +1575,38 @@ performer::new_sequence (seq::number & finalseq, seq::number seq)
                 finalseq = s->seq_number();
                 notify_sequence_change(finalseq, change::recreate);
             }
+        }
+    }
+    return result;
+}
+
+/**
+ *  Copies the sequence to the clipboard and then sets the channel
+ *  for all channel events, if not using c_midichannel_null.
+ *
+ * \param seqno
+ *      Provides the track number.
+ *
+ * \param channel
+ *      Provides the channel to be applied to all events.
+ *
+ * \return
+ *      Returns true if the patterns was copied, whether or not any
+ *      events were modified.
+ */
+
+bool
+performer::channelize_sequence (seq::number seqno, int channel)
+{
+    bool result = channel != c_midichannel_null;
+    if (result)
+    {
+        const seq::pointer s = get_sequence(seqno);
+        bool result = bool(s);
+        if (result)
+        {
+            m_seq_clipboard.partial_assign(*s, true);
+            (void) m_seq_clipboard.set_channels(channel);
         }
     }
     return result;
@@ -4812,7 +4844,17 @@ performer::convert_to_smf_0 (bool remove_old)
 
             if (is_exportable(track))
             {
-                bool ok = copy_sequence(track);         /* to the clipboard */
+                const seq::pointer s = get_sequence(track);
+                bool ok = bool(s);
+                if (s->free_channel())
+                {
+                    ok = copy_sequence(track);         /* to the clipboard  */
+                }
+                else
+                {
+                    int channel = int(s->midi_channel());
+                    ok = channelize_sequence(track, channel);   /* ditto    */
+                }
                 if (ok)
                     (void) merge_sequence(newslot);
             }
@@ -6721,8 +6763,14 @@ performer::group_name (mutegroup::number gmute, const std::string & n)
         n != mutes().group_name(gmute));
 
     mutes().group_name(gmute, n);
+
+    /*
+     * Commented out to avoid load issues. The on-change callback should
+     * cause a modify().
+     *
     if (result)
         modify();
+     */
 
     return result;
 }

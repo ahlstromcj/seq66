@@ -91,6 +91,8 @@ Windows, and using a conventional source tarball.
         *   Issue #48: For a new NSM session configuration, disable "JACK"
             port auto-connect.
         *   Issue #108.  Fixed trying to remove Event tab after deleting it.
+        *   Issue #109.  Fixed the application of channels to the various
+            export operations.
         *   Fixed minor-but-annoying bug in reporting trying map a "null" buss.
         *   Improved state-appearance of Stop, Pause, and Play buttons.
         *   Fixed issue opening an non-standard-length pattern in its window.

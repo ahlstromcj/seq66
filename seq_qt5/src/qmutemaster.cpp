@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-04-15
+ * \updates       2023-04-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -913,16 +913,22 @@ qmutemaster::handle_group_change (int groupno)
  */
 
 bool
-qmutemaster::on_mutes_change (mutegroup::number group)
+qmutemaster::on_mutes_change (mutegroup::number group, performer::change mod)
 {
     bool result = ! mutegroup::none(group);
     if (result)
     {
-        result = initialize_table();
-        if (result)
+        // performer::callbacks::true_change(mod);
+
+        bool ok = mod != performer::change::max;
+        if (ok)
         {
-            update_group_buttons(enabling::enable);
-            group_needs_update();
+            result = initialize_table();
+            if (result)
+            {
+                update_group_buttons(enabling::enable);
+                group_needs_update();
+            }
         }
     }
     return result;

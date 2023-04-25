@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-04-24
+ * \updates       2023-04-25
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -326,6 +326,7 @@ eventlist::merge (const eventlist & el, bool presort)
 void
 eventlist::link_new (bool wrap)
 {
+    bool wrap_em = m_link_wraparound || wrap;       /* a Stazed extension   */
     sort();                                         /* IMPORTANT!           */
     for (auto on = m_events.begin(); on != m_events.end(); ++on)
     {
@@ -342,7 +343,7 @@ eventlist::link_new (bool wrap)
 
                 ++off;
             }
-            if (m_link_wraparound || wrap)          /* a Stazed extension   */
+            if (wrap_em)
             {
                 if (! endfound)
                 {
@@ -1608,6 +1609,34 @@ eventlist::select_notes_by_channel (int channel)
         if (er.is_note() && er.channel() == target)
             er.select();
     }
+}
+
+/**
+ *  Allows the events to be permanently set to a given channel. Obviously,
+ *  it applies only to channel events such as Note On/Off.
+ *
+ * \param channel
+ *      The caller is responsible for ensuring this parameter ranges from
+ *      0 to 15.
+ *
+ * \return
+ *      Returns true if even one event was modified.
+ */
+
+bool
+eventlist::set_channels (int channel)
+{
+    bool result = false;
+    midibyte target = midibyte(channel);
+    for (auto & er : m_events)
+    {
+        if (er.has_channel())
+        {
+            er.set_channel(target);
+            result = true;
+        }
+    }
+    return result;
 }
 
 /**

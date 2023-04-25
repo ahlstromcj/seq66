@@ -724,7 +724,10 @@ qseqroll::draw_notes
                     if (ni.finish() < ni.start())   /* shadow these notes   */
                     {
                         painter.setPen(error_pen);
-                        painter.drawRect(m_keypadding_x, m_note_y, len, noteheight);
+                        painter.drawRect
+                        (
+                            m_keypadding_x, m_note_y, len, noteheight
+                        );
                         painter.setPen(pen);
                     }
                 }
@@ -737,18 +740,6 @@ qseqroll::draw_notes
 
             if (m_note_width > 3)
             {
-#if COMMENTED_CODE_WAS_NOT_MOVED_BELOW
-                if (ni.selected())
-                    brush.setColor(sel_color());        /* was "orange"    */
-                else
-                    brush.setColor(note_in_color());    /* was Qt::white   */
-
-                if (bad)
-                    painter.setBrush(error_brush);
-                else
-                    painter.setBrush(brush);
-#endif
-
                 if (! background)
                 {
                     int x_shift = m_note_x + in_shift;
