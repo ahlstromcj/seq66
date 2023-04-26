@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-04-25
+ * \updates       2023-04-26
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2035,6 +2035,7 @@ public:
     bool set_midi_channel (seq::number seqno, int channel);
     bool set_sequence_name (seq::ref s, const std::string & name);
     bool set_recording (seq::ref s, bool active, bool toggle);
+    bool set_recording (seq::number seqno, bool active, bool toggle);
     bool set_quantized_recording (seq::ref s, bool active, bool toggle);
     bool set_tightened_recording (seq::ref s, bool active, bool toggle);
     bool set_overwrite_recording (seq::ref s, bool active, bool toggle);
@@ -3231,7 +3232,6 @@ private:
     void playlist_activate (bool on);
     void playlist_auto_arm (bool on);
     void set_error_message (const std::string & msg = "") const; /* mutable */
-    bool set_recording (seq::number seqno, bool active, bool toggle);
     bool set_quantized_recording (seq::number seqno, bool active, bool toggle);
     bool set_tightened_recording (seq::number seqno, bool active, bool toggle);
     bool set_overwrite_recording (seq::number seqno, bool active, bool toggle);

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-03-18
+ * \updates       2023-04-26
  * \license       GNU GPLv2 or above
  *
  *
@@ -191,6 +191,9 @@ private slots:
     void edit_sequence ();
     void edit_sequence_ex ();
     void edit_events ();
+#if defined SEQ66_RECORD_MENU_ENTRY
+    void record_sequence ();
+#endif
     void copy_sequence ();
     void cut_sequence ();
     void paste_sequence ();

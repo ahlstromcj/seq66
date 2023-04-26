@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-03-18
+ * \updates       2023-04-26
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -101,6 +101,12 @@
 #else
 #include "forms/qslivegrid.ui.h"
 #endif
+
+/**
+ *  EXPERIMENTAL.
+ */
+
+#undef SEQ66_RECORD_MENU_ENTRY
 
 /*
  * Do not document a namespace, it breaks Doxygen.
@@ -1320,6 +1326,19 @@ qslivegrid::alter_sequence (seq::number seqno)
     }
 }
 
+#if defined SEQ66_RECORD_MENU_ENTRY
+
+void
+qslivegrid::record_sequence ()
+{
+    if (perf().set_recording(m_current_seq, false /*active*/, true /*toggle*/))
+    {
+        // todo?
+    }
+}
+
+#endif
+
 void
 qslivegrid::copy_sequence ()
 {
@@ -1727,6 +1746,16 @@ qslivegrid::popup_menu ()
         menuColour->addMenu(menu3Colour);
         menuColour->addMenu(menu4Colour);
         m_popup->addMenu(menuColour);
+
+#if defined SEQ66_RECORD_MENU_ENTRY
+        QAction * actionRecord = new QAction(tr("&Record pattern"), m_popup);
+        m_popup->addAction(actionRecord);
+        connect
+        (
+            actionCopy, SIGNAL(triggered(bool)),
+            this, SLOT(record_sequence())
+        );
+#endif
 
         /**
          *  Copy/Cut/Delete/Paste menus

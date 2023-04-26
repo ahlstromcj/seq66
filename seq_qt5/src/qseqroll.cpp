@@ -154,7 +154,8 @@ qseqroll::conditional_update ()
     if (ok)
     {
 #if defined SEQ66_ALWAYS_VERIFY_AND_LINK
-        track().verify_and_link();          /* refresh before update        */
+        if (track().recording())
+            track().verify_and_link();      /* refresh before update        */
 #endif
         if (progress_follow())
             follow_progress();              /* keep up with progress        */
