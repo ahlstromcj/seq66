@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-10-20
-% \update      2022-01-16
+% \update      2023-04-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -100,9 +100,25 @@
 \subsection{File / Export Menu}
 \label{subsec:midi_export_file_export_menu}
 
-   The actions for exporting files have been move to the new
+   The actions for exporting files have been move to the
    \textbf{File / Export} menu in order to keep from cluttering the
    ever-expanding file menu.
+
+   An important point to note is the pattern/channel behavior inherited
+   from \textsl{Seq24}.
+   When a pattern has a channel specified, all MIDI channel events
+   (e.g. Note On/Off) are stamped with that channel when exported.
+   This applies to exports to plain MIDI files, song exports, and
+   exports to the SMF 0 format.
+
+   If one wants to preserve the channel number for all events in
+   a pattern, then one should set the channel to the \textbf{Free}
+   value.  See \sectionref{subsec:pattern_editor_first_row}, the section on
+   \textbf{Channel Selection}.
+
+   Also note that exporting a song or an SMF 0 file require that the song
+   be exportable (see the next section).
+   Exporting to a regular MIDI does not have this requirement.
 
 \subsubsection{Export Song}
 \label{subsubsec:midi_export_song_export}
@@ -116,9 +132,10 @@
       \item Only tracks (sequences, loops, or patterns)
          \index{exportable}
          that are "exportable" are written.  To be exportable, a
-         track must have triggers present
-         in the \textbf{Song Editor}, and, \textsl{in the song editor}, it
-         must not be muted.
+         track must have triggers
+         (see \sectionref{subsubsec:concepts_terms_performance})
+         present in the \textbf{Song Editor}.
+         Also \textsl{in the song editor}, it must \textsl{not be muted}.
       \item Each trigger generates the events, including repeats,
          offset-play of the events, and transposition.
          If there is a gap in the layout
@@ -140,8 +157,9 @@
          operation.
    \end{itemize}
 
-   The Export dialog is similar to the Open dialog; one will likely want to
-   change the name of the file so as not to overwrite it.
+   The \textbf{Export} dialog is similar to the \textbf{Open} dialog;
+   one will likely want to change the name of the file so as
+   not to overwrite it.
    If there are no exportable tracks, the following message is shown:
 
 \begin{figure}[H]

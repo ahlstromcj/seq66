@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-04-25
+ * \updates       2023-04-26
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -337,24 +337,29 @@ eventlist::link_new (bool wrap)
             ++off;                                  /* get next element     */
             while (off != m_events.end())
             {
-                endfound = link_notes(on, off);
+                endfound = link_notes(on, off);     /* calls off_linkable() */
                 if (endfound)
                     break;
 
                 ++off;
             }
-            if (wrap_em)
+            if (! endfound)
             {
-                if (! endfound)
+                off = m_events.begin();
+                while (off != on)
                 {
-                    off = m_events.begin();
-                    while (off != on)
+                    if (link_notes(on, off))
                     {
-                        if (link_notes(on, off))
-                            break;
-
-                        ++off;
+// #if defined USE_NEW_CODE
+                        if (! wrap_em)
+                        {
+                            if (off->timestamp() < on->timestamp())
+                                off->set_timestamp(get_length() - 1);
+                        }
+// #endif
+                        break;
                     }
+                    ++off;
                 }
             }
         }
@@ -385,11 +390,7 @@ eventlist::link_new (bool wrap)
  */
 
 bool
-eventlist::link_notes
-(
-    event::iterator eon,
-    event::iterator eoff
-)
+eventlist::link_notes (event::iterator eon, event::iterator eoff)
 {
     bool result = eon->off_linkable(eoff);
     if (result)
@@ -816,8 +817,8 @@ eventlist::adjust_timestamp (event & er, midipulse delta_tick)
  *  Any events (except Note Off) that will start just after the END of the
  *  pattern will be wrapped around to the beginning of the pattern.
  *
- *  After this function, we also have to call verify_and_link(), which sorts and
- *  relinks the notes from scratch.
+ *  After this function, we also have to call verify_and_link(), which sorts
+ *  and relinks the notes from scratch.
  *
  * \param delta_tick
  *      Provides the amount of time to move the selected notes.  Note that it
@@ -2055,7 +2056,9 @@ eventlist::stretch_selected (midipulse delta)
                 if (er.is_selected())
                 {
                     midipulse t = er.timestamp();
-                    midipulse nt = midipulse(ratio * (t - first_ev)) + first_ev;
+                    midipulse nt = midipulse(ratio * (t - first_ev)) +
+                        first_ev;
+
                     er.set_timestamp(nt);
                     result = true;
                 }

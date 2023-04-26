@@ -69,9 +69,9 @@ namespace seq66
 
 class eventlist
 {
-    friend class editable_events;       // access to verify_and_link()
-    friend class midifile;              // access to print()
-    friend class sequence;              // any_selected_notes()
+    friend class editable_events;       /* access to verify_and_link()      */
+    friend class midifile;              /* access to print()                */
+    friend class sequence;              /* any_selected_notes()             */
 
 public:
 

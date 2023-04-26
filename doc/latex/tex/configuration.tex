@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2023-04-17
+% \update      2023-04-26
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1701,10 +1701,16 @@
    \end{verbatim}
 
    Also included is a flag to allow notes to wrap around, where the Note On
-   comes near the end of the pattern, but the Note Off appears after the
-   pattern loops back to the beginning.
-   If false, then two unlinked note events appear in the piano roll, colored
-   magenta.  The "u" command in the piano roll will remove them.
+   comes near the end of the pattern, but the Note Off appears before the
+   Note On.
+   In this case the end of the note is colored magenta.
+   If wrap-around is false, then the note is clipped to the end of the pattern.
+   \textbf{Warning}:
+   If a song with wrapped notes is re-opened after wrap-around is changed
+   to false, then the wrapped notes will be truncated.
+%  If false, then two unlinked note events appear in the piano roll, colored
+%  magenta.
+%  The "u" command in the piano roll will remove them.
    If one does not want to deal with wrap-around at all, then set the pattern
    length to the desired measure count \textsl{plus one} while recording, until
    satisfied with the recording.  Shrink or delete any notes that bleed into

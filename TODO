@@ -1,12 +1,18 @@
 TO DO for Seq66 0.99.4 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-04-25
+2019-04-13 to 2023-04-26
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
 Hot:
 
-    Disabling wrap-around causes unlinked notes.
+    Fix the wrinkles in wrap-around notes.  Wrapped notes will be displayed
+    incorrectly if wrap-around is later turned on.  And perhaps wrap-around
+    should be song-specific or even pattern-specific.
+
+    Add a pending character for toggling recording in a pattern.
+    Add this toggle to the pattern seqmenu.  Rearrange the seqmenu
+    to save space.
 
     The red record indicator does not appear until later.
 
@@ -243,24 +249,6 @@ ISSUES:
 
 #77 For building without JACK
     STATUS: Will push off to version 2
-
-#80 Launchpad MIDI on input bus
-    ..., in order to use my Launchpad Mini with Seq66, it needs to be both
-    checked in the "Input Buses" list and selected in the "MIDI Control
-    Input", which works fine except that it means that the MIDI messages from
-    the Launchpad also end up getting recorded into any loop that I try to
-    record.  Particularly arming/disarming loops via the Launchpad in "record"
-    mode has a tendency to write an unwanted note into the loop.
-    STATUS: Fixed in 0.98.7!
-
-#82 Tabs don't scale to window
-    STATUS: Fixed for the main window, pattern editor, and song editor.
-    Am finding it impossible to get the Events, Playlist, Sets, Mutes, and
-    Session tabs to expand vertically; have not yet looked a horizontally for
-    those. Weird behavior when trying to apply layouts to the whole frame in
-    the tabs.
-    STATUS: Will push off to version 2, and make those external QDialogs, I
-    think.
 
 #83 MIDI Input not possible: "[midi-input]: in-bus data line error"
     STATUS: Seems to be fixed. Will spawn another new issue out the

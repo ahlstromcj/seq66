@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-25
+ * \updates       2023-04-26
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -46,6 +46,16 @@
 #include "qseqkeys.hpp"                 /* seq66::qseqkeys class            */
 #include "qseqroll.hpp"                 /* seq66::qseqroll class            */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
+
+/**
+ *  We've had an issue where adding wrapped-but-truncated notes would
+ *  alter the look of some other notes until the play/record was stopped.
+ *  So this macro enables sequence::verify_and_link() every time.
+ *  This iterates through all events, but acts only for unlinked notes,
+ *  so it doesn't appear add a noticeable amount to the CPU load.
+ */
+
+#define SEQ66_ALWAYS_VERIFY_AND_LINK
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -77,7 +87,7 @@ qseqroll::qseqroll
     int unith, int totalh
 ) :
     QWidget                 (frame),
-    qseqbase                ( p, s, frame, zoom, snap, unith, totalh),
+    qseqbase                (p, s, frame, zoom, snap, unith, totalh),
     m_analysis_msg          (nullptr),
     m_font                  ("Monospace"),
     m_backseq_color         (backseq_paint()),
@@ -143,8 +153,11 @@ qseqroll::conditional_update ()
     bool ok = perf().needs_update() || check_dirty();
     if (ok)
     {
+#if defined SEQ66_ALWAYS_VERIFY_AND_LINK
+        track().verify_and_link();          /* refresh before update        */
+#endif
         if (progress_follow())
-            follow_progress();              /* keep up with progress    */
+            follow_progress();              /* keep up with progress        */
 
         update();
     }
@@ -626,6 +639,7 @@ qseqroll::draw_notes
 
         bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
         bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;
+        bool not_wrapped = ni.finish() >= ni.start();
         bool linkedin = dt == sequence::draw::linked && end_in;
         bool bad = false;
         if (start_in || linkedin)
@@ -636,7 +650,7 @@ qseqroll::draw_notes
             m_note_y = total_height() - (ni.note() * unitheight) - unitdecr;
             if (dt == sequence::draw::linked)
             {
-                if (ni.finish() >= ni.start())
+                if (not_wrapped)
                 {
                     m_note_width = tix_to_pix(ni.finish() - ni.start());
                     if (m_note_width < 1)
@@ -700,7 +714,7 @@ qseqroll::draw_notes
                     );
                 }
             }
-            if (m_link_wraparound)
+            if (m_link_wraparound && ! not_wrapped)
             {
                 int len = tix_to_pix(ni.finish()) - m_note_off_margin;
                 if (use_gradient())
@@ -721,15 +735,12 @@ qseqroll::draw_notes
                 }
                 else
                 {
-                    if (ni.finish() < ni.start())   /* shadow these notes   */
-                    {
-                        painter.setPen(error_pen);
-                        painter.drawRect
-                        (
-                            m_keypadding_x, m_note_y, len, noteheight
-                        );
-                        painter.setPen(pen);
-                    }
+                    painter.setPen(error_pen);
+                    painter.drawRect
+                    (
+                        m_keypadding_x, m_note_y, len, noteheight
+                    );
+                    painter.setPen(pen);
                 }
             }
 
@@ -765,16 +776,16 @@ qseqroll::draw_notes
                     else
                     {
                         if (ni.selected())
-                            brush.setColor(sel_color());     /* was "orange"  */
+                            brush.setColor(sel_color());        /* "orange"  */
                         else
-                            brush.setColor(note_in_color()); /* was Qt::white */
+                            brush.setColor(note_in_color());    /* Qt::white */
 
                         if (bad)
                             painter.setBrush(error_brush);
                         else
                             painter.setBrush(brush);
 
-                        if (ni.finish() >= ni.start())  /* note highlight   */
+                        if (not_wrapped)                /* note highlight   */
                         {
                             painter.drawRect
                             (
@@ -789,7 +800,10 @@ qseqroll::draw_notes
                             (
                                 x_shift, m_note_y, m_note_width, h_minus
                             );
-                            painter.drawRect(m_keypadding_x, m_note_y, w, h_minus);
+                            painter.drawRect
+                            (
+                                m_keypadding_x, m_note_y, w, h_minus
+                            );
                         }
                     }
                 }
@@ -983,7 +997,7 @@ qseqroll::add_painted_note (midipulse tick, int note)
 void
 qseqroll::resizeEvent (QResizeEvent * qrep)
 {
-    QWidget::resizeEvent(qrep);         /* qrep->ignore() */
+    QWidget::resizeEvent(qrep);
 }
 
 void
@@ -1541,13 +1555,13 @@ qseqroll::keyPressEvent (QKeyEvent * event)
     if (done)
         set_dirty();
     else
-        QWidget::keyPressEvent(event);      // event->ignore();
+        QWidget::keyPressEvent(event);
 }
 
 void
 qseqroll::keyReleaseEvent (QKeyEvent * event)
 {
-    QWidget::keyReleaseEvent(event);    // event->ignore();
+    QWidget::keyReleaseEvent(event);
 }
 
 bool

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-25
+ * \updates       2023-04-26
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -1071,7 +1071,7 @@ public:
 
     bool off_linkable () const
     {
-        return is_note_off() && get_note() == get_note() && ! is_linked();
+        return is_note_off() && ! is_linked();
     }
 
     /**
@@ -1088,14 +1088,7 @@ public:
 
     bool off_linkable (buffer::iterator & eoff) const
     {
-        return eoff->off_linkable();
-#if 0
-        return
-        (
-            eoff->is_note_off() && eoff->get_note() == get_note() &&
-            ! eoff->is_linked()
-        );
-#endif
+        return eoff->off_linkable() ? eoff->get_note() == get_note() : false ;
     }
 
     /**
