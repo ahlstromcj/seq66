@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-04-26
+ * \updates       2023-04-27
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -1398,6 +1398,36 @@ eventlist::remove_event (event & e)
     {
         event & er = dref(i);
         if (&e == &er)                  /* comparing pointers, not values   */
+        {
+            (void) remove(i);           /* an iterator is required here     */
+            result = true;
+            break;
+        }
+    }
+    return result;
+}
+
+/**
+ *  Removes the first event where there is a match based on event data,
+ *  not event address.
+ *
+ * \param e
+ *      Provides a reference to the event for which the first match is to be
+ *      removed.
+ *
+ * \return
+ *      Returns true if the event was found and removed.  This function
+ *      returns immediately after the event is removed.
+ */
+
+bool
+eventlist::remove_first_match (const event & e)
+{
+    bool result = false;
+    for (auto i = m_events.begin(); i != m_events.end(); ++i)
+    {
+        event & er = dref(i);
+        if (er.match(e))                /* comparing values, not pointers   */
         {
             (void) remove(i);           /* an iterator is required here     */
             result = true;

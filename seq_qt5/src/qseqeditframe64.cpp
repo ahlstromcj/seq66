@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-04-24
+ * \updates       2023-04-26
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1172,6 +1172,19 @@ qseqeditframe64::on_sequence_change
         update_midi_buttons();                  /* mirror current states    */
     }
     return result;
+}
+
+/**
+ *  Added this function to handle simple changes in sequence status,
+ *  including recording changes.  Can be conflated with on_sequence_change().
+ */
+
+bool
+qseqeditframe64::on_trigger_change (seq::number /* seqno */)
+{
+    set_dirty();                            /* modified for issue #90   */
+    update_midi_buttons();                  /* mirror current states    */
+    return true;
 }
 
 /**

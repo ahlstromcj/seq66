@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2023-03-27
+ * \updates       2023-04-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -34,6 +34,7 @@
 #include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
 #include "os/daemonize.hpp"             /* seq66::signal_for_restart()      */
 #include "play/performer.hpp"           /* seq66::performer                 */
+#include "util/strfunctions.hpp"        /* seq66::int_to_string()           */
 #include "qsessionframe.hpp"            /* seq66::qsessionframe, this class */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd                 */
 #include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
@@ -98,6 +99,27 @@ qsessionframe::qsessionframe
         this, SLOT(slot_flag_reload())
     );
     populate_macro_combo();
+
+    /*
+     * New song-info edit control and the characters-remaining label..
+     */
+
+    std::string songinfo = perf().song_info();
+    size_t remainder = c_meta_text_limit - songinfo.size();
+    std::string rem = int_to_string(int(remainder));
+    ui->plainTextSongInfo->document()->setPlainText(qt(perf().song_info()));
+    ui->labelCharactersRemaining->setText(qt(rem));
+    connect
+    (
+        ui->plainTextSongInfo, SIGNAL(textChanged()),
+        this, SLOT(slot_songinfo_change())
+    );
+    ui->pushButtonSaveInfo->setEnabled(false);
+    connect
+    (
+        ui->pushButtonSaveInfo, SIGNAL(clicked(bool)),
+        this, SLOT(slot_save_info())
+    );
 }
 
 qsessionframe::~qsessionframe()
@@ -115,6 +137,26 @@ void
 qsessionframe::slot_flag_reload ()
 {
     signal_for_restart();           /* warnprint("Session reload request"); */
+}
+
+void
+qsessionframe::slot_songinfo_change ()
+{
+    QString qtex = ui->plainTextSongInfo->toPlainText();
+    std::string text = qtex.toStdString();
+    size_t remainder = c_meta_text_limit - text.size();
+    std::string rem = int_to_string(int(remainder));
+    ui->labelCharactersRemaining->setText(qt(rem));
+    ui->pushButtonSaveInfo->setEnabled(true);
+}
+
+void
+qsessionframe::slot_save_info ()
+{
+    QString qtex = ui->plainTextSongInfo->toPlainText();
+    std::string text = qtex.toStdString();
+    perf().song_info(text);
+    ui->pushButtonSaveInfo->setEnabled(false);
 }
 
 void

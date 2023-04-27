@@ -1053,6 +1053,9 @@ bool
 midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 {
     bool result = true;
+#if defined SEQ66_USE_SONG_INFO
+    bool got_song_info = false;
+#endif
     midibyte buss_override = usr().midi_buss_override();
     midishort track_count = read_short();
     midishort fileppqn = read_short();
@@ -1479,7 +1482,21 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                                 bool ok = e.append_meta_data(mtype, mt, count);
                                 if (ok)
+                                {
                                     s.append_event(e);
+#if defined SEQ66_USE_SONG_INFO
+                                    bool get_song_info =
+                                        track == 0 &&
+                                        mtype == EVENT_META_TEXT_EVENT &&
+                                        ! got_song_info;
+
+                                    if (get_song_info)
+                                    {
+                                        got_song_info = true;
+                                        p.song_info(e.get_text());
+                                    }
+#endif
+                                }
                             }
                             else
                                 return false;

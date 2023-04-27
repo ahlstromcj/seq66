@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-04-10
+ * \updates       2023-04-26
  * \license       GNU GPLv2 or above
  *
  */
@@ -153,8 +153,9 @@ private:        /* performer::callback overrides    */
     virtual bool on_automation_change (automation::slot s) override;
     virtual bool on_sequence_change
     (
-        seq::number seqno, performer::change ctype  // bool recreate
+        seq::number seqno, performer::change ctype
     ) override;
+    virtual bool on_trigger_change (seq::number seqno) override;
     virtual bool on_resolution_change
     (
         int ppqn, midibpm bp, performer::change ch

@@ -43,6 +43,12 @@
 #include "qslivebase.hpp"               /* seq66::qslivebase ABC            */
 #include "play/screenset.hpp"           /* seq66::screenset class           */
 
+/**
+ *  New feature?
+ */
+
+#define SEQ66_RECORD_MENU_ENTRY
+
 /*
  * Qt forward references.
  */
@@ -69,9 +75,11 @@ namespace seq66
 
 /**
  *  Provides a grid of Qt buttons to implement the Live frame.
+ *
+ *  The protected inheritance could be moved to qslivebase, maybe.
  */
 
-class qslivegrid final : public qslivebase
+class qslivegrid final : public qslivebase, protected performer::callbacks
 {
     friend class qsmainwnd;
     friend class qliveframeex;
@@ -133,7 +141,9 @@ private:                            // overrides of qslivebase functions
     virtual void update_geometry () override;
     virtual void change_event (QEvent *) override;
 
-protected:                              // performer callbacks; none
+private:        /* performer::callback overrides    */
+
+    virtual bool on_trigger_change (seq::number seqno) override;
 
 private:                                // overrides of event handlers
 
@@ -176,6 +186,7 @@ private:
     void show_grid_mode ();
     void populate_grid_mode ();
     void set_grid_mode ();
+    void update_state ();                               /* ca 2023-04-26    */
 
 signals:
 

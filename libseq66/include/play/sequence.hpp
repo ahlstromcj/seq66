@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-04-25
+ * \updates       2023-04-27
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1946,6 +1946,7 @@ private:
     void remove (event & e);
 #endif
 
+    bool remove_first_match (const event & e);
     void remove_all ();
 
     /**

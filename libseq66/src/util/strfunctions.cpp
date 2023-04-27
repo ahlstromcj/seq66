@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-07-21
+ * \updates       2023-04-27
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -34,6 +34,7 @@
  */
 
 #include <cctype>                       /* std::toupper() function          */
+#include <climits>                      /* INT_MAX and its ilk              */
 #include <cmath>                        /* std::floor(), std::pow()         */
 #include <cstring>                      /* std::memcmp() function           */
 #include <stdexcept>                    /* std::invalid_argument            */
@@ -560,6 +561,124 @@ has_digit (const std::string & s, bool floating = false)
 #endif
 
 /**
+ *  A useful function for the midi_bytes-to-from-string functions below.
+ *
+ * \param c
+ *      Provides a hexadecimal digit. This must be a number or a lower-case
+ *      hex digit.
+ *
+ * \return
+ *      Returns the value of the hexadecimal digit.  If not a hex digit,
+ *      then (-1) is returned.
+ */
+
+int
+hex_digit (char c)
+{
+    static std::string s_hex_digits = "0123456789abcdef";
+    int result = (-1);
+    auto pos = s_hex_digits.find_first_of(c);
+    if (pos != std::string::npos)
+        result = int(pos);
+
+    return result;
+}
+
+/**
+ *  This pair of functions work to make sure that all ASCII characters in
+ *  the string are restricted to the range of 0 to 127.  This is done by
+ *  encoding characters of value 128 to 255 in the format "\xx" where "xx" is
+ *  two hexadecimal digits. For simplicity the x's are always lower-case.
+ *  They are also zero-padded to two bytes.
+ *
+ * \param s
+ *      Provides the string to be "midi-ized".
+ *
+ * \param limit
+ *      Provides the maximum number of characters allowed in the converted
+ *      string.  Defaults to 0, which means "no limit", i.e. a very large
+ *      value.
+ */
+
+std::string
+string_to_midi_bytes (const std::string & s, size_t limit)
+{
+    int maximum = limit == 0 ? INT_MAX : int(limit) ;
+    std::string result;
+    for (const auto c : s)
+    {
+        unsigned char b = (unsigned char) (c);      /* if bigger than 127   */
+        if (b > 127)
+        {
+            if (maximum >= 3)
+            {
+                char tmp[4];
+                int count = snprintf(tmp, sizeof tmp, "\\%02x", b);
+                maximum -= count;
+                result += tmp;
+            }
+            else
+                break;
+        }
+        else
+        {
+            result.push_back(c);
+            if (--maximum == 0)
+                break;
+        }
+    }
+    return result;
+}
+
+std::string
+midi_bytes_to_string (const std::string & s)
+{
+    auto bslashpos = s.find_first_of("\\");
+    if (bslashpos != std::string::npos)
+    {
+        std::string result;
+        bool slashed = false;
+        int sum = 0;
+        int hexcount = 0;
+        for (const auto c : s)
+        {
+            if (slashed)
+            {
+                int value = hex_digit(c);
+                if (value >= 0)
+                {
+                    ++hexcount;
+                    if (hexcount == 1)
+                        sum += value * 16;
+                    else if (hexcount == 2)
+                    {
+                        result.push_back(c);
+                        slashed = false;
+                        hexcount = 0;
+                    }
+                }
+                else
+                {
+                    result.push_back(c);
+                    slashed = false;
+                    hexcount = 0;
+                }
+            }
+            else
+            {
+                if (c == '\\')
+                    slashed = true;
+                else
+                    result.push_back(c);
+            }
+        }
+        return result;
+    }
+    else
+        return s;
+}
+
+/**
  *  Converts a string value to a boolean.  Note that an empty string returns
  *  the default value, which is false if the caller does not supply a default
  *  parameter.
@@ -766,6 +885,14 @@ int
 string_to_int (const std::string & s, int defalt)
 {
     return int(string_to_long(s, long(defalt)));
+}
+
+std::string
+int_to_string (int value)
+{
+    char temp[32];
+    (void) snprintf(temp, sizeof temp, "%d", value);
+    return std::string(temp);
 }
 
 /**

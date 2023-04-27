@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-07-21
+ * \updates       2023-04-27
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -102,6 +102,9 @@ extern std::string string_replace
     const std::string & replacement,
     int n = -1
 );
+extern int hex_digit (char c);
+extern std::string string_to_midi_bytes (const std::string & s, size_t lim = 0);
+extern std::string midi_bytes_to_string (const std::string & s);
 extern bool string_to_bool (const std::string & s, bool defalt = false);
 extern bool string_to_time_signature
 (
@@ -131,6 +134,7 @@ extern unsigned string_to_unsigned
     const std::string & s, unsigned defalt = 0U
 );
 extern int string_to_int (const std::string & s, int defalt = 0);
+extern std::string int_to_string (int value);
 extern bool string_not_void (const std::string & s);
 extern bool string_is_void (const std::string & s);
 extern bool strings_match (const std::string & target, const std::string & x);

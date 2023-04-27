@@ -102,12 +102,6 @@
 #include "forms/qslivegrid.ui.h"
 #endif
 
-/**
- *  EXPERIMENTAL.
- */
-
-#undef SEQ66_RECORD_MENU_ENTRY
-
 /*
  * Do not document a namespace, it breaks Doxygen.
  */
@@ -150,17 +144,18 @@ qslivegrid::qslivegrid
     screenset::number setno,
     QWidget * parent
 ) :
-    qslivebase          (p, window, setno, parent),
-    ui                  (new Ui::qslivegrid),
-    m_popup             (nullptr),
-    m_timer             (nullptr),
-    m_msg_box           (nullptr),
-    m_redraw_buttons    (true),
-    m_loop_buttons      (),
-    m_x_min             (0),
-    m_x_max             (0),
-    m_y_min             (0),
-    m_y_max             (0)
+    qslivebase              (p, window, setno, parent),
+    performer::callbacks    (p),
+    ui                      (new Ui::qslivegrid),
+    m_popup                 (nullptr),
+    m_timer                 (nullptr),
+    m_msg_box               (nullptr),
+    m_redraw_buttons        (true),
+    m_loop_buttons          (),
+    m_x_min                 (0),
+    m_x_max                 (0),
+    m_y_min                 (0),
+    m_y_max                 (0)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setFocusPolicy(Qt::StrongFocus);
@@ -250,6 +245,7 @@ qslivegrid::qslivegrid
         usr().progress_box_width(),
         usr().progress_box_height()
     );
+    perf().enregister(this);                                /* notification */
     m_timer = qt_timer(this, "qslivegrid", 2, SLOT(conditional_update()));
 }
 
@@ -262,6 +258,7 @@ qslivegrid::~qslivegrid()
 {
     m_timer->stop();
     clear_loop_buttons();               /* currently we use raw pointers    */
+    perf().unregister(this);
     delete ui;
 }
 
@@ -369,20 +366,7 @@ qslivegrid::conditional_update ()
         show_grid_record_style();
         show_record_mode();
         show_grid_mode();
-        for (auto pb : m_loop_buttons)
-        {
-            if (not_nullptr(pb))
-            {
-                seq::pointer s = pb->loop();
-                if (s)
-                {
-                    pb->set_checked(s->armed());
-                    pb->reupdate(true);
-                }
-                else
-                    pb->reupdate(false);
-            }
-        }
+        update_state();
     }
 }
 
@@ -847,8 +831,8 @@ qslivegrid::update_bank_name (const std::string & name)
 
 /**
  *  This function causes all slots to ultimately be deleted and flagged for
- * reconstruction.  That's a lot of work, and only occurs if a sequence slot
- * is created, deleted, or pasted.
+ *  reconstruction.  That's a lot of work, and only occurs if a sequence slot
+ *  is created, deleted, or pasted.
  *
  * \param seqno
  *      Provides the number of the pattern being created, deleted, or pasted.
@@ -1284,6 +1268,10 @@ qslivegrid::keyReleaseEvent (QKeyEvent * event)
         QWidget::keyReleaseEvent(event);
 }
 
+/**
+ *  Very close to 
+ */
+
 void
 qslivegrid::reupdate ()
 {
@@ -1296,6 +1284,25 @@ qslivegrid::reupdate ()
         }
         else
             break;
+    }
+}
+
+void
+qslivegrid::update_state ()
+{
+    for (auto pb : m_loop_buttons)              /* copy/paste code  */
+    {
+        if (not_nullptr(pb))
+        {
+            seq::pointer s = pb->loop();
+            if (s)
+            {
+                pb->set_checked(s->armed());
+                pb->reupdate(true);
+            }
+            else
+                pb->reupdate(false);
+        }
     }
 }
 
@@ -1748,11 +1755,11 @@ qslivegrid::popup_menu ()
         m_popup->addMenu(menuColour);
 
 #if defined SEQ66_RECORD_MENU_ENTRY
-        QAction * actionRecord = new QAction(tr("&Record pattern"), m_popup);
+        QAction * actionRecord = new QAction(tr("&Record toggle"), m_popup);
         m_popup->addAction(actionRecord);
         connect
         (
-            actionCopy, SIGNAL(triggered(bool)),
+            actionRecord, SIGNAL(triggered(bool)),
             this, SLOT(record_sequence())
         );
 #endif
@@ -1915,6 +1922,18 @@ qslivegrid::popup_menu ()
      */
 
     millisleep(10);
+}
+
+/**
+ *  Added this function to handle simple changes in sequence status,
+ *  including recording changes.
+ */
+
+bool
+qslivegrid::on_trigger_change (seq::number /* seqno */)
+{
+    update_state();
+    return true;
 }
 
 }           // namespace seq66

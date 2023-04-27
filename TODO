@@ -14,8 +14,6 @@ Hot:
     Add this toggle to the pattern seqmenu.  Rearrange the seqmenu
     to save space.
 
-    The red record indicator does not appear until later.
-
     verify_and_link() wrap parameter defaults to false!
 
 UI:

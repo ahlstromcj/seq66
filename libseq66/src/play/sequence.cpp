@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-26
+ * \updates       2023-04-27
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1435,6 +1435,17 @@ sequence::remove (event & e)
 }
 
 #endif  // defined USE_SEQUENCE_REMOVE_EVENTS
+
+/**
+ *  This function is use in replacing the "song info" Meta Text event.
+ */
+
+bool
+sequence::remove_first_match (const event & e)
+{
+    automutex locker(m_mutex);
+    return m_events.remove_first_match(e);
+}
 
 /**
  *  Clears all events from the event container.  Also see copy_events().
@@ -3998,7 +4009,6 @@ sequence::grow_trigger (midipulse tickfrom, midipulse tickto)
     set_dirty_mp();                     /* force redraw                     */
     return true;
 }
-
 
 const trigger &
 sequence::find_trigger (midipulse tick) const

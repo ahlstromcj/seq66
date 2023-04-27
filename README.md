@@ -1,4 +1,4 @@
-# README for Seq66 0.99.4 2023-04-26
+# README for Seq66 0.99.4 2023-04-27
 
 __Seq66__: MIDI sequencer and live-looper with a hardware-sampler grid
 interface, pattern sets/banks, pattern triggers, and playlists for song
@@ -99,6 +99,8 @@ Windows, and using a conventional source tarball.
         *   Fixed note events not getting linked after recording.
         *   Fixed drawing of wrap-around notes with linear gradient, and fixed
             handling of note wrap-around when set to false.
+        *   Added seqmenu entry for toggling recording of a pattern.
+        *   Added the ability to use the first Text message as "song info".
         *   Seq66 now prevents opening the event editor if recording is in
             progress. Cannot update event editor live with new events.
     *   Version 0.99.3:

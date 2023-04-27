@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-25
+ * \updates       2023-04-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -307,6 +307,9 @@ static const int c_long_path_max = 56;
  */
 
 performer::performer (int ppqn, int rows, int columns) :
+#if defined SEQ66_USE_SONG_INFO
+    m_song_info             (),
+#endif
     m_smf_format            (1),
     m_error_pending         (false),
     m_play_set              (),
@@ -469,6 +472,46 @@ performer::set_error_message (const std::string & msg) const
     if (! msg.empty())
         seq66::error_message("Performer", msg);
 }
+
+#if defined SEQ66_USE_SONG_INFO
+
+/**
+ *  Changes the song-info data.
+ *
+ *  We have to find the original first Meta Text event, if any, and then
+ *  remove it and add its replacement.
+ */
+
+void
+performer::song_info (const std::string & s)
+{
+    std::string temp = string_to_midi_bytes(s, c_meta_text_limit);
+    if (temp != m_song_info)
+    {
+        seq::pointer s = get_sequence(0);
+        if (s)
+        {
+            event metatext(0, EVENT_MIDI_META);
+            metatext.set_channel(EVENT_META_TEXT_EVENT);
+            metatext.set_text(temp);            /* not used in the match    */
+            (void) s->remove_first_match(metatext);
+            if (s->add_event(metatext))
+            {
+                // s->set_dirty();
+                m_song_info = temp;
+                notify_sequence_change(0, change::yes);
+            }
+        }
+    }
+}
+
+std::string
+performer::song_info () const
+{
+    return midi_bytes_to_string(m_song_info);
+}
+
+#endif
 
 void
 performer::unmodify ()

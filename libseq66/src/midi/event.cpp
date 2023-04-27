@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-18
+ * \updates       2023-04-27
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -382,6 +382,40 @@ event::operator < (const event & rhs) const
 }
 
 /**
+ *  Indicates that the events are "identical".  This function is not a
+ *  replacement for operator < ().  It is meant to be used in a brute force
+ *  search for one particular event in the sorted event list.
+ *
+ *  SysEx (or text) data are not checked.
+ */
+
+bool
+event::match (const event & target) const
+{
+    bool result = false;
+    if (timestamp() <= target.timestamp())
+    {
+        if (timestamp() == target.timestamp())
+        {
+            result =
+            (
+                get_status() == target.get_status() &&
+                channel() == target.channel()
+            );
+            if (result && ! is_meta())
+            {
+                result =
+                (
+                    m_data[0] == target.m_data[0] &&
+                    m_data[1] == target.m_data[1]
+                );
+            }
+        }
+    }
+    return result;
+}
+
+/**
  *  Returns true if the event's status is *not* a control-change, but does
  *  match the given status OR if the event's status is a control-change that
  *  matches the given status, and has a control value matching the given
@@ -687,6 +721,43 @@ event::set_meta_status (midibyte metatype)
 {
     m_status = EVENT_MIDI_META;
     m_channel = metatype;
+}
+
+/**
+ *  If the event is a text event, then this function converts the midibytes
+ *  to a string.
+ *
+ * \return
+ *      Returns the text if valid, otherwise returns an empty string.
+ */
+
+std::string
+event::get_text () const
+{
+    std::string result;
+    if (is_meta_text())
+    {
+        size_t dsize = m_sysex.size();
+        for (size_t i = 0; i < dsize; ++i)
+        {
+            char c = char(m_sysex[i]);
+            result.push_back(c);
+        }
+    }
+    return result;
+}
+
+bool
+event::set_text (const std::string & s)
+{
+    bool result = ! s.empty();
+    if (result)
+    {
+        m_sysex.clear();
+        for (const auto c : s)
+            m_sysex.push_back(c);
+    }
+    return result;
 }
 
 /**

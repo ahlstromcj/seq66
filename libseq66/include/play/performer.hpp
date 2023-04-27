@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-04-26
+ * \updates       2023-04-27
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -44,10 +44,6 @@
  *      play/mutegroups.hpp
  */
 
-#if defined USE_SONG_BOX_SELECT
-#include <set>                          /* std::set, arbitary selection     */
-#endif
-
 #include <memory>                       /* std::shared_ptr<>, unique_ptr<>  */
 #include <vector>                       /* std::vector<>                    */
 #include <thread>                       /* std::thread                      */
@@ -61,6 +57,17 @@
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "play/setmapper.hpp"           /* seq66::seqmanager and seqstatus  */
 #include "util/condition.hpp"           /* seq66::condition/synchronizer    */
+
+#if defined USE_SONG_BOX_SELECT
+#include <set>                          /* std::set, arbitary selection     */
+#endif
+
+/**
+ *  EXPERIMENTAL.
+ *  The first Meta Text message found in the song is special.
+ */
+
+#define SEQ66_USE_SONG_INFO
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -381,6 +388,19 @@ private:
     };
 
     static automation_pair sm_auto_func_list [];
+
+#if defined SEQ66_USE_SONG_INFO
+
+    /**
+     *  Holds the first Meta Text message, if any, in the first pattern.
+     *  The string is encoded as "MIDI bytes", which means that characters
+     *  with a value greater than 127 are encoded as "\xx". See the
+     *  string_to_midi_bytes() function in the strfunctions module.
+     */
+
+    std::string m_song_info;
+
+#endif
 
     /**
      *  Indicates the format of this file, either SMF 0 or SMF 1.
@@ -1062,6 +1082,17 @@ public:
         bool signalit = true,
         playlist::action act = playlist::action::none
     );
+
+#if defined SEQ66_USE_SONG_INFO
+
+    /**
+     *  Holds the first Meta Text message, if any, in the first pattern.
+     */
+
+    void song_info (const std::string & s);
+    std::string song_info () const;
+
+#endif
 
     int smf_format () const
     {

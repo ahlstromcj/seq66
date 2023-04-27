@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-26
+ * \updates       2023-04-27
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -212,6 +212,8 @@ const midibyte EVENT_META_SMPTE_OFFSET   = 0x54u;   // skipped
 const midibyte EVENT_META_TIME_SIGNATURE = 0x58u;
 const midibyte EVENT_META_KEY_SIGNATURE  = 0x59u;
 const midibyte EVENT_META_SEQSPEC        = 0x7Fu;
+
+const size_t c_meta_text_limit           = 1024;    // for sanity only
 
 /**
  *  As a "type" (overloaded on channel) value for a Meta event, 0xFF indicates
@@ -438,6 +440,7 @@ public:
      */
 
     bool operator < (const event & rhsevent) const;
+    bool match (const event & target) const;
 
     void set_input_bus (bussbyte b)
     {
@@ -1036,6 +1039,9 @@ public:
         reset_sysex();
         return append_sysex(data, len);
     }
+
+    std::string get_text () const;
+    bool set_text (const std::string & s);
 
     sysex & get_sysex ()
     {
