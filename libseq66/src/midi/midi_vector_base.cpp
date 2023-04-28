@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2023-04-25
+ * \updates       2023-04-28
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -146,7 +146,7 @@ midi_vector_base::put_meta
     midipulse deltatime
 )
 {
-    add_varinum(deltatime);
+    add_varinum(midilong(deltatime));
     put(EVENT_MIDI_META);                           /* 0xFF meta marker     */
     put(metavalue);                                 /* meta marker          */
     add_varinum(midilong(datalen));
@@ -236,7 +236,7 @@ midi_vector_base::add_short (midishort x)
  *  won't be able to read it back if all the channels are bad.  So we just use
  *  the channel from the event.
  *
- *  SysEx and Meta events are detected and passed to the new add_ex_event()
+ *  SysEx and Meta events are detected and passed to the add_ex_event()
  *  function for proper dumping.
  *
  * Issue #109:
@@ -264,7 +264,7 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
         midibyte d1 = e.data(1);
         midibyte channel = seq().seq_midi_channel();
         midibyte st = e.get_status();
-        add_varinum(deltatime);                     /* encode delta_time    */
+        add_varinum(midilong(deltatime));           /* encode delta_time    */
         if (seq().free_channel() || is_null_channel(channel))
             put(st | e.channel());                  /* channel from event   */
         else
@@ -298,6 +298,11 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
 /**
  *  Adds the bytes of a SysEx or Meta MIDI event.
  *
+ * ca 2023-04-28:
+ *
+ *  This function was using put() to write a single count byte, but
+ *  add_varinum() must be used for this value.
+ *
  * \param e
  *      Provides the MIDI event to add.  The caller must ensure that this is
  *      either SysEx or Meta event, using the event::is_ex_data() function.
@@ -309,13 +314,13 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
 void
 midi_vector_base::add_ex_event (const event & e, midipulse deltatime)
 {
-    add_varinum(deltatime);                     /* encode delta_time        */
+    add_varinum(midilong(deltatime));           /* encode delta_time        */
     put(e.get_status());                        /* indicates SysEx/Meta     */
     if (e.is_meta())
         put(e.channel());                       /* indicates meta type      */
 
     int count = e.sysex_size();                 /* applies for meta, too    */
-    put(count);
+    add_varinum(midilong(count));               /* using put() was wrong!   */
     for (int i = 0; i < count; ++i)
         put(e.get_sysex()[i]);
 }
@@ -367,6 +372,29 @@ midi_vector_base::fill_seq_name (const std::string & name)
     for (int i = 0; i < len; ++i)
         put(midibyte(name[i]));
 }
+
+#if defined SEQ66_USE_FILL_META_TEXT
+
+/**
+ *  ca 2023-04-27
+ *  A general function for writing the textual MIDI events. But see
+ *  add_ex_event().
+ */
+
+void
+midi_vector_base::fill_meta_text
+(
+    midibyte metacode,
+    const std::string & text
+)
+{
+    int len = int(text.length());
+    put_meta(metacode, len);                        /* 0x01-0x07, len bytes */
+    for (int i = 0; i < len; ++i)
+        put(midibyte(text[i]));
+}
+
+#endif
 
 /*
  * Last, but certainly not least, write the end-of-track meta-event.
@@ -789,7 +817,7 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
     midipulse timestamp = 0;
     midipulse deltatime = 0;
     midipulse prevtimestamp = 0;
-    for (auto & e : evl)
+    for (const auto & e : evl)
     {
         timestamp = e.timestamp();
         deltatime = timestamp - prevtimestamp;

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10
- * \updates       2021-10-04
+ * \updates       2023-04-27
  * \license       GNU GPLv2 or above
  *
  *  This class is meant to hold the bytes that represent MIDI events and other
@@ -235,8 +235,11 @@ protected:
 
     void fill_seq_number (int seq);
     void fill_seq_name (const std::string & name);
+#if defined SEQ66_USE_FILL_META_TEXT
+    void fill_meta_text (midibyte metacode, const std::string & text);
+#endif
 
-#if defined SEQ_USE_FILL_TIME_SIG_AND_TEMPO
+#if defined SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
     void fill_time_sig_and_tempo
     (
         const performer & p,

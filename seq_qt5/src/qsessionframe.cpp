@@ -102,12 +102,16 @@ qsessionframe::qsessionframe
 
     /*
      * New song-info edit control and the characters-remaining label..
+     * Tricky, when getting the song info from the performer, it is already
+     * in normal string format.
+     *
+     * std::string songinfo = midi_bytes_to_string(perf().song_info());
      */
 
     std::string songinfo = perf().song_info();
     size_t remainder = c_meta_text_limit - songinfo.size();
     std::string rem = int_to_string(int(remainder));
-    ui->plainTextSongInfo->document()->setPlainText(qt(perf().song_info()));
+    ui->plainTextSongInfo->document()->setPlainText(qt(songinfo));
     ui->labelCharactersRemaining->setText(qt(rem));
     connect
     (
@@ -154,7 +158,10 @@ void
 qsessionframe::slot_save_info ()
 {
     QString qtex = ui->plainTextSongInfo->toPlainText();
-    std::string text = qtex.toStdString();
+    std::string text = string_to_midi_bytes
+    (
+        qtex.toStdString(), c_meta_text_limit
+    );
     perf().song_info(text);
     ui->pushButtonSaveInfo->setEnabled(false);
 }

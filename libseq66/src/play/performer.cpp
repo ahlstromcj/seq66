@@ -480,28 +480,31 @@ performer::set_error_message (const std::string & msg) const
  *
  *  We have to find the original first Meta Text event, if any, and then
  *  remove it and add its replacement.
+ *
+ * \param s
+ *      The string to be saved as song info. It must already have been
+ *      converted to "midi-bytes" format.
  */
 
 void
 performer::song_info (const std::string & s)
 {
-    std::string temp = string_to_midi_bytes(s, c_meta_text_limit);
-    if (temp != m_song_info)
+    if (s != m_song_info)
     {
-        seq::pointer s = get_sequence(0);
-        if (s)
+        seq::pointer seq = get_sequence(0);
+        if (seq)
         {
             event metatext(0, EVENT_MIDI_META);
             metatext.set_channel(EVENT_META_TEXT_EVENT);
-            metatext.set_text(temp);            /* not used in the match    */
-            (void) s->remove_first_match(metatext);
-            if (s->add_event(metatext))
+            metatext.set_text(s);               /* not used in the match    */
+            (void) seq->remove_first_match(metatext);
+            if (seq->add_event(metatext))
             {
-                // s->set_dirty();
-                m_song_info = temp;
+                seq->sort_events();             /* important!               */
                 notify_sequence_change(0, change::yes);
             }
         }
+        m_song_info = s;
     }
 }
 

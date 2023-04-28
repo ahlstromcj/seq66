@@ -56,7 +56,6 @@ midi_vector::midi_vector (sequence & seq) :
 }
 
 /**
- *
  *  Fills this list with an exportable track.  Following stazed, we're
  *  consolidate the tracks at the beginning of the song, replacing the actual
  *  track number with a counter that is incremented only if the track was
