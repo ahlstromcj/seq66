@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-27
+ * \updates       2023-04-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -476,7 +476,7 @@ performer::set_error_message (const std::string & msg) const
 #if defined SEQ66_USE_SONG_INFO
 
 /**
- *  Changes the song-info data.
+ *  Changes the track-info data.
  *
  *  We have to find the original first Meta Text event, if any, and then
  *  remove it and add its replacement.
@@ -484,26 +484,37 @@ performer::set_error_message (const std::string & msg) const
  * \param s
  *      The string to be saved as song info. It must already have been
  *      converted to "midi-bytes" format.
+ *
+ * \param trk
+ *      The optional track number, which defaults to 0.
  */
+
+bool
+performer::track_info (const std::string & s, seq::number trk)
+{
+    seq::pointer seqp = get_sequence(trk);
+    bool result = bool(seqp);
+    if (result)
+    {
+        event metatext(0, EVENT_MIDI_META);
+        metatext.set_channel(EVENT_META_TEXT_EVENT);
+        metatext.set_text(s);                   /* not used in the match    */
+        (void) seqp->remove_first_match(metatext);
+        if (seqp->add_event(metatext))
+        {
+            seqp->sort_events();                /* important!               */
+            notify_sequence_change(0, change::yes);
+        }
+    }
+    return result;
+}
 
 void
 performer::song_info (const std::string & s)
 {
     if (s != m_song_info)
     {
-        seq::pointer seq = get_sequence(0);
-        if (seq)
-        {
-            event metatext(0, EVENT_MIDI_META);
-            metatext.set_channel(EVENT_META_TEXT_EVENT);
-            metatext.set_text(s);               /* not used in the match    */
-            (void) seq->remove_first_match(metatext);
-            if (seq->add_event(metatext))
-            {
-                seq->sort_events();             /* important!               */
-                notify_sequence_change(0, change::yes);
-            }
-        }
+        (void) track_info(s, 0);
         m_song_info = s;
     }
 }

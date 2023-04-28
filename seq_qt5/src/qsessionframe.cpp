@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2023-04-27
+ * \updates       2023-04-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -113,6 +113,7 @@ qsessionframe::qsessionframe
     std::string rem = int_to_string(int(remainder));
     ui->plainTextSongInfo->document()->setPlainText(qt(songinfo));
     ui->labelCharactersRemaining->setText(qt(rem));
+    ui->spinBoxTrackInfo->hide();                   /* for the FUTURE   */
     connect
     (
         ui->plainTextSongInfo, SIGNAL(textChanged()),

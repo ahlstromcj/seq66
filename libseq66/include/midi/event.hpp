@@ -213,6 +213,11 @@ const midibyte EVENT_META_TIME_SIGNATURE = 0x58u;
 const midibyte EVENT_META_KEY_SIGNATURE  = 0x59u;
 const midibyte EVENT_META_SEQSPEC        = 0x7Fu;
 
+/**
+ *  Provides a sanity-check limit for the number of bytes in a MIDI Meta Text
+ *  message and similar messages. Might be better larger, but....
+ */
+
 const size_t c_meta_text_limit           = 1024;    // for sanity only
 
 /**
@@ -1008,6 +1013,8 @@ public:
     bool append_sysex (midibyte data);
     bool append_meta_data (midibyte metatype, const midibyte * data, int len);
     bool append_meta_data (midibyte metatype, const std::vector<midibyte> & data);
+    bool set_text (const std::string & s);
+    std::string get_text () const;
 
     /**
      *  Deletes and clears out the SYSEX buffer.  (The m_sysex member used to
@@ -1039,9 +1046,6 @@ public:
         reset_sysex();
         return append_sysex(data, len);
     }
-
-    std::string get_text () const;
-    bool set_text (const std::string & s);
 
     sysex & get_sysex ()
     {

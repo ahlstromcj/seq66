@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-04-27
+ * \updates       2023-04-28
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1089,6 +1089,7 @@ public:
      *  Holds the first Meta Text message, if any, in the first pattern.
      */
 
+    bool track_info (const std::string & s, seq::number trk);
     void song_info (const std::string & s);
     std::string song_info () const;
 
