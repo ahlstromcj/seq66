@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-27
+ * \updates       2023-04-29
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -393,23 +393,21 @@ bool
 event::match (const event & target) const
 {
     bool result = false;
-    if (timestamp() <= target.timestamp())
+    bool ignore_ts = is_null_midipulse(target.timestamp());
+    if (ignore_ts || timestamp() == target.timestamp())
     {
-        if (timestamp() == target.timestamp())
+        result =
+        (
+            get_status() == target.get_status() &&
+            channel() == target.channel()
+        );
+        if (result && ! is_meta())
         {
             result =
             (
-                get_status() == target.get_status() &&
-                channel() == target.channel()
+                m_data[0] == target.m_data[0] &&
+                m_data[1] == target.m_data[1]
             );
-            if (result && ! is_meta())
-            {
-                result =
-                (
-                    m_data[0] == target.m_data[0] &&
-                    m_data[1] == target.m_data[1]
-                );
-            }
         }
     }
     return result;

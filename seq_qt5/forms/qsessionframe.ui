@@ -30,7 +30,6 @@
    </property>
    <property name="font">
     <font>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -76,10 +75,13 @@
    </property>
    <property name="html">
     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLabel" name="sessionServerUrl">
@@ -99,7 +101,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="font">
     <font>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -145,10 +146,13 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="html">
     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLabel" name="sessionLogLabel">
@@ -168,7 +172,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="font">
     <font>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -245,10 +248,13 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="html">
     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-weight:456;&quot;&gt;Normal&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456;&quot;&gt;Normal&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLabel" name="sessionManagerNameLabel">
@@ -262,7 +268,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="font">
     <font>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -284,7 +289,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="font">
     <font>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -306,7 +310,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="font">
     <font>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -352,10 +355,13 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="html">
     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QTextEdit" name="clientIdText">
@@ -393,10 +399,13 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="html">
     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="songPathText">
@@ -446,7 +455,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="font">
     <font>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -511,7 +519,7 @@ It can include any comments desired, including
 author and dates. The size limit is 1024 characters.</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="labelTrackInfo">
    <property name="geometry">
     <rect>
      <x>32</x>
@@ -522,7 +530,6 @@ author and dates. The size limit is 1024 characters.</string>
    </property>
    <property name="font">
     <font>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -548,14 +555,20 @@ author and dates. The size limit is 1024 characters.</string>
     <string>(free formatted plain text, carriage returns allowed)</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_4">
+  <widget class="QLabel" name="labelCharsRemaining">
    <property name="geometry">
     <rect>
-     <x>252</x>
+     <x>300</x>
      <y>380</y>
-     <width>161</width>
-     <height>17</height>
+     <width>180</width>
+     <height>22</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>22</height>
+    </size>
    </property>
    <property name="font">
     <font>
@@ -565,15 +578,24 @@ author and dates. The size limit is 1024 characters.</string>
    <property name="text">
     <string>Characters remaining</string>
    </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
   </widget>
   <widget class="QLabel" name="labelCharactersRemaining">
    <property name="geometry">
     <rect>
-     <x>436</x>
+     <x>472</x>
      <y>380</y>
-     <width>63</width>
-     <height>17</height>
+     <width>52</width>
+     <height>22</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>22</height>
+    </size>
    </property>
    <property name="font">
     <font>
@@ -612,14 +634,61 @@ author and dates. The size limit is 1024 characters.</string>
     <string>Save Info</string>
    </property>
   </widget>
-  <widget class="QSpinBox" name="spinBoxTrackInfo">
+  <widget class="QSpinBox" name="spinBoxTrackNumber">
    <property name="geometry">
     <rect>
-     <x>48</x>
-     <y>376</y>
-     <width>48</width>
+     <x>35</x>
+     <y>380</y>
+     <width>61</width>
      <height>26</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QScrollBar" name="horizontalScrollBar">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>380</y>
+     <width>61</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit">
+   <property name="geometry">
+    <rect>
+     <x>222</x>
+     <y>380</y>
+     <width>71</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>22</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>380</y>
+     <width>31</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>TS</string>
    </property>
   </widget>
  </widget>

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-04-25
+ * \updates       2023-04-29
  * \license       GNU GPLv2 or above
  *
  */
@@ -292,8 +292,6 @@ qmutemaster::slot_clear_all_mutes ()
 void
 qmutemaster::slot_fill_mutes ()
 {
-    // cb_perf().clear_mutes();
-    // ui->m_button_save->setEnabled(true);
     if (cb_perf().mutegroup_reset())
     {
         initialize_table();
@@ -918,8 +916,6 @@ qmutemaster::on_mutes_change (mutegroup::number group, performer::change mod)
     bool result = ! mutegroup::none(group);
     if (result)
     {
-        // performer::callbacks::true_change(mod);
-
         bool ok = mod != performer::change::max;
         if (ok)
         {
@@ -932,6 +928,17 @@ qmutemaster::on_mutes_change (mutegroup::number group, performer::change mod)
         }
     }
     return result;
+}
+
+void
+qmutemaster::reload_mute_groups ()
+{
+    bool ok = initialize_table();
+    if (ok)
+    {
+        update_group_buttons(enabling::enable);
+        group_needs_update();
+    }
 }
 
 /*

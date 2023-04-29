@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2023-04-27
+ * \updates       2023-04-29
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -82,6 +82,7 @@ public:
     void session_URL (const std::string & text);
     void session_log_file (const std::string & text);
     void song_path (const std::string & text);
+    void reload_song_info ();
     void populate_macro_combo ();
     void enable_reload_button (bool flag);
 

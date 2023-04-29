@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-28
+ * \updates       2023-04-29
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -490,13 +490,13 @@ performer::set_error_message (const std::string & msg) const
  */
 
 bool
-performer::track_info (const std::string & s, seq::number trk)
+performer::set_track_info (const std::string & s, seq::number trk)
 {
     seq::pointer seqp = get_sequence(trk);
     bool result = bool(seqp);
     if (result)
     {
-        event metatext(0, EVENT_MIDI_META);
+        event metatext(0, EVENT_MIDI_META, 0);  /* tricky, d0 = 0           */
         metatext.set_channel(EVENT_META_TEXT_EVENT);
         metatext.set_text(s);                   /* not used in the match    */
         (void) seqp->remove_first_match(metatext);
@@ -514,7 +514,7 @@ performer::song_info (const std::string & s)
 {
     if (s != m_song_info)
     {
-        (void) track_info(s, 0);
+        (void) set_track_info(s, 0);
         m_song_info = s;
     }
 }
@@ -2639,6 +2639,7 @@ performer::clear_all (bool /* clearplaylist */ )
 {
     bool result = clear_song();
     usr().clear_global_seq_features();
+    m_song_info.clear();
     if (result)
     {
         play_set().clear();                     /* dump active patterns     */
@@ -8105,7 +8106,14 @@ performer::read_midi_file
 )
 {
     errmsg.clear();
+
+    /*
+     * Hmmmm, should we call clear_all(true/false) here???
+     */
+
     usr().clear_global_seq_features();
+    m_song_info.clear();
+
     bool result = seq66::read_midi_file(*this, fn, ppqn(), errmsg, addtorecent);
     if (result)
     {

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2023-04-28
+ * \updates       2023-04-29
  * \license       GNU GPLv2 or above
  *
  */
@@ -99,21 +99,7 @@ qsessionframe::qsessionframe
         this, SLOT(slot_flag_reload())
     );
     populate_macro_combo();
-
-    /*
-     * New song-info edit control and the characters-remaining label..
-     * Tricky, when getting the song info from the performer, it is already
-     * in normal string format.
-     *
-     * std::string songinfo = midi_bytes_to_string(perf().song_info());
-     */
-
-    std::string songinfo = perf().song_info();
-    size_t remainder = c_meta_text_limit - songinfo.size();
-    std::string rem = int_to_string(int(remainder));
-    ui->plainTextSongInfo->document()->setPlainText(qt(songinfo));
-    ui->labelCharactersRemaining->setText(qt(rem));
-    ui->spinBoxTrackInfo->hide();                   /* for the FUTURE   */
+    reload_song_info();
     connect
     (
         ui->plainTextSongInfo, SIGNAL(textChanged()),
@@ -125,6 +111,16 @@ qsessionframe::qsessionframe
         ui->pushButtonSaveInfo, SIGNAL(clicked(bool)),
         this, SLOT(slot_save_info())
     );
+#if defined USE_EXPERIMENTAL_TRACK_INFO
+    ui->labelTrackInfo->setText("Track Info");
+#else
+    /* Duty no for the FUTURE   */
+
+    ui->spinBoxTrackNumber->hide();
+    ui->scrollBarTextNumber->hide();
+    ui->lineEditTimeStamp->hide();
+    ui->labelEditTimeStamp->hide();
+#endif
 }
 
 qsessionframe::~qsessionframe()
@@ -144,11 +140,16 @@ qsessionframe::slot_flag_reload ()
     signal_for_restart();           /* warnprint("Session reload request"); */
 }
 
+/**
+ *  Also gets the characters remaining after translation to encoded
+ *  MIDI bytes.  Too slow?
+ */
+
 void
 qsessionframe::slot_songinfo_change ()
 {
     QString qtex = ui->plainTextSongInfo->toPlainText();
-    std::string text = qtex.toStdString();
+    std::string text = string_to_midi_bytes(qtex.toStdString());
     size_t remainder = c_meta_text_limit - text.size();
     std::string rem = int_to_string(int(remainder));
     ui->labelCharactersRemaining->setText(qt(rem));
@@ -164,6 +165,25 @@ qsessionframe::slot_save_info ()
         qtex.toStdString(), c_meta_text_limit
     );
     perf().song_info(text);
+    ui->pushButtonSaveInfo->setEnabled(false);
+}
+
+/*
+ * New song-info edit control and the characters-remaining label..
+ * Tricky, when getting the song info from the performer, it is already
+ * in normal string format.
+ *
+ * std::string songinfo = midi_bytes_to_string(perf().song_info());
+ */
+
+void
+qsessionframe::reload_song_info ()
+{
+    std::string songinfo = perf().song_info();
+    size_t remainder = c_meta_text_limit - songinfo.size();
+    std::string rem = int_to_string(int(remainder));
+    ui->plainTextSongInfo->document()->setPlainText(qt(songinfo));
+    ui->labelCharactersRemaining->setText(qt(rem));
     ui->pushButtonSaveInfo->setEnabled(false);
 }
 

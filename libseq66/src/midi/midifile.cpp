@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-16
+ * \updates       2023-04-29
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1468,11 +1468,11 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             if (checklen(len, mtype))
                             {
                                 int count = 0;
-                                midibyte mt[c_trackname_max];
+                                midibyte mt[c_meta_text_limit];
                                 for (int i = 0; i < int(len); ++i)
                                 {
                                     char ch = char(read_byte());
-                                    if (count < c_trackname_max)
+                                    if (count < int(c_meta_text_limit))
                                     {
                                         mt[count] = ch;
                                         ++count;

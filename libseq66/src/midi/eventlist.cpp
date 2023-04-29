@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-04-27
+ * \updates       2023-04-29
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -50,6 +50,8 @@ namespace seq66
 
 eventlist::eventlist () :
     m_events                (),
+    m_match_iterating       (false),
+    m_match_iterator        (m_events.end()),
     m_action_in_progress    (false),                    /* atomic boolean   */
     m_length                (0),
     m_note_off_margin       (3),
@@ -69,6 +71,8 @@ eventlist::eventlist () :
 
 eventlist::eventlist (const eventlist & rhs) :
     m_events                (rhs.m_events),
+    m_match_iterating       (false),
+    m_match_iterator        (m_events.end()),
     m_action_in_progress    (false),                    /* atomic boolean   */
     m_length                (rhs.m_length),
     m_note_off_margin       (rhs.m_note_off_margin),
@@ -86,6 +90,8 @@ eventlist::operator = (const eventlist & rhs)
     if (this != &rhs)
     {
         m_events                = rhs.m_events;
+        m_match_iterating       = rhs.m_match_iterating;    /* ok? */
+        m_match_iterator        = rhs.m_match_iterator;     /* ok? */
         m_action_in_progress    = false;                /* atomic boolean   */
         m_length                = rhs.m_length;
         m_note_off_margin       = rhs.m_note_off_margin;
@@ -1405,6 +1411,59 @@ eventlist::remove_event (event & e)
         }
     }
     return result;
+}
+
+/**
+ *  We want to get event iterators for given events.
+ *
+ *  What we want to support:
+ *
+ *      -   Meta text.
+ *          -   Song-info: Find (or remove) the first meta text event at
+ *              timestamp 0.
+ *          -   Track-info: Find (and take note of) the first meta text event
+ *              at any timestamp (e.timestamp == c_null_midipulse).
+ */
+
+event::iterator
+eventlist::find_first_match (const event & e)
+{
+    event::iterator result = m_events.end();
+    for (auto i = m_events.begin(); i != m_events.end(); ++i)
+    {
+        event & er = dref(i);
+        if (er.match(e))                /* comparing values, not pointers   */
+        {
+            result = i;
+            m_match_iterator = result;  /* keeps internal track of position */
+            break;
+        }
+    }
+    m_match_iterating = result != m_events.end();
+    return result;
+
+}
+
+event::iterator
+eventlist::find_next_match (const event & e)
+{
+    event::iterator result = m_events.end();
+    if (m_match_iterating)
+    {
+        for (auto i = m_match_iterator; i != m_events.end(); ++i)
+        {
+            event & er = dref(i);
+            if (er.match(e))            /* comparing values, not pointers   */
+            {
+                result = i;
+                break;
+            }
+        }
+        m_match_iterating = result != m_events.end();
+    }
+    m_match_iterator = result;
+    return result;
+
 }
 
 /**

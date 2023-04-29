@@ -1,18 +1,15 @@
 TO DO for Seq66 0.99.4 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-04-28
+2019-04-13 to 2023-04-29
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
 Hot:
 
-    Fix the wrinkles in wrap-around notes.  Wrapped notes will be displayed
-    incorrectly if wrap-around is later turned on.  And perhaps wrap-around
-    should be song-specific or even pattern-specific.
+    Perhaps wrap-around should be song-specific or even pattern-specific.
 
-    Add a pending character for toggling recording in a pattern.
-    Add this toggle to the pattern seqmenu.  Rearrange the seqmenu
-    to save space.
+    Add a pending character for toggling recording in a pattern?
+    Rearrange the seqmenu to save space?
 
     verify_and_link() wrap parameter defaults to false!
 
