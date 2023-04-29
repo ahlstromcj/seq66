@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2023-04-20
+2015-09-09 to 2023-04-29
 
 Creating a GitHub Repository:
 
@@ -247,7 +247,7 @@ Release:
         into it.
     -   Make sure the version numbering and dates are current in
         configure.ac and other places.
-    -   Update the README.md and RELNOTES files.
+    -   Update the README.md and RELNOTES (see below) files.
     -   Verify the master branch builds and runs.
     -   Go to doc/latex and run make to rebuild the PDF manual.
     -   Run "git2cl > cl.txt" and use it to update the Changelog file.
@@ -255,6 +255,13 @@ Release:
     -   Get the HEAD checksum and use it to create the tag.
         Leave off the -m option and instead load RELNOTES into
         the commit message.
+
+	Rules for a Git commit message:
+
+    	-	Separate Subject from Body with a BLANK LINE.
+    	-	Do NOT end the Subject line with a period.
+    	-	Capitalize the Subject line and each paragraph.
+    	-	Wrap lines at 72 characters.
 
     Later we will discuss how to build and verify the Windows
     version and make the installer part of the release (instead

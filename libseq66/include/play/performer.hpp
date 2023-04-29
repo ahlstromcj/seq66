@@ -1099,6 +1099,7 @@ public:
      */
 
     bool set_track_info (const std::string & s, seq::number trk);
+    event get_track_info (seq::number trk, bool nextmatch = false);
     void song_info (const std::string & s);
     std::string song_info () const;
 

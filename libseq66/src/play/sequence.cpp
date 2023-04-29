@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-27
+ * \updates       2023-04-29
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3285,9 +3285,21 @@ sequence::sort_events ()
     m_events.sort();
 }
 
+event
+sequence::find_event (const event & e, bool nextmatch)
+{
+    automutex locker(m_mutex);
+    static event s_null_result{0, 0, 0};
+    event::iterator evi = nextmatch ?
+        m_events.find_next_match(e) : m_events.find_first_match(e) ;
+
+    return evi != m_events.end() ?  *evi : s_null_result ;
+}
+
 bool
 sequence::remove_duplicate_events (midipulse tick, int note)
 {
+    automutex locker(m_mutex);                  /* ca 2023-04-29    */
     bool ignore = false;
     for (auto & er : m_events)
     {

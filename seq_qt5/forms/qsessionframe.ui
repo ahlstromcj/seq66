@@ -644,7 +644,7 @@ author and dates. The size limit is 1024 characters.</string>
     </rect>
    </property>
   </widget>
-  <widget class="QScrollBar" name="horizontalScrollBar">
+  <widget class="QScrollBar" name="scrollBarTextNumber">
    <property name="geometry">
     <rect>
      <x>110</x>
@@ -657,7 +657,7 @@ author and dates. The size limit is 1024 characters.</string>
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit">
+  <widget class="QLineEdit" name="lineEditTimeStamp">
    <property name="geometry">
     <rect>
      <x>222</x>
@@ -673,7 +673,7 @@ author and dates. The size limit is 1024 characters.</string>
     </size>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="labelTimeStamp">
    <property name="geometry">
     <rect>
      <x>190</x>

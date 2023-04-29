@@ -119,7 +119,7 @@ qsessionframe::qsessionframe
     ui->spinBoxTrackNumber->hide();
     ui->scrollBarTextNumber->hide();
     ui->lineEditTimeStamp->hide();
-    ui->labelEditTimeStamp->hide();
+    ui->labelTimeStamp->hide();
 #endif
 }
 

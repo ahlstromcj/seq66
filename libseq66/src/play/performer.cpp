@@ -486,7 +486,10 @@ performer::set_error_message (const std::string & msg) const
  *      converted to "midi-bytes" format.
  *
  * \param trk
- *      The optional track number, which defaults to 0.
+ *      The track number, pattern number.
+ *
+ * \return
+ *      Returns true if the track was found.
  */
 
 bool
@@ -507,6 +510,38 @@ performer::set_track_info (const std::string & s, seq::number trk)
         }
     }
     return result;
+}
+
+/**
+ *  Get the first (or next) matching Meta Text event and retunrs it.
+ *
+ * \param trk
+ *      The track number, pattern number.
+ *
+ * \param nextmatch
+ *      If true, get the next match instead of the first match.
+ *
+ * \return
+ *      Returns a copy of the found event.  The can use event::timestamp()
+ *      and event::get_text() to get the data relevant to the qsessionframe
+ *      (for example). If event::get_status() returns 0, the event is
+ *      not found and not usable.
+ */
+
+event
+performer::get_track_info (seq::number trk, bool nextmatch)
+{
+    static event s_null_result{0, 0, 0};
+    seq::pointer seqp = get_sequence(trk);
+    bool result = bool(seqp);
+    if (result)
+    {
+        event metatext(0, EVENT_MIDI_META, 0);  /* tricky, d0 = 0           */
+        metatext.set_channel(EVENT_META_TEXT_EVENT);
+        return seqp->find_event(metatext, nextmatch);
+    }
+    else
+        return s_null_result;
 }
 
 void

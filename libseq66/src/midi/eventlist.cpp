@@ -1423,6 +1423,8 @@ eventlist::remove_event (event & e)
  *              timestamp 0.
  *          -   Track-info: Find (and take note of) the first meta text event
  *              at any timestamp (e.timestamp == c_null_midipulse).
+ *              -   Get the text and timestamp. As en event?
+ *              -   Set the event to a new value.
  */
 
 event::iterator
@@ -1460,8 +1462,11 @@ eventlist::find_next_match (const event & e)
             }
         }
         m_match_iterating = result != m_events.end();
+        m_match_iterator = result;
     }
-    m_match_iterator = result;
+    else
+        result = find_first_match(e);
+
     return result;
 
 }
