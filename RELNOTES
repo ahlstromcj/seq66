@@ -1,10 +1,25 @@
 Release Notes for Seq66 v. 0.99.4
 
 This file lists __major__ changes from version 0.99.1 to 0.99.4.
-These notes are not complete, just trying to get it to work.
 
 *   Version 0.99.4:
-    *   Fixed minor bug in reporting trying map a "null" buss.
+    *   Issue #3: The scroll wheel is enabled in the piano rolls (only).
+    *   Issue #48: For a new NSM session configuration, disabled "JACK"
+        port auto-connect.
+    *   Issue #108. Fixed trying to remove Event tab after deleting it.
+    *   Issue #109. Fixed the application of channels to the various
+        export operations.
+    *   Fixed bug in reporting trying map a "null" buss.
+    *   Improved state-appearance of Stop, Pause, and Play buttons.
+    *   Fixed issue opening a non-standard-length pattern in window.
+    *   Fixed note events not getting linked after recording.
+    *   Fixed drawing of wrap-around notes with linear gradient, and
+    *   fixed handling of note wrap-around when set to false.
+    *   Fixed refresh of Mute & Session tabs when loading a MIDI file.
+    *   Added seqmenu entry for toggling recording of a pattern.
+    *   Added the ability to use the first Text message as "song info".
+    *   Seq66 now prevents opening the event editor if recording is in
+        progress. Cannot update event editor live with new events.
 
 *   Previous changes:
 
@@ -22,9 +37,10 @@ These notes are not complete, just trying to get it to work.
     *   Fixed the daemonization and log-file functionality.
     *   Fixed broken "recent-files" feature.
     *   Improved error reporting.
-    *   Fixed background sequence not displaying with linear-gradient brush.
-    *   Fixes to brushes; made the linear gradient the default.
-    *   Other minor fixes and documentation updates, including the manual.
+    *   Fixed background sequence not displaying with linear-gradient
+        brush; Made linear gradient brush the default.
+    *   Other minor fixes and documentation updates, including the
+        manual.
     *   Fixed partial breakage of pattern-merge function.
     *   Fixed odd breakage of ALSA playback in release mode.
     *   Fixed Stop button when another Master has started playback.
@@ -37,3 +53,5 @@ These notes are not complete, just trying to get it to work.
         and triggers.
 
 Read the NEWS, README.md, and TODO files.  Never-ending!
+
+// vim: sw=4 ts=4 wm=10 et ft=markdown

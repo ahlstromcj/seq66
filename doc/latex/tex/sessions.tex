@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2023-03-30
+% \update      2023-04-30
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -587,12 +587,27 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          a MIDI controller into the proper mode for controlling and displaying
          information in \textsl{Seq66}, and "shutdown" can return the controller
          to its normal operating mode.
-      \item Reload Session.
+      \item Restart (Reload Session).
          \index{restart!manual}
          After editing some of the preferences in the \textbf{Edit / Preferences}
          dialog, one can visit this tab and press this button to essentially
          restart \textsl{Seq66}, reloading the new configuration.
          Be careful!
+      \item Song Info.
+         \index{song!info}
+         \index{meta text}
+         Not shown yet is an edit-control that allows the view and
+         editing of "song info".
+         The song info is merely the first Meta Text event, if any,
+         found in pattern 0.
+         This field can be edited with information such as date, composer,
+         playback notes, etc. up to about 1024 ASCII characters.
+         Extended ASCII characters are encoded as three hexadecimal
+         bytes: "\\xx".
+         When the \textbf{Save Info} button is clicked, the meta text
+         is copied to the first pattern, thus modifying the file, which
+         can then be saved.
+         The "song info" option will be extended in the future.
    \end{itemize}
 
 \subsubsection{Seq66 Session Management / NSM / File Menu}
