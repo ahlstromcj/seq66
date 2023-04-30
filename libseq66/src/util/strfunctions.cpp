@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-04-27
+ * \updates       2023-04-29
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -842,6 +842,14 @@ string_to_long (const std::string & s, long defalt)
     return result;
 }
 
+std::string
+long_to_string (long value)
+{
+    char temp[32];
+    (void) snprintf(temp, sizeof temp, "%ld", value);
+    return std::string(temp);
+}
+
 /**
  *  Converts a string to an unsigned long integer.
  */
@@ -1084,7 +1092,7 @@ tokenize_stanzas
         BR = brackets[1];
         CBR = brackets[1];
     }
-    tokens.clear();                                         /* set size = 0 */
+    tokens.clear();
     bleft = source.find_first_of(BL, bleft);
     if (bleft != std::string::npos)
     {

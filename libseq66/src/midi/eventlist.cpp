@@ -58,6 +58,7 @@ eventlist::eventlist () :
     m_is_modified           (false),
     m_has_tempo             (false),
     m_has_time_signature    (false),
+    m_has_key_signature     (false),
     m_link_wraparound       (usr().new_pattern_wraparound())
 {
     // No code needed
@@ -79,6 +80,7 @@ eventlist::eventlist (const eventlist & rhs) :
     m_is_modified           (rhs.m_is_modified),
     m_has_tempo             (rhs.m_has_tempo),
     m_has_time_signature    (rhs.m_has_time_signature),
+    m_has_key_signature     (false),
     m_link_wraparound       (rhs.m_link_wraparound)
 {
     // no code
@@ -98,6 +100,7 @@ eventlist::operator = (const eventlist & rhs)
         m_is_modified           = rhs.m_is_modified;
         m_has_tempo             = rhs.m_has_tempo;
         m_has_time_signature    = rhs.m_has_time_signature;
+        m_has_key_signature     = rhs.m_has_key_signature;
         m_link_wraparound       = rhs.m_link_wraparound;
     }
     return *this;
@@ -181,6 +184,9 @@ eventlist::append (const event & e)
 
     if (e.is_time_signature())
         m_has_time_signature = true;
+
+    if (e.is_key_signature())
+        m_has_key_signature = true;
 
     return true;
 }
@@ -356,13 +362,11 @@ eventlist::link_new (bool wrap)
                 {
                     if (link_notes(on, off))
                     {
-// #if defined USE_NEW_CODE
                         if (! wrap_em)
                         {
                             if (off->timestamp() < on->timestamp())
                                 off->set_timestamp(get_length() - 1);
                         }
-// #endif
                         break;
                     }
                     ++off;
@@ -480,12 +484,7 @@ void
 eventlist::clear_links ()
 {
     for (auto & e : m_events)
-    {
-#if 0
-        if (not_nullptr(&e))                /* ca 2023-04-24                */
-#endif
-            e.clear_links();                /* does unmark() and unlink()   */
-    }
+        e.clear_links();                    /* does unmark() and unlink()   */
 }
 
 int
@@ -804,7 +803,7 @@ eventlist::adjust_timestamp (event & er, midipulse delta_tick)
                 result = note_off_margin();
         }
     }
-    else                                /* if (wrap)                    */
+    else                                    /* if (wrap)                    */
     {
         if (result == seqlength)
         {
@@ -1786,8 +1785,6 @@ eventlist::select_events
     {
         if (event_in_range(er, status, tick_s, tick_f))
         {
-            // midibyte d0, d1;
-            // er.get_data(d0, d1);
             if (er.is_desired(status, cc))
             {
                 if (action == select::selecting)

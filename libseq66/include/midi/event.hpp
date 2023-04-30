@@ -437,8 +437,6 @@ public:
     event & operator = (const event & rhs);
     virtual ~event ();
 
-    void prep_for_send (midipulse tick, const event & source);
-
     /*
      * Operator overload, the only one needed for sorting events in a list
      * or a map.
@@ -446,6 +444,7 @@ public:
 
     bool operator < (const event & rhsevent) const;
     bool match (const event & target) const;
+    void prep_for_send (midipulse tick, const event & source);
 
     void set_input_bus (bussbyte b)
     {

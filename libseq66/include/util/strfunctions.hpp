@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-04-27
+ * \updates       2023-04-29
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -85,15 +85,18 @@ extern bool strncompare
 extern bool strcasecompare (const std::string & a, const std::string & b);
 extern std::string & ltrim
 (
-    std::string & str, const std::string & chars = SEQ66_TRIM_CHARS
+    std::string & str,
+    const std::string & chars = SEQ66_TRIM_CHARS
 );
 extern std::string & rtrim
 (
-    std::string & str, const std::string & chars = SEQ66_TRIM_CHARS
+    std::string & str,
+    const std::string & chars = SEQ66_TRIM_CHARS
 );
 extern std::string trim
 (
-    const std::string & str, const std::string & chars = SEQ66_TRIM_CHARS
+    const std::string & str,
+    const std::string & chars = SEQ66_TRIM_CHARS
 );
 extern std::string string_replace
 (
@@ -125,6 +128,7 @@ extern double string_to_double
 );
 extern std::string double_to_string(double value, int precision = 0);
 extern long string_to_long (const std::string & s, long defalt = 0L);
+extern std::string long_to_string (long value);
 extern unsigned long string_to_unsigned_long
 (
     const std::string & s, unsigned long defalt = 0UL

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2023-04-29
+ * \updates       2023-04-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -73,10 +73,13 @@ qsessionframe::qsessionframe
     qsmainwnd * mainparent,
     QWidget * parent
 ) :
-    QFrame          (parent),
-    ui              (new Ui::qsessionframe),
-    m_main_window   (mainparent),
-    m_performer     (p)
+    QFrame                  (parent),
+    ui                      (new Ui::qsessionframe),
+    m_main_window           (mainparent),
+    m_performer             (p),
+    m_current_track         (0),
+    m_current_text_number   (0),
+    m_track_high            (p.sequence_high())
 {
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -111,21 +114,84 @@ qsessionframe::qsessionframe
         ui->pushButtonSaveInfo, SIGNAL(clicked(bool)),
         this, SLOT(slot_save_info())
     );
+
 #if defined USE_EXPERIMENTAL_TRACK_INFO
-    ui->labelTrackInfo->setText("Track Info");
+
+    sync_track_label();
+
+    /*
+     * Track (pattern) spin-box.
+     */
+
+    ui->spinBoxTrackNumber->setReadOnly(false);
+    ui->spinBoxTrackNumber->setRange(0, m_track_high - 1);
+    ui->spinBoxTrackNumber->setValue(0);
+    connect
+    (
+        ui->spinBoxTrackNumber, SIGNAL(valueChanged(int)),
+        this, SLOT(slot_track_number(int))
+    );
+
+#if defined ALLOW_TRACK_NUMBER_EDIT         // maybe later
+
+    connect
+    (
+        ui->spinBoxTrackNumber, SIGNAL(textChanged(const QString &)),
+        this, SLOT(slot_edit_track_number())
+    );
+
+#endif
+
+    ui->scrollBarTextNumber->setRange(0, 99999);        /* way over the top */
+    connect
+    (
+        ui->scrollBarTextNumber, SIGNAL(valueChanged(int)),
+        this, SLOT(slot_text_number(int))
+    );
+
+    ui->lineEditTimeStamp->setReadOnly(false);          // later, connect()
+
 #else
+
     /* Duty no for the FUTURE   */
 
     ui->spinBoxTrackNumber->hide();
     ui->scrollBarTextNumber->hide();
     ui->lineEditTimeStamp->hide();
     ui->labelTimeStamp->hide();
+
 #endif
 }
 
 qsessionframe::~qsessionframe()
 {
     delete ui;
+}
+
+void
+qsessionframe::sync_track_label ()
+{
+    std::string tlabel = "Track Info ";
+    tlabel += std::to_string(int(m_current_track));
+    ui->labelTrackInfo->setText(qt(tlabel));
+}
+
+void
+qsessionframe::sync_track_high ()
+{
+    int high = int(perf().sequence_high());
+    if (m_track_high != high)
+    {
+        bool reduced = m_track_high < high;
+        m_track_high = high;
+        if (reduced)
+        {
+            m_current_track = high - 1;
+            ui->spinBoxTrackNumber->setValue(high - 1);
+            sync_track_label();
+        }
+        ui->spinBoxTrackNumber->setMaximum(high - 1);
+    }
 }
 
 void
@@ -168,6 +234,71 @@ qsessionframe::slot_save_info ()
     ui->pushButtonSaveInfo->setEnabled(false);
 }
 
+void
+qsessionframe::slot_track_number (int trk)
+{
+    sync_track_high();                  /* adjust the maximum value         */
+
+    if (trk != m_current_track)
+    {
+        if (trk == 0)
+        {
+            reload_song_info();         /* track zero is treated specially  */
+        }
+        else
+        {
+            bool nextmatch = false;
+            seq66::event e = perf().get_track_info(trk, nextmatch);
+            std::string trkinfo = e.get_text();
+            if (trkinfo.empty())
+            {
+                ui->plainTextSongInfo->document()->setPlainText("*No text*");
+                ui->lineEditTimeStamp->setText("N/A");
+                ui->pushButtonSaveInfo->setEnabled(false);
+            }
+            else
+            {
+                // CUT-AND-PASTE-CODE
+                size_t remainder = c_meta_text_limit - trkinfo.size();
+                std::string rem = int_to_string(int(remainder));
+                midipulse ts = e.timestamp();
+                std::string tstr = long_to_string(long(ts));
+                ui->plainTextSongInfo->document()->setPlainText(qt(trkinfo));
+                ui->labelCharactersRemaining->setText(qt(rem));
+                ui->lineEditTimeStamp->setText(qt(tstr));
+//              if (nextmatch)
+                ui->pushButtonSaveInfo->setEnabled(false);
+            }
+        }
+    }
+    m_current_track = trk;
+}
+
+void
+qsessionframe::slot_text_number (int textnum)
+{
+    if (textnum > m_current_text_number)    // will allow reversal later
+    {
+        bool nextmatch = true;
+        seq66::event e = perf().get_track_info(m_current_track, nextmatch);
+        if (e.get_status() != 0)
+        {
+            // CUT-AND-PASTE-CODE
+            std::string trkinfo = e.get_text();
+            size_t remainder = c_meta_text_limit - trkinfo.size();
+            std::string rem = int_to_string(int(remainder));
+            midipulse ts = e.timestamp();
+            std::string tstr = long_to_string(long(ts));
+            ui->plainTextSongInfo->document()->setPlainText(qt(trkinfo));
+            ui->labelCharactersRemaining->setText(qt(rem));
+            ui->lineEditTimeStamp->setText(qt(tstr));
+//          if (nextmatch)
+            ui->pushButtonSaveInfo->setEnabled(false);
+            ++m_current_text_number;
+        }
+    }
+}
+
 /*
  * New song-info edit control and the characters-remaining label..
  * Tricky, when getting the song info from the performer, it is already
@@ -184,6 +315,7 @@ qsessionframe::reload_song_info ()
     std::string rem = int_to_string(int(remainder));
     ui->plainTextSongInfo->document()->setPlainText(qt(songinfo));
     ui->labelCharactersRemaining->setText(qt(rem));
+    ui->lineEditTimeStamp->setText("0");
     ui->pushButtonSaveInfo->setEnabled(false);
 }
 

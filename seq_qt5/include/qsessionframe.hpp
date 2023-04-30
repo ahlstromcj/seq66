@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2023-04-29
+ * \updates       2023-04-30
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -93,6 +93,9 @@ protected:
         return m_performer;
     }
 
+    void sync_track_label ();
+    void sync_track_high ();
+
 protected:                          // overrides of event handlers
 
     virtual void keyPressEvent (QKeyEvent *) override;
@@ -105,6 +108,8 @@ private slots:
     void slot_flag_reload ();
     void slot_songinfo_change ();
     void slot_save_info ();
+    void slot_track_number (int trk);
+    void slot_text_number (int textnum);
     void slot_macros_active ();
     void slot_macro_pick (const QString &);
     void slot_log_file ();
@@ -121,7 +126,31 @@ private:
 
     qsmainwnd * m_main_window;
 
+    /**
+     *  The main player :-).
+     */
+
     performer & m_performer;
+
+    /**
+     *  Holds the currently selected track, needed when the track selection
+     *  changes in order to clear the "next match" flag.
+     */
+
+    int m_current_track;
+
+    /**
+     *  A counter for Meta Text events when a track contains more than one.
+     */
+
+    int m_current_text_number;
+
+    /**
+     *  The highest-numbered track, plus one, kept synchronized with
+     *  performer::m_sequence_high.
+     */
+
+    int m_track_high;
 
 };
 

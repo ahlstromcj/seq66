@@ -643,15 +643,21 @@ author and dates. The size limit is 1024 characters.</string>
      <height>26</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Changes the current track number, ranging&lt;/p&gt;&lt;p&gt;from 0 to the highest pattern.  Then, if&lt;/p&gt;&lt;p&gt;any Meta Text is present in that pattern,&lt;/p&gt;&lt;p&gt;then the first one is shown.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
   </widget>
   <widget class="QScrollBar" name="scrollBarTextNumber">
    <property name="geometry">
     <rect>
-     <x>110</x>
+     <x>120</x>
      <y>380</y>
-     <width>61</width>
+     <width>41</width>
      <height>26</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Moves forward (not yet backward) to the&lt;/p&gt;&lt;p&gt;next Meta Text event, if any.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
@@ -671,6 +677,9 @@ author and dates. The size limit is 1024 characters.</string>
      <width>0</width>
      <height>22</height>
     </size>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Displays the time stamp of the current&lt;/p&gt;&lt;p&gt;Meta Text event.  Editable as well.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLabel" name="labelTimeStamp">

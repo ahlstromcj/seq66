@@ -190,6 +190,12 @@ private:
     bool m_has_time_signature;
 
     /**
+     *  Another flag.
+     */
+
+    bool m_has_key_signature;
+
+    /**
      *  Stores the setting of usr().new_pattern_wraparound().  It is used in
      *  the link_new() function.
      */
@@ -385,11 +391,7 @@ private:                                /* functions for friend sequence    */
     bool randomize_selected (midibyte status, int plus_minus);
     bool randomize_selected_notes (int jitter, int range);
     bool jitter_notes (int jitter);
-    bool link_notes
-    (
-        event::iterator eon,
-        event::iterator eoff
-    );
+    bool link_notes (event::iterator eon, event::iterator eoff);
     void link_tempos ();
     void clear_tempo_links ();
     bool mark_selected ();
