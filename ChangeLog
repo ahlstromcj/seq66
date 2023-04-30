@@ -1,5 +1,151 @@
-2023-04-19  Chris Ahlstrom <ahlstromcj@gmail.com>
+2023-04-30  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* README.md, RELNOTES, doc/latex/tex/sessions.tex,
+	include/config.h.in: Version 0.99.4 issues fixed for #3, #48, #108,
+	#109, and discovered issues.
+	* libseq66/include/midi/event.hpp,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/util/strfunctions.hpp,
+	libseq66/src/midi/eventlist.cpp,
+	libseq66/src/util/strfunctions.cpp, seq_qt5/forms/qsessionframe.ui,
+	seq_qt5/include/qsessionframe.hpp, seq_qt5/src/qsessionframe.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Hidden work to support show meta text, in
+	progress.
+
+2023-04-29  ahlstrom <ahlstromcj@gmail.com>
+
+	* VERSION, configure.ac, contrib/git/git.text,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/forms/qsessionframe.ui,
+	seq_qt5/src/qsessionframe.cpp: Date bump, find-event code, fixes to
+	qsessionframe form.
+	* README.md, TODO, libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/performer.hpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qsessionframe.ui,
+	seq_qt5/include/qmutemaster.hpp, seq_qt5/include/qsessionframe.hpp,
+	seq_qt5/src/qmutemaster.cpp, seq_qt5/src/qsessionframe.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixed mutes/session refresh, 256-char
+	text limit, experimental meta-text enhancements started.
+
+2023-04-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/midi/event.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qsessionframe.ui,
+	seq_qt5/src/qsessionframe.cpp: Future spinbox for song-info, need to
+	fix 256-char limit.
+	* libseq66/include/midi/midi_vector_base.hpp,
+	libseq66/src/midi/event.cpp, libseq66/src/midi/midi_vector.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qsessionframe.ui,
+	seq_qt5/src/qsessionframe.cpp: Fixed error writing meta text length
+	to file.
+
+2023-04-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO,
+	contrib/midi/Carpet_of_the_Sun_karaoke_meta_text.text,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/midi/midifile.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/util/strfunctions.hpp,
+	libseq66/src/midi/event.cpp, libseq66/src/midi/eventlist.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/util/strfunctions.cpp,
+	seq_qt5/forms/qsessionframe.ui,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qsessionframe.hpp, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsessionframe.cpp,
+	seq_qt5/src/qslivegrid.cpp: Work in progress on adding song-info
+	feature.
+
+2023-04-26  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/linux/qseq66.ctrl, libseq66/include/play/performer.hpp,
+	libseq66/src/ctrl/keycontainer.cpp, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qslivegrid.cpp: Modified
+	default ctrl keystrokes.
+	* README.md, TODO, doc/latex/tex/configuration.tex,
+	doc/latex/tex/midi_export.tex, doc/latex/tex/pattern_editor.tex,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qseqroll.cpp: Fixed issues with note wrap-around and
+	linking.
+
+2023-04-25  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/midi/event.hpp,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/eventlist.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qmutemaster.hpp, seq_qt5/src/qmutemaster.cpp,
+	seq_qt5/src/qseqroll.cpp: Fixed issue #109 where exports lost event
+	channels.
+	* README.md, TODO, doc/latex/tex/event_editor.tex,
+	doc/latex/tex/pattern_editor.tex, doc/latex/tex/song_editor.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp, libseq66/include/play/seq.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qslivegrid.cpp: Fixes to linking and drawing recorded
+	notes.
+
+2023-04-24  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, seq_qt5/src/qsmainwnd.cpp: A potential fix to issue
+	#108, was removing a widget after deleting.
+
+2023-04-22  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, doc/latex/tex/configuration.tex,
+	doc/latex/tex/live_grid.tex, doc/latex/tex/menu.tex,
+	doc/latex/tex/midi_formats.tex, doc/latex/tex/pattern_editor.tex,
+	libseq66/include/play/performer.hpp, libseq66/src/play/metro.cpp,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qperfnames.hpp,
+	seq_qt5/include/qperftime.hpp, seq_qt5/include/qscrollmaster.h,
+	seq_qt5/include/qseqdata.hpp, seq_qt5/include/qseqtime.hpp,
+	seq_qt5/include/qstriggereditor.hpp, seq_qt5/src/qperfnames.cpp,
+	seq_qt5/src/qperftime.cpp, seq_qt5/src/qscrollmaster.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqkeys.cpp,
+	seq_qt5/src/qseqtime.cpp, seq_qt5/src/qstriggereditor.cpp: Mitigated
+	issue #3 so that only the piano rolls can use the scroll wheel.
+
+2023-04-20  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/play/performer.hpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/forms/qsbuildinfo.ui,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_rtmidi/src/rtmidi.cpp: Revisited issue #48, fixed some minor
+	issues, see README.md.
+
+2023-04-19  ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, README.md, RELNOTES, contrib/scripts/qtctrun,
+	libseq66/src/play/performer.cpp: Fixed showing port errors re MIDI
+	control undefined.
+	* contrib/git/git.text: Updated Git notes.
+	* RELNOTES, RELNOTES.md, configure: Release Notes for Seq66 v.
+	0.99.4 (RELNOTES snipped for brevity here).
+	* NEWS, README.md, RELNOTES.md, VERSION, configure.ac,
+	doc/latex/tex/seq66-user-manual.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h: Stamping for version 0.99.4.  Also need to figure out why the last multi-line commit message is a
+	single line.
+	* ChangeLog: Updated Changelog.
 	* doc/latex/tex/configuration.tex,
 	doc/latex/tex/pattern_editor.tex, doc/latex/tex/patterns_panel.tex: 
 	Merged portfix and updated documentation for version 0.99.3
