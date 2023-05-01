@@ -317,6 +317,16 @@ qseditoptions::setup_tab_midi_clock ()
         ui->pushButtonRemoveMap, SIGNAL(clicked(bool)),
         this, SLOT(slot_remove_io_maps())
     );
+
+#if defined SEQ66_USE_DEFAULT_PORT_MAPPING
+    ui->inPortsMappedCheck->hide();
+    ui->outPortsMappedCheck->setText("Ports Mapped");
+    connect
+    (
+        ui->outPortsMappedCheck, SIGNAL(clicked(bool)),
+        this, SLOT(slot_activate_output_map())
+    );
+#else
     connect
     (
         ui->inPortsMappedCheck, SIGNAL(clicked(bool)),
@@ -327,6 +337,7 @@ qseditoptions::setup_tab_midi_clock ()
         ui->outPortsMappedCheck, SIGNAL(clicked(bool)),
         this, SLOT(slot_activate_output_map())
     );
+#endif
 
     /*
      * The virtual port counts for input and output.
@@ -1755,7 +1766,6 @@ qseditoptions::slot_io_maps ()
     ui->inPortsMappedCheck->setChecked(inportmap);
     rc().portmaps_active(outportmap && inportmap);
     modify_rc();
-    // reload_needed(true);
 }
 
 void
@@ -1767,7 +1777,6 @@ qseditoptions::slot_remove_io_maps ()
     ui->inPortsMappedCheck->setChecked(false);
     rc().portmaps_active(false);
     modify_rc();
-    // reload_needed(true);
 }
 
 void
@@ -1786,11 +1795,17 @@ void
 qseditoptions::slot_activate_output_map ()
 {
     bool active = ui->outPortsMappedCheck->isChecked();
+#if defined SEQ66_USE_DEFAULT_PORT_MAPPING
+    perf().activate_output_map(active);
+    perf().activate_inputput_map(active);
+    TODO
+#else
     perf().activate_output_map(active);
 
     bool outportmap = output_port_map().active();
     bool inportmap = input_port_map().active();
     rc().portmaps_active(outportmap && inportmap);
+#endif
     modify_rc();
 }
 
@@ -1961,7 +1976,7 @@ qseditoptions::reset ()
 {
     rc() = m_backup_rc;
     usr() = m_backup_usr;
-    reload_needed(false);   // state_unchanged();
+    reload_needed(false);
 }
 
 void

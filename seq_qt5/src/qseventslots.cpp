@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-04-07
+ * \updates       2023-05-01
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -216,7 +216,16 @@ qseventslots::set_current_event
     std::string data_0;
     std::string data_1;
     const editable_event & ev = editable_events::cdref(ei);
-    if (ev.is_ex_data())
+    if (ev.is_meta())
+    {
+        /*
+         * This may not be suitable for all meta events.
+         */
+
+        std::string text = ev.get_text();
+        m_parent.set_event_plaintext(text);
+    }
+    else if (ev.is_ex_data())
     {
         data_0 = ev.ex_data_string();
     }

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2023-04-30
+ * \updates       2023-05-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -114,9 +114,6 @@ qsessionframe::qsessionframe
         ui->pushButtonSaveInfo, SIGNAL(clicked(bool)),
         this, SLOT(slot_save_info())
     );
-
-#if defined USE_EXPERIMENTAL_TRACK_INFO
-
     sync_track_label();
 
     /*
@@ -133,33 +130,11 @@ qsessionframe::qsessionframe
     );
 
 #if defined ALLOW_TRACK_NUMBER_EDIT         // maybe later
-
     connect
     (
         ui->spinBoxTrackNumber, SIGNAL(textChanged(const QString &)),
         this, SLOT(slot_edit_track_number())
     );
-
-#endif
-
-    ui->scrollBarTextNumber->setRange(0, 99999);        /* way over the top */
-    connect
-    (
-        ui->scrollBarTextNumber, SIGNAL(valueChanged(int)),
-        this, SLOT(slot_text_number(int))
-    );
-
-    ui->lineEditTimeStamp->setReadOnly(false);          // later, connect()
-
-#else
-
-    /* Duty no for the FUTURE   */
-
-    ui->spinBoxTrackNumber->hide();
-    ui->scrollBarTextNumber->hide();
-    ui->lineEditTimeStamp->hide();
-    ui->labelTimeStamp->hide();
-
 #endif
 }
 
@@ -238,7 +213,6 @@ void
 qsessionframe::slot_track_number (int trk)
 {
     sync_track_high();                  /* adjust the maximum value         */
-
     if (trk != m_current_track)
     {
         if (trk == 0)
@@ -253,50 +227,22 @@ qsessionframe::slot_track_number (int trk)
             if (trkinfo.empty())
             {
                 ui->plainTextSongInfo->document()->setPlainText("*No text*");
-                ui->lineEditTimeStamp->setText("N/A");
                 ui->pushButtonSaveInfo->setEnabled(false);
             }
             else
             {
-                // CUT-AND-PASTE-CODE
                 size_t remainder = c_meta_text_limit - trkinfo.size();
                 std::string rem = int_to_string(int(remainder));
                 midipulse ts = e.timestamp();
                 std::string tstr = long_to_string(long(ts));
                 ui->plainTextSongInfo->document()->setPlainText(qt(trkinfo));
                 ui->labelCharactersRemaining->setText(qt(rem));
-                ui->lineEditTimeStamp->setText(qt(tstr));
-//              if (nextmatch)
                 ui->pushButtonSaveInfo->setEnabled(false);
             }
         }
     }
     m_current_track = trk;
-}
-
-void
-qsessionframe::slot_text_number (int textnum)
-{
-    if (textnum > m_current_text_number)    // will allow reversal later
-    {
-        bool nextmatch = true;
-        seq66::event e = perf().get_track_info(m_current_track, nextmatch);
-        if (e.get_status() != 0)
-        {
-            // CUT-AND-PASTE-CODE
-            std::string trkinfo = e.get_text();
-            size_t remainder = c_meta_text_limit - trkinfo.size();
-            std::string rem = int_to_string(int(remainder));
-            midipulse ts = e.timestamp();
-            std::string tstr = long_to_string(long(ts));
-            ui->plainTextSongInfo->document()->setPlainText(qt(trkinfo));
-            ui->labelCharactersRemaining->setText(qt(rem));
-            ui->lineEditTimeStamp->setText(qt(tstr));
-//          if (nextmatch)
-            ui->pushButtonSaveInfo->setEnabled(false);
-            ++m_current_text_number;
-        }
-    }
+    sync_track_label();
 }
 
 /*
@@ -315,7 +261,6 @@ qsessionframe::reload_song_info ()
     std::string rem = int_to_string(int(remainder));
     ui->plainTextSongInfo->document()->setPlainText(qt(songinfo));
     ui->labelCharactersRemaining->setText(qt(rem));
-    ui->lineEditTimeStamp->setText("0");
     ui->pushButtonSaveInfo->setEnabled(false);
 }
 

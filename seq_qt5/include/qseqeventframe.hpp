@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-10-20
+ * \updates       2023-05-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -123,6 +123,7 @@ private:
     void set_event_channel (int channel);
     void set_event_data_0 (const std::string & d);
     void set_event_data_1 (const std::string & d);
+    void set_event_plaintext (const std::string & t);
     void set_event_line
     (
         int row,
@@ -152,6 +153,7 @@ private:
     int current_row () const;
     void populate_midich_combo ();
     void populate_status_combo ();
+    void populate_category_combo ();
     std::string filename_prompt
     (
         const std::string & prompt,
@@ -177,8 +179,10 @@ private slots:
     void update_seq_name ();
     void slot_midi_channel (int index);
     void slot_event_name (int index);
+    void slot_event_category (int index);
     void slot_hex_data_state (int state);
     void slot_pulse_time_state (int state);
+    void slot_meta_text_change ();
 
 private:
 

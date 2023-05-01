@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-07
+ * \updates       2023-05-01
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -267,7 +267,28 @@ s_category_arrays [] =
 };
 
 /**
- *  A static function used to fill a channel-event status combo-box.
+ *  A static member function used to fill the event category combo-box.
+ */
+
+std::string
+editable_event::category_name (int index)
+{
+    std::string result;
+    int counter = 0;
+    while (s_category_names[counter].event_value != s_end_of_table)
+    {
+        if (counter == index)
+        {
+            result = s_category_names[counter].event_name;
+            break;
+        }
+        ++counter;
+    }
+    return result;
+}
+
+/**
+ *  A static member function used to fill a channel-event status combo-box.
  */
 
 std::string

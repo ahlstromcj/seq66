@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-04-07
+ * \updates       2023-05-01
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -114,34 +114,24 @@ qseqeventframe::qseqeventframe
     QString seqnolabel = qt(std::to_string(int(track().seq_number())));
     ui->label_seq_number->setText(seqnolabel);
 
-    std::string ts_ppqn = std::to_string(track().get_beats_per_bar());
+    midibyte seqchan = track().seq_midi_channel();
+    std::string ts_ppqn = "Ch. ";
+    ts_ppqn += is_null_channel(seqchan) ?
+        "Free" : std::to_string(int(seqchan) + 1);
+
+    ts_ppqn += ": ";
+    ts_ppqn += std::to_string(track().get_beats_per_bar());
     ts_ppqn += "/";
     ts_ppqn += std::to_string(track().get_beat_width());
-    ts_ppqn += " at ";
+    ts_ppqn += " ";
+    ts_ppqn += " PPQN ";
     ts_ppqn += std::to_string(track().get_ppqn());
-    ts_ppqn += " PPQN (";
+    ts_ppqn += " ticks ";
     ts_ppqn += std::to_string(track().get_length());
-    ts_ppqn += " total)";
     set_seq_time_sig_and_ppqn(ts_ppqn);
 
-    std::string channelstr = "Channel ";
-    midibyte seqchan = track().seq_midi_channel();
-    if (is_null_channel(seqchan))
-    {
-        channelstr += "Free";
-    }
-    else
-    {
-        channelstr += std::to_string(int(seqchan) + 1);
-        channelstr += " [re 1]";
-    }
-    set_seq_channel(channelstr);
-
-    /*
-     * Measures and Event.  The event-slot object should keep these up-to-date
-     * during editing.
-     */
-
+//  ui->label_channel->hide();              /* set_seq_channel(channelstr); */
+    set_seq_channel("");
     set_seq_lengths(get_lengths());
 
     /*
@@ -203,6 +193,17 @@ qseqeventframe::qseqeventframe
         ui->combo_ev_name, SIGNAL(currentIndexChanged(int)),
         this, SLOT(slot_event_name(int))
     );
+    populate_category_combo();
+    connect
+    (
+        ui->combo_ev_category, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(slot_event_category(int))
+    );
+
+    /*
+     * Time and data format check-boxes.
+     */
+
     connect
     (
         ui->hex_data_check_box, SIGNAL(stateChanged(int)),
@@ -212,6 +213,18 @@ qseqeventframe::qseqeventframe
     (
         ui->pulse_time_check_box, SIGNAL(stateChanged(int)),
         this, SLOT(slot_pulse_time_state(int))
+    );
+
+    /*
+     *  Plain-text edit control for Meta messages involving text.
+     */
+
+    ui->plainTextEdit->document()->setPlainText("N/A");
+    ui->plainTextEdit->setEnabled(false);
+    connect
+    (
+        ui->plainTextEdit, SIGNAL(textChanged()),
+        this, SLOT(slot_meta_text_change())
     );
 
     /*
@@ -325,7 +338,8 @@ void
 qseqeventframe::populate_status_combo ()
 {
     ui->combo_ev_name->clear();
-    for (int counter = 0; /* counter value */; ++counter)
+    int counter = 0;
+    for ( ; /* counter value */ ; ++counter)
     {
         std::string name = editable_event::channel_event_name(counter);
         if (name.empty())
@@ -338,7 +352,31 @@ qseqeventframe::populate_status_combo ()
             ui->combo_ev_name->insertItem(counter, combotext);
         }
     }
+
+#if defined USE_META_TEXT_EDITING
+    ui->combo_ev_name->insertSeparator(counter);
+#endif
+
     ui->combo_ev_name->setCurrentIndex(0);
+}
+
+void
+qseqeventframe::populate_category_combo ()
+{
+    ui->combo_ev_category->clear();
+    for (int counter = 0; /* counter value */ ; ++counter)
+    {
+        std::string name = editable_event::category_name(counter);
+        if (name.empty())
+        {
+            break;
+        }
+        else
+        {
+            QString combotext(qt(name));
+            ui->combo_ev_category->insertItem(counter, combotext);
+        }
+    }
 }
 
 void
@@ -363,6 +401,12 @@ qseqeventframe::slot_event_name (int /*index*/)
 }
 
 void
+qseqeventframe::slot_event_category (int /*index*/)
+{
+    // Anything to do? We just need the text.
+}
+
+void
 qseqeventframe::slot_hex_data_state (int state)
 {
     bool is_true = state != Qt::Unchecked;
@@ -378,6 +422,25 @@ qseqeventframe::slot_pulse_time_state (int state)
     m_show_time_as_pulses = is_true;
     m_eventslots->pulses(is_true);
     initialize_table();
+}
+
+/**
+ *  Also gets the characters remaining after translation to encoded
+ *  MIDI bytes.  Too slow?
+ */
+
+void
+qseqeventframe::slot_meta_text_change ()
+{
+    QString qtex = ui->plainTextEdit->toPlainText();
+    set_dirty();
+
+#if 0
+    std::string text = string_to_midi_bytes(qtex.toStdString());
+    size_t remainder = c_meta_text_limit - text.size();
+    std::string rem = int_to_string(int(remainder));
+    ui->labelCharactersRemaining->setText(qt(rem));
+#endif
 }
 
 /**
@@ -528,9 +591,9 @@ qseqeventframe::set_seq_time_sig_and_ppqn (const std::string & sig)
 }
 
 void
-qseqeventframe::set_seq_channel (const std::string & ch)
+qseqeventframe::set_seq_channel (const std::string & /*ch*/)
 {
-    ui->label_channel->setText(qt(ch));
+//  ui->label_channel->setText(qt(ch));
     ui->channel_combo_box->setCurrentIndex(0);
 }
 
@@ -558,7 +621,8 @@ qseqeventframe::set_seq_lengths (const std::string & mevents)
 void
 qseqeventframe::set_event_category (const std::string & c)
 {
-    ui->label_category->setText(qt(c));
+    QString category = qt(c);       /* ui->label_category->setText(qt(c))   */
+    ui->combo_ev_category->setCurrentText(category);
 }
 
 /**
@@ -620,6 +684,13 @@ void
 qseqeventframe::set_event_data_1 (const std::string & d)
 {
     ui->entry_ev_data_1->setText(qt(d));
+}
+
+void
+qseqeventframe::set_event_plaintext (const std::string & t)
+{
+    QString text = qt(t);
+    ui->plainTextEdit->document()->setPlainText(text);
 }
 
 /**
