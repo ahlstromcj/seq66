@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-27
+ * \updates       2023-05-02
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -1422,6 +1422,11 @@ public:
     bool is_ex_data () const
     {
         return is_ex_data_msg(m_status);
+    }
+
+    bool is_system () const
+    {
+        return is_system_msg(m_status);
     }
 
     /**

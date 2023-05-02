@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-01
+ * \updates       2023-05-02
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -37,19 +37,19 @@
 #include "midi/editable_events.hpp"     /* seq66::editable_events multimap  */
 #include "util/strfunctions.hpp"        /* seq66::strings_match(), etc.     */
 
-/**
- *  Provides an integer value that is larger than any MIDI value, to be
- *  used to terminate a array of items keyed by a midibyte value.
- */
-
-unsigned short s_end_of_table = 0x100;  /* one more than 0xFF   */
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
 
 namespace seq66
 {
+
+/**
+ *  Provides an integer value that is larger than any MIDI value, to be
+ *  used to terminate a array of items keyed by a midibyte value.
+ */
+
+midishort s_end_of_table = 0x100;       /* one more than 0xFF               */
 
 /**
  *  We moved all of these static arrays out of editable_events because
@@ -66,24 +66,23 @@ static const editable_event::name_value_t
 s_category_names [] =
 {
     {
-        (unsigned short)(editable_event::subgroup::channel_message),
+        0, midishort(editable_event::subgroup::channel_message),
         "Channel Message"
     },
     {
-        (unsigned short)(editable_event::subgroup::system_message),
+        1, midishort(editable_event::subgroup::system_message),
         "System Message"
     },
     {
-        (unsigned short)(editable_event::subgroup::meta_event),
+        2, midishort(editable_event::subgroup::meta_event),
         "Meta Event"
     },
     {
-        (unsigned short)(editable_event::subgroup::prop_event),
-        "Proprietary Event"
+        3, midishort(editable_event::subgroup::seqspec_event),
+        "SeqSpec Event"
     },
     {
-        s_end_of_table,
-        ""
+        -1, s_end_of_table, ""
     }
 };
 
@@ -95,14 +94,14 @@ s_category_names [] =
 static const editable_event::name_value_t
 s_channel_event_names [] =
 {
-    { (unsigned short)(EVENT_NOTE_OFF),         "Note Off"          },  // 0x80
-    { (unsigned short)(EVENT_NOTE_ON),          "Note On"           },  // 0x90
-    { (unsigned short)(EVENT_AFTERTOUCH),       "Aftertouch"        },  // 0xA0
-    { (unsigned short)(EVENT_CONTROL_CHANGE),   "Control"           },  // 0xB0
-    { (unsigned short)(EVENT_PROGRAM_CHANGE),   "Program"           },  // 0xC0
-    { (unsigned short)(EVENT_CHANNEL_PRESSURE), "Ch Pressure"       },  // 0xD0
-    { (unsigned short)(EVENT_PITCH_WHEEL),      "Pitch Wheel"       },  // 0xE0
-    { s_end_of_table,                           ""                  }   // end
+    {  0, midishort(EVENT_NOTE_OFF),         "Note Off"          },  // 0x80
+    {  1, midishort(EVENT_NOTE_ON),          "Note On"           },  // 0x90
+    {  2, midishort(EVENT_AFTERTOUCH),       "Aftertouch"        },  // 0xA0
+    {  3, midishort(EVENT_CONTROL_CHANGE),   "Control"           },  // 0xB0
+    {  4, midishort(EVENT_PROGRAM_CHANGE),   "Program"           },  // 0xC0
+    {  5, midishort(EVENT_CHANNEL_PRESSURE), "Ch Pressure"       },  // 0xD0
+    {  6, midishort(EVENT_PITCH_WHEEL),      "Pitch Wheel"       },  // 0xE0
+    { -1, s_end_of_table,                    ""                  }   // end
 };
 
 /**
@@ -113,66 +112,72 @@ s_channel_event_names [] =
 static const editable_event::name_value_t
 s_system_event_names [] =
 {
-    { (unsigned short)(EVENT_MIDI_SYSEX),         "SysEx Start"     },  // 0xF0
-    { (unsigned short)(EVENT_MIDI_QUARTER_FRAME), "Quarter Frame"   },  //   .
-    { (unsigned short)(EVENT_MIDI_SONG_POS),      "Song Position"   },  //   .
-    { (unsigned short)(EVENT_MIDI_SONG_SELECT),   "Song Select"     },  //   .
-    { (unsigned short)(EVENT_MIDI_SONG_F4),       "F4"              },
-    { (unsigned short)(EVENT_MIDI_SONG_F5),       "F5"              },
-    { (unsigned short)(EVENT_MIDI_TUNE_SELECT),   "Tune Request"    },
-    { (unsigned short)(EVENT_MIDI_SYSEX_END),     "SysEx End"       },
-    { (unsigned short)(EVENT_MIDI_CLOCK),         "Clock"           },
-    { (unsigned short)(EVENT_MIDI_SONG_F9),       "F9"              },
-    { (unsigned short)(EVENT_MIDI_START),         "Start"           },
-    { (unsigned short)(EVENT_MIDI_CONTINUE),      "Continue"        },
-    { (unsigned short)(EVENT_MIDI_STOP),          "Stop"            },  //   .
-    { (unsigned short)(EVENT_MIDI_SONG_FD),       "FD"              },  //   .
-    { (unsigned short)(EVENT_MIDI_ACTIVE_SENSE),  "Active sensing"  },  //   .
-    { (unsigned short)(EVENT_MIDI_RESET),         "Reset"           },  // 0xFF
-    { s_end_of_table,                             ""                }   // end
+    {  0, midishort(EVENT_MIDI_SYSEX),         "SysEx Start"     },  // 0xF0
+    {  1, midishort(EVENT_MIDI_QUARTER_FRAME), "Quarter Frame"   },  //   .
+    {  2, midishort(EVENT_MIDI_SONG_POS),      "Song Position"   },  //   .
+    {  3, midishort(EVENT_MIDI_SONG_SELECT),   "Song Select"     },  //   .
+    { -1, midishort(EVENT_MIDI_SONG_F4),       "F4"              },
+    { -1, midishort(EVENT_MIDI_SONG_F5),       "F5"              },
+    {  4, midishort(EVENT_MIDI_TUNE_SELECT),   "Tune Request"    },
+    {  5, midishort(EVENT_MIDI_SYSEX_END),     "SysEx End"       },
+    {  6, midishort(EVENT_MIDI_CLOCK),         "Timing Clock"    },
+    { -1, midishort(EVENT_MIDI_SONG_F9),       "F9"              },
+    {  7, midishort(EVENT_MIDI_START),         "Start"           },
+    {  8, midishort(EVENT_MIDI_CONTINUE),      "Continue"        },
+    {  9, midishort(EVENT_MIDI_STOP),          "Stop"            },  //   .
+    { -1, midishort(EVENT_MIDI_SONG_FD),       "FD"              },  //   .
+    { 10, midishort(EVENT_MIDI_ACTIVE_SENSE),  "Active sensing"  },  //   .
+    { 11, midishort(EVENT_MIDI_RESET),         "Reset"           },  // 0xFF
+    { -1, s_end_of_table,                      ""                }   // end
 };
 
 /**
  *  Initializes the array of event/name pairs for all of the Meta events.
- *  Terminated only by the empty string.
+ *  Terminated only by the empty string. Events with an index of -1 are not
+ *  supported.  Only s_end_of_table is used to detect the end of the table.
+ *  Previous to version 0.99.5, this array wasn't used, so we are free
+ *  to mess with it and hide non-editable events. Events that are non-editable
+ *  include events handled by non-MIDI manipulations:
+ *
+ *      -   Seq Number
+ *      -   MIDI Channel
+ *      -   MIDI Port
+ *      -   Track End
+ *      -   SeqSpec (maybe)
+ *
+ *  However, we need to be able to look up their names for display in case
+ *  someone's tune contains them.
  */
 
 static const editable_event::name_value_t
 s_meta_event_names [] =
 {
-    { 0x00, "Seq Number"                },      // FF 00 02 ss ss (16-bit)
-    { 0x01, "Text Event"                },      // FF 01 len text
-    { 0x02, "Copyright"                 },      // FF 02 len text
-    { 0x03, "Track Name"                },      // FF 03 len text
-    { 0x04, "Instrument Name"           },      // FF 04 len text
-    { 0x05, "Lyric"                     },      // FF 05 len text
-    { 0x06, "Marker"                    },      // FF 06 len text
-    { 0x07, "Cue Point"                 },      // FF 07 len text
-    { 0x08, "Program Name"              },      // FF 08 len text
-    { 0x09, "Device Name"               },      // FF 09 len text
-
-    /*
-     * The following events are normally not documented, so let's save some
-     * lookup time.
-     *
-     * { 0x0A, "Text Event 0A"          },
-     * { 0x0B, "Text Event 0B"          },
-     * { 0x0C, "Text Event 0C"          },
-     * { 0x0D, "Text Event 0D"          },
-     * { 0x0E, "Text Event 0E"          },
-     * { 0x0F, "Text Event 0F"          },
-     */
-
-    { 0x20, "MIDI Channel"              },      // FF 20 01 cc (obsolete)
-    { 0x21, "MIDI Port"                 },      // FF 21 01 pp (obsolete)
-    { 0x2F, "Track End"                 },      // FF 2F 00 (mandatory event)
-    { 0x51, "Tempo"                     },      // FF 51 03 tt tt tt (set tempo)
-    { 0x54, "SMPTE Offset"              },      // FF 54 05 hh mm ss fr ff
-    { 0x58, "Time Sig"                  },      // FF 58 04 nn dd cc bb
-    { 0x59, "Key Sig"                   },      // FF 59 02 sf mi
-    { 0x7F, "Seq Spec"                  },      // FF 7F len id data (seq66 prop)
-    { 0xFF, "Illegal meta event"        },      // indicator of problem
-    { s_end_of_table, ""                }       // terminator
+    { -1, 0x00, "Seq Number"            },  // FF 00 02 ss ss (16-bit)
+    {  0, 0x01, "Text Event"            },  // FF 01 len text
+    {  1, 0x02, "Copyright"             },  // FF 02 len text
+    {  2, 0x03, "Track Name"            },  // FF 03 len text
+    {  3, 0x04, "Instrument Name"       },  // FF 04 len text
+    {  4, 0x05, "Lyric"                 },  // FF 05 len text
+    {  5, 0x06, "Marker"                },  // FF 06 len text
+    {  6, 0x07, "Cue Point"             },  // FF 07 len text
+    {  7, 0x08, "Program Name"          },  // FF 08 len text
+    {  8, 0x09, "Device Name"           },  // FF 09 len text
+    { -1, 0x0A, "Event 0A"              },
+    { -1, 0x0B, "Event 0B"              },
+    { -1, 0x0C, "Event 0C"              },
+    { -1, 0x0D, "Event 0D"              },
+    { -1, 0x0E, "Event 0E"              },
+    { -1, 0x0F, "Event 0F"              },
+    { -1, 0x20, "MIDI Channel"          },  // FF 20 01 cc (obsolete)
+    { -1, 0x21, "MIDI Port"             },  // FF 21 01 pp (obsolete)
+    { -1, 0x2F, "Track End"             },  // FF 2F 00 (mandatory event)
+    {  9, 0x51, "Tempo"                 },  // FF 51 03 tt tt tt (set tempo)
+    { 10, 0x54, "SMPTE Offset"          },  // FF 54 05 hh mm ss fr ff
+    { 11, 0x58, "Time Sig"              },  // FF 58 04 nn dd cc bb
+    { 12, 0x59, "Key Sig"               },  // FF 59 02 sf mi
+    { 13, 0x7F, "Seq Spec"              },  // FF 7F len id data (seq66 prop)
+    { -1, 0xFF, "Illegal meta event"    },  // indicator of problem
+    { -1, s_end_of_table, ""            }   // terminator
 };
 
 /**
@@ -227,27 +232,48 @@ sm_meta_lengths [] =
 /**
  *  Initializes the array of event/name pairs for all of the
  *  seq66-specific events.  Terminated only by the empty string.
- *  Note that the numbers reflect the masking off of the high-order bits by
- *  0x242400FF.
+ *  Note that the numbers reflect the masking off of the high-order bits
+ *  of 0x242400nn to retrieve 0xnn.
+ *
+ *  Also see the list of midilong value in midi_vector_base.hpp.
  */
 
 static const editable_event::name_value_t
-s_prop_event_names [] =
+s_seqspec_event_names [] =
 {
-    { 0x01, "Buss number"               },
-    { 0x02, "Channel number"            },
-    { 0x03, "Clocking"                  },
-    { 0x04, "Old triggers"              },
-    { 0x05, "Song notes"                },
-    { 0x06, "Time signature"            },
-    { 0x07, "Beats per minute"          },
-    { 0x08, "Trigger data"              },
-    { 0x09, "Song mute group data"      },
-    { 0x10, "Song MIDI control"         },
-    { 0x11, "Key"                       },
-    { 0x12, "Scale"                     },
-    { 0x13, "Background sequence"       },
-    { s_end_of_table, ""                }   // terminator
+    {  0, 0x01, "Buss number"               },
+    {  1, 0x02, "Channel number"            },
+    {  2, 0x03, "Clocking"                  },
+    {  3, 0x04, "Old trigger"               },  // original Seq24-style trigger
+    {  4, 0x05, "Song notes"                },
+    {  5, 0x06, "Time signature"            },
+    {  6, 0x07, "Beats per minute"          },
+    {  7, 0x08, "Trigger ex"                },  // newer Seq24 trigger
+    {  8, 0x09, "Mute groups"               },
+    { -1, 0x0A, "Gap A"                     },
+    { -1, 0x0B, "Gap B"                     },
+    { -1, 0x0C, "Gap C"                     },
+    { -1, 0x0D, "Gap D"                     },
+    { -1, 0x0E, "Gap E"                     },
+    { -1, 0x0F, "Gap F"                     },
+    {  9, 0x10, "Song MIDI control"         },
+    { 10, 0x11, "Music key"                 },
+    { 11, 0x12, "Music scale"               },
+    { 12, 0x13, "Background pattern"        },
+    { 13, 0x14, "Track transpose"           },  // Seq32
+    { 14, 0x15, "Perfedit beats/measure"    },  // Seq32
+    { 15, 0x16, "Perfedit beat width"       },  // Seq32
+    { 16, 0x17, "Tempo map"                 },  // Seq32
+    { -1, 0x18, "Reserved 1"                },
+    { -1, 0x19, "Reserved 2"                },
+    { 17, 0x1A, "Tempo track"               },
+    { 18, 0x1B, "Pattern color"             },
+    { 19, 0x1C, "Patter edit mode"          },
+    { 20, 0x1D, "Pattern loop count"        },
+    { -1, 0x1E, "Reserved 3"                },
+    { -1, 0x1F, "Reserved 4"                },
+    { 21, 0x20, "Transposable trigger"      },  // Seq66/Sequencer64 trigger
+    { -1, s_end_of_table, ""                }   // terminator
 };
 
 /**
@@ -263,7 +289,7 @@ s_category_arrays [] =
     s_channel_event_names,
     s_system_event_names,
     s_meta_event_names,
-    s_prop_event_names
+    s_seqspec_event_names
 };
 
 /**
@@ -302,6 +328,81 @@ editable_event::channel_event_name (int index)
         {
             result = s_channel_event_names[counter].event_name;
             break;
+        }
+        ++counter;
+    }
+    return result;
+}
+
+/**
+ *  A static member function used to fill a system-event combo-box.
+ */
+
+std::string
+editable_event::system_event_name (int index)
+{
+    std::string result;
+    int counter = 0;
+    while (s_system_event_names[counter].event_value != s_end_of_table)
+    {
+        int tindex = s_system_event_names[counter].event_index;
+        if (tindex >= 0)
+        {
+            if (tindex == index)
+            {
+                result = s_system_event_names[counter].event_name;
+                break;
+            }
+        }
+        ++counter;
+    }
+    return result;
+}
+
+/**
+ *  A static member function used to fill a meta-event combo-box.
+ */
+
+std::string
+editable_event::meta_event_name (int index)
+{
+    std::string result;
+    int counter = 0;
+    while (s_meta_event_names[counter].event_value != s_end_of_table)
+    {
+        int tindex = s_meta_event_names[counter].event_index;
+        if (tindex >= 0)
+        {
+            if (tindex == index)
+            {
+                result = s_meta_event_names[counter].event_name;
+                break;
+            }
+        }
+        ++counter;
+    }
+    return result;
+}
+
+/**
+ *  A static member function used to fill a seqspec-event combo-box.
+ */
+
+std::string
+editable_event::seqspec_event_name (int index)
+{
+    std::string result;
+    int counter = 0;
+    while (s_seqspec_event_names[counter].event_value != s_end_of_table)
+    {
+        int tindex = s_seqspec_event_names[counter].event_index;
+        if (tindex >= 0)
+        {
+            if (tindex == index)
+            {
+                result = s_seqspec_event_names[counter].event_name;
+                break;
+            }
         }
         ++counter;
     }
@@ -367,14 +468,14 @@ editable_event::value_to_name
  *      then s_end_of_table is returned.
  */
 
-unsigned short
+midishort
 editable_event::name_to_value
 (
     const std::string & name,
     editable_event::subgroup cat
 )
 {
-    unsigned short result = s_end_of_table;
+    midishort result = s_end_of_table;
     if (! name.empty())
     {
         const name_value_t * const table = s_category_arrays[int(cat)];
@@ -404,10 +505,10 @@ editable_event::name_to_value
  *      length is actually 0, or is variable, then 0 is returned.
  */
 
-unsigned short
+midishort
 editable_event::meta_event_length (midibyte value)
 {
-    unsigned short result = 0;
+    midishort result = 0;
     midibyte counter = 0;
     while (sm_meta_lengths[counter].event_value != s_end_of_table)
     {
@@ -491,7 +592,7 @@ editable_event::editable_event
 void
 editable_event::category (editable_event::subgroup c)
 {
-    if (c >= subgroup::channel_message && c <= subgroup::prop_event)
+    if (c >= subgroup::channel_message && c <= subgroup::seqspec_event)
         m_category = c;
     else
         m_category = subgroup::name;
@@ -515,7 +616,7 @@ editable_event::category (editable_event::subgroup c)
 void
 editable_event::category (const std::string & name)
 {
-    unsigned short catcode = name_to_value(name, subgroup::name);
+    midishort catcode = name_to_value(name, subgroup::name);
     if (catcode < s_end_of_table)
         m_category = static_cast<subgroup>(catcode);
     else
@@ -686,7 +787,7 @@ editable_event::set_status_from_string
     const std::string & chan
 )
 {
-    unsigned short value = name_to_value(s, subgroup::channel_message);
+    midishort value = name_to_value(s, subgroup::channel_message);
     timestamp(ts);
     if (value != s_end_of_table)                        /* channel message  */
     {

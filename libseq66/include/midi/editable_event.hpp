@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2023-05-01
+ * \updates       2023-05-02
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -37,6 +37,7 @@
 
 #include "midi/calculations.hpp"        /* seq66::pulses_to_string() etc.   */
 #include "midi/event.hpp"               /* seq66::event                     */
+#include "midi/midibytes.hpp"           /* seq66::midishort data type       */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -77,14 +78,14 @@ public:
      *  the lookup infrastructure.
      */
 
-    enum class subgroup
+    enum class subgroup : midibyte
     {
         /**
          *  Indicates that the lookup needs to be done on the category names,
          *  as listed in sm_category_names[].
          */
 
-        name,              /* sm_category_names[]          */
+        name,                           /* sm_category_names[]      */
 
         /**
          *  Indicates a channel event, with a value ranging from 0x80 through
@@ -92,7 +93,7 @@ public:
          *  change.  Values are looked up in sm_channel_event_names[].
          */
 
-        channel_message,   /* sm_channel_event_names[]     */
+        channel_message,                /* sm_channel_event_names[] */
 
         /**
          *  Indicates a system event, with a value ranging from 0xF0 through
@@ -103,7 +104,7 @@ public:
          *  Meta events.
          */
 
-        system_message,    /* sm_system_event_names[]      */
+        system_message,                 /* sm_system_event_names[]  */
 
         /**
          *  Indicates a meta event, and there is a second value that is used
@@ -114,15 +115,15 @@ public:
          *  Reset event.
          */
 
-        meta_event,        /* sm_meta_event_names[]        */
+        meta_event,                     /* sm_meta_event_names[]    */
 
         /**
          *  Indicates a "proprietary", Seq66 event.  Indicates to look
-         *  up the name of the event in sm_prop_event_names[].  Not sure if
+         *  up the name of the event in sm_seqspec_event_names[].  Not sure if
          *  these kinds of events will be stored separately.
          */
 
-        prop_event         /* sm_prop_event_names[]        */
+        seqspec_event                   /* sm_seqspec_event_names[] */
     };
 
     /**
@@ -167,12 +168,21 @@ public:
     using name_value_t = struct
     {
         /**
-         *  Holds a midibyte value (0x00 to 0xFF).  This field can be
-         *  considered a "key" value, as it is often looked up to find the
-         *  event name.
+         *  ca 2023-05-02
+         *  Supplements the event value with an index into a combo-box or
+         *  similar list.  We cannot support every possible event_value for
+         *  lookup.
          */
 
-        unsigned short event_value;
+        int event_index;
+
+        /**
+         *  Holds a midibyte value (0x00 to 0xFF or 0x100 for end-of-list).
+         *  This field can be considered a "key" value, as it is often looked
+         *  up to find the event name.
+         */
+
+        midishort event_value;
 
         /**
          *  Holds the human-readable name for an event code or other numeric
@@ -194,14 +204,14 @@ public:
          *  meaning as the event_value of the name_value_t type.
          */
 
-        unsigned short event_value;
+        midishort event_value;
 
         /**
          *  Holds the length expected for the Meta event, or 0 if it does not
          *  apply to the Meta event.
          */
 
-        unsigned short event_length;
+        midishort event_length;
     };
 
 private:
@@ -225,7 +235,7 @@ private:
     /**
      *  Indicates the overall category of this event, which will be
      *  subgroup::channel_message, subgroup::system_message,
-     *  subgroup::meta_event, and subgroup::prop_event.  The subgroup::name
+     *  subgroup::meta_event, and subgroup::seqspec_event.  The subgroup::name
      *  value is not set here, since that category is used only for looking up
      *  the human-readable form of the category.
      */
@@ -408,6 +418,9 @@ public:
 
     static std::string category_name (int index);
     static std::string channel_event_name (int index);
+    static std::string system_event_name (int index);
+    static std::string meta_event_name (int index);
+    static std::string seqspec_event_name (int index);
 
 private:
 
@@ -417,8 +430,8 @@ private:
     }
 
     static std::string value_to_name (midibyte value, subgroup cat);
-    static unsigned short name_to_value (const std::string & name, subgroup cat);
-    static unsigned short meta_event_length (midibyte value);
+    static midishort name_to_value (const std::string & name, subgroup cat);
+    static midishort meta_event_length (midibyte value);
 
 };          // class editable_event
 

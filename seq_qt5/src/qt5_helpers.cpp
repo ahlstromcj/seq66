@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-04-01
+ * \updates       2023-05-02
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -310,10 +310,19 @@ enable_combobox_item (QComboBox * box, int index, bool enabled)
 {
     QStandardItemModel * m = qobject_cast<QStandardItemModel *>(box->model());
     QStandardItem * item = m->item(index);
-    if (enabled)
-        item->setFlags(item->flags() | Qt::ItemIsEnabled);
+    if (not_nullptr(item))
+    {
+        if (enabled)
+            item->setFlags(item->flags() | Qt::ItemIsEnabled);
+        else
+            item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+    }
     else
-        item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+    {
+        std::string data = "index ";
+        data += std::to_string(index);
+        error_message("null combobox item", data);
+    }
 }
 
 /**

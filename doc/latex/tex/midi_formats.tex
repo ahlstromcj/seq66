@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2023-04-28
+% \update      2023-05-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -114,9 +114,12 @@
       FF 7F len data
    \end{verbatim}
 
-   The first byte of the data is the "manufacturer ID", which \textsl{Seq24}
-   set to "24". Another "24" is added to make the number \texttt{0x2424}
-   easy to search in a binary hex editor, such as \textsl{hexer}.
+   The first byte of the "data is the "manufacturer ID", which \textsl{Seq24}
+   set to "24". (This value corresponds to the manufactuer ID of
+   \textsl{Hohner}!)
+   Another "24" is added to make the number \texttt{0x2424}
+   easy to search in a binary hex editor, such as \textsl{hexer} or
+   \textsl{bvi}..
    Then a "00" is added.  Finally, the last number, "nn" is added, and that
    specifies the type of data to be read.  Here is the full format:
 
@@ -124,6 +127,8 @@
       FF 7F len 24 24 00 nn databyte(s)
    \end{verbatim}
 
+   The "len" value includes the 4 bytes of the SeqSpec marker and number
+   of data bytes.
    If the tag value "nn" is not recognized, a message is emitted and the
   \texttt{SeqSpec} is skipped.  If the "24" value is something else, as it
   would be for another sequencer product, then the

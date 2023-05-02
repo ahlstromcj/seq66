@@ -213,6 +213,7 @@ qseventslots::set_current_event
     bool // full_redraw
 )
 {
+    int channel = null_channel();
     std::string data_0;
     std::string data_1;
     const editable_event & ev = editable_events::cdref(ei);
@@ -228,6 +229,11 @@ qseventslots::set_current_event
     else if (ev.is_ex_data())
     {
         data_0 = ev.ex_data_string();
+        m_parent.set_event_plaintext("Ex data");
+    }
+    else if (ev.is_system())
+    {
+        m_parent.set_event_system("System data");
     }
     else
     {
@@ -235,11 +241,12 @@ qseventslots::set_current_event
         ev.get_data(d0, d1);
         data_0 = data_string(d0);
         data_1 = data_string(d1);
+        channel = int(ev.channel());
     }
     set_event_text
     (
         ev.category_string(), ev.timestamp_string(), ev.status_string(),
-        data_0, data_1, int(ev.channel())
+        data_0, data_1, channel
     );
     m_current_row = m_current_index = index;
     m_current_iterator = ei;

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-04-29
+ * \updates       2023-05-02
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -6618,7 +6618,7 @@ performer::midi_control_keystroke (const keystroke & k)
 #if defined SEQ66_PLATFORM_DEBUG
                         printf
                         (
-                            "Action %d: code %d, d0 %d, d1 %d failed\n",
+                            "Action %d: code %d, d0 %d, d1 %d ignored\n",
                             index, static_cast<int>(a), d0, d1
                         );
 #endif

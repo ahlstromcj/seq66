@@ -141,7 +141,7 @@
    <property name="geometry">
     <rect>
      <x>460</x>
-     <y>252</y>
+     <y>264</y>
      <width>349</width>
      <height>69</height>
     </rect>
@@ -157,8 +157,8 @@
    <property name="geometry">
     <rect>
      <x>461</x>
-     <y>332</y>
-     <width>361</width>
+     <y>340</y>
+     <width>345</width>
      <height>52</height>
     </rect>
    </property>
@@ -334,8 +334,8 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
     <rect>
      <x>461</x>
      <y>9</y>
-     <width>365</width>
-     <height>83</height>
+     <width>349</width>
+     <height>86</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -466,13 +466,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>460</x>
      <y>99</y>
      <width>348</width>
-     <height>139</height>
+     <height>158</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -514,13 +514,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
         <property name="minimumSize">
          <size>
           <width>100</width>
-          <height>24</height>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>272</width>
-          <height>24</height>
+          <height>28</height>
          </size>
         </property>
         <property name="editable">
@@ -530,10 +530,10 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
          <number>-1</number>
         </property>
         <property name="maxVisibleItems">
-         <number>16</number>
+         <number>12</number>
         </property>
         <property name="maxCount">
-         <number>16</number>
+         <number>17</number>
         </property>
         <property name="insertPolicy">
          <enum>QComboBox::NoInsert</enum>
@@ -548,17 +548,23 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
         <property name="minimumSize">
          <size>
           <width>100</width>
-          <height>24</height>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>272</width>
-          <height>24</height>
+          <height>28</height>
          </size>
         </property>
         <property name="editable">
          <bool>true</bool>
+        </property>
+        <property name="maxVisibleItems">
+         <number>12</number>
+        </property>
+        <property name="maxCount">
+         <number>32</number>
         </property>
         <property name="insertPolicy">
          <enum>QComboBox::NoInsert</enum>
@@ -567,16 +573,22 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       </item>
       <item row="1" column="1">
        <widget class="QLineEdit" name="entry_ev_timestamp">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
           <width>100</width>
-          <height>24</height>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>272</width>
-          <height>24</height>
+          <height>28</height>
          </size>
         </property>
         <property name="toolTip">
@@ -626,7 +638,29 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="combo_ev_category"/>
+       <widget class="QComboBox" name="combo_ev_category">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>272</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maxVisibleItems">
+         <number>8</number>
+        </property>
+        <property name="maxCount">
+         <number>8</number>
+        </property>
+        <property name="insertPolicy">
+         <enum>QComboBox::NoInsert</enum>
+        </property>
+       </widget>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label_category">

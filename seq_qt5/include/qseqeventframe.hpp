@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-05-01
+ * \updates       2023-05-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -124,6 +124,8 @@ private:
     void set_event_data_0 (const std::string & d);
     void set_event_data_1 (const std::string & d);
     void set_event_plaintext (const std::string & t);
+    void set_event_system (const std::string & t);
+    void set_event_seqspec (const std::string & t);
     void set_event_line
     (
         int row,
@@ -151,9 +153,12 @@ private:
     QTableWidgetItem * cell (int row, column_id col);
     void current_row (int row);
     int current_row () const;
-    void populate_midich_combo ();
-    void populate_status_combo ();
     void populate_category_combo ();
+    void populate_status_combo ();
+    void populate_system_combo ();
+    void populate_meta_combo ();
+    void populate_seqspec_combo ();
+    void populate_midich_combo ();
     std::string filename_prompt
     (
         const std::string & prompt,

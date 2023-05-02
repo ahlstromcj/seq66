@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-05-01
+ * \updates       2023-05-02
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -129,8 +129,6 @@ qseqeventframe::qseqeventframe
     ts_ppqn += " ticks ";
     ts_ppqn += std::to_string(track().get_length());
     set_seq_time_sig_and_ppqn(ts_ppqn);
-
-//  ui->label_channel->hide();              /* set_seq_channel(channelstr); */
     set_seq_channel("");
     set_seq_lengths(get_lengths());
 
@@ -317,22 +315,34 @@ qseqeventframe::~qseqeventframe()
     delete ui;
 }
 
-void
-qseqeventframe::populate_midich_combo ()
-{
-    int defchannel = int(track().seq_midi_channel());
-    if (is_null_channel(defchannel))
-        defchannel = 0;
+/**
+ *  Populates the (new) Category combo-box that replaces the text-label
+ *  with a more functional interface item.
+ */
 
-    ui->channel_combo_box->clear();
-    for (int channel = 1; channel <= c_midichannel_max; ++channel)
+void
+qseqeventframe::populate_category_combo ()
+{
+    ui->combo_ev_category->clear();
+    for (int counter = 0; /* counter value */ ; ++counter)
     {
-        std::string name = std::to_string(channel);
-        QString combotext(qt(name));
-        ui->channel_combo_box->insertItem(channel - 1, combotext);
+        std::string name = editable_event::category_name(counter);
+        if (name.empty())
+        {
+            break;
+        }
+        else
+        {
+            QString combotext(qt(name));
+            ui->combo_ev_category->insertItem(counter, combotext);
+        }
     }
-    ui->channel_combo_box->setCurrentIndex(defchannel);
 }
+
+/**
+ *  Populates combo_ev_name with the status values of Channel
+ *  events.
+ */
 
 void
 qseqeventframe::populate_status_combo ()
@@ -352,21 +362,21 @@ qseqeventframe::populate_status_combo ()
             ui->combo_ev_name->insertItem(counter, combotext);
         }
     }
-
-#if defined USE_META_TEXT_EDITING
-    ui->combo_ev_name->insertSeparator(counter);
-#endif
-
     ui->combo_ev_name->setCurrentIndex(0);
 }
 
+/**
+ *  Populates combo_ev_name with the name of supported System events.
+ */
+
 void
-qseqeventframe::populate_category_combo ()
+qseqeventframe::populate_system_combo ()
 {
-    ui->combo_ev_category->clear();
-    for (int counter = 0; /* counter value */ ; ++counter)
+    ui->combo_ev_name->clear();
+    int counter = 0;
+    for ( ; /* counter value */ ; ++counter)
     {
-        std::string name = editable_event::category_name(counter);
+        std::string name = editable_event::system_event_name(counter);
         if (name.empty())
         {
             break;
@@ -374,9 +384,85 @@ qseqeventframe::populate_category_combo ()
         else
         {
             QString combotext(qt(name));
-            ui->combo_ev_category->insertItem(counter, combotext);
+            ui->combo_ev_name->insertItem(counter, combotext);
         }
     }
+    ui->combo_ev_name->setCurrentIndex(0);
+}
+
+/**
+ *  Populates combo_ev_name with the name of supported Meta events.
+ */
+
+void
+qseqeventframe::populate_meta_combo ()
+{
+    ui->combo_ev_name->clear();
+    int counter = 0;
+    for ( ; /* counter value */ ; ++counter)
+    {
+        std::string name = editable_event::meta_event_name(counter);
+        if (name.empty())
+        {
+            break;
+        }
+        else
+        {
+            QString combotext(qt(name));
+            ui->combo_ev_name->insertItem(counter, combotext);
+        }
+    }
+    ui->combo_ev_name->setCurrentIndex(0);
+}
+
+/**
+ *  Populates combo_ev_name with the name of supported SeqSpec events.
+ */
+
+void
+qseqeventframe::populate_seqspec_combo ()
+{
+    ui->combo_ev_name->clear();
+    int counter = 0;
+    for ( ; /* counter value */ ; ++counter)
+    {
+        std::string name = editable_event::seqspec_event_name(counter);
+        if (name.empty())
+        {
+            break;
+        }
+        else
+        {
+            QString combotext(qt(name));
+            ui->combo_ev_name->insertItem(counter, combotext);
+        }
+    }
+    ui->combo_ev_name->setCurrentIndex(0);
+}
+
+/**
+ *  Inserts channel text items from 1 to 16, with indices from 0 to 15.
+ *  Also added is a "None" entry at index 16, for display with
+ *  non-channel events.
+ */
+
+void
+qseqeventframe::populate_midich_combo ()
+{
+    int defchannel = int(track().seq_midi_channel());
+    if (is_null_channel(defchannel))
+        defchannel = c_midichannel_max;                     /* index == 16  */
+
+    ui->channel_combo_box->clear();
+    for (int channel = 0; channel <= c_midichannel_max; ++channel)
+    {
+        std::string name = channel == c_midichannel_max ?
+            "None" : std::to_string(channel + 1) ;
+
+        QString combotext(qt(name));
+        ui->channel_combo_box->insertItem(channel, combotext);
+    }
+    ui->channel_combo_box->setCurrentIndex(defchannel);
 }
 
 void
@@ -400,10 +486,22 @@ qseqeventframe::slot_event_name (int /*index*/)
     // Anything to do? We just need the text.
 }
 
+/**
+ *  We'll tighten this up later.
+ *  See the s_category_names [] array.
+ */
+
 void
-qseqeventframe::slot_event_category (int /*index*/)
+qseqeventframe::slot_event_category (int index)
 {
-    // Anything to do? We just need the text.
+    switch (index)
+    {
+    case 0:     populate_status_combo();            break;
+    case 1:     populate_system_combo();            break;
+    case 2:     populate_meta_combo();              break;
+    case 3:     populate_seqspec_combo();           break;
+    default:                                        break;
+    }
 }
 
 void
@@ -593,7 +691,6 @@ qseqeventframe::set_seq_time_sig_and_ppqn (const std::string & sig)
 void
 qseqeventframe::set_seq_channel (const std::string & /*ch*/)
 {
-//  ui->label_channel->setText(qt(ch));
     ui->channel_combo_box->setCurrentIndex(0);
 }
 
@@ -657,6 +754,9 @@ qseqeventframe::set_event_name (const std::string & n)
 void
 qseqeventframe::set_event_channel (int channel)
 {
+    if (is_null_channel(midibyte(channel)))
+        channel = c_midichannel_max + 1;
+
     ui->channel_combo_box->setCurrentIndex(channel);
 }
 
@@ -691,6 +791,26 @@ qseqeventframe::set_event_plaintext (const std::string & t)
 {
     QString text = qt(t);
     ui->plainTextEdit->document()->setPlainText(text);
+    populate_meta_combo();
+    ui->channel_combo_box->setCurrentIndex(16);
+}
+
+void
+qseqeventframe::set_event_system (const std::string & t)
+{
+    QString text = qt(t);                               // convert to hex bytes?
+    ui->plainTextEdit->document()->setPlainText(text);
+    populate_system_combo();
+    ui->channel_combo_box->setCurrentIndex(16);
+}
+
+void
+qseqeventframe::set_event_seqspec (const std::string & t)
+{
+    QString text = qt(t);                               // convert to hex bytes?
+    ui->plainTextEdit->document()->setPlainText(text);
+    populate_system_combo();
+    ui->channel_combo_box->setCurrentIndex(16);
 }
 
 /**
@@ -834,6 +954,10 @@ qseqeventframe::current_row (int row)
     m_eventslots->current_row(row);
 }
 
+/**
+ *  The first slot for handling a click in the event table.
+ */
+
 void
 qseqeventframe::slot_table_click_ex
 (
@@ -851,6 +975,10 @@ qseqeventframe::slot_table_click_ex
             ui->eventTableWidget->clearSelection();
     }
 }
+
+/**
+ *  The second slot for handling a click in the event table.
+ */
 
 void
 qseqeventframe::slot_row_selected ()
