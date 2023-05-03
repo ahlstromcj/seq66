@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2023-04-30
+% \update      2023-05-03
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -545,8 +545,10 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    information received from \textsl{NSM} is displayed.
    It is meant to display information to
    help the user understand what is happening in the run.
-   This tab is not yet fully functional.
-   In particular, \textbf{Session Log} does not yet work.
+   Two screenshots are shown below.
+%  The first shows a \textbf{Session Log} pane, but this has been removed
+%  as non-functional.
+   The first one is a little out-of-date.
 
 \begin{figure}[H]
    \centering 
@@ -554,11 +556,20 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    \caption*{Session Tab Under NSM}
 \end{figure}
 
+   The next diagram is more up-to-date, and shows the \textbf{Song Info}
+   pane.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.65]{tabs/session/qseq66-session-tab-song-info.png}
+   \caption*{New Session Tab with Song Info}
+\end{figure}
+
    \index{sessions!ui}
    This section describes the \textsl{Session} tab in the main
    \textsl{Seq66} window.  This tab displays mostly informative and
    \textsl{read-only} information (except for the name of the log file
-   to use).
+   and the editable song-info pane).
    It displays the following bits of information that \textsl{Seq66} has received
    from \textsl{NSM} via the \texttt{nmsd} daemon:
 
@@ -596,7 +607,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
       \item Song Info.
          \index{song!info}
          \index{meta text}
-         Not shown yet is an edit-control that allows the view and
+         This item is a plaintext edit-control that allows the viewing and
          editing of "song info".
          The song info is merely the first Meta Text event, if any,
          found in pattern 0.
@@ -607,7 +618,6 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          When the \textbf{Save Info} button is clicked, the meta text
          is copied to the first pattern, thus modifying the file, which
          can then be saved.
-         The "song info" option will be extended in the future.
    \end{itemize}
 
 \subsubsection{Seq66 Session Management / NSM / File Menu}

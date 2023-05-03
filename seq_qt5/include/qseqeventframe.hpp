@@ -227,6 +227,12 @@ private:
 
     bool m_is_dirty;
 
+    /**
+     *  Holds the index of the channel named "None".
+     */
+
+    int m_no_channel_index;
+
 };          // class qseqeventframe
 
 }           // namespace seq66

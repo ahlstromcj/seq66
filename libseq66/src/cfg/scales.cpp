@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2023-03-22
+ * \updates       2023-05-03
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of many scale interval patterns if working with
@@ -63,6 +63,7 @@
 
 #include "cfg/scales.hpp"               /* seq66::scales declarations       */
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
+#include "util/strfunctions.hpp"        /* seq66::contains()                */
 
 #if defined USE_SHOE_ALL_COUNTS
 #include "cfg/settings.hpp"             /* seq66::rc().verbose()            */
@@ -939,6 +940,105 @@ analyze_notes
                         ++result;                   /* count it */
                     }
                 }
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ *  Returns the root note of a key signature.
+ */
+
+using key_sig_data = struct
+{
+    int sharp_flat_count;
+    std::string major_root_note;
+    std::string minor_root_note;
+};
+
+static key_sig_data s_key_sig_root_table [15] =
+{
+    {   -7,  "Cbmaj", "Abmin"     },
+    {   -6,  "Gbmaj", "Ebmin"     },
+    {   -5,  "Dbmaj", "Bbmin"     },
+    {   -4,  "Abmaj", "Fmin"      },
+    {   -3,  "Ebmaj", "Cmin"      },
+    {   -2,  "Bbmaj", "Gmin"      },
+    {   -1,  "Fmaj",  "Dmin"      },
+    {    0,  "Cmaj",  "Amin"      },
+    {    1,  "Gmaj",  "Emin"      },
+    {    2,  "Dmaj",  "Bmin"      },
+    {    3,  "Amaj",  "F#min"     },
+    {    4,  "Emaj",  "C#min"     },
+    {    5,  "Bmaj",  "G#min"     },
+    {    6,  "F#maj", "D#min"     },
+    {    7,  "C#maj", "A#min"     }
+};
+
+/**
+ *  Returns the key-signature string.
+ *
+ * \param sfcount
+ *      Provides the sharp/flat count, rangine from -7 to 7.
+ *
+ * \param isminor
+ *      If true, the scale is minor, otherwise it is major.
+ *
+ * \return
+ *      Returns the string via a fast lookup. It is empty if
+ *      the sfcount is out of range.
+ */
+
+std::string
+key_signature_string (int sfcount, bool isminor)
+{
+    std::string result;
+    if (sfcount >= -7 && sfcount <= 7)
+    {
+        int index = sfcount + 7;
+        const key_sig_data & ksd = s_key_sig_root_table[index];
+        result = isminor ? ksd.minor_root_note : ksd.major_root_note ;
+    }
+    return result;
+}
+
+/**
+ * \param keysigname
+ *      The human-readable name of the key signature, from the above table.
+ *
+ * \param [inout] sfcount
+ *      Returns the key-sig value, ranging from -7 to 7. This is a
+ *      brute-force lookup. Defaults to 0 if the keysigname is not found.
+ *
+ * \return
+ *      Returns true if the scale is a minor scale.
+ */
+
+bool
+key_signature_values (const std::string & keysigname, int & sfcount)
+{
+    bool result = contains(keysigname, "min");
+    sfcount = 0;
+    if (result)
+    {
+        for (int i = 0; i < 15; ++i)
+        {
+            if (keysigname == s_key_sig_root_table[i].minor_root_note)
+            {
+                sfcount = i - 7;
+                break;
+            }
+        }
+    }
+    else
+    {
+        for (int i = 0; i < 15; ++i)
+        {
+            if (keysigname == s_key_sig_root_table[i].major_root_note)
+            {
+                sfcount = i - 7;
+                break;
             }
         }
     }

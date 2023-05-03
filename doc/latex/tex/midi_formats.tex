@@ -1019,7 +1019,8 @@
    If the meta event status value is 0xF0, it is called a "System-exclusive",
    or "SysEx" event.
    \textsl{Seq66} has some code in place to store these messages, but the
-   data is currently not actually stored or used.  Although there is some
+   data is currently not actually stored or used.
+   Although there is some
    infrastructure to support storing the SysEx event within a sequence, the
    SysEx information is simply skipped.  \textsl{Seq66} warns if the
    terminating 0xF7 SysEx terminator is not found at the expected length.
@@ -1036,6 +1037,25 @@
    also be stored (by \textsl{Seq66}) with a particular sequence/track,
    as well as at the end of the song.  Not sure if this bit of extra
    flexibility is useful, but it is there.
+   The format of a SysEx message is
+
+   \begin{verbatim}
+      F0 manid devid modelid direction address   data checksum terminator
+      F0 0x41  0x10  0x42    0x12      0x40007F  0x00 0x41     0xF7
+   \end{verbatim}
+
+   The "manid" is a manufacturer's identifier. 0x41 is Roland, 0x24 is
+   Hohner. The "devid" is the device identifier (e.g. 0x10 for Roland devices).
+   The "devid" indicates which devices will accept the SysEx message.
+   The "modelid" is the model identifier (0x42 for most GS synths).
+   The "direction" is 0x12 for sending information or 0x11 for requesting
+   information.
+   The "address" is a 3-byte value on which the SysEx message should act.
+   Devices provide an address map to define what is at each address.
+   For example, this address might define a "GS Reset", which performs
+   an initialization.
+   The "data" is either the data to send (one or more bytes), or the
+   size of the data we are requesting.
 
 \subsubsection{Non-Specific End of Sequence}
 \label{subsubsec:midi_format_meta_sequence_ends}

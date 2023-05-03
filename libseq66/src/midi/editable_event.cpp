@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-02
+ * \updates       2023-05-03
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -784,7 +784,8 @@ editable_event::set_status_from_string
     const std::string & s,
     const std::string & sd0,
     const std::string & sd1,
-    const std::string & chan
+    const std::string & chan,
+    const std::string & text
 )
 {
     midishort value = name_to_value(s, subgroup::channel_message);
@@ -858,6 +859,12 @@ editable_event::set_status_from_string
             else if (value == EVENT_META_KEY_SIGNATURE)             /* 0x59 */
             {
                 // TO DO
+            }
+            else if
+            (
+                value >= EVENT_META_TEXT_EVENT && value <= EVENT_META_CUE_POINT
+            )
+            {
             }
             else
             {

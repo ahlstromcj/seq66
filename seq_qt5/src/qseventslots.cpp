@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-05-01
+ * \updates       2023-05-03
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -474,8 +474,7 @@ qseventslots::insert_event (editable_event ev)
 
             select_event(m_current_index);
         }
-        else
-        {
+        else {
             /*
              * This iterator is a short-lived [changed after the next add()
              * call] pointer to the added event.  This check somehow breaks
@@ -544,12 +543,17 @@ qseventslots::insert_event
     const std::string & evname,
     const std::string & evdata0,
     const std::string & evdata1,
-    const std::string & channel
+    const std::string & channel,
+    const std::string & text
 )
 {
     seq66::event e;                                 /* new default event    */
     editable_event edev(m_event_container, e);
-    edev.set_status_from_string(evtimestamp, evname, evdata0, evdata1, channel);
+
+    edev.set_status_from_string
+    (
+        evtimestamp, evname, evdata0, evdata1, channel, text
+    );
     m_current_event = edev;
     return insert_event(edev);
 }
@@ -749,7 +753,8 @@ qseventslots::modify_current_event
     const std::string & evname,
     const std::string & evdata0,
     const std::string & evdata1,
-    const std::string & channel
+    const std::string & channel,
+    const std::string & text
 )
 {
     bool result = m_event_count > 0;

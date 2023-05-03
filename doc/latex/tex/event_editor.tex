@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-02
-% \update      2023-04-25
+% \update      2023-05-03
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -42,9 +42,8 @@
    \begin{enumerate}
       \item It requires the user to know the details
          about MIDI events and data values.
-      \item It does not present handy dropdown lists for various items.
-      \item It does not detect any changes made to the sequence in the
-         pattern editor; we will ultimately add a refresh button.
+      \item For safety, it does not detect any changes made to the sequence in
+         the pattern editor; we might add a refresh button.
       \item It does not have an undo function.
       \item It cannot mark more than one event for deletion or modification.
          However, if one note event is deleted, the corrsponding linked note
@@ -54,7 +53,8 @@
 
    The event editor is a good way to see the events in a sequence,
    and to delete or modify problematic events.
-   Additionally, it can be used to add \textbf{Set Tempo} meta events.
+   Additionally, it can be used to add \textbf{Set Tempo} and other
+   meta events.
    \index{sequence extension}
    \index{pattern extension}
    If an event is added that has a time-stamp beyond the current
@@ -97,15 +97,17 @@
    Mouse or touchpad scrolling can be used to move up and down
    in the event list.  This movement is even easier than reaching for the
    scrollbars.
-   We have been trying to get this table to auto-stretch vertically when the
-   main window is vertically maximized, but have not succeeded so far.
+   Depending on the window manager theme, the currently-selected event
+   is highlighted.
+   (We have been trying to get this table to auto-stretch vertically when the
+   main window is vertically maximized, but have not succeeded so far. Qt!)
 
 \subsubsection{Event Frame / Data Items}
 \label{subsec:event_frame_data}
 
    The event frame shows a list of numbered events, one per line.
-   The currently-selected event is highlighted in cyan text on a black
-   background.  Here is an example of the data line for a MIDI event:
+   The currently-selected event is shown in the edit fields.
+   Here is an example of the data line for a MIDI event:
 
    \begin{verbatim}
       17   003:3:128 Note On   Ch 3    0x45:69 0x6b:107 003:4:96
@@ -127,7 +129,7 @@
    \itempar{Index Number}{event editor!index number}
    Displays the index number of the event.
    This number is purely for reference, and is not part
-   of the event.  Events in the pattern are numbered from 0 to the number of
+   of the event.  Events in the pattern are numbered from 1 to the number of
    events in the pattern.
 
    \itempar{Time Stamp}{event editor!time stamp}
@@ -144,6 +146,8 @@
    \index{ppqn!\$ shortcut}
    As a shortcut, one can use the dollar sign ("\$") to represent
    PPQN-1.
+   If the \textbf{Tick Time} box is checked, then the timestamps are
+   shown in units of "ticks" (MIDI pulses, sometimes called "divisions").
 
    \itempar{Event Name}{event editor!event name}
    Displays the name of the event.
@@ -151,14 +155,15 @@
    See \sectionref{subsec:event_editor_fields}.
 
    \itempar{Channel Number}{event editor!channel number}
-   Shows the channel number (for channel-events only) re 0, not 1.
-   For the user, of course, MIDI channels always range from
-   1 to 16.  Internally, they range from 0 to 15.
+   Shows the channel number (for channel-events only) re 1, not 0.
+   (For the user, MIDI channels always range from
+   1 to 16.  Internally, they range from 0 to 15.)
 
    \itempar{Data Bytes}{event editor!data bytes}
    Shows the one or two data bytes for the event.
    The byte is shown in two formats, hexadecimal and decimal, as in
    \texttt{0x6b:107} ("hex:dec").
+   For text events, a small portion of the text is shown.
 
    Note Off, Note On, and Aftertouch events requires a byte for the key (0 to
    127) and a byte for the velocity (also 0 to 127).
@@ -169,6 +174,10 @@
    (instrument) to be used for the sequence.  The Channel Pressure event
    requires only a one-byte value.
    Tempo requires a number (e.g. "120.3") to be typed in.
+
+   \itempar{Links}{event editor!links}
+   Note events are linked together; each Note On is linked to the corresponding
+   Note Off, and vice versa.
 
 \subsubsection{Event Frame / Navigation}
 \label{subsec:event_frame_navigation}
@@ -266,10 +275,32 @@
    the frame will move to the location of the new event and make it the current
    event.
 
+   \itempar{Category}{event editor!event category}
+   This drop-down displays the category of the currently selected event:
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[scale=0.65]{event-editor/message-category-dropdown.png}
+   \caption{Event Category List}
+   \label{fig:event_editor_category_dropdown}
+\end{figure}
+
+   There are four types of messages handled by \textsl{Seq66}:
+   Channel, System, Meta, and SeqSpec. 
+   Seqspec messages are stored when a pattern is saved, but they are
+   not part of the pattern's event list.
+   Hence this item is grayed out; these message values are shown in various
+   parts of the user interface.
+   See the table in \sectionref{subsec:midi_format_meta_format}.
+
+   \itempar{Time}{event editor!event time}
+   Shows the time of the event in the format of "measure:beat:divisions" (only).
+   This field can be edited to change the time of the event.
+
    \itempar{Event}{event editor!event name}
    Displays the name of the event, and allows entry of an event name.
    The event name indicates what kind of MIDI event it is. 
-   The following event names are supported:
+   The following event names are supported for Channel events:
 
    \begin{enumber}
       \item \textbf{Note Off}
@@ -293,6 +324,33 @@
    following the settings in the 'usr' file, and the program-change being made
    from a (new) 'patch' file. Currently the programs are General MIDI.
 
+   If the \textbf{Meta Event} category is selected, the following events are
+   shown:
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[scale=0.65]{event-editor/meta-event-dropdown.png}
+   \caption{Meta Event List}
+   \label{fig:event_editor_meta_dropdown}
+\end{figure}
+
+   If the \textbf{System Message} category is selected, the following events are
+   shown:
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[scale=0.65]{event-editor/system-event-dropdown.png}
+   \caption{Meta Event List}
+   \label{fig:event_editor_system_dropdown}
+\end{figure}
+
+   At present, most of these message are not editable, but at least they can be
+   seen.
+
+   \itempar{Channel}{event editor!channel}
+   This dropdown shows the channel of the current event, ranging from 1 to 16.
+   If the event is not a channel message, then \textbf{None} is shown.
+
    \itempar{D0}{event editor!data byte 1}
    Allows modification of the first data byte of the event.
    One must know what one is doing.
@@ -313,19 +371,23 @@
    One must know what one is doing.
    The scanning of the digits is as noted above.
 
-   \itempar{Show data in hex format}{event editor!hex data}
-   Selecting this shows all number items in hex format.
+   \itempar{Tick time}{event editor!tick time}
+   Selecting this check-box
+   shows the time-stamps in the frame in tick (pulses) format.
 
-   \itempar{Delete}{event editor!delete event}
-   Causes the selected event to be deleted.
-   The frame display is updated to move following events upward.
+   \itempar{Hex}{event editor!hex data}
+   Selecting this check-box
+   shows all number items in hex format.
 
-   \index{bugs!event delete key}
-   \index{bugs!event insert key}
-   \textsl{Seq66} does not support using the
-   \texttt{Delete} and \texttt{Insert} keys to
-   supplement the buttons; the \texttt{Delete}
-   key is needed for editing the event data fields.
+   \itempar{Text data}{event editor!text data}
+   This unlabelled pane shows the text of a meta text event.  Currently
+   only the Text event is supported, but in the future this will show the
+   text of other events, such as "Copyright".
+   This field can be edited to add or change a meta Text event.
+
+%  \itempar{Delete}{event editor!delete event}
+%  Causes the selected event to be deleted.
+%  The frame display is updated to move following events upward.
 
 \subsection{Event Editor / Bottom Buttons}
 \label{subsec:event_editor_buttons}
@@ -339,8 +401,16 @@
       \item \textbf{Modify} (selected event)
       \item \textbf{Clear} (all events)
       \item \textbf{Save} (back to pattern)
-      \item \textbf{Dump} (events to file)
+      \item \textbf{Dump} (dump the events to a file)
    \end{enumber}
+
+   Note that
+   \index{bugs!event delete key}
+   \index{bugs!event insert key}
+   \textsl{Seq66} does not support using the
+   \texttt{Delete} and \texttt{Insert} keys to
+   supplement the buttons; the \texttt{Delete}
+   key is needed for editing the event data fields.
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2022-07-05
+ * \updates       2023-05-03
  * \license       GNU GPLv2 or above
  *
  *  This class supports the left side of the Qt 5 version of the Event Editor
@@ -358,7 +358,8 @@ private:
         const std::string & evname,
         const std::string & evdata0,
         const std::string & evdata1,
-        const std::string & ch = ""
+        const std::string & ch      = "",
+        const std::string & text    = ""
     );
     bool delete_current_event ();
     bool modify_current_event
@@ -368,7 +369,8 @@ private:
         const std::string & evname,
         const std::string & evdata0,
         const std::string & evdata1,
-        const std::string & ch = ""
+        const std::string & ch      = "",
+        const std::string & text    = ""
     );
     bool modify_current_channel_event
     (

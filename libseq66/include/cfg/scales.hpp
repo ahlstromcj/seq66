@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-07-08
+ * \updates       2023-05-03
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the Seq64 globals module.  Includes the
@@ -204,6 +204,11 @@ extern int analyze_notes
     const eventlist & evlist,
     std::vector<keys> & outkey,
     std::vector<scales> & outscale
+);
+extern std::string key_signature_string (int sfcount, bool isminor);
+extern bool key_signature_values
+(
+    const std::string & keysigname, int & sfcount
 );
 
 }           // namespace seq66

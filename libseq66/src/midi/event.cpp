@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-29
+ * \updates       2023-05-03
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -725,6 +725,14 @@ event::set_meta_status (midibyte metatype)
  *  If the event is a text event, then this function converts the midibytes
  *  to a string.
  *
+ *  If it is another meta event, the data is converted to a human-readable
+ *  string using decimal numbers.
+ *
+ *  If it is a sysex event, the data is converted to a series of 0xnn hex
+ *  values.
+ *
+ *  For channel events, an empty string is returned.
+ *
  * \return
  *      Returns the text if valid, otherwise returns an empty string. Note
  *      that the text is in "midi-bytes" format, where characters greater
@@ -735,14 +743,41 @@ std::string
 event::get_text () const
 {
     std::string result;
-    if (is_meta_text())
+    if (is_meta_text())                     /* FF 01-07 len text            */
     {
         size_t dsize = m_sysex.size();
         for (size_t i = 0; i < dsize; ++i)
         {
             char c = char(m_sysex[i]);
-            result.push_back(c);
+            result.push_back(c);                            /* plain-text   */
         }
+    }
+    else if (is_tempo())                    /* FF 51 03 tt tt tt            */
+    {
+        midibpm bp = tempo();
+        char tmp[16];
+        (void) snprintf(tmp, sizeof tmp, "%.2f", bp);       /* "120.12"     */
+        result = std::string(tmp);
+    }
+    else if (is_key_signature())            /* FF 59 02 -7-+7 0-1           */
+    {
+    }
+    else if (is_time_signature())           /* FF 58 04 nn dd cc bb         */
+    {
+        int n = int(m_sysex[0]);
+        int d = beat_power_of_2(int(m_sysex[1]));
+        int c = int(m_sysex[2]);
+        int b = int(m_sysex[3]);
+        char tmp[32];
+        (void) snprintf
+        (
+            tmp, sizeof tmp, "%d/%d %d %d", n, d, c, b      /* "3/4 24 8"   */
+        );
+        result = std::string(tmp);
+    }
+    else if (is_sysex())
+    {
+        // TODO: convert to string of 0xnn hex values.
     }
     return result;
 }
@@ -750,7 +785,7 @@ event::get_text () const
 bool
 event::set_text (const std::string & s)
 {
-    bool result = ! s.empty();
+    bool result = ! s.empty() && is_meta_text();    /* EXPERIMENTAL */
     if (result)
     {
         m_sysex.clear();

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2023-05-02
+ * \updates       2023-05-03
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -376,7 +376,8 @@ public:
         const std::string & s,
         const std::string & sd0,
         const std::string & sd1,
-        const std::string & ch = ""
+        const std::string & ch      = "",
+        const std::string & text    = ""
     );
     void modify_channel_status_from_string
     (

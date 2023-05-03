@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2023-05-01
+ * \updates       2023-05-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -146,8 +146,12 @@ qsessionframe::~qsessionframe()
 void
 qsessionframe::sync_track_label ()
 {
-    std::string tlabel = "Track Info ";
-    tlabel += std::to_string(int(m_current_track));
+    std::string tlabel = "Song Info ";
+    if (m_current_track > 0)
+    {
+        tlabel = "Track Info ";
+        tlabel += std::to_string(int(m_current_track));
+    }
     ui->labelTrackInfo->setText(qt(tlabel));
 }
 

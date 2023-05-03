@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-05-02
+ * \updates       2023-05-03
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -95,7 +95,8 @@ qseqeventframe::qseqeventframe
     m_eventslots            (new qseventslots(p, *this, s)),
     m_show_data_as_hex      (false),
     m_show_time_as_pulses   (false),
-    m_is_dirty              (false)
+    m_is_dirty              (false),
+    m_no_channel_index      (c_midichannel_max)
 {
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -337,6 +338,15 @@ qseqeventframe::populate_category_combo ()
             ui->combo_ev_category->insertItem(counter, combotext);
         }
     }
+
+    /*
+     * Currently, we can't directly display Seq66 SeqSpec items because
+     * they are not in the event list. There are trigger containers that
+     * could be displayed. The rest of the SeqSpecs are properties of the
+     * pattern or the song.
+     */
+
+    enable_combobox_item(ui->combo_ev_category, 3, false);
 }
 
 /**
@@ -755,7 +765,7 @@ void
 qseqeventframe::set_event_channel (int channel)
 {
     if (is_null_channel(midibyte(channel)))
-        channel = c_midichannel_max + 1;
+        channel = c_midichannel_max;
 
     ui->channel_combo_box->setCurrentIndex(channel);
 }
@@ -792,7 +802,7 @@ qseqeventframe::set_event_plaintext (const std::string & t)
     QString text = qt(t);
     ui->plainTextEdit->document()->setPlainText(text);
     populate_meta_combo();
-    ui->channel_combo_box->setCurrentIndex(16);
+    ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
 }
 
 void
@@ -801,7 +811,7 @@ qseqeventframe::set_event_system (const std::string & t)
     QString text = qt(t);                               // convert to hex bytes?
     ui->plainTextEdit->document()->setPlainText(text);
     populate_system_combo();
-    ui->channel_combo_box->setCurrentIndex(16);
+    ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
 }
 
 void
@@ -810,7 +820,7 @@ qseqeventframe::set_event_seqspec (const std::string & t)
     QString text = qt(t);                               // convert to hex bytes?
     ui->plainTextEdit->document()->setPlainText(text);
     populate_system_combo();
-    ui->channel_combo_box->setCurrentIndex(16);
+    ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
 }
 
 /**
@@ -1106,8 +1116,15 @@ qseqeventframe::slot_insert ()
         std::string d0 = ui->entry_ev_data_0->text().toStdString();
         std::string d1 = ui->entry_ev_data_1->text().toStdString();
         std::string ch = ui->channel_combo_box->currentText().toStdString();
+        std::string text = ui->plainTextEdit->toPlainText().toStdString();
         std::string linktime;                   /* empty, no link time yet  */
-        bool has_events = m_eventslots->insert_event(ts, name, d0, d1, ch);
+        if (text == "N/A")
+            text.clear();
+
+        bool has_events = m_eventslots->insert_event
+        (
+            ts, name, d0, d1, ch, text
+        );
         set_seq_lengths(get_lengths());
         if (has_events)
         {
@@ -1145,6 +1162,7 @@ qseqeventframe::slot_modify ()
         std::string d0 = ui->entry_ev_data_0->text().toStdString();
         std::string d1 = ui->entry_ev_data_1->text().toStdString();
         std::string ch = ui->channel_combo_box->currentText().toStdString();
+        std::string text = ev0.get_text();  /* non-empty only w/meta events */
         midipulse lt = c_null_midipulse;
         bool reload = false;                /* works, but why is it needed? */
         if (ev0.is_linked())
@@ -1166,7 +1184,10 @@ qseqeventframe::slot_modify ()
 
         std::string ltstr = m_eventslots->time_string(lt);
         m_eventslots->select_event(row0, false);
-        (void) m_eventslots->modify_current_event(row0, ts, name, d0, d1, ch);
+        (void) m_eventslots->modify_current_event
+        (
+            row0, ts, name, d0, d1, ch, text
+        );
         set_seq_lengths(get_lengths());
         set_event_line(row0, ts, name, ch, d0, d1, ltstr);
         if (reload)
