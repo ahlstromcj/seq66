@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2023-05-03
+ * \updates       2023-05-04
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of many scale interval patterns if working with
@@ -63,6 +63,7 @@
 
 #include "cfg/scales.hpp"               /* seq66::scales declarations       */
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
+#include "midi/midibytes.hpp"           /* seq66::midibytes                 */
 #include "util/strfunctions.hpp"        /* seq66::contains()                */
 
 #if defined USE_SHOE_ALL_COUNTS
@@ -1007,40 +1008,58 @@ key_signature_string (int sfcount, bool isminor)
  * \param keysigname
  *      The human-readable name of the key signature, from the above table.
  *
- * \param [inout] sfcount
+ * \param keysigbytes
  *      Returns the key-sig value, ranging from -7 to 7. This is a
  *      brute-force lookup. Defaults to 0 if the keysigname is not found.
  *
  * \return
- *      Returns true if the scale is a minor scale.
+ *      Returns true if the bytes can be used, because no error occurred.
+ *      If false, then the keysigbytes parameter is empty [size() == 0].
  */
 
 bool
-key_signature_values (const std::string & keysigname, int & sfcount)
+key_signature_bytes
+(
+    const std::string & keysigname,
+    midibytes & keysigbytes
+)
 {
-    bool result = contains(keysigname, "min");
-    sfcount = 0;
+    bool hasminor = contains(keysigname, "min");
+    bool hasmajor = contains(keysigname, "maj");
+    bool result = hasminor || hasmajor;
+    keysigbytes.clear();
     if (result)
     {
-        for (int i = 0; i < 15; ++i)
+        int sfcount = (-99);
+        if (hasminor)
         {
-            if (keysigname == s_key_sig_root_table[i].minor_root_note)
+            for (int i = 0; i < 15; ++i)
             {
-                sfcount = i - 7;
-                break;
+                if (keysigname == s_key_sig_root_table[i].minor_root_note)
+                {
+                    sfcount = i - 7;
+                    break;
+                }
             }
         }
-    }
-    else
-    {
-        for (int i = 0; i < 15; ++i)
+        else
         {
-            if (keysigname == s_key_sig_root_table[i].major_root_note)
+            for (int i = 0; i < 15; ++i)
             {
-                sfcount = i - 7;
-                break;
+                if (keysigname == s_key_sig_root_table[i].major_root_note)
+                {
+                    sfcount = i - 7;
+                    break;
+                }
             }
         }
+        if (sfcount != (-99))
+        {
+            keysigbytes.push_back(midibyte(sfcount));
+            keysigbytes.push_back(hasminor ? midibyte(1) : 0);
+        }
+        else
+            result = false;
     }
     return result;
 }

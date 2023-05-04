@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-05-03
+ * \updates       2023-05-04
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -38,6 +38,7 @@
 #include "midi/controllers.hpp"         /* seq66::controller_name(), etc.   */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "util/filefunctions.hpp"       /* seq66::filename_split()          */
+#include "util/strfunctions.hpp"        /* seq66::string_to_midi_bytes()    */
 #include "qseqeventframe.hpp"           /* seq66::qseqeventframe            */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
@@ -93,6 +94,7 @@ qseqeventframe::qseqeventframe
     ui                      (new Ui::qseqeventframe),
     m_seq                   (s),
     m_eventslots            (new qseventslots(p, *this, s)),
+    m_linked_selection      (false),
     m_show_data_as_hex      (false),
     m_show_time_as_pulses   (false),
     m_is_dirty              (false),
@@ -175,6 +177,14 @@ qseqeventframe::qseqeventframe
         ui->eventTableWidget, SIGNAL(clicked(const QModelIndex &)),
         this, SLOT(slot_row_selected())
     );
+    ui->button_link->setChecked(m_linked_selection);
+    connect
+    (
+        ui->button_link, SIGNAL(clicked()),
+        this, SLOT(slot_link_status())
+    );
+
+    ui->button_blank->setEnabled(false);            /* not yet in use   */
 
     /*
      * Channel selection and (new) Event selection.
@@ -218,8 +228,8 @@ qseqeventframe::qseqeventframe
      *  Plain-text edit control for Meta messages involving text.
      */
 
-    ui->plainTextEdit->document()->setPlainText("N/A");
-    ui->plainTextEdit->setEnabled(false);
+    ui->plainTextEdit->document()->setPlainText("");
+    ui->plainTextEdit->setEnabled(true);
     connect
     (
         ui->plainTextEdit, SIGNAL(textChanged()),
@@ -540,7 +550,12 @@ qseqeventframe::slot_pulse_time_state (int state)
 void
 qseqeventframe::slot_meta_text_change ()
 {
-    QString qtex = ui->plainTextEdit->toPlainText();
+    /*
+     * TODO: How can we easily detect a meta-text change???
+     *
+     * QString qtex = ui->plainTextEdit->toPlainText();
+     */
+
     set_dirty();
 
 #if 0
@@ -796,10 +811,16 @@ qseqeventframe::set_event_data_1 (const std::string & d)
     ui->entry_ev_data_1->setText(qt(d));
 }
 
+/**
+ *  TODO: handle string_to_midi_bytes() vs midi_bytes_to_string().
+ */
+
 void
 qseqeventframe::set_event_plaintext (const std::string & t)
 {
-    QString text = qt(t);
+    std::string temp = string_to_midi_bytes(t); // TODO
+
+    QString text = qt(temp);
     ui->plainTextEdit->document()->setPlainText(text);
     populate_meta_combo();
     ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
@@ -808,7 +829,9 @@ qseqeventframe::set_event_plaintext (const std::string & t)
 void
 qseqeventframe::set_event_system (const std::string & t)
 {
-    QString text = qt(t);                               // convert to hex bytes?
+    std::string temp = string_to_midi_bytes(t); // TODO
+
+    QString text = qt(temp);                           // convert to hex bytes?
     ui->plainTextEdit->document()->setPlainText(text);
     populate_system_combo();
     ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
@@ -988,17 +1011,22 @@ qseqeventframe::slot_table_click_ex
 
 /**
  *  The second slot for handling a click in the event table.
+ *
+ * Alternative to check-button:
+ *
+ *      QApplication::queryKeyboardModifiers().testFlag(Qt::ShiftModifier);
  */
 
 void
 qseqeventframe::slot_row_selected ()
 {
     QModelIndex index = ui->eventTableWidget->currentIndex();
+    bool multi = m_linked_selection = ui->button_link->isChecked();
     int row = index.row();
     m_eventslots->select_event(row);        /* also done by click */
 
     const editable_event & ev0 = m_eventslots->current_event();
-    if (ev0.is_linked())
+    if (multi && ev0.is_linked())
     {
         editable_event & ev1 = m_eventslots->lookup_link(ev0);
         if (ev1.valid_status())
@@ -1012,9 +1040,15 @@ qseqeventframe::slot_row_selected ()
         }
     }
     else
-    {
         set_selection_multi(false);
-    }
+}
+
+void
+qseqeventframe::slot_link_status ()
+{
+    m_linked_selection = ui->button_link->isChecked();
+    if (! m_linked_selection)
+        set_selection_multi(false);
 }
 
 std::string
@@ -1117,10 +1151,8 @@ qseqeventframe::slot_insert ()
         std::string d1 = ui->entry_ev_data_1->text().toStdString();
         std::string ch = ui->channel_combo_box->currentText().toStdString();
         std::string text = ui->plainTextEdit->toPlainText().toStdString();
+        text = string_to_midi_bytes(text);      /* encode for ext ASCII     */
         std::string linktime;                   /* empty, no link time yet  */
-        if (text == "N/A")
-            text.clear();
-
         bool has_events = m_eventslots->insert_event
         (
             ts, name, d0, d1, ch, text
@@ -1162,7 +1194,9 @@ qseqeventframe::slot_modify ()
         std::string d0 = ui->entry_ev_data_0->text().toStdString();
         std::string d1 = ui->entry_ev_data_1->text().toStdString();
         std::string ch = ui->channel_combo_box->currentText().toStdString();
-        std::string text = ev0.get_text();  /* non-empty only w/meta events */
+        std::string text = ui->plainTextEdit->toPlainText().toStdString();
+        text = string_to_midi_bytes(text);      /* encode for ext ASCII     */
+
         midipulse lt = c_null_midipulse;
         bool reload = false;                /* works, but why is it needed? */
         if (ev0.is_linked())

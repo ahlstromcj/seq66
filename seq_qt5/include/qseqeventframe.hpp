@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-05-02
+ * \updates       2023-05-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -174,6 +174,7 @@ private slots:
 
     void slot_table_click_ex (int row, int column, int prevrow, int prevcol);
     void slot_row_selected ();
+    void slot_link_status ();
     void slot_delete ();
     void slot_insert ();
     void slot_modify ();
@@ -208,6 +209,12 @@ private:
      */
 
     std::unique_ptr<qseventslots> m_eventslots;
+
+    /**
+     *  If true, selecting a note event also selects its linked event.
+     */
+
+    bool m_linked_selection;
 
     /**
      *  If true, show the data bytes in hexadecimal format.

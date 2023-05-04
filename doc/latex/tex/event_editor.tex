@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-02
-% \update      2023-05-03
+% \update      2023-05-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -203,12 +203,17 @@
 \subsection{Event Editor / Info Panel}
 \label{subsec:event_editor_info}
 
-   The "info panel" is simply a read-only list of properties on the top right
+   The "info panel" is a read-only list of properties on the top right
    of the event editor.  It serves to remind the used of the pattern being
    edited and some characteristics of the pattern and the whole song.
+   It also includes one button.
    Five items are shown:
 
    \begin{enumber}
+      \item \textbf{Sel Linked}. (Not yet shown)
+         If this button is checked, then selecting a Note On or Off event
+         also selects the opposite, linked note.
+         This allow for easy deletion of a complete Note pair.
       \item \textbf{Sequence Number and Name}.
          A bit redundant, as the window caption or the pattern
          also shows the pattern name.

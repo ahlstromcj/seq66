@@ -925,6 +925,10 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
             }
             else if (event->modifiers() & Qt::AltModifier)
             {
+                /*
+                 * Not sure that this really works. Needs investigation.
+                 */
+
                 (void) perf().replace_for_solo(m_current_seq);
             }
             else

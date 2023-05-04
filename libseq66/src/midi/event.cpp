@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-03
+ * \updates       2023-05-04
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -722,19 +722,13 @@ event::set_meta_status (midibyte metatype)
 }
 
 /**
- *  If the event is a text event, then this function converts the midibytes
- *  to a string.
- *
- *  If it is another meta event, the data is converted to a human-readable
- *  string using decimal numbers.
- *
- *  If it is a sysex event, the data is converted to a series of 0xnn hex
- *  values.
- *
- *  For channel events, an empty string is returned.
+ *  This base class version simply returns the bytes as characters in a
+ *  string.
  *
  * \return
- *      Returns the text if valid, otherwise returns an empty string. Note
+ *      Returns the text if valid, otherwise returns an empty string.
+ *
+ *      Note
  *      that the text is in "midi-bytes" format, where characters greater
  *      than 127 are encodes as a hex value, "\xx".
  */
@@ -743,101 +737,29 @@ std::string
 event::get_text () const
 {
     std::string result;
-    if (is_meta_text())                     /* FF 01-07 len text            */
+    size_t dsize = m_sysex.size();
+    for (size_t i = 0; i < dsize; ++i)
     {
-        size_t dsize = m_sysex.size();
-        for (size_t i = 0; i < dsize; ++i)
-        {
-            char c = char(m_sysex[i]);
-            result.push_back(c);                            /* plain-text   */
-        }
-    }
-    else if (is_tempo())                    /* FF 51 03 tt tt tt            */
-    {
-        midibpm bp = tempo();
-        char tmp[16];
-        (void) snprintf(tmp, sizeof tmp, "%.2f", bp);       /* "120.12"     */
-        result = std::string(tmp);
-    }
-    else if (is_key_signature())            /* FF 59 02 -7-+7 0-1           */
-    {
-    }
-    else if (is_time_signature())           /* FF 58 04 nn dd cc bb         */
-    {
-        int n = int(m_sysex[0]);
-        int d = beat_power_of_2(int(m_sysex[1]));
-        int c = int(m_sysex[2]);
-        int b = int(m_sysex[3]);
-        char tmp[32];
-        (void) snprintf
-        (
-            tmp, sizeof tmp, "%d/%d %d %d", n, d, c, b      /* "3/4 24 8"   */
-        );
-        result = std::string(tmp);
-    }
-    else if (is_sysex())
-    {
-        // TODO: convert to string of 0xnn hex values.
-    }
-    return result;
-}
-
-bool
-event::set_text (const std::string & s)
-{
-    bool result = ! s.empty() && is_meta_text();    /* EXPERIMENTAL */
-    if (result)
-    {
-        m_sysex.clear();
-        for (const auto c : s)
-            m_sysex.push_back(c);
+        char c = char(m_sysex[i]);
+        result.push_back(c);
     }
     return result;
 }
 
 /**
- *  Appends SYSEX data to a new buffer.  We now use a vector instead of an
- *  array, so there is no need for reallocation and copying of the current
- *  SYSEX data.  The data represented by data and dsize is appended to that
- *  data buffer.
- *
- * \param data
- *      Provides the additional SysEx/Meta data.  If not provided, nothing is
- *      done, and false is returned.
- *
- * \param dsize
- *      Provides the size of the additional SYSEX data.  If not provided,
- *      nothing is done.
- *
- * \return
- *      Returns true if there was data to add.  The End-of-SysEx byte is
- *      included.
+ *  This base-class version unconditionally loads bytes into the
+ *  m_sysex vector.
  */
 
 bool
-event::append_sysex (const midibyte * data, int dsize)
+event::set_text (const std::string & s)
 {
-    bool result = not_nullptr(data) && (dsize > 0);
+    bool result = ! s.empty();
     if (result)
     {
-        for (int i = 0; i < dsize; ++i)
-        {
-            m_sysex.push_back(data[i]);
-
-            /*
-             *
-             *  if (data[i] == EVENT_MIDI_SYSEX_END)
-             *  {
-             *      result = false;
-             *      break;             // is this the right thing to do? //
-             *  }
-             *
-             */
-        }
-    }
-    else
-    {
-        errprint("event::append_sysex(): null parameters");
+        m_sysex.clear();
+        for (const auto c : s)
+            m_sysex.push_back(c);
     }
     return result;
 }
@@ -906,7 +828,7 @@ event::append_meta_data (midibyte metatype, const midibyte * data, int dsize)
  */
 
 bool
-event::append_meta_data (midibyte metatype, const std::vector<midibyte> & data)
+event::append_meta_data (midibyte metatype, const midibytes & data)
 {
     int dsize = int(data.size());
     bool result = dsize > 0;
@@ -935,10 +857,98 @@ event::append_meta_data (midibyte metatype, const std::vector<midibyte> & data)
  */
 
 bool
-event::append_sysex (midibyte data)
+event::append_sysex_byte (midibyte data)
 {
     m_sysex.push_back(data);
     return data != EVENT_MIDI_SYSEX_END;
+}
+
+/**
+ *  Appends SYSEX data to a new buffer.  We now use a vector instead of an
+ *  array, so there is no need for reallocation and copying of the current
+ *  SYSEX data.  The data represented by data and dsize is appended to that
+ *  data buffer.
+ *
+ * \param data
+ *      Provides the additional SysEx/Meta data.  If not provided, nothing is
+ *      done, and false is returned.
+ *
+ * \param dsize
+ *      Provides the size of the additional SYSEX data.  If not provided,
+ *      nothing is done.
+ *
+ * \return
+ *      Returns true if there was data to add.  The End-of-SysEx byte is
+ *      included.
+ */
+
+bool
+event::append_sysex (const midibyte * data, int dsize)
+{
+    bool result = not_nullptr(data) && (dsize > 0);
+    if (result)
+    {
+        for (int i = 0; i < dsize; ++i)
+            m_sysex.push_back(data[i]);
+    }
+    else
+    {
+        errprint("event::append_sysex(): null parameters");
+    }
+    return result;
+}
+
+bool
+event::append_sysex (const midibytes & data)
+{
+    bool result = ! data.empty();
+    if (result)
+    {
+        for (auto b : data)
+            m_sysex.push_back(b);
+    }
+    else
+    {
+        errprint("event::append_sysex(): no data");
+    }
+    return result;
+}
+
+/**
+ *  Resets and adds ex data.
+ *
+ * \param data
+ *      Provides the SysEx/Meta data.  If not provided, nothing is done,
+ *      and false is returned.
+ *
+ * \param len
+ *      The number of bytes to set.
+ *
+ * \return
+ *      Returns true if the function succeeded.
+ */
+
+bool
+event::set_sysex (const midibyte * data, int len)
+{
+    reset_sysex();
+    return append_sysex(data, len);
+}
+
+bool
+event::set_sysex (const midibytes & data)
+{
+    reset_sysex();
+    return append_sysex(data);
+}
+
+void
+event::set_sysex_size (int len)
+{
+    if (len == 0)
+        m_sysex.clear();
+    else if (len > 0)
+        m_sysex.resize(len);
 }
 
 /**

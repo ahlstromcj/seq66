@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-02
+ * \updates       2023-05-04
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -268,11 +268,10 @@ public:
 
     /**
      *  Provides a type definition for a vector of midibytes.  This type will
-     *  also hold the generally small amounts of data needed for Meta events,
-     *  but doesn't help us encapsulate derived values, such as tempo.
+     *  also hold the raw data of Meta events.
      */
 
-    using sysex = std::vector<midibyte>;
+    using sysex = midibytes;
 
     /**
      *  The data buffer for MIDI events.  This item replaces the
@@ -1008,42 +1007,21 @@ public:
         m_data[1] = (m_data[1] - 1) & EVENT_DATA_MASK;
     }
 
-    bool append_sysex (const midibyte * data, int len);
-    bool append_sysex (midibyte data);
-    bool append_meta_data (midibyte metatype, const midibyte * data, int len);
-    bool append_meta_data (midibyte metatype, const std::vector<midibyte> & data);
-    bool set_text (const std::string & s);
-    std::string get_text () const;
+    virtual bool set_text (const std::string & s);
+    virtual std::string get_text () const;
 
-    /**
-     *  Deletes and clears out the SYSEX buffer.  (The m_sysex member used to
-     *  be a pointer.)  This function also causes sysex_size() to return
-     *  0.
-     */
+    bool append_meta_data (midibyte metatype, const midibyte * data, int len);
+    bool append_meta_data (midibyte metatype, const midibytes & data);
+    bool append_sysex_byte (midibyte data);
+    bool append_sysex (const midibyte * data, int len);
+    bool append_sysex (const midibytes & data);
+    bool set_sysex (const midibyte * data, int len);
+    bool set_sysex (const midibytes & data);
+    void set_sysex_size (int len);
 
     void reset_sysex ()
     {
         m_sysex.clear();
-    }
-
-    /**
-     *  Resets and adds ex data.
-     *
-     * \param data
-     *      Provides the SysEx/Meta data.  If not provided, nothing is done,
-     *      and false is returned.
-     *
-     * \param len
-     *      The number of bytes to set.
-     *
-     * \return
-     *      Returns true if the function succeeded.
-     */
-
-    bool set_sysex (const midibyte * data, int len)
-    {
-        reset_sysex();
-        return append_sysex(data, len);
     }
 
     sysex & get_sysex ()
@@ -1054,14 +1032,6 @@ public:
     const sysex & get_sysex () const
     {
         return m_sysex;
-    }
-
-    void set_sysex_size (int len)
-    {
-        if (len == 0)
-            m_sysex.clear();
-        else if (len > 0)
-            m_sysex.resize(len);
     }
 
     int sysex_size () const

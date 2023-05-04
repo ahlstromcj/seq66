@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-29
+ * \updates       2023-05-04
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1544,7 +1544,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             {
                                 midibyte b = read_byte();
                                 ++bcount;
-                                if (! e.append_sysex(b)) /* SysEx end byte? */
+                                if (! e.append_sysex_byte(b)) /* end byte?  */
                                     break;
                             }
                             skip(len);                  /* eat it           */

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-03
+ * \updates       2023-05-04
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -33,6 +33,7 @@
 
 #include <cstdlib>                      /* atoi(3) and atof(3) for 32-bit   */
 
+#include "cfg/scales.hpp"               /* seq66::key_signature_bytes() etc */
 #include "midi/editable_event.hpp"      /* seq66::editable_event            */
 #include "midi/editable_events.hpp"     /* seq66::editable_events multimap  */
 #include "util/strfunctions.hpp"        /* seq66::strings_match(), etc.     */
@@ -94,14 +95,14 @@ s_category_names [] =
 static const editable_event::name_value_t
 s_channel_event_names [] =
 {
-    {  0, midishort(EVENT_NOTE_OFF),         "Note Off"          },  // 0x80
-    {  1, midishort(EVENT_NOTE_ON),          "Note On"           },  // 0x90
-    {  2, midishort(EVENT_AFTERTOUCH),       "Aftertouch"        },  // 0xA0
-    {  3, midishort(EVENT_CONTROL_CHANGE),   "Control"           },  // 0xB0
-    {  4, midishort(EVENT_PROGRAM_CHANGE),   "Program"           },  // 0xC0
-    {  5, midishort(EVENT_CHANNEL_PRESSURE), "Ch Pressure"       },  // 0xD0
-    {  6, midishort(EVENT_PITCH_WHEEL),      "Pitch Wheel"       },  // 0xE0
-    { -1, s_end_of_table,                    ""                  }   // end
+    {  0, midishort(EVENT_NOTE_OFF),           "Note Off"        },  // 0x80
+    {  1, midishort(EVENT_NOTE_ON),            "Note On"         },  // 0x90
+    {  2, midishort(EVENT_AFTERTOUCH),         "Aftertouch"      },  // 0xA0
+    {  3, midishort(EVENT_CONTROL_CHANGE),     "Control"         },  // 0xB0
+    {  4, midishort(EVENT_PROGRAM_CHANGE),     "Program"         },  // 0xC0
+    {  5, midishort(EVENT_CHANNEL_PRESSURE),   "Ch Pressure"     },  // 0xD0
+    {  6, midishort(EVENT_PITCH_WHEEL),        "Pitch Wheel"     },  // 0xE0
+    { -1, s_end_of_table,                      ""                }   // end
 };
 
 /**
@@ -738,7 +739,7 @@ editable_event::time_as_minutes ()
  *      -   subgroup::channel_message.
  *          Handle Meta or SysEx events, setting that status to 0xFF and the
  *          meta-type (in the m_channel member) to the meta event type-value,
- *          then filling in m_sysex based on the field values in the sd0
+ *          then filling in get_sysex() based on the field values in the sd0
  *          parameter.
  *      -   subgroup::system_message.
  *      -   subgroup::meta_event.
@@ -810,75 +811,45 @@ editable_event::set_status_from_string
             set_meta_status(value);
             if (value == EVENT_META_SET_TEMPO)                      /* 0x51 */
             {
-                double bpm = string_to_double(sd0);
-                if (bpm > 0.0f)
-                    (void) set_tempo(bpm);
+                double bp = string_to_double(text);
+                if (bp <= 0.0f)
+                    bp = string_to_double(sd0);
+
+                if (bp > 0.0f)
+                    (void) set_tempo(bp);
             }
             else if (value == EVENT_META_TIME_SIGNATURE)            /* 0x58 */
             {
-                auto pos = sd0.find_first_of("/");
-                if (pos != std::string::npos)
-                {
-                    int nn = string_to_int(sd0);
-                    int dd = nn;
-                    int cc = 0x18;
-                    int bb = 0x08;
-                    ++pos;
-
-                    std::string sd0_partial = sd0.substr(pos);  // drop "nn/"
-                    if (! sd0_partial.empty())
-                        dd = string_to_int(sd0_partial);
-
-                    if (dd > 0)
-                    {
-                        pos = sd0.find_first_of(" ", pos);      // bypass dd
-                        if (pos != std::string::npos)
-                        {
-                            pos = sd0.find_first_of("0123456789x", pos);
-                            if (pos != std::string::npos)
-                            {
-                                cc = int(strtol(&sd0[pos], NULL, 0));
-                                pos = sd0.find_first_of(" ", pos);
-                                if (pos != std::string::npos)
-                                {
-                                    pos = sd0.find_first_of("0123456789x", pos);
-                                    if (pos != std::string::npos)
-                                        bb = int(strtol(&sd0[pos], NULL, 0));
-                                }
-                            }
-                        }
-                        midibyte t[4];
-                        t[0] = midibyte(nn);
-                        t[1] = midibyte(dd);
-                        t[2] = midibyte(cc);
-                        t[3] = midibyte(bb);
-                        (void) set_sysex(t, 4);     /* add ex-data bytes    */
-                    }
-                }
+                midibytes t;
+                bool ok = time_signature_bytes(text, t);
+                if (ok)
+                    (void) set_sysex(t);
             }
             else if (value == EVENT_META_KEY_SIGNATURE)             /* 0x59 */
             {
-                // TO DO
+                midibytes k;
+                bool ok = key_signature_bytes(text, k);
+                if (ok)
+                    (void) set_sysex(k);
             }
             else if
             (
                 value >= EVENT_META_TEXT_EVENT && value <= EVENT_META_CUE_POINT
             )
             {
+                (void) set_text(text);
+            }
+            else if (value == EVENT_MIDI_SYSEX)
+            {
+                sysex s;
+                bool ok = sysex_bytes(text, s);
+                if (ok)
+                    (void) set_sysex(s);
             }
             else
             {
                 /*
-                 * Parse the string of (potentially) hex digits.  However, we
-                 * still need to determine the length value and allocate the
-                 * midibyte array ahead of time, or add a function to set
-                 * SysEx. TODO.
-                 *
-                auto pos = sd0.find_first_of("0123456789x");
-                while (pos != std::string::npos)
-                {
-                    // TODO
-                }
+                 * These have to be system events.  TODO
                  */
             }
         }
@@ -1156,6 +1127,245 @@ editable_event::ex_text_string () const
     if (sysex_size() > limit)
         result += "...";
 
+    return result;
+}
+
+/**
+ *  Gets the values in the m_sysex vector and converts them to a strictly
+ *  human readable string in plaintext extended (values 0 to 255) ASCII.
+ *  If the event is a text event, then this function converts the midibytes
+ *  to a string.
+ *
+ *  If it is another meta event, the data is converted to a human-readable
+ *  string using decimal numbers.
+ *
+ *  If it is a sysex event, the data is converted to a series of 0xnn hex
+ *  values.
+ *
+ *  For channel events, an empty string is returned, since they don't
+ *  populate m_sysex.
+ *
+ * \return
+ *      Returns the text if valid, otherwise returns an empty string.
+ *
+ *      True?
+ *
+ *      Note that the text is in "midi-bytes" format, where characters greater
+ *      than 127 are encoded as a hex value, "\xx".
+ */
+
+std::string
+editable_event::get_text () const
+{
+    std::string result;
+    if (is_meta_text())                     /* FF 01-07 len text            */
+    {
+        size_t dsize = get_sysex().size();
+        for (size_t i = 0; i < dsize; ++i)      /* TODO SEE "True?" ABOVE   */
+        {
+            char c = char(get_sysex()[i]);
+            result.push_back(c);                            /* plain-text   */
+        }
+    }
+    else if (is_tempo())                    /* FF 51 03 tt tt tt            */
+    {
+        midibpm bp = tempo();
+        char tmp[16];
+        (void) snprintf(tmp, sizeof tmp, "%.2f", bp);       /* "120.12"     */
+        result = std::string(tmp);
+    }
+    else if (is_key_signature())            /* FF 59 02 -7-+7 0-1           */
+    {
+        int sharpsflats = int(get_sysex()[0]);              /* -7 to +7     */
+        bool isminor = get_sysex()[1] != 0;
+        result = key_signature_string(sharpsflats, isminor);
+        if (result.empty())
+            result = "Key signature format error!";
+    }
+    else if (is_time_signature())           /* FF 58 04 nn dd cc bb         */
+    {
+        int n = int(get_sysex()[0]);
+        int d = beat_power_of_2(int(get_sysex()[1]));
+        int c = int(get_sysex()[2]);
+        int b = int(get_sysex()[3]);
+        result = time_signature_string(n, d, c, b);
+    }
+    else if (is_sysex())                    /* F0 id msg-bytes ... F7       */
+    {
+        result = sysex_string(get_sysex());
+    }
+    return result;
+}
+
+bool
+editable_event::set_text (const std::string & s)
+{
+    bool result = ! s.empty();
+    if (result)
+    {
+        get_sysex().clear();
+        if (is_meta_text())
+        {
+            std::string converted = string_to_midi_bytes(s);
+            for (const auto c : converted)
+                get_sysex().push_back(c);
+        }
+        else
+            result = event::set_text(s);    /* no "\xx" conversion is done  */
+    }
+    return result;
+}
+
+/**
+ *  An external function to construct a human-readable string from
+ *  time-signature values.
+ *
+ *  Compare these functions with the key-signature functions in the scales
+ *  module.
+ *
+ * \param n
+ *      Provides the numerator of the time signature, the beats per measure.
+ *
+ * \param d
+ *      Provides the denominator of the time signature, the beat width.
+ *      If not a power of 2, then this function will still work, but the text
+ *      doesn't represent a proper MIDI time signature.
+ *
+ * \param c
+ *      Provides the number of MIDI clock ticks that occur for every tick
+ *      of the metronome.  Defaults to 24.
+ *
+ * \param b
+ *      Provides the number of 32nd notes per beats. Defaults to 8.
+ */
+
+std::string
+time_signature_string (int n, int d, int c, int b)
+{
+    char tmp[32];
+    (void) snprintf
+    (
+        tmp, sizeof tmp, "%d/%d %d %d", n, d, c, b      /* "3/4 24 8"   */
+    );
+    return std::string(tmp);
+}
+
+/**
+ *  An external function to convert text to the midibytes for a time signature.
+ *
+ * \param text
+ *      Provides a string of the form "nn/dd cc bb", such as
+ *      "3/4 24 8".  Note the dd must be a power of 2, that 24 is
+ *      a common MIDI clock ticks/metronome value, and we have here
+ *      8 32nd notes per beat (quarter note).
+ *
+ *  \param [out] timesigbytes
+ *      Provides a vector that will be 4 bytes in length, to hold
+ *      the converted values that can be written to a MIDI file.
+ *
+ * \return
+ *      Returns true if no errors were found. If false, the timesigbytes
+ *      vector is empty.
+ */
+
+bool
+time_signature_bytes
+(
+    const std::string & text,
+    midibytes & timesigbytes
+)
+{
+    bool result = false;
+    auto pos = text.find_first_of("/");
+    timesigbytes.clear();
+    if (pos != std::string::npos)
+    {
+        int nn = string_to_int(text);
+        ++pos;
+
+        std::string partial = text.substr(pos);     /* drop the "nn/"       */
+        result = ! partial.empty();
+        if (result)
+        {
+            int dd = string_to_int(partial);
+            int cc = 0x18;                          /* 24 is a common value */
+            int bb = 0x08;                          /* 8/32nds per beat     */
+            result = is_power_of_2(dd);
+            if (result)
+            {
+                pos = text.find_first_of(" ", pos); /* bypass the "dd"      */
+                if (pos != std::string::npos)
+                {
+                    pos = text.find_first_of("0123456789x", pos);
+                    if (pos != std::string::npos)
+                    {
+                        cc = int(strtol(&text[pos], NULL, 0));
+                        pos = text.find_first_of(" ", pos);
+                        if (pos != std::string::npos)
+                        {
+                            pos = text.find_first_of("0123456789x", pos);
+                            if (pos != std::string::npos)
+                                bb = int(strtol(&text[pos], NULL, 0));
+                        }
+                    }
+                }
+                timesigbytes.push_back(midibyte(nn));
+                timesigbytes.push_back(midibyte(dd));
+                timesigbytes.push_back(midibyte(cc));
+                timesigbytes.push_back(midibyte(bb));
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ *  Converts the SysEx midibytes to a string of hex values of the form
+ *  "0xnn 0xnn ... 0xnn".
+ */
+
+std::string
+sysex_string (const event::sysex & s)
+{
+    std::string result;
+    if (s.size() > 0)
+    {
+        char tmp[8];
+        for (auto b : s)
+        {
+            (void) snprintf(tmp, sizeof tmp, "0x%02x ", unsigned(b));
+            result += tmp;
+        }
+    }
+    return result;
+}
+
+bool
+sysex_bytes
+(
+    const std::string & text,
+    event::sysex & sxbytes
+)
+{
+    tokenization tokens = tokenize(text);
+    bool result = ! tokens.empty();
+    sxbytes.clear();
+    if (result)
+    {
+        try
+        {
+            for (auto t : tokens)
+            {
+                midibyte b = midibyte(std::stoi(t, nullptr, 0));
+                sxbytes.push_back(b);
+            }
+        }
+        catch (std::invalid_argument const &)
+        {
+            result = false;
+            sxbytes.clear();
+        }
+    }
     return result;
 }
 

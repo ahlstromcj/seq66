@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2023-05-03
+ * \updates       2023-05-04
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -313,6 +313,9 @@ public:
         // Empty body
     }
 
+    virtual bool set_text (const std::string & s) override;
+    virtual std::string get_text () const override;
+
     midipulse link_time () const
     {
         return m_link_time;
@@ -435,6 +438,23 @@ private:
     static midishort meta_event_length (midibyte value);
 
 };          // class editable_event
+
+/*
+ *  Free functions in the seq66 namespace.
+ */
+
+extern std::string time_signature_string (int n, int d, int c = 24, int b = 8);
+extern bool time_signature_bytes
+(
+    const std::string & text,
+    midibytes & timesigbytes
+);
+extern std::string sysex_string (const event::sysex & s);
+extern bool sysex_bytes
+(
+    const std::string & text,
+    event::sysex & sxbytes
+);
 
 }           // namespace seq66
 
