@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-29
+ * \updates       2023-05-05
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -2355,6 +2355,7 @@ qsmainwnd::load_event_editor (int seqid)
         {
             ui->tabWidget->setTabEnabled(Tab_Events, true);
             ui->tabWidget->setCurrentIndex(Tab_Events);
+            m_event_frame->set_initialized();
             update();
         }
     }
@@ -2819,7 +2820,9 @@ qsmainwnd::tabWidgetClicked (int newindex)
             {
                 if (make_event_frame(seqid))
                 {
+                    ui->tabWidget->setTabEnabled(Tab_Events, true);
                     ui->tabWidget->setCurrentIndex(Tab_Events);
+                    m_event_frame->set_initialized();
                     update();
                 }
             }

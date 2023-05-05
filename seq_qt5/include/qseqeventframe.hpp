@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-05-04
+ * \updates       2023-05-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -94,6 +94,11 @@ public:
         QWidget * parent = nullptr
     );
     virtual ~qseqeventframe ();
+
+    void set_initialized ()
+    {
+         m_initialized = true;
+    };
 
 protected:
 
@@ -227,6 +232,13 @@ private:
      */
 
     bool m_show_time_as_pulses;
+
+    /**
+     *  Indicates the dialog has now been set up.  We need this to
+     *  avoid dirtying the dialog during setup. Weird.
+     */
+
+    bool m_initialized;
 
     /**
      *  Indicates a modification is active.

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-05-04
+ * \updates       2023-05-05
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -97,6 +97,7 @@ qseqeventframe::qseqeventframe
     m_linked_selection      (false),
     m_show_data_as_hex      (false),
     m_show_time_as_pulses   (false),
+    m_initialized           (false),
     m_is_dirty              (false),
     m_no_channel_index      (c_midichannel_max)
 {
@@ -187,6 +188,33 @@ qseqeventframe::qseqeventframe
     ui->button_blank->setEnabled(false);            /* not yet in use   */
 
     /*
+     * The (new) "Category combo-box.
+     */
+
+    populate_category_combo();
+    connect
+    (
+        ui->combo_ev_category, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(slot_event_category(int))
+    );
+
+    /*
+     * The "Event" combo-box is used for various purposes depending on which
+     * "Category" item is selected.  See these additional populator functions:
+     *
+     *      -   populate_system_combo()
+     *      -   populate_meta_combo()
+     *      -   populate_seqspec_combo() [currently disabled]
+     */
+
+    populate_status_combo();
+    connect
+    (
+        ui->combo_ev_name, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(slot_event_name(int))
+    );
+
+    /*
      * Channel selection and (new) Event selection.
      */
 
@@ -195,18 +223,6 @@ qseqeventframe::qseqeventframe
     (
         ui->channel_combo_box, SIGNAL(currentIndexChanged(int)),
         this, SLOT(slot_midi_channel(int))
-    );
-    populate_status_combo();
-    connect
-    (
-        ui->combo_ev_name, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(slot_event_name(int))
-    );
-    populate_category_combo();
-    connect
-    (
-        ui->combo_ev_category, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(slot_event_category(int))
     );
 
     /*
@@ -228,7 +244,7 @@ qseqeventframe::qseqeventframe
      *  Plain-text edit control for Meta messages involving text.
      */
 
-    ui->plainTextEdit->document()->setPlainText("");
+    ui->plainTextEdit->clear();
     ui->plainTextEdit->setEnabled(true);
     connect
     (
@@ -317,6 +333,7 @@ qseqeventframe::qseqeventframe
      */
 
     track().set_dirty_mp();
+    set_dirty(false);
     cb_perf().enregister(this);
 }
 
@@ -360,8 +377,7 @@ qseqeventframe::populate_category_combo ()
 }
 
 /**
- *  Populates combo_ev_name with the status values of Channel
- *  events.
+ *  Populates combo_ev_name with the status values of Channel events.
  */
 
 void
@@ -432,6 +448,14 @@ qseqeventframe::populate_meta_combo ()
             ui->combo_ev_name->insertItem(counter, combotext);
         }
     }
+
+    /*
+     * Currently, the "Track Name" is editable by the ui->m_entry_name
+     * line-edit, and is not inserted into the pattern's event list (though
+     * it is saved as a track-name event in the MIDI file.
+     */
+
+    enable_combobox_item(ui->combo_ev_name, 2, false);
     ui->combo_ev_name->setCurrentIndex(0);
 }
 
@@ -500,10 +524,17 @@ qseqeventframe::slot_midi_channel (int /*index*/)
     // Anything to do? We just need the text.
 }
 
+/**
+ *  Here, we clear the text.  It will be filled in either by selecting
+ *  a Meta event in the table, or by the user preparing to insert a new
+ *  Meta event.  Note that clearing the text inserts the placeholder
+ *  text.
+ */
+
 void
 qseqeventframe::slot_event_name (int /*index*/)
 {
-    // Anything to do? We just need the text.
+    ui->plainTextEdit->clear();
 }
 
 /**
@@ -544,26 +575,27 @@ qseqeventframe::slot_pulse_time_state (int state)
 
 /**
  *  Also gets the characters remaining after translation to encoded
- *  MIDI bytes.  Too slow?
+ *  MIDI bytes.  Too slow? No.
+ *
+ *  How can we easily detect an actual meta-text change???
+ *
+ *      QString qtex = ui->plainTextEdit->toPlainText();
  */
 
 void
 qseqeventframe::slot_meta_text_change ()
 {
-    /*
-     * TODO: How can we easily detect a meta-text change???
-     *
-     * QString qtex = ui->plainTextEdit->toPlainText();
-     */
-
     set_dirty();
 
-#if 0
-    std::string text = string_to_midi_bytes(qtex.toStdString());
-    size_t remainder = c_meta_text_limit - text.size();
-    std::string rem = int_to_string(int(remainder));
-    ui->labelCharactersRemaining->setText(qt(rem));
-#endif
+    /*
+     * We let the user enter any amount of text here.  We might
+     * have a ton of SysEx bytes, for example.
+     *
+     *  std::string text = string_to_midi_bytes(qtex.toStdString());
+     *  size_t remainder = c_meta_text_limit - text.size();
+     *  std::string rem = int_to_string(int(remainder));
+     *  ui->labelCharactersRemaining->setText(qt(rem));
+     */
 }
 
 /**
@@ -821,9 +853,9 @@ qseqeventframe::set_event_plaintext (const std::string & t)
     std::string temp = string_to_midi_bytes(t); // TODO
 
     QString text = qt(temp);
-    ui->plainTextEdit->document()->setPlainText(text);
     populate_meta_combo();
     ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
+    ui->plainTextEdit->document()->setPlainText(text);
 }
 
 void
@@ -832,18 +864,18 @@ qseqeventframe::set_event_system (const std::string & t)
     std::string temp = string_to_midi_bytes(t); // TODO
 
     QString text = qt(temp);                           // convert to hex bytes?
-    ui->plainTextEdit->document()->setPlainText(text);
     populate_system_combo();
     ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
+    ui->plainTextEdit->document()->setPlainText(text);
 }
 
 void
 qseqeventframe::set_event_seqspec (const std::string & t)
 {
     QString text = qt(t);                               // convert to hex bytes?
-    ui->plainTextEdit->document()->setPlainText(text);
     populate_system_combo();
     ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
+    ui->plainTextEdit->document()->setPlainText(text);
 }
 
 /**
@@ -955,8 +987,11 @@ qseqeventframe::set_dirty (bool flag)
 {
     if (flag)
     {
-        ui->button_save->setEnabled(true);
-        m_is_dirty = true;
+        if (m_initialized)
+        {
+            ui->button_save->setEnabled(true);
+            m_is_dirty = true;
+        }
     }
     else
     {
@@ -1003,7 +1038,6 @@ qseqeventframe::slot_table_click_ex
         current_row(row);
         ui->button_del->setEnabled(true);
         ui->button_modify->setEnabled(true);
-
         if (ui->eventTableWidget->selectionModel()->selectedRows().count() > 1)
             ui->eventTableWidget->clearSelection();
     }
@@ -1164,7 +1198,11 @@ qseqeventframe::slot_insert ()
             int cr = m_eventslots->current_row();
             ui->eventTableWidget->insertRow(cr);
             set_row_height(cr, sc_event_row_height);
-            set_event_line(cr, ts, name, chan, d0, d1, linktime);
+            if (text.empty())
+                set_event_line(cr, ts, name, chan, d0, d1, linktime);
+            else
+                set_event_line(cr, ts, name, chan, text, d1, linktime);
+
             ui->button_del->setEnabled(true);
             ui->button_modify->setEnabled(true);
             set_dirty();
@@ -1259,8 +1297,7 @@ qseqeventframe::slot_save ()
         {
             seq::number seqno = track().seq_number();
             cb_perf().notify_sequence_change(seqno);
-            ui->button_save->setEnabled(false);
-            m_is_dirty = false;
+            set_dirty(false);
         }
     }
     set_selection_multi(false);
@@ -1273,7 +1310,12 @@ qseqeventframe::slot_clear ()
     {
         m_eventslots->clear();
         initialize_table();
-        set_dirty();
+
+        /*
+         * Not sure we need this here.
+         *
+         * set_dirty();
+         */
     }
     set_selection_multi(false);
 }

@@ -220,9 +220,16 @@ qseventslots::set_current_event
     if (ev.is_meta())
     {
         /*
-         * This may not be suitable for all meta events.
+         * This may not be suitable for all meta events. But we will
+         * add support for using the "sysex" (text) data for storing
+         * data for these events.
          */
 
+        std::string text = ev.get_text();
+        m_parent.set_event_plaintext(text);
+    }
+    else if (ev.is_sysex())
+    {
         std::string text = ev.get_text();
         m_parent.set_event_plaintext(text);
     }
@@ -234,6 +241,7 @@ qseventslots::set_current_event
     else if (ev.is_system())
     {
         m_parent.set_event_system("System data");
+        m_parent.set_event_plaintext("System data: To do!");
     }
     else
     {
@@ -242,6 +250,7 @@ qseventslots::set_current_event
         data_0 = data_string(d0);
         data_1 = data_string(d1);
         channel = int(ev.channel());
+        m_parent.set_event_plaintext("");       /* no plaintext data here   */
     }
     set_event_text
     (
@@ -458,7 +467,7 @@ qseventslots::string_to_channel (const std::string & channel)
  */
 
 bool
-qseventslots::insert_event (editable_event ev)
+qseventslots::insert_event (editable_event ev)          // Q: where called?
 {
     bool result = m_event_container.add(ev);
     if (result)
@@ -474,7 +483,8 @@ qseventslots::insert_event (editable_event ev)
 
             select_event(m_current_index);
         }
-        else {
+        else
+        {
             /*
              * This iterator is a short-lived [changed after the next add()
              * call] pointer to the added event.  This check somehow breaks
@@ -741,6 +751,10 @@ qseventslots::delete_current_event ()
  * \param channel
  *      Provides the channel string.  Defaults to "", which means the
  *
+ * \param text
+ *      For ex-data events (meta, sysex, and system), this provides
+ *      data to be converted into storable bytes.
+ *
  * \return
  *      Returns true simply if the event-count is greater than 0.
  */
@@ -778,7 +792,10 @@ qseventslots::modify_current_event
         else
         {
             editable_event ev = editable_events::dref(m_current_iterator);
-            ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
+            ev.set_status_from_string
+            (
+                evtimestamp, evname, evdata0, evdata1, text
+            );
             if (! ev.is_ex_data())
                 ev.set_channel(channelbyte);
 

@@ -32,6 +32,7 @@
  */
 
 #include <cstdlib>                      /* atoi(3) and atof(3) for 32-bit   */
+#include <stdexcept>                    /* std::invalid_argument            */
 
 #include "cfg/scales.hpp"               /* seq66::key_signature_bytes() etc */
 #include "midi/editable_event.hpp"      /* seq66::editable_event            */
@@ -156,7 +157,7 @@ s_meta_event_names [] =
     { -1, 0x00, "Seq Number"            },  // FF 00 02 ss ss (16-bit)
     {  0, 0x01, "Text Event"            },  // FF 01 len text
     {  1, 0x02, "Copyright"             },  // FF 02 len text
-    {  2, 0x03, "Track Name"            },  // FF 03 len text
+    {  2, 0x03, "Track Name"            },  // FF 03 len text (disabled)
     {  3, 0x04, "Instrument Name"       },  // FF 04 len text
     {  4, 0x05, "Lyric"                 },  // FF 05 len text
     {  5, 0x06, "Marker"                },  // FF 06 len text
