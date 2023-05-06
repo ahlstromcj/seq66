@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-04-29
+ * \updates       2023-05-06
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -62,21 +62,11 @@
 #include <set>                          /* std::set, arbitary selection     */
 #endif
 
-/**
- *  The first Meta Text message found in the song is special.
- */
-
-#define SEQ66_USE_SONG_INFO
-
 /*
- * EXPERIMENTAL. Cycling through patterns and text events within the patterns.
+ *  EXPERIMENTAL. Make port-mapping the default.
  */
 
-#if defined SEQ66_PLATFORM_DEBUG
-#if defined SEQ66_USE_SONG_INFO
-#define USE_EXPERIMENTAL_TRACK_INFO
-#endif
-#endif
+#define SEQ66_USE_DEFAULT_PORT_MAPPING
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -398,8 +388,6 @@ private:
 
     static automation_pair sm_auto_func_list [];
 
-#if defined SEQ66_USE_SONG_INFO
-
     /**
      *  Holds the first Meta Text message, if any, in the first pattern.
      *  The string is encoded as "MIDI bytes", which means that characters
@@ -408,8 +396,6 @@ private:
      */
 
     std::string m_song_info;
-
-#endif
 
     /**
      *  Indicates the format of this file, either SMF 0 or SMF 1.
@@ -1092,8 +1078,6 @@ public:
         playlist::action act = playlist::action::none
     );
 
-#if defined SEQ66_USE_SONG_INFO
-
     /**
      *  Holds the first Meta Text message, if any, in the first pattern.
      */
@@ -1102,8 +1086,6 @@ public:
     event get_track_info (seq::number trk, bool nextmatch = false);
     void song_info (const std::string & s);
     std::string song_info () const;
-
-#endif
 
     int smf_format () const
     {
@@ -2654,9 +2636,9 @@ public:
         bussbyte bus, e_clock & e, std::string & n, bool statusshow = true
     ) const;
 
-    void store_output_map ()
+    bool store_output_map ()
     {
-        (void) build_output_port_map(m_clocks);
+        return build_output_port_map(m_clocks);
     }
 
     void clear_output_map ()
@@ -2671,9 +2653,9 @@ public:
 
     bussbyte true_output_bus (bussbyte nominalbuss) const;
 
-    void store_input_map ()
+    bool store_input_map ()
     {
-        (void) build_input_port_map(m_inputs);
+        return build_input_port_map(m_inputs);
     }
 
     void clear_input_map ()

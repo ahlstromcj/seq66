@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-12-29
-% \update      2023-04-19
+% \update      2023-05-06
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -31,6 +31,12 @@
    In "manual" mode, these ports represent virtual MIDI ports that the user
    can connect manually (on Linux).
 
+   \textbf{Note}:
+   \textsl{Port-mapping is now automatic; default MIDI I/O port-maps are created
+   at first start, and are always active if virtual ports are not in use.
+   Once created, one can edit the 'rc' file to rearrange the mapping as
+   desired.}
+
    A pattern/loop/sequence is assigned to output to a given port via
    a buss number saved \textsl{in the pattern}, in the tune.
    When a tune is loaded,
@@ -41,7 +47,8 @@
    We do not want to store port names in the MIDI file.
    They can be too long, but, more importantly,
    they will differ between the systems of each user.
-   They can even differ when switching from ALSA to JACK.
+   They can even differ when switching from ALSA to JACK, or even versions
+   of these MIDI engines.
    Better to let the user determine the port-mapping.
    Mapping allows the buss number stored with a pattern to be
    remapped to another buss number based on the "nick-name"
@@ -68,7 +75,7 @@
    MIDI using the mapped ports, and later move to another computer, modify the
    port-maps int the 'rc' file to match, and record and play without issue.
 
-   The easiest way to start port-mapping is to go to
+   The easiest way to start port-mapping (which is now automatic) is to go to
    \textbf{Edit / Preferences / MIDI Clock}.
    Here, we see the long MIDI port names made up by the system, along
    with the \textsl{JACK} aliases that can be retrieved, and which make it easy
@@ -106,6 +113,8 @@
    managed in the \textsl{Seq66} 'rc' file.
    One can also edit that file in a text editor to
    rearrange the mapped ports.
+
+   Note that one can also deactivate port-mapping.
 
 \subsection{Output Port Mapping}
 \label{subsec:output_port_mapping}

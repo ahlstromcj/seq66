@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-13
+ * \updates       2023-05-06
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -318,26 +318,24 @@ qseditoptions::setup_tab_midi_clock ()
         this, SLOT(slot_remove_io_maps())
     );
 
-#if defined SEQ66_USE_DEFAULT_PORT_MAPPING
-    ui->inPortsMappedCheck->hide();
-    ui->outPortsMappedCheck->setText("Ports Mapped");
+    /*
+     * The output and input port-map active check-boxes are both in the
+     * Clocks tab.
+     */
+
+    bool inportmap = input_port_map().active();
+    ui->inPortsMappedCheck->setChecked(inportmap);
+    ui->outPortsMappedCheck->setChecked(outportmap);
     connect
     (
         ui->outPortsMappedCheck, SIGNAL(clicked(bool)),
         this, SLOT(slot_activate_output_map())
     );
-#else
     connect
     (
         ui->inPortsMappedCheck, SIGNAL(clicked(bool)),
         this, SLOT(slot_activate_input_map())
     );
-    connect
-    (
-        ui->outPortsMappedCheck, SIGNAL(clicked(bool)),
-        this, SLOT(slot_activate_output_map())
-    );
-#endif
 
     /*
      * The virtual port counts for input and output.
@@ -1757,15 +1755,20 @@ qseditoptions::state_applied ()
 void
 qseditoptions::slot_io_maps ()
 {
-    perf().store_output_map();
-    perf().store_input_map();
-
-    bool outportmap = output_port_map().active();
-    bool inportmap = input_port_map().active();
-    ui->outPortsMappedCheck->setChecked(outportmap);
-    ui->inPortsMappedCheck->setChecked(inportmap);
-    rc().portmaps_active(outportmap && inportmap);
-    modify_rc();
+    bool ok = perf().store_output_map();
+    if (ok)
+    {
+        bool outportmap = output_port_map().active();
+        ui->outPortsMappedCheck->setChecked(outportmap);
+        ok = perf().store_input_map();
+        if (ok)
+        {
+            bool inportmap = input_port_map().active();
+            ui->inPortsMappedCheck->setChecked(inportmap);
+        }
+        rc().portmaps_active(true);
+        modify_rc();
+    }
 }
 
 void
@@ -1795,17 +1798,11 @@ void
 qseditoptions::slot_activate_output_map ()
 {
     bool active = ui->outPortsMappedCheck->isChecked();
-#if defined SEQ66_USE_DEFAULT_PORT_MAPPING
-    perf().activate_output_map(active);
-    perf().activate_inputput_map(active);
-    TODO
-#else
     perf().activate_output_map(active);
 
     bool outportmap = output_port_map().active();
     bool inportmap = input_port_map().active();
     rc().portmaps_active(outportmap && inportmap);
-#endif
     modify_rc();
 }
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-04-13
+ * \updates       2023-05-06
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -348,6 +348,7 @@ rcfile::parse ()
      *  Check for an optional input port map section.
      */
 
+    bool portmaps_present = false;
     bool inportmap_active = false;
     bool outportmap_active = false;
     tag = "[midi-input-map]";
@@ -358,6 +359,7 @@ rcfile::parse ()
         int count = 0;
         inputref.clear();
         (void) std::sscanf(scanline(), "%d", &activeflag);
+        portmaps_present = true;
         inportmap_active = activeflag != 0;
         inputref.active(inportmap_active);
         while (next_data_line(file))
@@ -449,6 +451,10 @@ rcfile::parse ()
         }
         infoprintf("%d midi-clock-map entries added", count);
     }
+    else
+        portmaps_present = false;       /* both sections must be present    */
+
+    rc().portmaps_present(portmaps_present);
     rc().portmaps_active(inportmap_active && outportmap_active);
 
     /*

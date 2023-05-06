@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-04-13
+ * \updates       2023-05-06
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -514,6 +514,14 @@ private:
      */
 
     bool m_full_recent_paths;
+
+    /**
+     *  Indicates that the "[midi-input-map]" and "[midi-clock-map]" sections
+     *  were found, which indicates they should not be recreated again,
+     *  regardless of the status of "portmaps active".
+     */
+
+    bool m_portmaps_present;
 
     /**
      *  Indicates if both the input and output port-maps are active. Needed as
@@ -1037,6 +1045,11 @@ public:
         return m_full_recent_paths;
     }
 
+    bool portmaps_present () const
+    {
+        return m_portmaps_present;
+    }
+
     bool portmaps_active () const
     {
         return m_portmaps_active;
@@ -1367,6 +1380,11 @@ public:
     void full_recent_paths (bool f)
     {
         m_full_recent_paths = f;
+    }
+
+    void portmaps_present (bool f)
+    {
+        m_portmaps_present = f;
     }
 
     void portmaps_active (bool f)

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-05-02
+ * \updates       2023-05-06
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -307,9 +307,7 @@ static const int c_long_path_max = 56;
  */
 
 performer::performer (int ppqn, int rows, int columns) :
-#if defined SEQ66_USE_SONG_INFO
     m_song_info             (),
-#endif
     m_smf_format            (1),
     m_error_pending         (false),
     m_play_set              (),
@@ -473,8 +471,6 @@ performer::set_error_message (const std::string & msg) const
         seq66::error_message("Performer", msg);
 }
 
-#if defined SEQ66_USE_SONG_INFO
-
 /**
  *  Changes the track-info data.
  *
@@ -559,8 +555,6 @@ performer::song_info () const
 {
     return midi_bytes_to_string(m_song_info);
 }
-
-#endif
 
 void
 performer::unmodify ()
@@ -2929,6 +2923,26 @@ performer::launch (int ppqn)
 
             m_master_bus->copy_io_busses();
             m_master_bus->get_port_statuses(m_clocks, m_inputs);
+
+#if defined SEQ66_USE_DEFAULT_PORT_MAPPING
+
+        if (! rc().portmaps_present())      /* don't mung existing port-map */
+        {
+            bool ok = store_output_map();
+            if (ok)
+            {
+                ok = store_input_map();
+                if (ok)
+                {
+                    rc().portmaps_active(true);
+                    session_message("Created initial port maps");
+                }
+                else
+                    set_error_message("Creating port maps failed");
+            }
+        }
+
+#endif
 
             /*
              * Moved from get_settings() so that aliases, if present, are

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-04-15
+ * \updates       2023-05-06
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -138,6 +138,7 @@ rcsettings::rcsettings () :
     m_recent_files              (),
     m_load_most_recent          (true),
     m_full_recent_paths         (false),
+    m_portmaps_present          (false),
     m_portmaps_active           (false)
 {
 #if ! defined SEQ66_PLATFORM_WINDOWS
@@ -253,6 +254,7 @@ rcsettings::set_defaults ()
     m_recent_files.clear();
     m_load_most_recent = true;
     m_full_recent_paths = false;
+    m_portmaps_present = false;
     m_portmaps_active = false;
     set_config_files(SEQ66_CONFIG_NAME);
     set_save_list(false);

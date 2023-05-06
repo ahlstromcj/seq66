@@ -1,4 +1,4 @@
-# README for Seq66 0.99.4 2023-05-04
+# README for Seq66 0.99.4 2023-05-06
 
 __Seq66__: MIDI sequencer and live-looper with a hardware-sampler grid
 interface, pattern sets/banks, pattern triggers, and playlists for song
@@ -89,6 +89,9 @@ Windows, and using a conventional source tarball.
     *   Version 0.99.5:
         *   Greatly enhanced the event editor tab and the events that can
             be view and modified.
+        *   Made port-mapping the default. At first startup the map
+            exactly matches the existing port; the user can edit this setup
+            in the 'rc' file.
     *   Version 0.99.4:
         *   Issue #3: The scroll wheel is enabled in the piano rolls (only).
         *   Issue #48: For a new NSM session configuration, disable "JACK"

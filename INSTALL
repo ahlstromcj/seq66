@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.99.4 and above
+INSTALL for Seq66 v. 0.99.5 and above
 Chris Ahlstrom
-2015-09-10 to 2023-04-20
+2015-09-10 to 2023-05-06
 
 Getting Seq66 requires building the code or going to "sequencer64-packages/seq66"
 on GitHub to get an installation package.  The bootstrap setup is primarily
@@ -389,7 +389,15 @@ MANUALLY-DEFINED MACROS IN CODE:
     SEQ66_USE_METRONOME_FADE
 
         Define if it is desired to waste CPU cycles on a fancier
-        time-indicator bar.
+        time-indicator bar. Not to be confused with the audible
+        metronome!
+
+    SEQ66_USE_DEFAULT_PORT_MAPPING
+
+        This macro is defined (0.99.5) to automatically set up port
+        mapping at first startup, instead of forcing the user to do
+        it.  The user can still deactivate it in the MIDI Clocks Preferences
+        Tab.
 
     USE_xxxxxx:
     SEQ66_xxxxxx_TMI:

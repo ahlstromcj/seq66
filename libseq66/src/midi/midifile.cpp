@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-04
+ * \updates       2023-05-06
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1053,9 +1053,7 @@ bool
 midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 {
     bool result = true;
-#if defined SEQ66_USE_SONG_INFO
     bool got_song_info = false;
-#endif
     midibyte buss_override = usr().midi_buss_override();
     midishort track_count = read_short();
     midishort fileppqn = read_short();
@@ -1484,7 +1482,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 if (ok)
                                 {
                                     s.append_event(e);
-#if defined SEQ66_USE_SONG_INFO
                                     bool get_song_info =
                                         track == 0 &&
                                         mtype == EVENT_META_TEXT_EVENT &&
@@ -1495,7 +1492,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                         got_song_info = true;
                                         p.song_info(e.get_text());
                                     }
-#endif
                                 }
                             }
                             else

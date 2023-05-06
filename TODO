@@ -1,15 +1,28 @@
 TO DO for Seq66 0.99.4 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-05-03
+2019-04-13 to 2023-05-06
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
 Hot:
 
+    -   Try to eliminate "missing ctrl" message at first startup.
     -   Finish the major upgrade to the event editor; plan for a
-        "Triggers" tab?  Worth it?
-    -   Make port-mapping the default.
+        "SeqSpec" tab?  Worth it?
     -   Do we really need sequence::draw_lock() now? Investigate.
+    -   Weird port change while testing port mapping: original input
+        ports vs second write:
+
+                           v
+             0  1   "[0] 0:0 system:ALSA Announce"
+             1  1   "[1] 14:0 Midi Through Port-0"
+             2  1   "[2] 130:2 VMPK Output:out"
+                             ^
+                           v
+             0  1   "[0] 0:1 system:ALSA Announce"
+             1  1   "[1] 14:0 Midi Through Port-0"
+             2  1   "[2] 130:0 VMPK Output:out"
+                             ^
 
 UI:
 
