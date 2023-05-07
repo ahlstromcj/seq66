@@ -529,29 +529,48 @@
 
    \begin{itemize}
       \item \textbf{normal}.
-      \index{sets-mode ! normal}
+      \index{sets-mode!normal}
          When moving to another set, the patterns in the
          current play-screen are muted, as are the patterns in the destination
          set.
       \item \textbf{autoarm}.
-      \index{sets-mode ! autoarm}
+      \index{sets-mode!autoarm}
          Similar to normal, but the patterns in the
          destination set are automatically unmuted.
       \item \textbf{additive}.
-      \index{sets-mode ! additive}
+      \index{sets-mode!additive}
          When moving to another set, the destination set
          is added to the play-set, so that both sets are playing.
          This option was requested by users.
       \item \textbf{allsets}.
-      \index{sets-mode ! allsets}
+      \index{sets-mode!allsets}
          When a song is loaded, all patterns in all sets are unmuted and will
          play.
    \end{itemize}
 
-  The port-naming values are 'short' or 'long'.  The short style
-  just shows the port number and short port name; the long style
-  shows all the numbers and the long port name.
-  For \textsl{Windows} (portmidi), the 'long' option works better.
+   \index{port-naming}
+   The \texttt{port-naming} option determines how much detail is shown in
+   port names as shown in the user-interface.  It does not apply if
+   port-mapping (\sectionref{sec:port_mapping}) is active (and note that
+   port-mapping is now the default).
+   Port-naming values are:
+
+   \begin{itemize}
+      \item \textbf{short}.
+      \index{port-naming!short}
+         The brief name is shown; this is just the bare device name.
+      \item \textbf{pair}.
+      \index{port-naming!pair}
+         The ALSA client number and port are shown along with the device name.
+         Example "128:0 VMPK Input"
+      \item \textbf{long}.
+      \index{port-naming!long}
+         The internal number of the clients and ports are shown.
+         These are a sequence of port numbers: 0, 1, 2, 3, etc.
+   \end{itemize}
+
+   For \textsl{Windows} (the "portmidi" build),
+   the 'long' option works better.
 
 \subsubsection{'rc' File / MIDI Control}
 \label{subsubsec:configuration_rc_midi_control}

@@ -739,7 +739,7 @@ void
 mastermidibase::port_start (int client, int port)
 {
     automutex locker(m_mutex);
-    api_port_start(client, port);
+    api_client_port_start(client, port);
 }
 
 /**

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-04-17
+ * \updates       2023-05-06
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -368,6 +368,10 @@ smanager::create_performer ()
 
 /**
  *  Code moved from rcfile to here while researching issue #89.
+ *
+ * \return
+ *      Returns true if the 'ctrl' file was able to be opened.
+ *      If not active, we don't bother to report the error.
  */
 
 bool
@@ -378,7 +382,7 @@ smanager::open_midi_control_file ()
     if (result)
     {
         result = read_midi_control_file(fullpath, rc());
-        if (! result)
+        if (rc().midi_control_active() && ! result)
             append_error_message("Read failed", fullpath);
     }
     return result;

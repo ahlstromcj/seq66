@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2023-04-15
+ * \updates       2023-05-07
  * \license       See above.
  *
  *  API information found at:
@@ -335,10 +335,15 @@ midi_alsa_info::get_all_port_info
                 }
                 if ((caps & sm_output_caps) == sm_output_caps)
                 {
+                    /*
+                     * ca 2023-05-07 Big bug!!!!! Was using the
+                     * midibase::io::input value!
+                     */
+
                     outputports.add
                     (
                         client, clientname, portnumber, portname,
-                        midibase::io::input, midibase::port::normal
+                        midibase::io::output, midibase::port::normal
                     );
                     ++result;
                 }

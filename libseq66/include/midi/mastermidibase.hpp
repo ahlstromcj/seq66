@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2022-05-15
+ * \updates       2023-05-06
  * \license       GNU GPLv2 or above
  *
  *  The mastermidibase module is the base-class version of the mastermidibus
@@ -415,7 +415,7 @@ protected:
         // no code for base, alsmidi, or portmidi
     }
 
-    virtual void api_port_start (int /* client */, int /* port */)
+    virtual void api_client_port_start (int /* client */, int /* port */)
     {
         // no code for portmidi
     }

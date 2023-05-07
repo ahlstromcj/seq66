@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2023-05-03
+2015-09-09 to 2023-05-07
 
 Creating a GitHub Repository:
 
@@ -237,18 +237,20 @@ Release:
 
     -   Make sure the working branch builds and runs properly for
         the rtmidi, portmidi, debug, Windows, and command-line versions,
-        and all changes pushed to GitHub.
+        and all changes are pushed to GitHub.
     -   Run "./bootstreap --full-clean".
     -   Check out the "master" branch and merge the working branch
         into it.
     -   Make sure the version numbering and dates are current in
-        configure.ac and other places.
+        configure.ac, VERSION, README.md, RELNOTES,
+        include/qt/portmidi/seq66-config.h, include/qt/rtmidi/seq66-config.h,
+        seq66-user-manual.tex, and ...?
     -   Update the README.md and RELNOTES (see below) files.
     -   Verify the master branch builds ("./bootstrap -er" followed
         by "make") and runs.
     -   Go to "doc/latex" and run "make" to rebuild the PDF manual.
     -   Run "git2cl > cl.txt" and use it to update the Changelog file.
-    -   Commit this release build without the "-m" option.  Instead,
+    -   Commit this release build *without* the "-m" option.  Instead,
         read the RELNOTES file into the commit message. See the
         commit-message rules below.
     -   Push the release.
@@ -256,7 +258,8 @@ Release:
         Leave off the -m option and instead load RELNOTES into
         the commit message.
     -   On GitHub, create a release with a name of the form
-        "Fancy Name 0.99.x".
+        "Fancy Name 0.99.x".  Optionally, add a Windows installer
+        to the release packages.
 
 	Rules for a Git commit message:
 
@@ -596,7 +599,5 @@ Cloning our personal GitHub site:
 
     Otherwise, GitHub now gripes about security and refuses to deal with
     a https link.
-
-    Add an index.html file.
 
 # vim: sw=4 ts=4 wm=8 et ft=sh

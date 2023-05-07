@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2022-03-09
+ * \updates       2022-05-07
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of the midibus class.
@@ -90,7 +90,7 @@ midibus::midibus
         rt.get_port_name(index),
         index,
         is_good_buss(bussoverride) ? bussoverride : rt.get_bus_id(index),
-        index,
+        rt.get_port_id(index),          /* ca 2023-05-07 was "index"        */
         rt.global_queue(),
         rt.ppqn(), rt.bpm(),
         iotype,                         /* perhaps I/O is swapped (JACK)    */
