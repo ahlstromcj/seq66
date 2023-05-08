@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2022-08-25
+:: \update      2023-05-08
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -22,10 +22,10 @@
 ::          environment variables and steps below to accommodate your choice.
 ::       1. Runs in Windows only.
 ::       2. Requires QtCreator to be installed, and configured to provide
-::          the 32-bit Mingw tools, including mingw32-make.exe, and
-::          qmake.exe.  The PATH must include the path to both executables.
-::          See "Path Additions" below.  We have not tried
-::          using the Microsoft C++ compiler yet. Any takers?
+::          the 32/64-bit Mingw tools, including mingw32-make.exe (there is
+::          no mingw64-make.exe), and qmake.exe.  The PATH must include the
+::          path to both executables. See "Path Additions" below.
+::          We have not tried the Microsoft C++ compiler yet. Any takers?
 ::       3. Requires 7-Zip to be installed and accessible from the DOS
 ::          command-line, as 7z.exe.
 ::
@@ -33,15 +33,20 @@
 ::
 ::       1. C:\Qt\Qt5.12.9\5.12.9\mingw73_32\bin    (or 64-bit)
 ::       2. C:\Qt\Qt5.12.9\Tools\mingw73_32\bin     (ditto)
+::       3. C:\Program Files (x86)\NSIS\bin         (if NSIS installed on Win)
+::       4. C:\Program File\Git\usr\bin etc.        (if Git Bash installed)
 ::
 ::      Depending on the versions some things will be different.
 ::
 ::       a. For earlier versions of Qt, might need to remove "Qt" from the
 ::          "Qt5.12.9" subdirectories.
-::       b. Might also need to change the "73" version number in "mingw73_32".
+::       b. Might also need to change the "73" version number in "mingw73_32"
+::          in the paths.
 ::       c. Can also change to 64-bit:  "mingw73_64".  In this case warnings or
 ::          errors might be exposed in the Windows PortMidi C files, though
 ::          we check both builds.
+::
+::          Note: the default is now PROJECT_BITS = 64.
 ::
 :: Build Instructions:
 ::
@@ -51,7 +56,8 @@
 ::
 ::       1. Before running this script, modify the environment variables below
 ::          in this batch file for your specific setup, including
-::          PROJECT_VERSION, PROJECT_DRIVE, and PROJECT_BASE.
+::          PROJECT_VERSION, PROJECT_DRIVE, PROJECT_BITS, PROJECT_BASE,
+::          and NSIS_PLATFORM (either "Linux" or "Windows").
 ::       2. Also edit seq66/nsis/Seq66Constants.nsh to specify the current
 ::          date and Seq66 version number.  The macros to modify are:
 ::          VER_NUMBER (e.g. "0.90") and VER_REVISION (e.g. "1", as in "0.90.1").
@@ -122,26 +128,32 @@
 ::          where "rtmidi" can be replaced with whatever the current build
 ::          is, such as "cli" or "portmidi" or "qt".
 ::
-:: This batch file completely removes the old Windows seq66-release-32 directory
-:: and re-does everything.
+:: This batch file completely removes the old Windows seq66-release-64 or
+:: 32 directory and re-does everything.
 ::
 :: See the set of variable immediately below.
 ::
-::---------------------------------------------------------------------------
- 
-set PROJECT_VERSION=0.99.1
-set PROJECT_DRIVE=C:
-set PROJECT_BITS=32
-
 :: PROJECT_BASE is the directory that is the immediate parent of the seq66
 :: directory.  Adjust this value for your setup.
 ::
 :: Mingw:
 ::
 :: set PROJECT_BASE=\home\chris\Home\git
-
+::
+::---------------------------------------------------------------------------
+ 
+set PROJECT_VERSION=0.99.5
+set PROJECT_DRIVE=C:
+set PROJECT_BITS=64
 set PROJECT_BASE=\Users\Chris\Documents\Home
-set PROJECT_ROOT=..\seq66
+set NSIS_PLATFORM=Windows
+
+:: No need to change the following. PROJECT_REL_ROOT is relative to the
+:: Qt shadow build directory that is created in PROJECT_BASE.
+
+set PROJECT_NAME=seq66
+set PROJECT_TREE=%PROJECT_BASE%\%PROJECT_NAME%
+set PROJECT_REL_ROOT=..\seq66
 set PROJECT_FILE=seq66.pro
 set PROJECT_7ZIP="qpseq66-release-package-%PROJECT_VERSION%.7z"
 set SHADOW_DIR=seq66-release-%PROJECT_BITS%
@@ -158,32 +170,29 @@ set DOC_DIR="data\share\doc"
 :: cd \Users\Chris\Documents\Home
 
 cd %PROJECT_BASE%
-
-:: mkdir seq66-release-32
-:: cd seq66-release-32
-
 del /S /Q %SHADOW_DIR% > NUL
 mkdir %SHADOW_DIR%
+echo Creating Qt shadow directory %SHADOW_DIR% ...
 cd %SHADOW_DIR%
 
 :: qmake -makefile -recursive "CONFIG += release" ..\seq66\seq66.pro
 
 cd
-echo qmake -makefile -recursive %CONFIG_SET% %PROJECT_ROOT%\%PROJECT_FILE%
-echo mingw%PROJECT_BITS%-make (output to make.log)
-qmake -makefile -recursive %CONFIG_SET% %PROJECT_ROOT%\%PROJECT_FILE%
-mingw%PROJECT_BITS%-make > make.log 2>&1
+echo qmake -makefile -recursive %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_FILE%
+echo mingw32-make (output to make.log)
+qmake -makefile -recursive %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_FILE% > make.log 2>&1
+mingw32-make > make.log 2>&1
 
 :: windeployqt Seq66qt5\release
 
-echo windeployqt %RELEASE_DIR%
+echo Creating deployment area via windeployqt %RELEASE_DIR%
 windeployqt %RELEASE_DIR%
 
 echo mkdir %RELEASE_DIR%\%AUX_DIR%
 echo mkdir %RELEASE_DIR%\%DOC_DIR%
-echo copy %PROJECT_ROOT%\%DOC_DIR%\*.pdf %RELEASE_DIR%\%DOC_DIR%
-echo copy %PROJECT_ROOT%\%DOC_DIR%\*.ods %RELEASE_DIR%\%DOC_DIR%
-echo xcopy %PROJECT_ROOT%\%DOC_DIR%\tutorial %RELEASE_DIR%\%DOC_DIR% /f /s /y /i
+echo copy %PROJECT_REL_ROOT%\%DOC_DIR%\*.pdf %RELEASE_DIR%\%DOC_DIR%
+echo copy %PROJECT_REL_ROOT%\%DOC_DIR%\*.ods %RELEASE_DIR%\%DOC_DIR%
+echo xcopy %PROJECT_REL_ROOT%\%DOC_DIR%\tutorial %RELEASE_DIR%\%DOC_DIR% /f /s /y /i
 
 mkdir %RELEASE_DIR%\%AUX_DIR%
 mkdir %RELEASE_DIR%\%AUX_DIR%\linux
@@ -192,16 +201,16 @@ mkdir %RELEASE_DIR%\%AUX_DIR%\samples
 mkdir %RELEASE_DIR%\%AUX_DIR%\win
 mkdir %RELEASE_DIR%\%AUX_DIR%\wrk
 
-copy %PROJECT_ROOT%\%AUX_DIR%\linux\*.* %RELEASE_DIR%\%AUX_DIR%\linux
-copy %PROJECT_ROOT%\%AUX_DIR%\midi\*.* %RELEASE_DIR%\%AUX_DIR%\midi
-copy %PROJECT_ROOT%\%AUX_DIR%\samples\*.* %RELEASE_DIR%\%AUX_DIR%\samples
-copy %PROJECT_ROOT%\%AUX_DIR%\win\*.* %RELEASE_DIR%\%AUX_DIR%\win
-copy %PROJECT_ROOT%\%AUX_DIR%\wrk\*.* %RELEASE_DIR%\%AUX_DIR%\wrk
+copy %PROJECT_REL_ROOT%\%AUX_DIR%\linux\*.* %RELEASE_DIR%\%AUX_DIR%\linux
+copy %PROJECT_REL_ROOT%\%AUX_DIR%\midi\*.* %RELEASE_DIR%\%AUX_DIR%\midi
+copy %PROJECT_REL_ROOT%\%AUX_DIR%\samples\*.* %RELEASE_DIR%\%AUX_DIR%\samples
+copy %PROJECT_REL_ROOT%\%AUX_DIR%\win\*.* %RELEASE_DIR%\%AUX_DIR%\win
+copy %PROJECT_REL_ROOT%\%AUX_DIR%\wrk\*.* %RELEASE_DIR%\%AUX_DIR%\wrk
 
 mkdir %RELEASE_DIR%\%DOC_DIR%
-copy %PROJECT_ROOT%\%DOC_DIR%\*.pdf %RELEASE_DIR%\%DOC_DIR%
-copy %PROJECT_ROOT%\%DOC_DIR%\*.ods %RELEASE_DIR%\%DOC_DIR%
-copy %PROJECT_ROOT%\%DOC_DIR%\README %RELEASE_DIR%\%DOC_DIR%
+copy %PROJECT_REL_ROOT%\%DOC_DIR%\*.pdf %RELEASE_DIR%\%DOC_DIR%
+copy %PROJECT_REL_ROOT%\%DOC_DIR%\*.ods %RELEASE_DIR%\%DOC_DIR%
+copy %PROJECT_REL_ROOT%\%DOC_DIR%\README %RELEASE_DIR%\%DOC_DIR%
 
 :: This section takes the generated build and data files and packs them
 :: up into a 7-zip archive.  This archive should be copied to the root
@@ -210,16 +219,44 @@ copy %PROJECT_ROOT%\%DOC_DIR%\README %RELEASE_DIR%\%DOC_DIR%
 ::
 :: Then, in Linux, "cd" to the "nsis" directory and run
 ::
-::      makensis Seq66Setup_V0.90.nsi
+::      makensis Seq66Setup.nsi
 ::
 :: pushd Seq66qt5
 :: 7z a -r qppseq66-nsis-ready-package-DATE.7z release\*
 
+echo The build DLLs and EXE are in %SHADOW_DIR%\%RELEASE_DIR%
 pushd %APP_DIR%
+echo Making 7zip package in %APP_DIR%...
 cd
 echo 7z a -r %PROJECT_7ZIP% release\*
 del *.o
 7z a -r %PROJECT_7ZIP% release\*
 popd
+
+:: Here we are seq66-release-64 (or 32).
+
+if NOT %NSIS_PLATFORM%==Windows goto skipnsis
+
+echo "Copying the 7zip package to the project tree..."
+copy %APP_DIR%\%PROJECT_7ZIP% %PROJECT_TREE%
+cd %PROJECT_TREE%
+echo "Unpacking the 7zip package, %PROJECT_7ZIP% ..."
+7z x %PROJECT_7ZIP%
+echo "Building a Windows installer using NSIS..."
+cd %PROJECT_TREE%
+pushd nsis
+makensis Seq66Setup.nsi
+popd
+goto done
+
+:skipnsis
+
+echo In Linux, copy the %PROJECT_7ZIP% file to the project root ("seq66")
+echo and extract that file. The contents go into the "release" directory.
+echo Change to the "nsis" directory and run "makensis Seq66Setup.nsi".
+
+:done
+
+echo Build products are in %RELEASE_DIR%.
 
 :: vim: ts=4 sw=4 ft=dosbatch fileformat=dos

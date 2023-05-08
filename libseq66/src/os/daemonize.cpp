@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2023-03-29
+ * \updates       2023-05-08
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -112,8 +112,9 @@
 #include <windows.h>                    /* WaitForSingleObject(), INFINITE  */
 #include <fcntl.h>                      /* _O_RDWR                          */
 #include <io.h>                         /* _open(), _close()                */
-#include <synchapi.h>                   /* recent Windows "wait" functions  */
 #include <process.h>                    /* Windows _getpid() function       */
+#include <synchapi.h>                   /* recent Windows "wait" functions  */
+#include <sys/stat.h>                   /* Windows S_IWUSR, S_IWGRP, etc.   */
 
 #define STD_CLOSE       _close
 #define STD_OPEN        _open
@@ -785,8 +786,14 @@ get_process_name (pid_t /*pid*/)
 std::string
 get_parent_process_name ()
 {
-    long parentpid = long(_getppid());
-    return "TODO";
+    /*
+     * Not available on Windoze. And used only for the Non/New Session Manager,
+     * which is not supported on Windoze.
+     *
+     * long parentpid = long(_getppid());
+     */
+
+    return std::string("None");
 }
 
 #endif  // defined SEQ66_PLATFORM_LINUX

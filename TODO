@@ -6,6 +6,15 @@ Some of these issues will be pushed off for the distant Seq66v2.
 
 Hot:
 
+    -   Port-map issues:
+        -   When mapping active, need to keep the midi-input and midi-output
+            statuses in sync with the mapped statuses. These seems to be ok,
+            but....
+        -   Do not provide the ALSA Announce buss in the input port map.
+        -   Make sure GUI changes in mapping take hold and are restored
+            under rerunning and restarting.
+        -   Verify proper behavior with mapping in active.
+        -   Replace I and O map checkboxes with just one checkbox.
     -   Finish the major upgrade to the event editor; plan for a
         "SeqSpec" tab?  Worth it?
 

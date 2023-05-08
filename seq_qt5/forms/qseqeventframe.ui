@@ -162,7 +162,7 @@
     <string>(Enter Meta/SysEx event text here)</string>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
      <x>461</x>
@@ -338,7 +338,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="vertLayoutWidget">
    <property name="geometry">
     <rect>
      <x>460</x>
@@ -690,7 +690,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="horizLayoutWidget">
    <property name="geometry">
     <rect>
      <x>460</x>
@@ -764,7 +764,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="dataLayoutWidget">
    <property name="geometry">
     <rect>
      <x>460</x>

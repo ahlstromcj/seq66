@@ -3,8 +3,8 @@
 ; File:         x64.nsh
 ; Author:       Chris Ahlstrom
 ; Date:         2021-12-12
-; Updated:      2021-12-12
-; Version:      0.98.2
+; Updated:      2023-05-08
+; Version:      0.99.5
 ;
 ;   NSIS, presently a 32-bit program, redirects installations to default
 ;    "C:\Program Files (x86)" and uses the Windows Registry key

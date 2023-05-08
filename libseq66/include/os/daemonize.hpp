@@ -23,7 +23,7 @@
  * \file          daemonize.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2023-03-29
+ * \updates       2023-05-08
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
@@ -42,7 +42,9 @@
  */
 
 #if defined SEQ66_PLATFORM_32_BIT
+#if defined NO_OLDNAMES
 using mode_t = unsigned int;
+#endif
 #endif
 
 /*

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-05-06
+ * \updates       2023-05-08
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -118,6 +118,13 @@ smanager::~smanager ()
  *  the 'usr' and 'rc' configuration files, in that order.  The last thing
  *  is to override any other settings via the command-line parameters.
  *
+ * NSM:
+ *
+ *      This function can detect the parent process ("nsmd") under Linux.
+ *      Under Windows, we don't really support NSM, and so the
+ *      seq66::get_parent_process_name() function in the daemonize.cpp module
+ *      returns a name of "None".
+ *
  * \param argc
  *      The number of command-line parameters, including the name of the
  *      application as parameter 0.
@@ -179,12 +186,14 @@ smanager::main_settings (int argc, char * argv [])
             result = rcode != (-1);
             if (result)
             {
+#if ! defined SEQ66_PLATFORM_WINDOWS
                 if (usr().want_nsm_session())
                 {
                     in_nsm = true;
                     session_manager_name("Simulated NSM");
                     session_manager_path(rc().home_config_directory());
                 }
+#endif
             }
             else
                 is_help(true);          /* a hack to avoid create_window()  */

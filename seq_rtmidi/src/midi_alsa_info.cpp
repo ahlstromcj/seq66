@@ -336,7 +336,7 @@ midi_alsa_info::get_all_port_info
                 if ((caps & sm_output_caps) == sm_output_caps)
                 {
                     /*
-                     * ca 2023-05-07 Big bug!!!!! Was using the
+                     * ca 2023-05-07 Big bug? Was using the
                      * midibase::io::input value!
                      */
 

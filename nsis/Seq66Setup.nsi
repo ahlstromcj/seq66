@@ -3,8 +3,8 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2022-09-04
-; Version:      0.99.1
+; Updated:      2023-05-08
+; Version:      0.99.5
 ;
 ; Usage of this Windows build script:
 ;
@@ -208,8 +208,8 @@ Section "Documentation" SEC_DOC
 
     SetOutPath "$INSTDIR\doc"
     SetOverwrite on
-    File /r "..\release\doc\*.pdf"
-    File /r "..\release\doc\*.ods"
+    File /r "..\release\data\share\doc\*.pdf"
+    File /r "..\release\data\share\doc\*.ods"
 
 SectionEnd
 
