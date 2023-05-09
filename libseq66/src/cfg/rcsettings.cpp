@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-05-06
+ * \updates       2023-05-09
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -109,30 +109,23 @@ rcsettings::rcsettings () :
     m_jack_session_uuid         (),
     m_jack_session_active       (false),
     m_last_used_dir             (),                     /* double_quotes()  */
-#if defined SEQ66_PLATFORM_WINDOWS      /* but see home_config_directory()  */
-    m_session_directory         (SEQ66_CLIENT_NAME),
-#else
-    m_session_directory
-    (
-        std::string(".config/") + std::string(SEQ66_CLIENT_NAME)
-    ),
-#endif
+    m_session_directory         (),
     m_config_subdirectory       (),
-    m_config_filename           (SEQ66_CONFIG_NAME),    /* updated in body  */
+    m_config_filename           (seq_config_name()),    /* updated in body  */
     m_full_config_directory     (),
     m_user_file_active          (true),
-    m_user_filename             (SEQ66_CONFIG_NAME),    /* updated in body  */
+    m_user_filename             (seq_config_name()),    /* updated in body  */
     m_midi_control_active       (false),
-    m_midi_control_filename     (SEQ66_CONFIG_NAME),    /* updated in body  */
+    m_midi_control_filename     (seq_config_name()),    /* updated in body  */
     m_mute_group_file_active    (false),
-    m_mute_group_filename       (SEQ66_CONFIG_NAME),    /* updated in body  */
+    m_mute_group_filename       (seq_config_name()),    /* updated in body  */
     m_playlist_active           (false),
-    m_playlist_filename         (SEQ66_CONFIG_NAME),    /* updated in body  */
+    m_playlist_filename         (seq_config_name()),    /* updated in body  */
     m_playlist_midi_base        (),
     m_notemap_active            (false),
-    m_notemap_filename          (SEQ66_CONFIG_NAME),    /* updated in body  */
+    m_notemap_filename          (seq_config_name()),    /* updated in body  */
     m_palette_active            (false),
-    m_palette_filename          (SEQ66_CONFIG_NAME),    /* updated in body  */
+    m_palette_filename          (seq_config_name()),    /* updated in body  */
     m_application_name          (seq_app_name()),
     m_tempo_track_number        (0),
     m_recent_files              (),
@@ -141,9 +134,7 @@ rcsettings::rcsettings () :
     m_portmaps_present          (false),
     m_portmaps_active           (false)
 {
-#if ! defined SEQ66_PLATFORM_WINDOWS
-    m_session_directory = default_session_path();       /* tricky */
-#endif
+    m_session_directory = user_session(seq_client_name());
     m_midi_control_in.inactive_allowed(true);
     m_config_filename += ".rc";
     m_user_filename += ".usr";
@@ -213,31 +204,24 @@ rcsettings::set_defaults ()
     m_jack_session_uuid.clear();
     m_jack_session_active       = false;
     m_last_used_dir.clear();                /* double_quotes()              */
-#if defined SEQ66_PLATFORM_WINDOWS          /* see home_config_directory()  */
-    m_session_directory = SEQ66_CLIENT_NAME;
-#else
-    m_session_directory = std::string(".config/") +
-        std::string(SEQ66_CLIENT_NAME);
-
-    m_session_directory = default_session_path();   /* tricky */
-#endif
+    m_session_directory         = user_session(seq_client_name());
     m_config_subdirectory.clear(),
-    m_config_filename           = SEQ66_CONFIG_NAME;
+    m_config_filename           = seq_config_name();
     m_config_filename           += ".rc";
     m_full_config_directory.clear();
     m_user_file_active = true;
-    m_user_filename = SEQ66_CONFIG_NAME;
+    m_user_filename = seq_config_name();
     m_midi_control_active = false;
-    m_midi_control_filename = SEQ66_CONFIG_NAME;
+    m_midi_control_filename = seq_config_name();
     m_mute_group_file_active = false;
-    m_mute_group_filename = SEQ66_CONFIG_NAME;
+    m_mute_group_filename = seq_config_name();
     m_playlist_active = false;
-    m_playlist_filename = SEQ66_CONFIG_NAME;
+    m_playlist_filename = seq_config_name();
     m_playlist_midi_base.clear();
     m_notemap_active = false;
-    m_notemap_filename = SEQ66_CONFIG_NAME;
+    m_notemap_filename = seq_config_name();
     m_palette_active = false;
-    m_palette_filename = SEQ66_CONFIG_NAME;
+    m_palette_filename = seq_config_name();
     m_config_filename += ".rc";
     m_user_filename += ".usr";
     m_midi_control_filename += ".ctrl";
@@ -256,7 +240,7 @@ rcsettings::set_defaults ()
     m_full_recent_paths = false;
     m_portmaps_present = false;
     m_portmaps_active = false;
-    set_config_files(SEQ66_CONFIG_NAME);
+    set_config_files(seq_config_name());
     set_save_list(false);
 }
 
@@ -1047,6 +1031,10 @@ rcsettings::last_used_dir (const std::string & value)
 
 /**
  * \setter m_session_directory
+ *
+ *      The default value of this member is that returned by the
+ *      user_session() function, either ".config" or "AppData/Local", with
+ *      the "seq66" or the result of seq_client_name() appended.
  *
  * \param value
  *      The value to use to make the setting.  Currently, we do not handle

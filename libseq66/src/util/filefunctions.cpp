@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-01-01
+ * \updates       2023-05-09
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -56,16 +56,25 @@
  *  Also, select the HOME or LOCALAPPDATA environment variables depending on
  *  whether building for Windows or not.  LOCALAPPDATA points to the root of
  *  the Windows user's configuration directory, AppData/Local.
+ *
+ *      APPDATA         C:\Users\username\AppData\Roaming
+ *      LOCALAPPDATA    C:\Users\username\AppData\Local
+ *      HOMEDRIVE       C:
+ *      HOMEPATH        \Users\username
+ *
  */
 
 #if defined SEQ66_PLATFORM_WINDOWS
 #define SEQ66_PATH_SLASH                "\\"
 #define SEQ66_PATH_SLASH_CHAR           '\\'
-#define SEQ66_ENV_HOME                  "LOCALAPPDATA"
+#define SEQ66_ENV_HOMEDRIVE             "HOMEDRIVE"
+#define SEQ66_ENV_HOMEPATH              "HOMEPATH"
+#define SEQ66_ENV_CONFIG                "LOCALAPPDATA"
 #else
 #define SEQ66_PATH_SLASH                "/"
 #define SEQ66_PATH_SLASH_CHAR           '/'
 #define SEQ66_ENV_HOME                  "HOME"
+#define SEQ66_ENV_CONFIG                ".config"
 #endif
 
 #define SEQ66_PATH_SLASHES              "/\\"
@@ -1593,11 +1602,10 @@ append_path
     return normalize_path(result, to_unix, true);
 }
 
-
 /**
  *  Cleans up the path to make sure it is either valid or empty, and then
- *  appends the base file-name (hopefully in the format "base.extension") to
- *  it.
+ *  appends the base file-name (generally in the format "base" or
+ *  "base.extension") to it.
  *
  *  This function works solely using UNIX conventions, it is for internal use.
  *  If desired, it can be converted to Windows conventions using
@@ -1607,7 +1615,7 @@ append_path
 std::string
 filename_concatenate (const std::string & path, const std::string & filebase)
 {
-    std::string result = clean_path(path);
+    std::string result = clean_path(path);          /* also adds end slash  */
     std::string base = filename_base(filebase);     /* strip existing path  */
     result += base;
     return result;
@@ -1895,35 +1903,133 @@ set_current_directory (const std::string & path)
  *  Gets the user's $HOME (Linux) or $LOCALAPPDAT (Windows) directory from the
  *  current environment.
  *
- * getenv(HOME):
+ * getenv("HOME"):
  *
  *      -   Linux returns "/home/ahlstrom".  Append "/.config/seq66".
  *      -   Windows returns "\Users\ahlstrom".  A better value than HOMEPATH
  *          is LOCALAPPDATA, which gives us most of what we want:
  *          "C:\Users\ahlstrom\AppData\Local", and then we append simply
- *          "seq66".
+ *          "seq66".  However, this inconsistency is annoying. So now
+ *          we provide separate functions for home versus the standard
+ *          configuration directory for a Windows or Linux user.
+ *
+ * \param appfolder
+ *      If not empty (the default) then the parameter is appended to the
+ *      path that is returned.
+ *
+ * \return
+ *      Returns the value of $HOME, such as "/home/user" or "C:\Users\user".
+ *      Notice the lack of a terminating path-slash.  If std::getenv() fails,
+ *      an empty string is returned. The value is normalized to use the
+ *      UNIX path separator.
+ */
+
+std::string
+user_home (const std::string & appfolder)
+{
+    std::string result;
+#if defined SEQ66_PLATFORM_WINDOWS
+    char * env = std::getenv(SEQ66_ENV_HOMEDRIVE);
+    if (not_nullptr(env))
+    {
+        char * env2 = std::getenv(SEQ66_ENV_HOMEPATH);
+        if (not_nullptr(env2))
+        {
+            result += env;              /* "C:"                             */
+            result += env2;             /* "\Users\username"                */
+        }
+    }
+#else
+    char * env = std::getenv(SEQ66_ENV_HOME);
+    if (not_nullptr(env))
+        result = std::string(env);      /* "/home/username"                 */
+#endif
+    if (result.empty())
+    {
+        file_error("std::getenv() failed", "HOME");
+    }
+    else
+    {
+        result = normalize_path(result);
+        if (! appfolder.empty())
+            result = filename_concatenate(result, appfolder);
+    }
+    return result;
+}
+
+/**
+ *  Similar to user_home(), but tacks on the standard configuration directory
+ *  for Linux or Windows. Again, there is no slash at the end.
+ *
+ * \param appfolder
+ *      If not empty (the default) then the parameter is appended to the
+ *      path that is returned.
  *
  * \return
  *      Returns the value of $HOME, such as "/home/user" or
  *      "C:\Users\user\AppData\Local".  Notice the lack of a terminating
- *      path-slash.  If std::getenv() fails, an empty string is returned.
+ *      path-slash.  If std::getenv() fails, an empty string is returned. The
+ *      value is normalized to use the UNIX path separator.
  */
 
 std::string
-user_home ()
+user_config (const std::string & appfolder)
 {
     std::string result;
-    char * env = std::getenv(SEQ66_ENV_HOME);
+#if defined SEQ66_PLATFORM_WINDOWS
+    char * env = std::getenv(SEQ66_ENV_CONFIG);
     if (not_nullptr(env))
     {
-        result = std::string(env);
+        result = env;                   /* C:\Users\username\AppData\Local  */
+        result = normalize_path(result);
     }
-    else
-    {
-        file_error("std::getenv() failed", SEQ66_ENV_HOME);
-    }
+#else
+    result = user_home();
+    if (! result.empty())
+        result = filename_concatenate(result, SEQ66_ENV_CONFIG);
+#endif
+
+    if (result.empty())
+        file_error("std::getenv() failed", "CONFIG");
+    else if (! appfolder.empty())
+            result = filename_concatenate(result, appfolder);
+
     return result;
 }
+
+/**
+ *  Strips off the "HOME" parts of the user config directory for use
+ *  as the default "session" directory. For Linux, what is stripped is
+ *  "/home/username" and for Windows it is "C:/Users/username".
+ */
+
+
+std::string
+user_session (const std::string & appfolder)
+{
+#if defined SEQ66_PLATFORM_WINDOWS
+    std::string result = user_config();
+    if (! result.empty())
+    {
+        auto spos = temp.find_first_of("/");
+        if (spos != std::string::npos)
+            spos = temp.find_first_of("/", spos);
+
+        if (spos != std::string::npos)
+        {
+            result = result.substr(spos + 1)
+            if (! appfolder.empty())
+                result = filename_concatenate(result, appfolder);
+        }
+    }
+#else
+    std::string result = ".config";
+    if (! appfolder.empty())
+        result = filename_concatenate(result, appfolder);
+#endif
+    return result;
+}
+
 
 /**
  *  Given a list of potential directories, try to find a given file in them.

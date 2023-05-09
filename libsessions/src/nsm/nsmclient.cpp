@@ -482,7 +482,7 @@ nsmclient::open
 void
 nsmclient::save ()
 {
-    if (save_session())
+    if (save_session())                         /* assumes that all is okay */
     {
         std::string msg;
         bool saved = m_session_manager.save_session(msg);

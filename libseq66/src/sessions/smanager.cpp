@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-05-08
+ * \updates       2023-05-09
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -647,6 +647,11 @@ smanager::save_session (std::string & msg, bool ok)
     return result;
 }
 
+/**
+ *  This function is overridden in qt5nsmanager to actually create the
+ *  user-interface.
+ */
+
 bool
 smanager::create_window ()
 {
@@ -832,18 +837,32 @@ smanager::create (int argc, char * argv [])
         bool ok = create_session(argc, argv);       /* path, client ID, etc */
         if (ok)
         {
+            /*
+             * Need to test this change under NSM and Windows!
+             *
+             * rc().session_directory();
+             */
+
             std::string homedir = manager_path();   /* session manager path */
             if (homedir == "None")
-                homedir = rc().session_directory();
+                homedir = rc().home_config_directory();
 
             session_message("Session manager path", homedir);
             (void) create_project(argc, argv, homedir);
         }
         if (ok)
-            ok = open_midi_control_file();
+            (void) open_midi_control_file();
 
-        result = create_performer();
-        if (result)
+        /*
+         * We don't want to return a false result, otherwise seq66 will
+         * exit mysteriously, without showing any message. So we use an
+         * internal flag. Found while investigating issue #110. Done for
+         * everything to line 875. We also have to call open_playlist()
+         * to avoid a segfault later.
+         */
+
+        ok = create_performer();
+        if (ok)
         {
             std::string fname = midi_filename();
             if (fname.empty())
@@ -858,10 +877,10 @@ smanager::create (int argc, char * argv [])
             else
                 (void) open_midi_file(fname);
 
-            result = open_playlist();
-            if (result)
-                result = open_note_mapper();
         }
+        ok = open_playlist();
+        if (ok)
+            ok = open_note_mapper();
 
 #if defined USE_CRIPPLED_RUN
 
@@ -893,7 +912,7 @@ smanager::create (int argc, char * argv [])
             {
                 std::string msg;                        /* maybe errmsg?    */
                 result = close_session(msg, false);
-                session_message("Startup error", msg);
+                session_message("Window creation error", msg);
             }
         }
         if (! is_help())
@@ -931,7 +950,13 @@ smanager::create_configuration
         rc().midi_filepath(midifilepath);               /* do this first    */
         rc().full_config_directory(cfgfilepath);        /* set session dir. */
 
-        std::string rcpath = rc().session_directory();
+        /*
+         * Need to test this change under NSM and Windows!
+         *
+         * rc().session_directory();
+         */
+
+        std::string rcpath = rc().home_config_directory();
         std::string rcfile = filename_concatenate(rcpath, rcbase);
         bool already_created = file_exists(rcfile);
         if (already_created)

@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2023-05-08
+:: \update      2023-05-09
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -140,6 +140,9 @@
 ::
 :: set PROJECT_BASE=\home\chris\Home\git
 ::
+:: NSIS_PLATFORM defaults to "Windows", but the presence of the makensis
+:: program is tested; if missing, then the value is "Linux".
+::
 ::---------------------------------------------------------------------------
  
 set PROJECT_VERSION=0.99.5
@@ -233,7 +236,16 @@ del *.o
 7z a -r %PROJECT_7ZIP% release\*
 popd
 
+:: Test for a properly set up NSIS on Windows.
+
+makensis /version
+if ERRORLEVEL 0 goto nsisexists
+
+set NSIS_PLATFORM=Linux
+
 :: Here we are seq66-release-64 (or 32).
+
+:nsisexists
 
 if NOT %NSIS_PLATFORM%==Windows goto skipnsis
 
@@ -246,6 +258,8 @@ echo "Building a Windows installer using NSIS..."
 cd %PROJECT_TREE%
 pushd nsis
 makensis Seq66Setup.nsi
+echo If makensis succeeded, the installer is located in
+echo %PROJECT_TREE%\release, named like "seq66_setup_VERSION.exe".
 popd
 goto done
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2022-05-19
+ * \updates       2023-05-08
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -252,6 +252,13 @@ const std::string &
 seq_client_short ()
 {
     return s_client_name_short;
+}
+
+const std::string &
+seq_config_name ()
+{
+    static std::string s_config_name = SEQ66_CONFIG_NAME;
+    return s_config_name;
 }
 
 const std::string &

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2022-05-18
+ * \updates       2023-05-09
  * \license       GNU GPLv2 or above
  *
  *    Provides some useful functions for displaying information about the
@@ -97,6 +97,7 @@ extern bool seq_app_cli ();
 extern const std::string & seq_arg_0 ();
 extern const std::string & seq_client_name ();
 extern const std::string & seq_client_short ();
+extern const std::string & seq_config_name ();
 extern const std::string & seq_icon_name ();
 extern bool is_a_tty (int fd);
 extern std::string seq_client_tag (msglevel el = msglevel::none);
