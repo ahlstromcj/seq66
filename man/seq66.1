@@ -1,24 +1,406 @@
-.TH Seq66 "September 2022" "Version 0.99.1" "Seq66 Manual Page"
+.TH Seq66 "May 2023" "Version 0.99.5" "Seq66 Manual Page"
 
 .SH NAME
-Seq66 - Real-time live MIDI sequencer refactored from Seq24, Native JACK
+Seq66 (qseq66) - Real-time live MIDI loop sequencer refactored from
+Sequencer64/Seq24
 
 .SH SYNOPSIS
 .B qseq66
-[\fIOPTIONS\fP] [\fIFILENAME\fP]
+[\fIOPTIONS\fP] [\fIfilename\fP]
+.BR
+.BR
+.B qpseq66 (Windows)
+[\fIOPTIONS\fP] [\fIfilename\fP]
+.BR
+.BR
 .B seq66cli
-[\fIOPTIONS\fP] [\fIFILENAME\fP]
-.B qpseq66
-[\fIOPTIONS\fP] [\fIFILENAME\fP]
-on Windows.
+[\fIOPTIONS\fP] [\fIfilename\fP]
+
+.BR filename
+is the name of a MIDI file to be loaded at startup.
 
 .SH DESCRIPTION
 .PP
-\fISeq66\fP is the comprehensively updated version of Sequencer64.
-See "man sequencer66" for full information on this application.
+\fISequencer66\fP ("Seq66") is a real-time MIDI sequencer.
+It provides a nice interface for editing and playing MIDI 'loops'.
+It uses Qt 5 for the user interface.  It is functionally very
+similar to Sequencer64 and Seq24, but more flexible and faster.
+The two executables are qseq66 and a command-line/daemon called
+seq66cli. The Windows version uses a variant of PortMidi, and is qpseq66.
+
+.SH OPTIONS
+Seq66 accepts the following options, plus an optional name of
+a MIDI file.
+Note that many of the options are "sticky".  That is, they will
+be saved to the "rc" configuration file.  "User" options can also be saved,
+if desired, via the "--user-save" option.
+
+.TP 8
+.B  \-h, \-\-help
+Display a list of all commandline options.
+
+.TP 8
+.B  \-V, \-\-version
+Display the program version.
+
+.TP 8
+.B  \-v, \-\-verbose
+Adds more output to the console, for troubleshooting.  This option
+is not saved to the "rc" configuration file.
+
+.TP 8
+.B  \-H, \-\-home dir
+Set the directory that holds the configuration files.  It is always
+relative to the user's HOME directory:  The default is $HOME/.config/seq66.
+
+.TP 8
+.B  \-X, \-\-playlist filename
+Load the given play-list from the HOME directory.  The conventional name for
+this file is, for example, "live-sets.playlist".
+This file provides one or more play-list
+entries, each providing a list of one or more songs.  Once loaded, the
+user can use the four arrow keys to move between play-lists and the songs
+in each play-list.  The play-list entries are also controllable via MIDI
+control values set in the "rc" file.  See the Seq66 manual for
+more information.  Note that, once set, this option is, by default, saved
+in the "rc" file.
+
+.TP 8
+.B \-b b, \-\-bus b
+Supports modifying the buss number on all tracks when a MIDI file
+is read.  All tracks are loaded with this buss-number override.  This feature
+is useful for testing, making it easy to map the MIDI file onto the system's
+current hardware/software synthesizer setup.
+
+.TP 8
+.B \-B b, \-\-buss b
+The same as the --bus option, just for oldsters to use.
+
+.TP 8
+.B \-q p, \-\-ppqn p
+Supports modifying the PPQN value of Seq66, which defaults
+to a value of 192.  This setting should allow MIDI files to play back at the
+proper speed, and be written with the new PPQN value.  The support values for
+PPQN (p) are 0 and 32 to 1920.  The value of 0 is special.  It indicates
+that the Seq66 internal PPQN should be set to the value that
+is present in the currently-loaded MIDI file.
+
+.TP 8
+.B \-l, \-\-client-name
+Changes the default label for the client MIDI ports, which is "seq66".
+It can be changed to any value, though better if it includes "seq66".
+The Non Session Manager will override this label with its own label (e.g,
+"seq66.nXYZX"), however.
+
+.TP 8
+.B \-n, \-\-nsm
+Enable
+.BR NSM
+support (if included in the build options). This option provides
+support for qseq66 as a client of the Non Session Manager.  This support
+is basically finished, but please report any issues.
+Note that
+.BR LASH
+is not supported,
+but JACK session is supported.
+
+.TP 8
+.B \-T, \-\-no-nsm
+Disable NSM support (if included in the build options). This option overrides
+the user-session option 'session', useful to temporarily run in "typical"
+usage.
+
+.TP 8
+.B \-U, \-\-jack-session UUID | "on"
+Enable usage of JACK session management.  The user should use "on", which
+enables JACK session management; the process will provide its own UUID
+when session management starts.
+
+.TP 8
+.B \-\-file \fI<filename>\fP
+Load the specified MIDI file on startup.
+This option does not exist.
+Instead, specify the file itself as the last command-line argument.
+
+.TP 8
+.B \-m, \-\-manual-ports
+Seq66 won't attach (auto-connect) ALSA/JACK MIDI ports.
+Instead, it will create is own set of 4 virtual input and
+8 virtual output busses/ports.
+To change this number, use the "-o virtual" option.
+The user can then connect them manually (e.g. in qjackctl for JACK usage).
+Not supported in the PortMIDI build.
+
+.TP 8
+.B \-a, \-\-auto-ports
+Seq66 will attach (auto-connect) to existing ALSA/JACK MIDI ports.
+Useful for overriding the qseq66.rc configuration file when
+set up to use manual (virtual) ports.
+
+.TP 8
+.B \-r, \-\-reveal-ports
+Do not use the 'user' definition for port names, show the actual
+port names reported by ALSA/JACK.
+
+.TP 8
+.B \-R, \-\-hide-ports
+Use the 'user' definition for port names (useful for overriding a
+configuration).
+
+.TP 8
+.B \-A, \-\-alsa
+Seq66 will use ALSA MIDI ports.  This option is useful to override the
+configuration file, if it was set up for JACK.  This is a sticky option.
+
+.TP 8
+.B \-s, \-\-show-midi
+Dumps incoming MIDI to screen.
+
+.TP 8
+.B \-k, \-\-show-keys
+Prints pressed key value.
+
+.TP 8
+.B \-K, \-\-inverse
+Changes the sequence editor and performance/song editor colors to an
+inverse-color mode.  This mode can be considered a "night mode".
+
+.TP 8
+.B \-p, \-\-priority
+Runs higher priority with a FIFO scheduler.
+This option needs root access to succeed.
+
+.TP 8
+.B \-P, \-\-pass-sysex
+Passes any incoming SYSEX messages to all outputs.
+Not yet fully implemented.
+
+.TP 8
+.B \-d, \-\-record-by-channel
+Divert MIDI input by cannel into the sequences that are configured for
+each channel.
+
+.TP 8
+.B \-D, \-\-legacy-record
+Record all MIDI into the active sequence.
+
+The following options will not be shown by --help if the application is
+not compiled for JACK support.
+
+.TP 8
+.B \-j, \-\-jack-slave
+Seq66 will sync to JACK transport, as "slave".
+Note that JACK transport is separate from native JACK MIDI support.
+
+.TP 8
+.B \-j, \-\-jack-transport
+The older version of setting up as transport "slave". Deprecated.
+
+.TP 8
+.B \-g, \-\-no-jack-transport
+Seq66 will not use JACK transport. This setting is needed if one had earlier
+enabled JACK transport, but no longer wants it.
+
+.TP 8
+.B \-J, \-\-jack-master
+Seq66 will try to be the JACK master.  This is a sticky option.
+
+.TP 8
+.B \-C, \-\-jack-master-cond
+JACK master will fail if there is already a JACK master.
+
+.TP 8
+.B \-t, \-\-jack-midi
+Use native JACK MIDI.  This is a separate option from JACK Transport, and is
+the default.  If JACK is not running, the application falls back to ALSA.
+
+.TP 8
+.B \-N, \-\-no-jack-midi
+Use ALSA MIDI, even with JACK Transport.  See the -A option.
+
+.TP 8
+.B \-W, \-\-jack-connect
+Auto-connect to JACK ports discovered on the system.  This is the
+standing default.
+
+.TP 8
+.B \-w, \-\-no-jack-connect
+Do not auto-connect to JACK ports.
+This option is useful to let a session manager take care of the JACK
+connections.
+Note that one cannot disable autoconnection if using the
+ALSA or portmidi engines.
+.TP 8
+.B \-M, \-\-jack-start-mode \fImode\fP
+In ALSA or JACK, the following play modes are available:
+"live", "song", or "auto". Auto is now the default.  Live mode means that
+the musician controls the unmuting of patterns on the main window.  Song mode
+means that the song layout in the "Song" window controls the playback.
+Auto means to use Song mode if the song contains performance triggers.
+
+.TP 8
+.B \-0, \-\-smf-0
+Normally, SMF 0 (single-track MIDI) files are split into separate tracks
+when read into Seq66.  This 'usr' option preserve the file as an SMF 0
+file.
+
+.TP 8
+.B \-u, \-\-user-save
+Save the "user" configuration file after exiting.  Normally, it is saved
+only if it does not exist, so as not to make certain command-line "user"
+options (such as --bus) permanent.  (Perhaps the same should be true of the
+"rc" configuration options.)
+
+.TP 8
+.B \-f, \-\-rc filename
+Use a different "rc" configuration file.  It must be a file in the user's
+$HOME/.config/seq66 directory or the directory specified by the --home
+option.  The '.rc' extension is added if
+no extension is present in the filename.
+
+.TP 8
+.B \-F, \-\-usr filename
+Use a different "usr" configuration file.  It must be a file in the user's
+$HOME/.config/seq66 directory or the directory specified by the --home
+option.  The '.usr' extension is added if
+no extension is present in the filename.
+.TP 8
+.B \-c, \-\-config basename
+Use a different configuration file base name for the 'rc' and 'usr' files.
+For example, one can specify a full configuration for "testing", for "jack",
+or for "alsa".
+.TP 8
+.B \-L, \-\-locale localename
+Set a different locale for running seq66. If the current locale uses the
+comma as a decimal point, then try --locale en_US.UTF-8 (for example).
+.TP 8
+.B \-o, \-\-option opvalue
+Provides additional options, including the no-GUI version of
+Seq66.  Here are the opvalues supported:
+
+daemonize     Fork the command-line application to background.
+              The base configuration files are "seq66cli.rc",
+              etc.  This feature currently does not work,
+              needs to fork with the proper settings still.
+              For now, create a keyboard or desktop shortcut
+              for a seq66cli command.
+
+no-daemonize  Makes the command-line application not fork.
+
+log=filename  Redirect console output to a log file in the
+              configuration directory.
+
+sets=RxC      Modifies the rows and columns in a set from the
+              default of 4x8.  Supported values of R are 4 to 8,
+              and C can range from 8 to 12. If not 4x8, seq66 is
+              in 'variset' mode. Affects mute groups, too.
+
+scale=x       Scales the main window size, from 0.5 to 3.0.
+              A value of 0.75 is useful when using
+              "-o wid=2x2 -o sets=8x8", though the pattern
+              labelling is mildly distorted.
+
+mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.
+              'mutes' saves to a separate file, 'midi' saves
+              the mutes in the MIDI file.
+
+virtual=o,i   Set up the --manual-ports option, using 'o' output ports
+              and 'i' input ports.
+
+.SH FILES
+\fB$HOME\fP/.config/qseq66.rc stores the main configuration settings for
+Seq66.  If it does not exist, it will be generated when Seq66
+exits.  If it does exist, it will be rewritten with the current configuration
+of Seq66.
+If running under
+.BR NSM ,
+the configuration is stored in the Non Session Manager directory
+created for that session.
+Many, or most, of the command-line options are "sticky", in
+that they will be written to the configuration file.
+This configuration file also specifies other configuration files to be used.
+
+\fB$HOME\fP/.config/qseq66.usr stores the MIDI-configuration settings and
+some of the user-interface settings for Seq66.  If it does not
+exist, it will be generated with a minimal configuration when Seq66
+exits.  If it does exist, it will not be rewritten with the current
+configuration of Seq66 except when the user-save option is given, or when
+particular items are changed in the 'Preferences' dialog.
+
+\fB$HOME\fP/.config/qseq66.ctrl contains the keystroke-control and MIDI-control
+specification for operating Seq66 from the keyboard and via MIDI commands.
+It also specifies MIDI commands to show the status of commands, patterns, and 
+mute-groups on "launch-pad" devices.
+
+\fB$HOME\fP/.config/qseq66.mutes contains the setting for mute-groups, which
+specify collections of unmuted patterns to be played at the touch of a
+keystroke or by a MIDI command configured in the 'ctrl' file.
+
+\fB$HOME\fP/.config/qseq66.drums contains settings which can be used to modify
+drum tracks recorded on legacy MIDI equipment to play on modern General MIDI
+equipment. The conversions can be reversed as well.
+
+\fB$HOME\fP/.config/qseq66.playlist contains one or more play-lists.  Each
+play-list is a group of songs.  The user can cycle through the play-lists and
+the songs using the arrow keys or MIDI commands configured in the 'ctrl' file.
+
+\fB$HOME\fP/.config/qseq66.palette contains all of the variable colors for
+tracks, foreground, background, etc.  If present, it overrides the default
+palette colors.
+
+\fB$HOME\fP/.config/qseq66.qss is an optional Qt style-sheet. If present,
+it is loaded and can override most elements of the user-interface.
+It can be specified in the 'usr' file.
+
+Many sample configuration files are provided in the 'data/linux' and
+the 'data/samples' installed directories.
+See the Seq66 user manual for details.
+
+.SH BUGS
+Seq66 has them.  See 
+.UR https://github.com/ahlstromcj/seq66/issues
+for the reported bugs.  We take pride in hiding a few more :-D.
+
+.SH SUGGESTIONS AND BUG REPORTS
+Any bugs found should be reported to the upstream author and/or package 
+maintainer.  See the link in the previous section.
+
+.SH HOMEPAGE
+.UR https://github.com/ahlstromcj/seq66/
+
+.SH OTHER INFO
+--ppqn works and should be close to bug-free.  If a MIDI file is re-saved,
+the new PPQN is also saved to the MIDI file.
+Note that some options shown above may have been
+disabled in the Linux distro's build configuration.
+
+The current Seq66 project homepage is a simple git repository at the
+https://github.com/ahlstromcj/seq66.git URL.
+Comprehensive instructions are provided as a PDF manual in the
+same project.
+
+The old Seq24 project homepage is at <http://www.filter24.org/seq24/>, and the
+new one is at <https://edge.launchpad.net/seq24/>.  It is released under the
+GNU GPL license.  Seq66 is also released under the GNU GPL license.
 
 .SH SEE ALSO
-See the Seq66/Sequencer66 man page for command-line options.
-Use the "--help" option for a comprehensive list.
-See the Seq66 PDF user's manual in the 'doc' directory for even more
+There are no man-pages yet for the configuration files.
+However, when Seq66 is first run, these files are saved in
+$HOME/.config/seq66, and they are fairly self-documenting.
+Also see the Seq66 PDF user's manual in the 'doc' directory for even more
 information.  It is very comprehensive and is indexed.
+
+.SH AUTHOR
+Seq66 was written by Chris Ahlstrom <ahlstromcj@gmail.com>, with
+contributions from Tim Deagan <tim@deagan.net>, Daniel Appelt
+<daniel.appelt@gmail.com>, 0rel, layk, and many others.
+Seq24 was originally written by Rob C. Buse <seq24@filter24.org> and the
+Seq24 team at LaunchPad.
+
+This manual page was written by
+Dana Olson <seq24@ubuntustudio.com>
+with additions from
+Guido Scholz <guido.scholz@bayernline.de>
+and
+Chris Ahlstrom <ahlstromcj@gmail.com>.
+

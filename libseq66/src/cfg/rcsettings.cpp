@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-05-09
+ * \updates       2023-05-10
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -110,6 +110,7 @@ rcsettings::rcsettings () :
     m_jack_session_active       (false),
     m_last_used_dir             (),                     /* double_quotes()  */
     m_session_directory         (),
+    m_config_subdirectory_set   (false),
     m_config_subdirectory       (),
     m_config_filename           (seq_config_name()),    /* updated in body  */
     m_full_config_directory     (),
@@ -205,6 +206,7 @@ rcsettings::set_defaults ()
     m_jack_session_active       = false;
     m_last_used_dir.clear();                /* double_quotes()              */
     m_session_directory         = user_session(seq_client_name());
+    m_config_subdirectory_set   = false;
     m_config_subdirectory.clear(),
     m_config_filename           = seq_config_name();
     m_config_filename           += ".rc";
@@ -443,18 +445,9 @@ rcsettings::default_session_path () const
     else
     {
         if (name_has_root_path(session_directory()))
-        {
-            result = session_directory();      /* seq66 directory      */
-        }
+            result = session_directory();       /* seq66 directory      */
         else
-        {
-            result += path_slash();             /* e.g. /home/username/ */
-            result += session_directory();      /* seq66 directory      */
-
-#if defined SEQ66_PLATFORM_UNIX                 /* TODO: make robust    */
-            result += path_slash();
-#endif
-        }
+            result = pathname_concatenate(result, session_directory());
     }
     return result;
 }
@@ -485,7 +478,13 @@ rcsettings::home_config_directory () const
         if (! home.empty())
         {
             if (! m_config_subdirectory.empty())
-                result = filename_concatenate(result, m_config_subdirectory);
+            {
+                if (! m_config_subdirectory_set)
+                {
+                    result = filename_concatenate(result, m_config_subdirectory);
+                    m_config_subdirectory_set = true;
+                }
+            }
 
             bool ok = make_directory_path(result);
             if (ok)
@@ -1051,6 +1050,10 @@ rcsettings::session_directory (const std::string & value)
 /**
  * \setter m_config_subdirectory
  *
+ *  This value is one of the ways to implement the --home option. It
+ *  works if there is no root to the value parameter. It should only
+ *  work once (when m_config_subdirectory has not yet been set).
+ *
  * \param value
  *      The value to use to make the setting. This should be a relative path.
  */
@@ -1058,12 +1061,9 @@ rcsettings::session_directory (const std::string & value)
 void
 rcsettings::config_subdirectory (const std::string & value)
 {
-    if (! value.empty())
-    {
+    bool can_do = ! value.empty() && m_config_subdirectory.empty();
+    if (can_do)
         m_config_subdirectory = value;
-
-        // Should we concatenate this to the current home directory?
-    }
 }
 
 /**
@@ -1101,13 +1101,23 @@ rcsettings::full_config_directory (const::std::string & value)
 {
     std::string tv = value;
     if (! m_config_subdirectory.empty())
-        tv = pathname_concatenate(tv, m_config_subdirectory);
-
+    {
+        if (! m_config_subdirectory_set)
+        {
+            tv = pathname_concatenate(tv, m_config_subdirectory);
+            m_config_subdirectory_set = true;
+        }
+    }
     m_full_config_directory = normalize_path(tv, true, true);
 
     std::string homedir = rc().home_config_directory();
     if (make_directory_path(homedir))                   // REDUNDANT
     {
+        /*
+         * This setting will convert the relative session directory
+         * to a full path.
+         */
+
         file_message("Config directory", homedir);
         session_directory(homedir);
     }

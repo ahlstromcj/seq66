@@ -325,15 +325,21 @@ private:
     /**
      *  Holds the current 'rc' and 'usr' configuration base directory.  This
      *  value is ".config/seq66" by default.  For usage, it is normally
-     *  expanded.  For NSM usage, it is the path returned by the NSM daemon.
+     *  expanded to a full path.
+     *
+     *  For NSM usage, it is the full path returned by the NSM daemon.
      */
 
     std::string m_session_directory;
 
     /**
-     *  An optional appendage to the base configuration directory.
+     *  An optional appendage to the base configuration directory. It is
+     *  appended to the default session/configuration path. It is set only
+     *  by the --home option. The boolean makes sure the appending is done only
+     *  once (due to processing command-line options multiple times, :-(.)
      */
 
+    mutable bool m_config_subdirectory_set;
     std::string m_config_subdirectory;
 
     /**

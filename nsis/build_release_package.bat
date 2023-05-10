@@ -7,14 +7,17 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2023-05-09
+:: \update      2023-05-10
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
 ::      Windows and creates a 7-Zip package that can be unpacked in the root
 ::      of the project, ready to be made into an NSIS installer either in Linux
-::      or in Windows.  It does NOT make the NSIS installer; that is a separate
-::      manual step described below in steps 5 to 8.
+::      or in Windows.
+::
+::      If NSIS is installed and the PATH leads to the makensis.exe program,
+::      then a Seq66 NSIS installer will be created. Otherwise, that is a
+::      separate manual step described below in steps 7 to 9.
 ::
 :: Requirements:
 ::
@@ -111,6 +114,9 @@
 ::          seq66/release $ mv seq66_setup_0.90.1.exe\
 ::              ../../seq66/packages/... TO DO !!!
 ::
+::          Note: the setup files are now part of the GitHub releases of
+::                Seq66.
+::
 ::      11. Make a portable Zip package:
 ::
 ::          $ mv release/ qpseq66
@@ -157,14 +163,14 @@ set NSIS_PLATFORM=Windows
 set PROJECT_NAME=seq66
 set PROJECT_TREE=%PROJECT_BASE%\%PROJECT_NAME%
 set PROJECT_REL_ROOT=..\seq66
-set PROJECT_FILE=seq66.pro
-set PROJECT_7ZIP="qpseq66-release-package-%PROJECT_VERSION%.7z"
+set PROJECT_PRO=seq66.pro
+set PROJECT_7ZIP=qpseq66-release-package-%PROJECT_VERSION%.7z
 set SHADOW_DIR=seq66-release-%PROJECT_BITS%
 set APP_DIR=Seq66qt5
 set RELEASE_DIR=%APP_DIR%\release
 set CONFIG_SET="CONFIG += release"
 set AUX_DIR=data
-set DOC_DIR="data\share\doc"
+set DOC_DIR=data\share\doc
 
 :: C:
 
@@ -173,18 +179,22 @@ set DOC_DIR="data\share\doc"
 :: cd \Users\Chris\Documents\Home
 
 cd %PROJECT_BASE%
-del /S /Q %SHADOW_DIR% > NUL
+del /S /Q %SHADOW_DIR%\*.* > NUL
+rmdir %SHADOW_DIR%
 mkdir %SHADOW_DIR%
 echo Creating Qt shadow directory %SHADOW_DIR% ...
 cd %SHADOW_DIR%
 
 :: qmake -makefile -recursive "CONFIG += release" ..\seq66\seq66.pro
+::
+:: Note that "if ERRORLEVEL n" means "if ERRORLEVEL >= n".  Tricky.
 
 cd
-echo qmake -makefile -recursive %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_FILE%
+echo qmake -makefile -recursive %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO%
 echo mingw32-make (output to make.log)
-qmake -makefile -recursive %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_FILE% > make.log 2>&1
+qmake -makefile -recursive %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO% > make.log 2>&1
 mingw32-make > make.log 2>&1
+if ERRORLEVEL 1 goto builderror
 
 :: windeployqt Seq66qt5\release
 
@@ -249,12 +259,12 @@ set NSIS_PLATFORM=Linux
 
 if NOT %NSIS_PLATFORM%==Windows goto skipnsis
 
-echo "Copying the 7zip package to the project tree..."
+echo Copying the 7zip package to the project tree...
 copy %APP_DIR%\%PROJECT_7ZIP% %PROJECT_TREE%
 cd %PROJECT_TREE%
-echo "Unpacking the 7zip package, %PROJECT_7ZIP% ..."
+echo Unpacking the 7zip package, %PROJECT_7ZIP% ...
 7z x %PROJECT_7ZIP%
-echo "Building a Windows installer using NSIS..."
+echo Building a Windows installer using NSIS...
 cd %PROJECT_TREE%
 pushd nsis
 makensis Seq66Setup.nsi
@@ -262,6 +272,11 @@ echo If makensis succeeded, the installer is located in
 echo %PROJECT_TREE%\release, named like "seq66_setup_VERSION.exe".
 popd
 goto done
+
+:builderror
+
+echo mingw32-make failed, aborting! Check make.log for errors.
+goto ender
 
 :skipnsis
 
@@ -272,5 +287,7 @@ echo Change to the "nsis" directory and run "makensis Seq66Setup.nsi".
 :done
 
 echo Build products are in %RELEASE_DIR%.
+
+:ender
 
 :: vim: ts=4 sw=4 ft=dosbatch fileformat=dos

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-05-09
+ * \updates       2023-05-10
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -1164,14 +1164,14 @@ smanager::make_path_names
     const std::string & path,
     std::string & outcfgpath,
     std::string & outmidipath,
-    const std::string & midisubdir
+    const std::string & midisubdir  // why no configsubdir (for NSM)?
 )
 {
     bool result = ! path.empty();
     if (result)
     {
-        std::string cfgpath = path;
-        std::string midipath = path;
+        std::string cfgpath = normalize_path(path);
+        std::string midipath = cfgpath;
         std::string subdir = midisubdir.empty() ? "midi" : midisubdir ;
         midipath = pathname_concatenate(cfgpath, subdir);
         outcfgpath = cfgpath;

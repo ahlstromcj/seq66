@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-05-08
+2019-04-13 to 2023-05-09
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
@@ -17,6 +17,9 @@ Hot:
         -   Replace I and O map checkboxes with just one checkbox.
     -   Finish the major upgrade to the event editor; plan for a
         "SeqSpec" tab?  Worth it?
+    -   Naming an NSM session puzz yields:
+        [seq66] Session path: '/home/ahlstrom/.local/share/nsm/puzz/seq66.nAYMS'
+        Correct?
 
 UI:
 

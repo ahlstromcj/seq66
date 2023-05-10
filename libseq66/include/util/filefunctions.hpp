@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-05-09
+ * \updates       2023-05-10
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -93,6 +93,7 @@ extern bool set_current_directory (const std::string & path);
 extern std::string get_current_directory ();
 extern std::string get_full_path (const std::string & path);
 extern char path_slash ();
+extern char os_path_slash ();
 extern std::string os_normalize_path
 (
     const std::string & path,

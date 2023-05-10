@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-05-09
+ * \updates       2023-05-10
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1347,13 +1347,23 @@ get_full_path (const std::string & path)
 }
 
 /**
+ *  Returns the UNIX path separator.
+ */
+
+char
+path_slash ()
+{
+    return '/';
+}
+
+/**
  *  Returns the default path separator. Based on the operating system:  a
  *  backslash for Windows and (laughing) CPM and DOS, and a forward slash
  *  for UNIXen.
  */
 
 char
-path_slash ()
+os_path_slash ()
 {
     return SEQ66_PATH_SLASH_CHAR;
 }
@@ -1550,7 +1560,7 @@ append_file
     if (! result.empty())
     {
         (void) rtrim(result, SEQ66_TRIM_CHARS_PATHS);
-        result += path_slash();
+        result += to_unix ? path_slash() : os_path_slash();
     }
     result += filename;
     return normalize_path(result, to_unix, false);
@@ -1579,6 +1589,7 @@ append_path
 {
     std::string result = path;
     std::string pn = pathname;
+    char slash = to_unix ? path_slash() : os_path_slash() ;
     if (! result.empty())
     {
         (void) trim(result);                            /* whitespace out   */
@@ -1586,7 +1597,7 @@ append_path
         auto spos = result.find_last_of(SEQ66_PATH_SLASHES);
         auto endindex = result.length() - 1;
         if (spos == std::string::npos || spos != endindex)
-            result += path_slash();
+            result += slash;
     }
     if (! pn.empty())
     {
@@ -1596,7 +1607,7 @@ append_path
         auto spos = pn.find_last_of(SEQ66_PATH_SLASHES);
         auto endindex = pn.length() - 1;
         if (spos == std::string::npos || spos != endindex)
-            pn += path_slash();
+            pn += slash;
     }
     result += pn;
     return normalize_path(result, to_unix, true);
@@ -1630,7 +1641,7 @@ filename_concatenate (const std::string & path, const std::string & filebase)
  *      modified only to add a terminating slash, if necessary.
  *
  * \param path1
- *      The seconds path, which can only be a relative path (or a base
+ *      The second path, which can only be a relative path (or a base
  *      filename such as "x.ext").  If it starts with a slash, that is
  *      removed.
  *
@@ -1999,10 +2010,17 @@ user_config (const std::string & appfolder)
 
 /**
  *  Strips off the "HOME" parts of the user config directory for use
- *  as the default "session" directory. For Linux, what is stripped is
- *  "/home/username" and for Windows it is "C:/Users/username".
+ *  as the default "session" directory. For Linux, what is effectively
+ *  stripped for Linux is "/home/username/" which yields ".config".
+ *  For Windows it is "C:/Users/username/", which yields "AppData/Local".
+ *
+ * \param appfolder
+ *      If not empty, this value is concatenated to the result.
+ *
+ * \return
+ *      Returns the relative location of the "config" portion of the user's
+ *      home directory.
  */
-
 
 std::string
 user_session (const std::string & appfolder)
@@ -2011,15 +2029,20 @@ user_session (const std::string & appfolder)
     std::string result = user_config();
     if (! result.empty())
     {
-        auto spos = temp.find_first_of("/");
-        if (spos != std::string::npos)
-            spos = temp.find_first_of("/", spos);
-
-        if (spos != std::string::npos)
+        auto spos0 = result.find_first_of("/");
+        if (spos0 != std::string::npos)
         {
-            result = result.substr(spos + 1)
-            if (! appfolder.empty())
-                result = filename_concatenate(result, appfolder);
+            auto spos1= result.find_first_of("/", spos0 + 1);
+            if (spos1 != std::string::npos)
+            {
+                auto spos2= result.find_first_of("/", spos1 + 1);
+                if (spos2 != std::string::npos)
+                {
+                    result = result.substr(spos2 + 1);
+                    if (! appfolder.empty())
+                        result = filename_concatenate(result, appfolder);
+                }
+            }
         }
     }
 #else
@@ -2029,7 +2052,6 @@ user_session (const std::string & appfolder)
 #endif
     return result;
 }
-
 
 /**
  *  Given a list of potential directories, try to find a given file in them.

@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2021-12-09
-:: \update      2023-05-08
+:: \update      2023-05-10
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a debug build of Seq66 for
@@ -70,14 +70,14 @@ set PROJECT_BASE=\Users\Chris\Documents\Home
 :: The project directory depends upon running this file from the nsis
 :: directory or from the shadow directory at the same level as "seq66".
 
-set PROJECT_ROOT=..\seq66
-set PROJECT_FILE=seq66.pro
+set PROJECT_REL_ROOT=..\seq66
+set PROJECT_PRO=seq66.pro
 set SHADOW_DIR=seq66-debug
 set APP_DIR=Seq66qt5
 set DEBUG_DIR=%APP_DIR%\debug
 set CONFIG_SET="CONFIG += debug"
 set AUX_DIR=data
-set DOC_DIR=doc
+set DOC_DIR=data\share\doc
 
 :: C:
 
@@ -86,24 +86,31 @@ set DOC_DIR=doc
 :: cd \Users\Chris\Documents\Home
 
 cd %PROJECT_BASE%
-
-:: mkdir seq66-debug
-:: cd seq66-debug
-
 del /S /Q %SHADOW_DIR% > NUL
+rmdir %SHADOW_DIR%
 mkdir %SHADOW_DIR%
+echo Creating Qt shadow directory %SHADOW_DIR% ...
 cd %SHADOW_DIR%
 
 :: qmake -makefile -recursive "CONFIG += debug" ..\seq66\seq66.pro
 
-echo qmake -makefile -recursive %CONFIG_SET% %PROJECT_ROOT%\%PROJECT_FILE%
+echo qmake -makefile -recursive %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO%
 echo mingw%PROJECT_BITS%-make (output to make.log)
-qmake -makefile -recursive %CONFIG_SET% %PROJECT_ROOT%\%PROJECT_FILE%
-mingw%PROJECT_BITS%-make > make.log 2>&1
+qmake -makefile -recursive %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO%
+mingw32-make > make.log 2>&1
+if ERRORLEVEL 1 goto builderror
 
 :: windeployqt Seq66qt5\debug
 
 echo windeployqt %DEBUG_DIR%
 windeployqt %DEBUG_DIR%
+goto done
+
+:builderror
+
+echo mingw32-make failed, aborting! Check make.log for errors.
+goto ender
+
+:done
 
 :: vim: ts=4 sw=4 ft=dosbatch fileformat=dos
