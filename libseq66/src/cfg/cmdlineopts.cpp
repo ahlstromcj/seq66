@@ -238,7 +238,7 @@ static const std::string s_help_1b =
 "   -B, --buss b             Covers the 'bus' versus 'buss' confusion.\n"
 "   -l, --client-name label  Use this name instead of 'seq66'. Overridden by a\n"
 "                            session manager.\n"
-"   -q, --ppqn qn            Specify default PPQN to replace 192.  The MIDI file\n"
+"   -q, --ppqn qn            Specify default PPQN to replace 192. The MIDI file\n"
 "                            can specify its own PPQN.\n"
 "   -p, --priority           Run high priority, FIFO scheduler (needs root).\n"
 "   -P, --pass-sysex         Passes incoming SysEx messages to all outputs.\n"

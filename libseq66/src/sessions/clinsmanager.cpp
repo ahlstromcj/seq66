@@ -165,7 +165,7 @@ clinsmanager::create_session (int argc, char * argv [])
     {
         std::string nsmfile = "dummy/file";
         std::string nsmext = nsm::default_ext();
-        rc().config_subdirectory("config");         /* NEW 2023-03-31       */
+        rc().config_subdirectory("config");         /* appended to NSM path */
         m_nsm_client.reset(create_nsmclient(*this, url, nsmfile, nsmext));
         bool result = bool(m_nsm_client);
         if (result)
@@ -174,8 +174,8 @@ clinsmanager::create_session (int argc, char * argv [])
              * Use the same name as provided when opening the JACK client.
              */
 
-            std::string appname = seq_client_name();    /* "seq66"          */
-            std::string exename = seq_arg_0();          /* "qseq66"         */
+            std::string appname = seq_client_name();    /* "seq66", -l labl */
+            std::string exename = seq_arg_0();          /* "qseq66", etc.   */
             result = m_nsm_client->announce(appname, exename, capabilities());
             if (result)
             {

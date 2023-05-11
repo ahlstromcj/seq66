@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2023-04-17
+ * \updates       2023-05-11
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -422,8 +422,11 @@ midicontrolfile::parse ()
         result = false;
     }
     else
+    {
         result = parse_stream(file);
-
+        if (! result)
+            file_error("Read failed", name());
+    }
     return result;
 }
 
@@ -1206,11 +1209,7 @@ read_midi_control_file
 )
 {
     midicontrolfile mcf(fname, rcs);
-    bool result = mcf.parse();
-    if (! result)
-        file_error("Read failed", fname);
-
-    return result;
+    return mcf.parse();
 }
 
 /**

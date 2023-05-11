@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-05-10
+ * \updates       2023-05-11
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -984,8 +984,6 @@ smanager::create_configuration
             {
                 session_message("Main path", mainpath);
                 result = make_directory_path(cfgfilepath);
-                if (result)
-                    rc().full_config_directory(cfgfilepath);
             }
             if (result && ! midifilepath.empty())
             {
@@ -997,15 +995,16 @@ smanager::create_configuration
             if (usr().in_nsm_session())
             {
                 usr().session_visibility(false);        /* new session=hide */
-
-#if defined NSM_DISABLE_LOAD_MOST_RECENT
-                rc().load_most_recent(false;            /* don't load MIDI  */
-#else
                 rc().load_most_recent(true);            /* issue #41        */
-#endif
                 rc().jack_auto_connect(false);          /* issue #48        */
             }
-#if defined DO_NOT_BELAY_UNTIL_EXIT
+
+            /*
+             * The options files and other files are written at exit.
+             * We might provide a menu command to write them at any time.
+             */
+
+#if defined WRITE_OPTIONS_FILES_AT_STARTUP
             if (result)
             {
                 file_message("Saving session configuration", cfgfilepath);
@@ -1164,7 +1163,7 @@ smanager::make_path_names
     const std::string & path,
     std::string & outcfgpath,
     std::string & outmidipath,
-    const std::string & midisubdir  // why no configsubdir (for NSM)?
+    const std::string & midisubdir
 )
 {
     bool result = ! path.empty();
@@ -1172,8 +1171,9 @@ smanager::make_path_names
     {
         std::string cfgpath = normalize_path(path);
         std::string midipath = cfgpath;
-        std::string subdir = midisubdir.empty() ? "midi" : midisubdir ;
-        midipath = pathname_concatenate(cfgpath, subdir);
+        if (! midisubdir.empty())
+            midipath = pathname_concatenate(cfgpath, midisubdir);
+
         outcfgpath = cfgpath;
         outmidipath = midipath;
     }
@@ -1291,13 +1291,8 @@ smanager::import_configuration_items
 
             if (result)
             {
-#if defined NSM_DISABLE_LOAD_MOST_RECENT
-                if (usr().in_nsm_session())
-                    rc().load_most_recent(false);       /* don't load MIDI  */
-#else
                 if (usr().in_nsm_session())
                     rc().load_most_recent(true);        /* issue #41        */
-#endif
             }
         }
         if (result)

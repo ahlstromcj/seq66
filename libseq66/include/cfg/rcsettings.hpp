@@ -334,7 +334,8 @@ private:
 
     /**
      *  An optional appendage to the base configuration directory. It is
-     *  appended to the default session/configuration path. It is set only
+     *  appended to the default session/configuration path. The setter,
+     *  config_subdirectory, is meant to work only once. It is set only
      *  by the --home option. The boolean makes sure the appending is done only
      *  once (due to processing command-line options multiple times, :-(.)
      */

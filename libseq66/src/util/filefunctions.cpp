@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-05-10
+ * \updates       2023-05-11
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1039,15 +1039,17 @@ name_has_path (const std::string & filename)
 }
 
 /**
- *  Detects if the filename is likely to contain a root path:
+ *  Detects if the filename contains a root path, rather than a relative
+ *  path.  Using the circumflex (for /home/user) is treated as a root path.
  *
 \verbatim
-        /dir/dir2 ...
-        \dir\dir2 ...
-        x:
+        ~/dir/dir2 ...          User's HOME directory.
+        /dir/dir2 ...           System directory.
+        \dir\dir2 ...           Windows root directory on current drive.
+        C:[\dir-or-file...]     Windows root directory on specific drive.
+        \\server\volume...      Windows Universal Naming Convention (UNC).
 \endverbatim
  *
- *  Also, using the circumflex (for /home/user) is treated as a root path.
  */
 
 bool
@@ -1058,17 +1060,17 @@ name_has_root_path (const std::string & filename)
 #if defined SEQ66_PLATFORM_WINDOWS
     if (! result)
     {
-        pos = filename.find_first_of("\\");
+        pos = filename.find_first_of("\\");     /* UNC/current drive root   */
         result = pos != std::string::npos;
     }
 #endif
     if (result)
-        result = pos == 0;              /* path starts with "/", "~", "\"   */
+        result = pos == 0;                      /* path starts with "/~\    */
 
 #if defined SEQ66_PLATFORM_WINDOWS
     if (! result)
     {
-        pos = filename.find_first_of(":");
+        pos = filename.find_first_of(":");      /* C:                       */
         result = pos != std::string::npos;
         if (result)
             result = std::isalpha(filename[0]) && pos == 1;
@@ -1165,7 +1167,7 @@ bool
 make_directory_path (const std::string & directory_name)
 {
     bool result = file_name_good(directory_name);
-    std::string dirname = normalize_path(directory_name);
+    std::string dirname = os_normalize_path(directory_name);   /* ca 2023-05-11 */
     if (result)
     {
         if (file_exists(dirname))               /* directory already exists */

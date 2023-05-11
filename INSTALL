@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.99.5 and above
 Chris Ahlstrom
-2015-09-10 to 2023-05-06
+2015-09-10 to 2023-05-10
 
 Getting Seq66 requires building the code or going to "sequencer64-packages/seq66"
 on GitHub to get an installation package.  The bootstrap setup is primarily
@@ -518,10 +518,20 @@ DEPENDENCIES:
 
    Raspberry Pi:
 
-    A few notes while trying to get Seq66 built on a Raspberry Pi 3 Model
-    B+.  The Raspian on this board, installed via NOOB, could ultimately not
-    load some Qt dependences.  Ended up installing OpenSUSE, and installed
-    Qt Creator to save time.
+        A few notes while trying to get Seq66 built on a Raspberry Pi 3 Model
+        B+.  The Raspian on this board, installed via NOOB, could ultimately
+        not load some Qt dependences.  Ended up installing OpenSUSE, and
+        installed Qt Creator to save time.
+
+   Windows Installer:
+
+        One can build the Windows installer under Linux (see the "nsis"
+        sub-directory).  To build it on Windows, install the NSIS 3
+        program, available at
+
+            https://sourceforge.net/projects/nsis/files/NSIS%203/3.08/nsis-3.08-setup.exe/download
+
+        Be sure to add the location of makensis.exe to the Windows PATH.
 
    Runtime:
 

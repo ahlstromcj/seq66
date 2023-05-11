@@ -900,8 +900,7 @@ usrfile::write ()
 "# (Non/New Session Manager), or 'jack'. 'url' can be set to the value set by\n"
 "# nsmd when run by command-line. Set 'url' if running nsmd stand-alone; use\n"
 "# the --osc-port number. Seq66 detects if started in NSM. The visibility flag\n"
-"# is used only by NSM to restore visibility. 'copy-config' indicates if the\n"
-"# existing home configuration is copied to a new NSM session.\n"
+"# is used only by NSM to restore visibility.\n"
 "\n[user-session]\n\n"
         ;
     write_string(file, "session", usr().session_manager_name());

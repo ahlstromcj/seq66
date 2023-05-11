@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-05-10
+ * \updates       2023-05-11
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -86,7 +86,7 @@ rcsettings::rcsettings () :
     m_with_jack_master          (false),
     m_with_jack_master_cond     (false),
 #if defined SEQ66_RTMIDI_SUPPORT
-    m_with_jack_midi            (true),
+    m_with_jack_midi            (true),     /* hmmmmmmmmmm              */
 #else
     m_with_jack_midi            (false),
 #endif
@@ -144,6 +144,7 @@ rcsettings::rcsettings () :
     m_playlist_filename += ".playlist";
     m_notemap_filename += ".drums";
     m_palette_filename += ".palette";
+    set_config_files(seq_config_name());                /* ca 2023-05-11    */
 }
 
 /**
@@ -162,6 +163,15 @@ rcsettings::rcsettings () :
 void
 rcsettings::set_defaults ()
 {
+    /*
+     * basesettings
+     * m_clocks
+     * m_inputs
+     * m_keycontainer
+     * m_midi_control_in
+     * m_midi_control_out
+     */
+
     m_metro_settings.set_defaults();
     m_mute_group_save           = mutegroups::saving::midi;
     m_drop_empty_in_controls    = false;
@@ -182,7 +192,7 @@ rcsettings::set_defaults ()
     m_with_jack_master          = false;
     m_with_jack_master_cond     = false;
 #if defined SEQ66_RTMIDI_SUPPORT
-    m_with_jack_midi            = true;
+    m_with_jack_midi            = true;     /* hmmmmmmmmmm              */
 #else
     m_with_jack_midi            = false;
 #endif
@@ -207,9 +217,8 @@ rcsettings::set_defaults ()
     m_last_used_dir.clear();                /* double_quotes()              */
     m_session_directory         = user_session(seq_client_name());
     m_config_subdirectory_set   = false;
-    m_config_subdirectory.clear(),
+    m_config_subdirectory.clear();
     m_config_filename           = seq_config_name();
-    m_config_filename           += ".rc";
     m_full_config_directory.clear();
     m_user_file_active = true;
     m_user_filename = seq_config_name();
@@ -475,16 +484,15 @@ rcsettings::home_config_directory () const
     {
         std::string home = default_session_path();
         std::string result = home;
-        if (! home.empty())
+        if (home.empty())
         {
-            if (! m_config_subdirectory.empty())
-            {
-                if (! m_config_subdirectory_set)
-                {
-                    result = filename_concatenate(result, m_config_subdirectory);
-                    m_config_subdirectory_set = true;
-                }
-            }
+            std::string temp = "Cannot find HOME!";
+            result = set_error_message(temp);
+        }
+        else
+        {
+            if (m_config_subdirectory_set)
+                result = pathname_concatenate(result, m_config_subdirectory);
 
             bool ok = make_directory_path(result);
             if (ok)
@@ -501,15 +509,10 @@ rcsettings::home_config_directory () const
                 result.clear();
             }
         }
-        else
-        {
-            std::string temp = "Cannot find HOME!";
-            result = set_error_message(temp);
-        }
         return result;
     }
     else
-        return os_normalize_path(m_full_config_directory);
+        return normalize_path(m_full_config_directory); /* ca 2023-05-11 */
 }
 
 /**
@@ -1056,14 +1059,26 @@ rcsettings::session_directory (const std::string & value)
  *
  * \param value
  *      The value to use to make the setting. This should be a relative path.
+ *      If empty (should be a rare use case), then the config subdirectory
+ *      is cleared.
  */
 
 void
 rcsettings::config_subdirectory (const std::string & value)
 {
-    bool can_do = ! value.empty() && m_config_subdirectory.empty();
-    if (can_do)
-        m_config_subdirectory = value;
+    if (value.empty())
+    {
+        m_config_subdirectory_set = false;
+        m_config_subdirectory.clear();
+    }
+    else
+    {
+        if (! m_config_subdirectory_set)
+        {
+            m_config_subdirectory_set = true;
+            m_config_subdirectory = value;
+        }
+    }
 }
 
 /**
@@ -1088,9 +1103,13 @@ rcsettings::set_config_directory (const std::string & value)
 /**
  * \setter m_full_config_directory
  *
- *      Provides an alternate value to be returned by the
- *      home_config_directory() function. Please note that all configuration
- *      locates are relative to home.
+ *  Provides an alternate value to be returned by the
+ *  home_config_directory() function. Please note that all configuration
+ *  locates are relative to home.
+ *
+ *  This causes double concatenation. But we need to call it just
+ *  once in the case where NSM has changed the default configuration
+ *  directory.
  *
  * \param value
  *      Provides the directory name, which should be an actual full path.
@@ -1099,30 +1118,30 @@ rcsettings::set_config_directory (const std::string & value)
 void
 rcsettings::full_config_directory (const::std::string & value)
 {
-    std::string tv = value;
-    if (! m_config_subdirectory.empty())
+    if (! value.empty())
     {
-        if (! m_config_subdirectory_set)
+        std::string tv = value;
+        if (m_config_subdirectory_set)              /* see the banner note  */
         {
             tv = pathname_concatenate(tv, m_config_subdirectory);
-            m_config_subdirectory_set = true;
+            m_config_subdirectory_set = false;
+            m_full_config_directory = normalize_path(tv, true, true);
         }
-    }
-    m_full_config_directory = normalize_path(tv, true, true);
 
-    std::string homedir = rc().home_config_directory();
-    if (make_directory_path(homedir))                   // REDUNDANT
-    {
-        /*
-         * This setting will convert the relative session directory
-         * to a full path.
-         */
+        std::string homedir = rc().home_config_directory();
+        if (make_directory_path(homedir))                   // REDUNDANT
+        {
+            /*
+             * This setting will convert the relative session directory
+             * to a full path.
+             */
 
-        file_message("Config directory", homedir);
-        session_directory(homedir);
+            file_message("Config directory", homedir);
+            session_directory(homedir);
+        }
+        else
+            file_error("Could not create", homedir);
     }
-    else
-        file_error("Could not create", homedir);
 }
 
 /**
@@ -1131,9 +1150,14 @@ rcsettings::full_config_directory (const::std::string & value)
  *      Implements the --config option to change both configuration files
  *      ("rc" and "usr") with one option.
  *
+ *      What about the "ctrl", "playlist", "mutes", "notemap", and "palette"
+ *      files?  They are defined in the "rc" file.
+ *
  * \param value
  *      The value to use to make the setting, if the string is not empty.
  *      If the value has an extension, it is stripped first.
+ *
+ *      TODO: use value = file_extension_set(value);
  */
 
 void
