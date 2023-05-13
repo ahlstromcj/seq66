@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2020-07-12
+ * \updates     2023-05-13
  * \license     GNU GPLv2 or above
  *
  * Written by:
@@ -984,6 +984,50 @@ pm_strdup (const char * s)
 }
 
 /**
+ *  We tried opening the ALSA port in non-blocking mode.  Didn't seem to
+ *  offer any benefit.
+ *
+ *  -   0                       Blocking mode.
+ *  -   SND_SEQ_NONBLOCK        Non-blocking mode.
+ *
+ *  We did reduce the polling timeout from 1000 milliseconds (in Seq24) to 100
+ *  milliseconds, and now, after testing, 10 milliseconds, and removed the
+ *  additional 100 microsecond wait.
+ *
+ * Not yet used (see midi_alsa_info.cpp):
+ *
+ *      static const int c_poll_wait_ms = 10;
+ *      static unsigned c_input_caps =
+ *          SND_SEQ_PORT_CAP_READ | SND_SEQ_PORT_CAP_SUBS_READ;
+ *      static unsigned c_output_caps =
+ *          SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE;
+ */
+
+static const int c_open_block_mode  = SND_SEQ_NONBLOCK;
+static unsigned c_io_caps =
+    SND_SEQ_PORT_CAP_SUBS_READ | SND_SEQ_PORT_CAP_SUBS_WRITE;
+
+/**
+ *  Checks the port type for not being the "generic" types
+ *  SND_SEQ_PORT_TYPE_MIDI_GENERIC and SND_SEQ_PORT_TYPE_SYNTH.
+ *
+ *  We might need to add this check!!!
+ *
+ *      ((alsatype & SND_SEQ_PORT_TYPE_APPLICATION) == 0)
+ */
+
+static cbool_t
+check_port_type (snd_seq_port_info_t * pinfo)
+{
+    unsigned alsatype = snd_seq_port_info_get_type(pinfo);
+    return
+    (
+        ((alsatype & SND_SEQ_PORT_TYPE_MIDI_GENERIC) == 0) &&
+        ((alsatype & SND_SEQ_PORT_TYPE_SYNTH) == 0)
+    );
+}
+
+/**
  *  Previously, the last parameter to snd_seq_opten() was SND_SEQ_NONBLOCK,
  *  but this would cause messages to be dropped if the ALSA buffer fills up.
  *  The correct behavior is for writes to block until there is room to send
@@ -996,70 +1040,90 @@ pm_strdup (const char * s)
 PmError
 pm_linuxalsa_init (void)
 {
-    snd_seq_client_info_t * cinfo;
-    snd_seq_port_info_t * pinfo;
-    unsigned caps;
-    int err = snd_seq_open(&s_seq, "default", SND_SEQ_OPEN_DUPLEX, 0);
-    pm_log_buffer_alloc();               /* see portmidi.c & .h         */
+    int err = snd_seq_open                  /* set up ALSA sequencer client */
+    (
+        &s_seq, "default", SND_SEQ_OPEN_DUPLEX, c_open_block_mode
+    );
+    pm_log_buffer_alloc();                  /* see portmidi.c & .h          */
     if (err < 0)
-        return err;
-
-    snd_seq_client_info_alloca(&cinfo);
-    snd_seq_port_info_alloca(&pinfo);
-    snd_seq_client_info_set_client(cinfo, -1);
-    while (snd_seq_query_next_client(s_seq, cinfo) == 0)
     {
-        int client = snd_seq_client_info_get_client(cinfo);
-        int port = -1;
-        const char * portname = "unknown";
-        snd_seq_port_info_set_client(pinfo, client);
-        snd_seq_port_info_set_port(pinfo, port);
-        while (snd_seq_query_next_port(s_seq, pinfo) == 0)
+        get_alsa_error_text                 /* ca 2023-05-13                */
+        (
+            Pm_hosterror_text_mutable(), PM_HOST_ERROR_MSG_LEN, err
+        );
+        return err;
+    }
+    else
+    {
+        snd_seq_port_info_t * pinfo;
+        snd_seq_client_info_t * cinfo;
+        snd_seq_client_info_alloca(&cinfo);
+        snd_seq_client_info_set_client(cinfo, -1);
+        while (snd_seq_query_next_client(s_seq, cinfo) >= 0)
         {
-            client = snd_seq_client_info_get_client(cinfo);
-            if (client == SND_SEQ_CLIENT_SYSTEM)
-                continue; /* ignore Timer and Announce ports on client 0 */
-
-            caps = snd_seq_port_info_get_capability(pinfo);
-            if
-            (
-                ! (
-                    caps &
-                    (SND_SEQ_PORT_CAP_SUBS_READ | SND_SEQ_PORT_CAP_SUBS_WRITE)
-                )
-            )
+            unsigned caps;
+            int port = -1;
+            int client = snd_seq_client_info_get_client(cinfo);
+            snd_seq_port_info_alloca(&pinfo);   // moved from above
+            snd_seq_port_info_set_client(pinfo, client);
+            snd_seq_port_info_set_port(pinfo, port);
+            while (snd_seq_query_next_port(s_seq, pinfo) >= 0)
             {
-                continue; /* ignore if you cannot read or write port */
-            }
+                /*
+                 * Not used in the portmidi implementation:
+                 *
+                 * const char * clientname;
+                 * clientname = snd_seq_client_info_get_name(cinfo);
+                 */
 
-            if (caps & SND_SEQ_PORT_CAP_SUBS_WRITE)
-            {
-                if (pm_default_output_device_id == -1)
-                    pm_default_output_device_id = pm_descriptor_index;
+                const char * clientname;
+                const char * portname;
+                if (check_port_type(pinfo))
+                    continue;
 
-                portname = snd_seq_port_info_get_name(pinfo);
-                client = snd_seq_port_info_get_client(pinfo);
+                client = snd_seq_client_info_get_client(cinfo);
+                if (client == SND_SEQ_CLIENT_SYSTEM)
+                {
+                    /*
+                     * Client 0 won't have ports (timer and announce) that
+                     * match the MIDI-generic and Synth types checked below.
+                     */
+
+                    continue;
+                }
+
+                caps = snd_seq_port_info_get_capability(pinfo);
+                clientname = snd_seq_client_info_get_name(cinfo);
+                portname = snd_seq_port_info_get_name(pinfo);       // from below
                 port = snd_seq_port_info_get_port(pinfo);
-                pm_add_device
-                (
-                    "ALSA", pm_strdup(portname), FALSE,
-                    MAKE_DESCRIPTOR(client, port),
-                    &pm_linuxalsa_out_dictionary,
-                    client, port                    /* new parameters   */
-                );
-            }
-            if (caps & SND_SEQ_PORT_CAP_SUBS_READ)
-            {
-                if (pm_default_input_device_id == -1)
-                    pm_default_input_device_id = pm_descriptor_index;
+                client = snd_seq_port_info_get_client(pinfo);
+                if (! (caps & c_io_caps))
+                    continue;       /* ignore if can't read or write por    */
 
-                pm_add_device
-                (
-                    "ALSA", pm_strdup(portname), TRUE,
-                    MAKE_DESCRIPTOR(client, port),
-                    &pm_linuxalsa_in_dictionary,
-                    client, port                    /* new parameters   */
-                );
+                if (caps & SND_SEQ_PORT_CAP_SUBS_WRITE)
+                {
+                    if (pm_default_output_device_id == -1)
+                        pm_default_output_device_id = pm_descriptor_index;
+
+                    pm_add_device
+                    (
+                        pm_strdup(clientname), pm_strdup(portname), FALSE,
+                        MAKE_DESCRIPTOR(client, port),
+                        &pm_linuxalsa_out_dictionary, client, port
+                    );
+                }
+                if (caps & SND_SEQ_PORT_CAP_SUBS_READ)
+                {
+                    if (pm_default_input_device_id == -1)
+                        pm_default_input_device_id = pm_descriptor_index;
+
+                    pm_add_device
+                    (
+                        pm_strdup(clientname), pm_strdup(portname), TRUE,
+                        MAKE_DESCRIPTOR(client, port),
+                        &pm_linuxalsa_in_dictionary, client, port
+                    );
+                }
             }
         }
     }

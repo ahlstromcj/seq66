@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-03-06
+ * \updates       2023-05-15
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -133,12 +133,14 @@ mastermidibus::api_init (int ppqn, midibpm /*bpm*/)
 
             midibus * m = new (std::nothrow) midibus
             (
-                numouts, numouts, i, dev_info->name
+                numouts, dev_info->client,
+                i,                                  /* not dev_info->port   */
+                dev_info->interf, dev_info->name
             );
             m->is_input_port(false);                    /* add to ctor!     */
             m->is_virtual_port(false);                  /* add to ctor!     */
-            m_outbus_array.add(m, clock(numouts));      /* not i            */
-            ++numouts;
+            if (m_outbus_array.add(m, clock(numouts)))  /* not i            */
+                ++numouts;
         }
         else if (dev_info->input)
         {
@@ -149,12 +151,14 @@ mastermidibus::api_init (int ppqn, midibpm /*bpm*/)
 
             midibus * m = new (std::nothrow) midibus
             (
-                numins, numins, i, dev_info->name
+                numins, dev_info->client,
+                i,                                  /* not dev_info->port   */
+                dev_info->interf, dev_info->name
             );
             m->is_input_port(true);                     /* add to ctor!     */
             m->is_virtual_port(false);                  /* add to ctor!     */
-            m_inbus_array.add(m, input(numins));        /* not i            */
-            ++numins;
+            if (m_inbus_array.add(m, input(numins)))    /* not i            */
+                ++numins;
         }
     }
 

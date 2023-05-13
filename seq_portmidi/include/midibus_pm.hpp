@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-03-10
+ * \updates       2023-05-13
  * \license       GNU GPLv2 or above
  *
  *  This midibus module is the Windows (PortMidi) version of the midibus
@@ -77,7 +77,8 @@ public:
         int index,
         int bus_id,
         int port_id,
-        const std::string & client_name
+        const std::string & client_name,
+        const std::string & port_name
     );
 
     virtual ~midibus ();

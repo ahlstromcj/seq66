@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-01-29
+ * \updates       2023-05-13
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the midibus class.
@@ -54,11 +54,15 @@
 namespace seq66
 {
 
+#if defined THIS_FUNCTION_IS_NEEDED
+
 static std::string
 s_portname (const std::string & name, int index)
 {
     return name + " " + std::to_string(index);
 }
+
+#endif
 
 /**
  *  Principal constructor.  There's a little confusion with the port ID
@@ -69,17 +73,23 @@ s_portname (const std::string & name, int index)
 
 midibus::midibus
 (
-    int index, int bus_id, int port_id,
-    const std::string & clientname
+    int index, int bus_id,
+    int port_id,                            // port ID and queue number !
+    const std::string & clientname,
+    const std::string & portname
 ) :
     midibase
     (
         rc().application_name(),            // appname
-        s_portname(clientname, index),      // busname
-        clientname,                         // portname
+#if defined THIS_FUNCTION_IS_NEEDED
+        s_portname(clientname, index),      // busname, shitty
+#else
+        clientname,
+#endif
+        portname,
         index,
         bus_id,
-        port_id,
+        port_id,                            // port ID
         port_id,                            // queue number
         usr().use_default_ppqn(),           // PPQN flag value (-1)
         usr().bpm_default(),                // 120.0,

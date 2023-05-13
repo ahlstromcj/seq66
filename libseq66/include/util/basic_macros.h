@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2021-11-12
+ * \updates       2023-05-13
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -119,15 +119,13 @@
 #if ! defined __cplusplus
 
 /**
- *  Provides the "false" value of the wbool_t type definition.
+ *  Provides a type to better represent a boolean value.  Provides the "true"
+ *  and "false" values of the cbool_t type definition.
  */
+
+typedef int cbool_t;
 
 #define false    0
-
-/**
- *  Provides the "true" value of the wbool_t type definition.
- */
-
 #define true     1
 
 #endif

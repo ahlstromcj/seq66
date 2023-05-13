@@ -6,17 +6,17 @@
 # \library    	qpseq66 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2020-11-14
+# \update      2023-05-13
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
 # Created by and for Qt Creator. This file was created for editing the project
 # sources only.  You may attempt to use it for building too, by modifying this
-# file here.  [Which we have done.  -- Chris]
+# file here.
 #
 # Important:
 #
-#  This project file is designed only for Qt 5 (and above?).
+#     This project file is designed only for Qt 5 (and above?).
 #
 #------------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ HEADERS += \
  include/portmidi.h \
  include/porttime.h
 
-# Linux:
+# Linux
 
 unix:!macx {
    HEADERS += include/pmlinux.h include/pmlinuxalsa.h 
@@ -56,11 +56,11 @@ unix:!macx {
 
 # Mac OSX
 
-macx: {
+macx {
    HEADERS += include/pmmac.h include/pmmacosxcm.h 
 }
 
-# Windows:
+# Windows
 
 windows {
  HEADERS += include/pmerrmm.h include/pmwinmm.h
@@ -69,7 +69,7 @@ windows {
  QMAKE_CFLAGS_WARN_ON += -Wno-unused-parameter
 }
 
-# Common:
+# Common
 
 SOURCES += \
  src/mastermidibus.cpp \
@@ -78,7 +78,7 @@ SOURCES += \
  src/portmidi.c \
  src/porttime.c
 
-# Linux:
+# Linux
 
 unix:!macx {
    SOURCES += src/pmlinux.c src/pmlinuxalsa.c src/ptlinux.c
@@ -88,11 +88,11 @@ unix:!macx {
 #
 #  We have removed the readbinaryplist.c file; we use INI-style files.
 
-macx: {
+macx {
    SOURCES += src/pmmac.c pmmacosxcm.c src/ptmacosx_mach.c
 }
 
-# Windows:
+# Windows
 
 windows: SOURCES += src/pmwin.c \
  src/pmerrmm.c \

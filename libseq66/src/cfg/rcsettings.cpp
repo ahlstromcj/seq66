@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-05-11
+ * \updates       2023-05-12
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -34,10 +34,10 @@
  * \warning
  *      No more "statistics" support.
  *
- * \todo
- *      Kepler34 has two more settings values: [midi-clock-mod-ticks],
- *      [note-resume] and [key-height].  The latter sounds more like a "usr"
- *      setting.
+ * ca 2023-05-12:
+ *
+ *      A number of calls to rc() occur in this module. but that doesn't make
+ *      sense. Go back to commit efc8db20 if removing them is a flub.
  */
 
 #include <algorithm>                    /* std::find()                      */
@@ -114,7 +114,7 @@ rcsettings::rcsettings () :
     m_config_subdirectory       (),
     m_config_filename           (seq_config_name()),    /* updated in body  */
     m_full_config_directory     (),
-    m_user_file_active          (true),
+    m_user_file_active          (true),                 /* keep it true     */
     m_user_filename             (seq_config_name()),    /* updated in body  */
     m_midi_control_active       (false),
     m_midi_control_filename     (seq_config_name()),    /* updated in body  */
@@ -310,7 +310,7 @@ rcsettings::auto_options_save () const
     return
     (
         auto_rc_save() || auto_usr_save() ||
-        rc().is_modified() || usr().is_modified()
+        is_modified() || usr().is_modified()
     );
 }
 
@@ -497,9 +497,6 @@ rcsettings::home_config_directory () const
             bool ok = make_directory_path(result);
             if (ok)
             {
-#if defined SEQ66_PLATFORM_WINDOWS
-                result += path_slash();
-#endif
                 result = normalize_path(result);
                 m_full_config_directory = result;
             }
@@ -662,7 +659,7 @@ rcsettings::trim_home_directory (const std::string & filepath)
 void
 rcsettings::create_config_names (const std::string & base)
 {
-    std::string cfgname = base.empty() ? rc().config_filename() : base ;
+    std::string cfgname = base.empty() ? config_filename() : base ;
     cfgname = filename_base(cfgname, true);             /* strip extension  */
 
     std::string cc = file_extension_set(cfgname, ".rc");
@@ -673,13 +670,13 @@ rcsettings::create_config_names (const std::string & base)
     std::string nm = file_extension_set(cfgname, ".drums");
     std::string pa = file_extension_set(cfgname, ".palette");
     std::string af = cfgname + ".rc,ctrl,midi,mutes,drums,playlist,palette";
-    rc().config_filename(cc);
-    rc().user_filename(uf);
-    rc().midi_control_filename(cf);
-    rc().mute_group_filename(mf);
-    rc().playlist_filename(pl);
-    rc().notemap_filename(nm);
-    rc().palette_filename(pa);
+    config_filename(cc);
+    user_filename(uf);
+    midi_control_filename(cf);
+    mute_group_filename(mf);
+    playlist_filename(pl);
+    notemap_filename(nm);
+    palette_filename(pa);
     file_message("Configuration files", af);
 }
 
@@ -712,7 +709,7 @@ rcsettings::filespec_helper (const std::string & baseext) const
             result = home_config_directory();
             result += baseext;
         }
-        result = os_normalize_path(result);         /* change to OS's slash */
+        result = normalize_path(result);            /* change to UNIX slash */
     }
     return result;
 }
@@ -1001,7 +998,7 @@ rcsettings::jack_session (const std::string & uuid)
         }
     }
     if (save_config)
-        rc().auto_usr_save(true);           /* hmmmm, why the rc() here?    */
+        auto_usr_save(true);
 
     if (clear_uuid)
         m_jack_session_uuid.clear();
@@ -1128,7 +1125,7 @@ rcsettings::full_config_directory (const::std::string & value)
             m_full_config_directory = normalize_path(tv, true, true);
         }
 
-        std::string homedir = rc().home_config_directory();
+        std::string homedir = home_config_directory();
         if (make_directory_path(homedir))                   // REDUNDANT
         {
             /*

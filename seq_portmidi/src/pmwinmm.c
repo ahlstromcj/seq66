@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-02-28
+ * \updates     2023-05-12
  * \license     GNU GPLv2 or above
  *
  *  Check out this site:
@@ -33,7 +33,31 @@
  *      "Working with MIDI on Windows (Outside of a DAW)"
  */
 
+#include "seq66_platform_macros.h"      /* compilation environment settings */
+
+#if defined SEQ66_PLATFORM_MSVC         /* based on _MSC_VER                */
+#pragma warning(disable: 4133)          /* stop implicit typecast warnings  */
+#endif
+
+/*
+ *  Without this #define, InitializeCriticalSectionAndSpinCount is undefined.
+ *  This version level means "Windows 2000 and higher".
+ */
+
+#if ! defined _WIN32_WINNT
+#define _WIN32_WINNT 0x0500
+#endif
+
+/*
+ *  The former is defined in seq66_features.h (included by basic_macros.h),
+ *  but what about the latter?  Sequencer64 defines the former!!!
+ *
+ *      SEQ66_USE_SYSEX_PROCESSING?
+ *      SEQ66_USE_SYSEX_BUFFERS
+ */
+
 #include <windows.h>
+#include <mmsystem.h>
 #include <string.h>
 
 #include "pmerrmm.h"                    /* Windows error support, debugging */
@@ -56,8 +80,7 @@
 
 static void CALLBACK winmm_in_callback
 (
-    HMIDIIN hMidiIn,
-    WORD wMsg,
+    HMIDIIN hmi, WORD wmsg,
     DWORD_PTR dwInstance,
     DWORD_PTR dwParam1,
     DWORD_PTR dwParam2
@@ -65,8 +88,7 @@ static void CALLBACK winmm_in_callback
 
 static void CALLBACK winmm_streamout_callback
 (
-    HMIDIOUT hmo,
-    UINT wMsg,
+    HMIDIOUT hmo, UINT wmsg,
     DWORD_PTR dwInstance,
     DWORD_PTR dwParam1,
     DWORD_PTR dwParam2
@@ -78,11 +100,11 @@ static void CALLBACK winmm_streamout_callback
  * seq66_features.h, which *is* defined.
  */
 
-#if defined SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
 
 static void CALLBACK winmm_out_callback
 (
-    HMIDIOUT hmo, UINT wMsg,
+    HMIDIOUT hmo, UINT wmsg,
     DWORD_PTR dwInstance,
     DWORD_PTR dwParam1,
     DWORD_PTR dwParam2
@@ -91,7 +113,6 @@ static void CALLBACK winmm_out_callback
 #endif
 
 static void winmm_out_delete (PmInternal * midi);
-
 extern pm_fns_node pm_winmm_in_dictionary;
 extern pm_fns_node pm_winmm_out_dictionary;
 
@@ -154,7 +175,7 @@ extern pm_fns_node pm_winmm_out_dictionary;
 
 #define MIDIHDR_SYSEX_SIZE(x) (MIDIHDR_SYSEX_BUFFER_LENGTH(x) + sizeof(MIDIHDR))
 
-#if defined SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
 
 /**
  *  Size of a MIDIHDR with a buffer contaning multiple MIDIEVENT structures.
@@ -162,7 +183,7 @@ extern pm_fns_node pm_winmm_out_dictionary;
 
 #define MIDIHDR_SIZE(x) ((x) + sizeof(MIDIHDR))
 
-#endif  // SEQ66_USE_SYSEX_BUFFERS
+#endif
 
 /**
  *  win32 multi-media-system-specific structure passed to MIDI callbacks;
@@ -180,16 +201,17 @@ static UINT midi_num_outputs = 0;
 static int midi_output_index = 0;
 
 /**
- *  The MIDI_MAPPER descriptor number (-1) is another example of Microsoft's
- *  clumsy approach to C code dating back decades. PortMidi compounds it by
- *  not adopting a pointer for the descriptor universally.
+ *  The MIDI_MAPPER descriptor number (-1), defined in mmsystem.h, is another
+ *  example of Microsoft's clumsy approach to C code dating back decades.
+ *  PortMidi compounds it by not adopting a pointer for the descriptor
+ *  universally. Weird stuff.
  */
 
 static void * PTR_MIDIMAPPER    = ((void *) ((uintptr_t) MIDI_MAPPER));
 static UINT UINT_MIDIMAPPER     = ((UINT) MIDI_MAPPER);
 
 /**
- *  This complext structure provides per-device information.
+ *  This complex structure provides per-device information.
  */
 
 typedef struct midiwinmm_struct
@@ -219,7 +241,7 @@ typedef struct midiwinmm_struct
      * a SysEx message is sent. The size of the buffer is fixed.
      */
 
-#if defined SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
     LPMIDIHDR sysex_buffers[NUM_SYSEX_BUFFERS]; /**< Pool for SysEx data.   */
     int next_sysex_buffer;      /**< Index of next SysEx buffer to send.    */
 #endif
@@ -258,7 +280,7 @@ pm_winmm_general_inputs (void)
 
     if (is_nullptr(midi_in_caps))                       /* see banner notes */
     {
-        pm_log_buffer_append("No input devices found.\n");
+        pm_log_buffer_append("No MIDI input devices found.\n");
     }
     else
     {
@@ -288,11 +310,6 @@ pm_winmm_general_inputs (void)
             const char * devname = (const char *) midi_in_caps[in].szPname;
             if (winerrcode == MMSYSERR_NOERROR)
             {
-                snprintf
-                (
-                    temp, sizeof temp, "[%d] MIDI input dev %d: '%s'\n",
-                    index, (int) in, devname
-                );
                 (void) pm_add_device                    /* ignore errors    */
                 (
                     "MMSystem",                         /* subsystem name   */
@@ -303,6 +320,12 @@ pm_winmm_general_inputs (void)
                     index,                              /* client number    */
                     index                               /* port number      */
                 );
+                snprintf
+                (
+                    temp, sizeof temp, "[%d] MIDI input dev %d: '%s'\n",
+                    index, (int) in, devname
+                );
+                infoprint(temp);                        /* log to console   */
             }
             else
             {
@@ -341,6 +364,12 @@ pm_winmm_general_inputs (void)
 static void
 pm_winmm_mapper_input (void)
 {
+// #if defined USE_THIS_CODE
+    UINT count = midiInGetNumDevs();            /* ca 2023-05-12    */
+    if (count == 0)
+        return;
+// #endif
+
     WORD winerrcode = midiInGetDevCaps
     (
         UINT_MIDIMAPPER,
@@ -388,7 +417,7 @@ pm_winmm_general_outputs (void)
 
     if (is_nullptr(midi_out_caps))
     {
-        pm_log_buffer_append("No output devices found.\n");
+        pm_log_buffer_append("No MIDI output devices found.\n");
     }
     else
     {
@@ -404,7 +433,8 @@ pm_winmm_general_outputs (void)
         pm_log_buffer_append(temp);
         for
         (
-            out = 0, index = midi_output_index; out < (UINT) midi_num_outputs;
+            out = 0, index = midi_output_index;
+            out < (UINT) midi_num_outputs;
             ++out, ++index
         )
         {
@@ -464,6 +494,11 @@ pm_winmm_general_outputs (void)
 static void
 pm_winmm_mapper_output (void)
 {
+// #if defined USE_THIS_CODE
+    UINT count = midiOutGetNumDevs();                       /* ca 2023-05-12    */
+    if (count == 0)
+        return;
+// #endif
     WORD winerrcode = midiOutGetDevCaps
     (
         UINT_MIDIMAPPER,
@@ -589,15 +624,14 @@ allocate_buffer (long data_size)
             MIDIEVENT * evt = (MIDIEVENT *)(hdr + 1); /* placed after header */
             hdr->lpData = (LPSTR) evt;
             hdr->dwBufferLength = MIDIHDR_SYSEX_BUFFER_LENGTH(data_size);
-            hdr->dwBytesRecorded = 0;
-            hdr->dwFlags = 0;
+            hdr->dwBytesRecorded = hdr->dwFlags = 0;
             hdr->dwUser = hdr->dwBufferLength;
         }
     }
     return hdr;
 }
 
-#if defined SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
 
 /**
  * we're actually allocating more than data_size because the buffer
@@ -615,14 +649,13 @@ allocate_sysex_buffer (long data_size)
         {
             MIDIEVENT * evt = (MIDIEVENT *)(hdr + 1);   /* placed after header */
             hdr->lpData = (LPSTR) evt;
-            hdr->dwFlags = 0;
-            hdr->dwUser = 0;
+            hdr->dwFlags = hdr->dwUser = 0;
         }
     }
     return hdr;
 }
 
-#endif  // SEQ66_USE_SYSEX_BUFFERS
+#endif
 
 /**
  *  Buffers is an array of 'count' pointers to an MIDIHDR/MIDIEVENT struct.
@@ -656,7 +689,7 @@ allocate_buffers (midiwinmm_type m, long data_size, long count)
     return pmNoError;
 }
 
-#if defined SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
 
 /**
  * sysex_buffers is an array of count pointers to MIDIHDR/MIDIEVENT struct
@@ -715,7 +748,7 @@ get_free_sysex_buffer (PmInternal * midi)
             warnprint
             (
                 "PortMidi warning: get_free_sysex_buffer() wait timed "
-                "out after 1000ms\n"
+                "out after 1000 ms\n"
             );
         }
     }
@@ -727,7 +760,7 @@ found_sysex_buffer:
     return r;
 }
 
-#endif      // SEQ66_USE_SYSEX_BUFFERS
+#endif
 
 /**
  *  1. Cycle through buffers, modulo m->num_buffers.
@@ -840,6 +873,8 @@ found_buffer:
  *
  *      This is not working code, but might be useful if you want to grow
  *      sysex buffers.
+ *
+ *      Buffer must be smaller than 64k, but be also a multiple of 4.
  */
 
 static PmError
@@ -848,11 +883,6 @@ resize_sysex_buffer (PmInternal * midi, long old_size, long new_size)
     LPMIDIHDR big;
     int i;
     midiwinmm_type m = (midiwinmm_type) midi->descriptor;
-
-    /*
-     * Buffer must be smaller than 64k, but be also a multiple of 4.
-     */
-
     if (new_size > 65520)
     {
         if (old_size >= 65520)
@@ -984,7 +1014,7 @@ winmm_in_open (PmInternal * midi, void * driverInfo)
     m->next_buffer = 0;                     /* not used for input */
     m->buffer_signal = 0;                   /* not used for input */
 
-#if defined SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
     for (i = 0; i < NUM_SYSEX_BUFFERS; ++i)
         m->sysex_buffers[i] = nullptr;      /* not used for input */
 
@@ -1376,7 +1406,7 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
     m->num_buffers = m->max_buffers = m->next_buffer = 0;
     m->buffers_expanded = FALSE;
 
-#if defined SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
     m->sysex_buffers[0] = nullptr;
     m->sysex_buffers[1] = nullptr;
     m->next_sysex_buffer = 0;
@@ -1550,10 +1580,16 @@ winmm_out_delete (PmInternal * midi)
         pm_free(m->buffers);
         m->max_buffers = 0;
 
-#if defined SEQ66_USE_SYSEX_BUFFERS  /* free the sysex buffers   */
+#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
+
+        /*
+         * Free the sysex buffers.
+         */
+
         for (i = 0; i < NUM_SYSEX_BUFFERS; ++i)
             if (m->sysex_buffers[i]) pm_free(m->sysex_buffers[i]);
 #endif
+
     }
     midi->descriptor = nullptr;
     pm_free(m);                         /* delete */
@@ -1990,7 +2026,7 @@ winmm_synchronize (PmInternal * midi)
     return real_time;
 }
 
-#if defined SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
 
 /**
  *  The winmm_out_callback()  recycles SysEx buffers.  A future optimization:
@@ -2035,7 +2071,7 @@ winmm_out_callback
     }
 }
 
-#endif  // SEQ66_USE_SYSEX_BUFFERS
+#endif
 
 /**
  *  The winmm_streamout_callback() unprepares (frees) the buffer header.  Even

@@ -1,4 +1,4 @@
-# README for Seq66 0.99.4 2023-05-10
+# README for Seq66 0.99.4 2023-05-13
 
 __Seq66__: MIDI sequencer and live-looper with a hardware-sampler grid
 interface, pattern sets/banks, pattern triggers, and playlists for song
@@ -99,6 +99,7 @@ Windows, and using a conventional source tarball.
             build NSIS-based install without leaving Windows, if desired.
         *   Internal refactoring to regularize handling of the session/config
             directory between Linux and Windows.
+        *   Fixed portmidi bugs in Linux and Windows, enhanced device naming..
         *   Rearranged the Seq66 man pages more sensibly.
     *   Version 0.99.4:
         *   Issue #3: The scroll wheel is enabled in the piano rolls (only).

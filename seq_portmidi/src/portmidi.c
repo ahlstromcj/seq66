@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-02-28
+ * \updates     2023-05-13
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:
@@ -538,7 +538,8 @@ pm_add_device
 {
     char temp[64];
     int ismapper = not_nullptr(strstrcase(name, "mapper"));
-    if (pm_descriptor_index >= pm_descriptor_max)
+    const int index = pm_descriptor_index;
+    if (index >= pm_descriptor_max)
     {
         const size_t sdesc = sizeof(descriptor_node); // expand descriptors
         descriptor_type new_descriptors =
@@ -555,38 +556,38 @@ pm_add_device
         pm_descriptor_max += 32;
         pm_descriptors = new_descriptors;
     }
-    pm_descriptors[pm_descriptor_index].pub.structVersion = PM_STRUCTURE_VERSION;
-    pm_descriptors[pm_descriptor_index].pub.interf = interf;
-    pm_descriptors[pm_descriptor_index].pub.name = name;
-    pm_descriptors[pm_descriptor_index].pub.input = input;
-    pm_descriptors[pm_descriptor_index].pub.output = ! input;
-    pm_descriptors[pm_descriptor_index].pub.mapper = ismapper;
-    pm_descriptors[pm_descriptor_index].pub.client = client;
-    pm_descriptors[pm_descriptor_index].pub.port = port;
+    pm_descriptors[index].pub.structVersion = PM_STRUCTURE_VERSION;
+    pm_descriptors[index].pub.interf = interf;
+    pm_descriptors[index].pub.name = name;
+    pm_descriptors[index].pub.input = input;
+    pm_descriptors[index].pub.output = ! input;
+    pm_descriptors[index].pub.mapper = ismapper;
+    pm_descriptors[index].pub.client = client;
+    pm_descriptors[index].pub.port = port;
 
     /*
      * Default state: nothing to close (for automatic device closing).
      */
 
-    pm_descriptors[pm_descriptor_index].pub.opened = FALSE;
+    pm_descriptors[index].pub.opened = FALSE;
 
     /*
      * ID number passed to Win32 multimedia API open function.
      */
 
-    pm_descriptors[pm_descriptor_index].descriptor = descriptor;
+    pm_descriptors[index].descriptor = descriptor;
 
     /*
      * Points to PmInternal, allows automatic device closing.
      */
 
-    pm_descriptors[pm_descriptor_index].internalDescriptor = nullptr;
-    pm_descriptors[pm_descriptor_index].dictionary = dictionary;
+    pm_descriptors[index].internalDescriptor = nullptr;
+    pm_descriptors[index].dictionary = dictionary;
     ++pm_descriptor_index;
     snprintf
     (
-        temp, sizeof temp, "PortMidi: %s %s added",
-        (input ? "Input" : "Output"), name
+        temp, sizeof temp, "PortMidi [%d]: %s %s:%s added",
+        index, (input ? "Input" : "Output"), interf, name
     );
     infoprint(temp);
     (void) strcat(temp, "\n");
