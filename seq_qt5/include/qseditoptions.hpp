@@ -22,15 +22,14 @@
 /**
  * \file          qseditoptions.hpp
  *
- *  The time bar shows markers and numbers for the measures of the song,
- *  and also depicts the left and right markers.
+ *      This dialog contains many tabs for editing various aspects of
+ *      Seq66 operation.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-10-02
+ * \updates       2023-05-14
  * \license       GNU GPLv2 or above
- *
  */
 
 #include <QDialog>
@@ -165,8 +164,7 @@ private slots:
     void slot_jack_auto_connect ();
     void slot_io_maps ();
     void slot_remove_io_maps ();
-    void slot_activate_input_map ();
-    void slot_activate_output_map ();
+    void slot_activate_io_maps ();
     void slot_session (int buttonno);
     void slot_nsm_url ();
     void slot_note_resume ();

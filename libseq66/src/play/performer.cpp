@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-05-06
+ * \updates       2023-05-14
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1014,6 +1014,12 @@ performer::ui_get_clock
 
     n = name;
     return ! name.empty();
+}
+
+bool
+performer::port_maps_active () const
+{
+    return input_port_map().active() && output_port_map().active();
 }
 
 bussbyte
@@ -2908,13 +2914,18 @@ performer::launch (int ppqn)
         (void) init_jack_transport();
         m_master_bus->init(ppqn, m_bpm);    /* calls api_init() per API     */
         result = activate();
+#if defined TEST_ACTIVATION_BEFORE_GETTING_PORT_STATUSES
         if (result)
+#endif
         {
             /*
              * Get and store the clocks and inputs created (disabled or not)
              * by the mastermidibus during api_init().  After this call, the
              * clocks and inputs now have names.  These calls are necessary to
              * populate the port lists the first time Seq66 is run.
+             * We need to do this even if activation has failed, such as
+             * when the Windows MIDI Mapper prevents the opening of the
+             * built-in GS wave-table synthesizer.
              *
              * m_master_bus->get_port_statuses(m_clocks, m_inputs); the
              * statuses from e.g. midi_jack_info are already obtained in the
@@ -2923,23 +2934,22 @@ performer::launch (int ppqn)
 
             m_master_bus->copy_io_busses();
             m_master_bus->get_port_statuses(m_clocks, m_inputs);
+        }
+        if (result)
+        {
 
 #if defined SEQ66_USE_DEFAULT_PORT_MAPPING
 
         if (! rc().portmaps_present())      /* don't mung existing port-map */
         {
-            bool ok = store_output_map();
+            bool ok = store_io_maps();
             if (ok)
             {
-                ok = store_input_map();
-                if (ok)
-                {
-                    rc().portmaps_active(true);
-                    session_message("Created initial port maps");
-                }
-                else
-                    set_error_message("Creating port maps failed");
+                rc().portmaps_active(true);
+                session_message("Created initial port maps");
             }
+            else
+                set_error_message("Creating port maps failed");
         }
 
 #endif

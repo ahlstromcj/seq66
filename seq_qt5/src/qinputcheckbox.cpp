@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-20
- * \updates       2022-05-29
+ * \updates       2023-05-14
  * \license       GNU GPLv2 or above
  *
  *  This class is used in the qseditoptions settings-dialog class.
@@ -91,14 +91,17 @@ qinputcheckbox::setup_ui ()
     std::string busname;
     bool inputing;
     bool disabled = perf().is_input_system_port(bus());
+    bool unavailable = perf().is_port_unavailable(bus());
     bool gotbussinfo = perf().ui_get_input(bus(), inputing, busname);
-    if (! gotbussinfo)
+    if (unavailable || ! gotbussinfo)
         disabled = true;
 
     QString qbname = qt(busname);
     m_chkbox_inputactive = new QCheckBox(qbname);
     m_chkbox_inputactive->setChecked(inputing);
     m_chkbox_inputactive->setEnabled(! disabled);
+    if (unavailable)
+        m_chkbox_inputactive->setToolTip("Port is unavailable");
 }
 
 /**

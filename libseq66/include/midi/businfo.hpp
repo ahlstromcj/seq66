@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2022-02-23
+ * \updates       2023-05-14
  * \license       GNU GPLv2 or above
  *
  *  The businfo module defines the businfo and busarray classes so that we can
@@ -365,6 +365,7 @@ public:
 
     bool get_input (bussbyte bus) const;
     bool is_system_port (bussbyte bus);
+    bool is_port_unavailable (bussbyte bus);
     int poll_for_midi ();
     bool get_midi_event (event * inev);
     int replacement_port (int bus, int port);

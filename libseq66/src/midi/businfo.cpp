@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2022-03-13
+ * \updates       2023-05-14
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -165,6 +165,8 @@ businfo::initialize ()
         result = bus()->initialize(rc().init_disabled_ports());
         if (result)
             activate();                         /* "initialized" & "active" */
+        else
+            bus()->set_port_unavailable();      /* currently permanent      */
     }
     else
     {
@@ -196,7 +198,7 @@ businfo::print () const
     if (active())
         flags += " active";
     else
-        flags += " inactive";
+        flags += bus()->port_unavailable() ? "unavailable" : " inactive" ;
 
     if (initialized())
         flags += " initialized";
@@ -694,6 +696,18 @@ busarray::is_system_port (bussbyte bus)
         businfo & bi = m_container[bus];
         if (bi.active())
             result = bi.bus()->is_system_port();
+    }
+    return result;
+}
+
+bool
+busarray::is_port_unavailable (bussbyte bus)
+{
+    bool result = true;
+    if (bus < count())
+    {
+        businfo & bi = m_container[bus];
+        result = bi.bus()->port_unavailable();
     }
     return result;
 }

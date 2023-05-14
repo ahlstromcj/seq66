@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-05-06
+ * \updates       2023-05-14
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2635,38 +2635,28 @@ public:
     (
         bussbyte bus, e_clock & e, std::string & n, bool statusshow = true
     ) const;
+    bool port_maps_active () const;
 
-    bool store_output_map ()
+    bool store_io_maps ()
     {
-        return build_output_port_map(m_clocks);
+        bool oki = build_input_port_map(m_inputs);
+        bool oko = build_output_port_map(m_clocks);
+        return oki && oko;
     }
 
-    void clear_output_map ()
+    void clear_io_maps ()
     {
+        clear_input_port_map();
         clear_output_port_map();
     }
 
-    void activate_output_map (bool active)
+    void activate_io_maps (bool active)
     {
+        activate_input_port_map(active);
         activate_output_port_map(active);
     }
 
     bussbyte true_output_bus (bussbyte nominalbuss) const;
-
-    bool store_input_map ()
-    {
-        return build_input_port_map(m_inputs);
-    }
-
-    void clear_input_map ()
-    {
-        clear_input_port_map();
-    }
-
-    void activate_input_map (bool active)
-    {
-        activate_input_port_map(active);
-    }
 
     bussbyte true_input_bus (bussbyte nominalbuss) const;
 
@@ -2721,6 +2711,12 @@ public:
     {
         return master_bus() ?
             master_bus()->is_input_system_port(bus) : false ;
+    }
+
+    bool is_port_unavailable (bussbyte bus)
+    {
+        return master_bus() ?
+            master_bus()->is_port_unavailable(bus) : true ;
     }
 
     bool mainwnd_key_event (const keystroke & k);

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2022-01-20
+ * \updates       2023-05-14
  * \license       GNU GPLv2 or above
  *
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
@@ -144,45 +144,59 @@ qclocklayout::setup_ui ()
         m_horizlayout_clockline->addWidget(m_rbutton_clockoff);
         m_horizlayout_clockline->addWidget(m_rbutton_clockonpos);
         m_horizlayout_clockline->addWidget(m_rbutton_clockonmod);
-        switch (clocking)
+        if (perf().is_port_unavailable(bus()))
         {
-        case e_clock::disabled:
-
             m_label_outputbusname->setEnabled(false);
             m_rbutton_portdisabled->setChecked(true);
             m_rbutton_portdisabled->setEnabled(false);
-
-            /*
-             * We need to be able to undo the Disabled status.
-             *
-             *      m_rbutton_clockoff->setEnabled(false);
-             */
-
+            m_rbutton_portdisabled->setToolTip("Port is unavailable");
+            m_rbutton_clockoff->setChecked(false);
+            m_rbutton_clockoff->setEnabled(false);
             m_rbutton_clockonpos->setEnabled(false);
             m_rbutton_clockonmod->setEnabled(false);
-            break;
+        }
+        else
+        {
+            switch (clocking)
+            {
+            case e_clock::disabled:
 
-        case e_clock::off:
+                m_label_outputbusname->setEnabled(false);
+                m_rbutton_portdisabled->setChecked(true);
+                m_rbutton_portdisabled->setEnabled(false);
 
-            m_label_outputbusname->setEnabled(true);
-            m_rbutton_clockoff->setChecked(true);
-            break;
+                /*
+                 * We need to be able to undo the Disabled status.
+                 *
+                 *      m_rbutton_clockoff->setEnabled(false);
+                 */
 
-        case e_clock::pos:
+                m_rbutton_clockonpos->setEnabled(false);
+                m_rbutton_clockonmod->setEnabled(false);
+                break;
 
-            m_label_outputbusname->setEnabled(true);
-            m_rbutton_clockonpos->setChecked(true);
-            break;
+            case e_clock::off:
 
-        case e_clock::mod:
+                m_label_outputbusname->setEnabled(true);
+                m_rbutton_clockoff->setChecked(true);
+                break;
 
-            m_label_outputbusname->setEnabled(true);
-            m_rbutton_clockonmod->setChecked(true);
-            break;
+            case e_clock::pos:
 
-        case e_clock::max:      /* will never occur */
+                m_label_outputbusname->setEnabled(true);
+                m_rbutton_clockonpos->setChecked(true);
+                break;
 
-            break;
+            case e_clock::mod:
+
+                m_label_outputbusname->setEnabled(true);
+                m_rbutton_clockonmod->setChecked(true);
+                break;
+
+            case e_clock::max:      /* will never occur */
+
+                break;
+            }
         }
     }
 }

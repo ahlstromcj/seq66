@@ -364,11 +364,11 @@ pm_winmm_general_inputs (void)
 static void
 pm_winmm_mapper_input (void)
 {
-// #if defined USE_THIS_CODE
+#if defined USE_THIS_TEST_CODE
     UINT count = midiInGetNumDevs();            /* ca 2023-05-12    */
     if (count == 0)
         return;
-// #endif
+#endif
 
     WORD winerrcode = midiInGetDevCaps
     (
@@ -494,11 +494,12 @@ pm_winmm_general_outputs (void)
 static void
 pm_winmm_mapper_output (void)
 {
-// #if defined USE_THIS_CODE
+#if defined USE_THIS_TEST_CODE
     UINT count = midiOutGetNumDevs();                       /* ca 2023-05-12    */
     if (count == 0)
         return;
-// #endif
+#endif
+
     WORD winerrcode = midiOutGetDevCaps
     (
         UINT_MIDIMAPPER,

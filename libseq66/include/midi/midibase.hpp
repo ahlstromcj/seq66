@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-24
- * \updates       2022-03-09
+ * \updates       2023-05-14
  * \license       GNU GPLv2 or above
  *
  *  The midibase module is the new base class for the various implementations
@@ -148,6 +148,14 @@ private:
      */
 
     bool m_io_active;
+
+    /**
+     *   Indicates if the port is unavailable. For example, when the
+     *   Windows MIDI Mapper grabs the GS wave-table synthesizer.
+     *   The port is not just disabled... it cannot be enabled.
+     */
+
+    bool m_unavailable;
 
     /**
      *  Provides the PPQN value in force, currently a constant.
@@ -381,6 +389,11 @@ public:
         return m_io_active;
     }
 
+    bool port_unavailable () const
+    {
+        return m_unavailable;
+    }
+
     bool clock_enabled () const
     {
         return clocking_enabled(m_clock_type);  /* pos and mod enabled  */
@@ -389,6 +402,11 @@ public:
     void set_io_status (bool flag)
     {
         m_io_active = flag;
+    }
+
+    void set_port_unavailable ()
+    {
+        m_unavailable = true;
     }
 
     int queue_number () const

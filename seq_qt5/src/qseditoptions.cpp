@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-06
+ * \updates       2023-05-14
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -324,17 +324,11 @@ qseditoptions::setup_tab_midi_clock ()
      */
 
     bool inportmap = input_port_map().active();
-    ui->inPortsMappedCheck->setChecked(inportmap);
-    ui->outPortsMappedCheck->setChecked(outportmap);
+    ui->ioPortsMappedCheck->setChecked(inportmap && outportmap);
     connect
     (
-        ui->outPortsMappedCheck, SIGNAL(clicked(bool)),
-        this, SLOT(slot_activate_output_map())
-    );
-    connect
-    (
-        ui->inPortsMappedCheck, SIGNAL(clicked(bool)),
-        this, SLOT(slot_activate_input_map())
+        ui->ioPortsMappedCheck, SIGNAL(clicked(bool)),
+        this, SLOT(slot_activate_io_maps())
     );
 
     /*
@@ -1755,18 +1749,15 @@ qseditoptions::state_applied ()
 void
 qseditoptions::slot_io_maps ()
 {
-    bool ok = perf().store_output_map();
+    bool ok = perf().store_io_maps();
     if (ok)
     {
-        bool outportmap = output_port_map().active();
-        ui->outPortsMappedCheck->setChecked(outportmap);
-        ok = perf().store_input_map();
+        bool active = perf().port_maps_active();
+        ui->ioPortsMappedCheck->setChecked(active);
+        ok = perf().store_io_maps();
         if (ok)
-        {
-            bool inportmap = input_port_map().active();
-            ui->inPortsMappedCheck->setChecked(inportmap);
-        }
-        rc().portmaps_active(true);
+            rc().portmaps_active(active);
+
         modify_rc();
     }
 }
@@ -1774,35 +1765,19 @@ qseditoptions::slot_io_maps ()
 void
 qseditoptions::slot_remove_io_maps ()
 {
-    perf().clear_output_map();
-    perf().clear_input_map();
-    ui->outPortsMappedCheck->setChecked(false);
-    ui->inPortsMappedCheck->setChecked(false);
+    perf().clear_io_maps();
+    ui->ioPortsMappedCheck->setChecked(false);
     rc().portmaps_active(false);
     modify_rc();
 }
 
 void
-qseditoptions::slot_activate_input_map ()
+qseditoptions::slot_activate_io_maps ()
 {
-    bool active = ui->inPortsMappedCheck->isChecked();
-    perf().activate_input_map(active);
-
-    bool outportmap = output_port_map().active();
-    bool inportmap = input_port_map().active();
-    rc().portmaps_active(outportmap && inportmap);
-    modify_rc();
-}
-
-void
-qseditoptions::slot_activate_output_map ()
-{
-    bool active = ui->outPortsMappedCheck->isChecked();
-    perf().activate_output_map(active);
-
-    bool outportmap = output_port_map().active();
-    bool inportmap = input_port_map().active();
-    rc().portmaps_active(outportmap && inportmap);
+    bool active = ui->ioPortsMappedCheck->isChecked();
+    perf().activate_io_maps(active);
+    active = perf().port_maps_active();
+    rc().portmaps_active(active);
     modify_rc();
 }
 
@@ -2127,8 +2102,7 @@ qseditoptions::sync_rc ()
 
     bool outportmap = output_port_map().active();
     bool inportmap = input_port_map().active();
-    ui->outPortsMappedCheck->setChecked(outportmap);
-    ui->inPortsMappedCheck->setChecked(inportmap);
+    ui->ioPortsMappedCheck->setChecked(outportmap && inportmap);
     ui->checkBoxVirtualPorts->setChecked(rc().manual_ports());
 
     std::string value = std::to_string(rc().manual_port_count());

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2022-05-06
+ * \updates       2022-05-14
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -107,7 +107,7 @@ mastermidibase::~mastermidibase ()
 }
 
 /**
- *  Initializes and ctivates the busses, in a partly API-dependent manner.
+ *  Initializes and activates the busses, in a partly API-dependent manner.
  *  Currently re-implemented only in the rtmidi JACK API.
  */
 
@@ -583,6 +583,12 @@ bool
 mastermidibase::is_input_system_port (bussbyte bus)
 {
     return m_inbus_array.is_system_port(bus);
+}
+
+bool
+mastermidibase::is_port_unavailable (bussbyte bus)
+{
+    return m_inbus_array.is_port_unavailable(bus);
 }
 
 /**
