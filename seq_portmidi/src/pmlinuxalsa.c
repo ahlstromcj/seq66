@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-05-13
+ * \updates     2023-05-15
  * \license     GNU GPLv2 or above
  *
  * Written by:
@@ -1078,6 +1078,8 @@ pm_linuxalsa_init (void)
 
                 const char * clientname;
                 const char * portname;
+                char * clientname2;
+                char * portname2;
                 if (check_port_type(pinfo))
                     continue;
 
@@ -1095,6 +1097,8 @@ pm_linuxalsa_init (void)
                 caps = snd_seq_port_info_get_capability(pinfo);
                 clientname = snd_seq_client_info_get_name(cinfo);
                 portname = snd_seq_port_info_get_name(pinfo);       // from below
+                clientname2 = pm_strdup(clientname);
+                portname2 = pm_strdup(portname);
                 port = snd_seq_port_info_get_port(pinfo);
                 client = snd_seq_port_info_get_client(pinfo);
                 if (! (caps & c_io_caps))
@@ -1105,9 +1109,9 @@ pm_linuxalsa_init (void)
                     if (pm_default_output_device_id == -1)
                         pm_default_output_device_id = pm_descriptor_index;
 
-                    pm_add_device
+                    (void) pm_add_device
                     (
-                        pm_strdup(clientname), pm_strdup(portname), FALSE,
+                        clientname2, portname2, FALSE,
                         MAKE_DESCRIPTOR(client, port),
                         &pm_linuxalsa_out_dictionary, client, port
                     );
@@ -1117,13 +1121,21 @@ pm_linuxalsa_init (void)
                     if (pm_default_input_device_id == -1)
                         pm_default_input_device_id = pm_descriptor_index;
 
-                    pm_add_device
+                    (void) pm_add_device
                     (
-                        pm_strdup(clientname), pm_strdup(portname), TRUE,
+                        clientname2, portname2, TRUE,
                         MAKE_DESCRIPTOR(client, port),
                         &pm_linuxalsa_in_dictionary, client, port
                     );
                 }
+
+                /*
+                 * We MUST NOT free these items, as these pointers are logged
+                 * in pm_add_device and are to be available "forever".
+                 *
+                 *      free(portname2);
+                 *      free(clientname2);
+                 */
             }
         }
     }

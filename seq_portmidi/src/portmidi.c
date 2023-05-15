@@ -1066,9 +1066,9 @@ Pm_Read (PortMidiStream * stream, PmEvent * buffer, int32_t length)
 }
 
 /**
- *  Pm_Poll() tests whether input is available, returning TRUE (PmGotData = 1),
- *  FALSE (PmNoData = 0), or an error value.  This is a pretty weird way of
- *  dealing with polling status.
+ *  Pm_Poll() tests whether input is available, returning TRUE (PmGotData =
+ *  1), FALSE (PmNoData = 0), or an error value.  This is a pretty weird way
+ *  of dealing with polling status.
  */
 
 PMEXPORT PmError

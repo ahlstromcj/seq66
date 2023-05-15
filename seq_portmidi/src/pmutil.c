@@ -25,7 +25,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2021-11-18
+ * \updates     2023-05-13
  * \license     GNU GPLv2 or above
  *
  */
@@ -64,8 +64,8 @@ Pm_QueueCreate (long num_msgs, int32_t bytes_per_msg)
     (
         ( (bytes_per_msg + sint32 - 1) & ~(sint32 - 1) ) / sint32
     );
-    PmQueueRep *queue = (PmQueueRep *) pm_alloc(sizeof(PmQueueRep));
-    if (! queue)                            /* memory allocation failed */
+    PmQueueRep * queue = (PmQueueRep *) pm_alloc(sizeof(PmQueueRep));
+    if (! queue)                                /* memory allocation failed */
         return NULL;
 
     /*
@@ -80,9 +80,8 @@ Pm_QueueCreate (long num_msgs, int32_t bytes_per_msg)
         pm_free(queue);
         return NULL;
     }
-    else                                /* allocate the "peek" buffer   */
+    else                                        /* allocate "peek" buffer   */
     {
-
         queue->peek = (int32_t *) pm_alloc(int32s_per_msg * sint32);
         if (! queue->peek)
         {
@@ -94,8 +93,7 @@ Pm_QueueCreate (long num_msgs, int32_t bytes_per_msg)
         }
     }
     memset(queue->buffer, 0, queue->len * sint32);
-    queue->head = 0;
-    queue->tail = 0;
+    queue->head = queue->tail = 0;
 
     /* msg_size is in words */
 

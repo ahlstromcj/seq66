@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-05-12
+ * \updates     2023-05-15 b
  * \license     GNU GPLv2 or above
  *
  *  Check out this site:
@@ -188,6 +188,66 @@ extern pm_fns_node pm_winmm_out_dictionary;
 /**
  *  win32 multi-media-system-specific structure passed to MIDI callbacks;
  *  it is global WinMM device informations.
+ *
+ *  typedef struct
+ *  {
+ *      WORD    wMid;
+ *      WORD    wPid;
+ *      VERSION vDriverVersion;
+ *      char    szPname[MAXPNAMELEN];
+ *      DWORD   dwSupport;
+ *  } MIDIINCAPS;
+ *
+ *  typedef struct
+ *  {
+ *      WORD    wMid;
+ *      WORD    wPid;
+ *      VERSION vDriverVersion;
+ *      char    szPname[MAXPNAMELEN];
+ *      WORD    wTechnology;
+ *      WORD    wVoices;
+ *      WORD    wNotes;
+ *      WORD    wChannelMask;
+ *      DWORD   dwSupport;
+ *  } MIDIOUTCAPS;
+ *
+ * wMid Manufacturer identifier of the device driver for the MIDI device.
+ *
+ * wPid Product identifier of the MIDI device.
+ *
+ * vDriverVersion Version number of the device driver. High/Low-order bytes
+ * are the major/minor version numbers.
+ *
+ * szPname[MAXPNAMELEN] Product name in a null-terminated string.
+ *
+ * wTechnology Type of the MIDI device, one of the following:
+ *
+ *      MOD_UNKNOWN (0).
+ *      MOD_MIDIPORT (1). MIDI hardware port.
+ *      MOD_SYNTH (2). Synthesizer.
+ *      MOD_SQSYNTH (3). Square wave synthesizer.
+ *      MOD_FMSYNTH (4). FM synthesizer.
+ *      MOD_MAPPER (5). Microsoft MIDI mapper.
+ *      MOD_WAVETABLE (6). Hardware wavetable synthesizer.
+ *      MOD_SWSYNTH (7). Software synthesizer.
+ *
+ * wVoices Number of voices supported by internal synthesizer. If a port,
+ * this vale is set to 0.
+ *
+ * wNotes Maximum number of notes that can be played by an internal device.
+ * If a port, it is set to 0.
+ *
+ * wChannelMask Channels that an internal device responds to, LSB = 0, MSB = 15.
+ * Port devices that transmit on all channels set this member to 0xFFFF.
+ *
+ * dwSupport Optional functionality supported by the device. One or more of
+ * the following:
+ *
+ *      MIDICAPS_CACHE Supports patch caching.
+ *      MIDICAPS_LRVOLUME Supports separate left and right volume control.
+ *      MIDICAPS_STREAM Provides direct support for the midiStreamOut function.
+ *      MIDICAPS_VOLUME Supports volume control.
+ *
  */
 
 static MIDIINCAPS * midi_in_caps = nullptr;
@@ -380,7 +440,7 @@ pm_winmm_mapper_input (void)
     const char * devname = (const char *) midi_in_mapper_caps.szPname;
     if (winerrcode == MMSYSERR_NOERROR)
     {
-        pm_add_device
+        (void) pm_add_device
         (
             "MMSystem",
             (char *) devname,
@@ -510,7 +570,7 @@ pm_winmm_mapper_output (void)
     const char * devname = (const char *) midi_out_mapper_caps.szPname;
     if (winerrcode == MMSYSERR_NOERROR)
     {
-        pm_add_device
+        (void) pm_add_device
         (
             "MMSystem",
             (char *) devname,
@@ -964,28 +1024,32 @@ allocate_input_buffer (HMIDIIN h, long buffer_len)
 static PmError
 winmm_in_open (PmInternal * midi, void * driverInfo)
 {
+    int i;
+    midiwinmm_type m;
     int max_sysex_len = midi->buffer_len * 4;
     int num_input_buffers = max_sysex_len / INPUT_SYSEX_LEN;
-    int i = midi->device_id;
-    midiwinmm_type m;
+    int devid = midi->device_id;
+    int client = pm_descriptors[devid].pub.client;
+    int port = pm_descriptors[devid].pub.port;
 
 #if defined SEQ66_PLATFORM_64_BIT
-    UINT_PTR dev = (UINT_PTR) pm_descriptors[i].descriptor;
+    UINT_PTR dev = (UINT_PTR) pm_descriptors[devid].descriptor;
     UINT dwDevice = (UINT) (dev & 0xFFFFFFFF);
 #else                                       /* warnings with 64 bit builds: */
-    UINT dwDevice = (UINT) pm_descriptors[i].descriptor;
+    UINT dwDevice = (UINT) pm_descriptors[devid].descriptor;
 #endif
 
     if (dwDevice == UINT_MIDIMAPPER)
     {
         pm_log_buffer_append("Opening MIDI Mapper for input\n");
     }
-    else if (dwDevice < 32)            /* sanity check */
+    else if (dwDevice < 32)                 /* just a mere sanity check     */
     {
         char temp[64];
         snprintf
         (
-            temp, sizeof temp, "Opening MIDI input device %d\n", (int) dwDevice
+            temp, sizeof temp, "Opening MIDI input device %d (%d:%d)\n",
+            (int) dwDevice, client, port
         );
         pm_log_buffer_append(temp);
     }
@@ -1362,16 +1426,18 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
     midiwinmm_type m;
     MIDIPROPTEMPO propdata;
     MIDIPROPTIMEDIV divdata;
-    int max_sysex_len = midi->buffer_len * 4;
     int output_buffer_len;
     int num_buffers;
-    int i = midi->device_id;
+    int max_sysex_len = midi->buffer_len * 4;
+    int devid = midi->device_id;
+    int client = pm_descriptors[devid].pub.client;
+    int port = pm_descriptors[devid].pub.port;
 
 #if defined SEQ66_PLATFORM_64_BIT
-    UINT_PTR dev = (UINT_PTR) pm_descriptors[i].descriptor;
+    UINT_PTR dev = (UINT_PTR) pm_descriptors[devid].descriptor;
     UINT dwDevice = (UINT) (dev & 0xFFFFFFFF);
 #else                                       /* warnings with 64 bit builds: */
-    UINT dwDevice = (UINT) pm_descriptors[i].descriptor;
+    UINT dwDevice = (UINT) pm_descriptors[devid].descriptor;
 #endif
 
     if (dwDevice == UINT_MIDIMAPPER)
@@ -1383,8 +1449,8 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
         char temp[64];
         snprintf
         (
-            temp, sizeof temp, "Opening MIDI output device #%d\n",
-            (int) dwDevice
+            temp, sizeof temp, "Opening MIDI output device #%d (%d:%d)\n",
+            (int) dwDevice, client, port
         );
         pm_log_buffer_append(temp);
     }

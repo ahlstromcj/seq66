@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-05-14
+ * \updates       2023-05-15
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -897,6 +897,41 @@ performer::reload_mute_groups (std::string & errmessage)
     return result;
 }
 
+bussbyte
+performer::true_input_bus (bussbyte nominalbuss) const
+{
+    bussbyte result = nominalbuss;
+    if (! is_null_buss(result))
+    {
+        result = seq66::true_input_bus(m_inputs, nominalbuss);
+        if (is_null_buss(result))
+            set_error_message("missing input buss");
+    }
+    return result;
+}
+
+/**
+ *  Gets the status of the is bus from the input port-map or, if the map is
+ *  not active, from the master bus.
+ *
+ * \param bus
+ *      The index number for the bus entry to be retrieved.
+ *
+ * \param [out] active
+ *      Set to true if the bus is enabled for I/O.
+ *
+ * \param [out] n
+ *      Holds the name of the bus, if found.
+ *
+ * \param [out] statusshow
+ *      If true and the bus is disabled, then append "(off)" to the name of
+ *      the bus.
+ *
+ * \return
+ *      Returns true if the bus was found.  This means the name was
+ *      able to be retrieved.
+ */
+
 bool
 performer::ui_get_input
 (
@@ -907,19 +942,15 @@ performer::ui_get_input
     bool disabled = false;
     std::string name;
     std::string alias;
-    if (ipm.active())
+    if (ipm.active())                   /* Should we do this in one call?   */
     {
         name = ipm.get_name(bus);
         alias = ipm.get_alias(bus, rc().port_naming());
-        active = ipm.get(bus);
-        disabled = ipm.is_disabled(bus);
+        active = ipm.get(bus);              /* input enabled for this bus?  */
+        disabled = ipm.is_disabled(bus);    /* for input, same as ! get()   */
     }
-    else if (m_master_bus)
+    else if (m_master_bus)              /* Should we do this in one call?   */
     {
-        /*
-         * Should we do this in one call?
-         */
-
         name = m_master_bus->get_midi_bus_name(bus, midibase::io::input);
         alias = m_master_bus->get_midi_alias(bus, midibase::io::input);
         active = m_master_bus->get_input(bus);
@@ -934,20 +965,7 @@ performer::ui_get_input
         name += " (off)";
 
     n = name;
-    return ! name.empty() && ! disabled;
-}
-
-bussbyte
-performer::true_input_bus (bussbyte nominalbuss) const
-{
-    bussbyte result = nominalbuss;
-    if (! is_null_buss(result))
-    {
-        result = seq66::true_input_bus(m_inputs, nominalbuss);
-        if (is_null_buss(result))
-            set_error_message("missing input buss");
-    }
-    return result;
+    return ! name.empty();
 }
 
 /**
@@ -991,13 +1009,13 @@ performer::ui_get_clock
     const clockslist & opm = output_port_map();
     std::string name;
     std::string alias;
-    if (opm.active())
+    if (opm.active())                   /* Should we do this in one call?   */
     {
         name = opm.get_name(bus);
         alias = opm.get_alias(bus, rc().port_naming());
-        e = opm.get(bus);
+        e = opm.get(bus);               /* type of clocking for this bus    */
     }
-    else if (m_master_bus)
+    else if (m_master_bus)              /* Should we do this in one call?   */
     {
         name = m_master_bus->get_midi_bus_name(bus, midibase::io::output);
         alias = m_master_bus->get_midi_alias(bus, midibase::io::output);

@@ -1581,7 +1581,7 @@ jack_assistant::session_event (jack_session_event_t * ev)
     cmd += (" --jack-session ");
     cmd += uuid;
     cmd += " --home ${SESSION_DIR}";
-    ev->command_line = strdup(cmd.c_str());
+    ev->command_line = strdup(cmd.c_str()); // NEED TO free() EVENTUALLY!
 
     std::string clientname = rc().app_client_name();    /* seq_client_id()  */
     clientname += ":";

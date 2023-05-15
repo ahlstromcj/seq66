@@ -163,6 +163,7 @@ midibase::midibase
     m_port_id           (port_id),
     m_clock_type        (e_clock::off),
     m_io_active         (false),
+    m_unavailable       (false),
     m_ppqn              (choose_ppqn(ppqn)),
     m_bpm               (bpm),
     m_queue             (queue),
