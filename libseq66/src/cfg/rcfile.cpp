@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-05-12
+ * \updates       2023-05-16
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -876,7 +876,7 @@ rcfile::write ()
 
     int inbuses = bussbyte(rc_ref().inputs().count());
     file << "\n"
-"# These system ports are available for input. From JACK's view, these are\n"
+"# These MIDI ports are available for input. From JACK's view, these are\n"
 "# 'playback' devices. The first number is the bus, the second number is the\n"
 "# input status, disabled (0) or enabled (1). The item in quotes is the full\n"
 "# input bus name.\n\n"
@@ -953,12 +953,12 @@ rcfile::write ()
 
         mapstatus += "active";
         file << "\n"
-"# Patterns use bus numbers, not names. If present, this table provides virtual\n"
-"# bus numbers set up to match real devices and to use in all song patterns.\n"
-"# The bus number is looked up in this table, the port nick-name is retrieved,\n"
-"# and the real bus number is obtained and used. Thus, if the ports change order\n"
-"# in the MIDI system, the pattern will still use the proper port. The short\n"
-"# nick-names are the same with ALSA or JACK (a2jmidid bridge).\n"
+"# Patterns use bus numbers, not names. This table provides virtual bus numbers\n"
+"# that match real devices and can be stored in each pattern. The bus number\n"
+"# is looked up in this table, the port nick-name is retrieved, and the true\n"
+"# bus number is obtained and used. Thus, if the ports change order in the MIDI\n"
+"# system, the pattern will use the proper port. The short nick-names work in\n"
+"# ALSA or JACK (a2jmidid bridge).\n"
 "\n"
 "[midi-clock-map]\n"
 "\n"
@@ -973,7 +973,7 @@ rcfile::write ()
      */
 
     file << "\n"
-"# 'ticks' provides the Song Position (in 16th notes) at which clocking begins if\n"
+"# 'ticks' provides the Song Position (16th notes) at which clocking begins if\n"
 "# the bus is set to MIDI Clock Mod setting. 'record-by-channel' allows the\n"
 "# master MIDI bus to record/filter incoming MIDI data by channel, adding each\n"
 "# new MIDI event to the pattern that is set to that channel. Option adopted\n"

@@ -1,20 +1,17 @@
-# README for Seq66 0.99.4 2023-05-13
+# README for Seq66 0.99.5 2023-05-16
 
-__Seq66__: MIDI sequencer and live-looper with a hardware-sampler grid
-interface, pattern sets/banks, pattern triggers, and playlists for song
-management. Includes a scale and chord-aware piano-roll, song editor for
-creative composition, and control and display via MIDI automation for live
-performance.  Mute-groups enable/disable multiple patterns with one control.
-Supports NSM (Non/New Session Manager) on Linux; can also run headless.
+__Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
+pattern banks and triggers, and playlists for song management; a scale and
+chord-aware piano-roll; song layout for creative composition; and control/status
+via MIDI automation for live performance.  Mute-groups enable/disable multiple
+patterns at once.  Supports the Non/New Session Manager; can also run headless.
+Works in a space as small as 725x500 pixels (less if window decoration removed).
 It does not support audio samples, just MIDI.
 
-__Seq66__ is a major refactoring of Sequencer64/Kepler34/Seq24
-with modern C++ and new features.  Linux and Windows users can build this
-application from source code.  See the extensive INSTALL file.
-Includes a comprehensive PDF user-manual.
-
-Some proposed features will be pushed off to Seq66v2; see the bottom of
-the TODO file.
+__Seq66__ is a major refactoring of Sequencer64/Kepler34/Seq24 with modern C++
+and new features.  Linux and Windows users can build this application from
+source code.  See the extensive INSTALL file.  Includes a comprehensive PDF
+user-manual.
 
 Support sites (still in progress):
 
@@ -29,15 +26,14 @@ Support sites (still in progress):
 
     *   Qt 5 (cross-platform).  A grid of loop buttons, unlimited external
         windows.  Qt style-sheet support.
-    *   Tabs for management of sets, mute-groups, song mode, pattern
-        editing, event-editing, play-lists, and session information.
+    *   Tabs or external windows for management of sets, mute-groups, song
+        layout, event-editing, play-lists, and session information.
     *   Low-frequency oscillator (LFO) for modifying continuous controller
         (CC) and velocity values.
-    *   An editor for expansion/compression/alignment of note patterns.
-    *   Color-able pattern slots; the color palette for slots etc. can be
-        saved and modified.
+    *   A "fixer" for expansion/compression/alignment of note patterns.
+    *   Colorable pattern slots; the color palette can be saved and modified.
     *   Horizontal and vertical zoom in the pattern and song editors.
-    *   A headless version can be built.
+    *   A headless/daemon version can be built.
 
 ##  Configuration files
 
@@ -99,7 +95,7 @@ Windows, and using a conventional source tarball.
             build NSIS-based install without leaving Windows, if desired.
         *   Internal refactoring to regularize handling of the session/config
             directory between Linux and Windows.
-        *   Fixed portmidi bugs in Linux and Windows, enhanced device naming..
+        *   Fixed portmidi bugs in Linux and Windows, enhanced device naming.
         *   Rearranged the Seq66 man pages more sensibly.
     *   Version 0.99.4:
         *   Issue #3: The scroll wheel is enabled in the piano rolls (only).
@@ -119,35 +115,9 @@ Windows, and using a conventional source tarball.
         *   Added the ability to use the first Text message as "song info".
         *   Seq66 now prevents opening the event editor if recording is in
             progress. Cannot update event editor live with new events.
-    *   Version 0.99.3:
-        *   Issue #107.  The basic fix is made. Still need to rehabilitate
-            the Expand-pattern functionality.
-        *   Issue #40.  Improved NSM handling:
-            *   Seq66 detects nsmd as the parent process early in startup.
-            *   Close ("X") button disabled and hidden.  Xcfe4 "close window"
-                action works, though, as does response to a SIGTERM from nsmd.
-            *   Handling "config" subdirectory improved.
-            *   The --nsm option is now for debugging only, simulating running
-                under NSM.
-        *   Automation fixes:
-            *   Fixed processing grid keystrokes twice.
-            *   Renamed record-mode and grid-model control labels.
-            *   Fixed accident disabling of grid-mode controls.
-            *   Making MIDI control-out handling more reasonable.
-            *   Added some LaunchPad Mini macros.
-        *   Added reading/writing/displaying Meta text events such as Text
-            and Cue Point.
-        *   Fixed broken "recent-files" features (by forcing 'rc' save).
-        *   Improvements made to playlist handling. It wasn't displaying
-            the BPM of the next tune.  Still have issue with the BPM spinbox
-            not causing a file modification. Editing the BPM works.
-        *   Improvements and important fixes to mute-group and its MIDI
-            control still in progress.
-        *   Fixed the daemonization and log-file functionality.
-        *   Revisited the recmutex implementation.
-        *   Weird error where ALSA not found! We now avoid a crash, but
-            qseq66 currently exits with only console messages.
 
-    See the "NEWS" file for changes in earlier versions.
+    See the "NEWS" file for changes in earlier versions.  Some proposed features
+    will be pushed off to Seq66v2; see the bottom of the TODO file. Version
+    2 is probably a year or two away.
 
 // vim: sw=4 ts=4 wm=2 et ft=markdown

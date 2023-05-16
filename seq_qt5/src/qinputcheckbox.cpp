@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-20
- * \updates       2023-05-14
+ * \updates       2023-05-15
  * \license       GNU GPLv2 or above
  *
  *  This class is used in the qseditoptions settings-dialog class.
@@ -91,7 +91,7 @@ qinputcheckbox::setup_ui ()
     std::string busname;
     bool inputing;
     bool disabled = perf().is_input_system_port(bus());
-    bool unavailable = perf().is_port_unavailable(bus());
+    bool unavailable = perf().is_port_unavailable(bus(), midibase::io::output);
     bool gotbussinfo = perf().ui_get_input(bus(), inputing, busname);
     if (unavailable || ! gotbussinfo)
         disabled = true;

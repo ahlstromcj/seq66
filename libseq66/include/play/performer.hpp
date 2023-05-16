@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-05-14
+ * \updates       2023-05-15
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2707,18 +2707,8 @@ public:
         return m_inputs.get(bus);
     }
 
-    bool is_input_system_port (bussbyte bus)
-    {
-        return master_bus() ?
-            master_bus()->is_input_system_port(bus) : false ;
-    }
-
-    bool is_port_unavailable (bussbyte bus)
-    {
-        return master_bus() ?
-            master_bus()->is_port_unavailable(bus) : true ;
-    }
-
+    bool is_input_system_port (bussbyte bus) const;
+    bool is_port_unavailable (bussbyte bus, midibase::io iotype) const;
     bool mainwnd_key_event (const keystroke & k);
     bool keyboard_control_press (unsigned key);
     bool keyboard_group_c_status_press (unsigned key);

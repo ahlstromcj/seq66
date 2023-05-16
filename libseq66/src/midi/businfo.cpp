@@ -688,12 +688,12 @@ busarray::get_input (bussbyte bus) const
  */
 
 bool
-busarray::is_system_port (bussbyte bus)
+busarray::is_system_port (bussbyte bus) const
 {
     bool result = false;
     if (bus < count())
     {
-        businfo & bi = m_container[bus];
+        const businfo & bi = m_container[bus];
         if (bi.active())
             result = bi.bus()->is_system_port();
     }
@@ -701,12 +701,12 @@ busarray::is_system_port (bussbyte bus)
 }
 
 bool
-busarray::is_port_unavailable (bussbyte bus)
+busarray::is_port_unavailable (bussbyte bus) const
 {
     bool result = true;
     if (bus < count())
     {
-        businfo & bi = m_container[bus];
+        const businfo & bi = m_container[bus];
         result = bi.bus()->port_unavailable();
     }
     return result;

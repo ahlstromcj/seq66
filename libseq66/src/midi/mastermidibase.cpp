@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2022-05-14
+ * \updates       2022-05-16
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -390,7 +390,22 @@ mastermidibase::set_clock (bussbyte bus, e_clock clocktype)
 bool
 mastermidibase::save_clock (bussbyte bus, e_clock clock)
 {
-    return m_master_clocks.set(bus, clock);
+    int currentcount = m_master_clocks.count();
+    bool result = m_master_clocks.set(bus, clock);
+    if (! result)
+    {
+        errprint("mmb::save_clock(): missing bus");
+        for (int i = currentcount; i <= bus; ++i)
+        {
+            e_clock value = e_clock::disabled;
+            if (i == int(bus))
+            {
+                value = clock;
+                m_master_clocks.add(i, value, "No name");
+            }
+        }
+    }
+    return result;
 }
 
 /**
@@ -412,10 +427,16 @@ mastermidibase::get_clock (bussbyte bus) const
     return m_outbus_array.get_clock(bus);
 }
 
+/**
+ *  This function copies the buss values from the input and output busarrays
+ *  (see the businfo module). They are then added to the masterbus's input and
+ *  output containers.
+ */
+
 void
 mastermidibase::copy_io_busses ()
 {
-    m_master_inputs.clear();
+    m_master_inputs.clear();                        /* inputslist container */
     int buses = m_inbus_array.count();              /* get_num_in_buses()   */
     for (int bus = 0; bus < buses; ++bus)
     {
@@ -424,7 +445,7 @@ mastermidibase::copy_io_busses ()
         std::string alias = m_inbus_array.get_midi_alias(bus);
         m_master_inputs.add(bus, inputflag, name, "", alias);
     }
-    m_master_clocks.clear();
+    m_master_clocks.clear();                        /* clockslist container */
     buses = m_outbus_array.count();                 /* get_num_out_buses()  */
     for (int bus = 0; bus < buses; ++bus)
     {
@@ -453,24 +474,50 @@ mastermidibase::get_port_statuses (clockslist & outs, inputslist & ins)
     get_in_port_statuses(ins);
 }
 
+/**
+ *  Copies the port statuses between the master clockslist and the output
+ *  port-map.
+ *
+ *  The direction is dependent on whether the port-map is active or not.
+ *  If active, then the port-map is copied to the master clockslist.
+ *  If inactive, then the master clockslist is copied to the port-map.
+ *  Finally, the (possibly update) master clockslist is copied to the \a
+ *  outs parameter.
+ *
+ * \param outs
+ *      The destination for the current master clockslist port statuses.
+ */
+
 void
 mastermidibase::get_out_port_statuses (clockslist & outs)
 {
     clockslist & opm = output_port_map();
-    if (opm.not_empty())
-        opm.match_system_to_map(m_master_clocks);
-
-    outs = m_master_clocks;     /* the actual system clocks information     */
+    if (opm.active())
+    {
+        if (opm.not_empty())                        /* master clocks = opm  */
+            opm.match_system_to_map(m_master_clocks);
+    }
+    else
+    {
+        opm.match_map_to_system(m_master_clocks);   /* opm = master clocks  */
+    }
+    outs = m_master_clocks;         /* system clocks information to store   */
 }
 
 void
 mastermidibase::get_in_port_statuses (inputslist & ins)
 {
     inputslist & ipm = input_port_map();
-    if (ipm.not_empty())
-        ipm.match_system_to_map(m_master_inputs);
-
-    ins = m_master_inputs;      /* the actual system inputs information     */
+    if (ipm.active())
+    {
+        if (ipm.not_empty())                        /* master inputs = ipm  */
+            ipm.match_system_to_map(m_master_inputs);
+    }
+    else
+    {
+        ipm.match_map_to_system(m_master_inputs);   /* ipm = master inputs  */
+    }
+    ins = m_master_inputs;          /* system inputs information to store   */
 }
 
 /**
@@ -535,20 +582,18 @@ mastermidibase::save_input (bussbyte bus, bool inputing)
     bool result = m_master_inputs.set(bus, inputing);
     if (! result)
     {
+        errprint("mmb::save_input(): missing bus");
         for (int i = currentcount; i <= bus; ++i)
         {
             bool value = false;
             if (i == int(bus))
+            {
                 value = inputing;
-
-            /*
-             * TODO: use the buss number from the source!!!
-             */
-
-            m_master_inputs.add(i, value, "Why no name???");
+                m_master_inputs.add(i, value, "No name");
+            }
         }
     }
-    return result;          /* or true ? */
+    return result;
 }
 
 /**
@@ -580,15 +625,18 @@ mastermidibase::get_input (bussbyte bus) const
  */
 
 bool
-mastermidibase::is_input_system_port (bussbyte bus)
+mastermidibase::is_input_system_port (bussbyte bus) const
 {
     return m_inbus_array.is_system_port(bus);
 }
 
 bool
-mastermidibase::is_port_unavailable (bussbyte bus)
+mastermidibase::is_port_unavailable (bussbyte bus, midibase::io iotype) const
 {
-    return m_inbus_array.is_port_unavailable(bus);
+    if (iotype == midibase::io::input)
+        return m_inbus_array.is_port_unavailable(bus);
+    else
+        return m_outbus_array.is_port_unavailable(bus);
 }
 
 /**
@@ -632,14 +680,11 @@ mastermidibase::is_port_unavailable (bussbyte bus)
 std::string
 mastermidibase::get_midi_bus_name (bussbyte bus, midibase::io iotype) const
 {
-    std::string result;
     portname p = rc().port_naming();
     if (iotype == midibase::io::input)
-        result = m_master_inputs.get_display_name(bus, p);
+        return m_master_inputs.get_display_name(bus, p);
     else
-        result = m_master_clocks.get_display_name(bus, p);
-
-    return result;
+        return m_master_clocks.get_display_name(bus, p);
 }
 
 /**

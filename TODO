@@ -1,20 +1,17 @@
 TO DO for Seq66 0.99.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-05-14
+2019-04-13 to 2023-05-16
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
 Hot:
 
     -   Port-map issues:
-        -   When mapping active, need to keep the midi-input and midi-output
-            statuses in sync with the mapped statuses. These seems to be ok,
-            but....
         -   Do not provide the ALSA Announce buss in the input port map.
-        -   Make sure GUI changes in mapping take hold and are restored
-            under rerunning and restarting.
-        -   Verify proper behavior with mapping in active.
-        -   Replace I and O map checkboxes with just one checkbox.
+        -   In PortMidi, whether port-mapping is active or not, Fluid
+            Synth shows as disabled, even though enabled in the 'rc' file.
+    -   If a song has a port (e.g. 5) not present on the system, a message
+        appears.  What should we do about this?
     -   Finish the major upgrade to the event editor; plan for a
         "SeqSpec" tab?  Worth it?
 

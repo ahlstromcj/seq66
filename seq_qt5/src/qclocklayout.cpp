@@ -144,7 +144,7 @@ qclocklayout::setup_ui ()
         m_horizlayout_clockline->addWidget(m_rbutton_clockoff);
         m_horizlayout_clockline->addWidget(m_rbutton_clockonpos);
         m_horizlayout_clockline->addWidget(m_rbutton_clockonmod);
-        if (perf().is_port_unavailable(bus()))
+        if (perf().is_port_unavailable(bus(), midibase::io::input))
         {
             m_label_outputbusname->setEnabled(false);
             m_rbutton_portdisabled->setChecked(true);

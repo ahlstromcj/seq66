@@ -1,10 +1,38 @@
-NEWS for Seq66 0.98.6 and above
+NEWS for Seq66 0.99.5 and above
 Chris Ahlstrom
-2015-07-10 to 2022-04-20
+2015-07-10 to 2023-05-16
 
 This file collects major changes that are older and clutter up
 the README.md file.  This file should be called "OLD NEWS".
 
+    -   Version 0.99.3:
+        -   Issue #107.  The basic fix is made. Still need to rehabilitate
+            the Expand-pattern functionality.
+        -   Issue #40.  Improved NSM handling:
+            -   Seq66 detects nsmd as the parent process early in startup.
+            -   Close ("X") button disabled and hidden.  Xcfe4 "close window"
+                action works, though, as does response to a SIGTERM from nsmd.
+            -   Handling "config" subdirectory improved.
+            -   The --nsm option is now for debugging only, simulating running
+                under NSM.
+        -   Automation fixes:
+            -   Fixed processing grid keystrokes twice.
+            -   Renamed record-mode and grid-model control labels.
+            -   Fixed accident disabling of grid-mode controls.
+            -   Making MIDI control-out handling more reasonable.
+            -   Added some LaunchPad Mini macros.
+        -   Added reading/writing/displaying Meta text events such as Text
+            and Cue Point.
+        -   Fixed broken "recent-files" features (by forcing 'rc' save).
+        -   Improvements made to playlist handling. It wasn't displaying
+            the BPM of the next tune.  Still have issue with the BPM spinbox
+            not causing a file modification. Editing the BPM works.
+        -   Improvements and important fixes to mute-group and its MIDI
+            control still in progress.
+        -   Fixed the daemonization and log-file functionality.
+        -   Revisited the recmutex implementation.
+        -   Weird error where ALSA not found! We now avoid a crash, but
+            qseq66 currently exits with only console messages.
     -   Version 0.99.2:
         -   Issue #103.  Some improvements to pattern loop-count.
         -   Pull request #106. User phuel added checkmarks for active buss and

@@ -333,6 +333,10 @@ private:
      *  Holds pointers to the ports that were created, so that, after
      *  activation, we can call the connect_port() function on those that are
      *  not virtual.  See the add_bus() and bus_container() member functions.
+     *
+     *  Currently this container is used ONLY in midi_jack_info ::
+     *  api_connect().  Can we give the JACK code access to the
+     *  busarrays that also contain these pointers?
      */
 
     std::vector<midibus *> m_bus_container;

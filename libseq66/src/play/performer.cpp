@@ -968,6 +968,20 @@ performer::ui_get_input
     return ! name.empty();
 }
 
+bool
+performer::is_input_system_port (bussbyte bus) const
+{
+    return master_bus() ?
+        master_bus()->is_input_system_port(bus) : false ;
+}
+
+bool
+performer::is_port_unavailable (bussbyte bus, midibase::io iotype) const
+{
+    return master_bus() ?
+        master_bus()->is_port_unavailable(bus, iotype) : true ;
+}
+
 /**
  *  Sets the main input bus, and handles the special "key labels on sequence"
  *  and "sequence numbers on sequence" functionality.  This function is called
@@ -3359,8 +3373,15 @@ performer::finish ()
         bool ok = deinit_jack_transport();
         bool result = bool(m_master_bus);
         if (result)
-            m_master_bus->get_port_statuses(m_clocks, m_inputs);
-
+        {
+            /*
+             * ca 2023-05-16
+             * Will be done in put_settings()!!!
+             *
+             *      m_master_bus->get_port_statuses(m_clocks, m_inputs);
+             *      // m_master_bus->save_io_busses();
+             */
+        }
         result = ok && result;
     }
     return result;

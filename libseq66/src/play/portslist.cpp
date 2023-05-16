@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2022-06-02
+ * \updates       2023-05-16
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -585,23 +585,26 @@ portslist::port_name_from_bus (bussbyte nominalbuss) const
 }
 
 /**
- *  Sets the enabled/disabled status in the source port-list based on the
+ *  Sets the enabled/disabled status in the destination port-list based on the
  *  statuses set in the port-map.  The port-map is what the user will see
  *  in the MIDI Clocks and Inputs tabs, and that is where the user will
- *  enable/disable the ports.
+ *  enable/disable the ports, if port-mapping is enabled.
  *
  *  Used to prepare the lists for showing the port-map along with the status
  *  of the disabled ports.  Each port in the port-map is looked up in the
  *  given source list.  If not found, it is disabled.
  *
- *  Currently, it is assumed that the "this" here is the portslist object
+ *  It is assumed that the "this" here is the portslist object
  *  returned by the input_port_map() or output_port_map() functions. Recall
  *  that its full-name is the nick-name of an actual port, and its nick-name
  *  is a string version of the port-number.  Too tricky... unless it works.
  *  :-)
  *
- * \param source
- *      The source for the statuses to be applied.  Ultimately, the sources
+ *  Call this function when the port-map is enabled.
+ *
+ * \param destination
+ *      The destination for the statuses to be applied.  Ultimately, the
+ *      destinatios
  *      are the clocks and inputs from the performer, provided by
  *      mastermidibase :: get_port_statuses(), which gets the system ports.
  *
@@ -611,25 +614,58 @@ portslist::port_name_from_bus (bussbyte nominalbuss) const
  */
 
 void
-portslist::match_system_to_map (/*const*/ portslist & source)
+portslist::match_system_to_map (portslist & destination) const
+{
+    if (is_port_map())
+    {
+        for (const auto & iopair : m_master_io)
+        {
+            const io & item = iopair.second;
+            const std::string & portname = item.io_name;  /* nick-name */
+            io & destinitem = destination.io_block(portname);
+            if (valid(destinitem))
+            {
+                destinitem.io_enabled = item.io_enabled;
+                destinitem.out_clock = item.out_clock;
+            }
+            else
+            {
+                io & ncitem = const_cast<io &>(item);
+                ncitem.io_enabled = false;
+                ncitem.out_clock = e_clock::disabled;
+            }
+        }
+    }
+}
+
+/**
+ *  The opposite of match_system_to_map(), this function takes the source
+ *  portslists and makes the statuses of the map match the system (the
+ *  mastermidibus).
+ *
+ *  Call this function when the port-map is disabled.
+ */
+
+void
+portslist::match_map_to_system (const portslist & source)
 {
     if (is_port_map())
     {
         for (auto & iopair : m_master_io)
         {
-            io & item = iopair.second;
-            const std::string & portname = item.io_name;  /* nick-name */
-            io & sourceio = source.io_block(portname);
-            if (valid(sourceio))
+            io & destinitem = iopair.second;
+            const std::string & portname = destinitem.io_name;  /* nick-name */
+            const io & srcitem = source.const_io_block(portname);
+            if (valid(srcitem))
             {
-                sourceio.io_enabled = item.io_enabled;
-                sourceio.out_clock = item.out_clock;
+                destinitem.io_enabled = srcitem.io_enabled;
+                destinitem.out_clock = srcitem.out_clock;
             }
-            else
-            {
-                item.io_enabled = false;
-                item.out_clock = e_clock::disabled;
-            }
+//          else
+//          {
+//              destinitem.io_enabled = false;
+//              destinitem.out_clock = e_clock::disabled;
+//          }
         }
     }
 }
