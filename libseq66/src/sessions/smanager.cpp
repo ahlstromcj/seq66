@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-05-11
+ * \updates       2023-05-17
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -903,6 +903,9 @@ smanager::create (int argc, char * argv [])
 
         if (result)
         {
+            if (perf()->error_pending())
+                append_error_message(perf()->error_messages());
+
             result = create_window();
             if (result)
             {

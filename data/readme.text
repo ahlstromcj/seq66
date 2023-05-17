@@ -1,6 +1,6 @@
 readme.txt for Seq66 0.99.5 and above
 Chris Ahlstrom
-2015-09-10 to 2023-05-08
+2015-09-10 to 2023-05-16
 
 Seq66 is a refactoring of a reboot (sequencer64) of seq24, extending it with new
 features and bug fixes, and incorporation of Modern C++ (C++11/C++14).  It
@@ -42,6 +42,16 @@ in/out control for the Novation Launchpad Mini.
 Please note that the files in the "data/linux" directory can also be used
 in Windows.  They are simply named for the Linux executable, "qseq66",
 rather than the Windows executable "qpseq66.exe".
+
+Port-Mapping:
+
+    See the PDF user manual for full details.  Here, we note that port-mapping
+    is enabled by default.  If it is, and devices do not show up, then
+    go to the Edit / Preferences / Clock tab and click the "Make maps" button.
+    Exit and restart and the device should show up.
+
+    This process is usually necessary when adding new MIDI devices to the
+    system setup.
 
 Windows support:
 

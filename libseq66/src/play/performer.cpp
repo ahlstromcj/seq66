@@ -310,6 +310,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_song_info             (),
     m_smf_format            (1),
     m_error_pending         (false),
+    m_error_messages        (),
     m_play_set              (),
     m_play_set_storage      (),
     m_play_list             (),
@@ -469,11 +470,29 @@ performer::unregister (callbacks * pfcb)
  */
 
 void
-performer::set_error_message (const std::string & msg) const
+performer::append_error_message (const std::string & msg) const
 {
     m_error_pending = true;                         /* a mutable boolean    */
     if (! msg.empty())
+    {
+        static std::vector<std::string> s_old_msgs;
         seq66::error_message("Performer", msg);
+        if (! m_error_messages.empty())
+        {
+            const auto finding = std::find
+            (
+                s_old_msgs.cbegin(), s_old_msgs.cend(), msg
+            );
+            if (finding != s_old_msgs.cend())
+            {
+                m_error_messages += "\n";
+                m_error_messages += msg;
+                s_old_msgs.push_back(msg);
+            }
+        }
+        else
+            m_error_messages = msg;
+    }
 }
 
 /**
@@ -903,7 +922,7 @@ performer::reload_mute_groups (std::string & errmessage)
         std::string msg = filename;
         msg += ": reading mutes failed";
         errmessage = msg;
-        set_error_message(errmessage);          /* show it on the console   */
+        append_error_message(errmessage);          /* show it on the console   */
     }
     return result;
 }
@@ -916,7 +935,21 @@ performer::true_input_bus (bussbyte nominalbuss) const
     {
         result = seq66::true_input_bus(m_inputs, nominalbuss);
         if (is_null_buss(result))
-            set_error_message("missing input buss");
+        {
+            /*
+             * Later, could call opm.port_name_from_bus(nominalbuss) and
+             * show the name here just like we had done in inputslist.
+             */
+
+            char temp[32];
+            (void) snprintf
+            (
+                temp, sizeof temp,
+                "Unavailable input buss %u; check ports/maps.",
+                unsigned(nominalbuss)
+            );
+            append_error_message(temp);
+        }
     }
     return result;
 }
@@ -1073,7 +1106,21 @@ performer::true_output_bus (bussbyte nominalbuss) const
     {
         bussbyte result = seq66::true_output_bus(m_clocks, nominalbuss);
         if (is_null_buss(result))
-            set_error_message("missing output buss");
+        {
+            /*
+             * Later, could call opm.port_name_from_bus(nominalbuss) and
+             * show the name here just like we had done in clockslist.
+             */
+
+            char temp[32];
+            (void) snprintf
+            (
+                temp, sizeof temp,
+                "Unavailable output buss %u; check ports/maps.",
+                unsigned(nominalbuss)
+            );
+            append_error_message(temp);
+        }
     }
     return result;
 }
@@ -1979,7 +2026,7 @@ performer::set_ppqn (int p)
         }
         else
         {
-            set_error_message("set_ppqn() null master bus");
+            append_error_message("set_ppqn() null master bus");
             result = false;
         }
     }
@@ -2088,7 +2135,7 @@ performer::ui_change_set_bus (int buss)
                     seqi->set_midi_bus(b, true);        /* calls notify()   */
             }
             else
-                set_error_message("set bus on null sequence");
+                append_error_message("set bus on null sequence");
         }
 
         screenset::number setno = mapper().playscreen_number();
@@ -2991,7 +3038,7 @@ performer::launch (int ppqn)
                     session_message("Created initial port maps");
                 }
                 else
-                    set_error_message("Creating port maps failed");
+                    append_error_message("Creating port maps failed");
             }
 #endif
 
@@ -4913,7 +4960,7 @@ performer::play (midipulse tick)
             if (seqi)
                 seqi->play_queue(tick, songmode, resume_note_ons());
             else
-                set_error_message("play() on null sequence");
+                append_error_message("play() on null sequence");
         }
         m_master_bus->flush();                          /* flush MIDI buss  */
     }
@@ -6902,7 +6949,7 @@ performer::populate_default_ops ()
             {
                 std::string errmsg = "Failed to insert automation function #";
                 errmsg += std::to_string(index);
-                set_error_message(errmsg);
+                append_error_message(errmsg);
                 break;
             }
         }
@@ -8246,12 +8293,12 @@ performer::open_note_mapper (const std::string & notefile)
                 notemapfile nmf(*m_note_mapper, notefile, rc());
                 result = nmf.parse();
                 if (! result)
-                    set_error_message(nmf.get_error_message());
+                    append_error_message(nmf.get_error_message());
             }
             else
             {
                 std::string msg = "Cannot read: " + notefile;
-                set_error_message(msg);
+                append_error_message(msg);
             }
         }
     }
@@ -8277,7 +8324,7 @@ performer::save_note_mapper (const std::string & notefile)
             notemapfile nmf(*m_note_mapper, nfname, rc());
             result = nmf.write();
             if (! result)
-                set_error_message(nmf.get_error_message());
+                append_error_message(nmf.get_error_message());
         }
     }
     return result;
@@ -8491,7 +8538,7 @@ performer::open_mutegroups (const std::string & mgf)
 
     if (mgfname.empty())
     {
-        set_error_message("no mute-group filename");
+        append_error_message("no mute-group filename");
     }
     else
     {
@@ -8659,7 +8706,7 @@ performer::open_playlist (const std::string & pl)
         else
         {
             /*
-             * set_error_message(m_play_list->error_messaget)
+             * append_error_message(m_play_list->error_messaget)
              */
 
             m_play_list->mode(false);       /* disable it by error          */
@@ -8695,7 +8742,7 @@ performer::save_playlist (const std::string & pl)
          * TODO
          *
         if (! result)
-            set_error_message(m_play_list->error_message());
+            append_error_message(m_play_list->error_message());
          */
     }
     else

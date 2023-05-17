@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2022-05-06
+ * \updates       2022-05-17
  * \license       GNU GPLv2 or above
  *
  */
@@ -337,7 +337,7 @@ true_output_bus (const clockslist & cl, bussbyte seqbuss)
             std::string shortname = opm.port_name_from_bus(seqbuss);
             if (shortname.empty())
             {
-                std::string msg = string_format("No output buss %d", seqbuss);
+                std::string msg = string_format("Bad output buss %d", seqbuss);
                 errprint(msg);
                 result = null_buss();
             }
@@ -349,12 +349,16 @@ true_output_bus (const clockslist & cl, bussbyte seqbuss)
 
                 if (is_null_buss(result))
                 {
-                    const char * sn = shortname.c_str();
-                    std::string msg = string_format
-                    (
-                        "No output buss %d (%s)", seqbuss, sn
-                    );
-                    errprint(msg);
+                    /*
+                     * Let performer assemble the message.
+                     *
+                     *  const char * sn = shortname.c_str();
+                     *  std::string msg = string_format
+                     *  (
+                     *     "No output buss %d (%s)", seqbuss, sn
+                     *  );
+                     *  errprint(msg);
+                     */
                 }
             }
 

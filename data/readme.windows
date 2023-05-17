@@ -65,7 +65,7 @@ Inaccessible Devices:
 
     Furthermore...
 
-    ...We installed the CoolSoft MIDIMapper and VirtualMIDISYnth to try to get
+    ...We installed the CoolSoft MIDIMapper and VirtualMIDISynth to try to get
     around these issues, and tried to turn off the system setup of "Allow
     applications to restrict access to this device."  But we still had
     inaccessible devices, and the resulting errors would cause qpseq66 to

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-05
+ * \updates       2023-05-17
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -299,9 +299,13 @@ qsmainwnd::qsmainwnd
             std::string busname;
             if (cb_perf().ui_get_clock(bussbyte(bus), ec, busname))
             {
+                bool unavailable = cb_perf().is_port_unavailable
+                (
+                    bus, midibase::io::output
+                );
                 bool disabled = ec == e_clock::disabled;
                 ui->cmb_global_bus->addItem(qt(busname));
-                if (disabled)
+                if (disabled || unavailable)
                     enable_bus_item(bus, false);
             }
         }

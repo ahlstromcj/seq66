@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-04-26
+ * \updates       2023-05-17
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -584,7 +584,11 @@ qseqeditframe64::qseqeditframe64
             std::string busname;
             if (perf().ui_get_clock(bussbyte(bus), ec, busname))
             {
-                bool disabled = ec == e_clock::disabled;
+                bool unavailable = perf().is_port_unavailable
+                (
+                    bussbyte(bus), midibase::io::output
+                );
+                bool disabled = ec == e_clock::disabled || unavailable;
                 ui->m_combo_bus->addItem(qt(busname));
                 if (disabled)
                     enable_combobox_item(ui->m_combo_bus, bus, false);

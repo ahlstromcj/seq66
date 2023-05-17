@@ -416,6 +416,12 @@ private:
     mutable bool m_error_pending;
 
     /**
+     *  Accumulates error messages for display after launch().
+     */
+
+    mutable std::string m_error_messages;
+
+    /**
      *  When the screenset changes, we put only the existing sequences in this
      *  vector to try to save time in the play() function.  This "play-set"
      *  feature offloads the performer::play() work to a special short vector
@@ -1100,6 +1106,11 @@ public:
     bool error_pending () const
     {
         return m_error_pending;
+    }
+
+    std::string error_messages () const
+    {
+        return m_error_messages;
     }
 
     bool modified () const;
@@ -3223,7 +3234,7 @@ private:
     void show_cpu ();
     void playlist_activate (bool on);
     void playlist_auto_arm (bool on);
-    void set_error_message (const std::string & msg = "") const; /* mutable */
+    void append_error_message (const std::string & msg = "") const;
     bool set_quantized_recording (seq::number seqno, bool active, bool toggle);
     bool set_tightened_recording (seq::number seqno, bool active, bool toggle);
     bool set_overwrite_recording (seq::number seqno, bool active, bool toggle);

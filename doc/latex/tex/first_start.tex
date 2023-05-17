@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-03-02
+% \update      2023-05-17
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -24,14 +24,17 @@
    It might work with a Pipewire-JACK setup, but that usage has not been
    tested.
    On Windows, \textsl{Seq66} uses the MultiMedia API.
-   This manual assumes that one is running \textsl{Seq66} on Linux, for the most
-   part.
+   This manual assumes that one is running \textsl{Seq66} on Linux, for the
+   most part.
 
    For the first run, make sure all desired MIDI devices are plugged in and
    that all desired software synthesizers are running.
    Only ports present at startup will appear; this version of
    \textsl{Seq66} does not
-   really support automatic detection of port changes at run-time.
+   support automatic detection of port changes at run-time.
+   In addition, port-mapping (see \sectionref{sec:port_mapping}) is
+   enabled by default.
+
    Start \textsl{Seq66}, verify that it comes up, and then exit it
    immediately.
    This first start creates the configuration files in
@@ -40,6 +43,8 @@
    The main configuration file is
    \texttt{qseq66.rc} (Linux) or
    \texttt{qpseq66.rc} (Windows).
+   The '.rc' file contains ports and port-mapping for the devices
+   initially on the system
 
    Now start \textsl{Seq66} to use JACK or ALSA for MIDI.
    For USB MIDI devices on JACK, the \texttt{a2jmidid} program must be running
@@ -70,7 +75,7 @@
       C:/Program Files (x86)/Seq66/data/              (Windows)
    \end{verbatim}
 
-   It sample MIDI files and configuration files.
+   It contains sample MIDI files and configuration files.
    Some of the files in those directories apply to both operating systems, so
    be sure to look at them.
    The user configration files are stored in the user's "home" area:
@@ -86,6 +91,48 @@
    If not, look into \textbf{Edit / Preferences} or the configuration files.
    Don't change the configuration files while \textsl{Seq66} is running, as
    they are generally re-saved at application exit.
+
+   \textbf{Bug}:
+      The irst-start change of input port setting does not get saved
+      to the 'rc' file. The workaround is to exit and rerun Seq66, and
+      make the setting again. Mysterious.
+
+\subsection{Device Changes}
+\label{subsec:introduction_device_changes}
+
+   After running \textsl{Seq66} and getting it to work, one might
+   either add new MIDI devices and software synthesizers, or remove
+   them.
+   If port-mapping is enabled (the default, and recommended), then
+   one can go to
+   \textbf{Edit / Preferences / MIDI Clock} and
+   click the \textbf{Make Maps} button.
+   This action stores the current set of MIDI devices.
+   Restart \textsl{Seq66} and the new set of devices should appear.
+
+   In version 2 of \textsl{SAeq66}, a year or two from now, we hope to make
+   the adjustments automatic.
+
+\subsection{Windows}}
+\label{subsec:introduction_windows}
+
+   Details about running in \textsl{Windows} can be found in the installed file
+   \texttt{C:\Program Files (x86)\Seq66\data\midi\readme.windows}.
+   But basically, the first-start depends on if it is a bare \textsl{Windows}
+   install, or if supplement MIDI support such as 
+   the CoolSoft MIDIMapper and VirtualMIDISynth have been installed.
+   If they haven't, the default MIDI setup will contain no MIDI inputs,
+   and two MIDI outputs, the \textsl{MIDI Mapper} and the
+   \textsl{Microsoft GS Wavetable} synthesizer.
+   The former grabs control of the latter, making it unavailable!
+   \textsl{Seq66} detects this situation and enables only the MIDI Mapper.
+
+   Therefore, run \textsl{Seq66} for the first time, then exit it and
+   restart it. One should then be able to play MIDI files to the MIDI Mapper,
+   if nothing else.
+
+   We hope to get some input from Windows users, as our main usage is Linux
+   and we run Windows only in an old virtual machine.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

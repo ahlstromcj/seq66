@@ -6,11 +6,11 @@ Some of these issues will be pushed off for the distant Seq66v2.
 
 Hot:
 
-    -   
     -   Port-map issues:
         -   Do not provide the ALSA Announce buss in the input port map.
         -   First-start change of input port setting does not get saved
-            to 'rc' file.
+            to 'rc' file. The workaround is to exit and rerun Seq66, and
+            make the setting again. Mysterious.
     -   If a song has a port (e.g. 5) not present on the system, a message
         appears.  What should we do about this?
     -   Beef up performer error-message to append additional errors.
