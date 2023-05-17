@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-20
- * \updates       2023-05-15
+ * \updates       2023-05-16
  * \license       GNU GPLv2 or above
  *
  *  This class is used in the qseditoptions settings-dialog class.
@@ -90,18 +90,24 @@ qinputcheckbox::setup_ui ()
 {
     std::string busname;
     bool inputing;
-    bool disabled = perf().is_input_system_port(bus());
-    bool unavailable = perf().is_port_unavailable(bus(), midibase::io::output);
     bool gotbussinfo = perf().ui_get_input(bus(), inputing, busname);
-    if (unavailable || ! gotbussinfo)
-        disabled = true;
+    if (gotbussinfo)
+    {
+        QString qbname = qt(busname);
+        bool unavailable = perf().is_port_unavailable
+        (
+            bus(), midibase::io::input
+        );
+        m_chkbox_inputactive = new QCheckBox(qbname);
+        m_chkbox_inputactive->setChecked(inputing);
+        if (! unavailable)
+            unavailable = perf().is_input_system_port(bus());
 
-    QString qbname = qt(busname);
-    m_chkbox_inputactive = new QCheckBox(qbname);
-    m_chkbox_inputactive->setChecked(inputing);
-    m_chkbox_inputactive->setEnabled(! disabled);
-    if (unavailable)
-        m_chkbox_inputactive->setToolTip("Port is unavailable");
+        if (unavailable)
+            m_chkbox_inputactive->setToolTip("Port is unavailable");
+
+        m_chkbox_inputactive->setEnabled(! unavailable);
+    }
 }
 
 /**

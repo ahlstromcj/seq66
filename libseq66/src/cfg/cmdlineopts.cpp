@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-04-15
+ * \updates       2023-05-17
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -775,7 +775,7 @@ cmdlineopts::parse_usr_file
 bool
 cmdlineopts::parse_daemonization (bool & startdaemon, std::string & logfile)
 {
-    bool result = seq66::cmdlineopts::get_usr_file();   /* daemon values    */
+    bool result = cmdlineopts::get_usr_file();   /* daemon values    */
     if (result)
     {
         std::string usrn = rc().user_filespec();
@@ -1299,7 +1299,7 @@ cmdlineopts::write_rc_file (const std::string & filebase)
             rcn = rc().config_filespec(name);
         }
 
-        rcfile options(rcn, seq66::rc());
+        rcfile options(rcn, rc());
         result = options.write();
         if (! result)
             file_error("Write failed", rcn);

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2023-05-14
+ * \updates       2023-05-17
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -150,6 +150,12 @@ businfo::businfo (const businfo & rhs)
  *      "Disabled" is currently used to making an OS-disabled, non-openable port
  *      a non-fatal error.
  *
+ * Unavailable ports:
+ *
+ *      In Windows, a port can be unavailable because the MIDI Mapper has
+ *      taken control of it. We could account for that here ore in
+ *      performer::launch().
+ *
  * \return
  *      Returns true if the buss is value, and it could be initialized (as an
  *      output port or a virtual output port.  If bus has been "disabled"
@@ -164,9 +170,16 @@ businfo::initialize ()
     {
         result = bus()->initialize(rc().init_disabled_ports());
         if (result)
+        {
             activate();                         /* "initialized" & "active" */
+        }
         else
+        {
+#if defined SEQ66_PLATFORM_WINDOWS
+            result = true;                      /* allow it for Windoze     */
+#endif
             bus()->set_port_unavailable();      /* currently permanent      */
+        }
     }
     else
     {

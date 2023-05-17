@@ -37,7 +37,7 @@
  *      -# Call main_settings(argc, argv).  It sets defaults, does some parsing
  *         of command-line options and files.  It saves the MIDI file-name, if
  *         provided.
- *      -# Call create_performer(), which then launches the performer and saves
+ *      -# Call create_performer(). This does not launch the performer. Save
  *         the unique-pointer.
  *      -# Call open_playlist().  It will open it, if specified and possible.
  e      -# Call open_note_mapper().  It will open it, if specified and possible.
@@ -358,7 +358,7 @@ smanager::create_performer ()
     {
         m_perf_pointer = std::move(p);              /* change the ownership */
         (void) perf()->get_settings(rc(), usr());
-        result = perf()->launch(ppqn);
+        result = perf()->launch(ppqn);              // std::string perfmsgs;
         if (result)
         {
             // Anything to do?
@@ -768,8 +768,8 @@ smanager::internal_error_check (std::string & errmsg) const
     if (result)
     {
         pmerrmsg +=
-            " Check Edit / Preferences / MIDI Clock & MIDI Input to "
-            "see which devices are disabled."
+            "Check MIDI Clock & MIDI Input tabs to "
+            "see if devices are unavailable."
             ;
         append_error_message(pmerrmsg);
         errmsg = pmerrmsg;

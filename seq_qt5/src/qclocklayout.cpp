@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2023-05-14
+ * \updates       2023-05-17
  * \license       GNU GPLv2 or above
  *
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
@@ -144,16 +144,26 @@ qclocklayout::setup_ui ()
         m_horizlayout_clockline->addWidget(m_rbutton_clockoff);
         m_horizlayout_clockline->addWidget(m_rbutton_clockonpos);
         m_horizlayout_clockline->addWidget(m_rbutton_clockonmod);
-        if (perf().is_port_unavailable(bus(), midibase::io::input))
+
+        bool unavailable = perf().is_port_unavailable
+        (
+            bus(), midibase::io::output
+        );
+        if (unavailable)
         {
             m_label_outputbusname->setEnabled(false);
             m_rbutton_portdisabled->setChecked(true);
             m_rbutton_portdisabled->setEnabled(false);
-            m_rbutton_portdisabled->setToolTip("Port is unavailable");
             m_rbutton_clockoff->setChecked(false);
             m_rbutton_clockoff->setEnabled(false);
             m_rbutton_clockonpos->setEnabled(false);
             m_rbutton_clockonmod->setEnabled(false);
+
+            /*
+             * Overridden by the Clock tab's tooltip.
+             *
+             * m_rbutton_portdisabled->setToolTip("Port is unavailable");
+             */
         }
         else
         {
@@ -164,13 +174,6 @@ qclocklayout::setup_ui ()
                 m_label_outputbusname->setEnabled(false);
                 m_rbutton_portdisabled->setChecked(true);
                 m_rbutton_portdisabled->setEnabled(false);
-
-                /*
-                 * We need to be able to undo the Disabled status.
-                 *
-                 *      m_rbutton_clockoff->setEnabled(false);
-                 */
-
                 m_rbutton_clockonpos->setEnabled(false);
                 m_rbutton_clockonmod->setEnabled(false);
                 break;

@@ -1,6 +1,6 @@
-readme.windows for Seq66 0.98.0 and above
+readme.windows for Seq66 0.99.5 and above
 Chris Ahlstrom
-2018-05-13 to 2021-12-12
+2018-05-13 to 2023-05-17
 
 This README file tells you how to run the native Windows implmentation of
 seq66, an executable named qpseq66.exe.  It provides some notes on Seq66 and
@@ -12,10 +12,11 @@ installer is available (replace "0.95" with the latest version number):
 
     https://github.com/ahlstromcj/sequencer64-packages/seq66/0.95.
 
+or (soon) at GitHub in the Seq66 release section.
+
 For documentation (PDF user manual), see https://github.com/ahlstromcj/seq66/doc
 or the install directory.  Some minor features are missing from the Windows
-version, such as virtual ports Sample configuration files are provided for such
-cases.
+version, such as virtual ports. Sample configuration files are provided.
 
 Why the name qpseq66.exe instead of seq66.exe? The "q" stands for the Qt user
 interface, and the "p" stands for the PortMidi-based engine used for Windows.
@@ -32,13 +33,15 @@ user manual is a PDF file stored in:
 
     C:\Program Files (x86)\Seq66\data\doc\seq66-user-manual.pdf
 
-Run the 'qpseq66.exe' shortcut and load a tune from the directory
+and sample Seq66 MIDI files are stored in
 
-    C:\Program Files (x86)\Seq66\data\midi
+    C:\Program Files (x86)\Seq66\data\midi\
 
+for demonstration of various Seq66 features.)
+
+Run the 'qpseq66.exe' shortcut and load a tune from the MIDI directory.
 If there application seems frozen, exit it (which saves the initial set of
-configuration files), and run it again.  We are not yet sure why this can
-happen.
+configuration files), and run it again.
 
 If an error appears, click out and run it again, and there should be a "MIDI
 Mapper" present on buss 0.  Load a song, and select the "0" device from the
@@ -54,18 +57,22 @@ Inaccessible Devices:
     used in qpseq66.  Another issue is that the built-in Microsoft wave-table
     synthesizer is not accessible, because the MIDI Mapper grabs it.  So Seq66
     detects this situation and disables the wave-table synthesizer, instead
-    using the MIDI Mapper (device 0) to access the synthesizer.  To make this
-    change permanent, exit Seq66 and restart it.  Then, for the basic setup on
-    Windows, only output bus 0 is available.  And no input bus is available.
+    using the MIDI Mapper (device 0) to access the synthesizer, and it shows
+    a warning dialog.  To make the disabling change permanent, exit Seq66 and
+    restart it.  Then, for the basic setup on Windows, only output bus 0 is
+    available.  And no input bus is available, so Seq66 ignores that, so
+    that one can at least do MIDI playback.
 
-    We installed the CoolSoft MIDIMapper and VirtualMIDISYnth to try to get
+    Furthermore...
+
+    ...We installed the CoolSoft MIDIMapper and VirtualMIDISYnth to try to get
     around these issues, and tried to turn off the system setup of "Allow
     applications to restrict access to this device."  But we still had
     inaccessible devices, and the resulting errors would cause qpseq66 to
     abort.  So we had to spend a lot of time supporting the disabling of
     inaccessible ports, and saving and restoring the "rc" setup properly.
-    Here is the latest output on our Windows, generated using the option
-    "-o log=virtualmidi.log":
+    Here is the latest output on our Windows, generated using the option "-o
+    log=virtualmidi.log":
 
         qpseq66 
         C:/Users/myname/AppData/Local/seq66/virtualmidi.log 
@@ -97,6 +104,7 @@ Inaccessible Devices:
         C:\Users\username\AppData\Local\seq66\qpseq66.ctrl
         C:\Users\username\AppData\Local\seq66\qpseq66.drums
         C:\Users\username\AppData\Local\seq66\qpseq66.mutes
+        C:\Users\username\AppData\Local\seq66\qpseq66.palette
     
     Inaccessible devices are noted in the "[midi-clock]" section of
     "C:\Users\username\AppData\Local\seq66\qpseq66.rc" by a "-1" value.
@@ -120,7 +128,7 @@ Configuration Files:
 
 Building the Application:
 
-    To build, see the instructions in the nsis\build_release_\package.bat
+    To build, see the instructions in the "nsis\build_release_package.bat"
     file.  Basically, install Qt Creator to use the mingw compiler, and
     double-click on that batch file and let it do its thing.
 
@@ -195,7 +203,10 @@ Configuration Files For Windows:
         qpseq66.ctrl        Provides the MIDI input controls and output controls
                             that let one control Seq66 via MIDI and display some
                             status items to LaunchPad-like devices.
+        qpseq66.drums       Provides the ability to remap drum notes.
         qpseq66.mutes       Offloads the mute settings to a separate file.
+        qpseq66.palette     Provides a way to change the coloring of most
+                            of Seq66.  Qt themes can also be applied.
 
     The log-file also goes into the AppData\Local\seq66 directory.
     To access AppData, highlight the username directory, then append

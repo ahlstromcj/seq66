@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-05-15
+ * \updates       2023-05-17
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2656,9 +2656,8 @@ public:
         activate_output_port_map(active);
     }
 
-    bussbyte true_output_bus (bussbyte nominalbuss) const;
-
     bussbyte true_input_bus (bussbyte nominalbuss) const;
+    bussbyte true_output_bus (bussbyte nominalbuss) const;
 
     /**
      *  Sets a single clock item, if in the currently existing range.
@@ -2667,28 +2666,13 @@ public:
 
     void set_clock (bussbyte bus, e_clock clocktype)
     {
-        bus = true_output_bus(bus);
-        m_clocks.set(bus, clocktype);
+        m_clocks.set(true_output_bus(bus), clocktype);
     }
 
     e_clock get_clock (bussbyte bus) const
     {
-        bus = true_output_bus(bus);
-        return m_clocks.get(bus);
+        return m_clocks.get(true_output_bus(bus));
     }
-
-    /**
-     *  Saves the input settings read from the "rc" file so that they can be
-     *  passed to the mastermidibus after it is created.
-     *
-     * \param flag
-     *      The input flag read from the "rc" file.
-
-    void add_input (int bus, bool flag, const std::string & name)
-    {
-        m_inputs.add(bus flag, name);
-    }
-     */
 
     /**
      *  Sets a single input item, if in the currently existing range.
@@ -2697,14 +2681,12 @@ public:
 
     void set_input (bussbyte bus, bool inputing)
     {
-        bus = true_input_bus(bus);
-        m_inputs.set(bus, inputing);
+        m_inputs.set(true_input_bus(bus), inputing);
     }
 
     bool get_input (bussbyte bus) const
     {
-        bus = true_input_bus(bus);
-        return m_inputs.get(bus);
+        return m_inputs.get(true_input_bus(bus));
     }
 
     bool is_input_system_port (bussbyte bus) const;

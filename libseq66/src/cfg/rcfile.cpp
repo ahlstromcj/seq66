@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-05-16
+ * \updates       2023-05-17
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -876,21 +876,23 @@ rcfile::write ()
 
     int inbuses = bussbyte(rc_ref().inputs().count());
     file << "\n"
-"# These MIDI ports are available for input. From JACK's view, these are\n"
+"# These MIDI ports are for input and control. JACK's view: these are\n"
 "# 'playback' devices. The first number is the bus, the second number is the\n"
 "# input status, disabled (0) or enabled (1). The item in quotes is the full\n"
 "# input bus name.\n\n"
 "[midi-input]\n\n"
         << std::setw(2) << int(inbuses)
-        << "      # number of input MIDI buses\n\n"
+        << "      # number of MIDI input (or control) buses\n\n"
         ;
 
-    file << rc_ref().inputs().io_list_lines();
+    std::string listlines = rc_ref().inputs().io_list_lines();
+    file << listlines;
 
     const inputslist & inpsref = input_port_map();
     if (inpsref.not_empty())
     {
         bool active = inpsref.active();
+        std::string maplines = input_port_map_list();
         std::string activestring = active ? " 1" : " 0";
         std::string mapstatus = "map is ";
         if (! active)
@@ -902,8 +904,7 @@ rcfile::write ()
            "\n"
            "[midi-input-map]\n"
            "\n"
-        << activestring << "      # " << mapstatus << "\n\n"
-        << input_port_map_list()
+        << activestring << "      # " << mapstatus << "\n\n" << maplines
         ;
     }
 
@@ -920,9 +921,9 @@ rcfile::write ()
 
     bussbyte outbuses = bussbyte(rc_ref().clocks().count());
     file << "\n"
-"# These ports are available for output, for playback/control. From JACK's\n"
-"# view, these are 'capture' devices. The first line shows the count of output\n"
-"# ports. Each line shows the bus number and clock status of that bus:\n"
+"# These MIDI ports are for output, playback, and display. JACK's view: these\n"
+"# are 'capture' devices. The first line shows the count of output ports.\n"
+"# Each line shows the bus number and clock status of that bus:\n"
 "#\n"
 "#  -1 = The output port is disabled.\n"
 "#   0 = MIDI Clock is off. The output port is enabled.\n"
@@ -930,22 +931,24 @@ rcfile::write ()
 "#   2 = MIDI Clock Modulo.\n"
 "#\n"
 "# With Clock Modulo, clocking doesn't begin until song position reaches the\n"
-"# start-modulo value [midi-clock-mod-ticks]. One can disable a port manually\n"
-"# for devices that are present, but unavailable (because another application,\n"
-"# e.g. Windows MIDI Mapper, has exclusive access to the device.\n"
+"# start-modulo value [midi-clock-mod-ticks]. Ports that are unavailable\n"
+"# (because another portapplication, e.g. Windows MIDI Mapper, has exclusive\n"
+"# access to the device) are displayed ghosted.\n"
 "\n"
 "[midi-clock]\n"
 "\n"
         << std::setw(2) << int(outbuses)
-        << "      # number of MIDI clocks (output buses)\n\n"
+        << "      # number of MIDI clocks (output/display buses)\n\n"
         ;
 
-    file << rc_ref().clocks().io_list_lines();
+    listlines = rc_ref().clocks().io_list_lines();
+    file << listlines;
 
     const clockslist & outsref = output_port_map();
     if (outsref.not_empty())
     {
         bool active = outsref.active();
+        std::string maplines = output_port_map_list();
         std::string activestring = active ? " 1" : " 0";
         std::string mapstatus = "map is ";
         if (! active)
@@ -962,8 +965,7 @@ rcfile::write ()
 "\n"
 "[midi-clock-map]\n"
 "\n"
-        << activestring << "      # " << mapstatus << "\n\n"
-        << output_port_map_list()
+        << activestring << "      # " << mapstatus << "\n\n" << maplines
         ;
     }
 

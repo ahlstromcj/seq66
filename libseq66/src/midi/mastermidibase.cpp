@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2022-05-16
+ * \updates       2022-05-17
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -390,10 +390,10 @@ mastermidibase::set_clock (bussbyte bus, e_clock clocktype)
 bool
 mastermidibase::save_clock (bussbyte bus, e_clock clock)
 {
-    int currentcount = m_master_clocks.count();
     bool result = m_master_clocks.set(bus, clock);
     if (! result)
     {
+        int currentcount = m_master_clocks.count();
         errprint("mmb::save_clock(): missing bus");
         for (int i = currentcount; i <= bus; ++i)
         {
@@ -436,8 +436,8 @@ mastermidibase::get_clock (bussbyte bus) const
 void
 mastermidibase::copy_io_busses ()
 {
-    m_master_inputs.clear();                        /* inputslist container */
     int buses = m_inbus_array.count();              /* get_num_in_buses()   */
+    m_master_inputs.clear();                        /* inputslist container */
     for (int bus = 0; bus < buses; ++bus)
     {
         bool inputflag = m_inbus_array.get_input(bus);
@@ -445,8 +445,8 @@ mastermidibase::copy_io_busses ()
         std::string alias = m_inbus_array.get_midi_alias(bus);
         m_master_inputs.add(bus, inputflag, name, "", alias);
     }
-    m_master_clocks.clear();                        /* clockslist container */
     buses = m_outbus_array.count();                 /* get_num_out_buses()  */
+    m_master_clocks.clear();                        /* clockslist container */
     for (int bus = 0; bus < buses; ++bus)
     {
         e_clock clk = m_outbus_array.get_clock(bus);
@@ -498,9 +498,8 @@ mastermidibase::get_out_port_statuses (clockslist & outs)
             opm.match_system_to_map(m_master_clocks);
     }
     else
-    {
         opm.match_map_to_system(m_master_clocks);   /* opm = master clocks  */
-    }
+
     outs = m_master_clocks;         /* system clocks information to store   */
 }
 
@@ -514,9 +513,8 @@ mastermidibase::get_in_port_statuses (inputslist & ins)
             ipm.match_system_to_map(m_master_inputs);
     }
     else
-    {
         ipm.match_map_to_system(m_master_inputs);   /* ipm = master inputs  */
-    }
+
     ins = m_master_inputs;          /* system inputs information to store   */
 }
 
@@ -578,10 +576,10 @@ mastermidibase::set_input (bussbyte bus, bool inputing)
 bool
 mastermidibase::save_input (bussbyte bus, bool inputing)
 {
-    int currentcount = m_master_inputs.count();
     bool result = m_master_inputs.set(bus, inputing);
     if (! result)
     {
+        int currentcount = m_master_inputs.count();
         errprint("mmb::save_input(): missing bus");
         for (int i = currentcount; i <= bus; ++i)
         {

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-05-15
+ * \updates       2023-05-17
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -463,6 +463,11 @@ performer::unregister (callbacks * pfcb)
     }
 }
 
+/**
+ *  This function emits an error message to cerr via the basic_macros
+ *  global function error_message().
+ */
+
 void
 performer::set_error_message (const std::string & msg) const
 {
@@ -731,11 +736,12 @@ bool
 performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
 {
     int buses = rcs.clocks().count();
-    int inputs = rcs.inputs().count();
     bool result = buses > 0;                        /* at least 1 output    */
     if (result)
     {
         m_clocks = rcs.clocks();
+
+        int inputs = rcs.inputs().count();
         if (inputs > 0)
             m_inputs = rcs.inputs();
 
@@ -809,7 +815,12 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
  *  inputslist classes, rather than accessing the vectors directly.
  *
  * \param rcs
- *      Provides the destination for the settings.
+ *      Provides the destination for the 'rc' settings. Normally, this is
+ *      the global settings object returned by rc().
+ *
+ * \param usrs
+ *      Provides the destination for the 'usr' settings. Normally, this is
+ *      the global settings object returned by usr().
  *
  * \return
  *      Returns true if the settings were proper and were copied.
@@ -819,7 +830,7 @@ bool
 performer::put_settings (rcsettings & rcs, usrsettings & usrs)
 {
     /*
-     * We cannot allow changes made outside of the Preferences GUI to
+     * We cannot allow certain changes made outside of the Preferences GUI to
      * be saved (e.g the Live/Song button in the main window).
      *
      *  bool pb = song_mode();
@@ -2940,50 +2951,48 @@ performer::create_master_bus ()
 bool
 performer::launch (int ppqn)
 {
+#if defined SEQ66_PLATFORM_WINDOWS
+    bool allow_unavailable_devices = true;
+#else
+    bool allow_unavailable_devices = false;
+#endif
     bool result = create_master_bus();      /* calls set_port_statuses()    */
     if (result)
     {
         (void) init_jack_transport();
         m_master_bus->init(ppqn, m_bpm);    /* calls api_init() per API     */
         result = activate();
-#if defined TEST_ACTIVATION_BEFORE_GETTING_PORT_STATUSES
-        if (result)
-#endif
-        {
-            /*
-             * Get and store the clocks and inputs created (disabled or not)
-             * by the mastermidibus during api_init().  After this call, the
-             * clocks and inputs now have names.  These calls are necessary to
-             * populate the port lists the first time Seq66 is run.
-             * We need to do this even if activation has failed, such as
-             * when the Windows MIDI Mapper prevents the opening of the
-             * built-in GS wave-table synthesizer.
-             *
-             * m_master_bus->get_port_statuses(m_clocks, m_inputs); the
-             * statuses from e.g. midi_jack_info are already obtained in the
-             * call stack of create_master_bus().
-             */
 
-            m_master_bus->copy_io_busses();
-            m_master_bus->get_port_statuses(m_clocks, m_inputs);
-        }
-        if (result)
-        {
+        /*
+         * Get and store the clocks and inputs created (disabled or not)
+         * by the mastermidibus during api_init().  After this call, the
+         * clocks and inputs now have names.  These calls are necessary to
+         * populate the port lists the first time Seq66 is run.
+         * We need to do this even if activation has failed, such as
+         * when the Windows MIDI Mapper prevents the opening of the
+         * built-in GS wave-table synthesizer.
+         *
+         * m_master_bus->get_port_statuses(m_clocks, m_inputs); the
+         * statuses from e.g. midi_jack_info are already obtained in the
+         * call stack of create_master_bus().
+         */
 
+        m_master_bus->copy_io_busses();
+        m_master_bus->get_port_statuses(m_clocks, m_inputs);
+        if (result || allow_unavailable_devices)
+        {
 #if defined SEQ66_USE_DEFAULT_PORT_MAPPING
-
-        if (! rc().portmaps_present())      /* don't mung existing port-map */
-        {
-            bool ok = store_io_maps();
-            if (ok)
+            if (! rc().portmaps_present())  /* don't mung existing port-map */
             {
-                rc().portmaps_active(true);
-                session_message("Created initial port maps");
+                bool ok = store_io_maps();
+                if (ok)
+                {
+                    rc().portmaps_active(true);
+                    session_message("Created initial port maps");
+                }
+                else
+                    set_error_message("Creating port maps failed");
             }
-            else
-                set_error_message("Creating port maps failed");
-        }
-
 #endif
 
             /*
@@ -3006,7 +3015,7 @@ performer::launch (int ppqn)
             announce_automation();
             (void) set_playing_screenset(screenset::number(0));
         }
-        else
+        if (! result)
             m_error_pending = true;
     }
     return result;
@@ -3369,20 +3378,17 @@ performer::finish ()
             m_in_thread.join();
             m_in_thread_launched = false;
         }
+        result = deinit_jack_transport();
 
-        bool ok = deinit_jack_transport();
-        bool result = bool(m_master_bus);
-        if (result)
-        {
-            /*
-             * ca 2023-05-16
-             * Will be done in put_settings()!!!
-             *
-             *      m_master_bus->get_port_statuses(m_clocks, m_inputs);
-             *      // m_master_bus->save_io_busses();
-             */
-        }
-        result = ok && result;
+        /*
+         * Will be done externally (by smanager::close_session) in
+         * put_settings()! That assumes that m_clocks and m_inputs are
+         * kept up-to-date with user changes.
+         *
+         *  result = bool(m_master_bus);
+         *  if (result)
+         *       m_master_bus->get_port_statuses(m_clocks, m_inputs);
+         */
     }
     return result;
 }
