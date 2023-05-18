@@ -67,8 +67,6 @@ public:
 
 protected:
 
-    // virtual void setup_ui () = 0;
-
     performer & perf ()
     {
         return m_performance;

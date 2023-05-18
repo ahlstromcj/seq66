@@ -412,6 +412,12 @@ busarray::sysex (bussbyte bus, const event * e24)
  *
  *      m_container[bus].bus()->get_clock();
  *
+ * ca  2023-05-18
+ *
+ *  The check for a change in status is commented out because it
+ *  can disable setting values for the same item as stored in the portmap.
+ *  Need to investigate this at some point.
+ *
  * \param bus
  *      The MIDI bus for which the clock is to be set.
  *
@@ -426,7 +432,7 @@ bool
 busarray::set_clock (bussbyte bus, e_clock clocktype)
 {
     e_clock current = get_clock(bus);
-    bool result = bus < count() && current != clocktype;
+    bool result = bus < count(); // && current != clocktype;
     if (result)
     {
         businfo & bi = m_container[bus];
@@ -625,6 +631,12 @@ busarray::port_exit (int client, int port)
  *
  *  This function should be used only for the input busarray, obviously.
  *
+ * ca  2023-05-18
+ *
+ *  The check for a change in status is commented out because it
+ *  can disable setting values for the same item as stored in the portmap.
+ *  Need to investigate this at some point.
+ *
  * \threadsafe
  *
  * \param bus
@@ -642,7 +654,7 @@ bool
 busarray::set_input (bussbyte bus, bool inputing)
 {
     bool current = get_input(bus);                          /* see below    */
-    bool result = bus < count() && current != inputing;
+    bool result = bus < count(); // && current != inputing;
     if (result)
     {
         businfo & bi = m_container[bus];

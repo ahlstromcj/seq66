@@ -928,6 +928,13 @@ private:                            /* key, midi, and op container section  */
 
     bool m_is_modified;
 
+    /**
+     *  This is meant for trying to work around a problem in Windows, and
+     *  perhaps also increase the responsiveness of recording.
+     */
+
+    bool m_events_modified;     /* EXPERIMENTAL */
+
 #if defined USE_SONG_BOX_SELECT
 
     /**
@@ -1114,6 +1121,16 @@ public:
     }
 
     bool modified () const;
+
+    bool events_modified () const
+    {
+        return m_events_modified;       /* EXPERIMENTAL */
+    }
+
+    void modified_events (bool flag = true)
+    {
+        m_events_modified = flag;       /* EXPERIMENTAL */
+    }
 
     /**
      * \setter m_is_modified

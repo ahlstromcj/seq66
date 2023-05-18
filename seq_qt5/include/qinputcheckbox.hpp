@@ -49,11 +49,11 @@ namespace seq66
 {
 
 /**
- *  This class represent a single line holding the setting (enabled/disabled
+ *  This class represents a single line holding the setting (enabled/disabled
  *  for a single MIDI input buss.
  */
 
-class qinputcheckbox : public qportwidget       // QWidget
+class qinputcheckbox : public qportwidget
 {
     Q_OBJECT
 

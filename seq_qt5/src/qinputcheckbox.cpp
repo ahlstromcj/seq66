@@ -123,7 +123,7 @@ qinputcheckbox::input_callback_clicked (int state)
 {
     bool inputing = state == Qt::Checked;
     perf().ui_set_input(bus(), inputing);
-    parent_widget()->reload_needed(true);       /* tell parent */
+    parent_widget()->enable_bus_item(bus(), true);      /* tell the parent  */
 }
 
 }           // namespace seq66

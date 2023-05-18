@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-05-17
+ * \updates       2023-05-18
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -386,6 +386,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_midiclockpos          (0),
     m_dont_reset_ticks      (false),            /* support for pausing      */
     m_is_modified           (false),
+    m_events_modified       (false),            /* EXPERIMENTAL             */
 #if defined USE_SONG_BOX_SELECT
     m_selected_seqs         (),
 #endif
@@ -584,6 +585,7 @@ void
 performer::unmodify ()
 {
     m_is_modified = false;
+    m_events_modified = false;             /* EXPERIMENTAL             */
     mapper().unmodify_all_sequences();
 }
 
@@ -941,7 +943,7 @@ performer::true_input_bus (bussbyte nominalbuss) const
              * show the name here just like we had done in inputslist.
              */
 
-            char temp[32];
+            char temp[64];
             (void) snprintf
             (
                 temp, sizeof temp,
@@ -1112,7 +1114,7 @@ performer::true_output_bus (bussbyte nominalbuss) const
              * show the name here just like we had done in clockslist.
              */
 
-            char temp[32];
+            char temp[64];
             (void) snprintf
             (
                 temp, sizeof temp,

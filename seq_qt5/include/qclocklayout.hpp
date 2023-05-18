@@ -66,7 +66,7 @@ namespace seq66
  *      -   On (Mod).
  */
 
-class qclocklayout : public qportwidget     // QWidget
+class qclocklayout : public qportwidget
 {
     Q_OBJECT
 

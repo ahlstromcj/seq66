@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-04-20
+% \update      2023-05-18
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -672,6 +672,11 @@
    Use this control to select the output bus used to display
    application-automation status, loop status, and mute-group status.
    Requires a \textsl{reload session} to take effect.
+   The number of the buss is stored in the 'ctrl' file named in
+   \sectionref{paragraph:menu_edit_preferences_session},
+   as the value of \texttt{output-buss}.
+   If port mapping is enabled (now the default),
+   the nick-name of the bus is stored instead of the number.
 
    \itempar{Meta Events}{midi clock!meta events}
    \index{tempo-track-number}
@@ -778,6 +783,11 @@
    Use this control to select the input bus used for MIDI control automation of 
    application actions, loop actions, and mute-group actions.
    Requires a \textsl{reload session} to take effect.
+   The number of the buss is stored in the 'ctrl' file named in
+   \sectionref{paragraph:menu_edit_preferences_session},
+   as the value of \texttt{control-buss}.
+   If port mapping is enabled (now the default),
+   the nick-name of the bus is stored instead of the number.
 
    \itempar{Input Options}{input options}
    \index{input options}

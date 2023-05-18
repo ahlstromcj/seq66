@@ -86,8 +86,8 @@ Windows, and using a conventional source tarball.
         *   Greatly enhanced the event editor tab and the events that can
             be view and modified.
         *   Made port-mapping the default. At first startup the map
-            exactly matches the existing port; the user can edit this setup
-            in the 'rc' file.
+            exactly matches the existing ports; the user can edit this setup
+            in the 'rc' file or the Preferences dialog.
         *   Eliminated "missing ctrl" message at first startup.
         *   Fixed port ID setting in midibus, and adding output flag in
             midi_alsa_info.

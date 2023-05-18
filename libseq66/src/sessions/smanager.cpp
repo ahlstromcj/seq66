@@ -572,9 +572,9 @@ smanager::save_session (std::string & msg, bool ok)
     bool result = not_nullptr(perf());
     if (result)
     {
-        if (ok)                     /* code moved from clinsmanager to here */
+        if (ok)                             /* code from clinsmanager here  */
         {
-            if (perf()->modified())
+            if (perf()->modified())         /* i.e. MIDI file is modified   */
             {
                 std::string filename = rc().midi_filename();
                 if (filename.empty())
@@ -952,12 +952,6 @@ smanager::create_configuration
         std::string rcbase = rc().config_filename();
         rc().midi_filepath(midifilepath);               /* do this first    */
         rc().full_config_directory(cfgfilepath);        /* set session dir. */
-
-        /*
-         * Need to test this change under NSM and Windows!
-         *
-         * rc().session_directory();
-         */
 
         std::string rcpath = rc().home_config_directory();
         std::string rcfile = filename_concatenate(rcpath, rcbase);

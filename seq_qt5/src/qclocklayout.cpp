@@ -230,7 +230,7 @@ qclocklayout::clock_callback_clicked (int id)
     m_rbutton_clockoff->setEnabled(true);
     m_rbutton_clockonpos->setEnabled(enable);
     m_rbutton_clockonmod->setEnabled(enable);
-    parent_widget()->enable_bus_item(bus(), enable);
+    parent_widget()->enable_bus_item(bus(), enable);    /* tell the parent  */
 }
 
 }           // namespace seq66

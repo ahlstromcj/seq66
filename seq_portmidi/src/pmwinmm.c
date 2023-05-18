@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-05-15 b
+ * \updates     2023-05-18
  * \license     GNU GPLv2 or above
  *
  *  Check out this site:
@@ -100,7 +100,7 @@ static void CALLBACK winmm_streamout_callback
  * seq66_features.h, which *is* defined.
  */
 
-#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_USE_SYSEX_PROCESSING_NOT_IN_USE
 
 static void CALLBACK winmm_out_callback
 (
@@ -2093,7 +2093,7 @@ winmm_synchronize (PmInternal * midi)
     return real_time;
 }
 
-#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_USE_SYSEX_PROCESSING_NOT_IN_USE
 
 /**
  *  The winmm_out_callback()  recycles SysEx buffers.  A future optimization:
