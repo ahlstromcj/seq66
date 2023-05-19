@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2023-05-10
+:: \update      2023-05-19
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -23,6 +23,7 @@
 ::
 ::       0. Decide whether to a 32-bit or a 64-bit build.  Modify the
 ::          environment variables and steps below to accommodate your choice.
+::          We might support only 64-bit builds at some point.
 ::       1. Runs in Windows only.
 ::       2. Requires QtCreator to be installed, and configured to provide
 ::          the 32/64-bit Mingw tools, including mingw32-make.exe (there is
@@ -82,7 +83,7 @@
 ::             "..\seq66\nsis\build_release_package.bat".
 ::          d. Or cd to the seq66\nsis directory and try
 ::             "build_release_package.bat > build.log 2>&1"
-::       6. The result is a file such as "qpseq66-release-package-0.90.1.7z".
+::       6. The result is a file such as "qpseq66-release-package-x64-0.90.1.7z".
 ::          It is found in seq66/../seq66-release-32/Seq66qt5.  Also, a
 ::          log file is made in seq66/../seq66-release-32/make.log,
 ::          which can be checked for build warnings and errors. If you cannot
@@ -97,8 +98,8 @@
 ::          Here are the commands ("$" is the command-line prompt character):
 ::
 ::          seq66 $ rm -rf release/                         # careful!
-::          seq66 $ 7z x qpseq66-release-package-0.90.2.7z
-::          seq66 $ mv qpseq66-release-package-0.90.2.7z ..
+::          seq66 $ 7z x qpseq66-release-package-x64-0.90.2.7z
+::          seq66 $ mv qpseq66-release-package-x64-0.90.2.7z ..
 ::
 ::       9. Change to the seq66/nsis directory and run:
 ::
@@ -153,7 +154,15 @@
  
 set PROJECT_VERSION=0.99.5
 set PROJECT_DRIVE=C:
+
+:: Set the bits of the project, either 64 or 32. Also define WIN64 versus
+:: WIN32 in Seq66Constants.nsh.
+
 set PROJECT_BITS=64
+
+:: This is where the seq66 and the shadow build directories reside. Adjust
+:: them for your setup.
+
 set PROJECT_BASE=\Users\Chris\Documents\Home
 set NSIS_PLATFORM=Windows
 
@@ -164,7 +173,7 @@ set PROJECT_NAME=seq66
 set PROJECT_TREE=%PROJECT_BASE%\%PROJECT_NAME%
 set PROJECT_REL_ROOT=..\seq66
 set PROJECT_PRO=seq66.pro
-set PROJECT_7ZIP=qpseq66-release-package-%PROJECT_VERSION%.7z
+set PROJECT_7ZIP=qpseq66-release-package-x%PROJECT_BITS%-%PROJECT_VERSION%.7z
 set SHADOW_DIR=seq66-release-%PROJECT_BITS%
 set APP_DIR=Seq66qt5
 set RELEASE_DIR=%APP_DIR%\release

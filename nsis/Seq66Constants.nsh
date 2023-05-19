@@ -36,6 +36,16 @@
 !define PRODUCT_WEB_SITE    "https://github.com/ahlstromcj/seq66/"
 
 ;============================================================================
+; The type of build to make.  Uncomment the one desired.  WIN64 preferred.
+;============================================================================
+
+!define WIN64
+!define WINBITS             "64"
+
+; !define WIN32
+; !define WINBITS           "32"
+
+;============================================================================
 ; Directory to place the installer.
 ;============================================================================
 
