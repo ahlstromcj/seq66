@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-04-29
+ * \updates       2023-05-19
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3218,11 +3218,14 @@ sequence::add_tempo (midipulse tick, midibpm tempo, bool repaint)
  *  Here, we could ignore events not on the sequence's channel, as an option.
  *  We have to be careful because this function can be used in painting events.
  *
- *  EXPERIMENTAL ca 2023-04-26
+ *  To speed things up a bit, do not try to verify and link notes unless the
+ *  incoming event is a note.  We will first try allowing it only for a Note
+ *  Off for even more savings :-D
  *
- *      To speed things up a bit, do not try to verify and link notes unless
- *      the incoming event is a note.  We will first try allowing it only for
- *      a Note Off for even more savings :-D
+ *  Also, instead of modifying and notifying, we just modify. We need to see
+ *  if this prevents a weird unknown-signal error in qseqeditframe64 in the
+ *  update_midi_buttons() function.  We don't need that to see added note
+ *  events anyway..
  *
  * \threadsafe
  *
@@ -3248,10 +3251,17 @@ sequence::add_event (const event & er)
     bool result = m_events.append(er);  /* no-sort insertion of event       */
     if (result)
     {
-        if (er.is_note_off())           /* EXPERIMENTAL test ca 2023-04-26  */
+        if (er.is_note_off())
             verify_and_link();          /* for proper seqroll draw; sorts   */
 
+#if defined USE_OLD_ADD_EVENT_CODE
         modify(true);                   /* call notify_change()             */
+#else
+        modify(false);                  /* do not call notify_change()      */
+#if defined USE_EVENTS_MODIFIED
+        perf()->modified_events();      /* EXPERIMENTAL                     */
+#endif
+#endif
     }
     return result;
 }
@@ -5327,6 +5337,9 @@ sequence::set_recording (bool recordon, bool toggle)
         else
         {
             m_recording = m_quantized_recording = m_tightened_recording = false;
+#if defined USE_EVENTS_MODIFIED
+            perf()->modified_events(false); /* EXPERIMENTAL                 */
+#endif
         }
         set_dirty();
         notify_trigger();                                   /* tricky!  */

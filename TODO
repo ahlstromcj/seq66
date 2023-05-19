@@ -1,21 +1,8 @@
 TO DO for Seq66 0.99.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-05-17
+2019-04-13 to 2023-05-19
 
 Some of these issues will be pushed off for the distant Seq66v2.
-
-Hot:
-
-    -   Port-map issues:
-        -   Do not provide the ALSA Announce buss in the input port map.
-        -   First-start change of input port setting does not get saved
-            to 'rc' file. The workaround is to exit and rerun Seq66, and
-            make the setting again. Mysterious.
-    -   If a song has a port (e.g. 5) not present on the system, a message
-        appears.  What should we do about this?
-    -   Beef up performer error-message to append additional errors.
-    -   Finish the major upgrade to the event editor; plan for a
-        "SeqSpec" tab?  Worth it?
 
 UI:
 
@@ -34,6 +21,7 @@ UI:
                 in Preferences / JACK.  Add "Auto" (as default).
         -   Config Options: (new)
             -   Log-file. Add this CLI option to Preferences / Session.
+        -   Plan for a "SeqSpec" tab?  Worth it?
 
 Mutes:
 
@@ -50,17 +38,6 @@ Playlists:
     -   Make sure that otherwise changing the buss during playlist processing
         does not raise the save/dirty flag.
 
-Port-Mapping:
-
-    Running qpseq66 on Linux:  "QSynth" is named "PortMidi"! See
-    seq_portmidi/src/midibus.cpp.  The workaround is to specify long port
-    names in the 'rc' file.
-
-Automation:
-
-    Can we leverage continuous controllers (CC) to support modifying synth
-    parameters through input automation? See the new "macro" facility.
-
 From Testing:
 
     When zooming, try to keep the same viewport in view.  Got this working
@@ -72,8 +49,6 @@ From Testing:
 
 Windows:
 
-    -   mastermidibase::activate() fails at m_outbus_array.initialize().
-        Error initing port 1; it should be disabled?
     -   Change to creating a 64-bit installer and adjust the instructions.
     -   In the live grid, move the top text up 1 pixel.  Move the bottom text
         up 2 pixels. Maybe reduce the font size by 1. Also consist the for the
@@ -212,6 +187,9 @@ ISSUES:
     instantly activates a specific mode.
 
     STATUS: Partly fulfilled.
+
+    Can we leverage continuous controllers (CC) to support modifying synth
+    parameters through input automation? See the new "macro" facility.
 
 #68 MIDI controller initialization step
     STATUS: Closed, some follow-on suggestions:
@@ -405,8 +383,13 @@ MIDI version 2 considerations::
 Version 2 features:
 
     -   Use Meson/Ninja as the build system.
-    -   See the issue noted above as "pushed off to version 2".
+    -   Support for Clang?
+    -   Support for multiple languages in user-messages.
+    -   Allow for building without JACK dev files installed.  Weak JACK
+        support.  Seq66 dependence on the JACK ringbuffer is an issue here.
     -   Port refresh in ALSA and JACK at a minimum.
+    -   JACK port groups and order.
+    -   Pipewire support.
     -   Live note mapping?
     -   Abletone Link support?
     -   Support for audio-clip patterns?
@@ -415,6 +398,7 @@ Version 2 features:
         (the Preferences editor?).
     -   Make main menu hide-able.
     -   Allow multiple instances of seq66.
+    -   Allow multiple tunes to be loaded in seq66?
     -   More consistent support for undo / redo / unmodify.
     -   Add console output for every user action.
     -   Add scripting language?
@@ -424,11 +408,7 @@ Version 2 features:
         playback, to re-use the pattern on a differnt buss and channel.
     -   Support manual reconnecting, including of the control/display busses.
     -   Implement solo, FF, rewind, etc.
-    -   Weak JACK support.  Seq66 dependence on the JACK ringbuffer is an
-        issue here.
     -   Use std::numeric_limits instead of macros.
     -   LV2 MIDINAM support.
-    -   JACK port groups and order.
-    -   Pipewire support.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

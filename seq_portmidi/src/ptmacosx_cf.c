@@ -116,7 +116,6 @@ static void* Pt_Thread(void *p)
     CFRunLoopRemoveTimer(CFRunLoopGetCurrent(), timer, CFSTR("PtTimeMode"));
     CFRelease(timer);
     free(params);
-
     return NULL;
 }
 
@@ -155,7 +154,6 @@ Pt_Start (int resolution, PtCallback *callback, void *userData)
 PtError Pt_Stop()
 {
     printf("Pt_Stop called\n");
-
     CFRunLoopStop(timerRunLoop);
     time_started_flag = FALSE;
     return ptNoError;

@@ -117,6 +117,9 @@ pm_alloc (size_t s)
 /**
  *  The inverse of pm_alloc(), a wrapper for the free(3) function.
  *
+ *  This should be moved to a common module, as it is also defined in the
+ *  architecture-specific modules.
+ *
  * \param ptr
  *      Provides the pointer to be freed, if it is not null.
  */

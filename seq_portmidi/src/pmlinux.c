@@ -115,6 +115,9 @@ pm_alloc (size_t s)
  *  undefined.  The caller can guard against this by setting the pointer to
  *  null explicitly after calling this function.
  *
+ *  This should be moved to a common module, as it is also defined in the
+ *  architecture-specific modules.
+ *
  * \param ptr
  *      The pointer to be freed.  It is ignored if null.
  */

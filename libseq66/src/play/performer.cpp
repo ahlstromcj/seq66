@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-05-18
+ * \updates       2023-05-19
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -386,7 +386,9 @@ performer::performer (int ppqn, int rows, int columns) :
     m_midiclockpos          (0),
     m_dont_reset_ticks      (false),            /* support for pausing      */
     m_is_modified           (false),
+#if defined USE_EVENTS_MODIFIED
     m_events_modified       (false),            /* EXPERIMENTAL             */
+#endif
 #if defined USE_SONG_BOX_SELECT
     m_selected_seqs         (),
 #endif
@@ -585,7 +587,9 @@ void
 performer::unmodify ()
 {
     m_is_modified = false;
+#if defined USE_EVENTS_MODIFIED
     m_events_modified = false;             /* EXPERIMENTAL             */
+#endif
     mapper().unmodify_all_sequences();
 }
 

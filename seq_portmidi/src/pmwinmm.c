@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-05-18
+ * \updates     2023-05-19
  * \license     GNU GPLv2 or above
  *
  *  Check out this site:
@@ -738,9 +738,12 @@ allocate_buffers (midiwinmm_type m, long data_size, long count)
         if (is_nullptr(hdr))        /* free all allocations and return      */
         {
             for (i = i - 1; i >= 0; --i)
+            {
                 pm_free(m->buffers[i]);
-
+                m->buffers[i] = nullptr;
+            }
             pm_free(m->buffers);    /* zero out the pointers?               */
+            m->buffers = nullptr;
             m->max_buffers = 0;
             return pmInsufficientMemory;
         }
@@ -1641,10 +1644,14 @@ winmm_out_delete (PmInternal * midi)
         for (i = 0; i < m->num_buffers; ++i)
         {
             if (m->buffers[i])
+            {
                 pm_free(m->buffers[i]);
+                m->buffers[i] = nullptr;
+            }
         }
         m->num_buffers = 0;
         pm_free(m->buffers);
+        m->buffers = nullptr;
         m->max_buffers = 0;
 
 #if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
@@ -1809,11 +1816,13 @@ winmm_write_sysex_byte (PmInternal * midi, midibyte_t byte)
         {
             m->buffers[0] = big;
             pm_free(m->hdr);
+            m->hdr = nullptr;
         }
         else if (m->buffers[1] == m->hdr)
         {
             m->buffers[1] = big;
             pm_free(m->hdr);
+            m->hdr = nullptr;
         }
         m->hdr = big;
     }

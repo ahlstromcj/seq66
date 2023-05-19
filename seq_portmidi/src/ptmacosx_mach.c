@@ -63,24 +63,29 @@ static int pt_callback_proc_id = 0;
 
 static void *Pt_CallbackProc(void *p)
 {
-    pt_callback_parameters *parameters = (pt_callback_parameters *) p;
+    pt_callback_parameters * parameters = (pt_callback_parameters *) p;
     int mytime = 1;
     kern_return_t error;
     thread_extended_policy_data_t extendedPolicy;
     thread_precedence_policy_data_t precedencePolicy;
     extendedPolicy.timeshare = 0;
-    error = thread_policy_set(mach_thread_self(), THREAD_EXTENDED_POLICY,
-                              (thread_policy_t)&extendedPolicy,
-                              THREAD_EXTENDED_POLICY_COUNT);
+    error = thread_policy_set
+    (
+        mach_thread_self(), THREAD_EXTENDED_POLICY,
+        (thread_policy_t) &extendedPolicy,
+        THREAD_EXTENDED_POLICY_COUNT
+    );
     if (error != KERN_SUCCESS)
     {
         mach_error("Couldn't set thread timeshare policy", error);
     }
-
     precedencePolicy.importance = THREAD_IMPORTANCE;
-    error = thread_policy_set(mach_thread_self(), THREAD_PRECEDENCE_POLICY,
-                              (thread_policy_t)&precedencePolicy,
-                              THREAD_PRECEDENCE_POLICY_COUNT);
+    error = thread_policy_set
+    (
+        mach_thread_self(), THREAD_PRECEDENCE_POLICY,
+        (thread_policy_t)&precedencePolicy,
+        THREAD_PRECEDENCE_POLICY_COUNT
+    );
     if (error != KERN_SUCCESS)
     {
         mach_error("Couldn't set thread precedence policy", error);

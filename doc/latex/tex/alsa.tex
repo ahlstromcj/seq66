@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-06-16
-% \update      2023-03-03
+% \update      2023-05-18
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -36,10 +36,17 @@
      . . .
    \end{verbatim}
 
+   \index{linux!system MIDI Thru}
+   \index{MIDI Thru}
+   One minor issue with the system MIDI Thru port is that, if it and another
+   input port (e.g. VMPK) are both enabled, then each note emitted by VMPK is
+   doubled. Be aware.
+
    \begin{quote}
-   "ALSA always creates 1 MIDI through port. Since I work with Windows music
-   applications via Wine, and because MIDI through ports are everything-proof,
-   how can I increase the amount of MIDI through ports created by ALSA?"
+      "ALSA always creates 1 MIDI through port. Since I work with Windows music
+      applications via Wine, and because MIDI through ports are
+      everything-proof, how can I increase the amount of MIDI through ports
+      created by ALSA?"
    \end{quote}
 
    To add more Thru ports, first use \texttt{modinfo} to see information about
@@ -56,7 +63,8 @@
       parm:        duplex:create DUPLEX ports (bool)
    \end{verbatim}
 
-   Edit this file (create it if necessary) to add a line to change the number
+   Edit the following file (create it if necessary)
+   to add a line to change the number
    of Thru ports.  We use the '\#' prompt to indicate root access or usage of
    \texttt{sudo}.
    Save it.  No need to reboot, just remove and reinsert the module with the

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2023-04-26
+% \update      2023-05-18
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -775,6 +775,12 @@
    Note that the "system:announce" buss is present only for ALSA, not for JACK.
    This will change the port numbering.
    Again, see the 'rc' file itself for more information.
+
+   \index{linux!system MIDI Thru}
+   \index{MIDI Thru}
+   One minor issue with the system MIDI Thru port is that, if it and another
+   input port (e.g. VMPK) are both enabled, then each note emitted by VMPK is
+   doubled. Be aware.
 
 \subsubsection{'rc' File / Manual (Virtual) Ports}
 \label{subsubsec:configuration_rc_manual_ports}

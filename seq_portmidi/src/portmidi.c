@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-05-13
+ * \updates     2023-05-19
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:
@@ -552,6 +552,7 @@ pm_add_device
         {
             memcpy(new_descriptors, pm_descriptors, sdesc * pm_descriptor_max);
             free(pm_descriptors);
+            pm_descriptors = nullptr;
         }
         pm_descriptor_max += 32;
         pm_descriptors = new_descriptors;
