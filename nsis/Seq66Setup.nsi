@@ -3,7 +3,7 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2023-05-19
+; Updated:      2023-05-20
 ; Version:      0.99.5
 ;
 ; Usage of this Windows build script:
@@ -115,12 +115,12 @@ SilentInstall normal
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION} NSIS-based Installer"
-OutFile "${EXE_DIRECTORY}\seq66_setup_${VER_NUMBER}.${VER_REVISION}.exe"
+OutFile "${EXE_DIRECTORY}\seq66_setup_x${WINBITS}-${VER_NUMBER}.${VER_REVISION}.exe"
 RequestExecutionLevel admin
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
-InstallDir "$PROGRAMFILES\${PRODUCT_NAME}"
+InstallDir "$PROGRAMFILES${WINBITS}\${PRODUCT_NAME}"
 
 ;---------------------------------------------------------------------------
 ; The actual installer sections
