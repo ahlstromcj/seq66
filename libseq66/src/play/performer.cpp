@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-05-19
+ * \updates       2023-05-20
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -479,22 +479,25 @@ performer::append_error_message (const std::string & msg) const
     if (! msg.empty())
     {
         static std::vector<std::string> s_old_msgs;
-        seq66::error_message("Performer", msg);
         if (! m_error_messages.empty())
         {
             const auto finding = std::find
             (
                 s_old_msgs.cbegin(), s_old_msgs.cend(), msg
             );
-            if (finding != s_old_msgs.cend())
+            if (finding == s_old_msgs.cend())
             {
                 m_error_messages += "\n";
                 m_error_messages += msg;
                 s_old_msgs.push_back(msg);
+                seq66::error_message("Performer", msg);
             }
         }
         else
+        {
             m_error_messages = msg;
+            seq66::error_message("Performer", msg);
+        }
     }
 }
 
@@ -951,7 +954,7 @@ performer::true_input_bus (bussbyte nominalbuss) const
             (void) snprintf
             (
                 temp, sizeof temp,
-                "Unavailable input buss %u; check ports/maps.",
+                "Unavailable input buss %u; check or remake ports/maps.",
                 unsigned(nominalbuss)
             );
             append_error_message(temp);
@@ -1122,7 +1125,7 @@ performer::true_output_bus (bussbyte nominalbuss) const
             (void) snprintf
             (
                 temp, sizeof temp,
-                "Unavailable output buss %u; check ports/maps.",
+                "Unavailable output buss %u; check or remake ports/maps.",
                 unsigned(nominalbuss)
             );
             append_error_message(temp);

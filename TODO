@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-05-19
+2019-04-13 to 2023-05-20
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
@@ -22,6 +22,8 @@ UI:
         -   Config Options: (new)
             -   Log-file. Add this CLI option to Preferences / Session.
         -   Plan for a "SeqSpec" tab?  Worth it?
+        -   Add r or R key to seqroll to toggle recording instead of using
+            the button.
 
 Mutes:
 

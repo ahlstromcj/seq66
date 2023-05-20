@@ -1,4 +1,4 @@
-readme.txt for Seq66 0.99.5 and above
+readme.text for Seq66 0.99.5 and above
 Chris Ahlstrom
 2015-09-10 to 2023-05-20
 
@@ -71,8 +71,10 @@ Windows support:
     "mutes" (toggles of patterns of sequences), "drums" (note mappings) and
     "playlist" files.  See the READMEs for more information.
 
-    See the file C:\Program Files(x86)\Seq66\data for README.windows,
+    See the file C:\Program Files(x86)\Seq66\data for readme.windows,
     which explains some things to watch for with Windows.
+    There should also be an executable installer available with the GitHub
+    release.
 
 See the INSTALL file for build-from-source instructions or using a
 conventional source tarball.  This file is part of:

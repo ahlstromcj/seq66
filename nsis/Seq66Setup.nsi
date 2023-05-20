@@ -113,7 +113,7 @@ Unicode True
 
 SilentInstall normal
 
-Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
+Name "${PRODUCT_NAME} ${PRODUCT_VERSION} ${WINBITS}-bit"
 BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION} NSIS-based Installer"
 OutFile "${EXE_DIRECTORY}\seq66_setup_x${WINBITS}-${VER_NUMBER}.${VER_REVISION}.exe"
 RequestExecutionLevel admin

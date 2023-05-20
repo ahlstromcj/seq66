@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-05-17
+ * \updates       2023-05-20
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -768,8 +768,9 @@ smanager::internal_error_check (std::string & errmsg) const
     if (result)
     {
         pmerrmsg +=
-            "Check MIDI Clock & MIDI Input tabs to "
-            "see if devices are unavailable."
+            "Check MIDI Clock & MIDI Input tabs for "
+            "unavailable/missing ports. Try the 'Make Maps' "
+            "button and restart Seq66."
             ;
         append_error_message(pmerrmsg);
         errmsg = pmerrmsg;

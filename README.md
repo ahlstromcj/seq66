@@ -1,4 +1,4 @@
-# README for Seq66 0.99.5 2023-05-17
+# README for Seq66 0.99.5 2023-05-20
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks and triggers, and playlists for song management; a scale and
@@ -17,6 +17,8 @@ Support sites (still in progress):
 
     *   https://ahlstromcj.github.io/
     *   https://github.com/ahlstromcj/ahlstromcj.github.io/wiki
+
+The release now includes an installer for the 64-bit Windows version of Seq66.
 
 ![Alt text](doc/latex/images/main-window/main-windows.png?raw=true "Seq66")
 

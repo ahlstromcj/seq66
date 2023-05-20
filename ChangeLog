@@ -1,5 +1,227 @@
+2023-05-20  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/license.text, data/readme.text, data/readme.windows,
+	nsis/README, nsis/Seq66Setup.nsi: Got 64-bit build/installer
+	working.
+
+2023-05-19  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* VERSION, configure.ac, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat: Issue #110 is
+	tentatively done, portfix branch.
+	* TODO, doc/latex/tex/alsa.tex, doc/latex/tex/configuration.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_portmidi/src/pmlinux.c, seq_portmidi/src/pmwin.c,
+	seq_portmidi/src/pmwinmm.c, seq_portmidi/src/portmidi.c,
+	seq_portmidi/src/ptmacosx_cf.c, seq_portmidi/src/ptmacosx_mach.c: 
+	Eliminated calls to update_midi_buttons when just recording events,
+	and nullified portmidi pointers after free().
+
+2023-05-18  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES, doc/latex/tex/menu.tex,
+	libseq66/include/play/performer.hpp, libseq66/src/midi/businfo.cpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_portmidi/src/pmwinmm.c,
+	seq_qt5/include/qclocklayout.hpp,
+	seq_qt5/include/qinputcheckbox.hpp,
+	seq_qt5/include/qportwidget.hpp, seq_qt5/src/qclocklayout.cpp,
+	seq_qt5/src/qinputcheckbox.cpp: USB MIDI control/display works in
+	Windows, issue with recording in Qt debugger.
+
+2023-05-17  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, data/readme.text, data/readme.windows,
+	doc/latex/tex/first_start.tex, libseq66/include/play/performer.hpp,
+	libseq66/src/play/clockslist.cpp, libseq66/src/play/inputslist.cpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsmainwnd.cpp: Improved
+	performer error reporting, and added ghosting of ports in dropdowns
+	when they are no longer present.
+	* TODO, data/readme.windows, libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/midi/businfo.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/src/qclocklayout.cpp,
+	seq_qt5/src/qinputcheckbox.cpp: Finally got port handling almost
+	airtight and playing tunes on Windows re issue #110.
+
+2023-05-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, TODO, libseq66/include/midi/businfo.hpp,
+	libseq66/include/midi/mastermidibase.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/portslist.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/midi/businfo.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/portslist.cpp,
+	seq_qt5/src/qclocklayout.cpp, seq_qt5/src/qinputcheckbox.cpp,
+	seq_rtmidi/include/midi_info.hpp: Big fix to synch the masterbus
+	ports and port-maps when saving the 'rc' file.
+
+2023-05-15  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/midi/midibase.cpp, libseq66/src/play/performer.cpp,
+	seq_portmidi/src/pmlinuxalsa.c, seq_portmidi/src/pmutil.c,
+	seq_portmidi/src/pmwinmm.c, seq_portmidi/src/portmidi.c: More fixes
+	for portmidi and port-mapping, still fails with Qsynth, Portmidi,
+	with mapping off.
+
+2023-05-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/midi/businfo.hpp,
+	libseq66/include/midi/mastermidibase.hpp,
+	libseq66/include/midi/midibase.hpp,
+	libseq66/include/play/performer.hpp, libseq66/src/midi/businfo.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/performer.cpp, seq_portmidi/src/pmwinmm.c,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/src/qclocklayout.cpp, seq_qt5/src/qinputcheckbox.cpp,
+	seq_qt5/src/qseditoptions.cpp: Added code to display
+	present-but-unavailable ports.
+
+2023-05-13  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/util/basic_macros.h,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/cfg/rcsettings.cpp,
+	seq_portmidi/include/midibus_pm.hpp, seq_portmidi/seq_portmidi.pro,
+	seq_portmidi/src/mastermidibus.cpp, seq_portmidi/src/midibus.cpp,
+	seq_portmidi/src/pmlinuxalsa.c, seq_portmidi/src/pmwinmm.c,
+	seq_portmidi/src/portmidi.c: Enhancement and fixes to borken
+	portmidi code re issue #110.
+
+2023-05-11  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, configure.ac, include/config.h.in,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/sessions/smanager.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/filefunctions.cpp: Working out config-file issues
+	with normal and NSM usage.
+
+2023-05-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, contrib/git/git.text,
+	doc/latex/tex/sessions.tex, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/util/filefunctions.hpp,
+	libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/filefunctions.cpp, man/seq66.1, man/seq66cli.1,
+	man/sequencer66.1, nsis/build_debug_code.bat,
+	nsis/build_release_package.bat: Some successful tinkering for
+	pathnames re issue #110.
+
+2023-05-09  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, data/license.text, data/readme.text,
+	libseq66/include/seq66_features.hpp,
+	libseq66/include/util/filefunctions.hpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/seq66_features.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/filefunctions.cpp,
+	libsessions/src/nsm/nsmclient.cpp, nsis/build_release_package.bat: 
+	Refactoring config/session directories for consistency, expect
+	breakage for now.
+
+2023-05-08  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, data/linux/qseq66.rc,
+	libseq66/include/os/daemonize.hpp, libseq66/src/os/daemonize.cpp,
+	libseq66/src/sessions/smanager.cpp, nsis/README,
+	nsis/Seq66Constants.nsh, nsis/Seq66Setup.nsi,
+	nsis/build_debug_code.bat, nsis/build_release_package.bat,
+	nsis/x64.nsh, seq_qt5/forms/qseqeventframe.ui,
+	seq_rtmidi/src/midi_alsa_info.cpp: Work on issue #110 in progress.
+
+2023-05-07  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, contrib/git/git.text,
+	doc/latex/tex/configuration.tex,
+	libseq66/include/midi/mastermidibase.hpp,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	seq_rtmidi/src/midi_alsa_info.cpp, seq_rtmidi/src/midibus.cpp: Fixed
+	subtle bugs creating midi ports.
+
+2023-05-06  ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, README.md, TODO, doc/latex/tex/port_mapping.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/play/performer.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/src/qseditoptions.cpp: 
+	Enabled default port mapping, testing needed.
+
+2023-05-05  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/src/midi/editable_event.cpp,
+	seq_qt5/include/qseqeventframe.hpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseventslots.cpp, seq_qt5/src/qsmainwnd.cpp: More
+	progress on inserting meta text events.
+
+2023-05-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, doc/latex/tex/event_editor.tex,
+	doc/latex/tex/patterns_panel.tex, libseq66/include/cfg/scales.hpp,
+	libseq66/include/midi/editable_event.hpp,
+	libseq66/include/midi/event.hpp, libseq66/src/cfg/scales.cpp,
+	libseq66/src/midi/editable_event.cpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/midifile.cpp, seq_qt5/forms/qseqeventframe.ui,
+	seq_qt5/include/qseqeventframe.hpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qslivegrid.cpp: Now able to insert Meta Text events in
+	event editor.
+
+2023-05-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, contrib/git/git.text, doc/latex/tex/event_editor.tex,
+	doc/latex/tex/midi_formats.tex, doc/latex/tex/sessions.tex,
+	libseq66/include/cfg/scales.hpp,
+	libseq66/include/midi/editable_event.hpp,
+	libseq66/src/cfg/scales.cpp, libseq66/src/midi/editable_event.cpp,
+	libseq66/src/midi/event.cpp, seq_qt5/include/qseqeventframe.hpp,
+	seq_qt5/include/qseventslots.hpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qsessionframe.cpp, seq_qt5/src/qseventslots.cpp: Event
+	editing progress, added key-signature conversion functions.
+
+2023-05-02  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/meta_events.tex, doc/latex/tex/midi_formats.tex,
+	libseq66/include/midi/editable_event.hpp,
+	libseq66/include/midi/event.hpp,
+	libseq66/src/midi/editable_event.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qseqeventframe.ui,
+	seq_qt5/include/qseqeventframe.hpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseventslots.cpp, seq_qt5/src/qt5_helpers.cpp: Now can
+	populate event combo based on event category.
+
+2023-05-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure, include/config.h.in,
+	libseq66/include/midi/editable_event.hpp,
+	libseq66/src/midi/editable_event.cpp,
+	seq_qt5/forms/qseqeventframe.ui, seq_qt5/forms/qsessionframe.ui,
+	seq_qt5/include/qseqeventframe.hpp,
+	seq_qt5/include/qsessionframe.hpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qseqeventframe.cpp, seq_qt5/src/qsessionframe.cpp,
+	seq_qt5/src/qseventslots.cpp: Continuing work to add meta/text
+	handling to event editor.
+
 2023-04-30  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* VERSION, configure.ac, doc/latex/tex/seq66-user-manual.tex,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h: Initial version bump.
+	* ChangeLog: Forget to update 0.99.4 Changelog.
 	* README.md, RELNOTES, doc/latex/tex/sessions.tex,
 	include/config.h.in: Version 0.99.4 issues fixed for #3, #48, #108,
 	#109, and discovered issues.

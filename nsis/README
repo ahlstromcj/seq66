@@ -27,7 +27,8 @@ default to "C:\Program Files (x86)" and uses, from the Windows Registry,
 only "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node".
 
 NOTE: Currently we force the creation of a 64-bit Seq66 and a 64-bit Seq66
-installer.  The following material is for reference only.
+installer.  The following material is for reference only. Read the
+release batch file.
 
 The "x64" plug-in provides a macro, "RunningX64", which returns true if the
 installer is running on 64-bit Windows under WoW64 emulation.  It can be

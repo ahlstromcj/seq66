@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2023-05-10
+2015-09-09 to 2023-05-20
 
 Creating a GitHub Repository:
 
@@ -252,7 +252,7 @@ Release:
         and update the readmes and license files as necessary.
     -   Verify that the Windows version builds, runs, and that the
         Windows installer is created and works. Verify the configuration
-        files in C:/Users/user/AppData/Local/seq66. Update the
+        files in C:/Users/user/AppData/Local/seq66.
     -   Go to "doc/latex" and run "make" to rebuild the PDF manual.
     -   Run "git2cl > cl.txt" and use it to update the Changelog file.
     -   Commit this release build *without* the "-m" option.  Instead,

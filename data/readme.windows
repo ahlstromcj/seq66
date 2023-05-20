@@ -8,9 +8,9 @@ Windows.  We mostly use Windows 10; some features might differ in Windows 7 or
 Windows 2012+ Server.
 
 There will eventually be a portable ZIP package for qpseq66; an NSIS-based
-installer is available (replace "0.95" with the latest version number):
+installer is available (replace "0.99" with the latest version number):
 
-    https://github.com/ahlstromcj/sequencer64-packages/seq66/0.95.
+    https://github.com/ahlstromcj/sequencer64-packages/seq66/0.99.
 
 or (soon) at GitHub in the Seq66 release section.
 
