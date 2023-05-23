@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-19
+ * \updates       2023-05-23
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2522,14 +2522,15 @@ sequence::change_event_data_range
 {
     automutex locker(m_mutex);
     bool result = false;
-    bool noselection = ! any_selected_events(status, cc);
+    bool haveselection = any_selected_events(status, cc);
     for (auto & er : m_events)
     {
         bool match = false;
-        if (noselection || er.is_selected())
-            match = er.is_desired_ex(status, cc);
+        if (haveselection && ! er.is_selected())
+            continue;
 
         midipulse tick = er.timestamp();
+        match = er.is_desired_ex(status, cc);
         if (match)
         {
             if (tick > tick_f)                          /* in range?        */
@@ -2607,14 +2608,15 @@ sequence::change_event_data_relative
 {
     automutex locker(m_mutex);
     bool result = false;
-    bool noselection = ! any_selected_events(status, cc);
+    bool haveselection = any_selected_events(status, cc);
     for (auto & er : m_events)
     {
         bool match = false;
-        if (noselection || er.is_selected())
-            match = er.is_desired_ex(status, cc);
+        if (haveselection && ! er.is_selected())
+            continue;
 
         midipulse tick = er.timestamp();
+        match = er.is_desired_ex(status, cc);
         if (match)
         {
             if (tick > tick_f)                          /* in range?        */

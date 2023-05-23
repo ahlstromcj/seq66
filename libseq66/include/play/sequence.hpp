@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-04-29
+ * \updates       2023-05-22
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -48,10 +48,6 @@
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
-
-/*
- * Causes issues currently.
- */
 
 #define SEQ66_METRO_COUNT_IN_ENABLED    /* EXPERIMENTAL, seems to work      */
 
@@ -951,6 +947,11 @@ public:
     bool any_selected_notes () const
     {
         return m_events.any_selected_notes();
+    }
+
+    bool any_selected_events () const
+    {
+        return m_events.any_selected_events();
     }
 
     bool any_selected_events (midibyte status, midibyte cc) const

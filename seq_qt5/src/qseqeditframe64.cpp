@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-05-17
+ * \updates       2023-05-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1072,6 +1072,32 @@ qseqeditframe64::wheelEvent (QWheelEvent * qwep)
 }
 
 /**
+ *  https://www.informit.com/articles/article.aspx?p=1405544&seqNum=2
+ *
+ *  The edit frame is the monitor of what events go into the
+ *  various scroll areas.  A follow-on to issue #3.
+ */
+
+bool
+qseqeditframe64::eventFilter (QObject * target, QEvent * event)
+{
+    if (event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent * kev = static_cast<QKeyEvent *>(event);
+        int key = kev->key();
+        bool isarrow = key == Qt::Key_Down || key == Qt::Key_Up ||
+            key == Qt::Key_Left || key == Qt::Key_Right;
+
+        if (isarrow)
+            return false;
+    }
+//  else if (event->type() == QEvent::ShortcutOverride)
+//      return false;
+
+    return qseqframe::eventFilter(target, event);
+}
+
+/**
  *  Once the user has clicked on the qseqroll, the Space key can be used to
  *  start, stop, and restart playback.  The Period key can be used to pause
  *  and start (at the same position) playback.
@@ -1132,6 +1158,19 @@ qseqeditframe64::keyPressEvent (QKeyEvent * event)
                 scroll_by_step(qscrollmaster::dir::Left);
             else if (key == Qt::Key_L)
                 scroll_by_step(qscrollmaster::dir::Right);
+#if defined THIS_CODE_WORKS
+            else if (! track().any_selected_events())   /* ca 2023-05-22    */
+            {
+                if (key == Qt::Key_Down)
+                    scroll_by_step(qscrollmaster::dir::Down);
+                else if (key == Qt::Key_Up)
+                    scroll_by_step(qscrollmaster::dir::Up);
+                else if (key == Qt::Key_Left)
+                    scroll_by_step(qscrollmaster::dir::Left);
+                else if (key == Qt::Key_Right)
+                    scroll_by_step(qscrollmaster::dir::Right);
+            }
+#endif
             else
                 event->accept();
         }
@@ -1234,14 +1273,6 @@ qseqeditframe64::initialize_panels ()
     ui->timeScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->timeScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    QPoint pos = ui->timeScrollArea->mapToGlobal
-    (
-        ui->timeScrollArea->rect().topLeft()
-    );
-    printf("time position: (%d, %d)\n", pos.x(), pos.y());
-#endif
-
     /*
      * qseqroll.  Note the "this" parameter is not really a Qt parent
      * parameter.  It simply gives qseqroll access to the qseqeditframe64 ::
@@ -1262,6 +1293,16 @@ qseqeditframe64::initialize_panels ()
         perf(), track(), this, zoom(), m_snap, ui->dataScrollArea,
         short_version() ? 64 : 0                /* 0 means "normal height"  */
     );
+
+    /*
+     * Doesn't cause the event filter to fire!?
+     *
+    (void) install_scroll_filter(this, ui->dataScrollArea//->horizontalScrollBar());
+    (void) install_scroll_filter(this, ui->rollScrollArea);  // EXPERIMENTAL
+     *
+     *  EXPERIMENTAL: dataScrollArea is now a qscrollslave object.
+     */
+
     ui->dataScrollArea->setWidget(m_seqdata);
     ui->dataScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->dataScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -3540,6 +3581,43 @@ qseqeditframe64::rollwidget () const
 {
     return ui->rollScrollArea->widget();
 }
+
+/**
+ *  POTENTIAL SHARED CODE between qseqroll and qseqdata.
+ *
+ *  We have common access via some functions:
+ *
+ *      perf():         performer &             qbase
+ *      track():        sequence &              qseqbase
+ *      snap():         int                     qeditbase
+ */
+
+#if defined USE_DATA_PANE_KEYSTROKES
+
+/*
+ *  We need to somehow get qseqtime, qseqroll, qseqdata, and qstriggereditor
+ *  all to respond to the left/right arrows.
+ *
+ *  What are the base classes of these panes? qseqbase.
+ */
+
+void
+qseqeditframe64::move_left (midipulse snap)
+{
+    midipulse tick = perf().get_tick();
+    perf().set_tick(tick - snap, true);           /* no reset */
+    track().set_last_tick(tick - snap);
+}
+
+void
+qseqeditframe64::move_right (midipulse snap)
+{
+    midipulse tick = perf().get_tick();
+    perf().set_tick(tick + snap, true);           /* no reset */
+    track().set_last_tick(tick + snap);
+}
+
+#endif  // defined USE_DATA_PANE_KEYSTROKES
 
 }           // namespace seq66
 

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-04-26
+ * \updates       2023-05-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -98,6 +98,7 @@ class qseqeditframe64 final : public qseqframe, protected performer::callbacks
     friend class qlfoframe;
     friend class qpatternfix;
     friend class qperfroll;
+    friend class qseqdata;
     friend class qseqeditex;
     friend class qseqkeys;
     friend class qseqroll;
@@ -148,6 +149,12 @@ protected:
 
     void set_track_change ();
 
+#if defined USE_DATA_PANE_KEYSTROKES
+#endif
+
+    void move_left (midipulse snap);
+    void move_right (midipulse snap);
+
 private:        /* performer::callback overrides    */
 
     virtual bool on_automation_change (automation::slot s) override;
@@ -174,6 +181,7 @@ private:        /* qbase and qseqframe overrides    */
 
 protected:      /* QWidget overrides                */
 
+    virtual bool eventFilter (QObject * target, QEvent * event) override;
     virtual void paintEvent (QPaintEvent * ) override;
     virtual void resizeEvent (QResizeEvent *) override;
     virtual void wheelEvent (QWheelEvent *) override;

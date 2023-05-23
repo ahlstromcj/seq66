@@ -184,7 +184,7 @@ qperfeditframe64::qperfeditframe64
     ui->rollScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     /*
-     *  Add the various scrollbar points to the qscrollmaster object.
+     *  Add the various scrollbar pointers to the qscrollmaster object.
      */
 
     ui->rollScrollArea->add_v_scroll(ui->namesScrollArea->verticalScrollBar());

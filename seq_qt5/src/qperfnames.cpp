@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-22
+ * \updates       2023-05-23
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -330,19 +330,12 @@ qperfnames::keyPressEvent (QKeyEvent * event)
     }
     else
     {
-        if (event->key() == Qt::Key_Left)
-        {
-            ignored = true;
-        }
-        else if (event->key() == Qt::Key_Right)
-        {
-            ignored = true;
-        }
-        else if (event->key() == Qt::Key_Up)
-        {
-            ignored = true;
-        }
-        else if (event->key() == Qt::Key_Down)
+        int keyvalue = event->key();
+        if
+        (
+            keyvalue == Qt::Key_Left || keyvalue == Qt::Key_Right ||
+            keyvalue == Qt::Key_Up || keyvalue == Qt::Key_Down
+        )
         {
             ignored = true;
         }

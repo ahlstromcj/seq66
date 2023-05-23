@@ -6,16 +6,12 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2023-03-28`
+# \update      2023-05-23
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
 # 		This module provides an Automake makefile for the libseq_qt5 C/C++
 # 		library.
-#
-# Removed:
-#
-#     qseqeditframe.cpp
 #
 #------------------------------------------------------------------------------
 
@@ -327,6 +323,7 @@ libseq_qt5_la_SOURCES = \
  qsabout.cpp \
  qsbuildinfo.cpp \
  qscrollmaster.cpp \
+ qscrollslave.cpp \
  qseditoptions.cpp \
  qseqbase.cpp \
  qseqdata.cpp \

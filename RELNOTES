@@ -1,25 +1,9 @@
-Release Notes for Seq66 v. 0.99.5 2023-05-20
+Release Notes for Seq66 v. 0.99.6 2023-05-21
 
-This file lists __major__ changes from version 0.99.5
+This file lists __major__ changes from version 0.99.6
 
-    -   Issue #110 Windows: Fixed many errors, added installer to this release,
-        no more going to the sequencer64 repository. Can build NSIS installer
-        in Windows now.
-    -   Fixed portmidi bugs in Linux and Windows, enhanced the device naming.
-    -   Greatly enhanced the event editor tab and added more events that can
-        be view and modified.
-    -   Made port-mapping the default. At first startup the map exactly matches
-        the existing ports; can be changed in the 'rc' file or Preferences dialog.
-        Used the Edit / Preferences / MIDI Clock / Make Maps button to
-        refresh the port setup when devices are added or removed.
-    -   Eliminated "missing ctrl" message at first startup.
-    -   Fixed port ID setting in midibus, and adding output flag for
-        ALSA MIDI info.
-    -   Internal refactoring to regularize handling of the session/config
-        directory between Linux and Windows.
-    -   Shows disabled/unavailable MIDI devices as grayed in various dropdowns.
-    -   Rearranged the Seq66 man pages more sensibly.
+    -   Issue #x:
 
 Read the NEWS, README.md, and TODO files.  Never-ending!
 
-// vim: sw=4 ts=4 wm=10 et ft=markdown
+// vim: sw=4 ts=4 wm=12 et ft=markdown

@@ -148,7 +148,6 @@ private:        // overrides for painting, mouse/keyboard events, & size hints
     virtual void mouseReleaseEvent (QMouseEvent *) override;
     virtual void mouseMoveEvent (QMouseEvent *) override;
     virtual void keyPressEvent (QKeyEvent *) override;
-    virtual void keyReleaseEvent (QKeyEvent *) override;
     virtual QSize sizeHint () const override;
 
 private:

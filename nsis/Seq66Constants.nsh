@@ -3,8 +3,8 @@
 ; File:         Seq66Constants.nsh
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2023-05-20
-; Version:      0.99.5
+; Updated:      2023-05-21
+; Version:      0.99.6
 ;
 ;   Provides constants commonly used by the installer for Seq66 for
 ;   Windows.
@@ -18,10 +18,12 @@
 ; Product Registry keys.
 ;============================================================================
 
+!define COMPANY_NAME        "Seq66"
 !define PRODUCT_NAME        "Seq66"
 !define PRODUCT_DIR_REGKEY  "Software\Microsoft\Windows\CurrentVersion\App Paths\qpseq66.exe"
 !define PRODUCT_UNINST_KEY  "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY     "HKLM"
+!define EXE_NAME            "qpseq66.exe"
 
 ;============================================================================
 ; Informational settings

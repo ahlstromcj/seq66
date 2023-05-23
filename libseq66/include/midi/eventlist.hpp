@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-04-29
+ * \updates       2023-05-22
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -408,6 +408,7 @@ private:                                /* functions for friend sequence    */
     int count_selected_notes () const;
     bool any_selected_notes () const;
     int count_selected_events (midibyte status, midibyte cc) const;
+    bool any_selected_events () const;
     bool any_selected_events (midibyte status, midibyte cc) const;
     void select_all ();
     void select_by_channel (int channel);

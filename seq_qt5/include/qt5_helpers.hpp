@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-04-01
+ * \updates       2023-05-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -41,6 +41,7 @@ class QComboBox;
 class QIcon;
 class QKeyEvent;
 class QPushButton;
+class QScrollArea;
 class QTimer;
 class QWidget;
 
@@ -104,6 +105,7 @@ extern QAction * create_menu_action
     const std::string & text,
     const QIcon & micon
 );
+extern bool install_scroll_filter (QWidget * monitor, QScrollArea * target);
 extern bool show_open_midi_file_dialog (QWidget * parent, std::string & file);
 extern bool show_import_midi_file_dialog (QWidget * parent, std::string & file);
 extern bool show_import_project_dialog

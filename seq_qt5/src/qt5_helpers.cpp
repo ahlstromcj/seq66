@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-05-02
+ * \updates       2023-05-23
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -55,6 +55,8 @@
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QScrollArea>
+#include <QScrollBar>
 #include <QStandardItemModel>
 #include <QTimer>
 
@@ -402,6 +404,36 @@ create_menu_action
 #else
     QAction * result = new QAction(micon, mlabel);
 #endif
+    return result;
+}
+
+/**
+ *  To be called by the monitoring object.
+ *
+ *      QWidget * monitor = parentWidget(); // ui->dataScrollArea
+ *      m_scrollArea->viewport()->installEventFilter(monitor);
+ *      m_scrollArea->horizontalScrollBar()->installEventFilter(monitor);
+ *      if event->type() == QEvent::ShortcutOverride &&
+ *          obj == myparent->verticalScrollBar()
+ *
+ *          QKeyEvent keyEvent = static_cast<QKeyEvent>(event);
+ *          if(obj == keyEvent->key() == Qt::Key_Up)
+ *          {
+ *              m_scrollArea->verticalScrollBar()->setEnabled(false);
+ *              std::cout<<" Up "<<std::endl;
+ *          }
+ */
+
+bool
+install_scroll_filter (QWidget * monitor, QScrollArea * target)
+{
+    bool result = not_nullptr(monitor);
+    if (result)
+    {
+        target->viewport()->installEventFilter(monitor);
+        target->horizontalScrollBar()->installEventFilter(monitor);
+        target->verticalScrollBar()->installEventFilter(monitor);
+    }
     return result;
 }
 

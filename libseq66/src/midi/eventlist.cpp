@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-04-29
+ * \updates       2023-05-22
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -1644,9 +1644,31 @@ eventlist::count_selected_events (midibyte status, midibyte cc) const
 }
 
 /**
- *  Indicates that at least one matching event is selected.  Acts like
- *  eventlist::count_selected_events(), but stops after finding a selected
- *  note.
+ *  Indicates that at least one event of any kind is selected.
+ *
+ * \return
+ *      Returns true if at least one event is selected.
+ */
+
+bool
+eventlist::any_selected_events () const
+{
+    bool result = false;
+    for (auto & er : m_events)
+    {
+        if (er.is_selected())
+        {
+            result = true;
+            break;
+        }
+    }
+    return result;
+}
+
+/**
+ *  This is an overload of any_selected_events(). It indicates that at least
+ *  one matching event is selected.  Acts like eventlist ::
+ *  count_selected_events(), but stops after finding a selected note.
  *
  * \return
  *      Returns true if at least one matching event is selected.

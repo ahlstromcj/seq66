@@ -2,7 +2,7 @@
 
 #define VERSION_DATE_SHORT "2023-05-20"
 #define API_VERSION "0.99"
-#define VERSION "0.99.5"
+#define VERSION "0.99.6"
 
 
 

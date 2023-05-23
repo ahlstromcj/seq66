@@ -61,7 +61,7 @@
         <enum>QLayout::SetMinimumSize</enum>
        </property>
        <item>
-        <widget class="QScrollArea" name="keysScrollArea">
+        <widget class="qscrollslave" name="keysScrollArea">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
@@ -300,7 +300,7 @@ the note-map, if any, to the note events in this pattern.</string>
       </layout>
      </item>
      <item>
-      <widget class="QScrollArea" name="dataScrollArea">
+      <widget class="qscrollslave" name="dataScrollArea">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -1319,7 +1319,7 @@ the '0' key in the piano roll.</string>
       </layout>
      </item>
      <item>
-      <widget class="QScrollArea" name="timeScrollArea">
+      <widget class="qscrollslave" name="timeScrollArea">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -1833,7 +1833,7 @@ the '0' key in the piano roll.</string>
       </widget>
      </item>
      <item>
-      <widget class="QScrollArea" name="eventScrollArea">
+      <widget class="qscrollslave" name="eventScrollArea">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -1905,6 +1905,12 @@ the '0' key in the piano roll.</string>
    <class>qscrollmaster</class>
    <extends>QScrollArea</extends>
    <header>qscrollmaster.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qscrollslave</class>
+   <extends>QScrollArea</extends>
+   <header>qscrollslave.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

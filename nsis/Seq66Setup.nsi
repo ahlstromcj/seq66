@@ -3,8 +3,8 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2023-05-20
-; Version:      0.99.5
+; Updated:      2023-05-21
+; Version:      0.99.6
 ;
 ; Usage of this Windows build script:
 ;
@@ -229,26 +229,36 @@ SectionEnd
 ;--------------------------------------------------------------------------
 ;
 ;   In this section, uninstallation Registry keys are added.
-
+;
 ;   We are not sure if they are needed.
+;
+; https://nsis.sourceforge.io/
+;   A_simple_installer_with_start_menu_shortcut_and_uninstaller
 ;
 ;--------------------------------------------------------------------------
 
 Section -Post
 
     SetRegView ${WINBITS}
+
+; EXE_NAME is just a constant that is defined in the script, you can just use
+;
+; CreateShortcut "$smprograms\my app\my shortcut.lnk"
+;     "c:\path\to\application.exe" "" "c:\path\to\application.exe" 0
+;
+; It will create a shortcut to the application executable.
+
+    CreateDirectory '$SMPROGRAMS\${COMPANY_NAME}\${PRODUCT_NAME}'
+    CreateShortCut '$SMPROGRAMS\${COMPANY_NAME}\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk' '$INSTDIR\${EXE_NAME}' "" '$INSTDIR\${EXE_NAME}' 0
+    CreateShortCut '$SMPROGRAMS\${COMPANY_NAME}\${PRODUCT_NAME}\Uninstall ${PRODUCT_NAME}.lnk' '$INSTDIR\uninst.exe' "" '$INSTDIR\uninst.exe' 0
+
     WriteUninstaller "$INSTDIR\uninst.exe"
     WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\qpseq66.exe"
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
-
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
-
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\qpseq66.exe"
-
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
-
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
-
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
 
 SectionEnd
@@ -258,10 +268,10 @@ SectionEnd
 ;--------------------------------------------------------------------------
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-!insertmacro MUI_DESCRIPTION_TEXT ${SEC_APPLIC}  "Application 32-bit executable."
+!insertmacro MUI_DESCRIPTION_TEXT ${SEC_APPLIC}  "Application ${WINBITS}-bit executable."
 !insertmacro MUI_DESCRIPTION_TEXT ${SEC_QT5}     "Qt 5 DLLs."
-!insertmacro MUI_DESCRIPTION_TEXT ${SEC_MINGW}   "MingW 32-bit DLLs."
-!insertmacro MUI_DESCRIPTION_TEXT ${SEC_QTDLLS}  "Qt 5 32-bit DLLs."
+!insertmacro MUI_DESCRIPTION_TEXT ${SEC_MINGW}   "MingW DLLs."
+!insertmacro MUI_DESCRIPTION_TEXT ${SEC_QTDLLS}  "Qt 5 DLLs."
 !insertmacro MUI_DESCRIPTION_TEXT ${SEC_QTICON}  "Qt 5 icon-engine DLLs."
 !insertmacro MUI_DESCRIPTION_TEXT ${SEC_QTIMG}   "Qt 5 image-format DLLs."
 !insertmacro MUI_DESCRIPTION_TEXT ${SEC_QTPLAT}  "Qt 5 platform DLLs."

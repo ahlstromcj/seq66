@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-28
+ * \updates       2023-05-22
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -60,6 +60,7 @@ static const int qc_eventarea_y     = 16;
 static const int qc_eventevent_y    = 10;
 static const int qc_eventevent_x    =  5;
 static const int s_x_tick_fix       =  2;
+static std::string s_edit_msg{"Note events cannot be edited in the data pane."};
 
 /**
  *  Principal constructor.
@@ -87,6 +88,7 @@ qstriggereditor::qstriggereditor
     setAttribute(Qt::WA_OpaquePaintEvent);          /* no erase on repaint  */
     setFocusPolicy(Qt::StrongFocus);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    setToolTip(qt(s_edit_msg));
     m_timer = qt_timer(this, "qstriggereditor", 2, SLOT(conditional_update()));
 }
 
@@ -714,6 +716,10 @@ qstriggereditor::set_data_type (midibyte status, midibyte control)
         is_tempo(false);
         m_status = event::normalized_status(status);
         m_cc = control;
+        if (event::is_note_msg(status))
+            setToolTip(qt(s_edit_msg));
+        else
+            setToolTip("");
     }
     update();
 }

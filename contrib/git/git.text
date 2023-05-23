@@ -259,12 +259,10 @@ Release:
         read the RELNOTES file into the commit message. See the
         commit-message rules below.
     -   Push the release.
-    -   Get the HEAD checksum and use it to create the tag.
-        Leave off the -m option and instead load RELNOTES into
-        the commit message.
+    -   Get the HEAD checksum and use it to create the tag with a simple
+        message about the version number.
     -   On GitHub, create a release with a name of the form
-        "Fancy Name 0.99.x".  Optionally, add a Windows installer
-        to the release packages.
+        "Fancy Name 0.99.x".  Add the Windows installer to the release packages.
 
 	Rules for a Git commit message:
 

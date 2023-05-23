@@ -21,16 +21,12 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2023-03-28`
+# \update      2023-05-23
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
 # 		This module provides an Automake makefile for the libseq_qt5 C/C++
 # 		library.
-#
-# Removed:
-#
-#     qseqeditframe.cpp
 #
 #------------------------------------------------------------------------------
 
@@ -187,13 +183,13 @@ am_libseq_qt5_la_OBJECTS = gui_palette_qt5.lo palettefile.lo qbase.lo \
 	qliveframeex.lo qloopbutton.lo qmutemaster.lo qpatternfix.lo \
 	qperfbase.lo qperfeditex.lo qperfeditframe64.lo qperfnames.lo \
 	qperfroll.lo qperftime.lo qplaylistframe.lo qportwidget.lo \
-	qsabout.lo qsbuildinfo.lo qscrollmaster.lo qseditoptions.lo \
-	qseqbase.lo qseqdata.lo qseqeditex.lo qseqeditframe64.lo \
-	qseqeventframe.lo qseqframe.lo qseqkeys.lo qseqroll.lo \
-	qsessionframe.lo qseqtime.lo qsetmaster.lo qseventslots.lo \
-	qslivebase.lo qslivegrid.lo qslotbutton.lo qsmaintime.lo \
-	qsmainwnd.lo qstriggereditor.lo qt5_helpers.lo qt5nsmanager.lo \
-	$(am__objects_2)
+	qsabout.lo qsbuildinfo.lo qscrollmaster.lo qscrollslave.lo \
+	qseditoptions.lo qseqbase.lo qseqdata.lo qseqeditex.lo \
+	qseqeditframe64.lo qseqeventframe.lo qseqframe.lo qseqkeys.lo \
+	qseqroll.lo qsessionframe.lo qseqtime.lo qsetmaster.lo \
+	qseventslots.lo qslivebase.lo qslivegrid.lo qslotbutton.lo \
+	qsmaintime.lo qsmainwnd.lo qstriggereditor.lo qt5_helpers.lo \
+	qt5nsmanager.lo $(am__objects_2)
 libseq_qt5_la_OBJECTS = $(am_libseq_qt5_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -262,17 +258,17 @@ am__depfiles_remade = ../include/$(DEPDIR)/qclocklayout.moc.Plo \
 	./$(DEPDIR)/qperftime.Plo ./$(DEPDIR)/qplaylistframe.Plo \
 	./$(DEPDIR)/qportwidget.Plo ./$(DEPDIR)/qsabout.Plo \
 	./$(DEPDIR)/qsbuildinfo.Plo ./$(DEPDIR)/qscrollmaster.Plo \
-	./$(DEPDIR)/qseditoptions.Plo ./$(DEPDIR)/qseqbase.Plo \
-	./$(DEPDIR)/qseqdata.Plo ./$(DEPDIR)/qseqeditex.Plo \
-	./$(DEPDIR)/qseqeditframe64.Plo ./$(DEPDIR)/qseqeventframe.Plo \
-	./$(DEPDIR)/qseqframe.Plo ./$(DEPDIR)/qseqkeys.Plo \
-	./$(DEPDIR)/qseqroll.Plo ./$(DEPDIR)/qseqtime.Plo \
-	./$(DEPDIR)/qsessionframe.Plo ./$(DEPDIR)/qsetmaster.Plo \
-	./$(DEPDIR)/qseventslots.Plo ./$(DEPDIR)/qslivebase.Plo \
-	./$(DEPDIR)/qslivegrid.Plo ./$(DEPDIR)/qslotbutton.Plo \
-	./$(DEPDIR)/qsmaintime.Plo ./$(DEPDIR)/qsmainwnd.Plo \
-	./$(DEPDIR)/qstriggereditor.Plo ./$(DEPDIR)/qt5_helpers.Plo \
-	./$(DEPDIR)/qt5nsmanager.Plo
+	./$(DEPDIR)/qscrollslave.Plo ./$(DEPDIR)/qseditoptions.Plo \
+	./$(DEPDIR)/qseqbase.Plo ./$(DEPDIR)/qseqdata.Plo \
+	./$(DEPDIR)/qseqeditex.Plo ./$(DEPDIR)/qseqeditframe64.Plo \
+	./$(DEPDIR)/qseqeventframe.Plo ./$(DEPDIR)/qseqframe.Plo \
+	./$(DEPDIR)/qseqkeys.Plo ./$(DEPDIR)/qseqroll.Plo \
+	./$(DEPDIR)/qseqtime.Plo ./$(DEPDIR)/qsessionframe.Plo \
+	./$(DEPDIR)/qsetmaster.Plo ./$(DEPDIR)/qseventslots.Plo \
+	./$(DEPDIR)/qslivebase.Plo ./$(DEPDIR)/qslivegrid.Plo \
+	./$(DEPDIR)/qslotbutton.Plo ./$(DEPDIR)/qsmaintime.Plo \
+	./$(DEPDIR)/qsmainwnd.Plo ./$(DEPDIR)/qstriggereditor.Plo \
+	./$(DEPDIR)/qt5_helpers.Plo ./$(DEPDIR)/qt5nsmanager.Plo
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -749,6 +745,7 @@ libseq_qt5_la_SOURCES = \
  qsabout.cpp \
  qsbuildinfo.cpp \
  qscrollmaster.cpp \
+ qscrollslave.cpp \
  qseditoptions.cpp \
  qseqbase.cpp \
  qseqdata.cpp \
@@ -982,6 +979,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qsabout.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qsbuildinfo.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qscrollmaster.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qscrollslave.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qseditoptions.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qseqbase.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qseqdata.Plo@am__quote@ # am--include-marker
@@ -1232,6 +1230,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/qsabout.Plo
 	-rm -f ./$(DEPDIR)/qsbuildinfo.Plo
 	-rm -f ./$(DEPDIR)/qscrollmaster.Plo
+	-rm -f ./$(DEPDIR)/qscrollslave.Plo
 	-rm -f ./$(DEPDIR)/qseditoptions.Plo
 	-rm -f ./$(DEPDIR)/qseqbase.Plo
 	-rm -f ./$(DEPDIR)/qseqdata.Plo
@@ -1353,6 +1352,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/qsabout.Plo
 	-rm -f ./$(DEPDIR)/qsbuildinfo.Plo
 	-rm -f ./$(DEPDIR)/qscrollmaster.Plo
+	-rm -f ./$(DEPDIR)/qscrollslave.Plo
 	-rm -f ./$(DEPDIR)/qseditoptions.Plo
 	-rm -f ./$(DEPDIR)/qseqbase.Plo
 	-rm -f ./$(DEPDIR)/qseqdata.Plo

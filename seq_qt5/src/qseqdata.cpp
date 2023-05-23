@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-22
+ * \updates       2023-05-22
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -94,9 +94,9 @@ qseqdata::qseqdata
 (
     performer & p,
     sequence & s,
-    qseqeditframe64 * frame,
+    qseqeditframe64 * frame,                    /* frame64() accessor       */
     int zoom, int snap,
-    QWidget * parent,
+    QWidget * parent,                           /* ui->dataScrollArea       */
     int height
 ) :
     QWidget                 (parent),
@@ -154,6 +154,18 @@ qseqdata::on_ui_change (seq::number seqno)
     return true;
 }
 
+/**
+ *  ca 2023-05-22 EXPERIMENTAL. Doesn't work for the arrow keys.
+ *  The data pane still scrolls on its own. Keys event are not detected
+ *  here!
+ */
+
+void
+qseqdata::keyPressEvent (QKeyEvent * event)
+{
+    frame64()->keyPressEvent(event);    // event->ignore();
+}
+
 QSize
 qseqdata::sizeHint () const
 {
@@ -174,6 +186,8 @@ qseqdata::sizeHint () const
  *  occur. For issue #3, we have enabled the scroll wheel in the piano roll
  *  [see qscrollmaster::wheelEvent()], but we disable it here. So this is a
  *  partial solution to the issue.
+ *
+ *  SEQ66_ENABLE_SCROLL_WHEEL_ALL currently undefined.
  */
 
 void

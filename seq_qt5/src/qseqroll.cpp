@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-26
+ * \updates       2023-05-20
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1344,6 +1344,9 @@ qseqroll::zoom_key_press (bool shifted, int key)
  *  Debian/Ubuntu Linux).
  *
  *  We could simplify this a bit by creating a keystroke object.
+ *
+ *  At first, qseqeditframe gets the keystrokes.  But giving focus to the
+ *  qseqroll causes both to get the keystrokes.
  */
 
 void
@@ -1403,7 +1406,6 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                         break;
 
                     case Qt::Key_Home:
-
 
                         done = true;
                         track().set_last_tick(0);   /* sets it to beginning */
@@ -1509,6 +1511,12 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                         done = true;
                     break;
 
+                case Qt::Key_O:
+
+                    if (track().set_recording(false, true))     /* toggle   */
+                        done = true;
+                    break;
+
                 case Qt::Key_P:
 
                     done = true;
@@ -1557,12 +1565,6 @@ qseqroll::keyPressEvent (QKeyEvent * event)
         set_dirty();
     else
         QWidget::keyPressEvent(event);
-}
-
-void
-qseqroll::keyReleaseEvent (QKeyEvent * event)
-{
-    QWidget::keyReleaseEvent(event);
 }
 
 bool

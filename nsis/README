@@ -1,11 +1,12 @@
 NSIS Notes
 Chris Ahlstrom
-2021-12-11 to 2023-05-20
+2021-12-11 to 2023-05-21
 
 This directory contains files that allow Linux and Windows users to create
-an NSIS installer for Seq66.
+an NSIS installer for Seq66. The latest version adds application
+shortcuts.
 
-The Windows version of Seq66 is a 32-application, and the Linux
+The Windows version of Seq66 is a 64-application, and the Linux
 "makensis" program creates a 32-bit installer. One can also install
 the latest NSIS on Windows, add the path to "makensis.exe" to the PATH
 variable, and the build_release_package.bat script will detect and

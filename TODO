@@ -1,8 +1,25 @@
-TO DO for Seq66 0.99.5 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-05-20
+2019-04-13 to 2023-05-23
 
 Some of these issues will be pushed off for the distant Seq66v2.
+
+Current:
+
+    - No shortcut in Start menu after setup.
+	- Cannot click on 'MIDI Clock' tab in preferences (alt-C is ok).
+    - User manual and tutorials entry menus seems to open something but close
+      quick (I do have a default pdf reader).
+	- Tempo is not saved with new song (but works with for example
+      Kraftwerk-Europe_Endless-reconstructed.midi provided in data folder).
+
+	Patterns editor:
+
+	- Often Ctrl-Z is not working event though click undo button works.
+	- No undo on velocity changes. (Works if seqroll clicked first, need
+      to add keystrokes to forward to seqroll.)
+    - When a background sequence is chosen, it is s not possible to display
+      another one or to turn it off.
 
 UI:
 
@@ -22,8 +39,9 @@ UI:
         -   Config Options: (new)
             -   Log-file. Add this CLI option to Preferences / Session.
         -   Plan for a "SeqSpec" tab?  Worth it?
-        -   Add r or R key to seqroll to toggle recording instead of using
-            the button.
+        -   Add a key to seqroll to toggle recording instead of using
+            the button. "R" is already in use for note randomization.
+            Make sure all the keys are documented in the user manual.
 
 Mutes:
 
