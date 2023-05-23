@@ -1076,11 +1076,15 @@ qseqeditframe64::wheelEvent (QWheelEvent * qwep)
  *
  *  The edit frame is the monitor of what events go into the
  *  various scroll areas.  A follow-on to issue #3.
+ *
+ *  This does not work, so see the new qscrollslave class, a replacement
+ *  for QScrollArea that disables the arrow and paging keys.
  */
 
 bool
 qseqeditframe64::eventFilter (QObject * target, QEvent * event)
 {
+#if 0
     if (event->type() == QEvent::KeyPress)
     {
         QKeyEvent * kev = static_cast<QKeyEvent *>(event);
@@ -1091,9 +1095,7 @@ qseqeditframe64::eventFilter (QObject * target, QEvent * event)
         if (isarrow)
             return false;
     }
-//  else if (event->type() == QEvent::ShortcutOverride)
-//      return false;
-
+#endif
     return qseqframe::eventFilter(target, event);
 }
 
@@ -1158,19 +1160,6 @@ qseqeditframe64::keyPressEvent (QKeyEvent * event)
                 scroll_by_step(qscrollmaster::dir::Left);
             else if (key == Qt::Key_L)
                 scroll_by_step(qscrollmaster::dir::Right);
-#if defined THIS_CODE_WORKS
-            else if (! track().any_selected_events())   /* ca 2023-05-22    */
-            {
-                if (key == Qt::Key_Down)
-                    scroll_by_step(qscrollmaster::dir::Down);
-                else if (key == Qt::Key_Up)
-                    scroll_by_step(qscrollmaster::dir::Up);
-                else if (key == Qt::Key_Left)
-                    scroll_by_step(qscrollmaster::dir::Left);
-                else if (key == Qt::Key_Right)
-                    scroll_by_step(qscrollmaster::dir::Right);
-            }
-#endif
             else
                 event->accept();
         }

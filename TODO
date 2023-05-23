@@ -6,12 +6,14 @@ Some of these issues will be pushed off for the distant Seq66v2.
 
 Current:
 
-    - No shortcut in Start menu after setup.
-	- Cannot click on 'MIDI Clock' tab in preferences (alt-C is ok).
+    - Windows: No shortcut in Start menu after setup.
+	- Investigate cannot click on 'MIDI Clock' tab in preferences (alt-C OK).
     - User manual and tutorials entry menus seems to open something but close
       quick (I do have a default pdf reader).
 	- Tempo is not saved with new song (but works with for example
       Kraftwerk-Europe_Endless-reconstructed.midi provided in data folder).
+      This is due to a known issue, must remember to Save. Added code to
+      fix this, but TEST with playlist active.
 
 	Patterns editor:
 

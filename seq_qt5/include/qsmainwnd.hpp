@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-20
+ * \updates       2023-05-23
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -313,6 +313,12 @@ private:
     combolist m_ppqn_list;
     combolist m_beatwidth_list;
     combolist m_beats_per_bar_list;
+
+    /**
+     *  Experiment: how to better detect changes in BPM.
+     */
+
+    midibpm m_main_bpm;
 
     /**
      *  Holds the last value of the MIDI-control-in status, used in displaying

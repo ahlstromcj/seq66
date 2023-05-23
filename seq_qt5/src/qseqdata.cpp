@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-22
+ * \updates       2023-05-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -152,18 +152,6 @@ qseqdata::on_ui_change (seq::number seqno)
         update();
 
     return true;
-}
-
-/**
- *  ca 2023-05-22 EXPERIMENTAL. Doesn't work for the arrow keys.
- *  The data pane still scrolls on its own. Keys event are not detected
- *  here!
- */
-
-void
-qseqdata::keyPressEvent (QKeyEvent * event)
-{
-    frame64()->keyPressEvent(event);    // event->ignore();
 }
 
 QSize

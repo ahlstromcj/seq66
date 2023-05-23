@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-22
+ * \updates       2023-05-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -126,7 +126,6 @@ protected:
     virtual void mouseReleaseEvent (QMouseEvent *) override;
     virtual void mouseMoveEvent (QMouseEvent *) override;
     virtual QSize sizeHint () const override;
-    virtual void keyPressEvent (QKeyEvent *) override;
     virtual void wheelEvent (QWheelEvent *) override;
 
 private:

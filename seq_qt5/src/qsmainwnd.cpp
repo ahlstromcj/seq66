@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-17
+ * \updates       2023-05-23
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -243,6 +243,7 @@ qsmainwnd::qsmainwnd
     m_ppqn_list             (default_ppqns(), true), /* add a blank slot    */
     m_beatwidth_list        (beatwidth_items()),     /* see settings module */
     m_beats_per_bar_list    (beats_per_bar_items()), /* ditto               */
+    m_main_bpm              (0.0),
     m_control_status        (automation::ctrlstatus::none),
     m_song_mode             (false),
     m_is_looping            (false),
@@ -664,10 +665,11 @@ qsmainwnd::qsmainwnd
      * BPM (beats-per-minute) spin-box.
      */
 
+    m_main_bpm = cb_perf().bpm();
     ui->spinBpm->setReadOnly(false);
     ui->spinBpm->setDecimals(usr().bpm_precision());
     ui->spinBpm->setSingleStep(usr().bpm_step_increment());
-    ui->spinBpm->setValue(cb_perf().bpm());
+    ui->spinBpm->setValue(m_main_bpm);
     connect
     (
         ui->spinBpm, SIGNAL(valueChanged(double)),
@@ -1160,11 +1162,14 @@ qsmainwnd::set_ppqn_combo ()
 void
 qsmainwnd::update_bpm (double bp)
 {
-    midibpm bpold = ui->spinBpm->value();
+    midibpm bpold = m_main_bpm;     // ui->spinBpm->value() already changed!
     if (bp != bpold)
     {
         if (cb_perf().set_beats_per_minute(midibpm(bp), true))
+        {
+            m_main_bpm = bp;
             enable_save();
+        }
     }
 }
 
