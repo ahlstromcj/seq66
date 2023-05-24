@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-05-23
- * \updates       2023-05-23
+ * \updates       2023-05-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -45,6 +45,7 @@
 
 class QFrame;
 class QScrollBar;
+class qscrollmaster;
 
 /*
  * Note that there is no namespace; the Qt uic specification does not seem to
@@ -64,17 +65,24 @@ class qscrollslave : public QScrollArea
 
 private:
 
+    /**
+     *  An unowned pointer used to pass keystrokes to the scroll master.
+     */
+
+    qscrollmaster * m_master;
+
 public:
 
     qscrollslave (QWidget * qf);
     virtual ~qscrollslave ();
+
+    void attach_master (qscrollmaster * qsm);
 
 protected:      // QWidget overrides
 
     virtual void keyPressEvent (QKeyEvent *) override;
     virtual void keyReleaseEvent (QKeyEvent *) override;
     virtual void wheelEvent (QWheelEvent *) override;
-//  virtual void scrollContentsBy (int dx, int dy) override;
 
 };              // class qscrollslave
 

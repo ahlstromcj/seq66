@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-05-23
+2019-04-13 to 2023-05-24
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
@@ -18,10 +18,13 @@ Current:
 	Patterns editor:
 
 	- Often Ctrl-Z is not working event though click undo button works.
-	- No undo on velocity changes. (Works if seqroll clicked first, need
-      to add keystrokes to forward to seqroll.)
+	- No undo on velocity changes. Works, but was not always seen, had to set
+      a dirty status.
     - When a background sequence is chosen, it is s not possible to display
       another one or to turn it off.
+
+    Added code to pass arrow events from the qscrollslave to the
+    qscrollmaster. Does not work for wheel events, oddly enough.
 
 UI:
 

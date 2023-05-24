@@ -24,18 +24,21 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-05-23
- * \updates       2023-05-23
+ * \updates       2023-05-24
  * \license       GNU GPLv2 or above
  *
  *  Compare using qscrollslave for a QScrollArea versus the method used in
  *  qperfnames::keyPressEvent().
  */
 
+#include <QApplication>
 #include <QResizeEvent>
 #include <QScrollBar>
 #include <QWheelEvent>
 
 #include "qscrollslave.h"               /* ::qscrollslave class             */
+#include "qscrollmaster.h"              /* ::qscrollmaster class            */
+#include "util/basic_macros.h"          /* not_nullptr() test macro         */
 
 /*
  * Note that there is no namespace; the Qt uic specification does not seem to
@@ -50,7 +53,8 @@
  */
 
 qscrollslave::qscrollslave (QWidget * qf) :
-    QScrollArea         (qf)
+    QScrollArea (qf),
+    m_master    (nullptr)
 {
     // Done!
 }
@@ -58,6 +62,12 @@ qscrollslave::qscrollslave (QWidget * qf) :
 qscrollslave::~qscrollslave ()
 {
     // no code
+}
+
+void
+qscrollslave::attach_master (qscrollmaster * qsm)
+{
+    m_master = qsm;
 }
 
 static bool
@@ -71,13 +81,26 @@ is_direction_key (int key)
     );
 }
 
+/**
+ *  Arrow and Page events are accepted so they don't go to the QScrollArea,
+ *  and then forwarded to the qscrollmaster (e.g. the piano roll pane in
+ *  the pattern editor.
+ */
+
 void
 qscrollslave::keyPressEvent (QKeyEvent * event)
 {
     int key = event->key();
     bool isarrow = is_direction_key(key);
     if (isarrow)
+    {
         event->accept();                            // event->ignore();
+        if (not_nullptr(m_master))
+        {
+            QKeyEvent keyevent = *event;
+            QApplication::sendEvent(m_master, &keyevent);
+        }
+    }
     else
         QScrollArea::keyPressEvent(event);          // event->accept();
 }
@@ -93,10 +116,19 @@ qscrollslave::keyReleaseEvent (QKeyEvent * event)
         QScrollArea::keyReleaseEvent(event);        // event->accept();
 }
 
+/**
+ *  The event forward here does not work, not sure why.
+ */
+
 void
 qscrollslave::wheelEvent (QWheelEvent * qwep)
 {
-    qwep->ignore();
+    qwep->accept();                                 // qwep->ignore();
+    if (not_nullptr(m_master))
+    {
+        QWheelEvent wheelevent = *qwep;
+        QApplication::sendEvent(m_master, &wheelevent);
+    }
 }
 
 /*

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-05-23
+ * \updates       2023-05-24
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1112,6 +1112,7 @@ void
 qseqeditframe64::keyPressEvent (QKeyEvent * event)
 {
     int key = event->key();
+    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
     if (perf().is_pattern_playing())
     {
         if (key == Qt::Key_Space)
@@ -1124,10 +1125,21 @@ qseqeditframe64::keyPressEvent (QKeyEvent * event)
     else
     {
         if (key == Qt::Key_Space || key == Qt::Key_Period)
+        {
             start_playing();
+        }
+        else if (isctrl)
+        {
+            bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
+            if (key == Qt::Key_Z)
+            {
+                if (isshift)
+                    redo();                     // track().pop_redo();
+                else
+                    undo();                     // #110 track().pop_undo()
+            }
+        }
     }
-
-    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
     if (! isctrl)
     {
         bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
@@ -1284,12 +1296,7 @@ qseqeditframe64::initialize_panels ()
     );
 
     /*
-     * Doesn't cause the event filter to fire!?
-     *
-    (void) install_scroll_filter(this, ui->dataScrollArea//->horizontalScrollBar());
-    (void) install_scroll_filter(this, ui->rollScrollArea);  // EXPERIMENTAL
-     *
-     *  EXPERIMENTAL: dataScrollArea is now a qscrollslave object.
+     *  dataScrollArea is now a qscrollslave object.
      */
 
     ui->dataScrollArea->setWidget(m_seqdata);
@@ -1317,6 +1324,19 @@ qseqeditframe64::initialize_panels ()
     int minimum = ui->rollScrollArea->verticalScrollBar()->minimum();
     int maximum = ui->rollScrollArea->verticalScrollBar()->maximum();
     ui->rollScrollArea->verticalScrollBar()->setValue((minimum + maximum) / 2);
+
+    /*
+     * Attach the qscrollmaster to each qscrollslave so that they can
+     * forward the arrow and page keys to the qscrollmaster.  This avoids
+     * having to click on the seqroll to get focus to enable the direction
+     * keys. However, this doesn't seem to work with wheel events. See
+     * the qscrollslave module.
+     */
+
+    ui->dataScrollArea->attach_master(ui->rollScrollArea);
+    ui->eventScrollArea->attach_master(ui->rollScrollArea);
+    ui->keysScrollArea->attach_master(ui->rollScrollArea);
+    ui->timeScrollArea->attach_master(ui->rollScrollArea);
 }
 
 /**
@@ -1987,6 +2007,7 @@ void
 qseqeditframe64::undo ()
 {
     track().pop_undo();
+    set_dirty();                        /* for issue #110                   */
 }
 
 /**
