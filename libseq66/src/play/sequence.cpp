@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-23
+ * \updates       2023-05-24
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -438,19 +438,21 @@ sequence::musical_scale (int scale, bool user_change)
     }
 }
 
-void
+bool
 sequence::background_sequence (int bs, bool user_change)
 {
+    bool result = false;
     if (seq::legal(bs))
     {
-        bool change = bs != m_background_sequence;
-        if (change)
+        result = bs != m_background_sequence;
+        if (result)
         {
             m_background_sequence = short(bs);
             if (user_change)
                 modify();
         }
     }
+    return result;
 }
 
 /**

@@ -7,20 +7,18 @@ Some of these issues will be pushed off for the distant Seq66v2.
 Current:
 
     - Windows: No shortcut in Start menu after setup.
-	- Investigate cannot click on 'MIDI Clock' tab in preferences (alt-C OK).
     - User manual and tutorials entry menus seems to open something but close
       quick (I do have a default pdf reader).
-	- Tempo is not saved with new song (but works with for example
+	- Fixed: Tempo is not saved with new song (but works with for example
       Kraftwerk-Europe_Endless-reconstructed.midi provided in data folder).
-      This is due to a known issue, must remember to Save. Added code to
-      fix this, but TEST with playlist active.
+	- Investigate: cannot click on 'MIDI Clock' tab in preferences (alt-C OK).
 
 	Patterns editor:
 
-	- Often Ctrl-Z is not working event though click undo button works.
-	- No undo on velocity changes. Works, but was not always seen, had to set
-      a dirty status.
-    - When a background sequence is chosen, it is s not possible to display
+	- Fixed: Often Ctrl-Z is not working event though click undo button works.
+	- Fixed: No undo on velocity changes. Works, but was not always seen,
+      had to set a dirty status.
+    - Fixed:When a background sequence is chosen, it is not possible to display
       another one or to turn it off.
 
     Added code to pass arrow events from the qscrollslave to the

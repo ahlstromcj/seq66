@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2022-10-04
+ * \updates       2023-05-24
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -35,6 +35,7 @@
 
 #include <stdexcept>                    /* std::invalid_argument            */
 
+#include "seq66_features.hpp"           /* seq66::seq_app_path()            */
 #include "cfg/settings.hpp"             /* std::rc(), usr(), and much more  */
 
 /*
@@ -450,25 +451,28 @@ pdf_user_manual_url ()
 
 /**
  *  This list is useful to look up the installed documentation.
+ *
+ * Windows:
  */
 
 const tokenization &
 doc_folder_list ()
 {
-#if defined SEQ66_PLATFORM_WINDOWS
-    static tokenization s_folder_list
-    {
-        "C:/Program Files (x86)/Seq66/data/doc",
-        "C:/Program Files/Seq66/data/doc",
-        ""                              /* terminator   */
-    };
-#else
     static bool s_uninitialized = true;
     static tokenization s_folder_list;
-    static std::string s_usr_dir;
-    static std::string s_usr_local_dir;
     if (s_uninitialized)
     {
+#if defined SEQ66_PLATFORM_WINDOWS
+        static std::string s_64_dir = "C:/Program Files/Seq66/data/doc";
+        static std::string s_32_dir = "C:/Program Files (x86)/Seq66/data/doc";
+        std::string app_path = seq_app_path();
+        s_64_dir[0] = app_path[0];
+        s_32_dir[0] = app_path[0];
+        s_folder_list.push_back(s_64_dir);
+        s_folder_list.push_back(s_32_dir);
+#else
+        static std::string s_usr_dir;
+        static std::string s_usr_local_dir;
         s_usr_dir = "/usr/share/doc/" + seq_api_subdirectory();
         s_usr_local_dir = "/usr/local/share/doc/" + seq_api_subdirectory();
         s_folder_list.push_back(s_usr_dir);
@@ -477,9 +481,9 @@ doc_folder_list ()
 #if defined SEQ66_PLATFORM_DEBUG
         s_folder_list.push_back("../seq66/data/share/doc");  /* shadow dir  */
 #endif
+#endif
         s_uninitialized = false;
     }
-#endif
     return s_folder_list;
 }
 
@@ -491,20 +495,25 @@ doc_folder_list ()
 const tokenization &
 tutorial_folder_list ()
 {
-#if defined SEQ66_PLATFORM_WINDOWS
-    static tokenization s_folder_list
-    {
-        "C:/Program Files (x86)/Seq66/data/doc/tutorial",
-        "C:/Program Files/Seq66/data/doc/tutorial",
-        ""                              /* terminator   */
-    };
-#else
     static bool s_uninitialized = true;
     static tokenization s_folder_list;
-    static std::string s_usr_dir;
-    static std::string s_usr_local_dir;
     if (s_uninitialized)
     {
+#if defined SEQ66_PLATFORM_WINDOWS
+        static std::string s_64_dir =
+            "C:/Program Files/Seq66/data/doc/tutorial";
+        static std::string s_32_dir =
+            "C:/Program Files (x86)/Seq66/data/doc/tutorial";
+
+        std::string app_path = seq_app_path();
+        s_64_dir[0] = app_path[0];
+        s_32_dir[0] = app_path[0];
+        s_folder_list.push_back(s_64_dir);
+        s_folder_list.push_back(s_32_dir);
+
+#else
+        static std::string s_usr_dir;
+        static std::string s_usr_local_dir;
         s_usr_dir = "/usr/share/doc/" + seq_api_subdirectory();
         s_usr_local_dir = "/usr/local/share/doc/" + seq_api_subdirectory();
         s_usr_dir += "/tutorial";
@@ -515,9 +524,9 @@ tutorial_folder_list ()
 #if defined SEQ66_PLATFORM_DEBUG
         s_folder_list.push_back("../seq66/data/share/doc/tutorial");
 #endif
+#endif
         s_uninitialized = false;
     }
-#endif
     return s_folder_list;
 }
 

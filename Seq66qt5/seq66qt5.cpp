@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2023-03-30
+ * \updates       2023-05-24
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -34,6 +34,7 @@
 
 #include <QApplication>                 /* QApplication etc.                */
 
+#include "seq66_features.hpp"           /* seq66::set_app_path()            */
 #include "qt5nsmanager.hpp"             /* an seq66::smanager for Qt 5      */
 #include "os/daemonize.hpp"             /* seq66::session_close(), etc.     */
 
@@ -76,6 +77,7 @@ int
 main (int argc, char * argv [])
 {
     QApplication app(argc, argv);           /* main application object      */
+    seq66::set_app_path(argv[0]);           /* log for future usage         */
 
 #if defined USE_RING_BUFFER_TEST && defined SEQ66_PLATFORM_DEBUG
     if (! seq66::run_ring_test())

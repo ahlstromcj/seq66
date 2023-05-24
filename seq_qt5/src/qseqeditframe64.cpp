@@ -2356,13 +2356,13 @@ qseqeditframe64::update_note_entry (bool on)
 void
 qseqeditframe64::set_background_sequence (int seqnum, qbase::status qs)
 {
-    if (! seq::valid(seqnum))
+    if (! seq::legal(seqnum))                   /* includes seq::limit()    */
         return;
 
     seq::pointer s = perf().get_sequence(seqnum);
     if (not_nullptr(s))
     {
-        if (seqnum < usr().max_sequence())      /* even more restrictive */
+        if (seqnum < usr().max_sequence())      /* even more restrictive    */
         {
             if (seq::disabled(seqnum) || ! perf().is_seq_active(seqnum))
             {
@@ -2378,16 +2378,36 @@ qseqeditframe64::set_background_sequence (int seqnum, qbase::status qs)
                     usr().seqedit_bgsequence(seqnum);
 
                 bool user_change = qs == qbase::status::edit;
-                track().background_sequence(seqnum, user_change);
-                if (not_nullptr(m_seqroll))
-                    m_seqroll->set_background_sequence(true, seqnum);
+                if (track().background_sequence(seqnum, user_change))
+                {
+                    if (not_nullptr(m_seqroll))
+                        m_seqroll->set_background_sequence(true, seqnum);
 
-                set_track_change();                 /* to solve issue #90   */
+                    set_track_change();         /* to solve issue #90       */
+                }
             }
         }
     }
     else
-        msgprintf(msglevel::error, "null pattern %d", seqnum);
+    {
+        if (seqnum == seq::limit())
+        {
+            ui->m_entry_sequence->setText("Off");
+            if (usr().global_seq_feature())
+                usr().seqedit_bgsequence(seqnum);
+
+            bool user_change = qs == qbase::status::edit;
+            if (track().background_sequence(seqnum, user_change))
+            {
+                if (not_nullptr(m_seqroll))
+                    m_seqroll->set_background_sequence(true, seqnum);
+
+                set_track_change();             /* to solve issue #90       */
+            }
+        }
+        else
+            msgprintf(msglevel::error, "null pattern %d", seqnum);
+    }
 }
 
 /**

@@ -107,16 +107,86 @@ open_local_url (const std::string & url)
 
 #elif defined SEQ66_PLATFORM_WINDOWS
 
+/*
+ *  Information for the future. However, Because ShellExecute() can delegate
+ *  execution to Shell extensions implementations) that are activated using
+ *  Component Object Model (COM), COM should be initialized before
+ *  ShellExecuteEx() is called.
+ *
+\verbatim
+	HINSTANCE ShellExecuteA
+	(
+		[in, optional] HWND   hwnd,
+		[in, optional] LPCSTR lpOperation,
+		[in]           LPCSTR lpFile,
+		[in, optional] LPCSTR lpParameters,
+		[in, optional] LPCSTR lpDirectory,
+		[in]           INT    nShowCmd
+	);
+\endverbatim
+ *
+ *  -	hwnd. A handle to the parent window used for displaying a UI or error
+ *      messages. This value can be NULL if the operation is not associated
+ *      with a window.
+ *  -	lpOperation.  A verb that specifies the action to be performed.
+ *      Generally, the actions available from an object's shortcut menu are
+ *      usable. Common verbs for Seq66 usage: edit.  Launches an editor and
+ *      opens the document for editing. If lpFile is not a document file, the
+ *      function will fail.
+ *      -   open.  Opens the item specified by the lpFile parameter. Can be a
+ *          file or folder.
+ *      -   NULL.  The default verb is used, if available. If not, the "open"
+ *          verb is used. If neither verb is available, the system uses the
+ *          first verb listed in the registry.
+ *  -	lpFile.  A string that specifies the file/object on which to execute
+ *      the verb.
+ *  -	lpParameters.  If lpFile specifies an executable file, this parameter
+ *      is a pointer to a null-terminated string that specifies the parameters
+ *      to be passed to the application. If lpFile specifies a document,
+ *      lpParameters should be NULL.
+ *  -	lpDirectory.  A string specifying the default (working) directory for
+ *      the action. If this value is NULL, the current working directory is
+ *      used.
+ *  -	nShowCmd.  The flags that specify how an application is to be displayed
+ *      when it is opened.
+ *  -	Return value.  Success is a value greater than 32. If the function
+ *      fails, it returns an error value that indicates the cause of the
+ *      failure. The return value is cast as an HINSTANCE for backward
+ *      compatibility with 16-bit Windows applications. It is not a true
+ *      HINSTANCE, however. It can be cast only to an INT_PTR and compared to
+ *      either 32 or error codes. (See the web page).
+ */
+
 bool
 open_pdf (const std::string & pdfspec)
 {
-    return command_line(pdfspec);
+    std::string cmd = usr().user_pdf_viewer();
+    if (cmd.empty())
+    {
+        return command_line(pdfspec);
+    }
+    else
+    {
+        cmd += " ";
+        cmd += pdfspec;
+        return command_line(cmd);
+    }
 }
 
 bool
 open_url (const std::string & url)
 {
-    return command_line(url);
+    std::string cmd = usr().user_browser();
+    if (cmd.empty())
+    {
+        return command_line(url);
+    }
+    else
+    {
+        cmd += " ";
+        cmd += url;
+        return command_line(url);
+    }
 }
 
 bool

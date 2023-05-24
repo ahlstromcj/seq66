@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2023-05-08
+ * \updates       2023-05-24
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -78,6 +78,7 @@ static std::string s_jack_version;
 static std::string s_qt_version;
 static std::string s_app_engine = SEQ66_APP_ENGINE;
 static std::string s_app_name = SEQ66_APP_NAME;
+static std::string s_app_path;
 static std::string s_app_type = SEQ66_APP_TYPE;
 static bool s_app_cli = false;
 static std::string s_apptag = SEQ66_APP_NAME " " SEQ66_VERSION;
@@ -124,6 +125,16 @@ void
 set_app_name (const std::string & aname)
 {
     s_app_name = aname;
+}
+
+/**
+ *  Sets the path to the application. Most useful on Windows.
+ */
+
+void
+set_app_path (const std::string & apath)
+{
+    s_app_path = apath;
 }
 
 /**
@@ -197,6 +208,12 @@ const std::string &
 seq_app_name ()
 {
     return s_app_name;
+}
+
+const std::string &
+seq_app_path ()
+{
+    return s_app_path;
 }
 
 const std::string &
@@ -449,7 +466,7 @@ seq_build_details ()
         << "GNU C++ " << __GNUC__ << "." << __GNUC_MINOR__
         << "." << __GNUC_PATCHLEVEL__ << "\n"
 #endif
-        << "Executable: " << seq_app_name()
+        << "Executable: " << seq_app_name() << " (" << seq_app_path() << ")"
         << "; " << seq_app_type() << " interface"
         << "; " << seq_app_engine() << " engine" << "\n"
         ;

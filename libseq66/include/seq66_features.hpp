@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-05-09
+ * \updates       2023-05-24
  * \license       GNU GPLv2 or above
  *
  *    Provides some useful functions for displaying information about the
@@ -85,12 +85,14 @@ extern void set_app_build_os (const std::string & abuild_os);
 extern void set_app_build_issue (const std::string & abuild_issue);
 extern void set_app_engine (const std::string & aengine);
 extern void set_app_name (const std::string & aname);
+extern void set_app_path (const std::string & apath);
 extern void set_app_type (const std::string & atype);
 extern void set_app_cli (bool iscli);
 extern void set_arg_0 (const std::string & arg);
 extern void set_client_name (const std::string & cname);
 extern void set_package_name (const std::string & pname);
 extern const std::string & seq_app_name ();
+extern const std::string & seq_app_path ();
 extern const std::string & seq_app_tag ();
 extern const std::string & seq_app_type ();
 extern bool seq_app_cli ();

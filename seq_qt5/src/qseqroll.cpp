@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-20
+ * \updates       2023-05-24
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -289,6 +289,10 @@ qseqroll::scroll_offset (int x)
  *  editor, so that the musician can have another pattern to play against.
  *  The state parameter sets the boolean m_draw_background_seq.
  *
+ *  The first check in this statement disabled further changes!
+ *
+ *      if (state != m_draw_background_seq && m_background_sequence != seq)
+ *
  * \param state
  *      If true, the background sequence will be drawn.
  *
@@ -301,7 +305,7 @@ qseqroll::scroll_offset (int x)
 void
 qseqroll::set_background_sequence (bool state, int seq)
 {
-    if (state != m_draw_background_seq && m_background_sequence != seq)
+    if (m_background_sequence != seq)
     {
         if (seq::legal(seq))
         {

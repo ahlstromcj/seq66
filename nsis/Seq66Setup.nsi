@@ -3,7 +3,7 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2023-05-21
+; Updated:      2023-05-24
 ; Version:      0.99.6
 ;
 ; Usage of this Windows build script:
@@ -210,6 +210,7 @@ Section "Documentation" SEC_DOC
     SetOverwrite on
     File /r "..\release\data\share\doc\*.pdf"
     File /r "..\release\data\share\doc\*.ods"
+    File /r "..\release\data\share\doc\tutorial\*.*"
 
 SectionEnd
 

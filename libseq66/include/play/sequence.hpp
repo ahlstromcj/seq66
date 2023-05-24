@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-05-22
+ * \updates       2023-05-24
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1834,7 +1834,7 @@ public:
 
     void musical_key (int key, bool user_change = false);
     void musical_scale (int scale, bool user_change = false);
-    void background_sequence (int bs, bool user_change = false);
+    bool background_sequence (int bs, bool user_change = false);
     void show_events () const;
     bool copy_events (const eventlist & newevents);
     midipulse unit_measure (bool reset = false) const;

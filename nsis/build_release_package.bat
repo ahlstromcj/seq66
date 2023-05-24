@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2023-05-20
+:: \update      2023-05-24
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -152,8 +152,8 @@
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.99.5
-set PROJECT_DATE=2023-05-20
+set PROJECT_VERSION=0.99.6
+set PROJECT_DATE=2023-05-24
 set PROJECT_DRIVE=C:
 
 :: Set the bits of the project, either 64 or 32. Also define WIN64 versus
@@ -181,6 +181,7 @@ set RELEASE_DIR=%APP_DIR%\release
 set CONFIG_SET="CONFIG += release"
 set AUX_DIR=data
 set DOC_DIR=data\share\doc
+set TUTORIAL_DIR=data\share\doc\tutorial
 
 :: C:
 
@@ -213,9 +214,10 @@ windeployqt %RELEASE_DIR%
 
 echo mkdir %RELEASE_DIR%\%AUX_DIR%
 echo mkdir %RELEASE_DIR%\%DOC_DIR%
+echo mkdir %RELEASE_DIR%\%TUTORIAL_DIR%
 echo copy %PROJECT_REL_ROOT%\%DOC_DIR%\*.pdf %RELEASE_DIR%\%DOC_DIR%
 echo copy %PROJECT_REL_ROOT%\%DOC_DIR%\*.ods %RELEASE_DIR%\%DOC_DIR%
-echo xcopy %PROJECT_REL_ROOT%\%DOC_DIR%\tutorial %RELEASE_DIR%\%DOC_DIR% /f /s /y /i
+echo xcopy %PROJECT_REL_ROOT%\%DOC_DIR%\tutorial\*.* %RELEASE_DIR%\%TUTORIAL_DIR% /f /s /y /i
 
 mkdir %RELEASE_DIR%\%AUX_DIR%
 mkdir %RELEASE_DIR%\%AUX_DIR%\linux
