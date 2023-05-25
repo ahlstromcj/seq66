@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-05-18
+% \update      2023-05-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1393,16 +1393,53 @@
    This entry brings up a short tutorial of \textsl{Seq66} in the default
    browser. This tutorial is meant only to jump-start a new user of
    \textsl{Seq66}, and is a work in progress.
-   It does not cover nearly as much as the user manual, so....
+   It does not cover nearly as much as the user manual, so check that out in
+   the next section.
+
+   Normally, the tutorial will open a web page.  If it does not, one might need
+   to set up a default browser.  On Linux, make sure that there is a "desktop"
+   file for the browser, as in
+   \texttt{/usr/share/applications/firefox.desktop}.
+   If so, then run the following command, and then test it:
+
+   \begin{verbatim}
+      $ xdg-settings set default-web-browser firefox.desktop
+      $ xdg-open https://ahlstromcj.github.io/docs/seq66/tutorial/index.html 
+   \end{verbatim}
+
+   On Windows, this procedure is still \textsl{to be determined}.
+
+   In both systems, one can override the default applications by opening
+   the specified 'usr' file (usually \texttt{qseq66.usr} or
+   \texttt{qpseq66.usr} and specifying the full path to the desired
+   applications (Linux paths shown here):
+
+   \begin{verbatim}
+      [user-options]
+      log = "/home/user/.config/seq66/seq66.log"
+      pdf-viewer = "/usr/bin/zathura"
+      browser = "/usr/bin/google-chrome"
+   \end{verbatim}
+
+   Also see \sectionref{subsubsec:usr_file_user_options}.
 
 \subsubsection{Menu / Help / User Manual}
 \label{subsubsec:menu_help_user_manual}
 
    \index{Help!user manual}
-   This entry brings up the full \textsl{Seq66} user manual in the default
+   This menu entry first tries to locate the user manual on the internet and
+   open it in the default browser. If not found, or the network is down,
+   then this entry brings up the full \textsl{Seq66} user manual in the default
    PDF viewer.  It currently looks in the possible installation areas and in
    the \textsl{Seq66} source tree to find the PDF.
-   It currently does not try to locate the user manual on the internet.
+
+   On Linux, one can follow the setup procedure in the previous section and
+   test it via the following command, which will show the manual in the default
+   browser.:
+
+   \begin{verbatim}
+      $ xdg-open https://ahlstromcj.github.io/docs/seq66/seq66-user-manual.pdf
+   \end{verbatim}
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

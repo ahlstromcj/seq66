@@ -1,7 +1,7 @@
 # Seq66 0.99.3 user ('usr') configuration file
 #
 # /home/usr/.config/seq66/qseq66.usr
-# Written 2023-04-17 19:12:53
+# Written 2023-05-25 12:12:22
 #
 # 'usr' file. Edit it and place it in ~/.config/seq66. It allows naming each
 # MIDI bus/port, channel, and control code.
@@ -165,8 +165,8 @@ bpm-maximum = 600
 
 daemonize = false
 log = "/home/user/.config/seq66/seq66.log"
-pdf-viewer = ""
-browser = ""
+pdf-viewer = "/usr/bin/zathura"
+browser = "/usr/bin/google-chrome"
 
 # [user-ui-tweaks]
 #

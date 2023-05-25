@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2023-05-24
+ * \updates       2023-05-25
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -37,6 +37,8 @@
 
 #include "seq66_features.hpp"           /* seq66::seq_app_path()            */
 #include "cfg/settings.hpp"             /* std::rc(), usr(), and much more  */
+#include "os/shellexecute.hpp"          /* seq66::open_url(), open_pdf()    */
+#include "util/filefunctions.hpp"       /* seq66::find_file()               */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -425,34 +427,53 @@ ppqn_in_range (int ppqn)
     return usr().use_file_ppqn() || usr().is_ppqn_valid(ppqn);
 }
 
-/**
- *  Returns the file-name of the Seq66 user's manual.
- */
-
-const std::string &
-pdf_user_manual ()
-{
-    static const std::string name = "seq66-user-manual.pdf";
-    return name;
-}
 
 /**
- *  Returns the path to the github version of the Seq66 user's manual.
+ *  First try the web, then the directory list.
  */
 
-const std::string &
-pdf_user_manual_url ()
+bool
+open_user_manual ()
 {
-    static const std::string url =
+    static const std::string s_url =
         "https://ahlstromcj.github.io/docs/seq66/seq66-user-manual.pdf";
 
-    return url;
+    bool result = open_url(s_url);
+    if (! result)
+    {
+        std::string docpath = find_file
+        (
+            doc_folder_list(), "seq66-user-manual.pdf"
+        );
+        result = ! docpath.empty();
+        if (result)
+            result = open_pdf(docpath);
+    }
+    return result;
 }
 
+bool
+open_tutorial ()
+{
+    static const std::string s_url =
+        "https://ahlstromcj.github.io/docs/seq66/tutorial/index.html";
+
+    bool result = open_url(s_url);
+    if (! result)
+    {
+        std::string tutpath = find_file(tutorial_folder_list(), "index.html");
+        result = ! tutpath.empty();
+        if (result)
+            result = open_url(tutpath);
+    }
+    return result;
+}
+
+
 /**
- *  This list is useful to look up the installed documentation.
- *
- * Windows:
+ *  This list is useful to look up the installed documentation. It starts with
+ *  the possible installation areas.  For debugging, the relative directories,
+ *  either the source directory or the shadow directory, are added.
  */
 
 const tokenization &
@@ -477,10 +498,10 @@ doc_folder_list ()
         s_usr_local_dir = "/usr/local/share/doc/" + seq_api_subdirectory();
         s_folder_list.push_back(s_usr_dir);
         s_folder_list.push_back(s_usr_local_dir);
-        s_folder_list.push_back("data/share/doc");  /* source distro file?  */
-#if defined SEQ66_PLATFORM_DEBUG
-        s_folder_list.push_back("../seq66/data/share/doc");  /* shadow dir  */
 #endif
+#if defined SEQ66_PLATFORM_DEBUG
+        s_folder_list.push_back("data/share/doc");              /* source   */
+        s_folder_list.push_back("../seq66/data/share/doc");     /* shadow   */
 #endif
         s_uninitialized = false;
     }

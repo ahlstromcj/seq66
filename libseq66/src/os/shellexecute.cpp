@@ -21,7 +21,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-05-19
- * \updates       2022-08-02
+ * \updates       2023-05-25
  * \license       GNU GPLv2 or above
  *
  *  Provides support for cross-platform time-related functions.

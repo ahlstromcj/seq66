@@ -1207,16 +1207,12 @@ qsmainwnd::slot_summary_save ()
 void
 qsmainwnd::slot_tutorial ()
 {
-    std::string tutpath = find_file(tutorial_folder_list(), "index.html");
-    if (! tutpath.empty())
-    {
 #if defined USE_QDESKTOPSERVICES
-        QString link = qt(tutpath);             /* "http://www.google.com" */
-        QDesktopServices::openUrl(QUrl(link));
+    QString link = qt(tutpath);             /* "http://www.google.com" */
+    QDesktopServices::openUrl(QUrl(link));
 #else
-        (void) open_url(tutpath);
+    (void) open_tutorial();
 #endif
-    }
 }
 
 /**
@@ -1226,21 +1222,12 @@ qsmainwnd::slot_tutorial ()
 void
 qsmainwnd::slot_user_manual ()
 {
-    std::string docpath = find_file(doc_folder_list(), pdf_user_manual());
-    if (docpath.empty())
-    {
-        docpath = pdf_user_manual_url();        /* in the settings module   */
-        (void) open_url(docpath);
-    }
-    else
-    {
 #if defined USE_QDESKTOPSERVICES
-        QString link = qt(docpath);
-        QDesktopServices::openUrl(QUrl::fromLocalFile(link));
+    QString link = qt(docpath);
+    QDesktopServices::openUrl(QUrl::fromLocalFile(link));
 #else
-        (void) open_pdf(docpath);
+    (void) open_user_manual();
 #endif
-    }
 }
 
 /**
