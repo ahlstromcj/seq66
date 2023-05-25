@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-04-17
+ * \updates       2023-05-25
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -364,6 +364,9 @@ usrfile::parse ()
     usr().option_daemonize(flag);
 
     std::string fname = get_variable(file, tag, "log");
+    if (fname == "none")
+        fname.clear();
+
     bool gotlog = ! fname.empty();
     if (gotlog)
         fname = strip_quotes(fname);
@@ -817,13 +820,17 @@ usrfile::write ()
     file << "\n"
 "# [user-options]\n"
 "#\n"
-"# These settings specify -o or --option switch values.  'daemonize' is used\n"
-"# in seq66cli to indicate the application should run as a service. 'log'\n"
-"# specifies a log-file that gets output to standard output/error.  For no\n"
-"# log-file, use \"\".  This option also works from the command line:\n"
-"# '-o log=filename.log'.\n"
+"# These settings specify some -o or --option switch values.  'daemonize' in\n"
+"# seq66cli indicates that it should run as a service. 'log' specifies a log-\n"
+"# file redirecting output from standard output/error.  If no path in the name,\n"
+"# the log is stored in the configuration directory. For no log-file, use\n"
+"# \"none\" or \"\".  On the command line: '-o log=filename.log'.\n"
 "\n[user-options]\n\n"
         ;
+
+    std::string fname = usr().option_logfile();
+    if (fname.empty())
+        fname = "none";
 
     write_boolean(file, "daemonize", usr().option_daemonize());
     write_string(file, "log", usr().option_logfile(), true);

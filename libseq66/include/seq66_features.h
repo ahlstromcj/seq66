@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-04-09
+ * \updates       2023-05-25
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -49,6 +49,14 @@
 
 #include "seq66-config.h"               /* automake-generated or for qmake  */
 #include "seq66_platform_macros.h"      /* indicates the build platform     */
+
+#if defined SEQ66_PLATFORM_WINDOWS
+#if ! defined STDIN_FILENO
+#define STDIN_FILENO    0
+#define STDOUT_FILENO   1
+#define STDERR_FILENO   2
+#endif
+#endif
 
 /**
  *  For issue #100, this macro enables using our new ring_buffer instead of

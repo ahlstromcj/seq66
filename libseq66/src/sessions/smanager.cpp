@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-05-20
+ * \updates       2023-05-25
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -977,6 +977,9 @@ smanager::create_configuration
         }
         else
         {
+            usr().option_logfile("seq66.log");
+            usr().option_use_logfile(true);
+            (void) reroute_stdio(usr().option_logfile());
             result = make_directory_path(mainpath);
             if (result)
             {

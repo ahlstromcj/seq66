@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2023-05-24
+ * \updates       2023-05-25
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -284,13 +284,35 @@ seq_icon_name ()
     return s_icon_name;
 }
 
+/**
+ *  This function checks to see if stdin, stdout, or stderro are attached to a
+ *  console device, versus being redirected to a file.
+ *
+ *  stdout is a FILE pointer giving the standard output stream.
+ *  Use stdout for <stdio.h> functions such as fprintf(), fputs(), etc.
+ *
+ *  STDOUT_FILENO is an integer file descriptor (actually, the integer 1).
+ *  One might use it for the write() system call.
+ *
+ *  The relation between the two is STDOUT_FILENO == fileno(stdout)
+ *
+ * \param fd
+ *      Provides the file descriptor, one of STDIN_FILE = 0, STDOUT_FILENO =
+ *      1, and STDERR_FILENO = 2.  These values are defined in unistd.h
+ *      or in seq66_features.h (probably already defined in some Windoze
+ *      header.
+ *
+ * \return
+ *      Returns true if the file-descriptor is not redirected to a file.
+ */
+
 bool
 is_a_tty (int fd)
 {
+    bool result = true;
+    int rc;
+
 #if defined SEQ66_PLATFORM_WINDOWS
-#define STDIN_FILENO    0
-#define STDOUT_FILENO   1
-#define STDERR_FILENO   2
 
     int fileno;
     switch (fd)
@@ -300,12 +322,27 @@ is_a_tty (int fd)
         case STDERR_FILENO: fileno = _fileno(stderr);   break;
         default:            fileno = (-1);              break;
     }
-    int rc = (fileno >= 0) ? _isatty(fileno) : 90;
-    return rc == 1;                             /* fd refers to a terminal  */
+    rc = (fileno >= 0) ? _isatty(fileno) : 999 ;
+    if (rc != 0)                                /* fd refers to a terminal  */
+        rc = 1;                                 /* to match Linux isatty()  */
 #else
-    int rc = isatty(fd);
-    return rc == 1;                             /* fd refers to a terminal  */
+    rc = isatty(fd);
 #endif
+
+    if (rc == 0)
+    {
+        if (rc == EBADF)
+        {
+            printf
+            (
+                "[%s] File descriptor %d is invalid\n",
+                seq_client_name().c_str(), rc
+            );
+        }
+        else
+            result = rc == 1;                   /* fd refers to a terminal  */
+    }
+    return result;
 }
 
 /**

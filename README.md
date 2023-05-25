@@ -1,4 +1,4 @@
-# README for Seq66 0.99.6 2023-05-23
+# README for Seq66 0.99.6 2023-05-25
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks and triggers, and playlists for song management; a scale and
@@ -85,8 +85,6 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.99.6:
-        *   Added 'o' keystroke to seqroll to toggle recording ('r' already
-            used to randomize notes).
         *   Follow-ons to issue #3:
             *   Added a qscrollslave to allow QScrollArea to ignore the
                 arrow keys.
@@ -97,6 +95,10 @@ Windows, and using a conventional source tarball.
             *   Addition of Start menu entries for Windows.
             *   Fixed event::is_desired(), which affected changing note
                 velocities in the pattern editor's data pane.
+        *   Added 'o' keystroke to seqroll to toggle recording ('r' already
+            used to randomize notes).
+        *   Refactored access to manual and tutorial for robustness.
+        *   At first start, a log-file is automatically created.
     *   Version 0.99.5:
         *   Greatly enhanced the event editor tab and the events that can
             be view and modified.

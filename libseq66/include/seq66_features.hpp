@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-05-24
+ * \updates       2023-05-25
  * \license       GNU GPLv2 or above
  *
  *    Provides some useful functions for displaying information about the
