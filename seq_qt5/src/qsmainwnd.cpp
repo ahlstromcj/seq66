@@ -125,7 +125,10 @@
 #include "forms/qsmainwnd.ui.h"         /* generated btnStop, btnPlay, etc. */
 #endif
 
+#if defined SEQ66_PORTMIDI_SUPPORT
 #include "icons/route66.xpm"
+#endif
+
 #include "pixmaps/learn.xpm"
 #include "pixmaps/learn2.xpm"
 #include "pixmaps/loop.xpm"
