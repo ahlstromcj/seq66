@@ -6,6 +6,7 @@ Linux:
 
     Let PREFIX = "/usr" or "/usr/local" for the base of the installation
     area.  (Is there a base for a "~/.local"-based installation?)
+    Let HOME = "/home/username".
 
     Header files:   PREFIX/include/seq66-0.99/ and subdirectories
     Executable:     PREFIX/bin/
@@ -17,13 +18,21 @@ Linux:
                     PREFIX/share/seq66-0.99/pixmaps/
                     PREFIX/share/pixmaps/
     Documentation:  PREFIX/share/doc/seq66-0.99/ including tutorial directory
-    Configuration:  /home/username/.config/seq66/ (default location)
+    Configuration:  HOME/.config/seq66/ (default location)
 
 Windows:
 
     Let PREFIX = "C:/Program Files" (64-bit) or "C:/Program Files (x86)"
-    (32-bit).
+    (32-bit).  Let HOME = "C:/Users/username".
 
+    Header files:   Not installed on Windows
     Executable:     PREFIX/Seq66
+    Libraries:      PREFIX/Seq66 (C/C++, pthread, and Qt libraries only)
+    Man pages:      Not installed on Windows
+    Desktop files:  N/A
+    Data/samples:   PREFIX/Seq66/data
+    Icons/pixmaps:  To do.
+    Documentation:  PREFIX/Seq66/doc
+    Configuration:  HOME/AppData/Local/seq66 (default location)
 
 # vim: sw=4 ts=4 wm=8 et ft=sh

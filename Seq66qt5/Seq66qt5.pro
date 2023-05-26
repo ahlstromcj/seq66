@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2020-08-23
+# \update      2023-05-26
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -131,6 +131,11 @@ unix:!macx: LIBS += -lasound -ljack -lrt
 }
 
 windows: LIBS += -lwinmm
+
+# Install an application icon for Windows to use.
+
+win32:RC_ICONS += ../resources/icons/route66.ico
+windows:RC_ICONS += ../resources/icons/route66.ico
 
 #******************************************************************************
 # Seq66qt5.pro (Seq66qt5)

@@ -6,7 +6,7 @@
 # \library      qpseq66 application
 # \author       Chris Ahlstrom
 # \date         2018-11-15
-# \update       2023-05-25
+# \update       2023-05-26
 # \version      $Revision$
 # \license      $XPC_SUITE_GPL_LICENSE$
 #
@@ -50,11 +50,12 @@ message("SUBDIRS is set to: $${SUBDIRS}")
 QMAKE_CXXFLAGS += -std=c++14
 
 # Install an application icon for Windows to use.
+
+win32:RC_ICONS += ../seq66/resources/icons/route66.ico
+
+# win32:RC_FILE = resources/seq66_win.rc
+# RESOURCES += seq66.qrc
 #
-# win32:RC_ICONS += resources/icons/route66.ico
-
-win32:RC_FILE = resources/seq66_win.rc
-
 # The automated resource file generation also uses the values of the following
 # qmake variables: VERSION, QMAKE_TARGET_COMPANY, QMAKE_TARGET_DESCRIPTION,
 # QMAKE_TARGET_COPYRIGHT, QMAKE_TARGET_PRODUCT, RC_LANG, RC_CODEPAGE.

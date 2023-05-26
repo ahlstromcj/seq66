@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2023-05-24
+:: \update      2023-05-26
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -204,7 +204,7 @@ cd
 echo qmake -makefile -recursive %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO%
 echo mingw32-make (output to make.log)
 qmake -makefile -recursive %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO% > make.log 2>&1
-mingw32-make > make.log 2>&1
+mingw32-make >> make.log 2>&1
 if ERRORLEVEL 1 goto builderror
 
 :: windeployqt Seq66qt5\release
@@ -217,25 +217,30 @@ echo mkdir %RELEASE_DIR%\%DOC_DIR%
 echo mkdir %RELEASE_DIR%\%TUTORIAL_DIR%
 echo copy %PROJECT_REL_ROOT%\%DOC_DIR%\*.pdf %RELEASE_DIR%\%DOC_DIR%
 echo copy %PROJECT_REL_ROOT%\%DOC_DIR%\*.ods %RELEASE_DIR%\%DOC_DIR%
-echo xcopy %PROJECT_REL_ROOT%\%DOC_DIR%\tutorial\*.* %RELEASE_DIR%\%TUTORIAL_DIR% /f /s /y /i
+echo xcopy %PROJECT_REL_ROOT%\%DOC_DIR%\tutorial\*.* %RELEASE_DIR%\%TUTORIAL_DIR% /f /s /e /y /i
 
 mkdir %RELEASE_DIR%\%AUX_DIR%
 mkdir %RELEASE_DIR%\%AUX_DIR%\linux
 mkdir %RELEASE_DIR%\%AUX_DIR%\midi
+mkdir %RELEASE_DIR%\%AUX_DIR%\pixmaps
 mkdir %RELEASE_DIR%\%AUX_DIR%\samples
 mkdir %RELEASE_DIR%\%AUX_DIR%\win
 mkdir %RELEASE_DIR%\%AUX_DIR%\wrk
+mkdir %RELEASE_DIR%\%DOC_DIR%
+mkdir %RELEASE_DIR%\%TUTORIAL_DIR%
 
+copy %PROJECT_REL_ROOT%\%AUX_DIR%\license.* %RELEASE_DIR%\%AUX_DIR%
+copy %PROJECT_REL_ROOT%\%AUX_DIR%\readme.* %RELEASE_DIR%\%AUX_DIR%
 copy %PROJECT_REL_ROOT%\%AUX_DIR%\linux\*.* %RELEASE_DIR%\%AUX_DIR%\linux
 copy %PROJECT_REL_ROOT%\%AUX_DIR%\midi\*.* %RELEASE_DIR%\%AUX_DIR%\midi
+copy %PROJECT_REL_ROOT%\%AUX_DIR%\pixmaps\*.* %RELEASE_DIR%\%AUX_DIR%\pixmaps
 copy %PROJECT_REL_ROOT%\%AUX_DIR%\samples\*.* %RELEASE_DIR%\%AUX_DIR%\samples
 copy %PROJECT_REL_ROOT%\%AUX_DIR%\win\*.* %RELEASE_DIR%\%AUX_DIR%\win
 copy %PROJECT_REL_ROOT%\%AUX_DIR%\wrk\*.* %RELEASE_DIR%\%AUX_DIR%\wrk
-
-mkdir %RELEASE_DIR%\%DOC_DIR%
+copy %PROJECT_REL_ROOT%\%DOC_DIR%\README %RELEASE_DIR%\%DOC_DIR%
 copy %PROJECT_REL_ROOT%\%DOC_DIR%\*.pdf %RELEASE_DIR%\%DOC_DIR%
 copy %PROJECT_REL_ROOT%\%DOC_DIR%\*.ods %RELEASE_DIR%\%DOC_DIR%
-copy %PROJECT_REL_ROOT%\%DOC_DIR%\README %RELEASE_DIR%\%DOC_DIR%
+xcopy %PROJECT_REL_ROOT%\%DOC_DIR%\tutorial\*.* %RELEASE_DIR%\%TUTORIAL_DIR% /f /s /e /y /i
 
 :: This section takes the generated build and data files and packs them
 :: up into a 7-zip archive.  This archive should be copied to the root
@@ -292,6 +297,7 @@ goto ender
 
 :skipnsis
 
+echo The NSIS installer builder is not installed on this Window computer.
 echo In Linux, copy the %PROJECT_7ZIP% file to the project root ("seq66")
 echo and extract that file. The contents go into the "release" directory.
 echo Change to the "nsis" directory and run "makensis Seq66Setup.nsi".

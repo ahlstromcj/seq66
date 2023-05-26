@@ -250,8 +250,10 @@ Section -Post
 ; It will create a shortcut to the application executable.
 
     CreateDirectory '$SMPROGRAMS\${COMPANY_NAME}\${PRODUCT_NAME}'
-    CreateShortCut '$SMPROGRAMS\${COMPANY_NAME}\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk' '$INSTDIR\${EXE_NAME}' "" '$INSTDIR\${EXE_NAME}' 0
-    CreateShortCut '$SMPROGRAMS\${COMPANY_NAME}\${PRODUCT_NAME}\Uninstall ${PRODUCT_NAME}.lnk' '$INSTDIR\uninst.exe' "" '$INSTDIR\uninst.exe' 0
+    CreateShortCut '$SMPROGRAMS\${COMPANY_NAME}\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk' \
+        '$INSTDIR\${EXE_NAME}' "" '$INSTDIR\${EXE_NAME}' 0
+    CreateShortCut '$SMPROGRAMS\${COMPANY_NAME}\${PRODUCT_NAME}\Uninstall ${PRODUCT_NAME}.lnk' \
+        '$INSTDIR\uninst.exe' "" '$INSTDIR\uninst.exe' 0
 
     WriteUninstaller "$INSTDIR\uninst.exe"
     WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\qpseq66.exe"

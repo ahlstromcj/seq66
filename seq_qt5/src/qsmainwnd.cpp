@@ -125,6 +125,7 @@
 #include "forms/qsmainwnd.ui.h"         /* generated btnStop, btnPlay, etc. */
 #endif
 
+#include "icons/route66.xpm"
 #include "pixmaps/learn.xpm"
 #include "pixmaps/learn2.xpm"
 #include "pixmaps/loop.xpm"
@@ -264,16 +265,24 @@ qsmainwnd::qsmainwnd
 
     /*
      * Let's try to use a true Windows icon here to override the Linux-allowed
-     * xpm file defined the the qsmainwnd.ui file.
+     * xpm file defined the the qsmainwnd.ui file. That doesn't work, so we
+     * fall back to our reliable #include xpm method.
      */
 
+#if defined THIS_CODE_WORKS
     QIcon icon;
     icon.addFile
     (
         QString::fromUtf8(":/icons/route66.ico"),
-        QSize(), QIcon::Normal, QIcon::Off
+        QSize(), QIcon::Normal, QIcon::On
     );
     setWindowIcon(icon);
+#else
+    QPixmap pixmap(route66);
+    QIcon icon;
+    icon.addPixmap(pixmap, QIcon::Normal, QIcon::On);
+    setWindowIcon(icon);
+#endif
 
 #endif
 

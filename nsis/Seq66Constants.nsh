@@ -3,7 +3,7 @@
 ; File:         Seq66Constants.nsh
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2023-05-24
+; Updated:      2023-05-26
 ; Version:      0.99.6
 ;
 ;   Provides constants commonly used by the installer for Seq66 for
@@ -48,7 +48,7 @@
 ; !define WINBITS           "32"
 
 ;============================================================================
-; Directory to place the installer.
+; Directory to place the installer. It's in seq66/release.
 ;============================================================================
 
 !define EXE_DIRECTORY       "..\release"

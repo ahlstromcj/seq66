@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-05-25
- * \updates       2023-05-25
+ * \updates       2023-05-26
  * \license       GNU GPLv2 or above
  *
  * Still in progress.  See
@@ -37,7 +37,7 @@
 #include <winuser.h>
 #include "afxres.h"
 
-IDI_ICON_APP    ICON DISCARDABLE "resources/icons/route66.ico"
+IDI_ICON_1 ICON "resources/icons/route66.ico"
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION 0,99,6,0
