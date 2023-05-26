@@ -1,0 +1,29 @@
+Installation directories for Seq66 in Linux and Window
+Chris Ahlstrom
+2023-05-26 to 2023-05-26
+
+Linux:
+
+    Let PREFIX = "/usr" or "/usr/local" for the base of the installation
+    area.  (Is there a base for a "~/.local"-based installation?)
+
+    Header files:   PREFIX/include/seq66-0.99/ and subdirectories
+    Executable:     PREFIX/bin/
+    Libraries:      PREFIX/lib/seq66-0.00/
+    Man pages:      PREFIX/man/man1/
+    Desktop files:  PREFIX/share/applications/
+    Data/samples:   PREFIX/share/seq66-0.99/
+    Icons/pixmaps:  PREFIX/share/seq66-0.99/icons/hicolor/<WIDTHxHEIGHT>/
+                    PREFIX/share/seq66-0.99/pixmaps/
+                    PREFIX/share/pixmaps/
+    Documentation:  PREFIX/share/doc/seq66-0.99/ including tutorial directory
+    Configuration:  /home/username/.config/seq66/ (default location)
+
+Windows:
+
+    Let PREFIX = "C:/Program Files" (64-bit) or "C:/Program Files (x86)"
+    (32-bit).
+
+    Executable:     PREFIX/Seq66
+
+# vim: sw=4 ts=4 wm=8 et ft=sh

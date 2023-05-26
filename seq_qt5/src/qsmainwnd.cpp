@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-23
+ * \updates       2023-05-25
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -259,6 +259,23 @@ qsmainwnd::qsmainwnd
     m_shrunken              (usr().shrunken())
 {
     ui->setupUi(this);
+
+#if defined SEQ66_PORTMIDI_SUPPORT
+
+    /*
+     * Let's try to use a true Windows icon here to override the Linux-allowed
+     * xpm file defined the the qsmainwnd.ui file.
+     */
+
+    QIcon icon;
+    icon.addFile
+    (
+        QString::fromUtf8(":/icons/route66.ico"),
+        QSize(), QIcon::Normal, QIcon::Off
+    );
+    setWindowIcon(icon);
+
+#endif
 
     int w = usr().mainwnd_x();                  /* normal, maybe scaled     */
     int h = usr().mainwnd_y();

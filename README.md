@@ -95,6 +95,7 @@ Windows, and using a conventional source tarball.
             *   Addition of Start menu entries for Windows.
             *   Fixed event::is_desired(), which affected changing note
                 velocities in the pattern editor's data pane.
+            *   Fixed an error preventing changing the "background" pattern.
         *   Added 'o' keystroke to seqroll to toggle recording ('r' already
             used to randomize notes).
         *   Refactored access to manual and tutorial for robustness.
