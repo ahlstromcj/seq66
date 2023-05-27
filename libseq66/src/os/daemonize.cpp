@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2023-05-08
+ * \updates       2023-05-27
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -98,10 +98,19 @@
 #include <syslog.h>                     /* syslog() and related constants   */
 #include <unistd.h>                     /* exit(), setsid()                 */
 
-#define STD_CLOSE       close
-#define STD_OPEN        open
-#define STD_O_RDWR      O_RDWR
-#define DEV_NULL        "/dev/null"
+#define STD_CLOSE               close
+#define STD_OPEN                open
+#define STD_O_RDWR              O_RDWR
+#define DEV_NULL                "/dev/null"
+
+/*
+ *  In Linux, dup2(int oldfd, int newfd) uses newfd as the new file descriptor,
+ *  closing it if open before reusing it.  dup2() returns this new file
+ *  descriptor on success, and a (-1) on error (setting errno, too).
+ */
+
+#define STD_DUP2                dup2
+#define STD_DUP2_SUCCESS(rc)    (rc >= 0)
 
 #elif defined SEQ66_PLATFORM_WINDOWS
 
@@ -116,10 +125,18 @@
 #include <synchapi.h>                   /* recent Windows "wait" functions  */
 #include <sys/stat.h>                   /* Windows S_IWUSR, S_IWGRP, etc.   */
 
-#define STD_CLOSE       _close
-#define STD_OPEN        _open
-#define STD_O_RDWR      _O_RDWR
-#define DEV_NULL        "NUL"
+#define STD_CLOSE               _close
+#define STD_OPEN                _open
+#define STD_O_RDWR              _O_RDWR
+#define DEV_NULL                "NUL"
+
+/*
+ *  In Windows, _dup2() has the same parameters with the same meaning, but
+ *  it returns 0 for success.
+ */
+
+#define STD_DUP2                _dup2
+#define STD_DUP2_SUCCESS(rc)    (rc == 0)
 
 #endif
 
@@ -138,8 +155,8 @@ namespace seq66
  *
  *  These actions are layed out in the following URLs.
  *
- *      http://www.linuxprofilm.com/articles/linux-daemon-howto.html#s1   <br>
- *      http://www.deez.info/sengelha/projects/sigrandd/doc/#5.           <br>
+ *      http://www.linuxprofilm.com/articles/linux-daemon-howto.html#s1
+ *      http://www.deez.info/sengelha/projects/sigrandd/doc/#5
  *
  *      -# Fork off the parent process.
  *      -# Change file mode mask (umask).
@@ -389,19 +406,18 @@ reroute_stdio_to_dev_null ()
         result = fd == STDIN_FILENO;
         if (result)
         {
-            if (dup2(STDIN_FILENO, STDOUT_FILENO) != STDOUT_FILENO)
-                result = false;
-
+            int newfd = STD_DUP2(STDIN_FILENO, STDOUT_FILENO);
+            result = STD_DUP2_SUCCESS(newfd);
             if (result)
             {
-                if (dup2(STDIN_FILENO, STDOUT_FILENO) != STDOUT_FILENO)
-                    result = false;
+                newfd = STD_DUP2(STDIN_FILENO, STDOUT_FILENO);
+                result = STD_DUP2_SUCCESS(newfd);
             }
         }
         if (result)
             warnprint("Standard I/O rerouted to /dev/null");
         else
-            file_error("Failed to reroute standard I/O to ", "/dev/null");
+            file_error("Failed to reroute standard I/O", "/dev/null");
     }
     return result;
 }
@@ -463,12 +479,12 @@ reroute_stdio (const std::string & logfile)
             result = fd != (-1);
             if (result)
             {
-                int newfd = dup2(fd, STDOUT_FILENO);
-                result = newfd == STDOUT_FILENO;
+                int newfd = STD_DUP2(fd, STDOUT_FILENO);
+                result = STD_DUP2_SUCCESS(newfd);
                 if (result)
                 {
-                    newfd = dup2(fd, STDERR_FILENO);
-                    result = newfd == STDERR_FILENO;
+                    newfd = STD_DUP2(fd, STDERR_FILENO);
+                    result = STD_DUP2_SUCCESS(newfd);
                     if (result)
                     {
                         std::string logpath = get_full_path(logfile);
@@ -488,7 +504,7 @@ reroute_stdio (const std::string & logfile)
             }
         }
         if (! result)
-            file_error("Failed to reroute standard I/O to ", logfile);
+            file_error("Failed to reroute standard I/O", logfile);
     }
     return result;
 }

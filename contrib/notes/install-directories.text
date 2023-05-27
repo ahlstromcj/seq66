@@ -1,6 +1,6 @@
 Installation directories for Seq66 in Linux and Window
 Chris Ahlstrom
-2023-05-26 to 2023-05-26
+2023-05-26 to 2023-05-27
 
 Linux:
 
@@ -34,5 +34,8 @@ Windows:
     Icons/pixmaps:  To do.
     Documentation:  PREFIX/Seq66/doc
     Configuration:  HOME/AppData/Local/seq66 (default location)
+    Lnk files:      HOME/AppData/Roaming/Microsoft/Windows/Recent (seq66.lnk)
+    Install/Un lnk: HOME/AppData/Roaming/Microsoft/Windows/Start Menu/
+                        /Programs/Seq66/ (Seq66.lnk and Uninstall Seq66.lnk)
 
 # vim: sw=4 ts=4 wm=8 et ft=sh
