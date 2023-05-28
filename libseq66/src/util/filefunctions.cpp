@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-05-11
+ * \updates       2023-05-28
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -491,13 +491,13 @@ file_writable (const std::string & filename)
 }
 
 /**
- *    Checks a file for readability and writability.  An even stronger test
- *    than file_exists.  At present, we see no need to distinguish read and
- *    write permissions.  We assume the file is fully accessible only if the
- *    file has both permissions.
+ *  Checks a file for readability and writability.  An even stronger test than
+ *  file_exists.  At present, we see no need to distinguish read and write
+ *  permissions.  We assume the file is fully accessible only if the file has
+ *  both permissions.
  *
- *    This can be surprising if one wants only to read a file, and the file is
- *    read-only.
+ *  This can be surprising if one wants only to read a file, and the file is
+ *  read-only.
  *
  * \param filename
  *    Provides the name of the file to be checked.
@@ -513,7 +513,7 @@ file_read_writable (const std::string & filename)
 }
 
 /**
- *    Checks a file for the ability to be executed.
+ *  Checks a file for the ability to be executed.
  *
  * \param filename
  *    Provides the name of the file to be checked.
@@ -550,8 +550,8 @@ file_executable (const std::string & filename)
 }
 
 /**
- *    Checks a file to see if it is a directory.  This function is also used
- *    in the function of the same name in fileutilities.cpp.
+ *  Checks a file to see if it is a directory.  This function is also used in
+ *  the function of the same name in fileutilities.cpp.
  *
  * \param filename
  *    Provides the name of the directory to be checked.
@@ -578,6 +578,42 @@ file_is_directory (const std::string & filename)
         }
         else
             result = false;
+    }
+    return result;
+}
+
+/**
+ *  Determines the size of a file. An alternative, but apparently less
+ *  reliable method is the following, which apparently needs to be put in a
+ *  try-catch block.
+ *
+ *  std::ifstream file(m_name, std::ios::in | std::ios::binary | std::ios::ate);
+ *  bool result = file.is_open();
+ *  (void) file.seekg(0, file.end);     // seek to the file's end
+ *  m_file_size = file.tellg();         // get the end offset
+ *
+ *  Another option is to #include <filesystem> and call
+ *  std::uintmax_t file_size (const std::filesystem::path& p), which
+ *  throws (but there is a noexcept version as well.
+ *
+ * \param filename
+ *      The name of the file. If it is a directory, this function will fail.
+ *
+ * \return
+ *      Returns the size of the file or 0 if the file is of size 0 or is
+ *      not a file.
+ */
+
+size_t
+file_size (const std::string & filename)
+{
+    size_t result = 0;
+    if (file_name_good(filename))
+    {
+        stat_t statusbuf;
+        int statresult = S_STAT(filename.c_str(), &statusbuf);
+        if (statresult == 0)                           // a good file handle?
+            result = statusbuf.st_size;
     }
     return result;
 }

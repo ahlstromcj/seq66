@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-05-10
+ * \updates       2023-05-28
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -59,7 +59,12 @@ extern bool file_executable (const std::string & targetfile);
 extern bool file_is_directory (const std::string & targetfile);
 extern bool file_name_good (const std::string & filename);
 extern bool file_mode_good (const std::string & mode);
-extern std::FILE * file_open (const std::string & filename, const std::string & mode);
+extern size_t file_size (const std::string & filename);
+extern std::FILE * file_open
+(
+    const std::string & filename,
+    const std::string & mode
+);
 extern std::FILE * file_open_for_read (const std::string & filename);
 extern std::FILE * file_create_for_write (const std::string & filename);
 extern std::string current_date_time ();

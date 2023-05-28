@@ -1,4 +1,4 @@
-# README for Seq66 0.99.6 2023-05-25
+# README for Seq66 0.99.6 2023-05-28
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks and triggers, and playlists for song management; a scale and
@@ -93,13 +93,16 @@ Windows, and using a conventional source tarball.
                 arrow keys work only if the seqroll has keyboard focus.
         *   Follow-ons to issue #110:
             *   Addition of Start menu entries for Windows.
+            *   Added data/readme files and doc/tutorial files accidentally
+                left out of NSIS installer.
             *   Fixed event::is_desired(), which affected changing note
                 velocities in the pattern editor's data pane.
             *   Fixed an error preventing changing the "background" pattern.
         *   Added 'o' keystroke to seqroll to toggle recording ('r' already
             used to randomize notes).
         *   Refactored access to manual and tutorial for robustness.
-        *   At first start, a log-file is automatically created.
+        *   At first start, a log-file is now automatically created. If it
+            gets larger than a megabyte, then it is deleted to start over.
     *   Version 0.99.5:
         *   Greatly enhanced the event editor tab and the events that can
             be view and modified.

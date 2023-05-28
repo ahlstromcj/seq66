@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2023-05-26
+# \update      2023-05-27
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -134,8 +134,18 @@ windows: LIBS += -lwinmm
 
 # Install an application icon for Windows to use.
 
-win32:RC_ICONS += ../resources/icons/route66.ico
-windows:RC_ICONS += ../resources/icons/route66.ico
+win32:RC_ICONS += ../resources/icons/route66.ico \
+ ../resources/icons/route66-16x16.ico \
+ ../resources/icons/route66-32x32.ico \
+ ../resources/icons/route66-48x48.ico \
+ ../resources/icons/route66-64x64.ico \
+ ../resources/icons/route66-256x256.ico
+windows:RC_ICONS += ../resources/icons/route66.ico \
+ ../resources/icons/route66-16x16.ico \
+ ../resources/icons/route66-32x32.ico \
+ ../resources/icons/route66-48x48.ico \
+ ../resources/icons/route66-64x64.ico \
+ ../resources/icons/route66-256x256.ico
 
 #******************************************************************************
 # Seq66qt5.pro (Seq66qt5)

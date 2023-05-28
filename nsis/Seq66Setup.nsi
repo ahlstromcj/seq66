@@ -3,7 +3,7 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2023-05-24
+; Updated:      2023-05-28
 ; Version:      0.99.6
 ;
 ; Usage of this Windows build script:
@@ -11,7 +11,9 @@
 ;    -  See the build_release_package.bat file for full details.
 ;    -  Obtain and install the NSIS 2.46 (or above) installer from
 ;       http://nsis.sourceforge.net/Download, or preferably install it from
-;       your Linux repository via apt.
+;       your Linux repository via apt. It can also be installed on
+;       Windows, and the build script can detect if it is available on
+;       the PATH.
 ;    -  In Windows, Check out the latest branch project from Git.  Or
 ;       make a source package using the handy "pack" script on Linux,
 ;       and copy the source package to your Windows system, and unpack it
@@ -35,12 +37,15 @@
 ;               "Test Installer" button in the NSIS window.
 ;           -   When you get to the "Choose Install Location" window, you can
 ;               use "C" and test the installation.
+;           -   Or, as in Linux, the makensis command can be used if
+;               available.
 ;       -   Linux: The program that creates Windows installers on Linux is
 ;           'makensis'.
 ;           -   The actual build is done on Windows.
 ;           -   Change to the "seq66/nsis" directory.
-;           -   Run "makensis Seq66Setup_V0.95.nsi" (or current version).
-;    -  The installer package is located at "...."
+;           -   Run "makensis Seq66Setup.nsi".
+;    -  After creation, The installer package is at
+;       "seq66/release/seq66_setup_x64-0.99.5.exe" or similar.
 ;       -   Select the defaults and let the installer do its thing.
 ;    -  To uninstall the application, use Settings /
 ;           Control Panel / Add and Remove Programs.  The application is
@@ -96,6 +101,36 @@ Unicode True
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
+
+;---------------------------------------------------------------------------
+; Tentative code to install a desktop icon. Disabls the readme prompt and
+; uses it to prompt for installing a desktop icon
+;
+; Function finishpageaction
+; CreateShortcut "$DESKTOP\qpseq66.lnk" "$iNSTDIR\qpseq66.exe"
+; FunctionEnd
+;
+; !define MUI_FINISHPAGE_SHOWREADME ""
+; !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+; !define MUI_FINISHPAGE_SHOWREADME_TEXT "Create Desktop Shortcut"
+; !define MUI_FINISHPAGE_SHOWREADME_FUNCTION finishpageaction
+;
+;----------------------------
+;
+; Uninstall:
+;
+; Removes pins using the shortcut.
+; Deletes the shortcut.
+; Refreshes the desktop.
+;
+; !macro customInstall WinShell::UninstShortcut "$desktopLink"
+;
+; Delete "$desktopLink"
+; System::Call 'shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'
+;
+; !macroend
+;
+;---------------------------------------------------------------------------
 
 !define MUI_FINISHPAGE_SHOWREADME "..\data\readme.text"
 !insertmacro MUI_PAGE_FINISH

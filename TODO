@@ -1,25 +1,27 @@
 TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-05-24
+2019-04-13 to 2023-05-27
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
-Current:
+Current ("o" = we think it is fixed):
 
-    - Windows: No shortcut in Start menu after setup.
+    o Windows: No shortcut in Start menu after setup.
     - User manual and tutorials entry menus seems to open something but close
       quick (I do have a default pdf reader).
-	- Fixed: Tempo is not saved with new song (but works with for example
+	o Fixed: Tempo is not saved with new song (but works with for example
       Kraftwerk-Europe_Endless-reconstructed.midi provided in data folder).
 	- Investigate: cannot click on 'MIDI Clock' tab in preferences (alt-C OK).
 
 	Patterns editor:
 
-	- Fixed: Often Ctrl-Z is not working event though click undo button works.
-	- Fixed: No undo on velocity changes. Works, but was not always seen,
+	o Fixed: Often Ctrl-Z is not working event though click undo button works.
+	o Fixed: No undo on velocity changes. Works, but was not always seen,
       had to set a dirty status.
-    - Fixed:When a background sequence is chosen, it is not possible to display
+    o Fixed: When a background sequence is chosen, it is not possible to display
       another one or to turn it off.
+    - Why does velocity change in data pane not work when starting from the
+      left in barrage.midi, but work okay when starting from the right?
 
     Added code to pass arrow events from the qscrollslave to the
     qscrollmaster. Does not work for wheel events, oddly enough.

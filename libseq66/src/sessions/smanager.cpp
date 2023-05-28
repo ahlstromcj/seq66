@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-05-25
+ * \updates       2023-05-28
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -111,6 +111,24 @@ smanager::~smanager ()
 {
     if (! is_help())
         session_message("Exiting session manager");
+}
+
+/**
+ *  This function also checks to make sure the log file does not get too large
+ *  (about a megabyte).
+ */
+
+static void
+reroute_to_log (const std::string & filepath)
+{
+    static const size_t s_limit = 1048576;
+    size_t sz = file_size(filepath);
+    if (sz > s_limit)
+    {
+        (void) file_delete(filepath);
+        session_message("Log file deleted", filepath);
+    }
+    (void) reroute_stdio(filepath);
 }
 
 /**
@@ -256,7 +274,7 @@ smanager::main_settings (int argc, char * argv [])
 
                 std::string logfile = usr().option_logfile();
                 if (usr().option_use_logfile())
-                    (void) reroute_stdio(logfile);
+                    reroute_to_log(logfile);
 
                 m_midi_filename.clear();
                 if (optionindex > 0 && optionindex < argc) /* MIDI filename? */
@@ -979,7 +997,7 @@ smanager::create_configuration
         {
             usr().option_logfile("seq66.log");
             usr().option_use_logfile(true);
-            (void) reroute_stdio(usr().option_logfile());
+            reroute_to_log(usr().option_logfile());
             result = make_directory_path(mainpath);
             if (result)
             {

@@ -6,7 +6,7 @@
 # \library      qpseq66 application
 # \author       Chris Ahlstrom
 # \date         2018-11-15
-# \update       2023-05-26
+# \update       2023-05-27
 # \version      $Revision$
 # \license      $XPC_SUITE_GPL_LICENSE$
 #
@@ -49,9 +49,9 @@ message("SUBDIRS is set to: $${SUBDIRS}")
 
 QMAKE_CXXFLAGS += -std=c++14
 
-# Install an application icon for Windows to use.
-
-win32:RC_ICONS += ../seq66/resources/icons/route66.ico
+# Install an application icon for Windows to use. But see Seq66qt5.pro instead.
+#
+# win32:RC_ICONS += ../seq66/resources/icons/route66.ico
 
 # win32:RC_FILE = resources/seq66_win.rc
 # RESOURCES += seq66.qrc

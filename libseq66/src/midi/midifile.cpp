@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-06
+ * \updates       2023-05-28
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -641,14 +641,18 @@ midifile::read_gap (size_t sz)
 bool
 midifile::grab_input_stream (const std::string & tag)
 {
-    if (m_name.empty())
-        return false;
+    m_file_size = file_size(m_name);
+    if (m_name.empty() || m_file_size == 0)
+    {
+        return set_error("Bad MIDI file");
+    }
 
     std::ifstream file(m_name, std::ios::in | std::ios::binary | std::ios::ate);
     bool result = file.is_open();
     m_error_is_fatal = false;
     if (result)
     {
+#if defined USE_OLD_CODE
         try
         {
             (void) file.seekg(0, file.end);     /* seek to the file's end   */
@@ -658,6 +662,7 @@ midifile::grab_input_stream (const std::string & tag)
         {
             m_file_size = 0;
         }
+#endif
         if (m_file_size < c_minimum_midi_file_size)
         {
             result = set_error("File too small");
