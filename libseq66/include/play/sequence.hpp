@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-05-24
+ * \updates       2023-05-29
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1712,13 +1712,13 @@ public:
     (
         midipulse tick_s, midipulse tick_f,
         midibyte status, midibyte cc,
-        int d_s, int d_f
+        int d_s, int d_f, bool finalize = false
     );
     bool change_event_data_relative
     (
         midipulse tick_s, midipulse tick_f,
         midibyte status, midibyte cc,
-        int newval
+        int newval, bool finalize = false
     );
     void change_event_data_lfo
     (

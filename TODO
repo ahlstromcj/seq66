@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-05-27
+2019-04-13 to 2023-05-30
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
@@ -8,10 +8,12 @@ Current ("o" = we think it is fixed):
 
     o Windows: No shortcut in Start menu after setup.
     - User manual and tutorials entry menus seems to open something but close
-      quick (I do have a default pdf reader).
+      quick (I do have a default pdf reader). The std::system() call cannot
+      return a failure status under Windows.
 	o Fixed: Tempo is not saved with new song (but works with for example
       Kraftwerk-Europe_Endless-reconstructed.midi provided in data folder).
-	- Investigate: cannot click on 'MIDI Clock' tab in preferences (alt-C OK).
+	- Investigate: cannot click on 'MIDI Clock' tab in preferences (Alt-C OK).
+      This will work if just the right place in the tab is clicked.
 
 	Patterns editor:
 
@@ -21,7 +23,10 @@ Current ("o" = we think it is fixed):
     o Fixed: When a background sequence is chosen, it is not possible to display
       another one or to turn it off.
     - Why does velocity change in data pane not work when starting from the
-      left in barrage.midi, but work okay when starting from the right?
+      left in barrage.midi? The Kepler34 "relative change" feature. This
+      feature is macroed out for now.
+    - Ctrl-Z works, but does not undo the modify flag. (Our undo method
+      is not completely robust.
 
     Added code to pass arrow events from the qscrollslave to the
     qscrollmaster. Does not work for wheel events, oddly enough.
@@ -112,22 +117,12 @@ ISSUES:
 #3  Open loop Pattern Editor window.
     On mouse wheel scroll event we expect the piano-roll and notes sheet to
     scroll vertically.
-    STATUS: We had to disable mouse-wheel scrolling for this reason: In
-    qseqkeys, we did not want the scroll wheel to accidentally scroll the
-    piano keys vertically.  Same for qscrollmaster, qseqeditframe64, except
-    that we note wheelEvent() is not called for some reason.  One way around
-    this issue might be to somehow pass child scrolling up to the
-    qscrollmaster class, e.g. via a signal. For now, we have mitigated
-    this issue by enabling the scroll wheel in the pattern and song piano
-    rolls, and disabled it in qseqdata, qseqtime, qstriggereditor,
-    qperfnames, and qpertime.
+    STATUS:  Mostly fixed; it works only if the piano roll has focus.
+    See the code involving the qscrollmaster and qscrollslave.
 
 #24 Release notes in release tag message?
     STATUS: Will try to create a GitHub release using the "hub" program and
     the RELNOTES (not .md) file.
-
-#37 Song editor scrolling?
-    STATUS: Closed, refer to issue #3 instead.
 
 #44 "Record live sequence changes" functionality
     Currently the "record live sequence changes" only adds patterns into the

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-04-29
+ * \updates       2023-05-29
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -40,6 +40,10 @@
 #include <stdexcept>                    /* std::invalid_argument            */
 
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
+
+#if defined SEQ66_PLATFORM_WINDOWS
+#include <windows.h>                    /* ::MultiByteToWideChar()          */
+#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -1287,6 +1291,48 @@ simplify (const std::string & source)
         }
     }
     return result;
+}
+
+/**
+ *
+ *  This is a simplistic string-conversion function; it requires that
+ *  the source string be ASCII-encoded.
+ *
+ * Windows:
+ *
+ *  -#  Handle the trivial case of an empty string.
+ *  -#  Determine the required length of the new string.
+ *  -#  Construct a new string of required length.
+ *  -#  Convert the old string to the new string.
+ *
+ * Linux:
+ *
+ *  Just do a simple assign.
+ *
+ */
+
+std::wstring
+widen_string (const std::string & source)
+{
+    if (source.empty())
+        return std::wstring();          /* trivial case of empty string     */
+
+#if defined SEQ66_PLATFORM_WINDOWS
+    size_t required_length = ::MultiByteToWideChar
+    (
+        CP_UTF8, 0, source.c_str(), int(source.length()), 0, 0
+    );
+    std::wstring result(required_length, L'\0');
+    ::MultiByteToWideChar
+    (
+        CP_UTF8, 0, source.c_str(), int(source.length()), &result[0], int(result.length())
+    );
+    return result;
+#else
+    std::wstring result;
+    result.assign(source.begin(), source.end());
+    return result;
+#endif
 }
 
 }           // namespace seq66

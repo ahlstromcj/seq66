@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2023-05-25
+ * \updates       2023-05-30
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -39,6 +39,12 @@
 #include "cfg/settings.hpp"             /* std::rc(), usr(), and much more  */
 #include "os/shellexecute.hpp"          /* seq66::open_url(), open_pdf()    */
 #include "util/filefunctions.hpp"       /* seq66::find_file()               */
+
+/*
+ * TEMPORARY
+ */
+
+static const bool s_netdocs_first = false;
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -429,7 +435,9 @@ ppqn_in_range (int ppqn)
 
 
 /**
- *  First try the web, then the directory list.
+ *  First try the web, then the directory list. Actually, let's do it the
+ *  other way, on the theory that the local install should be used for
+ *  documentation as well.
  */
 
 bool
@@ -438,7 +446,13 @@ open_user_manual ()
     static const std::string s_url =
         "https://ahlstromcj.github.io/docs/seq66/seq66-user-manual.pdf";
 
-    bool result = open_url(s_url);
+    bool result = false;
+    bool netdocs_done = false;
+    if (s_netdocs_first)
+    {
+        result = open_url(s_url);
+        netdocs_done = true;
+    }
     if (! result)
     {
         std::string docpath = find_file
@@ -448,6 +462,8 @@ open_user_manual ()
         result = ! docpath.empty();
         if (result)
             result = open_pdf(docpath);
+        else if (! netdocs_done)
+            result = open_url(s_url);
     }
     return result;
 }
@@ -458,17 +474,24 @@ open_tutorial ()
     static const std::string s_url =
         "https://ahlstromcj.github.io/docs/seq66/tutorial/index.html";
 
-    bool result = open_url(s_url);
+    bool result = false;
+    bool netdocs_done = false;
+    if (s_netdocs_first)
+    {
+        result = open_url(s_url);
+        netdocs_done = true;
+    }
     if (! result)
     {
         std::string tutpath = find_file(tutorial_folder_list(), "index.html");
         result = ! tutpath.empty();
         if (result)
             result = open_url(tutpath);
+        else if (! netdocs_done)
+            result = open_url(s_url);
     }
     return result;
 }
-
 
 /**
  *  This list is useful to look up the installed documentation. It starts with
@@ -484,8 +507,12 @@ doc_folder_list ()
     if (s_uninitialized)
     {
 #if defined SEQ66_PLATFORM_WINDOWS
-        static std::string s_64_dir = "C:/Program Files/Seq66/data/doc";
-        static std::string s_32_dir = "C:/Program Files (x86)/Seq66/data/doc";
+        static std::string s_64_dir =
+            "C:/Program Files/Seq66/data/share/doc";
+
+        static std::string s_32_dir =
+            "C:/Program Files (x86)/Seq66/data/share/doc";
+
         std::string app_path = seq_app_path();
         s_64_dir[0] = app_path[0];
         s_32_dir[0] = app_path[0];
@@ -522,9 +549,9 @@ tutorial_folder_list ()
     {
 #if defined SEQ66_PLATFORM_WINDOWS
         static std::string s_64_dir =
-            "C:/Program Files/Seq66/data/doc/tutorial";
+            "C:/Program Files/Seq66/data/share/doc/tutorial";
         static std::string s_32_dir =
-            "C:/Program Files (x86)/Seq66/data/doc/tutorial";
+            "C:/Program Files (x86)/Seq66/data/share/doc/tutorial";
 
         std::string app_path = seq_app_path();
         s_64_dir[0] = app_path[0];

@@ -23,14 +23,12 @@
  * \file          shellexecute.hpp
  * \author        Chris Ahlstrom
  * \date          2022-05-19
- * \updates       2022-05-19
+ * \updates       2022-05-29
  * \license       GNU GPLv2 or above
  *
  *    This module provides functions for executing commands from within
  *    the application.
  */
-
-#include "seq66_platform_macros.h"      /* detecting Linux vs Windows       */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -44,6 +42,7 @@ namespace seq66
  */
 
 extern bool command_line (const std::string & cmdline);
+extern bool open_document (const std::string & documentpath);
 extern bool open_pdf (const std::string & pdfspec);
 extern bool open_url (const std::string & pdfspec);
 extern bool open_local_url (const std::string & pdfspec);

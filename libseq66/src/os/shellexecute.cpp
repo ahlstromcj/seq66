@@ -21,7 +21,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-05-19
- * \updates       2023-05-25
+ * \updates       2023-05-29
  * \license       GNU GPLv2 or above
  *
  *  Provides support for cross-platform time-related functions.
@@ -29,9 +29,14 @@
 
 #include <cstdlib>                      /* int std::system(commandline)     */
 
+#include "seq66_platform_macros.h"      /* detecting Linux vs Windows       */
 #include "cfg/settings.hpp"             /* for usr().use_pdf_viewer() etc.  */
-#include "util/basic_macros.hpp"        /* error_message()                  */
 #include "os/shellexecute.hpp"          /* seq66::open_document(), etc.     */
+#include "util/strfunctions.hpp"        /* seq66::widen_string()            */
+
+#if defined SEQ66_PLATFORM_WINDOWS
+#include <windows.h>                    /* ShellExecute() [shellapi.h]      */
+#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -41,7 +46,7 @@ namespace seq66
 {
 
 /**
- *  Generic C++ method for executing a command-line. It must
+ *  Generic C++ method for executing a command-line.
  */
 
 bool
@@ -58,8 +63,6 @@ command_line (const std::string & cmdline)
     return result;
 }
 
-#if defined SEQ66_PLATFORM_LINUX
-
 /**
  *  Opens a PDF file.  Meant to be made more flexible later:
  *
@@ -74,12 +77,18 @@ open_pdf (const std::string & pdfspec)
 {
     std::string cmd = usr().user_pdf_viewer();
     if (cmd.empty())
-        cmd = "/usr/bin/xdg-open";
-
-    cmd += " ";
-    cmd += pdfspec;
-    cmd += "&";
-    return command_line(cmd);
+    {
+        return open_document(pdfspec);
+    }
+    else
+    {
+        cmd += " ";
+        cmd += pdfspec;
+#if ! defined SEQ66_PLATFORM_WINDOWS
+        cmd += "&";
+#endif
+        return command_line(cmd);
+    }
 }
 
 bool
@@ -87,12 +96,18 @@ open_url (const std::string & url)
 {
     std::string cmd = usr().user_browser();
     if (cmd.empty())
-        cmd = "/usr/bin/xdg-open";
-
-    cmd += " ";
-    cmd += url;
-    cmd += "&";
-    return command_line(cmd);
+    {
+        return open_document(url);
+    }
+    else
+    {
+        cmd += " ";
+        cmd += url;
+#if ! defined SEQ66_PLATFORM_WINDOWS
+        cmd += "&";
+#endif
+        return command_line(cmd);
+    }
 }
 
 /**
@@ -103,6 +118,25 @@ bool
 open_local_url (const std::string & url)
 {
     return open_url(url);
+}
+
+#if defined SEQ66_PLATFORM_LINUX
+
+bool
+open_document (const std::string & documentpath)
+{
+    bool result = ! documentpath.empty();
+    if (result)
+    {
+        std::string cmd = "/usr/bin/xdg-open";
+        cmd += " ";
+        cmd += documentpath;
+        cmd += "&";
+        result = command_line(cmd);
+        if (! result)
+            (void) file_error("xdg-open failed", documentpath);
+    }
+    return result;
 }
 
 #elif defined SEQ66_PLATFORM_WINDOWS
@@ -158,41 +192,27 @@ open_local_url (const std::string & url)
  */
 
 bool
-open_pdf (const std::string & pdfspec)
+open_document (const std::string & documentpath)
 {
-    std::string cmd = usr().user_pdf_viewer();
-    if (cmd.empty())
+    bool result = ! documentpath.empty();
+    if (result)
     {
-        return command_line(pdfspec);
+#if defined SEQ66_PLATFORM_64_BIT
+        std::wstring op = widen_string("open");
+        std::wstring path = widen_string(documentpath);
+#else
+        std::wstring op = "open";
+        std::string path = documentpath;
+#endif
+        HINSTANCE rc = ::ShellExecute
+        (
+            NULL, op.c_str(), path.c_str(), NULL, NULL, SW_SHOW
+        );
+        result = uintptr_t(rc) > 32;
+        if (! result)
+            (void) file_error("Command failed", documentpath);
     }
-    else
-    {
-        cmd += " ";
-        cmd += pdfspec;
-        return command_line(cmd);
-    }
-}
-
-bool
-open_url (const std::string & url)
-{
-    std::string cmd = usr().user_browser();
-    if (cmd.empty())
-    {
-        return command_line(url);
-    }
-    else
-    {
-        cmd += " ";
-        cmd += url;
-        return command_line(url);
-    }
-}
-
-bool
-open_local_url (const std::string & url)
-{
-    return open_url(url);
+    return result;
 }
 
 #endif

@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-04-29
+ * \updates       2023-05-29
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -159,6 +159,7 @@ extern tokenization tokenize
 );
 extern tokenization tokenize_quoted (const std::string & source);
 extern std::string simplify (const std::string & source);
+extern std::wstring widen_string (const std::string & source);
 
 /**
  *  This function comes, slightly modified to avoid throwing an exception,

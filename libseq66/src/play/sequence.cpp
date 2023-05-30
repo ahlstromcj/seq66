@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-24
+ * \updates       2023-05-29
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2519,7 +2519,7 @@ sequence::change_event_data_range
 (
     midipulse tick_s, midipulse tick_f,
     midibyte status, midibyte cc,
-    int data_s, int data_f
+    int data_s, int data_f, bool finalize
 )
 {
     automutex locker(m_mutex);
@@ -2568,7 +2568,7 @@ sequence::change_event_data_range
             er.set_data(d0, d1);
             result = true;
         }
-        if (result)
+        if (result && finalize)
             modify();
     }
     return result;
@@ -2605,7 +2605,7 @@ sequence::change_event_data_relative
 (
     midipulse tick_s, midipulse tick_f,
     midibyte status, midibyte cc,
-    int newval
+    int newval, bool finalize
 )
 {
     automutex locker(m_mutex);
@@ -2653,7 +2653,7 @@ sequence::change_event_data_relative
             er.set_data(d0, d1);
             result = true;
         }
-        if (result)
+        if (result && finalize)
             modify();
     }
     return result;

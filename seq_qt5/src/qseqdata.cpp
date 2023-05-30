@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-23
+ * \updates       2023-05-30
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -141,6 +141,7 @@ qseqdata::conditional_update ()
 {
     if (check_dirty())
     {
+printf("dirty ");
         update();
     }
 }
@@ -328,18 +329,22 @@ qseqdata::resizeEvent (QResizeEvent * qrep)
 void
 qseqdata::mousePressEvent (QMouseEvent * event)
 {
-    midipulse tick_start, tick_finish;
     int mouse_x = event->x() - c_keyboard_padding_x + scroll_offset_x();
     int mouse_y = event->y();
 
+#if defined SEQ66_ALLOW_RELATIVE_VELOCITY_CHANGE
+
     /*
      * If near an event (4px), do relative adjustment.  Do we need to
-     * push-undo here?  Not sure, won't change for now.
+     * push-undo here?  Not sure, won't change for now. Disable for now
+     * because it either doesn't work or causes velocity changes to not
+     * occur. Also, it's an issue with tracks densely packed with note
+     * events.
      */
 
+    midipulse tick_start, tick_finish;
     tick_start = pix_to_tix(mouse_x - 8);       // 2; never get it to fire!
     tick_finish = pix_to_tix(mouse_x + 8);      // 2; ditto
-    track().push_undo();
 
     /*
      * Check if this tick range would select an event.
@@ -353,8 +358,11 @@ qseqdata::mousePressEvent (QMouseEvent * event)
     if (would_select)
         m_relative_adjust = true;               /* printf("rel adjust\n");  */
     else
+
+#endif
         m_line_adjust = true;                   /* set ev values under line */
 
+    track().push_undo();
     drop_x(mouse_x);                            /* set values for line      */
     drop_y(mouse_y);
     old_rect().clear();                         /* reset dirty redraw box   */
@@ -384,16 +392,13 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
         int df = byte_value(m_dataarea_y, m_dataarea_y - current_y() - 1);
         bool ok = track().change_event_data_range
         (
-            tick_s, tick_f, m_status, m_cc, ds, df
+            tick_s, tick_f, m_status, m_cc, ds, df, true
         );
         m_line_adjust = false;
         if (ok)
             set_dirty();
     }
-    else if (m_relative_adjust)
-        m_relative_adjust = false;
-
-    m_dragging = false;
+    m_relative_adjust = m_dragging = false;
 }
 
 void
@@ -425,7 +430,6 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
             adj_x_min = drop_x();
             adj_y_min = drop_y();
         }
-
         tick_s = pix_to_tix(adj_x_min);
         tick_f = pix_to_tix(adj_x_max);
 
@@ -436,7 +440,7 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
             tick_s, tick_f, m_status, m_cc, ds, df
         );
         if (ok)
-            set_dirty();
+            set_dirty();                /* just a flag setting      */
 #else
         set_dirty();
 #endif
@@ -447,13 +451,12 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
         int adjy = byte_value(m_dataarea_y, drop_y() - current_y());
         tick_s = pix_to_tix(drop_x() - 2);
         tick_f = pix_to_tix(drop_x() + 2);
-
         bool ok = track().change_event_data_relative
         (
             tick_s, tick_f, m_status, m_cc, adjy
         );
         if (ok)
-            set_dirty();
+            set_dirty();                /* just a flag setting      */
 #else
         set_dirty();
 #endif
