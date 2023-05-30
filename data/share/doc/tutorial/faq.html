@@ -6,7 +6,7 @@
 <! Library:    seq66/data/share/tutorial>
 <! Author:     Chris Ahlstrom >
 <! Date:       2022-05-21>
-<! Updates:    2022-05-24>
+<! Updates:    2023-06-01>
 <! Version:    $Revision$>
 <! License:    $XPC_SUITE_GPL_LICENSES$>
 
@@ -35,7 +35,9 @@
                height="80" class="slideheader">
                <p class="slideheader">
                   Seq66 Basic Tutorial
-                  <p class="slidetopic"> Frequently Asked Questions</p>
+                  <p class="slidetopic">
+                     Frequently Asked Questions
+                  </p>
                </p>
             </td>
          </tr>
@@ -58,8 +60,35 @@
             <td align="left" valign="top" colspan="2">
                <ul>
                   <li>
-                     <b> First Question. </b>
-                     Answer
+                     <b> When Seq66 runs, it gives port errors or does not show
+                     all ports. </b>
+                     When Seq66 starts for the first time (i.e. no
+                     configuration files yet exist), it scans the system for
+                     existing ports. On Windows, it disabled ports that
+                     are already grabbed by the Windows MIDI Mapper.
+                     If later devices are removed or added to the system,
+                     the user has the option of rebuilding the port maps
+                     by going to <b>Edit / Preferences / MIDI Clock </b>
+                     and clicking the <b> Make Maps </b> button.
+                     Then restart Seq66 and make sure of the desired set of
+                     ports.
+                     (One can also edit the 'rc' file manually while
+                     Seq66 is not running.)
+                  </li>
+                  <li>
+                     <b> Clicking on the Edit / Preferences / MIDI Clock
+                     tab does not work.</b>
+                     It actually does work, but in some themes one has to
+                     click in the exact right spot.  Why? Don't know.
+                     Another option is to use <tt>Alt-C</tt> to move to that
+                     tab.
+                  </li>
+                  <li>
+                     <b> Undo/redo does not work consistently.</b>
+                     While Seq66 makes great improvements on the management of
+                     modifications, there are currently still issues with some
+                     modifications. Make a bug report and we'll see if the
+                     particular issue can be fixed.
                   </li>
                </ul>
             </td>
@@ -72,7 +101,7 @@
             <td align="left" valign="top" width="405"
                colspan="1" class="slidenote">
                <p class="slidenote">
-                  As time goes on, this FAQ will be update, especially
+                  As time goes on, this FAQ will be updated, especially
                   as requested by user input at <i>GitHub</i>:
                   <!--
                   <a href="https://github.com/ahlstromcj/seq66">
@@ -88,7 +117,7 @@
             <td align="left" valign="bottom" width="100">
                <p class="slidelabel">
                   <font size="-1">
-                     Updated 2022-05-24
+                     Updated 2023-06-01
                   </font>
                </p>
             </td>

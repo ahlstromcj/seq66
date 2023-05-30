@@ -7,7 +7,7 @@ Some of these issues will be pushed off for the distant Seq66v2.
 Current ("o" = we think it is fixed):
 
     o Windows: No shortcut in Start menu after setup.
-    - User manual and tutorials entry menus seems to open something but close
+    o User manual and tutorials entry menus seems to open something but close
       quick (I do have a default pdf reader). The std::system() call cannot
       return a failure status under Windows.
 	o Fixed: Tempo is not saved with new song (but works with for example
