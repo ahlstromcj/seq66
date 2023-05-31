@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-05-17
+% \update      2023-05-31
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -107,13 +107,20 @@
    one can go to
    \textbf{Edit / Preferences / MIDI Clock} and
    click the \textbf{Make Maps} button.
-   This action stores the current set of MIDI devices.
+   This action stores (again) the current set of MIDI devices.
    Restart \textsl{Seq66} and the new set of devices should appear.
+
+   \textsl{Seq66} will also detect at startup if there are unavailable
+   ports or if there are now more real MIDI ports than mapped ports.
+   It will prompt for a potential remapping and restart.
+   Click that button if feeling lucky, otherwise
+   exit and fix the 'rc' file with a text editor.
 
    \textbf{Warning}:
    If one has hand-tailored the port maps to represent all possible devices one
-   has, this button might remove some of those devices.
-   Keep a backup of the 'rc' file in a safe place.
+   has, the remap or restart buttons might \textbf{remove}
+   some of those devices.
+   Always keep a backup of a known-good 'rc' file in a safe place.
 
    In version 2 of \textsl{Seq66}, a year or two from now, we hope to make
    the adjustments automatic.

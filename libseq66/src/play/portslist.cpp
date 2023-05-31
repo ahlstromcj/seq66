@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2023-05-16
+ * \updates       2023-05-31
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -661,11 +661,6 @@ portslist::match_map_to_system (const portslist & source)
                 destinitem.io_enabled = srcitem.io_enabled;
                 destinitem.out_clock = srcitem.out_clock;
             }
-//          else
-//          {
-//              destinitem.io_enabled = false;
-//              destinitem.out_clock = e_clock::disabled;
-//          }
         }
     }
 }

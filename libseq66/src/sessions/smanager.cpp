@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-05-28
+ * \updates       2023-05-31
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -74,6 +74,25 @@
 
 namespace seq66
 {
+
+/**
+ *  Port error message.
+ */
+
+static std::string s_port_error_msg
+{
+    "Check MIDI Clock & MIDI Input tabs for unavailable/missing ports. "
+    "Make sure the loaded MIDI tune is not using such ports. "
+    "Use the remap/restart button if not, or change the global output port "
+    "for the tune."
+};
+
+static std::string s_port_update_msg
+{
+    "There are more real ports than mapped ports. "
+    "Use the remap/restart button to recreate the maps or edit "
+    "them in the 'rc' file."
+};
 
 /**
  *  Does the usual construction.  It also calls set_defaults() from the
@@ -785,11 +804,7 @@ smanager::internal_error_check (std::string & errmsg) const
 
     if (result)
     {
-        pmerrmsg +=
-            "Check MIDI Clock & MIDI Input tabs for "
-            "unavailable/missing ports. Try the 'Make Maps' "
-            "button and restart Seq66."
-            ;
+        pmerrmsg += s_port_error_msg;
         append_error_message(pmerrmsg);
         errmsg = pmerrmsg;
     }
@@ -801,7 +816,7 @@ smanager::error_handling ()
 {
     std::string errmsg;
     if (internal_error_check(errmsg))
-        show_error("Session error", errmsg);
+        show_error("Session error.", errmsg);
 
     std::string path = seq66::rc().config_filespec("seq66.log");
 
@@ -928,7 +943,10 @@ smanager::create (int argc, char * argv [])
             result = create_window();
             if (result)
             {
-                error_handling();
+                if (perf()->new_ports_available())
+                    show_message("Session note.", s_port_update_msg);
+                else
+                    error_handling();
             }
             else
             {

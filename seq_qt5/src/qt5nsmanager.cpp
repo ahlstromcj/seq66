@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2023-04-01
+ * \updates       2023-05-31
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -179,62 +179,60 @@ qt5nsmanager::create_window ()
             /*
              * Let the application stay active; let the user decide what to
              * do about the error here.  For example, if a playlist doesn't
-             * load, why just exit?
+             * load, why just exit? Should delay this message because other
+             * messages are shown later in the process. For that matter,
+             * we should allow otherwise normal operations so that the user
+             * can recover.
+             *
+             * if (error_active()) show_error("", error_message()); else
              */
 
-            if (error_active())
+            std::string path;               /* config or session path   */
+            std::string name;               /* config or session name   */
+            std::string clid;               /* config/session client ID */
+            if (usensm)
             {
-                show_error("", error_message());
+                path = manager_path();      /* session manager path     */
+                name = display_name();      /* session display name     */
+                clid = client_id();         /* session client ID        */
             }
             else
             {
-                std::string path;               /* config or session path   */
-                std::string name;               /* config or session name   */
-                std::string clid;               /* config/session client ID */
-                if (usensm)
+                bool have_uuid = ! rc().jack_session().empty();
+                path = rc().home_config_directory();
+                name = rc().config_filename();
+                clid = rc().app_client_name();
+                if (rc().jack_session_active())
                 {
-                    path = manager_path();      /* session manager path     */
-                    name = display_name();      /* session display name     */
-                    clid = client_id();         /* session client ID        */
-                }
-                else
-                {
-                    bool have_uuid = ! rc().jack_session().empty();
-                    path = rc().home_config_directory();
-                    name = rc().config_filename();
-                    clid = rc().app_client_name();
-                    if (rc().jack_session_active())
+                    session_manager_name("JACK");
+                    if (have_uuid)
                     {
-                        session_manager_name("JACK");
-                        if (have_uuid)
-                        {
-                            clid += ":";
-                            clid += rc().jack_session();    /* UUID alone   */
-                        }
-                    }
-                    {
-                        if (have_uuid)
-                        {
-                            clid += "/";
-                            clid += rc().jack_session();    /* UUID alone   */
-                        }
+                        clid += ":";
+                        clid += rc().jack_session();    /* UUID alone   */
                     }
                 }
-                m_window->session_manager(manager_name());
-                m_window->session_path(path);
-                m_window->session_display_name(name);
-                m_window->session_client_id(clid);
-                m_window->song_path(rc().midi_filename());
-                if (rc().investigate_disabled())
                 {
-                    file_message("Session manager", manager_name());
-                    file_message("Session path", path);
-                    file_message("Session name", name);
-                    file_message("Session ID", clid);
-                    file_message("Session song path", rc().midi_filename());
+                    if (have_uuid)
+                    {
+                        clid += "/";
+                        clid += rc().jack_session();    /* UUID alone   */
+                    }
                 }
-                set_session_url();
             }
+            m_window->session_manager(manager_name());
+            m_window->session_path(path);
+            m_window->session_display_name(name);
+            m_window->session_client_id(clid);
+            m_window->song_path(rc().midi_filename());
+            if (rc().investigate_disabled())
+            {
+                file_message("Session manager", manager_name());
+                file_message("Session path", path);
+                file_message("Session name", name);
+                file_message("Session ID", clid);
+                file_message("Session song path", rc().midi_filename());
+            }
+            set_session_url();
         }
     }
     if (result)
@@ -312,8 +310,6 @@ qt5nsmanager::quit ()
     }
 }
 
-#if USE_THIS_FUNCTION
-
 void
 qt5nsmanager::show_message
 (
@@ -324,11 +320,14 @@ qt5nsmanager::show_message
     if (m_window && ! msg.empty())
     {
         std::string text = tag + ": " + msg;
-        m_window->show_message_box(text);
+        bool yes = m_window->show_error_box_ex
+        (
+            text, perf()->new_ports_available()
+        );
+        if (yes)
+            perf()->store_io_maps_and_restart();
     }
 }
-
-#endif
 
 /**
  *  Shows the collected messages in the message-box, and recommends the user
@@ -361,18 +360,16 @@ qt5nsmanager::show_error
         else
         {
             std::string text = tag;
-
-            /*
-             * This ends up duplicating messages.
-             *
-             * append_error_message(msg);
-             */
-
             if (! tag.empty())
                 text += " ";
 
             text += msg;
-            m_window->show_error_box(text);
+            bool yes = m_window->show_error_box_ex
+            (
+                text, perf()->port_map_error()
+            );
+            if (yes)
+                perf()->store_io_maps_and_restart();
         }
     }
 }

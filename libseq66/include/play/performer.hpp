@@ -1,4 +1,4 @@
-#if ! defined  SEQ66_PERFORMER_HPP
+#if ! defined SEQ66_PERFORMER_HPP
 #define SEQ66_PERFORMER_HPP
 
 /*
@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-05-19
+ * \updates       2023-05-31
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -533,6 +533,12 @@ private:                            /* key, midi, and op container section  */
      */
 
     inputslist m_inputs;
+
+    /**
+     *  Indicates a clocks/inputs port_map error at startup.
+     */
+
+    mutable bool m_port_map_error;
 
     /**
      *  Provides a default-filled keycontrol container.
@@ -2673,6 +2679,13 @@ public:
     ) const;
     bool port_maps_active () const;
 
+    bool port_map_error () const
+    {
+        return m_port_map_error;
+    }
+
+    void store_io_maps_and_restart () const;
+
     bool store_io_maps ()
     {
         bool oki = build_input_port_map(m_inputs);
@@ -2726,7 +2739,9 @@ public:
     }
 
     bool is_input_system_port (bussbyte bus) const;
+    bool new_ports_available () const;
     bool is_port_unavailable (bussbyte bus, midibase::io iotype) const;
+    bool any_ports_unavailable (bool accept_zero_inputs = false) const;
     bool mainwnd_key_event (const keystroke & k);
     bool keyboard_control_press (unsigned key);
     bool keyboard_group_c_status_press (unsigned key);

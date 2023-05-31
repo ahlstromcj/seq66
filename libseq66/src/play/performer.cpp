@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-05-20
+ * \updates       2023-05-31
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -329,6 +329,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_screenset_to_copy     (screenset::unassigned()),
     m_clocks                (),                 /* vector wrapper class     */
     m_inputs                (),                 /* vector wrapper class     */
+    m_port_map_error        (false),
     m_key_controls          ("Key controls"),
     m_midi_control_in       ("Perf ctrl in"),
     m_midi_control_out      ("Perf ctrl out"),
@@ -475,29 +476,31 @@ performer::unregister (callbacks * pfcb)
 void
 performer::append_error_message (const std::string & msg) const
 {
+    static std::vector<std::string> s_old_msgs;
+    std::string newmsg = msg;
     m_error_pending = true;                         /* a mutable boolean    */
-    if (! msg.empty())
+    if (newmsg.empty())
+        newmsg = "Performer error";
+
+    if (! m_error_messages.empty())
     {
-        static std::vector<std::string> s_old_msgs;
-        if (! m_error_messages.empty())
+        const auto finding = std::find
+        (
+            s_old_msgs.cbegin(), s_old_msgs.cend(), newmsg
+        );
+        if (finding == s_old_msgs.cend())
         {
-            const auto finding = std::find
-            (
-                s_old_msgs.cbegin(), s_old_msgs.cend(), msg
-            );
-            if (finding == s_old_msgs.cend())
-            {
-                m_error_messages += "\n";
-                m_error_messages += msg;
-                s_old_msgs.push_back(msg);
-                seq66::error_message("Performer", msg);
-            }
+            m_error_messages += "\n";
+            m_error_messages += newmsg;
+            s_old_msgs.push_back(newmsg);
+            seq66::error_message("Performer", newmsg);
         }
-        else
-        {
-            m_error_messages = msg;
-            seq66::error_message("Performer", msg);
-        }
+    }
+    else
+    {
+        m_error_messages = newmsg;
+        s_old_msgs.push_back(newmsg);
+        seq66::error_message("Performer", newmsg);
     }
 }
 
@@ -924,16 +927,33 @@ performer::reload_mute_groups (std::string & errmessage)
     bool result = open_mutegroups(filename);
     if (result)
     {
-        result = get_settings(rc(), usr());     /* re-investigate usage     */
+        result = get_settings(rc(), usr());
     }
     else
     {
         std::string msg = filename;
         msg += ": reading mutes failed";
         errmessage = msg;
-        append_error_message(errmessage);          /* show it on the console   */
+        append_error_message(errmessage);           /* show it on console   */
     }
     return result;
+}
+
+/**
+ *  Provides a way to store the I/O maps and restart in a const context.
+ *  See qt5nsmanager::show_error().
+ */
+
+void
+performer::store_io_maps_and_restart () const
+{
+    performer * ncperf = const_cast<performer *>(this);
+    bool ok = ncperf->store_io_maps();
+    if (ok)
+    {
+        rc().portmaps_active(true);
+        signal_for_restart();
+    }
 }
 
 bussbyte
@@ -945,19 +965,22 @@ performer::true_input_bus (bussbyte nominalbuss) const
         result = seq66::true_input_bus(m_inputs, nominalbuss);
         if (is_null_buss(result))
         {
-            /*
-             * Later, could call opm.port_name_from_bus(nominalbuss) and
-             * show the name here just like we had done in inputslist.
-             */
+            m_port_map_error = m_error_pending = true;  /* mutable booleans */
+            if (rc().verbose())
+            {
+                /*
+                 * Later, could call opm.port_name_from_bus(nominalbuss) and
+                 * show the name here just like we had done in inputslist.
+                 */
 
-            char temp[64];
-            (void) snprintf
-            (
-                temp, sizeof temp,
-                "Unavailable input buss %u; check or remake ports/maps.",
-                unsigned(nominalbuss)
-            );
-            append_error_message(temp);
+                char temp[64];
+                (void) snprintf
+                (
+                    temp, sizeof temp, "Unavailable input buss %u",
+                    unsigned(nominalbuss)
+                );
+                append_error_message(temp);
+            }
         }
     }
     return result;
@@ -1028,11 +1051,100 @@ performer::is_input_system_port (bussbyte bus) const
         master_bus()->is_input_system_port(bus) : false ;
 }
 
+/**
+ *  This check could be made more robust by not only seeing if there aren't
+ *  enough mapped ports, but also by enumating to see if any
+ *  real ports are not mapped (given an active map).
+ */
+
+bool
+performer::new_ports_available () const
+{
+    bool result = not_nullptr(master_bus());
+    if (result)
+    {
+        const mastermidibus * mbus = master_bus();
+        bool new_outputs = false;
+        const clockslist & opm = output_port_map();
+        if (opm.active())
+        {
+            int mappedbuses = opm.count();
+            int realbuses = mbus->get_num_out_buses();
+            new_outputs = mappedbuses < realbuses;
+        }
+
+        bool new_inputs = false;
+        const inputslist & ipm = input_port_map();
+        if (ipm.active())
+        {
+            int mappedbuses = ipm.count();
+            int realbuses = mbus->get_num_in_buses();
+            new_inputs = mappedbuses < realbuses;
+        }
+        result = new_outputs || new_inputs;
+    }
+    return result;
+}
+
 bool
 performer::is_port_unavailable (bussbyte bus, midibase::io iotype) const
 {
     return master_bus() ?
         master_bus()->is_port_unavailable(bus, iotype) : true ;
+}
+
+/**
+ *  Checks for unavailable ports.
+ */
+
+bool
+performer::any_ports_unavailable (bool accept_zero_inputs) const
+{
+    bool result = is_nullptr(master_bus());
+    const mastermidibus * mbus = master_bus();
+    if (! result)
+    {
+        const clockslist & opm = output_port_map();
+        bool outportmap = opm.active();
+        int buses = outportmap ?  opm.count() : mbus->get_num_out_buses() ;
+        if (buses == 0)
+        {
+            result = true;
+        }
+        else
+        {
+            for (int bus = 0; bus < buses; ++bus)
+            {
+                if (mbus->is_port_unavailable(bus, midibase::io::output))
+                {
+                    result = true;
+                    break;
+                }
+            }
+        }
+    }
+    if (! result)
+    {
+        const inputslist & ipm = input_port_map();
+        bool inportmap = ipm.active();
+        int buses = inportmap ?  ipm.count() : mbus->get_num_in_buses() ;
+        if (buses == 0)
+        {
+            result = ! accept_zero_inputs;
+        }
+        else
+        {
+            for (int bus = 0; bus < buses; ++bus)
+            {
+                if (mbus->is_port_unavailable(bus, midibase::io::input))
+                {
+                    result = true;
+                    break;
+                }
+            }
+        }
+    }
+    return result;
 }
 
 /**
@@ -1116,19 +1228,25 @@ performer::true_output_bus (bussbyte nominalbuss) const
         bussbyte result = seq66::true_output_bus(m_clocks, nominalbuss);
         if (is_null_buss(result))
         {
-            /*
-             * Later, could call opm.port_name_from_bus(nominalbuss) and
-             * show the name here just like we had done in clockslist.
-             */
+            m_port_map_error = true;
+            m_error_pending = true;                 /* a mutable boolean    */
+            if (rc().verbose())
+            {
+                /*
+                 * Later, could call opm.port_name_from_bus(nominalbuss) and
+                 * show the name here just like we had done in clockslist.
+                 */
 
-            char temp[64];
-            (void) snprintf
-            (
-                temp, sizeof temp,
-                "Unavailable output buss %u; check or remake ports/maps.",
-                unsigned(nominalbuss)
-            );
-            append_error_message(temp);
+                char temp[64];
+                (void) snprintf
+                (
+                    temp, sizeof temp, "Unavailable output buss %u",
+                    unsigned(nominalbuss)
+                );
+                append_error_message(temp);
+            }
+            else
+                append_error_message();
         }
     }
     return result;
@@ -2035,7 +2153,7 @@ performer::set_ppqn (int p)
         }
         else
         {
-            append_error_message("set_ppqn() null master bus");
+            append_error_message("set_ppqn() null master bus.");
             result = false;
         }
     }
@@ -3070,6 +3188,10 @@ performer::launch (int ppqn)
             announce_mutes();
             announce_automation();
             (void) set_playing_screenset(screenset::number(0));
+            if (any_ports_unavailable())
+            {
+                m_port_map_error = m_error_pending = true;  /* mutables     */
+            }
         }
         if (! result)
             m_error_pending = true;

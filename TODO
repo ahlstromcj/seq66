@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-05-30
+2019-04-13 to 2023-05-31
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
@@ -52,6 +52,7 @@ UI:
         -   Add a key to seqroll to toggle recording instead of using
             the button. "R" is already in use for note randomization.
             Make sure all the keys are documented in the user manual.
+        -   Add option to start JACK if --jack?
 
 Mutes:
 

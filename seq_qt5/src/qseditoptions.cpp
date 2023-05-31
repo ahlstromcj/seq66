@@ -1754,11 +1754,13 @@ qseditoptions::slot_io_maps ()
     {
         bool active = perf().port_maps_active();
         ui->ioPortsMappedCheck->setChecked(active);
-        ok = perf().store_io_maps();
-        if (ok)
-            rc().portmaps_active(active);
-
+        rc().portmaps_active(active);
         modify_rc();
+    }
+    else
+    {
+        ui->ioPortsMappedCheck->setChecked(false);
+        rc().portmaps_active(false);
     }
 }
 

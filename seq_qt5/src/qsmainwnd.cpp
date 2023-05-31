@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-25
+ * \updates       2023-05-31
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -57,8 +57,8 @@
  *  Import MIDI     import_midi_into_set()  Import MIDI into current set
  *  Import Project  import_project()        Import a project configuration
  *  Quit/Exit       quit()                  Normal Qt application closing
- *  Help            showqsabout()           Show Help About (version info)
- *                  showqsbuildinfo()       Show features of the build
+ *  Help            show_qsabout()          Show Help About (version info)
+ *                  show_qsbuildinfo()      Show features of the build
  */
 
 #include <QErrorMessage>                /* QErrorMessage                    */
@@ -464,11 +464,15 @@ qsmainwnd::qsmainwnd
      * Help menu.
      */
 
-    connect(ui->actionAbout, SIGNAL(triggered(bool)), this, SLOT(showqsabout()));
+    connect
+    (
+        ui->actionAbout, SIGNAL(triggered(bool)),
+        this, SLOT(show_qsabout())
+    );
     connect
     (
         ui->actionBuildInfo, SIGNAL(triggered(bool)),
-        this, SLOT(showqsbuildinfo())
+        this, SLOT(show_qsbuildinfo())
     );
     connect
     (
@@ -903,6 +907,9 @@ qsmainwnd::~qsmainwnd ()
      *
      *  if (not_nullptr(m_msg_error))
      *      delete m_msg_error;
+     *
+     *  if (not_nullptr(m_msg_save_changes))
+     *      delete m_msg_save_changes;
      */
 
     m_timer->stop();
@@ -1781,13 +1788,6 @@ qsmainwnd::conditional_update ()
         (void) refresh_captions();
         update_window_title();          /* puts current MIDI file in title  */
     }
-//  if (m_is_playing_now != cb_perf().is_pattern_playing())
-//  {
-//      m_is_playing_now = cb_perf().is_pattern_playing();
-//      ui->btnStop->setChecked(false);
-//      ui->btnPause->setChecked(false);
-//      ui->btnPlay->setChecked(m_is_playing_now);
-//  }
     update_play_status();
     if (! m_shrunken)
     {
@@ -2286,14 +2286,14 @@ qsmainwnd::import_project ()
 }
 
 void
-qsmainwnd::showqsabout ()
+qsmainwnd::show_qsabout ()
 {
     if (not_nullptr(m_dialog_about))
         m_dialog_about->show();
 }
 
 void
-qsmainwnd::showqsbuildinfo ()
+qsmainwnd::show_qsbuildinfo ()
 {
     if (not_nullptr(m_dialog_build_info))
         m_dialog_build_info->show();
@@ -3197,17 +3197,25 @@ qsmainwnd::update_bank_text ()
 }
 
 void
-qsmainwnd::show_error_box (const std::string & msg_text)
+qsmainwnd::show_error_box (const std::string & msgtext)
 {
-    if (! msg_text.empty())
+    if (! msgtext.empty())
+        qt_error_box(this, msgtext);
+}
+
+bool
+qsmainwnd::show_error_box_ex (const std::string & msgtext, bool isporterror)
+{
+    bool result = false;
+    if (! msgtext.empty())
     {
         if (not_nullptr(m_msg_error))
             delete m_msg_error;
 
-        m_msg_error = new (std::nothrow) QErrorMessage(this);
+        m_msg_error = new (std::nothrow) QMessageBox(this);
         if (not_nullptr(m_msg_error))
         {
-            QString msg = qt(msg_text);
+            QString msg = qt(msgtext);
             QSpacerItem * hspace = new QSpacerItem
             (
                 SEQ66_ERROR_BOX_WIDTH, 0,
@@ -3215,21 +3223,38 @@ qsmainwnd::show_error_box (const std::string & msg_text)
             );
             QGridLayout * lay = (QGridLayout *) m_msg_error->layout();
             lay->addItem(hspace, lay->rowCount(), 0, 1, lay->columnCount());
-            m_msg_error->showMessage(msg);
+
+            QAbstractButton * yes;
+            if (isporterror)
+            {
+                (void) m_msg_error->addButton("OK", QMessageBox::NoRole);
+                yes = m_msg_error->addButton
+                (
+                    "Remap and restart", QMessageBox::YesRole
+                );
+                m_msg_error->setIcon(QMessageBox::Question);
+            }
+            m_msg_error->setText(msg);
             m_msg_error->exec();
+            if (isporterror)
+            {
+                if (m_msg_error->clickedButton() == yes)
+                    result = true;
+            }
         }
     }
+    return result;
 }
 
 /**
  *  Check for an actual flag change before dirtying the title, which prevents
- *  a lot of flickering. However, it often prevent dirtying the main title.
+ *  a lot of flickering. However, it often prevents dirtying the main title.
  */
 
 void
 qsmainwnd::enable_save (bool flag)
 {
-#if defined USE_TRIAL_CODE
+#if defined USE_TRIAL_CODE                  /* see the banner   */
     if (! m_is_title_dirty)
     {
         ui->actionSave->setEnabled(flag);

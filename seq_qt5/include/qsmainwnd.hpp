@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-23
+ * \updates       2023-05-31
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -132,6 +132,11 @@ public:
     void enable_reload_button (bool flag);
     bool open_file (const std::string & path);
     void show_error_box (const std::string & msg_text);
+    bool show_error_box_ex
+    (
+        const std::string & msgtext,
+        bool isporterror = false
+    );
     void remove_editor (int seq);
     void remove_qperfedit ();
     void hide_qperfedit (bool hide = false);
@@ -298,7 +303,7 @@ private:
     qseqframe * m_edit_frame;
     qseqeventframe * m_event_frame;
     qplaylistframe * m_playlist_frame;
-    QErrorMessage * m_msg_error;
+    QMessageBox * m_msg_error;              /* QErrorMessage        */
     QMessageBox * m_msg_save_changes;
     QTimer * m_timer;
     QMenu * m_menu_recent;
@@ -458,8 +463,8 @@ private slots:
     void show_save_list_dialog ();          /* NOT YET CONNECTED            */
     void show_open_mutes_dialog ();         /* NOT YET CONNECTED            */
     void show_save_mutes_dialog ();         /* NOT YET CONNECTED            */
-    void showqsabout ();
-    void showqsbuildinfo ();
+    void show_qsabout ();
+    void show_qsbuildinfo ();
     void tabWidgetClicked (int newindex);
     void conditional_update ();             /* redraw certain GUI elements  */
     void load_editor (int seqid);
