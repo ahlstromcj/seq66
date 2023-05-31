@@ -934,17 +934,6 @@ private:                            /* key, midi, and op container section  */
 
     bool m_is_modified;
 
-#if defined USE_EVENTS_MODIFIED
-
-    /**
-     *  This is meant for trying to work around a problem in Windows, and
-     *  perhaps also increase the responsiveness of recording.
-     */
-
-    bool m_events_modified;     /* EXPERIMENTAL */
-
-#endif
-
 #if defined USE_SONG_BOX_SELECT
 
     /**
@@ -1131,20 +1120,6 @@ public:
     }
 
     bool modified () const;
-
-#if defined USE_EVENTS_MODIFIED
-
-    bool events_modified () const
-    {
-        return m_events_modified;       /* EXPERIMENTAL */
-    }
-
-    void modified_events (bool flag = true)
-    {
-        m_events_modified = flag;       /* EXPERIMENTAL */
-    }
-
-#endif
 
     /**
      * \setter m_is_modified

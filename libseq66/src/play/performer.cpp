@@ -387,9 +387,6 @@ performer::performer (int ppqn, int rows, int columns) :
     m_midiclockpos          (0),
     m_dont_reset_ticks      (false),            /* support for pausing      */
     m_is_modified           (false),
-#if defined USE_EVENTS_MODIFIED
-    m_events_modified       (false),            /* EXPERIMENTAL             */
-#endif
 #if defined USE_SONG_BOX_SELECT
     m_selected_seqs         (),
 #endif
@@ -593,9 +590,6 @@ void
 performer::unmodify ()
 {
     m_is_modified = false;
-#if defined USE_EVENTS_MODIFIED
-    m_events_modified = false;             /* EXPERIMENTAL             */
-#endif
     mapper().unmodify_all_sequences();
 }
 
@@ -3097,9 +3091,10 @@ performer::create_master_bus ()
         }
         catch (...)
         {
-            /*
-             * We will improve this error handling later. :-D
-             */
+            append_error_message
+            (
+                "Creating master bus maps failed; check MIDI drivers"
+            );
         }
     }
     return result;

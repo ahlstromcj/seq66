@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-29
+ * \updates       2023-05-31
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3229,7 +3229,7 @@ sequence::add_tempo (midipulse tick, midibpm tempo, bool repaint)
  *  Also, instead of modifying and notifying, we just modify. We need to see
  *  if this prevents a weird unknown-signal error in qseqeditframe64 in the
  *  update_midi_buttons() function.  We don't need that to see added note
- *  events anyway..
+ *  events anyway.
  *
  * \threadsafe
  *
@@ -3258,14 +3258,7 @@ sequence::add_event (const event & er)
         if (er.is_note_off())
             verify_and_link();          /* for proper seqroll draw; sorts   */
 
-#if defined USE_OLD_ADD_EVENT_CODE
-        modify(true);                   /* call notify_change()             */
-#else
         modify(false);                  /* do not call notify_change()      */
-#if defined USE_EVENTS_MODIFIED
-        perf()->modified_events();      /* EXPERIMENTAL                     */
-#endif
-#endif
     }
     return result;
 }
@@ -5335,16 +5328,10 @@ sequence::set_recording (bool recordon, bool toggle)
     {
         m_notes_on = 0;                 /* reset the step-edit note counter */
         if (recordon)
-        {
             m_recording = true;
-        }
         else
-        {
             m_recording = m_quantized_recording = m_tightened_recording = false;
-#if defined USE_EVENTS_MODIFIED
-            perf()->modified_events(false); /* EXPERIMENTAL                 */
-#endif
-        }
+
         set_dirty();
         notify_trigger();                                   /* tricky!  */
     }
