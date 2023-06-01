@@ -173,6 +173,7 @@ public:
     void session_URL (const std::string & text);
     void session_log_file (const std::string & text);
     void song_path (const std::string & text);
+    void last_used_dir (const std::string & text);
 
 protected:
 

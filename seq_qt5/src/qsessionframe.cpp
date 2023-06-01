@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2023-05-03
+ * \updates       2023-05-31
  * \license       GNU GPLv2 or above
  *
  */
@@ -89,6 +89,8 @@ qsessionframe::qsessionframe
     ui->displayNameText->setEnabled(false);
     ui->clientIdText->setEnabled(false);
     ui->songPathText->setEnabled(false);
+    ui->lineEditLastUsedDir->setEnabled(false);
+    ui->lineEditLastUsedDir->setText(qt(rc().last_used_dir()));
     session_log_file(usr().option_logfile());
     connect
     (
@@ -397,6 +399,12 @@ void
 qsessionframe::song_path (const std::string & text)
 {
     ui->songPathText->setText(qt(text));
+}
+
+void
+qsessionframe::last_used_dir (const std::string & text)
+{
+    ui->lineEditLastUsedDir->setText(qt(text));
 }
 
 /*

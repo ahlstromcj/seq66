@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2023-04-03
+ * \updates       2023-06-01
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -414,7 +414,7 @@ clinsmanager::show_error
         }
 #endif
         std::string msg = error_message();
-        msg += "Please exit and fix the configuration.";
+        msg += "Please exit and fix Seq66 configuration.";
         show_message(tag, msg);
     }
     else

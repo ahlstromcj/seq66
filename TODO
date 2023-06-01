@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-05-31
+2019-04-13 to 2023-06-01
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
@@ -25,8 +25,8 @@ Current ("o" = we think it is fixed):
     - Why does velocity change in data pane not work when starting from the
       left in barrage.midi? The Kepler34 "relative change" feature. This
       feature is macroed out for now.
-    - Ctrl-Z works, but does not undo the modify flag. (Our undo method
-      is not completely robust.
+    o Ctrl-Z works, but does not undo the modify flag. (Our undo method
+      is not completely robust.)
 
     Added code to pass arrow events from the qscrollslave to the
     qscrollmaster. Does not work for wheel events, oddly enough.
@@ -46,13 +46,9 @@ UI:
             -   New-pattern editor options (check-boxes)
             -   Add song-start-mode radio buttons. Already have Live and Song
                 in Preferences / JACK.  Add "Auto" (as default).
-        -   Config Options: (new)
-            -   Log-file. Add this CLI option to Preferences / Session.
         -   Plan for a "SeqSpec" tab?  Worth it?
-        -   Add a key to seqroll to toggle recording instead of using
-            the button. "R" is already in use for note randomization.
-            Make sure all the keys are documented in the user manual.
         -   Add option to start JACK if --jack?
+        -   Make sure port-issues detection works with control/display ports.
 
 Mutes:
 

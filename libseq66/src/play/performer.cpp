@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-05-31
+ * \updates       2023-06-01
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -387,9 +387,6 @@ performer::performer (int ppqn, int rows, int columns) :
     m_midiclockpos          (0),
     m_dont_reset_ticks      (false),            /* support for pausing      */
     m_is_modified           (false),
-#if defined USE_EVENTS_MODIFIED
-    m_events_modified       (false),            /* EXPERIMENTAL             */
-#endif
 #if defined USE_SONG_BOX_SELECT
     m_selected_seqs         (),
 #endif
@@ -593,9 +590,6 @@ void
 performer::unmodify ()
 {
     m_is_modified = false;
-#if defined USE_EVENTS_MODIFIED
-    m_events_modified = false;             /* EXPERIMENTAL             */
-#endif
     mapper().unmodify_all_sequences();
 }
 
@@ -965,22 +959,14 @@ performer::true_input_bus (bussbyte nominalbuss) const
         result = seq66::true_input_bus(m_inputs, nominalbuss);
         if (is_null_buss(result))
         {
-            m_port_map_error = m_error_pending = true;  /* mutable booleans */
-            if (rc().verbose())
-            {
-                /*
-                 * Later, could call opm.port_name_from_bus(nominalbuss) and
-                 * show the name here just like we had done in inputslist.
-                 */
-
-                char temp[64];
-                (void) snprintf
-                (
-                    temp, sizeof temp, "Unavailable input buss %u",
-                    unsigned(nominalbuss)
-                );
-                append_error_message(temp);
-            }
+            char temp[64];
+            m_port_map_error = true;                /* mutable boolean      */
+            (void) snprintf
+            (
+                temp, sizeof temp, "Unavailable input buss %u",
+                unsigned(nominalbuss)
+            );
+            append_error_message(temp);
         }
     }
     return result;
@@ -1228,25 +1214,14 @@ performer::true_output_bus (bussbyte nominalbuss) const
         bussbyte result = seq66::true_output_bus(m_clocks, nominalbuss);
         if (is_null_buss(result))
         {
-            m_port_map_error = true;
-            m_error_pending = true;                 /* a mutable boolean    */
-            if (rc().verbose())
-            {
-                /*
-                 * Later, could call opm.port_name_from_bus(nominalbuss) and
-                 * show the name here just like we had done in clockslist.
-                 */
-
-                char temp[64];
-                (void) snprintf
-                (
-                    temp, sizeof temp, "Unavailable output buss %u",
-                    unsigned(nominalbuss)
-                );
-                append_error_message(temp);
-            }
-            else
-                append_error_message();
+            char temp[64];
+            m_port_map_error = true;                /* mutable boolean      */
+            (void) snprintf
+            (
+                temp, sizeof temp, "Unavailable output buss %u",
+                unsigned(nominalbuss)
+            );
+            append_error_message(temp);
         }
     }
     return result;
@@ -1562,6 +1537,11 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
 
             result = mapper().add_to_play_set(play_set(), s);
         }
+
+        /*
+         * Check the buss number to make sure it is an available output buss.
+         */
+
         if (! fileload)
             modify();
     }
@@ -3097,9 +3077,10 @@ performer::create_master_bus ()
         }
         catch (...)
         {
-            /*
-             * We will improve this error handling later. :-D
-             */
+            append_error_message
+            (
+                "Creating master bus maps failed; check MIDI drivers"
+            );
         }
     }
     return result;
@@ -3190,7 +3171,8 @@ performer::launch (int ppqn)
             (void) set_playing_screenset(screenset::number(0));
             if (any_ports_unavailable())
             {
-                m_port_map_error = m_error_pending = true;  /* mutables     */
+                m_port_map_error = true;            /* mutable boolean      */
+                append_error_message("Some configured ports unavailable");
             }
         }
         if (! result)

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-31
+ * \updates       2023-06-01
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1307,6 +1307,8 @@ qsmainwnd::load_into_session (const std::string & selectedfile)
 
             std::string mfilename = rc().midi_filename();
             song_path(mfilename);
+            last_used_dir(rc().last_used_dir());
+
             std::string msg = save_file(mfilename, false) ?
                 "Saved: " : "Failed to save: ";
 
@@ -1605,10 +1607,22 @@ qsmainwnd::open_file (const std::string & fn)
         {
             m_session_frame->reload_song_info();
             song_path(fn);
+            last_used_dir(rc().last_used_dir());
         }
         if (not_nullptr(m_mute_master))
             m_mute_master->reload_mute_groups();
 
+        if (cb_perf().port_map_error())                 /* ca 2023-06-01    */
+        {
+            std::string msg =
+                "Unavailable port(s) specified in MIDI file. Check ports "
+                "and perhaps modify MIDI file to specify available ports."
+                ;
+
+            bool yes = show_error_box_ex(msg, false);
+            if (yes)
+                cb_perf().store_io_maps_and_restart();
+        }
         m_is_title_dirty = true;
     }
     else
@@ -4059,6 +4073,13 @@ qsmainwnd::song_path (const std::string & text)
 {
     if (not_nullptr(m_session_frame))
         m_session_frame->song_path(text);
+}
+
+void
+qsmainwnd::last_used_dir (const std::string & text)
+{
+    if (not_nullptr(m_session_frame))
+        m_session_frame->last_used_dir(text);
 }
 
 }               // namespace seq66

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-05-31
+% \update      2023-06-01
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -124,6 +124,18 @@
 
    In version 2 of \textsl{Seq66}, a year or two from now, we hope to make
    the adjustments automatic.
+
+\subsection{Ports in Seq66 MIDI Files}
+\label{subsec:introduction_ports}
+
+   When opening a pre-existing \textsl{Seq66} which contains patterns with
+   output port numbers that don't exist on the current system, a prompt
+   will appear with option to remap-and-restart \textsl{Seq66}.
+   However, what normally needs to be done is to change the
+   port numbers to the numbers of existing ports, and then save the MIDI file.
+   One way to do this is to use the "buss-override" feature
+   (see \sectionref{subsubsec:introduction_sets_buss_override}),
+   which affects all patterns shown on the Live grid.
 
 \subsection{Windows}
 \label{subsec:introduction_windows}

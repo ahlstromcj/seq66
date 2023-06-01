@@ -35,7 +35,14 @@
    \textsl{Port-mapping is now automatic; default MIDI I/O port-maps are created
    at first start, and are always active if virtual ports are not in use.
    Once created, one can edit the 'rc' file to rearrange the mapping as
-   desired.}
+   desired.
+   In addition, issues with new or unavailable ports are
+   noted in warning dialogs.
+   The user can click the \textbf{Remap and restart} button,
+   fix the loaded pattern to use existing ports,
+   or exit, determine the existing ports using
+   \texttt{aplaymidi}, \texttt{arecordmidi}, or \texttt{jack\_lsp},
+   and edit the maps directly in the 'rc' file.}
 
    A pattern/loop/sequence is assigned to output to a given port via
    a buss number saved \textsl{in the pattern}, in the tune.

@@ -224,6 +224,7 @@ qt5nsmanager::create_window ()
             m_window->session_display_name(name);
             m_window->session_client_id(clid);
             m_window->song_path(rc().midi_filename());
+            m_window->last_used_dir(rc().last_used_dir());
             if (rc().investigate_disabled())
             {
                 file_message("Session manager", manager_name());

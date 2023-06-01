@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2023-05-18
+% \update      2023-06-01
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -709,6 +709,9 @@
       $ jack_lsp --aliases
    \end{verbatim}
 
+   For output port-mapping, which is now the default for \textsl{Seq66},
+   see \sectionref{subsec:output_port_mapping}.
+
 \subsubsection{'rc' File / MIDI Clock Mod Ticks}
 \label{subsubsec:configuration_rc_midi_cmt}
 
@@ -781,6 +784,9 @@
    One minor issue with the system MIDI Thru port is that, if it and another
    input port (e.g. VMPK) are both enabled, then each note emitted by VMPK is
    doubled. Be aware.
+
+   For input port-mapping, which is now the default for \textsl{Seq66},
+   see \sectionref{subsec:input_port_mapping}.
 
 \subsubsection{'rc' File / Manual (Virtual) Ports}
 \label{subsubsec:configuration_rc_manual_ports}
