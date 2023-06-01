@@ -804,7 +804,11 @@ smanager::internal_error_check (std::string & errmsg) const
 
     if (result)
     {
-        pmerrmsg += s_port_error_msg;
+        if (pmerrmsg.empty())
+            pmerrmsg = perf()->error_messages();
+        else
+            pmerrmsg += s_port_error_msg;
+
         append_error_message(pmerrmsg);
         errmsg = pmerrmsg;
     }
