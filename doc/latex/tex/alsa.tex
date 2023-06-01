@@ -27,7 +27,11 @@
    When running the commands \texttt{aplaymidi -l} or \texttt{arecordmidi -l},
    one sees something like the following.
    Notice that there is only one Thru port.
-   The MIDI Through port is useful for...? See \cite{alsathru}.
+   The MIDI Through port is useful for...?
+   They are virtualized hardware MIDI loopbacks that make it so
+   programs that only output to "hardware" ports can use them
+   to control and sequence other programs in an ALSA or JACK session.
+   Also see \cite{alsathru}.
 
    \begin{verbatim}
     Port    Client name                      Port name

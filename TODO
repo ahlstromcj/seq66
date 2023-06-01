@@ -4,7 +4,7 @@ Chris Ahlstrom
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
-Current ("o" = we think it is fixed):
+Current ("o" = we think it is fixed, or explained):
 
     o Windows: No shortcut in Start menu after setup.
     o User manual and tutorials entry menus seems to open something but close
@@ -12,8 +12,9 @@ Current ("o" = we think it is fixed):
       return a failure status under Windows.
 	o Fixed: Tempo is not saved with new song (but works with for example
       Kraftwerk-Europe_Endless-reconstructed.midi provided in data folder).
-	- Investigate: cannot click on 'MIDI Clock' tab in preferences (Alt-C OK).
-      This will work if just the right place in the tab is clicked.
+	o Investigate: cannot click on 'MIDI Clock' tab in preferences (Alt-C OK).
+      This will work if just the right place in the tab is clicked. Cannot find
+      any useful information on this issue.
 
 	Patterns editor:
 
@@ -22,9 +23,10 @@ Current ("o" = we think it is fixed):
       had to set a dirty status.
     o Fixed: When a background sequence is chosen, it is not possible to display
       another one or to turn it off.
-    - Why does velocity change in data pane not work when starting from the
+    o Why does velocity change in data pane not work when starting from the
       left in barrage.midi? The Kepler34 "relative change" feature. This
-      feature is macroed out for now.
+      feature is macroed out for now. Perhaps should make it a Ctrl-Click or
+      something to start it in addition to "would select".
     o Ctrl-Z works, but does not undo the modify flag. (Our undo method
       is not completely robust.)
 
@@ -44,8 +46,6 @@ UI:
                 There are BPM options in 'rc' and 'usr'!
         -   Play Options:
             -   New-pattern editor options (check-boxes)
-            -   Add song-start-mode radio buttons. Already have Live and Song
-                in Preferences / JACK.  Add "Auto" (as default).
         -   Plan for a "SeqSpec" tab?  Worth it?
         -   Add option to start JACK if --jack?
         -   Make sure port-issues detection works with control/display ports.

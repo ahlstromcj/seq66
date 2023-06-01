@@ -1936,6 +1936,8 @@ qsmainwnd::new_file ()
         if (not_nullptr(m_mute_master))
             m_mute_master->group_needs_update();
 
+        std::string nofile;
+        song_path(nofile);
         m_is_title_dirty = true;
     }
 }

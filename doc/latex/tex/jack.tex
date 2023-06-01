@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-28
-% \update      2022-11-27
+% \update      2023-06-01
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -267,7 +267,12 @@
    that that the \texttt{a2j} client creates entries for "Midi Through",
    software clients, and bridged USB MIDI devices.
    Again, if these automatic connections get in the way, run \texttt{seq66} in
-   manual/virtual mode.
+   manual/virtual mode, or disable JACK auto-connect in the
+   \texttt{[jack-transport] jack-auto-connect]} setting
+   (\textbf{Edit / Preferences / JACK / JACK auto-connect}.
+
+   Note that \texttt{a2jmidid --export-hardware} is roughly
+   equivalentto JACK started with the \texttt{-Xseq} option.
 
    To set up \textsl{JACK}, one can use the script shipped with
    \textsl{Seq66}, \texttt{data/linus/startjack}.  It has the following

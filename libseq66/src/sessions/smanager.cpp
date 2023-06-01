@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-05-31
+ * \updates       2023-06-01
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -147,6 +147,7 @@ reroute_to_log (const std::string & filepath)
         (void) file_delete(filepath);
         session_message("Log file deleted", filepath);
     }
+    session_message("Rerouting console messages", filepath);
     (void) reroute_stdio(filepath);
 }
 

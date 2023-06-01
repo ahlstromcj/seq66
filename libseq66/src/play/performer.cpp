@@ -963,7 +963,7 @@ performer::true_input_bus (bussbyte nominalbuss) const
             m_port_map_error = true;                /* mutable boolean      */
             (void) snprintf
             (
-                temp, sizeof temp, "Unavailable input buss %u",
+                temp, sizeof temp, "Unavailable input buss %u.",
                 unsigned(nominalbuss)
             );
             append_error_message(temp);
@@ -1218,7 +1218,7 @@ performer::true_output_bus (bussbyte nominalbuss) const
             m_port_map_error = true;                /* mutable boolean      */
             (void) snprintf
             (
-                temp, sizeof temp, "Unavailable output buss %u",
+                temp, sizeof temp, "Unavailable output buss %u.",
                 unsigned(nominalbuss)
             );
             append_error_message(temp);
@@ -3171,8 +3171,14 @@ performer::launch (int ppqn)
             (void) set_playing_screenset(screenset::number(0));
             if (any_ports_unavailable())
             {
+                std::string msg =
+                    "Some configured port-maps unavailable. "
+                    "Remap if all devices desired are plugged in, "
+                    "or exit and edit 'rc' port-maps manually. "
+                    ;
+
                 m_port_map_error = true;            /* mutable boolean      */
-                append_error_message("Some configured ports unavailable");
+                append_error_message(msg);
             }
         }
         if (! result)

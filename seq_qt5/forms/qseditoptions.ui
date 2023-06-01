@@ -28,7 +28,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>6</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -1404,7 +1404,7 @@ connects to the MIDI I/O ports it finds.</string>
          <rect>
           <x>8</x>
           <y>32</y>
-          <width>181</width>
+          <width>291</width>
           <height>17</height>
          </rect>
         </property>
@@ -1414,7 +1414,7 @@ connects to the MIDI I/O ports it finds.</string>
          </font>
         </property>
         <property name="text">
-         <string>JACK/ALSA Start Mode</string>
+         <string>JACK/ALSA Current Start Mode</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_14">
@@ -1433,8 +1433,8 @@ connects to the MIDI I/O ports it finds.</string>
          </font>
         </property>
         <property name="text">
-         <string>(mode applies to
- current run)</string>
+         <string>(See Play tab for user's
+setting of Start mode)</string>
         </property>
        </widget>
       </widget>
