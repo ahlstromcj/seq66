@@ -1,28 +1,22 @@
 TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-06-01
+2019-04-13 to 2023-06-02
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
+Retest:
+
+    o   Wndows build, installation, and operation.
+    o   Control/display automation.
+
 Current ("o" = we think it is fixed, or explained):
 
-    o Windows: No shortcut in Start menu after setup.
-    o User manual and tutorials entry menus seems to open something but close
-      quick (I do have a default pdf reader). The std::system() call cannot
-      return a failure status under Windows.
-	o Fixed: Tempo is not saved with new song (but works with for example
-      Kraftwerk-Europe_Endless-reconstructed.midi provided in data folder).
 	o Investigate: cannot click on 'MIDI Clock' tab in preferences (Alt-C OK).
       This will work if just the right place in the tab is clicked. Cannot find
       any useful information on this issue.
 
 	Patterns editor:
 
-	o Fixed: Often Ctrl-Z is not working event though click undo button works.
-	o Fixed: No undo on velocity changes. Works, but was not always seen,
-      had to set a dirty status.
-    o Fixed: When a background sequence is chosen, it is not possible to display
-      another one or to turn it off.
     o Why does velocity change in data pane not work when starting from the
       left in barrage.midi? The Kepler34 "relative change" feature. This
       feature is macroed out for now. Perhaps should make it a Ctrl-Click or
@@ -114,12 +108,8 @@ ISSUES:
 #3  Open loop Pattern Editor window.
     On mouse wheel scroll event we expect the piano-roll and notes sheet to
     scroll vertically.
-    STATUS:  Mostly fixed; it works only if the piano roll has focus.
-    See the code involving the qscrollmaster and qscrollslave.
-
-#24 Release notes in release tag message?
-    STATUS: Will try to create a GitHub release using the "hub" program and
-    the RELNOTES (not .md) file.
+    STATUS:  Mostly fixed; wheel works only if the piano roll has focus, not
+    sure why..  See the code for the qscrollmaster and qscrollslave.
 
 #44 "Record live sequence changes" functionality
     Currently the "record live sequence changes" only adds patterns into the

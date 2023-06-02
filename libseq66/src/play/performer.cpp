@@ -959,12 +959,13 @@ performer::true_input_bus (bussbyte nominalbuss) const
         result = seq66::true_input_bus(m_inputs, nominalbuss);
         if (is_null_buss(result))
         {
-            char temp[64];
+            char temp[128];
             m_port_map_error = true;                /* mutable boolean      */
             (void) snprintf
             (
-                temp, sizeof temp, "Unavailable input buss %u.",
-                unsigned(nominalbuss)
+                temp, sizeof temp, "Unavailable output buss %u. %s.",
+                unsigned(nominalbuss),
+                "Check the song and the MIDI control/display settings"
             );
             append_error_message(temp);
         }
@@ -1214,12 +1215,13 @@ performer::true_output_bus (bussbyte nominalbuss) const
         bussbyte result = seq66::true_output_bus(m_clocks, nominalbuss);
         if (is_null_buss(result))
         {
-            char temp[64];
+            char temp[128];
             m_port_map_error = true;                /* mutable boolean      */
             (void) snprintf
             (
-                temp, sizeof temp, "Unavailable output buss %u.",
-                unsigned(nominalbuss)
+                temp, sizeof temp, "Unavailable output buss %u. %s.",
+                unsigned(nominalbuss),
+                "Check the song and the MIDI control/display settings"
             );
             append_error_message(temp);
         }

@@ -1,8 +1,8 @@
-# README for Seq66 0.99.6 2023-06-01
+# README for Seq66 0.99.6 2023-06-02
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
-pattern banks and triggers, and playlists for song management; a scale and
-chord-aware piano-roll; song layout for creative composition; and control/status
+pattern banks, triggers, and playlists for song management; scale and chord
+aware piano-roll; song layout for creative composition; and control/status
 via MIDI automation for live performance.  Mute-groups enable/disable multiple
 patterns at once.  Supports the Non/New Session Manager; can also run headless.
 Works in a space as small as 725x500 pixels (less if window decoration removed).
@@ -26,12 +26,11 @@ The release now includes an installer for the 64-bit Windows version of Seq66.
 
 ##  User interface
 
-    *   Qt 5 (cross-platform).  A grid of loop buttons, unlimited external
-        windows.  Qt style-sheet support.
-    *   Tabs or external windows for management of sets, mute-groups, song
+    *   Qt 5 (cross-platform).  Loop-button gird. Qt style-sheet support.
+    *   Tabs and external windows for patterns, sets, mute-groups, song
         layout, event-editing, play-lists, and session information.
-    *   Low-frequency oscillator (LFO) for modifying continuous controller
-        (CC) and velocity values.
+    *   Low-frequency oscillator (LFO) to modify continuous controller
+        and velocity values.
     *   A "fixer" for expansion/compression/alignment of note patterns.
     *   Colorable pattern slots; the color palette can be saved and modified.
     *   Horizontal and vertical zoom in the pattern and song editors.
@@ -39,13 +38,12 @@ The release now includes an installer for the 64-bit Windows version of Seq66.
 
 ##  Configuration files
 
-    *   Separates MIDI control and mute-group setting into their own files.
     *   Supports configuration files: '.rc', '.usr', '.ctrl', '.mutes',
         '.playlist', '.drums' (note-mapping), '.palette', and Qt '.qss'.
+    *   Separates MIDI control and mute-group setting into their own files.
     *   Unified keystroke and MIDI controls in the '.ctrl' file; defines MIDI
-        controls for automation and displaying Seq66 status in grid
-        controllers (e.g. LaunchPad).  Sample '.ctrl' files provided for the
-        Launchpad Mini.
+        controls for automation/display of Seq66 status in grid controllers
+        (e.g. LaunchPad).  Sample '.ctrl' files provided for Launchpad Mini.
 
 ##  Non/New Session Manager
 
@@ -55,7 +53,7 @@ The release now includes an installer for the 64-bit Windows version of Seq66.
 
 ##  Multiple Builds
 
-    *   ALSA/JACK: `qseq66`
+    *   ALSA/JACK: `qseq66` using an rtmidi-based library
     *   Command-line/headless: `seq66cli`
     *   PortMidi: `qpseq66`
     *   Windows: `qpseq66.exe`
@@ -63,16 +61,15 @@ The release now includes an installer for the 64-bit Windows version of Seq66.
 ##  More Features
 
     *   Transposable triggers to re-use patterns more comprehensively.
-    *   Song export to stock MIDI.
+    *   Song import/export from/to stock MIDI (SMF 0 or 1).
     *   Improved non-U.S. keyboard support.
     *   Many demonstration and test MIDI files.
-    *   SMF 0 import and export.
     *   See **Recent Changes** below, and the **NEWS** file.
 
 ##  Internal
 
     *   More consistent use of modern C++, auto, and lambda functions.
-    *   Additional performer callbacks to reduce the need for polling.
+    *   Additional performer callbacks to reduce polling.
     *   A ton of clean-up and refactoring.
 
 Seq66 uses a Qt 5 user-interface based on Kepler34 and the Seq66 *rtmidi*
@@ -86,20 +83,19 @@ Windows, and using a conventional source tarball.
 
     *   Version 0.99.6:
         *   Follow-ons to issue #3:
-            *   Added a qscrollslave to allow QScrollArea to ignore the
-                arrow keys.
-            *   This allows the pattern editor pains to remai in sync with
-                the seqroll while still allowing use of the hjkl keys. The
-                arrow keys work only if the seqroll has keyboard focus.
+            *   Added a qscrollslave to allow QScrollArea to allow the pattern
+                editor panes to remain in sync with the seqroll when using the
+                hjkl, arrow, and page keys.
         *   Follow-ons to issue #110:
             *   Addition of Start menu entries for Windows.
             *   Fixed access to the tutorial and manual. Refactored access
                 to manual and tutorial for robustness.
             *   Added data/readme files and doc/tutorial files accidentally
                 left out of NSIS installer.
+            *   Fixed the saving of modified tempo changes.
             *   Fixed event::is_desired(), which affected changing note
-                velocities in the pattern editor's data pane.
-                Improving (mitigating) velocity-change undo.
+                velocities in the pattern editor's data pane.  Improved
+                velocity-change undo.
             *   Fixed an error preventing changing the "background" pattern.
         *   Enhanced port-mapping to prompt the user about issues and
             allow for an immediate remap-and-restart. Lots of fixes!
