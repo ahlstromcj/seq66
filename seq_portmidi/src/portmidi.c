@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-05-19
+ * \updates     2023-06-03
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:
@@ -105,6 +105,38 @@
 
 #if defined SEQ66_PLATFORM_WINDOWS
 #include <synchapi.h>                   /* Windows C::Sleep() function      */
+#endif
+
+#if defined SEQ66_PLATFORM_DEBUG
+
+#define DEBUG_ALLOC_TRACKING            /* define only when debugging       */
+
+#if defined DEBUG_ALLOC_TRACKING        /* define only when debugging       */
+#include <stdint.h>                     /* uintptr_t                        */
+
+
+static int
+bad_pointer (void * ptr)
+{
+    uintptr_t vp = (uintptr_t) ptr;
+#if defined SEQ66_PLATFORM_64_BIT
+    int result =
+        vp == 0xbaadf00dbaadf00d || vp == 0xdeadbeefdeadbeef ||
+        vp == 0xcdcdcdcdcdcdcdcd || vp == 0xcccccccccccccccc
+        ;
+#else
+    int result =
+        vp == 0xbaadf00d || vp == 0xdeadbeef ||
+        vp == 0xcdcdcdcd || vp == 0xcccccccc
+        ;
+#endif
+    if (result)
+        printf("Bad pointer!\n");
+
+    return result;
+}
+
+#endif
 #endif
 
 /**
@@ -298,6 +330,73 @@ strstrcase (const char * src, const char * target)
     }
     return result;
 }
+
+/**
+ *  Common memory functions basically the same on all platforms, so moved
+ *  to here from the pmlinux, pmmac, and pmwin modules.
+ */
+
+/**
+ *  A wrapper for malloc().
+ *
+ * \param s
+ *      Provides the number of bytes to allocate.
+ *
+ * \return
+ *      Returns a pointer to the allocated memory, or a null pointer if the
+ *      size parameter is 0.
+ */
+
+void *
+pm_alloc (size_t s)
+{
+#if defined DEBUG_ALLOC_TRACKING
+    void * result;
+    if (s > 0)
+    {
+        result = malloc(s);
+        printf("%p <-- pm_alloc()\n", result);
+    }
+    else
+    {
+        result = nullptr;
+        printf("nullptr <-- pm_alloc()\n");
+    }
+    return result;
+#else
+    return s > 0 ? malloc(s) : nullptr ;
+#endif
+}
+
+/**
+ *  A wrapper for free().  It would be nice to be able so see if the pointer
+ *  was already freed, as calling free() twice on the same pointer is
+ *  undefined.  The caller can guard against this by setting the pointer to
+ *  null explicitly after calling this function.
+ *
+ *  This should be moved to a common module, as it is also defined in the
+ *  architecture-specific modules.
+ *
+ * \param ptr
+ *      The pointer to be freed.  It is ignored if null.
+ */
+
+void
+pm_free (void * ptr)
+{
+#if defined DEBUG_ALLOC_TRACKING
+    printf("pm_free(%p)\n", ptr);
+    if (not_nullptr(ptr) && ! bad_pointer(ptr))
+        free(ptr);
+#else
+    if (not_nullptr(ptr))
+        free(ptr);
+#endif
+}
+
+/**
+ *  Error setter.
+ */
 
 void
 Pm_set_hosterror_text (const char * msg)
@@ -551,8 +650,7 @@ pm_add_device
         if (not_nullptr(pm_descriptors))
         {
             memcpy(new_descriptors, pm_descriptors, sdesc * pm_descriptor_max);
-            free(pm_descriptors);
-            pm_descriptors = nullptr;
+            pm_free(pm_descriptors);            // pm_descriptors = nullptr;
         }
         pm_descriptor_max += 32;
         pm_descriptors = new_descriptors;
@@ -958,7 +1056,7 @@ Pm_Terminate (void)
 
         if (not_nullptr(pm_descriptors))
         {
-            free(pm_descriptors);
+            pm_free(pm_descriptors);
             pm_descriptors = nullptr;
         }
         pm_descriptor_index = 0;
@@ -1055,10 +1153,10 @@ Pm_Read (PortMidiStream * stream, PmEvent * buffer, int32_t length)
 
     while (n < length)
     {
-        PmError err = Pm_Dequeue(midi->queue, buffer++);
-        if (err == pmBufferOverflow)        /* ignore data retrieved so far */
+        PmError qerr = Pm_Dequeue(midi->queue, buffer++);
+        if (qerr == pmBufferOverflow)        /* ignore data gotten so far   */
             return pm_errmsg(pmBufferOverflow, deviceid);
-        else if (err == 0)                  /* empty queue                  */
+        else if (qerr == 0)                  /* empty queue                 */
             break;
 
         ++n;
@@ -1254,9 +1352,12 @@ Pm_Write (PortMidiStream * stream, PmEvent * buffer, int32_t length)
         {
             if (midi->sysex_in_progress)        /* a non-SysEx message?     */
             {
-                if (is_real_time(msg))      /* should be a realtime message */
+                if (is_real_time(msg))          /* a realtime message?      */
                 {
-                    err = (*midi->dictionary->write_realtime)(midi, &(buffer[i]));
+                    err = (*midi->dictionary->write_realtime)
+                    (
+                        midi, &(buffer[i])
+                    );
                     if (err!= pmNoError)
                         goto pm_write_error;
                 }
@@ -1748,10 +1849,10 @@ Pm_OpenOutput
     {
         *stream = nullptr;
         pm_descriptors[outputdev].internalDescriptor = nullptr;
-        pm_free(midi);                          /* free portMidi data */
+        pm_free(midi);                              /* free portMidi data   */
     }
     else
-        pm_descriptors[outputdev].pub.opened = TRUE; /* input-open success */
+        pm_descriptors[outputdev].pub.opened = TRUE; /* input-open success  */
 
 error_return:
 
@@ -1904,13 +2005,14 @@ PmError
 Pm_Synchronize (PortMidiStream * stream )
 {
     PmInternal * midi = (PmInternal *) stream;
-    int deviceid = PORTMIDI_BAD_DEVICE_ID;
     PmError err = pmNoError;
     if (is_nullptr(midi))
+    {
         err = pmBadPtr;
+    }
     else
     {
-        deviceid = midi->device_id;
+        int deviceid = midi->device_id;     // PORTMIDI_BAD_DEVICE_ID
         if (! pm_descriptors[deviceid].pub.output)
             err = pmErrOther;
         else if (! pm_descriptors[deviceid].pub.opened)
@@ -1918,7 +2020,6 @@ Pm_Synchronize (PortMidiStream * stream )
         else
             midi->first_message = TRUE;
     }
-
     return err;
 }
 
@@ -2135,13 +2236,18 @@ pm_read_bytes
 
     if (len == 0)
         return 0;                                   /* sanity check         */
+
     if (! midi->sysex_in_progress)
     {
         while (i < len)                             /* process all data     */
         {
 
             midibyte_t byte = data[i++];
-            if (byte == MIDI_SYSEX && !pm_realtime_filtered(byte, midi->filters))
+            if
+            (
+                byte == MIDI_SYSEX &&
+                ! pm_realtime_filtered(byte, midi->filters)
+            )
             {
                 midi->sysex_in_progress = TRUE;
                 i--;            /* back up so code below gets SYSEX byte    */
@@ -2165,7 +2271,7 @@ pm_read_bytes
                 event.message = byte;
                 pm_read_short(midi, &event);
             }
-        }                   /* all bytes in the buffer are processed */
+        }                       /* all bytes in the buffer are processed    */
     }
 
     /*
@@ -2332,7 +2438,7 @@ pm_log_buffer_free (void)
 {
     if (not_nullptr(s_pmlogmm_buffer))
     {
-        free(s_pmlogmm_buffer);
+        pm_free(s_pmlogmm_buffer);
         s_pmlogmm_buffer = nullptr;
         s_pmlogmm_current_size = 0;
     }

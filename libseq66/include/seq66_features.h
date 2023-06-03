@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-05-25
+ * \updates       2023-06-03
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -80,9 +80,17 @@
 /**
  *  Adds more SYSEX processing, plus the ability to read SYSEX information
  *  from a file.  This needs a fair amount of testing and debugging.
+ *
+ *  The former is defined in seq66_features.h (included by basic_macros.h),
+ *  but what about the latter?  Sequencer64 defines the former!!!
+ *
+ *  We cannot use this in portmidi.  Code exists to support it, but it is not
+ *  called, and but where did we get it??? It's merely noted in the GitHub
+ *  portmidi repository, not coded there.
  */
 
 #define SEQ66_USE_SYSEX_PROCESSING
+#undef  SEQ66_PORTMIDI_SYSEX_PROCESSING
 
 /**
  * Configure-time options.

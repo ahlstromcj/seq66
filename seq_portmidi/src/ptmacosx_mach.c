@@ -51,17 +51,19 @@ static UInt64 start_time;
 static pthread_t pt_thread_pid;
 
 /* note that this is static data -- we only need one copy */
+
 typedef struct
 {
     int id;
     int resolution;
-    PtCallback *callback;
-    void *userData;
+    PtCallback * callback;
+    void * userData;
 } pt_callback_parameters;
 
 static int pt_callback_proc_id = 0;
 
-static void *Pt_CallbackProc(void *p)
+static void *
+Pt_CallbackProc (void * p)
 {
     pt_callback_parameters * parameters = (pt_callback_parameters *) p;
     int mytime = 1;

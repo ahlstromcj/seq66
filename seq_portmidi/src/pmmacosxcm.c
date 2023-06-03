@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2018-05-13
- * \updates     2018-05-20
+ * \updates     2023-06-03
  * \license     GNU GPLv2 or above
  *
  *  A platform interface to the MacOS X CoreMIDI framework.
@@ -404,13 +404,13 @@ readProc (const MIDIPacketList * newPackets, void * refCon, void * connRefCon)
     printf("readProc: numPackets %d: ", newPackets->numPackets);
 #endif
 
-    midi = (PmInternal *) connRefCon;   /* retrieve context for this connection */
+    midi = (PmInternal *) connRefCon;   /* get context for this connection  */
     m = (midi_macosxcm_type) midi->descriptor;
     assert(m);
-    now = (*midi->time_proc)(midi->time_info);      /* synch time every 100 ms  */
-    if (m->first_message || m->sync_time + 100 < now)    /* milliseconds        */
+    now = (*midi->time_proc)(midi->time_info);      /* synch every 100 ms   */
+    if (m->first_message || m->sync_time + 100 < now)    /* milliseconds    */
     {
-        now = midi_synchronize(midi);               /* time to resync           */
+        /* now = */ midi_synchronize(midi);         /* time to resync       */
         m->first_message = FALSE;
     }
 
@@ -418,7 +418,8 @@ readProc (const MIDIPacketList * newPackets, void * refCon, void * connRefCon)
     for (packetIndex = 0; packetIndex < newPackets->numPackets; packetIndex++)
     {
         /*
-         * Set the timestamp and dispatch this message.  Do an explicit conversion.
+         * Set the timestamp and dispatch this message.  Do an explicit
+         * conversion.
          */
 
         event.timestamp = (PmTimestamp)
@@ -1028,12 +1029,9 @@ ConnectedEndpointName (MIDIEndpointRef endpoint)
     CFMutableStringRef result = CFStringCreateMutable(NULL, 0);
     CFStringRef str;
     OSStatus err;
-    long i;
-
     CFDataRef connections = NULL;       // Does the endpoint have connections?
-    long nConnected = 0;
     bool anyStrings = false;
-    err = MIDIObjectGetDataProperty
+    /* err = */ MIDIObjectGetDataProperty
     (
         endpoint, kMIDIPropertyConnectionUniqueID, &connections
     );
@@ -1044,10 +1042,13 @@ ConnectedEndpointName (MIDIEndpointRef endpoint)
          * devices.
          */
 
-        nConnected = CFDataGetLength(connections) / (int32_t) sizeof(MIDIUniqueID);
+        long nConnected =
+            CFDataGetLength(connections) / (int32_t) sizeof(MIDIUniqueID);
+
         if (nConnected)
         {
             const SInt32 * pid = (const SInt32 *) CFDataGetBytePtr(connections);
+            int i;
             for (i = 0; i < nConnected; ++i, ++pid)
             {
                 MIDIUniqueID id = EndianS32_BtoN(*pid);
@@ -1117,10 +1118,9 @@ char * cm_get_full_endpoint_name (MIDIEndpointRef endpoint)
     CFStringRef deviceName = NULL;
 #endif
 
-    CFStringRef fullName = NULL;
+    CFStringRef fullName;                           //  = NULL;
     CFStringEncoding defaultEncoding;
     char * newName;
-
     defaultEncoding = CFStringGetSystemEncoding();  /* string encoding      */
     fullName = ConnectedEndpointName(endpoint);
 

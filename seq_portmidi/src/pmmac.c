@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2018-05-13
- * \updates     2021-06-23
+ * \updates     2023-06-02
  * \license     GNU GPLv2 or above
 
  *  This file needs to implement pm_init(), which calls various routines to
@@ -82,36 +82,6 @@ void
 pm_term (void)
 {
     pm_macosxcm_term();
-}
-
-/**
- *  A simple wrapper for malloc().
- *
- * \param s
- *      Provides the desired size of the allocation.
- *
- * \return
- *      Returns a void pointer to the allocated buffer.
- */
-
-void *
-pm_alloc (size_t s)
-{
-    return malloc(s);
-}
-
-/**
- *  The inverse of pm_alloc(), a wrapper for the free(3) function.
- *
- * \param ptr
- *      Provides the pointer to be freed, if it is not null.
- */
-
-void
-pm_free (void * ptr)
-{
-    if (not_nullptr(ptr))
-        free(ptr);
 }
 
 /*

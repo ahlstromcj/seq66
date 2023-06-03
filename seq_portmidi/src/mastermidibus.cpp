@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-15
+ * \updates       2023-06-03
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -213,7 +213,7 @@ mastermidibus::api_get_midi_event (event * in)
         if (m->port_enabled())
         {
             PmEvent pme;
-            PmInternal * midi = (PmInternal *) m->m_pms;
+            PmInternal * midi = reinterpret_cast<PmInternal *>(m->m_pms);
             PmError err = Pm_Dequeue(midi->queue, &pme);
             if (err == pmBufferOverflow)        /* ignore data retrieved    */
             {

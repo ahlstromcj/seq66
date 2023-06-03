@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-05-19
+ * \updates     2023-06-03
  * \license     GNU GPLv2 or above
  *
  *  Check out this site:
@@ -52,8 +52,7 @@
  *  The former is defined in seq66_features.h (included by basic_macros.h),
  *  but what about the latter?  Sequencer64 defines the former!!!
  *
- *      SEQ66_USE_SYSEX_PROCESSING?
- *      SEQ66_USE_SYSEX_BUFFERS
+ *      SEQ66_PORTMIDI_SYSEX_PROCESSING
  */
 
 #include <windows.h>
@@ -95,12 +94,11 @@ static void CALLBACK winmm_streamout_callback
 );
 
 /*
- * Note that this macro is undefined, as it is in the original PortMidi library.
- * Do not confuse it with the SEQ66_USE_SYSEX_PROCESSING macro in
- * seq66_features.h, which *is* defined.
+ * Note that this macro is undefined, as it is in the original PortMidi
+ * library.
  */
 
-#if defined SEQ66_USE_SYSEX_PROCESSING_NOT_IN_USE
+#if defined SEQ66_PORTMIDI_SYSEX_PROCESSING
 
 static void CALLBACK winmm_out_callback
 (
@@ -175,7 +173,7 @@ extern pm_fns_node pm_winmm_out_dictionary;
 
 #define MIDIHDR_SYSEX_SIZE(x) (MIDIHDR_SYSEX_BUFFER_LENGTH(x) + sizeof(MIDIHDR))
 
-#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_PORTMIDI_SYSEX_PROCESSING
 
 /**
  *  Size of a MIDIHDR with a buffer contaning multiple MIDIEVENT structures.
@@ -301,9 +299,11 @@ typedef struct midiwinmm_struct
      * a SysEx message is sent. The size of the buffer is fixed.
      */
 
-#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_PORTMIDI_SYSEX_PROCESSING
+
     LPMIDIHDR sysex_buffers[NUM_SYSEX_BUFFERS]; /**< Pool for SysEx data.   */
     int next_sysex_buffer;      /**< Index of next SysEx buffer to send.    */
+
 #endif
 
     unsigned long last_time;    /**< Last output time.                      */
@@ -335,9 +335,7 @@ static void
 pm_winmm_general_inputs (void)
 {
     midi_num_inputs = midiInGetNumDevs();                           /* UINT */
-    midi_in_caps = midi_num_inputs > 0 ?
-        pm_alloc(sizeof(MIDIINCAPS) * midi_num_inputs) : nullptr ;
-
+    midi_in_caps = pm_alloc(sizeof(MIDIINCAPS) * midi_num_inputs);
     if (is_nullptr(midi_in_caps))                       /* see banner notes */
     {
         pm_log_buffer_append("No MIDI input devices found.\n");
@@ -472,9 +470,7 @@ static void
 pm_winmm_general_outputs (void)
 {
     midi_num_outputs = midiOutGetNumDevs();                         /* UINT */
-    midi_out_caps = midi_num_outputs > 0 ?
-        pm_alloc(sizeof(MIDIOUTCAPS) * midi_num_outputs) : nullptr ;
-
+    midi_out_caps = pm_alloc(sizeof(MIDIOUTCAPS) * midi_num_outputs);
     if (is_nullptr(midi_out_caps))
     {
         pm_log_buffer_append("No MIDI output devices found.\n");
@@ -674,7 +670,7 @@ winmm_get_host_error (PmInternal * midi, char * msg, UINT len)
  */
 
 static MIDIHDR *
-allocate_buffer (long data_size)
+allocate_buffer (long data_size)        /* should be size_t! */
 {
     LPMIDIHDR hdr = nullptr;
     if (data_size > 0)
@@ -692,7 +688,7 @@ allocate_buffer (long data_size)
     return hdr;
 }
 
-#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_PORTMIDI_SYSEX_PROCESSING
 
 /**
  * we're actually allocating more than data_size because the buffer
@@ -738,10 +734,8 @@ allocate_buffers (midiwinmm_type m, long data_size, long count)
         if (is_nullptr(hdr))        /* free all allocations and return      */
         {
             for (i = i - 1; i >= 0; --i)
-            {
-                pm_free(m->buffers[i]);
-                m->buffers[i] = nullptr;
-            }
+                pm_free(m->buffers[i]); /* m->buffers[i] = nullptr too?     */
+
             pm_free(m->buffers);    /* zero out the pointers?               */
             m->buffers = nullptr;
             m->max_buffers = 0;
@@ -753,7 +747,7 @@ allocate_buffers (midiwinmm_type m, long data_size, long count)
     return pmNoError;
 }
 
-#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_PORTMIDI_SYSEX_PROCESSING
 
 /**
  * sysex_buffers is an array of count pointers to MIDIHDR/MIDIEVENT struct
@@ -776,6 +770,10 @@ allocate_sysex_buffers (midiwinmm_type m, long data_size)
     }
     return rslt;
 }
+
+/*
+ * cppcheck: unused function.
+ */
 
 /* static */ LPMIDIHDR
 get_free_sysex_buffer (PmInternal * midi)
@@ -1000,7 +998,7 @@ resize_sysex_buffer (PmInternal * midi, long old_size, long new_size)
  */
 
 static PmError
-allocate_input_buffer (HMIDIIN h, long buffer_len)
+allocate_input_buffer (HMIDIIN h, long buffer_len)  /* size_t !!! */
 {
     LPMIDIHDR hdr = allocate_buffer(buffer_len);
     if (is_nullptr(hdr))
@@ -1025,7 +1023,7 @@ allocate_input_buffer (HMIDIIN h, long buffer_len)
  */
 
 static PmError
-winmm_in_open (PmInternal * midi, void * driverInfo)
+winmm_in_open (PmInternal * midi, void * driverinfo)
 {
     int i;
     midiwinmm_type m;
@@ -1060,7 +1058,7 @@ winmm_in_open (PmInternal * midi, void * driverInfo)
     {
         pm_log_buffer_append("MIDI input device ID out-of-range\n");
     }
-    if (not_nullptr(driverInfo))
+    if (not_nullptr(driverinfo))
     {
         // Anything worth doing here?
     }
@@ -1082,7 +1080,7 @@ winmm_in_open (PmInternal * midi, void * driverInfo)
     m->next_buffer = 0;                     /* not used for input */
     m->buffer_signal = 0;                   /* not used for input */
 
-#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_PORTMIDI_SYSEX_PROCESSING
     for (i = 0; i < NUM_SYSEX_BUFFERS; ++i)
         m->sysex_buffers[i] = nullptr;      /* not used for input */
 
@@ -1118,7 +1116,7 @@ winmm_in_open (PmInternal * midi, void * driverInfo)
         )
     );
     if (Pm_hosterror())
-        goto free_descriptor;
+        goto free_in_descriptor;
 
     if (num_input_buffers < MIN_INPUT_BUFFERS)
         num_input_buffers = MIN_INPUT_BUFFERS;
@@ -1154,10 +1152,10 @@ close_device:
 
     (void) midiInClose(m->handle.in);
 
-free_descriptor:
+free_in_descriptor:
 
+    pm_free(midi->descriptor);      /* was assigned to m above  */
     midi->descriptor = nullptr;
-    pm_free(m);
 
 no_memory:
 
@@ -1196,7 +1194,7 @@ winmm_in_poll (PmInternal * midi)
  */
 
 static PmError
-winmm_in_close(PmInternal * midi)
+winmm_in_close (PmInternal * midi)
 {
     midiwinmm_type m = (midiwinmm_type) midi->descriptor;
     if (is_nullptr(m))
@@ -1211,25 +1209,24 @@ winmm_in_close(PmInternal * midi)
     }
     else if ((err = midiInReset(m->handle.in)) != pmNoError)
     {
-        midiInClose(m->handle.in);      /* best effort to close midi port   */
+        midiInClose(m->handle.in);          /* best effort: close midi port */
         Pm_set_hosterror(err);
     }
     else
-    {
         Pm_set_hosterror(midiInClose(m->handle.in));
-    }
-    midi->descriptor = nullptr;
+
     DeleteCriticalSection(&m->lock);
     pm_free(m);
+    midi->descriptor = nullptr;             /* was identical to m           */
     if (Pm_hosterror() != pmNoError)
     {
-        int err = midiInGetErrorText
+        int texterr = midiInGetErrorText
         (
             Pm_hosterror(),
             Pm_hosterror_text_mutable(),
             PM_HOST_ERROR_MSG_LEN
         );
-        if (err != MMSYSERR_NOERROR)
+        if (texterr != MMSYSERR_NOERROR)
         {
             // handle the error
         }
@@ -1240,22 +1237,23 @@ winmm_in_close(PmInternal * midi)
 
 /**
  *  Callback function executed via midiInput SW interrupt [via midiInOpen()].
- *  NOTE: we do not just EnterCriticalSection() here because an MIM_CLOSE message
- *  arrives when the port is closed, but then the m->lock has been destroyed.
+ *  NOTE: we do not just EnterCriticalSection() here because an MIM_CLOSE
+ *  message arrives when the port is closed, but then the m->lock has been
+ *  destroyed.
  *
  *  If this callback is reentered with data, we're in trouble.  It's hard to
  *  imagine that Microsoft would allow callbacks to be reentrant -- isn't the
  *  model that this is like a hardware interrupt? -- but I've seen reentrant
  *  behavior using a debugger, so it happens.
  *
- *  dwParam1 is MIDI data received, packed into DWORD w/ 1st byte of message LOB;
- *  dwParam2 is time message received by input device driver, specified in [ms]
- *  from when midiInStart called.  each message is expanded to include the status
- *  byte.
+ *  dwParam1 is MIDI data received, packed into DWORD w/ 1st byte of message
+ *  LOB; dwParam2 is time message received by input device driver, specified
+ *  in [ms] from when midiInStart called.  each message is expanded to include
+ *  the status byte.
  *
- *  If dwParam1 is not a status byte; ignore it. This happened running the sysex.c
- *  test under Win2K with MidiMan USB 1x1 interface, but I can't reproduce it.
- *  -RBD
+ *  If dwParam1 is not a status byte; ignore it. This happened running the
+ *  sysex.c test under Win2K with MidiMan USB 1x1 interface, but I can't
+ *  reproduce it.  -RBD
  */
 
 static void CALLBACK
@@ -1476,7 +1474,7 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
     m->num_buffers = m->max_buffers = m->next_buffer = 0;
     m->buffers_expanded = FALSE;
 
-#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_PORTMIDI_SYSEX_PROCESSING
     m->sysex_buffers[0] = nullptr;
     m->sysex_buffers[1] = nullptr;
     m->next_sysex_buffer = 0;
@@ -1541,7 +1539,7 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
         );
     }
     if (Pm_hosterror() != pmNoError)                    /* MMSYSERR_NOERROR */
-        goto free_descriptor;
+        goto free_out_descriptor;
 
     if (midi->latency == 0)
     {
@@ -1601,7 +1599,7 @@ close_device:
 
     midiOutClose(m->handle.out);
 
-free_descriptor:
+free_out_descriptor:
 
     midi->descriptor = nullptr;
     winmm_out_delete(midi);                             /* free buffers & m */
@@ -1639,34 +1637,28 @@ winmm_out_delete (PmInternal * midi)
         if (m->buffer_signal)
             CloseHandle(m->buffer_signal);
 
-        /* if using stream output, free buffers */
-
         for (i = 0; i < m->num_buffers; ++i)
         {
-            if (m->buffers[i])
+            if (m->buffers[i])          /* free buffer for stream output    */
             {
                 pm_free(m->buffers[i]);
                 m->buffers[i] = nullptr;
             }
         }
-        m->num_buffers = 0;
         pm_free(m->buffers);
         m->buffers = nullptr;
-        m->max_buffers = 0;
+        m->num_buffers = m->max_buffers = 0;
 
-#if defined SEQ66_USE_SYSEX_PROCESSING  // SEQ66_USE_SYSEX_BUFFERS
+#if defined SEQ66_PORTMIDI_SYSEX_PROCESSING
 
-        /*
-         * Free the sysex buffers.
-         */
-
-        for (i = 0; i < NUM_SYSEX_BUFFERS; ++i)
-            if (m->sysex_buffers[i]) pm_free(m->sysex_buffers[i]);
+        for (i = 0; i < NUM_SYSEX_BUFFERS; ++i)     /* free SysEx buffers   */
+            if (m->sysex_buffers[i])
+                pm_free(m->sysex_buffers[i]);
 #endif
 
     }
-    midi->descriptor = nullptr;
-    pm_free(m);                         /* delete */
+    pm_free(m);                                     /* delete descriptor    */
+    midi->descriptor = nullptr;                     /* same as m at top     */
 }
 
 /*
@@ -2040,10 +2032,11 @@ winmm_write_byte
      * Then write what we've got and continue.
      */
 
-    if (hdr->dwBytesRecorded >= hdr->dwBufferLength - 1)
-        rslt = winmm_end_sysex(midi, timestamp);
-
 #if defined SEQ66_USE_EXPANDING_SYSEX_BUFFERS
+
+    if (hdr->dwBytesRecorded >= hdr->dwBufferLength - 1)
+        /* rslt = */ winmm_end_sysex(midi, timestamp);
+
     /*
      *  This code is here as an aid in case you want sysex buffers to expand
      *  to hold large messages completely. If so, you will want to change
@@ -2066,6 +2059,12 @@ winmm_write_byte
     {
         // no code
     }
+
+#else
+
+    if (hdr->dwBytesRecorded >= hdr->dwBufferLength - 1)
+        rslt = winmm_end_sysex(midi, timestamp);
+
 #endif
 
     return rslt;
@@ -2102,7 +2101,7 @@ winmm_synchronize (PmInternal * midi)
     return real_time;
 }
 
-#if defined SEQ66_USE_SYSEX_PROCESSING_NOT_IN_USE
+#if defined SEQ66_PORTMIDI_SYSEX_PROCESSING
 
 /**
  *  The winmm_out_callback()  recycles SysEx buffers.  A future optimization:
@@ -2244,6 +2243,9 @@ void
 pm_winmm_init (void)
 {
     pm_log_buffer_alloc();               /* see portmidi.c & .h         */
+#if defined SEQ66_PORTMIDI_SYSEX_PROCESSING
+    TO DO
+#endif
     pm_winmm_mapper_input();
     pm_winmm_mapper_output();
     pm_winmm_general_inputs();
@@ -2259,7 +2261,7 @@ pm_winmm_init (void)
 void
 pm_winmm_term (void)
 {
-    int doneAny = 0;
+    int doneany = 0;
     int i;
     for (i = 0; i < pm_descriptor_index; ++i)
     {
@@ -2269,10 +2271,10 @@ pm_winmm_term (void)
             midiwinmm_type m = (midiwinmm_type) midi->descriptor;
             if (m->handle.out)
             {
-                if (doneAny == 0)               /* close next open device   */
+                if (doneany == 0)               /* close next open device   */
                 {
                     infoprint("Begin closing open devices...\n");
-                    doneAny = 1;
+                    doneany = 1;
                 }
 
                 /*
@@ -2293,21 +2295,13 @@ pm_winmm_term (void)
             }
         }
     }
-    if (midi_in_caps)
+    pm_free(midi_in_caps);
+    midi_in_caps = nullptr;
+    pm_free(midi_out_caps);
+    midi_out_caps = nullptr;
+    if (doneany)
     {
-        pm_free(midi_in_caps);
-        midi_in_caps = nullptr;
-    }
-    if (midi_out_caps)
-    {
-        pm_free(midi_out_caps);
-        midi_out_caps = nullptr;
-    }
-    if (doneAny)
-    {
-        const char * msg =
-            "Warning: devices were left open. They have been closed.\n";
-
+        const char * msg = "devices left open have been closed.\n";
         warnprint(msg);                                 /* log to console   */
         pm_log_buffer_append(msg);                      /* log to buffer    */
     }

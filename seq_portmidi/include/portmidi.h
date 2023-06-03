@@ -30,7 +30,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-02-28
+ * \updates     2023-06-02
  * \license     GNU GPLv2 or above
  *
  * Copyright (c) 1999-2000 Ross Bencina and Phil Burk
@@ -69,6 +69,14 @@ extern "C"
 #endif
 
 #include "pminternal.h"             /* not quite internal now, refactoring  */
+
+/**
+ *  Common memory functions basically the same on all platforms, so moved
+ *  to here from the pmlinux, pmmac, and pmwin modules.
+ */
+
+PMEXPORT void pm_free (void * ptr);
+PMEXPORT void * pm_alloc (size_t s);
 
 /**
  *  A single PortMidiStream is a descriptor for an open MIDI device.

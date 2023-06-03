@@ -56,6 +56,14 @@ typedef struct
 
 } PmQueueRep;
 
+/**
+ *  Allocates:
+ *
+ *      -   PmQueueReg queue
+ *          -   int32_t buffer
+ *          -   int32_t peek
+ */
+
 PMEXPORT PmQueue *
 Pm_QueueCreate (long num_msgs, int32_t bytes_per_msg)
 {
@@ -208,6 +216,10 @@ Pm_Dequeue(PmQueue * q, void * msg)
     return pmGotData;                                   /* success */
 }
 
+/*
+ * cppcheck: unused function.
+ */
+
 PMEXPORT PmError
 Pm_SetOverflow (PmQueue * q)
 {
@@ -312,6 +324,10 @@ Pm_QueueFull (PmQueue * q)
     }
     return FALSE;
 }
+
+/*
+ * cppcheck: unused function.
+ */
 
 PMEXPORT void *
 Pm_QueuePeek (PmQueue * q)

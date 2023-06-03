@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2021-06-23
+ * \updates     2023-06-02
  * \license     GNU GPLv2 or above
  *
  *  This file only needs to implement pm_init(), which calls various routines
@@ -90,43 +90,6 @@ pm_term (void)
 #if defined SEQ66_HAVE_LIBASOUND
     pm_linuxalsa_term();
 #endif
-}
-
-/**
- *  A wrapper for malloc().
- *
- * \param s
- *      Provides the number of bytes to allocate.
- *
- * \return
- *      Returns a pointer to the allocated memory, or a null pointer if the
- *      size parameter is 0.
- */
-
-void *
-pm_alloc (size_t s)
-{
-    return s > 0 ? malloc(s) : nullptr ;
-}
-
-/**
- *  A wrapper for free().  It would be nice to be able so see if the pointer
- *  was already freed, as calling free() twice on the same pointer is
- *  undefined.  The caller can guard against this by setting the pointer to
- *  null explicitly after calling this function.
- *
- *  This should be moved to a common module, as it is also defined in the
- *  architecture-specific modules.
- *
- * \param ptr
- *      The pointer to be freed.  It is ignored if null.
- */
-
-void
-pm_free (void * ptr)
-{
-    if (not_nullptr(ptr))
-        free(ptr);
 }
 
 /*
