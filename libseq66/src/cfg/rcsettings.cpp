@@ -71,6 +71,7 @@ rcsettings::rcsettings () :
     m_midi_control_out          ("rc"),
     m_clock_mod                 (64),
     m_verbose                   (false),
+    m_quiet                     (false),
     m_investigate               (false),
     m_inspection_tag            (),
     m_save_list                 (),         /* std::map<string, bool>   */
@@ -178,6 +179,7 @@ rcsettings::set_defaults ()
     m_midi_control_buss         = null_buss();
     m_clock_mod                 = 64;
     m_verbose                   = false;
+    m_quiet                     = false;
     m_investigate               = false;
     m_inspection_tag.clear();
     m_save_old_triggers         = false;

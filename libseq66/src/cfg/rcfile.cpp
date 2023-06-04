@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-05-17
+ * \updates       2023-06-04
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -195,12 +195,15 @@ rcfile::parse ()
 
     /*
      * We no longer read the verbosity.  It should be only a command line
-     * option, otherwise it gets annoying.
+     * option, otherwise it gets annoying. However, we now have a
+     * quiet option (it's not yet a command-line option).
      *
      * bool verby = get_boolean(file, "[Seq66]", "verbose");
      * rc_ref().verbose(verby);
      */
 
+    bool verby = get_boolean(file, "[Seq66]", "quiet");
+    rc_ref().quiet(verby);
     std::string s = parse_version(file);
     if (s.empty() || file_version_old(file))
         rc_ref().auto_rc_save(true);
@@ -740,7 +743,11 @@ rcfile::write ()
 "# 'version' is set by Seq66; it is used to detect older configuration files,\n"
 "# which are upgraded to the new version when saved.\n"
 "#\n"
-"# 'verbose' just indicates the status of --verbose at exit.\n"
+"# 'quiet' suppresses start-up error messages. Useful when they are not\n"
+"# relevant. There's no --quiet command-line option yet. It's NOT the opposite\n"
+"# of 'verbose'.\n"
+"#\n"
+"# 'verbose' is temporary, same as --verbose; it's set to false at exit.\n"
 "#\n"
 "# 'sets-mode' affects set muting when moving to the next set. 'normal' leaves\n"
 "# the next set muted. 'auto-arm' unmutes it. 'additive' keeps the previous set\n"
@@ -751,10 +758,11 @@ rcfile::write ()
 "# the client:port number is prepended. If 'long', the full set of name items\n"
 "# is shown. If port-mapping is active (now the default), this does not apply.\n"
 "#\n"
-"# 'init-disabled-ports' is experimental. It allows live toggle of port state.\n"
+"# 'init-disabled-ports' is experimental. It tries live toggle of port state.\n"
         ;
 
     write_seq66_header(file, "rc", version());
+    write_boolean(file, "quiet", rc_ref().quiet());
     write_boolean(file, "verbose", rc_ref().verbose());
     write_string(file, "sets-mode", rc_ref().sets_mode_string());
     write_string(file, "port-naming", rc_ref().port_naming_string());

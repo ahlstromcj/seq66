@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2023-05-31
+ * \updates       2023-06-04
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -320,13 +320,20 @@ qt5nsmanager::show_message
 {
     if (m_window && ! msg.empty())
     {
-        std::string text = tag + ": " + msg;
-        bool yes = m_window->show_error_box_ex
-        (
-            text, perf()->new_ports_available()
-        );
-        if (yes)
-            perf()->store_io_maps_and_restart();
+        if (rc().quiet())
+        {
+            smanager::show_message(tag, msg);
+        }
+        else
+        {
+            std::string text = tag + ": " + msg;
+            bool yes = m_window->show_error_box_ex
+            (
+                text, perf()->new_ports_available()
+            );
+            if (yes)
+                perf()->store_io_maps_and_restart();
+        }
     }
 }
 
@@ -353,10 +360,17 @@ qt5nsmanager::show_error
                 append_error_message(pmerrmsg);
             }
 #endif
-            std::string html = tag + " ";
-            html += string_replace(error_message(), "\n", "<br>");
-            html += "<br>Please exit and fix the configuration.";
-            m_window->show_error_box(html);
+            if (rc().quiet())
+            {
+                smanager::show_message(tag, msg);
+            }
+            else
+            {
+                std::string html = tag + " ";
+                html += string_replace(error_message(), "\n", "<br>");
+                html += "<br>Please exit and fix the configuration.";
+                m_window->show_error_box(html);
+            }
         }
         else
         {
@@ -365,12 +379,19 @@ qt5nsmanager::show_error
                 text += " ";
 
             text += msg;
-            bool yes = m_window->show_error_box_ex
-            (
-                text, perf()->port_map_error()
-            );
-            if (yes)
-                perf()->store_io_maps_and_restart();
+            if (rc().quiet())
+            {
+                smanager::show_message(tag, msg);
+            }
+            else
+            {
+                bool yes = m_window->show_error_box_ex
+                (
+                    text, perf()->port_map_error()
+                );
+                if (yes)
+                    perf()->store_io_maps_and_restart();
+            }
         }
     }
 }

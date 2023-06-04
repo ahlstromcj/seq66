@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-06-01
+% \update      2023-06-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -919,7 +919,16 @@
    \itempar{Verbose Console Output}{verbose}
    This boolean makes more output appear if \textsl{Seq66} is run from a
    console/terminal. It will also increase the amount of data logged to the log
-   file, if activated.
+   file, if activated. It is only a temporary setting, just like
+   its command-line counterpart, \texttt{--verbose}; when
+   \textsl{Seq66} exits, the setting remains false.
+
+   \itempar{Suppress startup error messages}{quiet}
+   Unlike the verbose setting, this one is permanent.
+   It prevents the display of error prompts at startup.
+   It is useful when the system keeps flagging the same problem,
+   it cannot be fixed, and can be ignored.
+   It is \textsl{not} the opposite of "verbose".
 
    \itempar{Load Most Recent File (startup)}{load most-recent}
    If checked, the file at the top of the \texttt{[recent-files]}

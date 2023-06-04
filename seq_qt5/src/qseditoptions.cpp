@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-14
+ * \updates       2023-06-04
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -86,13 +86,13 @@
 namespace seq66
 {
 
-static const int Tab_MIDI_Clock     =  0;
-static const int Tab_MIDI_Input     =  1;
-static const int Tab_Display        =  2;
-static const int Tab_JACK           =  3;
-static const int Tab_Play_Options   =  4;
-static const int Tab_Metronome      =  5;
-static const int Tab_Session        =  6;
+const int Tab_MIDI_Clock     =  0;
+const int Tab_MIDI_Input     =  1;
+const int Tab_Display        =  2;
+const int Tab_JACK           =  3;
+const int Tab_Play_Options   =  4;
+const int Tab_Metronome      =  5;
+const int Tab_Session        =  6;
 
 /**
  *  Button numbering for JACK Start Mode radio-buttons.
@@ -502,11 +502,31 @@ qseditoptions::setup_tab_display ()
         ui->lineEditFingerprintSize, SIGNAL(editingFinished()),
         this, SLOT(slot_fingerprint_size())
     );
-    connect
-    (
-        ui->checkBoxVerbose, SIGNAL(clicked(bool)),
-        this, SLOT(slot_verbose_active_click())
-    );
+
+    /*
+     * Verbosity is meant to be only a temporary setting for one run.
+     * It is set via --verbose or by editing the 'rc' file, but is
+     * set to false at application exit. This control is read-only.
+     */
+
+#if defined USE_VERBOSE_CHECKBOX
+
+     ui->checkBoxVerbose->setEnabled(true);
+     connect
+     (
+         ui->checkBoxVerbose, SIGNAL(clicked(bool)),
+         this, SLOT(slot_verbose_active_click())
+     );
+
+#endif
+
+     ui->checkBoxQuiet->setChecked(rc().quiet());
+     connect
+     (
+         ui->checkBoxQuiet, SIGNAL(clicked(bool)),
+         this, SLOT(slot_quiet_active_click())
+     );
+
     connect
     (
         ui->checkBoxLoadMostRecent, SIGNAL(clicked(bool)),
@@ -2488,11 +2508,23 @@ qseditoptions::slot_palette_active_click ()
     modify_rc();
 }
 
+#if defined USE_VERBOSE_CHECKBOX
+
 void
 qseditoptions::slot_verbose_active_click ()
 {
     bool on = ui->checkBoxVerbose->isChecked();
     rc().verbose(on);
+    modify_rc();
+}
+
+#endif
+
+void
+qseditoptions::slot_quiet_active_click ()
+{
+    bool on = ui->checkBoxQuiet->isChecked();
+    rc().quiet(on);
     modify_rc();
 }
 
@@ -2845,6 +2877,16 @@ qseditoptions::slot_output_bus (int index)
     }
 }
 
+void
+qseditoptions::activate_ctrl_file ()
+{
+    bool inenable = ui->checkBoxMidiInBuss->isChecked();
+    bool outenable = ui->checkBoxMidiOutBuss->isChecked();
+    bool active = inenable || outenable;
+    rc().midi_control_active(active);
+    ui->checkBoxActiveCtrl->setChecked(rc().midi_control_active());
+}
+
 /**
  *  The issue here is that disabling the display MIDI means it won't
  *  be acted on at exit/restart. We have rc().midi_control_active(), but
@@ -2857,21 +2899,13 @@ qseditoptions::slot_output_bus_enable ()
 {
     bool enable = ui->checkBoxMidiOutBuss->isChecked();
     modify_ctrl();
-
-    /*
-     * perf().midi_control_out().is_enabled(enable);
-     */
-
     perf().midi_control_out().configure_enabled(enable);
+    activate_ctrl_file();
 }
 
 void
 qseditoptions::slot_input_bus (int index)
 {
-    /*
-     * int oldindex = perf().midi_control_in().nominal_buss();
-     */
-
     int oldindex = perf().midi_control_in().configured_buss();
     if (index != oldindex)
     {
@@ -2879,20 +2913,8 @@ qseditoptions::slot_input_bus (int index)
         if (enable)
         {
             ui->checkBoxSaveCtrl->setChecked(true);
-
-            /*
-             * perf().midi_control_in().is_enabled(enable);
-             * perf().midi_control_in().nominal_buss(index);
-             * perf().midi_control_in().configure_enabled(enable);
-             */
-
             perf().midi_control_in().configured_buss(index);
             rc().midi_control_active(true);
-
-            /*
-             * EXPERIMENTAL
-             */
-
             perf().ui_set_input(index, true);   /* auto-enable the input    */
             reload_needed(true);
         }
@@ -2905,11 +2927,6 @@ qseditoptions::slot_input_bus_enable ()
 {
     bool enable = ui->checkBoxMidiInBuss->isChecked();
     modify_ctrl();
-
-    /*
-     * perf().midi_control_in().is_enabled(enable);
-     */
-
     perf().midi_control_in().configure_enabled(enable);
 }
 
@@ -2927,7 +2944,7 @@ qseditoptions::slot_tempo_track ()
         int track = string_to_int(t);
         bool ok = track >= 0 && track < seq::maximum();
         ui->pushButtonTempoTrack->setEnabled(ok);
-        modify_rc();                                // reload_needed(true);
+        modify_rc();
     }
 }
 

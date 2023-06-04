@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-05-06
+ * \updates       2023-06-04
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -246,7 +246,8 @@ private:
 
     bool m_clock_mod;
 
-    bool m_verbose;                 /**< Message-showing setting.           */
+    bool m_verbose;                 /**< Console message showing setting.   */
+    bool m_quiet;                   /**< Disables startup error prompts.    */
     bool m_investigate;             /**< An option for the test of the day. */
     std::string m_inspection_tag;   /**< A sessionfile tag to set a test.   */
 
@@ -652,6 +653,11 @@ public:
     bool verbose () const
     {
         return m_verbose;
+    }
+
+    bool quiet () const
+    {
+        return m_quiet;
     }
 
     bool investigate () const
@@ -1209,6 +1215,11 @@ public:
     void inspection_tag (const std::string & t)
     {
         m_inspection_tag = t;
+    }
+
+    void quiet (bool flag)
+    {
+        m_quiet = flag;
     }
 
     void verbose (bool flag);

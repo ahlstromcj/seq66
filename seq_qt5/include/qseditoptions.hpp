@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-14
+ * \updates       2023-06-04
  * \license       GNU GPLv2 or above
  */
 
@@ -124,6 +124,7 @@ private:
     void state_unchanged ();
     void state_changed ();
     void state_applied ();
+    void activate_ctrl_file ();
 
     bool reload_needed () const
     {
@@ -180,7 +181,10 @@ private slots:
     void slot_progress_box_height ();
     void slot_progress_box_shown ();
     void slot_fingerprint_size ();
+#if defined USE_VERBOSE_CHECKBOX
     void slot_verbose_active_click ();
+#endif
+    void slot_quiet_active_click ();
     void slot_load_most_recent_click ();
     void slot_show_full_paths_click ();
     void slot_long_buss_names_click ();

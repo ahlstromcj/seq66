@@ -1,31 +1,24 @@
 TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-06-02
+2019-04-13 to 2023-06-04
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
-Retest:
-
-    o   Wndows build, installation, and operation.
-    o   Control/display automation.
-
-Current ("o" = we think it is fixed, or explained):
-
+    -   In port-error messages, try to report the name as well as the
+        number.
+    o   Windows build, installation, and operation.
+    o   Control/display automation and missing ports.
 	o Investigate: cannot click on 'MIDI Clock' tab in preferences (Alt-C OK).
       This will work if just the right place in the tab is clicked. Cannot find
       any useful information on this issue.
-
-	Patterns editor:
-
     o Why does velocity change in data pane not work when starting from the
       left in barrage.midi? The Kepler34 "relative change" feature. This
       feature is macroed out for now. Perhaps should make it a Ctrl-Click or
       something to start it in addition to "would select".
     o Ctrl-Z works, but does not undo the modify flag. (Our undo method
       is not completely robust.)
-
-    Added code to pass arrow events from the qscrollslave to the
-    qscrollmaster. Does not work for wheel events, oddly enough.
+    o Added code to pass arrow events from the qscrollslave to the
+      qscrollmaster. Does not work for wheel events, oddly enough.
 
 UI:
 
@@ -70,7 +63,6 @@ From Testing:
 
 Windows:
 
-    -   Change to creating a 64-bit installer and adjust the instructions.
     -   In the live grid, move the top text up 1 pixel.  Move the bottom text
         up 2 pixels. Maybe reduce the font size by 1. Also consist the for the
         piano rolls.
@@ -88,15 +80,6 @@ Pending Macros:
     USE_ADJUST_DATA_HANDLE (no code uses this function yet).
     USE_INTERSECT_FUNCTIONS (could be used for trigger lookup at some point).
     USE_TIMEBASE_MASTER (functionality from Hydrogen, not used).
-
-Others to Consider:
-
-    On a Debian Sid box, ALSA puts out *two* events into Qsynth for every note
-    event. On an Ubuntu box, just one event is emitted. Why?  Try it under JACK
-    at some point on Debian Sid (it also puts out two events).  Two events are
-    emitted even when just clicking on the virtual piano keyboard in the
-    pattern editor!  This occurs during the buss flush after the event is
-    sent.  Does not seem to be due to the MIDI thru ALSA port.
 
 Ongoing efforts:
 
@@ -156,7 +139,7 @@ ISSUES:
     behavior should be disabled with NSM, because a session manager is
     supposed to store/restore the connections.
 
-    (I have used Ray-Session , but I guess it acts as others NSM managers)
+    (I have used Ray-Session, but I guess it acts as others NSM managers)
 
     Probably need an option to not auto-connect while NSM is running.
     The current fix is to disable auto-connect when first creating the

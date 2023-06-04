@@ -21,6 +21,7 @@
      </property>
      <property name="font">
       <font>
+       <weight>50</weight>
        <bold>false</bold>
       </font>
      </property>
@@ -28,7 +29,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>6</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -48,6 +49,7 @@
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -125,6 +127,7 @@
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -173,6 +176,7 @@
          <widget class="QLabel" name="labelClockStartModulo">
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -233,6 +237,7 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -279,6 +284,7 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -307,6 +313,7 @@ Each port number can be found by name-lookup.</string>
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -357,6 +364,7 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -375,6 +383,7 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -403,6 +412,7 @@ Each port number can be found by name-lookup.</string>
          <widget class="QLabel" name="labelMidiOutBuss">
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -448,6 +458,7 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -571,6 +582,7 @@ slot by channel number (0 to 15).</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -591,6 +603,7 @@ slot by channel number (0 to 15).</string>
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -651,6 +664,7 @@ slot by channel number (0 to 15).</string>
          <widget class="QLabel" name="labelMidiCtrlIn">
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -686,6 +700,7 @@ slot by channel number (0 to 15).</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -758,10 +773,11 @@ slot by channel number (0 to 15).</string>
          <item row="0" column="0">
           <widget class="QCheckBox" name="checkBoxVerbose">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="toolTip">
-            <string>rc: [Seq66] verbose</string>
+            <string>Shows the status of rc / [Seq66] / verbose.
+Always set to false at exit.</string>
            </property>
            <property name="text">
             <string>Verbose console output</string>
@@ -778,17 +794,17 @@ slot by channel number (0 to 15).</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QCheckBox" name="checkBoxDoubleClickEdit">
+         <item row="3" column="1">
+          <widget class="QCheckBox" name="checkBoxPairBussNames">
            <property name="toolTip">
-            <string>rc: [interaction-method] double-click-edit</string>
+            <string>rc: [Seq66] port-naming = pair</string>
            </property>
            <property name="text">
-            <string>Double click for pattern editor</string>
+            <string>Client:port buss names</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="2" column="1">
           <widget class="QCheckBox" name="checkBoxGlobalSeqFeature">
            <property name="toolTip">
             <string>usr: [user-interface-settings] global-seq-feature</string>
@@ -798,13 +814,25 @@ slot by channel number (0 to 15).</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
-          <widget class="QCheckBox" name="checkBoxPairBussNames">
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="checkBoxDoubleClickEdit">
            <property name="toolTip">
-            <string>rc: [Seq66] port-naming = pair</string>
+            <string>rc: [interaction-method] double-click-edit</string>
            </property>
            <property name="text">
-            <string>Client:port buss names</string>
+            <string>Double click for pattern editor</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="checkBoxQuiet">
+           <property name="toolTip">
+            <string>Enable to suppress error prompts at startup.
+Useful if the prompts are going to be ignored
+anyway.</string>
+           </property>
+           <property name="text">
+            <string>Suppress startup error messages</string>
            </property>
           </widget>
          </item>
@@ -1065,6 +1093,7 @@ Range: 0.5 to 3.0</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -1084,6 +1113,7 @@ Range: 0.5 to 3.0</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1102,6 +1132,7 @@ Range: 0.5 to 3.0</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1143,6 +1174,7 @@ Range: 0.5 to 3.0</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1161,6 +1193,7 @@ Range: 0.5 to 3.0</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1410,6 +1443,7 @@ connects to the MIDI I/O ports it finds.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1428,6 +1462,7 @@ connects to the MIDI I/O ports it finds.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -1490,6 +1525,7 @@ in the Song Editor.</string>
          </property>
          <property name="font">
           <font>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1507,6 +1543,7 @@ in the Song Editor.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1529,6 +1566,7 @@ playback resumes.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1552,6 +1590,7 @@ the default PPQN.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1572,6 +1611,7 @@ the default PPQN.</string>
          <property name="font">
           <font>
            <family>Sans</family>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1643,6 +1683,7 @@ Seq66 exits.</string>
          </property>
          <property name="font">
           <font>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1660,6 +1701,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1678,6 +1720,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1696,6 +1739,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1714,6 +1758,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1739,6 +1784,7 @@ Seq66 exits.</string>
          </property>
          <property name="font">
           <font>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1756,6 +1802,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1774,6 +1821,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1792,6 +1840,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1837,6 +1886,7 @@ Seq66 exits.</string>
          <widget class="QLabel" name="label_metro_timesig">
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -1851,6 +1901,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_bpb">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -1866,6 +1917,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_beat_width">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -1888,6 +1940,7 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -1903,6 +1956,7 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -1961,6 +2015,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_output_specs">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -1976,6 +2031,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_main_note">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -1988,6 +2044,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_sub_notes">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2000,6 +2057,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_patch">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2021,6 +2079,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_note">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2042,6 +2101,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_velocity">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2063,6 +2123,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_length_fraction">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2119,6 +2180,7 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2147,6 +2209,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_channel">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2188,6 +2251,7 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2239,6 +2303,7 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2267,6 +2332,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_thru_channel">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2314,6 +2380,7 @@ Seq66 exits.</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -2370,6 +2437,7 @@ Seq66 exits.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -2389,6 +2457,7 @@ Seq66 exits.</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -2418,6 +2487,7 @@ required.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -2647,6 +2717,7 @@ required.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -2666,6 +2737,7 @@ required.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -2763,6 +2835,7 @@ required.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -2827,6 +2900,7 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -2846,6 +2920,7 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -2865,6 +2940,7 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -2945,6 +3021,7 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
