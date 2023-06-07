@@ -22,7 +22,7 @@
 !define PRODUCT_NAME        "Seq66"
 !define PRODUCT_DIR_REGKEY  "Software\Microsoft\Windows\CurrentVersion\App Paths\qpseq66.exe"
 !define PRODUCT_UNINST_KEY  "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
-!define PRODUCT_UNINST_ROOT_KEY     "HKLM"
+!define PRODUCT_UNINST_ROOT_KEY "HKLM"
 !define EXE_NAME            "qpseq66.exe"
 
 ;============================================================================
@@ -39,6 +39,7 @@
 
 ;============================================================================
 ; The type of build to make.  Uncomment the one desired.  WIN64 preferred.
+; Actually WIN32 might not be a tenable option anymore.
 ;============================================================================
 
 !define WIN64

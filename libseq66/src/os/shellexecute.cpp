@@ -21,7 +21,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-05-19
- * \updates       2023-05-29
+ * \updates       2023-06-05
  * \license       GNU GPLv2 or above
  *
  *  Provides support for cross-platform time-related functions.
@@ -197,13 +197,8 @@ open_document (const std::string & documentpath)
     bool result = ! documentpath.empty();
     if (result)
     {
-#if defined SEQ66_PLATFORM_64_BIT
         std::wstring op = widen_string("open");
         std::wstring path = widen_string(documentpath);
-#else
-        std::wstring op = "open";
-        std::string path = documentpath;
-#endif
         HINSTANCE rc = ::ShellExecute
         (
             NULL, op.c_str(), path.c_str(), NULL, NULL, SW_SHOW

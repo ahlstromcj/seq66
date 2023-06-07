@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2023-05-26
+:: \update      2023-06-07
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -23,17 +23,29 @@
 ::
 ::       0. Decide whether to a 32-bit or a 64-bit build.  Modify the
 ::          environment variables and steps below to accommodate your choice.
-::          We might support only 64-bit builds at some point.
+::          We might support only 64-bit builds at some point. And in fact,
+::          32-bit and old OS's like Windows XP may not be supported.
+::
+::          https://forum.qt.io/topic/73292/
+::              the-last-qt-version-that-supported-windows-xp/5
+::
+::          Warning: Currently a 32-bit build is not possible on our current
+::          setup.
+::
 ::       1. Runs in Windows only.
 ::       2. Requires QtCreator to be installed, and configured to provide
 ::          the 32/64-bit Mingw tools, including mingw32-make.exe (there is
-::          no mingw64-make.exe), and qmake.exe.  The PATH must include the
-::          path to both executables. See "Path Additions" below.
-::          We have not tried the Microsoft C++ compiler yet. Any takers?
+::          no mingw64-make.exe, but the mingw730_32 and mingw730_64
+::          directories both have a binary by the name), and qmake.exe. 
+::          The PATH must include the path to both executables. See "Path
+::          Additions" below.  We have not tried the Microsoft C++ compiler
+::          yet. Any takers?
 ::       3. Requires 7-Zip to be installed and accessible from the DOS
 ::          command-line, as 7z.exe.
 ::
 :: Path Additions:
+::
+::       QTVERSION=5.12.9
 ::
 ::       1. C:\Qt\Qt5.12.9\5.12.9\mingw73_32\bin    (or 64-bit)
 ::       2. C:\Qt\Qt5.12.9\Tools\mingw73_32\bin     (ditto)
@@ -50,7 +62,9 @@
 ::          errors might be exposed in the Windows PortMidi C files, though
 ::          we check both builds.
 ::
-::          Note: the default is now PROJECT_BITS = 64.
+::          Note: the default is now PROJECT_BITS = 64. Support for 32-bits
+::          in Qt does not seem to be viable anymore without a laborious
+::          rebuild of Qt 5.12+ from source code.
 ::
 :: Build Instructions:
 ::
@@ -153,13 +167,19 @@
 ::---------------------------------------------------------------------------
  
 set PROJECT_VERSION=0.99.6
-set PROJECT_DATE=2023-05-24
+set PROJECT_DATE=2023-06-07
 set PROJECT_DRIVE=C:
 
 :: Set the bits of the project, either 64 or 32. Also define WIN64 versus
-:: WIN32 in Seq66Constants.nsh.
+:: WIN32 and set WINBItS to "32" in Seq66Constants.nsh.
+::
+:: set PROJECT_BITS=32      // probably no longer supportable by Qt
+:: set PROJECT_BITS=64
 
 set PROJECT_BITS=64
+set QTVERSION=5.12.9
+set QTPATH=C:/Qt/Qt%QTVERSION%/%QTVERSION%
+set QMAKE=%QTPATH%/mingw73_%PROJECT_BITS%/bin/qmake.exe
 
 :: This is where the seq66 and the shadow build directories reside. Adjust
 :: them for your setup.
@@ -178,10 +198,13 @@ set PROJECT_7ZIP=qpseq66-release-package-x%PROJECT_BITS%-%PROJECT_VERSION%.7z
 set SHADOW_DIR=seq66-release-%PROJECT_BITS%
 set APP_DIR=Seq66qt5
 set RELEASE_DIR=%APP_DIR%\release
-set CONFIG_SET="CONFIG += release"
 set AUX_DIR=data
 set DOC_DIR=data\share\doc
 set TUTORIAL_DIR=data\share\doc\tutorial
+
+:: The quotes are required here.
+
+set CONFIG_SET="CONFIG += release WIN%PROJECT_BITS%"
 
 :: C:
 
@@ -191,9 +214,13 @@ set TUTORIAL_DIR=data\share\doc\tutorial
 
 cd %PROJECT_BASE%
 del /S /Q %SHADOW_DIR%\*.* > NUL
+echo Recreating Qt shadow directory %SHADOW_DIR% ...
 rmdir %SHADOW_DIR%
 mkdir %SHADOW_DIR%
-echo Creating Qt shadow directory %SHADOW_DIR% ...
+
+:: Make sure the supplementary batch files is in the shadow directory.
+
+copy %PROJECT_TREE%\nsis\windeploybruteforce.bat %SHADOW_DIR%
 cd %SHADOW_DIR%
 
 :: qmake -makefile -recursive "CONFIG += release" ..\seq66\seq66.pro
@@ -203,14 +230,22 @@ cd %SHADOW_DIR%
 cd
 echo qmake -makefile -recursive %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO%
 echo mingw32-make (output to make.log)
-qmake -makefile -recursive %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO% > make.log 2>&1
+%QMAKE% -makefile -recursive %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO% > make.log 2>&1
 mingw32-make >> make.log 2>&1
 if ERRORLEVEL 1 goto builderror
 
+if %PROJECT_BITS%==64 goto windep64
+call windeploybruteforce %QTVERSION% mingw73_32 %RELEASEDIR%
+goto makerels
+
 :: windeployqt Seq66qt5\release
+
+:windep64
 
 echo Creating deployment area via windeployqt %RELEASE_DIR%
 windeployqt %RELEASE_DIR%
+
+:makerels
 
 echo mkdir %RELEASE_DIR%\%AUX_DIR%
 echo mkdir %RELEASE_DIR%\%DOC_DIR%
@@ -277,6 +312,7 @@ set NSIS_PLATFORM=Linux
 if NOT %NSIS_PLATFORM%==Windows goto skipnsis
 
 echo Copying the 7zip package to the project tree...
+del /S /Q %PROJECT_TREE%\release\*.* > NUL
 copy %APP_DIR%\%PROJECT_7ZIP% %PROJECT_TREE%
 cd %PROJECT_TREE%
 echo Unpacking the 7zip package, %PROJECT_7ZIP% ...

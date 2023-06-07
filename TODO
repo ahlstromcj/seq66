@@ -4,10 +4,9 @@ Chris Ahlstrom
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
-    -   In port-error messages, try to report the name as well as the
-        number.
-    o   Windows build, installation, and operation.
-    o   Control/display automation and missing ports.
+    o Windows build, installation, and operation. Also add a 32-bit
+      installer!
+    o Control/display automation and missing ports.
 	o Investigate: cannot click on 'MIDI Clock' tab in preferences (Alt-C OK).
       This will work if just the right place in the tab is clicked. Cannot find
       any useful information on this issue.

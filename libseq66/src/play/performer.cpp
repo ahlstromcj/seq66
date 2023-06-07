@@ -959,15 +959,16 @@ performer::true_input_bus (bussbyte nominalbuss) const
         result = seq66::true_input_bus(m_inputs, nominalbuss);
         if (is_null_buss(result))
         {
-            char temp[128];
-            m_port_map_error = true;                /* mutable boolean      */
-            (void) snprintf
-            (
-                temp, sizeof temp, "Unavailable output buss %u. %s.",
-                unsigned(nominalbuss),
-                "Check the song and the MIDI control/display settings"
-            );
-            append_error_message(temp);
+            bool busstatus;                         /* not used here        */
+            std::string busname;                    /* this is what we want */
+            (void) ui_get_input(nominalbuss, busstatus, busname, false);
+
+            std::string msg = "Unavailable input bus ";
+            msg += std::to_string(unsigned(nominalbuss));
+            msg += " '";
+            msg += busname;
+            msg += "'. Check MIDI inputs and control settings.";
+            append_error_message(msg);
         }
     }
     return result;
@@ -1215,15 +1216,16 @@ performer::true_output_bus (bussbyte nominalbuss) const
         bussbyte result = seq66::true_output_bus(m_clocks, nominalbuss);
         if (is_null_buss(result))
         {
-            char temp[128];
-            m_port_map_error = true;                /* mutable boolean      */
-            (void) snprintf
-            (
-                temp, sizeof temp, "Unavailable output buss %u. %s.",
-                unsigned(nominalbuss),
-                "Check the song and the MIDI control/display settings"
-            );
-            append_error_message(temp);
+            e_clock clockvalue;                     /* not used here        */
+            std::string busname;                    /* this is what we want */
+            (void) ui_get_clock(nominalbuss, clockvalue, busname, false);
+
+            std::string msg = "Unavailable output bus ";
+            msg += std::to_string(unsigned(nominalbuss));
+            msg += " '";
+            msg += busname;
+            msg += "'. Check song and MIDI output and display settings.";
+            append_error_message(msg);
         }
     }
     return result;
