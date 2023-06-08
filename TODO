@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-06-04
+2019-04-13 to 2023-06-07
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
@@ -84,6 +84,10 @@ Ongoing efforts:
 
     -   Verify setmapper/setmaster for odd set sizes.
     -   Perfect the "background recording" feature.
+
+Ideas:
+
+    -   Drag and drop MIDI files onto seq66 (see sequencer64 issue #137)
 
 ISSUES:
 
@@ -318,7 +322,23 @@ ISSUES:
 
     STATUS: Undoing the change and commenting on it. Investigating the second
             part.
+
+#110 Windows build download
+
+    STATUS: works for 64-bit builds, but still working on 32-bit builds.
+
+#111 Time signature changes does not get saved on .midi file
      
+    STATUS: In progress. Still need to:
+
+        1.  Update the seqedit to somehow show a time-signature event.
+            Maybe show it in position in the data pane, such as "3/4".
+        2.  Get the first load to store the default time-signature if
+            it is changed.
+        3.  Cause an update to the pop-up event menu to indicate that
+            there is now a time signature.
+        4.  Do we really need a separate button to log the time signature?
+
 PATTERNS:
 
     -   Set pattern editor focus to grid at start unless it is a new one.

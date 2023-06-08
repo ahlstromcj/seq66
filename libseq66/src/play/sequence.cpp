@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-31
+ * \updates       2023-06-08
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3204,6 +3204,42 @@ sequence::add_tempo (midipulse tick, midibpm tempo, bool repaint)
 }
 
 /**
+ *  In setting the time signature here, all we want to do is change the
+ *  beats and beat width. The clocks_per_metronome() and
+ *  get_32nds_per_quarter() stay the same, as they would affect the whole tune.
+ *
+ *  Data: FF 58 04 n d c b
+ *
+ * Warning: The following call actually calls the tempo version of the
+ *          event constructor. Let append_meta_event() set the status to
+ *          EVENT_MIDI_META.
+ *
+ *          event e (tick, EVENT_MIDI_META);
+ */
+
+bool
+sequence::add_time_signature (midipulse tick, int beats, int bw)
+{
+    automutex locker(m_mutex);
+    bool result = beats > 0 && is_power_of_2(bw);
+    if (result)
+    {
+        event e (tick, EVENT_MIDI_META);                    /* see banner   */
+        midibyte bt[4];
+        bw = beat_log2(bw);                                 /* log2(bw)     */
+        bt[0] = midibyte(beats);                            /* numerator    */
+        bt[1] = midibyte(bw);                               /* denominator  */
+        bt[2] = midibyte(clocks_per_metronome());
+        bt[3] = midibyte(get_32nds_per_quarter());
+
+        bool ok = e.append_meta_data(EVENT_META_TIME_SIGNATURE, bt, 4);
+        if (ok)
+            append_event(e);
+    }
+    return result;
+}
+
+/**
  *  Adds an event to the internal event list in a sorted manner.  Then it
  *  resets the draw-marker and sets the dirty flag.
  *
@@ -4825,7 +4861,7 @@ sequence::get_next_event
  *
  * \return
  *      Returns true if the current event was one of the desired ones, or was
- *      a Tempo event.  In this case, the caller <i> must </i> increment the
+ *      a Tempo or Time Signature event (the Meta events whose drawing in qseqdata *      supported). In this case, the caller <i> must </i> increment the
  *      iterator.
  */
 
@@ -4843,8 +4879,10 @@ sequence::get_next_event_match
             return false;                       /* bug out immediately      */
 
         const event & drawevent = eventlist::cdref(evi);
-        bool istempo = drawevent.is_tempo();
-        bool ok = drawevent.match_status(status) || istempo;
+        bool isdrawablemeta = drawevent.is_tempo() ||
+            drawevent.is_time_signature();
+
+        bool ok = drawevent.match_status(status) || isdrawablemeta;
         if (! ok)
             ok = status == EVENT_ANY;
 
@@ -4857,7 +4895,9 @@ sequence::get_next_event_match
              * Broken for this purpose: ok = drawevent.is_desired(status, cc);
              */
 
-            ok = istempo || event::is_desired_cc_or_not_cc(status, cc, d0);
+            ok = isdrawablemeta ||
+                event::is_desired_cc_or_not_cc(status, cc, d0);
+
             if (ok)
                 return true;                    /* must ++evi after call    */
         }
@@ -4880,9 +4920,11 @@ sequence::get_next_meta_match
             return false;                       /* bug out immediately      */
 
         const event & drawevent = eventlist::cdref(evi);
-        if (drawevent.is_meta() && drawevent.channel() == metamsg)
-            return true;
-
+        if (drawevent.is_meta())
+        {
+            if (drawevent.channel() == metamsg)
+                return true;
+        }
         ++evi;                                  /* keep going here          */
     }
     return false;

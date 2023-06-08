@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-05-24
+ * \updates       2023-06-08
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -234,16 +234,22 @@ using event_popup_pair = struct
     midibyte epp_status;
 };
 
+/*
+ *  This array must exactly match the qseqeditframe64::event_index enumeration.
+ */
+
 event_popup_pair
 s_event_items [] =
 {
-    { "Note On Velocity",   EVENT_NOTE_ON           },
-    { "Note Off Velocity",  EVENT_NOTE_OFF          },
-    { "Aftertouch",         EVENT_AFTERTOUCH        },
-    { "Program Change",     EVENT_PROGRAM_CHANGE    },
-    { "Channel Pressure",   EVENT_CHANNEL_PRESSURE  },
-    { "Pitch Wheel",        EVENT_PITCH_WHEEL       },
-    { "Tempo",              EVENT_META_SET_TEMPO    }       /* special */
+    { "Note On Velocity",   EVENT_NOTE_ON               },
+    { "Note Off Velocity",  EVENT_NOTE_OFF              },
+    { "Aftertouch",         EVENT_AFTERTOUCH            },
+    { "Control Change",     EVENT_CONTROL_CHANGE        },
+    { "Program Change",     EVENT_PROGRAM_CHANGE        },
+    { "Channel Pressure",   EVENT_CHANNEL_PRESSURE      },
+    { "Pitch Wheel",        EVENT_PITCH_WHEEL           },
+    { "Tempo",              EVENT_META_SET_TEMPO        },      /* special  */
+    { "Time Signature",     EVENT_META_TIME_SIGNATURE   }       /* ditto    */
 };
 
 /**
@@ -438,6 +444,19 @@ qseqeditframe64::qseqeditframe64
     (
         ui->m_button_bw, SIGNAL(clicked(bool)),
         this, SLOT(reset_beat_width())
+    );
+
+    /*
+     * EXPERIMENTAL.
+     * Button to log the current time signature as a Meta event at the
+     * current "L" marker.
+     */
+
+    set_log_timesig_text();                 // ui->m_button_log_timesig->setText();
+    connect
+    (
+        ui->m_button_log_timesig, SIGNAL(clicked(bool)),
+        this, SLOT(slot_log_timesig())
     );
 
     /*
@@ -1497,6 +1516,27 @@ qseqeditframe64::update_seq_name ()
 }
 
 /**
+ *  EXPERIMENTAL.
+ */
+
+void
+qseqeditframe64::set_log_timesig_text ()
+{
+    std::string text = std::to_string(m_beats_per_bar);
+    text += "/";
+    text += std::to_string(m_beat_width);
+    ui->m_button_log_timesig->setText(qt(text));
+}
+
+void
+qseqeditframe64::slot_log_timesig ()
+{
+    midipulse tick = perf().get_left_tick();
+    (void) track().add_time_signature(tick, m_beats_per_bar, m_beat_width);
+    set_track_change();
+}
+
+/**
  *  Handles updates to the beats/measure for only the current sequences.
  *  See the similar function in qsmainwnd.  Not needed, it seems.
  *
@@ -2430,6 +2470,12 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
         m_seqdata->set_data_type(status, control);
         ui->m_entry_data->setText("Tempo");
     }
+    else if (event::is_time_signature_status(status))
+    {
+        m_seqevent->set_data_type(status, control);
+        m_seqdata->set_data_type(status, control);
+        ui->m_entry_data->setText("Time Signature");
+    }
     else
     {
         char hexa[8];
@@ -2461,7 +2507,7 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
         else if (status == EVENT_PITCH_WHEEL)
             snprintf(type, sizeof type, "Pitch Wheel");
         else if (event::is_meta_status(status))
-            snprintf(type, sizeof type, "Meta Events");
+            snprintf(type, sizeof type, "Meta Event");
         else
             snprintf(type, sizeof type, "Unknown MIDI Event");
 
@@ -3044,6 +3090,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     bool channel_pressure = false;
     bool pitch_wheel = false;
     bool tempo = false;
+    bool timesig = false;
     midibyte status = 0, cc = 0;
     memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
     for (auto cev = track().cbegin(); ! track().cend(cev); ++cev)
@@ -3051,43 +3098,65 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
         if (! track().get_next_event(status, cc, cev))
             break;
 
+        /*
+         * Tempo and time-signature are handled after this loop.
+         */
+
         status = event::normalized_status(status);      /* mask off channel */
-        switch (status)
+        switch (status)                                 /* see event_index  */
         {
-        case EVENT_NOTE_OFF:            note_off = true;            break;
         case EVENT_NOTE_ON:             note_on = true;             break;
+        case EVENT_NOTE_OFF:            note_off = true;            break;
         case EVENT_AFTERTOUCH:          aftertouch = true;          break;
         case EVENT_CONTROL_CHANGE:      ccs[cc] = true;             break;
-        case EVENT_PITCH_WHEEL:         pitch_wheel = true;         break;
         case EVENT_PROGRAM_CHANGE:      program_change = true;      break;
         case EVENT_CHANNEL_PRESSURE:    channel_pressure = true;    break;
+        case EVENT_PITCH_WHEEL:         pitch_wheel = true;         break;
         }
     }
 
     /*
-     * Currently the only meta event that can be edited is tempo.  The
-     * meta-match function keeps going until it finds the meta event or it
-     * ends.  All we care here is if one exists.
+     * Currently the only meta events that can be edited here are tempo and
+     * time signature.  The meta-match function keeps going until it finds
+     * these meta events, or it ends.  All we care here is if one exists.
      */
 
-    auto cev = track().cbegin();
+    auto cev = track().cbegin();        /* will scan the whole container    */
     if (! track().cend(cev))
     {
         if (track().get_next_meta_match(EVENT_META_SET_TEMPO, cev))
             tempo = true;
+
+        cev = track().cbegin();         /* start over!                      */
+        if (track().get_next_meta_match(EVENT_META_TIME_SIGNATURE, cev))
+            timesig = true;
     }
     if (not_nullptr(m_events_popup))
         delete m_events_popup;
 
     m_events_popup = new QMenu(this);
     set_event_entry(m_events_popup, note_on, event_index::note_on);
-    m_events_popup->addSeparator();
     set_event_entry(m_events_popup, note_off, event_index::note_off);
+    m_events_popup->addSeparator();
     set_event_entry(m_events_popup, aftertouch, event_index::aftertouch);
-    set_event_entry(m_events_popup, program_change, event_index::prog_change);
-    set_event_entry(m_events_popup, channel_pressure, event_index::chan_pressure);
+
+    /*
+     * Control changes are handled in submenus constructed below.
+     *
+     * set_event_entry
+     * (
+     *      m_events_popup, control_change, event_index::control_change
+     * );
+     */
+
+    set_event_entry(m_events_popup, program_change, event_index::program_change);
+    set_event_entry
+    (
+        m_events_popup, channel_pressure, event_index::channel_pressure
+    );
     set_event_entry(m_events_popup, pitch_wheel, event_index::pitch_wheel);
     set_event_entry(m_events_popup, tempo, event_index::tempo);
+    set_event_entry(m_events_popup, timesig, event_index::time_signature);
     m_events_popup->addSeparator();
 
     /**
@@ -3187,6 +3256,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     bool channel_pressure = false;
     bool pitch_wheel = false;
     bool tempo = false;
+    bool timesig = false;
     bool any_events = false;
     midibyte status = 0, cc = 0;
     memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
@@ -3196,6 +3266,11 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
             break;
 
         status = event::normalized_status(status);      /* mask off channel */
+
+        /*
+         *  Tempo and time-signatures are detected after this loop ends.
+         */
+
         switch (status)
         {
         case EVENT_NOTE_OFF:
@@ -3214,12 +3289,12 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
             ccs[cc] = any_events = true;
             break;
 
-        case EVENT_PITCH_WHEEL:
-            any_events = pitch_wheel = true;
-            break;
-
         case EVENT_PROGRAM_CHANGE:
             any_events = program_change = true;
+            break;
+
+        case EVENT_PITCH_WHEEL:
+            any_events = pitch_wheel = true;
             break;
 
         case EVENT_CHANNEL_PRESSURE:
@@ -3228,11 +3303,15 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
         }
     }
 
-    auto cev = track().cbegin();
+    auto cev = track().cbegin();        /* will scan the whole container    */
     if (! track().cend(cev))
     {
         if (track().get_next_meta_match(EVENT_META_SET_TEMPO, cev))
             tempo = any_events = true;
+
+        cev = track().cbegin();         /* start over!                      */
+        if (track().get_next_meta_match(EVENT_META_TIME_SIGNATURE, cev))
+            timesig = any_events = true;
     }
     if (not_nullptr(m_minidata_popup))
         delete m_minidata_popup;
@@ -3247,17 +3326,24 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     if (aftertouch)
         set_event_entry(m_minidata_popup, true, event_index::aftertouch);
 
+    /*
+     * Control changes are handled in submenus constructed below.
+     */
+
     if (program_change)
-        set_event_entry(m_minidata_popup, true, event_index::prog_change);
+        set_event_entry(m_minidata_popup, true, event_index::program_change);
 
     if (channel_pressure)
-        set_event_entry(m_minidata_popup, true, event_index::chan_pressure);
+        set_event_entry(m_minidata_popup, true, event_index::channel_pressure);
 
     if (pitch_wheel)
         set_event_entry(m_minidata_popup, true, event_index::pitch_wheel);
 
     if (tempo)
         set_event_entry(m_minidata_popup, true, event_index::tempo);
+
+    if (timesig)
+        set_event_entry(m_minidata_popup, true, event_index::time_signature);
 
     if (any_events)
         m_minidata_popup->addSeparator();
@@ -3538,6 +3624,7 @@ qseqeditframe64::set_dirty ()
 void
 qseqeditframe64::set_track_change ()
 {
+    set_log_timesig_text();
     set_dirty();
     if (is_initialized())               /* do not set changes at start-up   */
         track().modify(false);          /* modify, but do not change-notify */
@@ -3611,43 +3698,6 @@ qseqeditframe64::rollwidget () const
 {
     return ui->rollScrollArea->widget();
 }
-
-/**
- *  POTENTIAL SHARED CODE between qseqroll and qseqdata.
- *
- *  We have common access via some functions:
- *
- *      perf():         performer &             qbase
- *      track():        sequence &              qseqbase
- *      snap():         int                     qeditbase
- */
-
-#if defined USE_DATA_PANE_KEYSTROKES
-
-/*
- *  We need to somehow get qseqtime, qseqroll, qseqdata, and qstriggereditor
- *  all to respond to the left/right arrows.
- *
- *  What are the base classes of these panes? qseqbase.
- */
-
-void
-qseqeditframe64::move_left (midipulse snap)
-{
-    midipulse tick = perf().get_tick();
-    perf().set_tick(tick - snap, true);           /* no reset */
-    track().set_last_tick(tick - snap);
-}
-
-void
-qseqeditframe64::move_right (midipulse snap)
-{
-    midipulse tick = perf().get_tick();
-    perf().set_tick(tick + snap, true);           /* no reset */
-    track().set_last_tick(tick + snap);
-}
-
-#endif  // defined USE_DATA_PANE_KEYSTROKES
 
 }           // namespace seq66
 

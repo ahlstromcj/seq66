@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-22
+ * \updates       2023-06-07
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -808,7 +808,7 @@ event::append_meta_data (midibyte metatype, const midibyte * data, int dsize)
     }
     else
     {
-        errprint("event::append_meta_data(): null data");
+        errprint("event::append_meta_data(null data)");
     }
     return result;
 }
@@ -841,7 +841,7 @@ event::append_meta_data (midibyte metatype, const midibytes & data)
     }
     else
     {
-        errprint("event::append_meta_data(): no data");
+        errprint("event::append_meta_data(no data)");
     }
     return result;
 }

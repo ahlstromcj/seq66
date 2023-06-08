@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-06-01
+ * \updates       2023-06-08
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -968,6 +968,7 @@ performer::true_input_bus (bussbyte nominalbuss) const
             msg += " '";
             msg += busname;
             msg += "'. Check MIDI inputs and control settings.";
+            m_port_map_error = true;                /* mutable boolean      */
             append_error_message(msg);
         }
     }
@@ -1225,6 +1226,7 @@ performer::true_output_bus (bussbyte nominalbuss) const
             msg += " '";
             msg += busname;
             msg += "'. Check song and MIDI output and display settings.";
+            m_port_map_error = true;                /* mutable boolean      */
             append_error_message(msg);
         }
     }

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-30
+ * \updates       2023-06-08
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -82,7 +82,7 @@ static const int sc_dataarea_y = 128;
  * Tweaks.
  */
 
-static const int s_x_data_fix   = 2;    /* adjusts x-value for the events   */
+static const int s_x_data_fix   = -6; // 2;    /* adjusts x-value for the events   */
 static const int s_key_padding  = 8;    /* adjusts x for keyboard padding   */
 static const int s_circle_d     = 6;    /* diameter of tempo/prog. dots     */
 
@@ -107,6 +107,7 @@ qseqdata::qseqdata
     m_keyboard_padding_x    (s_key_padding),
     m_dataarea_y            (height > 0 ? height : sc_dataarea_y),
     m_is_tempo              (false),
+    m_is_time_signature     (false),
     m_is_program_change     (false),
     m_status                (EVENT_NOTE_ON),
     m_cc                    (1),                /* modulation   */
@@ -217,7 +218,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
         midipulse tick = cev->timestamp();
         if (tick >= start_tick && tick <= end_tick)
         {
-            bool normal_event = ! cev->is_tempo() && ! cev->is_program_change();
+            bool data_event = cev->is_continuous_event();  /* can draw line */
             bool selected = cev->is_selected();
             int event_x = tix_to_pix(tick) + m_keyboard_padding_x;
             int x_offset = event_x + s_x_data_fix;
@@ -228,31 +229,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             int event_height = event::is_one_byte_msg(m_status) ? d0 : d1 ;
             event_height = height() - byte_height(m_dataarea_y, event_height);
             pen.setWidth(2);
-            if (cev->is_tempo() && is_tempo())
-            {
-                d1 = height() - tempo_to_note_value(cev->tempo());
-                if (d1 < 4)
-                    d1 = 4;                     /* avoid overlap with top   */
-
-                snprintf(digits, sizeof digits, "%3d", int(cev->tempo()));
-                brush.setColor(selected ? sel_color() : tempo_color());
-                painter.setBrush(brush);
-                painter.drawEllipse(event_x, d1 - 3, s_circle_d, s_circle_d);
-                painter.drawText(x_offset + 6, d1 + 4, digits);
-                brush.setColor(grey_color());
-                painter.setBrush(brush);
-            }
-            if (cev->is_program_change() && is_program_change())
-            {
-                d1 = event_height;
-                if (d1 > height() - 6)
-                    d1 = height() - 6;          /* avoid overlap w/bottom   */
-
-                snprintf(digits, sizeof digits, "%3d", d0);
-                painter.drawEllipse(event_x, d1, s_circle_d, s_circle_d);
-                painter.drawText(x_offset + 2, d1 + 6, digits);
-            }
-            if (normal_event)
+            if (data_event)
             {
 #if defined SEQ66_REQUIRE_SEQ_CHANNEL_MATCH                 /* too much! */
                 bool ok;
@@ -285,15 +262,58 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 #endif
                 pen.setColor(selected ? sel_paint() : fore_color());
                 painter.setPen(pen);
+                event_x -= 3;
                 painter.drawLine(event_x, event_height, event_x, height());
                 snprintf(digits, sizeof digits, "%3d", d1);
 
                 QString val = digits;
                 pen.setColor(fore_color());
                 painter.setPen(pen);
+                x_offset += 6;
                 painter.drawText(x_offset, y_offset,      val.at(0));
                 painter.drawText(x_offset, y_offset +  9, val.at(1));
                 painter.drawText(x_offset, y_offset + 18, val.at(2));
+            }
+            else if (is_tempo() && cev->is_tempo())
+            {
+                d1 = height() - tempo_to_note_value(cev->tempo()) -
+                    (s_circle_d / 2);
+
+                if (d1 < 4)
+                    d1 = 4;                     /* avoid overlap with top   */
+
+                snprintf(digits, sizeof digits, "%3d", int(cev->tempo()));
+                brush.setColor(selected ? sel_color() : tempo_color());
+                painter.setBrush(brush);
+                painter.drawEllipse(event_x - 8, d1 - 3, s_circle_d, s_circle_d);
+                painter.drawText(x_offset + 12, d1 + 4, digits);
+                brush.setColor(grey_color());
+                painter.setBrush(brush);
+            }
+            else if (is_time_signature() && cev->is_time_signature())
+            {
+                int n = int(cev->get_sysex(0));
+                int d = int(cev->get_sysex(1));
+                QString dash = (n > 9 || d > 9) ? "x --" : "x -" ;
+                QString numerator = "  " + qt(std::to_string(n));
+                QString denominator = "  " + qt(std::to_string(d));
+                y_offset = 12;
+                painter.drawText(x_offset, y_offset,      numerator);
+                painter.drawText(x_offset, y_offset +  9, dash);
+                painter.drawText(x_offset, y_offset + 18, denominator);
+            }
+            else if (is_program_change() && cev->is_program_change())
+            {
+                d1 = event_height;
+                if (d1 > height() - 6)
+                    d1 = height() - 6;          /* avoid overlap w/bottom   */
+                else if (d1 < s_circle_d)
+                    d1 = s_circle_d;
+
+                d1 -= s_circle_d;
+                snprintf(digits, sizeof digits, "%3d", d0);
+                painter.drawEllipse(event_x - 6, d1, s_circle_d, s_circle_d);
+                painter.drawText(x_offset + 6, d1 + 6, digits);
             }
         }
     }
@@ -475,6 +495,15 @@ qseqdata::set_data_type (midibyte status, midibyte control)
     if (event::is_tempo_status(status))
     {
         is_tempo(true);
+        is_time_signature(false);
+        is_program_change(false);
+        m_status = status;
+        m_cc = 0;
+    }
+    else if (event::is_time_signature_status(status))
+    {
+        is_tempo(false);
+        is_time_signature(true);
         is_program_change(false);
         m_status = status;
         m_cc = 0;
@@ -482,6 +511,7 @@ qseqdata::set_data_type (midibyte status, midibyte control)
     else if (event::is_program_change_msg(status))
     {
         is_tempo(false);
+        is_time_signature(false);
         is_program_change(true);
         m_status = status;
         m_cc = 0;
@@ -489,6 +519,7 @@ qseqdata::set_data_type (midibyte status, midibyte control)
     else
     {
         is_tempo(false);
+        is_time_signature(false);
         is_program_change(false);
         m_status = event::normalized_status(status);
         m_cc = control;

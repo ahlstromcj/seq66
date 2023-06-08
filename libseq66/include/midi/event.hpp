@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-04
+ * \updates       2023-06-08
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -425,7 +425,13 @@ private:
 public:
 
     event ();
-    event (midipulse tstamp, midibyte status, midibyte d0, midibyte d1 = 0);
+    event
+    (
+        midipulse tstamp,
+        midibyte status,
+        midibyte d0         = 0,
+        midibyte d1         = 0
+    );
     event (midipulse tstamp, midibpm tempo);
     event
     (
@@ -738,6 +744,11 @@ public:
         return m == EVENT_META_SET_TEMPO;
     }
 
+    static bool is_time_signature_status (midibyte m)
+    {
+        return m == EVENT_META_TIME_SIGNATURE;
+    }
+
     static bool is_sysex_msg (midibyte m)
     {
         return m == EVENT_MIDI_SYSEX;
@@ -1032,6 +1043,11 @@ public:
     const sysex & get_sysex () const
     {
         return m_sysex;
+    }
+
+    midibyte get_sysex (size_t i) const
+    {
+        return m_sysex[i];
     }
 
     int sysex_size () const
@@ -1340,6 +1356,17 @@ public:
     bool is_program_change () const
     {
         return is_program_change_msg(m_status);
+    }
+
+    /**
+     *  Indicates an event that has a line-drawable data item, such as
+     *  velocity.  It is false for discrete data such as program/path number
+     *  or Meta events.
+     */
+
+    bool is_continuous_event () const
+    {
+        return ! is_program_change() && ! is_meta();
     }
 
     /**

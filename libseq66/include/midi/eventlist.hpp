@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-05-22
+ * \updates       2023-06-07
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -51,6 +51,18 @@
  *
  *  we will now use std::vector for the event list.
  */
+
+/**
+ *  We made some fixes for sequencer64 issue #141 to disable saving the tempo
+ *  into first track. But for Seq66, we do want to be able to save the
+ *  time signature of each pattern with that pattern (especially if different
+ *  from the global time signature). Note that we would support only one
+ *  time-signature per pattern, but unlimited tempo changes.  Also note that,
+ *  unlike tempo, time-signature does not affect the playback of MIDI events.
+ *  It changes how they are displayed.
+ */
+
+#undef   SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
 
 #include <atomic>                       /* std::atomic<bool> usage          */
 

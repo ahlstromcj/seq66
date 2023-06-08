@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2023-06-04
+ * \updates       2023-06-08
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -327,10 +327,10 @@ qt5nsmanager::show_message
         else
         {
             std::string text = tag + ": " + msg;
-            bool yes = m_window->show_error_box_ex
-            (
-                text, perf()->new_ports_available()
-            );
+            bool prompt_for_restart =
+                perf()->port_map_error() || perf()->new_ports_available();
+
+            bool yes = m_window->show_error_box_ex(text, prompt_for_restart);
             if (yes)
                 perf()->store_io_maps_and_restart();
         }

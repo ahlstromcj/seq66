@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-23
+ * \updates       2023-06-07
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -92,6 +92,16 @@ public:
     void is_tempo (bool flag)
     {
         m_is_tempo = flag;
+    }
+
+    bool is_time_signature () const
+    {
+        return m_is_time_signature;
+    }
+
+    void is_time_signature (bool flag)
+    {
+        m_is_time_signature = flag;
     }
 
     bool is_program_change () const
@@ -167,8 +177,15 @@ private:
     bool m_is_tempo;
 
     /**
-     *  Indicates we are editing tempo events.  They are drawn as circles
-     *  instead of lines.
+     *  Indicates we are editing time-signature events.  They are drawn as
+     *  text instead of lines.
+     */
+
+    bool m_is_time_signature;
+
+    /**
+     *  Indicates we are editing program-change events.  They are drawn as
+     *  circles instead of lines.
      */
 
     bool m_is_program_change;

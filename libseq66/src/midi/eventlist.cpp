@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-05-22
+ * \updates       2023-06-08
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -1782,7 +1782,7 @@ eventlist::unselect_all ()
  * \param status
  *      The desired event in the selection.  Now, as a new feature, tempo
  *      events are also selectable, in addition to events selected by this
- *      parameter.
+ *      parameter. Oh, and now time-signature events.
  *
  * \param cc
  *      The desired control-change in the selection, if the event is a
@@ -2081,7 +2081,9 @@ eventlist::event_in_range
     midipulse tick_s, midipulse tick_f
 ) const
 {
-    bool result = e.match_status(status) || e.is_tempo();
+    bool result = e.match_status(status) || e.is_tempo() ||
+        e.is_time_signature();
+
     if (result)
         result = e.timestamp() >= tick_s && e.timestamp() <= tick_f;
 

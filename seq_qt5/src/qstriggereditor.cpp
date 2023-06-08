@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-22
+ * \updates       2023-06-08
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -75,14 +75,15 @@ qstriggereditor::qstriggereditor
     QWidget * parent,
     int xoffset
 ) :
-    QWidget     (parent),
-    qseqbase    (p, s, frame, zoom, snap),
-    m_timer     (nullptr),
-    m_x_offset  (xoffset + s_x_tick_fix),
-    m_key_y     (keyheight),
-    m_is_tempo  (false),                            /* is_tempo()           */
-    m_status    (EVENT_NOTE_ON),
-    m_cc        (0)                                 /* bank select          */
+    QWidget             (parent),
+    qseqbase            (p, s, frame, zoom, snap),
+    m_timer             (nullptr),
+    m_x_offset          (xoffset + s_x_tick_fix),
+    m_key_y             (keyheight),
+    m_is_tempo          (false),                    /* is_tempo()           */
+    m_is_time_signature (false),                    /* is_time_signature()  */
+    m_status            (EVENT_NOTE_ON),
+    m_cc                (0)                         /* bank select          */
 {
     setAttribute(Qt::WA_StaticContents);
     setAttribute(Qt::WA_OpaquePaintEvent);          /* no erase on repaint  */
@@ -250,6 +251,8 @@ qstriggereditor::paintEvent (QPaintEvent *)
                 brush.setColor(sel_color());        /* "orange"             */
             else if (cev->is_tempo())
                 brush.setColor(tempo_color());
+            else if (cev->is_time_signature())
+                brush.setColor(grey_color());
             else
                 brush.setColor(back_color());       /* Qt::white            */
 
@@ -665,7 +668,11 @@ qstriggereditor::drop_event (midipulse tick)
     if (is_tempo())
     {
         midibpm bpm = perf().bpm();
-        (void) track().add_tempo(tick, bpm, true);   /* repaint true */
+        (void) track().add_tempo(tick, bpm, true);      /* repaint true     */
+    }
+    else if (is_time_signature())
+    {
+        /* ignore */
     }
     else
     {
@@ -708,12 +715,21 @@ qstriggereditor::set_data_type (midibyte status, midibyte control)
     if (event::is_tempo_status(status))
     {
         is_tempo(true);
+        is_time_signature(false);
+        m_status = status;
+        m_cc = 0;
+    }
+    else if (event::is_time_signature_status(status))
+    {
+        is_tempo(false);
+        is_time_signature(true);
         m_status = status;
         m_cc = 0;
     }
     else
     {
         is_tempo(false);
+        is_time_signature(false);
         m_status = event::normalized_status(status);
         m_cc = control;
         if (event::is_note_msg(status))

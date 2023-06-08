@@ -91,7 +91,7 @@ midi_vector::song_fill_track (int track, bool standalone)
             fill_seq_number(track);
             fill_seq_name(seq().name());
 
-#if defined USE_FILL_TIME_SIG_AND_TEMPO             /* issue #141   */
+#if defined SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
             if (track == rc().tempo_track_number)
             {
                 seq().events().scan_meta_events();

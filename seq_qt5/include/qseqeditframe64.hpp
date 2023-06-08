@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-05-23
+ * \updates       2023-06-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -119,10 +119,12 @@ private:
         note_on,
         note_off,
         aftertouch,
-        prog_change,
-        chan_pressure,
+        control_change,
+        program_change,
+        channel_pressure,
         pitch_wheel,
-        tempo
+        tempo,
+        time_signature
     };
 
 public:
@@ -148,12 +150,6 @@ public:
 protected:
 
     void set_track_change ();
-
-#if defined USE_DATA_PANE_KEYSTROKES
-#endif
-
-    void move_left (midipulse snap);
-    void move_right (midipulse snap);
 
 private:        /* performer::callback overrides    */
 
@@ -202,6 +198,7 @@ private:
     void remove_lfo_frame ();
     void remove_patternfix_frame ();
     QIcon * create_menu_image (bool state);
+    void set_log_timesig_text ();
 
 private:        /* combo-box list accessors */
 
@@ -244,6 +241,7 @@ private slots:
     void slot_reset_zoom ();
     void slot_update_zoom (int index);
     void update_seq_name ();
+    void slot_log_timesig ();
 
     /*
      * Not necessary:

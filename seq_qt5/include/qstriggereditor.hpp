@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-22
+ * \updates       2023-06-08
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -87,6 +87,11 @@ public:
         return m_is_tempo;
     }
 
+    bool is_time_signature () const
+    {
+        return m_is_time_signature;
+    }
+
 private:
 
     void flag_dirty ();
@@ -100,6 +105,11 @@ private:
     void is_tempo (bool flag)
     {
         m_is_tempo = flag;
+    }
+
+    void is_time_signature (bool flag)
+    {
+        m_is_time_signature = flag;
     }
 
 protected:
@@ -143,9 +153,10 @@ private:
     QTimer * m_timer;
     int m_x_offset;
     int m_key_y;
-    bool m_is_tempo;            /* the only reasonably editable meta event  */
-    midibyte m_status;          /* the event seqdata is currently editing   */
-    midibyte m_cc;              /* the controller being edited              */
+    bool m_is_tempo;                /* a reasonably editable meta event     */
+    bool m_is_time_signature;       /* a reasonably displayable meta event  */
+    midibyte m_status;              /* event seqdata is currently editing   */
+    midibyte m_cc;                  /* controller being edited              */
 
 };          // class qstriggereditor
 

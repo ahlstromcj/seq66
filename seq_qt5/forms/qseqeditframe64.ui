@@ -165,8 +165,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>726</width>
-          <height>159</height>
+          <width>729</width>
+          <height>162</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -333,8 +333,8 @@ the note-map, if any, to the note events in this pattern.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>716</width>
-          <height>124</height>
+          <width>718</width>
+          <height>126</height>
          </rect>
         </property>
        </widget>
@@ -1352,8 +1352,8 @@ the '0' key in the piano roll.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>720</width>
-          <height>20</height>
+          <width>722</width>
+          <height>22</height>
          </rect>
         </property>
        </widget>
@@ -1473,6 +1473,29 @@ the '0' key in the piano roll.</string>
        </property>
        <property name="text">
         <string>Untitled</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="m_button_log_timesig">
+       <property name="minimumSize">
+        <size>
+         <width>36</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>40</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Click to add the current time signature as a
+meta event at the position of the L marker.</string>
+       </property>
+       <property name="text">
+        <string>3/4</string>
        </property>
       </widget>
      </item>
@@ -1866,8 +1889,8 @@ the '0' key in the piano roll.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>718</width>
-          <height>20</height>
+          <width>720</width>
+          <height>22</height>
          </rect>
         </property>
        </widget>
