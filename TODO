@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-06-07
+2019-04-13 to 2023-06-08
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
@@ -338,6 +338,8 @@ ISSUES:
         3.  Cause an update to the pop-up event menu to indicate that
             there is now a time signature.
         4.  Do we really need a separate button to log the time signature?
+        5.  The qstriggereditor class needs to filter properly on the
+            selected events.
 
 PATTERNS:
 

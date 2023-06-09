@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-06-08
+ * \updates       2023-06-09
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4873,33 +4873,33 @@ sequence::get_next_event_match
 )
 {
     automutex locker(m_mutex);
+    bool ismeta = event::is_meta_msg(status);
     while (evi != m_events.end())
     {
         if (m_events.action_in_progress())      /* atomic boolean check     */
             return false;                       /* bug out immediately      */
 
         const event & drawevent = eventlist::cdref(evi);
-        bool isdrawablemeta = drawevent.is_tempo() ||
-            drawevent.is_time_signature();
-
-        bool ok = drawevent.match_status(status) || isdrawablemeta;
-        if (! ok)
-            ok = status == EVENT_ANY;
-
-        if (ok)
+        bool ok = drawevent.match_status(status);
+        if (ok && ismeta)
         {
-            midibyte d0;
-            drawevent.get_data(d0);
-
-            /*
-             * Broken for this purpose: ok = drawevent.is_desired(status, cc);
-             */
-
-            ok = isdrawablemeta ||
-                event::is_desired_cc_or_not_cc(status, cc, d0);
-
+            ok = drawevent.channel() == cc;     /* avoids redundant check   */
             if (ok)
                 return true;                    /* must ++evi after call    */
+        }
+        else
+        {
+            if (! ok)
+                ok = status == EVENT_ANY;
+
+            if (ok)
+            {
+                midibyte d0;
+                drawevent.get_data(d0);
+                ok = event::is_desired_cc_or_not_cc(status, cc, d0);
+                if (ok)
+                    return true;                /* must ++evi after call    */
+            }
         }
         ++evi;                                  /* keep going here          */
     }

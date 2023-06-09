@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-08
+ * \updates       2023-06-09
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -92,6 +92,11 @@ public:
         return m_is_time_signature;
     }
 
+    bool is_program_change () const
+    {
+        return m_is_program_change;
+    }
+
 private:
 
     void flag_dirty ();
@@ -110,6 +115,11 @@ private:
     void is_time_signature (bool flag)
     {
         m_is_time_signature = flag;
+    }
+
+    void is_program_change (bool flag)
+    {
+        m_is_program_change = flag;
     }
 
 protected:
@@ -155,6 +165,7 @@ private:
     int m_key_y;
     bool m_is_tempo;                /* a reasonably editable meta event     */
     bool m_is_time_signature;       /* a reasonably displayable meta event  */
+    bool m_is_program_change;       /* a special case                       */
     midibyte m_status;              /* event seqdata is currently editing   */
     midibyte m_cc;                  /* controller being edited              */
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-06-08
+ * \updates       2023-06-09
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -383,16 +383,27 @@ qseqeditframe64::qseqeditframe64
     );
 
     /*
-     * Beats Per Bar.  Fill the options for the beats per measure combo-box,
-     * and set the default.  These range from 1 to 16, plus a value of 32.
+     * Beats Per Bar, preliminary (global) value.  Fill options for the beats
+     * per measure combo-box, and set the default.  These range from 1 to 16,
+     * plus a value of 32.
      *
      * How to handle values outside the combobox? Pass the string as a
      * parameter to fill_combobox().
      *
+     * We also set up the preliminary values of beat-width here to avoid doing
+     * it while connected.
      */
 
-    std::string bpbstring = std::to_string(m_beats_per_bar);
-    (void) fill_combobox(ui->m_combo_bpm, beats_per_bar_list(), bpbstring);
+    detect_time_signature();                /* possibly changes beats/width */
+
+    std::string bstring = std::to_string(m_beats_per_bar);
+    (void) fill_combobox(ui->m_combo_bpm, beats_per_bar_list(), bstring);
+    bstring = std::to_string(m_beat_width);
+    (void) fill_combobox(ui->m_combo_bw, beatwidth_list(), bstring);
+
+    /*
+     * TODO: look for time signature
+     */
 
     /*
      * Doesn't seem to be needed, as changing the index also changes the text.
@@ -421,18 +432,6 @@ qseqeditframe64::qseqeditframe64
      * the beats per measure combo-box, and set the default.
      */
 
-    std::string bwstring = std::to_string(m_beat_width);
-    (void) fill_combobox(ui->m_combo_bw, beatwidth_list(), bwstring);
-
-    /*
-     * Doesn't seem to be needed, as changing the index also changes the text.
-     *
-     *  connect
-     *  (
-     *      ui->m_combo_bw, SIGNAL(currentIndexChanged(int)),
-     *      this, SLOT(update_beat_width(int))
-     *  );
-     */
 
     qt_set_icon(down_xpm, ui->m_button_bw);
     connect
@@ -1742,6 +1741,30 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
 }
 
 /**
+ *  This function looks for a time-signature, and if it is within the first
+ *  snap interval, sets the beats value accordingly.
+ */
+
+void
+qseqeditframe64::detect_time_signature ()
+{
+    midibyte mstatus = EVENT_MIDI_META;
+    midibyte mtype = EVENT_META_TIME_SIGNATURE;
+    auto cev = track().cbegin();
+    if (track().get_next_event_match(mstatus, mtype, cev))
+    {
+        midipulse tick = cev->timestamp();
+        if (tick < track().snap())
+        {
+            int n = int(cev->get_sysex(0));
+            int d = int(cev->get_sysex(1));
+            set_beats_per_bar(n, qbase::status::startup);
+            set_beat_width(d, qbase::status::startup);
+        }
+    }
+}
+
+/**
  *  Handles updates to the pattern length.
  *
  *  void
@@ -2640,8 +2663,9 @@ qseqeditframe64::update_grid_snap (int index)
  *  equivalent of a 16th note (48 ticks).  The snap divisor is 192 * 4 / 48 or
  *  16.
  *
- * \param s The prospective snap value to set.  It is checked only to make
- * sure it is greater than 0, to avoid a numeric exception.
+ * \param s
+ *      The prospective snap value to set.  It is checked only to make
+ *      sure it is greater than 0, to avoid a numeric exception.
  */
 
 void
@@ -2655,6 +2679,10 @@ qseqeditframe64::set_snap (midipulse s)
 
         track().snap(s);
         m_seqevent->set_snap(s);
+
+        /*
+         * What about the event-page (qstriggereditor) snap???
+         */
     }
 }
 

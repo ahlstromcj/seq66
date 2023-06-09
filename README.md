@@ -1,4 +1,4 @@
-# README for Seq66 0.99.6 2023-06-08
+# README for Seq66 0.99.6 2023-06-09
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -82,11 +82,11 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.99.6:
-        *   Follow-ons to issue #3:
+        *   Issue #3 follow-ons:
             *   Added a qscrollslave to allow QScrollArea to allow the pattern
                 editor panes to remain in sync with the seqroll when using the
                 hjkl, arrow, and page keys.
-        *   Follow-ons to issue #110:
+        *   Issue #110 follow-ons:
             *   Addition of Start menu entries for Windows.
             *   Fixed access to the tutorial and manual. Refactored access
                 to manual and tutorial for robustness.
@@ -97,14 +97,15 @@ Windows, and using a conventional source tarball.
                 velocities in the pattern editor's data pane.  Improved
                 velocity-change undo.
             *   Fixed an error preventing changing the "background" pattern.
-        *   Issue #111: Adding support, as much as possible, for editing
-            storing, and displaying time signature.
+        *   Issue #111: Adding support, as much as possible, for editing,
+            storing, and displaying time signature. Enhanced the event pane,
+            too.
         *   Enhanced port-mapping to prompt the user about issues and
             allow for an immediate remap-and-restart. Lots of fixes!
         *   Added 'o' keystroke to seqroll to toggle recording ('r' already
             used to randomize notes).
-        *   Added a "quiet" option and enhanced the Edit / Preferences
-            dialog.
+        *   Added a "quiet" option to not show startup message prompts.
+        *   Enhanced the Edit / Preferences dialog.
         *   At first start, a log-file is now automatically created. If it
             gets larger than a megabyte, then it is deleted to start over.
     *   Version 0.99.5:

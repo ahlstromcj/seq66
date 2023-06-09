@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-08
+ * \updates       2023-06-09
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -294,9 +294,9 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             {
                 int n = int(cev->get_sysex(0));
                 int d = int(cev->get_sysex(1));
-                QString dash = (n > 9 || d > 9) ? "x --" : "x -" ;
-                QString numerator = "  " + qt(std::to_string(n));
-                QString denominator = "  " + qt(std::to_string(d));
+                QString dash = (n > 9 || d > 9) ? "--" : "-" ;
+                QString numerator = qt(std::to_string(n));
+                QString denominator = qt(std::to_string(d));
                 y_offset = 12;
                 painter.drawText(x_offset, y_offset,      numerator);
                 painter.drawText(x_offset, y_offset +  9, dash);
@@ -312,8 +312,11 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 
                 d1 -= s_circle_d;
                 snprintf(digits, sizeof digits, "%3d", d0);
+                brush.setColor(selected ? sel_color() : drum_color()); /* ! */
                 painter.drawEllipse(event_x - 6, d1, s_circle_d, s_circle_d);
                 painter.drawText(x_offset + 6, d1 + 6, digits);
+                brush.setColor(grey_color());   /* new */
+                painter.setBrush(brush);        /* new */
             }
         }
     }
@@ -497,16 +500,16 @@ qseqdata::set_data_type (midibyte status, midibyte control)
         is_tempo(true);
         is_time_signature(false);
         is_program_change(false);
-        m_status = status;
-        m_cc = 0;
+        m_status = EVENT_MIDI_META;     /* tricky */
+        m_cc = status;
     }
     else if (event::is_time_signature_status(status))
     {
         is_tempo(false);
         is_time_signature(true);
         is_program_change(false);
-        m_status = status;
-        m_cc = 0;
+        m_status = EVENT_MIDI_META;     /* tricky */
+        m_cc = status;
     }
     else if (event::is_program_change_msg(status))
     {

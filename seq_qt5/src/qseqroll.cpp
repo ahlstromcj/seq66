@@ -1005,6 +1005,10 @@ qseqroll::resizeEvent (QResizeEvent * qrep)
     QWidget::resizeEvent(qrep);
 }
 
+/**
+ *  If it was a button press, set values for dragging.
+ */
+
 void
 qseqroll::mousePressEvent (QMouseEvent * event)
 {
@@ -1075,7 +1079,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
             else                                    /* we're selecting anew */
             {
                 /*
-                 *  In drum mode, were using "is_onset", but this breaks
+                 *  In drum mode, we were using "is_onset", but this breaks
                  *  moving the selected drum events. So we leave it at
                  *  "selected".
                  */

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-08
+ * \updates       2023-06-09
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -82,6 +82,7 @@ qstriggereditor::qstriggereditor
     m_key_y             (keyheight),
     m_is_tempo          (false),                    /* is_tempo()           */
     m_is_time_signature (false),                    /* is_time_signature()  */
+    m_is_program_change (false),                    /* is_program_change()  */
     m_status            (EVENT_NOTE_ON),
     m_cc                (0)                         /* bank select          */
 {
@@ -253,6 +254,8 @@ qstriggereditor::paintEvent (QPaintEvent *)
                 brush.setColor(tempo_color());
             else if (cev->is_time_signature())
                 brush.setColor(grey_color());
+            else if (cev->is_program_change())
+                brush.setColor(drum_color());       /* ! */
             else
                 brush.setColor(back_color());       /* Qt::white            */
 
@@ -306,16 +309,15 @@ qstriggereditor::flag_dirty ()
     frame64()->set_dirty();
 }
 
+/**
+ *  If it was a button press, set values for dragging.
+ */
+
 void
 qstriggereditor::mousePressEvent (QMouseEvent * event)
 {
     midipulse tick_s, tick_f, tick_w;
     convert_x(qc_eventevent_x, tick_w);
-
-    /*
-     * If it was a button press, set values for dragging.
-     */
-
     current_x(int(event->x()) - c_keyboard_padding_x);
     drop_x(current_x());
     old_rect().clear();             /* reset box holding dirty redraw spot */
@@ -333,6 +335,9 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
         bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
         bool lbutton = event->button() == Qt::LeftButton;
         bool rbutton = event->button() == Qt::RightButton;
+    //  bool mbutton = event->button() == Qt::MiddleButton ||
+    //      (lbutton && isctrl);
+
         if (lbutton)
         {
             convert_x(drop_x(), tick_s);        /* turn x,y in to tick/note */
@@ -349,14 +354,12 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                 convert_x(drop_x(), tick_s);    /* turn x,y in to tick/note */
                 bool dropit = select_events(selmode, tick_s, tick_f) == 0;
                 if (dropit)
-                {
                     drop_event(tick_s);
-                }
             }
             else                                /* we're selecting anew     */
             {
                 eventlist::select selmode = eventlist::select::selected;
-                bool is_selected = select_events(selmode, tick_s, tick_f) > 0;
+                bool is_selected = select_events(selmode, tick_s, tick_f);
                 if (is_selected)
                 {
                     if (! isctrl)
@@ -716,13 +719,23 @@ qstriggereditor::set_data_type (midibyte status, midibyte control)
     {
         is_tempo(true);
         is_time_signature(false);
-        m_status = status;
-        m_cc = 0;
+        is_program_change(false);
+        m_status = EVENT_MIDI_META;     /* tricky */
+        m_cc = status;
     }
     else if (event::is_time_signature_status(status))
     {
         is_tempo(false);
         is_time_signature(true);
+        is_program_change(false);
+        m_status = EVENT_MIDI_META;     /* tricky */
+        m_cc = status;
+    }
+    else if (event::is_program_change_msg(status))
+    {
+        is_tempo(false);
+        is_time_signature(false);
+        is_program_change(true);
         m_status = status;
         m_cc = 0;
     }
