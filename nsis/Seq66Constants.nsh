@@ -3,7 +3,7 @@
 ; File:         Seq66Constants.nsh
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2023-05-26
+; Updated:      2023-06-10
 ; Version:      0.99.6
 ;
 ;   Provides constants commonly used by the installer for Seq66 for
@@ -39,7 +39,8 @@
 
 ;============================================================================
 ; The type of build to make.  Uncomment the one desired.  WIN64 preferred.
-; Actually WIN32 might not be a tenable option anymore.
+; Actually WIN32 might not be a tenable option anymore. Working on getting
+; it to work (it works inside QtCreator).
 ;============================================================================
 
 !define WIN64

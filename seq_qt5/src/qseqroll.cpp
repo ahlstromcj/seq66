@@ -532,7 +532,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
      * is the number of pixels in the smallest divisions in the default
      * seqroll background.  This code needs to be put into a function.
      *
-     * EXPERIMENTAL.  For odd beat widths, use 1 as ticks_per_substep.
+     * For odd beat widths, use 1 as ticks_per_substep.
      */
 
     int bpbar = track().get_beats_per_bar();
@@ -540,8 +540,8 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
     midipulse ticks_per_bar = bpbar * ticks_per_beat;
     midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
-    midipulse endtick = pix_to_tix(r.x() + r.width());
     midipulse starttick = pix_to_tix(r.x());
+    midipulse endtick = pix_to_tix(r.x() + r.width());
     starttick -= starttick % ticks_per_step;
     if ((bwidth % 2) != 0)
         ticks_per_step = zoom();                            /* EXPERIMENTAL */
@@ -560,19 +560,19 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         int x_offset = xoffset(tick) - scroll_offset_x();
         int penwidth = 1;
         enum Qt::PenStyle penstyle = Qt::SolidLine;
-        if (tick % ticks_per_bar == 0)          /* solid line on every beat */
+        if (tick % ticks_per_bar == 0)          /* solid line on every bar  */
         {
             pen.setColor(fore_color());         /* Qt::black                */
             penwidth = 2;
         }
-        else if (tick % ticks_per_beat == 0)
+        else if (tick % ticks_per_beat == 0)    /* lighter on every beat    */
         {
             pen.setColor(beat_color());
             penwidth = 1;
         }
         else
         {
-            pen.setColor(step_color());        /* faint step lines         */
+            pen.setColor(step_color());         /* faint step lines         */
             int tick_snap = tick - (tick % grid_snap());
             if (tick != tick_snap)
                 penstyle = Qt::DotLine;

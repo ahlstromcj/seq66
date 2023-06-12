@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2023-06-06
-:: \update      2023-06-07
+:: \update      2023-06-10
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -45,9 +45,9 @@ copy C:\Qt\Qt%1\%1\%2\bin\libGLESV2.dll %3
 copy C:\Qt\Qt%1\%1\%2\bin\libEGL.dll %3
 copy C:\Qt\Qt%1\%1\%2\bin\D3Dcompiler_47.dll %3
 copy C:\Qt\Qt%1\%1\%2\bin\opengl32sw.dll %3
-copy C:\Qt\Qt%1\Tools\mingw730_64\bin\libgcc_s_seh-1.dll %3
-copy C:\Qt\Qt%1\Tools\mingw730_64\bin\libstdc++-6.dll %3
-copy C:\Qt\Qt%1\Tools\mingw730_64\bin\libwinpthread-1.dll %3
+copy C:\Qt\Qt%1\Tools\%2\bin\libgcc_s_seh-1.dll %3
+copy C:\Qt\Qt%1\Tools\%2\bin\libstdc++-6.dll %3
+copy C:\Qt\Qt%1\Tools\%2\bin\libwinpthread-1.dll %3
 copy C:\Qt\Qt%1\%1\%2\plugins\iconengines\qsvgicon.dll %3\iconengines
 copy C:\Qt\Qt%1\%1\%2\plugins\imageformats\qgif.dll %3\imageformats
 copy C:\Qt\Qt%1\%1\%2\plugins\imageformats\qicns.dll %3\imageformats

@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2023-06-07
+:: \update      2023-06-11
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -18,6 +18,11 @@
 ::      If NSIS is installed and the PATH leads to the makensis.exe program,
 ::      then a Seq66 NSIS installer will be created. Otherwise, that is a
 ::      separate manual step described below in steps 7 to 9.
+::
+:: Also see:
+::
+:: https://stackoverflow.com/questions/18553125/
+::      how-qtcreator-is-able-to-avoid-the-console-window-when-building-a-windows-applic
 ::
 :: Requirements:
 ::
@@ -167,7 +172,7 @@
 ::---------------------------------------------------------------------------
  
 set PROJECT_VERSION=0.99.6
-set PROJECT_DATE=2023-06-07
+set PROJECT_DATE=2023-06-11
 set PROJECT_DRIVE=C:
 
 :: Set the bits of the project, either 64 or 32. Also define WIN64 versus
@@ -176,10 +181,18 @@ set PROJECT_DRIVE=C:
 :: set PROJECT_BITS=32      // probably no longer supportable by Qt
 :: set PROJECT_BITS=64
 
-set PROJECT_BITS=64
+set PROJECT_BITS=32
 set QTVERSION=5.12.9
-set QTPATH=C:/Qt/Qt%QTVERSION%/%QTVERSION%
-set QMAKE=%QTPATH%/mingw73_%PROJECT_BITS%/bin/qmake.exe
+set QTPATH=C:\Qt\Qt%QTVERSION%\%QTVERSION%
+set QMAKE=%QTPATH%\mingw73_%PROJECT_BITS%\bin\qmake.exe
+set QMAKEOPTS=-makefile -recursive
+set MAKEPATH=C:\Qt\Qt%QTVERSION%\Tools\mingw730_%PROJECT_BITS%\bin
+
+:: set MINGMAKE=mingw32-make
+:: set MINGMAKE=%MING64MAKE%
+:: if %PROJECT_BITS%==32 set MINGMAKE=%MING32MAKE%
+
+set MINGMAKE=%MAKEPATH%\mingw32-make
 
 :: This is where the seq66 and the shadow build directories reside. Adjust
 :: them for your setup.
@@ -191,7 +204,7 @@ set NSIS_PLATFORM=Windows
 :: Qt shadow build directory that is created in PROJECT_BASE.
 
 set PROJECT_NAME=seq66
-set PROJECT_TREE=%PROJECT_BASE%\%PROJECT_NAME%
+set PROJECT_TREE=%PROJECT_DRIVE%%PROJECT_BASE%\%PROJECT_NAME%
 set PROJECT_REL_ROOT=..\seq66
 set PROJECT_PRO=seq66.pro
 set PROJECT_7ZIP=qpseq66-release-package-x%PROJECT_BITS%-%PROJECT_VERSION%.7z
@@ -202,17 +215,18 @@ set AUX_DIR=data
 set DOC_DIR=data\share\doc
 set TUTORIAL_DIR=data\share\doc\tutorial
 
-:: The quotes are required here.
+:: The quotes are required here. Do we want to add "qtquickcompiler"?
 
 set CONFIG_SET="CONFIG += release WIN%PROJECT_BITS%"
 
-:: C:
+:: Set the current drive (normally C:)
 
 %PROJECT_DRIVE%
 
-:: cd \Users\Chris\Documents\Home
+:: cd \Users\Chris\Documents\Home and show it for comfort
 
 cd %PROJECT_BASE%
+cd
 del /S /Q %SHADOW_DIR%\*.* > NUL
 echo Recreating Qt shadow directory %SHADOW_DIR% ...
 rmdir %SHADOW_DIR%
@@ -220,22 +234,27 @@ mkdir %SHADOW_DIR%
 
 :: Make sure the supplementary batch files is in the shadow directory.
 
-copy %PROJECT_TREE%\nsis\windeploybruteforce.bat %SHADOW_DIR%
+echo Copying %PROJECT_TREE%\nsis\winddeploybruteforce.bat to %SHADOW_DIR%
+copy %PROJECT_TREE%\nsis\winddeploybruteforce.bat %SHADOW_DIR%
 cd %SHADOW_DIR%
+set > environment.log
 
 :: qmake -makefile -recursive "CONFIG += release" ..\seq66\seq66.pro
 ::
 :: Note that "if ERRORLEVEL n" means "if ERRORLEVEL >= n".  Tricky.
 
 cd
-echo qmake -makefile -recursive %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO%
-echo mingw32-make (output to make.log)
-%QMAKE% -makefile -recursive %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO% > make.log 2>&1
-mingw32-make >> make.log 2>&1
+echo %QMAKE% %QMAKEOPTS% %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO%
+echo %MINGMAKE% (output to make.log)
+
+:: TODO: add "-spec win32-g++" for 32 bit and ??? for 64-bit
+
+%QMAKE% %QMAKEOPTS% %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO% > make.log 2>&1
+%MINGMAKE% >> make.log 2>&1
 if ERRORLEVEL 1 goto builderror
 
 if %PROJECT_BITS%==64 goto windep64
-call windeploybruteforce %QTVERSION% mingw73_32 %RELEASEDIR%
+call winddeploybruteforce %QTVERSION% mingw73_32 %RELEASEDIR%
 goto makerels
 
 :: windeployqt Seq66qt5\release
@@ -328,7 +347,7 @@ goto done
 
 :builderror
 
-echo mingw32-make failed, aborting! Check make.log for errors.
+echo %MINGMAKE% failed, aborting! Check make.log for errors.
 goto ender
 
 :skipnsis

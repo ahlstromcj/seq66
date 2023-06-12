@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2023-05-27
+# \update      2023-06-11
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -30,6 +30,7 @@ CONFIG(debug, debug|release) {
    DEFINES += DEBUG
 } else {
    DEFINES += NDEBUG
+   DEFINES += QT_NO_DEBUG
 }
 
 contains (CONFIG, rtmidi) {
@@ -42,7 +43,19 @@ contains (CONFIG, rtmidi) {
    MIDILIB = portmidi
    DEFINES += "SEQ66_MIDILIB=portmidi"
    DEFINES += "SEQ66_PORTMIDI_SUPPORT=1"
+   DEFINES += "MINGW_HAS_SECURE_API=1"
 }
+
+windows {
+   DEFINES += "UNICODE"
+   DEFINES += "_UNICODE"
+}
+
+win32 {
+   DEFINES += "WIN32"
+   DEFINES += "QT_NEEDS_QMAIN"
+}
+
 message($${DEFINES})
 
 SOURCES += seq66qt5.cpp
