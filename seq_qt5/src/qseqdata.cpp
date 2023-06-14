@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-09
+ * \updates       2023-06-14
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -293,14 +293,22 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             else if (is_time_signature() && cev->is_time_signature())
             {
                 int n = int(cev->get_sysex(0));
-                int d = int(cev->get_sysex(1));
-                QString dash = (n > 9 || d > 9) ? "--" : "-" ;
+                int d = beat_power_of_2(int(cev->get_sysex(1)));
+#if defined USE_CLUMSY_FRACTION
                 QString numerator = qt(std::to_string(n));
                 QString denominator = qt(std::to_string(d));
+                QString dash = (n > 9 || d > 9) ? "--" : "-" ;
                 y_offset = 12;
                 painter.drawText(x_offset, y_offset,      numerator);
                 painter.drawText(x_offset, y_offset +  9, dash);
                 painter.drawText(x_offset, y_offset + 18, denominator);
+#else
+                std::string text = std::to_string(n);
+                text += "/";
+                text += std::to_string(d);
+                y_offset = 20;
+                painter.drawText(x_offset, y_offset, qt(text));
+#endif
             }
             else if (is_program_change() && cev->is_program_change())
             {

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-06-07
+ * \updates       2023-06-13
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -411,10 +411,10 @@ private:                                /* functions for friend sequence    */
     void mark_all ();
     void unmark_all ();
     bool remove_event (event & e);
-    event::iterator find_first_match (const event & e);
+    event::iterator find_first_match (const event & e, midipulse starttick = 0);
     event::iterator find_next_match (const event & e);
-    bool remove_first_match (const event & e);
-    bool remove_marked ();                  /* deprecated   */
+    bool remove_first_match (const event & e, midipulse starttick = 0);
+    bool remove_marked ();
     bool remove_selected ();
     void unpaint_all ();
     int count_selected_notes () const;

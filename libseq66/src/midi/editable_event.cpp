@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-04
+ * \updates       2023-06-14
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -1077,7 +1077,7 @@ editable_event::ex_data_string () const
         if (sysex_size() > 0)
         {
             int nn = get_sysex()[0];
-            int dd = get_sysex()[1];            /* hopefully a power of 2   */
+            int dd = beat_power_of_2(get_sysex()[1]);
             int cc = get_sysex()[2];
             int bb = get_sysex()[3];
             snprintf(tmp, sizeof tmp, "%d/%d 0x%X 0x%X", nn, dd, cc, bb);

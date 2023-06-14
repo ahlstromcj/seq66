@@ -386,7 +386,7 @@ event::operator < (const event & rhs) const
  *  replacement for operator < ().  It is meant to be used in a brute force
  *  search for one particular event in the sorted event list.
  *
- *  SysEx (or text) data are not checked.
+ *  SysEx (or text) data are not checked, just the status and channel values..
  */
 
 bool
@@ -401,7 +401,7 @@ event::match (const event & target) const
             get_status() == target.get_status() &&
             channel() == target.channel()
         );
-        if (result && ! is_meta())
+        if (result && ! is_meta())                  /* additional matching  */
         {
             result =
             (

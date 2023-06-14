@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-28
+ * \updates       2023-06-13
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -188,16 +188,6 @@ static const std::string c_prop_track_name = "Seq66-S";
  */
 
 static const miditag c_prop_tag_word = 0x24240000;
-
-/**
- *  Defines the size of the time-signature and tempo information.  The sizes of
- *  these meta events consists of the delta time of 0 (1 byte), the event and
- *  size bytes (3 bytes), and the data (4 bytes for time-signature and 3 bytes
- *  for the tempo.  So, 8 bytes for the time-signature and 7 bytes for the
- *  tempo.  Unused, so commented out.
- *
- *      static const int c_time_tempo_size  = 15;
- */
 
 /*
  *  Internal functions.
@@ -1091,7 +1081,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
         midilong TrackLength = read_long();         /* get track length     */
         if (ID == c_mtrk_tag)                       /* magic number 'MTrk'  */
         {
-            bool timesig_set = false;               /* seq66 style wins     */
+            bool timesig_set = false;               /* first time-sig wins  */
             midipulse runningtime = 0;              /* reset time           */
             midipulse currenttime = 0;              /* adjusted by PPQN     */
             midishort seqnum = c_midishort_max;     /* either read or set   */
@@ -1280,26 +1270,22 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                             if ((len == 4) && ! timesig_set)
                             {
-                                int bpm = int(read_byte());         // nn
+                                int bpb = int(read_byte());         // nn
                                 int logbase2 = int(read_byte());    // dd
                                 int cc = read_byte();               // cc
                                 int bb = read_byte();               // bb
                                 int bw = beat_power_of_2(logbase2);
-                                s.set_beats_per_bar(bpm);
-                                s.set_beat_width(bw);
-                                s.clocks_per_metronome(cc);
-                                s.set_32nds_per_quarter(bb);
 
 #if defined SEQ66_USE_TRACK_0_AS_GLOBAL_TIME_SIG
 
                                 /*
-                                 * Should use c_perf_bp_mes and c_perf_bw
+                                 * Could use c_perf_bp_mes and c_perf_bw
                                  * instead.
                                  */
 
                                 if (track == 0)
                                 {
-                                    p.set_beats_per_bar(bpm);
+                                    p.set_beats_per_bar(bpb);
                                     p.set_beat_width(bw);
                                     p.clocks_per_metronome(cc);
                                     p.set_32nds_per_quarter(bb);
@@ -1307,14 +1293,28 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 #endif
 
                                 midibyte bt[4];
-                                bt[0] = midibyte(bpm);
+                                bt[0] = midibyte(bpb);
                                 bt[1] = midibyte(logbase2);
                                 bt[2] = midibyte(cc);
                                 bt[3] = midibyte(bb);
 
                                 bool ok = e.append_meta_data(mtype, bt, 4);
                                 if (ok)
+                                {
+                                    /*
+                                     * Consolidate the settings for
+                                     * integrity's sake.
+                                     *
+                                     * s.set_beats_per_bar(bpb);
+                                     * s.set_beat_width(bw);
+                                     */
+
+                                    s.set_time_signature(bpb, bw);
+                                    s.clocks_per_metronome(cc);
+                                    s.set_32nds_per_quarter(bb);
                                     s.append_event(e);
+                                    timesig_set = true;
+                                }
                             }
                             else
                                 skip(len);              /* eat it           */
@@ -1361,19 +1361,15 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             }
                             else if (seqspec == c_timesig)
                             {
-                                timesig_set = true;
-                                int bpm = int(read_byte());
-                                int bw = int(read_byte());
-                                s.set_beats_per_bar(bpm);
-                                s.set_beat_width(bw);
-
                                 /*
-                                 * The usr() values replaced these.
-                                 *
-                                 *      p.set_beats_per_bar(bpm);
-                                 *      p.set_beat_width(bw);
+                                 * This can override an early time-signature.
                                  */
 
+                                int bpb = int(read_byte());
+                                int bw = int(read_byte());
+                                s.set_beats_per_bar(bpb);
+                                s.set_beat_width(bw);
+                                timesig_set = true;
                                 len -= 2;
                             }
                             else if (seqspec == c_triggers)

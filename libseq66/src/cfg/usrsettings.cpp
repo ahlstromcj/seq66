@@ -1263,6 +1263,11 @@ usrsettings::bpb_default () const
     return c_def_beats_per_measure;
 }
 
+/**
+ *  Beat width should be a power of two.  We currently enforce that in
+ *  the user interface, though.
+ */
+
 bool
 usrsettings::bw_is_valid (int v) const
 {

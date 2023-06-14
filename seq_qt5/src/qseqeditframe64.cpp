@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-06-09
+ * \updates       2023-06-13
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -319,9 +319,19 @@ qseqeditframe64::qseqeditframe64
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);             /* part of issue #4     */
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    set_beats_per_bar(track().get_beats_per_bar(), qbase::status::startup);
-    set_beat_width(track().get_beat_width(), qbase::status::startup);
-    set_measures(track().get_measures(), qbase::status::startup);
+
+    /*
+     * These indirect settings have side-effects, so we just assign the
+     * values to the members.
+     *
+     * set_beats_per_bar(track().get_beats_per_bar(), qbase::status::startup);
+     * set_beat_width(track().get_beat_width(), qbase::status::startup);
+     * set_measures(track().get_measures(), qbase::status::startup);
+     */
+
+    m_beats_per_bar = track().get_beats_per_bar();
+    m_beat_width = track().get_beat_width();
+    m_measures = track().get_measures();
     m_scale = track().musical_scale();
     m_edit_bus = track().seq_midi_bus();
     m_edit_channel = track().midi_channel();        /* 0-15, null           */
@@ -394,16 +404,12 @@ qseqeditframe64::qseqeditframe64
      * it while connected.
      */
 
-    detect_time_signature();                /* possibly changes beats/width */
+    (void) detect_time_signature();     /* can set beats/bar and beat width */
 
     std::string bstring = std::to_string(m_beats_per_bar);
     (void) fill_combobox(ui->m_combo_bpm, beats_per_bar_list(), bstring);
     bstring = std::to_string(m_beat_width);
     (void) fill_combobox(ui->m_combo_bw, beatwidth_list(), bstring);
-
-    /*
-     * TODO: look for time signature
-     */
 
     /*
      * Doesn't seem to be needed, as changing the index also changes the text.
@@ -446,12 +452,11 @@ qseqeditframe64::qseqeditframe64
     );
 
     /*
-     * EXPERIMENTAL.
      * Button to log the current time signature as a Meta event at the
      * current "L" marker.
      */
 
-    set_log_timesig_text();                 // ui->m_button_log_timesig->setText();
+    set_log_timesig_text();
     connect
     (
         ui->m_button_log_timesig, SIGNAL(clicked(bool)),
@@ -1527,10 +1532,26 @@ qseqeditframe64::set_log_timesig_text ()
     ui->m_button_log_timesig->setText(qt(text));
 }
 
+/**
+ *  TODO:
+ *
+ *  We still need to check to see if we're overwriting an existing
+ *  time-signature.
+ */
+
 void
 qseqeditframe64::slot_log_timesig ()
 {
     midipulse tick = perf().get_left_tick();
+    midipulse tstamp;
+    int n, d;
+    bool found = track().detect_time_signature(tstamp, n, d);
+    if (found)
+    {
+        found = labs(tick - tstamp) < track().snap();
+        if (found)
+            (void) track().delete_time_signature(tstamp);
+    }
     (void) track().add_time_signature(tick, m_beats_per_bar, m_beat_width);
     set_track_change();
 }
@@ -1584,7 +1605,8 @@ qseqeditframe64::set_beats_per_bar (int bpb, qbase::status qs)
     if (usr().bpb_is_valid(bpb) && bpb != m_beats_per_bar)
     {
         bool reset = false;
-        if (qs == qbase::status::edit)
+        bool user_change = qs == qbase::status::edit;
+        if (user_change)
             reset = would_truncate(bpb, m_beat_width);
 
         if (reset)
@@ -1594,8 +1616,11 @@ qseqeditframe64::set_beats_per_bar (int bpb, qbase::status qs)
         else
         {
             m_beats_per_bar = bpb;
-            track().set_beats_per_bar(bpb, is_initialized());
-            track().apply_length(bpb, 0, 0);        /* no measures supplied */
+            track().set_beats_per_bar(bpb, user_change);    // is_initialized()
+            (void) track().apply_length(bpb, 0, 0); /* no measures supplied */
+            if (perf().get_left_tick() == 0)
+                slot_log_timesig();
+
             set_track_change();                     /* to solve issue #90   */
         }
     }
@@ -1708,7 +1733,8 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
     if (usr().bw_is_valid(bw) && bw != m_beat_width)
     {
         bool reset = false;
-        if (qs == qbase::status::edit)
+        bool user_change = qs == qbase::status::edit;
+        if (user_change)
             reset = would_truncate(m_beats_per_bar, bw);
 
         if (reset)
@@ -1728,10 +1754,12 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
             }
             if (rational)
             {
-                bool user_change = qs == qbase::status::edit;
                 m_beat_width = bw;
-                track().set_beat_width(bw, user_change);
+                track().set_beat_width(bw, user_change);    // is_initialized()
                 (void) track().apply_length(0, 0, bw);
+                if (perf().get_left_tick() == 0)
+                    slot_log_timesig();
+
                 set_track_change();                 /* to solve issue #90   */
             }
             else
@@ -1743,25 +1771,30 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
 /**
  *  This function looks for a time-signature, and if it is within the first
  *  snap interval, sets the beats value accordingly.
+ *
+ * Time signature life-cycle:
+ *
+ *      -#  Set seqedit time-signature to the global default (usually 4/4).
+ *      -#  If an initial time-signature is detected, set it here.
+ *      -#  If the numerator or denominator is changed in the GUI, and
+ *          there is a time-signature at the beginning (tick == 0), then
+ *          replace it.
+ *      -#  Otherwise, require the "L" marker to be set and then log the
+ *          time-signature at that point. See slot_log_timesig().
  */
 
-void
+bool
 qseqeditframe64::detect_time_signature ()
 {
-    midibyte mstatus = EVENT_MIDI_META;
-    midibyte mtype = EVENT_META_TIME_SIGNATURE;
-    auto cev = track().cbegin();
-    if (track().get_next_event_match(mstatus, mtype, cev))
+    midipulse tstamp;
+    int n, d;
+    bool result = track().detect_time_signature(tstamp, n, d, track().snap());
+    if (result)
     {
-        midipulse tick = cev->timestamp();
-        if (tick < track().snap())
-        {
-            int n = int(cev->get_sysex(0));
-            int d = int(cev->get_sysex(1));
-            set_beats_per_bar(n, qbase::status::startup);
-            set_beat_width(d, qbase::status::startup);
-        }
+        set_beats_per_bar(n, qbase::status::startup);
+        set_beat_width(d, qbase::status::startup);
     }
+    return result;
 }
 
 /**

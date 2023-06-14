@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-06-08
+ * \updates       2023-06-13
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -1424,25 +1424,38 @@ eventlist::remove_event (event & e)
  *              at any timestamp (e.timestamp == c_null_midipulse).
  *              -   Get the text and timestamp. As en event?
  *              -   Set the event to a new value.
+ *
+ * \param e
+ *      The event to match.
+ *
+ * \param starttick
+ *      The starting point in time of the search.  Defaults to 0.
+ *
+ * \return
+ *      Returns the iterator to the next match.  If end(), the event was
+ *      not found.
  */
 
 event::iterator
-eventlist::find_first_match (const event & e)
+eventlist::find_first_match (const event & e, midipulse starttick)
 {
     event::iterator result = m_events.end();
     for (auto i = m_events.begin(); i != m_events.end(); ++i)
     {
         event & er = dref(i);
-        if (er.match(e))                /* comparing values, not pointers   */
+        midipulse t = er.timestamp();
+        if (t >= starttick)
         {
-            result = i;
-            m_match_iterator = result;  /* keeps internal track of position */
-            break;
+            if (er.match(e))                /* compares values, not ptrs    */
+            {
+                result = i;
+                m_match_iterator = result;  /* keeps track of position      */
+                break;
+            }
         }
     }
     m_match_iterating = result != m_events.end();
     return result;
-
 }
 
 event::iterator
@@ -1484,17 +1497,21 @@ eventlist::find_next_match (const event & e)
  */
 
 bool
-eventlist::remove_first_match (const event & e)
+eventlist::remove_first_match (const event & e, midipulse starttick)
 {
     bool result = false;
     for (auto i = m_events.begin(); i != m_events.end(); ++i)
     {
         event & er = dref(i);
-        if (er.match(e))                /* comparing values, not pointers   */
+        midipulse t = er.timestamp();
+        if (t >= starttick)
         {
-            (void) remove(i);           /* an iterator is required here     */
-            result = true;
-            break;
+            if (er.match(e))            /* comparing values, not pointers   */
+            {
+                (void) remove(i);       /* an iterator is required here     */
+                result = true;
+                break;
+            }
         }
     }
     return result;

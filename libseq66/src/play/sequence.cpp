@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-06-09
+ * \updates       2023-06-13
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -198,8 +198,8 @@ sequence::sequence (int ppqn) :
     m_length                    (4 * midipulse(m_ppqn)),  /* 1 bar of ticks */
     m_measures                  (0),
     m_snap_tick                 (int(m_ppqn) / 4),
-    m_time_beats_per_measure    (4),
-    m_time_beat_width           (4),
+    m_time_beats_per_measure    (0),                /* ca 2023-06-13 */
+    m_time_beat_width           (0),                /* ca 2023-06-13 */
     m_clocks_per_metronome      (24),
     m_32nds_per_quarter         (8),
     m_us_per_quarter_note       (tempo_us_from_bpm(usr().bpm_default())),
@@ -730,17 +730,17 @@ sequence::set_beats_per_bar (int bpb, bool user_change)
         m_time_beats_per_measure = (unsigned short)(bpb);
         if (user_change)
             modded = true;
-    }
 
-    int m = get_measures();
-    if (m != m_measures)
-    {
-        m_measures = m;
-        if (user_change)
-            modded = true;
+        int m = get_measures();
+        if (m != m_measures)
+        {
+            m_measures = m;
+            if (user_change)
+                modded = true;
+        }
+        if (modded)
+            modify();
     }
-    if (modded)
-        modify();
 }
 
 /**
@@ -766,17 +766,32 @@ sequence::set_beat_width (int bw, bool user_change)
         m_time_beat_width = (unsigned short)(bw);
         if (user_change)
             modded = true;
-    }
 
-    int m = get_measures();
-    if (m != m_measures)
-    {
-        m_measures = m;
-        if (user_change)
-            modded = true;
+        int m = get_measures();
+        if (m != m_measures)
+        {
+            m_measures = m;
+            if (user_change)
+                modded = true;
+        }
+        if (modded)
+            modify();
     }
-    if (modded)
-        modify();
+}
+
+/**
+ *  Used in midifile, this function replaces consecutive calls to
+ *  set_beats_per_bar() and set_beat_width() with a single call that
+ *  gets all the necessary information before making calculations.
+ */
+
+void
+sequence::set_time_signature (int bpb, int bw)
+{
+    m_time_beats_per_measure = (unsigned short)(bpb);   /* get first item   */
+    set_beat_width(bw, false);                          /* no user change   */
+    int m = get_measures();
+    m_measures = m;
 }
 
 /**
@@ -898,10 +913,13 @@ sequence::get_measures (midipulse newlength) const
 {
     midipulse um = unit_measure();
     midipulse len = newlength > 0 ? newlength : get_length() ;
-    int measures = int(len / um);
-    if (len % int(um) != 0)
-        ++measures;
-
+    int measures = 1;
+    if (um > 0)
+    {
+        measures = int(len / um);
+        if (len % int(um) != 0)
+            ++measures;
+    }
     return measures;
 }
 
@@ -1443,10 +1461,10 @@ sequence::remove (event & e)
  */
 
 bool
-sequence::remove_first_match (const event & e)
+sequence::remove_first_match (const event & e, midipulse starttick)
 {
     automutex locker(m_mutex);
-    return m_events.remove_first_match(e);
+    return m_events.remove_first_match(e, starttick);
 }
 
 /**
@@ -3209,12 +3227,6 @@ sequence::add_tempo (midipulse tick, midibpm tempo, bool repaint)
  *  get_32nds_per_quarter() stay the same, as they would affect the whole tune.
  *
  *  Data: FF 58 04 n d c b
- *
- * Warning: The following call actually calls the tempo version of the
- *          event constructor. Let append_meta_event() set the status to
- *          EVENT_MIDI_META.
- *
- *          event e (tick, EVENT_MIDI_META);
  */
 
 bool
@@ -3224,7 +3236,7 @@ sequence::add_time_signature (midipulse tick, int beats, int bw)
     bool result = beats > 0 && is_power_of_2(bw);
     if (result)
     {
-        event e (tick, EVENT_MIDI_META);                    /* see banner   */
+        event e (tick, EVENT_MIDI_META);
         midibyte bt[4];
         bw = beat_log2(bw);                                 /* log2(bw)     */
         bt[0] = midibyte(beats);                            /* numerator    */
@@ -3235,6 +3247,73 @@ sequence::add_time_signature (midipulse tick, int beats, int bw)
         bool ok = e.append_meta_data(EVENT_META_TIME_SIGNATURE, bt, 4);
         if (ok)
             append_event(e);
+    }
+    return result;
+}
+
+bool
+sequence::delete_time_signature (midipulse tick)
+{
+    bool result = false;
+    event e(tick, EVENT_MIDI_META);
+    midibyte bt[4];
+    bt[0] = bt[1] = bt[2] = bt[3] = 0;
+    result = e.append_meta_data(EVENT_META_TIME_SIGNATURE, bt, 4);
+    if (result)
+        result = remove_first_match(e, tick);
+
+    return result;
+}
+
+/**
+ *  This function looks for a time-signature, and if it is within the first
+ *  snap interval, sets the beats value accordingly.
+ *
+ * \param [out] tstamp
+ *      The timestamp of the time-signature event, if one is found.
+ *
+ * \param [out] numerator
+ *      A return parameter for the beats per bar. Use the value only if true
+ *      is returned.
+ *
+ * \param [out] denominator
+ *      A return parameter for the beat width. Use the value only if true
+ *      is returned.
+ *
+ * \param limit
+ *      Provides how far to look for a time signature. The default is
+ *      c_null_midipulse, which means just detect the first time-signature
+ *      no matter how deep into the pattern. Another useful value is the
+ *      snap() value from the seqedit.
+ *
+ * \return
+ *      Returns true if a time signature was detected before the limit was
+ *      reached.
+ */
+
+bool
+sequence::detect_time_signature
+(
+    midipulse & tstamp,
+    int & numerator,
+    int & denominator,
+    midipulse limit
+)
+{
+    bool result = false;
+    midibyte mstatus = EVENT_MIDI_META;
+    midibyte mtype = EVENT_META_TIME_SIGNATURE;
+    auto cev = cbegin();
+    if (get_next_event_match(mstatus, mtype, cev))
+    {
+        midipulse tick = cev->timestamp();
+        if (tick < limit || limit == c_null_midipulse)
+        {
+            tstamp = tick;
+            numerator = int(cev->get_sysex(0));
+            denominator = beat_power_of_2(int(cev->get_sysex(1)));
+            result = true;
+        }
     }
     return result;
 }
@@ -6125,8 +6204,16 @@ sequence::set_parent (performer * p)
 {
     if (not_nullptr(p))
     {
-        midipulse ppnote = 4 * get_ppqn() / get_beat_width();
-        midipulse barlength = ppnote * get_beats_per_bar();
+        int bpb = get_beats_per_bar();
+        int bw = get_beat_width();
+        if (bpb == 0)
+            bpb = p->get_beats_per_bar();
+
+        if (bw == 0)
+            bw = p->get_beat_width();
+
+        midipulse ppnote = 4 * get_ppqn() / bw; // get_beat_width();
+        midipulse barlength = ppnote * bpb;     // get_beats_per_bar();
         bussbyte buss_override = usr().midi_buss_override();
         m_parent = p;
         set_master_midi_bus(p->master_bus());
@@ -6141,8 +6228,8 @@ sequence::set_parent (performer * p)
         else
             (void) set_midi_bus(buss_override);
 
-        set_beats_per_bar(p->get_beats_per_bar());
-        set_beat_width(p->get_beat_width());
+        set_beats_per_bar(bpb);
+        set_beat_width(bw);
         unmodify();                         /* for issue #90                */
     }
 }

@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2023-06-11
+# \update      2023-06-12
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -20,7 +20,7 @@
 
 message($$_PRO_FILE_PWD_)
 
-QT += core gui widgets
+QT += widgets gui core
 TEMPLATE += app
 CONFIG += static qtc_runnable c++14
 
@@ -81,9 +81,10 @@ win32:CONFIG(release, debug|release) {
   -L$$OUT_PWD/../libseq66/release -lseq66 \
   -L$$OUT_PWD/../seq_$${MIDILIB}/release -lseq_$${MIDILIB} \
   -L$$OUT_PWD/../seq_qt5/release -lseq_qt5 \
+  -lmingw32 -lshell32 \
   -Wl,--end-group
 }
-else:win32:CONFIG(debug, debug|release) {
+else:windows:CONFIG(debug, debug|release) {
  LIBS += \
   -Wl,--start-group \
   -L$$OUT_PWD/../libseq66/debug -lseq66 \
@@ -92,7 +93,6 @@ else:win32:CONFIG(debug, debug|release) {
   -Wl,--end-group
 }
 else:unix {
-
 contains (CONFIG, rtmidi) {
 LIBS += \
  -Wl,--start-group \
@@ -109,7 +109,6 @@ LIBS += \
  -L$$OUT_PWD/../seq_qt5 -lseq_qt5 \
  -Wl,--end-group
 }
-
 }
 
 contains (CONFIG, rtmidi) {

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-06-07
+ * \updates       2023-06-13
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1157,6 +1157,8 @@ public:
         return int(m_time_beat_width);
     }
 
+    void set_time_signature (int bpb, int bw);
+
     /**
      *  A convenience function for calculating the number of ticks in the
      *  given number of measures.
@@ -1555,6 +1557,12 @@ public:
     );
     bool add_tempo (midipulse tick, midibpm tempo, bool repaint = false);
     bool add_time_signature (midipulse tick, int beats, int width);
+    bool delete_time_signature (midipulse tick);
+    bool detect_time_signature
+    (
+        midipulse & tstamp, int & numerator, int & denominator,
+        midipulse limit = c_null_midipulse
+    );
     bool add_event (const event & er);      /* another one declared below */
     bool add_event
     (
@@ -1949,7 +1957,7 @@ private:
     void remove (event & e);
 #endif
 
-    bool remove_first_match (const event & e);
+    bool remove_first_match (const event & e, midipulse starttick = 0);
     void remove_all ();
 
     /**
