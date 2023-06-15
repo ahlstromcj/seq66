@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-06-13
+ * \updates       2023-06-15
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -293,8 +293,10 @@ qseqeditframe64::qseqeditframe64
     m_measures              (0),
     m_beats_per_bar_list    (beats_per_bar_items()),
     m_beats_per_bar         (0),                    /* set in ctor body     */
+    m_beats_per_bar_to_log  (0),                    /* set in ctor body     */
     m_beatwidth_list        (beatwidth_items()),    /* see settings module  */
     m_beat_width            (0),                    /* set in ctor body     */
+    m_beat_width_to_log     (0),                    /* set in ctor body     */
     m_snap_list             (snap_items()),         /* see settings module  */
     m_snap                  (sm_initial_snap),
     m_zoom_list             (zoom_items()),         /* see settings module  */
@@ -329,8 +331,8 @@ qseqeditframe64::qseqeditframe64
      * set_measures(track().get_measures(), qbase::status::startup);
      */
 
-    m_beats_per_bar = track().get_beats_per_bar();
-    m_beat_width = track().get_beat_width();
+    m_beats_per_bar_to_log = m_beats_per_bar = track().get_beats_per_bar();
+    m_beat_width_to_log = m_beat_width = track().get_beat_width();
     m_measures = track().get_measures();
     m_scale = track().musical_scale();
     m_edit_bus = track().seq_midi_bus();
@@ -456,7 +458,8 @@ qseqeditframe64::qseqeditframe64
      * current "L" marker.
      */
 
-    set_log_timesig_text();
+    set_log_timesig_text(m_beats_per_bar_to_log, m_beat_width_to_log);
+    ui->m_button_log_timesig->setEnabled(false);
     connect
     (
         ui->m_button_log_timesig, SIGNAL(clicked(bool)),
@@ -1520,40 +1523,63 @@ qseqeditframe64::update_seq_name ()
 }
 
 /**
- *  EXPERIMENTAL.
+ *  Reacts to text changes.
  */
 
 void
-qseqeditframe64::set_log_timesig_text ()
+qseqeditframe64::set_log_timesig_text (int bpb, int bw)
 {
-    std::string text = std::to_string(m_beats_per_bar);
+    std::string text = int_to_string(bpb);
+    std::string bwstr = int_to_string(bw);
     text += "/";
-    text += std::to_string(m_beat_width);
+    text += bwstr;
     ui->m_button_log_timesig->setText(qt(text));
 }
 
 /**
- *  TODO:
- *
- *  We still need to check to see if we're overwriting an existing
- *  time-signature.
+ *  Helper function
  */
 
 void
-qseqeditframe64::slot_log_timesig ()
+qseqeditframe64::log_timesig (bool islogbutton)
 {
-    midipulse tick = perf().get_left_tick();
+    midipulse tick = perf().get_tick();         /* perf().get_left_tick()   */
     midipulse tstamp;
     int n, d;
     bool found = track().detect_time_signature(tstamp, n, d);
     if (found)
     {
-        found = labs(tick - tstamp) < track().snap();
+        found = labs(tick - tstamp) < (track().snap() / 2);
         if (found)
             (void) track().delete_time_signature(tstamp);
     }
-    (void) track().add_time_signature(tick, m_beats_per_bar, m_beat_width);
-    set_track_change();
+
+    int bpb = islogbutton ? m_beats_per_bar_to_log : m_beats_per_bar ;
+    int bw = islogbutton ? m_beat_width_to_log : m_beat_width ;
+    if (track().add_time_signature(tick, bpb, bw))
+    {
+        set_data_type(EVENT_META_TIME_SIGNATURE);
+        set_log_timesig_text(bpb, bw);
+        ui->m_button_log_timesig->setEnabled(false);
+        set_track_change();
+    }
+}
+
+/**
+ *  Given the current positions as set by clicking in the top half of the
+ *  seqtime bar [performer::get_tick() versus performer::get_left_tick()],
+ *  this function removes any existing time-signature at that point, and adds
+ *  a new one at that point.
+ *
+ *  Note that there's some slop, 1/2 the event-snap value. Also note that this
+ *  function will not change to stored values of m_beats_per_bar and
+ *  m_beat_width.
+ */
+
+void
+qseqeditframe64::slot_log_timesig ()
+{
+    log_timesig(true);
 }
 
 /**
@@ -1576,6 +1602,7 @@ qseqeditframe64::text_beats_per_bar (const QString & text)
     {
         int bpb = string_to_int(temp);
         set_beats_per_bar(bpb);
+//      set_track_change();                         /* to solve issue #90   */
     }
 }
 
@@ -1584,7 +1611,7 @@ qseqeditframe64::reset_beats_per_bar ()
 {
     int index = beats_per_bar_list().index(usr().bpb_default());
     ui->m_combo_bpm->setCurrentIndex(index);
-    set_track_change();                             /* to solve issue #90   */
+//  set_track_change();                             /* to solve issue #90   */
 }
 
 /**
@@ -1611,17 +1638,25 @@ qseqeditframe64::set_beats_per_bar (int bpb, qbase::status qs)
 
         if (reset)
         {
-            reset_beats_per_bar();
+            /* reset_beats_per_bar();  simply ignore */
         }
         else
         {
-            m_beats_per_bar = bpb;
-            track().set_beats_per_bar(bpb, user_change);    // is_initialized()
-            (void) track().apply_length(bpb, 0, 0); /* no measures supplied */
-            if (perf().get_left_tick() == 0)
-                slot_log_timesig();
-
-            set_track_change();                     /* to solve issue #90   */
+            if (perf().get_tick() == 0)             /* get_left_tick()      */
+            {
+                m_beats_per_bar = bpb;
+                track().set_beats_per_bar(bpb, user_change);
+                (void) track().apply_length(bpb, 0, 0); /* no measures      */
+                log_timesig(false);
+            }
+            else
+            {
+                m_beats_per_bar_to_log = bpb;
+                set_log_timesig_text
+                (
+                    m_beats_per_bar_to_log, m_beat_width_to_log
+                );
+            }
         }
     }
 }
@@ -1647,7 +1682,7 @@ qseqeditframe64::set_measures (int m, qbase::status qs)
         }
         if (reset)
         {
-            reset_measures();
+            /* reset_measures(); simply ignore */
         }
         else
         {
@@ -1707,6 +1742,7 @@ qseqeditframe64::text_beat_width (const QString & text)
     {
         int bw = string_to_int(temp);
         set_beat_width(bw);
+        ui->m_button_log_timesig->setEnabled(true);
     }
 }
 
@@ -1719,7 +1755,9 @@ qseqeditframe64::reset_beat_width ()
 {
     int index = beatwidth_list().index(usr().bw_default());
     ui->m_combo_bw->setCurrentIndex(index);
-    set_track_change();                             /* to solve issue #90   */
+    set_log_timesig_text(m_beats_per_bar, m_beat_width);
+    ui->m_button_log_timesig->setEnabled(true);
+//  set_track_change();                             /* to solve issue #90   */
 }
 
 /**
@@ -1739,10 +1777,14 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
 
         if (reset)
         {
-            reset_beat_width();
+            /* reset_beat_width(); simply ignore */
         }
         else
         {
+            /*
+             * IDEA: If not a power of 2, then add a c_timesig SeqSpec.
+             */
+
             bool rational = is_power_of_2(bw);
             if (! rational)
             {
@@ -1752,18 +1794,28 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
                     "It won't be saved properly, but you do you."
                 );
             }
-            if (rational)
+            if (rational)                           /* use OK'ed it         */
             {
-                m_beat_width = bw;
-                track().set_beat_width(bw, user_change);    // is_initialized()
-                (void) track().apply_length(0, 0, bw);
-                if (perf().get_left_tick() == 0)
-                    slot_log_timesig();
-
-                set_track_change();                 /* to solve issue #90   */
+                if (perf().get_tick() == 0)         /* get_left_tick()      */
+                {
+                    m_beat_width = bw;
+                    track().set_beat_width(bw, user_change);
+                    (void) track().apply_length(0, 0, bw);
+                    log_timesig(false);
+                }
+                else
+                {
+                    m_beat_width_to_log = bw;
+                    set_log_timesig_text
+                    (
+                        m_beats_per_bar_to_log, m_beat_width_to_log
+                    );
+                }
             }
             else
-                reset_beat_width();
+            {
+                /* reset_beat_width();  simply ignore */
+            }
         }
     }
 }
@@ -1788,7 +1840,10 @@ qseqeditframe64::detect_time_signature ()
 {
     midipulse tstamp;
     int n, d;
-    bool result = track().detect_time_signature(tstamp, n, d, track().snap());
+    bool result = track().detect_time_signature
+    (
+        tstamp, n, d, track().snap() / 2
+    );
     if (result)
     {
         set_beats_per_bar(n, qbase::status::startup);
@@ -2711,11 +2766,11 @@ qseqeditframe64::set_snap (midipulse s)
             m_seqroll->set_snap(s);
 
         track().snap(s);
-        m_seqevent->set_snap(s);
+        if (not_nullptr(m_seqevent))
+            m_seqevent->set_snap(s);        /* qstriggereditor  */
 
-        /*
-         * What about the event-page (qstriggereditor) snap???
-         */
+        if (not_nullptr(m_seqtime))
+            m_seqtime->set_snap(s);
     }
 }
 
@@ -3685,7 +3740,6 @@ qseqeditframe64::set_dirty ()
 void
 qseqeditframe64::set_track_change ()
 {
-    set_log_timesig_text();
     set_dirty();
     if (is_initialized())               /* do not set changes at start-up   */
         track().modify(false);          /* modify, but do not change-notify */

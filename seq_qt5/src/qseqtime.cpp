@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-09-11
+ * \updates       2023-06-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -50,10 +50,10 @@ namespace seq66
  *  between GUI elements better.
  */
 
-static const int s_x_tick_fix  =  2;        /* adjusts vertical grid lines  */
-static const int s_time_fix    =  9;        /* seqtime offset from seqroll  */
-static const int s_o_fix       =  6;        /* adjust position of "o" mark  */
-static const int s_end_fix     = 10;        /* adjust position of "END" box */
+static const int s_x_tick_fix  =  2;    /* adjusts vertical grid lines      */
+static const int s_time_fix    =  9;    /* seqtime offset from seqroll      */
+static const int s_o_fix       =  6;    /* adjust position of "o" mark      */
+static const int s_end_fix     = 10;    /* adjust position of "END" box     */
 
 /**
  *  Principal constructor.
@@ -241,9 +241,13 @@ qseqtime::resizeEvent (QResizeEvent * qrep)
 
 /**
  *  There is a trick to this function that to document and take further
- *  advantage of.  If clicking in the top half of the time-bar, whether and
+ *  advantage of.
+ *
+ *  Top half: If clicking in the top half of the time-bar, whether and
  *  L- or R-click, the time is set to that value, and the effect can be
- *  seen in the main window's beat-indicator.  If clicking in the bottom
+ *  seen in the main window's beat-indicator.
+ *
+ *  Bottom half: If clicking in the bottom
  *  half, of course, the L or R marker is set, depending on which button
  *  is pressed.  See the qperftime versoin of this function.
  */
@@ -255,7 +259,7 @@ qseqtime::mousePressEvent (QMouseEvent * event)
     if (snap() > 0)
         tick -= (tick % snap());
 
-    if (event->y() > height() / 2)                      /* see banner note  */
+    if (event->y() > height() / 2)                      /* bottom half      */
     {
         bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
         if (event->button() == Qt::LeftButton)          /* move L/R markers */
@@ -278,7 +282,7 @@ qseqtime::mousePressEvent (QMouseEvent * event)
             set_dirty();
         }
     }
-    else
+    else                                                /* top half         */
     {
         perf().set_tick(tick, true);                    /* reposition time  */
         set_dirty();

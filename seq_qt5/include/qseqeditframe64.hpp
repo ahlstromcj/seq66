@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-06-12
+ * \updates       2023-06-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -198,7 +198,8 @@ private:
     void remove_lfo_frame ();
     void remove_patternfix_frame ();
     QIcon * create_menu_image (bool state);
-    void set_log_timesig_text ();
+    void set_log_timesig_text (int bpb, int bw);
+    void log_timesig (bool islogbutton);
     bool detect_time_signature ();
 
 private:        /* combo-box list accessors */
@@ -426,10 +427,12 @@ private:
     combolist m_beats_per_bar_list;
 
     /**
-     *  Holds the current beats-per-measure selection.
+     *  Holds the current beats-per-measure selection and the value to log
+     *  when the time-sig button is clicked.
      */
 
     int m_beats_per_bar;
+    int m_beats_per_bar_to_log;
 
     /**
      *  Holds the beat-width selection for the beats-width combo-box.
@@ -438,10 +441,12 @@ private:
     combolist m_beatwidth_list;
 
     /**
-     *  Holds the current beat-width selection.
+     *  Holds the current beat-width selection and the value to log
+     *  when the time-sig button is clicked.
      */
 
     int m_beat_width;
+    int m_beat_width_to_log;
 
     /**
      *  Holds the list for the snap settings.  These also apply to the note

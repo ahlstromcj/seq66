@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-05-20
+% \update      2023-06-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -107,7 +107,8 @@
 
    \begin{enumber}
       \item \textbf{Track Number}
-      \item \textbf{Track Title}
+      \item \textbf{Track Name}
+      \item \textbf{Add Time Signature Event} (see composite picture below)
       \item \textbf{Beats Per Bar Reset} and \textbf{Beats Per Bar}
       \item \textbf{Beat Width Reset} and \textbf{Beat Width}
       \item \textbf{Pattern Length Reset} and \textbf{Pattern Length}
@@ -128,6 +129,36 @@
    This name should be short and memorable.
    It is displayed in the \textbf{Live Grid} (the \textbf{Patterns Panel}),
    on the top line of its pattern slot.
+
+   \itempar{Add Time Signature Event}{pattern editor!time signature}
+   This button is shown in the composite picture in
+   \sectionref{subsec:pattern_editor_time}, to the left of the beat
+   selector.
+   When either the beats/bar or beat width values (see below) are changed,
+   and the progress marker is at time 0, then the change is
+   saved as a Time Signature Meta event at time 0. Additional changes there
+   overwrite that event.
+   There are interactions between the beats/bar, beat-width, and the length (in
+   measures) of the pattern.
+   Generally, if both the beats/bar and beat-width are to be changed,
+   it is better to change the beat-width first.
+   In any case, the measures might have to be adjusted as well.
+
+   To add time signatures at later times in the tune, this must be done:
+
+   \begin{enumber}
+      \item Move the mouse cursor to the \textsl{top half} of the time pane;
+         the cursor will change to a vertical arrow. Click at the desired time
+         and observed the red progress line.
+      \item Change the beats-per-measure, if desired.
+      \item Change the beats-width, if desired.
+      \item Clock the \textbf{Add Time Signature} button to log the
+         new time signature.
+   \end{enumber}
+
+   It adds a time-signature Meta event and adjusts the pattern
+   length (if needed) at once.
+   The new time signature should appear in the data and event panes as well.
 
    \itempar{Beats Per Bar}{pattern editor!beats/bar}
    \index{beats per bar}
@@ -280,7 +311,7 @@
 
 \begin{figure}[H]
    \centering 
-  \includegraphics[scale=0.65]{pattern-editor/patternfix.png}
+   \includegraphics[scale=0.65]{pattern-editor/patternfix.png}
    \caption{Pattern Fix Dialog}
    \label{fig:pattern_editor_pattern_fix}
 \end{figure}
@@ -595,7 +626,7 @@
          The \textbf{Time} (or \textbf{Measures}) bar provides an explicit
          count of beats and bars.
          It follows the horizontal zoom of the piano roll.
-         It also has a couple tricks:
+         It also has a couple tricks, which are shown in the diagram below.
          \begin{itemize}
             \item \textbf{In the upper half} of the time-line,
                the mouse pointer changes to a vertical pointer.
@@ -612,6 +643,35 @@
                This looping now works with both Live and Song modes.
          \end{itemize}
    \end{itemize}
+
+   The following figure shows three steps in cursor movement, and the final
+   result for setting a time-signature.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.65]{pattern-editor/seqtime-cursor-composite.png}
+   \caption{Setting a Time Signature}
+   \label{fig:pattern_editor_seqtime_cursor_composite}
+\end{figure}
+
+   The steps shown are
+
+   \begin{enumber}
+      \item The mouse cursor is in the piano roll, and has the normal
+         appearance for the current mouse cursor theme.
+      \item The mouse cursor is in the bottom half of the time line, and
+         here it's a pointing finger.  When clicked, the "L" marker is set
+         there.
+      \item The mouse cursor is in the top half of the time line, and is
+         shown as a vertical arrow.  It sets the current position in the
+         pattern, and a red vertical line marks that position.
+      \item The time-signature button (the "4/8" shown in the top
+         bar) is clicked, and a time-signature is added at that point.
+      \item The data pane switches to show Time Signatures.
+         These cannot be edited in the data pane, but in the event bar above
+         it, they can be selected by drawing a box around them, and then
+         be either deleted or moved with the Left/Right arrow keys.
+   \end{enumber}
 
    Note that the "L" and "R" markers can be selected via the keyboard using
    their respective shifted key.  Once selected, the marker can be moved left

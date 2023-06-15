@@ -1478,6 +1478,9 @@ the '0' key in the piano roll.</string>
      </item>
      <item>
       <widget class="QPushButton" name="m_button_log_timesig">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="minimumSize">
         <size>
          <width>36</width>
