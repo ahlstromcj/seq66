@@ -1228,15 +1228,15 @@ qseqeventframe::slot_modify ()
         const editable_event & ev0 = m_eventslots->current_event();
         std::string ts = ui->entry_ev_timestamp->text().toStdString();
         std::string name = ui->combo_ev_name->currentText().toStdString();
-        std::string chan = ev0.channel_string();
+        std::string ch = ev0.channel_string();
         std::string d0 = ui->entry_ev_data_0->text().toStdString();
         std::string d1 = ui->entry_ev_data_1->text().toStdString();
-        std::string ch = ui->channel_combo_box->currentText().toStdString();
+        std::string chan = ui->channel_combo_box->currentText().toStdString();
         std::string text = ui->plainTextEdit->toPlainText().toStdString();
         text = string_to_midi_bytes(text);      /* encode for ext ASCII     */
 
         midipulse lt = c_null_midipulse;
-        bool reload = false;                /* works, but why is it needed? */
+        bool reload = true;
         if (ev0.is_linked())
         {
             editable_event & ev1 = m_eventslots->lookup_link(ev0);
@@ -1250,18 +1250,22 @@ qseqeventframe::slot_modify ()
                     m_eventslots->modify_current_channel_event(row1, d0, d1, ch);
                     set_event_line(row1);
                 }
-                reload = true;              /* this is very krufty, mufti   */
             }
+            else
+                reload = false;
         }
 
         std::string ltstr = m_eventslots->time_string(lt);
         m_eventslots->select_event(row0, false);
-        (void) m_eventslots->modify_current_event
-        (
-            row0, ts, name, d0, d1, ch, text
-        );
+        if (reload)
+        {
+            reload = m_eventslots->modify_current_event
+            (
+                row0, ts, name, d0, d1, ch, text
+            );
+        }
         set_seq_lengths(get_lengths());
-        set_event_line(row0, ts, name, ch, d0, d1, ltstr);
+        set_event_line(row0, ts, name, chan, d0, d1, ltstr);
         if (reload)
             initialize_table();             /* this is very stilted, Milton */
 

@@ -1,4 +1,4 @@
-# README for Seq66 0.99.6 2023-06-09
+# README for Seq66 0.99.6 2023-06-15
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -98,8 +98,20 @@ Windows, and using a conventional source tarball.
                 velocity-change undo.
             *   Fixed an error preventing changing the "background" pattern.
         *   Issue #111: Adding support, as much as possible, for editing,
-            storing, and displaying time signature. Enhanced the event pane,
-            too.
+            storing, and displaying time signature in the pattern and event
+            editors.
+            *   The first time-signature in a pattern becomes the main
+                time signature of the pattern.
+            *   The data pane shows a time-signature as a simple fraction.
+            *   Changing the time signature if at time 0 is semi-automatic.
+            *   Time signatures at later times can be logged by setting the
+                current time with a click in the top half of the time line,
+                changing the beats and beat width, then clicking a time-sig log
+                button.
+            *   Time-signature changes show time-signatures in the data pane.
+            *   Remaining issue: how to properly draw the piano roll, time line,
+                event pane vertical lines as time-signature changes.
+            *   Fixed event filtering in the event (qstriggereditor) pane.
         *   Enhanced port-mapping to prompt the user about issues and
             allow for an immediate remap-and-restart. Lots of fixes!
         *   Added 'o' keystroke to seqroll to toggle recording ('r' already
@@ -125,24 +137,6 @@ Windows, and using a conventional source tarball.
         *   Showing disabled/unavailable MIDI devices as grayed in various
             dropdowns.
         *   Rearranged the Seq66 man pages more sensibly.
-    *   Version 0.99.4:
-        *   Issue #3: The scroll wheel is enabled in the piano rolls (only).
-        *   Issue #48: For a new NSM session configuration, disable "JACK"
-            port auto-connect.
-        *   Issue #108.  Fixed trying to remove Event tab after deleting it.
-        *   Issue #109.  Fixed the application of channels to the various
-            export operations.
-        *   Fixed minor-but-annoying bug in reporting trying map a "null" buss.
-        *   Improved state-appearance of Stop, Pause, and Play buttons.
-        *   Fixed issue opening a non-standard-length pattern in its window.
-        *   Fixed note events not getting linked after recording.
-        *   Fixed drawing of wrap-around notes with linear gradient, and fixed
-            handling of note wrap-around when set to false.
-        *   Fixed refresh of Mute and Session tabs when loading a MIDI file.
-        *   Added seqmenu entry for toggling recording of a pattern.
-        *   Added the ability to use the first Text message as "song info".
-        *   Seq66 now prevents opening the event editor if recording is in
-            progress. Cannot update event editor live with new events.
 
     See the "NEWS" file for changes in earlier versions.  Some proposed features
     will be pushed off to Seq66v2; see the bottom of the TODO file. Version

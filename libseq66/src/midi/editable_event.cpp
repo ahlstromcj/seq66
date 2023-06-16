@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-06-14
+ * \updates       2023-06-16
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -1021,7 +1021,7 @@ editable_event::analyze ()
     }
     else if (is_system_msg(status))
     {
-        if (is_meta_msg(status))
+        if (is_meta_msg(status))    // CHANNEL set to metatype?????
         {
             midibyte metatype = get_meta_status();  /* stored in channel!   */
             category(subgroup::meta_event);
@@ -1076,10 +1076,10 @@ editable_event::ex_data_string () const
     {
         if (sysex_size() > 0)
         {
-            int nn = get_sysex()[0];
-            int dd = beat_power_of_2(get_sysex()[1]);
-            int cc = get_sysex()[2];
-            int bb = get_sysex()[3];
+            int nn = get_sysex(0);
+            int dd = beat_power_of_2(get_sysex(1));         /* 2^sysex[1]   */
+            int cc = get_sysex(2);
+            int bb = get_sysex(3);
             snprintf(tmp, sizeof tmp, "%d/%d 0x%X 0x%X", nn, dd, cc, bb);
             result += tmp;
         }
@@ -1093,7 +1093,7 @@ editable_event::ex_data_string () const
 
         for (int i = 0; i < limit; ++i)
         {
-            snprintf(tmp, sizeof tmp, "%2X ", get_sysex()[i]);
+            snprintf(tmp, sizeof tmp, "%2X ", get_sysex(i));
             result += tmp;
         }
         if (sysex_size() > limit)
@@ -1122,7 +1122,7 @@ editable_event::ex_text_string () const
 
     for (int i = 0; i < limit; ++i)
     {
-        char ch = char(get_sysex()[i]);
+        char ch = char(get_sysex(i));
         result += ch;
     }
     if (sysex_size() > limit)
@@ -1164,7 +1164,7 @@ editable_event::get_text () const
         size_t dsize = get_sysex().size();
         for (size_t i = 0; i < dsize; ++i)      /* TODO SEE "True?" ABOVE   */
         {
-            char c = char(get_sysex()[i]);
+            char c = char(get_sysex(i));
             result.push_back(c);                            /* plain-text   */
         }
     }
@@ -1177,18 +1177,18 @@ editable_event::get_text () const
     }
     else if (is_key_signature())            /* FF 59 02 -7-+7 0-1           */
     {
-        int sharpsflats = int(get_sysex()[0]);              /* -7 to +7     */
-        bool isminor = get_sysex()[1] != 0;
+        int sharpsflats = int(get_sysex(0));                /* -7 to +7     */
+        bool isminor = get_sysex(1) != 0;
         result = key_signature_string(sharpsflats, isminor);
         if (result.empty())
             result = "Key signature format error!";
     }
     else if (is_time_signature())           /* FF 58 04 nn dd cc bb         */
     {
-        int n = int(get_sysex()[0]);
-        int d = beat_power_of_2(int(get_sysex()[1]));
-        int c = int(get_sysex()[2]);
-        int b = int(get_sysex()[3]);
+        int n = int(get_sysex(0));
+        int d = beat_power_of_2(int(get_sysex(1)));         /* 2^sysex[1]   */
+        int c = int(get_sysex(2));
+        int b = int(get_sysex(3));
         result = time_signature_string(n, d, c, b);
     }
     else if (is_sysex())                    /* F0 id msg-bytes ... F7       */
@@ -1288,12 +1288,13 @@ time_signature_bytes
         result = ! partial.empty();
         if (result)
         {
-            int dd = string_to_int(partial);
+            int dd = string_to_int(partial);        /* user value, 4, 8 ... */
             int cc = 0x18;                          /* 24 is a common value */
             int bb = 0x08;                          /* 8/32nds per beat     */
             result = is_power_of_2(dd);
             if (result)
             {
+                dd = beat_log2(dd);                 /* convert to 2-power   */
                 pos = text.find_first_of(" ", pos); /* bypass the "dd"      */
                 if (pos != std::string::npos)
                 {
@@ -1314,6 +1315,10 @@ time_signature_bytes
                 timesigbytes.push_back(midibyte(dd));
                 timesigbytes.push_back(midibyte(cc));
                 timesigbytes.push_back(midibyte(bb));
+            }
+            else
+            {
+                /* anything we can leverage here? */
             }
         }
     }

@@ -2577,8 +2577,8 @@ midifile::write_time_sig (int beatsperbar, int beatwidth)
     write_byte(EVENT_META_TIME_SIGNATURE);  /* 0x58                         */
     write_byte(4);                          /* the message length           */
     write_byte(beatsperbar);                /* nn                           */
-    write_byte(beat_log2(beatwidth));       /* dd                           */
-    write_short(0x1808);                    /* cc bb                        */
+    write_byte(beat_log2(beatwidth));       /* dd as the exponent of 2      */
+    write_short(0x1808);                    /* cc bb TODO!                  */
 }
 
 #endif  // SEQ66_USE_WRITE_TIME_SIG

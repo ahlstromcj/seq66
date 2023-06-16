@@ -1,10 +1,28 @@
-NEWS for Seq66 0.99.5 and above
+NEWS for Seq66 0.99.0 and above
 Chris Ahlstrom
-2015-07-10 to 2023-05-16
+2015-07-10 to 2023-06-15
 
 This file collects major changes that are older and clutter up
 the README.md file.  This file should be called "OLD NEWS".
 
+    -   Version 0.99.4:
+        -   Issue #3: The scroll wheel is enabled in the piano rolls (only).
+        -   Issue #48: For a new NSM session configuration, disable "JACK"
+            port auto-connect.
+        -   Issue #108.  Fixed trying to remove Event tab after deleting it.
+        -   Issue #109.  Fixed the application of channels to the various
+            export operations.
+        -   Fixed minor-but-annoying bug in reporting trying map a "null" buss.
+        -   Improved state-appearance of Stop, Pause, and Play buttons.
+        -   Fixed issue opening a non-standard-length pattern in its window.
+        -   Fixed note events not getting linked after recording.
+        -   Fixed drawing of wrap-around notes with linear gradient, and fixed
+            handling of note wrap-around when set to false.
+        -   Fixed refresh of Mute and Session tabs when loading a MIDI file.
+        -   Added seqmenu entry for toggling recording of a pattern.
+        -   Added the ability to use the first Text message as "song info".
+        -   Seq66 now prevents opening the event editor if recording is in
+            progress. Cannot update event editor live with new events.
     -   Version 0.99.3:
         -   Issue #107.  The basic fix is made. Still need to rehabilitate
             the Expand-pattern functionality.

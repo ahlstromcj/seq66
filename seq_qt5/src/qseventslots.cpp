@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-05-03
+ * \updates       2023-06-16
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -216,7 +216,7 @@ qseventslots::set_current_event
     int channel = null_channel();
     std::string data_0;
     std::string data_1;
-    const editable_event & ev = editable_events::cdref(ei);
+    const editable_event /* & */ ev = editable_events::cdref(ei);
     if (ev.is_meta())
     {
         /*
@@ -393,7 +393,7 @@ qseventslots::event_to_string
  * \param evcategory
  *      The category of event to be set in the parent.
  *
- * \param evtimestamp
+ * \param evts
  *      The event time-stamp to be set in the parent.
  *
  * \param evname
@@ -410,14 +410,14 @@ void
 qseventslots::set_event_text
 (
     const std::string & evcategory,
-    const std::string & evtimestamp,
+    const std::string & evts,
     const std::string & evname,
     const std::string & evdata0,
     const std::string & evdata1,
     int channel
 )
 {
-    m_parent.set_event_timestamp(evtimestamp);
+    m_parent.set_event_timestamp(evts);
     m_parent.set_event_category(evcategory);
     m_parent.set_event_name(evname);
     m_parent.set_event_channel(channel);
@@ -522,7 +522,7 @@ qseventslots::insert_event (editable_event ev)          // Q: where called?
  *  below, with the seq66 namespace, otherwise the compiler thinks we're
  *  trying to access some Gtkmm thing.
  *
- * \param evtimestamp
+ * \param evts
  *      The time-stamp of the new event, as obtained from the event-edit
  *      timestamp field.
  *
@@ -549,7 +549,7 @@ qseventslots::insert_event (editable_event ev)          // Q: where called?
 bool
 qseventslots::insert_event
 (
-    const std::string & evtimestamp,
+    const std::string & evts,
     const std::string & evname,
     const std::string & evdata0,
     const std::string & evdata1,
@@ -562,7 +562,7 @@ qseventslots::insert_event
 
     edev.set_status_from_string
     (
-        evtimestamp, evname, evdata0, evdata1, channel, text
+        evts, evname, evdata0, evdata1, channel, text
     );
     m_current_event = edev;
     return insert_event(edev);
@@ -736,7 +736,7 @@ qseventslots::delete_current_event ()
  *  editable-event container.  The insertion takes care of updating any length
  *  increase of the sequence.
  *
- * \param evtimestamp
+ * \param evts
  *      Provides the new event time-stamp as edited by the user.
  *
  * \param evname
@@ -763,7 +763,7 @@ bool
 qseventslots::modify_current_event
 (
     int row,
-    const std::string & evtimestamp,
+    const std::string & evts,
     const std::string & evname,
     const std::string & evdata0,
     const std::string & evdata1,
@@ -777,24 +777,24 @@ qseventslots::modify_current_event
 
     if (result)
     {
-        bool isnoteevent = strings_match(evname, "Note");
+        editable_event & evref = editable_events::dref(m_current_iterator);
+        bool isnoteevent = evref.is_note();
         midibyte channelbyte = string_to_channel(channel);
         if (isnoteevent)
         {
-            editable_event & ev = editable_events::dref(m_current_iterator);
-            ev.set_status_from_string
+            evref.set_status_from_string
             (
-                evtimestamp, evname, evdata0, evdata1, channel
+                evts, evname, evdata0, evdata1, channel
             );
             if (row >= 0)
-                set_table_event(ev, row);
+                set_table_event(evref, row);
         }
         else
         {
             editable_event ev = editable_events::dref(m_current_iterator);
             ev.set_status_from_string
             (
-                evtimestamp, evname, evdata0, evdata1, text
+                evts, evname, evdata0, evdata1, channel, text
             );
             if (! ev.is_ex_data())
                 ev.set_channel(channelbyte);

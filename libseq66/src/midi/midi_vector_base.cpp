@@ -322,7 +322,7 @@ midi_vector_base::add_ex_event (const event & e, midipulse deltatime)
     int count = e.sysex_size();                 /* applies for meta, too    */
     add_varinum(midilong(count));               /* using put() was wrong!   */
     for (int i = 0; i < count; ++i)
-        put(e.get_sysex()[i]);
+        put(e.get_sysex(i));
 }
 
 /**

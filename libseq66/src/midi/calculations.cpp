@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-10-12
+ * \updates       2023-06-16
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -892,16 +892,16 @@ power (int base, int exponent)
  *  MIDI file.
  *
  * \param value
- *      The integer value for which log2(value) is needed.
+ *      The integer value for which the log2(value) is needed.
  *
  * \return
- *      Returns log2(value).
+ *      Returns log2(value) for values of 1 or greater. Otherwise returns 0.
  */
 
 midibyte
 beat_log2 (int value)
 {
-    return midibyte(std::log(double(value)) / std::log(2.0));
+    return value > 0 ? midibyte(std::log(double(value)) / std::log(2.0)) : 0 ;
 }
 
 /**
