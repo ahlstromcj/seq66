@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-06-13
+ * \updates       2023-06-17
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1561,6 +1561,7 @@ public:
     bool detect_time_signature
     (
         midipulse & tstamp, int & numerator, int & denominator,
+        midipulse start = 0,
         midipulse limit = c_null_midipulse
     );
     bool add_event (const event & er);      /* another one declared below */
@@ -1807,7 +1808,9 @@ public:
     bool get_next_meta_match
     (
         midibyte metamsg,
-        event::buffer::const_iterator & evi
+        event::buffer::const_iterator & evi,
+        midipulse start = 0,
+        midipulse range = c_null_midipulse
     );
     bool get_next_event
     (

@@ -334,7 +334,6 @@ ISSUES:
         -   Can we use c_timesig for non-power-of-two beat widths?
         -   Add the ability to Ctrl-Z a time-sig change, and also show
             the modification "*" in the pattern editor title-bar.
-        -   How to edit the time-signature in the event editor?
         -   Currently recommended to change the beat width first, but
             can we enforce updating only when both change?
         -   Retest adding time-sigs.

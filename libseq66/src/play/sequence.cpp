@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-06-13
+ * \updates       2023-06-17
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3243,10 +3243,9 @@ sequence::add_time_signature (midipulse tick, int beats, int bw)
         bt[1] = midibyte(bw);                               /* denominator  */
         bt[2] = midibyte(clocks_per_metronome());
         bt[3] = midibyte(get_32nds_per_quarter());
-
-        bool ok = e.append_meta_data(EVENT_META_TIME_SIGNATURE, bt, 4);
-        if (ok)
-            append_event(e);
+        result = e.append_meta_data(EVENT_META_TIME_SIGNATURE, bt, 4);
+        if (result)
+            result = append_event(e);
     }
     return result;
 }
@@ -3280,14 +3279,19 @@ sequence::delete_time_signature (midipulse tick)
  *      A return parameter for the beat width. Use the value only if true
  *      is returned.
  *
- * \param limit
+ * \param start
+ *      Provides the starting point for the search.  Events before this tick
+ *      are ignored.  The default value is 0, the beginning of the pattern.
+ *
+ * \param range
  *      Provides how far to look for a time signature. The default is
  *      c_null_midipulse, which means just detect the first time-signature
  *      no matter how deep into the pattern. Another useful value is the
- *      snap() value from the seqedit.
+ *      snap() value from the seqedit. In that case the event must be
+ *      with \a range ticks of .....
  *
  * \return
- *      Returns true if a time signature was detected before the limit was
+ *      Returns true if a time signature was detected before the range was
  *      reached.
  */
 
@@ -3297,19 +3301,17 @@ sequence::detect_time_signature
     midipulse & tstamp,
     int & numerator,
     int & denominator,
-    midipulse limit
+    midipulse start,
+    midipulse range
 )
 {
     bool result = false;
-    midibyte mstatus = EVENT_MIDI_META;
-    midibyte mtype = EVENT_META_TIME_SIGNATURE;
     auto cev = cbegin();
-    if (get_next_event_match(mstatus, mtype, cev))
+    if (! cend(cev))
     {
-        midipulse tick = cev->timestamp();
-        if (tick < limit || limit == c_null_midipulse)
+        if (get_next_meta_match(EVENT_META_TIME_SIGNATURE, cev, start, range))
         {
-            tstamp = tick;
+            tstamp = cev->timestamp();
             numerator = int(cev->get_sysex(0));
             denominator = beat_power_of_2(int(cev->get_sysex(1)));
             result = true;
@@ -4916,7 +4918,7 @@ sequence::get_next_event
  *  m_draw_iterator from seqdata, seqevent, seqroll, and perfroll.
  *
  *  This function returns the whole event, rather than filling in a bunch of
- *  parameters.  In addition, it always allows Tempo events to be found.  Gets
+ *  parameters.  In addition, it allows Meta events to be found.  Gets
  *  the next event in the event list that matches the given status and control
  *  character.  Then set the rest of the parameters parameters using that
  *  event.  If the status is the new value EVENT_ANY, then any event will be
@@ -4940,7 +4942,8 @@ sequence::get_next_event
  *
  * \return
  *      Returns true if the current event was one of the desired ones, or was
- *      a Tempo or Time Signature event (the Meta events whose drawing in qseqdata *      supported). In this case, the caller <i> must </i> increment the
+ *      a Tempo or Time Signature event (the Meta events whose drawing in qseqdata
+ *      supported). In this case, the caller <i> must </i> increment the
  *      iterator.
  */
 
@@ -4985,14 +4988,49 @@ sequence::get_next_event_match
     return false;
 }
 
+/**
+ *  Similar to get_next_event_match(), but specific to Meta events and can
+ *  be restricted to a limited range of time.
+ *
+ * \param metamsg
+ *      Provides the type of Meta message. In Seq66, this value is stored
+ *      in the "channel" member.
+ *
+ * \param [out] evi
+ *      An iterator return value for the next event found.  The caller might
+ *      want to check it.  Do not use this iterator if
+ *      false is returned!  The caller must increment it for the next call, just
+ *      as for get_next_event() or get_next_event_match().
+ *
+ * \param start
+ *      Provides the starting point for the search.  Events before this tick
+ *      are ignored.  The default value is 0, the beginning of the pattern.
+ *
+ * \param range
+ *      Provides how far to look for a time signature. The default is
+ *      c_null_midipulse, which means just detect the first Meta event
+ *      no matter how deep into the pattern. Another useful value is the
+ *      snap() value from the seqedit. In that case the event time must be
+ *      within \a start + \a range ticks.
+ *
+ * \return
+ *      Returns true if the Meta event was detected before the range limit was
+ *      reached.
+ */
+
 bool
 sequence::get_next_meta_match
 (
     midibyte metamsg,
-    event::buffer::const_iterator & evi
+    event::buffer::const_iterator & evi,
+    midipulse start,
+    midipulse range
 )
 {
     automutex locker(m_mutex);
+    if (range != c_null_midipulse)
+        range += start;
+
     while (evi != m_events.end())
     {
         if (m_events.action_in_progress())      /* atomic boolean check     */
@@ -5002,7 +5040,14 @@ sequence::get_next_meta_match
         if (drawevent.is_meta())
         {
             if (drawevent.channel() == metamsg)
-                return true;
+            {
+                midipulse tick = evi->timestamp();
+                if (tick >= start)
+                {
+                    if (tick < range || range == c_null_midipulse)
+                        return true;
+                }
+            }
         }
         ++evi;                                  /* keep going here          */
     }

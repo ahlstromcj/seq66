@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-06-16
+ * \updates       2023-06-17
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -459,7 +459,7 @@ qseqeditframe64::qseqeditframe64
      */
 
     set_log_timesig_text(m_beats_per_bar_to_log, m_beat_width_to_log);
-    ui->m_button_log_timesig->setEnabled(false);
+    set_log_timesig_status(false); // ui->m_button_log_timesig->setEnabled(false);
     connect
     (
         ui->m_button_log_timesig, SIGNAL(clicked(bool)),
@@ -1536,17 +1536,27 @@ qseqeditframe64::set_log_timesig_text (int bpb, int bw)
     ui->m_button_log_timesig->setText(qt(text));
 }
 
+void
+qseqeditframe64::set_log_timesig_status (bool flag)
+{
+    midipulse tick = perf().get_tick();         /* perf().get_left_tick()   */
+    if (tick > 0)
+        ui->m_button_log_timesig->setEnabled(flag);
+    else
+        ui->m_button_log_timesig->setEnabled(false);
+}
+
 /**
  *  Helper function
  */
 
-void
+bool
 qseqeditframe64::log_timesig (bool islogbutton)
 {
     midipulse tick = perf().get_tick();         /* perf().get_left_tick()   */
     midipulse tstamp;
     int n, d;
-    bool found = track().detect_time_signature(tstamp, n, d);
+    bool found = track().detect_time_signature(tstamp, n, d, tick);
     if (found)
     {
         found = labs(tick - tstamp) < (track().snap() / 2);
@@ -1556,13 +1566,14 @@ qseqeditframe64::log_timesig (bool islogbutton)
 
     int bpb = islogbutton ? m_beats_per_bar_to_log : m_beats_per_bar ;
     int bw = islogbutton ? m_beat_width_to_log : m_beat_width ;
-    if (track().add_time_signature(tick, bpb, bw))
+    bool result = track().add_time_signature(tick, bpb, bw);
+    if (result)
     {
         set_data_type(EVENT_META_TIME_SIGNATURE);
         set_log_timesig_text(bpb, bw);
-        ui->m_button_log_timesig->setEnabled(false);
-        set_track_change();
+        set_log_timesig_status(false);
     }
+    return result;
 }
 
 /**
@@ -1579,7 +1590,17 @@ qseqeditframe64::log_timesig (bool islogbutton)
 void
 qseqeditframe64::slot_log_timesig ()
 {
-    log_timesig(true);
+    if (log_timesig(true))
+    {
+        /*
+         * How to get the modify flag set???
+         *
+         * m_beats_per_bar = m_beats_per_bar_to_log;
+         * m_beat_width = m_beat_width_to_log;
+         */
+
+        set_track_change();
+    }
 }
 
 /**
@@ -1602,7 +1623,7 @@ qseqeditframe64::text_beats_per_bar (const QString & text)
     {
         int bpb = string_to_int(temp);
         set_beats_per_bar(bpb);
-//      set_track_change();                         /* to solve issue #90   */
+        set_log_timesig_status(true);
     }
 }
 
@@ -1611,7 +1632,7 @@ qseqeditframe64::reset_beats_per_bar ()
 {
     int index = beats_per_bar_list().index(usr().bpb_default());
     ui->m_combo_bpm->setCurrentIndex(index);
-//  set_track_change();                             /* to solve issue #90   */
+    set_log_timesig_status(true);
 }
 
 /**
@@ -1647,7 +1668,8 @@ qseqeditframe64::set_beats_per_bar (int bpb, qbase::status qs)
                 m_beats_per_bar = m_beats_per_bar_to_log = bpb;
                 track().set_beats_per_bar(bpb, user_change);
                 (void) track().apply_length(bpb, 0, 0); /* no measures      */
-                log_timesig(false);
+                if (log_timesig(false))
+                    set_track_change();
             }
             else
             {
@@ -1742,7 +1764,7 @@ qseqeditframe64::text_beat_width (const QString & text)
     {
         int bw = string_to_int(temp);
         set_beat_width(bw);
-        ui->m_button_log_timesig->setEnabled(true);
+        set_log_timesig_status(true);
     }
 }
 
@@ -1756,8 +1778,7 @@ qseqeditframe64::reset_beat_width ()
     int index = beatwidth_list().index(usr().bw_default());
     ui->m_combo_bw->setCurrentIndex(index);
     set_log_timesig_text(m_beats_per_bar, m_beat_width);
-    ui->m_button_log_timesig->setEnabled(true);
-//  set_track_change();                             /* to solve issue #90   */
+    set_log_timesig_status(true);
 }
 
 /**
@@ -1801,7 +1822,8 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
                     m_beat_width = m_beat_width_to_log = bw;
                     track().set_beat_width(bw, user_change);
                     (void) track().apply_length(0, 0, bw);
-                    log_timesig(false);
+                    if (log_timesig(false))
+                        set_track_change();
                 }
                 else
                 {
@@ -1822,7 +1844,8 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
 
 /**
  *  This function looks for a time-signature, and if it is within the first
- *  snap interval, sets the beats value accordingly.
+ *  half-snap interval of the start of of the pattern, sets the beats value
+ *  accordingly.
  *
  * Time signature life-cycle:
  *
@@ -1842,7 +1865,7 @@ qseqeditframe64::detect_time_signature ()
     int n, d;
     bool result = track().detect_time_signature
     (
-        tstamp, n, d, track().snap() / 2
+        tstamp, n, d, 0, track().snap() / 2
     );
     if (result)
     {

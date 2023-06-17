@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-06-15
+ * \updates       2023-06-17
  * \license       GNU GPLv2 or above
  *
  */
@@ -199,7 +199,8 @@ private:
     void remove_patternfix_frame ();
     QIcon * create_menu_image (bool state);
     void set_log_timesig_text (int bpb, int bw);
-    void log_timesig (bool islogbutton);
+    void set_log_timesig_status (bool flag);
+    bool log_timesig (bool islogbutton);
     bool detect_time_signature ();
 
 private:        /* combo-box list accessors */

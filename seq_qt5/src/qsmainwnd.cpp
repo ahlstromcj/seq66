@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-01
+ * \updates       2023-06-17
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -3270,20 +3270,12 @@ qsmainwnd::show_error_box_ex (const std::string & msgtext, bool isporterror)
 void
 qsmainwnd::enable_save (bool flag)
 {
-#if defined USE_TRIAL_CODE                  /* see the banner   */
-    if (! m_is_title_dirty)
-    {
-        ui->actionSave->setEnabled(flag);
-        m_is_title_dirty = true;
-    }
-#else
     bool enabled = ui->actionSave->isEnabled();
     if (flag != enabled)
     {
         ui->actionSave->setEnabled(flag);
         m_is_title_dirty = true;
     }
-#endif
 }
 
 void
