@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-06-17
+ * \updates       2023-06-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -192,7 +192,9 @@ private:
         return m_short_version;
     }
 
+#if defined USE_WOULD_TRUNCATE_BPB_BW
     bool would_truncate (int bpb, int bw);
+#endif
     bool would_truncate (int measures);
     void scroll_by_step (qscrollmaster::dir d);
     void remove_lfo_frame ();

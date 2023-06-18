@@ -1,4 +1,4 @@
-# README for Seq66 0.99.6 2023-06-16
+# README for Seq66 0.99.6 2023-06-18
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -97,18 +97,20 @@ Windows, and using a conventional source tarball.
                 velocities in the pattern editor's data pane.  Improved
                 velocity-change undo.
             *   Fixed an error preventing changing the "background" pattern.
+            *   Remaining issue: Building 32-bit (Windows XP) version on
+                64-bit Windows.
         *   Issue #111: Adding support, as much as possible, for editing,
             storing, and displaying time signature in the pattern and event
             editors.
             *   The first time-signature in a pattern becomes the main
-                time signature of the pattern.
+                time signature of the pattern. (Also stored as a c_timesig
+                SeqSpec).
             *   The data pane shows a time-signature as a simple fraction.
-            *   Changing the time signature if at time 0 is semi-automatic.
+            *   Changing the time signature if at time 0 is automatic.
             *   Time signatures at later times can be logged by setting the
                 current time with a click in the top half of the time line,
                 changing the beats and beat width, then clicking a time-sig log
                 button.
-            *   Time-signature changes show time-signatures in the data pane.
             *   Remaining issue: how to properly draw the piano roll, time line,
                 event pane vertical lines as time-signature changes.
             *   Fixed event filtering in the event (qstriggereditor) pane.

@@ -3245,7 +3245,11 @@ sequence::add_time_signature (midipulse tick, int beats, int bw)
         bt[3] = midibyte(get_32nds_per_quarter());
         result = e.append_meta_data(EVENT_META_TIME_SIGNATURE, bt, 4);
         if (result)
+        {
             result = append_event(e);
+            if (result)
+                modify(true);
+        }
     }
     return result;
 }

@@ -1,9 +1,42 @@
-Release Notes for Seq66 v. 0.99.6 2023-05-21
+Release Notes for Seq66 v. 0.99.6 2023-06-18
 
 This file lists __major__ changes from version 0.99.6
 
-    -   Issue #x:
+    -   Issue #3 follow-ons:
+        -   Pattern editor panes stay in sync with the piano roll using
+            the hjkl, arrow, and page keys.
+    -   Issue #110 follow-ons:
+        -   Addition of Start menu entries for Windows.
+        -   Fixed access to the tutorial and manual.
+        -   data/readme & doc/tutorial files fixed for NSIS installer.
+        -   Fixed the saving of modified tempo changes.
+        -   Fixed changing note velocities in the pattern editor data
+            pane.  Improved velocity-change undo.
+        -   Fixed error preventing changing the "background" pattern.
+        -   Remaining issue: Building 32-bit (Windows XP) version on
+            64-bit Windows.
+    -   Issue #111:
+        -   Added support for editing, storing, and displaying time
+            signatures in the pattern and event editors.
+        -   The first time-signature in a pattern becomes the main
+            time signature of the pattern.
+        -   The data pane shows a time-signature as a simple fraction.
+        -   Changing the time signature if at time 0 is automatic.
+        -   Time signatures at later times are logged by setting the
+            current time with a click in the top half of the time line,
+            changing the beats and beat width, then clicking a
+            time-sig log button.
+        -   Fixed event filtering in the event (qstriggereditor) pane.
+        -   Remaining issue: how to properly draw the piano roll, time
+            line, event pane vertical lines as time-signature changes.
+    -   Port-mapping prompts about port issues and allows an immediate
+        remap-and-restart.
+    -   'o' keystroke in seqroll toggles recording ('r' already
+        taken).
+    -   Added a "quiet" option to not show startup message prompts.
+    -   A log-file is now automatically created & kept under a
+        megabyte.
 
-Read the NEWS, README.md, and TODO files.  Never-ending!
+Read the NEWS, README.md, and TODO files.  Working our assoff!
 
-// vim: sw=4 ts=4 wm=12 et ft=markdown
+// vim: sw=4 ts=4 wm=15 et ft=markdown

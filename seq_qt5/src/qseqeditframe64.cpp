@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-06-17
+ * \updates       2023-06-18
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1451,6 +1451,8 @@ qseqeditframe64::conditional_update ()
     }
 }
 
+#if defined USE_WOULD_TRUNCATE_BPB_BW
+
 /**
  *  Checks if the new time-signature results in a dropping events.
  *  However, this check is now not needed under recent fixes which increase
@@ -1466,7 +1468,6 @@ qseqeditframe64::would_truncate (int bpb, int bw)
     bool result = false;                        /* no problem by default    */
     if (bpb > 0 && bw > 0)                      /* do only after start-up   */
     {
-#if defined USE_WOULD_TRUNCATE_BPB_BW
         double fraction = double(bpb) / double(bw);
         midipulse max = track().get_max_timestamp();
         midipulse newlength = midipulse(track().get_length() * fraction);
@@ -1479,10 +1480,11 @@ qseqeditframe64::would_truncate (int bpb, int bw)
                 "Cancel to avoid that."
             );
         }
-#endif
     }
     return result;
 }
+
+#endif  // defined USE_WOULD_TRUNCATE_BPB_BW
 
 /**
  *  Checks if a direct change in measures would truncate events.
@@ -1650,35 +1652,47 @@ qseqeditframe64::reset_beats_per_bar ()
 void
 qseqeditframe64::set_beats_per_bar (int bpb, qbase::status qs)
 {
-    if (usr().bpb_is_valid(bpb) && bpb != m_beats_per_bar)
+    if (usr().bpb_is_valid(bpb))
     {
-        bool reset = false;
-        bool user_change = qs == qbase::status::edit;
-        if (user_change)
-            reset = would_truncate(bpb, m_beat_width);
+        bool loggable = perf().get_tick() > track().snap() / 2;
+        bool doable = loggable ?
+            (bpb != m_beats_per_bar_to_log) : (bpb != m_beats_per_bar) ;
 
-        if (reset)
+        if (doable)
         {
-            /* reset_beats_per_bar();  simply ignore */
-        }
-        else
-        {
-            if (perf().get_tick() == 0)             /* get_left_tick()      */
+            bool user_change = qs == qbase::status::edit;
+
+#if defined USE_WOULD_TRUNCATE_BPB_BW
+            bool reset = false;
+            if (user_change)
+                reset = would_truncate(bpb, m_beat_width);
+
+            if (reset)
             {
-                m_beats_per_bar = m_beats_per_bar_to_log = bpb;
-                track().set_beats_per_bar(bpb, user_change);
-                (void) track().apply_length(bpb, 0, 0); /* no measures      */
-                if (log_timesig(false))
-                    set_track_change();
+                /* reset_beats_per_bar();  simply ignore */
             }
             else
             {
-                m_beats_per_bar_to_log = bpb;
-                set_log_timesig_text
-                (
-                    m_beats_per_bar_to_log, m_beat_width_to_log
-                );
+#endif
+                if (loggable)
+                {
+                    m_beats_per_bar_to_log = bpb;
+                    set_log_timesig_text
+                    (
+                        m_beats_per_bar_to_log, m_beat_width_to_log
+                    );
+                }
+                else                                    /* get_left_tick()  */
+                {
+                    m_beats_per_bar = m_beats_per_bar_to_log = bpb;
+                    track().set_beats_per_bar(bpb, user_change);
+                    (void) track().apply_length(bpb, 0, 0); /* no measures  */
+                    if (log_timesig(false))
+                        set_track_change();
+                }
+#if defined USE_WOULD_TRUNCATE_BPB_BW
             }
+#endif
         }
     }
 }
@@ -1789,55 +1803,67 @@ qseqeditframe64::reset_beat_width ()
 void
 qseqeditframe64::set_beat_width (int bw, qbase::status qs)
 {
-    if (usr().bw_is_valid(bw) && bw != m_beat_width)
+    if (usr().bw_is_valid(bw))
     {
-        bool reset = false;
-        bool user_change = qs == qbase::status::edit;
-        if (user_change)
-            reset = would_truncate(m_beats_per_bar, bw);
+        bool loggable = perf().get_tick() > track().snap() / 2;
+        bool doable = loggable ?
+            (bw != m_beat_width_to_log) : (bw != m_beat_width) ;
 
-        if (reset)
+        if (doable)
         {
-            /* reset_beat_width(); simply ignore */
-        }
-        else
-        {
-            /*
-             * IDEA: If not a power of 2, then add a c_timesig SeqSpec.
-             */
+            bool user_change = qs == qbase::status::edit;
 
-            bool rational = is_power_of_2(bw);
-            if (! rational)
+#if defined USE_WOULD_TRUNCATE_BPB_BW
+            bool reset = false;
+            if (user_change)
+                reset = would_truncate(m_beats_per_bar, bw);
+
+            if (reset)
             {
-                rational = qt_prompt_ok             /* Ok == ignore danger  */
-                (
-                    "MIDI supports only powers of 2 for beat-width.",
-                    "It won't be saved properly, but you do you."
-                );
-            }
-            if (rational)                           /* use OK'ed it         */
-            {
-                if (perf().get_tick() == 0)         /* get_left_tick()      */
-                {
-                    m_beat_width = m_beat_width_to_log = bw;
-                    track().set_beat_width(bw, user_change);
-                    (void) track().apply_length(0, 0, bw);
-                    if (log_timesig(false))
-                        set_track_change();
-                }
-                else
-                {
-                    m_beat_width_to_log = bw;
-                    set_log_timesig_text
-                    (
-                        m_beats_per_bar_to_log, m_beat_width_to_log
-                    );
-                }
+                /* reset_beat_width(); simply ignore */
             }
             else
             {
-                /* reset_beat_width();  simply ignore */
+#endif
+                /*
+                 * IDEA: If not a power of 2, then add a c_timesig SeqSpec.
+                 */
+
+                bool rational = is_power_of_2(bw);
+                if (! rational)
+                {
+                    rational = qt_prompt_ok         /* Ok == ignore danger  */
+                    (
+                        "MIDI supports only powers of 2 for beat-width.",
+                        "It won't be saved properly, but you do you."
+                    );
+                }
+                if (rational)                       /* use OK'ed it         */
+                {
+                    if (loggable)
+                    {
+                        m_beat_width_to_log = bw;
+                        set_log_timesig_text
+                        (
+                            m_beats_per_bar_to_log, m_beat_width_to_log
+                        );
+                    }
+                    else                             /* get_left_tick()      */
+                    {
+                        m_beat_width = m_beat_width_to_log = bw;
+                        track().set_beat_width(bw, user_change);
+                        (void) track().apply_length(0, 0, bw);
+                        if (log_timesig(false))
+                            set_track_change();
+                    }
+                }
+                else
+                {
+                    /* reset_beat_width();  simply ignore */
+                }
+#if defined USE_WOULD_TRUNCATE_BPB_BW
             }
+#endif
         }
     }
 }
