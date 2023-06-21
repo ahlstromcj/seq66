@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2023-06-16
+ * \updates       2023-06-21
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -95,23 +95,26 @@ namespace seq66
 static const int c_pixels_per_substep = 6;
 
 /**
- *  This value represents the fundamental beats-per-bar.
+ *  This value represents the fundamental and default beats-per-bar.
  */
 
 static const int c_qn_beats = 4;
 
 /**
- *  Convenience function.
+ *  Convenience function. We don't want to use seq66::string_to_int()
+ *  because that uses a leading "0" or "0x" to determine the base of the
+ *  conversions.
  */
 
 static int
-satoi (const std::string & v)
+strtoi (const std::string & v)
 {
-    return std::atoi(v.c_str());
+    return v.empty() ? 0 : std::atoi(v.c_str());
 }
 
 /**
- *  Extracts up to 4 numbers from a colon-delimited string.
+ *  Extracts up to 4 numbers from a colon-delimited string, or 1 from a
+ *  non-delimited string.  Actually colon or period are used.
  *
  *      -   measures : beats : divisions
  *          -   "8" represents solely the number of pulses.  That is, if the
@@ -126,9 +129,7 @@ satoi (const std::string & v)
  *
  * \warning
  *      This is not the most efficient implementation you'll ever see.
- *      At some point we will tighten it up.  This function is tested in the
- *      seq66-tests project, in the "calculations_unit_test" module.
- *      At present this test is surely BROKEN!
+ *      At some point we will tighten it up.
  *
  * \param s
  *      Provides the input time string, in measures or time format,
@@ -150,6 +151,8 @@ satoi (const std::string & v)
  *
  * \return
  *      Returns the number of parts provided, ranging from 0 to 4.
+ *      If 0, there is an error. If 1, it is assumed to be an single number,
+ *      such as 768.
  */
 
 int
@@ -163,7 +166,7 @@ extract_timing_numbers
 )
 {
     tokenization tokens;
-    int count = tokenize_string(s, tokens);
+    int count = tokenize_string(s, tokens); /* a function in this module    */
     part_1.clear();
     part_2.clear();
     part_3.clear();
@@ -471,8 +474,9 @@ pulses_to_hours (midipulse p, midibpm bpm, int ppqn)
 }
 
 /**
- *  Converts a string that represents "measures:beats:division" to a MIDI
- *  pulse/ticks/clock value.
+ *  Converts a string that represents "measures:beats:division" (also known
+ *  as "B:B:T") to a MIDI pulse/ticks/clock value. Note that, here, "division"
+ *  is simply a number of pulses less than a beat.
  *
  *  If the third value (the MIDI pulses or ticks value) is set to the dollar
  *  sign ("$"), then the pulses are set to PPQN-1, as a handy shortcut to
@@ -510,17 +514,17 @@ measurestring_to_pulses
         int valuecount = extract_timing_numbers(measures, m, b, d, dummy);
         if (valuecount >= 1)
         {
-            midi_measures meas_values;          /* initializes to 0 in ctor */
-            meas_values.measures(satoi(m));
+            midi_measures meas_values;                      /* 0 in ctor    */
+            meas_values.measures(strtoi(m));
             if (valuecount > 1)
             {
-                meas_values.beats(satoi(b));
+                meas_values.beats(strtoi(b));
                 if (valuecount > 2)
                 {
                     if (d == "$")
                         meas_values.divisions(seqparms.ppqn() - 1);
                     else
-                        meas_values.divisions(satoi(d));
+                        meas_values.divisions(strtoi(d));
                 }
             }
             result = midi_measures_to_pulses(meas_values, seqparms);
@@ -542,18 +546,25 @@ measurestring_to_pulses
  *
  *  Note that the 0-pulse MIDI measure is "1:1:0", which means "at the
  *  beginning of the first beat of the first measure, no pulses'.  It is not
- *  "0:0:0" as one might expect.  If we get a 0 for measures or for beats, we
+ *  "0:0:0" as one might expect.
+ *
+ *  If we get a 0 for measures or for beats, we
  *  treat them as if they were 1.  It is too easy for the user to mess up.
  *
  *  We should consider clamping the beats to the beat-width value as well.
  *
+ *  Example: Current time-signature = 3/16. Then qn_per_beat = 4/16 = 0.25.
+ *  For 1 measure and 3 beats, the pulses are p = 1 * 3 * 0.25 * PPQN. If PPQN
+ *  is 192, the pulses per beat are 0.25 * PPQN = 48.
+ *
  * \param measures
  *      Provides the current MIDI song time structure holding the
  *      measures, beats, and divisions values for the time of interest.
+ *      Note that it does not employ beat-width. It is a time position.
  *
  * \param seqparms
- *      This small structure provides the beats/measure, beat-width, and PPQN
- *      that hold for the sequence involved in this calculation.
+ *      This small structure provides the beats/minute, beats/measure,
+ *      beat-width, and PPQN that hold for the sequence in this calculation.
  *
  * \return
  *      Returns the absolute pulses that mark this duration.  If the
@@ -564,29 +575,29 @@ measurestring_to_pulses
 midipulse
 midi_measures_to_pulses
 (
-    const midi_measures & measures,
-    const midi_timing & seqparms
+    const midi_measures & measures,                 /* B:B:T time value     */
+    const midi_timing & seqparms                    /* ppqn and beat-width  */
 )
 {
     midipulse result = c_null_midipulse;
     int m = measures.measures() - 1;                /* true measure count   */
-    int b = measures.beats() - 1;
-    if (m < 0)
-        m = 0;
+    int b = measures.beats() - 1;                   /* true beats count     */
+    if (m >= 0 && b >= 0)
+    {
+        double ppq = double(seqparms.ppqn());
+        double beats_per_bar = double(seqparms.beats_per_measure());
+        double beat_width = double(seqparms.beat_width());
+        double qn_per_beat = double(c_qn_beats) / beat_width;        /* 4/W */
+        double pulses_per_beat = qn_per_beat * ppq;
+        double pulses_per_meas = m * pulses_per_beat * beats_per_bar;
+        double pulses = m * pulses_per_meas;
+        pulses += b * pulses_per_beat;
+        result = midipulse(pulses);
+        result += measures.divisions();
+    }
+    else
+        result = 0;
 
-    if (b < 0)
-        b = 0;
-
-    double qn_per_beat = double(c_qn_beats) / seqparms.beat_width();
-    result = 0;
-    if (m > 0)
-        result += int(m * seqparms.beats_per_measure() * qn_per_beat);
-
-    if (b > 0)
-        result += int(b * qn_per_beat);
-
-    result *= seqparms.ppqn();
-    result += measures.divisions();
     return result;
 }
 
@@ -625,10 +636,10 @@ timestring_to_pulses (const std::string & timestring, midibpm bpm, int ppqn)
              * seconds is padded with zeroes on the left or right to 6 digits.
              */
 
-            int hours = satoi(sh);
-            int minutes = satoi(sm);
-            int seconds = satoi(ss);
-            double secfraction = atof(us.c_str());
+            int hours = strtoi(sh);
+            int minutes = strtoi(sm);
+            int seconds = strtoi(ss);
+            double secfraction = string_to_double(us, 0, 3); /* atof(us)    */
             long sec = ((hours * 60) + minutes) * 60 + seconds;
             long microseconds = 1000000 * sec + long(1000000.0 * secfraction);
             double pulses = delta_time_us_to_ticks(microseconds, bpm, ppqn);
@@ -642,8 +653,8 @@ timestring_to_pulses (const std::string & timestring, midibpm bpm, int ppqn)
  *  Converts a time string to pulses.  First, the type of string is deduced by
  *  the characters in the string.  If the string contains two colons and a
  *  decimal point, it is assumed to be a time-string ("hh:mm:ss.frac"); in
- *  addition ss will have to be less than 60. ???  Actually, now we only care if
- *  four numbers are provided.
+ *  addition ss will have to be less than 60. ???  Actually, now we only care
+ *  if four numbers are provided.
  *
  *  If the string just contains two colons, then it is assumed to be a
  *  measure-string ("measures:beats:divisions").
@@ -651,12 +662,18 @@ timestring_to_pulses (const std::string & timestring, midibpm bpm, int ppqn)
  *  If it has none of the above, it is assumed to be pulses.  Testing is not
  *  rigorous.
  *
+ * measurestring_to_pulses(): Converts "B:B:T" values to pulses.
+ * timestring_to_pulses(): Converts "H:M:S.f" values to pulses.
+ *
  * \param s
  *      Provides the string to convert to pulses.
  *
  * \param mt
  *      Provides the structure needed to provide BPM and other values needed
  *      for some of the conversions done by this function.
+ *
+ * \param timestring
+ *      If true, interpret the string as an "H:M:S" string.
  *
  * \return
  *      Returns the string as converted to MIDI pulses (or divisions, clocks,
@@ -667,25 +684,24 @@ midipulse
 string_to_pulses
 (
     const std::string & s,
-    const midi_timing & mt
+    const midi_timing & mt,
+    bool timestring
 )
 {
     midipulse result = 0;
-    std::string s1;
-    std::string s2;
-    std::string s3;
-    std::string fraction;
-    int count = extract_timing_numbers(s, s1, s2, s3, fraction);
-    if (count > 1)
+    tokenization tokens;
+    int count = tokenize_string(s, tokens);     /* function in this module  */
+    if (count == 1)                             /* no colons in it          */
     {
-        if (fraction.empty() || satoi(s3) >= 60)     // why???
-            result = measurestring_to_pulses(s, mt);
-        else
-            result = timestring_to_pulses(s, mt.beats_per_minute(), mt.ppqn());
+        result = midipulse(string_to_long(s));
     }
-    else
-        result = atol(s.c_str());
-
+    else if (count > 1)
+    {
+        if (timestring)
+            result = timestring_to_pulses(s, mt.beats_per_minute(), mt.ppqn());
+        else
+            result = measurestring_to_pulses(s, mt);
+    }
     return result;
 }
 

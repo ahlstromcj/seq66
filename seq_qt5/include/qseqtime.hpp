@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-04-22
+ * \updates       2023-06-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -82,6 +82,13 @@ protected:
     virtual void keyPressEvent (QKeyEvent *) override;
     virtual QSize sizeHint() const override;
     virtual void wheelEvent (QWheelEvent *) override;
+
+private:
+
+#if defined SEQ66_TIME_SIG_DRAWING
+    void draw_grid (QPainter & painter, const QRect & r);
+    void draw_markers (QPainter & painter);
+#endif
 
 private:
 

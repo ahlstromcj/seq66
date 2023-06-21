@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-06-15
+2019-04-13 to 2023-06-21
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
@@ -35,6 +35,10 @@ UI:
         -   Plan for a "SeqSpec" tab?  Worth it?
         -   Add option to start JACK if --jack?
         -   Make sure port-issues detection works with control/display ports.
+        -   In the event editor dump button, we do not need to prompt
+            if the file already exists, since it gets appended to.
+        -   Do we need an option to auto-store? Easy to forget to push that
+            button.
 
 Mutes:
 
@@ -338,7 +342,12 @@ ISSUES:
             can we enforce updating only when both change?
         -   Retest adding time-sigs.
         -   How can we draw vertical bars to reflect time-sig event
-            changes?
+            changes? In progress.
+        -   Nagging issues:
+            -   Adding time-sig does work, but needs hard-core verification.
+            -   When going from 3/8 to 3/16, the measure numbers need
+                to be adjust.  For example, they go 1, 2, 3, 4, and then
+                9, 10, 11... at the point where the time-sig changes.
 
 PATTERNS:
 

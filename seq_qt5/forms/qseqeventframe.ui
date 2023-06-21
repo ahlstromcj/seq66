@@ -282,7 +282,7 @@ must be done to preserve the changes.  Then the file must
 be saved to make the changes permanent.  Tricky, but safer.</string>
       </property>
       <property name="text">
-       <string>Sa&amp;ve</string>
+       <string>Store</string>
       </property>
      </widget>
     </item>
@@ -372,7 +372,6 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -475,7 +474,6 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QLabel" name="channel_label">
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -500,7 +498,6 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -550,7 +547,6 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -610,7 +606,6 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -652,7 +647,6 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -696,7 +690,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
      <x>460</x>
      <y>4</y>
      <width>337</width>
-     <height>27</height>
+     <height>32</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
@@ -725,7 +719,6 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       </property>
       <property name="font">
        <font>
-        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>

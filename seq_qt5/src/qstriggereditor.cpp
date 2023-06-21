@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-09
+ * \updates       2023-06-21
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -171,15 +171,29 @@ qstriggereditor::wheelEvent (QWheelEvent * qwep)
 #endif
 }
 
+#if defined SEQ66_TIME_SIG_DRAWING
+void
+qstriggereditor::paintEvent (QPaintEvent * qpep)
+{
+    QRect r = qpep->rect();
+#else
 void
 qstriggereditor::paintEvent (QPaintEvent *)
 {
+#endif
     QPainter painter(this);
     QBrush brush(Qt::darkGray, Qt::SolidPattern);
     QPen pen(Qt::black);
+    pen.setStyle(Qt::SolidLine);
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.drawRect(1, 0, width(), height() - 1);  /* draw the background  */
+
+#if defined SEQ66_TIME_SIG_DRAWING
+
+    draw_grid(painter, r);
+
+#else
 
     int bpbar = track().get_beats_per_bar();
     int bwidth = track().get_beat_width();
@@ -188,9 +202,6 @@ qstriggereditor::paintEvent (QPaintEvent *)
     midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
     midipulse starttick = scroll_offset() - (scroll_offset() % ticks_per_step);
     midipulse endtick = pix_to_tix(width());
-    if ((bwidth % 2) != 0)
-        ticks_per_step = zoom();                            /* EXPERIMENTAL */
-
     for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
     {
         int x_offset = xoffset(tick) - scroll_offset_x() + m_x_offset;
@@ -226,9 +237,19 @@ qstriggereditor::paintEvent (QPaintEvent *)
         painter.drawLine(x_offset, 1, x_offset, qc_eventarea_y);
     }
 
+#endif
+
     /*
      * Draw boxes from sequence.
      */
+
+#if defined SEQ66_TIME_SIG_DRAWING
+
+    midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
+    midipulse starttick = scroll_offset() - (scroll_offset() % ticks_per_step);
+    midipulse endtick = pix_to_tix(width());
+
+#endif
 
     pen.setColor(fore_color());                     /* Qt::black            */
     pen.setStyle(Qt::SolidLine);
@@ -290,6 +311,70 @@ qstriggereditor::paintEvent (QPaintEvent *)
         old_rect().width(selection().width());
     }
 }
+
+#if defined SEQ66_TIME_SIG_DRAWING
+
+void
+qstriggereditor::draw_grid (QPainter & painter, const QRect & r)
+{
+    QBrush brush(Qt::lightGray, Qt::SolidPattern);
+    QPen pen(Qt::black);
+    int count = track().time_signature_count();
+    for (int tscount = 0; tscount < count; ++tscount)
+    {
+        const sequence::timesig & ts = track().get_time_signature(tscount);
+        if (ts.sig_beat_width == 0)
+            break;
+
+        int bpbar = ts.sig_beats_per_bar;
+        int bwidth = ts.sig_beat_width;
+        midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
+        midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
+        midipulse ticks_per_bar = bpbar * ticks_per_beat;
+        midipulse starttick = ts.sig_start_tick;
+        midipulse endtick = ts.sig_end_tick != 0 ?
+            ts.sig_end_tick : pix_to_tix(r.x() + r.width());
+
+        pen.setColor(Qt::black);
+        painter.setPen(pen);
+        for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
+        {
+            int x_offset = xoffset(tick) - scroll_offset_x() + m_x_offset;
+            pen.setWidth(1);
+            if (tick % ticks_per_bar == 0)      /* solid line on every beat */
+            {
+                pen.setColor(fore_color());     /* Qt::black                */
+                pen.setStyle(Qt::SolidLine);
+                pen.setWidth(2);                /* two pixels               */
+            }
+            else if (tick % ticks_per_beat == 0)
+            {
+                pen.setColor(beat_color());     /* Qt::black                */
+                pen.setStyle(Qt::SolidLine);
+            }
+            else
+            {
+                pen.setColor(step_color());     /* Qt::lightGray            */
+                pen.setStyle(Qt::DashLine);
+                int tick_snap = tick - (tick % snap());
+                if (tick == tick_snap)
+                {
+                    pen.setStyle(Qt::SolidLine);
+                    pen.setColor(Qt::lightGray);
+                }
+                else
+                {
+                    pen.setStyle(Qt::DashLine);
+                    pen.setColor(Qt::lightGray);
+                }
+            }
+            painter.setPen(pen);
+            painter.drawLine(x_offset, 1, x_offset, qc_eventarea_y);
+        }
+    }
+}
+
+#endif
 
 void
 qstriggereditor::resizeEvent (QResizeEvent * qrep)

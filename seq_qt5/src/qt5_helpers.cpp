@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-05-23
+ * \updates       2023-06-21
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -566,6 +566,22 @@ show_text_file_dialog (QWidget * parent, std::string & selectedfile)
 
 /**
  *  Meant to handle many more situations.
+ *
+ * QString QFileDialog::getSaveFileName
+ * (
+ *     QWidget * parent = nullptr,
+ *     const QString & caption = QString(),
+ *     const QString & dir = QString(),
+ *     const QString & filter = QString(),
+ *     QString * selectedFilter = nullptr,
+ *     QFileDialog::Options options = Options()
+ * )
+ *
+ * Useful QFileDialog::Options:
+ *
+ * QFileDialog::ShowDirsOnly
+ * QFileDialog::DontConfirmOverwrite
+ *
  */
 
 bool
@@ -577,7 +593,8 @@ show_file_dialog
     const std::string & filterlist,
     bool saving,
     bool forceconfig,
-    const std::string & extension
+    const std::string & extension,
+    bool promptoverwrite
 )
 {
     bool result = false;
@@ -618,12 +635,29 @@ show_file_dialog
     if (f.empty())
         f = "All files (*)";
 
+    QString file;
     QString folder = qt(d);
     QString caption = qt(p);
     QString filters = qt(f);
-    QString file = saving ?
-        QFileDialog::getSaveFileName(parent, caption, folder, filters) :
-        QFileDialog::getOpenFileName(parent, caption, folder, filters) ;
+    QString * selfilter = nullptr;
+    QFileDialog::Options options;   /* what's the default? Options(); */
+    if (saving)
+    {
+        if (! promptoverwrite)
+            options = QFileDialog::DontConfirmOverwrite;
+
+        file = QFileDialog::getSaveFileName
+        (
+            parent, caption, folder, filters, selfilter, options
+        );
+    }
+    else
+    {
+        file = QFileDialog::getOpenFileName
+        (
+            parent, caption, folder, filters, selfilter, options
+        );
+    }
 
     result = ! file.isEmpty();
     if (result)

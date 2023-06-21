@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-06-18
+ * \updates       2023-06-19
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1571,6 +1571,9 @@ qseqeditframe64::log_timesig (bool islogbutton)
     bool result = track().add_time_signature(tick, bpb, bw);
     if (result)
     {
+#if defined SEQ66_TIME_SIG_DRAWING
+        (void) track().analyze_time_signatures();
+#endif
         set_data_type(EVENT_META_TIME_SIGNATURE);
         set_log_timesig_text(bpb, bw);
         set_log_timesig_status(false);
@@ -1893,6 +1896,9 @@ qseqeditframe64::detect_time_signature ()
     (
         tstamp, n, d, 0, track().snap() / 2
     );
+#if defined SEQ66_TIME_SIG_DRAWING
+    (void) track().analyze_time_signatures();       /* detect some or none  */
+#endif
     if (result)
     {
         set_beats_per_bar(n, qbase::status::startup);

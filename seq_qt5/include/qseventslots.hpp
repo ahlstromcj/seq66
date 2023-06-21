@@ -242,19 +242,14 @@ public:
         return m_current_event;
     }
 
-    int event_count () const
-    {
-        return m_event_count;
-    }
-
     bool empty () const
     {
-        return m_event_count == 0;
+        return m_event_container.empty();   /* m_event_count  == 0  */
     }
 
     int count () const
     {
-        return m_event_count;
+        return m_event_container.count();   /* m_event_count        */
     }
 
     /**

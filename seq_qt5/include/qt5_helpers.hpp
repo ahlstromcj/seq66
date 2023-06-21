@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-05-23
+ * \updates       2023-06-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -129,7 +129,8 @@ extern bool show_file_dialog
     const std::string & filterlist = "",
     bool saving = false,
     bool forceconfig = false,
-    const std::string & extension = ""
+    const std::string & extension = "",
+    bool promptoverwrite = true
 );
 
 }               // namespace seq66

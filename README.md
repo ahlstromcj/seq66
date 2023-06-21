@@ -1,4 +1,4 @@
-# README for Seq66 0.99.6 2023-06-18
+# README for Seq66 0.99.6 2023-06-21
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -115,6 +115,7 @@ Windows, and using a conventional source tarball.
                 event pane vertical lines as time-signature changes.
             *   Fixed event filtering in the event (qstriggereditor) pane.
             *   Fixed time-signature editing in the event editor.
+            *   Fixed B:B:T to pulses calculation.
         *   Enhanced port-mapping to prompt the user about issues and
             allow for an immediate remap-and-restart. Lots of fixes!
         *   Added 'o' keystroke to seqroll to toggle recording ('r' already
@@ -123,6 +124,7 @@ Windows, and using a conventional source tarball.
         *   Enhanced the Edit / Preferences dialog.
         *   At first start, a log-file is now automatically created. If it
             gets larger than a megabyte, then it is deleted to start over.
+        *   Fixed bug writing pattern-dump files from event editor.
     *   Version 0.99.5:
         *   Greatly enhanced the event editor tab and the events that can
             be view and modified.

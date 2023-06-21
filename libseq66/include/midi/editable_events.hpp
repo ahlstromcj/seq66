@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-04
- * \updates       2021-08-19
+ * \updates       2023-06-20
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -221,6 +221,11 @@ public:
     int count () const
     {
         return int(m_events.size());
+    }
+
+    bool empty () const
+    {
+        return m_events.empty();
     }
 
     midipulse get_length () const;

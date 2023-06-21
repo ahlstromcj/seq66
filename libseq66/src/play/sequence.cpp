@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-06-17
+ * \updates       2023-06-19
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -141,6 +141,9 @@ sequence::sequence (int ppqn) :
     m_parent                    (nullptr),      /* set when seq installed   */
     m_events                    (),
     m_triggers                  (*this),
+#if defined SEQ66_TIME_SIG_DRAWING
+    m_time_signatures           (),
+#endif
     m_events_undo_hold          (),
     m_have_undo                 (false),
     m_have_redo                 (false),
@@ -559,6 +562,88 @@ sequence::is_playable () const
     return m_events.is_playable();
 }
 
+#if defined SEQ66_TIME_SIG_DRAWING
+
+/*-------------------------------------------------------------------------
+ * Experimental time-signature functions
+ *-------------------------------------------------------------------------*/
+
+/**
+ *  Here, we count the time-signatures, if any, in the pattern.
+ *
+ *  TODO: What if there is no beginning time signature, but ones deeper into
+ *        the pattern?
+ */
+
+bool
+sequence::analyze_time_signatures ()
+{
+    bool result = false;
+    midipulse start = 0;
+    m_time_signatures.clear();
+    for (auto cev = cbegin(); ! cend(cev); ++cev)
+    {
+        if (get_next_meta_match(EVENT_META_TIME_SIGNATURE, cev, start))
+        {
+            timesig t;
+            t.sig_start_tick = cev->timestamp();
+            t.sig_end_tick = 0;
+            t.sig_beats_per_bar = int(cev->get_sysex(0));
+            t.sig_beat_width = beat_power_of_2(int(cev->get_sysex(1)));
+            m_time_signatures.push_back(t);
+            ++start;
+            result = true;
+        }
+        else
+            break;
+    }
+    if (result)
+    {
+        size_t sz = m_time_signatures.size();
+        if (sz > 1)
+        {
+            size_t count = 0;
+            for (auto & t : m_time_signatures)
+            {
+                if (count < (sz - 1))
+                    t.sig_end_tick = m_time_signatures[count + 1].sig_start_tick;
+
+                ++count;
+            }
+        }
+    }
+    else
+    {
+        timesig t;
+        t.sig_start_tick = t.sig_end_tick = 0;
+        t.sig_beats_per_bar = m_time_beats_per_measure;
+        t.sig_beat_width = m_time_beat_width;
+        m_time_signatures.push_back(t);
+    }
+    return result;
+}
+
+const sequence::timesig &
+sequence::get_time_signature (size_t index)
+{
+    static timesig s_ts_dummy;      /* { 0, 0, 0, 0 }; */
+    static bool s_uninitialized = true;
+    if (s_uninitialized)
+    {
+        s_ts_dummy.sig_start_tick = s_ts_dummy.sig_end_tick = 0;
+        s_ts_dummy.sig_beats_per_bar = s_ts_dummy.sig_beat_width = 0;
+        s_uninitialized = false;
+    }
+    return index < m_time_signatures.size() ?
+        m_time_signatures[index] : s_ts_dummy ;
+}
+
+#endif  // defined SEQ66_TIME_SIG_DRAWING
+
+/*-------------------------------------------------------------------------
+ * Undo/redo functions
+ *-------------------------------------------------------------------------*/
+
 /**
  *  Pushes the event-list into the undo-list or the upcoming undo-hold-list.
  *
@@ -793,6 +878,10 @@ sequence::set_time_signature (int bpb, int bw)
     int m = get_measures();
     m_measures = m;
 }
+
+#if defined SEQ66_TIME_SIG_DRAWING
+
+#endif  // defined SEQ66_TIME_SIG_DRAWING
 
 /**
  *  Calculates and sets u = 4BP/W, where u is m_unit_measure, B is the

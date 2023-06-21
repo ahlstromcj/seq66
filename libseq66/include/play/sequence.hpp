@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-06-17
+ * \updates       2023-06-21
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -50,6 +50,7 @@
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
 
 #define SEQ66_METRO_COUNT_IN_ENABLED    /* EXPERIMENTAL, seems to work      */
+#undef  SEQ66_TIME_SIG_DRAWING          /* EXPERIMENTAL, almost  ready      */
 
 /**
  *  Provides an integer value for color that matches PaletteColor::NONE.  That
@@ -279,6 +280,32 @@ private:
 
     using eventstack = std::stack<eventlist>;
 
+#if defined SEQ66_TIME_SIG_DRAWING
+
+public:
+
+    /**
+     *  FUTURE
+     *  Holds partial information about a time signature.
+     */
+
+    using timesig = struct
+    {
+        midipulse sig_start_tick;   /* The pulse where time-sig was placed. */
+        midipulse sig_end_tick;     /* Next time-sig start (0 == end).      */
+        int sig_beats_per_bar;      /* The beats-per-bar in the time-sig.   */
+        int sig_beat_width;         /* The size of each beat in the bar.    */
+    };
+
+    /**
+     *  A list of time-signatures, which assumes that only the beats/bar and
+     *  beat width vary.
+     */
+
+    using timesig_list = std::vector<timesig>;
+
+#endif  // defined SEQ66_TIME_SIG_DRAWING
+
 private:
 
     /**
@@ -311,6 +338,8 @@ private:
 
     static int sm_fingerprint_size;
 
+private:
+
     /**
      *  For pause support, we need a way for the sequence to find out if JACK
      *  transport is active.  We can use the rcsettings flag(s), but JACK
@@ -337,6 +366,18 @@ private:
      */
 
     triggers m_triggers;
+
+#if defined SEQ66_TIME_SIG_DRAWING
+
+    /**
+     *  Holds a list of time-signatures in the pattern, for use when drawing
+     *  the vertical grid-lines in the pattern-editor time, piano roll, and
+     *  event (qstriggereditor) panes.
+     */
+
+    timesig_list m_time_signatures;
+
+#endif  // defined SEQ66_TIME_SIG_DRAWING
 
     /**
      *  Provides a list of event actions to undo for the Stazed LFO and
@@ -1017,6 +1058,19 @@ public:
     {
         return m_triggers.get_trigger_paste_tick();
     }
+
+#if defined SEQ66_TIME_SIG_DRAWING
+
+    bool analyze_time_signatures ();
+
+    int time_signature_count () const
+    {
+        return int(m_time_signatures.size());
+    }
+
+    const timesig & get_time_signature (size_t index);
+
+#endif  // defined SEQ66_TIME_SIG_DRAWING
 
     bool is_recorder_seq () const
     {

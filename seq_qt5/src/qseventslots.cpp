@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-06-16
+ * \updates       2023-06-20
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -714,8 +714,8 @@ qseventslots::delete_current_event ()
         if (ok)
         {
             m_parent.set_dirty();
-            result = true;                  /* an event was deleted */
-            m_event_count = newcount;       // result = newcount > 0;
+            m_event_count = newcount;
+            result = true;                          /* an event was deleted */
             if (newcount > 0)
                 select_event(m_current_index);
             else

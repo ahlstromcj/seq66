@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2022-10-10
+ * \updates       2023-06-20
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -215,7 +215,8 @@ extern midipulse timestring_to_pulses
 extern midipulse string_to_pulses
 (
     const std::string & s,
-    const midi_timing & mt
+    const midi_timing & mt,
+    bool timestring = false
 );
 extern int randomize (int range);
 extern bool is_power_of_2 (int value);

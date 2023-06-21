@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-24
+ * \updates       2023-06-21
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -468,19 +468,34 @@ qseqroll::call_draw_notes (QPainter & painter, const QRect & view)
 /**
  *  First, we clear the rectangle before drawing.  At this point, we could
  *  choose black instead white for "inverse" mode.
+ *
+ *  The brush. The following really looks good only with the default
+ *  "SolidPattern" style:
+ *
+ *          QBrush brush(back_color(), blank_brush().style());
+ *
+ *  Drawing the horizontal grid lines depends on the vertical zoom.
+ *  Draw horizontal grid lines differently depending on editing mode.
+ *  Set line color dependent on the note row we're on.
+ *
+ *  Drawing vertical grid lines.  Incrementing by ticks_per_step only works
+ *  for PPQN of certain multiples or for certain time offsets.  Therefore, need
+ *  to check every darn tick!!!! No, that causes aliasing in drawing horizontal
+ *  lines. :-D
+ *
+ *          for (int tick = starttick; tick < endtick; ++tick)
+ *
+ *  The ticks_per_step value needs to be figured out.  Why 6 * zoom()?  6 is
+ *  the number of pixels in the smallest divisions in the default seqroll
+ *  background.  This code needs to be put into a function.
+ *
+ *  For odd beat widths, use 1 as ticks_per_substep.
  */
 
 void
 qseqroll::draw_grid (QPainter & painter, const QRect & r)
 {
     int octkey = c_octave_size - m_key;             /* used three times     */
-
-    /*
-     * This really looks good only with the default "SolidPattern" style.
-     *
-     * QBrush brush(back_color(), blank_brush().style());
-     */
-
     QBrush brush(back_color());                     /* brush(Qt::NoBrush)   */
     QPen pen(grey_color());                         /* pen(Qt::lightGray)   */
     pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
@@ -499,12 +514,6 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     {
         int remkeys = c_notes_count - key;              /* remaining keys   */
         int modkey = remkeys - scroll_offset_v() + octkey;
-
-        /*
-         * Draw horizontal grid lines differently depending on editing mode.
-         * Set line colour dependent on the note row we're on.
-         */
-
         int y = key * unit_height() + 2;
         if ((modkey % c_octave_size) == 0)
             pen.setColor(fore_color());
@@ -525,16 +534,56 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         }
     }
 
-    /*
-     * Vertical (time) lines.
-     *
-     * The ticks_per_step value needs to be figured out.  Why 6 * zoom()?  6
-     * is the number of pixels in the smallest divisions in the default
-     * seqroll background.  This code needs to be put into a function.
-     *
-     * For odd beat widths, use 1 as ticks_per_substep.
-     */
+#if defined SEQ66_TIME_SIG_DRAWING
+    int count = track().time_signature_count();
+    for (int tscount = 0; tscount < count; ++tscount)
+    {
+        const sequence::timesig & ts = track().get_time_signature(tscount);
+        if (ts.sig_beat_width == 0)
+            break;
 
+        int bpbar = ts.sig_beats_per_bar;
+        int bwidth = ts.sig_beat_width;
+        midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
+        midipulse ticks_per_bar = bpbar * ticks_per_beat;
+        midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
+        midipulse starttick = ts.sig_start_tick;
+        midipulse endtick = ts.sig_end_tick != 0 ?
+            ts.sig_end_tick : pix_to_tix(r.x() + r.width());
+
+        starttick -= starttick % ticks_per_step;
+        if ((bwidth % 2) != 0)
+            ticks_per_step = zoom();
+
+        for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
+        {
+            int x_offset = xoffset(tick) - scroll_offset_x();
+            int penwidth = 1;
+            enum Qt::PenStyle penstyle = Qt::SolidLine;
+            if (tick % ticks_per_bar == 0)      /* solid line on every bar  */
+            {
+                pen.setColor(fore_color());     /* Qt::black                */
+                penwidth = 2;
+            }
+            else if (tick % ticks_per_beat == 0)    /* light on every beat  */
+            {
+                pen.setColor(beat_color());
+                penwidth = 1;
+            }
+            else
+            {
+                pen.setColor(step_color());         /* faint step lines     */
+                int tick_snap = tick - (tick % grid_snap());
+                if (tick != tick_snap)
+                    penstyle = Qt::DotLine;
+            }
+            pen.setWidth(penwidth);
+            pen.setStyle(penstyle);
+            painter.setPen(pen);
+            painter.drawLine(x_offset, 0, x_offset, total_height());
+        }
+    }
+#else
     int bpbar = track().get_beats_per_bar();
     int bwidth = track().get_beat_width();
     midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
@@ -545,15 +594,6 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     starttick -= starttick % ticks_per_step;
     if ((bwidth % 2) != 0)
         ticks_per_step = zoom();                            /* EXPERIMENTAL */
-
-    /*
-     * Draw vertical grid lines.  Incrementing by ticks_per_step only works for
-     * PPQN of certain multiples or for certain time offsets.  Therefore, need
-     * to check every darn tick!!!! No, that causes aliasing in drawing
-     * horizontal lines. :-D
-     *
-     * for (int tick = starttick; tick < endtick; ++tick)
-     */
 
     for (int tick = starttick; tick < endtick; tick += ticks_per_step)
     {
@@ -582,6 +622,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         painter.setPen(pen);
         painter.drawLine(x_offset, 0, x_offset, total_height());
     }
+#endif  // defined SEQ66_TIME_SIG_DRAWING
 }
 
 /**

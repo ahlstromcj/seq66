@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-05-05
+ * \updates       2023-06-21
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -286,15 +286,15 @@ qseqeventframe::qseqeventframe
     ui->button_modify->setEnabled(false);
 
     /*
-     * Save button.
+     * Save button, now labelled less misleadingly as "Store".
      */
 
+    ui->button_save->setEnabled(false);
     connect
     (
         ui->button_save, SIGNAL(clicked(bool)),
         this, SLOT(slot_save())
     );
-    ui->button_save->setEnabled(false);
 
     /*
      * Clear button.
@@ -323,15 +323,6 @@ qseqeventframe::qseqeventframe
      */
 
     initialize_table();
-
-    /*
-     *  The event editor is now in a tab, and it is not quite as critical as
-     *  the pattern editor.  The following setting causes the "File / New"
-     *  operation to seem to mysteriously fail.
-     *
-     *      track().seq_in_edit(true);
-     */
-
     track().set_dirty_mp();
     set_dirty(false);
     cb_perf().enregister(this);
@@ -580,16 +571,19 @@ qseqeventframe::slot_pulse_time_state (int state)
  *  How can we easily detect an actual meta-text change???
  *
  *      QString qtex = ui->plainTextEdit->toPlainText();
+ *
+ *  There's actually nothing to do here. And the pattern is not
+ *  dirty until the Modify or Insert button is pressed.
  */
 
 void
 qseqeventframe::slot_meta_text_change ()
 {
-    set_dirty();
-
     /*
      * We let the user enter any amount of text here.  We might
      * have a ton of SysEx bytes, for example.
+     *
+     *  set_dirty();
      *
      *  std::string text = string_to_midi_bytes(qtex.toStdString());
      *  size_t remainder = c_meta_text_limit - text.size();
@@ -672,7 +666,7 @@ qseqeventframe::initialize_table ()
     bool result = false;
     if (m_eventslots)
     {
-        int rows = m_eventslots->event_count();
+        int rows = m_eventslots->count();
         if (rows > 0)
         {
             ui->eventTableWidget->clearContents();
@@ -717,7 +711,8 @@ qseqeventframe::set_seq_title (const std::string & title)
 }
 
 /**
- *  Handles edits of the sequence title.
+ *  Handles edits of the sequence title. This immediately dirties the
+ *  pattern.
  */
 
 void
@@ -1090,7 +1085,7 @@ qseqeventframe::get_lengths ()
 {
     std::string meas_events = std::to_string(m_eventslots->calculate_measures());
     meas_events += " measures, ";
-    meas_events += std::to_string(m_eventslots->event_count());
+    meas_events += std::to_string(m_eventslots->count());
     meas_events += " events";
     return meas_events;
 }
@@ -1269,13 +1264,15 @@ qseqeventframe::slot_modify ()
         if (reload)
             initialize_table();             /* this is very stilted, Milton */
 
-        set_dirty();
+        set_dirty(reload);
     }
     set_selection_multi(false);
 }
 
 /**
- *  Handles saving the edited data back to the original sequence.
+ *  Handles saving the edited data back to the original sequence, now called
+ *  "Storing"..
+ *
  *  The event list in the original sequence is cleared, and the editable
  *  events are converted to plain events, and added to the container, one by
  *  one.
@@ -1312,14 +1309,11 @@ qseqeventframe::slot_clear ()
 {
     if (m_eventslots)
     {
+        bool hasevents = ! m_eventslots->empty();
         m_eventslots->clear();
         initialize_table();
-
-        /*
-         * Not sure we need this here.
-         *
-         * set_dirty();
-         */
+        if (hasevents)
+            set_dirty();
     }
     set_selection_multi(false);
 }
@@ -1336,7 +1330,7 @@ qseqeventframe::filename_prompt
     (
         this, result, prompt,
         "Text files (*.text *.txt);;All files (*)", SavingFile, NormalFile,
-        ".text"
+        ".text", false
     );
     if (ok)
     {
@@ -1381,7 +1375,7 @@ qseqeventframe::slot_dump ()
                 }
                 else
                 {
-                    if (! file_write_string(fspec, dump))
+                    if (! file_write_string(filename, dump))
                         msgprintf(msglevel::status, "%s", dump.c_str());
                 }
             }

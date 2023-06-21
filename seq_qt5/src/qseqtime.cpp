@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-15
+ * \updates       2023-06-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -106,8 +106,9 @@ qseqtime::conditional_update ()
  */
 
 void
-qseqtime::paintEvent (QPaintEvent *)
+qseqtime::paintEvent (QPaintEvent * qpep)
 {
+    QRect r = qpep->rect();
     QPainter painter(this);
     QBrush brush(Qt::lightGray, Qt::SolidPattern);
     QPen pen(Qt::black);
@@ -126,20 +127,27 @@ qseqtime::paintEvent (QPaintEvent *)
      * seqroll background.  This code needs to be put into a function.
      *
      * EXPERIMENTAL.  For odd beat widths, use 1 as ticks_per_substep.
+     * Actually, odd beats are not allowed in MIDI.
      */
+
+#if defined SEQ66_TIME_SIG_DRAWING
+
+    draw_grid(painter, r);
+    draw_markers(painter);
+}
+
+#else
 
     int bpbar = track().get_beats_per_bar();
     int bwidth = track().get_beat_width();
+    int measures_per_line = zoom() * bwidth * bpbar * 2;
+    int sizeheight = size().height();
+    midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
+    midipulse ticks_per_four = ticks_per_step * 4;
     midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
     midipulse ticks_per_bar = bpbar * ticks_per_beat;
-    int measures_per_line = zoom() * bwidth * bpbar * 2;
-    int ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
-    int ticks_per_four = ticks_per_step * 4;
     midipulse starttick = scroll_offset() - (scroll_offset() % ticks_per_step);
     midipulse endtick = pix_to_tix(width()) + scroll_offset();
-    if ((bwidth % 2) != 0)
-        ticks_per_step = zoom();                            /* EXPERIMENTAL */
-
     if (measures_per_line <= 0)
         measures_per_line = 1;
 
@@ -159,7 +167,7 @@ qseqtime::paintEvent (QPaintEvent *)
             pen.setWidth(2);                    // two pixels
             pen.setStyle(Qt::SolidLine);
             painter.setPen(pen);
-            painter.drawLine(x_offset, 0, x_offset, size().height());
+            painter.drawLine(x_offset, 0, x_offset, sizeheight);
             snprintf(bar, sizeof bar, "%ld", long(tick / ticks_per_bar + 1));
 
             QString qbar(bar);
@@ -170,14 +178,14 @@ qseqtime::paintEvent (QPaintEvent *)
             pen.setWidth(1);                    // back to one pixel
             pen.setStyle(Qt::SolidLine);
             painter.setPen(pen);
-            painter.drawLine(x_offset, 0, x_offset, size().height());
+            painter.drawLine(x_offset, 0, x_offset, sizeheight);
         }
         else if (tick % (ticks_per_four) == 0)
         {
             pen.setWidth(1);                    // back to one pixel
             pen.setStyle(Qt::DotLine);
             painter.setPen(pen);
-            painter.drawLine(x_offset, 0, x_offset, size().height());
+            painter.drawLine(x_offset, 0, x_offset, sizeheight);
         }
     }
 
@@ -232,6 +240,146 @@ qseqtime::paintEvent (QPaintEvent *)
         painter.drawText(right + 2, 18, "R");
     }
 }
+
+#endif
+
+#if defined SEQ66_TIME_SIG_DRAWING
+
+void
+qseqtime::draw_grid (QPainter & painter, const QRect & r)
+{
+    QBrush brush(Qt::lightGray, Qt::SolidPattern);
+    QPen pen(Qt::black);
+    int count = track().time_signature_count();
+    for (int tscount = 0; tscount < count; ++tscount)
+    {
+        const sequence::timesig & ts = track().get_time_signature(tscount);
+        if (ts.sig_beat_width == 0)
+            break;
+
+        int bpbar = ts.sig_beats_per_bar;
+        int bwidth = ts.sig_beat_width;
+        int measures_per_line = zoom() * bwidth * bpbar * 2;
+        int sizeheight = size().height();
+        midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
+        midipulse ticks_per_four = ticks_per_step * 4;
+        midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
+        midipulse ticks_per_bar = bpbar * ticks_per_beat;
+        midipulse starttick = ts.sig_start_tick;
+        midipulse endtick = ts.sig_end_tick != 0 ?
+            ts.sig_end_tick : pix_to_tix(r.x() + r.width());
+
+        if (measures_per_line <= 0)
+            measures_per_line = 1;
+
+        pen.setColor(Qt::black);
+        painter.setPen(pen);
+        for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
+        {
+            char bar[32];
+            int x_offset = xoffset(tick) - scroll_offset_x() + s_x_tick_fix;
+
+            /*
+             * Vertical line at each measure; number each measure.
+             */
+
+            if (tick % ticks_per_bar == 0)          /* thick solid line bar */
+            {
+                pen.setWidth(2);                    /* two pixels           */
+                pen.setStyle(Qt::SolidLine);
+                painter.setPen(pen);
+                painter.drawLine(x_offset, 0, x_offset, sizeheight);
+                snprintf(bar, sizeof bar, "%ld", long(tick / ticks_per_bar + 1));
+
+                QString qbar(bar);
+                painter.drawText(x_offset + 3, 10, qbar);
+            }
+            else if (tick % ticks_per_beat == 0)    /* light on every beat  */
+            {
+                pen.setWidth(1);                    /* back to one pixel    */
+                pen.setStyle(Qt::SolidLine);
+                painter.setPen(pen);
+                painter.drawLine(x_offset, 0, x_offset, sizeheight);
+            }
+            else if (tick % (ticks_per_four) == 0)
+            {
+                pen.setWidth(1);                    /* back to one pixel    */
+                pen.setStyle(Qt::SolidLine);
+                painter.setPen(pen);
+                painter.drawLine(x_offset, 0, x_offset, sizeheight);
+            }
+            else                                    /* new 2023-06-21       */
+            {
+                pen.setWidth(1);                    /* back to one pixel    */
+                pen.setStyle(Qt::DotLine);
+                painter.setPen(pen);
+                painter.drawLine(x_offset, 0, x_offset, sizeheight);
+//              int tick_snap = tick - (tick % grid_snap());
+//              if (tick != tick_snap)
+//                  penstyle = Qt::DotLine;
+            }
+        }
+    }
+}
+
+void
+qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
+{
+    int xoff_left = scroll_offset_x();
+    int xoff_right = scroll_offset_x() + width();
+    midipulse length = track().get_length();
+    int end = position_pixel(length) - s_end_fix;
+    int left = position_pixel(perf().get_left_tick()) + s_time_fix;
+    int right = position_pixel(perf().get_right_tick());
+    int now = position_pixel(perf().get_tick() % length) + s_o_fix;
+    QBrush brush(Qt::lightGray, Qt::SolidPattern);
+    QPen pen(Qt::black);
+    painter.setPen(pen);
+
+    /*
+     * Draw end of seq label, label background.
+     */
+
+    if (! perf().is_pattern_playing() && (now != left) && (now != right))
+    {
+        if (now >= xoff_left && now <= xoff_right)
+        {
+            pen.setColor(progress_color());
+            painter.setPen(pen);
+            painter.drawText(now, 18, "o");
+        }
+    }
+    pen.setColor(Qt::black);
+    brush.setColor(Qt::black);
+    brush.setStyle(Qt::SolidPattern);
+    painter.setBrush(brush);
+    painter.setPen(pen);
+    if (left >= xoff_left && left <= xoff_right)
+    {
+        painter.setBrush(brush);
+        painter.drawRect(left, 10, 8, 24);          // black background
+        pen.setColor(Qt::white);                    // white label text
+        painter.setPen(pen);
+        painter.drawText(left + 1, 18, "L");
+    }
+    pen.setColor(Qt::black);
+    painter.setPen(pen);
+    painter.drawRect(end, 10, 16, 24);              // black background
+    pen.setColor(Qt::white);                        // white label text
+    painter.setPen(pen);
+    painter.drawText(end + 1, 18, "END");
+    if (right >= xoff_left && right <= xoff_right)
+    {
+        pen.setColor(Qt::black);
+        painter.setBrush(brush);
+        painter.setPen(pen);
+        painter.drawRect(right, 10, 8, 24);         // black background
+        pen.setColor(Qt::white);                    // white label text
+        painter.setPen(pen);
+        painter.drawText(right + 2, 18, "R");
+    }
+}
+#endif
 
 void
 qseqtime::resizeEvent (QResizeEvent * qrep)
