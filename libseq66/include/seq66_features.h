@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-06-03
+ * \updates       2023-06-21
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -57,6 +57,19 @@
 #define STDERR_FILENO   2
 #endif
 #endif
+
+/**
+ *  For issue #111, adding provisional support for drawing multiple time
+ *  signatures in the pattern editor.  This macro enables a lot of code.
+ */
+
+#define  SEQ66_TIME_SIG_DRAWING         /* EXPERIMENTAL, almost  ready      */
+
+/**
+ *  Support the the metronome feature. Issue #98.
+ */
+
+#define SEQ66_METRO_COUNT_IN_ENABLED    /* EXPERIMENTAL, seems to work      */
 
 /**
  *  For issue #100, this macro enables using our new ring_buffer instead of

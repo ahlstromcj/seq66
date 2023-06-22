@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.99.5 and above
+INSTALL for Seq66 v. 0.99.6 and above
 Chris Ahlstrom
-2015-09-10 to 2023-05-10
+2015-09-10 to 2023-06-22
 
 Getting Seq66 requires building the code or going to "sequencer64-packages/seq66"
 on GitHub to get an installation package.  The bootstrap setup is primarily
@@ -385,6 +385,18 @@ MANUALLY-DEFINED MACROS IN CODE:
     experiment-happy people will normally want to change the define-state of
     these macros.  We have consolidated them into a single file,
     libseq66/include/seq66_features.h, to make them easier to find and edit.
+
+    SEQ66_TIME_SIG_DRAWING
+
+        For issue #111, adding provisional support for drawing multiple time
+        signatures in the pattern editor.  This macro enables a lot of code.
+        Experimental, and undoubtedly has loose ends to tie up. Undefine it
+        if it affects normal (no time-signature) usage.
+
+    SEQ66_METRO_COUNT_IN_ENABLED
+
+        Enables the experimental but working feature of recording while
+        counting in to the metronome.
 
     SEQ66_USE_METRONOME_FADE
 

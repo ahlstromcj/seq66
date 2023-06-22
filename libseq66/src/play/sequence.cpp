@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-06-19
+ * \updates       2023-06-22
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -569,10 +569,24 @@ sequence::is_playable () const
  *-------------------------------------------------------------------------*/
 
 /**
- *  Here, we count the time-signatures, if any, in the pattern.
+ *  Here, we count the time-signatures, if any, in the pattern.  If there
+ *  are not any, then we create one representing the default beats and beat
+ *  width and push it on the time-signatures stack.  Apart from this
+ *  possible default one, only actual existing time-signature events are saved
+ *  in the pattern.  This stack is used only in drawing in the panes of the
+ *  pattern editor. It is not saved with the pattern.
  *
- *  TODO: What if there is no beginning time signature, but ones deeper into
- *        the pattern?
+ *  What if there is no beginning time signature, but ones deeper into the
+ *  pattern? We detect this and add a default one at the beginning. It gets
+ *  tweaked later in the process unless it is the only one.
+ *
+ *  Note that this function assumes there are not two time-signature events
+ *  at the same timestamp.  If there are, one will be ignored. Unlikely to
+ *  be a big issue
+ *
+ * \return
+ *      Returns true if a true time-signature was found. If false, then
+ *      the only time-signature saved will be the default one.
  */
 
 bool
@@ -580,18 +594,25 @@ sequence::analyze_time_signatures ()
 {
     bool result = false;
     midipulse start = 0;
+    midipulse limit = snap() / 2;   /* allow some slop at the beginning    */
+    int count = 0;
     m_time_signatures.clear();
     for (auto cev = cbegin(); ! cend(cev); ++cev)
     {
         if (get_next_meta_match(EVENT_META_TIME_SIGNATURE, cev, start))
         {
-            timesig t;
-            t.sig_start_tick = cev->timestamp();
+            midipulse ts = cev->timestamp();
+            if (count == 0 && ts > limit)
+                push_default_time_signature();  /* ensure one at the start  */
+
+            timesig t;                          /* push a real time-sig     */
+            t.sig_start_tick = ts;
             t.sig_end_tick = 0;
             t.sig_beats_per_bar = int(cev->get_sysex(0));
             t.sig_beat_width = beat_power_of_2(int(cev->get_sysex(1)));
             m_time_signatures.push_back(t);
-            ++start;
+            start = ts + 1;                     /* better than ++start;     */
+            ++count;
             result = true;
         }
         else
@@ -613,14 +634,19 @@ sequence::analyze_time_signatures ()
         }
     }
     else
-    {
-        timesig t;
-        t.sig_start_tick = t.sig_end_tick = 0;
-        t.sig_beats_per_bar = m_time_beats_per_measure;
-        t.sig_beat_width = m_time_beat_width;
-        m_time_signatures.push_back(t);
-    }
+        push_default_time_signature();
+
     return result;
+}
+
+void
+sequence::push_default_time_signature ()
+{
+    timesig t;
+    t.sig_start_tick = t.sig_end_tick = 0;
+    t.sig_beats_per_bar = m_time_beats_per_measure;
+    t.sig_beat_width = m_time_beat_width;
+    m_time_signatures.push_back(t);
 }
 
 const sequence::timesig &
@@ -639,6 +665,45 @@ sequence::get_time_signature (size_t index)
 }
 
 #endif  // defined SEQ66_TIME_SIG_DRAWING
+
+int
+sequence::measure_number (midipulse p)
+{
+    double tick = double(p);
+    double B = double(m_time_beats_per_measure);
+    double W = double(m_time_beat_width);
+    double P = double(m_ppqn);
+    double m = 0.25 * tick * W / B / P;
+    int result = int(m) + 1;
+
+#if defined SEQ66_TIME_SIG_DRAWING
+    int count = time_signature_count();
+    if (count > 1)
+    {
+        for (int i = 1; i < count; ++i)
+        {
+            const timesig & current = get_time_signature(i);
+            midipulse p0 = current.sig_start_tick;
+            if (p >= p0)
+            {
+                midipulse p1 = current.sig_end_tick;
+                tick = double(p - current.sig_start_tick);
+                B = double(current.sig_beats_per_bar);
+                W = double(current.sig_beat_width);
+
+                double mnew = 0.25 * tick * W / B / P;
+                result += int(mnew);
+                if (p <= p1)
+                    break;
+            }
+            else
+                break;
+        }
+    }
+#endif
+
+    return result;
+}
 
 /*-------------------------------------------------------------------------
  * Undo/redo functions
@@ -3325,6 +3390,7 @@ sequence::add_time_signature (midipulse tick, int beats, int bw)
     bool result = beats > 0 && is_power_of_2(bw);
     if (result)
     {
+        m_events_undo.push(m_events);               /* push_undo(), no lock */
         event e (tick, EVENT_MIDI_META);
         midibyte bt[4];
         bw = beat_log2(bw);                                 /* log2(bw)     */

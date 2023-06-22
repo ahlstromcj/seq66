@@ -105,10 +105,16 @@ qseqtime::conditional_update ()
  *  Draws the time panel.
  */
 
+#if defined SEQ66_TIME_SIG_DRAWING
 void
 qseqtime::paintEvent (QPaintEvent * qpep)
 {
     QRect r = qpep->rect();
+#else
+void
+qseqtime::paintEvent (QPaintEvent *)
+{
+#endif
     QPainter painter(this);
     QBrush brush(Qt::lightGray, Qt::SolidPattern);
     QPen pen(Qt::black);
@@ -276,7 +282,6 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
         painter.setPen(pen);
         for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
         {
-            char bar[32];
             int x_offset = xoffset(tick) - scroll_offset_x() + s_x_tick_fix;
 
             /*
@@ -285,11 +290,13 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
 
             if (tick % ticks_per_bar == 0)          /* thick solid line bar */
             {
+                char bar[32];
+                int measure = track().measure_number(tick);
                 pen.setWidth(2);                    /* two pixels           */
                 pen.setStyle(Qt::SolidLine);
                 painter.setPen(pen);
                 painter.drawLine(x_offset, 0, x_offset, sizeheight);
-                snprintf(bar, sizeof bar, "%ld", long(tick / ticks_per_bar + 1));
+                snprintf(bar, sizeof bar, "%d", measure);
 
                 QString qbar(bar);
                 painter.drawText(x_offset + 3, 10, qbar);
@@ -314,9 +321,6 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
                 pen.setStyle(Qt::DotLine);
                 painter.setPen(pen);
                 painter.drawLine(x_offset, 0, x_offset, sizeheight);
-//              int tick_snap = tick - (tick % grid_snap());
-//              if (tick != tick_snap)
-//                  penstyle = Qt::DotLine;
             }
         }
     }

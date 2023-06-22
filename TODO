@@ -1,23 +1,6 @@
 TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-06-21
-
-Some of these issues will be pushed off for the distant Seq66v2.
-
-    o Windows build, installation, and operation. Also add a 32-bit
-      installer!
-    o Control/display automation and missing ports.
-	o Investigate: cannot click on 'MIDI Clock' tab in preferences (Alt-C OK).
-      This will work if just the right place in the tab is clicked. Cannot find
-      any useful information on this issue.
-    o Why does velocity change in data pane not work when starting from the
-      left in barrage.midi? The Kepler34 "relative change" feature. This
-      feature is macroed out for now. Perhaps should make it a Ctrl-Click or
-      something to start it in addition to "would select".
-    o Ctrl-Z works, but does not undo the modify flag. (Our undo method
-      is not completely robust.)
-    o Added code to pass arrow events from the qscrollslave to the
-      qscrollmaster. Does not work for wheel events, oddly enough.
+2019-04-13 to 2023-06-22
 
 UI:
 
@@ -26,7 +9,7 @@ UI:
 
         -   Display:
             -   Global seq feature (global vs pattern background pattern, key,
-                and scale).
+                and scale). What is the default?
             -   Tempo / BPM min and max. Might want to add a "Meta" or "Tempo"
                 tab to Preferences and move the MIDI Clock meta stuff to it.
                 There are BPM options in 'rc' and 'usr'!
@@ -35,10 +18,23 @@ UI:
         -   Plan for a "SeqSpec" tab?  Worth it?
         -   Add option to start JACK if --jack?
         -   Make sure port-issues detection works with control/display ports.
-        -   In the event editor dump button, we do not need to prompt
-            if the file already exists, since it gets appended to.
         -   Do we need an option to auto-store? Easy to forget to push that
             button.
+
+Some of these issues will be pushed off for the distant Seq66v2.
+
+    o Windows build and installer. 32-bit installer cannot work!
+	o Investigate: cannot click on 'MIDI Clock' tab in preferences (Alt-C OK).
+      This will work if just the right place in the tab is clicked. Cannot find
+      any useful information on this issue.
+    o Why does velocity change in data pane not work when starting from the
+      left in barrage.midi? The Kepler34 "relative change" feature. This
+      feature is macroed out for now. Perhaps should make it a Ctrl-Click or
+      something to start it in addition to "would select".
+    o Ctrl-Z works, but does not always undo the modify flag. (Our undo method
+      is not robust.)
+    o Added code to pass arrow events from the qscrollslave to the
+      qscrollmaster. Does not work for wheel events, oddly enough.
 
 Mutes:
 
@@ -99,7 +95,7 @@ ISSUES:
     On mouse wheel scroll event we expect the piano-roll and notes sheet to
     scroll vertically.
     STATUS:  Mostly fixed; wheel works only if the piano roll has focus, not
-    sure why..  See the code for the qscrollmaster and qscrollslave.
+    sure why.  See the code for the qscrollmaster and qscrollslave.
 
 #44 "Record live sequence changes" functionality
     Currently the "record live sequence changes" only adds patterns into the
@@ -162,7 +158,6 @@ ISSUES:
     New issue: Verify that it works in other settings.
 
 #66 Toggle MIDI Recording via CC message
-    
     I think modes generally should be triggerable individually. Especially if
     there   will be more to come in the future, it will get messy when you
     only have a single button for them.  I think that a next candidate would
@@ -336,18 +331,14 @@ ISSUES:
     STATUS: In progress. See README.md for things done so far.
 
         -   Can we use c_timesig for non-power-of-two beat widths?
-        -   Add the ability to Ctrl-Z a time-sig change, and also show
-            the modification "*" in the pattern editor title-bar.
+        -   Show the modification "*" in the pattern editor title-bar?
         -   Currently recommended to change the beat width first, but
             can we enforce updating only when both change?
-        -   Retest adding time-sigs.
-        -   How can we draw vertical bars to reflect time-sig event
-            changes? In progress.
-        -   Nagging issues:
-            -   Adding time-sig does work, but needs hard-core verification.
-            -   When going from 3/8 to 3/16, the measure numbers need
-                to be adjust.  For example, they go 1, 2, 3, 4, and then
-                9, 10, 11... at the point where the time-sig changes.
+        -   Ctrl-Z in pattern editor works, but does not restore original
+            view until pattern is reopened. Not sure why, it should work.
+        -   Adding time-sig does work, but needs hard-core verification.
+        -   We could update the song editor to redraw sequences that
+            have time signatures; more for appearances, really.
 
 PATTERNS:
 

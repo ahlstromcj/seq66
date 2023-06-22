@@ -1,4 +1,4 @@
-# README for Seq66 0.99.6 2023-06-21
+# README for Seq66 0.99.6 2023-06-22
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -98,7 +98,8 @@ Windows, and using a conventional source tarball.
                 velocity-change undo.
             *   Fixed an error preventing changing the "background" pattern.
             *   Remaining issue: Building 32-bit (Windows XP) version on
-                64-bit Windows.
+                64-bit Windows. On 64-bit Windows, this seems to require 
+                building a 32-bit version of the Qt toolset.
         *   Issue #111: Adding support, as much as possible, for editing,
             storing, and displaying time signature in the pattern and event
             editors.
@@ -111,11 +112,12 @@ Windows, and using a conventional source tarball.
                 current time with a click in the top half of the time line,
                 changing the beats and beat width, then clicking a time-sig log
                 button.
-            *   Remaining issue: how to properly draw the piano roll, time line,
+            *   Provisional feature: we properly draw the piano roll, time line,
                 event pane vertical lines as time-signature changes.
+                Currently compiled in via a macro (see INSTALL).
             *   Fixed event filtering in the event (qstriggereditor) pane.
-            *   Fixed time-signature editing in the event editor.
-            *   Fixed B:B:T to pulses calculation.
+            *   Fixed time-signature editing in the event editor, and the
+                B:B:T to pulses calculation.
         *   Enhanced port-mapping to prompt the user about issues and
             allow for an immediate remap-and-restart. Lots of fixes!
         *   Added 'o' keystroke to seqroll to toggle recording ('r' already

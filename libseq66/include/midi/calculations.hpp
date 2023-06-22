@@ -552,7 +552,8 @@ measures_to_ticks (int bpb, int ppqn, int bw, int measures = 1)
 }
 
 /**
- *  The inverse of measures_to_ticks().
+ *  The inverse of measures_to_ticks(). Note that callers who want to
+ *  display the measure number to a user should add 1 to it.
  *
  * \param B
  *      The B value in the equation, beats/measure or beats/bar.
@@ -569,8 +570,8 @@ measures_to_ticks (int bpb, int ppqn, int bw, int measures = 1)
  *      The p (pulses) value in the equation.
  *
  * \return
- *      Returns the M value (measures or bars) as calculated via the inverse
- *      equation.  If P or B are 0, then 0 is returned.
+ *      Returns the M value (measures or bars, re 0) as calculated via the
+ *      inverse equation.  If P or B are 0, then 0 is returned.
  */
 
 inline int

@@ -1,10 +1,11 @@
-Release Notes for Seq66 v. 0.99.6 2023-06-18
+Release Notes for Seq66 v. 0.99.6 2023-06-21
 
 This file lists __major__ changes from version 0.99.6
 
     -   Issue #3 follow-ons:
         -   Pattern editor panes stay in sync with the piano roll using
-            the hjkl, arrow, and page keys.
+            the hjkl, arrow, and page keys. Scroll wheel works in
+            the piano roll.
     -   Issue #110 follow-ons:
         -   Addition of Start menu entries for Windows.
         -   Fixed access to the tutorial and manual.
@@ -27,15 +28,14 @@ This file lists __major__ changes from version 0.99.6
             changing the beats and beat width, then clicking a
             time-sig log button.
         -   Fixed event filtering in the event (qstriggereditor) pane.
-        -   Remaining issue: how to properly draw the piano roll, time
-            line, event pane vertical lines as time-signature changes.
+        -   As the time-signatures change, Seq66 adjusts the piano roll,
+            time line (with measure counts), and event pane vertical lines.
     -   Port-mapping prompts about port issues and allows an immediate
         remap-and-restart.
     -   'o' keystroke in seqroll toggles recording ('r' already
         taken).
     -   Added a "quiet" option to not show startup message prompts.
-    -   A log-file is now automatically created & kept under a
-        megabyte.
+    -   A log-file is now created by default & kept under a megabyte.
 
 Read the NEWS, README.md, and TODO files.  Working our assoff!
 
