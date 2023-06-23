@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-21
+ * \updates       2023-06-23
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -420,9 +420,6 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
         bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
         bool lbutton = event->button() == Qt::LeftButton;
         bool rbutton = event->button() == Qt::RightButton;
-    //  bool mbutton = event->button() == Qt::MiddleButton ||
-    //      (lbutton && isctrl);
-
         if (lbutton)
         {
             convert_x(drop_x(), tick_s);        /* turn x,y in to tick/note */
@@ -595,7 +592,7 @@ qstriggereditor::keyPressEvent (QKeyEvent * event)
     if (key == Qt::Key_Delete || key == Qt::Key_Backspace)
     {
         track().remove_selected();
-        ret = true;
+        ret = mark_modified();
     }
     if (event->modifiers() & Qt::ControlModifier)
     {
@@ -604,7 +601,7 @@ qstriggereditor::keyPressEvent (QKeyEvent * event)
         case Qt::Key_X: /* cut */
 
             track().cut_selected();
-            ret = true;
+            ret = mark_modified();
             break;
 
         case Qt::Key_C: /* copy */
@@ -614,7 +611,7 @@ qstriggereditor::keyPressEvent (QKeyEvent * event)
 
         case Qt::Key_V: /* paste */
             start_paste();
-            ret = true;
+            ret = mark_modified();
             break;
 
         case Qt::Key_Z: /* Undo */
@@ -640,7 +637,7 @@ qstriggereditor::keyPressEvent (QKeyEvent * event)
             ret = true;
         }
         else if (movement_key_press(key))
-            ret = true;
+            ret = mark_modified();
     }
     if (ret)
         flag_dirty();
@@ -663,12 +660,12 @@ qstriggereditor::movement_key_press (int key)
         if (key == Qt::Key_Left)
         {
             move_selected_events(-1);
-            result = true;
+            result = mark_modified();
         }
         else if (key == Qt::Key_Right)
         {
             move_selected_events(1);
-            result = true;
+            result = mark_modified();
         }
     }
     return result;
@@ -775,7 +772,8 @@ qstriggereditor::drop_event (midipulse tick)
         else if (m_status == EVENT_PITCH_WHEEL)
             d0 = 0;
 
-        track().add_event(tick, m_status, d0, d1, true); /* sorts it */
+        if (track().add_event(tick, m_status, d0, d1, true))    /* sorts it */
+            (void) mark_modified();
     }
 }
 

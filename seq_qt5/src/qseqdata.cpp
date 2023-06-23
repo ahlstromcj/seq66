@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-14
+ * \updates       2023-06-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -471,8 +471,12 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
             tick_s, tick_f, m_status, m_cc, ds, df
         );
         if (ok)
+        {
+            (void) mark_modified();
             set_dirty();                /* just a flag setting      */
+        }
 #else
+        (void) mark_modified();
         set_dirty();
 #endif
     }
@@ -487,8 +491,12 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
             tick_s, tick_f, m_status, m_cc, adjy
         );
         if (ok)
+        {
+            (void) mark_modified();
             set_dirty();                /* just a flag setting      */
+        }
 #else
+        (void) mark_modified();
         set_dirty();
 #endif
 

@@ -1,4 +1,4 @@
-# README for Seq66 0.99.6 2023-06-22
+# README for Seq66 0.99.6 2023-06-23
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -127,6 +127,7 @@ Windows, and using a conventional source tarball.
         *   At first start, a log-file is now automatically created. If it
             gets larger than a megabyte, then it is deleted to start over.
         *   Fixed bug writing pattern-dump files from event editor.
+        *   Improved modification detection and display in the pattern editor.
     *   Version 0.99.5:
         *   Greatly enhanced the event editor tab and the events that can
             be view and modified.

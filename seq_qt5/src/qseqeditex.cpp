@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2022-04-28
+ * \updates       2023-06-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -75,9 +75,15 @@ namespace seq66
  *      the qsmainwnd user-interface.
  */
 
-qseqeditex::qseqeditex (performer & p, int seqid, qsmainwnd * parent) :
+qseqeditex::qseqeditex
+(
+    performer & p,
+    int seqid,
+    qsmainwnd * parent
+) :
     QWidget         (nullptr),
     ui              (new Ui::qseqeditex),
+    m_performer     (p),
     m_seq_id        (seqid),
     m_edit_parent   (parent),
     m_edit_frame    (nullptr)
@@ -85,7 +91,7 @@ qseqeditex::qseqeditex (performer & p, int seqid, qsmainwnd * parent) :
     ui->setupUi(this);
 
     QGridLayout * layout = new QGridLayout(this);
-    seq::pointer s = p.get_sequence(seqid);
+    seq::pointer s = perf().get_sequence(seqid);
     if (s)
     {
         m_edit_frame = new (std::nothrow) qseqeditframe64(p, *s, this);
@@ -93,6 +99,8 @@ qseqeditex::qseqeditex (performer & p, int seqid, qsmainwnd * parent) :
 
         std::string title = "Pattern #";
         title += std::to_string(seqid);
+        title += ": ";
+        title += s->name();
         setWindowTitle(qt(title));
         show();
         m_edit_frame->show();
@@ -141,6 +149,23 @@ qseqeditex::update_draw_geometry ()
 {
     if (not_nullptr(m_edit_frame))
         m_edit_frame->update_draw_geometry();
+}
+
+void
+qseqeditex::set_title (bool modified)
+{
+    seq::pointer s = perf().get_sequence(m_seq_id);
+    if (s)
+    {
+        std::string title = "Pattern #";
+        title += std::to_string(m_seq_id);
+        title += ": ";
+        title += s->name();
+        if (modified)
+            title += " *";
+
+        setWindowTitle(qt(title));
+    }
 }
 
 }               // namespace seq66

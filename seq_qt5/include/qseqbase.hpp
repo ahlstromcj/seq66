@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-20
- * \updates       2022-04-28
+ * \updates       2023-06-23
  * \license       GNU GPLv2 or above
  *
  *  This class is a base class for qseqroll, qseqdata, qtriggereditor, and
@@ -102,6 +102,7 @@ public:
 
     virtual bool check_dirty () const override;
 
+    bool mark_modified ();
     void set_measures (int len);
     int get_measures ();
 

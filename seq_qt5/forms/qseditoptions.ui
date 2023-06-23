@@ -21,7 +21,6 @@
      </property>
      <property name="font">
       <font>
-       <weight>50</weight>
        <bold>false</bold>
       </font>
      </property>
@@ -29,7 +28,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>6</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -49,7 +48,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -127,7 +125,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -176,7 +173,6 @@
          <widget class="QLabel" name="labelClockStartModulo">
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -237,7 +233,6 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -284,7 +279,6 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -313,7 +307,6 @@ Each port number can be found by name-lookup.</string>
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -364,7 +357,6 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -383,7 +375,6 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -412,7 +403,6 @@ Each port number can be found by name-lookup.</string>
          <widget class="QLabel" name="labelMidiOutBuss">
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -458,7 +448,6 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -582,7 +571,6 @@ slot by channel number (0 to 15).</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -603,7 +591,6 @@ slot by channel number (0 to 15).</string>
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -664,7 +651,6 @@ slot by channel number (0 to 15).</string>
          <widget class="QLabel" name="labelMidiCtrlIn">
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -700,7 +686,6 @@ slot by channel number (0 to 15).</string>
        </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -848,28 +833,18 @@ anyway.</string>
          <height>183</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayoutUiValues" columnstretch="8,2,1,2,4">
-        <item row="1" column="3">
-         <widget class="QLineEdit" name="lineEditUiScalingHeight">
-          <property name="toolTip">
-           <string>Scales the height of main window at startup.
-Range: 0.5 to 3.0</string>
-          </property>
-          <property name="text">
-           <string>1.0</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="3">
-         <widget class="QLineEdit" name="lineEditProgressBoxHeight">
+       <layout class="QGridLayout" name="gridLayoutUiValues" columnstretch="8,0,0,0,0">
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="lineEditProgressBox">
           <property name="enabled">
            <bool>true</bool>
           </property>
           <property name="toolTip">
-           <string>Heights of the progress box as a fraction of button height. Range: 0.1 to 1.0. Default: 0.4.</string>
+           <string>Width of the progress box as a fraction of button width.
+Range: 0.5 to 1.0. Default: 0.8.</string>
           </property>
           <property name="text">
-           <string>0.4</string>
+           <string>0.8</string>
           </property>
          </widget>
         </item>
@@ -883,42 +858,6 @@ Range: 0.5 to 3.0</string>
           </property>
           <property name="text">
            <string>Fingerprint size</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="2">
-         <widget class="QLabel" name="label_x3">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="text">
-           <string>X</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <spacer name="verticalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="labelUiScaling">
-          <property name="toolTip">
-           <string>usr: [user-interface-settings] window-scale, -y</string>
-          </property>
-          <property name="text">
-           <string>Scaling of user interface</string>
           </property>
          </widget>
         </item>
@@ -938,30 +877,18 @@ Range: 0.5 to 3.0</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="3">
-         <widget class="QLineEdit" name="lineEditSetSizeColumns">
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="lineEditFingerprintSize">
           <property name="enabled">
            <bool>true</bool>
           </property>
           <property name="toolTip">
-           <string>Set the set-size columns.
-Range: 4 to 12. Default: 8.</string>
+           <string>An abbreviated display of a long pattern to save CPU time.
+If more notes than this value, a fingerprint is shown.
+Range: 32 to 128, 0 disables.  Default: 32.</string>
           </property>
           <property name="text">
-           <string>8</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="labelProgressBoxSize">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="toolTip">
-           <string>usr: [user-ui-tweaks] progress-box-width, -height</string>
-          </property>
-          <property name="text">
-           <string>Progress boxes (fraction)</string>
+           <string>32</string>
           </property>
          </widget>
         </item>
@@ -975,6 +902,20 @@ Range: 4 to 12. Default: 8.</string>
           </property>
           <property name="text">
            <string>Set size (rows x columns)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QLineEdit" name="lineEditSetSizeColumns">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>Set the set-size columns.
+Range: 4 to 12. Default: 8.</string>
+          </property>
+          <property name="text">
+           <string>8</string>
           </property>
          </widget>
         </item>
@@ -993,58 +934,6 @@ zoom vertically.</string>
           </property>
           <property name="value">
            <number>10</number>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QLabel" name="label_x">
-          <property name="text">
-           <string>X</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QLabel" name="label_x2">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="text">
-           <string>X</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="lineEditProgressBox">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="toolTip">
-           <string>Width of the progress box as a fraction of button width.
-Range: 0.5 to 1.0. Default: 0.8.</string>
-          </property>
-          <property name="text">
-           <string>0.8</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QLineEdit" name="lineEditFingerprintSize">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="toolTip">
-           <string>An abbreviated display of a long pattern to save CPU time.
-If more notes than this value, a fingerprint is shown.
-Range: 32 to 128, 0 disables.  Default: 32.</string>
-          </property>
-          <property name="text">
-           <string>32</string>
           </property>
          </widget>
         </item>
@@ -1073,12 +962,111 @@ Range: 0.5 to 3.0</string>
           </property>
          </widget>
         </item>
+        <item row="5" column="0">
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item row="3" column="4">
          <widget class="QCheckBox" name="checkBoxProgressBoxShown">
           <property name="text">
            <string>Shown</string>
           </property>
          </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLabel" name="label_x2">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>X</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelUiScaling">
+          <property name="toolTip">
+           <string>usr: [user-interface-settings] window-scale, -y</string>
+          </property>
+          <property name="text">
+           <string>Grid scaling &amp; spacing</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLabel" name="label_x">
+          <property name="text">
+           <string>X</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QLineEdit" name="lineEditUiScalingHeight">
+          <property name="toolTip">
+           <string>Scales the height of main window at startup.
+Range: 0.5 to 3.0</string>
+          </property>
+          <property name="text">
+           <string>1.0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="3">
+         <widget class="QLineEdit" name="lineEditProgressBoxHeight">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>Heights of the progress box as a fraction of button height. Range: 0.1 to 1.0. Default: 0.4.</string>
+          </property>
+          <property name="text">
+           <string>0.4</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="labelProgressBoxSize">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>usr: [user-ui-tweaks] progress-box-width, -height</string>
+          </property>
+          <property name="text">
+           <string>Progress boxes (fraction)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QLabel" name="label_x3">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>X</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="4">
+         <widget class="QLineEdit" name="lineEditGridSpacing"/>
         </item>
        </layout>
       </widget>
@@ -1093,7 +1081,6 @@ Range: 0.5 to 3.0</string>
        </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -1113,7 +1100,6 @@ Range: 0.5 to 3.0</string>
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1132,7 +1118,6 @@ Range: 0.5 to 3.0</string>
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1174,7 +1159,6 @@ Range: 0.5 to 3.0</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1193,7 +1177,6 @@ Range: 0.5 to 3.0</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1443,7 +1426,6 @@ connects to the MIDI I/O ports it finds.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1462,7 +1444,6 @@ connects to the MIDI I/O ports it finds.</string>
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -1525,7 +1506,6 @@ in the Song Editor.</string>
          </property>
          <property name="font">
           <font>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1543,7 +1523,6 @@ in the Song Editor.</string>
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1566,7 +1545,6 @@ playback resumes.</string>
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1590,7 +1568,6 @@ the default PPQN.</string>
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1611,7 +1588,6 @@ the default PPQN.</string>
          <property name="font">
           <font>
            <family>Sans</family>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1683,7 +1659,6 @@ Seq66 exits.</string>
          </property>
          <property name="font">
           <font>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1701,7 +1676,6 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1720,7 +1694,6 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1739,7 +1712,6 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1758,7 +1730,6 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1784,7 +1755,6 @@ Seq66 exits.</string>
          </property>
          <property name="font">
           <font>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1802,7 +1772,6 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1821,7 +1790,6 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1840,7 +1808,6 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1886,7 +1853,6 @@ Seq66 exits.</string>
          <widget class="QLabel" name="label_metro_timesig">
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -1901,7 +1867,6 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_bpb">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -1917,7 +1882,6 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_beat_width">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -1940,7 +1904,6 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -1956,7 +1919,6 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2015,7 +1977,6 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_output_specs">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2031,7 +1992,6 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_main_note">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2044,7 +2004,6 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_sub_notes">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2057,7 +2016,6 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_patch">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2079,7 +2037,6 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_note">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2101,7 +2058,6 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_velocity">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2123,7 +2079,6 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_length_fraction">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2180,7 +2135,6 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2209,7 +2163,6 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_channel">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2251,7 +2204,6 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2303,7 +2255,6 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2332,7 +2283,6 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_thru_channel">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2380,7 +2330,6 @@ Seq66 exits.</string>
        </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -2437,7 +2386,6 @@ Seq66 exits.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -2457,7 +2405,6 @@ Seq66 exits.</string>
        </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -2487,7 +2434,6 @@ required.</string>
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -2717,7 +2663,6 @@ required.</string>
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -2737,7 +2682,6 @@ required.</string>
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -2835,7 +2779,6 @@ required.</string>
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -2900,7 +2843,6 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -2920,7 +2862,6 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -2940,7 +2881,6 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3021,7 +2961,6 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>

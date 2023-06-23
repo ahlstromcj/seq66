@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-21
+ * \updates       2023-06-23
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -162,6 +162,22 @@ qseqroll::conditional_update ()
 
         update();
     }
+}
+
+void
+qseqroll::set_dirty ()
+{
+    /*
+     * Recursion unto segfault!
+     *
+     *      frame64()->set_track_change();
+     *
+     * This function is actually for drawing.
+     *
+     *      frame64()->set_external_frame_title();
+     */
+
+    qseqbase::set_dirty();
 }
 
 /**
@@ -535,6 +551,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     }
 
 #if defined SEQ66_TIME_SIG_DRAWING
+
     int count = track().time_signature_count();
     for (int tscount = 0; tscount < count; ++tscount)
     {
@@ -560,9 +577,12 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
             int x_offset = xoffset(tick) - scroll_offset_x();
             int penwidth = 1;
             enum Qt::PenStyle penstyle = Qt::SolidLine;
-            if (tick % ticks_per_bar == 0)      /* solid line on every bar  */
+            if ((tscount % 2) == 1)
+                penstyle = Qt::DashLine;            /* show time-sig change */
+
+            if (tick % ticks_per_bar == 0)          /* solid line every bar */
             {
-                pen.setColor(fore_color());     /* Qt::black                */
+                pen.setColor(fore_color());         /* Qt::black            */
                 penwidth = 2;
             }
             else if (tick % ticks_per_beat == 0)    /* light on every beat  */
@@ -583,7 +603,9 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
             painter.drawLine(x_offset, 0, x_offset, total_height());
         }
     }
+
 #else
+
     int bpbar = track().get_beats_per_bar();
     int bwidth = track().get_beat_width();
     midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
@@ -622,6 +644,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         painter.setPen(pen);
         painter.drawLine(x_offset, 0, x_offset, total_height());
     }
+
 #endif  // defined SEQ66_TIME_SIG_DRAWING
 }
 
@@ -1035,8 +1058,10 @@ qseqroll::add_painted_note (midipulse tick, int note)
 #endif
 
     if (result)
+    {
+        result = mark_modified();
         set_dirty();
-
+    }
     return result;
 }
 
@@ -1288,6 +1313,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             else
                 track().grow_selected(delta_tick);
 
+            (void) mark_modified();
             set_dirty();
         }
     }
@@ -1409,7 +1435,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
     if (key == Qt::Key_Delete || key == Qt::Key_Backspace)
     {
         if (track().remove_selected())
-            done = true;
+            done = mark_modified();
     }
     else
     {
@@ -1425,14 +1451,18 @@ qseqroll::keyPressEvent (QKeyEvent * event)
             if (! isctrl)
             {
                 done = movement_key_press(key);
-                if (! done)
+                if (done)
+                    done = mark_modified();
+                else
                     done = zoom_key_press(isshift, key);
             }
         }
         else
         {
             done = movement_key_press(key);
-            if (! done)
+            if (done)
+                done = mark_modified();
+            else
             {
                 if (isctrl)
                 {
@@ -1551,13 +1581,13 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                 case Qt::Key_C:
 
                     if (frame64()->repitch_selected())
-                        done = true;
+                        done = mark_modified();
                     break;
 
                 case Qt::Key_F:
 
                     if (track().edge_fix())
-                        done = true;
+                        done = mark_modified();
                     break;
 
                 case Qt::Key_O:
@@ -1575,24 +1605,24 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                 case Qt::Key_Q:                 /* quantize selected notes  */
 
                     if (track().push_quantize(EVENT_NOTE_ON, 0, 1, true))
-                        done = true;
+                        done = mark_modified();
                     break;
 
                 case Qt::Key_R:                 /* default jitter == 8      */
 
                     if (track().randomize_selected_notes())
-                        done = true;
+                        done = mark_modified();
                     break;
 
                 case Qt::Key_T:                 /* tighten selected notes   */
                     if (track().push_quantize(EVENT_NOTE_ON, 0, 2, true))
-                        done = true;
+                        done = mark_modified();
                     break;
 
                 case Qt::Key_U:
 
                     if (track().remove_unlinked_notes())
-                        done = true;
+                        done = mark_modified();
                     break;
 
                 case Qt::Key_X:
@@ -1625,22 +1655,22 @@ qseqroll::movement_key_press (int key)
         if (key == Qt::Key_Left)
         {
             move_selected_notes(-1, 0);
-            result = true;
+            result = mark_modified();
         }
         else if (key == Qt::Key_Right)
         {
             move_selected_notes(1, 0);
-            result = true;
+            result = mark_modified();
         }
         else if (key == Qt::Key_Down)
         {
             move_selected_notes(0, 1);
-            result = true;
+            result = mark_modified();
         }
         else if (key == Qt::Key_Up)
         {
             move_selected_notes(0, -1);
-            result = true;
+            result = mark_modified();
         }
     }
     return result;

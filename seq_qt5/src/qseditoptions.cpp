@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-04
+ * \updates       2023-06-22
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -471,6 +471,14 @@ qseditoptions::setup_tab_display ()
     (
         ui->lineEditUiScalingHeight, SIGNAL(editingFinished()),
         this, SLOT(slot_ui_scaling())
+    );
+
+    std::string spacingtext = int_to_string(usr().mainwnd_spacing());
+    ui->lineEditGridSpacing->setText(qt(spacingtext));
+    connect
+    (
+        ui->lineEditGridSpacing, SIGNAL(editingFinished()),
+        this, SLOT(slot_grid_spacing())
     );
     connect
     (
@@ -1919,6 +1927,19 @@ qseditoptions::slot_ui_scaling ()
     QString qheight = ui->lineEditUiScalingHeight->text();      /* h */
     ui_scaling_helper(qs, qheight);
     modify_usr();
+}
+
+void
+qseditoptions::slot_grid_spacing ()
+{
+    QString qs = ui->lineEditGridSpacing->text();
+    std::string spacingtext = qs.toStdString();
+    int spacing = string_to_int(spacingtext, 2);
+    if (spacing != usr().mainwnd_spacing())
+    {
+        usr().mainwnd_spacing(spacing);
+        modify_usr();
+    }
 }
 
 /**

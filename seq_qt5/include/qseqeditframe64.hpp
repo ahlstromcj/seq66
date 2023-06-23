@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-06-18
+ * \updates       2023-06-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -98,6 +98,7 @@ class qseqeditframe64 final : public qseqframe, protected performer::callbacks
     friend class qlfoframe;
     friend class qpatternfix;
     friend class qperfroll;
+    friend class qseqbase;
     friend class qseqdata;
     friend class qseqeditex;
     friend class qseqkeys;
@@ -150,6 +151,7 @@ public:
 protected:
 
     void set_track_change ();
+    void set_external_frame_title ();
 
 private:        /* performer::callback overrides    */
 
@@ -373,6 +375,13 @@ private:
      */
 
     Ui::qseqeditframe64 * ui;
+
+    /**
+     *  In progress, wanting modify the parent's title bar if the parent
+     *  is a qseqeditex object.
+     */
+
+    qseqeditex * m_qseqeditex_frame;
 
     /**
      *  Indicates to compress this window vertically, for use in the Edit tab.

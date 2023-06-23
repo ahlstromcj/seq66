@@ -342,9 +342,7 @@ ISSUES:
 
 PATTERNS:
 
-    -   Set pattern editor focus to grid at start unless it is a new one.
     -   Make it center on notes if not visible.
-    -   Consider adding start/stop buttons to external windows (song & pattern).
 
 To close as fixed (and remove from TODO):
 

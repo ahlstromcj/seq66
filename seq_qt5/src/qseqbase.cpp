@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-02-28
+ * \updates       2023-06-23
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -35,7 +35,8 @@
  */
 
 #include "play/performer.hpp"           /* seq66::performer class           */
-#include "qseqbase.hpp"
+#include "qseqbase.hpp"                 /* seq66::qseqbase class            */
+#include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -94,6 +95,15 @@ qseqbase::check_dirty () const
         dirty = ncp.needs_update(track().seq_number());
     }
     return dirty;
+}
+
+bool
+qseqbase::mark_modified ()
+{
+    if (not_nullptr(frame64()))
+        frame64()->set_external_frame_title();
+
+    return true;
 }
 
 /**

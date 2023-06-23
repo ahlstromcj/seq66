@@ -1363,6 +1363,11 @@ protected:
 
     void seqchars_x (int value);
     void seqchars_y (int value);
+
+    /*
+     * Now an option in Edit / Preferences.
+     */
+
     void mainwnd_spacing (int value);
 
     /*

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-06-19
+ * \updates       2023-06-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -99,6 +99,7 @@
 #include "qlfoframe.hpp"                /* seq66::qlfoframe dialog class    */
 #include "qpatternfix.hpp"              /* seq66::qpatternfix dialog class  */
 #include "qseqdata.hpp"                 /* seq66::qseqdata panel            */
+#include "qseqeditex.hpp"               /* seq66::qseqeditex class          */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 #include "qseqkeys.hpp"                 /* seq66::qseqkeys panel            */
 #include "qseqroll.hpp"                 /* seq66::qseqroll panel            */
@@ -263,11 +264,14 @@ s_event_items [] =
  *
  * \param parent
  *      Provides the parent window/widget for this container window.  Defaults
- *      to null.
+ *      to null. Normally a pointer to a qseditex fram or the qsmainwnd's
+ *      EditTab is passed in this parameter.  If the former, we want to be
+ *      able to change it's title.
  *
  * \param shorter
  *      If true, the data window is halved in size, and some controls are
- *      hidden, to compact the editor for use a tab.
+ *      hidden, to compact the editor for use a tab. If false, we assume
+ *      that the \a parent parameter is a qseqeditex frame.
  */
 
 qseqeditframe64::qseqeditframe64
@@ -280,6 +284,7 @@ qseqeditframe64::qseqeditframe64
     qseqframe               (p, s, parent),
     performer::callbacks    (p),
     ui                      (new Ui::qseqeditframe64),
+    m_qseqeditex_frame      (nullptr),              /* TBD              */
     m_short_version         (shorter),              /* short_version()  */
     m_is_looping            (false),
     m_lfo_wnd               (nullptr),
@@ -321,6 +326,8 @@ qseqeditframe64::qseqeditframe64
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);             /* part of issue #4     */
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    if (! shorter)
+        m_qseqeditex_frame = dynamic_cast<qseqeditex *>(parent);
 
     /*
      * These indirect settings have side-effects, so we just assign the
@@ -3796,8 +3803,18 @@ void
 qseqeditframe64::set_track_change ()
 {
     set_dirty();
-    if (is_initialized())               /* do not set changes at start-up   */
-        track().modify(false);          /* modify, but do not change-notify */
+    if (is_initialized())                           /* start-up changes?    */
+    {
+        set_external_frame_title();
+        track().modify(false);                      /* do not change-notify */
+    }
+}
+
+void
+qseqeditframe64::set_external_frame_title ()
+{
+    if (not_nullptr(m_qseqeditex_frame))
+        m_qseqeditex_frame->set_title(true);    /* show an asterisk     */
 }
 
 /**
