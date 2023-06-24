@@ -101,7 +101,7 @@
             <x>0</x>
             <y>0</y>
             <width>38</width>
-            <height>150</height>
+            <height>144</height>
            </rect>
           </property>
          </widget>
@@ -166,7 +166,7 @@
           <x>0</x>
           <y>0</y>
           <width>729</width>
-          <height>162</height>
+          <height>156</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -436,7 +436,6 @@ the note-map, if any, to the note events in this pattern.</string>
          </property>
          <property name="font">
           <font>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1254,13 +1253,13 @@ Oneshot recording of a pattern.</string>
          <property name="minimumSize">
           <size>
            <width>16</width>
-           <height>20</height>
+           <height>24</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16</width>
-           <height>20</height>
+           <height>24</height>
           </size>
          </property>
          <property name="toolTip">
@@ -1276,13 +1275,13 @@ Oneshot recording of a pattern.</string>
          <property name="minimumSize">
           <size>
            <width>18</width>
-           <height>20</height>
+           <height>24</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>18</width>
-           <height>20</height>
+           <height>24</height>
           </size>
          </property>
          <property name="toolTip">
@@ -1299,13 +1298,13 @@ the '0' key in the piano roll.</string>
          <property name="minimumSize">
           <size>
            <width>16</width>
-           <height>20</height>
+           <height>24</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16</width>
-           <height>20</height>
+           <height>24</height>
           </size>
          </property>
          <property name="toolTip">
@@ -1329,13 +1328,13 @@ the '0' key in the piano roll.</string>
        <property name="minimumSize">
         <size>
          <width>300</width>
-         <height>24</height>
+         <height>28</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>16777215</width>
-         <height>24</height>
+         <height>28</height>
         </size>
        </property>
        <property name="frameShape">
@@ -1352,9 +1351,15 @@ the '0' key in the piano roll.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>722</width>
-          <height>22</height>
+          <width>708</width>
+          <height>28</height>
          </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>28</height>
+         </size>
         </property>
        </widget>
       </widget>
@@ -1420,7 +1425,6 @@ the '0' key in the piano roll.</string>
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1463,7 +1467,6 @@ the '0' key in the piano roll.</string>
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <italic>false</italic>
          <bold>true</bold>
         </font>

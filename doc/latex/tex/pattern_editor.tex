@@ -177,6 +177,12 @@
    Arbitrary values up to 32 can be entered by typing the number.
    The "Reset" button resets the value to 4.
 
+   Now, although the combo-box provides only beat-widths that are the
+   MIDI-standard power of 2, the number can be edited for any number.
+   A warning prompt appears, and if OK'ed, then the non-standard beat-width is
+   set, but it is not added as a time-signature event.
+   Instead, it is stored as a SeqSpec event for \textsl{Seq66}.
+
    \itempar{Pattern Length}{pattern editor!length}
    Sets the length of the current pattern, in measures.
    The possible values range from 1 to 64.

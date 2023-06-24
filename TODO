@@ -330,8 +330,6 @@ ISSUES:
      
     STATUS: In progress. See README.md for things done so far.
 
-        -   Can we use c_timesig for non-power-of-two beat widths?
-        -   Show the modification "*" in the pattern editor title-bar?
         -   Currently recommended to change the beat width first, but
             can we enforce updating only when both change?
         -   Ctrl-Z in pattern editor works, but does not restore original

@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.6 2023-06-21
+Release Notes for Seq66 v. 0.99.6 2023-06-23
 
 This file lists __major__ changes from version 0.99.6
 
@@ -27,6 +27,8 @@ This file lists __major__ changes from version 0.99.6
             current time with a click in the top half of the time line,
             changing the beats and beat width, then clicking a
             time-sig log button.
+        -   Non-MIDI-standard beat-widths are supported as a
+            Seq66-specific "event".
         -   Fixed event filtering in the event (qstriggereditor) pane.
         -   As the time-signatures change, Seq66 adjusts the piano roll,
             time line (with measure counts), and event pane vertical lines.

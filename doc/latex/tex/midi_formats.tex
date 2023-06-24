@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2023-05-02
+% \update      2023-06-23
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -324,16 +324,22 @@
       \item \textsl{Format}: \texttt{0x24240006 bpb bw}
    \end{description}
 
-   This \texttt{SeqSpec} specifies the time-signature for the track in a 2-byte
+   This \texttt{SeqSpec} specifies the underlyng
+   time-signature for the track in a 2-byte
    format, the beats-per-bar followed by the beat-width.
    This time-signature is meant for setting up the pattern editor to the
    user's preferences, and is not the time-signature for the song.
-   However, in addtion to being set for the sequence, it is also
-   set globally in the \texttt{seq66::performer} class, and the last one
-   encountered is official.
-   Bug, or feature?
+   It is \textsl{not} set globally in the \texttt{seq66::performer} class;
+   that can be done in the main window.
 
-   The normal time-signature meta-event is obtained from values stored in
+   When a time-signature is added
+   (see \sectionref{subsec:pattern_editor_first_row},
+   how it is stored depends if it is a MIDI-standard power-of-2 beat-width or
+   not.  If a power of 2, a time-signature event is added.
+   Otherwise, the beat-width is set for the pattern, and is saved as the
+   \texttt{c\_timesig} event.
+
+   The normal time-signature meta-event is first obtained from values stored in
    the performer class, and has the format
    \texttt{0xFF 58 4 bpb bw cpm tpq}, where cpm is the clocks-per-metronome
    and tpq is the 32nds-per-quarter.

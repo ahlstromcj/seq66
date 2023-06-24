@@ -112,6 +112,9 @@ Windows, and using a conventional source tarball.
                 current time with a click in the top half of the time line,
                 changing the beats and beat width, then clicking a time-sig log
                 button.
+            *   Time-signatures with a beat width that are not a power of 2
+                do not add an event, but are saved as the c_timesig SeqSpec
+                value.
             *   Provisional feature: we properly draw the piano roll, time line,
                 event pane vertical lines as time-signature changes.
                 Currently compiled in via a macro (see INSTALL).

@@ -294,21 +294,11 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             {
                 int n = int(cev->get_sysex(0));
                 int d = beat_power_of_2(int(cev->get_sysex(1)));
-#if defined USE_CLUMSY_FRACTION
-                QString numerator = qt(std::to_string(n));
-                QString denominator = qt(std::to_string(d));
-                QString dash = (n > 9 || d > 9) ? "--" : "-" ;
-                y_offset = 12;
-                painter.drawText(x_offset, y_offset,      numerator);
-                painter.drawText(x_offset, y_offset +  9, dash);
-                painter.drawText(x_offset, y_offset + 18, denominator);
-#else
                 std::string text = std::to_string(n);
                 text += "/";
                 text += std::to_string(d);
                 y_offset = 20;
                 painter.drawText(x_offset, y_offset, qt(text));
-#endif
             }
             else if (is_program_change() && cev->is_program_change())
             {

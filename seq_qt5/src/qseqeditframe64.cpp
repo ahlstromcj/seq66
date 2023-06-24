@@ -1836,18 +1836,10 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
             {
 #endif
                 /*
-                 * IDEA: If not a power of 2, then add a c_timesig SeqSpec.
+                 * If not a power of 2, then just set for a c_timesig SeqSpec.
                  */
 
                 bool rational = is_power_of_2(bw);
-                if (! rational)
-                {
-                    rational = qt_prompt_ok         /* Ok == ignore danger  */
-                    (
-                        "MIDI supports only powers of 2 for beat-width.",
-                        "It won't be saved properly, but you do you."
-                    );
-                }
                 if (rational)                       /* use OK'ed it         */
                 {
                     if (loggable)
@@ -1869,7 +1861,19 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
                 }
                 else
                 {
-                    /* reset_beat_width();  simply ignore */
+                    bool allow_odd_beat_width = qt_prompt_ok
+                    (
+                        "MIDI supports only powers of 2 for beat-width.",
+//                      "It won't be saved properly, but you do you."
+                        "It will be saved as a Seq66-specific MIDI event, "
+                        "not a time-signature event. Only one seq-spec allowed. "
+                        "Overriden by existing time-signature events."
+                    );
+                    if (allow_odd_beat_width)
+                    {
+                        track().set_beat_width(bw, user_change);
+                        (void) track().apply_length(0, 0, bw);
+                    }
                 }
 #if defined USE_WOULD_TRUNCATE_BPB_BW
             }
@@ -1905,6 +1909,11 @@ qseqeditframe64::detect_time_signature ()
     );
 #if defined SEQ66_TIME_SIG_DRAWING
     (void) track().analyze_time_signatures();       /* detect some or none  */
+
+    /*
+     * set_data_type(EVENT_META_TIME_SIGNATURE);
+     */
+
 #endif
     if (result)
     {

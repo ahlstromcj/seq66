@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-21
+ * \updates       2023-06-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -47,13 +47,15 @@ namespace seq66
 
 /*
  *  Tweaks. The presence of these corrections means we need to coordinate
- *  between GUI elements better.
+ *  between GUI elements better :-(.
  */
 
-static const int s_x_tick_fix  =  2;    /* adjusts vertical grid lines      */
-static const int s_time_fix    =  9;    /* seqtime offset from seqroll      */
-static const int s_o_fix       =  6;    /* adjust position of "o" mark      */
-static const int s_end_fix     = 10;    /* adjust position of "END" box     */
+static const int s_x_tick_fix    =  2;  /* adjusts vertical grid lines      */
+static const int s_time_fix      =  9;  /* seqtime offset from seqroll      */
+static const int s_timesig_fix   = 17;  /* time-sig offset from seqroll     */
+static const int s_L_timesig_fix = 40;  /* time-sig offset from "L" marker  */
+static const int s_o_fix         =  6;  /* adjust position of "o" mark      */
+static const int s_end_fix       = 10;  /* adjust position of "END" box     */
 
 /**
  *  Principal constructor.
@@ -75,7 +77,7 @@ qseqtime::qseqtime
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_font.setBold(true);
-    m_font.setPointSize(6);
+    m_font.setPointSize(8);
     setMouseTracking(true);         /* track mouse movement without a click */
     m_timer = qt_timer(this, "qseqtime", 2, SLOT(conditional_update()));
 }
@@ -382,7 +384,31 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
         painter.setPen(pen);
         painter.drawText(right + 2, 18, "R");
     }
+
+    int count = track().time_signature_count();
+    for (int tscount = 0; tscount < count; ++tscount)
+    {
+        const sequence::timesig & ts = track().get_time_signature(tscount);
+        if (ts.sig_beat_width == 0)
+            break;
+
+        int n = ts.sig_beats_per_bar;
+        int d = ts.sig_beat_width;
+        midipulse start = ts.sig_start_tick;
+        std::string text = std::to_string(n);
+        text += "/";
+        text += std::to_string(d);
+        start += start == perf().get_left_tick() ?
+            s_L_timesig_fix : s_timesig_fix ;
+
+        int pos = position_pixel(start);
+        pen.setColor(Qt::white);
+        pen.setColor(Qt::black);
+        painter.setPen(pen);
+        painter.drawText(pos + 1, 20, qt(text));
+    }
 }
+
 #endif
 
 void

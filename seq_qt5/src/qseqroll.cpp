@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-23
+ * \updates       2023-06-24
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -577,8 +577,16 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
             int x_offset = xoffset(tick) - scroll_offset_x();
             int penwidth = 1;
             enum Qt::PenStyle penstyle = Qt::SolidLine;
+
+#if defined USE_DASHED_LINE_TO_DENOTE_TIME_SIG
+
+            /*
+             * This doesn't seem intuitive enough for a user.
+             */
+
             if ((tscount % 2) == 1)
                 penstyle = Qt::DashLine;            /* show time-sig change */
+#endif
 
             if (tick % ticks_per_bar == 0)          /* solid line every bar */
             {
