@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2022-05-16
+ * \updates       2022-06-26
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -99,8 +99,9 @@ protected:
 
     using io = struct
     {
+        bool io_available;          /**< Portmapped-bus not present.        */
         bool io_enabled;            /**< The status setting for this buss.  */
-        e_clock out_clock;          /**< The clock setting for this buss.   */
+        e_clock out_clock;          /**< Clock/disabled setting for buss.   */
         std::string io_name;        /**< The name of the I/O buss.          */
         std::string io_nick_name;   /**< The short name of the I/O buss.    */
         std::string io_alias;       /**< FYI only, and only for JACK.       */
@@ -162,6 +163,7 @@ public:
     }
 
     void activate (status s);
+    int available_count () const;
 
     int count () const
     {
@@ -212,6 +214,7 @@ public:
     std::string port_name_from_bus (bussbyte nominalbuss) const;
     void show (const std::string & tag) const;
     bool set_enabled (bussbyte bus, bool enabled);
+    bool is_available (bussbyte bus) const;
     bool is_enabled (bussbyte bus) const;
 
     bool is_disabled (bussbyte bus) const
@@ -251,6 +254,7 @@ protected:
     bool add
     (
         int buss,
+        bool available,
         int status,
         const std::string & name,
         const std::string & nickname = "",

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-06-08
+ * \updates       2023-06-26
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -988,9 +988,9 @@ performer::true_input_bus (bussbyte nominalbuss) const
  * \param [out] n
  *      Holds the name of the bus, if found.
  *
- * \param [out] statusshow
- *      If true and the bus is disabled, then append "(off)" to the name of
- *      the bus.
+ * \param statusshow
+ *      If true (the default) and the bus is unavailable, then append
+ *      "(unavailable)" to the name of *      the bus.
  *
  * \return
  *      Returns true if the bus was found.  This means the name was
@@ -1004,7 +1004,7 @@ performer::ui_get_input
 ) const
 {
     const inputslist & ipm = input_port_map();
-    bool disabled = false;
+    bool unavailable = false;
     std::string name;
     std::string alias;
     if (ipm.active())                   /* Should we do this in one call?   */
@@ -1012,7 +1012,7 @@ performer::ui_get_input
         name = ipm.get_name(bus);
         alias = ipm.get_alias(bus, rc().port_naming());
         active = ipm.get(bus);              /* input enabled for this bus?  */
-        disabled = ipm.is_disabled(bus);    /* for input, same as ! get()   */
+        unavailable = ! ipm.is_available(bus);
     }
     else if (m_master_bus)              /* Should we do this in one call?   */
     {
@@ -1026,8 +1026,8 @@ performer::ui_get_input
         name += alias;
         name += "'";
     }
-    if (disabled && statusshow)
-        name += " (off)";
+    if (unavailable && statusshow)
+        name += " (unavailable)";
 
     n = name;
     return ! name.empty();
@@ -1057,7 +1057,7 @@ performer::new_ports_available () const
         const clockslist & opm = output_port_map();
         if (opm.active())
         {
-            int mappedbuses = opm.count();
+            int mappedbuses = opm.available_count();
             int realbuses = mbus->get_num_out_buses();
             new_outputs = mappedbuses < realbuses;
         }
@@ -1066,7 +1066,7 @@ performer::new_ports_available () const
         const inputslist & ipm = input_port_map();
         if (ipm.active())
         {
-            int mappedbuses = ipm.count();
+            int mappedbuses = ipm.available_count();
             int realbuses = mbus->get_num_in_buses();
             new_inputs = mappedbuses < realbuses;
         }
@@ -1078,12 +1078,38 @@ performer::new_ports_available () const
 bool
 performer::is_port_unavailable (bussbyte bus, midibase::io iotype) const
 {
-    return master_bus() ?
-        master_bus()->is_port_unavailable(bus, iotype) : true ;
+    bool result = true;
+    bool processed = false;
+    if (iotype == midibase::io::output)
+    {
+        const clockslist & opm = output_port_map();
+        bool outportmap = opm.active();
+        if (outportmap)
+        {
+            result = ! opm.is_available(bus);
+            processed = true;
+        }
+    }
+    else if (iotype == midibase::io::input)
+    {
+        const inputslist & ipm = input_port_map();
+        bool inportmap = ipm.active();
+        if (inportmap)
+        {
+            result = ! ipm.is_available(bus);
+            processed = true;
+        }
+    }
+    if (! processed)
+    {
+        result =  master_bus() ?
+            master_bus()->is_port_unavailable(bus, iotype) : true ;
+    }
+    return result;
 }
 
 /**
- *  Checks for unavailable ports.
+ *  Checks for unavailable system ports.
  */
 
 bool
@@ -1095,7 +1121,7 @@ performer::any_ports_unavailable (bool accept_zero_inputs) const
     {
         const clockslist & opm = output_port_map();
         bool outportmap = opm.active();
-        int buses = outportmap ?  opm.count() : mbus->get_num_out_buses() ;
+        int buses = outportmap ? opm.count() : mbus->get_num_out_buses() ;
         if (buses == 0)
         {
             result = true;
@@ -1116,7 +1142,7 @@ performer::any_ports_unavailable (bool accept_zero_inputs) const
     {
         const inputslist & ipm = input_port_map();
         bool inportmap = ipm.active();
-        int buses = inportmap ?  ipm.count() : mbus->get_num_in_buses() ;
+        int buses = inportmap ? ipm.count() : mbus->get_num_in_buses() ;
         if (buses == 0)
         {
             result = ! accept_zero_inputs;
@@ -1175,10 +1201,12 @@ performer::ui_get_clock
 ) const
 {
     const clockslist & opm = output_port_map();
+    bool unavailable = false;
     std::string name;
     std::string alias;
     if (opm.active())                   /* Should we do this in one call?   */
     {
+        unavailable = ! opm.is_available(bus);
         name = opm.get_name(bus);
         alias = opm.get_alias(bus, rc().port_naming());
         e = opm.get(bus);               /* type of clocking for this bus    */
@@ -1195,8 +1223,8 @@ performer::ui_get_clock
         name += alias;
         name += "'";
     }
-    if ((e == e_clock::disabled) && statusshow)
-        name += " (off)";
+    if (unavailable && statusshow)          /* e == e_clock::unavailable    */
+        name += " (unavailable)";
 
     n = name;
     return ! name.empty();
@@ -4348,7 +4376,7 @@ performer::output_func ()
             }
             else
             {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG && ! defined SEQ66_PLATFORM_WINDOWS
                 if (delta_us != 0)
                 {
                     print_client_tag(msglevel::warn);

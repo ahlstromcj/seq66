@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-13
+ * \updates       2023-06-26
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the midibus class.
@@ -173,7 +173,7 @@ midibus::api_init_out ()
             "Pm_OpenOutput(): %s; MIDI clock disabled\n",
             Pm_GetErrorText(err)
         );
-        (void) set_clock(e_clock::disabled);
+        (void) set_clock(e_clock::unavailable);     /* e_clock::disabled    */
     }
     return result;
 }

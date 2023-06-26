@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-12-29
-% \update      2023-05-06
+% \update      2023-06-26
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -32,17 +32,24 @@
    can connect manually (on Linux).
 
    \textbf{Note}:
-   \textsl{Port-mapping is now automatic; default MIDI I/O port-maps are created
-   at first start, and are always active if virtual ports are not in use.
-   Once created, one can edit the 'rc' file to rearrange the mapping as
+   \textsl{Port-mapping is now automatic; default MIDI I/O port-maps are
+   created at first start, and are always active if virtual ports are not in
+   use.  Once created, one can edit the 'rc' file to rearrange the mapping as
    desired.
    In addition, issues with new or unavailable ports are
    noted in warning dialogs.
+   (The startup warnings can be suppressed;
+   see \sectionref{paragraph:menu_edit_preferences_display}.)
    The user can click the \textbf{Remap and restart} button,
    fix the loaded pattern to use existing ports,
    or exit, determine the existing ports using
    \texttt{aplaymidi}, \texttt{arecordmidi}, or \texttt{jack\_lsp},
    and edit the maps directly in the 'rc' file.}
+
+   The output bus or port for a given pattern can be determined by
+   looking at the grid slots or by dumping a summary of the song to
+   a text file.
+   See \sectionref{subsubsec:menu_help_song_summary_file}.
 
    A pattern/loop/sequence is assigned to output to a given port via
    a buss number saved \textsl{in the pattern}, in the tune.

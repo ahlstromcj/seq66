@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-03-15
+ * \updates       2023-06-25
  * \license       GNU GPLv2 or above
  *
  *  Defines some midibus constants and the clock_e enumeration.
@@ -68,11 +68,17 @@ const int c_midibus_sysex_chunk = 0x100;        // 256
 
 /**
  *  A clock enumeration, as used in the File / Options / MIDI Clock dialog.
+ *  It is also (perhaps ill-advisedly) used for other statuses, including
+ *  for some input port statuses.
+ *
+ * \var unavailable
+ *      This value indicates that a port defined in a port-map is not
+ *      present on the system.
  *
  * \var disabled
- *      A new, currently-hidden value to indicate to ignore/disable an
- *      output port.  If a port always fails to open, we want just to
- *      ignore it.
+ *      A value to indicate to ignore/disable an output port. If a port always
+ *      fails to open, we want just to ignore it. But see the unavailable
+ *      status above.
  *
  * \var off
  *      Corresponds to the "Off" selection in the MIDI Clock tab.  With
@@ -101,8 +107,9 @@ const int c_midibus_sysex_chunk = 0x100;        // 256
 
 enum class e_clock
 {
-    disabled = -1,
-    off,
+    unavailable = -2,
+    disabled    = -1,
+    off         = 0,
     pos,
     mod,
     max
@@ -130,6 +137,18 @@ inline bool
 clocking_enabled (e_clock ce)
 {
     return ce == e_clock::pos || ce == e_clock::mod;
+}
+
+inline bool
+port_unavailable (e_clock ce)
+{
+    return ce == e_clock::unavailable;
+}
+
+inline bool
+port_disabled (e_clock ce)
+{
+    return ce == e_clock::disabled;
 }
 
 }           // namespace seq66

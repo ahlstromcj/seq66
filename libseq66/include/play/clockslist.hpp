@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-05-06
+ * \updates       2023-06-24
  * \license       GNU GPLv2 or above
  *
  *  Defines some midibus constants and the seq66::clock enumeration.  In
@@ -71,6 +71,7 @@ public:
     bool add
     (
         int buss,
+        bool available,
         e_clock clocktype,
         const std::string & name,
         const std::string & nickname = "",

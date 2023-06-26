@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2022-05-17
+ * \updates       2022-06-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -48,7 +48,10 @@ namespace seq66
  *  Saves the input settings read from the "rc" file so that they can be
  *  passed to the mastermidibus after it is created.
  *
- * \param flag
+ * \param available
+ *      Indicates that the input is available.
+ *
+ * \param enabled
  *      Indicates in the input is enabled.
  *
  * \param name
@@ -70,7 +73,8 @@ bool
 inputslist::add
 (
     int buss,
-    bool flag,
+    bool available,
+    bool enabled,
     const std::string & name,
     const std::string & nickname,
     const std::string & alias
@@ -84,7 +88,8 @@ inputslist::add
             portname = name;
 
         io ioitem;
-        ioitem.io_enabled = flag;
+        ioitem.io_available = available;
+        ioitem.io_enabled = enabled;
         ioitem.out_clock = e_clock::off;        /* not e_clock::disabled    */
         ioitem.io_name = portname;
         ioitem.io_alias = alias;
@@ -102,8 +107,9 @@ inputslist::add_list_line (const std::string & line)
     bool result = parse_port_line(line, pnumber, pstatus, pname);
     if (result)
     {
+        bool available = pstatus != (-2);
         bool enabled = pstatus > 0;
-        result = add(pnumber, enabled, pname);
+        result = add(pnumber, available, enabled, pname);
     }
     return result;
 }
@@ -132,8 +138,9 @@ inputslist::add_map_line (const std::string & line)
     if (result)
     {
         bool enabled = pstatus > 0;
+        bool available = pstatus != (-2);
         std::string pnum = std::to_string(pnumber);
-        result = add(pnumber, enabled, pname, pnum);    /* no alias */
+        result = add(pnumber, available, enabled, pname, pnum); /* no alias */
     }
     return result;
 }
@@ -253,10 +260,22 @@ build_input_port_map (const inputslist & il)
         {
             const portslist::io & item = iopair.second;
             std::string number = std::to_string(bus);
+            bool available = item.io_available;
+            bool enabled = item.io_enabled;
             if (item.io_alias.empty())
-                result = ipm.add(bus, true, item.io_nick_name, number);
+            {
+                result = ipm.add
+                (
+                    bus, available, enabled, item.io_nick_name, number
+                );
+            }
             else
-                result = ipm.add(bus, true, item.io_alias, number);
+            {
+                result = ipm.add
+                (
+                    bus, available, enabled, item.io_alias, number
+                );
+            }
 
             if (! result)
             {

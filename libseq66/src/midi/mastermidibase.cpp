@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2022-05-17
+ * \updates       2023-06-26
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -377,8 +377,8 @@ mastermidibase::set_clock (bussbyte bus, e_clock clocktype)
  *  Saves the given clock value in m_master_clocks[bus].
  *
  * \param bus
- *      Provides the desired buss to be set.  This must be an actual system buss,
- *      not a buss number from the output-port-map.
+ *      Provides the desired buss to be set.  This must be an actual system
+ *      buss, not a buss number from the output-port-map.
  *
  * \param clock
  *      Provides the clocking value to set.
@@ -401,7 +401,7 @@ mastermidibase::save_clock (bussbyte bus, e_clock clock)
             if (i == int(bus))
             {
                 value = clock;
-                m_master_clocks.add(i, value, "No name");
+                m_master_clocks.add(i, false, value, "Null clock");
             }
         }
     }
@@ -431,6 +431,8 @@ mastermidibase::get_clock (bussbyte bus) const
  *  This function copies the buss values from the input and output busarrays
  *  (see the businfo module). They are then added to the masterbus's input and
  *  output containers.
+ *
+ *  Question: do we really want to add unavailable ports here?
  */
 
 void
@@ -440,19 +442,21 @@ mastermidibase::copy_io_busses ()
     m_master_inputs.clear();                        /* inputslist container */
     for (int bus = 0; bus < buses; ++bus)
     {
+        bool available = ! m_inbus_array.is_port_unavailable(bus);
         bool inputflag = m_inbus_array.get_input(bus);
         std::string name = m_inbus_array.get_midi_bus_name(bus);
         std::string alias = m_inbus_array.get_midi_alias(bus);
-        m_master_inputs.add(bus, inputflag, name, "", alias);
+        m_master_inputs.add(bus, available, inputflag, name, "", alias);
     }
     buses = m_outbus_array.count();                 /* get_num_out_buses()  */
     m_master_clocks.clear();                        /* clockslist container */
     for (int bus = 0; bus < buses; ++bus)
     {
+        bool available = ! m_outbus_array.is_port_unavailable(bus);
         e_clock clk = m_outbus_array.get_clock(bus);
         std::string name = m_outbus_array.get_midi_bus_name(bus);
         std::string alias = m_outbus_array.get_midi_alias(bus);
-        m_master_clocks.add(bus, clk, name, "", alias);
+        m_master_clocks.add(bus, available, clk, name, "", alias);
     }
 }
 
@@ -587,7 +591,7 @@ mastermidibase::save_input (bussbyte bus, bool inputing)
             if (i == int(bus))
             {
                 value = inputing;
-                m_master_inputs.add(i, value, "No name");
+                m_master_inputs.add(i, false, value, "Null input");
             }
         }
     }
@@ -627,6 +631,13 @@ mastermidibase::is_input_system_port (bussbyte bus) const
 {
     return m_inbus_array.is_system_port(bus);
 }
+
+/**
+ *  There is an issue where this function is indirectly used in creating
+ *  the lists of I/O ports in the user-interface. There will, in general,
+ *  be more ports shown in the map than actually exist on the system.
+ *  For that purpose, we need to use the port maps, not the real port lists.
+ */
 
 bool
 mastermidibase::is_port_unavailable (bussbyte bus, midibase::io iotype) const

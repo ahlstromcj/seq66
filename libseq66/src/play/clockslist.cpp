@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2022-05-17
+ * \updates       2022-06-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -78,6 +78,7 @@ bool
 clockslist::add
 (
     int buss,
+    bool available,
     e_clock clocktype,
     const std::string & name,
     const std::string & nickname,
@@ -91,11 +92,23 @@ clockslist::add
         if (portname.empty())                   /* was already parsed       */
             portname = name;
 
+        int pstatus = (-1);
         io ioitem;
-        ioitem.io_enabled = clocktype != e_clock::disabled;
-        ioitem.out_clock = clocktype;
+        ioitem.io_available = available;
+        if (! available)
+        {
+            pstatus = clock_to_int(e_clock::unavailable);
+            ioitem.io_enabled = false;
+            ioitem.out_clock = e_clock::unavailable;    // disabled;
+        }
+        else
+        {
+            ioitem.io_enabled = clocktype != e_clock::disabled;
+            ioitem.out_clock = clocktype;
+        }
         ioitem.io_name = portname;
         ioitem.io_alias = alias;
+        ioitem.io_client_number = ioitem.io_port_number = pstatus;
         result = portslist::add(buss, ioitem, nickname);
     }
     return result;
@@ -111,7 +124,8 @@ clockslist::add_list_line (const std::string & line)
     if (result)
     {
         e_clock clocktype = int_to_clock(pstatus);
-        result = add(pnumber, clocktype, pname);
+        bool available = pstatus != (-2);
+        result = add(pnumber, available, clocktype, pname);
     }
     return result;
 }
@@ -139,9 +153,13 @@ clockslist::add_map_line (const std::string & line)
     bool result = parse_port_line(line, pnumber, pstatus, pname);
     if (result)
     {
+        bool available = true;
+        if (pstatus == (-2))
+            available = false;
+
         e_clock clocktype = int_to_clock(pstatus);
         std::string pnum = std::to_string(pnumber);
-        result = add(pnumber, clocktype, pname, pnum);    /* no alias */
+        result = add(pnumber, available, clocktype, pname, pnum); /* no alias */
     }
     return result;
 }
@@ -265,10 +283,15 @@ build_output_port_map (const clockslist & cl)
         {
             const portslist::io & item = iopair.second;
             std::string number = std::to_string(bus);
+            bool available = item.io_available;
+            e_clock ec = e_clock::off;
+            if (! item.io_enabled)
+                ec = e_clock::disabled;
+
             if (item.io_alias.empty())
-                result = opm.add(bus, e_clock::off, item.io_nick_name, number);
+                result = opm.add(bus, available, ec, item.io_nick_name, number);
             else
-                result = opm.add(bus, e_clock::off, item.io_alias, number);
+                result = opm.add(bus, available, ec, item.io_alias, number);
 
             if (! result)
             {

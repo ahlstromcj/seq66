@@ -181,7 +181,7 @@ set PROJECT_DRIVE=C:
 :: set PROJECT_BITS=32      // probably no longer supportable by Qt
 :: set PROJECT_BITS=64
 
-set PROJECT_BITS=32
+set PROJECT_BITS=64
 set QTVERSION=5.12.9
 set QTPATH=C:\Qt\Qt%QTVERSION%\%QTVERSION%
 set QMAKE=%QTPATH%\mingw73_%PROJECT_BITS%\bin\qmake.exe

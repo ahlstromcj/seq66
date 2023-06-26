@@ -395,11 +395,17 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
         int n = ts.sig_beats_per_bar;
         int d = ts.sig_beat_width;
         midipulse start = ts.sig_start_tick;
+        int ypos = 20;
         std::string text = std::to_string(n);
         text += "/";
         text += std::to_string(d);
-        start += start == perf().get_left_tick() ?
-            s_L_timesig_fix : s_timesig_fix ;
+        if (start == perf().get_left_tick())
+        {
+            start += s_L_timesig_fix;
+            ypos -= 4;
+        }
+        else
+            start += s_timesig_fix;
 
         int pos = position_pixel(start);
         pen.setColor(Qt::white);

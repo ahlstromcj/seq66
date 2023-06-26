@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2023-04-13
+ * \updates       2023-06-26
  * \license       GNU GPLv2 or above
  *
  */
@@ -166,6 +166,7 @@ songsummary::write_sequence (std::ofstream & file, seq::pointer s)
     int triggercount = s->trigger_count();
     file
         << "Sequence #" << s->seq_number() << " '" << s->name() << "'\n"
+        << "         Port #: " << int(s->seq_midi_bus()) << "\n"
         << "        Channel: " << int(s->seq_midi_channel()) << "\n"
         << "          Beats: " << s->get_beats_per_bar() << "/"
                                << s->get_beat_width() << "\n"

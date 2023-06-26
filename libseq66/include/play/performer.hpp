@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-05-31
+ * \updates       2023-06-26
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2645,12 +2645,12 @@ public:
     bool ui_set_input (bussbyte bus, bool active);
     bool ui_get_input
     (
-        bussbyte bus, bool & active, std::string & n, bool statusshow = true
+        bussbyte bus, bool & active, std::string & n, bool statusshow = false
     ) const;
     bool ui_set_clock (bussbyte bus, e_clock clocktype);
     bool ui_get_clock
     (
-        bussbyte bus, e_clock & e, std::string & n, bool statusshow = true
+        bussbyte bus, e_clock & e, std::string & n, bool statusshow = false
     ) const;
     bool port_maps_active () const;
 

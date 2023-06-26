@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2023-05-31
+ * \updates       2023-06-25
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -119,6 +119,7 @@ bool
 portslist::add
 (
     int buss,
+    bool available,
     int status,                                 /* covers bool or e_clock   */
     const std::string & name,
     const std::string & nickname,
@@ -140,6 +141,7 @@ portslist::add
             ioitem.io_client_number = (-1);
             ioitem.io_port_number = (-1);
         }
+        ioitem.io_available = available;
         ioitem.io_enabled = status > 0;
         ioitem.out_clock = int_to_clock(status);
         ioitem.io_name = name;
@@ -195,7 +197,20 @@ portslist::set_enabled (bussbyte bus, bool enabled)
     auto it = m_master_io.find(bus);
     bool result = it != m_master_io.end();
     if (result)
+    {
+        it->second.io_available = true;
         it->second.io_enabled = enabled;
+    }
+    return result;
+}
+
+bool
+portslist::is_available (bussbyte bus) const
+{
+    bool result = false;
+    auto it = m_master_io.find(bus);
+    if (it != m_master_io.end())
+        result = it->second.io_available;
 
     return result;
 }
@@ -490,6 +505,18 @@ portslist::extract_port_pair
     return result;
 }
 
+int
+portslist::available_count () const
+{
+    int result = 0;
+    for (const auto & iopair : m_master_io)
+    {
+        if (iopair.second.io_available)
+            ++result;
+    }
+    return result;
+}
+
 bussbyte
 portslist::bus_from_name (const std::string & nick) const
 {
@@ -588,11 +615,11 @@ portslist::port_name_from_bus (bussbyte nominalbuss) const
  *  Sets the enabled/disabled status in the destination port-list based on the
  *  statuses set in the port-map.  The port-map is what the user will see
  *  in the MIDI Clocks and Inputs tabs, and that is where the user will
- *  enable/disable the ports, if port-mapping is enabled.
+ *  enable/disable the ports, if port-mapping is enabled (recommended).
  *
  *  Used to prepare the lists for showing the port-map along with the status
  *  of the disabled ports.  Each port in the port-map is looked up in the
- *  given source list.  If not found, it is disabled.
+ *  given source list.  If not found, it is unavailabl3 and hence disabled.
  *
  *  It is assumed that the "this" here is the portslist object
  *  returned by the input_port_map() or output_port_map() functions. Recall
@@ -604,8 +631,7 @@ portslist::port_name_from_bus (bussbyte nominalbuss) const
  *
  * \param destination
  *      The destination for the statuses to be applied.  Ultimately, the
- *      destinatios
- *      are the clocks and inputs from the performer, provided by
+ *      destinations are the clocks and inputs from the performer, provided by
  *      mastermidibase :: get_port_statuses(), which gets the system ports.
  *
  * \return
@@ -625,14 +651,16 @@ portslist::match_system_to_map (portslist & destination) const
             io & destinitem = destination.io_block(portname);
             if (valid(destinitem))
             {
+                destinitem.io_available = true;
                 destinitem.io_enabled = item.io_enabled;
                 destinitem.out_clock = item.out_clock;
             }
             else
             {
                 io & ncitem = const_cast<io &>(item);
+                ncitem.io_available = false;
                 ncitem.io_enabled = false;
-                ncitem.out_clock = e_clock::disabled;
+                ncitem.out_clock = e_clock::unavailable;
             }
         }
     }
@@ -658,6 +686,7 @@ portslist::match_map_to_system (const portslist & source)
             const io & srcitem = source.const_io_block(portname);
             if (valid(srcitem))
             {
+                destinitem.io_available = srcitem.io_available;
                 destinitem.io_enabled = srcitem.io_enabled;
                 destinitem.out_clock = srcitem.out_clock;
             }
@@ -687,6 +716,7 @@ portslist::const_io_block (const std::string & nickname) const
     if (s_needs_initing)
     {
         s_needs_initing = false;
+        s_dummy_io.io_available = false;
         s_dummy_io.io_enabled = false;
         s_dummy_io.out_clock = e_clock::disabled;
     }
@@ -723,7 +753,7 @@ portslist::e_clock_to_string (e_clock e) const
  *  in rcfile to dump the maps into the 'rc' file.
  *
  *  Compare this function to io_list_lines(). This one does not emit an alias,
- *  as port-maps don't use them.
+ *  as port-maps don't use them directly.
  *
  * \param isclock
  *      Unfortunately, we need to determine the derived object (clockslist vs
@@ -743,9 +773,16 @@ portslist::port_map_list (bool isclock) const
             int pnumber = string_to_int(item.io_nick_name);
             int pstatus;
             if (isclock)
+            {
                 pstatus = clock_to_int(item.out_clock);
+            }
             else
-                pstatus = item.io_enabled ? 1 : 0 ;
+            {
+                if (! item.io_available)
+                    pstatus = clock_to_int(e_clock::unavailable);
+                else
+                    pstatus = item.io_enabled ? 1 : 0 ;
+            }
 
             std::string tmp = io_line(pnumber, pstatus, pname);
             result += tmp;
@@ -839,6 +876,9 @@ portslist::to_string (const std::string & tag) const
         const io & item = iopair.second;
         std::string temp = std::to_string(count) + ". ";
         temp += item.io_enabled ? "Enabled;  " : "Disabled; " ;
+        if (! item.io_available)
+            temp += "Unavailable ";
+
         temp += "Clock = " + e_clock_to_string(item.out_clock);
         temp += "\n   ";
         temp += "Name:     " + item.io_name + "\n  ";

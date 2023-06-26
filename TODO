@@ -1,6 +1,15 @@
 TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-06-22
+2019-04-13 to 2023-06-26
+
+Port-mapping:
+
+    -   Needs a status of "unavailable", particularly on Windows where
+        the MIDI Mapper can grab the wavetable synth.
+    -   In ALSA, the MIDI through port has bogus client and port numbers
+        in its "io" structure. Should be initialized to -1 or -2.
+    -   Verify if a MIDI port can be rendered unavailable by another
+        application using it, in both ALSA and JACK.
 
 UI:
 
@@ -335,8 +344,13 @@ ISSUES:
         -   Ctrl-Z in pattern editor works, but does not restore original
             view until pattern is reopened. Not sure why, it should work.
         -   Adding time-sig does work, but needs hard-core verification.
+            Also verify measure-count changes.
         -   We could update the song editor to redraw sequences that
             have time signatures; more for appearances, really.
+        -   Can we have time-signature changes shown during playback by
+            modifying the combo boxes text?
+        -   Try to eliminate bad time-sig drawing in seqdata when the only
+            events are time sigs.
 
 PATTERNS:
 

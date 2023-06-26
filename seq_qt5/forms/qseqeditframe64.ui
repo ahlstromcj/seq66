@@ -45,7 +45,7 @@
     <number>6</number>
    </property>
    <property name="verticalSpacing">
-    <number>4</number>
+    <number>1</number>
    </property>
    <item row="3" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -101,7 +101,7 @@
             <x>0</x>
             <y>0</y>
             <width>38</width>
-            <height>144</height>
+            <height>162</height>
            </rect>
           </property>
          </widget>
@@ -166,7 +166,7 @@
           <x>0</x>
           <y>0</y>
           <width>729</width>
-          <height>156</height>
+          <height>174</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -436,6 +436,7 @@ the note-map, if any, to the note events in this pattern.</string>
          </property>
          <property name="font">
           <font>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1374,13 +1375,13 @@ the '0' key in the piano roll.</string>
          <property name="minimumSize">
           <size>
            <width>20</width>
-           <height>0</height>
+           <height>28</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>20</width>
-           <height>20</height>
+           <height>28</height>
           </size>
          </property>
          <property name="text">
@@ -1425,6 +1426,7 @@ the '0' key in the piano roll.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1467,6 +1469,7 @@ the '0' key in the piano roll.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <italic>false</italic>
          <bold>true</bold>
         </font>

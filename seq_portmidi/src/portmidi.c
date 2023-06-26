@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-06-03
+ * \updates     2023-06-26
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:
@@ -108,12 +108,9 @@
 #endif
 
 #if defined SEQ66_PLATFORM_DEBUG
-
-#define DEBUG_ALLOC_TRACKING            /* define only when debugging       */
-
+#undef  DEBUG_ALLOC_TRACKING            /* define only when debugging       */
 #if defined DEBUG_ALLOC_TRACKING        /* define only when debugging       */
 #include <stdint.h>                     /* uintptr_t                        */
-
 
 static int
 bad_pointer (void * ptr)

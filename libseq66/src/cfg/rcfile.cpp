@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-06-04
+ * \updates       2023-06-24
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -422,7 +422,7 @@ rcfile::parse ()
          *  e_clock::off.  LATER?
          */
 
-        rc_ref().clocks().add(0, e_clock::off, "Bad clock count");
+        rc_ref().clocks().add(0, false, e_clock::off, "Bad clock count");
     }
 
     /*

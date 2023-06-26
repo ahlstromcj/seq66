@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2023-05-17
+ * \updates       2023-06-24
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -152,9 +152,10 @@ businfo::businfo (const businfo & rhs)
  *
  * Unavailable ports:
  *
- *      In Windows, a port can be unavailable because the MIDI Mapper has
- *      taken control of it. We could account for that here ore in
- *      performer::launch().
+ *      In Windows, a port can be present on the system, but be unavailable
+ *      because the MIDI Mapper has taken control of it. Can a port be
+ *      unavailable for a similar reason (e.g. grabbed by another application)
+ *      in Linux?
  *
  * \return
  *      Returns true if the buss is value, and it could be initialized (as an
@@ -175,7 +176,7 @@ businfo::initialize ()
         }
         else
         {
-#if defined SEQ66_PLATFORM_WINDOWS
+#if defined SEQ66_PLATFORM_WINDOWS_DISABLED     /* don't allow it1!!        */
             result = true;                      /* allow it for Windoze     */
 #endif
             bus()->set_port_unavailable();      /* currently permanent      */
@@ -432,7 +433,7 @@ bool
 busarray::set_clock (bussbyte bus, e_clock clocktype)
 {
     e_clock current = get_clock(bus);
-    bool result = bus < count(); // && current != clocktype;
+    bool result = bus < count();
     if (result)
     {
         businfo & bi = m_container[bus];
@@ -654,7 +655,7 @@ bool
 busarray::set_input (bussbyte bus, bool inputing)
 {
     bool current = get_input(bus);                          /* see below    */
-    bool result = bus < count(); // && current != inputing;
+    bool result = bus < count();
     if (result)
     {
         businfo & bi = m_container[bus];
