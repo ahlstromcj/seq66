@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2023-06-23
+% \update      2023-06-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -253,8 +253,9 @@
    and can have a mixture of different channels in its channel event.
    If \textsl{Seq66} detects SMF 0, it splits the channel events into different
    patterns.
-   Also note that support for "channel" 0x80 (a flag to use the events
-   channels) is new and still being worked out.
+   Also note that "channel" 0x80 is a flag to use the channel stored in each
+   channel event.
+   This represents the "Free" setting in the pattern editor.
 
 \subsubsection{SeqSpec c\_midiclocks}
 \label{subsubsec:midi_format_track_seqspec_midiclocks}

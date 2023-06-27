@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-12-29
-% \update      2023-06-26
+% \update      2023-06-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -32,7 +32,7 @@
    can connect manually (on Linux).
 
    \textbf{Note}:
-   \textsl{Port-mapping is now automatic; default MIDI I/O port-maps are
+   Port-mapping is now automatic; default MIDI I/O port-maps are
    created at first start, and are always active if virtual ports are not in
    use.  Once created, one can edit the 'rc' file to rearrange the mapping as
    desired.
@@ -41,15 +41,18 @@
    (The startup warnings can be suppressed;
    see \sectionref{paragraph:menu_edit_preferences_display}.)
    The user can click the \textbf{Remap and restart} button,
-   fix the loaded pattern to use existing ports,
+   fix the loaded pattern to use existing ports, \textbf{OK} to ignore
+   the warning,,
    or exit, determine the existing ports using
    \texttt{aplaymidi}, \texttt{arecordmidi}, or \texttt{jack\_lsp},
-   and edit the maps directly in the 'rc' file.}
+   and edit the maps directly in the 'rc' file.
 
    The output bus or port for a given pattern can be determined by
    looking at the grid slots or by dumping a summary of the song to
    a text file.
    See \sectionref{subsubsec:menu_help_song_summary_file}.
+   Also check the specified 'ctrl' file to see if it is using
+   non-existent MIDI I/O ports.
 
    A pattern/loop/sequence is assigned to output to a given port via
    a buss number saved \textsl{in the pattern}, in the tune.
@@ -120,15 +123,57 @@
    the system.  If there is no matching system port for a mapped port, then
    that mapped port will show up as disabled in the port lists,
    and a warning should appear.
+   If it makes sense, click on the \textbf{Remap and restart} button.
+   Or later, go to \textbg{Edit / Preferences / MIDI Clock}.
    To remove the port mappings, click the \textbf{Clear Maps} button.
    To reconstruct the current setup, click on the \textbf{Make Maps} button to
-   get the new mapping.
+   get the new mapping, and restart manually.
    As with the normal port listings, the port-mappings are saved and
    managed in the \textsl{Seq66} 'rc' file.
    One can also edit that file in a text editor to
    rearrange the mapped ports.
 
-   Note that one can also deactivate port-mapping.
+   Note that one can also deactivate port-mapping. Both input and output
+   will always be in the same state (activated or deactivated).
+
+\subsection{Input Port Mapping}
+\label{subsec:input_port_mapping}
+
+   The input ports are handling somewhat similarly.  Here's another
+   initial system input setup:
+
+   \begin{verbatim}
+       4      # number of input MIDI busses
+       0  1   "[0] 0:0 seq66:system midi_capture_1"     # 'Midi Through'
+       1  1   "[1] 0:1 seq66:system midi_capture_6"     # 'Launchpad Mini'
+       2  1   "[2] 0:2 seq66:system midi_capture_3"     # 'USB Midi'
+       3  1   "[3] 0:3 seq66:system midi_capture_5"     # 'nanoKEY2'
+   \end{verbatim}
+
+   To see an example from ALSA, look at the sample file
+   \texttt{data/linux/qseq66.rc}.
+   ALSA does not support aliases.
+   (Neither to early versions of JACK.)
+
+   Note that the "system:announce" ALSA buss is always disabled, as \textsl{Seq66}
+   does not use it. In a future version of \textsl{Seq66} it may be removed.
+   Here is the stored input port-map:
+
+   \begin{verbatim}
+      [midi-input-map]
+       1      # map is active
+       0  1   "Midi Through"
+       1  1   "Launchpad Mini"
+       2  1   "USB Midi"
+       3  1   "nanoKEY2"
+   \end{verbatim}
+
+   Other than being input devices, this input map works like the output
+   (clocks) map.
+   In the user interface dropdowns for input buss, if a map is active, it is
+   put into the dropdown; any missing items are noted and are shown as
+   disabled.
+   If the map is not active, then only the actual system input ports are shown.
 
 \subsection{Output Port Mapping}
 \label{subsec:output_port_mapping}
@@ -146,6 +191,9 @@
        3  0   "[3] 0:3 seq66:system midi_playback_5"    # 'nanoKEY2'
        4  0   "[4] 1:4 seq66:fluidsynth-midi midi_00"
    \end{verbatim}
+
+   To see an example from ALSA, look at the sample file
+   \texttt{data/linux/qseq66.rc}.
 
    If some items are unplugged, then this list will change, so we save it while
    still running \textsl{Seq66}:
@@ -181,39 +229,6 @@
 
    If the map is not active, then only the actual system output ports are
    shown in the user interface.
-
-\subsection{Input Port Mapping}
-\label{subsec:input_port_mapping}
-
-   The input ports are handling somewhat similarly.  Here's another
-   initial system input setup:
-
-   \begin{verbatim}
-       4      # number of input MIDI busses
-       0  1   "[0] 0:0 seq66:system midi_capture_1"     # 'Midi Through'
-       1  1   "[1] 0:1 seq66:system midi_capture_6"     # 'Launchpad Mini'
-       2  1   "[2] 0:2 seq66:system midi_capture_3"     # 'USB Midi'
-       3  1   "[3] 0:3 seq66:system midi_capture_5"     # 'nanoKEY2'
-   \end{verbatim}
-
-   Note that the "system:announce" buss is always disabled, as \textsl{Seq66}
-   does not use it (yet).  Here is the stored input port-map:
-
-   \begin{verbatim}
-      [midi-input-map]
-       1      # map is active
-       0  1   "Midi Through"
-       1  1   "Launchpad Mini"
-       2  1   "USB Midi"
-       3  1   "nanoKEY2"
-   \end{verbatim}
-
-   Other than being input devices, this input map works like the output
-   (clocks) map.
-   In the user interface dropdowns for input buss, if a map is active, it is
-   put into the dropdown; any missing items are noted and are shown as
-   disabled.
-   If the map is not active, then only the actual system input ports are shown.
 
 \subsection{Port Mapping Example}
 \label{subsec:input_port_mapping_example}
@@ -298,6 +313,35 @@
    system port numbers.  For example, with the above setup, \textsl{Seq66} can
    be assured that output buss 1 will always go to the
    \textsl{Launchpad Mini}.
+
+\subsection{Port Setting SeqSpec}
+\label{subsec:port_seqspec}
+
+   In the MIDI specification, there are two obsolete MIDI Meta events,
+   "MIDI Channel" (0x20) and "MIDI Port" (0x21).
+   These events were never endorsed by the MIDI Manufacturers Associated,
+   but some versions of \textsl{Cakewalked} used them.
+   In any case, one does not generally change the channel and port during
+   playback.
+
+   However, \textsl{Seq66} needs to set the channel and port in order to
+   determined where events in a pattern are output.
+   These are specified by sequencer-specific (SeqSpec) events stored with
+   each pattern.
+
+   If the patterns uses "Free" setting of channel (0x80), each channel event
+   goes to whatever channel (0 through 15 internally) is specified in the event.
+   If a channel is specified, then all channel events are redirected to that
+   channel.
+   See \sectionref{subsubsec:midi_format_track_seqspec_midichannel}.
+
+   The port setting for each pattern is a number, as described earlier in
+   this chapter.
+   The output of a pattern goes to this numbered port in the midi-clock
+   lists.
+   Every pattern must have a port number.
+   For imported tracks, this number defaults to 0.
+   See \sectionref{subsubsec:midi_format_track_seqspec_midibus}.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

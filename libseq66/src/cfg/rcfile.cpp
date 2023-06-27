@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-06-24
+ * \updates       2023-06-26
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -908,10 +908,11 @@ rcfile::write ()
 
         mapstatus += "active";
         file << "\n"
-           "# This table is similar to the [midi-clock-map] section.\n"
-           "\n"
-           "[midi-input-map]\n"
-           "\n"
+"# This table is similar to the [midi-clock-map] section, but the values are\n"
+"# different. -2 = unavailable; 0 = not inputing; 1 = enabled for inputing.\n"
+"\n"
+"[midi-input-map]\n"
+"\n"
         << activestring << "      # " << mapstatus << "\n\n" << maplines
         ;
     }
@@ -933,6 +934,7 @@ rcfile::write ()
 "# are 'capture' devices. The first line shows the count of output ports.\n"
 "# Each line shows the bus number and clock status of that bus:\n"
 "#\n"
+"#  -2 = The output port is not present on the system (unavailable).\n"
 "#  -1 = The output port is disabled.\n"
 "#   0 = MIDI Clock is off. The output port is enabled.\n"
 "#   1 = MIDI Clock on; Song Position and MIDI Continue are sent.\n"

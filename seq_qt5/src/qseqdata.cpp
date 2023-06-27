@@ -142,7 +142,6 @@ qseqdata::conditional_update ()
 {
     if (check_dirty())
     {
-printf("dirty ");
         update();
     }
 }

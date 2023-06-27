@@ -1,15 +1,11 @@
 TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-06-26
+2019-04-13 to 2023-06-27
 
 Port-mapping:
 
-    -   Needs a status of "unavailable", particularly on Windows where
-        the MIDI Mapper can grab the wavetable synth.
-    -   In ALSA, the MIDI through port has bogus client and port numbers
-        in its "io" structure. Should be initialized to -1 or -2.
-    -   Verify if a MIDI port can be rendered unavailable by another
-        application using it, in both ALSA and JACK.
+    -   A status of "unavailable" on Windows should somehow avoid trying
+        to open the port, or at least nullifying the error.
 
 UI:
 
@@ -26,7 +22,6 @@ UI:
             -   New-pattern editor options (check-boxes)
         -   Plan for a "SeqSpec" tab?  Worth it?
         -   Add option to start JACK if --jack?
-        -   Make sure port-issues detection works with control/display ports.
         -   Do we need an option to auto-store? Easy to forget to push that
             button.
 
@@ -333,7 +328,9 @@ ISSUES:
 
 #110 Windows build download
 
-    STATUS: works for 64-bit builds, but still working on 32-bit builds.
+    STATUS: works for 64-bit builds, but 32-bit builds work only in
+    QtCreator, and too many things to do to build 32-bit on a 64-bit
+    machine.
 
 #111 Time signature changes does not get saved on .midi file
      

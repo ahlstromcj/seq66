@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2022-06-24
+ * \updates       2022-06-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -313,6 +313,8 @@ activate_input_port_map (bool flag)
  *  of this port. That name is then used to look up the actual buss number of
  *  that port as set up by the system according to existing MIDI equipment.
  *
+ *  If there is an error, the caller can assemble an error message.
+ *
  * \param cl
  *      Provides the clockslist that holds the actual existing MIDI input
  *      ports.
@@ -352,20 +354,6 @@ true_input_bus (const inputslist & cl, bussbyte seqbuss)
                 result = cl.bus_from_alias(shortname);
                 if (is_null_buss(result))
                     result = cl.bus_from_nick_name(shortname);
-
-                if (is_null_buss(result))
-                {
-                    /*
-                     * Let performer assemble the message.
-                     *
-                     *  const char * sn = shortname.c_str();
-                     *  std::string msg = string_format
-                     *  (
-                     *      "No input buss %d (%s)", seqbuss, sn
-                     *  );
-                     *  errprint(msg);
-                     */
-                }
             }
         }
     }

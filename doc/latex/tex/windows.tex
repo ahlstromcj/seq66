@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-02-13
-% \update      2021-06-22
+% \update      2023-06-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -18,39 +18,40 @@
 \label{sec:windows}
 
    This section discusses installing and using the basics of \textsl{Seq66}
-   in \textsl{Microsoft Windows}.  Additional trouble-shooting information can be
-   found in the installed file.
+   in \textsl{Microsoft Windows}.  Additional trouble-shooting information can
+   be found in the installed file data directory.
    Another useful reference is \cite{windowsmidi}.
 
    \begin{verbatim}
-      C:/Program Files (x86)/Seq66/data/readme.windows
+      C:/Program Files/Seq66/data/readme.windows
    \end{verbatim}
 
-   First, apart from cloning \textsl{Sequencer64-packages} (where the
-   \textsl{Seq66} installers are kept, which is a \textbf{lot}
-   of data), there are tricks to getting the installer
-   (e.g. \texttt{seq66\_setup\_0.95.0.exe}) properly. 
+   For \textsl{Seq66}, the installer executable is now part of
+   each "major" release (currently 0.99.6).
+   There are tricks to getting the installer
+   (e.g. \texttt{seq66\_setup\_0.99.6-x64.exe}) properly. 
    One can't just right-click and save the link.
-   The file downloaded that way is broken.
    Instead, click on the link.  Then look for a "Download" button, and
-   click that instead.
+   click that.
 
    Installation itself is straightforward.  Run the installer (e.g.
-   \texttt{seq66\_setup\_0.93.0.exe}).  Accept the license terms (\textsl{GNU
-   GPL 2 or 3}), make sure all components are selected, accept the default
+   \texttt{seq66\_setup\_0.99.6-x64.exe}).  Accept the license terms
+   (\textsl{GNU GPL 2 or 3}),
+   make sure all components are selected, accept the default
    install directory, and click through until the installation is done.
 
-   (Note that there is also a
-   \texttt{qpseq66-release-package-0.93.0.7z} portable installer
-   than can be download, again using the \textsl{GitHub} "Download" button.
+   (Note that there might also be a
+   \texttt{qpseq66-release-package-0.96.6.7z} portable installer
+   than can be downloaded.
    Just extract that file where desired.
-   Note that, although the \textsl{Windows} version can be built as a 64-bit
-   application, it is currently built as a 32-bit application.)
+   Note that the \textsl{Windows} version is a 64-bit
+   application. We do not currently build a 32-bit version, due to
+   our lack of a 32-bit Windows platform.)
 
    Now run 
-   \texttt{C:/Program Files (x86)/Seq66/qpseq66.exe}.
-   (One might want to create a desktop short cut; one can also go to the
-   "Start" menu and search for "qpseq66.exe".)
+   \texttt{C:/Program Files/Seq66/qpseq66.exe}.
+   One might want to create a desktop short cut; one can also go to the
+   "Start" menu and search for "qpseq66.exe" or "Seq66".)
    Assuming there are no MIDI devices attached, and no other MIDI programs
    running, an error like the following will appear:
 
@@ -63,21 +64,27 @@
 
    This error occurs on \textsl{Windows 10} because the 0th port, the
    \textsl{Microsoft MIDI Mapper}, grabs access to the 1st port, the
-   \textsl{Microsoft GS Wavetable Synth}.  It is fixed easily by exiting
-   and rerunning the application:
-   Click \textbf{OK} on the error and then \textbf{File / Quit}.
-   \textsl{Seq66} will save this configuration, disabling port 1 and
-   enabling port 0.
+   \textsl{Microsoft GS Wavetable Synth}.
+   Thus, the wavetable synth is "unavailable".
+   This message will appear at startup, and one can just click
+   \textbf{OK}, but it can also be suppressed using an option in
+   \textbf{Edit / Preferences / Display}.
+
+%  It is fixed easily by exiting
+%  and rerunning the application:
+%  Click \textbf{OK} on the error and then \textbf{File / Quit}.
+%  \textsl{Seq66} will save this configuration, disabling port 1 and
+%  enabling port 0.
 
    Run the \textsl{qpseq66.exe} shortcut and load a tune from the
-   directory \texttt{C:/Program Files (x86)/Seq66/data/midi}.
+   directory \texttt{C:/Program Files/Seq66/data/midi}.
 
-   \textbf{Tip}:
-   Also note that, in some cases, the application might not play (i.e. it is
-   unresponsive) when it is first started after a new installation.
-   Exit the application and try again; this makes sure that the
-   initial configuration files are created.
-   (At some point we will figure out why this happens).
+%  \textbf{Tip}:
+%  Also note that, in some cases, the application might not play (i.e. it is
+%  unresponsive) when it is first started after a new installation.
+%  Exit the application and try again; this makes sure that the
+%  initial configuration files are created.
+%  (At some point we will figure out why this happens).
 
    Navigate in the file explorer to
    \texttt{C:/Users/your\_user\_name/AppData/Local/seq66} and open
@@ -92,16 +99,18 @@
 \end{figure}
 
    The \texttt{[midi-input]} section indicates there are no input ports
-   (if no MIDI device is connected to the computer).
+   in Windows when no MIDI device is connected to the computer.
    The \texttt{[midi-clock]} section indicates there are two output
    ports, and that port 1 is disabled.   So one should be able to
    play a tune to the MIDI mapper and hear it, if output is directed
    to port 0.
 
-   Now run \texttt{qpseq66.exe} again.  No error should appear.
-   Go to \textbf{Edit / Preferences / MIDI Clock}.  It might be
-   difficult to click on that tab, and we have never figured out why.
-   Use \texttt{Alt-C} if necessary.
+%  Now run \texttt{qpseq66.exe} again.  No error should appear.
+%  Go to \textbf{Edit / Preferences / MIDI Clock}.  It might be
+%  difficult to click on that tab, and we have never figured out why.
+%  Use \texttt{Alt-C} if necessary.
+
+   Go to \textbf{Edit / Preferences / MIDI Clock}.
    It will look like this:
 
 \begin{figure}[H]
@@ -114,8 +123,11 @@
    Next select \textbf{File / Open} and select this sample tune:
 
    \begin{verbatim}
-      C:/Program Files (x86)/Seq66/data/midi/b4uacuse-gm-patchless.midi
+      C:/Program Files/Seq66/data/midi/b4uacuse-gm-patchless.midi
    \end{verbatim}
+
+   (In the following figure, the "(x86)" is due to an early incorrect
+   installation.)
 
 \begin{figure}[H]
    \centering 
@@ -159,7 +171,7 @@
    Again, for trouble-shooting, also see the installed text file:
 
    \begin{verbatim}
-      C:/Program Files (x86)/Seq66/data/readme.windows
+      C:/Program Files/Seq66/data/readme.windows
    \end{verbatim}
 
 %-------------------------------------------------------------------------------

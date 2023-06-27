@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-06-26
+ * \updates       2023-06-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -487,7 +487,7 @@ performer::append_error_message (const std::string & msg) const
         );
         if (finding == s_old_msgs.cend())
         {
-            m_error_messages += "\n";
+            m_error_messages += " ";
             m_error_messages += newmsg;
             s_old_msgs.push_back(newmsg);
             seq66::error_message("Performer", newmsg);
@@ -965,9 +965,13 @@ performer::true_input_bus (bussbyte nominalbuss) const
 
             std::string msg = "Unavailable input bus ";
             msg += std::to_string(unsigned(nominalbuss));
-            msg += " '";
-            msg += busname;
-            msg += "'. Check MIDI inputs and control settings.";
+            if (! busname.empty())
+            {
+                msg += " \"";
+                msg += busname;
+                msg += "\"";
+            }
+            msg += ". Check ports in the 'rc'/'ctrl' files.";
             m_port_map_error = true;                /* mutable boolean      */
             append_error_message(msg);
         }
@@ -1251,9 +1255,13 @@ performer::true_output_bus (bussbyte nominalbuss) const
 
             std::string msg = "Unavailable output bus ";
             msg += std::to_string(unsigned(nominalbuss));
-            msg += " '";
-            msg += busname;
-            msg += "'. Check song and MIDI output and display settings.";
+            if (! busname.empty())
+            {
+                msg += " \"";
+                msg += busname;
+                msg += "\"";
+            }
+            msg += ". Check ports in the song or 'rc'/'ctrl' files.";
             m_port_map_error = true;                /* mutable boolean      */
             append_error_message(msg);
         }
@@ -3189,12 +3197,18 @@ performer::launch (int ppqn)
              * obtained by this point.
              */
 
-            bussbyte namedbus = m_midi_control_in.nominal_buss();
-            bussbyte truebus = true_input_bus(namedbus);
-            m_midi_control_in.true_buss(truebus);
-            namedbus = m_midi_control_out.nominal_buss();
-            truebus = true_output_bus(namedbus);
-            m_midi_control_out.true_buss(truebus);
+            if (midi_control_in().is_enabled())
+            {
+                bussbyte namedbus = m_midi_control_in.nominal_buss();
+                bussbyte truebus = true_input_bus(namedbus);
+                m_midi_control_in.true_buss(truebus);
+            }
+            if (midi_control_out().is_enabled())
+            {
+                bussbyte namedbus = m_midi_control_out.nominal_buss();
+                bussbyte truebus = true_output_bus(namedbus);
+                m_midi_control_out.true_buss(truebus);
+            }
             m_io_active = true;
             launch_input_thread();
             launch_output_thread();
@@ -3206,9 +3220,9 @@ performer::launch (int ppqn)
             if (any_ports_unavailable())
             {
                 std::string msg =
-                    "Some configured port-maps unavailable. "
-                    "Remap if all devices desired are plugged in, "
-                    "or exit and edit 'rc' port-maps manually. "
+                    "Some configured ports are unavailable. "
+                    "Remap if all desired ports are present, OK to ignore, "
+                    "or exit and edit the 'rc' file  manually."
                     ;
 
                 m_port_map_error = true;            /* mutable boolean      */

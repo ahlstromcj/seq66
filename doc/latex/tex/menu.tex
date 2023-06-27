@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-06-26
+% \update      2023-06-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -510,6 +510,10 @@
    \label{fig:midi_clock_tab}
 \end{figure}
 
+   Port-mapping is the default, and when active, is shown in this pane.
+   If there are more than about a dozen
+   output ports in the system, then a vertical scrollbar appears.
+
    The following elements are present in this tab:
 
    \begin{enumber}
@@ -533,7 +537,7 @@
    If the set of system MIDI devices and software devices has changed since
    the last run, this list could be in error.  Restart the application
    and see if it is now correct.  Currently, there is no way to edit the list
-   except in the 'rc' file.  Also, enabling port-mapping is an issue.
+   except in the 'rc' file.
 
    The \textbf{Ports and Clocks} table contains the following elements,
    although some can be removed by specifying the
@@ -755,9 +759,13 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_input_tab.png}
-   \caption{MIDI Input, ALSA View}
+   \caption{MIDI Input Tab}
    \label{fig:midi_input_tab}
 \end{figure}
+
+   Port-mapping is the default, and when active, is shown in this pane.
+   If there are more than about a dozen
+   input ports in the system, then a vertical scrollbar appears.
 
    Any item checked allows \textsl{Seq66} to record MIDI from that source,
    which must be connected to this input port.

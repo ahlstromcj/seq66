@@ -1,7 +1,7 @@
-# Seq66 0.98.0 main ('rc') configuration file
+# Seq66 0.99.6 main ('rc') configuration file
 #
 # /home/user/.config/seq66/qseq66.rc
-# Written 2022-08-10 13:28:05
+# Written 2023-06-27 11:35:11
 #
 # This file holds the main configuration for Seq66. It no longer follows the
 # format of the seq24rc configuration file.
@@ -9,23 +9,28 @@
 # 'version' is set by Seq66; it is used to detect older configuration files,
 # which are upgraded to the new version when saved.
 #
-# 'verbose' just indicates the status of --verbose at exit.
+# 'quiet' suppresses start-up error messages. Useful when they are not
+# relevant. There's no --quiet command-line option yet. It's NOT the opposite
+# of 'verbose'.
+#
+# 'verbose' is temporary, same as --verbose; it's set to false at exit.
 #
 # 'sets-mode' affects set muting when moving to the next set. 'normal' leaves
 # the next set muted. 'auto-arm' unmutes it. 'additive' keeps the previous set
 # armed when moving to the next set. 'all-sets' arms all sets at once.
 #
-# 'port-naming' is 'short', 'pair', or 'long'. If 'short', the port name shows
-# the name of the device. If the name is generic, the client name is added for
-# clarity. If 'pair', the client:port number is prepended. If 'long', the full
-# name (index, client:port, client name, and port name is shown.
+# 'port-naming': 'short', 'pair', or 'long'. If 'short', the device name is
+# shown. If it  is generic, the client name is added for clarity. If 'pair',
+# the client:port number is prepended. If 'long', the full set of name items
+# is shown. If port-mapping is active (now the default), this does not apply.
 #
-# 'init-disabled-ports' is experimental. It allows live toggle of port state.
+# 'init-disabled-ports' is experimental. It tries live toggle of port state.
 
 [Seq66]
 
 config-type = "rc"
 version = 2
+quiet = false
 verbose = false
 sets-mode = normal
 port-naming = short
@@ -36,7 +41,9 @@ init-disabled-ports = false
 
 [comments]
 
-Add your comment block here
+Add your comment block here. This is a sample file and not necessarily
+realistic for your system.  Also, we add about 8 bogus ports to test the
+MIDI Clocks and MIDI Inputs tabs.
 
 # Provides a flag and file-name for MIDI-control I/O settings. '""' means
 # no 'ctrl' file. If none, default keystrokes are used, with no MIDI control.
@@ -115,100 +122,110 @@ virtual-ports = false
 output-port-count = 8
 input-port-count = 4
 
-# These system ports are available for input. From JACK's view, these are
+# These MIDI ports are for input and control. JACK's view: these are
 # 'playback' devices. The first number is the bus, the second number is the
 # input status, disabled (0) or enabled (1). The item in quotes is the full
 # input bus name.
-#
-#  -1 = The output port is disabled.
-#   0 = MIDI Clock is off. The output port is enabled.
-#   1 = MIDI Clock on; Song Position and MIDI Continue are sent.
-#   2 = MIDI Clock Modulo.
-#
-# With Clock Modulo, MIDI clocking doesn't begin until song position
-# reaches the start modulo value [midi-clock-mod-ticks]. One can
-# disable a port manually for devices that are present, but not
-# available (because another application, e.g. Windows MIDI Mapper,
-# has exclusive access to the device.
 
 [midi-input]
 
- 4      # number of input MIDI busses
+ 8      # number of MIDI input (or control) buses
 
- 0  1   "[0] 0:0 seq66:system midi_capture_1"       # Midi-Through
- 1  1   "[1] 0:1 seq66:system midi_capture_2"       # Launchpad-Mini
- 2  0   "[2] 0:2 system:midi_capture_3"             # USB-Midi
- 3  0   "[3] 0:3 system:midi_capture_4"             # nanoKEY2
+ 0  1   "[0] 0:1 system:ALSA Announce"
+ 1  0   "[1] 14:0 Midi Through Port-0"
+ 2  0   "[2] 36:0 Launchpad Mini MIDI 1"
+ 3  1   "[3] 40:0 nanoKEY2 nanoKEY2 _ CTRL"
+ 4  0   "[4] 44:0 CH345 MIDI 1"
+ 5  0   "[5] 48:0 E-MU XMidi1X1 Tab Out"
+ 6  0   "[6] 52:0 USB Midi MIDI 1"
+ 7  0   "[7] 56:0 Q25 MIDI 1"
 
-# This table is similar to the [midi-clock-map] section.
-# Port-mapping is disabled in manual/virtual port mode.
+# This table is similar to the [midi-clock-map] section, but the values are
+# different. -2 = unavailable; 0 = not inputing; 1 = enabled for inputing.
 
 [midi-input-map]
 
-1       # map is active
+ 1      # map is active
 
- 0  1   "announce"
- 1  1   "Midi Through Port-0"
- 2  1   "nanoKEY2 MIDI 1"
- 3  1   "USB Midi MIDI 1"
- 4  1   "Q25 MIDI 1"
- 5  1   "E-MU XMidi1X1 Tab MIDI 1"
- 6  1   "Launchpad Mini MIDI 1"
+ 0  1   "ALSA Announce"
+ 1  0   "Midi Through Port-0"
+ 2  0   "Launchpad Mini MIDI 1"
+ 3  1   "nanoKEY2 nanoKEY2 _ CTRL"
+ 4  0   "CH345 MIDI 1"
+ 5  0   "E-MU XMidi1X1 Tab Out"
+ 6  0   "USB Midi MIDI 1"
+ 7  0   "Q25 MIDI 1"
+ 8 -2   "Excess 0"
+ 9 -2   "Excess 1"
+10 -2   "Excess 2"
+11 -2   "Excess 3"
+12 -2   "Excess 4"
+13 -2   "Excess 5"
+14 -2   "Excess 7"
+15 -2   "Excess 7"
 
-# These system ports are available for output, for playback/control.
-# From JACK's view, these are 'capture' devices. The first line shows
-# the count of MIDI 'capture' ports. Each line shows the buss number
-# and clock status of that buss:
+# These MIDI ports are for output, playback, and display. JACK's view: these
+# are 'capture' devices. The first line shows the count of output ports.
+# Each line shows the bus number and clock status of that bus:
 #
+#  -2 = The output port is not present on the system (unavailable).
 #  -1 = The output port is disabled.
 #   0 = MIDI Clock is off. The output port is enabled.
 #   1 = MIDI Clock on; Song Position and MIDI Continue are sent.
 #   2 = MIDI Clock Modulo.
 #
 # With Clock Modulo, clocking doesn't begin until song position reaches the
-# start-modulo value [midi-clock-mod-ticks]. One can disable a port manually
-# for devices that are present, but unavailable (because another application,
-# e.g. Windows MIDI Mapper, has exclusive access to the device.
+# start-modulo value [midi-clock-mod-ticks]. Ports that are unavailable
+# (because another portapplication, e.g. Windows MIDI Mapper, has exclusive
+# access to the device) are displayed ghosted.
 
 [midi-clock]
 
- 7      # number of MIDI clocks (output busses)
+ 9      # number of MIDI clocks (output/display buses)
 
  0  0   "[0] 14:0 Midi Through Port-0"
- 1  0   "[1] 28:0 nanoKEY2 MIDI 1"
- 2  0   "[2] 36:0 USB Midi MIDI 1"
- 3  0   "[3] 40:0 Q25 MIDI 1"
- 4  0   "[4] 44:0 E-MU XMidi1X1 Tab MIDI 1"
- 5  0   "[5] 48:0 Launchpad Mini MIDI 1"
- 6  0   "[6] 128:0 FLUID Synth (1070760):Synth input port (1070760:0)"
+ 1  0   "[1] 36:0 Launchpad Mini MIDI 1"
+ 2  0   "[2] 40:0 nanoKEY2 nanoKEY2 _ CTRL"
+ 3  0   "[3] 44:0 CH345 MIDI 1"
+ 4  0   "[4] 48:0 E-MU XMidi1X1 Tab Out"
+ 5  0   "[5] 52:0 USB Midi MIDI 1"
+ 6  0   "[6] 56:0 Q25 MIDI 1"
+ 7  0   "[7] 128:0 FLUID Synth (21079):Synth input port (21079:0)"
+ 8  0   "[8] 129:0 yoshimi:input"
 
-# This table, if present, allows the pattern to set buss numbers
-# as usual, but the use the table to look up the true buss number
-# by the short form of the port name. Thus, if the ports change
-# their order in the MIDI system, the pattern can still output to
-# the proper port. The short names are the same with ALSA or with
-# JACK with the a2jmidi bridge running. Note that port-mapping is
-# disabled in manual/virtual port mode.
+# Patterns use bus numbers, not names. This table provides virtual bus numbers
+# that match real devices and can be stored in each pattern. The bus number
+# is looked up in this table, the port nick-name is retrieved, and the true
+# bus number is obtained and used. Thus, if the ports change order in the MIDI
+# system, the pattern will use the proper port. The short nick-names work in
+# ALSA or JACK (a2jmidid bridge).
 
 [midi-clock-map]
 
  1      # map is active
 
- 0  1   "Midi Through Port-0"
- 1  1   "nanoKEY2 MIDI 1"
- 2  1   "USB Midi MIDI 1"
- 3  1   "Q25 MIDI 1"
- 4  1   "E-MU XMidi1X1 Tab MIDI 1"
- 5  1   "Launchpad Mini MIDI 1"
- 6  1   "FLUID Synth"
- 7  1   "qsynth midi_00"
+ 0  0   "Midi Through Port-0"
+ 1  0   "Launchpad Mini MIDI 1"
+ 2  0   "nanoKEY2 nanoKEY2 _ CTRL"
+ 3  0   "CH345 MIDI 1"
+ 4  0   "E-MU XMidi1X1 Tab Out"
+ 5  0   "USB Midi MIDI 1"
+ 6  0   "Q25 MIDI 1"
+ 7  0   "FLUID Synth"
+ 8  0   "yoshimi:input"
+ 9 -2   "Excess 0"
+10 -2   "Excess 1"
+11 -2   "Excess 3"
+12 -2   "Excess 4"
+13 -2   "Excess 5"
+14 -2   "Excess 6"
+15 -2   "Excess 7"
 
-# 'ticks' provides the Song Position (in 16th notes) at which
-# clocking begins if the buss is set to MIDI Clock Mod setting.
-# 'record-by-channel' allows the master MIDI bus to record/filter
-# incoming MIDI data by channel, adding each new MIDI event to the
-# pattern that is set to that channel.  This option adopted from the
-# Seq32 project at GitHub.
+# 'ticks' provides the Song Position (16th notes) at which clocking begins if
+# the bus is set to MIDI Clock Mod setting. 'record-by-channel' allows the
+# master MIDI bus to record/filter incoming MIDI data by channel, adding each
+# new MIDI event to the pattern that is set to that channel. Option adopted
+# from the Seq32 project at GitHub.
 
 [midi-clock-mod-ticks]
 
@@ -243,12 +260,18 @@ sub-patch = 33
 sub-note = 76
 sub-note-velocity = 84
 sub-note-length = 0
+count-in-active = false
+count-in-measures = 1
+count-in-recording = false
+recording-buss = 3
+recording-measures = 0
+thru-buss = 0
+thru-channel = 0
 
-# Sets mouse usage for drawing/editing patterns. 'Fruity' mode is NOT
-# supported in Seq66. Also obsolete is the Mod4 feature. Other settings
-# are available: 'snap-split' enables splitting song-editor triggers
-# at a snap position instead of in its middle. Split is done by a
-# middle-click or Ctrl-left click. 'double-click-edit' allows double-
+# Sets mouse usage for drawing/editing patterns. 'Fruity' mode is NOT in
+# Seq66. Other settings are available: 'snap-split' enables splitting
+# song-editor triggers at a snap position instead of in its middle. Split is
+# done by a middle-click or ctrl-left click. 'double-click-edit' allows double-
 # click on a slot to open it in a pattern editor. Set it to false if
 # you don't like how it works.
 
@@ -271,6 +294,9 @@ double-click-edit = true
 # jack-midi sets/unsets JACK MIDI, separate from JACK transport.
 # jack-auto-connect sets connecting to JACK ports found. Default = true; use
 # false to have a session manager make the connections.
+# jack-use-offset attempts to calculate timestamp offsets to improve accuracy
+# at high-buffer sizes. Still a work in progress.
+# jack-buffer-size allows for changing the frame-count, a power of 2.
 
 [jack-transport]
 
@@ -278,16 +304,15 @@ transport-type = slave
 song-start-mode = auto
 jack-midi = true
 jack-auto-connect = true
+jack-use-offset = true
+jack-buffer-size = 0
 
-# 'auto-save-rc' sets automatic saving of the running configuration
-# 'rc' and other files.  True is Seq24 behavior. If set, many
-# command-line settings are saved to configuration files. There is
-# no user-interface control for this setting.
+# 'auto-save-rc' sets automatic saving of the  'rc' and other files. If set,
+# many command-line settings are saved to configuration files.
 #
-# The 'old-triggers' value means to save triggers in a format
-# compatible with Seq24.  Otherwise, triggers are saved with an
-# additional 'transpose' setting. Similarly, the old-mutes value,
-# if true, saves mute-groups as long values (!) instead of bytes.
+# 'old-triggers' saves triggers in a format compatible with Seq24. Otherwise,
+# triggers are saved with an additional 'transpose' setting. The old-mutes
+# value, if true, saves mute-groups as long values (!) instead of bytes.
 
 [auto-option-save]
 
@@ -295,15 +320,15 @@ auto-save-rc = true
 save-old-triggers = false
 save-old-mutes = false
 
-# Specifies the last-used and currently-active directory.
+# Specifies the last-used/currently-active directory.
 
 [last-used-dir]
 
 "/home/user/data/midi"
 
-# A list of the most recently-loaded MIDI files. 'full-paths' = true
-# means to show the full file-path in the menu.  The most recent
-# file (top of list) can be loaded via 'load-most-recent' at startup.
+# The most recently-loaded MIDI files. 'full-paths' = true means to show the
+# full file-path in the menu. The most recent file (top of list) can be loaded
+# via 'load-most-recent' at startup.
 
 [recent-files]
 
