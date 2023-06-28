@@ -27,7 +27,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2020-07-12
+ * \updates     2023-06-28
  * \license     GNU GPLv2 or above
  *
  * Here is a guide to implementers:
@@ -312,6 +312,7 @@ typedef enum
     pmWriteToInput,
     pmReadFromOutput,
     pmErrOther,
+    pmDeviceLocked,                 /* grabbed by MIDI Mapper   */
 
     /*
      *  If you add a new error type here, be sure to update Pm_GetErrorText()!
@@ -322,7 +323,7 @@ typedef enum
 } PmError;
 
 /*
- *  These are defined in system-specific file
+ *  These are defined in system-specific files.
  */
 
 extern void * pm_alloc (size_t s);
@@ -334,19 +335,11 @@ struct pm_internal_struct;                  /* forward declaration  */
  *  These do not use PmInternal because it is not defined yet....
  */
 
-/**
- *
- */
-
 typedef PmError (* pm_write_short_fn)
 (
     struct pm_internal_struct * midi,
     PmEvent * buffer
 );
-
-/**
- *
- */
 
 typedef PmError (* pm_begin_sysex_fn)
 (
@@ -354,19 +347,11 @@ typedef PmError (* pm_begin_sysex_fn)
     PmTimestamp timestamp
 );
 
-/**
- *
- */
-
 typedef PmError (* pm_end_sysex_fn)
 (
     struct pm_internal_struct * midi,
     PmTimestamp timestamp
 );
-
-/**
- *
- */
 
 typedef PmError (* pm_write_byte_fn)
 (
@@ -375,29 +360,17 @@ typedef PmError (* pm_write_byte_fn)
     PmTimestamp timestamp
 );
 
-/**
- *
- */
-
 typedef PmError (* pm_write_realtime_fn)
 (
     struct pm_internal_struct * midi,
     PmEvent * buffer
 );
 
-/**
- *
- */
-
 typedef PmError (* pm_write_flush_fn)
 (
     struct pm_internal_struct * midi,
      PmTimestamp timestamp
 );
-
-/**
- *
- */
 
 typedef PmTimestamp (* pm_synchronize_fn) (struct pm_internal_struct * midi);
 
@@ -420,16 +393,7 @@ typedef PmError (* pm_abort_fn) (struct pm_internal_struct * midi);
  */
 
 typedef PmError (* pm_close_fn) (struct pm_internal_struct * midi);
-
-/**
- *
- */
-
 typedef PmError (* pm_poll_fn) (struct pm_internal_struct * midi);
-
-/**
- *
- */
 
 typedef void (* pm_host_error_fn)
 (
@@ -438,18 +402,10 @@ typedef void (* pm_host_error_fn)
     unsigned
 );
 
-/**
- *
- */
-
 typedef unsigned (* pm_has_host_error_fn)
 (
     struct pm_internal_struct * midi
 );
-
-/**
- *
- */
 
 typedef struct
 {
@@ -503,15 +459,7 @@ extern descriptor_type pm_descriptors;
 extern int pm_descriptor_index;
 extern int pm_descriptor_max;
 
-/**
- *
- */
-
 typedef uint32_t (* time_get_proc_type) (void * time_info);
-
-/**
- *
- */
 
 typedef struct pm_internal_struct
 {
@@ -546,7 +494,7 @@ typedef struct pm_internal_struct
     int32_t buffer_len;
 
     /**
-     *
+     *  To be documented.
      */
 
     PmQueue * queue;

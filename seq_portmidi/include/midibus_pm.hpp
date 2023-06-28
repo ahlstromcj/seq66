@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-05-13
+ * \updates       2023-06-28
  * \license       GNU GPLv2 or above
  *
  *  This midibus module is the Windows (PortMidi) version of the midibus
@@ -66,6 +66,15 @@ private:
 
     PortMidiStream * m_pms;
 
+    /**
+     *  The Windows MIDI Mapper will lock the built-in GS Wavetable Synth,
+     *  making it unavailable all the time.  This flag will allow the
+     *  error status to be skipped, eliminating a misleading/annoying message
+     *  at start-up.
+     */
+
+    bool m_is_port_locked;
+
 public:
 
     /*
@@ -82,6 +91,16 @@ public:
     );
 
     virtual ~midibus ();
+
+    virtual bool is_port_locked () const override
+    {
+        return  m_is_port_locked;
+    }
+
+    void set_port_locked ()
+    {
+        m_is_port_locked = true;
+    }
 
 protected:
 

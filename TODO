@@ -1,36 +1,36 @@
 TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-06-27
+2019-04-13 to 2023-06-28
 
 Port-mapping:
 
     -   A status of "unavailable" on Windows should somehow avoid trying
         to open the port, or at least nullifying the error.
+    -   Consider allowing the addition of an alias to a port. This would
+        be useful for devices attached to "USB Midi MIDI 1". However,
+        think about MIDNAM.
 
 UI:
 
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:
 
-        -   Display:
-            -   Global seq feature (global vs pattern background pattern, key,
-                and scale). What is the default?
-            -   Tempo / BPM min and max. Might want to add a "Meta" or "Tempo"
-                tab to Preferences and move the MIDI Clock meta stuff to it.
-                There are BPM options in 'rc' and 'usr'!
-        -   Play Options:
+        -   Pattern Options (would be a new tab):
             -   New-pattern editor options (check-boxes)
-        -   Plan for a "SeqSpec" tab?  Worth it?
+            -   BPM display minimum and maximum
+        -   Plan for a "SeqSpec" tab?  Worth it? Values that can reasonably
+            appear are not pattern-specific and are not represented in an
+            existing UI setting:
+            -   Global-seq version of c_musickey, c_musicscale, c_backsequence
+            -   c_perf_bp_mes. Used?
+            -   c_perf_bw. Used?
         -   Add option to start JACK if --jack?
-        -   Do we need an option to auto-store? Easy to forget to push that
-            button.
+        -   Do we need an option to auto-store changes in the event editor?
+            Easy to forget to push that button.
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
     o Windows build and installer. 32-bit installer cannot work!
-	o Investigate: cannot click on 'MIDI Clock' tab in preferences (Alt-C OK).
-      This will work if just the right place in the tab is clicked. Cannot find
-      any useful information on this issue.
     o Why does velocity change in data pane not work when starting from the
       left in barrage.midi? The Kepler34 "relative change" feature. This
       feature is macroed out for now. Perhaps should make it a Ctrl-Click or
@@ -43,7 +43,7 @@ Some of these issues will be pushed off for the distant Seq66v2.
 Mutes:
 
     -   Mutes via MIDI control, in Learn mode, do not raise the modify
-        asterisk.
+        asterisk. Why not???
     -   If inactive, set "Mute File" setting to "not enabled".
     -   Consider showing, as a run-time toggle, the mute hot-keys, rather
         than the mute number, in the mute-master buttons.
@@ -63,13 +63,6 @@ From Testing:
 
     Can we distinguish note-insertion from movement snap, to avoid the
     "L"-then-snap-then-move samba?
-
-Windows:
-
-    -   In the live grid, move the top text up 1 pixel.  Move the bottom text
-        up 2 pixels. Maybe reduce the font size by 1. Also consist the for the
-        piano rolls.
-    -   The default Qt theme pushes the seqtime rightward by about 6 pixels.
 
 Pending Macros:
 
@@ -129,31 +122,6 @@ ISSUES:
 #46 JACK port groups / order?
     STATUS: Probably a future feature (version 2).
 
-#48 JACK-midi self connections
-    With NSM and [manual ports] enabled, inputs ports are not created when I
-    load the session.  Steps to reproduce :
-
-      * Create a NSM session with a jack-patch.
-      * Add qseq66
-      * Save and quit the session
-      * Change .rc file in the session folder to enable [manual-ports], then
-        save the file.
-      * Open your NSM session, use MIDI-input preference to create ports,
-        then make connections.
-      * Save and reload the session.
-
-    Also, [manual-ports] is off, then seq66 handles connections. IMO, this
-    behavior should be disabled with NSM, because a session manager is
-    supposed to store/restore the connections.
-
-    (I have used Ray-Session, but I guess it acts as others NSM managers)
-
-    Probably need an option to not auto-connect while NSM is running.
-    The current fix is to disable auto-connect when first creating the
-    new session configuration.  This can be changed later in the 'rc' file.
-
-    STATUS: Mitigated, should close with release 0.99.4.
-
 #52 Community / discussion place?
     STATUS: Partly supported now by using github.io, but much more to be done.
 
@@ -163,12 +131,12 @@ ISSUES:
 
 #66 Toggle MIDI Recording via CC message
     I think modes generally should be triggerable individually. Especially if
-    there   will be more to come in the future, it will get messy when you
+    there will be more to come in the future, it will get messy when you
     only have a single button for them.  I think that a next candidate would
     be for copy and clear mode.  In copy mode, the first grid button press
     would highlight a pattern and the second one would paste it to the
     appropriate slot.  On clear mode, the patterns could be emptied or removed
-    via the grid buttons on   the controller.
+    via the grid buttons on the controller.
 
     We could end up with a lot of modes, perhaps more than keystrokes could
     support.  If a MIDI controller can emit specific D2 data programmably from
@@ -228,20 +196,6 @@ ISSUES:
     is a MIDI Slave
     STATUS: Some fix(es) made, needs more testing.
 
-#77 For building without JACK
-    STATUS: Will push off to version 2
-
-#83 MIDI Input not possible: "[midi-input]: in-bus data line error"
-    STATUS: Seems to be fixed. Will spawn another new issue out the
-    
-    New Issue: "Get control/display ports to work without auto-connect".
-    This involves being able to set up the controls after the fact without
-    being stymied by start-up errors. An ALSA issue.
-    STATUS: Fixed.
-
-#86 The mousewheel doesn't works to scroll or zoom in Editor.
-    STATUS: Closed, see issue #3 instead.
-
 #90 seq66 does not recognize some changes for the save entry in the file menu.
     STATUS: Ongoing improvements.
     Fix pattern is DONE, but needs a way to allow user to back out more easily.
@@ -260,12 +214,6 @@ ISSUES:
     mode, but does not stop when looped back as in Seq66.
     STATUS: Fixed.
 
-#98 Feature requests (metronome and background recording).
-    STATUS: Basically done.
-
-#99 How is seq66 different from seq64?
-    STATUS: Explained in the issue report.  README.md changes needed?
-
 #100 Seq66's MIDI timing completely falls apart at JACK buffer sizer larger
     than 128.
     STATUS: In progress. Added a timestamp to each message in the JACK
@@ -278,11 +226,6 @@ ISSUES:
     Ardour) to completely eliminate hiccups in the synchronization of
     note input and playback, due to the unavoidable lag between putting the
     note in the ringbuffer and taking it out in the JACK process callback.
-
-#101 Totally unstable playback
-    Further investigation leads me to believe it might be something with the
-    realtime kernel and video drivers! bloody annoying! I wonder where to
-    start looking...
 
 #102 How can I use mutes?
     After some additional experimentation I found out that Seq66 has these
@@ -330,7 +273,7 @@ ISSUES:
 
     STATUS: works for 64-bit builds, but 32-bit builds work only in
     QtCreator, and too many things to do to build 32-bit on a 64-bit
-    machine.
+    machine. A ton of refactoring and fixes for the damn MIDI Mapper.
 
 #111 Time signature changes does not get saved on .midi file
      
@@ -406,6 +349,7 @@ Version 2 features:
         support.  Seq66 dependence on the JACK ringbuffer is an issue here.
     -   Port refresh in ALSA and JACK at a minimum.
     -   JACK port groups and order.
+    -   MIDI Learn.  Separate app?
     -   Pipewire support.
     -   Live note mapping?
     -   Abletone Link support?
@@ -415,7 +359,7 @@ Version 2 features:
         (the Preferences editor?).
     -   Make main menu hide-able.
     -   Allow multiple instances of seq66.
-    -   Allow multiple tunes to be loaded in seq66?
+    -   Allow multiple tunes to be loaded in seq66.
     -   More consistent support for undo / redo / unmodify.
     -   Add console output for every user action.
     -   Add scripting language?

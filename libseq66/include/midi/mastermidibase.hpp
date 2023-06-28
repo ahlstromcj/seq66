@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2023-05-15
+ * \updates       2023-06-28
  * \license       GNU GPLv2 or above
  *
  *  The mastermidibase module is the base-class version of the mastermidibus
@@ -302,6 +302,7 @@ public:
     bool set_input (bussbyte bus, bool inputing);
     bool is_input_system_port (bussbyte bus) const;
     bool is_port_unavailable (bussbyte bus, midibase::io iotype) const;
+    bool is_port_locked (bussbyte bus, midibase::io iotype) const;
     void copy_io_busses ();
     void set_ppqn (int ppqn);
     void set_beats_per_minute (midibpm bpm);

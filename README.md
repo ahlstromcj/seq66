@@ -1,4 +1,4 @@
-# README for Seq66 0.99.6 2023-06-26
+# README for Seq66 0.99.6 2023-06-28
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -97,9 +97,10 @@ Windows, and using a conventional source tarball.
                 velocities in the pattern editor's data pane.  Improved
                 velocity-change undo.
             *   Fixed an error preventing changing the "background" pattern.
-            *   Remaining issue: Building 32-bit (Windows XP) version on
-                64-bit Windows. On 64-bit Windows, this seems to require 
-                building a 32-bit version of the Qt toolset.
+            *   Fixed issues with port-mapping and the Windows MIDI Mapper.
+            *   Issue: Building 32-bit (Windows XP) version on 64-bit Windows.
+                On 64-bit Windows, this seems to require building a 32-bit
+                version of the Qt toolset. Ugh.
         *   Issue #111: Adding support, as much as possible, for editing,
             storing, and displaying time signature in the pattern and event
             editors.

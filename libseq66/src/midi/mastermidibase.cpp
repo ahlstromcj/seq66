@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2023-06-26
+ * \updates       2023-06-28
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -646,6 +646,15 @@ mastermidibase::is_port_unavailable (bussbyte bus, midibase::io iotype) const
         return m_inbus_array.is_port_unavailable(bus);
     else
         return m_outbus_array.is_port_unavailable(bus);
+}
+
+bool
+mastermidibase::is_port_locked (bussbyte bus, midibase::io iotype) const
+{
+    if (iotype == midibase::io::input)
+        return m_inbus_array.is_port_locked(bus);
+    else
+        return m_outbus_array.is_port_locked(bus);
 }
 
 /**

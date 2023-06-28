@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-06-26
+ * \updates       2023-06-28
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the midibus class.
@@ -96,7 +96,8 @@ midibus::midibus
         midibase::io::output,               // false,
         midibase::port::normal              // false
     ),
-    m_pms (nullptr)
+    m_pms               (nullptr),
+    m_is_port_locked    (false)
 {
     // Empty body
 }
@@ -168,11 +169,25 @@ midibus::api_init_out ()
     bool result = err == pmNoError;
     if (! result)
     {
-        errprintf
-        (
-            "Pm_OpenOutput(): %s; MIDI clock disabled\n",
-            Pm_GetErrorText(err)
-        );
+        if (err == pmDeviceLocked)                  /* e.g. by MIDI Mapper  */
+        {
+            errprintf
+            (
+                "Pm_OpenOutput(): %s; MIDI output locked\n",
+                Pm_GetErrorText(err)
+            );
+            set_port_locked();
+            result = true;                          /* cover up the "error" */
+        }
+        else
+        {
+            errprintf
+            (
+                "Pm_OpenOutput(): %s; MIDI output disabled\n",
+                Pm_GetErrorText(err)
+            );
+        }
+        set_port_unavailable();
         (void) set_clock(e_clock::unavailable);     /* e_clock::disabled    */
     }
     return result;

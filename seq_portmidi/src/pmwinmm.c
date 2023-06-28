@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-06-03
+ * \updates     2023-06-28
  * \license     GNU GPLv2 or above
  *
  *  Check out this site:
@@ -113,6 +113,13 @@ static void CALLBACK winmm_out_callback
 static void winmm_out_delete (PmInternal * midi);
 extern pm_fns_node pm_winmm_in_dictionary;
 extern pm_fns_node pm_winmm_out_dictionary;
+
+/**
+ *  If the Windows MIDI Mapper is active, then the wavetable synthesizer
+ *  will not be directly available.
+ */
+
+static cbool_t s_midi_mapper_active = false;
 
 /**
  * \note
@@ -1161,13 +1168,22 @@ no_memory:
 
     if (Pm_hosterror())
     {
-        int err = midiInGetErrorText
+        int hosterror = Pm_hosterror();
+        /* MMRESULT err = */ midiInGetErrorText
         (
-            Pm_hosterror(), Pm_hosterror_text_mutable(), PM_HOST_ERROR_MSG_LEN
+            (MMRESULT) hosterror, Pm_hosterror_text_mutable(),
+            PM_HOST_ERROR_MSG_LEN
         );
-        if (err != MMSYSERR_NOERROR)
+        if ((MMRESULT) hosterror != MMSYSERR_NOERROR)
         {
-            // Anything worth doing here to handle the error?
+            /*
+             *  Anything worth doing here to handle the error? Let's do this,
+             *  though it might not occur. Compare to the output port handling
+             *  below.
+             */
+
+            if ((MMRESULT) hosterror == MMSYSERR_ALLOCATED)
+                return pmDeviceLocked;
         }
         return pmHostError;
     }
@@ -1433,6 +1449,7 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
     int devid = midi->device_id;
     int client = pm_descriptors[devid].pub.client;
     int port = pm_descriptors[devid].pub.port;
+    cbool_t opening_midimapper = false;
 
 #if defined SEQ66_PLATFORM_64_BIT
     UINT_PTR dev = (UINT_PTR) pm_descriptors[devid].descriptor;
@@ -1441,9 +1458,10 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
     UINT dwDevice = (UINT) pm_descriptors[devid].descriptor;
 #endif
 
-    if (dwDevice == UINT_MIDIMAPPER)
+    if (dwDevice == UINT_MIDIMAPPER)        /* UINT_PTR 4294967295          */
     {
-        pm_log_buffer_append("Opening the MIDI Mapper for output\n");
+        opening_midimapper = true;
+        pm_log_buffer_append("Opening MIDI Mapper for output\n");
     }
     else if (dwDevice < 32)            /* sanity check */
     {
@@ -1489,8 +1507,7 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
     m->error = MMSYSERR_NOERROR;
 
     /*
-     * Create a signal.  this should only fail when there are very serious
-     * problems.
+     * Create a signal; should only fail with very serious problems.
      */
 
     m->buffer_signal = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -1592,9 +1609,12 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
         if (Pm_hosterror() != pmNoError)                /* MMSYSERR_NOERROR */
             goto free_buffers;
     }
+    if (opening_midimapper)
+        s_midi_mapper_active = true;
+
     return pmNoError;
 
-free_buffers:               /* buffers freed below by winmm_out_delete()    */
+free_buffers:
 close_device:
 
     midiOutClose(m->handle.out);
@@ -1602,19 +1622,33 @@ close_device:
 free_out_descriptor:
 
     midi->descriptor = nullptr;
-    winmm_out_delete(midi);                             /* free buffers & m */
+    winmm_out_delete(midi);                             /* free buffers etc */
 
 no_memory:
 
     if (Pm_hosterror() != pmNoError)
     {
-        int err = midiOutGetErrorText
+        int hosterror = Pm_hosterror();
+        /* MMRESULT err = */ midiOutGetErrorText
         (
-            Pm_hosterror(), Pm_hosterror_text_mutable(), PM_HOST_ERROR_MSG_LEN
+            (MMRESULT) hosterror, Pm_hosterror_text_mutable(),
+            PM_HOST_ERROR_MSG_LEN
         );
-        if (err != MMSYSERR_NOERROR)
+        if ((MMRESULT) hosterror != MMSYSERR_NOERROR)   /* "nullify" error? */
         {
-            // log the error
+            /*
+             * This error means the specified resource is already allocated.
+             * In this case, likely locked by the MIDI Mapper.
+             */
+
+            if
+            (
+                s_midi_mapper_active &&
+                ((MMRESULT) hosterror == MMSYSERR_ALLOCATED)
+            )
+            {
+                return pmDeviceLocked;
+            }
         }
         return pmHostError;
     }

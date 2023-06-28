@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-02-13
-% \update      2023-06-27
+% \update      2023-06-28
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -26,6 +26,9 @@
       C:/Program Files/Seq66/data/readme.windows
    \end{verbatim}
 
+\subsection{Windows / Seq66 Installation}
+\label{subsec:windows_seq66_installation}
+
    For \textsl{Seq66}, the installer executable is now part of
    each "major" release (currently 0.99.6).
    There are tricks to getting the installer
@@ -41,19 +44,110 @@
    install directory, and click through until the installation is done.
 
    (Note that there might also be a
-   \texttt{qpseq66-release-package-0.96.6.7z} portable installer
+   \texttt{qpseq66-release-package-0.99.6.7z} portable installer
    than can be downloaded.
+   If not, request one!
    Just extract that file where desired.
    Note that the \textsl{Windows} version is a 64-bit
    application. We do not currently build a 32-bit version, due to
    our lack of a 32-bit Windows platform.)
 
-   Now run 
+   \textsl{Seq66} is installed at
    \texttt{C:/Program Files/Seq66/qpseq66.exe}.
-   One might want to create a desktop short cut; one can also go to the
+   One might want to create a desktop shortcut or a shortcut button on
+   the \textsl{Quick Launch} bar; one can also go to the
    "Start" menu and search for "qpseq66.exe" or "Seq66".)
-   Assuming there are no MIDI devices attached, and no other MIDI programs
-   running, an error like the following will appear:
+
+   Before we discuss usage, we have to talk a bit about a Windows issue.
+
+\subsection{Windows / MIDI Mapper}
+\label{subsec:windows_midi_mapper}
+
+   \index{windows!midi mapper}
+   Windows has a \textbf{MIDI Mapper}.
+   This is a subsystem that redirects MIDI to a specific device.
+   Supposedly it was removed in Windows 8 and beyond, but it still
+   exists in Windows 10.
+   However, the alleged Control Panel applet
+   for the MIDI Mapper no longer exists.
+
+   In the Windows XP era, MIDI was exposed in the OS, 
+   and it had a setup applet in the
+   \textsl{Sound and Multimedia}
+   \textsl{Control Panel}.
+   Users could select a default MIDI Out device from a list of all
+   installed MIDI devices.
+   All programs outputting a MIDI data stream
+   (and no selected a specific MIDI Out device)
+   played their stream to that device.
+
+   The MIDI Mapper is not real device but a "pipe";
+   it receives MIDI on input and sends it to an user-configured
+   MIDI Out device.
+   It was bundled with Windows, installed as MIDI Out device 0, preconfigured
+   to use the first available device, the built-in
+   \textsl{Microsoft GS Wavetable Synth}.
+   It is a low quality software wave synth, installed as MIDI Out device 1.
+   So on Windows, programmers had 2 well-known devices.
+
+   This works for MIDI software without a configurable output device; they
+   use MIDI Out 0, and the wavetable synth generates the sound.
+   This chain worked well: default users had working MIDI synthesis
+   out of the box.
+   Then Microsoft removed it in Windows 7.
+   But it resurfaced in Windows 10, but without the
+   MIDI Control Panel applet.
+
+   It gets more interesting.
+   Assume we have a LaunchPad Mini and a Korg nanoKEY2 plugged in.
+   Internally, Windows see the following devices (based on a trek
+   in the debugger):
+
+   \begin{itemize}
+      \item \textbf{0}. MIDI Mapper.
+      \item \textbf{3}. GS Wavetable Synth.
+      \item \textbf{4}. NanoKEY2.
+      \item \textbf{5}. LaunchPad Mini.
+   \end{itemize}
+
+   Our "portmidi" implementation opens them in the same order, but
+   numbers them sequentially:
+
+   \begin{itemize}
+      \item \textbf{0}. MIDI Mapper.
+      \item \textbf{1}. GS Wavetable Synth.
+      \item \textbf{2}. NanoKEY2.
+      \item \textbf{3}. LaunchPad Mini.
+   \end{itemize}
+
+   The MIDI Mapper, if present, grabs the wavetable synth, which prevents
+   \textsl{Seq66} from opening it.
+   So the \textsl{Seq66}
+   code detects that the MIDI Mapper (port 0) exists, and when opening
+   the wavetable synth (port 1) fails, it marks that port as
+   "unavailable" and "locked", in order to ghost it in the user-interface
+   and ignore it for error reporting (otherwise every startup would bring
+   up an annoying and meaningless error message).
+
+   As an aside, for MIDI input, Windows does no mapping, and there are
+   only two input devices (given the two plugged in above).
+
+   \begin{itemize}
+      \item \textbf{0}. NanoKEY2.
+      \item \textbf{1}. LaunchPad Mini.
+   \end{itemize}
+
+   There are applications that try to get around this issue, such as
+   the \textsl{CoolSoft MIDIMapper} and \textsl{VirtualMIDISynth}
+   \cite{midimapper} or \textsl{MIDI OX} \cite{midiox}.
+   See the \texttt{readme.windows} file for more information.
+
+\subsection{Windows / Seq66 Startup}
+\label{subsec:windows_seq66_startup}
+
+   Now run \texttt{C:/Program Files/Seq66/qpseq66.exe}.
+   It might generate an error, though we believe we have suppressed
+   this error:
 
 \begin{figure}[H]
    \centering 
@@ -65,9 +159,10 @@
    This error occurs on \textsl{Windows 10} because the 0th port, the
    \textsl{Microsoft MIDI Mapper}, grabs access to the 1st port, the
    \textsl{Microsoft GS Wavetable Synth}.
-   Thus, the wavetable synth is "unavailable".
-   This message will appear at startup, and one can just click
-   \textbf{OK}, but it can also be suppressed using an option in
+   Thus, the wavetable synth is "unavailable" and "locked".
+   This message will appear at startup for "unavailable" ports,
+   but not for a "locked" port; one can also just click
+   \textbf{OK}, but startup messages can also be suppressed using an option in
    \textbf{Edit / Preferences / Display}.
 
 %  It is fixed easily by exiting
@@ -102,7 +197,7 @@
    in Windows when no MIDI device is connected to the computer.
    The \texttt{[midi-clock]} section indicates there are two output
    ports, and that port 1 is disabled.   So one should be able to
-   play a tune to the MIDI mapper and hear it, if output is directed
+   play a tune to the MIDI Mapper and hear it, if output is directed
    to port 0.
 
 %  Now run \texttt{qpseq66.exe} again.  No error should appear.

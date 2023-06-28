@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2023-06-24
+ * \updates       2023-06-28
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -734,6 +734,18 @@ busarray::is_port_unavailable (bussbyte bus) const
     {
         const businfo & bi = m_container[bus];
         result = bi.bus()->port_unavailable();
+    }
+    return result;
+}
+
+bool
+busarray::is_port_locked (bussbyte bus) const
+{
+    bool result = true;
+    if (bus < count())
+    {
+        const businfo & bi = m_container[bus];
+        result = bi.bus()->is_port_locked();
     }
     return result;
 }

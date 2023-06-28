@@ -568,6 +568,11 @@ public:
         m_port_id = id;
     }
 
+    virtual bool is_port_locked () const
+    {
+        return false;               /* not supported in Linux, just Windows */
+    }
+
     /**
      *  Now defined in the ALSA implementation, and used by mastermidibus.
      *  Also used in the JACK implementation.

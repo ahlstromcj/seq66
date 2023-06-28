@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-06-26
+ * \updates     2023-06-28
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:
@@ -934,6 +934,10 @@ Pm_GetErrorText (PmError errnum)
 
     case pmErrOther:
         msg = "Unspecified error";
+        break;
+
+    case pmDeviceLocked:
+        msg = "Device locked";
         break;
 
     default:

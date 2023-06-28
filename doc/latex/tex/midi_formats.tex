@@ -203,7 +203,7 @@
    \end{table}
 
    Note that the base length is 4 bytes, the size of a \texttt{0x242400nn}
-   value.  Also note that some of multi-byte (2 or 4 bytes) values that
+   value.  Also note that some of the multi-byte (2 or 4 bytes) values that
    indicate counts are stored in big-endian (network order) format.  The
    most-signifant byte is grabbed first, then
    left-shifted to get read for the next significant bit.
@@ -255,7 +255,7 @@
    patterns.
    Also note that "channel" 0x80 is a flag to use the channel stored in each
    channel event.
-   This represents the "Free" setting in the pattern editor.
+   This value represents the "Free" setting in the pattern editor.
 
 \subsubsection{SeqSpec c\_midiclocks}
 \label{subsubsec:midi_format_track_seqspec_midiclocks}
@@ -263,7 +263,8 @@
    \index{SeqSpec!c\_midiclocks}
 
    \begin{description}
-      \item \texttt{c\_midiclocks}: specifies the clocking for the busses, but is inactive.
+      \item \texttt{c\_midiclocks}: specifies the clocking for the busses,
+         but is inactive.
       \item \textsl{Length}: 8
       \item \textsl{Format}: \texttt{0x24240003 count:L bussclocks}
    \end{description}
@@ -640,6 +641,7 @@
    \end{description}
 
    This section is an unimplemented \textsl{Seq32} feature.
+   Tempo events can be added to pattern 0.
 
 \subsubsection{SeqSpec c\_reserved\_(12)}
 \label{subsubsec:midi_format_track_seqspec_reserved_1_2}
