@@ -685,6 +685,7 @@ X_LIBS
 X_PRE_LIBS
 X_CFLAGS
 XMKMF
+ALSA_TOPOLOGY_LIBS
 ALSA_LIBS
 ALSA_CFLAGS
 LIBLO_LIBS
@@ -863,6 +864,7 @@ enable_nsm
 enable_both
 with_alsa_prefix
 with_alsa_inc_prefix
+enable_alsa_topology
 enable_alsatest
 enable_rtmidi
 enable_qt
@@ -1547,6 +1549,7 @@ Optional Features:
   --enable-port-refresh   Enable JACK port refresh support
   --disable-nsm           Disable NSM support
   --enable-both           Enable Qt and command-line builds
+  --enable-alsatopology   Force to use the Alsa topology library
   --disable-alsatest      Do not try to compile and run a test Alsa program
   --disable-rtmidi        Disable rtmidi MIDI engine
   --disable-qt            Disable Qt5 user-interface
@@ -1570,7 +1573,8 @@ Optional Packages:
   --with-sysroot[=DIR]    Search for dependent libraries within DIR (or the
                           compiler's sysroot if not specified).
   --with-alsa-prefix=PFX  Prefix where Alsa library is installed(optional)
-  --with-alsa-inc-prefix=PFX  Prefix where include libraries are (optional)
+  --with-alsa-inc-prefix=PFX
+                          Prefix where include libraries are (optional)
   --with-x                use the X Window System
 
 Some influential environment variables:
@@ -16800,6 +16804,7 @@ $as_echo "rtmidi Qt and command-line builds enabled" >&6; };
 alsa_save_LDFLAGS="$LDFLAGS"
 alsa_save_LIBS="$LIBS"
 alsa_found=yes
+alsa_topology_found=no
 
 
 # Check whether --with-alsa-prefix was given.
@@ -16816,6 +16821,14 @@ if test "${with_alsa_inc_prefix+set}" = set; then :
   withval=$with_alsa_inc_prefix; alsa_inc_prefix="$withval"
 else
   alsa_inc_prefix=""
+fi
+
+
+# Check whether --enable-alsa-topology was given.
+if test "${enable_alsa_topology+set}" = set; then :
+  enableval=$enable_alsa_topology; enable_atopology="$enableval"
+else
+  enable_atopology=no
 fi
 
 
@@ -16836,6 +16849,88 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ALSA_CFLAGS" >&5
 $as_echo "$ALSA_CFLAGS" >&6; }
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -lc" >&5
+$as_echo_n "checking for dlopen in -lc... " >&6; }
+if ${ac_cv_lib_c_dlopen+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lc  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_c_dlopen=yes
+else
+  ac_cv_lib_c_dlopen=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_c_dlopen" >&5
+$as_echo "$ac_cv_lib_c_dlopen" >&6; }
+if test "x$ac_cv_lib_c_dlopen" = xyes; then :
+  LIBDL=""
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
+$as_echo_n "checking for dlopen in -ldl... " >&6; }
+if ${ac_cv_lib_dl_dlopen+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-ldl  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_dl_dlopen=yes
+else
+  ac_cv_lib_dl_dlopen=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dl_dlopen" >&5
+$as_echo "$ac_cv_lib_dl_dlopen" >&6; }
+if test "x$ac_cv_lib_dl_dlopen" = xyes; then :
+  LIBDL="-ldl"
+fi
+
+fi
+
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ALSA LDFLAGS" >&5
 $as_echo_n "checking for ALSA LDFLAGS... " >&6; }
 if test "$alsa_prefix" != "" ; then
@@ -16843,15 +16938,16 @@ if test "$alsa_prefix" != "" ; then
 	LDFLAGS="$LDFLAGS $ALSA_LIBS"
 fi
 
-ALSA_LIBS="$ALSA_LIBS -lasound -lm -ldl -lpthread"
+ALSA_LIBS="$ALSA_LIBS -lasound -lm $LIBDL -lpthread"
 LIBS="$ALSA_LIBS $LIBS"
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ALSA_LIBS" >&5
 $as_echo "$ALSA_LIBS" >&6; }
 
 if test "x$enable_alsatest" = "xyes"; then
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking required libasound headers version" >&5
+$as_echo_n "checking required libasound headers version... " >&6; }
 min_alsa_version=0.9.0
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libasound headers version >= $min_alsa_version" >&5
-$as_echo_n "checking for libasound headers version >= $min_alsa_version... " >&6; }
 no_alsa=""
     alsa_min_major_version=`echo $min_alsa_version | \
            sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\1/'`
@@ -16859,7 +16955,8 @@ no_alsa=""
            sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\2/'`
     alsa_min_micro_version=`echo $min_alsa_version | \
            sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\3/'`
-
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version" >&5
+$as_echo "$alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version" >&6; }
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -16867,10 +16964,13 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libasound headers version >= $alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version ($min_alsa_version)" >&5
+$as_echo_n "checking for libasound headers version >= $alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version ($min_alsa_version)... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
 #include <alsa/asoundlib.h>
+#include <stdlib.h>
 
 int
 main ()
@@ -16920,6 +17020,57 @@ else
 $as_echo "not present." >&6; }
    as_fn_error $? "Sufficiently new version of libasound not found." "$LINENO" 5
    alsa_found=no
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libatopology (sound headers version > 1.1.9)" >&5
+$as_echo_n "checking for libatopology (sound headers version > 1.1.9)... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <alsa/asoundlib.h>
+#include <alsa/topology.h>
+#include <stdlib.h>
+
+int
+main ()
+{
+
+/* ensure backward compatibility */
+#if !defined(SND_LIB_VERSION)
+#define SND_LIB_VERSION 0
+#endif
+#if SND_LIB_VERSION > 0x00010109
+  exit(0);
+#else
+# error not present
+#endif
+exit(0);
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+   enable_atopology="yes"
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
@@ -16981,6 +17132,65 @@ else
 
 fi
 
+if test "x$enable_atopology" = "xyes"; then
+alsa_topology_found=yes
+alsa_save_LIBS2="$LIBS"
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for snd_tplg_new in -latopology" >&5
+$as_echo_n "checking for snd_tplg_new in -latopology... " >&6; }
+if ${ac_cv_lib_atopology_snd_tplg_new+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-latopology  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char snd_tplg_new ();
+int
+main ()
+{
+return snd_tplg_new ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_atopology_snd_tplg_new=yes
+else
+  ac_cv_lib_atopology_snd_tplg_new=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_atopology_snd_tplg_new" >&5
+$as_echo "$ac_cv_lib_atopology_snd_tplg_new" >&6; }
+if test "x$ac_cv_lib_atopology_snd_tplg_new" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBATOPOLOGY 1
+_ACEOF
+
+  LIBS="-latopology $LIBS"
+
+else
+  as_fn_error $? "No linkable libatopology was found." "$LINENO" 5
+	 alsa_topology_found=no,
+
+
+fi
+
+LIBS="$alsa_save_LIBS2"
+fi
+else
+if test "x$enable_atopology" = "xyes"; then
+  alsa_topology_found=yes
+fi
 fi
 
 if test "x$alsa_found" = "xyes" ; then
@@ -16996,7 +17206,17 @@ if test "x$alsa_found" = "xno" ; then
    LIBS="$alsa_save_LIBS"
    ALSA_CFLAGS=""
    ALSA_LIBS=""
+   ALSA_TOPOLOGY_LIBS=""
 fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ALSA topology LDFLAGS" >&5
+$as_echo_n "checking for ALSA topology LDFLAGS... " >&6; }
+if test "x$alsa_topology_found" = "xyes"; then
+  ALSA_TOPOLOGY_LIBS="$ALSA_TOPOLOGY_LIBS -latopology"
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ALSA_TOPOLOGY_LIBS" >&5
+$as_echo "$ALSA_TOPOLOGY_LIBS" >&6; }
+
 
 
 
@@ -17034,6 +17254,7 @@ $as_echo "#define RTMIDI_SUPPORT 1" >>confdefs.h
 alsa_save_LDFLAGS="$LDFLAGS"
 alsa_save_LIBS="$LIBS"
 alsa_found=yes
+alsa_topology_found=no
 
 
 # Check whether --with-alsa-prefix was given.
@@ -17050,6 +17271,14 @@ if test "${with_alsa_inc_prefix+set}" = set; then :
   withval=$with_alsa_inc_prefix; alsa_inc_prefix="$withval"
 else
   alsa_inc_prefix=""
+fi
+
+
+# Check whether --enable-alsa-topology was given.
+if test "${enable_alsa_topology+set}" = set; then :
+  enableval=$enable_alsa_topology; enable_atopology="$enableval"
+else
+  enable_atopology=no
 fi
 
 
@@ -17070,6 +17299,88 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ALSA_CFLAGS" >&5
 $as_echo "$ALSA_CFLAGS" >&6; }
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -lc" >&5
+$as_echo_n "checking for dlopen in -lc... " >&6; }
+if ${ac_cv_lib_c_dlopen+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lc  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_c_dlopen=yes
+else
+  ac_cv_lib_c_dlopen=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_c_dlopen" >&5
+$as_echo "$ac_cv_lib_c_dlopen" >&6; }
+if test "x$ac_cv_lib_c_dlopen" = xyes; then :
+  LIBDL=""
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
+$as_echo_n "checking for dlopen in -ldl... " >&6; }
+if ${ac_cv_lib_dl_dlopen+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-ldl  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_dl_dlopen=yes
+else
+  ac_cv_lib_dl_dlopen=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dl_dlopen" >&5
+$as_echo "$ac_cv_lib_dl_dlopen" >&6; }
+if test "x$ac_cv_lib_dl_dlopen" = xyes; then :
+  LIBDL="-ldl"
+fi
+
+fi
+
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ALSA LDFLAGS" >&5
 $as_echo_n "checking for ALSA LDFLAGS... " >&6; }
 if test "$alsa_prefix" != "" ; then
@@ -17077,15 +17388,16 @@ if test "$alsa_prefix" != "" ; then
 	LDFLAGS="$LDFLAGS $ALSA_LIBS"
 fi
 
-ALSA_LIBS="$ALSA_LIBS -lasound -lm -ldl -lpthread"
+ALSA_LIBS="$ALSA_LIBS -lasound -lm $LIBDL -lpthread"
 LIBS="$ALSA_LIBS $LIBS"
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ALSA_LIBS" >&5
 $as_echo "$ALSA_LIBS" >&6; }
 
 if test "x$enable_alsatest" = "xyes"; then
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking required libasound headers version" >&5
+$as_echo_n "checking required libasound headers version... " >&6; }
 min_alsa_version=0.9.0
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libasound headers version >= $min_alsa_version" >&5
-$as_echo_n "checking for libasound headers version >= $min_alsa_version... " >&6; }
 no_alsa=""
     alsa_min_major_version=`echo $min_alsa_version | \
            sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\1/'`
@@ -17093,7 +17405,8 @@ no_alsa=""
            sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\2/'`
     alsa_min_micro_version=`echo $min_alsa_version | \
            sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\3/'`
-
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version" >&5
+$as_echo "$alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version" >&6; }
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -17101,10 +17414,13 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libasound headers version >= $alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version ($min_alsa_version)" >&5
+$as_echo_n "checking for libasound headers version >= $alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version ($min_alsa_version)... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
 #include <alsa/asoundlib.h>
+#include <stdlib.h>
 
 int
 main ()
@@ -17154,6 +17470,57 @@ else
 $as_echo "not present." >&6; }
    as_fn_error $? "Sufficiently new version of libasound not found." "$LINENO" 5
    alsa_found=no
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libatopology (sound headers version > 1.1.9)" >&5
+$as_echo_n "checking for libatopology (sound headers version > 1.1.9)... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <alsa/asoundlib.h>
+#include <alsa/topology.h>
+#include <stdlib.h>
+
+int
+main ()
+{
+
+/* ensure backward compatibility */
+#if !defined(SND_LIB_VERSION)
+#define SND_LIB_VERSION 0
+#endif
+#if SND_LIB_VERSION > 0x00010109
+  exit(0);
+#else
+# error not present
+#endif
+exit(0);
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+   enable_atopology="yes"
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
@@ -17215,6 +17582,65 @@ else
 
 fi
 
+if test "x$enable_atopology" = "xyes"; then
+alsa_topology_found=yes
+alsa_save_LIBS2="$LIBS"
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for snd_tplg_new in -latopology" >&5
+$as_echo_n "checking for snd_tplg_new in -latopology... " >&6; }
+if ${ac_cv_lib_atopology_snd_tplg_new+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-latopology  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char snd_tplg_new ();
+int
+main ()
+{
+return snd_tplg_new ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_atopology_snd_tplg_new=yes
+else
+  ac_cv_lib_atopology_snd_tplg_new=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_atopology_snd_tplg_new" >&5
+$as_echo "$ac_cv_lib_atopology_snd_tplg_new" >&6; }
+if test "x$ac_cv_lib_atopology_snd_tplg_new" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBATOPOLOGY 1
+_ACEOF
+
+  LIBS="-latopology $LIBS"
+
+else
+  as_fn_error $? "No linkable libatopology was found." "$LINENO" 5
+	 alsa_topology_found=no,
+
+
+fi
+
+LIBS="$alsa_save_LIBS2"
+fi
+else
+if test "x$enable_atopology" = "xyes"; then
+  alsa_topology_found=yes
+fi
 fi
 
 if test "x$alsa_found" = "xyes" ; then
@@ -17230,7 +17656,17 @@ if test "x$alsa_found" = "xno" ; then
    LIBS="$alsa_save_LIBS"
    ALSA_CFLAGS=""
    ALSA_LIBS=""
+   ALSA_TOPOLOGY_LIBS=""
 fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ALSA topology LDFLAGS" >&5
+$as_echo_n "checking for ALSA topology LDFLAGS... " >&6; }
+if test "x$alsa_topology_found" = "xyes"; then
+  ALSA_TOPOLOGY_LIBS="$ALSA_TOPOLOGY_LIBS -latopology"
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ALSA_TOPOLOGY_LIBS" >&5
+$as_echo "$ALSA_TOPOLOGY_LIBS" >&6; }
+
 
 
 
@@ -17270,6 +17706,7 @@ $as_echo "#define ICON_NAME \"qseq66\"" >>confdefs.h
 alsa_save_LDFLAGS="$LDFLAGS"
 alsa_save_LIBS="$LIBS"
 alsa_found=yes
+alsa_topology_found=no
 
 
 # Check whether --with-alsa-prefix was given.
@@ -17286,6 +17723,14 @@ if test "${with_alsa_inc_prefix+set}" = set; then :
   withval=$with_alsa_inc_prefix; alsa_inc_prefix="$withval"
 else
   alsa_inc_prefix=""
+fi
+
+
+# Check whether --enable-alsa-topology was given.
+if test "${enable_alsa_topology+set}" = set; then :
+  enableval=$enable_alsa_topology; enable_atopology="$enableval"
+else
+  enable_atopology=no
 fi
 
 
@@ -17306,6 +17751,88 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ALSA_CFLAGS" >&5
 $as_echo "$ALSA_CFLAGS" >&6; }
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -lc" >&5
+$as_echo_n "checking for dlopen in -lc... " >&6; }
+if ${ac_cv_lib_c_dlopen+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lc  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_c_dlopen=yes
+else
+  ac_cv_lib_c_dlopen=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_c_dlopen" >&5
+$as_echo "$ac_cv_lib_c_dlopen" >&6; }
+if test "x$ac_cv_lib_c_dlopen" = xyes; then :
+  LIBDL=""
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
+$as_echo_n "checking for dlopen in -ldl... " >&6; }
+if ${ac_cv_lib_dl_dlopen+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-ldl  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_dl_dlopen=yes
+else
+  ac_cv_lib_dl_dlopen=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dl_dlopen" >&5
+$as_echo "$ac_cv_lib_dl_dlopen" >&6; }
+if test "x$ac_cv_lib_dl_dlopen" = xyes; then :
+  LIBDL="-ldl"
+fi
+
+fi
+
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ALSA LDFLAGS" >&5
 $as_echo_n "checking for ALSA LDFLAGS... " >&6; }
 if test "$alsa_prefix" != "" ; then
@@ -17313,15 +17840,16 @@ if test "$alsa_prefix" != "" ; then
 	LDFLAGS="$LDFLAGS $ALSA_LIBS"
 fi
 
-ALSA_LIBS="$ALSA_LIBS -lasound -lm -ldl -lpthread"
+ALSA_LIBS="$ALSA_LIBS -lasound -lm $LIBDL -lpthread"
 LIBS="$ALSA_LIBS $LIBS"
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ALSA_LIBS" >&5
 $as_echo "$ALSA_LIBS" >&6; }
 
 if test "x$enable_alsatest" = "xyes"; then
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking required libasound headers version" >&5
+$as_echo_n "checking required libasound headers version... " >&6; }
 min_alsa_version=0.9.0
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libasound headers version >= $min_alsa_version" >&5
-$as_echo_n "checking for libasound headers version >= $min_alsa_version... " >&6; }
 no_alsa=""
     alsa_min_major_version=`echo $min_alsa_version | \
            sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\1/'`
@@ -17329,7 +17857,8 @@ no_alsa=""
            sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\2/'`
     alsa_min_micro_version=`echo $min_alsa_version | \
            sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\3/'`
-
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version" >&5
+$as_echo "$alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version" >&6; }
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -17337,10 +17866,13 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libasound headers version >= $alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version ($min_alsa_version)" >&5
+$as_echo_n "checking for libasound headers version >= $alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version ($min_alsa_version)... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
 #include <alsa/asoundlib.h>
+#include <stdlib.h>
 
 int
 main ()
@@ -17390,6 +17922,57 @@ else
 $as_echo "not present." >&6; }
    as_fn_error $? "Sufficiently new version of libasound not found." "$LINENO" 5
    alsa_found=no
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libatopology (sound headers version > 1.1.9)" >&5
+$as_echo_n "checking for libatopology (sound headers version > 1.1.9)... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <alsa/asoundlib.h>
+#include <alsa/topology.h>
+#include <stdlib.h>
+
+int
+main ()
+{
+
+/* ensure backward compatibility */
+#if !defined(SND_LIB_VERSION)
+#define SND_LIB_VERSION 0
+#endif
+#if SND_LIB_VERSION > 0x00010109
+  exit(0);
+#else
+# error not present
+#endif
+exit(0);
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+   enable_atopology="yes"
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
@@ -17451,6 +18034,65 @@ else
 
 fi
 
+if test "x$enable_atopology" = "xyes"; then
+alsa_topology_found=yes
+alsa_save_LIBS2="$LIBS"
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for snd_tplg_new in -latopology" >&5
+$as_echo_n "checking for snd_tplg_new in -latopology... " >&6; }
+if ${ac_cv_lib_atopology_snd_tplg_new+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-latopology  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char snd_tplg_new ();
+int
+main ()
+{
+return snd_tplg_new ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_atopology_snd_tplg_new=yes
+else
+  ac_cv_lib_atopology_snd_tplg_new=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_atopology_snd_tplg_new" >&5
+$as_echo "$ac_cv_lib_atopology_snd_tplg_new" >&6; }
+if test "x$ac_cv_lib_atopology_snd_tplg_new" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBATOPOLOGY 1
+_ACEOF
+
+  LIBS="-latopology $LIBS"
+
+else
+  as_fn_error $? "No linkable libatopology was found." "$LINENO" 5
+	 alsa_topology_found=no,
+
+
+fi
+
+LIBS="$alsa_save_LIBS2"
+fi
+else
+if test "x$enable_atopology" = "xyes"; then
+  alsa_topology_found=yes
+fi
 fi
 
 if test "x$alsa_found" = "xyes" ; then
@@ -17466,7 +18108,17 @@ if test "x$alsa_found" = "xno" ; then
    LIBS="$alsa_save_LIBS"
    ALSA_CFLAGS=""
    ALSA_LIBS=""
+   ALSA_TOPOLOGY_LIBS=""
 fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ALSA topology LDFLAGS" >&5
+$as_echo_n "checking for ALSA topology LDFLAGS... " >&6; }
+if test "x$alsa_topology_found" = "xyes"; then
+  ALSA_TOPOLOGY_LIBS="$ALSA_TOPOLOGY_LIBS -latopology"
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ALSA_TOPOLOGY_LIBS" >&5
+$as_echo "$ALSA_TOPOLOGY_LIBS" >&6; }
+
 
 
 
@@ -18442,6 +19094,7 @@ $as_echo "#define RTMIDI_SUPPORT 1" >>confdefs.h
 alsa_save_LDFLAGS="$LDFLAGS"
 alsa_save_LIBS="$LIBS"
 alsa_found=yes
+alsa_topology_found=no
 
 
 # Check whether --with-alsa-prefix was given.
@@ -18458,6 +19111,14 @@ if test "${with_alsa_inc_prefix+set}" = set; then :
   withval=$with_alsa_inc_prefix; alsa_inc_prefix="$withval"
 else
   alsa_inc_prefix=""
+fi
+
+
+# Check whether --enable-alsa-topology was given.
+if test "${enable_alsa_topology+set}" = set; then :
+  enableval=$enable_alsa_topology; enable_atopology="$enableval"
+else
+  enable_atopology=no
 fi
 
 
@@ -18478,6 +19139,88 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ALSA_CFLAGS" >&5
 $as_echo "$ALSA_CFLAGS" >&6; }
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -lc" >&5
+$as_echo_n "checking for dlopen in -lc... " >&6; }
+if ${ac_cv_lib_c_dlopen+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lc  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_c_dlopen=yes
+else
+  ac_cv_lib_c_dlopen=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_c_dlopen" >&5
+$as_echo "$ac_cv_lib_c_dlopen" >&6; }
+if test "x$ac_cv_lib_c_dlopen" = xyes; then :
+  LIBDL=""
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
+$as_echo_n "checking for dlopen in -ldl... " >&6; }
+if ${ac_cv_lib_dl_dlopen+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-ldl  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_dl_dlopen=yes
+else
+  ac_cv_lib_dl_dlopen=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dl_dlopen" >&5
+$as_echo "$ac_cv_lib_dl_dlopen" >&6; }
+if test "x$ac_cv_lib_dl_dlopen" = xyes; then :
+  LIBDL="-ldl"
+fi
+
+fi
+
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ALSA LDFLAGS" >&5
 $as_echo_n "checking for ALSA LDFLAGS... " >&6; }
 if test "$alsa_prefix" != "" ; then
@@ -18485,15 +19228,16 @@ if test "$alsa_prefix" != "" ; then
 	LDFLAGS="$LDFLAGS $ALSA_LIBS"
 fi
 
-ALSA_LIBS="$ALSA_LIBS -lasound -lm -ldl -lpthread"
+ALSA_LIBS="$ALSA_LIBS -lasound -lm $LIBDL -lpthread"
 LIBS="$ALSA_LIBS $LIBS"
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ALSA_LIBS" >&5
 $as_echo "$ALSA_LIBS" >&6; }
 
 if test "x$enable_alsatest" = "xyes"; then
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking required libasound headers version" >&5
+$as_echo_n "checking required libasound headers version... " >&6; }
 min_alsa_version=0.9.0
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libasound headers version >= $min_alsa_version" >&5
-$as_echo_n "checking for libasound headers version >= $min_alsa_version... " >&6; }
 no_alsa=""
     alsa_min_major_version=`echo $min_alsa_version | \
            sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\1/'`
@@ -18501,7 +19245,8 @@ no_alsa=""
            sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\2/'`
     alsa_min_micro_version=`echo $min_alsa_version | \
            sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\3/'`
-
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version" >&5
+$as_echo "$alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version" >&6; }
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -18509,10 +19254,13 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libasound headers version >= $alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version ($min_alsa_version)" >&5
+$as_echo_n "checking for libasound headers version >= $alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version ($min_alsa_version)... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
 #include <alsa/asoundlib.h>
+#include <stdlib.h>
 
 int
 main ()
@@ -18562,6 +19310,57 @@ else
 $as_echo "not present." >&6; }
    as_fn_error $? "Sufficiently new version of libasound not found." "$LINENO" 5
    alsa_found=no
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libatopology (sound headers version > 1.1.9)" >&5
+$as_echo_n "checking for libatopology (sound headers version > 1.1.9)... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <alsa/asoundlib.h>
+#include <alsa/topology.h>
+#include <stdlib.h>
+
+int
+main ()
+{
+
+/* ensure backward compatibility */
+#if !defined(SND_LIB_VERSION)
+#define SND_LIB_VERSION 0
+#endif
+#if SND_LIB_VERSION > 0x00010109
+  exit(0);
+#else
+# error not present
+#endif
+exit(0);
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+   enable_atopology="yes"
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
@@ -18623,6 +19422,65 @@ else
 
 fi
 
+if test "x$enable_atopology" = "xyes"; then
+alsa_topology_found=yes
+alsa_save_LIBS2="$LIBS"
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for snd_tplg_new in -latopology" >&5
+$as_echo_n "checking for snd_tplg_new in -latopology... " >&6; }
+if ${ac_cv_lib_atopology_snd_tplg_new+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-latopology  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char snd_tplg_new ();
+int
+main ()
+{
+return snd_tplg_new ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_atopology_snd_tplg_new=yes
+else
+  ac_cv_lib_atopology_snd_tplg_new=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_atopology_snd_tplg_new" >&5
+$as_echo "$ac_cv_lib_atopology_snd_tplg_new" >&6; }
+if test "x$ac_cv_lib_atopology_snd_tplg_new" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBATOPOLOGY 1
+_ACEOF
+
+  LIBS="-latopology $LIBS"
+
+else
+  as_fn_error $? "No linkable libatopology was found." "$LINENO" 5
+	 alsa_topology_found=no,
+
+
+fi
+
+LIBS="$alsa_save_LIBS2"
+fi
+else
+if test "x$enable_atopology" = "xyes"; then
+  alsa_topology_found=yes
+fi
 fi
 
 if test "x$alsa_found" = "xyes" ; then
@@ -18638,7 +19496,17 @@ if test "x$alsa_found" = "xno" ; then
    LIBS="$alsa_save_LIBS"
    ALSA_CFLAGS=""
    ALSA_LIBS=""
+   ALSA_TOPOLOGY_LIBS=""
 fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ALSA topology LDFLAGS" >&5
+$as_echo_n "checking for ALSA topology LDFLAGS... " >&6; }
+if test "x$alsa_topology_found" = "xyes"; then
+  ALSA_TOPOLOGY_LIBS="$ALSA_TOPOLOGY_LIBS -latopology"
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ALSA_TOPOLOGY_LIBS" >&5
+$as_echo "$ALSA_TOPOLOGY_LIBS" >&6; }
+
 
 
 
@@ -18675,6 +19543,7 @@ $as_echo "#define ICON_NAME \"qseq66\"" >>confdefs.h
 alsa_save_LDFLAGS="$LDFLAGS"
 alsa_save_LIBS="$LIBS"
 alsa_found=yes
+alsa_topology_found=no
 
 
 # Check whether --with-alsa-prefix was given.
@@ -18691,6 +19560,14 @@ if test "${with_alsa_inc_prefix+set}" = set; then :
   withval=$with_alsa_inc_prefix; alsa_inc_prefix="$withval"
 else
   alsa_inc_prefix=""
+fi
+
+
+# Check whether --enable-alsa-topology was given.
+if test "${enable_alsa_topology+set}" = set; then :
+  enableval=$enable_alsa_topology; enable_atopology="$enableval"
+else
+  enable_atopology=no
 fi
 
 
@@ -18711,6 +19588,88 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ALSA_CFLAGS" >&5
 $as_echo "$ALSA_CFLAGS" >&6; }
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -lc" >&5
+$as_echo_n "checking for dlopen in -lc... " >&6; }
+if ${ac_cv_lib_c_dlopen+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lc  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_c_dlopen=yes
+else
+  ac_cv_lib_c_dlopen=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_c_dlopen" >&5
+$as_echo "$ac_cv_lib_c_dlopen" >&6; }
+if test "x$ac_cv_lib_c_dlopen" = xyes; then :
+  LIBDL=""
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
+$as_echo_n "checking for dlopen in -ldl... " >&6; }
+if ${ac_cv_lib_dl_dlopen+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-ldl  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_dl_dlopen=yes
+else
+  ac_cv_lib_dl_dlopen=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dl_dlopen" >&5
+$as_echo "$ac_cv_lib_dl_dlopen" >&6; }
+if test "x$ac_cv_lib_dl_dlopen" = xyes; then :
+  LIBDL="-ldl"
+fi
+
+fi
+
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ALSA LDFLAGS" >&5
 $as_echo_n "checking for ALSA LDFLAGS... " >&6; }
 if test "$alsa_prefix" != "" ; then
@@ -18718,15 +19677,16 @@ if test "$alsa_prefix" != "" ; then
 	LDFLAGS="$LDFLAGS $ALSA_LIBS"
 fi
 
-ALSA_LIBS="$ALSA_LIBS -lasound -lm -ldl -lpthread"
+ALSA_LIBS="$ALSA_LIBS -lasound -lm $LIBDL -lpthread"
 LIBS="$ALSA_LIBS $LIBS"
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ALSA_LIBS" >&5
 $as_echo "$ALSA_LIBS" >&6; }
 
 if test "x$enable_alsatest" = "xyes"; then
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking required libasound headers version" >&5
+$as_echo_n "checking required libasound headers version... " >&6; }
 min_alsa_version=0.9.0
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libasound headers version >= $min_alsa_version" >&5
-$as_echo_n "checking for libasound headers version >= $min_alsa_version... " >&6; }
 no_alsa=""
     alsa_min_major_version=`echo $min_alsa_version | \
            sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\1/'`
@@ -18734,7 +19694,8 @@ no_alsa=""
            sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\2/'`
     alsa_min_micro_version=`echo $min_alsa_version | \
            sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\3/'`
-
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version" >&5
+$as_echo "$alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version" >&6; }
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -18742,10 +19703,13 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libasound headers version >= $alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version ($min_alsa_version)" >&5
+$as_echo_n "checking for libasound headers version >= $alsa_min_major_version.$alsa_min_minor_version.$alsa_min_micro_version ($min_alsa_version)... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
 #include <alsa/asoundlib.h>
+#include <stdlib.h>
 
 int
 main ()
@@ -18795,6 +19759,57 @@ else
 $as_echo "not present." >&6; }
    as_fn_error $? "Sufficiently new version of libasound not found." "$LINENO" 5
    alsa_found=no
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libatopology (sound headers version > 1.1.9)" >&5
+$as_echo_n "checking for libatopology (sound headers version > 1.1.9)... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <alsa/asoundlib.h>
+#include <alsa/topology.h>
+#include <stdlib.h>
+
+int
+main ()
+{
+
+/* ensure backward compatibility */
+#if !defined(SND_LIB_VERSION)
+#define SND_LIB_VERSION 0
+#endif
+#if SND_LIB_VERSION > 0x00010109
+  exit(0);
+#else
+# error not present
+#endif
+exit(0);
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+   enable_atopology="yes"
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
@@ -18856,6 +19871,65 @@ else
 
 fi
 
+if test "x$enable_atopology" = "xyes"; then
+alsa_topology_found=yes
+alsa_save_LIBS2="$LIBS"
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for snd_tplg_new in -latopology" >&5
+$as_echo_n "checking for snd_tplg_new in -latopology... " >&6; }
+if ${ac_cv_lib_atopology_snd_tplg_new+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-latopology  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char snd_tplg_new ();
+int
+main ()
+{
+return snd_tplg_new ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_atopology_snd_tplg_new=yes
+else
+  ac_cv_lib_atopology_snd_tplg_new=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_atopology_snd_tplg_new" >&5
+$as_echo "$ac_cv_lib_atopology_snd_tplg_new" >&6; }
+if test "x$ac_cv_lib_atopology_snd_tplg_new" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBATOPOLOGY 1
+_ACEOF
+
+  LIBS="-latopology $LIBS"
+
+else
+  as_fn_error $? "No linkable libatopology was found." "$LINENO" 5
+	 alsa_topology_found=no,
+
+
+fi
+
+LIBS="$alsa_save_LIBS2"
+fi
+else
+if test "x$enable_atopology" = "xyes"; then
+  alsa_topology_found=yes
+fi
 fi
 
 if test "x$alsa_found" = "xyes" ; then
@@ -18871,7 +19945,17 @@ if test "x$alsa_found" = "xno" ; then
    LIBS="$alsa_save_LIBS"
    ALSA_CFLAGS=""
    ALSA_LIBS=""
+   ALSA_TOPOLOGY_LIBS=""
 fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ALSA topology LDFLAGS" >&5
+$as_echo_n "checking for ALSA topology LDFLAGS... " >&6; }
+if test "x$alsa_topology_found" = "xyes"; then
+  ALSA_TOPOLOGY_LIBS="$ALSA_TOPOLOGY_LIBS -latopology"
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ALSA_TOPOLOGY_LIBS" >&5
+$as_echo "$ALSA_TOPOLOGY_LIBS" >&6; }
+
 
 
 
