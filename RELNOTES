@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.6 2023-06-23
+Release Notes for Seq66 v. 0.99.6 2023-07-01
 
 This file lists __major__ changes from version 0.99.6
 
@@ -38,7 +38,9 @@ This file lists __major__ changes from version 0.99.6
         taken).
     -   Added a "quiet" option to not show startup message prompts.
     -   A log-file is now created by default & kept under a megabyte.
+    -   Added the pattern port number to the Song Summary output.
+    -   A large number of fixes of unrelated issues.
 
 Read the NEWS, README.md, and TODO files.  Working our assoff!
 
-// vim: sw=4 ts=4 wm=15 et ft=markdown
+// vim: sw=4 ts=4 wm=15 et ft=sh

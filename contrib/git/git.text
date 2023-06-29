@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2023-05-20
+2015-09-09 to 2023-06-29
 
 Creating a GitHub Repository:
 
@@ -308,7 +308,6 @@ Tagging:
     Here is what we will use:
 
     $ git config --global hub.protocol ssh
-
     $ git tag -a 0.99.0 -m "Version 0.99.0" abcd1234
     $ git push origin --tags
     $ hub release create 0.99.0 -F RELNOTES.md abcd1234
@@ -448,7 +447,7 @@ Diffs:
         [difftool]
             prompt = false
 
-    one can cycle through a series of diffs on the involved files with one
+    One can cycle through a series of diffs on the involved files with one
     of the best diff viewers ever:
 
         $ git difftool <commit1> <commit2>
@@ -487,7 +486,7 @@ Listing files:
     From https://jayenashar.wordpress.com/2014/03/07/
                 git-status-sorted-by-last-modified-timestamp/,
 
-    here’s a command that will show the modified, but unstaged files,
+    Here’s a command that will show the modified, but unstaged files,
     sorted by time:
 
         $ ls -lrtd $(git status --porcelain | grep '^.[?M]' | sed 's/^.. //')

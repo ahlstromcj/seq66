@@ -331,6 +331,7 @@ activate_input_port_map (bool flag)
  *      returned.  Otherwise, the nominal buss parameter is returned, which
  *      preserves the legacy behavior of the pattern buss number.  Also,
  *      null_buss() will be returned if the nomimal buss is that value.
+ *      Test with the is_null_buss() function.
  */
 
 bussbyte

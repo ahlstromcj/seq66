@@ -1,0 +1,40 @@
+# This port-map snippet tests the performer::any_unavailable_ports()
+# function.
+
+[midi-input]
+
+ 3      # number of MIDI input (or control) buses
+
+ 0  1   "[0] 0:1 system:ALSA Announce"
+ 1  1   "[1] 14:0 Midi Through Port-0"
+ 2  0   "[2] 129:0 VMPK Output:out"
+
+[midi-input-map]
+
+ 1      # map is active
+
+ 0  1   "ALSA Announce"
+ 1  1   "Midi Through Port-0"
+ 2 -2   "Yamaha PSS-680"
+ 3 -2   "Yamaha PSS-790"
+ 4  0   "VMPK Output:out"
+
+[midi-clock]
+
+ 3      # number of MIDI clocks (output/display buses)
+
+ 0  0   "[0] 14:0 Midi Through Port-0"
+ 1  0   "[1] 128:0 VMPK Input:in"
+ 2  0   "[2] 130:0 FLUID Synth (3063):Synth input port (3063:0)"
+
+[midi-clock-map]
+
+ 1      # map is active
+
+ 0  0   "Midi Through Port-0"
+ 1 -2   "Yamaha PSS-680"
+ 2 -2   "Yamaha PSS-790"
+ 3  0   "VMPK Input:in"
+ 4  0   "FLUID Synth"
+
+# vim: sw=4 ts=4 wm=4 et ft=dosini

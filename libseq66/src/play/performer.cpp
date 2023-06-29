@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-06-28
+ * \updates       2023-06-29
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1114,6 +1114,26 @@ performer::is_port_unavailable (bussbyte bus, midibase::io iotype) const
 
 /**
  *  Checks for unavailable system ports.
+ *
+ * ISSUE:
+ *
+ *      Given these output settings (ignoring port counts, map is active):
+ *
+ *      [midi-clock]
+ *      0  0   "[0] 14:0 Midi Through Port-0"
+ *      1  0   "[1] 128:0 VMPK Input:in"
+ *      2  0   "[2] 130:0 FLUID Synth (3063):Synth input port (3063:0)"
+ *
+ *      [midi-clock-map]
+ *      0  0   "Midi Through Port-0"
+ *      1 -2   "Yamaha PSS-680"
+ *      2 -2   "Yamaha PSS-790"
+ *      3  0   "VMPK Input:in"
+ *      4  0   "FLUID Synth"
+ *
+ *      Below we get the mapped-bus count, but iterate through the
+ *      masterbus's list.  We need to get the true output bus instead!
+ *      Then we get a much more informative startup error message.
  */
 
 bool
@@ -1134,12 +1154,21 @@ performer::any_ports_unavailable (bool accept_zero_inputs) const
         {
             for (int bus = 0; bus < buses; ++bus)
             {
-                if (mbus->is_port_unavailable(bus, midibase::io::output))
+                bussbyte b = true_output_bus(bus);      /* maybe translate  */
+                if (is_null_buss(result))
                 {
-                    if (! mbus->is_port_locked(bus, midibase::io::output))
+                    result = true;
+                    break;
+                }
+                else
+                {
+                    if (mbus->is_port_unavailable(b, midibase::io::output))
                     {
-                        result = true;
-                        break;
+                        if (! mbus->is_port_locked(b, midibase::io::output))
+                        {
+                            result = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -1158,12 +1187,21 @@ performer::any_ports_unavailable (bool accept_zero_inputs) const
         {
             for (int bus = 0; bus < buses; ++bus)
             {
-                if (mbus->is_port_unavailable(bus, midibase::io::input))
+                bussbyte b = true_input_bus(bus);       /* maybe translate  */
+                if (is_null_buss(result))
                 {
-                    if (! mbus->is_port_locked(bus, midibase::io::input))
+                    result = true;
+                    break;
+                }
+                else
+                {
+                    if (mbus->is_port_unavailable(b, midibase::io::input))
                     {
-                        result = true;
-                        break;
+                        if (! mbus->is_port_locked(b, midibase::io::input))
+                        {
+                            result = true;
+                            break;
+                        }
                     }
                 }
             }

@@ -738,10 +738,19 @@ busarray::is_port_unavailable (bussbyte bus) const
     return result;
 }
 
+/**
+ *  Modified to account for the fact that if a port has not been
+ *  added to the array, it cannot be locked.  This check is made by
+ *  comparing the bus to the count().
+ *
+ * \param bus
+ *      The buss/port number.
+ */
+
 bool
 busarray::is_port_locked (bussbyte bus) const
 {
-    bool result = true;
+    bool result = false;
     if (bus < count())
     {
         const businfo & bi = m_container[bus];

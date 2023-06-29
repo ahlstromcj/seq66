@@ -1,0 +1,52 @@
+# This port-map snippet tests the scroll-bar in the Clocks and Inputs
+# tabs. We only have 8 things to plug in on our system :-(.
+
+[midi-input]
+
+ 8      # number of MIDI input (or control) buses
+
+ 0  1   "[0] 0:1 system:ALSA Announce"
+ 1  0   "[1] 14:0 Midi Through Port-0"
+ 2  0   "[2] 36:0 Launchpad Mini MIDI 1"
+ 3  1   "[3] 40:0 nanoKEY2 nanoKEY2 _ CTRL"
+ 4  0   "[4] 44:0 CH345 MIDI 1"
+ 5  0   "[5] 48:0 E-MU XMidi1X1 Tab Out"
+ 6  0   "[6] 52:0 USB Midi MIDI 1"
+ 7  0   "[7] 56:0 Q25 MIDI 1"
+
+[midi-input-map]
+
+ 1      # map is active
+
+ 0  1   "ALSA Announce"
+ 1  0   "Midi Through Port-0"
+ 2  0   "Launchpad Mini MIDI 1"
+ 3  1   "nanoKEY2 nanoKEY2 _ CTRL"
+ 4  0   "CH345 MIDI 1"
+ 5  0   "E-MU XMidi1X1 Tab Out"
+ 6  0   "USB Midi MIDI 1"
+ 7  0   "Q25 MIDI 1"
+ 8  0   "Excess 0"
+ 9  0   "Excess 1"
+10  0   "Excess 2"
+11  0   "Excess 3"
+12  0   "Excess 4"
+13  0   "Excess 5"
+14  0   "Excess 7"
+15  0   "Excess 7"
+
+[midi-clock]
+
+ 9      # number of MIDI clocks (output/display buses)
+
+ 0  0   "[0] 14:0 Midi Through Port-0"
+ 1  0   "[1] 36:0 Launchpad Mini MIDI 1"
+ 2  0   "[2] 40:0 nanoKEY2 nanoKEY2 _ CTRL"
+ 3  0   "[3] 44:0 CH345 MIDI 1"
+ 4  0   "[4] 48:0 E-MU XMidi1X1 Tab Out"
+ 5  0   "[5] 52:0 USB Midi MIDI 1"
+ 6  0   "[6] 56:0 Q25 MIDI 1"
+ 7  0   "[7] 128:0 FLUID Synth (21079):Synth input port (21079:0)"
+ 8  0   "[8] 129:0 yoshimi:input"
+
+# vim: sw=4 ts=4 wm=4 et ft=dosini

@@ -101,10 +101,12 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_clock_pre_portmap.png}
-   \caption{Clocks List Before Port Mapping}
+   \caption{Clocks List Without Port Mapping}
    \label{fig:clocks_list_before_port_mapping}
 \end{figure}
 
+   Note the \texttt{system:midi\_playback\} that is part of each port name.
+   (There is a similar "capture" portion for input ports).
    Click on the \textbf{Make Maps} button.
    This creates the initial I/O maps internally.
    Then either restart \textsl{Seq66} or go to the \textbf{Restart Seq66}
@@ -119,13 +121,16 @@
    \label{fig:clocks_list_after_port_mapping}
 \end{figure}
 
+   Note that the short names generated are partial names of either the ALSA
+   port name or are comprised of the JACK alias name for each port.
+
    At startup, \textsl{Seq66} matches the port-map to the ports that exist on
    the system.  If there is no matching system port for a mapped port, then
    that mapped port will show up as disabled in the port lists,
    and a warning should appear.
    If it makes sense, click on the \textbf{Remap and restart} button.
    Or later, go to \textbf{Edit / Preferences / MIDI Clock}.
-   To remove the port mappings, click the \textbf{Clear Maps} button.
+   There, to remove the port mappings, click the \textbf{Clear Maps} button.
    To reconstruct the current setup, click on the \textbf{Make Maps} button to
    get the new mapping, and restart manually.
    As with the normal port listings, the port-mappings are saved and
@@ -153,10 +158,11 @@
    To see an example from ALSA, look at the sample file
    \texttt{data/linux/qseq66.rc}.
    ALSA does not support aliases.
-   (Neither to early versions of JACK.)
-
-   Note that the "system:announce" ALSA buss is always disabled, as \textsl{Seq66}
-   does not use it. In a future version of \textsl{Seq66} it may be removed.
+   (Neither do early versions of JACK.)
+   Note that the "system:announce" ALSA buss is always disabled,
+   as \textsl{Seq66} does not use it.
+   In a future version of \textsl{Seq66} it may be removed, as it means ports
+   have to be renumbered slightly when switching to JACK..
    Here is the stored input port-map:
 
    \begin{verbatim}
