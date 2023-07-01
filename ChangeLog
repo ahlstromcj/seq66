@@ -1,5 +1,364 @@
+2023-07-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, doc/latex/tex/references.tex,
+	seq_portmidi/src/pmwinmm.c: Minor doc updates.
+
+2023-06-29  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.in, Seq66cli/Makefile.in, Seq66qt5/Makefile.in,
+	configure, contrib/scripts/alsa.m4, data/Makefile.in,
+	doc/Makefile.in, doc/latex/Makefile.in, doc/latex/tex/Makefile.in,
+	include/config.h.in, libseq66/Makefile.in,
+	libseq66/include/Makefile.in, libseq66/src/Makefile.in,
+	libsessions/Makefile.in, libsessions/include/Makefile.in,
+	libsessions/src/Makefile.in, m4/Makefile.in, m4/alsa.m4,
+	man/Makefile.in, resources/pixmaps/Makefile.in,
+	seq_portmidi/Makefile.in, seq_portmidi/include/Makefile.in,
+	seq_portmidi/src/Makefile.in, seq_qt5/Makefile.in,
+	seq_qt5/forms/Makefile.in, seq_qt5/include/Makefile.in,
+	seq_qt5/src/Makefile.in, seq_rtmidi/Makefile.in,
+	seq_rtmidi/include/Makefile.in, seq_rtmidi/src/Makefile.in: Updated
+	alsa.m4 to avoid AC_TRY_COMPILE warnings on Arch Linux.
+	* README.md, RELNOTES, VERSION, configure.ac, contrib/git/git.text,
+	data/readme.text, data/readme.windows,
+	data/testing/mapping-snippet.rc,
+	data/testing/sixteen-ports-snippet.rc,
+	doc/latex/tex/port_mapping.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/src/midi/businfo.cpp,
+	libseq66/src/play/clockslist.cpp, libseq66/src/play/inputslist.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/src/qseqtime.cpp: Portmap
+	fixes, date/doc updates, seqtime markers fixed.
+
+2023-06-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, data/readme.windows, doc/latex/tex/menu.tex,
+	doc/latex/tex/midi_formats.tex, doc/latex/tex/port_mapping.tex,
+	doc/latex/tex/references.tex, doc/latex/tex/windows.tex,
+	libseq66/include/midi/businfo.hpp,
+	libseq66/include/midi/mastermidibase.hpp,
+	libseq66/include/midi/midibase.hpp, libseq66/src/midi/businfo.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/performer.cpp,
+	seq_portmidi/include/midibus_pm.hpp,
+	seq_portmidi/include/pminternal.h, seq_portmidi/src/midibus.cpp,
+	seq_portmidi/src/pmwinmm.c, seq_portmidi/src/portmidi.c,
+	seq_qt5/forms/qseditoptions.ui: Solidified Windows MIDI Mapper
+	handling for issue #110.
+
+2023-06-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, data/linux/qseq66.rc, doc/latex/tex/menu.tex,
+	doc/latex/tex/midi_formats.tex, doc/latex/tex/port_mapping.tex,
+	doc/latex/tex/windows.tex, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/play/clockslist.cpp, libseq66/src/play/inputslist.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/src/qseqdata.cpp: Minor tweaks and clean-up.
+
+2023-06-26  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, data/readme.text, doc/latex/tex/menu.tex,
+	doc/latex/tex/port_mapping.tex,
+	libseq66/include/midi/midibus_common.hpp,
+	libseq66/include/play/clockslist.hpp,
+	libseq66/include/play/inputslist.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/portslist.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/midi/businfo.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/clockslist.cpp, libseq66/src/play/inputslist.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/portslist.cpp,
+	libseq66/src/play/songsummary.cpp, nsis/build_release_package.bat,
+	seq_portmidi/src/midibus.cpp, seq_portmidi/src/portmidi.c,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/forms/qsessionframe.ui, seq_qt5/src/qclocklayout.cpp,
+	seq_qt5/src/qseqtime.cpp: Added unavailable flag to port handling
+	and mapping.
+
+2023-06-24  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES, TODO, doc/latex/tex/midi_formats.tex,
+	doc/latex/tex/pattern_editor.tex, seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qseqtime.cpp: Added time-sig
+	display to timeline.
+
+2023-06-23  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, doc/latex/tex/menu.tex,
+	libseq66/include/cfg/usrsettings.hpp,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/include/qseqbase.hpp, seq_qt5/include/qseqeditex.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qseqroll.hpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qseqbase.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditex.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qstriggereditor.cpp: Improved modification management,
+	added grid space setting to UI.
+
+2023-06-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, README.md, RELNOTES, TODO,
+	doc/latex/tex/pattern_editor.tex,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/seq66_features.h, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qseqtime.cpp: Enabled time-sig drawing in
+	seq66_features, upgraded measure calculation.
+
+2023-06-21  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/midi/calculations.hpp,
+	libseq66/include/midi/editable_events.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/calculations.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qseqeventframe.ui, seq_qt5/include/qseqtime.hpp,
+	seq_qt5/include/qseventslots.hpp,
+	seq_qt5/include/qstriggereditor.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqeventframe.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qseqtime.cpp, seq_qt5/src/qseventslots.cpp,
+	seq_qt5/src/qstriggereditor.cpp, seq_qt5/src/qt5_helpers.cpp: Added
+	time-sig drawing to qseqtime and qstriggereditor, disabled by
+	SEQ66_TIME_SIG_DRAWING in sequence.hpp, time-sig fixes galore.
+
+2023-06-18  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qseqeditframe64.cpp: Fixed setting up the time-sig log
+	button.
+
+2023-06-17  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/play/sequence.hpp,
+	libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsmainwnd.cpp: 
+	Refactored meta and time-sig detection code.
+
+2023-06-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, TODO, VERSION, configure.ac,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/src/midi/calculations.cpp,
+	libseq66/src/midi/editable_event.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/midi/midifile.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqeventframe.cpp, seq_qt5/src/qseventslots.cpp: Fixes
+	to editing time-signature in event editor.
+
+2023-06-15  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, doc/latex/tex/pattern_editor.tex,
+	seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqtime.cpp: More work
+	on adding time signatures.
+
+2023-06-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Seq66qt5/Seq66qt5.pro, TODO, libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/cfg/usrsettings.cpp,
+	libseq66/src/midi/editable_event.cpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/play/sequence.cpp, nsis/winddeploybruteforce.bat,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditframe64.cpp: Wash hands of 32-bit Windows for
+	now, fixed and improvd time-sig handling.
+
+2023-06-12  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Seq66qt5/Seq66qt5.pro, include/config.h.in,
+	nsis/Seq66Constants.nsh, nsis/build_release_package.bat,
+	nsis/winddeploybruteforce.bat, seq_qt5/src/qseqroll.cpp: Seemingly
+	futile attempt at Win32 build on a Win64 machine.
+
+2023-06-09  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qstriggereditor.hpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qstriggereditor.cpp: Support for setting pattern editor
+	to beginning time-signature in place.
+
+2023-06-08  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/midi/event.hpp,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/midi/midi_vector.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qseqeditframe64.ui, seq_qt5/include/qseqdata.hpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qstriggereditor.hpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qstriggereditor.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: Work on issue #111 improving
+	time-signature support, in progress.
+
+2023-06-07  ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/src/os/shellexecute.cpp,
+	libseq66/src/play/performer.cpp, nsis/Seq66Constants.nsh,
+	nsis/build_release_package.bat, nsis/winddeploybruteforce.bat: 
+	Trying to get a Windows 32-bit version to deploy.
+
+2023-06-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, doc/latex/tex/menu.tex,
+	libseq66/include/cfg/rcsettings.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: Added quiet option, improved
+	control/display options.
+
+2023-06-03  ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/seq66_features.h,
+	seq_portmidi/include/portmidi.h,
+	seq_portmidi/src/mastermidibus.cpp, seq_portmidi/src/pmlinux.c,
+	seq_portmidi/src/pmmac.c, seq_portmidi/src/pmmacosxcm.c,
+	seq_portmidi/src/pmutil.c, seq_portmidi/src/pmwin.c,
+	seq_portmidi/src/pmwinmm.c, seq_portmidi/src/portmidi.c,
+	seq_portmidi/src/ptmacosx_mach.c: Investigated Windows portmidi free
+	error, disabled incomplete sysex processing.
+
+2023-06-02  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/src/play/performer.cpp: Tweaks for
+	remote work.
+
+2023-06-01  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, VERSION, configure.ac, doc/latex/tex/alsa.tex,
+	doc/latex/tex/event_editor.tex, doc/latex/tex/jack.tex,
+	doc/latex/tex/menu.tex, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/src/qsmainwnd.cpp: Documentation of port-map prompts.
+
+2023-05-31  ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/sessions/smanager.cpp: Improved reporting of MIDI
+	driver errors.
+	* README.md, TODO, doc/latex/tex/first_start.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/portslist.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/include/qt5nsmanager.hpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5nsmanager.cpp: Made
+	port-map inconsistencies raise a prompt for a potential remapping
+	and restart.
+
+2023-05-30  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, data/share/doc/tutorial/faq.html,
+	data/share/doc/tutorial/left-tree.html: Added a couple of FAQs to
+	the tutorial.
+	* README.md, TODO, data/license.text, data/readme.text,
+	libseq66/include/os/shellexecute.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/util/strfunctions.hpp,
+	libseq66/src/cfg/settings.cpp, libseq66/src/os/shellexecute.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/util/strfunctions.cpp,
+	seq_qt5/src/qseqdata.cpp: Fixed tutorial/manual access for issue
+	#110.
+
+2023-05-28  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, Seq66qt5/Seq66qt5.pro, TODO,
+	libseq66/include/util/filefunctions.hpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/filefunctions.cpp, nsis/Seq66Setup.nsi, seq66.pro: 
+	Added code to delete gigantic log file.
+
+2023-05-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/notes/install-directories.text,
+	libseq66/src/os/daemonize.cpp: Fixed stdio rerouting and added
+	Windows icons.
+
+2023-05-26  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_qt5/src/qsmainwnd.cpp: Minor tweak to qsmainwnd.
+	* Seq66qt5/Seq66qt5.pro, contrib/notes/install-directories.text,
+	nsis/Seq66Constants.nsh, nsis/Seq66Setup.nsi,
+	nsis/build_release_package.bat, resources/icons/route66.xpm,
+	resources/seq66_win.rc, seq66.pro, seq_qt5/src/qsmainwnd.cpp: Better
+	app icon support in progress.
+	* README.md, Seq66qt5/seq66qt5.cpp,
+	contrib/notes/install-directories.text, data/linux/qseq66.usr,
+	resources/seq66_win.rc, seq66.pro, seq_qt5/src/qsmainwnd.cpp: 
+	Interim check-in for Windows icon handling.
+
+2023-05-25  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/seq66_features.h,
+	libseq66/include/seq66_features.hpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/seq66_features.cpp, libseq66/src/sessions/smanager.cpp: 
+	Making log-file usage more automatic, need to debug under Windows.
+	* data/linux/qseq66.usr, doc/latex/tex/menu.tex,
+	libseq66/include/cfg/settings.hpp, libseq66/src/cfg/settings.cpp,
+	libseq66/src/os/shellexecute.cpp, seq_qt5/src/qsmainwnd.cpp: 
+	Refactored the handling of the tutorial and manual.
+
+2023-05-24  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Seq66qt5/seq66qt5.cpp, TODO, libseq66/include/play/sequence.hpp,
+	libseq66/include/seq66_features.hpp, libseq66/src/cfg/settings.cpp,
+	libseq66/src/os/shellexecute.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/seq66_features.cpp, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp: Fixed
+	issue #110 to handle changing background sequence.
+	* TODO, seq_qt5/include/qscrollslave.h,
+	seq_qt5/src/qscrollslave.cpp, seq_qt5/src/qseqeditframe64.cpp: 
+	Forwarding direction events from qscrollslave to qscrollmaster.
+
+2023-05-23  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, doc/latex/tex/pattern_editor.tex,
+	seq_qt5/include/qscrollslave.h, seq_qt5/include/qseqdata.hpp,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/qscrollslave.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qsmainwnd.cpp: More issue #3 work and tentative fix for
+	main tempo change.
+	* README.md, RELNOTES, TODO, VERSION, configure, configure.ac,
+	contrib/git/git.text, doc/latex/tex/kbd_mouse.tex,
+	doc/latex/tex/pattern_editor.tex,
+	doc/latex/tex/seq66-user-manual.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/sequence.cpp,
+	nsis/README, nsis/Seq66Constants.nsh, nsis/Seq66Setup.nsi,
+	seq_qt5/forms/qseqeditframe64.ui, seq_qt5/include/Makefile.am,
+	seq_qt5/include/Makefile.in, seq_qt5/include/qseqdata.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qseqroll.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/seq_qt5.pro,
+	seq_qt5/src/Makefile.am, seq_qt5/src/Makefile.in,
+	seq_qt5/src/qperfeditframe64.cpp, seq_qt5/src/qperfnames.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qstriggereditor.cpp,
+	seq_qt5/src/qt5_helpers.cpp: Added qscrollslave class, keeps seqedit
+	panes in sync now, issue #3.
+
 2023-05-20  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* ChangeLog, README.md, RELNOTES, TODO, contrib/git/git.text,
+	data/readme.text, data/readme.windows,
+	doc/latex/tex/first_start.tex, include/config.h.in,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp, nsis/README,
+	nsis/Seq66Constants.nsh, nsis/Seq66Setup.nsi,
+	nsis/build_debug_code.bat, nsis/build_release_package.bat: Release
+	Notes for Seq66 v. 0.99.5 2023-05-20 This file lists __major__ changes...
 	* data/license.text, data/readme.text, data/readme.windows,
 	nsis/README, nsis/Seq66Setup.nsi: Got 64-bit build/installer
 	working.

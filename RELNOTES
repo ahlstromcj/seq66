@@ -30,8 +30,9 @@ This file lists __major__ changes from version 0.99.6
         -   Non-MIDI-standard beat-widths are supported as a
             Seq66-specific "event".
         -   Fixed event filtering in the event (qstriggereditor) pane.
-        -   As the time-signatures change, Seq66 adjusts the piano roll,
-            time line (with measure counts), and event pane vertical lines.
+        -   As time-signatures change, Seq66 adjusts the piano roll,
+            time line (with measure counts), and event pane vertical
+            lines.
     -   Port-mapping prompts about port issues and allows an immediate
         remap-and-restart.
     -   'o' keystroke in seqroll toggles recording ('r' already

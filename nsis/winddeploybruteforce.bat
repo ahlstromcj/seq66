@@ -7,11 +7,12 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2023-06-06
-:: \update      2023-06-12
+:: \update      2023-07-01
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
-::      This script sets up and creates a release build of Seq66 for
-:: ....
+::      This script was meant to try to get a 32-bit Windows build properly
+::      deployed.  Did not work.
+::
 :: The only parameter for this batch file is the source location of the Qt
 :: files. The base location is something like:
 ::

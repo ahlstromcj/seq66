@@ -21,21 +21,21 @@ version, such as virtual ports. Sample configuration files are provided.
 Why the name qpseq66.exe instead of seq66.exe? The "q" stands for the Qt user
 interface, and the "p" stands for the PortMidi-based engine used for Windows.
 
-Once installed, go to "C:/Program Files (x86)/Seq66" and create a desktop
+Once installed, go to "C:/Program Files/Seq66" and create a desktop
 shortcut for qpseq66.exe, with the following command line (for a default
 Windows 10 setup having only the MIDI Mapper and the Microsoft wave-table
 synthesizer installed):
 
-    C:\Program Files (x86)\Seq66\qpseq66.exe
+    C:\Program Files\Seq66\qpseq66.exe
 
 (Other files are available in the 'data' directory.  For example, the
 user manual is a PDF file stored in:
 
-    C:\Program Files (x86)\Seq66\data\doc\seq66-user-manual.pdf
+    C:\Program Files\Seq66\data\doc\seq66-user-manual.pdf
 
 and sample Seq66 MIDI files are stored in
 
-    C:\Program Files (x86)\Seq66\data\midi\
+    C:\Program Files\Seq66\data\midi\
 
 for demonstration of various Seq66 features.)
 

@@ -16,18 +16,13 @@ It is also installed in "/usr/local/share/doc/seq66-0.90" (or a later version
 number) along with ODF spreadsheets describing the control keys and Launchpad
 Mini configuration.  It covers everything that seq66 can do.
     
-Prebuilt Debian packages, Windows installers, and source tarballs are
-available here, in the project directory for Sequencer64 packages:
+Prebuilt packages, Windows installers, and source tarballs are
+provided as part of the GitHub release.
 
-    https://github.com/ahlstromcj/sequencer64-packages.git
-
-This directory contains files to be installed in the ${prefix}/share/seq66-0.97
-(replace 0.97 with the latest version).  directory ("prefix" is /usr/share
-or /usr/local/share) on Linux, or in the installation ${install}/data
-directory (e.g. C:/Program Files/Seq66/data) on Windows.
-
-However, as of version 0.99.5, the Windows installer will be available as
-part of the extra packages in a GitHub release.
+This directory contains files to be installed in the ${prefix}/share/seq66-0.99
+directory ("prefix" is /usr/share or /usr/local/share) on Linux, or in the
+installation ${install}/data directory (e.g. C:/Program Files/Seq66/data)
+on Windows.
 
 Seq66 will create the configuration directory and configuration file
 the first time, but we also supply some samples.  The files include alternate
@@ -46,12 +41,11 @@ rather than the Windows executable "qpseq66.exe".
 Port-Mapping:
 
     See the PDF user manual for full details.  Here, we note that port-mapping
-    is enabled by default.  If it is, and devices do not show up, then
-    go to the Edit / Preferences / Clock tab and click the "Make maps" button.
-    Exit and restart and the device should show up.
-
-    This process is usually necessary when adding new MIDI devices to the
-    system setup.
+    is enabled by default.  If it is, and devices do not show up, then go to
+    the Edit / Preferences / Clock tab and click the "Make maps" button.  Exit
+    and restart and the device should show up. Or just click the "Remap and
+    restart" button if a warning message pops up.  This process is usually
+    necessary when adding new MIDI devices to the system setup.
 
 Windows support:
 

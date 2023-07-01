@@ -1,6 +1,6 @@
 NSIS Notes
 Chris Ahlstrom
-2021-12-11 to 2023-05-21
+2021-12-11 to 2023-07-01
 
 This directory contains files that allow Linux and Windows users to create
 an NSIS installer for Seq66. The latest version adds application
@@ -25,11 +25,15 @@ Source:
 
 Since NSIS is currently a 32-bit program, it redirects installations by
 default to "C:\Program Files (x86)" and uses, from the Windows Registry,
-only "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node".
+only "HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node". We have updated that to
+install to "C:\Program Files", since Seq66 can be built only as a 64-bit
+application on our current development system.
 
-NOTE: Currently we force the creation of a 64-bit Seq66 and a 64-bit Seq66
-installer.  The following material is for reference only. Read the
-release batch file.
+NOTE: Currently we force the creation of a 64-bit Seq66, but still create
+a 32-bit Seq66 installer.  The following material is for reference only at
+this time. Read the release batch file for the most accurate information.
+
+    ========================================================
 
 The "x64" plug-in provides a macro, "RunningX64", which returns true if the
 installer is running on 64-bit Windows under WoW64 emulation.  It can be
