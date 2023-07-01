@@ -94,7 +94,7 @@ static void CALLBACK winmm_streamout_callback
 );
 
 /*
- * Note that this macro is undefined, as it is in the original PortMidi
+ * Note that this macro was undefined, as it is in the original PortMidi
  * library.
  */
 
@@ -1518,10 +1518,10 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
     if (midi->latency == 0)                             /* open the device  */
     {
         /*
-         * Use simple MIDI out calls.  Note that winmm_streamout_callback() is
-         * Note: the same callback function as for StreamOpen().  Please note that
-         * the error codes returned by Microsoft functions don't line up
-         * completely with the values in the PmError enumeration.
+         * Use simple MIDI out calls. Note: the same callback function as
+         * for StreamOpen().  Please note that the error codes returned by
+         * Microsoft functions don't line up completely with the values in the
+         * PmError enumeration.
          */
 
         Pm_set_hosterror
@@ -2147,7 +2147,7 @@ winmm_synchronize (PmInternal * midi)
 static void CALLBACK
 winmm_out_callback
 (
-    HMIDIOUT hmo,                // unused
+    HMIDIOUT hmo,
     UINT wMsg,
     DWORD_PTR dwInstance,
     DWORD_PTR dwParam1,

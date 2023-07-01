@@ -133,6 +133,8 @@ Windows, and using a conventional source tarball.
         *   Fixed bug writing pattern-dump files from event editor.
         *   Improved modification detection and display in the pattern editor.
         *   Added the pattern port number to the song summary output.
+        *   Updated alsa.m4 to avoid obsolete AC_TRY_COMPILE warning. Old
+            version stored in contrib/scripts.
     *   Version 0.99.5:
         *   Greatly enhanced the event editor tab and the events that can
             be view and modified.
