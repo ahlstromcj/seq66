@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-29
+ * \updates       2023-07-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -115,16 +115,10 @@ qseqtime::conditional_update ()
  *  Draws the time panel.
  */
 
-#if defined SEQ66_TIME_SIG_DRAWING
 void
 qseqtime::paintEvent (QPaintEvent * qpep)
 {
     QRect r = qpep->rect();
-#else
-void
-qseqtime::paintEvent (QPaintEvent *)
-{
-#endif
     QPainter painter(this);
     QBrush brush(Qt::lightGray, Qt::SolidPattern);
     QPen pen(Qt::black);
@@ -146,120 +140,9 @@ qseqtime::paintEvent (QPaintEvent *)
      * Actually, odd beats are not allowed in MIDI.
      */
 
-#if defined SEQ66_TIME_SIG_DRAWING
-
     draw_grid(painter, r);
     draw_markers(painter);
 }
-
-#else
-
-    int bpbar = track().get_beats_per_bar();
-    int bwidth = track().get_beat_width();
-    int measures_per_line = zoom() * bwidth * bpbar * 2;
-    int sizeheight = size().height();
-    midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
-    midipulse ticks_per_four = ticks_per_step * 4;
-    midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
-    midipulse ticks_per_bar = bpbar * ticks_per_beat;
-    midipulse starttick = scroll_offset() - (scroll_offset() % ticks_per_step);
-    midipulse endtick = pix_to_tix(width()) + scroll_offset();
-    if (measures_per_line <= 0)
-        measures_per_line = 1;
-
-    pen.setColor(Qt::black);
-    painter.setPen(pen);
-    for (midipulse tick = starttick; tick <= endtick; tick += ticks_per_step)
-    {
-        char bar[32];
-        int x_offset = xoffset(tick) - scroll_offset_x() + s_x_tick_fix;
-
-        /*
-         * Vertical line at each bar; number each bar.
-         */
-
-        if (tick % ticks_per_bar == 0)
-        {
-            pen.setWidth(2);                    // two pixels
-            pen.setStyle(Qt::SolidLine);
-            painter.setPen(pen);
-            painter.drawLine(x_offset, 0, x_offset, sizeheight);
-            snprintf(bar, sizeof bar, "%ld", long(tick / ticks_per_bar + 1));
-
-            QString qbar(bar);
-            painter.drawText(x_offset + 3, 10, qbar);
-        }
-        else if (tick % ticks_per_beat == 0)
-        {
-            pen.setWidth(1);                    // back to one pixel
-            pen.setStyle(Qt::SolidLine);
-            painter.setPen(pen);
-            painter.drawLine(x_offset, 0, x_offset, sizeheight);
-        }
-        else if (tick % (ticks_per_four) == 0)
-        {
-            pen.setWidth(1);                    // back to one pixel
-            pen.setStyle(Qt::DotLine);
-            painter.setPen(pen);
-            painter.drawLine(x_offset, 0, x_offset, sizeheight);
-        }
-    }
-
-    int xoff_left = scroll_offset_x();
-    int xoff_right = scroll_offset_x() + width();
-    midipulse length = track().get_length();
-    int end = position_pixel(length) - s_end_fix;
-    int left = position_pixel(perf().get_left_tick()) + s_time_fix;
-    int right = position_pixel(perf().get_right_tick());
-    int now = position_pixel(perf().get_tick() % length) + s_o_fix;
-
-    /*
-     * Draw end of seq label, label background.
-     */
-
-    if (! perf().is_pattern_playing() && (now != left) && (now != right))
-    {
-        if (now >= xoff_left && now <= xoff_right)
-        {
-            pen.setColor(progress_color());
-            painter.setPen(pen);
-            painter.drawText(now, 18, "o");
-        }
-    }
-    pen.setColor(Qt::black);
-    brush.setColor(Qt::black);
-    brush.setStyle(Qt::SolidPattern);
-    painter.setBrush(brush);
-    painter.setPen(pen);
-    if (left >= xoff_left && left <= xoff_right)
-    {
-        painter.setBrush(brush);
-        painter.drawRect(left, 10, 8, 24);          // black background
-        pen.setColor(Qt::white);                    // white label text
-        painter.setPen(pen);
-        painter.drawText(left + 1, 18, "L");
-    }
-    pen.setColor(Qt::black);
-    painter.setPen(pen);
-    painter.drawRect(end, 10, 16, 24);              // black background
-    pen.setColor(Qt::white);                        // white label text
-    painter.setPen(pen);
-    painter.drawText(end + 1, 18, "END");
-    if (right >= xoff_left && right <= xoff_right)
-    {
-        pen.setColor(Qt::black);
-        painter.setBrush(brush);
-        painter.setPen(pen);
-        painter.drawRect(right, 10, 8, 24);         // black background
-        pen.setColor(Qt::white);                    // white label text
-        painter.setPen(pen);
-        painter.drawText(right + 2, 18, "R");
-    }
-}
-
-#endif
-
-#if defined SEQ66_TIME_SIG_DRAWING
 
 void
 qseqtime::draw_grid (QPainter & painter, const QRect & r)
@@ -371,15 +254,15 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
     if (left >= xoff_left && left <= xoff_right)
     {
         painter.setBrush(brush);
-        painter.drawRect(left, s_box_y, s_LR_box_w, s_LR_box_h);     // background
-        pen.setColor(Qt::white);                                // white text
+        painter.drawRect(left, s_box_y, s_LR_box_w, s_LR_box_h); // background
+        pen.setColor(Qt::white);                                 // white text
         painter.setPen(pen);
         painter.drawText(left + 1, s_text_y, "L");
     }
     pen.setColor(Qt::black);
     painter.setPen(pen);
-    painter.drawRect(end, s_box_y, s_END_box_w, s_END_box_h);        // background
-    pen.setColor(Qt::white);                                    // white text
+    painter.drawRect(end, s_box_y, s_END_box_w, s_END_box_h);    // background
+    pen.setColor(Qt::white);                                     // white text
     painter.setPen(pen);
     painter.drawText(end + 1, s_text_y, "END");
     if (right >= xoff_left && right <= xoff_right)
@@ -387,8 +270,8 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
         pen.setColor(Qt::black);
         painter.setBrush(brush);
         painter.setPen(pen);
-        painter.drawRect(right, s_box_y, s_LR_box_w, s_LR_box_h);    // background
-        pen.setColor(Qt::white);                                // white text
+        painter.drawRect(right, s_box_y, s_LR_box_w, s_LR_box_h); // background
+        pen.setColor(Qt::white);                                  // white text
         painter.setPen(pen);
         painter.drawText(right + 2, s_text_y, "R");
     }
@@ -403,14 +286,12 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
         int n = ts.sig_beats_per_bar;
         int d = ts.sig_beat_width;
         midipulse start = ts.sig_start_tick;
-//      int ypos = 20;
         std::string text = std::to_string(n);
         text += "/";
         text += std::to_string(d);
         if (start == perf().get_left_tick())
         {
             start += s_L_timesig_fix;
-//          ypos -= 4;
         }
         else
             start += s_timesig_fix;
@@ -422,8 +303,6 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
         painter.drawText(pos + 1, s_ts_text_y, qt(text));
     }
 }
-
-#endif
 
 void
 qseqtime::resizeEvent (QResizeEvent * qrep)

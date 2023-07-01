@@ -141,9 +141,7 @@ sequence::sequence (int ppqn) :
     m_parent                    (nullptr),      /* set when seq installed   */
     m_events                    (),
     m_triggers                  (*this),
-#if defined SEQ66_TIME_SIG_DRAWING
     m_time_signatures           (),
-#endif
     m_events_undo_hold          (),
     m_have_undo                 (false),
     m_have_redo                 (false),
@@ -562,8 +560,6 @@ sequence::is_playable () const
     return m_events.is_playable();
 }
 
-#if defined SEQ66_TIME_SIG_DRAWING
-
 /*-------------------------------------------------------------------------
  * Experimental time-signature functions
  *-------------------------------------------------------------------------*/
@@ -664,8 +660,6 @@ sequence::get_time_signature (size_t index)
         m_time_signatures[index] : s_ts_dummy ;
 }
 
-#endif  // defined SEQ66_TIME_SIG_DRAWING
-
 int
 sequence::measure_number (midipulse p)
 {
@@ -675,8 +669,6 @@ sequence::measure_number (midipulse p)
     double P = double(m_ppqn);
     double m = 0.25 * tick * W / B / P;
     int result = int(m) + 1;
-
-#if defined SEQ66_TIME_SIG_DRAWING
     int count = time_signature_count();
     if (count > 1)
     {
@@ -700,8 +692,6 @@ sequence::measure_number (midipulse p)
                 break;
         }
     }
-#endif
-
     return result;
 }
 
@@ -943,10 +933,6 @@ sequence::set_time_signature (int bpb, int bw)
     int m = get_measures();
     m_measures = m;
 }
-
-#if defined SEQ66_TIME_SIG_DRAWING
-
-#endif  // defined SEQ66_TIME_SIG_DRAWING
 
 /**
  *  Calculates and sets u = 4BP/W, where u is m_unit_measure, B is the

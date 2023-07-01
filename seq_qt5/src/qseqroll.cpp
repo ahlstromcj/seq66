@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-24
+ * \updates       2023-07-01
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -550,8 +550,6 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         }
     }
 
-#if defined SEQ66_TIME_SIG_DRAWING
-
     int count = track().time_signature_count();
     for (int tscount = 0; tscount < count; ++tscount)
     {
@@ -577,17 +575,6 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
             int x_offset = xoffset(tick) - scroll_offset_x();
             int penwidth = 1;
             enum Qt::PenStyle penstyle = Qt::SolidLine;
-
-#if defined USE_DASHED_LINE_TO_DENOTE_TIME_SIG
-
-            /*
-             * This doesn't seem intuitive enough for a user.
-             */
-
-            if ((tscount % 2) == 1)
-                penstyle = Qt::DashLine;            /* show time-sig change */
-#endif
-
             if (tick % ticks_per_bar == 0)          /* solid line every bar */
             {
                 pen.setColor(fore_color());         /* Qt::black            */
@@ -611,49 +598,6 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
             painter.drawLine(x_offset, 0, x_offset, total_height());
         }
     }
-
-#else
-
-    int bpbar = track().get_beats_per_bar();
-    int bwidth = track().get_beat_width();
-    midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
-    midipulse ticks_per_bar = bpbar * ticks_per_beat;
-    midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
-    midipulse starttick = pix_to_tix(r.x());
-    midipulse endtick = pix_to_tix(r.x() + r.width());
-    starttick -= starttick % ticks_per_step;
-    if ((bwidth % 2) != 0)
-        ticks_per_step = zoom();                            /* EXPERIMENTAL */
-
-    for (int tick = starttick; tick < endtick; tick += ticks_per_step)
-    {
-        int x_offset = xoffset(tick) - scroll_offset_x();
-        int penwidth = 1;
-        enum Qt::PenStyle penstyle = Qt::SolidLine;
-        if (tick % ticks_per_bar == 0)          /* solid line on every bar  */
-        {
-            pen.setColor(fore_color());         /* Qt::black                */
-            penwidth = 2;
-        }
-        else if (tick % ticks_per_beat == 0)    /* lighter on every beat    */
-        {
-            pen.setColor(beat_color());
-            penwidth = 1;
-        }
-        else
-        {
-            pen.setColor(step_color());         /* faint step lines         */
-            int tick_snap = tick - (tick % grid_snap());
-            if (tick != tick_snap)
-                penstyle = Qt::DotLine;
-        }
-        pen.setWidth(penwidth);
-        pen.setStyle(penstyle);
-        painter.setPen(pen);
-        painter.drawLine(x_offset, 0, x_offset, total_height());
-    }
-
-#endif  // defined SEQ66_TIME_SIG_DRAWING
 }
 
 /**

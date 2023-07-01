@@ -277,8 +277,6 @@ private:
 
     using eventstack = std::stack<eventlist>;
 
-#if defined SEQ66_TIME_SIG_DRAWING
-
 public:
 
     /**
@@ -299,8 +297,6 @@ public:
      */
 
     using timesig_list = std::vector<timesig>;
-
-#endif  // defined SEQ66_TIME_SIG_DRAWING
 
 private:
 
@@ -363,8 +359,6 @@ private:
 
     triggers m_triggers;
 
-#if defined SEQ66_TIME_SIG_DRAWING
-
     /**
      *  Holds a list of time-signatures in the pattern, for use when drawing
      *  the vertical grid-lines in the pattern-editor time, piano roll, and
@@ -372,8 +366,6 @@ private:
      */
 
     timesig_list m_time_signatures;
-
-#endif  // defined SEQ66_TIME_SIG_DRAWING
 
     /**
      *  Provides a list of event actions to undo for the Stazed LFO and
@@ -1055,8 +1047,6 @@ public:
         return m_triggers.get_trigger_paste_tick();
     }
 
-#if defined SEQ66_TIME_SIG_DRAWING
-
     bool analyze_time_signatures ();
 
     int time_signature_count () const
@@ -1065,9 +1055,6 @@ public:
     }
 
     const timesig & get_time_signature (size_t index);
-
-#endif  // defined SEQ66_TIME_SIG_DRAWING
-
     int measure_number (midipulse p);
 
     bool is_recorder_seq () const
@@ -2007,9 +1994,7 @@ private:
         event::buffer::const_iterator & evi
     ) const;
 
-#if defined SEQ66_TIME_SIG_DRAWING
     void push_default_time_signature ();
-#endif
 
 #if defined USE_SEQUENCE_REMOVE_EVENTS
     void remove (event::buffer::iterator i);

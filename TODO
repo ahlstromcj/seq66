@@ -1,11 +1,9 @@
-TO DO for Seq66 0.99.6 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.99.7 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2023-06-28
+2019-04-13 to 2023-07-01
 
 Port-mapping:
 
-    -   A status of "unavailable" on Windows should somehow avoid trying
-        to open the port, or at least nullifying the error.
     -   Consider allowing the addition of an alias to a port. This would
         be useful for devices attached to "USB Midi MIDI 1". However,
         think about MIDNAM.
@@ -279,12 +277,10 @@ ISSUES:
      
     STATUS: In progress. See README.md for things done so far.
 
-        -   Currently recommended to change the beat width first, but
-            can we enforce updating only when both change?
         -   Ctrl-Z in pattern editor works, but does not restore original
             view until pattern is reopened. Not sure why, it should work.
-        -   Adding time-sig does work, but needs hard-core verification.
-            Also verify measure-count changes.
+        -   Verify measure-count changes upon time-sig. In timesigs.midi,
+            adding a time-sig 8/16 at 4:1 yields one at 10:1 !!!
         -   We could update the song editor to redraw sequences that
             have time signatures; more for appearances, really.
         -   Can we have time-signature changes shown during playback by

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-21
+ * \updates       2023-07-01
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -143,9 +143,7 @@ private:
 
 private:
 
-#if defined SEQ66_TIME_SIG_DRAWING
     void draw_grid (QPainter & painter, const QRect & r);
-#endif
 
 signals:
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-21
+ * \updates       2023-07-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -85,17 +85,15 @@ protected:
 
 private:
 
-#if defined SEQ66_TIME_SIG_DRAWING
-    void draw_grid (QPainter & painter, const QRect & r);
-    void draw_markers (QPainter & painter);
-#endif
-
-private:
-
     virtual void update_midi_buttons () override
     {
         // no code needed, no buttons or statuses to update at this time
     }
+
+private:
+
+    void draw_grid (QPainter & painter, const QRect & r);
+    void draw_markers (QPainter & painter);
 
 signals:
 

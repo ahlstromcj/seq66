@@ -1,21 +1,21 @@
 INSTALL for Seq66 v. 0.99.6 and above
 Chris Ahlstrom
-2015-09-10 to 2023-06-22
+2015-09-10 to 2023-07-01
 
-Getting Seq66 requires building the code or going to "sequencer64-packages/seq66"
-on GitHub to get an installation package.  The bootstrap setup is primarily
-aimed at developers, but is easy to use with the instructions below.  Different
-versions of the program can be built:
+Getting Seq66 requires building the code or going to
+"sequencer64-packages/seq66" on GitHub to get an installation package.  The
+bootstrap setup is primarily aimed at developers, but is easy to use with the
+instructions below.  Different versions of the program can be built:
 
     -   qseq66.  The "rtmidi" engine version, with a Qt5 user-interface a la
-        Kepler34.  Native ALSA, JACK MIDI and JACK transport; fall-back to ALSA;
-        support for Meta events (Set Tempo and Time Signature).  The official
-        version of Seq66, Linux only.
+        Kepler34.  Native ALSA, JACK MIDI and JACK transport; fall-back to
+        ALSA; support for Meta events (Set Tempo and Time Signature).  The
+        official version of Seq66, Linux only.
     -   qpseq66. The same as qseq66, except that the internal "portmidi"
         implementation is used as the MIDI engine.  Linux and Windows.  Built
         via qmake and suitable for loading in QtCreator installed with mingw32
-        tools. To build it in Windows, specify the Mingw library and tools when
-        installing QtCreator.  See "Qmake-based Install" below.
+        tools. To build it in Windows, specify the Mingw library and tools
+        when installing QtCreator.  See "Qmake-based Install" below.
     -   seq66cli.  A headless version of Seq66, which can run from the
         console or as a daemon, controlled via MIDI and playlists.
 
@@ -385,13 +385,6 @@ MANUALLY-DEFINED MACROS IN CODE:
     experiment-happy people will normally want to change the define-state of
     these macros.  We have consolidated them into a single file,
     libseq66/include/seq66_features.h, to make them easier to find and edit.
-
-    SEQ66_TIME_SIG_DRAWING
-
-        For issue #111, adding provisional support for drawing multiple time
-        signatures in the pattern editor.  This macro enables a lot of code.
-        Experimental, and undoubtedly has loose ends to tie up. Undefine it
-        if it affects normal (no time-signature) usage.
 
     SEQ66_METRO_COUNT_IN_ENABLED
 
