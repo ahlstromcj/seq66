@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-06-22
+ * \updates       2023-07-03
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -578,7 +578,11 @@ sequence::is_playable () const
  *
  *  Note that this function assumes there are not two time-signature events
  *  at the same timestamp.  If there are, one will be ignored. Unlikely to
- *  be a big issue
+ *  be a big issue.
+ *
+ *  Currently the seqedit calls this function. Should the event editor
+ *  also call it? Yes, because it needs an up-to-date list of time signatures
+ *  in order to add events properly.
  *
  * \return
  *      Returns true if a true time-signature was found. If false, then
@@ -591,6 +595,7 @@ sequence::analyze_time_signatures ()
     bool result = false;
     midipulse start = 0;
     midipulse limit = snap() / 2;   /* allow some slop at the beginning    */
+    bool found = false;
     int count = 0;
     m_time_signatures.clear();
     for (auto cev = cbegin(); ! cend(cev); ++cev)
@@ -599,46 +604,83 @@ sequence::analyze_time_signatures ()
         {
             midipulse ts = cev->timestamp();
             if (count == 0 && ts > limit)
+            {
                 push_default_time_signature();  /* ensure one at the start  */
+                ++count;
+            }
 
             timesig t;                          /* push a real time-sig     */
+            t.sig_start_measure = 0.0;          /* calculated later         */
+            t.sig_measures = 0.0;               /* ditto                    */
             t.sig_start_tick = ts;
-            t.sig_end_tick = 0;
+            t.sig_end_tick = 0;                 /* tritto                   */
             t.sig_beats_per_bar = int(cev->get_sysex(0));
             t.sig_beat_width = beat_power_of_2(int(cev->get_sysex(1)));
             m_time_signatures.push_back(t);
             start = ts + 1;                     /* better than ++start;     */
             ++count;
-            result = true;
+            found = result = true;
         }
         else
             break;
     }
-    if (result)
+    if (! found)
     {
+        push_default_time_signature();
+        found = true;
+    }
+    if (found)
+    {
+        /*
+         * Calculate the "calculate later" values here. These will save
+         * valuable time in drawing.
+         */
+
         size_t sz = m_time_signatures.size();
         if (sz > 1)
         {
             size_t count = 0;
+            double lastmeasure = 1.0;   /* always at least one measure, #1  */
             for (auto & t : m_time_signatures)
             {
-                if (count < (sz - 1))
-                    t.sig_end_tick = m_time_signatures[count + 1].sig_start_tick;
+                midipulse ender = count < (sz - 1) ?
+                    m_time_signatures[count + 1].sig_start_tick : get_length() ;
 
+                t.sig_end_tick = ender;
+                ender -= t.sig_start_tick;
+
+                double mcurrent = pulses_to_measures
+                (
+                    ender, get_ppqn(), t.sig_beats_per_bar, t.sig_beat_width
+                );
+                t.sig_start_measure = lastmeasure;
+                t.sig_measures = mcurrent;
+                lastmeasure += mcurrent;
                 ++count;
             }
         }
+        else                            /* 1 time signature for whole song  */
+        {
+            auto & t = m_time_signatures[0];
+            t.sig_start_measure = 1;
+            t.sig_measures = measures();
+            t.sig_end_tick = get_length();
+        }
     }
-    else
-        push_default_time_signature();
-
     return result;
 }
+
+/**
+ *  Pushes a default time-signature based on the beats/bar and beat width set
+ *  for the pattern. The extent and measure will get calculated later.
+ */
 
 void
 sequence::push_default_time_signature ()
 {
     timesig t;
+    t.sig_start_measure = 0;
+    t.sig_measures = 0;
     t.sig_start_tick = t.sig_end_tick = 0;
     t.sig_beats_per_bar = m_time_beats_per_measure;
     t.sig_beat_width = m_time_beat_width;
@@ -652,6 +694,7 @@ sequence::get_time_signature (size_t index)
     static bool s_uninitialized = true;
     if (s_uninitialized)
     {
+        s_ts_dummy.sig_start_measure = s_ts_dummy.sig_measures = 0.0;
         s_ts_dummy.sig_start_tick = s_ts_dummy.sig_end_tick = 0;
         s_ts_dummy.sig_beats_per_bar = s_ts_dummy.sig_beat_width = 0;
         s_uninitialized = false;
@@ -660,38 +703,114 @@ sequence::get_time_signature (size_t index)
         m_time_signatures[index] : s_ts_dummy ;
 }
 
-int
-sequence::measure_number (midipulse p)
+/**
+ *  Do we want to call analyze_time_signatures() here? Probably better to
+ *  let the caller do it.
+ *
+ * \param p
+ *      Provides the current time in ticks (pulses).
+ *
+ * \param [out] beats
+ *      The value to which the time-signatures beats/pbar is passed if the
+ *      function succeeds.
+ *
+ * \param [out] beatwidth
+ *      The value to which the time-signatures beat width is passed if the
+ *      function succeeds.
+ *
+ * \return
+ *      Returns true if a time-signature was found.
+ */
+
+bool
+sequence::current_time_signature (midipulse p, int & beats, int & beatwidth)
 {
-    double tick = double(p);
-    double B = double(m_time_beats_per_measure);
-    double W = double(m_time_beat_width);
-    double P = double(m_ppqn);
-    double m = 0.25 * tick * W / B / P;
-    int result = int(m) + 1;
+    bool result = false;
     int count = time_signature_count();
-    if (count > 1)
+    if (count > 0)
     {
         for (int i = 1; i < count; ++i)
         {
             const timesig & current = get_time_signature(i);
             midipulse p0 = current.sig_start_tick;
-            if (p >= p0)
+            midipulse p1 = current.sig_end_tick;
+            if (p >= p0 && p < p1)
             {
-                midipulse p1 = current.sig_end_tick;
-                tick = double(p - current.sig_start_tick);
-                B = double(current.sig_beats_per_bar);
-                W = double(current.sig_beat_width);
-
-                double mnew = 0.25 * tick * W / B / P;
-                result += int(mnew);
-                if (p <= p1)
-                    break;
-            }
-            else
+                beats = current.sig_beats_per_bar;
+                beatwidth = current.sig_beat_width;
+                result = true;
                 break;
+            }
         }
     }
+    else
+    {
+        beats = get_beats_per_bar();
+        beatwidth = get_beat_width();
+        result = true;
+    }
+    return result;
+}
+
+/**
+ *  Finds the current measure number for a tick based on the list of
+ *  time-signatures. Although it is possible for a time-signature to last
+ *  for a non-integral number of measures, here we force the value to
+ *  be integral.
+ *
+ *  This function is meant to be used in the time-lines of the pattern or song
+ *  editors.
+ *
+ *  If the tick is past the start of the last time-signature (there is always
+ *  one, the default time signature), then we get the duration since that start,
+ *  convert it to a measure value, then add it to the firts measure of the last
+ *  time-signature.
+ *
+ *  Note: for speed, we should use the old method, just incrementing the measure.
+ *
+ * \param p
+ *      Provides the tick for which we want to get the measure it it in.
+ *
+ * \return
+ *      Returns the rounded up integer version of the measure.
+ */
+
+int
+sequence::measure_number (midipulse p)
+{
+    int result = 0;
+    int count = time_signature_count();
+    if (count > 0)
+    {
+        for (int i = 0; i < count; ++i)
+        {
+            const timesig & t = get_time_signature(i);
+            midipulse p0 = t.sig_start_tick;
+            if (p >= p0)
+            {
+                midipulse p1 = t.sig_end_tick;
+                midipulse duration = p - p0;
+                double mnew = t.sig_start_measure;
+                double m = pulses_to_measures
+                (
+                    duration, get_ppqn(),
+                    t.sig_beats_per_bar, t.sig_beat_width
+                );
+                result += int(mnew + m + 0.5);      /* round up for now */
+                if (p >= p1)
+                {
+                    /*
+                     * We're past the last time-signature event. See banner.
+                     */
+
+                    break;
+                }
+            }
+        }
+    }
+    else
+        result = measures();
+
     return result;
 }
 

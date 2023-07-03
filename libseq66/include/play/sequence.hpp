@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-06-22
+ * \updates       2023-07-03
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -285,8 +285,10 @@ public:
 
     using timesig = struct
     {
+        double sig_start_measure;   /* Starting measure, precalculated.     */
+        double sig_measures;        /* Size in measures, precalculated.     */
         midipulse sig_start_tick;   /* The pulse where time-sig was placed. */
-        midipulse sig_end_tick;     /* Next time-sig start (0 == end).      */
+        midipulse sig_end_tick;     /* Next time-sig start (0 == end?).     */
         int sig_beats_per_bar;      /* The beats-per-bar in the time-sig.   */
         int sig_beat_width;         /* The size of each beat in the bar.    */
     };
@@ -1055,6 +1057,7 @@ public:
     }
 
     const timesig & get_time_signature (size_t index);
+    bool current_time_signature (midipulse p, int & beats, int & beatwidth);
     int measure_number (midipulse p);
 
     bool is_recorder_seq () const

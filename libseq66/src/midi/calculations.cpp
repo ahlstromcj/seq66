@@ -342,13 +342,58 @@ pulses_to_midi_measures
     if (result)
     {
         double qnotes = double(c_qn_beats) * B / W; /* Q notes per measure  */
-        double measlength = P * qnotes;             /* pulses in a measure  */
-        int beatticks = measlength / B;             /* pulses in a beat     */
+        double measlength = P * qnotes;             /* pulses/std measure   */
+        int beatticks = measlength / B;             /* pulses/beat          */
         int m = int(p / measlength) + 1;            /* measure no. of pulse */
         int metro = 1 + ((p * W / P / c_qn_beats ) % B);
         measures.measures(m);                       /* number of measures   */
         measures.beats(metro);                      /* beats within measure */
         measures.divisions(int(p % beatticks));     /* leftover pulses      */
+    }
+    return result;
+}
+
+/**
+ *  Function used in sequence::analyze_time_signatures() to precalculate
+ *  the size of each time-signature (sequence::timesig) segment.
+ *
+ * \param p
+ *      Provides either the time in ticks (pulses), or the duration of a
+ *      timesig segment.
+ *
+ * \param P
+ *      The PPQN in force for this calculation. Must be greater than 0.
+ *
+ * \param B
+ *      The beats/measure in force for this calculation. Must be greater
+ *      than 0.
+ *
+ * \param W
+ *      The beat width in force for this calculation. Must be greater
+ *      than 0.
+ *
+ * \return
+ *      If the parameters are valid, returns the measure count or size
+ *      as a floating-point value.  The caller is responsible for any
+ *      rounding.  If parameters are invalid, 0.0 is returned.
+ */
+
+double
+pulses_to_measures
+(
+    midipulse p,                                    /* time or duration     */
+    int P,                                          /* PPQN                 */
+    int B,                                          /* beats per measure    */
+    int W                                           /* beat width           */
+)
+{
+    double result = 0.0;                            /* indicates an error   */
+    bool ok = (W > 0) && (P > 0) && (B > 0);
+    if (ok)
+    {
+        double qnotes = double(c_qn_beats) * B / W; /* Q notes per measure  */
+        double measlength = P * qnotes;             /* pulses/std measure   */
+        result = p / measlength;
     }
     return result;
 }

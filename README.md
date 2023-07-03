@@ -1,4 +1,4 @@
-# README for Seq66 0.99.7 2023-07-01
+# README for Seq66 0.99.7 2023-07-02
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -81,6 +81,9 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.99.7:
+        *   Issue #111 follow-ons: Fixed initial time-signature drawing in
+            data pane.
     *   Version 0.99.6:
         *   Issue #3 follow-ons:
             *   Added a qscrollslave to allow QScrollArea to allow the pattern

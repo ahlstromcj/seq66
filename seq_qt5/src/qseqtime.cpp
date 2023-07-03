@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-07-01
+ * \updates       2023-07-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -53,7 +53,7 @@ namespace seq66
 
 static const int s_x_tick_fix    =  2;  /* adjusts vertical grid lines      */
 static const int s_time_fix      =  9;  /* seqtime offset from seqroll      */
-static const int s_timesig_fix   = 17;  /* time-sig offset from seqroll     */
+static const int s_timesig_fix   = 18;  /* time-sig offset from seqroll     */
 static const int s_L_timesig_fix = 40;  /* time-sig offset from "L" marker  */
 static const int s_o_fix         =  6;  /* adjust position of "o" mark      */
 static const int s_end_fix       = 18;  /* adjust position of "END" box     */

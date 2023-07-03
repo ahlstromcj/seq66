@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-06-21
+ * \updates       2023-07-03
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -117,6 +117,8 @@ qseqeventframe::qseqeventframe
 
     QString seqnolabel = qt(std::to_string(int(track().seq_number())));
     ui->label_seq_number->setText(seqnolabel);
+
+    (void) track().analyze_time_signatures();   /* ca 2023-07-03 */
 
     midibyte seqchan = track().seq_midi_channel();
     std::string ts_ppqn = "Ch. ";
@@ -1302,6 +1304,8 @@ qseqeventframe::slot_save ()
         }
     }
     set_selection_multi(false);
+
+    (void) track().analyze_time_signatures();   /* ca 2023-07-03 */
 }
 
 void

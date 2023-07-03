@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-07-01
+ * \updates       2023-07-02
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -413,8 +413,7 @@ qseqeditframe64::qseqeditframe64
      * it while connected.
      */
 
-    (void) detect_time_signature();     /* can set beats/bar and beat width */
-
+    bool got_timesig = detect_time_signature(); /* find beats/bar & width   */
     std::string bstring = std::to_string(m_beats_per_bar);
     (void) fill_combobox(ui->m_combo_bpm, beats_per_bar_list(), bstring);
     bstring = std::to_string(m_beat_width);
@@ -874,7 +873,10 @@ qseqeditframe64::qseqeditframe64
         ui->m_button_event, SIGNAL(clicked(bool)),
         this, SLOT(events())
     );
-    set_data_type(EVENT_NOTE_ON);
+    if (got_timesig)
+        set_data_type(EVENT_META_TIME_SIGNATURE);
+    else
+        set_data_type(EVENT_NOTE_ON);
 
     /*
      * Event Data Presence-Indicator Button and Popup Menu.
@@ -1905,12 +1907,7 @@ qseqeditframe64::detect_time_signature ()
     (
         tstamp, n, d, 0, track().snap() / 2
     );
-    (void) track().analyze_time_signatures();       /* detect some or none  */
-
-    /*
-     * set_data_type(EVENT_META_TIME_SIGNATURE);
-     */
-
+    (void) track().analyze_time_signatures();           /* log some or none */
     if (result)
     {
         set_beats_per_bar(n, qbase::status::startup);
@@ -2632,6 +2629,9 @@ qseqeditframe64::set_background_sequence (int seqnum, qbase::status qs)
  *  Sets the data type based on the given parameters.  This function uses the
  *  controller_name() function defined in the controllers.cpp module.
  *
+ *  See editable_event.cpp's s_channel_event_names[] for the list of names.
+ *  We should centralizze them at some point.
+ *
  * \param status
  *      The current editing status.
  *
@@ -2679,15 +2679,15 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
             snprintf(type, sizeof type, "CC - %s", ccname.c_str());
         }
         else if (status == EVENT_PROGRAM_CHANGE)
-            snprintf(type, sizeof type, "Program Change");
+            snprintf(type, sizeof type, "Program");
         else if (status == EVENT_CHANNEL_PRESSURE)
-            snprintf(type, sizeof type, "Channel Pressure");
+            snprintf(type, sizeof type, "Ch Pressure");
         else if (status == EVENT_PITCH_WHEEL)
             snprintf(type, sizeof type, "Pitch Wheel");
         else if (event::is_meta_status(status))
             snprintf(type, sizeof type, "Meta Event");
         else
-            snprintf(type, sizeof type, "Unknown MIDI Event");
+            snprintf(type, sizeof type, "Unknown");
 
         char text[80];
         snprintf(text, sizeof text, "%s %s", hexa, type);
@@ -3255,6 +3255,8 @@ qseqeditframe64::set_event_entry
  *      -   Pitch Wheel
  *      -   Control Changes from 0 to 127
  *
+ *  Compare this function to repopulate_mini_event_menu().
+ *
  * \param buss
  *      The selected bus number.
  *
@@ -3288,13 +3290,14 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
         status = event::normalized_status(status);      /* mask off channel */
         switch (status)                                 /* see event_index  */
         {
-        case EVENT_NOTE_ON:             note_on = true;             break;
         case EVENT_NOTE_OFF:            note_off = true;            break;
+        case EVENT_NOTE_ON:             note_on = true;             break;
         case EVENT_AFTERTOUCH:          aftertouch = true;          break;
         case EVENT_CONTROL_CHANGE:      ccs[cc] = true;             break;
         case EVENT_PROGRAM_CHANGE:      program_change = true;      break;
-        case EVENT_CHANNEL_PRESSURE:    channel_pressure = true;    break;
         case EVENT_PITCH_WHEEL:         pitch_wheel = true;         break;
+        case EVENT_CHANNEL_PRESSURE:    channel_pressure = true;    break;
+        case EVENT_MIDI_META:           /* handled below    */      break;
         }
     }
 
@@ -3304,13 +3307,13 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
      * these meta events, or it ends.  All we care here is if one exists.
      */
 
-    auto cev = track().cbegin();        /* will scan the whole container    */
+    auto cev = track().cbegin();                    /* scan whole container */
     if (! track().cend(cev))
     {
         if (track().get_next_meta_match(EVENT_META_SET_TEMPO, cev))
             tempo = true;
 
-        cev = track().cbegin();         /* start over!                      */
+        cev = track().cbegin();                     /* start over!          */
         if (track().get_next_meta_match(EVENT_META_TIME_SIGNATURE, cev))
             timesig = true;
     }
@@ -3421,6 +3424,8 @@ qseqeditframe64::repopulate_usr_combos (int buss, int channel)
  *  smaller number of items, only the ones that actually exist in the
  *  track/pattern/loop/sequence.
  *
+ *  Compare this function to repopulate_event_menu().
+ *
  * \param buss
  *      The selected bus number.
  *
@@ -3483,16 +3488,20 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
         case EVENT_CHANNEL_PRESSURE:
             any_events = channel_pressure = true;
             break;
+
+        case EVENT_MIDI_META:
+            break;                      /* handled below                    */
+
         }
     }
 
-    auto cev = track().cbegin();        /* will scan the whole container    */
+    auto cev = track().cbegin();                    /* scan whole container */
     if (! track().cend(cev))
     {
         if (track().get_next_meta_match(EVENT_META_SET_TEMPO, cev))
             tempo = any_events = true;
 
-        cev = track().cbegin();         /* start over!                      */
+        cev = track().cbegin();                     /* start over!          */
         if (track().get_next_meta_match(EVENT_META_TIME_SIGNATURE, cev))
             timesig = any_events = true;
     }

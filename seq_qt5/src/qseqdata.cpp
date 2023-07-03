@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-23
+ * \updates       2023-07-02
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -110,15 +110,18 @@ qseqdata::qseqdata
     m_is_time_signature     (false),
     m_is_program_change     (false),
     m_status                (EVENT_NOTE_ON),
-    m_cc                    (1),                /* modulation   */
+    m_cc                    (1),                            /* modulation   */
     m_line_adjust           (false),
     m_relative_adjust       (false),
     m_dragging              (false)
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    m_font.setPointSize(8);                     /* was 6        */
+    m_font.setPointSize(8);                                 /* was 6 points */
     m_font.setBold(true);
-    cb_perf().enregister(this);
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    set_initialized();                                      /* helps debug  */
+#endif
+    cb_perf().enregister(this);                             /* notification */
     m_timer = qt_timer(this, "qseqdata", 2, SLOT(conditional_update()));
 }
 
@@ -289,6 +292,14 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 brush.setColor(grey_color());
                 painter.setBrush(brush);
             }
+#if defined USE_DRAWING_OF_TS_EVENTS
+
+            /*
+             * This is taken care of by separately drawing the logged time
+             * signatures.  That also fixes a weird/osbscure bug at first
+             * drawing.
+             */
+
             else if (is_time_signature() && cev->is_time_signature())
             {
                 int n = int(cev->get_sysex(0));
@@ -299,6 +310,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 y_offset = 20;
                 painter.drawText(x_offset, y_offset, qt(text));
             }
+#endif
             else if (is_program_change() && cev->is_program_change())
             {
                 d1 = event_height;
@@ -315,6 +327,30 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 brush.setColor(grey_color());   /* new */
                 painter.setBrush(brush);        /* new */
             }
+        }
+    }
+    if (is_time_signature())                    /* ca 2023-07-02 redundant  */
+    {
+        const int y_offset = 12;                /* m_dataarea_y - 25;       */
+        int count = track().time_signature_count();
+        for (int tscount = 0; tscount < count; ++tscount)
+        {
+            const sequence::timesig & ts = track().get_time_signature(tscount);
+            if (ts.sig_beat_width == 0)
+                break;
+
+            midipulse start = ts.sig_start_tick;
+            int pos = position_pixel(start) + 3;
+            int n = ts.sig_beats_per_bar;
+            int d = ts.sig_beat_width;
+            std::string text = std::to_string(n);
+            text += "/";
+            text += std::to_string(d);
+
+            pen.setColor(Qt::white);
+            pen.setColor(Qt::black);
+            painter.setPen(pen);
+            painter.drawText(pos, y_offset, qt(text));
         }
     }
     track().draw_unlock();
