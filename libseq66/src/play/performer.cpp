@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-06-29
+ * \updates       2023-07-03
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2193,6 +2193,12 @@ performer::fix_sequence (seq::number seqno, fixparameters & params)
  *  Note that we do not set the modify flag or do notification notification
  *  here.  See the change_ppqn() function instead.
  *
+ *  Setting the "R" marker to 4 times a measure seems wrong, and makes the R
+ *  in the seqedit unseen. But it works for the perfedit. We could loop
+ *  through all patterns to find the shortest one, but it's simpler to
+ *  just set the "R" to 1 measure. Perhaps multiply it by 4 if the song editor
+ *  is opened.
+ *
  * \setter ppqn
  *      Also sets other related members.
  *
@@ -2225,14 +2231,11 @@ performer::set_ppqn (int p)
     }
     if (m_one_measure == 0)
     {
-        m_one_measure = p * 4;                  /* simplistic!  */
+        m_right_tick = m_one_measure = p * 4;               /* simplistic!  */
 
         /*
-         * ca 2022-08-17 This seems wrong, and makes the R in
-         * the seqedit unseen. But it works for the perfedit.
+         * m_right_tick = m_one_measure * 4;
          */
-
-         m_right_tick = m_one_measure * 4;
     }
     return result;
 }

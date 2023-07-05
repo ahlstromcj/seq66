@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-07-02
+ * \updates       2023-07-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -167,6 +167,8 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
         midipulse starttick = ts.sig_start_tick;
         midipulse endtick = ts.sig_end_tick != 0 ?
             ts.sig_end_tick : pix_to_tix(r.x() + r.width());
+
+        endtick += snap() / 2;                      /* ca 2023-07-03        */
 
         if (measures_per_line <= 0)
             measures_per_line = 1;

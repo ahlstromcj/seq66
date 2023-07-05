@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2023-07-03
+ * \updates       2023-07-04
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -211,6 +211,7 @@ extern midipulse midi_measures_to_pulses
     const midi_measures & measures,
     const midi_timing & seqparms
 );
+extern midi_measures string_to_measures (const std::string & bbt);
 extern midipulse timestring_to_pulses
 (
     const std::string & timestring,

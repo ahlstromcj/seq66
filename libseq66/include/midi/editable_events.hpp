@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-04
- * \updates       2023-06-20
+ * \updates       2023-07-04
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -106,7 +106,7 @@ private:
      *  editable_events constructor by the caller.
      */
 
-    sequence & m_sequence;
+    sequence & m_seq;
 
     /**
      *  Holds the current settings for the sequence (and usually for the whole
@@ -144,17 +144,7 @@ public:
     }
 
     editable_event & lookup_link (const editable_event & ee);
-
-    /**
-     *  Calculates the MIDI pulses (divisions) from a string using one of the
-     *  free functions of the calculations module.
-     */
-
-    midipulse string_to_pulses (const std::string & ts_string) const
-    {
-        return seq66::string_to_pulses(ts_string, timing());
-    }
-
+    midipulse string_to_pulses (const std::string & ts_string) const;
     bool load_events ();
     bool save_events ();
 
@@ -297,6 +287,16 @@ public:
     void print () const;
 
 private:
+
+    const sequence & track () const
+    {
+        return m_seq;
+    }
+
+    sequence & track ()
+    {
+        return m_seq;
+    }
 
     /**
      * \setter m_current_event

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2023-06-21
+ * \updates       2023-07-04
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -644,6 +644,40 @@ midi_measures_to_pulses
         result = 0;
 
     return result;
+}
+
+/**
+ *  A new function to create a midi_measures structure from a string assumed
+ *  to have a formate of "B:B:T".  Any fractional part is ignored as being
+ *  less than a pulse.
+ */
+
+midi_measures
+string_to_measures (const std::string & bbt)
+{
+    std::string m;
+    std::string b;
+    std::string t;
+    std::string fraction;
+    int count = extract_timing_numbers(bbt, m, b, t, fraction);
+    if (count > 0)
+    {
+        int measures = strtoi(m);
+        int beats = strtoi(b);
+        int ticks = strtoi(t);
+        if (measures == 0)
+            measures = 1;
+
+        if (beats == 0)
+            beats = 1;
+
+        return midi_measures(measures, beats, ticks);
+    }
+    else
+    {
+        static midi_measures s_dummy;
+        return s_dummy;
+    }
 }
 
 /**

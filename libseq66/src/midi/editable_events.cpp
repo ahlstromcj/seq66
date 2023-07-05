@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-04
- * \updates       2021-08-19
+ * \updates       2023-07-04
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_events
@@ -60,13 +60,13 @@ namespace seq66
  *      get and provides in this parameter.
  */
 
-editable_events::editable_events (sequence & seq, midibpm bpm) :
+editable_events::editable_events (sequence & s, midibpm bp) :
     m_events            (),
     m_current_event     (m_events.end()),
-    m_sequence          (seq),
+    m_seq               (s),
     m_midi_parameters
     (
-        bpm, seq.get_beats_per_bar(), seq.get_beat_width(), seq.get_ppqn()
+        bp, s.get_beats_per_bar(), s.get_beat_width(), s.get_ppqn()
     )
 {
     // Empty body
@@ -87,7 +87,7 @@ editable_events::editable_events (sequence & seq, midibpm bpm) :
 editable_events::editable_events (const editable_events & rhs) :
     m_events            (rhs.m_events),
     m_current_event     (rhs.m_current_event),
-    m_sequence          (rhs.m_sequence),
+    m_seq               (rhs.m_seq),
     m_midi_parameters   (rhs.m_midi_parameters)
 {
     // no code
@@ -113,7 +113,7 @@ editable_events::operator = (const editable_events & rhs)
         m_events            = rhs.m_events;
         m_current_event     = rhs.m_current_event;
         m_midi_parameters   = rhs.m_midi_parameters;
-        m_sequence.partial_assign(rhs.m_sequence);
+        m_seq.partial_assign(rhs.m_seq);
     }
     return *this;
 }
@@ -212,8 +212,8 @@ bool
 editable_events::load_events ()
 {
     bool result;
-    int original_count = m_sequence.events().count();
-    for (const auto & ei : m_sequence.events())
+    int original_count = track().events().count();
+    for (const auto & ei : track().events())
     {
         if (! add(ei))
             break;
@@ -244,25 +244,40 @@ editable_events::save_events ()
     bool result = count() > 0;
     if (result)
     {
-        m_sequence.events().clear();
+        track().events().clear();
         for (const auto & ei : events())
         {
-            if (! m_sequence.add_event(ei.second))  /* sorts the events     */
+            if (! track().add_event(ei.second))         /* sorts the events */
                 break;
         }
-        result = m_sequence.events().count () == count();
+        result = track().events().count () == count();
         if (result)
         {
             /*
              * ca 2021-0-02 Reload in case of note changes.
              */
 
-            m_sequence.events().verify_and_link();
+            track().events().verify_and_link();
             clear();
             result = load_events();
         }
     }
     return result;
+}
+
+/**
+ *  Calculates the MIDI pulses (divisions) from a string using one of the
+ *  free functions of the calculations module.
+ */
+
+midipulse
+editable_events::string_to_pulses (const std::string & ts_string) const
+{
+#if defined USE_OLD_CODE
+    return seq66::string_to_pulses(ts_string, timing());
+#else
+    return track().time_signature_pulses(ts_string);
+#endif
 }
 
 /**

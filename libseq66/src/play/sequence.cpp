@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-07-03
+ * \updates       2023-07-05
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -612,10 +612,11 @@ sequence::analyze_time_signatures ()
             timesig t;                          /* push a real time-sig     */
             t.sig_start_measure = 0.0;          /* calculated later         */
             t.sig_measures = 0.0;               /* ditto                    */
-            t.sig_start_tick = ts;
-            t.sig_end_tick = 0;                 /* tritto                   */
             t.sig_beats_per_bar = int(cev->get_sysex(0));
             t.sig_beat_width = beat_power_of_2(int(cev->get_sysex(1)));
+            t.sig_ticks_per_beat = 0;
+            t.sig_start_tick = ts;
+            t.sig_end_tick = 0;                 /* tritto                   */
             m_time_signatures.push_back(t);
             start = ts + 1;                     /* better than ++start;     */
             ++count;
@@ -643,6 +644,7 @@ sequence::analyze_time_signatures ()
             double lastmeasure = 1.0;   /* always at least one measure, #1  */
             for (auto & t : m_time_signatures)
             {
+                int ticksperbeat = pulses_per_beat(get_ppqn(), t.sig_beat_width);
                 midipulse ender = count < (sz - 1) ?
                     m_time_signatures[count + 1].sig_start_tick : get_length() ;
 
@@ -655,6 +657,7 @@ sequence::analyze_time_signatures ()
                 );
                 t.sig_start_measure = lastmeasure;
                 t.sig_measures = mcurrent;
+                t.sig_ticks_per_beat = ticksperbeat;
                 lastmeasure += mcurrent;
                 ++count;
             }
@@ -672,31 +675,33 @@ sequence::analyze_time_signatures ()
 
 /**
  *  Pushes a default time-signature based on the beats/bar and beat width set
- *  for the pattern. The extent and measure will get calculated later.
+ *  for the pattern. The extent and measure are calculated at the end of the
+ *  time-signature analysis stage.
  */
 
 void
 sequence::push_default_time_signature ()
 {
     timesig t;
-    t.sig_start_measure = 0;
-    t.sig_measures = 0;
-    t.sig_start_tick = t.sig_end_tick = 0;
+    t.sig_start_measure = 0.0;
+    t.sig_measures = 0.0;
     t.sig_beats_per_bar = m_time_beats_per_measure;
     t.sig_beat_width = m_time_beat_width;
+    t.sig_ticks_per_beat = t.sig_start_tick = t.sig_end_tick = 0;
     m_time_signatures.push_back(t);
 }
 
 const sequence::timesig &
-sequence::get_time_signature (size_t index)
+sequence::get_time_signature (size_t index) const
 {
-    static timesig s_ts_dummy;      /* { 0, 0, 0, 0 }; */
+    static timesig s_ts_dummy;                  /* { 0.0, 0.0, 0, 0, ... }; */
     static bool s_uninitialized = true;
     if (s_uninitialized)
     {
         s_ts_dummy.sig_start_measure = s_ts_dummy.sig_measures = 0.0;
-        s_ts_dummy.sig_start_tick = s_ts_dummy.sig_end_tick = 0;
         s_ts_dummy.sig_beats_per_bar = s_ts_dummy.sig_beat_width = 0;
+        s_ts_dummy.sig_ticks_per_beat =0;
+        s_ts_dummy.sig_start_tick = s_ts_dummy.sig_end_tick = 0;
         s_uninitialized = false;
     }
     return index < m_time_signatures.size() ?
@@ -723,7 +728,10 @@ sequence::get_time_signature (size_t index)
  */
 
 bool
-sequence::current_time_signature (midipulse p, int & beats, int & beatwidth)
+sequence::current_time_signature
+(
+    midipulse p, int & beats, int & beatwidth
+) const
 {
     bool result = false;
     int count = time_signature_count();
@@ -776,7 +784,7 @@ sequence::current_time_signature (midipulse p, int & beats, int & beatwidth)
  */
 
 int
-sequence::measure_number (midipulse p)
+sequence::measure_number (midipulse p) const
 {
     int result = 0;
     int count = time_signature_count();
@@ -811,6 +819,86 @@ sequence::measure_number (midipulse p)
     else
         result = measures();
 
+    return result;
+}
+
+/**
+ *  Converts a "B:B:T" string to pulses, given that the analysis, if done,
+ *  added time signatures.  Compare it to seq66::measurestring_to_pulses()
+ *  or string_to_pulses().
+ *
+ *  -   We have a string such as "4:l:000".
+ *      -   Fill a midi_measures structure from that string.
+ *          -   Extract the 4 (measures).
+ *          -   Extract the 1 (beat).
+ *          -   Extract the ticks.
+ *      -   Iterate the time-signatures to get to the one where
+ *          measure >= t.sig_start_measure and if not at the end
+ *          where measure < t+1.sig_start_measure.
+ *          -   Set pulses = t.sig_start_tick.
+ *          -   Get the measure size, 
+ *          -   Get the percentage of the measure size:
+ *              percent = beat/t.sig_beats_per_bar as doubles;
+ *          -   pulsesbeat = percent * (t.sig_end_tick - t.sig_start_tick);
+ *          -   pulses += pulsebeat
+ *          -   pulses += ticks.
+ *      -   If after the last time-signature change:
+ *
+ *  After completion, a re-analysis will be required.
+ */
+
+midipulse
+sequence::time_signature_pulses (const std::string & s) const
+{
+    midipulse result = 0;
+    midi_measures mm = string_to_measures(s);   /* measures, beats, ticks   */
+    int count = time_signature_count();
+    if (count > 0)
+    {
+        double mtarget = double(mm.measures());
+        for (int i = 0; i < count; ++i)
+        {
+            const timesig & t0 = get_time_signature(i);
+            double m0 = t0.sig_start_measure;
+            double m1;
+            if (i < (count - 1))
+            {
+                const timesig & t1 = get_time_signature(i + 1);
+                m1 = t1.sig_start_measure;
+                if (mtarget >= m0 && mtarget < m1)
+                {
+                    double mcount = double(mm.measures()) - m0;
+                    double tpb = double(t0.sig_ticks_per_beat);
+                    double bpb = double(t0.sig_beats_per_bar);
+                    midipulse added = midipulse(tpb * bpb * mcount);
+                    result = t0.sig_start_tick + added + mm.divisions();
+                    break;
+                }
+            }
+            else    /* target measure is after last time-signature change.  */
+            {
+                double mcount = double(mm.measures()) - m0; /* integral?    */
+                double tpb = double(t0.sig_ticks_per_beat);
+                double bpb = double(t0.sig_beats_per_bar);
+                midipulse added = midipulse(tpb * bpb * mcount);
+                result = t0.sig_start_tick + added + mm.divisions();
+                break;
+            }
+        }
+    }
+    else
+    {
+        /*
+         * Convert midi_measures to midi_timing, which has beats/bar and width
+         * elements, and adds beats-per-minute and PPQN.
+         */
+
+        midibpm bpminute = perf()->get_beats_per_minute();
+        int bpb = get_beats_per_bar();
+        int bwidth = get_beat_width();
+        midi_timing mt(bpminute, bpb, bwidth, get_ppqn());
+        result = seq66::string_to_pulses(s, mt);
+    }
     return result;
 }
 

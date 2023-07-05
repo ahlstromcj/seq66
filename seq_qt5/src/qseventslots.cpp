@@ -559,7 +559,6 @@ qseventslots::insert_event
 {
     seq66::event e;                                 /* new default event    */
     editable_event edev(m_event_container, e);
-
     edev.set_status_from_string
     (
         evts, evname, evdata0, evdata1, channel, text
