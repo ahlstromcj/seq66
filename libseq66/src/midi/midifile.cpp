@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-06-13
+ * \updates       2023-07-06
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1706,9 +1706,10 @@ midifile::parse_seqspec_header (int file_size)
         midibyte status = (result & 0x00FF0000) >> 16;      /* 2-byte shift */
         if (status == EVENT_MIDI_META)          /* 0xFF meta marker         */
         {
-            skip(-2);                           /* back up to meta type     */
+            back_up(2);                         /* back up to meta type     */
+
             midibyte type = read_byte();        /* get meta type            */
-            if (type == EVENT_META_SEQSPEC)     /* 0x7F event marker     */
+            if (type == EVENT_META_SEQSPEC)     /* 0x7F event marker        */
             {
                 (void) read_varinum();          /* prop section length      */
                 result = read_long();           /* control tag              */
@@ -1806,15 +1807,15 @@ midifile::parse_seqspec_track (performer & p, int file_size)
                 m_error_is_fatal = false;
                 result = set_error_dump
                 (
-                    "No sequence number in SeqSpec track, extra data"
+                    "No sequence number in SeqSpec, extra data"
                 );
             }
             else
-                result = set_error("Unexpected sequence number, SeqSpec track");
+                result = set_error("Unexpected sequence number in SeqSpec");
         }
     }
     else
-        skip(-4);                                   /* unread the "ID code" */
+        back_up(4);                                 /* unread the "ID code" */
 
     if (result)
         result = prop_header_loop(p, file_size);
@@ -1907,7 +1908,7 @@ midifile::parse_c_midictrl (performer & /* p*/)
     int ctrls = int(read_long());
     if (ctrls > usr().max_sequence())
     {
-        skip(-4);
+        back_up(4);
         (void) set_error_dump
         (
             "Bad MIDI-control sequence count, fixing.\n"
@@ -1916,7 +1917,7 @@ midifile::parse_c_midictrl (performer & /* p*/)
         );
         ctrls = midilong(read_byte());
     }
-    midibyte a[6];
+    midibyte a[8];
     for (int i = 0; i < ctrls; ++i)
     {
         read_byte_array(a, 6);
@@ -2774,7 +2775,7 @@ midifile::write (performer & p, bool doseqspec)
     {
         result = write_seqspec_track(p);
         if (! result)
-            m_error_message = "Could not write SeqSpec track.";
+            m_error_message = "Could not write SeqSpec.";
     }
     if (result)
     {

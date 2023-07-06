@@ -1,47 +1,14 @@
-Release Notes for Seq66 v. 0.99.6 2023-07-01
+Release Notes for Seq66 v. 0.99.7 2023-07-05
 
-This file lists __major__ changes from version 0.99.6
+This file lists __major__ changes from version 0.99.7
 
-    -   Issue #3 follow-ons:
-        -   Pattern editor panes stay in sync with the piano roll using
-            the hjkl, arrow, and page keys. Scroll wheel works in
-            the piano roll.
     -   Issue #110 follow-ons:
-        -   Addition of Start menu entries for Windows.
-        -   Fixed access to the tutorial and manual.
-        -   data/readme & doc/tutorial files fixed for NSIS installer.
-        -   Fixed the saving of modified tempo changes.
-        -   Fixed changing note velocities in the pattern editor data
-            pane.  Improved velocity-change undo.
-        -   Fixed error preventing changing the "background" pattern.
-        -   Remaining issue: Building 32-bit (Windows XP) version on
-            64-bit Windows.
-    -   Issue #111:
-        -   Added support for editing, storing, and displaying time
-            signatures in the pattern and event editors.
-        -   The first time-signature in a pattern becomes the main
-            time signature of the pattern.
-        -   The data pane shows a time-signature as a simple fraction.
-        -   Changing the time signature if at time 0 is automatic.
-        -   Time signatures at later times are logged by setting the
-            current time with a click in the top half of the time line,
-            changing the beats and beat width, then clicking a
-            time-sig log button.
-        -   Non-MIDI-standard beat-widths are supported as a
-            Seq66-specific "event".
-        -   Fixed event filtering in the event (qstriggereditor) pane.
-        -   As time-signatures change, Seq66 adjusts the piano roll,
-            time line (with measure counts), and event pane vertical
-            lines.
-    -   Port-mapping prompts about port issues and allows an immediate
-        remap-and-restart.
-    -   'o' keystroke in seqroll toggles recording ('r' already
-        taken).
-    -   Added a "quiet" option to not show startup message prompts.
-    -   A log-file is now created by default & kept under a megabyte.
-    -   Added the pattern port number to the Song Summary output.
-    -   A large number of fixes of unrelated issues.
+        -   Should BPM changes raise the modification flag with no
+            file in force?
+    -   Issue #111 follow-ons:
+        -   Fixed inserting/appending time signatures in the event
+            editor.
 
-Read the NEWS, README.md, and TODO files.  Working our assoff!
+Read the NEWS, README.md, and TODO files.
 
 // vim: sw=4 ts=4 wm=15 et ft=sh

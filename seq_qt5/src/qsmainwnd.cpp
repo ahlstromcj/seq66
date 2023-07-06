@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-17
+ * \updates       2023-07-06
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -493,25 +493,17 @@ qsmainwnd::qsmainwnd
     /*
      * Edit Menu.  First connect the preferences dialog to the main window's
      * Edit / Preferences menu entry.  Then connect all the new Edit menu
-     * entries. Update: rather than wire in show() directly, we wire in another
-     * slot to allow syncing the Preferences dialog with the current status.
+     * entries. We wire in a slot to allow syncing the Preferences dialog
+     * with the current status.
      */
 
     if (not_nullptr(m_dialog_prefs))
     {
-#if USE_DIRECT_SHOW_CONNECT
-        connect
-        (
-            ui->actionPreferences, SIGNAL(triggered(bool)),
-            m_dialog_prefs, SLOT(show())
-        );
-#else
         connect
         (
             ui->actionPreferences, SIGNAL(triggered(bool)),
             this, SLOT(slot_open_edit_prefs())
         );
-#endif
     }
     connect
     (
@@ -2934,8 +2926,11 @@ qsmainwnd::update_recent_files_menu ()
                 m_recent_action_list.at(fj)->setVisible(false);
 
             ui->menuFile->insertMenu(ui->actionSave, m_menu_recent);
+            m_menu_recent->setEnabled(true);
         }
     }
+    else
+        m_menu_recent->setEnabled(false);
 }
 
 void
@@ -2965,11 +2960,17 @@ qsmainwnd::create_action_menu ()
     if (not_nullptr(m_menu_recent) && m_menu_recent->isWidgetType())
         delete m_menu_recent;
 
+    int count = rc().recent_file_max();
     m_menu_recent = new QMenu(tr("&Recent MIDI Files..."), this);
-    for (int i = 0; i < rc().recent_file_max(); ++i)
+    if (count > 0)
     {
-        m_menu_recent->addAction(m_recent_action_list.at(i));
+        m_menu_recent->setEnabled(true);
+        for (int i = 0; i < rc().recent_file_max(); ++i)
+            m_menu_recent->addAction(m_recent_action_list.at(i));
     }
+    else
+        m_menu_recent->setEnabled(false);
+
     ui->menuFile->insertMenu(ui->actionSave, m_menu_recent);
 }
 

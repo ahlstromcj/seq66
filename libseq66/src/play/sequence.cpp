@@ -856,6 +856,7 @@ sequence::time_signature_pulses (const std::string & s) const
     if (count > 0)
     {
         double mtarget = double(mm.measures());
+        bool got_it = false;
         for (int i = 0; i < count; ++i)
         {
             const timesig & t0 = get_time_signature(i);
@@ -866,16 +867,12 @@ sequence::time_signature_pulses (const std::string & s) const
                 const timesig & t1 = get_time_signature(i + 1);
                 m1 = t1.sig_start_measure;
                 if (mtarget >= m0 && mtarget < m1)
-                {
-                    double mcount = double(mm.measures()) - m0;
-                    double tpb = double(t0.sig_ticks_per_beat);
-                    double bpb = double(t0.sig_beats_per_bar);
-                    midipulse added = midipulse(tpb * bpb * mcount);
-                    result = t0.sig_start_tick + added + mm.divisions();
-                    break;
-                }
+                    got_it = true;
             }
             else    /* target measure is after last time-signature change.  */
+                got_it = true;
+
+            if (got_it)
             {
                 double mcount = double(mm.measures()) - m0; /* integral?    */
                 double tpb = double(t0.sig_ticks_per_beat);

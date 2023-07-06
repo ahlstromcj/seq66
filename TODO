@@ -1,12 +1,6 @@
-TO DO for Seq66 0.99.7 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.99.7
 Chris Ahlstrom
-2019-04-13 to 2023-07-02
-
-Port-mapping:
-
-    -   Consider allowing the addition of an alias to a port. This would
-        be useful for devices attached to "USB Midi MIDI 1". However,
-        think about MIDNAM.
+2019-04-13 to 2023-07-06
 
 UI:
 
@@ -25,6 +19,7 @@ UI:
         -   Add option to start JACK if --jack?
         -   Do we need an option to auto-store changes in the event editor?
             Easy to forget to push that button.
+        -   Look into connecting the save-playlist and  save-mutes functions.
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
@@ -83,6 +78,12 @@ Ongoing efforts:
 Ideas:
 
     -   Drag and drop MIDI files onto seq66 (see sequencer64 issue #137)
+
+Port-mapping:
+
+    -   Consider allowing the addition of an alias to a port. This would
+        be useful for devices attached to "USB Midi MIDI 1". However,
+        think about MIDNAM.
 
 ISSUES:
 
