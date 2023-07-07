@@ -1432,6 +1432,21 @@ qsmainwnd::open_list_dialog ()
 }
 
 /**
+ *  TODO
+ *  TODO
+ *  TODO
+ *
+ *  This function let's one select a directory and type in a file-name for
+ *  a playlist file at the beginning of its creation.
+ */
+
+bool
+qsmainwnd::specify_list_dialog ()
+{
+    return false;   /* TODO */
+}
+
+/**
  *  Opens the dialog to save a playlist file.  This action should be allowed
  *  in an NSM session, but defaults to the configuration directory.
  *

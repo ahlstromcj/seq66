@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-04-05
+ * \updates       2023-07-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -91,7 +91,7 @@ public:
     (
         performer & p,
         qsmainwnd * window,
-        QWidget * parent = nullptr
+        QWidget * frameparent = nullptr
     );
 
     virtual ~qplaylistframe ();
@@ -124,12 +124,23 @@ private:
     void list_unmodify ();
     void song_unmodify ();
 
+    const qsmainwnd * parent () const
+    {
+        return m_parent;
+    }
+
+    qsmainwnd * parent ()
+    {
+        return m_parent;
+    }
+
 signals:
 
 private slots:
 
     void handle_list_click_ex (int, int, int, int);
     void handle_song_click_ex (int, int, int, int);
+    void handle_file_create_click();
     void handle_list_load_click ();
     void handle_list_add_click ();
     void handle_list_modify_click ();

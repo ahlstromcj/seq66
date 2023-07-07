@@ -10,16 +10,10 @@ UI:
         -   Pattern Options (would be a new tab):
             -   New-pattern editor options (check-boxes)
             -   BPM display minimum and maximum
-        -   Plan for a "SeqSpec" tab?  Worth it? Values that can reasonably
-            appear are not pattern-specific and are not represented in an
-            existing UI setting:
-            -   Global-seq version of c_musickey, c_musicscale, c_backsequence
-            -   c_perf_bp_mes. Used?
-            -   c_perf_bw. Used?
         -   Add option to start JACK if --jack?
         -   Do we need an option to auto-store changes in the event editor?
             Easy to forget to push that button.
-        -   Look into connecting the save-playlist and  save-mutes functions.
+        -   Look into connecting the save-playlist and save-mutes functions.
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
@@ -86,12 +80,6 @@ Port-mapping:
         think about MIDNAM.
 
 ISSUES:
-
-#3  Open loop Pattern Editor window.
-    On mouse wheel scroll event we expect the piano-roll and notes sheet to
-    scroll vertically.
-    STATUS:  Mostly fixed; wheel works only if the piano roll has focus, not
-    sure why.  See the code for the qscrollmaster and qscrollslave.
 
 #44 "Record live sequence changes" functionality
     Currently the "record live sequence changes" only adds patterns into the
@@ -191,8 +179,7 @@ ISSUES:
     functions to a single button.  It would also fit nicely with a Launchpad
     where apart from the grid buttons, there are "mode" buttons on the side.
 
-#76 MIDI Tempo Sync & Real Time Messages Not Behaving As Expected When SEQ66
-    is a MIDI Slave
+#76 MIDI Tempo Sync & Real Time Messages Not Behaving As Expected When SEQ66 is a MIDI Slave
     STATUS: Some fix(es) made, needs more testing.
 
 #90 seq66 does not recognize some changes for the save entry in the file menu.
@@ -213,8 +200,7 @@ ISSUES:
     mode, but does not stop when looped back as in Seq66.
     STATUS: Fixed.
 
-#100 Seq66's MIDI timing completely falls apart at JACK buffer sizer larger
-    than 128.
+#100 Seq66's MIDI timing completely falls apart at JACK buffer sizer larger than 128.
     STATUS: In progress. Added a timestamp to each message in the JACK
     ringbuffer (enabled by a C macro in libseq66/include/seq_features.h).
     This addes a notable burden on process and we can get buffer overflow

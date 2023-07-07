@@ -151,6 +151,11 @@ public:
         return cb_perf().ppqn();
     }
 
+    bool specify_playlist ()
+    {
+        return specify_list_dialog();
+    }
+
     bool open_playlist ()
     {
         return open_list_dialog();
@@ -271,6 +276,7 @@ private:
     void connect_nsm_slots ();
     void connect_normal_slots ();
     bool show_open_file_dialog (std::string & selectedfile);
+    bool specify_list_dialog ();
     bool open_list_dialog ();
     bool save_list_dialog ();
     bool open_mutes_dialog ();

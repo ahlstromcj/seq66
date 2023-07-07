@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>837</width>
-    <height>425</height>
+    <width>838</width>
+    <height>433</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -56,7 +56,7 @@
       </property>
       <property name="toolTip">
        <string>Full path to the play-list file.  Read-only.
-       </string>
+Click &quot;Load List&quot; to select a playlist file.</string>
       </property>
       <property name="text">
        <string>None</string>
@@ -80,6 +80,12 @@
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
      <widget class="QLabel" name="midiBaseDirLabel">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>MIDI Base Directory</string>
       </property>
@@ -116,6 +122,12 @@ Read-only.</string>
    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0">
     <item>
      <widget class="QLabel" name="label">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>Current Song Path</string>
       </property>
@@ -167,9 +179,9 @@ Read-only.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Default song directory for the current play-list
-section. Edit to enable Add List and Modify List,
-(but not in NSM mode.</string>
+         <string>Default song directory for current play-list
+section. Edit to enable &quot;Add List&quot; and
+&quot;Modify List&quot;, but not in NSM mode.</string>
         </property>
         <property name="text">
          <string>None</string>
@@ -182,76 +194,7 @@ section. Edit to enable Add List and Modify List,
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="labelCurrentPlaylist">
-        <property name="font">
-         <font>
-          <italic>true</italic>
-         </font>
-        </property>
-        <property name="text">
-         <string>Current:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="3">
-       <widget class="QLabel" name="labelCurrentSong">
-        <property name="font">
-         <font>
-          <italic>true</italic>
-         </font>
-        </property>
-        <property name="text">
-         <string>Current:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="3">
-       <widget class="QLabel" name="labelSongDirectory">
-        <property name="font">
-         <font>
-          <italic>true</italic>
-         </font>
-        </property>
-        <property name="text">
-         <string>Directory:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="6" rowspan="2">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>*</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="2">
-       <widget class="QLineEdit" name="editPlaylistName">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Name of the currently-selected play-list section.
-Edit to enable Add List and Modify List.</string>
-        </property>
-        <property name="text">
-         <string>None</string>
-        </property>
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="4">
+      <item row="3" column="5">
        <widget class="QLineEdit" name="editSongNumber">
         <property name="minimumSize">
          <size>
@@ -276,84 +219,14 @@ can be edited for a song.</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="5">
-       <widget class="QLineEdit" name="editSongFilename">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Base file-name of the currently selected song. 
-Read-only.  Use the Load Song button to modify this entry.</string>
-        </property>
+      <item row="2" column="8" rowspan="2">
+       <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>None</string>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
+         <string>*</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="labelPlaylistDirectory">
-        <property name="font">
-         <font>
-          <italic>true</italic>
-         </font>
-        </property>
-        <property name="text">
-         <string>Directory:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="4" rowspan="2" colspan="2">
-       <widget class="QLineEdit" name="editSongPath">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Directory where the selected
-song is stored. Read-only.  Use the Load Song button
-to select an existing song.</string>
-        </property>
-        <property name="text">
-         <string>None</string>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="6">
+      <item row="1" column="8">
        <widget class="QLabel" name="labelDirEmbedded">
         <property name="toolTip">
          <string>If set to an asterisk, this directory is part of the song's file-name.</string>
@@ -363,7 +236,7 @@ to select an existing song.</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="3" colspan="3">
+      <item row="0" column="4" colspan="3">
        <widget class="QLabel" name="labelListSong">
         <property name="font">
          <font>
@@ -393,11 +266,84 @@ to select an existing song.</string>
         </property>
         <property name="toolTip">
          <string>MIDI control number for the selected 
-play-list section. Edit to enable Add List and Modify List.
+play-list section. Edit to enable "Add List" and "Modify List".
     </string>
         </property>
         <property name="text">
          <string>000</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="6">
+       <widget class="QLineEdit" name="editSongFilename">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Base file-name of the currently selected song. 
+Read-only.  Use the Load Song button to modify this entry.</string>
+        </property>
+        <property name="text">
+         <string>None</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QPushButton" name="buttonSelectPlaylist">
+        <property name="maximumSize">
+         <size>
+          <width>24</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Look up a *.playlist file and load it into
+the play-list table.</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="labelCurrentPlaylist">
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>Current:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelPlaylistDirectory">
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>Directory:</string>
         </property>
        </widget>
       </item>
@@ -411,7 +357,107 @@ play-list section. Edit to enable Add List and Modify List.
          </font>
         </property>
         <property name="text">
-         <string>Playlist Selection</string>
+         <string>List Selection</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QLabel" name="labelSongDirectory">
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>Directory:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QLineEdit" name="editPlaylistName">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Name of the currently-selected play-list section.
+Edit to enable &quot;Add List&quot; and &quot;Modify List&quot;.</string>
+        </property>
+        <property name="text">
+         <string>None</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="4">
+       <widget class="QLabel" name="labelCurrentSong">
+        <property name="font">
+         <font>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>Current:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="5" rowspan="2" colspan="2">
+       <widget class="QLineEdit" name="editSongPath">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Directory where the selected
+song is stored. Use the &quot;Load Song&quot; button
+to select an existing song.</string>
+        </property>
+        <property name="text">
+         <string>None</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="7">
+       <widget class="QPushButton" name="buttonSelectSong">
+        <property name="maximumSize">
+         <size>
+          <width>24</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Look up a MIDI or WRK file and
+add it to the song table.</string>
+        </property>
+        <property name="text">
+         <string>...</string>
         </property>
        </widget>
       </item>
@@ -429,6 +475,9 @@ play-list section. Edit to enable Add List and Modify List.
         </property>
         <property name="sizeAdjustPolicy">
          <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
         </property>
         <property name="alternatingRowColors">
          <bool>true</bool>
@@ -477,7 +526,7 @@ play-list section. Edit to enable Add List and Modify List.
          <number>12</number>
         </property>
         <item>
-         <widget class="QPushButton" name="buttonPlaylistLoad">
+         <widget class="QPushButton" name="buttonPlaylistCreate">
           <property name="enabled">
            <bool>true</bool>
           </property>
@@ -500,10 +549,10 @@ play-list section. Edit to enable Add List and Modify List.
            </size>
           </property>
           <property name="toolTip">
-           <string>Opens a dialog to select and open a play-list file.</string>
+           <string>Opens a dialog to set a directory and play-list file.</string>
           </property>
           <property name="text">
-           <string>Load List</string>
+           <string>Create File</string>
           </property>
          </widget>
         </item>
@@ -525,8 +574,7 @@ play-list section. Edit to enable Add List and Modify List.
            </size>
           </property>
           <property name="toolTip">
-           <string>Adds the play-list defined by the 3 text entries above to the
-current play-list set.</string>
+           <string>Creates a new play-list file.</string>
           </property>
           <property name="text">
            <string>Add List</string>
@@ -615,6 +663,9 @@ information.</string>
         </property>
         <property name="sizeAdjustPolicy">
          <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
         </property>
         <property name="alternatingRowColors">
          <bool>true</bool>
@@ -708,8 +759,9 @@ imported.</string>
            </size>
           </property>
           <property name="toolTip">
-           <string>Adds the song information specified above to the current
-play-list section; it is easier to use Load Song.</string>
+           <string>Adds the song information specified above
+to the current play-list section; it is easier
+to use &quot;Load Song&quot;.</string>
           </property>
           <property name="text">
            <string>Add Song</string>
@@ -773,13 +825,13 @@ the song is not deleted from the hard drive.</string>
           <property name="minimumSize">
            <size>
             <width>98</width>
-            <height>25</height>
+            <height>32</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
             <width>98</width>
-            <height>25</height>
+            <height>40</height>
            </size>
           </property>
           <property name="toolTip">
@@ -803,13 +855,14 @@ active</string>
    <property name="geometry">
     <rect>
      <x>760</x>
-     <y>380</y>
+     <y>370</y>
      <width>61</width>
-     <height>28</height>
+     <height>41</height>
     </rect>
    </property>
    <property name="text">
-    <string>Arm</string>
+    <string>Auto
+Arm</string>
    </property>
   </widget>
  </widget>

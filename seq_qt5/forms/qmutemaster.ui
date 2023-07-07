@@ -30,7 +30,7 @@
     <rect>
      <x>10</x>
      <y>0</y>
-     <width>806</width>
+     <width>823</width>
      <height>354</height>
     </rect>
    </property>
@@ -200,6 +200,25 @@ to edit this name.</string>
           </property>
           <property name="verticalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="m_button_select_file">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>32</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>...</string>
           </property>
          </widget>
         </item>
