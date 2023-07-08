@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-31
+ * \updates       2023-07-08
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -150,6 +150,8 @@ public:
     {
         return cb_perf().ppqn();
     }
+
+    std::string specify_playlist_folder (const std::string & defalt = "");
 
     bool specify_playlist ()
     {

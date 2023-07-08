@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-07-07
+ * \updates       2023-07-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -123,6 +123,7 @@ private:
 
     void list_unmodify ();
     void song_unmodify ();
+    void enable_midi_widgets (bool enable);
 
     const qsmainwnd * parent () const
     {
@@ -141,12 +142,14 @@ private slots:
     void handle_list_click_ex (int, int, int, int);
     void handle_song_click_ex (int, int, int, int);
     void handle_file_create_click();
+    void handle_list_dir_click ();
     void handle_list_load_click ();
     void handle_list_add_click ();
     void handle_list_modify_click ();
     void handle_list_remove_click ();
     void handle_list_save_click ();
     void handle_song_load_click ();
+    void handle_song_select_click ();
     void handle_song_add_click ();
     void handle_song_modify_click ();
     void handle_song_remove_click ();

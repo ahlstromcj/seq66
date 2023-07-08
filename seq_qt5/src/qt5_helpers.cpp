@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-06-21
+ * \updates       2023-07-08
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -669,6 +669,48 @@ show_file_dialog
             selectedfile = file_extension_set(selectedfile, extension);
 
         file_message(saving ? "Saving" : "Opening", selectedfile);
+    }
+    return result;
+}
+
+/**
+ *  This dialog is meant to allow the user to select a directory instead
+ *  of typing it.
+ */
+
+bool
+show_folder_dialog
+(
+    QWidget * parent,
+    std::string & selectedfolder,
+    const std::string & prompt,
+    bool forcehome
+)
+{
+    bool result = false;
+    std::string d = forcehome ? rc().home_config_directory() : selectedfolder ;
+    if (d.empty())
+    {
+        /* nothing extra to do (yet) */
+    }
+    else
+    {
+        bool badpath = ! name_has_path(d);
+        if (! badpath)
+            badpath = ! file_is_directory(d);
+
+        if (badpath)
+            d.clear();
+    }
+
+    QString qprompt = qt(prompt);
+    QString folder = qt(d);
+    folder = QFileDialog::getExistingDirectory(parent, qprompt, folder);
+    result = ! folder.isEmpty();
+    if (result)
+    {
+        selectedfolder = folder.toStdString();
+        file_message("Choosing", selectedfolder);
     }
     return result;
 }

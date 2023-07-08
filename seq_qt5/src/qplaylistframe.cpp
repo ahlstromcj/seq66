@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-07-07
+ * \updates       2023-07-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -123,6 +123,11 @@ qplaylistframe::qplaylistframe
     );
     connect
     (
+        ui->buttonSelectSongDir, SIGNAL(clicked(bool)),
+        this, SLOT(handle_list_dir_click())
+    );
+    connect
+    (
         ui->buttonSelectPlaylist, SIGNAL(clicked(bool)),
         this, SLOT(handle_list_load_click())
     );
@@ -180,6 +185,7 @@ qplaylistframe::qplaylistframe
         ui->buttonPlaylistSave, SIGNAL(clicked(bool)),
         this, SLOT(handle_list_save_click())
     );
+
 #if defined USE_REDUNDANT_BUTTON
     connect
     (
@@ -187,12 +193,14 @@ qplaylistframe::qplaylistframe
         this, SLOT(handle_song_load_click())
     );
 #else
-    ui->buttonSongLoad->hide();
+    ui->buttonSongLoad->setText(" ");
+    ui->buttonSongLoad->setEnabled(false);
 #endif
+
     connect
     (
         ui->buttonSelectSong, SIGNAL(clicked(bool)),
-        this, SLOT(handle_song_load_click())
+        this, SLOT(handle_song_select_click())
     );
     connect
     (
@@ -250,6 +258,7 @@ qplaylistframe::qplaylistframe
         ui->editSongFilename, SIGNAL(textEdited(QString)),
         this, SLOT(song_modify(QString))
     );
+    enable_midi_widgets(false);
 
     ui->midiBaseDirText->setReadOnly(true);
     ui->midiBaseDirText->setEnabled(false);
@@ -315,6 +324,21 @@ qplaylistframe::set_column_widths ()
 }
 
 /**
+ *  Enables/disables the MIDI-file buttons and edit controls to prevent
+ *  trying to add a MIDI file when there is no playlist selected.
+ */
+
+void
+qplaylistframe::enable_midi_widgets (bool enable)
+{
+    ui->editSongPath->setEnabled(enable);
+    ui->editSongNumber->setEnabled(enable);
+    ui->editSongFilename->setEnabled(enable);
+    ui->buttonSelectSong->setEnabled(enable);
+    ui->buttonSongLoad->setEnabled(enable);
+}
+
+/**
  *  Resets the play-list.  First, resets to the first (0th) play-list and the
  *  first (0th) song.  Then fills the play-list items and resets again.  Then
  *  fills in the play-list and song items for the current selection.
@@ -329,7 +353,7 @@ qplaylistframe::reset_playlist (int listindex)
 {
     if (listindex >= 0)
     {
-        (void) perf().playlist_reset();
+        bool usable = perf().playlist_reset();
         fill_playlists();
         fill_songs();
         if (listindex > 0)
@@ -338,6 +362,8 @@ qplaylistframe::reset_playlist (int listindex)
         set_current_playlist();
         ui->tablePlaylistSections->selectRow(listindex);
         ui->tablePlaylistSongs->selectRow(0);
+        ui->buttonPlaylistRemove->setEnabled(usable);
+        ui->buttonSongRemove->setEnabled(usable);
     }
     else
     {
@@ -364,6 +390,9 @@ qplaylistframe::set_current_playlist ()
     ui->editPlaylistPath->setText(qt(temp));
 
     int midinumber = perf().playlist_midi_number();
+    if (midinumber < 0)
+        midinumber = 0;
+
     temp = std::to_string(midinumber);
     if (temp.empty())
         temp = "0";
@@ -409,6 +438,10 @@ qplaylistframe::set_current_song ()
             temp = "None";
 
         ui->currentSongPath->setText(qt(temp));
+    }
+    else
+    {
+        ui->labelDirEmbedded->setText(" ");
     }
 }
 
@@ -500,6 +533,13 @@ qplaylistframe::fill_playlists ()
     }
     else
     {
+        /*
+         * This call cleans out the grid.
+         *
+         * ui->tablePlaylistSections->setRowCount(0);
+         */
+
+        ui->tablePlaylistSections->clearContents();
         ui->buttonPlaylistRemove->setEnabled(false);
         ui->buttonSongRemove->setEnabled(false);
     }
@@ -592,6 +632,7 @@ qplaylistframe::handle_list_click_ex
             set_current_playlist();
             ui->tablePlaylistSongs->selectRow(0);
             ui->buttonPlaylistRemove->setEnabled(true);
+            enable_midi_widgets(true);
         }
     }
 }
@@ -627,8 +668,39 @@ qplaylistframe::handle_file_create_click ()
 {
     if (not_nullptr(parent()))
     {
-        parent()->specify_playlist();
-        ui->buttonPlaylistSave->setEnabled(false);
+        if (parent()->specify_playlist())
+            ui->buttonPlaylistSave->setEnabled(false);
+        else
+            ui->entry_playlist_file->setText("None");
+    }
+}
+
+/**
+ *  Allows the user to select a directory to serve as the location for
+ *  the MIDI files of the currently-selected play-list sub-list.
+ */
+
+void
+qplaylistframe::handle_list_dir_click ()
+{
+    if (not_nullptr(parent()))
+    {
+        std::string folder = parent()->specify_playlist_folder();
+        if (! folder.empty())
+        {
+            std::string listname;
+            auto spos = folder.find_last_of("/");
+            if (spos != std::string::npos)
+            {
+                listname = folder.substr(spos + 1);
+                listname += " ";
+            }
+            listname += "MIDI Files";
+            ui->editPlaylistPath->setText(qt(folder));
+            ui->editPlaylistName->setText(qt(listname));
+            ui->buttonPlaylistAdd->setEnabled(true);
+            list_modify("dummy");
+        }
     }
 }
 
@@ -644,8 +716,8 @@ qplaylistframe::handle_list_load_click ()
 {
     if (not_nullptr(parent()))
     {
-        parent()->open_playlist();
-        ui->buttonPlaylistSave->setEnabled(false);
+        if (parent()->open_playlist())
+            ui->buttonPlaylistSave->setEnabled(false);
     }
 }
 
@@ -796,6 +868,26 @@ qplaylistframe::handle_song_load_click ()
 }
 
 /**
+ *  Let's one select a MIDI file to fill in the MIDI information
+ */
+
+void
+qplaylistframe::handle_song_select_click ()
+{
+    if (not_nullptr(parent()))
+    {
+        std::string selectedfile = ui->editSongPath->text().toStdString();
+        if (show_open_midi_file_dialog(this, selectedfile))
+        {
+            ui->editSongPath->setText(qt(selectedfile));
+            ui->editSongNumber->setText("Set index #");
+            ui->editSongFilename->setText("Click 'Add Song'");
+            song_modify("dummy");
+        }
+    }
+}
+
+/**
  *  These values depend on correct information edited into the Song text
  *  fields.  We support loading a song from a file-selection dialog, so that
  *  is the preferred method; see handle_song_load_click().
@@ -827,9 +919,7 @@ qplaylistframe::handle_song_add_click ()
                 }
                 else
                 {
-                    /*
-                     * TODO: report error
-                     */
+                    ui->editSongPath->setText("Error in adding song");
                 }
             }
         }

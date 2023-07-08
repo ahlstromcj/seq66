@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-07-06
+ * \updates       2023-07-08
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1432,10 +1432,24 @@ qsmainwnd::open_list_dialog ()
 }
 
 /**
- *  TODO
- *  TODO
- *  TODO
- *
+ *  This function prompts the user for a directory to be used as the base
+ *  directory for a play-list sub-list.
+ */
+
+std::string
+qsmainwnd::specify_playlist_folder (const std::string & defalt)
+{
+    std::string result;
+    std::string temp = defalt;
+    std::string prompt = "Select directory for the MIDI files";
+    bool ok = show_folder_dialog(this, temp, prompt, true); /* force home   */
+    if (ok)
+        result = temp;
+
+    return result;
+}
+
+/**
  *  This function let's one select a directory and type in a file-name for
  *  a playlist file at the beginning of its creation.
  */
@@ -1443,7 +1457,37 @@ qsmainwnd::open_list_dialog ()
 bool
 qsmainwnd::specify_list_dialog ()
 {
-    return false;   /* TODO */
+    bool result = false;
+    std::string fname = rc().playlist_filespec();
+    if (use_nsm())
+    {
+        // TODO
+    }
+    else
+    {
+        std::string prompt =
+            "Select a directory and type a base name for the playlist";
+
+        bool ok = show_file_dialog
+        (
+            this, fname, prompt,
+            "Playlist file (*.playlist);;All files (*)", SavingFile, NormalFile,
+            ".playlist"
+        );
+        if (ok)
+        {
+            rc().playlist_filename(fname);
+            rc().auto_playlist_save(true);
+            result = not_nullptr(m_playlist_frame);
+            if (result)
+            {
+                result = m_playlist_frame->load_playlist(fname);
+                if (! result)
+                    show_error_box(cb_perf().playlist_error_message());
+            }
+        }
+    }
+    return result;
 }
 
 /**

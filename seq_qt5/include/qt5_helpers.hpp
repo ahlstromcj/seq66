@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-06-21
+ * \updates       2023-07-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -125,12 +125,19 @@ extern bool show_file_dialog
 (
     QWidget * parent,
     std::string & selectedfile,
-    const std::string & prompt = "",
-    const std::string & filterlist = "",
-    bool saving = false,
-    bool forceconfig = false,
-    const std::string & extension = "",
-    bool promptoverwrite = true
+    const std::string & prompt      = "",
+    const std::string & filterlist  = "",
+    bool saving                     = false,
+    bool forceconfig                = false,
+    const std::string & extension   = "",
+    bool promptoverwrite            = true
+);
+extern bool show_folder_dialog
+(
+    QWidget * parent,
+    std::string & selectedfolder,
+    const std::string & prompt      = "",
+    bool forcehome                  = false
 );
 
 }               // namespace seq66

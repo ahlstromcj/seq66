@@ -1,4 +1,4 @@
-# README for Seq66 0.99.7 2023-07-06
+# README for Seq66 0.99.7 2023-07-08
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -90,6 +90,7 @@ Windows, and using a conventional source tarball.
             changed from main window. This was caused by mixing a long
             and a size_t and sizeof(long) in the Windows build.
         *   Recent Files is disabled if there are none.
+        *   Revamped the Playlist tab, as it was confusing.
     *   Version 0.99.6:
         *   Issue #3 follow-ons:
             *   Added a qscrollslave to allow QScrollArea to allow the pattern

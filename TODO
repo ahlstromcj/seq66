@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.7
 Chris Ahlstrom
-2019-04-13 to 2023-07-06
+2019-04-13 to 2023-07-08
 
 UI:
 
@@ -41,6 +41,9 @@ Playlists:
         is not saved in the file.
     -   Make sure that otherwise changing the buss during playlist processing
         does not raise the save/dirty flag.
+    -   Keep working out interactions of list and song widgets.
+        Also automatically insert the next list or song number; the user
+        can change it.  Can we add a reorder control?
 
 From Testing:
 

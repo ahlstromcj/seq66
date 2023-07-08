@@ -28,7 +28,6 @@
       <property name="font">
        <font>
         <pointsize>10</pointsize>
-        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -82,7 +81,6 @@ Click &quot;Load List&quot; to select a playlist file.</string>
      <widget class="QLabel" name="midiBaseDirLabel">
       <property name="font">
        <font>
-        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -124,7 +122,6 @@ Read-only.</string>
      <widget class="QLabel" name="label">
       <property name="font">
        <font>
-        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -179,9 +176,11 @@ Read-only.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Default song directory for current play-list
-section. Edit to enable &quot;Add List&quot; and
-&quot;Modify List&quot;, but not in NSM mode.</string>
+         <string>The base directory for the play-list selected
+in the table below. Use the &quot;...&quot; to the right
+to select the directory. The directory is not
+used in the MIDI file contains a full path to
+the file.</string>
         </property>
         <property name="text">
          <string>None</string>
@@ -222,7 +221,7 @@ can be edited for a song.</string>
       <item row="2" column="8" rowspan="2">
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>*</string>
+         <string> </string>
         </property>
        </widget>
       </item>
@@ -241,7 +240,6 @@ can be edited for a song.</string>
         <property name="font">
          <font>
           <pointsize>10</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -266,7 +264,7 @@ can be edited for a song.</string>
         </property>
         <property name="toolTip">
          <string>MIDI control number for the selected 
-play-list section. Edit to enable "Add List" and "Modify List".
+play-list section. Edit to enable &quot;Add List&quot; and &quot;Modify List&quot;.
     </string>
         </property>
         <property name="text">
@@ -281,7 +279,7 @@ play-list section. Edit to enable "Add List" and "Modify List".
         </property>
         <property name="minimumSize">
          <size>
-          <width>0</width>
+          <width>200</width>
           <height>24</height>
          </size>
         </property>
@@ -303,23 +301,6 @@ Read-only.  Use the Load Song button to modify this entry.</string>
         </property>
         <property name="clearButtonEnabled">
          <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="3">
-       <widget class="QPushButton" name="buttonSelectPlaylist">
-        <property name="maximumSize">
-         <size>
-          <width>24</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Look up a *.playlist file and load it into
-the play-list table.</string>
-        </property>
-        <property name="text">
-         <string>...</string>
         </property>
        </widget>
       </item>
@@ -352,7 +333,6 @@ the play-list table.</string>
         <property name="font">
          <font>
           <pointsize>10</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -369,7 +349,7 @@ the play-list table.</string>
          </font>
         </property>
         <property name="text">
-         <string>Directory:</string>
+         <string>MIDI File:</string>
         </property>
        </widget>
       </item>
@@ -380,7 +360,7 @@ the play-list table.</string>
         </property>
         <property name="minimumSize">
          <size>
-          <width>0</width>
+          <width>200</width>
           <height>24</height>
          </size>
         </property>
@@ -441,6 +421,41 @@ to select an existing song.</string>
         </property>
         <property name="clearButtonEnabled">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3">
+       <widget class="QPushButton" name="buttonSelectPlaylist">
+        <property name="maximumSize">
+         <size>
+          <width>24</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Look up a *.playlist file and load it into
+the play-list table.</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QPushButton" name="buttonSelectSongDir">
+        <property name="maximumSize">
+         <size>
+          <width>24</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Allows the user to find a directory and
+select it, instead of typing the full path
+name in the edit control to the left.</string>
+        </property>
+        <property name="text">
+         <string>...</string>
         </property>
        </widget>
       </item>
