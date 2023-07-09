@@ -1396,6 +1396,16 @@ public:
     bool open_next_song (bool opensong = true);
     bool open_previous_song (bool opensong = true);
 
+    int next_available_song_number () const
+    {
+        return m_play_list->next_available_song_number();
+    }
+
+    int next_available_list_number () const
+    {
+        return m_play_list->next_available_list_number();
+    }
+
     /*
      * End of playlist accessors.
      */

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2023-04-05
+ * \updates       2023-07-09
  * \license       GNU GPLv2 or above
  *
  * \todo
@@ -97,7 +97,7 @@ private:
         int ss_midi_number;
 
         /**
-         *  The directory where the song is located.  This either the default
+         *  The directory where the song is located, either the default (base)
          *  directory specified in the playlist, or the path specification that
          *  existed in the file-name of the song.
          */
@@ -415,6 +415,8 @@ public:
     bool select_song_by_midi (int ctrl);
     bool next_song ();
     bool previous_song ();
+    int next_available_song_number () const;
+    int next_available_list_number () const;
 
     bool open_song (const std::string & filename, bool verifymode = false);
     bool open_select_song (int index, bool opensong = true);

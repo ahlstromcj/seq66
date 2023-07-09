@@ -1183,8 +1183,7 @@ qsmainwnd::set_ppqn_combo ()
  *  This gets called when just typing numbers into the BPM field! It gets
  *  called before edit_bpm().
  *
- *  This doesn't make send, isn't the BPM value definitely different???
- *  We should fix for 0.99.5.
+ *  This doesn't make sense, isn't the BPM value definitely different???
  */
 
 void

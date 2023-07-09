@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2023-04-05
+ * \updates       2023-07-09
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -707,6 +707,31 @@ playlist::select_list (int index, bool selectsong)
 }
 
 /**
+ *  We want to provide the user with an unused list/control number.  The user
+ *  can scroll to the bottom of the list in the user interface, but this
+ *  is annoying and easy to forget. We look at the last entry, and increment
+ *  the key value by one, if possible.
+ *
+ * \return
+ *      Returns the next number after the last one. If there's none
+ *      available, then (-1) is returned.
+ */
+
+int
+playlist::next_available_list_number () const
+{
+    int result = (-1);
+    auto last = m_play_lists.rbegin();
+    if (last != m_play_lists.rend())
+    {
+        int controlnumber = last->first;
+        if (controlnumber < 127)
+            result = controlnumber + 1;
+    }
+    return result;
+}
+
+/**
  *  Selects a play-list with the given MIDI control value.
  *
  * \param index
@@ -1202,6 +1227,36 @@ playlist::select_song (int index)
                 result = true;
                 break;
             }
+        }
+    }
+    return result;
+}
+
+/**
+ *  We want to provide the user with an unused song/control number.  The user
+ *  can scroll to the bottom of the list in the user interface, but this
+ *  is annoying and easy to forget. We look at the last entry, and increment
+ *  the key value by one, if possible.
+ *
+ * \return
+ *      Returns the next number after the last one. If there's none
+ *      available, then (-1) is returned.
+ */
+
+int
+playlist::next_available_song_number () const
+{
+    int result = (-1);
+    if (m_current_list != m_play_lists.end())
+    {
+        play_list_t & plist = m_current_list->second;
+        song_list & slist = plist.ls_song_list;
+        auto last = slist.rbegin();
+        if (last != slist.rend())
+        {
+            int controlnumber = last->first;
+            if (controlnumber < 127)
+                result = controlnumber + 1;
         }
     }
     return result;

@@ -26,11 +26,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-07-08
+ * \updates       2023-07-09
  * \license       GNU GPLv2 or above
  *
  */
 
+#include <QErrorMessage>                /* QErrorMessage                    */
 #include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
 #include <QTimer>
 
@@ -186,7 +187,7 @@ qplaylistframe::qplaylistframe
         this, SLOT(handle_list_save_click())
     );
 
-#if defined USE_REDUNDANT_BUTTON
+#if defined USE_REDUNDANT_SONGLOAD_BUTTON
     connect
     (
         ui->buttonSongLoad, SIGNAL(clicked(bool)),
@@ -232,21 +233,46 @@ qplaylistframe::qplaylistframe
         ui->entry_playlist_file, SIGNAL(textEdited(QString)),
         this, SLOT(list_modify(QString))
     );
+#if defined USE_PLAYLIST_NUMBER_TEXTEDIT
     connect
     (
         ui->editPlaylistNumber, SIGNAL(textEdited(QString)),
         this, SLOT(list_modify(QString))
     );
+#else
+    ui->editPlaylistNumber->hide();
+    set_spin_value(ui->spinPlaylistNumber, 0);
     connect
     (
-        ui->editPlaylistName, SIGNAL(textEdited(QString)),
-        this, SLOT(list_modify(QString))
+        ui->spinPlaylistNumber, SIGNAL(valueChanged(int)),
+        this, SLOT(list_modify(int))        // SLOT(slot_playlist_number(int))
     );
+    connect
+    (
+        ui->spinPlaylistNumber, SIGNAL(editingFinished()),
+        this, SLOT(list_modify())           // SLOT(edit_playlist_number())
+    );
+#endif
+#if defined USE_SONG_NUMBER_TEXTEDIT
     connect
     (
         ui->editSongNumber, SIGNAL(textEdited(QString)),
         this, SLOT(song_modify(QString))
     );
+#else
+    ui->editSongNumber->hide();
+    set_spin_value(ui->spinSongNumber, 0);
+    connect
+    (
+        ui->spinSongNumber, SIGNAL(valueChanged(int)),
+        this, SLOT(song_modify(int))        // SLOT(slot_playlist_number(int))
+    );
+    connect
+    (
+        ui->spinSongNumber, SIGNAL(editingFinished()),
+        this, SLOT(song_modify())           // SLOT(edit_playlist_number())
+    );
+#endif
 
     /*
      * This field is now read-only, as is the base MIDI file name.
@@ -332,7 +358,11 @@ void
 qplaylistframe::enable_midi_widgets (bool enable)
 {
     ui->editSongPath->setEnabled(enable);
+#if defined USE_SONG_NUMBER_TEXTEDIT
     ui->editSongNumber->setEnabled(enable);
+#else
+    ui->spinSongNumber->setEnabled(enable);
+#endif
     ui->editSongFilename->setEnabled(enable);
     ui->buttonSelectSong->setEnabled(enable);
     ui->buttonSongLoad->setEnabled(enable);
@@ -393,11 +423,16 @@ qplaylistframe::set_current_playlist ()
     if (midinumber < 0)
         midinumber = 0;
 
+#if defined USE_PLAYLIST_NUMBER_TEXTEDIT
     temp = std::to_string(midinumber);
     if (temp.empty())
         temp = "0";
 
     ui->editPlaylistNumber->setText(qt(temp));
+#else
+    set_spin_value(ui->spinPlaylistNumber, midinumber);
+#endif
+
     temp = perf().playlist_midi_base();
     if (temp.empty())
         temp = "None";
@@ -417,11 +452,21 @@ qplaylistframe::set_current_song ()
     int rows = perf().song_count();
     if (rows > 0)
     {
+
+#if defined USE_SONG_NUMBER_TEXTEDIT
         std::string temp = std::to_string(perf().song_midi_number());
         ui->editSongNumber->setText(qt(temp));
         temp = perf().song_directory();
         if (temp.empty())
             temp = "None";
+#else
+        int midinumber = perf().song_midi_number();
+        set_spin_value(ui->spinSongNumber, midinumber);
+
+        std::string temp = perf().song_directory();
+        if (temp.empty())
+            temp = "None";
+#endif
 
         ui->editSongPath->setText(qt(temp));
 
@@ -589,7 +634,11 @@ qplaylistframe::fill_songs ()
     {
         ui->tablePlaylistSongs->clearContents();
         ui->editSongPath->setText("None");
+#if defined USE_SONG_NUMBER_TEXTEDIT
         ui->editSongNumber->setText("0");
+#else
+        ui->spinSongNumber->setValue(0);
+#endif
         ui->editSongFilename->setText("None");
         ui->buttonSongRemove->setEnabled(false);
     }
@@ -699,7 +748,10 @@ qplaylistframe::handle_list_dir_click ()
             ui->editPlaylistPath->setText(qt(folder));
             ui->editPlaylistName->setText(qt(listname));
             ui->buttonPlaylistAdd->setEnabled(true);
-            list_modify("dummy");
+
+            int highnumber = perf().next_available_list_number();
+            ui->spinPlaylistNumber->setValue(highnumber);
+            list_modify();
         }
     }
 }
@@ -754,8 +806,12 @@ qplaylistframe::handle_list_add_click ()
             int midinumber = index;                     /* useful number?   */
             temp = ui->editPlaylistName->text();
             listname = temp.toStdString();
+#if defined USE_PLAYLIST_NUMBER_TEXTEDIT
             temp = ui->editPlaylistNumber->text();
             midinumber = string_to_int(temp.toStdString(), index);
+#else
+            midinumber = ui->spinPlaylistNumber->value();
+#endif
             if (perf().add_list(index, midinumber, listname, listpath))
             {
                 reset_playlist();
@@ -784,8 +840,12 @@ qplaylistframe::handle_list_modify_click ()
         int midinumber;
         temp = ui->editPlaylistName->text();
         listname = temp.toStdString();
+#if defined USE_PLAYLIST_NUMBER_TEXTEDIT
         temp = ui->editPlaylistNumber->text();
         midinumber = string_to_int(temp.toStdString(), index);
+#else
+        midinumber = ui->spinPlaylistNumber->value();
+#endif
         if (perf().modify_list(index, midinumber, listname, listpath))
         {
             reset_playlist(index);
@@ -822,7 +882,10 @@ qplaylistframe::handle_list_save_click ()
     if (not_nullptr(parent()))
     {
         if (parent()->save_playlist())
+        {
             list_unmodify();
+            song_unmodify();
+        }
     }
 }
 
@@ -868,7 +931,8 @@ qplaylistframe::handle_song_load_click ()
 }
 
 /**
- *  Let's one select a MIDI file to fill in the MIDI information
+ *  Lets one select a MIDI file from a file dialog to fill in the MIDI
+ *  information.
  */
 
 void
@@ -879,10 +943,27 @@ qplaylistframe::handle_song_select_click ()
         std::string selectedfile = ui->editSongPath->text().toStdString();
         if (show_open_midi_file_dialog(this, selectedfile))
         {
-            ui->editSongPath->setText(qt(selectedfile));
-            ui->editSongNumber->setText("Set index #");
-            ui->editSongFilename->setText("Click 'Add Song'");
-            song_modify("dummy");
+            std::string path;
+            std::string basename;
+            if (filename_split(selectedfile, path, basename))
+            {
+                ui->editSongPath->setText(qt(path));
+                ui->editSongFilename->setText(qt(basename));
+#if defined USE_SONG_NUMBER_TEXTEDIT
+                ui->editSongNumber->setText("Unique MIDI #");
+#else
+                /*
+                 * Find the highest song number and add one to it.
+                 * Base it on playlist::select_song().
+                 * Should this be done in fill_songs()???
+                 * If so, what about fill_playlists() or
+                 */
+
+                int highnumber = perf().next_available_song_number();
+                ui->spinSongNumber->setValue(highnumber);
+#endif
+                song_modify();
+            }
         }
     }
 }
@@ -898,7 +979,13 @@ qplaylistframe::handle_song_add_click ()
 {
     if (not_nullptr(parent()))
     {
-        std::string name = rc().midi_filename();            /* full path */
+#if defined USE_LOADED_FILE                         // this is misleading !!!!
+        std::string name = rc().midi_filename();            /* full path    */
+#else
+        std::string name = ui->editSongFilename->text().toStdString();
+        std::string directory = ui->editSongPath->text().toStdString();
+        name = filename_concatenate(directory, name);
+#endif
         bool loadedfile = ! name.empty();
         if (loadedfile)
         {
@@ -907,8 +994,12 @@ qplaylistframe::handle_song_add_click ()
             bool ok = filename_split(name, directory, basename);
             if (ok)
             {
+#if defined USE_SONG_NUMBER_TEXTEDIT
                 std::string nstr = ui->editSongNumber->text().toStdString();
                 int midinumber = string_to_int(nstr);
+#else
+                int midinumber = ui->spinSongNumber->value();
+#endif
                 int index = perf().song_count() + 1;
                 if (perf().add_song(index, midinumber, basename, directory))
                 {
@@ -919,7 +1010,9 @@ qplaylistframe::handle_song_add_click ()
                 }
                 else
                 {
-                    ui->editSongPath->setText("Error in adding song");
+                    QErrorMessage * errbox = new QErrorMessage(this);
+                    errbox->showMessage("Error adding song, fix MIDI #");
+                    errbox->exec();
                 }
             }
         }
@@ -933,8 +1026,12 @@ qplaylistframe::handle_song_modify_click ()
     {
         std::string name = ui->editSongFilename->text().toStdString();
         std::string directory = ui->editSongPath->text().toStdString();
+#if defined USE_SONG_NUMBER_TEXTEDIT
         std::string nstr = ui->editSongNumber->text().toStdString();
         int midinumber = string_to_int(nstr);
+#else
+        int midinumber = ui->spinSongNumber->value();
+#endif
         int songindex = m_current_song_index;
         if (perf().modify_song(songindex, midinumber, name, directory))
         {
@@ -998,9 +1095,7 @@ qplaylistframe::handle_auto_arm_click ()
 void
 qplaylistframe::list_modify (const QString &)
 {
-    ui->buttonPlaylistAdd->setEnabled(true);
-    ui->buttonPlaylistModify->setEnabled(true);
-    ui->buttonPlaylistSave->setEnabled(true);
+    list_modify();
 }
 
 void
@@ -1012,13 +1107,23 @@ qplaylistframe::list_unmodify ()
 }
 
 void
+qplaylistframe::list_modify (int)
+{
+    list_modify();
+}
+
+void
+qplaylistframe::list_modify ()
+{
+    ui->buttonPlaylistAdd->setEnabled(true);
+    ui->buttonPlaylistModify->setEnabled(true);
+    ui->buttonPlaylistSave->setEnabled(true);
+}
+
+void
 qplaylistframe::song_modify (const QString &)
 {
-    bool addable = ! rc().midi_filename().empty();
-    if (addable)
-        ui->buttonSongAdd->setEnabled(true);
-
-    ui->buttonSongModify->setEnabled(true);
+    song_modify();
 }
 
 void
@@ -1026,6 +1131,28 @@ qplaylistframe::song_unmodify ()
 {
     ui->buttonSongAdd->setEnabled(false);
     ui->buttonSongModify->setEnabled(false);
+    ui->buttonPlaylistSave->setEnabled(true);
+}
+
+void
+qplaylistframe::song_modify (int)
+{
+    song_modify();
+}
+
+void
+qplaylistframe::song_modify ()
+{
+    /*
+     * Why this check? Makes no sense.
+     *
+     * bool addable = ! rc().midi_filename().empty();
+     * if (addable)
+     */
+
+    ui->buttonSongAdd->setEnabled(true);
+    ui->buttonSongModify->setEnabled(true);
+    ui->buttonPlaylistSave->setEnabled(true);
 }
 
 /*

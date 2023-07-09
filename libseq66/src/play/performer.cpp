@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-07-03
+ * \updates       2023-07-09
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -4438,14 +4438,17 @@ performer::output_func ()
             else
             {
 #if defined SEQ66_PLATFORM_DEBUG && ! defined SEQ66_PLATFORM_WINDOWS
-                if (delta_us != 0)
+                if (seq_app_cli())
                 {
-                    print_client_tag(msglevel::warn);
-                    fprintf
-                    (
-                        stderr, "Play underrun %ld us          \r",
-                        delta_us
-                    );
+                    if (delta_us != 0)
+                    {
+                        print_client_tag(msglevel::warn);
+                        fprintf
+                        (
+                            stderr, "Play underrun %ld us          \r",
+                            delta_us
+                        );
+                    }
                 }
 #endif
                 m_delta_us = delta_us;

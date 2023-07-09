@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-07-08
+ * \updates       2023-07-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -42,6 +42,7 @@ class QIcon;
 class QKeyEvent;
 class QPushButton;
 class QScrollArea;
+class QSpinBox;
 class QTimer;
 class QWidget;
 
@@ -100,6 +101,7 @@ extern bool fill_combobox
     const std::string & prefix  = "",
     const std::string & suffix  = ""
 );
+extern void set_spin_value (QSpinBox * spin, int value);
 extern QAction * create_menu_action
 (
     const std::string & text,

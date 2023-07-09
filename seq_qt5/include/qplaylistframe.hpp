@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-07-08
+ * \updates       2023-07-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -156,8 +156,12 @@ private slots:
     void handle_playlist_active_click ();
     void handle_auto_arm_click ();
     void conditional_update ();
-    void list_modify (const QString & text);
-    void song_modify (const QString & text);
+    void list_modify ();
+    void list_modify (int);
+    void list_modify (const QString &);
+    void song_modify ();
+    void song_modify (int);
+    void song_modify (const QString &);
 
 private:
 

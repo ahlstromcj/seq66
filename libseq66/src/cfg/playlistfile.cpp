@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2023-04-05
+ * \updates       2023-07-09
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -454,10 +454,10 @@ playlistfile::write ()
     }
     write_date(file, "playlist");
     file <<
-"# This file holds multiple playlists, with one or more [playlist] sections.\n"
-"# Each has a user-specified number for sorting and MIDI control, ranging from 0\n"
-"# to 127. Next comes a quoted name for this list, followed by the quoted name\n"
-"# of the song folder using the UNIX separator ('/').\n"
+"# This file holds multiple playlists, each in a [playlist] section. Each has\n"
+"# a user-specified number for sorting and MIDI control, ranging from 0 to 127.\n"
+"# Next comes a quoted name for this list, followed by the quoted name\n"
+"# of the song directory using the UNIX separator ('/').\n"
 "#\n"
 "# Next is a list of tunes, each starting with a MIDI control number and the\n"
 "# quoted name of the MIDI file, sorted by control number. They can be simple\n"
@@ -481,9 +481,9 @@ playlistfile::write ()
     write_boolean(file, "unmute-new-song", play_list().auto_arm());
     write_boolean(file, "deep-verify", play_list().deep_verify());
     file << "\n"
-"# First provide the playlist settings, its default storage folder, and then list\n"
+"# Here are the playlist settings, default storage folder, and then a list of\n"
 "# each tune with its control number. The playlist number is arbitrary but\n"
-"# unique. 0 to 127 recommended for use with the MIDI playlist control. Similar\n"
+"# unique. 0 to 127 enforced for use with MIDI playlist controls. Similar\n"
 "# for the tune numbers. Each tune can include a path; it overrides the base\n"
 "# directory.\n"
        ;
@@ -501,6 +501,7 @@ playlistfile::write ()
         write_integer(file, "number", pl.ls_midi_number);
         write_string(file, "name", pl.ls_list_name, true);
         write_string(file, "directory", pl.ls_file_directory, true);
+        file << "\n";
 
         /*
          * For each song, write the MIDI control number, followed only by

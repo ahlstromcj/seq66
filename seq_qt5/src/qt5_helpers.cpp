@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-07-08
+ * \updates       2023-07-09
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -57,6 +57,7 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QSpinBox>
 #include <QStandardItemModel>
 #include <QTimer>
 
@@ -390,6 +391,23 @@ fill_combobox
     }
     return result;
 }
+
+/**
+ *  Sets the value in an integer spin-box without causing it to trigger
+ *  an event.
+ */
+
+void
+set_spin_value (QSpinBox * spin, int value)
+{
+    spin->blockSignals(true);
+    spin->setValue(value);
+    spin->blockSignals(false);
+}
+
+/**
+ *  Handles versioning issue in creating a menu action.
+ */
 
 QAction *
 create_menu_action
