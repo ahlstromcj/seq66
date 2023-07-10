@@ -7650,8 +7650,7 @@ performer::mute_group_control
             announce_mutes();
             if (result)
             {
-                // TODO: can we update qmutemaster?
-                modify();
+                modify(); // TODO: can we update qmutemaster?
             }
         }
         else
@@ -8553,19 +8552,34 @@ performer::playlist_song_basename () const
     return filename_base(playlist_song());
 }
 
-void
+/**
+ *  This function is used only in the user-interface to turn on activation.
+ */
+
+bool
 performer::playlist_activate (bool on)
 {
+#if defined USE_OLD_CODE
     if (on)
     {
         if (m_play_list)
         {
+            // TODO: This is not being set right when successfully loading
+            // the playlist file so it is seen in the Playlist tab.
+
             if (m_play_list->mode())            /* loaded successfully? */
                 rc().playlist_active(true);
         }
     }
     else
         rc().playlist_active(false);
+#else
+    bool result = bool(m_play_list);
+    if (result)
+        result = m_play_list->activate(on);
+
+    return result;
+#endif
 }
 
 void

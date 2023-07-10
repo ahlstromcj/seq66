@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>831</width>
-    <height>500</height>
+    <width>884</width>
+    <height>458</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -25,11 +25,23 @@
   <property name="windowTitle">
    <string>Events</string>
   </property>
+  <property name="frameShape">
+   <enum>QFrame::NoFrame</enum>
+  </property>
+  <property name="frameShadow">
+   <enum>QFrame::Raised</enum>
+  </property>
+  <property name="lineWidth">
+   <number>3</number>
+  </property>
+  <property name="midLineWidth">
+   <number>2</number>
+  </property>
   <widget class="QTableWidget" name="eventTableWidget">
    <property name="geometry">
     <rect>
      <x>9</x>
-     <y>9</y>
+     <y>17</y>
      <width>440</width>
      <height>380</height>
     </rect>
@@ -141,8 +153,8 @@
    <property name="geometry">
     <rect>
      <x>460</x>
-     <y>264</y>
-     <width>349</width>
+     <y>272</y>
+     <width>361</width>
      <height>69</height>
     </rect>
    </property>
@@ -165,8 +177,8 @@
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>461</x>
-     <y>340</y>
+     <x>468</x>
+     <y>348</y>
      <width>345</width>
      <height>52</height>
     </rect>
@@ -342,8 +354,8 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
    <property name="geometry">
     <rect>
      <x>460</x>
-     <y>99</y>
-     <width>348</width>
+     <y>107</y>
+     <width>369</width>
      <height>158</height>
     </rect>
    </property>
@@ -353,25 +365,29 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       <property name="sizeConstraint">
        <enum>QLayout::SetFixedSize</enum>
       </property>
-      <property name="spacing">
+      <property name="horizontalSpacing">
+       <number>4</number>
+      </property>
+      <property name="verticalSpacing">
        <number>2</number>
       </property>
       <item row="1" column="0">
        <widget class="QLabel" name="time_label">
         <property name="minimumSize">
          <size>
-          <width>0</width>
+          <width>84</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>48</width>
+          <width>80</width>
           <height>24</height>
          </size>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -384,13 +400,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QComboBox" name="channel_combo_box">
         <property name="minimumSize">
          <size>
-          <width>100</width>
+          <width>260</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>272</width>
+          <width>264</width>
           <height>28</height>
          </size>
         </property>
@@ -418,13 +434,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QComboBox" name="combo_ev_name">
         <property name="minimumSize">
          <size>
-          <width>100</width>
+          <width>260</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>272</width>
+          <width>264</width>
           <height>28</height>
          </size>
         </property>
@@ -452,13 +468,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
         </property>
         <property name="minimumSize">
          <size>
-          <width>100</width>
+          <width>260</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>272</width>
+          <width>264</width>
           <height>28</height>
          </size>
         </property>
@@ -472,8 +488,21 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       </item>
       <item row="3" column="0">
        <widget class="QLabel" name="channel_label">
+        <property name="minimumSize">
+         <size>
+          <width>84</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>80</width>
+          <height>24</height>
+         </size>
+        </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -486,18 +515,19 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QLabel" name="event_label">
         <property name="minimumSize">
          <size>
-          <width>0</width>
+          <width>84</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>48</width>
+          <width>80</width>
           <height>24</height>
          </size>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -510,14 +540,14 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QComboBox" name="combo_ev_category">
         <property name="minimumSize">
          <size>
-          <width>100</width>
-          <height>28</height>
+          <width>260</width>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>272</width>
-          <height>28</height>
+          <width>264</width>
+          <height>24</height>
          </size>
         </property>
         <property name="maxVisibleItems">
@@ -535,18 +565,19 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QLabel" name="label_category">
         <property name="minimumSize">
          <size>
-          <width>80</width>
-          <height>18</height>
+          <width>84</width>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>264</width>
-          <height>18</height>
+          <width>80</width>
+          <height>24</height>
          </size>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -606,6 +637,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -619,6 +651,18 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       </item>
       <item row="0" column="4">
        <widget class="QCheckBox" name="pulse_time_check_box">
+        <property name="minimumSize">
+         <size>
+          <width>96</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>84</width>
+          <height>24</height>
+         </size>
+        </property>
         <property name="text">
          <string>Tick Time</string>
         </property>
@@ -647,6 +691,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -688,8 +733,8 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
    <property name="geometry">
     <rect>
      <x>460</x>
-     <y>4</y>
-     <width>337</width>
+     <y>12</y>
+     <width>369</width>
      <height>32</height>
     </rect>
    </property>
@@ -719,6 +764,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       </property>
       <property name="font">
        <font>
+        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -741,14 +787,20 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       <property name="minimumSize">
        <size>
         <width>272</width>
-        <height>0</height>
+        <height>24</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>9999</width>
-        <height>16777215</height>
+        <width>272</width>
+        <height>24</height>
        </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Anonymous Pro</family>
+        <pointsize>12</pointsize>
+       </font>
       </property>
       <property name="text">
        <string>Loop Name</string>
@@ -761,8 +813,8 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
    <property name="geometry">
     <rect>
      <x>460</x>
-     <y>40</y>
-     <width>321</width>
+     <y>48</y>
+     <width>369</width>
      <height>58</height>
     </rect>
    </property>
@@ -775,10 +827,16 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
     </property>
     <item row="0" column="0">
      <widget class="QPushButton" name="button_link">
+      <property name="minimumSize">
+       <size>
+        <width>64</width>
+        <height>24</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
         <width>64</width>
-        <height>16777215</height>
+        <height>24</height>
        </size>
       </property>
       <property name="font">
@@ -813,14 +871,14 @@ same time.</string>
       </property>
       <property name="minimumSize">
        <size>
-        <width>224</width>
-        <height>20</height>
+        <width>248</width>
+        <height>24</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>16777215</width>
-        <height>20</height>
+        <width>248</width>
+        <height>24</height>
        </size>
       </property>
       <property name="text">
@@ -833,6 +891,12 @@ same time.</string>
     </item>
     <item row="1" column="0">
      <widget class="QPushButton" name="button_blank">
+      <property name="minimumSize">
+       <size>
+        <width>64</width>
+        <height>24</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
         <width>64</width>
@@ -857,14 +921,14 @@ same time.</string>
       </property>
       <property name="minimumSize">
        <size>
-        <width>224</width>
-        <height>20</height>
+        <width>248</width>
+        <height>24</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>16777215</width>
-        <height>20</height>
+        <width>248</width>
+        <height>24</height>
        </size>
       </property>
       <property name="text">

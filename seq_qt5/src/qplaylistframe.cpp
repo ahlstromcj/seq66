@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-07-09
+ * \updates       2023-07-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -110,42 +110,42 @@ qplaylistframe::qplaylistframe
     connect
     (
         ui->tablePlaylistSections, SIGNAL(currentCellChanged(int, int, int, int)),
-        this, SLOT(handle_list_click_ex(int, int, int, int))
+        this, SLOT(slot_list_click_ex(int, int, int, int))
     );
     connect
     (
         ui->tablePlaylistSongs, SIGNAL(currentCellChanged(int, int, int, int)),
-        this, SLOT(handle_song_click_ex(int, int, int, int))
+        this, SLOT(slot_song_click_ex(int, int, int, int))
     );
     connect
     (
         ui->buttonPlaylistCreate, SIGNAL(clicked(bool)),
-        this, SLOT(handle_file_create_click())
+        this, SLOT(slot_file_create_click())
     );
     connect
     (
         ui->buttonSelectSongDir, SIGNAL(clicked(bool)),
-        this, SLOT(handle_list_dir_click())
+        this, SLOT(slot_list_dir_click())
     );
     connect
     (
         ui->buttonSelectPlaylist, SIGNAL(clicked(bool)),
-        this, SLOT(handle_list_load_click())
+        this, SLOT(slot_list_load_click())
     );
     connect
     (
         ui->buttonPlaylistAdd, SIGNAL(clicked(bool)),
-        this, SLOT(handle_list_add_click())
+        this, SLOT(slot_list_add_click())
     );
     connect
     (
         ui->buttonPlaylistModify, SIGNAL(clicked(bool)),
-        this, SLOT(handle_list_modify_click())
+        this, SLOT(slot_list_modify_click())
     );
     connect
     (
         ui->buttonPlaylistRemove, SIGNAL(clicked(bool)),
-        this, SLOT(handle_list_remove_click())
+        this, SLOT(slot_list_remove_click())
     );
     if (not_nullptr(parent()))
     {
@@ -184,49 +184,50 @@ qplaylistframe::qplaylistframe
     connect
     (
         ui->buttonPlaylistSave, SIGNAL(clicked(bool)),
-        this, SLOT(handle_list_save_click())
+        this, SLOT(slot_list_save_click())
     );
 
 #if defined USE_REDUNDANT_SONGLOAD_BUTTON
     connect
     (
         ui->buttonSongLoad, SIGNAL(clicked(bool)),
-        this, SLOT(handle_song_load_click())
+        this, SLOT(slot_song_load_click())
     );
 #else
     ui->buttonSongLoad->setText(" ");
     ui->buttonSongLoad->setEnabled(false);
+    ui->buttonSongLoad->hide();
 #endif
 
     connect
     (
         ui->buttonSelectSong, SIGNAL(clicked(bool)),
-        this, SLOT(handle_song_select_click())
+        this, SLOT(slot_song_select_click())
     );
     connect
     (
         ui->buttonSongAdd, SIGNAL(clicked(bool)),
-        this, SLOT(handle_song_add_click())
+        this, SLOT(slot_song_add_click())
     );
     connect
     (
         ui->buttonSongModify, SIGNAL(clicked(bool)),
-        this, SLOT(handle_song_modify_click())
+        this, SLOT(slot_song_modify_click())
     );
     connect
     (
         ui->buttonSongRemove, SIGNAL(clicked(bool)),
-        this, SLOT(handle_song_remove_click())
+        this, SLOT(slot_song_remove_click())
     );
     connect
     (
         ui->checkBoxPlaylistActive, SIGNAL(clicked(bool)),
-        this, SLOT(handle_playlist_active_click())
+        this, SLOT(slot_playlist_active_click())
     );
     connect
     (
         ui->checkBoxAutoArm, SIGNAL(clicked(bool)),
-        this, SLOT(handle_auto_arm_click())
+        this, SLOT(slot_auto_arm_click())
     );
     connect
     (
@@ -276,14 +277,19 @@ qplaylistframe::qplaylistframe
 
     /*
      * This field is now read-only, as is the base MIDI file name.
-     * The Load Song button must be used.
+     * The new "load song" button (buttonSelectSong) must be used.
      */
 
+#if defined SEQ66_ALLOW_FILENAME_EDIT
     connect
     (
         ui->editSongFilename, SIGNAL(textEdited(QString)),
         this, SLOT(song_modify(QString))
     );
+#else
+    ui->editSongFilename->setEnabled(false);    /* now stays disabled   */
+#endif
+
     enable_midi_widgets(false);
 
     ui->midiBaseDirText->setReadOnly(true);
@@ -363,7 +369,6 @@ qplaylistframe::enable_midi_widgets (bool enable)
 #else
     ui->spinSongNumber->setEnabled(enable);
 #endif
-    ui->editSongFilename->setEnabled(enable);
     ui->buttonSelectSong->setEnabled(enable);
     ui->buttonSongLoad->setEnabled(enable);
 }
@@ -667,7 +672,7 @@ qplaylistframe::load_playlist (const std::string & fullfilespec)
  */
 
 void
-qplaylistframe::handle_list_click_ex
+qplaylistframe::slot_list_click_ex
 (
     int row, int /*column*/, int /*prevrow*/, int /*prevcolumn*/
 )
@@ -693,7 +698,7 @@ qplaylistframe::handle_list_click_ex
  */
 
 void
-qplaylistframe::handle_song_click_ex
+qplaylistframe::slot_song_click_ex
 (
     int row, int /*column*/, int /*prevrow*/, int /*prevcolumn*/
 )
@@ -713,7 +718,7 @@ qplaylistframe::handle_song_click_ex
 }
 
 void
-qplaylistframe::handle_file_create_click ()
+qplaylistframe::slot_file_create_click ()
 {
     if (not_nullptr(parent()))
     {
@@ -730,7 +735,7 @@ qplaylistframe::handle_file_create_click ()
  */
 
 void
-qplaylistframe::handle_list_dir_click ()
+qplaylistframe::slot_list_dir_click ()
 {
     if (not_nullptr(parent()))
     {
@@ -764,12 +769,15 @@ qplaylistframe::handle_list_dir_click ()
  */
 
 void
-qplaylistframe::handle_list_load_click ()
+qplaylistframe::slot_list_load_click ()
 {
     if (not_nullptr(parent()))
     {
         if (parent()->open_playlist())
+        {
             ui->buttonPlaylistSave->setEnabled(false);
+            rc().auto_rc_save(true);
+        }
     }
 }
 
@@ -793,7 +801,7 @@ qplaylistframe::handle_list_load_click ()
  */
 
 void
-qplaylistframe::handle_list_add_click ()
+qplaylistframe::slot_list_add_click ()
 {
     if (not_nullptr(parent()))
     {
@@ -829,7 +837,7 @@ qplaylistframe::handle_list_add_click ()
 }
 
 void
-qplaylistframe::handle_list_modify_click ()
+qplaylistframe::slot_list_modify_click ()
 {
     if (not_nullptr(parent()))
     {
@@ -862,7 +870,7 @@ qplaylistframe::handle_list_modify_click ()
 }
 
 void
-qplaylistframe::handle_list_remove_click ()
+qplaylistframe::slot_list_remove_click ()
 {
     if (not_nullptr(parent()))
     {
@@ -877,7 +885,7 @@ qplaylistframe::handle_list_remove_click ()
 }
 
 void
-qplaylistframe::handle_list_save_click ()
+qplaylistframe::slot_list_save_click ()
 {
     if (not_nullptr(parent()))
     {
@@ -891,11 +899,11 @@ qplaylistframe::handle_list_save_click ()
 
 /**
  *  This function supports loading a song from a file-selection dialog.
- *  Compare it to handle_song_add_click().
+ *  Compare it to slot_song_add_click().
  */
 
 void
-qplaylistframe::handle_song_load_click ()
+qplaylistframe::slot_song_load_click ()
 {
     if (not_nullptr(parent()))
     {
@@ -936,7 +944,7 @@ qplaylistframe::handle_song_load_click ()
  */
 
 void
-qplaylistframe::handle_song_select_click ()
+qplaylistframe::slot_song_select_click ()
 {
     if (not_nullptr(parent()))
     {
@@ -971,11 +979,11 @@ qplaylistframe::handle_song_select_click ()
 /**
  *  These values depend on correct information edited into the Song text
  *  fields.  We support loading a song from a file-selection dialog, so that
- *  is the preferred method; see handle_song_load_click().
+ *  is the preferred method; see slot_song_load_click().
  */
 
 void
-qplaylistframe::handle_song_add_click ()
+qplaylistframe::slot_song_add_click ()
 {
     if (not_nullptr(parent()))
     {
@@ -1020,7 +1028,7 @@ qplaylistframe::handle_song_add_click ()
 }
 
 void
-qplaylistframe::handle_song_modify_click ()
+qplaylistframe::slot_song_modify_click ()
 {
     if (not_nullptr(parent()))
     {
@@ -1049,7 +1057,7 @@ qplaylistframe::handle_song_modify_click ()
 }
 
 void
-qplaylistframe::handle_song_remove_click ()
+qplaylistframe::slot_song_remove_click ()
 {
     if (not_nullptr(parent()))
     {
@@ -1071,24 +1079,29 @@ qplaylistframe::handle_song_remove_click ()
 }
 
 void
-qplaylistframe::handle_playlist_active_click ()
+qplaylistframe::slot_playlist_active_click ()
 {
     if (not_nullptr(parent()))
     {
         bool on = ui->checkBoxPlaylistActive->isChecked();
-        perf().playlist_activate(on);       /* sets rc().playlist_active()  */
-        if (on)                             /* leave patterns in if off     */
-            parent()->recreate_all_slots();
+        bool success = perf().playlist_activate(on);
+        if (success)
+        {
+            rc().auto_rc_save(true);
+            if (on)                         /* leave patterns in if off     */
+                parent()->recreate_all_slots();
+        }
+        ui->checkBoxPlaylistActive->setChecked(perf().playlist_active());
     }
 }
 
 void
-qplaylistframe::handle_auto_arm_click ()
+qplaylistframe::slot_auto_arm_click ()
 {
     if (not_nullptr(parent()))
     {
         bool on = ui->checkBoxAutoArm->isChecked();
-        perf().playlist_auto_arm(on);       /* sets rc().playlist_active()  */
+        perf().playlist_auto_arm(on);       /* sets rc().playlist_active()? */
     }
 }
 

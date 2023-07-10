@@ -3257,7 +3257,7 @@ private:
 
     bool calculate_snap (midipulse & tick);
     void show_cpu ();
-    void playlist_activate (bool on);
+    bool playlist_activate (bool on);
     void playlist_auto_arm (bool on);
     void append_error_message (const std::string & msg = "") const;
     bool set_quantized_recording (seq::number seqno, bool active, bool toggle);

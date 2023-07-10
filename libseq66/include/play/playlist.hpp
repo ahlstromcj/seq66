@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2023-07-09
+ * \updates       2023-07-10
  * \license       GNU GPLv2 or above
  *
  * \todo
@@ -302,6 +302,8 @@ public:
         m_mode = m;
     }
 
+    bool validated () const;
+    bool activate (bool flag);
     bool active () const;
 
     bool deep_verify () const

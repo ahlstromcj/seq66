@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-07-09
+ * \updates       2023-07-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -139,22 +139,22 @@ signals:
 
 private slots:
 
-    void handle_list_click_ex (int, int, int, int);
-    void handle_song_click_ex (int, int, int, int);
-    void handle_file_create_click();
-    void handle_list_dir_click ();
-    void handle_list_load_click ();
-    void handle_list_add_click ();
-    void handle_list_modify_click ();
-    void handle_list_remove_click ();
-    void handle_list_save_click ();
-    void handle_song_load_click ();
-    void handle_song_select_click ();
-    void handle_song_add_click ();
-    void handle_song_modify_click ();
-    void handle_song_remove_click ();
-    void handle_playlist_active_click ();
-    void handle_auto_arm_click ();
+    void slot_list_click_ex (int, int, int, int);
+    void slot_song_click_ex (int, int, int, int);
+    void slot_file_create_click();
+    void slot_list_dir_click ();
+    void slot_list_load_click ();
+    void slot_list_add_click ();
+    void slot_list_modify_click ();
+    void slot_list_remove_click ();
+    void slot_list_save_click ();
+    void slot_song_load_click ();
+    void slot_song_select_click ();
+    void slot_song_add_click ();
+    void slot_song_modify_click ();
+    void slot_song_remove_click ();
+    void slot_playlist_active_click ();
+    void slot_auto_arm_click ();
     void conditional_update ();
     void list_modify ();
     void list_modify (int);

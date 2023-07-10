@@ -16,9 +16,9 @@
   <widget class="QWidget" name="fileLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>6</x>
      <y>0</y>
-     <width>811</width>
+     <width>781</width>
      <height>30</height>
     </rect>
    </property>
@@ -28,6 +28,7 @@
       <property name="font">
        <font>
         <pointsize>10</pointsize>
+        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -70,7 +71,7 @@ Click &quot;Load List&quot; to select a playlist file.</string>
   <widget class="QWidget" name="baseDirLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>16</x>
      <y>344</y>
      <width>731</width>
      <height>32</height>
@@ -79,8 +80,22 @@ Click &quot;Load List&quot; to select a playlist file.</string>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
      <widget class="QLabel" name="midiBaseDirLabel">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>24</height>
+       </size>
+      </property>
       <property name="font">
        <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -93,6 +108,18 @@ Click &quot;Load List&quot; to select a playlist file.</string>
      <widget class="QLineEdit" name="midiBaseDirText">
       <property name="enabled">
        <bool>false</bool>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>24</height>
+       </size>
       </property>
       <property name="toolTip">
        <string>Base directory holding all files in all playlists.
@@ -111,7 +138,7 @@ Read-only.</string>
   <widget class="QWidget" name="pathLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>16</x>
      <y>376</y>
      <width>731</width>
      <height>32</height>
@@ -120,8 +147,22 @@ Read-only.</string>
    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0">
     <item>
      <widget class="QLabel" name="label">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>24</height>
+       </size>
+      </property>
       <property name="font">
        <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -134,6 +175,18 @@ Read-only.</string>
      <widget class="QLineEdit" name="currentSongPath">
       <property name="enabled">
        <bool>false</bool>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>24</height>
+       </size>
       </property>
       <property name="toolTip">
        <string>Full path to the currently-selected song.
@@ -152,16 +205,16 @@ Read-only.</string>
   <widget class="QWidget" name="selectionLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>6</x>
      <y>30</y>
-     <width>811</width>
+     <width>817</width>
      <height>309</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
      <layout class="QGridLayout" name="gridLayout">
-      <property name="verticalSpacing">
+      <property name="spacing">
        <number>2</number>
       </property>
       <item row="1" column="4">
@@ -213,7 +266,7 @@ name in the edit control to the left.</string>
        </widget>
       </item>
       <item row="2" column="10" rowspan="2">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="labelSongReserved">
         <property name="text">
          <string/>
         </property>
@@ -229,7 +282,7 @@ name in the edit control to the left.</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>340</width>
           <height>24</height>
          </size>
         </property>
@@ -301,13 +354,13 @@ the file.</string>
        <widget class="QLineEdit" name="editPlaylistNumber">
         <property name="minimumSize">
          <size>
-          <width>0</width>
+          <width>24</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>32</width>
           <height>24</height>
          </size>
         </property>
@@ -335,9 +388,16 @@ play-list section. Edit to enable &quot;Add List&quot; and &quot;Modify List&quo
       </item>
       <item row="0" column="5" colspan="4">
        <widget class="QLabel" name="labelListSong">
+        <property name="maximumSize">
+         <size>
+          <width>300</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="font">
          <font>
           <pointsize>10</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -348,9 +408,16 @@ play-list section. Edit to enable &quot;Add List&quot; and &quot;Modify List&quo
       </item>
       <item row="0" column="0" colspan="4">
        <widget class="QLabel" name="labelListSection">
+        <property name="maximumSize">
+         <size>
+          <width>400</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="font">
          <font>
           <pointsize>10</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -363,13 +430,13 @@ play-list section. Edit to enable &quot;Add List&quot; and &quot;Modify List&quo
        <widget class="QLineEdit" name="editSongNumber">
         <property name="minimumSize">
          <size>
-          <width>0</width>
+          <width>24</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>32</width>
           <height>24</height>
          </size>
         </property>
@@ -391,13 +458,13 @@ can be edited for a song.</string>
         </property>
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>228</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>228</width>
           <height>24</height>
          </size>
         </property>
@@ -426,7 +493,7 @@ Edit to enable &quot;Add List&quot; and &quot;Modify List&quot;.</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>300</width>
           <height>24</height>
          </size>
         </property>
@@ -450,13 +517,13 @@ to select an existing song.</string>
         </property>
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>208</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>208</width>
           <height>24</height>
          </size>
         </property>
@@ -519,7 +586,7 @@ Read-only.  Use the Load Song button to modify this entry.</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>64</width>
           <height>24</height>
          </size>
         </property>
@@ -578,7 +645,7 @@ add it to the song table.</string>
        </widget>
       </item>
       <item row="1" column="9">
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="buttonSongReserved_1">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -600,7 +667,7 @@ add it to the song table.</string>
        </widget>
       </item>
       <item row="3" column="4">
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="buttonPlaylistReserved">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -622,7 +689,7 @@ add it to the song table.</string>
        </widget>
       </item>
       <item row="3" column="9">
-       <widget class="QPushButton" name="pushButton_3">
+       <widget class="QPushButton" name="buttonSongreserved_2">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -646,9 +713,18 @@ add it to the song table.</string>
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,1,3,1">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="4,1,4,1">
+      <property name="spacing">
+       <number>2</number>
+      </property>
       <item>
        <widget class="QTableWidget" name="tablePlaylistSections">
+        <property name="maximumSize">
+         <size>
+          <width>320</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="toolTip">
          <string>Shows existing play-lists read from the play-list file.</string>
         </property>
@@ -720,13 +796,13 @@ add it to the song table.</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
@@ -745,13 +821,13 @@ add it to the song table.</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
@@ -770,13 +846,13 @@ add it to the song table.</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
@@ -784,7 +860,7 @@ add it to the song table.</string>
            <string>Update the current list with the 3 editable fields above.</string>
           </property>
           <property name="text">
-           <string>Modify List</string>
+           <string>Modify</string>
           </property>
          </widget>
         </item>
@@ -792,13 +868,13 @@ add it to the song table.</string>
          <widget class="QPushButton" name="buttonPlaylistRemove">
           <property name="minimumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
@@ -806,7 +882,7 @@ add it to the song table.</string>
            <string>To do: Removes the selected playlist from this play-list set.</string>
           </property>
           <property name="text">
-           <string>Delete List</string>
+           <string>Delete</string>
           </property>
          </widget>
         </item>
@@ -817,13 +893,13 @@ add it to the song table.</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
@@ -832,7 +908,7 @@ add it to the song table.</string>
 information.</string>
           </property>
           <property name="text">
-           <string>Save List</string>
+           <string>Save Lists</string>
           </property>
          </widget>
         </item>
@@ -840,6 +916,18 @@ information.</string>
       </item>
       <item>
        <widget class="QTableWidget" name="tablePlaylistSongs">
+        <property name="minimumSize">
+         <size>
+          <width>300</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>310</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="toolTip">
          <string>Shows MIDI tunes in the currently-selected play-list.</string>
         </property>
@@ -902,13 +990,13 @@ information.</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
@@ -919,7 +1007,7 @@ automatically.  In Non Session Manager mode, the file is
 imported.</string>
           </property>
           <property name="text">
-           <string>Load Song</string>
+           <string>Load</string>
           </property>
          </widget>
         </item>
@@ -930,13 +1018,13 @@ imported.</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
@@ -957,13 +1045,13 @@ to use &quot;Load Song&quot;.</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
@@ -972,7 +1060,7 @@ to use &quot;Load Song&quot;.</string>
 in the 3 entry fields above.</string>
           </property>
           <property name="text">
-           <string>Modify Song</string>
+           <string>Modify</string>
           </property>
          </widget>
         </item>
@@ -983,13 +1071,13 @@ in the 3 entry fields above.</string>
           </property>
           <property name="minimumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>92</width>
+            <width>76</width>
             <height>25</height>
            </size>
           </property>
@@ -998,7 +1086,7 @@ in the 3 entry fields above.</string>
 the song is not deleted from the hard drive.</string>
           </property>
           <property name="text">
-           <string>Delete Song</string>
+           <string>Delete</string>
           </property>
          </widget>
         </item>
@@ -1006,13 +1094,13 @@ the song is not deleted from the hard drive.</string>
          <widget class="QCheckBox" name="checkBoxPlaylistActive">
           <property name="minimumSize">
            <size>
-            <width>98</width>
+            <width>76</width>
             <height>32</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>98</width>
+            <width>76</width>
             <height>40</height>
            </size>
           </property>
@@ -1036,7 +1124,7 @@ the configured MIDI control comes in.</string>
   <widget class="QCheckBox" name="checkBoxAutoArm">
    <property name="geometry">
     <rect>
-     <x>760</x>
+     <x>756</x>
      <y>350</y>
      <width>61</width>
      <height>41</height>

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2023-07-09
+ * \updates       2023-07-10
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -101,6 +101,86 @@ playlist::~playlist ()
 {
     // No code
 }
+
+/**
+ *  Indicates only if the loaded data is usable. A lesser version of verify()
+ *  that is used before the play-lists are saved to a play-list file.
+ */
+
+bool
+playlist::validated () const
+{
+    bool result = ! m_play_lists.empty();
+    if (result)
+    {
+        auto beginning = m_play_lists.cbegin();
+        result = beginning->second.ls_song_count > 0;
+        if (! result)
+            return true;                /* no songs to verify */
+    }
+    if (result)
+    {
+        for (const auto & plpair : m_play_lists)
+        {
+            if (plpair.second.ls_song_count > 0)
+            {
+                const song_list & sl = plpair.second.ls_song_list;
+                for (const auto & sci : sl)
+                {
+                    const song_spec_t & s = sci.second;
+                    std::string fname = song_filepath(s);
+                    if (fname.empty())
+                    {
+                        result = false;
+                        break;
+                    }
+                }
+                if (! result)
+                    break;
+            }
+            else
+            {
+                result = false;
+                break;
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ *  Used (only) in the user interface to validate that usable playlist data is
+ *  present and to activate the playlist.
+ *
+ * \return
+ *      Returns true if the settings were made.
+ */
+
+bool
+playlist::activate (bool flag)
+{
+    bool result = false;
+    bool change = flag != rc().playlist_active();
+    if (change)
+    {
+        if (flag)
+        {
+            bool ok = validated();
+            if (ok)
+            {
+                mode(true);             /* i.e. the play-lists are loaded   */
+                result = true;
+            }
+        }
+        else
+            result = true;
+
+        rc().playlist_active(flag);
+        rc().auto_rc_save(true);
+    }
+    return result;
+}
+
 
 /**
  *  Returns true if in playlist mode and the playlist is active.  These are two
