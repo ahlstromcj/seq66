@@ -731,6 +731,9 @@ add it to the song table.</string>
         <property name="statusTip">
          <string/>
         </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
         <property name="sizeAdjustPolicy">
          <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
         </property>
@@ -930,6 +933,9 @@ information.</string>
         </property>
         <property name="toolTip">
          <string>Shows MIDI tunes in the currently-selected play-list.</string>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
         </property>
         <property name="sizeAdjustPolicy">
          <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2023-07-09
+ * \updates       2023-07-11
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -159,7 +159,7 @@ playlistfile::open (bool verify_it)
             result = play_list().verify();                  /* weak verify  */
         }
     }
-    play_list().mode(result);
+    play_list().loaded(result);
     return result;
 }
 
@@ -302,6 +302,8 @@ playlistfile::parse ()
                                 sinfo.ss_song_directory = path;
                                 sinfo.ss_embedded_song_directory = true;
                                 sinfo.ss_filename = filebase;
+                                (void) play_list().add_song(slist, sinfo);
+                                ++songcount;
                             }
                             else if (! fname.empty())
                             {
@@ -512,7 +514,16 @@ playlistfile::write ()
         for (const auto & sc : sl)
         {
             const playlist::song_spec_t & s = sc.second;
-            std::string fname = s.ss_filename;
+            bool haspath = s.ss_embedded_song_directory;
+            std::string fname;
+            if (haspath)
+            {
+                fname = filename_concatenate(s.ss_song_directory, s.ss_filename);
+            }
+            else
+            {
+                fname = s.ss_filename;
+            }
             fname = add_quotes(fname);
             file << s.ss_midi_number << " " << fname << "\n";
         }
@@ -581,7 +592,7 @@ open_playlist
     else
     {
         file_error("Playlist file", "none");
-        pl.mode(false);
+        pl.loaded(false);
     }
     return result;
 }

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-07-08
+ * \updates       2023-07-11
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1477,6 +1477,7 @@ qsmainwnd::specify_list_dialog ()
         {
             rc().playlist_filename(fname);
             rc().auto_playlist_save(true);
+            rc().auto_rc_save(true);
             result = not_nullptr(m_playlist_frame);
             if (result)
             {
@@ -1506,7 +1507,7 @@ qsmainwnd::show_save_list_dialog ()
 bool
 qsmainwnd::save_list_dialog ()
 {
-    std::string fname;
+    std::string fname = rc().playlist_filename();
     bool result = show_playlist_dialog(this, fname, SavingFile);
     if (result)
     {

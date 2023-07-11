@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-07-10
+ * \updates       2023-07-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -408,20 +408,20 @@ qplaylistframe::reset_playlist (int listindex)
 }
 
 void
+qplaylistframe::reset_playlist_file_name ()
+{
+    QString fname = qt(rc().playlist_filespec());
+}
+
+void
 qplaylistframe::set_current_playlist ()
 {
     std::string temp;
     ui->checkBoxPlaylistActive->setChecked(perf().playlist_active());
     ui->checkBoxAutoArm->setChecked(perf().playlist_auto_arm());
     temp = perf().playlist_filename();
-    if (temp.empty())
-        temp = "None";
-
     ui->entry_playlist_file->setText(qt(temp));
     temp = perf().file_directory();
-    if (temp.empty())
-        temp = "None";
-
     ui->editPlaylistPath->setText(qt(temp));
 
     int midinumber = perf().playlist_midi_number();
@@ -439,14 +439,8 @@ qplaylistframe::set_current_playlist ()
 #endif
 
     temp = perf().playlist_midi_base();
-    if (temp.empty())
-        temp = "None";
-
     ui->midiBaseDirText->setText(qt(temp));
     temp = perf().playlist_name();
-    if (temp.empty())
-        temp = "None";
-
     ui->editPlaylistName->setText(qt(temp));
     set_current_song();
 }
@@ -469,8 +463,6 @@ qplaylistframe::set_current_song ()
         set_spin_value(ui->spinSongNumber, midinumber);
 
         std::string temp = perf().song_directory();
-        if (temp.empty())
-            temp = "None";
 #endif
 
         ui->editSongPath->setText(qt(temp));
@@ -479,14 +471,9 @@ qplaylistframe::set_current_song ()
         temp = embedded ? "*" : " " ;
         ui->labelDirEmbedded->setText(qt(temp));
         temp = perf().song_filename();
-        if (temp.empty())
-            temp = "None";
 
         ui->editSongFilename->setText(qt(temp));
         temp = perf().song_filepath();
-        if (temp.empty())
-            temp = "None";
-
         ui->currentSongPath->setText(qt(temp));
     }
     else
@@ -638,13 +625,13 @@ qplaylistframe::fill_songs ()
     else
     {
         ui->tablePlaylistSongs->clearContents();
-        ui->editSongPath->setText("None");
+        ui->editSongPath->setText("");
 #if defined USE_SONG_NUMBER_TEXTEDIT
         ui->editSongNumber->setText("0");
 #else
         ui->spinSongNumber->setValue(0);
 #endif
-        ui->editSongFilename->setText("None");
+        ui->editSongFilename->setText("");
         ui->buttonSongRemove->setEnabled(false);
     }
 }
@@ -657,9 +644,13 @@ qplaylistframe::load_playlist (const std::string & fullfilespec)
     {
         bool playlistmode = perf().open_playlist(fullfilespec);
         if (playlistmode)
+        {
             playlistmode = perf().open_current_song();
+            reset_playlist();
+        }
+        else
+            reset_playlist_file_name();
 
-        reset_playlist();                   /* if (perf().playlist_mode())  */
         update();                           /* refresh the user-interface   */
     }
     return result;
@@ -725,7 +716,7 @@ qplaylistframe::slot_file_create_click ()
         if (parent()->specify_playlist())
             ui->buttonPlaylistSave->setEnabled(false);
         else
-            ui->entry_playlist_file->setText("None");
+            ui->entry_playlist_file->setText("");
     }
 }
 
@@ -1092,6 +1083,7 @@ qplaylistframe::slot_playlist_active_click ()
                 parent()->recreate_all_slots();
         }
         ui->checkBoxPlaylistActive->setChecked(perf().playlist_active());
+        ui->buttonPlaylistSave->setEnabled(true);
     }
 }
 
@@ -1102,6 +1094,7 @@ qplaylistframe::slot_auto_arm_click ()
     {
         bool on = ui->checkBoxAutoArm->isChecked();
         perf().playlist_auto_arm(on);       /* sets rc().playlist_active()? */
+        ui->buttonPlaylistSave->setEnabled(true);
     }
 }
 

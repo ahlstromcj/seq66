@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2023-07-10
+ * \updates       2023-07-11
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -82,10 +82,10 @@ playlist::playlist
     basesettings                (filename),
     m_performer                 (p),                /* owner of this object */
     m_play_lists                (),
-    m_mode                      (false),            /* playlist enabled     */
+    m_loaded                    (false),            /* playlist loaded      */
     m_deep_verify               (false),
     m_current_list              (m_play_lists.end()),
-    m_current_song              (sm_dummy.end()),   // song-list iterator
+    m_current_song              (sm_dummy.end()),   /* song-list iterator   */
     m_auto_arm                  (false),
     m_midi_base_directory       (rc().midi_base_directory()),
     m_show_on_stdout            (show_on_stdout)
@@ -168,7 +168,7 @@ playlist::activate (bool flag)
             bool ok = validated();
             if (ok)
             {
-                mode(true);             /* i.e. the play-lists are loaded   */
+                loaded(true);            /* i.e. the play-lists are loaded   */
                 result = true;
             }
         }
@@ -190,7 +190,7 @@ playlist::activate (bool flag)
 bool
 playlist::active () const
 {
-    return rc().playlist_active() && mode();
+    return rc().playlist_active() && loaded();
 }
 
 /**
@@ -659,7 +659,7 @@ playlist::clear ()
 {
     comments_block().clear();
     m_play_lists.clear();
-    mode(false);
+    loaded(false);
     m_current_list = m_play_lists.end();
     m_current_song = sm_dummy.end();
 }
@@ -1259,15 +1259,18 @@ std::string
 playlist::current_song () const
 {
     std::string result;
-    if (mode())
+    if (loaded())
     {
         if (m_current_list != m_play_lists.end())
         {
             play_list_t & plist = m_current_list->second;
             if (m_current_song != plist.ls_song_list.end())
             {
+                int mnumber = m_current_song->second.ss_midi_number;
                 result = plist.ls_list_name;
                 result += ": ";
+                result += int_to_string(mnumber);
+                result += " ";
                 result += m_current_song->second.ss_filename;
             }
         }

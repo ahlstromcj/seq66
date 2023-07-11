@@ -1271,14 +1271,14 @@ public:
         return m_play_list->auto_arm();
     }
 
-    bool playlist_mode () const
+    bool playlist_loaded () const
     {
-        return m_play_list->mode();
+        return m_play_list->loaded();
     }
 
-    void playlist_mode (bool on)
+    void playlist_loaded (bool on)
     {
-        m_play_list->mode(on);
+        m_play_list->loaded(on);
     }
 
     const std::string & playlist_error_message () const

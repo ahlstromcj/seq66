@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-07-09
+ * \updates       2023-07-11
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -8567,7 +8567,7 @@ performer::playlist_activate (bool on)
             // TODO: This is not being set right when successfully loading
             // the playlist file so it is seen in the Playlist tab.
 
-            if (m_play_list->mode())            /* loaded successfully? */
+            if (m_play_list->loaded())              /* loaded successfully? */
                 rc().playlist_active(true);
         }
     }
@@ -8587,7 +8587,7 @@ performer::playlist_auto_arm (bool on)
 {
     if (m_play_list)
     {
-        if (m_play_list->mode())                /* loaded successfully? */
+        if (m_play_list->loaded())                  /* loaded successfully? */
             m_play_list->auto_arm(on);
     }
 }
@@ -8703,8 +8703,8 @@ performer::open_current_song ()
         /*
          * Does not work.
          *
-        if (m_play_list->auto_arm())
-            set_song_mute(mutegroups::action::off);
+         *  if (m_play_list->auto_arm())
+         *      set_song_mute(mutegroups::action::off);
          *
          */
     }
@@ -8870,7 +8870,7 @@ performer::import_playlist
                 result = copy_playlist_songs(*m_play_list, filespec, midipath);
 
             if (result)
-                m_play_list->mode(true);
+                m_play_list->loaded(true);
         }
     }
     return result;
@@ -8905,7 +8905,7 @@ performer::open_playlist (const std::string & pl)
 {
     bool show_on_stdout = rc().verbose();
     if (m_play_list)
-        m_play_list->mode(false);                           /* just in case */
+        m_play_list->loaded(false);                           /* just in case */
 
     m_play_list.reset
     (
@@ -8931,7 +8931,7 @@ performer::open_playlist (const std::string & pl)
                  */
 
                 rc().auto_rc_save(false);   /* could be TRICKY!             */
-                m_play_list->mode(false);   /* disable it by choice         */
+                m_play_list->loaded(false); /* disable it by choice         */
             }
         }
         else
@@ -8940,7 +8940,7 @@ performer::open_playlist (const std::string & pl)
              * append_error_message(m_play_list->error_messaget)
              */
 
-            m_play_list->mode(false);       /* disable it by error          */
+            m_play_list->loaded(false);     /* disable it by error          */
         }
     }
     else

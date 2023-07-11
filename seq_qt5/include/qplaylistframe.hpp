@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-07-10
+ * \updates       2023-07-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -101,6 +101,7 @@ private:
     void set_row_heights (int height);
     void set_column_widths ();
     void reset_playlist (int listindex = 0);
+    void reset_playlist_file_name ();
     void set_current_playlist ();
     void set_current_song ();
     void fill_playlists ();
