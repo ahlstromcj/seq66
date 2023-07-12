@@ -1,4 +1,4 @@
-# README for Seq66 0.99.7 2023-07-08
+# README for Seq66 0.99.7 2023-07-12
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -82,15 +82,17 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.99.7:
+        *   Issue #110 follow-ons:
+            Cannot save tempo (BPM) in Windows when
+            changed from main window. Caused by mixing a long and size_t,
+            which messed up in the Windows build.
         *   Issue #111 follow-ons:
             *   Fixed initial time-signature drawing in data pane.
             *   Fixed errors in inserting a time-signature. Added a pulse
                 calculator that iterates through time-signatures.
-        *   Issue #110 follow-ons: Cannot save tempo (BPM) in Windows when
-            changed from main window. This was caused by mixing a long
-            and a size_t and sizeof(long) in the Windows build.
+        *   Fixed an important port-translation bug in output port-mapping.
         *   Recent Files is disabled if there are none.
-        *   Revamped the Playlist tab, as it was confusing.
+        *   Revamped the Playlist tab, as it was confusing and very buggy.
     *   Version 0.99.6:
         *   Issue #3 follow-ons:
             *   Added a qscrollslave to allow QScrollArea to allow the pattern

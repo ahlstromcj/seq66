@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.7
 Chris Ahlstrom
-2019-04-13 to 2023-07-11
+2019-04-13 to 2023-07-12
 
 UI:
 
@@ -44,8 +44,6 @@ Playlists:
     -   Keep working out interactions of list and song widgets.
         Also automatically insert the next list or song number; the user
         can change it.
-    -   Port Mapping issue: swapped 0 MIDI Thru and 7 Fluid Synth but it did
-        not work.
 
 From Testing:
 

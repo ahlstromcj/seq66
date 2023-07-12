@@ -1,14 +1,17 @@
-Release Notes for Seq66 v. 0.99.7 2023-07-05
+Release Notes for Seq66 v. 0.99.7 2023-07-12
 
-This file lists __major__ changes from version 0.99.7
+This file lists __major__ changes in version 0.99.7
 
     -   Issue #110 follow-ons:
-        -   Should BPM changes raise the modification flag with no
-            file in force?
+        -   Fixed saving tempo (BPM) in Windows when changed from main window.
+            Caused by mixing a long and size_t; messed up in Windows builds.
     -   Issue #111 follow-ons:
-        -   Fixed inserting/appending time signatures in the event
-            editor.
+        -   Fixed initial time-signature drawing in data pane.
+        -   Fixed errors in inserting a time-signature.
+        -   Added a pulse (tick) calculator to iterate through time-signatures.
+    -   Fixed an important port-translation bug in output port-mapping.
+    -   Revamped the Playlist tab, as it was confusing and very buggy.
 
 Read the NEWS, README.md, and TODO files.
 
-// vim: sw=4 ts=4 wm=15 et ft=sh
+# vim: sw=4 ts=4 wm=15 et ft=sh
