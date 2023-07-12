@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-06-26
+ * \updates       2023-09-12
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1271,6 +1271,11 @@ public:
         return m_play_list->auto_arm();
     }
 
+    bool playlist_auto_play () const
+    {
+        return m_play_list->auto_play();
+    }
+
     bool playlist_loaded () const
     {
         return m_play_list->loaded();
@@ -2165,6 +2170,7 @@ public:
             master_bus()->print();
     }
 
+    void delay_start ();
     void delay_stop ();
     void auto_stop (bool rewind = false);
     void auto_pause ();
@@ -3259,6 +3265,7 @@ private:
     void show_cpu ();
     bool playlist_activate (bool on);
     void playlist_auto_arm (bool on);
+    void playlist_auto_play (bool on);
     void append_error_message (const std::string & msg = "") const;
     bool set_quantized_recording (seq::number seqno, bool active, bool toggle);
     bool set_tightened_recording (seq::number seqno, bool active, bool toggle);

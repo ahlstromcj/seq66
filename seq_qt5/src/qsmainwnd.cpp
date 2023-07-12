@@ -4005,7 +4005,7 @@ qsmainwnd::update_song_action (int playaction)
     }
     if (result)
     {
-        cb_perf().next_song_mode();
+        /* cb_perf().next_song_mode();         // redundant */
         m_is_title_dirty = true;
         update_window_title(cb_perf().playlist_song_basename());
     }

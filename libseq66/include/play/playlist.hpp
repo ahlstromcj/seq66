@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2023-07-11
+ * \updates       2023-07-12
  * \license       GNU GPLv2 or above
  *
  * \todo
@@ -243,9 +243,17 @@ private:
      *  If true, indicates that the current set (or all via "F8"?) be turned
      *  on immediately, rather than depending on the musician to unmute the
      *  various patterns.  This is an option stored in the playlist file.
+     *  Also, this option is superceded if the newly-loaded tune has a
+     *  Song layout.
      */
 
     bool m_auto_arm;
+
+    /**
+     *  If true, the next song will start playing immediately.
+     */
+
+    bool m_auto_play;
 
     /**
      *  If non-empty, this provides the base directory for all MIDI files in
@@ -324,6 +332,16 @@ public:
     void auto_arm (bool u)
     {
         m_auto_arm = u;
+    }
+
+    bool auto_play () const
+    {
+        return m_auto_play;
+    }
+
+    void auto_play (bool u)
+    {
+        m_auto_play = u;
     }
 
     void midi_base_directory (const std::string & basedir);

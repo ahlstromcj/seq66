@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-07-11
+ * \updates       2023-07-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -231,6 +231,11 @@ qplaylistframe::qplaylistframe
     );
     connect
     (
+        ui->checkBoxAutoPlay, SIGNAL(clicked(bool)),
+        this, SLOT(slot_auto_play_click())
+    );
+    connect
+    (
         ui->entry_playlist_file, SIGNAL(textEdited(QString)),
         this, SLOT(list_modify(QString))
     );
@@ -419,6 +424,7 @@ qplaylistframe::set_current_playlist ()
     std::string temp;
     ui->checkBoxPlaylistActive->setChecked(perf().playlist_active());
     ui->checkBoxAutoArm->setChecked(perf().playlist_auto_arm());
+    ui->checkBoxAutoPlay->setChecked(perf().playlist_auto_play());
     temp = perf().playlist_filename();
     ui->entry_playlist_file->setText(qt(temp));
     temp = perf().file_directory();
@@ -882,6 +888,7 @@ qplaylistframe::slot_list_save_click ()
     {
         if (parent()->save_playlist())
         {
+            rc().auto_rc_save(true);
             list_unmodify();
             song_unmodify();
         }
@@ -1093,7 +1100,18 @@ qplaylistframe::slot_auto_arm_click ()
     if (not_nullptr(parent()))
     {
         bool on = ui->checkBoxAutoArm->isChecked();
-        perf().playlist_auto_arm(on);       /* sets rc().playlist_active()? */
+        perf().playlist_auto_arm(on);
+        ui->buttonPlaylistSave->setEnabled(true);
+    }
+}
+
+void
+qplaylistframe::slot_auto_play_click ()
+{
+    if (not_nullptr(parent()))
+    {
+        bool on = ui->checkBoxAutoPlay->isChecked();
+        perf().playlist_auto_play(on);
         ui->buttonPlaylistSave->setEnabled(true);
     }
 }

@@ -342,6 +342,11 @@ the file.</string>
           <height>24</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Provides the ordering and control number
+for this play-list, when added. Ranges from
+0 to 127.</string>
+        </property>
         <property name="maximum">
          <number>127</number>
         </property>
@@ -363,11 +368,6 @@ the file.</string>
           <width>32</width>
           <height>24</height>
          </size>
-        </property>
-        <property name="toolTip">
-         <string>MIDI control number for the selected 
-play-list section. Edit to enable &quot;Add List&quot; and &quot;Modify List&quot;.
-    </string>
         </property>
         <property name="text">
          <string>000</string>
@@ -439,12 +439,6 @@ play-list section. Edit to enable &quot;Add List&quot; and &quot;Modify List&quo
           <width>32</width>
           <height>24</height>
          </size>
-        </property>
-        <property name="toolTip">
-         <string>MIDI control number for the
-selected song. Edit to enable the Add Song
-and Modify Song buttons.  This is the only item that
-can be edited for a song.</string>
         </property>
         <property name="text">
          <string>000</string>
@@ -589,6 +583,11 @@ Read-only.  Use the Load Song button to modify this entry.</string>
           <width>64</width>
           <height>24</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Provides the ordering and control number
+for this song, when added. Ranges from
+0 to 127.</string>
         </property>
         <property name="maximum">
          <number>127</number>
@@ -1089,7 +1088,7 @@ in the 3 entry fields above.</string>
           </property>
           <property name="toolTip">
            <string>Removes the current song from the current play-list;
-the song is not deleted from the hard drive.</string>
+the song itself is not deleted.</string>
           </property>
           <property name="text">
            <string>Delete</string>
@@ -1127,19 +1126,49 @@ the configured MIDI control comes in.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QCheckBox" name="checkBoxAutoArm">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
      <x>756</x>
-     <y>350</y>
-     <width>61</width>
-     <height>41</height>
+     <y>344</y>
+     <width>55</width>
+     <height>65</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Auto
- arm</string>
-   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_4">
+    <item>
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Auto:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="checkBoxAutoArm">
+      <property name="toolTip">
+       <string>If checked, moving to the next song
+automatically arms (unmutes) all
+patterns in the song, if there is no
+Song layout.</string>
+      </property>
+      <property name="text">
+       <string>Arm</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="checkBoxAutoPlay">
+      <property name="toolTip">
+       <string>If checked, the next selected song starts
+playing automatically. (Perhaps it should
+also load the next song and keep going!)</string>
+      </property>
+      <property name="text">
+       <string>Play</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

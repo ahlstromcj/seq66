@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2023-07-11
+ * \updates       2023-07-12
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -87,6 +87,7 @@ playlist::playlist
     m_current_list              (m_play_lists.end()),
     m_current_song              (sm_dummy.end()),   /* song-list iterator   */
     m_auto_arm                  (false),
+    m_auto_play                 (false),
     m_midi_base_directory       (rc().midi_base_directory()),
     m_show_on_stdout            (show_on_stdout)
 {
@@ -255,13 +256,22 @@ bool
 playlist::open_song (const std::string & fname, bool verifymode)
 {
     bool result = not_nullptr(m_performer);
+
+#if defined USE_OLD_CODE            // ca 2023-07-12
     if (result)
     {
+        /*
+         * These could be done in performer:delay_stop(), which
+         * all playlist traversal functions call.
+         */
+
         if (m_performer->is_pattern_playing())
             m_performer->stop_playing();
 
         result = m_performer->clear_song();
     }
+#endif
+
     if (result)
     {
         std::string errmsg_dummy;

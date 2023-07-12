@@ -293,7 +293,8 @@ static const int c_thread_priority = 1;
  *  usages herein.
  */
 
-static const int c_delay_stop_ms = 100;
+static const int c_delay_start      =  25;      /* delay_start()    */
+static const int c_delay_stop_ms    = 100;      /* delay_stop()     */
 
 /**
  *  Indicates how much of a long file-path we will show using the
@@ -816,8 +817,8 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
         const std::string & mgf = rc().mute_group_filespec();
         (void) open_mutegroups(mgf);
     }
-    if (! rc().song_start_auto())
-        song_start_mode(rcs.get_song_start_mode());      /* force the mode   */
+    if (! rc().song_start_auto())                   /* detect live vs song  */
+        song_start_mode(rcs.get_song_start_mode()); /* force the mode       */
 
     filter_by_channel(rcs.filter_by_channel());
 
@@ -2355,7 +2356,7 @@ performer::next_song_mode ()
 {
     bool has_triggers = mapper().trigger_count() > 0;
     (void) set_playing_screenset(screenset::number(0));
-    if (rc().song_start_auto())
+    if (rc().song_start_auto())                     /* detect live vs song  */
     {
         song_mode(has_triggers);
         if (has_triggers)
@@ -4936,11 +4937,16 @@ performer::start_playing ()
 
     /*
      * When play starts, enabled the tracks if auto-arm is true.
+     *
+     * TODO:  start playing if specified
+        if (m_play_list->auto_play())
      */
 
-    if (m_play_list && m_play_list->auto_arm())
-        set_song_mute(mutegroups::action::off);
-
+    if (m_play_list)
+    {
+        if (m_play_list->auto_arm())
+            set_song_mute(mutegroups::action::off);
+    }
     start_jack();
     start();
     for (auto notify : m_notify)
@@ -5131,11 +5137,44 @@ performer::auto_stop (bool rewind)
 #endif
 }
 
+/**
+ *  Should now be called delay_and_start().  * ca 2023-07-12
+ */
+
+void
+performer::delay_start ()
+{
+    next_song_mode();
+    if (m_play_list)
+    {
+        if (m_play_list->auto_arm() && ! song_mode())
+        {
+            set_song_mute(mutegroups::action::off);
+        }
+        if (! is_pattern_playing())
+        {
+            if (m_play_list->auto_play())
+            {
+                millisleep(c_delay_start);
+                auto_play();
+            }
+        }
+    }
+}
+
+/**
+ *  Should now be called stop_delay_and_clear().
+ */
+
 void
 performer::delay_stop ()
 {
-    auto_stop();
-    millisleep(c_delay_stop_ms);
+    if (is_pattern_playing())                       /* ca 2023-07-12        */
+    {
+        auto_stop();
+        millisleep(c_delay_stop_ms);
+    }
+    (void) clear_song();
 }
 
 /**
@@ -7372,7 +7411,7 @@ performer::apply_session_mutes ()
     bool result = mutes().any() && mutes().group_valid();
     if (result)
     {
-        if (rc().song_start_auto())
+        if (rc().song_start_auto())                 /* detect live vs song  */
             result = mapper().trigger_count() == 0; /* triggers = song mode */
         else
             result = ! rc().song_start_mode();      /* don't use in "song"  */
@@ -8592,6 +8631,16 @@ performer::playlist_auto_arm (bool on)
     }
 }
 
+void
+performer::playlist_auto_play (bool on)
+{
+    if (m_play_list)
+    {
+        if (m_play_list->loaded())                  /* loaded successfully? */
+            m_play_list->auto_play(on);
+    }
+}
+
 bool
 performer::open_next_list (bool opensong, bool loading)
 {
@@ -8613,6 +8662,9 @@ performer::open_next_list (bool opensong, bool loading)
             notify_song_action(false);
         }
     }
+    if (result)                         /* ca 2023-07-12    */
+        delay_start();
+
     return result;
 }
 
@@ -8637,6 +8689,9 @@ performer::open_previous_list (bool opensong)
             notify_song_action(false);
         }
     }
+    if (result)                         /* ca 2023-07-12    */
+        delay_start();
+
     return result;
 }
 
@@ -8663,6 +8718,9 @@ performer::open_select_song_by_index (int index, bool opensong)
             notify_song_action(false);
         }
     }
+    if (result)                         /* ca 2023-07-12    */
+        delay_start();
+
     return result;
 }
 
@@ -8687,6 +8745,9 @@ performer::open_select_song_by_midi (int ctrl, bool opensong)
             notify_song_action(false);
         }
     }
+    if (result)                         /* ca 2023-07-12    */
+        delay_start();
+
     return result;
 }
 
@@ -8701,11 +8762,10 @@ performer::open_current_song ()
     if (result)
     {
         /*
-         * Does not work.
+         * Nothing else to do?
          *
-         *  if (m_play_list->auto_arm())
-         *      set_song_mute(mutegroups::action::off);
-         *
+         *  if (m_play_list->auto_play())
+         *      start_playing();
          */
     }
     return result;
@@ -8732,6 +8792,9 @@ performer::open_next_song (bool opensong)
             notify_song_action(false);
         }
     }
+    if (result)                         /* ca 2023-07-12    */
+        delay_start();
+
     return result;
 }
 
@@ -8756,6 +8819,9 @@ performer::open_previous_song (bool opensong)
             notify_song_action(false);
         }
     }
+    if (result)                         /* ca 2023-07-12    */
+        delay_start();
+
     return result;
 }
 

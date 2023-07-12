@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-09-15
-% \update      2023-07-11
+% \update      2023-07-12
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -90,8 +90,9 @@
 
    \begin{verbatim}
    [playlist-options]
-   unmute-new-song = true   # the next song selection unmutes its patterns
-   deep-verify = false      # If true, every MIDI song is opened and verified
+   unmute-next-song = true   # the next song selection unmutes its patterns
+   auto-play = true          # if true, unmute and start play automatically
+   deep-verify = false       # If true, every MIDI song is opened and verified
    \end{verbatim}
 
    The first option allows the load of the next song to enable the patterns in
@@ -486,8 +487,11 @@
          configured in the 'rc' file.
          When a new play-list file is created, this item can be check-marked
          if the play-lists and their songs are basically valid.
-      \item \textbf{Auto arm}.
-         This item sets the \texttt{unmute-new-song} item in the 'playlist'
+      \item \textbf{Auto: Arm}.
+         This item sets the \texttt{unmute-next-song} (unfortunate name!)
+         item in the 'playlist' file.
+      \item \textbf{Auto: Play}.
+         This item sets the \texttt{unmute-next-song} item in the 'playlist'
          file.
    \end{itemize}
 

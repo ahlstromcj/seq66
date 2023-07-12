@@ -93,6 +93,7 @@ Windows, and using a conventional source tarball.
         *   Fixed an important port-translation bug in output port-mapping.
         *   Recent Files is disabled if there are none.
         *   Revamped the Playlist tab, as it was confusing and very buggy.
+        *   Added auto-play to play-lists.
     *   Version 0.99.6:
         *   Issue #3 follow-ons:
             *   Added a qscrollslave to allow QScrollArea to allow the pattern
