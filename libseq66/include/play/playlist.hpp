@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2023-07-12
+ * \updates       2023-07-13
  * \license       GNU GPLv2 or above
  *
  * \todo
@@ -256,6 +256,32 @@ private:
     bool m_auto_play;
 
     /**
+     *  This value controls whether auto-play (in a playlist) works or not.
+     *  We don't want play-list play-back to start immediately when Seq66
+     *  starts... we want it to engage once the user presses Play. This
+     *  value starts out false.
+     *
+     *  -   Set to true when "Play" is activated the first time.
+     *  -   The next song selected will start playing if playlist::auto_play()
+     *      is true and m_engage_auto_play is true.
+     *  -   Set m_engage_auto_play to false:
+     *      -   When File / Open is explicitly called.
+     *      -   When "Stop" is enacted manually.
+     */
+
+    bool m_engage_auto_play;
+
+    /**
+     *  EXPERIMENTAL.
+     *
+     *  We are considering how to support automatically moving to the next song
+     *  in the play-list when the current song finishes.  This might also
+     *  includeA moving to the next playlist, as well as automatic wrap-around.
+     */
+
+    bool m_auto_advance;
+
+    /**
      *  If non-empty, this provides the base directory for all MIDI files in
      *  all playlists.  Sometimes we need this, for example when importing
      *  into a new NSM session.
@@ -329,9 +355,9 @@ public:
         return m_auto_arm;
     }
 
-    void auto_arm (bool u)
+    void auto_arm (bool flag)
     {
-        m_auto_arm = u;
+        m_auto_arm = flag;
     }
 
     bool auto_play () const
@@ -339,9 +365,46 @@ public:
         return m_auto_play;
     }
 
-    void auto_play (bool u)
+    void auto_play (bool flag)
     {
-        m_auto_play = u;
+        m_auto_play = flag;
+    }
+
+    bool engage_auto_play () const
+    {
+        return m_engage_auto_play;
+    }
+
+    void engage_auto_play (bool flag)
+    {
+        m_engage_auto_play = flag;
+    }
+
+    bool auto_play_engaged () const
+    {
+        return m_auto_play && m_engage_auto_play;
+    }
+
+    void reengage_auto_play ()
+    {
+        if (active() && auto_play())
+            engage_auto_play(true);
+    }
+
+    void disengage_auto_play ()
+    {
+        if (active() && auto_play())
+            engage_auto_play(false);
+    }
+
+    bool auto_advance () const
+    {
+        return m_auto_advance;
+    }
+
+    void auto_advance (bool flag)
+    {
+        m_auto_advance = flag;
     }
 
     void midi_base_directory (const std::string & basedir);

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-09-12
+ * \updates       2023-07-13
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -476,7 +476,8 @@ private:
      *  If true, playback is done in Song mode, not Live mode.  This option is
      *  saved to and restored from the "rc" configuration file.  Sometimes
      *  called "JACK start mode", it used to be a JACK setting, but now
-     *  applies to any playback.
+     *  applies to any playback. If set to 'auto', then the mode is 'song'
+     *  if the loaded tune has any pattern with song triggers.
      */
 
     sequence::playback m_song_start_mode;
@@ -1274,6 +1275,16 @@ public:
     bool playlist_auto_play () const
     {
         return m_play_list->auto_play();
+    }
+
+    bool playlist_auto_advance () const
+    {
+        return m_play_list->auto_advance();
+    }
+
+    void playlist_auto_advance (bool on)
+    {
+        m_play_list->auto_advance(on);
     }
 
     bool playlist_loaded () const

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2023-07-12
+ * \updates       2023-07-13
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -79,17 +79,19 @@ playlist::playlist
     const std::string & filename,
     bool show_on_stdout
 ) :
-    basesettings                (filename),
-    m_performer                 (p),                /* owner of this object */
-    m_play_lists                (),
-    m_loaded                    (false),            /* playlist loaded      */
-    m_deep_verify               (false),
-    m_current_list              (m_play_lists.end()),
-    m_current_song              (sm_dummy.end()),   /* song-list iterator   */
-    m_auto_arm                  (false),
-    m_auto_play                 (false),
-    m_midi_base_directory       (rc().midi_base_directory()),
-    m_show_on_stdout            (show_on_stdout)
+    basesettings            (filename),
+    m_performer             (p),                    /* owner of this object */
+    m_play_lists            (),
+    m_loaded                (false),                /* playlist loaded      */
+    m_deep_verify           (false),
+    m_current_list          (m_play_lists.end()),
+    m_current_song          (sm_dummy.end()),       /* song-list iterator   */
+    m_auto_arm              (false),
+    m_auto_play             (false),
+    m_engage_auto_play      (false),
+    m_auto_advance          (false),
+    m_midi_base_directory   (rc().midi_base_directory()),
+    m_show_on_stdout        (show_on_stdout)
 {
     // No code
 }

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-07-12
+ * \updates       2023-07-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -233,6 +233,12 @@ qplaylistframe::qplaylistframe
     (
         ui->checkBoxAutoPlay, SIGNAL(clicked(bool)),
         this, SLOT(slot_auto_play_click())
+    );
+    ui->checkBoxAutoAdvance->setEnabled(false);     // NOT YET READY
+    connect
+    (
+        ui->checkBoxAutoAdvance, SIGNAL(clicked(bool)),
+        this, SLOT(slot_auto_advance_click())
     );
     connect
     (
@@ -1113,6 +1119,21 @@ qplaylistframe::slot_auto_play_click ()
         bool on = ui->checkBoxAutoPlay->isChecked();
         perf().playlist_auto_play(on);
         ui->buttonPlaylistSave->setEnabled(true);
+        ui->checkBoxAutoArm->setChecked(true);
+        slot_auto_arm_click();
+    }
+}
+
+void
+qplaylistframe::slot_auto_advance_click ()
+{
+    if (not_nullptr(parent()))
+    {
+        bool on = ui->checkBoxAutoAdvance->isChecked();
+        perf().playlist_auto_advance(on);
+        ui->buttonPlaylistSave->setEnabled(true);
+        ui->checkBoxAutoPlay->setChecked(true);
+        slot_auto_play_click();
     }
 }
 

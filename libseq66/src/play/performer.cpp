@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-07-12
+ * \updates       2023-07-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2967,12 +2967,9 @@ performer::clear_all (bool /* clearplaylist */ )
         play_set().clear();                     /* dump active patterns     */
 
 #if defined WE_REALLY_NEED_TO_RESET_PLAYLIST
-        if (m_play_list)
-        {
-            m_is_busy = true;
-            (void) m_play_list->reset_list(clearplaylist);
-            m_is_busy = false;
-        }
+        m_is_busy = true;
+        (void) m_play_list->reset_list(clearplaylist);
+        m_is_busy = false;
 #endif
 
         set_needs_update();             /* tell all GUIs to refresh. BUG!   */
@@ -4934,19 +4931,9 @@ performer::start_playing ()
                 seqi->resume_note_ons(get_tick());
         }
     }
+    if (m_play_list->auto_arm())
+        set_song_mute(mutegroups::action::off);
 
-    /*
-     * When play starts, enabled the tracks if auto-arm is true.
-     *
-     * TODO:  start playing if specified
-        if (m_play_list->auto_play())
-     */
-
-    if (m_play_list)
-    {
-        if (m_play_list->auto_arm())
-            set_song_mute(mutegroups::action::off);
-    }
     start_jack();
     start();
     for (auto notify : m_notify)
@@ -5072,8 +5059,10 @@ performer::auto_play ()
             play_count_in();
         else
 #endif
+        {
+            m_play_list->reengage_auto_play();
             start_playing();
-
+        }
         isplaying = true;
     }
     is_pattern_playing(isplaying);
@@ -5108,8 +5097,6 @@ performer::auto_pause ()
 }
 
 /**
- *  ca 2022-09-14:
- *
  *  Added an is_running() check for when JACK transport is running at startup,
  *  which sets that flag, but not is_pattern_playing(); the result was that
  *  we could not stop playback with Seq66's Stop button.
@@ -5124,6 +5111,7 @@ performer::auto_stop (bool rewind)
 {
     if (is_pattern_playing() || is_running())       /* normal & JACK, hmmmm */
     {
+        m_play_list->disengage_auto_play();
         stop_playing(rewind);
         is_pattern_playing(false);
 
@@ -5145,19 +5133,15 @@ void
 performer::delay_start ()
 {
     next_song_mode();
-    if (m_play_list)
+    if (m_play_list->auto_arm() && ! song_mode())
+        set_song_mute(mutegroups::action::off);
+
+    if (! is_pattern_playing())
     {
-        if (m_play_list->auto_arm() && ! song_mode())
+        if (m_play_list->auto_play_engaged())
         {
-            set_song_mute(mutegroups::action::off);
-        }
-        if (! is_pattern_playing())
-        {
-            if (m_play_list->auto_play())
-            {
-                millisleep(c_delay_start);
-                auto_play();
-            }
+            millisleep(c_delay_start);
+            auto_play();
         }
     }
 }
@@ -5171,7 +5155,9 @@ performer::delay_stop ()
 {
     if (is_pattern_playing())                       /* ca 2023-07-12        */
     {
+        bool engaged = m_play_list->engage_auto_play();
         auto_stop();
+        m_play_list->engage_auto_play(engaged);
         millisleep(c_delay_stop_ms);
     }
     (void) clear_song();
@@ -8598,47 +8584,25 @@ performer::playlist_song_basename () const
 bool
 performer::playlist_activate (bool on)
 {
-#if defined USE_OLD_CODE
-    if (on)
-    {
-        if (m_play_list)
-        {
-            // TODO: This is not being set right when successfully loading
-            // the playlist file so it is seen in the Playlist tab.
-
-            if (m_play_list->loaded())              /* loaded successfully? */
-                rc().playlist_active(true);
-        }
-    }
-    else
-        rc().playlist_active(false);
-#else
     bool result = bool(m_play_list);
     if (result)
         result = m_play_list->activate(on);
 
     return result;
-#endif
 }
 
 void
 performer::playlist_auto_arm (bool on)
 {
-    if (m_play_list)
-    {
-        if (m_play_list->loaded())                  /* loaded successfully? */
-            m_play_list->auto_arm(on);
-    }
+    if (m_play_list->loaded())                  /* loaded successfully? */
+        m_play_list->auto_arm(on);
 }
 
 void
 performer::playlist_auto_play (bool on)
 {
-    if (m_play_list)
-    {
-        if (m_play_list->loaded())                  /* loaded successfully? */
-            m_play_list->auto_play(on);
-    }
+    if (m_play_list->loaded())                  /* loaded successfully? */
+        m_play_list->auto_play(on);
 }
 
 bool
@@ -8945,9 +8909,8 @@ performer::import_playlist
 /**
  *  Creates a playlist object and opens it.  If there is a playlist object
  *  already in existence, it is replaced. If there is no playlist file-name,
- *  then an "empty" playlist object is created.
- *
- *  The perform object needs to own the playlist.
+ *  then an "empty" playlist object is created. We do not want to constantly
+ *  check for its existence.  The perform object needs to own the playlist.
  *
  * \param pl
  *      Provides the full path file-specification for the play-list file to be
@@ -9003,16 +8966,18 @@ performer::open_playlist (const std::string & pl)
         else
         {
             /*
-             * append_error_message(m_play_list->error_messaget)
+             * This will fail if the user hasn't yet created the default
+             * play-list file. No need to report it.
+             *
+             * append_error_message(m_play_list->error_message)
              */
 
             m_play_list->loaded(false);     /* disable it by error          */
         }
     }
     else
-    {
-        errprint("null playlist pointer");
-    }
+        append_error_message("Could not create playlist object");
+
     return result;
 }
 
