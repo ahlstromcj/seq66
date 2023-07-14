@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.7 2023-07-12
+Release Notes for Seq66 v. 0.99.7 2023-07-14
 
 This file lists __major__ changes in version 0.99.7
 
@@ -11,7 +11,7 @@ This file lists __major__ changes in version 0.99.7
         -   Added a pulse (tick) calculator to iterate through time-signatures.
     -   Fixed an important port-translation bug in output port-mapping.
     -   Revamped the Playlist tab, as it was confusing and very buggy.
-    -   Added auto-play to play-lists.
+    -   Added auto-play and auto-advance to play-lists.
 
 Read the NEWS, README.md, and TODO files.
 

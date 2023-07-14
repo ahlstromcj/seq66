@@ -521,6 +521,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <height>28</height>
     </size>
    </property>
+   <property name="clearButtonEnabled">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QPlainTextEdit" name="plainTextSongInfo">
    <property name="geometry">

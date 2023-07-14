@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-07-13
+ * \updates       2023-07-14
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -821,11 +821,6 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
         song_start_mode(rcs.get_song_start_mode()); /* force the mode       */
 
     filter_by_channel(rcs.filter_by_channel());
-
-    /*
-     * tempo_track_number(rcs.tempo_track_number());    // [midi-meta-events]
-     */
-
     m_resume_note_ons = usrs.resume_note_ons();
     return result;
 }
@@ -1724,7 +1719,7 @@ performer::reload_metronome ()
 {
     bool wasrunning = is_running();
     if (wasrunning)
-        auto_stop();            /* or pause? */
+        auto_stop();                                /* or pause? */
 
     remove_metronome();
     bool result = install_metronome();
@@ -1740,7 +1735,7 @@ performer::remove_metronome ()
     if (m_metronome)
     {
         seq::number seqno =  m_metronome->seq_number();
-        auto_stop();            /* or pause? */
+        auto_stop();                                /* or pause? */
         play_set().remove(seqno);
         if (m_metronome)
             m_metronome.reset();
@@ -1767,7 +1762,7 @@ performer::install_recorder ()
 {
     if (bool(m_recorder))
     {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         printf("[-----] Recorder already exists\n");
 #endif
         return true;
@@ -1784,7 +1779,7 @@ performer::install_recorder ()
             /*
              * Not needed: result = play_set().add(m_recorder);
              */
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
             printf("[-----] Installed recorder\n");
 #endif
         }
@@ -1806,7 +1801,7 @@ performer::remove_recorder ()
 {
     if (not_nullptr(m_recorder))
     {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         printf("[-----] Removed recorder\n");
 #endif
         delete m_recorder;
@@ -1842,7 +1837,7 @@ performer::finish_recorder ()
     }
     else
     {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         printf("[-----] No background events recorded\n");
 #endif
         remove_recorder();
@@ -4687,14 +4682,7 @@ performer::poll_cycle ()
 void
 performer::midi_start ()
 {
-#if defined USE_OLD_MIDI_CLOCK_CODE
-    auto_stop();
-    song_start_mode(sequence::playback::live);
-    auto_play();
-#else
-    start_playing();        // m_dont_reset_ticks needed ?
-#endif
-
+    start_playing();
     m_midiclockrunning = m_usemidiclock = true;
     m_midiclocktick = m_midiclockpos = 0;
     if (rc().verbose())
@@ -4774,7 +4762,7 @@ performer::midi_stop ()
 void
 performer::midi_clock ()
 {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     if (rc().verbose())
     {
         infoprint("MIDI Clock");
@@ -4912,10 +4900,17 @@ performer::midi_sysex (const event & ev)
 void
 performer::start_playing ()
 {
+    if (! song_recording())
+        m_max_extent = get_max_extent();
+
     if (song_mode())
     {
-        if (! song_recording())
-            m_max_extent = get_max_extent();
+        /*
+         * Moved to above since it's needed in mixed song/live play-lists.
+         *
+         * if (! song_recording())
+         *      m_max_extent = get_max_extent();
+         */
 
        if (is_jack_master() && ! m_reposition)      /* see "Flicker" above  */
            position_jack(true, get_left_tick());
@@ -5156,7 +5151,14 @@ performer::delay_stop ()
     if (is_pattern_playing())                       /* ca 2023-07-12        */
     {
         bool engaged = m_play_list->engage_auto_play();
-        auto_stop();
+
+        /*
+         * auto_stop();
+         */
+
+        stop_playing(true);
+        is_pattern_playing(false);
+
         m_play_list->engage_auto_play(engaged);
         millisleep(c_delay_stop_ms);
     }
@@ -5190,21 +5192,35 @@ performer::play (midipulse tick)
     if (tick != get_tick() || tick == 0)                /* avoid replays    */
     {
         bool songmode = song_mode();
-        if (m_max_extent > 0 && tick > m_max_extent)
+        if (m_max_extent > 0 && tick >= m_max_extent)
         {
-            auto_stop();
-            return;
-        }
+            /*
+             * auto_stop disengages auto-play. Instead we just stop with
+             * rewind.
+        m_max_extent = get_max_extent();
+             */
 
-        set_tick(tick);
-        for (auto seqi : play_set().seq_container())
-        {
-            if (seqi)
-                seqi->play_queue(tick, songmode, resume_note_ons());
-            else
-                append_error_message("play() on null sequence");
+            stop_playing(true);
+            is_pattern_playing(false);
+            m_master_bus->flush(); // EXPERIMENTAL      /* ca 2023-07-13    */
+            if (m_play_list->auto_advance_engaged())
+            {
+                (void) open_next_song();
+                delay_start();
+            }
         }
-        m_master_bus->flush();                          /* flush MIDI buss  */
+        else
+        {
+            set_tick(tick);
+            for (auto seqi : play_set().seq_container())
+            {
+                if (seqi)
+                    seqi->play_queue(tick, songmode, resume_note_ons());
+                else
+                    append_error_message("play() on null sequence");
+            }
+            m_master_bus->flush();                      /* flush MIDI buss  */
+        }
     }
 }
 
@@ -6973,7 +6989,7 @@ performer::midi_control_keystroke (const keystroke & k)
                     bool ok = mop.call(a, d0, d1, index, invert);
                     if (! ok)
                     {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                         printf
                         (
                             "Action %d: code %d, d0 %d, d1 %d ignored\n",
@@ -8743,6 +8759,7 @@ performer::open_next_song (bool opensong)
     {
         delay_stop();
         result = m_play_list->open_next_song(opensong);
+printf("opening next song\n");
     }
     else
     {

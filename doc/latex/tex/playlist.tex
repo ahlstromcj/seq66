@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-09-15
-% \update      2023-07-12
+% \update      2023-07-14
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -459,6 +459,8 @@
    If checked, the play-list is enabled, and the arrow keys, automation keys,
    and MIDI controls (if configured) can be used to move between play-lists and
    songs.
+   Note that this check-box will not work unless there are play-lists and songs
+   that exist in the tables and on the computer's file system.
 
 \subsubsection{Seq66 Play-Lists / User Interfaces / Info Fields}
 \label{subsubsec:playlist_ui_info_fields}
@@ -491,8 +493,16 @@
          This item sets the \texttt{unmute-next-song} (unfortunate name!)
          item in the 'playlist' file.
       \item \textbf{Auto: Play}.
-         This item sets the \texttt{unmute-next-song} item in the 'playlist'
-         file.
+         This item sets the \texttt{auto-play} item in the 'playlist'
+         file. If set, the the \textbf{Arm} setting is automatically set as
+         well. When set, the next song starts playing as soon as it
+         is loaded.
+      \item \textbf{Auto: Advance}.
+         This item sets the \texttt{auto-advance} item in the 'playlist'
+         file. If set, the the \textbf{Play} and \textbf{Arm}
+         settings are automatically set as well.
+         When set, at the end of one song, the next song is automatically
+         loaded and played as well.
    \end{itemize}
 
    There is currently no \texttt{deep-verify} check-box; edit the 'playlist'

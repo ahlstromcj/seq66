@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2023-07-12
+ * \updates       2023-07-14
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -230,10 +230,16 @@ playlistfile::parse ()
         }
         else
         {
+            /*
+             * The first one would be better named "auto-arm".
+             */
+
             bool flag = get_boolean(file, tag, "unmute-next-song");
             play_list().auto_arm(flag);
             flag = get_boolean(file, tag, "auto-play");
             play_list().auto_play(flag);
+            flag = get_boolean(file, tag, "auto-advance");
+            play_list().auto_advance(flag);
             flag = get_boolean(file, tag, "deep-verify");
             play_list().deep_verify(flag);
         }
@@ -482,8 +488,21 @@ playlistfile::write ()
      */
 
     file << "\n[playlist-options]\n\n";
+
+    file <<
+"# 'unmute-next-song' causes the next selected song to have all patterns\n"
+"# armed for playback. (Should be called 'auto-arm'). Does not matter for\n"
+"# songs with triggers for Song mode. 'auto-play' causes songs to start play\n"
+"# automatically when loaded. 'auto-advance' implies the settings noted\n"
+"# above. It automatically loads the next song in the play-list when the\n"
+"# current song ends. 'deep-verify' causes each tune in the play-list to be\n"
+"# loaded to make sure each one can be loaded. Otherwise, only file existence\n"
+"# is checked.\n\n"
+        ;
+
     write_boolean(file, "unmute-next-song", play_list().auto_arm());
     write_boolean(file, "auto-play", play_list().auto_play());
+    write_boolean(file, "auto-advance", play_list().auto_advance());
     write_boolean(file, "deep-verify", play_list().deep_verify());
     file << "\n"
 "# Here are the playlist settings, default storage folder, and then a list of\n"
@@ -537,7 +556,7 @@ playlistfile::write ()
         file
         << "\n[playlist]\n\n"
 "# This is a NON-FUNCTIONAL playlist SAMPLE. Please see one of the sample\n"
-"# playlist files shipped with Seq66.\n\n"
+"# playlist files shipped with Seq66, or fill this in the Playlist tab.\n\n"
             ;
     }
     write_seq66_footer(file);

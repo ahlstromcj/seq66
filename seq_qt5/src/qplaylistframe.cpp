@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-07-13
+ * \updates       2023-07-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -234,7 +234,6 @@ qplaylistframe::qplaylistframe
         ui->checkBoxAutoPlay, SIGNAL(clicked(bool)),
         this, SLOT(slot_auto_play_click())
     );
-    ui->checkBoxAutoAdvance->setEnabled(false);     // NOT YET READY
     connect
     (
         ui->checkBoxAutoAdvance, SIGNAL(clicked(bool)),
@@ -257,12 +256,12 @@ qplaylistframe::qplaylistframe
     connect
     (
         ui->spinPlaylistNumber, SIGNAL(valueChanged(int)),
-        this, SLOT(list_modify(int))        // SLOT(slot_playlist_number(int))
+        this, SLOT(list_modify(int))
     );
     connect
     (
         ui->spinPlaylistNumber, SIGNAL(editingFinished()),
-        this, SLOT(list_modify())           // SLOT(edit_playlist_number())
+        this, SLOT(list_modify())
     );
 #endif
 #if defined USE_SONG_NUMBER_TEXTEDIT
@@ -277,12 +276,12 @@ qplaylistframe::qplaylistframe
     connect
     (
         ui->spinSongNumber, SIGNAL(valueChanged(int)),
-        this, SLOT(song_modify(int))        // SLOT(slot_playlist_number(int))
+        this, SLOT(song_modify(int))
     );
     connect
     (
         ui->spinSongNumber, SIGNAL(editingFinished()),
-        this, SLOT(song_modify())           // SLOT(edit_playlist_number())
+        this, SLOT(song_modify())
     );
 #endif
 
@@ -431,6 +430,7 @@ qplaylistframe::set_current_playlist ()
     ui->checkBoxPlaylistActive->setChecked(perf().playlist_active());
     ui->checkBoxAutoArm->setChecked(perf().playlist_auto_arm());
     ui->checkBoxAutoPlay->setChecked(perf().playlist_auto_play());
+    ui->checkBoxAutoAdvance->setChecked(perf().playlist_auto_advance());
     temp = perf().playlist_filename();
     ui->entry_playlist_file->setText(qt(temp));
     temp = perf().file_directory();
@@ -654,15 +654,16 @@ qplaylistframe::load_playlist (const std::string & fullfilespec)
     bool result = ! fullfilespec.empty();
     if (result)
     {
-        bool playlistmode = perf().open_playlist(fullfilespec);
-        if (playlistmode)
+        bool opened = perf().open_playlist(fullfilespec);
+        if (opened)
         {
-            playlistmode = perf().open_current_song();
+            opened = perf().open_current_song();
             reset_playlist();
         }
         else
-            reset_playlist_file_name();
-
+        {
+            reset_playlist(); // reset_playlist_file_name();
+        }
         update();                           /* refresh the user-interface   */
     }
     return result;
@@ -991,13 +992,9 @@ qplaylistframe::slot_song_add_click ()
 {
     if (not_nullptr(parent()))
     {
-#if defined USE_LOADED_FILE                         // this is misleading !!!!
-        std::string name = rc().midi_filename();            /* full path    */
-#else
         std::string name = ui->editSongFilename->text().toStdString();
         std::string directory = ui->editSongPath->text().toStdString();
         name = filename_concatenate(directory, name);
-#endif
         bool loadedfile = ! name.empty();
         if (loadedfile)
         {
@@ -1119,7 +1116,7 @@ qplaylistframe::slot_auto_play_click ()
         bool on = ui->checkBoxAutoPlay->isChecked();
         perf().playlist_auto_play(on);
         ui->buttonPlaylistSave->setEnabled(true);
-        ui->checkBoxAutoArm->setChecked(true);
+        ui->checkBoxAutoArm->setChecked(true);          /* tricky   */
         slot_auto_arm_click();
     }
 }
@@ -1132,7 +1129,7 @@ qplaylistframe::slot_auto_advance_click ()
         bool on = ui->checkBoxAutoAdvance->isChecked();
         perf().playlist_auto_advance(on);
         ui->buttonPlaylistSave->setEnabled(true);
-        ui->checkBoxAutoPlay->setChecked(true);
+        ui->checkBoxAutoPlay->setChecked(true);         /* tricky   */
         slot_auto_play_click();
     }
 }

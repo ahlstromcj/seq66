@@ -382,7 +382,7 @@ public:
 
     bool auto_play_engaged () const
     {
-        return m_auto_play && m_engage_auto_play;
+        return active() && auto_play() && engage_auto_play();
     }
 
     void reengage_auto_play ()
@@ -400,6 +400,11 @@ public:
     bool auto_advance () const
     {
         return m_auto_advance;
+    }
+
+    bool auto_advance_engaged () const
+    {
+        return active() && auto_play() && auto_advance();
     }
 
     void auto_advance (bool flag)
