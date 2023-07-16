@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.99.6 and above
 Chris Ahlstrom
-2015-09-10 to 2023-07-01
+2015-09-10 to 2023-07-16
 
 Getting Seq66 requires building the code or going to
 "sequencer64-packages/seq66" on GitHub to get an installation package.  The
@@ -385,11 +385,6 @@ MANUALLY-DEFINED MACROS IN CODE:
     experiment-happy people will normally want to change the define-state of
     these macros.  We have consolidated them into a single file,
     libseq66/include/seq66_features.h, to make them easier to find and edit.
-
-    SEQ66_METRO_COUNT_IN_ENABLED
-
-        Enables the experimental but working feature of recording while
-        counting in to the metronome.
 
     SEQ66_USE_METRONOME_FADE
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-07-13
+ * \updates       2023-07-16
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2181,8 +2181,8 @@ public:
             master_bus()->print();
     }
 
-    void delay_start ();
-    void delay_stop ();
+    bool auto_play_start ();
+    bool auto_play_stop (midipulse tick);
     void auto_stop (bool rewind = false);
     void auto_pause ();
     void auto_play ();

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-07-03
+ * \updates       2023-07-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -61,6 +61,7 @@ static const int s_LR_box_w      =  8;
 static const int s_LR_box_h      = 24;
 static const int s_END_box_w     = 24;
 static const int s_END_box_h     = 24;
+static const int s_END_y         = 19;  /* keep the same as s_text_y        */
 static const int s_box_y         = 10;
 static const int s_text_y        = 19;
 static const int s_ts_text_y     = 19;
@@ -266,7 +267,7 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
     painter.drawRect(end, s_box_y, s_END_box_w, s_END_box_h);    // background
     pen.setColor(Qt::white);                                     // white text
     painter.setPen(pen);
-    painter.drawText(end + 1, s_text_y, "END");
+    painter.drawText(end + 1, s_END_y, "END");
     if (right >= xoff_left && right <= xoff_right)
     {
         pen.setColor(Qt::black);

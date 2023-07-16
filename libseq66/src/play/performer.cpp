@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-07-14
+ * \updates       2023-07-16
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -293,8 +293,7 @@ static const int c_thread_priority = 1;
  *  usages herein.
  */
 
-static const int c_delay_start      =  25;      /* delay_start()    */
-static const int c_delay_stop_ms    = 100;      /* delay_stop()     */
+static const int c_delay_start      = 10;       /* delay_start()    */
 
 /**
  *  Indicates how much of a long file-path we will show using the
@@ -2349,10 +2348,10 @@ performer::ui_change_set_bus (int buss)
 void
 performer::next_song_mode ()
 {
-    bool has_triggers = mapper().trigger_count() > 0;
     (void) set_playing_screenset(screenset::number(0));
     if (rc().song_start_auto())                     /* detect live vs song  */
     {
+        bool has_triggers = mapper().trigger_count() > 0;
         song_mode(has_triggers);
         if (has_triggers)
             set_song_mute(mutegroups::action::off);
@@ -2992,6 +2991,9 @@ performer::clear_song ()
         mapper().reset();               /* clears and recreates empty set   */
         m_is_busy = false;
         unmodify();                     /* new, we start afresh             */
+        set_tick(0);                    /* force a "rewind"                 */
+        pad().set_current_tick(0);      /* another necessary rewind         */
+        m_max_extent = 0;               /* force an "empty" song            */
         set_needs_update();             /* tell all GUIs to refresh. BUG!   */
     }
     return result;
@@ -5037,11 +5039,9 @@ performer::auto_play ()
         }
         else
         {
-#if defined SEQ66_METRO_COUNT_IN_ENABLED
             if (rc().metro_settings().count_in_active())
                 play_count_in();
             else
-#endif
                 start_playing();
 
             isplaying = true;
@@ -5049,11 +5049,11 @@ performer::auto_play ()
     }
     else if (! is_running())
     {
-#if defined SEQ66_METRO_COUNT_IN_ENABLED
         if (rc().metro_settings().count_in_active())
+        {
             play_count_in();
+        }
         else
-#endif
         {
             m_play_list->reengage_auto_play();
             start_playing();
@@ -5121,48 +5121,40 @@ performer::auto_stop (bool rewind)
 }
 
 /**
- *  Should now be called delay_and_start().  * ca 2023-07-12
+ *  If the play-list auto-play feature is engaged, then restart playback.
+ *  This also implies auto-arming, currently enforced in the user-interface.
+ *  But auto-marming is done in start_playing(),
  */
 
-void
-performer::delay_start ()
+bool
+performer::auto_play_start ()
 {
-    next_song_mode();
-    if (m_play_list->auto_arm() && ! song_mode())
-        set_song_mute(mutegroups::action::off);
-
-    if (! is_pattern_playing())
+    bool result = false;
+    if (m_play_list->auto_play_engaged())
     {
-        if (m_play_list->auto_play_engaged())
-        {
-            millisleep(c_delay_start);
-            auto_play();
-        }
+        millisleep(c_delay_start);
+        start_playing();
+        result = true;
     }
+    return result;
 }
 
 /**
- *  Should now be called stop_delay_and_clear().
+ *  auto_stop disengages auto-play. Instead we just stop with rewind.
  */
 
-void
-performer::delay_stop ()
+bool
+performer::auto_play_stop (midipulse tick)
 {
-    if (is_pattern_playing())                       /* ca 2023-07-12        */
+    bool result = m_play_list->auto_advance_engaged() &&
+        m_max_extent > 0 && tick >= m_max_extent;
+
+    if (result)
     {
-        bool engaged = m_play_list->engage_auto_play();
-
-        /*
-         * auto_stop();
-         */
-
         stop_playing(true);
-        is_pattern_playing(false);
-
-        m_play_list->engage_auto_play(engaged);
-        millisleep(c_delay_stop_ms);
+        (void) clear_song();
     }
-    (void) clear_song();
+    return result;
 }
 
 /**
@@ -5192,22 +5184,10 @@ performer::play (midipulse tick)
     if (tick != get_tick() || tick == 0)                /* avoid replays    */
     {
         bool songmode = song_mode();
-        if (m_max_extent > 0 && tick >= m_max_extent)
+        if (auto_play_stop(tick))
         {
-            /*
-             * auto_stop disengages auto-play. Instead we just stop with
-             * rewind.
-        m_max_extent = get_max_extent();
-             */
-
-            stop_playing(true);
-            is_pattern_playing(false);
-            m_master_bus->flush(); // EXPERIMENTAL      /* ca 2023-07-13    */
-            if (m_play_list->auto_advance_engaged())
-            {
-                (void) open_next_song();
-                delay_start();
-            }
+            (void) open_next_song();
+            auto_play_start();
         }
         else
         {
@@ -8526,6 +8506,8 @@ performer::read_midi_file
     if (result)
     {
         next_song_mode();
+        m_max_extent = get_max_extent();        /* analyze current file     */
+        set_tick(0);                            /* enforce beginning        */
         announce_mutes();                       /* cannot forget this one!  */
         notify_mutes_change(0, change::no);
     }
@@ -8625,14 +8607,13 @@ bool
 performer::open_next_list (bool opensong, bool loading)
 {
     bool result;
+    auto_stop(true);
     if (signalled_changes())
     {
-        delay_stop();
         result = m_play_list->open_next_list(opensong, loading);
     }
     else
     {
-        delay_stop();
         result = m_play_list->open_next_list(opensong, loading);
         if (result)
         {
@@ -8642,9 +8623,6 @@ performer::open_next_list (bool opensong, bool loading)
             notify_song_action(false);
         }
     }
-    if (result)                         /* ca 2023-07-12    */
-        delay_start();
-
     return result;
 }
 
@@ -8652,14 +8630,13 @@ bool
 performer::open_previous_list (bool opensong)
 {
     bool result;
+    auto_stop(true);
     if (signalled_changes())
     {
-        delay_stop();
         result = m_play_list->open_previous_list(opensong);
     }
     else
     {
-        delay_stop();
         result = m_play_list->open_previous_list(opensong);
         if (result)
         {
@@ -8669,9 +8646,6 @@ performer::open_previous_list (bool opensong)
             notify_song_action(false);
         }
     }
-    if (result)                         /* ca 2023-07-12    */
-        delay_start();
-
     return result;
 }
 
@@ -8681,14 +8655,10 @@ performer::open_select_song_by_index (int index, bool opensong)
     bool result;
     if (signalled_changes())
     {
-        if (opensong)
-            delay_stop();
-
         result = m_play_list->open_select_song(index, opensong);
     }
     else
     {
-        delay_stop();
         result = m_play_list->open_select_song(index, opensong);
         if (result)
         {
@@ -8698,9 +8668,6 @@ performer::open_select_song_by_index (int index, bool opensong)
             notify_song_action(false);
         }
     }
-    if (result)                         /* ca 2023-07-12    */
-        delay_start();
-
     return result;
 }
 
@@ -8710,12 +8677,10 @@ performer::open_select_song_by_midi (int ctrl, bool opensong)
     bool result;
     if (signalled_changes())
     {
-        delay_stop();
         result = m_play_list->open_select_song_by_midi(ctrl, opensong);
     }
     else
     {
-        delay_stop();
         result = m_play_list->open_select_song_by_midi(ctrl, opensong);
         if (result)
         {
@@ -8725,9 +8690,6 @@ performer::open_select_song_by_midi (int ctrl, bool opensong)
             notify_song_action(false);
         }
     }
-    if (result)                         /* ca 2023-07-12    */
-        delay_start();
-
     return result;
 }
 
@@ -8757,13 +8719,10 @@ performer::open_next_song (bool opensong)
     bool result;
     if (signalled_changes())
     {
-        delay_stop();
         result = m_play_list->open_next_song(opensong);
-printf("opening next song\n");
     }
     else
     {
-        delay_stop();
         result = m_play_list->open_next_song(opensong);
         if (result)
         {
@@ -8773,9 +8732,6 @@ printf("opening next song\n");
             notify_song_action(false);
         }
     }
-    if (result)                         /* ca 2023-07-12    */
-        delay_start();
-
     return result;
 }
 
@@ -8785,12 +8741,10 @@ performer::open_previous_song (bool opensong)
     bool result;
     if (signalled_changes())
     {
-        delay_stop();
         result = m_play_list->open_previous_song(opensong);
     }
     else
     {
-        delay_stop();
         result = m_play_list->open_previous_song(opensong);
         if (result)
         {
@@ -8800,9 +8754,6 @@ performer::open_previous_song (bool opensong)
             notify_song_action(false);
         }
     }
-    if (result)                         /* ca 2023-07-12    */
-        delay_start();
-
     return result;
 }
 

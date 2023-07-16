@@ -1526,10 +1526,9 @@ sequence::play
         {
             if (times_played >= loop_count_max())
             {
-#if defined SEQ66_METRO_COUNT_IN_ENABLED
                 if (is_metro_seq())                 /* count-in is complete */
                     m_parent->finish_count_in();
-#endif
+
                 return;
             }
         }
@@ -1638,10 +1637,9 @@ sequence::live_play (midipulse tick)
         {
             if (times_played >= loop_count_max())
             {
-#if defined SEQ66_METRO_COUNT_IN_ENABLED
                 if (is_metro_seq())                 /* count-in is complete */
                     m_parent->finish_count_in();
-#endif
+
                 return;
             }
         }

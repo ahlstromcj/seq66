@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-07-01
+ * \updates       2023-07-16
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -57,12 +57,6 @@
 #define STDERR_FILENO   2
 #endif
 #endif
-
-/**
- *  Support the the metronome feature. Issue #98.
- */
-
-#define SEQ66_METRO_COUNT_IN_ENABLED    /* EXPERIMENTAL, seems to work      */
 
 /**
  *  For issue #100, this macro enables using our new ring_buffer instead of

@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.7
 Chris Ahlstrom
-2019-04-13 to 2023-07-14
+2019-04-13 to 2023-07-15
 
 UI:
 
@@ -37,10 +37,8 @@ Mutes:
 
 Playlists:
 
-    -   When changing the buss with override, then do a Save-As, the new buss
-        is not saved in the file.
-    -   Make sure that otherwise changing the buss during playlist processing
-        does not raise the save/dirty flag.
+    -   When opening play-list, also open next song.
+    -   Still need to work out playlist naming and replacement.
 
 From Testing:
 

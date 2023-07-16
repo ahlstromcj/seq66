@@ -92,6 +92,7 @@
          <font>
           <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
+          <weight>75</weight>
           <italic>false</italic>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
@@ -294,6 +295,7 @@ It does not change Seq66's default PPQN.</string>
          <font>
           <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -350,6 +352,7 @@ It does not change Seq66's default PPQN.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -697,6 +700,7 @@ It does not change Seq66's default PPQN.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -722,6 +726,7 @@ It does not change Seq66's default PPQN.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -754,6 +759,7 @@ It does not change Seq66's default PPQN.</string>
         <property name="font">
          <font>
           <pointsize>9</pointsize>
+          <weight>50</weight>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -805,6 +811,7 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -836,6 +843,7 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -880,6 +888,7 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -908,6 +917,7 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -957,8 +967,8 @@ matter what sets-mode is in force. </string>
           </property>
           <property name="iconSize">
            <size>
-            <width>24</width>
-            <height>24</height>
+            <width>16</width>
+            <height>16</height>
            </size>
           </property>
           <property name="checkable">
@@ -1302,6 +1312,7 @@ Shift key enables recording at start of playback.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1388,6 +1399,7 @@ Shift key enables recording at start of playback.</string>
           </property>
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1419,6 +1431,7 @@ Shift key enables recording at start of playback.</string>
           </property>
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1455,7 +1468,7 @@ Shift key enables recording at start of playback.</string>
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>27</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1664,7 +1677,7 @@ and messages.</string>
   </action>
   <action name="actionExportSMF0">
    <property name="text">
-    <string>Export SMF 0...</string>
+    <string>Export &amp;SMF 0...</string>
    </property>
    <property name="toolTip">
     <string>Convert to SMF 0 and export without Seq66 SeqSpecs.</string>
@@ -1763,7 +1776,7 @@ in the same directory as the original, with the extension
   </action>
   <action name="actionPasteToCurrentSet">
    <property name="text">
-    <string>Paste To Current Set</string>
+    <string>Past&amp;e To Current Set</string>
    </property>
    <property name="iconText">
     <string>P&amp;aste To Current Set</string>
@@ -1771,7 +1784,7 @@ in the same directory as the original, with the extension
   </action>
   <action name="actionImportPlaylist">
    <property name="text">
-    <string>Import Playlist...</string>
+    <string>Import &amp;Playlist...</string>
    </property>
    <property name="toolTip">
     <string>Import a playlist into the session.</string>
@@ -1782,7 +1795,7 @@ in the same directory as the original, with the extension
   </action>
   <action name="actionImportMIDIIntoSession">
    <property name="text">
-    <string>Import MIDI into Session</string>
+    <string>Import &amp;MIDI into Session</string>
    </property>
   </action>
   <action name="actionTutorial">

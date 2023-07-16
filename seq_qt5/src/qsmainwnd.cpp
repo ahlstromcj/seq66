@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-07-11
+ * \updates       2023-07-15
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -132,7 +132,7 @@
 #include "pixmaps/learn.xpm"
 #include "pixmaps/learn2.xpm"
 #include "pixmaps/loop.xpm"
-#include "pixmaps/panic.xpm"
+#include "pixmaps/panic.xpm"           /* panic.xpm was too big and fuzzy  */
 #include "pixmaps/pause.xpm"
 #include "pixmaps/perfedit.xpm"
 #include "pixmaps/play2.xpm"
@@ -1475,6 +1475,7 @@ qsmainwnd::specify_list_dialog ()
         );
         if (ok)
         {
+            fname = file_extension_set(fname, ".playlist");
             rc().playlist_filename(fname);
             rc().auto_playlist_save(true);
             rc().auto_rc_save(true);
