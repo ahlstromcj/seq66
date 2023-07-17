@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.7
 Chris Ahlstrom
-2019-04-13 to 2023-07-15
+2019-04-13 to 2023-07-17
 
 UI:
 
@@ -37,8 +37,15 @@ Mutes:
 
 Playlists:
 
-    -   When opening play-list, also open next song.
+    -   When opening play-list, also open next song. Make the play-list
+        active.
     -   Still need to work out playlist naming and replacement.
+    -   Specifying a playlist on the command-line should activate it.
+        It does, but there was a bug in rcsettings::make_config_filespec().
+    -   Set all contrib/midi and data/midi MIDI files to use port 0
+    -   Consider adding a configurable play-list auto-advance delay value.
+    -   Why is the first play-list file double loaded?
+    -   How to force ports to 0 when errors happen, and save the file.
 
 From Testing:
 

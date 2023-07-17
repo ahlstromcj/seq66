@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-07-16
+ * \updates       2023-07-17
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -289,11 +289,13 @@ static const int c_thread_priority = 1;
  *  tune would really jack up JACK, crashing the app (corrupted double-linked
  *  list, double frees in destructors, etc.) and sometimes leaving a loud tone
  *  buzzing.  So after we stop the current tune, we delay a little bit to
- *  allow JACK playback to exit.  See the delay_stop() member function and its
- *  usages herein.
+ *  allow JACK playback to exit.
+ *
+ *  1. TEST WITH JACK.
+ *  2. MAKE A CONFIGURATION ITEM?
  */
 
-static const int c_delay_start      = 10;       /* delay_start()    */
+static const int c_delay_start = 1000;
 
 /**
  *  Indicates how much of a long file-path we will show using the
@@ -966,7 +968,7 @@ performer::true_input_bus (bussbyte nominalbuss) const
                 msg += busname;
                 msg += "\"";
             }
-            msg += ". Check ports in the 'rc'/'ctrl' files.";
+            msg += ". Check ports in the rc/ctrl files.";
             m_port_map_error = true;                /* mutable boolean      */
             append_error_message(msg);
         }

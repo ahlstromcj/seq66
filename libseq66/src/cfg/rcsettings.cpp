@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-05-12
+ * \updates       2023-07-17
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -563,7 +563,7 @@ rcsettings::make_config_filespec
     const std::string & ext
 ) const
 {
-    std::string result;
+    std::string result = base;                          /* bugfix 23-07-17  */
     auto pos = base.find_last_of(".");
     if (pos != std::string::npos)                       /* base.extension   */
     {
@@ -571,18 +571,10 @@ rcsettings::make_config_filespec
         if (pos != std::string::npos)                   /* slash in base    */
         {
             if (pos > 0)                                /* not at start     */
-            {
-                result = home_config_directory();       /* relative path    */
-                result += base;
-            }
-            else
-                result = base;                          /* a full path      */
+                result = filename_concatenate(home_config_directory(), base);
         }
         else
-        {
-            result = home_config_directory();           /* HOME/base.exten  */
-            result += base;
-        }
+            result = filename_concatenate(home_config_directory(), base);
     }
     else
     {

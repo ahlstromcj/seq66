@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-07-15
+ * \updates       2023-07-17
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -452,7 +452,6 @@ qsmainwnd::qsmainwnd
         Qt::WindowFlags c = Qt::WindowCloseButtonHint;
         f = f & (~c);
         setWindowFlags(f);
-
         connect_nsm_slots();
     }
     else
@@ -1422,6 +1421,9 @@ qsmainwnd::open_list_dialog ()
         result = not_nullptr(m_playlist_frame);
         if (result)
         {
+            cb_perf().playlist_activate(true);      /* ca 2023-07-17    */
+            rc().playlist_active(true);             /* ditto            */
+            refresh_captions();                     /* ditto            */
             result = m_playlist_frame->load_playlist(fname);
             if (! result)
                 show_error_box(cb_perf().playlist_error_message());
@@ -1667,9 +1669,10 @@ qsmainwnd::open_file (const std::string & fn)
         if (cb_perf().port_map_error())                 /* ca 2023-06-01    */
         {
             std::string msg =
-                "Unavailable port(s) specified in MIDI file. Check ports "
-                "and perhaps modify MIDI file to specify available ports."
+                "Unavailable port(s) specified in MIDI file. "
+                "Perhaps modify MIDI file to specify available ports. "
                 ;
+            msg += cb_perf().error_messages();
 
             bool yes = show_error_box_ex(msg, false);
             if (yes)
