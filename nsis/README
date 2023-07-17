@@ -1,6 +1,6 @@
 NSIS Notes
 Chris Ahlstrom
-2021-12-11 to 2023-07-01
+2021-12-11 to 2023-07-17
 
 This directory contains files that allow Linux and Windows users to create
 an NSIS installer for Seq66. The latest version adds application

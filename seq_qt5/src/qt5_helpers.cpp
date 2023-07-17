@@ -116,7 +116,9 @@ qt_keystroke_test (QKeyEvent * event, keystroke::action act)
  *  one of them, for example.
  *
  *  We can also check the nativeVirtualKey() result for the event.  Even that
- *  can be fooled by a change in the keyboard encoding.  Yeesh!
+ *  can be fooled by a change in the keyboard encoding.  Yeesh! And on
+ *  Windows, the native value is different from that of Linux for the arrow
+ *  keys.
  *
  *  The qt_modkey_ordinal() function in the keymap module can use all these
  *  codes to try to figure out the proper ordinal to return.
