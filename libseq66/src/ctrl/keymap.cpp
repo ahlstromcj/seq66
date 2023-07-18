@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-12-04
+ * \updates       2023-07-18
  * \license       GNU GPLv2 or above
  */
 
@@ -244,11 +244,17 @@ struct qt_keycodes
  *  values in accessor functions.
  */
 
+#if defined SEQ66_PLATFORM_WINDOWS
+
+#include "winkeys.hpp"                  /* provisional Windows key mapping  */
+
+#else
+
 static qt_keycodes &
 qt_keys (int i)
 {
     using namespace keyboard;
-    static qt_keycodes s_qt_keys [] =   /* modifiable from inside this module */
+    static qt_keycodes s_qt_keys [] =   /* modifiable inside this module    */
     {
         /*
          *  Code        Qt      Qt      Key
@@ -273,9 +279,9 @@ qt_keys (int i)
         {  0x0b,        0x4b,   0x6b,  "VT",         KCTRL  }, // ^K: Vertical Tab
         {  0x0c,        0x4c,   0x6c,  "FF",         KCTRL  }, // ^L: Form Feed
         {  0x0d,        0x4d,   0x6d,  "CR",         KCTRL  }, // ^M: Carriage Return
-        {  0x0e,        0x4e,   0x60,  "SO",         KCTRL  }, // ^N: Shift Out
-        {  0x0f,        0x4f,   0x6e,  "SI",         KCTRL  }, // ^O: Shift In
-        {  0x10,        0x50,   0x7f,  "DLE",        KCTRL  }, // ^P: Data Link Escape
+        {  0x0e,        0x4e,   0x6e,  "SO",         KCTRL  }, // ^N: Shift Out
+        {  0x0f,        0x4f,   0x6f,  "SI",         KCTRL  }, // ^O: Shift In
+        {  0x10,        0x50,   0x70,  "DLE",        KCTRL  }, // ^P: Data Link Escape
         {  0x11,        0x51,   0x71,  "DC1",        KCTRL  }, // ^Q: Device Control 1
         {  0x12,        0x52,   0x72,  "DC2",        KCTRL  }, // ^R: Device Control 2
         {  0x13,        0x53,   0x73,  "DC3",        KCTRL  }, // ^S: Device Control 3
@@ -567,6 +573,8 @@ qt_keys (int i)
     return s_qt_keys[i];
 }
 
+#endif  // defined SEQ66_PLATFORM_WINDOWS
+
 /**
  *  Returns the key-name for undefined keys, those not yet defined in the
  *  key-map.  Also used when out-of-range ordinals are encountered.
@@ -823,6 +831,19 @@ qt_modkey_ordinal (eventkey qtkey, unsigned qtmodifier, eventkey virtkey)
                 result = cqi->second.qtk_ordinal;
         }
     }
+
+#if defined SEQ66_PLATFORM_DEBUG
+    std::string name = qt_ordinal_keyname(result);
+    char temp[132];
+    (void) snprintf
+    (
+        temp, sizeof temp,
+        "qt_modkey_ordinal(0x%x, 0x%x, 0x%x) --> 0x%x '%s'",
+        qtkey, qtmodifier, virtkey, result, name.c_str()
+    );
+    printf("%s\n", temp);
+#endif
+
     return result;
 }
 
@@ -956,15 +977,15 @@ setup_qt_azerty_fr_keys ()
         { 0x22,   0x22,     0x22,   "\"",        KNONE  }, // QuoteDbl
         { 0x23,   0x23,     0x23,   "#",         KALTGR }, // NumberSign
         { 0x26,   0x26,     0x26,   "&",         KNONE  }, // Ampersand
-        { 0x27,   0x27,     0x27,  "'",          KNONE  }, // Apostrophe
-        { 0x28,   0x28,     0x28,  "(",          KNONE  }, // ParenLeft
-        { 0x29,   0x29,     0x29,  ")",          KNONE  }, // ParenRight
-        { 0x2a,   0x2a,     0x2a,  "*",          KNONE  }, // Asterisk
-        { 0x2e,   0x2e,     0x2e,  ".",          KSHIFT }, // Period
-        { 0x2f,   0x2f,     0x2f,  "/",          KSHIFT }, // Slash
-        { 0x3a,   0x3a,     0x3a,  ":",          KNONE  }, // Colon
-        { 0x3c,   0x3c,     0x3c,  "<",          KNONE  },
-        { 0x40,   0x40,     0x40,  "@",          KALTGR }, // AtSign
+        { 0x27,   0x27,     0x27,   "'",         KNONE  }, // Apostrophe
+        { 0x28,   0x28,     0x28,   "(",         KNONE  }, // ParenLeft
+        { 0x29,   0x29,     0x29,   ")",         KNONE  }, // ParenRight
+        { 0x2a,   0x2a,     0x2a,   "*",         KNONE  }, // Asterisk
+        { 0x2e,   0x2e,     0x2e,   ".",         KSHIFT }, // Period
+        { 0x2f,   0x2f,     0x2f,   "/",         KSHIFT }, // Slash
+        { 0x3a,   0x3a,     0x3a,   ":",         KNONE  }, // Colon
+        { 0x3c,   0x3c,     0x3c,   "<",         KNONE  },
+        { 0x40,   0x40,     0x40,   "@",         KALTGR }, // AtSign
         { 0x5b,   0x5b,     0x5b,   "[",         KALTGR }, // BracketLeft
         { 0x5c,   0x5c,     0x5c,   "\\",        KALTGR }, // Backslash
         { 0x5d,   0x5d,     0x5d,   "]",         KALTGR }, // BracketRight

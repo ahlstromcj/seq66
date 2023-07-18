@@ -150,8 +150,12 @@ qt_keystroke (QKeyEvent * event, keystroke::action act, bool testing)
 
     unsigned kmods = static_cast<unsigned>(event->modifiers());
     eventkey k = event->key();
+#if defined SEQ66_PLATFORM_WINDOWS
+    ctrlkey ordinal = qt_modkey_ordinal(k, kmods, 0);
+#else
     eventkey v = event->nativeVirtualKey();
     ctrlkey ordinal = qt_modkey_ordinal(k, kmods, v);
+#endif
     bool press = act == keystroke::action::press;
     return keystroke(ordinal, press, kmods);
 }
