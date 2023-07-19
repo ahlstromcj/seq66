@@ -1,19 +1,21 @@
-Release Notes for Seq66 v. 0.99.7 2023-07-18
+Release Notes for Seq66 v. 0.99.7 2023-07-19
 
 This file lists __major__ changes in version 0.99.7
 
     -   Issue #110 follow-ons:
-        -   Fixed saving tempo (BPM) in Windows when changed from main window.
-            Caused by mixing a long and size_t; messed up in Windows builds.
+        -   Fixed saving tempo (BPM) in Windows when changed from main
+            window. Caused by mixing a long and size_t; messed up in
+            Windows builds.
     -   Issue #111 follow-ons:
         -   Fixed initial time-signature drawing in data pane.
         -   Fixed errors in inserting a time-signature.
-        -   Added a pulse (tick) calculator to iterate through time-signatures.
+        -   Added a pulse (tick) calculator to iterate through
+            time-signatures.
     -   Fixed an important port-translation bug in output port-mapping.
     -   Revamped the Playlist tab, as it was confusing and very buggy.
     -   Added auto-play and auto-advance to play-lists.
-    -   Added Windows key-mapping to fix processing "native virtual" keys,
-        such as the arrow keys.
+    -   Issue #102: Added Windows key-mapping to fix processing
+        "native virtual" keys, such as the arrow keys.
 
 Read the NEWS, README.md, and TODO files.
 

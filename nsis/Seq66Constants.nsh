@@ -3,14 +3,14 @@
 ; File:         Seq66Constants.nsh
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2023-07-17
+; Updated:      2023-07-19
 ; Version:      0.99.7
 ;
 ;   Provides constants commonly used by the installer for Seq66 for
 ;   Windows.
 ;
 ;   Note that "PRODUCT_NAME" determines the name of the directory in
-;   C:/Program Files(x86) where the application is installed.
+;   C:/Program Files, where the application is installed.
 ;
 ;---------------------------------------------------------------------------
 
@@ -46,6 +46,8 @@
 !define WIN64
 !define WINBITS             "64"
 
+; We currently cannot get a 32-bit build to work outside of Qtcreator.
+;
 ; !define WIN32
 ; !define WINBITS           "32"
 

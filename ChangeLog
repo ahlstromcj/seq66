@@ -1,5 +1,160 @@
+2023-07-19  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, doc/latex/tex/configuration.tex,
+	doc/latex/tex/launchpad_mini.tex, doc/latex/tex/windows.tex,
+	libseq66/src/ctrl/keymap.cpp, libseq66/src/ctrl/winkeys.hpp: Doc
+	updates and Windows/AZERTY keymap tweaks.
+
+2023-07-18  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES, contrib/notes/win-virtual-keys.text,
+	libseq66/src/ctrl/keymap.cpp, libseq66/src/ctrl/winkeys.hpp,
+	seq_qt5/forms/qsessionframe.ui, seq_qt5/src/qt5_helpers.cpp: Added
+	Windows key-mapping module.
+
+2023-07-17  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/readme.text, data/readme.windows,
+	data/win/win_midi.playlist, nsis/README, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat,
+	seq_qt5/src/qt5_helpers.cpp: Windows installer updates and fixes.
+	* README.md, TODO, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/src/qsmainwnd.cpp: Minor
+	playlist fixes.
+
+2023-07-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, TODO, libseq66/include/play/performer.hpp,
+	libseq66/include/seq66_features.h, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, resources/pixmaps/panic2.xpm,
+	seq_qt5/forms/qsmainwnd.ui, seq_qt5/src/qseqtime.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Auto-advance seems to be perfected, let
+	us pray.
+
+2023-07-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES, TODO, doc/latex/tex/playlist.tex,
+	libseq66/include/play/playlist.hpp,
+	libseq66/src/cfg/playlistfile.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/forms/qperfeditframe64.ui, seq_qt5/forms/qsessionframe.ui,
+	seq_qt5/src/qplaylistframe.cpp: Auto-advance almost working.
+
+2023-07-13  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp,
+	libseq66/include/play/playlist.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/playlist.cpp,
+	seq_qt5/forms/qplaylistframe.ui,
+	seq_qt5/include/qplaylistframe.hpp, seq_qt5/src/qplaylistframe.cpp: 
+	Auto-play improved, added support for play-list auto-advance.
+
+2023-07-12  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES, configure.ac, doc/latex/tex/playlist.tex,
+	include/config.h.in, libseq66/include/play/performer.hpp,
+	libseq66/include/play/playlist.hpp,
+	libseq66/src/cfg/playlistfile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/playlist.cpp, seq_qt5/forms/qplaylistframe.ui,
+	seq_qt5/include/qplaylistframe.hpp, seq_qt5/src/qplaylistframe.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Added auto-play support to playlists,
+	needs some tinkering.
+	* README.md, RELNOTES, TODO, libseq66/src/play/performer.cpp: Fixed
+	a nasty bug in output port-mapping lookup.
+
+2023-07-11  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, data/samples/ca_midi.playlist,
+	doc/latex/tex/configuration.tex, doc/latex/tex/playlist.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/playlist.hpp,
+	libseq66/src/cfg/playlistfile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/playlist.cpp, seq_qt5/forms/qplaylistframe.ui,
+	seq_qt5/include/qplaylistframe.hpp, seq_qt5/src/qplaylistframe.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixed handling MIDI file paths in
+	playlists.
+
+2023-07-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp,
+	libseq66/include/play/playlist.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/playlist.cpp,
+	seq_qt5/forms/qplaylistframe.ui, seq_qt5/forms/qseqeventframe.ui,
+	seq_qt5/include/qplaylistframe.hpp, seq_qt5/src/qplaylistframe.cpp: 
+	Playlist UI tweaks, added list activation function.
+
+2023-07-09  ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/play/performer.hpp,
+	libseq66/include/play/playlist.hpp,
+	libseq66/src/cfg/playlistfile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/playlist.cpp, seq_qt5/forms/qplaylistframe.ui,
+	seq_qt5/include/qplaylistframe.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/qplaylistframe.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5_helpers.cpp: More
+	playlist revamping, nearly done.
+
+2023-07-08  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, seq_qt5/forms/qplaylistframe.ui,
+	seq_qt5/include/qplaylistframe.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/qplaylistframe.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5_helpers.cpp: More
+	playlist revamping, much more to come.
+
+2023-07-07  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, doc/latex/tex/first_start.tex, doc/latex/tex/windows.tex,
+	seq_qt5/forms/qmutemaster.ui, seq_qt5/forms/qplaylistframe.ui,
+	seq_qt5/forms/qsessionframe.ui, seq_qt5/forms/qsetmaster.ui,
+	seq_qt5/include/qplaylistframe.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qplaylistframe.cpp, seq_qt5/src/qsmainwnd.cpp: Starting
+	improvement of Playlists tab.
+
+2023-07-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES, TODO, libseq66/include/midi/midifile.hpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixed BPM saving error in Windows, issue
+	#110.
+
+2023-07-05  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/midi/calculations.hpp,
+	libseq66/include/midi/editable_events.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/calculations.cpp,
+	libseq66/src/midi/editable_events.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qseqtime.cpp,
+	seq_qt5/src/qseventslots.cpp, seq_qt5/src/qstriggereditor.cpp: Issue
+	#111 time-sig insertion solved.
+
+2023-07-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/midi/calculations.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/calculations.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqeventframe.cpp, seq_qt5/src/qseqtime.cpp: Some more
+	fixes to time-signature analysis.
+
 2023-07-01  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* INSTALL, README.md, TODO, VERSION, configure, configure.ac,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/seq66_features.h, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qseqtime.hpp, seq_qt5/include/qstriggereditor.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qseqtime.cpp, seq_qt5/src/qstriggereditor.cpp: Cleanup
+	for next version of Seq66.
+	* ChangeLog, RELNOTES, contrib/git/git.text, {nsis =>
+	contrib/scripts}/build_debug_code.bat, data/license.text,
+	data/readme.text, data/readme.windows,
+	doc/latex/tex/port_mapping.tex, nsis/README,
+	nsis/build_release_package.bat, nsis/winddeploybruteforce.bat: 
+	Release Notes for Seq66 v. 0.99.6 2023-07-01
 	* README.md, doc/latex/tex/references.tex,
 	seq_portmidi/src/pmwinmm.c: Minor doc updates.
 

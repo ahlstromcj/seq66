@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2023-05-30
+ * \updates       2023-07-19
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -510,14 +510,18 @@ doc_folder_list ()
         static std::string s_64_dir =
             "C:/Program Files/Seq66/data/share/doc";
 
-        static std::string s_32_dir =
-            "C:/Program Files (x86)/Seq66/data/share/doc";
+        /*
+         * Currently cannot do 32-bit builds in Windows.
+         *
+         *  static std::string s_32_dir =
+         *      "C:/Program Files (x86)/Seq66/data/share/doc";
+         *  s_32_dir[0] = app_path[0];
+         *  s_folder_list.push_back(s_32_dir);
+         */
 
         std::string app_path = seq_app_path();
         s_64_dir[0] = app_path[0];
-        s_32_dir[0] = app_path[0];
         s_folder_list.push_back(s_64_dir);
-        s_folder_list.push_back(s_32_dir);
 #else
         static std::string s_usr_dir;
         static std::string s_usr_local_dir;
@@ -550,14 +554,19 @@ tutorial_folder_list ()
 #if defined SEQ66_PLATFORM_WINDOWS
         static std::string s_64_dir =
             "C:/Program Files/Seq66/data/share/doc/tutorial";
-        static std::string s_32_dir =
-            "C:/Program Files (x86)/Seq66/data/share/doc/tutorial";
+
+        /*
+         * Currently cannot do 32-bit builds in Windows.
+         *
+         *  static std::string s_32_dir =
+         *      "C:/Program Files (x86)/Seq66/data/share/doc/tutorial";
+         *  s_32_dir[0] = app_path[0];
+         *  s_folder_list.push_back(s_32_dir);
+         */
 
         std::string app_path = seq_app_path();
         s_64_dir[0] = app_path[0];
-        s_32_dir[0] = app_path[0];
         s_folder_list.push_back(s_64_dir);
-        s_folder_list.push_back(s_32_dir);
 
 #else
         static std::string s_usr_dir;

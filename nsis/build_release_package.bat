@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2023-07-17
+:: \update      2023-07-19
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -54,7 +54,7 @@
 ::
 ::       1. C:\Qt\Qt5.12.9\5.12.9\mingw73_32\bin    (or 64-bit)
 ::       2. C:\Qt\Qt5.12.9\Tools\mingw73_32\bin     (ditto)
-::       3. C:\Program Files (x86)\NSIS\bin         (if NSIS installed on Win)
+::       3. C:\Program Files\NSIS\bin               (if NSIS installed on Win)
 ::       4. C:\Program File\Git\usr\bin etc.        (if Git Bash installed)
 ::
 ::      Depending on the versions some things will be different.
@@ -172,7 +172,7 @@
 ::---------------------------------------------------------------------------
  
 set PROJECT_VERSION=0.99.7
-set PROJECT_DATE=2023-07-17
+set PROJECT_DATE=2023-07-19
 set PROJECT_DRIVE=C:
 
 :: Set the bits of the project, either 64 or 32. Also define WIN64 versus

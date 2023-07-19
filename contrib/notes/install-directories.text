@@ -1,6 +1,6 @@
-Installation directories for Seq66 in Linux and Window
+Installation directories for Seq66 in Linux and Windows
 Chris Ahlstrom
-2023-05-26 to 2023-05-27
+2023-05-26 to 2023-07-19
 
 Linux:
 
@@ -22,8 +22,8 @@ Linux:
 
 Windows:
 
-    Let PREFIX = "C:/Program Files" (64-bit) or "C:/Program Files (x86)"
-    (32-bit).  Let HOME = "C:/Users/username".
+    Let PREFIX = "C:/Program Files" (64-bit)
+    Let HOME = "C:/Users/username".
 
     Header files:   Not installed on Windows
     Executable:     PREFIX/Seq66
