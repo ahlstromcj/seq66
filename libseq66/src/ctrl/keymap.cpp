@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-07-18
+ * \updates       2023-07-19
  * \license       GNU GPLv2 or above
  */
 
@@ -573,6 +573,123 @@ qt_keys (int i)
     return s_qt_keys[i];
 }
 
+/**
+ *  Extended keys, running on system locale with French (fr) AZERTY keymap.
+ *  The first number is the value returned by QKeyEvent::key().  The second
+ *  column is the name returned by QKeyEvent::text().  The scan code is
+ *  returned by QKeyEvent::nativeScanCode(), but is not used in this table.
+ *  The keycode is returned by QKeyEvent::nativeVirtualKey(), and is used to
+ *  look up the s_qt_keys[] slot that will be replaced by the information
+ *  below.
+ *
+ *  Note that these code are what we found on Debian Linux after running
+ *  "setxkbmap fr".  All of the standard ASCII symbols are unchanged with this
+ *  mapping, even though their locations on the French keyboard are different,
+ *  and numeric-key shifting is reversed compared to the US key-map.
+ *
+ *  Also note that we cannot place the characters themselves in a 'ctrl' file.
+ *  When read, these characters have the value 0xffffffc2 or 0xffffffc3.  So
+ *  we have to make up names to use in the 'ctrl' file.
+ *
+ * Sylvain's findings on a real AZERTY keyboard:
+ *
+\verbatim
+        Key #0xa3   '£' scan = 0x23; keycode = 0xa3
+        Key #0xa4   '¤' scan = 0x23; keycode = 0xa4
+        Key #0xa7   '§' scan = 0x3d; keycode = 0xa7
+        Key #0xb0   '°' scan = 0x14; keycode = 0xb0
+        Key #0xb2   '²' scan = 0x31; keycode = 0xb2
+        Key #0xc0   'à' scan = 0x13; keycode = 0xe0
+        Key #0xc7   'ç' scan = 0x12; keycode = 0xe7
+        Key #0xc8   'è' scan = 0x10; keycode = 0xe8
+        Key #0xc9   'é' scan = 0x0b; keycode = 0xe9
+        Key #0xd9   'ù' scan = 0x30; keycode = 0xf9
+        Key #0x039c  'µ' scan = 0x33; keycode = 0xb5
+        Key #0x20ac '€' scan = 0x1a; keycode = 0x20ac
+        Key #0x1001252 '^' scan = 0x22; keycode = 0xfe52
+        Key #0x1001257 '¨' scan = 0x22; keycode = 0xfe57
+\endverbatim
+ *
+ *  Just call this function once.
+ */
+
+static void
+setup_qt_azerty_fr_keys ()
+{
+    using namespace keyboard;
+    static const qt_keycodes s_fr_keys [] =
+    {
+        /*
+         *  Code     Qt      Qt      Key
+         * Ordinal Evkey  Virtkey   Name        Modifier
+         */
+
+        { 0x21,   0x21,     0x21,   "!",         KNONE  }, // Exclam
+        { 0x22,   0x22,     0x22,   "\"",        KNONE  }, // QuoteDbl
+        { 0x23,   0x23,     0x23,   "#",         KALTGR }, // NumberSign
+        { 0x26,   0x26,     0x26,   "&",         KNONE  }, // Ampersand
+        { 0x27,   0x27,     0x27,   "'",         KNONE  }, // Apostrophe
+        { 0x28,   0x28,     0x28,   "(",         KNONE  }, // ParenLeft
+        { 0x29,   0x29,     0x29,   ")",         KNONE  }, // ParenRight
+        { 0x2a,   0x2a,     0x2a,   "*",         KNONE  }, // Asterisk
+        { 0x2e,   0x2e,     0x2e,   ".",         KSHIFT }, // Period
+        { 0x2f,   0x2f,     0x2f,   "/",         KSHIFT }, // Slash
+        { 0x3a,   0x3a,     0x3a,   ":",         KNONE  }, // Colon
+        { 0x3c,   0x3c,     0x3c,   "<",         KNONE  },
+        { 0x40,   0x40,     0x40,   "@",         KALTGR }, // AtSign
+        { 0x5b,   0x5b,     0x5b,   "[",         KALTGR }, // BracketLeft
+        { 0x5c,   0x5c,     0x5c,   "\\",        KALTGR }, // Backslash
+        { 0x5d,   0x5d,     0x5d,   "]",         KALTGR }, // BracketRight
+        { 0x5e,   0x5e,     0x5e,   "^",         KALTGR }, // AsciiCircumflex
+        { 0x5f,   0x5f,     0x5f,   "_",         KNONE  }, // Underscore
+        { 0x60,   0x60,     0x60,   "`",         KALTGR }, // QuoteLeft, Backtick
+        { 0x7b,   0x7b,     0x7b,   "{",         KALTGR }, // BraceLeft
+        { 0x7c,   0x7c,     0x7c,   "|",         KALTGR }, // Bar
+        { 0x7d,   0x7d,     0x7d,   "}",         KALTGR }, // BraceRight
+        { 0x7e,   0x7e,     0x7e,   "~",         KALTGR }, // Tilde (dead key)
+        { 0xe0,   0xa3,     0xa3,   "L_pound",   KNONE  }, // £ <--F4
+        { 0xe1,   0xa4,     0xa4,   "Currency",  KALTGR }, // ¤ <--F5
+        { 0xe2,   0xa7,     0xa7,   "Silcrow",   KSHIFT }, // § <--F8
+        { 0xe3,   0xb0,     0xb0,   "Degrees",   KSHIFT }, // ° <--Hyper_R
+        { 0xe4, 0x01000022, 0xffec, "Super_2",   KMETA  }, // ² <--Dir_L press
+        { 0xe5,   0xc0,     0xe0,   "a_grave",   KNONE  }, // à <--KP_Ins
+        { 0xe6,   0xc7,     0xe7,   "c_cedilla", KNONE  }, // ç <--KP_Up
+        { 0xe7,   0xc8,     0xe8,   "e_grave",   KNONE  }, // è <--KP_Right
+        { 0xe8,   0xc9,     0xe9,   "e_acute",   KNONE  }, // é <--KP_Down
+        { 0xe9,   0xd9,     0xf9,   "u_grave",   KNONE  }, // ù <--Super/Mod4/Win
+        { 0xea,   0x039c,   0xb5,   "Mu",        KSHIFT }, // µ <--(new)
+        { 0xeb,   0x20ac,   0xb6,   "Euro",      KALTGR }, // € <--(new)
+        { 0xec, 0x1001252,  0xfe52, "Circflex",  KNONE  }, // ^ <--Caret
+        { 0xed, 0x1001257,  0xfe57, "Umlaut",    KSHIFT }, // ¨ <--Diaeresis
+        { 0xee, 0x01000022, 0xffec, "Super_2r",  KNONE  }, // ² <--Dir_L release
+        { 0x00, 0xffffffff, 0xff,   "??",        KNONE  }  // terminator
+    };
+    for (int i = 0; s_fr_keys[i].qtk_keyevent != 0xffffffff; ++i)
+    {
+        int index = s_fr_keys[i].qtk_ordinal;           // not qtk_keyevent
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf
+        (
+            "Key #%03d '%s': Ord %02x; code %02x-->",
+            i, qt_keys(index).qtk_keyname.c_str(),
+            qt_keys(index).qtk_ordinal, qt_keys(index).qtk_keyevent
+        );
+#endif
+
+        qt_keys(index) = s_fr_keys[i];
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf
+        (
+            "Key #%03d '%s': Ord %02x; code %02x\n",
+            i, qt_keys(index).qtk_keyname.c_str(),
+            qt_keys(index).qtk_ordinal, qt_keys(index).qtk_keyevent
+        );
+#endif
+    }
+}
+
 #endif  // defined SEQ66_PLATFORM_WINDOWS
 
 /**
@@ -832,7 +949,7 @@ qt_modkey_ordinal (eventkey qtkey, unsigned qtmodifier, eventkey virtkey)
         }
     }
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     std::string name = qt_ordinal_keyname(result);
     char temp[132];
     (void) snprintf
@@ -920,123 +1037,6 @@ qt_ordinal_keyname (ctrlkey ordinal)
 {
     return is_invalid_ordinal(ordinal) ?
         "Missing_Key" : qt_keys(ordinal).qtk_keyname ;
-}
-
-/**
- *  Extended keys, running on system locale with French (fr) AZERTY keymap.
- *  The first number is the value returned by QKeyEvent::key().  The second
- *  column is the name returned by QKeyEvent::text().  The scan code is
- *  returned by QKeyEvent::nativeScanCode(), but is not used in this table.
- *  The keycode is returned by QKeyEvent::nativeVirtualKey(), and is used to
- *  look up the s_qt_keys[] slot that will be replaced by the information
- *  below.
- *
- *  Note that these code are what we found on Debian Linux after running
- *  "setxkbmap fr".  All of the standard ASCII symbols are unchanged with this
- *  mapping, even though their locations on the French keyboard are different,
- *  and numeric-key shifting is reversed compared to the US key-map.
- *
- *  Also note that we cannot place the characters themselves in a 'ctrl' file.
- *  When read, these characters have the value 0xffffffc2 or 0xffffffc3.  So
- *  we have to make up names to use in the 'ctrl' file.
- *
- * Sylvain's findings on a real AZERTY keyboard:
- *
-\verbatim
-        Key #0xa3   '£' scan = 0x23; keycode = 0xa3
-        Key #0xa4   '¤' scan = 0x23; keycode = 0xa4
-        Key #0xa7   '§' scan = 0x3d; keycode = 0xa7
-        Key #0xb0   '°' scan = 0x14; keycode = 0xb0
-        Key #0xb2   '²' scan = 0x31; keycode = 0xb2
-        Key #0xc0   'à' scan = 0x13; keycode = 0xe0
-        Key #0xc7   'ç' scan = 0x12; keycode = 0xe7
-        Key #0xc8   'è' scan = 0x10; keycode = 0xe8
-        Key #0xc9   'é' scan = 0x0b; keycode = 0xe9
-        Key #0xd9   'ù' scan = 0x30; keycode = 0xf9
-        Key #0x039c  'µ' scan = 0x33; keycode = 0xb5
-        Key #0x20ac '€' scan = 0x1a; keycode = 0x20ac
-        Key #0x1001252 '^' scan = 0x22; keycode = 0xfe52
-        Key #0x1001257 '¨' scan = 0x22; keycode = 0xfe57
-\endverbatim
- *
- *  Just call this function once.
- */
-
-static void
-setup_qt_azerty_fr_keys ()
-{
-    using namespace keyboard;
-    static const qt_keycodes s_fr_keys [] =
-    {
-        /*
-         *  Code     Qt      Qt      Key
-         * Ordinal Evkey  Virtkey   Name        Modifier
-         */
-
-        { 0x21,   0x21,     0x21,   "!",         KNONE  }, // Exclam
-        { 0x22,   0x22,     0x22,   "\"",        KNONE  }, // QuoteDbl
-        { 0x23,   0x23,     0x23,   "#",         KALTGR }, // NumberSign
-        { 0x26,   0x26,     0x26,   "&",         KNONE  }, // Ampersand
-        { 0x27,   0x27,     0x27,   "'",         KNONE  }, // Apostrophe
-        { 0x28,   0x28,     0x28,   "(",         KNONE  }, // ParenLeft
-        { 0x29,   0x29,     0x29,   ")",         KNONE  }, // ParenRight
-        { 0x2a,   0x2a,     0x2a,   "*",         KNONE  }, // Asterisk
-        { 0x2e,   0x2e,     0x2e,   ".",         KSHIFT }, // Period
-        { 0x2f,   0x2f,     0x2f,   "/",         KSHIFT }, // Slash
-        { 0x3a,   0x3a,     0x3a,   ":",         KNONE  }, // Colon
-        { 0x3c,   0x3c,     0x3c,   "<",         KNONE  },
-        { 0x40,   0x40,     0x40,   "@",         KALTGR }, // AtSign
-        { 0x5b,   0x5b,     0x5b,   "[",         KALTGR }, // BracketLeft
-        { 0x5c,   0x5c,     0x5c,   "\\",        KALTGR }, // Backslash
-        { 0x5d,   0x5d,     0x5d,   "]",         KALTGR }, // BracketRight
-        { 0x5e,   0x5e,     0x5e,   "^",         KALTGR }, // AsciiCircumflex
-        { 0x5f,   0x5f,     0x5f,   "_",         KNONE  }, // Underscore
-        { 0x60,   0x60,     0x60,   "`",         KALTGR }, // QuoteLeft, Backtick
-        { 0x7b,   0x7b,     0x7b,   "{",         KALTGR }, // BraceLeft
-        { 0x7c,   0x7c,     0x7c,   "|",         KALTGR }, // Bar
-        { 0x7d,   0x7d,     0x7d,   "}",         KALTGR }, // BraceRight
-        { 0x7e,   0x7e,     0x7e,   "~",         KALTGR }, // Tilde (dead key)
-        { 0xe0,   0xa3,     0xa3,   "L_pound",   KNONE  }, // £ <--F4
-        { 0xe1,   0xa4,     0xa4,   "Currency",  KALTGR }, // ¤ <--F?
-        { 0xe2,   0xa7,     0xa7,   "Silcrow",   KSHIFT }, // § <--F8
-        { 0xe3,   0xb0,     0xb0,   "Degrees",   KSHIFT }, // ° <--Hyper_R
-        { 0xe4, 0x01000022, 0xffec, "Super_2",   KMETA  }, // ² <--Dir_L press
-        { 0xe5,   0xc0,     0xe0,   "a_grave",   KNONE  }, // à <--KP_Ins
-        { 0xe6,   0xc7,     0xe7,   "c_cedilla", KNONE  }, // ç <--KP_Up
-        { 0xe7,   0xc8,     0xe8,   "e_grave",   KNONE  }, // è <--KP_Right
-        { 0xe8,   0xc9,     0xe9,   "e_acute",   KNONE  }, // é <--KP_Down
-        { 0xe9,   0xd9,     0xf9,   "u_grave",   KNONE  }, // ù <--Super/Mod4/Win
-        { 0xea,   0x039c,   0xb5,   "Mu",        KSHIFT }, // µ <--(new)
-        { 0xeb,   0x20ac,   0xb6,   "Euro",      KALTGR }, // € <--(new)
-        { 0xec, 0x1001252,  0xfe52, "Circflex",  KNONE  }, // ^ <--Caret
-        { 0xed, 0x1001257,  0xfe57, "Umlaut",    KSHIFT }, // ¨ <--Diaeresis
-        { 0xee, 0x01000022, 0xffec, "Super_2r",  KNONE  }, // ² <--Dir_L release
-        { 0x00, 0xffffffff, 0xff,   "?",         KNONE  }  // terminator
-    };
-    for (int i = 0; s_fr_keys[i].qtk_keyevent != 0xffffffff; ++i)
-    {
-        int index = s_fr_keys[i].qtk_ordinal;           // not qtk_keyevent
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf
-        (
-            "Key #%03d '%s': Ord %02x; code %02x-->",
-            i, qt_keys(index).qtk_keyname.c_str(),
-            qt_keys(index).qtk_ordinal, qt_keys(index).qtk_keyevent
-        );
-#endif
-
-        qt_keys(index) = s_fr_keys[i];
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf
-        (
-            "Key #%03d '%s': Ord %02x; code %02x\n",
-            i, qt_keys(index).qtk_keyname.c_str(),
-            qt_keys(index).qtk_ordinal, qt_keys(index).qtk_keyevent
-        );
-#endif
-    }
 }
 
 /**

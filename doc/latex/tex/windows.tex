@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-02-13
-% \update      2023-07-06
+% \update      2023-07-18
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -269,6 +269,36 @@
    \begin{verbatim}
       C:/Program Files/Seq66/data/readme.windows
    \end{verbatim}
+
+\subsection{Windows / Keyboard Issues}
+\label{subsec:windows_keyboard_issues}
+
+   The keystroke processing of \textsl{Seq66} is based on looking up
+   \textsl{Qt} key scan codes and then finding the matching key modifiers (e.g.
+   Shift or Ctrl) and native virtual key numbers.
+   When a match is found, a \textsl{Seq66}-specific ordinal value ranging from
+   0 to 255 is found, and that is used to look up the command or function
+   associated with that keystroke.
+
+   The native virtual key numbers are how the operating system
+   encodes the various hardware keys on the keyboard.
+   These numbers vary between
+   \textsl{Linux},
+   \textsl{Windows}, and
+   \textsl{Mac}.
+   All these numbers are in a table, and there is (currently)
+   a table for \textsl{Linux} and a table for \textsl{Windows}.
+
+   The table for \textsl{Windows} was recently completed, but
+   it is likely that there are some native virtual key numbers
+   that were not assigned correctly.
+   Report any issues.
+
+   There is also a table that corrects for
+   \index{keys!AZERTY}
+   the French AZERTY layout.
+   It is a good bet that this table also has errors.
+   Report any issues.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

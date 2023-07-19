@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.7
 Chris Ahlstrom
-2019-04-13 to 2023-07-17
+2019-04-13 to 2023-07-19
 
 UI:
 
@@ -40,11 +40,9 @@ Playlists:
     -   When opening play-list, also open next song. Make the play-list
         active.
     -   Still need to work out playlist naming and replacement.
-    -   Specifying a playlist on the command-line should activate it.
-        It does, but there was a bug in rcsettings::make_config_filespec().
-    -   Set all contrib/midi and data/midi MIDI files to use port 0
+    -   Set all contrib/midi and data/midi MIDI files to use port 0.
     -   Consider adding a configurable play-list auto-advance delay value.
-    -   Why is the first play-list file double loaded?
+    -   Why is the first play-list song file double loaded?
     -   How to force ports to 0 when errors happen, and save the file.
 
 From Testing:
@@ -52,6 +50,7 @@ From Testing:
     When zooming, try to keep the same viewport in view.  Got this working
     for horizontal seqroll and perfroll, but not for vertical (refactoring
     needed).  Try to center vertically on notes in the viewport.
+    Make it center on notes if not visible.
 
     Can we distinguish note-insertion from movement snap, to avoid the
     "L"-then-snap-then-move samba?
@@ -77,12 +76,6 @@ Ongoing efforts:
 Ideas:
 
     -   Drag and drop MIDI files onto seq66 (see sequencer64 issue #137)
-
-Port-mapping:
-
-    -   Consider allowing the addition of an alias to a port. This would
-        be useful for devices attached to "USB Midi MIDI 1". However,
-        think about MIDNAM.
 
 ISSUES:
 
@@ -206,7 +199,7 @@ ISSUES:
     STATUS: Fixed.
 
 #100 Seq66's MIDI timing completely falls apart at JACK buffer sizer larger than 128.
-    STATUS: In progress. Added a timestamp to each message in the JACK
+    STATUS: Added a timestamp to each message in the JACK
     ringbuffer (enabled by a C macro in libseq66/include/seq_features.h).
     This addes a notable burden on process and we can get buffer overflow
     errors.  Even with message timestamps disabled, the b4uacuse-stress.midi
@@ -225,7 +218,7 @@ ISSUES:
     plain muting (with queue functionality) is good enough for me.
     Muting using mouse works reasonably well.
     I am using Windows 7 if this helps with platform specific bugs.
-    STATUS: Need to improve documentation and testing, including on Windows.
+    STATUS: It turns out that we needed a different key-map for Windows.
 
 #103 One-shot (repetitions != 0) patterns do not play
     This feature works, but requires the pattern to be armed before
@@ -277,31 +270,14 @@ ISSUES:
             have time signatures; more for appearances, really.
         -   Can we have time-signature changes shown during playback by
             modifying the combo boxes text?
-        -   Try to eliminate bad time-sig drawing in seqdata when the only
-            events are time sigs.
-
-PATTERNS:
-
-    -   Make it center on notes if not visible.
 
 To close as fixed (and remove from TODO):
 
     24 Release notes in release tag message?
-    47 change key map
-    54 Qt5 include errors
     63 Option to rotate pattern numbers?
-    64 NSM: UI show up after restarting the app
-    68 MIDI controller initialization step
     79 NSM: starts always with a blank pattern
-    80 Launchpad MIDI on input bus
-    83 MIDI Input not possible: "[midi-input]: in-bus data line error"
-    85 Segfaults and extra windows
-    89 MIDI control output queue events
-    91 No colors in live view with xfce/xubuntu
     93 The window of a deleted pattern remains open
-    94 Added Song editor expansion button
     97 Seq24 differences
-    98 Metronome and background recording
 
 To close as pushed off to version 2:
 

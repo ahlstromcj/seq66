@@ -1,4 +1,4 @@
-# README for Seq66 0.99.7 2023-07-18
+# README for Seq66 0.99.7 2023-07-19
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -94,7 +94,7 @@ Windows, and using a conventional source tarball.
         *   Recent Files is disabled if there are none.
         *   Revamped the Playlist tab, as it was confusing and very buggy.
         *   Added Windows key-mapping to fix processing "native virtual" keys,
-            such as the arrow keys.
+            such as the arrow keys. Also fixes issue #102.
         *   Added auto-play and auto-advance to play-lists.
         *   Fixed bug in rcsettings::make_config_filespec().
     *   Version 0.99.6:

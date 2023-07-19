@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-07-18
- * \updates       2023-07-18
+ * \updates       2023-07-19
  * \license       GNU GPLv2 or above
  *
  *  Include this file in keymap.cpp if building for Windows. The main
@@ -259,8 +259,8 @@ qt_keys (int i)
         {  0xac,  0x01000053,   0x5b,  "Super_L",    KNONE  },  // Left-Windows, VK_LWIN
         {  0xad,  0x01000054,   0x5c,  "Super_R",    KNONE  },  // Right-Windows, VK_RWIN
         {  0xae,  0x01000055,   0x5d,  "Menu",       KNONE  },  // Win-Menu key, VK_APPS ?
-        {  0xaf,  0x01000056,   0xaf,  "Hyper_L",    KNONE  },
-        {  0xb0,  0x01000057,   0xb0,  "Hyper_R",    KNONE  },
+        {  0xaf,  0x01000056,   0xaf,  "Hyper_L",    KNONE  },  // ???
+        {  0xb0,  0x01000057,   0xb0,  "Hyper_R",    KNONE  },  // ???
         {  0xb1,  0x01000058,   0x2f,  "Help",       KNONE  },  // VK_HELP
         {  0xb2,  0x01000059,   0xb2,  "Dir_L",      KNONE  },
         {  0xb3,  0x01000060,   0xb3,  "Dir_R",      KNONE  },  // Direction_R
@@ -371,6 +371,90 @@ qt_keys (int i)
         i = 0;
 
     return s_qt_keys[i];
+}
+
+/**
+ *  Extended keys, running on system locale with French (fr) AZERTY keymap,
+ *  for Windows.
+ *
+ *  Just call this function once.
+ */
+
+static void
+setup_qt_azerty_fr_keys ()
+{
+    using namespace keyboard;
+    static const qt_keycodes s_fr_keys [] =
+    {
+        /*
+         *  Code     Qt      Qt      Key
+         * Ordinal Evkey  Virtkey   Name        Modifier
+         */
+
+        { 0x21,   0x21,     0x31,   "!",         KNONE  }, // Exclam
+        { 0x22,   0x22,     0xde,   "\"",        KNONE  }, // QuoteDbl
+        { 0x23,   0x23,     0x33,   "#",         KALTGR }, // NumberSign
+        { 0x26,   0x26,     0x37,   "&",         KNONE  }, // Ampersand
+        { 0x27,   0x27,     0xde,   "'",         KNONE  }, // Apostrophe
+        { 0x28,   0x28,     0x39,   "(",         KNONE  }, // ParenLeft
+        { 0x29,   0x29,     0x30,   ")",         KNONE  }, // ParenRight
+        { 0x2a,   0x2a,     0x38,   "*",         KNONE  }, // Asterisk
+        { 0x2e,   0x2e,     0xbe,   ".",         KSHIFT }, // Period
+        { 0x2f,   0x2f,     0xbf,   "/",         KSHIFT }, // Slash
+        { 0x3a,   0x3a,     0xba,   ":",         KNONE  }, // Colon
+        { 0x3c,   0x3c,     0xbc,   "<",         KNONE  },
+        { 0x40,   0x40,     0x32,   "@",         KALTGR }, // AtSign
+        { 0x5b,   0x5b,     0xdb,   "[",         KALTGR }, // BracketLeft
+        { 0x5c,   0x5c,     0xdc,   "\\",        KALTGR }, // Backslash
+        { 0x5d,   0x5d,     0xdd,   "]",         KALTGR }, // BracketRight
+        { 0x5e,   0x5e,     0x36,   "^",         KALTGR }, // AsciiCircumflex
+        { 0x5f,   0x5f,     0xbd,   "_",         KNONE  }, // Underscore
+        { 0x60,   0x60,     0xc0,   "`",         KALTGR }, // QuoteLeft, Backtick
+        { 0x7b,   0x7b,     0xdb,   "{",         KALTGR }, // BraceLeft
+        { 0x7c,   0x7c,     0xdc,   "|",         KALTGR }, // Bar
+        { 0x7d,   0x7d,     0xdd,   "}",         KALTGR }, // BraceRight
+        { 0x7e,   0x7e,     0xc0,   "~",         KALTGR }, // Tilde (dead key)
+        { 0xe0,   0xa3,     0x73,   "L_pound",   KNONE  }, // £ <--F4
+        { 0xe1,   0xa4,     0x74,   "Currency",  KALTGR }, // ¤ <--F5
+        { 0xe2,   0xa7,     0x77,   "Silcrow",   KSHIFT }, // § <--F8
+        { 0xe3,   0xb0,     0xb0,   "Degrees",   KSHIFT }, // ° <--Hyper_R ???
+        { 0xe4, 0x01000022, 0xb2,   "Super_2",   KMETA  }, // ² <--Dir_L press ???
+        { 0xe5,   0xc0,     0x2d,   "a_grave",   KNONE  }, // à <--KP_Ins ???
+        { 0xe6,   0xc7,     0x26,   "c_cedilla", KNONE  }, // ç <--KP_Up
+        { 0xe7,   0xc8,     0x27,   "e_grave",   KNONE  }, // è <--KP_Right
+        { 0xe8,   0xc9,     0x28,   "e_acute",   KNONE  }, // é <--KP_Down
+        { 0xe9,   0xd9,     0x5d,   "u_grave",   KNONE  }, // ù <--Super/Mod4/Win
+        { 0xea,   0x039c,   0xb5,   "Mu",        KSHIFT }, // µ <--(new)
+        { 0xeb,   0x20ac,   0xb6,   "Euro",      KALTGR }, // € <--(new)
+        { 0xec, 0x1001252,  0x36,   "Circflex",  KNONE  }, // ^ <--Caret
+        { 0xed, 0x1001257,  0xde,   "Umlaut",    KSHIFT }, // ¨ <--Diaeresis
+        { 0xee, 0x01000022, 0xb2,   "Super_2r",  KNONE  }, // ² <--Dir_L release
+        { 0x00, 0xffffffff, 0xff,   "??",        KNONE  }  // terminator
+    };
+    for (int i = 0; s_fr_keys[i].qtk_keyevent != 0xffffffff; ++i)
+    {
+        int index = s_fr_keys[i].qtk_ordinal;           // not qtk_keyevent
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf
+        (
+            "Key #%03d '%s': Ord %02x; code %02x-->",
+            i, qt_keys(index).qtk_keyname.c_str(),
+            qt_keys(index).qtk_ordinal, qt_keys(index).qtk_keyevent
+        );
+#endif
+
+        qt_keys(index) = s_fr_keys[i];
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf
+        (
+            "Key #%03d '%s': Ord %02x; code %02x\n",
+            i, qt_keys(index).qtk_keyname.c_str(),
+            qt_keys(index).qtk_ordinal, qt_keys(index).qtk_keyevent
+        );
+#endif
+    }
 }
 
 #endif          // SEQ66_WINKEYS_HPP
