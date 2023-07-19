@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2023-03-18
+ * \updates       2023-07-19
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -318,11 +318,19 @@ qloopbutton::initialize_text ()
         {
             snprintf(tmp, sizeof tmp, "%-2d %d-%s", sn, bus, chanstr.c_str());
         }
+        else if (sn > 999)
+        {
+            snprintf
+            (
+                tmp, sizeof tmp, "%d %d-%s %d/%d",
+                sn, bus, chanstr.c_str(), bpb, bw
+            );
+        }
         else
         {
             snprintf
             (
-                tmp, sizeof tmp, "%-2d %d-%s %d/%d",
+                tmp, sizeof tmp, "#%-2d %d-%s %d/%d",
                 sn, bus, chanstr.c_str(), bpb, bw
             );
         }

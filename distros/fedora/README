@@ -1,0 +1,7 @@
+Seq66 Fedora/Auinux Linux Package Build
+Chris Ahlstrom
+2023-07-19 to 2023-07-19
+
+A copy of the spec file from github/audinux/fedora-spec.
+
+# vim: sw=4 ts=4 wm=4 et ft=sh

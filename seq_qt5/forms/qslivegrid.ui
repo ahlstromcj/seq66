@@ -183,6 +183,12 @@
        <property name="text">
         <string>BG</string>
        </property>
+       <property name="iconSize">
+        <size>
+         <width>28</width>
+         <height>16</height>
+        </size>
+       </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
@@ -210,8 +216,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>33</width>
-         <height>24</height>
+         <width>28</width>
+         <height>20</height>
         </size>
        </property>
        <property name="checkable">

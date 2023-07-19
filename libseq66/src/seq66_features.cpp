@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2023-05-25
+ * \updates       2023-07-19
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -503,9 +503,9 @@ seq_build_details ()
         << "GNU C++ " << __GNUC__ << "." << __GNUC_MINOR__
         << "." << __GNUC_PATCHLEVEL__ << "\n"
 #endif
-        << "Executable: " << seq_app_name() << " (" << seq_app_path() << ")"
-        << "; " << seq_app_type() << " interface"
-        << "; " << seq_app_engine() << " engine" << "\n"
+        << "Executable: " << seq_app_name() << " (" << seq_app_path() << ")\n"
+        << "Interface: " << seq_app_type() << "\n"
+        << "Engine: " << seq_app_engine() << "\n"
         ;
 
     result
@@ -551,12 +551,12 @@ seq_build_details ()
 #endif
         <<
             "\n"
-            "Chord generator, LFO, trigger transpose, Tap BPM, Song recording "
-            "Pattern coloring, pause, save time-sig/tempo, "
-            "event editor, follow-progress.\n"
+            "Chord generator, LFO, trigger transpose, tap BPM, song recording "
+            "pattern coloring, pause, save time-sig/tempo, "
+            "event editor, follow-progress, play-lists, mute-groups.\n"
         <<
             "\n"
-            "Options can be enabled/disabled via the configure script,"
+            "Some options can be enabled/disabled via the configure script,"
             " seq66_features.h, or build-specific seq66-config.h files in"
             " include/qt/* for qmake portmidi and rtmidi builds."
         << std::endl

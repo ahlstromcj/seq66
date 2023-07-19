@@ -1,0 +1,17 @@
+Seq66 Forks and Distro Packaging
+Chris Ahlstrom
+2023-07-19 to 2023-07-19
+
+This directory contains information about projects related to Seq66.
+
+    GitHub Forks:
+
+        henning
+
+    Distro Packaging:
+
+        Debian.  Created by us for this project.
+        Fedora/Audinux.
+        NixOS.
+
+# vim: sw=4 ts=4 wm=4 et ft=sh

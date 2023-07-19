@@ -1,0 +1,13 @@
+Seq66 NixOS Linux Package Build
+Chris Ahlstrom
+2023-07-19 to 2023-07-19
+
+A copy of the spec file from
+
+    0.99.6  https://github.com/audinux/fedora-spec/seq66/seq66.spec
+
+Others:
+
+    0.90.5  github/league/nixpkgs/pkgs/applications/audio/seq66/default.nix
+
+# vim: sw=4 ts=4 wm=4 et ft=sh
