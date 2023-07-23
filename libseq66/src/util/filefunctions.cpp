@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-05-28
+ * \updates       2023-07-20
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1086,6 +1086,7 @@ name_has_path (const std::string & filename)
         \\server\volume...      Windows Universal Naming Convention (UNC).
 \endverbatim
  *
+ *  Also, using the circumflex (for /home/user) is treated as a root path.
  */
 
 bool
@@ -1787,6 +1788,20 @@ filename_split_ext
     return result;
 }
 
+/**
+ *  Replaces the path in a full file specification. This function is useful
+ *  in doing a "save-as" operation to a different destination.
+ *
+ * \param fullpath
+ *      The full file specification to be modified.
+ *
+ * \param newpath
+ *      Provides the replacement path.
+ *
+ * \return
+ *      Returns the modified file specification.
+ */
+
 std::string
 file_path_set (const std::string & fullpath, const std::string & newpath)
 {
@@ -1794,6 +1809,29 @@ file_path_set (const std::string & fullpath, const std::string & newpath)
     std::string filebase;
     (void) filename_split(fullpath, path, filebase);
     return filename_concatenate(newpath, filebase);
+}
+
+/**
+ *  Replaces the file-name in a full file specification. This function is useful
+ *  in doing a "save-as" operation.
+ *
+ * \param fullpath
+ *      The full file specification to be modified.
+ *
+ * \param newfile
+ *      Provides the replacement file name.
+ *
+ * \return
+ *      Returns the modified file specification.
+ */
+
+std::string
+file_base_set (const std::string & fullpath, const std::string & newbase)
+{
+    std::string path;
+    std::string filebase;
+    (void) filename_split(fullpath, path, filebase);
+    return filename_concatenate(path, newbase);
 }
 
 /**
@@ -1945,6 +1983,30 @@ set_current_directory (const std::string & path)
         if (! result)
             file_error("chdir() failed", path);
     }
+    return result;
+}
+
+/**
+ *  An alternative on Linux to using either /proc/self/exe or argv[0] is using
+ *  the information passed by the ELF interpreter, made available by glibc.
+ *  The getauxval() function is a glibc extension; check so that it doesn't
+ *  return NULL (indicating that the ELF interpreter hasn't provided the
+ *  AT_EXECFN parameter). This is never actually a problem on Linux.
+ */
+
+std::string
+executable_full_path ()
+{
+    std::string result;
+
+#if defined PLATFORM_GLIBC        /* TO DO!!!!                        */
+    const char * p = (const char *) getauxval(AT_EXECFN);
+    if (not_nullptr(p))
+    {
+        result = p;
+    }
+#endif
+
     return result;
 }
 

@@ -38,16 +38,6 @@
 #include "seq66_platform_macros.h"      /* for detecting 32-bit builds      */
 
 /*
- * uint32_t alias for 32-bit code
- */
-
-#if defined SEQ66_PLATFORM_32_BIT
-#if defined NO_OLDNAMES
-using mode_t = unsigned int;
-#endif
-#endif
-
-/*
  *  The "flags" parameters described in Michael Kerrisk's book, "The Linux
  *  Programming Interface", 2010. We also add a flag to avoid a second fork,
  *  plus some other flags.
@@ -103,8 +93,9 @@ namespace seq66
 {
 
 /*
- *  Free functions.  These functions do a lot of the work of dealing with UNIX
- *  daemons.
+ *  Free functions.
+ *
+ *      These functions do a lot of the work of dealing with UNIX daemons.
  */
 
 extern daemonization daemonize

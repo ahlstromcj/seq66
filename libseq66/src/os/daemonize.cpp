@@ -29,7 +29,7 @@
  *
  *  Provides a function to make it easy to run an application as a (Linux)
  *  daemon.  There are large differences between POSIX daemons and Win32
- *  services.  Thus, this module is currently Linux/POSIX-specific.
+ *  services.  Thus, this module is mostly Linux/POSIX-specific.
  *
  *  ca 2023-03-22:
  *

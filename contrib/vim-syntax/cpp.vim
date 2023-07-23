@@ -4,7 +4,7 @@
 "
 "  Language:      C/C++
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-09-04 to 2023-03-16
+"  Last Change:   2006-09-04 to 2023-07-21
 "  Project:       XPC Suite library project
 "  Usage:
 "
@@ -37,7 +37,9 @@
 syn keyword XPCC midibytes midistring midi_message seq64 seq66 tokenization
 syn keyword XPCC boolean booleans bpm buffer byte bytes bytestring ppqn pulse
 syn keyword XPCC audio container ctrl meta seqspec status tag ulong ushort
-syn keyword XPCC cfg cfg66 cli midi rtl rtl66 seq seq66 session util xpc xpc66
+syn keyword XPCC api api_list cfg cfg66 cli audio rtaudio
+syn keyword XPCC midi rtl rtmidi rtl66
+syn keyword XPCC seq seq66 session util xpc xpc66
 syn keyword XPCC action clock clocking e_clock jack transport synch
 syn keyword XPCC recmutex automutex
 

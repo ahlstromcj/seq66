@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-05-28
+ * \updates       2023-07-20
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -153,6 +153,11 @@ extern std::string file_path_set
     const std::string & fullpath,
     const std::string & newpath
 );
+extern std::string file_base_set
+(
+    const std::string & fullpath,
+    const std::string & newbase
+);
 extern std::string filename_base
 (
     const std::string & fullpath,
@@ -169,6 +174,7 @@ extern std::string file_extension_set
     const std::string & path,
     const std::string & ext = ""
 );
+extern std::string executable_full_path ();
 extern std::string user_home (const std::string & appfolder = "");
 extern std::string user_config (const std::string & appfolder = "");
 extern std::string user_session (const std::string & appfolder = "");
