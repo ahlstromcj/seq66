@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-05-29
+ * \updates       2023-07-27
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -49,6 +49,7 @@ namespace seq66
  *  Lists of characters to trim from strings.
  */
 
+const std::string SEQ66_WHITE_CHARS       = " \t\r\n\v\f";
 const std::string SEQ66_TRIM_CHARS        = " \t\r\n\v\f";
 const std::string SEQ66_TRIM_CHARS_QUOTES = " \t\r\n\v\f\"'";
 const std::string SEQ66_TRIM_CHARS_PATHS  = " /\\";
@@ -160,6 +161,12 @@ extern tokenization tokenize
 extern tokenization tokenize_quoted (const std::string & source);
 extern std::string simplify (const std::string & source);
 extern std::wstring widen_string (const std::string & source);
+extern std::string word_wrap
+(
+    const std::string & source,
+    size_t margin       = 80,
+    char commentchar    = 0
+);
 
 /**
  *  This function comes, slightly modified to avoid throwing an exception,

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-05-29
+ * \updates       2023-07-27
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1151,7 +1151,7 @@ tokenize_stanzas
  *      Provides the string to be parsed into tokens.
  *
  * \param delimiters
- *      The character separating the tokens.  Defaults to a Space character.
+ *      The character(s) separating the tokens. Defaults to a Space character.
  *
  * \return
  *      Returns the number of tokens converted in a string vector.
@@ -1333,6 +1333,74 @@ widen_string (const std::string & source)
     result.assign(source.begin(), source.end());
     return result;
 #endif
+}
+
+/**
+ *  Takes a string and adds line breaks to make it fit full words within
+ *  a margin. Any existing line breaks are treated like spaces.
+ *
+ *  This function can optionally add a comment character at the beginning
+ *  of each line, followed by a space.
+ *
+ *  As with most of our string functions, this one isn't built for speed or
+ *  space-saving.
+ *
+ * Method:
+ *
+ *  -#  Tokenize the string using SEQ66_WHITE_CHARS = " \t\r\n\v\f" as
+ *      the delimiters.
+ *
+ * \param source
+ *      Provides the string to be wrapped.
+ *
+ * \param margin
+ *      Provides the wrap margin, beyond which no character will appear.
+ *      Words that hit that limit are belayed to the next line. The default
+ *      margin is 80.
+ *
+ * \param commentchar
+ *      If non-zero (which is the default), then this character is prepended
+ *      to each line.  A common value is "#".
+ *
+ * \return
+ *      Returns the word-wrapped string.
+ */
+
+std::string
+word_wrap (const std::string & source, size_t margin, char commentchar)
+{
+    std::string result;
+    if (! source.empty())
+    {
+        std::string commenting{"  "};
+        size_t linelen = 0;
+        tokenization words = tokenize(source, SEQ66_WHITE_CHARS);
+        commenting[0] = commentchar;
+        for (auto w : words)
+        {
+            bool room = (linelen + w.length()) < margin;
+            if (linelen == 0 || ! room)
+            {
+                if (commentchar != 0)
+                    w = commenting + w;
+
+                if (! room)
+                    result += "\n";
+
+                result += w;
+                linelen = w.length();
+            }
+            else
+            {
+                w = " " + w;
+                result += w;
+                linelen += w.length();
+            }
+        }
+        if (linelen > 0)
+            result += "\n";
+    }
+    return result;
 }
 
 }           // namespace seq66
