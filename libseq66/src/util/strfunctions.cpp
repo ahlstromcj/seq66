@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-07-27
+ * \updates       2023-07-28
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1399,6 +1399,65 @@ word_wrap (const std::string & source, size_t margin, char commentchar)
         }
         if (linelen > 0)
             result += "\n";
+    }
+    return result;
+}
+
+/**
+ *  This function is meant for --help. It allows the display of long
+ *  help text for an option by splitting the description line and indenting
+ *  any subsequent lines that are necessary.
+ *
+ *  As an example, consider this line from another application:
+ *
+ *  -U, --jack-session uuid  Set UUID for JACK session; turns on session
+ *                           management. Use 'on' to enable it and let JACK
+ *                           set the UUID.
+ *
+ * \param source
+ *      Provides a string defining a command-line option (for example). In
+ *      the example above, this is the text at the right.
+ *
+ * \param leftmargin
+ *      Provides the margin for lines after the first (if necessary).
+ *      This provides the hanging indent.
+ *
+ * \param rightmargin
+ *      Provides the maximum length of the lines that are generated.
+ *
+ * \return
+ *      Returns the reformatted string.
+ */
+
+std::string
+hanging_word_wrap
+(
+    const std::string & source,
+    size_t leftmargin,
+    size_t rightmargin
+)
+{
+    std::string result;
+    if (! source.empty())
+    {
+        int line = 0;                       /* the first line   */
+        size_t linelen = leftmargin;
+        std::string padding(leftmargin, ' ');
+        tokenization words = tokenize(source, SEQ66_WHITE_CHARS);
+        for (auto w : words)
+        {
+            bool room = (linelen + w.length()) < rightmargin;
+            if (! room)
+            {
+                result += "\n";
+                result += padding;
+                linelen = leftmargin;
+                ++line;
+            }
+            w = " " + w;
+            result += w;
+            linelen += w.length();
+        }
     }
     return result;
 }
