@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-07-28
+ * \updates       2023-07-31
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -807,6 +807,12 @@ double_to_string (double value, int precision)
         (void) snprintf(temp, sizeof temp, "%*g", precision, value);
 
     return std::string(temp);
+}
+
+float
+string_to_float (const std::string & s, float defalt, int rounding)
+{
+    return float(string_to_double(s, double(defalt), rounding));
 }
 
 /**

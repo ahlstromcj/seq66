@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-07-28
+ * \updates       2023-07-31
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -128,6 +128,10 @@ extern double string_to_double
     int rounding = 0
 );
 extern std::string double_to_string(double value, int precision = 0);
+extern float string_to_float
+(
+    const std::string & s, float defalt = 0.0, int rounding = 0
+);
 extern long string_to_long (const std::string & s, long defalt = 0L);
 extern std::string long_to_string (long value);
 extern unsigned long string_to_unsigned_long
