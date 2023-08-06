@@ -1,7 +1,7 @@
 # Seq66 0.94.0 (and above) keyboard remapping configuration file
 #
-# /home/ahlstrom/.config/seq66/qseq66-azerty-fr.keys
-# Written on 2021-05-12 14:52:54
+# /home/ahlstrom/.config/seq66/qseq66-azerty-fr.keymap
+# Written on 2023-08-06 14:52:54
 #
 # This file holds keystroke remappings for the AZERTY FR keyboard.
 # If specified, it modifies the internal key-map with the changes
@@ -91,6 +91,6 @@ well, mainly changes in keystroke modifiers.
 0xee      0x01000022  0xffec   "Super_2r"   "None"         # ² Release
 0xff      0xffffffff  0xff     "?"          "None"         # terminator
 
-# End of /home/ahlstrom/.config/seq66/qseq66-azerty.ctrl
+# End of /home/ahlstrom/.config/seq66/qseq66-azerty-fr.keymap
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

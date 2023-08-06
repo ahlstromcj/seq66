@@ -1,7 +1,7 @@
-# Seq66 0.97.2 playlist configuration file
+# Seq66 0.97.7 playlist configuration file
 #
 # /home/ahlstrom/.config/seq66/qseq66.playlist
-# Written 2021-11-04 14:00:24
+# Written 2023-08-06 14:00:24
 #
 # This file holds multiple playlists, with one or more [playlist]
 # sections.  Each has a user-specified number for sorting and MIDI
@@ -25,10 +25,22 @@ version = 1
 
 [comments]
 
+Defines the basic skeleton of a play-list file.
 
 [playlist-options]
 
+# 'unmute-next-song' causes the next selected song to have all patterns
+# armed for playback. (Should be called 'auto-arm'). Does not matter for
+# songs with triggers for Song mode. 'auto-play' causes songs to start play
+# automatically when loaded. 'auto-advance' implies the settings noted
+# above. It automatically loads the next song in the play-list when the
+# current song ends. 'deep-verify' causes each tune in the play-list to be
+# loaded to make sure each one can be loaded. Otherwise, only file existence
+# is checked.
+
 unmute-new-song = false
+auto-play = true
+auto-advance = true
 deep-verify = false
 
 # First provide the playlist settings, its default storage folder,
@@ -39,8 +51,49 @@ deep-verify = false
 
 [playlist]
 
-# This is a NON-FUNCTIONAL playlist SAMPLE. Please see one of the
-# sample playlist files shipped with Seq66.
+# This is a playlist SAMPLE.
+
+number = 0
+name = "Legacy Midi Files"
+directory = "/usr/local/share/seq66-0.99/midi/FM/"
+
+0 "brecluse.mid"
+1 "carptsun.mid"
+2 "cbflitfm.mid"
+3 "dasmodel.mid"
+4 "grntamb.mid"
+5 "hapwandr.mid"
+6 "judyblue.mid"
+7 "k_seq11.mid"
+8 "longhair.mid"
+9 "marraksh.mid"
+10 "oxyg4bfm.mid"
+11 "pirates.mid"
+12 "pss680.mid"
+13 "qufrency.mid"
+14 "stdemo3.mid"
+15 "viceuk.mid"
+16 "wallstsm.mid"
+
+[playlist]
+
+number = 1
+name = "PSS-790 Midi Files"
+directory = "/usr/local/share/seq66-0.99/midi/PSS-790/"
+
+0 "ancestor.mid"
+10 "carptsun.mid"
+20 "cbflite.mid"
+30 "old_love.mid"
+
+[playlist]
+
+number = 3
+name = "Live vs Song Files"
+directory = "/usr/local/share/seq66-0.99/midi/"
+
+0 "carptsun.midi"
+1 "Peter_Gunn-reconstructed.midi"
 
 
 # End of /home/ahlstrom/.config/seq66/qseq66.playlist

@@ -196,14 +196,6 @@ browser = "/usr/bin/google-chrome"
 # the height from 0.10 to 1.0.  If either is 'default', defaults (0.8 x 0.3)
 # are used.  progress-box-shown controls if the boxes are shown at all.
 #
-# If specified, a style-sheet (e.g. 'qseq66.qss') is applied at
-# startup.  Normally just a base-name, it can contain a file-path
-# to provide a style usable in many other applications.
-#
-# A fingerprint is a condensation of note events in a long track, to
-# reduce the time drawing the pattern in the buttons. Ranges from 32
-# (default) to 128. 0 = don't use a fingerprint.
-#
 # progress-box width and height settings change the scaled size of the
 # progress box in the live-loop grid buttons.  Width ranges from 0.50
 # to 1.0; the height from 0.10 to 0.50.  If either is 0, then the box

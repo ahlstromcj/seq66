@@ -1,7 +1,7 @@
 # Seq66 0.94.0 (and above) keyboard remapping configuration file
 #
-# /home/ahlstrom/.config/seq66/qseq66-qwerty-us.keys
-# Written on 2021-05-12 14:52:54
+# /home/ahlstrom/.config/seq66/qseq66-qwerty-us.keymap
+# Written on 2023-08-06 14:52:54
 #
 # This file holds keystroke remappings for the AZERTY FR keyboard.
 # If specified it modifies the internal key-map with the changes
@@ -284,6 +284,6 @@ really.  Also see the doc/control-keys.ods spreadsheet.
 0xfe      0x01000099   0xfe    "0xfe"       "None"
 0xff      0xffffffff   0xff    "Null_ff"    "None"         # end-of-list
 
-# End of /home/ahlstrom/.config/seq66/qseq66-azerty.ctrl
+# End of /home/ahlstrom/.config/seq66/qseq66-azerty-us.keymap
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini
