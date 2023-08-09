@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-07-15
+ * \updates       2023-08-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -165,12 +165,17 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
         midipulse ticks_per_four = ticks_per_step * 4;
         midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
         midipulse ticks_per_bar = bpbar * ticks_per_beat;
+
+        /*
+         * Code fixed to make sure the whole rectangle is fill with vertical
+         * bars.  See qseqroll for more notes.
+         *
+         *  midipulse endtick = ts.sig_end_tick != 0 ?
+         *      ts.sig_end_tick : pix_to_tix(r.x() + r.width());
+         */
+
         midipulse starttick = ts.sig_start_tick;
-        midipulse endtick = ts.sig_end_tick != 0 ?
-            ts.sig_end_tick : pix_to_tix(r.x() + r.width());
-
-        endtick += snap() / 2;                      /* ca 2023-07-03        */
-
+        midipulse endtick = pix_to_tix(r.x() + r.width());
         if (measures_per_line <= 0)
             measures_per_line = 1;
 

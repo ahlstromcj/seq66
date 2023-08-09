@@ -604,7 +604,6 @@ signal_end_restart ()
 
 /**
  *  Provides a basic session handler, called upon receipt of a POSIX signal.
- *
  *  Note that SIGSTOP and SIGKILL cannot be blocked, ignored, or caught by a
  *  handler.  Also note that SIGKILL bypasses the SIGTERM handler; it is a last
  *  resort for runaway processes that don't respond to SIGTERM.

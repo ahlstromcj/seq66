@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-07-03
+ * \updates       2023-08-09
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -562,12 +562,20 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
         midipulse ticks_per_bar = bpbar * ticks_per_beat;
         midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
+
+        /*
+         * If the time-sig is further along, it won't work.  We do make
+         * sure there is a time-sig at the beginning, if nothing else.
+         * Also, the time-sig ends at the end of the pattern, but we
+         * generally need to paint beyond that point
+         *
+         *  midipulse starttick = pix_to_tix(r.x()); // the old way
+         *  midipulse tsendtick = ts.sig_end_tick != 0 ?
+         *      ts.sig_end_tick : pix_to_tix(r.x() + r.width());
+         */
+
         midipulse starttick = ts.sig_start_tick;
-        midipulse endtick = ts.sig_end_tick != 0 ?
-            ts.sig_end_tick : pix_to_tix(r.x() + r.width());
-
-        endtick += snap() / 2;                      /* ca 2023-07-03        */
-
+        midipulse endtick = pix_to_tix(r.x() + r.width());
         starttick -= starttick % ticks_per_step;
         if ((bwidth % 2) != 0)
             ticks_per_step = zoom();

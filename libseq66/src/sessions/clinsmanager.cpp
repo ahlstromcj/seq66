@@ -268,7 +268,8 @@ clinsmanager::save_session (std::string & msg, bool ok)
 
 /**
  *  This function is useful in the command-line version of the application.
- *  For the Qt version, see the qt5nsmanager class.
+ *  For the Qt version, see the qt5nsmanager class, which runs the Qt exec()
+ *  function..
  */
 
 bool

@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2023-06-08
+ * \updates       2023-08-09
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -278,9 +278,17 @@ qt5nsmanager::close_session (std::string & msg, bool ok)
     return saved && closed;
 }
 
+/**
+ *  Compare this function to clinsmanager::run(). We need to call
+ *  session_setup(), otherwise Ctrl-C terminates the application peremptorily,
+ *  potentially leaving the MIDI display device lit up instead of shut down.
+ */
+
 bool
 qt5nsmanager::run ()
 {
+    session_setup();
+
     int exit_status = m_application.exec();     /* run main window loop     */
     return exit_status == EXIT_SUCCESS;
 }

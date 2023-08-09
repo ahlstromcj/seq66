@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-07-03
+ * \updates       2023-08-09
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -269,12 +269,17 @@ qstriggereditor::draw_grid (QPainter & painter, const QRect & r)
         midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
         midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
         midipulse ticks_per_bar = bpbar * ticks_per_beat;
+
+        /*
+         * Code fixed to make sure the whole rectangle is fill with vertical
+         * bars.  See qseqroll for more notes.
+         *
+         *  midipulse endtick = ts.sig_end_tick != 0 ?
+         *      ts.sig_end_tick : pix_to_tix(r.x() + r.width());
+         */
+
         midipulse starttick = ts.sig_start_tick;
-        midipulse endtick = ts.sig_end_tick != 0 ?
-            ts.sig_end_tick : pix_to_tix(r.x() + r.width());
-
-        endtick += snap() / 2;                      /* ca 2023-07-03        */
-
+        midipulse endtick = pix_to_tix(r.x() + r.width());
         pen.setColor(Qt::black);
         painter.setPen(pen);
         for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)

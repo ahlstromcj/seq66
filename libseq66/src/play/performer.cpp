@@ -9193,7 +9193,7 @@ performer::automation_keep_queue
 
 /**
  * \return
- *      Returns false so that the caller can take action on it.
+ *      Returns true so that the caller can take action on it.
  */
 
 bool
@@ -9213,7 +9213,7 @@ performer::automation_edit_pending
 
 /**
  * \return
- *      Returns false so that the caller can take action on it.
+ *      Returns true so that the caller can take action on it.
  */
 
 bool
@@ -9233,8 +9233,8 @@ performer::automation_event_pending
 
 /**
  * \return
- *      Returns false so that the caller can take action on it, unless the user
- *      has pressed the key more than twice.
+ *      Returns true so that the caller can take action on it, unless the
+ *      user has pressed the key more than twice.
  */
 
 bool
@@ -9258,7 +9258,7 @@ performer::automation_slot_shift
 
 /**
  * \return
- *      Returns false so that the caller can take action on it, unless the user
+ *      Returns true so that the caller can take action on it, unless the user
  *      has pressed the key more than twice.
  */
 

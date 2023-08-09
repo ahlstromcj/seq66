@@ -1,29 +1,22 @@
 TO DO for Seq66 0.99.8
 Chris Ahlstrom
-2019-04-13 to 2023-08-06
+2019-04-13 to 2023-08-09
 
 UI:
 
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:
 
-        -   Pattern Options (would be a new tab):
-            -   New-pattern editor options (check-boxes)
-            -   BPM display minimum and maximum
-        -   Add option to start JACK if --jack?
-        -   Do we need an option to auto-store changes in the event editor?
-            Easy to forget to push that button.
-        -   Look into connecting the save-playlist and save-mutes functions.
+    -   Do we need an option to auto-store changes in the event editor?
+        Easy to forget to push that button.
+    -   Look into connecting the save-playlist and save-mutes functions.
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
-    o Windows build and installer. 32-bit installer cannot work!
     o Why does velocity change in data pane not work when starting from the
       left in barrage.midi? The Kepler34 "relative change" feature. This
       feature is macroed out for now. Perhaps should make it a Ctrl-Click or
       something to start it in addition to "would select".
-    o Ctrl-Z works, but does not always undo the modify flag. (Our undo method
-      is not robust.)
     o Added code to pass arrow events from the qscrollslave to the
       qscrollmaster. Does not work for wheel events, oddly enough.
 
@@ -37,13 +30,10 @@ Mutes:
 
 Playlists:
 
-    -   When opening play-list, also open next song. Make the play-list
-        active.
-    -   Still need to work out playlist naming and replacement.
-    -   Set all contrib/midi and data/midi MIDI files to use port 0.
     -   Consider adding a configurable play-list auto-advance delay value.
     -   Why is the first play-list song file double loaded?
     -   How to force ports to 0 when errors happen, and save the file.
+    -   Set all contrib/midi and data/midi MIDI files to use port 0.
 
 From Testing:
 
@@ -249,8 +239,8 @@ ISSUES:
     press the Stop button, when it starts over on 001:X:xxx. The pattern length
     remains the same though.
 
-    STATUS: Undoing the change and commenting on it. Investigating the second
-            part.
+    STATUS: Closed by the reporter. Undid the change and commented on it.
+            Need to investigate the second part.
 
 #110 Windows build download
 
@@ -313,6 +303,7 @@ Version 2 features:
         support.  Seq66 dependence on the JACK ringbuffer is an issue here.
     -   Port refresh in ALSA and JACK at a minimum.
     -   JACK port groups and order.
+    -   Add option to start JACK if not running.
     -   MIDI Learn.  Separate app?
     -   Pipewire support.
     -   Live note mapping?
@@ -336,5 +327,10 @@ Version 2 features:
     -   Use std::numeric_limits instead of macros.
     -   LV2 MIDINAM support.
     -   Live note-mapping.
+    -   Pattern Options (would be a new tab):
+        -   New-pattern editor options (check-boxes)
+        -   BPM display minimum and maximum
+    -   Windows build and installer. 32-bit installer cannot work!
+    -   Drag and drop MIDI files onto seq66 (see sequencer64 issue #137)
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

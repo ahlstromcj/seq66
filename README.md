@@ -1,4 +1,4 @@
-# README for Seq66 0.99.7 2023-07-19
+# README for Seq66 0.99.8 2023-08-09
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -81,6 +81,10 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.99.8:
+        *   Fixed seqroll drawing errors introduced in adding time-sig support.
+        *   Fixed not setting up SIGINT in qseq66, which prevented a proper
+            shutdown.
     *   Version 0.99.7:
         *   Issue #110 follow-ons:
             Cannot save tempo (BPM) in Windows when

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-07-20
+ * \updates       2023-08-07
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1668,6 +1668,19 @@ filename_concatenate (const std::string & path, const std::string & filebase)
     std::string result = clean_path(path);          /* also adds end slash  */
     std::string base = filename_base(filebase);     /* strip existing path  */
     result += base;
+    return result;
+}
+
+std::string
+filename_concatenate
+(
+    const std::string & path,
+    const std::string & base,
+    const std::string & ext
+)
+{
+    std::string result = filename_concatenate(path, base);
+    result = file_extension_set(result, ext);
     return result;
 }
 
