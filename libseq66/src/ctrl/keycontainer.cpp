@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2023-04-26
+ * \updates       2023-08-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -53,6 +53,7 @@ keycontainer::keycontainer () :
     m_container_name    ("Default keys"),
     m_pattern_keys      (),
     m_mute_keys         (),
+    m_automation_keys   (),
     m_loaded_from_rc    (false),
     m_use_auto_shift    (true),
     m_kbd_layout        (keyboard::layout::qwerty),
@@ -74,6 +75,7 @@ keycontainer::keycontainer (const std::string & name) :
     m_container_name    (name),
     m_pattern_keys      (),
     m_mute_keys         (),
+    m_automation_keys   (),
     m_loaded_from_rc    (false),
     m_use_auto_shift    (true),
     m_kbd_layout        (keyboard::layout::qwerty),
@@ -153,10 +155,9 @@ keycontainer::add_slot (const keycontrol & op)
     bool result = false;
     int keyslot = op.control_code();            /* pattern offset       */
     std::string keyname = op.key_name();
-    auto sz = m_pattern_keys.size();
     auto p = std::make_pair(keyslot, keyname);
-    (void) m_pattern_keys.insert(p);
-    result = m_pattern_keys.size() == (sz + 1);
+    auto r = m_pattern_keys.insert(p);
+    result = r.second;
     if (result)
     {
         /* no code needed */
@@ -191,10 +192,36 @@ keycontainer::add_mute (const keycontrol & op)
     bool result = false;
     int keyslot = op.control_code();            /* pattern offset       */
     std::string keyname = op.key_name();
-    auto sz = m_mute_keys.size();
     auto p = std::make_pair(keyslot, keyname);
-    (void) m_mute_keys.insert(p);
-    result = m_mute_keys.size() == (sz + 1);
+    auto r = m_mute_keys.insert(p);
+    result = r.second;
+    if (result)
+    {
+        /* no code needed */
+    }
+    else
+    {
+        std::cerr
+            << "Duplicate mute slot #" << std::setw(3) << keyslot
+            << " : '" << keyname << "'" << std::endl
+            ;
+    }
+    return result;
+}
+
+/**
+ *  Function added for issue #114.
+ */
+
+bool
+keycontainer::add_automation (const keycontrol & op)
+{
+    bool result = false;
+    int keyslot = op.control_code();            /* pattern offset       */
+    std::string keyname = op.key_name();
+    auto p = std::make_pair(keyslot, keyname);
+    auto r = m_automation_keys.insert(p);
+    result = r.second;
     if (result)
     {
         /* no code needed */
@@ -262,6 +289,31 @@ keycontainer::mute_key (int mute_offset) const
     std::string result;
     auto p = m_mute_keys.find(mute_offset);
     if (p != m_mute_keys.end())
+    {
+        result = p->second;
+        if (result[0] == '0' && result[1] == 'x')
+        {
+            char ch = char(std::stoi(result, nullptr, 0));
+            result = ch;
+        }
+    }
+    else
+        result = "?";
+
+    return result;
+}
+
+/**
+ *  Function added for issue #114.
+ *  Similar to slot_key().
+ */
+
+std::string
+keycontainer::automation_key (int ctrlcode) const
+{
+    std::string result;
+    auto p = m_automation_keys.find(ctrlcode);
+    if (p != m_automation_keys.end())
     {
         result = p->second;
         if (result[0] == '0' && result[1] == 'x')
@@ -361,8 +413,13 @@ keycontainer::kbd_layout_to_string (keyboard::layout lay)
     return result;
 }
 
+/**
+ *  Static function to look up the default name of a key based on
+ *  its index (actually a ctrlkey value).
+ */
+
 const std::string &
-keycontainer::automation_key_name (int index)
+keycontainer::automation_default_key_name (int index)
 {
     static std::string s_dummy;
     const defaults & keylist = keys_automation();
@@ -608,6 +665,9 @@ keycontainer::add_defaults ()
         {
             keycontrol kc(nametag, keyname, c, a, s, auslot);
             if (! add(ordinal, kc))
+                break;
+
+            if (! add_automation(kc))           /* provides mute number     */
                 break;
         }
     }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2023-04-12
+ * \updates       2023-08-12
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of keycontrol objects keyed by a key ordinal
@@ -86,6 +86,14 @@ public:
 
     using mutemap = std::map<int, std::string>;
 
+    /**
+     *  An additional container to hold the automation numbers and the
+     *  corresponding keystrokes to quickly look up the keystroke name based on
+     *  the offset number.
+     */
+
+    using automationmap = std::map<int, std::string>;
+
 private:
 
     /**
@@ -125,6 +133,13 @@ private:
      */
 
     mutemap m_mute_keys;
+
+    /**
+     *  Reverse lookup map for automation number numbers. This map is useful
+     *  in showing the keystroke in a tool-tip as per issue #114.
+     */
+
+    automationmap m_automation_keys;
 
     /**
      *  Indicates if the key values were loaded from an "rc" configuration
@@ -169,6 +184,7 @@ public:
         m_container.clear();
         m_pattern_keys.clear();
         m_mute_keys.clear();
+        m_automation_keys.clear();
     }
 
     int count () const
@@ -179,9 +195,11 @@ public:
     bool add (ctrlkey ordinal, const keycontrol & kc);
     bool add_slot (const keycontrol & kc);
     bool add_mute (const keycontrol & kc);
+    bool add_automation (const keycontrol & kc);
     const keycontrol & control (ctrlkey ordinal) const;
     std::string slot_key (int pattern_offset) const;
     std::string mute_key (int mute_offset) const;
+    std::string automation_key (int ctrlcode) const;
     keystroke mute_keystroke (int mute_offset) const;
 
     bool loaded_from_rc () const
@@ -224,7 +242,7 @@ public:
 
     void show () const;
 
-    static const std::string & automation_key_name (int index);
+    static const std::string & automation_default_key_name (int index);
 
 private:
 

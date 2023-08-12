@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-07-17
+ * \updates       2023-08-12
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -575,6 +575,15 @@ qsmainwnd::qsmainwnd
     ui->btnPlay->setCheckable(true);
     connect(ui->btnPlay, SIGNAL(clicked(bool)), this, SLOT(start_playing()));
     qt_set_icon(play2_xpm, ui->btnPlay);
+
+    /*
+     * Adding support bit by bit for showing the automation key in the
+     * tool-tips where applicable. Per issue #114.
+     */
+
+    int index = slot_to_int_cast(automation::slot::start);  // vs playback
+    std::string keyname = rc().key_controls().automation_key(index);
+    (void) tooltip_with_keystroke(ui->btnPlay, keyname);
 
     /*
      * L/R Loop button (and Text Underrun button hiding).

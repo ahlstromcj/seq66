@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-07-09
+ * \updates       2023-08-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -140,6 +140,12 @@ extern bool show_folder_dialog
     std::string & selectedfolder,
     const std::string & prompt      = "",
     bool forcehome                  = false
+);
+extern void tooltip_with_keystroke
+(
+    QWidget * widget,
+    const std::string & keyname,
+    int duration = -1
 );
 
 }               // namespace seq66

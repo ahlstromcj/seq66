@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2023-05-11
+ * \updates       2023-08-12
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -1256,7 +1256,7 @@ midicontrolfile::parse_control_stanza (automation::category opcat, int index)
         }
         else
         {
-            keyname = keycontainer::automation_key_name(index);
+            keyname = keycontainer::automation_default_key_name(index);
             ok = ! keyname.empty();
         }
         if (ok)
@@ -1268,6 +1268,13 @@ midicontrolfile::parse_control_stanza (automation::category opcat, int index)
                 opslot = automation::slot::mute_group;
             else if (opcat == automation::category::automation)
                 opslot = opcontrol::set_slot(index);
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+            if (opcat == automation::category::automation)
+            {
+                printf("Key %d = '%s'\n", index, keyname.c_str());
+            }
+#endif
 
             /*
              *  Create control objects, whether active or not.  We want to
@@ -1312,15 +1319,21 @@ midicontrolfile::parse_control_stanza (automation::category opcat, int index)
             "", keyname, opcat, automation::action::toggle, opslot, index
         );
         ctrlkey ordinal = qt_keyname_ordinal(keyname);
-        if (! is_invalid_ordinal(ordinal))          /* ca 2021-12-31 */
+        if (! is_invalid_ordinal(ordinal))
         {
             bool ok = m_temp_key_controls.add(ordinal, kc);
             if (ok)
             {
+                /*
+                 * We now add automation codes for issue #114.
+                 */
+
                 if (opcat == automation::category::loop)
                     ok = m_temp_key_controls.add_slot(kc);
                 else if (opcat == automation::category::mute_group)
                     ok = m_temp_key_controls.add_mute(kc);
+                else if (opcat == automation::category::automation)
+                    ok = m_temp_key_controls.add_automation(kc);
             }
             if (! ok)
                 (void) keycontrol_error_message(kc, ordinal, line_number());

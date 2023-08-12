@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-07-09
+ * \updates       2023-08-12
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -737,6 +737,52 @@ show_folder_dialog
         file_message("Choosing", selectedfolder);
     }
     return result;
+}
+
+/**
+ *  For issue #114, we want to append the keystroke as configured to the
+ *  tool-tip.
+ *
+ * \param widget
+ *      The QWidget whose tool-tip we want to modify.
+ *
+ * \param keyname
+ *      The name of the key as provided by the caller. (We could change
+ *      this parameter to an automation action that can be looked up here
+ *      instead.)
+ *
+ * \param duration
+ *      Provides the tool-tip duration in milliseconds.  If -1 (the default),
+ *      then duration depends on the length of the tool-tip (and this is still
+ *      a bit too short.
+ */
+
+void
+tooltip_with_keystroke
+(
+    QWidget * widget,
+    const std::string & keyname,
+    int duration
+)
+{
+    if (! keyname.empty())
+    {
+        QString qtip = widget->toolTip();
+        std::string tip = qtip.toStdString();
+        if (tip.empty())
+        {
+            tip = "Key " + keyname;
+        }
+        else
+        {
+            tip += " [";
+            tip += keyname;
+            tip += "]";
+        }
+        qtip = qt(tip);
+        widget->setToolTip(qtip);
+        widget->setToolTipDuration(duration);
+    }
 }
 
 }               // namespace seq66
