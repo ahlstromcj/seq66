@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-07-16
+ * \updates       2023-08-13
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2661,6 +2661,7 @@ public:
         mapper().off_sequences();
     }
 
+    std::string automation_key (automation::slot s);
     std::string sequence_label (seq::cref seq) const;
     std::string sequence_label (seq::number seqno) const;
     std::string sequence_title (seq::cref seq) const;
@@ -3754,7 +3755,7 @@ public:
         automation::action a, int d0, int d1,
         int index, bool inverse
     );
-    bool automation_reserved_29
+    bool automation_looping
     (
         automation::action a, int d0, int d1,
         int index, bool inverse

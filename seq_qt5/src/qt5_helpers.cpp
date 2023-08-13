@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-08-12
+ * \updates       2023-08-13
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -775,9 +775,9 @@ tooltip_with_keystroke
         }
         else
         {
-            tip += " [";
+            tip += " [ ";
             tip += keyname;
-            tip += "]";
+            tip += " ]";
         }
         qtip = qt(tip);
         widget->setToolTip(qtip);

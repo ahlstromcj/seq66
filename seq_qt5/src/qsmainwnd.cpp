@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-12
+ * \updates       2023-08-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -534,9 +534,24 @@ qsmainwnd::qsmainwnd
         ui->actionUnmuteAllTracks, SIGNAL(triggered(bool)),
         this, SLOT(set_song_mute_off())
     );
+
+    /*
+     * We also add a track toggle button for quicker access.
+     */
+
     connect
     (
         ui->actionToggleAllTracks, SIGNAL(triggered(bool)),
+        this, SLOT(set_song_mute_toggle())
+    );
+
+    std::string keyname =
+        cb_perf().automation_key(automation::slot::toggle_mutes);
+
+    tooltip_with_keystroke(ui->btnMute, keyname);
+    connect
+    (
+        ui->btnMute, SIGNAL(clicked(bool)),
         this, SLOT(set_song_mute_toggle())
     );
     connect
@@ -557,6 +572,8 @@ qsmainwnd::qsmainwnd
      */
 
     ui->btnStop->setCheckable(true);
+    keyname = cb_perf().automation_key(automation::slot::stop);
+    tooltip_with_keystroke(ui->btnStop, keyname);
     connect(ui->btnStop, SIGNAL(clicked(bool)), this, SLOT(stop_playing()));
     qt_set_icon(stop_xpm, ui->btnStop);
 
@@ -565,28 +582,25 @@ qsmainwnd::qsmainwnd
      */
 
     ui->btnPause->setCheckable(true);
+    keyname = cb_perf().automation_key(automation::slot::playback);
+    tooltip_with_keystroke(ui->btnPause, keyname);
     connect(ui->btnPause, SIGNAL(clicked(bool)), this, SLOT(pause_playing()));
     qt_set_icon(pause_xpm, ui->btnPause);
 
     /*
-     * Play button.
+     * Play button. Adding support bit by bit for showing the automation key
+     * in the tool-tips where applicable. Per issue #114.
      */
 
     ui->btnPlay->setCheckable(true);
+    keyname = cb_perf().automation_key(automation::slot::start);
+    tooltip_with_keystroke(ui->btnPlay, keyname);
     connect(ui->btnPlay, SIGNAL(clicked(bool)), this, SLOT(start_playing()));
     qt_set_icon(play2_xpm, ui->btnPlay);
 
     /*
-     * Adding support bit by bit for showing the automation key in the
-     * tool-tips where applicable. Per issue #114.
-     */
-
-    int index = slot_to_int_cast(automation::slot::start);  // vs playback
-    std::string keyname = rc().key_controls().automation_key(index);
-    (void) tooltip_with_keystroke(ui->btnPlay, keyname);
-
-    /*
-     * L/R Loop button (and Text Underrun button hiding).
+     * L/R Loop button (and Text Underrun button hiding). While working issue
+     * #114, added automation::slot::loop_LR to the mix.
      */
 
     if (m_shrunken)
@@ -596,7 +610,10 @@ qsmainwnd::qsmainwnd
     }
     else
     {
+        ui->btnLoop->setCheckable(true);
         ui->btnLoop->setChecked(cb_perf().looping());
+        keyname = cb_perf().automation_key(automation::slot::loop_LR);
+        tooltip_with_keystroke(ui->btnLoop, keyname);
         connect(ui->btnLoop, SIGNAL(clicked(bool)), this, SLOT(set_loop(bool)));
         qt_set_icon(loop_xpm, ui->btnLoop);
     }
@@ -605,17 +622,21 @@ qsmainwnd::qsmainwnd
      * Song Play (Live vs Song) button.
      */
 
+    ui->btnSongPlay->setCheckable(false);   /* hmmmmmm */
+    keyname = cb_perf().automation_key(automation::slot::song_mode);
+    tooltip_with_keystroke(ui->btnSongPlay, keyname);
     connect
     (
         ui->btnSongPlay, SIGNAL(clicked(bool)),
         this, SLOT(set_song_mode(bool))
     );
-    ui->btnSongPlay->setCheckable(false);
 
     /*
      * Record-Song button. What about the song_rec_off_xpm file?
      */
 
+    keyname = cb_perf().automation_key(automation::slot::song_record);
+    tooltip_with_keystroke(ui->btnRecord, keyname);
     connect
     (
         ui->btnRecord, SIGNAL(clicked(bool)),
@@ -624,7 +645,8 @@ qsmainwnd::qsmainwnd
     qt_set_icon(song_rec_off_xpm, ui->btnRecord);
 
     /*
-     * Performance Editor button.
+     * Performance Editor button. The keystroke shortcut specified in the
+     * ui file.
      */
 
     if (m_shrunken)
@@ -664,6 +686,8 @@ qsmainwnd::qsmainwnd
 
     /*
      * Group-learn ("L") button.
+     *
+     * CONTINUE HERE!!!!!!
      */
 
     connect
@@ -936,7 +960,7 @@ qsmainwnd::enable_bus_item (int bus, bool enabled)
 void
 qsmainwnd::set_ppqn_text (const std::string & text)
 {
-    std::string t = text + " PPQN";
+    std::string t = text;
     QString p = qt(t);
     ui->lineEditPpqn->setText(p);
 }
@@ -1087,6 +1111,10 @@ qsmainwnd::update_play_status ()
         }
     }
 }
+
+/**
+ *  There is a button with the same functionality in the Song editor.
+ */
 
 void
 qsmainwnd::set_loop (bool looping)

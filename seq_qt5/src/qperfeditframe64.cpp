@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2022-10-04
+ * \updates       2023-08-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -310,6 +310,8 @@ qperfeditframe64::qperfeditframe64
 
     if (m_is_external)
     {
+        std::string keyname = perf().automation_key(automation::slot::loop_LR);
+        tooltip_with_keystroke(ui->btnLoop, keyname);
         connect
         (
             ui->btnLoop, SIGNAL(clicked(bool)),
@@ -749,6 +751,10 @@ qperfeditframe64::set_trigger_transpose (int tpose)
         m_perfroll->set_trigger_transpose(tpose);
     }
 }
+
+/**
+ *  There is a button with the same functionality in the main window.
+ */
 
 void
 qperfeditframe64::marker_loop (bool loop)

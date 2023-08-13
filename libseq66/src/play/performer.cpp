@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-07-17
+ * \updates       2023-08-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -884,6 +884,18 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     rcs.playlist_filename(playlist_filename());
     rcs.playlist_active(playlist_active());
     return true;
+}
+
+/**
+ *  A helper function for the user-interface, this function retrieves the
+ *  name of the keystroke for a given automation control.
+ */
+
+std::string
+performer::automation_key (automation::slot s)
+{
+    int index = slot_to_int_cast(s);
+    return m_key_controls.automation_key(index);
 }
 
 void
@@ -9107,15 +9119,20 @@ performer::automation_stop
 }
 
 bool
-performer::automation_reserved_29
+performer::automation_looping
 (
     automation::action a, int d0, int d1,
     int index, bool inverse
 )
 {
-    std::string name = "Reserved 29";
+    std::string name = "Loop L/R";
     print_parameters(name, a, d0, d1, index, inverse);
-    return false;
+    if (! inverse)
+    {
+        bool loopy = looping();
+        looping(! loopy);
+    }
+    return true;
 }
 
 bool
@@ -9639,10 +9656,7 @@ performer::sm_auto_func_list [] =
     { automation::slot::tap_bpm, &performer::automation_tap_bpm          },
     { automation::slot::start, &performer::automation_start              },
     { automation::slot::stop, &performer::automation_stop                },
-    {
-        automation::slot::reserved_29,
-        &performer::automation_reserved_29
-    },
+    { automation::slot::loop_LR, &performer::automation_looping          },
     {
         automation::slot::toggle_mutes,
         &performer::automation_toggle_mutes

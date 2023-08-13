@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-02
+ * \updates       2023-08-13
  * \license       GNU GPLv2 or above
  *
  * MIDI control container:
@@ -74,7 +74,6 @@
 #include <iomanip>                      /* std::setw() manipulator          */
 #include <iostream>                     /* std::cerr                        */
 
-#include "cfg/settings.hpp"             /* seq66::rc() rcsettings getter    */
 #include "ctrl/keycontainer.hpp"        /* seq66::keycontainer class        */
 #include "ctrl/midicontrolin.hpp"       /* seq66::midicontrolin class       */
 
@@ -238,7 +237,7 @@ midicontrolin::show () const
     using namespace std;
     int index = 0;
     cout
-        << "MIDI-In container (size " << m_container.size() << "): " << endl
+        << "MIDI-In controls (size " << m_container.size() << "): " << endl
         << "Index; MIDI key; Keystroke (name, action, slot, code); stanza"
         << endl
         ;
@@ -247,15 +246,14 @@ midicontrolin::show () const
         const midicontrol::key & k = mcpair.first;
         const midicontrol & mc = mcpair.second;
         int status = k.status();
-        int d0 = k.d0();                            // key::d1() removed
+        int d0 = k.d0();                            /* key::d1() removed    */
         cout
             << "["   << setw(3) << hex << right << index << "] "
             << "0x" << setw(2)
             << setfill('0') << hex << status << setfill(' ')
-            << " "   << setw(2) << hex << d0 << " " //  << setw(2) << hex << d1
-            // << " "
+            << " "   << setw(2) << hex << d0 << " "
             ;
-        mc.show();                      /* shows the key and midi control   */
+        mc.show();                                  /* key & midi control   */
         ++index;
     }
 }

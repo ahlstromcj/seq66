@@ -92,7 +92,6 @@
          <font>
           <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <italic>false</italic>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
@@ -126,6 +125,10 @@
           <height>16777215</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Indicates the format (0 or 1) of
+the MIDI tune.</string>
+        </property>
         <property name="text">
          <string>SMF 0</string>
         </property>
@@ -152,7 +155,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Indicates if in JACK/ALSA/PM (PortMidi) mode.</string>
+         <string>Indicates if in JACK/ALSA/PortMidi mode.</string>
         </property>
         <property name="text">
          <string>PortMidi</string>
@@ -180,8 +183,8 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Indicates if in JACK Transport, Master, Master-Conditional
-mode.</string>
+         <string>Indicates if in JACK Transport Master
+or Slave mode.</string>
         </property>
         <property name="text">
          <string>Master</string>
@@ -209,9 +212,11 @@ mode.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Change the PPQN value of song for ALL sets.
-This modifies the song; a &quot;Save&quot; prompt will occur at exit.
-It does not change Seq66's default PPQN.</string>
+         <string>Change the PPQN value of song for
+ALL sets. This modifies the song; a
+&quot;Save&quot; prompt will occur at exit.
+It does not change Seq66's default
+PPQN.</string>
         </property>
         <property name="editable">
          <bool>true</bool>
@@ -242,7 +247,8 @@ It does not change Seq66's default PPQN.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Sets output bus for all patterns in the current set.  Modifies the song.</string>
+         <string>Sets output bus for all patterns in
+the current set.  Modifies the song.</string>
         </property>
        </widget>
       </item>
@@ -295,7 +301,6 @@ It does not change Seq66's default PPQN.</string>
          <font>
           <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -352,7 +357,6 @@ It does not change Seq66's default PPQN.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -700,7 +704,6 @@ It does not change Seq66's default PPQN.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -726,10 +729,13 @@ It does not change Seq66's default PPQN.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
+        </property>
+        <property name="toolTip">
+         <string>Editable, this shows the name of
+the current set.</string>
         </property>
         <property name="text">
          <string>New</string>
@@ -759,10 +765,13 @@ It does not change Seq66's default PPQN.</string>
         <property name="font">
          <font>
           <pointsize>9</pointsize>
-          <weight>50</weight>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
+        </property>
+        <property name="toolTip">
+         <string>Indicates the loading of the system
+during playback.</string>
         </property>
         <property name="text">
          <string>-</string>
@@ -787,8 +796,8 @@ It does not change Seq66's default PPQN.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Resets the play-set to the current set, no
-matter what sets-mode is in force. </string>
+         <string>Resets the play-set to the current set,
+no matter what sets-mode is in force. </string>
         </property>
         <property name="text">
          <string>!</string>
@@ -811,7 +820,6 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -843,13 +851,13 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
         <property name="toolTip">
-         <string>Number of the active screen-set, including the active external live frame.</string>
+         <string>The number of the active screen-set
+or active external live frame.</string>
         </property>
         <property name="readOnly">
          <bool>true</bool>
@@ -888,7 +896,6 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -917,7 +924,6 @@ matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1000,7 +1006,8 @@ matter what sets-mode is in force. </string>
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
-           <string>Stop playback. With Shift, also rewind transport.</string>
+           <string>Stop playback. With Shift, also rewind
+transport.</string>
           </property>
           <property name="text">
            <string>Stop</string>
@@ -1031,7 +1038,8 @@ matter what sets-mode is in force. </string>
            </size>
           </property>
           <property name="toolTip">
-           <string>Pauses playback, so that the current location is preserved.</string>
+           <string>Pauses playback, so that the current
+location is preserved.</string>
           </property>
           <property name="text">
            <string>Pause</string>
@@ -1089,6 +1097,9 @@ matter what sets-mode is in force. </string>
             <height>28</height>
            </size>
           </property>
+          <property name="toolTip">
+           <string>Activate looping between L and R.</string>
+          </property>
           <property name="text">
            <string>Loop</string>
           </property>
@@ -1130,9 +1141,10 @@ matter what sets-mode is in force. </string>
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
-           <string>Record live sequence changes into the Song Editor.
-Ctrl key disables snap for the recording.
-Shift key enables recording at start of playback.</string>
+           <string>Record live sequence changes into the
+Song Editor. Ctrl key disables snap for
+the recording. Shift key enables recording
+at start of playback.</string>
           </property>
           <property name="text">
            <string>Rec</string>
@@ -1163,7 +1175,9 @@ Shift key enables recording at start of playback.</string>
            </size>
           </property>
           <property name="toolTip">
-           <string>Shows/toggles keep-queue status. Does not show one-shot queue status.</string>
+           <string>Shows/toggles keep-queue status.
+Does not show one-shot queue
+status.</string>
           </property>
           <property name="text">
            <string>Q</string>
@@ -1191,7 +1205,9 @@ Shift key enables recording at start of playback.</string>
            </size>
           </property>
           <property name="toolTip">
-           <string>Mute Group Learn. Click L, then press a key to store the state of the sequences in the Shift of that key.</string>
+           <string>Mute Group Learn. Click, then press
+a key to store the state of the sequences
+in the Shift of that key.</string>
           </property>
           <property name="text">
            <string>Learn</string>
@@ -1210,12 +1226,35 @@ Shift key enables recording at start of playback.</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>999</width>
+          <width>16</width>
           <height>28</height>
          </size>
         </property>
         <property name="text">
          <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnMute">
+        <property name="minimumSize">
+         <size>
+          <width>56</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>64</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Click to toggle the mute status of
+all tracks.</string>
+        </property>
+        <property name="text">
+         <string>Mute</string>
         </property>
        </widget>
       </item>
@@ -1240,7 +1279,8 @@ Shift key enables recording at start of playback.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Opens the external song-editor window.</string>
+         <string>Opens the external song-editor.
+[ Ctrl-E ]</string>
         </property>
         <property name="text">
          <string>Perf</string>
@@ -1277,7 +1317,8 @@ Shift key enables recording at start of playback.</string>
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="toolTip">
-         <string>Toggle playback of the Song Editor data</string>
+         <string>Toggle playback using the Song
+Editor triggers.</string>
         </property>
         <property name="text">
          <string>Live</string>
@@ -1300,19 +1341,18 @@ Shift key enables recording at start of playback.</string>
         </property>
         <property name="minimumSize">
          <size>
-          <width>72</width>
+          <width>56</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>999</width>
+          <width>64</width>
           <height>28</height>
          </size>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1352,7 +1392,8 @@ Shift key enables recording at start of playback.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Switch between BBT and HMS timing in the clock.</string>
+         <string>Switch between BBT and HMS time
+format in the clock.</string>
         </property>
         <property name="text">
          <string>H:M:S</string>
@@ -1371,12 +1412,14 @@ Shift key enables recording at start of playback.</string>
           </property>
           <property name="maximumSize">
            <size>
-            <width>999</width>
+            <width>36</width>
             <height>28</height>
            </size>
           </property>
           <property name="toolTip">
-           <string>Tap in time to set beats per minute (BPM). After 5 seconds of no taps, the tap-counter resets to 0. Default keystroke is F9.</string>
+           <string>Tap in time to set beats per minute
+(BPM). After 5 seconds of no taps,
+the tap-counter resets to 0.</string>
           </property>
           <property name="text">
            <string>0</string>
@@ -1399,7 +1442,6 @@ Shift key enables recording at start of playback.</string>
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1431,7 +1473,6 @@ Shift key enables recording at start of playback.</string>
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1440,7 +1481,8 @@ Shift key enables recording at start of playback.</string>
            <enum>Qt::ClickFocus</enum>
           </property>
           <property name="toolTip">
-           <string>Allows the setting of the Beats Per Minute.</string>
+           <string>Allows the setting of the
+beats/minute.</string>
           </property>
           <property name="layoutDirection">
            <enum>Qt::LeftToRight</enum>
@@ -1468,7 +1510,7 @@ Shift key enables recording at start of playback.</string>
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>22</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

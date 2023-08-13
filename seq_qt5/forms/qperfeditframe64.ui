@@ -149,6 +149,9 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Show triggers at half height. [ v ]</string>
+       </property>
        <property name="text">
         <string>-</string>
        </property>
@@ -162,6 +165,9 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Reset triggers to normal height. [ 0 ]</string>
+       </property>
        <property name="text">
         <string>0</string>
        </property>
@@ -174,6 +180,9 @@
          <width>20</width>
          <height>16777215</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>Double the height of triggers. [ V ]</string>
        </property>
        <property name="text">
         <string>+</string>
@@ -369,7 +378,8 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>If active, the piano roll scrolls to follow progress bar.</string>
+          <string>If active, the piano roll scrolls to
+follow progress bar.</string>
          </property>
          <property name="text">
           <string/>
@@ -404,7 +414,8 @@
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Zoom out horizontally in the piano roll.</string>
+          <string>Zoom out horizontally in the piano roll.
+[ z ] The 0 key resets zoom.</string>
          </property>
          <property name="statusTip">
           <string/>
@@ -432,7 +443,8 @@
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Zoom in horizontally in the piano roll.</string>
+          <string>Zoom in horizontally in the piano roll.
+[ Z ] The 0 key resets zoom.</string>
          </property>
          <property name="text">
           <string/>
@@ -454,9 +466,9 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Toggles painting mode.  An alternative to holding
-the right mouse button or using the &quot;p&quot; and &quot;x&quot;
-keys.</string>
+          <string>Toggles painting mode.  Or hold the
+right mouse button. [ p to enter, x
+to leave ]</string>
          </property>
          <property name="text">
           <string>Enter</string>
@@ -486,8 +498,8 @@ keys.</string>
          </property>
          <property name="toolTip">
           <string>Turns on &quot;song record&quot; snap. An added
-pattern snaps to the full length of the sequence like Seq24
-(with snap set to &quot;L&quot;) or to the snap setting.
+trigger snaps to the full length of the
+pattern or to the snap setting.
 Growing occurs at snap length.</string>
          </property>
          <property name="text">
@@ -516,11 +528,10 @@ Growing occurs at snap length.</string>
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Selects the movement and sizing snap value.
-&quot;L&quot; indicates full length. &quot;1/N&quot; means 1/Nth of a measure.
-Also affects the L/R markers, except that &quot;L&quot; means
-&quot;1 measure L/R&quot;.  Use &quot;L&quot; only for patterns no longer than
-a few measures!</string>
+          <string>Selects the movement and sizing snap
+value. &quot;L&quot; = full length. &quot;1/N&quot; means 1/Nth
+of a measure. Affects the L/R markers. Use
+L only for short patterns.</string>
          </property>
          <property name="currentIndex">
           <number>-1</number>
@@ -566,9 +577,8 @@ a few measures!</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>The number of semitones to transpose the performance,
-for transposable patterns.  The transposition is done at
-playback time, on the fly.</string>
+        <string>The number of semitones to transpose the performance, for transposable patterns.
+Transposition is done during playback.</string>
        </property>
        <property name="currentText">
         <string/>
@@ -593,7 +603,8 @@ playback time, on the fly.</string>
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>Sets looping between the L and R markers.</string>
+        <string>Sets looping between the L and R
+markers.</string>
        </property>
        <property name="text">
         <string>Loop</string>
@@ -704,7 +715,8 @@ playback time, on the fly.</string>
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Expand and copy between the L and R markers.</string>
+          <string>Expand and copy between the
+L and R markers.</string>
          </property>
          <property name="text">
           <string/>
@@ -732,7 +744,8 @@ playback time, on the fly.</string>
           </size>
          </property>
          <property name="toolTip">
-          <string>Expands the piano roll to the right to allow more room for editing.</string>
+          <string>Expands the piano roll to the right
+to allow more room for editing.</string>
          </property>
          <property name="text">
           <string>--&gt;</string>
@@ -784,7 +797,7 @@ playback time, on the fly.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>The transposition value for Trigger Transpose.
+        <string>Transposition value for Trigger Transpose.
 Range: -60 to +60 (5 octaves each way).
 Apply it to a trigger block via Ctrl-right-click.
 To reset, set to 0 and apply it.</string>
@@ -806,9 +819,9 @@ To reset, set to 0 and apply it.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Shows the duration of the song, which depends
-on the longest track or the Song layout. Clicking
-on this button toggles between H:M:S and B:B:T
+        <string>Shows the duration of the song based
+on the longest track or Song layout.
+Click to toggle between H:M:S and B:B:T
 format.</string>
        </property>
        <property name="text">

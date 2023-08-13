@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2023-03-18
+ * \updates       2023-08-13
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -212,8 +212,8 @@ enum class slot
     tap_bpm,            /**< 26: Tap key for estimating BPM.                */
     start,              /**< 27: Start playback. Compare to playback above. */
     stop,               /**< 28: Stop playback. Compare to playback above.  */
-    reserved_29,        /**< 29: Was the second snapshot key.               */
-    toggle_mutes,       /**< 30: Song mute, unmute, and toggle?  TODO.      */
+    loop_LR,            /**< 29: Toggle looping between L/R markers.        */
+    toggle_mutes,       /**< 30: Song mute, unmute, and toggle?             */
     song_pointer,       /**< 31: Reposition the song pointer.  TODO.        */
 
     /*
