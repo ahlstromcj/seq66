@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-04-26
+ * \updates       2023-08-14
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -206,11 +206,18 @@ qslivegrid::qslivegrid
         ui->buttonBackgroundRecord->setEnabled(background_record);
         show_grid_record_style();
         show_record_mode();
+
+        std::string keyname; // =
+            // cb_perf().automation_key(automation::slot::record_style);
+
         connect
         (
             ui->buttonLoopMode, SIGNAL(clicked(bool)),
             this, SLOT(slot_grid_record_style(bool))
         );
+
+        keyname = cb_perf().automation_key(automation::slot::record_style);
+        tooltip_with_keystroke(ui->buttonRecordMode, keyname);
         connect
         (
             ui->buttonRecordMode, SIGNAL(clicked(bool)),

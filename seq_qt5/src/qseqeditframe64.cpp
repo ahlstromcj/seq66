@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-07-02
+ * \updates       2023-08-14
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -446,7 +446,6 @@ qseqeditframe64::qseqeditframe64
      * the beats per measure combo-box, and set the default.
      */
 
-
     qt_set_icon(down_xpm, ui->m_button_bw);
     connect
     (
@@ -532,6 +531,9 @@ qseqeditframe64::qseqeditframe64
             ui->m_toggle_drum, SIGNAL(toggled(bool)),
             this, SLOT(editor_mode(bool))
         );
+
+        std::string keyname = perf().automation_key(automation::slot::loop_LR);
+        tooltip_with_keystroke(ui->m_button_loop, keyname);
         connect
         (
             ui->m_button_loop, SIGNAL(toggled(bool)),

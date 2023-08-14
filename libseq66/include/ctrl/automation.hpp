@@ -239,7 +239,7 @@ enum class slot
     reserved_48,        /**< 48: Reserved for expansion.                    */
 
     /*
-     * Proposed massive expansion in automation. Record mode selection.
+     * Massive expansion in automation. Record mode selection.
      */
 
     record_overdub,     /**< 49: Select overdub/merge recording triggering. */
@@ -248,7 +248,7 @@ enum class slot
     record_oneshot,     /**< 52: Select oneshot recording triggering.       */
 
     /*
-     * Proposed massive expansion in automation. Grid mode selection.
+     * Massive expansion in automation. Grid mode selection.
      */
 
     grid_loop,          /**< 53: Normal operation of the main grid.         */

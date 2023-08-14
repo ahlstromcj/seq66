@@ -214,7 +214,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Toggles the transposability of this pattern.</string>
+          <string>Toggles transposability of this pattern.</string>
          </property>
          <property name="text">
           <string>Transp</string>
@@ -236,8 +236,8 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>If the sequence is transposable, this button applies
-the note-map, if any, to the note events in this pattern.</string>
+          <string>If transposable, apply active note-map
+to note events.</string>
          </property>
          <property name="text">
           <string>Map</string>
@@ -290,7 +290,7 @@ the note-map, if any, to the note events in this pattern.</string>
           </size>
          </property>
          <property name="toolTip">
-          <string>Resets the selected chord generation to Off.</string>
+          <string>Resets chord generation to Off.</string>
          </property>
          <property name="text">
           <string>Chord</string>
@@ -441,9 +441,7 @@ the note-map, if any, to the note events in this pattern.</string>
           </font>
          </property>
          <property name="toolTip">
-          <string>Closes this window and any child windows.
-A workaround for Qt's lack of a signal for closing
-a non-main window frame.</string>
+          <string>Closes this window and child windows. Fails. Hidden.</string>
          </property>
          <property name="text">
           <string>X</string>
@@ -480,7 +478,7 @@ a non-main window frame.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Undo the last operation(s).</string>
+        <string>Undo previous operation(s). [ Ctrl-Z ]</string>
        </property>
        <property name="text">
         <string>U</string>
@@ -502,7 +500,7 @@ a non-main window frame.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Redo the last operation(s).</string>
+        <string>Redo last operation(s). [ Shift-Ctrl-Z ]</string>
        </property>
        <property name="text">
         <string>R</string>
@@ -524,7 +522,7 @@ a non-main window frame.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Quantize the selected notes.</string>
+        <string>Quantize the selected notes. [ q r t ]</string>
        </property>
        <property name="text">
         <string>Q</string>
@@ -549,7 +547,7 @@ a non-main window frame.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Brings up the Tools popup menus.</string>
+        <string>Shows the Tools popup menus.</string>
        </property>
        <property name="text">
         <string>T</string>
@@ -574,7 +572,7 @@ a non-main window frame.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>If active, the pattern piano roll scrolls to follow the progress bar in playback.</string>
+        <string>Set the piano roll to follow progress bar.</string>
        </property>
        <property name="text">
         <string>F</string>
@@ -599,8 +597,8 @@ a non-main window frame.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Snap size for spacing drawn notes. Resets it to
-default snap size.</string>
+        <string>Snap size for spacing drawn notes.
+Resets to default snap size.</string>
        </property>
        <property name="text">
         <string>S</string>
@@ -631,7 +629,7 @@ default snap size.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Selects the snap size for the spacing of drawn events.</string>
+        <string>Selects snap size for spacing drawn events.</string>
        </property>
       </widget>
      </item>
@@ -650,7 +648,7 @@ default snap size.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Sets the note length to generate using the mouse back
+        <string>Sets note length for drawing
 to the default value, 1/16.</string>
        </property>
        <property name="text">
@@ -720,9 +718,9 @@ to the default value, 1/16.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Horizontal zoom level in 'pixels:ticks'.  The number
+        <string>Horizontal zoom level in 'pixels:ticks', the number
 of ticks or pulses represented by 1 pixel.  A lower value
-zooms 'in'.</string>
+zooms 'in' [ z 0 Z ].</string>
        </property>
       </widget>
      </item>
@@ -741,7 +739,7 @@ zooms 'in'.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Musical key selection. Resets key selection to 'C'.</string>
+        <string>Musical key selection. Resets key selection to C.</string>
        </property>
        <property name="text">
         <string>K</string>
@@ -763,7 +761,7 @@ zooms 'in'.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Selects the desired musical key to apply.</string>
+        <string>Selects the musical key to apply.</string>
        </property>
       </widget>
      </item>
@@ -782,7 +780,7 @@ zooms 'in'.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Musical scale selection. Resets scale to Off (Chromatic).</string>
+        <string>Resets musical scale to Off.</string>
        </property>
        <property name="text">
         <string>S</string>
@@ -810,7 +808,7 @@ zooms 'in'.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Selects musical scale to show on piano roll background.</string>
+        <string>Musical scale to show on piano roll background.</string>
        </property>
       </widget>
      </item>
@@ -866,7 +864,7 @@ zooms 'in'.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>The other pattern/sequence to show on background of piano roll.</string>
+        <string>Another pattern/sequence to show on piano roll background.</string>
        </property>
        <property name="text">
         <string>Off</string>
@@ -911,7 +909,7 @@ zooms 'in'.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Event to show in data panel, popup menu.</string>
+        <string>Event to show in data panel popup menu.</string>
        </property>
        <property name="text">
         <string>Event</string>
@@ -933,7 +931,7 @@ zooms 'in'.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Present events to show, popup menu.</string>
+        <string>Present event-to-show popup menu.</string>
        </property>
        <property name="text">
         <string>Data</string>
@@ -958,7 +956,7 @@ zooms 'in'.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Displays the name of the event being shown.</string>
+        <string>Displays name of event being shown.</string>
        </property>
        <property name="text">
         <string>Note On</string>
@@ -1014,7 +1012,7 @@ zooms 'in'.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Brings up an LFO window to modulate the data values.</string>
+        <string>Brings up an LFO window to modulate data values.</string>
        </property>
        <property name="text">
         <string>LFO</string>
@@ -1036,10 +1034,10 @@ zooms 'in'.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Provides the number of repetitions in Live mode.
-The default, 0, means the normal unlimited repetitions.
-A value of 1 is a &quot;one-shot&quot; loop.  Values up to 999 are
-supported by this control.</string>
+        <string>The number of repetitions in Live mode.
+0 (default) means unlimited repetitions.
+A value of 1 is a &quot;one-shot&quot; loop.
+Values up to 999 are supported by this control.</string>
        </property>
        <property name="maximum">
         <number>999</number>
@@ -1224,7 +1222,8 @@ Oneshot recording of a pattern.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Selects the Free mode of recording (incoming velocity), or a velocity to force upon input.</string>
+        <string>Selects the Free mode of recording (incoming velocity),
+or a velocity to force upon input.</string>
        </property>
       </widget>
      </item>
@@ -1264,7 +1263,7 @@ Oneshot recording of a pattern.</string>
           </size>
          </property>
          <property name="toolTip">
-          <string>Vertical zoom out.  Same as the 'v' key in the piano roll.</string>
+          <string>Vertical zoom out. [ v ].</string>
          </property>
          <property name="text">
           <string>-</string>
@@ -1286,8 +1285,7 @@ Oneshot recording of a pattern.</string>
           </size>
          </property>
          <property name="toolTip">
-          <string>Vertical zoom reset (to defined &quot;key height&quot;).  Same as
-the '0' key in the piano roll.</string>
+          <string>Vertical zoom reset. [ 0 ]</string>
          </property>
          <property name="text">
           <string>0</string>
@@ -1309,7 +1307,7 @@ the '0' key in the piano roll.</string>
           </size>
          </property>
          <property name="toolTip">
-          <string>Vertical zoom in.  Same as the 'V' key in the piano roll.</string>
+          <string>Vertical zoom in. [ V ]</string>
          </property>
          <property name="text">
           <string>+</string>
@@ -1500,8 +1498,8 @@ the '0' key in the piano roll.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Click to add the current time signature as a
-meta event at the position of the L marker.</string>
+        <string>Add the current time signature as a
+meta event at the L marker.</string>
        </property>
        <property name="text">
         <string>3/4</string>
@@ -1613,7 +1611,7 @@ meta event at the position of the L marker.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Selects the beat width, the denominator of the time signature.</string>
+        <string>Selects beat width (denominator of time signature).</string>
        </property>
        <property name="editable">
         <bool>true</bool>
@@ -1678,7 +1676,8 @@ meta event at the position of the L marker.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Selects the length of the pattern for this sequence.  Note that it can be overridden by the &quot;Merge&quot; setting below.</string>
+        <string>Selects the pattern length. It can be
+overridden by the &quot;Merge&quot; setting below.</string>
        </property>
        <property name="editable">
         <bool>true</bool>
@@ -1700,7 +1699,7 @@ meta event at the position of the L marker.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Selects a chord to generate automatically when each note is created.</string>
+        <string>Selects a chord to generate when each note is created.</string>
        </property>
       </widget>
      </item>
@@ -1762,7 +1761,7 @@ meta event at the position of the L marker.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Selects the MIDI output buss for this pattern. It is stored with the pattern.</string>
+        <string>Selects MIDI output buss; stored with the pattern.</string>
        </property>
       </widget>
      </item>
@@ -1815,7 +1814,7 @@ meta event at the position of the L marker.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Selects the MIDI output channel for this pattern. It is stored with the pattern.</string>
+        <string>Selects MIDI output channel; stored with the pattern.</string>
        </property>
       </widget>
      </item>

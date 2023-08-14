@@ -81,7 +81,7 @@
           <x>0</x>
           <y>0</y>
           <width>16</width>
-          <height>306</height>
+          <height>310</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -116,7 +116,7 @@
           <x>0</x>
           <y>0</y>
           <width>689</width>
-          <height>308</height>
+          <height>312</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -207,7 +207,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>TIme-line and L and R markers.</string>
+        <string>Time-line and L and R markers.</string>
        </property>
        <property name="text">
         <string/>
@@ -316,7 +316,7 @@
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Undo the previous operation(s).</string>
+          <string>Undo previous operation(s). [ Ctrl-Z ]</string>
          </property>
          <property name="statusTip">
           <string/>
@@ -350,7 +350,7 @@
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Redo the last operations(s).</string>
+          <string>Redo last operations(s). [ Shift-Ctrl-Z ]</string>
          </property>
          <property name="text">
           <string/>
@@ -378,8 +378,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>If active, the piano roll scrolls to
-follow progress bar.</string>
+          <string>Set piano roll to follow progress bar.</string>
          </property>
          <property name="text">
           <string/>
@@ -414,7 +413,7 @@ follow progress bar.</string>
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Zoom out horizontally in the piano roll.
+          <string>Zoom out horizontally in piano roll.
 [ z ] The 0 key resets zoom.</string>
          </property>
          <property name="statusTip">
@@ -443,7 +442,7 @@ follow progress bar.</string>
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Zoom in horizontally in the piano roll.
+          <string>Zoom in horizontally in piano roll.
 [ Z ] The 0 key resets zoom.</string>
          </property>
          <property name="text">
@@ -497,10 +496,9 @@ to leave ]</string>
           </size>
          </property>
          <property name="toolTip">
-          <string>Turns on &quot;song record&quot; snap. An added
-trigger snaps to the full length of the
-pattern or to the snap setting.
-Growing occurs at snap length.</string>
+          <string>Set &quot;song record&quot; snap. An added
+trigger snaps to the length of the pattern
+or snap setting. Growth occurs at snap length.</string>
          </property>
          <property name="text">
           <string>Snap</string>
@@ -528,9 +526,9 @@ Growing occurs at snap length.</string>
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Selects the movement and sizing snap
-value. &quot;L&quot; = full length. &quot;1/N&quot; means 1/Nth
-of a measure. Affects the L/R markers. Use
+          <string>Selects movement and sizing snap
+value. &quot;L&quot; = full length. &quot;1/N&quot; is 1/Nth
+of a measure. Affects L/R markers. Use
 L only for short patterns.</string>
          </property>
          <property name="currentIndex">
@@ -589,7 +587,7 @@ Transposition is done during playback.</string>
       <widget class="QPushButton" name="btnLoop">
        <property name="minimumSize">
         <size>
-         <width>28</width>
+         <width>36</width>
          <height>28</height>
         </size>
        </property>
@@ -603,8 +601,7 @@ Transposition is done during playback.</string>
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>Sets looping between the L and R
-markers.</string>
+        <string>Set looping between L/R markers.</string>
        </property>
        <property name="text">
         <string>Loop</string>
@@ -639,7 +636,7 @@ markers.</string>
         <widget class="QPushButton" name="btnCollapse">
          <property name="minimumSize">
           <size>
-           <width>40</width>
+           <width>36</width>
            <height>28</height>
           </size>
          </property>
@@ -653,7 +650,7 @@ markers.</string>
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Collapse pattern between L and R markers.</string>
+          <string>Collapse pattern between L/R markers.</string>
          </property>
          <property name="text">
           <string/>
@@ -670,7 +667,7 @@ markers.</string>
         <widget class="QPushButton" name="btnExpand">
          <property name="minimumSize">
           <size>
-           <width>40</width>
+           <width>36</width>
            <height>28</height>
           </size>
          </property>
@@ -684,7 +681,7 @@ markers.</string>
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Expand space between L and R markers.</string>
+          <string>Expand space between L/R markers.</string>
          </property>
          <property name="text">
           <string/>
@@ -701,7 +698,7 @@ markers.</string>
         <widget class="QPushButton" name="btnExpandCopy">
          <property name="minimumSize">
           <size>
-           <width>40</width>
+           <width>36</width>
            <height>28</height>
           </size>
          </property>
@@ -715,8 +712,7 @@ markers.</string>
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Expand and copy between the
-L and R markers.</string>
+          <string>Expand and copy between L/R markers.</string>
          </property>
          <property name="text">
           <string/>
@@ -744,8 +740,8 @@ L and R markers.</string>
           </size>
          </property>
          <property name="toolTip">
-          <string>Expands the piano roll to the right
-to allow more room for editing.</string>
+          <string>Expand piano roll to the right
+for more editing room.</string>
          </property>
          <property name="text">
           <string>--&gt;</string>
@@ -775,7 +771,7 @@ to allow more room for editing.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Resets the Trigger Transpose to 0.</string>
+        <string>Resets Trigger Transpose to 0.</string>
        </property>
        <property name="text">
         <string>TT</string>
@@ -799,7 +795,7 @@ to allow more room for editing.</string>
        <property name="toolTip">
         <string>Transposition value for Trigger Transpose.
 Range: -60 to +60 (5 octaves each way).
-Apply it to a trigger block via Ctrl-right-click.
+Apply it to a trigger via Shift-Right click.
 To reset, set to 0 and apply it.</string>
        </property>
       </widget>
@@ -819,7 +815,7 @@ To reset, set to 0 and apply it.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Shows the duration of the song based
+        <string>Shows duration of the song based
 on the longest track or Song layout.
 Click to toggle between H:M:S and B:B:T
 format.</string>

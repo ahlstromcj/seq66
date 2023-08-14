@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.8
 Chris Ahlstrom
-2019-04-13 to 2023-08-13
+2019-04-13 to 2023-08-14
 
 UI:
 
@@ -11,7 +11,10 @@ UI:
         Easy to forget to push that button.
     -   Look into connecting the save-playlist and save-mutes functions.
     -   Make sure L/R looping buttons (main and song) works.
-    -   Clarify the two transpose button in the song editor.
+    -   Clarify the two transpose buttons in the song editor.
+    -   There is no "Loop Mode" (loop_mode) automation slot.
+        The slot is a mislabelled record_style automation slot!
+    -   Add the #114 tool-tip upgrades to the pattern editor.
 
 Some of these issues will be pushed off for the distant Seq66v2.
 

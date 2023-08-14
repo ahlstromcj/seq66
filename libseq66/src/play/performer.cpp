@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-08-13
+ * \updates       2023-08-14
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -9790,7 +9790,7 @@ performer::sm_auto_func_list [] =
      * Terminator
      */
 
-    { automation::slot::max, &performer::automation_no_op               }
+    { automation::slot::max,                &performer::automation_no_op }
 };
 
 }           // namespace seq66

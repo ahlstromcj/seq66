@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-13
+ * \updates       2023-08-14
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -686,10 +686,10 @@ qsmainwnd::qsmainwnd
 
     /*
      * Group-learn ("L") button.
-     *
-     * CONTINUE HERE!!!!!!
      */
 
+    keyname = cb_perf().automation_key(automation::slot::mod_glearn);
+    tooltip_with_keystroke(ui->button_learn, keyname);
     connect
     (
         ui->button_learn, SIGNAL(clicked(bool)),
@@ -701,6 +701,8 @@ qsmainwnd::qsmainwnd
      * Tap BPM button.
      */
 
+    keyname = cb_perf().automation_key(automation::slot::tap_bpm);
+    tooltip_with_keystroke(ui->button_tap_bpm, keyname);
     connect
     (
         ui->button_tap_bpm, SIGNAL(clicked(bool)),
@@ -711,6 +713,8 @@ qsmainwnd::qsmainwnd
      * Keep Queue button.
      */
 
+    keyname = cb_perf().automation_key(automation::slot::keep_queue);
+    tooltip_with_keystroke(ui->button_keep_queue, keyname);
     connect
     (
         ui->button_keep_queue, SIGNAL(clicked(bool)),
@@ -722,6 +726,10 @@ qsmainwnd::qsmainwnd
      * BPM (beats-per-minute) spin-box.
      */
 
+    std::string keysnames = cb_perf().automation_key(automation::slot::bpm_dn);
+    keysnames += " ";
+    keysnames += cb_perf().automation_key(automation::slot::bpm_up);
+    tooltip_with_keystroke(ui->spinBpm, keysnames);
     m_main_bpm = cb_perf().bpm();
     ui->spinBpm->setReadOnly(false);
     ui->spinBpm->setDecimals(usr().bpm_precision());
@@ -803,6 +811,8 @@ qsmainwnd::qsmainwnd
      * Panic button.
      */
 
+    keyname = cb_perf().automation_key(automation::slot::panic);
+    tooltip_with_keystroke(ui->btnPanic, keyname);
     connect(ui->btnPanic, SIGNAL(clicked(bool)), this, SLOT(panic()));
     qt_set_icon(panic_xpm, ui->btnPanic);
 
@@ -813,6 +823,10 @@ qsmainwnd::qsmainwnd
     QString bname = qt(cb_perf().set_name(0));
     ui->txtBankName->setText(bname);
     ui->spinBank->setRange(0, cb_perf().screenset_max() - 1);
+    keysnames = cb_perf().automation_key(automation::slot::ss_dn);
+    keysnames += " ";
+    keysnames += cb_perf().automation_key(automation::slot::ss_up);
+    tooltip_with_keystroke(ui->spinBank, keysnames);
     connect
     (
         ui->setHomeButton, SIGNAL(clicked(bool)),

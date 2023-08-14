@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2023-08-13
+ * \updates       2023-08-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -203,6 +203,9 @@ qperfeditframe64::qperfeditframe64
 
     /*
      * Undo and Redo buttons.
+     *
+     *      tooltip_with_keystroke(ui->btnUndo, "Ctrl-Z");
+     *      tooltip_with_keystroke(ui->btnUndo, "Shift-Ctrl-Z");
      */
 
     connect(ui->btnUndo, SIGNAL(clicked(bool)), m_perfroll, SLOT(undo()));
@@ -214,6 +217,10 @@ qperfeditframe64::qperfeditframe64
      * Follow Progress Button.  Qt::NoFocus is the default focus policy.
      */
 
+    std::string keyname =
+        perf().automation_key(automation::slot::follow_transport);
+
+    tooltip_with_keystroke(ui->m_toggle_follow, keyname);
     qt_set_icon(follow_xpm, ui->m_toggle_follow);
     ui->m_toggle_follow->setEnabled(true);
     ui->m_toggle_follow->setCheckable(true);

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2023-03-18
+ * \updates       2023-08-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -186,7 +186,7 @@ opcontrol::automation_slot_name (slot s)
         "BPM Page Up",          // 14 bpm_page_up
         "BPM Page Dn",          // 15 bpm_page_dn
         "Set Set",              // 16 ss_set
-        "Loop Mode",            // 17 loop_mode (increment/decrement)
+        "Record Style",         // 17 record_style (increment/decrement)
         "Quan Record",          // 18 quan_record
         "Reset Sets",           // 19 reset_sets
         "One-shot",             // 20 mod_oneshot *
@@ -198,7 +198,7 @@ opcontrol::automation_slot_name (slot s)
         "Tap BPM",              // 26 tap_bpm *
         "Start",                // 27 start
         "Stop",                 // 28 stop ?
-        "Reserved 29",          // 29 reserved_29
+        "Loop L/R",             // 29 loop_LR
         "Toggle Mute",          // 30 toggle_mutes *
         "Song Pos",             // 31 song_pointer
 

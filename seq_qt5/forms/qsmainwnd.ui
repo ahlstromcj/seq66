@@ -92,6 +92,7 @@
          <font>
           <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
+          <weight>75</weight>
           <italic>false</italic>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
@@ -301,6 +302,7 @@ the current set.  Modifies the song.</string>
          <font>
           <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -357,6 +359,7 @@ the current set.  Modifies the song.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -704,6 +707,7 @@ the current set.  Modifies the song.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -729,6 +733,7 @@ the current set.  Modifies the song.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -765,6 +770,7 @@ the current set.</string>
         <property name="font">
          <font>
           <pointsize>9</pointsize>
+          <weight>50</weight>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -820,6 +826,7 @@ no matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -851,6 +858,7 @@ no matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -896,6 +904,7 @@ or active external live frame.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -924,6 +933,7 @@ or active external live frame.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -966,7 +976,7 @@ or active external live frame.</string>
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
-           <string>Sends a global note off signal</string>
+           <string>Panic! Turns off all notes.</string>
           </property>
           <property name="text">
            <string>Panic</string>
@@ -1006,8 +1016,7 @@ or active external live frame.</string>
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
-           <string>Stop playback. With Shift, also rewind
-transport.</string>
+           <string>Stop playback. Shift-click rewinds transport.</string>
           </property>
           <property name="text">
            <string>Stop</string>
@@ -1038,8 +1047,7 @@ transport.</string>
            </size>
           </property>
           <property name="toolTip">
-           <string>Pauses playback, so that the current
-location is preserved.</string>
+           <string>Pause/continue. Preserves current location.</string>
           </property>
           <property name="text">
            <string>Pause</string>
@@ -1070,7 +1078,7 @@ location is preserved.</string>
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
-           <string>Start playback.</string>
+           <string>Start/continue playback.</string>
           </property>
           <property name="text">
            <string>Play</string>
@@ -1098,7 +1106,7 @@ location is preserved.</string>
            </size>
           </property>
           <property name="toolTip">
-           <string>Activate looping between L and R.</string>
+           <string>Activate L/R looping.</string>
           </property>
           <property name="text">
            <string>Loop</string>
@@ -1174,6 +1182,12 @@ at start of playback.</string>
             <height>28</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Shows/toggles keep-queue status.
 Does not show one-shot queue
@@ -1240,7 +1254,7 @@ in the Shift of that key.</string>
         <property name="minimumSize">
          <size>
           <width>56</width>
-          <height>0</height>
+          <height>20</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -1353,12 +1367,13 @@ Editor triggers.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
         <property name="toolTip">
-         <string>Shows the current PPQN</string>
+         <string>PPQN</string>
         </property>
         <property name="text">
          <string>192</string>
@@ -1417,9 +1432,9 @@ format in the clock.</string>
            </size>
           </property>
           <property name="toolTip">
-           <string>Tap in time to set beats per minute
-(BPM). After 5 seconds of no taps,
-the tap-counter resets to 0.</string>
+           <string>Tap in time to set beats/minute (BPM).
+After 5 seconds of no taps, the counter
+resets to 0.</string>
           </property>
           <property name="text">
            <string>0</string>
@@ -1442,6 +1457,7 @@ the tap-counter resets to 0.</string>
           </property>
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1473,6 +1489,7 @@ the tap-counter resets to 0.</string>
           </property>
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1510,7 +1527,7 @@ beats/minute.</string>
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>27</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

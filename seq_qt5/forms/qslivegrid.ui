@@ -134,7 +134,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Edit the set/bank name in this field.</string>
+        <string>Edit the Set/Bank name here.</string>
        </property>
       </widget>
      </item>
@@ -284,7 +284,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Cycles through the recording styles.</string>
+        <string>Cycles through recording styles.</string>
        </property>
        <property name="text">
         <string>LMode</string>
@@ -306,7 +306,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Cycles through quantization modes for recording.</string>
+        <string>Cycles through quantized recording modes.</string>
        </property>
        <property name="text">
         <string>RMode</string>
