@@ -177,7 +177,26 @@ qseqroll::set_dirty ()
      *      frame64()->set_external_frame_title();
      */
 
+    /*
+     * Try to get refresh of data pane to work.
+     * qseqbase::set_dirty() doesn't do the trick.
+     * frame64()->set_dirty() yields a segfault because it calls
+     * qseqframe::set_dirty() which then calls the set_dirty() functions
+     * of the four pattern editor frames including this one.
+     */
+
     qseqbase::set_dirty();
+}
+
+/**
+ *  Similar to qstriggereditor::flag_dirty().
+ */
+
+void
+qseqroll::flag_dirty ()
+{
+    track().set_dirty();
+    frame64()->set_dirty();
 }
 
 /**
@@ -1435,15 +1454,17 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     case Qt::Key_Left:
 
                         done = true;
-                        perf().set_tick(tick - snap(), true);   // no reset
+                        perf().set_tick(tick - snap(), true);   /* no reset */
                         track().set_last_tick(tick - snap());
+                        flag_dirty();                           /* tricky   */
                         break;
 
                     case Qt::Key_Right:
 
                         done = true;
-                        perf().set_tick(tick + snap(), true);   // no reset
+                        perf().set_tick(tick + snap(), true);   /* no reset */
                         track().set_last_tick(tick + snap());
+                        flag_dirty();                           /* tricky   */
                         break;
 
                     case Qt::Key_Home:

@@ -99,7 +99,7 @@ public:
 
 private:
 
-    void flag_dirty ();
+    void flag_dirty ();                 /* tricky code */
     int select_events
     (
         eventlist::select selmode,

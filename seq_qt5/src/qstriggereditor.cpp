@@ -326,7 +326,7 @@ qstriggereditor::resizeEvent (QResizeEvent * qrep)
 }
 
 /**
- *  We cannot call frame64()::set_dirty() without creating an infinite loop
+ *  We cannot call frame64()->set_dirty() without creating an infinite loop
  *  and seqfault.  So we make a private function to do that.
  */
 

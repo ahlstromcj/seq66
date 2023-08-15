@@ -12,9 +12,7 @@ UI:
     -   Look into connecting the save-playlist and save-mutes functions.
     -   Make sure L/R looping buttons (main and song) works.
     -   Clarify the two transpose buttons in the song editor.
-    -   There is no "Loop Mode" (loop_mode) automation slot.
-        The slot is a mislabelled record_style automation slot!
-    -   Add the #114 tool-tip upgrades to the pattern editor.
+    -   There are many "TODOs" in the automation slots.
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
@@ -49,6 +47,18 @@ From Testing:
 
     Can we distinguish note-insertion from movement snap, to avoid the
     "L"-then-snap-then-move samba?
+
+    File errors:
+
+    Offset ~0x8 of 0x4f35 bytes (8/20277): 
+       Invalid MIDI header chunk detected. Bad value 0xc010bb36.
+       [seq66] Play-list: Open failed: song
+           '/usr/local/share/seq66-0.99/midi/FM/judyblue.mid'
+
+    Offset ~0x8 of 0x5c1c bytes (8/23580): 
+       Invalid MIDI header chunk detected. Bad value 0x0.
+       [seq66] Play-list: Open failed: song
+           '/usr/local/share/seq66-0.99/midi/FM/longhair.mid'
 
 Pending Macros:
 
@@ -296,6 +306,8 @@ ISSUES:
             data pane when the roll was moved by the arrow keys!
             Clicking in the event pane forces redrawing.
             Using the horizontal scrollbar refreshes properly.
+            Added some tricky code [flag_dirty()], as already done
+            in qstriggereditor.
 
 #116 What happened to the "MIDI Ctrl Out (Display) Bus" setting?
 

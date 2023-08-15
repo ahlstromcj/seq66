@@ -118,6 +118,7 @@ private:
         return qseqbase::scroll_offset();
     }
 
+    void flag_dirty ();                 /* tricky code */
     void set_redraw ();
 
     bool is_drum_mode () const
