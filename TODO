@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.8
 Chris Ahlstrom
-2019-04-13 to 2023-08-14
+2019-04-13 to 2023-08-15
 
 UI:
 
@@ -250,8 +250,8 @@ ISSUES:
 #110 Windows build download
 
     STATUS: works for 64-bit builds, but 32-bit builds work only in
-    QtCreator, and too many things to do to build 32-bit on a 64-bit
-    machine. A ton of refactoring and fixes for the damn MIDI Mapper.
+            QtCreator, and too many things to do to build 32-bit on a 64-bit
+            machine. A ton of refactoring and fixes for the damn MIDI Mapper.
 
 #111 Time signature changes does not get saved on .midi file
      
@@ -265,6 +265,41 @@ ISSUES:
             have time signatures; more for appearances, really.
         -   Can we have time-signature changes shown during playback by
             modifying the combo boxes text?
+
+#112 Send midi-control-out message when New Pattern is created in GUI
+
+    When creating a new pattern with right click -> New pattern, the new
+    pattern does not show up on my control surface upon creation. The new
+    pattern is outlined in red.  The control surface does not show the newly
+    created pattern until I press the button for the pattern itself (or
+    arm/queue it by pressing w on the keyboard). Seq66 then sends Arm or Queue
+    midi signals to the control surface, depending on if the keep-queue
+    function is set (Q in the interface).
+
+    STATUS: Added an announce_sequence() call to performer::new_sequence().
+            Will test.
+
+#114 [feature request] Include keyboard shortcut in setToolTip function?
+
+    STATUS: Nearly finished with this one. Also fixing some automation
+            errors found during this task.
+
+#115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
+
+    STATUS: It works for this user. As a side issue, he would like to
+            be able to set data values more easily (e.g. exact number)
+            than by dragging the data line.
+
+            Also found a bug: Open brecluse.mid and then pattern #1.
+            Then attempt to modify the velocity in the data pane.
+            We find that many of the events were not drawn in the
+            data pane when the roll was moved by the arrow keys!
+            Clicking in the event pane forces redrawing.
+            Using the horizontal scrollbar refreshes properly.
+
+#116 What happened to the "MIDI Ctrl Out (Display) Bus" setting?
+
+    STATUS: Cannot duplicate.
 
 To close as fixed (and remove from TODO):
 

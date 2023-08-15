@@ -549,6 +549,7 @@ qseqeditframe64::qseqeditframe64
 
     /*
      *  Transpose button.  Qt::NoFocus is the default focus policy.
+     *  When implement, add tooltip extension for mod_transpose_song. (???)
      */
 
     qt_set_icon(transpose_xpm, ui->m_toggle_transpose);
@@ -666,6 +667,7 @@ qseqeditframe64::qseqeditframe64
      * recording.
      */
 
+    tooltip_with_keystroke(ui->m_button_undo, "q");
     qt_set_icon(quantize_xpm, ui->m_button_quantize);
     connect
     (
@@ -681,6 +683,10 @@ qseqeditframe64::qseqeditframe64
      * Follow Progress Button.
      */
 
+    std::string keyname =
+        perf().automation_key(automation::slot::follow_transport);
+
+    tooltip_with_keystroke(ui->m_toggle_follow, keyname);
     qt_set_icon(follow_xpm, ui->m_toggle_follow);
     ui->m_toggle_follow->setEnabled(true);
     ui->m_toggle_follow->setCheckable(true);
@@ -856,10 +862,6 @@ qseqeditframe64::qseqeditframe64
     ui->m_button_note_entry->setCheckable(true);
     ui->m_button_note_entry->setAutoDefault(false);
     ui->m_button_note_entry->setChecked(false);
-    ui->m_button_note_entry->setToolTip
-    (
-        "Toggle between selection and note-entry modes\nin the piano roll."
-    );
     connect
     (
         ui->m_button_note_entry, SIGNAL(toggled(bool)),
@@ -914,7 +916,8 @@ qseqeditframe64::qseqeditframe64
     );
 
     /*
-     * Enable (unmute) Play Button.
+     * Enable (unmute) Play Button. It's not the triangular play button, it's
+     * the box-to-MIDI-port button.
      */
 
     qt_set_icon(play_xpm, ui->m_toggle_play);
@@ -942,7 +945,6 @@ qseqeditframe64::qseqeditframe64
      */
 
     qt_set_icon(rec_xpm, ui->m_toggle_record);
-    ui->m_toggle_record->setCheckable(true);
     connect
     (
         ui->m_toggle_record, SIGNAL(toggled(bool)),

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-08-14
+ * \updates       2023-08-15
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1949,7 +1949,7 @@ performer::new_sequence (seq::number & finalseq, seq::number seq)
     if (result && seq != seq::unassigned())
     {
         result = install_sequence(seqptr, seq);
-        if (result)                                 /* new 2021-10-01   */
+        if (result)
         {
             const seq::pointer s = get_sequence(seq);
             result = not_nullptr(s);
@@ -1957,6 +1957,7 @@ performer::new_sequence (seq::number & finalseq, seq::number seq)
             {
                 s->set_dirty();
                 finalseq = s->seq_number();
+                announce_sequence(s, finalseq);         /* issue #112       */
                 notify_sequence_change(finalseq, change::recreate);
             }
         }
@@ -2102,12 +2103,6 @@ performer::paste_sequence (seq::number seqno)
         {
             seq::pointer s = get_sequence(seqno);
             s->partial_assign(m_seq_clipboard);
-
-            /*
-             * Already done in new_sequence().
-             *
-             * s->set_dirty();
-             */
         }
     }
     return result;
