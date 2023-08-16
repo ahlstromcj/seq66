@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-07-05
+ * \updates       2023-08-16
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -536,15 +536,21 @@ private:
 
     /**
      *  True if recording in quantized mode.
-     */
 
     bool m_quantized_recording;
+     */
 
     /**
      *  True if recording in tighten mode.
-     */
 
     bool m_tightened_recording;
+     */
+
+    /**
+     *  Will replace the booleans above.
+     */
+
+     quantization m_quant_recording;
 
     /**
      *  True if recording in MIDI-through mode.
@@ -1378,8 +1384,11 @@ public:
     }
 
     bool set_recording (bool recordon, bool toggle = false);
+    bool set_recording (quantization q, bool active = false);
+
     bool set_quantized_recording (bool qr, bool toggle = false);
     bool set_tightened_recording (bool tr, bool toggle = false);
+
     bool set_overwrite_recording (bool ovwr, bool toggle = false);
     bool set_thru (bool thru_active, bool toggle = false);
 
@@ -1390,27 +1399,27 @@ public:
 
     bool quantized_recording () const
     {
-        return m_quantized_recording;
+        return m_quant_recording == quantization::full;
     }
 
     bool quantizing () const
     {
-        return m_recording && m_quantized_recording;
+        return recording() && quantized_recording();
     }
 
     bool tightened_recording () const
     {
-        return m_tightened_recording;
+        return m_quant_recording == quantization::tighten;
     }
 
     bool tightening () const
     {
-        return m_recording && m_tightened_recording;
+        return recording() && tightened_recording();
     }
 
     bool quantizing_or_tightening () const
     {
-        return m_recording && (m_quantized_recording || m_tightened_recording);
+        return recording() && (quantized_recording() || tightened_recording());
     }
 
     bool expanded_recording () const
@@ -1420,7 +1429,7 @@ public:
 
     bool expanding () const
     {
-        return m_recording && m_expanded_recording;
+        return recording() && m_expanded_recording;
     }
 
     bool auto_step_reset () const

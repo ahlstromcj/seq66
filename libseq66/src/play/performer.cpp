@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-08-15
+ * \updates       2023-08-16
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -358,6 +358,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_song_recording        (false),
     m_song_record_snap      (true),
     m_record_snap_length    (0),
+    m_grid_quant_recording  (quantization::none),
     m_resume_note_ons       (usr().resume_note_ons()),
     m_ppqn                  (choose_ppqn(ppqn)),
     m_file_ppqn             (0),
@@ -9605,7 +9606,20 @@ performer::automation_grid_mode
     return result;
 }
 
-#if defined THIS_CODE_IS_READY
+/**
+ *  This merely set the kind of quantization to employ once recording
+ *  is set.
+ */
+
+void
+performer::set_grid_quant (quantization q)
+{
+    if (q < quantization::max)
+    {
+        m_grid_quant_recording = q;
+        // notify_automation_change(automation::slot::grid_loop);
+    }
+}
 
 bool
 performer::automation_grid_quant
@@ -9620,23 +9634,38 @@ performer::automation_grid_quant
     if (automation::actionable(a) && ! inverse)
     {
         automation::slot s = int_to_slot_cast(index);
-        gridmode gm;
+        quantization q;                         /* see calculations module  */
         switch (s)
         {
             case automation::slot::grid_quant_none:
-                gm = gridmode::loop;
+                q = quantization::none;
                 break;
 
+            case automation::slot::grid_quant_tighten:  /* partial q'zation */
+                q = quantization::tighten;
+                break;
+
+            case automation::slot::grid_quant_full:     /* full q'zation    */
+                q = quantization::full;
+                break;
+
+            case automation::slot::grid_quant_jitter:   /* note time & vel. */
+                q = quantization::jitter;
+                break;
+
+            case automation::slot::grid_quant_random:   /* event d0 or d1   */
+                q = quantization::random;
+                break;
+
+            case automation::slot::grid_quant_68:       /* for expansion    */
             default:
-                gm = gridmode::max;
+                q = quantization::none;
                 break;
         }
-        set_grid_quant(gm);
+        set_grid_quant(q);
     }
     return result;
 }
-
-#endif
 
 /**
  *  Provides a list of all the functions that can be configured to be called
@@ -9785,12 +9814,30 @@ performer::sm_auto_func_list [] =
      * Grid quantization type selection.
      */
 
-    { automation::slot::grid_quant_none,    &performer::automation_no_op },
-    { automation::slot::grid_quant_full,    &performer::automation_no_op },
-    { automation::slot::grid_quant_tighten, &performer::automation_no_op },
-    { automation::slot::grid_quant_random,  &performer::automation_no_op },
-    { automation::slot::grid_quant_jitter,  &performer::automation_no_op },
-    { automation::slot::grid_quant_68,      &performer::automation_no_op },
+    {
+        automation::slot::grid_quant_none,
+        &performer::automation_grid_quant
+    },
+    {
+        automation::slot::grid_quant_full,
+        &performer::automation_grid_quant
+    },
+    {
+        automation::slot::grid_quant_tighten,
+        &performer::automation_grid_quant
+    },
+    {
+        automation::slot::grid_quant_random,
+        &performer::automation_grid_quant
+    },
+    {
+        automation::slot::grid_quant_jitter,
+        &performer::automation_grid_quant
+    },
+    {
+        automation::slot::grid_quant_68,
+        &performer::automation_grid_quant
+    },
 
     /*
      * A few more likely candidates.

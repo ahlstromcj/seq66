@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2023-07-04
+ * \updates       2023-08-16
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -74,6 +74,7 @@
 #include <cstdlib>                      /* std::atoi(), std::strtol()       */
 #include <cstring>                      /* std::memset()                    */
 #include <ctime>                        /* std::strftime()                  */
+#include <random>                       /* std::uniform_int_distribution    */
 
 #include "cfg/settings.hpp"
 #include "midi/calculations.hpp"        /* MIDI-related calculations        */
@@ -785,8 +786,25 @@ string_to_pulses
 }
 
 /**
+ *  Creates a number with a negative-to-0-to-positive range.
+ *
  *  The first call is seeded with the current time, then a pseudo-random
- *  number is returned.  This is a simplistic linear generator.
+ *  number is returned.  This is a simplistic linear congruence generator. It
+ *  returns a random number between -range and + range. [Could consider using
+ *  random(3) which has a much longer periodicity.]
+ *
+ *  Another options is rand() % (2 * range + 1) + (-range + 1), but it uses
+ *  only the low-order bits of the number.
+ *
+ *  C++11 has a default random engine template, but it is a pain!
+ *
+ *  return rand() / (RAND_MAX / (2 * range + 1) + 1) - range;
+ *
+ * \param range
+ *      The amount of "randomness" desired.
+ *
+ * \return
+ *      Returns a number from -range to +range, uniformly distributed.
  */
 
 int
@@ -798,7 +816,11 @@ randomize (int range)
         s_uninitialized = false;
         srand(unsigned(time(NULL)));
     }
-    return rand() / (RAND_MAX / (2 * range + 1) + 1) - range;
+    if (range < 0)
+        range = -range;
+
+    long result = 2 * range * long(rand()) / RAND_MAX;
+    return int(result) - range;
 }
 
 /**

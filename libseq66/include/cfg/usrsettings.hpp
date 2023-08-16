@@ -954,7 +954,8 @@ private:
      *  Indicates the global selected mode for the main-window's grid.
      *  Modes consist of loop (the normal used of the grid to do muting and
      *  unmuting), record (use the grid to turn recording on for a pattern,
-     *  copy (use the grid to copy patterns), and more.
+     *  copy (use the grid to copy patterns), and more. This is a run-time
+     *  value; it is not stored.
      */
 
     gridmode m_grid_mode;

@@ -270,9 +270,9 @@ enum class slot
     grid_quant_none,    /**< 63: Grid slot remove recording quantization.   */
     grid_quant_full,    /**< 64: Grid slot full quantization recording.     */
     grid_quant_tighten, /**< 65: Grid slot tighten quantization recording.  */
-    grid_quant_random,  /**< 66: Grid slot salts the recording randomly.    */
-    grid_quant_jitter,  /**< 67: Grid slot jitter the velocity.             */
-    grid_quant_68,      /**< 68: Reserved for expansion.                    */
+    grid_quant_random,  /**< 66: Grid slot salts the magnitude randomly.    */
+    grid_quant_jitter,  /**< 67: Grid slot jitter the timing.               */
+    grid_quant_68,      /**< 68: Reserved for expansion (e.g. note-mapping) */
 
     /*
      * A few more likely candidates.

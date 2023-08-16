@@ -702,6 +702,8 @@ private:                            /* key, midi, and op container section  */
 
     midipulse m_record_snap_length;
 
+    quantization m_grid_quant_recording;
+
     /**
      *  Indicates to resume notes if the sequence is toggled after a Note On.
      *  Note that this setting is settable in the user interface, and is a
@@ -3844,6 +3846,12 @@ public:
     );
     void set_grid_mode (gridmode gm);
     bool automation_grid_mode
+    (
+        automation::action a, int d0, int d1,
+        int index, bool inverse
+    );
+    void set_grid_quant (quantization q);
+    bool automation_grid_quant
     (
         automation::action a, int d0, int d1,
         int index, bool inverse

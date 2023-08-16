@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-07-05
+ * \updates       2023-08-16
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -164,8 +164,9 @@ sequence::sequence (int ppqn) :
     m_expanded_recording        (false),
     m_overwrite_recording       (false),
     m_oneshot_recording         (false),
-    m_quantized_recording       (false),
-    m_tightened_recording       (false),
+//  m_quantized_recording       (false),
+//  m_tightened_recording       (false),
+    m_quant_recording      (quantization::none),
     m_thru                      (false),
     m_queued                    (false),
     m_one_shot                  (false),
@@ -328,8 +329,9 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
          *  m_expanded_recording
          *  m_overwrite_recording
          *  m_oneshot_recording
-         *  m_quantized_recording
-         *  m_tightened_recording
+         *  // m_quantized_recording
+         *  // m_tightened_recording
+         *  m_quant_recording
          *  m_thru
          *  m_queued
          *  m_one_shot
@@ -5835,48 +5837,54 @@ sequence::set_recording (bool recordon, bool toggle)
 
     bool result = toggle || recordon != m_recording;
     if (result)
-        result = master_bus()->set_sequence_input(recordon, this);
+        result = set_recording(m_quant_recording, recordon);
 
+    return result;
+}
+
+bool
+sequence::set_recording (quantization q, bool recordon)
+{
+    automutex locker(m_mutex);
+    bool result = master_bus()->set_sequence_input(recordon, this);
     if (result)
     {
         m_notes_on = 0;                 /* reset the step-edit note counter */
         if (recordon)
+        {
             m_recording = true;
+            m_quant_recording = q;
+        }
         else
-            m_recording = m_quantized_recording = m_tightened_recording = false;
-
+        {
+            m_recording = false;
+            m_quant_recording = quantization::none;
+        }
         set_dirty();
         notify_trigger();                                   /* tricky!  */
     }
     return result;
 }
 
-/**
- * \setter m_quantized_recording
- *
- *  What about doing this?
- *
- *      master_bus()->set_sequence_input(recordon, this);
- *
- * \threadsafe
- */
-
 bool
 sequence::set_quantized_recording (bool qr, bool toggle)
 {
     automutex locker(m_mutex);
+    bool result;
+    bool quan = m_quant_recording == quantization::full;
     if (toggle)
-        qr = ! m_quantized_recording;
+    {
+        qr = ! quan;
+        result = true;
+    }
+    else
+        result = qr = ! quan;
 
-    bool result = qr != m_quantized_recording;
     if (result)
     {
-        m_quantized_recording = qr;
+        m_quant_recording = quan ? quantization::none : quantization::full;
         if (qr)
-            result = set_recording(true, false);
-
-        if (result)
-            notify_trigger();                               /* tricky!  */
+            result = set_recording(m_quant_recording, true);
     }
     return result;
 }
@@ -5885,18 +5893,21 @@ bool
 sequence::set_tightened_recording (bool tr, bool toggle)
 {
     automutex locker(m_mutex);
+    bool result;
+    bool tight = m_quant_recording == quantization::tighten;
     if (toggle)
-        tr = ! m_tightened_recording;
+    {
+        tr = ! tight;
+        result = true;
+    }
+    else
+        result = tr = ! tight;
 
-    bool result = tr != m_tightened_recording;
     if (result)
     {
-        m_tightened_recording = tr;
+        m_quant_recording = tight ? quantization::none : quantization::tighten;
         if (tr)
-            result = set_recording(true, false);
-
-        if (result)
-            notify_trigger();                               /* tricky!  */
+            result = set_recording(m_quant_recording, true);
     }
     return result;
 }

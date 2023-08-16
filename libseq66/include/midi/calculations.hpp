@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2023-07-04
+ * \updates       2023-08-16
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -63,7 +63,8 @@ enum class waveform
     reverse_sawtooth,           /**< Reverse saw-tooth (decay).             */
     triangle,                   /**< No waveform, never used.               */
     exponential,                /**< A partial exponential rise.            */
-    reverse_exponential         /**< A partial exponential fall.            */
+    reverse_exponential,        /**< A partial exponential fall.            */
+    max                         /**< Illegal value.                         */
 };
 
 inline int
@@ -87,7 +88,8 @@ enum class lengthfix
 {
     none = 0,                   /**< Not adjusting pattern length.          */
     measures,                   /**< The user sets the desired measures.    */
-    rescale                     /**< The user wants to rescale the pattern. */
+    rescale,                    /**< The user wants to rescale the pattern. */
+    max                         /**< Illegal value.                         */
 };
 
 inline int
@@ -112,7 +114,9 @@ enum class quantization
     none = 0,                   /**< Not adjusting the timing of pattern.   */
     tighten,                    /**< Adjusting timing less forcefully.      */
     full,                       /**< Adjusting timing strictly.             */
-    jitter                      /**< Randomize timing slightly.             */
+    jitter,                     /**< Randomize timing slightly.             */
+    random,                     /**< Randomize event magnitudes slightly.   */
+    max                         /**< Illegal value.                         */
 };
 
 inline int
