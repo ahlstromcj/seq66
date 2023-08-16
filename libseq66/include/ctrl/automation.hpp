@@ -264,6 +264,7 @@ enum class slot
 
     /*
      * Grid quantization type selection.
+     * NOT YET IMPLEMENTED.
      */
 
     grid_quant_none,    /**< 63: Grid slot remove recording quantization.   */
@@ -275,6 +276,7 @@ enum class slot
 
     /*
      * A few more likely candidates.
+     * NOT YET IMPLEMENTED.
      */
 
     mod_bbt_hms,        /**< 69: Toggle between time-display modes.         */
@@ -288,6 +290,7 @@ enum class slot
 
     /*
      * Set playing modes.
+     * NOT YET IMPLEMENTED.
      */
 
     set_mode_normal,    /**< 77: A set selection replaces the playing set.  */

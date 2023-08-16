@@ -9605,6 +9605,39 @@ performer::automation_grid_mode
     return result;
 }
 
+#if defined THIS_CODE_IS_READY
+
+bool
+performer::automation_grid_quant
+(
+    automation::action a, int d0, int d1,
+    int index, bool inverse
+)
+{
+    std::string name = "Grid Quant";
+    bool result = true;
+    print_parameters(name, a, d0, d1, index, inverse);
+    if (automation::actionable(a) && ! inverse)
+    {
+        automation::slot s = int_to_slot_cast(index);
+        gridmode gm;
+        switch (s)
+        {
+            case automation::slot::grid_quant_none:
+                gm = gridmode::loop;
+                break;
+
+            default:
+                gm = gridmode::max;
+                break;
+        }
+        set_grid_quant(gm);
+    }
+    return result;
+}
+
+#endif
+
 /**
  *  Provides a list of all the functions that can be configured to be called
  *  upon configured keystrokes or incoming MIDI messages.

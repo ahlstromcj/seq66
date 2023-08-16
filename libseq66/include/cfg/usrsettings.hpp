@@ -137,7 +137,7 @@ enum class recordmode
 {
     normal,
     quantize,
-    tighten,        /* not supported yet */
+    tighten,
     max
 };
 

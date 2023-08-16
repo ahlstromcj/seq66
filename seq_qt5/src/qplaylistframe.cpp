@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-07-14
+ * \updates       2023-08-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -781,6 +781,7 @@ qplaylistframe::slot_list_load_click ()
         {
             ui->buttonPlaylistSave->setEnabled(false);
             rc().auto_rc_save(true);
+            parent()->enable_reload_button(true);
         }
     }
 }
@@ -883,6 +884,7 @@ qplaylistframe::slot_list_remove_click ()
         {
             reset_playlist();
             parent()->recreate_all_slots();
+            parent()->enable_reload_button(true);
             ui->buttonPlaylistSave->setEnabled(true);
         }
     }
@@ -898,6 +900,7 @@ qplaylistframe::slot_list_save_click ()
             rc().auto_rc_save(true);
             list_unmodify();
             song_unmodify();
+            parent()->enable_reload_button(true);
         }
     }
 }
@@ -923,6 +926,7 @@ qplaylistframe::slot_song_load_click ()
                 {
                     fill_songs();           /* too much: reset_playlist();  */
                     parent()->recreate_all_slots();
+                    parent()->enable_reload_button(true);
                     ui->buttonPlaylistSave->setEnabled(true);
                 }
             }
@@ -936,6 +940,7 @@ qplaylistframe::slot_song_load_click ()
                 {
                     fill_songs();           /* too much: reset_playlist();  */
                     parent()->recreate_all_slots();
+                    parent()->enable_reload_button(true);
                     ui->buttonPlaylistSave->setEnabled(true);
                 }
             }
@@ -1015,6 +1020,7 @@ qplaylistframe::slot_song_add_click ()
                     int listindex = m_current_list_index;
                     reset_playlist(listindex);
                     parent()->recreate_all_slots();
+                    parent()->enable_reload_button(true);
                     song_unmodify();
                 }
                 else
@@ -1047,6 +1053,7 @@ qplaylistframe::slot_song_modify_click ()
             int listindex = m_current_list_index;
             reset_playlist(listindex);
             parent()->recreate_all_slots();
+            parent()->enable_reload_button(true);
         }
         else
         {
@@ -1068,6 +1075,7 @@ qplaylistframe::slot_song_remove_click ()
         {
             reset_playlist(listindex);
             parent()->recreate_all_slots();
+            parent()->enable_reload_button(true);
             ui->buttonPlaylistSave->setEnabled(true);
         }
         else
@@ -1090,7 +1098,9 @@ qplaylistframe::slot_playlist_active_click ()
         {
             rc().auto_rc_save(true);
             if (on)                         /* leave patterns in if off     */
-                parent()->recreate_all_slots();
+                parent()->recreate_all_slots();         /* why? */
+
+            parent()->enable_reload_button(true);
         }
         ui->checkBoxPlaylistActive->setChecked(perf().playlist_active());
         ui->buttonPlaylistSave->setEnabled(true);
@@ -1105,6 +1115,7 @@ qplaylistframe::slot_auto_arm_click ()
         bool on = ui->checkBoxAutoArm->isChecked();
         perf().playlist_auto_arm(on);
         ui->buttonPlaylistSave->setEnabled(true);
+        parent()->enable_reload_button(true);
     }
 }
 
@@ -1160,6 +1171,7 @@ qplaylistframe::list_modify ()
     ui->buttonPlaylistAdd->setEnabled(true);
     ui->buttonPlaylistModify->setEnabled(true);
     ui->buttonPlaylistSave->setEnabled(true);
+    parent()->enable_reload_button(true);
 }
 
 void
@@ -1195,6 +1207,7 @@ qplaylistframe::song_modify ()
     ui->buttonSongAdd->setEnabled(true);
     ui->buttonSongModify->setEnabled(true);
     ui->buttonPlaylistSave->setEnabled(true);
+    parent()->enable_reload_button(true);
 }
 
 /*

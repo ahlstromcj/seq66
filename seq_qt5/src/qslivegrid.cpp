@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-08-14
+ * \updates       2023-08-16
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -215,7 +215,6 @@ qslivegrid::qslivegrid
             ui->buttonLoopMode, SIGNAL(clicked(bool)),
             this, SLOT(slot_grid_record_style(bool))
         );
-
         keyname = cb_perf().automation_key(automation::slot::record_style);
         tooltip_with_keystroke(ui->buttonRecordMode, keyname);
         connect
@@ -1489,9 +1488,15 @@ qslivegrid::slot_toggle_background_record (bool /*clicked*/)
     }
 }
 
+/**
+ *  Changing the color of the button can yield unreadable text, so let's not
+ *  do that anymore.
+ */
+
 void
 qslivegrid::show_grid_record_style ()
 {
+#if defined USE_BUTTON_COLORING
     static bool s_uninitialized = true;
     static QPalette s_palette;
     QPushButton * button = ui->buttonLoopMode;
@@ -1526,12 +1531,30 @@ qslivegrid::show_grid_record_style ()
         button->setEnabled(true);
         button->update();
     }
+#else
+    static bool s_uninitialized = true;
+    QPushButton * button = ui->buttonLoopMode;
+    if (s_uninitialized)
+    {
+        s_uninitialized = false;
+        button->setEnabled(false);
+    }
+    else
+        button->setEnabled(! usr().no_grid_record());
+#endif
+
     button->setText(qt(usr().grid_record_style_label()));
 }
+
+/**
+ *  Changing the color of the button can yield unreadable text, so let's not
+ *  do that anymore.
+ */
 
 void
 qslivegrid::show_record_mode ()
 {
+#if defined USE_BUTTON_COLORING
     static bool s_uninitialized = true;
     static QPalette s_palette;
     QPushButton * button = ui->buttonRecordMode;
@@ -1564,6 +1587,18 @@ qslivegrid::show_record_mode ()
         button->setEnabled(true);
         button->update();
     }
+#else
+    static bool s_uninitialized = true;
+    QPushButton * button = ui->buttonRecordMode;
+    if (s_uninitialized)
+    {
+        s_uninitialized = false;
+        button->setEnabled(false);
+    }
+    else
+        button->setEnabled(! usr().no_grid_record());
+#endif
+
     button->setText(qt(usr().record_mode_label()));
 }
 
