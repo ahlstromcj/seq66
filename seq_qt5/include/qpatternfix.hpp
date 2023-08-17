@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-05-15
+ * \updates       2023-08-16
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -35,7 +35,7 @@
 
 #include <QFrame>
 
-#include "midi/calculations.hpp"        /* seq66::lengthfix, quantization   */
+#include "midi/calculations.hpp"        /* seq66::lengthfix, alteration     */
 #include "play/seq.hpp"                 /* seq66::seq::pointer & sequence   */
 
 /*
@@ -154,7 +154,7 @@ private:
     QButtonGroup * m_fixlength_group;
 
     /**
-     * Access to radio-buttons for quantization.
+     * Access to radio-buttons for alteration.
      */
 
     QButtonGroup * m_quan_group;
@@ -209,10 +209,10 @@ private:
     lengthfix m_length_type;
 
     /**
-     *  The current way the user has selected for quantization.
+     *  The current way the user has selected for alteration.
      */
 
-    quantization m_quan_type;
+    alteration m_quan_type;
 
     /**
      *  The range of jitter to apply.  Here, jitter is a randomization of

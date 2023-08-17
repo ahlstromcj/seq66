@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-06-13
+ * \updates       2023-08-17
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -109,7 +109,7 @@ eventlist::operator = (const eventlist & rhs)
 /**
  *  Provides the minimum and maximux timestamps  of the events, in MIDI pulses.
  *  These functions get the iterator for the first or last element and returns
- *  its value.
+ *  its value. Obviously the events must already be sorted.
  *
  * \return
  *      Returns the timestamp of the first or last event in the container.
@@ -637,8 +637,8 @@ eventlist::remove_unlinked_notes ()
  *      tested for 0.  The caller should do it.
  *
  * \param fixlink
- *      This parameter indicates if linked events are to be
- *      adjusted against the length of the pattern.
+ *      This parameter indicates if linked events are to be adjusted against
+ *      the length of the pattern.
  */
 
 bool
@@ -649,7 +649,10 @@ eventlist::quantize_events
 )
 {
     bool result = false;
-    midipulse seqlength = get_length();
+    midipulse len = get_length();
+#if ! defined USE_OLD_CODE
+    bool tight = divide == 2;
+#endif
     for (auto & er : m_events)
     {
         if (er.is_selected())
@@ -665,6 +668,7 @@ eventlist::quantize_events
 
             if (canselect)
             {
+#if defined USE_OLD_CODE
                 midipulse t = er.timestamp();
                 midipulse tremainder = snap > 0 ? (t % snap) : 0 ;
                 midipulse tdelta;
@@ -673,32 +677,43 @@ eventlist::quantize_events
                 else
                     tdelta = (snap - tremainder) / divide;
 
-                if ((tdelta + t) >= seqlength)  /* wrap-around Note On      */
+                if ((tdelta + t) >= len)        /* wrap-around Note On      */
                     tdelta = -t;
 
                 er.set_timestamp(t + tdelta);
                 result = true;
-                if (er.is_linked() && fixlink)
+#else
+                result = tight ?
+                    er.tighten(snap, len) : er.quantize(snap, len) ;
+#endif
+                if (fixlink)
                 {
-                    /*
-                     * Only notes are linked; the status of all notes here are
-                     * On, so the link must be an Off.  Also see "Seq32" in
-                     * banner.
-                     */
+                    if (er.is_linked())
+                    {
+#if defined USE_OLD_CODE
+                        /*
+                         * Only notes are linked; the status of all notes here
+                         * are On, so the link must be an Off.  Also see
+                         * "Seq32" in banner. However, here, all events get
+                         * quantized, including the Note Offs. Let's disable
+                         * this for now.
+                         */
 
-                    event::iterator f = er.link();
-                    midipulse ft = f->timestamp() + tdelta; /* seq32 */
-                    if (ft < 0)                     /* unwrap Note Off      */
-                        ft += seqlength;
+                        event::iterator f = er.link();
+                        midipulse ft = f->timestamp() + tdelta; /* seq32 */
+                        if (ft < 0)                     /* unwrap Note Off      */
+                            ft += len;
 
-                    if (ft > seqlength)             /* wrap it around       */
-                        ft -= seqlength;
+                        if (ft > len)                   /* wrap it around       */
+                            ft -= len;
 
-                    if (ft == seqlength)            /* trim it a little     */
-                        ft -= note_off_margin();
+                        if (ft == len)                  /* trim it a little     */
+                            ft -= note_off_margin();
 
-                    f->set_timestamp(ft);
-                    result = true;
+                        f->set_timestamp(ft);
+                        result = true;
+#endif
+                    }
                 }
             }
         }
@@ -727,9 +742,13 @@ bool
 eventlist::quantize_all_events (int snap, int divide)
 {
     bool result = false;
-    midipulse seqlength = get_length();
+    midipulse len = get_length();
+#if ! defined USE_OLD_CODE
+    bool tight = divide == 2;
+#endif
     for (auto & er : m_events)
     {
+#if defined USE_OLD_CODE
         midipulse t = er.timestamp();
         midipulse tremainder = snap > 0 ? (t % snap) : 0 ;
         midipulse tdelta;
@@ -738,11 +757,14 @@ eventlist::quantize_all_events (int snap, int divide)
         else
             tdelta = (snap - tremainder) / divide;
 
-        if ((tdelta + t) >= seqlength)  /* wrap-around Note On      */
+        if ((tdelta + t) >= len)  /* wrap-around Note On      */
             tdelta = -t;
 
         er.set_timestamp(t + tdelta);
         result = true;
+#else
+        result = tight ? er.tighten(snap, len) : er.quantize(snap, len) ;
+#endif
     }
     if (result)
         verify_and_link();                          /* sorts them again!!!  */
@@ -782,14 +804,14 @@ eventlist::adjust_timestamp (event & er, midipulse delta_tick)
 {
     static const bool s_allow_wrap = true;  /* wrap: note on after note-off */
     midipulse result = er.timestamp() + delta_tick;
-    midipulse seqlength = get_length();
-    if (result > seqlength)
-        result -= seqlength;
+    midipulse len = get_length();
+    if (result > len)
+        result -= len;
 
     if (result < 0)                         /* only if midipulse is signed  */
     {
         if (s_allow_wrap)
-            result += seqlength;
+            result += len;
         else
             result = 0;
     }
@@ -798,14 +820,14 @@ eventlist::adjust_timestamp (event & er, midipulse delta_tick)
         if (result == 0)
         {
             if (s_allow_wrap)
-                result = seqlength - note_off_margin();
+                result = len - note_off_margin();
             else
                 result = note_off_margin();
         }
     }
     else                                    /* if (wrap)                    */
     {
-        if (result == seqlength)
+        if (result == len)
         {
             if (s_allow_wrap)
                 result = 0;
@@ -1105,11 +1127,14 @@ eventlist::randomize_selected (midibyte status, int range)
     bool result = false;
     if (range > 0)
     {
+#if defined USE_OLD_CODE
         int dataindex = event::is_two_byte_msg(status) ? 1 : 0 ;
+#endif
         for (auto & e : m_events)
         {
             if (e.is_selected_status(status))
             {
+#if defined USE_OLD_CODE
                 midibyte data[2];
                 e.get_data(data[0], data[1]);
 
@@ -1117,6 +1142,9 @@ eventlist::randomize_selected (midibyte status, int range)
                 data[dataindex] = clamp_midibyte_value(datitem);
                 e.set_data(data[0], data[1]);
                 result = true;
+#else
+                result = e.randomize(range);
+#endif
             }
         }
     }
@@ -1143,19 +1171,22 @@ eventlist::randomize_selected (midibyte status, int range)
  */
 
 bool
-eventlist::randomize_selected_notes (int jitter, int range)
+eventlist::randomize_selected_notes (int jitr, int range)
 {
     bool result = false;
-    if (range > 0 || jitter > 0)
+    if (range > 0 || jitr > 0)
     {
         bool got_jittered = false;
+#if defined USE_OLD_CODE
         midipulse length = get_length();
+#endif
         for (auto & e : m_events)
         {
             if (e.is_selected_note())               /* randomizable event?  */
             {
-                if (range > 0)
+                if (! e.is_note_off_recorded())
                 {
+#if defined USE_OLD_CODE
                     int random = randomize(range);
                     midibyte data[2];
                     e.get_data(data[0], data[1]);
@@ -1164,21 +1195,28 @@ eventlist::randomize_selected_notes (int jitter, int range)
                     velocity = int(clamp_midibyte_value(velocity));
                     e.note_velocity(velocity);
                     result = true;
+#else
+                    result = e.randomize(range);
+#endif
                 }
-                if (jitter > 0)
-                {
-                    int random = randomize(jitter);
-                    midipulse tstamp = e.timestamp();
-                    tstamp += random;
-                    if (tstamp < 0)
-                        tstamp = 0;
-                    else if (tstamp > length)
-                        tstamp = length;
 
-                    e.set_timestamp(tstamp);
-                    if (random != 0)
-                        got_jittered = true;
-                }
+#if defined USE_OLD_CODE
+                int random = randomize(jitr);
+                midipulse tstamp = e.timestamp();
+                tstamp += random;
+                if (tstamp < 0)
+                    tstamp = 0;
+                else if (tstamp > length)
+                    tstamp = length;
+
+                e.set_timestamp(tstamp);
+                if (random != 0)
+                    got_jittered = true;
+#else
+                result = e.randomize(range);
+                if (result)
+                    got_jittered = true;
+#endif
             }
         }
         if (got_jittered)
@@ -1192,18 +1230,21 @@ eventlist::randomize_selected_notes (int jitter, int range)
  */
 
 bool
-eventlist::jitter_notes (int jitter)
+eventlist::jitter_notes (int jitr)
 {
     bool result = false;
-    if (jitter > 0)
+    if (jitr > 0)
     {
         bool got_jittered = false;
+#if defined USE_OLD_CODE
         midipulse length = get_length();
+#endif
         for (auto & e : m_events)
         {
             if (e.is_note())
             {
-                int random = randomize(jitter);
+#if defined USE_OLD_CODE
+                int random = randomize(jitr);
                 midipulse tstamp = e.timestamp();
                 tstamp += random;
                 if (tstamp < 0)
@@ -1214,6 +1255,11 @@ eventlist::jitter_notes (int jitter)
                 e.set_timestamp(tstamp);
                 if (random != 0)
                     got_jittered = true;
+#else
+                result = e.randomize(jitr);
+                if (result)
+                    got_jittered = true;
+#endif
             }
         }
         if (got_jittered)

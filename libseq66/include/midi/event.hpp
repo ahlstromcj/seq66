@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-06-08
+ * \updates       2023-08-17
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -263,6 +263,7 @@ class event
 {
 
     friend class eventlist;
+    friend class sequence;
 
 public:
 
@@ -1464,6 +1465,13 @@ public:
     std::string to_string () const;
     int get_rank () const;
     void rescale (int newppqn, int oldppqn);
+
+private:    // used by friend eventlist
+
+    bool jitter (int range, midipulse seqlegnth);   /* changes timestamp    */
+    bool randomize (int range);                     /* changes "amplitude"  */
+    bool tighten (int snap, midipulse seqlength);
+    bool quantize (int snap, midipulse seqlength);
 
 };          // class event
 

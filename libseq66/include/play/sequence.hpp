@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-08-16
+ * \updates       2023-08-17
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -44,7 +44,7 @@
 
 #include "seq66_features.hpp"           /* various feature #defines         */
 #include "cfg/usrsettings.hpp"          /* enum class record                */
-#include "midi/calculations.hpp"        /* seq66::lengthfix, quantization   */
+#include "midi/calculations.hpp"        /* seq66::lengthfix, alteration     */
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
@@ -139,7 +139,7 @@ using colorbyte = char;
 struct fixparameters
 {
     lengthfix fp_fix_type;
-    quantization fp_quan_type;
+    alteration fp_quan_type;
     int fp_jitter;
     bool fp_align_left;
     bool fp_reverse;
@@ -535,22 +535,11 @@ private:
     bool m_oneshot_recording;
 
     /**
-     *  True if recording in quantized mode.
-
-    bool m_quantized_recording;
+     *  Replaces a potential bunch of booleans. The data type is defined in
+     *  the calculations module.
      */
 
-    /**
-     *  True if recording in tighten mode.
-
-    bool m_tightened_recording;
-     */
-
-    /**
-     *  Will replace the booleans above.
-     */
-
-     quantization m_quant_recording;
+     alteration m_alter_recording;
 
     /**
      *  True if recording in MIDI-through mode.
@@ -1384,7 +1373,7 @@ public:
     }
 
     bool set_recording (bool recordon, bool toggle = false);
-    bool set_recording (quantization q, bool active = false);
+    bool set_recording (alteration q, bool active = false);
 
     bool set_quantized_recording (bool qr, bool toggle = false);
     bool set_tightened_recording (bool tr, bool toggle = false);
@@ -1397,9 +1386,14 @@ public:
         return m_recording;
     }
 
+    bool alter_recording () const
+    {
+        return m_alter_recording != alteration::none;
+    }
+
     bool quantized_recording () const
     {
-        return m_quant_recording == quantization::full;
+        return m_alter_recording == alteration::quantize;
     }
 
     bool quantizing () const
@@ -1409,7 +1403,7 @@ public:
 
     bool tightened_recording () const
     {
-        return m_quant_recording == quantization::tighten;
+        return m_alter_recording == alteration::tighten;
     }
 
     bool tightening () const
@@ -1994,7 +1988,8 @@ private:
 
     bool quantize_events
     (
-        midibyte status, midibyte cc, int divide, bool linked = false
+        midibyte status, midibyte cc,
+        int divide, bool linked = false
     );
     bool change_ppqn (int p);
     void put_event_on_bus (const event & ev);

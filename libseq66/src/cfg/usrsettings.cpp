@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2023-04-17
+ * \updates       2023-08-17
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -104,6 +104,12 @@
 #include "play/seq.hpp"                 /* seq66::seq::limit()              */
 #include "util/filefunctions.hpp"       /* seq66::name_has_root_path()      */
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
+
+/*
+ * When ready, remove this macros.
+ */
+
+#undef  SEQ66_USE_ADDED_ALTERATIONS     /* undefined while in-progress      */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -398,7 +404,7 @@ usrsettings::usrsettings () :
     m_new_pattern_qrecord       (false),
     m_new_pattern_record_style  (recordstyle::merge),
     m_new_pattern_wraparound    (false),
-    m_record_mode               (recordmode::normal),
+    m_record_mode               (alteration::none),
     m_grid_record_style         (recordstyle::merge),
     m_grid_mode                 (gridmode::loop),
     m_enable_learn_confirmation (true)
@@ -492,7 +498,7 @@ usrsettings::set_defaults ()
     m_new_pattern_qrecord = false;
     m_new_pattern_record_style = recordstyle::merge;
     m_new_pattern_wraparound = false;
-    m_record_mode = recordmode::normal;
+    m_record_mode = alteration::none;
     m_grid_record_style = recordstyle::merge;
     m_grid_mode = gridmode::loop;
     m_enable_learn_confirmation = true;
@@ -584,9 +590,12 @@ usrsettings::record_mode_label () const
     std::string result;
     switch (record_mode())
     {
-    case recordmode::normal:        result = "No Quan";     break;
-    case recordmode::quantize:      result = "Quantize";    break;
-    case recordmode::tighten:       result = "Tighten";     break;
+    case alteration::none:          result = "None";        break;
+    case alteration::quantize:      result = "Quantize";    break;
+    case alteration::tighten:       result = "Tighten";     break;
+    case alteration::jitter:        result = "Jitter";      break;
+    case alteration::random:        result = "Random";      break;
+    case alteration::notemap:       result = "Note Map";    break;
     default:                        result = "Normal";      break;
     }
     return result;
@@ -600,31 +609,49 @@ usrsettings::record_mode_label () const
  *  instead, where a = automation::action::toggle/yes/no.
  */
 
-recordmode
+alteration
 usrsettings::next_record_mode ()
 {
-    recordmode result;
+    alteration result;
     switch (record_mode())
     {
-    case recordmode::normal:        result = recordmode::quantize;  break;
-    case recordmode::quantize:      result = recordmode::tighten;   break;
-    case recordmode::tighten:       result = recordmode::normal;    break;
-    default:                        result = recordmode::normal;    break;
+#if defined SEQ66_USE_ADDED_ALTERATIONS
+    case alteration::none:          result = alteration::tighten;   break;
+    case alteration::tighten:       result = alteration::quantize;  break;
+    case alteration::quantize:      result = alteration::jitter;    break;
+    case alteration::jitter:        result = alteration::random;    break;
+    case alteration::random:        result = alteration::notemap    break;
+    case alteration::notemap:       result = alteration::none;      break;
+#else
+    case alteration::none:          result = alteration::tighten;   break;
+    case alteration::tighten:       result = alteration::quantize;  break;
+    case alteration::quantize:      result = alteration::none;      break;
+#endif
+    default:                        result = alteration::none;      break;
     }
     m_record_mode = result;
     return result;
 }
 
-recordmode
+alteration
 usrsettings::previous_record_mode ()
 {
-    recordmode result;
+    alteration result;
     switch (record_mode())
     {
-    case recordmode::normal:        result = recordmode::tighten;   break;
-    case recordmode::quantize:      result = recordmode::normal;    break;
-    case recordmode::tighten:       result = recordmode::quantize;  break;
-    default:                        result = recordmode::normal;    break;
+#if defined SEQ66_USE_ADDED_ALTERATIONS
+    case alteration::none:          result = alteration::notemap;   break;
+    case alteration::tighten:       result = alteration::none;      break;
+    case alteration::quantize:      result = alteration::tighten;   break;
+    case alteration::jitter;        result = alteration::quantize;  break;
+    case alteration::random;        result = alteration::jitter;    break;
+    case alteration::notemap;       result = alteration::random;    break;
+#else
+    case alteration::none:          result = alteration::quantize;  break;
+    case alteration::quantize:      result = alteration::tighten;   break;
+    case alteration::tighten:       result = alteration::none;      break;
+#endif
+    default:                        result = alteration::none;      break;
     }
     m_record_mode = result;
     return result;

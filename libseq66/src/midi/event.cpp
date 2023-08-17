@@ -1172,6 +1172,121 @@ event::set_tempo (midibyte t[3])
 }
 
 /*
+ *  Helper functions for alteration of events.
+ */
+
+/**
+ *  Modifies the timestamp of the event by plus or minus the range value.
+ *
+ * \param range
+ *      The range of the changes up and down. Not used if 0 or less.
+ *
+ * \return
+ *      Returns true if the timestamp was actually jittered.
+ */
+
+bool
+event::jitter (int range, midipulse seqlength)
+{
+    bool result = range > 0;
+    if (result)
+    {
+        midipulse delta = midipulse(randomize(range));
+        midipulse tstamp = timestamp() + delta;
+        result = delta != 0;
+        if (tstamp < 0)
+            tstamp = 0;
+        else if (tstamp >= seqlength)
+            tstamp = seqlength - 1;
+
+        set_timestamp(tstamp);
+    }
+    return result;
+}
+
+/**
+ *  Modifies the velocity. However, the caller will like not want to
+ *  change the velocity of a Note On with velocity 0.
+ *
+ * \param range
+ *      The range of the changes up and down. Not used if 0 or less.
+ *
+ * \return
+ *      Returns true if the timestamp was actually jittered.
+ */
+
+bool
+event::randomize (int range)
+{
+    bool result = range > 0;
+    if (result)
+    {
+        bool twobytes = is_two_bytes();
+        int datum = int(twobytes ? m_data[1] : m_data[0]);
+        datum += seq66::randomize(range);
+
+        midibyte d = clamp_midibyte_value(datum);
+        if (twobytes)
+            m_data[1] = d;
+        else
+            m_data[0] = d;
+    }
+    return result;
+}
+
+/**
+ *  Division by 2 "tightens" toward the nearest snap time.
+ */
+
+bool
+event::tighten (int snap, midipulse seqlength)
+{
+    bool result = snap > 0;
+    if (result)
+    {
+        midipulse t = timestamp();
+        midipulse tremainder = t % snap;
+        midipulse tdelta;
+        if (tremainder < snap / 2)
+            tdelta = -(tremainder / 2);
+        else
+            tdelta = (snap - tremainder) / 2;
+
+        if ((tdelta + t) >= seqlength)  /* wrap-around Note On      */
+            tdelta = -t;
+
+        set_timestamp(t + tdelta);
+    }
+    return result;
+}
+
+/**
+ *  Quantizes the time-stamp toward the nearest snap time.
+ */
+
+bool
+event::quantize (int snap, midipulse seqlength)
+{
+    bool result = snap > 0;
+    if (result)
+    {
+        midipulse t = timestamp();
+        midipulse tremainder = t % snap;
+        midipulse tdelta;
+        if (tremainder < snap / 2)
+            tdelta = -tremainder;
+        else
+            tdelta = (snap - tremainder);
+
+        if ((tdelta + t) >= seqlength)  /* wrap-around Note On      */
+            tdelta = -t;
+
+        set_timestamp(t + tdelta);
+    }
+    return result;
+}
+
+/*
  * --------------------------------------------------------------
  *  event::key
  * --------------------------------------------------------------

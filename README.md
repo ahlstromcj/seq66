@@ -1,4 +1,4 @@
-# README for Seq66 0.99.8 2023-08-16
+# README for Seq66 0.99.8 2023-08-18
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -91,6 +91,7 @@ Windows, and using a conventional source tarball.
         *   Fixed a couple corrupted data/midi/FM/*.mid files.
         *   Changing playlist setting enables Session Restart button.
         *   Removed coloring of record-style and -mode buttons.
+        *   Refactoring quantization alterations for future upgrades.
     *   Version 0.99.7:
         *   Issue #110 follow-ons:
             Cannot save tempo (BPM) in Windows when

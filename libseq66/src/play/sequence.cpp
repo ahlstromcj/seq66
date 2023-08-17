@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-08-16
+ * \updates       2023-08-17
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -164,9 +164,7 @@ sequence::sequence (int ppqn) :
     m_expanded_recording        (false),
     m_overwrite_recording       (false),
     m_oneshot_recording         (false),
-//  m_quantized_recording       (false),
-//  m_tightened_recording       (false),
-    m_quant_recording      (quantization::none),
+    m_alter_recording           (alteration::none),
     m_thru                      (false),
     m_queued                    (false),
     m_one_shot                  (false),
@@ -329,9 +327,7 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
          *  m_expanded_recording
          *  m_overwrite_recording
          *  m_oneshot_recording
-         *  // m_quantized_recording
-         *  // m_tightened_recording
-         *  m_quant_recording
+         *  m_alter_recording
          *  m_thru
          *  m_queued
          *  m_one_shot
@@ -3267,18 +3263,32 @@ sequence::fix_pattern (fixparameters & params)
                 else if (newscalefactor < 1.00)                         // 1.0
                     tempefx = bit_set(tempefx, fixeffect::shrunk);
             }
-            if (params.fp_quan_type == quantization::tighten)
+            if (params.fp_quan_type == alteration::tighten)
             {
                 result = m_events.quantize_all_events(snap(), 2);
             }
-            else if (params.fp_quan_type == quantization::full)
+            else if (params.fp_quan_type == alteration::quantize)
             {
                 result = m_events.quantize_all_events(snap(), 1);
             }
-            else if (params.fp_quan_type == quantization::jitter)
+            else if (params.fp_quan_type == alteration::jitter)
             {
                 result = m_events.jitter_notes(params.fp_jitter);
             }
+#if defined SEQ66_USE_ADDED_ALTERATIONS
+            else if (params.fp_quan_type == alteration::random)
+            {
+                m_events.select_all();                      // TODO
+                result = m_events_randomize_selected_notes
+                (
+                    params.fp_jitter, params.fp_jitter      // FIXME
+                );
+            }
+            else if (params.fp_quan_type == alteration::notemap)
+            {
+                result = m_events.jitter_notes(params.fp_jitter);   // TODO
+            }
+#endif
             if (result)
             {
                 params.fp_scale_factor = newscalefactor;
@@ -4052,6 +4062,7 @@ sequence::stream_event (event & ev)
 
         if (quantizing_or_tightening() && perf()->is_pattern_playing())
         {
+#if defined USE_OLD_CODE
             if (ev.is_note_off())
             {
                 midipulse timestamp = ev.timestamp();
@@ -4066,6 +4077,18 @@ sequence::stream_event (event & ev)
                 else                                    /* if tightening()  */
                     quantize_events(EVENT_NOTE_ON, 0, 2, true);
             }
+#else
+            /*
+             * We want to quantize or tighten ANY event that comes in,
+             * including Note Offs. This could potentially alter the
+             * note length by a couple of snaps. So what? Play better!
+             */
+
+            if (quantizing())
+                (void) ev.quantize(snap(), get_length());
+            else
+                (void) ev.tighten(snap(), get_length());
+#endif
         }
     }
     return result;
@@ -5837,13 +5860,13 @@ sequence::set_recording (bool recordon, bool toggle)
 
     bool result = toggle || recordon != m_recording;
     if (result)
-        result = set_recording(m_quant_recording, recordon);
+        result = set_recording(m_alter_recording, recordon);
 
     return result;
 }
 
 bool
-sequence::set_recording (quantization q, bool recordon)
+sequence::set_recording (alteration q, bool recordon)
 {
     automutex locker(m_mutex);
     bool result = master_bus()->set_sequence_input(recordon, this);
@@ -5853,12 +5876,12 @@ sequence::set_recording (quantization q, bool recordon)
         if (recordon)
         {
             m_recording = true;
-            m_quant_recording = q;
+            m_alter_recording = q;
         }
         else
         {
             m_recording = false;
-            m_quant_recording = quantization::none;
+            m_alter_recording = alteration::none;
         }
         set_dirty();
         notify_trigger();                                   /* tricky!  */
@@ -5866,12 +5889,16 @@ sequence::set_recording (quantization q, bool recordon)
     return result;
 }
 
+/**
+ *  Support for the legacy UI button or menu entry.
+ */
+
 bool
 sequence::set_quantized_recording (bool qr, bool toggle)
 {
     automutex locker(m_mutex);
     bool result;
-    bool quan = m_quant_recording == quantization::full;
+    bool quan = m_alter_recording == alteration::quantize;
     if (toggle)
     {
         qr = ! quan;
@@ -5882,19 +5909,23 @@ sequence::set_quantized_recording (bool qr, bool toggle)
 
     if (result)
     {
-        m_quant_recording = quan ? quantization::none : quantization::full;
+        m_alter_recording = quan ? alteration::none : alteration::quantize;
         if (qr)
-            result = set_recording(m_quant_recording, true);
+            result = set_recording(m_alter_recording, true);
     }
     return result;
 }
+
+/**
+ *  Support for the legacy UI button or menu entry.
+ */
 
 bool
 sequence::set_tightened_recording (bool tr, bool toggle)
 {
     automutex locker(m_mutex);
     bool result;
-    bool tight = m_quant_recording == quantization::tighten;
+    bool tight = m_alter_recording == alteration::tighten;
     if (toggle)
     {
         tr = ! tight;
@@ -5905,9 +5936,9 @@ sequence::set_tightened_recording (bool tr, bool toggle)
 
     if (result)
     {
-        m_quant_recording = tight ? quantization::none : quantization::tighten;
+        m_alter_recording = tight ? alteration::none : alteration::tighten;
         if (tr)
-            result = set_recording(m_quant_recording, true);
+            result = set_recording(m_alter_recording, true);
     }
     return result;
 }
@@ -6410,12 +6441,17 @@ sequence::set_transposable (bool flag, bool user_change)
 bool
 sequence::quantize_events
 (
-    midibyte status, midibyte cc, int divide, bool fixlink
+    midibyte status, midibyte cc,
+    int divide, bool fixlink
 )
 {
     automutex locker(m_mutex);
     if (divide == 0)
         return false;
+
+    /*
+     * FIXME: this works only on selected events.
+     */
 
     bool result = m_events.quantize_events(status, cc, snap(), divide, fixlink);
     if (result)

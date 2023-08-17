@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-04-17
+ * \updates       2023-08-16
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -62,8 +62,9 @@
 
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 #include "cfg/scales.hpp"               /* seq66::legal_key() and scale()   */
-#include "cfg/userinstrument.hpp"
-#include "cfg/usermidibus.hpp"
+#include "cfg/userinstrument.hpp"       /* seq24's version of MIDNAM :-)    */
+#include "cfg/usermidibus.hpp"          /* ditto                            */
+#include "midi/calculations.hpp"        /* seq66::alteration enum class     */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -126,18 +127,6 @@ enum class recordtempo
     log_event,
     on,
     off,
-    max
-};
-
-/**
- *  Indicates the recording mode when recording is in progress.
- */
-
-enum class recordmode
-{
-    normal,
-    quantize,
-    tighten,
     max
 };
 
@@ -938,7 +927,7 @@ private:
      *  a sequence will be quantized or not.
      */
 
-    recordmode m_record_mode;
+    alteration m_record_mode;
 
     /**
      *  Indicates the recording style mode in use with the 'ctrl' file's
@@ -1609,6 +1598,10 @@ public:
         return m_lock_main_window;
     }
 
+    /*
+     * Session manager options
+     */
+
     session session_manager () const
     {
         return m_session_manager;
@@ -1645,6 +1638,10 @@ public:
     {
         return m_session_url;
     }
+
+    /*
+     * New-pattern options
+     */
 
     bool new_pattern_armed () const
     {
@@ -1683,20 +1680,35 @@ public:
 
     std::string new_pattern_record_string () const;
 
-    recordmode record_mode () const
+    /*
+     * Record-mode options. By "record mode" is meant the alterations
+     * that can be done on-the-fly on incoming events. It used to be
+     * an enumeration in this module, but is now defined by the alteration
+     * enumeration in the calculations module.
+     *
+     * Planned is a "playback mode", as well manually-applied alterations.
+     */
+
+    alteration record_mode () const
     {
         return m_record_mode;
     }
 
-    void record_mode (recordmode rm)
+    void record_mode (alteration rm)
     {
-        if (rm < recordmode::max)
+        if (rm < alteration::max)
             m_record_mode = rm;
     }
 
     std::string record_mode_label () const;
-    recordmode next_record_mode ();
-    recordmode previous_record_mode ();
+    alteration next_record_mode ();
+    alteration previous_record_mode ();
+
+    /*
+     * Record style refers to what happens to already recorded notes when the
+     * pattern wraps around.
+     */
+
     std::string grid_record_style_label () const;
 
     recordstyle grid_record_style () const
@@ -1724,6 +1736,11 @@ public:
 
     recordstyle next_grid_record_style ();
     recordstyle previous_grid_record_style ();
+
+    /*
+     * Grid mode refers to what happens when a pattern is clicked or selected
+     * via a hot-key.
+     */
 
     bool no_grid_record () const
     {

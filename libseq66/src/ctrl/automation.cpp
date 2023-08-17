@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-12-10
+ * \updates       2023-08-16
  * \license       GNU GPLv2 or above
  *
  *  Currently, there is no code in this file.
@@ -330,7 +330,7 @@ s_slotnamelist [] =
     { slot::grid_quant_tighten, "grid_quant_tighten"    },
     { slot::grid_quant_random,  "grid_quant_random"     },
     { slot::grid_quant_jitter,  "grid_quant_jitter"     },
-    { slot::grid_quant_68,      "grid_quant_68"         },
+    { slot::grid_quant_notemap, "grid_quant_notemap",   },
 
     /*
      * A few more likely candidates.

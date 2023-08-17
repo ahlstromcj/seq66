@@ -1576,8 +1576,8 @@ qslivegrid::show_record_mode ()
         QColor c;
         switch (usr().record_mode())
         {
-        case recordmode::quantize:      c.setNamedColor("#00C0C0");     break;
-        case recordmode::tighten:       c.setNamedColor("#009090");     break;
+        case alteration::quantize:      c.setNamedColor("#00C0C0");     break;
+        case alteration::tighten:       c.setNamedColor("#009090");     break;
         default:
             break;
         }

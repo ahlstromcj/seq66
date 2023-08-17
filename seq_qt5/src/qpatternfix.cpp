@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-08-01
+ * \updates       2022-08-16
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -97,7 +97,7 @@ qpatternfix::qpatternfix
     m_backup_width      (s.get_beat_width()),
     m_edit_frame        (editparent),
     m_length_type       (lengthfix::none),
-    m_quan_type         (quantization::none),
+    m_quan_type         (alteration::none),
     m_jitter_range      (s.get_ppqn() / 12),
     m_measures          (double(m_backup_measures)),
     m_scale_factor      (1.0),
@@ -203,12 +203,12 @@ qpatternfix::initialize (bool startup)
 
         m_quan_group = new QButtonGroup(this);
         ui->group_box_quantize->setEnabled(true);
-        m_quan_group->addButton(ui->btn_quan_none, cast(quantization::none));
+        m_quan_group->addButton(ui->btn_quan_none, cast(alteration::none));
         m_quan_group->addButton
         (
-            ui->btn_quan_tighten, cast(quantization::tighten)
+            ui->btn_quan_tighten, cast(alteration::tighten)
         );
-        m_quan_group->addButton(ui->btn_quan_full, cast(quantization::full));
+        m_quan_group->addButton(ui->btn_quan_full, cast(alteration::quantize));
         ui->btn_quan_none->setChecked(true);
         ui->line_edit_q_none->hide();
         ui->line_edit_q_tighten->hide();
@@ -401,7 +401,7 @@ void
 qpatternfix::slot_quan_change (int quanid)
 {
     m_quan_type = quantization_cast(quanid);
-    if (m_quan_type != quantization::none)
+    if (m_quan_type != alteration::none)
         modify();
 }
 
@@ -415,7 +415,7 @@ qpatternfix::slot_jitter_change ()
     {
         ui->btn_quan_jitter->setChecked(true);
         m_jitter_range = m;
-        m_quan_type = quantization::jitter;
+        m_quan_type = alteration::jitter;
         modify();
     }
 }
@@ -542,7 +542,7 @@ qpatternfix::slot_reset ()
     m_time_sig_beats = m_time_sig_width = 0;
     m_scale_factor = 1.0;
     m_length_type = lengthfix::none;
-    m_quan_type = quantization::none;
+    m_quan_type = alteration::none;
     initialize(false);
     unmodify();                                         /* change fields    */
     set_dirty();                                        /* for redrawing    */

@@ -105,30 +105,31 @@ lengthfix_cast (int v)
 }
 
 /**
- *  Provides the short list of options for the type of quantization used in
+ *  Provides the short list of options for the type of alteration used in
  *  the qpatternfix dialog.  Might be useful elsewhere as well.
  */
 
-enum class quantization
+enum class alteration
 {
     none = 0,                   /**< Not adjusting the timing of pattern.   */
     tighten,                    /**< Adjusting timing less forcefully.      */
-    full,                       /**< Adjusting timing strictly.             */
+    quantize,                   /**< Adjusting timing strictly.             */
     jitter,                     /**< Randomize timing slightly.             */
     random,                     /**< Randomize event magnitudes slightly.   */
+    notemap,                    /**< Apply a configured note-mapping.       */
     max                         /**< Illegal value.                         */
 };
 
 inline int
-cast (quantization lv)
+cast (alteration lv)
 {
     return static_cast<int>(lv);
 }
 
-inline quantization
+inline alteration
 quantization_cast (int v)
 {
-    return static_cast<quantization>(v);
+    return static_cast<alteration>(v);
 }
 
 /**

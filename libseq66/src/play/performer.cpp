@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-08-16
+ * \updates       2023-08-17
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -358,7 +358,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_song_recording        (false),
     m_song_record_snap      (true),
     m_record_snap_length    (0),
-    m_grid_quant_recording  (quantization::none),
+    m_alter_recording  (alteration::none),
     m_resume_note_ons       (usr().resume_note_ons()),
     m_ppqn                  (choose_ppqn(ppqn)),
     m_file_ppqn             (0),
@@ -7469,7 +7469,7 @@ performer::previous_record_mode ()
 }
 
 void
-performer::record_mode (recordmode rm)
+performer::record_mode (alteration rm)
 {
     (void) usr().record_mode(rm);
     notify_automation_change(automation::slot::quan_record);
@@ -7594,11 +7594,11 @@ performer::loop_control
                 else if (a == automation::action::on)
                     rec = true;
 
-                if (usr().record_mode() == recordmode::normal)
+                if (usr().record_mode() == alteration::none)
                     result = set_recording(seqno, rec, toggle);
-                else if (usr().record_mode() == recordmode::quantize)
+                else if (usr().record_mode() == alteration::quantize)
                     result = set_quantized_recording(seqno, rec, toggle);
-                else if (usr().record_mode() == recordmode::tighten)
+                else if (usr().record_mode() == alteration::tighten)
                     result = set_tightened_recording(seqno, rec, toggle);
             }
         }
@@ -9534,7 +9534,7 @@ performer::set_grid_mode (gridmode gm)
         usr().grid_mode(gm);
         if (gm != gridmode::record)
         {
-            usr().record_mode(recordmode::normal);
+            usr().record_mode(alteration::none);
             usr().grid_record_style(recordstyle::merge);
         }
         notify_automation_change(automation::slot::grid_loop);
@@ -9607,16 +9607,16 @@ performer::automation_grid_mode
 }
 
 /**
- *  This merely set the kind of quantization to employ once recording
+ *  This merely set the kind of alteration to employ once recording
  *  is set.
  */
 
 void
-performer::set_grid_quant (quantization q)
+performer::set_grid_quant (alteration q)
 {
-    if (q < quantization::max)
+    if (q < alteration::max)
     {
-        m_grid_quant_recording = q;
+        m_alter_recording = q;
         // notify_automation_change(automation::slot::grid_loop);
     }
 }
@@ -9634,32 +9634,35 @@ performer::automation_grid_quant
     if (automation::actionable(a) && ! inverse)
     {
         automation::slot s = int_to_slot_cast(index);
-        quantization q;                         /* see calculations module  */
+        alteration q;                               /* calculations module  */
         switch (s)
         {
             case automation::slot::grid_quant_none:
-                q = quantization::none;
+                q = alteration::none;
                 break;
 
             case automation::slot::grid_quant_tighten:  /* partial q'zation */
-                q = quantization::tighten;
+                q = alteration::tighten;
                 break;
 
             case automation::slot::grid_quant_full:     /* full q'zation    */
-                q = quantization::full;
+                q = alteration::quantize;
                 break;
 
             case automation::slot::grid_quant_jitter:   /* note time & vel. */
-                q = quantization::jitter;
+                q = alteration::jitter;
                 break;
 
             case automation::slot::grid_quant_random:   /* event d0 or d1   */
-                q = quantization::random;
+                q = alteration::random;
                 break;
 
-            case automation::slot::grid_quant_68:       /* for expansion    */
+            case automation::slot::grid_quant_notemap:  /* for expansion    */
+                q = alteration::notemap;
+                break;
+
             default:
-                q = quantization::none;
+                q = alteration::none;
                 break;
         }
         set_grid_quant(q);
@@ -9835,7 +9838,7 @@ performer::sm_auto_func_list [] =
         &performer::automation_grid_quant
     },
     {
-        automation::slot::grid_quant_68,
+        automation::slot::grid_quant_notemap,
         &performer::automation_grid_quant
     },
 

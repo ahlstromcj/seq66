@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.99.6 and above
+INSTALL for Seq66 v. 0.99.8 and above
 Chris Ahlstrom
-2015-09-10 to 2023-07-16
+2015-09-10 to 2023-08-17
 
 Getting Seq66 requires building the code or going to
 "sequencer64-packages/seq66" on GitHub to get an installation package.  The
@@ -385,6 +385,14 @@ MANUALLY-DEFINED MACROS IN CODE:
     experiment-happy people will normally want to change the define-state of
     these macros.  We have consolidated them into a single file,
     libseq66/include/seq66_features.h, to make them easier to find and edit.
+
+    SEQ66_USE_ADDED_ALTERATIONS
+
+        A currently in-progress option to add more ways to modify a pattern
+        during recording, playback, or upon command. It will eventually 
+        apply tightening, quantization, jitter (in time), random (in
+        amplitude), and note-mapping. Not to be confused with the pattern-fix
+        dialog.
 
     SEQ66_USE_METRONOME_FADE
 

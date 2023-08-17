@@ -346,13 +346,13 @@ recorder::initialize (performer * p)
         {
             /*
              * Must set this before the possibility of raising the modify
-             * flag. Also note we select the active recordmode (normal,
+             * flag. Also note we select the active record-mode (normal,
              * quantize, or tighten).
              */
 
             midibyte channel = settings().thru_channel();
-            bool quantize = usr().record_mode() == recordmode::quantize;
-            bool tighten = usr().record_mode() == recordmode::tighten;
+            bool quantize = usr().record_mode() == alteration::quantize;
+            bool tighten = usr().record_mode() == alteration::tighten;
             bool overwrite = usr().grid_record_style() == recordstyle::overwrite;
             bool oneshot = usr().grid_record_style() == recordstyle::oneshot;
             bool expand = usr().grid_record_style() == recordstyle::expand;

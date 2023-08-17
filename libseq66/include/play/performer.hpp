@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-08-13
+ * \updates       2023-08-17
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -702,7 +702,12 @@ private:                            /* key, midi, and op container section  */
 
     midipulse m_record_snap_length;
 
-    quantization m_grid_quant_recording;
+    /**
+     *  Part of a refactoring and expansion of the alterations that can be done
+     *  while reocrding, playing, or by a manual command.
+     */
+
+    alteration m_alter_recording;
 
     /**
      *  Indicates to resume notes if the sequence is toggled after a Note On.
@@ -3590,7 +3595,7 @@ public:
     void previous_grid_record_style ();
     void next_record_mode ();
     void previous_record_mode ();
-    void record_mode (recordmode rm);
+    void record_mode (alteration rm);
     bool loop_control                   /* [loop-control]       */
     (
         automation::action a, int d0, int d1,
@@ -3850,7 +3855,7 @@ public:
         automation::action a, int d0, int d1,
         int index, bool inverse
     );
-    void set_grid_quant (quantization q);
+    void set_grid_quant (alteration q);
     bool automation_grid_quant
     (
         automation::action a, int d0, int d1,
