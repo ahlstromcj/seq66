@@ -1587,7 +1587,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                 case Qt::Key_Q:                 /* quantize selected notes  */
 
-                    if (track().push_quantize(EVENT_NOTE_ON, 0, 1, true))
+                    if (track().push_quantize(EVENT_NOTE_ON, 0, 1)) // , true))
                         done = mark_modified();
                     break;
 
@@ -1598,7 +1598,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     break;
 
                 case Qt::Key_T:                 /* tighten selected notes   */
-                    if (track().push_quantize(EVENT_NOTE_ON, 0, 2, true))
+                    if (track().push_quantize(EVENT_NOTE_ON, 0, 2)) // , true))
                         done = mark_modified();
                     break;
 

@@ -2417,7 +2417,7 @@ qseqeditframe64::inverse_note_selection ()
 void
 qseqeditframe64::quantize_notes ()
 {
-    track().push_quantize(EVENT_NOTE_ON, 0, 1, false);
+    track().push_quantize(EVENT_NOTE_ON, 0, 1);     // , false);
 }
 
 /**
@@ -2427,7 +2427,7 @@ qseqeditframe64::quantize_notes ()
 void
 qseqeditframe64::tighten_notes ()
 {
-    track().push_quantize(EVENT_NOTE_ON, 0, 2, true);
+    track().push_quantize(EVENT_NOTE_ON, 0, 2);     // , true);
 }
 
 /**

@@ -635,24 +635,18 @@ eventlist::remove_unlinked_notes ()
  *      in the application are either 1 ("quantize") or 2 ("tighten").  The
  *      latter value reduces the amount of change slightly.  This value is not
  *      tested for 0.  The caller should do it.
- *
- * \param fixlink
- *      This parameter indicates if linked events are to be adjusted against
- *      the length of the pattern.
  */
 
 bool
 eventlist::quantize_events
 (
-    midibyte status, midibyte cc, int snap,
-    int divide, bool fixlink
+    midibyte status, midibyte cc,
+    int snap, int divide
 )
 {
     bool result = false;
     midipulse len = get_length();
-#if ! defined USE_OLD_CODE
     bool tight = divide == 2;
-#endif
     for (auto & er : m_events)
     {
         if (er.is_selected())
@@ -668,51 +662,28 @@ eventlist::quantize_events
 
             if (canselect)
             {
-#if defined USE_OLD_CODE
-                midipulse t = er.timestamp();
-                midipulse tremainder = snap > 0 ? (t % snap) : 0 ;
-                midipulse tdelta;
-                if (tremainder < snap / 2)
-                    tdelta = -(tremainder / divide);
-                else
-                    tdelta = (snap - tremainder) / divide;
-
-                if ((tdelta + t) >= len)        /* wrap-around Note On      */
-                    tdelta = -t;
-
-                er.set_timestamp(t + tdelta);
-                result = true;
-#else
                 result = tight ?
                     er.tighten(snap, len) : er.quantize(snap, len) ;
-#endif
-                if (fixlink)
+
+                if (er.is_linked())
                 {
-                    if (er.is_linked())
+                    /*
+                     * In some cases, the linked Note Off, when quantized,
+                     * will end up next to the Note On.  How to fix? If they
+                     * are closer than half the snap, add the snap.
+                     */
+
+                    event::iterator f = er.link();
+                    if (tight)
+                        f->tighten(snap, len);
+                    else
+                        f->quantize(snap, len);
+
+                    midipulse ts = f->timestamp();
+                    if (ts - er.timestamp() < (snap / 2))
                     {
-#if defined USE_OLD_CODE
-                        /*
-                         * Only notes are linked; the status of all notes here
-                         * are On, so the link must be an Off.  Also see
-                         * "Seq32" in banner. However, here, all events get
-                         * quantized, including the Note Offs. Let's disable
-                         * this for now.
-                         */
-
-                        event::iterator f = er.link();
-                        midipulse ft = f->timestamp() + tdelta; /* seq32 */
-                        if (ft < 0)                     /* unwrap Note Off      */
-                            ft += len;
-
-                        if (ft > len)                   /* wrap it around       */
-                            ft -= len;
-
-                        if (ft == len)                  /* trim it a little     */
-                            ft -= note_off_margin();
-
-                        f->set_timestamp(ft);
-                        result = true;
-#endif
+                        ts = er.timestamp() + snap;
+                        f->set_timestamp(ts);
                     }
                 }
             }
@@ -743,28 +714,10 @@ eventlist::quantize_all_events (int snap, int divide)
 {
     bool result = false;
     midipulse len = get_length();
-#if ! defined USE_OLD_CODE
     bool tight = divide == 2;
-#endif
     for (auto & er : m_events)
     {
-#if defined USE_OLD_CODE
-        midipulse t = er.timestamp();
-        midipulse tremainder = snap > 0 ? (t % snap) : 0 ;
-        midipulse tdelta;
-        if (tremainder < snap / 2)
-            tdelta = -(tremainder / divide);
-        else
-            tdelta = (snap - tremainder) / divide;
-
-        if ((tdelta + t) >= len)  /* wrap-around Note On      */
-            tdelta = -t;
-
-        er.set_timestamp(t + tdelta);
-        result = true;
-#else
         result = tight ? er.tighten(snap, len) : er.quantize(snap, len) ;
-#endif
     }
     if (result)
         verify_and_link();                          /* sorts them again!!!  */
@@ -1127,25 +1080,10 @@ eventlist::randomize_selected (midibyte status, int range)
     bool result = false;
     if (range > 0)
     {
-#if defined USE_OLD_CODE
-        int dataindex = event::is_two_byte_msg(status) ? 1 : 0 ;
-#endif
         for (auto & e : m_events)
         {
             if (e.is_selected_status(status))
-            {
-#if defined USE_OLD_CODE
-                midibyte data[2];
-                e.get_data(data[0], data[1]);
-
-                int datitem = data[dataindex] + randomize(range);
-                data[dataindex] = clamp_midibyte_value(datitem);
-                e.set_data(data[0], data[1]);
-                result = true;
-#else
                 result = e.randomize(range);
-#endif
-            }
         }
     }
     return result;
@@ -1177,46 +1115,16 @@ eventlist::randomize_selected_notes (int jitr, int range)
     if (range > 0 || jitr > 0)
     {
         bool got_jittered = false;
-#if defined USE_OLD_CODE
-        midipulse length = get_length();
-#endif
         for (auto & e : m_events)
         {
             if (e.is_selected_note())               /* randomizable event?  */
             {
                 if (! e.is_note_off_recorded())
-                {
-#if defined USE_OLD_CODE
-                    int random = randomize(range);
-                    midibyte data[2];
-                    e.get_data(data[0], data[1]);
-
-                    int velocity = int(data[1]) + random;
-                    velocity = int(clamp_midibyte_value(velocity));
-                    e.note_velocity(velocity);
-                    result = true;
-#else
                     result = e.randomize(range);
-#endif
-                }
 
-#if defined USE_OLD_CODE
-                int random = randomize(jitr);
-                midipulse tstamp = e.timestamp();
-                tstamp += random;
-                if (tstamp < 0)
-                    tstamp = 0;
-                else if (tstamp > length)
-                    tstamp = length;
-
-                e.set_timestamp(tstamp);
-                if (random != 0)
-                    got_jittered = true;
-#else
                 result = e.randomize(range);
                 if (result)
                     got_jittered = true;
-#endif
             }
         }
         if (got_jittered)
@@ -1236,30 +1144,13 @@ eventlist::jitter_notes (int jitr)
     if (jitr > 0)
     {
         bool got_jittered = false;
-#if defined USE_OLD_CODE
-        midipulse length = get_length();
-#endif
         for (auto & e : m_events)
         {
             if (e.is_note())
             {
-#if defined USE_OLD_CODE
-                int random = randomize(jitr);
-                midipulse tstamp = e.timestamp();
-                tstamp += random;
-                if (tstamp < 0)
-                    tstamp = 0;
-                else if (tstamp > length)
-                    tstamp = length;
-
-                e.set_timestamp(tstamp);
-                if (random != 0)
-                    got_jittered = true;
-#else
                 result = e.randomize(jitr);
                 if (result)
                     got_jittered = true;
-#endif
             }
         }
         if (got_jittered)

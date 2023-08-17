@@ -4062,22 +4062,6 @@ sequence::stream_event (event & ev)
 
         if (quantizing_or_tightening() && perf()->is_pattern_playing())
         {
-#if defined USE_OLD_CODE
-            if (ev.is_note_off())
-            {
-                midipulse timestamp = ev.timestamp();
-                midibyte note = ev.get_note();
-                select_note_events
-                (
-                    timestamp, note, timestamp, note,
-                    eventlist::select::selecting
-                );
-                if (quantizing())
-                    quantize_events(EVENT_NOTE_ON, 0, 1, true);
-                else                                    /* if tightening()  */
-                    quantize_events(EVENT_NOTE_ON, 0, 2, true);
-            }
-#else
             /*
              * We want to quantize or tighten ANY event that comes in,
              * including Note Offs. This could potentially alter the
@@ -4088,7 +4072,6 @@ sequence::stream_event (event & ev)
                 (void) ev.quantize(snap(), get_length());
             else
                 (void) ev.tighten(snap(), get_length());
-#endif
         }
     }
     return result;
@@ -4961,14 +4944,6 @@ sequence::paste_trigger (midipulse paste_tick)
 void
 sequence::stop (bool songmode)
 {
-#if defined USE_OLD_CODE
-    bool state = playing();
-    off_playing_notes();
-    set_playing(false);
-    zero_markers();                         /* sets the "last-tick" value   */
-    if (! song_mode)
-        set_playing(state);
-#else
     bool state = armed();
     off_playing_notes();
     zero_markers();                         /* sets the "last-tick" value   */
@@ -4976,7 +4951,6 @@ sequence::stop (bool songmode)
         verify_and_link();
 
     set_armed(songmode ? false : state);
-#endif
 }
 
 /**
@@ -6432,18 +6406,10 @@ sequence::set_transposable (bool flag, bool user_change)
  *      in the application are either 1 ("quantize") or 2 ("tighten").  The
  *      latter value reduces the amount of change slightly.  This value is
  *      tested for 0, and the function just returns if that is the case.
- *
- * \param fixlink
- *      False by default, this parameter indicates if linked events are to be
- *      adjusted against the length of the pattern
  */
 
 bool
-sequence::quantize_events
-(
-    midibyte status, midibyte cc,
-    int divide, bool fixlink
-)
+sequence::quantize_events (midibyte status, midibyte cc, int divide)
 {
     automutex locker(m_mutex);
     if (divide == 0)
@@ -6453,7 +6419,7 @@ sequence::quantize_events
      * FIXME: this works only on selected events.
      */
 
-    bool result = m_events.quantize_events(status, cc, snap(), divide, fixlink);
+    bool result = m_events.quantize_events(status, cc, snap(), divide);
     if (result)
         set_dirty();
 
@@ -6505,23 +6471,16 @@ sequence::change_ppqn (int p)
  *      Provides a division value, usually either 1 ("quantize") or 2
  *      ("tighten").
  *
- * \param linked
- *      Set this value to true for tightening notes.  The default value of
- *      this parameter is false.
- *
  * \return
  *      Returns true if the events were quantized.
  */
 
 bool
-sequence::push_quantize
-(
-    midibyte status, midibyte cc, int divide, bool linked
-)
+sequence::push_quantize (midibyte status, midibyte cc, int divide)
 {
     automutex locker(m_mutex);
     m_events_undo.push(m_events);
-    return quantize_events(status, cc, divide, linked);     /* sets dirty   */
+    return quantize_events(status, cc, divide);
 }
 
 /**
@@ -7077,7 +7036,7 @@ sequence::handle_edit_action (eventlist::edit action, int var)
          * a new function to do that.
          */
 
-        push_quantize(EVENT_NOTE_ON, 0, 1, true);
+        push_quantize(EVENT_NOTE_ON, 0, 1);
         break;
 
     case eventlist::edit::quantize_events:
@@ -7087,7 +7046,7 @@ sequence::handle_edit_action (eventlist::edit action, int var)
 
     case eventlist::edit::tighten_notes:
 
-        push_quantize(EVENT_NOTE_ON, 0, 2, true);
+        push_quantize(EVENT_NOTE_ON, 0, 2);
         break;
 
     case eventlist::edit::tighten_events:

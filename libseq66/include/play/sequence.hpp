@@ -1865,11 +1865,7 @@ public:
         event::buffer::const_iterator & evi
     );
     bool next_trigger (trigger & trig);
-    bool push_quantize
-    (
-        midibyte status, midibyte cc,
-        int divide, bool linked = false
-    );
+    bool push_quantize (midibyte status, midibyte cc, int divide);
     bool transpose_notes (int steps, int scale, int key = 0);
 
 #if defined SEQ66_SEQ32_SHIFT_SUPPORT
@@ -1986,11 +1982,7 @@ private:
         return m_parent;
     }
 
-    bool quantize_events
-    (
-        midibyte status, midibyte cc,
-        int divide, bool linked = false
-    );
+    bool quantize_events (midibyte status, midibyte cc, int divide);
     bool change_ppqn (int p);
     void put_event_on_bus (const event & ev);
     void reset_loop ();

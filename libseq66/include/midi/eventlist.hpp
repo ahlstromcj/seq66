@@ -384,8 +384,8 @@ private:                                /* functions for friend sequence    */
     bool remove_unlinked_notes ();
     bool quantize_events
     (
-        midibyte status, midibyte cc, int snap,
-        int divide, bool fixlink
+        midibyte status, midibyte cc,
+        int snap, int divide
     );
     bool quantize_all_events (int snap, int divide);
     midipulse adjust_timestamp (event & er, midipulse deltatick);
