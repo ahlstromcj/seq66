@@ -401,8 +401,8 @@ private:                                /* functions for friend sequence    */
     bool move_selected_events (midipulse delta_tick);
     bool align_left (bool relink = false);
     bool randomize_selected (midibyte status, int plus_minus);
-    bool randomize_selected_notes (int jitter, int range);
-    bool jitter_notes (int jitter);
+    bool randomize_selected_notes (int jitr, int range);
+    bool jitter_notes (int jitr);
     bool link_notes (event::iterator eon, event::iterator eoff);
     void link_tempos ();
     void clear_tempo_links ();

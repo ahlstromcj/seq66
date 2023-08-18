@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-08-17
+ * \updates       2023-08-18
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -1083,7 +1083,10 @@ eventlist::randomize_selected (midibyte status, int range)
         for (auto & e : m_events)
         {
             if (e.is_selected_status(status))
-                result = e.randomize(range);
+            {
+                if (e.randomize(range))
+                    result = true;
+            }
         }
     }
     return result;
@@ -1091,9 +1094,9 @@ eventlist::randomize_selected (midibyte status, int range)
 
 /**
  *  This function randomizes a Note On or Note Off message, and more
- *  thoroughly than randomize_selected().  We want to be able to jitter the
- *  note event in time, and jitter the velocity (data byte d[1]) of the note.
- *  The note pitch (d[0]) is not altered.
+ *  thoroughly than randomize_selected().  We want to be able to "jitter" the
+ *  velocity (data byte d[1]) of the note.  The note pitch (d[0]) is not
+ *  altered.
  *
  *  Since we jitter the timestamps, we have to call verify_and_link()
  *  afterward.
@@ -1101,11 +1104,14 @@ eventlist::randomize_selected (midibyte status, int range)
  * \param length
  *      The length of the sequence containing the notes.
  *
- * \param jitter
- *      Provides the amount of time jitter in ticks.  Defaults to 8.
+ * \param jitr
+ *      Provides the amount of time jitter in ticks.
  *
  * \param range
- *      Provides the amount of velocity jitter.  Defaults to 8.
+ *      Provides the amount of velocity jitter.
+ *
+ * \return
+ *      Returns true if any event got altered.
  */
 
 bool
@@ -1114,20 +1120,18 @@ eventlist::randomize_selected_notes (int jitr, int range)
     bool result = false;
     if (range > 0 || jitr > 0)
     {
-        bool got_jittered = false;
         for (auto & e : m_events)
         {
             if (e.is_selected_note())               /* randomizable event?  */
             {
-                if (! e.is_note_off_recorded())
-                    result = e.randomize(range);
-
-                result = e.randomize(range);
-                if (result)
-                    got_jittered = true;
+                if (! e.is_note_off_recorded())     /* don't ruin fake Off  */
+                {
+                    if (e.randomize(range))
+                        result = true;
+                }
             }
         }
-        if (got_jittered)
+        if (result)
             verify_and_link();                      /* sort and relink      */
     }
     return result;
@@ -1143,17 +1147,15 @@ eventlist::jitter_notes (int jitr)
     bool result = false;
     if (jitr > 0)
     {
-        bool got_jittered = false;
         for (auto & e : m_events)
         {
             if (e.is_note())
             {
-                result = e.randomize(jitr);
-                if (result)
-                    got_jittered = true;
+                if (e.randomize(jitr))
+                    result = true;
             }
         }
-        if (got_jittered)
+        if (result)
             verify_and_link();                      /* sort and relink      */
     }
     return result;

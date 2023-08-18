@@ -1388,7 +1388,7 @@ public:
 
     bool alter_recording () const
     {
-        return m_alter_recording != alteration::none;
+        return m_recording && (m_alter_recording != alteration::none);
     }
 
     bool quantized_recording () const
@@ -1398,7 +1398,7 @@ public:
 
     bool quantizing () const
     {
-        return recording() && quantized_recording();
+        return quantized_recording();
     }
 
     bool tightened_recording () const
@@ -1408,13 +1408,15 @@ public:
 
     bool tightening () const
     {
-        return recording() && tightened_recording();
+        return tightened_recording();
     }
 
+/*
     bool quantizing_or_tightening () const
     {
         return recording() && (quantized_recording() || tightened_recording());
     }
+ */
 
     bool expanded_recording () const
     {

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-06-07
+ * \updates       2023-08-18
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -1176,35 +1176,6 @@ event::set_tempo (midibyte t[3])
  */
 
 /**
- *  Modifies the timestamp of the event by plus or minus the range value.
- *
- * \param range
- *      The range of the changes up and down. Not used if 0 or less.
- *
- * \return
- *      Returns true if the timestamp was actually jittered.
- */
-
-bool
-event::jitter (int range, midipulse seqlength)
-{
-    bool result = range > 0;
-    if (result)
-    {
-        midipulse delta = midipulse(randomize(range));
-        midipulse tstamp = timestamp() + delta;
-        result = delta != 0;
-        if (tstamp < 0)
-            tstamp = 0;
-        else if (tstamp >= seqlength)
-            tstamp = seqlength - 1;
-
-        set_timestamp(tstamp);
-    }
-    return result;
-}
-
-/**
  *  Modifies the velocity. However, the caller will like not want to
  *  change the velocity of a Note On with velocity 0.
  *
@@ -1223,19 +1194,64 @@ event::randomize (int range)
     {
         bool twobytes = is_two_bytes();
         int datum = int(twobytes ? m_data[1] : m_data[0]);
-        datum += seq66::randomize(range);
+        int delta = seq66::randomize(range);
+        result = delta != 0;
+        if (result)
+        {
+            midibyte d = clamp_midibyte_value(datum + delta);
+            if (twobytes)
+                m_data[1] = d;
+            else
+                m_data[0] = d;
+        }
+    }
+    return result;
+}
 
-        midibyte d = clamp_midibyte_value(datum);
-        if (twobytes)
-            m_data[1] = d;
-        else
-            m_data[0] = d;
+/**
+ *  Modifies the timestamp of the event by plus or minus the range value.
+ *
+ * \param range
+ *      The range of the changes up and down. Not used if 0 or less.
+ *
+ * \return
+ *      Returns true if the timestamp was actually jittered.
+ */
+
+bool
+event::jitter (int range, midipulse seqlength)
+{
+    bool result = range > 0;
+    if (result)
+    {
+        midipulse delta = midipulse(randomize(range));
+        result = delta != 0;
+        if (result)
+        {
+            midipulse tstamp = timestamp() + delta;
+            if (tstamp >= seqlength)
+                tstamp = seqlength - 1;
+            else if (tstamp < 0)
+                tstamp = 0;
+
+            set_timestamp(tstamp);
+        }
     }
     return result;
 }
 
 /**
  *  Division by 2 "tightens" toward the nearest snap time.
+ *
+ * \param snap
+ *      The time boundary length to snap to. A common value is the number of
+ *      ticks (pulses) in a 16th note.
+ *
+ * \param seqlength
+ *      The length in ticks of the pattern that holds this event.
+ *
+ * \return
+ *      Returns true if the time-stamp was actually altered.
  */
 
 bool
@@ -1252,16 +1268,33 @@ event::tighten (int snap, midipulse seqlength)
         else
             tdelta = (snap - tremainder) / 2;
 
-        if ((tdelta + t) >= seqlength)  /* wrap-around Note On      */
-            tdelta = -t;
+        result = tdelta != 0;
+        if (result)
+        {
+            t += tdelta;
+            if (t >= seqlength)
+                t = seqlength - 1;
+            else if (t < 0)
+                t = 0;
 
-        set_timestamp(t + tdelta);
+            set_timestamp(t);
+        }
     }
     return result;
 }
 
 /**
  *  Quantizes the time-stamp toward the nearest snap time.
+ *
+ * \param snap
+ *      The time boundary length to snap to. A common value is the number of
+ *      ticks (pulses) in a 16th note.
+ *
+ * \param seqlength
+ *      The length in ticks of the pattern that holds this event.
+ *
+ * \return
+ *      Returns true if the time-stamp was actually altered.
  */
 
 bool
@@ -1278,10 +1311,17 @@ event::quantize (int snap, midipulse seqlength)
         else
             tdelta = (snap - tremainder);
 
-        if ((tdelta + t) >= seqlength)  /* wrap-around Note On      */
-            tdelta = -t;
+        result = tdelta != 0;
+        if (result)
+        {
+            t += tdelta;
+            if (t >= seqlength)
+                t = seqlength - 1;
+            else if (t < 0)
+                t = 0;
 
-        set_timestamp(t + tdelta);
+            set_timestamp(t);
+        }
     }
     return result;
 }

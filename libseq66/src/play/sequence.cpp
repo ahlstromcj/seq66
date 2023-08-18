@@ -4060,7 +4060,11 @@ sequence::stream_event (event & ev)
         if (ev.is_note_off())
             link_new();
 
-        if (quantizing_or_tightening() && perf()->is_pattern_playing())
+        /*
+         * if (quantizing_or_tightening() && perf()->is_pattern_playing())
+         */
+
+        if (alter_recording())
         {
             /*
              * We want to quantize or tighten ANY event that comes in,
@@ -4070,7 +4074,7 @@ sequence::stream_event (event & ev)
 
             if (quantizing())
                 (void) ev.quantize(snap(), get_length());
-            else
+            else if (tightening())
                 (void) ev.tighten(snap(), get_length());
         }
     }
