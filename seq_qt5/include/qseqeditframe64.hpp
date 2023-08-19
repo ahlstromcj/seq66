@@ -283,6 +283,7 @@ private slots:
     void inverse_note_selection ();
     void quantize_notes ();
     void tighten_notes ();
+    void jitter_notes ();
     void transpose_notes ();
     void transpose_harmonic ();
     void remap_notes ();

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-08-17
+ * \updates       2023-08-18
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1789,9 +1789,9 @@ public:
     void decrement_selected (midibyte status, midibyte /*control*/);
     bool grow_selected (midipulse deltatick);
     bool stretch_selected (midipulse deltatick);
-    bool randomize_selected (midibyte status, int plus_minus);
-    bool randomize_selected_notes (int jitter = 8, int range = 8);
-    bool jitter_notes (int jitter = 8);
+    bool randomize_selected (midibyte status, int range = 8);
+    bool randomize_selected_notes (int range = 8);
+    bool jitter_notes (int jitter = -1);
     bool mark_selected ();
     void unpaint_all ();
     void verify_and_link (bool wrap = false);
@@ -1868,6 +1868,14 @@ public:
     );
     bool next_trigger (trigger & trig);
     bool push_quantize (midibyte status, midibyte cc, int divide);
+
+    /*
+     * Later, maybe.
+     *
+     * bool push_jitter_notes (midibyte status, midibyte cc, int range);
+     */
+
+    bool push_jitter_notes (int range = -1);
     bool transpose_notes (int steps, int scale, int key = 0);
 
 #if defined SEQ66_SEQ32_SHIFT_SUPPORT

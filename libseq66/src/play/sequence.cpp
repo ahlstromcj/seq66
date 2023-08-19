@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-08-17
+ * \updates       2023-08-18
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2480,12 +2480,12 @@ sequence::randomize_selected (midibyte status, int plus_minus)
 }
 
 bool
-sequence::randomize_selected_notes (int jitter, int range)
+sequence::randomize_selected_notes (int range)
 {
     automutex locker(m_mutex);
     m_events_undo.push(m_events);               /* push_undo(), no lock  */
 
-    bool result = m_events.randomize_selected_notes(jitter, range);
+    bool result = m_events.randomize_selected_notes(range);
     if (result)
         modify();
 
@@ -2497,12 +2497,10 @@ sequence::randomize_selected_notes (int jitter, int range)
  */
 
 bool
-sequence::jitter_notes (int jitter)
+sequence::jitter_notes (int jitr)
 {
     automutex locker(m_mutex);
-    m_events_undo.push(m_events);               /* push_undo(), no lock  */
-
-    bool result = m_events.jitter_notes(jitter);
+    bool result = m_events.jitter_notes(snap(), jitr);
     if (result)
         modify();
 
@@ -3273,7 +3271,7 @@ sequence::fix_pattern (fixparameters & params)
             }
             else if (params.fp_quan_type == alteration::jitter)
             {
-                result = m_events.jitter_notes(params.fp_jitter);
+                result = m_events.jitter_notes(snap(), params.fp_jitter);
             }
 #if defined SEQ66_USE_ADDED_ALTERATIONS
             else if (params.fp_quan_type == alteration::random)
@@ -6485,6 +6483,14 @@ sequence::push_quantize (midibyte status, midibyte cc, int divide)
     automutex locker(m_mutex);
     m_events_undo.push(m_events);
     return quantize_events(status, cc, divide);
+}
+
+bool
+sequence::push_jitter_notes (int range)
+{
+    automutex locker(m_mutex);
+    m_events_undo.push(m_events);
+    return jitter_notes(range);
 }
 
 /**

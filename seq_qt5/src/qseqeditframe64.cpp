@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-08-14
+ * \updates       2023-08-19
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2307,17 +2307,15 @@ qseqeditframe64::popup_tool_menu ()
     connect(tighten, SIGNAL(triggered(bool)), this, SLOT(tighten_notes()));
     menutiming->addAction(tighten);
 
+    QAction * jitter = new QAction(tr("&Jitter"), m_tools_popup);
+    connect(jitter, SIGNAL(triggered(bool)), this, SLOT(jitter_notes()));
+    menutiming->addAction(jitter);
+
     QAction * lfobox = new QAction(tr("&LFO..."), m_tools_popup);
     connect(lfobox, SIGNAL(triggered(bool)), this, SLOT(show_lfo_frame()));
-#if defined USE_MORE_TOOLS
-    menumore->addAction(lfobox);
-#endif
 
     QAction * fixbox = new QAction(tr("Pattern &fix..."), m_tools_popup);
     connect(fixbox, SIGNAL(triggered(bool)), this, SLOT(show_pattern_fix()));
-#if defined USE_MORE_TOOLS
-    menumore->addAction(fixbox);
-#endif
 
     QAction * transpose[2 * c_octave_size];     /* plain pitch transposings */
     QAction * harmonic[2 * c_harmonic_size];    /* harmonic transpositions  */
@@ -2417,7 +2415,7 @@ qseqeditframe64::inverse_note_selection ()
 void
 qseqeditframe64::quantize_notes ()
 {
-    track().push_quantize(EVENT_NOTE_ON, 0, 1);     // , false);
+    track().push_quantize(EVENT_NOTE_ON, 0, 1);
 }
 
 /**
@@ -2427,7 +2425,14 @@ qseqeditframe64::quantize_notes ()
 void
 qseqeditframe64::tighten_notes ()
 {
-    track().push_quantize(EVENT_NOTE_ON, 0, 2);     // , true);
+    track().push_quantize(EVENT_NOTE_ON, 0, 2);
+}
+
+void
+qseqeditframe64::jitter_notes ()
+{
+    int s = usr().jitter_range(m_seqroll->snap());
+    track().push_jitter_notes(s);
 }
 
 /**

@@ -654,7 +654,12 @@ eventlist::quantize_events
             midibyte d0, d1;
             er.get_data(d0, d1);
             bool match = er.match_status(status);
-            bool canselect;
+            bool canselect = false;
+            if (er.is_marked())                 /* ignore marked events     */
+            {
+                er.unmark();
+                continue;
+            }
             if (status == EVENT_CONTROL_CHANGE)
                 canselect = match && d0 == cc;  /* correct status and cc    */
             else
@@ -665,7 +670,7 @@ eventlist::quantize_events
                 result = tight ?
                     er.tighten(snap, len) : er.quantize(snap, len) ;
 
-                if (er.is_linked())
+                if (er.is_note_on_linked())
                 {
                     /*
                      * In some cases, the linked Note Off, when quantized,
@@ -679,12 +684,17 @@ eventlist::quantize_events
                     else
                         f->quantize(snap, len);
 
-                    midipulse ts = f->timestamp();
-                    if (ts - er.timestamp() < (snap / 2))
+                    midipulse ts1 = er.timestamp();
+                    midipulse ts2 = f->timestamp();
+                    if (ts2 >= ts1)
                     {
-                        ts = er.timestamp() + snap;
-                        f->set_timestamp(ts);
+                        if (ts2 - ts1 < (snap / 2))
+                        {
+                            ts1 += snap / 2;
+                            f->set_timestamp(ts1);
+                        }
                     }
+                    f->mark();              /* mark linked note for later   */
                 }
             }
         }
@@ -1098,27 +1108,18 @@ eventlist::randomize_selected (midibyte status, int range)
  *  velocity (data byte d[1]) of the note.  The note pitch (d[0]) is not
  *  altered.
  *
- *  Since we jitter the timestamps, we have to call verify_and_link()
- *  afterward.
- *
- * \param length
- *      The length of the sequence containing the notes.
- *
- * \param jitr
- *      Provides the amount of time jitter in ticks.
- *
  * \param range
- *      Provides the amount of velocity jitter.
+ *      Provides the amount of velocity randomization.
  *
  * \return
  *      Returns true if any event got altered.
  */
 
 bool
-eventlist::randomize_selected_notes (int jitr, int range)
+eventlist::randomize_selected_notes (int range)
 {
     bool result = false;
-    if (range > 0 || jitr > 0)
+    if (range > 0)
     {
         for (auto & e : m_events)
         {
@@ -1132,17 +1133,100 @@ eventlist::randomize_selected_notes (int jitr, int range)
             }
         }
         if (result)
-            verify_and_link();                      /* sort and relink      */
+            verify_and_link();                  /* sort and relink notes    */
     }
     return result;
 }
 
 /**
- *  This function jitters the timestamps of all note events.
+ *  This function jitters the timestamps of all events. If note events were
+ *  jittered, then we verify-and-link.
+ *
+ *  Since we jitter the timestamps, we have to call verify_and_link()
+ *  afterward.
+ *
+ * \param snap
+ *      Provides the current snap value, which is used to avoid gross
+ *      jittering.
+ *
+ * \param jitr
+ *      Provides the amount of time jitter in ticks.
+ *
+ * \return
+ *      Returns true if some jittering was actually done.
  */
 
 bool
-eventlist::jitter_notes (int jitr)
+eventlist::jitter_events (int snap, int jitr)
+{
+    bool result = false;
+    if (jitr > 0)
+    {
+        bool note_changed = false;
+        for (auto & e : m_events)
+        {
+            if (e.is_marked())                  /* ignore marked events     */
+            {
+                e.unmark();
+                continue;
+            }
+            if (e.jitter(snap, jitr, get_length()))
+            {
+                result = true;
+                if (e.is_note())
+                    note_changed = true;
+
+                if (e.is_note_on_linked())
+                {
+                    /*
+                     * In some cases, the linked Note Off, when quantized,
+                     * will end up next to the Note On.  How to fix? If they
+                     * are closer than half the snap, add the snap.
+                     */
+
+                    event::iterator f = e.link();
+                    f->jitter(snap, jitr, get_length());
+
+                    midipulse ts1 = e.timestamp();
+                    midipulse ts2 = f->timestamp();
+                    if (ts2 >= ts1)
+                    {
+                        if (ts2 - ts1 < (snap / 2))
+                        {
+                            ts1 += snap / 2;
+                            f->set_timestamp(ts1);
+                        }
+                    }
+                    f->mark();                  /* mark link note for later */
+                }
+            }
+        }
+        if (note_changed)
+            verify_and_link();                  /* sort and relink notes    */
+    }
+    return result;
+}
+
+/**
+ *  This function jitters the timestamps of all note events.  If any
+ *  were jittered, then we verify-and-link.
+ *
+ *  Since we jitter the timestamps, we have to call verify_and_link()
+ *  afterward.
+ *
+ * \param snap
+ *      Provides the current snap value, which is used to avoid gross
+ *      jittering.
+ *
+ * \param jitr
+ *      Provides the amount of time jitter in ticks.
+ *
+ * \return
+ *      Returns true if some jittering was actually done.
+ */
+
+bool
+eventlist::jitter_notes (int snap, int jitr)
 {
     bool result = false;
     if (jitr > 0)
@@ -1151,7 +1235,7 @@ eventlist::jitter_notes (int jitr)
         {
             if (e.is_note())
             {
-                if (e.randomize(jitr))
+                if (e.jitter(snap, jitr, get_length()))
                     result = true;
             }
         }

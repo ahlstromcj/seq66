@@ -1547,7 +1547,10 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     case Qt::Key_N:
 
                         done = true;
-                        track().select_notes_by_channel(frame64()->edit_channel());
+                        track().select_notes_by_channel
+                        (
+                            frame64()->edit_channel()
+                        );
                         break;
                     }
                 }
@@ -1587,18 +1590,18 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                 case Qt::Key_Q:                 /* quantize selected notes  */
 
-                    if (track().push_quantize(EVENT_NOTE_ON, 0, 1)) // , true))
+                    if (track().push_quantize(EVENT_NOTE_ON, 0, 1))
                         done = mark_modified();
                     break;
 
-                case Qt::Key_R:                 /* default jitter == 8      */
+                case Qt::Key_R:                 /* default random == 8      */
 
                     if (track().randomize_selected_notes())
                         done = mark_modified();
                     break;
 
                 case Qt::Key_T:                 /* tighten selected notes   */
-                    if (track().push_quantize(EVENT_NOTE_ON, 0, 2)) // , true))
+                    if (track().push_quantize(EVENT_NOTE_ON, 0, 2))
                         done = mark_modified();
                     break;
 

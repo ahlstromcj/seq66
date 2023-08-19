@@ -181,11 +181,11 @@ midi_jack_data::recalculate_frame_factor
  * The problem (issue #100):
  *
  *  Our RtMidi-based process handles output by first pushing the current
- *  playback tick (pulse) and the message bytes to the JACK ringubffer.
- *  This happens at frame f0 and time t1.  In the JACK output callback,
- *  the message data is plucked from the ringbuffer at later frame f1 and time
- *  t1.  There, we need an offset from the current frame to the actual frame, so
- *  that the messages don't jitter to much with large frame sizes.
+ *  playback tick (pulse) and the message bytes to the JACK ringubffer.  This
+ *  happens at frame f0 and time t1.  In the JACK output callback, the message
+ *  data is plucked from the ringbuffer at later frame f1 and time t1.  There,
+ *  we need an offset from the current frame to the actual frame,
+ *  so that the messages don't jitter to much with large frame sizes.
  *
  * The solution:
  *

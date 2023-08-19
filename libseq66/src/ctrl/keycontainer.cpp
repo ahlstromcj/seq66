@@ -447,113 +447,113 @@ keycontainer::keys_automation ()
 {
     static defaults s_keys_automation =
     {
-        { "'",         automation::action::on      },  //  0 bpm_up
-        { ";",         automation::action::on      },  //  1 bpm_dn
-        { "]",         automation::action::on      },  //  2 ss_up
-        { "[",         automation::action::on      },  //  3 ss_dn
-        { "KP_Home",   automation::action::toggle  },  //  4 mod_replace
-        { "Ins",       automation::action::toggle  },  //  5 mod_snapshot
-        { "o",         automation::action::toggle  },  //  6 mod_queue
-        { "`",         automation::action::on      },  //  7 mod_gmute
-        { "l", /*el*/  automation::action::on      },  //  8 mod_glearn
-        { "Home",      automation::action::on      },  //  9 play_ss
-        { ".",         automation::action::toggle  },  // 10 playback (pause)
-        { "P",         automation::action::on      },  // 11 song_record
-        { "BS",        automation::action::on      },  // 12 solo
-        { "LF",        automation::action::on      },  // 13 thru
-        { "PageUp",    automation::action::on      },  // 14 bpm_page_up
-        { "PageDn",    automation::action::on      },  // 15 bpm_page_dn
-        { "KP_.",      automation::action::on      },  // 16 ss_set
-        { "KP_*",      automation::action::on      },  // 17 record_style
-        { "KP_-",      automation::action::on      },  // 18 quan_record
-        { "KP_+",      automation::action::on      },  // 19 reset_sets
-        { "|",         automation::action::on      },  // 20 mod_oneshot
-        { "F6",        automation::action::on      },  // 21 FF
-        { "F5",        automation::action::on      },  // 22 rewind
-        { "F1",        automation::action::on      },  // 23 top (beginning)
-        { "F2",        automation::action::on      },  // 24 playlist (next)
-        { "F3",        automation::action::on      },  // 25 playlist_song (next)
-        { "F9",        automation::action::on      },  // 26 tap_bpm
-        { "Space",     automation::action::on      },  // 27 start [not " "!]
-        { "Esc",       automation::action::on      },  // 28 stop
-        { "KP_Ins",    automation::action::on      },  // 29 reserved_29
-        { "F8",        automation::action::on      },  // 30 toggle_mutes
-        { "F7",        automation::action::on      },  // 31 song_pointer
-        { "\\",        automation::action::toggle  },  // 32 keep_queue
-        { "/",         automation::action::off     },  // 33 slot_shift
-        { "0",         automation::action::on      },  // 34 mutes_clear
-        { "Quit",      automation::action::off     },  // 35 quit
-        { "=",         automation::action::on      },  // 36 pattern_edit
-        { "-",         automation::action::on      },  // 37 event_edit
-        { "F10",       automation::action::on      },  // 38 song_mode
-        { "F11",       automation::action::on      },  // 39 toggle_jack
-        { "F12",       automation::action::on      },  // 40 menu_mode
-        { "F4",        automation::action::on      },  // 41 follow_transport
-        { "~",         automation::action::on      },  // 42 panic
-        { "0xf9",      automation::action::toggle  },  // 43 visibility
-        { "0xfa",      automation::action::off     },  // 44 save_session
-        { "0xfb",      automation::action::off     },  // 45 reserved_45
-        { "0xfc",      automation::action::off     },  // 46 reserved_46
-        { "0xfd",      automation::action::off     },  // 47 reserved_47
-        { "0xfe",      automation::action::off     },  // 48 reserved_48
+        { "'",         automation::action::on      }, //  0 bpm_up
+        { ";",         automation::action::on      }, //  1 bpm_dn
+        { "]",         automation::action::on      }, //  2 ss_up
+        { "[",         automation::action::on      }, //  3 ss_dn
+        { "KP_Home",   automation::action::toggle  }, //  4 mod_replace
+        { "Ins",       automation::action::toggle  }, //  5 mod_snapshot
+        { "o",         automation::action::toggle  }, //  6 mod_queue
+        { "`",         automation::action::on      }, //  7 mod_gmute
+        { "l", /*el*/  automation::action::on      }, //  8 mod_glearn
+        { "Home",      automation::action::on      }, //  9 play_ss
+        { ".",         automation::action::toggle  }, // 10 playback (pause)
+        { "P",         automation::action::on      }, // 11 song_record
+        { "BS",        automation::action::on      }, // 12 solo
+        { "LF",        automation::action::on      }, // 13 thru
+        { "PageUp",    automation::action::on      }, // 14 bpm_page_up
+        { "PageDn",    automation::action::on      }, // 15 bpm_page_dn
+        { "KP_.",      automation::action::on      }, // 16 ss_set
+        { "KP_*",      automation::action::on      }, // 17 record_style
+        { "KP_-",      automation::action::on      }, // 18 quan_record
+        { "KP_+",      automation::action::on      }, // 19 reset_sets
+        { "|",         automation::action::on      }, // 20 mod_oneshot
+        { "F6",        automation::action::on      }, // 21 FF
+        { "F5",        automation::action::on      }, // 22 rewind
+        { "F1",        automation::action::on      }, // 23 top (beginning)
+        { "F2",        automation::action::on      }, // 24 playlist (next)
+        { "F3",        automation::action::on      }, // 25 playlist_song (next)
+        { "F9",        automation::action::on      }, // 26 tap_bpm
+        { "Space",     automation::action::on      }, // 27 start [not " "!]
+        { "Esc",       automation::action::on      }, // 28 stop
+        { "KP_Ins",    automation::action::on      }, // 29 reserved_29
+        { "F8",        automation::action::on      }, // 30 toggle_mutes
+        { "F7",        automation::action::on      }, // 31 song_pointer
+        { "\\",        automation::action::toggle  }, // 32 keep_queue
+        { "/",         automation::action::off     }, // 33 slot_shift
+        { "0",         automation::action::on      }, // 34 mutes_clear
+        { "Quit",      automation::action::off     }, // 35 quit
+        { "=",         automation::action::on      }, // 36 pattern_edit
+        { "-",         automation::action::on      }, // 37 event_edit
+        { "F10",       automation::action::on      }, // 38 song_mode
+        { "F11",       automation::action::on      }, // 39 toggle_jack
+        { "F12",       automation::action::on      }, // 40 menu_mode
+        { "F4",        automation::action::on      }, // 41 follow_transport
+        { "~",         automation::action::on      }, // 42 panic
+        { "0xf9",      automation::action::toggle  }, // 43 visibility
+        { "0xfa",      automation::action::off     }, // 44 save_session
+        { "0xfb",      automation::action::off     }, // 45 reserved_45
+        { "0xfc",      automation::action::off     }, // 46 reserved_46
+        { "0xfd",      automation::action::off     }, // 47 reserved_47
+        { "0xfe",      automation::action::off     }, // 48 reserved_48
 
         /*
          * Proposed massive expansion in automation. Grid mode selection.
          */
 
-        { "Sh_F1",    automation::action::on      },  // 49 record_overdub
-        { "Sh_F2",    automation::action::on      },  // 50 record_overwrite
-        { "Sh_F3",    automation::action::on      },  // 51 record_expand
-        { "Sh_F4",    automation::action::on      },  // 52 record_oneshot
-        { "Sh_F5",    automation::action::on      },  // 53 grid_loop
-        { "Sh_F6",    automation::action::on      },  // 54 grid_record
-        { "Sh_F7",    automation::action::on      },  // 55 grid_copy
-        { "Sh_F8",    automation::action::on      },  // 56 grid_paste
-        { "Sh_F9",    automation::action::on      },  // 57 grid_clear
-        { "Sh_F10",   automation::action::on      },  // 58 grid_delete
-        { "Sh_F11",   automation::action::on      },  // 59 grid_thru
-        { "Sh_F12",   automation::action::on      },  // 60 grid_solo
-        { "0xe0",     automation::action::on      },  // 61 grid_cut
-        { "0xe1",     automation::action::on      },  // 62 grid_double
+        { "Sh_F1",    automation::action::on       }, // 49 record_overdub
+        { "Sh_F2",    automation::action::on       }, // 50 record_overwrite
+        { "Sh_F3",    automation::action::on       }, // 51 record_expand
+        { "Sh_F4",    automation::action::on       }, // 52 record_oneshot
+        { "Sh_F5",    automation::action::on       }, // 53 grid_loop
+        { "Sh_F6",    automation::action::on       }, // 54 grid_record
+        { "Sh_F7",    automation::action::on       }, // 55 grid_copy
+        { "Sh_F8",    automation::action::on       }, // 56 grid_paste
+        { "Sh_F9",    automation::action::on       }, // 57 grid_clear
+        { "Sh_F10",   automation::action::on       }, // 58 grid_delete
+        { "Sh_F11",   automation::action::on       }, // 59 grid_thru
+        { "Sh_F12",   automation::action::on       }, // 60 grid_solo
+        { "0xe0",     automation::action::on       }, // 61 grid_cut
+        { "0xe1",     automation::action::on       }, // 62 grid_double
 
         /*
          * Grid quantization type selection.
          */
 
-        { "0xe2",      automation::action::on      },  // 63 grid_quant_none,
-        { "0xe3",      automation::action::on      },  // 64 grid_quant_full,
-        { "0xe4",      automation::action::on      },  // 65 grid_quant_tighten,
-        { "0xe5",      automation::action::on      },  // 66 grid_quant_random,
-        { "0xe6",      automation::action::on      },  // 67 grid_quant_jitter,
-        { "0xe7",      automation::action::off     },  // 68 grid_quant_68,
+        { "0xe2",      automation::action::on      }, // 63 grid_quant_none
+        { "0xe3",      automation::action::on      }, // 64 grid_quant_full
+        { "0xe4",      automation::action::on      }, // 65 grid_quant_tighten
+        { "0xe5",      automation::action::on      }, // 66 grid_quant_random
+        { "0xe6",      automation::action::on      }, // 67 grid_quant_jitter
+        { "0xe7",      automation::action::off     }, // 68 grid_quant_notemap
 
         /*
          * A few more likely candidates.
          */
 
-        { "0xe8",      automation::action::off     },  // 69 mod_bbt_hms,
-        { "0xe9",      automation::action::off     },  // 70 mod_LR_loop,
-        { "0xea",      automation::action::off     },  // 71 mod_undo_recording,
-        { "0xeb",      automation::action::off     },  // 72 mod_redo_recording,
-        { "0xec",      automation::action::off     },  // 73 mod_transpose_song,
-        { "0xed",      automation::action::off     },  // 74 mod_copy_set,
-        { "0xee",      automation::action::off     },  // 75 mod_paste_set,
-        { "0xef",      automation::action::off     },  // 76 mod_toggle_tracks,
+        { "0xe8",      automation::action::off     }, // 69 mod_bbt_hms
+        { "0xe9",      automation::action::off     }, // 70 mod_LR_loop
+        { "0xea",      automation::action::off     }, // 71 mod_undo_recording
+        { "0xeb",      automation::action::off     }, // 72 mod_redo_recording
+        { "0xec",      automation::action::off     }, // 73 mod_transpose_song
+        { "0xed",      automation::action::off     }, // 74 mod_copy_set
+        { "0xee",      automation::action::off     }, // 75 mod_paste_set
+        { "0xef",      automation::action::off     }, // 76 mod_toggle_tracks
 
         /*
          * Set playing modes.
          */
 
-        { "0x8c",      automation::action::off     },  // 77 set_mode_normal,
-        { "0x8d",      automation::action::off     },  // 78 set_mode_auto,
-        { "0x8e",      automation::action::off     },  // 79 set_mode_additive,
-        { "0x8f",      automation::action::off     },  // 80 set_mode_all_sets,
+        { "0x8c",      automation::action::off     }, // 77 set_mode_normal
+        { "0x8d",      automation::action::off     }, // 78 set_mode_auto
+        { "0x8e",      automation::action::off     }, // 79 set_mode_additive
+        { "0x8f",      automation::action::off     }, // 80 set_mode_all_sets
 
         /*
          * Tricky ending.
          */
 
-        { "0xff",      automation::action::off     },  // -- maximum
+        { "0xff",      automation::action::off     }, // -- maximum
     };
     return s_keys_automation;
 }

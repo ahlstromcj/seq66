@@ -1176,14 +1176,15 @@ event::set_tempo (midibyte t[3])
  */
 
 /**
- *  Modifies the velocity. However, the caller will like not want to
- *  change the velocity of a Note On with velocity 0.
+ *  Modifies the velocity (for notes) or some other amplitude. However,
+ *  the caller will like not want to change the amplitude of a Note On with
+ *  velocity 0. Let the caller beware!
  *
  * \param range
  *      The range of the changes up and down. Not used if 0 or less.
  *
  * \return
- *      Returns true if the timestamp was actually jittered.
+ *      Returns true if the amplitude was actually jittered.
  */
 
 bool
@@ -1219,15 +1220,20 @@ event::randomize (int range)
  */
 
 bool
-event::jitter (int range, midipulse seqlength)
+event::jitter (int snap, int range, midipulse seqlength)
 {
     bool result = range > 0;
     if (result)
     {
-        midipulse delta = midipulse(randomize(range));
+        midipulse delta = midipulse(seq66::randomize(range));
         result = delta != 0;
         if (result)
         {
+            if (delta < -snap)
+                delta = -snap + 1;
+            else if (delta > snap)
+                delta = snap - 1;
+
             midipulse tstamp = timestamp() + delta;
             if (tstamp >= seqlength)
                 tstamp = seqlength - 1;

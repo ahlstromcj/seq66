@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2023-08-17
+ * \updates       2023-08-19
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -322,7 +322,9 @@ usrsettings::usrsettings () :
     m_window_scale              (c_window_scale_default),
     m_window_scale_y            (c_window_scale_default),
     m_mainwnd_spacing           (0),
-    m_current_zoom              (2),            // 0 is a feature
+    m_current_zoom              (2),                    /* 0 is a feature   */
+    m_jitter_divisor            (8),                    /* i.e. "1/8"       */
+    m_randomization_amount      (8),                    /* for 0 to 127     */
     m_global_seq_feature_save   (true),
     m_seqedit_scale             (c_scales_off),
     m_seqedit_key               (c_key_of_C),
@@ -431,6 +433,8 @@ usrsettings::set_defaults ()
     m_window_scale_y = c_window_scale_default;
     m_mainwnd_spacing = c_mainwnd_spacing;
     m_current_zoom = 2;
+    m_jitter_divisor = 8;
+    m_randomization_amount = 8;
     m_global_seq_feature_save = true;
     m_seqedit_scale = c_scales_off;
     m_seqedit_key = c_key_of_C;
@@ -1226,6 +1230,26 @@ usrsettings::zoom (int value)
     bool ok = value >= c_min_zoom && value <= c_max_zoom;
     if (ok || value == 0)                       /* 0 == use zoom power of 2 */
         m_current_zoom = value;
+}
+
+/**
+ *  Calculates the actual jitter range from the given snap value.
+ *
+ * \param snap
+ *      The snap value in ticks (pulses).
+ *
+ * \return
+ *      Returns the fraction of snap as the jitter range.
+ */
+
+midipulse
+usrsettings::jitter_range (int snap)
+{
+    midipulse result = 8;                   /* a default in case of error   */
+    if (snap > m_jitter_divisor)
+        result = snap / m_jitter_divisor;
+
+    return result;
 }
 
 void

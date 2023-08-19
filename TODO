@@ -1,8 +1,8 @@
 TO DO for Seq66 0.99.8
 Chris Ahlstrom
-2019-04-13 to 2023-08-15
+2019-04-13 to 2023-08-19
 
-UI:
+Misc:
 
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:
@@ -13,6 +13,20 @@ UI:
     -   Make sure L/R looping buttons (main and song) works.
     -   Clarify the two transpose buttons in the song editor.
     -   There are many "TODOs" in the automation slots.
+    -   Drawing notes does not update the seqedit Event menus.
+    -   Add a feature to start playback when the first note comes
+        into a pattern when recording is set.
+    -   Add functions in usrsetting to get default jitter and randomize
+        values. Probably good to add to Preferences or ...?
+        Jitter should be a fraction (of the current snap/PPQN).
+    -   Document better all of the keys on the seqroll, etc. Maybe
+        a "?" button?
+    -   Edit events in tab disabled
+    -   Doing a jitter in the pattern editor adds a red Q to the slot and
+        to subsequently added slots!
+    -   Add "jitter-divisor" and "randomization-amount" to
+        "[user-midi-ppqn]".
+    -   Document everything.
 
 Some of these issues will be pushed off for the distant Seq66v2.
 

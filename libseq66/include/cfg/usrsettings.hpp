@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-08-16
+ * \updates       2023-08-19
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -358,6 +358,28 @@ private:
      */
 
     int m_current_zoom;
+
+    /**
+     *  The amount of default timestamp jitter. This is the fraction of the
+     *  current snap. Examples:
+     *
+     *      -   The default snap of 1/16th and 192 PPQN translates to 48
+     *          ticks. At the default zoom, this is 24 pixels.
+     *      -   At a base PPQN of 1920, this is 480 ticks.
+     *
+     *  A reasonable jitter would be a few pixels. A reasonable way to get
+     *  this is to use a fraction of a snap value, like 1/8 or 1/16.
+     *  This number is the denominator of such a fraction.
+     */
+
+    int m_jitter_divisor;
+
+    /**
+     *  The amount to use for randomization (of "amplitude"). Note that
+     *  various MIDI amplitudes range from 0 to 127.
+     */
+
+    int m_randomization_amount;
 
     /**
      *  If true, this value provide a bit of backward-compatibility with the
@@ -1233,7 +1255,30 @@ public:
         return m_current_zoom;
     }
 
-    void zoom (int value);      /* seqedit can change this one */
+    void zoom (int value);              /* seqedit can change this one      */
+    midipulse jitter_range (int snap);
+
+    int jitter_divisor () const
+    {
+        return m_jitter_divisor;
+    }
+
+    void jitter_divisor (int d)
+    {
+        if (d > 1)
+            m_jitter_divisor = d;
+    }
+
+    int randomization_amount () const
+    {
+        return m_randomization_amount;
+    }
+
+    void randomization_amount (int r)
+    {
+        if (r > 0 && r < 20)            /* an arbitrary upper limit, large  */
+            m_randomization_amount = r;
+    }
 
     /**
      *  This special value of zoom sets the zoom according to a power of two

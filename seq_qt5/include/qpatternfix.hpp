@@ -217,7 +217,7 @@ private:
     /**
      *  The range of jitter to apply.  Here, jitter is a randomization of
      *  the event time-stamp by plus/minus a value in the range of the jitter.
-     *  Defaults to PPQN / 12.
+     *  Defaults to usr().jitter_range(ppqn() / 4).
      */
 
     int m_jitter_range;

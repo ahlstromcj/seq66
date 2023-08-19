@@ -91,7 +91,8 @@ Windows, and using a conventional source tarball.
         *   Fixed a couple corrupted data/midi/FM/*.mid files.
         *   Changing playlist setting enables Session Restart button.
         *   Removed coloring of record-style and -mode buttons.
-        *   Refactoring quantization alterations for future upgrades.
+        *   Refactoring quantization alterations for future upgrades. Added
+            an option to jitter the notes in the seqedit.
     *   Version 0.99.7:
         *   Issue #110 follow-ons:
             Cannot save tempo (BPM) in Windows when

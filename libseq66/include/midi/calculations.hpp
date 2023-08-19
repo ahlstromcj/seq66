@@ -106,18 +106,19 @@ lengthfix_cast (int v)
 
 /**
  *  Provides the short list of options for the type of alteration used in
- *  the qpatternfix dialog.  Might be useful elsewhere as well.
+ *  the qpatternfix dialog.  Might be useful elsewhere as well. Note the
+ *  automation::slot values shown.
  */
 
 enum class alteration
 {
-    none = 0,                   /**< Not adjusting the timing of pattern.   */
-    tighten,                    /**< Adjusting timing less forcefully.      */
-    quantize,                   /**< Adjusting timing strictly.             */
-    jitter,                     /**< Randomize timing slightly.             */
-    random,                     /**< Randomize event magnitudes slightly.   */
-    notemap,                    /**< Apply a configured note-mapping.       */
-    max                         /**< Illegal value.                         */
+    none = 0,   /**< grid_quant_none:    Not adjusting timing of pattern.   */
+    tighten,    /**< grid_quant_tighten: Adjusting timing less forcefully.  */
+    quantize,   /**< grid_quant_full:    Adjusting timing strictly.         */
+    jitter,     /**< grid_quant_jitter:  Randomize timing slightly.         */
+    random,     /**< grid_quant_random:  Randomize event magnitude a bit.   */
+    notemap,    /**< grid_quant_notemap: Apply a configured note-mapping.   */
+    max         /**<                      Illegal value.                    */
 };
 
 inline int

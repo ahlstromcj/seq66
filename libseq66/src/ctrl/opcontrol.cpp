@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2023-08-14
+ * \updates       2023-08-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -255,9 +255,9 @@ opcontrol::automation_slot_name (slot s)
         "Q None",               // 63: grid_quant_none
         "Q Full",               // 64: grid_quant_full
         "Q Tighten",            // 65: grid_quant_tighten
-        "Q Random",             // 66: grid_quant_random
-        "Q Jitter",             // 67: grid_quant_jitter
-        "Reserved 68",          // 68: grid_quant_68
+        "Randomize",            // 66: grid_quant_random
+        "Jitter",               // 67: grid_quant_jitter
+        "Note-map",             // 68: grid_quant_notemap
 
         /*
          * A few more likely candidates.

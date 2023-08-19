@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-08-16
+ * \updates       2022-08-19
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -98,7 +98,7 @@ qpatternfix::qpatternfix
     m_edit_frame        (editparent),
     m_length_type       (lengthfix::none),
     m_quan_type         (alteration::none),
-    m_jitter_range      (s.get_ppqn() / 12),
+    m_jitter_range      (usr().jitter_range(s.get_ppqn() / 4)),
     m_measures          (double(m_backup_measures)),
     m_scale_factor      (1.0),
     m_align_left        (false),

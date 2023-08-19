@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-08-17
+ * \updates       2023-08-18
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -1468,10 +1468,19 @@ public:
 
 private:    // used by friend eventlist
 
-    bool jitter (int range, midipulse seqlegnth);   /* changes timestamp    */
-    bool randomize (int range);                     /* changes "amplitude"  */
+    /*
+     * Changes timestamp.
+     */
+
+    bool jitter (int snap, int range, midipulse seqlength);
     bool tighten (int snap, midipulse seqlength);
     bool quantize (int snap, midipulse seqlength);
+
+    /*
+     * Changes the amplitude of d0 or d1, depending on the event.
+     */
+
+    bool randomize (int range);
 
 };          // class event
 
