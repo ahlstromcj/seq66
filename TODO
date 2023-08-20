@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.8
 Chris Ahlstrom
-2019-04-13 to 2023-08-19
+2019-04-13 to 2023-08-20
 
 Misc:
 
@@ -22,10 +22,11 @@ Misc:
     -   Document better all of the keys on the seqroll, etc. Maybe
         a "?" button?
     -   Edit events in tab disabled
-    -   Doing a jitter in the pattern editor adds a red Q to the slot and
-        to subsequently added slots!
-    -   Add "jitter-divisor" and "randomization-amount" to
-        "[user-midi-ppqn]".
+    -   Add sequence::push_quantize_notes() etc. to also handle Aftertouch.
+    -   Seqroll: Select notes, then deselect. The event pane and data pane
+        remain orange. Refresh also does not occur until each pane gets
+        clicked. Do what they Scale dropdown callback does to refresh.
+    -   Use create_menu_action() everywhere!
     -   Document everything.
 
 Some of these issues will be pushed off for the distant Seq66v2.

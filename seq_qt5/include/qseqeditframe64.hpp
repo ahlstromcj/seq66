@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-06-23
+ * \updates       2023-08-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -366,6 +366,7 @@ private:        /* setters and getters          */
     void set_event_entry (QMenu * menu, bool present, event_index ei);
     void set_data_type (midibyte status, midibyte control = 0);
     void set_recording_volume (int recvol);
+    void enable_note_menus ();
     QWidget * rollview ();
     QWidget * rollwidget () const;
 
@@ -417,6 +418,8 @@ private:
 
     QMenu * m_tools_popup;
     QMenu * m_tools_harmonic;
+    QMenu * m_tools_pitch;
+    QMenu * m_tools_timing;
     QMenu * m_sequences_popup;
     QMenu * m_events_popup;
     QMenu * m_minidata_popup;

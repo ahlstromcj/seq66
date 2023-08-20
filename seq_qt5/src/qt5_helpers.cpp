@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-08-13
+ * \updates       2023-08-20
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -424,9 +424,9 @@ create_menu_action
 {
     QString mlabel(qt(text));
 #if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
-    QAction * result = new QAction(micon, mlabel, nullptr);
+    QAction * result = new (std::nothrow) QAction(micon, mlabel, nullptr);
 #else
-    QAction * result = new QAction(micon, mlabel);
+    QAction * result = new (std::nothrow) QAction(micon, mlabel);
 #endif
     return result;
 }

@@ -411,7 +411,7 @@ qpatternfix::slot_jitter_change ()
     QString t = ui->line_edit_q_jitter->text();
     std::string tc = t.toStdString();
     int m = string_to_int(tc, 0);
-    if (m > 0 && m < track().get_ppqn())
+    if (m > 0 && m < track().get_ppqn())        /* sanity check */
     {
         ui->btn_quan_jitter->setChecked(true);
         m_jitter_range = m;

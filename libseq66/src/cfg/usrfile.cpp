@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-05-25
+ * \updates       2023-08-19
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -310,11 +310,23 @@ usrfile::parse ()
      */
 
     tag = "[user-midi-ppqn]";
+
     int ppqn = get_integer(file, tag, "default-ppqn");
     bool flag = get_boolean(file, tag, "use-file-ppqn");
     usr().default_ppqn(ppqn);
     usr().midi_ppqn(ppqn);              /* can change based on file PPQN    */
     usr().use_file_ppqn(flag);
+
+    /*
+     * [user-randomization]
+     */
+
+    tag = "[user-randomization]";
+
+    int randvalue = get_integer(file, tag, "jitter-divisor");
+    usr().jitter_divisor(randvalue);
+    randvalue = get_integer(file, tag, "amplitude");
+    usr().randomization_amount(randvalue);
 
     /*
      * [user-midi-settings]
@@ -753,9 +765,21 @@ usrfile::write ()
 "# Seq66 PPQN, from 32 to 19200, default = 192. 'use-file-ppqn' (recommended)\n"
 "# indicates to use file PPQN.\n"
 "\n[user-midi-ppqn]\n\n"
-        ;
+    ;
     write_integer(file, "default-ppqn", usr().default_ppqn());
     write_boolean(file, "use-file-ppqn", usr().use_file_ppqn());
+
+    /*
+     * [user-randomization]
+     */
+
+    file << "\n"
+"# This section specifies the default values to use to jitter the MIDI event\n"
+"# time-stamps and randomize event amplitudes (e.g. velocity for notes).\n"
+"\n[user-randomization]\n\n"
+    ;
+    write_integer(file, "jitter_divisor", usr().jitter_divisor());
+    write_integer(file, "amplitude", usr().randomization_amount());
 
     /*
      * [user-midi-settings]

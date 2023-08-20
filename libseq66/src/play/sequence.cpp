@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-08-18
+ * \updates       2023-08-20
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2467,12 +2467,14 @@ sequence::grow_selected (midipulse delta)
  */
 
 bool
-sequence::randomize_selected (midibyte status, int plus_minus)
+sequence::randomize_selected (midibyte status, int range)
 {
     automutex locker(m_mutex);
     m_events_undo.push(m_events);               /* push_undo(), no lock  */
+    if (range == (-1))
+        range = usr().jitter_range(snap());
 
-    bool result = m_events.randomize_selected(status, plus_minus);
+    bool result = m_events.randomize_selected(status, range);
     if (result)
         modify();
 
@@ -2484,6 +2486,8 @@ sequence::randomize_selected_notes (int range)
 {
     automutex locker(m_mutex);
     m_events_undo.push(m_events);               /* push_undo(), no lock  */
+    if (range == (-1))
+        range = usr().jitter_range(snap());
 
     bool result = m_events.randomize_selected_notes(range);
     if (result)
@@ -2493,7 +2497,7 @@ sequence::randomize_selected_notes (int range)
 }
 
 /**
- *  For usage by fix_pattern().
+ *  For usage by fix_pattern() and by Tools / Timing / Jitter.
  */
 
 bool
@@ -3261,6 +3265,11 @@ sequence::fix_pattern (fixparameters & params)
                 else if (newscalefactor < 1.00)                         // 1.0
                     tempefx = bit_set(tempefx, fixeffect::shrunk);
             }
+
+            /*
+             * These functions operate only on selected events.
+             */
+
             if (params.fp_quan_type == alteration::tighten)
             {
                 result = m_events.quantize_all_events(snap(), 2);
@@ -5881,11 +5890,11 @@ sequence::set_quantized_recording (bool qr, bool toggle)
         result = true;
     }
     else
-        result = qr = ! quan;
+        result = qr != quan;
 
     if (result)
     {
-        m_alter_recording = quan ? alteration::none : alteration::quantize;
+        m_alter_recording = quan ? alteration::quantize : alteration::none ;
         if (qr)
             result = set_recording(m_alter_recording, true);
     }
@@ -6417,11 +6426,21 @@ sequence::quantize_events (midibyte status, midibyte cc, int divide)
     if (divide == 0)
         return false;
 
-    /*
-     * FIXME: this works only on selected events.
-     */
-
     bool result = m_events.quantize_events(status, cc, snap(), divide);
+    if (result)
+        set_dirty();
+
+    return result;
+}
+
+bool
+sequence::quantize_notes (int divide)
+{
+    automutex locker(m_mutex);
+    if (divide == 0)
+        return false;
+
+    bool result = m_events.quantize_notes(snap(), divide);
     if (result)
         set_dirty();
 
@@ -6486,10 +6505,21 @@ sequence::push_quantize (midibyte status, midibyte cc, int divide)
 }
 
 bool
+sequence::push_quantize_notes (int divide)
+{
+    automutex locker(m_mutex);
+    m_events_undo.push(m_events);
+    return quantize_notes(divide);
+}
+
+bool
 sequence::push_jitter_notes (int range)
 {
     automutex locker(m_mutex);
     m_events_undo.push(m_events);
+    if (range == (-1))
+        range = usr().jitter_range(snap());
+
     return jitter_notes(range);
 }
 

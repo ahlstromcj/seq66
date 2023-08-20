@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-08-18
+ * \updates       2023-08-20
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -736,6 +736,54 @@ eventlist::quantize_all_events (int snap, int divide)
 }
 
 /**
+ *  Quantize/tighten all Note events, including Aftertouch.
+ */
+
+bool
+eventlist::quantize_notes (int snap, int divide)
+{
+    bool result = false;
+    midipulse len = get_length();
+    bool tight = divide == 2;
+    for (auto & er : m_events)
+    {
+        if (er.is_selected_note())
+        {
+            if (er.is_marked())                 /* ignore marked events     */
+            {
+                er.unmark();
+                continue;
+            }
+            result = tight ? er.tighten(snap, len) : er.quantize(snap, len) ;
+            if (er.is_note_on_linked())
+            {
+                event::iterator f = er.link();
+                if (tight)
+                    f->tighten(snap, len);
+                else
+                    f->quantize(snap, len);
+
+                midipulse ts1 = er.timestamp();
+                midipulse ts2 = f->timestamp();
+                if (ts2 >= ts1)
+                {
+                    if (ts2 - ts1 < (snap / 2))
+                    {
+                        ts1 += snap / 2;
+                        f->set_timestamp(ts1);
+                    }
+                }
+                f->mark();                      /* mark linked for later    */
+            }
+        }
+    }
+    if (result)
+        verify_and_link();                      /* sorts them again!!!      */
+
+    return result;
+}
+
+/**
  *  Consolidates the adjustment of timestamps in a pattern.
  *
  *  -   If the timestamp plus the delta is greater that m_length, we do
@@ -1233,7 +1281,7 @@ eventlist::jitter_notes (int snap, int jitr)
     {
         for (auto & e : m_events)
         {
-            if (e.is_note())
+            if (e.is_selected_note())               /* ca 2023-08-20        */
             {
                 if (e.jitter(snap, jitr, get_length()))
                     result = true;

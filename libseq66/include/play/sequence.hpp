@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-08-18
+ * \updates       2023-08-20
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1789,8 +1789,8 @@ public:
     void decrement_selected (midibyte status, midibyte /*control*/);
     bool grow_selected (midipulse deltatick);
     bool stretch_selected (midipulse deltatick);
-    bool randomize_selected (midibyte status, int range = 8);
-    bool randomize_selected_notes (int range = 8);
+    bool randomize_selected (midibyte status, int range = -1);
+    bool randomize_selected_notes (int range = -1);
     bool jitter_notes (int jitter = -1);
     bool mark_selected ();
     void unpaint_all ();
@@ -1868,13 +1868,7 @@ public:
     );
     bool next_trigger (trigger & trig);
     bool push_quantize (midibyte status, midibyte cc, int divide);
-
-    /*
-     * Later, maybe.
-     *
-     * bool push_jitter_notes (midibyte status, midibyte cc, int range);
-     */
-
+    bool push_quantize_notes (int divide);
     bool push_jitter_notes (int range = -1);
     bool transpose_notes (int steps, int scale, int key = 0);
 
@@ -1993,6 +1987,7 @@ private:
     }
 
     bool quantize_events (midibyte status, midibyte cc, int divide);
+    bool quantize_notes (int divide);
     bool change_ppqn (int p);
     void put_event_on_bus (const event & ev);
     void reset_loop ();

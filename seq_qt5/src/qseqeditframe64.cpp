@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-08-19
+ * \updates       2023-08-20
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -291,6 +291,8 @@ qseqeditframe64::qseqeditframe64
     m_patternfix_wnd        (nullptr),
     m_tools_popup           (nullptr),
     m_tools_harmonic        (nullptr),
+    m_tools_pitch           (nullptr),
+    m_tools_timing          (nullptr),
     m_sequences_popup       (nullptr),
     m_events_popup          (nullptr),
     m_minidata_popup        (nullptr),
@@ -2250,6 +2252,7 @@ qseqeditframe64::tools ()
 {
     if (not_nullptr(m_tools_popup))
     {
+        enable_note_menus();
         m_tools_popup->exec
         (
             ui->m_button_tools->mapToGlobal
@@ -2270,10 +2273,13 @@ qseqeditframe64::popup_tool_menu ()
 {
     m_tools_popup = new QMenu(this);
 
-    QMenu * menuselect = new QMenu(tr("&Select..."), m_tools_popup);
-    QMenu * menutiming = new QMenu(tr("&Timing..."), m_tools_popup);
+    QMenu * menuselect = new QMenu(tr("&Select notes..."), m_tools_popup);
+    QMenu * menutiming = new QMenu(tr("Note &timing..."), m_tools_popup);
     QMenu * menupitch  = new QMenu(tr("&Pitch transpose..."), m_tools_popup);
-    QMenu * menuharmonic = new QMenu(tr("&Harmonic transpose..."), m_tools_popup);
+    QMenu * menuharmonic = new QMenu
+    (
+        tr("&Harmonic transpose..."), m_tools_popup
+    );
 
 #if defined USE_MORE_TOOLS
     /*
@@ -2376,18 +2382,36 @@ qseqeditframe64::popup_tool_menu ()
     m_tools_popup->addMenu(menutiming);
     m_tools_popup->addMenu(menupitch);
     m_tools_popup->addMenu(menuharmonic);
+
 #if defined USE_MORE_TOOLS
     m_tools_popup->addMenu(menumore);
 #else
     m_tools_popup->addAction(lfobox);
     m_tools_popup->addAction(fixbox);
 #endif
+
     m_tools_harmonic = menuharmonic;
-    m_tools_harmonic->setEnabled(m_scale > 0);
+    m_tools_timing = menutiming;
+    m_tools_pitch = menupitch;
+    enable_note_menus();
+}
+
+void
+qseqeditframe64::enable_note_menus ()
+{
+    bool gotselection = track().any_selected_notes();
+    if (not_nullptr(m_tools_harmonic))
+        m_tools_harmonic->setEnabled(gotselection && m_scale > 0);
+
+    if (not_nullptr(m_tools_pitch))
+        m_tools_pitch->setEnabled(gotselection);
+
+    if (not_nullptr(m_tools_timing))
+        m_tools_timing->setEnabled(gotselection);
 }
 
 /**
- *  Consider adding Aftertouch events.
+ *  Aftertouch events are associated with notes.
  */
 
 void
@@ -2395,10 +2419,12 @@ qseqeditframe64::select_all_notes ()
 {
     track().select_events(EVENT_NOTE_ON, 0);
     track().select_events(EVENT_NOTE_OFF, 0);
+    track().select_events(EVENT_AFTERTOUCH, 0);
+    enable_note_menus();
 }
 
 /**
- *  Consider adding Aftertouch events.
+ *  Aftertouch events are associated with notes.
  */
 
 void
@@ -2406,27 +2432,33 @@ qseqeditframe64::inverse_note_selection ()
 {
     track().select_events(EVENT_NOTE_ON, 0, true);
     track().select_events(EVENT_NOTE_OFF, 0, true);
+    track().select_events(EVENT_AFTERTOUCH, 0, true);
+    enable_note_menus();
 }
 
 /**
- *  Consider adding Aftertouch events.
+ *  This function acts on Notes On, Notes Off, and Aftertouch events.
  */
 
 void
 qseqeditframe64::quantize_notes ()
 {
-    track().push_quantize(EVENT_NOTE_ON, 0, 1);
+    track().push_quantize_notes(1);
 }
 
 /**
- *  Consider adding Aftertouch events.
+ *  This function acts on Notes On, Notes Off, and Aftertouch events.
  */
 
 void
 qseqeditframe64::tighten_notes ()
 {
-    track().push_quantize(EVENT_NOTE_ON, 0, 2);
+    track().push_quantize_notes(2);
 }
+
+/**
+ *  Includes Aftertouch events.
+ */
 
 void
 qseqeditframe64::jitter_notes ()
@@ -2437,6 +2469,7 @@ qseqeditframe64::jitter_notes ()
 
 /**
  *  Consider adding Aftertouch events.  Done in sequence::transpose_notes().
+ *  Also note that this function does a push-undo operation first.
  */
 
 void
@@ -3100,9 +3133,7 @@ qseqeditframe64::set_scale (int scale, qbase::status qs)
 
         bool user_change = qs == qbase::status::edit;
         track().musical_scale(midibyte(scale), user_change);
-        if (not_nullptr(m_tools_harmonic))
-            m_tools_harmonic->setEnabled(m_scale > 0);
-
+        enable_note_menus();
         set_track_change();                         /* to solve issue #90   */
     }
     else

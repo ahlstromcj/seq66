@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-08-18
+ * \updates       2023-08-20
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -388,6 +388,7 @@ private:                                /* functions for friend sequence    */
         int snap, int divide
     );
     bool quantize_all_events (int snap, int divide);
+    bool quantize_notes (int snap, int divide);
     midipulse adjust_timestamp (event & er, midipulse deltatick);
     void scale_note_off (event & noteoff, double factor);
     midipulse apply_time_factor
