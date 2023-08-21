@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-14
+ * \updates       2023-08-21
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -3052,18 +3052,22 @@ qsmainwnd::create_action_connections ()
 {
     for (int i = 0; i < rc().recent_file_max(); ++i)
     {
-        QAction * action = new QAction(this);
-        action->setVisible(false);
-        QObject::connect
-        (
-            action, &QAction::triggered, this, &qsmainwnd::open_recent_file
-        );
-        m_recent_action_list.append(action);
+        QAction * action = new_qaction("", this);
+        if (not_nullptr(action))
+        {
+            action->setVisible(false);
+            QObject::connect
+            (
+                action, &QAction::triggered,
+                this, &qsmainwnd::open_recent_file
+            );
+            m_recent_action_list.append(action);
+        }
     }
 }
 
 /**
- *  Deletes the recent-files menu and recreates it, insert it into the File
+ *  Deletes the recent-files menu and recreates it, inserts it into the File
  *  menu.  Not sure why we picked create_action_menu() for the name of this
  *  function.
  */
@@ -3075,7 +3079,7 @@ qsmainwnd::create_action_menu ()
         delete m_menu_recent;
 
     int count = rc().recent_file_max();
-    m_menu_recent = new QMenu(tr("&Recent MIDI Files..."), this);
+    m_menu_recent = new_qmenu("&Recent MIDI Files...", this);
     if (count > 0)
     {
         m_menu_recent->setEnabled(true);

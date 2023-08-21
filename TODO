@@ -7,13 +7,10 @@ Misc:
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:
 
-    -   Do we need an option to auto-store changes in the event editor?
-        Easy to forget to push that button.
+    -   Drawing notes does not update the seqedit Event menus.
     -   Look into connecting the save-playlist and save-mutes functions.
     -   Make sure L/R looping buttons (main and song) works.
-    -   Clarify the two transpose buttons in the song editor.
     -   There are many "TODOs" in the automation slots.
-    -   Drawing notes does not update the seqedit Event menus.
     -   Add a feature to start playback when the first note comes
         into a pattern when recording is set.
     -   Add functions in usrsetting to get default jitter and randomize
@@ -21,8 +18,7 @@ Misc:
         Jitter should be a fraction (of the current snap/PPQN).
     -   Document better all of the keys on the seqroll, etc. Maybe
         a "?" button?
-    -   Edit events in tab disabled
-    -   Add sequence::push_quantize_notes() etc. to also handle Aftertouch.
+    -   Add a context/focus-sensitive Help / Keyboard menu
     -   Document and test all this churn.
 
 Some of these issues will be pushed off for the distant Seq66v2.

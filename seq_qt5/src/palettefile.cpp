@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2023-02-27
+ * \updates       2023-08-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -146,10 +146,11 @@ palettefile::parse_stream (std::ifstream & file)
     }
     if (ok)
     {
-        std::string sempty = get_variable(file, "[brushes]", "empty");
-        std::string snote = get_variable(file, "[brushes]", "note");
-        std::string sscale = get_variable(file, "[brushes]", "scale");
-        std::string sbackseq = get_variable(file, "[brushes]", "backseq");
+        const std::string tag = "[brushes]";
+        std::string sempty = get_variable(file, tag, "empty");
+        std::string snote = get_variable(file, tag, "note");
+        std::string sscale = get_variable(file, tag, "scale");
+        std::string sbackseq = get_variable(file, tag, "backseq");
         (void) m_palettes.set_brushes(sempty, snote, sscale, sbackseq);
     }
     if (! ok)
@@ -212,7 +213,8 @@ palettefile::write_stream (std::ofstream & file)
         << "# Written on " << get_current_date_time() << "\n"
         << "#\n"
         << "# This file can be used to change the colors used by patterns\n"
-        << "# and in some parts of the user-interface.\n"
+        << "# and in some parts of the user-interface. It must be active and\n"
+        << "# specified in the 'rc' file.\n"
         << "\n"
         ;
 

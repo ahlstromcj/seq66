@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-07-03
+ * \updates       2023-08-21
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -982,16 +982,25 @@ qseqeventframe::set_event_line (int row)
 void
 qseqeventframe::set_dirty (bool flag)
 {
+    static std::string s_initial_color;
+    static bool s_uninitialized = true;
+    if (s_uninitialized)
+    {
+        s_uninitialized = false;
+        s_initial_color = qt_get_color(ui->button_save);
+    }
     if (flag)
     {
         if (m_initialized)
         {
             ui->button_save->setEnabled(true);
+            (void) qt_set_color("#AAAA00", ui->button_save);
             m_is_dirty = true;
         }
     }
     else
     {
+        (void) qt_set_color(s_initial_color, ui->button_save);
         ui->button_save->setEnabled(false);
         m_is_dirty = false;
     }

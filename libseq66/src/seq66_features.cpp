@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2023-07-19
+ * \updates       2023-08-21
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -73,6 +73,7 @@ static std::string s_app_build_os    = SEQ66_APP_BUILD_OS;
 static std::string s_app_build_issue = SEQ66_APP_BUILD_ISSUE;
 #endif
 
+static std::string s_pane_focus;
 static std::string s_alsa_version;
 static std::string s_jack_version;
 static std::string s_qt_version;
@@ -93,6 +94,17 @@ static std::string s_api_version = SEQ66_API_VERSION;
 static std::string s_version = SEQ66_VERSION;
 static std::string s_versiontext = SEQ66_APP_NAME " " SEQ66_VERSION " "
     SEQ66_GIT_VERSION " " SEQ66_VERSION_DATE_SHORT "\n";
+
+/**
+ *  Sets the focus for the current action. This is an arbitrary string
+ *  that Help / Keystrokes can use.
+ */
+
+void
+set_pane_focus (const std::string & s)
+{
+    s_pane_focus = s;
+}
 
 /**
  *  Sets version strings.  Meant to be called where the engine or API is used.
@@ -196,6 +208,16 @@ void
 set_package_name (const std::string & pname)
 {
     s_package_name = pname;
+}
+
+/**
+ *  Returns the focus string.
+ */
+
+const std::string &
+seq_pane_focus ()
+{
+    return s_pane_focus;
 }
 
 /**

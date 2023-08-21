@@ -2271,129 +2271,134 @@ qseqeditframe64::tools ()
 void
 qseqeditframe64::popup_tool_menu ()
 {
-    m_tools_popup = new QMenu(this);
-
-    QMenu * menuselect = new QMenu(tr("&Select notes..."), m_tools_popup);
-    QMenu * menutiming = new QMenu(tr("Note &timing..."), m_tools_popup);
-    QMenu * menupitch  = new QMenu(tr("&Pitch transpose..."), m_tools_popup);
-    QMenu * menuharmonic = new QMenu
-    (
-        tr("&Harmonic transpose..."), m_tools_popup
-    );
+    m_tools_popup = new_qmenu("", this);
+    if (not_nullptr(m_tools_popup))
+    {
+        QMenu * menuselect = new_qmenu("&Select notes...", m_tools_popup);
+        QMenu * menutiming = new_qmenu("Note &timing...", m_tools_popup);
+        QMenu * menupitch  = new_qmenu("&Pitch transpose...", m_tools_popup);
+        QMenu * menuharmonic = new_qmenu
+        (
+            "&Harmonic transpose...", m_tools_popup
+        );
 
 #if defined USE_MORE_TOOLS
-    /*
-     * Can enable this if we get much more than the 2 current extra tools.
-     */
+        /*
+         * Can enable this if we get much more than the 2 current extra tools.
+         */
 
-    QMenu * menumore = new QMenu(tr("&More tools..."), m_tools_popup);
+        QMenu * menumore = new_qmenu("&More tools...", m_tools_popup);
 #endif
 
-    QAction * selectall = new QAction(tr("Select &all"), m_tools_popup);
-    connect
-    (
-        selectall, SIGNAL(triggered(bool)),
-        this, SLOT(select_all_notes())
-    );
-    menuselect->addAction(selectall);
+        QAction * selectall = new_qaction("Select &all", m_tools_popup);
+        connect
+        (
+            selectall, SIGNAL(triggered(bool)),
+            this, SLOT(select_all_notes())
+        );
+        menuselect->addAction(selectall);
 
-    QAction * selectinverse = new QAction(tr("&Invert selection"), m_tools_popup);
-    connect
-    (
-        selectinverse, SIGNAL(triggered(bool)),
-        this, SLOT(inverse_note_selection())
-    );
-    menuselect->addAction(selectinverse);
+        QAction * selectinverse = new_qaction
+        (
+            "&Invert selection", m_tools_popup
+        );
+        connect
+        (
+            selectinverse, SIGNAL(triggered(bool)),
+            this, SLOT(inverse_note_selection())
+        );
+        menuselect->addAction(selectinverse);
 
-    QAction * quantize = new QAction(tr("&Quantize"), m_tools_popup);
-    connect(quantize, SIGNAL(triggered(bool)), this, SLOT(quantize_notes()));
-    menutiming->addAction(quantize);
+        QAction * quantize = new_qaction("&Quantize", m_tools_popup);
+        connect(quantize, SIGNAL(triggered(bool)), this, SLOT(quantize_notes()));
+        menutiming->addAction(quantize);
 
-    QAction * tighten = new QAction(tr("&Tighten"), m_tools_popup);
-    connect(tighten, SIGNAL(triggered(bool)), this, SLOT(tighten_notes()));
-    menutiming->addAction(tighten);
+        QAction * tighten = new_qaction("&Tighten", m_tools_popup);
+        connect(tighten, SIGNAL(triggered(bool)), this, SLOT(tighten_notes()));
+        menutiming->addAction(tighten);
 
-    QAction * jitter = new QAction(tr("&Jitter"), m_tools_popup);
-    connect(jitter, SIGNAL(triggered(bool)), this, SLOT(jitter_notes()));
-    menutiming->addAction(jitter);
+        QAction * jitter = new_qaction("&Jitter", m_tools_popup);
+        connect(jitter, SIGNAL(triggered(bool)), this, SLOT(jitter_notes()));
+        menutiming->addAction(jitter);
 
-    QAction * lfobox = new QAction(tr("&LFO..."), m_tools_popup);
-    connect(lfobox, SIGNAL(triggered(bool)), this, SLOT(show_lfo_frame()));
+        QAction * lfobox = new_qaction("&LFO...", m_tools_popup);
+        connect(lfobox, SIGNAL(triggered(bool)), this, SLOT(show_lfo_frame()));
 
-    QAction * fixbox = new QAction(tr("Pattern &fix..."), m_tools_popup);
-    connect(fixbox, SIGNAL(triggered(bool)), this, SLOT(show_pattern_fix()));
+        QAction * fixbox = new_qaction("Pattern &fix...", m_tools_popup);
+        connect(fixbox, SIGNAL(triggered(bool)), this, SLOT(show_pattern_fix()));
 
-    QAction * transpose[2 * c_octave_size];     /* plain pitch transposings */
-    QAction * harmonic[2 * c_harmonic_size];    /* harmonic transpositions  */
-    for (int t = -c_octave_size; t <= c_octave_size; ++t)
-    {
-        if (t != 0)
+        QAction * transpose[2 * c_octave_size];     /* pitch transpose      */
+        QAction * harmonic[2 * c_harmonic_size];    /* harmonic transpose   */
+        for (int t = -c_octave_size; t <= c_octave_size; ++t)
         {
-            /*
-             * Pitch transpose menu entries. Note the interval_name_ptr() and
-             * harmonic_interval_name_ptr() functions from the scales module.
-             */
-
-            char num[16];
-            int index = t + c_octave_size;
-            snprintf
-            (
-                num, sizeof num, "%+d [%s]",
-                t, interval_name_ptr(t)
-            );
-            transpose[index] = new QAction(num, m_tools_popup);
-            transpose[index]->setData(t);
-            menupitch->addAction(transpose[index]);
-            connect
-            (
-                transpose[index], SIGNAL(triggered(bool)),
-                this, SLOT(transpose_notes())
-            );
-            if (harmonic_number_valid(t))
+            if (t != 0)
             {
                 /*
-                 * Harmonic transpose menu entries.
+                 * Pitch transpose menu entries. Note the interval_name_ptr() and
+                 * harmonic_interval_name_ptr() functions from the scales module.
                  */
 
-                int tn = t < 0 ? (t - 1) : (t + 1);
-                index = t + c_harmonic_size;
+                char num[32];
+                int index = t + c_octave_size;
                 snprintf
                 (
                     num, sizeof num, "%+d [%s]",
-                    tn, harmonic_interval_name_ptr(t)
+                    t, interval_name_ptr(t)
                 );
-                harmonic[index] = new QAction(num, m_tools_popup);
-                harmonic[index]->setData(t);
-                menuharmonic->addAction(harmonic[index]);
+                transpose[index] = new_qaction(num, m_tools_popup);
+                transpose[index]->setData(t);
+                menupitch->addAction(transpose[index]);
                 connect
                 (
-                    harmonic[index], SIGNAL(triggered(bool)),
-                    this, SLOT(transpose_harmonic())
+                    transpose[index], SIGNAL(triggered(bool)),
+                    this, SLOT(transpose_notes())
                 );
+                if (harmonic_number_valid(t))
+                {
+                    /*
+                     * Harmonic transpose menu entries.
+                     */
+
+                    int tn = t < 0 ? (t - 1) : (t + 1);
+                    index = t + c_harmonic_size;
+                    snprintf
+                    (
+                        num, sizeof num, "%+d [%s]",
+                        tn, harmonic_interval_name_ptr(t)
+                    );
+                    harmonic[index] = new_qaction(num, m_tools_popup);
+                    harmonic[index]->setData(t);
+                    menuharmonic->addAction(harmonic[index]);
+                    connect
+                    (
+                        harmonic[index], SIGNAL(triggered(bool)),
+                        this, SLOT(transpose_harmonic())
+                    );
+                }
+            }
+            else
+            {
+                menupitch->addSeparator();
+                menuharmonic->addSeparator();
             }
         }
-        else
-        {
-            menupitch->addSeparator();
-            menuharmonic->addSeparator();
-        }
-    }
-    m_tools_popup->addMenu(menuselect);
-    m_tools_popup->addMenu(menutiming);
-    m_tools_popup->addMenu(menupitch);
-    m_tools_popup->addMenu(menuharmonic);
+        m_tools_popup->addMenu(menuselect);
+        m_tools_popup->addMenu(menutiming);
+        m_tools_popup->addMenu(menupitch);
+        m_tools_popup->addMenu(menuharmonic);
 
 #if defined USE_MORE_TOOLS
-    m_tools_popup->addMenu(menumore);
+        m_tools_popup->addMenu(menumore);
 #else
-    m_tools_popup->addAction(lfobox);
-    m_tools_popup->addAction(fixbox);
+        m_tools_popup->addAction(lfobox);
+        m_tools_popup->addAction(fixbox);
 #endif
 
-    m_tools_harmonic = menuharmonic;
-    m_tools_timing = menutiming;
-    m_tools_pitch = menupitch;
-    enable_note_menus();
+        m_tools_harmonic = menuharmonic;
+        m_tools_timing = menutiming;
+        m_tools_pitch = menupitch;
+        enable_note_menus();
+    }
 }
 
 void
@@ -2537,11 +2542,15 @@ qseqeditframe64::popup_sequence_menu ()
 {
     if (is_nullptr(m_sequences_popup))
     {
-        m_sequences_popup = new QMenu(this);
+        m_sequences_popup = new_qmenu("", this);
     }
 
-    QAction * off = new QAction(tr("Off"), m_sequences_popup);
-    connect(off, &QAction::triggered, SET_BG_SEQ(seq::limit(), qbase::status::edit));
+    QAction * off = new_qaction("Off", m_sequences_popup);
+    connect
+    (
+        off, &QAction::triggered,
+        SET_BG_SEQ(seq::limit(), qbase::status::edit)
+    );
     (void) m_sequences_popup->addAction(off);
     (void) m_sequences_popup->addSeparator();
     int seqsinset = perf().screenset_size();
@@ -2564,7 +2573,7 @@ qseqeditframe64::popup_sequence_menu ()
                     const char * nameptr = sp->name().c_str();
                     snprintf(name, sizeof name, "[%d] %.13s", s, nameptr);
 
-                    QAction * item = new QAction(tr(name), menusset);
+                    QAction * item = new_qaction(name, menusset);
                     menusset->addAction(item);
                     connect
                     (
@@ -3360,7 +3369,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     if (not_nullptr(m_events_popup))
         delete m_events_popup;
 
-    m_events_popup = new QMenu(this);
+    m_events_popup = new_qmenu("", this);
     set_event_entry(m_events_popup, note_on, event_index::note_on);
     set_event_entry(m_events_popup, note_off, event_index::note_off);
     m_events_popup->addSeparator();
@@ -3397,7 +3406,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     {
         int offset = submenu * itemcount;
         snprintf(b, sizeof b, "Controls %d-%d", offset, offset + itemcount - 1);
-        QMenu * menucc = new QMenu(tr(b), m_events_popup);
+        QMenu * menucc = new_qmenu(b, m_events_popup);
         for (int item = 0; item < itemcount; ++item)
         {
             /*
@@ -3548,7 +3557,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     if (not_nullptr(m_minidata_popup))
         delete m_minidata_popup;
 
-    m_minidata_popup = new QMenu(this);
+    m_minidata_popup = new_qmenu("", this);
     if (note_on)
         set_event_entry(m_minidata_popup, true, event_index::note_on);
 

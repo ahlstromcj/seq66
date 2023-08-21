@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-09
+ * \updates       2023-08-21
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -819,7 +819,7 @@ qseqroll::draw_notes
                             painter.fillRect
                             (
                                 x_shift, m_note_y,
-                                m_note_width + length_add - 1, h_minus, grad
+                                m_note_width + length_add, h_minus, grad
                             );
                         }
                     }

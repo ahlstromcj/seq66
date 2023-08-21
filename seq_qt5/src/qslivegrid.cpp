@@ -1642,7 +1642,7 @@ qslivegrid::changeEvent (QEvent * event)
 void
 qslivegrid::popup_menu ()
 {
-    m_popup = new QMenu(this);
+    m_popup = new_qmenu("", this);
 
     QAction * ns = new_qaction("&New pattern", m_popup);
     QObject::connect(ns, SIGNAL(triggered(bool)), this, SLOT(new_sequence()));
@@ -1725,7 +1725,7 @@ qslivegrid::popup_menu ()
          *  Color menus
          */
 
-        QMenu * menuColour = new QMenu(tr("Pattern &color..."));
+        QMenu * menuColour = new_qmenu("Pattern &color...");
         int firstcolor = palette_to_int(none);
         int lastcolor = palette_to_int(white);
         for (int c = firstcolor; c <= lastcolor; ++c)
@@ -1743,7 +1743,7 @@ qslivegrid::popup_menu ()
             menuColour->addAction(a);
         }
 
-        QMenu * menu2Colour = new QMenu(tr("Dark colors"));
+        QMenu * menu2Colour = new_qmenu("Dark colors");
         firstcolor = palette_to_int(dk_black);
         lastcolor = palette_to_int(dk_white);
         for (int c = firstcolor; c <= lastcolor; ++c)
@@ -1759,7 +1759,7 @@ qslivegrid::popup_menu ()
             menu2Colour->addAction(a);
         }
 
-        QMenu * menu3Colour = new QMenu(tr("Other colors"));
+        QMenu * menu3Colour = new_qmenu("Other colors");
         firstcolor = palette_to_int(orange);                /* color_16 */
         lastcolor = palette_to_int(grey);                   /* color_23 */
         for (int c = firstcolor; c <= lastcolor; ++c)
@@ -1775,7 +1775,7 @@ qslivegrid::popup_menu ()
             menu3Colour->addAction(a);
         }
 
-        QMenu * menu4Colour = new QMenu(tr("More colors"));
+        QMenu * menu4Colour = new_qmenu("More colors");
         firstcolor = palette_to_int(dk_orange);             /* color_24 */
         lastcolor = palette_to_int(dk_grey);                /* color_31 */
         for (int c = firstcolor; c <= lastcolor; ++c)
@@ -1874,7 +1874,7 @@ qslivegrid::popup_menu ()
         seq::pointer seq = perf().get_sequence(m_current_seq);
         if (not_nullptr(mmb))
         {
-            QMenu * menubuss = new QMenu(tr("Output Bus"));
+            QMenu * menubuss = new_qmenu("Output Bus");
             const clockslist & opm = output_port_map();
             int buses = opm.active() ?
                 opm.count() : mmb->get_num_out_buses() ;
@@ -1906,7 +1906,7 @@ qslivegrid::popup_menu ()
              *  Channel menu
              */
 
-            QMenu * menuchan = new QMenu(tr("Output Channel"));
+            QMenu * menuchan = new_qmenu("Output Channel");
             int buss = seq->true_bus();
             for (int channel = 0; channel <= c_midichannel_max; ++channel)
             {

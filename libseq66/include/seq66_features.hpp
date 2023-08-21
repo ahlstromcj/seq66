@@ -28,11 +28,15 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-05-25
+ * \updates       2023-08-21
  * \license       GNU GPLv2 or above
  *
  *    Provides some useful functions for displaying information about the
  *    application.  More flexible than macros.
+ *
+ *    In addition, we will eventually provide a global setter and getter for
+ *    application context so that we have provide a little bit of
+ *    context-sensitive help, starting with Help / Keystrokes.
  *
  *    Also see the seq66_features.h module.
  */
@@ -78,6 +82,7 @@ enum class msglevel
  * Global (free) functions.
  */
 
+extern void set_pane_focus (const std::string & v);
 extern void set_alsa_version (const std::string & v);
 extern void set_jack_version (const std::string & v);
 extern void set_qt_version (const std::string & v);
@@ -91,6 +96,7 @@ extern void set_app_cli (bool iscli);
 extern void set_arg_0 (const std::string & arg);
 extern void set_client_name (const std::string & cname);
 extern void set_package_name (const std::string & pname);
+extern const std::string & seq_pane_focus ();
 extern const std::string & seq_app_name ();
 extern const std::string & seq_app_path ();
 extern const std::string & seq_app_tag ();

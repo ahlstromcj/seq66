@@ -70,6 +70,11 @@ const bool NormalFile = false;
  * Free functions in the seq66 namespace.
  */
 
+extern std::string qt_get_color (QPushButton * button);
+extern std::string qt_set_color
+(
+    const std::string & colorname, QPushButton * button
+);
 extern void qt_set_icon (const char * pixmap_array [], QPushButton * button);
 extern std::string qt_icon_theme ();
 extern bool qt_prompt_ok
@@ -104,7 +109,8 @@ extern bool fill_combobox
 );
 extern void set_spin_value (QSpinBox * spin, int value);
 extern QAction * new_qaction (const std::string & text, const QIcon & micon);
-extern QAction * new_qaction (const std::string & text, QObject * menu);
+extern QAction * new_qaction (const std::string & text, QObject * parent);
+extern QMenu * new_qmenu (const std::string & text, QWidget * parent = nullptr);
 extern bool install_scroll_filter (QWidget * monitor, QScrollArea * target);
 extern bool show_open_midi_file_dialog (QWidget * parent, std::string & file);
 extern bool show_import_midi_file_dialog (QWidget * parent, std::string & file);

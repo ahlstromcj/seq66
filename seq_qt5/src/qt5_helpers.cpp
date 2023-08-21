@@ -30,6 +30,7 @@
  *  The items provided externally are:
  *
  *      -   qt_keystroke(). Returns an "ordinal" for Qt keystroke.
+ *      -   qt_set_color(). Sets the color of a push-button.
  *      -   qt_set_icon(). Sets an icon for a push-button.
  *      -   qt_icon_theme(). Returns the name of the icon theme.
  *      -   qt_prompt_ok(). Does an OK/Cancel QMessageBox.
@@ -38,7 +39,9 @@
  *          callback given by a Qt slot-name.
  *      -   enable_combobox_item(). Handles the appearance of a combo box.
  *      -   fill_combobox(). Fills a combo box from a combolist.
- *      -   new_qaction(). Creates a menu action from text and an icon.
+ *      -   new_qaction(). Creates a menu action from text and an icon. Also
+ *          could centralize internationalization.
+ *      -   new_qmenu(). Similar.
  *      -   show_open_midi_file_dialog()
  *      -   show_import_midi_file_dialog()
  *      -   show_import_project_dialog()
@@ -49,11 +52,14 @@
 
 #include <QAction>
 #include <QComboBox>
+#include <QColor>
 #include <QErrorMessage>
 #include <QFileDialog>                  /* prompt for full MIDI file's path */
 #include <QIcon>
 #include <QKeyEvent>
+#include <QMenu>
 #include <QMessageBox>
+#include <QPalette>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QScrollBar>
@@ -161,6 +167,60 @@ qt_keystroke (QKeyEvent * event, keystroke::action act, bool testing)
 }
 
 /**
+ *  Get the color of a push-button as a string.
+ */
+
+std::string
+qt_get_color (QPushButton * button)
+{
+    std::string result;
+    if (not_nullptr(button))
+    {
+        QColor buttcolor = button->palette().color(QPalette::Button);
+        char temp[16];
+        int r, g, b, a;
+        buttcolor.getRgb(&r, &g, &b, &a);
+        snprintf(temp, sizeof temp, "#%02X%02X%02X%02X", a, r, g, b);
+        result = temp;
+    }
+    return result;
+}
+
+/**
+ *  Sets the color of a push-button. Code (now disabled) from qslivegrid.
+ *
+ * \param colorname
+ *      The name of the color, preferably in the form "#AARRGGBB"; "AA" is
+ *      quite often "FF".
+ *
+ * \param button
+ *      Pointer to the button to color.
+ *
+ * \return
+ *      Returns a string of the form "#AARRGGBB" denoting the original color
+ *      of the button.
+ */
+
+std::string
+qt_set_color (const std::string & colorname, QPushButton * button)
+{
+    std::string result;
+    if (not_nullptr(button) && ! colorname.empty())
+    {
+        result = qt_get_color(button);
+
+        QString qcolorname(qt(colorname));
+        QPalette pal = button->palette();
+        QColor c(qcolorname);
+        pal.setColor(QPalette::Button, c);
+        button->setAutoFillBackground(true); /* not needed: setFlat(true)   */
+        button->setPalette(pal);
+        button->update();
+    }
+    return result;
+}
+
+/**
  *  Clears the text of the QPushButton, and sets its icon to the pixmap given
  *  by the pixmap character array.
  *
@@ -175,11 +235,14 @@ qt_keystroke (QKeyEvent * event, keystroke::action act, bool testing)
 void
 qt_set_icon (const char * pixmap_array [], QPushButton * button)
 {
-    QPixmap pixmap(pixmap_array);
-    QIcon icon;
-    icon.addPixmap(pixmap, QIcon::Normal, QIcon::On);
-    button->setText("");
-    button->setIcon(icon);
+    if (not_nullptr_2(pixmap_array, button))
+    {
+        QPixmap pixmap(pixmap_array);
+        QIcon icon;
+        icon.addPixmap(pixmap, QIcon::Normal, QIcon::On);
+        button->setText("");
+        button->setIcon(icon);
+    }
 }
 
 /**
@@ -419,11 +482,7 @@ set_spin_value (QSpinBox * spin, int value)
  */
 
 QAction *
-new_qaction
-(
-    const std::string & text,
-    const QIcon & micon
-)
+new_qaction (const std::string & text, const QIcon & micon)
 {
     QString mlabel(qt(text));
 #if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
@@ -442,15 +501,33 @@ new_qaction
  */
 
 QAction *
-new_qaction
-(
-    const std::string & text,
-    QObject * menu
-)
+new_qaction (const std::string & text, QObject * parent)
 {
-    QString mlabel(qt(text));
-    QAction * result = new (std::nothrow) QAction(mlabel, menu);
-    return result;
+    if (text.empty())
+    {
+        return new (std::nothrow) QAction(parent);
+    }
+    else
+    {
+        QString mlabel(qt(text));
+        QAction * result = new (std::nothrow) QAction(mlabel, parent);
+        return result;
+    }
+}
+
+QMenu *
+new_qmenu (const std::string & text, QWidget * parent)
+{
+    if (text.empty())
+    {
+        return new (std::nothrow) QMenu(parent);
+    }
+    else
+    {
+        QString mlabel(qt(text));
+        QMenu * result = new (std::nothrow) QMenu(mlabel, parent);
+        return result;
+    }
 }
 
 /**
