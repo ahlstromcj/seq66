@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-08-20
+ * \updates       2023-08-21
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -3234,7 +3234,7 @@ qseqeditframe64::set_event_entry
     midibyte control
 )
 {
-    QAction * item = create_menu_action(text, *create_menu_image(present));
+    QAction * item = new_qaction(text, *create_menu_image(present));
     menu->addAction(item);
     connect
     (
@@ -3260,7 +3260,7 @@ qseqeditframe64::set_event_entry
     int index = static_cast<int>(ei);
     std::string text = s_event_items[index].epp_name;
     midibyte status = s_event_items[index].epp_status;
-    QAction * item = create_menu_action(text, *create_menu_image(present));
+    QAction * item = new_qaction(text, *create_menu_image(present));
     menu->addAction(item);
     connect
     (

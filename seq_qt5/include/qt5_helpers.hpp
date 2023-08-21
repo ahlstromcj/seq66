@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-08-12
+ * \updates       2023-08-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -40,6 +40,7 @@ class QAction;
 class QComboBox;
 class QIcon;
 class QKeyEvent;
+class QMenu;
 class QPushButton;
 class QScrollArea;
 class QSpinBox;
@@ -102,11 +103,8 @@ extern bool fill_combobox
     const std::string & suffix  = ""
 );
 extern void set_spin_value (QSpinBox * spin, int value);
-extern QAction * create_menu_action
-(
-    const std::string & text,
-    const QIcon & micon
-);
+extern QAction * new_qaction (const std::string & text, const QIcon & micon);
+extern QAction * new_qaction (const std::string & text, QObject * menu);
 extern bool install_scroll_filter (QWidget * monitor, QScrollArea * target);
 extern bool show_open_midi_file_dialog (QWidget * parent, std::string & file);
 extern bool show_import_midi_file_dialog (QWidget * parent, std::string & file);

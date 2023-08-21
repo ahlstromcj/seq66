@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.8
 Chris Ahlstrom
-2019-04-13 to 2023-08-20
+2019-04-13 to 2023-08-21
 
 Misc:
 
@@ -23,11 +23,7 @@ Misc:
         a "?" button?
     -   Edit events in tab disabled
     -   Add sequence::push_quantize_notes() etc. to also handle Aftertouch.
-    -   Seqroll: Select notes, then deselect. The event pane and data pane
-        remain orange. Refresh also does not occur until each pane gets
-        clicked. Do what they Scale dropdown callback does to refresh.
-    -   Use create_menu_action() everywhere!
-    -   Document everything.
+    -   Document and test all this churn.
 
 Some of these issues will be pushed off for the distant Seq66v2.
 

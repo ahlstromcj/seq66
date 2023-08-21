@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-08-16
+ * \updates       2023-08-21
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1644,7 +1644,7 @@ qslivegrid::popup_menu ()
 {
     m_popup = new QMenu(this);
 
-    QAction * ns = new QAction(tr("&New pattern"), m_popup);
+    QAction * ns = new_qaction("&New pattern", m_popup);
     QObject::connect(ns, SIGNAL(triggered(bool)), this, SLOT(new_sequence()));
     m_popup->addAction(ns);
     m_popup->addSeparator();
@@ -1665,10 +1665,9 @@ qslivegrid::popup_menu ()
         char temp[48];
         snprintf
         (
-            temp, sizeof temp, "External &live frame for set %d",
-            mcs
+            temp, sizeof temp, "&Live grid window for set %d", mcs
         );
-        QAction * livegrid = new QAction(tr(temp), m_popup);
+        QAction * livegrid = new_qaction(temp, m_popup);
         m_popup->addAction(livegrid);
         m_popup->addSeparator();
         QObject::connect
@@ -1678,10 +1677,7 @@ qslivegrid::popup_menu ()
         );
         if (perf().is_seq_active(m_current_seq))
         {
-            QAction * editseq = new QAction
-            (
-                tr("Edit pattern in &tab"), m_popup
-            );
+            QAction * editseq = new_qaction("Edit pattern in &tab", m_popup);
             m_popup->addAction(editseq);
             connect
             (
@@ -1694,9 +1690,9 @@ qslivegrid::popup_menu ()
     {
         if (! is_external())
         {
-            QAction * editseqex = new QAction
+            QAction * editseqex = new_qaction
             (
-                tr("Edit pattern in &window"), m_popup
+                "Edit pattern in &window", m_popup
             );
             m_popup->addAction(editseqex);
             connect
@@ -1705,9 +1701,9 @@ qslivegrid::popup_menu ()
                 this, SLOT(edit_sequence_ex())
             );
 
-            QAction * editevents = new QAction
+            QAction * editevents = new_qaction
             (
-                tr("Edit e&vents in tab"), m_popup
+                "Edit e&vents in tab", m_popup
             );
             m_popup->addAction(editevents);
 
@@ -1735,15 +1731,14 @@ qslivegrid::popup_menu ()
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
-            QString cname = qt
-            (
-                c == firstcolor ? get_color_name(pc) : get_color_name_ex(pc)
-            );
-            QAction * a = new QAction(cname, menuColour);
+            std::string cname =
+                c == firstcolor ? get_color_name(pc) : get_color_name_ex(pc);
+
+            QAction * a = new_qaction(cname, menuColour);
             connect
             (
                 a, &QAction::triggered,
-                [this, c] { color_by_number(c); }
+                [this, c] { color_by_number(c); }           /* lambda   */
             );
             menuColour->addAction(a);
         }
@@ -1754,8 +1749,8 @@ qslivegrid::popup_menu ()
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
-            QString cname = qt(get_color_name_ex(pc));
-            QAction * a = new QAction(cname, menu2Colour);
+            std::string cname = get_color_name_ex(pc);
+            QAction * a = new_qaction(cname, menu2Colour);
             connect
             (
                 a, &QAction::triggered,
@@ -1770,8 +1765,8 @@ qslivegrid::popup_menu ()
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
-            QString cname = qt(get_color_name_ex(pc));
-            QAction * a = new QAction(cname, menu3Colour);
+            std::string cname = get_color_name_ex(pc);
+            QAction * a = new_qaction(cname, menu3Colour);
             connect
             (
                 a, &QAction::triggered,
@@ -1786,8 +1781,8 @@ qslivegrid::popup_menu ()
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
-            QString cname = qt(get_color_name_ex(pc));
-            QAction * a = new QAction(cname, menu4Colour);
+            std::string cname = get_color_name_ex(pc);
+            QAction * a = new_qaction(cname, menu4Colour);
             connect
             (
                 a, &QAction::triggered,
@@ -1801,7 +1796,7 @@ qslivegrid::popup_menu ()
         m_popup->addMenu(menuColour);
 
 #if defined SEQ66_RECORD_MENU_ENTRY
-        QAction * actionRecord = new QAction(tr("&Record toggle"), m_popup);
+        QAction * actionRecord = new_qaction("&Record toggle", m_popup);
         m_popup->addAction(actionRecord);
         connect
         (
@@ -1814,7 +1809,7 @@ qslivegrid::popup_menu ()
          *  Copy/Cut/Delete/Paste menus
          */
 
-        QAction * actionCopy = new QAction(tr("Cop&y pattern"), m_popup);
+        QAction * actionCopy = new_qaction("Cop&y pattern", m_popup);
         m_popup->addAction(actionCopy);
         connect
         (
@@ -1822,7 +1817,7 @@ qslivegrid::popup_menu ()
             this, SLOT(copy_sequence())
         );
 
-        QAction * actionCut = new QAction(tr("Cu&t pattern"), m_popup);
+        QAction * actionCut = new_qaction("Cu&t pattern", m_popup);
         m_popup->addAction(actionCut);
         connect
         (
@@ -1830,17 +1825,16 @@ qslivegrid::popup_menu ()
             this, SLOT(cut_sequence())
         );
 
-        QAction * actionDelete = new QAction(tr("&Delete pattern"), m_popup);
+        QAction * actionDelete = new_qaction("&Delete pattern", m_popup);
         m_popup->addAction(actionDelete);
         connect
         (
             actionDelete, SIGNAL(triggered(bool)),
             this, SLOT(delete_sequence())
         );
-
         if (can_paste())
         {
-            QAction * actionMerge = new QAction(tr("&Merge into pattern"), m_popup);
+            QAction * actionMerge = new_qaction("&Merge into pattern", m_popup);
             m_popup->addAction(actionMerge);
             connect
             (
@@ -1851,7 +1845,7 @@ qslivegrid::popup_menu ()
     }
     else if (perf().can_paste() && can_paste())
     {
-        QAction * actionPaste = new QAction(tr("&Paste to pattern"), m_popup);
+        QAction * actionPaste = new_qaction("&Paste to pattern", m_popup);
         m_popup->addAction(actionPaste);
         connect
         (
@@ -1859,7 +1853,7 @@ qslivegrid::popup_menu ()
             this, SLOT(paste_sequence())
         );
 
-        QAction * actionMerge = new QAction(tr("&Merge into pattern"), m_popup);
+        QAction * actionMerge = new_qaction("&Merge into pattern", m_popup);
         m_popup->addAction(actionMerge);
         connect
         (
@@ -1892,8 +1886,7 @@ qslivegrid::popup_menu ()
                 if (perf().ui_get_clock(bussbyte(bus), ec, busname))
                 {
                     bool disabled = ec == e_clock::disabled;
-                    QString bname = qt(busname);
-                    QAction * a = new QAction(bname, menubuss);
+                    QAction * a = new_qaction(busname, menubuss);
                     a->setCheckable(true);                  /* issue #106   */
                     a->setChecked(seq->true_bus() == bus);
                     connect
@@ -1929,8 +1922,7 @@ qslivegrid::popup_menu ()
                 }
                 if (channel == c_midichannel_max)
                 {
-                    QString cname("Free");
-                    QAction * a = new QAction(cname, menuchan);
+                    QAction * a = new_qaction("Free", menuchan);
                     connect
                     (
                         a, &QAction::triggered,
@@ -1942,8 +1934,7 @@ qslivegrid::popup_menu ()
                 }
                 else
                 {
-                    QString cname(qt(name));
-                    QAction * a = new QAction(cname, menuchan);
+                    QAction * a = new_qaction(name, menuchan);
                     connect
                     (
                         a, &QAction::triggered,

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-08-20
+ * \updates       2023-08-21
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -38,7 +38,7 @@
  *          callback given by a Qt slot-name.
  *      -   enable_combobox_item(). Handles the appearance of a combo box.
  *      -   fill_combobox(). Fills a combo box from a combolist.
- *      -   create_menu_action(). Creates a menu action from text and an icon.
+ *      -   new_qaction(). Creates a menu action from text and an icon.
  *      -   show_open_midi_file_dialog()
  *      -   show_import_midi_file_dialog()
  *      -   show_import_project_dialog()
@@ -412,11 +412,14 @@ set_spin_value (QSpinBox * spin, int value)
 }
 
 /**
- *  Handles versioning issue in creating a menu action.
+ *  Handles versioning issue in creating a menu action. Earlier versions
+ *  required a QMenu pointer even if null.
+ *
+ *  We could add tr() to the text parameter.
  */
 
 QAction *
-create_menu_action
+new_qaction
 (
     const std::string & text,
     const QIcon & micon
@@ -428,6 +431,25 @@ create_menu_action
 #else
     QAction * result = new (std::nothrow) QAction(micon, mlabel);
 #endif
+    return result;
+}
+
+/**
+ *  Prevents cluttering the code with "new (std::nothrow)"; we generally
+ *  prefer to check pointers (or let the app crash) in the Qt code.
+ *
+ *  We could add tr() to the text parameter.
+ */
+
+QAction *
+new_qaction
+(
+    const std::string & text,
+    QObject * menu
+)
+{
+    QString mlabel(qt(text));
+    QAction * result = new (std::nothrow) QAction(mlabel, menu);
     return result;
 }
 
