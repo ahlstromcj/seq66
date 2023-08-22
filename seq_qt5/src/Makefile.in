@@ -21,7 +21,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2023-05-23
+# \update      2023-08-21
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -167,9 +167,9 @@ am__objects_1 = ../include/qclocklayout.moc.lo \
 	../include/qperfnames.moc.lo ../include/qperfroll.moc.lo \
 	../include/qperftime.moc.lo ../include/qplaylistframe.moc.lo \
 	../include/qportwidget.moc.lo ../include/qsabout.moc.lo \
-	../include/qsbuildinfo.moc.lo ../include/qseditoptions.moc.lo \
-	../include/qseqdata.moc.lo ../include/qseqeditex.moc.lo \
-	../include/qseqeditframe64.moc.lo \
+	../include/qsappinfo.moc.lo ../include/qsbuildinfo.moc.lo \
+	../include/qseditoptions.moc.lo ../include/qseqdata.moc.lo \
+	../include/qseqeditex.moc.lo ../include/qseqeditframe64.moc.lo \
 	../include/qseqeventframe.moc.lo ../include/qseqframe.moc.lo \
 	../include/qseqkeys.moc.lo ../include/qseqroll.moc.lo \
 	../include/qseqtime.moc.lo ../include/qsessionframe.moc.lo \
@@ -183,13 +183,14 @@ am_libseq_qt5_la_OBJECTS = gui_palette_qt5.lo palettefile.lo qbase.lo \
 	qliveframeex.lo qloopbutton.lo qmutemaster.lo qpatternfix.lo \
 	qperfbase.lo qperfeditex.lo qperfeditframe64.lo qperfnames.lo \
 	qperfroll.lo qperftime.lo qplaylistframe.lo qportwidget.lo \
-	qsabout.lo qsbuildinfo.lo qscrollmaster.lo qscrollslave.lo \
-	qseditoptions.lo qseqbase.lo qseqdata.lo qseqeditex.lo \
-	qseqeditframe64.lo qseqeventframe.lo qseqframe.lo qseqkeys.lo \
-	qseqroll.lo qsessionframe.lo qseqtime.lo qsetmaster.lo \
-	qseventslots.lo qslivebase.lo qslivegrid.lo qslotbutton.lo \
-	qsmaintime.lo qsmainwnd.lo qstriggereditor.lo qt5_helpers.lo \
-	qt5nsmanager.lo $(am__objects_2)
+	qsabout.lo qsappinfo.lo qsbuildinfo.lo qscrollmaster.lo \
+	qscrollslave.lo qseditoptions.lo qseqbase.lo qseqdata.lo \
+	qseqeditex.lo qseqeditframe64.lo qseqeventframe.lo \
+	qseqframe.lo qseqkeys.lo qseqroll.lo qsessionframe.lo \
+	qseqtime.lo qsetmaster.lo qseventslots.lo qslivebase.lo \
+	qslivegrid.lo qslotbutton.lo qsmaintime.lo qsmainwnd.lo \
+	qstriggereditor.lo qt5_helpers.lo qt5nsmanager.lo \
+	$(am__objects_2)
 libseq_qt5_la_OBJECTS = $(am_libseq_qt5_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -229,6 +230,7 @@ am__depfiles_remade = ../include/$(DEPDIR)/qclocklayout.moc.Plo \
 	../include/$(DEPDIR)/qplaylistframe.moc.Plo \
 	../include/$(DEPDIR)/qportwidget.moc.Plo \
 	../include/$(DEPDIR)/qsabout.moc.Plo \
+	../include/$(DEPDIR)/qsappinfo.moc.Plo \
 	../include/$(DEPDIR)/qsbuildinfo.moc.Plo \
 	../include/$(DEPDIR)/qseditoptions.moc.Plo \
 	../include/$(DEPDIR)/qseqdata.moc.Plo \
@@ -257,18 +259,19 @@ am__depfiles_remade = ../include/$(DEPDIR)/qclocklayout.moc.Plo \
 	./$(DEPDIR)/qperfnames.Plo ./$(DEPDIR)/qperfroll.Plo \
 	./$(DEPDIR)/qperftime.Plo ./$(DEPDIR)/qplaylistframe.Plo \
 	./$(DEPDIR)/qportwidget.Plo ./$(DEPDIR)/qsabout.Plo \
-	./$(DEPDIR)/qsbuildinfo.Plo ./$(DEPDIR)/qscrollmaster.Plo \
-	./$(DEPDIR)/qscrollslave.Plo ./$(DEPDIR)/qseditoptions.Plo \
-	./$(DEPDIR)/qseqbase.Plo ./$(DEPDIR)/qseqdata.Plo \
-	./$(DEPDIR)/qseqeditex.Plo ./$(DEPDIR)/qseqeditframe64.Plo \
-	./$(DEPDIR)/qseqeventframe.Plo ./$(DEPDIR)/qseqframe.Plo \
-	./$(DEPDIR)/qseqkeys.Plo ./$(DEPDIR)/qseqroll.Plo \
-	./$(DEPDIR)/qseqtime.Plo ./$(DEPDIR)/qsessionframe.Plo \
-	./$(DEPDIR)/qsetmaster.Plo ./$(DEPDIR)/qseventslots.Plo \
-	./$(DEPDIR)/qslivebase.Plo ./$(DEPDIR)/qslivegrid.Plo \
-	./$(DEPDIR)/qslotbutton.Plo ./$(DEPDIR)/qsmaintime.Plo \
-	./$(DEPDIR)/qsmainwnd.Plo ./$(DEPDIR)/qstriggereditor.Plo \
-	./$(DEPDIR)/qt5_helpers.Plo ./$(DEPDIR)/qt5nsmanager.Plo
+	./$(DEPDIR)/qsappinfo.Plo ./$(DEPDIR)/qsbuildinfo.Plo \
+	./$(DEPDIR)/qscrollmaster.Plo ./$(DEPDIR)/qscrollslave.Plo \
+	./$(DEPDIR)/qseditoptions.Plo ./$(DEPDIR)/qseqbase.Plo \
+	./$(DEPDIR)/qseqdata.Plo ./$(DEPDIR)/qseqeditex.Plo \
+	./$(DEPDIR)/qseqeditframe64.Plo ./$(DEPDIR)/qseqeventframe.Plo \
+	./$(DEPDIR)/qseqframe.Plo ./$(DEPDIR)/qseqkeys.Plo \
+	./$(DEPDIR)/qseqroll.Plo ./$(DEPDIR)/qseqtime.Plo \
+	./$(DEPDIR)/qsessionframe.Plo ./$(DEPDIR)/qsetmaster.Plo \
+	./$(DEPDIR)/qseventslots.Plo ./$(DEPDIR)/qslivebase.Plo \
+	./$(DEPDIR)/qslivegrid.Plo ./$(DEPDIR)/qslotbutton.Plo \
+	./$(DEPDIR)/qsmaintime.Plo ./$(DEPDIR)/qsmainwnd.Plo \
+	./$(DEPDIR)/qstriggereditor.Plo ./$(DEPDIR)/qt5_helpers.Plo \
+	./$(DEPDIR)/qt5nsmanager.Plo
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -678,6 +681,7 @@ moc_qt_headers = \
  ../include/qplaylistframe.hpp \
  ../include/qportwidget.hpp \
  ../include/qsabout.hpp \
+ ../include/qsappinfo.hpp \
  ../include/qsbuildinfo.hpp \
  ../include/qseditoptions.hpp \
  ../include/qseqdata.hpp \
@@ -707,6 +711,7 @@ uic_qt_forms = \
  $(formsdir)/qperfeditframe64.ui \
  $(formsdir)/qplaylistframe.ui \
  $(formsdir)/qsabout.ui \
+ $(formsdir)/qsappinfo.ui \
  $(formsdir)/qsbuildinfo.ui \
  $(formsdir)/qseditoptions.ui \
  $(formsdir)/qseqeditex.ui \
@@ -744,6 +749,7 @@ libseq_qt5_la_SOURCES = \
  qplaylistframe.cpp \
  qportwidget.cpp \
  qsabout.cpp \
+ qsappinfo.cpp \
  qsbuildinfo.cpp \
  qscrollmaster.cpp \
  qscrollslave.cpp \
@@ -877,6 +883,8 @@ clean-libLTLIBRARIES:
 	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qsabout.moc.lo: ../include/$(am__dirstamp) \
 	../include/$(DEPDIR)/$(am__dirstamp)
+../include/qsappinfo.moc.lo: ../include/$(am__dirstamp) \
+	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qsbuildinfo.moc.lo: ../include/$(am__dirstamp) \
 	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qseditoptions.moc.lo: ../include/$(am__dirstamp) \
@@ -940,6 +948,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qplaylistframe.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qportwidget.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qsabout.moc.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qsappinfo.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qsbuildinfo.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qseditoptions.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qseqdata.moc.Plo@am__quote@ # am--include-marker
@@ -978,6 +987,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qplaylistframe.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qportwidget.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qsabout.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qsappinfo.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qsbuildinfo.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qscrollmaster.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qscrollslave.Plo@am__quote@ # am--include-marker
@@ -1191,6 +1201,7 @@ distclean: distclean-am
 	-rm -f ../include/$(DEPDIR)/qplaylistframe.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qportwidget.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qsabout.moc.Plo
+	-rm -f ../include/$(DEPDIR)/qsappinfo.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qsbuildinfo.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qseditoptions.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qseqdata.moc.Plo
@@ -1229,6 +1240,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/qplaylistframe.Plo
 	-rm -f ./$(DEPDIR)/qportwidget.Plo
 	-rm -f ./$(DEPDIR)/qsabout.Plo
+	-rm -f ./$(DEPDIR)/qsappinfo.Plo
 	-rm -f ./$(DEPDIR)/qsbuildinfo.Plo
 	-rm -f ./$(DEPDIR)/qscrollmaster.Plo
 	-rm -f ./$(DEPDIR)/qscrollslave.Plo
@@ -1313,6 +1325,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ../include/$(DEPDIR)/qplaylistframe.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qportwidget.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qsabout.moc.Plo
+	-rm -f ../include/$(DEPDIR)/qsappinfo.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qsbuildinfo.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qseditoptions.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qseqdata.moc.Plo
@@ -1351,6 +1364,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/qplaylistframe.Plo
 	-rm -f ./$(DEPDIR)/qportwidget.Plo
 	-rm -f ./$(DEPDIR)/qsabout.Plo
+	-rm -f ./$(DEPDIR)/qsappinfo.Plo
 	-rm -f ./$(DEPDIR)/qsbuildinfo.Plo
 	-rm -f ./$(DEPDIR)/qscrollmaster.Plo
 	-rm -f ./$(DEPDIR)/qscrollslave.Plo
