@@ -6,7 +6,7 @@
 # \library      libseq_qt5 library
 # \author       Chris Ahlstrom
 # \date         2018-03-09
-# \update       2021-05-15
+# \update       2023-08-21
 # \version      $Revision$
 # \license      $XPC_SUITE_GPL_LICENSE$
 #
@@ -72,6 +72,7 @@ UI_FILES = \
  qmutemaster.ui \
  qperfeditframe64.ui \
  qsabout.ui \
+ qsappinfo.ui \
  qsbuildinfo.ui \
  qseditoptions.ui \
  qseqeditex.ui \
@@ -87,6 +88,7 @@ UI_H_FILES = \
  qmutemaster.ui.h \
  qperfeditframe64.ui.h \
  qsabout.ui.h \
+ qsappinfo.ui.h \
  qsbuildinfo.ui.h \
  qseditoptions.ui.h \
  qseqeditex.ui.h \

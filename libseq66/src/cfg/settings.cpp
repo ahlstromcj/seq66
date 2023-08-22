@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2023-07-19
+ * \updates       2023-08-22
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -567,7 +567,6 @@ tutorial_folder_list ()
         std::string app_path = seq_app_path();
         s_64_dir[0] = app_path[0];
         s_folder_list.push_back(s_64_dir);
-
 #else
         static std::string s_usr_dir;
         static std::string s_usr_local_dir;
@@ -585,6 +584,62 @@ tutorial_folder_list ()
         s_uninitialized = false;
     }
     return s_folder_list;
+}
+
+/**
+ *  To be refined.
+ */
+
+const tokenization &
+share_doc_folder_list (const std::string & path_end)
+{
+    static bool s_uninitialized = true;
+    static tokenization s_folder_list;
+    if (s_uninitialized && ! path_end.empty())
+    {
+#if defined SEQ66_PLATFORM_WINDOWS
+        std::string s_64_dir = "C:/Program Files/Seq66/data/share/doc";
+        std::string app_path = seq_app_path();
+        std::string path = pathname_concatenate(s_64_dir, path_end);
+        path[0] = app_path[0];                  /* change C: if needed  */
+        s_folder_list.push_back(path);
+
+#else
+        std::string s_usr_dir = "/usr/share/doc/";
+        std::string s_usr_local_dir = "/usr/local/share/doc/";
+        std::string s_build_dir = "data/share/doc/";
+        std::string s_shadow_dir = "../seq66/data/share/doc/";
+        s_usr_dir += seq_api_subdirectory() + "/" + path_end;;
+        s_usr_local_dir += seq_api_subdirectory() + "/" + path_end;
+        s_build_dir += "/" + path_end;
+        s_shadow_dir += "/" + path_end;
+        s_folder_list.push_back(s_usr_dir);
+        s_folder_list.push_back(s_usr_local_dir);
+        s_folder_list.push_back(s_build_dir);
+        s_folder_list.push_back(s_shadow_dir);
+#endif
+        s_uninitialized = false;
+    }
+    return s_folder_list;
+}
+
+/**
+ *  This function searches only on the local drive.
+ *
+ * \return
+ *      Returns the contents of the file
+ */
+
+std::string
+open_share_doc_file (const std::string & filename)
+{
+    std::string result;
+    std::string path = find_file(share_doc_folder_list(), filename);
+    if (! path.empty())
+    {
+        result = file_read_string(path);
+    }
+    return result;
 }
 
 }           // namespace seq66

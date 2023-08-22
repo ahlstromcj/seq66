@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-08-07
+ * \updates       2023-08-22
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -860,6 +860,31 @@ file_write_string (const std::string & filename, const std::string & text)
 }
 
 /**
+ *  Reads a file into a string.
+ */
+
+std::string
+file_read_string (const std::string & file)
+{
+    std::string result;
+    bool ok = file_name_good(file);
+    if (ok)
+    {
+        std::FILE * input = file_open_for_read(file);
+        if (not_nullptr(input))
+        {
+            int ci;
+            while ((ci = fgetc(input)) != EOF)
+            {
+                result += char(ci);
+            }
+            (void) file_close(input, file);
+        }
+    }
+    return result;
+}
+
+/**
  *  Closes a file opened by the file_open() functions. Replaces fclose().
  *
  * \param filehandle
@@ -1607,15 +1632,14 @@ append_file
 
 /**
  *  Concatenates paths.  Used by playlist processing only at present.
+ *  Compare this function to pathname_concatenate().
  *
  *  The paths are first trimmed of white-space.  The beginning path retains any
  *  path characters (forward or backward slash it has at the start and end of the
  *  path. If it doesn't have one at the end, one is added.
  *
  *  The second path is stripped of any slash it has at the beginning, converting
- *  it to a relative path. And end slash is added, if necessary.
- *
- *  Compare this function to pathname_concatenate().
+ *  it to a relative path. An ending slash is added, if necessary.
  */
 
 std::string

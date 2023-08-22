@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2023-05-23
+# \update      2023-08-21
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -252,6 +252,7 @@ moc_qt_headers = \
  ../include/qplaylistframe.hpp \
  ../include/qportwidget.hpp \
  ../include/qsabout.hpp \
+ ../include/qsappinfo.hpp \
  ../include/qsbuildinfo.hpp \
  ../include/qseditoptions.hpp \
  ../include/qseqdata.hpp \
@@ -282,6 +283,7 @@ uic_qt_forms = \
  $(formsdir)/qperfeditframe64.ui \
  $(formsdir)/qplaylistframe.ui \
  $(formsdir)/qsabout.ui \
+ $(formsdir)/qsappinfo.ui \
  $(formsdir)/qsbuildinfo.ui \
  $(formsdir)/qseditoptions.ui \
  $(formsdir)/qseqeditex.ui \
@@ -321,6 +323,7 @@ libseq_qt5_la_SOURCES = \
  qplaylistframe.cpp \
  qportwidget.cpp \
  qsabout.cpp \
+ qsappinfo.cpp \
  qsbuildinfo.cpp \
  qscrollmaster.cpp \
  qscrollslave.cpp \

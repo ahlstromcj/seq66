@@ -6,7 +6,7 @@
 # \library        qpseq66 application
 # \author         Chris Ahlstrom
 # \date           2018-04-08
-# \update         2023-05-23
+# \update         2023-08-21
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -72,6 +72,7 @@ FORMS += forms/qlfoframe.ui \
  forms/qperfeditframe64.ui \
  forms/qplaylistframe.ui \
  forms/qsabout.ui \
+ forms/qsappinfo.ui \
  forms/qsbuildinfo.ui \
  forms/qseditoptions.ui \
  forms/qseqeditex.ui \
@@ -102,6 +103,7 @@ HEADERS += include/gui_palette_qt5.hpp \
  include/qplaylistframe.hpp \
  include/qportwidget.hpp \
  include/qsabout.hpp \
+ include/qsappinfo.hpp \
  include/qsbuildinfo.hpp \
  include/qscrollmaster.h \
  include/qscrollslave.h \
@@ -148,6 +150,7 @@ SOURCES += src/gui_palette_qt5.cpp \
  src/qplaylistframe.cpp \
  src/qportwidget.cpp \
  src/qsabout.cpp \
+ src/qsappinfo.cpp \
  src/qsbuildinfo.cpp \
  src/qscrollmaster.cpp \
  src/qscrollslave.cpp \
