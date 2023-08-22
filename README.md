@@ -94,7 +94,9 @@ Windows, and using a conventional source tarball.
             of event-editor "Store" button to denote saving is needed.
         *   Refactoring quantization alterations for future upgrades. Added
             an option to jitter the notes in the seqroll.
-        *   The usual raft of humiliating bug-fixes.
+        *   The usual raft of humiliating bug-fixes. A small sample: Updating
+            the event list when recording stops; fixing record button in pattern
+            editor; fixing note-selection refresh; and about a dozen more.
     *   Version 0.99.7:
         *   Issue #110 follow-ons:
             Cannot save tempo (BPM) in Windows when

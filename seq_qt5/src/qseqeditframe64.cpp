@@ -3349,7 +3349,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
         case EVENT_PROGRAM_CHANGE:      program_change = true;      break;
         case EVENT_PITCH_WHEEL:         pitch_wheel = true;         break;
         case EVENT_CHANNEL_PRESSURE:    channel_pressure = true;    break;
-        case EVENT_MIDI_META:           /* handled below    */      break;
+        case EVENT_MIDI_META:           /* handled below */         break;
         }
     }
 
@@ -3380,11 +3380,6 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
 
     /*
      * Control changes are handled in submenus constructed below.
-     *
-     * set_event_entry
-     * (
-     *      m_events_popup, control_change, event_index::control_change
-     * );
      */
 
     set_event_entry(m_events_popup, program_change, event_index::program_change);
@@ -3505,45 +3500,21 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
         if (! track().get_next_event(status, cc, cev))
             break;
 
-        status = event::normalized_status(status);      /* mask off channel */
-
         /*
          *  Tempo and time-signatures are detected after this loop ends.
          */
 
+        status = event::normalized_status(status);      /* mask off channel */
         switch (status)
         {
-        case EVENT_NOTE_OFF:
-            note_off = any_events = true;
-            break;
-
-        case EVENT_NOTE_ON:
-            note_on = any_events = true;
-            break;
-
-        case EVENT_AFTERTOUCH:
-            aftertouch = any_events = true;
-            break;
-
-        case EVENT_CONTROL_CHANGE:
-            ccs[cc] = any_events = true;
-            break;
-
-        case EVENT_PROGRAM_CHANGE:
-            any_events = program_change = true;
-            break;
-
-        case EVENT_PITCH_WHEEL:
-            any_events = pitch_wheel = true;
-            break;
-
-        case EVENT_CHANNEL_PRESSURE:
-            any_events = channel_pressure = true;
-            break;
-
-        case EVENT_MIDI_META:
-            break;                      /* handled below                    */
-
+        case EVENT_NOTE_OFF:         any_events = note_off = true;         break;
+        case EVENT_NOTE_ON:          any_events = note_on = true;          break;
+        case EVENT_AFTERTOUCH:       any_events = aftertouch = true;       break;
+        case EVENT_CONTROL_CHANGE:   any_events = ccs[cc] = true;          break;
+        case EVENT_PROGRAM_CHANGE:   any_events = program_change = true;   break;
+        case EVENT_PITCH_WHEEL:      any_events = pitch_wheel = true;      break;
+        case EVENT_CHANNEL_PRESSURE: any_events = channel_pressure = true; break;
+        case EVENT_MIDI_META:        /* handled below */                   break;
         }
     }
 
@@ -3561,34 +3532,23 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
         delete m_minidata_popup;
 
     m_minidata_popup = new_qmenu("", this);
-    if (note_on)
-        set_event_entry(m_minidata_popup, true, event_index::note_on);
-
-    if (note_off)
-        set_event_entry(m_minidata_popup, true, event_index::note_off);
-
-    if (aftertouch)
-        set_event_entry(m_minidata_popup, true, event_index::aftertouch);
+    set_event_entry(m_minidata_popup, note_on, event_index::note_on);
+    set_event_entry(m_minidata_popup, note_off, event_index::note_off);
+    m_minidata_popup->addSeparator();
+    set_event_entry(m_minidata_popup, aftertouch, event_index::aftertouch);
 
     /*
      * Control changes are handled in submenus constructed below.
      */
 
-    if (program_change)
-        set_event_entry(m_minidata_popup, true, event_index::program_change);
-
-    if (channel_pressure)
-        set_event_entry(m_minidata_popup, true, event_index::channel_pressure);
-
-    if (pitch_wheel)
-        set_event_entry(m_minidata_popup, true, event_index::pitch_wheel);
-
-    if (tempo)
-        set_event_entry(m_minidata_popup, true, event_index::tempo);
-
-    if (timesig)
-        set_event_entry(m_minidata_popup, true, event_index::time_signature);
-
+    set_event_entry(m_minidata_popup, program_change, event_index::program_change);
+    set_event_entry
+    (
+        m_minidata_popup, channel_pressure, event_index::channel_pressure
+    );
+    set_event_entry(m_minidata_popup, pitch_wheel, event_index::pitch_wheel);
+    set_event_entry(m_minidata_popup, tempo, event_index::tempo);
+    set_event_entry(m_minidata_popup, timesig, event_index::time_signature);
     if (any_events)
         m_minidata_popup->addSeparator();
 
@@ -3722,7 +3682,11 @@ void
 qseqeditframe64::record_change (bool ischecked)
 {
     if (perf().set_recording(track(), ischecked, false))
+    {
         update_midi_buttons();
+        if (! ischecked)
+            repopulate_usr_combos(m_edit_bus, m_edit_channel);
+    }
 }
 
 /**

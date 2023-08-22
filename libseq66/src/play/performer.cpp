@@ -956,6 +956,7 @@ performer::store_io_maps_and_restart () const
     if (ok)
     {
         rc().portmaps_active(true);
+        rc().auto_rc_save(true);
         signal_for_restart();
     }
 }
