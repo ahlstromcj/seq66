@@ -21,6 +21,7 @@
      </property>
      <property name="font">
       <font>
+       <weight>50</weight>
        <bold>false</bold>
       </font>
      </property>
@@ -28,7 +29,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>6</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -48,6 +49,7 @@
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -125,6 +127,7 @@
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -173,6 +176,7 @@
          <widget class="QLabel" name="labelClockStartModulo">
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -233,6 +237,7 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -279,6 +284,7 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -307,6 +313,7 @@ Each port number can be found by name-lookup.</string>
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -363,6 +370,7 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -381,6 +389,7 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -409,6 +418,7 @@ Each port number can be found by name-lookup.</string>
          <widget class="QLabel" name="labelMidiOutBuss">
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -454,6 +464,7 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -577,6 +588,7 @@ slot by channel number (0 to 15).</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -597,6 +609,7 @@ slot by channel number (0 to 15).</string>
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -663,6 +676,7 @@ slot by channel number (0 to 15).</string>
          <widget class="QLabel" name="labelMidiCtrlIn">
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -698,6 +712,7 @@ slot by channel number (0 to 15).</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -1321,6 +1336,7 @@ Range: 0.5 to 3.0</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -1340,6 +1356,7 @@ Range: 0.5 to 3.0</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1358,6 +1375,7 @@ Range: 0.5 to 3.0</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1399,6 +1417,7 @@ Range: 0.5 to 3.0</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1417,6 +1436,7 @@ Range: 0.5 to 3.0</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1666,6 +1686,7 @@ connects to the MIDI I/O ports it finds.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1684,6 +1705,7 @@ connects to the MIDI I/O ports it finds.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -1746,6 +1768,7 @@ in the Song Editor.</string>
          </property>
          <property name="font">
           <font>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1763,6 +1786,7 @@ in the Song Editor.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1785,6 +1809,7 @@ playback resumes.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1808,6 +1833,7 @@ the default PPQN.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1828,6 +1854,7 @@ the default PPQN.</string>
          <property name="font">
           <font>
            <family>Sans</family>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1899,6 +1926,7 @@ Seq66 exits.</string>
          </property>
          <property name="font">
           <font>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1916,6 +1944,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1934,6 +1963,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1952,6 +1982,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1970,6 +2001,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1995,6 +2027,7 @@ Seq66 exits.</string>
          </property>
          <property name="font">
           <font>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -2012,6 +2045,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2030,6 +2064,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2048,6 +2083,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2093,6 +2129,7 @@ Seq66 exits.</string>
          <widget class="QLabel" name="label_metro_timesig">
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -2107,6 +2144,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_bpb">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2122,6 +2160,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_beat_width">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2144,6 +2183,7 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2159,6 +2199,7 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2217,6 +2258,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_output_specs">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2232,6 +2274,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_main_note">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2244,6 +2287,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_sub_notes">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2256,6 +2300,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_patch">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2277,6 +2322,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_note">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2298,6 +2344,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_velocity">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2319,6 +2366,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_length_fraction">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2375,6 +2423,7 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2403,6 +2452,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_channel">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2444,6 +2494,7 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2495,6 +2546,7 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2523,6 +2575,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_thru_channel">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2570,6 +2623,7 @@ Seq66 exits.</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -2626,6 +2680,7 @@ Seq66 exits.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -2645,6 +2700,7 @@ Seq66 exits.</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -2674,6 +2730,7 @@ required.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -2699,7 +2756,7 @@ required.</string>
         <rect>
          <x>8</x>
          <y>220</y>
-         <width>597</width>
+         <width>609</width>
          <height>231</height>
         </rect>
        </property>
@@ -2709,14 +2766,14 @@ required.</string>
        <widget class="QCheckBox" name="checkBoxSaveRc">
         <property name="geometry">
          <rect>
-          <x>44</x>
+          <x>36</x>
           <y>70</y>
           <width>101</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>'rc'</string>
+         <string>.rc</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBoxSaveUsr">
@@ -2725,40 +2782,40 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>44</x>
+          <x>36</x>
           <y>100</y>
           <width>101</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>'usr'</string>
+         <string>.usr</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBoxSaveMutes">
         <property name="geometry">
          <rect>
-          <x>44</x>
+          <x>36</x>
           <y>130</y>
           <width>101</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>'mutes'</string>
+         <string>.mutes</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBoxSavePlaylist">
         <property name="geometry">
          <rect>
-          <x>44</x>
+          <x>36</x>
           <y>160</y>
           <width>101</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>'playlist'</string>
+         <string>.playlist</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBoxSaveCtrl">
@@ -2767,14 +2824,14 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>332</x>
+          <x>344</x>
           <y>70</y>
           <width>101</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>'ctrl'</string>
+         <string>.ctrl</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBoxSaveDrums">
@@ -2783,14 +2840,14 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>332</x>
+          <x>344</x>
           <y>100</y>
           <width>101</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>'drums'</string>
+         <string>.drums</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBoxActiveRc">
@@ -2799,7 +2856,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>20</x>
+          <x>8</x>
           <y>70</y>
           <width>25</width>
           <height>23</height>
@@ -2818,7 +2875,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>20</x>
+          <x>8</x>
           <y>100</y>
           <width>25</width>
           <height>23</height>
@@ -2834,7 +2891,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>20</x>
+          <x>8</x>
           <y>128</y>
           <width>25</width>
           <height>23</height>
@@ -2850,7 +2907,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>20</x>
+          <x>8</x>
           <y>160</y>
           <width>25</width>
           <height>23</height>
@@ -2866,7 +2923,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>308</x>
+          <x>316</x>
           <y>70</y>
           <width>25</width>
           <height>23</height>
@@ -2882,7 +2939,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>308</x>
+          <x>316</x>
           <y>100</y>
           <width>25</width>
           <height>23</height>
@@ -2897,12 +2954,13 @@ required.</string>
          <rect>
           <x>8</x>
           <y>36</y>
-          <width>45</width>
+          <width>57</width>
           <height>17</height>
          </rect>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -2914,20 +2972,21 @@ required.</string>
        <widget class="QLabel" name="label_cfg_save">
         <property name="geometry">
          <rect>
-          <x>52</x>
+          <x>64</x>
           <y>36</y>
-          <width>81</width>
+          <width>65</width>
           <height>17</height>
          </rect>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
         </property>
         <property name="text">
-         <string>Save At Exit</string>
+         <string>Save</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEditRc">
@@ -2936,9 +2995,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>136</x>
+          <x>140</x>
           <y>70</y>
-          <width>153</width>
+          <width>170</width>
           <height>24</height>
          </rect>
         </property>
@@ -2949,9 +3008,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>136</x>
+          <x>140</x>
           <y>100</y>
-          <width>153</width>
+          <width>170</width>
           <height>24</height>
          </rect>
         </property>
@@ -2962,9 +3021,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>136</x>
+          <x>140</x>
           <y>130</y>
-          <width>153</width>
+          <width>170</width>
           <height>24</height>
          </rect>
         </property>
@@ -2975,9 +3034,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>136</x>
+          <x>140</x>
           <y>160</y>
-          <width>153</width>
+          <width>170</width>
           <height>24</height>
          </rect>
         </property>
@@ -2988,9 +3047,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>420</x>
+          <x>432</x>
           <y>70</y>
-          <width>153</width>
+          <width>170</width>
           <height>24</height>
          </rect>
         </property>
@@ -3001,9 +3060,9 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>420</x>
+          <x>432</x>
           <y>100</y>
-          <width>153</width>
+          <width>170</width>
           <height>24</height>
          </rect>
         </property>
@@ -3011,7 +3070,7 @@ required.</string>
        <widget class="QLabel" name="label_cfg_basename">
         <property name="geometry">
          <rect>
-          <x>146</x>
+          <x>144</x>
           <y>36</y>
           <width>113</width>
           <height>17</height>
@@ -3019,6 +3078,7 @@ required.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3030,9 +3090,9 @@ required.</string>
        <widget class="QLineEdit" name="lineEditPalette">
         <property name="geometry">
          <rect>
-          <x>136</x>
+          <x>140</x>
           <y>190</y>
-          <width>153</width>
+          <width>170</width>
           <height>24</height>
          </rect>
         </property>
@@ -3049,7 +3109,7 @@ path added to this name is stripped.</string>
        <widget class="QCheckBox" name="checkBoxActivePalette">
         <property name="geometry">
          <rect>
-          <x>20</x>
+          <x>8</x>
           <y>190</y>
           <width>25</width>
           <height>23</height>
@@ -3062,27 +3122,28 @@ path added to this name is stripped.</string>
        <widget class="QCheckBox" name="checkBoxSavePalette">
         <property name="geometry">
          <rect>
-          <x>44</x>
+          <x>36</x>
           <y>190</y>
           <width>101</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>'palette'</string>
+         <string>.palette</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_cfg_active_2">
         <property name="geometry">
          <rect>
-          <x>292</x>
+          <x>312</x>
           <y>36</y>
-          <width>45</width>
+          <width>53</width>
           <height>17</height>
          </rect>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3094,26 +3155,27 @@ path added to this name is stripped.</string>
        <widget class="QLabel" name="label_cfg_save_2">
         <property name="geometry">
          <rect>
-          <x>340</x>
+          <x>368</x>
           <y>36</y>
-          <width>81</width>
+          <width>53</width>
           <height>17</height>
          </rect>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
         </property>
         <property name="text">
-         <string>Save At Exit</string>
+         <string>Save</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_cfg_basename_2">
         <property name="geometry">
          <rect>
-          <x>432</x>
+          <x>440</x>
           <y>36</y>
           <width>113</width>
           <height>17</height>
@@ -3121,6 +3183,7 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3135,7 +3198,7 @@ path added to this name is stripped.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>308</x>
+          <x>316</x>
           <y>130</y>
           <width>25</width>
           <height>23</height>
@@ -3151,14 +3214,14 @@ path added to this name is stripped.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>332</x>
+          <x>344</x>
           <y>130</y>
           <width>101</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>'qss'</string>
+         <string>.qss</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEditStyleSheet">
@@ -3167,9 +3230,9 @@ path added to this name is stripped.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>420</x>
+          <x>432</x>
           <y>130</y>
-          <width>153</width>
+          <width>170</width>
           <height>24</height>
          </rect>
         </property>
@@ -3177,9 +3240,9 @@ path added to this name is stripped.</string>
        <widget class="QPushButton" name="pushButtonSavePalette">
         <property name="geometry">
          <rect>
-          <x>340</x>
+          <x>320</x>
           <y>190</y>
-          <width>173</width>
+          <width>149</width>
           <height>25</height>
          </rect>
         </property>
@@ -3187,7 +3250,7 @@ path added to this name is stripped.</string>
          <string/>
         </property>
         <property name="text">
-         <string>&amp;Save Palette Now</string>
+         <string>&amp;Store Palette</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_11">
@@ -3201,6 +3264,7 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -3216,7 +3280,7 @@ path added to this name is stripped.</string>
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>452</y>
+         <y>456</y>
          <width>129</width>
          <height>25</height>
         </rect>

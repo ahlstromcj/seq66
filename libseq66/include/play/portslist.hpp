@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2022-06-26
+ * \updates       2023-08-22
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -212,7 +212,7 @@ public:
     bussbyte bus_from_nick_name (const std::string & nick) const;
     bussbyte bus_from_alias (const std::string & alias) const;
     std::string port_name_from_bus (bussbyte nominalbuss) const;
-    void show (const std::string & tag) const;
+    void show (const std::string & tag = "") const;
     bool set_enabled (bussbyte bus, bool enabled);
     bool is_available (bussbyte bus) const;
     bool is_enabled (bussbyte bus) const;
@@ -234,7 +234,7 @@ protected:
         return m_master_io;
     }
 
-    std::string to_string (const std::string & tag) const;
+    std::string to_string (const std::string & tag = "") const;
     std::string extract_nickname (const std::string & name) const;
     bool extract_port_pair
     (

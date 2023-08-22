@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-05-15
+ * \updates       2023-08-22
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -68,9 +68,12 @@ namespace seq66
  */
 
 std::string configfile::sm_error_message;
-bool configfile::sm_is_error = false;
-int configfile::sm_int_default = -9999;
-int configfile::sm_float_default = -9999.0f;
+bool configfile::sm_is_error        = false;
+int configfile::sm_int_missing      = -9998;
+int configfile::sm_int_default      = -9999;
+float configfile::sm_float_missing  = -9998.0f;
+float configfile::sm_float_default  = -9999.0f;
+
 tokenization configfile::sm_file_extensions
 {
     ".ctrl",
@@ -532,7 +535,10 @@ configfile::get_integer
 )
 {
     std::string value = get_variable(file, tag, variablename, position);
-    int result = value == "default" ? sm_int_default : string_to_int(value) ;
+    int result = sm_int_missing;
+    if (! value.empty())
+        result = value == "default" ? sm_int_default : string_to_int(value) ;
+
     return result;
 }
 
@@ -561,8 +567,10 @@ configfile::get_float
 )
 {
     std::string value = get_variable(file, tag, variablename, position);
-    float result = value == "default" ?
-        sm_float_default : float(string_to_double(value)) ;
+    float result = sm_float_missing;
+    if (! value.empty())
+        result = value == "default" ?
+            sm_float_default : float(string_to_double(value)) ;
 
     return result;
 }

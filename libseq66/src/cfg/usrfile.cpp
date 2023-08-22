@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-08-19
+ * \updates       2023-08-22
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -324,9 +324,16 @@ usrfile::parse ()
     tag = "[user-randomization]";
 
     int randvalue = get_integer(file, tag, "jitter-divisor");
-    usr().jitter_divisor(randvalue);
-    randvalue = get_integer(file, tag, "amplitude");
-    usr().randomization_amount(randvalue);
+    if (configfile::is_missing(randvalue))
+    {
+        rc().auto_usr_save(true);
+    }
+    else
+    {
+        usr().jitter_divisor(randvalue);
+        randvalue = get_integer(file, tag, "amplitude");
+        usr().randomization_amount(randvalue);
+    }
 
     /*
      * [user-midi-settings]
@@ -775,7 +782,8 @@ usrfile::write ()
 
     file << "\n"
 "# This section specifies the default values to use to jitter the MIDI event\n"
-"# time-stamps and randomize event amplitudes (e.g. velocity for notes).\n"
+"# time-stamps and randomize event amplitudes (e.g. velocity for notes). The\n"
+"# range of jitter is 1/j times the current snap value.\n"
 "\n[user-randomization]\n\n"
     ;
     write_integer(file, "jitter_divisor", usr().jitter_divisor());

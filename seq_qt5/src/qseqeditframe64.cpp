@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-08-21
+ * \updates       2023-08-22
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -947,6 +947,7 @@ qseqeditframe64::qseqeditframe64
      */
 
     qt_set_icon(rec_xpm, ui->m_toggle_record);
+    ui->m_toggle_record->setCheckable(true);
     connect
     (
         ui->m_toggle_record, SIGNAL(toggled(bool)),
@@ -2426,6 +2427,7 @@ qseqeditframe64::select_all_notes ()
     track().select_events(EVENT_NOTE_OFF, 0);
     track().select_events(EVENT_AFTERTOUCH, 0);
     enable_note_menus();
+    set_dirty();
 }
 
 /**
@@ -2439,6 +2441,7 @@ qseqeditframe64::inverse_note_selection ()
     track().select_events(EVENT_NOTE_OFF, 0, true);
     track().select_events(EVENT_AFTERTOUCH, 0, true);
     enable_note_menus();
+    set_dirty();
 }
 
 /**

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2022-05-15
+ * \updates       2023-08-22
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -99,6 +99,7 @@ private:
      *  Provides a numerical flag to use a default value for an integer.
      */
 
+    static int sm_int_missing;
     static int sm_int_default;
 
     /**
@@ -106,7 +107,8 @@ private:
      *  value.
      */
 
-    static int sm_float_default;
+    static float sm_float_missing;
+    static float sm_float_default;
 
     /**
      *  Supported ile-extensions.  The qss extension is included, but only
@@ -262,6 +264,26 @@ public:
     static bool is_error ()
     {
         return sm_is_error;
+    }
+
+    static bool is_default (int value)
+    {
+        return value == sm_int_default;
+    }
+
+    static bool is_missing (int value)
+    {
+        return value == sm_int_missing;
+    }
+
+    static bool is_default (float value)
+    {
+        return value == sm_float_default;
+    }
+
+    static bool is_missing (float value)
+    {
+        return value == sm_float_missing;
     }
 
 protected:

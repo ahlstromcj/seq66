@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-08-17
+ * \updates       2023-08-22
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1248,6 +1248,7 @@ performer::ui_set_input (bussbyte bus, bool active)
 
         set_input(bus, active);
         mapper().set_dirty();
+        rc().auto_rc_save(true);                /* force the save of 'rc'   */
     }
     return result;
 }
@@ -1350,6 +1351,7 @@ performer::ui_set_clock (bussbyte bus, e_clock clocktype)
 
         set_clock(bus, clocktype);
         mapper().set_dirty();
+        rc().auto_rc_save(true);                /* force the save of 'rc'   */
     }
     return result;
 }
