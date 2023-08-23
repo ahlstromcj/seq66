@@ -231,7 +231,7 @@ rcfile::parse ()
     std::string pfname;
     bool active = get_file_status(file, tag, pfname);
     rc_ref().mute_group_file_active(active);
-    rc_ref().mute_group_filename(pfname);   /* [[/]path/] basename.ext  */
+    rc_ref().mute_group_filename(pfname);       /* [[/]path/] basename.ext  */
     fullpath = rc_ref().mute_group_filespec();
     file_message("Reading mutes", fullpath);
 
@@ -247,7 +247,7 @@ rcfile::parse ()
     tag = "[palette-file]";
     active = get_file_status(file, tag, pfname);
     rc_ref().palette_active(active);
-    rc_ref().palette_filename(pfname);              /* base name    */
+    rc_ref().palette_filename(pfname);                  /* base name    */
 
     /*
      * JACK transport settings are currently accessed only via the rcsetting's
@@ -934,9 +934,9 @@ rcfile::write ()
 "# are 'capture' devices. The first line shows the count of output ports.\n"
 "# Each line shows the bus number and clock status of that bus:\n"
 "#\n"
-"#  -2 = The output port is not present on the system (unavailable).\n"
-"#  -1 = The output port is disabled.\n"
-"#   0 = MIDI Clock is off. The output port is enabled.\n"
+"#  -2 = Output port is not present on the system (unavailable).\n"
+"#  -1 = Output port is disabled.\n"
+"#   0 = MIDI Clock is off. Output port is enabled.\n"
 "#   1 = MIDI Clock on; Song Position and MIDI Continue are sent.\n"
 "#   2 = MIDI Clock Modulo.\n"
 "#\n"

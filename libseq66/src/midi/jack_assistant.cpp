@@ -1191,6 +1191,8 @@ jack_assistant::activate ()
 /**
  *  If JACK is supported, starts the JACK transport.  This function assumes
  *  that m_jack_client is not null, if m_jack_running is true.
+ *
+ *  QUESTION: Why start transport if no transport enabled?
  */
 
 void

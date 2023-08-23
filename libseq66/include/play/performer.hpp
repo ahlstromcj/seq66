@@ -2695,25 +2695,9 @@ public:
     }
 
     void store_io_maps_and_restart () const;
-
-    bool store_io_maps ()
-    {
-        bool oki = build_input_port_map(m_inputs);
-        bool oko = build_output_port_map(m_clocks);
-        return oki && oko;
-    }
-
-    void clear_io_maps ()
-    {
-        clear_input_port_map();
-        clear_output_port_map();
-    }
-
-    void activate_io_maps (bool active)
-    {
-        activate_input_port_map(active);
-        activate_output_port_map(active);
-    }
+    bool store_io_maps ();
+    void clear_io_maps ();
+    void activate_io_maps (bool active);
 
     bussbyte true_input_bus (bussbyte nominalbuss) const;
     bussbyte true_output_bus (bussbyte nominalbuss) const;

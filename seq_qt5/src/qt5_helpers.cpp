@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-08-21
+ * \updates       2023-08-23
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -56,6 +56,7 @@
 #include <QErrorMessage>
 #include <QFileDialog>                  /* prompt for full MIDI file's path */
 #include <QIcon>
+#include <QLineEdit>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QMessageBox>
@@ -881,6 +882,24 @@ tooltip_with_keystroke
         qtip = qt(tip);
         widget->setToolTip(qtip);
         widget->setToolTipDuration(duration);
+    }
+}
+
+void
+tooltip_for_filename
+(
+    QLineEdit * lineedit,
+    const std::string & filespec,
+    int duration
+)
+{
+    if (! filespec.empty())
+    {
+        QString filename = qt(filespec);
+        QString basename = qt(filename_base(filespec));
+        lineedit->setToolTip(filename);
+        lineedit->setToolTipDuration(duration);
+        lineedit->setText(basename);
     }
 }
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-08-22
+ * \updates       2023-08-23
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -542,7 +542,7 @@ performer::set_track_info (const std::string & s, seq::number trk)
 }
 
 /**
- *  Get the first (or next) matching Meta Text event and retunrs it.
+ *  Get the first (or next) matching Meta Text event and return it.
  *
  * \param trk
  *      The track number, pattern number.
@@ -943,6 +943,40 @@ performer::reload_mute_groups (std::string & errmessage)
     return result;
 }
 
+bool
+performer::store_io_maps ()
+{
+    bool oki = build_input_port_map(m_inputs);
+    bool oko = build_output_port_map(m_clocks);
+    bool result = oki && oko;
+    if (result)
+    {
+        /*
+         * Not until user sets this flag: rc().portmaps_active(true);
+         */
+
+        rc().auto_rc_save(true);
+    }
+    return result;
+}
+
+void
+performer::clear_io_maps ()
+{
+    clear_input_port_map();
+    clear_output_port_map();
+    rc().portmaps_active(false);
+    rc().auto_rc_save(true);
+}
+
+void
+performer::activate_io_maps (bool active)
+{
+    activate_input_port_map(active);
+    activate_output_port_map(active);
+    rc().auto_rc_save(true);
+}
+
 /**
  *  Provides a way to store the I/O maps and restart in a const context.
  *  See qt5nsmanager::show_error().
@@ -955,8 +989,6 @@ performer::store_io_maps_and_restart () const
     bool ok = ncperf->store_io_maps();
     if (ok)
     {
-        rc().portmaps_active(true);
-        rc().auto_rc_save(true);
         signal_for_restart();
     }
 }
@@ -3240,7 +3272,12 @@ performer::launch (int ppqn)
                 if (ok)
                 {
                     rc().portmaps_active(true);
+                    rc().auto_rc_save(true);
                     session_message("Created initial port maps");
+
+                    /*
+                     * Not necessary?  signal_for_restart();
+                     */
                 }
                 else
                     append_error_message("Creating port maps failed");
@@ -3275,9 +3312,11 @@ performer::launch (int ppqn)
             if (any_ports_unavailable())
             {
                 std::string msg =
-                    "Some configured ports are unavailable. "
-                    "Remap if all desired ports are present, OK to ignore, "
-                    "or exit and edit the 'rc' file  manually."
+                    "Some ports unavailable. "
+                    "Remap if all needed ports exist. "
+                    "OK preserves the map. "
+                    "Or exit to edit the 'rc' file directly."
+                    "Suppress this message in Preferences/Display."
                     ;
 
                 m_port_map_error = true;            /* mutable boolean      */
@@ -4562,6 +4601,17 @@ performer::poll_cycle ()
             event ev;
             if (m_master_bus->get_midi_event(&ev))
             {
+#if defined USE_EXPERIMENTAL_CODE
+
+                /*
+                 * EXPERIMENTAL: start playing on first event. This causes
+                 * a barrage of notes!
+                 */
+
+                if (! is_pattern_playing())         /* ! is_running()       */
+                    inner_start();                  /* start_playing()      */
+#endif
+
                 if (ev.below_sysex())                       /* below 0xF0   */
                 {
                     if (m_master_bus->is_dumping())         /* see banner   */

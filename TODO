@@ -1,14 +1,14 @@
 TO DO for Seq66 0.99.8
 Chris Ahlstrom
-2019-04-13 to 2023-08-21
+2019-04-13 to 2023-08-23
 
 Misc:
 
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:
 
-    -   Drawing notes does not update the seqedit Event menus.
-    -   Look into connecting the save-playlist and save-mutes functions.
+    -   In rcfile, if the filename has a path, have xxx_filespec()
+        return xxx_filename().
     -   Make sure L/R looping buttons (main and song) works.
     -   There are many "TODOs" in the automation slots.
     -   Add a feature to start playback when the first note comes
@@ -16,9 +16,8 @@ Misc:
     -   Add functions in usrsetting to get default jitter and randomize
         values. Probably good to add to Preferences or ...?
         Jitter should be a fraction (of the current snap/PPQN).
-    -   Document better all of the keys on the seqroll, etc. Maybe
-        a "?" button?
-    -   Add a context/focus-sensitive Help / Keyboard menu
+    -   Document better all of the keys on the seqroll, etc. Add a
+        context/focus-sensitive Help / Keyboard menu
     -   Document and test all this churn.
 
 Some of these issues will be pushed off for the distant Seq66v2.

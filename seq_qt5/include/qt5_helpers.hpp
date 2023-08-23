@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-08-21
+ * \updates       2023-08-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -40,6 +40,7 @@ class QAction;
 class QComboBox;
 class QIcon;
 class QKeyEvent;
+class QLineEdit;
 class QMenu;
 class QPushButton;
 class QScrollArea;
@@ -149,6 +150,12 @@ extern void tooltip_with_keystroke
 (
     QWidget * widget,
     const std::string & keyname,
+    int duration = -1
+);
+extern void tooltip_for_filename
+(
+    QLineEdit * lineedit,
+    const std::string & filespec,
     int duration = -1
 );
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-22
+ * \updates       2023-08-23
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1777,7 +1777,7 @@ qseditoptions::state_applied ()
 void
 qseditoptions::slot_io_maps ()
 {
-    bool ok = perf().store_io_maps();
+    bool ok = perf().store_io_maps();               /* sets 'rc' auto-save  */
     if (ok)
     {
         bool active = perf().port_maps_active();
@@ -1795,9 +1795,8 @@ qseditoptions::slot_io_maps ()
 void
 qseditoptions::slot_remove_io_maps ()
 {
-    perf().clear_io_maps();
+    perf().clear_io_maps();                         /* sets save, inactive  */
     ui->ioPortsMappedCheck->setChecked(false);
-    rc().portmaps_active(false);
     modify_rc();
 }
 
@@ -1805,7 +1804,7 @@ void
 qseditoptions::slot_activate_io_maps ()
 {
     bool active = ui->ioPortsMappedCheck->isChecked();
-    perf().activate_io_maps(active);
+    perf().activate_io_maps(active);                /* sets 'rc' auto-save  */
     active = perf().port_maps_active();
     rc().portmaps_active(active);
     modify_rc();
@@ -2095,42 +2094,40 @@ qseditoptions::sync_rc ()
     ui->checkBoxBoldGridSlots->setChecked(usr().progress_bar_thick());
     ui->checkBoxDoubleClickEdit->setChecked(rc().allow_click_edit());
 
-    QString filename = qt(rc().config_filename());
+    std::string filespec = rc().config_filespec();
     ui->checkBoxSaveRc->setChecked(rc().auto_rc_save());
-    ui->checkBoxActiveRc->setChecked(true);     /* ALWAYS active */
-    ui->lineEditRc->setText(filename);
+    ui->checkBoxActiveRc->setChecked(true);         /* not always active    */
+    tooltip_for_filename(ui->lineEditRc, filespec);
 
-    filename = qt(rc().user_filename());
+    filespec = rc().user_filespec();
     ui->checkBoxSaveUsr->setChecked(rc().auto_usr_save());
     ui->checkBoxActiveUsr->setChecked(rc().user_file_active());
-    ui->lineEditUsr->setText(filename);
+    tooltip_for_filename(ui->lineEditUsr, filespec);
 
-    filename = qt(rc().mute_group_filename());
+    filespec = rc().mute_group_filespec();
     ui->checkBoxSaveMutes->setChecked(rc().auto_mutes_save());
     ui->checkBoxActiveMutes->setChecked(rc().mute_group_file_active());
-    ui->lineEditMutes->setText(filename);
+    tooltip_for_filename(ui->lineEditMutes, filespec);
 
-    filename = qt(rc().playlist_filename());
+    filespec = rc().playlist_filespec();
     ui->checkBoxSavePlaylist->setChecked(rc().auto_playlist_save());
     ui->checkBoxActivePlaylist->setChecked(rc().playlist_active());
-    ui->lineEditPlaylist->setText(filename);
+    tooltip_for_filename(ui->lineEditPlaylist, filespec);
 
-    filename = qt(rc().midi_control_filename());
+    filespec = rc().midi_control_filespec();
     ui->checkBoxSaveCtrl->setChecked(rc().auto_ctrl_save());    /* read-only */
     ui->checkBoxActiveCtrl->setChecked(rc().midi_control_active());
-    ui->lineEditCtrl->setText(filename);
+    tooltip_for_filename(ui->lineEditCtrl, filespec);
 
-    filename = qt(rc().notemap_filename());
+    filespec = rc().notemap_filespec();
     ui->checkBoxSaveDrums->setChecked(rc().auto_drums_save());  /* read-only */
     ui->checkBoxActiveDrums->setChecked(rc().notemap_active());
-    ui->lineEditDrums->setText(filename);
+    tooltip_for_filename(ui->lineEditDrums, filespec);
 
-    filename = qt(rc().palette_filename());
+    filespec = rc().palette_filespec();
     ui->checkBoxSavePalette->setChecked(rc().auto_palette_save());
     ui->checkBoxActivePalette->setChecked(rc().palette_active());
-    ui->lineEditPalette->setText(filename);
-
-    filename = qt(usr().style_sheet());
+    tooltip_for_filename(ui->lineEditPalette, filespec);
 
     /*
      * We will never save the style sheet from within Seq66.  We leave the
@@ -2139,9 +2136,10 @@ qseditoptions::sync_rc ()
      * ui->checkBoxSaveStyleSheet->hide();
      */
 
+    filespec = usr().style_sheet();
     ui->checkBoxSaveStyleSheet->setChecked(false);
     ui->checkBoxActiveStyleSheet->setChecked(usr().style_sheet_active());
-    ui->lineEditStyleSheet->setText(filename);
+    tooltip_for_filename(ui->lineEditStyleSheet, filespec);
 
     bool outportmap = output_port_map().active();
     bool inportmap = input_port_map().active();
@@ -2638,13 +2636,21 @@ qseditoptions::slot_rc_save_click ()
     reload_needed(true);
 }
 
+/**
+ *
+ */
+
 void
 qseditoptions::slot_rc_filename ()
 {
+    const QString qtip = ui->lineEditRc->toolTip();
     const QString qs = ui->lineEditRc->text();
     std::string text = qs.toStdString();
     if (text != rc().config_filename())
     {
+        if (name_has_path(text))
+            text = filename_base(text);
+
         rc().config_filename(text);
         modify_rc();
     }

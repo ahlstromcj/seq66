@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-08-22
+ * \updates       2023-08-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1268,8 +1268,8 @@ qseqeditframe64::on_sequence_change
 bool
 qseqeditframe64::on_trigger_change (seq::number /* seqno */)
 {
-    set_dirty();                            /* modified for issue #90   */
-    update_midi_buttons();                  /* mirror current states    */
+    set_dirty();                                /* modified for issue #90   */
+    update_midi_buttons();                      /* mirror current states    */
     return true;
 }
 
@@ -3651,6 +3651,8 @@ qseqeditframe64::update_midi_buttons ()
     ui->m_toggle_record->setChecked(record_active);
     ui->m_toggle_record->setToolTip(record_active ? s_rec_on : s_rec_off);
     qt_set_icon(record_active ? rec_on_xpm : rec_xpm, ui->m_toggle_record);
+    if (! record_active)
+        repopulate_usr_combos(m_edit_bus, m_edit_channel);
 
     bool qrecord_active = track().quantized_recording();
     ui->m_toggle_qrecord->setChecked(qrecord_active);
@@ -3684,8 +3686,8 @@ qseqeditframe64::record_change (bool ischecked)
     if (perf().set_recording(track(), ischecked, false))
     {
         update_midi_buttons();
-        if (! ischecked)
-            repopulate_usr_combos(m_edit_bus, m_edit_channel);
+//      if (! ischecked)
+//          repopulate_usr_combos(m_edit_bus, m_edit_channel);
     }
 }
 

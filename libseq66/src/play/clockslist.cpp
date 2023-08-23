@@ -99,7 +99,7 @@ clockslist::add
         {
             pstatus = clock_to_int(e_clock::unavailable);
             ioitem.io_enabled = false;
-            ioitem.out_clock = e_clock::unavailable;    // disabled;
+            ioitem.out_clock = e_clock::unavailable;
         }
         else
         {
