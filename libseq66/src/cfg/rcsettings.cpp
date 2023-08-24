@@ -599,6 +599,8 @@ rcsettings::make_config_filespec
 
 /**
  *  Constructs the full path and file specification for the "rc" file.
+ *  If the file-name includes a path, then that is returned as is.
+ *  See filespec_helper().
  *
  * \return
  *      If home_config_directory() returns a non-empty string, then the
@@ -677,10 +679,10 @@ rcsettings::create_config_names (const std::string & base)
 /**
  *  We need a way to handle the following configuration-file paths:
  *
- *      -   "base.ext": Prepend the HOME directory.
+ *      -   "base.ext":              Prepend the HOME directory.
  *      -   "subdirectory/base.ext": Prepend the HOME directory
- *      -   "/path/.../base.ext": Use the path as is.
- *      -   "C:/path/.../base.ext": Use the path as is.
+ *      -   "/path/.../base.ext":    Use the path as is.
+ *      -   "C:/path/.../base.ext":  Use the path as is.
  *
  *  Compare to make_config_filespec(), used only by rcfile and this class.
  *  That one treats the base and extension separately.

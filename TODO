@@ -1,14 +1,14 @@
 TO DO for Seq66 0.99.8
 Chris Ahlstrom
-2019-04-13 to 2023-08-23
+2019-04-13 to 2023-08-24
 
 Misc:
 
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:
 
-    -   In rcfile, if the filename has a path, have xxx_filespec()
-        return xxx_filename().
+    -   Enforce that all config files are stored in the "HOME" configuration
+        directory; that path is implicit..
     -   Make sure L/R looping buttons (main and song) works.
     -   There are many "TODOs" in the automation slots.
     -   Add a feature to start playback when the first note comes

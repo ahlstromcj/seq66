@@ -1,4 +1,4 @@
-# README for Seq66 0.99.8 2023-08-21
+# README for Seq66 0.99.8 2023-08-24
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -94,6 +94,8 @@ Windows, and using a conventional source tarball.
             of event-editor "Store" button to denote saving is needed.
         *   Refactoring quantization alterations for future upgrades. Added
             an option to jitter the notes in the seqroll.
+        *   Enforced that configuration files are stored in the "home"
+            directory.
         *   The usual raft of humiliating bug-fixes. A small sample: Updating
             the event list when recording stops; fixing record button in pattern
             editor; fixing note-selection refresh; and about a dozen more.

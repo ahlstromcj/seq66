@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-23
+ * \updates       2023-08-24
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -2470,16 +2470,17 @@ qseditoptions::slot_palette_filename ()
 {
     const QString qs = ui->lineEditPalette->text();
     std::string text = qs.toStdString();
-    if (! text.empty())
+    if (! text.empty() && text != rc().palette_filename())
     {
-        text = filename_base(text);
-        if (text != rc().palette_filename())
+        if (name_has_path(text))
         {
-            rc().palette_filename(text);
-            rc().auto_palette_save(true);
-            ui->checkBoxSavePalette->setChecked(true);
-            modify_rc();
+            tooltip_for_filename(ui->lineEditPalette, text);
+            text = filename_base(text);
         }
+        rc().palette_filename(text);
+        rc().auto_palette_save(true);
+        ui->checkBoxSavePalette->setChecked(true);
+        modify_rc();
     }
 }
 
@@ -2637,16 +2638,19 @@ qseditoptions::slot_rc_save_click ()
 }
 
 /**
- *
+ *  The previous file-name has either the "HOME" path, no path, or a different
+ *  path specified the the 'rc' file, In the first two cases, the plain file
+ *  base-name appears in the control. In the last one, the specified path
+ *  appears. If there is no path, it can be obtained from the tooltip.
+ *  If there is a path, it is stripped. Preserve the original path.
  */
 
 void
 qseditoptions::slot_rc_filename ()
 {
-    const QString qtip = ui->lineEditRc->toolTip();
     const QString qs = ui->lineEditRc->text();
     std::string text = qs.toStdString();
-    if (text != rc().config_filename())
+    if (! text.empty() && text != rc().config_filename())
     {
         if (name_has_path(text))
             text = filename_base(text);
@@ -2712,11 +2716,14 @@ qseditoptions::slot_usr_filename ()
 {
     const QString qs = ui->lineEditUsr->text();
     std::string text = qs.toStdString();
-    if (text != rc().user_filename())
+    if (! text.empty() && text != rc().user_filename())
     {
+        if (name_has_path(text))
+            text = filename_base(text);
+
         rc().user_filename(text);
         modify_rc();
-        modify_usr();
+        modify_usr();                   /* guarantee a save */
     }
 }
 
@@ -2741,9 +2748,12 @@ qseditoptions::slot_mutes_filename ()
 {
     const QString qs = ui->lineEditMutes->text();
     std::string text = qs.toStdString();
-    if (text != rc().mute_group_filename())
+    if (! text.empty() && text != rc().mute_group_filename())
     {
         ui->checkBoxSaveMutes->setChecked(true);
+        if (name_has_path(text))
+            text = filename_base(text);
+
         rc().mute_group_filename(text);
         rc().auto_mutes_save(true);
         modify_rc();
@@ -2771,15 +2781,15 @@ qseditoptions::slot_playlist_filename ()
 {
     const QString qs = ui->lineEditPlaylist->text();
     std::string text = qs.toStdString();
-    if (! text.empty())
+    if (! text.empty() && text != rc().playlist_filename())
     {
-        if (text != rc().playlist_filename())
-        {
-            perf().playlist_filename(text); /* rc().playlist_filename(text) */
-            rc().auto_playlist_save(true);
-            rc().auto_rc_save(true);
-            ui->checkBoxSavePlaylist->setChecked(true);
-        }
+        if (name_has_path(text))
+            text = filename_base(text);
+
+        perf().playlist_filename(text);     /* rc().playlist_filename(text) */
+        rc().auto_playlist_save(true);
+        modify_rc();
+        ui->checkBoxSavePlaylist->setChecked(true);
     }
 }
 
@@ -2808,14 +2818,14 @@ qseditoptions::slot_ctrl_filename ()
 {
     const QString qs = ui->lineEditCtrl->text();
     std::string text = qs.toStdString();
-    if (! text.empty())
+    if (! text.empty() && text != rc().midi_control_filename())
     {
-        if (text != rc().midi_control_filename())
-        {
-            rc().midi_control_filename(text);
-            modify_rc();
-            modify_ctrl();
-        }
+        if (name_has_path(text))
+            text = filename_base(text);
+
+        rc().midi_control_filename(text);
+        modify_rc();
+        modify_ctrl();
     }
 }
 
@@ -2832,14 +2842,14 @@ qseditoptions::slot_drums_filename ()
 {
     const QString qs = ui->lineEditDrums->text();
     std::string text = qs.toStdString();
-    if (! text.empty())
+    if (! text.empty() && text != rc().notemap_filename())
     {
-        if (text != rc().notemap_filename())
-        {
-            ui->checkBoxSaveDrums->setChecked(true);
-            rc().notemap_filename(text);
-            modify_rc();
-        }
+        if (name_has_path(text))
+            text = filename_base(text);
+
+        ui->checkBoxSaveDrums->setChecked(true);
+        rc().notemap_filename(text);
+        modify_rc();
     }
 }
 
@@ -2856,19 +2866,14 @@ qseditoptions::slot_stylesheet_filename ()
 {
     const QString qs = ui->lineEditStyleSheet->text();
     std::string text = qs.toStdString();
-    if (! text.empty())
+    if (! text.empty() && text != usr().style_sheet())
     {
-        if (text != usr().style_sheet())
-        {
-            bool check = ! qs.isEmpty();
-            ui->checkBoxActiveStyleSheet->setChecked(check);
-            usr().style_sheet(text);
-            modify_usr();
+        ui->checkBoxActiveStyleSheet->setChecked(true);
+        if (name_has_path(text))
+            text = filename_base(text);
 
-            /*
-             * Now hidden: ui->checkBoxSaveStyleSheet->setChecked(true);
-             */
-        }
+        usr().style_sheet(text);
+        modify_usr();                       /* 'rc' doesn't set style-sheet */
     }
 }
 

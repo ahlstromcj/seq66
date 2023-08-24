@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-08-22
+ * \updates       2023-08-24
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -620,6 +620,11 @@ configfile::write_string
 /**
  *  Gets the active flag and the name of the file from the given tag section.
  *  Very useful for all "included" configuration files.
+ *
+ *  2023-08-24:
+ *
+ *  We now enforce that all configuration files are restricted to the HOME
+ *  directory, so we also strip the path from the file-name.
  */
 
 bool
@@ -633,6 +638,9 @@ configfile::get_file_status
 {
     bool result = get_boolean(file, tag, "active", position);
     filename = strip_quotes(get_variable(file, tag, "name", position));
+    if (name_has_path(filename))
+        filename = filename_base(filename);
+
     return result;
 }
 

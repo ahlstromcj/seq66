@@ -3312,10 +3312,10 @@ performer::launch (int ppqn)
             if (any_ports_unavailable())
             {
                 std::string msg =
-                    "Some ports unavailable. "
-                    "Remap if all needed ports exist. "
-                    "OK preserves the map. "
-                    "Or exit to edit the 'rc' file directly."
+                    "Some ports now missing. "
+                    "Remap if that is fine. "
+                    "OK preserves thise map. "
+                    "Exit to edit the 'rc' file directly. "
                     "Suppress this message in Preferences/Display."
                     ;
 

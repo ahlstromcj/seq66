@@ -461,7 +461,7 @@ rcfile::parse ()
     rc().portmaps_active(inportmap_active && outportmap_active);
 
     /*
-     * Moved from ORIGINAL_LOCATION above so that we have the port-mapping
+     * Moved from original location above so that we have the port-mapping
      * in place for use here.
      */
 
@@ -480,20 +480,6 @@ rcfile::parse ()
 
     fullpath = rc_ref().midi_control_filespec();
     file_message("Reading ctrl", fullpath);
-
-    /*
-     * While researching issue #89, moved all this to the smanager.
-     *
-    // ok = parse_midi_control_section(fullpath);
-    ok = read_midi_control_file(fullpath, rc_ref());
-    if (! ok)
-    {
-        std::string info = "'";
-        info += fullpath;
-        info += "'";
-        return make_error_message(tag, info);
-    }
-    */
 
     int ticks = 64;
     bool recordbychannel = false;
@@ -782,6 +768,10 @@ rcfile::write ()
      *
      *  std::string mcfname = rc_ref().midi_control_filespec();
      *  ok = write_midi_control_file(mcfname, rc_ref());
+     *
+     * In all that follow, we no longer write the full-path. We write only
+     * the base file-name (e.g. "qseq66.ctrl"), and enforce that all
+     * configuration files being store in the "--home" directory.
      */
 
     file << "\n"
@@ -791,7 +781,7 @@ rcfile::write ()
     write_file_status
     (
         file, "[midi-control-file]",
-        rc_ref().midi_control_filespec(), rc_ref().midi_control_active()
+        rc_ref().midi_control_filename(), rc_ref().midi_control_active()
     );
     file << "\n"
 "# Provides a flag and file-name for mute-groups settings. '\"\"' means no\n"
@@ -801,10 +791,10 @@ rcfile::write ()
     write_file_status
     (
         file, "[mute-group-file]",
-        rc_ref().mute_group_filespec(), rc_ref().mute_group_file_active()
+        rc_ref().mute_group_filename(), rc_ref().mute_group_file_active()
     );
 
-    std::string usrname = rc_ref().user_filespec();
+    std::string usrname = rc_ref().user_filename();
     file << "\n"
 "# Provides a flag and file-name for 'user' settings. '\"\"' means no 'usr'\n"
 "# file. If none, there are no special user settings. Using no 'usr' file\n"
@@ -823,7 +813,7 @@ rcfile::write ()
 "# another; it preserves sub-directories (e.g. in creating an NSM session).\n"
         ;
 
-    std::string plname = rc_ref().playlist_filespec();
+    std::string plname = rc_ref().playlist_filename();
     std::string mbasedir = rc_ref().midi_base_directory();
     write_file_status(file, "[playlist]", plname, rc_ref().playlist_active());
     write_string(file, "base-directory", mbasedir, true);
@@ -835,7 +825,7 @@ rcfile::write ()
 "# transposable to allow this operation.\n"
        ;
 
-    std::string drumfile = rc_ref().notemap_filespec();
+    std::string drumfile = rc_ref().notemap_filename();
     bool drumactive = rc_ref().notemap_active();
     write_file_status(file, "[note-mapper]", drumfile, drumactive);
 
@@ -851,7 +841,7 @@ rcfile::write ()
     write_file_status
     (
         file, "[palette-file]",
-        rc_ref().palette_filespec(), rc_ref().palette_active()
+        rc_ref().palette_filename(), rc_ref().palette_active()
     );
 
     /*
