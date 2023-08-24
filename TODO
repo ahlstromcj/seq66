@@ -2,23 +2,24 @@ TO DO for Seq66 0.99.8
 Chris Ahlstrom
 2019-04-13 to 2023-08-24
 
-Misc:
+UI:
 
     Additional, oft-used configuration items to consider adding to the
     Preferences dialog:
 
-    -   Enforce that all config files are stored in the "HOME" configuration
-        directory; that path is implicit..
+        -   Jitter and randomization ranges
+        -   The new-pattern options.
+
+Misc:
+
     -   Make sure L/R looping buttons (main and song) works.
     -   There are many "TODOs" in the automation slots.
     -   Add a feature to start playback when the first note comes
-        into a pattern when recording is set.
-    -   Add functions in usrsetting to get default jitter and randomize
-        values. Probably good to add to Preferences or ...?
-        Jitter should be a fraction (of the current snap/PPQN).
+        into a pattern when recording is set. [Turns out to be quite tricky!]
+    -   Document and test all this churn.
     -   Document better all of the keys on the seqroll, etc. Add a
         context/focus-sensitive Help / Keyboard menu
-    -   Document and test all this churn.
+    -   Make the performer get/put_settings() functions robust.
 
 Some of these issues will be pushed off for the distant Seq66v2.
 

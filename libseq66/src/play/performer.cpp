@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-08-23
+ * \updates       2023-08-24
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -879,10 +879,14 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
 
     /*
      * We also need to update the playlist file-name in case the user loaded
-     * or removed the playlist.
+     * or removed the playlist. We don't want the result of
+     * performer::playlist_filename() because that contains the path needed to
+     * open the playlist.
+     *
+     *      rcs.playlist_filename(playlist_filename());
      */
 
-    rcs.playlist_filename(playlist_filename());
+    rcs.playlist_filename(rc().playlist_filename());
     rcs.playlist_active(playlist_active());
     return true;
 }
@@ -899,6 +903,13 @@ performer::automation_key (automation::slot s)
     return m_key_controls.automation_key(index);
 }
 
+/**
+ *  We need to restrict even the playlist files to the configuration directory
+ *  for the session.
+ *
+ *          m_play_list->file_name(rc().playlist_filespec());
+ */
+
 void
 performer::playlist_filename (const std::string & basename)
 {
@@ -909,7 +920,7 @@ performer::playlist_filename (const std::string & basename)
     else
     {
         rc().playlist_filename(basename);
-        m_play_list->file_name(rc().playlist_filespec());
+        m_play_list->file_name(basename);
     }
 }
 
@@ -8966,6 +8977,11 @@ performer::open_playlist (const std::string & pl)
     bool show_on_stdout = rc().verbose();
     if (m_play_list)
         m_play_list->loaded(false);                           /* just in case */
+
+    /*
+     * This call adds the full path specification as the file-name for
+     * the playlist.
+     */
 
     m_play_list.reset
     (

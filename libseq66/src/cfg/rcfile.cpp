@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-06-26
+ * \updates       2023-08-24
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -777,6 +777,8 @@ rcfile::write ()
     file << "\n"
 "# Provides a flag and file-name for MIDI-control I/O settings. '\"\"' means\n"
 "# no 'ctrl' file. If none, default keystrokes are used, with no MIDI control.\n"
+"# Note that all configuration files are stored in the \"home\" configuration\n"
+"# directory; any paths in the file-names are stripped.\n"
        ;
     write_file_status
     (
@@ -815,6 +817,15 @@ rcfile::write ()
 
     std::string plname = rc_ref().playlist_filename();
     std::string mbasedir = rc_ref().midi_base_directory();
+
+    /*
+     * The play-list file-name has the "home" directory prepended as a
+     * side-effect of smanager::open_playlist() & performer::open_playlist().
+     * We need to fix that, but here we could just strip the path.
+     *
+     *      plname = filename_base(plname);
+     */
+
     write_file_status(file, "[playlist]", plname, rc_ref().playlist_active());
     write_string(file, "base-directory", mbasedir, true);
 

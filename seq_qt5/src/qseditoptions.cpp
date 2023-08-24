@@ -92,7 +92,8 @@ const int Tab_Display        =  2;
 const int Tab_JACK           =  3;
 const int Tab_Play_Options   =  4;
 const int Tab_Metronome      =  5;
-const int Tab_Session        =  6;
+const int Tab_Pattern        =  6;
+const int Tab_Session        =  7;
 
 /**
  *  Button numbering for JACK Start Mode radio-buttons.
@@ -152,6 +153,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     setup_tab_jack();
     setup_tab_play_options();
     setup_tab_metronome();
+    setup_tab_pattern();
     setup_tab_session();
 
     /*
@@ -214,6 +216,11 @@ qseditoptions::~qseditoptions ()
 void
 qseditoptions::setup_tab_midi_clock ()
 {
+    ui->tabWidget->setTabToolTip
+    (
+        Tab_MIDI_Clock, "Output ports, port-mapping, and clock settings"
+    );
+
     /*
      * Set up the MIDI Clock tab.  We use the qclocklayout class to hold
      * most of the complex code needed to handle the list of output ports and
@@ -359,6 +366,11 @@ qseditoptions::setup_tab_midi_clock ()
 void
 qseditoptions::setup_tab_midi_input ()
 {
+    ui->tabWidget->setTabToolTip
+    (
+        Tab_MIDI_Input, "Input ports and I/O options"
+    );
+
     /*
      * Set up the MIDI Input tab.  It is simpler, just a list of check-boxes
      * in the groupBoxInputs widget.  No need for a separate class.  However,
@@ -455,6 +467,11 @@ qseditoptions::setup_tab_midi_input ()
 void
 qseditoptions::setup_tab_display ()
 {
+    ui->tabWidget->setTabToolTip
+    (
+        Tab_Display, "User-interface tweaks and boolean options"
+    );
+
     ui->spinKeyHeight->setMinimum(usr().min_key_height());
     ui->spinKeyHeight->setMaximum(usr().max_key_height());
     connect
@@ -594,6 +611,11 @@ qseditoptions::setup_tab_jack ()
 
 #if defined SEQ66_JACK_SUPPORT
 
+    ui->tabWidget->setTabToolTip
+    (
+        Tab_JACK, "JACK transport and server options"
+    );
+
     /*
      * JACK Transport Connect/Disconnect buttons.
      */
@@ -681,6 +703,11 @@ qseditoptions::setup_tab_jack ()
 
 #else
 
+    ui->tabWidget->setTabToolTip
+    (
+        Tab_JACK, "JACK not supported for this system"
+    );
+
     ui->btnJackConnect->setEnabled(false);
     ui->btnJackDisconnect->setEnabled(false);
     ui->chkJackTransport->setEnabled(false);
@@ -702,6 +729,10 @@ qseditoptions::setup_tab_jack ()
 void
 qseditoptions::setup_tab_play_options ()
 {
+    ui->tabWidget->setTabToolTip
+    (
+        Tab_Play_Options, "PPQN and playback options"
+    );
     connect
     (
         ui->chkNoteResume, SIGNAL(stateChanged(int)),
@@ -774,6 +805,10 @@ qseditoptions::setup_tab_play_options ()
 void
 qseditoptions::setup_tab_metronome ()
 {
+    ui->tabWidget->setTabToolTip
+    (
+        Tab_Metronome, "Options for the metronome and count-in"
+    );
     int metrotemp = rc().metro_settings().beats_per_bar();
     QString qmetrotemp = qt(std::to_string(metrotemp));
     ui->lineedit_metro_beats_per_bar->setText(qmetrotemp);
@@ -1345,6 +1380,36 @@ qseditoptions::slot_metro_thru_channel (int index)
 
 /*
  *---------------------------------------------------------------------
+ *  Pattern tab.
+ *---------------------------------------------------------------------
+ */
+
+/*
+ * Duty now for the Future!
+ *
+ * Not available in Qt 5.15:
+ *
+ * ui->tabWidget->setTabVisible(Tab_Pattern, false);
+ * ui->tabWidget->setTabBarAutoHide(true);
+ */
+
+void
+qseditoptions::setup_tab_pattern ()
+{
+#if defined THIS_CODE_IS_READY
+    ui->tabWidget->setTabToolTip
+    (
+        Tab_Pattern, "Options for new patterns and randomization"
+    );
+#else
+    ui->tabWidget->setTabToolTip(Tab_Pattern, "Reserved for future expansion");
+    if (! rc().investigate())
+        ui->tabWidget->setTabEnabled(Tab_Pattern, false);
+#endif
+}
+
+/*
+ *---------------------------------------------------------------------
  *  Session tab.
  *---------------------------------------------------------------------
  */
@@ -1352,6 +1417,10 @@ qseditoptions::slot_metro_thru_channel (int index)
 void
 qseditoptions::setup_tab_session ()
 {
+    ui->tabWidget->setTabToolTip
+    (
+        Tab_Session, "Options for session configuration files"
+    );
 
     /*
      *  Group-box for changing the session.
