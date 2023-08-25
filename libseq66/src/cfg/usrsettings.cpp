@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2023-08-19
+ * \updates       2023-08-24
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -556,7 +556,16 @@ usrsettings::new_pattern_record_style (const std::string & style)
         rs = recordstyle::expand;
     else if (style == "one-shot")
         rs = recordstyle::oneshot;
+    else if (style == "one-shot-reset")
+        rs = recordstyle::oneshot_reset;
 
+    m_new_pattern_record_style = rs;
+}
+
+void
+usrsettings::new_pattern_record_style (int index)
+{
+    recordstyle rs = static_cast<recordstyle>(index);
     m_new_pattern_record_style = rs;
 }
 

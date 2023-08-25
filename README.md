@@ -1,4 +1,4 @@
-# README for Seq66 0.99.8 2023-08-24
+# README for Seq66 0.99.8 2023-08-25
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -84,6 +84,8 @@ Windows, and using a conventional source tarball.
     *   Version 0.99.8:
         *   Issue #112: A new pattern now displays in the MIDI controller.
         *   Issue #114: Adding display of shortcut keys to tool tips.
+        *   Added a Pattern tab to Edit / Preferences for new-pattern settings
+            and jitter/randomization.
         *   Added automation for the main window Loop L/R button.
         *   Fixed seqroll drawing errors introduced in adding time-sig support.
         *   Fixed incomplete data-pane refresh in scrolling with arrow-keys.

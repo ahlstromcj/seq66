@@ -1952,6 +1952,7 @@ public:         // used in main application module and the usrfile class
 
     void grid_record_style (const std::string & style);
     void new_pattern_record_style (const std::string & style);
+    void new_pattern_record_style (int index);
 
     void grid_record_style (recordstyle style)
     {

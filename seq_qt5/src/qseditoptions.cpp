@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-24
+ * \updates       2023-08-25
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1387,25 +1387,157 @@ qseditoptions::slot_metro_thru_channel (int index)
 /*
  * Duty now for the Future!
  *
- * Not available in Qt 5.15:
+ *  checkBoxNewPatternArm
+ *  checkBoxNewPatternQRecord
+ *  checkBoxNewPatternRecord
+ *  checkBoxNewPatternThru
+ *  checkBoxNewPatternWrapAround
+ *  comboBoxRecordStyle
  *
- * ui->tabWidget->setTabVisible(Tab_Pattern, false);
- * ui->tabWidget->setTabBarAutoHide(true);
+ *  spinBoxJitter
+ *  spinBoxAmplitude
  */
 
 void
 qseditoptions::setup_tab_pattern ()
 {
-#if defined THIS_CODE_IS_READY
     ui->tabWidget->setTabToolTip
     (
         Tab_Pattern, "Options for new patterns and randomization"
     );
-#else
-    ui->tabWidget->setTabToolTip(Tab_Pattern, "Reserved for future expansion");
-    if (! rc().investigate())
-        ui->tabWidget->setTabEnabled(Tab_Pattern, false);
-#endif
+
+    /*
+     * New-pattern boolean options.
+     */
+
+    ui->checkBoxNewPatternArm->setChecked(usr().new_pattern_armed());
+    connect
+    (
+        ui->checkBoxNewPatternArm, SIGNAL(clicked(bool)),
+        this, SLOT(slot_new_pattern_arm())
+    );
+    ui->checkBoxNewPatternQRecord->setChecked(usr().new_pattern_qrecord());
+    connect
+    (
+        ui->checkBoxNewPatternQRecord, SIGNAL(clicked(bool)),
+        this, SLOT(slot_new_pattern_qrecord())
+    );
+    ui->checkBoxNewPatternRecord->setChecked(usr().new_pattern_record());
+    connect
+    (
+        ui->checkBoxNewPatternRecord, SIGNAL(clicked(bool)),
+        this, SLOT(slot_new_pattern_record())
+    );
+    ui->checkBoxNewPatternThru->setChecked(usr().new_pattern_thru());
+    connect
+    (
+        ui->checkBoxNewPatternThru, SIGNAL(clicked(bool)),
+        this, SLOT(slot_new_pattern_thru())
+    );
+    ui->checkBoxNewPatternWrapAround->setChecked
+    (
+        usr().new_pattern_wraparound()
+    );
+    connect
+    (
+        ui->checkBoxNewPatternWrapAround, SIGNAL(clicked(bool)),
+        this, SLOT(slot_new_pattern_wraparound())
+    );
+
+    /*
+     * New-pattern record-style options.
+     */
+
+    int r = usr().new_pattern_record_code();
+    ui->comboBoxRecordStyle->addItem("Merge");
+    ui->comboBoxRecordStyle->addItem("Overwrite");
+    ui->comboBoxRecordStyle->addItem("Expand");
+    ui->comboBoxRecordStyle->addItem("Oneshot");
+    ui->comboBoxRecordStyle->addItem("Oneshot Reset");
+    ui->comboBoxRecordStyle->setCurrentIndex(r);
+    connect
+    (
+        ui->comboBoxRecordStyle, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(slot_new_record_style(int))
+    );
+
+    /*
+     * Randomization options.
+     */
+
+    ui->spinBoxJitter->setValue(usr().jitter_divisor());
+    connect
+    (
+        ui->spinBoxJitter, SIGNAL(valueChanged(int)),
+        this, SLOT(slot_jitter(int))
+    );
+    ui->spinBoxAmplitude->setValue(usr().randomization_amount());
+    connect
+    (
+        ui->spinBoxAmplitude, SIGNAL(valueChanged(int)),
+        this, SLOT(slot_amplitude(int))
+    );
+}
+
+void
+qseditoptions::slot_new_pattern_arm ()
+{
+    bool enable = ui->checkBoxNewPatternArm->isChecked();
+    usr().new_pattern_armed(enable);
+    modify_usr();
+}
+
+void
+qseditoptions::slot_new_pattern_qrecord ()
+{
+    bool enable = ui->checkBoxNewPatternQRecord->isChecked();
+    usr().new_pattern_qrecord(enable);
+    modify_usr();
+}
+
+void
+qseditoptions::slot_new_pattern_record ()
+{
+    bool enable = ui->checkBoxNewPatternRecord->isChecked();
+    usr().new_pattern_record(enable);
+    modify_usr();
+}
+
+void
+qseditoptions::slot_new_pattern_thru ()
+{
+    bool enable = ui->checkBoxNewPatternThru->isChecked();
+    usr().new_pattern_thru(enable);
+    modify_usr();
+}
+
+void
+qseditoptions::slot_new_pattern_wraparound ()
+{
+    bool enable = ui->checkBoxNewPatternWrapAround->isChecked();
+    usr().new_pattern_wraparound(enable);
+    modify_usr();
+}
+
+void
+qseditoptions::slot_new_record_style (int index)
+{
+    usr().new_pattern_record_style(index);
+    modify_usr();
+}
+
+void
+qseditoptions::slot_jitter (int jitr)
+{
+    usr().jitter_divisor(jitr);
+    modify_usr();
+}
+
+void
+qseditoptions::slot_amplitude (int amp)
+{
+    usr().randomization_amount(amp);
+    modify_usr();
 }
 
 /*

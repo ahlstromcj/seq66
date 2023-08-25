@@ -469,24 +469,28 @@ usrfile::parse ()
         flag = get_boolean(file, tag, "lock-main-window");
         usr().lock_main_window(flag);
     }
-    std::string s = get_variable(file, "[user-session]", "session");
+    tag = "[user-session]";
+
+    std::string s = get_variable(file, tag, "session");
     usr().session_manager(s);
 
-    s = get_variable(file, "[user-session]", "url");
+    s = get_variable(file, tag, "url");
     usr().session_url(strip_quotes(s));
-    flag = get_boolean(file, "[user-session]", "visibility", 0, true);
+    flag = get_boolean(file, tag, "visibility", 0, true);
     usr().session_visibility(flag);
-    flag = get_boolean(file, "[new-pattern-editor]", "armed");
+
+    tag = "[new-pattern-editor]";
+    flag = get_boolean(file, tag, "armed");
     usr().new_pattern_armed(flag);
-    flag = get_boolean(file, "[new-pattern-editor]", "thru");
+    flag = get_boolean(file, tag, "thru");
     usr().new_pattern_thru(flag);
-    flag = get_boolean(file, "[new-pattern-editor]", "record");
+    flag = get_boolean(file, tag, "record");
     usr().new_pattern_record(flag);
-    flag = get_boolean(file, "[new-pattern-editor]", "qrecord");
+    flag = get_boolean(file, tag, "qrecord");
     usr().new_pattern_qrecord(flag);
-    s = get_variable(file, "[new-pattern-editor]", "record-style");
+    s = get_variable(file, tag, "record-style");
     usr().new_pattern_record_style(s);
-    flag = get_boolean(file, "[new-pattern-editor]", "wrap-around");
+    flag = get_boolean(file, tag, "wrap-around");
     usr().new_pattern_wraparound(flag);
 
     /*
@@ -786,7 +790,7 @@ usrfile::write ()
 "# range of jitter is 1/j times the current snap value.\n"
 "\n[user-randomization]\n\n"
     ;
-    write_integer(file, "jitter_divisor", usr().jitter_divisor());
+    write_integer(file, "jitter-divisor", usr().jitter_divisor());
     write_integer(file, "amplitude", usr().randomization_amount());
 
     /*
@@ -953,10 +957,11 @@ usrfile::write ()
     file <<
 "\n# [new-pattern-editor]\n"
 "#\n"
-"# Setup values for play/recording when a new pattern is opened. A new pattern\n"
-"# means that the loop has the default name 'Untitled' and no events. These\n"
+"# Values for play/recording when a new pattern is created. A new pattern\n"
+"# is indicated when the loop has the name 'Untitled' and no events. These\n"
 "# values save time during a live recording session. The valid values for\n"
-"# record-style are 'merge' (default), 'overwrite', 'expand', and 'one-shot'.\n"
+"# record-style are 'merge' (default), 'overwrite', 'expand', 'one-shot', \n"
+"# and 'one-shot-reset'.\n"
 "# 'wrap-around', if true, allows recorded notes to wrap around to the\n"
 "# pattern start.\n"
 "\n[new-pattern-editor]\n\n"
