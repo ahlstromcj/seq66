@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2023-08-16
+ * \updates       2023-08-25
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -42,6 +42,13 @@
 
 #include "midi/midibytes.hpp"           /* midipulse alias and much more    */
 #include "util/basic_macros.hpp"        /* seq66::tokenization container    */
+
+/**
+ *  This is supposed to be a better method than rand(), but it still
+ *  yields, seemingly, more negative numbers than positive numbers.
+ */
+
+#undef  SEQ66_USE_UNIFORM_INT_DISTRIBUTION     /* EXPERIMENTAL */
 
 /*
  * Global functions in the seq66 namespace for MIDI timing calculations.
@@ -229,7 +236,10 @@ extern midipulse string_to_pulses
     const midi_timing & mt,
     bool timestring = false
 );
-extern int randomize (int range);
+extern int randomize (int range, int seed = 0);
+#if defined SEQ66_USE_UNIFORM_INT_DISTRIBUTION
+extern int randomize_uniformly (int range, int seed = -1);
+#endif
 extern bool is_power_of_2 (int value);
 extern int log2_time_sig_value (int tsd);
 extern int beat_power_of_2 (int logbase2);

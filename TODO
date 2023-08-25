@@ -12,6 +12,7 @@ Misc:
     -   Document better all of the keys on the seqroll, etc. Add a
         context/focus-sensitive Help / Keyboard menu
     -   Make the performer get/put_settings() functions robust.
+    -   Randomizing seems to have a negative bias (after many repeats).
 
 Some of these issues will be pushed off for the distant Seq66v2.
 

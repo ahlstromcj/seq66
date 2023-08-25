@@ -1073,7 +1073,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
         track().paste_selected(tick_s, note);
         paste(false);
         setCursor(Qt::ArrowCursor);
-        flag_dirty();   // set_dirty();
+        flag_dirty();
     }
     else
     {
@@ -1141,7 +1141,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     if (! isctrl)
                     {
                         moving_init(true);          /* moving; L-click only */
-                        flag_dirty();   // set_dirty();
+                        flag_dirty();
                         if (is_drum_mode())
                         {
                             track().onsets_selected_box
@@ -1184,14 +1184,6 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     if (! isctrl)
                     {
                         track().unselect();
-
-                        /*
-                         * ca 2022-05-20: why set dirty here?
-                         * qseqeditframe64 modifies the track!
-                         *
-                         * frame64()->set_dirty();
-                         */
-
                         flag_dirty();
                     }
                     selmode = is_drum_mode() ?
@@ -1205,7 +1197,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     if (numsel == 0)    /* none selected, start selection box */
                         selecting(true);
                     else
-                        flag_dirty();   // set_dirty();
+                        flag_dirty();
                 }
             }
         }
@@ -1256,7 +1248,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
                 tick_s, note_h, tick_f, note_l, selmode
             );
             if (numsel > 0)
-                flag_dirty();   // frame64()->set_dirty();
+                flag_dirty();
         }
         if (moving())
         {
@@ -1282,7 +1274,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             if (delta_tick != 0 || delta_note != 0)
             {
                 track().move_selected_notes(delta_tick, delta_note);
-                flag_dirty();   // set_dirty();
+                flag_dirty();
             }
         }
     }
@@ -1297,7 +1289,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
                 track().grow_selected(delta_tick);
 
             (void) mark_modified();
-            flag_dirty();   // set_dirty();
+            flag_dirty();
         }
     }
     if (rbutton)
@@ -1305,7 +1297,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
         if (! QApplication::queryKeyboardModifiers().testFlag(Qt::MetaModifier))
         {
             set_adding(false);
-            flag_dirty();   // set_dirty();
+            flag_dirty();
         }
     }
     clear_action_flags();               /* turn off all the action flags    */
@@ -1458,7 +1450,6 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                         done = true;
                         perf().set_tick(tick - snap(), true);   /* no reset */
                         track().set_last_tick(tick - snap());
-//                      flag_dirty();                           /* tricky   */
                         break;
 
                     case Qt::Key_Right:
@@ -1466,7 +1457,6 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                         done = true;
                         perf().set_tick(tick + snap(), true);   /* no reset */
                         track().set_last_tick(tick + snap());
-//                      flag_dirty();                           /* tricky   */
                         break;
 
                     case Qt::Key_Home:
@@ -1518,14 +1508,12 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                         else
                             track().pop_undo();
 
-//                      flag_dirty();                           /* tricky   */
                         break;
 
                     case Qt::Key_A:
 
                         done = true;
                         track().select_all();
-//                      flag_dirty();                           /* tricky   */
                         break;
 
                     case Qt::Key_D:
@@ -1598,7 +1586,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                 case Qt::Key_R:                 /* default random == 8      */
 
-                    if (track().randomize_selected_notes())
+                    if (track().randomize_selected_notes()) /* pushes too   */
                         done = mark_modified();
                     break;
 

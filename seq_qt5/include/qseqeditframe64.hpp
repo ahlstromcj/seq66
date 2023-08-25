@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-08-20
+ * \updates       2023-08-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -284,6 +284,7 @@ private slots:
     void quantize_notes ();
     void tighten_notes ();
     void jitter_notes ();
+    void randomize_notes ();
     void transpose_notes ();
     void transpose_harmonic ();
     void remap_notes ();

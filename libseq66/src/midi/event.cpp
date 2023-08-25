@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-08-18
+ * \updates       2023-08-25
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -1195,7 +1195,11 @@ event::randomize (int range)
     {
         bool twobytes = is_two_bytes();
         int datum = int(twobytes ? m_data[1] : m_data[0]);
+#if defined SEQ66_USE_UNIFORM_INT_DISTRIBUTION
+        int delta = seq66::randomize_uniformly(range);
+#else
         int delta = seq66::randomize(range);
+#endif
         result = delta != 0;
         if (result)
         {
@@ -1225,7 +1229,11 @@ event::jitter (int snap, int range, midipulse seqlength)
     bool result = range > 0;
     if (result)
     {
+#if defined SEQ66_USE_UNIFORM_INT_DISTRIBUTION
+        midipulse delta = midipulse(seq66::randomize_uniformly(range));
+#else
         midipulse delta = midipulse(seq66::randomize(range));
+#endif
         result = delta != 0;
         if (result)
         {

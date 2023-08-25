@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-08-23
+ * \updates       2023-08-25
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2276,7 +2276,10 @@ qseqeditframe64::popup_tool_menu ()
     if (not_nullptr(m_tools_popup))
     {
         QMenu * menuselect = new_qmenu("&Select notes...", m_tools_popup);
-        QMenu * menutiming = new_qmenu("Note &timing...", m_tools_popup);
+        QMenu * menutiming = new_qmenu
+        (
+            "Note &timing/velocity...", m_tools_popup
+        );
         QMenu * menupitch  = new_qmenu("&Pitch transpose...", m_tools_popup);
         QMenu * menuharmonic = new_qmenu
         (
@@ -2311,22 +2314,41 @@ qseqeditframe64::popup_tool_menu ()
         menuselect->addAction(selectinverse);
 
         QAction * quantize = new_qaction("&Quantize", m_tools_popup);
-        connect(quantize, SIGNAL(triggered(bool)), this, SLOT(quantize_notes()));
+        connect
+        (
+            quantize, SIGNAL(triggered(bool)), this, SLOT(quantize_notes())
+        );
         menutiming->addAction(quantize);
 
         QAction * tighten = new_qaction("&Tighten", m_tools_popup);
-        connect(tighten, SIGNAL(triggered(bool)), this, SLOT(tighten_notes()));
+        connect
+        (
+            tighten, SIGNAL(triggered(bool)), this, SLOT(tighten_notes())
+        );
         menutiming->addAction(tighten);
 
         QAction * jitter = new_qaction("&Jitter", m_tools_popup);
         connect(jitter, SIGNAL(triggered(bool)), this, SLOT(jitter_notes()));
         menutiming->addAction(jitter);
 
+        QAction * rando = new_qaction("&Randomize velocity", m_tools_popup);
+        connect
+        (
+            rando, SIGNAL(triggered(bool)), this, SLOT(randomize_notes())
+        );
+        menutiming->addAction(rando);
+
         QAction * lfobox = new_qaction("&LFO...", m_tools_popup);
-        connect(lfobox, SIGNAL(triggered(bool)), this, SLOT(show_lfo_frame()));
+        connect
+        (
+            lfobox, SIGNAL(triggered(bool)), this, SLOT(show_lfo_frame())
+        );
 
         QAction * fixbox = new_qaction("Pattern &fix...", m_tools_popup);
-        connect(fixbox, SIGNAL(triggered(bool)), this, SLOT(show_pattern_fix()));
+        connect
+        (
+            fixbox, SIGNAL(triggered(bool)), this, SLOT(show_pattern_fix())
+        );
 
         QAction * transpose[2 * c_octave_size];     /* pitch transpose      */
         QAction * harmonic[2 * c_harmonic_size];    /* harmonic transpose   */
@@ -2471,8 +2493,15 @@ qseqeditframe64::tighten_notes ()
 void
 qseqeditframe64::jitter_notes ()
 {
-    int s = usr().jitter_range(m_seqroll->snap());
-    track().push_jitter_notes(s);
+    int j = usr().jitter_range(m_seqroll->snap());      /* a calculation    */
+    track().push_jitter_notes(j);
+}
+
+void
+qseqeditframe64::randomize_notes ()
+{
+    int r = usr().randomization_amount();
+    track().randomize_selected_notes(r);
 }
 
 /**

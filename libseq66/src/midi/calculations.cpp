@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2023-08-16
+ * \updates       2023-08-25
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -74,11 +74,14 @@
 #include <cstdlib>                      /* std::atoi(), std::strtol()       */
 #include <cstring>                      /* std::memset()                    */
 #include <ctime>                        /* std::strftime()                  */
-#include <random>                       /* std::uniform_int_distribution    */
 
 #include "cfg/settings.hpp"
 #include "midi/calculations.hpp"        /* MIDI-related calculations        */
 #include "util/strfunctions.hpp"        /* seq66::contains(), etc.          */
+
+#if defined SEQ66_USE_UNIFORM_INT_DISTRIBUTION
+#include <random>                       /* std::uniform_int_distribution    */
+#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -808,20 +811,79 @@ string_to_pulses
  */
 
 int
-randomize (int range)
+randomize (int range, int seed)
 {
     static bool s_uninitialized = true;
     if (s_uninitialized)
     {
         s_uninitialized = false;
-        srand(unsigned(time(NULL)));
+        if (seed == 0)
+            seed = time(NULL);
+
+        srand(unsigned(seed));
     }
     if (range < 0)
         range = -range;
 
-    long result = 2 * range * long(rand()) / RAND_MAX;
-    return int(result) - range;
+    long result = (2 * range * long(rand()) / RAND_MAX) - range;
+    return int(result);
 }
+
+#if defined SEQ66_USE_UNIFORM_INT_DISTRIBUTION
+
+class randomizer
+{
+private:
+
+    static const int s_upper_limit = std::numeric_limits<int>::max();
+
+    std::random_device m_rd;    /* seed source for random number engine     */
+    std::mt19937 m_mtwister;    /* mersenne_twister_engine, maybe seeded    */
+    std::uniform_int_distribution<int> m_distribution;
+
+public:
+
+    randomizer (int seed = -1) :
+        m_rd            (),                         /* random device (opt.) */
+        m_mtwister      (m_rd()),                   /* internal generator   */
+        m_distribution  (0, s_upper_limit)          /* uniform int range    */
+    {
+        if (seed != (-1))
+            m_mtwister.seed(seed);
+    }
+
+    int generate ()
+    {
+        return m_distribution(m_mtwister);
+    }
+
+    int generate (int range)
+    {
+        int rnd = generate();
+        long result = 2 * range * long(rnd) / long(s_upper_limit);
+        return int(result) - range;
+    }
+
+};          // class randomizer
+
+int
+randomize_uniformly (int range, int seed)
+{
+    static bool s_uninitialized = true;
+    static randomizer * s_randomizer_pointer = nullptr;
+    if (s_uninitialized)
+    {
+        static randomizer s_randomizer(seed);   /* create it secretly   */
+        s_randomizer_pointer = &s_randomizer;   /* point to it          */
+        s_uninitialized = false;
+    }
+    if (range < 0)
+        range = -range;
+
+    return s_randomizer_pointer->generate(range);
+}
+
+#endif
 
 /**
  *  Returns true if a number is a power of 2.  MIDI's beatwidth values
