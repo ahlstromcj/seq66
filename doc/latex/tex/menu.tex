@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-06-27
+% \update      2023-08-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1290,11 +1290,110 @@
    We still have some more work to do to refine the metronome, the
    background recorder, and their configuration, pending user input.
 
+\paragraph{Menu / Edit / Preferences / Pattern}
+\label{paragraph:menu_edit_preferences_pattern}
+
+   This tab provides options for the status of newly-created patterns
+   and for randomization of amplitude and jitter of time-stamps.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.50]{main-menu/edit/preferences/midi_pattern_tab.png}
+   \caption{Pattern Options}
+   \label{fig:midi_pattern_options_tab}
+\end{figure}
+
+   \itempar{Pattern}{edit!pattern}
+   \textbf{Pattern}
+   This relatively new tab provides a way to configure the status of
+   a newly-created pattern.
+   It also provides a way to change the range of amplitude randomization
+   and time jittering of events.
+
+   The first section is \textbf{New-Pattern Options}.
+   It defines the statuses of a newly-created pattern.
+   This can be convenient for live-recording.
+   The status setting are:
+
+   \begin{itemize}
+      \item \textbf{Armed}.
+         This setting causes the pattern to be armed when a new pattern
+         is created.
+      \item \textbf{Record}.
+         The new pattern starts in record mode.
+      \item \textbf{Q-Record}.
+         The new pattern starts in quantized record mode.
+      \item \textbf{Wrap-Aound}.
+         The new pattern will allow prolonged notes to wrap around so
+         that the Note Off event precedes the Note On event in the
+         pattern loop.
+      \item \textbf{Thru}.
+         The new pattern starts with MIDI Thru enabled.
+      \item \textbf{Record Style}
+         This setting sets how record mode works for the pattern.
+         \begin{itemize}
+            \item \textbf{Merge}.
+               As recording and looping proceeds, new events merge with
+               the existing events.
+            \item \textbf{Overwrite}.
+               When the pattern loops back to its beginning, any
+               existing events are deleted.
+               A good way to try to get the right collection of notes.
+            \item \textbf{Expand}.
+               When recording as notes are recorded, the pattern expands to
+               accomodate them.
+               This results in a longer pattern than initially specified.
+            \item \textbf{Oneshot}.
+               Events are entered until the end is reached.
+               Useful for recording stock patterns from a drum machine.
+            \item \textbf{Oneshot Reset}.
+               At the end of the specified length of the pattern,
+               all events are cleared.
+               Normal recording is set.
+               Need to look into this as we cannot rememember all the
+               details :-D.
+         \end{itemize}
+   \end{itemize}
+
+   The second section is \textbf{Randomization}.
+   The range of randomization is based on a range parameter, and
+   goes from -range to +range.
+   The concept of jitter means that the time-stamps of recorded events
+   are randomized slightly.
+   The concept of randomization means that the amplitudes of events
+   are randomized slightly.
+   The randomization settings are:
+
+   \begin{itemize}
+      \item \textbf{Jitter}.
+         This value is a jitter divisor.
+         It sets the fraction of of the current snap value that
+         is used as the range of jittering the time.
+         For example, "8" means that the range is 1/8th of the snap value.
+      \item \textbf{Amplitude}.
+         This value is used for various data values.
+         For Notes On (but not Notes Off), this parameter affects
+         the range of amplitude variation, when amplitudes are
+         the standard MIDI range, 0 to 127.
+   \end{itemize}
+
+   One minor issue, which we're still trying to work around, is that
+   our various randomization algorithms seem biased to emit
+   negative numbers.
+   If one clicks in a pattern editor piano roll, types
+   \texttt{Ctrl-A} to select all notes (and aftertouch)
+   and types the \texttt{r} key repeatedly to randomize
+   note amplitudes, the overall velocities slowly descend to 0.
+   Still not sure what's wrong with \textsl{Seq66} randomization, 
+   but it is only important if randomizing a large number of times.
+
 \paragraph{Menu / Edit / Preferences / Session}
 \label{paragraph:menu_edit_preferences_session}
 
    This tab contains options related to session management and the
    configuration files.
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
 \begin{figure}[H]
    \centering 
@@ -1307,7 +1406,7 @@
 
    \itempar{Session}{edit!session}
    \textbf{Session}
-   This section provides for three modes of session management:  None, the
+   This tab provides for three modes of session management:  None, the
    Non/New Session Manager (NSM), and JACK Session management.
    None is the normal mode of operation, where the user has full control of
    where to put files, what other applications are to be run alongside

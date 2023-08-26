@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-08-20
+ * \updates       2023-08-25
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2472,7 +2472,7 @@ sequence::randomize_selected (midibyte status, int range)
     automutex locker(m_mutex);
     m_events_undo.push(m_events);               /* push_undo(), no lock  */
     if (range == (-1))
-        range = usr().jitter_range(snap());
+        range = usr().randomization_amount();
 
     bool result = m_events.randomize_selected(status, range);
     if (result)
@@ -2487,7 +2487,7 @@ sequence::randomize_selected_notes (int range)
     automutex locker(m_mutex);
     m_events_undo.push(m_events);               /* push_undo(), no lock  */
     if (range == (-1))
-        range = usr().jitter_range(snap());
+        range = usr().randomization_amount();
 
     bool result = m_events.randomize_selected_notes(range);
     if (result)

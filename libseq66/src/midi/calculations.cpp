@@ -822,11 +822,16 @@ randomize (int range, int seed)
 
         srand(unsigned(seed));
     }
-    if (range < 0)
-        range = -range;
+    if (range != 0)
+    {
+        if (range < 0)
+            range = -range;
 
-    long result = (2 * range * long(rand()) / RAND_MAX) - range;
-    return int(result);
+        long result = (2 * range * long(rand()) / RAND_MAX) - range;
+        return int(result);
+    }
+    else
+        return 0;
 }
 
 #if defined SEQ66_USE_UNIFORM_INT_DISTRIBUTION
@@ -877,10 +882,15 @@ randomize_uniformly (int range, int seed)
         s_randomizer_pointer = &s_randomizer;   /* point to it          */
         s_uninitialized = false;
     }
-    if (range < 0)
-        range = -range;
+    if (range != 0)
+    {
+        if (range < 0)
+            range = -range;
 
-    return s_randomizer_pointer->generate(range);
+        return s_randomizer_pointer->generate(range);
+    }
+    else
+        return 0;
 }
 
 #endif
