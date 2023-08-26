@@ -4,6 +4,9 @@ Chris Ahlstrom
 
 Misc:
 
+    -   The time-line shows measures 11, 21, etc. for Peter Gunn tune.
+        The main window shows PPQN = 1920, but in qseqtime get_ppqn()
+        shows 192! Setting ppqn in 'usr' file fixes this issue.
     -   Make sure L/R looping buttons (main and song) works.
     -   There are many "TODOs" in the automation slots.
     -   Add a feature to start playback when the first note comes
