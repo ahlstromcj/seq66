@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-07-08
+ * \updates       2023-08-26
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -89,6 +89,7 @@ namespace seq66
     class qperfeditframe64;
     class qplaylistframe;
     class qsabout;
+    class qsappinfo;
     class qsbuildinfo;
     class qseditoptions;
     class qseqeditex;
@@ -321,6 +322,7 @@ private:
     qseditoptions * m_dialog_prefs;
     qsabout * m_dialog_about;
     qsbuildinfo * m_dialog_build_info;
+    qsappinfo * m_dialog_app_info;
     qsessionframe * m_session_frame;
     qsetmaster * m_set_master;
     qmutemaster * m_mute_master;
@@ -474,6 +476,7 @@ private slots:
     void show_save_mutes_dialog ();         /* NOT YET CONNECTED            */
     void show_qsabout ();
     void show_qsbuildinfo ();
+    void show_qsappinfo ();
     void tabWidgetClicked (int newindex);
     void conditional_update ();             /* redraw certain GUI elements  */
     void load_editor (int seqid);

@@ -1571,6 +1571,7 @@ beats/minute.</string>
     <addaction name="actionBuildInfo"/>
     <addaction name="actionSongSummary"/>
     <addaction name="separator"/>
+    <addaction name="actionAppInfo"/>
     <addaction name="actionTutorial"/>
     <addaction name="actionUserManual"/>
    </widget>
@@ -1704,6 +1705,11 @@ beats/minute.</string>
   <action name="actionBuildInfo">
    <property name="text">
     <string>&amp;Build Info...</string>
+   </property>
+  </action>
+  <action name="actionAppInfo">
+   <property name="text">
+    <string>App &amp;Keys...</string>
    </property>
   </action>
   <action name="actionAbout_Qt">

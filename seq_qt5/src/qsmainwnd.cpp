@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-21
+ * \updates       2023-08-26
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -59,6 +59,7 @@
  *  Quit/Exit       quit()                  Normal Qt application closing
  *  Help            show_qsabout()          Show Help About (version info)
  *                  show_qsbuildinfo()      Show features of the build
+ *                  show_qsappinfo()        Show additional features
  */
 
 #include <QErrorMessage>                /* QErrorMessage                    */
@@ -93,6 +94,7 @@
 #include "qperfeditframe64.hpp"         /* seq66::qperfeditframe64 class    */
 #include "qplaylistframe.hpp"           /* seq66::qplaylistframe class      */
 #include "qsabout.hpp"                  /* seq66::qsabout dialog class      */
+#include "qsappinfo.hpp"                /* seq66::qsappinfo dialog class    */
 #include "qsbuildinfo.hpp"              /* seq66::qsbuildinfo dialog class  */
 #include "qseditoptions.hpp"            /* seq66::qseditoptions dialog      */
 #include "qseqeditex.hpp"               /* seq66::qseqeditex container      */
@@ -241,6 +243,7 @@ qsmainwnd::qsmainwnd
     m_dialog_prefs          (nullptr),
     m_dialog_about          (nullptr),
     m_dialog_build_info     (nullptr),
+    m_dialog_app_info       (nullptr),
     m_session_frame         (nullptr),
     m_set_master            (nullptr),
     m_mute_master           (nullptr),
@@ -372,6 +375,7 @@ qsmainwnd::qsmainwnd
         cb_perf(), ui->verticalWidget /*this*/, 4, 4
     );
     m_dialog_about = new (std::nothrow) qsabout(this);
+    m_dialog_app_info = new (std::nothrow) qsappinfo(this);
     m_dialog_build_info = new (std::nothrow) qsbuildinfo(this);
     make_perf_frame_in_tab();           /* create m_song_frame64 pointer    */
     m_live_frame = new (std::nothrow) qslivegrid
@@ -472,6 +476,11 @@ qsmainwnd::qsmainwnd
     (
         ui->actionBuildInfo, SIGNAL(triggered(bool)),
         this, SLOT(show_qsbuildinfo())
+    );
+    connect
+    (
+        ui->actionAppInfo, SIGNAL(triggered(bool)),
+        this, SLOT(show_qsappinfo())
     );
     connect
     (
@@ -2419,6 +2428,13 @@ qsmainwnd::show_qsbuildinfo ()
 {
     if (not_nullptr(m_dialog_build_info))
         m_dialog_build_info->show();
+}
+
+void
+qsmainwnd::show_qsappinfo ()
+{
+    if (not_nullptr(m_dialog_app_info))
+        m_dialog_app_info->show();
 }
 
 /**

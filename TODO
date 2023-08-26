@@ -1,21 +1,17 @@
 TO DO for Seq66 0.99.8
 Chris Ahlstrom
-2019-04-13 to 2023-08-25
+2019-04-13 to 2023-08-26
 
 Misc:
 
-    -   The time-line shows measures 11, 21, etc. for Peter Gunn tune.
-        The main window shows PPQN = 1920, but in qseqtime get_ppqn()
-        shows 192! Setting ppqn in 'usr' file fixes this issue.
-    -   Make sure L/R looping buttons (main and song) works.
     -   There are many "TODOs" in the automation slots.
-    -   Add a feature to start playback when the first note comes
-        into a pattern when recording is set. [Turns out to be quite tricky!]
     -   Document and test all this churn.
     -   Document better all of the keys on the seqroll, etc. Add a
         context/focus-sensitive Help / Keyboard menu
     -   Make the performer get/put_settings() functions robust.
     -   Randomizing seems to have a negative bias (after many repeats).
+    -   Add a feature to start playback when the first note comes
+        into a pattern when recording is set. [Turns out to be quite tricky!]
 
 Some of these issues will be pushed off for the distant Seq66v2.
 
