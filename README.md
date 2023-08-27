@@ -81,6 +81,8 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.99.9:
+        *   To be determined.
     *   Version 0.99.8:
         *   Issue #112: A new pattern now displays in the MIDI controller.
         *   Issue #114: Adding display of shortcut keys to tool tips.
@@ -117,77 +119,6 @@ Windows, and using a conventional source tarball.
             such as the arrow keys. Also fixes issue #102.
         *   Added auto-play and auto-advance to play-lists.
         *   Fixed bug in rcsettings::make_config_filespec().
-    *   Version 0.99.6:
-        *   Issue #3 follow-ons:
-            *   Added a qscrollslave to allow QScrollArea to allow the pattern
-                editor panes to remain in sync with the seqroll when using the
-                hjkl, arrow, and page keys.
-        *   Issue #110 follow-ons:
-            *   Addition of Start menu entries for Windows.
-            *   Fixed access to the tutorial and manual. Refactored access
-                to manual and tutorial for robustness.
-            *   Added data/readme files and doc/tutorial files accidentally
-                left out of NSIS installer.
-            *   Fixed the saving of modified tempo changes.
-            *   Fixed event::is_desired(), which affected changing note
-                velocities in the pattern editor's data pane.  Improved
-                velocity-change undo.
-            *   Fixed an error preventing changing the "background" pattern.
-            *   Fixed issues with port-mapping and the Windows MIDI Mapper.
-            *   Issue: Building 32-bit (Windows XP) version on 64-bit Windows.
-                On 64-bit Windows, this seems to require building a 32-bit
-                version of the Qt toolset. Ugh.
-        *   Issue #111: Adding support, as much as possible, for editing,
-            storing, and displaying time signature in the pattern and event
-            editors.
-            *   The first time-signature in a pattern becomes the main
-                time signature of the pattern. (Also stored as a c_timesig
-                SeqSpec).
-            *   The data pane shows a time-signature as a simple fraction.
-            *   Changing the time signature if at time 0 is automatic.
-            *   Time signatures at later times can be logged by setting the
-                current time with a click in the top half of the time line,
-                changing the beats and beat width, then clicking a time-sig log
-                button.
-            *   Time-signatures with a beat width that are not a power of 2
-                do not add an event, but are saved as the c_timesig SeqSpec
-                value.
-            *   Provisional feature: we properly draw the piano roll, time line,
-                event pane vertical lines as time-signature changes.
-                Currently compiled in via a macro (see INSTALL).
-            *   Fixed event filtering in the event (qstriggereditor) pane.
-            *   Fixed time-signature editing in the event editor, and the
-                B:B:T to pulses calculation.
-        *   Enhanced port-mapping to prompt the user about issues and
-            allow for an immediate remap-and-restart. A ton of fixes!
-        *   Added 'o' keystroke to seqroll to toggle recording ('r' already
-            used to randomize notes).
-        *   Added a "quiet" option to not show startup message prompts.
-        *   Enhanced the Edit / Preferences dialog.
-        *   At first start, a log-file is now automatically created. If it
-            gets larger than a megabyte, then it is deleted to start over.
-        *   Fixed bug writing pattern-dump files from event editor.
-        *   Improved modification detection and display in the pattern editor.
-        *   Added the pattern port number to the song summary output.
-        *   Updated alsa.m4 to avoid obsolete AC_TRY_COMPILE warning. Old
-            version stored in contrib/scripts.
-    *   Version 0.99.5:
-        *   Greatly enhanced the event editor tab and the events that can
-            be view and modified.
-        *   Made port-mapping the default. At first startup the map
-            exactly matches the existing ports; the user can edit this setup
-            in the 'rc' file or the Preferences dialog.
-        *   Eliminated "missing ctrl" message at first startup.
-        *   Fixed port ID setting in midibus, and adding output flag in
-            midi_alsa_info.
-        *   Issue #110 Windows: Fixed compiler errors and added scripting to
-            build NSIS-based install without leaving Windows, if desired.
-        *   Internal refactoring to regularize handling of the session/config
-            directory between Linux and Windows.
-        *   Fixed portmidi bugs in Linux and Windows, enhanced device naming.
-        *   Showing disabled/unavailable MIDI devices as grayed in various
-            dropdowns.
-        *   Rearranged the Seq66 man pages more sensibly.
 
     See the "NEWS" file for changes in earlier versions.  Some proposed features
     will be pushed off to Seq66v2; see the bottom of the TODO file. Version

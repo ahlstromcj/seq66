@@ -171,7 +171,7 @@
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.99.8
+set PROJECT_VERSION=0.99.9
 set PROJECT_DATE=2023-08-27
 set PROJECT_DRIVE=C:
 
