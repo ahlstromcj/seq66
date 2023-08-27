@@ -1,12 +1,12 @@
-Seq66 Licensing 0.99.6 and above
+Seq66 Licensing 0.99.8 and above
 Chris Ahlstrom
-2015-09-10 to 2023-07-01
+2015-09-10 to 2023-08-27
 
 Applications:
 
    The Seq66 application license is either the GNU GPLv2 or the GNU GPLv3.
-   Generally, projects that originate with us use the latter license, while
-   projects we have extended may specify the former license.
+   Generally, our projects use the latter license, while projects we have
+   extended may specify the former license.
 
    Copyright (C) 2015-2023 by Chris Ahlstrom
 

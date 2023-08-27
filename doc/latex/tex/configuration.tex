@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2023-06-01
+% \update      2023-08-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1469,6 +1469,36 @@
       default-ppqn = 192
       use-file-ppqn = true
    \end{verbatim}
+
+\subsubsection{'usr' File / User Randomization}
+\label{subsubsec:usr_file_user_randomization}
+
+   The \textbf{Jitter} and \textbf{Randomize} commands available in
+   the \textbf{Tools} menu in the pattern editor depend on
+   two configurable values.
+
+   \index{usr!midi-ppqn}
+   \index{default PPQN}
+   \index{file PPQN}
+   \begin{verbatim}
+      [user-randomization]
+      jitter-divisor = 8
+      amplitude = 8
+   \end{verbatim}
+
+   The \texttt{jitter-divisor} value is used to limit the amount of time
+   jitter in jittering note events.  If \texttt{J} is the jitter divisor, than
+   the maximum range of time randomization R is: \texttt{R = S / J}, where
+   \texttt{S} is the current value of note snap in the pattern editor.
+   Thus, the time can be varied by an amount from minus R to plus R.
+
+   The \texttt{amplitude} value is the maximum range (plus or minus) by which
+   to modify amplitude values such as note velocity or channel pressure.
+   Keep this value small, as the numbers it affects range only from
+   0 to 127.
+
+   One minor bug persists in randomization.  As the randomization is applied
+   repeatedly, the amplitude tends toward zero.
 
 \subsubsection{'usr' File / User MIDI Settings}
 \label{subsubsec:usr_file_user_midi_settings}

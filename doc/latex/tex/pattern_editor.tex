@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-06-15
+% \update      2023-08-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -276,27 +276,41 @@
 
    \itempar{Tools}{pattern editor!tools}
    This button brings up a nested menu of tools for modifying selected
-   events and notes:
+   events and notes.
 
    \begin{enumber}
-      \item \textbf{Select}.  This menu provides two note-selection options:
+      \item \textbf{Select Notes...}.
+      Selects Note Ons, Note Offs, and Aftertouch.
+      In order for notes to be modified by quantization or randomization,
+      they need to be selected first, otherwise some menu entries are
+      disabled..
+      Notes can be selected in the piano roll of via this menu.
+      This menu provides two note-selection options:
          \begin{itemize}
             \item \textbf{Select all}, selects all notes in the pattern;
                The \index{keys!ctrl-a} \texttt{Ctrl-A} will also select
                all of the events in the pattern editor.
-            \item \textbf{Inverse selection}, which inverts the selection of
+            \item \textbf{Invert selection}, which inverts the selection of
                notes.
          \end{itemize}
-      \item \textbf{Timing}. This menu
-            offers two ways to tweak the timing of the selected note:
+      \item \textbf{Note timing/velocity...}. This menu
+            offers three ways to tweak the timing of the selected notes:
          \begin{itemize}
             \item \textbf{Quantize}
                \index{quantize}
-               quantizes the selected notes, the same way as the
+               quantizes the selected notes in time, the same way as the
                \textbf{Quantize} ("\textbf{Q}") button.
-            \item \textbf{Tighten},
+            \item \textbf{Tighten}
                \index{tighten}
-               which is merely a less strict form of quantization.
+               This operation merely a less strict form of quantization.
+            \item \textbf{Jitter}
+               \index{jitter}
+               Jittering modifies the timing of a note by adding or subtracting
+               a small random of time.
+            \item \textbf{Randomize velocity}
+               \index{randomize}
+               This operation modifies the velocity of a note by a small
+               amount.
          \end{itemize}
       \item \textbf{Pitch transpose} allows uniform transpostion
          regardless of the key and scale in force for the pattern.

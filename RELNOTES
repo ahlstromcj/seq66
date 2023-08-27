@@ -1,6 +1,6 @@
-Release Notes for Seq66 v. 0.99.8 2023-08-25
+Release Notes for Seq66 v. 0.99.8 2023-08-27
 
-This file lists major changes in version 0.99.8
+Major changes in version 0.99.8
 
     -   Issue #112: A new pattern now displays in the MIDI controller.
     -   Issue #114: Adding display of shortcut keys to tool tips.
