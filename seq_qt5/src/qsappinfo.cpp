@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-08-21
- * \updates       2023-08-21
+ * \updates       2023-08-28
  * \license       GNU GPLv2 or above
  *
  *  This module supports a task similar to that of the Help / Tutorial menu
@@ -44,6 +44,7 @@
  *
  */
 
+#include "cfg/settings.hpp"             /* seq66::open_share_doc_file()     */
 #include "qsappinfo.hpp"                /* seq66::qsappinfo dialog class    */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
@@ -61,50 +62,15 @@
 namespace seq66
 {
 
-/**
- * Currently just test code.
- */
-
-const std::string s_main_html
+static const std::string s_error_html
 {
 "<html>"
 "<head>"
 "<meta name=\"qrichtext\" content=\"1\" />"
 "<meta charset=\"utf-8\" />"
-"<style type=\"text/css\">"
-"p, li { white-space: pre-wrap; }"
-"hr { height: 1px; border-width: 0; }"
-"li.unchecked::marker { content: \"\2610\"; }"
-"li.checked::marker { content: \"\2612\"; }"
-"</style>"
 "</head>"
 "<body>"
-"   <p> <b> Common Keystrokes</b> </p>"
-"   <p>"
-"      Each piano roll panel has keystrokes separate from the automation keystrokes, and thus not configurable. The arrow keys and some other characters provide functions that are common to the pattern edit and song \"piano rolls\"."
-"   <br>"
-"   <table>"
-"      <tr>"
-"         <td> Standard movement keys</td>"
-"         <td> Arrow-left, -right, -up, -down</td>"
-"      </tr>"
-"      <tr>"
-"         <td> vi-like movement keys</td>"
-"         <td> h, j, k, l</rd>"
-"      </tr>"
-"      <tr>"
-"         <td> Standard large movement keys</td>"
-"         <td> Page-Up, Page-Down, and Ctrl-Home, Ctrl-End</rd>"
-"      </tr>"
-"      <tr>"
-"         <td> Horizontal zoom keys</td>"
-"         <td> Zoom out 'z', zoom in 'Z', reset '0'</rd>"
-"      </tr>"
-"      <tr>"
-"         <td> Vertical zoom keys</td>"
-"         <td> Zoom out 'v', zoom in 'V', reset '0'</rd>"
-"      </tr>"
-"   </table>"
+"<i>Could not find the HTML file in installation directories</i>"
 "</body>"
 "</html>"
 };
@@ -118,12 +84,77 @@ qsappinfo::qsappinfo (QWidget * parent) :
     ui      (new Ui::qsappinfo)
 {
     ui->setupUi(this);
-    ui->textBrowser->setHtml(qt(s_main_html));
+    ui->buttonReserved->hide();
+    slot_common_keys();
+    connect
+    (
+        ui->buttonCommonKeys, SIGNAL(clicked(bool)),
+        this, SLOT(slot_common_keys())
+    );
+    connect
+    (
+        ui->buttonAutomation, SIGNAL(clicked(bool)),
+        this, SLOT(slot_automation_keys())
+    );
+    connect
+    (
+        ui->buttonSeqroll, SIGNAL(clicked(bool)),
+        this, SLOT(slot_seqroll_keys())
+    );
+    connect
+    (
+        ui->buttonPerfroll, SIGNAL(clicked(bool)),
+        this, SLOT(slot_songroll_keys())
+    );
 }
 
 qsappinfo::~qsappinfo ()
 {
     delete ui;
+}
+
+void
+qsappinfo::slot_common_keys ()
+{
+    std::string html = open_share_doc_file("common_keys.html", "info");
+    if (html.empty())
+        html = s_error_html;
+
+    ui->textBrowser->setHtml(qt(html));
+    ui->appPanelLabel->setText("Common to piano rolls");
+}
+
+void
+qsappinfo::slot_automation_keys ()
+{
+    std::string html = open_share_doc_file("automation_keys.html", "info");
+    if (html.empty())
+        html = s_error_html;
+
+    ui->textBrowser->setHtml(qt(html));
+    ui->appPanelLabel->setText("Automation");
+}
+
+void
+qsappinfo::slot_seqroll_keys ()
+{
+    std::string html = open_share_doc_file("seqroll_keys.html", "info");
+    if (html.empty())
+        html = s_error_html;
+
+    ui->textBrowser->setHtml(qt(html));
+    ui->appPanelLabel->setText("Pattern Editor");
+}
+
+void
+qsappinfo::slot_songroll_keys ()
+{
+    std::string html = open_share_doc_file("songroll_keys.html", "info");
+    if (html.empty())
+        html = s_error_html;
+
+    ui->textBrowser->setHtml(qt(html));
+    ui->appPanelLabel->setText("Song Editor");
 }
 
 }               // namespace seq66

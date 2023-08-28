@@ -704,7 +704,7 @@ private:                            /* key, midi, and op container section  */
 
     /**
      *  Part of a refactoring and expansion of the alterations that can be done
-     *  while reocrding, playing, or by a manual command.
+     *  while recording, playing, or by a manual command.
      */
 
     alteration m_alter_recording;

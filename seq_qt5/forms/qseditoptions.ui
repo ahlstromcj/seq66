@@ -28,7 +28,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>6</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -2201,10 +2201,10 @@ Seq66 exits.</string>
       <widget class="QWidget" name="metroLayoutWidget2">
        <property name="geometry">
         <rect>
-         <x>204</x>
+         <x>222</x>
          <y>28</y>
-         <width>329</width>
-         <height>204</height>
+         <width>311</width>
+         <height>201</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -2358,7 +2358,7 @@ Seq66 exits.</string>
         <rect>
          <x>21</x>
          <y>241</y>
-         <width>535</width>
+         <width>511</width>
          <height>105</height>
         </rect>
        </property>
@@ -2609,7 +2609,7 @@ Seq66 exits.</string>
           <x>8</x>
           <y>40</y>
           <width>197</width>
-          <height>151</height>
+          <height>166</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">

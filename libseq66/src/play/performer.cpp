@@ -358,7 +358,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_song_recording        (false),
     m_song_record_snap      (true),
     m_record_snap_length    (0),
-    m_alter_recording  (alteration::none),
+    m_alter_recording       (alteration::none),
     m_resume_note_ons       (usr().resume_note_ons()),
     m_ppqn                  (choose_ppqn(ppqn)),
     m_file_ppqn             (0),

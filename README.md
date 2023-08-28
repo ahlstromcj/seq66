@@ -1,4 +1,4 @@
-# README for Seq66 0.99.8 2023-08-27
+# README for Seq66 0.99.9 2023-08-28
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -82,7 +82,7 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.99.9:
-        *   To be determined.
+        *   Added HTML help files to data/share/doc/info.
     *   Version 0.99.8:
         *   Issue #112: A new pattern now displays in the MIDI controller.
         *   Issue #114: Adding display of shortcut keys to tool tips.

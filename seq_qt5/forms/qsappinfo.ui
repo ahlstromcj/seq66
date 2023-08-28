@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>428</y>
+     <x>660</x>
+     <y>420</y>
      <width>91</width>
      <height>32</height>
     </rect>
@@ -34,13 +34,14 @@
     <rect>
      <x>28</x>
      <y>12</y>
-     <width>251</width>
+     <width>281</width>
      <height>16</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <pointsize>11</pointsize>
+     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -54,9 +55,9 @@
   <widget class="QLabel" name="appPanelLabel">
    <property name="geometry">
     <rect>
-     <x>300</x>
+     <x>370</x>
      <y>10</y>
-     <width>251</width>
+     <width>391</width>
      <height>22</height>
     </rect>
    </property>
@@ -75,16 +76,86 @@
    </property>
    <property name="html">
     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-hr { height: 1px; border-width: 0; }
-li.unchecked::marker { content: &quot;\2610&quot;; }
-li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(Filled at runtime)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Inconsolata'; font-size:11pt; font-weight:456; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:12pt; font-weight:400;&quot;&gt;(Filled at runtime)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonCommonKeys">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>420</y>
+     <width>110</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&amp;Common</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonSeqroll">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>420</y>
+     <width>110</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&amp;Pattern Roll</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonPerfroll">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>420</y>
+     <width>110</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&amp;Song Roll</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonAutomation">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>420</y>
+     <width>110</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&amp;Automation</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonReserved">
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>420</y>
+     <width>110</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Reserved</string>
    </property>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>textBrowser</tabstop>
+  <tabstop>buttonCommonKeys</tabstop>
+  <tabstop>buttonAutomation</tabstop>
+  <tabstop>buttonSeqroll</tabstop>
+  <tabstop>buttonPerfroll</tabstop>
+  <tabstop>buttonReserved</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

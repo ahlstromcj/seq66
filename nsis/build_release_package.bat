@@ -172,7 +172,7 @@
 ::---------------------------------------------------------------------------
  
 set PROJECT_VERSION=0.99.9
-set PROJECT_DATE=2023-08-27
+set PROJECT_DATE=2023-08-28
 set PROJECT_DRIVE=C:
 
 :: Set the bits of the project, either 64 or 32. Also define WIN64 versus
@@ -214,6 +214,7 @@ set RELEASE_DIR=%APP_DIR%\release
 set AUX_DIR=data
 set DOC_DIR=data\share\doc
 set TUTORIAL_DIR=data\share\doc\tutorial
+set INFO_DIR=data\share\doc\tutorial
 
 :: The quotes are required here. Do we want to add "qtquickcompiler"?
 
@@ -269,9 +270,11 @@ windeployqt %RELEASE_DIR%
 echo mkdir %RELEASE_DIR%\%AUX_DIR%
 echo mkdir %RELEASE_DIR%\%DOC_DIR%
 echo mkdir %RELEASE_DIR%\%TUTORIAL_DIR%
+echo mkdir %RELEASE_DIR%\%INFO_DIR%
 echo copy %PROJECT_REL_ROOT%\%DOC_DIR%\*.pdf %RELEASE_DIR%\%DOC_DIR%
 echo copy %PROJECT_REL_ROOT%\%DOC_DIR%\*.ods %RELEASE_DIR%\%DOC_DIR%
 echo xcopy %PROJECT_REL_ROOT%\%DOC_DIR%\tutorial\*.* %RELEASE_DIR%\%TUTORIAL_DIR% /f /s /e /y /i
+echo xcopy %PROJECT_REL_ROOT%\%DOC_DIR%\info\*.* %RELEASE_DIR%\%INFO_DIR% /f /s /e /y /i
 
 mkdir %RELEASE_DIR%\%AUX_DIR%
 mkdir %RELEASE_DIR%\%AUX_DIR%\linux
@@ -282,6 +285,7 @@ mkdir %RELEASE_DIR%\%AUX_DIR%\win
 mkdir %RELEASE_DIR%\%AUX_DIR%\wrk
 mkdir %RELEASE_DIR%\%DOC_DIR%
 mkdir %RELEASE_DIR%\%TUTORIAL_DIR%
+mkdir %RELEASE_DIR%\%INFO_DIR%
 
 copy %PROJECT_REL_ROOT%\%AUX_DIR%\license.* %RELEASE_DIR%\%AUX_DIR%
 copy %PROJECT_REL_ROOT%\%AUX_DIR%\readme.* %RELEASE_DIR%\%AUX_DIR%
@@ -295,6 +299,7 @@ copy %PROJECT_REL_ROOT%\%DOC_DIR%\README %RELEASE_DIR%\%DOC_DIR%
 copy %PROJECT_REL_ROOT%\%DOC_DIR%\*.pdf %RELEASE_DIR%\%DOC_DIR%
 copy %PROJECT_REL_ROOT%\%DOC_DIR%\*.ods %RELEASE_DIR%\%DOC_DIR%
 xcopy %PROJECT_REL_ROOT%\%DOC_DIR%\tutorial\*.* %RELEASE_DIR%\%TUTORIAL_DIR% /f /s /e /y /i
+xcopy %PROJECT_REL_ROOT%\%DOC_DIR%\info\*.* %RELEASE_DIR%\%INFO_DIR% /f /s /e /y /i
 
 :: This section takes the generated build and data files and packs them
 :: up into a 7-zip archive.  This archive should be copied to the root

@@ -1,11 +1,11 @@
-TO DO for Seq66 0.99.8
+TO DO for Seq66 0.99.9
 Chris Ahlstrom
-2019-04-13 to 2023-08-26
+2019-04-13 to 2023-08-28
 
 Misc:
 
+    -   Make sure metronome buttons etc. still work.
     -   There are many "TODOs" in the automation slots.
-    -   Document and test all this churn.
     -   Document better all of the keys on the seqroll, etc. Add a
         context/focus-sensitive Help / Keyboard menu
     -   Make the performer get/put_settings() functions robust.

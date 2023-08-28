@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-04-29
+ * \updates       2023-08-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -302,8 +302,12 @@ qmutemaster::slot_fill_mutes ()
 void
 qmutemaster::clear_pattern_mutes ()
 {
+    int count = cb_perf().mutegroup_count();                /* always 32    */
     m_pattern_mutes.clear();                                /* midibooleans */
-    m_pattern_mutes.resize(cb_perf().mutegroup_count());    /* always 32    */
+    if (count > 0)
+    {
+        m_pattern_mutes.resize(count);
+    }
     m_pattern_offset = 0;
 }
 

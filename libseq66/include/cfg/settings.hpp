@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2023-08-22
+ * \updates       2023-08-28
  * \license       GNU GPLv2 or above
  *
  *  A couple of universal helper functions remain as inline functions in the
@@ -156,7 +156,11 @@ extern const tokenization & share_doc_folder_list
 (
     const std::string & path_end = ""
 );
-extern std::string open_share_doc_file (const std::string & filename);
+extern std::string open_share_doc_file
+(
+    const std::string & filename,
+    const std::string & path_end = ""
+);
 
 }           // namespace seq66
 

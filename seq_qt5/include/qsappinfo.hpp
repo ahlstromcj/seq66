@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-08-21
- * \updates       2023-08-21
+ * \updates       2023-08-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -50,6 +50,13 @@ public:
 
     explicit qsappinfo (QWidget * parent = nullptr);
     virtual ~qsappinfo ();
+
+private slots:
+
+    void slot_common_keys ();
+    void slot_automation_keys ();
+    void slot_seqroll_keys ();
+    void slot_songroll_keys ();
 
 private:
 

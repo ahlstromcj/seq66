@@ -3,7 +3,7 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2023-08-27
+; Updated:      2023-08-28
 ; Version:      0.99.9
 ;
 ; Usage of this Windows build script:
@@ -246,6 +246,7 @@ Section "Documentation" SEC_DOC
     File /r "..\release\data\share\doc\*.pdf"
     File /r "..\release\data\share\doc\*.ods"
     File /r "..\release\data\share\doc\tutorial\*.*"
+    File /r "..\release\data\share\doc\info\*.*"
 
 SectionEnd
 
