@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2023-06-01
+ * \updates       2023-08-29
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -48,6 +48,47 @@ namespace seq66
 {
 
 /**
+ *  This function attempts to get the ACTUAL operating system on which
+ *  a clinsmanager application is built.  See the comment for
+ *  set/seq_app_bulld_issue() function(s) in the seq66_features module.
+ *
+ *  We could also read the /etc/os-release file and parse that sucker.
+ *  Maybe later :-)
+ */
+
+static void
+get_and_set_build_issue ()
+{
+#if defined SEQ66_PLATFORM_WINDOWS
+
+    /*
+     * Windows version helper functions are a mess!
+     */
+
+    std::string buildtext = "Windows 64-bit";   /* no 32-bit support yet    */
+
+#else
+
+    std::string buildtext = "Unknown";          /* fallback for failure     */
+    std::string temp = file_read_string("/etc/issue");
+    if (temp.empty())
+        temp = file_read_string("/etc/issue.net");
+
+    if (! temp.empty())
+    {
+        auto spos = temp.find_first_of("\\");
+        if (spos != std::string::npos)
+            temp = temp.substr(0, spos - 1);
+
+        buildtext = temp;
+    }
+
+#endif
+
+    set_app_build_issue(buildtext);
+}
+
+/**
  *  Note that this object is created before there is any chance to get the
  *  configuration, because the smanager base class is what gets the
  *  configuration, well after this constructor.
@@ -61,7 +102,7 @@ clinsmanager::clinsmanager (const std::string & caps) :
     m_nsm_active        (false),
     m_poll_period_ms    (3 * usr().window_redraw_rate())    /* in qsmainwnd */
 {
-    // no code
+    get_and_set_build_issue();
 }
 
 clinsmanager::~clinsmanager ()

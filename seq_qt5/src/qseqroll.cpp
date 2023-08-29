@@ -1439,6 +1439,11 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                 done = mark_modified();
             else
             {
+                /*
+                 * TODO: does this even get called for the non-Ctrl'ed
+                 *       arrow keys? Investigate!
+                 */
+
                 if (isctrl)
                 {
                     midipulse tick = perf().get_tick();
@@ -1500,7 +1505,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                         if (event->modifiers() & Qt::ShiftModifier)
                         {
                             /*
-                             * Doesn't seem to do anything!
+                             * TODO: Doesn't seem to do anything!
                              */
 
                             track().pop_redo();

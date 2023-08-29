@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2023-08-21
+ * \updates       2023-08-29
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -261,6 +261,19 @@ seq_app_build_os ()
 {
     return s_app_build_os;
 }
+
+/**
+ *  We saw "Ubuntu" when built on our new Arch Linux laptop. How? The
+ *  configure.ac file uses
+ *
+ *  AC_DEFINE_UNQUOTED(APP_BUILD_ISSUE,
+ *  "[m4_normalize(esyscmd([cat /etc/issue.net]))]", "Distro of build")
+ *
+ *  And this gets locked into the configure script (somehow).
+ *
+ *  So now we recommend that main() call set_app_build_issue() to the
+ *  c0rrect value.
+ */
 
 const std::string &
 seq_app_build_issue ()

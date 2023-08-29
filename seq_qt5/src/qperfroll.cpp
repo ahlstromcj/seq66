@@ -751,6 +751,10 @@ qperfroll::keyPressEvent (QKeyEvent * event)
             case Qt::Key_Left:
             case Qt::Key_Right:
 
+                /*
+                 * Redundant with non-Ctrl versions.
+                 */
+
                 handled = move_by_key(event->key() == Qt::Key_Right, false);
                 break;
             }
