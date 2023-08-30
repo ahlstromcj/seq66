@@ -21,7 +21,7 @@
 # \library     seq66/data
 # \author      Chris Ahlstrom
 # \date        2018-01-02
-# \updates     2023-04-04
+# \updates     2023-08-28
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -643,9 +643,11 @@ install-data-local:
 	@echo "Copying Seq66 documentation to $(docfolder)..."
 	mkdir -p $(docfolder)
 	mkdir -p $(docfolder)/tutorial
+	mkdir -p $(docfolder)/info
 	cp -r -p $(top_srcdir)/data/share/doc/*.pdf $(docfolder)
 	cp -r -p $(top_srcdir)/data/share/doc/*.ods $(docfolder)
 	cp -r -p $(top_srcdir)/data/share/doc/tutorial/* $(docfolder)/tutorial
+	cp -r -p $(top_srcdir)/data/share/doc/info/* $(docfolder)/info
 
 #******************************************************************************
 # uninstall-hook

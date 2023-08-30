@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-08-20
+ * \updates       2023-08-30
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -48,6 +48,8 @@
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
+
+#undef  USE_OBSOLETE_SET_RECORDING
 
 /**
  *  Provides an integer value for color that matches PaletteColor::NONE.  That
@@ -510,6 +512,8 @@ private:
 
     bool m_auto_step_reset;
 
+#if defined USE_OBSOLETE_SET_RECORDING
+
     /**
      *  Provides an option for expanding the number of measures while
      *  recording.  In essence, the "infinite" track we've wanted, thanks
@@ -533,6 +537,16 @@ private:
      */
 
     bool m_oneshot_recording;
+
+#else
+
+    /**
+     *  Eliminates a bunch of booleans. The default style is merge.
+     */
+
+    recordstyle m_recording_style;
+
+#endif
 
     /**
      *  Replaces a potential bunch of booleans. The data type is defined in
@@ -1372,13 +1386,24 @@ public:
         return get_queued() && (get_queued_tick() <= tick);
     }
 
+#if defined USE_OBSOLETE_SET_RECORDING
+    bool set_overwrite_recording (toggler flag);
     bool set_recording (bool recordon, bool toggle = false);
     bool set_recording (alteration q, bool active = false);
-
     bool set_quantized_recording (bool qr, bool toggle = false);
     bool set_tightened_recording (bool tr, bool toggle = false);
-
     bool set_overwrite_recording (bool ovwr, bool toggle = false);
+#else
+    bool set_recording_style (recordstyle rs);
+#endif
+
+    /*
+     * The seq66::toggler flag enumeration is off, on, and flip!
+     */
+
+    bool set_recording (toggler flag);
+    bool set_recording (alteration q, toggler flag);
+
     bool set_thru (bool thru_active, bool toggle = false);
 
     bool recording () const
@@ -1411,21 +1436,18 @@ public:
         return tightened_recording();
     }
 
-/*
-    bool quantizing_or_tightening () const
-    {
-        return recording() && (quantized_recording() || tightened_recording());
-    }
- */
-
     bool expanded_recording () const
     {
+#if defined USE_OBSOLETE_SET_RECORDING
         return m_expanded_recording;
+#else
+        return m_recording_style == recordstyle::expand;
+#endif
     }
 
     bool expanding () const
     {
-        return recording() && m_expanded_recording;
+        return recording() && expanded_recording();
     }
 
     bool auto_step_reset () const
@@ -1435,7 +1457,11 @@ public:
 
     bool oneshot_recording () const
     {
+#if defined USE_OBSOLETE_SET_RECORDING
         return m_oneshot_recording;
+#else
+        return m_recording_style == recordstyle::oneshot;
+#endif
     }
 
     void auto_step_reset (bool flag)
@@ -1446,19 +1472,31 @@ public:
 
     void oneshot_recording (bool flag)
     {
+#if defined USE_OBSOLETE_SET_RECORDING
         m_oneshot_recording = flag;
+#else
+        m_recording_style = flag ? recordstyle::oneshot : recordstyle::merge ;
+#endif
     }
 
-    void expanded_recording (bool expand)
+    void expanded_recording (bool flag)
     {
-        m_expanded_recording = expand;
+#if defined USE_OBSOLETE_SET_RECORDING
+        m_expanded_recording = flag;
+#else
+        m_recording_style = flag ? recordstyle::expand : recordstyle::merge ;
+#endif
     }
 
     bool expand_recording () const;     /* does more checking for status    */
 
     bool overwriting () const
     {
+#if defined USE_OBSOLETE_SET_RECORDING
         return m_recording && m_overwrite_recording;
+#else
+        return m_recording_style == recordstyle::overwrite;
+#endif
     }
 
     bool thru () const

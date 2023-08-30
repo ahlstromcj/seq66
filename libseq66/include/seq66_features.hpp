@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-08-21
+ * \updates       2023-08-30
  * \license       GNU GPLv2 or above
  *
  *    Provides some useful functions for displaying information about the
@@ -52,6 +52,18 @@
 
 namespace seq66
 {
+
+/**
+ *  A kind of tribool, it adds a "flip" option. Better than sending
+ *  multiple boolean parameters.
+ */
+
+enum class toggler
+{
+    off,                /**< A request to turn a state boolean to false.    */
+    on,                 /**< A request to turn a state boolean to true.     */
+    flip                /**< A request to toggle a state boolean.           */
+};
 
 /**
  *  An indicator of the message level.  Used in the message functions defined

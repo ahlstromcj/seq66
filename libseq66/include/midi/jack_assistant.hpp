@@ -118,27 +118,6 @@ public:
 #if defined SEQ66_JACK_SUPPORT
 
 /**
- *  Indicates whether Seq66 or another program is the JACK timebase master.
- *
- * \var none
- *      JACK transport is not being used.
- *
- * \var slave
- *      An external program is timebase master and we disregard all local
- *      tempo information. Instead, we use onl the BPM provided by JACK.
- *
- * \var master
- *      Whether by force or conditionally, this program is JACK master.
-
-enum class timebase
-{
-    none,
-    slave,
-    master
-};
- */
-
-/**
  *  Provides an internal type to make it easier to display a specific and
  *  accurate human-readable message when a JACK operation fails.
  */

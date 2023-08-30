@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-21
+ * \updates       2023-08-30
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1573,8 +1573,13 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                 case Qt::Key_O:
 
+#if defined USE_OBSOLETE_SET_RECORDING
                     if (track().set_recording(false, true))     /* toggle   */
                         done = true;
+#else
+                    if (track().set_recording(toggler::flip))
+                        done = true;
+#endif
                     break;
 
                 case Qt::Key_P:

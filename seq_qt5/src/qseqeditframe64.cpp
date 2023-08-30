@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-08-25
+ * \updates       2023-08-30
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -382,6 +382,8 @@ qseqeditframe64::qseqeditframe64
         thru_change(usr().new_pattern_thru());
         record_change(usr().new_pattern_record());
         q_record_change(usr().new_pattern_qrecord());
+
+        // TODO: WHAT ABOUT RECORD TYPE???
     }
 
     /*
@@ -1871,9 +1873,8 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
                     bool allow_odd_beat_width = qt_prompt_ok
                     (
                         "MIDI supports only powers of 2 for beat-width.",
-//                      "It won't be saved properly, but you do you."
-                        "It will be saved as a Seq66-specific MIDI event, "
-                        "not a time-signature event. Only one seq-spec allowed. "
+                        "It is saved as a global Seq66-specific MIDI event, "
+                        "not a time-signature event. "
                         "Overriden by existing time-signature events."
                     );
                     if (allow_odd_beat_width)
@@ -3712,12 +3713,14 @@ qseqeditframe64::play_change (bool ischecked)
 void
 qseqeditframe64::record_change (bool ischecked)
 {
+#if defined USE_OBSOLETE_SET_RECORDING
     if (perf().set_recording(track(), ischecked, false))
-    {
         update_midi_buttons();
-//      if (! ischecked)
-//          repopulate_usr_combos(m_edit_bus, m_edit_channel);
-    }
+#else
+    toggler t = ischecked ? toggler::on : toggler::off ;
+    if (perf().set_recording(track(), t))
+        update_midi_buttons();
+#endif
 }
 
 /**
@@ -3740,11 +3743,20 @@ qseqeditframe64::q_record_change (bool ischecked)
      * Q record button to get set, and turn both Q and regular recording on.
      */
 
+#if defined USE_OBSOLETE_SET_RECORDING
     if (ischecked)
-        (void) (perf().set_recording(track(), false, false));
+        (void) perf().set_recording(track(), false, false);
 
     if (perf().set_quantized_recording(track(), ischecked, false))
         update_midi_buttons();
+#else
+    toggler t = ischecked ? toggler::on : toggler::off ;
+    if (ischecked)
+        (void) perf().set_recording(track(), toggler::off);
+
+    if (perf().set_recording(track(), alteration::quantize, t))
+        update_midi_buttons();
+#endif
 }
 
 /**

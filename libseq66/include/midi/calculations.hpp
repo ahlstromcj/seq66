@@ -120,12 +120,12 @@ lengthfix_cast (int v)
 enum class alteration
 {
     none = 0,   /**< grid_quant_none:    Not adjusting timing of pattern.   */
-    tighten,    /**< grid_quant_tighten: Adjusting timing less forcefully.  */
-    quantize,   /**< grid_quant_full:    Adjusting timing strictly.         */
+    tighten,    /**< grid_quant_tighten: Adjust timing less forcefully.     */
+    quantize,   /**< grid_quant_full:    Adjust timing strictly.            */
     jitter,     /**< grid_quant_jitter:  Randomize timing slightly.         */
     random,     /**< grid_quant_random:  Randomize event magnitude a bit.   */
     notemap,    /**< grid_quant_notemap: Apply a configured note-mapping.   */
-    max         /**<                      Illegal value.                    */
+    max         /**<                     Illegal value.                     */
 };
 
 inline int

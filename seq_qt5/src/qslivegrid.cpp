@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-08-21
+ * \updates       2023-08-30
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1343,18 +1343,21 @@ qslivegrid::alter_sequence (seq::number seqno)
     }
 }
 
-#if defined SEQ66_RECORD_MENU_ENTRY
-
 void
 qslivegrid::record_sequence ()
 {
-    if (perf().set_recording(m_current_seq, false /*active*/, true /*toggle*/))
+#if defined USE_OBSOLETE_SET_RECORDING
+    if (perf().set_recording(m_current_seq, false, true))   // active, toggle
     {
         // todo?
     }
-}
-
+#else
+    if (perf().set_recording(m_current_seq, toggler::flip))
+    {
+        // todo?
+    }
 #endif
+}
 
 void
 qslivegrid::copy_sequence ()
@@ -1795,7 +1798,6 @@ qslivegrid::popup_menu ()
         menuColour->addMenu(menu4Colour);
         m_popup->addMenu(menuColour);
 
-#if defined SEQ66_RECORD_MENU_ENTRY
         QAction * actionRecord = new_qaction("&Record toggle", m_popup);
         m_popup->addAction(actionRecord);
         connect
@@ -1803,7 +1805,6 @@ qslivegrid::popup_menu ()
             actionRecord, SIGNAL(triggered(bool)),
             this, SLOT(record_sequence())
         );
-#endif
 
         /**
          *  Copy/Cut/Delete/Paste menus

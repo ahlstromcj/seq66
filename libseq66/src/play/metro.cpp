@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-08-18
+ * \updates       2022-08-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -351,20 +351,28 @@ recorder::initialize (performer * p)
              */
 
             midibyte channel = settings().thru_channel();
+#if defined USE_OBSOLETE_SET_RECORDING
             bool quantize = usr().record_mode() == alteration::quantize;
             bool tighten = usr().record_mode() == alteration::tighten;
             bool overwrite = usr().grid_record_style() == recordstyle::overwrite;
-            bool oneshot = usr().grid_record_style() == recordstyle::oneshot;
+#endif
             bool expand = usr().grid_record_style() == recordstyle::expand;
+            bool oneshot = usr().grid_record_style() == recordstyle::oneshot;
             seq_number(sequence::recorder());       /* magic recorder seq   */
             set_name("Background Recording");
             set_midi_bus(buss);
             free_channel(true);                     /* keep recorded chan   */
+#if defined USE_OBSOLETE_SET_RECORDING
             set_overwrite_recording(overwrite);
-            oneshot_recording(oneshot);
             set_quantized_recording(quantize);
             set_tightened_recording(tighten);
             set_recording(true);                    /* see banner notes     */
+            oneshot_recording(oneshot);
+#else
+            set_recording(usr().record_mode(), toggler::on);
+            set_recording_style(usr().grid_record_style());
+            oneshot_recording(oneshot);
+#endif
             set_thru(true);
             set_midi_channel(channel);
             if (expand || settings().expand_recording())
@@ -389,7 +397,11 @@ recorder::initialize (performer * p)
 bool
 recorder::uninitialize ()
 {
+#if defined USE_OBSOLETE_SET_RECORDING
     set_recording(false);               /* also clears expanded rec, etc.   */
+#else
+    set_recording(alteration::none, toggler::off);  /* doesn't clear expand */
+#endif
 
     /*
      * Probably want the user to remember to modify these settings.

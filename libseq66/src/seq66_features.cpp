@@ -554,18 +554,21 @@ seq_build_details ()
         ;
 
 #if defined SEQ66_PLATFORM_UNIX
-    result << "Distro: " << seq_app_build_issue() << "\n";
+    result << "Build Distro: " << seq_app_build_issue() << "\n";
 #endif
 
     if (! s_qt_version.empty())
-        result << "Qt v. " << s_qt_version << "\n";
+        result << "GUI: Qt v. " << s_qt_version << "\n";
 
 #if defined SEQ66_RTMIDI_SUPPORT_REDUNDANT_INFO
     result << "Native JACK/ALSA (rtmidi)\n";
 #endif
 
+    if (! s_alsa_version.empty())
+        result << "ALSA v. " << s_alsa_version << "\n";
+
 #if defined SEQ66_PORTMIDI_SUPPORT
-    result << "PortMIDI support\n";
+    result << "PortMIDI\n";
 #endif
 
 #if defined SEQ66_JACK_SUPPORT
@@ -577,12 +580,9 @@ seq_build_details ()
         ;
 #endif
 
-    if (! s_alsa_version.empty())
-        result << "ALSA v. " << s_alsa_version << "\n";
-
     result
 #if defined SEQ66_NSM_SUPPORT
-        << "NSM (Non Session Manager) support\n"
+        << "NSM (Non Session Manager)\n"
 #endif
         <<
             "\n"

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-04-26
+ * \updates       2023-08-29
  * \license       GNU GPLv2 or above
  *
  *
@@ -42,12 +42,6 @@
 
 #include "qslivebase.hpp"               /* seq66::qslivebase ABC            */
 #include "play/screenset.hpp"           /* seq66::screenset class           */
-
-/**
- *  New feature?
- */
-
-#define SEQ66_RECORD_MENU_ENTRY
 
 /*
  * Qt forward references.
@@ -202,9 +196,7 @@ private slots:
     void edit_sequence ();
     void edit_sequence_ex ();
     void edit_events ();
-#if defined SEQ66_RECORD_MENU_ENTRY
     void record_sequence ();
-#endif
     void copy_sequence ();
     void cut_sequence ();
     void paste_sequence ();

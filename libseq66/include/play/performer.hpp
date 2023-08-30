@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-08-17
+ * \updates       2023-08-30
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -704,7 +704,8 @@ private:                            /* key, midi, and op container section  */
 
     /**
      *  Part of a refactoring and expansion of the alterations that can be done
-     *  while recording, playing, or by a manual command.
+     *  while recording, playing, or by a manual command. See the calculations
+     *  header for the "alteration" enumeration.
      */
 
     alteration m_alter_recording;
@@ -2108,11 +2109,27 @@ public:
     bool set_midi_bus (seq::number seqno, int buss);
     bool set_midi_channel (seq::number seqno, int channel);
     bool set_sequence_name (seq::ref s, const std::string & name);
+    bool set_recording (seq::number seqno, toggler flag);
+    bool set_recording (seq::ref s, toggler flag);
+
+    bool set_recording (seq::ref s, alteration q, toggler flag)
+    {
+        return s.set_recording(q, flag);
+    }
+
+    void set_recording_style (recordstyle rs);
+
+#if defined USE_OBSOLETE_SET_RECORDING
+    bool set_overwrite_recording (seq::ref s, toggler flag)
+    {
+        return s.set_overwrite_recording(flag);
+    }
     bool set_recording (seq::ref s, bool active, bool toggle);
     bool set_recording (seq::number seqno, bool active, bool toggle);
     bool set_quantized_recording (seq::ref s, bool active, bool toggle);
     bool set_tightened_recording (seq::ref s, bool active, bool toggle);
     bool set_overwrite_recording (seq::ref s, bool active, bool toggle);
+#endif
     bool set_thru (seq::ref s, bool active, bool toggle);
 
 #if defined USE_SONG_BOX_SELECT

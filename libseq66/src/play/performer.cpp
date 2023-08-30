@@ -3962,13 +3962,29 @@ performer::set_sequence_name (seq::ref s, const std::string & name)
  *      checked.
  */
 
+#if defined USE_OBSOLETE_SET_RECORDING
+
 bool
 performer::set_recording (seq::ref s, bool recordon, bool toggle)
 {
     bool result = s.set_recording(recordon, toggle);
     if (result)
-        set_needs_update();                             /* ca 2023-04-24    */
+    {
+        set_needs_update();
+    }
+    return result;
+}
 
+#endif
+
+bool
+performer::set_recording (seq::ref s, toggler flag)
+{
+    bool result = s.set_recording(flag);
+    if (result)
+    {
+        set_needs_update();
+    }
     return result;
 }
 
@@ -3987,6 +4003,8 @@ performer::set_recording (seq::ref s, bool recordon, bool toggle)
  *      setting.  Passed along to sequence::input_recording().
  */
 
+#if defined USE_OBSOLETE_SET_RECORDING
+
 bool
 performer::set_recording (seq::number seqno, bool recordon, bool toggle)
 {
@@ -3994,6 +4012,19 @@ performer::set_recording (seq::number seqno, bool recordon, bool toggle)
     bool result = not_nullptr(s);
     if (result)
         result = set_recording(*s, recordon, toggle);
+
+    return result;
+}
+
+#endif
+
+bool
+performer::set_recording (seq::number seqno, toggler flag)
+{
+    sequence * s = get_sequence(seqno).get();
+    bool result = not_nullptr(s);
+    if (result)
+        result = set_recording(*s, flag);   /* s->set_recording(flag)   */
 
     return result;
 }
@@ -4009,11 +4040,15 @@ performer::set_recording (seq::number seqno, bool recordon, bool toggle)
  *      validity.
  */
 
+#if defined USE_OBSOLETE_SET_RECORDING
+
 bool
 performer::set_quantized_recording (seq::ref s, bool recordon, bool toggle)
 {
     return s.set_quantized_recording(recordon, toggle);
 }
+
+#endif
 
 /**
  *  Sets quantized recording.  This isn't quite consistent with setting
@@ -4029,6 +4064,8 @@ performer::set_quantized_recording (seq::ref s, bool recordon, bool toggle)
  *      If true, ignore the first flag and let the sequence toggle its
  *      setting.  Passed along to sequence::set_recording().
  */
+
+#if defined USE_OBSOLETE_SET_RECORDING
 
 bool
 performer::set_quantized_recording (seq::number seqno, bool recordon, bool toggle)
@@ -4114,6 +4151,8 @@ performer::set_overwrite_recording
 
     return result;
 }
+
+#endif  // defined USE_OBSOLETE_SET_RECORDING
 
 /**
  *  Encapsulates code used by seqedit::thru_change_callback().
@@ -7651,6 +7690,7 @@ performer::loop_control
             }
             else
             {
+#if defined USE_OBSOLETE_SET_RECORDING
                 bool rec = false;                   /* !s->recording()  */
                 bool toggle = false;
                 if (a == automation::action::toggle)
@@ -7664,6 +7704,21 @@ performer::loop_control
                     result = set_quantized_recording(seqno, rec, toggle);
                 else if (usr().record_mode() == alteration::tighten)
                     result = set_tightened_recording(seqno, rec, toggle);
+#else
+                toggler flag = toggler::off;            /* i.e. "false"     */
+                seq::pointer seqp = get_sequence(seqno);
+                bool result = bool(seqp);
+                if (result)
+                {
+                    if (a == automation::action::toggle)
+                        flag = toggler::flip;
+                    else if (a == automation::action::on)
+                        flag = toggler::on;
+
+                    result = set_recording(*seqp, usr().record_mode(), flag);
+                }
+
+#endif  // defined USE_OBSOLETE_SET_RECORDING
             }
         }
         if (result)

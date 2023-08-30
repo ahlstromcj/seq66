@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-08-25
+ * \updates       2023-08-30
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -161,9 +161,13 @@ sequence::sequence (int ppqn) :
     m_recording                 (false),
     m_draw_locked               (false),
     m_auto_step_reset           (false),
+#if defined USE_OBSOLETE_SET_RECORDING
     m_expanded_recording        (false),
     m_overwrite_recording       (false),
     m_oneshot_recording         (false),
+#else
+    m_recording_style           (recordstyle::merge),
+#endif
     m_alter_recording           (alteration::none),
     m_thru                      (false),
     m_queued                    (false),
@@ -3962,7 +3966,11 @@ sequence::stream_event (event & ev)
             else if (oneshot_recording())
             {
                 loop_reset(false);
+#if defined USE_OBSOLETE_SET_RECORDING
                 set_recording(false);
+#else
+                set_recording(toggler::off);
+#endif
                 set_dirty();
             }
         }
@@ -5812,7 +5820,8 @@ sequence::set_armed (bool p)
 }
 
 /**
- * \setter m_recording and m_notes_on
+ *  This sets the status of basic recording, with no other wrinkles such as
+ *  quantization.
  *
  *  This function sets m_notes_on to 0, only if the recording status has
  *  changed.  It is called by set_recording().  We probably need to explicitly
@@ -5836,6 +5845,8 @@ sequence::set_armed (bool p)
  *      value is false.
  */
 
+#if defined USE_OBSOLETE_SET_RECORDING
+
 bool
 sequence::set_recording (bool recordon, bool toggle)
 {
@@ -5851,28 +5862,52 @@ sequence::set_recording (bool recordon, bool toggle)
 }
 
 bool
-sequence::set_recording (alteration q, bool recordon)
+sequence::set_recording (alteration q, bool active)
+{
+    m_alter_recording = q;
+    return set_recording(active, false);        // BOGUS???
+}
+
+#endif  // defined USE_OBSOLETE_SET_RECORDING
+
+bool
+sequence::set_recording (toggler flag)
 {
     automutex locker(m_mutex);
+    bool recordon = m_recording;
+    if (flag == toggler::flip)
+        recordon = ! recordon;
+    else
+        recordon = flag == toggler::on;
+
     bool result = master_bus()->set_sequence_input(recordon, this);
     if (result)
     {
+        m_recording = recordon;
         m_notes_on = 0;                 /* reset the step-edit note counter */
-        if (recordon)
-        {
-            m_recording = true;
-            m_alter_recording = q;
-        }
-        else
-        {
-            m_recording = false;
+        if (! recordon)
             m_alter_recording = alteration::none;
-        }
+
         set_dirty();
-        notify_trigger();                                   /* tricky!  */
+        notify_trigger();
     }
     return result;
 }
+
+bool
+sequence::set_recording (alteration q, toggler flag)
+{
+    automutex locker(m_mutex);
+    bool result = set_recording(flag);
+    if (result)
+        m_alter_recording = q;
+    else
+        m_alter_recording = alteration::none;
+
+    return result;
+}
+
+#if defined USE_OBSOLETE_SET_RECORDING
 
 /**
  *  Support for the legacy UI button or menu entry.
@@ -5950,6 +5985,52 @@ sequence::set_overwrite_recording (bool ovwr, bool toggle)
     }
     return result;
 }
+
+bool
+sequence::set_overwrite_recording (toggler flag)
+{
+    automutex locker(m_mutex);
+    bool result = true;
+    bool ovwr = m_overwrite_recording;
+    if (flag == toggler::flip)
+    {
+        ovwr = ! ovwr;
+    }
+    else
+    {
+        ovwr = flag == toggler::on;
+        result = ovwr != m_overwrite_recording;
+    }
+    if (result)
+    {
+        m_overwrite_recording = ovwr;
+        if (ovwr)
+            loop_reset(true);   /* on overwrite, always reset the sequence  */
+
+        notify_trigger();                               /* tricky!  */
+    }
+    return result;
+}
+
+#else
+
+bool
+sequence::set_recording_style (recordstyle rs)
+{
+    automutex locker(m_mutex);
+    bool result = rs != recordstyle::max;
+    if (result)
+    {
+        m_recording_style = rs;
+        if (rs == recordstyle::overwrite)
+            loop_reset(true);   /* on overwrite, always reset the sequence  */
+
+        notify_trigger();                               /* tricky!  */
+    }
+    return result;
+}
+
+#endif  // defined USE_OBSOLETE_SET_RECORDING
 
 /**
  *  Sets the state of MIDI Thru.
@@ -6980,6 +7061,7 @@ sequence::update_recording (int index)
     bool result = rectype != recordstyle::max;
     if (result)
     {
+#if defined USE_OBSOLETE_SET_RECORDING
         switch (rectype)
         {
         case recordstyle::merge:
@@ -7024,6 +7106,36 @@ sequence::update_recording (int index)
 
             break;
         }
+#else
+        switch (rectype)
+        {
+        case recordstyle::merge:
+        case recordstyle::overwrite:
+        case recordstyle::expand:
+
+            auto_step_reset(false);
+            break;
+
+        case recordstyle::oneshot:
+
+            auto_step_reset(true);
+            break;
+
+        case recordstyle::oneshot_reset:
+
+            clear_events();
+            m_last_tick = 0;
+            set_recording(toggler::on);
+            break;
+
+        default:
+
+            result = false;
+            break;
+        }
+        if (result)
+            result = set_recording_style(rectype);
+#endif
     }
     return result;
 }
