@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-08-30
+ * \updates       2023-08-31
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2111,13 +2111,9 @@ public:
     bool set_sequence_name (seq::ref s, const std::string & name);
     bool set_recording (seq::number seqno, toggler flag);
     bool set_recording (seq::ref s, toggler flag);
+    bool set_recording (seq::ref s, alteration q, toggler flag);
 
-    bool set_recording (seq::ref s, alteration q, toggler flag)
-    {
-        return s.set_recording(q, flag);
-    }
-
-    void set_recording_style (recordstyle rs);
+    // bool set_recording_style (recordstyle rs);   // see set_record_style()
 
 #if defined USE_OBSOLETE_SET_RECORDING
     bool set_overwrite_recording (seq::ref s, toggler flag)

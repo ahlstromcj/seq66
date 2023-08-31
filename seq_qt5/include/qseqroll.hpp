@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-23
+ * \updates       2023-08-31
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -155,13 +155,6 @@ private:        // overrides for painting, mouse/keyboard events, & size hints
     virtual void mouseMoveEvent (QMouseEvent *) override;
     virtual void keyPressEvent (QKeyEvent *) override;
     virtual QSize sizeHint () const override;
-
-private:
-
-    virtual void update_midi_buttons () override
-    {
-        // no code needed, no buttons or statuses to update at this time
-    }
 
 private:
 

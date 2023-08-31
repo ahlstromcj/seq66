@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-08-30
+ * \updates       2023-08-31
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -920,6 +920,12 @@ qseqeditframe64::qseqeditframe64
     );
 
     /*
+     * New location. Update the buttons before any of them are connected.
+     */
+
+    update_midi_buttons();
+
+    /*
      * Enable (unmute) Play Button. It's not the triangular play button, it's
      * the box-to-MIDI-port button.
      */
@@ -1048,7 +1054,14 @@ qseqeditframe64::qseqeditframe64
     int scrollwidth = ui->rollScrollArea->width();
     m_seqroll->progress_follow(seqwidth > scrollwidth);
     ui->m_toggle_follow->setChecked(m_seqroll->progress_follow());
-    update_midi_buttons();
+
+    /*
+     * Old location. Avoid calling setChecked(), as the Qt 5 documentation
+     * seems to be incorrect in saying setChecked() doesn't trigger a slot.
+     *
+     *      update_midi_buttons();
+     */
+
     set_initialized();
     cb_perf().enregister(this);                             /* notification */
     m_timer = qt_timer(this, "qseqeditframe64", 2, SLOT(conditional_update()));
@@ -3662,37 +3675,45 @@ qseqeditframe64::show_pattern_fix ()
  *  Duplicative code.  See record_change(), thru_change(), q_record_change().
  */
 
+static const char * const s_thru_on     = "MIDI Thru Active";
+static const char * const s_thru_off    = "MIDI Thru Inactive";
+static const char * const s_rec_on      = "Record Active";
+static const char * const s_rec_off     = "Record Inactive";
+static const char * const s_qrec_on     = "Quantized Record Active";
+static const char * const s_qrec_off    = "Quantized Record Inactive";
+
 void
 qseqeditframe64::update_midi_buttons ()
 {
-    static const char * const s_thru_on = "MIDI Thru Active";
-    static const char * const s_thru_off = "MIDI Thru Inactive";
-    static const char * const s_rec_on = "Record Active";
-    static const char * const s_rec_off = "Record Inactive";
-    static const char * const s_qrec_on = "Quantized Record Active";
-    static const char * const s_qrec_off = "Quantized Record Inactive";
-
     bool thru_active = track().thru();
+    ui->m_toggle_thru->blockSignals(true);
     ui->m_toggle_thru->setChecked(thru_active);
     ui->m_toggle_thru->setToolTip(thru_active ? s_thru_on : s_thru_off);
     qt_set_icon(thru_active ? thru_on_xpm : thru_xpm, ui->m_toggle_thru);
+    ui->m_toggle_thru->blockSignals(false);
 
     bool record_active = track().recording();
+    ui->m_toggle_record->blockSignals(true);
     ui->m_toggle_record->setChecked(record_active);
     ui->m_toggle_record->setToolTip(record_active ? s_rec_on : s_rec_off);
     qt_set_icon(record_active ? rec_on_xpm : rec_xpm, ui->m_toggle_record);
+    ui->m_toggle_record->blockSignals(false);
     if (! record_active)
         repopulate_usr_combos(m_edit_bus, m_edit_channel);
 
     bool qrecord_active = track().quantized_recording();
+    ui->m_toggle_qrecord->blockSignals(true);
     ui->m_toggle_qrecord->setChecked(qrecord_active);
     ui->m_toggle_qrecord->setToolTip(qrecord_active ? s_qrec_on : s_qrec_off);
     qt_set_icon(qrecord_active ? q_rec_on_xpm : q_rec_xpm, ui->m_toggle_qrecord);
+    ui->m_toggle_qrecord->blockSignals(false);
 
     bool playing = track().armed();
+    ui->m_toggle_play->blockSignals(true);
     ui->m_toggle_play->setChecked(playing);
     ui->m_toggle_play->setToolTip(playing ? "Armed" : "Muted");
     qt_set_icon(playing ? play_on_xpm : play_xpm, ui->m_toggle_play);
+    ui->m_toggle_play->blockSignals(false);
 }
 
 /**
@@ -3703,7 +3724,15 @@ void
 qseqeditframe64::play_change (bool ischecked)
 {
     if (track().set_armed(ischecked))
-        update_midi_buttons();
+    {
+        /*
+         * No need to refresh all the buttons: update_midi_buttons();
+         */
+
+        bool playing = track().armed();
+        ui->m_toggle_play->setToolTip(playing ? "Armed" : "Muted");
+        qt_set_icon(playing ? play_on_xpm : play_xpm, ui->m_toggle_play);
+    }
 }
 
 /**
@@ -3719,30 +3748,34 @@ qseqeditframe64::record_change (bool ischecked)
 #else
     toggler t = ischecked ? toggler::on : toggler::off ;
     if (perf().set_recording(track(), t))
-        update_midi_buttons();
+    {
+        /*
+         * No need to refresh all the buttons: update_midi_buttons();
+         */
+
+        bool record_active = track().recording();
+        ui->m_toggle_record->setToolTip(record_active ? s_rec_on : s_rec_off);
+        qt_set_icon(record_active ? rec_on_xpm : rec_xpm, ui->m_toggle_record);
+    }
 #endif
 }
 
 /**
- *  Passes the quantized-recording status to the performer object.
+ *  Passes the quantized-recording status to the performer object.  Tricky
+ *  code.  Turn off reqular recording first. This allows the Q record button
+ *  to get set, and turn both Q and regular recording on.
  *
  * Stazed fix:
  *
  *      If we set Quantized recording, then also set recording, but do not
  *      unset recording if we unset Quantized recording.
  *
- *  This is not necessarily the most intuitive thing to do.  See
- *  midi_record.txt.
+ *  This is not necessarily the most intuitive thing to do.
  */
 
 void
 qseqeditframe64::q_record_change (bool ischecked)
 {
-    /*
-     * Tricky code.  Turn off reqular recording first. This allows the
-     * Q record button to get set, and turn both Q and regular recording on.
-     */
-
 #if defined USE_OBSOLETE_SET_RECORDING
     if (ischecked)
         (void) perf().set_recording(track(), false, false);
@@ -3751,11 +3784,28 @@ qseqeditframe64::q_record_change (bool ischecked)
         update_midi_buttons();
 #else
     toggler t = ischecked ? toggler::on : toggler::off ;
-    if (ischecked)
-        (void) perf().set_recording(track(), toggler::off);
-
     if (perf().set_recording(track(), alteration::quantize, t))
-        update_midi_buttons();
+    {
+        /*
+         * No need to refresh all the buttons: update_midi_buttons();
+         * And in fact it can cause endless recursion when the Q button
+         * is clicked.
+         */
+
+        bool record_active = track().recording();
+        ui->m_toggle_record->setToolTip(record_active ? s_rec_on : s_rec_off);
+        qt_set_icon(record_active ? rec_on_xpm : rec_xpm, ui->m_toggle_record);
+
+        bool qrecord_active = track().quantized_recording();
+        ui->m_toggle_qrecord->setToolTip
+        (
+            qrecord_active ? s_qrec_on : s_qrec_off
+        );
+        qt_set_icon
+        (
+            qrecord_active ? q_rec_on_xpm : q_rec_xpm, ui->m_toggle_qrecord
+        );
+    }
 #endif
 }
 
@@ -3767,7 +3817,15 @@ void
 qseqeditframe64::thru_change (bool ischecked)
 {
     if (perf().set_thru(track(), ischecked, false))
-        update_midi_buttons();
+    {
+        /*
+         * No need to refresh all the buttons: update_midi_buttons();
+         */
+
+        bool thru_active = track().thru();
+        ui->m_toggle_thru->setToolTip(thru_active ? s_thru_on : s_thru_off);
+        qt_set_icon(thru_active ? thru_on_xpm : thru_xpm, ui->m_toggle_thru);
+    }
 }
 
 /**

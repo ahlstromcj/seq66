@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-08-24
+ * \updates       2023-08-31
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -3977,14 +3977,32 @@ performer::set_recording (seq::ref s, bool recordon, bool toggle)
 
 #endif
 
+/**
+ *  Handles setting the status of basic recording.
+ */
+
 bool
 performer::set_recording (seq::ref s, toggler flag)
 {
     bool result = s.set_recording(flag);
     if (result)
-    {
         set_needs_update();
-    }
+
+    return result;
+}
+
+/**
+ *  Handles a particular alteration in juxtaposition with the recording
+ *  flag.
+ */
+
+bool
+performer::set_recording (seq::ref s, alteration q, toggler flag)
+{
+    bool result = s.set_recording(q, flag);
+    if (result)
+        set_needs_update();
+
     return result;
 }
 

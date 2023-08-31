@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-08-30
+ * \updates       2023-08-31
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -5870,6 +5870,12 @@ sequence::set_recording (alteration q, bool active)
 
 #endif  // defined USE_OBSOLETE_SET_RECORDING
 
+/**
+ *  This function sets only the status of recording, regardless of alteration
+ *  type.  And, if recording get turned off, the alteration type is set
+ *  to alteration::none.
+ */
+
 bool
 sequence::set_recording (toggler flag)
 {
@@ -5894,15 +5900,60 @@ sequence::set_recording (toggler flag)
     return result;
 }
 
+/**
+ *  Added some wrinkles from qseqeditframe64. If recording is on, and the
+ *  flag is toggler::off, we want to disable basic recording only if the
+ *  alteration is alteration::none.  Otherwise, we want to disable only
+ *  the alteration option, leaving basic recording still active.
+ *
+ *  -   If toggler::on. Set the appropriate alteration and pass the flag
+ *      to the basic set_recording() function above.
+ *  -   If toggler::off.
+ *      -   Set alteration::none. The next step also does that.
+ *      -   If the specified alteration was none, pass the flag as above.
+ *  -   If toggler::flip. See the code :-D
+ */
+
 bool
 sequence::set_recording (alteration q, toggler flag)
 {
     automutex locker(m_mutex);
+    bool result = true;
+    if (flag == toggler::on)
+    {
+        m_alter_recording = q;
+        result = set_recording(toggler::on);
+    }
+    else if (flag == toggler::off)
+    {
+        m_alter_recording = alteration::none;
+        if (q == alteration::none)          /* just turn off the alteration */
+            result = set_recording(toggler::off);   // flag
+    }
+    else
+    {
+        if (q == alteration::none)          /* plain old basic recording    */
+        {
+            result = set_recording(toggler::flip);
+        }
+        else
+        {
+            if (q == m_alter_recording)
+                m_alter_recording = alteration::none;
+            else
+                m_alter_recording = q;
+
+            result = set_recording(toggler::flip);
+        }
+    }
+
+#if 0
     bool result = set_recording(flag);
-    if (result)
+    if (result && flag == toggler::on)
         m_alter_recording = q;
     else
         m_alter_recording = alteration::none;
+#endif
 
     return result;
 }

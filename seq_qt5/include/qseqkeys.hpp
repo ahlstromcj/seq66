@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-28
+ * \updates       2023-08-31
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -142,11 +142,6 @@ public slots:
 private:
 
     void convert_y (int y, int & note);
-
-    void update_midi_buttons () override
-    {
-        // not needed for the keys panel.
-    }
 
     /**
      *  Detects a black key.

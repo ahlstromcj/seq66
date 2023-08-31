@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2023-08-18
+ * \updates       2023-08-31
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -81,8 +81,8 @@ static const int s_alpha_oneshot    =  64;       // 148;
  */
 
 static const int s_fontsize_main    = 7;
-static const int s_fontsize_record  = 5;
-static const int s_radius_record    = 8;
+static const int s_fontsize_record  = 8;        // 5;
+static const int s_radius_record    = 9;        // 8;
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -544,10 +544,8 @@ qloopbutton::reupdate (bool all)
  *  click highlights/unhighlight this checkable button.  And this call must be
  *  done first, otherwise the application segfaults.
  *
- * Issue #89:
- *
- *      Added showing "Unqueued" if queueing enabled while the pattern was
- *      playing.
+ * Issue #89: Added showing "Unqueued" if queueing enabled while the pattern
+ *            was playing.
  */
 
 void
@@ -568,11 +566,6 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             QString title(qt(m_top_left.m_label));
             painter.setPen(label_color());      /* text issue #50   */
             painter.setFont(m_text_font);
-
-            /*
-             * Removed the "background role color" code that was here.
-             */
-
             if (m_draw_text)
             {
                 painter.drawText(box, m_top_left.m_flags, title);
@@ -589,7 +582,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 int radius = usr().scale_size(s_radius_record) + 2;
                 int clx = m_top_right.m_x + m_top_right.m_w - radius - 2;
                 int cly = m_top_right.m_y + m_top_right.m_h;
-                int tlx = clx + usr().scale_size(2);
+                int tlx = clx + usr().scale_size(2) + 1;
                 int tly = cly + radius - usr().scale_size(2);
                 QPen pen2(drum_paint());
                 QBrush brush(drum_paint(), Qt::SolidPattern);
@@ -597,13 +590,13 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 painter.setPen(pen2);
                 painter.setBrush(brush);
                 painter.drawEllipse(clx, cly, radius, radius);
-                if (loop()->alter_recording())  // quantizing_or_tightening()
+                if (loop()->alter_recording())          /* Q, Tighten, etc. */
                 {
                     int fontsize = usr().scale_font_size(s_fontsize_record);
                     QFont font;
                     font.setPointSize(fontsize);
                     font.setBold(true);
-                    painter.setPen(Qt::black);
+                    painter.setPen(Qt::white);          /* Qt::black        */
                     painter.setFont(font);
                     if (loop()->quantizing())
                         painter.drawText(tlx, tly, "Q");

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-14
- * \updates       2021-09-12
+ * \updates       2023-08-31
  * \license       GNU GPLv2 or above
  *
  *  This class WILL BE the base class for qseqroll, qseqdata, qtriggereditor,
@@ -168,13 +168,6 @@ protected:
         midipulse tick_s, midipulse tick_f, int seq_h, int seq_l,
         seq66::rect & r
     );
-
-private:
-
-    virtual void update_midi_buttons () override
-    {
-        // TODO, in the derived qperf classes.
-    }
 
 };          // class qperfbase
 
