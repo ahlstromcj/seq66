@@ -1394,6 +1394,16 @@ public:
         return tightened_recording();
     }
 
+    bool notemapped_recording () const
+    {
+        return m_alter_recording == alteration::notemap;
+    }
+
+    bool notemapping () const
+    {
+        return notemapped_recording();
+    }
+
     bool expanded_recording () const
     {
         return m_recording_style == recordstyle::expand;

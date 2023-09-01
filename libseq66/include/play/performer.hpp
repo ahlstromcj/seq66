@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-08-31
+ * \updates       2023-09-01
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1184,11 +1184,6 @@ public:
         bool addtorecent = true
     );
 
-    bool notemap_exists () const
-    {
-        return bool(m_note_mapper);
-    }
-
     const playset & play_set () const
     {
         return m_metronome_count_in ? m_play_set_storage : m_play_set ;
@@ -1436,6 +1431,7 @@ public:
 
 public:
 
+    void repitch (event & ev) const;
     bool repitch_all (const std::string & nmapfile, seq::ref s);
     bool repitch_selected (const std::string & nmapfile, seq::ref s);
 
@@ -3278,6 +3274,11 @@ private:
     bool create_master_bus ();
     void reset_sequences (bool pause = false);
 
+    bool notemap_exists () const
+    {
+        return bool(m_note_mapper);
+    }
+
     void copy_triggers ()
     {
         mapper().copy_triggers(m_left_tick, m_right_tick);
@@ -3841,6 +3842,11 @@ public:
     );
     void set_grid_quant (alteration q);
     bool automation_grid_quant
+    (
+        automation::action a, int d0, int d1,
+        int index, bool inverse
+    );
+    bool automation_bbt_hms
     (
         automation::action a, int d0, int d1,
         int index, bool inverse

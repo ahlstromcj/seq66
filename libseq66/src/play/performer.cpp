@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-08-31
+ * \updates       2023-09-01
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -3090,6 +3090,16 @@ performer::reset_sequences (bool p)
      * if (m_master_bus)
      *     m_master_bus->flush();
      */
+}
+
+void
+performer::repitch (event & ev) const
+{
+    if (notemap_exists() && ev.is_note())
+    {
+        midibyte incoming = ev.d0();
+        m_note_mapper->fast_convert(incoming);
+    }
 }
 
 bool
@@ -9584,6 +9594,7 @@ performer::set_grid_quant (alteration q)
     if (q < alteration::max)
     {
         m_alter_recording = q;
+
         // notify_automation_change(automation::slot::grid_loop);
     }
 }
@@ -9633,6 +9644,23 @@ performer::automation_grid_quant
                 break;
         }
         set_grid_quant(q);
+    }
+    return result;
+}
+
+bool
+performer::automation_bbt_hms
+(
+    automation::action a, int d0, int d1,
+    int index, bool inverse
+)
+{
+    std::string name = "Grid Quant";
+    bool result = true;
+    print_parameters(name, a, d0, d1, index, inverse);
+    if (automation::actionable(a) && ! inverse)
+    {
+        notify_automation_change(automation::slot::mod_bbt_hms);
     }
     return result;
 }
@@ -9813,7 +9841,10 @@ performer::sm_auto_func_list [] =
      * A few more likely candidates.
      */
 
-    { automation::slot::mod_bbt_hms,        &performer::automation_no_op },
+    {
+        automation::slot::mod_bbt_hms,
+        &performer::automation_bbt_hms
+    },
     { automation::slot::mod_LR_loop,        &performer::automation_no_op },
     { automation::slot::mod_undo_recording, &performer::automation_no_op },
     { automation::slot::mod_redo_recording, &performer::automation_no_op },

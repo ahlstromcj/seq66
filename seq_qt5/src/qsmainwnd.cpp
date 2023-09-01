@@ -1801,7 +1801,7 @@ qsmainwnd::update_window_title (const std::string & fn)
 /**
  *  Toggles the recording of the live song control done by the musician.
  *  This functionality currently does not have a key devoted to it, nor is it
- *  a saved setting.
+ *  a saved setting. But it now has a MIDI automation slot, mod_bbt_hms.
  */
 
 void
@@ -3933,11 +3933,14 @@ qsmainwnd::on_group_learn_complete (const keystroke & k, bool good)
 }
 
 bool
-qsmainwnd::on_automation_change (automation::slot /* s */)
+qsmainwnd::on_automation_change (automation::slot s)
 {
     bool result = not_nullptr(m_live_frame);
     if (result)
         m_live_frame->set_needs_update();           /* brute force          */
+
+    if (s == automation::slot::mod_bbt_hms)
+        toggle_time_format(true);
 
     return result;
 }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-08-18
+ * \updates       2023-09-01
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -974,9 +974,19 @@ public:
         return m_data[0];
     }
 
+    void d0 (midibyte b)
+    {
+        m_data[0] = b;
+    }
+
     midibyte d1 () const
     {
         return m_data[1];
+    }
+
+    void d1 (midibyte b)
+    {
+        m_data[1] = b;
     }
 
     /**
@@ -984,7 +994,7 @@ public:
      *  significant bit.
      */
 
-    void increment_data1 ()
+    void increment_d0 ()
     {
         m_data[0] = (m_data[0] + 1) & EVENT_DATA_MASK;
     }
@@ -994,7 +1004,7 @@ public:
      *  significant bit.
      */
 
-    void decrement_data1 ()
+    void decrement_d0 ()
     {
         m_data[0] = (m_data[0] - 1) & EVENT_DATA_MASK;
     }
@@ -1004,7 +1014,7 @@ public:
      *  significant bit.
      */
 
-    void increment_data2 ()
+    void increment_d1 ()
     {
         m_data[1] = (m_data[1] + 1) & EVENT_DATA_MASK;
     }
@@ -1014,7 +1024,7 @@ public:
      *  significant bit.
      */
 
-    void decrement_data2 ()
+    void decrement_d1 ()
     {
         m_data[1] = (m_data[1] - 1) & EVENT_DATA_MASK;
     }

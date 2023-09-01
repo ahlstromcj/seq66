@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-08-31
+ * \updates       2023-09-01
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2573,12 +2573,12 @@ sequence::increment_selected (midibyte astat, midibyte /*acontrol*/)
         {
             if (event::is_two_byte_msg(astat))
             {
-                e.increment_data2();
+                e.increment_d1();
                 modded = true;
             }
             else if (event::is_one_byte_msg(astat))
             {
-                e.increment_data1();
+                e.increment_d0();
                 modded = true;
             }
         }
@@ -2621,12 +2621,12 @@ sequence::decrement_selected (midibyte astat, midibyte /*acontrol*/)
         {
             if (event::is_two_byte_msg(astat))
             {
-                e.decrement_data2();
+                e.decrement_d1();
                 modded = true;
             }
             else if (event::is_one_byte_msg(astat))
             {
-                e.decrement_data1();
+                e.decrement_d0();
                 modded = true;
             }
         }
@@ -4081,6 +4081,8 @@ sequence::stream_event (event & ev)
                 (void) ev.quantize(snap(), get_length());
             else if (tightening())
                 (void) ev.tighten(snap(), get_length());
+            else if (notemapping())
+                perf()->repitch(ev);
         }
     }
     return result;
