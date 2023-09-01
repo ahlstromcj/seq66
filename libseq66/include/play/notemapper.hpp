@@ -30,7 +30,7 @@
  * \library       libmidipp
  * \author        Chris Ahlstrom
  * \date          2014-04-24
- * \updates       2020-09-28
+ * \updates       2023-09-01
  * \version       $Revision$
  * \license       GNU GPL
  *
@@ -61,6 +61,7 @@
 #include <string>
 
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
+#include "midi/midibytes.hpp"           /* seq66::c_notes_count             */
 
 namespace seq66
 {
@@ -120,7 +121,8 @@ private:
 
         /**
          *  The incoming note number from a non-GM compliant device.  This
-         *  value is used as a "key" value in a map.
+         *  value is used as a "key" value in the map or the index in the
+         *  array.
          */
 
         const int m_dev_value;
@@ -242,15 +244,11 @@ private:
     std::string m_map_type;
 
     /**
-     *
+     * Provides the lowest and highest notes actually read into the map and
+     * array.
      */
 
     int m_note_minimum;
-
-    /**
-     *
-     */
-
     int m_note_maximum;
 
     /**
@@ -303,6 +301,12 @@ private:
     map m_note_map;
 
     /**
+     *  Provides a quick translation "map" for use while recording.
+     */
+
+    midibyte m_note_array[c_notes_count];
+
+    /**
      *    Indicates if the setup is valid.
      */
 
@@ -316,6 +320,12 @@ private:
     ~notemapper () = default;
 
     int convert (int incoming) const;
+
+    midibyte fast_convert (midibyte incoming) const
+    {
+        return m_note_array[incoming];          /* no check done, for speed */
+    }
+
     std::string to_string (int devnote) const;
     void show () const;
 

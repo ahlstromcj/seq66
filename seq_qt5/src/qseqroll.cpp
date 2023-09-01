@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-30
+ * \updates       2023-09-01
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1423,7 +1423,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
              * movement during playback.
              */
 
-            if (! isctrl)
+            if (! isctrl && ! ismeta)
             {
                 done = movement_key_press(key);
                 if (done)
@@ -1435,8 +1435,13 @@ qseqroll::keyPressEvent (QKeyEvent * event)
         else
         {
             done = movement_key_press(key);
+            if (! done && ! isctrl && ! ismeta)
+                done = zoom_key_press(isshift, key);
+
             if (done)
+            {
                 done = mark_modified();
+            }
             else
             {
                 /*
@@ -1444,12 +1449,61 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                  *       arrow keys? Investigate!
                  */
 
-                if (isctrl)
+                if (isshift)
+                {
+                    std::string filename;
+                    switch (key)
+                    {
+                    case Qt::Key_J:
+
+                        /*
+                         * No alteration setting, as the human will jitter the
+                         * timing quite naturally.
+                         */
+
+                        track().push_jitter_notes(usr().jitter_range(snap()));
+                        done = true;
+                        break;
+
+                    case Qt::Key_N:             /* note-map while recording */
+
+                        done = perf().set_recording
+                        (
+                            track(), alteration::notemap, toggler::flip
+                        );
+                        break;
+
+                    case Qt::Key_Q:             /* set quantized recording  */
+
+                        done = perf().set_recording
+                        (
+                            track(), alteration::quantize, toggler::flip
+                        );
+                        break;
+
+                    case Qt::Key_R:
+
+                        if (track().set_recording(toggler::flip))
+                            done = true;
+                        break;
+
+                    case Qt::Key_Z:
+
+                        track().pop_redo();     /* does this work ???       */
+                        done = true;
+                    }
+                }
+                else if (isctrl)
                 {
                     midipulse tick = perf().get_tick();
                     midipulse len = track().get_length();
                     switch (key)
                     {
+                        /*
+                         * See movement_key_press(). Can we reconcile that
+                         * with this?
+                         */
+
                     case Qt::Key_Left:
 
                         done = true;
@@ -1480,45 +1534,16 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                             frame64()->scroll_to_tick(len);
                         break;
 
-                    case Qt::Key_X:
+                    case Qt::Key_A:
 
-                        if (track().cut_selected())
-                            done = true;
+                        done = true;
+                        track().select_all();
                         break;
 
                     case Qt::Key_C:
 
                         done = true;
                         track().copy_selected();
-                        break;
-
-                    case Qt::Key_V:
-
-                        done = true;
-                        start_paste();
-                        setCursor(Qt::CrossCursor);
-                        break;
-
-                    case Qt::Key_Z:
-
-                        done = true;
-                        if (event->modifiers() & Qt::ShiftModifier)
-                        {
-                            /*
-                             * TODO: Doesn't seem to do anything!
-                             */
-
-                            track().pop_redo();
-                        }
-                        else
-                            track().pop_undo();
-
-                        break;
-
-                    case Qt::Key_A:
-
-                        done = true;
-                        track().select_all();
                         break;
 
                     case Qt::Key_D:
@@ -1547,81 +1572,117 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                             frame64()->edit_channel()
                         );
                         break;
+
+                    case Qt::Key_V:
+
+                        done = true;
+                        start_paste();
+                        setCursor(Qt::CrossCursor);
+                        break;
+
+                    case Qt::Key_X:
+
+                        if (track().cut_selected())
+                            done = true;
+                        break;
+
+                    case Qt::Key_Z:
+
+                        done = true;
+                        track().pop_undo();
+                        break;
                     }
                 }
-                else
-                    done = zoom_key_press(isshift, key);
-            }
-        }
-        if (! is_dirty())
-        {
-            if (! isctrl && ! isshift && ! ismeta)
-            {
-                switch (key)
+                else if (ismeta)
                 {
-                case Qt::Key_C:
+                    // nothing yet
+                }
+                else
+                {
+                    switch (key)
+                    {
+                    case Qt::Key_C:
 
-                    if (frame64()->repitch_selected())
-                        done = mark_modified();
-                    break;
+                        if (frame64()->repitch_selected())
+                            done = mark_modified();
+                        break;
 
-                case Qt::Key_F:
+                    case Qt::Key_F:
 
-                    if (track().edge_fix())
-                        done = mark_modified();
-                    break;
+                        if (track().edge_fix())
+                            done = mark_modified();
+                        break;
 
-                case Qt::Key_O:
+#if 0
+                    /*
+                     * See Shift-N
+                     */
 
-#if defined USE_OBSOLETE_SET_RECORDING
-                    if (track().set_recording(false, true))     /* toggle   */
-                        done = true;
-#else
-                    if (track().set_recording(toggler::flip))
-                        done = true;
+                    case Qt::Key_N:
+
+                        if (track().set_recording(toggler::flip))
+                            done = true;
+                        break;
+
+                    /*
+                     * Use Shift-R instead.
+                     */
+
+                    case Qt::Key_O:
+
+                        if (track().set_recording(toggler::flip))
+                            done = true;
+                        break;
 #endif
-                    break;
 
-                case Qt::Key_P:
+                    case Qt::Key_P:
 
-                    done = true;
-                    set_adding(true);
-                    break;
+                        done = true;
+                        set_adding(true);
+                        break;
 
-                case Qt::Key_Q:                 /* quantize selected notes  */
+                    case Qt::Key_Q:                 /* quantize selected notes  */
 
-                    if (track().push_quantize(EVENT_NOTE_ON, 0, 1))
-                        done = mark_modified();
-                    break;
+                        if (track().push_quantize(EVENT_NOTE_ON, 0, 1))
+                            done = mark_modified();
+                        break;
 
-                case Qt::Key_R:                 /* default random == 8      */
+                    case Qt::Key_R:                 /* default random == 8      */
 
-                    if (track().randomize_selected_notes()) /* pushes too   */
-                        done = mark_modified();
-                    break;
+                        /*
+                         * No alteration setting, as the human will randomize
+                         * the note velocity quite naturally.
+                         */
 
-                case Qt::Key_T:                 /* tighten selected notes   */
-                    if (track().push_quantize(EVENT_NOTE_ON, 0, 2))
-                        done = mark_modified();
-                    break;
+                        if (track().randomize_selected_notes()) /* pushes too   */
+                            done = mark_modified();
+                        break;
 
-                case Qt::Key_U:
+                    case Qt::Key_T:                 /* tighten selected notes   */
 
-                    if (track().remove_unlinked_notes())
-                        done = mark_modified();
-                    break;
+                        if (track().push_quantize(EVENT_NOTE_ON, 0, 2))
+                            done = mark_modified();
+                        break;
 
-                case Qt::Key_X:
+                    case Qt::Key_U:
 
-                    done = true;
-                    set_adding(false);
-                    break;
+                        if (track().remove_unlinked_notes())
+                            done = mark_modified();
+                        break;
 
-                case Qt::Key_Equal:
+                    case Qt::Key_X:
 
-                    set_adding(false);
-                    track().verify_and_link(true);          /* with wrap    */
-                    break;
+                        set_adding(false);
+                        done = true;
+                        break;
+
+                    case Qt::Key_Equal:
+
+                        set_adding(false);
+                        track().verify_and_link(true);          /* with wrap    */
+                        done = true;
+                        break;
+                    }
                 }
             }
         }

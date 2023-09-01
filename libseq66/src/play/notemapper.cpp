@@ -27,7 +27,7 @@
  * \library       libmidipp
  * \author        Chris Ahlstrom
  * \date          2014-04-24
- * \updates       2020-09-28
+ * \updates       2023-09-01
  * \version       $Revision$
  * \license       GNU GPL
  *
@@ -143,9 +143,11 @@ notemapper::notemapper () :
     m_device_channel    (0),
     m_map_reversed      (false),
     m_note_map          (),
+    m_note_array        (),
     m_is_valid          (false)
 {
-    //
+    for (int n = 0; n < c_notes_count; ++n)
+        m_note_array[n] = midibyte(n);
 }
 
 bool
@@ -155,38 +157,50 @@ notemapper::add
     const std::string & devname, const std::string & gmname
 )
 {
-    auto count = m_note_map.size();
-    if (m_map_reversed)
+    bool result =
+    (
+        devnote >= 0 && devnote < c_notes_count &&
+        gmnote >= 0 && gmnote < c_notes_count
+    );
+    if (result)
     {
-        pair np(gmnote, devnote, devname, gmname, true);    /* reversed     */
-        auto p = std::make_pair(gmnote, np);
-        (void) m_note_map.insert(p);
-        if (devnote < m_note_minimum)
-            m_note_minimum = devnote;
+        auto count = m_note_map.size();
+        if (m_map_reversed)
+        {
+            pair np(gmnote, devnote, devname, gmname, true);    /* reversed */
+            auto p = std::make_pair(gmnote, np);
+            (void) m_note_map.insert(p);
+            m_note_array[gmnote] = devnote;
+            if (devnote < m_note_minimum)
+                m_note_minimum = devnote;
 
-        if (devnote > m_note_maximum)
-            m_note_maximum = devnote;
+            if (devnote > m_note_maximum)
+                m_note_maximum = devnote;
+        }
+        else
+        {
+            pair np(devnote, gmnote, devname, gmname, false);   /* !reverse */
+            auto p = std::make_pair(devnote, np);
+            (void) m_note_map.insert(p);
+            m_note_array[devnote] = gmnote;
+            if (gmnote < m_note_minimum)
+                m_note_minimum = gmnote;
+
+            if (gmnote > m_note_maximum)
+                m_note_maximum = gmnote;
+        }
+        result = m_note_map.size() == (count + 1);              /* clunky!  */
+        if (! result)
+        {
+            std::cerr
+                << "Duplicate note pair " << devnote << " & " << gmnote
+                << std::endl
+                ;
+        }
     }
     else
-    {
-        pair np(devnote, gmnote, devname, gmname, false);   /* not reversed */
-        auto p = std::make_pair(devnote, np);
-        (void) m_note_map.insert(p);
-        if (gmnote < m_note_minimum)
-            m_note_minimum = gmnote;
+        std::cerr << "Note-mapper note out of range" << std::endl;
 
-        if (gmnote > m_note_maximum)
-            m_note_maximum = gmnote;
-    }
-
-    bool result = m_note_map.size() == (count + 1);
-    if (! result)
-    {
-        std::cerr
-            << "Duplicate note pair " << devnote << " & " << gmnote
-            << std::endl
-            ;
-    }
     return result;
 }
 

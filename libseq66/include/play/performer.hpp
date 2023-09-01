@@ -2112,20 +2112,7 @@ public:
     bool set_recording (seq::number seqno, toggler flag);
     bool set_recording (seq::ref s, toggler flag);
     bool set_recording (seq::ref s, alteration q, toggler flag);
-
     // bool set_recording_style (recordstyle rs);   // see set_record_style()
-
-#if defined USE_OBSOLETE_SET_RECORDING
-    bool set_overwrite_recording (seq::ref s, toggler flag)
-    {
-        return s.set_overwrite_recording(flag);
-    }
-    bool set_recording (seq::ref s, bool active, bool toggle);
-    bool set_recording (seq::number seqno, bool active, bool toggle);
-    bool set_quantized_recording (seq::ref s, bool active, bool toggle);
-    bool set_tightened_recording (seq::ref s, bool active, bool toggle);
-    bool set_overwrite_recording (seq::ref s, bool active, bool toggle);
-#endif
     bool set_thru (seq::ref s, bool active, bool toggle);
 
 #if defined USE_SONG_BOX_SELECT

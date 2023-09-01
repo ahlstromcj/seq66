@@ -3742,10 +3742,6 @@ qseqeditframe64::play_change (bool ischecked)
 void
 qseqeditframe64::record_change (bool ischecked)
 {
-#if defined USE_OBSOLETE_SET_RECORDING
-    if (perf().set_recording(track(), ischecked, false))
-        update_midi_buttons();
-#else
     toggler t = ischecked ? toggler::on : toggler::off ;
     if (perf().set_recording(track(), t))
     {
@@ -3757,7 +3753,6 @@ qseqeditframe64::record_change (bool ischecked)
         ui->m_toggle_record->setToolTip(record_active ? s_rec_on : s_rec_off);
         qt_set_icon(record_active ? rec_on_xpm : rec_xpm, ui->m_toggle_record);
     }
-#endif
 }
 
 /**
@@ -3776,13 +3771,6 @@ qseqeditframe64::record_change (bool ischecked)
 void
 qseqeditframe64::q_record_change (bool ischecked)
 {
-#if defined USE_OBSOLETE_SET_RECORDING
-    if (ischecked)
-        (void) perf().set_recording(track(), false, false);
-
-    if (perf().set_quantized_recording(track(), ischecked, false))
-        update_midi_buttons();
-#else
     toggler t = ischecked ? toggler::on : toggler::off ;
     if (perf().set_recording(track(), alteration::quantize, t))
     {
@@ -3806,7 +3794,6 @@ qseqeditframe64::q_record_change (bool ischecked)
             qrecord_active ? q_rec_on_xpm : q_rec_xpm, ui->m_toggle_qrecord
         );
     }
-#endif
 }
 
 /**

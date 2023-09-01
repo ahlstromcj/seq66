@@ -3948,6 +3948,7 @@ performer::set_sequence_name (seq::ref s, const std::string & name)
  */
 
 /**
+ *  Handles setting the status of basic recording.
  *  Encapsulates code used by the sequence editing frames' recording-change
  *  callbacks.
  *
@@ -3960,25 +3961,6 @@ performer::set_sequence_name (seq::ref s, const std::string & name)
  * \param s
  *      The sequence that the seqedit window represents.  This pointer is
  *      checked.
- */
-
-#if defined USE_OBSOLETE_SET_RECORDING
-
-bool
-performer::set_recording (seq::ref s, bool recordon, bool toggle)
-{
-    bool result = s.set_recording(recordon, toggle);
-    if (result)
-    {
-        set_needs_update();
-    }
-    return result;
-}
-
-#endif
-
-/**
- *  Handles setting the status of basic recording.
  */
 
 bool
@@ -4021,21 +4003,6 @@ performer::set_recording (seq::ref s, alteration q, toggler flag)
  *      setting.  Passed along to sequence::input_recording().
  */
 
-#if defined USE_OBSOLETE_SET_RECORDING
-
-bool
-performer::set_recording (seq::number seqno, bool recordon, bool toggle)
-{
-    sequence * s = get_sequence(seqno).get();
-    bool result = not_nullptr(s);
-    if (result)
-        result = set_recording(*s, recordon, toggle);
-
-    return result;
-}
-
-#endif
-
 bool
 performer::set_recording (seq::number seqno, toggler flag)
 {
@@ -4046,131 +4013,6 @@ performer::set_recording (seq::number seqno, toggler flag)
 
     return result;
 }
-
-/**
- *  Sets quantized recording in the way used by seqedit.
- *
- * \param recordon
- *      The setting desired for the quantized-recording flag.
- *
- * \param s
- *      Provides the pointer to the sequence to operate upon.  Checked for
- *      validity.
- */
-
-#if defined USE_OBSOLETE_SET_RECORDING
-
-bool
-performer::set_quantized_recording (seq::ref s, bool recordon, bool toggle)
-{
-    return s.set_quantized_recording(recordon, toggle);
-}
-
-#endif
-
-/**
- *  Sets quantized recording.  This isn't quite consistent with setting
- *  regular recording, which uses sequence::input_recording().
- *
- * \param recordon
- *      Provides the current status of the Record button.
- *
- * \param seq
- *      The sequence number; the resulting pointer is checked.
- *
- * \param toggle
- *      If true, ignore the first flag and let the sequence toggle its
- *      setting.  Passed along to sequence::set_recording().
- */
-
-#if defined USE_OBSOLETE_SET_RECORDING
-
-bool
-performer::set_quantized_recording (seq::number seqno, bool recordon, bool toggle)
-{
-    sequence * s = get_sequence(seqno).get();
-    bool result = not_nullptr(s);
-    if (result)
-        result = set_quantized_recording(*s, recordon, toggle);
-
-    return result;
-}
-
-bool
-performer::set_tightened_recording
-(
-    seq::number seqno, bool recordon, bool toggle
-)
-{
-    sequence * s = get_sequence(seqno).get();
-    bool result = not_nullptr(s);
-    if (result)
-        result = set_tightened_recording(*s, recordon, toggle);
-
-    return result;
-}
-
-bool
-performer::set_tightened_recording (seq::ref s, bool recordon, bool toggle)
-{
-    return s.set_tightened_recording(recordon, toggle);
-}
-
-/**
- *  Set recording for overwrite.  This feature was obtained from jfrey-xx on
- *  GitHub.
- *
- *  Pull request #150: Ask for a reset explicitly upon toggle-on, since we
- *  don't have the GUI to control for progress.  This is implemented in
- *  sequence's version of this function.
- *
- * \param s
- *      The sequence pointer, which is checked.
- *
- * \param oactive
- *      Provides the current status of the overwrite mode.
- *
- * \param toggle
- *      If true, ignore the first flag and let the sequence toggle its
- *      setting.  Passed along to sequence::set_overwrite_rec().
- */
-
-bool
-performer::set_overwrite_recording (seq::ref s, bool oactive, bool toggle)
-{
-    return s.set_overwrite_recording(oactive, toggle);
-}
-
-/**
- *  Set recording for overwrite.  This feature was obtained from jfrey-xx on
- *  GitHub.
- *
- * \param oactive
- *      Provides the current status of the overwrite mode.
- *
- * \param seq
- *      The sequence number; the resulting pointer is checked.
- *
- * \param toggle
- *      If true, ignore the first flag and let the sequence toggle its
- *      setting.  Passed along to sequence::set_overwrite_rec().
- */
-
-bool
-performer::set_overwrite_recording
-(
-    seq::number seqno, bool oactive, bool toggle
-)
-{
-    sequence * s = get_sequence(seqno).get();
-    bool result = not_nullptr(s);
-    if (result)
-        result = set_overwrite_recording(*s, oactive, toggle);
-
-    return result;
-}
-
-#endif  // defined USE_OBSOLETE_SET_RECORDING
 
 /**
  *  Encapsulates code used by seqedit::thru_change_callback().
@@ -7708,21 +7550,6 @@ performer::loop_control
             }
             else
             {
-#if defined USE_OBSOLETE_SET_RECORDING
-                bool rec = false;                   /* !s->recording()  */
-                bool toggle = false;
-                if (a == automation::action::toggle)
-                    toggle = true;
-                else if (a == automation::action::on)
-                    rec = true;
-
-                if (usr().record_mode() == alteration::none)
-                    result = set_recording(seqno, rec, toggle);
-                else if (usr().record_mode() == alteration::quantize)
-                    result = set_quantized_recording(seqno, rec, toggle);
-                else if (usr().record_mode() == alteration::tighten)
-                    result = set_tightened_recording(seqno, rec, toggle);
-#else
                 toggler flag = toggler::off;            /* i.e. "false"     */
                 seq::pointer seqp = get_sequence(seqno);
                 bool result = bool(seqp);
@@ -7735,8 +7562,6 @@ performer::loop_control
 
                     result = set_recording(*seqp, usr().record_mode(), flag);
                 }
-
-#endif  // defined USE_OBSOLETE_SET_RECORDING
             }
         }
         if (result)
