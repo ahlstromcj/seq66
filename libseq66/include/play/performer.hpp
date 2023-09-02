@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-09-01
+ * \updates       2023-09-02
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3847,6 +3847,11 @@ public:
         int index, bool inverse
     );
     bool automation_bbt_hms
+    (
+        automation::action a, int d0, int d1,
+        int index, bool inverse
+    );
+    bool automation_LR_loop
     (
         automation::action a, int d0, int d1,
         int index, bool inverse

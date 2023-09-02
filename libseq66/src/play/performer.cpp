@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-09-01
+ * \updates       2023-09-02
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -9655,12 +9655,29 @@ performer::automation_bbt_hms
     int index, bool inverse
 )
 {
-    std::string name = "Grid Quant";
+    std::string name = "BBT/HMS";
     bool result = true;
     print_parameters(name, a, d0, d1, index, inverse);
     if (automation::actionable(a) && ! inverse)
     {
         notify_automation_change(automation::slot::mod_bbt_hms);
+    }
+    return result;
+}
+
+bool
+performer::automation_LR_loop
+(
+    automation::action a, int d0, int d1,
+    int index, bool inverse
+)
+{
+    std::string name = "L/R Loop";
+    bool result = true;
+    print_parameters(name, a, d0, d1, index, inverse);
+    if (automation::actionable(a) && ! inverse)
+    {
+        notify_automation_change(automation::slot::mod_LR_loop);
     }
     return result;
 }
@@ -9845,7 +9862,10 @@ performer::sm_auto_func_list [] =
         automation::slot::mod_bbt_hms,
         &performer::automation_bbt_hms
     },
-    { automation::slot::mod_LR_loop,        &performer::automation_no_op },
+    {
+        automation::slot::mod_LR_loop,
+        &performer::automation_LR_loop
+    },
     { automation::slot::mod_undo_recording, &performer::automation_no_op },
     { automation::slot::mod_redo_recording, &performer::automation_no_op },
     { automation::slot::mod_transpose_song, &performer::automation_no_op },

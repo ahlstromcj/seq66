@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-26
+ * \updates       2023-09-02
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -507,6 +507,7 @@ private:
 
     void remove_set_master ();
     void update_time (midipulse tick);
+    void toggle_loop ();
 
     qt5nsmanager * session ()
     {

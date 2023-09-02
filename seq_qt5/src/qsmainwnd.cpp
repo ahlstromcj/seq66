@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-26
+ * \updates       2023-09-02
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1145,6 +1145,13 @@ qsmainwnd::set_loop (bool looping)
     cb_perf().looping(looping);
     if (not_nullptr(m_perfedit))
         m_perfedit->set_loop_button(looping);
+}
+
+void
+qsmainwnd::toggle_loop ()
+{
+    bool looping = ! cb_perf().looping();
+    set_loop(looping);
 }
 
 /**
@@ -3941,6 +3948,8 @@ qsmainwnd::on_automation_change (automation::slot s)
 
     if (s == automation::slot::mod_bbt_hms)
         toggle_time_format(true);
+    else if (s == automation::slot::mod_LR_loop)
+        toggle_loop();
 
     return result;
 }
