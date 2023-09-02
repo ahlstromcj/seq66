@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-07-19
+ * \updates       2023-09-02
  * \license       GNU GPLv2 or above
  */
 
@@ -833,23 +833,48 @@ initialize_key_maps (bool reinit)
         s_are_maps_initialized = keymap_size() >= 0xfe;
         if (! s_are_maps_initialized)
             error_message("Key map unable to be initialized");
-    }
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-    int index = 0;
-    for (const auto & kp : keycode_map())
-    {
-        printf
-        (
-            "Key[%3d] = { 0x%2x <-- keycode 0x%8x, '%9s', mod 0x%2x }\n",
-            index, kp.second.qtk_ordinal, kp.second.qtk_keyevent,
-            kp.second.qtk_keyname.c_str(), kp.second.qtk_modifier
-        );
-        ++index;
-    }
-    printf("keymap size = %d\n", keymap_size());
+
+        /*
+         * std::multimap<eventkey, qt_keycodes>
+         */
+
+        printf("====================== Key Code Map ====================\n");
+        int index = 0;
+        for (const auto & kp : keycode_map())
+        {
+            printf
+            (
+                "Key[%3d] = ev key %8u { 0x%2x <-- code 0x%08x, "
+                "'%9s', mod 0x%2x }\n",
+                index, kp.first, kp.second.qtk_ordinal, kp.second.qtk_keyevent,
+                kp.second.qtk_keyname.c_str(), kp.second.qtk_modifier
+            );
+            ++index;
+        }
+        printf("keymap size = %d\n", keymap_size());
+
+        /*
+         * = std::map<std::string, ctrlkey>
+         */
+
+        printf("====================== Key Name Map ====================\n");
+        index = 0;
+        for (const auto & kp : keyname_map())
+        {
+            printf
+            (
+                "Name[%3d] = %10s #%3u (0x%2x)\n",
+                index, kp.first.c_str(), kp.second, kp.second
+            );
+            ++index;
+        }
+        printf("keyname size = %d\n", int(keyname_map().size()));
+
 #endif
 
+    }                                   /* if (! s_are_maps_initialized)    */
     return s_are_maps_initialized;
 }
 

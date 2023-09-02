@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2023-08-27
+% \update      2023-09-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -588,7 +588,7 @@
       name = "qseq66.ctrl"    # contains a [midi-control] section, and more
    \end{verbatim}
 
-   As with the 'rc' file, the 'ctrl' file is rewritten upon exit,
+   As with the 'rc' file, the 'ctrl' file can be rewritten upon exit,
    \textsl{except} that it is not written unless it is \textsl{active},
    or \textsl{does not exist} (as during the first run of \textsl{Seq66}).
    For the details of the 'ctrl' file, see
@@ -2032,20 +2032,32 @@
 
    \begin{verbatim}
       [automation-control]
-       0 "'"    [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # BPM Up
-       1 ";"    [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # BPM Dn
+       0 "'"    [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] # BPM Up
+       1 ";"    [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] # BPM Dn
        . . .
-      35 "Quit" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 0
+      35 "Quit" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] # Loop 0
        . . .
-      48 "0xfe" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]   # Reserved 48
+      48 "0xfe" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] # Reserved 48
+       . . .
+      80 "0x8f" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] # All Sets
    \end{verbatim}
 
-   Note that "Quit" is not a real keystroke.  It is a placeholder in the internal
-   keystroke map for the functionality of quitting \textsl{Seq66} via MIDI
-   control.  Qt provides other ways to quit via keystroke.
-   A key name of \texttt{Blank} can be used to disable a keystroke for
-   a line.
-   The stanzas meaning can change depending on the type of control.  Here are
+   One thing to be careful of when editing this section is to make
+   all the numbers (from 0 to 80) unique. When copy/pasting a line and
+   forgetting to change the number (\textsl{mea culpa}),
+   an error like the following can appear in the console output:
+
+   \begin{verbatim}
+      Duplicate mute slot # 43 : '0xe8'
+      [seq66] Key controls: Error at line 232 ordinal 0xe8 key
+         '0xe8' control 'Visibility' code 43
+   \end{verbatim}
+
+   Note that "Quit" is not a real keystroke.  It is a placeholder in the
+   internal keystroke map for the functionality of quitting \textsl{Seq66} via
+   MIDI control.  Qt provides other ways to quit via keystroke.  A key name of
+   \texttt{Blank} can be used to disable a keystroke for a line.  The stanzas
+   meaning can change depending on the type of control.  Here are
    the important styles:
 
    \begin{verbatim}
