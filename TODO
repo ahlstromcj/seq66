@@ -1,14 +1,15 @@
 TO DO for Seq66 0.99.9
 Chris Ahlstrom
-2019-04-13 to 2023-09-02
+2019-04-13 to 2023-09-03
 
 Misc:
 
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
     -   Add automation for these and add some to nanomap.ctrl:
-        -   BBT/HMS. Done.
-        -   L/R looping.
+        -   Song Pointer
+        -   Transpose Song
+    -   Make sure we have record-toggle automation!
     -   Make sure metronome buttons etc. still work.
     -   There are many "TODOs" in the automation slots.
     -   Document better all of the keys on the seqroll, etc. Add a

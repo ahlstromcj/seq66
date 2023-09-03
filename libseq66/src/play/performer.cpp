@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-09-02
+ * \updates       2023-09-03
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -376,6 +376,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_master_bus            (),                 /* this is a shared pointer */
     m_filter_by_channel     (false),
     m_one_measure           (0),
+    m_fast_ticks            (0),
     m_left_tick             (0),
     m_right_tick            (0),
     m_start_tick            (0),
@@ -2270,7 +2271,7 @@ performer::set_ppqn (int p)
         if (m_master_bus)
         {
             m_ppqn = p;
-            m_one_measure = 0;
+            m_one_measure = m_fast_ticks = 0;
             (void) jack_set_ppqn(p);
             m_master_bus->set_ppqn(p);
         }
@@ -2283,10 +2284,7 @@ performer::set_ppqn (int p)
     if (m_one_measure == 0)
     {
         m_right_tick = m_one_measure = p * 4;               /* simplistic!  */
-
-        /*
-         * m_right_tick = m_one_measure * 4;
-         */
+        m_fast_ticks = m_one_measure / 2;
     }
     return result;
 }
@@ -2918,6 +2916,10 @@ performer::copy_playscreen ()
     bool result = pscreen != screenset::unassigned();
     if (result)
         m_screenset_to_copy = pscreen;
+
+    /*
+     * TODO:  what else is needed? Check out automation::slot::play_ss.
+     */
 
     return result;
 }
@@ -3762,6 +3764,33 @@ performer::set_tick (midipulse tick, bool dontreset)
             set_needs_update();
         }
     }
+}
+
+/**
+ *  Moves the current tick by the value of ticks (negative or positive).
+ *  If 0, move to the beginning.
+ */
+
+void
+performer::move_tick (midipulse ticks, bool dontreset)
+{
+    midipulse curtick = m_tick;
+    if (ticks != 0)
+    {
+        curtick += ticks;
+        if (curtick < 0)
+            curtick = 0;
+//      else if (curtick > m_max_tick)
+//          curtick = m_max_tick;
+    }
+    else
+        curtick = get_left_tick();                      /* get_star_tick()? */
+
+    set_tick(curtick, dontreset);
+    if (is_jack_running())                              /* stazed Seq32     */
+        position_jack(true, curtick);
+    else
+        set_reposition();                               /* ditto!           */
 }
 
 /**
@@ -7725,6 +7754,21 @@ performer::automation_no_op
 }
 
 /**
+ *  This function helps avoid long function calls like:
+ *
+ *      std::string name =
+ *          opcontrol::automation_slot_name(automation::slot::bpm_up);
+ *
+ *  C/C++ talen-pasting cannot work here.
+ */
+
+static std::string
+auto_name (automation::slot s)
+{
+    return opcontrol::automation_slot_name(s);
+}
+
+/**
  *  Implements BPM Up and BPM Down for MIDI control.  There would be no need
  *  for two BPM configuration lines for MIDI control, except that we need two
  *  different keystrokes, one for up, and one for down.
@@ -7763,7 +7807,7 @@ performer::automation_bpm_up_dn
     int index, bool inverse
 )
 {
-    std::string name = "BPM";
+    std::string name = auto_name(automation::slot::bpm_up);
     print_parameters(name, a, d0, d1, index, inverse);
     if (inverse)
     {
@@ -7798,10 +7842,12 @@ performer::automation_bpm_up_dn
 bool
 performer::automation_bpm_dn
 (
-    automation::action /*a*/, int d0, int d1,
+    automation::action a, int d0, int d1,
     int index, bool inverse
 )
 {
+    std::string name = auto_name(automation::slot::bpm_dn);
+    print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
     {
         return automation_bpm_up_dn
@@ -7826,7 +7872,7 @@ performer::automation_ss_up_dn
     int index, bool inverse
 )
 {
-    std::string name = "Screenset";
+    std::string name = auto_name(automation::slot::ss_up);
     print_parameters(name, a, d0, d1, index, inverse);
     if (inverse)
     {
@@ -7859,10 +7905,12 @@ performer::automation_ss_up_dn
 bool
 performer::automation_ss_dn
 (
-    automation::action /*a*/, int d0, int d1,
+    automation::action a, int d0, int d1,
     int index, bool inverse
 )
 {
+    std::string name = auto_name(automation::slot::ss_dn);
+    print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
     {
         return automation_ss_up_dn
@@ -7890,7 +7938,7 @@ performer::automation_replace
     int index, bool inverse
 )
 {
-    std::string name = "Mod Replace";
+    std::string name = auto_name(automation::slot::mod_replace);
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
         return set_ctrl_status(a, automation::ctrlstatus::replace);
@@ -7909,7 +7957,7 @@ performer::automation_snapshot
     int index, bool inverse
 )
 {
-    std::string name = "Mod Snapshot";
+    std::string name = auto_name(automation::slot::mod_snapshot);
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
         return set_ctrl_status(a, automation::ctrlstatus::snapshot);
@@ -7928,7 +7976,7 @@ performer::automation_queue
     int index, bool inverse
 )
 {
-    std::string name = "Mod Queue";
+    std::string name = auto_name(automation::slot::mod_queue);
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
         return set_ctrl_status(a, automation::ctrlstatus::queue);
@@ -7952,7 +8000,7 @@ performer::automation_gmute
     int index, bool inverse
 )
 {
-    std::string name = "Mod Group Mute";
+    std::string name = auto_name(automation::slot::mod_gmute);
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
     {
@@ -7983,7 +8031,7 @@ performer::automation_glearn
     int index, bool inverse
 )
 {
-    std::string name = "Mod Group Learn";
+    std::string name = auto_name(automation::slot::mod_glearn);
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
     {
@@ -8012,7 +8060,7 @@ performer::automation_play_ss
     int index, bool inverse
 )
 {
-    std::string name = "Play Screen-Set";
+    std::string name = auto_name(automation::slot::play_ss);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
         (void) set_playing_screenset(screenset::number(d1));
@@ -8046,7 +8094,7 @@ performer::automation_playback
     int index, bool inverse
 )
 {
-    std::string name = "Playback";
+    std::string name = auto_name(automation::slot::playback);
     print_parameters(name, a, d0, d1, index, inverse);
     if (a == automation::action::toggle)            /* key "." press  */
     {
@@ -8082,7 +8130,7 @@ performer::automation_song_record
     int index, bool inverse
 )
 {
-    std::string name = "Song Record";
+    std::string name = auto_name(automation::slot::song_record);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
@@ -8109,8 +8157,8 @@ performer::automation_solo
     int index, bool inverse
 )
 {
-    std::string name = "Solo";
     bool result = true;
+    std::string name = auto_name(automation::slot::solo);
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
     {
@@ -8136,7 +8184,7 @@ performer::automation_thru
     int index, bool inverse
 )
 {
-    std::string name = "Thru";
+    std::string name = auto_name(automation::slot::thru);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
@@ -8163,7 +8211,7 @@ performer::automation_bpm_page_up_dn
     int index, bool inverse
 )
 {
-    std::string name = "BPM Page";
+    std::string name = auto_name(automation::slot::bpm_page_up);
     print_parameters(name, a, d0, d1, index, inverse);
     if (inverse)
     {
@@ -8197,10 +8245,12 @@ performer::automation_bpm_page_up_dn
 bool
 performer::automation_bpm_page_dn
 (
-    automation::action /*a*/, int d0, int d1,
+    automation::action a, int d0, int d1,
     int index, bool inverse
 )
 {
+    std::string name = auto_name(automation::slot::bpm_page_dn);
+    print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
     {
         return automation_bpm_page_up_dn
@@ -8224,7 +8274,7 @@ performer::automation_ss_set
     int index, bool inverse
 )
 {
-    std::string name = "Screen-Set Set";
+    std::string name = auto_name(automation::slot::ss_set);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
         (void) set_playing_screenset(screenset::number(d1));
@@ -8252,7 +8302,7 @@ performer::automation_record_style
     int index, bool inverse
 )
 {
-    std::string name = "Record Style";
+    std::string name = auto_name(automation::slot::record_style);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
@@ -8283,7 +8333,7 @@ performer::automation_quan_record
     int index, bool inverse
 )
 {
-    std::string name = "Q Record";
+    std::string name = auto_name(automation::slot::quan_record);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
@@ -8310,7 +8360,7 @@ performer::automation_reset_sets
     int index, bool inverse
 )
 {
-    std::string name = "Reset Sequences";
+    std::string name = auto_name(automation::slot::reset_sets);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
@@ -8333,7 +8383,7 @@ performer::automation_oneshot
     int index, bool inverse
 )
 {
-    std::string name = "One-shot Queue";
+    std::string name = auto_name(automation::slot::mod_oneshot);
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
         return set_ctrl_status(a, automation::ctrlstatus::oneshot);
@@ -8348,13 +8398,9 @@ performer::automation_FF
     int index, bool inverse
 )
 {
-    std::string name = "Fast-forward";
+    std::string name = auto_name(automation::slot::FF);
     print_parameters(name, a, d0, d1, index, inverse);
-
-    /*
-     * TO BE DETERMINED
-     */
-
+    move_tick(m_fast_ticks, true);
     return true;
 }
 
@@ -8365,13 +8411,9 @@ performer::automation_rewind
     int index, bool inverse
 )
 {
-    std::string name = "Rewind";
+    std::string name = auto_name(automation::slot::rewind);
     print_parameters(name, a, d0, d1, index, inverse);
-
-    /*
-     * TO BE DETERMINED
-     */
-
+    move_tick(-m_fast_ticks, true);
     return true;
 }
 
@@ -8387,13 +8429,9 @@ performer::automation_top
     int index, bool inverse
 )
 {
-    std::string name = "Top";
+    std::string name = auto_name(automation::slot::top);
     print_parameters(name, a, d0, d1, index, inverse);
-
-    /*
-     * TO BE DETERMINED
-     */
-
+    move_tick(0, true);                                 /* slighly tricky   */
     return true;
 }
 
@@ -8411,7 +8449,7 @@ performer::automation_playlist
 )
 {
     bool result = false;
-    std::string name = "Playlist";
+    std::string name = auto_name(automation::slot::playlist);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
@@ -8989,7 +9027,7 @@ performer::automation_playlist_song
 )
 {
     bool result = false;
-    std::string name = "Playlist Song";
+    std::string name = auto_name(automation::slot::playlist_song);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
@@ -9030,7 +9068,7 @@ performer::automation_tap_bpm
     int index, bool inverse
 )
 {
-    std::string name = "Tap BPM";
+    std::string name = auto_name(automation::slot::tap_bpm);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
@@ -9059,7 +9097,7 @@ performer::automation_start
     int index, bool inverse
 )
 {
-    std::string name = "Start";
+    std::string name = auto_name(automation::slot::start);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
@@ -9083,7 +9121,7 @@ performer::automation_stop
     int index, bool inverse
 )
 {
-    std::string name = "Stop";
+    std::string name = auto_name(automation::slot::stop);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
         auto_stop();
@@ -9098,7 +9136,7 @@ performer::automation_looping
     int index, bool inverse
 )
 {
-    std::string name = "Loop L/R";
+    std::string name = auto_name(automation::slot::loop_LR);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
@@ -9115,7 +9153,7 @@ performer::automation_toggle_mutes
     int index, bool inverse
 )
 {
-    std::string name = "Toggle Mutes";
+    std::string name = auto_name(automation::slot::toggle_mutes);
     print_parameters(name, a, d0, d1, index, inverse);
     if (a == automation::action::toggle)
     {
@@ -9146,7 +9184,7 @@ performer::automation_song_pointer
     int index, bool inverse
 )
 {
-    std::string name = "Song Pointer";
+    std::string name = auto_name(automation::slot::song_pointer);
     print_parameters(name, a, d0, d1, index, inverse);
 
     /*
@@ -9168,7 +9206,7 @@ performer::automation_keep_queue
     int index, bool inverse
 )
 {
-    std::string name = "Keep queue";
+    std::string name = auto_name(automation::slot::keep_queue);
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
     {
@@ -9179,46 +9217,6 @@ performer::automation_keep_queue
     }
     else
         return true;
-}
-
-/**
- * \return
- *      Returns true so that the caller can take action on it.
- */
-
-bool
-performer::automation_edit_pending
-(
-    automation::action a, int d0, int d1,
-    int index, bool inverse
-)
-{
-    std::string name = "Seq edit pending";
-    print_parameters(name, a, d0, d1, index, inverse);
-    if (! inverse)
-        m_seq_edit_pending = true;
-
-    return true;
-}
-
-/**
- * \return
- *      Returns true so that the caller can take action on it.
- */
-
-bool
-performer::automation_event_pending
-(
-    automation::action a, int d0, int d1,
-    int index, bool inverse
-)
-{
-    std::string name = "Event edit pending";
-    print_parameters(name, a, d0, d1, index, inverse);
-    if (! inverse)
-        m_event_edit_pending = true;
-
-    return true;
 }
 
 /**
@@ -9234,8 +9232,8 @@ performer::automation_slot_shift
     int index, bool inverse
 )
 {
-    std::string name = "Slot shift ";
     bool result = false;
+    std::string name = auto_name(automation::slot::slot_shift);
     name += std::to_string(slot_shift() + 1);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
@@ -9259,8 +9257,8 @@ performer::automation_mutes_clear
     int index, bool inverse
 )
 {
-    std::string name = "Mutes clear";
     bool result = false;
+    std::string name = auto_name(automation::slot::mutes_clear);
     name += std::to_string(slot_shift() + 1);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
@@ -9282,10 +9280,50 @@ performer::automation_quit
     int index, bool inverse
 )
 {
-    std::string name = "Exit";
+    std::string name = auto_name(automation::slot::quit);
     print_parameters(name, a, d0, d1, index, inverse);
     if (a == automation::action::on && ! inverse)
         signal_quit();
+
+    return true;
+}
+
+/**
+ * \return
+ *      Returns true so that the caller can take action on it.
+ */
+
+bool
+performer::automation_edit_pending
+(
+    automation::action a, int d0, int d1,
+    int index, bool inverse
+)
+{
+    std::string name = auto_name(automation::slot::pattern_edit);
+    print_parameters(name, a, d0, d1, index, inverse);
+    if (! inverse)
+        m_seq_edit_pending = true;
+
+    return true;
+}
+
+/**
+ * \return
+ *      Returns true so that the caller can take action on it.
+ */
+
+bool
+performer::automation_event_pending
+(
+    automation::action a, int d0, int d1,
+    int index, bool inverse
+)
+{
+    std::string name = auto_name(automation::slot::event_edit);
+    print_parameters(name, a, d0, d1, index, inverse);
+    if (! inverse)
+        m_event_edit_pending = true;
 
     return true;
 }
@@ -9304,7 +9342,7 @@ performer::automation_song_mode
     int index, bool inverse
 )
 {
-    std::string name = "Song mode toggle";
+    std::string name = auto_name(automation::slot::song_mode);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
         (void) toggle_song_start_mode();
@@ -9327,7 +9365,7 @@ performer::automation_toggle_jack
     int index, bool inverse
 )
 {
-    std::string name = "Toggle JACK Transport";
+    std::string name = auto_name(automation::slot::toggle_jack);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
@@ -9340,7 +9378,7 @@ performer::automation_toggle_jack
 }
 
 /**
- *  TODO TODO TODO
+ *  Not sure we really need this one.`
  */
 
 bool
@@ -9350,12 +9388,12 @@ performer::automation_menu_mode
     int index, bool inverse
 )
 {
-    std::string name = "Menu mode toggle TODO";
+    std::string name = auto_name(automation::slot::menu_mode);
     bool result = false;
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
-        // TODO
+        // TODO???
     }
     return result;
 }
@@ -9371,12 +9409,12 @@ performer::automation_follow_transport
     int index, bool inverse
 )
 {
-    std::string name = "Follow JACK Transport";
     bool result = true;
+    std::string name = auto_name(automation::slot::follow_transport);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
-        std::string mode("Follow JACK Transport ");
+        std::string mode{name};
         toggle_follow_transport();
         mode += get_follow_transport() ? "On" : "Off" ;
         infoprint(mode);
@@ -9391,8 +9429,8 @@ performer::automation_panic
     int index, bool inverse
 )
 {
-    std::string name = "Panic!";
     bool result = true;
+    std::string name = auto_name(automation::slot::panic);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
         result = panic();
@@ -9407,8 +9445,8 @@ performer::automation_visibility
     int index, bool inverse
 )
 {
-    std::string name = "Visibility";
     bool result = true;
+    std::string name = auto_name(automation::slot::visibility);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
         result = visibility(a);
@@ -9423,8 +9461,8 @@ performer::automation_save_session
     int index, bool inverse
 )
 {
-    std::string name = "Save Session";
     bool result = true;
+    std::string name = auto_name(automation::slot::save_session);
     print_parameters(name, a, d0, d1, index, inverse);
     if (a == automation::action::on && ! inverse)
         signal_save();                     /* actually just raises a flag  */
@@ -9455,6 +9493,8 @@ performer::set_record_style (recordstyle rs)
 /**
  *  Selects the style of recording: recordstyle::merge, overwrite, expand,
  *  oneshot, and oneshot_reset.
+ *
+ *  Also see performer::automation_record_style() above.
  */
 
 bool
@@ -9464,35 +9504,41 @@ performer::automation_record_style_select
     int index, bool inverse
 )
 {
-    std::string name = "Record Style"; // opcontrol::slot_name(index)
     bool result = true;
-    print_parameters(name, a, d0, d1, index, inverse);
+    std::string name = auto_name(automation::slot::record_style); /* tricky */
     if (a == automation::action::on && ! inverse)
     {
         automation::slot s = int_to_slot_cast(index);
         recordstyle rs;
+        name += " ";
         switch (s)
         {
             case automation::slot::record_overdub:
                 rs = recordstyle::merge;
+                name += auto_name(automation::slot::record_overdub);
                 break;
 
             case automation::slot::record_overwrite:
                 rs = recordstyle::overwrite;
+                name += auto_name(automation::slot::record_overwrite);
                 break;
 
             case automation::slot::record_expand:
                 rs = recordstyle::expand;
+                name += auto_name(automation::slot::record_expand);
                 break;
 
             case automation::slot::record_oneshot:
                 rs = recordstyle::oneshot;
+                name += auto_name(automation::slot::record_oneshot);
                 break;
 
             default:
                 rs = recordstyle::max;
+                name += "Error";
                 break;
         }
+        print_parameters(name, a, d0, d1, index, inverse);
         set_record_style(rs);
     }
     return result;
@@ -9525,13 +9571,14 @@ performer::automation_grid_mode
     int index, bool inverse
 )
 {
-    std::string name = "Grid Mode";
     bool result = true;
-    print_parameters(name, a, d0, d1, index, inverse);
+    std::string name = "Mode: ";
     if (automation::actionable(a) && ! inverse)
     {
         automation::slot s = int_to_slot_cast(index);
         gridmode gm;
+        name += auto_name(s);
+        print_parameters(name, a, d0, d1, index, inverse);
         switch (s)
         {
             case automation::slot::grid_loop:
@@ -9606,13 +9653,13 @@ performer::automation_grid_quant
     int index, bool inverse
 )
 {
-    std::string name = "Grid Quant";
     bool result = true;
-    print_parameters(name, a, d0, d1, index, inverse);
     if (automation::actionable(a) && ! inverse)
     {
         automation::slot s = int_to_slot_cast(index);
+        std::string name = auto_name(s);
         alteration q;                               /* calculations module  */
+        print_parameters(name, a, d0, d1, index, inverse);
         switch (s)
         {
             case automation::slot::grid_quant_none:
@@ -9655,8 +9702,8 @@ performer::automation_bbt_hms
     int index, bool inverse
 )
 {
-    std::string name = "BBT/HMS";
     bool result = true;
+    std::string name = auto_name(automation::slot::mod_bbt_hms);
     print_parameters(name, a, d0, d1, index, inverse);
     if (automation::actionable(a) && ! inverse)
     {
@@ -9672,12 +9719,121 @@ performer::automation_LR_loop
     int index, bool inverse
 )
 {
-    std::string name = "L/R Loop";
     bool result = true;
+    std::string name = auto_name(automation::slot::mod_LR_loop);
     print_parameters(name, a, d0, d1, index, inverse);
     if (automation::actionable(a) && ! inverse)
     {
         notify_automation_change(automation::slot::mod_LR_loop);
+    }
+    return result;
+}
+
+bool
+performer::automation_undo
+(
+    automation::action a, int d0, int d1,
+    int index, bool inverse
+)
+{
+    bool result = true;
+    std::string name = auto_name(automation::slot::mod_undo);
+    print_parameters(name, a, d0, d1, index, inverse);
+    if (automation::actionable(a) && ! inverse)
+    {
+        notify_automation_change(automation::slot::mod_undo);
+    }
+    return result;
+}
+
+bool
+performer::automation_redo
+(
+    automation::action a, int d0, int d1,
+    int index, bool inverse
+)
+{
+    bool result = true;
+    std::string name = auto_name(automation::slot::mod_redo);
+    print_parameters(name, a, d0, d1, index, inverse);
+    if (automation::actionable(a) && ! inverse)
+    {
+        notify_automation_change(automation::slot::mod_redo);
+    }
+    return result;
+}
+
+bool
+performer::automation_copy_set
+(
+    automation::action a, int d0, int d1,
+    int index, bool inverse
+)
+{
+    bool result = true;
+    std::string name = auto_name(automation::slot::mod_copy_set);
+    print_parameters(name, a, d0, d1, index, inverse);
+    if (automation::actionable(a) && ! inverse)
+    {
+        result = copy_playscreen();
+        notify_automation_change(automation::slot::mod_copy_set);
+    }
+    return result;
+}
+
+bool
+performer::automation_paste_set
+(
+    automation::action a, int d0, int d1,
+    int index, bool inverse
+)
+{
+    bool result = true;
+    std::string name = auto_name(automation::slot::mod_paste_set);
+    print_parameters(name, a, d0, d1, index, inverse);
+    if (automation::actionable(a) && ! inverse)
+    {
+        result = paste_playscreen(0);       /* TODO: provide a destination */
+        notify_automation_change(automation::slot::mod_paste_set);
+    }
+    return result;
+}
+
+bool
+performer::automation_set_mode
+(
+    automation::action a, int d0, int d1,
+    int index, bool inverse
+)
+{
+    bool result = true;
+    if (automation::actionable(a) && ! inverse)
+    {
+        automation::slot s = int_to_slot_cast(index);
+        std::string name = auto_name(s);
+        print_parameters(name, a, d0, d1, index, inverse);
+        switch (s)
+        {
+            case automation::slot::set_mode_normal:
+                rc().sets_mode(rcsettings::setsmode::normal);
+                break;
+
+            case automation::slot::set_mode_auto:
+                rc().sets_mode(rcsettings::setsmode::autoarm);
+                break;
+
+            case automation::slot::set_mode_additive:
+                rc().sets_mode(rcsettings::setsmode::additive);
+                break;
+
+            case automation::slot::set_mode_all_sets:
+                rc().sets_mode(rcsettings::setsmode::allsets);
+                break;
+
+            default:
+
+                break;
+        }
     }
     return result;
 }
@@ -9866,21 +10022,53 @@ performer::sm_auto_func_list [] =
         automation::slot::mod_LR_loop,
         &performer::automation_LR_loop
     },
-    { automation::slot::mod_undo_recording, &performer::automation_no_op },
-    { automation::slot::mod_redo_recording, &performer::automation_no_op },
+    {
+        automation::slot::mod_undo,
+        &performer::automation_undo
+    },
+    {
+        automation::slot::mod_redo,
+        &performer::automation_redo
+    },
+
+    /*
+     *  Transpose song... what does this even mean? We forget!
+     */
+
     { automation::slot::mod_transpose_song, &performer::automation_no_op },
-    { automation::slot::mod_copy_set,       &performer::automation_no_op },
-    { automation::slot::mod_paste_set,      &performer::automation_no_op },
-    { automation::slot::mod_toggle_tracks,  &performer::automation_no_op },
+    {
+        automation::slot::mod_copy_set,
+        &performer::automation_copy_set
+        },
+    {
+        automation::slot::mod_paste_set,
+        &performer::automation_paste_set
+    },
+    {
+        automation::slot::mod_toggle_tracks,
+        &performer::automation_toggle_mutes     /* duplicate functionality! */
+    },
 
     /*
      * Set playing modes.
      */
 
-    { automation::slot::set_mode_normal,    &performer::automation_no_op },
-    { automation::slot::set_mode_auto,      &performer::automation_no_op },
-    { automation::slot::set_mode_additive,  &performer::automation_no_op },
-    { automation::slot::set_mode_all_sets,  &performer::automation_no_op },
+    {
+        automation::slot::set_mode_normal,
+        &performer::automation_set_mode
+    },
+    {
+        automation::slot::set_mode_auto,
+        &performer::automation_set_mode
+    },
+    {
+        automation::slot::set_mode_additive,
+        &performer::automation_set_mode
+    },
+    {
+        automation::slot::set_mode_all_sets,
+        &performer::automation_set_mode
+    },
 
     /*
      * Terminator

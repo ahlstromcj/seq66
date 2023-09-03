@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2023-08-13
+ * \updates       2023-09-02
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -280,8 +280,8 @@ enum class slot
 
     mod_bbt_hms,        /**< 69: Toggle between time-display modes.         */
     mod_LR_loop,        /**< 70: Toggle looping between the L and R marks.  */
-    mod_undo_recording, /**< 71: Undo events in current active pattern. ??? */
-    mod_redo_recording, /**< 72: Redo events in current active pattern. ??? */
+    mod_undo,           /**< 71: Undo events in current active pattern. ??? */
+    mod_redo,           /**< 72: Redo events in current active pattern. ??? */
     mod_transpose_song, /**< 73: Apply song transpose. ??????               */
     mod_copy_set,       /**< 74: Copy the current playing set.              */
     mod_paste_set,      /**< 75: Paste into the current active set.         */

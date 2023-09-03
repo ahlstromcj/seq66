@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2023-08-18
+ * \updates       2023-09-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -190,8 +190,8 @@ opcontrol::automation_slot_name (slot s)
         "Quan Record",          // 18 quan_record
         "Reset Sets",           // 19 reset_sets
         "One-shot",             // 20 mod_oneshot *
-        "FF",                   // 21 FF
-        "Rewind",               // 22 rewind
+        "FF",                   // 21 FF (movement faster than playback)
+        "Rewind",               // 22 rewind (movement faster than playback)
         "Top",                  // 23 top (song beginning or L marker)
         "Play List",            // 24 playlist * *
         "Play Song",            // 25 playlist_song * *
@@ -208,7 +208,7 @@ opcontrol::automation_slot_name (slot s)
 
         "Keep Queue",           // 32 keep_queue
         "Slot Shift",           // 33 slot_shift *
-        "Mutes Clear",          // 34 reserved_34
+        "Mutes Clear",          // 34 mutes_clear
         "Quit",                 // 35 quit *
         "Loop Edit",            // 36 pattern_edit
         "Event Edit",           // 37 event_edit
@@ -216,7 +216,7 @@ opcontrol::automation_slot_name (slot s)
         "Toggle JACK",          // 39 toggle_jack
         "Menu Mode",            // 40 menu_mode
         "Follow JACK",          // 41 follow_transport
-        "Panic",                // 42 panic *
+        "Panic!",               // 42 panic *
         "Visibility",           // 43 visibility *
         "Save Session",         // 44 save_session
         "Reserved 45",          // 45 reserved_45
@@ -228,10 +228,10 @@ opcontrol::automation_slot_name (slot s)
          * Record mode selection. Changed labels on 2023-03-18.
          */
 
-        "Record Overdub",       // 49: record_overdub
-        "Record Overwrite",     // 50: record_overwrite
-        "Record Expand",        // 51: record_expand
-        "Record Oneshot",       // 52: record_oneshot
+        "Overdub",              // 49: record_overdub
+        "Overwrite",            // 50: record_overwrite
+        "Expand",               // 51: record_expand
+        "Oneshot",              // 52: record_oneshot
 
         /*
          * Grid mode selection. Changed labels on 2023-03-18.
@@ -265,20 +265,20 @@ opcontrol::automation_slot_name (slot s)
 
         "BBT/HMS",              // 69: mod_bbt_hms
         "LR Loop",              // 70: mod_LR_loop
-        "Undo Record",          // 71: mod_undo_recording
-        "Redo Record",          // 72: mod_redo_recording
-        "Transpose Song",       // 73: mod_transpose_song
+        "Undo",                 // 71: mod_undo
+        "Redo",                 // 72: mod_redo
+        "Transpose Song",       // 73: mod_transpose_song ???
         "Copy Set",             // 74: mod_copy_set
         "Paste Set",            // 75: mod_paste_set
         "Toggle Tracks",        // 76: mod_toggle_tracks
 
         /*
-         * Set playing modes.
+         * Set-playing modes.
          */
 
-        "Sets Normal",          // 77: set_mode_norman
+        "Sets Normal",          // 77: set_mode_normal
         "Sets Auto",            // 78: set_mode_auto
-        "Sets Additive",        // 79: set_mode_additieve
+        "Sets Additive",        // 79: set_mode_additive
         "All Sets",             // 80: set_mode_all_sets
 
         /*

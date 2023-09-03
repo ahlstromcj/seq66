@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2023-08-16
+ * \updates       2023-09-02
  * \license       GNU GPLv2 or above
  *
  *  Currently, there is no code in this file.
@@ -338,8 +338,8 @@ s_slotnamelist [] =
 
     { slot::mod_bbt_hms,        "mod_bbt_hms"           },
     { slot::mod_LR_loop,        "mod_LR_loop"           },
-    { slot::mod_undo_recording, "mod_undo_recording"    },
-    { slot::mod_redo_recording, "mod_redo_recording"    },
+    { slot::mod_undo,           "mod_undo"              },
+    { slot::mod_redo,           "mod_redo"              },
     { slot::mod_transpose_song, "mod_transpose_song"    },
     { slot::mod_copy_set,       "mod_copy_set"          },
     { slot::mod_paste_set,      "mod_paste_set"         },

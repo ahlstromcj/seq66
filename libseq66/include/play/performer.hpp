@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-09-02
+ * \updates       2023-09-03
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -840,6 +840,13 @@ private:                            /* key, midi, and op container section  */
      */
 
     midipulse m_one_measure;
+
+    /**
+     *  The number of ticks to move for fast-forward and rewind. Defaults to
+     *  one-half of one measure.
+     */
+
+    midipulse m_fast_ticks;
 
     /**
      *  Holds the position of the left (L) marker, and it is first defined as
@@ -2057,7 +2064,7 @@ public:
     bool FF_RW_timeout ();          /* called by free-function of same name */
     void jack_reposition (midipulse tick, midipulse stoptick);
 
-    void set_reposition (bool postype)
+    void set_reposition (bool postype = true)
     {
         m_reposition = postype;
     }
@@ -2201,6 +2208,7 @@ public:
     bool panic ();                                      /* from kepler43    */
     bool visibility (automation::action a);             /* for NSM/Live use */
     void set_tick (midipulse tick, bool dontreset = false);
+    void move_tick (midipulse tick, bool dontreset = false);
     void set_left_tick (midipulse tick);
     void set_left_tick_seq (midipulse tick, midipulse snap);
 
@@ -3852,6 +3860,31 @@ public:
         int index, bool inverse
     );
     bool automation_LR_loop
+    (
+        automation::action a, int d0, int d1,
+        int index, bool inverse
+    );
+    bool automation_undo
+    (
+        automation::action a, int d0, int d1,
+        int index, bool inverse
+    );
+    bool automation_redo
+    (
+        automation::action a, int d0, int d1,
+        int index, bool inverse
+    );
+    bool automation_copy_set
+    (
+        automation::action a, int d0, int d1,
+        int index, bool inverse
+    );
+    bool automation_paste_set
+    (
+        automation::action a, int d0, int d1,
+        int index, bool inverse
+    );
+    bool automation_set_mode
     (
         automation::action a, int d0, int d1,
         int index, bool inverse

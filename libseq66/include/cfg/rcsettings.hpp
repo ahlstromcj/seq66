@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-06-04
+ * \updates       2023-09-03
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -284,7 +284,7 @@ private:
     bool m_print_keys;              /**< Show hot-key in main window slot.  */
     interaction m_interaction_method; /**< Interaction method: no support.  */
     setsmode m_sets_mode;           /**< How to handle set changes.         */
-    portname m_port_naming;       /**< How to display port names.         */
+    portname m_port_naming;         /**< How to display port names.         */
 
     /**
      *  Provides the name of current MIDI file.  Under normal usage, it is the
@@ -1413,6 +1413,11 @@ public:
     bool interaction_method (int v)
     {
         return interaction_method(static_cast<interaction>(v));
+    }
+
+    void sets_mode (setsmode sm)
+    {
+        m_sets_mode = sm;
     }
 
     void sets_mode (const std::string & v);

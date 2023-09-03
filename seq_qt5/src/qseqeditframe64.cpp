@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-08-31
+ * \updates       2023-09-02
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1297,6 +1297,10 @@ qseqeditframe64::on_automation_change (automation::slot s)
 {
     if (s == automation::slot::start || s == automation::slot::stop)
         m_seqroll->set_redraw();
+    else if (s == automation::slot::mod_undo)
+        undo();
+    else if (s == automation::slot::mod_redo)
+        redo();
 
     return true;
 }

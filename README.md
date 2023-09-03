@@ -86,7 +86,8 @@ Windows, and using a conventional source tarball.
         *   Adding more seqroll keystokes (and HTML help).
         *   Added live-note mapping (needs testing!), refactoring set-record
             code.
-        *   Implemented automation for BBT/HMS toggling.
+        *   Implemented automation for BBT/HMS toggling, FF/Rewind, Undo/Redo,
+            Play-set Copy/Paste.
     *   Version 0.99.8:
         *   Issue #112: A new pattern now displays in the MIDI controller.
         *   Issue #114: Adding display of shortcut keys to tool tips.

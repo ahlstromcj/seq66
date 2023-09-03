@@ -533,8 +533,8 @@ keycontainer::keys_automation ()
 
         { "0xe8",      automation::action::off     }, // 69 mod_bbt_hms
         { "0xe9",      automation::action::off     }, // 70 mod_LR_loop
-        { "0xea",      automation::action::off     }, // 71 mod_undo_recording
-        { "0xeb",      automation::action::off     }, // 72 mod_redo_recording
+        { "0xea",      automation::action::off     }, // 71 mod_undo
+        { "0xeb",      automation::action::off     }, // 72 mod_redo
         { "0xec",      automation::action::off     }, // 73 mod_transpose_song
         { "0xed",      automation::action::off     }, // 74 mod_copy_set
         { "0xee",      automation::action::off     }, // 75 mod_paste_set
