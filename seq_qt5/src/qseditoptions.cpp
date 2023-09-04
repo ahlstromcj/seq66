@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-25
+ * \updates       2023-09-04
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -2180,8 +2180,10 @@ qseditoptions::cancel ()
 void
 qseditoptions::apply ()
 {
-    m_backup_rc = rc();
-    m_backup_usr = usr();
+    /*
+     * backup() useless at this point, 'cause we're outa here!
+     */
+
     state_unchanged();
     signal_for_restart();           /* warnprint("Session reload request"); */
 }

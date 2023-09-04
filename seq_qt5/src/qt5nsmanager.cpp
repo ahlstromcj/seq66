@@ -287,10 +287,14 @@ qt5nsmanager::close_session (std::string & msg, bool ok)
 bool
 qt5nsmanager::run ()
 {
-    session_setup();
-
-    int exit_status = m_application.exec();     /* run main window loop     */
-    return exit_status == EXIT_SUCCESS;
+    bool restart = perf()->port_map_error() || perf()->new_ports_available();
+    if (session_setup(restart))                 /* need an early exit?      */
+    {
+        int exit_status = m_application.exec(); /* run main window loop     */
+        return exit_status == EXIT_SUCCESS;
+    }
+    else
+        return true;                            /* see main()               */
 }
 
 /*
@@ -340,7 +344,15 @@ qt5nsmanager::show_message
 
             bool yes = m_window->show_error_box_ex(text, prompt_for_restart);
             if (yes)
+            {
+                /*
+                 * We get here before the call to session_setup().
+                 * So we check the condition above again in our run()
+                 * function. See above.
+                 */
+
                 perf()->store_io_maps_and_restart();
+            }
         }
     }
 }

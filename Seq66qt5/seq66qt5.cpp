@@ -134,20 +134,20 @@ main (int argc, char * argv [])
             exit_status = result ? EXIT_SUCCESS : EXIT_FAILURE ;
             (void) sm.close_session(msg, result);
             if (! result)
-                break;
+                break;                              /* stop infinite loop   */
 
             if (seq66::session_close())
             {
                 seq66::session_message("Closing session");
-                break;
+                break;                              /* stop infinite loop   */
             }
             if (seq66::session_restart())
             {
                 seq66::session_message("Reloading session");
-                seq66::signal_end_restart();        /* stop infinite loop   */
+                seq66::signal_end_restart();
             }
             else
-                break;
+                break;                              /* stop infinite loop   */
         }
         else
         {

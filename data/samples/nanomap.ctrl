@@ -234,18 +234,16 @@ keyboard-layout = qwerty
 68 "0xe7"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Note-map
 69 "0xe8"        [ 0 0x90  12   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # BBT/HMS
 70 "0xe9"        [ 0 0x90  14   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # LR Loop
-71 "0xea"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Undo Record
-72 "0xeb"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Redo Record
 71 "0xea"        [ 0 0x90  16   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Undo
 72 "0xeb"        [ 0 0x90  17   1 127 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Redo
 73 "0xec"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Transpose Song
 74 "0xed"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Copy Set
 75 "0xee"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Paste Set
 76 "0xef"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Toggle Tracks
-77 "0x8c"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Sets Normal
-78 "0x8d"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Sets Auto
-79 "0x8e"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Sets Additive
-80 "0x8f"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # All Sets
+77 "0xf0"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Sets Normal
+78 "0xf1"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Sets Auto
+79 "0xf2"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Sets Additive
+80 "0xf3"        [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # All Sets
 
 [midi-control-out-settings]
 

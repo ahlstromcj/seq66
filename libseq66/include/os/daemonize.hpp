@@ -23,7 +23,7 @@
  * \file          daemonize.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2023-05-08
+ * \updates       2023-09-04
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
@@ -133,7 +133,7 @@ extern std::string get_parent_process_name ();
  * determine what to do.
  */
 
-extern void session_setup ();
+extern bool session_setup (bool earlyexit = false);
 extern bool session_close ();
 extern bool session_save ();
 extern bool session_restart ();

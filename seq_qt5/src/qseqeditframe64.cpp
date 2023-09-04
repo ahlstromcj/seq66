@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-09-02
+ * \updates       2023-09-04
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1184,6 +1184,10 @@ qseqeditframe64::keyPressEvent (QKeyEvent * event)
         if (key == Qt::Key_Space || key == Qt::Key_Period)
         {
             start_playing();
+        }
+        else if (key == Qt::Key_Escape)
+        {
+            m_seqroll->set_adding(false);
         }
         else if (isctrl)
         {

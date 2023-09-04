@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2023-08-12
+ * \updates       2023-09-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -229,7 +229,7 @@ keycontainer::add_automation (const keycontrol & op)
     else
     {
         std::cerr
-            << "Duplicate mute slot #" << std::setw(3) << keyslot
+            << "Duplicate automation slot #" << std::setw(3) << keyslot
             << " : '" << keyname << "'" << std::endl
             ;
     }

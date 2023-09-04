@@ -82,15 +82,15 @@ namespace seq66
 static std::string s_port_error_msg
 {
     "Check MIDI Clock & MIDI Input tabs for unavailable/missing ports. "
-    "Make sure the loaded MIDI tune is not using such ports. "
-    "Use the remap/restart button if not, or change the global output port "
+    "Make sure the MIDI tune is not using such ports. "
+    "Click 'Remap and restart' or change the global output ports "
     "for the tune."
 };
 
 static std::string s_port_update_msg
 {
     "There are more real ports than mapped ports. "
-    "Use the remap/restart button to recreate the maps or edit "
+    "Click 'Remap and restart' to recreate the maps or edit "
     "them in the 'rc' file."
 };
 

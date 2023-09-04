@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2023-05-27
+ * \updates       2023-09-04
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -31,18 +31,16 @@
  *  daemon.  There are large differences between POSIX daemons and Win32
  *  services.  Thus, this module is mostly Linux/POSIX-specific.
  *
- *  ca 2023-03-22:
+ *  Updating daemonize().  Instead of calling exit on error, it now
+ *  returns the error code; the return value is now int instead of
+ *  uint32_t, and uint32_t is now mode_t to reflect the return type of
+ *  umask(2). Note that digging reveals that mode_t is an unsigned 32-bit
+ *  type anyway.
  *
- *      Updating daemonize().  Instead of calling exit on error, it now
- *      returns the error code; the return value is now int instead of
- *      uint32_t, and uint32_t is now mode_t to reflect the return type of
- *      umask(2). Note that digging reveals that mode_t is an unsigned 32-bit
- *      type anyway.
- *
- *      We also calls fork() again to insure that the application is not
- *      the session leader, and implement the "flags" parameters; both steps
- *      are described in Michael Kerrisk's book, "The Linux Programming
- *      Interface", 2010.
+ *  We also calls fork() again to insure that the application is not
+ *  the session leader, and implement the "flags" parameters; both steps
+ *  are described in Michael Kerrisk's book, "The Linux Programming
+ *  Interface", 2010.
  *
  *  Questions:
  *
@@ -634,18 +632,31 @@ session_handler (int sig)
 
 /**
  *  Sets up the application to intercept SIGINT, SIGTERM, and SIGUSR1.
+ *
+ * \param earlyexit
+ *      It turns out that the test for the need to remap ports occurs
+ *      (in Seq66} before this function is called. We don't want to continue
+ *      to run in this case.
+ *
+ * \return
+ *      Returns true if the application can continue.
  */
 
-void
-session_setup ()
+bool
+session_setup (bool earlyexit)
 {
-    struct sigaction action;
-    memset(&action, 0, sizeof action);
-    action.sa_handler = session_handler;
-    sg_needs_close = sg_needs_save = sg_restart = false;
-    sigaction(SIGINT, &action, NULL);                   /* SIGINT is 2      */
-    sigaction(SIGTERM, &action, NULL);                  /* SIGTERM is 15    */
-    sigaction(SIGUSR1, &action, NULL);                  /* SIGUSR1 is 10    */
+    bool result = ! earlyexit;
+    if (result)
+    {
+        struct sigaction action;
+        memset(&action, 0, sizeof action);
+        action.sa_handler = session_handler;
+        sg_needs_close = sg_needs_save = sg_restart = false;
+        sigaction(SIGINT, &action, NULL);               /* SIGINT is 2      */
+        sigaction(SIGTERM, &action, NULL);              /* SIGTERM is 15    */
+        sigaction(SIGUSR1, &action, NULL);              /* SIGUSR1 is 10    */
+    }
+    return result;
 }
 
 /**
@@ -755,10 +766,15 @@ get_parent_process_name ()
  * --------------------------------------------------------------------------
  */
 
-void
-session_setup ()
+bool
+session_setup (bool earlyexit)
 {
-    sg_needs_close = sg_needs_save = sg_restart = false;
+    bool result = ! earlyexit;
+    if (result)
+    {
+        sg_needs_close = sg_needs_save = sg_restart = false;
+    }
+    return result;
 }
 
 bool

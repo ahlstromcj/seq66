@@ -331,13 +331,7 @@ qperfeditframe64::qperfeditframe64
 
     /*
      *  The width of the qperfroll is based on its sizeHint(), which is based
-     *  on the maximum trigger in all of the sequences in all sets.  At the
-     *  moment, we're not sure how to deal with this, so the grow button is
-     *  hidden.
-     *
-     *      ui->btnGrow->hide();
-     *      qt_set_icon(right_xpm, ui->btnGrow);
-     *      ui->btnGrow->setEnabled(false);
+     *  on the maximum trigger in all of the sequences in all sets.
      */
 
     connect(ui->btnGrow, SIGNAL(clicked(bool)), this, SLOT(grow()));

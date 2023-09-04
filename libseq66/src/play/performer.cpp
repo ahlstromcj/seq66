@@ -3780,8 +3780,8 @@ performer::move_tick (midipulse ticks, bool dontreset)
         curtick += ticks;
         if (curtick < 0)
             curtick = 0;
-//      else if (curtick > m_max_tick)
-//          curtick = m_max_tick;
+        else if (curtick > m_max_extent)
+            curtick = m_max_extent;                     /* but can change!! */
     }
     else
         curtick = get_left_tick();                      /* get_star_tick()? */
