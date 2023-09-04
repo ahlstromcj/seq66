@@ -287,7 +287,7 @@ qt5nsmanager::close_session (std::string & msg, bool ok)
 bool
 qt5nsmanager::run ()
 {
-    bool restart = perf()->port_map_error() || perf()->new_ports_available();
+    bool restart = perf()->port_map_error(); // || perf()->new_ports_available();
     if (session_setup(restart))                 /* need an early exit?      */
     {
         int exit_status = m_application.exec(); /* run main window loop     */
@@ -339,10 +339,10 @@ qt5nsmanager::show_message
         else
         {
             std::string text = tag + ": " + msg;
-            bool prompt_for_restart =
-                perf()->port_map_error() || perf()->new_ports_available();
+            bool prompt = perf()->port_map_error() ||
+                perf()->new_ports_available();
 
-            bool yes = m_window->show_error_box_ex(text, prompt_for_restart);
+            bool yes = m_window->show_error_box_ex(text, prompt);
             if (yes)
             {
                 /*
@@ -353,6 +353,8 @@ qt5nsmanager::show_message
 
                 perf()->store_io_maps_and_restart();
             }
+            else
+                perf()->clear_port_map_error();
         }
     }
 }

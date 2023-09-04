@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-09-03
+ * \updates       2023-09-04
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2696,6 +2696,11 @@ public:
     bool port_map_error () const
     {
         return m_port_map_error;
+    }
+
+    void clear_port_map_error () const
+    {
+        m_port_map_error = false;           /* mutable */
     }
 
     void store_io_maps_and_restart () const;

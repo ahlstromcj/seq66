@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-09-03
+ * \updates       2023-09-04
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1000,9 +1000,7 @@ performer::store_io_maps_and_restart () const
     performer * ncperf = const_cast<performer *>(this);
     bool ok = ncperf->store_io_maps();
     if (ok)
-    {
         signal_for_restart();
-    }
 }
 
 bussbyte
@@ -1108,8 +1106,8 @@ performer::is_input_system_port (bussbyte bus) const
 bool
 performer::new_ports_available () const
 {
-    bool result = not_nullptr(master_bus());
-    if (result)
+    bool result = false;
+    if (not_nullptr(master_bus()))
     {
         const mastermidibus * mbus = master_bus();
         bool new_outputs = false;
@@ -1129,7 +1127,7 @@ performer::new_ports_available () const
             int realbuses = mbus->get_num_in_buses();
             new_inputs = mappedbuses < realbuses;
         }
-        result = new_outputs || new_inputs;
+        m_port_map_error = result = new_outputs || new_inputs;
     }
     return result;
 }
@@ -3337,9 +3335,9 @@ performer::launch (int ppqn)
                 std::string msg =
                     "Some ports now missing. "
                     "Remap if that is fine. "
-                    "OK preserves thise map. "
+                    "OK preserves this map. "
                     "Exit to edit the 'rc' file directly. "
-                    "Suppress this message in Preferences/Display."
+                    "Suppress this message in Preferences / Display."
                     ;
 
                 m_port_map_error = true;            /* mutable boolean      */
