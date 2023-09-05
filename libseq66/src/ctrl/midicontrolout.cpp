@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with refactoring by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2023-04-10
+ * \updates       2023-09-05
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -67,6 +67,7 @@
 #include <iomanip>                      /* std::setw() manipulator          */
 #include <sstream>                      /* std::ostringstream class         */
 
+#include "ctrl/opcontrol.hpp"           /* seq66::automation & opcontrol    */
 #include "ctrl/midicontrolout.hpp"      /* seq66::midicontrolout class      */
 #include "play/mutegroups.hpp"          /* seq66::mutegroups::Size()        */
 
@@ -179,6 +180,20 @@ operator ++ (midicontrolout::uiaction & e)
     return e;
 }
 
+/**
+ *  This function helps avoid long function calls like:
+ *
+ *      std::string name =
+ *          opcontrol::automation_slot_name(automation::slot::bpm_up);
+ *
+ *  C/C++ talen-pasting cannot work here.
+ */
+
+std::string
+auto_name (automation::slot s)
+{
+    return opcontrol::automation_slot_name(s);
+}
 
 /**
  *  A "to_string" function for the seqaction enumeration.
@@ -206,39 +221,104 @@ action_to_string (midicontrolout::uiaction a)
 {
     switch (a)
     {
-    case midicontrolout::uiaction::panic:           return "Panic";
-    case midicontrolout::uiaction::stop:            return "Stop";
-    case midicontrolout::uiaction::pause:           return "Pause";
-    case midicontrolout::uiaction::play:            return "Play";
-    case midicontrolout::uiaction::toggle_mutes:    return "Toggle_mutes";
-    case midicontrolout::uiaction::song_record:     return "Song-record";
-    case midicontrolout::uiaction::slot_shift:      return "Slot-shift";
-    case midicontrolout::uiaction::free:            return "Free";
-    case midicontrolout::uiaction::queue:           return "Queue";
-    case midicontrolout::uiaction::oneshot:         return "One-shot";
-    case midicontrolout::uiaction::replace:         return "Replace";
-    case midicontrolout::uiaction::snapshot:        return "Snapshot";
-    case midicontrolout::uiaction::song_mode:       return "Song-mode";
-    case midicontrolout::uiaction::learn:           return "Learn";
-    case midicontrolout::uiaction::bpm_up:          return "BPM-Up";
-    case midicontrolout::uiaction::bpm_dn:          return "BPM-Dn";
-    case midicontrolout::uiaction::list_up:         return "List-Up";
-    case midicontrolout::uiaction::list_dn:         return "List-Dn";
-    case midicontrolout::uiaction::song_up:         return "Song-Up";
-    case midicontrolout::uiaction::song_dn:         return "Song-Dn";
-    case midicontrolout::uiaction::set_up:          return "Set-Up";
-    case midicontrolout::uiaction::set_dn:          return "Set-Dn";
-    case midicontrolout::uiaction::tap_bpm:         return "Tap-BPM";
-    case midicontrolout::uiaction::quit:            return "Quit";
-    case midicontrolout::uiaction::visibility:      return "Visibility";
-    case midicontrolout::uiaction::alt_2:           return "Alt_2";
-    case midicontrolout::uiaction::alt_3:           return "Alt_3";
-    case midicontrolout::uiaction::alt_4:           return "Alt_4";
-    case midicontrolout::uiaction::alt_5:           return "Alt_5";
-    case midicontrolout::uiaction::alt_6:           return "Alt_6";
-    case midicontrolout::uiaction::alt_7:           return "Alt_7";
-    case midicontrolout::uiaction::alt_8:           return "Alt_8";
-    default:                                        return "Unknown";
+    case midicontrolout::uiaction::panic:
+        return auto_name(automation::slot::panic);          // "Panic"
+
+    case midicontrolout::uiaction::stop:
+        return auto_name(automation::slot::stop);           // "Stop"
+
+    case midicontrolout::uiaction::pause:
+        return "Pause";
+
+    case midicontrolout::uiaction::play:
+        return auto_name(automation::slot::playback);       // "Play"
+
+    case midicontrolout::uiaction::toggle_mutes:
+        return auto_name(automation::slot::toggle_mutes);   // "Toggle-mutes
+
+    case midicontrolout::uiaction::song_record:
+        return auto_name(automation::slot::song_record);    // "Song-record"
+
+    case midicontrolout::uiaction::slot_shift:
+        return auto_name(automation::slot::slot_shift);     // "Slot-shift"
+
+    case midicontrolout::uiaction::free:
+        return "Free";
+
+    case midicontrolout::uiaction::queue:
+        return auto_name(automation::slot::mod_queue);      // "Queue"
+
+    case midicontrolout::uiaction::oneshot:
+        return auto_name(automation::slot::mod_oneshot);    // "One-shot"
+
+    case midicontrolout::uiaction::replace:
+        return auto_name(automation::slot::mod_replace);    // "Replace"
+
+    case midicontrolout::uiaction::snapshot:
+        return auto_name(automation::slot::mod_snapshot);   // "Snapshot"
+
+    case midicontrolout::uiaction::song_mode:
+        return auto_name(automation::slot::song_mode);      // "Song-mode"
+
+    case midicontrolout::uiaction::learn:
+        return auto_name(automation::slot::mod_glearn);     // "Learn"
+
+    case midicontrolout::uiaction::bpm_up:
+        return auto_name(automation::slot::bpm_up);         // "BPM-Up"
+
+    case midicontrolout::uiaction::bpm_dn:
+        return auto_name(automation::slot::bpm_dn);         // "BPM-Dn"
+
+    case midicontrolout::uiaction::list_up:
+        return auto_name(automation::slot::playlist) + " Up";
+
+    case midicontrolout::uiaction::list_dn:
+        return auto_name(automation::slot::playlist) + " Dn";
+
+    case midicontrolout::uiaction::song_up:
+        return auto_name(automation::slot::playlist_song) + " Up";
+
+    case midicontrolout::uiaction::song_dn:
+        return auto_name(automation::slot::playlist_song) + " Dn";
+
+    case midicontrolout::uiaction::set_up:
+        return auto_name(automation::slot::ss_up);          // "Set-Up"
+
+    case midicontrolout::uiaction::set_dn:
+        return auto_name(automation::slot::ss_dn);          // "Set-Dn"
+
+    case midicontrolout::uiaction::tap_bpm:
+        return auto_name(automation::slot::tap_bpm);        // "Tap-BPM"
+
+    case midicontrolout::uiaction::quit:
+        return auto_name(automation::slot::quit);           // "Quit"
+
+    case midicontrolout::uiaction::visibility:
+        return auto_name(automation::slot::visibility);     // "Visibility"
+
+    case midicontrolout::uiaction::alt_2:
+        return "Alt_2";
+
+    case midicontrolout::uiaction::alt_3:
+        return "Alt_3";
+
+    case midicontrolout::uiaction::alt_4:
+        return "Alt_4";
+
+    case midicontrolout::uiaction::alt_5:
+        return "Alt_5";
+
+    case midicontrolout::uiaction::alt_6:
+        return "Alt_6";
+
+    case midicontrolout::uiaction::alt_7:
+        return "Alt_7";
+
+    case midicontrolout::uiaction::alt_8:
+        return "Alt_8";
+
+    default:
+        return "Unknown";
     }
 }
 

@@ -7752,21 +7752,6 @@ performer::automation_no_op
 }
 
 /**
- *  This function helps avoid long function calls like:
- *
- *      std::string name =
- *          opcontrol::automation_slot_name(automation::slot::bpm_up);
- *
- *  C/C++ talen-pasting cannot work here.
- */
-
-static std::string
-auto_name (automation::slot s)
-{
-    return opcontrol::automation_slot_name(s);
-}
-
-/**
  *  Implements BPM Up and BPM Down for MIDI control.  There would be no need
  *  for two BPM configuration lines for MIDI control, except that we need two
  *  different keystrokes, one for up, and one for down.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2023-08-25
+ * \updates       2023-09-04
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1295,6 +1295,32 @@ note_value_to_tempo (midibyte note)
     slope /= double(max_midi_value());
     slope += usr().midi_bpm_minimum();
     return slope;
+}
+
+/**
+ *  Formalizes the rescaling of ticks base on changing the PPQN.  For speed
+ *  the parameters are all assumed to be valid.  The PPQN values supported
+ *  explicity range from 32 to 19200.  The maximum tick value for 32-bit code
+ *  is 2147483647.  At the highest PPQN that's almost 28000 measures.  64-bit
+ *  code maxes at over 9E18.
+ *
+ * \param tick
+ *      The tick value to be rescaled.
+ *
+ * \param newppqn
+ *      The new PPQN.
+ *
+ * \param oldppqn
+ *      The original PPQN.  Defaults to 192.
+ *
+ * \return
+ *      Returns the new tick value.
+ */
+
+midipulse
+rescale_tick (midipulse tick, int newppqn, int oldppqn)
+{
+    return midipulse(double(tick) * newppqn / oldppqn + 0.5);
 }
 
 /**

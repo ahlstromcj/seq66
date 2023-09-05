@@ -667,6 +667,11 @@ qperfroll::keyPressEvent (QKeyEvent * event)
             handled = true;
             set_adding(false);
         }
+        else if (event->key() == Qt::Key_I)
+        {
+            handled = true;
+            set_adding(true);
+        }
         else if (event->key() == Qt::Key_P)
         {
             handled = true;

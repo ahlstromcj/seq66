@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-01
+ * \updates       2023-09-04
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1611,6 +1611,12 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                         if (track().edge_fix())
                             done = mark_modified();
+                        break;
+
+                    case Qt::Key_I:
+
+                        done = true;
+                        set_adding(true);
                         break;
 
 #if 0

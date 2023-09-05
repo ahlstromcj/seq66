@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2023-09-02
+% \update      2023-09-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -2106,8 +2106,8 @@
 \paragraph{Automation / Mod Replace}
 \label{paragraph:configuration_midi_ctrl_modrep}
 
-   This control the "replace" flag.
-   Then, when the user manually clicks a pattern slot,
+   This entry controls the "replace" flag.
+   Once set, when the user manually clicks a pattern slot,
    that pattern is unmuted, and all the rest are muted.
    Thus, this MIDI control is kind a of "Solo" function.
    It works whether in "Live" or "Song" mode.
@@ -2117,8 +2117,9 @@
 
    This control causes the playing statuses of all active
    (i.e. having data) patterns to be saved.  When turned off, the
-   original playing status is restored.  Thus, two MIDI events
-   need to be allocated to this functionality.
+   original playing status is restored.
+%  Thus, two MIDI events
+%  need to be allocated to this functionality.
 
 \paragraph{Automation / Mod Queue}
 \label{paragraph:configuration_midi_ctrl_modqueue}
@@ -2149,8 +2150,13 @@
    on the \textsl{MPK Mini}, the corresponding sequence gets queued.
    Also included in the data directory are sample 'ctrl' files for other devices.
 
-\paragraph{Automation / Mute Group}
+\paragraph{Automation / Mute Group ("Group Mute")}
 \label{paragraph:configuration_midi_ctrl_modgmute}
+
+   To be documented.
+
+\paragraph{Automation / Group Learn}
+\label{paragraph:configuration_midi_ctrl_modglean}
 
    This MIDI control sets up a "group learn".
    This control sets two internal flags on : "mode-group" and "group-learn".
@@ -2167,6 +2173,151 @@
    Note that, once in learn-mode, there is no way to cancel learn-mode
    except by selecting an illegal mute-group keystroke.
    Also see \sectionref{sec:mutes_master}.
+
+\paragraph{Automation / Playing Set}
+\label{paragraph:configuration_playing_set}
+
+   To be documented.
+
+\paragraph{Automation / Playback}
+\label{paragraph:configuration_playback}
+
+   This automation entry defaults to a period.
+   It starts playback and stops (pauses) playback.
+   Note that this applies to the live grid.
+   For the pattern and song editor piano rolls, it is hardwired.
+
+\paragraph{Automation / Song Record}
+\label{paragraph:configuration_song_record}
+
+   Initiates a "recording" of the musician's muting and unmutings as triggers
+   in the song editor.
+
+   There are still some wrinkles to work out with this, such as ignoring snap
+   values in order to get an exact recording of the triggers.
+
+\paragraph{Automation / Solo}
+\label{paragraph:configuration_midi_ctrl_solo}
+
+   Meant to "solo" a given track.
+   Needs testing and further work.
+
+\paragraph{Automation / Theu}
+\label{paragraph:configuration_midi_ctrl_thru}
+
+   Turns on the "MIDI Thru" function of the current pattern as displayed in a
+   pattern editor.  More testing needed.
+
+\paragraph{Automation / BPM Page Up and Page Down}
+\label{paragraph:configuration_midi_ctrl_bpmpageupdn}
+
+   Similar to
+   \sectionref{paragraph:configuration_midi_ctrl_bpmupdn}, but in
+   larger steps.
+   These controls increment or decrement the beats-per-minute setting
+   in large steps, as if
+   the Page-Up or Page-Down were pressed in the BPM combox-box.
+   This increment is the
+   \index{bpm!page increment}
+   \index{usr!page increment}
+   "page increment" which defaults to 10, but can be modified by
+   changing the "bpm\_page\_increment" value in the 'usr'
+   configuration file.
+
+\paragraph{Automation / Set a Set}
+\label{paragraph:configuration_midi_set_a_set}
+
+   Changes to a set as given by the data parameter.
+   Needs more testing and further work.
+
+% \paragraph{Automation / Screen-Set Play}
+% \label{paragraph:configuration_midi_ctrl_ssplay}
+
+%  This MIDI control sets the playing screen-set.
+
+\paragraph{Automation / Loop Mode}
+\label{paragraph:configuration_midi_loop_mode}
+
+   Toggles using the "L/R" markers as the beginning and ending
+   of playback.
+
+   See \sectionref{paragraph:configuration_bbthms_lr_loop}.
+
+\paragraph{Automation / Quan Record}
+\label{paragraph:configuration_midi_quanrecord}
+
+   Toggles quantization of the incoming note events while recording.
+
+\paragraph{Automation / Reset Sets}
+\label{paragraph:configuration_midi_reset_sets}
+
+   Resets the set counter to set 0.
+
+\paragraph{Automation / One-shot}
+\label{paragraph:configuration_midi_one_shot}
+
+   Toggles one-shot recording mode.
+
+\paragraph{Automation / FF, Rewind, and Top}
+\label{paragraph:configuration_midi_ff_rewind_top}
+
+   When activated, each command moves the playing tick value up or down
+   by one-half of a measure.
+   The "Top" command rewinds to the beginning immediately.
+
+\paragraph{Automation / Playlist Commands}
+\label{paragraph:configuration_midi_playlist_commands}
+
+   The "Play List" and "Play Song" automation commands allow one
+   to select a particular play-list or song,
+   or increment/decrement to the next/previous one.
+
+\paragraph{Automation / Tap BPM}
+\label{paragraph:configuration_midi_tap_bpm}
+
+   This command, when pressed repeatedly, sets the beats-per-minute
+   value to the interval between the taps.
+
+\paragraph{Automation / Start}
+\label{paragraph:configuration_start}
+
+   This automation entry defaults to a space.
+   It starts playback and stops playback with a rewind to the beginning.
+   Note that this applies to the live grid.
+   For the pattern and song editor piano rolls, it is hardwired.
+
+\paragraph{Automation / Stop}
+\label{paragraph:configuration_stop}
+
+   This automation entry defaults to an escape character.
+   It stops playback with a rewind to the beginning.
+   Note that this applies to the live grid.
+   For the pattern and song editor piano rolls, it is hardwired,
+   and this keystroke can be used to exit insert/paint mode.
+
+\paragraph{Automation / Toggle Mute}
+\label{paragraph:configuration_toggle_mute}
+
+   Reverses the armed statuses of the current set.
+
+\paragraph{Automation / Song Position}
+\label{paragraph:configuration_song_position}
+
+   This one needs work. We can't even remember what it means!
+
+\paragraph{Automation / Keep Queuue}
+\label{paragraph:configuration_keep_queue}
+
+   When given, this command turns on keep-queue mode.
+
+\paragraph{Automation / Slot Shift}
+\label{paragraph:configuration_slot_shift}
+
+   When given, this command allows for accessing patterns numbered
+   from 32 to 63.
+   When given again, this command allows for accessing patterns numbered
+   from 64 to 95.
+   Useful only when set sizes of 64 and 96 are configured.
 
 \paragraph{Automation / Record Modes and Quantization}
 \label{paragraph:configuration_midi_record_quan}
@@ -2211,22 +2362,50 @@
    \end{itemize}
 
 %  For details, see \sectionref{paragraph:patterns_recording_modes}.
-   Also supported is changing the mode of recording:
+   Also supported is changing the mode of recording, that is, what happens
+   to notes while incoming during recording:
 
    \begin{itemize}
       \item \textbf{No Quan}.
+         Nothing is done to the incoming notes.
       \item \textbf{Quantize}.
+         Incoming notes are quantized to the nearst snap value for the
+         pattern.
       \item \textbf{Tighten}.
+         Incoming notes are tightened (partially quantized)
+         to the nearst snap value for the pattern.
+      \item \textbf{Randomize}.
+         The amplitude (velocity) of notes is randomized.
+         This is not done during recording, but can be applied later.
+      \item \textbf{Jitter}.
+         The timing of notes is randomized.
+         This is not done during recording, but can be applied later.
+      \item \textbf{Note-map}.
+         If active, the specified 'drums' file values are used to remap the
+         notes to new notes. This is useful, along with setting MIDI Thru, to
+         play on a pre-General-MIDI drum machine (e.g. Yamaha DD-11) and
+         hear it transmuted to GM while recording. Can also be applied after
+         the fact, if the pattern is marked as transposable.
       \end{itemize}
 
 %  For details, see \sectionref{paragraph:patterns_recording_modes}.
    Also see \sectionref{subsec:pattern_editor_bottom} for more information on these
    recording modes.
 
-\paragraph{Automation / Screen-Set Play}
-\label{paragraph:configuration_midi_ctrl_ssplay}
+\paragraph{Automation / BBT/HMS and LR Loop}
+\label{paragraph:configuration_bbthms_lr_loop}
 
-This MIDI control sets the playing screen-set.
+   These commands toggle the display of bars:beats:ticks versus
+   hours:minutes:seconds, and looping between the L/R markers.
+
+   See \sectionref{paragraph:configuration_midi_loop_mode}.
+
+\paragraph{Automation / Undo and Redo}
+\label{paragraph:configuration_undo_redo}
+
+   These commands undo or redo actions such as deleting notes.
+   \textbf{Important}:
+   These commands will affect \textsl{all} open pattern editors!
 
 \subsubsection{Automation / More MIDI Control}
 \label{subsubsec:configuration_midi_ctrl_automationex}
@@ -2234,6 +2413,19 @@ This MIDI control sets the playing screen-set.
    Many additional control items were requested by users, to control
    additional features of the application.  Too many to list here.
    See the 'ctrl' file samples for more information.
+   We will ultimately mention them all.
+
+   Some important ones to touch on:
+
+   \begin{itemize}
+      \item \textbf{Visibility}.
+         Toggles the visibility of the user-interface.
+         This can be useful in some circumstances.
+         In addition, the session manager, if in force, might
+         issue this command.
+      \item \textbf{Quit}.
+         Provides a way to exit \textsl{Seq66} via MIDI control.
+   \end{itemize}
 
 \subsubsection{'ctrl' File / MIDI Control Output}
 \label{subsubsec:configuration_ctrl_midi_control_out}

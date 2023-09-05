@@ -735,11 +735,12 @@ qseqeditframe64::qseqeditframe64
         this, SLOT(reset_grid_snap())
     );
 
-    set_snap(rescale_tick(sm_initial_snap, perf().ppqn(), usr().base_ppqn()));
-    set_note_length
+    midipulse scaledtick = rescale_tick
     (
-        rescale_tick(sm_initial_note_length, perf().ppqn(), usr().base_ppqn())
+        sm_initial_snap, perf().ppqn(), usr().base_ppqn()
     );
+    set_snap(scaledtick);
+    set_note_length(scaledtick);
     qt_set_icon(note_length_xpm, ui->m_button_note);
     connect
     (
@@ -2954,7 +2955,7 @@ qseqeditframe64::reset_grid_snap ()
 }
 
 /**
- *  Updates the note-length values and control based on the index.  It is
+ *  Updates the note-length values and control based on the index. It is
  *  passed to the set_note_length() function for processing.
  *
  * \param index
@@ -3034,11 +3035,12 @@ bool
 qseqeditframe64::change_ppqn (int ppqn)
 {
     int zoom = usr().zoom();
-    set_snap(rescale_tick(sm_initial_snap, ppqn, usr().base_ppqn()));
-    set_note_length
+    midipulse scaledtick = rescale_tick
     (
-        rescale_tick(sm_initial_note_length, ppqn, usr().base_ppqn())
+        sm_initial_snap, ppqn, usr().base_ppqn()
     );
+    set_snap(scaledtick);
+    set_note_length(scaledtick);
     if (usr().adapt_zoom())
         zoom = zoom_power_of_2(ppqn);
 

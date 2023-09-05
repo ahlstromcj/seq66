@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2021-12-07
+ * \updates       2023-09-05
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -207,6 +207,14 @@ public:
     std::string build_slot_name (int index) const;
 
 };              // class automation
+
+/*
+ * ----------------------------------------------------------------------
+ *  Free functions in the seq66 namespace
+ * ----------------------------------------------------------------------
+ */
+
+extern std::string auto_name (automation::slot s);
 
 }               // namespace seq66
 

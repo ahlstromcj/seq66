@@ -90,7 +90,8 @@ Windows, and using a conventional source tarball.
             code.
         *   Implemented automation for BBT/HMS toggling, FF/Rewind, Undo/Redo,
             Play-set Copy/Paste.
-        *   Added HTML help files to data/share/doc/info.
+        *   Added HTML help files to data/share/doc/info, other documentation
+            upgrades.
     *   Version 0.99.8:
         *   Issue #112: A new pattern now displays in the MIDI controller.
         *   Issue #114: Adding display of shortcut keys to tool tips.

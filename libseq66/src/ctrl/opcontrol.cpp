@@ -199,7 +199,7 @@ opcontrol::automation_slot_name (slot s)
         "Start",                // 27 start
         "Stop",                 // 28 stop ?
         "Loop L/R",             // 29 loop_LR
-        "Toggle Mute",          // 30 toggle_mutes *
+        "Toggle Mutes",         // 30 toggle_mutes *
         "Song Pos",             // 31 song_pointer
 
         /*
@@ -216,7 +216,7 @@ opcontrol::automation_slot_name (slot s)
         "Toggle JACK",          // 39 toggle_jack
         "Menu Mode",            // 40 menu_mode
         "Follow JACK",          // 41 follow_transport
-        "Panic!",               // 42 panic *
+        "Panic",                // 42 panic *
         "Visibility",           // 43 visibility *
         "Save Session",         // 44 save_session
         "Reserved 45",          // 45 reserved_45
