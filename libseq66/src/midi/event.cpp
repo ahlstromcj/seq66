@@ -445,6 +445,44 @@ event::is_desired (midibyte status, midibyte cc) const
     return result;
 }
 
+#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
+
+bool
+event::is_data_in_handle_range (midibyte target) const
+{
+    static const midibyte delta = 2;                    /* seq32 provision  */
+    static const midibyte max = c_midibyte_value_max - delta;
+    midibyte datum = is_one_byte() ? d0() : d1() ;
+    bool result = target >= delta && target <= max;
+    if (result)
+        result = datum >= (target - delta) && datum <= (target + delta);
+
+    return result;
+}
+
+bool
+event::is_desired (midibyte status, midibyte cc, midibyte data) const
+{
+    bool result;
+    if (is_tempo_status(status))
+    {
+        result = is_tempo();
+    }
+    else
+    {
+        result = mask_status(status) == mask_status(m_status);
+        if (result && (event::is_controller_msg(status)))
+        {
+            result = m_data[0] == cc;
+            if (result)
+                result = is_data_in_handle_range();     /* check d0/d1()    */
+        }
+    }
+    return result;
+}
+
+#endif  // defined SEQ66_STAZED_SELECT_EVENT_HANDLE
+
 /**
  *  We should also match tempo events here.  But we have to treat them
  *  differently from the matched status events.

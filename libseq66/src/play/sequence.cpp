@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-01
+ * \updates       2023-09-05
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2257,6 +2257,26 @@ sequence::select_events (midibyte status, midibyte cc, bool inverse)
     }
     return 0;
 }
+
+#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
+
+int
+sequence::select_event_handle
+(
+    midipulse tick_s, midipulse tick_f,
+    midibyte status, midibyte cc, eventlist::select action
+)
+{
+    automutex locker(m_mutex);
+    int result = m_events.select_event_handle
+    (
+        tick_s, tick_f, status, cc, action
+    );
+    set_dirty();
+    return result;
+}
+
+#endif  // define SEQ66_STAZED_SELECT_EVENT_HANDLE
 
 /**
  *  Selects all events, unconditionally.

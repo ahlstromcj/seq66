@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-31
+ * \updates       2023-09-05
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -206,6 +206,17 @@ private:
      */
 
     bool m_relative_adjust;
+
+#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE     /* to define in event.hpp   */
+
+    /**
+     *  A feature shamelessly stolen from stazed's Seq32, in progress.
+     *  Supporting drag handles in the near future.
+     */
+
+    bool m_drag_handle;
+
+#endif
 
     /**
      *  This value is true if the mouse is being dragged in the data pane,

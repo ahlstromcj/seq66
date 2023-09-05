@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-07-02
+ * \updates       2023-09-05
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -113,6 +113,9 @@ qseqdata::qseqdata
     m_cc                    (1),                            /* modulation   */
     m_line_adjust           (false),
     m_relative_adjust       (false),
+#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
+    m_drag_handle           (false),
+#endif
     m_dragging              (false)
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
@@ -401,6 +404,15 @@ qseqdata::mousePressEvent (QMouseEvent * event)
     midipulse tick_start, tick_finish;
     tick_start = pix_to_tix(mouse_x - 8);       // 2; never get it to fire!
     tick_finish = pix_to_tix(mouse_x + 8);      // 2; ditto
+
+#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
+    m_drag_handle = track().select_event_handle
+    (
+        tick_start, tick_finish, m_status, m_cc,
+        m_dataarea_y - drop_y() + 3
+    ) > 0;
+#else
+#endif
 
     /*
      * Check if this tick range would select an event.

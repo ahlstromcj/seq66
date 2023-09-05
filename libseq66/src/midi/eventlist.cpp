@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-08-20
+ * \updates       2023-09-05
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -619,7 +619,7 @@ eventlist::remove_unlinked_notes ()
  *      notes (ON or OFF) that are >= m_length. So we must wrap if > m_length
  *      and trim if == m_length.  Compare to trim_timestamp().
  *
- * \param status
+ * \param astatus
  *      Indicates the type of event to be quantized.
  *
  * \param cc
@@ -640,7 +640,7 @@ eventlist::remove_unlinked_notes ()
 bool
 eventlist::quantize_events
 (
-    midibyte status, midibyte cc,
+    midibyte astatus, midibyte cc,
     int snap, int divide
 )
 {
@@ -653,14 +653,14 @@ eventlist::quantize_events
         {
             midibyte d0, d1;
             er.get_data(d0, d1);
-            bool match = er.match_status(status);
+            bool match = er.match_status(astatus);
             bool canselect = false;
             if (er.is_marked())                 /* ignore marked events     */
             {
                 er.unmark();
                 continue;
             }
-            if (status == EVENT_CONTROL_CHANGE)
+            if (astatus == EVENT_CONTROL_CHANGE)
                 canselect = match && d0 == cc;  /* correct status and cc    */
             else
                 canselect = match;              /* correct status, any cc   */
@@ -1122,7 +1122,7 @@ eventlist::reverse_events (bool inplace, bool relink)
  *  Note that we do not need to call verify_and_link() here, since we are not
  *  altering the timestamps or the note values.
  *
- * \param status
+ * \param astatus
  *      The kind of event to be randomized.
  *
  * \param range
@@ -1133,14 +1133,14 @@ eventlist::reverse_events (bool inplace, bool relink)
  */
 
 bool
-eventlist::randomize_selected (midibyte status, int range)
+eventlist::randomize_selected (midibyte astatus, int range)
 {
     bool result = false;
     if (range > 0)
     {
         for (auto & e : m_events)
         {
-            if (e.is_selected_status(status))
+            if (e.is_selected_status(astatus))
             {
                 if (e.randomize(range))
                     result = true;
@@ -1708,7 +1708,7 @@ eventlist::any_selected_notes () const
  *  given CC value.  One exception is tempo events, which are selected
  *  based on the event::is_tempo() test.
  *
- * \param status
+ * \param astatus
  *      The desired status value to count.  Note that tempo is 0x51.
  *
  * \param cc
@@ -1720,12 +1720,12 @@ eventlist::any_selected_notes () const
  */
 
 int
-eventlist::count_selected_events (midibyte status, midibyte cc) const
+eventlist::count_selected_events (midibyte astatus, midibyte cc) const
 {
     int result = 0;
     for (auto & er : m_events)
     {
-        if (er.is_selected() && er.is_desired(status, cc))
+        if (er.is_selected() && er.is_desired(astatus, cc))
             ++result;
     }
     return result;
@@ -1763,12 +1763,12 @@ eventlist::any_selected_events () const
  */
 
 bool
-eventlist::any_selected_events (midibyte status, midibyte cc) const
+eventlist::any_selected_events (midibyte astatus, midibyte cc) const
 {
     bool result = false;
     for (auto & er : m_events)
     {
-        if (er.is_selected() && er.is_desired(status, cc))
+        if (er.is_selected() && er.is_desired(astatus, cc))
         {
             result = true;
             break;
@@ -1867,7 +1867,7 @@ eventlist::unselect_all ()
  * \param tick_f
  *      The finish time of the selection.
  *
- * \param status
+ * \param astatus
  *      The desired event in the selection.  Now, as a new feature, tempo
  *      events are also selectable, in addition to events selected by this
  *      parameter. Oh, and now time-signature events.
@@ -1887,15 +1887,15 @@ int
 eventlist::select_events
 (
     midipulse tick_s, midipulse tick_f,
-    midibyte status, midibyte cc, select action
+    midibyte astatus, midibyte cc, select action
 )
 {
     int result = 0;
     for (auto & er : m_events)
     {
-        if (event_in_range(er, status, tick_s, tick_f))
+        if (event_in_range(er, astatus, tick_s, tick_f))
         {
-            if (er.is_desired(status, cc))
+            if (er.is_desired(astatus, cc))
             {
                 if (action == select::selecting)
                 {
@@ -1941,6 +1941,124 @@ eventlist::select_events
     }
     return result;
 }
+
+#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
+
+int
+eventlist::select_event_handle
+(
+    midipulse tick_s, midipulse tick_f,
+    midibyte astatus, midibyte cc,
+    midibyte data
+)
+{
+    int result = 0;
+    bool have_selected_note_ons = false;
+    if (event::is_note_on_msg(astatus))
+    {
+        if (count_selected_event(astatus, cc) > 0)
+            have_selected_note_ons = true;
+    }
+    for (auto & er : m_events)
+    {
+        if (event_in_range(er, astatus, tick_s, tick_f)) /* in time-range    */
+        {
+            bool isctrl = event::is_controller_msg(astatus);
+            if (isctrl && er.is_desired(astatus, cc, data)) /* in data-range */
+            {
+                unselect_all();                         /* or unmark()      */
+                er.select();                            /* or mark()???     */
+                ++result;
+                break;
+            }
+            if (! isctrl)                               /* chan. pressure?  */
+            {
+                bool twobytes = is_two_byte_msg(astatus);
+                if (twobytes)
+                {
+                    if (er.is_data_in_handle_range(data))   /* checks d1()  */
+                    {
+                        if (have_selected_note_ons)     /* Note Ons only    */
+                        {
+                            if (er.is_selected())
+                            {
+                                unselect_all();
+                                er.select();
+                                if (result > 0)         /* have a marked    */
+                                {
+                                    for (auto & ev : m_events)
+                                    {
+                                        if (ev.is_marked())
+                                        {
+                                            ev.unmark();    /* clear it     */
+                                            break;
+                                        }
+                                    }
+                                    --result;
+                                    have_selected_note_ons = false;
+                                }
+                                ++result;               /* for selected one */
+                                break;
+                            }
+                            else
+                            {
+                                if (result == 0)        /* mark only first  */
+                                {
+                                    er.mark();          /* mark for hold    */
+                                    ++result;           /* we got one       */
+                                }
+                                continue;               /* till sel'ed/done */
+                            }
+                        }
+                        else                            /* not Note On      */
+                        {
+                            unselect_all();
+                            er.select();
+                            ++result;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    /*
+                     * Not quite right.
+                     */
+
+                    if (er.is_data_in_handle_range(data))   /* checks d0()  */
+                    {
+                        unselect_all();
+                        er.select();
+                        ++result;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /*
+     * Is it a Note On that is unselected, but in range? Then use it....
+     * The have_selected_note_ons flag will be false if we found a
+     * selected one in range (?)
+     */
+
+    if (result > 0 && have_selected_note_ons)
+    {
+        for (auto & er : m_events)
+        {
+            if (er.is_marked())
+            {
+                unselect_all();
+                er.unmark();
+                er.select();
+            }
+        }
+    }
+    return result;
+}
+
+#endif  // defined SEQ66_STAZED_SELECT_EVENT_HANDLE
 
 /**
  *  This function selects events in range of tick start, note high, tick end,
@@ -2146,7 +2264,7 @@ eventlist::select_note_events
  * \param e
  *      Provides the event to be checked.
  *
- * \param status
+ * \param astatus
  *      Provides the event type that must be matched.  However, Set Tempo
  *      events will always be matched.
  *
@@ -2165,11 +2283,11 @@ eventlist::select_note_events
 bool
 eventlist::event_in_range
 (
-    const event & e, midibyte status,
+    const event & e, midibyte astatus,
     midipulse tick_s, midipulse tick_f
 ) const
 {
-    bool result = e.match_status(status) || e.is_tempo() ||
+    bool result = e.match_status(astatus) || e.is_tempo() ||
         e.is_time_signature();
 
     if (result)

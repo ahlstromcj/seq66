@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-01
+ * \updates       2023-09-05
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -51,6 +51,8 @@
 #include <vector>                       /* SYSEX data stored in vector      */
 
 #include "midi/midibytes.hpp"           /* seq66::midibyte alias, etc.      */
+
+#undef  SEQ66_STAZED_SELECT_EVENT_HANDLE    /* nowhere near ready!  */
 
 /**
  *  Defines the number of data bytes in MIDI status data.
@@ -582,6 +584,11 @@ public:
     static bool is_controller_msg (midibyte m)
     {
         return mask_status(m) == EVENT_CONTROL_CHANGE;
+    }
+
+    static bool is_note_on_msg (midibyte m)
+    {
+        return m >= EVENT_NOTE_ON || m < EVENT_AFTERTOUCH;
     }
 
     /**
@@ -1286,6 +1293,16 @@ public:
         return is_selected() && is_note_on();
     }
 
+    bool is_controller () const
+    {
+        return is_controller_msg(m_status);
+    }
+
+    bool is_pitchbend () const
+    {
+        return is_pitchbend_msg(m_status);
+    }
+
     bool is_playable () const
     {
         return is_playable_msg(m_status) || is_tempo();
@@ -1297,7 +1314,11 @@ public:
     }
 
     bool is_desired (midibyte status, midibyte cc) const;
-    bool is_desired_ex (midibyte status, midibyte cc) const; /* EXPERIMENT */
+#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
+    bool is_data_in_handle_range (midibyte target) const;
+    bool is_desired (midibyte status, midibyte cc, midibyte data) const;
+#endif
+    bool is_desired_ex (midibyte status, midibyte cc) const;
 
     /**
      *  Some keyboards send Note On with velocity 0 for Note Off, so we

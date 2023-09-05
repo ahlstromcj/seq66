@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-08-31
+ * \updates       2023-09-05
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1708,6 +1708,13 @@ public:
     (
         midibyte status, midibyte cc, bool inverse = false
     );
+#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
+    int select_event_handle
+    (
+        midipulse tick_s, midipulse tick_f,
+        midibyte status, midibyte cc, eventlist::select action
+    );
+#endif
 
     /**
      *  New convenience function.  What about Aftertouch events?  I think we
