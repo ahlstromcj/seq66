@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-05
+ * \updates       2023-09-06
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2264,13 +2264,13 @@ int
 sequence::select_event_handle
 (
     midipulse tick_s, midipulse tick_f,
-    midibyte status, midibyte cc, eventlist::select action
+    midibyte astatus, midibyte cc, midibyte data
 )
 {
     automutex locker(m_mutex);
     int result = m_events.select_event_handle
     (
-        tick_s, tick_f, status, cc, action
+        tick_s, tick_f, astatus, cc, data
     );
     set_dirty();
     return result;
@@ -2529,37 +2529,42 @@ sequence::jitter_notes (int jitr)
     return result;
 }
 
-#if defined USE_ADJUST_DATA_HANDLE
+#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
 
-/*
- * Unused.  Has issue(s) to correct before enabling. Such as "what was this
- * function meant to do?"
+/**
+ *  Used for moving the data value of an event in the seqdata pane up or
+ *  down.
+ *
+ *  One issue in adjusting data is Pitch events, which have two
+ *  components [d0() and d1()] which must be combined. But d0() is the
+ *  least-significant byte, and d1() is the most-significant byte.
+ *  Since pitch is a 2-byte message, d1() will be adjusted.
  */
 
 void
-sequence::adjust_data_handle (midibyte status, int adata)
+sequence::adjust_event_handle (midibyte astatus, midibyte adata)
 {
     midibyte data[2];
     midibyte datitem;
-    int dataindex = event::is_two_byte_msg(status) ? 1 : 0 ;
+    int dataindex = event::is_two_byte_msg(astatus) ? 1 : 0 ;
     automutex locker(m_mutex);
     for (auto & e : m_events)
     {
-        if (e.is_selected_status(status))
+        if (e.is_selected_status(astatus))
         {
-            status = event::mask_status(status);
-            e.get_data(data[0], data[1]);           /* \tricky code */
+            astatus = event::mask_status(astatus);
+            e.get_data(data[0], data[1]);                   /* \tricky code */
             datitem = adata;
             if (datitem > (c_midibyte_data_max - 1))
                 datitem = (c_midibyte_data_max - 1);
 
-            data[datidx] = datitem;
+            data[dataindex] = datitem;
             e.set_data(data[0], data[1]);
         }
     }
 }
 
-#endif  // defined USE_ADJUST_DATA_HANDLE
+#endif
 
 /**
  *  Increments events the match the given status and control values.

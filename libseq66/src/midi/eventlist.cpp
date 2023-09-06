@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-09-05
+ * \updates       2023-09-06
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -1944,6 +1944,13 @@ eventlist::select_events
 
 #if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
 
+/**
+ *  Selects the seqdata event handle if in range.
+ *
+ *  One issue in adjusting data is Pitch events, which have two
+ *  components [d0() and d1()] which must be combined.
+ */
+
 int
 eventlist::select_event_handle
 (
@@ -1956,7 +1963,7 @@ eventlist::select_event_handle
     bool have_selected_note_ons = false;
     if (event::is_note_on_msg(astatus))
     {
-        if (count_selected_event(astatus, cc) > 0)
+        if (count_selected_events(astatus, cc) > 0)
             have_selected_note_ons = true;
     }
     for (auto & er : m_events)
@@ -1973,7 +1980,7 @@ eventlist::select_event_handle
             }
             if (! isctrl)                               /* chan. pressure?  */
             {
-                bool twobytes = is_two_byte_msg(astatus);
+                bool twobytes = event::is_two_byte_msg(astatus);
                 if (twobytes)
                 {
                     if (er.is_data_in_handle_range(data))   /* checks d1()  */

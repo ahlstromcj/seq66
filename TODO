@@ -1,11 +1,13 @@
 TO DO for Seq66 0.99.9
 Chris Ahlstrom
-2019-04-13 to 2023-09-05
+2019-04-13 to 2023-09-06
 
 Misc:
 
     -   Open t.midi, start playing, stop, then add more notes. They are
-        way longer than the snap value!
+        way longer than the snap value! Cannot duplicate on Debian
+        box!
+    -   Make sure pitch bend is handled correctly in qseqdata.
     -   When enabling a MIDI Control/Display port, also enable it
         automatically. See issue #116.
     -   Fix and test new record/quantize handling, and verify that

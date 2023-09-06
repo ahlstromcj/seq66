@@ -28,12 +28,16 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-05
+ * \updates       2023-09-06
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
  *  contains vertical lines whose height matches the value of each data event.
  *  The height of the vertical lines is editable via the mouse.
+ *
+ *  Another EXPERIMENT. Drawing a circular "grab handle" when an event is
+ *  crossed by the mouse or is selected. This is progress on the way to
+ *  improving issue #115.
  */
 
 #include <QWidget>
@@ -123,6 +127,14 @@ public:
     {
         return m_cc;
     }
+
+private:
+
+    void flag_dirty ();                 /* tricky code */
+
+#if defined SEQ66_ALLOW_RELATIVE_VELOCITY_CHANGE
+    void set_adjustment (midipulse tick_start, midipulse tick_finish);
+#endif
 
 private:        // performer::callback overrides
 
@@ -217,6 +229,20 @@ private:
     bool m_drag_handle;
 
 #endif
+
+    /**
+     *  Keeps track of the X-location of the mouse, in ticks.
+     */
+
+    midipulse m_mouse_tick;
+
+    /**
+     *  The precision of event-line detection in ticks.  This depends
+     *  upon the PPQN, obviously.  This value starts at 2 pixels and is
+     *  corrected to ticks by the pix_to_tix() function.
+     */
+
+    midipulse m_handle_delta;
 
     /**
      *  This value is true if the mouse is being dragged in the data pane,

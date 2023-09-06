@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-05
+ * \updates       2023-09-06
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -41,25 +41,25 @@
 #include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
 
 /*
- * The fixes for issue #90 cause a lot of redrawing during mouse movement
- * while using a line to edit (for example) velocity. So we do not call
+ * The fixes for issue #90 cause a lot of redrawing during mouse movement while
+ * using a line to edit (for example) velocity. But we still call
  * change_event_data_range() or change_event_data_relative() during mouse
- * movement.  The orange edit line still appears, but doesn't take effect
- * until the mouse button is released.
+ * movement, if SEQ66_TRACK_DATA_EDITING_MOVEMENTS is defined.
  *
- * This also disables the "relative adjust" feature we copped from Kepler34.
- * However, we have never been able to get that feature to turn on. In
- * Kepler34, all it seems to do is allow modifying a single event by moving
- * the mouse up and down. Obviously, our implementation is buggy, but does it
- * matter?  We will still see if we can get it to work at some point.
+ * We also disabled the "relative adjust" feature we copped from Kepler34.
+ * However, we have never been able to get that feature to turn on. In Kepler34,
+ * all it seems to do is allow modifying a single event by moving the mouse up
+ * and down. Obviously, our implementation is buggy, but does it matter?  We will
+ * still see if we can get it to work at some point.
  *
- * To revert to the old behavior, define this macro. We leave the old behavior
- * in since we figured out that constant title-dirtying in
- * qsmainwnd::enable_save() was causing continuous flickering during editing
- * mouse movements.
+ * To revert to the old behavior, define this macro. We leave the old behavior in
+ * since we figured out that constant title-dirtying in qsmainwnd ::
+ * enable_save() was causing continuous flickering during editing mouse
+ * movements.
  */
 
 #define SEQ66_TRACK_DATA_EDITING_MOVEMENTS
+#undef  SEQ66_ALLOW_RELATIVE_VELOCITY_CHANGE
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -82,9 +82,12 @@ static const int sc_dataarea_y = 128;
  * Tweaks.
  */
 
-static const int s_x_data_fix   = -6; // 2;    /* adjusts x-value for the events   */
+static const int s_x_data_fix   = -6;   /* adjusts x-value for the events   */
 static const int s_key_padding  = 8;    /* adjusts x for keyboard padding   */
 static const int s_circle_d     = 6;    /* diameter of tempo/prog. dots     */
+static const int s_handle_d     = 8;    /* diameter of grab handle          */
+static const int s_handle_r     = 4;    /* radius of grab handle            */
+static const int s_handle_delta = 2;    /* delta of mouse-pixels            */
 
 /**
  *  Principal constructor.
@@ -110,21 +113,24 @@ qseqdata::qseqdata
     m_is_time_signature     (false),
     m_is_program_change     (false),
     m_status                (EVENT_NOTE_ON),
-    m_cc                    (1),                            /* modulation   */
+    m_cc                    (1),                /* modulation               */
     m_line_adjust           (false),
     m_relative_adjust       (false),
-#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
+#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE    /* in event.hpp             */
     m_drag_handle           (false),
 #endif
+    m_mouse_tick            (-1),
+    m_handle_delta          (pix_to_tix(s_handle_delta)),
     m_dragging              (false)
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    m_font.setPointSize(8);                                 /* was 6 points */
+    setMouseTracking(true);                     /* no click needed          */
+    m_font.setPointSize(8);
     m_font.setBold(true);
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-    set_initialized();                                      /* helps debug  */
+    set_initialized();
 #endif
-    cb_perf().enregister(this);                             /* notification */
+    cb_perf().enregister(this);                 /* set for notification     */
     m_timer = qt_timer(this, "qseqdata", 2, SLOT(conditional_update()));
 }
 
@@ -271,6 +277,22 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 painter.drawLine(event_x, event_height, event_x, height());
                 snprintf(digits, sizeof digits, "%3d", d1);
 
+                bool its_close = false;
+                if (! selected && m_mouse_tick >= 0)
+                {
+                    midipulse delta = std::labs(tick - m_mouse_tick);
+                    if (delta <= m_handle_delta)
+                        its_close = true;
+                }
+                if (selected || its_close)
+                {
+                    painter.drawEllipse
+                    (
+                        event_x - s_handle_r, event_height - s_handle_r,
+                        s_handle_d, s_handle_d
+                    );
+                }
+
                 QString val = digits;
                 pen.setColor(fore_color());
                 painter.setPen(pen);
@@ -390,52 +412,77 @@ qseqdata::mousePressEvent (QMouseEvent * event)
 {
     int mouse_x = event->x() - c_keyboard_padding_x + scroll_offset_x();
     int mouse_y = event->y();
+    midipulse tick_start = pix_to_tix(mouse_x - 8);     /* 2; never fires!  */
+    midipulse tick_finish = pix_to_tix(mouse_x + 8);    /* 2; ditto         */
+    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
+    drop_x(mouse_x);                            /* set values for line      */
+    drop_y(mouse_y);
 
 #if defined SEQ66_ALLOW_RELATIVE_VELOCITY_CHANGE
-
-    /*
-     * If near an event (4px), do relative adjustment.  Do we need to
-     * push-undo here?  Not sure, won't change for now. Disable for now
-     * because it either doesn't work or causes velocity changes to not
-     * occur. Also, it's an issue with tracks densely packed with note
-     * events.
-     */
-
-    midipulse tick_start, tick_finish;
-    tick_start = pix_to_tix(mouse_x - 8);       // 2; never get it to fire!
-    tick_finish = pix_to_tix(mouse_x + 8);      // 2; ditto
+    bool would_select = set_adjustment(tick_start, tick_finish);
+    if (! would_select)
+    {
+        m_dragging = m_line_adjust = true;      /* set ev values under line */
+    }
+#endif
 
 #if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
-    m_drag_handle = track().select_event_handle
+
+    int count = track().select_event_handle     /* check for handle grab    */
     (
         tick_start, tick_finish, m_status, m_cc,
-        m_dataarea_y - drop_y() + 3
-    ) > 0;
-#else
+        m_dataarea_y - drop_y() + 3             /* m_dataarea_y == 128      */
+    );
+    m_drag_handle = count > 0;
+    if (m_drag_handle)
+    {
+        track().push_undo();
+        m_dragging = false;
+    }
+    else
+    {
+
+#endif
+
+        int currcount = track().get_num_selected_events(m_status, m_cc);
+        if (currcount > 0 && ! isctrl)
+            track().unselect();                 /* unselect all of selected */
+
+        int evcount = track().select_events     /* select clicked event     */
+        (
+            tick_start, tick_finish, m_status, m_cc,
+            eventlist::select::select_one       /* adds to the selections   */
+        );
+        bool selected = evcount > 0;
+        if (selected)
+        {
+            flag_dirty();
+        }
+        else
+        {
+            track().unselect();                 /* unselect all of selected */
+            m_dragging = m_line_adjust = true;
+            flag_dirty();
+        }
+
+#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
+    }
 #endif
 
     /*
      * Check if this tick range would select an event.
      */
 
-    bool would_select = track().select_events
-    (
-        tick_start, tick_finish, m_status, m_cc,
-        eventlist::select::would_select
-    );
-    if (would_select)
-        m_relative_adjust = true;               /* printf("rel adjust\n");  */
-    else
-
-#endif
-        m_line_adjust = true;                   /* set ev values under line */
 
     track().push_undo();
-    drop_x(mouse_x);                            /* set values for line      */
-    drop_y(mouse_y);
+//  drop_x(mouse_x);                            /* set values for line      */
+//  drop_y(mouse_y);
     old_rect().clear();                         /* reset dirty redraw box   */
-    m_dragging = true;                          /* may be dragging now      */
 }
+
+/**
+ * Convert x,y to ticks, then set events in range
+ */
 
 void
 qseqdata::mouseReleaseEvent (QMouseEvent * event)
@@ -450,10 +497,6 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
             swap_y();
         }
 
-        /*
-         * Convert x,y to ticks, then set events in range
-         */
-
         midipulse tick_s = pix_to_tix(drop_x());
         midipulse tick_f = pix_to_tix(current_x());
         int ds = byte_value(m_dataarea_y, m_dataarea_y - drop_y());
@@ -466,19 +509,40 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
         if (ok)
             set_dirty();
     }
+#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
+    else if (m_drag_handle)
+    {
+        track().unselect();
+        track().set_dirty();
+    }
+    m_drag_handle = m_relative_adjust = m_dragging = false;
+#else
     m_relative_adjust = m_dragging = false;
+#endif
+
+    /*
+     * Should we call update()?
+     * Should we call track().push_undo(true)?
+     */
 }
 
 void
 qseqdata::mouseMoveEvent (QMouseEvent * event)
 {
-    if (! m_dragging)
-        return;
-
-    current_x(int(event->x()) - c_keyboard_padding_x);
-    current_y(int(event->y()));
 #if defined SEQ66_TRACK_DATA_EDITING_MOVEMENTS
     midipulse tick_s, tick_f;
+#endif
+    current_x(int(event->x()) - c_keyboard_padding_x);
+    current_y(int(event->y()));                     // deduct from m_dataarea_y?
+    m_mouse_tick = -1;
+
+#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
+    if (m_drag_handle)
+    {
+        track().adjust_event_handle(m_status, m_dataarea_y - current_y());
+        update();
+    }
+    else
 #endif
     if (m_line_adjust)
     {
@@ -510,14 +574,15 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
         if (ok)
         {
             (void) mark_modified();
-            set_dirty();                /* just a flag setting      */
+            set_dirty();                        /* just a flag setting      */
         }
 #else
         (void) mark_modified();
         set_dirty();
 #endif
     }
-    else if (m_relative_adjust)
+#if defined SEQ66_ALLOW_RELATIVE_VELOCITY_CHANGE
+    else if (m_relative_adjust)                 /* currently DISABLED       */
     {
 #if defined SEQ66_TRACK_DATA_EDITING_MOVEMENTS
         int adjy = byte_value(m_dataarea_y, drop_y() - current_y());
@@ -530,7 +595,7 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
         if (ok)
         {
             (void) mark_modified();
-            set_dirty();                /* just a flag setting      */
+            set_dirty();                        /* just a flag setting      */
         }
 #else
         (void) mark_modified();
@@ -543,7 +608,50 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
 
         drop_y(current_y());
     }
+#endif
+    else if (! m_dragging)
+    {
+        m_mouse_tick = pix_to_tix(current_x());
+        update();                               /* force a paintEvent()     */
+    }
 }
+
+#if defined SEQ66_ALLOW_RELATIVE_VELOCITY_CHANGE
+
+/**
+ *  If near an event (8 px), do relative adjustment.  Do we need to
+ *  push-undo here?  Not sure, won't change for now. Disable for now
+ *  because it either doesn't work or causes velocity changes to not
+ *  occur. Also, it's an issue with tracks densely packed with note
+ *  events.
+ *
+ *  The sequence::select_events() call checks if this tick range would
+ *  select an event.
+ *
+ * \return
+ *      Returns true if the mouse location would select events.
+ */
+
+bool
+qseqdata::set_adjustment (midipulse tick_start, midipulse tick_finish)
+{
+    int count = track().select_events
+    (
+        tick_start, tick_finish, m_status, m_cc,
+        eventlist::select::would_select
+    );
+    bool result = count > 0;
+    if (result)
+    {
+        m_dragging = m_relative_adjust = true;
+
+//  drop_x(mouse_x);                            /* set values for line      */
+//  drop_y(mouse_y);
+//  old_rect().clear();                         /* reset dirty redraw box   */
+    }
+}
+
+#endif  // defined SEQ66_ALLOW_RELATIVE_VELOCITY_CHANGE
 
 void
 qseqdata::set_data_type (midibyte status, midibyte control)
@@ -581,6 +689,17 @@ qseqdata::set_data_type (midibyte status, midibyte control)
         m_cc = control;
     }
     update();
+}
+
+/**
+ *  Similar to qstriggereditor::flag_dirty().
+ */
+
+void
+qseqdata::flag_dirty ()
+{
+    track().set_dirty();
+    frame64()->set_dirty();
 }
 
 }           // namespace seq66

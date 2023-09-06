@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-05
+ * \updates       2023-09-06
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -52,7 +52,7 @@
 
 #include "midi/midibytes.hpp"           /* seq66::midibyte alias, etc.      */
 
-#undef  SEQ66_STAZED_SELECT_EVENT_HANDLE    /* nowhere near ready!  */
+#define SEQ66_STAZED_SELECT_EVENT_HANDLE    /* EXPERIMENTAL */
 
 /**
  *  Defines the number of data bytes in MIDI status data.

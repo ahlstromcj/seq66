@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-09-04
+ * \updates       2023-09-06
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1601,7 +1601,7 @@ qseqeditframe64::log_timesig (bool islogbutton)
     bool found = track().detect_time_signature(tstamp, n, d, tick);
     if (found)
     {
-        found = labs(tick - tstamp) < (track().snap() / 2);
+        found = std::labs(tick - tstamp) < (track().snap() / 2);
         if (found)
             (void) track().delete_time_signature(tstamp);
     }

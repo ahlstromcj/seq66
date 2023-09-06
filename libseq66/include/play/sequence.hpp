@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-09-05
+ * \updates       2023-09-06
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1702,18 +1702,20 @@ public:
     int select_events
     (
         midipulse tick_s, midipulse tick_f,
-        midibyte status, midibyte cc, eventlist::select action
+        midibyte astatus, midibyte cc, eventlist::select action
     );
     int select_events
     (
-        midibyte status, midibyte cc, bool inverse = false
+        midibyte astatus, midibyte cc, bool inverse = false
     );
 #if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
     int select_event_handle
     (
         midipulse tick_s, midipulse tick_f,
-        midibyte status, midibyte cc, eventlist::select action
+        midibyte astatus, midibyte cc,
+        midibyte data
     );
+    void adjust_event_handle (midibyte astatus, midibyte data);
 #endif
 
     /**
@@ -1791,9 +1793,6 @@ public:
     void link_new ();
     bool edge_fix ();
     bool remove_unlinked_notes ();
-#if defined USE_ADJUST_DATA_HANDLE
-    void adjust_data_handle (midibyte status, int data);
-#endif
 
     /**
      *  Resets everything to zero.  This function is used when the sequencer

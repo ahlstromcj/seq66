@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2023-05-04
+ * \updates       2023-09-06
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of many scale interval patterns if working with
@@ -562,7 +562,7 @@ interval_name_ptr (int interval)
         "P1", "m2", "M2", "m3", "M3", "P4", "TT", "P5",
         "m6", "M6", "m7", "M7", "P8", "m9", "M9", "0"   /* "0" if error */
     };
-    int index = abs(interval);
+    int index = std::abs(interval);
     if (index > c_interval_size)
         index = c_interval_size;
 
@@ -586,7 +586,7 @@ interval_name_ptr (int interval)
 bool
 harmonic_number_valid (int number)
 {
-    return abs(number) < c_harmonic_size;
+    return std::abs(number) < c_harmonic_size;
 }
 
 /**
@@ -600,7 +600,7 @@ harmonic_interval_name_ptr (int interval)
     {
         "I", "ii", "iii", "IV", "V", "vi", "vii", "I", "0"
     };
-    int index = abs(interval);
+    int index = std::abs(interval);
     if (index > c_harmonic_size)
         index = c_harmonic_size;
 

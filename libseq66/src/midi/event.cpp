@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-08-25
+ * \updates       2023-09-06
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -475,7 +475,7 @@ event::is_desired (midibyte status, midibyte cc, midibyte data) const
         {
             result = m_data[0] == cc;
             if (result)
-                result = is_data_in_handle_range();     /* check d0/d1()    */
+                result = is_data_in_handle_range(data); /* check d0/d1()    */
         }
     }
     return result;
