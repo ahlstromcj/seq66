@@ -76,7 +76,8 @@ namespace seq66
 /**
  *  Constant values. Taken from the eliminated app limits header file, and
  *  redundantly defined in the qeditbase header file.  Provides the minimum
- *  zoom value, currently a constant.
+ *  zoom value, currently a constant. It represents the minimum number of
+ *  pixels per tick.
  */
 
 const int c_min_zoom = 1;
@@ -84,7 +85,7 @@ const int c_min_zoom = 1;
 /**
  *  Provides the maximum zoom value, currently a constant.  It's value was
  *  32, but is now 512, to allow for better presentation of high PPQN
- *  valued sequences.
+ *  valued sequences. Units are pixels per tick.
  */
 
 const int c_max_zoom = 512;

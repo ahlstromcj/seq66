@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2022-08-27
+ * \updates       2022-09-07
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -39,6 +39,12 @@
 #include "qeditbase.hpp"
 
 /*
+ * EXPERIMENT IN PROGRESS
+ */
+
+#undef  SEQ66_USE_ZOOM_EXPANSION
+
+/*
  *  Do not document a namespace; it breaks Doxygen.
  */
 
@@ -50,6 +56,16 @@ namespace seq66
  */
 
 static const float c_horizontal_factor = 1.25f;
+
+/**
+ *  The list of supported expansion values.
+ */
+
+static const size_t c_zoom_expansion_size = 4;
+static const int c_zoom_expansion [c_zoom_expansion_size]
+{
+    1, 2, 4, 8
+};
 
 /**
  *  Principal constructor.
@@ -83,6 +99,8 @@ qeditbase::qeditbase
     m_selected              (),                     /* current sel box      */
     m_scale                 (scalex > 4 ? scalex / 4 : 1),
     m_scale_zoom            (m_scale * zoom()),     /* see change_ppqn()    */
+    m_zoom_exp_index        (0),
+    m_zoom_expansion        (c_zoom_expansion[0]),
     m_padding_x             (padding),
     m_snap                  (snap),
     m_grid_snap
@@ -159,20 +177,79 @@ qeditbase::horizSizeHint () const
 #endif
 }
 
+/**
+ *  Make the view cover less horizontal length.  The lowest zoom possible
+ *  is 1.  But, if the user still wants to zoom in some more, we fake it
+ *  by using "zoom expansion". This factor increases the pixel spread by
+ *  a factor of 1, 2, 4, or 8.
+ */
+
 bool
 qeditbase::zoom_in ()
 {
-    bool result = qbase::zoom_in();
-    if (result)
-        m_scale_zoom = zoom() * m_scale;
-
+    bool result = false;
+#if defined  SEQ66_USE_ZOOM_EXPANSION
+    int z = zoom();
+    if (z == 1)                     /* already at maximum normal zoom-in    */
+    {
+        if (m_zoom_exp_index < (c_zoom_expansion_size - 1)) /* 0 to 3 legal */
+        {
+            m_zoom_expansion = c_zoom_expansion[++m_zoom_exp_index];
+            result = true;
+            set_dirty();
+        }
+    }
+    else
+#endif
+    {
+        result = qbase::zoom_in();
+        if (result)
+            m_scale_zoom = zoom() * m_scale;
+    }
     return result;
 }
 
 bool
 qeditbase::zoom_out ()
 {
-    bool result = qbase::zoom_out();
+    bool result = false;
+#if defined  SEQ66_USE_ZOOM_EXPANSION
+    if (m_zoom_exp_index > 0)       /* currently in normal zoom-in area     */
+    {
+        --m_zoom_exp_index;
+        if (m_zoom_exp_index == 0)
+        {
+            result = reset_zoom();
+        }
+        else
+        {
+            m_zoom_expansion = c_zoom_expansion[m_zoom_exp_index];
+            result = true;
+            set_dirty();
+        }
+    }
+    else
+#endif
+    {
+        result = qbase::zoom_out();
+        if (result)
+            m_scale_zoom = zoom() * m_scale;
+    }
+    return result;
+}
+
+bool
+qeditbase::set_zoom (int z)
+{
+#if 0
+    if (z == 1)
+    {
+        m_zoom_exp_index = 0;
+        m_zoom_expansion = c_zoom_expansion[0];
+    }
+#endif
+
+    bool result = qbase::set_zoom(z);
     if (result)
         m_scale_zoom = zoom() * m_scale;
 
@@ -180,13 +257,11 @@ qeditbase::zoom_out ()
 }
 
 bool
-qeditbase::set_zoom (int z)
+qeditbase::reset_zoom ()
 {
-    bool result = qbase::set_zoom(z);
-    if (result)
-        m_scale_zoom = zoom() * m_scale;
-
-    return result;
+    m_zoom_exp_index = 0;
+    m_zoom_expansion = c_zoom_expansion[0];
+    return qbase::reset_zoom();
 }
 
 /**

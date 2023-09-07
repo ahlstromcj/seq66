@@ -4,6 +4,10 @@ Chris Ahlstrom
 
 Misc:
 
+    -   File / New keeps the previous file name.
+    -   When saving, an open seqedit retains the "*" marker.
+    -   Support higher zooms than 1:1.  Hacked it in, still need to get
+        the time markers and data lines to be in the right positions.
     -   Open t.midi, start playing, stop, then add more notes. They are
         way longer than the snap value! Cannot duplicate.
     -   Make sure pitch bend is handled correctly in qseqdata.

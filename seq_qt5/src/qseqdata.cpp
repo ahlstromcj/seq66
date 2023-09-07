@@ -109,9 +109,12 @@ qseqdata::qseqdata
     m_font                  ("Monospace"),
     m_keyboard_padding_x    (s_key_padding),
     m_dataarea_y            (height > 0 ? height : sc_dataarea_y),
+#if 0
     m_is_tempo              (false),
     m_is_time_signature     (false),
     m_is_program_change     (false),
+#endif
+    m_data_type             (type::note),       /* replaces booleans        */
     m_status                (EVENT_NOTE_ON),
     m_cc                    (1),                /* modulation               */
     m_line_adjust           (false),
@@ -291,13 +294,16 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                     );
                 }
 
-                QString val = digits;
-                pen.setColor(fore_color());
-                painter.setPen(pen);
-                x_offset += 6;
-                painter.drawText(x_offset, y_offset,      val.at(0));
-                painter.drawText(x_offset, y_offset +  9, val.at(1));
-                painter.drawText(x_offset, y_offset + 18, val.at(2));
+                if (! is_pitchbend())
+                {
+                    QString val = digits;
+                    pen.setColor(fore_color());
+                    painter.setPen(pen);
+                    x_offset += 6;
+                    painter.drawText(x_offset, y_offset,      val.at(0));
+                    painter.drawText(x_offset, y_offset +  9, val.at(1));
+                    painter.drawText(x_offset, y_offset + 18, val.at(2));
+                }
             }
             else if (is_tempo() && cev->is_tempo())
             {
@@ -643,33 +649,51 @@ qseqdata::set_data_type (midibyte status, midibyte control)
 {
     if (event::is_tempo_status(status))
     {
+#if 0
         is_tempo(true);
         is_time_signature(false);
         is_program_change(false);
+#endif
+        m_data_type = type::tempo;
         m_status = EVENT_MIDI_META;     /* tricky */
         m_cc = status;
     }
     else if (event::is_time_signature_status(status))
     {
+#if 0
         is_tempo(false);
         is_time_signature(true);
         is_program_change(false);
+#endif
+        m_data_type = type::time_signature;
         m_status = EVENT_MIDI_META;     /* tricky */
         m_cc = status;
     }
     else if (event::is_program_change_msg(status))
     {
+#if 0
         is_tempo(false);
         is_time_signature(false);
         is_program_change(true);
+#endif
+        m_data_type = type::program_change;
+        m_status = status;
+        m_cc = 0;
+    }
+    else if (event::is_pitchbend_msg(status))
+    {
+        m_data_type = type::pitchbend;
         m_status = status;
         m_cc = 0;
     }
     else
     {
+#if 0
         is_tempo(false);
         is_time_signature(false);
         is_program_change(false);
+#endif
+        m_data_type = type::note;                               /* "other"  */
         m_status = event::normalized_status(status);
         m_cc = control;
     }

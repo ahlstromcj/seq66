@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-06
+ * \updates       2023-09-07
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -70,6 +70,22 @@ class qseqdata final :
     friend class qseqroll;
     friend class qstriggereditor;
 
+public:
+
+    /**
+     *  Various types of MIDI data have different wrinkles to how they are
+     *  displayed. Better than a bunch of booleans!
+     */
+
+    enum class type
+    {
+        note,
+        tempo,
+        time_signature,
+        program_change,
+        pitchbend
+    };
+
     Q_OBJECT
 
 public:
@@ -90,33 +106,44 @@ public:
 
     bool is_tempo () const
     {
-        return m_is_tempo;
+        return m_data_type == type::tempo;   // m_is_tempo;
     }
 
+#if 0
     void is_tempo (bool flag)
     {
         m_is_tempo = flag;
     }
+#endif
 
     bool is_time_signature () const
     {
-        return m_is_time_signature;
+        return m_data_type == type::time_signature;   // m_is_time_signature;
     }
 
+#if 0
     void is_time_signature (bool flag)
     {
         m_is_time_signature = flag;
     }
+#endif
 
     bool is_program_change () const
     {
-        return m_is_program_change;
+        return m_data_type == type::program_change;   // m_is_program_change;
     }
 
+    bool is_pitchbend () const
+    {
+        return m_data_type == type::pitchbend;  // m_is_program_change;
+    }
+
+#if 0
     void is_program_change (bool flag)
     {
         m_is_program_change = flag;
     }
+#endif
 
     midibyte status () const
     {
@@ -174,6 +201,8 @@ private:
 
     int m_dataarea_y;
 
+#if 0
+
     /**
      *  Indicates we are editing tempo events.  They are drawn as circles
      *  instead of lines.
@@ -194,6 +223,10 @@ private:
      */
 
     bool m_is_program_change;
+
+#endif
+
+    type m_data_type;
 
     /**
      * What events is the data window currently editing?

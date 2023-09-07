@@ -568,7 +568,7 @@ qperfeditframe64::zoom_out ()
     m_perfroll->zoom_out();
 
     float factor = float(zprevious) / float(m_perfroll->zoom());
-    ui->rollScrollArea->scroll_x_by_factor(factor); // 0.5f
+    ui->rollScrollArea->scroll_x_by_factor(factor);
 }
 
 /**

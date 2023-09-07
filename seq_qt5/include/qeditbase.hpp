@@ -28,11 +28,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2022-08-27
+ * \updates       2023-09-07
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
- *  Both kinds of editing involve selection, movement, etc.
+ *  Both kinds of editing involve selection, movement, zooming, etc.
  */
 
 #include "util/rect.hpp"                /* seq66::rect rectangle class      */
@@ -147,6 +147,17 @@ protected:
      */
 
     int m_scale_zoom;
+
+    /**
+     *  An additional kind of zoom, useful for depicting dense events such as
+     *  pitch-bend.  All it does is multiply the pixel numbers by this factor.
+     *  The support values are 1 (the same as no expansion), 2, 4, and 8.
+     *  It is accessible only via the zoom buttons and zoom keys, and applies
+     *  only to the x (horizontal) direction.
+     */
+
+    size_t m_zoom_exp_index;                /* index into supported factors */
+    int m_zoom_expansion;
 
     /**
      *  Provides additional padding to move items rightward to account for
@@ -634,6 +645,7 @@ public:
     virtual bool zoom_in () override;
     virtual bool zoom_out () override;
     virtual bool set_zoom (int z) override;
+    virtual bool reset_zoom () override;
     virtual bool check_dirty () const override;
 
     void set_snap (midipulse snap)
@@ -810,12 +822,20 @@ protected:
 
     virtual midipulse pix_to_tix (int x) const override
     {
-        return x * pulses_per_pixel(perf().ppqn(), m_scale_zoom);
+        midipulse result = x * pulses_per_pixel(perf().ppqn(), m_scale_zoom);
+        if (m_zoom_expansion > 1)
+            result /= m_zoom_expansion;
+
+        return result;
     }
 
     virtual int tix_to_pix (midipulse ticks) const override
     {
-        return ticks / pulses_per_pixel(perf().ppqn(), m_scale_zoom);
+        int result = ticks / pulses_per_pixel(perf().ppqn(), m_scale_zoom);
+        if (m_zoom_expansion > 1)
+            result *= m_zoom_expansion;
+
+        return result;
     }
 
     midipulse position_tick (int pix)
