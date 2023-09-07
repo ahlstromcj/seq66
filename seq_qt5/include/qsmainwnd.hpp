@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-02
+ * \updates       2023-09-07
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -268,6 +268,8 @@ private:
     void create_action_menu ();
     void remove_all_editors ();
     void remove_all_live_frames ();
+    void remove_edit_tab_frame ();
+    void remove_event_tab_frame ();
     void set_tap_button (int beats);
     void set_beats_per_minute (double bp, bool blockchange = false);
     void redo_live_frame ();

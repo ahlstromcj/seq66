@@ -1708,7 +1708,6 @@ public:
     (
         midibyte astatus, midibyte cc, bool inverse = false
     );
-#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
     int select_event_handle
     (
         midipulse tick_s, midipulse tick_f,
@@ -1716,7 +1715,6 @@ public:
         midibyte data
     );
     void adjust_event_handle (midibyte astatus, midibyte data);
-#endif
 
     /**
      *  New convenience function.  What about Aftertouch events?  I think we

@@ -434,14 +434,12 @@ private:                                /* functions for friend sequence    */
         midipulse tick_s, midipulse tick_f,
         midibyte status, midibyte cc, select action
     );
-#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
     int select_event_handle
     (
         midipulse tick_s, midipulse tick_f,
         midibyte astatus, midibyte cc,
         midibyte data
     );
-#endif
     int select_note_events
     (
         midipulse tick_s, int note_h,

@@ -1942,8 +1942,6 @@ eventlist::select_events
     return result;
 }
 
-#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
-
 /**
  *  Selects the seqdata event handle if in range.
  *
@@ -2064,8 +2062,6 @@ eventlist::select_event_handle
     }
     return result;
 }
-
-#endif  // defined SEQ66_STAZED_SELECT_EVENT_HANDLE
 
 /**
  *  This function selects events in range of tick start, note high, tick end,

@@ -219,7 +219,6 @@ private:
 
     bool m_relative_adjust;
 
-#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE     /* to define in event.hpp   */
 
     /**
      *  A feature shamelessly stolen from stazed's Seq32, in progress.
@@ -227,8 +226,6 @@ private:
      */
 
     bool m_drag_handle;
-
-#endif
 
     /**
      *  Keeps track of the X-location of the mouse, in ticks.

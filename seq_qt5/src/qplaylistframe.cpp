@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-08-15
+ * \updates       2023-09-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -301,7 +301,6 @@ qplaylistframe::qplaylistframe
 #endif
 
     enable_midi_widgets(false);
-
     ui->midiBaseDirText->setReadOnly(true);
     ui->midiBaseDirText->setEnabled(false);
     ui->currentSongPath->setReadOnly(true);
@@ -316,7 +315,9 @@ qplaylistframe::qplaylistframe
 
 qplaylistframe::~qplaylistframe ()
 {
-    m_timer->stop();
+    if (not_nullptr(m_timer))
+        m_timer->stop();
+
     delete ui;
 }
 

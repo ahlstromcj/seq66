@@ -97,7 +97,8 @@ qseqtime::qseqtime
 
 qseqtime::~qseqtime ()
 {
-    m_timer->stop();
+    if (not_nullptr(m_timer))
+        m_timer->stop();
 }
 
 /**
@@ -153,6 +154,10 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
     int count = track().time_signature_count();
     for (int tscount = 0; tscount < count; ++tscount)
     {
+        /*
+         * See TODO for a crash error in a certain situation!
+         */
+
         const sequence::timesig & ts = track().get_time_signature(tscount);
         if (ts.sig_beat_width == 0)
             break;

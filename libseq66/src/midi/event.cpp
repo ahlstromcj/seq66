@@ -445,8 +445,6 @@ event::is_desired (midibyte status, midibyte cc) const
     return result;
 }
 
-#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
-
 bool
 event::is_data_in_handle_range (midibyte target) const
 {
@@ -480,8 +478,6 @@ event::is_desired (midibyte status, midibyte cc, midibyte data) const
     }
     return result;
 }
-
-#endif  // defined SEQ66_STAZED_SELECT_EVENT_HANDLE
 
 /**
  *  We should also match tempo events here.  But we have to treat them

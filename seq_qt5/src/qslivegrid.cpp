@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-08-31
+ * \updates       2023-09-07
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -262,9 +262,11 @@ qslivegrid::qslivegrid
 
 qslivegrid::~qslivegrid()
 {
-    m_timer->stop();
-    clear_loop_buttons();               /* currently we use raw pointers    */
+    if (not_nullptr(m_timer))
+        m_timer->stop();
+
     perf().unregister(this);
+    clear_loop_buttons();               /* currently we use raw pointers    */
     delete ui;
 }
 
@@ -1159,7 +1161,7 @@ qslivegrid::edit_sequence ()
 
 /**
  *  Emits the signal_call_editor_ex() signal.  In qsmainwnd, this signal is
- *  connected to the loadEditorEx() slot.
+ *  connected to the load_qseqedit() slot.
  */
 
 void

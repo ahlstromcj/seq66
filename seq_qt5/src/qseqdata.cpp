@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-06
+ * \updates       2023-09-07
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -116,9 +116,7 @@ qseqdata::qseqdata
     m_cc                    (1),                /* modulation               */
     m_line_adjust           (false),
     m_relative_adjust       (false),
-#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE    /* in event.hpp             */
     m_drag_handle           (false),
-#endif
     m_mouse_tick            (-1),
     m_handle_delta          (pix_to_tix(s_handle_delta)),
     m_dragging              (false)
@@ -140,7 +138,9 @@ qseqdata::qseqdata
 
 qseqdata::~qseqdata ()
 {
-    m_timer->stop();
+    if (not_nullptr(m_timer))
+        m_timer->stop();
+
     cb_perf().unregister(this);
 }
 
@@ -153,9 +153,7 @@ void
 qseqdata::conditional_update ()
 {
     if (check_dirty())
-    {
         update();
-    }
 }
 
 bool
@@ -426,12 +424,18 @@ qseqdata::mousePressEvent (QMouseEvent * event)
     }
 #endif
 
-#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
+    /*
+     * This value is either 0 (128) or 64 as called in qseqeditframe64's
+     * constructor. If this changes, we could change the factor of 2 to
+     * sc_dataarea_y / height.
+     */
+
+    midibyte dataval = m_dataarea_y == sc_dataarea_y ?
+        m_dataarea_y - drop_y() : (m_dataarea_y - drop_y()) * 2 ;
 
     int count = track().select_event_handle     /* check for handle grab    */
     (
-        tick_start, tick_finish, m_status, m_cc,
-        m_dataarea_y - drop_y() + 3             /* m_dataarea_y == 128      */
+        tick_start, tick_finish, m_status, m_cc, dataval
     );
     m_drag_handle = count > 0;
     if (m_drag_handle)
@@ -441,9 +445,6 @@ qseqdata::mousePressEvent (QMouseEvent * event)
     }
     else
     {
-
-#endif
-
         int currcount = track().get_num_selected_events(m_status, m_cc);
         if (currcount > 0 && ! isctrl)
             track().unselect();                 /* unselect all of selected */
@@ -464,10 +465,7 @@ qseqdata::mousePressEvent (QMouseEvent * event)
             m_dragging = m_line_adjust = true;
             flag_dirty();
         }
-
-#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
     }
-#endif
 
     /*
      * Check if this tick range would select an event.
@@ -475,8 +473,6 @@ qseqdata::mousePressEvent (QMouseEvent * event)
 
 
     track().push_undo();
-//  drop_x(mouse_x);                            /* set values for line      */
-//  drop_y(mouse_y);
     old_rect().clear();                         /* reset dirty redraw box   */
 }
 
@@ -509,16 +505,12 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
         if (ok)
             set_dirty();
     }
-#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
     else if (m_drag_handle)
     {
         track().unselect();
         track().set_dirty();
     }
     m_drag_handle = m_relative_adjust = m_dragging = false;
-#else
-    m_relative_adjust = m_dragging = false;
-#endif
 
     /*
      * Should we call update()?
@@ -535,15 +527,12 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
     current_x(int(event->x()) - c_keyboard_padding_x);
     current_y(int(event->y()));                     // deduct from m_dataarea_y?
     m_mouse_tick = -1;
-
-#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
     if (m_drag_handle)
     {
         track().adjust_event_handle(m_status, m_dataarea_y - current_y());
         update();
     }
     else
-#endif
     if (m_line_adjust)
     {
 #if defined SEQ66_TRACK_DATA_EDITING_MOVEMENTS
@@ -644,10 +633,6 @@ qseqdata::set_adjustment (midipulse tick_start, midipulse tick_finish)
     if (result)
     {
         m_dragging = m_relative_adjust = true;
-
-//  drop_x(mouse_x);                            /* set values for line      */
-//  drop_y(mouse_y);
-//  old_rect().clear();                         /* reset dirty redraw box   */
     }
 }
 

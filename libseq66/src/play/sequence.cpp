@@ -2258,8 +2258,6 @@ sequence::select_events (midibyte status, midibyte cc, bool inverse)
     return 0;
 }
 
-#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
-
 int
 sequence::select_event_handle
 (
@@ -2275,8 +2273,6 @@ sequence::select_event_handle
     set_dirty();
     return result;
 }
-
-#endif  // define SEQ66_STAZED_SELECT_EVENT_HANDLE
 
 /**
  *  Selects all events, unconditionally.
@@ -2529,8 +2525,6 @@ sequence::jitter_notes (int jitr)
     return result;
 }
 
-#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
-
 /**
  *  Used for moving the data value of an event in the seqdata pane up or
  *  down.
@@ -2563,8 +2557,6 @@ sequence::adjust_event_handle (midibyte astatus, midibyte adata)
         }
     }
 }
-
-#endif
 
 /**
  *  Increments events the match the given status and control values.

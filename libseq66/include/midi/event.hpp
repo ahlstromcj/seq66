@@ -1314,10 +1314,8 @@ public:
     }
 
     bool is_desired (midibyte status, midibyte cc) const;
-#if defined SEQ66_STAZED_SELECT_EVENT_HANDLE
     bool is_data_in_handle_range (midibyte target) const;
     bool is_desired (midibyte status, midibyte cc, midibyte data) const;
-#endif
     bool is_desired_ex (midibyte status, midibyte cc) const;
 
     /**

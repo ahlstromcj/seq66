@@ -259,7 +259,9 @@ qmutemaster::qmutemaster
 
 qmutemaster::~qmutemaster()
 {
-    m_timer->stop();
+    if (not_nullptr(m_timer))
+        m_timer->stop();
+
     cb_perf().unregister(this);         /* unregister this immediately      */
     delete ui;
 }

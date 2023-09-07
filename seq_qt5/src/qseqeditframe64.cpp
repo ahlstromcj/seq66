@@ -468,7 +468,7 @@ qseqeditframe64::qseqeditframe64
      */
 
     set_log_timesig_text(m_beats_per_bar_to_log, m_beat_width_to_log);
-    set_log_timesig_status(false); // ui->m_button_log_timesig->setEnabled(false);
+    set_log_timesig_status(false);
     connect
     (
         ui->m_button_log_timesig, SIGNAL(clicked(bool)),
@@ -1070,7 +1070,9 @@ qseqeditframe64::qseqeditframe64
 
 qseqeditframe64::~qseqeditframe64 ()
 {
-    m_timer->stop();
+    if (not_nullptr(m_timer))
+        m_timer->stop();
+
     cb_perf().unregister(this);
     delete ui;
 }
@@ -1142,18 +1144,6 @@ qseqeditframe64::wheelEvent (QWheelEvent * qwep)
 bool
 qseqeditframe64::eventFilter (QObject * target, QEvent * event)
 {
-#if 0
-    if (event->type() == QEvent::KeyPress)
-    {
-        QKeyEvent * kev = static_cast<QKeyEvent *>(event);
-        int key = kev->key();
-        bool isarrow = key == Qt::Key_Down || key == Qt::Key_Up ||
-            key == Qt::Key_Left || key == Qt::Key_Right;
-
-        if (isarrow)
-            return false;
-    }
-#endif
     return qseqframe::eventFilter(target, event);
 }
 
@@ -1895,7 +1885,7 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
                     bool allow_odd_beat_width = qt_prompt_ok
                     (
                         "MIDI supports only powers of 2 for beat-width.",
-                        "It is saved as a global Seq66-specific MIDI event, "
+                        "Thus, saved as a global Seq66-specific MIDI event, "
                         "not a time-signature event. "
                         "Overriden by existing time-signature events."
                     );

@@ -1,12 +1,4 @@
-%-------------------------------------------------------------------------------
-% pattern_editor
-%-------------------------------------------------------------------------------
-%
-% \file        pattern_editor.tex
-% \library     Documents
-% \author      Chris Ahlstrom
-% \date        2015-08-31
-% \update      2023-09-04
+pdate      2023-09-07
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1324,11 +1316,45 @@
 
    Note that some events are shown as small circles instead of a line; each
    circle has the numeric value next to it.
-   Tempo events are shown as a small yellow circle, even if there are a lot of
-   tempo events.
+   Tempo events are shown as a small yellow circle.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=1.0]{pattern-editor/data-pane-tempo.png}
+   \caption{Data Pane Tempo}
+   \label{fig:pattern_editor_data_pane_tempo}
+\end{figure}
+
    Program-change events are shown as a small open circle with a numeric value.
-   Both of these events' values can be modified by dragging a line as discussed
+   Both of these event values can be modified by dragging a line as discussed
    above.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=1.0]{pattern-editor/data-pane-program.png}
+   \caption{Data Pane Program Change}
+   \label{fig:pattern_editor_data_pane_program_change}
+\end{figure}
+
+   As of version 0.99.9, we have added \textsl{Seq32}-style grab-handles
+   to the events in the data panel.
+   They are shown only if an event is selected, or if the mouse
+   is on top of the event line.
+   As the mouse moves through the data panel, the grab-handles are shown
+   as circles at the top of each line.
+   If the line is clicked, it is selected.
+   If Ctrl-clicked, the selected line is added to the selection.
+   If an empty spot in the data pane is clicked, all events are
+   unselected.
+   When present, the circular grab-handle can be clicked-and-held
+   and moved up and down to change the event value.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=1.0]{pattern-editor/grab-handles.png}
+   \caption{Data Pane Grab-Handles}
+   \label{fig:pattern_editor_data_pane_grab_handles}
+\end{figure}
 
    \index{event data editor!mouse wheel}
    Any events that are selected in the piano roll or event strip can have

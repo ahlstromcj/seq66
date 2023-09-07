@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-02
+ * \updates       2023-09-07
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -959,7 +959,9 @@ qsmainwnd::~qsmainwnd ()
      *      delete m_msg_save_changes;
      */
 
-    m_timer->stop();
+    if (not_nullptr(m_timer))
+        m_timer->stop();
+
     cb_perf().unregister(this);
     delete ui;
 }
@@ -2499,6 +2501,32 @@ qsmainwnd::load_editor (int seqid)
     }
 }
 
+void
+qsmainwnd::remove_edit_tab_frame ()
+{
+    if (not_nullptr(m_edit_frame))
+    {
+        ui->tabWidget->setCurrentIndex(Tab_Live);
+        ui->EditTabLayout->removeWidget(m_edit_frame);
+        delete m_edit_frame;
+        m_edit_frame = nullptr;
+        ui->tabWidget->setTabEnabled(Tab_Editor, false);
+    }
+}
+
+void
+qsmainwnd::remove_event_tab_frame ()
+{
+    if (not_nullptr(m_event_frame))
+    {
+        ui->tabWidget->setCurrentIndex(Tab_Live);
+        ui->EventTabLayout->removeWidget(m_event_frame);
+        delete m_event_frame;
+        m_event_frame = nullptr;
+        ui->tabWidget->setTabEnabled(Tab_Events, false);
+    }
+}
+
 /**
  *  This function first looks to see if a piano roll editor is already open
  *  for this sequence.  If so, we will not open the event-editor frame, to
@@ -2642,24 +2670,13 @@ qsmainwnd::remove_editor (int seqno)
 void
 qsmainwnd::remove_all_editors ()
 {
-    /*
-     * New clause ca 2021-01-31.  Helps with File / New and Event Editor
-     * interactions.
-     */
-
-    if (not_nullptr(m_event_frame))
-    {
-        /*
-         * We were removing the frame AFTER deleting it. Might be a fix
-         * for issue #108 where the Event tab is missing (empty).
-         */
-
-        ui->EventTabLayout->removeWidget(m_event_frame);
-        delete m_event_frame;
-        m_event_frame = nullptr;
-        ui->tabWidget->setTabEnabled(Tab_Events, false);
-    }
-    for (auto ei = m_open_editors.begin(); ei != m_open_editors.end(); /*++ei*/)
+    remove_edit_tab_frame();
+    remove_event_tab_frame();
+    for
+    (
+        auto ei = m_open_editors.begin();
+        ei != m_open_editors.end(); /* ++ei */
+    )
     {
         qseqeditex * qep = ei->second;      /* save the pointer             */
         m_open_editors.erase(ei++);         /* remove pointer, inc iterator */
@@ -2966,6 +2983,16 @@ qsmainwnd::tabWidgetClicked (int newindex)
                     }
                 }
             }
+
+            /*
+             * Need to disable the recent files and open file
+             */
+        }
+        else
+        {
+            /*
+             * Need to enable the recent files and open file
+             */
         }
     }
     isnull = is_nullptr(m_event_frame);

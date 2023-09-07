@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-04-13
+ * \updates       2023-09-07
  * \license       GNU GPLv2 or above
  *
  *  The set-master controls the existence and usage of all sets.  For control
@@ -147,7 +147,9 @@ qsetmaster::qsetmaster
 
 qsetmaster::~qsetmaster()
 {
-    m_timer->stop();
+    if (not_nullptr(m_timer))
+        m_timer->stop();
+
     cb_perf().unregister(this);
     delete ui;
 }

@@ -100,7 +100,8 @@ qstriggereditor::qstriggereditor
 
 qstriggereditor::~qstriggereditor ()
 {
-    m_timer->stop();
+    if (not_nullptr(m_timer))
+        m_timer->stop();
 }
 
 /**

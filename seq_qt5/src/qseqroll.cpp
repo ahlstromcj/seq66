@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-04
+ * \updates       2023-09-07
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -137,7 +137,8 @@ qseqroll::qseqroll
 
 qseqroll::~qseqroll ()
 {
-    m_timer->stop();
+    if (not_nullptr(m_timer))
+        m_timer->stop();
 }
 
 /**
@@ -630,9 +631,9 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
 }
 
 /**
- * Draw the current pixmap frame.  Note that, if the width and height change, we
- * will have to reevaluate.  Draw the events. This currently draws all of them.
- * Drawing all them only needs to be drawn once.
+ * Draw the current pixmap frame.  Note that, if the width and height change,
+ * we will have to reevaluate.  Draw the events. This currently draws all of
+ * them.  Drawing all them only needs to be drawn once.
  */
 
 void
@@ -1194,7 +1195,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     (
                         tick_s, note, tick_f, note, selmode
                     );
-                    if (numsel == 0)    /* none selected, start selection box */
+                    if (numsel == 0)  /* none selected, start selection box */
                         selecting(true);
                     else
                         flag_dirty();
@@ -1253,9 +1254,9 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
         if (moving())
         {
             /*
-             * Adjust delta x for snap, convert deltas into screen coordinates.
-             * Since delta_note and delta_y are of opposite sign, we flip
-             * the final result.  delta_y[0] = note[127].
+             * Adjust delta x for snap, convert deltas into screen
+             * coordinates.  Since delta_note and delta_y are of opposite
+             * sign, we flip the final result.  delta_y[0] = note[127].
              */
 
             int note;

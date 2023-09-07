@@ -136,7 +136,8 @@ qperfroll::qperfroll
 
 qperfroll::~qperfroll ()
 {
-    m_timer->stop();
+    if (not_nullptr(m_timer))
+        m_timer->stop();
 }
 
 /**
