@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2022-09-19
+# \update      2023-09-08
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -64,6 +64,7 @@ HEADERS += include/seq66_features.h \
  include/cfg/usermidibus.hpp \
  include/cfg/usrfile.hpp \
  include/cfg/usrsettings.hpp \
+ include/cfg/zoomer.hpp \
  include/ctrl/automation.hpp \
  include/ctrl/keycontrol.hpp \
  include/ctrl/keycontainer.hpp \
@@ -146,6 +147,7 @@ SOURCES += src/seq66_features.cpp \
  src/cfg/usermidibus.cpp \
  src/cfg/usrfile.cpp \
  src/cfg/usrsettings.cpp \
+ src/cfg/zoomer.cpp \
  src/ctrl/automation.cpp \
  src/ctrl/keycontainer.cpp \
  src/ctrl/keycontrol.cpp \

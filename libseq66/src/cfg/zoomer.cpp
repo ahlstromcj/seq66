@@ -29,7 +29,8 @@
  *
  */
 
-#include "cfg/settings.hpp"             /* seq66::zoom_items()           e  */
+#include "cfg/settings.hpp"             /* seq66::zoom_items()              */
+#include "cfg/zoomer.hpp"               /* seq66::zoomer class              */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -42,11 +43,7 @@ namespace seq66
  *  Principal constructor.
  */
 
-zoomer::zoomer
-(
-    int ppq, int initialzoom, int snap, int scalex,
-    int padding, int unit_height, int total_height
-) :
+zoomer::zoomer (int ppq, int initialzoom, int scalex) :
     m_ppqn                  (ppq),
     m_initial_zoom          (initialzoom),
     m_scale                 (scalex > 4 ? scalex / 4 : 1),
@@ -83,21 +80,29 @@ zoomer::initialize ()
  *  is 1.  But, if the user still wants to zoom in some more, we fake it
  *  by using "zoom expansion". This factor increases the pixel spread by
  *  a factor of 1, 2, 4, or 8.
+ *
+ *  If the new index is valid, then the zoom index, expansion factor, and
+ *  zoom itself are modified.
  */
 
 bool
 zoomer::zoom_in ()
 {
-    bool result = false;
-    return result;
+    int index = m_zoom_index - 1;
+    return set_zoom_by_index(index);
 }
 
 bool
 zoomer::zoom_out ()
 {
-    bool result = false;
-    return result;
+    int index = m_zoom_index + 1;
+    return set_zoom_by_index(index);
 }
+
+/**
+ *  This handles only the normal zooms, no zoom expansion support.
+ *  It rejects zooms that are not powers of 2.
+ */
 
 bool
 zoomer::set_zoom (int z)
@@ -105,14 +110,8 @@ zoomer::set_zoom (int z)
     int index = log2_of_power_of_2(z);
     bool result = index >= 0;
     if (result)
-    {
-        m_zoom_index = index;
-        m_zoom_expansion = 0;
-        m_zoom = zoom_item(index);
-        m_scale_zoom = zoom() * m_scale;
+        set_zoom_by_index(index);
 
-        // or call set_zoom_by_index()???
-    }
     return result;
 }
 
@@ -128,8 +127,8 @@ zoomer::set_zoom_by_index (int i)
             m_zoom_index = i;
             m_zoom_expansion = 0;
             m_zoom = z;
-            result = true;
             m_scale_zoom = zoom() * m_scale;
+            result = true;
         }
     }
     else
@@ -138,7 +137,6 @@ zoomer::set_zoom_by_index (int i)
         if (m_zoom_expansion > 0)
         {
             m_zoom_index = i;
-            m_zoom_expansion = 0;
             m_zoom = 1;
             result = true;
         }

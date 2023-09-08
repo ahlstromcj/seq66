@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2022-09-19
+# \update      2023-09-08
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -90,6 +90,7 @@ nobase_include_HEADERS = \
  cfg/usermidibus.hpp \
  cfg/usrfile.hpp \
  cfg/usrsettings.hpp \
+ cfg/zoomer.hpp \
  ctrl/automation.hpp \
  ctrl/keycontrol.hpp \
  ctrl/keycontainer.hpp \

@@ -130,7 +130,7 @@ class zoomer
 public:
 
     zoomer (int ppq, int initialzoom, int scalex = 1);
-    virtual ~zoomer ();
+    ~zoomer () = default;
 
 public:
 
@@ -144,13 +144,12 @@ public:
         return in ? zoom_in() : zoom_out() ;        /* calls the override   */
     }
 
-    bool reset_zoom ();
-#if 0
-    bool reset_zoom ()
+    int zoom () const
     {
-        return set_zoom(m_initial_zoom);
+        return m_zoom;
     }
-#endif
+
+    bool reset_zoom ();
 
     int scale () const
     {
