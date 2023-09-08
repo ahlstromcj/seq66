@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-07-22
- * \updates       2019-07-29
+ * \updates       2023-09-07
  * \license       GNU GPLv2 or above
  *
  *  We eventually want to migrate all user-interface widgets so that they
@@ -105,11 +105,17 @@ qbase::zoom_out ()
 }
 
 /**
- *  Sets the zoom parameter, z.  If valid, then the m_zoom member is set.
- *  The new setting should be passed to the roll, time, data, and event panels.
+ *  Sets the zoom parameter, z.  If valid, then the m_zoom member is set.  The
+ *  new setting should be passed to the roll, time, data, and event panels.
  *
- *  Note that zoom is not stored in the configuration files or in the MIDI song,
- *  so it should not set the "dirty" flag, just the "needs update" flag.
+ *  Note that zoom is not stored in the configuration files or in the MIDI
+ *  song, so it should not set the "dirty" flag, just the "needs update" flag.
+ *
+ *  Also note that we no longer (2023-09-07) check if the zoom has actually
+ *  changed. The new zoom-expansion feature if triggered will not change the
+ *  official zoom, but will change the zoom-expansion factor.
+ *
+ *      result = z != m_zoom && ....
  *
  * \param z
  *      The desired zoom value, which is checked for validity.
@@ -121,7 +127,7 @@ qbase::zoom_out ()
 bool
 qbase::set_zoom (int z)
 {
-    bool result = z != m_zoom && z >= usr().min_zoom() && z <= usr().max_zoom();
+    bool result = z >= usr().min_zoom() && z <= usr().max_zoom();
     if (result)
     {
         m_zoom = z;

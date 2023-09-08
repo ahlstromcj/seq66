@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2023-09-07
+ * \updates       2023-09-08
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -38,6 +38,12 @@
 #include "util/rect.hpp"                /* seq66::rect rectangle class      */
 #include "gui_palette_qt5.hpp"          /* gui_pallete_qt5::Color etc.      */
 #include "qbase.hpp"                    /* seq66:qbase super base class     */
+
+/*
+ * EXPERIMENT IN PROGRESS
+ */
+
+#undef SEQ66_USE_ZOOM_EXPANSION
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -624,11 +630,6 @@ public:
         return m_scroll_offset_y;
     }
 
-    int xoffset (midipulse tick) const
-    {
-        return tix_to_pix(tick) + m_padding_x;
-    }
-
     int unit_height () const
     {
         return m_unit_height;
@@ -838,15 +839,36 @@ protected:
         return result;
     }
 
-    midipulse position_tick (int pix)
-    {
-        return m_scroll_offset + pix_to_tix(pix - m_scroll_offset_x);
-    }
+#if ! defined SEQ66_USE_ZOOM_EXPANSION
+
+    /*
+     * qseqtime: int right = position_pixel(righttick)
+     *
+     * m_scroll_offset is an int!
+     */
 
     int position_pixel (midipulse tix)
     {
         return m_scroll_offset_x + tix_to_pix(tix - m_scroll_offset);
     }
+
+#endif
+
+    /*
+     * qseqroll: int x_offset = xoffset(tick) - scroll_offset_x()
+     */
+
+    int xoffset (midipulse tick) const
+    {
+        return tix_to_pix(tick) + m_padding_x;
+    }
+
+#if 0
+    midipulse position_tick (int pix)
+    {
+        return m_scroll_offset + pix_to_tix(pix - m_scroll_offset_x);
+    }
+#endif
 
     void convert_x (int x, midipulse & tick);
     void convert_xy (int x, int y, midipulse & ticks, int & seq);

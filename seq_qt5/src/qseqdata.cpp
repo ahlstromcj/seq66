@@ -232,8 +232,14 @@ qseqdata::paintEvent (QPaintEvent * qpep)
         {
             bool data_event = cev->is_continuous_event();  /* can draw line */
             bool selected = cev->is_selected();
+#if defined SEQ66_USE_ZOOM_EXPANSION
+            int event_x = xoffset(tick) - scroll_offset_x();
+//          event_x += m_keyboard_padding_x;
+            int x_offset = event_x + s_x_data_fix;
+#else
             int event_x = tix_to_pix(tick) + m_keyboard_padding_x;
             int x_offset = event_x + s_x_data_fix;
+#endif
             int y_offset = m_dataarea_y - 25;
             midibyte d0, d1;
             cev->get_data(d0, d1);
@@ -369,7 +375,11 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 break;
 
             midipulse start = ts.sig_start_tick;
+#if defined SEQ66_USE_ZOOM_EXPANSION
+            int pos = xoffset(start);           // + 3;
+#else
             int pos = position_pixel(start) + 3;
+#endif
             int n = ts.sig_beats_per_bar;
             int d = ts.sig_beat_width;
             std::string text = std::to_string(n);

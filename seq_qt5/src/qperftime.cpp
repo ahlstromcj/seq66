@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-08-30
+ * \updates       2023-09-07
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -136,7 +136,11 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
             break;
         }
 
+#if defined SEQ66_USE_ZOOM_EXPANSION
+        int x_pos = xoffset(tick) - scroll_offset_x();
+#else
         int x_pos = position_pixel(tick);
+#endif
         if (tick % measure_length() == 0)
         {
             pen.setColor(fore_color());                     /* measure */
@@ -171,10 +175,17 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
 
     int xoff_left = scroll_offset_x();
     int xoff_right = scroll_offset_x() + xwidth;
+#if defined SEQ66_USE_ZOOM_EXPANSION
+    int end = xoffset(perf().get_max_trigger()) - s_end_fix;
+    int left = xoffset(perf().get_left_tick());
+    int right = xoffset(perf().get_right_tick());
+    int now = xoffset(perf().get_tick());
+#else
     int end = position_pixel(perf().get_max_trigger()) - s_end_fix;
     int left = position_pixel(perf().get_left_tick());
     int right = position_pixel(perf().get_right_tick());
     int now = position_pixel(perf().get_tick());
+#endif
     if (! perf().is_pattern_playing() && (now != left) && (now != right))
     {
         if (now >= xoff_left && now <= xoff_right)

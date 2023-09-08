@@ -39,12 +39,6 @@
 #include "qeditbase.hpp"
 
 /*
- * EXPERIMENT IN PROGRESS
- */
-
-#undef  SEQ66_USE_ZOOM_EXPANSION
-
-/*
  *  Do not document a namespace; it breaks Doxygen.
  */
 
@@ -188,9 +182,8 @@ bool
 qeditbase::zoom_in ()
 {
     bool result = false;
-#if defined  SEQ66_USE_ZOOM_EXPANSION
-    int z = zoom();
-    if (z == 1)                     /* already at maximum normal zoom-in    */
+#if defined SEQ66_USE_ZOOM_EXPANSION
+    if (zoom() == 1)                /* already at maximum normal zoom-in    */
     {
         if (m_zoom_exp_index < (c_zoom_expansion_size - 1)) /* 0 to 3 legal */
         {
@@ -213,7 +206,7 @@ bool
 qeditbase::zoom_out ()
 {
     bool result = false;
-#if defined  SEQ66_USE_ZOOM_EXPANSION
+#if defined SEQ66_USE_ZOOM_EXPANSION
     if (m_zoom_exp_index > 0)       /* currently in normal zoom-in area     */
     {
         --m_zoom_exp_index;
