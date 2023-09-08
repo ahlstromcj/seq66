@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2023-08-28
+ * \updates       2023-09-08
  * \license       GNU GPLv2 or above
  *
  *  A couple of universal helper functions remain as inline functions in the
@@ -145,6 +145,9 @@ extern const tokenization & beatwidth_items ();
 extern const tokenization & snap_items ();
 extern const tokenization & perf_snap_items ();
 extern const tokenization & zoom_items ();
+extern int zoom_item (int i);
+extern const tokenization & expanded_zoom_items ();
+extern int expanded_zoom_item (int i);
 extern const tokenization & rec_vol_items ();
 extern void set_configuration_defaults ();
 extern bool ppqn_in_range (int ppqn);

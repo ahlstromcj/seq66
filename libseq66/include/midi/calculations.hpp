@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2023-09-04
+ * \updates       2023-09-08
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -241,7 +241,7 @@ extern int randomize (int range, int seed = 0);
 extern int randomize_uniformly (int range, int seed = -1);
 #endif
 extern bool is_power_of_2 (int value);
-extern int log2_time_sig_value (int tsd);
+extern int log2_of_power_of_2 (int tsd);
 extern int beat_power_of_2 (int logbase2);
 extern int power (int base, int exponent);
 extern midibyte beat_log2 (int value);

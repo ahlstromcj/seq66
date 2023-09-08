@@ -141,7 +141,7 @@ protected:
     seq66::rect m_selected;
 
     /**
-     *  X scaling.  Allows the caller to adjust the overall zoom.   A
+     *  X scaling.  Allows the caller to adjust the overall zoom. A
      *  constant.
      */
 
@@ -157,7 +157,7 @@ protected:
     /**
      *  An additional kind of zoom, useful for depicting dense events such as
      *  pitch-bend.  All it does is multiply the pixel numbers by this factor.
-     *  The support values are 1 (the same as no expansion), 2, 4, and 8.
+     *  The supported values are 1 (the same as no expansion), 2, 4, and 8.
      *  It is accessible only via the zoom buttons and zoom keys, and applies
      *  only to the x (horizontal) direction.
      */

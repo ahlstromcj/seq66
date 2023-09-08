@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2023-09-04
+ * \updates       2023-09-08
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -917,23 +917,29 @@ is_power_of_2 (int b)
  *  meta event's "dd" value.
  *
  * \param tsd
- *      The time signature denominator, which must be a power of 2:  2, 4, 8,
- *      16, or 32.
+ *      The time signature denominator or other integer, which must be a power
+ *      of 2:  2, 4, 8, 16, 32, ....
  *
  * \return
  *      Returns the power of 2 that achieves the \a tsd parameter value.
+ *      Returns -1 if the value is not a power of 2.
  */
 
 int
-log2_time_sig_value (int tsd)
+log2_of_power_of_2 (int tsd)
 {
-    int result = 0;
-    while (tsd > 1)
+    if (is_power_of_2(tsd))
     {
-        ++result;
-        tsd >>= 1;
+        int result = 0;
+        while (tsd > 1)
+        {
+            ++result;
+            tsd >>= 1;
+        }
+        return result;
     }
-    return result;
+    else
+        return (-1);
 }
 
 /**

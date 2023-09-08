@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2023-08-28
+ * \updates       2023-09-08
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -39,6 +39,7 @@
 #include "cfg/settings.hpp"             /* std::rc(), usr(), and much more  */
 #include "os/shellexecute.hpp"          /* seq66::open_url(), open_pdf()    */
 #include "util/filefunctions.hpp"       /* seq66::find_file()               */
+#include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
 
 /*
  * We should probably access only the version stored on the user's Seq66
@@ -237,7 +238,10 @@ perf_snap_items ()
 }
 
 /**
- *  Zoom values for the pattern editor.
+ *  Zoom values for the pattern editor. Keep these values as consecutive
+ *  powers of 2, ranging from power-of-0 to power-of-9. The higher the
+ *  number, the more zoomed-out. This range is high to help support large
+ *  PPQNs.
  */
 
 const tokenization &
@@ -248,6 +252,53 @@ zoom_items ()
         "1", "2", "4", "8", "16", "32", "64", "128", "256", "512"
     };
     return s_zoom_list;
+}
+
+int
+zoom_item (int i)
+{
+    int result = 0;
+    if (i >= 0)
+    {
+        const tokenization & zs = zoom_items();
+        i = -i;
+        if (i < int(zs.size()))
+            result = string_to_int(zs[i]);
+    }
+    return result;
+}
+
+/**
+ *  To get around the long-standing limitation of zoom no less than 1,
+ *  we want to add additional items that can be used as factors in
+ *  drawing further expanded horizontal zoom.
+ *
+ *  This list actually goes in the opposite direction: higher numbers
+ *  are more zoomed in, as each number is an expansion factor.
+ */
+
+const tokenization &
+expanded_zoom_items ()
+{
+    static const tokenization s_expanded_zoom_list
+    {
+        "2", "4", "8", "16"
+    };
+    return s_expanded_zoom_list;
+}
+
+int
+expanded_zoom_item (int i)
+{
+    int result = 0;
+    if (i < 0)
+    {
+        const tokenization & expz = expanded_zoom_items();
+        i = -i;
+        if (i < int(expz.size()))
+            result = string_to_int(expz[i]);
+    }
+    return result;
 }
 
 /**

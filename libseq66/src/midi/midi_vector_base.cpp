@@ -450,9 +450,9 @@ midi_vector_base::fill_time_sig_and_tempo
  *  Fill in the time-signature information.  This function is used only for
  *  the first track, and only if no such event is in the track data.
  *
- *  We now make sure that the proper values are part of the performer object for
- *  usage in this particular track.  For export, we cannot guarantee that the
- *  first (0th) track/sequence is exportable.
+ *  We now make sure that the proper values are part of the performer object
+ *  for usage in this particular track.  For export, we cannot guarantee that
+ *  the first (0th) track/sequence is exportable.
  *
  * \param p
  *      Provides the performance object from which we get some global MIDI
@@ -466,7 +466,7 @@ midi_vector_base::fill_time_sig (const performer & p)
     int bpb = p.get_beats_per_bar();;
     int cpm = p.clocks_per_metronome();
     int get32pq = p.get_32nds_per_quarter();
-    int bw = log2_time_sig_value(beatwidth);
+    int bw = log2_of_power_of_2(beatwidth);
     put_meta(EVENT_META_TIME_SIGNATURE, 4);         /* 0x58 marker, 4 bytes */
     put(bpb);
     put(bw);
