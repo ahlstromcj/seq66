@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2023-09-08
+ * \updates       2023-09-09
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -115,16 +115,8 @@ combolist::ctoi (int index) const
     int result = (-1);
     std::string s = at(index);
     if (! s.empty())
-    {
-        try
-        {
-            result = std::stoi(s);
-        }
-        catch (std::invalid_argument const &)
-        {
-            // no code
-        }
-    }
+        result = string_to_int(s);
+
     return result;
 }
 
@@ -261,7 +253,6 @@ zoom_item (int i)
     if (i >= 0)
     {
         const tokenization & zs = zoom_items();
-        i = -i;
         if (i < int(zs.size()))
             result = string_to_int(zs[i]);
     }

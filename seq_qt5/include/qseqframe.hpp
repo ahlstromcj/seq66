@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2022-04-28
+ * \updates       2023-09-09
  * \license       GNU GPLv2 or above
  *
  *  Provides an abstract base class so that both the old and the new Qt
@@ -39,7 +39,7 @@
 
 #include <QFrame>
 
-#include "qbase.hpp"                    /* seq66:qbase super base class     */
+#include "qeditbase.hpp"                /* seq66:qeditbase super base class */
 #include "play/seq.hpp"                 /* seq66::seq::pointer & sequence   */
 #include "play/sequence.hpp"            /* seq66::seq::pointer & sequence   */
 
@@ -75,7 +75,7 @@ namespace seq66
  *  This frame is the basis for editing an individual MIDI sequence.
  */
 
-class qseqframe : public QFrame, public qbase
+class qseqframe : public QFrame, public qeditbase
 {
     friend class qseqroll;
 
@@ -112,7 +112,10 @@ public:     // protected:
 
 public:
 
+    virtual bool zoom_in () override;
+    virtual bool zoom_out () override;
     virtual bool set_zoom (int z) override;
+    virtual bool reset_zoom () override;
     virtual void set_dirty () override;
 
 private:

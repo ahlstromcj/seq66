@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-07-22
- * \updates       2023-08-31
+ * \updates       2023-09-09
  * \license       GNU GPLv2 or above
  *
  *  Provides a abstract base class so that both the old and the new Qt
@@ -81,26 +81,6 @@ private:
     performer & m_performer;
 
     /**
-     *  Provides the initial zoom, used for restoring the original zoom using
-     *  the 0 key.
-     */
-
-    const int m_initial_zoom;
-
-    /**
-     *  Horizontal zoom setting.  This is the ratio between pixels and MIDI
-     *  ticks, written "pixels:ticks".   As ticks increases, the effect is to
-     *  zoom out, making the beats look shorter.  The default zoom is 2 for the
-     *  normal PPQN of 192.
-     *
-     *  Provides the zoom values: 1  2  3  4, and 1, 2, 4, 8, 16.
-     *  The value of zoom is the same as the number of pixels per tick on the
-     *  piano roll.
-     */
-
-    int m_zoom;
-
-    /**
      *  Dirty!  Being dirty means that not only does the window need updating,
      *  but there are changes made that need to be saved.
      */
@@ -117,7 +97,7 @@ private:
 
 public:
 
-    qbase (performer & p, int zoom);
+    qbase (performer & p /* , int zoom */ );
     virtual ~qbase ();
 
     void stop_playing ()
@@ -150,11 +130,6 @@ protected:
     bool is_initialized () const
     {
         return m_is_initialized;
-    }
-
-    int zoom () const
-    {
-        return m_zoom;
     }
 
 public:
@@ -193,34 +168,6 @@ public:
     virtual bool change_bpm (midibpm /*bpm*/)
     {
         return true;                                // no code in most cases
-    }
-
-    virtual bool zoom_in ();
-    virtual bool zoom_out ();
-    virtual bool set_zoom (int z);
-
-    virtual bool change_zoom (bool in)
-    {
-        return in ? zoom_in() : zoom_out() ;        /* calls the override   */
-    }
-
-    virtual bool reset_zoom ()
-    {
-        return set_zoom(m_initial_zoom);
-    }
-
-    virtual int tix_to_pix (midipulse ticks) const
-    {
-        int result = ticks / pulses_per_pixel(ppqn(), zoom());
-        if (result < 1)
-            result = 1;
-
-        return result;
-    }
-
-    virtual midipulse pix_to_tix (int x) const
-    {
-        return x * pulses_per_pixel(ppqn(), zoom());
     }
 
     virtual void set_dirty ()

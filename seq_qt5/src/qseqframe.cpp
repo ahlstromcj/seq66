@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2022-04-28
+ * \updates       2023-09-09
  * \license       GNU GPLv2 or above
  *
  *  Seq66 (Qt version) has two different pattern editor frames to
@@ -78,7 +78,7 @@ qseqframe::qseqframe
     QWidget * parent
 ) :
     QFrame      (parent),
-    qbase       (p, c_default_zoom),
+    qeditbase   (p, c_default_zoom),
     m_seq       (s),
     m_seqkeys   (nullptr),
     m_seqtime   (nullptr),
@@ -127,6 +127,52 @@ qseqframe::repitch_selected ()
 }
 
 /**
+ *  Forwards the zoom changes to the child panes.
+ */
+
+bool
+qseqframe::zoom_in ()
+{
+    bool result = qeditbase::zoom_in();
+    if (result)
+    {
+        if (not_nullptr(m_seqroll))
+            m_seqroll->zoom_in();
+
+        if (not_nullptr(m_seqtime))
+            m_seqtime->zoom_in();
+
+        if (not_nullptr(m_seqdata))
+            m_seqdata->zoom_in();
+
+        if (not_nullptr(m_seqevent))
+            m_seqevent->zoom_in();
+    }
+    return result;
+}
+
+bool
+qseqframe::zoom_out ()
+{
+    bool result = qeditbase::zoom_out();
+    if (result)
+    {
+        if (not_nullptr(m_seqroll))
+            m_seqroll->zoom_out();
+
+        if (not_nullptr(m_seqtime))
+            m_seqtime->zoom_out();
+
+        if (not_nullptr(m_seqdata))
+            m_seqdata->zoom_out();
+
+        if (not_nullptr(m_seqevent))
+            m_seqevent->zoom_out();
+    }
+    return result;
+}
+
+/**
  *  Sets the horizontal (time) zoom parameter, z.  If valid, then the m_zoom
  *  member is set.  The new setting is passed to the roll, time, data, and
  *  event panels [which each call their own set_dirty() functions].
@@ -141,7 +187,7 @@ qseqframe::repitch_selected ()
 bool
 qseqframe::set_zoom (int z)
 {
-    bool result = qbase::set_zoom(z);
+    bool result = qeditbase::set_zoom(z);
     if (result)
     {
         if (not_nullptr(m_seqroll))
@@ -159,6 +205,27 @@ qseqframe::set_zoom (int z)
     return result;
 }
 
+bool
+qseqframe::reset_zoom ()
+{
+    bool result = qeditbase::reset_zoom();
+    if (result)
+    {
+        if (not_nullptr(m_seqroll))
+            m_seqroll->reset_zoom();
+
+        if (not_nullptr(m_seqtime))
+            m_seqtime->reset_zoom();
+
+        if (not_nullptr(m_seqdata))
+            m_seqdata->reset_zoom();
+
+        if (not_nullptr(m_seqevent))
+            m_seqevent->reset_zoom();
+    }
+    return result;
+}
+
 /**
  *  Sets the dirty status of all of the panels.  However, note that in the
  *  case of zoom, for example, it also sets dirtiness, via qseqbase.
@@ -170,7 +237,7 @@ qseqframe::set_zoom (int z)
 void
 qseqframe::set_dirty ()
 {
-    qbase::set_dirty();
+    qeditbase::set_dirty();
     if (not_nullptr(m_seqroll))
         m_seqroll->set_dirty();
 

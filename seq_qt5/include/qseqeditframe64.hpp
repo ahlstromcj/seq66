@@ -175,6 +175,7 @@ private:        /* qbase and qseqframe overrides    */
     virtual bool zoom_in () override;
     virtual bool zoom_out () override;
     virtual bool set_zoom (int z) override;
+    virtual bool reset_zoom () override;
     virtual void update_draw_geometry () override;
 
 protected:      /* QWidget overrides                */

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2022-09-07
+ * \updates       2022-09-09
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -53,13 +53,13 @@ static const float c_horizontal_factor = 1.25f;
 
 /**
  *  The list of supported expansion values.
- */
 
 static const size_t c_zoom_expansion_size = 4;
 static const int c_zoom_expansion [c_zoom_expansion_size]
 {
     1, 2, 4, 8
 };
+ */
 
 /**
  *  Principal constructor.
@@ -71,7 +71,7 @@ qeditbase::qeditbase
     int initialzoom, int snap, int scalex,
     int padding, int unit_height, int total_height
 ) :
-    qbase                   (p, initialzoom),
+    qbase                   (p),    // initialzoom),
     m_back_color            (background_paint()),
     m_fore_color            (foreground_paint()),
     m_label_color           (label_paint()),
@@ -91,10 +91,7 @@ qeditbase::qeditbase
     m_use_gradient          (gui_use_gradient_brush()),
     m_old                   (),                     /* past selection box   */
     m_selected              (),                     /* current sel box      */
-    m_scale                 (scalex > 4 ? scalex / 4 : 1),
-    m_scale_zoom            (m_scale * zoom()),     /* see change_ppqn()    */
-    m_zoom_exp_index        (0),
-    m_zoom_expansion        (c_zoom_expansion[0]),
+    m_zoomer                (p.ppqn(), initialzoom, scalex),
     m_padding_x             (padding),
     m_snap                  (snap),
     m_grid_snap
@@ -164,97 +161,7 @@ qeditbase::snap_current_y ()
 int
 qeditbase::horizSizeHint () const
 {
-#if defined USE_OLD_CODE
-    return tix_to_pix(perf().get_max_trigger()) + 200;
-#else
     return int(tix_to_pix(perf().get_max_trigger())) * c_horizontal_factor;
-#endif
-}
-
-/**
- *  Make the view cover less horizontal length.  The lowest zoom possible
- *  is 1.  But, if the user still wants to zoom in some more, we fake it
- *  by using "zoom expansion". This factor increases the pixel spread by
- *  a factor of 1, 2, 4, or 8.
- */
-
-bool
-qeditbase::zoom_in ()
-{
-    bool result = false;
-#if defined SEQ66_USE_ZOOM_EXPANSION
-    if (zoom() == 1)                /* already at maximum normal zoom-in    */
-    {
-        if (m_zoom_exp_index < (c_zoom_expansion_size - 1)) /* 0 to 3 legal */
-        {
-            m_zoom_expansion = c_zoom_expansion[++m_zoom_exp_index];
-            result = true;
-            set_dirty();
-        }
-    }
-    else
-#endif
-    {
-        result = qbase::zoom_in();
-        if (result)
-            m_scale_zoom = zoom() * m_scale;
-    }
-    return result;
-}
-
-bool
-qeditbase::zoom_out ()
-{
-    bool result = false;
-#if defined SEQ66_USE_ZOOM_EXPANSION
-    if (m_zoom_exp_index > 0)       /* currently in normal zoom-in area     */
-    {
-        --m_zoom_exp_index;
-        if (m_zoom_exp_index == 0)
-        {
-            result = reset_zoom();
-        }
-        else
-        {
-            m_zoom_expansion = c_zoom_expansion[m_zoom_exp_index];
-            result = true;
-            set_dirty();
-        }
-    }
-    else
-#endif
-    {
-        result = qbase::zoom_out();
-        if (result)
-            m_scale_zoom = zoom() * m_scale;
-    }
-    return result;
-}
-
-bool
-qeditbase::set_zoom (int z)
-{
-#if 0
-    if (z == 1)
-    {
-        m_zoom_exp_index = 0;
-        m_zoom_expansion = c_zoom_expansion[0];
-    }
-#endif
-
-    bool result = qbase::set_zoom(z);
-    if (result)
-        m_scale_zoom = zoom() * m_scale;
-
-    return result;
-}
-
-bool
-qeditbase::reset_zoom ()
-{
-    m_zoom_exp_index = 0;
-    m_zoom_expansion = c_zoom_expansion[0];
-    return qbase::reset_zoom();
 }
 
 /**
@@ -276,10 +183,9 @@ qeditbase::reset_zoom ()
 bool
 qeditbase::change_ppqn (int p)
 {
-    m_scale_zoom = zoom() * m_scale;
     m_beat_length = p;                          /* perf().ppqn()            */
     m_measure_length = m_beat_length * 4;       /* what about beat width?   */
-    return true;
+    return m_zoomer.change_ppqn(p);
 }
 
 /**
@@ -292,9 +198,10 @@ qeditbase::change_ppqn (int p)
 void
 qeditbase::snap_x (int & x)
 {
-    if (m_scale_zoom > 0)
+    int sczoom = m_zoomer.scale_zoom();
+    if (sczoom > 0)
     {
-        int mod = usr().base_ppqn() * m_snap / m_scale_zoom / ppqn();
+        int mod = usr().base_ppqn() * m_snap / sczoom / ppqn();
         if (mod <= 0)
             mod = 1;
 
@@ -319,15 +226,9 @@ qeditbase::check_dirty () const
 }
 
 void
-qeditbase::convert_x (int x, midipulse & tick)
-{
-    tick = pix_to_tix(x);                       /* x * m_scale_zoom */
-}
-
-void
 qeditbase::convert_ts (midipulse ticks, int seq, int & x, int & y)
 {
-    x = tix_to_pix(ticks);
+    x = m_zoomer.tix_to_pix(ticks);
     y = m_total_height - ((seq + 1) * m_unit_height) - 1;
 }
 
@@ -362,38 +263,6 @@ qeditbase::convert_ts_box_to_rect
     convert_ts(tick_f, seq_l, x2, y2);
     rect::xy_to_rect(x1, y1, x2, y2, r);
     r.height_incr(m_unit_height);
-}
-
-/**
- *  Calculates a suitable starting zoom value for the given PPQN value.  The
- *  default starting zoom is 2, but this value is suitable only for PPQN of
- *  192 and below.  Also, zoom currently works consistently only if it is a
- *  power of 2.  For starters, we scale the zoom to the selected ppqn, and
- *  then shift it each way to get a suitable power of two.
- *
- * \param ppqn
- *      The ppqn of interest.
- *
- * \return
- *      Returns the power of 2 appropriate for the given PPQN value.
- */
-
-int
-zoom_power_of_2 (int ppqn)
-{
-    int result = c_default_zoom;
-    if (ppqn > usr().base_ppqn())
-    {
-        int zoom = result * ppqn / usr().base_ppqn();
-        zoom >>= 1;                                     /* "divide" by 2    */
-        zoom <<= 1;                                     /* "multiply" by 2  */
-        result = zoom;
-        if (result > c_maximum_zoom)
-            result = c_maximum_zoom;
-        else if (result == 0)
-            result = c_minimum_zoom;
-    }
-    return result;
 }
 
 }           // namespace seq66

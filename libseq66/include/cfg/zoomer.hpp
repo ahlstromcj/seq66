@@ -28,10 +28,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2023-09-08
+ * \updates       2023-09-09
  * \license       GNU GPLv2 or above
  *
  */
+
+#include "midi/midibytes.hpp"           /* seq66::midipulse, etc.           */
 
 /*
  * Do not document namespaces, it breaks Doxygen.
@@ -138,6 +140,7 @@ public:
     bool zoom_out ();
     bool set_zoom (int z);
     bool set_zoom_by_index (int i);
+    bool reset_zoom ();
 
     bool change_zoom (bool in)
     {
@@ -148,8 +151,6 @@ public:
     {
         return m_zoom;
     }
-
-    bool reset_zoom ();
 
     int scale () const
     {

@@ -515,10 +515,6 @@ qmutemaster::slot_table_click
         }
         else
         {
-#if 0
-            if (cb_perf().mutegroup_reset())
-                initialize_table();
-#endif
         }
     }
 }
@@ -562,13 +558,6 @@ qmutemaster::create_group_buttons ()
             temp->show();
             temp->setCheckable(true);
             temp->setEnabled(false);
-#if 0
-            if (group == 0)
-            {
-                temp->setChecked(true);
-                temp->setEnabled(true);
-            }
-#endif
             m_group_buttons[group] = temp;
         }
     }

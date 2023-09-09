@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-07
+ * \updates       2023-09-09
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -282,6 +282,36 @@ qperfroll::reset_v_zoom ()
         set_dirty();
         frame64()->set_dirty();
     }
+    return result;
+}
+
+bool
+qperfroll::zoom_in ()
+{
+    bool result = frame64()->zoom_in();
+    if (result)
+        set_dirty();
+
+    return result;
+}
+
+bool
+qperfroll::zoom_out ()
+{
+    bool result = frame64()->zoom_out();
+    if (result)
+        set_dirty();
+
+    return result;
+}
+
+bool
+qperfroll::reset_zoom ()
+{
+    bool result = frame64()->reset_zoom();
+    if (result)
+        set_dirty();
+
     return result;
 }
 
@@ -714,6 +744,7 @@ qperfroll::keyPressEvent (QKeyEvent * event)
             switch (event->key())
             {
             case Qt::Key_X:
+
                 handled = true;
                 if (on_pattern)
                 {
@@ -723,12 +754,14 @@ qperfroll::keyPressEvent (QKeyEvent * event)
                 break;
 
             case Qt::Key_C:
+
                 handled = true;
                 if (on_pattern)
                     perf().copy_triggers(m_drop_track);
                 break;
 
             case Qt::Key_V:
+
                 handled = true;
                 if (on_pattern)
                 {
@@ -738,6 +771,7 @@ qperfroll::keyPressEvent (QKeyEvent * event)
                 break;
 
             case Qt::Key_Z:
+
                 handled = dirty = true;
                 if (event->modifiers() & Qt::ShiftModifier)
                     perf().pop_trigger_redo();
@@ -932,11 +966,11 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
     int penwidth = 1;
     for (midipulse tick = tick0; tick < tick1; tick += tickstep)
     {
-#if defined SEQ66_USE_ZOOM_EXPANSION
+// #if defined SEQ66_USE_ZOOM_EXPANSION
         int x_pos = xoffset(tick);
-#else
-        int x_pos = position_pixel(tick);
-#endif
+// #else
+//         int x_pos = position_pixel(tick);
+// #endif
         if (tick % measure_length() == 0)               /* measure          */
         {
             pen.setColor(fore_color());                 /* Qt::black        */

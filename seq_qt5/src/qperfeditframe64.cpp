@@ -239,9 +239,9 @@ qperfeditframe64::qperfeditframe64
      * Zoom-In and Zoom-Out buttons.
      */
 
-    connect(ui->btnZoomIn, SIGNAL(clicked(bool)), this, SLOT(zoom_in()));
+    connect(ui->btnZoomIn, SIGNAL(clicked(bool)), this, SLOT(slot_zoom_in()));
     qt_set_icon(zoom_in_xpm, ui->btnZoomIn);
-    connect(ui->btnZoomOut, SIGNAL(clicked(bool)), this, SLOT(zoom_out()));
+    connect(ui->btnZoomOut, SIGNAL(clicked(bool)), this, SLOT(slot_zoom_out()));
     qt_set_icon(zoom_out_xpm, ui->btnZoomOut);
 
     /*
@@ -545,14 +545,9 @@ qperfeditframe64::set_guides ()
  */
 
 void
-qperfeditframe64::zoom_in ()
+qperfeditframe64::slot_zoom_in ()
 {
-    int zprevious = m_perfroll->zoom();
-    m_perftime->zoom_in();
-    m_perfroll->zoom_in();
-
-    float factor = float(zprevious) / float(m_perfroll->zoom());
-    ui->rollScrollArea->scroll_x_by_factor(factor); // 2.0f
+    (void) zoom_in();
 }
 
 /**
@@ -561,14 +556,41 @@ qperfeditframe64::zoom_in ()
  */
 
 void
+qperfeditframe64::slot_zoom_out ()
+{
+    (void) zoom_out();
+}
+
+bool
+qperfeditframe64::zoom_in ()
+{
+    int zprevious = m_perfroll->zoom();
+    bool result = m_perftime->zoom_in();
+    if (result)
+        result = m_perfroll->zoom_in();
+
+    if (result)
+    {
+        float factor = float(zprevious) / float(m_perfroll->zoom());
+        ui->rollScrollArea->scroll_x_by_factor(factor);
+    }
+    return result;
+}
+
+bool
 qperfeditframe64::zoom_out ()
 {
     int zprevious = m_perfroll->zoom();
-    m_perftime->zoom_out();
-    m_perfroll->zoom_out();
+    bool result = m_perftime->zoom_out();
+    if (result)
+        result = m_perfroll->zoom_out();
 
-    float factor = float(zprevious) / float(m_perfroll->zoom());
-    ui->rollScrollArea->scroll_x_by_factor(factor);
+    if (result)
+    {
+        float factor = float(zprevious) / float(m_perfroll->zoom());
+        ui->rollScrollArea->scroll_x_by_factor(factor);
+    }
+    return result;
 }
 
 /**
@@ -576,11 +598,14 @@ qperfeditframe64::zoom_out ()
  *  and qperfroll.
  */
 
-void
+bool
 qperfeditframe64::reset_zoom ()
 {
-    m_perftime->reset_zoom();
-    m_perfroll->reset_zoom();
+    bool result = m_perftime->reset_zoom();
+    if (result)
+        m_perfroll->reset_zoom();
+
+    return result;
 }
 
 void

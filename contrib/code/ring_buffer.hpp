@@ -522,29 +522,4 @@ typename ring_buffer<TYPE>::const_iterator ring_buffer<TYPE>::rend() const
     return iter;
 }
 
-#if 0
-
-template<class TYPE>
-void ring_buffer<TYPE>::increment_tail ()
-{
-    ++m_tail;
-    ++m_contents_size;
-    if (m_tail == m_array_size)
-        m_tail = 0;
-}
-
-template<class TYPE>
-void ring_buffer<TYPE>::increment_head()
-{
-    if (m_contents_size == 0)
-        return;
-
-    ++m_head;
-    --m_contents_size;
-    if (m_head == m_array_size)
-        m_head = 0;
-}
-
-#endif
-
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-07
+ * \updates       2023-09-09
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -109,24 +109,10 @@ public:
         return m_data_type == type::tempo;   // m_is_tempo;
     }
 
-#if 0
-    void is_tempo (bool flag)
-    {
-        m_is_tempo = flag;
-    }
-#endif
-
     bool is_time_signature () const
     {
         return m_data_type == type::time_signature;   // m_is_time_signature;
     }
-
-#if 0
-    void is_time_signature (bool flag)
-    {
-        m_is_time_signature = flag;
-    }
-#endif
 
     bool is_program_change () const
     {
@@ -137,13 +123,6 @@ public:
     {
         return m_data_type == type::pitchbend;  // m_is_program_change;
     }
-
-#if 0
-    void is_program_change (bool flag)
-    {
-        m_is_program_change = flag;
-    }
-#endif
 
     midibyte status () const
     {
@@ -201,30 +180,10 @@ private:
 
     int m_dataarea_y;
 
-#if 0
-
     /**
-     *  Indicates we are editing tempo events.  They are drawn as circles
-     *  instead of lines.
+     *  Replaces a number of booleans denoting which type of events are
+     *  to be shown.
      */
-
-    bool m_is_tempo;
-
-    /**
-     *  Indicates we are editing time-signature events.  They are drawn as
-     *  text instead of lines.
-     */
-
-    bool m_is_time_signature;
-
-    /**
-     *  Indicates we are editing program-change events.  They are drawn as
-     *  circles instead of lines.
-     */
-
-    bool m_is_program_change;
-
-#endif
 
     type m_data_type;
 

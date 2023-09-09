@@ -65,13 +65,6 @@ namespace seq66
 
 class mutegroups final : public basesettings
 {
-#if 0
-    friend class midifile;
-    friend class qmutemaster;
-    friend class mutegroupsfile;
-    friend class performer;
-    friend class setmapper;
-#endif
 
 public:
 

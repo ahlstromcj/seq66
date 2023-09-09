@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-07-22
- * \updates       2023-09-07
+ * \updates       2023-09-09
  * \license       GNU GPLv2 or above
  *
  *  We eventually want to migrate all user-interface widgets so that they
@@ -51,10 +51,8 @@ namespace seq66
  *      sequence.  Among other things, this object provides the active PPQN.
  */
 
-qbase::qbase (performer & p, int zoom) :
+qbase::qbase (performer & p) :
     m_performer             (p),
-    m_initial_zoom          (zoom > 0 ? zoom : 1),
-    m_zoom                  (zoom),         /* adjusted below               */
     m_is_dirty              (false),
     m_is_initialized        (false)
 {
@@ -68,72 +66,6 @@ qbase::qbase (performer & p, int zoom) :
 qbase::~qbase ()
 {
     // No code needed
-}
-
-/**
- *  A virtual function to halve the zoom and set it.
- */
-
-bool
-qbase::zoom_in ()
-{
-    bool result = false;
-    int z = zoom();
-    if (z > 1)
-    {
-        z /= 2;
-        result = set_zoom(z);
-    }
-    return result;
-}
-
-/**
- *  A virtual function to double the zoom and set it.
- */
-
-bool
-qbase::zoom_out ()
-{
-    bool result = false;
-    int z = zoom();
-    if (z < usr().max_zoom())
-    {
-        z *= 2;
-        result = set_zoom(z);
-    }
-    return result;
-}
-
-/**
- *  Sets the zoom parameter, z.  If valid, then the m_zoom member is set.  The
- *  new setting should be passed to the roll, time, data, and event panels.
- *
- *  Note that zoom is not stored in the configuration files or in the MIDI
- *  song, so it should not set the "dirty" flag, just the "needs update" flag.
- *
- *  Also note that we no longer (2023-09-07) check if the zoom has actually
- *  changed. The new zoom-expansion feature if triggered will not change the
- *  official zoom, but will change the zoom-expansion factor.
- *
- *      result = z != m_zoom && ....
- *
- * \param z
- *      The desired zoom value, which is checked for validity.
- *
- * \return
- *      Returns true if the zoom value was changed.
- */
-
-bool
-qbase::set_zoom (int z)
-{
-    bool result = z >= usr().min_zoom() && z <= usr().max_zoom();
-    if (result)
-    {
-        m_zoom = z;
-        set_dirty();
-    }
-    return result;
 }
 
 }           // namespace seq66

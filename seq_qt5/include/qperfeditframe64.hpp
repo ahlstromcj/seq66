@@ -123,7 +123,10 @@ private:
         return m_mainperf;
     }
 
-    void reset_zoom ();
+    bool zoom_in ();
+    bool zoom_out ();
+    bool reset_zoom ();
+
     void set_transpose (int transpose);
     void update_entry_mode (bool on);
     void scroll_by_step (qscrollmaster::dir d);
@@ -136,8 +139,8 @@ protected:                          // overrides of event handlers
 private slots:
 
     void update_grid_snap (int snapindex);
-    void zoom_in ();
-    void zoom_out ();
+    void slot_zoom_in ();
+    void slot_zoom_out ();
     void reset_transpose ();
     void update_transpose (int index);
     void marker_collapse ();

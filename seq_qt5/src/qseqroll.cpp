@@ -209,12 +209,10 @@ qseqroll::flag_dirty ()
 bool
 qseqroll::zoom_in ()
 {
-    bool result = qseqbase::zoom_in();
+    bool result = qeditbase::zoom_in();
     if (result)
-    {
-        result = frame64()->set_zoom(zoom());
         set_dirty();
-    }
+
     return result;
 }
 
@@ -227,12 +225,10 @@ qseqroll::zoom_in ()
 bool
 qseqroll::zoom_out ()
 {
-    bool result = qseqbase::zoom_out();
+    bool result = qeditbase::zoom_out();
     if (result)
-    {
-        result = frame64()->set_zoom(zoom());
         set_dirty();
-    }
+
     return result;
 }
 
@@ -243,8 +239,10 @@ qseqroll::zoom_out ()
 bool
 qseqroll::reset_zoom ()
 {
-    bool result = frame64()->reset_zoom();
-    set_dirty();
+    bool result = qeditbase::reset_zoom();
+    if (result)
+        set_dirty();
+
     return result;
 }
 
@@ -1351,39 +1349,29 @@ qseqroll::zoom_key_press (bool shifted, int key)
     {
         if (key == Qt::Key_Z)
         {
-            (void) zoom_in();
-            result = true;
+            result = frame64()->zoom_in();
         }
         else if (key == Qt::Key_V)
         {
-            (void) v_zoom_in();
-            result = true;
+            result = v_zoom_in();
         }
     }
     else
     {
         if (key == Qt::Key_Z)
         {
-            (void) zoom_out();
-            result = true;
+            result = frame64()->zoom_out();
         }
         else if (key == Qt::Key_0)
         {
             if (m_v_zooming)
-            {
-                (void) reset_v_zoom();
-                result = true;
-            }
+                result = reset_v_zoom();
             else
-            {
-                (void) reset_zoom();
-                result = true;
-            }
+                result = frame64()->reset_zoom();
         }
         else if (key == Qt::Key_V)
         {
-            (void) v_zoom_out();
-            result = true;
+            result = v_zoom_out();
         }
     }
     return result;
@@ -1619,28 +1607,6 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                         done = true;
                         set_adding(true);
                         break;
-
-#if 0
-                    /*
-                     * See Shift-N
-                     */
-
-                    case Qt::Key_N:
-
-                        if (track().set_recording(toggler::flip))
-                            done = true;
-                        break;
-
-                    /*
-                     * Use Shift-R instead.
-                     */
-
-                    case Qt::Key_O:
-
-                        if (track().set_recording(toggler::flip))
-                            done = true;
-                        break;
-#endif
 
                     case Qt::Key_P:
 

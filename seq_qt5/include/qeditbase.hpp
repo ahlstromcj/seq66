@@ -28,22 +28,17 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2023-09-08
+ * \updates       2023-09-09
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
  *  Both kinds of editing involve selection, movement, zooming, etc.
  */
 
+#include "cfg/zoomer.hpp"               /* seq66::zoomer class              */
 #include "util/rect.hpp"                /* seq66::rect rectangle class      */
 #include "gui_palette_qt5.hpp"          /* gui_pallete_qt5::Color etc.      */
 #include "qbase.hpp"                    /* seq66:qbase super base class     */
-
-/*
- * EXPERIMENT IN PROGRESS
- */
-
-#undef SEQ66_USE_ZOOM_EXPANSION
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -66,23 +61,6 @@ const int c_keyboard_padding_x = 6;     /* Qt version of keys padding       */
  */
 
 const int c_default_snap    = 16;       /* default snap from app limits     */
-
-/**
- *  The default value of the zoom indicates that one pixel represents two
- *  ticks.  However, it turns out we're going to have to support adapting the
- *  default zoom to the PPQN, in addition to allowing some extra zoom values.
- *  A redundant definition is used on the calculations module at present.
- *
- *  The maximum value of the zoom indicates that one pixel represents 512
- *  ticks.  The old maximum was 32, but now that we support PPQN up to 19200,
- *  we need extra entries.
- *
- *  Redundantly defined in usrsettings.
- */
-
-const int c_minimum_zoom    =   1;      /* limit the amount of zoom         */
-const int c_default_zoom    =   2;      /* default snap from app limits     */
-const int c_maximum_zoom    = 512;      /* limit the amount of zoom         */
 
 /**
  *  Provides basic functionality to be inherited by qseqbase and qperfbase.
@@ -141,29 +119,10 @@ protected:
     seq66::rect m_selected;
 
     /**
-     *  X scaling.  Allows the caller to adjust the overall zoom. A
-     *  constant.
+     *  Handles all the ins-and-outs of our zoom and zoom expansion feature.
      */
 
-    const int m_scale;
-
-    /**
-     *  Zoom times the scale, to save a very common calculation,
-     *  m_zoom * m_scale.
-     */
-
-    int m_scale_zoom;
-
-    /**
-     *  An additional kind of zoom, useful for depicting dense events such as
-     *  pitch-bend.  All it does is multiply the pixel numbers by this factor.
-     *  The supported values are 1 (the same as no expansion), 2, 4, and 8.
-     *  It is accessible only via the zoom buttons and zoom keys, and applies
-     *  only to the x (horizontal) direction.
-     */
-
-    size_t m_zoom_exp_index;                /* index into supported factors */
-    int m_zoom_expansion;
+    zoomer m_zoomer;
 
     /**
      *  Provides additional padding to move items rightward to account for
@@ -454,14 +413,19 @@ public:
         return m_selected;
     }
 
+    int zoom () const
+    {
+        return m_zoomer.zoom();
+    }
+
     int scale () const
     {
-        return m_scale;
+        return m_zoomer.scale();
     }
 
     int scale_zoom () const
     {
-        return m_scale_zoom;
+        return m_zoomer.scale_zoom();
     }
 
     /**
@@ -642,11 +606,35 @@ public:
 
 public:
 
-    virtual bool change_ppqn (int ppqn) override;
-    virtual bool zoom_in () override;
-    virtual bool zoom_out () override;
-    virtual bool set_zoom (int z) override;
-    virtual bool reset_zoom () override;
+    virtual bool change_ppqn (int ppq);
+
+    /**
+     *  Make the view cover less horizontal length.  The lowest zoom possible
+     *  is 1.  But, if the user still wants to zoom in some more, we fake it
+     *  by using "zoom expansion". This factor increases the pixel spread by
+     *  a factor of 1, 2, 4, or 8.
+     */
+
+    virtual bool zoom_in ()
+    {
+        return m_zoomer.zoom_in();
+    }
+
+    virtual bool zoom_out ()
+    {
+        return m_zoomer.zoom_out();
+    }
+
+    virtual bool set_zoom (int z)
+    {
+        return m_zoomer.set_zoom(z);
+    }
+
+    virtual bool reset_zoom ()
+    {
+        return m_zoomer.reset_zoom();
+    }
+
     virtual bool check_dirty () const override;
 
     void set_snap (midipulse snap)
@@ -821,25 +809,17 @@ protected:
      * qbase::pix_to_tix().
      */
 
-    virtual midipulse pix_to_tix (int x) const override
+    virtual midipulse pix_to_tix (int x) const
     {
-        midipulse result = x * pulses_per_pixel(perf().ppqn(), m_scale_zoom);
-        if (m_zoom_expansion > 1)
-            result /= m_zoom_expansion;
-
-        return result;
+        return m_zoomer.pix_to_tix(x);
     }
 
-    virtual int tix_to_pix (midipulse ticks) const override
+    virtual int tix_to_pix (midipulse ticks) const
     {
-        int result = ticks / pulses_per_pixel(perf().ppqn(), m_scale_zoom);
-        if (m_zoom_expansion > 1)
-            result *= m_zoom_expansion;
-
-        return result;
+        return m_zoomer.tix_to_pix(ticks);
     }
 
-#if ! defined SEQ66_USE_ZOOM_EXPANSION
+#if 0
 
     /*
      * qseqtime: int right = position_pixel(righttick)
@@ -849,7 +829,8 @@ protected:
 
     int position_pixel (midipulse tix)
     {
-        return m_scroll_offset_x + tix_to_pix(tix - m_scroll_offset);
+        return m_scroll_offset_x +
+            m_zoomer.tix_to_pix(tix - m_scroll_offset);
     }
 
 #endif
@@ -860,17 +841,33 @@ protected:
 
     int xoffset (midipulse tick) const
     {
-        return tix_to_pix(tick) + m_padding_x;
+        return m_zoomer.tix_to_pix(tick) + m_padding_x;
     }
 
-#if 0
-    midipulse position_tick (int pix)
+    /**
+     *  Calculates a suitable starting zoom value for the given PPQN value.  The
+     *  default starting zoom is 2, but this value is suitable only for PPQN of
+     *  192 and below.  Also, zoom currently works consistently only if it is a
+     *  power of 2.  For starters, we scale the zoom to the selected ppqn, and
+     *  then shift it each way to get a suitable power of two.
+     *
+     * \param ppqn
+     *      The ppqn of interest.
+     *
+     * \return
+     *      Returns the power of 2 appropriate for the given PPQN value.
+     */
+
+    int zoom_power_of_2 (int ppq)
     {
-        return m_scroll_offset + pix_to_tix(pix - m_scroll_offset_x);
+        return m_zoomer.zoom_power_of_2(ppq);
     }
-#endif
 
-    void convert_x (int x, midipulse & tick);
+    void convert_x (int x, midipulse & tick)
+    {
+        tick = m_zoomer.pix_to_tix(x);
+    }
+
     void convert_xy (int x, int y, midipulse & ticks, int & seq);
     void convert_ts (midipulse ticks, int seq, int & x, int & y);
     void convert_ts_box_to_rect
@@ -895,12 +892,6 @@ protected:
     void start_paste();
 
 };          // class qeditbase
-
-/*
- *  Free functions.
- */
-
-extern int zoom_power_of_2 (int ppqn);
 
 }           // namespace seq66
 

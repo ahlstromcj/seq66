@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-07
+ * \updates       2023-09-09
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -109,11 +109,6 @@ qseqdata::qseqdata
     m_font                  ("Monospace"),
     m_keyboard_padding_x    (s_key_padding),
     m_dataarea_y            (height > 0 ? height : sc_dataarea_y),
-#if 0
-    m_is_tempo              (false),
-    m_is_time_signature     (false),
-    m_is_program_change     (false),
-#endif
     m_data_type             (type::note),       /* replaces booleans        */
     m_status                (EVENT_NOTE_ON),
     m_cc                    (1),                /* modulation               */
@@ -375,11 +370,11 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 break;
 
             midipulse start = ts.sig_start_tick;
-#if defined SEQ66_USE_ZOOM_EXPANSION
+//#if defined SEQ66_USE_ZOOM_EXPANSION
             int pos = xoffset(start);           // + 3;
-#else
-            int pos = position_pixel(start) + 3;
-#endif
+//#else
+//            int pos = position_pixel(start) + 3;
+//#endif
             int n = ts.sig_beats_per_bar;
             int d = ts.sig_beat_width;
             std::string text = std::to_string(n);
@@ -659,33 +654,18 @@ qseqdata::set_data_type (midibyte status, midibyte control)
 {
     if (event::is_tempo_status(status))
     {
-#if 0
-        is_tempo(true);
-        is_time_signature(false);
-        is_program_change(false);
-#endif
         m_data_type = type::tempo;
         m_status = EVENT_MIDI_META;     /* tricky */
         m_cc = status;
     }
     else if (event::is_time_signature_status(status))
     {
-#if 0
-        is_tempo(false);
-        is_time_signature(true);
-        is_program_change(false);
-#endif
         m_data_type = type::time_signature;
         m_status = EVENT_MIDI_META;     /* tricky */
         m_cc = status;
     }
     else if (event::is_program_change_msg(status))
     {
-#if 0
-        is_tempo(false);
-        is_time_signature(false);
-        is_program_change(true);
-#endif
         m_data_type = type::program_change;
         m_status = status;
         m_cc = 0;
@@ -698,11 +678,6 @@ qseqdata::set_data_type (midibyte status, midibyte control)
     }
     else
     {
-#if 0
-        is_tempo(false);
-        is_time_signature(false);
-        is_program_change(false);
-#endif
         m_data_type = type::note;                               /* "other"  */
         m_status = event::normalized_status(status);
         m_cc = control;

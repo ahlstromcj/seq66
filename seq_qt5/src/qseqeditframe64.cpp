@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-09-06
+ * \updates       2023-09-09
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -3057,20 +3057,25 @@ qseqeditframe64::slot_update_zoom (int index)
 bool
 qseqeditframe64::zoom_in ()
 {
-    int index = zoom_list().index(zoom());
-    ui->m_combo_zoom->setCurrentIndex(index);
-    return true;
+    bool result = qseqframe::zoom_in();
+    if (result)
+    {
+        int index = zoom_list().index(zoom());
+        ui->m_combo_zoom->setCurrentIndex(index);
+    }
+    return result;
 }
 
 bool
 qseqeditframe64::zoom_out ()
 {
-    if (zoom() >= usr().max_zoom())
+    bool result = qseqframe::zoom_out();
+    if (result)
     {
-        int v = zoom_list().ctoi(0);                /* wrap to beginning    */
-        set_zoom(v);
+        int index = zoom_list().index(zoom());
+        ui->m_combo_zoom->setCurrentIndex(index);
     }
-    return true;
+    return result;
 }
 
 bool
@@ -3085,6 +3090,18 @@ qseqeditframe64::set_zoom (int z)
         ui->m_combo_zoom->setCurrentIndex(index);
         set_dirty();                            /* modified for issue #90   */
         ui->rollScrollArea->scroll_x_by_factor(factor);
+    }
+    return result;
+}
+
+bool
+qseqeditframe64::reset_zoom ()
+{
+    bool result = qseqframe::reset_zoom();
+    if (result)
+    {
+        int index = zoom_list().index(zoom());
+        ui->m_combo_zoom->setCurrentIndex(index);
     }
     return result;
 }
@@ -3115,7 +3132,7 @@ qseqeditframe64::reset_v_zoom ()
 void
 qseqeditframe64::slot_reset_zoom ()
 {
-    (void) qseqframe::reset_zoom();
+    (void) reset_zoom();
 }
 
 /**
