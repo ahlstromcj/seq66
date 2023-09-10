@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-09-09
+ * \updates       2023-09-10
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1195,37 +1195,40 @@ qseqeditframe64::keyPressEvent (QKeyEvent * event)
     if (! isctrl)
     {
         bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
-        if (isshift)
+        if (! zoom_key_press(isshift, key))
         {
-            if (key == Qt::Key_L)
+            if (isshift)
             {
-                m_seqtime->setFocus();
-                m_seqtime->m_move_L_marker = true;
-            }
-            else if (key == Qt::Key_R)
-            {
-                m_seqtime->setFocus();
-                m_seqtime->m_move_L_marker = false;
+                if (key == Qt::Key_L)
+                {
+                    m_seqtime->setFocus();
+                    m_seqtime->m_move_L_marker = true;
+                }
+                else if (key == Qt::Key_R)
+                {
+                    m_seqtime->setFocus();
+                    m_seqtime->m_move_L_marker = false;
+                }
+                else
+                    event->accept();
             }
             else
-                event->accept();
-        }
-        else
-        {
-            /*
-             * vi-style scrolling keystrokes
-             */
+            {
+                /*
+                 * vi-style scrolling keystrokes
+                 */
 
-            if (key == Qt::Key_J)
-                scroll_by_step(qscrollmaster::dir::Down);
-            else if (key == Qt::Key_K)
-                scroll_by_step(qscrollmaster::dir::Up);
-            else if (key == Qt::Key_H)
-                scroll_by_step(qscrollmaster::dir::Left);
-            else if (key == Qt::Key_L)
-                scroll_by_step(qscrollmaster::dir::Right);
-            else
-                event->accept();
+                if (key == Qt::Key_J)
+                    scroll_by_step(qscrollmaster::dir::Down);
+                else if (key == Qt::Key_K)
+                    scroll_by_step(qscrollmaster::dir::Up);
+                else if (key == Qt::Key_H)
+                    scroll_by_step(qscrollmaster::dir::Left);
+                else if (key == Qt::Key_L)
+                    scroll_by_step(qscrollmaster::dir::Right);
+                else
+                    event->accept();
+        }
         }
     }
     else
@@ -1236,6 +1239,30 @@ void
 qseqeditframe64::keyReleaseEvent (QKeyEvent *)
 {
     // no code
+}
+
+/**
+ *  Supplemental zoom support, for horizontal zoom only, so that when
+ *  focus is not on the seqroll, zoom will still work.
+ */
+
+bool
+qseqeditframe64::zoom_key_press (bool shifted, int key)
+{
+    bool result = false;
+    if (shifted)
+    {
+        if (key == Qt::Key_Z)
+            result = zoom_in();
+    }
+    else
+    {
+        if (key == Qt::Key_Z)
+            result = zoom_out();
+        else if (key == Qt::Key_0)
+            result = reset_zoom();
+    }
+    return result;
 }
 
 /**
@@ -3054,27 +3081,36 @@ qseqeditframe64::slot_update_zoom (int index)
     set_dirty();                                /* modified for issue #90   */
 }
 
+void
+qseqeditframe64::adjust_for_zoom (int zprevious)
+{
+    int znew = zoom();
+    float factor = float(zprevious) / float(znew);
+    int index = zoom_list().index(znew);
+    ui->m_combo_zoom->setCurrentIndex(index);
+    ui->rollScrollArea->scroll_x_by_factor(factor);
+    set_dirty();
+}
+
 bool
 qseqeditframe64::zoom_in ()
 {
+    int zprevious = qseqframe::zoom();
     bool result = qseqframe::zoom_in();
     if (result)
-    {
-        int index = zoom_list().index(zoom());
-        ui->m_combo_zoom->setCurrentIndex(index);
-    }
+        adjust_for_zoom(zprevious);
+
     return result;
 }
 
 bool
 qseqeditframe64::zoom_out ()
 {
+    int zprevious = qseqframe::zoom();
     bool result = qseqframe::zoom_out();
     if (result)
-    {
-        int index = zoom_list().index(zoom());
-        ui->m_combo_zoom->setCurrentIndex(index);
-    }
+        adjust_for_zoom(zprevious);
+
     return result;
 }
 
@@ -3084,25 +3120,19 @@ qseqeditframe64::set_zoom (int z)
     int zprevious = qseqframe::zoom();
     bool result = qseqframe::set_zoom(z);
     if (result)
-    {
-        float factor = float(zprevious) / float(zoom());
-        int index = zoom_list().index(zoom());
-        ui->m_combo_zoom->setCurrentIndex(index);
-        set_dirty();                            /* modified for issue #90   */
-        ui->rollScrollArea->scroll_x_by_factor(factor);
-    }
+        adjust_for_zoom(zprevious);
+
     return result;
 }
 
 bool
 qseqeditframe64::reset_zoom ()
 {
+    int zprevious = qseqframe::zoom();
     bool result = qseqframe::reset_zoom();
     if (result)
-    {
-        int index = zoom_list().index(zoom());
-        ui->m_combo_zoom->setCurrentIndex(index);
-    }
+        adjust_for_zoom(zprevious);
+
     return result;
 }
 

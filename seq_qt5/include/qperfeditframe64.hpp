@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2022-05-20
+ * \updates       2023-09-10
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll),
@@ -125,11 +125,16 @@ private:
 
     bool zoom_in ();
     bool zoom_out ();
+    bool set_zoom (int z);
     bool reset_zoom ();
+
+protected:
 
     void set_transpose (int transpose);
     void update_entry_mode (bool on);
     void scroll_by_step (qscrollmaster::dir d);
+    void adjust_for_zoom (int zprevious);
+    bool zoom_key_press (bool shifted, int key);
 
 protected:                          // overrides of event handlers
 
@@ -153,9 +158,9 @@ private slots:
     void slot_duration (bool ischecked);
     void reset_trigger_transpose (bool ischecked);
     void set_trigger_transpose (int tpose);
-    void v_zoom_in ();
-    void v_zoom_out ();
-    void reset_v_zoom ();
+    bool v_zoom_in ();
+    bool v_zoom_out ();
+    bool reset_v_zoom ();
 
 private:
 

@@ -209,7 +209,7 @@ qseqroll::flag_dirty ()
 bool
 qseqroll::zoom_in ()
 {
-    bool result = qeditbase::zoom_in();
+    bool result = qseqbase::zoom_in();
     if (result)
         set_dirty();
 
@@ -225,7 +225,7 @@ qseqroll::zoom_in ()
 bool
 qseqroll::zoom_out ()
 {
-    bool result = qeditbase::zoom_out();
+    bool result = qseqbase::zoom_out();
     if (result)
         set_dirty();
 
@@ -239,7 +239,7 @@ qseqroll::zoom_out ()
 bool
 qseqroll::reset_zoom ()
 {
-    bool result = qeditbase::reset_zoom();
+    bool result = qseqbase::reset_zoom();
     if (result)
         set_dirty();
 

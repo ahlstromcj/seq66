@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2023-08-14
+ * \updates       2023-09-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -152,7 +152,9 @@ qperfeditframe64::qperfeditframe64
      * song editor frame.
      */
 
-    m_perfnames = new qperfnames(m_mainperf, ui->namesScrollArea);
+    m_perfnames = new (std::nothrow)
+        qperfnames(m_mainperf, ui->namesScrollArea);
+
     ui->namesScrollArea->setWidget(m_perfnames);
 
     /*
@@ -165,7 +167,7 @@ qperfeditframe64::qperfeditframe64
     ui->namesScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     ui->namesScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    m_perftime = new qperftime
+    m_perftime = new (std::nothrow) qperftime
     (
         m_mainperf, c_default_zoom, c_default_snap,
         this, ui->timeScrollArea
@@ -174,7 +176,7 @@ qperfeditframe64::qperfeditframe64
     ui->timeScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->timeScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    m_perfroll = new qperfroll
+    m_perfroll = new (std::nothrow) qperfroll
     (
         m_mainperf, c_default_zoom, c_default_snap,
         m_perfnames, this, ui->rollScrollArea
@@ -234,6 +236,8 @@ qperfeditframe64::qperfeditframe64
         ui->m_toggle_follow, SIGNAL(toggled(bool)),
         this, SLOT(follow(bool))
     );
+
+    set_zoom(c_default_zoom);
 
     /*
      * Zoom-In and Zoom-Out buttons.
@@ -561,6 +565,15 @@ qperfeditframe64::slot_zoom_out ()
     (void) zoom_out();
 }
 
+void
+qperfeditframe64::adjust_for_zoom (int zprevious)
+{
+    int znew = m_perfroll->zoom();
+    float factor = float(zprevious) / float(znew);
+    ui->rollScrollArea->scroll_x_by_factor(factor);
+    set_dirty();
+}
+
 bool
 qperfeditframe64::zoom_in ()
 {
@@ -570,10 +583,8 @@ qperfeditframe64::zoom_in ()
         result = m_perfroll->zoom_in();
 
     if (result)
-    {
-        float factor = float(zprevious) / float(m_perfroll->zoom());
-        ui->rollScrollArea->scroll_x_by_factor(factor);
-    }
+        adjust_for_zoom(zprevious);
+
     return result;
 }
 
@@ -586,10 +597,22 @@ qperfeditframe64::zoom_out ()
         result = m_perfroll->zoom_out();
 
     if (result)
-    {
-        float factor = float(zprevious) / float(m_perfroll->zoom());
-        ui->rollScrollArea->scroll_x_by_factor(factor);
-    }
+        adjust_for_zoom(zprevious);
+
+    return result;
+}
+
+bool
+qperfeditframe64::set_zoom (int z)
+{
+    int zprevious = m_perfroll->zoom();
+    bool result = m_perftime->set_zoom(z);
+    if (result)
+        result = m_perfroll->set_zoom(z);
+
+    if (result)
+        adjust_for_zoom(zprevious);
+
     return result;
 }
 
@@ -601,29 +624,33 @@ qperfeditframe64::zoom_out ()
 bool
 qperfeditframe64::reset_zoom ()
 {
+    int zprevious = m_perfroll->zoom();
     bool result = m_perftime->reset_zoom();
     if (result)
-        m_perfroll->reset_zoom();
+        result = m_perfroll->reset_zoom();
+
+    if (result)
+        adjust_for_zoom(zprevious);
 
     return result;
 }
 
-void
+bool
 qperfeditframe64::v_zoom_in ()
 {
-    m_perfroll->v_zoom_in();
+    return m_perfroll->v_zoom_in();
 }
 
-void
+bool
 qperfeditframe64::v_zoom_out ()
 {
-    m_perfroll->v_zoom_out();
+    return m_perfroll->v_zoom_out();
 }
 
-void
+bool
 qperfeditframe64::reset_v_zoom ()
 {
-    m_perfroll->reset_v_zoom();
+    return m_perfroll->reset_v_zoom();
 }
 
 /**
@@ -809,37 +836,40 @@ qperfeditframe64::keyPressEvent (QKeyEvent * event)
     if (! isctrl)
     {
         bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
-        if (isshift)
+        if (! zoom_key_press(isshift, key))
         {
-            if (key == Qt::Key_L)
+            if (isshift)
             {
-                m_perftime->setFocus();
-                m_perftime->m_move_L_marker = true;
-            }
-            else if (key == Qt::Key_R)
-            {
-                m_perftime->setFocus();
-                m_perftime->m_move_L_marker = false;
+                if (key == Qt::Key_L)
+                {
+                    m_perftime->setFocus();
+                    m_perftime->m_move_L_marker = true;
+                }
+                else if (key == Qt::Key_R)
+                {
+                    m_perftime->setFocus();
+                    m_perftime->m_move_L_marker = false;
+                }
+                else
+                    event->accept();
             }
             else
-                event->accept();
-        }
-        else
-        {
-            /*
-             * vi-style scrolling keystrokes
-             */
+            {
+                /*
+                 * vi-style scrolling keystrokes
+                 */
 
-            if (key == Qt::Key_J)
-                scroll_by_step(qscrollmaster::dir::Down);
-            else if (key == Qt::Key_K)
-                scroll_by_step(qscrollmaster::dir::Up);
-            else if (key == Qt::Key_H)
-                scroll_by_step(qscrollmaster::dir::Left);
-            else if (key == Qt::Key_L)
-                scroll_by_step(qscrollmaster::dir::Right);
-            else
-                event->accept();
+                if (key == Qt::Key_J)
+                    scroll_by_step(qscrollmaster::dir::Down);
+                else if (key == Qt::Key_K)
+                    scroll_by_step(qscrollmaster::dir::Up);
+                else if (key == Qt::Key_H)
+                    scroll_by_step(qscrollmaster::dir::Left);
+                else if (key == Qt::Key_L)
+                    scroll_by_step(qscrollmaster::dir::Right);
+                else
+                    event->accept();
+            }
         }
     }
     else
@@ -850,6 +880,41 @@ void
 qperfeditframe64::keyReleaseEvent (QKeyEvent * event)
 {
     event->accept();
+}
+
+bool
+qperfeditframe64::zoom_key_press (bool shifted, int key)
+{
+    bool result = false;
+    if (shifted)
+    {
+        if (key == Qt::Key_Z)
+        {
+            result = zoom_in();
+        }
+        else if (key == Qt::Key_V)
+        {
+            result = v_zoom_in();
+        }
+    }
+    else
+    {
+        if (key == Qt::Key_Z)
+        {
+            result = zoom_out();
+        }
+        else if (key == Qt::Key_0)
+        {
+            result = reset_v_zoom();
+            if (result)
+                result = reset_zoom();
+        }
+        else if (key == Qt::Key_V)
+        {
+            result = v_zoom_out();
+        }
+    }
+    return result;
 }
 
 }           // namespace seq66

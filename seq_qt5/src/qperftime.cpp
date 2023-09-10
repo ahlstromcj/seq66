@@ -136,11 +136,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
             break;
         }
 
-//#if defined SEQ66_USE_ZOOM_EXPANSION
         int x_pos = xoffset(tick) - scroll_offset_x();
-//#else
-//        int x_pos = position_pixel(tick);
-//#endif
         if (tick % measure_length() == 0)
         {
             pen.setColor(fore_color());                     /* measure */
@@ -175,17 +171,10 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
 
     int xoff_left = scroll_offset_x();
     int xoff_right = scroll_offset_x() + xwidth;
-//f defined SEQ66_USE_ZOOM_EXPANSION
     int end = xoffset(perf().get_max_trigger()) - s_end_fix;
     int left = xoffset(perf().get_left_tick());
     int right = xoffset(perf().get_right_tick());
     int now = xoffset(perf().get_tick());
-//lse
-//  int end = position_pixel(perf().get_max_trigger()) - s_end_fix;
-//  int left = position_pixel(perf().get_left_tick());
-//  int right = position_pixel(perf().get_right_tick());
-//  int now = position_pixel(perf().get_tick());
-//ndif
     if (! perf().is_pattern_playing() && (now != left) && (now != right))
     {
         if (now >= xoff_left && now <= xoff_right)

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-09
+ * \updates       2023-09-10
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -127,7 +127,7 @@ qperfroll::qperfroll
     m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     m_font.setBold(true);
     m_font.setPointSize(s_vfont_size_normal);
-    m_timer = qt_timer(this, "qsperfroll", 2, SLOT(conditional_update()));
+    m_timer = qt_timer(this, "qperfroll", 2, SLOT(conditional_update()));
 }
 
 /**
@@ -288,7 +288,7 @@ qperfroll::reset_v_zoom ()
 bool
 qperfroll::zoom_in ()
 {
-    bool result = frame64()->zoom_in();
+    bool result = qperfbase::zoom_in();
     if (result)
         set_dirty();
 
@@ -298,7 +298,7 @@ qperfroll::zoom_in ()
 bool
 qperfroll::zoom_out ()
 {
-    bool result = frame64()->zoom_out();
+    bool result = qperfbase::zoom_out();
     if (result)
         set_dirty();
 
@@ -308,7 +308,7 @@ qperfroll::zoom_out ()
 bool
 qperfroll::reset_zoom ()
 {
-    bool result = frame64()->reset_zoom();
+    bool result = qperfbase::reset_zoom();
     if (result)
         set_dirty();
 
@@ -804,42 +804,42 @@ qperfroll::keyPressEvent (QKeyEvent * event)
                 break;
             }
         }
-    }
+        else
+        {
+            /*
+             * These can be done in playback or not. The grid is "continually"
+             * redrawn.
+             */
 
-    /*
-     * These can be done in playback or not. The grid is "continually"
-     * redrawn.
-     */
-
-    if (isshift && ! isctrl)
-    {
-        if (event->key() == Qt::Key_Z)
-        {
-            handled = true;
-            frame64()->zoom_in();
-        }
-        else if (event->key() == Qt::Key_V)
-        {
-            handled = true;
-            v_zoom_in();
-        }
-    }
-    else if (! isctrl)
-    {
-        if (event->key() == Qt::Key_Z)
-        {
-            handled = true;
-            frame64()->zoom_out();
-        }
-        else if (event->key() == Qt::Key_V)
-        {
-            handled = true;
-            v_zoom_out();
-        }
-        else if (event->key() == Qt::Key_0)
-        {
-            handled = true;
-            reset_v_zoom();
+            if (isshift)
+            {
+                if (event->key() == Qt::Key_Z)
+                {
+                    handled = frame64()->zoom_in();
+                }
+                else if (event->key() == Qt::Key_V)
+                {
+                    handled = true;
+                    v_zoom_in();
+                }
+            }
+            else
+            {
+                if (event->key() == Qt::Key_Z)
+                {
+                    handled = frame64()->zoom_out();
+                }
+                else if (event->key() == Qt::Key_V)
+                {
+                    handled = true;
+                    v_zoom_out();
+                }
+                else if (event->key() == Qt::Key_0)
+                {
+                    handled = true;
+                    reset_v_zoom();     /* also resets horizontal zoom      */
+                }
+            }
         }
     }
     if (handled)
