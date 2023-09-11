@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-10
+ * \updates       2023-09-11
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -70,11 +70,11 @@ static const int c_alpha_muted      = 100;
  *  usrsettings.
  */
 
-static const int c_ycorrection      = (-1);     /* horizontal grid line fix */
+static const int c_ycorrection      = 1;    /* horizontal grid line fix */
 static const int c_border_width     = 2;
 static const int c_pen_width        = 2;
 static const int c_background_x     = (c_base_ppqn * 4 * 16) / c_perf_scale_x;
-static const int c_size_box_w       = 8;    // 6;
+static const int c_size_box_w       = 8;
 static const int c_size_box_click_w = c_size_box_w + 1 ;
 
 /**
@@ -831,13 +831,11 @@ qperfroll::keyPressEvent (QKeyEvent * event)
                 }
                 else if (event->key() == Qt::Key_V)
                 {
-                    handled = true;
-                    v_zoom_out();
+                    handled = v_zoom_out();
                 }
                 else if (event->key() == Qt::Key_0)
                 {
-                    handled = true;
-                    reset_v_zoom();     /* also resets horizontal zoom      */
+                    handled = reset_v_zoom();   /* also resets horiz zoom   */
                 }
             }
         }
@@ -966,11 +964,7 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
     int penwidth = 1;
     for (midipulse tick = tick0; tick < tick1; tick += tickstep)
     {
-// #if defined SEQ66_USE_ZOOM_EXPANSION
         int x_pos = xoffset(tick);
-// #else
-//         int x_pos = position_pixel(tick);
-// #endif
         if (tick % measure_length() == 0)               /* measure          */
         {
             pen.setColor(fore_color());                 /* Qt::black        */

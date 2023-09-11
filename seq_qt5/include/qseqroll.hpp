@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-31
+ * \updates       2023-09-10
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -48,7 +48,6 @@
  */
 
 class QMessageBox;
-class QPixmap;
 class QTimer;
 
 /*
@@ -67,7 +66,7 @@ namespace seq66
 
 class qseqroll final : public QWidget, public qseqbase
 {
-    friend class qseqframe;
+    friend class qseqframe;             /* for qseqroll::set_dirty() access */
     friend class qseqeditframe64;
 
     Q_OBJECT
@@ -90,12 +89,10 @@ public:
     virtual ~qseqroll ();
 
     void follow_progress ();
-
+    int note_height () const;
     bool v_zoom_in ();
     bool v_zoom_out ();
     bool reset_v_zoom ();
-    int note_height () const;
-
     virtual bool zoom_in () override;
     virtual bool zoom_out () override;
     virtual bool reset_zoom () override;

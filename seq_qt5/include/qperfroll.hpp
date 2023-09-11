@@ -91,7 +91,6 @@ public:
     bool v_zoom_in ();
     bool v_zoom_out ();
     bool reset_v_zoom ();
-
     virtual bool zoom_in () override;
     virtual bool zoom_out () override;
     virtual bool reset_zoom () override;

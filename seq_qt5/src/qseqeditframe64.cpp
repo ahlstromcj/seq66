@@ -3938,7 +3938,7 @@ qseqeditframe64::set_dirty ()
     if (is_initialized())
     {
         qseqframe::set_dirty();         /* roll, time, date & event panes   */
-        m_seqroll->set_redraw();        /* also calls set_dirty();          */
+        m_seqroll->set_redraw();        /* also calls set_dirty()           */
 
         /*
          * These are done in qseqframe::set_dirty().

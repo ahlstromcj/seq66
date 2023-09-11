@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2023-09-08
+ * \updates       2023-09-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -72,6 +72,7 @@ zoomer::initialize ()
         m_zoom_expansion = 0;
         m_zoom = zoom_item(1);
     }
+    m_scale_zoom = zoom() * m_scale;
     return result;
 }
 

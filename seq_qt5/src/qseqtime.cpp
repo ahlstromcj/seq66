@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-07
+ * \updates       2023-09-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -52,17 +52,17 @@ namespace seq66
  */
 
 static const int s_x_tick_fix    =  2;  /* adjusts vertical grid lines      */
-static const int s_time_fix      =  9;  /* seqtime offset from seqroll      */
-static const int s_timesig_fix   = 18;  /* time-sig offset from seqroll     */
-static const int s_L_timesig_fix = 40;  /* time-sig offset from "L" marker  */
-static const int s_o_fix         =  6;  /* adjust position of "o" mark      */
-static const int s_end_fix       = 18;  /* adjust position of "END" box     */
+static const int s_time_fix      =  3;  /* seqtime offset from seqroll (9)  */
+static const int s_timesig_fix   =  8;  /* time-sig offset from seqroll (18)*/
+static const int s_L_timesig_fix =  8;  /* time-sig offset from "L" marker  */
+static const int s_o_fix         =  0;  /* adjust position of "o" mark (6)  */
+static const int s_LR_box_y      = 10;
 static const int s_LR_box_w      =  8;
 static const int s_LR_box_h      = 24;
+static const int s_END_fix       = 24;  /* adjust position of "END" box (18)*/
 static const int s_END_box_w     = 24;
 static const int s_END_box_h     = 24;
 static const int s_END_y         = 19;  /* keep the same as s_text_y        */
-static const int s_box_y         = 10;
 static const int s_text_y        = 19;
 static const int s_ts_text_y     = 19;
 
@@ -238,17 +238,10 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
     int xoff_left = scroll_offset_x();
     int xoff_right = scroll_offset_x() + width();
     midipulse length = track().get_length();
-//#if defined SEQ66_USE_ZOOM_EXPANSION
-    int end = xoffset(length) - s_end_fix;
+    int end = xoffset(length) - s_END_fix;
     int left = xoffset(perf().get_left_tick()) + s_time_fix;
-    int right = xoffset(perf().get_right_tick());
+    int right = xoffset(perf().get_right_tick()) + s_time_fix - s_LR_box_w;
     int now = xoffset(perf().get_tick() % length) + s_o_fix;
-//#else
-//    int end = position_pixel(length) - s_end_fix;
-//    int left = position_pixel(perf().get_left_tick()) + s_time_fix;
-//    int right = position_pixel(perf().get_right_tick());
-//    int now = position_pixel(perf().get_tick() % length) + s_o_fix;
-//#endif
     QBrush brush(Qt::lightGray, Qt::SolidPattern);
     QPen pen(Qt::black);
     painter.setPen(pen);
@@ -274,26 +267,30 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
     if (left >= xoff_left && left <= xoff_right)
     {
         painter.setBrush(brush);
-        painter.drawRect(left, s_box_y, s_LR_box_w, s_LR_box_h); // background
-        pen.setColor(Qt::white);                                 // white text
+        painter.drawRect(left, s_LR_box_y, s_LR_box_w, s_LR_box_h);
+        pen.setColor(Qt::white);
         painter.setPen(pen);
         painter.drawText(left + 1, s_text_y, "L");
     }
     pen.setColor(Qt::black);
     painter.setPen(pen);
-    painter.drawRect(end, s_box_y, s_END_box_w, s_END_box_h);    // background
-    pen.setColor(Qt::white);                                     // white text
+    painter.drawRect(end, s_LR_box_y, s_END_box_w, s_END_box_h);
+    pen.setColor(Qt::white);
     painter.setPen(pen);
     painter.drawText(end + 1, s_END_y, "END");
     if (right >= xoff_left && right <= xoff_right)
     {
-        pen.setColor(Qt::black);
-        painter.setBrush(brush);
-        painter.setPen(pen);
-        painter.drawRect(right, s_box_y, s_LR_box_w, s_LR_box_h); // background
-        pen.setColor(Qt::white);                                  // white text
-        painter.setPen(pen);
-        painter.drawText(right + 2, s_text_y, "R");
+        int drend = std::abs(end - right);
+        if (drend > s_END_fix)
+        {
+            pen.setColor(Qt::black);
+            painter.setBrush(brush);
+            painter.setPen(pen);
+            painter.drawRect(right, s_LR_box_y, s_LR_box_w, s_LR_box_h);
+            pen.setColor(Qt::white);                            // white text
+            painter.setPen(pen);
+            painter.drawText(right + 2, s_text_y, "R");
+        }
     }
 
     int count = track().time_signature_count();
@@ -306,21 +303,14 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
         int n = ts.sig_beats_per_bar;
         int d = ts.sig_beat_width;
         midipulse start = ts.sig_start_tick;
+        int pos = xoffset(start) + s_timesig_fix;;
+        int dlstart = std::abs(pos - left);
         std::string text = std::to_string(n);
         text += "/";
         text += std::to_string(d);
-        if (start == perf().get_left_tick())
-        {
-            start += s_L_timesig_fix;
-        }
-        else
-            start += s_timesig_fix;
+        if (dlstart < 8)                                // FIXME
+            pos += s_L_timesig_fix;
 
-//#if defined SEQ66_USE_ZOOM_EXPANSION
-        int pos = xoffset(start);
-//#else
-//        int pos = position_pixel(start);
-//#endif
         pen.setColor(Qt::white);
         pen.setColor(Qt::black);
         painter.setPen(pen);
