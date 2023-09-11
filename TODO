@@ -4,11 +4,7 @@ Chris Ahlstrom
 
 Misc:
 
-    -   File / New keeps the previous file name.
     -   When saving, an open seqedit retains the "*" marker.
-    -   Open t.midi, start playing, stop, then add more notes. They are
-        way longer than the snap value! Cannot duplicate.
-    -   Make sure pitch bend is handled correctly in qseqdata.
     -   When enabling a MIDI Control/Display port, also enable it
         automatically. See issue #116.
     -   Fix and test new record/quantize handling, and verify that
@@ -23,6 +19,10 @@ Misc:
     -   Randomizing seems to have a negative bias (after many repeats).
     -   Add a feature to start playback when the first note comes
         into a pattern when recording is set. [Turns out to be quite tricky!]
+    -   Cannot duplicate:
+        -   File / New keeps the previous file name. Cannot duplicate.
+        -   Open t.midi, start playing, stop, then add more notes. They are
+            way longer than the snap value! Cannot duplicate.
 
 Some of these issues will be pushed off for the distant Seq66v2.
 

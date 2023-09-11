@@ -151,7 +151,7 @@ public:
 protected:
 
     void set_track_change ();
-    void set_external_frame_title ();
+    void set_external_frame_title (bool modified = true);
     void adjust_for_zoom (int zprevious);
     bool zoom_key_press (bool shifted, int key);
 

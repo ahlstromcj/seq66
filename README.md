@@ -1,4 +1,4 @@
-# README for Seq66 0.99.9 2023-09-10
+# README for Seq66 0.99.9 2023-09-11
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -87,7 +87,8 @@ Windows, and using a conventional source tarball.
             timing.
         *   Related to issue #115: Added ability to select a line in the data
             pane and grab a handle to change its value.
-        *   Refactored zoom support, added it to event and data panes.
+        *   Refactored and extended zoom support, added it to event and data
+            panes.
         *   Adding more seqroll keystokes (and HTML help). Enabled Esc to
             exit paint mode if not playing.
         *   Added live-note mapping (needs testing!), refactoring set-record
@@ -116,22 +117,6 @@ Windows, and using a conventional source tarball.
         *   The usual raft of humiliating bug-fixes. A small sample: Updating
             the event list when recording stops; fixing record button in pattern
             editor; fixing note-selection refresh; and about a dozen more.
-    *   Version 0.99.7:
-        *   Issue #110 follow-ons:
-            Cannot save tempo (BPM) in Windows when
-            changed from main window. Caused by mixing a long and size_t,
-            which messed up in the Windows build.
-        *   Issue #111 follow-ons:
-            *   Fixed initial time-signature drawing in data pane.
-            *   Fixed errors in inserting a time-signature. Added a pulse
-                calculator that iterates through time-signatures.
-        *   Fixed an important port-translation bug in output port-mapping.
-        *   Recent Files is disabled if there are none.
-        *   Revamped the Playlist tab, as it was confusing and very buggy.
-        *   Added Windows key-mapping to fix processing "native virtual" keys,
-            such as the arrow keys. Also fixes issue #102.
-        *   Added auto-play and auto-advance to play-lists.
-        *   Fixed bug in rcsettings::make_config_filespec().
 
     See the "NEWS" file for changes in earlier versions.  Some proposed features
     will be pushed off to Seq66v2; see the bottom of the TODO file. Version

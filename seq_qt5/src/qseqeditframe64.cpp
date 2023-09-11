@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-09-10
+ * \updates       2023-09-11
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -3976,10 +3976,10 @@ qseqeditframe64::set_track_change ()
 }
 
 void
-qseqeditframe64::set_external_frame_title ()
+qseqeditframe64::set_external_frame_title (bool modified)
 {
     if (not_nullptr(m_qseqeditex_frame))
-        m_qseqeditex_frame->set_title(true);    /* show an asterisk     */
+        m_qseqeditex_frame->set_title(modified);    /* show an asterisk?    */
 }
 
 /**

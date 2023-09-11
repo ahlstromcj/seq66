@@ -1,10 +1,26 @@
-NEWS for Seq66 0.99.0 and above
+NEWS for Seq66 0.99.9 and above
 Chris Ahlstrom
-2015-07-10 to 2023-08-27
+2015-07-10 to 2023-09-11
 
 This file collects major changes that are older and clutter up
 the README.md file.  This file should be called "OLD NEWS".
 
+    -   Version 0.99.7:
+        -   Issue #110 follow-ons:
+            Cannot save tempo (BPM) in Windows when
+            changed from main window. Caused by mixing a long and size_t,
+            which messed up in the Windows build.
+        -   Issue #111 follow-ons:
+            -   Fixed initial time-signature drawing in data pane.
+            -   Fixed errors in inserting a time-signature. Added a pulse
+                calculator that iterates through time-signatures.
+        -   Fixed an important port-translation bug in output port-mapping.
+        -   Recent Files is disabled if there are none.
+        -   Revamped the Playlist tab, as it was confusing and very buggy.
+        -   Added Windows key-mapping to fix processing "native virtual" keys,
+            such as the arrow keys. Also fixes issue #102.
+        -   Added auto-play and auto-advance to play-lists.
+        -   Fixed bug in rcsettings::make_config_filespec().
     -   Version 0.99.6:
         -   Issue #3 follow-ons:
             -   Added a qscrollslave to allow QScrollArea to allow the pattern

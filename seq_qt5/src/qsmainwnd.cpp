@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-07
+ * \updates       2023-09-11
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1946,8 +1946,8 @@ qsmainwnd::conditional_update ()
 }
 
 /**
- *  Prompts the user to save the MIDI file.  Check if the file has been modified.
- *  If modified, ask the user whether to save changes.
+ *  Prompts the user to save the MIDI file.  Check if the file has been
+ *  modified.  If modified, ask the user whether to save changes.
  *
  * \return
  *      Returns true if the file was saved or the changes were "discarded" by
@@ -2208,6 +2208,7 @@ qsmainwnd::save_file (const std::string & fname, bool updatemenu)
             if (result)
             {
                 enable_save(false);             /* disable "File / Save"    */
+                update_all_editors_titles(false);
                 if (updatemenu)                 /* or ! use_nsm()           */
                     update_recent_files_menu(); /* add the recent file-name */
             }
@@ -2683,6 +2684,13 @@ qsmainwnd::remove_all_editors ()
         if (not_nullptr(qep))
             qep->close();                   /* just signal to close         */
     }
+}
+
+void
+qsmainwnd::update_all_editors_titles (bool modified)
+{
+    for (auto & qed : m_open_editors)
+        qed.second->set_title(modified);
 }
 
 /**
@@ -4119,7 +4127,6 @@ qsmainwnd::update_song_action (int playaction)
     }
     if (result)
     {
-        /* cb_perf().next_song_mode();         // redundant */
         m_is_title_dirty = true;
         update_window_title(cb_perf().playlist_song_basename());
     }

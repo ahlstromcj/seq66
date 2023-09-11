@@ -1,14 +1,16 @@
-Release Notes for Seq66 v. 0.99.9 2023-09-07
+Release Notes for Seq66 v. 0.99.9 2023-09-11
 
     -   The usual raft of humiliating bug-fixes:
         -   Fixed nasty segfault opening new file with Editor tab open.
         -   Fixed port-mapping Remap and Restart not restarting Seq66.
+    -   Refactored and extended zoom support in the song/pattern
+        editors.
     -   Added ability to select a line in the data pane and grab a
         handle to change its value.
     -   Implemented automation for BBT/HMS toggling, FF/Rewind,
         Undo/Redo, Play-set Copy/Paste.
     -   Added more seqroll keystokes. Enabled Esc to exit paint mode
-        if not playing.
+        if not playing. Added keystroke zooming to additional panes.
     -   Added HTML help files to data/share/doc/info for installation.
 
 Read the NEWS, README.md, and TODO files.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-06-23
+ * \updates       2023-09-11
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -98,10 +98,19 @@ qseqbase::check_dirty () const
 }
 
 bool
+qseqbase::mark_unmodified ()
+{
+    if (not_nullptr(frame64()))
+        frame64()->set_external_frame_title(false);
+
+    return true;
+}
+
+bool
 qseqbase::mark_modified ()
 {
     if (not_nullptr(frame64()))
-        frame64()->set_external_frame_title();
+        frame64()->set_external_frame_title(true);
 
     return true;
 }
