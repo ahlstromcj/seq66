@@ -113,6 +113,8 @@ qinputcheckbox::setup_ui ()
 /**
  *  Sets the clocking value based on in incoming parameter.  We have to use
  *  this particular slot in order to handle all of the radio-buttons.
+ *  Note that there is no explicit and separate "disabled" state for input
+ *  like there is for clocks.
  *
  * \param state
  *      Provides the state of the check-box that was clicked.

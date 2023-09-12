@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-04
+ * \updates       2023-09-12
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -213,6 +213,60 @@ qseditoptions::~qseditoptions ()
  *---------------------------------------------------------------------
  */
 
+/*
+ * Output MIDI control buss combo-box population.
+ */
+
+void
+qseditoptions::setup_clock_combo_box (int buses, QComboBox * out)
+{
+    out->clear();
+    for (int bus = 0; bus < buses; ++bus)
+    {
+        std::string busname;
+        e_clock ec;
+        bool good = perf().ui_get_clock(bussbyte(bus), ec, busname);
+        if (good)
+        {
+            bool enabled = ec != e_clock::disabled;
+            out->addItem(qt(busname));
+            enable_combobox_item(out, bus, enabled);
+        }
+    }
+
+    bool active = perf().midi_control_out().configure_enabled();
+    int buss = perf().midi_control_out().configured_buss();
+    out->setCurrentIndex(buss);
+    ui->checkBoxMidiOutBuss->setChecked(active);
+}
+
+/*
+ * Input MIDI control buss combo-box population.
+ */
+
+void
+qseditoptions::setup_input_combo_box (int buses, QComboBox * in)
+{
+    in->clear();
+    for (int bus = 0; bus < buses; ++bus)
+    {
+        std::string busname;
+        bool inputing;
+        bool good = perf().ui_get_input(bussbyte(bus), inputing, busname);
+        if (good)
+        {
+            bool enabled = ! perf().is_input_system_port(bus);
+            in->addItem(qt(busname));
+            enable_combobox_item(in, bus, enabled);
+        }
+    }
+
+    bool active = perf().midi_control_in().configure_enabled();
+    int buss = perf().midi_control_in().configured_buss();
+    in->setCurrentIndex(buss);
+    ui->checkBoxMidiInBuss->setChecked(active);
+}
+
 void
 qseditoptions::setup_tab_midi_clock ()
 {
@@ -245,10 +299,11 @@ qseditoptions::setup_tab_midi_clock ()
         }
 
         /*
-         * Output MIDI control buss combo-box population. We use a check-box
-         * instead of a "Disabled" item, as per issue #83 revisited.
+         * Output MIDI control buss combo-box population.
          */
 
+        setup_clock_combo_box(buses, out);
+#if 0
         for (int bus = 0; bus < buses; ++bus)
         {
             std::string busname;
@@ -262,20 +317,16 @@ qseditoptions::setup_tab_midi_clock ()
             }
         }
 
-        /*
-         * bool active = perf().midi_control_out().is_enabled();
-         * int buss = perf().midi_control_out().nominal_buss();
-         */
-
         bool active = perf().midi_control_out().configure_enabled();
         int buss = perf().midi_control_out().configured_buss();
         out->setCurrentIndex(buss);
+        ui->checkBoxMidiOutBuss->setChecked(active);
+#endif
         connect
         (
             out, SIGNAL(currentIndexChanged(int)),
             this, SLOT(slot_output_bus(int))
         );
-        ui->checkBoxMidiOutBuss->setChecked(active);
         connect
         (
             ui->checkBoxMidiOutBuss, SIGNAL(clicked(bool)),
@@ -396,12 +447,11 @@ qseditoptions::setup_tab_midi_input ()
         }
 
         /*
-         * Input MIDI control buss combo-box population. We now use a
-         * check-box instead of a "Disabled" item, as per issue #83 revisited.
-         *
-         * in->addItem("Disabled");
+         * Input MIDI control buss combo-box population.
          */
 
+        setup_input_combo_box(buses, in);
+#if 0
         for (int bus = 0; bus < buses; ++bus)
         {
             std::string busname;
@@ -415,20 +465,16 @@ qseditoptions::setup_tab_midi_input ()
             }
         }
 
-        /*
-         * bool active = perf().midi_control_in().is_enabled();
-         * int buss = perf().midi_control_in().nominal_buss();
-         */
-
         bool active = perf().midi_control_in().configure_enabled();
         int buss = perf().midi_control_in().configured_buss();
         in->setCurrentIndex(buss);
+        ui->checkBoxMidiInBuss->setChecked(active);
+#endif
         connect
         (
             in, SIGNAL(currentIndexChanged(int)),
             this, SLOT(slot_input_bus(int))
         );
-        ui->checkBoxMidiInBuss->setChecked(active);
         connect
         (
             ui->checkBoxMidiInBuss, SIGNAL(clicked(bool)),
@@ -2385,13 +2431,29 @@ qseditoptions::sync_usr ()
  *  qclocklayout to eventually call the qsmainwnd slot.  We need to make this
  *  item cause immediate action.
  *
- *  \deprecated
+ *  We also need to reconstruct the Control/Display combo-boxes. The
+ *  code is a bit much, but seems to work well enough. The alternative
+ *  is to keep even disabled devices enabled in the combo-box.
  */
 
 void
 qseditoptions::enable_bus_item (int bus, bool enabled)
 {
     m_parent_widget->enable_bus_item(bus, enabled);
+
+    mastermidibus * mmb = perf().master_bus();
+    const clockslist & opm = output_port_map();
+    bool outportmap = opm.active();
+    QComboBox * out = ui->comboBoxMidiOutBuss;
+    int buses = outportmap ? opm.count() : mmb->get_num_out_buses() ;
+    setup_clock_combo_box(buses, out);
+
+    const inputslist & ipm = input_port_map();
+    bool inportmap = ipm.active();
+    QComboBox * in = ui->comboBoxMidiInBuss;
+    buses = inportmap ? ipm.count() : mmb->get_num_in_buses() ;
+    setup_input_combo_box(buses, in);
+
     reload_needed(true);                                /* immediate action */
 }
 
@@ -3105,8 +3167,11 @@ qseditoptions::slot_output_bus (int index)
              * perf().midi_control_out().configure_enabled(true);
              */
 
+            ui->checkBoxSaveCtrl->setChecked(true);
             perf().midi_control_out().configured_buss(index);
+            perf().ui_set_clock(index, e_clock::off);           /* enabled! */
             rc().midi_control_active(true);
+            reload_needed(true);
         }
         modify_ctrl();
     }
@@ -3149,8 +3214,8 @@ qseditoptions::slot_input_bus (int index)
         {
             ui->checkBoxSaveCtrl->setChecked(true);
             perf().midi_control_in().configured_buss(index);
-            rc().midi_control_active(true);
             perf().ui_set_input(index, true);   /* auto-enable the input    */
+            rc().midi_control_active(true);
             reload_needed(true);
         }
     }

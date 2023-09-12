@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2023-08-09
+ * \updates       2023-09-11
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -335,6 +335,7 @@ qt5nsmanager::show_message
         if (rc().quiet())
         {
             smanager::show_message(tag, msg);
+            perf()->clear_port_map_error();
         }
         else
         {

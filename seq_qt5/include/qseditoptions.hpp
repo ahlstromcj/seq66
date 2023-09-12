@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-25
+ * \updates       2023-09-12
  * \license       GNU GPLv2 or above
  */
 
@@ -47,6 +47,7 @@ namespace Ui
 }
 
 class QButtonGroup;
+class QComboBox;
 
 /*
  *  Do not document the namespace, it breaks Doxygen.
@@ -82,6 +83,8 @@ public:
 
 private:
 
+    void setup_clock_combo_box (int buses, QComboBox * out);
+    void setup_input_combo_box (int buses, QComboBox * in);
     void setup_tab_midi_clock ();
     void setup_tab_midi_input ();
     void setup_tab_display ();

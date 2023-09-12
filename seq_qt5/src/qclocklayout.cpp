@@ -229,7 +229,7 @@ void
 qclocklayout::clock_callback_clicked (int id)
 {
     if (id == (-2))
-        id = (-1);                      /* e_clock::disabled */
+        id = (-1);                                  /* e_clock::disabled    */
 
     e_clock clocking = static_cast<e_clock>(id);
     bool enable = clocking != e_clock::disabled;
