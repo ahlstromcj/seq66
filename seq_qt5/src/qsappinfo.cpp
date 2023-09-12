@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-08-21
- * \updates       2023-08-28
+ * \updates       2023-09-12
  * \license       GNU GPLv2 or above
  *
  *  This module supports a task similar to that of the Help / Tutorial menu
@@ -84,7 +84,8 @@ qsappinfo::qsappinfo (QWidget * parent) :
     ui      (new Ui::qsappinfo)
 {
     ui->setupUi(this);
-    ui->buttonReserved->hide();
+    ui->buttonReserved_1->hide();
+    ui->buttonReserved_2->hide();
     slot_common_keys();
     connect
     (
@@ -106,6 +107,16 @@ qsappinfo::qsappinfo (QWidget * parent) :
         ui->buttonPerfroll, SIGNAL(clicked(bool)),
         this, SLOT(slot_songroll_keys())
     );
+    connect
+    (
+        ui->buttonHotKeys, SIGNAL(clicked(bool)),
+        this, SLOT(slot_hot_keys())
+    );
+    connect
+    (
+        ui->buttonMutesKeys, SIGNAL(clicked(bool)),
+        this, SLOT(slot_mutes_keys())
+    );
 }
 
 qsappinfo::~qsappinfo ()
@@ -114,47 +125,55 @@ qsappinfo::~qsappinfo ()
 }
 
 void
-qsappinfo::slot_common_keys ()
+qsappinfo::open_html
+(
+    const std::string & basename,
+    const std::string & comment
+)
 {
-    std::string html = open_share_doc_file("common_keys.html", "info");
+    std::string filename = basename + ".html";
+    std::string html = open_share_doc_file(filename, "info");
     if (html.empty())
         html = s_error_html;
 
     ui->textBrowser->setHtml(qt(html));
-    ui->appPanelLabel->setText("Common to piano rolls");
+    ui->appPanelLabel->setText(qt(comment));
+}
+
+void
+qsappinfo::slot_common_keys ()
+{
+    open_html("common_keys", "Common Piano Roll Keyss");
 }
 
 void
 qsappinfo::slot_automation_keys ()
 {
-    std::string html = open_share_doc_file("automation_keys.html", "info");
-    if (html.empty())
-        html = s_error_html;
-
-    ui->textBrowser->setHtml(qt(html));
-    ui->appPanelLabel->setText("Automation");
+    open_html("automation_keys", "Automation Defaults");
 }
 
 void
 qsappinfo::slot_seqroll_keys ()
 {
-    std::string html = open_share_doc_file("seqroll_keys.html", "info");
-    if (html.empty())
-        html = s_error_html;
-
-    ui->textBrowser->setHtml(qt(html));
-    ui->appPanelLabel->setText("Pattern Editor");
+    open_html("seqroll_keys", "Pattern Editor Keys");
 }
 
 void
 qsappinfo::slot_songroll_keys ()
 {
-    std::string html = open_share_doc_file("songroll_keys.html", "info");
-    if (html.empty())
-        html = s_error_html;
+    open_html("songroll_keys", "Song Editor Keys");
+}
 
-    ui->textBrowser->setHtml(qt(html));
-    ui->appPanelLabel->setText("Song Editor");
+void
+qsappinfo::slot_hot_keys ()
+{
+    open_html("pattern_hotkeys", "Grid Hot Keys");
+}
+
+void
+qsappinfo::slot_mutes_keys ()
+{
+    open_html("mute_group_keys", "Grid Mute-Group Keys");
 }
 
 }               // namespace seq66

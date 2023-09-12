@@ -10,8 +10,6 @@ Misc:
     -   Make sure metronome buttons etc. still work.
     -   Document better all of the keys on the perfroll, etc.
     -   Make the performer get/put_settings() functions robust.
-    -   Fix zoom to keep the events in the view. How to show extended
-        zoom?
     -   Randomizing seems to have a negative bias (after many repeats).
     -   Add a feature to start playback when the first note comes
         into a pattern when recording is set. [Turns out to be quite tricky!]

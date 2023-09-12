@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-18
- * \updates       2023-04-22
+ * \updates       2023-09-12
  * \license       GNU GPLv2 or above
  *
  *  When inheriting QAbstractScrollArea, you need to do the following:
@@ -161,7 +161,7 @@ qscrollmaster::scroll_x_by_step (dir d)
     if (! m_h_scrollbars.empty())
     {
         int dx = m_self_h_scrollbar->singleStep();
-        if (d == dir::Left)                         /* else Right assumed   */
+        if (d == dir::left)                         /* else right assumed   */
             dx = -dx;
 
         int hvalue = m_self_h_scrollbar->value();
@@ -202,7 +202,7 @@ qscrollmaster::scroll_y_by_step (dir d)
     if (! m_v_scrollbars.empty())
     {
         int dy = m_self_v_scrollbar->singleStep();
-        if (d == dir::Up)                           /* else Down assumed    */
+        if (d == dir::up)                           /* else down assumed    */
             dy = -dy;
 
         int vvalue = m_self_v_scrollbar->value();

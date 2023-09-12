@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-18
- * \updates       2023-04-22
+ * \updates       2023-09-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -67,10 +67,10 @@ public:
 
     enum class dir
     {
-        Left,
-        Right,
-        Up,
-        Down
+        left,
+        right,
+        up,
+        down
     };
 
 private:

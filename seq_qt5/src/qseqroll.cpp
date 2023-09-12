@@ -1433,11 +1433,6 @@ qseqroll::keyPressEvent (QKeyEvent * event)
             }
             else
             {
-                /*
-                 * TODO: does this even get called for the non-Ctrl'ed
-                 *       arrow keys? Investigate!
-                 */
-
                 if (isshift)
                 {
                     std::string filename;
@@ -1476,10 +1471,12 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                             done = true;
                         break;
 
+#if 0
                     case Qt::Key_Z:
 
                         track().pop_redo();     /* does this work ???       */
                         done = true;
+#endif
                     }
                 }
                 else if (isctrl)

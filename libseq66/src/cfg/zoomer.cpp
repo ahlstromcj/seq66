@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2023-09-11
+ * \updates       2023-09-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -135,7 +135,7 @@ zoomer::set_zoom_by_index (int i)
     else
     {
         m_zoom_expansion = expanded_zoom_item(i);
-        if (m_zoom_expansion > 0)
+        if (expanded_zoom())
         {
             m_zoom_index = i;
             m_zoom = 1;
@@ -162,7 +162,7 @@ midipulse
 zoomer::pix_to_tix (int x) const
 {
     midipulse result = x * pulses_per_pixel(m_ppqn, m_scale_zoom);
-    if (m_zoom_expansion > 1)
+    if (expanded_zoom())
         result /= m_zoom_expansion;
 
     return result;
@@ -172,7 +172,7 @@ int
 zoomer::tix_to_pix (midipulse ticks) const
 {
     int result = ticks / pulses_per_pixel(m_ppqn, m_scale_zoom);
-    if (m_zoom_expansion > 1)
+    if (expanded_zoom())
         result *= m_zoom_expansion;
 
     return result;

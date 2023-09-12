@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-04-07
-% \update      2023-05-20
+% \update      2023-09-12
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -35,6 +35,11 @@
    The effect that keystrokes have depends upon
    which window has the keyboard/mouse focus.
    \index{keys!qt}
+   For a possibly more up-to-date list, see the
+   \textbf{Hardwired Keys} tab in the
+   \texttt{control\_keys.ods} spreadsheet which is installed
+   in the installed shared-data directory
+   (e.g. \texttt{/usr/share/doc/seq66-0.99}).
 
 \subsection{Keyboard Control}
 \label{subsec:kbd_mouse_keyboard_control}
@@ -61,16 +66,16 @@
 
    \index{keys!gotchas}
    There are a number of "gotchas" to be aware of when assigning keys to the
-   fields in the \textbf{Keyboard} tab:
+   actions in the 'ctrl' file:
 
    \begin{itemize}
       \item Some of the keystrokes are hard-wired, such as 
          "arrow" keys (for controlling play-lists), "page up/down" keys,
          the "zoom" keys, and some of the "Ctrl" keys.
       \item \textsl{Seq66} has appropriated the
-         \index{keys!shift} Shift key so that a a Shift-left-click on a pattern
+         \index{keys!shift} Shift key so that a a Shift-Left-click on a pattern
          slot opens up the corresponding set (based on pattern number)
-         in an external live grid, and a Ctrl-left-click requests a new pattern.
+         in an external live grid, and a Ctrl-Left-click requests a new pattern.
          \index{auto-shift}
          For the group-learn feature, the \texttt{Shift} key is 
          automatically enabled, using an "auto-shift" feature.
@@ -367,15 +372,15 @@
    as noted in \sectionref{sec:patterns_panel}, are:
 
    \begin{itemize}
-      \item \textsl{Shift-left-click}:
+      \item \textsl{Shift-Left-click}:
          Over one pattern slot, this action toggles the mute/unmute
          (armed/unarmed) status of all other patterns
          (even the patterns in other, unseen sets).
-      \item \textsl{Left-double-click}:
+      \item \textsl{Left-Double-click}:
          Over a pattern slot, this action quickly toggles the mute/unmute status,
          which is confusing.  But it ultimately brings up the pattern editor
          (sequence editor) for that pattern.
-%        It acts like Ctrl-left-click.
+%        It acts like Ctrl-Left-click.
    \end{itemize}
 
 \subsection{Performance Editor Window}
@@ -457,7 +462,7 @@
    A "section" in the performance editor is actually a box that
    specifies a trigger for the pattern in that sequence/pattern slot.
    Note that the "toggle other slots" action occurs only if
-   \textsl{shift-left-clicked}
+   \textsl{shift-Left-clicked}
    in the "names" area of the performance editor.
    \textsl{Left-click} is used to select performance blocks if clicked within
    a block, or to deselect them if clicked in an empty area of the piano roll.

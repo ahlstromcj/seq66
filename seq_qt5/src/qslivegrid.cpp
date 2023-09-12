@@ -1280,10 +1280,6 @@ qslivegrid::keyReleaseEvent (QKeyEvent * event)
         QWidget::keyReleaseEvent(event);
 }
 
-/**
- *  Very close to 
- */
-
 void
 qslivegrid::reupdate ()
 {

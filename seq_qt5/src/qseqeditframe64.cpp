@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-09-11
+ * \updates       2023-09-12
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1082,14 +1082,14 @@ qseqeditframe64::scroll_by_step (qscrollmaster::dir d)
 {
     switch (d)
     {
-    case qscrollmaster::dir::Left:
-    case qscrollmaster::dir::Right:
+    case qscrollmaster::dir::left:
+    case qscrollmaster::dir::right:
 
         ui->rollScrollArea->scroll_x_by_step(d);
         break;
 
-    case qscrollmaster::dir::Up:
-    case qscrollmaster::dir::Down:
+    case qscrollmaster::dir::up:
+    case qscrollmaster::dir::down:
 
         ui->rollScrollArea->scroll_y_by_step(d);
         break;
@@ -1219,13 +1219,13 @@ qseqeditframe64::keyPressEvent (QKeyEvent * event)
                  */
 
                 if (key == Qt::Key_J)
-                    scroll_by_step(qscrollmaster::dir::Down);
+                    scroll_by_step(qscrollmaster::dir::down);
                 else if (key == Qt::Key_K)
-                    scroll_by_step(qscrollmaster::dir::Up);
+                    scroll_by_step(qscrollmaster::dir::up);
                 else if (key == Qt::Key_H)
-                    scroll_by_step(qscrollmaster::dir::Left);
+                    scroll_by_step(qscrollmaster::dir::left);
                 else if (key == Qt::Key_L)
-                    scroll_by_step(qscrollmaster::dir::Right);
+                    scroll_by_step(qscrollmaster::dir::right);
                 else
                     event->accept();
         }
@@ -3088,6 +3088,11 @@ qseqeditframe64::adjust_for_zoom (int zprevious)
     float factor = float(zprevious) / float(znew);
     int index = zoom_list().index(znew);
     ui->m_combo_zoom->setCurrentIndex(index);
+    if (expanded_zoom())
+    {
+        factor = zoom_expansion();
+        ui->rollScrollArea->scroll_x_by_step(qscrollmaster::dir::right);
+    }
     ui->rollScrollArea->scroll_x_by_factor(factor);
     set_dirty();
 }

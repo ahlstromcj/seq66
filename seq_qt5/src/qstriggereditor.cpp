@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-11
+ * \updates       2023-09-12
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -570,7 +570,7 @@ qstriggereditor::keyPressEvent (QKeyEvent * event)
     }
     if (! ret)
     {
-        if (key == Qt::Key_P)
+        if (key == Qt::Key_P || key == Qt::Key_I)
         {
             set_adding(true);
             ret = true;
@@ -581,7 +581,20 @@ qstriggereditor::keyPressEvent (QKeyEvent * event)
             ret = true;
         }
         else if (movement_key_press(key))
+        {
             ret = mark_modified();
+        }
+        else
+        {
+            if (! perf().is_pattern_playing())
+            {
+                if (key == Qt::Key_Escape)
+                {
+                    set_adding(false);
+                    ret = true;
+                }
+            }
+        }
     }
     if (ret)
         flag_dirty();

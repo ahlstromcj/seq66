@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2023-09-09
+ * \updates       2023-09-12
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -426,6 +426,16 @@ public:
     int scale_zoom () const
     {
         return m_zoomer.scale_zoom();
+    }
+
+    bool expanded_zoom () const
+    {
+        return m_zoomer.expanded_zoom();
+    }
+
+    int zoom_expansion () const
+    {
+        return m_zoomer.zoom_expansion();
     }
 
     /**

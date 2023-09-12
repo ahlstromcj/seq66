@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2023-09-09
+ * \updates       2023-09-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -160,6 +160,16 @@ public:
     int scale_zoom () const
     {
         return m_scale_zoom;
+    }
+
+    bool expanded_zoom () const
+    {
+        return m_zoom_expansion > 0;
+    }
+
+    int zoom_expansion () const
+    {
+        return m_zoom_expansion;
     }
 
     midipulse pix_to_tix (int x) const;
