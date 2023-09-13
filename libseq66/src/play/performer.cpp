@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-09-04
+ * \updates       2023-09-12
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1127,7 +1127,10 @@ performer::new_ports_available () const
             int realbuses = mbus->get_num_in_buses();
             new_inputs = mappedbuses < realbuses;
         }
-        m_port_map_error = result = new_outputs || new_inputs;
+        if (! m_port_map_error)         /* might have earlier errors    */
+        {
+            m_port_map_error = result = new_outputs || new_inputs;
+        }
     }
     return result;
 }
@@ -2169,7 +2172,7 @@ performer::merge_sequence (seq::number seqno)
         if (result)
         {
             s->set_dirty();
-            notify_sequence_change(seqno, change::recreate);        /* NEW */
+            notify_sequence_change(seqno, change::recreate);
         }
     }
     return result;

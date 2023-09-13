@@ -1484,7 +1484,7 @@ sequence::play
      */
 
     midipulse times_played = tick / length;
-    m_trigger_offset = 0;                   /* NEW from Seq24 (!)           */
+    m_trigger_offset = 0;                   /* from Seq24                   */
     if (m_song_mute)
     {
         set_armed(false);

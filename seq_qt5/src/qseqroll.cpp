@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-07
+ * \updates       2023-09-13
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1585,8 +1585,25 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                 }
                 else
                 {
+                    midipulse len = track().get_length();
                     switch (key)
                     {
+                    case Qt::Key_Home:
+
+                        done = true;
+                        track().set_last_tick(0);   /* sets it to beginning */
+                        if (not_nullptr(frame64()))
+                            frame64()->scroll_to_tick(0);
+                        break;
+
+                    case Qt::Key_End:
+
+                        done = true;
+                        track().set_last_tick();    /* sets it to length    */
+                        if (not_nullptr(frame64()))
+                            frame64()->scroll_to_tick(len);
+                        break;
+
                     case Qt::Key_C:
 
                         if (frame64()->repitch_selected())
