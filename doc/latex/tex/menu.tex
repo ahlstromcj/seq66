@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-08-28
+% \update      2023-09-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1211,8 +1211,9 @@
 
    The metronome feature is enabled in the main live grid via a metronome
    button.
-   The metronome is a standard \textsl{Seq66} pattern, but it is never seen
-   nor edited by the user.
+   The metronome is a standard \textsl{Seq66} pattern that is used
+   for playback of the metronome, but it is never seen
+   nor directly edited by the user.
    It is not saved with a song, so changing the metronome does not modify the
    song.
    The settings shown above are saved to a "metronome" section in the 'rc'
@@ -1289,6 +1290,10 @@
 
    We still have some more work to do to refine the metronome, the
    background recorder, and their configuration, pending user input.
+   For more information about the metronome, see
+   \sectionref{paragraph:patterns_metronome}.
+   For information on count-in background recording, see
+   \sectionref{paragraph:patterns_background_recording}.
 
 \paragraph{Menu / Edit / Preferences / Pattern}
 \label{paragraph:menu_edit_preferences_pattern}

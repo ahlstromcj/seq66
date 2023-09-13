@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-12
+ * \updates       2023-09-13
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1014,7 +1014,7 @@ qseditoptions::setup_tab_metronome ()
     ui->lineedit_metro_recording_measures->setText(qmetrotemp);
     connect
     (
-        ui->lineedit_metro_count_in, SIGNAL(editingFinished()),
+        ui->lineedit_metro_recording_measures, SIGNAL(editingFinished()),
         this, SLOT(slot_metro_recording_measures())
     );
 
@@ -1374,7 +1374,7 @@ qseditoptions::slot_metro_recording ()
 {
     bool on = ui->checkbox_metro_recording->isChecked();
     rc().metro_settings().count_in_recording(on);
-    modify_metronome(false);                    /* no reload button */
+    modify_metronome(false);                        /* no reload button */
 }
 
 void

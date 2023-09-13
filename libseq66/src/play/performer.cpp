@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-09-12
+ * \updates       2023-09-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1819,34 +1819,32 @@ performer::arm_metronome (bool on)
     }
 }
 
+/**
+ *  ca 2023-09-13
+ *  Refactoring to immediately create a new pattern before recording so that
+ *  the user sees it. The functionality is similar to new_sequence().
+ */
+
 bool
 performer::install_recorder ()
 {
-    if (bool(m_recorder))
-    {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("[-----] Recorder already exists\n");
-#endif
-        return true;
-    }
+    if (bool(m_recorder))                           /* transitory pointer   */
+        return true;                                /* already in progress  */
 
     metrosettings & ms = rc().metro_settings();
     m_recorder = new (std::nothrow) recorder(ms);
     bool result = not_nullptr(m_recorder);
     if (result)
     {
-        result = m_recorder->initialize(this);     /* make settings & mute  */
+        result = new_sequence(m_recorder, 0);       /* earliest slot        */
         if (result)
         {
-            /*
-             * Not needed: result = play_set().add(m_recorder);
-             */
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            printf("[-----] Installed recorder\n");
-#endif
+            result = m_recorder->initialize(this);  /* make settings & mute */
+            if (! result)
+            {
+                remove_recorder();
+            }
         }
-        else
-            remove_recorder();
     }
     return result;
 }
@@ -1863,13 +1861,20 @@ performer::remove_recorder ()
 {
     if (not_nullptr(m_recorder))
     {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("[-----] Removed recorder\n");
-#endif
         delete m_recorder;
         m_recorder = nullptr;
+
+        // TODO notify all subscribers
     }
 }
+
+/**
+ *  ca 2023-09-13
+ *  We now install the sequence immediately rather than at the end
+ *  of recording. All we do to the m_recorder pointer is nullify it,
+ *  simply to indicate the sequence is logged and we're not recording
+ *  to it anymore.
+ */
 
 bool
 performer::finish_recorder ()
@@ -1878,19 +1883,31 @@ performer::finish_recorder ()
     if (result)
         result = m_recorder->event_count() > 0;
 
-    if (result)
-    {
+    m_recorder->uninitialize();
+    m_recorder = nullptr;                               /* nullify          */
+
+    // TODO notify all subscribers
+
+#if 0
         seq::number seqno = 0;
         result = install_sequence(m_recorder, seqno);   /* side-effect      */
         if (result)
         {
-            std::ostringstream os;
-            os << "Added background recording as sequence #"
-                << int(seqno) << std::endl
-                ;
-            (void) info_message(os.str());
-            m_recorder->uninitialize();
-            notify_sequence_change(seqno, change::recreate);
+            const seq::pointer s = get_sequence(seqno);
+            result = not_nullptr(s);
+            if (result)
+            {
+                seq::number finalseq = s->seq_number();
+                std::ostringstream os;
+                os << "Added background recording as sequence #"
+                    << int(finalseq) << std::endl ;
+
+                (void) info_message(os.str());
+                s->set_dirty();
+                announce_sequence(s, finalseq);         /* issue #112       */
+                notify_sequence_change(finalseq, change::recreate);
+            }
+            m_recorder->uninitialize();                     // ???
         }
         else
             delete m_recorder;                          /* remove bad one   */
@@ -1898,12 +1915,8 @@ performer::finish_recorder ()
         m_recorder = nullptr;                           /* nullify          */
     }
     else
-    {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("[-----] No background events recorded\n");
-#endif
         remove_recorder();
-    }
+#endif
 
     return result;
 }
@@ -1980,7 +1993,11 @@ performer::finish_count_in ()
  *
  *  If enabled, wire in the MIDI buss override.
  *
- * \param seq
+ * \param [out] finalseq
+ *      Holds the resulting sequence number. Use it only if this function
+ *      returns true.
+ *
+ * \param seqno
  *      The prospective sequence number of the new sequence.  If not set to
  *      seq::unassigned() (-1), then the sequence is also installed, and this
  *      value will be updated to the actual number.
@@ -1991,9 +2008,17 @@ performer::finish_count_in ()
  */
 
 bool
-performer::new_sequence (seq::number & finalseq, seq::number seq)
+performer::new_sequence (seq::number & finalseq, seq::number seqno)
 {
     sequence * seqptr = new (std::nothrow) sequence(ppqn());
+    bool result = new_sequence(seqptr, seqno);
+    if (result)
+        finalseq = seqptr->seq_number();
+
+    return result;
+}
+
+#if 0
     bool result = not_nullptr(seqptr);
     if (result && seq != seq::unassigned())
     {
@@ -2006,6 +2031,29 @@ performer::new_sequence (seq::number & finalseq, seq::number seq)
             {
                 s->set_dirty();
                 finalseq = s->seq_number();
+                announce_sequence(s, finalseq);         /* issue #112       */
+                notify_sequence_change(finalseq, change::recreate);
+            }
+        }
+    }
+    return result;
+#endif
+
+bool
+performer::new_sequence (sequence * seqptr, seq::number seqno)
+{
+    bool result = not_nullptr(seqptr);
+    if (result && seqno != seq::unassigned())
+    {
+        result = install_sequence(seqptr, seqno);
+        if (result)
+        {
+            const seq::pointer s = get_sequence(seqno);
+            result = not_nullptr(s);
+            if (result)
+            {
+                int finalseq = s->seq_number();
+                s->set_dirty();
                 announce_sequence(s, finalseq);         /* issue #112       */
                 notify_sequence_change(finalseq, change::recreate);
             }
@@ -5275,8 +5323,8 @@ performer::count_exportable () const
  *          item in qsmainwnd.
  *      -#  write_header()
  *
- *  We start with slot 0, and search for the first open slot (as a side-effect
- *  of new_sequence() and install_sequence() to put the SMF 0 data.
+ *  We start with slot 0, and search for the first open slot [as a side-effect
+ *  of new_sequence() and install_sequence()] to put the SMF 0 data.
  */
 
 bool

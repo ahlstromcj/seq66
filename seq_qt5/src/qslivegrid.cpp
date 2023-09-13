@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-09-07
+ * \updates       2023-09-13
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -84,6 +84,7 @@
 #include "qt5_helpers.hpp"              /* seq66::qt_keystroke() etc.       */
 
 #include "pixmaps/metro.xpm"            /* a metroname icon                 */
+#include "pixmaps/metro_on.xpm"         /* metroname-is-active icon         */
 #include "pixmaps/rec.xpm"              /* recording off                    */
 #include "pixmaps/rec_on.xpm"           /* recording on                     */
 
@@ -1434,16 +1435,20 @@ qslivegrid::slot_toggle_metronome (bool /*clicked*/)
     {
         bool on = ui->buttonMetronome->isChecked();
         if (on)
+        {
             ui->buttonMetronome->setChecked(false);
-
+            qt_set_icon(metro_xpm, ui->buttonMetronome);
+        }
         signal_call_editor_ex(sequence::metronome());
     }
     else if (qkm & Qt::AltModifier)
     {
         bool on = ui->buttonMetronome->isChecked();
         if (on)
+        {
             ui->buttonMetronome->setChecked(false);
-
+            qt_set_icon(metro_xpm, ui->buttonMetronome);
+        }
         signal_call_edit_events(sequence::metronome());
     }
     else
@@ -1452,6 +1457,7 @@ qslivegrid::slot_toggle_metronome (bool /*clicked*/)
         if (on)
         {
             (void) perf().install_metronome();  /* arms if already existing */
+            qt_set_icon(metro_on_xpm, ui->buttonMetronome);
         }
         else
         {
@@ -1462,6 +1468,7 @@ qslivegrid::slot_toggle_metronome (bool /*clicked*/)
              */
 
             (void) perf().arm_metronome(false); /* mutes the metronome      */
+            qt_set_icon(metro_xpm, ui->buttonMetronome);
         }
     }
 }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-09-04
+ * \updates       2023-09-13
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2148,25 +2148,30 @@ public:
     bool new_sequence
     (
         seq::number & finalseq,
-        seq::number seq = seq::unassigned()
+        seq::number seqno = seq::unassigned()
+    );
+    bool new_sequence
+    (
+        sequence * seqptr,
+        seq::number seqno = seq::unassigned()
     );
 
-    bool request_sequence (seq::number seq = seq::unassigned())
+    bool request_sequence (seq::number seqno = seq::unassigned())
     {
         static seq::number s_dummy;
-        return new_sequence(s_dummy, seq);
+        return new_sequence(s_dummy, seqno);
     }
 
-    bool channelize_sequence (seq::number seq, int channel);
-    bool clear_sequence (seq::number seq);
-    bool double_sequence (seq::number seq);
-    bool remove_sequence (seq::number seq);
-    bool copy_sequence (seq::number seq);
-    bool cut_sequence (seq::number seq);
-    bool paste_sequence (seq::number seq);
-    bool merge_sequence (seq::number seq);
-    bool move_sequence (seq::number seq);
-    bool finish_move (seq::number seq);
+    bool channelize_sequence (seq::number seqno, int channel);
+    bool clear_sequence (seq::number seqno);
+    bool double_sequence (seq::number seqno);
+    bool remove_sequence (seq::number seqno);
+    bool copy_sequence (seq::number seqno);
+    bool cut_sequence (seq::number seqno);
+    bool paste_sequence (seq::number seqno);
+    bool merge_sequence (seq::number seqno);
+    bool move_sequence (seq::number seqno);
+    bool finish_move (seq::number seqno);
     bool fix_sequence (seq::number seqno, fixparameters & params);
     bool remove_set (screenset::number setno);
     bool swap_sets (seq::number set0, seq::number set1);
@@ -2176,9 +2181,9 @@ public:
         return m_seq_clipboard.event_count() > 0;
     }
 
-    bool is_seq_in_edit (int seq) const
+    bool is_seq_in_edit (int seqno) const
     {
-        return mapper().is_seq_in_edit(seq);
+        return mapper().is_seq_in_edit(seqno);
     }
 
     /**

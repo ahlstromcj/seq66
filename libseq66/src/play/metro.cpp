@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-08-31
+ * \updates       2022-09-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -287,14 +287,17 @@ metro::initialize (performer * p)
  */
 
 /**
- *  Default constructor.
+ *  Default constructor. Also see the metro constructor.
+ *
+ *  The color is set to 22, which is the "Turquoise" entry in the
+ *  application palette.
  */
+
+static const int s_recorder_color = 22;
 
 recorder::recorder () : metro ()
 {
-    /*
-     * See metro constructor.
-     */
+    // set_color(s_recorder_color, true);
 }
 
 /**
@@ -303,9 +306,7 @@ recorder::recorder () : metro ()
 
 recorder::recorder (const metrosettings & mc) : metro (mc)
 {
-    /*
-     * See metro constructor.
-     */
+    // set_color(s_recorder_color, true);
 }
 
 /**
@@ -362,6 +363,7 @@ recorder::initialize (performer * p)
             oneshot_recording(oneshot);
             set_thru(true);
             set_midi_channel(channel);
+            set_color(s_recorder_color, true);
             if (expand || settings().expand_recording())
             {
                 /*
@@ -385,6 +387,7 @@ bool
 recorder::uninitialize ()
 {
     set_recording(alteration::none, toggler::off);  /* doesn't clear expand */
+    set_color(0, true);
 
     /*
      * Probably want the user to remember to modify these settings.
