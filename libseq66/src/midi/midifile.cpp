@@ -1276,7 +1276,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 int bb = read_byte();               // bb
                                 int bw = beat_power_of_2(logbase2);
 
-#if defined SEQ66_USE_TRACK_0_AS_GLOBAL_TIME_SIG
+#if defined SEQ66_USE_TRACK_0_AS_GLOBAL_TIME_SIG    /* undefined */
 
                                 /*
                                  * Could use c_perf_bp_mes and c_perf_bw

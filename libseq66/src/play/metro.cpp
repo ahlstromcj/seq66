@@ -104,6 +104,9 @@ metrosettings::calculate_length (int increment, float fraction)
  *
  *      https://music.arts.uci.edu/dobrian/maxcookbook/
  *              metronome-using-general-midi-sounds
+ *
+ *  This function is called in rcsettings::set_defaults(), happening in the
+ *  smanager constructor.
  */
 
 void
@@ -286,14 +289,16 @@ metro::initialize (performer * p)
  *---------------------------------------------------------------------
  */
 
-/**
- *  Default constructor. Also see the metro constructor.
- *
- *  The color is set to 22, which is the "Turquoise" entry in the
+/*
+ *  The color is set to 1, which is the "Red" entry in the
  *  application palette.
  */
 
-static const int s_recorder_color = 22;
+static const int s_recorder_color = 1;
+
+/**
+ *  Default constructor. Also see the metro constructor.
+ */
 
 recorder::recorder () : metro ()
 {
@@ -331,6 +336,11 @@ recorder::~recorder ()
  *      -   It sets a few things up for recording.  Note especially the
  *          set_recording() function. It calls mastermidibus ::
  *          set_sequence_input() to log this pattern as the recording pattern.
+ *
+ *  Must set this before the possibility of raising the modify
+ *  flag. Also note we select the new-pattern quantities. To recollect:
+ *  recordstyle covers merge, overwrite, expand...; alteration covers
+ *  none, quantize, notemap...;
  */
 
 bool
@@ -342,41 +352,32 @@ recorder::initialize (performer * p)
         int ppq = p->ppqn();                        /* p->get_ppqn()        */
         int bw = settings().beat_width();           /* get_beat_width()     */
         int increment = pulses_per_beat(ppq, bw);
-        bussbyte buss = settings().thru_buss();     /* recording_buss()     */
         if (settings().initialize(increment))
         {
+            bool unmute = usr().new_pattern_armed();
+            alteration alter = usr().record_mode();
+            recordstyle rs = usr().new_pattern_record_style();
+            bool usethru = usr().new_pattern_thru();
+            bussbyte outbuss = settings().thru_buss();
+            midibyte channel = settings().thru_channel();
+
+            armed(unmute);
+            set_recording(alter, toggler::on);      /* eg. quantize...      */
+            set_recording_style(rs);                /* merge, expand, etc.  */
+            set_thru(usethru);
+            set_midi_bus(outbuss);                  /* for playback         */
+            set_midi_channel(channel);
+            set_name("Background Recording");
+            set_color(s_recorder_color, true);
+
             /*
-             * Must set this before the possibility of raising the modify
-             * flag. Also note we select the active record-mode (normal,
-             * quantize, or tighten).
+             * Do not make these settings.
+             *
+             * seq_number(sequence::recorder());    // magic recorder seq
+             * expanded_recording(true);
+             * wrap-around?
              */
 
-            midibyte channel = settings().thru_channel();
-            bool expand = usr().grid_record_style() == recordstyle::expand;
-            bool oneshot = usr().grid_record_style() == recordstyle::oneshot;
-            seq_number(sequence::recorder());       /* magic recorder seq   */
-            set_name("Background Recording");
-            set_midi_bus(buss);
-            free_channel(true);                     /* keep recorded chan   */
-            set_recording(usr().record_mode(), toggler::on);
-            set_recording_style(usr().grid_record_style());
-            oneshot_recording(oneshot);
-            set_thru(true);
-            set_midi_channel(channel);
-            set_color(s_recorder_color, true);
-            if (expand || settings().expand_recording())
-            {
-                /*
-                 *  The record-style is only a run-time status of a pattern,
-                 *  and here it should apply only to the background recording;
-                 *  This setting is a run-time global setting:
-                 *
-                 * usr().grid_record_style(recordstyle::expand);
-                 */
-
-                expanded_recording(true);
-            }
-            armed(false);
             unmodify();                             /* not part of song     */
         }
     }

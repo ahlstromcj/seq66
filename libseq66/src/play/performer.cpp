@@ -1752,7 +1752,7 @@ performer::install_metronome ()
         return true;
     }
 
-    metrosettings & ms = rc().metro_settings();
+    const metrosettings & ms = rc().metro_settings();
     m_metronome.reset(new (std::nothrow) metro(ms));
     bool result = bool(m_metronome);
     if (result)
@@ -8559,6 +8559,9 @@ performer::read_midi_file
     bool result = seq66::read_midi_file(*this, fn, ppqn(), errmsg, addtorecent);
     if (result)
     {
+        metrosettings & ms = rc().metro_settings();
+        ms.beats_per_bar(get_beats_per_bar());
+        ms.beat_width(get_beat_width());
         next_song_mode();
         m_max_extent = get_max_extent();        /* analyze current file     */
         set_tick(0);                            /* enforce beginning        */
