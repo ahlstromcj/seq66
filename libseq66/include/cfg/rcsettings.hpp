@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-09-03
+ * \updates       2023-09-15
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -1007,7 +1007,7 @@ public:
         return m_last_used_dir;
     }
 
-    void last_used_dir (const std::string & value);
+    void last_used_dir (const std::string & value, bool userchange = true);
 
     /**
      * \setter m_recent_files

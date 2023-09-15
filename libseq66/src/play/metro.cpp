@@ -364,6 +364,11 @@ recorder::initialize (performer * p)
             armed(unmute);
             set_recording(alter, toggler::on);      /* eg. quantize...      */
             set_recording_style(rs);                /* merge, expand, etc.  */
+
+            /*
+             * Needs explaining.
+             */
+
             set_thru(usethru);
             set_midi_bus(outbuss);                  /* for playback         */
             set_midi_channel(channel);

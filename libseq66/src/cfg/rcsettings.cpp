@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-07-17
+ * \updates       2023-09-15
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -257,11 +257,15 @@ rcsettings::set_defaults ()
     set_save_list(false);
 }
 
+/**
+ *  We no longer save the 'rc' every damn time.
+ */
+
 void
 rcsettings::set_save_list (bool state)
 {
     m_save_list.clear();
-    m_save_list.add("rc", true);                /* can be edited in UI  */
+    m_save_list.add("rc", state);               /* can be edited in UI  */
     m_save_list.add("usr", state);              /* can be edited in UI  */
     m_save_list.add("mutes", state);            /* can be edited in UI  */
     m_save_list.add("playlist", state);         /* can be edited in UI  */
@@ -269,7 +273,8 @@ rcsettings::set_save_list (bool state)
 
     /*
      * The following are saved only after the first run.  Thereafter, they
-     * are managed by the user.
+     * are managed by the user. Seq66 offers no way to edit these
+     * files, nor the 'palette' file.
      */
 
     m_save_list.add("drums", state);
@@ -1006,10 +1011,15 @@ rcsettings::jack_session (const std::string & uuid)
  *      a file.  Also, we now expand a relative directory to the full path to
  *      that directory, to avoid ambiguity should the application be run from
  *      a different directory.
+ *
+ * \param userchange
+ *      If true (the default), then the 'rc' file needs to be save.
+ *      If false, we are loading the 'rc' file, so no change in status
+ *      is necessary.
  */
 
 void
-rcsettings::last_used_dir (const std::string & value)
+rcsettings::last_used_dir (const std::string & value, bool userchange)
 {
     if (value.empty())
         m_last_used_dir = empty_string();           /* "" from strfunctions */
@@ -1019,7 +1029,8 @@ rcsettings::last_used_dir (const std::string & value)
         if (last != m_last_used_dir)                /* new directory?       */
         {
             m_last_used_dir = get_full_path(value); /* might end up empty   */
-            auto_rc_save(true);                     /* need to write it     */
+            if (userchange)
+                auto_rc_save(true);                 /* need to write it     */
         }
     }
 }

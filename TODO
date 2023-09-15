@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.9
 Chris Ahlstrom
-2019-04-13 to 2023-09-13
+2019-04-13 to 2023-09-15
 
 Misc:
 
@@ -366,6 +366,7 @@ Version 2 features:
     -   Support for multiple languages in user-messages.
     -   Allow for building without JACK dev files installed.  Weak JACK
         support.  Seq66 dependence on the JACK ringbuffer is an issue here.
+    -   Record to patterns by buss number (a la channel number).
     -   Port refresh in ALSA and JACK at a minimum.
     -   JACK port groups and order.
     -   Add option to start JACK if not running.

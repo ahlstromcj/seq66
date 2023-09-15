@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-08-28
+ * \updates       2023-09-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -113,6 +113,11 @@ qmutemaster::qmutemaster
     create_pattern_buttons();
     setup_table();                      /* row and column sizing            */
     (void) initialize_table();          /* fill with mute-group information */
+
+    QString mgfname = qt(rc().mute_group_filename());
+    bool mgfactive = rc().mute_group_file_active();
+    ui->m_mute_basename->setPlainText(mgfname);
+    ui->m_mute_basename->setEnabled(mgfactive);
     connect
     (
         ui->m_mute_basename, SIGNAL(textChanged()),
@@ -120,10 +125,12 @@ qmutemaster::qmutemaster
     );
 
     /*
-     * Connect the bin/hex radio buttons and set them as per the configured
+     * First set the status of the bin/hex radio buttons, and only then
+     * connect the bin/hex radio buttons and set them as per the configured
      * status at start-up.
      */
 
+    set_bin_hex(! cb_perf().group_format_hex());
     connect
     (
         ui->m_radio_binary, SIGNAL(toggled(bool)),
@@ -134,7 +141,6 @@ qmutemaster::qmutemaster
         ui->m_radio_hex, SIGNAL(toggled(bool)),
         this, SLOT(slot_hex_mode(bool))
     );
-    set_bin_hex(! cb_perf().group_format_hex());
     ui->m_button_trigger->setEnabled(true);
     ui->m_button_trigger->setCheckable(true);
     connect
@@ -245,10 +251,6 @@ qmutemaster::qmutemaster
         this, SLOT(slot_cell_changed(int, int))
     );
 
-    QString mgfname = qt(rc().mute_group_filename());
-    bool mgfactive = rc().mute_group_file_active();
-    ui->m_mute_basename->setPlainText(mgfname);
-    ui->m_mute_basename->setEnabled(mgfactive);
     handle_group_button(0, 0);          /* guaranteed to be present         */
     handle_group_change(0);             /* select the first group           */
     ui->m_button_save->setEnabled(false);

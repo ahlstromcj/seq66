@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-06-01
+ * \updates       2023-09-15
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -910,7 +910,17 @@ smanager::create (int argc, char * argv [])
                 {
                     std::string midifname = rc().recent_file(0, false);
                     if (! midifname.empty())
+                    {
+                        /*
+                         * We don't want to necessarily save the 'rc' file
+                         * at exit just because we're loading the most
+                         * recent file.
+                         */
+
+                        bool autorcsave = rc().auto_rc_save();
                         (void) open_midi_file(midifname);
+                        rc().auto_rc_save(autorcsave);
+                    }
                 }
             }
             else

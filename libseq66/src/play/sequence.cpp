@@ -3963,6 +3963,9 @@ bool
 sequence::stream_event (event & ev)
 {
     automutex locker(m_mutex);
+
+/// printf("tick %ld, channel %d\n", ev.timestamp(), ev.channel());
+
     bool result = channels_match(ev);           /* set if channel matches   */
     if (result)
     {

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-08-24
+ * \updates       2023-09-15
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -567,7 +567,7 @@ rcfile::parse ()
         if (! is_missing_string(line()))
         {
             std::string ludir = strip_quotes(line());
-            rc_ref().last_used_dir(ludir);
+            rc_ref().last_used_dir(ludir, false);       /* set w/o modify   */
         }
     }
     else
@@ -603,6 +603,10 @@ rcfile::parse ()
     tag = "[auto-option-save]";
     flag = get_boolean(file, tag, "auto-save-rc");
     rc_ref().auto_rc_save(flag);
+    flag = get_boolean(file, tag, "save-old-triggers");
+    rc_ref().save_old_triggers(flag);
+    flag = get_boolean(file, tag, "save-old-mutes");
+    rc_ref().save_old_mutes(flag);
 
     /*
      * [recent-files]
@@ -658,11 +662,6 @@ rcfile::parse ()
             }
         }
     }
-
-    bool f = get_boolean(file, tag, "save-old-triggers");
-    rc_ref().save_old_triggers(f);
-    f = get_boolean(file, tag, "save-old-mutes");
-    rc_ref().save_old_mutes(f);
     file.close();               /* done parsing the "rc" file               */
     return true;
 }

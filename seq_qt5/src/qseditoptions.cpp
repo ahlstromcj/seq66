@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-13
+ * \updates       2023-09-15
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -195,6 +195,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     );
     sync();
     state_unchanged();
+    ui->tabWidget->setCurrentIndex(Tab_MIDI_Clock);
     m_is_initialized = true;
 }
 
@@ -303,25 +304,6 @@ qseditoptions::setup_tab_midi_clock ()
          */
 
         setup_clock_combo_box(buses, out);
-#if 0
-        for (int bus = 0; bus < buses; ++bus)
-        {
-            std::string busname;
-            e_clock ec;
-            bool good = perf().ui_get_clock(bussbyte(bus), ec, busname);
-            if (good)
-            {
-                bool enabled = ec != e_clock::disabled;
-                out->addItem(qt(busname));
-                enable_combobox_item(out, bus, enabled);
-            }
-        }
-
-        bool active = perf().midi_control_out().configure_enabled();
-        int buss = perf().midi_control_out().configured_buss();
-        out->setCurrentIndex(buss);
-        ui->checkBoxMidiOutBuss->setChecked(active);
-#endif
         connect
         (
             out, SIGNAL(currentIndexChanged(int)),
@@ -853,8 +835,9 @@ qseditoptions::setup_tab_metronome ()
 {
     ui->tabWidget->setTabToolTip
     (
-        Tab_Metronome, "Options for the metronome and count-in"
+        Tab_Metronome, "Options for metronome and count-in"
     );
+
     int metrotemp = rc().metro_settings().beats_per_bar();
     QString qmetrotemp = qt(std::to_string(metrotemp));
     ui->lineedit_metro_beats_per_bar->setText(qmetrotemp);
@@ -1088,10 +1071,10 @@ qseditoptions::setup_tab_metronome ()
                 enable_combobox_item(out, bus, enabled);
             }
         }
-        ui->combobox_metro_buss->setCurrentIndex(thrubus);
+        out->setCurrentIndex(thrubus);
         connect
         (
-            ui->combobox_metro_buss, SIGNAL(currentIndexChanged(int)),
+            out, SIGNAL(currentIndexChanged(int)),
             this, SLOT(slot_metro_thru_buss(int))
         );
     }
@@ -1374,7 +1357,7 @@ qseditoptions::slot_metro_recording ()
 {
     bool on = ui->checkbox_metro_recording->isChecked();
     rc().metro_settings().count_in_recording(on);
-    modify_metronome(false);                        /* no reload button */
+    modify_metronome(true);                        /* no reload button */
 }
 
 void
@@ -1386,7 +1369,7 @@ qseditoptions::slot_metro_recording_measures ()
     if (measures != rc().metro_settings().recording_measures())
     {
         rc().metro_settings().recording_measures(measures);
-        modify_metronome(false);                    /* no reload button */
+        modify_metronome(true);                    /* no reload button */
     }
 }
 
@@ -1397,7 +1380,7 @@ qseditoptions::slot_metro_record_buss (int index)
     if (index != b)
     {
         rc().metro_settings().recording_buss(midibyte(index));
-        modify_metronome(false);                    /* no reload button */
+        modify_metronome(true);                    /* no reload button */
     }
 }
 
