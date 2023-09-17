@@ -1865,14 +1865,62 @@ qslivegrid::popup_menu ()
 
     if (perf().is_seq_active(m_current_seq))
     {
-        /**
-         *  Buss menu
-         */
-
         mastermidibus * mmb = perf().master_bus();
         seq::pointer seq = perf().get_sequence(m_current_seq);
         if (not_nullptr(mmb))
         {
+#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
+
+            /**
+             *  Input buss menu. It is optional. The default is "Free",
+             *  which means the mastermidibus uses the active current
+             *  pattern for input.
+             */
+
+            QMenu * menuinbuss = new_qmenu("Input Bus");
+            const inputslist & ipm = input_port_map();
+            int inbuses = ipm.active() ?
+                ipm.count() : mmb->get_num_in_buses() ;
+
+            for (int bus = 0; bus < inbuses; ++bus)
+            {
+                bool active;
+                std::string busname;
+                if (perf().ui_get_input(bussbyte(bus), active, busname))
+                {
+                    QAction * a = new_qaction(busname, menuinbuss);
+                    a->setCheckable(true);
+                    a->setChecked(seq->true_in_bus() == bus);
+                    connect
+                    (
+                        a, &QAction::triggered,
+                        [this, bus] { set_midi_in_bus(bus); }
+                    );
+                    menuinbuss->addAction(a);
+                    if (! active)
+                        a->setEnabled(false);
+                }
+            }
+
+            QAction * f = new_qaction("Free", menuinbuss);
+            bussbyte nullbuss = null_buss();
+            f->setCheckable(true);
+            f->setChecked(is_null_buss(seq->true_in_bus()));
+            connect
+            (
+                f, &QAction::triggered,
+                [this, nullbuss] { set_midi_in_bus(nullbuss); }
+            );
+            menuinbuss->addAction(f);
+            m_popup->addSeparator();
+            m_popup->addMenu(menuinbuss);
+
+#endif
+
+            /**
+             *  Output buss menu
+             */
+
             QMenu * menubuss = new_qmenu("Output Bus");
             const clockslist & opm = output_port_map();
             int buses = opm.active() ?

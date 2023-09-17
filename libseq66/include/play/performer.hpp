@@ -72,7 +72,7 @@
  *  EXPERIMENTAL.  Route events by the buss on which the event came in on.
  */
 
-#undef  SEQ66_ROUTE_EVENTS_BY_BUSS
+#define SEQ66_ROUTE_EVENTS_BY_BUSS
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -853,10 +853,12 @@ private:                            /* key, midi, and op container section  */
     bool m_route_by_buss;
 
     /**
-     *  Provides a mapping of busses to patterns.
+     *  Provides a mapping of input busses to patterns. Treated like an array
+     *  with bussbyte indices ranging from 0 to the number of input ports
+     *  minus 1.
      */
 
-    std::vector<bussbyte, sequence *> m_buss_patterns;
+    std::vector<sequence *> m_buss_patterns;
 
 #endif
 
@@ -2146,11 +2148,11 @@ public:
 
     bool set_midi_bus (seq::number seqno, int buss);
     bool set_midi_channel (seq::number seqno, int channel);
+    bool set_midi_in_bus (seq::number seqno, int buss);
     bool set_sequence_name (seq::ref s, const std::string & name);
     bool set_recording (seq::number seqno, toggler flag);
     bool set_recording (seq::ref s, toggler flag);
     bool set_recording (seq::ref s, alteration q, toggler flag);
-    // bool set_recording_style (recordstyle rs);   // see set_record_style()
     bool set_thru (seq::ref s, bool active, bool toggle);
 
 #if defined USE_SONG_BOX_SELECT

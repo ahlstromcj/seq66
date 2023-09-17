@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2022-09-04
+ * \updates       2022-09-17
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the old mainwid class.
@@ -187,6 +187,12 @@ void
 qslivebase::set_midi_channel (int channel)
 {
     (void) perf().set_midi_channel(m_current_seq, channel);
+}
+
+void
+qslivebase::set_midi_in_bus (int b)
+{
+    (void) perf().set_midi_in_bus(m_current_seq, b);
 }
 
 bool

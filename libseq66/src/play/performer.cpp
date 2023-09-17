@@ -3357,21 +3357,21 @@ performer::launch (int ppqn)
 #if defined SEQ66_ROUTE_EVENTS_BY_BUSS
 
 /**
- *  Iterate through the current set of patterns (in the playset only!) to
- *  find those that might specify an input buss. Only one pattern can grab ahold
- *  of an input buss.  All current busses are present in this vector, but some
+ *  Iterate through the current set of patterns (in the playset only!) to find
+ *  those that might specify an input buss. Only one pattern can grab ahold of
+ *  an input buss.  All current busses are present in this vector, but some
  *  might have a null pointer.
  *
- *  This function should be called whenever the buss setup changes, or whenever
- *  a pattern (except for the semi-hidden metronome pattern) is added or removed.
- *  Might also need to be updated when the playset changes.
+ *  This function should be called whenever the buss setup changes, or
+ *  whenever a pattern (except for the semi-hidden metronome pattern) is added
+ *  or removed.  Might also need to be updated when the playset changes.
  */
 
 bool
 performer::sequence_lookup_setup ()
 {
     bool result = false;
-    size_t buscount = (number of input busses);
+    size_t buscount = master_bus()->get_num_in_buses();
     m_buss_patterns.clear();
     for (size_t b = 0; b < buscount; ++b)
         m_buss_patterns.push_back(nullptr);
@@ -3387,7 +3387,7 @@ performer::sequence_lookup_setup ()
                 {
                     sequence * original = m_buss_patterns[b];
                     if (is_nullptr(original))
-                        m_buss_patterns[b] = seqi->get();   /* raw pointer  */
+                        m_buss_patterns[b] = seqi.get();    /* raw pointer  */
                 }
             }
         }
@@ -3401,7 +3401,7 @@ sequence *
 performer::sequence_lookup (const event & ev)
 {
     sequence * result = nullptr;
-    size_t b = size_t(ev.input_buss);
+    size_t b = size_t(ev.input_bus());
     if (b < m_buss_patterns.size())
         result = m_buss_patterns[b];
 
@@ -3984,6 +3984,17 @@ performer::set_midi_bus (seq::number seqno, int buss)
     bool result = bool(s);
     if (result)
         result = s->set_midi_bus(buss, true);           /* a user change    */
+
+    return result;
+}
+
+bool
+performer::set_midi_in_bus (seq::number seqno, int buss)
+{
+    seq::pointer s = get_sequence(seqno);
+    bool result = bool(s);
+    if (result)
+        result = s->set_midi_in_bus(buss, true);        /* a user change    */
 
     return result;
 }

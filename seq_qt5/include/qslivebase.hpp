@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2022-09-04
+ * \updates       2022-09-17
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child class, qslivegride, are Sequencer66's
@@ -182,6 +182,7 @@ protected:
     virtual void color_by_number (int i) = 0;   /* implemented!!!   */
     virtual void set_midi_bus (int b);
     virtual void set_midi_channel (int b);
+    virtual void set_midi_in_bus (int b);
 
     virtual bool recreate_all_slots ()
     {
