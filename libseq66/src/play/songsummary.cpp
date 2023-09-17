@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2023-06-26
+ * \updates       2023-09-17
  * \license       GNU GPLv2 or above
  *
  */
@@ -51,33 +51,33 @@ namespace seq66
 std::map<midilong, std::string>
 s_tag_names_container
 {
-    { c_midibus      ,  "Track buss number" },
-    { c_midichannel  ,  "Track channel number" },
-    { c_midiclocks   ,  "Track clocking" },
-    { c_triggers     ,  "Old triggers" },
-    { c_notes        ,  "Set notes" },
-    { c_timesig      ,  "Track time signature" },
-    { c_bpmtag       ,  "Main beats/minute" },
-    { c_triggers_ex  ,  "Track trigger data" },
-    { c_mutegroups   ,  "Song mute group data" },
-    { c_gap_A        ,  "Gap A" },
-    { c_gap_B        ,  "Gap B" },
-    { c_gap_C        ,  "Gap C" },
-    { c_gap_D        ,  "Gap D" },
-    { c_gap_E        ,  "Gap E" },
-    { c_gap_F        ,  "Gap F" },
-    { c_midictrl     ,  "MIDI control" },
-    { c_musickey     ,  "Track key" },
-    { c_musicscale   ,  "Track scale" },
-    { c_backsequence ,  "Track background sequence" },
-    { c_transpose    ,  "Track transposability" },
-    { c_perf_bp_mes  ,  "Perfedit beats/measure" },
-    { c_perf_bw      ,  "Perfedit beat-width" },
-    { c_tempo_map    ,  "Reserve seq32 tempo map" },
-    { c_reserved_1   ,  "Reserved 1" },
-    { c_reserved_2   ,  "Reserved 2" },
-    { c_tempo_track  ,  "Alternate tempo track number" },
-    { c_seq_color    ,  "Color" },
+    { c_midibus,        "Track output buss" },
+    { c_midichannel,    "Track output channel" },
+    { c_midiclocks,     "Track clocking" },
+    { c_triggers,       "Old triggers" },
+    { c_notes,          "Set notes" },
+    { c_timesig,        "Track time signature" },
+    { c_bpmtag,         "Main beats/minute" },
+    { c_triggers_ex,    "Track trigger data" },
+    { c_mutegroups,     "Song mute group data" },
+    { c_gap_A,          "Gap A" },
+    { c_gap_B,          "Gap B" },
+    { c_gap_C,          "Gap C" },
+    { c_gap_D,          "Gap D" },
+    { c_gap_E,          "Gap E" },
+    { c_gap_F,          "Gap F" },
+    { c_midictrl,       "MIDI control" },
+    { c_musickey,       "Track key" },
+    { c_musicscale,     "Track scale" },
+    { c_backsequence,   "Track background sequence" },
+    { c_transpose,      "Track transposability" },
+    { c_perf_bp_mes,    "Perfedit beats/measure" },
+    { c_perf_bw,        "Perfedit beat-width" },
+    { c_tempo_map,      "Reserve seq32 tempo map" },
+    { c_midiinbus,      "Track input bus" },
+    { c_reserved_2,     "Reserved 2" },
+    { c_tempo_track,    "Alternate tempo track number" },
+    { c_seq_color,      "Color" },
     { c_seq_edit_mode,  "Normal/drum edit mode, not saved/used" },
     { c_seq_loopcount,  "N-repeat for pattern" },
     { c_reserved_3,     "Reserved 3" },
@@ -166,12 +166,13 @@ songsummary::write_sequence (std::ofstream & file, seq::pointer s)
     int triggercount = s->trigger_count();
     file
         << "Sequence #" << s->seq_number() << " '" << s->name() << "'\n"
-        << "         Port #: " << int(s->seq_midi_bus()) << "\n"
+        << "   Input port #: " << int(s->seq_midi_in_bus()) << "-->"
+                               << int(s->true_in_bus()) << "\n"
+        << "  Output port #: " << int(s->seq_midi_bus()) << "-->"
+                               << int(s->true_bus()) << "\n"
         << "        Channel: " << int(s->seq_midi_channel()) << "\n"
         << "          Beats: " << s->get_beats_per_bar() << "/"
                                << s->get_beat_width() << "\n"
-        << "         Busses: " << int(s->seq_midi_bus()) << "-->"
-                               << int(s->true_bus()) << "\n"
         << " Length (ticks): " << long(s->get_length()) << "\n"
         << "Events;triggers: " << s->event_count() << "; "
                                << triggercount << "\n"

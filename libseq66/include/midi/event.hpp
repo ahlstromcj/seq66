@@ -196,6 +196,8 @@ const midibyte EVENT_MIDI_META           = 0xFFu;   // an escape code
  *
  *      -   Set Tempo (0x51)
  *      -   Time Signature (0x58)
+ *
+ *  TODO: Add these to rtl66.
  */
 
 const midibyte EVENT_META_SEQ_NUMBER     = 0x00u;
@@ -206,6 +208,8 @@ const midibyte EVENT_META_INSTRUMENT     = 0x04u;   // meta text
 const midibyte EVENT_META_LYRIC          = 0x05u;   // meta text
 const midibyte EVENT_META_MARKER         = 0x06u;   // meta text
 const midibyte EVENT_META_CUE_POINT      = 0x07u;   // meta text
+const midibyte EVENT_META_PROGRAM_NAME   = 0x08u;   // NEW: name of patch
+const midibyte EVENT_META_PORT_NAME      = 0x09u;   // NEW: name of out-port
 const midibyte EVENT_META_MIDI_CHANNEL   = 0x20u;   // skipped, obsolete
 const midibyte EVENT_META_MIDI_PORT      = 0x21u;   // skipped, obsolete
 const midibyte EVENT_META_END_OF_TRACK   = 0x2Fu;

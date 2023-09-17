@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-09-13
+ * \updates       2023-09-17
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -375,6 +375,10 @@ performer::performer (int ppqn, int rows, int columns) :
     m_us_per_quarter_note   (0),
     m_master_bus            (),                 /* this is a shared pointer */
     m_filter_by_channel     (false),
+#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
+    m_route_by_buss         (false),
+    m_buss_patterns         (),
+#endif
     m_one_measure           (0),
     m_fast_ticks            (0),
     m_left_tick             (0),
@@ -1888,36 +1892,6 @@ performer::finish_recorder ()
 
     // TODO notify all subscribers
 
-#if 0
-        seq::number seqno = 0;
-        result = install_sequence(m_recorder, seqno);   /* side-effect      */
-        if (result)
-        {
-            const seq::pointer s = get_sequence(seqno);
-            result = not_nullptr(s);
-            if (result)
-            {
-                seq::number finalseq = s->seq_number();
-                std::ostringstream os;
-                os << "Added background recording as sequence #"
-                    << int(finalseq) << std::endl ;
-
-                (void) info_message(os.str());
-                s->set_dirty();
-                announce_sequence(s, finalseq);         /* issue #112       */
-                notify_sequence_change(finalseq, change::recreate);
-            }
-            m_recorder->uninitialize();                     // ???
-        }
-        else
-            delete m_recorder;                          /* remove bad one   */
-
-        m_recorder = nullptr;                           /* nullify          */
-    }
-    else
-        remove_recorder();
-#endif
-
     return result;
 }
 
@@ -2017,27 +1991,6 @@ performer::new_sequence (seq::number & finalseq, seq::number seqno)
 
     return result;
 }
-
-#if 0
-    bool result = not_nullptr(seqptr);
-    if (result && seq != seq::unassigned())
-    {
-        result = install_sequence(seqptr, seq);
-        if (result)
-        {
-            const seq::pointer s = get_sequence(seq);
-            result = not_nullptr(s);
-            if (result)
-            {
-                s->set_dirty();
-                finalseq = s->seq_number();
-                announce_sequence(s, finalseq);         /* issue #112       */
-                notify_sequence_change(finalseq, change::recreate);
-            }
-        }
-    }
-    return result;
-#endif
 
 bool
 performer::new_sequence (sequence * seqptr, seq::number seqno)
@@ -3401,6 +3354,62 @@ performer::launch (int ppqn)
     return result;
 }
 
+#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
+
+/**
+ *  Iterate through the current set of patterns (in the playset only!) to
+ *  find those that might specify an input buss. Only one pattern can grab ahold
+ *  of an input buss.  All current busses are present in this vector, but some
+ *  might have a null pointer.
+ *
+ *  This function should be called whenever the buss setup changes, or whenever
+ *  a pattern (except for the semi-hidden metronome pattern) is added or removed.
+ *  Might also need to be updated when the playset changes.
+ */
+
+bool
+performer::sequence_lookup_setup ()
+{
+    bool result = false;
+    size_t buscount = (number of input busses);
+    m_buss_patterns.clear();
+    for (size_t b = 0; b < buscount; ++b)
+        m_buss_patterns.push_back(nullptr);
+
+    for (auto seqi : play_set().seq_container())
+    {
+        if (seqi)
+        {
+            if (! seqi->is_metro_seq())
+            {
+                bussbyte b = seqi->true_in_bus();
+                if (b < buscount)
+                {
+                    sequence * original = m_buss_patterns[b];
+                    if (is_nullptr(original))
+                        m_buss_patterns[b] = seqi->get();   /* raw pointer  */
+                }
+            }
+        }
+        else
+            append_error_message("set bus on null sequence");
+    }
+    return result;
+}
+
+sequence *
+performer::sequence_lookup (const event & ev)
+{
+    sequence * result = nullptr;
+    size_t b = size_t(ev.input_buss);
+    if (b < m_buss_patterns.size())
+        result = m_buss_patterns[b];
+
+    return result;
+}
+
+#endif  // defined SEQ66_ROUTE_EVENTS_BY_BUSS
+
 /**
  *  Announces the current mute states of the now-current play-screen.  This
  *  function is handled by creating a slothandler that calls the
@@ -4621,10 +4630,30 @@ performer::poll_cycle ()
                         else
                         {
                             ev.set_timestamp(get_tick());
+
+#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
+
+                            if (m_route_by_buss)
+                            {
+                                sequence * sp = sequence_lookup(ev);
+                                if (is_nullptr(sp))
+                                    sp = m_master_bus->get_sequence();
+
+                                sp->stream_event(ev);
+                            }
+                            else
+                            {
+                                if (m_filter_by_channel)
+                                    m_master_bus->dump_midi_input(ev);
+                                else
+                                    m_master_bus->get_sequence()->stream_event(ev);
+                            }
+#else
                             if (m_filter_by_channel)
                                 m_master_bus->dump_midi_input(ev);
                             else
                                 m_master_bus->get_sequence()->stream_event(ev);
+#endif
                         }
                     }
                     else

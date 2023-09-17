@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-09-06
+ * \updates       2023-09-17
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -444,6 +444,14 @@ private:
      */
 
     bussbyte m_true_bus;
+
+    /**
+     *  Similar to the above, but for the input buss, a new feature.
+     *  Unlike the output buss, this input buss is optional.
+     */
+
+    bussbyte m_nominal_in_bus;
+    bussbyte m_true_in_bus;
 
     /**
      *  Provides a flag for pattern playback song muting.
@@ -1691,9 +1699,20 @@ public:
         return m_true_bus;
     }
 
+    bussbyte seq_midi_in_bus () const
+    {
+        return m_nominal_in_bus;
+    }
+
+    bussbyte true_in_bus () const
+    {
+        return m_true_in_bus;
+    }
+
     bool set_master_midi_bus (const mastermidibus * mmb);
     bool set_midi_bus (bussbyte mb, bool user_change = false);
     bool set_midi_channel (midibyte ch, bool user_change = false);
+    bool set_midi_in_bus (bussbyte mb, bool user_change = false);
     int select_note_events
     (
         midipulse tick_s, int note_h,

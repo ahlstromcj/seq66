@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-06
+ * \updates       2023-09-17
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -150,8 +150,10 @@ sequence::sequence (int ppqn) :
     m_channel_match             (false),
     m_midi_channel              (0),            /* null_channel() better?   */
     m_free_channel              (false),
-    m_nominal_bus               (0),
+    m_nominal_bus               (0),            /* out buss default value   */
     m_true_bus                  (null_buss()),
+    m_nominal_in_bus            (null_buss()),  /* optional input buss no.  */
+    m_true_in_bus               (null_buss()),
     m_song_mute                 (false),
     m_transposable              (true),
     m_notes_on                  (0),
@@ -306,6 +308,8 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
         m_free_channel              = rhs.m_free_channel;
         m_nominal_bus               = rhs.m_nominal_bus;
         m_true_bus                  = rhs.m_true_bus;
+        m_nominal_in_bus            = rhs.m_nominal_in_bus;
+        m_true_in_bus               = rhs.m_true_in_bus;
         m_song_mute                 = rhs.m_song_mute;
         m_transposable              = rhs.m_transposable;
         m_notes_on                  = 0;
@@ -5515,19 +5519,20 @@ bool
 sequence::set_midi_bus (bussbyte nominalbus, bool user_change)
 {
     automutex locker(m_mutex);
+    if (is_nullptr(perf()))
+    {
+        m_true_bus = null_buss();           /* provides an invalid value    */
+        return false;
+    }
+
     bool result = nominalbus != m_nominal_bus && is_good_buss(nominalbus);
     if (result)
     {
         off_playing_notes();                /* off notes except initial     */
         m_nominal_bus = nominalbus;
-        if (not_nullptr(perf()))
-        {
-            m_true_bus = perf()->true_output_bus(nominalbus);
-            if (is_null_buss(m_true_bus))
-                m_true_bus = nominalbus;    /* named buss no longer exists  */
-        }
-        else
-            m_true_bus = null_buss();       /* provides an invalid value    */
+        m_true_bus = perf()->true_output_bus(nominalbus);
+        if (is_null_buss(m_true_bus))
+            m_true_bus = nominalbus;        /* named buss no longer exists  */
 
         if (user_change)
             modify();                       /* no easy way to undo this     */
@@ -5537,10 +5542,46 @@ sequence::set_midi_bus (bussbyte nominalbus, bool user_change)
     }
     else
     {
-        if (is_null_buss(m_true_bus) && not_nullptr(perf()))
+        if (is_null_buss(m_true_bus))
         {
             m_true_bus = perf()->true_output_bus(nominalbus);
             if (is_null_buss(m_true_bus))
+                m_true_bus = nominalbus;    /* named buss no longer exists  */
+        }
+    }
+    return result;
+}
+
+bool
+sequence::set_midi_in_bus (bussbyte nominalbus, bool user_change)
+{
+    automutex locker(m_mutex);
+    if (is_nullptr(perf()))
+    {
+        m_true_in_bus = null_buss();        /* provides an invalid value    */
+        return false;
+    }
+
+    bool result = nominalbus != m_nominal_in_bus && is_good_buss(nominalbus);
+    if (result)
+    {
+        m_nominal_in_bus = nominalbus;
+        m_true_in_bus = perf()->true_input_bus(nominalbus);
+        if (is_null_buss(m_true_in_bus))
+            m_true_in_bus = nominalbus;     /* named buss no longer exists  */
+
+        if (user_change)
+            modify();                       /* no easy way to undo this     */
+
+        notify_change(user_change);         /* more reliable than set dirty */
+        set_dirty();                        /* this is for display updating */
+    }
+    else
+    {
+        if (is_null_buss(m_true_in_bus))
+        {
+            m_true_in_bus = perf()->true_input_bus(nominalbus);
+            if (is_null_buss(m_true_in_bus))
                 m_true_bus = nominalbus;    /* named buss no longer exists  */
         }
     }

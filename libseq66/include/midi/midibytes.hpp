@@ -199,11 +199,11 @@ const midibyte c_midibyte_data_max  = midibyte(0x80u);
 const midibyte c_midibyte_value_max = 127;
 
 /**
- *  The number of MIDI notes supported.  The notes range from 0 to 127.
+ *  The number of MIDI notes supported.  The notes range from 0 to 127 (0x7F).
  */
 
 const int c_notes_count   = 128;
-const midibyte c_note_max = 127;
+const midibyte c_note_max = 0x7F;
 
 /**
  *  Maximum and unusable values.  Use these values to avoid sign issues.

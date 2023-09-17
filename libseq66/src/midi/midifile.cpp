@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-07-06
+ * \updates       2023-09-17
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -703,7 +703,8 @@ midifile::grab_input_stream (const std::string & tag)
  *  Note that only Seq66 adds "FF 7F len" to the SeqSpec data.
  *
  *  Standard MIDI provides for port and channel specification meta events, but
- *  they are apparently considered obsolete:
+ *  they are considered obsolete. They were meant to change port and
+ *  channel on the fly during playback, apparently
  *
 \verbatim
     Obsolete meta-event:                Replacement:
@@ -1351,6 +1352,11 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 (void) s.set_midi_bus(read_byte());
                                 --len;
                             }
+                            else if (seqspec == c_midiinbus)
+                            {
+                                (void) s.set_midi_in_bus(read_byte());
+                                --len;
+                            }
                             else if (seqspec == c_midichannel)
                             {
                                 midibyte channel = read_byte();
@@ -1851,7 +1857,7 @@ midifile::parse_seqspec_track (performer & p, int file_size)
  *      c_midictrl         c_midiclocks      c_notes          c_bpmtag
  *      c_mutegroups       c_musickey *      c_musicscale *
  *      c_backsequence *   c_perf_bp_mes     c_perf_bw        c_tempo_map !
- *      c_reserved_1 !     c_reserved_2 !    c_tempo_track
+ *      c_midiinbus !      c_reserved_2 !    c_tempo_track
  *
  * Not handled:
  *
@@ -1880,13 +1886,29 @@ midifile::prop_header_loop (performer & p, int file_size)
             case c_backsequence:    ok = parse_c_backsequence();    break;
             case c_perf_bp_mes:     ok = parse_c_perf_bp_mes(p);    break;
             case c_perf_bw:         ok = parse_c_perf_bw(p);        break;
-            case c_tempo_track:     ok = parse_c_tempo_track();     break;
 #if defined USE_SEQ32_SEQSPECS      /* stazed features not implemented */
             case c_tempo_map:
-            case c_reserved_1:
-            case c_reserved_2:
+#endif
+            case c_midiinbus:       ok = false; /* TODO */          break;
+#if defined USE_SEQ32_SEQSPECS      /* stazed features not implemented */
                 break;
 #endif
+
+            /*
+             * The following are handled in the event-read loop, or are
+             * not handled:
+             *
+             * case c_reserved_2:       (unhandled)
+             * case c_seq_color:
+             * case c_seq_edit_mode:    (unhandled)
+             * case c_seq_loopcount:
+             * case c_reserved_3:       (unhandled)
+             * case c_reserved_4:       (unhandled)
+             * case c_trig_transpose:
+             */
+
+            case c_tempo_track:     ok = parse_c_tempo_track();     break;
+
             default:
                 break;
             }
@@ -1912,7 +1934,7 @@ midifile::parse_c_midictrl (performer & /* p*/)
         (void) set_error_dump
         (
             "Bad MIDI-control sequence count, fixing.\n"
-            "Please save the file now!",
+            "Save the file now!",
             midilong(ctrls)
         );
         ctrls = midilong(read_byte());

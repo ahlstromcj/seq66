@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2023-04-28
+ * \updates       2023-09-17
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -53,6 +53,7 @@
             c_seq_color (performance colors for a sequence)
             c_seq_edit_mode (unused by Seq66)
             c_seq_loopcount
+            c_midiinbus (new)
 \endverbatim
  *
  *  Note that c_seq_color in Seq66 is stored per sequence, and only if
@@ -71,7 +72,8 @@
             c_perf_bp_mes (perfedit's beats-per-measure setting)
             c_perf_bw     (perfedit's beat-width setting)
             c_tempo_map   (seq32's tempo map)
-            c_reserved_1 and c_reserved_2
+            c_midiinbus
+            c_reserved_2
             c_tempo_track (holds the song's particular tempo track)
 \endverbatim
  *
@@ -518,15 +520,23 @@ midi_vector_base::fill_tempo (const performer & p)
 void
 midi_vector_base::fill_proprietary ()
 {
-    put_seqspec(c_midibus, 1);
-    put(seq().seq_midi_bus());                 /* MIDI buss number     */
-
-    put_seqspec(c_timesig, 2);
+    bussbyte b = seq().seq_midi_bus();              /* MIDI out buss number */
+    if (is_good_buss(b))
+    {
+        put_seqspec(c_midibus, 1);
+        put(b);                                     /* MIDI out buss number */
+    }
+    b = seq().seq_midi_in_bus();                    /* MIDI out buss number */
+    if (is_good_buss(b))
+    {
+        put_seqspec(c_midiinbus, 1);
+        put(b);                                     /* MIDI in buss number  */
+    }
+    put_seqspec(c_timesig, 2);                      /* Time Sig bytes b/w   */
     put(seq().get_beats_per_bar());
     put(seq().get_beat_width());
-
-    put_seqspec(c_midichannel, 1);
-    put(seq().seq_midi_channel());             /* 0 to 15 or 0x80      */
+    put_seqspec(c_midichannel, 1);                  /* MIDI output channel  */
+    put(seq().seq_midi_channel());                  /* 0 to 15 or 0x80      */
     if (! usr().global_seq_feature())
     {
         /**
@@ -832,7 +842,7 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
     if (doseqspec)
     {
         /*
-         * Here, we add SeqSpec entries (specific to seq66) for triggers
+         * Here, we add SeqSpec entries (specific to Seq66) for triggers
          * (c_triggers_ex or c_trig_transpose), the MIDI buss (c_midibus),
          * time signature (c_timesig), and MIDI channel (c_midichannel).
          * Should we restrict this to only track 0?  No, Seq66 saves these

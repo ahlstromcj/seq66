@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-09-13
+ * \updates       2023-09-17
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -63,10 +63,16 @@
 #endif
 
 /*
- *  EXPERIMENTAL. Make port-mapping the default.
+ *  Make port-mapping the default.
  */
 
 #define SEQ66_USE_DEFAULT_PORT_MAPPING
+
+/*
+ *  EXPERIMENTAL.  Route events by the buss on which the event came in on.
+ */
+
+#undef  SEQ66_ROUTE_EVENTS_BY_BUSS
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -431,10 +437,13 @@ private:
      *  pattern armed, the program eats up one whole CPU on an i7.  Setting
      *  this macro cuts that roughly in half... except when a pattern is
      *  armed.
+     *
+     *  Note that the second playset here is accessed by the play_set()
+     *  function while count-in is in progress.
      */
 
-    playset m_play_set;
-    playset m_play_set_storage;
+    playset m_play_set;                 /* normal and metronome patterns    */
+    playset m_play_set_storage;         /* only for metronome count-in      */
 
     /**
      *  Provides an optional play-list, loosely patterned after Stazed's Seq32
@@ -831,6 +840,25 @@ private:                            /* key, midi, and op container section  */
      */
 
     bool m_filter_by_channel;
+
+#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
+
+    /**
+     *  If true, we can try to route events by their buss number. We have
+     *  a flag for quick checking to see if the bus/sequence vector is
+     *  usable. Note that filtering by channel and routing by buss are
+     *  incompatible with each other.
+     */
+
+    bool m_route_by_buss;
+
+    /**
+     *  Provides a mapping of busses to patterns.
+     */
+
+    std::vector<bussbyte, sequence *> m_buss_patterns;
+
+#endif
 
     /**
      *  Holds the "one measure's worth" of pulses (ticks), which is normally
@@ -1717,6 +1745,13 @@ public:
             master_bus()->filter_by_channel(flag);
     }
 
+#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
+
+    bool sequence_lookup_setup ();
+    sequence * sequence_lookup (const event & ev);
+
+#endif
+
     /*
      *  Used in synchronizing starting/stopping playback and in coordination
      *  with jack_assistant (transport).
@@ -2473,7 +2508,9 @@ public:
 
     bool install_sequence
     (
-        sequence * seq, seq::number & seqno, bool fileload = false
+        sequence * seq,
+        seq::number & seqno,
+        bool fileload = false
     );
     bool install_metronome ();
     bool reload_metronome ();

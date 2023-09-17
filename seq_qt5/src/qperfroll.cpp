@@ -1077,7 +1077,8 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         painter.setBrush(gradbrush);
                         pen.setColor(fore_color());     /* use box color    */
                         painter.setPen(pen);
-                        painter.drawRect(x + 1, y + 1, w - 2, h - 1);
+//                      painter.drawRect(x + 1, y + 1, w - 2, h - 1);
+                        painter.drawRect(x + 1, y + 3, w - 2, h - 1);
                     }
                     else
                     {

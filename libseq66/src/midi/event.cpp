@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-06
+ * \updates       2023-09-16
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -1061,7 +1061,7 @@ event::to_string () const
 
     const char * label = is_meta() ? "type" : "channel" ;
     std::string result = tmp;
-    result += is_linked() ? "L" : " ";
+    result += is_linked() ? "L" : "U";
     result += is_marked() ? "M" : " ";
     result += is_selected() ? "S" : " ";
     result += is_painted() ? "P" : " ";
