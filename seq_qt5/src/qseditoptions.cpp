@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-15
+ * \updates       2023-09-18
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -331,6 +331,24 @@ qseditoptions::setup_tab_midi_clock ()
         ui->lineEditTempoTrack, SIGNAL(editingFinished()),
         this, SLOT(slot_tempo_track())
     );
+
+    /*
+     * Buss override (simplistic for now)
+     */
+
+    int buss_override = usr().midi_buss_override();
+    std::string botext = std::to_string(buss_override);
+    ui->lineEditBussOverride->setText(qt(botext));
+    connect
+    (
+        ui->lineEditBussOverride, SIGNAL(editingFinished()),
+        this, SLOT(slot_buss_override())
+    );
+
+    /*
+     * Tempo precision combo-box.
+     */
+
     for (int i = 0; i <= 2; ++i)            /* c_max_bpm_precision */
     {
         QString s = QString::number(i);
@@ -3228,6 +3246,22 @@ qseditoptions::slot_tempo_track ()
         bool ok = track >= 0 && track < seq::maximum();
         ui->pushButtonTempoTrack->setEnabled(ok);
         modify_rc();
+    }
+}
+
+void
+qseditoptions::slot_buss_override ()
+{
+    QString text = ui->lineEditBussOverride->text();
+    std::string t = text.toStdString();
+    if (! t.empty())
+    {
+        bussbyte buss_override = bussbyte(string_to_int(t));
+        if (is_valid_buss(buss_override))
+        {
+            usr().midi_buss_override(buss_override);
+            modify_usr();
+        }
     }
 }
 

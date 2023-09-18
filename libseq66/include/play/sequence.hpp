@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-09-17
+ * \updates       2023-09-18
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1295,7 +1295,7 @@ public:
         bool verify = true
     );
 
-    void set_measures (int measures);
+    void set_measures (int measures, bool user_change = false);
     bool apply_length (int bpb, int ppqn, int bw, int measures = 0);
     bool extend_length ();
     bool double_length ();

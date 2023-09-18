@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-11
+ * \updates       2023-09-18
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -342,6 +342,23 @@ qsmainwnd::qsmainwnd
                     enable_bus_item(bus, false);
             }
         }
+
+        /*
+         * Global buss combo-box.  If we set the buss override, we have to add
+         * 1 to it to allow for the "None" entry.
+         */
+
+        bussbyte buss_override = usr().midi_buss_override();
+        if (is_good_buss(buss_override) && buss_override < buses)
+            ui->cmb_global_bus->setCurrentIndex(int(buss_override) + 1);
+        else
+            ui->cmb_global_bus->setCurrentIndex(0);
+
+        connect
+        (
+            ui->cmb_global_bus, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(update_midi_bus(int))
+        );
     }
 
     /*
@@ -753,21 +770,6 @@ qsmainwnd::qsmainwnd
     (
         ui->spinBpm, SIGNAL(editingFinished()),
         this, SLOT(edit_bpm())
-    );
-
-    /*
-     * Global buss combo-box.  If we set the buss override, we have to add 1
-     * to it to allow for the "None" entry.
-     */
-
-    bussbyte buss_override = usr().midi_buss_override();
-    if (is_good_buss(buss_override))
-        ui->cmb_global_bus->setCurrentIndex(int(buss_override) + 1);
-
-    connect
-    (
-        ui->cmb_global_bus, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(update_midi_bus(int))
     );
 
     /*

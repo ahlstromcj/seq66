@@ -21,6 +21,7 @@
      </property>
      <property name="font">
       <font>
+       <weight>50</weight>
        <bold>false</bold>
       </font>
      </property>
@@ -28,7 +29,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -42,12 +43,13 @@
         <rect>
          <x>10</x>
          <y>430</y>
-         <width>597</width>
+         <width>589</width>
          <height>81</height>
         </rect>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -60,60 +62,6 @@
        <property name="flat">
         <bool>true</bool>
        </property>
-       <widget class="QLineEdit" name="lineEditTempoTrack">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>40</y>
-          <width>42</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="toolTip">
-         <string/>
-        </property>
-        <property name="readOnly">
-         <bool>false</bool>
-        </property>
-        <property name="placeholderText">
-         <string>0</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="textLabelTempoTrack">
-        <property name="geometry">
-         <rect>
-          <x>64</x>
-          <y>44</y>
-          <width>189</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="toolTip">
-         <string/>
-        </property>
-        <property name="text">
-         <string>Tempo track number</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushButtonTempoTrack">
-        <property name="geometry">
-         <rect>
-          <x>433</x>
-          <y>36</y>
-          <width>157</width>
-          <height>32</height>
-         </rect>
-        </property>
-        <property name="toolTip">
-         <string>Saves the tempo track number to the MIDI file.</string>
-        </property>
-        <property name="text">
-         <string>Set Tempo Track</string>
-        </property>
-       </widget>
        <widget class="QLabel" name="label_meta_events">
         <property name="geometry">
          <rect>
@@ -125,6 +73,7 @@
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -132,95 +81,86 @@
          <string>Meta Events</string>
         </property>
        </widget>
-       <widget class="QComboBox" name="comboBoxBpmPrecision">
+       <widget class="QWidget" name="">
         <property name="geometry">
          <rect>
-          <x>368</x>
-          <y>40</y>
-          <width>57</width>
-          <height>25</height>
+          <x>10</x>
+          <y>36</y>
+          <width>588</width>
+          <height>33</height>
          </rect>
         </property>
+        <layout class="QGridLayout" name="gridLayout_8" columnstretch="1,4,3,2,4">
+         <item row="0" column="0">
+          <widget class="QLineEdit" name="lineEditTempoTrack">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+           <property name="placeholderText">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="textLabelTempoTrack">
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="text">
+            <string>Tempo track number</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="label_clock_precision">
+           <property name="text">
+            <string>Precision</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QComboBox" name="comboBoxBpmPrecision">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>28</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QPushButton" name="pushButtonTempoTrack">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Saves the tempo track number to the MIDI file.</string>
+           </property>
+           <property name="text">
+            <string>Set Tempo Track</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
-       <widget class="QLabel" name="label_clock_precision">
-        <property name="geometry">
-         <rect>
-          <x>288</x>
-          <y>44</y>
-          <width>77</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Precision</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QWidget" name="layoutWidgetClockStart">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>352</y>
-         <width>349</width>
-         <height>33</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizLayoutClockStartModulo" stretch="8,1">
-        <item>
-         <widget class="QLabel" name="labelClockStartModulo">
-          <property name="font">
-           <font>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="toolTip">
-           <string>Sets the position after which MIDI clocking begins.</string>
-          </property>
-          <property name="text">
-           <string>Clock Start Modulo (1/16 Notes)</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBoxClockStartModulo">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>1024</number>
-          </property>
-          <property name="value">
-           <number>64</number>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QPushButton" name="pushButtonStoreMap">
-       <property name="geometry">
-        <rect>
-         <x>389</x>
-         <y>352</y>
-         <width>100</width>
-         <height>32</height>
-        </rect>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Saves maps of I/O port numbers and names to the 'rc' file.
-Each port number can be found by name-lookup.</string>
-       </property>
-       <property name="text">
-        <string>Make Maps</string>
-       </property>
       </widget>
       <widget class="QLabel" name="label">
        <property name="geometry">
@@ -233,6 +173,7 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -265,30 +206,6 @@ Each port number can be found by name-lookup.</string>
         <string>0</string>
        </property>
       </widget>
-      <widget class="QCheckBox" name="ioPortsMappedCheck">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>396</x>
-         <y>516</y>
-         <width>221</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>If checked, the output port map was active.</string>
-       </property>
-       <property name="text">
-        <string>MIDI I/O Port Mapping</string>
-       </property>
-      </widget>
       <widget class="QLabel" name="portsClocksLabel">
        <property name="geometry">
         <rect>
@@ -307,6 +224,7 @@ Each port number can be found by name-lookup.</string>
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -320,7 +238,7 @@ Each port number can be found by name-lookup.</string>
          <x>10</x>
          <y>40</y>
          <width>591</width>
-         <height>301</height>
+         <height>273</height>
         </rect>
        </property>
        <property name="frameShape">
@@ -347,7 +265,7 @@ Each port number can be found by name-lookup.</string>
           <x>0</x>
           <y>0</y>
           <width>589</width>
-          <height>299</height>
+          <height>271</height>
          </rect>
         </property>
        </widget>
@@ -363,6 +281,7 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -381,6 +300,7 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -393,7 +313,7 @@ Each port number can be found by name-lookup.</string>
         <rect>
          <x>28</x>
          <y>388</y>
-         <width>581</width>
+         <width>573</width>
          <height>45</height>
         </rect>
        </property>
@@ -409,6 +329,7 @@ Each port number can be found by name-lookup.</string>
          <widget class="QLabel" name="labelMidiOutBuss">
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -422,18 +343,128 @@ Each port number can be found by name-lookup.</string>
         </item>
        </layout>
       </widget>
-      <widget class="QPushButton" name="pushButtonRemoveMap">
+      <widget class="QWidget" name="">
        <property name="geometry">
         <rect>
-         <x>496</x>
-         <y>352</y>
-         <width>112</width>
-         <height>32</height>
+         <x>30</x>
+         <y>320</y>
+         <width>569</width>
+         <height>70</height>
         </rect>
        </property>
-       <property name="text">
-        <string>Clear Maps</string>
-       </property>
+       <layout class="QGridLayout" name="gridLayout_7">
+        <item row="0" column="0" colspan="2">
+         <layout class="QHBoxLayout" name="horizLayoutClockStartModulo" stretch="8,1">
+          <item>
+           <widget class="QLabel" name="labelClockStartModulo">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>Sets the position after which MIDI clocking begins.</string>
+            </property>
+            <property name="text">
+             <string>Clock Start Modulo (ticks)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBoxClockStartModulo">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>1024</number>
+            </property>
+            <property name="value">
+             <number>64</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="2" colspan="2">
+         <widget class="QCheckBox" name="ioPortsMappedCheck">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="toolTip">
+           <string>If checked, the output port map was active.</string>
+          </property>
+          <property name="text">
+           <string>MIDI I/O Port Maps</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_20">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Buss Override</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEditBussOverride">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>28</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="pushButtonStoreMap">
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Saves maps of I/O port numbers and names to the 'rc' file.
+Each port number can be found by name-lookup.</string>
+          </property>
+          <property name="text">
+           <string>Create</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QPushButton" name="pushButtonRemoveMap">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Clear</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
      <widget class="QWidget" name="tabMidiInput">
@@ -454,6 +485,7 @@ Each port number can be found by name-lookup.</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -577,6 +609,7 @@ slot by channel number (0 to 15).</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -597,6 +630,7 @@ slot by channel number (0 to 15).</string>
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -663,6 +697,7 @@ slot by channel number (0 to 15).</string>
          <widget class="QLabel" name="labelMidiCtrlIn">
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -698,6 +733,7 @@ slot by channel number (0 to 15).</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -1321,6 +1357,7 @@ Range: 0.5 to 3.0</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -1340,6 +1377,7 @@ Range: 0.5 to 3.0</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1358,6 +1396,7 @@ Range: 0.5 to 3.0</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1399,6 +1438,7 @@ Range: 0.5 to 3.0</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1417,6 +1457,7 @@ Range: 0.5 to 3.0</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1666,6 +1707,7 @@ connects to the MIDI I/O ports it finds.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1684,6 +1726,7 @@ connects to the MIDI I/O ports it finds.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -1746,6 +1789,7 @@ in the Song Editor.</string>
          </property>
          <property name="font">
           <font>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1763,6 +1807,7 @@ in the Song Editor.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1785,6 +1830,7 @@ playback resumes.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1808,6 +1854,7 @@ the default PPQN.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1828,6 +1875,7 @@ the default PPQN.</string>
          <property name="font">
           <font>
            <family>Sans</family>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1899,6 +1947,7 @@ Seq66 exits.</string>
          </property>
          <property name="font">
           <font>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1916,6 +1965,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1934,11 +1984,12 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
           <property name="text">
-           <string>Auto-Arm. When moving to the next set, it automatically arms.</string>
+           <string>Auto-Arm. When moving to the ne&amp;xt set, it automatically arms.</string>
           </property>
          </widget>
          <widget class="QRadioButton" name="radio_setsmode_additive">
@@ -1952,6 +2003,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1970,6 +2022,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1995,6 +2048,7 @@ Seq66 exits.</string>
          </property>
          <property name="font">
           <font>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -2012,11 +2066,12 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
           <property name="text">
-           <string>Live. Musician controls arming/muting.</string>
+           <string>Li&amp;ve. Musician controls arming/muting.</string>
           </property>
          </widget>
          <widget class="QRadioButton" name="radio_startmode_song">
@@ -2030,6 +2085,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2048,6 +2104,7 @@ Seq66 exits.</string>
           </property>
           <property name="font">
            <font>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2093,6 +2150,7 @@ Seq66 exits.</string>
          <widget class="QLabel" name="label_metro_timesig">
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -2107,6 +2165,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_bpb">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2122,6 +2181,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_beat_width">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2144,6 +2204,7 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2159,6 +2220,7 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2217,6 +2279,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_output_specs">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2232,6 +2295,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_main_note">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2244,6 +2308,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_sub_notes">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2256,6 +2321,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_patch">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2277,6 +2343,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_note">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2298,6 +2365,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_velocity">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2319,6 +2387,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_length_fraction">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2375,6 +2444,7 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2403,6 +2473,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_channel">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2444,6 +2515,7 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2495,6 +2567,7 @@ Seq66 exits.</string>
             </property>
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2523,6 +2596,7 @@ Seq66 exits.</string>
            <widget class="QLabel" name="label_metro_thru_channel">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2749,6 +2823,7 @@ Seq66 exits.</string>
        </property>
        <property name="font">
         <font>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -2765,7 +2840,7 @@ Seq66 exits.</string>
          </rect>
         </property>
         <property name="text">
-         <string>None. Normal Seq66 operation.</string>
+         <string>None. Normal Se&amp;q66 operation.</string>
         </property>
        </widget>
        <widget class="QRadioButton" name="radio_session_nsm">
@@ -2805,6 +2880,7 @@ Seq66 exits.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -2825,6 +2901,7 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -2852,6 +2929,7 @@ required.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -3081,6 +3159,7 @@ required.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3100,6 +3179,7 @@ required.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3197,6 +3277,7 @@ required.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3261,6 +3342,7 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3280,6 +3362,7 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3299,6 +3382,7 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3379,6 +3463,7 @@ path added to this name is stripped.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -3424,6 +3509,7 @@ path added to this name is stripped.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>

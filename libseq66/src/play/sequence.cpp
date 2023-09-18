@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-17
+ * \updates       2023-09-18
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1161,10 +1161,10 @@ sequence::unit_measure (bool reset) const
 }
 
 void
-sequence::set_measures (int measures)
+sequence::set_measures (int measures, bool user_change)
 {
     bool modded = set_length(measures * unit_measure(true));
-    if (modded)
+    if (modded && user_change)
         modify();
 }
 
@@ -5505,7 +5505,8 @@ sequence::get_last_tick () const
  * \param nominalbus
  *      The MIDI buss to set as the buss number for this sequence.  Also
  *      called the "MIDI port" number.  This number is not necessarily the
- *      true system bus number
+ *      true system bus number. We no longer check that nominalbus !=
+ *      m_nominal_bus. Saves some trouble.
  *
  * \param user_change
  *      If true (the default value is false), the user has decided to change
@@ -5519,34 +5520,26 @@ bool
 sequence::set_midi_bus (bussbyte nominalbus, bool user_change)
 {
     automutex locker(m_mutex);
-    if (is_nullptr(perf()))
-    {
-        m_true_bus = null_buss();           /* provides an invalid value    */
-        return false;
-    }
-
-    bool result = nominalbus != m_nominal_bus && is_good_buss(nominalbus);
+    bool result = is_valid_buss(nominalbus);
     if (result)
     {
-        off_playing_notes();                /* off notes except initial     */
-        m_nominal_bus = nominalbus;
-        m_true_bus = perf()->true_output_bus(nominalbus);
-        if (is_null_buss(m_true_bus))
-            m_true_bus = nominalbus;        /* named buss no longer exists  */
-
-        if (user_change)
-            modify();                       /* no easy way to undo this     */
-
-        notify_change(user_change);         /* more reliable than set dirty */
-        set_dirty();                        /* this is for display updating */
-    }
-    else
-    {
-        if (is_null_buss(m_true_bus))
+        m_nominal_bus = nominalbus;             /* log the putative buss    */
+        if (is_nullptr(perf()))                 /* "parent" is not yet set  */
         {
+            m_true_bus = null_buss();           /* an invalid value         */
+        }
+        else
+        {
+            off_playing_notes();                /* off notes except initial */
             m_true_bus = perf()->true_output_bus(nominalbus);
             if (is_null_buss(m_true_bus))
-                m_true_bus = nominalbus;    /* named buss no longer exists  */
+                m_true_bus = nominalbus;        /* buss no longer exists    */
+
+            if (user_change)
+                modify();                       /* no easy way to undo this */
+
+            notify_change(user_change);         /* better than set_dirty()  */
+            set_dirty();                        /* for display updating     */
         }
     }
     return result;
@@ -5556,33 +5549,25 @@ bool
 sequence::set_midi_in_bus (bussbyte nominalbus, bool user_change)
 {
     automutex locker(m_mutex);
-    if (is_nullptr(perf()))
-    {
-        m_true_in_bus = null_buss();        /* provides an invalid value    */
-        return false;
-    }
-
-    bool result = nominalbus != m_nominal_in_bus && is_good_buss(nominalbus);
+    bool result = is_valid_buss(nominalbus);
     if (result)
     {
-        m_nominal_in_bus = nominalbus;
-        m_true_in_bus = perf()->true_input_bus(nominalbus);
-        if (is_null_buss(m_true_in_bus))
-            m_true_in_bus = nominalbus;     /* named buss no longer exists  */
-
-        if (user_change)
-            modify();                       /* no easy way to undo this     */
-
-        notify_change(user_change);         /* more reliable than set dirty */
-        set_dirty();                        /* this is for display updating */
-    }
-    else
-    {
-        if (is_null_buss(m_true_in_bus))
+        m_nominal_in_bus = nominalbus;          /* log the putative buss    */
+        if (is_nullptr(perf()))                 /* "parent" is not yet set  */
+        {
+            m_true_in_bus = null_buss();        /* an invalid value         */
+        }
+        else
         {
             m_true_in_bus = perf()->true_input_bus(nominalbus);
             if (is_null_buss(m_true_in_bus))
-                m_true_bus = nominalbus;    /* named buss no longer exists  */
+                m_true_in_bus = nominalbus;     /* named buss no longer exists  */
+
+            if (user_change)
+                modify();                       /* no easy way to undo this     */
+
+            notify_change(user_change);         /* more reliable than set dirty */
+            set_dirty();                        /* this is for display updating */
         }
     }
     return result;

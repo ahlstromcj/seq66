@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-09-17
+ * \updates       2023-09-18
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1366,7 +1366,11 @@ performer::true_output_bus (bussbyte nominalbuss) const
                 msg += busname;
                 msg += "\"";
             }
-            msg += ". Check ports in the song or 'rc'/'ctrl' files.";
+            msg +=
+                ". Check assigned ports in the song, 'rc', 'ctrl' files, "
+                "and the MIDI and Metronome tabs. Also check the Session "
+                "tab's file-names."
+                ;
             m_port_map_error = true;                /* mutable boolean      */
             append_error_message(msg);
         }
@@ -3585,7 +3589,7 @@ performer::set_beats_per_measure (int bpm, bool user_change)
                 if (result)
                 {
                     sp->set_beats_per_bar(bpm, user_change);
-                    sp->set_measures(sp->get_measures());
+                    sp->set_measures(sp->get_measures(), user_change);
                 }
                 return result;
             }

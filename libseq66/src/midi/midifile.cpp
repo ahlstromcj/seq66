@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-17
+ * \updates       2023-09-18
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1888,9 +1888,6 @@ midifile::prop_header_loop (performer & p, int file_size)
             case c_perf_bw:         ok = parse_c_perf_bw(p);        break;
 #if defined USE_SEQ32_SEQSPECS      /* stazed features not implemented */
             case c_tempo_map:
-#endif
-            case c_midiinbus:       ok = false; /* TODO */          break;
-#if defined USE_SEQ32_SEQSPECS      /* stazed features not implemented */
                 break;
 #endif
 
