@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2023-09-03
+ * \updates       2023-09-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -219,7 +219,7 @@ opcontrol::automation_slot_name (slot s)
         "Panic",                // 42 panic *
         "Visibility",           // 43 visibility *
         "Save Session",         // 44 save_session
-        "Reserved 45",          // 45 reserved_45
+        "Record Toggle",        // 45 record_toggle
         "Reserved 46",          // 46 reserved_46
         "Reserved 47",          // 47 reserved_47
         "Reserved 48",          // 48 reserved_48

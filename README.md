@@ -1,4 +1,4 @@
-# README for Seq66 0.99.9 2023-09-11
+# README for Seq66 0.99.9 2023-09-19
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -95,7 +95,7 @@ Windows, and using a conventional source tarball.
         *   Added live-note mapping (needs testing!), refactoring set-record
             code.
         *   Implemented automation for BBT/HMS toggling, FF/Rewind, Undo/Redo,
-            Play-set Copy/Paste.
+            Play-set Copy/Paste, and Record Toggle.
         *   Added HTML help files to data/share/doc/info, other documentation
             upgrades.
     *   Version 0.99.8:

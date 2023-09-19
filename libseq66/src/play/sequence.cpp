@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-18
+ * \updates       2023-09-19
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -5498,7 +5498,10 @@ sequence::get_last_tick () const
 }
 
 /**
- *  Sets the MIDI buss/port number to dump MIDI data to.
+ *  Sets the MIDI buss/port number to dump MIDI data to. When first called,
+ *  there is generally no performer yet, so all that it done is to set the
+ *  nominal buss. Later, set_parent() is called and here we then determine
+ *  the true system MIDI bus in use by this sequence.
  *
  * \threadsafe
  *
@@ -5544,6 +5547,11 @@ sequence::set_midi_bus (bussbyte nominalbus, bool user_change)
     }
     return result;
 }
+
+/**
+ *  Similar to set_midi_bus(), but supports the new and optional input
+ *  buss.
+ */
 
 bool
 sequence::set_midi_in_bus (bussbyte nominalbus, bool user_change)
@@ -6691,6 +6699,7 @@ sequence::set_parent (performer * p)
         if (get_length() < barlength)       /* pad sequence to a measure    */
             set_length(barlength, false);
 
+        (void) set_midi_in_bus(m_nominal_in_bus);
         if (is_null_buss(buss_override))
             (void) set_midi_bus(m_nominal_bus);
         else

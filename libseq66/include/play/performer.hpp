@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-09-17
+ * \updates       2023-09-19
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -70,9 +70,12 @@
 
 /*
  *  EXPERIMENTAL.  Route events by the buss on which the event came in on.
+ *  Does not work with Seq66's current JACK implementation or with Windows.
  */
 
+#if defined SEQ66_JACK_SUPPORT
 #define SEQ66_ROUTE_EVENTS_BY_BUSS
+#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -1073,12 +1076,20 @@ private:                            /* key, midi, and op container section  */
     mutable bool m_seq_edit_pending;
 
     /**
-     *  Set to true if automation_event_pending() is called.  It is reset by the
-     *  caller as a side-effect.  The usual (but configurable) keystroke for
-     *  this function is "-". In Sequencer64 this was m_call_seq_eventedit.
+     *  Set to true if automation_event_pending() is called.  It is reset by
+     *  the caller as a side-effect.  The usual (but configurable) keystroke
+     *  for this function is "-". In Sequencer64 this was
+     *  m_call_seq_eventedit.
      */
 
     mutable bool m_event_edit_pending;
+
+    /**
+     *  Set to true to use the next hot-key to toggle the recording status of
+     *  the pattern selected.
+     */
+
+    mutable bool m_record_toggle_pending;
 
     /**
      *  Holds the loop number in the case of using the edit keys.  It is
@@ -3577,6 +3588,11 @@ public:
         m_event_edit_pending = ! m_event_edit_pending;
     }
 
+    void toggle_record_edit ()
+    {
+        m_record_toggle_pending = ! m_record_toggle_pending;
+    }
+
     bool seq_edit_pending () const
     {
         return m_seq_edit_pending;
@@ -3587,9 +3603,15 @@ public:
         return m_event_edit_pending;
     }
 
+    bool record_toggle_pending () const
+    {
+        return m_event_edit_pending;
+    }
+
     bool call_seq_edits () const
     {
-        return m_seq_edit_pending || m_event_edit_pending;
+        return m_seq_edit_pending || m_event_edit_pending ||
+            m_record_toggle_pending;
     }
 
     seq::number pending_loop () const
@@ -3880,6 +3902,11 @@ public:
         int index, bool inverse
     );
     bool automation_save_session
+    (
+        automation::action a, int d0, int d1,
+        int index, bool inverse
+    );
+    bool automation_record_toggle
     (
         automation::action a, int d0, int d1,
         int index, bool inverse

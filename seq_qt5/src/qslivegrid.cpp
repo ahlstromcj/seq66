@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-09-18
+ * \updates       2023-09-19
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1208,6 +1208,23 @@ qslivegrid::sequence_key_check ()
             perf().clear_seq_edits();
         }
     }
+
+    /*
+     * We have no need to signal this one, and can hanlde it in the
+     * performer object.
+     */
+
+#if 0       // we have no signal for this one, and can
+    else if (perf().record_toggle_pending())
+    {
+        if (ok)
+        {
+            m_current_seq = seqno;
+            record_sequence();
+            perf().clear_seq_edits();
+        }
+    }
+#endif
     else if (ok)
     {
         /*
@@ -1874,8 +1891,12 @@ qslivegrid::popup_menu ()
             /**
              *  Input buss menu. It is optional. The default is "Free",
              *  which means the mastermidibus uses the active current
-             *  pattern for input.
+             *  pattern for input. Currently doesn't work with Seq66's
+             *  ALSA implementation.
              */
+
+            if (rc().with_jack_midi())
+            {
 
             QMenu * menuinbuss = new_qmenu("Input Bus");
             const inputslist & ipm = input_port_map();
@@ -1919,6 +1940,8 @@ qslivegrid::popup_menu ()
             menuinbuss->addAction(f);
             m_popup->addSeparator();
             m_popup->addMenu(menuinbuss);
+
+            }   /* if (rc().with_jack_midi()) */
 #endif
 
             /**

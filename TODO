@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.9
 Chris Ahlstrom
-2019-04-13 to 2023-09-15
+2019-04-13 to 2023-09-19
 
 Misc:
 
@@ -22,6 +22,7 @@ Misc:
     -   Randomizing seems to have a negative bias (after many repeats).
     -   Add a feature to start playback when the first note comes
         into a pattern when recording is set. [Turns out to be quite tricky!]
+    -   Implement drag-and-drop to open a MIDI file.
     -   Cannot duplicate:
         -   File / New keeps the previous file name. Cannot duplicate.
         -   Open t.midi, start playing, stop, then add more notes. They are

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2023-09-02
+ * \updates       2023-09-19
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -233,7 +233,7 @@ enum class slot
     panic,              /**< 42: The Panic Button.                          */
     visibility,         /**< 43: Toggle the visibility of the main window.  */
     save_session,       /**< 44: Save the MIDI and configuration files now. */
-    reserved_45,        /**< 45: Reserved for expansion.                    */
+    record_toggle,      /**< 45: Enter toggle-record for next hot-key.      */
     reserved_46,        /**< 46: Reserved for expansion.                    */
     reserved_47,        /**< 47: Reserved for expansion.                    */
     reserved_48,        /**< 48: Reserved for expansion.                    */

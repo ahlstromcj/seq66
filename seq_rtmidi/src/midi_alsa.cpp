@@ -245,6 +245,9 @@ midi_alsa::api_init_out ()
 /**
  *  Initialize the MIDI input port.
  *
+ *      SND_SEQ_PORT_CAP_SUBS_WRITE:    Allow write subscription.
+ *      SND_SEQ_PORT_CAP_NO_EXPORT:     Routing not allowed.
+ *
  * \tricky
  *      One important thing to note is that this input port is initialized
  *      with the SND_SEQ_PORT_CAP_WRITE flag, which means this is really an
@@ -271,8 +274,9 @@ midi_alsa::api_init_in ()
         return false;
     }
     else
+    {
         m_local_addr_port = rcode;
-
+    }
     rcode = snd_seq_connect_from
     (
         m_seq, m_local_addr_port, m_dest_addr_client, m_dest_addr_port

@@ -140,7 +140,7 @@ midi_alsa_info::midi_alsa_info
     snd_seq_t * seq;                        /* point to member              */
     int rcode = snd_seq_open                /* set up ALSA sequencer client */
     (
-        &seq, "default", SND_SEQ_OPEN_DUPLEX, c_open_block_mode
+        &seq, "default", SND_SEQ_OPEN_DUPLEX, c_open_block_mode     /* vs 0 */
     );
     if (rcode < 0)
     {
@@ -785,8 +785,8 @@ midi_alsa_info::api_get_midi_event (event * inev)
             );
             bool sysex = inev->is_sysex();
             inev->set_input_bus(b);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            warnprintf("Input on buss %d\n", int(b));
+#if defined SEQ66_PLATFORM_DEBUG // _TMI
+            printf("[seq66] input event on ALSA bus %d\n", int(b));
 #endif
             while (sysex)           /* sysex might be more than one message */
             {

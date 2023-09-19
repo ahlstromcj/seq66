@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-09-18
+ * \updates       2023-09-19
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -415,6 +415,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_signalled_changes     (! usr().app_is_headless()),
     m_seq_edit_pending      (false),
     m_event_edit_pending    (false),
+    m_record_toggle_pending (false),
     m_pending_loop          (seq::unassigned()),
     m_slot_shift            (0),
     m_hidden                (false),
@@ -2011,6 +2012,9 @@ performer::new_sequence (sequence * seqptr, seq::number seqno)
             {
                 int finalseq = s->seq_number();
                 s->set_dirty();
+#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
+                m_route_by_buss = sequence_lookup_setup();
+#endif
                 announce_sequence(s, finalseq);         /* issue #112       */
                 notify_sequence_change(finalseq, change::recreate);
             }
@@ -2108,6 +2112,9 @@ performer::remove_sequence (seq::number seqno)
     {
         seq::number buttonno = seqno - playscreen_offset();
         send_seq_event(buttonno, midicontrolout::seqaction::removed);
+#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
+        m_route_by_buss = sequence_lookup_setup();
+#endif
         notify_sequence_change(seqno, change::recreate);
         modify();
     }
@@ -2125,10 +2132,6 @@ performer::copy_sequence (seq::number seqno)
     return result;
 }
 
-/**
- *  TODO: make this work more like remove_sequence().
- */
-
 bool
 performer::cut_sequence (seq::number seqno)
 {
@@ -2140,7 +2143,7 @@ performer::cut_sequence (seq::number seqno)
         if (result)
         {
             m_seq_clipboard.partial_assign(*s);
-            result = remove_sequence(seqno);
+            result = remove_sequence(seqno);        /* handles notification */
         }
     }
     return result;
@@ -2153,7 +2156,7 @@ performer::paste_sequence (seq::number seqno)
     if (result)
     {
         static seq::number s_dummy;
-        if (new_sequence(s_dummy, seqno))
+        if (new_sequence(s_dummy, seqno))           /* handles notification */
         {
             seq::pointer s = get_sequence(seqno);
             s->partial_assign(m_seq_clipboard);
@@ -2168,7 +2171,7 @@ performer::merge_sequence (seq::number seqno)
     bool result = false;
     if (! is_seq_active(seqno))
     {
-        result = paste_sequence(seqno);
+        result = paste_sequence(seqno);             /* handles notification */
     }
     else
     {
@@ -2891,6 +2894,9 @@ performer::set_playing_screenset (screenset::number setno)
              * Nothing to do?
              */
         }
+#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
+        m_route_by_buss = sequence_lookup_setup();
+#endif
         announce_playscreen();                      /* inform control-out   */
         notify_set_change(setno, change::signal);   /* change::no           */
     }
@@ -3375,28 +3381,34 @@ bool
 performer::sequence_lookup_setup ()
 {
     bool result = false;
-    size_t buscount = master_bus()->get_num_in_buses();
-    m_buss_patterns.clear();
-    for (size_t b = 0; b < buscount; ++b)
-        m_buss_patterns.push_back(nullptr);
-
-    for (auto seqi : play_set().seq_container())
+    if (rc().with_jack_midi())
     {
-        if (seqi)
+        size_t buscount = master_bus()->get_num_in_buses();
+        m_buss_patterns.clear();
+        for (size_t b = 0; b < buscount; ++b)
+            m_buss_patterns.push_back(nullptr);
+
+        for (auto seqi : play_set().seq_container())
         {
-            if (! seqi->is_metro_seq())
+            if (seqi)
             {
-                bussbyte b = seqi->true_in_bus();
-                if (b < buscount)
+                if (! seqi->is_metro_seq())
                 {
-                    sequence * original = m_buss_patterns[b];
-                    if (is_nullptr(original))
-                        m_buss_patterns[b] = seqi.get();    /* raw pointer  */
+                    bussbyte b = seqi->true_in_bus();           /* CAREFUL!     */
+                    if (b < buscount)
+                    {
+                        sequence * original = m_buss_patterns[b];
+                        if (is_nullptr(original))
+                        {
+                            m_buss_patterns[b] = seqi.get();    /* raw pointer  */
+                            result = true;
+                        }
+                    }
                 }
             }
+            else
+                append_error_message("set bus on null sequence");
         }
-        else
-            append_error_message("set bus on null sequence");
     }
     return result;
 }
@@ -6925,7 +6937,7 @@ performer::sequence_playing_change (seq::number seqno, bool on)
 void
 performer::clear_seq_edits ()
 {
-    m_seq_edit_pending = m_event_edit_pending = false;
+    m_seq_edit_pending = m_event_edit_pending;
     m_pending_loop = seq::unassigned();
 }
 
@@ -7629,7 +7641,13 @@ performer::loop_control
             clear_slot_shift();
         }
         m_pending_loop = seqno;
-        if (m_seq_edit_pending || m_event_edit_pending)
+        if (m_record_toggle_pending)
+        {
+            m_pending_loop = seq::unassigned();
+            m_record_toggle_pending = false;
+            result = set_recording(seqno, toggler::flip);
+        }
+        else if (m_seq_edit_pending || m_event_edit_pending)
         {
             result = false;                             /* let caller do it */
         }
@@ -9542,13 +9560,27 @@ performer::automation_save_session
     int index, bool inverse
 )
 {
-    bool result = true;
     std::string name = auto_name(automation::slot::save_session);
     print_parameters(name, a, d0, d1, index, inverse);
     if (a == automation::action::on && ! inverse)
         signal_save();                     /* actually just raises a flag  */
 
-    return result;
+    return true;
+}
+
+bool
+performer::automation_record_toggle
+(
+    automation::action a, int d0, int d1,
+    int index, bool inverse
+)
+{
+    std::string name = auto_name(automation::slot::record_toggle);
+    print_parameters(name, a, d0, d1, index, inverse);
+    if (! inverse)
+        m_record_toggle_pending = true;
+
+    return true;
 }
 
 /**
@@ -9996,7 +10028,10 @@ performer::sm_auto_func_list [] =
         automation::slot::save_session,
         &performer::automation_save_session
     },
-    { automation::slot::reserved_45, &performer::automation_no_op        },
+    {
+        automation::slot::record_toggle,
+        &performer::automation_record_toggle
+    },
     { automation::slot::reserved_46, &performer::automation_no_op        },
     { automation::slot::reserved_47, &performer::automation_no_op        },
     { automation::slot::reserved_48, &performer::automation_no_op        },
