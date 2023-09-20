@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-18
+ * \updates       2023-09-20
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -923,7 +923,10 @@ qsmainwnd::qsmainwnd
     ui->alsaJackButton->setText("PortMidi");
     ui->jackTransportButton->hide();
 #else
-    QString midiengine = rc().with_jack_midi() ? "JACK" : "ALSA" ;
+    QString midiengine = rc().with_jack_midi() ? "JACK" : "?" ;
+    if (rc().with_alsa_midi())
+        midiengine = "ALSA";
+
     if (cb_perf().is_jack_master())
         ui->jackTransportButton->setText("Master");
     else if (cb_perf().is_jack_slave())

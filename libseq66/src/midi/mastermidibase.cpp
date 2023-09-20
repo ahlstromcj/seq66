@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2023-06-28
+ * \updates       2023-09-20
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -911,8 +911,8 @@ mastermidibase::set_sequence_input (bool state, sequence * seq)
     }
     else
     {
-        m_seq = seq;
         m_dumping_input = state;
+        m_seq = state ? seq : nullptr ;
     }
     return result;
 }

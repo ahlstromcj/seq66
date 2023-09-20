@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-09-15
+ * \updates       2023-09-20
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -87,10 +87,11 @@ rcsettings::rcsettings () :
     m_with_jack_master          (false),
     m_with_jack_master_cond     (false),
 #if defined SEQ66_RTMIDI_SUPPORT
-    m_with_jack_midi            (true),     /* hmmmmmmmmmm              */
+    m_with_jack_midi            (true),     /* tentative                    */
 #else
     m_with_jack_midi            (false),
 #endif
+    m_with_alsa_midi            (false),    /* unless ALSA gets selected    */
     m_jack_auto_connect         (true),
     m_jack_use_offset           (true),
     m_jack_buffer_size          (0),
@@ -194,10 +195,11 @@ rcsettings::set_defaults ()
     m_with_jack_master          = false;
     m_with_jack_master_cond     = false;
 #if defined SEQ66_RTMIDI_SUPPORT
-    m_with_jack_midi            = true;     /* hmmmmmmmmmm              */
+    m_with_jack_midi            = true;
 #else
     m_with_jack_midi            = false;
 #endif
+    m_with_alsa_midi            = false;    /* unless ALSA gets selected    */
     m_jack_auto_connect         = true;
     m_jack_use_offset           = true;
     m_jack_buffer_size          = 0;
@@ -1366,6 +1368,21 @@ rcsettings::port_naming_string (portname v) const
         default:                 result = "unknown";     break;
     }
     return result;
+}
+
+/**
+ *  In ALSA (and PortMidi), there is only one input (POLLIN) descriptor.
+ *  As far as we can tell, this allows only 1 input.  For example, when
+ *  running two instances of VMPK, without recording, only one instance
+ *  yields a note.  What about with two real devices? It works.
+ *
+ *  So, don't bother trying to use two instances of VMPK for testing.
+ */
+
+bool
+rcsettings::sequence_lookup_support () const
+{
+    return with_jack_midi() || with_alsa_midi() || with_port_midi();
 }
 
 }           // namespace seq66

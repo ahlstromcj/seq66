@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-18
+ * \updates       2023-09-20
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -326,6 +326,7 @@ qseditoptions::setup_tab_midi_clock ()
         ui->spinBoxClockStartModulo, SIGNAL(valueChanged(int)),
         this, SLOT(slot_clock_start_modulo(int))
     );
+    ui->lineEditTempoTrack->setEnabled(true);
     connect
     (
         ui->lineEditTempoTrack, SIGNAL(editingFinished()),
@@ -360,6 +361,7 @@ qseditoptions::setup_tab_midi_clock ()
         ui->comboBoxBpmPrecision, SIGNAL(currentIndexChanged(int)),
         this, SLOT(slot_bpm_precision(int))
     );
+    ui->pushButtonTempoTrack->setEnabled(false);
     connect
     (
         ui->pushButtonTempoTrack, SIGNAL(clicked(bool)),
@@ -387,21 +389,6 @@ qseditoptions::setup_tab_midi_clock ()
     (
         ui->ioPortsMappedCheck, SIGNAL(clicked(bool)),
         this, SLOT(slot_activate_io_maps())
-    );
-
-    /*
-     * The virtual port counts for input and output.
-     */
-
-    connect
-    (
-        ui->lineEditOutputCount, SIGNAL(editingFinished()),
-        this, SLOT(slot_virtual_out_count())
-    );
-    connect
-    (
-        ui->lineEditInputCount, SIGNAL(editingFinished()),
-        this, SLOT(slot_virtual_in_count())
     );
 
     std::string clid = perf().client_id_string();
@@ -451,25 +438,6 @@ qseditoptions::setup_tab_midi_input ()
          */
 
         setup_input_combo_box(buses, in);
-#if 0
-        for (int bus = 0; bus < buses; ++bus)
-        {
-            std::string busname;
-            bool inputing;
-            bool good = perf().ui_get_input(bus, inputing, busname);
-            if (good)
-            {
-                bool enabled = ! perf().is_input_system_port(bus);
-                in->addItem(qt(busname));
-                enable_combobox_item(in, bus, enabled);
-            }
-        }
-
-        bool active = perf().midi_control_in().configure_enabled();
-        int buss = perf().midi_control_in().configured_buss();
-        in->setCurrentIndex(buss);
-        ui->checkBoxMidiInBuss->setChecked(active);
-#endif
         connect
         (
             in, SIGNAL(currentIndexChanged(int)),
@@ -491,10 +459,30 @@ qseditoptions::setup_tab_midi_input ()
         ui->checkBoxRecordByChannel, SIGNAL(clicked(bool)),
         this, SLOT(slot_record_by_channel())
     );
+
+    bool isvirtualports = rc().manual_ports();
+    ui->checkBoxVirtualPorts->setChecked(isvirtualports);
     connect
     (
         ui->checkBoxVirtualPorts, SIGNAL(clicked(bool)),
         this, SLOT(slot_virtual_ports())
+    );
+
+    /*
+     * The virtual port counts for input and output.
+     */
+
+    ui->lineEditOutputCount->setEnabled(isvirtualports);
+    connect
+    (
+        ui->lineEditOutputCount, SIGNAL(editingFinished()),
+        this, SLOT(slot_virtual_out_count())
+    );
+    ui->lineEditInputCount->setEnabled(isvirtualports);
+    connect
+    (
+        ui->lineEditInputCount, SIGNAL(editingFinished()),
+        this, SLOT(slot_virtual_in_count())
     );
 
     QSpacerItem * spacer2 = new QSpacerItem
@@ -1902,8 +1890,6 @@ qseditoptions::slot_start_mode (int buttonno)
 
 /**
  *  A run-time-only setting.  No configuration modification.
- *
- *  TODO:  Remove this button; it's not really a configuration change.
  */
 
 void
@@ -3244,8 +3230,11 @@ qseditoptions::slot_tempo_track ()
     {
         int track = string_to_int(t);
         bool ok = track >= 0 && track < seq::maximum();
-        ui->pushButtonTempoTrack->setEnabled(ok);
-        modify_rc();
+        if (ok)
+        {
+            ui->pushButtonTempoTrack->setEnabled(true);
+            modify_rc();
+        }
     }
 }
 
@@ -3297,6 +3286,8 @@ void
 qseditoptions::slot_virtual_ports ()
 {
     bool on = ui->checkBoxVirtualPorts->isChecked();
+    ui->lineEditOutputCount->setEnabled(on);
+    ui->lineEditInputCount->setEnabled(on);
     rc().manual_ports(on);
     modify_rc();
 }

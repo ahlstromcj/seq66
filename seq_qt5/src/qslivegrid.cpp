@@ -1895,7 +1895,7 @@ qslivegrid::popup_menu ()
              *  ALSA implementation.
              */
 
-            if (rc().with_jack_midi())
+            if (rc().sequence_lookup_support())
             {
 
             QMenu * menuinbuss = new_qmenu("Input Bus");

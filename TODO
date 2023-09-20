@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.9
 Chris Ahlstrom
-2019-04-13 to 2023-09-19
+2019-04-13 to 2023-09-20
 
 Misc:
 
@@ -18,6 +18,9 @@ Misc:
     -   Make sure we have record-toggle automation!
     -   Make sure metronome buttons etc. still work. Recording measures
         not saved.
+    -   Green-on-black BBT/HMS in main window.
+    -   Add an option to show hide all the widgets surrounding the
+        live/grid.
     -   Make the performer get/put_settings() functions robust.
     -   Randomizing seems to have a negative bias (after many repeats).
     -   Add a feature to start playback when the first note comes

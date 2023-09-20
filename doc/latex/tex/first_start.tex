@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-07-19
+% \update      2023-09-20
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -50,13 +50,15 @@
    initially on the system
 
    Now start \textsl{Seq66} to use JACK or ALSA for MIDI.
-   For USB MIDI devices on JACK, the \texttt{a2jmidid} program must be running
+   For USB MIDI devices on JACK, the \texttt{a2jmidid} program might
+   need to be running
    (see \sectionref{sec:jack}, for details.)
-   On \textsl{Windows}, just run it \texttt{qpseq66.exe};
+   On \textsl{Windows}, just run \texttt{qpseq66.exe};
    see \sectionref{sec:windows}.
 
-   For better trouble-shooting, run it from the command-line at first and
-   provide a MIDI file.
+   For better trouble-shooting, run it via command-line in
+   a terminal window, at first and provide a MIDI file, to
+   see what messages might appear.
    The port settings will depend on your system.
    On our system, the synthesizer (\textsl{Yoshimi}) comes up on MIDI buss 5.
    (On \textsl{Windows}, buss 0 is the "MIDI Mapper", while buss 1 is the
@@ -74,7 +76,7 @@
    application:
 
    \begin{verbatim}
-      /usr/share/seq66-0.90/                          (Linux)
+      /usr/share/seq66-0.99/                          (Linux)
       C:/Program Files/Seq66/data/                    (Windows)
    \end{verbatim}
 
@@ -84,7 +86,7 @@
    The user configration files are stored in the user's "home" area:
 
    \begin{verbatim}
-      /home/user/.config/seq66/qseq66.*               (Linux)
+      /home/username/.config/seq66/qseq66.*           (Linux)
       C:/Users/username/AppData/Local/seq66           (Windows)
    \end{verbatim}
 
@@ -95,10 +97,11 @@
    Don't change the configuration files while \textsl{Seq66} is running, as
    they are generally re-saved at application exit.
 
-   \textbf{Bug}:
-      The irst-start change of input port setting does not get saved
-      to the 'rc' file. The workaround is to exit and rerun Seq66, and
-      make the setting again. Mysterious.
+   \textbf{Bug?}
+      The first-start change of input port settings might not get saved
+      to the 'rc' file. The workaround is to exit and rerun
+      \textsl{Seq66}, and make the setting again.
+      Mysterious.
 
 \subsection{Device Changes}
 \label{subsec:introduction_device_changes}
@@ -143,11 +146,14 @@
 \subsection{Windows}
 \label{subsec:introduction_windows}
 
-   Details about running in \textsl{Windows} can be found in the installed file
-   \texttt{C:/Program Files/Seq66/data/midi/readme.windows}.
-   But basically, the first-start depends on if it is a bare \textsl{Windows}
-   install, or if supplement MIDI support such as 
-   the CoolSoft MIDIMapper and VirtualMIDISynth have been installed.
+   Details about \textsl{Windows} is in the file
+   \texttt{C:/Program Files/Seq66/data/midi/readme.windows}
+   and in \sectionref{sec:windows}.
+   The first-start depends on if it is a bare \textsl{Windows}
+   install, or if supplemental MIDI support such as 
+   the 
+   \textsl{CoolSoft MIDIMapper} and 
+   \textsl{VirtualMIDISynth} have been installed.
    If they haven't, the default MIDI setup will contain no MIDI inputs,
    and two MIDI outputs, the \textsl{MIDI Mapper} and the
    \textsl{Microsoft GS Wavetable} synthesizer.
@@ -157,7 +163,6 @@
    Therefore, run \textsl{Seq66} for the first time, then exit it and
    restart it. One should then be able to play MIDI files to the MIDI Mapper,
    if nothing else.
-
    We hope to get some input from Windows users, as our main usage is Linux
    and we run Windows only in an old virtual machine.
 

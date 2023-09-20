@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-09-15
+ * \updates       2023-09-20
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -270,6 +270,7 @@ private:
     bool m_with_jack_master;        /**< Serve as a JACK transport Master.  */
     bool m_with_jack_master_cond;   /**< Serve as JACK Master if possible.  */
     bool m_with_jack_midi;          /**< Use JACK MIDI.                     */
+    bool m_with_alsa_midi;          /**< Use ALSA MIDI.                     */
     bool m_jack_auto_connect;       /**< Connect JACK ports in normal mode. */
     bool m_jack_use_offset;         /**< Try to calculate output offset.    */
     int m_jack_buffer_size;         /**< The desired power-of-2 size, or 0. */
@@ -782,6 +783,22 @@ public:
         return m_with_jack_midi;
     }
 
+    bool with_alsa_midi () const
+    {
+        return m_with_alsa_midi;
+    }
+
+    bool with_port_midi () const
+    {
+#if defined SEQ66_PORTMIDI_SUPPORT
+        return true;
+#else
+        return false;
+#endif
+    }
+
+    bool sequence_lookup_support () const;
+
     bool jack_auto_connect () const
     {
         return m_jack_auto_connect;
@@ -842,6 +859,11 @@ public:
     void with_jack_midi (bool flag)
     {
         m_with_jack_midi = flag;
+    }
+
+    void with_alsa_midi (bool flag)
+    {
+        m_with_alsa_midi = flag;
     }
 
     void jack_auto_connect (bool flag)

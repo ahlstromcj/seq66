@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-09-13
+% \update      2023-09-20
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -96,6 +96,7 @@
 
    The individual items annoted in this figure are described in
    \sectionref{subsubsec:patterns_pattern_filled}, in more detail.
+   This figure is a little out-of-date re version 0.99.9.
    Also note the buttons for changing and showing the
    loop/recording modes of the grid buttons and recording quantization.
    \textsl{Seq66}'s pattern grid can be put in various recording
@@ -247,17 +248,26 @@
    to allow one to edit it, or perform a few other actions
    specified in the context menu.  Here is that menu:
 
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.65]{main-window/slot-record-toggle.png}
+   \caption{Slot Popup Menu (as of 0.99.9)}
+   \label{fig:slot_record_toggle}
+\end{figure}
+
    \begin{enumber}
       \item \textbf{New pattern}
       \item \textbf{External live frame for set ...} *
       \item \textbf{Edit pattern in tab} *
       \item \textbf{Edit pattern in window} *
       \item \textbf{Edit events in tab} *
-      \item \textbf{Set pattern color}
+      \item \textbf{Pattern color}
+      \item \textbf{Record toggle} (new)
       \item \textbf{Copy pattern}
       \item \textbf{Cut pattern}
       \item \textbf{Delete pattern}
       \item \textbf{Merge into pattern}
+      \item \textbf{Input Bus} (new)
       \item \textbf{Output Bus}
       \item \textbf{Output Channel}
    \end{enumber}
@@ -323,10 +333,18 @@
    The configuration file settings for the the '=' and
    '-' keys can be altered in the 'ctrl' file.
 
-   \itempar{Set Pattern Color}{pattern!color}
+   \itempar{Pattern Color}{pattern!color}
    Opens a menu to select a color for the pattern.  This selects a color
    palette value (index) into the currently loaded color palette.
+   32 palette colors are supported, and the palette can be modified.
    See \sectionref{sec:palettes}.
+
+   \itempar{Record Toggle}{pattern!record toggle}
+   Selecting this item toggles the recording status of the pattern.
+   Note that recording can also be set in the pattern editor, or via
+   the "record" loop-mode, or by automation.
+   (The default key is \texttt{+}; click it and then select the
+   desired slot via mouse or hot-key.)
 
    \itempar{Copy Pattern}{pattern!copy}
    Copies the pattern underneath the mouse cursor.
@@ -361,10 +379,50 @@
    \itempar{Output Bus}{pattern!buss}
    This item allows one to select the output buss for a pattern without having
    to open the editor.
+   Note that having an output buss setting for a pattern is mandatory.
+   The output buss is stored as a simple buss number ranging from 0 on up to
+   the number of MIDI output devices.
 
    \itempar{Output Channel}{pattern!channel}
    This item allows one to select the output channel for a pattern without
    having to open the editor.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.65]{main-window/slot-inputt-buss.png}
+   \caption{Input Bus Popup Menu (as of 0.99.9)}
+   \label{fig:slot_input_bus}
+\end{figure}
+
+   \itempar{Input Bus}{pattern!input buss}
+   As of version 0.99.9, \textsl{Seq66} supports an
+   \textsl{optional} input buss setting for each pattern.
+   Normally, the "current" pattern, which is the one opened in
+   the pattern editor or the only one with recording activated.
+
+   By setting an input buss, incoming MIDI events can be routed to
+   the pattern that is set to accept input from that buss.
+   As the figure shows, the full set of input ports is shown.
+   Some are disabled. (The "ALSA Announce" buss, should be disabled; this
+   is a bug.)
+
+   In the figure, the "Input B" pattern will accept events from
+   the \textsl{KORG nanoKEY2} keyboard.
+   If the \textbf{Free} entry is selected (the default), then
+   the pattern will accept input from any MIDI input port.
+
+   \textbf{Important}:
+   \begin{itemize}
+      \item If a MIDI input device is not enabled in the port list,
+         it will not work as an input buss.
+      \item If a MIDI input device is defined as an automation controller for
+         \textsl{Seq66}, it will not work as an input buss.
+      \item To disable the usage of input-buss routing, set the input buss
+         to \textbf{Free} for all patterns, then save and reload the file.
+      \item To record normally to a pattern, open the patter for recording
+         and use a MIDI device that has \textsl{not} been assigned as
+         a pattern's input buss.
+   \end{itemize}
    
 \subsubsection{Pattern}
 \label{subsubsec:patterns_pattern_filled}

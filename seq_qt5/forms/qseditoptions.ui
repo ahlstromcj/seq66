@@ -81,16 +81,19 @@
          <string>Meta Events</string>
         </property>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidgetMetaEvents">
         <property name="geometry">
          <rect>
           <x>10</x>
           <y>36</y>
-          <width>588</width>
+          <width>565</width>
           <height>33</height>
          </rect>
         </property>
-        <layout class="QGridLayout" name="gridLayout_8" columnstretch="1,4,3,2,4">
+        <layout class="QGridLayout" name="gridLayout_8" columnstretch="1,4,3,2,3">
+         <property name="horizontalSpacing">
+          <number>2</number>
+         </property>
          <item row="0" column="0">
           <widget class="QLineEdit" name="lineEditTempoTrack">
            <property name="enabled">
@@ -103,7 +106,13 @@
             </size>
            </property>
            <property name="toolTip">
-            <string/>
+            <string>Change track to hold tempo.</string>
+           </property>
+           <property name="maxLength">
+            <number>4</number>
+           </property>
+           <property name="frame">
+            <bool>true</bool>
            </property>
            <property name="readOnly">
             <bool>false</bool>
@@ -126,7 +135,7 @@
          <item row="0" column="2">
           <widget class="QLabel" name="label_clock_precision">
            <property name="text">
-            <string>Precision</string>
+            <string>BPM Precision</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -141,6 +150,12 @@
              <height>28</height>
             </size>
            </property>
+           <property name="maximumSize">
+            <size>
+             <width>64</width>
+             <height>16777215</height>
+            </size>
+           </property>
           </widget>
          </item>
          <item row="0" column="4">
@@ -149,6 +164,12 @@
             <size>
              <width>0</width>
              <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>140</width>
+             <height>16777215</height>
             </size>
            </property>
            <property name="toolTip">
@@ -343,7 +364,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidgetCtrlOut">
        <property name="geometry">
         <rect>
          <x>30</x>
@@ -726,7 +747,7 @@ slot by channel number (0 to 15).</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>240</y>
+         <y>252</y>
          <width>577</width>
          <height>237</height>
         </rect>
@@ -1389,7 +1410,7 @@ Range: 0.5 to 3.0</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>224</y>
+         <y>228</y>
          <width>157</width>
          <height>17</height>
         </rect>
@@ -1588,10 +1609,10 @@ beat, normally PPQN/10.</string>
       <widget class="QPushButton" name="btnJackConnect">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>380</y>
-         <width>281</width>
-         <height>23</height>
+         <x>372</x>
+         <y>300</y>
+         <width>224</width>
+         <height>28</height>
         </rect>
        </property>
        <property name="toolTip">
@@ -1604,10 +1625,10 @@ beat, normally PPQN/10.</string>
       <widget class="QPushButton" name="btnJackDisconnect">
        <property name="geometry">
         <rect>
-         <x>310</x>
-         <y>380</y>
-         <width>291</width>
-         <height>23</height>
+         <x>372</x>
+         <y>340</y>
+         <width>224</width>
+         <height>28</height>
         </rect>
        </property>
        <property name="toolTip">
@@ -1685,9 +1706,9 @@ connects to the MIDI I/O ports it finds.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>252</y>
+         <y>268</y>
          <width>349</width>
-         <height>113</height>
+         <height>129</height>
         </rect>
        </property>
        <property name="title">
@@ -1700,7 +1721,7 @@ connects to the MIDI I/O ports it finds.</string>
         <property name="geometry">
          <rect>
           <x>8</x>
-          <y>32</y>
+          <y>20</y>
           <width>291</width>
           <height>17</height>
          </rect>
@@ -1741,14 +1762,17 @@ setting of Start mode)</string>
        <property name="geometry">
         <rect>
          <x>31</x>
-         <y>302</y>
+         <y>324</y>
          <width>141</width>
-         <height>64</height>
+         <height>56</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="radio_group_layout">
         <item>
          <widget class="QRadioButton" name="radio_live_mode">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="toolTip">
            <string>Play MIDI in Live Mode:  each pattern plays in an endless loop.</string>
           </property>
@@ -1759,6 +1783,9 @@ setting of Start mode)</string>
         </item>
         <item>
          <widget class="QRadioButton" name="radio_song_mode">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="toolTip">
            <string>Play MIDI in Song Mode: playback controlled by the layout
 in the Song Editor.</string>
@@ -2677,7 +2704,7 @@ Seq66 exits.</string>
          <string>Record Style</string>
         </property>
        </widget>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidgetRecordStyle">
         <property name="geometry">
          <rect>
           <x>8</x>
@@ -2737,7 +2764,7 @@ Seq66 exits.</string>
        <property name="title">
         <string>Randomization</string>
        </property>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidgetRandomization">
         <property name="geometry">
          <rect>
           <x>16</x>

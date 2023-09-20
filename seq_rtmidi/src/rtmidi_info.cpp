@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-08
- * \updates       2023-04-15
+ * \updates       2023-09-20
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.  This class
@@ -92,15 +92,20 @@ rtmidi_info::get_compiled_api (rtmidi_api_list & apis)
      * rc().with_jack_transport(), but the "rc" configuration file has not yet
      * been read by the time we get to here.  On the other hand, we can make
      * it default to "true" and see what happens.
+     *
+     * However, it seems silly to not provide the API categorically.
      */
 
 #if defined SEQ66_BUILD_UNIX_JACK
-     if (rc().with_jack_midi())                 /* hmmmmm */
-        apis.push_back(rtmidi_api::jack);
+    /*
+     * if (rc().with_jack_midi())                 // hmmmmm //
+     */
+
+    apis.push_back(rtmidi_api::jack);
 #endif
 
 #if defined SEQ66_BUILD_LINUX_ALSA
-        apis.push_back(rtmidi_api::alsa);
+    apis.push_back(rtmidi_api::alsa);
 #endif
 
     if (apis.empty())
@@ -273,7 +278,11 @@ rtmidi_info::openmidi_api
         );
         result = not_nullptr_2(maip, maip->midi_handle());
         if (result)
+        {
             result = set_api_info(maip);
+            if (result)
+                rc().with_alsa_midi(true);
+        }
     }
 #endif
 

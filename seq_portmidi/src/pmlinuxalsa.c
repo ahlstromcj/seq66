@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-05-15
+ * \updates     2023-09-20
  * \license     GNU GPLv2 or above
  *
  * Written by:
@@ -80,7 +80,7 @@ extern pm_fns_node pm_linuxalsa_in_dictionary;
 extern pm_fns_node pm_linuxalsa_out_dictionary;
 
 /**
- * All input comes here, output queue allocated on seq.
+ *  All input comes here, output queue allocated on seq.
  */
 
 static snd_seq_t * s_seq = nullptr;
@@ -1139,6 +1139,13 @@ pm_linuxalsa_init (void)
             }
         }
     }
+#if defined SEQ66_PLATFORM_DEBUG
+    if (s_seq)
+    {
+        int npfds = snd_seq_poll_descriptors_count(s_seq, POLLIN);
+        printf("[seq66] %d poll-in descriptors\n", npfds);
+    }
+#endif
     return pmNoError;
 }
 

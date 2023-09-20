@@ -3381,7 +3381,7 @@ bool
 performer::sequence_lookup_setup ()
 {
     bool result = false;
-    if (rc().with_jack_midi())
+    if (rc().sequence_lookup_support())     /* is it available on platform? */
     {
         size_t buscount = master_bus()->get_num_in_buses();
         m_buss_patterns.clear();
@@ -4668,13 +4668,10 @@ performer::poll_cycle ()
 
                                 sp->stream_event(ev);
                             }
+                            else if (m_filter_by_channel)
+                                m_master_bus->dump_midi_input(ev);
                             else
-                            {
-                                if (m_filter_by_channel)
-                                    m_master_bus->dump_midi_input(ev);
-                                else
-                                    m_master_bus->get_sequence()->stream_event(ev);
-                            }
+                                m_master_bus->get_sequence()->stream_event(ev);
 #else
                             if (m_filter_by_channel)
                                 m_master_bus->dump_midi_input(ev);

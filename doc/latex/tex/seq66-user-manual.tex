@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-08-26
+% \update      2023-09-20
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -107,7 +107,8 @@
    a reboot of \textsl{Seq24},
    a live-looping sequencer with an interface similar to a hardware sequencer,
    refactored for newer versions of
-   \textsl{C++} with much cleanup.  It drops the
+   \textsl{C++} for faster and simpler code.
+   It drops the
    \textsl{Gtkmm} user-interface in favor of \textsl{Qt 5},
    and has better handling of sets, mute-groups, sessions, configuration files,
    play-lists, and automation control.
@@ -124,7 +125,6 @@
    It does not handle audio data, just MIDI.
    It works with \textsl{ALSA}, \textsl{JACK},
    \textsl{portmidi}, and \textsl{Windows}.
-   It uses recent C++ features for faster and simpler code.
 
    We have many contributors to acknowledge.
    Please see \sectionref{sec:kudos}.
@@ -173,7 +173,9 @@
          'ctrl' file.
       \item Improved alternate keyboard layout support.
       \item Mapping of port names to a consistent set of port numbers.
-      \item Ability to export songs in SMF 0 format.
+      \item Providing for routing of MIDI input events to specify
+         patterns based on port number.
+      \item Ability to export songs in SMF 0 and 1 formats.
       \item More efficient lookups for controls using control maps
          and lambda functions.
    \end{itemize}
@@ -198,10 +200,16 @@
    There are a number of ways of building Seq66.
 
    \begin{itemize}
-      \item \textsl{Autotools Build and Install}. Configure, make, and install.
-      \item \textsl{Bootstrap Install}. Generate autotools files and build.
-      \item \textsl{OpenSUSE and Fedora}. Specifics for that Linux distro.
-      \item \textsl{Qmake-based Install}. Optional on Linux, mandatory for Windows.
+      \item \textsl{Autotools Build and Install}.
+         Configure, make, and install.
+      \item \textsl{Bootstrap Install}.
+         Generate autotools files and build.
+      \item \textsl{OpenSUSE and Fedora}.
+         Specifics for that Linux distro.
+      \item \textsl{Qmake-based Install}.
+         Optional on Linux, mandatory for Windows.
+      \item \textsl{Arch Linux}.
+         There is a nice, but outdated, AUR package (\cite{AUR}).
    \end{itemize}
 
    The \texttt{INSTALL} file included with the source code and

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-09-13
+% \update      2023-09-20
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -232,6 +232,8 @@
    They cannot be edited in \textsl{Seq66}, but they are not lost.
    (Channel and port meta events are
    considered \textsl{obsolete} in the MIDI standard.)
+   Lastly, various meta text events, such as \textbf{Lyric},
+   can be edited and saved.
 
 \subsubsection{Menu / File / Import / Import Project Configuration}
 \label{subsubsec:menu_file_import_project_configuration}
@@ -507,31 +509,39 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_clock_tab.png}
-   \caption{MIDI Clock Tab}
+   \caption{MIDI Clock (Output) Tab}
    \label{fig:midi_clock_tab}
 \end{figure}
+
+   This diagram is slightly out-of-date, but we go forward!
+   It shows the tab for configuring MIDI output and clocking features.
+
+   \textbf{Tip}:
+      With some Qt themes, it is difficult to activate this tab by clicking
+      because there is little or no sensitive area on the tab.
+      In this case, click \texttt{Alt-c} once or twice.
 
    Port-mapping is the default, and when active, is shown in this pane.
    If there are more than about a dozen
    output ports in the system, then a vertical scrollbar appears.
-
    The following elements are present in this tab:
 
    \begin{enumber}
-      \item \textbf{Ports and Clocks Table}
+      \item \textbf{Ports and Clocking Table}
       \item \textbf{Clock Start Modulo}
-      \item \textbf{Save Maps}
-      \item \textbf{Remove Maps}
+      \item \textbf{Buss Override}
+      \item \textbf{MIDI I/O Maps}
+      \item \textbf{Create (maps)}
+      \item \textbf{Clear (maps)}
       \item \textbf{MIDI Control Output Bus}
       \item \textbf{Meta Events}
       \item \textbf{Client Name:ID/UUID}
-      \item \textbf{Output Ports Mapped}
-      \item \textbf{Input Ports Mapped}
+      \item \textbf{Restart Seq66!}
    \end{enumber}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
-   \itempar{Ports and Clocks}{output!ports and clocks}
+   \itempar{Ports and Clocking}{output!ports and clocks}
    \index{output ports}
 
    This table shows the available MIDI outputs and their status.
@@ -653,14 +663,21 @@
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
-   \itempar{Clock Start Modulo}{midi clock!clock start modulo}
-   Clock Start Modulo (1/16 Notes).
-   This value starts at 1 and ranges up to 16384, and defaults to 64.
+   \itempar{Clock Start Modulo (ticks)}{midi clock!clock start modulo}
+   This value starts at 1 and ranges up to 16384, and defaults to 64 ticks.
    It is used by the \textbf{On (Mod)} setting discussed above.
    It is the \texttt{[midi-clock-mod-ticks]} option in the \textsl{Seq66}
    'rc' file.
 
-   \itempar{Save Maps}{midi i/o!port mapping}
+   \itempar{MIDI I/O Port Maps}{midi clock!port maps}
+   If checked (the default), then port-mapping is employed.
+   This makes it a bit easer to manage MIDI devices across systems and to store
+   the numbers in each pattern.
+   Note that both input and output port mappings are activated by this
+   checkbox.
+   If changed, the \textbf{Restart Seq66!} button is enabled.
+
+   \itempar{Create (maps)}{midi i/o!port mapping}
    \index{port mapping}
    \index{port!mapping}
    Pressing this button saves the current set of MIDI I/O ports to sections in
@@ -671,7 +688,7 @@
    'rc' file with a text editor, back up this file in a safe place,
    and restart \textsl{Seq66}.
 
-   \itempar{Remove Maps}{midi i/o!remove mapping}
+   \itempar{Clear (maps)}{midi i/o!remove mapping}
    \index{remove mapping}
    \index{port! remove mapping}
    Pressing this button removes the port mapping.
@@ -697,7 +714,8 @@
 
    \begin{enumerate}
       \item \textbf{Tempo track number}
-      \item \textbf{Precision}
+      \item \textbf{BPM Precision}
+      \item \textbf{Set Tempo Track}
    \end{enumerate}
 
    \textbf{Tempo track number}
@@ -706,7 +724,6 @@
    is the official track for tempo events, but \textsl{Seq66} allows the
    user to record tempo events to another track.  \textsl{Seq66} will
    process tempo events in any pattern.
-   \textsl{The "Set as Tempo Track" button to the right is not yet functional.}
 
    \index{usr!bpm-precision}
    \textbf{Precision}
@@ -715,6 +732,10 @@
    See \sectionref{subsubsec:usr_file_user_midi_settings}.
    The BPM (tempo) is stored in the MIDI file multiplied by 1000 to accommodate
    the decimal places.
+
+   \textsl{Set Tempo Track}
+   Enabled when a valid tempo track number is given.
+   It makes the tempo track official if it is not zero anymore.
 
    \itempar{Client Name:ID/UUID}{client ID}
    This read-only text field shows two things:
@@ -730,19 +751,11 @@
          Under JACK, the UUID that JACK assigned to \textsl{Seq66} is shown.
    \end{enumerate}
 
-   \itempar{Output Ports Mapped}{mapping!output}
-   This check-box shows if the port-mapper is active for the output ports.
-   It becomes set if the \textbf{Save Maps} button is clicked, and unset if the
-   \textbf{Remove Maps} button is clicked.
-   Uncheck this button and \textsl{reload session} for the setting
-   to take effect.
-
-   \itempar{Input Ports Mapped}{mapping!input}
-   This check-box shows if the port-mapper is active for the input ports.
-   It becomes set if the \textbf{Save Maps} button is clicked, and unset if the
-   \textbf{Remove Maps} button is clicked.
-   Uncheck this button and \textsl{reload session} for the setting
-   to take effect.
+   \itempar{Restart Seq66!}{restart}
+   Certain changes require a \textsl{Seq66} restart, unfortunately.
+   When enabled, clicking this button does not exit \textsl{Seq66},
+   but it does cause all of the internal mechanisms to be recreated
+   from scratch.
 
 %  \index{todo!manual alsa gui option}
 %  There is currently no user-interface item corresponding to the "manual-ports"
@@ -829,12 +842,14 @@
    A \textsl{reload session} (see \sectionref{subsec:concepts_reload_session})
    is necessary for this option to take effect.
 
-\paragraph{Menu / Edit / Preferences / Keyboard}
+\paragraph{Menu / Edit / Preferences / Keyboard (removed)}
 \label{paragraph:menu_edit_preferences_keyboard}
 
    Unlike \textsl{Seq24}, \textsl{Seq66}
    \textsl{does not} provide an options tab for
    setting up the keyboard.
+   There are just too many new keystroke-automation functions to fit
+   in a configuration dialog box.
    The default keyboard mappings follow \textsl{Seq24} fairly well,
    but add a large number of additional controls;
    around 96 keystroke slots would need to be provided!
@@ -855,15 +870,15 @@
    For more information on keystrokes, see
    \sectionref{subsec:kbd_mouse_keyboard_control}.
 
-\paragraph{Menu / Edit / Preferences / Mouse}
+\paragraph{Menu / Edit / Preferences / Mouse (removed)}
 \label{paragraph:menu_edit_preferences_mouse}
 
    Unlike \textsl{Seq24}, \textsl{Seq66}
    \textsl{does not} provide an options tab for
    the mouse-interaction method.
    It is not supported in \textsl{Seq66}...
-   the "Fruity" interaction method is not available;
-   only the "Seq24" interaction is available.
+   the \textbf{Fruity} interaction method is not available;
+   only the \textbf{Seq24} interaction is available.
  
 \paragraph{Menu / Edit / Preferences / Display}
 \label{paragraph:menu_edit_preferences_display}
@@ -935,7 +950,7 @@
    \textsl{Seq66} exits, the setting remains false.
 
    \itempar{Suppress startup error messages}{quiet}
-   Unlike the verbose setting, this one is permanent.
+   Unlike the verbose setting, this one is sticky.
    It prevents the display of error prompts at startup.
    It is useful when the system keeps flagging the same problem,
    it cannot be fixed, and can be ignored.
@@ -1024,6 +1039,7 @@
       \item \textbf{JACK Transport/MIDI}
       \item \textbf{JACK Start Mode}
       \item \textbf{JACK Transport Connect and Disconnect}
+      \item \textbf{JACK Server Settings}
    \end{enumber}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
@@ -1126,6 +1142,10 @@
    This button is useful to stop JACK sync when making changes to it.
    JACK connection and disconnection are disabled during playback, but the
    buttons don't yet reflect that status.
+
+   \itempar{JACK Server Settings}{jack server!settings}
+   This read-only section shows the current settings of the JACK
+   server, as much as possible.
 
 \paragraph{Menu / Edit / Preferences / Play Options}
 \label{paragraph:menu_edit_preferences_play_options}

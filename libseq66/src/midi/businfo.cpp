@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2023-09-19
+ * \updates       2023-09-20
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -808,7 +808,7 @@ busarray::get_midi_event (event * inev)
         {
             bussbyte b = bussbyte(bi.bus()->bus_index());
             inev->set_input_bus(b);
-#if defined SEQ66_PLATFORM_DEBUG // _TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
             printf("[seq66] input event on bus %d\n", int(b));
 #endif
             return true;

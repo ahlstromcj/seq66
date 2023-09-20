@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2023-05-07
+ * \updates       2023-09-20
  * \license       See above.
  *
  *  API information found at:
@@ -193,6 +193,10 @@ midi_alsa_info::~midi_alsa_info ()
  *  function to call later.
  *
  *  This function is called in the constructor and in api_port_start().
+ *
+ *  According to https://users.suse.com/~mana/alsa090_howto.html#sect04
+ *  snd_seq_poll_descriptors_count(alsa_seq, POLLIN) always returns 1.
+ *
  */
 
 void
@@ -446,7 +450,8 @@ midi_alsa_info::api_set_beats_per_minute (midibpm b)
 
 /**
  *  Polls for any ALSA MIDI information using a timeout value of 10
- *  milliseconds.
+ *  milliseconds (c_poll_wait_ms).  Currently there is only 1 poll
+ *  descriptor..
  *
  * \return
  *      Returns the result of the call to poll() on the global ALSA poll
@@ -785,7 +790,7 @@ midi_alsa_info::api_get_midi_event (event * inev)
             );
             bool sysex = inev->is_sysex();
             inev->set_input_bus(b);
-#if defined SEQ66_PLATFORM_DEBUG // _TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
             printf("[seq66] input event on ALSA bus %d\n", int(b));
 #endif
             while (sysex)           /* sysex might be more than one message */

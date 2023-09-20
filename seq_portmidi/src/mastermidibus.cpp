@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-06-03
+ * \updates       2023-09-20
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -244,6 +244,9 @@ mastermidibus::api_get_midi_event (event * in)
                 buffer[2] = Pm_MessageData2(pme.message);
                 result = in->set_midi_event(ts, buffer, 0);     /* 0 count  */
                 in->set_input_bus(bussbyte(b));
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+            printf("[seq66] input event on PortMidi bus %d\n", int(b));
+#endif
             }
         }
         if (result)

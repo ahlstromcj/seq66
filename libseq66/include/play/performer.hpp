@@ -73,7 +73,7 @@
  *  Does not work with Seq66's current JACK implementation or with Windows.
  */
 
-#if defined SEQ66_JACK_SUPPORT
+#if defined SEQ66_JACK_SUPPORT || defined SEQ66_PORTMIDI_SUPPORT
 #define SEQ66_ROUTE_EVENTS_BY_BUSS
 #endif
 
