@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.99.8 and above
+INSTALL for Seq66 v. 0.99.9 and above
 Chris Ahlstrom
-2015-09-10 to 2023-08-17
+2015-09-10 to 2023-09-21
 
 Getting Seq66 requires building the code or going to
 "sequencer64-packages/seq66" on GitHub to get an installation package.  The
@@ -380,32 +380,12 @@ CONFIGURE OPTIONS FOR APPLICATION FEATURES:
 
 MANUALLY-DEFINED MACROS IN CODE:
 
-    The following items are not yet part of the configure script, but can
-    be edited manually to achieve the desired settings.  Only crazy or
+    Read the descriptions of the various macros defined in
+    libseq66/include/seq66_features.h, and decide if you want to define
+    or undefine them, before building the application.  Only crazy or
     experiment-happy people will normally want to change the define-state of
-    these macros.  We have consolidated them into a single file,
-    libseq66/include/seq66_features.h, to make them easier to find and edit.
-
-    SEQ66_USE_ADDED_ALTERATIONS
-
-        A currently in-progress option to add more ways to modify a pattern
-        during recording, playback, or upon command. It will eventually 
-        apply tightening, quantization, jitter (in time), random (in
-        amplitude), and note-mapping. Not to be confused with the pattern-fix
-        dialog.
-
-    SEQ66_USE_METRONOME_FADE
-
-        Define if it is desired to waste CPU cycles on a fancier
-        time-indicator bar. Not to be confused with the audible
-        metronome!
-
-    SEQ66_USE_DEFAULT_PORT_MAPPING
-
-        This macro is defined (0.99.5) to automatically set up port
-        mapping at first startup, instead of forcing the user to do
-        it.  The user can still deactivate it in the MIDI Clocks Preferences
-        Tab.
+    these macros. In addition, sprinkled throughout the code are macros
+    like the following:
 
     USE_xxxxxx:
     SEQ66_xxxxxx_TMI:
@@ -423,12 +403,6 @@ MANUALLY-DEFINED MACROS IN CODE:
         of the user "stazed".  He includes some new features and some bug
         fixes that we had overlooked.  At present, we are not enabling this
         functionality, just adding it, macroed out by the following macros:
-
-        USE_STAZED_RANDOMIZE_SUPPORT
-        USE_STAZED_EVEN_ODD_SUPPORT
-
-        Also, the GitHub project "Kepler34" has some features we want to adopt
-        before we make our version of its conversion to the Qt library.
 
 REPORTING ISSUES:
 

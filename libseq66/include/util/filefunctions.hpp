@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-08-22
+ * \updates       2023-09-21
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -92,6 +92,7 @@ extern bool file_append_log
 );
 extern bool name_has_path (const std::string & filename);
 extern bool name_has_root_path (const std::string & path);
+extern bool name_has_extension (const std::string & filename);
 extern bool make_directory_path (const std::string & directory_name);
 extern std::string make_path_relative (const std::string & path);
 extern bool delete_directory (const std::string & filename);

@@ -45,13 +45,6 @@
 #include "midi/midibytes.hpp"           /* alias midibpm                    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 
-/**
- *  If defined, a button to show or hide the main menu bar and some
- *  of the layouts is available.
- */
-
-#define SEQ66_USE_SHOW_HIDE_BUTTON
-
 /*
  * Q_DECLARE_METATYPE(seq66::screenset::number) doesn't work, had to switch to
  * using int.
@@ -512,9 +505,7 @@ private slots:
     void tap ();
     void queue_it ();
     void slot_test ();
-#if defined SEQ66_USE_SHOW_HIDE_BUTTON
     void slot_show_hide ();
-#endif
 
 private:
 

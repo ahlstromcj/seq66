@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2023-05-31
+ * \updates       2023-09-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -97,6 +97,14 @@ qsessionframe::qsessionframe
         ui->lineEditLogFile, SIGNAL(editingFinished()),
         this, SLOT(slot_log_file())
     );
+
+    QIcon icon = QIcon::fromTheme("edit-clear", QIcon(":/images/icon"));
+    ui->pushButtonLogFileClear->setIcon(icon);
+    connect
+    (
+        ui->pushButtonLogFileClear, SIGNAL(clicked(bool)),
+        this, SLOT(slot_log_file_clear())
+     );
     ui->pushButtonReload->setEnabled(false);
     connect
     (
@@ -388,11 +396,20 @@ qsessionframe::slot_log_file ()
     std::string temp = text.toStdString();
     if (temp != usr().option_logfile())
     {
-        usr().option_logfile(temp);
-        usr().option_use_logfile(! temp.empty());
+        usr().option_logfile(temp);     /* sets usr().option_use_logfile()  */
+        session_log_file(usr().option_logfile());
         rc().auto_usr_save(true);
         usr().modify();
+        enable_reload_button(true);
+        ui->pushButtonLogFileClear->setEnabled(! temp.empty());
     }
+}
+
+void
+qsessionframe::slot_log_file_clear()
+{
+    ui->lineEditLogFile->clear();
+    slot_log_file();
 }
 
 void

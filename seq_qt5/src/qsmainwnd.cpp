@@ -3881,8 +3881,6 @@ qsmainwnd::slot_test ()
      */
 }
 
-#if defined SEQ66_USE_SHOW_HIDE_BUTTON
-
 /**
  *  We're adapting this control to make the main GUI as small as possible.
  */
@@ -3896,6 +3894,8 @@ qsmainwnd::slot_show_hide ()
         qt_set_icon(hide_xpm, ui->btnShowHide);
         ui->menuBar->show();
         ui->cmb_global_bus->show();
+        ui->cmb_beat_measure->show();
+        ui->cmb_beat_length->show();
         qt_set_layout_visibility(ui->hLayoutBottom_1, true);
         qt_set_layout_visibility(ui->hLayoutBottom_2, true);
     }
@@ -3904,12 +3904,12 @@ qsmainwnd::slot_show_hide ()
         qt_set_icon(show_xpm, ui->btnShowHide);
         ui->menuBar->hide();
         ui->cmb_global_bus->hide();
+        ui->cmb_beat_measure->hide();
+        ui->cmb_beat_length->hide();
         qt_set_layout_visibility(ui->hLayoutBottom_1, false);
         qt_set_layout_visibility(ui->hLayoutBottom_2, false);
     }
 }
-
-#endif
 
 bool
 qsmainwnd::export_file_as_smf_0 (const std::string & fname)

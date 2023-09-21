@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2023-08-24
+ * \updates       2023-09-21
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -1573,15 +1573,24 @@ usrsettings::option_logfile (const std::string & logfile)
     {
         m_user_option_logfile.clear();
     }
-    else if (name_has_root_path(logfile))
-    {
-        m_user_option_logfile = logfile;
-    }
     else
     {
-        std::string home = rc().home_config_directory();
-        std::string fullpath = filename_concatenate(home, logfile);
-        m_user_option_logfile = fullpath;
+        std::string normalized = normalize_path(logfile);
+        std::string newlogfile;
+        if (name_has_root_path(normalized))
+        {
+            newlogfile = normalized;
+        }
+        else
+        {
+            std::string home = rc().home_config_directory();
+            std::string fullpath = filename_concatenate(home, normalized);
+            newlogfile = fullpath;
+        }
+        if (! name_has_extension(newlogfile))
+            newlogfile = file_extension_set(newlogfile, ".log");
+
+        m_user_option_logfile = newlogfile;
     }
     m_user_use_logfile = ! logfile.empty();
     set_option_bit(option_log);

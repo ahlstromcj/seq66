@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-08-22
+ * \updates       2023-09-21
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1138,6 +1138,37 @@ name_has_root_path (const std::string & filename)
             result = std::isalpha(filename[0]) && pos == 1;
     }
 #endif
+    return result;
+}
+
+/**
+ *  Detect a legimate file extension in a file-name. Tricky!
+ *
+ *      -   .apprc                          The file-name is the extension.
+ *      -   app.rc                          File-name extension present.
+ *      -   app.local.rc                    File-name extension present.
+ *      -   ~/.config/seq66/                No file-name extension.
+ *      -   ~/.config/seq66/filename        No file-name extension.
+ *      -   ~/.config/seq66/filename.ext    File-name extension present.
+ *      -   ~/.config/seq66/file.name.ext   File-name extension present.
+ *
+ * \param filename
+ *      Provides the file-name or full path specification. It is assumed to
+ *      be normalized to UNIX format by normalize_path().
+ *
+ * \return
+ *      Returns true or false as per the list above.
+ */
+
+bool
+name_has_extension (const std::string & filename)
+{
+    auto spos = filename.find_last_of("/");
+    if (spos == std::string::npos)
+        spos = 0;
+
+    auto ppos = filename.find_first_of(".", spos);
+    bool result = ppos != std::string::npos;
     return result;
 }
 

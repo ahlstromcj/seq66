@@ -63,21 +63,6 @@
 #endif
 
 /*
- *  Make port-mapping the default.
- */
-
-#define SEQ66_USE_DEFAULT_PORT_MAPPING
-
-/*
- *  EXPERIMENTAL.  Route events by the buss on which the event came in on.
- *  Does not work with Seq66's current JACK implementation or with Windows.
- */
-
-#if defined SEQ66_JACK_SUPPORT || defined SEQ66_PORTMIDI_SUPPORT
-#define SEQ66_ROUTE_EVENTS_BY_BUSS
-#endif
-
-/*
  *  Do not document a namespace; it breaks Doxygen.
  */
 
