@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-08-23
+ * \updates       2023-09-21
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -35,6 +35,7 @@
  *      -   qt_icon_theme(). Returns the name of the icon theme.
  *      -   qt_prompt_ok(). Does an OK/Cancel QMessageBox.
  *      -   qt().  Converts an std::sring to a QString.
+ *      -   qt_set_layout_visibility(). Hide/show a layout and its children.
  *      -   qt_timer(). Encapsulates creating and starting a timer, with a
  *          callback given by a Qt slot-name.
  *      -   enable_combobox_item(). Handles the appearance of a combo box.
@@ -56,6 +57,8 @@
 #include <QErrorMessage>
 #include <QFileDialog>                  /* prompt for full MIDI file's path */
 #include <QIcon>
+#include <QLayout>
+#include <QLayoutItem>
 #include <QLineEdit>
 #include <QKeyEvent>
 #include <QMenu>
@@ -265,6 +268,26 @@ QString
 qt (const std::string & text)
 {
     return QString::fromStdString(text);
+}
+
+/**
+ *  Semi-recursive function to alter the visibility of all sub-items
+ *  in a layout item.
+ */
+
+void
+qt_set_layout_visibility (QLayoutItem * item, bool visible)
+{
+    QWidget * widget = item->widget();
+    if (not_nullptr(widget))
+        return widget->setVisible(visible);
+
+    QLayout * layout = item->layout();
+    if (not_nullptr(layout))
+    {
+        for (int i = 0; i < layout->count(); ++i)
+            qt_set_layout_visibility(layout->itemAt(i), visible);
+    }
 }
 
 /**

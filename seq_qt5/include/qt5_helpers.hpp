@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-08-23
+ * \updates       2023-09-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -40,6 +40,7 @@ class QAction;
 class QComboBox;
 class QIcon;
 class QKeyEvent;
+class QLayoutItem;
 class QLineEdit;
 class QMenu;
 class QPushButton;
@@ -92,6 +93,7 @@ extern keystroke qt_keystroke
     bool testing = false
 );
 extern QString qt (const std::string & text);
+extern void qt_set_layout_visibility (QLayoutItem * item, bool visible);
 extern QTimer * qt_timer
 (
     QObject * self,

@@ -19,6 +19,10 @@ Misc:
     -   Make sure metronome buttons etc. still work. Recording measures
         not saved.
     -   Green-on-black BBT/HMS in main window.
+    -   Disable "ALSA Announce" in basically all lists and popups:
+        -   Pattern "Input Buss" popup.
+        -   MIDI Display buss combo-box.
+        -   MIDI Ctrl buss combo-box.
     -   Add an option to show hide all the widgets surrounding the
         live/grid.
     -   Make the performer get/put_settings() functions robust.

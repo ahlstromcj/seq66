@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2023-05-10
+% \update      2023-09-20
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -18,8 +18,10 @@
 \section{Session Management}
 \label{sec:sessions}
 
-   Session management helps recreate complex setups and provide some uniformity
-   of application control.
+   A session is a group of applications and their configuration and
+   connections.
+   Session management recreate complex setups and provides some uniformity
+   of application control in a session.
    The first thing to do for session management is to make sure that the
    application is capable of various levels of session management, from
    \textsl{UNIX} signals to
@@ -33,12 +35,14 @@
       \item \textbf{Signals}.
          During a normal run, \textsl{Seq66} will respond
          to signals to save and to quit.
-         The normal configuration files and command-line options will be used.
+         The normal configuration files and command-line options will be
+         used, and can be marked to be saved at exit.
          This mode is useful with \textsl{nsm-proxy}, a way to script
          applications that don't have \textsl{NSM} support.
       \item \textbf{JACK Session}
          Deprecated, but implemented nonetheless.
-         This allows for the configuration files to be stored in
+         Many still use it.
+         This session manager allows the configuration files to be stored in
          a separate directory, for \textsl{Seq66} to be started, and files to
          be saved.  No restrictions on where the MIDI files can be stored.
       \item \textbf{Non Session Manager}
@@ -60,7 +64,7 @@
          continue to advance.
    \end{enumber}
 
-   If one desires session management, \textsl{NSM} is the way to go.
+   For session management, \textsl{NSM} is the way to go.
    \textsl{JACK} session management is provided for those who still use it.
    There are other session solutions, such as \textsl{aj-snapshot},
    \textsl{Claudia}, and \textsl{Chino}.
@@ -68,18 +72,21 @@
 
    The desired session can be set in the \textbf{Edit / Preferences /
    Session} tab.  But note that, if started by \textsl{NSM}, \textsl{Seq66}
-   will still set up for NSM usage.  The \textsl{NSM} setting is
+   will detect it and nonetheless set up for NSM usage.
+   The \textsl{NSM} setting is
    useful for attaching to a pre-existing known session.
    \textsl{JACK} session management events are processed
    only if \textsl{JACK} is selected.
    \textsl{JACK} session management will still start \textsl{Seq66} in
    an existing session, if \textsl{JACK} is
-   not selected, but that's it.
+   not selected.
+%  , but that's it.
 
    Also note that sometimes one will want the session manager to make the JACK
    connections.  In this case, go to
    \textbf{Edit / Preferences / JACK / Jack Auto-Connect}, uncheck that option,
-   and restart \textsl{Seq66}.  This option (\texttt{jack-auto-connect}
+   and restart \textsl{Seq66}.
+   This option, \texttt{jack-auto-connect}
    can also be changed in the 'rc' file.
    The \textsl{NSM} tool called \textsl{jackpatch} can also be used to manage
    connections.

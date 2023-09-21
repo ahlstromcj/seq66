@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-11
+ * \updates       2023-09-21
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -44,6 +44,13 @@
 #include "cfg/settings.hpp"             /* seq66::combolist helper class    */
 #include "midi/midibytes.hpp"           /* alias midibpm                    */
 #include "play/performer.hpp"           /* seq66::performer class           */
+
+/**
+ *  If defined, a button to show or hide the main menu bar and some
+ *  of the layouts is available.
+ */
+
+#define SEQ66_USE_SHOW_HIDE_BUTTON
 
 /*
  * Q_DECLARE_METATYPE(seq66::screenset::number) doesn't work, had to switch to
@@ -505,6 +512,9 @@ private slots:
     void tap ();
     void queue_it ();
     void slot_test ();
+#if defined SEQ66_USE_SHOW_HIDE_BUTTON
+    void slot_show_hide ();
+#endif
 
 private:
 

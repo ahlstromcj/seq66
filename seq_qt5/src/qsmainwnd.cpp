@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-20
+ * \updates       2023-09-21
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -142,6 +142,15 @@
 #include "pixmaps/song_rec_off.xpm"
 #include "pixmaps/song_rec_on.xpm"      /* #include "pixmaps/song_rec.xpm" */
 #include "pixmaps/stop.xpm"
+
+#if defined SEQ66_USE_SHOW_HIDE_BUTTON
+#include "pixmaps/hide.xpm"
+#include "pixmaps/show.xpm"
+#endif
+
+/**
+ *  Used in show_error_box_ex().
+ */
 
 #define SEQ66_ERROR_BOX_WIDTH       600
 
@@ -882,6 +891,27 @@ qsmainwnd::qsmainwnd
     ui->tabWidget->setCurrentIndex(Tab_Live);
     ui->tabWidget->setTabEnabled(Tab_Events, false);    /* prevents issues  */
 
+#if defined SEQ66_USE_SHOW_HIDE_BUTTON
+
+    /*
+     * Show/Hide button.
+     */
+
+    ui->btnShowHide->setCheckable(true);
+    ui->btnShowHide->setChecked(false);
+    ui->btnShowHide->setEnabled(true);
+    ui->btnShowHide->setToolTip("Show/hide many controls to save space");
+    qt_set_icon(hide_xpm, ui->btnShowHide);
+    connect
+    (
+        ui->btnShowHide, SIGNAL(clicked(bool)),
+        this, SLOT(slot_show_hide())
+    );
+
+#else
+    ui->btnShowHide->hide();
+#endif
+
     /*
      * Test button.  This button supports whatever debugging we need to do at
      * any particular time.
@@ -889,11 +919,6 @@ qsmainwnd::qsmainwnd
 
     if (rc().investigate_disabled())
     {
-        /*
-         * Test button.
-         */
-
-        ui->testButton->setEnabled(true);
         ui->testButton->setToolTip("No Test functionality at present.");
         connect(ui->testButton, SIGNAL(clicked(bool)), this, SLOT(slot_test()));
     }
@@ -3843,13 +3868,48 @@ qsmainwnd::queue_it ()
     cb_perf().set_keep_queue(is_active);
 }
 
+/**
+ *  We're adapting this control to make the main GUI as small as possible.
+ */
+
 void
 qsmainwnd::slot_test ()
 {
     /*
-     * No code at present
+     * The code here depends only on what we need to investigate at
+     * this time.
      */
 }
+
+#if defined SEQ66_USE_SHOW_HIDE_BUTTON
+
+/**
+ *  We're adapting this control to make the main GUI as small as possible.
+ */
+
+void
+qsmainwnd::slot_show_hide ()
+{
+    bool showthem = ui->btnShowHide->isChecked();
+    if (showthem)
+    {
+        qt_set_icon(hide_xpm, ui->btnShowHide);
+        ui->menuBar->show();
+        ui->cmb_global_bus->show();
+        qt_set_layout_visibility(ui->hLayoutBottom_1, true);
+        qt_set_layout_visibility(ui->hLayoutBottom_2, true);
+    }
+    else
+    {
+        qt_set_icon(show_xpm, ui->btnShowHide);
+        ui->menuBar->hide();
+        ui->cmb_global_bus->hide();
+        qt_set_layout_visibility(ui->hLayoutBottom_1, false);
+        qt_set_layout_visibility(ui->hLayoutBottom_2, false);
+    }
+}
+
+#endif
 
 bool
 qsmainwnd::export_file_as_smf_0 (const std::string & fname)
