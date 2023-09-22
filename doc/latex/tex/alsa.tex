@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-06-16
-% \update      2023-05-18
+% \update      2023-09-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -205,6 +205,13 @@
    However, with that version, one must go to its \textbf{Edit / Preferences}
    dialog and make sure that MIDI I/O is enabled and that both input
    and output are set to ALSA.
+
+   Another issue occurred when we tried testing with multiple instances
+   of VMPK. Both would appear in the MIDI Inputs list, with the same name but
+   different client numbers.  However, input would come in on the same buss
+   number, no matter which VMPK instance was played.
+   Thus, it's basically useless to run more than one VMPK instance.
+
    See the \textsl{VMPK} website (\cite{vmpk}).
    The current version one can download there is 0.8.8.
 

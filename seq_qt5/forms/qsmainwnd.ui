@@ -92,7 +92,6 @@
          <font>
           <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <italic>false</italic>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
@@ -321,7 +320,6 @@ the current set.  Modifies the song.</string>
          <font>
           <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -372,13 +370,13 @@ the current set.  Modifies the song.</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>90</width>
+          <width>112</width>
           <height>24</height>
          </size>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
+          <pointsize>12</pointsize>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -475,7 +473,7 @@ the current set.  Modifies the song.</string>
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="movable">
        <bool>false</bool>
@@ -726,7 +724,6 @@ the current set.  Modifies the song.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -752,7 +749,6 @@ the current set.  Modifies the song.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -789,7 +785,6 @@ the current set.</string>
         <property name="font">
          <font>
           <pointsize>9</pointsize>
-          <weight>50</weight>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -845,7 +840,6 @@ no matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -877,7 +871,6 @@ no matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -923,7 +916,6 @@ or active external live frame.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -952,7 +944,6 @@ or active external live frame.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1203,7 +1194,6 @@ at start of playback.</string>
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1387,7 +1377,6 @@ Editor triggers.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1477,7 +1466,6 @@ resets to 0.</string>
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1509,7 +1497,6 @@ resets to 0.</string>
           </property>
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1547,7 +1534,7 @@ beats/minute.</string>
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>23</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

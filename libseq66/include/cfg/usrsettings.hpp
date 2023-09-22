@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-08-19
+ * \updates       2023-09-22
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -460,6 +460,15 @@ private:
      */
 
     bool m_inverse_colors;
+
+    /**
+     *  Provides the text and background colors for timer values.
+     *  Lotta other apps use green-on-black. These are currently
+     *  values usable with HTML style-sheets.
+     */
+
+    std::string m_time_fg_color;        /* e.g. "green" */
+    std::string m_time_bg_color;        /* e.g. "black" */
 
     /**
      *  If set, adjust some items (like icons) to a dark-theme.
@@ -1352,6 +1361,11 @@ public:
         return m_inverse_colors;
     }
 
+    const std::string & time_fg_color () const;
+    const std::string & time_bg_color () const;
+
+    std::string time_colors_css () const;
+
     bool dark_theme () const
     {
         return m_dark_theme;
@@ -1850,6 +1864,16 @@ public:         // used in main application module and the usrfile class
             m_inverse_colors = flag;
             set_option_bit(option_inverse);
         }
+    }
+
+    void time_fg_color (const std::string & fgc)
+    {
+        m_time_fg_color = fgc;
+    }
+
+    void time_bg_color (const std::string & bgc)
+    {
+        m_time_bg_color = bgc;
     }
 
     void dark_theme (bool flag)

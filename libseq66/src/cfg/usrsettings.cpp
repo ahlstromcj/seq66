@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2023-09-21
+ * \updates       2023-09-22
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -303,6 +303,13 @@ static const int c_fingerprint_size     =  32;
 static const int c_fingerprint_size_max = 128;
 
 /**
+ *  Default color names for tick/time displays.
+ */
+
+const std::string s_time_fg_color = "lime";     /* CSS for bright green     */
+const std::string s_time_bg_color = "black";    /* CSS for black :-D        */
+
+/**
  *  Default constructor.
  */
 
@@ -331,6 +338,8 @@ usrsettings::usrsettings () :
     m_seqedit_bgsequence        (seq::limit()),
     m_progress_bar_thick        (false),
     m_inverse_colors            (false),
+    m_time_fg_color             ("default"),
+    m_time_bg_color             ("default"),
     m_dark_theme                (false),
     m_window_redraw_rate_ms     (c_default_redraw_ms),
 
@@ -441,6 +450,8 @@ usrsettings::set_defaults ()
     m_seqedit_bgsequence = seq::limit();
     m_progress_bar_thick = false;
     m_inverse_colors = false;
+    m_time_fg_color = "default";
+    m_time_bg_color = "default";
     m_dark_theme = false;
     m_window_redraw_rate_ms = c_default_redraw_ms;
     m_seqchars_x = 15;
@@ -1675,6 +1686,42 @@ usrsettings::shrunken () const
     if (! result)
         result = (m_window_scale < 0.80) || (m_window_scale_y < 0.75);
 
+    return result;
+}
+
+const std::string &
+usrsettings::time_fg_color () const
+{
+    if (m_time_fg_color == "default" || m_time_fg_color.empty())
+        return s_time_fg_color;
+    else
+        return m_time_fg_color;
+}
+
+const std::string &
+usrsettings::time_bg_color () const
+{
+    if (m_time_bg_color == "default" || m_time_bg_color.empty())
+        return s_time_bg_color;
+    else
+        return m_time_bg_color;
+}
+
+std::string
+usrsettings::time_colors_css () const
+{
+    std::string result;
+    if (! time_fg_color().empty() && ! time_bg_color().empty())
+    {
+        char tempcss[64];
+        (void) snprintf
+        (
+            tempcss, sizeof tempcss,
+            "color:%s;background-color:%s",
+            time_fg_color().c_str(), time_bg_color().c_str()
+        );
+        result = std::string(tempcss);
+    }
     return result;
 }
 

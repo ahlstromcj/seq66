@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2023-09-12
+ * \updates       2023-09-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -402,6 +402,10 @@ qperfeditframe64::qperfeditframe64
     set_beat_width(perf().get_beat_width());
 
     std::string dur = perf().duration(m_duration_mode);
+    std::string css = usr().time_colors_css();
+    if (! css.empty())
+        ui->btnDuration->setStyleSheet(qt(css));
+
     ui->btnDuration->setText(qt(dur));
     ui->btnDuration->setChecked(m_duration_mode);
     connect

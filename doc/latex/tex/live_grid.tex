@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-03-02
+% \update      2023-09-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -177,6 +177,7 @@
 
    \begin{itemize}
       \item \textbf{Seq66 Logo}
+      \item \textbf{Show/Hide Button}
       \item \textbf{Engine Status}
       \item \textbf{PPQN Selection}
       \item \textbf{Buss Override for Play-set}
@@ -199,6 +200,20 @@
       \item \textbf{Portmidi} appears if using the internal portmidi-derived
          MIDI engine.  This is currently always the case on \textsl{Windows}.
    \end{itemize}
+
+\subsubsection{Show/Hide Button}
+\label{subsubsec:introduction_show_hide_button}
+
+   If present (it is a build option),
+   this button allows the main menu and the bottom two
+   rows of controls to be hidden.
+   This measure can save a lot of space (e.g. in a \textsl{Raspberry Pi}
+   setup.
+   If your window manager (e.g. \textsl{Fluxbox})
+   allows hiding the window decorations, the smallest useful size of the
+   main window can be about 450 x 320 pixels.
+   Of course, a good 'ctrl' automation file (e.g. for the LaunchPad)
+   is necessary to control \textsl{Seq66} in this tiny setup.
 
 \subsubsection{PPQN Selection}
 \label{subsubsec:introduction_ppqn_selection}

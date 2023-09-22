@@ -1,9 +1,11 @@
 TO DO for Seq66 0.99.9
 Chris Ahlstrom
-2019-04-13 to 2023-09-20
+2019-04-13 to 2023-09-21
 
 Misc:
 
+    -   Space bar in grid does not start playback, though space . works.
+    -   Next version, document and test mute groups.
     -   Is performer::get_max_extent() correct at various PPQN?
     -   There are issues with Song / Zoom / Follow progress. Pattern
         editor not so bad. Also Song alignment with piano roll and
@@ -11,8 +13,8 @@ Misc:
     -   In the Kraftwerk song, the Chorus seems to have the wrong pitch,
         on the Arch Linux laptop with Qsynth running.
     -   Roll and time misaligned with Chameleon tune.
-    -   If a song has long patterns and no triggers, should be
-        make them?
+    -   If a song has long patterns and no triggers, should ee
+        automatically make them?
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
     -   Make sure we have record-toggle automation!
@@ -23,6 +25,7 @@ Misc:
         -   Pattern "Input Buss" popup.
         -   MIDI Display buss combo-box.
         -   MIDI Ctrl buss combo-box.
+        Also disable the combo-box entries if item is not enabled.
     -   Add an option to show hide all the widgets surrounding the
         live/grid.
     -   Make the performer get/put_settings() functions robust.

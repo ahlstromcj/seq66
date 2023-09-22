@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-21
+ * \updates       2023-09-22
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -394,6 +394,18 @@ qsmainwnd::qsmainwnd
         QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel
     );
     m_msg_save_changes->setDefaultButton(QMessageBox::Save);
+
+    /*
+     * Set HMS/BBT text and background color.
+     */
+
+    std::string css = usr().time_colors_css();
+    if (! css.empty())
+        ui->label_HMS->setStyleSheet(qt(css));
+
+    /*
+     *  Main time bar at top right.
+     */
 
     m_dialog_prefs = new (std::nothrow) qseditoptions(cb_perf(), this);
     m_beat_ind = new (std::nothrow) qsmaintime
@@ -898,7 +910,7 @@ qsmainwnd::qsmainwnd
      */
 
     ui->btnShowHide->setCheckable(true);
-    ui->btnShowHide->setChecked(false);
+    ui->btnShowHide->setChecked(true);                  /* start w/showing  */
     ui->btnShowHide->setEnabled(true);
     ui->btnShowHide->setToolTip("Show/hide many controls to save space");
     qt_set_icon(hide_xpm, ui->btnShowHide);

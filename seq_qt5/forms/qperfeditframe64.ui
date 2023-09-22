@@ -81,7 +81,7 @@
           <x>0</x>
           <y>0</y>
           <width>16</width>
-          <height>310</height>
+          <height>306</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -116,7 +116,7 @@
           <x>0</x>
           <y>0</y>
           <width>689</width>
-          <height>312</height>
+          <height>308</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -813,6 +813,11 @@ To reset, set to 0 and apply it.</string>
          <width>128</width>
          <height>28</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="toolTip">
         <string>Shows duration of the song based

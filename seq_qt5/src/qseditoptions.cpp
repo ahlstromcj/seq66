@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-20
+ * \updates       2023-09-21
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -242,12 +242,14 @@ qseditoptions::setup_clock_combo_box (int buses, QComboBox * out)
 }
 
 /*
- * Input MIDI control buss combo-box population.
+ * Input MIDI control buss combo-box population. Note the (new) check
+ * for the check-box being checked before enabling the items inside.
  */
 
 void
 qseditoptions::setup_input_combo_box (int buses, QComboBox * in)
 {
+    bool inctrlenabled = perf().midi_control_in().configure_enabled();
     in->clear();
     for (int bus = 0; bus < buses; ++bus)
     {
@@ -257,6 +259,7 @@ qseditoptions::setup_input_combo_box (int buses, QComboBox * in)
         if (good)
         {
             bool enabled = ! perf().is_input_system_port(bus);
+            enabled = enabled && inctrlenabled;         /* ca 2023-09-21    */
             in->addItem(qt(busname));
             enable_combobox_item(in, bus, enabled);
         }
@@ -2440,7 +2443,6 @@ qseditoptions::enable_bus_item (int bus, bool enabled)
     QComboBox * in = ui->comboBoxMidiInBuss;
     buses = inportmap ? ipm.count() : mmb->get_num_in_buses() ;
     setup_input_combo_box(buses, in);
-
     reload_needed(true);                                /* immediate action */
 }
 

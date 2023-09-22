@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-08-22
+ * \updates       2023-09-22
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -288,6 +288,19 @@ usrfile::parse ()
         flag = get_boolean(file, tag, "progress-bar-thick");
         usr().progress_bar_thick(flag);
         flag = get_boolean(file, tag, "inverse-colors");
+
+        std::string color = get_variable(file, tag, "time-fg-color");
+        if (color.empty())
+            rc().auto_usr_save(true);       /* and leave it at the default  */
+        else
+            usr().time_fg_color(color);
+
+        color = get_variable(file, tag, "time-bg-color");
+        if (color.empty())
+            rc().auto_usr_save(true);       /* and leave it at the default  */
+        else
+            usr().time_bg_color(color);
+
         usr().inverse_colors(flag);
         flag = get_boolean(file, tag, "dark-theme");
         usr().dark_theme(flag);
@@ -737,6 +750,9 @@ usrfile::write ()
 "# palette. Palettes are for Seq66 drawing areas, not for Qt widgets.\n"
 "# Normal/inverse palettes can be reconfigured via a 'palette' file.\n"
 "#\n"
+"# 'time-fg-color' and 'time-bg-color' override the default colors for ticks\n"
+"# and time displays (green on black). 'default' keeps the defaults.\n"
+"#\n"
 "# 'dark-theme' specifies that are dark theme is active.\n"
 "#\n"
 "# 'window-redraw-rate' specifies the base window redraw rate for all windows.\n"
@@ -758,6 +774,8 @@ usrfile::write ()
     write_boolean(file, "global-seq-feature", usr().global_seq_feature());
     write_boolean(file, "progress-bar-thick", usr().progress_bar_thick());
     write_boolean(file, "inverse-colors", usr().inverse_colors());
+    write_string(file, "time-fg-color", usr().time_fg_color());
+    write_string(file, "time-bg-color", usr().time_bg_color());
     write_boolean(file, "dark-theme", usr().dark_theme());
     write_integer(file, "window-redraw-rate", usr().window_redraw_rate());
     write_float(file, "window-scale", usr().window_scale());

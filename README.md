@@ -1,4 +1,4 @@
-# README for Seq66 0.99.9 2023-09-20
+# README for Seq66 0.99.9 2023-09-21
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -83,7 +83,8 @@ Windows, and using a conventional source tarball.
 
     *   Version 0.99.9:
         *   Added an "Input Bus Routing" feature, where each pattern can be
-            set to receive events from a given input buss.
+            set to receive events from a given input buss. Selectable from
+            the grid-slot popup menu.
         *   Fixed nasty segfault opening new file while Editor tab open.
         *   Fixed bug: port-mapping Remap and Restart did not work due to
             timing.
@@ -98,6 +99,8 @@ Windows, and using a conventional source tarball.
             code.
         *   Implemented automation for BBT/HMS toggling, FF/Rewind, Undo/Redo,
             Play-set Copy/Paste, and Record Toggle.
+        *   Added a build-time option to add a show/hide button in the
+            main window to allow making the window to take up much less space.
         *   Added HTML help files to data/share/doc/info, other documentation
             upgrades.
     *   Version 0.99.8:
