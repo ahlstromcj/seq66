@@ -306,8 +306,9 @@ static const int c_fingerprint_size_max = 128;
  *  Default color names for tick/time displays.
  */
 
-const std::string s_time_fg_color = "lime";     /* CSS for bright green     */
-const std::string s_time_bg_color = "black";    /* CSS for black :-D        */
+static const std::string s_time_no_color = "";      /* keep theme color     */
+static const std::string s_time_fg_color = "lime";  /* CSS bright green     */
+static const std::string s_time_bg_color = "black"; /* CSS black :-D        */
 
 /**
  *  Default constructor.
@@ -1690,18 +1691,26 @@ usrsettings::shrunken () const
 }
 
 const std::string &
-usrsettings::time_fg_color () const
+usrsettings::time_fg_color (bool forusrfile) const
 {
-    if (m_time_fg_color == "default" || m_time_fg_color.empty())
+    if (forusrfile)
+        return m_time_fg_color;
+    else if (m_time_fg_color == "normal")
+        return s_time_no_color;
+    else if (m_time_fg_color == "default" || m_time_fg_color.empty())
         return s_time_fg_color;
     else
         return m_time_fg_color;
 }
 
 const std::string &
-usrsettings::time_bg_color () const
+usrsettings::time_bg_color (bool forusrfile) const
 {
-    if (m_time_bg_color == "default" || m_time_bg_color.empty())
+    if (forusrfile)
+        return m_time_bg_color;
+    else if (m_time_bg_color == "normal")
+        return s_time_no_color;
+    else if (m_time_bg_color == "default" || m_time_bg_color.empty())
         return s_time_bg_color;
     else
         return m_time_bg_color;

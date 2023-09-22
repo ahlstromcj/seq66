@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-09-21
+% \update      2023-09-22
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -22,7 +22,7 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.65]{main-window/main-window-0_98_6-annotated.png}
+   \includegraphics[scale=0.65]{main-window/main-window-annotated.png}
    \caption{Seq66 Main Screen, Annotated}
    \label{fig:main_screen_annotated}
 \end{figure}
@@ -215,6 +215,21 @@
    Of course, a good 'ctrl' automation file (e.g. for the LaunchPad)
    is necessary to control \textsl{Seq66} in this tiny setup.
 
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=1.0]{main-window/main-window-tiny.png}
+   \caption{Main Window Tiny (Full Size)}
+   \label{fig:main_window_tiny}
+\end{figure}
+
+   Of course, noe of the other tabs are usable at this small size,
+   the song editor menu, shortcut, and button aren't available,
+   and the pattern editor still comes up big.
+   Might be enough for live play?.
+   Perhaps we should add a 'usr' option for the "tiny" mode?
+   And hide the rest of the tabs?
+   Switch some buttons around?
+
 \subsubsection{PPQN Selection}
 \label{subsubsec:introduction_ppqn_selection}
 
@@ -288,9 +303,10 @@
 \subsubsection{BBT or HMS Time Display}
 \label{subsubsec:introduction_time_display}
 
-   This text simply shows the current time during playback. 
-   It can be shown in BBT (bars:beats:ticks) or HMS (hours:minutes:seconds)
-   by clicking the \textbf{BBT/HMS} at the bottom of the window.
+   This push-button shows the current time during playback. 
+   It can be shown in BBT (bars:beats:ticks) or HMS (hours:minutes:seconds),
+   which can be switched by clicking this button.
+   (The \textbf{BBT/HMS} at the bottom of the window has been removed.)
 
 \subsubsection{Beat Indicator}
 \label{subsubsec:introduction_beat_indicator}
@@ -422,27 +438,33 @@
 \end{figure}
 
    \begin{itemize}
-      \item \textbf{Panic Button}
-      \item \textbf{Stop Button}
-      \item \textbf{Pause Button}
-      \item \textbf{Play Button}
-      \item \textbf{Loop Button}
+      \item \textbf{Panic}
+      \item \textbf{Stop}
+      \item \textbf{Pause}
+      \item \textbf{Play}
+      \item \textbf{Loop}
       \item \textbf{Live Song Record}
-      \item \textbf{Keep Queue Button}
-      \item \textbf{Mute Group Learn Button}
-      \item \textbf{Developer Test Button}
-      \item \textbf{Song Editor Button}
-      \item \textbf{Song Mode Button}
+      \item \textbf{Keep Queue}
+      \item \textbf{Mute Group Learn}
+      \item \textbf{Developer Test}
+      \item \textbf{Toggle Mute Status}
+      \item \textbf{Song Editor}
+      \item \textbf{Song Mode}
       \item \textbf{PPQN Indicator}
-      \item \textbf{BBT/HMS Toggle Button}
-      \item \textbf{Tap BPM Button}
+%     \item \textbf{BBT/HMS Toggle}
+      \item \textbf{Tap BPM}
       \item \textbf{Beats Per Minute Control}
    \end{itemize}
 
    Many of these controls have keystrokes and MIDI-control slots that can be
    set up in the 'ctrl' file.
 
-\subsubsection{Panic Button}
+   Note that \textbf{BBT/HMS Toggle Button} has been removed
+   (version 0.99.9).
+   One can now click on the \textbf{BBT/HMS Time Display} to
+   change the format.
+
+\subsubsection{Panic}
 \label{subsubsec:introduction_panic_button}
 
    This button causes playback to stop, all patterns to mute, and flushes the
@@ -451,7 +473,7 @@
    for this automation operation, plus
    a MIDI-announcement (output) configuration item for it.
 
-\subsubsection{Stop Button}
+\subsubsection{Stop}
 \label{subsubsec:introduction_stop_button}
 
    This button stops playback and rewinds to the beginning of the song.
@@ -459,7 +481,7 @@
    and there is both a MIDI-control slot and a MIDI-announcement slot
    available for it.
 
-\subsubsection{Pause Button}
+\subsubsection{Pause}
 \label{subsubsec:introduction_pause_button}
 
    This button stops playback, but does not rewind to the beginning of the
@@ -469,7 +491,7 @@
    hardwired to pause and start playback in the pattern editor and the song
    editor.
 
-\subsubsection{Play Button}
+\subsubsection{Play}
 \label{subsubsec:introduction_play_button}
 
    This button starts playback, either at the beginning or at the pause point.
@@ -480,7 +502,7 @@
    This key is also hardwired to toggle playback in the pattern editor and the
    song editor.
 
-\subsubsection{Loop Button}
+\subsubsection{Loop}
 \label{subsubsec:introduction_loop_button}
 
    This button has been added to the main window as of version 0.93.0 of
@@ -491,7 +513,7 @@
    In addition, looping can now be done in both the Live and Song modes of
    playback.
 
-\subsubsection{Live Song Record Button}
+\subsubsection{Live Song Record}
 \label{subsubsec:introduction_live_record_button}
 
    This button causes a live playing session to be recorded to Song mode.
@@ -507,7 +529,7 @@
    causes recording immediately after starting playback.
    This feature is useful in avoid delay at start up.
 
-\subsubsection{Keep Queue Button}
+\subsubsection{Keep Queue}
 \label{subsubsec:introduction_keep_queue_button}
 
    Puts the application into a "sticky" queue mode.
@@ -516,7 +538,7 @@
    By default, the \texttt{Backslash} key operates this function,
    and there is a MIDI-control slot available for it.
 
-\subsubsection{Mute Group Learn Button}
+\subsubsection{Mute Group Learn}
 \label{subsubsec:introduction_mute_group_learn_button}
 
    \index{L button}
@@ -560,21 +582,31 @@
    a feature of \textsl{Seq66}.
    Also see \sectionref{sec:mutes_master}.
 
-\subsubsection{Developer Test Button}
+\subsubsection{Developer Test}
 \label{subsubsec:introduction_developer_test_button}
 
    This button is always disabled.  Functionality is added temporarily when
    testing new features. Ignore this button.
 
-\subsubsection{Song Editor Button}
+\subsubsection{Toggle Mute Status}
+\label{subsubsec:introduction_toggle_mute_status_button}
+
+   This button toggles the mute/armed status of all of the patterns
+   in the current set.
+   Works the same as the
+   \textbf{Edit / Toggle All Tracks} menu or the hard-wired
+   \texttt{Ctrl-T} key.
+
+\subsubsection{Song Editor}
 \label{subsubsec:introduction_song_editor_button}
 
    This button (with a "pencil" icon)
    brings up an external window for editing the Song/Performance
-   information.  If already up, it closes it.  Works the same as the
+   information.  If already up, it closes it.
+   Works the same as the
    \textbf{Edit / Song Editor} menu or the hard-wired \texttt{Ctrl-E} key.
 
-\subsubsection{Live/Song Mode Button}
+\subsubsection{Live/Song Mode}
 \label{subsubsec:introduction_livesong_mode_button}
 
    This button toggles between the \textsl{Live} and \textsl{Song} performance
@@ -608,11 +640,15 @@
 
    \configref{usr}{user-midi-settings}{midi\_ppqn}
 
-\subsubsection{BBT/HMS Toggle Button}
+\subsubsection{BBT/HMS Toggle (removed)}
 \label{subsubsec:introduction_time_format_toggle_button}
 
-   Toggles the format of the current time displayed during playback. 
-   It can be shown in B:B:T (bars:beats:ticks) or H:M:S (hours:minutes:seconds).
+   The time display has been converted to a button, and click it will
+   switch the format. So the BBT/HMS Toggle button
+   \textsl{has been removed}.
+
+%  Toggles the format of the current time displayed during playback. 
+%  It can be shown in B:B:T (bars:beats:ticks) or H:M:S (hours:minutes:seconds).
 
 \subsubsection{Tap BPM Button}
 \label{subsubsec:introduction_tap_bpm_button}

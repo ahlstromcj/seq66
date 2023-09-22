@@ -1,7 +1,7 @@
-# Seq66 0.99.3 user ('usr') configuration file
+# Seq66 0.99.9 user ('usr') configuration file
 #
 # /home/usr/.config/seq66/qseq66.usr
-# Written 2023-05-25 12:12:22
+# Written 2023-09-22 09:01:45
 #
 # 'usr' file. Edit it and place it in ~/.config/seq66. It allows naming each
 # MIDI bus/port, channel, and control code.
@@ -77,6 +77,10 @@ evince put it in
 # palette. Palettes are for Seq66 drawing areas, not for Qt widgets.
 # Normal/inverse palettes can be reconfigured via a 'palette' file.
 #
+# 'time-fg-color' and 'time-bg-color' override the default colors for ticks
+# and time displays (lime on black). 'default' keeps the defaults. 'normal'
+# uses the theme color.
+#
 # 'dark-theme' specifies that are dark theme is active.
 #
 # 'window-redraw-rate' specifies the base window redraw rate for all windows.
@@ -99,6 +103,8 @@ default-zoom = 2
 global-seq-feature = false
 progress-bar-thick = false
 inverse-colors = false
+time-fg-color = "lime"
+time-bg-color = "black"
 dark-theme = false
 window-redraw-rate = 40
 window-scale = 1
@@ -113,6 +119,15 @@ enable-learn-confirmation = false
 
 default-ppqn = 192
 use-file-ppqn = true
+
+# This section specifies the default values to use to jitter the MIDI event
+# time-stamps and randomize event amplitudes (e.g. velocity for notes). The
+# range of jitter is 1/j times the current snap value.
+
+[user-randomization]
+
+jitter-divisor = 16
+amplitude = 4
 
 # [user-midi-settings]
 #
@@ -240,10 +255,11 @@ visibility = true
 
 # [new-pattern-editor]
 #
-# Setup values for play/recording when a new pattern is opened. A new pattern
-# means that the loop has the default name 'Untitled' and no events. These
+# Values for play/recording when a new pattern is created. A new pattern
+# is indicated when the loop has the name 'Untitled' and no events. These
 # values save time during a live recording session. The valid values for
-# record-style are 'merge' (default), 'overwrite', 'expand', and 'one-shot'.
+# record-style are 'merge' (default), 'overwrite', 'expand', 'one-shot', 
+# and 'one-shot-reset'.
 # 'wrap-around', if true, allows recorded notes to wrap around to the
 # pattern start.
 

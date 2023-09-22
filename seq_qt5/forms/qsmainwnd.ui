@@ -37,6 +37,11 @@
    <iconset>
     <normaloff>:/pixmaps/logo.xpm</normaloff>:/pixmaps/logo.xpm</iconset>
   </property>
+  <property name="toolTip">
+   <string>This button displays the current time during
+playback. Clicking it toggles between
+B:B:T and H:M:S format.</string>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -92,6 +97,7 @@
          <font>
           <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
+          <weight>75</weight>
           <italic>false</italic>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
@@ -320,6 +326,7 @@ the current set.  Modifies the song.</string>
          <font>
           <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -361,34 +368,15 @@ the current set.  Modifies the song.</string>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_HMS">
-        <property name="minimumSize">
-         <size>
-          <width>90</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>112</width>
-          <height>24</height>
-         </size>
-        </property>
+       <widget class="QPushButton" name="btnBBTHMS">
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
-          <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
-        <property name="frameShape">
-         <enum>QFrame::Box</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Sunken</enum>
-        </property>
         <property name="text">
-         <string>0:0:0</string>
+         <string>H:M:S</string>
         </property>
        </widget>
       </item>
@@ -724,6 +712,7 @@ the current set.  Modifies the song.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -749,6 +738,7 @@ the current set.  Modifies the song.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -785,6 +775,7 @@ the current set.</string>
         <property name="font">
          <font>
           <pointsize>9</pointsize>
+          <weight>50</weight>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -840,6 +831,7 @@ no matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -871,6 +863,7 @@ no matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -916,6 +909,7 @@ or active external live frame.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -944,6 +938,7 @@ or active external live frame.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1194,6 +1189,7 @@ at start of playback.</string>
           </property>
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1377,6 +1373,7 @@ Editor triggers.</string>
         </property>
         <property name="font">
          <font>
+          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1398,29 +1395,6 @@ Editor triggers.</string>
         </property>
         <property name="readOnly">
          <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btn_set_HMS">
-        <property name="minimumSize">
-         <size>
-          <width>56</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>999</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Switch between BBT and HMS time
-format in the clock.</string>
-        </property>
-        <property name="text">
-         <string>H:M:S</string>
         </property>
        </widget>
       </item>
@@ -1466,6 +1440,7 @@ resets to 0.</string>
           </property>
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1497,6 +1472,7 @@ resets to 0.</string>
           </property>
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1534,7 +1510,7 @@ beats/minute.</string>
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>27</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

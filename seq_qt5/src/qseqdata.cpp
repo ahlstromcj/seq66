@@ -311,7 +311,12 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 snprintf(digits, sizeof digits, "%3d", int(cev->tempo()));
                 brush.setColor(selected ? sel_color() : tempo_color());
                 painter.setBrush(brush);
-                painter.drawEllipse(event_x - 8, d1 - 3, s_circle_d, s_circle_d);
+                painter.setPen(pen);
+                painter.drawEllipse
+                (
+                    event_x - s_handle_r, d1 - s_handle_r,
+                    s_handle_d, s_handle_d
+                );
                 painter.drawText(x_offset + 12, d1 + 4, digits);
                 brush.setColor(grey_color());
                 painter.setBrush(brush);
@@ -329,6 +334,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 int n = int(cev->get_sysex(0));
                 int d = beat_power_of_2(int(cev->get_sysex(1)));
                 std::string text = std::to_string(n);
+                painter.setPen(pen);
                 text += "/";
                 text += std::to_string(d);
                 y_offset = 20;
@@ -346,7 +352,12 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 d1 -= s_circle_d;
                 snprintf(digits, sizeof digits, "%3d", d0);
                 brush.setColor(selected ? sel_color() : drum_color()); /* ! */
-                painter.drawEllipse(event_x - 6, d1, s_circle_d, s_circle_d);
+                painter.setPen(pen);
+                painter.drawEllipse
+                (
+                    event_x - s_handle_r, d1 - s_handle_r,
+                    s_handle_d, s_handle_d
+                );
                 painter.drawText(x_offset + 6, d1 + 6, digits);
                 brush.setColor(grey_color());   /* new */
                 painter.setBrush(brush);        /* new */

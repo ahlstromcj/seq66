@@ -1361,8 +1361,8 @@ public:
         return m_inverse_colors;
     }
 
-    const std::string & time_fg_color () const;
-    const std::string & time_bg_color () const;
+    const std::string & time_fg_color (bool forusrfile = false) const;
+    const std::string & time_bg_color (bool forusrfile = false) const;
 
     std::string time_colors_css () const;
 

@@ -396,12 +396,20 @@ qsmainwnd::qsmainwnd
     m_msg_save_changes->setDefaultButton(QMessageBox::Save);
 
     /*
+     * B:B:T vs H:M:S button is now incorporated into the tick/time display.
      * Set HMS/BBT text and background color.
      */
 
     std::string css = usr().time_colors_css();
     if (! css.empty())
-        ui->label_HMS->setStyleSheet(qt(css));
+        ui->btnBBTHMS->setStyleSheet(qt(css));
+
+    toggle_time_format(true);           /* slightly tricky */
+    connect
+    (
+        ui->btnBBTHMS, SIGNAL(clicked(bool)),
+        this, SLOT(toggle_time_format(bool))
+    );
 
     /*
      *  Main time bar at top right.
@@ -709,17 +717,6 @@ qsmainwnd::qsmainwnd
         );
         qt_set_icon(perfedit_xpm, ui->btnPerfEdit);
     }
-
-    /*
-     * B:B:T vs H:M:S button.
-     */
-
-    toggle_time_format(true);           /* slightly tricky */
-    connect
-    (
-        ui->btn_set_HMS, SIGNAL(clicked(bool)),
-        this, SLOT(toggle_time_format(bool))
-    );
 
     /*
      * Set-Reset button.
@@ -1860,7 +1857,7 @@ qsmainwnd::toggle_time_format (bool /*on*/)
 {
     m_tick_time_as_bbt = ! m_tick_time_as_bbt;
     QString label = m_tick_time_as_bbt ? "B:B:T" : "H:M:S" ;
-    ui->btn_set_HMS->setText(label);
+    ui->btnBBTHMS->setText(label);
     update_time(cb_perf().get_tick());
 }
 
@@ -1871,7 +1868,7 @@ qsmainwnd::update_time (midipulse tick)
         cb_perf().pulses_to_measure_string(tick) :
         cb_perf().pulses_to_time_string(tick) ;
 
-    ui->label_HMS->setText(qt(t));
+    ui->btnBBTHMS->setText(qt(t));
 }
 
 void

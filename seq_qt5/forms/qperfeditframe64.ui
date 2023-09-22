@@ -81,7 +81,7 @@
           <x>0</x>
           <y>0</y>
           <width>16</width>
-          <height>306</height>
+          <height>310</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -116,7 +116,7 @@
           <x>0</x>
           <y>0</y>
           <width>689</width>
-          <height>308</height>
+          <height>312</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -816,6 +816,7 @@ To reset, set to 0 and apply it.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -829,10 +830,10 @@ format.</string>
         <string>20:20.20</string>
        </property>
        <property name="checkable">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="flat">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>

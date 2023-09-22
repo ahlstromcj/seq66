@@ -751,7 +751,8 @@ usrfile::write ()
 "# Normal/inverse palettes can be reconfigured via a 'palette' file.\n"
 "#\n"
 "# 'time-fg-color' and 'time-bg-color' override the default colors for ticks\n"
-"# and time displays (green on black). 'default' keeps the defaults.\n"
+"# and time displays (lime on black). 'default' keeps the defaults. 'normal'\n"
+"# uses the theme color.\n"
 "#\n"
 "# 'dark-theme' specifies that are dark theme is active.\n"
 "#\n"
@@ -774,8 +775,8 @@ usrfile::write ()
     write_boolean(file, "global-seq-feature", usr().global_seq_feature());
     write_boolean(file, "progress-bar-thick", usr().progress_bar_thick());
     write_boolean(file, "inverse-colors", usr().inverse_colors());
-    write_string(file, "time-fg-color", usr().time_fg_color());
-    write_string(file, "time-bg-color", usr().time_bg_color());
+    write_string(file, "time-fg-color", usr().time_fg_color(true), true);
+    write_string(file, "time-bg-color", usr().time_bg_color(true), true);
     write_boolean(file, "dark-theme", usr().dark_theme());
     write_integer(file, "window-redraw-rate", usr().window_redraw_rate());
     write_float(file, "window-scale", usr().window_scale());

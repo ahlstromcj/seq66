@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2023-09-21
+ * \updates       2023-09-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -407,7 +407,6 @@ qperfeditframe64::qperfeditframe64
         ui->btnDuration->setStyleSheet(qt(css));
 
     ui->btnDuration->setText(qt(dur));
-    ui->btnDuration->setChecked(m_duration_mode);
     connect
     (
         ui->btnDuration, SIGNAL(clicked(bool)),
@@ -418,7 +417,7 @@ qperfeditframe64::qperfeditframe64
 qperfeditframe64::~qperfeditframe64 ()
 {
     delete ui;
-    if (not_nullptr(m_palette))     // valgrind fix?
+    if (not_nullptr(m_palette))
         delete m_palette;
 }
 
@@ -715,11 +714,11 @@ qperfeditframe64::entry_mode (bool ischecked)
 }
 
 void
-qperfeditframe64::slot_duration (bool ischecked)
+qperfeditframe64::slot_duration (bool /* ischecked */ )
 {
-    m_duration_mode = ischecked;
+    m_duration_mode = ! m_duration_mode;
 
-    std::string dur = perf().duration(ischecked);
+    std::string dur = perf().duration(m_duration_mode);
     ui->btnDuration->setText(qt(dur));
 }
 

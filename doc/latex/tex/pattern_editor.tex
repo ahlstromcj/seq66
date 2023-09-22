@@ -21,6 +21,11 @@ pdate      2023-09-07
    \caption{External Pattern Editor Window}
    \label{fig:pattern_editor_window}
 \end{figure}
+
+   This figure does not show a recent new feature: for selected event,
+   the orange data line is topped with a circular "grab handle" that can
+   be used to change the amplitude of the data (e.g. velocity) being
+   shown.
   
    The \textbf{Pattern Editor} is complex, and we will discuss the external
    window only since its features are a superset of the \textbf{Edit} tab.
@@ -31,8 +36,8 @@ pdate      2023-09-07
       \item \textbf{Second Row}
       \item \textbf{Time}
       \item \textbf{Piano Roll}
-      \item \textbf{Events Panel}
-      \item \textbf{Data Panel}
+      \item \textbf{Events Pane}
+      \item \textbf{Data Pane}
       \item \textbf{Bottom Row}
       \item \textbf{Common Actions}
    \end{enumber}
@@ -80,20 +85,13 @@ pdate      2023-09-07
    \label{fig:pattern_editor_window_annotated}
 \end{figure}
 
-   \textbf{Note}:
-   In order to keep the time pane (timeline), vertical piano keyboard,
-   piano roll, event pane line, and data pane in sync,
-   the arrow keys have been disabled
-   in all of the items \textsl{except} the piano roll.
-   The piano roll must have focus for moving or paging left, right, up, and
-   down.
+   The arrow keys can be used to move left, right, up, or down.
 
    \index{keys!vi}
    \index{keys!hjkl}
-   The exception is that the "h" (left), "j" (down), "k" (up), and "l" (right)
+   For \textsl{vi} users, the "h" (left), "j" (down), "k" (up), and "l" (right)
    keys can be used while any pane is in focus, and they act like the arrow
-   keys do when the piano roll is in focus..
-   These keys function as they do in the "vi" text editor.
+   keys.
 
 \subsection{Pattern Editor / First Row}
 \label{subsec:pattern_editor_first_row}
@@ -211,7 +209,7 @@ pdate      2023-09-07
    When active, a note is treated like the base note of the selected chord
    type, and extra notes are generated to create that chord.
    The \textbf{Chord Generation Reset} button is at the left of the
-   \textbf{Data Panel}.
+   \textbf{Data Pane}.
 
    \itempar{MIDI Out Device (Buss)}{pattern editor!midi out device}
    This setting specifies a virtual MIDI output buss or a
@@ -632,14 +630,19 @@ pdate      2023-09-07
    The measures ruler ("bar indicator", or "Time")
    consists of a \textsl{timeline} at the top and the 
    \textbf{L marker} and \textbf{R marker} items.
-   The following are the elements of the \textbf{Time} line:
+   The following are the elements next to and on
+   the \textbf{Time} line:
 
    \begin{itemize}
       \item \textbf{Vertical Zoom Buttons}.
          These buttons allow the user to compress, reset, or expand the
-         piano roll vertically to a certain degree.  A more permanent change
+         piano roll vertically to a certain degree.
+         (The \texttt{v}, \texttt{V}, and \texttt{0} keys offer
+         the same functions.)
+         A more permanent change in vertical grid scaling
          can be made by setting the \textbf{Editor Key Height} value in
-         the \textbf{Edit / Preferences / Display} tab, or in the 'usr' file.
+         the \textbf{Edit / Preferences / Display} tab,
+         or in the 'usr' file.
       \item \textbf{Time Line}.
          The \textbf{Time} (or \textbf{Measures}) bar provides an explicit
          count of beats and bars.
@@ -678,10 +681,12 @@ pdate      2023-09-07
       \item The mouse cursor is in the piano roll, and has the normal
          appearance for the current mouse cursor theme.
       \item The mouse cursor is in the bottom half of the time line, and
-         here it's a pointing finger.  When clicked, the "L" marker is set
-         there.
+         here it's a pointing finger.
+         When left-clicked, the "L" marker is set there.
+         When right-clicked, the "R" marker is set there.
       \item The mouse cursor is in the top half of the time line, and is
-         shown as a vertical arrow.  It sets the current position in the
+         shown as a vertical arrow.
+         A left- or right-click sets the current position in the
          pattern, and a red vertical line marks that position.
       \item The time-signature button (the "4/8" shown in the top
          bar) is clicked, and a time-signature is added at that point.
@@ -1171,7 +1176,7 @@ pdate      2023-09-07
    and the \textbf{0} key resets the zoom to the value of the "key height"
    setting in the 'usr' configuration file.
    
-\subsection{Events Panel}
+\subsection{Events Pane}
 \label{subsec:pattern_editor_panel}
 
    Also known as the "events pane" or "events editor".
@@ -1180,7 +1185,7 @@ pdate      2023-09-07
    \index{event strip}
    These and other events appear
    as small squares in the event strip, along with a black vertical bar
-   in the \textbf{Data Panel} with a
+   in the \textbf{Data Pane} with a
    height proportional to the data-value of the event and a numeric
    representation of that value.
 	The event value (data) editor (directly under the event strip) is used 
@@ -1233,7 +1238,7 @@ pdate      2023-09-07
    The event values can be edited via the data panel, described in the next
    section.
 
-\subsection{Data Panel}
+\subsection{Data Pane}
 \label{subsec:pattern_editor_data_view}
 
    Once the events are in place, the next step is to modify the
@@ -1274,20 +1279,19 @@ pdate      2023-09-07
    This button resets the chord-generation feature to \textbf{Off}.
    It's located by the data pane in order to save space in the first row.
 
-   Now on to the \textbf{Data Panel} itself.
-   Also known as the "data pane"
+   Now on to the \textbf{Data Pane} itself,
+   also known as the "data panel".
    \index{data pane}
-   or "data panel".
-   \index{data panel}
    \textbf{Modify Event Data} offers a way to
-   alter the event data values in 
-   the lower pane of the pattern editor, the "data pane".
+   alter the event data values.
    Many different events can be altered in the data pane:
    Note On and Note Off velocities, program changes, aftertouch, channel
    pressure, pitch wheel, and tempo.
 
    The events values for the currently selected category of events are shown
-   in this window as vertical lines of a height proportional to the value.
+   in this window as vertical lines of a height proportional to the value,
+   \index{data!grab handle}
+   topped by a circular grab handle.
    The exceptions are program changes and tempo, which are shown by small
    circles, yellow in the case of tempo.
    Also, the range of tempos in the data panel is set to match the
@@ -1313,6 +1317,10 @@ pdate      2023-09-07
    area, \textsl{only the events that are selected} are changed.
    The data-values of \textsl{unselected} events are left unchanged.
    A cool feature from \textsl{Seq24}.
+
+   Also, as the mouse passes over the data pane, events near the mouse
+   acquire a grab handle, which can be used to select the event
+   and modify its value.
 
    Note that some events are shown as small circles instead of a line; each
    circle has the numeric value next to it.
