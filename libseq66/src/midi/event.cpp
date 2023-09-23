@@ -448,13 +448,26 @@ event::is_desired (midibyte status, midibyte cc) const
 bool
 event::is_data_in_handle_range (midibyte target) const
 {
-    static const midibyte delta = 2;                    /* seq32 provision  */
-    static const midibyte max = c_midibyte_value_max - delta;
-    midibyte datum = is_one_byte() ? d0() : d1() ;
-    bool result = target >= delta && target <= max;
-    if (result)
-        result = datum >= (target - delta) && datum <= (target + delta);
-
+    bool result = false;
+    if (is_tempo())
+    {
+        static const midibpm s_delta = 10;
+        midibpm t = tempo();
+        midibpm tdesired = note_value_to_tempo(target);
+        result = t >= (tdesired - s_delta) && t <= (tdesired + s_delta);
+    }
+    else
+    {
+        static const midibyte s_delta = 2;                /* seq32 provision  */
+        static const midibyte max = c_midibyte_value_max - s_delta;
+        midibyte datum = is_one_byte() ? d0() : d1() ;
+        result = target >= s_delta && target <= max;
+        if (result)
+        {
+            result = datum >= (target - s_delta) &&
+                datum <= (target + s_delta);
+        }
+    }
     return result;
 }
 

@@ -248,6 +248,7 @@ extern midibyte beat_log2 (int value);
 extern midibpm tempo_us_from_bytes (const midibyte tt[3]);
 extern bool tempo_us_to_bytes (midibyte t[3], midibpm tempo_us);
 extern midibyte tempo_to_note_value (midibpm tempo);
+extern midibpm note_value_to_tempo (midibyte tempo);
 extern midibpm fix_tempo (midibpm bpm);
 extern unsigned short combine_bytes (midibyte b0, midibyte b1);
 extern midibpm note_value_to_tempo (midibyte note);

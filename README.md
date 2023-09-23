@@ -1,4 +1,4 @@
-# README for Seq66 0.99.9 2023-09-21
+# README for Seq66 0.99.9 2023-09-23
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -88,6 +88,7 @@ Windows, and using a conventional source tarball.
         *   Fixed nasty segfault opening new file while Editor tab open.
         *   Fixed bug: port-mapping Remap and Restart did not work due to
             timing.
+        *   Fixed bug in detecting Note-related messages.
         *   Fixed error in "quiet" startup that would cause immediate exit.
         *   Related to issue #115: Added ability to select a line in the data
             pane and grab a handle to change its value.

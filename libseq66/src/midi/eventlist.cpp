@@ -1943,10 +1943,29 @@ eventlist::select_events
 }
 
 /**
- *  Selects the seqdata event handle if in range.
+ *  Selects the seqdata event handle if in range.  One issue in adjusting data
+ *  is Pitch events, which have two components [d0() and d1()] which must be
+ *  combined. Another issue is tempo events, where the value is converted to a
+ *  note-velocity in order to display it in the data pane.
  *
- *  One issue in adjusting data is Pitch events, which have two
- *  components [d0() and d1()] which must be combined.
+ * \param tick_s
+ *      Provides the starting tick, which is some small amount below the tick
+ *      represented by the mouse position.
+ *
+ * \param tick_f
+ *      Provides the finishing  tick, which is some small amount above the
+ *      tick represented by the mouse position.
+ *
+ * \param astatus
+ *      Provides the type of event, such as Note-On/Off, Pitchbend, or Tempo.
+ *
+ * \param cc
+ *      For control events, represents the control code. Does not apply to
+ *      Notes, Tempo, Pitchbend.  For Meta events, cc is the type of Meta
+ *      event.
+ *
+ * \param data
+ *      Currently represents the note value.
  */
 
 int
@@ -1964,12 +1983,15 @@ eventlist::select_event_handle
         if (count_selected_events(astatus, cc) > 0)
             have_selected_note_ons = true;
     }
+    else if (event::is_tempo_status(cc))
+    {
+    }
     for (auto & er : m_events)
     {
-        if (event_in_range(er, astatus, tick_s, tick_f)) /* in time-range    */
+        if (event_in_range(er, astatus, tick_s, tick_f)) /* in time-range   */
         {
             bool isctrl = event::is_controller_msg(astatus);
-            if (isctrl && er.is_desired(astatus, cc, data)) /* in data-range */
+            if (isctrl && er.is_desired(astatus, cc, data)) /* in range     */
             {
                 unselect_all();                         /* or unmark()      */
                 er.select();                            /* or mark()???     */

@@ -236,6 +236,14 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             int event_height = event::is_one_byte_msg(m_status) ? d0 : d1 ;
             event_height = height() - byte_height(m_dataarea_y, event_height);
             pen.setWidth(2);
+
+            bool its_close = false;
+            if (! selected && m_mouse_tick >= 0)
+            {
+                midipulse delta = std::labs(tick - m_mouse_tick);
+                if (delta <= m_handle_delta)
+                    its_close = true;
+            }
             if (data_event)
             {
 #if defined SEQ66_REQUIRE_SEQ_CHANNEL_MATCH                 /* too much! */
@@ -272,14 +280,6 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 event_x -= 3;
                 painter.drawLine(event_x, event_height, event_x, height());
                 snprintf(digits, sizeof digits, "%3d", d1);
-
-                bool its_close = false;
-                if (! selected && m_mouse_tick >= 0)
-                {
-                    midipulse delta = std::labs(tick - m_mouse_tick);
-                    if (delta <= m_handle_delta)
-                        its_close = true;
-                }
                 if (selected || its_close)
                 {
                     painter.drawEllipse
@@ -288,7 +288,6 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                         s_handle_d, s_handle_d
                     );
                 }
-
                 if (! is_pitchbend())
                 {
                     QString val = digits;
@@ -310,6 +309,9 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 
                 snprintf(digits, sizeof digits, "%3d", int(cev->tempo()));
                 brush.setColor(selected ? sel_color() : tempo_color());
+                if (its_close)
+                    pen.setColor(Qt::yellow);
+
                 painter.setBrush(brush);
                 painter.setPen(pen);
                 painter.drawEllipse
@@ -382,8 +384,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             text += "/";
             text += std::to_string(d);
 
-            pen.setColor(Qt::white);
-            pen.setColor(Qt::black);
+            pen.setColor(Qt::white);            // pen.setColor(Qt::black);
             painter.setPen(pen);
             painter.drawText(pos, y_offset, qt(text));
         }
@@ -483,7 +484,6 @@ qseqdata::mousePressEvent (QMouseEvent * event)
      * Check if this tick range would select an event.
      */
 
-
     track().push_undo();
     old_rect().clear();                         /* reset dirty redraw box   */
 }
@@ -544,8 +544,7 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
         track().adjust_event_handle(m_status, m_dataarea_y - current_y());
         update();
     }
-    else
-    if (m_line_adjust)
+    else if (m_line_adjust)
     {
 #if defined SEQ66_TRACK_DATA_EDITING_MOVEMENTS
         int adj_x_min, adj_x_max, adj_y_min, adj_y_max;

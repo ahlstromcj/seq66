@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-06
+ * \updates       2023-09-23
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -39,12 +39,14 @@
  *  Meta events.  First, we use the existing event::sysex to hold
  *  this data.
  *
- *  The MIDI protocol consists of MIDI events that carry four types of messages:
+ *  The MIDI protocol consists of MIDI events that carry four types of
+ *  messages:
  *
  *      -   Voice messages.  0x80 to 0xEF; includes channel information.
  *      -   System common messages.  0xF0 (SysEx) to 0xF7 (End of SysEx)
  *      -   System realtime messages. 0xF8 to 0xFF.
- *      -   Meta messages. 0xFF is the flag, followed by type, length, and data.
+ *      -   Meta messages. 0xFF is the flag, followed by type, length, and
+ *          data.
  */
 
 #include <string>                       /* used in to_string()              */
@@ -590,9 +592,23 @@ public:
         return mask_status(m) == EVENT_CONTROL_CHANGE;
     }
 
-    static bool is_note_on_msg (midibyte m)
+    /**
+     *  Static test for messages that involve notes and velocity: Note On,
+     *  Note Off, and Aftertouch.
+     *
+     * \param m
+     *      The channel status or message byte to be tested, and the channel
+     *      bits are masked off before testing.  Actually, no longer
+     *      necessary, we have a faster test, since these three events have
+     *      values in an easy range to check.
+     *
+     * \return
+     *      Returns true if the byte represents a MIDI note message.
+     */
+
+    static bool is_note_msg (midibyte m)
     {
-        return m >= EVENT_NOTE_ON || m < EVENT_AFTERTOUCH;
+        return m >= EVENT_NOTE_OFF && m < EVENT_CONTROL_CHANGE;
     }
 
     /**
@@ -608,7 +624,12 @@ public:
 
     static bool is_strict_note_msg (midibyte m)
     {
-        return m >= EVENT_NOTE_OFF || m < EVENT_AFTERTOUCH;
+        return m >= EVENT_NOTE_OFF && m < EVENT_AFTERTOUCH;
+    }
+
+    static bool is_note_on_msg (midibyte m)
+    {
+        return m >= EVENT_NOTE_ON && m < EVENT_AFTERTOUCH;
     }
 
     /**
@@ -688,25 +709,6 @@ public:
             (m >= EVENT_NOTE_OFF && m < EVENT_PROGRAM_CHANGE) ||
             mask_status(m) == EVENT_PITCH_WHEEL
         );
-    }
-
-    /**
-     *  Static test for messages that involve notes and velocity: Note On,
-     *  Note Off, and Aftertouch.
-     *
-     * \param m
-     *      The channel status or message byte to be tested, and the channel
-     *      bits are masked off before testing.  Actually, no longer
-     *      necessary, we have a faster test, since these three events have
-     *      values in an easy range to check.
-     *
-     * \return
-     *      Returns true if the byte represents a MIDI note message.
-     */
-
-    static bool is_note_msg (midibyte m)
-    {
-        return m >= EVENT_NOTE_OFF && m < EVENT_CONTROL_CHANGE;
     }
 
     /**
