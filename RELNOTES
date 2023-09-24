@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.9 2023-09-23
+Release Notes for Seq66 v. 0.99.9 2023-09-24
 
 -   Added an "Input Bus Routing" feature, where each pattern can be
     set to receive events from a given input buss. Selectable from
@@ -10,12 +10,16 @@ Release Notes for Seq66 v. 0.99.9 2023-09-23
 -   Added more seqroll keystokes. Enabled Esc to exit paint mode if
     not playing. Added keystroke zoom handling to additional panes.
 -   Added a show-hide build option to allow for a very small window.
--   Added HTML help files to data/share/doc/info for installation.
+-   Added HTML help files to data/share/doc/info for installation
+    and viewing. Help for hard-wired panel keystrokes.
 -   The usual raft of humiliating bug-fixes:
     -   Fixed nasty segfault opening new file with Editor tab open.
     -   Fixed port-mapping Remap and Restart not restarting Seq66.
-    -   Fixed bug in detecting Note-related events.
+    -   Fixed years-long bug in detecting Note-related events.
     -   Fixed error in "quiet" startup that would cause immediate exit.
+    -   Fixed error in copying info files in the NSIS build.
+    -   Fixed startup error in portmidi with missing ports;
+        however, still broken in the Windows build. See TODO.
 
 Read the NEWS, README.md, and TODO files.
 

@@ -172,7 +172,7 @@
 ::---------------------------------------------------------------------------
  
 set PROJECT_VERSION=0.99.9
-set PROJECT_DATE=2023-08-28
+set PROJECT_DATE=2023-09-24
 set PROJECT_DRIVE=C:
 
 :: Set the bits of the project, either 64 or 32. Also define WIN64 versus
@@ -214,7 +214,7 @@ set RELEASE_DIR=%APP_DIR%\release
 set AUX_DIR=data
 set DOC_DIR=data\share\doc
 set TUTORIAL_DIR=data\share\doc\tutorial
-set INFO_DIR=data\share\doc\tutorial
+set INFO_DIR=data\share\doc\info
 
 :: The quotes are required here. Do we want to add "qtquickcompiler"?
 

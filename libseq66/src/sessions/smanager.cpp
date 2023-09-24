@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-09-15
+ * \updates       2023-09-24
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -767,6 +767,10 @@ smanager::show_error (const std::string & tag, const std::string & msg) const
  *  Checks for an internal (e.g. PortMidi) error, storing the message if
  *  applicable.
  *
+ *  ca 2023-09-24
+ *  For portmidi, the internal_error_check() might not find an error,
+ *  while a port-map error does exist. So we add a check of the latter here.
+ *
  * \param [out] errmsg
  *      Provides a destination for the PortMidi error.  It is cleared if
  *      there is no error.
@@ -795,6 +799,10 @@ smanager::internal_error_check (std::string & errmsg) const
         const char * perr = Pm_error_message();
         if (not_nullptr(perr) && std::strlen(perr) > 0)
             pmerrmsg = std::string(perr);
+    }
+    else
+    {
+        result = perf()->port_map_error();              /* ca 2023-09-24 */
     }
 
 #else

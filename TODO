@@ -1,9 +1,13 @@
 TO DO for Seq66 0.99.9
 Chris Ahlstrom
-2019-04-13 to 2023-09-22
+2019-04-13 to 2023-09-24
 
 Misc:
 
+    -   Windows: If ports are missing, the application just exits (it
+        works fine in the Linux portmidi build). The workaround
+        is save the 'rc' file elsewhere, run the exe, and then
+        merge the port settings back into the original 'rc' file.
     -   In the data pane, for tempo, program change etc., allow them to be
         dragged up and down (at least for tempo).
     -   Next version, document and test mute groups.

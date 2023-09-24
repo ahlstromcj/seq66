@@ -1,8 +1,8 @@
 readme.text for Seq66 0.99.9
 Chris Ahlstrom
-2015-09-10 to 2023-08-28
+2015-09-10 to 2023-09-24
 
-Release 0.99.8 fixes known issues, and adds additional run-time help files and
+Release 0.99.9 fixes known issues, and adds additional run-time help files and
 some more automation functions.
 
 Seq66 is a refactoring of a reboot (sequencer64) of seq24, extending it with new
