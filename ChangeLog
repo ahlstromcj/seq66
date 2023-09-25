@@ -1,3 +1,433 @@
+2023-09-24  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES, TODO, VERSION, configure.ac,
+	data/readme.text, data/readme.windows,
+	doc/latex/tex/seq66-user-manual.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/src/sessions/smanager.cpp, nsis/build_release_package.bat: 
+	Release Notes for Seq66 v. 0.99.9 2023-09-24 -   Added an "Input Bus Routing" feature, where each pattern can be     set to receive events from a given input buss. Selectable from -   Refactored and extended zoom support in the song/pattern
+	editors.  -   Can now select a line in the data pane and grab a handle to
+	    change its value.  -   Implemented automation for BBT/HMS toggling, FF/Rewind,
+	    Undo/Redo, Play-set Copy/Paste.  -   Added more seqroll keystokes. Enabled Esc to exit paint mode if     not playing. Added keystroke zoom handling to additional panes.  -   Added a show-hide build option to allow for a very small window.  -   Added HTML help files to data/share/doc/info for installation     and viewing. Help for hard-wired panel keystrokes.  -   The usual raft of humiliating bug-fixes:     -   Fixed nasty segfault opening new file with Editor tab open.      -   Fixed port-mapping Remap and Restart not restarting Seq66.      -   Fixed years-long bug in detecting Note-related events.      -   Fixed error in "quiet" startup that would cause immediate
+	    exit.  -   Fixed error in copying info files in the NSIS build.      -   Fixed startup error in portmidi with missing ports;         however, still broken in the Windows build. See TODO.  Read the NEWS, README.md, and TODO files.
+
+2023-09-24  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* RELNOTES: Updated RELNOTES.
+
+2023-09-23  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/midi/calculations.hpp,
+	libseq66/include/midi/event.hpp,
+	libseq66/src/midi/calculations.cpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/eventlist.cpp, seq_qt5/src/qseqdata.cpp: Fixed
+	bugs in note detection, attempted to allow tempo dragging.
+
+2023-09-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, data/linux/qseq66.usr, doc/latex/images/.gitignore,
+	doc/latex/images/main-menu/edit/.gitignore,
+	doc/latex/images/main-menu/file/.gitignore,
+	doc/latex/images/main-menu/help/.gitignore,
+	doc/latex/images/main-window/.gitignore,
+	doc/latex/images/slot-menu/.gitignore,
+	doc/latex/images/tabs/edit/.gitignore,
+	doc/latex/images/tabs/events/.gitignore,
+	doc/latex/images/tabs/live/.gitignore,
+	doc/latex/images/tabs/mutes/.gitignore,
+	doc/latex/images/tabs/playlist/.gitignore,
+	doc/latex/images/tabs/sets/.gitignore,
+	doc/latex/images/tabs/song/.gitignore,
+	doc/latex/tex/configuration.tex, doc/latex/tex/live_grid.tex,
+	doc/latex/tex/menu.tex, doc/latex/tex/pattern_editor.tex,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/cfg/usrsettings.cpp,
+	seq_qt5/forms/qperfeditframe64.ui, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/src/qperfeditframe64.cpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Doc update, time-display
+	refinements/fixes, removed redundant BBT/HMS button.
+	* README.md, TODO, doc/latex/tex/alsa.tex,
+	doc/latex/tex/live_grid.tex, doc/latex/tex/patterns_panel.tex,
+	libseq66/include/cfg/usrsettings.hpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/cfg/usrsettings.cpp,
+	seq_qt5/forms/qperfeditframe64.ui, seq_qt5/forms/qsessionframe.ui,
+	seq_qt5/forms/qsmainwnd.ui, seq_qt5/src/qperfeditframe64.cpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qsmainwnd.cpp: Added
+	configurable time-display colors.
+
+2023-09-21  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, doc/latex/tex/menu.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/seq66_features.h,
+	libseq66/include/util/filefunctions.hpp,
+	libseq66/src/cfg/usrsettings.cpp,
+	libseq66/src/util/filefunctions.cpp,
+	seq_qt5/forms/qsessionframe.ui, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/include/qsessionframe.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qsessionframe.cpp, seq_qt5/src/qsmainwnd.cpp: Updated
+	show/hide button, session log-file handling.
+	* TODO, doc/latex/tex/event_editor.tex, doc/latex/tex/sessions.tex,
+	resources/pixmaps/hide.xpm, resources/pixmaps/show.xpm,
+	seq_qt5/forms/qsmainwnd.ui, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qt5_helpers.cpp: Added optional show/hide button to
+	compress main window.
+
+2023-09-20  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, doc/latex/tex/event_editor.tex,
+	doc/latex/tex/first_start.tex, doc/latex/tex/menu.tex,
+	doc/latex/tex/patterns_panel.tex, doc/latex/tex/references.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/midi/businfo.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/performer.cpp,
+	seq_portmidi/src/mastermidibus.cpp, seq_portmidi/src/pmlinuxalsa.c,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_rtmidi/src/midi_alsa_info.cpp, seq_rtmidi/src/rtmidi_info.cpp: 
+	Finished input routing for ALSA/JACK/Portmidi, major user manual
+	update.
+
+2023-09-19  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/ctrl/automation.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/ctrl/automation.cpp,
+	libseq66/src/ctrl/keycontainer.cpp,
+	libseq66/src/ctrl/opcontrol.cpp, libseq66/src/midi/businfo.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_rtmidi/src/midi_alsa.cpp,
+	seq_rtmidi/src/midi_alsa_info.cpp: Added record toggle for hot-keys,
+	disabled input routing in ALSA and in Windows.
+
+2023-09-18  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Fixed issues
+	with saving in-bus settings, added bussoverride display to
+	Preferences.
+
+2023-09-17  ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, seq_qt5/include/qslivebase.hpp,
+	seq_qt5/src/qslivebase.cpp, seq_qt5/src/qslivegrid.cpp: Event buss
+	routing enabled, needs testing.
+	* data/share/doc/info/seqroll_keys.html,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/midi/midi_vector_base.hpp,
+	libseq66/include/midi/midibytes.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/songsummary.cpp,
+	seq_qt5/src/qperfroll.cpp: Added macroed-out code for routing input
+	by buss number.
+
+2023-09-15  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/play/metro.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/src/qmutemaster.cpp,
+	seq_qt5/src/qseditoptions.cpp: Interim check-in, mute-master errors
+	fixed, spurious bg recording notes from Launchpad.
+
+2023-09-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/src/midi/midifile.cpp, libseq66/src/play/metro.cpp,
+	libseq66/src/play/performer.cpp: Still tweaking weak background
+	recording.
+
+2023-09-13  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, doc/latex/tex/menu.tex, doc/latex/tex/patterns_panel.tex,
+	libseq66/include/play/performer.hpp, libseq66/src/play/metro.cpp,
+	libseq66/src/play/performer.cpp, resources/pixmaps/metro_on.xpm,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qslivegrid.cpp: Fixing
+	broken background recording in progress.
+	* TODO, data/share/doc/info/common_keys.html,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qperfroll.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: Minor fixes to startup messaging and
+	docs.
+
+2023-09-12  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, data/share/doc/info/automation_keys.html,
+	data/share/doc/info/common_keys.html,
+	data/share/doc/info/mute_group_keys.html,
+	data/share/doc/info/pattern_hotkeys.html,
+	data/share/doc/info/seqroll_keys.html,
+	data/share/doc/info/songroll_keys.html,
+	doc/latex/tex/defaultkeys.tex, doc/latex/tex/kbd_mouse.tex,
+	include/config.h.in, libseq66/include/cfg/zoomer.hpp,
+	libseq66/src/cfg/zoomer.cpp, seq_qt5/forms/qsappinfo.ui,
+	seq_qt5/include/qeditbase.hpp, seq_qt5/include/qsappinfo.hpp,
+	seq_qt5/include/qscrollmaster.h, seq_qt5/src/qperfeditframe64.cpp,
+	seq_qt5/src/qsappinfo.cpp, seq_qt5/src/qscrollmaster.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qstriggereditor.cpp: Tweaked
+	zoom scrolling, update keys HTML documentation.
+	* README.md, TODO, configure.ac,
+	data/share/doc/info/common_keys.html,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/qclocklayout.cpp,
+	seq_qt5/src/qinputcheckbox.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: Fixes to edit options and error
+	reporting.
+
+2023-09-11  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES, TODO, seq_qt5/include/qseqbase.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qseqbase.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixed removing modified marker from
+	seqedit after saving.
+	* TODO, libseq66/src/cfg/zoomer.cpp, seq_qt5/include/qperfroll.hpp,
+	seq_qt5/include/qseqroll.hpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqtime.cpp, seq_qt5/src/qstriggereditor.cpp: Zoom and
+	alignment fixes in place.
+
+2023-09-10  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, seq_qt5/include/qperfeditframe64.hpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qperfeditframe64.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qperftime.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqroll.cpp: Zoom refactoring works except for 0 reset
+	in perfedit.
+
+2023-09-09  ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/code/ring_buffer.hpp, libseq66/include/cfg/zoomer.hpp,
+	libseq66/include/play/mutegroups.hpp,
+	libseq66/src/cfg/settings.cpp, seq_qt5/include/qbase.hpp,
+	seq_qt5/include/qeditbase.hpp,
+	seq_qt5/include/qperfeditframe64.hpp,
+	seq_qt5/include/qperfroll.hpp, seq_qt5/include/qseqdata.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qseqframe.hpp,
+	seq_qt5/src/qbase.cpp, seq_qt5/src/qeditbase.cpp,
+	seq_qt5/src/qmutemaster.cpp, seq_qt5/src/qperfeditframe64.cpp,
+	seq_qt5/src/qperfroll.cpp, seq_qt5/src/qperftime.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqframe.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qseqtime.cpp: Seq horizontal zoom works, needs cleanup,
+	Perf zoom hangs.
+
+2023-09-08  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/Makefile.in, libseq66/src/Makefile.in: Added
+	zoomer to makefiles.
+	* libseq66/include/Makefile.am, libseq66/include/cfg/zoomer.hpp,
+	libseq66/libseq66.pro, libseq66/src/Makefile.am,
+	libseq66/src/cfg/zoomer.cpp: Built zoomer class.
+	* libseq66/include/cfg/settings.hpp,
+	libseq66/include/cfg/zoomer.hpp,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/src/cfg/settings.cpp, libseq66/src/cfg/zoomer.cpp,
+	libseq66/src/midi/calculations.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	seq_qt5/include/qeditbase.hpp: Added a not-yet-used zoom calculation
+	module.
+	* seq_qt5/include/qeditbase.hpp, seq_qt5/src/qbase.cpp,
+	seq_qt5/src/qeditbase.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qperftime.cpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqtime.cpp: Disabled zoom-expansion hack pending
+	refactoring of zoom.
+
+2023-09-07  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/cfg/usrsettings.hpp,
+	seq_qt5/include/qeditbase.hpp, seq_qt5/include/qseqdata.hpp,
+	seq_qt5/src/qeditbase.cpp, seq_qt5/src/qperfeditframe64.cpp,
+	seq_qt5/src/qseqdata.cpp: Working on expanded zoom-in hack.
+	* README.md, RELNOTES, TODO, doc/latex/tex/pattern_editor.tex,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qseqdata.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qmutemaster.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qperftime.cpp, seq_qt5/src/qplaylistframe.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qseqtime.cpp,
+	seq_qt5/src/qsetmaster.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qstriggereditor.cpp: Fixed
+	Editor tab segfault, grab-handles solidified.
+
+2023-09-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/midi/event.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/cfg/scales.cpp,
+	libseq66/src/midi/event.cpp, libseq66/src/midi/eventlist.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/include/qseqdata.hpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe64.cpp: In regard
+	to issue #115, got a grab handle implemented in the data pane, needs
+	more testing.
+
+2023-09-05  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, doc/latex/tex/references.tex,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qseqdata.hpp, seq_qt5/src/qseqdata.cpp: Laying
+	groundwork for data event grab handles.
+	* README.md, data/linux/qseq66.ctrl, data/samples/nanomap.ctrl,
+	doc/latex/tex/configuration.tex, doc/latex/tex/pattern_editor.tex,
+	doc/latex/tex/song_editor.tex, libseq66/include/ctrl/opcontrol.hpp,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/src/ctrl/midicontrolout.cpp,
+	libseq66/src/ctrl/opcontrol.cpp,
+	libseq66/src/midi/calculations.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp: Updated
+	keystroke automation and naming.
+
+2023-09-04  ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, seq_qt5/src/qt5nsmanager.cpp: Fixed
+	another bug in port-map restart.
+	* README.md, Seq66qt5/seq66qt5.cpp, TODO,
+	data/samples/nanomap.ctrl, data/share/doc/info/common_keys.html,
+	doc/latex/tex/pattern_editor.tex, doc/latex/tex/song_editor.tex,
+	libseq66/include/os/daemonize.hpp,
+	libseq66/src/ctrl/keycontainer.cpp, libseq66/src/os/daemonize.cpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	seq_qt5/src/qperfeditframe64.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: Fixed port-map restart and added Esc
+	of paint mode.
+
+2023-09-03  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, data/samples/nanomap.ctrl,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/ctrl/automation.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/ctrl/automation.cpp,
+	libseq66/src/ctrl/keycontainer.cpp,
+	libseq66/src/ctrl/opcontrol.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/src/qseqeditframe64.cpp: Added most of the rest of
+	automation controls, much testing needed.
+
+2023-09-02  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, data/samples/nanomap.ctrl,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qsmainwnd.cpp: Updated nanomap.ctrl, add L/R automation.
+	* contrib/notes/key-maps-dump.text,
+	contrib/notes/midi-control-in.text,
+	doc/latex/tex/configuration.tex, libseq66/src/ctrl/keymap.cpp: 
+	Documentation and debug code inspired by a poor ctrl-file edit.
+
+2023-09-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/linux/qseq66-lp-mini-alt.ctrl,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Added BBT/HMS automation and live
+	repitch, to test.
+	* data/share/doc/info/common_keys.html,
+	data/share/doc/info/seqroll_keys.html,
+	libseq66/include/play/notemapper.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/play/metro.cpp,
+	libseq66/src/play/notemapper.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qslivegrid.cpp: Seqroll
+	keystroke upgrades, note-mapper upgrade.
+
+2023-08-31  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, include/qt/rtmidi/seq66-config.h,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qbase.hpp, seq_qt5/include/qperfbase.hpp,
+	seq_qt5/include/qseqdata.hpp, seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qseqkeys.hpp, seq_qt5/include/qseqroll.hpp,
+	seq_qt5/include/qseqtime.hpp, seq_qt5/include/qstriggereditor.hpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qseqeditframe64.cpp: 
+	Recording refactoring basically done.
+
+2023-08-30  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/Makefile.in, libseq66/include/midi/calculations.hpp,
+	libseq66/include/midi/jack_assistant.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/seq66_features.hpp, libseq66/src/play/metro.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/seq66_features.cpp, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qslivegrid.cpp: Refactoring recording type and style,
+	needs rigorous testing.
+
+2023-08-29  ahlstrom <ahlstromcj@gmail.com>
+
+	* data/share/doc/info/common_keys.html,
+	data/share/doc/info/seqroll_keys.html,
+	data/share/doc/info/songroll_keys.html,
+	libseq66/src/seq66_features.cpp,
+	libseq66/src/sessions/clinsmanager.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qseqroll.cpp: Update keys htmls and added reading of
+	/etc/issue.
+
+2023-08-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES, TODO, configure, data/Makefile.am,
+	data/readme.text, data/readme.windows,
+	data/share/doc/info/automation_keys.html,
+	data/share/doc/info/common_keys.html,
+	data/share/doc/info/seqroll_keys.html,
+	data/share/doc/info/songroll_keys.html, doc/latex/tex/menu.tex,
+	include/config.h.in, libseq66/include/cfg/settings.hpp,
+	libseq66/include/play/performer.hpp, libseq66/src/cfg/settings.cpp,
+	libseq66/src/play/performer.cpp, nsis/Seq66Setup.nsi,
+	nsis/build_release_package.bat, seq_qt5/forms/qsappinfo.ui,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qsappinfo.hpp,
+	seq_qt5/src/qmutemaster.cpp, seq_qt5/src/qsappinfo.cpp: Version
+	bump, added some HTML help for keys with installation script
+	updates.
+
+2023-08-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, VERSION, configure.ac,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat: Prep for
+	0.99.9.
+
+2023-08-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* ChangeLog, README.md, RELNOTES, VERSION, configure.ac,
+	data/license.text, data/readme.text, data/readme.windows,
+	doc/latex/tex/configuration.tex, doc/latex/tex/pattern_editor.tex,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat: Release Notes
+	for Seq66 v. 0.99.8 2023-08-27     -   Issue #112: A new pattern now displays in the MIDI
+	    controller.  -   Issue #114: Adding display of shortcut keys to tool tips.      -   Added a Pattern tab to Edit / Preferences for more settings.      -   Added automation for the main window Loop L/R button.      -   Fixed seqroll drawing errors introduced in adding time-sig         support.      -   Fixed incomplete data-pane refresh in scrolling with         arrow-keys.      -   Fixed not setting up SIGINT, which prevented a proper
+	    shutdown.  -   Fixed a couple corrupted sample *.mid files.      -   Changing playlist setting enables Session Restart button.      -   Removed coloring of record-style and -mode buttons. Added         coloring of event-editor "Store" button to denote saving is         needed.      -   Refactoring quantization alterations for future upgrades.
+	        Added an option to jitter the notes in the seqroll.      -   Enforced that configuration files are stored in the "home"         directory.      -   The usual raft of humiliating bug-fixes. See README.md.  Read the NEWS, README.md, and TODO files.
+
 2023-08-26  ahlstrom <ahlstromcj@gmail.com>
 
 	* TODO, seq_qt5/forms/qsappinfo.ui, seq_qt5/forms/qsmainwnd.ui,

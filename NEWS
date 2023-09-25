@@ -1,10 +1,30 @@
-NEWS for Seq66 0.99.9 and above
+NEWS for Seq66 0.99.10
 Chris Ahlstrom
-2015-07-10 to 2023-09-11
+2015-07-10 to 2023-09-24
 
 This file collects major changes that are older and clutter up
 the README.md file.  This file should be called "OLD NEWS".
 
+    -   Version 0.99.8:
+        -   Issue #112: A new pattern now displays in the MIDI controller.
+        -   Issue #114: Adding display of shortcut keys to tool tips.
+        -   Added a Pattern tab to Edit / Preferences for new-pattern settings
+            and jitter/randomization.
+        -   Added automation for the main window Loop L/R button.
+        -   Fixed seqroll drawing errors introduced in adding time-sig support.
+        -   Fixed incomplete data-pane refresh in scrolling with arrow-keys.
+        -   Fixed not setting up SIGINT, which prevented a proper shutdown.
+        -   Fixed a couple corrupted data/midi/FM/*.mid files.
+        -   Changing playlist setting enables Session Restart button.
+        -   Removed coloring of record-style and -mode buttons. Added coloring
+            of event-editor "Store" button to denote saving is needed.
+        -   Refactoring quantization alterations for future upgrades. Added
+            an option to jitter the notes in the seqroll.
+        -   Enforced that configuration files are stored in the "home"
+            directory.
+        -   The usual raft of humiliating bug-fixes. A small sample: Updating
+            the event list when recording stops; fixing record button in pattern
+            editor; fixing note-selection refresh; and about a dozen more.
     -   Version 0.99.7:
         -   Issue #110 follow-ons:
             Cannot save tempo (BPM) in Windows when

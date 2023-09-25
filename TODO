@@ -1,4 +1,4 @@
-TO DO for Seq66 0.99.9
+TO DO for Seq66 0.99.10
 Chris Ahlstrom
 2019-04-13 to 2023-09-24
 
@@ -8,6 +8,7 @@ Misc:
         works fine in the Linux portmidi build). The workaround
         is save the 'rc' file elsewhere, run the exe, and then
         merge the port settings back into the original 'rc' file.
+        Also, the show/hide icon looks weird in Windows.
     -   In the data pane, for tempo, program change etc., allow them to be
         dragged up and down (at least for tempo).
     -   Next version, document and test mute groups.

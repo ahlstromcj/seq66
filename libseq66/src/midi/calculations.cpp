@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2023-09-08
+ * \updates       2023-09-25
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -291,14 +291,23 @@ pulses_to_measurestring (midipulse p, const midi_timing & seqparms)
 {
     midi_measures measures;                 /* measures, beats, divisions   */
     char tmp[32];
+    int width = 3;
     if (is_null_midipulse(p))
+    {
         p = 0;                              /* punt the runt!               */
-
+    }
+    else if (seqparms.ppqn() >= 1000)
+    {
+        if (seqparms.ppqn() < 10000)
+            width = 4;
+        else if (seqparms.ppqn() < 100000)
+            width = 5;
+    }
     pulses_to_midi_measures(p, seqparms, measures); /* fill measures struct */
     snprintf
     (
-        tmp, sizeof tmp, "%03d:%d:%03d",
-        measures.measures(), measures.beats(), measures.divisions()
+        tmp, sizeof tmp, "%03d:%d:%0*d",    /* "%03d:%d:%03d"               */
+        measures.measures(), measures.beats(), width, measures.divisions()
     );
     return std::string(tmp);
 }

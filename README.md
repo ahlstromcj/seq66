@@ -1,4 +1,4 @@
-# README for Seq66 0.99.9 2023-09-24
+# README for Seq66 0.99.10 2023-09-25
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -81,6 +81,8 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.99.10:
+        *   Tweaked time display to work better with high PPQN.
     *   Version 0.99.9:
         *   Added an "Input Bus Routing" feature, where each pattern can be
             set to receive events from a given input buss. Selectable from
@@ -104,29 +106,9 @@ Windows, and using a conventional source tarball.
             main window to allow making the window to take up much less space.
         *   Added HTML help files to data/share/doc/info, other documentation
             upgrades.
-    *   Version 0.99.8:
-        *   Issue #112: A new pattern now displays in the MIDI controller.
-        *   Issue #114: Adding display of shortcut keys to tool tips.
-        *   Added a Pattern tab to Edit / Preferences for new-pattern settings
-            and jitter/randomization.
-        *   Added automation for the main window Loop L/R button.
-        *   Fixed seqroll drawing errors introduced in adding time-sig support.
-        *   Fixed incomplete data-pane refresh in scrolling with arrow-keys.
-        *   Fixed not setting up SIGINT, which prevented a proper shutdown.
-        *   Fixed a couple corrupted data/midi/FM/*.mid files.
-        *   Changing playlist setting enables Session Restart button.
-        *   Removed coloring of record-style and -mode buttons. Added coloring
-            of event-editor "Store" button to denote saving is needed.
-        *   Refactoring quantization alterations for future upgrades. Added
-            an option to jitter the notes in the seqroll.
-        *   Enforced that configuration files are stored in the "home"
-            directory.
-        *   The usual raft of humiliating bug-fixes. A small sample: Updating
-            the event list when recording stops; fixing record button in pattern
-            editor; fixing note-selection refresh; and about a dozen more.
 
     See the "NEWS" file for changes in earlier versions.  Some proposed features
-    will be pushed off to Seq66v2; see the bottom of the TODO file. Version
-    2 is probably a year or two away :-( So many things to improve!
+    will be pushed off to Seq66v2; see the bottom of the TODO file. Version 2 is
+    probably a year or two away :-( So many things to improve!
 
 // vim: sw=4 ts=4 wm=2 et ft=markdown
