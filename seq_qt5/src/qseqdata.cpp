@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-10
+ * \updates       2023-09-26
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -86,7 +86,7 @@ static const int s_x_data_fix   = -6;   /* adjusts x-value for the events   */
 static const int s_key_padding  = 8;    /* adjusts x for keyboard padding   */
 static const int s_circle_d     = 6;    /* diameter of tempo/prog. dots     */
 static const int s_handle_d     = 8;    /* diameter of grab handle          */
-static const int s_handle_r     = 4;    /* radius of grab handle            */
+static const int s_handle_r     = s_handle_d / 2;   /* grab handle radius   */
 static const int s_handle_delta = 2;    /* delta of mouse-pixels            */
 
 /**
@@ -537,11 +537,12 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
     midipulse tick_s, tick_f;
 #endif
     current_x(int(event->x()) - c_keyboard_padding_x);
-    current_y(int(event->y()));                     // deduct from m_dataarea_y?
+    current_y(int(event->y()));
     m_mouse_tick = -1;
     if (m_drag_handle)
     {
         track().adjust_event_handle(m_status, m_dataarea_y - current_y());
+        set_dirty();                            /* just a flag setting      */
         update();
     }
     else if (m_line_adjust)

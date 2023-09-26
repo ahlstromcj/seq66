@@ -445,13 +445,20 @@ event::is_desired (midibyte status, midibyte cc) const
     return result;
 }
 
+/**
+ *  This is a bit tricky. The range of pixels in the data pane is 0 to 127
+ *  or 0 to 64 (in shrunken mode). For note events, the ranges is also
+ *  0 to 127. The diameter of tempo grab handle is currently s_handled_d = 8,
+ *  which can represent a wide range in tempos.
+ */
+
 bool
 event::is_data_in_handle_range (midibyte target) const
 {
     bool result = false;
     if (is_tempo())
     {
-        static const midibpm s_delta = 10;
+        static const midibpm s_delta = note_value_to_tempo(4);
         midibpm t = tempo();
         midibpm tdesired = note_value_to_tempo(target);
         result = t >= (tdesired - s_delta) && t <= (tdesired + s_delta);

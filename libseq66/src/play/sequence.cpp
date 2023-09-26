@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-19
+ * \updates       2023-09-26
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2537,6 +2537,11 @@ sequence::jitter_notes (int jitr)
  *  components [d0() and d1()] which must be combined. But d0() is the
  *  least-significant byte, and d1() is the most-significant byte.
  *  Since pitch is a 2-byte message, d1() will be adjusted.
+ *
+ * \param astatus
+ *      Provides the status byte of the event, which can indicate
+ *      a normal MIDI event or a Meta event (currently only Tempo is
+ *      handled.)
  */
 
 void
@@ -2546,18 +2551,32 @@ sequence::adjust_event_handle (midibyte astatus, midibyte adata)
     midibyte datitem;
     int dataindex = event::is_two_byte_msg(astatus) ? 1 : 0 ;
     automutex locker(m_mutex);
-    for (auto & e : m_events)
+    for (auto & er : m_events)
     {
-        if (e.is_selected_status(astatus))
+        if (er.is_selected_status(astatus))
         {
-            astatus = event::mask_status(astatus);
-            e.get_data(data[0], data[1]);                   /* \tricky code */
-            datitem = adata;
-            if (datitem > (c_midibyte_data_max - 1))
-                datitem = (c_midibyte_data_max - 1);
+            if (er.is_tempo())
+            {
+                midibpm tempo = note_value_to_tempo(midibyte(adata));
+                (void) er.set_tempo(tempo);
+            }
+            else if (er.is_program_change())
+            {
+                /*
+                 * Currently handled by the line-draw mechanism.
+                 */
+            }
+            else
+            {
+                astatus = event::mask_status(astatus);
+                er.get_data(data[0], data[1]);              /* \tricky code */
+                datitem = adata;
+                if (datitem > (c_midibyte_data_max - 1))
+                    datitem = (c_midibyte_data_max - 1);
 
-            data[dataindex] = datitem;
-            e.set_data(data[0], data[1]);
+                data[dataindex] = datitem;
+                er.set_data(data[0], data[1]);
+            }
         }
     }
 }

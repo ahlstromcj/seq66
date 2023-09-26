@@ -369,6 +369,12 @@ the current set.  Modifies the song.</string>
       </item>
       <item>
        <widget class="QPushButton" name="btnBBTHMS">
+        <property name="minimumSize">
+         <size>
+          <width>86</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="font">
          <font>
           <weight>75</weight>
@@ -376,7 +382,7 @@ the current set.  Modifies the song.</string>
          </font>
         </property>
         <property name="text">
-         <string>H:M:S</string>
+         <string>008:16:0000</string>
         </property>
        </widget>
       </item>

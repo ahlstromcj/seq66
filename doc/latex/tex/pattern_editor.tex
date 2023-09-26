@@ -1,4 +1,12 @@
-pdate      2023-09-07
+%-------------------------------------------------------------------------------
+% pattern_editor
+%-------------------------------------------------------------------------------
+%
+% \file        pattern_editor.tex
+% \library     Documents
+% \author      Chris Ahlstrom
+% \date        2015-08-31
+% \update      2023-09-26
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -37,6 +45,7 @@ pdate      2023-09-07
       \item \textbf{Time}
       \item \textbf{Piano Roll}
       \item \textbf{Events Pane}
+      \item \textbf{Left Buttons}
       \item \textbf{Data Pane}
       \item \textbf{Bottom Row}
       \item \textbf{Common Actions}
@@ -1238,8 +1247,8 @@ pdate      2023-09-07
    The event values can be edited via the data panel, described in the next
    section.
 
-\subsection{Data Pane}
-\label{subsec:pattern_editor_data_view}
+\subsection{Left Buttons}
+\label{subsec:pattern_editor_left_buttons}
 
    Once the events are in place, the next step is to modify the
    data values of the events as needed.
@@ -1279,6 +1288,9 @@ pdate      2023-09-07
    This button resets the chord-generation feature to \textbf{Off}.
    It's located by the data pane in order to save space in the first row.
 
+\subsection{Data Pane}
+\label{subsec:pattern_editor_data_view}
+
    Now on to the \textbf{Data Pane} itself,
    also known as the "data panel".
    \index{data pane}
@@ -1307,8 +1319,8 @@ pdate      2023-09-07
    These values can be easily modified by
    \index{mouse!left-click-drag}
    left-click-dragging the
-   mouse past each line, to chop it off at the given value.  Easier to try
-   it than explain it.
+   mouse past each line, to level it off at the given value.
+   Easier to try it than explain it.
    \index{mouse!right-click-drag}
    Right-click-drag also works the same.
    \index{modify event-data}
@@ -1333,9 +1345,10 @@ pdate      2023-09-07
    \label{fig:pattern_editor_data_pane_tempo}
 \end{figure}
 
-   Program-change events are shown as a small open circle with a numeric value.
-   Both of these event values can be modified by dragging a line as discussed
-   above.
+   Program Change events are shown as a small open circle with a numeric value.
+   Both Tempo and Program Change event values can be modified by dragging a
+   line as discussed above. (We're still working on select-and-drag for
+   these events.)
 
 \begin{figure}[H]
    \centering 

@@ -1,16 +1,13 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-09-24
+2019-04-13 to 2023-09-26
 
 Misc:
 
-    -   Windows: If ports are missing, the application just exits (it
-        works fine in the Linux portmidi build). The workaround
-        is save the 'rc' file elsewhere, run the exe, and then
-        merge the port settings back into the original 'rc' file.
-        Also, the show/hide icon looks weird in Windows.
     -   In the data pane, for tempo, program change etc., allow them to be
-        dragged up and down (at least for tempo).
+        dragged up and down (at least for tempo). The line-draw method works,
+        though. Tempo now works, but does not "modify", same for Pitchbend..
+    -   Draw tempo events by line in data pane?
     -   Next version, document and test mute groups.
     -   There are issues with Song / Zoom / Follow progress. Pattern
         editor not so bad. Also Song alignment with piano roll and
@@ -23,23 +20,15 @@ Misc:
     -   Make sure we have record-toggle automation!
     -   Make sure metronome buttons etc. still work. Recording measures
         not saved.
-    -   Green-on-black BBT/HMS in main window.
     -   Disable "ALSA Announce" in basically all lists and popups:
         -   Pattern "Input Buss" popup.
         -   MIDI Display buss combo-box.
         -   MIDI Ctrl buss combo-box.
         Also disable the combo-box entries if item is not enabled.
-    -   Add an option to show hide all the widgets surrounding the
-        live/grid.
-    -   Make the performer get/put_settings() functions robust.
     -   Randomizing seems to have a negative bias (after many repeats).
     -   Add a feature to start playback when the first note comes
         into a pattern when recording is set. [Turns out to be quite tricky!]
     -   Implement drag-and-drop to open a MIDI file.
-    -   Cannot duplicate:
-        -   File / New keeps the previous file name. Cannot duplicate.
-        -   Open t.midi, start playing, stop, then add more notes. They are
-            way longer than the snap value! Cannot duplicate.
 
 Some of these issues will be pushed off for the distant Seq66v2.
 

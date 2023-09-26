@@ -376,6 +376,11 @@ qt5nsmanager::show_error
     {
         if (msg.empty())
         {
+
+            /*
+             * Consider moving this support to before this if-clause.
+             */
+
 #if defined SEQ66_PORTMIDI_SUPPORT
             if (Pm_error_present())
             {
@@ -397,6 +402,13 @@ qt5nsmanager::show_error
         }
         else
         {
+#if defined SEQ66_PORTMIDI_SUPPORT      // EXPERIMENTAL EXPERIMENTAL
+            if (Pm_error_present())
+            {
+                std::string pmerrmsg = std::string(Pm_error_message());
+                append_error_message(pmerrmsg);
+            }
+#endif
             std::string text = tag;
             if (! tag.empty())
                 text += " ";
