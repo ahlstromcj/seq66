@@ -1270,6 +1270,10 @@ event::randomize (int range)
 /**
  *  Modifies the timestamp of the event by plus or minus the range value.
  *
+ * \param snap
+ *      Used for keeping the time-stamp change within the snap.
+ *      Does this even make sense?
+ *
  * \param range
  *      The range of the changes up and down. Not used if 0 or less.
  *

@@ -106,22 +106,22 @@ public:
 
     bool is_tempo () const
     {
-        return m_data_type == type::tempo;   // m_is_tempo;
+        return m_data_type == type::tempo;
     }
 
     bool is_time_signature () const
     {
-        return m_data_type == type::time_signature;   // m_is_time_signature;
+        return m_data_type == type::time_signature;
     }
 
     bool is_program_change () const
     {
-        return m_data_type == type::program_change;   // m_is_program_change;
+        return m_data_type == type::program_change;
     }
 
     bool is_pitchbend () const
     {
-        return m_data_type == type::pitchbend;  // m_is_program_change;
+        return m_data_type == type::pitchbend;
     }
 
     midibyte status () const

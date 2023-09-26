@@ -1,4 +1,4 @@
-# README for Seq66 0.99.10 2023-09-25
+# README for Seq66 0.99.10 2023-09-26
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -60,6 +60,7 @@ The release now includes an installer for the 64-bit Windows version of Seq66.
 
 ##  More Features
 
+    *   Supports configurable PPQN from 32 to 19200 (default is 192).
     *   Transposable triggers to re-use patterns more comprehensively.
     *   Song import/export from/to stock MIDI (SMF 0 or 1).
     *   Improved non-U.S. keyboard support.
@@ -82,6 +83,8 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.99.10:
+        *   Tempo events can be dragged in data pane.
+        *   Improved modification detection in data pane.
         *   Tweaked time display to work better with high PPQN.
     *   Version 0.99.9:
         *   Added an "Input Bus Routing" feature, where each pattern can be

@@ -2558,7 +2558,8 @@ sequence::adjust_event_handle (midibyte astatus, midibyte adata)
             if (er.is_tempo())
             {
                 midibpm tempo = note_value_to_tempo(midibyte(adata));
-                (void) er.set_tempo(tempo);
+                if (er.set_tempo(tempo))
+                    modify();
             }
             else if (er.is_program_change())
             {
@@ -2576,6 +2577,7 @@ sequence::adjust_event_handle (midibyte astatus, midibyte adata)
 
                 data[dataindex] = datitem;
                 er.set_data(data[0], data[1]);
+                modify();
             }
         }
     }
@@ -3607,18 +3609,78 @@ sequence::add_tempo (midipulse tick, midibpm tempo, bool repaint)
 
         /*
          *  Currently we draw tempo as a circle, not a bar, so we don't need
-         *  to know *  about the "next" tempo event.  However, let's
-         *  future-proof this.
+         *  to know about the "next" tempo event. We don't (yet) need
+         *  to link tempo events: verify_and_link();
          */
 
          if (result)
          {
-            verify_and_link();
             modify();                               /* added ca 2022-04-25  */
          }
     }
     return result;
 }
+
+#if defined SEQ66_EVENT_INSERTION_DRAG
+
+/**
+ *  Use for adding Tempo events via a drag-line in qseqdata. The events are
+ *  added at each snap point in the tick range. Currently only a linear
+ *  sequence of tempos can be added. The formula is linear:
+ *
+\verbatim
+                 (B1 - B0) (t - t0)
+            B = -------------------- + B0
+                        (t1 - t0)
+\endverbatim
+ *
+ *  We should generalize this is the calculations module at some point.
+ *
+ *
+ * \param tick_s
+ *      Provides the starting tick value. Might get adjusted to the previous
+ *      snap value. This is t0 above.
+ *
+ * \param tick_f
+ *      Provides the ending tick value. Might get adjusted to the next
+ *      snap value. This is t1 above.
+ *
+ * \param tempo_s
+ *      Provides the starting tempo value. This is B0 above.
+ *
+ * \param tempo_f
+ *      Provides the finishing tempo value. This is B1 above.
+ *
+ * \return
+ *      Returns true if all tempos in the time-range were added.
+ */
+
+bool
+sequence::add_tempos
+(
+    midipulse tick_s, midipulse tick_f,
+    int data_s, int data_f
+)
+{
+    automutex locker(m_mutex);
+    bool result = false;
+    midipulse S = snap();
+    midibpm B0 = note_value_to_tempo(midibyte(data_s));
+    midibpm B1 = note_value_to_tempo(midibyte(data_f));
+    midipulse t0 = down_snap(S, tick_s);
+    midipulse t1 = up_snap(S, tick_f);      /* later truncate to seq length */
+    double slope = (B1 - B0) / double(t1 - t0);
+    for (midipulse t = t0; t <= t1; t += S)
+    {
+        double value = slope * double(t - t0) + B0;
+        result = add_tempo(t, value);
+        if (! result)
+            break;
+    }
+    return result;
+}
+
+#endif  // defined SEQ66_EVENT_INSERTION_DRAG
 
 /**
  *  In setting the time signature here, all we want to do is change the

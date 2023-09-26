@@ -310,7 +310,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 snprintf(digits, sizeof digits, "%3d", int(cev->tempo()));
                 brush.setColor(selected ? sel_color() : tempo_color());
                 if (its_close)
-                    pen.setColor(Qt::yellow);
+                    pen.setColor(sel_color());  /* Qt::yellow */
 
                 painter.setBrush(brush);
                 painter.setPen(pen);
@@ -495,6 +495,9 @@ qseqdata::mousePressEvent (QMouseEvent * event)
 void
 qseqdata::mouseReleaseEvent (QMouseEvent * event)
 {
+    bool ismodded = bool(event->modifiers() & Qt::ControlModifier) ||
+        bool(event->modifiers() & Qt::ShiftModifier);
+
     current_x(int(event->x()) - c_keyboard_padding_x + scroll_offset_x());
     current_y(int(event->y()));
     if (m_line_adjust)
@@ -509,13 +512,25 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
         midipulse tick_f = pix_to_tix(current_x());
         int ds = byte_value(m_dataarea_y, m_dataarea_y - drop_y());
         int df = byte_value(m_dataarea_y, m_dataarea_y - current_y() - 1);
-        bool ok = track().change_event_data_range
-        (
-            tick_s, tick_f, m_status, m_cc, ds, df, true
-        );
-        m_line_adjust = false;
-        if (ok)
-            set_dirty();
+        if (ismodded)
+        {
+#if defined SEQ66_EVENT_INSERTION_DRAG
+            if (is_tempo())
+            {
+            }
+#endif
+            // todo
+        }
+        else
+        {
+            bool ok = track().change_event_data_range
+            (
+                tick_s, tick_f, m_status, m_cc, ds, df, true    /* finalize */
+            );
+            m_line_adjust = false;
+            if (ok)
+                set_dirty();
+        }
     }
     else if (m_drag_handle)
     {
@@ -536,14 +551,18 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
 #if defined SEQ66_TRACK_DATA_EDITING_MOVEMENTS
     midipulse tick_s, tick_f;
 #endif
+
+    bool ismodded = bool(event->modifiers() & Qt::ControlModifier) ||
+        bool(event->modifiers() & Qt::ShiftModifier);
+
     current_x(int(event->x()) - c_keyboard_padding_x);
     current_y(int(event->y()));
     m_mouse_tick = -1;
     if (m_drag_handle)
     {
         track().adjust_event_handle(m_status, m_dataarea_y - current_y());
-        set_dirty();                            /* just a flag setting      */
-        update();
+        mark_modified();    // update();
+        flag_dirty();
     }
     else if (m_line_adjust)
     {
@@ -565,17 +584,24 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
         }
         tick_s = pix_to_tix(adj_x_min);
         tick_f = pix_to_tix(adj_x_max);
-
-        int ds = byte_value(m_dataarea_y, m_dataarea_y - adj_y_min - 1);
-        int df = byte_value(m_dataarea_y, m_dataarea_y - adj_y_max - 1);
-        bool ok = track().change_event_data_range
-        (
-            tick_s, tick_f, m_status, m_cc, ds, df
-        );
-        if (ok)
+        if (ismodded)
         {
-            (void) mark_modified();
-            set_dirty();                        /* just a flag setting      */
+            // todo
+        }
+        else
+        {
+            int ds = byte_value(m_dataarea_y, m_dataarea_y - adj_y_min - 1);
+            int df = byte_value(m_dataarea_y, m_dataarea_y - adj_y_max - 1);
+            bool ok = track().change_event_data_range
+            (
+                tick_s, tick_f, m_status, m_cc, ds, df
+            );
+            if (ok)
+            {
+                (void) mark_modified();
+                flag_dirty();
+                set_dirty();                    /* just a flag setting      */
+            }
         }
 #else
         (void) mark_modified();

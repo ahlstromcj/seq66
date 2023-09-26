@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2023-09-25
+ * \updates       2023-09-26
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1709,12 +1709,15 @@ midipulse
 down_snap (int S, midipulse p)
 {
     midipulse result = p;
-    if (p < 0)
+    if (p <= 0)
         return 0;
 
     if (S > 0)
+    {
         result = midipulse(p - (p % S));
-
+        if (p <= 0)
+            result = 0;
+    }
     return result;
 }
 

@@ -4,9 +4,6 @@ Chris Ahlstrom
 
 Misc:
 
-    -   In the data pane, for tempo, program change etc., allow them to be
-        dragged up and down (at least for tempo). The line-draw method works,
-        though. Tempo now works, but does not "modify", same for Pitchbend..
     -   Draw tempo events by line in data pane?
     -   Next version, document and test mute groups.
     -   There are issues with Song / Zoom / Follow progress. Pattern
