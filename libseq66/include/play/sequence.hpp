@@ -1122,6 +1122,7 @@ public:
 
     int event_count () const;
     int note_count () const;
+    bool first_note (midipulse & ts, int & n) const;
     int playable_count () const;
     bool is_playable () const;
     bool minmax_notes (int & lowest, int & highest);

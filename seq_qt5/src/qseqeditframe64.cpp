@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-09-12
+ * \updates       2023-09-27
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1329,10 +1329,9 @@ qseqeditframe64::on_automation_change (automation::slot s)
 
 /**
  *  Instantiates the various editable areas (panels) of the seqedit
- *  user-interface.  seqkeys: Not quite working as we'd hope.  The scrollbars
- *  still eat up space.  They needed to be hidden.  Note that m_seqkeys and
- *  the other panel pointers are protected members of the qseqframe base
- *  class.  We could move qseqframe's members into this class, now that we no
+ *  user-interface. Note that m_seqkeys and the other panel pointers are
+ *  protected members of the qseqframe base class.  We could move
+ *  qseqframe's members into this class, now that we no
  *  longer provide the old qseqeditframe.
  */
 
@@ -1372,6 +1371,11 @@ qseqeditframe64::initialize_panels ()
     ui->rollScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     ui->rollScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     m_seqroll->update_edit_mode(m_edit_mode);
+
+    /*
+     * qseqdata
+     */
+
     m_seqdata = new (std::nothrow) qseqdata
     (
         perf(), track(), this, zoom(), m_snap, ui->dataScrollArea,
@@ -1404,10 +1408,6 @@ qseqeditframe64::initialize_panels ()
     ui->rollScrollArea->add_h_scroll(ui->dataScrollArea->horizontalScrollBar());
     ui->rollScrollArea->add_h_scroll(ui->eventScrollArea->horizontalScrollBar());
 
-    int minimum = ui->rollScrollArea->verticalScrollBar()->minimum();
-    int maximum = ui->rollScrollArea->verticalScrollBar()->maximum();
-    ui->rollScrollArea->verticalScrollBar()->setValue((minimum + maximum) / 2);
-
     /*
      * Attach the qscrollmaster to each qscrollslave so that they can
      * forward the arrow and page keys to the qscrollmaster.  This avoids
@@ -1420,6 +1420,21 @@ qseqeditframe64::initialize_panels ()
     ui->eventScrollArea->attach_master(ui->rollScrollArea);
     ui->keysScrollArea->attach_master(ui->rollScrollArea);
     ui->timeScrollArea->attach_master(ui->rollScrollArea);
+
+    /*
+     * int minimum = ui->rollScrollArea->verticalScrollBar()->minimum();
+     * int maximum = ui->rollScrollArea->verticalScrollBar()->maximum();
+     * ui->rollScrollArea->verticalScrollBar()->setValue((minimum + maximum) / 2);
+     */
+
+    midipulse ts;
+    int n;
+    bool gotnote = track().first_note(ts, n);
+    if (gotnote)
+    {
+        scroll_to_tick(ts);
+        scroll_to_note(n);
+    }
 }
 
 /**
@@ -2893,8 +2908,8 @@ qseqeditframe64::scroll_to_tick (midipulse tick)
     int w = ui->rollScrollArea->width();
     if (w > 0)              /* w is constant, e.g. around 742 by default    */
     {
-        int x = tix_to_pix(tick);
-        ui->rollScrollArea->scroll_to_x(x);
+        float fraction = float(tick) / float(track().get_length());
+        ui->rollScrollArea->scroll_x_by_factor(fraction);
     }
 }
 
@@ -2906,8 +2921,8 @@ qseqeditframe64::scroll_to_note (int note)
     {
         if (is_good_data_byte(midibyte(note)))
         {
-            int y = tix_to_pix(note);
-            ui->rollScrollArea->scroll_to_y(y);
+            float fraction = (127 - note) / 128.0F;
+            ui->rollScrollArea->scroll_y_by_factor(fraction);
         }
     }
 }

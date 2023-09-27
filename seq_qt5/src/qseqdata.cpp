@@ -246,35 +246,10 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             }
             if (data_event)
             {
-#if defined SEQ66_REQUIRE_SEQ_CHANNEL_MATCH                 /* too much! */
-                bool ok;
-                if (cev->has_channel())
-                {
-                    /*
-                     * This is problematic.  The dropdown doesn't select notes
-                     * with channel, it just selects note events. The
-                     * event::match_status() doesn't filter on channel.
-                     * We should not filter based on the sequence's hard-wired
-                     * channel, iether.
-                     */
+                /*
+                 * sel_paint() vs sel_color()! Why?
+                 */
 
-                    midibyte schan = track().seq_midi_channel();
-                    if (is_null_channel(schan))
-                        ok = true;
-                    else
-                    {
-                        midibyte chan = cev->channel();
-                        ok = chan == schan;
-                    }
-                }
-                else
-                    ok = true;
-
-                if (ok)
-                {
-                    // the code below
-                }
-#endif
                 pen.setColor(selected ? sel_paint() : fore_color());
                 painter.setPen(pen);
                 event_x -= 3;
@@ -309,8 +284,12 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 
                 snprintf(digits, sizeof digits, "%3d", int(cev->tempo()));
                 brush.setColor(selected ? sel_color() : tempo_color());
-                if (its_close)
-                    pen.setColor(sel_color());  /* Qt::yellow */
+                if (selected)
+                    pen.setColor(sel_color());
+                else if (its_close)
+                    pen.setColor(Qt::yellow);
+                else
+                    pen.setColor(fore_color());
 
                 painter.setBrush(brush);
                 painter.setPen(pen);
@@ -571,7 +550,7 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
     if (m_drag_handle)
     {
         track().adjust_event_handle(m_status, m_dataarea_y - current_y());
-        mark_modified();    // update();
+        mark_modified();
         flag_dirty();
     }
     else if (m_line_adjust)

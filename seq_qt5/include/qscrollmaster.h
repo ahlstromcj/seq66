@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-18
- * \updates       2023-09-12
+ * \updates       2023-09-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -139,6 +139,7 @@ public:
     void scroll_to_y (int y);
     void scroll_y_by_factor (float f);
     void scroll_y_by_step (dir d);
+    void show_values () const;
 
 protected:      // QWidget overrides
 

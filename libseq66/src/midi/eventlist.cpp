@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-09-06
+ * \updates       2023-09-27
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -522,6 +522,22 @@ eventlist::note_count () const
     {
         if (e.is_note_on())
             ++result;
+    }
+    return result;
+}
+
+bool
+eventlist::first_note (midipulse & ts, int & n) const
+{
+    bool result = false;
+    for (const auto & e : m_events)
+    {
+        if (e.is_note_on())
+        {
+            ts = e.timestamp();
+            n = int(e.get_note());
+            ++result;
+        }
     }
     return result;
 }

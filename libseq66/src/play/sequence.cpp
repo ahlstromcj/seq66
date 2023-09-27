@@ -546,6 +546,13 @@ sequence::note_count () const
     return m_events.note_count();
 }
 
+bool
+sequence::first_note (midipulse & ts, int & n) const
+{
+    automutex locker(m_mutex);
+    return m_events.first_note(ts, n);
+}
+
 int
 sequence::playable_count () const
 {

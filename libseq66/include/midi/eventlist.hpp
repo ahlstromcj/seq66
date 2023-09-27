@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-08-20
+ * \updates       2023-09-27
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -376,6 +376,7 @@ private:                                /* functions for friend sequence    */
     void link_new (bool wrap = false);
     void clear_links ();
     int note_count () const;
+    bool first_note (midipulse & ts, int & n) const;
 #if defined SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
     void scan_meta_events ();
 #endif
