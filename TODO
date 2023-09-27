@@ -4,7 +4,8 @@ Chris Ahlstrom
 
 Misc:
 
-    -   Draw tempo events by line in data pane?
+    -   Draw tempo events by line in data pane? Yes. But the selection
+        mechanism is too broad.
     -   Next version, document and test mute groups.
     -   There are issues with Song / Zoom / Follow progress. Pattern
         editor not so bad. Also Song alignment with piano roll and

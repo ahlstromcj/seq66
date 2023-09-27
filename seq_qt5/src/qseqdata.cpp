@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-26
+ * \updates       2023-09-27
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -393,7 +393,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     if (m_line_adjust)                          /* draw edit line           */
     {
         int x, y, w, h;
-        pen.setColor(sel_color());              /* Qt::black                */
+        pen.setColor(sel_color());
         pen.setStyle(Qt::DashLine);
         pen.setWidth(1);
         painter.setPen(pen);
@@ -426,6 +426,11 @@ qseqdata::mousePressEvent (QMouseEvent * event)
     midipulse tick_start = pix_to_tix(mouse_x - 8);     /* 2; never fires!  */
     midipulse tick_finish = pix_to_tix(mouse_x + 8);    /* 2; ditto         */
     bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
+    if (event->button() == Qt::RightButton)
+    {
+        m_dragging = m_line_adjust = false;
+        return;
+    }
     drop_x(mouse_x);                            /* set values for line      */
     drop_y(mouse_y);
 
@@ -514,12 +519,17 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
         int df = byte_value(m_dataarea_y, m_dataarea_y - current_y() - 1);
         if (ismodded)
         {
-#if defined SEQ66_EVENT_INSERTION_DRAG
             if (is_tempo())
             {
+                bool ok = track().add_tempos(tick_s, tick_f, ds, df);
+                if (ok)
+                    flag_dirty();
             }
-#endif
-            // todo
+
+            /*
+             * We could set m_line_adjust = false here, but the effect
+             * seems useful for tempo.
+             */
         }
         else
         {
@@ -586,7 +596,12 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
         tick_f = pix_to_tix(adj_x_max);
         if (ismodded)
         {
-            // todo
+            /*
+             * This shows the line, but the new events are not shown until
+             * mouse-release.
+             */
+
+            flag_dirty();
         }
         else
         {

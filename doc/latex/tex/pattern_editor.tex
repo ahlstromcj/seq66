@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-09-26
+% \update      2023-09-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1332,11 +1332,14 @@
 
    Also, as the mouse passes over the data pane, events near the mouse
    acquire a grab handle, which can be used to select the event
-   and modify its value.
+   and modify its value by moving the mouse up or down.
 
    Note that some events are shown as small circles instead of a line; each
    circle has the numeric value next to it.
-   Tempo events are shown as a small yellow circle.
+
+   \textbf{Tempo}
+   events are shown as a small yellow circle.
+   This circle can be grabbed and moved up or down.
 
 \begin{figure}[H]
    \centering 
@@ -1345,7 +1348,53 @@
    \label{fig:pattern_editor_data_pane_tempo}
 \end{figure}
 
-   Program Change events are shown as a small open circle with a numeric value.
+   A new feature is the ability to
+   add tempo events in the data pane.
+   To add a string of tempo events, first select \textbf{Tempo}
+   from the \textbf{Event} dropdown.
+   Move to the data pane, press and hold \texttt{Ctrl}
+   and then left-click-drag the mouse to form a line
+   as shown here.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=1.0]{pattern-editor/data-pane-tempo-0.png}
+   \caption{Data Pane Tempo Line Draw}
+   \label{fig:pattern_editor_data_pane_tempo_line_draw}
+\end{figure}
+
+   Note that there are no events shown yet.
+   While still holding \texttt{Ctrl}, release the left mouse button,
+   and the tempo events appear.
+   Release the \texttt{Ctrl} key.
+   If this line of tempos is fine, right-click to lock them.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=1.0]{pattern-editor/data-pane-tempo-1.png}
+   \caption{Data Pane Tempo Events Drawn}
+   \label{fig:pattern_editor_data_pane_tempo_events_drawn}
+\end{figure}
+
+   Otherwise, move the mouse around to change
+   the tempo events, as shown here.
+   Use the right-click to exit this mode.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=1.0]{pattern-editor/data-pane-tempo-2.png}
+   \caption{Data Pane Tempo Events Altered}
+   \label{fig:pattern_editor_data_pane_tempo_events_altered}
+\end{figure}
+
+   Again, note that the range of the tempo events is
+   determined by the BPM minimum and maximum values
+   specified in the 'usr' file.
+   There is currently no \textbf{Preferences}
+   setting for these values.  
+
+   \textbf{Program Change}
+   events are shown as a small open circle with a numeric value.
    Both Tempo and Program Change event values can be modified by dragging a
    line as discussed above. (We're still working on select-and-drag for
    these events.)
@@ -1358,7 +1407,7 @@
 \end{figure}
 
    As of version 0.99.9, we have added \textsl{Seq32}-style grab-handles
-   to the events in the data panel.
+   to the Note events in the data panel.
    They are shown only if an event is selected, or if the mouse
    is on top of the event line.
    As the mouse moves through the data panel, the grab-handles are shown
@@ -1373,8 +1422,8 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=1.0]{pattern-editor/grab-handles.png}
-   \caption{Data Pane Grab-Handles}
-   \label{fig:pattern_editor_data_pane_grab_handles}
+   \caption{Data Pane Note Grab-Handles}
+   \label{fig:pattern_editor_data_pane_note_grab_handles}
 \end{figure}
 
    \index{event data editor!mouse wheel}

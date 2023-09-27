@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-26
+ * \updates       2023-09-27
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3621,8 +3621,6 @@ sequence::add_tempo (midipulse tick, midibpm tempo, bool repaint)
     return result;
 }
 
-#if defined SEQ66_EVENT_INSERTION_DRAG
-
 /**
  *  Use for adding Tempo events via a drag-line in qseqdata. The events are
  *  added at each snap point in the tick range. Currently only a linear
@@ -3635,7 +3633,6 @@ sequence::add_tempo (midipulse tick, midibpm tempo, bool repaint)
 \endverbatim
  *
  *  We should generalize this is the calculations module at some point.
- *
  *
  * \param tick_s
  *      Provides the starting tick value. Might get adjusted to the previous
@@ -3679,8 +3676,6 @@ sequence::add_tempos
     }
     return result;
 }
-
-#endif  // defined SEQ66_EVENT_INSERTION_DRAG
 
 /**
  *  In setting the time signature here, all we want to do is change the

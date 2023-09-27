@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-09-26
+ * \updates       2023-09-27
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1599,13 +1599,11 @@ public:
         int velocity = sm_preserve_velocity
     );
     bool add_tempo (midipulse tick, midibpm tempo, bool repaint = false);
-#if defined SEQ66_EVENT_INSERTION_DRAG
     bool add_tempos
     (
         midipulse tick_s, midipulse tick_f,
         int tempo_s, int tempo_f
     );
-#endif
     bool add_time_signature (midipulse tick, int beats, int width);
     bool delete_time_signature (midipulse tick);
     bool detect_time_signature
