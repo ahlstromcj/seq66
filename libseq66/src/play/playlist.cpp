@@ -186,8 +186,8 @@ playlist::activate (bool flag)
 
 
 /**
- *  Returns true if in playlist mode and the playlist is active.  These are two
- *  separate conditions at present.
+ *  Returns true if in playlist mode and the playlist is active.  These are
+ *  two separate conditions at present.
  */
 
 bool

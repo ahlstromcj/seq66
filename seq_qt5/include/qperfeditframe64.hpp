@@ -123,6 +123,11 @@ private:
         return m_mainperf;
     }
 
+    qperfroll * perf_roll ()
+    {
+        return m_perfroll;
+    }
+
     bool zoom_in ();
     bool zoom_out ();
     bool set_zoom (int z);

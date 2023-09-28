@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-22
+ * \updates       2023-09-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -92,6 +92,7 @@
 #include "qmutemaster.hpp"              /* shows a map of mute-groups       */
 #include "qperfeditex.hpp"              /* seq66::qperfeditex container     */
 #include "qperfeditframe64.hpp"         /* seq66::qperfeditframe64 class    */
+#include "qperfroll.hpp"                /* seq66::qperfroll pointer access  */
 #include "qplaylistframe.hpp"           /* seq66::qplaylistframe class      */
 #include "qsabout.hpp"                  /* seq66::qsabout dialog class      */
 #include "qsappinfo.hpp"                /* seq66::qsappinfo dialog class    */
@@ -1097,6 +1098,16 @@ qsmainwnd::make_perf_frame_in_tab ()
             ui->layout_beat_ind->addWidget(m_beat_ind);
             m_beat_ind->beat_width(beatwidth);
             m_beat_ind->beats_per_measure(bpmeasure);
+        }
+
+        qperfroll * pr = m_song_frame64->perf_roll();
+        if (not_nullptr(pr))
+        {
+            connect         // new standalone sequence editor
+            (
+                pr, SIGNAL(signal_call_editor_ex(int, bool)),
+                this, SLOT(load_qseqedit_ex(int, bool))
+            );
         }
     }
 }
@@ -2666,6 +2677,21 @@ qsmainwnd::load_qseqedit (int seqid)
                 ex->show();
             }
         }
+    }
+}
+
+void
+qsmainwnd::load_qseqedit_ex (int seqid, bool active)
+{
+    if (active)
+    {
+        load_qseqedit(seqid);
+    }
+    else
+    {
+        session_message("Creating new pattern from Song editor not ready");
+
+        // see qslivegrid::new_sequence
     }
 }
 

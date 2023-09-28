@@ -88,6 +88,8 @@ Windows, and using a conventional source tarball.
         *   Improved modification detection in the data pane.
         *   Tweaked the main time display to work better with high PPQN.
         *   Added feature to scroll to show the first note in pattern.
+        *   Fixed bug preventing a song with triggers stopping playback at end
+            of song.
     *   Version 0.99.9:
         *   Added an "Input Bus Routing" feature, where each pattern can be
             set to receive events from a given input buss. Selectable from

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-09-19
+ * \updates       2023-09-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -5254,19 +5254,23 @@ performer::auto_play_start ()
 }
 
 /**
- *  auto_stop disengages auto-play. Instead we just stop with rewind.
+ *  auto_stop() disengages auto-play. Instead we just stop with rewind.
  */
 
 bool
 performer::auto_play_stop (midipulse tick)
 {
-    bool result = m_play_list->auto_advance_engaged() &&
-        m_max_extent > 0 && tick >= m_max_extent;
-
+    bool result = m_max_extent > 0 && tick >= m_max_extent;
     if (result)
     {
-        stop_playing(true);
-        (void) clear_song();
+        if (m_play_list->active())
+            result = m_play_list->auto_advance_engaged();
+
+        if (result)
+        {
+            stop_playing(true);
+            (void) clear_song();
+        }
     }
     return result;
 }

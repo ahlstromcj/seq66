@@ -1008,7 +1008,7 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
             perf().is_seq_active(m_current_seq)
         )
         {
-            signal_call_editor(m_current_seq);
+            emit signal_call_editor(m_current_seq);
         }
     }
 }
@@ -1068,7 +1068,7 @@ qslivegrid::mouseDoubleClickEvent (QMouseEvent * event)
         if (perf().is_seq_active(m_current_seq))
             button_toggle_checked(m_current_seq);   /* undo press-toggle    */
 
-        signal_call_editor_ex(m_current_seq);
+        emit signal_call_editor_ex(m_current_seq);
     }
 }
 
@@ -1146,7 +1146,7 @@ qslivegrid::new_sequence ()
 void
 qslivegrid::new_live_frame ()
 {
-    signal_live_frame(m_current_seq);
+    emit signal_live_frame(m_current_seq);
 }
 
 /**
@@ -1157,7 +1157,7 @@ qslivegrid::new_live_frame ()
 void
 qslivegrid::edit_sequence ()
 {
-    signal_call_editor(m_current_seq);
+    emit signal_call_editor(m_current_seq);
 }
 
 /**
@@ -1168,13 +1168,13 @@ qslivegrid::edit_sequence ()
 void
 qslivegrid::edit_sequence_ex ()
 {
-    signal_call_editor_ex(m_current_seq);
+    emit signal_call_editor_ex(m_current_seq);
 }
 
 void
 qslivegrid::edit_events ()
 {
-    signal_call_edit_events(m_current_seq);
+    emit signal_call_edit_events(m_current_seq);
 }
 
 /**
@@ -1456,7 +1456,7 @@ qslivegrid::slot_toggle_metronome (bool /*clicked*/)
             ui->buttonMetronome->setChecked(false);
             qt_set_icon(metro_xpm, ui->buttonMetronome);
         }
-        signal_call_editor_ex(sequence::metronome());
+        emit signal_call_editor_ex(sequence::metronome());
     }
     else if (qkm & Qt::AltModifier)
     {
@@ -1466,7 +1466,7 @@ qslivegrid::slot_toggle_metronome (bool /*clicked*/)
             ui->buttonMetronome->setChecked(false);
             qt_set_icon(metro_xpm, ui->buttonMetronome);
         }
-        signal_call_edit_events(sequence::metronome());
+        emit signal_call_edit_events(sequence::metronome());
     }
     else
     {

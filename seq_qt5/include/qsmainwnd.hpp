@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-21
+ * \updates       2023-09-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -485,6 +485,7 @@ private slots:
     void load_editor (int seqid);
     void load_event_editor (int seqid);
     void load_qseqedit (int seqid);
+    void load_qseqedit_ex (int seqid, bool active);
     void load_qperfedit (bool on);
     void load_live_frame (int ssnum);
     void load_session_frame ();

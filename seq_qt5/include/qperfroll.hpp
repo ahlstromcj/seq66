@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-09
+ * \updates       2023-09-28
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -99,6 +99,7 @@ private:
 
     bool in_selection_area (midipulse tick);
     bool move_by_key (bool forward, bool single = true);
+    int seq_id_from_xy (int /*click_x*/, int click_y);
     void draw_grid (QPainter & painter, const QRect & r);
     void draw_triggers (QPainter & painter, const QRect & r);
 
@@ -113,11 +114,18 @@ private:
     virtual void mousePressEvent (QMouseEvent *) override;
     virtual void mouseReleaseEvent (QMouseEvent *) override;
     virtual void mouseMoveEvent (QMouseEvent *) override;
+    virtual void mouseDoubleClickEvent (QMouseEvent *) override;
     virtual void keyPressEvent (QKeyEvent *) override;
     virtual void keyReleaseEvent (QKeyEvent *) override;
     virtual QSize sizeHint () const override;
 
 signals:
+
+    /*
+     * Open or create an editor window for the selected pattern.
+     */
+
+    void signal_call_editor_ex (int seqid, bool active);
 
 public slots:
 

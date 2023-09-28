@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-13
+ * \updates       2023-09-27
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -657,6 +657,55 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
     m_last_tick = tick;
     set_dirty();                                    /* force a redraw       */
     frame64()->set_dirty();
+}
+
+/**
+ *  One issue is that a double-click yields a mouse-press and an
+ *  mouse-double-click event, in that order.
+ */
+
+void
+qperfroll::mouseDoubleClickEvent (QMouseEvent * event)
+{
+    if (rc().allow_click_edit())
+    {
+        int seqno = seq_id_from_xy(event->x(), event->y());
+        if (perf().is_seq_active(seqno))
+        {
+            emit signal_call_editor_ex(seqno, true);
+        }
+        else
+        {
+            emit signal_call_editor_ex(seqno, false);
+        }
+    }
+}
+
+/**
+ *  Converts the (x, y) coordinates of a click into a sequence/pattern ID.
+ *  Compare this function to qslivegrid::seq_id_from_xy().
+ *
+ * \param click_x
+ *      The x-coordinate of the mouse click. At present, this value
+ *      is not checked to see if there is a trigger at that location.
+ *      Thus, a pattern can be opened/created anywhere in the track
+ *      line.
+ *
+ * \param click_y
+ *      The y-coordinate of the mouse click.
+ *
+ * \return
+ *      Returns the sequence/pattern number.  If not found, then a -1 (the
+ *      value seq::unassigned) is returned.
+ */
+
+int
+qperfroll::seq_id_from_xy (int click_x, int click_y)
+{
+    int result = seq::unassigned();
+    midipulse tick = 0;
+    convert_xy(click_x, click_y, tick, result);
+    return result;
 }
 
 void
