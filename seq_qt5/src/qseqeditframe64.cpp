@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-09-27
+ * \updates       2023-09-28
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2906,10 +2906,10 @@ void
 qseqeditframe64::scroll_to_tick (midipulse tick)
 {
     int w = ui->rollScrollArea->width();
-    if (w > 0)              /* w is constant, e.g. around 742 by default    */
+    if (w > 0)                                          /* w is constant    */
     {
         float fraction = float(tick) / float(track().get_length());
-        ui->rollScrollArea->scroll_x_by_factor(fraction);
+        ui->rollScrollArea->scroll_x_to_factor(fraction);
     }
 }
 
@@ -2917,12 +2917,12 @@ void
 qseqeditframe64::scroll_to_note (int note)
 {
     int h = ui->rollScrollArea->height();
-    if (h > 0)
+    if (h > 0)                                          /* h is constant    */
     {
         if (is_good_data_byte(midibyte(note)))
         {
             float fraction = (127 - note) / 128.0F;
-            ui->rollScrollArea->scroll_y_by_factor(fraction);
+            ui->rollScrollArea->scroll_y_to_factor(fraction);
         }
     }
 }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-18
- * \updates       2023-09-27
+ * \updates       2023-09-28
  * \license       GNU GPLv2 or above
  *
  *  When inheriting QAbstractScrollArea, you need to do the following:
@@ -143,23 +143,29 @@ qscrollmaster::scroll_to_x (int x)
 }
 
 void
+qscrollmaster::scroll_x_to_factor (float f)
+{
+    if (! m_h_scrollbars.empty())
+    {
+        int hmin = m_self_h_scrollbar->minimum();
+        int hmax = m_self_h_scrollbar->maximum();
+        int newh = int((hmax - hmin) * f) + hmin;
+        int dx = hmax - newh;
+        scroll_to_x(newh);
+        QScrollArea::scrollContentsBy(dx, 0);
+    }
+}
+
+void
 qscrollmaster::scroll_x_by_factor (float f)
 {
     if (! m_h_scrollbars.empty())
     {
-#if defined USE_OLD_CODE
         int hvalue = m_self_h_scrollbar->value();
         int newh = int(hvalue * f);
         int dx = hvalue - newh;
         scroll_to_x(newh);
         QScrollArea::scrollContentsBy(dx, 0);
-#else
-        int hmax = m_self_h_scrollbar->maximum();   /* minimum == 0         */
-        int newh = int(hmax * f);
-        int dx = hmax - newh;
-        scroll_to_x(newh);
-        QScrollArea::scrollContentsBy(dx, 0);
-#endif
     }
 }
 
@@ -192,23 +198,29 @@ qscrollmaster::scroll_to_y (int y)
 }
 
 void
+qscrollmaster::scroll_y_to_factor (float f)
+{
+    if (! m_v_scrollbars.empty())
+    {
+        int vmin = m_self_v_scrollbar->minimum();
+        int vmax = m_self_v_scrollbar->maximum();
+        int newv = int((vmax - vmin) * f) + vmin;
+        int dy = newv - vmax;
+        scroll_to_y(newv);
+        QScrollArea::scrollContentsBy(0, dy);
+    }
+}
+
+void
 qscrollmaster::scroll_y_by_factor (float f)
 {
     if (! m_v_scrollbars.empty())
     {
-#if defined USE_OLD_CODE
         int vvalue = m_self_v_scrollbar->value();
         int newv = int(vvalue * f);
         int dy = vvalue - newv;
         scroll_to_y(newv);
         QScrollArea::scrollContentsBy(0, dy);
-#else
-        int vmax = m_self_v_scrollbar->maximum();   /* minimum == 0         */
-        int newv = int(vmax * f);
-        int dy = newv - vmax;
-        scroll_to_y(newv);
-        QScrollArea::scrollContentsBy(0, dy);
-#endif
     }
 }
 

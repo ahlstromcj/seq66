@@ -536,7 +536,8 @@ eventlist::first_note (midipulse & ts, int & n) const
         {
             ts = e.timestamp();
             n = int(e.get_note());
-            ++result;
+            result = true;
+            break;
         }
     }
     return result;
