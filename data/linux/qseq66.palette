@@ -1,10 +1,11 @@
-# Seq66 0.97.1 (and above) palette configuration file
+# Seq66 0.99.10 (and above) palette configuration file
 #
 # /home/ahlstrom/.config/seq66/qseq66.palette
 # Written on 2023-02-28 09:01:20
 #
 # This file can be used to change the colors used by patterns
-# and in some parts of the user-interface.
+# and in some parts of the user-interface. It must be active and
+# specified in the 'rc' file.
 
 [Seq66]
 
@@ -68,15 +69,15 @@ Add your comment block here
 
  0       "Foreground" [ 0xFF000000 ]       "Foreground" [ 0xFFFFFFFF ]
  1       "Background" [ 0xFFFFFFFF ]       "Background" [ 0xFF484848 ]
- 2            "Label" [ 0xFF000000 ]            "Label" [ 0xFFFFFFFF ]
- 3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00FF ]
+ 2            "Label" [ 0xDEADBEEF ]            "Label" [ 0xFFFFFFFF ]
+ 3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00A5 ]
  4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF000080 ]
  5            "Tempo" [ 0xFFFFFF00 ]            "Tempo" [ 0xFFFFFF00 ]
  6        "Note Fill" [ 0xFFFFFFFF ]        "Note Fill" [ 0xFF000000 ]
  7      "Note Border" [ 0xFF000000 ]      "Note Border" [ 0xFFFFFFFF ]
  8       "Black Keys" [ 0xFF000000 ]       "Black Keys" [ 0xFFFFFFFF ]
  9       "White Keys" [ 0xFFFFFFFF ]       "White Keys" [ 0xFF000000 ]
-10     "Progress Bar" [ 0xFFFF0000 ]     "Progress Bar" [ 0xFF000080 ]
+10     "Progress Bar" [ 0xFFFF0000 ]     "Progress Bar" [ 0xFFFF0000 ]
 11     "Back Pattern" [ 0xFF008B8B ]     "Back Pattern" [ 0xFF008B8B ]
 12      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF808080 ]
 13        "Beat Line" [ 0xFF484848 ]        "Beat Line" [ 0xFFFFFFFF ]

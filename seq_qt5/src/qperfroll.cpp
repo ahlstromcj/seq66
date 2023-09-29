@@ -670,14 +670,8 @@ qperfroll::mouseDoubleClickEvent (QMouseEvent * event)
     if (rc().allow_click_edit())
     {
         int seqno = seq_id_from_xy(event->x(), event->y());
-        if (perf().is_seq_active(seqno))
-        {
-            emit signal_call_editor_ex(seqno, true);
-        }
-        else
-        {
-            emit signal_call_editor_ex(seqno, false);
-        }
+        bool active = perf().is_seq_active(seqno);
+        emit signal_call_editor_ex(seqno, active);
     }
 }
 

@@ -516,10 +516,12 @@
    This diagram is slightly out-of-date, but we go forward!
    It shows the tab for configuring MIDI output and clocking features.
 
-   \textbf{Tip}:
+   \begin{quotation}
+      \textbf{Tip}:
       With some Qt themes, it is difficult to activate this tab by clicking
       because there is little or no sensitive area on the tab.
       In this case, click \texttt{Alt-c} once or twice.
+   \end{quotation}
 
    Port-mapping is the default, and when active, is shown in this pane.
    If there are more than about a dozen
@@ -1063,8 +1065,6 @@
          \index{JACK!transport master}
          \textsl{Seq66} will attempt to serve as the JACK Master.
          The command-line option is \texttt{-{}-jack-master}.
-         \textbf{Tip}:
-         \textsl{Seq66} generally works better as JACK Master.
          If this option is enabled the \textbf{JACK Transport} option is
          automatically enabled as well.
       \item \textbf{Master Conditional}.
@@ -1093,6 +1093,11 @@
          or a session manager make the connections, even when not using
          manual/virtual ports.
    \end{itemize}
+
+   \begin{quotation}
+      \textbf{Tip}:
+      Seq66 generally works better as JACK Master than JACK Slave.
+   \end{quotation}
 
    If one makes a change in the JACK transport settings, it is best to
    then press the \textbf{JACK Transport Disconnect} button, then the

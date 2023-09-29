@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-21
- * \updates       2021-04-06
+ * \updates       2023-09-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -36,6 +36,7 @@
 #include "play/sequence.hpp"            /* seq66::sequence class            */
 #include "qperfeditex.hpp"
 #include "qperfeditframe64.hpp"
+#include "qperfroll.hpp"
 #include "qsmainwnd.hpp"
 
 /*
@@ -126,6 +127,16 @@ qperfeditex::set_loop_button (bool looping)
 {
     if (not_nullptr(m_edit_frame))
         m_edit_frame->set_loop_button(looping);
+}
+
+qperfroll *
+qperfeditex::perf_roll ()
+{
+    qperfroll * result = nullptr;
+    if (not_nullptr(m_edit_frame))
+        result = m_edit_frame->perf_roll();
+
+    return result;
 }
 
 }               // namespace seq66

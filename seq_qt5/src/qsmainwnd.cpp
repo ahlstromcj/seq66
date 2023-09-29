@@ -2680,18 +2680,30 @@ qsmainwnd::load_qseqedit (int seqid)
     }
 }
 
+/**
+ *  Compare to qslivegrid::new_sequence().
+ */
+
 void
-qsmainwnd::load_qseqedit_ex (int seqid, bool active)
+qsmainwnd::load_qseqedit_ex (int seqno, bool active)
 {
     if (active)
     {
-        load_qseqedit(seqid);
+        load_qseqedit(seqno);
     }
     else
     {
-        session_message("Creating new pattern from Song editor not ready");
+        if (cb_perf().request_sequence(seqno))          /* new_sequence()   */
+        {
+            msgprintf(msglevel::status, "New Pattern %d", int(seqno));
+            load_qseqedit(seqno);
 
-        // see qslivegrid::new_sequence
+            /*
+             * alter_sequence(seqno);                   // adds a grid button
+             * m_parent->remove_editor(m_current_seq);  // issue #93
+             */
+        }
+
     }
 }
 
@@ -2780,6 +2792,16 @@ qsmainwnd::load_qperfedit (bool /*on*/)
              *
              * ui->btnPerfEdit->setEnabled(false);
              */
+
+            qperfroll * pr = m_perfedit->perf_roll();
+            if (not_nullptr(pr))
+            {
+                connect         // new standalone sequence editor
+                (
+                    pr, SIGNAL(signal_call_editor_ex(int, bool)),
+                    this, SLOT(load_qseqedit_ex(int, bool))
+                );
+            }
         }
     }
     else

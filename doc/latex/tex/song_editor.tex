@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-09-04
+% \update      2023-09-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -17,10 +17,13 @@
 \section{Song Editor}
 \label{sec:song_editor}
 
+   The \textbf{Song Editor}
+   is also known as the "arrangement panel" or "performance editor".
    The \textbf{Song Editor} combines all patterns
    into a complete tune with controlled repetitions of each pattern.
    It shows one row per pattern/loop/sequence,
-   with the placement of each pattern at various time locations in the song.
+   with the placement of each pattern at various and possibly
+   multiple time locations in the song.
    \index{performance}
    In \textsl{Seq24} parlance, the song editor creates a
    \textsl{performance}, and the performance is implemented by a set of
@@ -73,15 +76,15 @@
    Note the major items shown:
 
    \begin{enumber}
-      \item \textbf{Top Panel}
+      \item \textbf{Top Panel} (recent updates not yet shown)
       \item \textbf{Measures Ruler}
       \item \textbf{Patterns (Names) Panel}
       \item \textbf{Song Roll}
       \item \textbf{Bottom Panel}
    \end{enumber}
 
-   Not shown in the figure is the estimated duration of the tune; it appears
-   at the right of the top panel.  It is calculated from the length of patterns
+   The estimated duration of the tune appears at the right of the top panel.
+   It is calculated from the length of patterns
    and the song triggers that may be present.
    Here are some of the features for the song editor:
 
@@ -92,13 +95,57 @@
       \item A configurable progress bar.
       \item \textbf{Undo} and \textbf{Redo} buttons.
       \item A \textbf{Transpose} button and transposition drop-down selector.
-      \item Red coloring of events for patterns that are not transposable, such
-         as drum tracks.
-      \item Horizontal zoom via buttons and keystrokes
+      \item Red coloring of events for patterns that are not transposable,
+         such as drum tracks.
+      \item Horizontal zoom (and a simple vertical zoom)
+      via buttons and keystrokes.
+      \item Opening a pattern editor via a double-click on any occupied
+         track.
+      \item Creating a pattern via a double-click on any unoccupied track.
    \end{itemize}
 
-   The song editor is not too complex, but for exposition, we break it into
-   the sections enumerated above.
+   The song editor is a bit complex; for exposition, we break it into
+   sections, starting with playback keystrokes.
+
+\subsection{Song Editor / Playback Keystrokes}
+\label{subsec:song_editor_playback_keystrokes}
+
+   The song roll (center panel)
+   of the song editor provides keystrokes for starting,
+   stopping, and pausing playback.
+   Other keystrokes are described in
+   \sectionref{subsubsec:song_editor_song_roll_keystrokes}.
+
+%  \itempar{Stop}{song editor!stop}
+%  Stops the playback of the song.
+%  \index{keys!esc (stop)}
+%  The keystroke for stopping playback is the \texttt{Escape} character.
+%  It can be configured to be another character (such as \texttt{Space}, which
+%  would make the space-bar toggle the playback status).
+
+%  \itempar{Stop/Pause/Play}{song editor!play}
+   \index{keys!space (toggle play)}
+   The keystroke for starting playback is the \texttt{Space} character.
+   \index{L marker}
+   It starts the playback of the song at the \textbf{L marker}.
+   The \textbf{L marker} serves as the start position for playback
+   in the song editor.  One can change the start position only when the
+   performance is not playing.
+   The \texttt{Space} character also toggles playback.
+   This character also rewinds the song to the beginning when stopping.
+
+   Another keystroke for stopping playback is the \texttt{Escape} character.
+   This character also rewinds the song to the beginning when stopping.
+
+   \index{keys!period (pause)}
+   The keystroke for pausing playback is the \texttt{Period} character.
+   When used, it keep the progress at the same spot as before.
+
+   Note that there are no stop, pause, and play buttons in the
+   song editor.
+   They are supplied by the main window.
+   The \textbf{Song} tab can be activated in the main window to
+   keep the playback buttons nearby.
 
 \subsection{Song Editor / Top Panel}
 \label{subsec:song_editor_top}
@@ -119,34 +166,11 @@
       \item \textbf{L/R Collapse}
       \item \textbf{L/R Expand}
       \item \textbf{L/R Expand and Copy}
+      \item \textbf{Expand Song Roll} (not shown in figure)
       \item \textbf{Trigger Transpose}
    \end{enumber}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
-
-   \itempar{Stop}{song editor!stop}
-   Stops the playback of the song.
-   \index{keys!esc (stop)}
-   The keystroke for stopping playback is the \texttt{Escape} character.
-   It can be configured to be another character (such as \texttt{Space}, which
-   would make the space-bar toggle the playback status).
-
-   \itempar{Play}{song editor!play}
-   \index{L marker}
-   Starts the playback of the song, starting at the \textbf{L marker}.
-   The \textbf{L marker} serves as the start position for playback
-   in the song editor.  One can change the start position only when the
-   performance is not playing.
-   \index{keys!space (play)}
-   The default keystroke for starting playback is the \texttt{Space} character.
-   \index{keys!esc (stop)}
-   The default keystroke for stopping playback is the \texttt{Escape} character.
-   \index{keys!period (pause)}
-   The default keystroke for pausing playback is the \texttt{Period} character.
-
-   Note that there are no stop, pause, and play buttons in this frame.
-   They are supplied by the main window, and the \textbf{Song} tab can be
-   activated in the main window.
 
    \itempar{Undo}{song editor!undo}
    The \textbf{Undo} button rolls back the last change in the layout of a
@@ -232,24 +256,12 @@
    transposition value.
 
    \itempar{L/R Loop}{song editor!play loop}
-   \index{loop mode}
-   Activates loop mode. When play is activated, plays the song and loop
-   between the
-   \index{L marker}
-   \index{R marker}
-   \textbf{L marker} and the \textbf{R marker}.
-   This button has been moved to the main window.
-   It is a state button, and its appearance indicates when it is
-   depressed, and thus active.
-   If this button is deactivated during playback, then playback
-   continues past the \textbf{R marker}.
-   Note that these markers can be placed using Left
-   and Right mouse clicks, respectively, in the time/measures ruler.
-   Also note that this button has been added to the main
-   window, and appears only in the "external" version of the song editor.
-   Furthermore, the \textbf{L/R} markers can also be set in a pattern editor,
-   where they can be used to focus in on a small section of notes.
-   Lastly, this looping mechanism is also available in Live mode as well.
+   This button appears in the song editor only when it is open as
+   an external window.
+   This button is present in the main window, and so is not needed
+   in the Song tab.
+   For a description of this button, see
+   \sectionref{subsubsec:introduction_loop_button}.
 
    \itempar{L/R Collapse}{song editor!collapse}
    This button collapses the song between the \textbf{L marker} and the
@@ -276,6 +288,12 @@
    However, it also copies the original data that is present after the
    \textbf{R marker}, and pastes it into the newly-available space between
    the L and R markers.
+
+   \itempar{Expand Song Roll}{song editor!expand song roll}
+   Sometimes one might come to the end of the song and still want to
+   add more triggers.
+   Clicking this button expands the song roll to the right, adding
+   more room for triggers.
 
    \itempar{Trigger Transpose}{song editor!trigger transpose}
    This button and spin-box support making trigger selections or segments
@@ -337,7 +355,7 @@
    These markers denote the time interval from the left of the 
    \textbf{L} marker to the right of the \textbf{R} marker.
    Once these markers are in place, one can then use
-	the \textsl{Collapse} and \textsl{Expand} buttons to modify the
+   the \textsl{Collapse} and \textsl{Expand} buttons to modify the
    placement of the pattern events.
    Note that the \textbf{L marker} serves as the start position for playback
    in the song editor even when not looping.
@@ -454,14 +472,18 @@
 \subsection{Song Editor / Song Roll}
 \label{subsec:song_editor_song_roll}
 
-   Also known as the "arrangement panel" or "performance editor".
-   The "Piano Roll" section of the arrangement panel is where patterns or
+   The "Song Roll" section of the arrangement panel is where patterns or
    subsections are inserted, deleted, shrunk, lengthened, or moved.
    Actions can be done via the mouse or keyboard.
 
 \subsubsection{Song Editor / Song Roll / Layout}
 \label{subsubsec:song_editor_song_roll_layout}
 
+   The song/piano roll provides one line (track) per pattern.
+   It provides another way (besides the live grid) to control
+   and lay out patterns.
+   Patterns can be set up with multiple triggers and can be
+   brought up for editing.
    Here are features to note in the annotated piano roll area:
 
    \begin{enumber}
@@ -475,8 +497,16 @@
          Tempo events in the pattern are shown as very small squares.
          They can be edited in the pattern editor's data panel,
          and in the event editor.
+      \item \textbf{Pattern Access}. (Since version 0.99.10).
+         Double-clicking (if enabled in the 'rc' file) on a track
+         representing an existing pattern will bring up an external
+         pattern editor windows.
+         Double-clicking on an empty track will create a new pattern
+         and bring up its pattern editor.
+         This new functionality is merely for convenience.
       \item \textbf{Trigger Creation}.
-         By click-dragging the mouse in paint mode, a series of triggers can be
+         By click-dragging the mouse on a track, in paint mode,
+         a series of triggers can be
          created; they indicate where the track will be unmuted and playing.
          See below for more information about triggers.
       \item \textbf{Selection}.
@@ -532,7 +562,7 @@
    \index{song editor!right-click-hold}
    \index{song editor!draw}
    \index{paint mode}
-	\textsl{Right-click} on the arrangement panel (roll) to enter
+   \textsl{Right-click} on the arrangement panel (roll) to enter
    paint mode, and hold the button.
    Paint mode does not work while the sequence is playing.
    Another way to turn on painting is to
@@ -642,8 +672,7 @@
             done for whole patterns.
          \end{itemize}
       \item Horizontal (Time) Zoom.  These keystrokes work similarly to the
-      pattern editor's piano roll.  However, there are only three levels of
-      vertical zoom:  half-size, normal, and double-size.
+      pattern editor's piano roll.
          Provided by buttons and by these keystrokes:
          \index{keys!shift-z}
          \texttt{Z}. Zoom in horizontally (i.e. in time).
@@ -651,11 +680,16 @@
          \texttt{z}. Zoom out horizontally.
          \index{keys!0}
          \texttt{0}. Reset zoom both horizontally and vertically.
+      \item Vertical (Time) Zoom.  These keystrokes work similarly to the
+         pattern editor's piano roll.
+         However, there are only three levels of
+         vertical zoom:  half-size, normal, and double-size.
          \index{keys!shift-V}
          \texttt{V}. Zoom in vertically to get a better view of the patterns
             and a large grab handle.
          \index{keys!v}
          \texttt{v}. Zoom out vertically to see more tracks.
+         \texttt{0}. Reset zoom both horizontally and vertically.
       \item Scrolling.
          \index{keys!arrows}
          The arrow keys will move the piano row up, down, left, and right.
@@ -666,16 +700,16 @@
          For implementation reasons, the scroll wheel is active
          \textsl{only} in the piano roll.
       \item Paging.
-      One can page up and down vertically in the arrangement
-      panel using the
-      \index{keys!page-up}
-      \texttt{Page Up} and 
-      \index{keys!page-down}
-      \texttt{Page Down} keys.
-      One can page left and right horizontally in the arrangement
-      panel using the
-      \index{keys!up-arrow} \texttt{Up-Arrow} and 
-      \index{keys!down-arrow} \texttt{Down-Arrow} keys.
+         One can page up and down vertically in the arrangement
+         panel using the
+         \index{keys!page-up}
+         \texttt{Page Up} and 
+         \index{keys!page-down}
+         \texttt{Page Down} keys.
+         One can page left and right horizontally in the arrangement
+         panel using the
+         \index{keys!up-arrow} \texttt{Up-Arrow} and 
+         \index{keys!down-arrow} \texttt{Down-Arrow} keys.
    \end{itemize}
 
 \subsection{Song Editor / Bottom Panel}

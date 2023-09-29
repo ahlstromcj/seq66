@@ -442,7 +442,7 @@
       \item \textbf{Stop}
       \item \textbf{Pause}
       \item \textbf{Play}
-      \item \textbf{Loop}
+      \item \textbf{L/R Loop}
       \item \textbf{Live Song Record}
       \item \textbf{Keep Queue}
       \item \textbf{Mute Group Learn}
@@ -502,7 +502,7 @@
    This key is also hardwired to toggle playback in the pattern editor and the
    song editor.
 
-\subsubsection{Loop}
+\subsubsection{L/R Loop}
 \label{subsubsec:introduction_loop_button}
 
    This button has been added to the main window as of version 0.93.0 of
@@ -512,6 +512,24 @@
    focus in on a pattern and tinker repeatedly with the same small section.
    In addition, looping can now be done in both the Live and Song modes of
    playback.
+
+   \index{loop mode}
+   Activates loop mode. When play is activated, plays the song and loop
+   between the
+   \index{L marker}
+   \index{R marker}
+   \textbf{L marker} and the \textbf{R marker}.
+   It is a state button, and its appearance indicates when it is
+   depressed, and thus active.
+   If this button is deactivated during playback, then playback
+   continues past the \textbf{R marker}.
+   Note that these markers can be placed using Left
+   and Right mouse clicks, respectively, in the time/measures ruler.
+   Also note that this button has been added to the main
+   window, and appears only in the "external" version of the song editor.
+   Furthermore, the \textbf{L/R} markers can also be set in a pattern editor,
+   where they can be used to focus in on a small section of notes.
+   Lastly, this looping mechanism is also available in Live mode as well.
 
 \subsubsection{Live Song Record}
 \label{subsubsec:introduction_live_record_button}

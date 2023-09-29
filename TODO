@@ -5,8 +5,6 @@ Chris Ahlstrom
 Misc:
 
     -   Next version, document and test mute groups.
-    -   Implement optional double-click (as in grid) to open
-        the corresponding external pattern editor.
     -   There are issues with Song / Zoom / Follow progress with the
         ulra-zoom-in in force. Pattern editor works.
     -   In the Kraftwerk song, the Chorus seems to have the wrong pitch,

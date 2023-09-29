@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2023-02-28
+ * \updates       2023-09-29
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -591,14 +591,14 @@ gui_palette_qt5::reset_invertibles ()
     m_inv_palette.add(InvertibleColor::black,       m_white,    "Foreground");
     m_inv_palette.add(InvertibleColor::white,       m_dk_grey,  "Background");
     m_inv_palette.add(InvertibleColor::label,       m_white,    "Label");
-    m_inv_palette.add(InvertibleColor::selection,   m_yellow,   "Selection");
+    m_inv_palette.add(InvertibleColor::selection,   m_orange,   "Selection");
     m_inv_palette.add(InvertibleColor::drum,        m_green,    "Drum");
     m_inv_palette.add(InvertibleColor::tempo,       m_magenta,  "Tempo");
     m_inv_palette.add(InvertibleColor::note_in,     m_black,    "Note Fill");
     m_inv_palette.add(InvertibleColor::note_out,    m_white,    "Note Border");
     m_inv_palette.add(InvertibleColor::black_key,   m_white,    "Black Keys");
     m_inv_palette.add(InvertibleColor::white_key,   m_black,    "White Keys");
-    m_inv_palette.add(InvertibleColor::progress,    m_green,    "Progress Bar");
+    m_inv_palette.add(InvertibleColor::progress,    m_red,      "Progress Bar");
     m_inv_palette.add(InvertibleColor::backseq,     m_dk_cyan,  "Back Pattern");
     m_inv_palette.add(InvertibleColor::grey,        m_grey,     "Medium Line");
     m_inv_palette.add(InvertibleColor::dk_grey,     m_white,    "Beat Line");

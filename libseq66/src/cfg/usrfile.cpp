@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-09-22
+ * \updates       2023-09-29
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -742,9 +742,9 @@ usrfile::write ()
 "# patterns versus separately to each.  If all, these values are stored in the\n"
 "# MIDI file in the global SeqSpec versus in each track.\n"
 "#\n"
-"# 'progress-bar-thick specifies a thicker progress bar.  Default is 1 pixel;\n"
-"# thick is 2 pixels if set to true. Also makes the progress box border\n"
-"# border 2 pixels, and the slot font bold.\n"
+"# 'progress-bar-thick specifies a thicker progress bar.  Default is 2 pixels,\n"
+"# 1 pixel if set to false. Also affects the slot box border and the boldness\n"
+"# of the slot font.\n"
 "#\n"
 "# 'inverse-colors' (option -K/--inverse) specifies use of an inverse color\n"
 "# palette. Palettes are for Seq66 drawing areas, not for Qt widgets.\n"

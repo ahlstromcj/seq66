@@ -1,4 +1,4 @@
-# README for Seq66 0.99.10 2023-09-28
+# README for Seq66 0.99.10 2023-09-29
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -85,11 +85,14 @@ Windows, and using a conventional source tarball.
     *   Version 0.99.10:
         *   Multiple tempo events can be drawn in a line in the data pane.
             They can be dragged up and down in the data pane.
+        *   If configured for double-click, can now open or create a pattern
+            by double-clicking in the song editor(s).
         *   Improved modification detection in the data pane.
         *   Tweaked the main time display to work better with high PPQN.
         *   Added feature to scroll to show the first note in pattern.
         *   Fixed bug preventing a song with triggers stopping playback at end
             of song.
+        *   Modified the inverse color palette slightly.
     *   Version 0.99.9:
         *   Added an "Input Bus Routing" feature, where each pattern can be
             set to receive events from a given input buss. Selectable from
