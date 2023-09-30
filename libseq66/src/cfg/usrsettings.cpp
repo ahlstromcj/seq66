@@ -338,6 +338,7 @@ usrsettings::usrsettings () :
     m_seqedit_key               (c_key_of_C),
     m_seqedit_bgsequence        (seq::limit()),
     m_progress_bar_thick        (true),
+    m_follow_progress           (true),
     m_inverse_colors            (false),
     m_time_fg_color             ("default"),
     m_time_bg_color             ("default"),
@@ -450,6 +451,7 @@ usrsettings::set_defaults ()
     m_seqedit_key = c_key_of_C;
     m_seqedit_bgsequence = seq::limit();
     m_progress_bar_thick = true;
+    m_follow_progress = true;
     m_inverse_colors = false;
     m_time_fg_color = "default";
     m_time_bg_color = "default";

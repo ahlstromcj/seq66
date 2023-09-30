@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-09-15
+ * \updates       2023-09-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -363,6 +363,11 @@ qmutemaster::set_column_widths (int total_width)
     ui->m_group_table->setColumnWidth(3, int(0.55f * total_width));
 }
 
+/**
+ *  Updated to not disabled the last group button when the next group button
+ *  is clicked, when in trigger mode.
+ */
+
 bool
 qmutemaster::set_current_group (int group)
 {
@@ -386,7 +391,9 @@ qmutemaster::set_current_group (int group)
             if (lastgroup != seq::unassigned())
             {
                 temp = m_group_buttons[lastgroup];
-                temp->setEnabled(false);
+                if (! trigger())
+                    temp->setEnabled(false);
+
                 temp->setChecked(false);
             }
         }
@@ -495,28 +502,22 @@ qmutemaster::slot_table_click
     int row, int /*column*/, int /*prevrow*/, int /*prevcolumn*/
 )
 {
-    if (! trigger())
+    int rows = cb_perf().mutegroup_count();                 /* always 32    */
+    if (rows > 0)
     {
-        int rows = cb_perf().mutegroup_count();             /* always 32    */
-        if (rows > 0)
+        if (row >= 0 && row < rows)
         {
-            if (row >= 0 && row < rows)
+            if (set_current_group(row))
             {
-                if (set_current_group(row))
-                {
-                    ui->m_button_trigger->setEnabled(true);
-                    ui->m_button_set_mutes->setEnabled(false);
+                ui->m_button_trigger->setEnabled(true);
+                ui->m_button_set_mutes->setEnabled(false);
 
 #if defined READY_FOR_PRIME_TIME
-                    ui->m_button_down->setEnabled(true);
-                    ui->m_button_up->setEnabled(true);
+                ui->m_button_down->setEnabled(true);
+                ui->m_button_up->setEnabled(true);
 #endif
-                    group_needs_update();
-                }
+                group_needs_update();
             }
-        }
-        else
-        {
         }
     }
 }
@@ -524,7 +525,7 @@ qmutemaster::slot_table_click
 void
 qmutemaster::closeEvent (QCloseEvent * event)
 {
-    cb_perf().unregister(this);            /* unregister this immediately      */
+    cb_perf().unregister(this);            /* unregister this immediately   */
     event->accept();
 }
 

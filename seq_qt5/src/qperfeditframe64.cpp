@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2023-09-22
+ * \updates       2023-09-29
  * \license       GNU GPLv2 or above
  *
  */
@@ -224,19 +224,33 @@ qperfeditframe64::qperfeditframe64
 
     tooltip_with_keystroke(ui->m_toggle_follow, keyname);
     qt_set_icon(follow_xpm, ui->m_toggle_follow);
+
+    /*
+     * Now specifiable in the 'usr' file.
+     *
+     * ui->m_toggle_follow->setEnabled(true);
+     */
+
+    bool followprogress = usr().follow_progress();
     ui->m_toggle_follow->setEnabled(true);
     ui->m_toggle_follow->setCheckable(true);
-    ui->m_toggle_follow->setAutoDefault(false);
-    if (perf().song_mode())
-        m_perfroll->progress_follow(true);
+    ui->m_toggle_follow->setChecked(followprogress);
+    ui->m_toggle_follow->setAutoDefault(false);         // ???
 
-    ui->m_toggle_follow->setChecked(m_perfroll->progress_follow());
+    /*
+     *
+     *  if (perf().song_mode())
+     *      m_perfroll->progress_follow(true);
+     *
+     *  ui->m_toggle_follow->setChecked(m_perfroll->progress_follow());
+     */
+
+    follow(followprogress);
     connect
     (
         ui->m_toggle_follow, SIGNAL(toggled(bool)),
         this, SLOT(follow(bool))
     );
-
     set_zoom(c_default_zoom);
 
     /*

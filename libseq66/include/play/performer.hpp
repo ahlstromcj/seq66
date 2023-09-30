@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-09-19
+ * \updates       2023-09-30
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1300,7 +1300,7 @@ public:
 
     bool playlist_active () const
     {
-        return m_play_list->active();
+        return bool(m_play_list) && m_play_list->active();
     }
 
     bool playlist_auto_arm () const

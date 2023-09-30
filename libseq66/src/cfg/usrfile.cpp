@@ -287,6 +287,8 @@ usrfile::parse ()
         usr().global_seq_feature(flag);
         flag = get_boolean(file, tag, "progress-bar-thick");
         usr().progress_bar_thick(flag);
+        flag = get_boolean(file, tag, "follow-progress");
+        usr().follow_progress(flag);
         flag = get_boolean(file, tag, "inverse-colors");
 
         std::string color = get_variable(file, tag, "time-fg-color");
@@ -746,6 +748,9 @@ usrfile::write ()
 "# 1 pixel if set to false. Also affects the slot box border and the boldness\n"
 "# of the slot font.\n"
 "#\n"
+"# 'follow-progress specifies the default for following progress in the piano\n"
+"# rolls. Each window has a button to toggle following progess\n"
+"#\n"
 "# 'inverse-colors' (option -K/--inverse) specifies use of an inverse color\n"
 "# palette. Palettes are for Seq66 drawing areas, not for Qt widgets.\n"
 "# Normal/inverse palettes can be reconfigured via a 'palette' file.\n"
@@ -774,6 +779,7 @@ usrfile::write ()
     write_integer(file, "default-zoom", usr().zoom());
     write_boolean(file, "global-seq-feature", usr().global_seq_feature());
     write_boolean(file, "progress-bar-thick", usr().progress_bar_thick());
+    write_boolean(file, "follow-progress", usr().follow_progress());
     write_boolean(file, "inverse-colors", usr().inverse_colors());
     write_string(file, "time-fg-color", usr().time_fg_color(true), true);
     write_string(file, "time-bg-color", usr().time_bg_color(true), true);

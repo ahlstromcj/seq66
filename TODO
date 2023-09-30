@@ -1,10 +1,11 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-09-27
+2019-04-13 to 2023-09-30
 
 Misc:
 
     -   Next version, document and test mute groups.
+    -   For scrolling to notes, use average note instead of first note.
     -   There are issues with Song / Zoom / Follow progress with the
         ulra-zoom-in in force. Pattern editor works.
     -   In the Kraftwerk song, the Chorus seems to have the wrong pitch,

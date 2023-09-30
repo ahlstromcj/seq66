@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-09-22
+ * \updates       2023-09-27
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -453,6 +453,13 @@ private:
      */
 
     bool m_progress_bar_thick;
+
+    /**
+     *  For the pattern and song windows, set the default status of
+     *  following progress (scrolling to the next section of the piano rolls).
+     */
+
+    bool m_follow_progress;
 
     /**
      *  If set, use an alternate, neo-inverse color palette.  Not all colors
@@ -1356,6 +1363,11 @@ public:
         return m_progress_bar_thick;
     }
 
+    bool follow_progress () const
+    {
+        return m_follow_progress;
+    }
+
     bool inverse_colors () const
     {
         return m_inverse_colors;
@@ -1846,6 +1858,11 @@ public:         // used in main application module and the usrfile class
     void progress_bar_thick (bool flag)
     {
         m_progress_bar_thick = flag;
+    }
+
+    void follow_progress (bool flag)
+    {
+        m_follow_progress = flag;
     }
 
     void lock_main_window (bool flag)

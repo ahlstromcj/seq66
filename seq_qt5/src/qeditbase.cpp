@@ -116,7 +116,7 @@ qeditbase::qeditbase
     m_progress_x            (0),
     m_old_progress_x        (0),
     m_scroll_page           (0),
-    m_progress_follow       (false),
+    m_progress_follow       (usr().follow_progress()),
     m_scroll_offset         (0),
     m_scroll_offset_v       (0),
     m_scroll_offset_x       (0),

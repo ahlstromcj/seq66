@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-09-28
+ * \updates       2023-09-29
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1053,8 +1053,11 @@ qseqeditframe64::qseqeditframe64
 
     int seqwidth = m_seqroll->width();
     int scrollwidth = ui->rollScrollArea->width();
-    m_seqroll->progress_follow(seqwidth > scrollwidth);
-    ui->m_toggle_follow->setChecked(m_seqroll->progress_follow());
+    if (usr().follow_progress())
+    {
+        m_seqroll->progress_follow(seqwidth > scrollwidth);
+        ui->m_toggle_follow->setChecked(m_seqroll->progress_follow());
+    }
 
     /*
      * Old location. Avoid calling setChecked(), as the Qt 5 documentation
