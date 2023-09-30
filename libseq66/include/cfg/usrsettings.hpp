@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-09-27
+ * \updates       2023-09-30
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -157,6 +157,7 @@ enum class recordstyle
 enum class gridmode
 {
     loop,               /**< Normal grid-slot mode.                     */
+    mutes,              /**< Slot-click activates a mute group.         */
     record,             /**< Use one of the available recording modes.  */
     copy,               /**< Copy any pattern that is selected.         */
     paste,              /**< Paste the copied pattern to selected slot. */

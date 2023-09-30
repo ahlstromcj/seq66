@@ -2340,15 +2340,34 @@
 
    \begin{itemize}
       \item \textbf{Loop}.
+         The normal toggling of the mute/armed status of
+         a pattern the slot is clicked or activated by its hot-keys.
+      \item \textbf{Mutes}.
+         Applies the given mute-group statuses when
+         the slot is clicked. Since the "shifted" hot-keys can also be used,
+         this mode is most useful with mouse-click control.
       \item \textbf{Record}.
+         In this mode, a click on a slot or the use of its hot-key toggles
+         recording for that pattern.
       \item \textbf{Copy}.
+         Copies the pattern when that slot is clicked.
       \item \textbf{Paste}.
+         Pastes the previously-copied pattern into the slot
+         that is clicked.
       \item \textbf{Clear}.
+         Clears the pattern in the clicked slot.
+         The pattern remains in that slot, but it has no events.
       \item \textbf{Delete}.
+         Deletes the pattern in the clicked slot.
       \item \textbf{Thru}.
+         Enables the MIDI Thru function for that pattern.
       \item \textbf{Solo}.
+         Solos the clicked pattern.
       \item \textbf{Cut}.
+         Deletes the pattern in the clicked slot, while saving it.
       \item \textbf{Double}.
+         Doubles the length (in measures) of the pattern in the slot
+         that is clicked.
    \end{itemize}
 
    A click or a hot-key will cause the selected function above to be applied to
@@ -2358,10 +2377,21 @@
 
    \begin{itemize}
       \item \textbf{Overdub}.
+         Called \textbf{Merge} in the pattern editor, this recording
+         style just keeps adding events as they come in when the
+         pattern repeats.
       \item \textbf{Overwrite}.
+         When the pattern ends, then loops back to the beginning,
+         an incoming note clears the pattern before being added.
       \item \textbf{Expand}.
+         As notes come in, the pattern gets longer and longer.
       \item \textbf{One-shot}.
+         Notes are added to the pattern as they come in, but recording
+         stops when the end of the pattern's specified measures is
+         reached.
       \item \textbf{One-shot Reset}.
+         Similar to one-shot, but clears the pattern.
+         (To do: find the exact process used here.)
    \end{itemize}
 
 %  For details, see \sectionref{paragraph:patterns_recording_modes}.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2023-09-19
+ * \updates       2023-09-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -220,7 +220,7 @@ opcontrol::automation_slot_name (slot s)
         "Visibility",           // 43 visibility *
         "Save Session",         // 44 save_session
         "Record Toggle",        // 45 record_toggle
-        "Reserved 46",          // 46 reserved_46
+        "Grid Mutes",           // 46 grid_mutes Grid expansion :-(
         "Reserved 47",          // 47 reserved_47
         "Reserved 48",          // 48 reserved_48
 

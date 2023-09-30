@@ -234,7 +234,7 @@ enum class slot
     visibility,         /**< 43: Toggle the visibility of the main window.  */
     save_session,       /**< 44: Save the MIDI and configuration files now. */
     record_toggle,      /**< 45: Enter toggle-record for next hot-key.      */
-    reserved_46,        /**< 46: Reserved for expansion.                    */
+    grid_mutes,         /**< 46: Grid mode extension :-( for reserved_46    */
     reserved_47,        /**< 47: Reserved for expansion.                    */
     reserved_48,        /**< 48: Reserved for expansion.                    */
 

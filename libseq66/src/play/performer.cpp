@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-09-29
+ * \updates       2023-09-30
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -7667,6 +7667,13 @@ performer::loop_control
                     else if (a == automation::action::off)
                         (void) sequence_playing_change(seqno, false);
                 }
+                else if (gm == gridmode::mutes)
+                {
+                    result = toggle_mutes
+                    (
+                        static_cast<mutegroup::number>(seqno)
+                    );
+                }
                 else if (gm == gridmode::copy)
                 {
                     result = copy_sequence(seqno);
@@ -9696,6 +9703,10 @@ performer::automation_grid_mode
         print_parameters(name, a, d0, d1, index, inverse);
         switch (s)
         {
+            case automation::slot::grid_mutes:
+                gm = gridmode::mutes;
+                break;
+
             case automation::slot::grid_loop:
                 gm = gridmode::loop;
                 break;
@@ -10034,7 +10045,17 @@ performer::sm_auto_func_list [] =
         automation::slot::record_toggle,
         &performer::automation_record_toggle
     },
-    { automation::slot::reserved_46, &performer::automation_no_op        },
+
+    /*
+     * Should have thought of adding this much earlier. So see have to
+     * put this one in the reserved section as a special case, unless
+     * we want to possibly break the users' setups.
+     */
+
+    {
+        automation::slot::grid_mutes,
+        &performer::automation_grid_mode
+    },
     { automation::slot::reserved_47, &performer::automation_no_op        },
     { automation::slot::reserved_48, &performer::automation_no_op        },
 

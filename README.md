@@ -89,6 +89,9 @@ Windows, and using a conventional source tarball.
             by double-clicking in the song editor(s).
         *   Improved modification detection in the data pane.
         *   Improvements to the Mutes tab.
+        *   Added a new "grid mode" to allow toggling mutes by clicking
+            in the Live Grid.  The default keystroke is "_"; still need to
+            get that to work and update the grid-mode drop-down.
         *   Tweaked the main time display to work better with high PPQN.
         *   Added feature to scroll to show the first note in pattern.
         *   Fixed bug preventing a song with triggers stopping playback at end

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2023-09-19
+ * \updates       2023-09-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -493,7 +493,7 @@ keycontainer::keys_automation ()
         { "0xf9",      automation::action::toggle  }, // 43 visibility
         { "0xfa",      automation::action::off     }, // 44 save_session
         { "+",         automation::action::on      }, // 45 record_toggle
-        { "0xfc",      automation::action::off     }, // 46 reserved_46
+        { "_",         automation::action::off     }, // 46 grid_mutes
         { "0xfd",      automation::action::off     }, // 47 reserved_47
         { "0xfe",      automation::action::off     }, // 48 reserved_48
 
