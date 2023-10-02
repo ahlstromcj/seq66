@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-01-13
-% \update      2023-04-14
+% \update      2023-10-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -18,21 +18,30 @@
 \section{Seq66 Mutes Master}
 \label{sec:mutes_master}
 
-   The \textbf{Mutes} tab is a way to get a global view of all the mutegroups in
-   a \textsl{Seq66} MIDI file or global configuration, and to be able to do
-   some simple operations with the mute groups.
-   A mute-group holds the statuses (armed/muted) of all of the patterns in
-   a screenset (see \sectionref{subsubsec:concepts_terms_bank}).
-   A mute-group can be associated with a hot-key (or MIDI control), so that,
+   The \textbf{Mutes} tab provides a global view of all the mute-groups
+   in a \textsl{Seq66} MIDI file or global configuration, and perform
+   some manipulation of mute-groups.
+
+   A mute-group
+   (see \sectionref{subsubsec:concepts_terms_group})
+   holds the desired statuses (armed/muted) of all
+   of the patterns in a screenset/bank
+   (see \sectionref{subsubsec:concepts_terms_bank}).
+   By setting up multiple mute-groups,
+   one can quickly transition to different arrangements or
+   musical themes.
+
+   A mute-group can be associated with a hot-key or MIDI control;
    when the mute-group is selected, the patterns that are armed changes.
    This makes it easy to change what the tune is playing in a big way.
    Mute-groups are \textsl{learned} by
 
    \begin{enumerate}
-      \item Arming all of the desired pattern in the set.
+      \item Arming all of the desired patterns in the set.
       \item Clicking the \textbf{Learn} ("L") button.
-      \item Clicking the keystroke, which is almost always the shifted version
-         of the hot-key to arm/mute the pattern.
+      \item Clicking the keystroke, which is the shifted version
+         of the hot-key to arm/mute the pattern corresponding to
+         the mute-group number..
          This is accomplished in the default keyboard configuration via the
          \index{auto-shift}
          auto-shift function, which shifts the keystroke automatically
@@ -40,43 +49,46 @@
    \end{enumerate}
 
    These steps can also be done via MIDI control.
+   More tediously, mute-groups can be edited in a 'mutes' file.
 
    To learn more about mute-groups, see
    \sectionref{subsubsec:introduction_mute_group_learn_button}, and
    \sectionref{subsubsec:concepts_terms_group}.
 
-% TODO: UPDATE THIS FIGURE WITH THE LATEST.
-
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.75]{tabs/mutes/mute-master-tab.png}
+   \includegraphics[scale=0.75]{tabs/mutes/mute-master-tab-3.png}
    \caption{Mutes Tab}
    \label{fig:mutes_master_tab}
 \end{figure}
 
-   This diagram show the \textbf{Mutes} tab after some mute-groups have been
+   This diagram shows the \textbf{Mutes} tab after some mute-groups have been
    created.  Mute-groups can be created in the main window's patterns panel,
    but it is difficult to know what each group consists of.  This tab make it
    easy to see the layout of the mute-groups, and also allows for some editing
    of the mute-groups.
 
+   Note that the Qt theme shown here (\textsl{kvantum})
+   shows that buttons are checkable; other themes might not show that status
+   well.
+
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Group Table}{mutes!table}
-   At the right is a table that holds all of the assigned mute-group key and
+   At the right is a table that shows the assigned mute-group keys and
    some information about them:
 
       \begin{itemize}
          \item \textbf{Group}.
             This column holds the group numbers for each group, ranging from 0
-            to 31.  Each row corresponds to a buton in the \textbf{Mute-Groups}
-            grid.
+            to 31.  Each row corresponds to a button in the
+            \textbf{Mute-Groups} grid.
          \item \textbf{Active}.
             This column shows the number of activated patterns in the
             mute-group.  A zero means the mute-group is inactive.
          \item \textbf{Key}.
-            Indicates the keystroke that can be used to put that mute-group in
-            place on the patterns in the current screenset.
+            Indicates the keystroke that can be used to activate that
+            mute-group.
             By default, these are shifted version of the corresponding
             mute/unmute pattern-slot hotkey.
          \item \textbf{Group Name}.
@@ -84,61 +96,61 @@
             future.
       \end{itemize}
 
-   Currently, only the \textbf{Group Name} field is editable directly.
-   The user generally should modify (tweak)
-   \texttt{qseq66.mutes} with a text editor.
-   This table is the only way to select a mute-group for editing.
+   This table is not editable (currently).
+   The user can \texttt{qseq66.mutes} with a text editor, or
+   edit \texttt{qseq66.ctrl} to modify the the hot-keys or MIDI
+   controls.
    Click on the desired group, and then click on the group button, perhaps
-   twice, to be able to add pattern mute states via the pattern buttons.
+   twice, to be able to add pattern mute states via the pattern buttons,
+   as an alternative to group-learn.
 
    \itempar{Mute-Groups}{mutes!groups}
-   This grid is always of size \textbf{4 x 8}.  It represents the maximum of 32
+   This grid is always of size \textbf{4 x 8}.
+   It represents the maximum of 32
    mute-groups that can be supported by \textsl{Seq66}.
    To start, all group buttons are \textsl{disabled} and
    \textsl{unchecked} (inactive).
    Where a mute-group exists, the button is made \textsl{checked} (active),
    but still disabled.
 
-   Here, the user clicked on mute-group 7, which now becomes active in the
-   user-interface.  (But it is not made active in the patterns panel).
-   The \textbf{7} button is also enabled, and can be clicked.
+   Here, the user clicked on mute-group 2, which becomes active in the
+   user-interface.
+%  (But it is not made active in the patterns panel).
+   The \textbf{2} button is also enabled, and can be clicked.
 
-   Clicking once deactivates the button, which potentially flags that mute-group
-   for removal.  Clicking it again reactivates it, which also enables all of the
+   Clicking once deactivates the button, which potentially flags that
+   mute-group for removal.
+   Clicking it again reactivates it and
+   enables all of the
    buttons in the \textbf{Group Patterns} grid.
 
    \itempar{Group Patterns}{mutes!patterns}
-   Once this grid is enabled, each button can be click to add a pattern to the
-   mute-group, or remove a pattern from the mute-group.
+   Once this grid is enabled, each button can be clicked to add a pattern to
+   the mute-group, or remove a pattern from the mute-group.
 
    \itempar{Update Group}{mutes!update group}
-%
-%  Was "Set Mutes"
-%
    When a change in the mute-group status or the status of one of its patterns
-   is made, this button becomes enabled.  Once clicked, the current mute-group
-   is modified internally, where it will later be saved when \textsl{Seq66}
+   is made, this button is enabled.
+   Once clicked, the current mute-group is modified internally,
+   where it can later be saved when \textsl{Seq66}
    exits, or when the \textbf{Save All} button is clicked.
 
    \itempar{Mutes File}{mutes!mutes file}
    The mutes-file shows the base-name of a file into which one can write the
    current-mute group setup, as a way to back up the setup.
-   TO DO:  We need to disable auto-save of the mutes file at exit in this case,
-   unless the name provided is identical.
 
-   \itempar{Save All}{mutes!save all}
-%
-%  Was "Save File"
-%
+   \itempar{Save File}{mutes!save file}
    This button saves all of the mute-groups.
    It is enabled when a change has been made to a mute-group and
    has been registered by pressing the \textbf{Update Group} button.
-   If the user has provided a path in the \textbf{Mutes File} field, the path
-   is stripped.  We do not want to write configuration information outside of
+   If the user has provided a path in the
+   \textbf{Edit / Preferences / Session / .mutes} field,
+   the path is stripped.
+   \textsl{Seq66} must not write configuration information outside of
    the session configuration directory.
-   The file is saved, but is not made official in the
-   'rc' file; one must edit the 'rc' file to use the new 'mutes' file.
-   We might provide a button for that function at some point.
+%  The file is saved, but is not made official in the
+%  'rc' file; one must edit the 'rc' file to use the new 'mutes' file.
+%  We might provide a button for that function at some point.
 
    \itempar{Write Format}{mutes!write format}
    This section provides the following features, which still need some work:
@@ -150,18 +162,18 @@
             Each mute-group pattern's setting is indicated by a 0 or a 1.
             This is the default format for writing the mute-groups.
          \item \textbf{Hex}.
-            In this format, each set of mute-group is written in 8-bit hexadecimal
-            format (e.g. "0xff").  This format is useful if the user has opted to
-            have large set sizes such as 64 and 96 patterns.  Not well-supported
-            yet.
+            In this format, each set of mute-group is written in 8-bit
+            hexadecimal format (e.g. "0xff").  This format is useful if the
+            user has opted to have large set sizes such as 64 and 96 patterns.
+            Not well-supported yet.
          \item \textbf{To MIDI}.
             When a tune is closed, as when \textsl{Seq66} exits, this option
             indicates to write the mute-group information to the
             \textsl{Seq66}-style MIDI file.
          \item \textbf{To Mutes}.
             When a tune is closed, as when \textsl{Seq66} exits, this option
-            indicates to write the mute-group information to the normal
-            \textsl{Seq66} configuration file (e.g. \texttt{qseq66.mutes}).
+            indicates to write the mute-group information to the 'mutes'
+            configuration file (e.g. \texttt{qseq66.mutes}).
       \end{itemize}
 
    \itempar{Trigger Mode}{mutes!trigger mode}
@@ -176,19 +188,17 @@
       This button will create a set of empty mute-groups.
       Currently, this alters the current MIDI tune, forcing a prompt to save.
       This action creates 32 empty mute-groups.
-      If a single mute-group is created in the patterns panel,
-      then only that mute-groups is saved.
+%     If a single mute-group is created in the patterns panel,
+%     then only that mute-group is saved.
 
-% INVESTIGATE!!!
-
-   \itempar{Pattern Offset}{mutes!pattern offset}
-      If the user has selected a larger set size that is a multiple of 32, this
-      item is enabled.  It then allows the user to modify patterns with a
-      sequence number greater than 31.  A future feature.
-
-   \itempar{Up/Down Buttons}{mutes!up/down buttons}
-      A future feature to move mute-group around without
-      changing the keystroke for that mute group.
+%  \itempar{Pattern Offset}{mutes!pattern offset}
+%     If the user has selected a larger set size that is a multiple of 32, this
+%     item is enabled.  It then allows the user to modify patterns with a
+%     sequence number greater than 31.  A future feature.
+%
+%  \itempar{Up/Down Buttons}{mutes!up/down buttons}
+%     A future feature to move mute-group around without
+%     changing the keystroke for that mute group.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-04-29
+ * \updates       2023-10-02
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -206,7 +206,6 @@ signals:
 private slots:
 
     void conditional_update ();
-    void slot_pattern_offset (int index);
     void slot_table_click
     (
         int row, int /*column*/,
@@ -220,8 +219,13 @@ private slots:
     void slot_hex_mode (bool ischecked);
     void slot_trigger ();
     void slot_set_mutes ();
+
+#if USE_REMOVED_MUTEMASTER_BUTTONS
+    void slot_pattern_offset (int index);
     void slot_down ();
     void slot_up ();
+#endif
+
     void slot_write_to_midi ();
     void slot_write_to_mutes ();
     void slot_strip_empty ();

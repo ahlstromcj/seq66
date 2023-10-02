@@ -1,4 +1,4 @@
-# README for Seq66 0.99.10 2023-09-30
+# README for Seq66 0.99.10 2023-10-02
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -88,15 +88,15 @@ Windows, and using a conventional source tarball.
         *   If configured for double-click, can now open or create a pattern
             by double-clicking in the song editor(s).
         *   Improved modification detection in the data pane.
-        *   Improvements to the Mutes tab.
+        *   Many improvements and fixes to the Mutes tab.
         *   Added a new "grid mode" to allow toggling mutes by clicking
-            in the Live Grid.  The default keystroke is "_"; still need to
-            get that to work and update the grid-mode drop-down.
+            in the Live Grid.  The default keystroke is "_".
         *   Tweaked the main time display to work better with high PPQN.
         *   Added feature to scroll to show the first note in pattern.
         *   Fixed bug preventing a song with triggers stopping playback at end
             of song. Fixes related to playlist-handling.
         *   Modified the inverse color palette slightly.
+        *   Restore missing table header in Mutes tab.
     *   Version 0.99.9:
         *   Added an "Input Bus Routing" feature, where each pattern can be
             set to receive events from a given input buss. Selectable from

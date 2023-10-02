@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-09-30
+ * \updates       2023-10-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -159,6 +159,8 @@ qmutemaster::qmutemaster
     if (large)
         large = (cb_perf().screenset_size() % mutegroups::Size()) == 0;
 
+#if USE_REMOVED_MUTEMASTER_BUTTONS
+
     if (large)
     {
         int max = cb_perf().screenset_size() / mutegroups::Size() - 1;
@@ -170,10 +172,14 @@ qmutemaster::qmutemaster
         ui->m_pattern_offset_spinbox, SIGNAL(valueChanged(int)),
         this, SLOT(slot_pattern_offset(int))
     );
+
     ui->m_button_down->setEnabled(false);
     connect(ui->m_button_down, SIGNAL(clicked()), this, SLOT(slot_down()));
     ui->m_button_up->setEnabled(false);
     connect(ui->m_button_up, SIGNAL(clicked()), this, SLOT(slot_up()));
+
+#endif
+
     ui->m_button_load->setEnabled(true);
     connect(ui->m_button_load, SIGNAL(clicked()), this, SLOT(slot_load()));
 
@@ -279,11 +285,15 @@ qmutemaster::conditional_update ()
     }
 }
 
+#if USE_REMOVED_MUTEMASTER_BUTTONS
+
 void
 qmutemaster::slot_pattern_offset (int index)
 {
     m_pattern_offset = index * cb_perf().screenset_size();
 }
+
+#endif
 
 void
 qmutemaster::slot_clear_all_mutes ()
@@ -444,8 +454,12 @@ qmutemaster::cell (mutegroup::number row, column_id col)
     QTableWidgetItem * result = ui->m_group_table->item(row, column);
     if (is_nullptr(result))
     {
-        result = new QTableWidgetItem;
-        ui->m_group_table->setItem(row, column, result);
+        result = new (std::nothrow) QTableWidgetItem;
+        if (not_nullptr(result))
+        {
+            ui->m_group_table->setItem(row, column, result);
+            result->setFlags(result->flags() ^ Qt::ItemIsEditable); // NEW
+        }
     }
     return result;
 }
@@ -671,6 +685,8 @@ qmutemaster::slot_set_mutes ()
     }
 }
 
+#if USE_REMOVED_MUTEMASTER_BUTTONS
+
 /**
  *  A slot for handle_group_change(), meant to move a table row down.
  *  Not yet ready for primetime.
@@ -695,6 +711,8 @@ qmutemaster::slot_up ()
         handle_group_change(current_group());
 }
 
+#endif
+
 /**
  *  This looks goofy, but we offload the dialog handling to qsmainwnd, which
  *  has the boolean function qsmainwnd::open_mutes_dialog(), which returns
@@ -709,6 +727,11 @@ qmutemaster::slot_load ()
     {
         m_main_window->open_mutes_dialog();     /* calls load_mutegroups()  */
         ui->m_button_save->setEnabled(false);
+
+        /*
+         * ca 2023-10-01 TODO: copy to the m_mute_basename QPlainTextEdit
+         * and also update the .mutes name in Edit / Preferences / Session.
+         */
     }
 }
 
