@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-27
+ * \updates       2023-10-03
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1672,7 +1672,14 @@ qsmainwnd::open_mutes_dialog ()
         if (result)
         {
             result = m_mute_master->load_mutegroups(fname);
-            if (! result)
+            if (result)
+            {
+                fname = filename_base(fname);
+                rc().mute_group_filename(fname);
+                rc().mute_group_file_active(true);
+                m_dialog_prefs->sync();             /* also call apply()? */
+            }
+            else
                 show_error_box("Mute-groups loading error");  // TODO
         }
         else
@@ -1684,7 +1691,7 @@ qsmainwnd::open_mutes_dialog ()
 }
 
 /**
- * NOT YET CONNECTED.
+ *  Not yet connected.
  */
 
 void
@@ -1693,6 +1700,10 @@ qsmainwnd::show_save_mutes_dialog ()
     if (check())
         (void) save_mutes_dialog();
 }
+
+/**
+ *  Called by qmutemaster::slot_save().
+ */
 
 bool
 qsmainwnd::save_mutes_dialog (const std::string & basename)
@@ -1709,8 +1720,10 @@ qsmainwnd::save_mutes_dialog (const std::string & basename)
         if (result)
         {
             result = m_mute_master->save_mutegroups(fname);
-            if (! result)
-                show_error_box("Mute-groups saving error");  // TODO
+            if (result)
+                rc().mute_group_filename(fname);
+            else
+                show_error_box("Mute-groups saving error");
         }
         else
         {

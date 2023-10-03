@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-09-30
+ * \updates       2023-10-03
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2396,9 +2396,9 @@ public:
 
     bool reload_mute_groups (std::string & errmessage);
 
-    void load_mute_groups (bool bmidi, bool bmutes)
+    bool load_mute_groups (bool bmidi, bool bmutes)
     {
-        mutes().load_mute_groups(bmidi, bmutes);
+        return mutes().load_mute_groups(bmidi, bmutes);
     }
 
     bool set_ctrl_status

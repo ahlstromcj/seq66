@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>824</width>
-    <height>396</height>
+    <width>848</width>
+    <height>377</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,8 +30,8 @@
     <rect>
      <x>10</x>
      <y>0</y>
-     <width>828</width>
-     <height>361</height>
+     <width>807</width>
+     <height>352</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -62,6 +62,7 @@
           <property name="font">
            <font>
             <family>DejaVu Sans</family>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -78,7 +79,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Click group row to show it</string>
+           <string>Click group row to show group layout </string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -114,6 +115,7 @@
         <property name="font">
          <font>
           <family>DejaVu Sans</family>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -135,7 +137,10 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="m_mutes_file_label">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
             <horstretch>0</horstretch>
@@ -157,6 +162,7 @@
           <property name="font">
            <font>
             <family>DejaVu Sans</family>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -192,11 +198,25 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Go to Edit / Preferences / Session
+           <string>For reference only. Go to Edit / Preferences / Session
 to edit this name.</string>
           </property>
           <property name="verticalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="m_check_mutes_active">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="toolTip">
+           <string>Indicates if the 'mutes' file is active. See
+Edit / Preferences / Session / .mutes.</string>
+          </property>
+          <property name="text">
+           <string>Active</string>
           </property>
          </widget>
         </item>
@@ -209,6 +229,7 @@ to edit this name.</string>
           <property name="font">
            <font>
             <family>DejaVu Sans</family>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -277,6 +298,10 @@ and 0's. Default setting.</string>
           </item>
           <item row="0" column="0">
            <widget class="QCheckBox" name="m_check_from_midi">
+            <property name="toolTip">
+             <string>If checked, read mute-groups from the MIDI
+file. Takes precedence over the 'mutes' file.</string>
+            </property>
             <property name="text">
              <string>From MIDI</string>
             </property>
@@ -284,6 +309,11 @@ and 0's. Default setting.</string>
           </item>
           <item row="1" column="0">
            <widget class="QCheckBox" name="m_check_from_mutes">
+            <property name="toolTip">
+             <string>If checked, the mute-groups are read from
+a common 'mutes' file. Superceded by
+&quot;From MIDI&quot;.</string>
+            </property>
             <property name="text">
              <string>From Mutes</string>
             </property>
@@ -304,9 +334,9 @@ and 0's. Default setting.</string>
            </size>
           </property>
           <property name="toolTip">
-           <string>Toggling off a mute-group toggles only patterns
-active in that group; patterns unmuted by the user stay on.
-Legacy behavior adheres strictly to the mute-group.</string>
+           <string>If checked, toggling a mute-group changes only patterns
+specified in that group; patterns armed by the user stay on.
+Legacy behavior toggles mute-group and armed patterns.</string>
           </property>
           <property name="text">
            <string>Toggle Only Active</string>
@@ -466,20 +496,23 @@ mute groups to the table.</string>
           <property name="enabled">
            <bool>false</bool>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>24</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>120</width>
+            <width>24</width>
             <height>16777215</height>
            </size>
           </property>
           <property name="toolTip">
-           <string>Save mute-group modifications to the configuration.
-Still need to save the MIDI or 'mutes' file,
-as applicable, to preserve this mute-group
-&quot;forever&quot;.</string>
+           <string>A star if mute-group modifications are present.</string>
           </property>
           <property name="text">
-           <string>Update Group</string>
+           <string> - </string>
           </property>
          </widget>
         </item>
@@ -523,6 +556,9 @@ configuration.</string>
             <width>72</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="toolTip">
+           <string>Present a dialog to load a 'mutes' file.</string>
           </property>
           <property name="text">
            <string>Load File</string>

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-10-02
+ * \updates       2023-10-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -95,6 +95,9 @@ qmutemaster::qmutemaster
     ui                      (new Ui::qmutemaster),
     m_timer                 (nullptr),
     m_main_window           (mainparent),
+    m_is_initialized        (false),
+    m_to_midi_active        (false),
+    m_to_mutes_active       (false),
     m_group_buttons         (mutegroups::Size(), nullptr),  /* "2-D" arrary */
     m_pattern_buttons       (p.screenset_size(), nullptr),  /* group_count()*/
     m_current_group         (seq::unassigned()),            /* important    */
@@ -115,14 +118,18 @@ qmutemaster::qmutemaster
     (void) initialize_table();          /* fill with mute-group information */
 
     QString mgfname = qt(rc().mute_group_filename());
-    bool mgfactive = rc().mute_group_file_active();
+    bool mutesactive = rc().mute_group_file_active();
     ui->m_mute_basename->setPlainText(mgfname);
+    ui->m_check_mutes_active->setChecked(mutesactive);
+#if defined USE_MUTES_FILE_TEXTEDIT
+    bool mgfactive = rc().mute_group_file_active();
     ui->m_mute_basename->setEnabled(mgfactive);
     connect
     (
         ui->m_mute_basename, SIGNAL(textChanged()),
         this, SLOT(slot_mutes_file_modify())
     );
+#endif
 
     /*
      * First set the status of the bin/hex radio buttons, and only then
@@ -149,17 +156,20 @@ qmutemaster::qmutemaster
         this, SLOT(slot_trigger())
     );
     ui->m_button_set_mutes->setEnabled(false);
+
+#if defined USE_GROUP_UPDATE_BUTTON
     connect
     (
         ui->m_button_set_mutes, SIGNAL(clicked()),
         this, SLOT(slot_set_mutes())
     );
+#endif
+
+#if defined USE_REMOVED_MUTEMASTER_BUTTONS
 
     bool large = cb_perf().screenset_size() > mutegroups::Size();
     if (large)
         large = (cb_perf().screenset_size() % mutegroups::Size()) == 0;
-
-#if USE_REMOVED_MUTEMASTER_BUTTONS
 
     if (large)
     {
@@ -184,21 +194,36 @@ qmutemaster::qmutemaster
     connect(ui->m_button_load, SIGNAL(clicked()), this, SLOT(slot_load()));
 
     /*
-     * Set to false further down.
-     *
-     * ui->m_button_save->setEnabled(true);
+     * We don't care if the user wants to save the current mute-groups
+     * right away. They might have been read from the MIDI file, and the
+     * user wants to keep a copy of the mute-groups.
      */
 
+    ui->m_button_save->setEnabled(true);
     connect(ui->m_button_save, SIGNAL(clicked()), this, SLOT(slot_save()));
+
+    /*
+     * To MIDI
+     */
+
+    bool tomidi = cb_perf().group_save_to_midi();
     ui->m_check_to_midi->setEnabled(true);
-    ui->m_check_to_midi->setChecked(cb_perf().group_save_to_midi());
+    ui->m_check_to_midi->setChecked(tomidi);
+    m_to_midi_active = tomidi;
     connect
     (
         ui->m_check_to_midi, SIGNAL(stateChanged(int)),
         this, SLOT(slot_write_to_midi())
     );
+
+    /*
+     * To Mutes
+     */
+
+    bool tofile = cb_perf().group_save_to_mutes();
     ui->m_check_to_mutes->setEnabled(true);
-    ui->m_check_to_mutes->setChecked(cb_perf().group_save_to_mutes());
+    ui->m_check_to_mutes->setChecked(tofile);
+    m_to_mutes_active = tofile;
     connect
     (
         ui->m_check_to_mutes, SIGNAL(stateChanged(int)),
@@ -259,9 +284,9 @@ qmutemaster::qmutemaster
 
     handle_group_button(0, 0);          /* guaranteed to be present         */
     handle_group_change(0);             /* select the first group           */
-    ui->m_button_save->setEnabled(false);
     cb_perf().enregister(this);         /* register this for notifications  */
     group_needs_update();               /* guarantee the initial load       */
+    m_is_initialized = true;
     m_timer = qt_timer(this, "qmutemaster", 3, SLOT(conditional_update()));
 }
 
@@ -285,7 +310,7 @@ qmutemaster::conditional_update ()
     }
 }
 
-#if USE_REMOVED_MUTEMASTER_BUTTONS
+#if defined USE_REMOVED_MUTEMASTER_BUTTONS
 
 void
 qmutemaster::slot_pattern_offset (int index)
@@ -298,9 +323,8 @@ qmutemaster::slot_pattern_offset (int index)
 void
 qmutemaster::slot_clear_all_mutes ()
 {
-    cb_perf().clear_mutes();
-    ui->m_button_save->setEnabled(true);
-    group_needs_update();
+    if (cb_perf().clear_mutes())
+        modify_mutes();
 }
 
 void
@@ -308,10 +332,17 @@ qmutemaster::slot_fill_mutes ()
 {
     if (cb_perf().mutegroup_reset())
     {
-        initialize_table();
-        group_needs_update();
+        if (initialize_table())
+        {
+            modify_mutes();
+            group_needs_update();
+        }
     }
 }
+
+/**
+ *  Done only at construction.
+ */
 
 void
 qmutemaster::clear_pattern_mutes ()
@@ -319,9 +350,8 @@ qmutemaster::clear_pattern_mutes ()
     int count = cb_perf().mutegroup_count();                /* always 32    */
     m_pattern_mutes.clear();                                /* midibooleans */
     if (count > 0)
-    {
         m_pattern_mutes.resize(count);
-    }
+
     m_pattern_offset = 0;
 }
 
@@ -355,7 +385,7 @@ qmutemaster::slot_cell_changed (int row, int column)
         QString qtext = c->text();
         std::string name = qtext.toStdString();
         if (cb_perf().group_name(m, name))
-            enable_save();
+            modify_mutes();
     }
 }
 
@@ -458,7 +488,8 @@ qmutemaster::cell (mutegroup::number row, column_id col)
         if (not_nullptr(result))
         {
             ui->m_group_table->setItem(row, column, result);
-            result->setFlags(result->flags() ^ Qt::ItemIsEditable); // NEW
+            if (col != column_id::group_name)
+                result->setFlags(result->flags() ^ Qt::ItemIsEditable);
         }
     }
     return result;
@@ -526,7 +557,7 @@ qmutemaster::slot_table_click
                 ui->m_button_trigger->setEnabled(true);
                 ui->m_button_set_mutes->setEnabled(false);
 
-#if defined READY_FOR_PRIME_TIME
+#if defined USE_REMOVED_MUTEMASTER_BUTTONS
                 ui->m_button_down->setEnabled(true);
                 ui->m_button_up->setEnabled(true);
 #endif
@@ -552,6 +583,8 @@ qmutemaster::closeEvent (QCloseEvent * event)
  *  Note that the largest number of mute-groups is 4 x 8 = 32.  This
  *  limitation is practically necessary because there are only so many
  *  available keys on the keyboard for pattern, mute-group, and set control.
+ *
+ *  Done at construction time.
  */
 
 void
@@ -613,25 +646,22 @@ qmutemaster::set_bin_hex (bool bin_checked)
     }
 }
 
-void
-qmutemaster::mutes_file_change (bool flag)
-{
-    ui->m_button_save->setEnabled(flag);
-    rc().auto_mutes_save(flag);
-}
+#if defined USE_MUTES_FILE_TEXTEDIT
 
 void
 qmutemaster::slot_mutes_file_modify ()
 {
-    mutes_file_change(true);
+    modify_mutes_file(true);
 }
+
+#endif
 
 void
 qmutemaster::slot_bin_mode (bool ischecked)
 {
     cb_perf().group_format_hex(! ischecked);
     set_bin_hex(ischecked);
-    mutes_file_change(true);
+    modify_mutes_file(true);
 }
 
 void
@@ -639,7 +669,7 @@ qmutemaster::slot_hex_mode (bool ischecked)
 {
     cb_perf().group_format_hex(ischecked);
     set_bin_hex(! ischecked);
-    mutes_file_change(true);
+    modify_mutes_file(true);
 }
 
 void
@@ -663,6 +693,8 @@ qmutemaster::slot_trigger ()
     }
 }
 
+#if defined USE_GROUP_UPDATE_BUTTON
+
 /**
  *  The calls to set mutes:  Fills midibooleans bit and calls performer ::
  *  set_mutes(), with a parameter of true so that the mutes are also copied to
@@ -685,11 +717,15 @@ qmutemaster::slot_set_mutes ()
     }
 }
 
-#if USE_REMOVED_MUTEMASTER_BUTTONS
+#endif
+
+#if defined USE_REMOVED_MUTEMASTER_BUTTONS
 
 /**
  *  A slot for handle_group_change(), meant to move a table row down.
  *  Not yet ready for primetime.
+ *
+ *  Actually this concept makes no sense.
  */
 
 void
@@ -718,6 +754,9 @@ qmutemaster::slot_up ()
  *  has the boolean function qsmainwnd::open_mutes_dialog(), which returns
  *  true if the user clicked OK and the call to qmutemaster::load_mutegroups()
  *  succeeded.  Circular!
+ *
+ *  ca 2023-10-01 TODO: copy to the m_mute_basename QPlainTextEdit
+ *  and also update the .mutes name in Edit / Preferences / Session.
  */
 
 void
@@ -725,42 +764,54 @@ qmutemaster::slot_load ()
 {
     if (not_nullptr(m_main_window))
     {
-        m_main_window->open_mutes_dialog();     /* calls load_mutegroups()  */
-        ui->m_button_save->setEnabled(false);
+        if (m_main_window->open_mutes_dialog()) /* calls load_mutegroups()  */
+        {
+            /*
+             * Some of this also done in constructor.
+             */
 
-        /*
-         * ca 2023-10-01 TODO: copy to the m_mute_basename QPlainTextEdit
-         * and also update the .mutes name in Edit / Preferences / Session.
-         */
+            QString mgfname = qt(rc().mute_group_filename());
+            bool mutesactive = rc().mute_group_file_active();
+            bool groupload = cb_perf().group_load_from_mutes();
+            ui->m_mute_basename->setPlainText(mgfname);
+            ui->m_check_mutes_active->setChecked(mutesactive);
+            ui->m_check_from_mutes->setChecked(groupload);
+            unmodify_mutes();
+        }
     }
 }
+
+/**
+ *  Called in qsmainwnd. See above.
+ */
 
 bool
 qmutemaster::load_mutegroups (const std::string & mutefile)
 {
     bool result = cb_perf().open_mutegroups(mutefile);
     if (result)
-    {
         file_message("Opened mute-groups", mutefile);
-        group_needs_update();
-        ui->m_button_save->setEnabled(false);
-    }
     else
-        file_message("Opened failed", mutefile);
+        file_error("Opened failed", mutefile);
 
     return result;
 }
+
+/**
+ *  Saves to the specified 'mutes' file, even if not checked or not
+ *  active. Note that ui->m_mute_basename is read-only.
+ */
 
 void
 qmutemaster::slot_save ()
 {
     if (not_nullptr(m_main_window))
     {
-        std::string fname = ui->m_mute_basename->toPlainText().toStdString();
+        std::string fname = rc().mute_group_filename();
         if (fname.empty())
         {
             /*
-             * Use default 'mutes' name
+             * Should we modify rc?
              */
         }
         else
@@ -773,15 +824,15 @@ qmutemaster::slot_save ()
                 if (ok)
                     fname = basename;
             }
+        }
+        if (m_main_window->save_mutes_dialog(rc().mute_group_filespec()))
+        {
+            modify_mutes_file(false);
+            if (fname != rc().mute_group_filespec())
+                modify_rc();
+
             rc().mute_group_filename(fname);
         }
-
-        /*
-         *  Set the base-name of the 'mutes' files.
-         */
-
-        m_main_window->save_mutes_dialog(rc().mute_group_filespec());
-        mutes_file_change(false);
     }
 }
 
@@ -796,7 +847,7 @@ qmutemaster::save_mutegroups (const std::string & mutefile)
     if (result)
     {
         file_message("Wrote mute-groups", mutefile);
-        ui->m_button_save->setEnabled(false);
+        unmodify_mutes();           /* ui->m_button_save->setEnabled(false) */
     }
     else
         file_message("Write failed", mutefile);
@@ -805,28 +856,23 @@ qmutemaster::save_mutegroups (const std::string & mutefile)
 }
 
 /**
- *  For MIDI save only.
+ *  This function handles a change in the "To MIDI" check-box.
  */
-
-void
-qmutemaster::enable_save ()
-{
-    if (not_nullptr(m_main_window))
-    {
-        m_main_window->enable_save(true);
-    }
-}
 
 void
 qmutemaster::slot_write_to_midi ()
 {
     bool midichecked = ui->m_check_to_midi->isChecked();
     bool muteschecked = ui->m_check_to_mutes->isChecked();
+    m_to_midi_active = midichecked;
+    m_to_mutes_active = muteschecked;
     if (cb_perf().group_save(midichecked, muteschecked))
-        enable_save();
+        modify_mutes();
 }
 
 /**
+ *  This function handles a change in the "To Mutes" check-box.
+ *
  *  Do we want to set this here? The user should use the Session tab in
  *  Preferences to set this, IMHO.
  *
@@ -838,7 +884,10 @@ qmutemaster::slot_write_to_mutes ()
 {
     bool midichecked = ui->m_check_to_midi->isChecked();
     bool muteschecked = ui->m_check_to_mutes->isChecked();
-    cb_perf().group_save(midichecked, muteschecked);
+    m_to_midi_active = midichecked;
+    m_to_mutes_active = muteschecked;
+    if (cb_perf().group_save(midichecked, muteschecked))
+        modify_mutes();
 }
 
 void
@@ -846,10 +895,12 @@ qmutemaster::slot_strip_empty ()
 {
     bool ischecked = ui->m_check_strip_empty->isChecked();
     if (cb_perf().strip_empty(ischecked))
-        enable_save();
+        modify_mutes();
 }
 
 /**
+ *  This function handles a change in the "From Mutes" check-box.
+ *
  *  Do we want to set this here? The user should use the Session tab in
  *  Preferences to set this, IMHO.
  *
@@ -861,8 +912,13 @@ qmutemaster::slot_load_mutes ()
 {
     bool muteschecked = ui->m_check_from_mutes->isChecked();
     bool midichecked = ui->m_check_from_midi->isChecked();
-    cb_perf().load_mute_groups(midichecked, muteschecked);
+    if (cb_perf().load_mute_groups(midichecked, muteschecked))
+        modify_mutes();
 }
+
+/**
+ *  This function handles a change in the "From MIDI" check-box.
+ */
 
 void
 qmutemaster::slot_load_midi ()
@@ -874,7 +930,8 @@ void
 qmutemaster::slot_toggle_active ()
 {
     bool ischecked = ui->m_check_toggle_active->isChecked();
-    cb_perf().toggle_active_only(ischecked);
+    (void) cb_perf().toggle_active_only(ischecked);
+    modify_mutes();
 }
 
 /**
@@ -929,6 +986,8 @@ qmutemaster::handle_group_change (int groupno)
 /**
  *  Handles mute-group changes from other dialogs.  These changes involve only
  *  the adding/subtracting of patterns to an old or a new group.
+ *
+ *  Don't think we need to call modify_mutes() here....
  */
 
 bool
@@ -1066,6 +1125,8 @@ qmutemaster::group_control
  *  currently 4 x 8, but might eventually approach 12 x 8.  We shall see.
  *  Activating a button adds that pattern to the currently-selected
  *  mute-group.
+ *
+ *  Done at construction time.
  */
 
 void
@@ -1132,7 +1193,7 @@ qmutemaster::update_pattern_buttons (enabling tomodify)
 
 /**
  *  This function handles one of the pattern buttons in the grid of pattern
- *  buttons.  All it does is change the status of the appropriate bit in the
+ *  buttons. All it does is change the status of the appropriate bit in the
  *  midibooleans pattern vector.
  */
 
@@ -1147,7 +1208,97 @@ qmutemaster::handle_pattern_button (int row, int column)
     {
         m_pattern_mutes[s] = midibool(enabled);
         ui->m_button_set_mutes->setEnabled(true);
-        mutes_file_change(true);
+        modify_mutes_file(true);
+    }
+}
+
+/**
+ *  For MIDI save only.
+ */
+
+void
+qmutemaster::modify_midi ()
+{
+    cb_perf().modify();
+    if (not_nullptr(m_main_window))
+        m_main_window->enable_save(true);
+}
+
+/**
+ *  Also see mute_file_change().
+ *
+ *  This function applies to.... Not sure yet, since we no longer allow
+ *  the base 'mutes' file-name to be changed here.
+ */
+
+void
+qmutemaster::modify_rc ()
+{
+    if (m_is_initialized)
+    {
+        rc().auto_rc_save(true);
+        rc().modify();
+    }
+}
+
+/**
+ *  Also see modify_mutes_file().
+ *
+ *  This function applies to changes that affect mutes independent of a
+ *  'mutes' file.
+ */
+
+void
+qmutemaster::modify_mutes ()
+{
+    group_needs_update();
+    if (m_is_initialized)
+    {
+        ui->m_button_set_mutes->setText("*");
+        ui->m_button_save->setEnabled(true);
+        if (m_to_mutes_active)
+            rc().auto_mutes_save(true);
+
+        if (m_to_midi_active)
+            modify_midi();
+    }
+}
+
+/**
+ *  Can't unmodify the tune or the 'mutes' file here.
+ */
+
+void
+qmutemaster::unmodify_mutes ()
+{
+    group_needs_update();
+    ui->m_button_set_mutes->setText("-");
+    ui->m_button_save->setEnabled(false);
+    rc().auto_mutes_save(false);
+}
+
+/**
+ *  Calls this whenever a mutes file is saved or loaded, no matter if the
+ *  "To Mutes" option is active or not.
+ *
+ * \param flag
+ *      If true, the 'mutes' file has been loaded, and we have to assume
+ *      that they have been modified.  If false, the 'mutes' file has been
+ *      saved.
+ */
+
+void
+qmutemaster::modify_mutes_file (bool flag)
+{
+    if (flag)
+    {
+        modify_mutes();
+        rc().auto_mutes_save(true);
+    }
+    else
+    {
+        unmodify_mutes();
+        rc().auto_mutes_save(false);
     }
 }
 

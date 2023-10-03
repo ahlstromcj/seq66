@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-10-02
+ * \updates       2023-10-03
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -76,6 +76,7 @@ namespace seq66
 class qmutemaster final : public QFrame, protected performer::callbacks
 {
     friend class qsmainwnd;
+    friend class qseditoptions;
 
 private:
 
@@ -136,6 +137,12 @@ protected:                          // overrides of event handlers
 
 private:
 
+    void modify_rc ();
+    void modify_mutes ();
+    void unmodify_mutes ();
+
+private:
+
     bool needs_update () const
     {
         bool result = m_needs_update;
@@ -178,7 +185,7 @@ private:
     }
 
     void set_bin_hex (bool bin_checked);
-    void mutes_file_change (bool flag);
+    void modify_mutes_file (bool flag);
     void set_column_widths (int total_width);
     void setup_table ();
     bool initialize_table ();
@@ -198,8 +205,8 @@ private:
     QTableWidgetItem * cell (screenset::number row, column_id col);
     void clear_pattern_mutes ();
     bool load_mutegroups (const std::string & fullfilespec);
-    bool save_mutegroups (const std::string & fullfilespec);
-    void enable_save ();
+    bool save_mutegroups (const std::string & fullfilespec);    // UNUSED
+    void modify_midi ();
 
 signals:
 
@@ -214,13 +221,18 @@ private slots:
     void slot_clear_all_mutes ();
     void slot_fill_mutes ();
     void slot_cell_changed (int row, int column);
+#if defined USE_MUTES_FILE_TEXTEDIT
     void slot_mutes_file_modify ();
+#endif
     void slot_bin_mode (bool ischecked);
     void slot_hex_mode (bool ischecked);
     void slot_trigger ();
-    void slot_set_mutes ();
 
-#if USE_REMOVED_MUTEMASTER_BUTTONS
+#if defined USE_GROUP_UPDATE_BUTTON
+    void slot_set_mutes ();
+#endif
+
+#if defined USE_REMOVED_MUTEMASTER_BUTTONS
     void slot_pattern_offset (int index);
     void slot_down ();
     void slot_up ();
@@ -254,6 +266,20 @@ private:
      */
 
      qsmainwnd * m_main_window;
+
+     /**
+      * Set at the end of the constructor to avoid spurious modification
+      * flagging.
+      */
+
+     bool m_is_initialized;
+
+     /**
+      * Indicates if "To MIDI" and "To Mutes" are active.
+      */
+
+     bool m_to_midi_active;
+     bool m_to_mutes_active;
 
     /**
      *  Access to buttons, more flexible for swapping coordinates.

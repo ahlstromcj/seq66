@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2022-04-17
+ * \updates       2023-10-03
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -683,7 +683,7 @@ mutegroups::group_load_label () const
     return result;
 }
 
-void
+bool
 mutegroups::load_mute_groups (bool midi, bool mutes)
 {
     if (mutes && midi)
@@ -694,6 +694,8 @@ mutegroups::load_mute_groups (bool midi, bool mutes)
         m_group_load = loading::midi;
     else
         m_group_load = loading::none;
+
+    return true;
 }
 
 bool

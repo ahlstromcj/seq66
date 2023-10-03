@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2022-03-07
+ * \updates       2023-10-03
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -476,7 +476,7 @@ public:
     bool group_load (loading mgh);
     bool group_load (bool midi, bool mutes);
     std::string group_load_label () const;
-    void load_mute_groups (bool midi, bool mutes);
+    bool load_mute_groups (bool midi, bool mutes);
 
     bool group_load_from_mutes () const
     {

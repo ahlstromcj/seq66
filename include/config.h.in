@@ -1,6 +1,6 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2023-09-24"
+#define VERSION_DATE_SHORT "2023-10-02"
 #define API_VERSION "0.99"
 #define VERSION "0.99.10"
 
@@ -24,7 +24,7 @@
 /* Name of this application */
 #undef APP_NAME
 
-/* Name of the UI */
+/* Name of the UI of the application */
 #undef APP_TYPE
 
 /* "Name to display as client/port" */

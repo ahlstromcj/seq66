@@ -96,7 +96,7 @@
             future.
       \end{itemize}
 
-   This table is not editable (currently).
+   Only the group-name column of This table is editable.
    The user can \texttt{qseq66.mutes} with a text editor, or
    edit \texttt{qseq66.ctrl} to modify the the hot-keys or MIDI
    controls.
@@ -138,6 +138,8 @@
    \itempar{Mutes File}{mutes!mutes file}
    The mutes-file shows the base-name of a file into which one can write the
    current-mute group setup, as a way to back up the setup.
+   This item is readonly. To change the name, do so in
+   \textbf{Edit / Preferences / Session / .mutes}.
 
    \itempar{Save File}{mutes!save file}
    This button saves all of the mute-groups.
@@ -152,10 +154,21 @@
 %  'rc' file; one must edit the 'rc' file to use the new 'mutes' file.
 %  We might provide a button for that function at some point.
 
-   \itempar{Write Format}{mutes!write format}
+   \itempar{Load File}{mutes!load file}
+
+   TODO
+
+   \itempar{Read/Write Format}{mutes!read/write format}
    This section provides the following features, which still need some work:
 
       \begin{itemize}
+         \itempar \textbf{From MIDI}.
+            If checked, the mute-groups are read from the MIDI file, if
+            present.  These mute-group override the one from an external
+            'mutes' file.
+         \itempar \textbf{From Mutes}.
+            If checked, the mute-groups are read from the specified
+            'mutes' file, if present and active.
          \item \textbf{Binary}.
             This flag indicates to save the mute-group information in
             binary format, which is the normal format.
@@ -174,7 +187,21 @@
             When a tune is closed, as when \textsl{Seq66} exits, this option
             indicates to write the mute-group information to the 'mutes'
             configuration file (e.g. \texttt{qseq66.mutes}).
+            Mute-groups can be written to both.
+         \item \textbf{Toggle Only Active}.
+            Normally, if a musician turns on a mute-group, then toggles
+            other patterns separately, all patterns are turned off
+            when the musician selects another mute group.
+            If this option is checked, only the patterns that are
+            part of the mute-group are toggled; the other patterns remain
+            on.
+         \item \textbf{Strip If No Mutes}.
+            If checked, and there are no defined mute-groups, then
+            they are not saved to the song.
       \end{itemize}
+
+   The only time one would want to read/write the mute-groups to a 'mutes' file
+   is when one uses standard song sets for all of one's songs.
 
    \itempar{Trigger Mode}{mutes!trigger mode}
       When activated, this option will enable the \textbf{Mute-Groups} buttons,

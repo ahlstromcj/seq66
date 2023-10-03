@@ -2290,6 +2290,13 @@ qseditoptions::sync ()
 {
     sync_rc();
     sync_usr();
+
+    /*
+     * Other items to sync.
+     */
+
+    ui->checkBoxSaveMutes->setChecked(rc().auto_mutes_save());
+    ui->checkBoxActiveMutes->setChecked(rc().mute_group_file_active());
 }
 
 /*

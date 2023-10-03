@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2023-09-25
+dnl \update        2023-10-02
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -391,29 +391,6 @@ if test "$rtmidi" != "no" -o "$both" != "no"; then
     AC_MSG_RESULT([rtmidi engine build enabled]);
 fi
 
-dnl "Qt" support.  Enabled by default, and actually mandatory for this
-dnl application if not built for the headless mode.
-
-AC_ARG_ENABLE(qt,
-    [AS_HELP_STRING(--disable-qt, [Disable Qt5 user-interface])],
-    [ac_qtmidi=$enableval],
-    [ac_qtmidi=yes])
-
-dnl Will set the default to yes later.  Will need to distinguish between rtmidi
-dnl and portmidi builds.
-
-if test "$ac_qtmidi" != "no"; then
-    build_qtmidi="yes"
-    AC_DEFINE(APP_NAME, ["qseq66"], [Name of the Qt/rtmidi application])
-    AC_DEFINE(APP_ENGINE, ["rtmidi"], [Name of the MIDI engine])
-    AC_DEFINE(APP_TYPE, ["qt5"], [Name of the UI of the application])
-    AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration base file name])
-    AC_DEFINE(ICON_NAME, ["qseq66"], [Canonical icon name for Freedesktop])
-    AM_PATH_ALSA(0.9.0)
-    AX_HAVE_QT_MIN
-    AC_MSG_RESULT([qt user-interface build enabled]);
-fi
-
 dnl "CLI" or "Command-line" support.
 
 AC_ARG_ENABLE(cli,
@@ -436,6 +413,33 @@ if test "$cli" != "no"; then
         AM_PATH_ALSA(0.9.0)
     fi
     need_qt="no"
+    ac_qtmidi="no"
+
+else
+
+dnl "Qt" support.  Enabled by default, and actually mandatory for this
+dnl application if not built for the headless mode.
+
+AC_ARG_ENABLE(qt,
+    [AS_HELP_STRING(--disable-qt, [Disable Qt5 user-interface])],
+    [ac_qtmidi=$enableval],
+    [ac_qtmidi=yes])
+
+fi
+
+dnl Will set the default to yes later.  Will need to distinguish between rtmidi
+dnl and portmidi builds.
+
+if test "$ac_qtmidi" != "no"; then
+    build_qtmidi="yes"
+    AC_DEFINE(APP_NAME, ["qseq66"], [Name of the Qt/rtmidi application])
+    AC_DEFINE(APP_ENGINE, ["rtmidi"], [Name of the MIDI engine])
+    AC_DEFINE(APP_TYPE, ["qt5"], [Name of the UI of the application])
+    AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration base file name])
+    AC_DEFINE(ICON_NAME, ["qseq66"], [Canonical icon name for Freedesktop])
+    AM_PATH_ALSA(0.9.0)
+    AX_HAVE_QT_MIN
+    AC_MSG_RESULT([qt user-interface build enabled]);
 fi
 
 dnl portmidi support.  Deprecated for Linux, but we still build it, for
@@ -480,7 +484,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2023-09-25"
+#define VERSION_DATE_SHORT "2023-10-02"
 #define API_VERSION "0.99"
 #define VERSION "0.99.10"
 

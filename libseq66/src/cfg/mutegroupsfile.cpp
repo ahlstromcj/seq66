@@ -64,14 +64,11 @@ internal_mutegroups ()
  *
  * \param filename
  *      Provides the name of the mute-groups file; this is usually a full path
- *      file-specification to the "mutes" file using this object.
+ *      file-specification to the "mutes" file using this object. This item
+ *      can be specified in the 'rc' file.
  *
  * \param rcs
  *      The source/destination for the configuration information.
- *
- * \param allowinactive
- *      If true (the default is false), allow inactive (all 0's) mute-groups
- *      to be read and stored.
  */
 
 mutegroupsfile::mutegroupsfile
@@ -79,7 +76,7 @@ mutegroupsfile::mutegroupsfile
     const std::string & filename,
     mutegroups & mutes
 ) :
-    configfile  (filename, rc(), ".mutes"), // don't need an rc now
+    configfile  (filename, rc(), ".mutes"),
     m_mute_groups   (mutes)
 {
     // Empty body
