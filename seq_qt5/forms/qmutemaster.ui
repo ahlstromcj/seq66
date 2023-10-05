@@ -30,8 +30,8 @@
     <rect>
      <x>10</x>
      <y>0</y>
-     <width>807</width>
-     <height>352</height>
+     <width>823</width>
+     <height>360</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -62,7 +62,6 @@
           <property name="font">
            <font>
             <family>DejaVu Sans</family>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -115,7 +114,6 @@
         <property name="font">
          <font>
           <family>DejaVu Sans</family>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -162,7 +160,6 @@
           <property name="font">
            <font>
             <family>DejaVu Sans</family>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -229,7 +226,6 @@ Edit / Preferences / Session / .mutes.</string>
           <property name="font">
            <font>
             <family>DejaVu Sans</family>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -292,7 +288,7 @@ Useful if set-size is larger than 4 x 8.</string>
 and 0's. Default setting.</string>
             </property>
             <property name="text">
-             <string>Binar&amp;y</string>
+             <string>&amp;Binary</string>
             </property>
            </widget>
           </item>
@@ -315,7 +311,7 @@ a common 'mutes' file. Superceded by
 &quot;From MIDI&quot;.</string>
             </property>
             <property name="text">
-             <string>From Mutes</string>
+             <string>From M&amp;utes</string>
             </property>
            </widget>
           </item>
@@ -339,7 +335,7 @@ specified in that group; patterns armed by the user stay on.
 Legacy behavior toggles mute-group and armed patterns.</string>
           </property>
           <property name="text">
-           <string>Toggle Only Active</string>
+           <string>Toggle &amp;Only Active</string>
           </property>
          </widget>
         </item>
@@ -356,7 +352,7 @@ Legacy behavior toggles mute-group and armed patterns.</string>
 do not save them to the MIDI file.</string>
           </property>
           <property name="text">
-           <string>Strip If No Mutes</string>
+           <string>Strip &amp;If No Mutes</string>
           </property>
          </widget>
         </item>
@@ -460,7 +456,7 @@ do not save them to the MIDI file.</string>
 can toggle the mute-groups.</string>
           </property>
           <property name="text">
-           <string>Trigger Mode</string>
+           <string>&amp;Trigger Mode</string>
           </property>
          </widget>
         </item>
@@ -476,7 +472,7 @@ can toggle the mute-groups.</string>
            <string>Removes all mute-groups from the mute-group setup.</string>
           </property>
           <property name="text">
-           <string>Clear</string>
+           <string>&amp;Clear</string>
           </property>
          </widget>
         </item>
@@ -487,7 +483,7 @@ can toggle the mute-groups.</string>
 mute groups to the table.</string>
           </property>
           <property name="text">
-           <string>Fill</string>
+           <string>&amp;Fill</string>
           </property>
          </widget>
         </item>
@@ -545,7 +541,7 @@ mute groups to the table.</string>
 configuration.</string>
           </property>
           <property name="text">
-           <string>Save File</string>
+           <string>Save &amp;File</string>
           </property>
          </widget>
         </item>
@@ -561,7 +557,7 @@ configuration.</string>
            <string>Present a dialog to load a 'mutes' file.</string>
           </property>
           <property name="text">
-           <string>Load File</string>
+           <string>&amp;Load File</string>
           </property>
          </widget>
         </item>

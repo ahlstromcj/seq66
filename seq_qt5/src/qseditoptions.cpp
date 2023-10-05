@@ -2742,7 +2742,7 @@ qseditoptions::slot_palette_filename ()
         if (name_has_path(text))
         {
             tooltip_for_filename(ui->lineEditPalette, text);
-            text = filename_base(text);
+            text = filename_base(text); // TODO: no longer needed
         }
         rc().palette_filename(text);
         rc().auto_palette_save(true);
@@ -2927,8 +2927,8 @@ qseditoptions::slot_rc_filename ()
     std::string text = qs.toStdString();
     if (! text.empty() && text != rc().config_filename())
     {
-        if (name_has_path(text))
-            text = filename_base(text);
+        if (name_has_path(text)) // TODO: no longer needed
+            text = filename_base(text); // TODO: no longer needed
 
         rc().config_filename(text);
         modify_rc();
@@ -2993,8 +2993,8 @@ qseditoptions::slot_usr_filename ()
     std::string text = qs.toStdString();
     if (! text.empty() && text != rc().user_filename())
     {
-        if (name_has_path(text))
-            text = filename_base(text);
+        if (name_has_path(text)) // TODO: no longer needed
+            text = filename_base(text); // TODO: no longer needed
 
         rc().user_filename(text);
         modify_rc();
@@ -3026,8 +3026,8 @@ qseditoptions::slot_mutes_filename ()
     if (! text.empty() && text != rc().mute_group_filename())
     {
         ui->checkBoxSaveMutes->setChecked(true);
-        if (name_has_path(text))
-            text = filename_base(text);
+        if (name_has_path(text)) // TODO: no longer needed
+            text = filename_base(text); // TODO: no longer needed
 
         rc().mute_group_filename(text);
         rc().auto_mutes_save(true);
@@ -3058,8 +3058,8 @@ qseditoptions::slot_playlist_filename ()
     std::string text = qs.toStdString();
     if (! text.empty() && text != rc().playlist_filename())
     {
-        if (name_has_path(text))
-            text = filename_base(text);
+        if (name_has_path(text)) // TODO: no longer needed
+            text = filename_base(text); // TODO: no longer needed
 
         perf().playlist_filename(text);     /* rc().playlist_filename(text) */
         rc().auto_playlist_save(true);
@@ -3095,8 +3095,8 @@ qseditoptions::slot_ctrl_filename ()
     std::string text = qs.toStdString();
     if (! text.empty() && text != rc().midi_control_filename())
     {
-        if (name_has_path(text))
-            text = filename_base(text);
+        if (name_has_path(text)) // TODO: no longer needed
+            text = filename_base(text); // TODO: no longer needed
 
         rc().midi_control_filename(text);
         modify_rc();
@@ -3145,7 +3145,7 @@ qseditoptions::slot_stylesheet_filename ()
     {
         ui->checkBoxActiveStyleSheet->setChecked(true);
         if (name_has_path(text))
-            text = filename_base(text);
+            text = filename_base(text);     /* hmmmm, qss a special case?   */
 
         usr().style_sheet(text);
         modify_usr();                       /* 'rc' doesn't set style-sheet */

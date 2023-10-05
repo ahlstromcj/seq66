@@ -1,22 +1,22 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-10-02
+2019-04-13 to 2023-10-05
 
 Misc:
 
-    -   Document and test mute groups. Issues: the Load File button does
-        not result in the name appearing in the "Mutes File" text-edit.
+    -   Document and test mute groups. Issues:
         To do:
         -   Disable auto-save of the mutes file at exit in this
             case, unless the name provided is identical.
-        -   Add tooltips to the buttons etc.
-        -   Add a new SeqSpec for mute-group names and make sure it
-            works in the MIDI and 'mutes' file. Or make the old
-            one work.
-        -   If "To Mutes" is set, and a change is made, then
-            mark to-save for mutes; if "Save File" is clicked,
-            uncheck it?
-        -   Ditch "Update Group" and its documentation.
+        -   If "To Mutes" is set, "To MIDI" is not, and a change is made, 
+            there is no MIDI modified flag, but closing prompts to save.
+            We need to forward the boolean changes immediately, e.g.
+            to cb_per().mutes().group_save_to_midi(); perhaps add
+            a flag set to performer::set_mutes()???
+        -   performer: cliear_mute_groups(), reset_mute_groups(), and
+            mutegroup_reset() all basically do the same things, except
+            that clear_mutes() also notifies subscribers. Probably
+            can get rid of "Fill" and its pix and documentation.
     -   For scrolling to notes, use average note instead of first note.
     -   There are issues with Song / Zoom / Follow progress with the
         ulra-zoom-in in force. Pattern editor works.

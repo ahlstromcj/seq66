@@ -2806,7 +2806,7 @@ Seq66 exits.</string>
      </widget>
      <widget class="QWidget" name="tabSession">
       <attribute name="title">
-       <string>&amp;Session</string>
+       <string>Sessio&amp;n</string>
       </attribute>
       <widget class="QGroupBox" name="group_session">
        <property name="geometry">

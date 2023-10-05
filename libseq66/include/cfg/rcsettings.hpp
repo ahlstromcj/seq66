@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-09-20
+ * \updates       2023-10-04
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -347,7 +347,7 @@ private:
 
     /**
      *  Holds the current 'rc' configuration filename.  This value is
-     *  "qseq66.rc" by default.
+     *  "qseq66.rc" by default, and is always a basename.
      */
 
     std::string m_config_filename;
@@ -1377,20 +1377,14 @@ public:
         m_midi_control_active = flag;
     }
 
-    void midi_control_filename (const std::string & name)
-    {
-       m_midi_control_filename = name;
-    }
+    void midi_control_filename (const std::string & name);
 
     void mute_group_file_active (bool flag)
     {
         m_mute_group_file_active = flag;
     }
 
-    void mute_group_filename (const std::string & name)
-    {
-       m_mute_group_filename = name;
-    }
+    void mute_group_filename (const std::string & name);
 
     void playlist_active (bool flag)
     {
@@ -1466,6 +1460,13 @@ public:
     void config_filename (const std::string & value);
     void playlist_filename (const std::string & value);
     bool playlist_filename_checked (const std::string & value);
+    void user_filename (const std::string & value);
+    void notemap_filename (const std::string & value);
+    void palette_filename (const std::string & value);
+    void create_config_names (const std::string & base = "");
+    void set_save_list (bool state);
+    void disable_save_list ();
+    void set_save (const std::string & name, bool value);
 
     void home_config_directory (const std::string & hcd)
     {
@@ -1477,26 +1478,14 @@ public:
         m_user_file_active = flag;
     }
 
-    void user_filename (const std::string & value);
-
-    void notemap_filename (const std::string & fn)
-    {
-        m_notemap_filename = fn;
-    }
-
-    void palette_filename (const std::string & fn)
-    {
-        m_palette_filename = fn;
-    }
-
-    void create_config_names (const std::string & base = "");
-    void set_save_list (bool state);
-    void disable_save_list ();
-    void set_save (const std::string & name, bool value);
-
 private:
 
     std::string filespec_helper (const std::string & baseext) const;
+    std::string filename_base_fix
+    (
+        const std::string & filename,
+        const std::string & ext
+    ) const;
 
 };          // class rcsettings
 

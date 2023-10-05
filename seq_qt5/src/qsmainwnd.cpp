@@ -1719,9 +1719,17 @@ qsmainwnd::save_mutes_dialog (const std::string & basename)
         result = not_nullptr(m_mute_master);
         if (result)
         {
+            /*
+             * Guarantee the '.mutes' extension.
+             */
+
+            fname = file_extension_set(fname, ".mutes");
             result = m_mute_master->save_mutegroups(fname);
             if (result)
+            {
                 rc().mute_group_filename(fname);
+                m_dialog_prefs->sync();             /* also call apply()? */
+            }
             else
                 show_error_box("Mute-groups saving error");
         }

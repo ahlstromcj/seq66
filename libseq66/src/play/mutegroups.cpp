@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2023-10-03
+ * \updates       2023-10-04
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -718,17 +718,8 @@ mutegroups::clear ()
 bool
 mutegroups::reset_defaults ()
 {
-    bool result = false;
-    int count = c_mute_groups_max;              /* not m_rows * m_columns   */
     clear();                                    /* remove all mutegroups    */
-    for (int gmute = 0; gmute < count; ++gmute)
-    {
-        mutegroup m(gmute);     /* m(mutegroup::number(gmute)) bad, why?    */
-        result = add(gmute, m);
-        if (! result)
-            break;
-    }
-    return result;
+    return true;
 }
 
 /**

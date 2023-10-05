@@ -726,9 +726,8 @@ show_text_file_dialog (QWidget * parent, std::string & selectedfile)
  *
  * Useful QFileDialog::Options:
  *
- * QFileDialog::ShowDirsOnly
- * QFileDialog::DontConfirmOverwrite
- *
+ *  QFileDialog::ShowDirsOnly
+ *  QFileDialog::DontConfirmOverwrite
  */
 
 bool
@@ -805,7 +804,6 @@ show_file_dialog
             parent, caption, folder, filters, selfilter, options
         );
     }
-
     result = ! file.isEmpty();
     if (result)
     {
@@ -918,8 +916,9 @@ tooltip_for_filename
 {
     if (! filespec.empty())
     {
+        std::string base = filename_base(filespec);
         QString filename = qt(filespec);
-        QString basename = qt(filename_base(filespec));
+        QString basename = qt(base);
         lineedit->setToolTip(filename);
         lineedit->setToolTipDuration(duration);
         lineedit->setText(basename);

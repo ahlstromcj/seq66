@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-01-13
-% \update      2023-10-02
+% \update      2023-10-05
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -66,11 +66,11 @@
    created.  Mute-groups can be created in the main window's patterns panel,
    but it is difficult to know what each group consists of.  This tab make it
    easy to see the layout of the mute-groups, and also allows for some editing
-   of the mute-groups.
+   and live control of the mute-groups.
 
    Note that the Qt theme shown here (\textsl{kvantum})
-   shows that buttons are checkable; other themes might not show that status
-   well.
+   shows that buttons are checkable; other themes often do not show that status.
+   Annoying.
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
@@ -128,26 +128,28 @@
    Once this grid is enabled, each button can be clicked to add a pattern to
    the mute-group, or remove a pattern from the mute-group.
 
-   \itempar{Update Group}{mutes!update group}
-   When a change in the mute-group status or the status of one of its patterns
-   is made, this button is enabled.
-   Once clicked, the current mute-group is modified internally,
-   where it can later be saved when \textsl{Seq66}
-   exits, or when the \textbf{Save All} button is clicked.
+%  \itempar{Update Group}{mutes!update group}
+%  When a change in the mute-group status or the status of one of its patterns
+%  is made, this button is enabled.
+%  Once clicked, the current mute-group is modified internally,
+%  where it can later be saved when \textsl{Seq66}
+%  exits, or when the \textbf{Save All} button is clicked.
 
    \itempar{Mutes File}{mutes!mutes file}
-   The mutes-file shows the base-name of a file into which one can write the
+   The mutes-file read-only field
+   shows the base-name of a file into which one can save the
    current-mute group setup, as a way to back up the setup.
-   This item is readonly. To change the name, do so in
+   To change this file-name, do so in
    \textbf{Edit / Preferences / Session / .mutes}.
 
    \itempar{Save File}{mutes!save file}
-   This button saves all of the mute-groups.
-   It is enabled when a change has been made to a mute-group and
-   has been registered by pressing the \textbf{Update Group} button.
+   This button saves all of the mute-groups to a selected 'mutes' file.
+   It is enabled when any change has been made to a mute-group
+   or to the check-boxes.
+%  and has been registered by pressing the \textbf{Update Group} button.
    If the user has provided a path in the
    \textbf{Edit / Preferences / Session / .mutes} field,
-   the path is stripped.
+   the path is stripped;
    \textsl{Seq66} must not write configuration information outside of
    the session configuration directory.
 %  The file is saved, but is not made official in the

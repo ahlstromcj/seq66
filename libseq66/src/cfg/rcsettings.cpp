@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-09-20
+ * \updates       2023-10-04
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -539,6 +539,122 @@ rcsettings::has_home_config_path (const std::string & name)
 }
 
 /**
+ *  Conditionally trims a file-specification of its home-directory path.  This
+ *  function is meant to be used for more flexible specification of the
+ *  specified 'ctrl', 'mutes', and 'playlist' files.  If there is no
+ *  directory, then the file is in the current configuration directory.  The
+ *  same is true if the home directory is present, but we don't need it.  If
+ *  there is another directory, whether relative or not, we need to keep it.
+ */
+
+std::string
+rcsettings::trim_home_directory (const std::string & filepath)
+{
+    if (has_home_config_path(filepath))
+    {
+        std::string path;
+        std::string result;
+        (void) filename_split(filepath, path, result);
+        return result;
+    }
+    else
+        return filepath;
+}
+
+/**
+ *  Moved here from cmdlineopts.
+ *
+ *  If no "rc" file exists, then, of course, we will create them upon
+ *  exit.  But we also want to force the new style of output, where the
+ *  key/MIDI controls and the mute-groups are in separate files ending
+ *  with the extensions "ctrl" and "mutes", respectively.  Also, the
+ *  mute-groups container is populated with zero values.  Finally, the
+ *  user may have specified an altername configuration-file name on
+ *  the command-line (e.g. "myseq66" versus the default, "qseq66",
+ *  which is the application name.
+ *
+ *      std::string cfgname = rc().application_name();
+ */
+
+void
+rcsettings::create_config_names (const std::string & base)
+{
+    std::string cfgname = base.empty() ? config_filename() : base ;
+    cfgname = filename_base(cfgname, true);             /* strip extension  */
+
+    std::string cc = file_extension_set(cfgname, ".rc");
+    std::string uf = file_extension_set(cfgname, ".usr");
+    std::string cf = file_extension_set(cfgname, ".ctrl");
+    std::string mf = file_extension_set(cfgname, ".mutes");
+    std::string pl = file_extension_set(cfgname, ".playlist");
+    std::string nm = file_extension_set(cfgname, ".drums");
+    std::string pa = file_extension_set(cfgname, ".palette");
+    std::string af = cfgname + "rc,ctrl,midi,mutes,drums,playlist,palette";
+    config_filename(cc);
+    user_filename(uf);
+    midi_control_filename(cf);
+    mute_group_filename(mf);
+    playlist_filename(pl);
+    notemap_filename(nm);
+    palette_filename(pa);
+    file_message("Configuration files", af);
+}
+
+/**
+ *  We need a way to handle the following configuration-file paths:
+ *
+ *      -   "base.ext":              Prepend the HOME directory.
+ *      -   "subdirectory/base.ext": Prepend the HOME directory
+ *      -   "/path/.../base.ext":    Use the path as is.
+ *      -   "C:/path/.../base.ext":  Use the path as is.
+ *
+ *  Compare to make_config_filespec(), used only by rcfile and this class.
+ *  That one treats the base and extension separately.
+ */
+
+std::string
+rcsettings::filespec_helper (const std::string & baseext) const
+{
+    std::string result = baseext;
+    if (! result.empty())
+    {
+        bool use_as_is = false;
+        if (name_has_path(baseext))
+        {
+            if (name_has_root_path(baseext))
+                use_as_is = true;
+        }
+        if (! use_as_is)
+        {
+            result = home_config_directory();
+            result += baseext;
+        }
+        result = normalize_path(result);            /* change to UNIX slash */
+    }
+    return result;
+}
+
+/**
+ *  Guarantees that a file-name is of the simple form "basename.ext".
+ *
+ * \param filename
+ *      The full file-specification of a file, or the basename, or a basename
+ *      without any extension.
+ */
+
+std::string
+rcsettings::filename_base_fix
+(
+    const std::string & filename,
+    const std::string & ext
+) const
+{
+    std::string result = filename_base(filename, true); /* strip the .ext   */
+    result = file_extension_set(result, ext);
+    return result;
+}
+
+/**
  *  Constructs a full path and file specification for the caller.
  *
  * \todo
@@ -619,102 +735,6 @@ std::string
 rcsettings::config_filespec () const
 {
     return filespec_helper(config_filename());
-}
-
-/**
- *  Conditionally trims a file-specification of its home-directory path.  This
- *  function is meant to be used for more flexible specification of the
- *  specified 'ctrl', 'mutes', and 'playlist' files.  If there is no
- *  directory, then the file is in the current configuration directory.  The
- *  same is true if the home directory is present, but we don't need it.  If
- *  there is another directory, whether relative or not, we need to keep it.
- */
-
-std::string
-rcsettings::trim_home_directory (const std::string & filepath)
-{
-    if (has_home_config_path(filepath))
-    {
-        std::string path;
-        std::string result;
-        (void) filename_split(filepath, path, result);
-        return result;
-    }
-    else
-        return filepath;
-}
-
-/**
- *  Moved here from cmdlineopts.
- *
- *  If no "rc" file exists, then, of course, we will create them upon
- *  exit.  But we also want to force the new style of output, where the
- *  key/MIDI controls and the mute-groups are in separate files ending
- *  with the extensions "ctrl" and "mutes", respectively.  Also, the
- *  mute-groups container is populated with zero values.  Finally, the
- *  user may have specified an altername configuration-file name on
- *  the command-line (e.g. "myseq66" versus the default, "qseq66",
- *  which is the application name.
- *
- *      std::string cfgname = rc().application_name();
- */
-
-void
-rcsettings::create_config_names (const std::string & base)
-{
-    std::string cfgname = base.empty() ? config_filename() : base ;
-    cfgname = filename_base(cfgname, true);             /* strip extension  */
-
-    std::string cc = file_extension_set(cfgname, ".rc");
-    std::string uf = file_extension_set(cfgname, ".usr");
-    std::string cf = file_extension_set(cfgname, ".ctrl");
-    std::string mf = file_extension_set(cfgname, ".mutes");
-    std::string pl = file_extension_set(cfgname, ".playlist");
-    std::string nm = file_extension_set(cfgname, ".drums");
-    std::string pa = file_extension_set(cfgname, ".palette");
-    std::string af = cfgname + ".rc,ctrl,midi,mutes,drums,playlist,palette";
-    config_filename(cc);
-    user_filename(uf);
-    midi_control_filename(cf);
-    mute_group_filename(mf);
-    playlist_filename(pl);
-    notemap_filename(nm);
-    palette_filename(pa);
-    file_message("Configuration files", af);
-}
-
-/**
- *  We need a way to handle the following configuration-file paths:
- *
- *      -   "base.ext":              Prepend the HOME directory.
- *      -   "subdirectory/base.ext": Prepend the HOME directory
- *      -   "/path/.../base.ext":    Use the path as is.
- *      -   "C:/path/.../base.ext":  Use the path as is.
- *
- *  Compare to make_config_filespec(), used only by rcfile and this class.
- *  That one treats the base and extension separately.
- */
-
-std::string
-rcsettings::filespec_helper (const std::string & baseext) const
-{
-    std::string result = baseext;
-    if (! result.empty())
-    {
-        bool use_as_is = false;
-        if (name_has_path(baseext))
-        {
-            if (name_has_root_path(baseext))
-                use_as_is = true;
-        }
-        if (! use_as_is)
-        {
-            result = home_config_directory();
-            result += baseext;
-        }
-        result = normalize_path(result);            /* change to UNIX slash */
-    }
-    return result;
 }
 
 /**
@@ -1196,14 +1216,13 @@ void
 rcsettings::config_filename (const std::string & value)
 {
     if (! value.empty())
-        m_config_filename = value;
-
-    if (m_config_filename.find(".") == std::string::npos)
-        m_config_filename += ".rc";
+        m_config_filename = filename_base_fix(value, ".rc");
 }
 
 /**
  * \setter m_playlist_filename ("playlist")
+ *
+ *  Let the caller take care of this: m_playlist_active = true;
  *
  * \param value
  *      The value to use to make the setting, if the string is not empty.
@@ -1215,19 +1234,9 @@ void
 rcsettings::playlist_filename (const std::string & value)
 {
     if (is_empty_string(value))
-    {
         clear_playlist();               /* clears file-name and active flag */
-    }
     else
-    {
-        /*
-         * Let the caller take care of this: m_playlist_active = true;
-         */
-
-        m_playlist_filename = value;
-        if (m_playlist_filename.find(".") == std::string::npos)
-            m_playlist_filename += ".playlist";
-    }
+        m_playlist_filename = filename_base_fix(value, ".playlist");
 }
 
 /**
@@ -1297,10 +1306,35 @@ void
 rcsettings::user_filename (const std::string & value)
 {
     if (! value.empty())
-        m_user_filename = value;
+        m_user_filename = filename_base_fix(value, ".usr");
+}
 
-    if (m_user_filename.find(".") == std::string::npos)
-        m_user_filename += ".usr";
+void
+rcsettings::midi_control_filename (const std::string & value)
+{
+    if (! value.empty())
+        m_midi_control_filename = filename_base_fix(value, ".ctrl");
+}
+
+void
+rcsettings::mute_group_filename (const std::string & value)
+{
+    if (! value.empty())
+        m_mute_group_filename = filename_base_fix(value, ".mutes");
+}
+
+void
+rcsettings::notemap_filename (const std::string & value)
+{
+    if (! value.empty())
+        m_notemap_filename = filename_base_fix(value, ".drums");
+}
+
+void
+rcsettings::palette_filename (const std::string & value)
+{
+    if (! value.empty())
+        m_palette_filename = filename_base_fix(value, ".palette");
 }
 
 void
