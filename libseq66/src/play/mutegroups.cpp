@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2023-10-04
+ * \updates       2023-10-06
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -573,7 +573,7 @@ mutegroups::group_learn (bool flag)
 bool
 mutegroups::group_save (saving mgh)
 {
-    if (mgh >= saving::mutes && mgh < saving::max)
+    if (mgh < saving::max)
     {
         m_group_save = mgh;
         return true;
@@ -592,6 +592,12 @@ mutegroups::group_save (const std::string & v)
         return false;
 }
 
+/**
+ *  The performer class uses this. It can "modify()". We want to
+ *  return true if we affect MIDI. That is, with a status of saving::both
+ *  or saving::midi.
+ */
+
 bool
 mutegroups::group_save (bool midi, bool mutes)
 {
@@ -602,7 +608,10 @@ mutegroups::group_save (bool midi, bool mutes)
     else if (midi)
         return group_save(saving::midi);
     else
+    {
+        (void) group_save(saving::none);        /* new for version 0.99.10  */
         return false;
+    }
 }
 
 /**
@@ -718,7 +727,7 @@ mutegroups::clear ()
 bool
 mutegroups::reset_defaults ()
 {
-    clear();                                    /* remove all mutegroups    */
+    (void) clear();
     return true;
 }
 

@@ -219,21 +219,20 @@ private slots:
         int /*prevrow*/, int /*prevcolumn*/
     );
     void slot_clear_all_mutes ();
-    void slot_fill_mutes ();
     void slot_cell_changed (int row, int column);
-#if defined USE_MUTES_FILE_TEXTEDIT
-    void slot_mutes_file_modify ();
-#endif
     void slot_bin_mode (bool ischecked);
     void slot_hex_mode (bool ischecked);
     void slot_trigger ();
 
+#if defined USE_MUTES_FILE_TEXTEDIT
+    void slot_mutes_file_modify ();
+#endif
 #if defined USE_GROUP_UPDATE_BUTTON
     void slot_set_mutes ();
 #endif
-
 #if defined USE_REMOVED_MUTEMASTER_BUTTONS
     void slot_pattern_offset (int index);
+    void slot_fill_mutes ();
     void slot_down ();
     void slot_up ();
 #endif

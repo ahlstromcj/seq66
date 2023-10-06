@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2022-06-28
+ * \updates       2023-10-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -182,7 +182,7 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     if (! load)
         internal_mutegroups() = mutes();
 
-    mutestorage.clear();
+    (void) mutestorage.reset_defaults();
     if (good)
     {
         bool ok = true;
@@ -221,7 +221,7 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     }
     else
     {
-        mutestorage.reset_defaults();
+        (void) mutestorage.reset_defaults();
         mutestorage.loaded_from_mutes(false);
     }
     return result;

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2023-04-13
+ * \updates       2023-10-05
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -1202,6 +1202,8 @@ setmapper::select_and_mute_group (mutegroup::number group)
     mute_group_tracks();
 }
 
+#if 0           // unused
+
 /**
  *  Clears all the group-mute items, whether they came from the "rc" file
  *  or from the most recently-loaded Seq66 MIDI file.
@@ -1224,6 +1226,8 @@ setmapper::clear_mutes ()
 
     return result;
 }
+
+#endif
 
 std::string
 setmapper::name (screenset::number setno) const

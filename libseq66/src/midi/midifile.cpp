@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-18
+ * \updates       2023-10-05
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -2048,7 +2048,7 @@ midifile::parse_c_mutegroups (performer & p)
         if (len > 0)
         {
             bool legacyformat = len == c_legacy_mute_group;
-            p.mutes().clear();                      /* makes it empty       */
+            (void) p.mutes().reset_defaults();      /* makes it empty       */
             if (legacyformat)
             {
                 result = parse_c_mutegroups_legacy(p, groupcount, groupsize);

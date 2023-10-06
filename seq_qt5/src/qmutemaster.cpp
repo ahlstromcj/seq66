@@ -158,11 +158,13 @@ qmutemaster::qmutemaster
     ui->m_button_set_mutes->setEnabled(false);
 
 #if defined USE_GROUP_UPDATE_BUTTON
+
     connect
     (
         ui->m_button_set_mutes, SIGNAL(clicked()),
         this, SLOT(slot_set_mutes())
     );
+
 #endif
 
 #if defined USE_REMOVED_MUTEMASTER_BUTTONS
@@ -191,7 +193,6 @@ qmutemaster::qmutemaster
     ui->m_button_down->setEnabled(false);
     connect(ui->m_button_down, SIGNAL(clicked()), this, SLOT(slot_down()));
     ui->m_button_up->setEnabled(false);
-    connect(ui->m_button_up, SIGNAL(clicked()), this, SLOT(slot_up()));
 
 #endif
 
@@ -238,11 +239,6 @@ qmutemaster::qmutemaster
     (
         ui->m_button_clear_all, SIGNAL(clicked()),
         this, SLOT(slot_clear_all_mutes())
-    );
-    connect
-    (
-        ui->m_button_fill, SIGNAL(clicked()),
-        this, SLOT(slot_fill_mutes())
     );
     ui->m_check_strip_empty->setEnabled(true);
     ui->m_check_strip_empty->setChecked(cb_perf().strip_empty());
@@ -323,6 +319,45 @@ qmutemaster::slot_pattern_offset (int index)
     m_pattern_offset = index * cb_perf().screenset_size();
 }
 
+void
+qmutemaster::slot_fill_mutes ()
+{
+    if (cb_perf().reset_mute_groups())
+    {
+        if (initialize_table())
+        {
+            modify_mutes();
+            group_needs_update();
+        }
+    }
+}
+
+/**
+ *  A slot for handle_group_change(), meant to move a table row down.
+ *  Not yet ready for primetime.
+ *
+ *  Actually this concept makes no sense.
+ */
+
+void
+qmutemaster::slot_down ()
+{
+    if (set_current_group(current_group() + 1))
+        handle_group_change(current_group());
+}
+
+/**
+ *  A slot for handle_group_change(), meant to move a table row up.
+ *  Not yet ready for primetime.
+ */
+
+void
+qmutemaster::slot_up ()
+{
+    if (set_current_group(current_group() - 1))
+        handle_group_change(current_group());
+}
+
 #endif
 
 void
@@ -333,19 +368,6 @@ qmutemaster::slot_clear_all_mutes ()
         modify_mutes();
         update_group_buttons();         /* see conditional_update() */
         update_pattern_buttons();       /* ditto                    */
-    }
-}
-
-void
-qmutemaster::slot_fill_mutes ()
-{
-    if (cb_perf().mutegroup_reset())
-    {
-        if (initialize_table())
-        {
-            modify_mutes();
-            group_needs_update();
-        }
     }
 }
 
@@ -733,36 +755,6 @@ qmutemaster::slot_set_mutes ()
 
 #endif
 
-#if defined USE_REMOVED_MUTEMASTER_BUTTONS
-
-/**
- *  A slot for handle_group_change(), meant to move a table row down.
- *  Not yet ready for primetime.
- *
- *  Actually this concept makes no sense.
- */
-
-void
-qmutemaster::slot_down ()
-{
-    if (set_current_group(current_group() + 1))
-        handle_group_change(current_group());
-}
-
-/**
- *  A slot for handle_group_change(), meant to move a table row up.
- *  Not yet ready for primetime.
- */
-
-void
-qmutemaster::slot_up ()
-{
-    if (set_current_group(current_group() - 1))
-        handle_group_change(current_group());
-}
-
-#endif
-
 /**
  *  This looks goofy, but we offload the dialog handling to qsmainwnd, which
  *  has the boolean function qsmainwnd::open_mutes_dialog(), which returns
@@ -784,7 +776,6 @@ qmutemaster::slot_load ()
              * Some of this also done in constructor.
              */
 
-//          std::string mutename = file_basename(rc().mute_group_filename());
             QString mgfname = qt(rc().mute_group_filename());
             bool mutesactive = rc().mute_group_file_active();
             bool groupload = cb_perf().group_load_from_mutes();
@@ -1335,8 +1326,7 @@ qmutemaster::modify_mutes_file (bool flag)
 {
     if (flag)
     {
-        modify_mutes();
-        rc().auto_mutes_save(true);
+        modify_mutes();                     /* rc().auto_mutes_save(true)   */
     }
     else
     {

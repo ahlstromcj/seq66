@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-09-30
+ * \updates       2023-10-06
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -7334,8 +7334,8 @@ performer::group_name (mutegroup::number gmute, const std::string & n)
      * Commented out to avoid load issues. The on-change callback should
      * cause a modify().
      *
-    if (result)
-        modify();
+     *  if (result)
+     *      modify();
      */
 
     return result;
@@ -7354,10 +7354,12 @@ bool
 performer::group_save (bool bmidi, bool bmutes)
 {
     bool result = bmidi != group_save_to_midi();
-    mutes().group_save(bmidi, bmutes);
     if (result)
-        modify();
-
+    {
+        bool changed = mutes().group_save(bmidi, bmutes);
+        if (changed && bmidi)
+            modify();
+    }
     return result;
 }
 
@@ -7447,7 +7449,7 @@ performer::clear_mutes ()
 bool
 performer::clear_mute_groups ()
 {
-    bool result = mutes().clear();              /* clears mutes container   */
+    bool result = mutes().reset_defaults();
     if (result)
         modify();
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2023-10-03
+ * \updates       2023-10-06
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -105,6 +105,7 @@ public:
 
     enum class saving
     {
+        none,               /**< Added for version 0.99.10 to fix a bug.    */
         mutes,              /**< Save mute groups to the 'mutes' file.      */
         midi,               /**< Write mute groups only to the MIDI file.   */
         both,               /**< Write the mute groups to both files.       */
@@ -533,8 +534,6 @@ public:
         mute_group(gmute).name(n);
     }
 
-    bool clear ();
-
     container & list ()
     {
         return m_container;
@@ -681,6 +680,7 @@ public:         // setters that need to be public
 
 private:
 
+    bool clear ();
     void create_empty_mutes ();
     bool add (mutegroup::number gmute, const mutegroup & m);
 

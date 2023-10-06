@@ -205,18 +205,25 @@
    The only time one would want to read/write the mute-groups to a 'mutes' file
    is when one uses standard song sets for all of one's songs.
 
-   \itempar{Trigger Mode}{mutes!trigger mode}
+   \itempar{Triggers}{mutes!trigger mode}
       When activated, this option will enable the \textbf{Mute-Groups} buttons,
-      deactive them all, and turn them into standard push-buttons.  When clicked
-      the mute-group will be actived during playback.
+      deactive them all, and turn them into standard push-buttons.
+      in the \textbf{Triggers} mode, when a button is clicked,
+      the corresponding mute-group will be actived.
 
-   \itempar{Clear}{mutes!clear all mutes}
-      This button will clear every mute group. Use it carefully!
+   \itempar{Zeroes}{mutes!clear all mutes}
+      This button will clear every mute group, and replace them with
+      mute-group where all patterns are off (zeroed).
 
-   \itempar{Fill}{mutes!fill mutes}
-      This button will create a set of empty mute-groups.
-      Currently, this alters the current MIDI tune, forcing a prompt to save.
-      This action creates 32 empty mute-groups.
+      There are a couple of small buttons.
+      The first is reserved for expansion.
+      The second displays an asterisk when a mute-group or mute setting
+      has changed.
+
+%  \itempar{Fill}{mutes!fill mutes}
+%     This button will create a set of empty mute-groups.
+%     Currently, this alters the current MIDI tune, forcing a prompt to save.
+%     This action creates 32 empty mute-groups.
 %     If a single mute-group is created in the patterns panel,
 %     then only that mute-group is saved.
 

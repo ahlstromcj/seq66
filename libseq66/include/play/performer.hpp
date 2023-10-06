@@ -1168,18 +1168,12 @@ public:
      *      This setter only sets the modified-flag to true.
      *      The setter that can falsify it, unmodify(), is private.  No one
      *      but performer and its friends should falsify this flag.
+     *      For issue #90, do not use the (silly) m_needs_update flag.
      */
 
     void modify ()
     {
         m_is_modified = true;
-
-        /*
-         * Relating to the fix for issue #90, do not use this (silly) flag.
-         * Needs testing!
-         *
-         * m_needs_update = true;
-         */
     }
 
     /*
@@ -3425,11 +3419,6 @@ public:                                 /* access functions for the containers *
     /*
      * Start of mute-groups accessors.
      */
-
-    bool mutegroup_reset ()
-    {
-        return mutes().reset_defaults();
-    }
 
     int mutegroup_count () const
     {

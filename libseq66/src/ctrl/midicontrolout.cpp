@@ -36,14 +36,16 @@
  * Automation buttons (uiactions): This is a TO DO, to follow these rules.
  *
  *      panic:              Always red.
- *      stop:               Always red. Making it green when pressed is confusing.
+ *      stop:               Always red. Making it green when pressed is
+ *                          confusing.
  *      pause:              Red normally, amber when paused.
  *      play:               Red normally, green when playing.
  *      toggle_mutes:       Always green (for "enabled")?
  *      song_record:        Green when on, red when off.
  *      slot_shift:         Green when on, red when done.
  *      free:               Unused, always red.
- *      queue:              Always green? Can we do momentary coloring via thread?
+ *      queue:              Always green? Can we do momentary coloring via
+ *                          thread?
  *      oneshot:            Ditto?
  *      replace:            Need to investigate.
  *      snapshot:           Green while held, red while released.

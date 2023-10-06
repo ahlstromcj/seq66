@@ -3801,7 +3801,7 @@ qsmainwnd::reload_mute_groups ()
  *  since the intent might be to clean up the MIDI file, the user is prompted
  *  to save.
  *
- *  Should we use reset_mute_groups() instead?
+ *  Should we use clear_mutes() instead?
  */
 
 void
