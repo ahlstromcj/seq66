@@ -1368,9 +1368,9 @@ performer::true_output_bus (bussbyte nominalbuss) const
                 msg += "\"";
             }
             msg +=
-                ". Check assigned ports in the song, 'rc', 'ctrl' files, "
-                "and the MIDI and Metronome tabs. Also check the Session "
-                "tab's file-names."
+                ". Check assigned ports in files: song, rc, ctrl, "
+                "usr buss-override, MIDI & Metronome tabs, and "
+                "Session tab file-names."
                 ;
             m_port_map_error = true;                /* mutable boolean      */
             append_error_message(msg);
@@ -5260,7 +5260,7 @@ performer::auto_play_start ()
 bool
 performer::auto_play_stop (midipulse tick)
 {
-    bool result = m_max_extent > 0 && tick >= m_max_extent;
+    bool result = m_max_extent > 0 && tick >= m_max_extent && song_mode();
     if (result)
     {
         if (playlist_active())
@@ -5302,7 +5302,6 @@ performer::play (midipulse tick)
 {
     if (tick != get_tick() || tick == 0)                /* avoid replays    */
     {
-        bool songmode = song_mode();
         if (auto_play_stop(tick))
         {
             (void) open_next_song();
@@ -5310,6 +5309,7 @@ performer::play (midipulse tick)
         }
         else
         {
+            bool songmode = song_mode();
             set_tick(tick);
             for (auto seqi : play_set().seq_container())
             {

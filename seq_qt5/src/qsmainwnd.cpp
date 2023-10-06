@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-03
+ * \updates       2023-10-06
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -908,7 +908,7 @@ qsmainwnd::qsmainwnd
      */
 
     ui->btnShowHide->setCheckable(true);
-    ui->btnShowHide->setChecked(true);                  /* start w/showing  */
+    ui->btnShowHide->setChecked(false);                 /* start w/showing  */
     ui->btnShowHide->setEnabled(true);
     ui->btnShowHide->setToolTip("Show/hide many controls to save space");
     qt_set_icon(hide_xpm, ui->btnShowHide);
@@ -3966,18 +3966,8 @@ qsmainwnd::slot_test ()
 void
 qsmainwnd::slot_show_hide ()
 {
-    bool showthem = ui->btnShowHide->isChecked();
-    if (showthem)
-    {
-        qt_set_icon(hide_xpm, ui->btnShowHide);
-        ui->menuBar->show();
-        ui->cmb_global_bus->show();
-        ui->cmb_beat_measure->show();
-        ui->cmb_beat_length->show();
-        qt_set_layout_visibility(ui->hLayoutBottom_1, true);
-        qt_set_layout_visibility(ui->hLayoutBottom_2, true);
-    }
-    else
+    bool hidethem = ui->btnShowHide->isChecked();
+    if (hidethem)
     {
         qt_set_icon(show_xpm, ui->btnShowHide);
         ui->menuBar->hide();
@@ -3986,6 +3976,16 @@ qsmainwnd::slot_show_hide ()
         ui->cmb_beat_length->hide();
         qt_set_layout_visibility(ui->hLayoutBottom_1, false);
         qt_set_layout_visibility(ui->hLayoutBottom_2, false);
+    }
+    else
+    {
+        qt_set_icon(hide_xpm, ui->btnShowHide);
+        ui->menuBar->show();
+        ui->cmb_global_bus->show();
+        ui->cmb_beat_measure->show();
+        ui->cmb_beat_length->show();
+        qt_set_layout_visibility(ui->hLayoutBottom_1, true);
+        qt_set_layout_visibility(ui->hLayoutBottom_2, true);
     }
 }
 

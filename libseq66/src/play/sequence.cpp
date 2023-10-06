@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-27
+ * \updates       2023-10-06
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -546,11 +546,15 @@ sequence::note_count () const
     return m_events.note_count();
 }
 
+/**
+ *  Gets the average of the notes within a snap value of the first note.
+ */
+
 bool
-sequence::first_note (midipulse & ts, int & n) const
+sequence::first_notes (midipulse & ts, int & n) const
 {
     automutex locker(m_mutex);
-    return m_events.first_note(ts, n);
+    return m_events.first_notes(ts, n, m_snap_tick);
 }
 
 int
@@ -4050,9 +4054,6 @@ bool
 sequence::stream_event (event & ev)
 {
     automutex locker(m_mutex);
-
-/// printf("tick %ld, channel %d\n", ev.timestamp(), ev.channel());
-
     bool result = channels_match(ev);           /* set if channel matches   */
     if (result)
     {
@@ -4093,6 +4094,31 @@ sequence::stream_event (event & ev)
                 if (ev.is_note_on() && m_rec_vol > usr().preserve_velocity())
                     ev.note_velocity(m_rec_vol);        /* modify incoming  */
 
+                /*
+                 * See USE_OLD_CODE below.  We need to do this here, not there.
+                 */
+
+                if (alter_recording() && ev.is_note())
+                {
+                    /*
+                     * We want to quantize or tighten note-related events that
+                     * comes in, This could potentially alter the note length
+                     * by a couple of snaps. So what? Play better!
+                     */
+
+                    if (quantizing())
+                    {
+                        (void) ev.quantize(snap(), get_length());
+                    }
+                    else if (tightening())
+                    {
+                        (void) ev.tighten(snap(), get_length());
+                    }
+                    else if (notemapping())
+                    {
+                        perf()->repitch(ev);
+                    }
+                }
                 add_event(ev);                          /* locks and sorts  */
             }
             else
@@ -4172,10 +4198,7 @@ sequence::stream_event (event & ev)
         if (ev.is_note_off())
             link_new();
 
-        /*
-         * if (quantizing_or_tightening() && perf()->is_pattern_playing())
-         */
-
+#if defined USE_OLD_CODE
         if (alter_recording())
         {
             /*
@@ -4185,12 +4208,19 @@ sequence::stream_event (event & ev)
              */
 
             if (quantizing())
+            {
                 (void) ev.quantize(snap(), get_length());
+            }
             else if (tightening())
+            {
                 (void) ev.tighten(snap(), get_length());
+            }
             else if (notemapping())
+            {
                 perf()->repitch(ev);
+            }
         }
+#endif
     }
     return result;
 }

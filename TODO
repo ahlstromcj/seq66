@@ -1,23 +1,18 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-10-05
+2019-04-13 to 2023-10-06
 
 Misc:
 
+    -   Issue #117
+    -   Issue #118
     -   Document and test mute groups. Issues:
-        To do:
-        -   Disable auto-save of the mutes file at exit in this
-            case, unless the name provided is identical.
-        -   If "To Mutes" is set, "To MIDI" is not, and a change is made, 
-            there is no MIDI modified flag, but closing prompts to save.
-            We need to forward the boolean changes immediately, e.g.
-            to cb_per().mutes().group_save_to_midi(); perhaps add
-            a flag set to performer::set_mutes()???
         -   performer: cliear_mute_groups(), reset_mute_groups(), and
             mutegroup_reset() all basically do the same things, except
-            that clear_mutes() also notifies subscribers. Probably
-            can get rid of "Fill" and its pix and documentation.
+            that clear_mutes() also notifies subscribers.
     -   For scrolling to notes, use average note instead of first note.
+        Also should add about half the height of the piano roll, otherwise
+        the middle (average) appears at the top.
     -   There are issues with Song / Zoom / Follow progress with the
         ulra-zoom-in in force. Pattern editor works.
     -   In the Kraftwerk song, the Chorus seems to have the wrong pitch,
@@ -335,6 +330,25 @@ ISSUES:
 #116 What happened to the "MIDI Ctrl Out (Display) Bus" setting?
 
     STATUS: Cannot duplicate.
+
+#117 Option to close pattern windows with esc key?
+
+    STATUS: Thinking... This can be done if (1) not playing; and
+    (2) not in Paint mode.
+
+#118 When enabling virtual ports, make those new ports enabled by default?
+    Currently one has to tick the box to enable and enter the number of output
+    and input ports, restart seq66, and then tick all the input port
+    checkboxes in the list then restart seq66 again.
+
+    STATUS: At least make it an rc option.
+
+#119 Quantized Record Active does not work
+    Having this button active has no effect; tried changing snap size to
+    different settings...  Post processing quantize works as expected (i,e,
+    Ctrl-A then q)
+
+    STATUS: Fixed in the portfix branch. An embarrasing misstep!
 
 To close as fixed (and remove from TODO):
 

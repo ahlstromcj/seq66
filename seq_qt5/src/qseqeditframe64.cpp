@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-09-29
+ * \updates       2023-10-06
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1424,19 +1424,23 @@ qseqeditframe64::initialize_panels ()
     ui->keysScrollArea->attach_master(ui->rollScrollArea);
     ui->timeScrollArea->attach_master(ui->rollScrollArea);
 
-    /*
-     * int minimum = ui->rollScrollArea->verticalScrollBar()->minimum();
-     * int maximum = ui->rollScrollArea->verticalScrollBar()->maximum();
-     * ui->rollScrollArea->verticalScrollBar()->setValue((minimum + maximum) / 2);
-     */
-
     midipulse ts;
     int n;
-    bool gotnote = track().first_note(ts, n);
-    if (gotnote)
+    bool gotnotes = track().first_notes(ts, n); /* get average note value   */
+    if (gotnotes)
     {
         scroll_to_tick(ts);
         scroll_to_note(n);
+printf("Avg note = %d\n", n);
+    }
+    else
+    {
+        int minimum = ui->rollScrollArea->verticalScrollBar()->minimum();
+        int maximum = ui->rollScrollArea->verticalScrollBar()->maximum();
+        ui->rollScrollArea->verticalScrollBar()->setValue
+        (
+            (minimum + maximum) / 2
+        );
     }
 }
 
@@ -2915,6 +2919,11 @@ qseqeditframe64::scroll_to_tick (midipulse tick)
         ui->rollScrollArea->scroll_x_to_factor(fraction);
     }
 }
+
+/**
+ *  How can we add a little bit to move the note value more to the middle of
+ *  the piano roll, rather than to the top?
+ */
 
 void
 qseqeditframe64::scroll_to_note (int note)

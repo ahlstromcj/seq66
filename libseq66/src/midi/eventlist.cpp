@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-09-27
+ * \updates       2023-10-06
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -526,18 +526,57 @@ eventlist::note_count () const
     return result;
 }
 
+/**
+ *  Look at note events within the snap interval. Return the first time-stamp
+ *  and the first (or average within the snap interval) note value. This
+ *  function is used for centering the seqroll on visible notes.
+ */
+
 bool
-eventlist::first_note (midipulse & ts, int & n) const
+eventlist::first_notes (midipulse & ts, int & n, midipulse snap) const
 {
     bool result = false;
-    for (const auto & e : m_events)
+    bool doaverage = snap > 0;
+    if (doaverage)
     {
-        if (e.is_note_on())
+        midipulse ts_first = (-1);
+        int note_avg = 0;
+        int note_count = 0;
+        for (const auto & e : m_events)
         {
-            ts = e.timestamp();
-            n = int(e.get_note());
-            result = true;
-            break;
+            if (e.is_note_on())
+            {
+                result = true;
+
+                midipulse ts_temp = e.timestamp();
+                if (ts_first == (-1))
+                    ts_first = ts_temp;
+
+                int note = int(e.get_note());
+                ++note_count;
+                if (ts_temp < (ts_first + snap))
+                    note_avg += note;
+                else
+                    break;
+            }
+        }
+        if (result)
+        {
+            ts = ts_first;
+            n = note_avg / note_count;
+        }
+    }
+    else
+    {
+        for (const auto & e : m_events)
+        {
+            if (e.is_note_on())
+            {
+                ts = e.timestamp();
+                n = int(e.get_note());
+                result = true;
+                break;
+            }
         }
     }
     return result;

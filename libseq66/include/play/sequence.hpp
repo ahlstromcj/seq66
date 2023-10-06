@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-09-27
+ * \updates       2023-10-06
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1122,7 +1122,7 @@ public:
 
     int event_count () const;
     int note_count () const;
-    bool first_note (midipulse & ts, int & n) const;
+    bool first_notes (midipulse & ts, int & n) const;
     int playable_count () const;
     bool is_playable () const;
     bool minmax_notes (int & lowest, int & highest);
