@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-09-29
+ * \updates       2023-10-07
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -495,6 +495,8 @@ usrfile::parse ()
     usr().session_visibility(flag);
 
     tag = "[new-pattern-editor]";
+    flag = get_boolean(file, tag, "escape-pattern");
+    usr().escape_pattern(flag);
     flag = get_boolean(file, tag, "armed");
     usr().new_pattern_armed(flag);
     flag = get_boolean(file, tag, "thru");
@@ -986,11 +988,12 @@ usrfile::write ()
 "# is indicated when the loop has the name 'Untitled' and no events. These\n"
 "# values save time during a live recording session. The valid values for\n"
 "# record-style are 'merge' (default), 'overwrite', 'expand', 'one-shot', \n"
-"# and 'one-shot-reset'.\n"
-"# 'wrap-around', if true, allows recorded notes to wrap around to the\n"
-"# pattern start.\n"
+"# and 'one-shot-reset'. 'wrap-around' allows recorded notes to wrap to the\n"
+"# pattern start. 'escape-pattern' allows the Esc key to close the pattern\n"
+"# editor if not playing or in paint mode.\n"
 "\n[new-pattern-editor]\n\n"
         ;
+    write_boolean(file, "escape-pattern", usr().escape_pattern());
     write_boolean(file, "armed", usr().new_pattern_armed());
     write_boolean(file, "thru", usr().new_pattern_thru());
     write_boolean(file, "record", usr().new_pattern_record());

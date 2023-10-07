@@ -1,7 +1,7 @@
 # Seq66 0.99.9 user ('usr') configuration file
 #
 # /home/usr/.config/seq66/qseq66.usr
-# Written 2023-09-22 09:01:45
+# Written 2023-10-07 09:01:45
 #
 # 'usr' file. Edit it and place it in ~/.config/seq66. It allows naming each
 # MIDI bus/port, channel, and control code.
@@ -259,12 +259,13 @@ visibility = true
 # is indicated when the loop has the name 'Untitled' and no events. These
 # values save time during a live recording session. The valid values for
 # record-style are 'merge' (default), 'overwrite', 'expand', 'one-shot', 
-# and 'one-shot-reset'.
-# 'wrap-around', if true, allows recorded notes to wrap around to the
-# pattern start.
+# and 'one-shot-reset'. 'wrap-around' allows recorded notes to wrap to the
+# pattern start. 'escape-pattern' allows the Esc key to close the pattern
+# editor if not playing or in paint mode.
 
 [new-pattern-editor]
 
+escape-pattern = false
 armed = false
 thru = false
 record = false

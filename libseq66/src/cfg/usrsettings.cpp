@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2023-09-30
+ * \updates       2023-10-07
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -411,6 +411,7 @@ usrsettings::usrsettings () :
     m_session_url               (),
     m_in_nsm_session            (false),
     m_session_visibility        (true),
+    m_escape_pattern            (false),
     m_new_pattern_armed         (false),
     m_new_pattern_thru          (false),
     m_new_pattern_record        (false),
@@ -510,6 +511,7 @@ usrsettings::set_defaults ()
     m_session_url.clear();
     m_in_nsm_session = false;
     m_session_visibility = true;
+    m_escape_pattern = false;
     m_new_pattern_armed = false;
     m_new_pattern_thru = false;
     m_new_pattern_record = false;

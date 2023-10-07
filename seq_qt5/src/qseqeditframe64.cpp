@@ -1181,7 +1181,20 @@ qseqeditframe64::keyPressEvent (QKeyEvent * event)
         }
         else if (key == Qt::Key_Escape)
         {
-            m_seqroll->set_adding(false);
+            /*
+             * If the parent is a qseqeditex, and if enabled, Esc can
+             * close the pattern editor. A concession for issue #117.
+             */
+
+            if (m_seqroll->adding())
+            {
+                m_seqroll->set_adding(false);
+            }
+            else if (not_nullptr(m_qseqeditex_frame))
+            {
+                if (usr().escape_pattern() && ! short_version())
+                    m_qseqeditex_frame->close();
+            }
         }
         else if (isctrl)
         {
@@ -1431,7 +1444,9 @@ qseqeditframe64::initialize_panels ()
     {
         scroll_to_tick(ts);
         scroll_to_note(n);
-printf("Avg note = %d\n", n);
+#if defined SEQ66_PLATFORM_DEBUG
+        printf("Avg note = %d\n", n);
+#endif
     }
     else
     {

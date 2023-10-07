@@ -1,4 +1,4 @@
-# README for Seq66 0.99.10 2023-10-04
+# README for Seq66 0.99.10 2023-10-07
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -83,6 +83,10 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.99.10:
+        *   Issue #117 Option to close pattern windows with esc key. Must
+            be enabled via a 'usr' option first.
+        *   Issue #118 Make virtual ports ports enabled by default. TO DO.
+        *   Issue #119 "Quantized Record Active does not work" fixed.
         *   Multiple tempo events can be drawn in a line in the data pane.
             They can be dragged up and down in the data pane.
         *   If configured for double-click, can now open or create a pattern

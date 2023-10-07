@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2023-09-27
+% \update      2023-10-07
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -218,8 +218,8 @@
 \label{subsec:configuration_command_line}
 
    Command-line options are well-described in the \textsl{Seq66} "man" page.
-   Here, we will present a brief note about each option, and, where applicable, a
-   reference to the corresponding configuration file option.
+   Here, we will present a brief note about each option, and, where applicable,
+   a reference to the corresponding configuration file option.
    Here is the basic command line:
 
    \begin{verbatim}
@@ -1758,6 +1758,7 @@
 
    \begin{verbatim}
       [new-pattern-editor]
+      escape-pattern = false
       armed = false
       thru = false
       record = false
@@ -1765,6 +1766,13 @@
       record-style = merge
       wrap-around = false
    \end{verbatim}
+
+   The \texttt{escape-pattern} option applies to an open pattern window.
+   If enabled, the \texttt{Esc} key can close the pattern window if
+   patterns are not playing and if not in paint mode.  If both are true, then
+   the first \texttt{Esc} stops playing, the second \texttt{Esc} exits
+   paint mode, and the third \texttt{Esc} closes the window.
+   The use must enable this option deliberately.
 
    Also included is a flag to allow notes to wrap around, where the Note On
    comes near the end of the pattern, but the Note Off appears before the

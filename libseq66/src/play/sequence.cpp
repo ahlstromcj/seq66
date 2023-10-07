@@ -4095,7 +4095,8 @@ sequence::stream_event (event & ev)
                     ev.note_velocity(m_rec_vol);        /* modify incoming  */
 
                 /*
-                 * See USE_OLD_CODE below.  We need to do this here, not there.
+                 * See USE_OLD_CODE below.  We need to do this here, not
+                 * there.  Fixes issue #119.
                  */
 
                 if (alter_recording() && ev.is_note())

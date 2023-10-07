@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-09-30
+ * \updates       2023-10-07
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -939,9 +939,11 @@ private:
     /**
      *  [new-pattern-editor]
      *
-     *  A new feature, in progress.
+     *  Options for a pattern that is newly-created, plus a new option to let
+     *  the Esc key close a pattern editor window.
      */
 
+    bool m_escape_pattern;
     bool m_new_pattern_armed;
     bool m_new_pattern_thru;
     bool m_new_pattern_record;
@@ -1716,6 +1718,11 @@ public:
      * New-pattern options
      */
 
+    bool escape_pattern () const
+    {
+        return m_escape_pattern;
+    }
+
     bool new_pattern_armed () const
     {
         return m_new_pattern_armed;
@@ -1971,6 +1978,11 @@ public:         // used in main application module and the usrfile class
     void session_url (const std::string & value)
     {
         m_session_url = value;
+    }
+
+    void escape_pattern (bool flag)
+    {
+        m_escape_pattern = flag;
     }
 
     void new_pattern_armed (bool flag)

@@ -1,10 +1,9 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-10-06
+2019-04-13 to 2023-10-07
 
 Misc:
 
-    -   Issue #117
     -   Issue #118
     -   Document and test mute groups. Issues:
         -   performer: cliear_mute_groups(), reset_mute_groups(), and
@@ -348,7 +347,7 @@ ISSUES:
     different settings...  Post processing quantize works as expected (i,e,
     Ctrl-A then q)
 
-    STATUS: Fixed in the portfix branch. An embarrasing misstep!
+    STATUS: Fixed in the portfix branch. An embarrassing misstep!
 
 To close as fixed (and remove from TODO):
 

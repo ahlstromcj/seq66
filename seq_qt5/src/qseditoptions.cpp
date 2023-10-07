@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-29
+ * \updates       2023-10-07
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1431,6 +1431,7 @@ qseditoptions::slot_metro_thru_channel (int index)
 /*
  * Duty now for the Future!
  *
+ *  checkBoxEscapePattern (for issue #117)
  *  checkBoxNewPatternArm
  *  checkBoxNewPatternQRecord
  *  checkBoxNewPatternRecord
@@ -1454,6 +1455,12 @@ qseditoptions::setup_tab_pattern ()
      * New-pattern boolean options.
      */
 
+    ui->checkBoxEscapePattern->setChecked(usr().escape_pattern());
+    connect
+    (
+        ui->checkBoxEscapePattern, SIGNAL(clicked(bool)),
+        this, SLOT(slot_escape_pattern())
+    );
     ui->checkBoxNewPatternArm->setChecked(usr().new_pattern_armed());
     connect
     (
@@ -1521,6 +1528,14 @@ qseditoptions::setup_tab_pattern ()
         ui->spinBoxAmplitude, SIGNAL(valueChanged(int)),
         this, SLOT(slot_amplitude(int))
     );
+}
+
+void
+qseditoptions::slot_escape_pattern ()
+{
+    bool enable = ui->checkBoxEscapePattern->isChecked();
+    usr().escape_pattern(enable);
+    modify_usr();
 }
 
 void
