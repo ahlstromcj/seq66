@@ -774,7 +774,8 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_input_tab.png}
+%  \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_input_tab.png}
+   \includegraphics[scale=0.95]{main-menu/edit/preferences/midi_input_tab-2.png}
    \caption{MIDI Input Tab}
    \label{fig:midi_input_tab}
 \end{figure}
@@ -846,6 +847,20 @@
 
    \itempar{Virtual Ports Auto-Enable}{ports!virtual auto-enable}
    \textbf{Auto-enable virtual I/O ports}
+   If set, the ports are all automatically enabled upon a restart.
+   The following figure shows that a large number of virtual ports can be
+   defined.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.95]{main-menu/edit/preferences/midi_input_tab-virtual.png}
+   \caption{MIDI Virtual Inputs}
+   \label{fig:midi_input_tab}
+\end{figure}
+
+   Note that the user is responsible for connecting the virtual MIDI ports,
+   using something like \textsl{aconnect} (ALSA) or
+   \textsl{qjackctl} (JACK).
 
 \paragraph{Menu / Edit / Preferences / Keyboard (removed)}
 \label{paragraph:menu_edit_preferences_keyboard}
