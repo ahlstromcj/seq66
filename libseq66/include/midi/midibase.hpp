@@ -143,16 +143,16 @@ private:
 
     /**
      *  This flag indicates if an input or output bus has been selected for
-     *  action as an input device (such as a MIDI controller).  It is turned on
-     *  if the user selects the port in the Options / MIDI Input tab.
+     *  action as an input device (such as a MIDI controller).  It is turned
+     *  on if the user selects the port in the Options / MIDI Input tab.
      */
 
     bool m_io_active;
 
     /**
-     *   Indicates if the port is unavailable. For example, when the
-     *   Windows MIDI Mapper grabs the GS wave-table synthesizer.
-     *   The port is not just disabled... it cannot be enabled.
+     *   Indicates if the port is unavailable. For example, when the Windows
+     *   MIDI Mapper grabs the GS wave-table synthesizer.  The port is not
+     *   just disabled... it cannot be enabled.
      */
 
     bool m_unavailable;

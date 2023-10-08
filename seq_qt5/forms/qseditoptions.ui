@@ -44,7 +44,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>6</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -523,106 +523,6 @@ Each port number can be found by name-lookup.</string>
        <property name="checkable">
         <bool>false</bool>
        </property>
-       <widget class="QCheckBox" name="checkBoxRecordByChannel">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>40</y>
-          <width>537</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="toolTip">
-         <string>If checked, incoming data routes to the pattern
-slot by channel number (0 to 15).</string>
-        </property>
-        <property name="text">
-         <string>Record input into sequences according to channel</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="checkBoxVirtualPorts">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>72</y>
-          <width>257</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Use virtual (manual) I/O Ports</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_inputs">
-        <property name="geometry">
-         <rect>
-          <x>416</x>
-          <y>72</y>
-          <width>77</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Inputs</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_outputs">
-        <property name="geometry">
-         <rect>
-          <x>284</x>
-          <y>72</y>
-          <width>77</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Outputs</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="lineEditOutputCount">
-        <property name="geometry">
-         <rect>
-          <x>372</x>
-          <y>68</y>
-          <width>42</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>8</string>
-        </property>
-        <property name="maxLength">
-         <number>2</number>
-        </property>
-        <property name="frame">
-         <bool>true</bool>
-        </property>
-        <property name="clearButtonEnabled">
-         <bool>false</bool>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="lineEditInputCount">
-        <property name="geometry">
-         <rect>
-          <x>504</x>
-          <y>68</y>
-          <width>42</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>4</string>
-        </property>
-        <property name="maxLength">
-         <number>2</number>
-        </property>
-       </widget>
        <widget class="QLabel" name="label_5">
         <property name="geometry">
          <rect>
@@ -640,6 +540,113 @@ slot by channel number (0 to 15).</string>
         <property name="text">
          <string>Input/Output Options</string>
         </property>
+       </widget>
+       <widget class="QWidget" name="">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>40</y>
+          <width>571</width>
+          <height>100</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_9">
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="checkBoxVirtualPorts">
+           <property name="text">
+            <string>Use virtual (manual) I/O ports</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="label_outputs">
+           <property name="maximumSize">
+            <size>
+             <width>96</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Outputs</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLineEdit" name="lineEditOutputCount">
+           <property name="maximumSize">
+            <size>
+             <width>48</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>8</string>
+           </property>
+           <property name="maxLength">
+            <number>2</number>
+           </property>
+           <property name="frame">
+            <bool>true</bool>
+           </property>
+           <property name="clearButtonEnabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QLabel" name="label_inputs">
+           <property name="maximumSize">
+            <size>
+             <width>96</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Inputs</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="4">
+          <widget class="QLineEdit" name="lineEditInputCount">
+           <property name="maximumSize">
+            <size>
+             <width>48</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>4</string>
+           </property>
+           <property name="maxLength">
+            <number>2</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBoxAutoEnableVirtual">
+           <property name="text">
+            <string>Auto-enable virtual ports</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="3">
+          <widget class="QCheckBox" name="checkBoxRecordByChannel">
+           <property name="toolTip">
+            <string>If checked, incoming data routes to the pattern
+slot by channel number (0 to 15).</string>
+           </property>
+           <property name="text">
+            <string>Record input into patterns by channel</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
       <widget class="QLabel" name="inputBussesLabel">

@@ -134,20 +134,31 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
     midi_master().api_set_beats_per_minute(bpm);
     if (rc().manual_ports())                            /* virtual ports    */
     {
+        bool enable = rc().manual_auto_enable();
         int num_buses = rc().manual_port_count();       /* output count     */
         midi_master().clear();
         for (int bus = 0; bus < num_buses; ++bus)       /* output busses    */
         {
            midibus * m = make_virtual_bus(bus, midibase::io::output);
             if (not_nullptr(m))
+            {
+                if (rc().manual_auto_enable())
+                    m->set_io_status(enable);
+
                 midi_master().add_output(m);            /* must come 2nd    */
+            }
         }
         num_buses = rc().manual_in_port_count();        /* input count      */
         for (int bus = 0; bus < num_buses; ++bus)       /* input busses     */
         {
             midibus * m = make_virtual_bus(bus, midibase::io::input);
             if (not_nullptr(m))
+            {
+                if (rc().manual_auto_enable())
+                    m->set_io_status(enable);
+
                 midi_master().add_input(m);             /* must come 2nd    */
+            }
         }
     }
     else

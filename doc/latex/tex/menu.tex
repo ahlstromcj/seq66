@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-10-07
+% \update      2023-10-08
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -800,7 +800,7 @@
    \texttt{-{}-reveal-ports} (\texttt{-r}) option.
    If you define these sections, they should match your
    hardware exactly, and your hardware should not change from session to
-   session.
+   session (or port-mapping should be enabled).
    If the "auto ALSA ports" option is turned on, via the \texttt{-a} or
    \texttt{-{}-auto-ports} option, then
    the input ports from the system are shown.
@@ -829,20 +829,23 @@
 
    \itempar{Input/Output Recording}{record!by channel}
    \index{input by channel}
-   \textbf{Record input into sequence according to channel}
+   \textbf{Record input into patterns by channel}
    causes MIDI input with multiple channels to be distributed to
    each sequence according to MIDI channel number.
    When disabled, the normal recording behavior dumps all data into the current
    sequence, regardless of channel.
 
    \itempar{Input/Output Virtual Ports}{ports!virtual}
-   \textbf{Use virtual (manual) I/O Ports}
-   This new option
+   \textbf{Use virtual (manual) I/O ports}
+   This option
    allows for configuration of the manual-ports option from within the
    user-interace. 
    Once the option is enable
    A \textsl{reload session} (see \sectionref{subsec:concepts_reload_session})
    is necessary for this option to take effect.
+
+   \itempar{Virtual Ports Auto-Enable}{ports!virtual auto-enable}
+   \textbf{Auto-enable virtual I/O ports}
 
 \paragraph{Menu / Edit / Preferences / Keyboard (removed)}
 \label{paragraph:menu_edit_preferences_keyboard}

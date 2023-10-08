@@ -471,6 +471,14 @@ qseditoptions::setup_tab_midi_input ()
         this, SLOT(slot_virtual_ports())
     );
 
+    bool enablevirtualports = rc().manual_auto_enable();
+    ui->checkBoxAutoEnableVirtual->setChecked(enablevirtualports);
+    connect
+    (
+        ui->checkBoxAutoEnableVirtual, SIGNAL(clicked(bool)),
+        this, SLOT(slot_enable_virtual_ports())
+    );
+
     /*
      * The virtual port counts for input and output.
      */
@@ -3327,6 +3335,14 @@ qseditoptions::slot_virtual_ports ()
     ui->lineEditOutputCount->setEnabled(on);
     ui->lineEditInputCount->setEnabled(on);
     rc().manual_ports(on);
+    modify_rc();
+}
+
+void
+qseditoptions::slot_enable_virtual_ports ()
+{
+    bool on = ui->checkBoxAutoEnableVirtual->isChecked();
+    rc().manual_auto_enable(on);
     modify_rc();
 }
 

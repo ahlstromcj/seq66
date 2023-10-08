@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-10-04
+ * \updates       2023-10-08
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -98,6 +98,7 @@ rcsettings::rcsettings () :
     m_song_start_mode           (sequence::playback::automatic),
     m_song_start_is_auto        (true),
     m_manual_ports              (false),
+    m_manual_auto_enable        (false),
     m_manual_port_count         (c_output_buss_default),
     m_manual_in_port_count      (c_input_buss_default),
     m_reveal_ports              (false),
@@ -206,6 +207,7 @@ rcsettings::set_defaults ()
     m_song_start_mode           = sequence::playback::automatic;
     m_song_start_is_auto        = true;
     m_manual_ports              = false;
+    m_manual_auto_enable        = false;
     m_manual_port_count         = c_output_buss_default;
     m_manual_in_port_count      = c_input_buss_default;
     m_reveal_ports              = false;

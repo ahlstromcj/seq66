@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-09-15
+ * \updates       2023-10-08
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -309,6 +309,8 @@ rcfile::parse ()
 
     bool flag = get_boolean(file, tag, "virtual-ports");
     rc_ref().manual_ports(flag);
+    flag = get_boolean(file, tag, "auto-enable");
+    rc_ref().manual_auto_enable(flag);
 
     int count = get_integer(file, tag, "output-port-count");
     rc_ref().manual_port_count(count);
@@ -874,11 +876,12 @@ rcfile::write ()
     file << "\n"
 "# Set to true to create virtual ALSA/JACK I/O ports and not auto-connect\n"
 "# to other clients. It allows up to 48 output or input ports (defaults to 8\n"
-"# and 4). Set to false to auto-connect Seq66 to the existing ALSA/JACK MIDI\n"
-"# ports.\n"
+"# and 4). Keep it false to auto-connect Seq66 to real ALSA/JACK MIDI ports.\n"
+"# Set 'auto-enable' to enable all virtual ports automatically.\n"
 "\n[manual-ports]\n\n"
         ;
     write_boolean(file, "virtual-ports", rc_ref().manual_ports());
+    write_boolean(file, "auto-enable", rc_ref().manual_auto_enable());
     write_integer(file, "output-port-count", rc_ref().manual_port_count());
     write_integer(file, "input-port-count", rc_ref().manual_in_port_count());
 
@@ -887,8 +890,8 @@ rcfile::write ()
 "# These MIDI ports are for input and control. JACK's view: these are\n"
 "# 'playback' devices. The first number is the bus, the second number is the\n"
 "# input status, disabled (0) or enabled (1). The item in quotes is the full\n"
-"# input bus name.\n\n"
-"[midi-input]\n\n"
+"# input bus name. The type of port depends on the 'virtual-ports' setting.\n"
+"\n[midi-input]\n\n"
         << std::setw(2) << int(inbuses)
         << "      # number of MIDI input (or control) buses\n\n"
         ;
@@ -942,11 +945,10 @@ rcfile::write ()
 "#\n"
 "# With Clock Modulo, clocking doesn't begin until song position reaches the\n"
 "# start-modulo value [midi-clock-mod-ticks]. Ports that are unavailable\n"
-"# (because another portapplication, e.g. Windows MIDI Mapper, has exclusive\n"
-"# access to the device) are displayed ghosted.\n"
-"\n"
-"[midi-clock]\n"
-"\n"
+"# (because another port, e.g. Windows MIDI Mapper, has exclusive access to\n"
+"# the device) are displayed ghosted. The type of port depends on the\n"
+"# 'virtual-ports' setting.\n"
+"\n[midi-clock]\n\n"
         << std::setw(2) << int(outbuses)
         << "      # number of MIDI clocks (output/display buses)\n\n"
         ;

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-10-04
+ * \updates       2023-10-07
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -278,6 +278,7 @@ private:
     bool m_song_start_is_auto;      /**< True if "auto" read from 'rc'.     */
     bool m_filter_by_channel;       /**< Record only sequence channel data. */
     bool m_manual_ports;            /**< [manual-ports] setting.            */
+    bool m_manual_auto_enable;      /**< [manual-port] auto-enable.         */
     int m_manual_port_count;        /**< [manual-ports] outputjport count.  */
     int m_manual_in_port_count;     /**< [manual-ports] inputjport count.   */
     bool m_reveal_ports;            /**< [reveal-ports] setting.            */
@@ -911,6 +912,11 @@ public:
         return m_manual_ports;
     }
 
+    bool manual_auto_enable () const
+    {
+        return m_manual_auto_enable;
+    }
+
     int manual_port_count () const
     {
         return m_manual_port_count;
@@ -1339,6 +1345,11 @@ public:
     void manual_ports (bool flag)
     {
         m_manual_ports = flag;
+    }
+
+    void  manual_auto_enable (bool flag)
+    {
+        m_manual_auto_enable = flag;
     }
 
     void manual_port_count (int count)

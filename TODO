@@ -1,10 +1,9 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-10-07
+2019-04-13 to 2023-10-08
 
 Misc:
 
-    -   Issue #118
     -   Document and test mute groups. Issues:
         -   performer: cliear_mute_groups(), reset_mute_groups(), and
             mutegroup_reset() all basically do the same things, except
@@ -332,15 +331,14 @@ ISSUES:
 
 #117 Option to close pattern windows with esc key?
 
-    STATUS: Thinking... This can be done if (1) not playing; and
-    (2) not in Paint mode.
+    STATUS: Done, not yet official.
 
 #118 When enabling virtual ports, make those new ports enabled by default?
     Currently one has to tick the box to enable and enter the number of output
     and input ports, restart seq66, and then tick all the input port
     checkboxes in the list then restart seq66 again.
 
-    STATUS: At least make it an rc option.
+    STATUS: Done, not yet official.
 
 #119 Quantized Record Active does not work
     Having this button active has no effect; tried changing snap size to

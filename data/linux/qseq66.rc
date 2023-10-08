@@ -47,6 +47,8 @@ MIDI Clocks and MIDI Inputs tabs.
 
 # Provides a flag and file-name for MIDI-control I/O settings. '""' means
 # no 'ctrl' file. If none, default keystrokes are used, with no MIDI control.
+# Note that all configuration files are stored in the "home" configuration
+# directory; any paths in the file-names are stripped.
 
 [midi-control-file]
 
@@ -119,6 +121,7 @@ tempo-track = 0
 [manual-ports]
 
 virtual-ports = false
+auto-enable = false
 output-port-count = 8
 input-port-count = 4
 

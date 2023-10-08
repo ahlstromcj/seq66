@@ -233,6 +233,7 @@ private slots:
     void slot_buss_override ();
     void slot_record_by_channel ();
     void slot_virtual_ports ();
+    void slot_enable_virtual_ports ();
     void slot_virtual_out_count ();
     void slot_virtual_in_count ();
 
