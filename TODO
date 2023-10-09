@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-10-08
+2019-04-13 to 2023-10-09
 
 Misc:
 
@@ -8,27 +8,16 @@ Misc:
         -   performer: cliear_mute_groups(), reset_mute_groups(), and
             mutegroup_reset() all basically do the same things, except
             that clear_mutes() also notifies subscribers.
-    -   For scrolling to notes, use average note instead of first note.
-        Also should add about half the height of the piano roll, otherwise
-        the middle (average) appears at the top.
-    -   There are issues with Song / Zoom / Follow progress with the
-        ulra-zoom-in in force. Pattern editor works.
     -   In the Kraftwerk song, the Chorus seems to have the wrong pitch,
         on the Arch Linux laptop with Qsynth running.
-    -   Roll and time misaligned with Chameleon tune.
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
     -   Make sure we have record-toggle automation!
     -   Make sure metronome buttons etc. still work. Recording measures
         not saved.
-    -   Disable "ALSA Announce" in basically all lists and popups. At least
-        detect its selection and ignore/warn it.
-        -   Pattern "Input Buss" popup.
-        -   MIDI Display buss combo-box.
-        -   MIDI Ctrl buss combo-box.
     -   Add a feature to start playback when the first note comes
         into a pattern when recording is set. [Turns out to be quite tricky!]
-    -   Implement drag-and-drop to open a MIDI file.
+    -   Implement drag-and-drop to open a MIDI file?
 
 Some of these issues will be pushed off for the distant Seq66v2.
 

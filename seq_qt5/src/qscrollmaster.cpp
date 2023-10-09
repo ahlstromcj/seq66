@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-18
- * \updates       2023-09-28
+ * \updates       2023-10-09
  * \license       GNU GPLv2 or above
  *
  *  When inheriting QAbstractScrollArea, you need to do the following:
@@ -197,17 +197,31 @@ qscrollmaster::scroll_to_y (int y)
     }
 }
 
+/**
+ *  Scrolls vertically by a factor, plus a bit to try to center in the roll.
+ *  TODO!
+ *
+ *  Used in qseqeditframe64::scroll_to_note().
+ *
+ * \param f
+ *      Provides the "average" value of the note(s) found at the beginning
+ *      of the pattern.
+ */
+
 void
 qscrollmaster::scroll_y_to_factor (float f)
 {
-    if (! m_v_scrollbars.empty())
+    if (! m_v_scrollbars.empty() && f > 0.1)
     {
         int vmin = m_self_v_scrollbar->minimum();
         int vmax = m_self_v_scrollbar->maximum();
         int newv = int((vmax - vmin) * f) + vmin;
-        int dy = newv - vmax;
         scroll_to_y(newv);
-        QScrollArea::scrollContentsBy(0, dy);
+
+        /*
+         * int dy = newv - vmax;
+         * QScrollArea::scrollContentsBy(0, dy);
+         */
     }
 }
 

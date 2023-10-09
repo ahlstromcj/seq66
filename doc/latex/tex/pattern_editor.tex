@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-09-27
+% \update      2023-10-09
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -716,23 +716,27 @@
 \label{subsec:pattern_editor_piano_roll}
 
    The piano roll is the center of the pattern/loop/track/sequence editor.
-   It is accompanied by a thin "event bar" ("event area", "event strip")
-   just below it,
-   and a taller "data bar" or "data area" just below that.
-   While the pattern
-   editor is very similar to note editors in other sequencers, it is a bit
-   different in feel.  A good mouse with at least 3 buttons is very helpful
-   for editing.  Buttons and keystrokes enhance the ease of editing.
+   When a pattern is opened in the editor, the piano roll scrolls
+   automatically to the first notes.
 
-   The piano roll can show notes, a background pattern, and a scale.
-   Notes are shown as narrow rectanges; the pattern and scale are
-   shown as bars running the whole length of the piano roll.
+   The piano roll is accompanied by a thin "event bar"
+   ("event pane") just below it,
+   and a taller "data pane" or "data area" just below that.
+   While the pattern editor is very similar to note editors in other
+   sequencers, it is a bit different in feel.  A good mouse with at least 3
+   buttons is very helpful for editing.  Buttons and keystrokes enhance the
+   ease of editing.
+
+   The piano roll shows notes, and, optionally, a background pattern or a
+   scale.  Notes are shown as narrow rectanges; the background
+   pattern and scale are shown as bars running the length of the piano roll.
 
    When the piano roll has keyboard focus, the \texttt{Space} key
    starts and stops playback, rewinding to the beginning when stopped.
    The \texttt{.} (period) key starts and pauses playback, without
    rewinding.
-   The \texttt{Esc} key stops playback.
+   The \texttt{Esc} key stops playback, exits "paint" mode, and
+   can be enabled to close the pattern editor.
    This functionality is similar to that of the main window, but
    these keys are not reconfigurable in the piano roll.
 
@@ -749,7 +753,7 @@
 
    \index{keys!arrows}
    \textsl{If no notes are selected}, the arrow keys will move the piano row
-   up, down, left, and right.
+   up, down, left, and right in small steps.
    Otherwise, the selected notes are moved
    up, down, left, and right.
 
@@ -846,7 +850,7 @@
    \index{mode!paint}
    or "paint" notes.
    Drawing, modifying, copying, and deleting notes is fairly easy in
-   \textsl{Seq66}, though a little different from other MIDI sequencers.
+   \textsl{Seq66}, though slightly different from other MIDI sequencers.
 
    The \textsl{Seq24} note-editing style is as expected for basic
    actions such as selecting and moving notes using the left mouse button.
@@ -854,13 +858,14 @@
    enter the drawing mode ("paint mode").
    One way is to \textsl{click and hold} the right mouse button, and then
    \textsl{click and drag} the mouse to insert notes.
-   Note that some \textsl{Seq66} windows
-   can use the \textsl{Ctrl-left-click} as a middle click. 
+   (Note that one can use the \textsl{Ctrl-left-click} as a middle click. )
    \index{keys!p}
    Another way is to use the \texttt{p} key to enter the "paint" mode.
    To get out of the "paint" mode, press the
    \index{keys!x}
+   \index{keys!Esc}
    \texttt{x} key while in the sequence editor.
+   The \texttt{Esc} key also exits paint mode if the tune is not playing.
    Also available is a "finger" button
    (\textbf{Note Select/Note Entry})
    to click to toggle the mode.

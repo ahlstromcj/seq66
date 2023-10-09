@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-10-06
+ * \updates       2023-10-09
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1437,6 +1437,11 @@ qseqeditframe64::initialize_panels ()
     ui->keysScrollArea->attach_master(ui->rollScrollArea);
     ui->timeScrollArea->attach_master(ui->rollScrollArea);
 
+    /*
+     *  Here, we want to position the notes in the piano roll so
+     *  that the user doesn't have to scroll up and down to find them.
+     */
+
     midipulse ts;
     int n;
     bool gotnotes = track().first_notes(ts, n); /* get average note value   */
@@ -1444,9 +1449,6 @@ qseqeditframe64::initialize_panels ()
     {
         scroll_to_tick(ts);
         scroll_to_note(n);
-#if defined SEQ66_PLATFORM_DEBUG
-        printf("Avg note = %d\n", n);
-#endif
     }
     else
     {
@@ -2937,7 +2939,13 @@ qseqeditframe64::scroll_to_tick (midipulse tick)
 
 /**
  *  How can we add a little bit to move the note value more to the middle of
- *  the piano roll, rather than to the top?
+ *  the piano roll, rather than to the top? The easiest approach is to
+ *  add an octave to the note, which moves the seqroll window down by about
+ *  half at normal zoom.
+ *
+ * \param note
+ *      Either a single note or the average of note values (e.g. from a
+ *      chord) within the first snap distance of the first note.
  */
 
 void
@@ -2948,7 +2956,7 @@ qseqeditframe64::scroll_to_note (int note)
     {
         if (is_good_data_byte(midibyte(note)))
         {
-            float fraction = (127 - note) / 128.0F;
+            float fraction = (127 - (note + 12)) / 128.0F;
             ui->rollScrollArea->scroll_y_to_factor(fraction);
         }
     }
