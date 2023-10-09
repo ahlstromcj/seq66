@@ -151,6 +151,15 @@ private:                                // overrides of event handlers
     virtual void keyReleaseEvent (QKeyEvent *) override;
     virtual void changeEvent (QEvent *) override;
 
+    /*
+     * Trial for drag-and-drop onto the Live grid.
+     */
+
+    virtual void dragEnterEvent (QDragEnterEvent * event) override;
+    virtual void dragMoveEvent (QDragMoveEvent * event) override;
+    virtual void dragLeaveEvent (QDragLeaveEvent * event) override;
+    virtual void dropEvent (QDropEvent * event) override;
+
 private:
 
     seq::number seq_id_from_xy (int click_x, int click_y);

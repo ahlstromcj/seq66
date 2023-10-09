@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-09-19
+ * \updates       2023-10-09
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -68,6 +68,7 @@
 
 #include <QMenu>
 #include <QMessageBox>
+#include <QMimeData>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QTimer>
@@ -252,6 +253,17 @@ qslivegrid::qslivegrid
         usr().progress_box_width(),
         usr().progress_box_height()
     );
+
+    /*
+     * Trial for drag-n-drop.
+     */
+
+    setAcceptDrops(true);
+
+    /*
+     * Register to be notified by the performer.
+     */
+
     perf().enregister(this);                                /* notification */
     m_timer = qt_timer(this, "qslivegrid", 2, SLOT(conditional_update()));
 }
@@ -2050,6 +2062,41 @@ qslivegrid::on_trigger_change (seq::number /* seqno */)
 {
     update_state();
     return true;
+}
+
+/*
+ * Trial for drag-and-drop onto the Live grid.
+ */
+
+void
+qslivegrid::dragEnterEvent (QDragEnterEvent * event)
+{
+    if (event->mimeData()->hasUrls())
+        event->acceptProposedAction();
+}
+
+void
+qslivegrid::dragMoveEvent (QDragMoveEvent * /*event*/)
+{
+    // no code
+}
+
+void
+qslivegrid::dragLeaveEvent (QDragLeaveEvent * /*event*/)
+{
+    // no code
+}
+
+void
+qslivegrid::dropEvent (QDropEvent * event)
+{
+    foreach (const QUrl & url, event->mimeData()->urls())
+    {
+        QString urlasfile = url.toLocalFile();
+        std::string fname = urlasfile.toStdString();
+        if (! parent()->open_file(fname))
+            file_error("Drag-and-drop failed", fname);
+    }
 }
 
 }           // namespace seq66

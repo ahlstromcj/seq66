@@ -17,7 +17,6 @@ Misc:
         not saved.
     -   Add a feature to start playback when the first note comes
         into a pattern when recording is set. [Turns out to be quite tricky!]
-    -   Implement drag-and-drop to open a MIDI file?
 
 Some of these issues will be pushed off for the distant Seq66v2.
 

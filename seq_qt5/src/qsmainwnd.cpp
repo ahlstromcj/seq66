@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-06
+ * \updates       2023-10-09
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1754,76 +1754,87 @@ qsmainwnd::save_mutes_dialog (const std::string & basename)
 bool
 qsmainwnd::open_file (const std::string & fn)
 {
-    std::string errmsg;
-    bool result = cb_perf().read_midi_file(fn, errmsg); /* update recents   */
-    if (result)
+    bool result = false;
+    if (check())
     {
-        redo_live_frame();
-        if (not_nullptr(m_song_frame64))
-            m_song_frame64->update_sizes();
+        std::string errmsg;
+        if (not_nullptr(m_mute_master))
+            m_mute_master->reset();
 
-        if (not_nullptr(m_perfedit))
-            m_perfedit->update_sizes();
+        result = cb_perf().read_midi_file(fn, errmsg);
+        if (result)
+        {
+            redo_live_frame();
+            if (not_nullptr(m_song_frame64))
+                m_song_frame64->update_sizes();
+
+            if (not_nullptr(m_perfedit))
+                m_perfedit->update_sizes();
 
 #if defined SEQ66_USE_SEQEDIT_REDRAWING
-        if (not_nullptr(m_edit_frame))
-            m_edit_frame->update_draw_geometry();
+            if (not_nullptr(m_edit_frame))
+                m_edit_frame->update_draw_geometry();
 
-        for (auto ei = m_open_editors.begin(); ei != m_open_editors.end(); ++ei)
-        {
-            qseqeditex * qep = ei->second;      /* save the pointer         */
-            qep->update_draw_geometry();
-        }
+            for
+            (
+                auto ei = m_open_editors.begin();
+                ei != m_open_editors.end(); ++ei
+            )
+            {
+                qseqeditex * qep = ei->second;      /* save the pointer     */
+                qep->update_draw_geometry();
+            }
 #else
-        /*
-         * The tabbed edit frame is automatically removed if no other seq-edit
-         * is open.
-         */
+            /*
+             * The tabbed edit frame is automatically removed if no other
+             * seq-edit is open.
+             */
 
-        remove_all_editors();
-        set_ppqn_text(cb_perf().ppqn());
+            remove_all_editors();
+            set_ppqn_text(cb_perf().ppqn());
 
 #endif
 
-        if (! use_nsm())                        /* does this menu exist?    */
-        {
-            /*
-             * Just because we open a file doesn't mean it needs to be
-             * saved.
-             *
-             * enable_save(file_writable(fn));
-             */
+            if (! use_nsm())                    /* does this menu exist?    */
+            {
+                /*
+                 * Just because we open a file doesn't mean it needs to be
+                 * saved.
+                 *
+                 * enable_save(file_writable(fn));
+                 */
 
-            enable_save(false);
+                enable_save(false);
+                update_recent_files_menu();
+            }
+            if (not_nullptr(m_session_frame))
+            {
+                m_session_frame->reload_song_info();
+                song_path(fn);
+                last_used_dir(rc().last_used_dir());
+            }
+            if (not_nullptr(m_mute_master))
+                m_mute_master->reload_mute_groups();
+
+            if (cb_perf().port_map_error())             /* ca 2023-06-01    */
+            {
+                std::string msg =
+                    "Unavailable port(s) specified in MIDI file. "
+                    "Perhaps modify MIDI file to specify available ports. "
+                    ;
+                msg += cb_perf().error_messages();
+
+                bool yes = show_error_box_ex(msg, false);
+                if (yes)
+                    cb_perf().store_io_maps_and_restart();
+            }
+            m_is_title_dirty = true;
+        }
+        else
+        {
+            show_error_box(errmsg);
             update_recent_files_menu();
         }
-        if (not_nullptr(m_session_frame))
-        {
-            m_session_frame->reload_song_info();
-            song_path(fn);
-            last_used_dir(rc().last_used_dir());
-        }
-        if (not_nullptr(m_mute_master))
-            m_mute_master->reload_mute_groups();
-
-        if (cb_perf().port_map_error())                 /* ca 2023-06-01    */
-        {
-            std::string msg =
-                "Unavailable port(s) specified in MIDI file. "
-                "Perhaps modify MIDI file to specify available ports. "
-                ;
-            msg += cb_perf().error_messages();
-
-            bool yes = show_error_box_ex(msg, false);
-            if (yes)
-                cb_perf().store_io_maps_and_restart();
-        }
-        m_is_title_dirty = true;
-    }
-    else
-    {
-        show_error_box(errmsg);
-        update_recent_files_menu();
     }
     return result;
 }
