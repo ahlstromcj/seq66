@@ -87,10 +87,8 @@ Windows, and using a conventional source tarball.
             be enabled via a 'usr' option first.
         *   Issue #118 Make virtual ports ports enabled by default.
         *   Issue #119 "Quantized Record Active does not work" fixed.
-        *   Fixed bug preventing a song with triggers stopping playback at end
-            of song. Fixes related to playlist-handling.
-        *   Add note-mapping to the loop record-mode list; fixed bugs
-            in handling note-mapping..
+            Still must test tightening and note mapping.
+        *   Implemented drag-and-drop of one MIDI file onto the Live grid.
         *   Multiple tempo events can be drawn in a line in the data pane.
             They can be dragged up and down in the data pane.
         *   If configured for double-click, can now open or create a pattern

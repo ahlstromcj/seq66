@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-10-04
+ * \updates       2023-10-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -1253,7 +1253,9 @@ qmutemaster::handle_pattern_button (int row, int column)
 void
 qmutemaster::modify_midi ()
 {
-    cb_perf().modify();
+    if (m_is_initialized)
+        cb_perf().modify();
+
     if (not_nullptr(m_main_window))
         m_main_window->enable_save(true);
 }
