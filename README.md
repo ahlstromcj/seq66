@@ -1,4 +1,4 @@
-# README for Seq66 0.99.10 2023-10-09
+# README for Seq66 0.99.10 2023-10-10
 
 __Seq66__: MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -87,6 +87,10 @@ Windows, and using a conventional source tarball.
             be enabled via a 'usr' option first.
         *   Issue #118 Make virtual ports ports enabled by default.
         *   Issue #119 "Quantized Record Active does not work" fixed.
+        *   Fixed bug preventing a song with triggers stopping playback at end
+            of song. Fixes related to playlist-handling.
+        *   Add note-mapping to the loop record-mode list; fixed bugs
+            in handling note-mapping..
         *   Multiple tempo events can be drawn in a line in the data pane.
             They can be dragged up and down in the data pane.
         *   If configured for double-click, can now open or create a pattern
@@ -99,8 +103,6 @@ Windows, and using a conventional source tarball.
         *   Tweaked the main time display to work better with high PPQN.
         *   Added feature to scroll automatically in time and note value
             to show the first notes in a pattern.
-        *   Fixed bug preventing a song with triggers stopping playback at end
-            of song. Fixes related to playlist-handling.
         *   Modified the inverse color palette slightly.
         *   Restore missing table header in Mutes tab.
     *   Version 0.99.9:

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2023-10-07
+ * \updates       2023-10-10
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -613,6 +613,18 @@ usrsettings::new_pattern_record_string () const
     return result;
 }
 
+/**
+ *  For recording, at present, only the following alterations are supported:
+ *
+ *      -   none
+ *      -   quantize
+ *      -   tighten
+ *      -   notemap
+ *
+ *  The alterations of jitter and random are left to the musician when
+ *  recording :-D.
+ */
+
 std::string
 usrsettings::record_mode_label () const
 {
@@ -654,7 +666,8 @@ usrsettings::next_record_mode ()
 #else
     case alteration::none:          result = alteration::tighten;   break;
     case alteration::tighten:       result = alteration::quantize;  break;
-    case alteration::quantize:      result = alteration::none;      break;
+    case alteration::quantize:      result = alteration::notemap;   break;
+    case alteration::notemap:       result = alteration::none;      break;
 #endif
     default:                        result = alteration::none;      break;
     }

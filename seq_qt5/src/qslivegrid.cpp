@@ -207,16 +207,14 @@ qslivegrid::qslivegrid
         ui->buttonBackgroundRecord->setEnabled(background_record);
         show_grid_record_style();
         show_record_mode();
-
-        std::string keyname; // =
-            // cb_perf().automation_key(automation::slot::record_style);
-
         connect
         (
             ui->buttonLoopMode, SIGNAL(clicked(bool)),
             this, SLOT(slot_grid_record_style(bool))
         );
-        keyname = cb_perf().automation_key(automation::slot::record_style);
+        std::string keyname =
+            cb_perf().automation_key(automation::slot::record_style);
+
         tooltip_with_keystroke(ui->buttonRecordMode, keyname);
         connect
         (

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2022-09-17
+ * \updates       2022-10-10
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the old mainwid class.
@@ -96,7 +96,13 @@ qslivebase::qslivebase
     m_is_external       (is_nullptr(parent)),
     m_needs_update      (false)
 {
-    // No code
+    /*
+     * Stupid hack to avoid the BBT/HMS tooltip showing up when the mouse
+     * is over the live grid.
+     */
+
+    setToolTip(" ");
+    setToolTipDuration(1);
 }
 
 /**

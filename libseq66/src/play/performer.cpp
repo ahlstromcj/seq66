@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-10-06
+ * \updates       2023-10-10
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -3106,13 +3106,18 @@ performer::reset_sequences (bool p)
      */
 }
 
+/**
+ *  What about the GM channel?
+ */
+
 void
 performer::repitch (event & ev) const
 {
     if (notemap_exists() && ev.is_note())
     {
         midibyte incoming = ev.d0();
-        m_note_mapper->fast_convert(incoming);
+        midibyte newnote = m_note_mapper->fast_convert(incoming);
+        ev.d0(newnote);
     }
 }
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-10-06
+ * \updates       2023-10-10
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2688,6 +2688,10 @@ sequence::decrement_selected (midibyte astat, midibyte /*acontrol*/)
         modify();                           /* issue #90 */
 }
 
+/**
+ *  Why "change" velocity here? Why verify_and_link()?
+ */
+
 bool
 sequence::repitch (const notemapper & nmap, bool all)
 {
@@ -2708,7 +2712,7 @@ sequence::repitch (const notemapper & nmap, bool all)
     if (result && ! all)
     {
         verify_and_link();
-        modify();                                   /* added ca 2022-04-25  */
+        modify();
     }
     return result;
 }
@@ -3329,12 +3333,12 @@ sequence::fix_pattern (fixparameters & params)
             {
                 result = m_events.quantize_all_events(snap(), 1);
             }
-            else if (params.fp_quan_type == alteration::jitter)
+            if (params.fp_quan_type == alteration::jitter)
             {
                 result = m_events.jitter_notes(snap(), params.fp_jitter);
             }
 #if defined SEQ66_USE_ADDED_ALTERATIONS
-            else if (params.fp_quan_type == alteration::random)
+            if (params.fp_quan_type == alteration::random)
             {
                 m_events.select_all();                      // TODO
                 result = m_events_randomize_selected_notes
@@ -3342,7 +3346,7 @@ sequence::fix_pattern (fixparameters & params)
                     params.fp_jitter, params.fp_jitter      // FIXME
                 );
             }
-            else if (params.fp_quan_type == alteration::notemap)
+            if (params.fp_quan_type == alteration::notemap)
             {
                 result = m_events.jitter_notes(params.fp_jitter);   // TODO
             }
@@ -4095,8 +4099,7 @@ sequence::stream_event (event & ev)
                     ev.note_velocity(m_rec_vol);        /* modify incoming  */
 
                 /*
-                 * See USE_OLD_CODE below.  We need to do this here, not
-                 * there.  Fixes issue #119.
+                 * We need to do this before adding the event. Issue #119.
                  */
 
                 if (alter_recording() && ev.is_note())
@@ -4108,17 +4111,12 @@ sequence::stream_event (event & ev)
                      */
 
                     if (quantizing())
-                    {
                         (void) ev.quantize(snap(), get_length());
-                    }
                     else if (tightening())
-                    {
                         (void) ev.tighten(snap(), get_length());
-                    }
-                    else if (notemapping())
-                    {
+
+                    if (notemapping())
                         perf()->repitch(ev);
-                    }
                 }
                 add_event(ev);                          /* locks and sorts  */
             }
@@ -4198,30 +4196,6 @@ sequence::stream_event (event & ev)
 
         if (ev.is_note_off())
             link_new();
-
-#if defined USE_OLD_CODE
-        if (alter_recording())
-        {
-            /*
-             * We want to quantize or tighten ANY event that comes in,
-             * including Note Offs. This could potentially alter the
-             * note length by a couple of snaps. So what? Play better!
-             */
-
-            if (quantizing())
-            {
-                (void) ev.quantize(snap(), get_length());
-            }
-            else if (tightening())
-            {
-                (void) ev.tighten(snap(), get_length());
-            }
-            else if (notemapping())
-            {
-                perf()->repitch(ev);
-            }
-        }
-#endif
     }
     return result;
 }
@@ -4351,6 +4325,9 @@ sequence::play_note_on (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_ON, midibyte(note), midibyte(m_note_on_velocity));
+    if (rc().investigate() && notemapping())
+        perf()->repitch(e);
+
     master_bus()->play_and_flush(m_true_bus, &e, midi_channel(e));
 }
 
@@ -4370,6 +4347,9 @@ sequence::play_note_off (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_OFF, midibyte(note), midibyte(m_note_on_velocity));
+    if (rc().investigate() && notemapping())
+        perf()->repitch(e);
+
     master_bus()->play_and_flush(m_true_bus, &e, midi_channel(e));
 }
 

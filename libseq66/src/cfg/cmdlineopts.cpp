@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-09-22
+ * \updates       2023-10-10
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -166,33 +166,32 @@ cmdlineopts::s_long_options [] =
  *  Provides a complete list of the short options, and is passed to
  *  getopt_long().  The following string keeps track of the characters used so
  *  far.  An 'x' means the character is used.  A ':' means it is used and
- *  requires an argument. An 'a' indicates we could
- *  repurpose the key with minimal impact. An asterisk indicates the option is
- *  reserved for application-specific options.  Currently we will use it for
- *  options like "daemonize" in the seq66cli application. Common shell
- *  characters, except for '#', are not include
+ *  requires an argument. An 'a' indicates we could repurpose the key with
+ *  minimal impact. An asterisk indicates the option is reserved for
+ *  application-specific options.  Currently we will use it for options like
+ *  "daemonize" in the seq66cli application. Common shell characters, except
+ *  for '#', are not include
  *
 \verbatim
         0123456789#@AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz
         xx       xx xx::x:xx  :: x:x:xxxxx::xxxx *xx :xxxxxxx:xxxx::  aa
 \endverbatim
  *
- *  * Note that 'o' options arguments cannot be included here due to issues
+ *  Note that 'o' options arguments cannot be included here due to issues
  *  involving parse_o_options(), but 'o' is *reserved* here, without the
  *  argument indicator.
  *
  * Manual + User mode '-Z' versus Auto + Native mode '-z':
  *
- *      Creates virtual ports '-m' and hides the native names for the ports '-R'
- *      in favor of the 'usr' definition of the names of ports and channels.
- *      The opposite (native) setting uses '-a' and '-r'.
- *      Both modes turn on the --user-save (-u) option.
+ *      Creates virtual ports '-m' and hides the native names for the ports
+ *      '-R' in favor of the 'usr' definition of the names of ports and
+ *      channels.  The opposite (native) setting uses '-a' and '-r'.  Both
+ *      modes turn on the --user-save (-u) option.
  *
  * Investigate:
  *
- *      The undocumented -i/--investigate option is used (only on the command
- *      line), to turn on the test-of-the-day and try to unearth
- *      difficult-to-find issues. Shhhh, it's a secret!
+ *      The -i/--investigate option is used on the command line), to turn on
+ *      the test-of-the-day and try to unearth difficult-to-find issues.
  */
 
 #if defined SEQ66_JACK_SUPPORT      // how to handle no SEQ66_NSM_SUPPORT?
@@ -211,17 +210,18 @@ const std::string cmdlineopts::s_arg_list = CMD_OPTS;
 
 static const std::string s_help_1a =
 "Options:\n"
-"   -h, --help, ?            Show this help and exit.\n"
-"   -V, --version, #         Show program version/build and exit.\n"
-"   -v, --verbose            Verbose mode, show more data to the console.\n"
+"   -h, --help, ?           Show this help and exit.\n"
+"   -V, --version, #        Show program version/build and exit.\n"
+"   -v, --verbose           Show more data to the console.\n"
 #if defined SEQ66_NSM_SUPPORT
-"   -n, --nsm                Activate debugging NSM support.\n"
-"   -T, --no-nsm             Ignore NSM in 'usr' file. 'T' for 'typical'.\n"
+"   -n, --nsm               Activate debugging NSM support.\n"
+"   -T, --no-nsm            Ignore NSM in 'usr' file. (Typical).\n"
 #endif
-"   -X, --playlist filename  Load playlists from the configuration directory.\n"
-"   -m, --manual-ports       Don't auto-connect MIDI ports; use virtual ports.\n"
-"                            Not supported in PortMidi builds.\n"
-"   -a, --auto-ports         Connect MIDI ports (overrides the 'rc' file).\n"
+"   -X, --playlist filename Load playlists (from \"home\" directory).\n"
+#if ! defined SEQ66_PORTMIDI_SUPPORT
+"   -m, --manual-ports      Create virtual ports (ALSA/JACK).\n"
+#endif
+"   -a, --auto-ports        Auto-Connect MIDI ports.\n"
 ;
 
 /**
@@ -229,27 +229,27 @@ static const std::string s_help_1a =
  */
 
 static const std::string s_help_1b =
-"   -r, --reveal-ports       Do not use 'usr' definitions for port names.\n"
-"   -R, --hide-ports         Use 'usr' definitions for port names.\n"
+"   -r, --reveal-ports      Don't show 'usr' definitions for port names.\n"
+"   -R, --hide-ports        Show 'usr' definitions for port names.\n"
 #if ! defined SEQ66_PLATFORM_WINDOWS
-"   -A, --alsa               Use ALSA, not JACK. A sticky option.\n"
+"   -A, --alsa              Use ALSA, not JACK. A sticky option.\n"
 #endif
-"   -b, --bus b              Global override of bus number (for testing).\n"
-"   -B, --buss b             Covers the 'bus' versus 'buss' confusion.\n"
-"   -l, --client-name label  Use this name instead of 'seq66'. Overridden by a\n"
-"                            session manager.\n"
-"   -q, --ppqn qn            Specify default PPQN to replace 192. The MIDI file\n"
-"                            can specify its own PPQN.\n"
-"   -p, --priority           Run high priority, FIFO scheduler (needs root).\n"
-"   -P, --pass-sysex         Passes incoming SysEx messages to all outputs.\n"
-"                            Not yet fully implemented.\n"
-"   -s, --show-midi          Dump incoming MIDI events to the screen.\n"
+"   -b, --bus b             Global override of bus number (for testing).\n"
+"   -B, --buss b            Covers the bus/buss confusion.\n"
+"   -l, --client-name label Use label instead of 'seq66'. Overridden by a\n"
+"                           session manager.\n"
+"   -q, --ppqn qn           Specify default PPQN to replace 192. The MIDI file\n"
+"                           can specify its own PPQN.\n"
+"   -p, --priority          Run high priority, FIFO scheduler (needs root).\n"
+"   -P, --pass-sysex        Passes incoming SysEx messages to all outputs.\n"
+"                           Not yet fully implemented.\n"
+"   -s, --show-midi         Dump incoming MIDI events to the console.\n"
 ;
 
 /*
  * This option was never used, just settable, in Seq24.  We need that letter!
  *
- *      "   -i, --ignore n           Ignore ALSA device number.\n"
+ *      "   -i, --ignore n Ignore ALSA device number."
  */
 
 /**
@@ -257,29 +257,27 @@ static const std::string s_help_1b =
  */
 
 static const std::string s_help_2 =
-"   -k, --show-keys          Prints pressed key value.\n"
-"   -K, --inverse            Inverse/night color scheme for seq/perf editors.\n"
-"   -M, --jack-start-mode m  For ALSA or JACK, these play modes are available:\n"
-"                            'live'; 'song'; and 'auto' (default).\n"
+"   -k, --show-keys         Prints pressed key value.\n"
+"   -K, --inverse           Inverse/night color scheme for seq/perf editors.\n"
+"   -M, --jack-start-mode m ALSA or JACK play modes: live; song; auto.\n"
 #if defined SEQ66_JACK_SUPPORT
-"   -S, --jack-slave         Synchronize to JACK transport (as Slave).\n"
-"   -j, --jack-transport     The legacy (and deprecated) form of --jack-slave.\n"
-"   -g, --no-jack-transport  Turn off JACK transport.\n"
-"   -J, --jack-master        Try to be JACK Master. Also sets -j.\n"
-"   -C, --jack-master-cond   Fail if there's already a Jack Master; sets -j.\n"
-"   -N, --no-jack-midi       Use ALSA MIDI, even with JACK Transport. See -A.\n"
-"   -t, --jack, --jack-midi  Use JACK MIDI, separately from JACK Transport.\n"
-"   -W, --jack-connect       Auto-connect to JACK ports. The default.\n"
-"   -w, --no-jack-connect    Don't connect to JACK ports. Good with NSM.\n"
+"   -S, --jack-slave        Synchronize to JACK transport as Slave.\n"
+"   -j, --jack-transport    Same as --jack-slave.\n"
+"   -g, --no-jack-transport Turn off JACK transport.\n"
+"   -J, --jack-master       Set up as JACK Master. Also sets -j.\n"
+"   -C, --jack-master-cond  Fail if there's already a JACK Master; sets -j.\n"
+"   -N, --no-jack-midi      Use ALSA MIDI, even with JACK Transport. See -A.\n"
+"   -t, --jack, --jack-midi Use JACK MIDI, separately from JACK Transport.\n"
+"   -W, --jack-connect      Auto-connect to JACK ports. The default.\n"
+"   -w, --no-jack-connect   Don't connect to JACK ports. Good with NSM.\n"
 #if defined SEQ66_JACK_SESSION
-"   -U, --jack-session uuid  Set UUID for JACK session; turns on session\n"
-"                            management. Use 'on' to enable it and let JACK\n"
-"                            set the UUID.\n"
+"   -U, --jack-session uuid Set UUID for JACK session management. Use 'on' to\n"
+"                           enable it and let JACK set the UUID.\n"
 #endif
 #endif
-"   -d, --record-by-channel  Divert MIDI input by channel into the patterns\n"
-"                            configured for each channel.\n"
-"   -D, --legacy-record      Record all MIDI into the active pattern. Default.\n"
+"   -d, --record-by-channel Divert MIDI input by channel into the patterns\n"
+"                           numbered for each channel.\n"
+"   -D, --legacy-record     Record all MIDI into the active pattern. Default.\n"
 ;
 
 /**
@@ -288,19 +286,18 @@ static const std::string s_help_2 =
 
 static const std::string s_help_3 =
 "   -0, --smf-0              Don't convert SMF 0 files to SMF 1 upon reading.\n"
-"   -u, --user-save          Save 'usr' settings, usually saved only if they\n"
-"                            do not exist; 'usr' command-line options are not\n"
-"                            permanent otherwise.\n"
+"   -u, --user-save          Force the save  of 'usr' settings.\n"
 "   -H, --home dir           Directory for configuration. $HOME/.config/seq66\n"
 "                            by default. If not a full path, it is appended.\n"
-"   -f, --rc filename        An alternate 'rc' file, in $HOME/.config/seq66 or\n"
-"                            the --home directory. '.rc' extension is enforced.\n"
+"   -f, --rc filename        An alternate 'rc' file in $HOME/.config/seq66 or\n"
+"                            the --home directory. '.rc' extension enforced.\n"
 "   -F, --usr filename       An alternate 'usr' file.  Same rules as for --rc.\n"
 "   -c, --config basename    Change base name of the 'rc' and 'usr' files. The\n"
 "                            extension is stripped. ['qseq66' is default].\n"
 "   -L, --locale lname       Set global locale, if installed on the system.\n"
-"   -o, --option optoken     Provides app-specific options for expansion.  The\n"
-"                            options supported are:\n\n"
+"   -i, --investigate        Turn on various trouble-shooting code.\n"
+"   -o, --option optoken     Provides app-specific options for expansion.\n"
+"                            Options supported are:\n\n"
     ;
 
 /**
@@ -328,7 +325,7 @@ static const std::string s_help_4b =
 "                    the application writes these options to the 'usr' file\n"
 "                    and exits. Subsequent runs are thus affected. Tricky!\n"
 "\n"
-"Add '--user-save' to make these options permanent in the 'usr' file.\n"
+"Add '--user-save' to make these options permanent.\n"
 "\n"
 ;
 
