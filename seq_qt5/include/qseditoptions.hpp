@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-07
+ * \updates       2023-10-11
  * \license       GNU GPLv2 or above
  */
 
@@ -259,7 +259,9 @@ private slots:
     void slot_metro_reload ();
     void slot_escape_pattern ();
     void slot_new_pattern_arm ();
+    void slot_new_pattern_tighten ();
     void slot_new_pattern_qrecord ();
+    void slot_new_pattern_notemap ();
     void slot_new_pattern_record ();
     void slot_new_pattern_thru ();
     void slot_new_pattern_wraparound ();

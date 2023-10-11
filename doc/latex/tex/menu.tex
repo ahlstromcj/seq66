@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-10-08
+% \update      2023-10-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1369,8 +1369,14 @@
          is created.
       \item \textbf{Record}.
          The new pattern starts in record mode.
-      \item \textbf{Q-Record}.
+      \item \textbf{Tighten Record}.
+         The new pattern starts in tightened (partly quantized) record mode.
+      \item \textbf{Quantize Record}.
          The new pattern starts in quantized record mode.
+      \item \textbf{Note-map Record}.
+         The new pattern starts in note-mapping record mode.
+         Notes are translated live via a 'drums' file, if set active
+         in the 'rc' file.
       \item \textbf{Wrap-Aound}.
          The new pattern will allow prolonged notes to wrap around so
          that the Note Off event precedes the Note On event in the

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-07-31
+ * \updates       2023-10-10
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -318,18 +318,18 @@ not_npos (std::string::size_type p)
  *
  * \param b
  *      Provides the "comparing" string. False is returned if it is empty.  It
- *      is the "source" string, the string whose contents we want to
- *      determine if it matches the "target" string.
+ *      is the "source" string, the string whose contents we want to determine
+ *      if it matches the "target" string.
  *
  * \param n
  *      Provides the number of characters in the "comparing" string (parameter
- *      \a a) that must match.  If equal to 0 (the default value), then
- *      the length of a is used. If n is greater than a.length(), then we
- *      cannot satisfy the semantics of this function.
+ *      \a a) that must match.  If equal to 0 (the default value), then the
+ *      minimum of the lengths of a and b is used.
  *
  * \return
  *      Returns true if the strings compare identically for the first \a n
- *      characters.  Returns false otherwise, including when n > a.length().
+ *      characters, but see \a n above. Returns false otherwise, including
+ *      when n > a.length().
  */
 
 bool
@@ -339,7 +339,7 @@ strncompare (const std::string & a, const std::string & b, size_t n)
     if (result)
     {
         if (n == 0)
-            n = a.length();
+            n = std::min(a.length(), b.length());
 
         if (n <= a.length() && b.length() >= n)
         {

@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-10-09
+2019-04-13 to 2023-10-11
 
 Misc:
 
@@ -8,6 +8,15 @@ Misc:
         -   performer: cliear_mute_groups(), reset_mute_groups(), and
             mutegroup_reset() all basically do the same things, except
             that clear_mutes() also notifies subscribers.
+    -   Note-mapping
+        -   When disabling virtual ports, reset counts to 8 and 4
+        -   Keep the None/Tighten/Quantize/NoteMap button enabled;
+            use the value when enabling recording.
+        -   Show icons in the pattern editor on the "quantize" button 
+            that match the alteration mode of recording.
+        -   Add note-map recording new-pattern option.
+        -   Add indicator for note-mapping somewhere besides slot.
+        -   Upgrade m_toggle_qrecord in pattern editor. QTN Icons in place.
     -   In the Kraftwerk song, the Chorus seems to have the wrong pitch,
         on the Arch Linux laptop with Qsynth running.
     -   Fix and test new record/quantize handling, and verify that

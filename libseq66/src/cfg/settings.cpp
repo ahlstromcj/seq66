@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2023-09-09
+ * \updates       2023-10-11
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -307,6 +307,20 @@ rec_vol_items ()
         "Free", "127", "112", "96", "80", "64", "48", "32", "16"
     };
     return s_rec_vol_list;
+}
+
+/**
+ *  The list of supported recording styles as used in qseditoptions.
+ */
+
+const tokenization &
+rec_style_items ()
+{
+    static const tokenization s_rec_style_items
+    {
+        "Merge", "Overwrite", "Expand", "Oneshot", "Oneshot Reset"
+    };
+    return s_rec_style_items;
 }
 
 /**

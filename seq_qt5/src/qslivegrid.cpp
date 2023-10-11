@@ -1620,6 +1620,7 @@ qslivegrid::show_record_mode ()
         button->update();
     }
 #else
+#if defined USE_THIS_CODE   // we want it to affect even in not in RECORD mode
     static bool s_uninitialized = true;
     QPushButton * button = ui->buttonRecordMode;
     if (s_uninitialized)
@@ -1630,8 +1631,9 @@ qslivegrid::show_record_mode ()
     else
         button->setEnabled(! usr().no_grid_record());
 #endif
+#endif
 
-    button->setText(qt(usr().record_mode_label()));
+    ui->buttonRecordMode->setText(qt(usr().record_mode_label()));
 }
 
 void

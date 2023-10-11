@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-10-10
+ * \updates       2023-10-11
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4325,7 +4325,7 @@ sequence::play_note_on (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_ON, midibyte(note), midibyte(m_note_on_velocity));
-    if (rc().investigate() && notemapping())
+    if (rc().investigate())
         perf()->repitch(e);
 
     master_bus()->play_and_flush(m_true_bus, &e, midi_channel(e));
@@ -4347,7 +4347,7 @@ sequence::play_note_off (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_OFF, midibyte(note), midibyte(m_note_on_velocity));
-    if (rc().investigate() && notemapping())
+    if (rc().investigate())
         perf()->repitch(e);
 
     master_bus()->play_and_flush(m_true_bus, &e, midi_channel(e));

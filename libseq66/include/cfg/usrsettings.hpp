@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-10-07
+ * \updates       2023-10-11
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -947,7 +947,9 @@ private:
     bool m_new_pattern_armed;
     bool m_new_pattern_thru;
     bool m_new_pattern_record;
+    bool m_new_pattern_tighten;
     bool m_new_pattern_qrecord;
+    bool m_new_pattern_notemap;
 
     /**
      *  Provides the default recording style at startup. Compare to the
@@ -1738,9 +1740,19 @@ public:
         return m_new_pattern_record;
     }
 
+    bool new_pattern_tighten () const
+    {
+        return m_new_pattern_tighten;
+    }
+
     bool new_pattern_qrecord () const
     {
         return m_new_pattern_qrecord;
+    }
+
+    bool new_pattern_notemap () const
+    {
+        return m_new_pattern_notemap;
     }
 
     recordstyle new_pattern_record_style () const
@@ -1778,6 +1790,11 @@ public:
     {
         if (rm < alteration::max)
             m_record_mode = rm;
+    }
+
+    bool alter_recording () const
+    {
+        return m_record_mode != alteration::none;
     }
 
     std::string record_mode_label () const;
@@ -2000,9 +2017,19 @@ public:         // used in main application module and the usrfile class
         m_new_pattern_record = flag;
     }
 
+    void new_pattern_tighten (bool flag)
+    {
+        m_new_pattern_tighten = flag;
+    }
+
     void new_pattern_qrecord (bool flag)
     {
         m_new_pattern_qrecord = flag;
+    }
+
+    void new_pattern_notemap (bool flag)
+    {
+        m_new_pattern_notemap = flag;
     }
 
     void grid_record_style (const std::string & style);

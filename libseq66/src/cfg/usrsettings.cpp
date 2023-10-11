@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2023-10-10
+ * \updates       2023-10-11
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -415,7 +415,9 @@ usrsettings::usrsettings () :
     m_new_pattern_armed         (false),
     m_new_pattern_thru          (false),
     m_new_pattern_record        (false),
+    m_new_pattern_tighten       (false),
     m_new_pattern_qrecord       (false),
+    m_new_pattern_notemap       (false),
     m_new_pattern_record_style  (recordstyle::merge),
     m_new_pattern_wraparound    (false),
     m_record_mode               (alteration::none),
@@ -515,7 +517,9 @@ usrsettings::set_defaults ()
     m_new_pattern_armed = false;
     m_new_pattern_thru = false;
     m_new_pattern_record = false;
+    m_new_pattern_tighten = false;
     m_new_pattern_qrecord = false;
+    m_new_pattern_notemap = false;
     m_new_pattern_record_style = recordstyle::merge;
     m_new_pattern_wraparound = false;
     m_record_mode = alteration::none;

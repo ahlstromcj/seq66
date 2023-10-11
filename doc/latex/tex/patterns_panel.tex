@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-10-07
+% \update      2023-10-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -947,14 +947,17 @@
          \end{itemize}
    \end{itemize}
 
-   Once the recording mode is turned on, then the recording type comes into
-   play:
+   Once the recording mode is turned on, whether here or in the pattern editor,
+   then the recording type comes into play.
+   The types of alteration that can come into play are set by click the
+   button at the right labeled "None" until the desired recording mode
+   is shown:
 
    \begin{itemize}
-      \item \textbf{No Quan}.
+      \item \textbf{None}.
          Incoming events are recorded as is.
          Plain recording, events recorded with timestamps unaltered.
-         Indicated by a red circle.
+         Indicated by a red circle in the pattern slot.
       \item \textbf{Quantize}.
          When recording, quantize the incoming events.
          Incoming events are quantized to the snap value of the pattern.
@@ -964,6 +967,14 @@
          Incoming events are partially quantized to the snap value of the
          pattern.
          Indicated by a red circle and a "T" inside it in a pattern slot.
+         This mode is accessible only via this recording mode; there
+         is no such button in the pattern editor.
+      \item \textbf{Note Map}.
+         If a 'drums' file has been specified and is active, then
+         incoming events are remapped to different notes.
+         This feature is useful in transforming the notes of an old
+         drum machine into, say, a \textsl{General MIDI} drum kit.
+         Indicated by a red circle and an "N" inside it in a pattern slot.
          This mode is accessible only via this recording mode; there
          is no such button in the pattern editor.
    \end{itemize}

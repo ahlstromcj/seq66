@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-10-10
+ * \updates       2023-10-11
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -316,7 +316,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_play_set              (),
     m_play_set_storage      (),
     m_play_list             (),
-    m_note_mapper           (new notemapper()),
+    m_note_mapper           (new (std::nothrow) notemapper()),
     m_metronome             (),                 /* no metronome by default  */
     m_recorder              (nullptr),          /* no background recording  */
     m_metronome_count_in    (false),
@@ -3116,8 +3116,13 @@ performer::repitch (event & ev) const
     if (notemap_exists() && ev.is_note())
     {
         midibyte incoming = ev.d0();
-        midibyte newnote = m_note_mapper->fast_convert(incoming);
-        ev.d0(newnote);
+        midibyte outgoing = m_note_mapper->fast_convert(incoming);
+
+#if defined SEQ66_PLATFORM_DEBUG
+        if (rc().investigate())
+            printf("Note %d in --> %d out\n", incoming, outgoing);
+#endif
+        ev.d0(outgoing);
     }
 }
 
@@ -8653,7 +8658,7 @@ bool
 performer::open_note_mapper (const std::string & notefile)
 {
     bool result = false;
-    m_note_mapper.reset(new notemapper());
+    m_note_mapper.reset(new (std::nothrow) notemapper());
     if (m_note_mapper)
     {
         if (notefile.empty() || ! rc().notemap_active())

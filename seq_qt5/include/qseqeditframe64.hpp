@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-09-10
+ * \updates       2023-10-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -316,6 +316,7 @@ private slots:
     void thru_change (bool ischecked);
     void record_change (bool ischecked);
     void q_record_change (bool ischecked);
+    void set_toggle_qrecord_button ();
     void update_record_type (int index);
     void update_recording_volume (int index);
     void update_loop_count (int value);

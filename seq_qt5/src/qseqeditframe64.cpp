@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-10-09
+ * \updates       2023-10-11
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -136,6 +136,7 @@
 #include "pixmaps/menu_full.xpm"
 #include "pixmaps/menu_full_inv.xpm"
 #include "pixmaps/midi.xpm"
+#include "pixmaps/n_rec_on.xpm"
 #include "pixmaps/note_length.xpm"
 #include "pixmaps/play.xpm"
 #include "pixmaps/play_on.xpm"
@@ -148,6 +149,7 @@
 #include "pixmaps/scale.xpm"
 #include "pixmaps/sequences.xpm"
 #include "pixmaps/snap.xpm"
+#include "pixmaps/t_rec_on.xpm"
 #include "pixmaps/thru.xpm"
 #include "pixmaps/thru_on.xpm"
 #include "pixmaps/tools.xpm"
@@ -964,11 +966,12 @@ qseqeditframe64::qseqeditframe64
     );
 
     /*
-     * MIDI Quantized Record Button.
+     * MIDI Quantized Record Button. For recording, we can set red-letter
+     * icons for "Q", "T", and "N".
      */
 
-    qt_set_icon(q_rec_xpm, ui->m_toggle_qrecord);
     ui->m_toggle_qrecord->setCheckable(true);
+    set_toggle_qrecord_button();
     connect
     (
         ui->m_toggle_qrecord, SIGNAL(toggled(bool)),
@@ -3775,14 +3778,15 @@ qseqeditframe64::show_pattern_fix ()
 
 /**
  *  Duplicative code.  See record_change(), thru_change(), q_record_change().
+ *  Should add text for Tightened and Note-Mapped active at some point.
  */
 
 static const char * const s_thru_on     = "MIDI Thru Active";
 static const char * const s_thru_off    = "MIDI Thru Inactive";
 static const char * const s_rec_on      = "Record Active";
 static const char * const s_rec_off     = "Record Inactive";
-static const char * const s_qrec_on     = "Quantized Record Active";
-static const char * const s_qrec_off    = "Quantized Record Inactive";
+static const char * const s_rec_on_fmt  = "%s Active";
+static const char * const s_rec_off_fmt = "%s Inactive";
 
 void
 qseqeditframe64::update_midi_buttons ()
@@ -3803,12 +3807,26 @@ qseqeditframe64::update_midi_buttons ()
     if (! record_active)
         repopulate_usr_combos(m_edit_bus, m_edit_channel);
 
+#if defined USE_OLD_CODE
     bool qrecord_active = track().quantized_recording();
     ui->m_toggle_qrecord->blockSignals(true);
     ui->m_toggle_qrecord->setChecked(qrecord_active);
-    ui->m_toggle_qrecord->setToolTip(qrecord_active ? s_qrec_on : s_qrec_off);
+    ui->m_toggle_qrecord->setToolTip(qrecord_active ? "Active" : "Inactive");
     qt_set_icon(qrecord_active ? q_rec_on_xpm : q_rec_xpm, ui->m_toggle_qrecord);
     ui->m_toggle_qrecord->blockSignals(false);
+#else
+    /*
+     * Need to be able to affect the track() alteration in this window!
+     *
+     *      bool alteration_active = track().alter_recording();
+     */
+
+    bool alteration_active = usr().alter_recording();
+    ui->m_toggle_qrecord->blockSignals(true);
+    ui->m_toggle_qrecord->setChecked(alteration_active);
+    set_toggle_qrecord_button();
+    ui->m_toggle_qrecord->blockSignals(false);
+#endif
 
     bool playing = track().armed();
     ui->m_toggle_play->blockSignals(true);
@@ -3874,7 +3892,8 @@ void
 qseqeditframe64::q_record_change (bool ischecked)
 {
     toggler t = ischecked ? toggler::on : toggler::off ;
-    if (perf().set_recording(track(), alteration::quantize, t))
+    alteration mode = usr().record_mode();
+    if (perf().set_recording(track(), mode, t))
     {
         /*
          * No need to refresh all the buttons: update_midi_buttons();
@@ -3885,17 +3904,33 @@ qseqeditframe64::q_record_change (bool ischecked)
         bool record_active = track().recording();
         ui->m_toggle_record->setToolTip(record_active ? s_rec_on : s_rec_off);
         qt_set_icon(record_active ? rec_on_xpm : rec_xpm, ui->m_toggle_record);
-
-        bool qrecord_active = track().quantized_recording();
-        ui->m_toggle_qrecord->setToolTip
-        (
-            qrecord_active ? s_qrec_on : s_qrec_off
-        );
-        qt_set_icon
-        (
-            qrecord_active ? q_rec_on_xpm : q_rec_xpm, ui->m_toggle_qrecord
-        );
+        set_toggle_qrecord_button();
     }
+}
+
+void
+qseqeditframe64::set_toggle_qrecord_button ()
+{
+    bool alter_record_active = track().alter_recording();
+    char qtnlabel[48];
+    (void) snprintf
+    (
+        qtnlabel, sizeof qtnlabel,
+        alter_record_active ? s_rec_on_fmt : s_rec_off_fmt,
+        usr().record_mode_label().c_str()
+    );
+    ui->m_toggle_qrecord->setToolTip(qtnlabel);
+    if (alter_record_active)
+    {
+        if (track().tightened_recording())
+            qt_set_icon(t_rec_on_xpm, ui->m_toggle_qrecord);
+        else if (track().notemapped_recording())
+            qt_set_icon(n_rec_on_xpm, ui->m_toggle_qrecord);
+        else
+            qt_set_icon(q_rec_on_xpm, ui->m_toggle_qrecord);
+    }
+    else
+        qt_set_icon(q_rec_xpm, ui->m_toggle_qrecord);
 }
 
 /**

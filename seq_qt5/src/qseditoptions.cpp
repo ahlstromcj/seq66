@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-07
+ * \updates       2023-10-11
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1441,8 +1441,10 @@ qseditoptions::slot_metro_thru_channel (int index)
  *
  *  checkBoxEscapePattern (for issue #117)
  *  checkBoxNewPatternArm
- *  checkBoxNewPatternQRecord
  *  checkBoxNewPatternRecord
+ *  checkBoxNewPatternTighten
+ *  checkBoxNewPatternQRecord
+ *  checkBoxNewPatternNoteMap
  *  checkBoxNewPatternThru
  *  checkBoxNewPatternWrapAround
  *  comboBoxRecordStyle
@@ -1475,11 +1477,23 @@ qseditoptions::setup_tab_pattern ()
         ui->checkBoxNewPatternArm, SIGNAL(clicked(bool)),
         this, SLOT(slot_new_pattern_arm())
     );
+    ui->checkBoxNewPatternTighten->setChecked(usr().new_pattern_tighten());
+    connect
+    (
+        ui->checkBoxNewPatternTighten, SIGNAL(clicked(bool)),
+        this, SLOT(slot_new_pattern_tighten())
+    );
     ui->checkBoxNewPatternQRecord->setChecked(usr().new_pattern_qrecord());
     connect
     (
         ui->checkBoxNewPatternQRecord, SIGNAL(clicked(bool)),
         this, SLOT(slot_new_pattern_qrecord())
+    );
+    ui->checkBoxNewPatternNoteMap->setChecked(usr().new_pattern_notemap());
+    connect
+    (
+        ui->checkBoxNewPatternNoteMap, SIGNAL(clicked(bool)),
+        this, SLOT(slot_new_pattern_notemap())
     );
     ui->checkBoxNewPatternRecord->setChecked(usr().new_pattern_record());
     connect
@@ -1504,15 +1518,19 @@ qseditoptions::setup_tab_pattern ()
     );
 
     /*
-     * New-pattern record-style options.
+     * New-pattern record-style options. These should be an array/function
+     * in the settings module! Note the handling of this list is different
+     * from PPQN and Buffer-size list handling.
      */
 
+    const tokenization & items = rec_style_items();     // settings module
+    ui->comboBoxRecordStyle->addItem(qt(items[0]));     // "Merge"
+    ui->comboBoxRecordStyle->addItem(qt(items[1]));     // "Overwrite"
+    ui->comboBoxRecordStyle->addItem(qt(items[2]));     // "Expand"
+    ui->comboBoxRecordStyle->addItem(qt(items[3]));     // "Oneshot"
+    ui->comboBoxRecordStyle->addItem(qt(items[4]));     // "Oneshot Reset"
+
     int r = usr().new_pattern_record_code();
-    ui->comboBoxRecordStyle->addItem("Merge");
-    ui->comboBoxRecordStyle->addItem("Overwrite");
-    ui->comboBoxRecordStyle->addItem("Expand");
-    ui->comboBoxRecordStyle->addItem("Oneshot");
-    ui->comboBoxRecordStyle->addItem("Oneshot Reset");
     ui->comboBoxRecordStyle->setCurrentIndex(r);
     connect
     (
@@ -1555,10 +1573,26 @@ qseditoptions::slot_new_pattern_arm ()
 }
 
 void
+qseditoptions::slot_new_pattern_tighten ()
+{
+    bool enable = ui->checkBoxNewPatternTighten->isChecked();
+    usr().new_pattern_tighten(enable);
+    modify_usr();
+}
+
+void
 qseditoptions::slot_new_pattern_qrecord ()
 {
     bool enable = ui->checkBoxNewPatternQRecord->isChecked();
     usr().new_pattern_qrecord(enable);
+    modify_usr();
+}
+
+void
+qseditoptions::slot_new_pattern_notemap ()
+{
+    bool enable = ui->checkBoxNewPatternNoteMap->isChecked();
+    usr().new_pattern_notemap(enable);
     modify_usr();
 }
 
@@ -2441,6 +2475,23 @@ qseditoptions::sync_usr ()
     ui->chkUseFilesPPQN->setChecked(usr().use_file_ppqn());
     ui->chkSongRecordSnap->setChecked(perf().song_record_snap());
     ui->spinKeyHeight->setValue(usr().key_height());
+
+#if defined UPDATE_NEW_PATTERN_CHECKBOXES
+    ui->checkBoxEscapePattern->setChecked(usr().escape_pattern());
+    ui->checkBoxNewPatternArm->setChecked(usr().new_pattern_armed());
+    ui->checkBoxNewPatternTighten->setChecked(usr().new_pattern_tighten());
+    ui->checkBoxNewPatternQRecord->setChecked(usr().new_pattern_qrecord());
+    ui->checkBoxNewPatternNoteMap->setChecked(usr().new_pattern_notemap());
+    ui->checkBoxNewPatternRecord->setChecked(usr().new_pattern_record());
+    ui->checkBoxNewPatternThru->setChecked(usr().new_pattern_thru());
+    ui->checkBoxNewPatternWrapAround->setChecked
+    (
+        usr().new_pattern_wraparound()
+    );
+
+    int r = usr().new_pattern_record_code();
+    ui->comboBoxRecordStyle->setCurrentIndex(r);
+#endif
 
     show_session(usr().session_manager());
     set_scaling_fields();
