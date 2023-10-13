@@ -208,6 +208,12 @@ qslivegrid::qslivegrid
         ui->buttonBackgroundRecord->setEnabled(background_record);
         show_grid_record_style();
         show_record_mode();
+
+        /*
+         * Loop mode: merge, overwrite, one-shot, etc. Also called,
+         * confusingly, grid record-style.
+         */
+
         connect
         (
             ui->buttonLoopMode, SIGNAL(clicked(bool)),
@@ -215,6 +221,10 @@ qslivegrid::qslivegrid
         );
         std::string keyname =
             cb_perf().automation_key(automation::slot::record_style);
+
+        /*
+         * Record mode: none, tighten, quantize, and note-map.
+         */
 
         tooltip_with_keystroke(ui->buttonRecordMode, keyname);
         connect
@@ -1446,11 +1456,20 @@ qslivegrid::slot_activate_bank (bool /*clicked*/)
     (void) perf().set_playing_screenset(bank_id());
 }
 
+/**
+ *  Record style (loop mode) is one of overwrite, expand, one-shot, etc.
+ */
+
 void
 qslivegrid::slot_grid_record_style (bool /*clicked*/)
 {
     perf().next_grid_record_style();
 }
+
+/**
+ *  Record mode is one of none, quantize, tighten, jitter, random, and
+ *  note-map.
+ */
 
 void
 qslivegrid::slot_record_mode (bool /*clicked*/)
@@ -1564,6 +1583,7 @@ qslivegrid::show_grid_record_style ()
         button->update();
     }
 #else
+#if defined USE_THIS_CODE   // we want it to affect even if not in RECORD mode
     static bool s_uninitialized = true;
     QPushButton * button = ui->buttonLoopMode;
     if (s_uninitialized)
@@ -1574,8 +1594,9 @@ qslivegrid::show_grid_record_style ()
     else
         button->setEnabled(! usr().no_grid_record());
 #endif
+#endif
 
-    button->setText(qt(usr().grid_record_style_label()));
+    ui->buttonLoopMode->setText(qt(usr().grid_record_style_label()));
 }
 
 /**
@@ -1620,7 +1641,7 @@ qslivegrid::show_record_mode ()
         button->update();
     }
 #else
-#if defined USE_THIS_CODE   // we want it to affect even in not in RECORD mode
+#if defined USE_THIS_CODE   // we want it to affect even if not in RECORD mode
     static bool s_uninitialized = true;
     QPushButton * button = ui->buttonRecordMode;
     if (s_uninitialized)

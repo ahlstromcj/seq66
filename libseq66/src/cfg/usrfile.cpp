@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-10-07
+ * \updates       2023-10-12
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -50,7 +50,7 @@ namespace seq66
 
 static const int s_usr_legacy = 5;
 static const int s_usr_smf_1 = 8;
-static const int s_usr_file_version = 10;       /* from 9 on 2022-07-21     */
+static const int s_usr_file_version = 11;       /* from 10 on 2023-10-12    */
 
 /**
  *  Principal constructor.
@@ -66,6 +66,7 @@ static const int s_usr_file_version = 10;       /* from 9 on 2022-07-21     */
  *      8:  2021-10-06: Added "convert-to-smf-1".
  *      9:  2021-10-26: Added "swap-coordinates".
  *     10:  2022-07-21: Added "pattern-box-shown" (issue #78).
+ *     11:  2023-10-12: Added more new-pattern options (e.g. notemap)
  *
  * \param name
  *      Provides the full file path specification to the configuration file.
@@ -503,8 +504,12 @@ usrfile::parse ()
     usr().new_pattern_thru(flag);
     flag = get_boolean(file, tag, "record");
     usr().new_pattern_record(flag);
+    flag = get_boolean(file, tag, "tighten");
+    usr().new_pattern_tighten(flag);
     flag = get_boolean(file, tag, "qrecord");
     usr().new_pattern_qrecord(flag);
+    flag = get_boolean(file, tag, "notemap");
+    usr().new_pattern_notemap(flag);
     s = get_variable(file, tag, "record-style");
     usr().new_pattern_record_style(s);
     flag = get_boolean(file, tag, "wrap-around");
@@ -997,7 +1002,9 @@ usrfile::write ()
     write_boolean(file, "armed", usr().new_pattern_armed());
     write_boolean(file, "thru", usr().new_pattern_thru());
     write_boolean(file, "record", usr().new_pattern_record());
+    write_boolean(file, "tighten", usr().new_pattern_tighten());
     write_boolean(file, "qrecord", usr().new_pattern_qrecord());
+    write_boolean(file, "notemap", usr().new_pattern_notemap());
     write_string(file, "record-style", usr().new_pattern_record_string());
     write_boolean(file, "wrap-around", usr().new_pattern_wraparound());
     write_seq66_footer(file);

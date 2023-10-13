@@ -2699,8 +2699,14 @@ Seq66 exits.</string>
          <height>349</height>
         </rect>
        </property>
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
        <property name="title">
-        <string>New-Pattern Options</string>
+        <string/>
        </property>
        <widget class="QComboBox" name="comboBoxRecordStyle">
         <property name="geometry">
@@ -2732,12 +2738,12 @@ Seq66 exits.</string>
          <rect>
           <x>16</x>
           <y>264</y>
-          <width>121</width>
+          <width>153</width>
           <height>16</height>
          </rect>
         </property>
         <property name="text">
-         <string>Record Style</string>
+         <string>Record Loop Style</string>
         </property>
        </widget>
        <widget class="QWidget" name="layoutWidgetRecordStyle">
@@ -2812,7 +2818,7 @@ Seq66 exits.</string>
         </rect>
        </property>
        <property name="title">
-        <string>Randomization</string>
+        <string/>
        </property>
        <widget class="QWidget" name="layoutWidgetRandomization">
         <property name="geometry">
@@ -2902,17 +2908,17 @@ Seq66 exits.</string>
          <x>270</x>
          <y>180</y>
          <width>331</width>
-         <height>131</height>
+         <height>89</height>
         </rect>
        </property>
        <property name="title">
-        <string>Additional 'usr' Options</string>
+        <string/>
        </property>
        <widget class="QCheckBox" name="checkBoxEscapePattern">
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>40</y>
+          <y>36</y>
           <width>301</width>
           <height>28</height>
          </rect>
@@ -2921,6 +2927,63 @@ Seq66 exits.</string>
          <string>Escape Can Close Pattern Editor</string>
         </property>
        </widget>
+      </widget>
+      <widget class="QLabel" name="label_21">
+       <property name="geometry">
+        <rect>
+         <x>28</x>
+         <y>36</y>
+         <width>157</width>
+         <height>18</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>New Pattern Options</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_22">
+       <property name="geometry">
+        <rect>
+         <x>280</x>
+         <y>36</y>
+         <width>117</width>
+         <height>18</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Randomization</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_23">
+       <property name="geometry">
+        <rect>
+         <x>280</x>
+         <y>184</y>
+         <width>177</width>
+         <height>18</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Additional 'usr' Options</string>
+       </property>
       </widget>
      </widget>
      <widget class="QWidget" name="tabSession">

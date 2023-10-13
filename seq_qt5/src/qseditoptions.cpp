@@ -1572,6 +1572,12 @@ qseditoptions::slot_new_pattern_arm ()
     modify_usr();
 }
 
+/**
+ *  Note: currently tightening, quantizing, and note-mapping are mutually
+ *  exclusive.  This GUI needs to enforce that. Or we need to allow
+ *  note-mapping to occur along with one of the others.
+ */
+
 void
 qseditoptions::slot_new_pattern_tighten ()
 {
@@ -2476,7 +2482,10 @@ qseditoptions::sync_usr ()
     ui->chkSongRecordSnap->setChecked(perf().song_record_snap());
     ui->spinKeyHeight->setValue(usr().key_height());
 
-#if defined UPDATE_NEW_PATTERN_CHECKBOXES
+    /*
+     * New-pattern items
+     */
+
     ui->checkBoxEscapePattern->setChecked(usr().escape_pattern());
     ui->checkBoxNewPatternArm->setChecked(usr().new_pattern_armed());
     ui->checkBoxNewPatternTighten->setChecked(usr().new_pattern_tighten());
@@ -2491,8 +2500,6 @@ qseditoptions::sync_usr ()
 
     int r = usr().new_pattern_record_code();
     ui->comboBoxRecordStyle->setCurrentIndex(r);
-#endif
-
     show_session(usr().session_manager());
     set_scaling_fields();
     set_set_size_fields();
@@ -3386,6 +3393,11 @@ qseditoptions::slot_virtual_ports ()
     ui->lineEditOutputCount->setEnabled(on);
     ui->lineEditInputCount->setEnabled(on);
     rc().manual_ports(on);
+    if (! on)
+    {
+        rc().default_manual_port_counts();
+        sync_rc();                              /* too much, but awright    */
+    }
     modify_rc();
 }
 
@@ -3393,6 +3405,13 @@ void
 qseditoptions::slot_enable_virtual_ports ()
 {
     bool on = ui->checkBoxAutoEnableVirtual->isChecked();
+    if (on)
+    {
+        ui->checkBoxVirtualPorts->setChecked(true);
+        ui->lineEditOutputCount->setEnabled(true);
+        ui->lineEditInputCount->setEnabled(true);
+        rc().manual_ports(true);
+    }
     rc().manual_auto_enable(on);
     modify_rc();
 }

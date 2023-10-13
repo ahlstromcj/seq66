@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-10-07
+ * \updates       2023-10-11
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -279,8 +279,8 @@ private:
     bool m_filter_by_channel;       /**< Record only sequence channel data. */
     bool m_manual_ports;            /**< [manual-ports] setting.            */
     bool m_manual_auto_enable;      /**< [manual-port] auto-enable.         */
-    int m_manual_port_count;        /**< [manual-ports] outputjport count.  */
-    int m_manual_in_port_count;     /**< [manual-ports] inputjport count.   */
+    int m_manual_port_count;        /**< [manual-ports] output port count.  */
+    int m_manual_in_port_count;     /**< [manual-ports] input port count.   */
     bool m_reveal_ports;            /**< [reveal-ports] setting.            */
     bool m_init_disabled_ports;     /**< A new test option. EXPERIMENTAL.   */
     bool m_print_keys;              /**< Show hot-key in main window slot.  */
@@ -1358,6 +1358,12 @@ public:
             count = c_output_buss_default;
 
         m_manual_port_count = count;
+    }
+
+    void default_manual_port_counts ()
+    {
+        m_manual_port_count = c_output_buss_default;
+        m_manual_in_port_count = c_input_buss_default;
     }
 
     void manual_in_port_count (int count)

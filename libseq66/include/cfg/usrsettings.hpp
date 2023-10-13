@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-10-11
+ * \updates       2023-10-12
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -952,8 +952,8 @@ private:
     bool m_new_pattern_notemap;
 
     /**
-     *  Provides the default recording style at startup. Compare to the
-     *  current recording style.
+     *  Provides the default recording style (merge, overwrite, etc.) at
+     *  startup. Compare to the current recording style.
      */
 
     recordstyle m_new_pattern_record_style;
@@ -967,8 +967,9 @@ private:
     bool m_new_pattern_wraparound;
 
     /**
-     *  Normal, quantize, or (unsupported) tighten. Indicates if recording into
-     *  a sequence will be quantized or not.
+     *  Normal (none = no alteration), tighten, quantize, or note-map (jitter
+     *  and random are not supported during recording at this time).
+     *  Indicates if notes recorded into a sequence will be altered  or not.
      */
 
     alteration m_record_mode;
@@ -985,6 +986,7 @@ private:
 
     /**
      *  Indicates the global selected mode for the main-window's grid.
+     *
      *  Modes consist of loop (the normal used of the grid to do muting and
      *  unmuting), record (use the grid to turn recording on for a pattern,
      *  copy (use the grid to copy patterns), and more. This is a run-time
@@ -1738,6 +1740,27 @@ public:
     bool new_pattern_record () const
     {
         return m_new_pattern_record;
+    }
+
+    bool new_pattern_alter_recording () const
+    {
+        return
+        (
+            new_pattern_tighten() || new_pattern_qrecord() ||
+            new_pattern_notemap()
+        );
+    }
+
+    alteration new_pattern_alteration () const
+    {
+        if (new_pattern_tighten())
+            return alteration::tighten;
+        else if (new_pattern_qrecord())
+            return alteration::quantize;
+        else if (new_pattern_notemap())
+            return alteration::notemap;
+        else
+            return alteration::none;
     }
 
     bool new_pattern_tighten () const

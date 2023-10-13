@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-10-11
+ * \updates       2023-10-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -209,6 +209,10 @@ private:
     void set_log_timesig_status (bool flag);
     bool log_timesig (bool islogbutton);
     bool detect_time_signature ();
+    void setup_record_styles ();
+    void setup_alterations ();
+    void q_record_change (alteration mode, toggler t);
+    void set_toggle_qrecord_button ();
 
 private:        /* combo-box list accessors */
 
@@ -312,11 +316,10 @@ private slots:
     void data ();
     void show_lfo_frame ();
     void show_pattern_fix ();
-    void play_change (bool ischecked);
-    void thru_change (bool ischecked);
-    void record_change (bool ischecked);
-    void q_record_change (bool ischecked);
-    void set_toggle_qrecord_button ();
+    void slot_play_change (bool ischecked);
+    void slot_thru_change (bool ischecked);
+    void slot_record_change (bool ischecked);
+    void slot_q_record_change (bool ischecked);
     void update_record_type (int index);
     void update_recording_volume (int index);
     void update_loop_count (int value);

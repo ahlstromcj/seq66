@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-10-11
+ * \updates       2023-10-13
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -326,7 +326,6 @@ qseqeditframe64::qseqeditframe64
 {
     std::string seqname = "No sequence!";
     int loopcountmax = 0;
-    bool isnewpattern = false;
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);             /* part of issue #4     */
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -372,21 +371,14 @@ qseqeditframe64::qseqeditframe64
             track().background_sequence(), qbase::status::startup
         );
     }
-    if (track().is_new_pattern())
-    {
-        /*
-         *  This check looks only for "Untitled" and no events. Causes
-         *  opening this window to unmute patterns in generic *.mid files.
-         */
 
-        isnewpattern = true;
-        play_change(usr().new_pattern_armed());
-        thru_change(usr().new_pattern_thru());
-        record_change(usr().new_pattern_record());
-        q_record_change(usr().new_pattern_qrecord());
+    setup_record_styles();
 
-        // TODO: WHAT ABOUT RECORD TYPE???
-    }
+    /*
+     * Might need to move this lower down in the constructor.
+     */
+
+    setup_alterations();
 
     /*
      *  Sequence Number Label
@@ -924,9 +916,11 @@ qseqeditframe64::qseqeditframe64
 
     /*
      * New location. Update the buttons before any of them are connected.
+     * Hmmmmm.... Been fixed to avoid triggering slots.
+     *
+     *  update_midi_buttons();
      */
 
-    update_midi_buttons();
 
     /*
      * Enable (unmute) Play Button. It's not the triangular play button, it's
@@ -938,7 +932,7 @@ qseqeditframe64::qseqeditframe64
     connect
     (
         ui->m_toggle_play, SIGNAL(toggled(bool)),
-        this, SLOT(play_change(bool))
+        this, SLOT(slot_play_change(bool))
     );
 
     /*
@@ -950,7 +944,7 @@ qseqeditframe64::qseqeditframe64
     connect
     (
         ui->m_toggle_thru, SIGNAL(toggled(bool)),
-        this, SLOT(thru_change(bool))
+        this, SLOT(slot_thru_change(bool))
     );
 
     /*
@@ -962,7 +956,7 @@ qseqeditframe64::qseqeditframe64
     connect
     (
         ui->m_toggle_record, SIGNAL(toggled(bool)),
-        this, SLOT(record_change(bool))
+        this, SLOT(slot_record_change(bool))
     );
 
     /*
@@ -975,39 +969,8 @@ qseqeditframe64::qseqeditframe64
     connect
     (
         ui->m_toggle_qrecord, SIGNAL(toggled(bool)),
-        this, SLOT(q_record_change(bool))
+        this, SLOT(slot_q_record_change(bool))
     );
-
-    /*
-     * Recording Merge, Replace, Extend Button.  Provides a button to set the
-     * recording style to "merge" (when looping, merge new incoming events
-     * into the pattern), "overwrite" (replace events with incoming events),
-     * and "expand" (increase the size of the loop to accomodate new events).
-     */
-
-    int lrmerge = usr().grid_record_code(recordstyle::merge);
-    int lrreplace = usr().grid_record_code(recordstyle::overwrite);
-    int lrexpand = usr().grid_record_code(recordstyle::expand);
-    int lroneshot = usr().grid_record_code(recordstyle::oneshot);
-    int lrreset = usr().grid_record_code(recordstyle::oneshot_reset);
-    ui->m_combo_rec_type->insertItem(lrmerge, "Merge");
-    ui->m_combo_rec_type->insertItem(lrreplace, "Overwrite");
-    ui->m_combo_rec_type->insertItem(lrexpand, "Expand");
-    ui->m_combo_rec_type->insertItem(lroneshot, "One-shot");
-    ui->m_combo_rec_type->insertItem(lrreset, "1-shot reset");
-    if (isnewpattern)
-    {
-        lrmerge = usr().new_pattern_record_code();
-        m_last_record_style = usr().new_pattern_record_style();
-        enable_combobox_item
-        (
-            ui->m_combo_rec_type, lrreset, lrmerge == lroneshot
-        );
-    }
-    else
-        enable_combobox_item(ui->m_combo_rec_type, lrreset, false);
-
-    ui->m_combo_rec_type->setCurrentIndex(lrmerge);
     connect
     (
         ui->m_combo_rec_type, SIGNAL(currentIndexChanged(int)),
@@ -1069,6 +1032,7 @@ qseqeditframe64::qseqeditframe64
      *      update_midi_buttons();
      */
 
+    update_midi_buttons();
     set_initialized();
     cb_perf().enregister(this);                             /* notification */
     m_timer = qt_timer(this, "qseqeditframe64", 2, SLOT(conditional_update()));
@@ -1344,6 +1308,95 @@ qseqeditframe64::on_automation_change (automation::slot s)
         redo();
 
     return true;
+}
+
+/**
+ *  Recording loop style Overdub (merge), Overwrite (replace), Expand
+ *  (extend), and One-Shot button.  Provides a button to cycle the
+ *  recording style between "merge" (when looping, merge new incoming events
+ *  into the pattern), "overwrite" (replace events with incoming events),
+ *  "expand" (increase the size of the loop to accomodate new events), and
+ *  "oneshot" (record one loop and stop playing).
+ *
+ *  Setting the current index will not call the slot function because
+ *  ui->m_combo_rec_type is not yet connected. So we call it manually.
+ */
+
+void
+qseqeditframe64::setup_record_styles ()
+{
+    int lrmerge = usr().grid_record_code(recordstyle::merge);
+    int lrreplace = usr().grid_record_code(recordstyle::overwrite);
+    int lrexpand = usr().grid_record_code(recordstyle::expand);
+    int lroneshot = usr().grid_record_code(recordstyle::oneshot);
+    int lrreset = usr().grid_record_code(recordstyle::oneshot_reset);
+    const tokenization & items = rec_style_items();            // settings
+    ui->m_combo_rec_type->insertItem(lrmerge,   qt(items[0])); // "Merge"
+    ui->m_combo_rec_type->insertItem(lrreplace, qt(items[1])); // "Overwrite"
+    ui->m_combo_rec_type->insertItem(lrexpand,  qt(items[2])); // "Expand"
+    ui->m_combo_rec_type->insertItem(lroneshot, qt(items[3])); // "One-shot"
+    ui->m_combo_rec_type->insertItem(lrreset,   qt(items[4])); // "1-shot reset"
+    if (track().is_new_pattern())
+    {
+        int npc = usr().new_pattern_record_code();
+        ui->m_combo_rec_type->setCurrentIndex(npc);
+        m_last_record_style = usr().new_pattern_record_style();
+        update_record_type(npc);
+    }
+    else
+    {
+        int npc = usr().grid_record_code();
+        ui->m_combo_rec_type->setCurrentIndex(npc);
+        m_last_record_style = usr().new_pattern_record_style();
+        update_record_type(npc);
+    }
+}
+
+/**
+ *  This check looks only for "Untitled" and no events. Causes
+ *  opening this window to unmute patterns in generic *.mid files.
+ *
+ *  Indirectly handled:
+ *
+ *      usr().new_pattern_tighten()
+ *      usr().new_pattern_notemap()
+ */
+
+void
+qseqeditframe64::setup_alterations ()
+{
+    if (track().is_new_pattern())
+    {
+        alteration alt = alteration::none;
+        toggler t = toggler::off;
+        bool altered_recording = usr().new_pattern_alter_recording();
+        if (altered_recording)
+        {
+            alt = usr().new_pattern_alteration();
+            t = toggler::on;
+        }
+        slot_play_change(usr().new_pattern_armed());    /* set track arming */
+        slot_thru_change(usr().new_pattern_thru());     /* set track thru   */
+        slot_record_change(usr().new_pattern_record()); /* set track record */
+        q_record_change(alt, t);                        /* trickier         */
+
+        /*
+         * Move to isnewpattern check below.
+         * update_record_type(usr().new_pattern_record_code());
+         */
+    }
+    else
+    {
+        alteration alt = alteration::none;
+        toggler t = toggler::off;
+        bool altered_recording = usr().alter_recording();
+        if (altered_recording)
+        {
+            alt = usr().record_mode();
+            t = toggler::on;
+        }
+        q_record_change(alt, t);
+    }
 }
 
 /**
@@ -3777,8 +3830,9 @@ qseqeditframe64::show_pattern_fix ()
 }
 
 /**
- *  Duplicative code.  See record_change(), thru_change(), q_record_change().
- *  Should add text for Tightened and Note-Mapped active at some point.
+ *  Duplicative code.  See slot_record_change(), slot_thru_change(),
+ *  slot_q_record_change().  Should add text for Tightened and Note-Mapped
+ *  active at some point.
  */
 
 static const char * const s_thru_on     = "MIDI Thru Active";
@@ -3818,10 +3872,13 @@ qseqeditframe64::update_midi_buttons ()
     /*
      * Need to be able to affect the track() alteration in this window!
      *
-     *      bool alteration_active = track().alter_recording();
+     *  bool alteration_active = track().is_new_pattern() ?
+     *      usr().new_pattern_alter_recording() :
+     *      usr().alter_recording() ;
+     *
      */
 
-    bool alteration_active = usr().alter_recording();
+    bool alteration_active = track().alter_recording();
     ui->m_toggle_qrecord->blockSignals(true);
     ui->m_toggle_qrecord->setChecked(alteration_active);
     set_toggle_qrecord_button();
@@ -3841,7 +3898,7 @@ qseqeditframe64::update_midi_buttons ()
  */
 
 void
-qseqeditframe64::play_change (bool ischecked)
+qseqeditframe64::slot_play_change (bool ischecked)
 {
     if (track().set_armed(ischecked))
     {
@@ -3860,7 +3917,7 @@ qseqeditframe64::play_change (bool ischecked)
  */
 
 void
-qseqeditframe64::record_change (bool ischecked)
+qseqeditframe64::slot_record_change (bool ischecked)
 {
     toggler t = ischecked ? toggler::on : toggler::off ;
     if (perf().set_recording(track(), t))
@@ -3889,24 +3946,38 @@ qseqeditframe64::record_change (bool ischecked)
  */
 
 void
-qseqeditframe64::q_record_change (bool ischecked)
+qseqeditframe64::slot_q_record_change (bool ischecked)
 {
     toggler t = ischecked ? toggler::on : toggler::off ;
-    alteration mode = usr().record_mode();
+    alteration mode = alteration::none;
+    if (ischecked)
+    {
+        mode = track().record_mode();
+        if (mode == alteration::none)
+            mode = alteration::quantize;                /* legacy setting   */
+    }
+    q_record_change(mode, t);
+}
+
+void
+qseqeditframe64::q_record_change (alteration mode, toggler t)
+{
     if (perf().set_recording(track(), mode, t))
     {
-        /*
-         * No need to refresh all the buttons: update_midi_buttons();
-         * And in fact it can cause endless recursion when the Q button
-         * is clicked.
-         */
-
         bool record_active = track().recording();
         ui->m_toggle_record->setToolTip(record_active ? s_rec_on : s_rec_off);
         qt_set_icon(record_active ? rec_on_xpm : rec_xpm, ui->m_toggle_record);
         set_toggle_qrecord_button();
     }
 }
+
+/**
+ *  Using track().alter_recording() currently, but when first opening this
+ *  editor, we want to show the setting of alteration usr().record_mode()
+ *  and usr().alter_recording().
+ *
+ *  TODO: elsewhere show recordstyle usr().grid_record_style().
+ */
 
 void
 qseqeditframe64::set_toggle_qrecord_button ()
@@ -3922,6 +3993,7 @@ qseqeditframe64::set_toggle_qrecord_button ()
     ui->m_toggle_qrecord->setToolTip(qtnlabel);
     if (alter_record_active)
     {
+        ui->m_toggle_qrecord->setChecked(true);
         if (track().tightened_recording())
             qt_set_icon(t_rec_on_xpm, ui->m_toggle_qrecord);
         else if (track().notemapped_recording())
@@ -3938,7 +4010,7 @@ qseqeditframe64::set_toggle_qrecord_button ()
  */
 
 void
-qseqeditframe64::thru_change (bool ischecked)
+qseqeditframe64::slot_thru_change (bool ischecked)
 {
     if (perf().set_thru(track(), ischecked, false))
     {

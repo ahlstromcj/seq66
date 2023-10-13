@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-10-11
+ * \updates       2023-10-13
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -6042,15 +6042,21 @@ sequence::set_recording (alteration q, toggler flag)
     else if (flag == toggler::off)
     {
         m_alter_recording = alteration::none;
-        if (q == alteration::none)          /* just turn off the alteration */
-            result = set_recording(toggler::off);
+
+        /*
+         * Don't change the status of recording just because
+         * quantization/alteration is being turned off.
+         *
+         *  if (q == alteration::none)              // turn off alteration
+         *      result = set_recording(toggler::off);
+         */
 
         set_dirty();
         notify_trigger();
     }
-    else
+    else                                        /* toggler::flip            */
     {
-        if (q == alteration::none)          /* plain old basic recording    */
+        if (q == alteration::none)              /* plain basic recording    */
         {
             result = set_recording(toggler::flip);
         }

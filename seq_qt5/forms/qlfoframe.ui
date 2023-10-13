@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>495</width>
-    <height>281</height>
+    <width>508</width>
+    <height>309</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -58,7 +58,7 @@
     <item>
      <widget class="QCheckBox" name="m_measures_check_box">
       <property name="text">
-       <string>Use Measures (vs Length)</string>
+       <string>Use Measure (vs Length)</string>
       </property>
      </widget>
     </item>
@@ -70,7 +70,7 @@
      <x>292</x>
      <y>40</y>
      <width>201</width>
-     <height>229</height>
+     <height>249</height>
     </rect>
    </property>
    <property name="title">
@@ -82,7 +82,7 @@
       <x>16</x>
       <y>30</y>
       <width>173</width>
-      <height>165</height>
+      <height>176</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="m_wave_layout">
@@ -150,10 +150,16 @@
     <property name="geometry">
      <rect>
       <x>16</x>
-      <y>204</y>
+      <y>212</y>
       <width>89</width>
-      <height>24</height>
+      <height>28</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>28</height>
+     </size>
     </property>
     <property name="text">
      <string>&amp;Reset</string>
@@ -163,23 +169,29 @@
     <property name="geometry">
      <rect>
       <x>108</x>
-      <y>204</y>
+      <y>212</y>
       <width>80</width>
-      <height>24</height>
+      <height>28</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>28</height>
+     </size>
     </property>
     <property name="text">
      <string>&amp;Close</string>
     </property>
    </widget>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>17</x>
      <y>52</y>
      <width>241</width>
-     <height>19</height>
+     <height>20</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -225,13 +237,13 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>4</x>
      <y>71</y>
      <width>281</width>
-     <height>165</height>
+     <height>181</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -277,11 +289,11 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>28</x>
-     <y>240</y>
+     <y>256</y>
      <width>245</width>
      <height>29</height>
     </rect>

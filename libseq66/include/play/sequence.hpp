@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-10-06
+ * \updates       2023-10-13
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1380,7 +1380,12 @@ public:
 
     bool alter_recording () const
     {
-        return m_recording && (m_alter_recording != alteration::none);
+        return /* m_recording && */ m_alter_recording != alteration::none;
+    }
+
+    alteration record_mode () const                 /* same name as usr()   */
+    {
+        return m_alter_recording;
     }
 
     bool quantized_recording () const
@@ -1437,16 +1442,6 @@ public:
     {
         m_auto_step_reset = flag;
         m_step_count = 0;
-    }
-
-    void oneshot_recording (bool flag)
-    {
-        m_recording_style = flag ? recordstyle::oneshot : recordstyle::merge ;
-    }
-
-    void expanded_recording (bool flag)
-    {
-        m_recording_style = flag ? recordstyle::expand : recordstyle::merge ;
     }
 
     bool expand_recording () const;     /* does more checking for status    */
