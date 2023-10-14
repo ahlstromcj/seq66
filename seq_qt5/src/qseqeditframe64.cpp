@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-10-13
+ * \updates       2023-10-14
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1347,7 +1347,7 @@ qseqeditframe64::setup_record_styles ()
     {
         int npc = usr().grid_record_code();
         ui->m_combo_rec_type->setCurrentIndex(npc);
-        m_last_record_style = usr().new_pattern_record_style();
+        m_last_record_style = usr().grid_record_style();
         update_record_type(npc);
     }
 }

@@ -6084,7 +6084,7 @@ sequence::set_recording_style (recordstyle rs)
         if (rs == recordstyle::overwrite)
             loop_reset(true);   /* on overwrite, always reset the sequence  */
 
-        notify_trigger();                               /* tricky!  */
+        notify_trigger();                                       /* tricky!  */
     }
     return result;
 }
@@ -7109,7 +7109,7 @@ sequence::loop_record_style (int ri)
 }
 
 /**
- *  Code to help user-interface callers.
+ *  Code to help user-interface callers. Used in qseqeditframe64.
  */
 
 bool

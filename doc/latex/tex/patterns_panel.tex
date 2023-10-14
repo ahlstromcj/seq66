@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-10-11
+% \update      2023-10-14
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -269,12 +269,12 @@
       \item \textbf{Edit pattern in window} *
       \item \textbf{Edit events in tab} *
       \item \textbf{Pattern color}
-      \item \textbf{Record toggle} (new)
+      \item \textbf{Record toggle}
       \item \textbf{Copy pattern}
       \item \textbf{Cut pattern}
       \item \textbf{Delete pattern}
       \item \textbf{Merge into pattern}
-      \item \textbf{Input Bus} (new)
+      \item \textbf{Input Bus}
       \item \textbf{Output Bus}
       \item \textbf{Output Channel}
    \end{enumber}
@@ -348,6 +348,9 @@
 
    \itempar{Record Toggle}{pattern!record toggle}
    Selecting this item toggles the recording status of the pattern.
+   If the grid record mode button shows something other than
+   \textbf{None} (e.g. \textbf{Quantize}), then that alteration is supplied.
+%  (The loop-record style is not applied at this time. TODO).
    Note that recording can also be set in the pattern editor, or via
    the "record" loop-mode, or by automation.
    (The default key is \texttt{+}; click it and then select the
@@ -849,16 +852,18 @@
    Note that the background pattern is muted while recording.
    We will change how it works based on user feedback.
 
-\paragraph{Pattern Loop Modes}
+\paragraph{Pattern Loop-Record Modes}
 \label{paragraph:patterns_loop_modes}
 
-   \textsl{Seq66} has always had the feature of turning on recording, including
-   quantized recording, in the pattern editor.
+   \textsl{Seq66} has always had the feature of turning on recording,
+   including quantized recording, in the pattern editor.
    Now, it also provides for
-   \index{loop!modes}
-   loop modes.  With this new feature, the normal loop muting/unmuting
-   functionality of the \textbf{Live Grid} can be changed to allow the toggling
-   of recording or other actions to be applied to each pattern.
+   \index{loop!grid modes}
+   loop-grid modes.
+   With this feature, the normal loop muting/unmuting
+   functionality of the \textbf{Live Grid} buttons
+   can be changed to allow the toggling
+   of recording or other actions to be applied to the affected  pattern.
    This new functionality is enabled by two buttons in the main window grid and
    by two refactored keystroke/MIDI controls ("Record" and "Quan Record").
    The normal mode (mute/unmute) is called \textbf{Loop}.
@@ -872,13 +877,15 @@
          armed/unarmed status of a pattern.
       \item \textbf{Record}.
          A click/key on the pattern turns on recording for that pattern.
+         This status is shown by the appearance of a red circle in the pattern
+         button.
       \item \textbf{Copy}.
          Copies the selected pattern into the clipboard.
       \item \textbf{Paste}.
          Pastes the clipboard into the selected pattern.
       \item \textbf{Clear}.
          Removes the events from the selected pattern.  Careful!
-         Not yet ready.
+%        Not yet ready.
       \item \textbf{Delete}.
          Deletes the selected pattern.  Careful!
       \item \textbf{Thru}.
@@ -889,7 +896,7 @@
          Deletes the selected pattern and copies it into the clipboard.
       \item \textbf{Double}.
          Doubles the length of the selected pattern.
-         Not yet ready.
+%        Not yet ready.
    \end{itemize}
    It has been supplemented by four recording modes.
    Here are the modes:
@@ -900,7 +907,8 @@
          \index{overdub}
          \index{record!merge}
          \index{record!overdub}
-         This mode is selected by clicking on the \textbf{Loop} button,
+         Also known as \textbf{Merge},
+         this mode is selected by clicking on the \textbf{Loop} button,
          then using the \textbf{Record} control.
          These commands cycle between all the modes in this list.
          Overdub is the same as the \textbf{Merge} option in the 
@@ -947,9 +955,12 @@
          \end{itemize}
    \end{itemize}
 
+   These loop-record modes are automatically applied if a pattern is opened
+   in the pattern editor.
+
    Once the recording mode is turned on, whether here or in the pattern editor,
    then the recording type comes into play.
-   The types of alteration that can come into play are set by click the
+   The types of alteration that can come into play are set by clicking the
    button at the right labeled "None" until the desired recording mode
    is shown:
 
@@ -978,6 +989,9 @@
          This mode is accessible only via this recording mode; there
          is no such button in the pattern editor.
    \end{itemize}
+
+   These alterations are automatically applied if a pattern is opened
+   in the pattern editor.
 
 \subsection{Patterns / Bottom Panel}
 \label{subsec:patterns_panel_bottom}

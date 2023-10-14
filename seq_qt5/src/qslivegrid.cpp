@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-10-09
+ * \updates       2023-10-14
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1232,32 +1232,6 @@ qslivegrid::sequence_key_check ()
             perf().clear_seq_edits();
         }
     }
-
-    /*
-     * We have no need to signal this one, and can hanlde it in the
-     * performer object.
-     */
-
-#if 0       // we have no signal for this one, and can
-    else if (perf().record_toggle_pending())
-    {
-        if (ok)
-        {
-            m_current_seq = seqno;
-            record_sequence();
-            perf().clear_seq_edits();
-        }
-    }
-#endif
-    else if (ok)
-    {
-        /*
-         * Currently ends up handled in performer's loop-control function.
-         *
-         * else
-         *     perf().sequence_key(seqno);                 // toggle loop  //
-         */
-    }
 }
 
 /**
@@ -1383,13 +1357,40 @@ qslivegrid::alter_sequence (seq::number seqno)
     }
 }
 
+/**
+ *  Upgraded to apply the loope record-style and alteration specified
+ *  in the grid.
+ */
+
 void
 qslivegrid::record_sequence ()
 {
+#if defined USE_OLD_CODE
     if (perf().set_recording(m_current_seq, toggler::flip))
     {
         // todo?
     }
+#else
+    bool ok = false;
+    seq::pointer sp = perf().get_sequence(m_current_seq);
+    if (sp)
+    {
+        alteration alt = alteration::none;
+        toggler t = toggler::flip;
+        bool altered_recording = usr().alter_recording();
+        if (altered_recording)
+            alt = usr().record_mode();
+
+        recordstyle rs = usr().grid_record_style();
+        ok = sp->set_recording_style(rs);
+        if (ok)
+            ok = perf().set_recording(*sp, alt, t);
+    }
+    if (! ok)
+    {
+        // todo?
+    }
+#endif
 }
 
 void
