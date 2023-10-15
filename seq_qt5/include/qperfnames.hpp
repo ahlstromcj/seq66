@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-02-27
+ * \updates       2023-10-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -98,6 +98,7 @@ protected:          // Qt overrides
     virtual void mousePressEvent (QMouseEvent *) override;
     virtual void mouseReleaseEvent (QMouseEvent *) override;
     virtual void mouseMoveEvent (QMouseEvent *) override;
+    virtual void mouseDoubleClickEvent (QMouseEvent *) override;
     virtual QSize sizeHint() const override;
     virtual void wheelEvent (QWheelEvent *) override;
 
@@ -111,6 +112,12 @@ private:
     }
 
 signals:
+
+    /*
+     * Open or create an editor window for the selected pattern.
+     */
+
+    void signal_call_editor_ex (int seqid, bool active);
 
 private slots:
 

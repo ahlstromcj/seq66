@@ -1365,32 +1365,15 @@ qslivegrid::alter_sequence (seq::number seqno)
 void
 qslivegrid::record_sequence ()
 {
-#if defined USE_OLD_CODE
-    if (perf().set_recording(m_current_seq, toggler::flip))
-    {
-        // todo?
-    }
-#else
     bool ok = false;
     seq::pointer sp = perf().get_sequence(m_current_seq);
     if (sp)
-    {
-        alteration alt = alteration::none;
-        toggler t = toggler::flip;
-        bool altered_recording = usr().alter_recording();
-        if (altered_recording)
-            alt = usr().record_mode();
+        ok = perf().set_recording_flip(*sp);
 
-        recordstyle rs = usr().grid_record_style();
-        ok = sp->set_recording_style(rs);
-        if (ok)
-            ok = perf().set_recording(*sp, alt, t);
-    }
     if (! ok)
     {
         // todo?
     }
-#endif
 }
 
 void

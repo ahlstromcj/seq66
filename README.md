@@ -87,7 +87,7 @@ Windows, and using a conventional source tarball.
             be enabled via a 'usr' option first.
         *   Issue #118 Make virtual ports ports enabled by default.
         *   Issue #119 "Quantized Record Active does not work" fixed.
-            Still must test tightening and note mapping.
+            Note-mapping also fixed with this issue.
         *   Implemented drag-and-drop of one MIDI file onto the Live grid.
         *   Multiple tempo events can be drawn in a line in the data pane.
             They can be dragged up and down in the data pane.
@@ -101,6 +101,9 @@ Windows, and using a conventional source tarball.
         *   Tweaked the main time display to work better with high PPQN.
         *   Added feature to scroll automatically in time and note value
             to show the first notes in a pattern.
+        *   The live-grid record-mode and alteration statuses are now applied
+            when the pattern editor is opened. The "Record toggle" popup
+            menu entry and MIDI control also support this functionality.
         *   Modified the inverse color palette slightly.
         *   Restore missing table header in Mutes tab.
     *   Version 0.99.9:

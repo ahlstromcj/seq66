@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-10-11
+ * \updates       2023-10-15
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -4123,6 +4123,33 @@ performer::set_recording (seq::ref s, alteration q, toggler flag)
 }
 
 /**
+ *  A version to make setting recording, record loop-mode (style), and
+ *  alterations more uniform and based on the selections in the live grid.
+ *
+ *  See the code in qslivegrid::record_sequence ()
+ */
+
+bool
+performer::set_recording_flip (seq::ref s)
+{
+    alteration alt = alteration::none;
+    toggler t = toggler::flip;
+    bool altered_recording = usr().alter_recording();
+    if (altered_recording)
+        alt = usr().record_mode();
+
+    recordstyle rs = usr().grid_record_style();
+    bool result = s.set_recording_style(rs);
+    if (result)
+        result = set_recording(s, alt, t);
+
+    if (result)
+        set_needs_update();
+
+    return result;
+}
+
+/**
  *  Encapsulates code used internally by performer's automation mechanism. This
  *  is a private function.
  *
@@ -7659,7 +7686,9 @@ performer::loop_control
         {
             m_pending_loop = seq::unassigned();
             m_record_toggle_pending = false;
-            result = set_recording(seqno, toggler::flip);
+            seq::pointer sp = get_sequence(seqno);
+            if (sp)
+                result = set_recording_flip(*sp);
         }
         else if (m_seq_edit_pending || m_event_edit_pending)
         {

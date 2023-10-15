@@ -35,8 +35,8 @@
 
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qperfeditframe64.hpp"
-#include "qperfroll.hpp"
 #include "qperfnames.hpp"
+#include "qperfroll.hpp"
 #include "qperftime.hpp"
 #include "qt5_helpers.hpp"              /* seq66::qt_set_icon()             */
 

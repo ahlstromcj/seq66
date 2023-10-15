@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2023-09-27
+ * \updates       2023-10-15
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll),
@@ -58,8 +58,8 @@ namespace seq66
 {
     class performer;
     class qperfeditex;
-    class qperfroll;
     class qperfnames;
+    class qperfroll;
     class qperftime;
 
 /**
@@ -128,6 +128,11 @@ private:
     qperfroll * perf_roll ()
     {
         return m_perfroll;
+    }
+
+    qperfnames * perf_names ()
+    {
+        return m_perfnames;
     }
 
     bool zoom_in ();

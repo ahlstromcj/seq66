@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-05-23
+ * \updates       2023-10-15
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -41,6 +41,7 @@
 #include <QPainter>
 #include <QPen>
 
+#include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5 class     */
 #include "qperfnames.hpp"               /* seq66::qperfnames panel class    */
@@ -201,7 +202,10 @@ qperfnames::paintEvent (QPaintEvent *)
                         grad.setColorAt(0.5, backcolor.lighter());
                         grad.setColorAt(0.99, backcolor.darker(150));
                     }
-                    painter.fillRect(rect_x +2 , rect_y +1, rect_w -2, h - 1, grad);
+                    painter.fillRect
+                    (
+                        rect_x +2 , rect_y +1, rect_w -2, h - 1, grad
+                    );
                     pen.setColor(fore_color());
 
                     /*
@@ -350,17 +354,35 @@ void
 qperfnames::mousePressEvent (QMouseEvent * ev)
 {
     int y = int(ev->y());
-    int seqnum = convert_y(y);
+    int seqno = convert_y(y);
     if (ev->button() == Qt::LeftButton)
     {
         bool isshiftkey = (ev->modifiers() & Qt::ShiftModifier) != 0;
-        (void) perf().toggle_sequences(seqnum, isshiftkey);
+        (void) perf().toggle_sequences(seqno, isshiftkey);
         update();
     }
     else if (ev->button() == Qt::RightButton)
     {
-        (void) perf().sequence_playing_toggle(seqnum);
+        (void) perf().sequence_playing_toggle(seqno);
         update();
+    }
+}
+
+/**
+ *  One issue is that a double-click yields a mouse-press and an
+ *  mouse-double-click event, in that order. Note the krufty solution
+ *  down at the end of this function.
+ */
+
+void
+qperfnames::mouseDoubleClickEvent (QMouseEvent * ev)
+{
+    if (rc().allow_click_edit())
+    {
+        int seqno = convert_y(int(ev->y()));
+        bool active = perf().is_seq_active(seqno);
+        emit signal_call_editor_ex(seqno, active);
+        (void) perf().toggle_sequences(seqno, false);           /* krufty ! */
     }
 }
 

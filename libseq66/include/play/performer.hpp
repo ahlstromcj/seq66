@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-10-03
+ * \updates       2023-10-15
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2143,6 +2143,7 @@ public:
     bool set_recording (seq::number seqno, toggler flag);
     bool set_recording (seq::ref s, toggler flag);
     bool set_recording (seq::ref s, alteration q, toggler flag);
+    bool set_recording_flip (seq::ref s);
     bool set_thru (seq::ref s, bool active, bool toggle);
 
 #if defined USE_SONG_BOX_SELECT

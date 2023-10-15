@@ -1,12 +1,14 @@
-Release Notes for Seq66 v. 0.99.10 2023-10-09
+Release Notes for Seq66 v. 0.99.10 2023-10-15
 
 -   The usual raft of humiliating bug-fixes:
     -   Issue #117 Option to close pattern windows with esc key if
         enabled via a 'usr' option.
     -   Issue #118 Made virtual ports ports enabled via an option.
     -   Issue #119 "Quantized Record Active does not work" fixed.
+        Live note/drum-mapping also fixed.
     -   Fixed bug preventing a song with triggers stopping playback at
         end of song. Fixes related to playlist-handling.
+    -   MANY other undocumented minor fixes.
 -   Implemented drag-and-drop of one MIDI file onto the Live grid.
 -   Multiple tempo events can be drawn in a line in the data pane
     and can be dragged up and down to change the tempo value.
@@ -14,11 +16,13 @@ Release Notes for Seq66 v. 0.99.10 2023-10-09
     editor(s).
 -   Many improvements and fixes to the Mutes tab.
 -   Added a "grid mode" to toggle mutes by clicking in the Live Grid.
-    The new default group-selection keystroke is "_".
+    The new default mute-group-selection mode keystroke is "_".
+-   Opening the pattern editor reflects the recording mode and live
+    pattern alteration selection (e.g. quantization).
 -   The main time display works better with high PPQN.
 -   Now scrolls automatically in time and note value to show the
     first notes in a pattern.
 
-Read the NEWS, README.md, and TODO files.
+Also see the NEWS, README.md, and TODO files.
 
 # vim: sw=4 ts=4 wm=15 et ft=sh

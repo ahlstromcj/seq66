@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-10-14
+2019-04-13 to 2023-10-15
 
 Misc:
 
@@ -8,20 +8,10 @@ Misc:
         -   performer: cliear_mute_groups(), reset_mute_groups(), and
             mutegroup_reset() all basically do the same things, except
             that clear_mutes() also notifies subscribers.
-    -   Note-mapping
-        -   Upgrade m_toggle_qrecord in pattern editor. QTN Icons in place.
-    -   Record style
-        -   Existing pattern does not show record loop type (e.g. oneshot)
-            in the pattern editor.
-        -   The correct (from live-grid) record-mode (e.g. merge) is not selected
-            in the existing pattern editor.
-        -   The slot-popup for Record Toggle should act like opening up the
-            pattern editor.
-        -   Make sure the keys and MIDI control to toggle recording do the
-            same thing.
-        -   Make sure all statuses update properly.
-        -   Make sure the grid-mode clear and double operations work
-            properly.
+    -   Song double-click opens pattern editor if done in perfqroll. How
+        about in perfnames?
+    -   Make sure the grid-mode clear and double operations work
+        properly.
     -   We might be able to implement auto play start in a manner similar to
         the one-shot mode. Make sure the one-shot-reset option can be accessed
         as per documentation!

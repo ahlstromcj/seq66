@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-09
+ * \updates       2023-10-15
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -92,6 +92,7 @@
 #include "qmutemaster.hpp"              /* shows a map of mute-groups       */
 #include "qperfeditex.hpp"              /* seq66::qperfeditex container     */
 #include "qperfeditframe64.hpp"         /* seq66::qperfeditframe64 class    */
+#include "qperfnames.hpp"               /* seq66::qperfnames pointer access */
 #include "qperfroll.hpp"                /* seq66::qperfroll pointer access  */
 #include "qplaylistframe.hpp"           /* seq66::qplaylistframe class      */
 #include "qsabout.hpp"                  /* seq66::qsabout dialog class      */
@@ -1085,7 +1086,10 @@ qsmainwnd::closeEvent (QCloseEvent * event)
 void
 qsmainwnd::make_perf_frame_in_tab ()
 {
-    m_song_frame64 = new (std::nothrow) qperfeditframe64(cb_perf(), ui->SongTab);
+    m_song_frame64 = new (std::nothrow) qperfeditframe64
+    (
+        cb_perf(), ui->SongTab
+    );
     if (not_nullptr(m_song_frame64))
     {
         int bpmeasure = m_song_frame64->get_beats_per_measure();
@@ -1103,9 +1107,19 @@ qsmainwnd::make_perf_frame_in_tab ()
         qperfroll * pr = m_song_frame64->perf_roll();
         if (not_nullptr(pr))
         {
-            connect         // new standalone sequence editor
+            connect         // standalone sequence editor
             (
                 pr, SIGNAL(signal_call_editor_ex(int, bool)),
+                this, SLOT(load_qseqedit_ex(int, bool))
+            );
+        }
+
+        qperfnames * pn = m_song_frame64->perf_names();
+        if (not_nullptr(pn))
+        {
+            connect         // standalone sequence editor
+            (
+                pn, SIGNAL(signal_call_editor_ex(int, bool)),
                 this, SLOT(load_qseqedit_ex(int, bool))
             );
         }
@@ -2828,9 +2842,19 @@ qsmainwnd::load_qperfedit (bool /*on*/)
             qperfroll * pr = m_perfedit->perf_roll();
             if (not_nullptr(pr))
             {
-                connect         // new standalone sequence editor
+                connect         // standalone sequence editor
                 (
                     pr, SIGNAL(signal_call_editor_ex(int, bool)),
+                    this, SLOT(load_qseqedit_ex(int, bool))
+                );
+            }
+
+            qperfnames * pn = m_perfedit->perf_names();
+            if (not_nullptr(pn))
+            {
+                connect         // standalone sequence editor
+                (
+                    pn, SIGNAL(signal_call_editor_ex(int, bool)),
                     this, SLOT(load_qseqedit_ex(int, bool))
                 );
             }

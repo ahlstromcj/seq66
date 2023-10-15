@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-21
- * \updates       2018-09-27
+ * \updates       2018-10-15
  * \license       GNU GPLv2 or above
  *
  *  The performance editing window is known as the "Song Editor".  Kepler34
@@ -63,6 +63,7 @@ namespace seq66
     class performer;
     class sequence;
     class qperfeditframe64;
+    class qperfnames;
     class qperfroll;
     class qsmainwnd;
 
@@ -103,6 +104,7 @@ private:
     }
 
     qperfroll * perf_roll ();
+    qperfnames * perf_names ();
 
 signals:
 
