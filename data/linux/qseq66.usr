@@ -1,7 +1,7 @@
 # Seq66 0.99.9 user ('usr') configuration file
 #
 # /home/usr/.config/seq66/qseq66.usr
-# Written 2023-10-07 09:01:45
+# Written 2023-10-16 09:09:23
 #
 # 'usr' file. Edit it and place it in ~/.config/seq66. It allows naming each
 # MIDI bus/port, channel, and control code.
@@ -9,7 +9,7 @@
 [Seq66]
 
 config-type = "usr"
-version = 10
+version = 11
 
 # [comments] holds user documentation for this file. The first empty, hash-
 # commented, or tag line ends the comment.
@@ -69,9 +69,12 @@ evince put it in
 # patterns versus separately to each.  If all, these values are stored in the
 # MIDI file in the global SeqSpec versus in each track.
 #
-# 'progress-bar-thick specifies a thicker progress bar.  Default is 1 pixel;
-# thick is 2 pixels if set to true. Also makes the progress box border
-# border 2 pixels, and the slot font bold.
+# 'progress-bar-thick specifies a thicker progress bar.  Default is 2 pixels,
+# 1 pixel if set to false. Also affects the slot box border and the boldness
+# of the slot font.
+#
+# 'follow-progress specifies the default for following progress in the piano
+# rolls. Each window has a button to toggle following progess
 #
 # 'inverse-colors' (option -K/--inverse) specifies use of an inverse color
 # palette. Palettes are for Seq66 drawing areas, not for Qt widgets.
@@ -102,6 +105,7 @@ mainwnd-spacing = 2
 default-zoom = 2
 global-seq-feature = false
 progress-bar-thick = false
+follow-progress = false
 inverse-colors = false
 time-fg-color = "lime"
 time-bg-color = "black"
@@ -174,11 +178,11 @@ bpm-maximum = 600
 
 # [user-options]
 #
-# These settings specify -o or --option switch values.  'daemonize' is used
-# in seq66cli to indicate the application should run as a service. 'log'
-# specifies a log-file that gets output to standard output/error.  For no
-# log-file, use "".  This option also works from the command line:
-# '-o log=filename.log'.
+# These settings specify some -o or --option switch values.  'daemonize' in
+# seq66cli indicates that it should run as a service. 'log' specifies a log-
+# file redirecting output from standard output/error.  If no path in the name,
+# the log is stored in the configuration directory. For no log-file, use
+# "none" or "".  On the command line: '-o log=filename.log'.
 
 [user-options]
 
@@ -244,8 +248,7 @@ lock-main-window = false
 # (Non/New Session Manager), or 'jack'. 'url' can be set to the value set by
 # nsmd when run by command-line. Set 'url' if running nsmd stand-alone; use
 # the --osc-port number. Seq66 detects if started in NSM. The visibility flag
-# is used only by NSM to restore visibility. 'copy-config' indicates if the
-# existing home configuration is copied to a new NSM session.
+# is used only by NSM to restore visibility.
 
 [user-session]
 
@@ -255,13 +258,13 @@ visibility = true
 
 # [new-pattern-editor]
 #
-# Values for play/recording when a new pattern is created. A new pattern
-# is indicated when the loop has the name 'Untitled' and no events. These
-# values save time during a live recording session. The valid values for
-# record-style are 'merge' (default), 'overwrite', 'expand', 'one-shot', 
+# Settings for play/record for a new pattern. A new pattern is 'Untitled'
+# and has no events. These settings save time in live recording. Valid
+# record-style values: 'merge' (overdub), 'overwrite', 'expand', 'one-shot',
 # and 'one-shot-reset'. 'wrap-around' allows recorded notes to wrap to the
 # pattern start. 'escape-pattern' allows the Esc key to close the pattern
-# editor if not playing or in paint mode.
+# editor if not playing or in paint mode. Currently 'notemap' and quantizing
+# are mutually exclusive.
 
 [new-pattern-editor]
 
@@ -269,7 +272,9 @@ escape-pattern = false
 armed = false
 thru = false
 record = false
+tighten = false
 qrecord = false
+notemap = false
 record-style = merge
 wrap-around = false
 

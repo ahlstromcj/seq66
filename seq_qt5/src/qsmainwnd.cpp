@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-15
+ * \updates       2023-10-16
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -277,6 +277,13 @@ qsmainwnd::qsmainwnd
     m_shrunken              (usr().shrunken())
 {
     ui->setupUi(this);
+
+    /*
+     * Weird. The tool-tip for the BBT/HMS button shows in other locations.
+     * And then setting this here makes the button show this tool-tip!!!
+     *
+     * setToolTip("Main window");
+     */
 
 #if defined SEQ66_PORTMIDI_SUPPORT
 
@@ -593,7 +600,8 @@ qsmainwnd::qsmainwnd
     );
 
     /*
-     * We also add a track toggle button for quicker access.
+     * Provide a menu entry to toggle all tracks.  We also add a track toggle
+     * button for quicker access; it will be disabled in Song mode.
      */
 
     connect
@@ -606,6 +614,10 @@ qsmainwnd::qsmainwnd
         cb_perf().automation_key(automation::slot::toggle_mutes);
 
     tooltip_with_keystroke(ui->btnMute, keyname);
+    ui->btnMute->setCheckable(true);                /* ok? */
+    if (cb_perf().song_mode())
+        ui->btnMute->setEnabled(false);
+
     connect
     (
         ui->btnMute, SIGNAL(clicked(bool)),
@@ -1282,9 +1294,15 @@ void
 qsmainwnd::set_song_mode (bool /*songmode*/)
 {
     bool playmode = cb_perf().toggle_song_mode();
-    if (! playmode)
+    if (playmode)
+    {
+        ui->btnMute->setEnabled(false);
+    }
+    else
+    {
+        ui->btnMute->setEnabled(true);
         song_recording(false);
-
+    }
     show_song_mode(playmode);
 }
 

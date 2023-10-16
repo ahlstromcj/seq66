@@ -25,7 +25,7 @@
   <property name="frameShadow">
    <enum>QFrame::Plain</enum>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>9</x>
@@ -62,6 +62,7 @@
           <property name="font">
            <font>
             <family>DejaVu Sans</family>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -120,6 +121,7 @@
         <property name="font">
          <font>
           <family>DejaVu Sans</family>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -169,6 +171,7 @@
           <property name="font">
            <font>
             <family>DejaVu Sans</family>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -247,6 +250,7 @@ Edit / Preferences / Session / .mutes.</string>
           <property name="font">
            <font>
             <family>DejaVu Sans</family>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -413,7 +417,7 @@ do not save them to the MIDI file.</string>
          <number>4</number>
         </property>
         <attribute name="horizontalHeaderVisible">
-         <bool>true</bool>
+         <bool>false</bool>
         </attribute>
         <attribute name="verticalHeaderVisible">
          <bool>false</bool>
@@ -596,17 +600,22 @@ mutes file are present.</string>
  </widget>
  <tabstops>
   <tabstop>m_group_table</tabstop>
-  <tabstop>m_mute_basename</tabstop>
   <tabstop>m_check_from_midi</tabstop>
-  <tabstop>m_check_from_mutes</tabstop>
   <tabstop>m_radio_binary</tabstop>
-  <tabstop>m_radio_hex</tabstop>
   <tabstop>m_check_to_midi</tabstop>
+  <tabstop>m_check_from_mutes</tabstop>
+  <tabstop>m_radio_hex</tabstop>
   <tabstop>m_check_to_mutes</tabstop>
   <tabstop>m_check_toggle_active</tabstop>
   <tabstop>m_check_strip_empty</tabstop>
   <tabstop>m_button_trigger</tabstop>
   <tabstop>m_button_clear_all</tabstop>
+  <tabstop>m_button_save</tabstop>
+  <tabstop>m_button_load</tabstop>
+  <tabstop>m_button_reserved</tabstop>
+  <tabstop>m_button_set_mutes</tabstop>
+  <tabstop>m_check_mutes_active</tabstop>
+  <tabstop>m_mute_basename</tabstop>
  </tabstops>
  <resources/>
  <connections/>

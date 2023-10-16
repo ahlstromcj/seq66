@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-09-22
+% \update      2023-10-16
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -27,11 +27,14 @@
    \label{fig:main_screen_annotated}
 \end{figure}
 
-   The \textsl{Seq66} main window (i.e. the "Live Grid")appears as shown above.
+   The \textsl{Seq66} main window (i.e. the "Live Grid") appears as shown above.
    This figure has many differences from the \textsl{Seq24} main window,
    but the functionality is similar.
    \textsl{Seq66} allows resizing, and can
    be configured to start with its size scaled up or down.
+   There is also a button near the top (not shown) that can
+   hide the menu and the bottom panels, to allow reducing the
+   size of the window event further.
    Its features, including the "look" of the application,
    can be configured via the 'rc', 'usr', 'ctrl', 'drums', 'playlist', 'mutes',
    and 'palette' configuration files, via command-line options, via
@@ -147,12 +150,25 @@
 \subsubsection{Tabs / Session}
 \label{subsubsec:introduction_main_tabs_session}
 
-   The \textbf{Session} tab simply displays some aspects of the running setup of
+   The \textbf{Session} tab displays some aspects of the running setup of
    \textsl{Seq66}.  It displays the name of the session manager, if any, client
    IDs, etc.  It also has a button reload the whole session after configuration
-   changes are made.  It will eventually also contain a log of events, similar
-   to the messages written to the terminal when \textsl{Seq66} is run from a
-   terminal shell.
+   changes are made.
+
+   Here, a session log file can also be specified.
+   If defined, then all messages written to the terminal when \textsl{Seq66}
+   is run from a terminal shell are instead redirected to this file.
+   The default log file is \texttt{seq66.log} specified to use
+   the "home" directory.
+   This file can be cleared using the button to the right of it; however,
+   messages will continue to be logged to this file until
+   \textsl{Seq66} is completely exited and then manually restarted.
+
+   In addition, text data for patterns can be viewed and edited here.
+   Select the desired pattern, enter the desired text, and click the
+   \textbf{Save Info} button.
+   The song is now modified and can be saved.
+
    Also see \sectionref{sec:sessions}.
 
 \subsection{Main Top Controls}
@@ -177,7 +193,7 @@
 
    \begin{itemize}
       \item \textbf{Seq66 Logo}
-      \item \textbf{Show/Hide Button}
+      \item \textbf{Show/Hide Button} (not shown)
       \item \textbf{Engine Status}
       \item \textbf{PPQN Selection}
       \item \textbf{Buss Override for Play-set}

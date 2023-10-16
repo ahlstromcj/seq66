@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2023-09-21
+ * \updates       2023-10-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -130,6 +130,7 @@ qsessionframe::qsessionframe
      * Track (pattern) spin-box.
      */
 
+    ui->spinBoxTrackNumber->setEnabled(true);
     ui->spinBoxTrackNumber->setReadOnly(false);
     ui->spinBoxTrackNumber->setRange(0, m_track_high - 1);
     ui->spinBoxTrackNumber->setValue(0);

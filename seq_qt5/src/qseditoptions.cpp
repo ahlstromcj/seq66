@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-11
+ * \updates       2023-10-16
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1583,6 +1583,13 @@ qseditoptions::slot_new_pattern_tighten ()
 {
     bool enable = ui->checkBoxNewPatternTighten->isChecked();
     usr().new_pattern_tighten(enable);
+    if (enable)
+    {
+        ui->checkBoxNewPatternQRecord->setChecked(false);
+        ui->checkBoxNewPatternNoteMap->setChecked(false);
+        usr().new_pattern_qrecord(false);
+        usr().new_pattern_notemap(false);
+    }
     modify_usr();
 }
 
@@ -1591,6 +1598,13 @@ qseditoptions::slot_new_pattern_qrecord ()
 {
     bool enable = ui->checkBoxNewPatternQRecord->isChecked();
     usr().new_pattern_qrecord(enable);
+    if (enable)
+    {
+        ui->checkBoxNewPatternTighten->setChecked(false);
+        ui->checkBoxNewPatternNoteMap->setChecked(false);
+        usr().new_pattern_tighten(false);
+        usr().new_pattern_notemap(false);
+    }
     modify_usr();
 }
 
@@ -1599,6 +1613,13 @@ qseditoptions::slot_new_pattern_notemap ()
 {
     bool enable = ui->checkBoxNewPatternNoteMap->isChecked();
     usr().new_pattern_notemap(enable);
+    if (enable)
+    {
+        ui->checkBoxNewPatternTighten->setChecked(false);
+        ui->checkBoxNewPatternQRecord->setChecked(false);
+        usr().new_pattern_tighten(false);
+        usr().new_pattern_qrecord(false);
+    }
     modify_usr();
 }
 

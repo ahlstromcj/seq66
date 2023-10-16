@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-02-13
-% \update      2023-07-18
+% \update      2023-10-16
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -142,6 +142,29 @@
    the \textsl{CoolSoft MIDIMapper} and \textsl{VirtualMIDISynth}
    \cite{midimapper} or \textsl{MIDI OX} \cite{midiox}.
    See the \texttt{readme.windows} file for more information.
+
+\subsection{Windows / Virtual Ports}}
+\label{subsec:windows_virtual_ports}}
+
+   Virtual ports are software MIDI ports that can be created for
+   input and output, as noted in
+   \sectionref{paragraph:menu_edit_preferences_midi_clock} and
+   \sectionref{paragraph:menu_edit_preferences_midi_input}.
+   To provide virtual ports in \textsl{Windows},
+   special software needs to be installed.
+   One useful applications is \textsl{LoopMIDI} (see \cite{loopmidi}).
+
+   \begin{quote}
+      Virtual loopback MIDI cable for Windows 7 up to Windows 10, 32 and 64
+      bit.  This software can be used to create virtual loopback MIDI-ports to
+      interconnect applications on Windows that want to open
+      hardware-MIDI-ports for communication.
+   \end{quote}
+
+   With this software, one can create a number of extra MIDI ports.
+   The main difference from \textsl{Linux} here is that the
+   \texttt{--manual-port} option is \textsl{not} used.
+   The virtual ports are treated as real ports in \textsl{Windows}.
 
 \subsection{Windows / Seq66 Startup}
 \label{subsec:windows_seq66_startup}
