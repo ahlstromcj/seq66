@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-10-16
+% \update      2023-10-17
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -193,7 +193,7 @@
 
    \begin{itemize}
       \item \textbf{Seq66 Logo}
-      \item \textbf{Show/Hide Button} (not shown)
+      \item \textbf{Show/Hide Button}
       \item \textbf{Engine Status}
       \item \textbf{PPQN Selection}
       \item \textbf{Buss Override for Play-set}
@@ -229,7 +229,8 @@
    allows hiding the window decorations, the smallest useful size of the
    main window can be about 450 x 320 pixels.
    Of course, a good 'ctrl' automation file (e.g. for the LaunchPad)
-   is necessary to control \textsl{Seq66} in this tiny setup.
+   is necessary to control \textsl{Seq66} in this tiny setup;
+   main menu hot-keys are not accessible with the main menu hidden.
 
 \begin{figure}[H]
    \centering 
@@ -339,6 +340,8 @@
    In the center of the main window is the \textsl{patterns panel}, also 
    known as the \textsl{live grid}, where patterns/loops/tracks are shown
    and where they can be controlled.
+   A MIDI file can be dragged-and-dropped onto the live grid in order
+   to open it.
    Also shown in the patterns panel are a
    background-record button, metronome button, a
    grid-mode dropdown to control how the grid is used,
@@ -463,9 +466,9 @@
       \item \textbf{Keep Queue}
       \item \textbf{Mute Group Learn}
       \item \textbf{Developer Test}
-      \item \textbf{Toggle Mute Status}
+      \item \textbf{Mute} (Toggle Mute Status)
       \item \textbf{Song Editor}
-      \item \textbf{Song Mode}
+      \item \textbf{Live/Song}
       \item \textbf{PPQN Indicator}
 %     \item \textbf{BBT/HMS Toggle}
       \item \textbf{Tap BPM}
@@ -625,8 +628,8 @@
 \subsubsection{Toggle Mute Status}
 \label{subsubsec:introduction_toggle_mute_status_button}
 
-   This button toggles the mute/armed status of all of the patterns
-   in the current set.
+   The \textbf{Mute}  button toggles the mute/armed status of all of the
+   patterns in the current set.
    Works the same as the
    \textbf{Edit / Toggle All Tracks} menu or the hard-wired
    \texttt{Ctrl-T} key.

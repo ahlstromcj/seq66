@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-10-14
+% \update      2023-10-17
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -39,13 +39,23 @@
 
    In addition, an external MIDI file can be dragged onto this grid,
    and dropped, to easily open a MIDI file.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{main-window/live-grid-drag-n-drop.png}
+   \caption{Patterns Panel Drag-and-Drop}
+   \label{fig:patterns_panel_drag_n_drop}
+\end{figure}
+
    This can be done even with "external" pattern editors.
+   If a modified file is loaded, the user
+   will be prompted to save, discard, or cancel.
 
    The musician can
    control the playback and muting/unmuting of each pattern in
    the song, while it is playing, from within this window.
    One can also switch to other screensets, to work with a different
-   part of the song.
+   section of the song.
 
    For exposition, we divide the patterns panel
    into a menu bar, a top panel, a pattern panel (live frame/grid),
@@ -454,7 +464,7 @@
       \item \textbf{Pattern Status}. Second line.
          \index{pattern!status}
          Underneath the pattern-name is the status of the pattern, such as
-         "Armed", "Muted", or "Queued".
+         "New" (untitled with zero events), "Armed", "Muted", or "Queued".
          This status is useful when the Qt theme coloring makes the exact
          status difficult to determine.
       \item \textbf{Pattern Length}. Top right.

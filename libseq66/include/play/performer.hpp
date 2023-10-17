@@ -3478,6 +3478,11 @@ public:                                 /* access functions for the containers *
         return m_mute_groups;
     }
 
+    /*
+     *  Called in qsmainwnd. Will call performer::modify() if
+     *  mutes().reset_defauilts() succeeds.
+     */
+
     bool clear_mute_groups ();
 
     bool reset_mute_groups ()                       /* see clear_mutes()    */

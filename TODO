@@ -1,22 +1,15 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-10-16
+2019-04-13 to 2023-10-17
 
 Misc:
 
+    -   Test Import / Import Project Configuration, Playlist....
     -   The Meta Text edit field stays read-only even when Modify is clicked.
-    -   Document and test mute groups. Issues:
-        -   performer: clear_mute_groups(), reset_mute_groups(), and
-            mutegroup_reset() all basically do the same things, except
-            that clear_mutes() also notifies subscribers.
-    -   Make sure the grid-mode clear and double operations work
-        properly.
-    -   In new patterns, show the word "New" instead of "Armed" or "Muted".
+        (This might be mistaken.)
+    -   Make sure the grid-mode clear and double operations work properly.
     -   Add a feature to start playback when the first note comes
         into a pattern when recording is set. [Turns out to be quite tricky!]
-        We might be able to implement auto play start in a manner similar to
-        the one-shot mode. Make sure the one-shot-reset option can be accessed
-        as per documentation!
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
     -   Make sure we have record-toggle automation!

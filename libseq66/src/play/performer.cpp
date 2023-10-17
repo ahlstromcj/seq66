@@ -7486,7 +7486,7 @@ performer::clear_mutes ()
 bool
 performer::clear_mute_groups ()
 {
-    bool result = mutes().reset_defaults();
+    bool result = reset_mute_groups();      /* mutes().reset_defaults()     */
     if (result)
         modify();
 

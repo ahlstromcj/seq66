@@ -322,7 +322,7 @@ qmutemaster::slot_pattern_offset (int index)
 void
 qmutemaster::slot_fill_mutes ()
 {
-    if (cb_perf().reset_mute_groups())
+    if (cb_perf().reset_mute_groups())  /* or clear_mute_groups() w/modify  */
     {
         if (initialize_table())
         {

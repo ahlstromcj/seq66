@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2023-10-10
+ * \updates       2023-10-16
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -625,19 +625,24 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 );
                 painter.drawText(box, m_bottom_right.m_flags, title);
             }
-
             set_checked(loop()->armed());   /* gets hot-key toggle to show  */
-            if (loop()->armed())
+            if (loop()->is_new_pattern())
             {
-                title = loop()->get_queued() ? "Unqueued" : "Armed" ;
+                title = "New";
             }
-            else if (loop()->get_queued())
-                title = "Queued";
-            else if (loop()->one_shot())
-                title = "One-shot";
             else
-                title = "Muted";
-
+            {
+                if (loop()->armed())
+                {
+                    title = loop()->get_queued() ? "Unqueued" : "Armed" ;
+                }
+                else if (loop()->get_queued())
+                    title = "Queued";
+                else if (loop()->one_shot())
+                    title = "One-shot";
+                else
+                    title = "Muted";
+            }
             if (m_draw_text)
             {
                 // TODO: If vertically compressed, smaller font size needed
