@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-16
+ * \updates       2023-10-17
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -449,6 +449,11 @@ qsmainwnd::qsmainwnd
     if (not_nullptr(m_playlist_frame))
         ui->PlaylistTabLayout->addWidget(m_playlist_frame);
 
+    connect
+    (
+        ui->actionExportProject, SIGNAL(triggered(bool)),
+        this, SLOT(export_project())
+    );
     connect
     (
         ui->actionExportSong, SIGNAL(triggered(bool)),
@@ -2102,7 +2107,7 @@ qsmainwnd::check ()
 }
 
 /**
- *  Prompts for a file-name, returning it as, what else, a C++ std::string.
+ *  Prompts for a MIDI file-name, returning it as, what else, a C++ std::string.
  *
  * \param prompt
  *      The prompt to display.
@@ -2113,7 +2118,7 @@ qsmainwnd::check ()
  */
 
 std::string
-qsmainwnd::filename_prompt
+qsmainwnd::midi_filename_prompt
 (
     const std::string & prompt,
     const std::string & file
@@ -2125,6 +2130,41 @@ qsmainwnd::filename_prompt
         this, result, prompt,
         "MIDI files (*.midi *.mid);;All files (*)", SavingFile, NormalFile,
         ".midi"
+    );
+    if (ok)
+    {
+        // nothing yet
+    }
+    else
+        result.clear();
+
+    return result;
+}
+
+/**
+ *  Prompts for an 'rc' file name.
+ *
+ * \param prompt
+ *      The prompt to display.
+ *
+ * \return
+ *      Returns the name of the file, which will include the path to the file.
+ *      If empty, the user cancelled.
+ */
+
+std::string
+qsmainwnd::project_filename_prompt
+(
+    const std::string & prompt,
+    const std::string & file
+)
+{
+    std::string result = file;
+    bool ok = show_file_dialog
+    (
+        this, result, prompt,
+        "Project files (*.rc);;All files (*)", SavingFile, NormalFile,
+        ".rc"
     );
     if (ok)
     {
@@ -2348,7 +2388,7 @@ qsmainwnd::save_file_as ()
     if (is_wrk)
         currentfile = file_extension_set(currentfile, ".midi");
 
-    std::string filename = filename_prompt(prompt, currentfile);
+    std::string filename = midi_filename_prompt(prompt, currentfile);
     if (filename.empty())
     {
         // no code, the user cancelled
@@ -2389,7 +2429,7 @@ qsmainwnd::export_file_as_midi (const std::string & fname)
     if (fname.empty())
     {
         std::string prompt = "Export file as standard MIDI...";
-        filename = filename_prompt(prompt);
+        filename = midi_filename_prompt(prompt);
     }
     else
         filename = fname;
@@ -2406,6 +2446,58 @@ qsmainwnd::export_file_as_midi (const std::string & fname)
         result = f.write(cb_perf(), false);           /* no SeqSpec       */
         if (! result)
             show_error_box(f.error_message());
+    }
+    return result;
+}
+
+bool
+qsmainwnd::export_project (const std::string & fname)
+{
+    bool result = false;
+    std::string filename;
+    if (fname.empty())
+    {
+        std::string prompt = "Export project configuration...";
+        filename = project_filename_prompt(prompt);
+    }
+    else
+        filename = fname;
+
+    if (filename.empty())
+    {
+        /*
+         * Maybe later, add some kind of warning dialog.
+         */
+    }
+    else
+    {
+        if (not_nullptr(session()))
+        {
+            std::string selecteddir;
+            std::string selectedfile;
+            bool ok = filename_split(fname, selecteddir, selectedfile);
+            if (ok)
+            {
+                ok = session()->export_session_configuration
+                (
+                    selecteddir, selectedfile
+                );
+            }
+            if (ok)
+            {
+                if (use_nsm())
+                {
+                }
+                else
+                {
+                }
+            }
+            else
+            {
+                std::string msg = "Could not export to " + selecteddir;
+                show_error_box(msg);
+            }
+        }
     }
     return result;
 }
@@ -2434,7 +2526,7 @@ qsmainwnd::export_song (const std::string & fname)
     if (fname.empty())
     {
         std::string prompt = "Export Song...";
-        filename = filename_prompt(prompt);
+        filename = midi_filename_prompt(prompt);
     }
     else
         filename = fname;
@@ -4050,7 +4142,7 @@ qsmainwnd::export_file_as_smf_0 (const std::string & fname)
     if (fname.empty())
     {
         std::string prompt = "Convert and export file as SMF 0...";
-        filename = filename_prompt(prompt);
+        filename = midi_filename_prompt(prompt);
     }
     else
         filename = fname;

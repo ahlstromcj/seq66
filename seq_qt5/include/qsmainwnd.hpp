@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-27
+ * \updates       2023-10-17
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -256,7 +256,12 @@ private:
     void enable_save (bool flag = true);
     void make_perf_frame_in_tab ();
     bool check ();
-    std::string filename_prompt
+    std::string midi_filename_prompt
+    (
+        const std::string & prompt,
+        const std::string & filename = ""
+    );
+    std::string project_filename_prompt
     (
         const std::string & prompt,
         const std::string & filename = ""
@@ -464,6 +469,7 @@ private slots:
     bool save_file (const std::string & fname = "", bool updatemenu = true);
     bool save_session ();
     bool save_file_as ();
+    bool export_project (const std::string & fname = "");
     bool export_file_as_midi (const std::string & fname = "");
     bool export_file_as_smf_0 (const std::string & fname = "");
     bool export_song (const std::string & fname = "");

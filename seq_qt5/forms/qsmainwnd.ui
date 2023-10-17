@@ -1527,6 +1527,7 @@ beats/minute.</string>
      <property name="title">
       <string>&amp;Export</string>
      </property>
+     <addaction name="actionExportProject"/>
      <addaction name="actionExportMIDI"/>
      <addaction name="actionExportSong"/>
      <addaction name="actionExportSMF0"/>
@@ -1598,7 +1599,7 @@ beats/minute.</string>
   </action>
   <action name="actionImportMIDI">
    <property name="text">
-    <string>&amp;Import MIDI to Current Set...</string>
+    <string>MIDI to &amp;Current Set...</string>
    </property>
    <property name="toolTip">
     <string>Import MIDI file into (different) bank/set.</string>
@@ -1609,7 +1610,7 @@ beats/minute.</string>
   </action>
   <action name="actionImportProject">
    <property name="text">
-    <string>Import Pro&amp;ject Configuraton...</string>
+    <string>Pro&amp;ject Configuraton...</string>
    </property>
    <property name="toolTip">
     <string>Import a configuration from another directory.</string>
@@ -1713,7 +1714,7 @@ beats/minute.</string>
   </action>
   <action name="actionExportSong">
    <property name="text">
-    <string>&amp;Export Song...</string>
+    <string>&amp;Song...</string>
    </property>
    <property name="toolTip">
     <string>Export song layout as a Seq66 MIDI file with
@@ -1722,7 +1723,7 @@ triggers consolidated into a single one for each unmuted pattern.</string>
   </action>
   <action name="actionExportMIDI">
    <property name="text">
-    <string>Export &amp;MIDI Only...</string>
+    <string>&amp;MIDI Only...</string>
    </property>
    <property name="toolTip">
     <string>Export without Seq66 SeqSpecs, just MIDI events
@@ -1731,7 +1732,7 @@ and messages.</string>
   </action>
   <action name="actionExportSMF0">
    <property name="text">
-    <string>Export &amp;SMF 0...</string>
+    <string>SMF &amp;0...</string>
    </property>
    <property name="toolTip">
     <string>Convert to SMF 0 and export without Seq66 SeqSpecs.</string>
@@ -1838,7 +1839,7 @@ in the same directory as the original, with the extension
   </action>
   <action name="actionImportPlaylist">
    <property name="text">
-    <string>Import &amp;Playlist...</string>
+    <string>&amp;Playlist...</string>
    </property>
    <property name="toolTip">
     <string>Import a playlist into the session.</string>
@@ -1849,7 +1850,7 @@ in the same directory as the original, with the extension
   </action>
   <action name="actionImportMIDIIntoSession">
    <property name="text">
-    <string>Import &amp;MIDI into Session</string>
+    <string>&amp;MIDI into Session</string>
    </property>
   </action>
   <action name="actionTutorial">
@@ -1860,6 +1861,11 @@ in the same directory as the original, with the extension
   <action name="actionUserManual">
    <property name="text">
     <string>&amp;User Manual</string>
+   </property>
+  </action>
+  <action name="actionExportProject">
+   <property name="text">
+    <string>Pro&amp;ject Configuration...</string>
    </property>
   </action>
  </widget>

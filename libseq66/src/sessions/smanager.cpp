@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-09-24
+ * \updates       2023-10-17
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -179,7 +179,7 @@ bool
 smanager::main_settings (int argc, char * argv [])
 {
     static const std::string s_nsm_name{"nsmd"};
-    bool result = true;                 /* false --> EXIT_FAILURE           */
+    bool result = true;                         /* false --> EXIT_FAILURE   */
     std::string parentname = get_parent_process_name();
     bool in_nsm = contains(parentname, s_nsm_name); /* this is tentative!   */
     if (seq_app_cli())
@@ -190,9 +190,9 @@ smanager::main_settings (int argc, char * argv [])
         rc().set_config_files("seq66cli");
     }
     else
-        set_app_name(SEQ66_APP_NAME);   /* "qseq66" by default              */
+        set_app_name(SEQ66_APP_NAME);           /* "qseq66" by default      */
 
-    set_arg_0(argv[0]);                 /* how it got started               */
+    set_arg_0(argv[0]);                         /* how it got started       */
 
     /**
      * Set up objects specific to the GUI for the performer.  Parse command-line
@@ -1241,6 +1241,9 @@ smanager::make_path_names
 }
 
 /**
+ *  Imports configuration files from another directory into the current
+ *  "home" directory. Implements File / Import / Project Configuration.
+ *
  *  Function for the main window to call. It deletes the existing
  *  configuration, copies the source configuration, then calls
  *  import_configuration_items().
@@ -1249,6 +1252,19 @@ smanager::make_path_names
  *  make settings as done in qsmainwnd::import_project().
  *
  *  We don't really need to care if NSM is active here, do we?
+ *
+ * \param sourcepath
+ *      Provides the name of the source directory.
+ *
+ * \param sourcebase
+ *      Provides the basename (e.g. "qseq66.rc") of the source
+ *      configuration file.
+ *
+ * \return
+ *      Returns true if the import succeeds. One source of failure
+ *      is specifying the current "home" directory as the source
+ *      path. The configuration to import must come from a different
+ *      subdirectory.
  */
 
 bool
@@ -1263,26 +1279,107 @@ smanager::import_into_session
     {
         std::string destdir = rc().home_config_directory();
         std::string destbase = rc().config_filename();
-        std::string cfgpath;
-        std::string midipath;
-        session_message("Source", sourcepath + sourcebase);
-        session_message("Destination", destdir);
-        result = make_path_names(destdir, cfgpath, midipath);
+        result = destdir != sourcepath;
         if (result)
         {
-            result = delete_configuration(cfgpath, destbase);
+            std::string cfgpath;
+            std::string midipath;
+            session_message("Source", sourcepath + sourcebase);
+            session_message("Destination", destdir);
+            result = make_path_names(destdir, cfgpath, midipath);
             if (result)
             {
-                result = copy_configuration(sourcepath, sourcebase, cfgpath);
+                result = delete_configuration(cfgpath, destbase);
                 if (result)
                 {
-                    result = import_configuration_items
-                    (
-                        sourcepath, sourcebase, cfgpath, midipath
-                    );
+                    result = copy_configuration(sourcepath, sourcebase, cfgpath);
+                    if (result)
+                    {
+                        result = import_configuration_items
+                        (
+                            sourcepath, sourcebase, cfgpath, midipath
+                        );
+                    }
                 }
             }
         }
+    }
+    return result;
+}
+
+/**
+ *  Copies the relevant files in the "home" configuration to another directory.
+ *
+ *  How do we want this to work?
+ *
+ *      -   Append (and create if necessary) a subdirectory?
+ *          -   "config" for NSM usage.
+ *          -   "seq66" otherwise.
+ *          -   The destbase name (stripped of extension)
+ *      -   Force the user to have already created the full desired path?
+ *
+ * Idea:
+ *
+ *  -   First save these:
+ *      -   rc().set_config_directory(soptarg);
+ *      -   rc().set_config_files(soptarg);
+ *  -   Then change them.
+ *  -   Call save_session().
+ *  -   Restore the saved values.
+ *
+ * \param destpath
+ *      Provides the full destination path.
+ *
+ * \param destbase
+ *      Provides the basename to use (e.g. "qseq66").
+ */
+
+bool
+smanager::export_session_configuration
+(
+    const std::string & destpath,
+    const std::string & destbase
+)
+{
+    bool result = not_nullptr(perf());
+    if (result)
+    {
+        result = ! destpath.empty() && ! destbase.empty();
+        if (result)
+        {
+            std::string sourcedir = rc().home_config_directory();
+            std::string sourcebase = rc().config_filename();
+            result = sourcedir != destpath;
+            if (result)
+            {
+                // TODO
+            }
+        }
+        if (result)
+        {
+            file_message("Save session", "Options");
+            if (! cmdlineopts::write_options_files())
+                file_error("Config export failed", "TODO");;
+
+            std::string mcfname = rc().midi_control_filespec();
+            file_message("Save session", "Controls");
+
+            /*
+             * TODO: make sure these work properly for exporting.
+             */
+
+            result = write_midi_control_file(mcfname, rc());
+            file_message("Save session", "Mutes");
+            result = perf()->save_mutegroups();
+            file_message("Save session", "Playlist");
+            result = perf()->save_playlist();
+            file_message("Save session", "Notemapper");
+            result = perf()->save_note_mapper();
+        }
+    }
+    else
+    {
+        file_error("no performer!", "TODO");
     }
     return result;
 }

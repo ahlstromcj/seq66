@@ -1264,7 +1264,7 @@ cmdlineopts::set_global_locale (const std::string & lname)
  *      file specified alternate "mutes" and "ctrl" files, those will be
  *      written to their specified names, not "erroneous" names.
  *
- * \param filename
+ * \param filebase
  *      This value, if not empty, provides an altername base name for the
  *      writing of the "rc" and "user" files.  Normally empty, it can be
  *      specified in order to write alternate files without overwriting the
