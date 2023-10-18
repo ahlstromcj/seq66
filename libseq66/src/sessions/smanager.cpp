@@ -1374,6 +1374,8 @@ smanager::export_session_configuration
                     result = perf()->save_playlist();
                     file_message("Export", "Notemapper");
                     result = perf()->save_note_mapper();
+
+                    // ADD SAVING OFF PALETTE and QSS
                 }
                 else
                     file_error("Usr export failed", destpath);
