@@ -1962,6 +1962,7 @@ file_extension (const std::string & path)
  *  This function makes sure that the file-extension of the given path is set
  *  to the given extension parameter. Styles that need to be handled:
  *
+ *  -   name or name.ext
  *  -   /dir0/dir1/name[.ext]
  *  -   /home/user/.config/seq66/qseq66[.ext]
  *  -   /dir0/dir1/dir2.xyz/name

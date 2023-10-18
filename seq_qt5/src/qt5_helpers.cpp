@@ -728,6 +728,35 @@ show_text_file_dialog (QWidget * parent, std::string & selectedfile)
  *
  *  QFileDialog::ShowDirsOnly
  *  QFileDialog::DontConfirmOverwrite
+ *
+ * \param parent
+ *      The owner of this dialog.
+ *
+ * \param [inout] selectedfile
+ *      The initial file option and the final selected file option.
+ *
+ * \param prompt
+ *      The string to show in the caption.
+ *
+ * \param filterlist
+ *      The types of files (file extensions) that can be selected.
+ *
+ * \param saving
+ *      indicates if the dialog is meant for saving a file. The constants
+ *      that apply are SavingFile (true) and OpeningFile (false).
+ *      If the former, we call QFileDialog::getSaveFileName().
+ *      If the latter, we call QFileDialog::getOpenFileName().
+ *
+ * \param forceconfig
+ *      Indicates if the dialog is meant for a configuration file. The
+ *      constants that apply are ConfigFile (true) and NormalFile (false).
+ *      forceconfig selects either rc().home_config_directory() or selectedfile.
+ *
+ * \param extension
+ *      The main extension that applies.
+ *
+ * \param promptoverwrite
+ *      If true, a prompt for an overwrite operation is shown.
  */
 
 bool

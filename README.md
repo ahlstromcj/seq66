@@ -1,4 +1,4 @@
-# README for Seq66 0.99.10 2023-10-16
+# README for Seq66 0.99.10 2023-10-18
 
 __Seq66__ A MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -88,7 +88,9 @@ Windows, and using a conventional source tarball.
         *   Issue #118 Make virtual ports ports enabled by default.
         *   Issue #119 "Quantized Record Active does not work" fixed.
             Note-mapping also fixed with this issue.
-        *   Implemented drag-and-drop of one MIDI file onto the Live grid.
+        *   Added drag-and-drop of one MIDI file onto the Live grid.
+        *   Added the export of most project configuration files to another
+            directory.
         *   Multiple tempo events can be drawn in a line in the data pane.
             They can be dragged up and down in the data pane.
         *   If configured for double-click, can now open or create a pattern
@@ -105,7 +107,7 @@ Windows, and using a conventional source tarball.
             when the pattern editor is opened. The "Record toggle" popup
             menu entry and MIDI control also support this functionality.
         *   Modified the inverse color palette slightly.
-        *   Restore missing table header in Mutes tab.
+        *   Restored missing table header in Mutes tab.
     *   Version 0.99.9:
         *   Added an "Input Bus Routing" feature, where each pattern can be
             set to receive events from a given input buss. Selectable from

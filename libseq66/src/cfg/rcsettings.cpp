@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-10-08
+ * \updates       2023-10-18
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -627,10 +627,8 @@ rcsettings::filespec_helper (const std::string & baseext) const
                 use_as_is = true;
         }
         if (! use_as_is)
-        {
-            result = home_config_directory();
-            result += baseext;
-        }
+            result = filename_concatenate(home_config_directory(), baseext);;
+
         result = normalize_path(result);            /* change to UNIX slash */
     }
     return result;

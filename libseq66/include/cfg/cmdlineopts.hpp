@@ -27,7 +27,7 @@
  *
  * \author  Chris Ahlstrom
  * \date    2015-11-20
- * \updates 2023-03-27
+ * \updates 2023-10-18
  * \version $Revision$
  *
  *    Also see the filefunctions.cpp and strfunctions modules.
@@ -109,6 +109,8 @@ public:
     static bool write_options_files (const std::string & filename = "");
     static bool write_rc_file (const std::string & filename = "");
     static bool write_usr_file (const std::string & filename = "");
+    static bool alt_write_rc_file (const std::string & filebase);
+    static bool alt_write_usr_file (const std::string & filebase);
 
 private:
 

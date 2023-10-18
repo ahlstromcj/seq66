@@ -1607,7 +1607,7 @@ qsmainwnd::specify_playlist_folder (const std::string & defalt)
 }
 
 /**
- *  This function let's one select a directory and type in a file-name for
+ *  This function lets one select a directory and type in a file-name for
  *  a playlist file at the beginning of its creation.
  */
 
@@ -1628,8 +1628,8 @@ qsmainwnd::specify_list_dialog ()
         bool ok = show_file_dialog
         (
             this, fname, prompt,
-            "Playlist file (*.playlist);;All files (*)", SavingFile, NormalFile,
-            ".playlist"
+            "Playlist file (*.playlist);;All files (*)",
+            SavingFile, NormalFile, ".playlist"
         );
         if (ok)
         {
@@ -2128,8 +2128,8 @@ qsmainwnd::midi_filename_prompt
     bool ok = show_file_dialog
     (
         this, result, prompt,
-        "MIDI files (*.midi *.mid);;All files (*)", SavingFile, NormalFile,
-        ".midi"
+        "MIDI files (*.midi *.mid);;All files (*)",
+        SavingFile, NormalFile, ".midi"
     );
     if (ok)
     {
@@ -2153,19 +2153,13 @@ qsmainwnd::midi_filename_prompt
  */
 
 std::string
-qsmainwnd::project_filename_prompt
+qsmainwnd::project_folder_prompt
 (
-    const std::string & prompt,
-    const std::string & file
+    const std::string & prompt
 )
 {
-    std::string result = file;
-    bool ok = show_file_dialog
-    (
-        this, result, prompt,
-        "Project files (*.rc);;All files (*)", SavingFile, NormalFile,
-        ".rc"
-    );
+    std::string result; //  = file;
+    bool ok = show_folder_dialog( this, result, prompt, true); /* force home */
     if (ok)
     {
         // nothing yet
@@ -2454,16 +2448,16 @@ bool
 qsmainwnd::export_project (const std::string & fname)
 {
     bool result = false;
-    std::string filename;
+    std::string foldername;
     if (fname.empty())
     {
         std::string prompt = "Export project configuration...";
-        filename = project_filename_prompt(prompt);
+        foldername = project_folder_prompt(prompt);
     }
     else
-        filename = fname;
+        foldername = fname;
 
-    if (filename.empty())
+    if (foldername.empty())
     {
         /*
          * Maybe later, add some kind of warning dialog.
@@ -2473,16 +2467,11 @@ qsmainwnd::export_project (const std::string & fname)
     {
         if (not_nullptr(session()))
         {
-            std::string selecteddir;
-            std::string selectedfile;
-            bool ok = filename_split(fname, selecteddir, selectedfile);
-            if (ok)
-            {
-                ok = session()->export_session_configuration
-                (
-                    selecteddir, selectedfile
-                );
-            }
+            std::string selectedfile = rc().config_filename();
+            bool ok = session()->export_session_configuration
+            (
+                foldername, selectedfile
+            );
             if (ok)
             {
                 if (use_nsm())
@@ -2494,7 +2483,7 @@ qsmainwnd::export_project (const std::string & fname)
             }
             else
             {
-                std::string msg = "Could not export to " + selecteddir;
+                std::string msg = "Could not export to " + foldername;
                 show_error_box(msg);
             }
         }

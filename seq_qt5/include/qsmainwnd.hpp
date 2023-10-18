@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-17
+ * \updates       2023-10-18
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -126,7 +126,7 @@ public:
         performer & p,
         const std::string & midifilename    = "",
         bool usensm                         = false,
-        qt5nsmanager * sessionmgr           = nullptr // QWidget * p = nullptr
+        qt5nsmanager * sessionmgr           = nullptr
     );
     virtual ~qsmainwnd ();
 
@@ -204,7 +204,7 @@ protected:                              // performer callbacks
     virtual bool on_automation_change (automation::slot s) override;
     virtual bool on_sequence_change
     (
-        seq::number seqno, performer::change ctype  // bool recreate
+        seq::number seqno, performer::change ctype
     ) override;
     virtual bool on_trigger_change (seq::number seqno) override;
     virtual bool on_set_change
@@ -261,11 +261,7 @@ private:
         const std::string & prompt,
         const std::string & filename = ""
     );
-    std::string project_filename_prompt
-    (
-        const std::string & prompt,
-        const std::string & filename = ""
-    );
+    std::string project_folder_prompt (const std::string & prompt);
     void update_play_status ();
     void update_window_title (const std::string & fn = "");
     void update_recent_files_menu ();

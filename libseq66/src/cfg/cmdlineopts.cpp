@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-10-10
+ * \updates       2023-10-18
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -1299,7 +1299,7 @@ cmdlineopts::write_rc_file (const std::string & filebase)
         }
         else
         {
-            std::string name = filename_concatenate(filebase, ".rc");
+            std::string name = file_extension_set(filebase, ".rc");
             rcn = rc().config_filespec(name);
         }
 
@@ -1308,6 +1308,20 @@ cmdlineopts::write_rc_file (const std::string & filebase)
         if (! result)
             file_error("Write failed", rcn);
     }
+    return result;
+}
+
+bool
+cmdlineopts::alt_write_rc_file (const std::string & filebase)
+{
+    bool result = true;
+    std::string name = file_extension_set(filebase, ".rc");
+    std::string rcn = rc().config_filespec(name);
+    rcfile options(rcn, rc());
+    result = options.write();
+    if (! result)
+        file_error("Write failed", rcn);
+
     return result;
 }
 
@@ -1324,7 +1338,7 @@ cmdlineopts::write_usr_file (const std::string & filebase)
         }
         else
         {
-            std::string name = filename_concatenate(filebase, ".usr");
+            std::string name = file_extension_set(filebase, ".usr");
             usrn = rc().user_filespec(name);
         }
 
@@ -1333,6 +1347,20 @@ cmdlineopts::write_usr_file (const std::string & filebase)
         if (! result)
             file_error("Write failed", usrn);
     }
+    return result;
+}
+
+bool
+cmdlineopts::alt_write_usr_file (const std::string & filebase)
+{
+    bool result = true;
+    std::string name = file_extension_set(filebase, ".usr");
+    std::string usrn = rc().user_filespec(name);
+    usrfile userstuff(usrn, rc());
+    result = userstuff.write();
+    if (! result)
+        file_error("Write failed", usrn);
+
     return result;
 }
 

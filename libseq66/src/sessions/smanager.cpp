@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-10-17
+ * \updates       2023-10-18
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -1344,37 +1344,45 @@ smanager::export_session_configuration
     bool result = not_nullptr(perf());
     if (result)
     {
+        std::string sourcedir = rc().home_config_directory();
+        std::string sourcebase = rc().config_filename();
         result = ! destpath.empty() && ! destbase.empty();
         if (result)
         {
-            std::string sourcedir = rc().home_config_directory();
-            std::string sourcebase = rc().config_filename();
             result = sourcedir != destpath;
             if (result)
-            {
-                // TODO
-            }
+                file_message("Export destination", destpath);
+            else
+                file_error("Export destination = source", destpath);
         }
         if (result)
         {
-            file_message("Save session", "Options");
-            if (! cmdlineopts::write_options_files())
-                file_error("Config export failed", "TODO");;
+            rc().home_config_directory(destpath);
+            rc().config_filename(destbase);
+            result = cmdlineopts::alt_write_rc_file(destbase);
+            if (result)
+            {
+                result = cmdlineopts::alt_write_usr_file(destbase);
+                if (result)
+                {
+                    std::string mcfname = rc().midi_control_filespec();
+                    file_message("Export", "Controls");
+                    result = write_midi_control_file(mcfname, rc());
+                    file_message("Export", "Mutes");
+                    result = perf()->save_mutegroups();
+                    file_message("Export", "Playlist");
+                    result = perf()->save_playlist();
+                    file_message("Export", "Notemapper");
+                    result = perf()->save_note_mapper();
+                }
+                else
+                    file_error("Usr export failed", destpath);
+            }
+            else
+                file_error("Rc export failed", destpath);
 
-            std::string mcfname = rc().midi_control_filespec();
-            file_message("Save session", "Controls");
-
-            /*
-             * TODO: make sure these work properly for exporting.
-             */
-
-            result = write_midi_control_file(mcfname, rc());
-            file_message("Save session", "Mutes");
-            result = perf()->save_mutegroups();
-            file_message("Save session", "Playlist");
-            result = perf()->save_playlist();
-            file_message("Save session", "Notemapper");
-            result = perf()->save_note_mapper();
+            rc().home_config_directory(sourcedir);
+            rc().config_filename(sourcebase);
         }
     }
     else

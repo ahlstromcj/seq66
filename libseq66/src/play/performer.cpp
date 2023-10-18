@@ -8962,10 +8962,6 @@ performer::save_mutegroups (const std::string & mgf)
     else
     {
         result = seq66::save_mutegroups(mgfname, mutes());
-        if (result)
-        {
-            // Anything to do?
-        }
     }
     return result;
 }
@@ -9141,13 +9137,25 @@ performer::save_playlist (const std::string & pl)
     bool result = bool(m_play_list);
     if (result)
     {
-        result = seq66::save_playlist(*m_play_list, pl);
-        /*
-         * TODO
-         *
-        if (! result)
-            append_error_message(m_play_list->error_message());
-         */
+        std::string plname = pl;
+        if (plname.empty())
+            plname = rc().playlist_filespec();
+
+        if (plname.empty())
+        {
+            // what to do?
+        }
+        else
+        {
+            result = seq66::save_playlist(*m_play_list, plname);
+
+            /*
+             * TODO
+             *
+             *  if (! result)
+             *      append_error_message(m_play_list->error_message());
+             */
+        }
     }
     else
     {
