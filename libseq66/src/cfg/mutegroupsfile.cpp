@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2023-10-05
+ * \updates       2023-10-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -512,17 +512,13 @@ save_mutegroups (const std::string & destination, const mutegroups & mutes)
     {
         mutegroups & ncmutes = const_cast<mutegroups &>(mutes);
         mutegroupsfile mgf(destination, ncmutes);
-        file_message("Mute-groups save", destination);
         result = mgf.write();
         if (! result)
-        {
             file_error("Mute-groups write failed", destination);
-        }
     }
     else
-    {
         file_error("Mute-groups file to save", "none");
-    }
+
     return result;
 }
 

@@ -1,10 +1,13 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-10-17
+2019-04-13 to 2023-10-19
 
 Misc:
 
+    -   The seqkeys are not using the keys palette colors!
     -   Test Import / Import Project Configuration, Playlist....
+    -   "Store Palette" and the palette configuration file should provide
+        the inverse palette.
     -   The Meta Text edit field stays read-only even when Modify is clicked.
         (This might be mistaken.)
     -   Make sure the grid-mode clear and double operations work properly.

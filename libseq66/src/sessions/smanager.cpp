@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-10-18
+ * \updates       2023-10-19
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -638,29 +638,29 @@ smanager::save_session (std::string & msg, bool ok)
             bool save = rc().auto_options_save();
             if (save)
             {
-                file_message("Save session", "Options");
+                session_message("Save", "Options");
                 if (! cmdlineopts::write_options_files())
                     msg = "Config writes failed";
             }
             if (rc().auto_ctrl_save())
             {
                 std::string mcfname = rc().midi_control_filespec();
-                file_message("Save session", "Controls");
+                session_message("Save", "Controls");
                 result = write_midi_control_file(mcfname, rc());
             }
             if (rc().auto_mutes_save())
             {
-                file_message("Save session", "Mutes");
+                session_message("Save", "Mutes");
                 result = perf()->save_mutegroups();         // add msg return?
             }
             if (rc().auto_playlist_save())
             {
-                file_message("Save session", "Playlist");
+                session_message("Save", "Playlist");
                 result = perf()->save_playlist();           // add msg return?
             }
             if (rc().auto_drums_save())
             {
-                file_message("Save session", "Notemapper");
+                session_message("Save", "Note-mapper");
                 result = perf()->save_note_mapper();        // add msg return?
             }
         }
@@ -1314,17 +1314,19 @@ smanager::import_into_session
  *
  *      -   Append (and create if necessary) a subdirectory?
  *          -   "config" for NSM usage.
- *          -   "seq66" otherwise.
+ *          -   No additional directory name otherwise.
  *          -   The destbase name (stripped of extension)
  *      -   Force the user to have already created the full desired path?
+ *          No, we can make the directory as needed.
  *
  * Idea:
  *
  *  -   First save these:
- *      -   rc().set_config_directory(soptarg);
- *      -   rc().set_config_files(soptarg);
+ *      -   rc().set_config_directory()
+ *      -   rc().set_config_files()
  *  -   Then change them.
- *  -   Call save_session().
+ *  -   Make sure the destination path exists, creating it if necessary.
+ *  -   Call some of the code present in save_session().
  *  -   Restore the saved values.
  *
  * \param destpath
@@ -1357,27 +1359,44 @@ smanager::export_session_configuration
         }
         if (result)
         {
+            std::string srcpalette = rc().palette_filespec();
+            std::string srcqss = rc().style_sheet_filespec();
             rc().home_config_directory(destpath);
             rc().config_filename(destbase);
-            result = cmdlineopts::alt_write_rc_file(destbase);
+            result = make_directory_path(destpath);
+            if (result)
+                result = cmdlineopts::alt_write_rc_file(destbase);
+
             if (result)
             {
                 result = cmdlineopts::alt_write_usr_file(destbase);
                 if (result)
                 {
                     std::string mcfname = rc().midi_control_filespec();
-                    file_message("Export", "Controls");
                     result = write_midi_control_file(mcfname, rc());
-                    file_message("Export", "Mutes");
-                    result = perf()->save_mutegroups();
-                    file_message("Export", "Playlist");
-                    result = perf()->save_playlist();
-                    file_message("Export", "Notemapper");
-                    result = perf()->save_note_mapper();
+                    if (result)
+                        result = perf()->save_mutegroups();
 
-                    // ADD SAVING OFF PALETTE and QSS
+                    if (result)
+                        result = perf()->save_playlist();
+
+                    if (result)
+                        result = perf()->save_note_mapper();
+
+                    if (result)
+                    {
+                        std::string destpalette = rc().palette_filespec();
+                        std::string destqss = rc().style_sheet_filespec();
+                        file_message("Writing palette", destpalette);
+                        result = file_copy(srcpalette, destpalette);
+                        if (result)
+                        {
+                            file_message("Writing qss", destpalette);
+                            result = file_copy(srcqss, destqss);
+                        }
+                    }
                 }
-                else
+                if (! result)
                     file_error("Usr export failed", destpath);
             }
             else

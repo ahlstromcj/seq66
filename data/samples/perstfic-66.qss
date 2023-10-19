@@ -32,6 +32,12 @@ This file and license is based on Incrypt.qss; it has been updated to
 work better with Seq66.
 */
 
+QWidget
+{
+	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0.00480769 rgba(3, 50, 76, 255),stop:0.293269 rgba(6, 82, 125, 255),stop:0.514423 rgba(8, 117, 178, 255),stop:0.745192 rgba(7, 108, 164, 255),stop:1 rgba(3, 51, 77, 255));
+	color: #ffffff;
+}
+
 /* Additions */
 
 QTabBar::tab
@@ -56,11 +62,6 @@ QTabBar::tab:selected
     margin-bottom: 0px;
 }
 
-QMenu
-{
-	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0.00480769 rgba(3, 50, 76, 255),stop:0.293269 rgba(6, 82, 125, 255),stop:0.514423 rgba(8, 117, 178, 255),stop:0.745192 rgba(7, 108, 164, 255),stop:1 rgba(3, 51, 77, 255));
-}
-
 QMenuBar
 {
 }
@@ -80,6 +81,11 @@ QMenuBar::item:selected
     color: #ffffff;
 }
 
+QMenu
+{
+	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0.00480769 rgba(3, 50, 76, 255),stop:0.293269 rgba(6, 82, 125, 255),stop:0.514423 rgba(8, 117, 178, 255),stop:0.745192 rgba(7, 108, 164, 255),stop:1 rgba(3, 51, 77, 255));
+}
+
 /* Affects the entries under the top-level menus. */
 
 QMenu::item
@@ -96,7 +102,7 @@ QMenu::item
     padding-top:4px;
     padding-bottom:4px;
     padding-right:7px;
-    /*background-color: #1e1d23;*/
+    /*background-color: #008080;*/
 }
 
 QMenu::item:selected
@@ -115,14 +121,34 @@ QMenu::item:selected
 	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0.00480769 rgba(3, 50, 76, 255),stop:0.293269 rgba(6, 82, 125, 255),stop:0.514423 rgba(8, 117, 178, 255),stop:0.745192 rgba(7, 108, 164, 255),stop:1 rgba(3, 51, 77, 255));
 }
 
-/* End of Additions */
+/*
 
-/*-----QWidget-----*/
-QWidget
+QTextEdit
 {
-	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0.00480769 rgba(3, 50, 76, 255),stop:0.293269 rgba(6, 82, 125, 255),stop:0.514423 rgba(8, 117, 178, 255),stop:0.745192 rgba(7, 108, 164, 255),stop:1 rgba(3, 51, 77, 255));
-	color: #ffffff;
+    border-width: 1px;
+    border-radius: 4px;
+    border-color: rgb(58, 58, 58);
+    border-style: inset;
+    padding: 0 8px;
+    color: #a9b7c6;
+    background:#008080;
+    selection-background-color:#007b50;
+    selection-color: #FFFFFF;
 }
+
+QPlainTextEdit
+{
+    background-color:#008080;
+    border-width: 1px;
+    border-color: rgb(58, 58, 58);
+    border-style: solid;
+    color: #a9b7c6;
+    selection-background-color:#007b50;
+}
+
+*/
+
+/* End of Additions */
 
 /*-----QLabel-----*/
 QLabel
@@ -156,17 +182,17 @@ QPushButton::pressed
 	padding: 5px;
 }
 
-/*-----QLineEdit-----*/
+/*-----QLineEdit----- */
+
 QLineEdit
 {
-	background-color: #bfbfbf;
+	background-color: #10b0b0;
 	color: #000000;
 	border-style: solid;
 	border-color: #141414;
 	border-radius: 5px;
 	padding-left: 10px;
 }
-
 
 /*-----QListView-----*/
 QListView

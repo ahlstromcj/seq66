@@ -37,6 +37,13 @@ QComboBox::down-arrow
 
 */
 
+QWidget
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:.4 #343434);
+    color: #ffa000;
+    border-color: #000000;
+}
+
 /* Additions */
 
 QMainWindow
@@ -157,21 +164,26 @@ QPushButton:disabled
 
 QMenuBar
 {
-    background-color: #1e1d23;
 }
+
+/* Affects the top-level menu. */
 
 QMenuBar::item
 {
     color: #a9b7c6;
-    spacing: 3px;
     padding: 1px 4px;
-    background: #1e1d23;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:.4 #343434);
 }
 
 QMenuBar::item:selected
 {
     background:#1e1d23;
     color: #FFFFFF;
+}
+
+QMenu
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:.4 #343434);
 }
 
 QMenu::item:selected
@@ -187,7 +199,7 @@ QMenu::item:selected
     padding-top:4px;
     padding-bottom:4px;
     padding-right:7px;
-    background-color: #1e1d23;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:.4 #343434);
 }
 
 QMenu::item
@@ -207,14 +219,6 @@ QMenu::item
     background-color: #1e1d23;
 }
 
-QMenu
-{
-    background-color:#1e1d23;
-}
-
-/*
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #212121, stop:0.48 #282828, stop:0.52 #303030, stop:1 #343434);
-*/
 QComboBox
 {
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:.4 #343434);
@@ -250,15 +254,6 @@ QComboBox QAbstractView
 
 /* End of Additions */
 
-/*-----QWidget-----*/
-QWidget
-{
-    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:.4 #343434);
-    color: #ffa000;
-    border-color: #000000;
-}
-
-/*-----QLabel-----*/
 QLabel
 {
     background-color: transparent;
