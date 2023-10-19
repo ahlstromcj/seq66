@@ -66,6 +66,8 @@ of the incrypt-66.qss style-sheet.
 # piano rolls and the --inverse option. The first value is the color
 # number, from 0 to 12. The names are feature names, not color names.
 # The second column is the inverse color.
+#  8       "Black Keys" [ 0xFF001000 ]       "Black Keys" [ 0xFF000000 ]
+#  9       "White Keys" [ 0xFFB0FFB0 ]       "White Keys" [ 0xFFFFFFFF ]
 
 [ui-palette]
 
@@ -77,9 +79,9 @@ of the incrypt-66.qss style-sheet.
  5            "Tempo" [ 0xFFFFFF00 ]            "Tempo" [ 0xFFFFFF00 ]
  6        "Note Fill" [ 0xFF000000 ]        "Note Fill" [ 0xFFFFFFFF ]
  7      "Note Border" [ 0xFFFFFFFF ]      "Note Border" [ 0xFF000000 ]
- 8       "Black Keys" [ 0xFF000000 ]       "Black Keys" [ 0xFF000000 ]
- 9       "White Keys" [ 0xFFD0FFD0 ]       "White Keys" [ 0xFFFFFFFF ]
-10     "Progress Bar" [ 0xFFFF0000 ]     "Progress Bar" [ 0xFFFF0000 ]
+ 8       "Black Keys" [ 0xFF0000FF ]       "Black Keys" [ 0xFF000000 ]
+ 9       "White Keys" [ 0xFFB0FFB0 ]       "White Keys" [ 0xFFFFFFFF ]
+10     "Progress Bar" [ 0xFFFF0000 ]     "Progress Bar" [ 0xFF00FF00 ]
 11     "Back Pattern" [ 0xFF008B8B ]     "Back Pattern" [ 0xFF008B8B ]
 12      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF808080 ]
 13        "Beat Line" [ 0xFFFFFFFF ]        "Beat Line" [ 0xFF484848 ]

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2023-09-12
+ * \updates       2023-10-19
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -666,20 +666,8 @@ protected:
         m_old = r;
     }
 
-    void selection (seq66::rect & r)
-    {
-        m_selected = r;
-    }
-
-    /**
-     *  Clears all the mouse-action flags.
-     */
-
-    void clear_action_flags ()
-    {
-        m_selecting = m_moving = m_growing = m_paste = m_moving_init =
-             m_painting = false;
-    }
+    void selection (seq66::rect & r);       /* moved due to debugging issue */
+    void clear_action_flags ();             /* ditto                        */
 
     void selecting (bool v)
     {
@@ -855,11 +843,12 @@ protected:
     }
 
     /**
-     *  Calculates a suitable starting zoom value for the given PPQN value.  The
-     *  default starting zoom is 2, but this value is suitable only for PPQN of
-     *  192 and below.  Also, zoom currently works consistently only if it is a
-     *  power of 2.  For starters, we scale the zoom to the selected ppqn, and
-     *  then shift it each way to get a suitable power of two.
+     *  Calculates a suitable starting zoom value for the given PPQN value.
+     *  The default starting zoom is 2, but this value is suitable only for
+     *  PPQN of 192 and below.  Also, zoom currently works consistently only
+     *  if it is a power of 2.  For starters, we scale the zoom to the
+     *  selected ppqn, and then shift it each way to get a suitable power of
+     *  two.
      *
      * \param ppqn
      *      The ppqn of interest.

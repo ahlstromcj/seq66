@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-31
+ * \updates       2023-10-19
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -163,6 +163,16 @@ private:
         return m_preview_color;
     }
 
+    const Color & white_color () const
+    {
+        return m_white_key_color;
+    }
+
+    const Color & black_color () const
+    {
+        return m_black_key_color;
+    }
+
     void total_height (int y)
     {
         if (y > 0)
@@ -196,6 +206,8 @@ private:
     int m_key_y;
     int m_key_area_y;
     const Color m_preview_color;
+    const Color m_white_key_color;
+    const Color m_black_key_color;
     bool m_is_previewing;
     bool m_preview_on;
     int m_preview_key;

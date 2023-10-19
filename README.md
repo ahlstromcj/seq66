@@ -1,4 +1,4 @@
-# README for Seq66 0.99.10 2023-10-18
+# README for Seq66 0.99.10 2023-10-19
 
 __Seq66__ A MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -88,6 +88,8 @@ Windows, and using a conventional source tarball.
         *   Issue #118 Make virtual ports ports enabled by default.
         *   Issue #119 "Quantized Record Active does not work" fixed.
             Note-mapping also fixed with this issue.
+        *   Fixed an egregious error in drawing notes in drum mode.
+        *   Fixed error in moving notes at PPQN != 192.
         *   Added drag-and-drop of one MIDI file onto the Live grid.
         *   Added the export of most project configuration files to another
             directory.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2022-09-09
+ * \updates       2023-10-19
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -263,6 +263,27 @@ qeditbase::convert_ts_box_to_rect
     convert_ts(tick_f, seq_l, x2, y2);
     rect::xy_to_rect(x1, y1, x2, y2, r);
     r.height_incr(m_unit_height);
+}
+
+void
+qeditbase::selection (seq66::rect & r)
+{
+    m_selected = r;
+}
+
+/**
+ *  Clears all the mouse-action flags.
+ */
+
+void
+qeditbase::clear_action_flags ()
+{
+    m_selecting =
+        m_moving =
+        m_growing =
+        m_paste =
+        m_moving_init =
+        m_painting = false;
 }
 
 }           // namespace seq66

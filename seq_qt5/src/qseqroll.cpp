@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-13
+ * \updates       2023-10-19
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -464,10 +464,10 @@ qseqroll::paintEvent (QPaintEvent * qpep)
         if (is_drum_mode())
         {
             int drumx = x - unit_height() * 0.5 + m_keypadding_x;
-            painter.drawRect(drumx, y, selw + unit_height(), selh);
+            painter.drawRect(drumx, y + 2, selw + unit_height(), selh);
         }
         else
-            painter.drawRect(x + m_keypadding_x, y, selw, selh);
+            painter.drawRect(x + m_keypadding_x, y + 2, selw, selh);
 
         old_rect().set(x, y, selw, selh);
     }
@@ -661,7 +661,7 @@ qseqroll::draw_notes
 
     int unitheight = unit_height();
     int unitdecr = unit_height() - 2;
-    int noteheight = unitheight - 3;
+    int noteheight = unitheight - 2;    // 3;
     s->draw_lock();
     for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
@@ -671,20 +671,7 @@ qseqroll::draw_notes
             break;
 
         if (dt == sequence::draw::tempo)
-        {
-#if defined SEQ66_SHOW_TEMPO_IN_PIANO_ROLL
-            int x = xoffset(ni.start());
-            double tempo = double(ni.velocity());
-            int tnote = tempo_to_note_value(tempo);
-            int y = total_height() - (tnote * unitheight) - unitdecr;
-            pen.setColor(fore_color());
-            brush.setColor(tempo_color());
-            painter.setPen(pen);
-            painter.setBrush(brush);
-            draw_tempo(painter, x, y, ni.velocity());
-#endif
             continue;
-        }
 
         bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
         bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;
@@ -864,7 +851,7 @@ qseqroll::draw_notes
 
 /*
  * Why floating point; just divide by 2.  Also, the polygon seems to be offset
- * downard by half the note height.
+ * downward by half the note height.
  *
 \verbatim
              x0    x     x1
@@ -945,7 +932,10 @@ qseqroll::draw_drum_notes
     if (is_nullptr(s))
         return;
 
-    int noteheight = unit_height();
+    int unitheight = unit_height();
+    int unitdecr = unit_height() - 2;
+//  int noteheight = unit_height() - 2;      // + 1;
+    s->draw_lock();
     for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
         sequence::note_info ni;
@@ -954,21 +944,7 @@ qseqroll::draw_drum_notes
             break;
 
         if (dt == sequence::draw::tempo)
-        {
-#if defined SEQ66_SHOW_TEMPO_IN_PIANO_ROLL
-            int x = xoffset(ni.start());
-            midibpm max = usr().midi_bpm_maximum();
-            midibpm min = usr().midi_bpm_minimum();
-            double tempo = double(ni.velocity());
-            int y = int((max - tempo) / (max - min) * 128) + 0;
-            pen.setColor(fore_color());
-            brush.setColor(tempo_color());
-            painter.setPen(pen);
-            painter.setBrush(brush);
-            draw_tempo(painter, x, y, ni.velocity());
-#endif
             continue;
-        }
 
         bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
         bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;
@@ -976,7 +952,7 @@ qseqroll::draw_drum_notes
         if (start_in || linkedin)
         {
             m_note_x = xoffset(ni.start());
-            m_note_y = total_height() - ((ni.note() + 1) * noteheight);
+            m_note_y = total_height() - (ni.note() * unitheight) - unitdecr;
 
             /*
              * Orange note if selected, red for drum mode.
@@ -993,6 +969,7 @@ qseqroll::draw_drum_notes
             draw_drum_note(painter, m_note_x, m_note_y);
         }
     }
+    s->draw_unlock();
 }
 
 int
@@ -1134,7 +1111,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                 bool is_selected = track().select_note_events
                 (
                     tick_s, note, tick_f, note, selmode
-                );
+                ) > 0;
                 if (is_selected)
                 {
                     if (! isctrl)

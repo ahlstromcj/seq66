@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.10 2023-10-18
+Release Notes for Seq66 v. 0.99.10 2023-10-19
 
 -   The usual raft of humiliating bug-fixes:
     -   Issue #117 Option to close pattern windows with esc key if
@@ -6,6 +6,8 @@ Release Notes for Seq66 v. 0.99.10 2023-10-18
     -   Issue #118 Made virtual ports ports enabled via an option.
     -   Issue #119 "Quantized Record Active does not work" fixed.
         Live note/drum-mapping also fixed.
+    -   Fixed an egregious error in drawing notes in drum mode.
+    -   Fixed error in moving notes at PPQN != 192.
     -   Fixed bug preventing a song with triggers stopping playback at
         end of song. Fixes related to playlist-handling.
     -   MANY other undocumented minor fixes.

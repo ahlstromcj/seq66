@@ -4,7 +4,11 @@ Chris Ahlstrom
 
 Misc:
 
-    -   The seqkeys are not using the keys palette colors!
+    -   Disabling the palette in UI and restarting does not work.
+    -   Note movement
+        -   Have to click the note once to select it, then a click-and-hold
+                to be able to move it.
+    -   Why do some controls get extra-wide with incrypt-66.qss?
     -   Test Import / Import Project Configuration, Playlist....
     -   "Store Palette" and the palette configuration file should provide
         the inverse palette.

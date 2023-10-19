@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-11
+ * \updates       2023-10-19
  * \license       GNU GPLv2 or above
  *
  *  We've added the feature of a right-click toggling between showing the main
@@ -98,7 +98,9 @@ qseqkeys::qseqkeys
     m_key               (0),
     m_key_y             (keyheight),            /* note_height()        */
     m_key_area_y        (keyareaheight),        /* total_height()       */
-    m_preview_color     (progress_paint()),     /* extra_paint())       */
+    m_preview_color     (progress_paint()),     /* preview_color()      */
+    m_white_key_color   (white_key_paint()),    /* white_color()        */
+    m_black_key_color   (black_key_paint()),    /* black_color()        */
     m_is_previewing     (false),                /* previewing()         */
     m_preview_on        (false),                /* preview_on()         */
     m_preview_key       (sc_null_key)           /* preview_key()        */
@@ -125,13 +127,15 @@ qseqkeys::paintEvent (QPaintEvent *)
     QPen pen(Qt::black);
     QBrush brush (Qt::SolidPattern);
     const int keyx = sc_keyoffset_x + 1;
-    int keyy = 0;
     const int numx = 1;                                     /* was 2        */
+    int keyy = 0;
     int numy = 8;
     const int nh = note_height();
     const int nh_1 = nh - 1;
     const int nh_4 = nh - 4;
-    const int nh_5 = nh - 5;
+    const int nh_3 = nh - 3;
+    const int key_x_3 = sc_key_x - 3;
+    const int key_x_6 = sc_key_x - 6;
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(sc_border_width);
     brush.setColor(Qt::darkGray);
@@ -143,21 +147,22 @@ qseqkeys::paintEvent (QPaintEvent *)
     {
         int keyvalue = c_notes_count - i - 1;
         int key = keyvalue % c_octave_size;
-        pen.setColor(Qt::black);                            /* white keys   */
         pen.setStyle(Qt::SolidLine);
-        brush.setColor(Qt::white);
+        pen.setColor(Qt::black);
         brush.setStyle(Qt::SolidPattern);
-        painter.setPen(pen);
-        painter.setBrush(brush);
-        painter.drawRect(keyx, keyy, sc_key_x, nh_1);
         if (is_black_key(key))                              /* black keys   */
         {
-            pen.setStyle(Qt::SolidLine);
-            pen.setColor(Qt::black);
-            brush.setColor(Qt::black);
+            brush.setColor(black_color());                  /* Qt::black    */
             painter.setPen(pen);
             painter.setBrush(brush);
-            painter.drawRect(keyx, keyy + 2, sc_key_x - 2, nh_5);
+            painter.drawRect(keyx, keyy + 1, key_x_6, nh_3);
+        }
+        else
+        {
+            brush.setColor(white_color());                  /* Qt::white    */
+            painter.setPen(pen);
+            painter.setBrush(brush);
+            painter.drawRect(keyx, keyy, sc_key_x, nh_1);
         }
         if (is_preview_key(keyvalue))                       /* preview note */
         {
@@ -165,7 +170,7 @@ qseqkeys::paintEvent (QPaintEvent *)
             pen.setStyle(Qt::NoPen);
             painter.setPen(pen);
             painter.setBrush(brush);
-            painter.drawRect(keyx + 2, keyy + 2, sc_key_x - 3, nh_4);
+            painter.drawRect(keyx + 2, keyy + 2, key_x_3, nh_4);
         }
 
         std::string note;
