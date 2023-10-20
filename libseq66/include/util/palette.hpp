@@ -137,15 +137,15 @@ enum class InvertibleColor
     grey,               /**< Medium grid lines.                             */
     dk_grey,            /**< Heavy grid lines.                              */
     lt_grey,            /**< Light grid lines.                              */
-    extra,              /**< Just an additional color to make it even.      */
+    beat,               /**< For a medium-heavy beat line; was foreground.  */
     near,               /**< Mouse is near an event in a pane. Was yellow   */
     backtime,           /**< Used for the background of time-lines.         */
     backdata,           /**< Used for the background of data panes.         */
     backevent,          /**< Used for the background of the event pane.     */
     backkeys,           /**< Used for the background of the keys pane.      */
     backnames,          /**< Used for the background of perf names pane.    */
-    extra_02,           /**< Expansion */
-    extra_03,           /**< Expansion */
+    octave,             /**< Color for each octave line; was foreground.    */
+    extra_03,           /**< Expansion                                      */
     max                 /**< First illegal palette value, not in color set. */
 };
 

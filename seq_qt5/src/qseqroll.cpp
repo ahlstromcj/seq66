@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-19
+ * \updates       2023-10-20
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -550,7 +550,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         int modkey = remkeys - scroll_offset_v() + octkey;
         int y = key * unit_height() + 2;
         if ((modkey % c_octave_size) == 0)
-            pen.setColor(fore_color());
+            pen.setColor(octave_paint());               /* fore_color()     */
         else
             pen.setColor(step_color());
 
@@ -560,7 +560,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         {
             if (! scales_policy(m_scale, modkey))       /* scales.cpp/hpp   */
             {
-                pen.setColor(fore_color());         /* Qt::lightGray        */
+                pen.setColor(fore_color());             /* Qt::lightGray    */
                 painter.setBrush(scale_brush());
                 painter.setPen(pen);
                 painter.drawRect(0, y + 1, r.width(), unit_height() - 1);
@@ -605,7 +605,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
             enum Qt::PenStyle penstyle = Qt::SolidLine;
             if (tick % ticks_per_bar == 0)          /* solid line every bar */
             {
-                pen.setColor(fore_color());         /* Qt::black            */
+                pen.setColor(beat_paint());         /* fore_color()         */
                 penwidth = 2;
             }
             else if (tick % ticks_per_beat == 0)    /* light on every beat  */

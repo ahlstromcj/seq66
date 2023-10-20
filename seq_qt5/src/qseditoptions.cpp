@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-16
+ * \updates       2023-10-20
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1885,6 +1885,22 @@ qseditoptions::setup_tab_session ()
         ui->lineEditStyleSheet, SIGNAL(editingFinished()),
         this, SLOT(slot_stylesheet_filename())
     );
+
+    /*
+     * Meant for looking up a file-name just to get the base-name.
+     * This will save the user from having to rely on memory.
+     *
+     * Hidden for now.
+     */
+
+    ui->pushButtonLoadCtrl->hide();
+    ui->pushButtonLoadDrums->hide();
+    ui->pushButtonLoadMutes->hide();
+    ui->pushButtonLoadPalette->hide();
+    ui->pushButtonLoadPlaylist->hide();
+    ui->pushButtonLoadRc->hide();
+    ui->pushButtonLoadStyleSheet->hide();
+    ui->pushButtonLoadUsr->hide();
 }
 
 bool
@@ -2864,28 +2880,21 @@ qseditoptions::slot_palette_save_click ()
 void
 qseditoptions::slot_palette_save_now_click ()
 {
-    std::string palfile = rc().palette_filespec();
-    if (palfile.empty())
+    QString qs = ui->lineEditPalette->text();
+    std::string palfile = qs.toStdString();
+    if (! palfile.empty())
     {
-        QString qs = ui->lineEditPalette->text();
-        palfile = qs.toStdString();
+        /* TODO: ensure only base name is used */
+
         rc().palette_filename(palfile);
-        palfile = rc().palette_filespec();
     }
+    palfile = rc().palette_filespec();
     if (! palfile.empty())
     {
         if (save_palette(global_palette(), palfile))
-        {
-            /*
-             * TODO: report full file-path saved
-             */
-        }
+            file_message("Saved", palfile);
         else
-        {
-            /*
-             * TODO: report error
-             */
-        }
+            file_error("Save failed", palfile);
     }
 }
 

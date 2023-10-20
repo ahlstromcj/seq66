@@ -1300,6 +1300,10 @@ rcsettings::clear_playlist (bool disable)
  *      The value to use to make the setting, if the string is not empty.
  *      If there is no period in the string, then ".usr" is appended to the
  *      end of the filename.
+ *
+ * TODO:
+ *
+ *      For these functions, investigate accepting empty values.
  */
 
 void

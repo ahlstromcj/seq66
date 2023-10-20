@@ -46,7 +46,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>7</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -3437,7 +3437,7 @@ required.</string>
          <rect>
           <x>140</x>
           <y>70</y>
-          <width>170</width>
+          <width>125</width>
           <height>24</height>
          </rect>
         </property>
@@ -3450,7 +3450,7 @@ required.</string>
          <rect>
           <x>140</x>
           <y>100</y>
-          <width>170</width>
+          <width>125</width>
           <height>24</height>
          </rect>
         </property>
@@ -3463,7 +3463,7 @@ required.</string>
          <rect>
           <x>140</x>
           <y>130</y>
-          <width>170</width>
+          <width>125</width>
           <height>24</height>
          </rect>
         </property>
@@ -3476,7 +3476,7 @@ required.</string>
          <rect>
           <x>140</x>
           <y>160</y>
-          <width>170</width>
+          <width>125</width>
           <height>24</height>
          </rect>
         </property>
@@ -3489,7 +3489,7 @@ required.</string>
          <rect>
           <x>432</x>
           <y>70</y>
-          <width>170</width>
+          <width>125</width>
           <height>24</height>
          </rect>
         </property>
@@ -3502,7 +3502,7 @@ required.</string>
          <rect>
           <x>432</x>
           <y>100</y>
-          <width>170</width>
+          <width>125</width>
           <height>24</height>
          </rect>
         </property>
@@ -3533,7 +3533,7 @@ required.</string>
          <rect>
           <x>140</x>
           <y>190</y>
-          <width>170</width>
+          <width>125</width>
           <height>24</height>
          </rect>
         </property>
@@ -3561,6 +3561,9 @@ path added to this name is stripped.</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBoxSavePalette">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>36</x>
@@ -3570,7 +3573,7 @@ path added to this name is stripped.</string>
          </rect>
         </property>
         <property name="text">
-         <string>.palette</string>
+         <string>.palette *</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_cfg_active_2">
@@ -3676,7 +3679,7 @@ path added to this name is stripped.</string>
          <rect>
           <x>432</x>
           <y>130</y>
-          <width>170</width>
+          <width>125</width>
           <height>24</height>
          </rect>
         </property>
@@ -3715,6 +3718,110 @@ path added to this name is stripped.</string>
         </property>
         <property name="text">
          <string>Configuration Files</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonLoadRc">
+        <property name="geometry">
+         <rect>
+          <x>272</x>
+          <y>70</y>
+          <width>36</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonLoadUsr">
+        <property name="geometry">
+         <rect>
+          <x>272</x>
+          <y>100</y>
+          <width>36</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonLoadMutes">
+        <property name="geometry">
+         <rect>
+          <x>272</x>
+          <y>130</y>
+          <width>36</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonLoadPlaylist">
+        <property name="geometry">
+         <rect>
+          <x>272</x>
+          <y>160</y>
+          <width>36</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonLoadPalette">
+        <property name="geometry">
+         <rect>
+          <x>272</x>
+          <y>190</y>
+          <width>36</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonLoadCtrl">
+        <property name="geometry">
+         <rect>
+          <x>563</x>
+          <y>70</y>
+          <width>36</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonLoadDrums">
+        <property name="geometry">
+         <rect>
+          <x>564</x>
+          <y>100</y>
+          <width>36</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonLoadStyleSheet">
+        <property name="geometry">
+         <rect>
+          <x>564</x>
+          <y>130</y>
+          <width>36</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
         </property>
        </widget>
       </widget>
@@ -3761,7 +3868,7 @@ path added to this name is stripped.</string>
         </font>
        </property>
        <property name="text">
-        <string>* cannot alter note-maps and style-sheets in Seq66</string>
+        <string>* Cannot alter data for these file in Seq66. Text-edit them.</string>
        </property>
       </widget>
      </widget>

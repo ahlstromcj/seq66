@@ -475,7 +475,7 @@ private:
     bool m_palette_active;
 
     /**
-     *  Provides the name of a palette file to use.
+     *  Provides the base name of a palette file to use.
      */
 
     std::string m_palette_filename;
