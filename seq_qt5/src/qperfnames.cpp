@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-15
+ * \updates       2023-10-20
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -120,10 +120,9 @@ qperfnames::paintEvent (QPaintEvent *)
     int set_count = setmaster::Size();                  /* number of rows   */
     QPainter painter(this);
     QPen pen(fore_color());
-    QBrush brush(Qt::lightGray);
+    QBrush brush(backnames_paint(), Qt::SolidPattern);
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(2);
-    brush.setStyle((Qt::SolidPattern));
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.setFont(m_font);

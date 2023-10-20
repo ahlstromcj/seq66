@@ -109,8 +109,8 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
     int xwidth = width();
     int yheight = height();
     QPainter painter(this);
-    QBrush brush(Qt::lightGray, Qt::SolidPattern);
-    QPen pen(fore_color());             // Qt::black);
+    QBrush brush(backtime_paint(), Qt::SolidPattern);
+    QPen pen(fore_color());
     pen.setStyle(Qt::SolidLine);
     painter.setPen(pen);
     painter.setBrush(brush);

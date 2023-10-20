@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-19
+ * \updates       2023-10-20
  * \license       GNU GPLv2 or above
  *
  *  We've added the feature of a right-click toggling between showing the main
@@ -138,7 +138,7 @@ qseqkeys::paintEvent (QPaintEvent *)
     const int key_x_6 = sc_key_x - 6;
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(sc_border_width);
-    brush.setColor(Qt::darkGray);
+    brush.setColor(backkeys_paint());
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.drawRect(0, 0, sc_keyarea_x, total_height());   /* border       */

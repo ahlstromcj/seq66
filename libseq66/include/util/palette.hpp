@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-18
- * \updates       2022-03-07
+ * \updates       2023-10-20
  * \license       GNU GPLv2 or above
  *
  *  This module is inspired by MidiPerformance::getSequenceColor() in
@@ -48,7 +48,6 @@ namespace seq66
 
 /**
  *  Progress bar colors as integer codes.
- */
 
 enum class ProgressColors
 {
@@ -60,6 +59,7 @@ enum class ProgressColors
     dark_magenta,
     dark_cyan
 };
+ */
 
 /**
  *  A type to support the concept of sequence color.  The color is a number
@@ -137,7 +137,15 @@ enum class InvertibleColor
     grey,               /**< Medium grid lines.                             */
     dk_grey,            /**< Heavy grid lines.                              */
     lt_grey,            /**< Light grid lines.                              */
-    extra,              /**< Just an addition color to make it 16 colors.   */
+    extra,              /**< Just an additional color to make it even.      */
+    near,               /**< Mouse is near an event in a pane. Was yellow   */
+    backtime,           /**< Used for the background of time-lines.         */
+    backdata,           /**< Used for the background of data panes.         */
+    backevent,          /**< Used for the background of the event pane.     */
+    backkeys,           /**< Used for the background of the keys pane.      */
+    backnames,          /**< Used for the background of perf names pane.    */
+    extra_02,           /**< Expansion */
+    extra_03,           /**< Expansion */
     max                 /**< First illegal palette value, not in color set. */
 };
 

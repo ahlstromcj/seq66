@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2023-02-27
+ * \updates       2023-10-20
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -165,12 +165,12 @@ public:
 
     static int palette_size ()
     {
-        return palette_to_int(max);
+        return palette_to_int(max);         /* PaletteColor::max    */
     }
 
     static int invertible_size ()
     {
-        return inv_palette_to_int(max);
+        return inv_palette_to_int(max);     /* InvertibleColor::max */
     }
 
     void reset ()
@@ -346,6 +346,14 @@ extern Color grey_paint ();
 extern Color beat_paint ();
 extern Color step_paint ();
 extern Color extra_paint ();
+extern Color near_paint ();
+extern Color backtime_paint ();
+extern Color backdata_paint ();
+extern Color backevent_paint ();
+extern Color backkeys_paint ();
+extern Color backnames_paint ();
+extern Color extra_02_paint ();
+extern Color extra_03_paint ();
 extern std::string get_color_name (PaletteColor index);
 extern std::string get_color_name_ex (PaletteColor index);
 extern bool is_theme_color (const Color & c);

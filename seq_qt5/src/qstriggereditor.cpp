@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-12
+ * \updates       2023-10-20
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -177,7 +177,7 @@ qstriggereditor::paintEvent (QPaintEvent * qpep)
 {
     QRect r = qpep->rect();
     QPainter painter(this);
-    QBrush brush(Qt::darkGray, Qt::SolidPattern);
+    QBrush brush(backevent_paint(), Qt::SolidPattern);
     QPen pen(Qt::black);
     pen.setStyle(Qt::SolidLine);
     painter.setPen(pen);

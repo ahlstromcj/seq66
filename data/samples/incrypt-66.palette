@@ -1,7 +1,7 @@
 # Seq66 0.97.1 (and above) palette configuration file
 #
 # /home/ahlstrom/.config/seq66/incrypt-66.palette
-# Written on 2023-10-19 07:21:45
+# Written on 2023-10-20 07:00:39
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface. It must be active and
@@ -64,29 +64,35 @@ of the incrypt-66.qss style-sheet.
 
 # Similar to the [palette] section, but applies to the custom-drawn
 # piano rolls and the --inverse option. The first value is the color
-# number, from 0 to 12. The names are feature names, not color names.
-# The second column is the inverse color.
-#  8       "Black Keys" [ 0xFF001000 ]       "Black Keys" [ 0xFF000000 ]
-#  9       "White Keys" [ 0xFFB0FFB0 ]       "White Keys" [ 0xFFFFFFFF ]
+# number, from 0 to 23. The names are feature names, not color names.
+# The second column block is the inverse color.
 
 [ui-palette]
 
- 0       "Foreground" [ 0xFFA0FFA0 ]       "Foreground" [ 0xFF000000 ]
- 1       "Background" [ 0xFF1E1D23 ]       "Background" [ 0xFFD0D0D0 ]
- 2            "Label" [ 0xFFFFFFFF ]            "Label" [ 0xFFADBEEF ]
- 3        "Selection" [ 0xFFFF00A5 ]        "Selection" [ 0xFFFFA500 ]
- 4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF0000FF ]
+ 0       "Foreground" [ 0xFF000000 ]       "Foreground" [ 0xFFFFFFFF ]
+ 1       "Background" [ 0xFF3C2010 ]       "Background" [ 0xFF484848 ]
+ 2            "Label" [ 0xDEADBEEF ]            "Label" [ 0xFFFFFFFF ]
+ 3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00A5 ]
+ 4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF000080 ]
  5            "Tempo" [ 0xFFFFFF00 ]            "Tempo" [ 0xFFFFFF00 ]
- 6        "Note Fill" [ 0xFF000000 ]        "Note Fill" [ 0xFFFFFFFF ]
- 7      "Note Border" [ 0xFFFFFFFF ]      "Note Border" [ 0xFF000000 ]
- 8       "Black Keys" [ 0xFF0000FF ]       "Black Keys" [ 0xFF000000 ]
- 9       "White Keys" [ 0xFFB0FFB0 ]       "White Keys" [ 0xFFFFFFFF ]
-10     "Progress Bar" [ 0xFFFF0000 ]     "Progress Bar" [ 0xFF00FF00 ]
+ 6        "Note Fill" [ 0xFFFFFFFF ]        "Note Fill" [ 0xFF000000 ]
+ 7      "Note Border" [ 0xFF000000 ]      "Note Border" [ 0xFFFFFFFF ]
+ 8       "Black Keys" [ 0xFF000000 ]       "Black Keys" [ 0xFFFFFFFF ]
+ 9       "White Keys" [ 0xFFFFFFFF ]       "White Keys" [ 0xFF000000 ]
+10     "Progress Bar" [ 0xFFFF0000 ]     "Progress Bar" [ 0xFFFF0000 ]
 11     "Back Pattern" [ 0xFF008B8B ]     "Back Pattern" [ 0xFF008B8B ]
 12      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF808080 ]
-13        "Beat Line" [ 0xFFFFFFFF ]        "Beat Line" [ 0xFF484848 ]
+13        "Beat Line" [ 0xFF484848 ]        "Beat Line" [ 0xFFFFFFFF ]
 14        "Step Line" [ 0xFFC0C0C0 ]        "Step Line" [ 0xFFC0C0C0 ]
-15            "Extra" [ 0xFF000064 ]            "Extra" [ 0xFF8B0000 ]
+15            "Extra" [ 0xFF8B0000 ]            "Extra" [ 0xFF000064 ]
+16             "Near" [ 0xFFFFFF00 ]             "Near" [ 0xFFFF00FF ]
+17       "Time Brush" [ 0xFFB09080 ]       "Time Brush" [ 0xFF808080 ]
+18       "Data Brush" [ 0xFFA08070 ]       "Data Brush" [ 0xFF808080 ]
+19      "Event Brush" [ 0xFFA08070 ]      "Event Brush" [ 0xFF808080 ]
+20       "Keys Brush" [ 0xFFA08070 ]       "Keys Brush" [ 0xFF808080 ]
+21      "Names Brush" [ 0xFFA08070 ]      "Names Brush" [ 0xFF808080 ]
+22          "Extra 2" [ 0xFF808080 ]          "Extra 2" [ 0xFF808080 ]
+23          "Extra 3" [ 0xFF808080 ]          "Extra 3" [ 0xFF808080 ]
 
 # This section defines brush styles to use. The names are based on the
 # names in the Qt::BrushStyle enumeration. The names are:

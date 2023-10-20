@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-27
+ * \updates       2023-10-20
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -206,7 +206,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 {
     QRect r = qpep->rect();
     QPainter painter(this);
-    QBrush brush(grey_color(), Qt::SolidPattern);
+    QBrush brush(backdata_paint(), Qt::SolidPattern);
     QPen pen(Qt::black);
     painter.setPen(pen);
     painter.setBrush(brush);
@@ -287,7 +287,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 if (selected)
                     pen.setColor(sel_color());
                 else if (its_close)
-                    pen.setColor(Qt::yellow);
+                    pen.setColor(near_paint()); /* near_color()?    */
                 else
                     pen.setColor(fore_color());
 
@@ -340,8 +340,8 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                     s_handle_d, s_handle_d
                 );
                 painter.drawText(x_offset + 6, d1 + 6, digits);
-                brush.setColor(grey_color());   /* new */
-                painter.setBrush(brush);        /* new */
+                brush.setColor(grey_color());
+                painter.setBrush(brush);
             }
         }
     }

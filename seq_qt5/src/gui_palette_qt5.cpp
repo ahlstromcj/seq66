@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2023-09-29
+ * \updates       2023-10-20
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -241,6 +241,54 @@ Color
 extra_paint ()
 {
     return global_palette().get_color(InvertibleColor::extra);
+}
+
+Color
+near_paint ()
+{
+    return global_palette().get_color(InvertibleColor::near);
+}
+
+Color
+backtime_paint ()
+{
+    return global_palette().get_color(InvertibleColor::backtime);
+}
+
+Color
+backdata_paint ()
+{
+    return global_palette().get_color(InvertibleColor::backdata);
+}
+
+Color
+backevent_paint ()
+{
+    return global_palette().get_color(InvertibleColor::backevent);
+}
+
+Color
+backkeys_paint ()
+{
+    return global_palette().get_color(InvertibleColor::backkeys);
+}
+
+Color
+backnames_paint ()
+{
+    return global_palette().get_color(InvertibleColor::backnames);
+}
+
+Color
+extra_02_paint ()
+{
+    return global_palette().get_color(InvertibleColor::extra_02);
+}
+
+Color
+extra_03_paint ()
+{
+    return global_palette().get_color(InvertibleColor::extra_03);
 }
 
 Brush
@@ -528,82 +576,95 @@ void
 gui_palette_qt5::reset_pens ()
 {
     m_pen_palette.clear();                  /* just in case */
-    m_pen_palette.add(PaletteColor::none,       m_black,   "Black");
-    m_pen_palette.add(PaletteColor::black,      m_white,   "White");
-    m_pen_palette.add(PaletteColor::red,        m_white,   "White");
-    m_pen_palette.add(PaletteColor::green,      m_white,   "White");
-    m_pen_palette.add(PaletteColor::yellow,     m_black,   "Black");
-    m_pen_palette.add(PaletteColor::blue,       m_white,   "White");
-    m_pen_palette.add(PaletteColor::magenta,    m_white,   "White");
-    m_pen_palette.add(PaletteColor::cyan,       m_black,   "Black");
-    m_pen_palette.add(PaletteColor::white,      m_black,   "Black");
-
-    m_pen_palette.add(PaletteColor::dk_black,   m_white,   "White");
-    m_pen_palette.add(PaletteColor::dk_red,     m_white,   "White");
-    m_pen_palette.add(PaletteColor::dk_green,   m_white,   "White");
-    m_pen_palette.add(PaletteColor::dk_yellow,  m_black,   "Black");
-    m_pen_palette.add(PaletteColor::dk_blue,    m_white,   "White");
-    m_pen_palette.add(PaletteColor::dk_magenta, m_white,   "White");
-    m_pen_palette.add(PaletteColor::dk_cyan,    m_white,   "White");
-    m_pen_palette.add(PaletteColor::dk_white,   m_white,   "White");
-
-    m_pen_palette.add(PaletteColor::orange,     m_white,   "White");
-    m_pen_palette.add(PaletteColor::pink,       m_black,   "Black");
-    m_pen_palette.add(PaletteColor::color_18,   m_black,   "Black");
-    m_pen_palette.add(PaletteColor::color_19,   m_black,   "Black");
-    m_pen_palette.add(PaletteColor::color_20,   m_black,   "Black");
-    m_pen_palette.add(PaletteColor::color_21,   m_black,   "Black");
-    m_pen_palette.add(PaletteColor::color_22,   m_black,   "Black");
-    m_pen_palette.add(PaletteColor::grey,       m_black,   "Black");
-
-    m_pen_palette.add(PaletteColor::dk_orange,  m_black,   "Black");
-    m_pen_palette.add(PaletteColor::dk_pink,    m_black,   "Black");
-    m_pen_palette.add(PaletteColor::color_26,   m_black,   "Black");
-    m_pen_palette.add(PaletteColor::color_27,   m_black,   "Black");
-    m_pen_palette.add(PaletteColor::color_28,   m_black,   "Black");
-    m_pen_palette.add(PaletteColor::color_29,   m_black,   "Black");
-    m_pen_palette.add(PaletteColor::color_30,   m_black,   "Black");
-    m_pen_palette.add(PaletteColor::dk_grey,    m_black,   "Black");
+    m_pen_palette.add(PaletteColor::none,         m_black,    "Black");
+    m_pen_palette.add(PaletteColor::black,        m_white,    "White");
+    m_pen_palette.add(PaletteColor::red,          m_white,    "White");
+    m_pen_palette.add(PaletteColor::green,        m_white,    "White");
+    m_pen_palette.add(PaletteColor::yellow,       m_black,    "Black");
+    m_pen_palette.add(PaletteColor::blue,         m_white,    "White");
+    m_pen_palette.add(PaletteColor::magenta,      m_white,    "White");
+    m_pen_palette.add(PaletteColor::cyan,         m_black,    "Black");
+    m_pen_palette.add(PaletteColor::white,        m_black,    "Black");
+    m_pen_palette.add(PaletteColor::dk_black,     m_white,    "White");
+    m_pen_palette.add(PaletteColor::dk_red,       m_white,    "White");
+    m_pen_palette.add(PaletteColor::dk_green,     m_white,    "White");
+    m_pen_palette.add(PaletteColor::dk_yellow,    m_black,    "Black");
+    m_pen_palette.add(PaletteColor::dk_blue,      m_white,    "White");
+    m_pen_palette.add(PaletteColor::dk_magenta,   m_white,    "White");
+    m_pen_palette.add(PaletteColor::dk_cyan,      m_white,    "White");
+    m_pen_palette.add(PaletteColor::dk_white,     m_white,    "White");
+    m_pen_palette.add(PaletteColor::orange,       m_white,    "White");
+    m_pen_palette.add(PaletteColor::pink,         m_black,    "Black");
+    m_pen_palette.add(PaletteColor::color_18,     m_black,    "Black");
+    m_pen_palette.add(PaletteColor::color_19,     m_black,    "Black");
+    m_pen_palette.add(PaletteColor::color_20,     m_black,    "Black");
+    m_pen_palette.add(PaletteColor::color_21,     m_black,    "Black");
+    m_pen_palette.add(PaletteColor::color_22,     m_black,    "Black");
+    m_pen_palette.add(PaletteColor::grey,         m_black,    "Black");
+    m_pen_palette.add(PaletteColor::dk_orange,    m_black,    "Black");
+    m_pen_palette.add(PaletteColor::dk_pink,      m_black,    "Black");
+    m_pen_palette.add(PaletteColor::color_26,     m_black,    "Black");
+    m_pen_palette.add(PaletteColor::color_27,     m_black,    "Black");
+    m_pen_palette.add(PaletteColor::color_28,     m_black,    "Black");
+    m_pen_palette.add(PaletteColor::color_29,     m_black,    "Black");
+    m_pen_palette.add(PaletteColor::color_30,     m_black,    "Black");
+    m_pen_palette.add(PaletteColor::dk_grey,      m_black,    "Black");
 }
 
 void
 gui_palette_qt5::reset_invertibles ()
 {
     m_nrm_palette.clear();
-    m_nrm_palette.add(InvertibleColor::black,       m_black,    "Foreground");
-    m_nrm_palette.add(InvertibleColor::white,       m_white,    "Background");
-    m_nrm_palette.add(InvertibleColor::label,       m_theme,    "Label");
-    m_nrm_palette.add(InvertibleColor::selection,   m_orange,   "Selection");
-    m_nrm_palette.add(InvertibleColor::drum,        m_red,      "Drum");
-    m_nrm_palette.add(InvertibleColor::tempo,       m_yellow,   "Tempo");
-    m_nrm_palette.add(InvertibleColor::note_in,     m_white,    "Note Fill");
-    m_nrm_palette.add(InvertibleColor::note_out,    m_black,    "Note Border");
-    m_nrm_palette.add(InvertibleColor::black_key,   m_black,    "Black Keys");
-    m_nrm_palette.add(InvertibleColor::white_key,   m_white,    "White Keys");
-    m_nrm_palette.add(InvertibleColor::progress,    m_red,      "Progress Bar");
-    m_nrm_palette.add(InvertibleColor::backseq,     m_dk_cyan,  "Back Pattern");
-    m_nrm_palette.add(InvertibleColor::grey,        m_grey,     "Medium Line");
-    m_nrm_palette.add(InvertibleColor::dk_grey,     m_dk_grey,  "Beat Line");
-    m_nrm_palette.add(InvertibleColor::lt_grey,     m_lt_grey,  "Step Line");
-    m_nrm_palette.add(InvertibleColor::extra,       m_dk_red,   "Extra");
+    m_nrm_palette.add(InvertibleColor::black,     m_black,    "Foreground");
+    m_nrm_palette.add(InvertibleColor::white,     m_white,    "Background");
+    m_nrm_palette.add(InvertibleColor::label,     m_theme,    "Label");
+    m_nrm_palette.add(InvertibleColor::selection, m_orange,   "Selection");
+    m_nrm_palette.add(InvertibleColor::drum,      m_red,      "Drum");
+    m_nrm_palette.add(InvertibleColor::tempo,     m_yellow,   "Tempo");
+    m_nrm_palette.add(InvertibleColor::note_in,   m_white,    "Note Fill");
+    m_nrm_palette.add(InvertibleColor::note_out,  m_black,    "Note Border");
+    m_nrm_palette.add(InvertibleColor::black_key, m_black,    "Black Keys");
+    m_nrm_palette.add(InvertibleColor::white_key, m_white,    "White Keys");
+    m_nrm_palette.add(InvertibleColor::progress,  m_red,      "Progress Bar");
+    m_nrm_palette.add(InvertibleColor::backseq,   m_dk_cyan,  "Back Pattern");
+    m_nrm_palette.add(InvertibleColor::grey,      m_grey,     "Medium Line");
+    m_nrm_palette.add(InvertibleColor::dk_grey,   m_dk_grey,  "Beat Line");
+    m_nrm_palette.add(InvertibleColor::lt_grey,   m_lt_grey,  "Step Line");
+    m_nrm_palette.add(InvertibleColor::extra,     m_dk_red,   "Extra");
+    m_nrm_palette.add(InvertibleColor::near,      m_yellow,   "Near");
+    m_nrm_palette.add(InvertibleColor::backtime,  m_grey,     "Time Brush");
+    m_nrm_palette.add(InvertibleColor::backdata,  m_grey,     "Data Brush");
+    m_nrm_palette.add(InvertibleColor::backevent, m_grey,     "Event Brush");
+    m_nrm_palette.add(InvertibleColor::backkeys,  m_grey,     "Keys Brush");
+    m_nrm_palette.add(InvertibleColor::backnames, m_grey,     "Names Brush");
+    m_nrm_palette.add(InvertibleColor::extra_02,  m_grey,     "Extra 2");
+    m_nrm_palette.add(InvertibleColor::extra_03,  m_grey,     "Extra 3");
 
     m_inv_palette.clear();
-    m_inv_palette.add(InvertibleColor::black,       m_white,    "Foreground");
-    m_inv_palette.add(InvertibleColor::white,       m_dk_grey,  "Background");
-    m_inv_palette.add(InvertibleColor::label,       m_white,    "Label");
-    m_inv_palette.add(InvertibleColor::selection,   m_orange,   "Selection");
-    m_inv_palette.add(InvertibleColor::drum,        m_green,    "Drum");
-    m_inv_palette.add(InvertibleColor::tempo,       m_magenta,  "Tempo");
-    m_inv_palette.add(InvertibleColor::note_in,     m_black,    "Note Fill");
-    m_inv_palette.add(InvertibleColor::note_out,    m_white,    "Note Border");
-    m_inv_palette.add(InvertibleColor::black_key,   m_white,    "Black Keys");
-    m_inv_palette.add(InvertibleColor::white_key,   m_black,    "White Keys");
-    m_inv_palette.add(InvertibleColor::progress,    m_red,      "Progress Bar");
-    m_inv_palette.add(InvertibleColor::backseq,     m_dk_cyan,  "Back Pattern");
-    m_inv_palette.add(InvertibleColor::grey,        m_grey,     "Medium Line");
-    m_inv_palette.add(InvertibleColor::dk_grey,     m_white,    "Beat Line");
-    m_inv_palette.add(InvertibleColor::lt_grey,     m_lt_grey,  "Step Line");
-    m_inv_palette.add(InvertibleColor::extra,       m_dk_green, "Extra");
+    m_inv_palette.add(InvertibleColor::black,     m_white,    "Foreground");
+    m_inv_palette.add(InvertibleColor::white,     m_dk_grey,  "Background");
+    m_inv_palette.add(InvertibleColor::label,     m_white,    "Label");
+    m_inv_palette.add(InvertibleColor::selection, m_orange,   "Selection");
+    m_inv_palette.add(InvertibleColor::drum,      m_green,    "Drum");
+    m_inv_palette.add(InvertibleColor::tempo,     m_magenta,  "Tempo");
+    m_inv_palette.add(InvertibleColor::note_in,   m_black,    "Note Fill");
+    m_inv_palette.add(InvertibleColor::note_out,  m_white,    "Note Border");
+    m_inv_palette.add(InvertibleColor::black_key, m_white,    "Black Keys");
+    m_inv_palette.add(InvertibleColor::white_key, m_black,    "White Keys");
+    m_inv_palette.add(InvertibleColor::progress,  m_red,      "Progress Bar");
+    m_inv_palette.add(InvertibleColor::backseq,   m_dk_cyan,  "Back Pattern");
+    m_inv_palette.add(InvertibleColor::grey,      m_grey,     "Medium Line");
+    m_inv_palette.add(InvertibleColor::dk_grey,   m_white,    "Beat Line");
+    m_inv_palette.add(InvertibleColor::lt_grey,   m_lt_grey,  "Step Line");
+    m_inv_palette.add(InvertibleColor::extra,     m_dk_green, "Extra");
+    m_inv_palette.add(InvertibleColor::near,      m_yellow,   "Near");
+    m_inv_palette.add(InvertibleColor::backtime,  m_grey,     "Time Brush");
+    m_inv_palette.add(InvertibleColor::backdata,  m_grey,     "Data Brush");
+    m_inv_palette.add(InvertibleColor::backevent, m_grey,     "Event Brush");
+    m_inv_palette.add(InvertibleColor::backkeys,  m_grey,     "Keys Brush");
+    m_inv_palette.add(InvertibleColor::backnames, m_grey,     "Names Brush");
+    m_inv_palette.add(InvertibleColor::extra_02,  m_grey,     "Extra 2");
+    m_inv_palette.add(InvertibleColor::extra_03,  m_grey,     "Extra 3");
 
     m_empty_brush->setColor(get_color(InvertibleColor::white));
     m_empty_brush->setStyle(m_empty_brush_style);

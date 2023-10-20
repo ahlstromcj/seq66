@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-12-29
-% \update      2023-03-23
+% \update      2023-10-20
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -29,12 +29,12 @@
          can be used to add color to a pattern in the \textsl{Live} grid or in
          the \textsl{Song} editor.  The color of a pattern, if used, is saved
          with the pattern in the MIDI file.
-      \item \textbf{Ui}.  This palette contains 16 color entries.  These
+      \item \textbf{Ui}.  This palette contains 24 color entries.  These
          color entries are used in drawing text, backgrounds, grid lines,
          background patterns, drum notes, and more.  These colors each have a
-         counterpart that is used with the \texttt{-{}-inverse} option is applied
-         to a run of \textsl{Seq66}.
-      \item \textbf{Inverse Ui}.  This palette contains 16 color entries.
+         counterpart that is used with the \texttt{-{}-inverse} option is
+         applied to a run of \textsl{Seq66}.
+      \item \textbf{Inverse Ui}.  This palette contains 24 color entries.
          These colors are used when the \texttt{-{}-inverse} option is applied
          to a run of \textsl{Seq66}.
       \item \textbf{Brushes}.  This "palette" provides a way to specify the
@@ -119,13 +119,14 @@ project.
        3        "Selection" [ 0xFFFFA500 ]  "Selection" [ 0xFFFF00FF ]
        4             "Drum" [ 0xFFFF0000 ]       "Drum" [ 0xFF000080 ]
              ...            ...       ...       ...       ...
-      13        "Beat Line" [ 0xFF2F4F4F ]  "Beat Line" [ 0xFF2F4F4F ]
-      14        "Step Line" [ 0xFF778899 ]  "Step Line" [ 0xFF808080 ]
-      15            "Extra" [ 0xFF778899 ]      "Extra" [ 0xFFBD6BB7 ]
+      20       "Keys Brush" [ 0xFFA08070 ] "Keys Brush" [ 0xFF808080 ]
+      21      "Names Brush" [ 0xFFA08070 ]"Names Brush" [ 0xFF808080 ]
+      22          "Extra 2" [ 0xFF808080 ]    "Extra 2" [ 0xFF808080 ]
+      23          "Extra 3" [ 0xFF808080 ]    "Extra 3" [ 0xFF808080 ]
    \end{verbatim}
 
    Here, the names are feature names, not color names.  The first color is the
-   normal color, and the second color is the inverse color.  Only 16 entries
+   normal color, and the second color is the inverse color.  Only 24 entries
    are accepted.
 
 \subsubsection{Palettes Setup / Brushes}
@@ -171,7 +172,9 @@ project.
    favorite, \textsl{Fluxbox}, in conjunction with \textsl{GTK+} themes,
    there can be issues on some \textsl{Linux} distros.
 
-   First, if using a Gtk theme setter (e.g. \textsl{gtk-chtheme}), one wants to
+   First, if using a Gtk theme setter (e.g. \textsl{gtk-chtheme}
+   or \textsl{lxappearance}),
+   one wants to
    use \textsl{qt5ct} to set Qt to work with Gtk themes.
    For this to work well, use this setting in the \texttt{.bashrc} or
    \texttt{.profile} file:
@@ -199,7 +202,10 @@ project.
 
    One might still encounter the issue that, with a Gtk theme, applications
    take about 20 to 30 seconds to start up!
-   More information to come.
+
+   Another issue is that some Qt themes might upset the sizing of button or
+   text.
+
    Also see the style-sheet discussion in
    \sectionref{sec:configuration}.
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2023-10-19
+ * \updates       2023-10-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -252,6 +252,7 @@ palettefile::write_stream (std::ofstream & file)
         "\n"
         "# Similar to the [palette] section, but applies to the custom-drawn\n"
         "# piano rolls and the --inverse option. The first value is the color\n"
+        "# number, from 0 to 23. The names are feature names, not color names.\n"
         "# number, from 0 to 15. The names are feature names, not color names.\n"
         "# The second column block is the inverse color.\n"
         "\n"
@@ -267,9 +268,6 @@ palettefile::write_stream (std::ofstream & file)
         else
             file << stanza << "\n";
     }
-
-#if defined USE_SAVE_INVERSE_PALETTE
-#endif
 
     std::string sempty;
     std::string snote;

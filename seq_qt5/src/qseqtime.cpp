@@ -122,7 +122,7 @@ qseqtime::paintEvent (QPaintEvent * qpep)
 {
     QRect r = qpep->rect();
     QPainter painter(this);
-    QBrush brush(Qt::lightGray, Qt::SolidPattern);
+    QBrush brush(backtime_paint(), Qt::SolidPattern);
     QPen pen(Qt::black);
     pen.setStyle(Qt::SolidLine);
     painter.setPen(pen);

@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.10 2023-10-19
+Release Notes for Seq66 v. 0.99.10 2023-10-20
 
 -   The usual raft of humiliating bug-fixes:
     -   Issue #117 Option to close pattern windows with esc key if
@@ -28,6 +28,7 @@ Release Notes for Seq66 v. 0.99.10 2023-10-19
     first notes in a pattern.
 -   Live-grid record-mode and alteration are applied when active
     pattern is opened for edit.
+-   Added more UI palette items for more non-Qt color control.
 
 Also see the NEWS, README.md, and TODO files.
 

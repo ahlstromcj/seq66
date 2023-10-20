@@ -564,7 +564,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 m_top_left.m_w, m_top_left.m_h
             );
             QString title(qt(m_top_left.m_label));
-            painter.setPen(label_color());      /* text issue #50   */
+            painter.setPen(label_color());              /* text issue #50   */
             painter.setFont(m_text_font);
             if (m_draw_text)
             {
