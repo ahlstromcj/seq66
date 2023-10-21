@@ -5,7 +5,7 @@ Copyright (c) DevSec Studio. All rights reserved.
 \library       seq66 application
 \author        Chris Ahlstrom
 \date          2023-10-18
-\updates       2023-10-18
+\updates       2023-10-21
 \license       MIT
 
 MIT License
@@ -224,10 +224,10 @@ QComboBox
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:.4 #343434);
     color: #ffa000;
     padding: 1px 23px 1px 3px;
-    border: 1px solid #333333;
+    border: 1px solid #a08070;
     border-radius: 3px;
-    min-width: 6em;
-    color: #ffffff;
+    min-width: 64px;
+    max-width: 108px;
 }
 
 QComboBox::drop-down
@@ -250,6 +250,13 @@ QComboBox QAbstractView
     color: #999999;
     selection-background-color: #999999;
     selection-color: #4f4f4f;
+}
+
+QToolTip
+{
+    color: #ffffff;
+    background-color: #000000;
+    border: 0px;
 }
 
 /* End of Additions */

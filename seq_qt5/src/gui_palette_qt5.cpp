@@ -216,6 +216,12 @@ backseq_paint ()
 }
 
 Color
+bar_paint ()
+{
+    return global_palette().get_color(InvertibleColor::dk_grey);
+}
+
+Color
 grey_paint ()
 {
     return global_palette().get_color(InvertibleColor::grey);
@@ -615,8 +621,8 @@ gui_palette_qt5::reset_invertibles ()
     m_nrm_palette.add(InvertibleColor::progress,  m_red,      "Progress Bar");
     m_nrm_palette.add(InvertibleColor::backseq,   m_dk_cyan,  "Back Pattern");
     m_nrm_palette.add(InvertibleColor::grey,      m_grey,     "Medium Line");
-    m_nrm_palette.add(InvertibleColor::dk_grey,   m_dk_grey,  "Beat Line");
-    m_nrm_palette.add(InvertibleColor::lt_grey,   m_lt_grey,  "Step Line");
+    m_nrm_palette.add(InvertibleColor::dk_grey,   m_dk_grey,  "Heavy Line");
+    m_nrm_palette.add(InvertibleColor::lt_grey,   m_lt_grey,  "Light Line");
     m_nrm_palette.add(InvertibleColor::beat,      m_black,    "Beat");
     m_nrm_palette.add(InvertibleColor::near,      m_yellow,   "Near");
     m_nrm_palette.add(InvertibleColor::backtime,  m_grey,     "Time Brush");
@@ -641,8 +647,8 @@ gui_palette_qt5::reset_invertibles ()
     m_inv_palette.add(InvertibleColor::progress,  m_red,      "Progress Bar");
     m_inv_palette.add(InvertibleColor::backseq,   m_dk_cyan,  "Back Pattern");
     m_inv_palette.add(InvertibleColor::grey,      m_grey,     "Medium Line");
-    m_inv_palette.add(InvertibleColor::dk_grey,   m_white,    "Beat Line");
-    m_inv_palette.add(InvertibleColor::lt_grey,   m_lt_grey,  "Step Line");
+    m_inv_palette.add(InvertibleColor::dk_grey,   m_white,    "Heavy Line");
+    m_inv_palette.add(InvertibleColor::lt_grey,   m_lt_grey,  "Light Line");
     m_inv_palette.add(InvertibleColor::beat,      m_white,    "Beat");
     m_inv_palette.add(InvertibleColor::near,      m_yellow,   "Near");
     m_inv_palette.add(InvertibleColor::backtime,  m_grey,     "Time Brush");

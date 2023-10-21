@@ -342,9 +342,10 @@ extern Color black_key_paint ();
 extern Color white_key_paint ();
 extern Color progress_paint ();
 extern Color backseq_paint ();
-extern Color grey_paint ();
-extern Color step_paint ();
-extern Color beat_paint ();
+extern Color bar_paint ();                      /* heavy lines, dk_grey     */
+extern Color grey_paint ();                     /* medium lines, grey       */
+extern Color step_paint ();                     /* light lines, dk_grey     */
+extern Color beat_paint ();                     /* beat lines               */
 extern Color near_paint ();
 extern Color backtime_paint ();
 extern Color backdata_paint ();

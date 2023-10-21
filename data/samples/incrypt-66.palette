@@ -1,7 +1,7 @@
 # Seq66 0.97.1 (and above) palette configuration file
 #
 # /home/ahlstrom/.config/seq66/incrypt-66.palette
-# Written on 2023-10-20 07:00:39
+# Written on 2023-10-20 14:37:26
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface. It must be active and
@@ -71,7 +71,7 @@ of the incrypt-66.qss style-sheet.
 
  0       "Foreground" [ 0xFF000000 ]       "Foreground" [ 0xFFFFFFFF ]
  1       "Background" [ 0xFF3C2010 ]       "Background" [ 0xFF484848 ]
- 2            "Label" [ 0xDEADBEEF ]            "Label" [ 0xFFFFFFFF ]
+ 2            "Label" [ 0xFFADBEEF ]            "Label" [ 0xFFFFFFFF ]
  3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00A5 ]
  4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF000080 ]
  5            "Tempo" [ 0xFFFFFF00 ]            "Tempo" [ 0xFFFFFF00 ]
@@ -83,15 +83,15 @@ of the incrypt-66.qss style-sheet.
 11     "Back Pattern" [ 0xFF008B8B ]     "Back Pattern" [ 0xFF008B8B ]
 12      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF808080 ]
 13        "Beat Line" [ 0xFF484848 ]        "Beat Line" [ 0xFFFFFFFF ]
-14        "Step Line" [ 0xFFC0C0C0 ]        "Step Line" [ 0xFFC0C0C0 ]
-15            "Extra" [ 0xFF8B0000 ]            "Extra" [ 0xFF000064 ]
+14        "Step Line" [ 0xFF008000 ]        "Step Line" [ 0xFFC0C0C0 ]
+15             "Beat" [ 0xFF00FF00 ]             "Beat" [ 0xFF000064 ]
 16             "Near" [ 0xFFFFFF00 ]             "Near" [ 0xFFFF00FF ]
 17       "Time Brush" [ 0xFFB09080 ]       "Time Brush" [ 0xFF808080 ]
 18       "Data Brush" [ 0xFFA08070 ]       "Data Brush" [ 0xFF808080 ]
 19      "Event Brush" [ 0xFFA08070 ]      "Event Brush" [ 0xFF808080 ]
 20       "Keys Brush" [ 0xFFA08070 ]       "Keys Brush" [ 0xFF808080 ]
 21      "Names Brush" [ 0xFFA08070 ]      "Names Brush" [ 0xFF808080 ]
-22          "Extra 2" [ 0xFF808080 ]          "Extra 2" [ 0xFF808080 ]
+22      "Octave Line" [ 0xFF808080 ]      "Octave Line" [ 0xFF808080 ]
 23          "Extra 3" [ 0xFF808080 ]          "Extra 3" [ 0xFF808080 ]
 
 # This section defines brush styles to use. The names are based on the

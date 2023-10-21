@@ -280,8 +280,8 @@ qperfnames::paintEvent (QPaintEvent *)
             {
                 pen.setStyle(Qt::SolidLine);
                 pen.setColor(fore_color());
-                brush.setColor(Qt::lightGray);
-                painter.setPen(pen);        /* fill seq label background    */
+                brush.setColor(backnames_paint());      /* Qt::lightGray)   */
+                painter.setPen(pen);                    /* fill background  */
                 painter.setBrush(brush);
                 painter.drawRect(rect_x, rect_y, rect_w, h);
             }
