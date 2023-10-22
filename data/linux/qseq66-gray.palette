@@ -1,7 +1,7 @@
-# Seq66 0.91.4 (and above) palette configuration file
+# Seq66 0.99.10 (and above) palette configuration file
 #
-# /home/user/.config/seq66/qseq66-grey.palette
-# Written on 2020-12-22 08:35:36
+# /home/user/.config/seq66/qseq66-gray.palette
+# Written on 2023-10-22 10:22:56
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface.
@@ -19,7 +19,7 @@ version = 0
 
 Comments added to this section are preserved.  Lines starting with
 a '#' or '[', or that are blank, are ignored.  Start lines that must
-look empty with a space.
+look empty with a space. Compare this palette to qseq66-alt-gray.palette.
 
 # The first integer is the color number, ranging from 0 to 31. The
 # first string is the name of the background color.  The first
@@ -81,9 +81,17 @@ look empty with a space.
 10     "Progress Bar" [ 0xFF000000 ]     "Progress Bar" [ 0xFFFFFFFF ]
 11     "Back Pattern" [ 0xFF8B8B8B ]     "Back Pattern" [ 0xFF8B8B8B ]
 12      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF779988 ]
-13        "Beat Line" [ 0xFF2F4F4F ]        "Beat Line" [ 0xFF2F4F4F ]
-14        "Step Line" [ 0xFF778899 ]        "Step Line" [ 0xFF808080 ]
-15            "Extra" [ 0xFF778899 ]            "Extra" [ 0xFFBD6BB7 ]
+13       "Heavy Line" [ 0xFF2F4F4F ]       "Heavy Line" [ 0xFF2F4F4F ]
+14       "Light Line" [ 0xFF778899 ]       "Light Line" [ 0xFF808080 ]
+15             "Beat" [ 0xFF778899 ]             "Beat" [ 0xFFBD6BB7 ]
+16             "Near" [ 0xFFFFFF00 ]             "Near" [ 0xFFFF00FF ]
+17       "Time Brush" [ 0xFF808080 ]       "Time Brush" [ 0xFF808080 ]
+18       "Data Brush" [ 0xFF808080 ]       "Data Brush" [ 0xFF808080 ]
+19      "Event Brush" [ 0xFF808080 ]      "Event Brush" [ 0xFF808080 ]
+20       "Keys Brush" [ 0xFF808080 ]       "Keys Brush" [ 0xFF808080 ]
+21      "Names Brush" [ 0xFF808080 ]      "Names Brush" [ 0xFF808080 ]
+22      "Octave Line" [ 0xFF808080 ]      "Octave Line" [ 0xFF808080 ]
+23             "Text" [ 0xFF808080 ]             "Text" [ 0xFF808080 ]
 
 # This section defines brush styles to use.  The names are based on the
 # names in the Qt::BrushStyle enumeration. The supported names are:
@@ -103,6 +111,6 @@ note = lineargradient
 scale = dense3
 backseq = dense2
 
-# End of /home/user/.config/seq66/qseq66-grey.palette
+# End of /home/user/.config/seq66/qseq66-gray.palette
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

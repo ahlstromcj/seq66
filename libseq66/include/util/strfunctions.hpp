@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-07-31
+ * \updates       2023-10-22
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -147,6 +147,8 @@ extern std::string int_to_string (int value);
 extern bool string_not_void (const std::string & s);
 extern bool string_is_void (const std::string & s);
 extern bool strings_match (const std::string & target, const std::string & x);
+extern std::string tolower (const std::string & source);
+extern std::string toupper (const std::string & source);
 extern std::string bool_to_string (bool x);
 extern char bool_to_char (bool x);
 extern std::string pointer_to_string (void * ptr);

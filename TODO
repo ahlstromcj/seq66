@@ -1,9 +1,12 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-10-21
+2019-04-13 to 2023-10-22
 
 Misc:
 
+    -   Consider moving filespec_helper into basesettings.
+    -   Should we use the next text_paint() in all panels besides the
+        loop button.
     -   Update all of the sample files to new expanded palette.
         "Beat Line" replaced by "Beat" and can be repurposed after
         investigation.

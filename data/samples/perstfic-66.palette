@@ -1,38 +1,39 @@
-# Seq66 0.99.10 (and above) palette configuration file
+# Seq66 0.97.1 (and above) palette configuration file
 #
-# /home/user/.config/seq66/qseq66-sample.palette
-# Written on 2023-10-22 10:22:56
+# /home/ahlstrom/.config/seq66/perstfic-66.palette
+# Written on 2023-10-22 10:30:00
 #
 # This file can be used to change the colors used by patterns
-# and in some parts of the user-interface.
+# and in some parts of the user-interface. It must be active and
+# specified in the 'rc' file.
 
 [Seq66]
 
 config-type = "palette"
 version = 0
 
-# The [comments] section can document this file.  Lines starting
-# with '#' and '[' are ignored.  Blank lines are ignored.  Show a
-# blank line by adding a space character to the line.
+# The [comments] section can document this file. Lines starting with
+# '#', '[', or that have no characters end the comment.
 
 [comments]
 
-Comments added to this section are preserved.  Lines starting with
-a '#' or '[', or that are blank, are ignored.  Start lines that must
-look empty with a space.
+This palette is meant to tweak the normal palette for the perstfic-66.qss
+style-sheet. The main thing is to make the drawn text white. We probably
+need an additional "Text" ui-palette entry to replace "Foreground" for
+text. Done!
 
-# The first integer is the color number, ranging from 0 to 31. The
-# first string is the name of the background color.  The first
-# stanza (in square brackets) are the ARGB values for the background.
-# The second set provides the foreground color name and color.
-# The alpha values are not important here, but should be set to FF.
+# [palette] affects the pattern colors selected (by number). First is
+# the color number, 0 to 31. Next is the name of the background color.
+# The first stanza [square brackets] are the background ARGB values.
+# The second provides the foreground color name and ARGB values. The
+# alpha values should be set to FF.
 
 [palette]
 
  0            "Black" [ 0xFF000000 ]            "White" [ 0xFFFFFFFF ]
  1              "Red" [ 0xFFFF0000 ]            "White" [ 0xFFFFFFFF ]
  2            "Green" [ 0xFF008000 ]            "White" [ 0xFFFFFFFF ]
- 3           "Yellow" [ 0xFFFFFF00 ]            "Dark!" [ 0xFF202020 ]
+ 3           "Yellow" [ 0xFFFFFF00 ]            "Black" [ 0xFF000000 ]
  4             "Blue" [ 0xFF0000FF ]            "White" [ 0xFFFFFFFF ]
  5          "Magenta" [ 0xFFFF00FF ]            "White" [ 0xFFFFFFFF ]
  6             "Cyan" [ 0xFF00FFFF ]            "Black" [ 0xFF000000 ]
@@ -62,24 +63,24 @@ look empty with a space.
 30       "Light Grey" [ 0xFFC0C0C0 ]            "Black" [ 0xFF000000 ]
 31        "Dark Grey" [ 0xFF484848 ]            "Black" [ 0xFF000000 ]
 
-# Similar to the [palette] section, but applies to UI elements and to
-# the --inverse color option.  The first integer is the color number,
-# ranging from 0 to 12. The names are feature names, not color names.
+# Similar to the [palette] section, but applies to the custom-drawn
+# piano rolls and the --inverse option. The first value is the color
+# number, from 0 to 23. The names are feature names, not color names.
 # The second column block is the inverse color.
 
 [ui-palette]
 
- 0       "Foreground" [ 0xFF0000FF ]       "Foreground" [ 0xFFFFFFFF ]
+ 0       "Foreground" [ 0xFF000000 ]       "Foreground" [ 0xFFFFFFFF ]
  1       "Background" [ 0xFFFFFFFF ]       "Background" [ 0xFF484848 ]
- 2            "Label" [ 0xFFFFFF00 ]            "Label" [ 0xFFFFFFFF ]
- 3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00FF ]
+ 2            "Label" [ 0xDEADBEEF ]            "Label" [ 0xFFFFFFFF ]
+ 3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00A5 ]
  4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF000080 ]
- 5            "Tempo" [ 0xFFFF00FF ]            "Tempo" [ 0xFFFFFF00 ]
+ 5            "Tempo" [ 0xFFFFFF00 ]            "Tempo" [ 0xFFFFFF00 ]
  6        "Note Fill" [ 0xFFFFFFFF ]        "Note Fill" [ 0xFF000000 ]
  7      "Note Border" [ 0xFF000000 ]      "Note Border" [ 0xFFFFFFFF ]
  8       "Black Keys" [ 0xFF000000 ]       "Black Keys" [ 0xFFFFFFFF ]
  9       "White Keys" [ 0xFFFFFFFF ]       "White Keys" [ 0xFF000000 ]
-10     "Progress Bar" [ 0xFFFF0000 ]     "Progress Bar" [ 0xFF000080 ]
+10     "Progress Bar" [ 0xFFFF0000 ]     "Progress Bar" [ 0xFFFF0000 ]
 11     "Back Pattern" [ 0xFF008B8B ]     "Back Pattern" [ 0xFF008B8B ]
 12      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF808080 ]
 13       "Heavy Line" [ 0xFF484848 ]       "Heavy Line" [ 0xFFFFFFFF ]
@@ -92,10 +93,10 @@ look empty with a space.
 20       "Keys Brush" [ 0xFF808080 ]       "Keys Brush" [ 0xFF808080 ]
 21      "Names Brush" [ 0xFF808080 ]      "Names Brush" [ 0xFF808080 ]
 22      "Octave Line" [ 0xFF808080 ]      "Octave Line" [ 0xFF808080 ]
-23             "Text" [ 0xFF808080 ]             "Text" [ 0xFF808080 ]
+23             "Text" [ 0xFFFFFFFF ]             "Text" [ 0xFF000000 ]
 
-# This section defines brush styles to use.  The names are based on the
-# names in the Qt::BrushStyle enumeration. The supported names are:
+# This section defines brush styles to use. The names are based on the
+# names in the Qt::BrushStyle enumeration. The names are:
 #
 #    nobrush, solid, dense1, dense2, dense3, dense4, dense5, dense6,
 #    dense7, horizontal, vertical, cross, bdiag, fdiag, diagcross,
@@ -112,6 +113,6 @@ note = lineargradient
 scale = dense3
 backseq = dense2
 
-# End of /home/user/.config/seq66/qseq66-sample.palette
+# End of /home/ahlstrom/.config/seq66/qseq66.palette
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

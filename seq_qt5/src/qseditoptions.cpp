@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-20
+ * \updates       2023-10-22
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1728,7 +1728,7 @@ qseditoptions::setup_tab_session ()
      */
 
     /*
-     * 'rc' file.  This file is always active, so that check-box is read-only.
+     * 'rc' file.  This file is ALWAYS active, so that check-box is read-only.
      */
 
     connect
@@ -1740,6 +1740,12 @@ qseditoptions::setup_tab_session ()
     (
         ui->lineEditRc, SIGNAL(editingFinished()),
         this, SLOT(slot_rc_filename())
+    );
+    // ui->pushButtonLoadRc->hide();
+    connect
+    (
+        ui->pushButtonLoadRc, SIGNAL(clicked(bool)),
+        this, SLOT(slot_load_rc_filename())
     );
 
     /*
@@ -1761,6 +1767,12 @@ qseditoptions::setup_tab_session ()
         ui->lineEditUsr, SIGNAL(editingFinished()),
         this, SLOT(slot_usr_filename())
     );
+    // ui->pushButtonLoadUsr->hide();
+    connect
+    (
+        ui->pushButtonLoadRc, SIGNAL(clicked(bool)),
+        this, SLOT(slot_load_rc_filename())
+    );
 
     /*
      * 'mutes' file
@@ -1781,6 +1793,12 @@ qseditoptions::setup_tab_session ()
         ui->lineEditMutes, SIGNAL(editingFinished()),
         this, SLOT(slot_mutes_filename())
     );
+    // ui->pushButtonLoadMutes->hide();
+    connect
+    (
+        ui->pushButtonLoadMutes, SIGNAL(clicked(bool)),
+        this, SLOT(slot_load_mutes_filename())
+    );
 
     /*
      * 'playlist' file
@@ -1800,6 +1818,12 @@ qseditoptions::setup_tab_session ()
     (
         ui->lineEditPlaylist, SIGNAL(editingFinished()),
         this, SLOT(slot_playlist_filename())
+    );
+    // ui->pushButtonLoadPlaylist->hide();
+    connect
+    (
+        ui->pushButtonLoadPlaylist, SIGNAL(clicked(bool)),
+        this, SLOT(slot_load_playlist_filename())
     );
 
     /*
@@ -1822,6 +1846,12 @@ qseditoptions::setup_tab_session ()
         ui->lineEditCtrl, SIGNAL(editingFinished()),
         this, SLOT(slot_ctrl_filename())
     );
+    // ui->pushButtonLoadCtrl->hide();
+    connect
+    (
+        ui->pushButtonLoadCtrl, SIGNAL(clicked(bool)),
+        this, SLOT(slot_load_ctrl_filename())
+    );
 
     /*
      * 'drums' file.  Since this configuration is not editable while the
@@ -1835,8 +1865,19 @@ qseditoptions::setup_tab_session ()
     );
     connect
     (
+        ui->checkBoxSaveDrums, SIGNAL(clicked(bool)),
+        this, SLOT(slot_drums_save_click())
+    );
+    connect
+    (
         ui->lineEditDrums, SIGNAL(editingFinished()),
         this, SLOT(slot_drums_filename())
+    );
+    // ui->pushButtonLoadDrums->hide();
+    connect
+    (
+        ui->pushButtonLoadDrums, SIGNAL(clicked(bool)),
+        this, SLOT(slot_load_drums_filename())
     );
 
     /*
@@ -1857,6 +1898,12 @@ qseditoptions::setup_tab_session ()
     (
         ui->lineEditPalette, SIGNAL(editingFinished()),
         this, SLOT(slot_palette_filename())
+    );
+    // ui->pushButtonLoadPalette->hide();
+    connect
+    (
+        ui->pushButtonLoadPalette, SIGNAL(clicked(bool)),
+        this, SLOT(slot_load_palette_filename())
     );
 
     /*
@@ -1885,22 +1932,12 @@ qseditoptions::setup_tab_session ()
         ui->lineEditStyleSheet, SIGNAL(editingFinished()),
         this, SLOT(slot_stylesheet_filename())
     );
-
-    /*
-     * Meant for looking up a file-name just to get the base-name.
-     * This will save the user from having to rely on memory.
-     *
-     * Hidden for now.
-     */
-
-    ui->pushButtonLoadCtrl->hide();
-    ui->pushButtonLoadDrums->hide();
-    ui->pushButtonLoadMutes->hide();
-    ui->pushButtonLoadPalette->hide();
-    ui->pushButtonLoadPlaylist->hide();
-    ui->pushButtonLoadRc->hide();
-    ui->pushButtonLoadStyleSheet->hide();
-    ui->pushButtonLoadUsr->hide();
+    // ui->pushButtonLoadStyleSheet->hide();
+    connect
+    (
+        ui->pushButtonLoadStyleSheet, SIGNAL(clicked(bool)),
+        this, SLOT(slot_load_stylesheet_filename())
+    );
 }
 
 bool
@@ -2850,6 +2887,49 @@ qseditoptions::slot_fingerprint_size ()
     }
 }
 
+/**
+ *  Given a file-name, possibly with a path, get the base name and load it
+ *  into the QLineEdit, and set the file-tooltip.
+ *
+ *  Currently useful for all files specified in the 'rc' file, but not
+ *  for the style-sheet, which can have a full path and is also specified
+ *  in the 'usr' file.
+ *
+ *  \param prompt
+ *      If true, use a file dialog to get the filename.
+ *
+ * \param lineedit
+ *      The QLineEdit that must be updated with the new base-name and the
+ *      full filespec tooltip.
+ *
+ * \param fileextension
+ *      The desired file-extension for filtering in the file dialog.
+ *
+ * \return
+ *      Returns true if the path/file selection succeeded.
+ */
+
+bool
+qseditoptions::load_file_name
+(
+    QLineEdit * lineedit,
+    const std::string & fileextension
+)
+{
+    std::string selecteddir;
+    std::string selectedfile;
+    bool result = show_file_select_dialog   /* a simplified lookup dialog   */
+    (
+        this, fileextension, selecteddir, selectedfile
+    );
+    if (result)
+    {
+        tooltip_for_filename(lineedit, selecteddir);
+        lineedit->setText(qt(selectedfile));
+    }
+    return result;
+}
+
 void
 qseditoptions::slot_palette_filename ()
 {
@@ -2860,13 +2940,19 @@ qseditoptions::slot_palette_filename ()
         if (name_has_path(text))
         {
             tooltip_for_filename(ui->lineEditPalette, text);
-            text = filename_base(text); // TODO: no longer needed
+            text = filename_base(text);
         }
         rc().palette_filename(text);
         rc().auto_palette_save(true);
         ui->checkBoxSavePalette->setChecked(true);
         modify_rc();
     }
+}
+
+void
+qseditoptions::slot_load_palette_filename ()
+{
+    (void) load_file_name(ui->lineEditPalette, "palette");
 }
 
 void
@@ -3047,6 +3133,12 @@ qseditoptions::slot_rc_filename ()
 }
 
 void
+qseditoptions::slot_load_rc_filename ()
+{
+    (void) load_file_name(ui->lineEditRc, "rc");
+}
+
+void
 qseditoptions::modify_rc ()
 {
     if (m_is_initialized)
@@ -3104,13 +3196,17 @@ qseditoptions::slot_usr_filename ()
     std::string text = qs.toStdString();
     if (! text.empty() && text != rc().user_filename())
     {
-        if (name_has_path(text)) // TODO: no longer needed
-            text = filename_base(text); // TODO: no longer needed
-
+        text = filename_base(text);
         rc().user_filename(text);
         modify_rc();
         modify_usr();                   /* guarantee a save */
     }
+}
+
+void
+qseditoptions::slot_load_usr_filename ()
+{
+    (void) load_file_name(ui->lineEditUsr, "usr");
 }
 
 void
@@ -3137,13 +3233,17 @@ qseditoptions::slot_mutes_filename ()
     if (! text.empty() && text != rc().mute_group_filename())
     {
         ui->checkBoxSaveMutes->setChecked(true);
-        if (name_has_path(text)) // TODO: no longer needed
-            text = filename_base(text); // TODO: no longer needed
-
+        text = filename_base(text);
         rc().mute_group_filename(text);
         rc().auto_mutes_save(true);
         modify_rc();
     }
+}
+
+void
+qseditoptions::slot_load_mutes_filename ()
+{
+    (void) load_file_name(ui->lineEditMutes, "mutes");
 }
 
 void
@@ -3169,14 +3269,18 @@ qseditoptions::slot_playlist_filename ()
     std::string text = qs.toStdString();
     if (! text.empty() && text != rc().playlist_filename())
     {
-        if (name_has_path(text)) // TODO: no longer needed
-            text = filename_base(text); // TODO: no longer needed
-
+        text = filename_base(text);
         perf().playlist_filename(text);     /* rc().playlist_filename(text) */
         rc().auto_playlist_save(true);
         modify_rc();
         ui->checkBoxSavePlaylist->setChecked(true);
     }
+}
+
+void
+qseditoptions::slot_load_playlist_filename ()
+{
+    (void) load_file_name(ui->lineEditPlaylist, "playlist");
 }
 
 /*
@@ -3206,13 +3310,17 @@ qseditoptions::slot_ctrl_filename ()
     std::string text = qs.toStdString();
     if (! text.empty() && text != rc().midi_control_filename())
     {
-        if (name_has_path(text)) // TODO: no longer needed
-            text = filename_base(text); // TODO: no longer needed
-
+        text = filename_base(text);
         rc().midi_control_filename(text);
         modify_rc();
         modify_ctrl();
     }
+}
+
+void
+qseditoptions::slot_load_ctrl_filename ()
+{
+    (void) load_file_name(ui->lineEditCtrl, "ctrl");
 }
 
 void
@@ -3224,19 +3332,31 @@ qseditoptions::slot_drums_active_click ()
 }
 
 void
+qseditoptions::slot_drums_save_click ()
+{
+    bool on = ui->checkBoxSaveDrums->isChecked();
+    rc().auto_drums_save(on);
+    modify_rc();
+}
+
+void
 qseditoptions::slot_drums_filename ()
 {
     const QString qs = ui->lineEditDrums->text();
     std::string text = qs.toStdString();
     if (! text.empty() && text != rc().notemap_filename())
     {
-        if (name_has_path(text))
-            text = filename_base(text);
-
+        text = filename_base(text);
         ui->checkBoxSaveDrums->setChecked(true);
         rc().notemap_filename(text);
         modify_rc();
     }
+}
+
+void
+qseditoptions::slot_load_drums_filename ()
+{
+    (void) load_file_name(ui->lineEditDrums, "drums");
 }
 
 void
@@ -3261,6 +3381,12 @@ qseditoptions::slot_stylesheet_filename ()
         usr().style_sheet(text);
         modify_usr();                       /* 'rc' doesn't set style-sheet */
     }
+}
+
+void
+qseditoptions::slot_load_stylesheet_filename ()
+{
+    (void) load_file_name(ui->lineEditStyleSheet, "qss");
 }
 
 void

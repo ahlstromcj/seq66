@@ -38,7 +38,6 @@
      <property name="font">
       <font>
        <pointsize>11</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -67,7 +66,6 @@
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -92,7 +90,6 @@
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -214,7 +211,6 @@
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -266,7 +262,6 @@
         <font>
          <family>DejaVu Sans</family>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -324,7 +319,6 @@
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -344,7 +338,6 @@
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -374,7 +367,6 @@
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -405,7 +397,6 @@
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -446,7 +437,6 @@
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -463,7 +453,6 @@
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -534,7 +523,6 @@ Each port number can be found by name-lookup.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -559,7 +547,6 @@ Each port number can be found by name-lookup.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -688,7 +675,6 @@ slot by channel number (0 to 15).</string>
         <font>
          <family>DejaVu Sans</family>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -756,7 +742,6 @@ slot by channel number (0 to 15).</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -793,7 +778,6 @@ slot by channel number (0 to 15).</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -1425,7 +1409,6 @@ Range: 0.5 to 3.0</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -1446,7 +1429,6 @@ Range: 0.5 to 3.0</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1466,7 +1448,6 @@ Range: 0.5 to 3.0</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1509,7 +1490,6 @@ Range: 0.5 to 3.0</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1529,7 +1509,6 @@ Range: 0.5 to 3.0</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1780,7 +1759,6 @@ connects to the MIDI I/O ports it finds.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1800,7 +1778,6 @@ connects to the MIDI I/O ports it finds.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -1870,7 +1847,6 @@ in the Song Editor.</string>
          <property name="font">
           <font>
            <pointsize>11</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1889,7 +1865,6 @@ in the Song Editor.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1913,7 +1888,6 @@ playback resumes.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1938,7 +1912,6 @@ the default PPQN.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1960,7 +1933,6 @@ the default PPQN.</string>
           <font>
            <family>Sans</family>
            <pointsize>11</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -2033,7 +2005,6 @@ Seq66 exits.</string>
          <property name="font">
           <font>
            <pointsize>11</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -2052,7 +2023,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2072,7 +2042,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2092,7 +2061,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2112,7 +2080,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2139,7 +2106,6 @@ Seq66 exits.</string>
          <property name="font">
           <font>
            <pointsize>11</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -2158,7 +2124,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2178,7 +2143,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2198,7 +2162,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2245,7 +2208,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -2261,7 +2223,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2278,7 +2239,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2302,7 +2262,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2319,7 +2278,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2379,7 +2337,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2396,7 +2353,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2410,7 +2366,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2424,7 +2379,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2447,7 +2401,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2470,7 +2423,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2493,7 +2445,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2551,7 +2502,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2581,7 +2531,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2624,7 +2573,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2677,7 +2625,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2707,7 +2654,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2756,7 +2702,6 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -2807,7 +2752,7 @@ Seq66 exits.</string>
           <x>8</x>
           <y>40</y>
           <width>197</width>
-          <height>213</height>
+          <height>227</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -2995,7 +2940,6 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -3015,7 +2959,6 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -3035,7 +2978,6 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -3060,7 +3002,6 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -3118,7 +3059,6 @@ Seq66 exits.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -3131,29 +3071,26 @@ Seq66 exits.</string>
        <property name="geometry">
         <rect>
          <x>336</x>
-         <y>20</y>
-         <width>291</width>
+         <y>10</y>
+         <width>311</width>
          <height>189</height>
         </rect>
        </property>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
        </property>
        <property name="text">
-        <string>NSM use is automatic if Seq66 runs
-in an NSM session.  The check-mark
-causes Seq66 to run as if in NSM, for
-debugging. JACK session management
-occurs only if checked, even if Seq66
-is run by it.
+        <string>NSM use is automatic if Seq66 runs in an
+NSM session.  The check-mark causes
+Seq66 to run as if in NSM, for debugging.
+ JACK session management occurs only
+if checked, even if Seq66 is run by it.
 
-As usual for many changes, restart
-required.</string>
+For many changes, restart is required.</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_nsm_url">
@@ -3168,7 +3105,6 @@ required.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -3193,8 +3129,8 @@ required.</string>
        <property name="geometry">
         <rect>
          <x>8</x>
-         <y>220</y>
-         <width>609</width>
+         <y>210</y>
+         <width>641</width>
          <height>231</height>
         </rect>
        </property>
@@ -3206,7 +3142,7 @@ required.</string>
          <rect>
           <x>36</x>
           <y>70</y>
-          <width>101</width>
+          <width>96</width>
           <height>23</height>
          </rect>
         </property>
@@ -3222,7 +3158,7 @@ required.</string>
          <rect>
           <x>36</x>
           <y>100</y>
-          <width>101</width>
+          <width>96</width>
           <height>23</height>
          </rect>
         </property>
@@ -3235,7 +3171,7 @@ required.</string>
          <rect>
           <x>36</x>
           <y>130</y>
-          <width>101</width>
+          <width>96</width>
           <height>23</height>
          </rect>
         </property>
@@ -3248,7 +3184,7 @@ required.</string>
          <rect>
           <x>36</x>
           <y>160</y>
-          <width>101</width>
+          <width>96</width>
           <height>23</height>
          </rect>
         </property>
@@ -3264,7 +3200,7 @@ required.</string>
          <rect>
           <x>344</x>
           <y>70</y>
-          <width>101</width>
+          <width>96</width>
           <height>23</height>
          </rect>
         </property>
@@ -3280,12 +3216,12 @@ required.</string>
          <rect>
           <x>344</x>
           <y>100</y>
-          <width>101</width>
+          <width>96</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>.drums *</string>
+         <string>.drums*</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBoxActiveRc">
@@ -3330,7 +3266,7 @@ required.</string>
         <property name="geometry">
          <rect>
           <x>8</x>
-          <y>128</y>
+          <y>130</y>
           <width>25</width>
           <height>23</height>
          </rect>
@@ -3399,7 +3335,6 @@ required.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3420,7 +3355,6 @@ required.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3487,7 +3421,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>432</x>
+          <x>448</x>
           <y>70</y>
           <width>125</width>
           <height>24</height>
@@ -3500,7 +3434,7 @@ required.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>432</x>
+          <x>448</x>
           <y>100</y>
           <width>125</width>
           <height>24</height>
@@ -3519,7 +3453,6 @@ required.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3568,12 +3501,12 @@ path added to this name is stripped.</string>
          <rect>
           <x>36</x>
           <y>190</y>
-          <width>101</width>
+          <width>96</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>.palette *</string>
+         <string>.palette*</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_cfg_active_2">
@@ -3588,7 +3521,6 @@ path added to this name is stripped.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3609,7 +3541,6 @@ path added to this name is stripped.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3621,7 +3552,7 @@ path added to this name is stripped.</string>
        <widget class="QLabel" name="label_cfg_basename_2">
         <property name="geometry">
          <rect>
-          <x>440</x>
+          <x>450</x>
           <y>36</y>
           <width>113</width>
           <height>17</height>
@@ -3630,7 +3561,6 @@ path added to this name is stripped.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3663,12 +3593,12 @@ path added to this name is stripped.</string>
          <rect>
           <x>344</x>
           <y>130</y>
-          <width>101</width>
+          <width>96</width>
           <height>23</height>
          </rect>
         </property>
         <property name="text">
-         <string>.qss *</string>
+         <string>.qss*</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEditStyleSheet">
@@ -3677,7 +3607,7 @@ path added to this name is stripped.</string>
         </property>
         <property name="geometry">
          <rect>
-          <x>432</x>
+          <x>448</x>
           <y>130</y>
           <width>125</width>
           <height>24</height>
@@ -3687,9 +3617,9 @@ path added to this name is stripped.</string>
        <widget class="QPushButton" name="pushButtonSavePalette">
         <property name="geometry">
          <rect>
-          <x>320</x>
+          <x>310</x>
           <y>190</y>
-          <width>149</width>
+          <width>131</width>
           <height>25</height>
          </rect>
         </property>
@@ -3712,7 +3642,6 @@ path added to this name is stripped.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -3725,7 +3654,7 @@ path added to this name is stripped.</string>
          <rect>
           <x>272</x>
           <y>70</y>
-          <width>36</width>
+          <width>28</width>
           <height>24</height>
          </rect>
         </property>
@@ -3738,7 +3667,7 @@ path added to this name is stripped.</string>
          <rect>
           <x>272</x>
           <y>100</y>
-          <width>36</width>
+          <width>28</width>
           <height>24</height>
          </rect>
         </property>
@@ -3751,7 +3680,7 @@ path added to this name is stripped.</string>
          <rect>
           <x>272</x>
           <y>130</y>
-          <width>36</width>
+          <width>28</width>
           <height>24</height>
          </rect>
         </property>
@@ -3764,7 +3693,7 @@ path added to this name is stripped.</string>
          <rect>
           <x>272</x>
           <y>160</y>
-          <width>36</width>
+          <width>28</width>
           <height>24</height>
          </rect>
         </property>
@@ -3777,7 +3706,7 @@ path added to this name is stripped.</string>
          <rect>
           <x>272</x>
           <y>190</y>
-          <width>36</width>
+          <width>28</width>
           <height>24</height>
          </rect>
         </property>
@@ -3788,9 +3717,9 @@ path added to this name is stripped.</string>
        <widget class="QPushButton" name="pushButtonLoadCtrl">
         <property name="geometry">
          <rect>
-          <x>563</x>
+          <x>579</x>
           <y>70</y>
-          <width>36</width>
+          <width>28</width>
           <height>24</height>
          </rect>
         </property>
@@ -3801,9 +3730,9 @@ path added to this name is stripped.</string>
        <widget class="QPushButton" name="pushButtonLoadDrums">
         <property name="geometry">
          <rect>
-          <x>564</x>
+          <x>580</x>
           <y>100</y>
-          <width>36</width>
+          <width>28</width>
           <height>24</height>
          </rect>
         </property>
@@ -3814,9 +3743,9 @@ path added to this name is stripped.</string>
        <widget class="QPushButton" name="pushButtonLoadStyleSheet">
         <property name="geometry">
          <rect>
-          <x>564</x>
+          <x>580</x>
           <y>130</y>
-          <width>36</width>
+          <width>28</width>
           <height>24</height>
          </rect>
         </property>
@@ -3832,7 +3761,7 @@ path added to this name is stripped.</string>
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>456</y>
+         <y>450</y>
          <width>129</width>
          <height>25</height>
         </rect>
@@ -3854,7 +3783,7 @@ path added to this name is stripped.</string>
        <property name="geometry">
         <rect>
          <x>250</x>
-         <y>460</y>
+         <y>450</y>
          <width>391</width>
          <height>22</height>
         </rect>
@@ -3862,7 +3791,6 @@ path added to this name is stripped.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>

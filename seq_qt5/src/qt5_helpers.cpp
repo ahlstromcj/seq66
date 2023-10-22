@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-09-21
+ * \updates       2023-10-22
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -49,6 +49,8 @@
  *      -   show_playlist_dialog()
  *      -   show_text_file_dialog()
  *      -   show_file_dialog()
+ *      -   show_folder_dialog()
+ (      -   show_file_select_dialog()
  */
 
 #include <QAction>
@@ -73,6 +75,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::rc().home_config_dir...() */
 #include "util/filefunctions.hpp"       /* seq66 file-name manipulations    */
+#include "util/strfunctions.hpp"        /* seq66::toupper() and tolower     */
 #include "qt5_helpers.hpp"              /* these cool helper functions!     */
 
 /*
@@ -843,6 +846,76 @@ show_file_dialog
             selectedfile = file_extension_set(selectedfile, extension);
 
         file_message(saving ? "Saving" : "Opening", selectedfile);
+    }
+    return result;
+}
+
+/**
+ *  To be used simply for getting file-names. It returns both the full path
+ *  to the file, including the base-name, plus the base-name of the file.
+ *
+ *  Compare to show_import_project_dialog().
+ *
+ * \param parent
+ *      The owner of this dialog.
+ *
+ * \param extension
+ *      The file-extension of interest. If empty, 'rc' is used.
+ *
+ * \param [inout] selecteddir
+ *      The initial path and the final selected path. This is the starting
+ *      point for the file dialog.
+ *
+ * \param [inout] selectedfile
+ *      The base name, nicely laid on a platter for the caller.
+ *
+ * \return
+ *      Returns true if the in-out parameters can be used.
+ */
+
+bool
+show_file_select_dialog
+(
+    QWidget * parent,
+    const std::string & extension,
+    std::string & selecteddir,
+    std::string & selectedfile
+)
+{
+    std::string selection;
+    std::string caption = "Select a File";
+    std::string ext = extension.empty() ? "*" : extension;
+    std::string filter = toupper(extension);
+    filter += "(*.";
+    filter += tolower(extension);
+    filter += ")";
+    if (! extension.empty())
+        filter += ";;All files (*)";
+
+    bool result = show_file_dialog
+    (
+        parent, selection, caption, filter, OpeningFile, ConfigFile
+    );
+    if (result)
+    {
+        std::string dir;
+        std::string file;
+        result = filename_split(selection, dir, file);
+        if (result)
+        {
+            selecteddir = dir;
+            selectedfile = file;
+        }
+    }
+
+    /*
+     * Hmmmm, do we really want to clear these?
+     */
+
+    if (! result)
+    {
+        selecteddir.clear();
+        selectedfile.clear();
     }
     return result;
 }

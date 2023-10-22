@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-10-10
+ * \updates       2023-10-22
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1013,6 +1013,38 @@ strings_match (const std::string & target, const std::string & x)
                 }
             }
         }
+    }
+    return result;
+}
+
+/**
+ *  Returns the source string with all characters converted to lowercase.
+ */
+
+std::string
+tolower (const std::string & source)
+{
+    std::string result;
+    for (auto c : source)
+    {
+        char c2 = std::tolower(c);
+        result += c2;
+    }
+    return result;
+}
+
+/**
+ *  Returns the source string with all characters converted to uppercase.
+ */
+
+std::string
+toupper (const std::string & source)
+{
+    std::string result;
+    for (auto c : source)
+    {
+        char c2 = std::toupper(c);
+        result += c2;
     }
     return result;
 }

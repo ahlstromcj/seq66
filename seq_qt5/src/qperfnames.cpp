@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-20
+ * \updates       2023-10-22
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -119,7 +119,12 @@ qperfnames::paintEvent (QPaintEvent *)
     int y_f = height() / h;
     int set_count = setmaster::Size();                  /* number of rows   */
     QPainter painter(this);
-    QPen pen(fore_color());
+
+    /*
+     * QPen pen(fore_color());
+     */
+
+    QPen pen(text_paint());
     QBrush brush(backnames_paint(), Qt::SolidPattern);
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(2);
@@ -150,12 +155,21 @@ qperfnames::paintEvent (QPaintEvent *)
 
                 int text_y = rect_y + set_y;
                 QString bankss(ss);
-                pen.setColor(fore_color());             // for bank number
+
+                /*
+                 * pen.setColor(fore_color());          // for bank number
+                 */
+
+                pen.setColor(text_paint());             // for bank number
                 painter.setPen(pen);
                 painter.drawText(1, rect_y + 10, bankss);
-                pen.setColor(Qt::black);                // bank name sideways
-                painter.setPen(pen);
-                painter.save();                         // {
+
+                /*
+                 * pen.setColor(Qt::black);             // bank name sideways
+                 * painter.setPen(pen);
+                 */
+
+                painter.save();                         // { ???
 
                 QString bank(qt(perf().set_name(bank_id)));
                 painter.translate(12, text_y + bank.length() * 4);
@@ -243,7 +257,12 @@ qperfnames::paintEvent (QPaintEvent *)
                         pen.setColor(fore_color());
                     }
                 }
-                painter.setPen(pen);
+
+                /*
+                 * painter.setPen(pen);
+                 */
+
+                painter.setPen(text_paint());
                 painter.drawText(18, rect_y + 9, chinfo);
                 if (! track_thin())
                 {

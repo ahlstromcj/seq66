@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2023-10-20
+ * \updates       2023-10-22
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -282,9 +282,9 @@ octave_paint ()
 }
 
 Color
-extra_03_paint ()
+text_paint ()
 {
-    return global_palette().get_color(InvertibleColor::extra_03);
+    return global_palette().get_color(InvertibleColor::text);
 }
 
 Brush
@@ -631,7 +631,7 @@ gui_palette_qt5::reset_invertibles ()
     m_nrm_palette.add(InvertibleColor::backkeys,  m_grey,     "Keys Brush");
     m_nrm_palette.add(InvertibleColor::backnames, m_grey,     "Names Brush");
     m_nrm_palette.add(InvertibleColor::octave,    m_grey,     "Octave Line");
-    m_nrm_palette.add(InvertibleColor::extra_03,  m_grey,     "Extra 3");
+    m_nrm_palette.add(InvertibleColor::text,      m_black,    "Text");
 
     m_inv_palette.clear();
     m_inv_palette.add(InvertibleColor::black,     m_white,    "Foreground");
@@ -657,7 +657,7 @@ gui_palette_qt5::reset_invertibles ()
     m_inv_palette.add(InvertibleColor::backkeys,  m_grey,     "Keys Brush");
     m_inv_palette.add(InvertibleColor::backnames, m_grey,     "Names Brush");
     m_inv_palette.add(InvertibleColor::octave,    m_grey,     "Octave Line");
-    m_inv_palette.add(InvertibleColor::extra_03,  m_grey,     "Extra 3");
+    m_inv_palette.add(InvertibleColor::text,      m_black,    "Text");
 
     m_empty_brush->setColor(get_color(InvertibleColor::white));
     m_empty_brush->setStyle(m_empty_brush_style);

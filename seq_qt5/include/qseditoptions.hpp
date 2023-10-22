@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-11
+ * \updates       2023-10-22
  * \license       GNU GPLv2 or above
  */
 
@@ -48,6 +48,7 @@ namespace Ui
 
 class QButtonGroup;
 class QComboBox;
+class QLineEdit;
 
 /*
  *  Do not document the namespace, it breaks Doxygen.
@@ -93,7 +94,6 @@ private:
     void setup_tab_metronome ();
     void setup_tab_pattern ();
     void setup_tab_session ();
-
     void set_enabled (QDialogButtonBox::StandardButton bcode, bool on);
     void set_text
     (
@@ -129,6 +129,11 @@ private:
     void state_changed ();
     void state_applied ();
     void activate_ctrl_file ();
+    bool load_file_name
+    (
+        QLineEdit * lineedit,
+        const std::string & fileextension
+    );
 
     bool reload_needed () const
     {
@@ -202,26 +207,35 @@ private slots:
     void slot_global_seq_feature ();
     void slot_rc_save_click ();
     void slot_rc_filename ();
+    void slot_load_rc_filename ();
     void slot_usr_save_click ();
     void slot_usr_active_click ();
     void slot_usr_filename ();
+    void slot_load_usr_filename ();
     void slot_mutes_save_click ();
     void slot_mutes_active_click ();
     void slot_mutes_filename ();
+    void slot_load_mutes_filename ();
     void slot_playlist_save_click ();
     void slot_playlist_active_click ();
     void slot_playlist_filename ();
+    void slot_load_playlist_filename ();
     void slot_ctrl_active_click ();
     void slot_ctrl_save_click ();
     void slot_ctrl_filename ();
+    void slot_load_ctrl_filename ();
     void slot_drums_active_click ();
+    void slot_drums_save_click ();
     void slot_drums_filename ();
+    void slot_load_drums_filename ();
     void slot_stylesheet_active_click ();
     void slot_stylesheet_filename ();
+    void slot_load_stylesheet_filename ();
     void slot_palette_save_now_click ();
     void slot_palette_save_click ();
     void slot_palette_active_click ();
     void slot_palette_filename ();
+    void slot_load_palette_filename ();
     void slot_clock_start_modulo (int arg);
     void slot_output_bus (int arg);
     void slot_output_bus_enable ();
