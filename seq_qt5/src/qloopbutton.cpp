@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2023-10-22
+ * \updates       2023-10-24
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -80,9 +80,10 @@ static const int s_alpha_oneshot    =  64;       // 148;
  *  other sizes.
  */
 
-static const int s_fontsize_main    = 7;
-static const int s_fontsize_record  = 8;        // 5;
-static const int s_radius_record    = 9;        // 8;
+static const int s_fontsize_main    =  8;       // 7;
+static const int s_fontsize_large   = 10;       // for usr:progress-bar-thick
+static const int s_fontsize_record  =  8;       // 5;
+static const int s_radius_record    =  9;       // 8;
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -279,7 +280,10 @@ qloopbutton::initialize_text ()
         int bh = usr().scale_size_y(sm_base_height);
         int rx = int(0.50 * w) + lx - dx - 1;
         int by = int(0.85 * h) + dy - 3;
-        int fontsize = usr().scale_font_size(s_fontsize_main);
+        int basefontsize = usr().progress_bar_thick() ?
+            s_fontsize_large : s_fontsize_main ;
+
+        int fontsize = usr().scale_font_size(basefontsize);
         if (vert_compressed())
         {
             ty += 2;

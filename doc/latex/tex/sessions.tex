@@ -545,7 +545,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 \subsubsection{Session Management / Sessions Tab}
 \label{subsubsec:sessions_tab}
 
-   The \textsl{Session} tab is a \textsl{read-only} tab
+   The \textsl{Session} tab is a mostly \textsl{read-only} tab
    provided to orient the user to the setup supported by the session.
    When not running in a session, the normal configuration directory and files
    are shown.  When running in an \textsl{NSM} section, the configuration
@@ -555,7 +555,11 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    Two screenshots are shown below.
 %  The first shows a \textbf{Session Log} pane, but this has been removed
 %  as non-functional.
-   The first one is a little out-of-date.
+   The first one is a little out-of-date;
+   the second one shows access to widgets to allow
+   song Text information to be stored.
+   (A more flexible text facility is provided in the \textbf{Events}
+   tab; see \sectionref{sec:event_editor}.)
 
 \begin{figure}[H]
    \centering 
@@ -563,13 +567,15 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    \caption*{Session Tab Under NSM}
 \end{figure}
 
+   Note that the alternate coloring was set using a Qt style-sheet.
    The next diagram is more up-to-date, and shows the \textbf{Song Info}
-   pane.
+   pane for adding a Text event to the song.
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.65]{tabs/session/qseq66-session-tab-song-info.png}
-   \caption*{New Session Tab with Song Info}
+%  \includegraphics[scale=0.65]{tabs/session/qseq66-session-tab-song-info.png}
+   \includegraphics[scale=0.65]{tabs/session/session-song-info.png}
+   \caption*{Session Tab with Song Info}
 \end{figure}
 
    \index{sessions!ui}
@@ -619,6 +625,10 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          a MIDI controller into the proper mode for controlling and displaying
          information in \textsl{Seq66}, and "shutdown" can return the controller
          to its normal operating mode.
+      \item Session Log File. If present, all console output goes into this
+         log-file, which exists only in the "home" configuration directory.
+      \item Last Directory. Shows the directory where the last MIDI file
+         was loaded.
       \item Restart (Reload Session).
          \index{restart!manual}
          After editing some of the preferences in the \textbf{Edit / Preferences}
@@ -632,6 +642,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          editing of "song info".
          The song info is merely the first Meta Text event, if any,
          found in pattern 0.
+         The pattern number can be changed if desired.
          This field can be edited with information such as date, composer,
          playback notes, etc. up to about 1024 ASCII characters.
          Extended ASCII characters are encoded as three hexadecimal

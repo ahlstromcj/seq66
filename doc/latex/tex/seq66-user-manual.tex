@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-10-08
+% \update      2023-10-24
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -125,7 +125,7 @@
    It requires a hardware or software synthesizer.
    It does not handle audio data, just MIDI.
    It works with \textsl{ALSA}, \textsl{JACK},
-   \textsl{portmidi}, and \textsl{Windows}.
+   and \textsl{Windows}.
 
    We have many contributors to acknowledge.
    Please see \sectionref{sec:kudos}.
@@ -155,28 +155,30 @@
          palette files;
          Qt style-sheets for control of colors and fonts for many
          user-interface items.
-         A Qt linear-gradient is now the default style for painting the
+         A Qt linear-gradient is the default style for painting the
          progress boxes, notes, and triggers.
       \item Improved the song editor tab for laying out patterns;
          includes transposable triggers;
-         can be opened in its own window.
-      \item The mutes editor tab, improves mutes handling and control;
-         a MIDI status display.
-      \item A playlist editor tab, with improved flexibility and automation.
+         can be opened in a tab or its own window.
+      \item The mutes editor tab, improves mutes handling and control.
+      \item A playlist editor tab with improved flexibility.
       \item A sets editor tab.
-      \item A events editor tab to fix minor event issues.
+      \item A events editor tab to fix minor event issues and add meta text
+         events.
       \item A session tab (and Edit / Preference pages) to see that
          \textsl{Seq66} is running in the desired environment and configuation.
       \item Non Session Manager support. The sessions tab shows the
          locations of configuration files for the session.
       \item Repartitioning of configuration files into separate files for
-         flexibility; added a color palette file, Qt style-sheets; a beefed-up
-         'ctrl' file.
+         flexibility; added a color palette file,
+         Qt style-sheets (\texttt{*.qss});
+         an enhanced keystroke and MIDI 'ctrl' file, with
+         support for displaying pattern and action statuses.
       \item Improved alternate keyboard layout support.
       \item Mapping of port names to a consistent set of port numbers.
-      \item Providing for routing of MIDI input events to specify
+      \item Providing for routing of MIDI input events to
          patterns based on port number.
-      \item Ability to export songs in SMF 0 and 1 formats.
+      \item Export songs in SMF 0 and 1 formats.
       \item More efficient lookups for controls using control maps
          and lambda functions.
       \item Can be configured to build as a command-line application with

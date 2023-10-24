@@ -4,12 +4,8 @@ Chris Ahlstrom
 
 Misc:
 
-    -   Consider moving filespec_helper into basesettings.
-    -   Should we use the next text_paint() in all panels besides the
-        loop button?
+    -   Test the Set Master.
     -   Test Import / Import Project Configuration, Playlist....
-    -   The Meta Text edit field stays read-only even when Modify is clicked.
-        (This might be mistaken.)
     -   Make sure the grid-mode clear and double operations work properly.
     -   Add a feature to start playback when the first note comes
         into a pattern when recording is set. [Turns out to be quite tricky!]
