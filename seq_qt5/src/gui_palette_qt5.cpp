@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2023-10-22
+ * \updates       2023-10-24
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -635,7 +635,7 @@ gui_palette_qt5::reset_invertibles ()
 
     m_inv_palette.clear();
     m_inv_palette.add(InvertibleColor::black,     m_white,    "Foreground");
-    m_inv_palette.add(InvertibleColor::white,     m_dk_grey,  "Background");
+    m_inv_palette.add(InvertibleColor::white,     m_black,    "Background");
     m_inv_palette.add(InvertibleColor::label,     m_white,    "Label");
     m_inv_palette.add(InvertibleColor::selection, m_orange,   "Selection");
     m_inv_palette.add(InvertibleColor::drum,      m_green,    "Drum");
@@ -656,7 +656,7 @@ gui_palette_qt5::reset_invertibles ()
     m_inv_palette.add(InvertibleColor::backevent, m_grey,     "Event Brush");
     m_inv_palette.add(InvertibleColor::backkeys,  m_grey,     "Keys Brush");
     m_inv_palette.add(InvertibleColor::backnames, m_grey,     "Names Brush");
-    m_inv_palette.add(InvertibleColor::octave,    m_grey,     "Octave Line");
+    m_inv_palette.add(InvertibleColor::octave,    m_white,    "Octave Line");
     m_inv_palette.add(InvertibleColor::text,      m_black,    "Text");
 
     m_empty_brush->setColor(get_color(InvertibleColor::white));

@@ -14,15 +14,10 @@ Misc:
     -   Make sure we have record-toggle automation!
     -   Make sure metronome buttons etc. still work. Recording measures
         not saved.
-
-Some of these issues will be pushed off for the distant Seq66v2.
-
-    o Why does velocity change in data pane not work when starting from the
+    - Why does velocity change in data pane not work when starting from the
       left in barrage.midi? The Kepler34 "relative change" feature. This
       feature is macroed out for now. Perhaps should make it a Ctrl-Click or
       something to start it in addition to "would select".
-    o Added code to pass arrow events from the qscrollslave to the
-      qscrollmaster. Does not work for wheel events, oddly enough.
 
 Mutes:
 

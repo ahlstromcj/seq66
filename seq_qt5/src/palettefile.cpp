@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2023-10-22
+ * \updates       2023-10-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -207,7 +207,7 @@ bool
 palettefile::write_stream (std::ofstream & file)
 {
     file
-        << "# Seq66 0.97.1 (and above) palette configuration file\n"
+        << "# Seq66 0.99.10 (and above) palette configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << get_current_date_time() << "\n"

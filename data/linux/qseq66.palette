@@ -1,7 +1,7 @@
 # Seq66 0.99.10 (and above) palette configuration file
 #
 # /home/user/.config/seq66/qseq66.palette
-# Written on 2023-10-22 10:22:56
+# Written on 2023-10-24 15:02:56
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface. It must be active and
@@ -17,7 +17,8 @@ version = 0
 
 [comments]
 
-This file is the default palette of Seq66.
+This file is the default palette of Seq66. The inverse now uses
+a black (not grey) background as of 0.99.10.
 
 # [palette] affects the pattern colors selected (by number). First is
 # the color number, 0 to 31. Next is the name of the background color.
@@ -68,7 +69,7 @@ This file is the default palette of Seq66.
 [ui-palette]
 
  0       "Foreground" [ 0xFF000000 ]       "Foreground" [ 0xFFFFFFFF ]
- 1       "Background" [ 0xFFFFFFFF ]       "Background" [ 0xFF484848 ]
+ 1       "Background" [ 0xFFFFFFFF ]       "Background" [ 0xFF000000 ]
  2            "Label" [ 0xDEADBEEF ]            "Label" [ 0xFFFFFFFF ]
  3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00A5 ]
  4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF000080 ]
@@ -89,8 +90,8 @@ This file is the default palette of Seq66.
 19      "Event Brush" [ 0xFF808080 ]      "Event Brush" [ 0xFF808080 ]
 20       "Keys Brush" [ 0xFF808080 ]       "Keys Brush" [ 0xFF808080 ]
 21      "Names Brush" [ 0xFF808080 ]      "Names Brush" [ 0xFF808080 ]
-22      "Octave Line" [ 0xFF808080 ]      "Octave Line" [ 0xFF808080 ]
-23             "Text" [ 0xFF808080 ]             "Text" [ 0xFF808080 ]
+22      "Octave Line" [ 0xFF808080 ]      "Octave Line" [ 0xFFFFFFFF ]
+23             "Text" [ 0xFF000000 ]             "Text" [ 0xFF000000 ]
 
 # This section defines brush styles to use. The names are based on the
 # names in the Qt::BrushStyle enumeration. The names are:
