@@ -321,9 +321,8 @@ palettefile::write ()
         file.close();
     }
     else
-    {
         file_error("Write open fail", name());
-    }
+
     return result;
 }
 
@@ -338,15 +337,10 @@ open_palette
     if (result)
     {
         palettefile palfile(pal, source, rc());     /* add msg? */
-
-        /*
-         * Redundant: file_message("Palette open", source);
-         */
-
         result = palfile.parse();
         if (result)
         {
-            // Anything worth doing
+            // Anything worth doing?
         }
         else
         {
@@ -363,7 +357,9 @@ open_palette
 }
 
 /**
- *  This function save the palette to a file.
+ *  This function saves the palettes to a file. It is primarily useful
+ *  in getting any new additions/upgrades to the palettes. Older palette
+ *  files can be updated using side-by-side editing in a text editor.
  *
  *  \param [inout] pal
  *      Provides the palette object.

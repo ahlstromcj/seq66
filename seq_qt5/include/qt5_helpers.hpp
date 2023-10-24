@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-10-22
+ * \updates       2023-10-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -167,6 +167,7 @@ extern void tooltip_for_filename
     const std::string & filespec,
     int duration = -1
 );
+extern bool is_empty (const QLineEdit * lineedit);
 
 }               // namespace seq66
 

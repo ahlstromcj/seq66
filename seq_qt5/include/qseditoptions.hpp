@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-22
+ * \updates       2023-10-24
  * \license       GNU GPLv2 or above
  */
 
@@ -206,10 +206,14 @@ private slots:
     void slot_double_click_edit ();
     void slot_global_seq_feature ();
     void slot_rc_save_click ();
+#if defined USE_RC_NAME_CHANGE
     void slot_rc_filename ();
     void slot_load_rc_filename ();
+#endif
     void slot_usr_save_click ();
+#if defined SEQ66_CAN_DEACTIVATE_USR
     void slot_usr_active_click ();
+#endif
     void slot_usr_filename ();
     void slot_load_usr_filename ();
     void slot_mutes_save_click ();
@@ -221,18 +225,24 @@ private slots:
     void slot_playlist_filename ();
     void slot_load_playlist_filename ();
     void slot_ctrl_active_click ();
+#if defined SEQ66_CAN_SAVE_CTRL
     void slot_ctrl_save_click ();
+#endif
     void slot_ctrl_filename ();
     void slot_load_ctrl_filename ();
     void slot_drums_active_click ();
+#if defined SEQ66_CAN_SAVE_DRUMS
     void slot_drums_save_click ();
+#endif
     void slot_drums_filename ();
     void slot_load_drums_filename ();
     void slot_stylesheet_active_click ();
     void slot_stylesheet_filename ();
     void slot_load_stylesheet_filename ();
     void slot_palette_save_now_click ();
+#if defined SEQ66_CAN_SAVE_PALETTE
     void slot_palette_save_click ();
+#endif
     void slot_palette_active_click ();
     void slot_palette_filename ();
     void slot_load_palette_filename ();

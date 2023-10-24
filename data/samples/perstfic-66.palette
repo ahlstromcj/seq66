@@ -20,7 +20,7 @@ version = 0
 This palette is meant to tweak the normal palette for the perstfic-66.qss
 style-sheet. The main thing is to make the drawn text white. We probably
 need an additional "Text" ui-palette entry to replace "Foreground" for
-text. Done!
+text.
 
 # [palette] affects the pattern colors selected (by number). First is
 # the color number, 0 to 31. Next is the name of the background color.
@@ -71,20 +71,20 @@ text. Done!
 [ui-palette]
 
  0       "Foreground" [ 0xFF000000 ]       "Foreground" [ 0xFFFFFFFF ]
- 1       "Background" [ 0xFFFFFFFF ]       "Background" [ 0xFF484848 ]
+ 1       "Background" [ 0xFF0876B2 ]       "Background" [ 0xFF484848 ]
  2            "Label" [ 0xDEADBEEF ]            "Label" [ 0xFFFFFFFF ]
  3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00A5 ]
  4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF000080 ]
  5            "Tempo" [ 0xFFFFFF00 ]            "Tempo" [ 0xFFFFFF00 ]
- 6        "Note Fill" [ 0xFFFFFFFF ]        "Note Fill" [ 0xFF000000 ]
+ 6        "Note Fill" [ 0xFF80FFFF ]        "Note Fill" [ 0xFF000000 ]
  7      "Note Border" [ 0xFF000000 ]      "Note Border" [ 0xFFFFFFFF ]
  8       "Black Keys" [ 0xFF000000 ]       "Black Keys" [ 0xFFFFFFFF ]
  9       "White Keys" [ 0xFFFFFFFF ]       "White Keys" [ 0xFF000000 ]
 10     "Progress Bar" [ 0xFFFF0000 ]     "Progress Bar" [ 0xFFFF0000 ]
 11     "Back Pattern" [ 0xFF008B8B ]     "Back Pattern" [ 0xFF008B8B ]
-12      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF808080 ]
-13       "Heavy Line" [ 0xFF484848 ]       "Heavy Line" [ 0xFFFFFFFF ]
-14       "Light Line" [ 0xFFC0C0C0 ]       "Light Line" [ 0xFFC0C0C0 ]
+12      "Medium Line" [ 0xFF202020 ]      "Medium Line" [ 0xFF808080 ]
+13       "Heavy Line" [ 0xFF101010 ]       "Heavy Line" [ 0xFFFFFFFF ]
+14       "Light Line" [ 0xFF404040 ]       "Light Line" [ 0xFFC0C0C0 ]
 15             "Beat" [ 0xFF000000 ]             "Beat" [ 0xFFFFFFFF ]
 16             "Near" [ 0xFFFFFF00 ]             "Near" [ 0xFFFF00FF ]
 17       "Time Brush" [ 0xFF808080 ]       "Time Brush" [ 0xFF808080 ]
@@ -92,7 +92,7 @@ text. Done!
 19      "Event Brush" [ 0xFF808080 ]      "Event Brush" [ 0xFF808080 ]
 20       "Keys Brush" [ 0xFF808080 ]       "Keys Brush" [ 0xFF808080 ]
 21      "Names Brush" [ 0xFF808080 ]      "Names Brush" [ 0xFF808080 ]
-22      "Octave Line" [ 0xFF808080 ]      "Octave Line" [ 0xFF808080 ]
+22      "Octave Line" [ 0xFF00FFFF ]      "Octave Line" [ 0xFF808080 ]
 23             "Text" [ 0xFFFFFFFF ]             "Text" [ 0xFF000000 ]
 
 # This section defines brush styles to use. The names are based on the

@@ -5,7 +5,7 @@ Copyright (c) DevSec Studio. All rights reserved.
 \library       seq66 application
 \author        Chris Ahlstrom
 \date          2023-10-18
-\updates       2023-10-21
+\updates       2023-10-23
 \license       MIT
 
 MIT License
@@ -43,7 +43,7 @@ QWidget
 QTabBar::tab
 {
 	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0.00480769 rgba(3, 50, 76, 255),stop:0.293269 rgba(6, 82, 125, 255),stop:0.514423 rgba(8, 117, 178, 255),stop:0.745192 rgba(7, 108, 164, 255),stop:1 rgba(3, 51, 77, 255));
-	color: #000000;
+	color: #FFFFFF;
     font-size: 11pt;
     font-weight: bold;
     width: 80px;
@@ -70,7 +70,7 @@ QMenuBar
 
 QMenuBar::item
 {
-    color: #000000;
+    color: #FFFFFF;
     padding: 1px 3px;
 	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0.00480769 rgba(3, 50, 76, 255),stop:0.293269 rgba(6, 82, 125, 255),stop:0.514423 rgba(8, 117, 178, 255),stop:0.745192 rgba(7, 108, 164, 255),stop:1 rgba(3, 51, 77, 255));
 }
@@ -194,6 +194,16 @@ QPushButton::pressed
 QLineEdit
 {
 	background-color: #10b0b0;
+	color: #000000;
+	border-style: solid;
+	border-color: #141414;
+	border-radius: 5px;
+	padding-left: 10px;
+}
+
+QLineEdit:read-only
+{
+	background-color: #808080;
 	color: #000000;
 	border-style: solid;
 	border-color: #141414;

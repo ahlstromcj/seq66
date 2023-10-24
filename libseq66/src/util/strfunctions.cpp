@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-10-22
+ * \updates       2023-10-23
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -841,13 +841,16 @@ long
 string_to_long (const std::string & s, long defalt)
 {
     long result = defalt;
-    try
+    if (! s.empty())
     {
-        result = std::stol(s, nullptr, 0);
-    }
-    catch (std::invalid_argument const &)
-    {
-        // no code
+        try
+        {
+            result = std::stol(s, nullptr, 0);
+        }
+        catch (std::invalid_argument const &)
+        {
+            // no code
+        }
     }
     return result;
 }
@@ -1050,13 +1053,30 @@ toupper (const std::string & source)
 }
 
 /**
+ *  Returns the source string with the first character converted to uppercase.
+ */
+
+std::string
+capitalize (const std::string & source)
+{
+    std::string result;
+    int count = 0;
+    for (auto c : source)
+    {
+        char c2 = count++ == 0 ? std::toupper(c) : c ;
+        result += c2;
+    }
+    return result;
+}
+
+/**
  *  Easy conversion from boolean to string, "true" or "false".
  */
 
 std::string
 bool_to_string (bool x)
 {
-    static const std::string s_true { "true" };
+    static const std::string s_true  { "true"  };
     static const std::string s_false { "false" };
     return x ? s_true : s_false ;
 }

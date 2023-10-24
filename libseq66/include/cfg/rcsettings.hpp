@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-10-11
+ * \updates       2023-10-23
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -1484,6 +1484,7 @@ public:
     void set_save_list (bool state);
     void disable_save_list ();
     void set_save (const std::string & name, bool value);
+    std::string filespec_helper (const std::string & baseext) const;
 
     void home_config_directory (const std::string & hcd)
     {
@@ -1497,7 +1498,6 @@ public:
 
 private:
 
-    std::string filespec_helper (const std::string & baseext) const;
     std::string filename_base_fix
     (
         const std::string & filename,

@@ -1,4 +1,4 @@
-# README for Seq66 0.99.10 2023-10-20
+# README for Seq66 0.99.10 2023-10-24
 
 __Seq66__ A MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -109,7 +109,9 @@ Windows, and using a conventional source tarball.
             when the pattern editor is opened. The "Record toggle" popup
             menu entry and MIDI control also support this functionality.
         *   Added more UI palette items for more non-Qt color control.
-            Modified the inverse color palette slightly.
+            Modified the inverse color palette slightly. Added checkmark
+            for the active pattern color in its popup menu.
+        *   Tightened the file-name/activity handling in Session preferences.
         *   Restored missing table header in Mutes tab.
     *   Version 0.99.9:
         *   Added an "Input Bus Routing" feature, where each pattern can be

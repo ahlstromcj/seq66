@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-10-14
+ * \updates       2023-10-23
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1727,6 +1727,7 @@ qslivegrid::popup_menu ()
     }
     if (perf().is_seq_active(m_current_seq))
     {
+        seq::pointer s = perf().get_sequence(m_current_seq);
         if (! is_external())
         {
             QAction * editseqex = new_qaction
@@ -1779,6 +1780,8 @@ qslivegrid::popup_menu ()
                 a, &QAction::triggered,
                 [this, c] { color_by_number(c); }           /* lambda   */
             );
+            a->setCheckable(true);
+            a->setChecked(s->color() == c);
             menuColour->addAction(a);
         }
 
@@ -1795,6 +1798,8 @@ qslivegrid::popup_menu ()
                 a, &QAction::triggered,
                 [this, c]  { color_by_number(c); }
             );
+            a->setCheckable(true);
+            a->setChecked(s->color() == c);
             menu2Colour->addAction(a);
         }
 
@@ -1811,6 +1816,8 @@ qslivegrid::popup_menu ()
                 a, &QAction::triggered,
                 [this, c]  { color_by_number(c); }
             );
+            a->setCheckable(true);
+            a->setChecked(s->color() == c);
             menu3Colour->addAction(a);
         }
 
@@ -1827,6 +1834,8 @@ qslivegrid::popup_menu ()
                 a, &QAction::triggered,
                 [this, c]  { color_by_number(c); }
             );
+            a->setCheckable(true);
+            a->setChecked(s->color() == c);
             menu4Colour->addAction(a);
         }
         menuColour->addMenu(menu2Colour);
@@ -1879,32 +1888,8 @@ qslivegrid::popup_menu ()
                 this, SLOT(merge_sequence())
             );
         }
-    }
-    else if (perf().can_paste() && can_paste())
-    {
-        QAction * actionPaste = new_qaction("&Paste to pattern", m_popup);
-        m_popup->addAction(actionPaste);
-        connect
-        (
-            actionPaste, SIGNAL(triggered(bool)),
-            this, SLOT(paste_sequence())
-        );
 
-        QAction * actionMerge = new_qaction("&Merge into pattern", m_popup);
-        m_popup->addAction(actionMerge);
-        connect
-        (
-            actionMerge, SIGNAL(triggered(bool)),
-            this, SLOT(merge_sequence())
-        );
-    }
-    else
-        can_paste(false);
-
-    if (perf().is_seq_active(m_current_seq))
-    {
         mastermidibus * mmb = perf().master_bus();
-        seq::pointer s = perf().get_sequence(m_current_seq);
         if (not_nullptr(mmb))
         {
 #if defined SEQ66_ROUTE_EVENTS_BY_BUSS
@@ -2045,6 +2030,27 @@ qslivegrid::popup_menu ()
             m_popup->addMenu(menuchan);
         }
     }
+    else if (perf().can_paste() && can_paste())
+    {
+        QAction * actionPaste = new_qaction("&Paste to pattern", m_popup);
+        m_popup->addAction(actionPaste);
+        connect
+        (
+            actionPaste, SIGNAL(triggered(bool)),
+            this, SLOT(paste_sequence())
+        );
+
+        QAction * actionMerge = new_qaction("&Merge into pattern", m_popup);
+        m_popup->addAction(actionMerge);
+        connect
+        (
+            actionMerge, SIGNAL(triggered(bool)),
+            this, SLOT(merge_sequence())
+        );
+    }
+    else
+        can_paste(false);
+
     m_popup->exec(QCursor::pos());
 
     /*

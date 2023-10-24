@@ -840,8 +840,8 @@ private:
      *  Provides the name of an optional Qt style-sheet, located in the active
      *  Seq66 configuration directory.  By default, this name is empty and not
      *  used.  It present, it contains the base name of the sheet (e.g.
-     *  "qseq66.qss".  (It can contain a path, in order to support a universal
-     *  style-sheet).
+     *  "qseq66.qss".  It can also contain a path, in order to support a
+     *  universal style-sheet.
      */
 
     std::string m_user_ui_style_sheet;

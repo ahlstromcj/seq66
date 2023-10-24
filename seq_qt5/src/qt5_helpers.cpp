@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-10-22
+ * \updates       2023-10-24
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -885,8 +885,8 @@ show_file_select_dialog
     std::string selection;
     std::string caption = "Select a File";
     std::string ext = extension.empty() ? "*" : extension;
-    std::string filter = toupper(extension);
-    filter += "(*.";
+    std::string filter = capitalize(extension);
+    filter += " (*.";
     filter += tolower(extension);
     filter += ")";
     if (! extension.empty())
@@ -1016,7 +1016,11 @@ tooltip_for_filename
     int duration
 )
 {
-    if (! filespec.empty())
+    if (filespec.empty())
+    {
+        lineedit->setToolTip("No file");
+    }
+    else
     {
         std::string base = filename_base(filespec);
         QString filename = qt(filespec);
@@ -1025,6 +1029,19 @@ tooltip_for_filename
         lineedit->setToolTipDuration(duration);
         lineedit->setText(basename);
     }
+}
+
+/**
+ *  Makes it easier to check a QLineEdit for empty text [QString::isEmpty() as
+ *  opposed to QString::isNull()].
+ */
+
+bool
+is_empty (const QLineEdit * lineedit)
+{
+    const QString qs = lineedit->text();
+    std::string text = qs.toStdString();
+    return text.empty();
 }
 
 }               // namespace seq66

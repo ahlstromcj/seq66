@@ -50,7 +50,7 @@
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
 
 /**
- *  Provides an integer value for color that matches PaletteColor::NONE.  That
+ *  Provides an integer value for color that matches PaletteColor::none.  That
  *  is, no color has been assigned.  Track colors are represent by a plain
  *  integer in the seq66::sequence class.
  */

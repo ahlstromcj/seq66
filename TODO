@@ -1,20 +1,13 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-10-22
+2019-04-13 to 2023-10-24
 
 Misc:
 
     -   Consider moving filespec_helper into basesettings.
     -   Should we use the next text_paint() in all panels besides the
-        loop button.
-    -   Update all of the sample files to new expanded palette.
-        "Beat Line" replaced by "Beat" and can be repurposed after
-        investigation.
-    -   Disabling the palette or changing the name in UI and restarting does
-        not work.  Changing the style sheet works.
+        loop button?
     -   Test Import / Import Project Configuration, Playlist....
-    -   "Store Palette" and the palette configuration file should provide
-        the inverse palette.
     -   The Meta Text edit field stays read-only even when Modify is clicked.
         (This might be mistaken.)
     -   Make sure the grid-mode clear and double operations work properly.

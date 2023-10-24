@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-10-18
+ * \updates       2023-10-23
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -458,7 +458,7 @@ std::string
 rcsettings::default_session_path () const
 {
     std::string result = user_home();
-    if (result.empty())
+    if (is_empty_string(result))                // if (result.empty())
     {
         result += session_directory();          /* seq66 directory      */
     }
@@ -1215,7 +1215,7 @@ rcsettings::set_config_files (const std::string & value)
 void
 rcsettings::config_filename (const std::string & value)
 {
-    if (! value.empty())
+    if (! value.empty())                /* an 'rc' file must always be used */
         m_config_filename = filename_base_fix(value, ".rc");
 }
 
@@ -1300,45 +1300,50 @@ rcsettings::clear_playlist (bool disable)
  *      The value to use to make the setting, if the string is not empty.
  *      If there is no period in the string, then ".usr" is appended to the
  *      end of the filename.
- *
- * TODO:
- *
- *      For these functions, investigate accepting empty values.
  */
 
 void
 rcsettings::user_filename (const std::string & value)
 {
-    if (! value.empty())
+    if (! value.empty())                /* always need a 'usr' file to read */
         m_user_filename = filename_base_fix(value, ".usr");
 }
+
+/**
+ *  If the 'ctrl' file-name is empty, the internal default keystrokes are
+ *  used.
+ */
 
 void
 rcsettings::midi_control_filename (const std::string & value)
 {
-    if (! value.empty())
-        m_midi_control_filename = filename_base_fix(value, ".ctrl");
+    m_midi_control_filename = filename_base_fix(value, ".ctrl");
+    if (value.empty())
+        midi_control_active(false);
 }
 
 void
 rcsettings::mute_group_filename (const std::string & value)
 {
-    if (! value.empty())
-        m_mute_group_filename = filename_base_fix(value, ".mutes");
+    m_mute_group_filename = filename_base_fix(value, ".mutes");
+    if (value.empty())
+        mute_group_file_active(false);
 }
 
 void
 rcsettings::notemap_filename (const std::string & value)
 {
-    if (! value.empty())
-        m_notemap_filename = filename_base_fix(value, ".drums");
+    m_notemap_filename = filename_base_fix(value, ".drums");
+    if (value.empty())
+        notemap_active(false);
 }
 
 void
 rcsettings::palette_filename (const std::string & value)
 {
-    if (! value.empty())
-        m_palette_filename = filename_base_fix(value, ".palette");
+    m_palette_filename = filename_base_fix(value, ".palette");
+    if (value.empty())
+        palette_active(false);
 }
 
 void
