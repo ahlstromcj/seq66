@@ -1,6 +1,6 @@
-Seq66 Licensing 0.99.8 and above
+Seq66 Licensing 0.99.10 and above
 Chris Ahlstrom
-2015-09-10 to 2023-08-27
+2015-09-10 to 2023-10-25
 
 Applications:
 
@@ -38,7 +38,7 @@ Libraries:
 
    This library is free software; you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published
-   by the Free Software Foundation; either version 3 of the License, or (at
+   by the Free Software Foundation; either version 2 of the License, or (at
    your option) any later version.
 
    This library is distributed in the hope that it will be useful, but

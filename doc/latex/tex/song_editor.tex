@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-09-27
+% \update      2023-10-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -460,14 +460,22 @@
    selected.  This action is useful for quickly listening to a single sequence
    in isoloation.
 
-   \index{patterns column!right-click}
-   \textsl{Right-clicking} on the pattern name or
-   the \textbf{M} button brings up the same
-   pattern editing menu as discussed in
-   \sectionref{subsubsec:patterns_pattern_filled}.
-   Recall that this context menu has the following entries:
-   \textbf{Edit...}, \textbf{Event Edit...}, \textbf{Cut}, \textbf{Copy},
-   \textbf{Song}, \textbf{Disable Transpose}, and \textbf{MIDI Bus}.
+   \index{patterns column!double-click}
+   \textsl{Double-clicking} on the pattern name
+   will either create a new pattern or open up the corresponding pattern
+   window.
+   This feature saves having to move to the live grid.
+
+% Think about implementing this feature for real. At least partially.
+%
+%  \index{patterns column!right-click}
+%  \textsl{Right-clicking} on the pattern name or
+%  the \textbf{M} button brings up the same
+%  pattern editing menu as discussed in
+%  \sectionref{subsubsec:patterns_pattern_filled}.
+%  Recall that this context menu has the following entries:
+%  \textbf{Edit...}, \textbf{Event Edit...}, \textbf{Cut}, \textbf{Copy},
+%  \textbf{Song}, \textbf{Disable Transpose}, and \textbf{MIDI Bus}.
 
 \subsection{Song Editor / Song Roll}
 \label{subsec:song_editor_song_roll}
@@ -626,6 +634,12 @@
    is to \textsl{delete} that pattern section or subsection.
    \index{keys!delete}
    One can also hit the \texttt{Delete} key.
+
+   \index{song editor!double-click}
+   \textsl{Double-click} on one of the trigger bars
+   will either create a new pattern or open up the corresponding pattern
+   window.
+   This feature saves having to move to the live grid.
 
 \subsubsection{Song Editor / Song Roll / Keystrokes}
 \label{subsubsec:song_editor_song_roll_keystrokes}

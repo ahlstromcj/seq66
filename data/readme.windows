@@ -1,6 +1,6 @@
 readme.windows for Seq66 0.99.10 and above
 Chris Ahlstrom
-2018-05-13 to 2023-10-24
+2018-05-13 to 2023-10-25
 
 This README file tells you how to run the native Windows implmentation of
 seq66, an executable named qpseq66.exe.  It provides some notes on Seq66 and
@@ -38,7 +38,7 @@ user manual is a PDF file stored in:
 
 and sample Seq66 MIDI files are stored in
 
-    C:\Program Files\Seq66\data\midi\
+    C:\Program Files\Seq66\data\midi
 
 for demonstration of various Seq66 features.)
 
@@ -51,6 +51,20 @@ Mapper" present on buss 0.  Load a song, and select the "0" device from the
 buss dropdown ("None") at the top of the main page.  The file should play.
 You can save the file to preserve the new buss number; songs can be set to
 play on multiple busses.
+
+Note that the configuration files for Seq66 get created at first exit.
+They reside in 
+
+        C:/Users/myname/AppData/Local/seq66/
+
+Palette files, style sheets, and sample 'ctrl' files can be copied from
+
+    C:\Program Files\Seq66\data\windows     and
+    C:\Program Files\Seq66\data\samples
+
+Try the incrypt-66 and perstfic-66 palette and qss (style-sheet) files!
+They can be set up by editing the 'rc' and 'usr' file, or in UI (followed
+by a complete restart of Seq66).
 
 Inaccessible Devices:
 
