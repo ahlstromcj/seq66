@@ -5,7 +5,7 @@ pattern banks, triggers, and playlists for song management; scale and chord
 aware piano-roll; song layout for creative composition; and control/status
 via MIDI automation for live performance.  Mute-groups enable/disable multiple
 patterns at once.  Supports the Non/New Session Manager; can also run headless.
-Works in a space as small as 725x500 pixels (less if window decoration removed).
+Works in a space as small as 450x340 pixels (if window decoration removed).
 It does not support audio samples, just MIDI.
 
 __Seq66__ A major refactoring of Sequencer64/Kepler34/Seq24 with modern C++
