@@ -1,6 +1,6 @@
 readme.windows for Seq66 0.99.10 and above
 Chris Ahlstrom
-2018-05-13 to 2023-09-24
+2018-05-13 to 2023-10-24
 
 This README file tells you how to run the native Windows implmentation of
 seq66, an executable named qpseq66.exe.  It provides some notes on Seq66 and
@@ -12,7 +12,7 @@ readme.text.
 
 There will eventually be a portable ZIP package for qpseq66; an NSIS-based
 installer is available (replace "0.99" with the latest version number)
-as part of the latest GitHub release.
+as part of the latest GitHub release. An example:
 
     https://github.com/ahlstromcj/seq66/releases/download/0.99.8/seq66_setup_x64-0.99.8.exe
 

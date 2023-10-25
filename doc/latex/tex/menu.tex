@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-10-24
+% \update      2023-10-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -60,9 +60,9 @@
       \item \textbf{Save As}
       \item \textbf{Import}
       \begin{enumber}
-         \item \textbf{Import Project Configuration...}
-         \item \textbf{Import MIDI to Current Set...}
-         \item \textbf{Import Playlist...}
+         \item \textbf{Project Configuration...}
+         \item \textbf{MIDI to Current Set...}
+         \item \textbf{Playlist...}
          \index{restart!automatic}
          Once the playlist is imported,
          \textsl{Seq66} is automatically \textsl{\textbf{restarted}}
@@ -71,10 +71,10 @@
       \end{enumber}
       \item \textbf{Export}
       \begin{enumber}
-         \item \textbf{Export Project Configuration...}
-         \item \textbf{Export MIDI Only...}
-         \item \textbf{Export Song...}
-         \item \textbf{Export SMF 0...}
+         \item \textbf{Project Configuration...}
+         \item \textbf{MIDI Only...}
+         \item \textbf{Song...}
+         \item \textbf{SMF 0...}
       \end{enumber}
       \item \textbf{Quit} (\textbf{Exit} in \textsl{Windows})
    \end{enumber}
@@ -83,7 +83,7 @@
    running under the \textsl{Non Session Manager}, see
    \sectionref{subsubsec:sessions_file_menu}.
 
-\subsection{Menu / File / New}
+\subsubsection{Menu / File / New}
 \label{subsec:menu_file_new}
 
    The \textbf{New} menu entry clears the current song.
@@ -298,7 +298,7 @@
             \item A "home" directory specified by the \texttt{--home} option.
             \item The session directory created by \textsl{NSM}.
          \end{itemize}
-         For discussion, this directory is called "HOME".
+         For discussion, this directory is called "HOME" or "home".
       \item In HOME, creates a directory called \texttt{playlist/listname},
          where "listname" is the base part of the playlist name, as in
          \texttt{listname.playlist}.
@@ -317,8 +317,18 @@
          manually in the NSM user-interface..
    \end{itemize}
 
+\subsubsection{Menu / File / Export / Export Project Configuration}
+\label{subsubsec:menu_file_export_project}
+
+   This menu entry lets the user select a destination directory.
+   Then the project files from the current "home" directory are copied
+   to that destination directory. Useful for backup.
+
+   At the present time, any file specified in a play-list are
+   \textsl{not} copied.
+
 \subsubsection{Menu / File / Export / Export Song as MIDI}
-\label{subsubsec:menu_file_export}
+\label{subsubsec:menu_file_export_song_as_midi}
 
    Thanks to the \textsl{Seq32} project, the ability to export songs to MIDI
    format has been added.  In this export, a complete song performance is
@@ -371,11 +381,12 @@
    It is discussed in detail in a later section.
 
    \itempar{Song Editor}{edit!song editor}
+   \index{performance editor}
    \index{song editor}
-   This item toggles the presence of the main song / performance editor.
+   This item toggles the presence of the main song/performance editor.
    Note that the song editor is also available in the
-   \textbf{Song} center tab in the main window.
-   The song editor allows specifying exact numbers of loop replays;
+   \textbf{Song} tab in the main window.
+   The song/performance editor allows specifying exact numbers of loop replays;
    this provides a canned rendition of the MIDI tune.
 
    \itempar{Apply Song Transpose}{edit!song transpose}

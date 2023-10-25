@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-10-24
+% \update      2023-10-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -149,7 +149,7 @@
    \textsl{Seq66} versus \textsl{Sequencer64}.
 
    \begin{itemize}
-      \item Qt 5 as the standard user-interface;
+      \item \textbf{Qt} 5 as the standard user-interface;
          a better live frame using Qt push-buttons;
          the main window's size can change;
          palette files;
@@ -157,32 +157,32 @@
          user-interface items.
          A Qt linear-gradient is the default style for painting the
          progress boxes, notes, and triggers.
-      \item Improved the song editor tab for laying out patterns;
+      \item Improved the \textbf{song editor} for laying out patterns;
          includes transposable triggers;
-         can be opened in a tab or its own window.
-      \item The mutes editor tab, improves mutes handling and control.
-      \item A playlist editor tab with improved flexibility.
-      \item A sets editor tab.
-      \item A events editor tab to fix minor event issues and add meta text
+         can be opened in a tab or window.
+      \item The \textbf{mutes editor} tab, improves mutes handling and control.
+      \item A \textbf{playlist editor} tab with improved flexibility.
+      \item A \textbf{sets editor} tab.
+      \item A \textbf{events editor} tab to fix minor event issues and add meta text
          events.
-      \item A session tab (and Edit / Preference pages) to see that
+      \item A \textbf{session} tab (and Edit / Preference pages) to see that
          \textsl{Seq66} is running in the desired environment and configuation.
-      \item Non Session Manager support. The sessions tab shows the
+      \item \textbf{Non Session Manager} support. The sessions tab shows the
          locations of configuration files for the session.
-      \item Repartitioning of configuration files into separate files for
-         flexibility; added a color palette file,
-         Qt style-sheets (\texttt{*.qss});
-         an enhanced keystroke and MIDI 'ctrl' file, with
+      \item Repartitioning of \textbf{configuration files} into separate files
+         for flexibility; added a \textbf{color palette} file,
+         Qt \textbf{style-sheets} (\texttt{*.qss});
+         an enhanced keystroke and \textbf{MIDI 'ctrl'} file, with
          support for displaying pattern and action statuses.
-      \item Improved alternate keyboard layout support.
-      \item Mapping of port names to a consistent set of port numbers.
-      \item Providing for routing of MIDI input events to
+      \item Improved \textbf{alternate} keyboard layout support.
+      \item \textbf{Mapping} of port names to a consistent set of port numbers.
+      \item Providing for \textbf{routing of MIDI input} events to
          patterns based on port number.
-      \item Export songs in SMF 0 and 1 formats.
-      \item More efficient lookups for controls using control maps
-         and lambda functions.
-      \item Can be configured to build as a command-line application with
-         the option to run as a headless \textsl{daemon}.
+      \item \textbf{Export songs} in SMF 0 and 1 formats.
+      \item \textbf{Internals}:
+         More efficient lookups for using control maps and lambda functions.
+      \item Configurable as a \textbf{command-line} application
+         with the option to run as a headless \textsl{daemon}.
    \end{itemize}
 
    For developers, a \textsl{Seq66} build is customizable via C macros and by
@@ -205,16 +205,16 @@
    There are a number of ways of building Seq66.
 
    \begin{itemize}
-      \item \textsl{Autotools Build and Install}.
+      \item \textbf{Autotools Build and Install}.
          Configure, make, and install.
-      \item \textsl{Bootstrap Install}.
+      \item \textbf{Bootstrap Install}.
          Generate autotools files and build.
-      \item \textsl{OpenSUSE and Fedora}.
+      \item \textbf{OpenSUSE and Fedora}.
          Specifics for that Linux distro.
-      \item \textsl{Qmake-based Install}.
+      \item \textbf{Qmake-based Install}.
          Optional on Linux, mandatory for Windows.
-      \item \textsl{Arch Linux}.
-         There is a nice, but outdated, AUR package (\cite{AUR}).
+      \item \textbf{Arch Linux}.
+         There is a nice, but outdated, \textsl{AUR} package (\cite{AUR}).
    \end{itemize}
 
    The \texttt{INSTALL} file included with the source code and

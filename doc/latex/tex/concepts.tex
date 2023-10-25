@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-03-03
+% \update      2023-10-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -34,13 +34,18 @@
    \begin{itemize}
       \item \textbf{Manual Restart}
          Once a setting is changed, or a new arrangement of devices occurs,
-         exit \textsl{Seq66}, examine or edit the various configuration files (if
-         desired), and start \textsl{Seq66} again.
+         exit \textsl{Seq66}, examine or edit the various configuration files
+         (if desired), and start \textsl{Seq66} again.
       \item \textbf{Edit / Preferences / Restart Seq66}.
          When settings in \textbf{Edit / Preferences} are changed, the
          \textbf{Reload Session} button becomes enabled.
          Click it, and the result is basically like restarting \textsl{Seq66}.
    \end{itemize}
+
+   Note that some changes in settings will not take effect on this restart.
+   For example, a style-sheet, if specified, is loaded when the application is
+   created, not in the restartable loop.
+   The solution is to exit \textsl{Seq66} manually and then start it again.
 
    In the future (version 2?), we will make \textsl{Seq66}
    able to better detect and
@@ -306,7 +311,7 @@
    running.
    It supports virtual port connections via the \texttt{qjackctl} program or
    the \textsl{Non Session Manager}.
-   See reference \cite{jack}.
+   See reference \textsl{JACK Audio Connection Kit} \cite{jack}.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

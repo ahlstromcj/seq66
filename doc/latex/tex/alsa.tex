@@ -31,7 +31,8 @@
    They are virtualized hardware MIDI loopbacks that make it so
    programs that only output to "hardware" ports can use them
    to control and sequence other programs in an ALSA or JACK session.
-   Also see \cite{alsathru}.
+   Also see how to increase the number of ALSA MIDI Thru ports in
+   \cite{alsathru}.
 
    \begin{verbatim}
     Port    Client name                      Port name
@@ -98,7 +99,7 @@
 \label{subsec:alsa_virtual_midi_devices}
 
    The "manual" ports of \textsl{Seq66} are "virtual" ports.
-   From \cite{midihowto}:
+   From \textsl{The Linux MIDI-HOWTO} \cite{midihowto}:
 
    \begin{quote}
    MIDI sequencers like to output their notes to MIDI devices that normally
@@ -122,7 +123,7 @@
    \end{verbatim}
 
    More to come, such as an explanation of \texttt{aconnectgui}....
-   Also see \cite{midilinux}.
+   Also see the article about ALSA and JACK MIDI \cite{midilinux}.
 
 \subsection{ALSA / Trouble-Shooting}
 \label{subsec:alsa_testing}
@@ -212,8 +213,7 @@
    number, no matter which VMPK instance was played.
    Thus, it's basically useless to run more than one VMPK instance.
 
-   See the \textsl{VMPK} website (\cite{vmpk}).
-   The current version one can download there is 0.8.8.
+   See the \textsl{VMPK} website \cite{vmpk}.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

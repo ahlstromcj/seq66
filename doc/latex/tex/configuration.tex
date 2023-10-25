@@ -1692,7 +1692,7 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.75]{main-window/main-window-stylesheet.png}
-   \caption{Seq66 View with Style-Sheet Applied}
+   \caption{Seq66 View with a Minimal Style-Sheet Applied}
    \label{fig:view_with_style_sheet_applied}
 \end{figure}
 
@@ -1729,10 +1729,10 @@
    The thing to note here is that we must limit the width of combo-boxes so
    that all elements in a horizontal bar can be seen.
    This has the unfortunate side-effect of showing only part of long
-   port names (e.g. "Midi Thoug" in the figure above).
+   port names (e.g. "Midi Throug" in the figure above).
 
    Another interesting style-sheet in \texttt{data/samples} is
-   \texttt{perstfix-66.qss}, which is a nice blue theme.
+   \texttt{perstfix-66.qss} and its palette file, which is a nice blue theme.
    No need to show it here; try it.
 
    \index{fingerprint}
@@ -1837,8 +1837,8 @@
    \textsl{Seq66} provides a way to control the
    application to some extent via a MIDI controller, such as a MIDI keyboard or
    a MIDI pad.  The current section describes this feature;
-   additional resources and ideas can be found at \url{linuxaudio.org}
-   \cite{midicontrol}.
+   additional resources and ideas can be found at \url{linuxaudio.org} and
+   its discussion of MIDI control with \textsl{Seq24} \cite{midicontrol}.
    Also see the tutorial section \sectionref{sec:launchpad_mini}.
    An \textsl{Open Document Format} spreadsheet in the
    \texttt{doc} directory shows layouts for the default
@@ -1885,7 +1885,7 @@
          the hardware on the system. If set, then only that buss will be allowed
          to send MIDI control.  A value of 255 or 0xff means any buss can send
          MIDI control. If port-mapping is enabled, the short name (nick-name) of
-         the port can be used.
+         the port can be used as will.
       \item \texttt{midi-enabled}.
          If set to "true", then the MIDI controls will be used.
          It can be set to "false", while keeping the configuration in place
@@ -1986,11 +1986,9 @@
    Remember that it can include a channel.  This channel is not overridden by
    the pattern's selected channel when a MIDI control matching event is
    received. 
-%  The channel nybble of this byte is ignored.
    One can look up the possible status values up in the MIDI messages tables;
-   the relevant data can be found at \cite{midicontroltable}.
-%  As the channel on which the events are sent is ignored,
-%  it is sufficient to use the values for channel 1; that is, 0.
+   the relevant data can be found at
+   \textsl{Summary of MIDI Messages} \cite{midicontroltable}.
 
    The last three fields describe the range of data that will match.  The
    \textbf{D1 (data1)} field provides the actual MIDI event message number to
@@ -2181,7 +2179,8 @@
    that pattern is queued, and will play at the next cycle of the
    pattern.
 
-   Here is an example from \cite{midicontrol}, which shows how to set up
+   Here is an example from  \textsl{Seq24} \cite{midicontrol},
+   which shows how to set up
    the "Sustain" control-change event to queue or un-queue a sequence:
    The \textsl{Akai MPK Mini} has a Sustain button and we can set the
    Sustain MIDI event (with MIDI status byte 176 [0xB0] to represent a
@@ -2200,7 +2199,10 @@
 
    So when the Sustain button is held down, and one presses one of the pads
    on the \textsl{MPK Mini}, the corresponding sequence gets queued.
-   Also included in the data directory are sample 'ctrl' files for other devices.
+   Also included in the data directory are sample 'ctrl' files for other
+   devices.
+   For a more comprehensive discussion, see
+   \sectionref{sec:launchpad_mini}.
 
 \paragraph{Automation / Mute Group ("Group Mute")}
 \label{paragraph:configuration_midi_ctrl_modgmute}
@@ -2383,7 +2385,7 @@
    Additional automation commands provide direct access to each mode.
 
    Grid mode changes the function of the main window's patterns panel so that
-   it can be used to initiate record instead of toggling mute status,
+   it can be used to initiate recording instead of toggling mute status,
    regardless of whether the toggling is done via the buttons, hot-keys, or
    MIDI controls.  The following modes are supported:
 
@@ -2395,7 +2397,7 @@
          Applies the given mute-group statuses when
          the slot is clicked. Since the "shifted" hot-keys can also be used,
          this mode is most useful with mouse-click control.
-      \item \textbf{Record}.
+      \item \textbf{RECORD}.
          In this mode, a click on a slot or the use of its hot-key toggles
          recording for that pattern.
       \item \textbf{Copy}.
@@ -2406,14 +2408,17 @@
       \item \textbf{Clear}.
          Clears the pattern in the clicked slot.
          The pattern remains in that slot, but it has no events.
+         Careful!
       \item \textbf{Delete}.
          Deletes the pattern in the clicked slot.
+         Careful!
       \item \textbf{Thru}.
          Enables the MIDI Thru function for that pattern.
       \item \textbf{Solo}.
          Solos the clicked pattern.
       \item \textbf{Cut}.
-         Deletes the pattern in the clicked slot, while saving it.
+         Deletes the pattern in the clicked slot, while saving it in
+         the clipboard.
       \item \textbf{Double}.
          Doubles the length (in measures) of the pattern in the slot
          that is clicked.
@@ -2421,8 +2426,7 @@
 
    A click or a hot-key will cause the selected function above to be applied to
    the pattern denoted by the click/key.
-%  For details, see \sectionref{paragraph:patterns_recording_modes}.
-   In \textbf{Record} mode, the following settings are enabled:
+   In \textbf{RECORD} mode, the following settings are enabled:
 
    \begin{itemize}
       \item \textbf{Overdub}.
@@ -2438,12 +2442,12 @@
          Notes are added to the pattern as they come in, but recording
          stops when the end of the pattern's specified measures is
          reached.
-      \item \textbf{One-shot Reset}.
-         Similar to one-shot, but clears the pattern.
-         (To do: find the exact process used here.)
+% TODO: fix this!
+%     \item \textbf{One-shot Reset}.
+%        Similar to one-shot, but clears the pattern.
+%        (To do: find the exact process used here.)
    \end{itemize}
 
-%  For details, see \sectionref{paragraph:patterns_recording_modes}.
    Also supported is changing the mode of recording, that is, what happens
    to notes while incoming during recording:
 
@@ -2456,12 +2460,13 @@
       \item \textbf{Tighten}.
          Incoming notes are tightened (partially quantized)
          to the nearst snap value for the pattern.
-      \item \textbf{Randomize}.
-         The amplitude (velocity) of notes is randomized.
-         This is not done during recording, but can be applied later.
-      \item \textbf{Jitter}.
-         The timing of notes is randomized.
-         This is not done during recording, but can be applied later.
+% These are not supported during recording:
+%     \item \textbf{Randomize}.
+%        The amplitude (velocity) of notes is randomized.
+%        This is not done during recording, but can be applied later.
+%     \item \textbf{Jitter}.
+%        The timing of notes is randomized.
+%        This is not done during recording, but can be applied later.
       \item \textbf{Note-map}.
          If active, the specified 'drums' file values are used to remap the
          notes to new notes. This is useful, along with setting MIDI Thru, to
@@ -2470,9 +2475,8 @@
          the fact, if the pattern is marked as transposable.
       \end{itemize}
 
-%  For details, see \sectionref{paragraph:patterns_recording_modes}.
-   Also see \sectionref{subsec:pattern_editor_bottom} for more information on these
-   recording modes.
+   Also see \sectionref{subsec:pattern_editor_bottom} for more information on
+   these recording modes.
 
 \paragraph{Automation / BBT/HMS and LR Loop}
 \label{paragraph:configuration_bbthms_lr_loop}

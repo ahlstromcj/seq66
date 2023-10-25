@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-10-24
+% \update      2023-10-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -127,10 +127,10 @@
    The two main items are the empty \textsl{pattern slot}, and the slot filled
    with a MIDI \textsl{pattern}:
 
-   \begin{enumber}
+   \begin{enumerate}
       \item \textbf{Pattern Slot}
       \item \textbf{Pattern}
-   \end{enumber}
+   \end{enumerate}
 
 \subsubsection{Pattern Slot}
 \label{subsubsec:patterns_pattern_slot}
@@ -216,10 +216,10 @@
    \textsl{Right-clicking} on an empty box one brings up a menu to create
    a new loop or open an external live grid, as well as some other operations.
 
-   \begin{enumber}
+   \begin{enumerate}
       \item \textbf{New pattern}
       \item \textbf{External live frame for set 0}
-   \end{enumber}
+   \end{enumerate}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
@@ -273,7 +273,7 @@
    \label{fig:slot_record_toggle}
 \end{figure}
 
-   \begin{enumber}
+   \begin{enumerate}
       \item \textbf{New pattern}
       \item \textbf{External live frame for set ...} *
       \item \textbf{Edit pattern in tab} *
@@ -288,7 +288,7 @@
       \item \textbf{Input Bus}
       \item \textbf{Output Bus}
       \item \textbf{Output Channel}
-   \end{enumber}
+   \end{enumerate}
 
    The first menu entry is the same as above.  However, since there is
    already a pattern present in the slot, the user is prompted before erasing
@@ -443,7 +443,7 @@
          \textsl{Seq66}, it will not work as an input buss.
       \item To disable the usage of input-buss routing, set the input buss
          to \textbf{Free} for all patterns, then save and reload the file.
-      \item To record normally to a pattern, open the patter for recording
+      \item To record normally to a pattern, open the pattern for recording
          and use a MIDI device that has \textsl{not} been assigned as
          a pattern's input buss.
    \end{itemize}
@@ -531,7 +531,6 @@
          or in the event editor.
          Other actions are supported by changing the 
          \textbf{loop mode}.
-%        (see \sectionref{paragraph:patterns_recording_modes}).
       \item \textbf{Armed}. Highlight color of button.
          Button highlighting indicates that the pattern is armed
          (unmuted), and will play if playback is initiated in the pattern
@@ -713,7 +712,7 @@
    \textsl{current} screen-set.
    Here are the steps:
 
-   \begin{enumber}
+   \begin{enumerate}
       \item Start playback with some patterns on. 
       \item Press and release
          the "keep queue" hot-key.  This puts the application into "queue" mode.
@@ -735,7 +734,7 @@
          behavior found in \textsl{Seq24}.
          One needs to clear the queue mode in order to select another pattern
          to solo.
-   \end{enumber}
+   \end{enumerate}
 
    Before pressing the "keep queue" key, patterns 33 ("\textbf{q}")
    and 34 ("\textbf{a}") are
@@ -765,7 +764,7 @@
    worth figuring out what they do, if not documented here.
    Also see the installed \texttt{control\_keys.ods} spreadsheet.
    For a couple of short, but good, video tutorials about using arming,
-   queuing, and snapshots, see reference \cite{wootangent1}.
+   queuing, and snapshots in \textsl{Seq24}, see reference \cite{wootangent1}.
 
 \paragraph{Other Pattern Clicks}
 \label{paragraph:patterns_pattern_clicks}
@@ -818,8 +817,6 @@
    the only one playing.
    We still need to work on reversing it exactly, but
    mute-groups can be used for that purpose.
-%  Holding the \texttt{Alt} key and clicking the same
-%  pattern again will unmute all of the other patterns.
 
 \paragraph{Metronome}
 \label{paragraph:patterns_metronome}
@@ -884,7 +881,7 @@
          This mode is the legacy and long-time standard mode of
          \textsl{Seq24}, \textsl{Sequencer64}, and \textsl{Seq66}.
          When in this mode, a click on a pattern slot, a loop-control
-         keystroke, or a loop-control MIDI event, will change the mute/unmute,
+         keystroke, or a loop-control MIDI event will change the mute/unmute,
          armed/unarmed status of a pattern.
       \item \textbf{Record}.
          A click/key on the pattern turns on recording for that pattern.
@@ -896,7 +893,6 @@
          Pastes the clipboard into the selected pattern.
       \item \textbf{Clear}.
          Removes the events from the selected pattern.  Careful!
-%        Not yet ready.
       \item \textbf{Delete}.
          Deletes the selected pattern.  Careful!
       \item \textbf{Thru}.
@@ -907,7 +903,6 @@
          Deletes the selected pattern and copies it into the clipboard.
       \item \textbf{Double}.
          Doubles the length of the selected pattern.
-%        Not yet ready.
    \end{itemize}
    It has been supplemented by four recording modes.
    Here are the modes:
@@ -1014,11 +1009,11 @@
    for playback) to the patterns in the current set.
    The \textbf{Set} spin-box can be used to change the current set.
 
-   \begin{enumber}
+   \begin{enumerate}
       \item \textbf{Set Name}
       \item \textbf{Set Reset}
       \item \textbf{Set}
-   \end{enumber}
+   \end{enumerate}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
@@ -1043,7 +1038,7 @@
    Refer to the diagram of the whole window, for now.
    It has a number of items:
 
-   \begin{enumber}
+   \begin{enumerate}
       \item \textbf{Panic!}
       \item \textbf{Stop}
       \item \textbf{Play and Pause}
@@ -1056,7 +1051,7 @@
       \item \textbf{Toggle Song/Live Mode}
       \item \textbf{Tap Tempo}
       \item \textbf{BPM}
-   \end{enumber}
+   \end{enumerate}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
@@ -1191,7 +1186,7 @@
    Let's go through an example using the \texttt{Home} key (or whatever key is
    configured as the \textbf{Set Playing Screenset} key.)
 
-   \begin{enumber}
+   \begin{enumerate}
       \item Load a song with more than one screen-set.
       \item Unmute the pattern(s) in the first set and start playback.
       \item Use the "\texttt{]}" (\textbf{Screenset Up}) key to move to the next
@@ -1203,7 +1198,7 @@
       \item Finally, hit the \texttt{F8} (\textbf{Toggle Mutes}) key.
          Note that all tracks on all sets toggle muting each time this key is
          pressed.
-   \end{enumber}
+   \end{enumerate}
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

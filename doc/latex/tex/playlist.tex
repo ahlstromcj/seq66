@@ -95,12 +95,14 @@
    deep-verify = false       # If true, every MIDI song is opened and verified
    \end{verbatim}
 
-   The first option allows the load of the next song to enable the patterns in
-   that song (and start playing???).
-   The second option causes each MIDI file to be opened to verify that it is an
+   The first option allows the load of the next song to unmute the patterns in
+   that song.
+   The second option causes the loaded song to start playing.
+   This feature is useful for an unattended lengthy play-list.
+   The thrid option causes each MIDI file to be opened to verify that it is an
    error-free play-list.  This process can be time-consuming for large
    playlists.  If set to false, \textsl{Seq66} still makes sure that
-   at least each MIDI file in the play-list exists.
+   each MIDI file in the play-list at least exists.
 
    Following the options section are one or more \texttt{[playlist]} sections.
    Each represents a complete play-list.
@@ -109,7 +111,7 @@
    \begin{verbatim}
    [playlist]
 
-   # Playlist number, arbitrary but unique. 0 to 127 recommended for MIDI control
+   # Playlist number, arbitrary & unique. 0 to 127 recommended for MIDI control
 
    number = 126
    name = "Music for Serious Dogs"  # Display name of this play list

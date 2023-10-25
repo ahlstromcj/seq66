@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-12-04
-% \update      2023-09-12
+% \update      2023-10-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -193,7 +193,7 @@
         Keep Queue         & (D)  &  0x5c   & "\\"         & none \\
         Screenset Up       & (D)  &  0x5d   & "]"          & none \\
         Mutes              & (D)  &  0x5e   & "\^"         & Shift \\
-        None               & (A)  &  0x5f   & "\_"         & Shift \\
+        Grid Mute Mode     & (A)  &  0x5f   & "\_"         & Shift \\
         Group Mute         & (D)  &  0x60   & "`"          & none \\
       \end{tabular}
    \end{table}
@@ -387,12 +387,13 @@
 
    The next section is \tableref{table:key_defaults_extended_keys_4}.
    There are many functions assigned in this section, but no
-   real \textsl{Qt} keys defined.  So this section is somewhat reserved
+   real \textsl{Qt} keys defined.
+   So this section is somewhat reserved
    for additional MIDI controls that will not have corresponding keystrokes.
-   There are a lot more MIDI controls that keystrokes, especially leaving out the
-   Ctrl, Shift, Alt, Super, and Hyper key combinations, which should be
-   reserved for the operating system, window manager, and
-   \textsl{Qt} user interface.
+   There are a lot more MIDI controls than keystrokes, especially leaving out
+   the Ctrl, Shift, Alt, Super, and Hyper key combinations, which should
+   generally be reserved for the operating system, window manager,
+   and \textsl{Qt} user interface.
 
    \begin{table}[htb!]
       \centering

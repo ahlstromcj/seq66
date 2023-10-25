@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-12-29
-% \update      2023-10-20
+% \update      2023-10-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -65,15 +65,17 @@
 \label{subsec:palettes_setup}
 
    The palette file is a standard \textsl{Seq66} configuration file with a name
-   something like \texttt{qseq66.palette}, plus two sections:
+   something like \texttt{qseq66.palette}, plus three sections:
 
    \begin{verbatim}
       [palette]
       [ui-palette]
+      [brushes]
    \end{verbatim}
 
-   The first section is the "Pattern" palette, and the second section is the
-   "Ui" palette, which includes the inverse palette as well.
+   The first section is the "Pattern" palette; the second section is the
+   "Ui" palette, which includes the inverse palette as well; and the third
+   section defines brushes for drawing the interiors of some elements..
 
 \subsubsection{Palettes Setup / Pattern}
 \label{subsubsec:palettes_setup_pattern}
@@ -113,21 +115,21 @@ project.
 
    \begin{verbatim}
       [ui-palette]
-       0       "Foreground" [ 0xFF000000 ] "Foreground" [ 0xFFFFFFFF ]
-       1       "Background" [ 0xFFFFFFFF ] "Background" [ 0xFF000000 ]
-       2            "Label" [ 0xFF000000 ]      "Label" [ 0xFFFFFFFF ]
-       3        "Selection" [ 0xFFFFA500 ]  "Selection" [ 0xFFFF00FF ]
-       4             "Drum" [ 0xFFFF0000 ]       "Drum" [ 0xFF000080 ]
-             ...            ...       ...       ...       ...
-      20       "Keys Brush" [ 0xFFA08070 ] "Keys Brush" [ 0xFF808080 ]
-      21      "Names Brush" [ 0xFFA08070 ]"Names Brush" [ 0xFF808080 ]
-      22          "Extra 2" [ 0xFF808080 ]    "Extra 2" [ 0xFF808080 ]
-      23          "Extra 3" [ 0xFF808080 ]    "Extra 3" [ 0xFF808080 ]
+       0       "Foreground" [ 0xFF000000 ]  "Foreground" [ 0xFFFFFFFF ]
+       1       "Background" [ 0xFFFFFFFF ]  "Background" [ 0xFF000000 ]
+       2            "Label" [ 0xFF000000 ]       "Label" [ 0xFFFFFFFF ]
+       3        "Selection" [ 0xFFFFA500 ]   "Selection" [ 0xFFFF00FF ]
+       4             "Drum" [ 0xFFFF0000 ]        "Drum" [ 0xFF000080 ]
+             ...            ...       ...        ...       ...
+      20       "Keys Brush" [ 0xFFA08070 ]  "Keys Brush" [ 0xFF808080 ]
+      21      "Names Brush" [ 0xFFA08070 ] "Names Brush" [ 0xFF808080 ]
+      22      "Octave Line" [ 0xFF808080 ] "Octave Line" [ 0xFFFFFFFF ]
+      23             "Text" [ 0xFF000000 ]        "Text" [ 0xFF000000 ]
    \end{verbatim}
 
    Here, the names are feature names, not color names.  The first color is the
    normal color, and the second color is the inverse color.  Only 24 entries
-   are accepted.
+   are accepted. (We might expand this further in the future.)
 
 \subsubsection{Palettes Setup / Brushes}
 \label{subsubsec:palettes_setup_brushes}
