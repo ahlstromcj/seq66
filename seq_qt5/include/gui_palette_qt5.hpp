@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2023-10-22
+ * \updates       2023-10-26
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -354,6 +354,12 @@ extern Color backkeys_paint ();
 extern Color backnames_paint ();
 extern Color octave_paint ();
 extern Color text_paint ();
+extern Color text_time_paint ();
+extern Color text_data_paint ();
+extern Color text_event_paint ();
+extern Color text_keys_paint ();
+extern Color text_names_paint ();
+extern Color text_slots_paint ();
 extern std::string get_color_name (PaletteColor index);
 extern std::string get_color_name_ex (PaletteColor index);
 extern bool is_theme_color (const Color & c);

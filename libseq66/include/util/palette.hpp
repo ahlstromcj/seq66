@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-18
- * \updates       2023-10-22
+ * \updates       2023-10-26
  * \license       GNU GPLv2 or above
  *
  *  This module is inspired by MidiPerformance::getSequenceColor() in
@@ -146,6 +146,14 @@ enum class InvertibleColor
     backnames,          /**< Used for the background of perf names pane.    */
     octave,             /**< Color for each octave line; was foreground.    */
     text,               /**< Replaces "black" (foreground) for text items.  */
+    texttime,           /**< Used for the text of time-lines.               */
+    textdata,           /**< Used for the text of data panes.               */
+    textevent,          /**< Used for the text of the event pane.           */
+    textkeys,           /**< Used for the text of the keys pane.            */
+    textnames,          /**< Used for the text of perf names pane.          */
+    textslots,          /**< Used for the text of the grid/pattern slots.   */
+    extra_01,           /**< Reserved for expansion.                        */
+    extra_02,           /**< Reserved for expansion.                        */
     max                 /**< First illegal palette value, not in color set. */
 };
 

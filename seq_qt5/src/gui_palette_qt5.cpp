@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2023-10-24
+ * \updates       2023-10-26
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -285,6 +285,36 @@ Color
 text_paint ()
 {
     return global_palette().get_color(InvertibleColor::text);
+}
+
+Color
+text_time_paint ()
+{
+    return global_palette().get_color(InvertibleColor::texttime);
+}
+
+Color
+text_data_paint ()
+{
+    return global_palette().get_color(InvertibleColor::textdata);
+}
+
+Color
+text_event_paint ()
+{
+    return global_palette().get_color(InvertibleColor::textevent);
+}
+
+Color
+text_names_paint ()
+{
+    return global_palette().get_color(InvertibleColor::textnames);
+}
+
+Color
+text_slots_paint ()
+{
+    return global_palette().get_color(InvertibleColor::textslots);
 }
 
 Brush
@@ -632,6 +662,14 @@ gui_palette_qt5::reset_invertibles ()
     m_nrm_palette.add(InvertibleColor::backnames, m_grey,     "Names Brush");
     m_nrm_palette.add(InvertibleColor::octave,    m_grey,     "Octave Line");
     m_nrm_palette.add(InvertibleColor::text,      m_black,    "Text");
+    m_nrm_palette.add(InvertibleColor::texttime,  m_black,    "Time Text");
+    m_nrm_palette.add(InvertibleColor::textdata,  m_black,    "Data Text");
+    m_nrm_palette.add(InvertibleColor::textevent, m_black,    "Event Text");
+    m_nrm_palette.add(InvertibleColor::textkeys,  m_black,    "Keys Text");
+    m_nrm_palette.add(InvertibleColor::textnames, m_black,    "Names Text");
+    m_nrm_palette.add(InvertibleColor::textslots, m_black,    "Slots Text");
+    m_nrm_palette.add(InvertibleColor::extra_01,  m_black,    "Extra 1");
+    m_nrm_palette.add(InvertibleColor::extra_02,  m_black,    "Extra 2");
 
     m_inv_palette.clear();
     m_inv_palette.add(InvertibleColor::black,     m_white,    "Foreground");
@@ -657,7 +695,15 @@ gui_palette_qt5::reset_invertibles ()
     m_inv_palette.add(InvertibleColor::backkeys,  m_grey,     "Keys Brush");
     m_inv_palette.add(InvertibleColor::backnames, m_grey,     "Names Brush");
     m_inv_palette.add(InvertibleColor::octave,    m_white,    "Octave Line");
-    m_inv_palette.add(InvertibleColor::text,      m_black,    "Text");
+    m_inv_palette.add(InvertibleColor::text,      m_white,    "Text");
+    m_nrm_palette.add(InvertibleColor::texttime,  m_white,    "Time Text");
+    m_nrm_palette.add(InvertibleColor::textdata,  m_white,    "Data Text");
+    m_nrm_palette.add(InvertibleColor::textevent, m_white,    "Event Text");
+    m_nrm_palette.add(InvertibleColor::textkeys,  m_white,    "Keys Text");
+    m_nrm_palette.add(InvertibleColor::textnames, m_white,    "Names Text");
+    m_nrm_palette.add(InvertibleColor::textslots, m_white,    "Slots Text");
+    m_nrm_palette.add(InvertibleColor::extra_01,  m_white,    "Extra 1");
+    m_nrm_palette.add(InvertibleColor::extra_02,  m_white,    "Extra 2");
 
     m_empty_brush->setColor(get_color(InvertibleColor::white));
     m_empty_brush->setStyle(m_empty_brush_style);

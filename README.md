@@ -1,4 +1,4 @@
-# README for Seq66 0.99.10 2023-10-25
+# README for Seq66 0.99.10 2023-10-26
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -82,6 +82,8 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.99.11:
+        *   Adding still more ui-palette entries.....
     *   Version 0.99.10:
         *   Issue #117 Option to close pattern windows with esc key. Must
             be enabled via a 'usr' option first.
@@ -113,29 +115,6 @@ Windows, and using a conventional source tarball.
             for the active pattern color in its popup menu.
         *   Tightened the file-name/activity handling in Session preferences.
         *   Restored missing table header in Mutes tab.
-    *   Version 0.99.9:
-        *   Added an "Input Bus Routing" feature, where each pattern can be
-            set to receive events from a given input buss. Selectable from
-            the grid-slot popup menu.
-        *   Fixed nasty segfault opening new file while Editor tab open.
-        *   Fixed bug: port-mapping Remap and Restart did not work due to
-            timing.
-        *   Fixed bug in detecting Note-related messages.
-        *   Fixed error in "quiet" startup that would cause immediate exit.
-        *   Related to issue #115: Added ability to select a line in the data
-            pane and grab a handle to change its value.
-        *   Refactored and extended zoom support, added it to event and data
-            panes.
-        *   Adding more seqroll keystokes (and HTML help). Enabled Esc to
-            exit paint mode if not playing.
-        *   Added live-note mapping (needs testing!), refactoring set-record
-            code.
-        *   Implemented automation for BBT/HMS toggling, FF/Rewind, Undo/Redo,
-            Play-set Copy/Paste, and Record Toggle.
-        *   Added a build-time option to add a show/hide button in the
-            main window to allow making the window to take up much less space.
-        *   Added HTML help files to data/share/doc/info, other documentation
-            upgrades.
 
     See the "NEWS" file for changes in earlier versions.  Some proposed features
     will be pushed off to Seq66v2; see the bottom of the TODO file. Version 2 is
