@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-10-25
+2019-04-13 to 2023-10-26
 
 Misc:
 
@@ -13,6 +13,22 @@ Misc:
         MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recording measures
         not saved.
+    -   Seq66cli
+        -   "[seq66] Standard I/P rerouted to /dev/null".
+        -   The --version and --help options do not work.
+        -   Session / Song Path is not updated when a new file is saved.
+    -   Palette:
+        -   Increment version number and use it!
+        -   Using palette active = true by default (after empty configuration
+            directory).
+        -   Consider slightly better names for the new "Text ..." colors.
+        -   Again catch up all palettes to the maximum ui-palettes.
+    -   In the Windows build batch file, improve the messaging and copy the
+        7z bundle to release as the installer is.
+    -   Maybe at first start, query the use about using a log file, if started
+        in the console?
+    -   Add the live-grid slot pop-up (or part of it) to qperfnames, and then
+        uncomment its documentation.
 
 Mutes:
 

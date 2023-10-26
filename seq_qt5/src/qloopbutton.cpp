@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2023-10-24
+ * \updates       2023-10-26
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -200,11 +200,11 @@ qloopbutton::qloopbutton
     make_active();
     make_checkable();
     set_checked(m_is_checked);
-    text_color(foreground_paint());
+//  text_color(text_slots_paint());     /* text_color(foreground_paint())   */
 
-    int c = loop() ? loop()->color() : palette_to_int(none) ;
-    pen_color(get_pen_color(PaletteColor(c)));
-    if (c != palette_to_int(black))
+    int c = loop() ? loop()->color() : palette_to_int(PaletteColor::none) ;
+//  pen_color(get_pen_color(PaletteColor(c)));
+    if (c != palette_to_int(PaletteColor::black))
         back_color(get_color_fix(PaletteColor(c)));
 }
 
@@ -451,10 +451,12 @@ qloopbutton::initialize_fingerprint ()
 void
 qloopbutton::setup ()
 {
-    int c = loop() ? loop()->color() : palette_to_int(none) ;
-    if (c == palette_to_int(black))
+    int c = loop() ? loop()->color() : palette_to_int(PaletteColor::none) ;
+    if (c == palette_to_int(PaletteColor::black))
     {
-        // no coloring on the button borders
+        /*
+         * No coloring on the button borders.
+         */
     }
     else
     {
@@ -571,9 +573,10 @@ qloopbutton::paintEvent (QPaintEvent * pev)
 
             /*
              * painter.setPen(label_color());           // text issue #50
+             * painter.setPen(text_paint());
              */
 
-            painter.setPen(text_paint());
+            painter.setPen(text_color());
             painter.setFont(m_text_font);
             if (m_draw_text)
             {

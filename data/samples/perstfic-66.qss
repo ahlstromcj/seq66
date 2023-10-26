@@ -5,7 +5,7 @@ Copyright (c) DevSec Studio. All rights reserved.
 \library       seq66 application
 \author        Chris Ahlstrom
 \date          2023-10-18
-\updates       2023-10-23
+\updates       2023-10-26
 \license       MIT
 
 MIT License
@@ -45,7 +45,7 @@ QTabBar::tab
 	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0.00480769 rgba(3, 50, 76, 255),stop:0.293269 rgba(6, 82, 125, 255),stop:0.514423 rgba(8, 117, 178, 255),stop:0.745192 rgba(7, 108, 164, 255),stop:1 rgba(3, 51, 77, 255));
 	color: #FFFFFF;
     font-size: 11pt;
-    font-weight: bold;
+    font-weight: normal;
     width: 80px;
     border: 1px solid #444;
     border-bottom-style: none;
@@ -215,7 +215,7 @@ QLineEdit:read-only
 QListView
 {
 	background-color: transparent;
-	font-size: 12pt;
+	font-size: 11pt;
 	border: none;
 	color: #fff;
 	show-decoration-selected: 0;

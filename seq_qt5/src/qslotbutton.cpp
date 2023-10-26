@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2022-04-08
+ * \updates       2023-10-26
  * \license       GNU GPLv2 or above
  *
  *  This object is just a QPushButton with number label.  See seq66::qslivegrid
@@ -77,10 +77,10 @@ qslotbutton::qslotbutton
     m_tempo_color       (tempo_paint()),                    /* Qt::magenta  */
 #endif
     m_progress_color    (progress_paint()),
-    m_label_color       (label_paint()),                    /* tentative    */
-    m_text_color        (),
-    m_pen_color         (foreground_paint()),               /* tentative    */
-    m_back_color        (background_paint()),               /* tentative    */
+    m_label_color       (label_paint()),
+    m_text_color        (text_slots_paint()),
+    m_pen_color         (foreground_paint()),
+    m_back_color        (background_paint()),
     m_vert_compressed   (usr().vertically_compressed()),
     m_horiz_compressed  (usr().horizontally_compressed()),
     m_is_active         (false),

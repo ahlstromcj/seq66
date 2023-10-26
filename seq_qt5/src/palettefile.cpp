@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2023-10-24
+ * \updates       2023-10-26
  * \license       GNU GPLv2 or above
  *
  */
@@ -74,9 +74,11 @@ palettefile::palettefile
 /**
  *  Parse the ~/.config/seq66/qseq66.palette file-stream.
  *
- *  [comments] Header commentary is skipped during parsing.  However, we now try
- *  to read an optional comment block.  This block is part of the palette
+ *  [comments] Header commentary is skipped during parsing.  However, we now
+ *  try to read an optional comment block.  This block is part of the palette
  *  container, not part of the rcsettings object.
+ *
+ *  Also, to account for expansion of the ui-palette (invertible palette).
  */
 
 bool
@@ -120,7 +122,7 @@ palettefile::parse_stream (std::ifstream & file)
     {
         if (line_after(file, "[ui-palette]"))
         {
-            int count = 0;                  /* limited to 32 palette entries    */
+            int count = 0;              /* limited to 32 palette entries    */
             m_palettes.clear_invertible();
             for (;;)
             {
@@ -207,7 +209,7 @@ bool
 palettefile::write_stream (std::ofstream & file)
 {
     file
-        << "# Seq66 0.99.10 (and above) palette configuration file\n"
+        << "# Seq66 0.99.11 (and above) palette configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << get_current_date_time() << "\n"
@@ -251,9 +253,9 @@ palettefile::write_stream (std::ofstream & file)
     file <<
         "\n"
         "# Similar to the [palette] section, but applies to the custom-drawn\n"
-        "# piano rolls and the --inverse option. The first value is the color\n"
-        "# number, from 0 to 23. The names are feature names, not color names.\n"
-        "# The second column block is the inverse color.\n"
+        "# piano rolls and the --inverse option. The values: color number (0\n"
+        "# to 31); main color feature name; main color value; inverse color\n"
+        "# feature name; and the --inverse color value.\n"
         "\n"
         "[ui-palette]\n"
         "\n"
@@ -360,6 +362,13 @@ open_palette
  *  This function saves the palettes to a file. It is primarily useful
  *  in getting any new additions/upgrades to the palettes. Older palette
  *  files can be updated using side-by-side editing in a text editor.
+ *
+ *  Now, consider this sequence:
+ *
+ *      -#  The programmer adds more palette entries to the InvertibleColors.
+ *          This changes the number of entries from N0 to N1 > N0.
+ *      -#  The application loads a pre-existing palette file, or none.
+ *      -#  xxx
  *
  *  \param [inout] pal
  *      Provides the palette object.

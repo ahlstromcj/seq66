@@ -634,6 +634,10 @@ gui_palette_qt5::reset_pens ()
     m_pen_palette.add(PaletteColor::dk_grey,      m_black,    "Black");
 }
 
+/**
+ *  The size of these two ui-palettes is now 32.
+ */
+
 void
 gui_palette_qt5::reset_invertibles ()
 {
@@ -696,14 +700,14 @@ gui_palette_qt5::reset_invertibles ()
     m_inv_palette.add(InvertibleColor::backnames, m_grey,     "Names Brush");
     m_inv_palette.add(InvertibleColor::octave,    m_white,    "Octave Line");
     m_inv_palette.add(InvertibleColor::text,      m_white,    "Text");
-    m_nrm_palette.add(InvertibleColor::texttime,  m_white,    "Time Text");
-    m_nrm_palette.add(InvertibleColor::textdata,  m_white,    "Data Text");
-    m_nrm_palette.add(InvertibleColor::textevent, m_white,    "Event Text");
-    m_nrm_palette.add(InvertibleColor::textkeys,  m_white,    "Keys Text");
-    m_nrm_palette.add(InvertibleColor::textnames, m_white,    "Names Text");
-    m_nrm_palette.add(InvertibleColor::textslots, m_white,    "Slots Text");
-    m_nrm_palette.add(InvertibleColor::extra_01,  m_white,    "Extra 1");
-    m_nrm_palette.add(InvertibleColor::extra_02,  m_white,    "Extra 2");
+    m_inv_palette.add(InvertibleColor::texttime,  m_white,    "Time Text");
+    m_inv_palette.add(InvertibleColor::textdata,  m_white,    "Data Text");
+    m_inv_palette.add(InvertibleColor::textevent, m_white,    "Event Text");
+    m_inv_palette.add(InvertibleColor::textkeys,  m_white,    "Keys Text");
+    m_inv_palette.add(InvertibleColor::textnames, m_white,    "Names Text");
+    m_inv_palette.add(InvertibleColor::textslots, m_white,    "Slots Text");
+    m_inv_palette.add(InvertibleColor::extra_01,  m_white,    "Extra 1");
+    m_inv_palette.add(InvertibleColor::extra_02,  m_white,    "Extra 2");
 
     m_empty_brush->setColor(get_color(InvertibleColor::white));
     m_empty_brush->setStyle(m_empty_brush_style);

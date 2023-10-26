@@ -119,12 +119,7 @@ qperfnames::paintEvent (QPaintEvent *)
     int y_f = height() / h;
     int set_count = setmaster::Size();                  /* number of rows   */
     QPainter painter(this);
-
-    /*
-     * QPen pen(fore_color());
-     */
-
-    QPen pen(text_paint());
+    QPen pen(text_paint());                             /* fore_color()     */
     QBrush brush(backnames_paint(), Qt::SolidPattern);
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(2);
@@ -158,9 +153,10 @@ qperfnames::paintEvent (QPaintEvent *)
 
                 /*
                  * pen.setColor(fore_color());          // for bank number
+                 * pen.setColor(text_paint());          // for bank number
                  */
 
-                pen.setColor(text_paint());             // for bank number
+                pen.setColor(text_names_paint());       // for bank number
                 painter.setPen(pen);
                 painter.drawText(1, rect_y + 10, bankss);
 
@@ -260,9 +256,10 @@ qperfnames::paintEvent (QPaintEvent *)
 
                 /*
                  * painter.setPen(pen);
+                 * painter.setPen(text_paint());
                  */
 
-                painter.setPen(text_paint());
+                painter.setPen(text_names_paint());
                 painter.drawText(18, rect_y + 9, chinfo);
                 if (! track_thin())
                 {

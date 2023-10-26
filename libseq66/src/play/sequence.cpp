@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-10-13
+ * \updates       2023-10-26
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -518,7 +518,7 @@ void
 sequence::empty_coloring ()
 {
     if (event_count() == 0)
-        (void) set_color(palette_to_int(yellow));
+        (void) set_color(palette_to_int(PaletteColor::yellow));
 }
 
 /**

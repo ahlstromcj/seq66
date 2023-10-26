@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-10-23
+ * \updates       2023-10-26
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1766,8 +1766,8 @@ qslivegrid::popup_menu ()
          */
 
         QMenu * menuColour = new_qmenu("Pattern &color...");
-        int firstcolor = palette_to_int(none);
-        int lastcolor = palette_to_int(white);
+        int firstcolor = palette_to_int(PaletteColor::none);
+        int lastcolor = palette_to_int(PaletteColor::white);
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
@@ -1786,8 +1786,8 @@ qslivegrid::popup_menu ()
         }
 
         QMenu * menu2Colour = new_qmenu("Dark colors");
-        firstcolor = palette_to_int(dk_black);
-        lastcolor = palette_to_int(dk_white);
+        firstcolor = palette_to_int(PaletteColor::dk_black);
+        lastcolor = palette_to_int(PaletteColor::dk_white);
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
@@ -1804,8 +1804,8 @@ qslivegrid::popup_menu ()
         }
 
         QMenu * menu3Colour = new_qmenu("Other colors");
-        firstcolor = palette_to_int(orange);                /* color_16 */
-        lastcolor = palette_to_int(grey);                   /* color_23 */
+        firstcolor = palette_to_int(PaletteColor::orange);
+        lastcolor = palette_to_int(PaletteColor::grey);
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
@@ -1822,8 +1822,8 @@ qslivegrid::popup_menu ()
         }
 
         QMenu * menu4Colour = new_qmenu("More colors");
-        firstcolor = palette_to_int(dk_orange);             /* color_24 */
-        lastcolor = palette_to_int(dk_grey);                /* color_31 */
+        firstcolor = palette_to_int(PaletteColor::dk_orange);
+        lastcolor = palette_to_int(PaletteColor::dk_grey);
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);

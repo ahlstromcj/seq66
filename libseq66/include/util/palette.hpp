@@ -47,21 +47,6 @@ namespace seq66
 {
 
 /**
- *  Progress bar colors as integer codes.
-
-enum class ProgressColors
-{
-    black,
-    dark_red,
-    dark_green,
-    dark_orange,
-    dark_blue,
-    dark_magenta,
-    dark_cyan
-};
- */
-
-/**
  *  A type to support the concept of sequence color.  The color is a number
  *  pointing to an RGB entry in a palette.
  *
@@ -161,8 +146,17 @@ enum class InvertibleColor
  *  A macro to simplify converting a PaletteColor to a simple integer.
  */
 
-#define palette_to_int(x)       static_cast<int>(PaletteColor :: x )
-#define inv_palette_to_int(x)   static_cast<int>(InvertibleColor :: x )
+inline int
+palette_to_int (PaletteColor x)
+{
+    return static_cast<int>(x);
+}
+
+inline int
+inv_palette_to_int (InvertibleColor x)
+{
+    return static_cast<int>(x);
+}
 
 /**
  *  A generic collection of whatever types of color classes (QColor,
@@ -308,7 +302,7 @@ palette<COLOR>::get_color (PaletteColor index) const
     }
     else
     {
-        int key = palette_to_int(none);
+        int key = palette_to_int(PaletteColor::none);
         return m_container.at(key).ppt_color;
     }
 }
@@ -324,7 +318,7 @@ palette<COLOR>::get_color_name (PaletteColor index) const
     }
     else
     {
-        int key = palette_to_int(none);
+        int key = palette_to_int(PaletteColor::none);
         return m_container.at(key).ppt_color_name;
     }
 }
@@ -363,26 +357,28 @@ template <typename COLOR>
 const COLOR &
 palette<COLOR>::get_color (InvertibleColor index) const
 {
+    int key = static_cast<int>(index);
     if (index >= InvertibleColor::black && index < InvertibleColor::max)
     {
-        int key = static_cast<int>(index);
-        return m_container.at(key).ppt_color;
+//      int maximum = static_cast<int>(m_container.size());
+//      if (key >= maximum)
+//          key = 0;
     }
-    else
-        return m_container.at(0).ppt_color;
+    return m_container.at(key).ppt_color;
 }
 
 template <typename COLOR>
 std::string
 palette<COLOR>::get_color_name (InvertibleColor index) const
 {
+    int key = static_cast<int>(index);
     if (index >= InvertibleColor::black && index < InvertibleColor::max)
     {
-        int key = static_cast<int>(index);
-        return m_container.at(key).ppt_color_name;
+//      int maximum = static_cast<int>(m_container.size());
+//      if (key >= maximum)
+//          key = 0;
     }
-    else
-        return m_container.at(0).ppt_color_name;
+    return m_container.at(key).ppt_color_name;
 }
 
 template <typename COLOR>

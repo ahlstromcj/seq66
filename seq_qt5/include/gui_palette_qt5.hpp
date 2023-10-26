@@ -109,14 +109,16 @@ private:
 
     /**
      *  Holds the invertible colors using in drawing pattern labels, drum
-     *  notes, tempo, and grid lines.  This holds the normal values.
+     *  notes, tempo, grid lines, and various text items. This holds the
+     *  normal values.
      */
 
     palette<Color> m_nrm_palette;
 
     /**
      *  Holds the invertible colors using in drawing pattern labels, drum
-     *  notes, tempo, and grid lines.  This holds the inverse values.
+     *  notes, tempo, grid lines, and various text items. This holds the
+     *  inverse values.
      */
 
     palette<Color> m_inv_palette;
@@ -165,12 +167,12 @@ public:
 
     static int palette_size ()
     {
-        return palette_to_int(max);         /* PaletteColor::max    */
+        return palette_to_int(PaletteColor::max);
     }
 
     static int invertible_size ()
     {
-        return inv_palette_to_int(max);     /* InvertibleColor::max */
+        return inv_palette_to_int(InvertibleColor::max);
     }
 
     void reset ()
