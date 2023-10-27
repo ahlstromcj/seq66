@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-24
+ * \updates       2023-10-27
  * \license       GNU GPLv2 or above
  */
 
@@ -94,6 +94,7 @@ private:
     void setup_tab_metronome ();
     void setup_tab_pattern ();
     void setup_tab_session ();
+    void exit_required ();
     void set_enabled (QDialogButtonBox::StandardButton bcode, bool on);
     void set_text
     (

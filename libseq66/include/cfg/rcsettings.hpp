@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-10-23
+ * \updates       2023-10-26
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -704,6 +704,13 @@ public:
         return m_save_list.get("playlist");
     }
 
+    /**
+     *  Actually, since we cannot edit keystroke/MIDI control, drums
+     *  (note-mapping), and style-sheets in the application, these functions
+     *  are moot. Although the palettes can be saved by a button in
+     *  the session preferences tab.
+     */
+
     bool auto_ctrl_save () const
     {
         return m_save_list.get("ctrl");
@@ -714,9 +721,14 @@ public:
         return m_save_list.get("drums");
     }
 
+    /**
+     *  Unused. Style-sheet not used by default, so not saved, even at
+     *  first-start. Kept for :-) consistency.
+     */
+
     bool auto_qss_save () const
     {
-        return m_save_list.get("drums");
+        return m_save_list.get("qss");
     }
 
     bool auto_palette_save () const

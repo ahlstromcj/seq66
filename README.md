@@ -1,4 +1,4 @@
-# README for Seq66 0.99.10 2023-10-26
+# README for Seq66 0.99.10 2023-10-27
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -83,7 +83,10 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.99.11:
-        *   Adding still more ui-palette entries.....
+        *   Added 8 more ui-palette entries, total of 32. Probably enough.
+        *   Fixed errors specifying style-sheet, palette, and mutes in
+            Preferences / Session.  Also enhanced this tab to indicate
+            exit is needed.
     *   Version 0.99.10:
         *   Issue #117 Option to close pattern windows with esc key. Must
             be enabled via a 'usr' option first.

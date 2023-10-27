@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-07
+ * \updates       2023-10-26
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -53,7 +53,10 @@ namespace seq66
  *  between GUI elements better.
  */
 
-static const int s_end_fix     = 16;        /* adjust position of "END" box */
+static const int s_end_fix          = 16;   /* adjust position of "END" box */
+static const int s_font_size        =  6;
+static const int s_font_size_large  =  9;
+static const int s_text_y_offset    = 22;
 
 /**
  *  Principal constructor.
@@ -75,7 +78,15 @@ qperftime::qperftime
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setFocusPolicy(Qt::StrongFocus);
     m_font.setBold(true);
-    m_font.setPointSize(6);
+
+    /*
+     *  This affects L/R too, and also requires adding to the y offset.
+     */
+
+    int pointsize = usr().progress_bar_thick() ?
+        s_font_size_large : s_font_size ;
+
+    m_font.setPointSize(pointsize);
     setMouseTracking(true);         /* track mouse movement without a click */
     m_timer = qt_timer(this, "qperftime", 2, SLOT(conditional_update()));
 }
@@ -126,7 +137,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
     midipulse tick0 = scroll_offset();
     midipulse windowticks = pix_to_tix(xwidth);
     midipulse tick1 = tick0 + windowticks;
-    midipulse tickstep = beat_length();                 /* versus 1         */
+    midipulse tickstep = beat_length();                     /* versus 1     */
     int measure = 0;
     for (midipulse tick = tick0; tick < tick1; tick += tickstep)
     {
@@ -139,11 +150,11 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
         int x_pos = xoffset(tick) - scroll_offset_x();
         if (tick % measure_length() == 0)
         {
-            pen.setColor(fore_color());                     /* measure */
+            pen.setColor(beat_color());                     /* measure      */
             pen.setWidth(2);
             pen.setStyle(Qt::SolidLine);
             painter.setPen(pen);
-            painter.drawLine(x_pos, 0, x_pos, yheight);
+            painter.drawLine(x_pos, 2, x_pos, yheight);
 
             /*
              * Draw the measure numbers if they will fit.  Determined
@@ -153,19 +164,24 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
             if (zoom() >= c_minimum_zoom && zoom() <= c_maximum_zoom)
             {
                 QString bar(QString::number(measure + 1));
-                pen.setColor(Qt::black);                /* always black     */
+                pen.setColor(text_time_paint());            /* Qt::black    */
                 painter.setPen(pen);
-                painter.drawText(x_pos + 2, 9, bar);
+                painter.drawText(x_pos + 2, 10, bar);
             }
             ++measure;
         }
-        else if (tick % beat_length() == 0)             /* beat             */
+        else if (tick % beat_length() == 0)                 /* beat         */
         {
             pen.setColor(beat_color());
             pen.setWidth(1);
-            pen.setStyle(Qt::DotLine);
+
+            /*
+             * We should match the solid line of the piano roll.
+             * pen.setStyle(Qt::DotLine);
+             */
+
             painter.setPen(pen);
-            painter.drawLine(x_pos, 0, x_pos, yheight);
+            painter.drawLine(x_pos, 2, x_pos, yheight);
         }
     }
 
@@ -193,7 +209,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
         painter.drawRect(left, yheight - 12, 7, 10);
         pen.setColor(Qt::white);
         painter.setPen(pen);
-        painter.drawText(left + 1, 20, "L");
+        painter.drawText(left + 1, s_text_y_offset, "L");
     }
     if (right >= xoff_left && right <= xoff_right)
     {
@@ -205,7 +221,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
         painter.drawRect(r, yheight - 12, 7, 10);
         pen.setColor(Qt::white);
         painter.setPen(pen);
-        painter.drawText(r, 20, "R");
+        painter.drawText(r, s_text_y_offset, "R");
     }
     if (end > right)
     {
@@ -216,7 +232,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
         painter.drawRect(end - 1, yheight - 12, 16, 10);
         pen.setColor(Qt::white);
         painter.setPen(pen);
-        painter.drawText(end - 3, 20, "END");
+        painter.drawText(end - 3, s_text_y_offset, "END");
     }
 }
 

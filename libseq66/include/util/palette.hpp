@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-18
- * \updates       2023-10-26
+ * \updates       2023-10-27
  * \license       GNU GPLv2 or above
  *
  *  This module is inspired by MidiPerformance::getSequenceColor() in
@@ -267,7 +267,7 @@ palette<COLOR>::add
     const std::string & colorname
 )
 {
-    int key = static_cast<int>(index);
+    int key = palette_to_int(index);
     size_t count = m_container.size();
     pair colorspec;
     colorspec.ppt_color = color;
@@ -297,7 +297,7 @@ palette<COLOR>::get_color (PaletteColor index) const
 {
     if (index >= PaletteColor::black && index < PaletteColor::max)
     {
-        int key = static_cast<int>(index);
+        int key = palette_to_int(index);
         return m_container.at(key).ppt_color;
     }
     else
@@ -313,7 +313,7 @@ palette<COLOR>::get_color_name (PaletteColor index) const
 {
     if (index >= PaletteColor::black && index < PaletteColor::max)
     {
-        int key = static_cast<int>(index);
+        int key = palette_to_int(index);
         return m_container.at(key).ppt_color_name;
     }
     else
@@ -327,7 +327,7 @@ template <typename COLOR>
 std::string
 palette<COLOR>::get_color_name_ex (PaletteColor index) const
 {
-    std::string result = std::to_string(static_cast<int>(index));
+    std::string result = std::to_string(palette_to_int(index));
     result += " ";
     result += get_color_name(index);
     return result;
@@ -342,7 +342,7 @@ palette<COLOR>::add
     const std::string & colorname
 )
 {
-    int key = static_cast<int>(index);
+    int key = inv_palette_to_int(index);
     size_t count = m_container.size();
     pair colorspec;
     colorspec.ppt_color = color;
@@ -357,12 +357,12 @@ template <typename COLOR>
 const COLOR &
 palette<COLOR>::get_color (InvertibleColor index) const
 {
-    int key = static_cast<int>(index);
+    int key = inv_palette_to_int(index);
     if (index >= InvertibleColor::black && index < InvertibleColor::max)
     {
-//      int maximum = static_cast<int>(m_container.size());
-//      if (key >= maximum)
-//          key = 0;
+        int maximum = static_cast<int>(m_container.size());
+        if (key >= maximum)
+            key = 0;
     }
     return m_container.at(key).ppt_color;
 }
@@ -371,12 +371,12 @@ template <typename COLOR>
 std::string
 palette<COLOR>::get_color_name (InvertibleColor index) const
 {
-    int key = static_cast<int>(index);
+    int key = inv_palette_to_int(index);
     if (index >= InvertibleColor::black && index < InvertibleColor::max)
     {
-//      int maximum = static_cast<int>(m_container.size());
-//      if (key >= maximum)
-//          key = 0;
+        int maximum = static_cast<int>(m_container.size());
+        if (key >= maximum)
+            key = 0;
     }
     return m_container.at(key).ppt_color_name;
 }
@@ -385,7 +385,7 @@ template <typename COLOR>
 std::string
 palette<COLOR>::get_color_name_ex (InvertibleColor index) const
 {
-    std::string result = std::to_string(static_cast<int>(index));
+    std::string result = std::to_string(inv_palette_to_int(index));
     result += " ";
     result += get_color_name(index);
     return result;

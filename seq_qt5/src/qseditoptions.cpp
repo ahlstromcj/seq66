@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-24
+ * \updates       2023-10-27
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1972,6 +1972,18 @@ qseditoptions::setup_tab_session ()
         ui->pushButtonLoadStyleSheet, SIGNAL(clicked(bool)),
         this, SLOT(slot_load_stylesheet_filename())
     );
+
+    /*
+     * This items is shown when certain files are changed.
+     */
+
+    ui->label_exit_required->hide();
+}
+
+void
+qseditoptions::exit_required ()
+{
+    ui->label_exit_required->show();
 }
 
 bool
@@ -3012,6 +3024,7 @@ qseditoptions::slot_palette_filename ()
             rc().palette_filename(text);
             tooltip_for_filename(ui->lineEditPalette, rc().palette_filespec());
         }
+        exit_required();
         modify_rc();
 
         /*
@@ -3036,6 +3049,11 @@ qseditoptions::slot_load_palette_filename ()
         const QString qs = ui->lineEditPalette->text();
         std::string text = qs.toStdString();
         rc().palette_filename(text);
+        if (! text.empty())
+        {
+            ui->checkBoxActivePalette->setChecked(true);
+            rc().palette_active(true);
+        }
         modify_rc();
     }
 }
@@ -3074,6 +3092,9 @@ qseditoptions::slot_palette_active_click ()
         ui->checkBoxActivePalette->setChecked(false);
     }
     rc().palette_active(on);
+    if (! on)
+        exit_required();
+
     modify_rc();
 }
 
@@ -3091,7 +3112,13 @@ qseditoptions::slot_palette_save_now_click ()
     if (! palfile.empty())
     {
         if (save_palette(global_palette(), palfile))
-            file_message("Saved", palfile);
+        {
+            /*
+             * TMI: file_message("Saved", palfile);
+             *      exit_required();
+             */
+
+        }
         else
             file_error("Save failed", palfile);
     }
@@ -3635,7 +3662,17 @@ void
 qseditoptions::slot_load_drums_filename ()
 {
     if (load_file_name(ui->lineEditDrums, "drums"))
+    {
+        QString qtqss = ui->lineEditDrums->text();
+        std::string qss = qtqss.toStdString();
+        usr().style_sheet(qss);
+        if (! qss.empty())
+        {
+            ui->checkBoxActiveDrums->setChecked(true);
+            usr().style_sheet_active(true);
+        }
         modify_rc();
+    }
 }
 
 void
@@ -3645,11 +3682,14 @@ qseditoptions::slot_stylesheet_active_click ()
     {
         ui->checkBoxActiveStyleSheet->setChecked(false);
         usr().style_sheet_active(false);
+        exit_required();
     }
     else
     {
         bool on = ui->checkBoxActiveStyleSheet->isChecked();
         usr().style_sheet_active(on);
+        if (! on)
+            exit_required();
     }
     modify_usr();
 }
@@ -3666,19 +3706,19 @@ qseditoptions::slot_stylesheet_filename ()
     std::string text = qs.toStdString();
     if (text != usr().style_sheet())
     {
+        usr().style_sheet(text);
         if (text.empty())
         {
             ui->checkBoxActiveStyleSheet->setChecked(false);
             ui->lineEditStyleSheet->setToolTip("No file");
-            usr().style_sheet(text);
             usr().style_sheet_active(false);
         }
         else
         {
-            usr().style_sheet(text);
             ui->checkBoxActiveStyleSheet->setChecked(true);
             tooltip_for_filename(ui->lineEditStyleSheet, text);
         }
+        exit_required();
         modify_usr();                       /* 'usr' sets the style-sheet   */
     }
 }
@@ -3687,7 +3727,22 @@ void
 qseditoptions::slot_load_stylesheet_filename ()
 {
     if (load_file_name(ui->lineEditStyleSheet, "qss"))
+    {
+        QString qtqss = ui->lineEditStyleSheet->text();
+        std::string qss = qtqss.toStdString();
+        usr().style_sheet(qss);
+        if (! qss.empty())
+        {
+            ui->checkBoxActiveStyleSheet->setChecked(true);
+            usr().style_sheet_active(true);
+        }
+
+        /*
+         * exit_required();                 // why not required?
+         */
+
         modify_usr();
+    }
 }
 
 void

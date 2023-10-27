@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2023-10-26
+ * \updates       2023-10-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -156,8 +156,10 @@ palettefile::parse_stream (std::ifstream & file)
         (void) m_palettes.set_brushes(sempty, snote, sscale, sbackseq);
     }
     if (! ok)
+    {
+        warn_message("Palettes reset to defaults");
         m_palettes.reset();
-
+    }
     return result;
 }
 
@@ -391,7 +393,11 @@ save_palette
     if (result)
     {
         palettefile palfile(pal, destination, rc());
-        file_message("Palette save", destination);
+
+        /*
+         * TMI: file_message("Palette save", destination);
+         */
+
         palfile.name(destination);
         result = palfile.write();
         if (! result)
@@ -433,7 +439,11 @@ save_palette
     {
         std::string msg = source + " --> " + destination;
         palettefile palfile(pal, source, rc());
-        file_message("Palette save", msg);
+
+        /*
+         * TMI: file_message("Palette save", msg);
+         */
+
         result = palfile.parse();
         if (result)
             result = save_palette(pal, destination);

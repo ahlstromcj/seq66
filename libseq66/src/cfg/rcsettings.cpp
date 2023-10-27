@@ -273,14 +273,15 @@ rcsettings::set_save_list (bool state)
     m_save_list.add("usr", state);              /* can be edited in UI  */
     m_save_list.add("mutes", state);            /* can be edited in UI  */
     m_save_list.add("playlist", state);         /* can be edited in UI  */
-    m_save_list.add("palette", state);          /* can be saved via UI  */
 
     /*
      * The following are saved only after the first run.  Thereafter, they
      * are managed by the user. Seq66 offers no way to edit these
-     * files, nor the 'palette' file.
+     * files, nor the 'palette' file. The palette in place can be saved
+     * via a special button in Edit / Preferences / Session.
      */
 
+    m_save_list.add("palette", state);          /* can save via button  */
     m_save_list.add("drums", state);
     m_save_list.add("ctrl", state);
     m_save_list.add("qss", state);
