@@ -622,6 +622,12 @@ qseditoptions::setup_tab_display ()
         ui->checkBoxLockMainWindow, SIGNAL(clicked(bool)),
         this, SLOT(slot_lock_main_window_click())
     );
+    ui->checkBoxDarkTheme->setChecked(usr().dark_theme());
+    connect
+    (
+        ui->checkBoxDarkTheme, SIGNAL(clicked(bool)),
+        this, SLOT(slot_dark_theme_click())
+    );
     connect
     (
         ui->checkBoxSwapCoordinates, SIGNAL(clicked(bool)),
@@ -3183,6 +3189,14 @@ qseditoptions::slot_lock_main_window_click ()
     usr().lock_main_window(on);
     modify_usr();
     m_parent_widget->lock_main_window(on);
+}
+
+void
+qseditoptions::slot_dark_theme_click ()
+{
+    bool on = ui->checkBoxDarkTheme->isChecked();
+    usr().dark_theme(on);
+    modify_usr();
 }
 
 void

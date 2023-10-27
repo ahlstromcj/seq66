@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-11
+ * \updates       2023-10-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -184,8 +184,6 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
         if (measures_per_line <= 0)
             measures_per_line = 1;
 
-        pen.setColor(Qt::black);
-        painter.setPen(pen);
         for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
         {
             int x_offset = xoffset(tick) - scroll_offset_x() + s_x_tick_fix;
@@ -205,12 +203,15 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
                 snprintf(bar, sizeof bar, "%d", measure);
 
                 QString qbar(bar);
+                pen.setColor(text_time_paint());    /* Qt::black            */
+                painter.setPen(pen);
                 painter.drawText(x_offset + 3, 10, qbar);
             }
             else if (tick % ticks_per_beat == 0)    /* light on every beat  */
             {
                 pen.setWidth(1);                    /* back to one pixel    */
                 pen.setStyle(Qt::SolidLine);
+                pen.setColor(beat_color());         /* Qt::black            */
                 painter.setPen(pen);
                 painter.drawLine(x_offset, 0, x_offset, sizeheight);
             }
@@ -218,6 +219,7 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
             {
                 pen.setWidth(1);                    /* back to one pixel    */
                 pen.setStyle(Qt::SolidLine);
+                pen.setColor(beat_color());         /* Qt::black            */
                 painter.setPen(pen);
                 painter.drawLine(x_offset, 0, x_offset, sizeheight);
             }
@@ -225,6 +227,7 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
             {
                 pen.setWidth(1);                    /* back to one pixel    */
                 pen.setStyle(Qt::DotLine);
+                pen.setColor(beat_color());         /* Qt::black            */
                 painter.setPen(pen);
                 painter.drawLine(x_offset, 0, x_offset, sizeheight);
             }
@@ -308,11 +311,10 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
         std::string text = std::to_string(n);
         text += "/";
         text += std::to_string(d);
-        if (dlstart < 8)                                // FIXME
+        if (dlstart < 8)
             pos += s_L_timesig_fix;
 
-        pen.setColor(Qt::white);
-        pen.setColor(Qt::black);
+        pen.setColor(text_time_paint());            /* Qt::black            */
         painter.setPen(pen);
         painter.drawText(pos + 1, s_ts_text_y, qt(text));
     }

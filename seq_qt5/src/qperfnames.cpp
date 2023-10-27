@@ -165,7 +165,7 @@ qperfnames::paintEvent (QPaintEvent *)
                  * painter.setPen(pen);
                  */
 
-                painter.save();                         // { ???
+                painter.save();                         // {
 
                 QString bank(qt(perf().set_name(bank_id)));
                 painter.translate(12, text_y + bank.length() * 4);

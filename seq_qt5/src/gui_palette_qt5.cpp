@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2023-10-26
+ * \updates       2023-10-27
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -300,9 +300,15 @@ text_data_paint ()
 }
 
 Color
-text_event_paint ()
+note_event_paint ()
 {
-    return global_palette().get_color(InvertibleColor::textevent);
+    return global_palette().get_color(InvertibleColor::noteevent);
+}
+
+Color
+text_keys_paint ()
+{
+    return global_palette().get_color(InvertibleColor::textkeys);
 }
 
 Color
@@ -314,7 +320,9 @@ text_names_paint ()
 Color
 text_slots_paint ()
 {
-    return global_palette().get_color(InvertibleColor::textslots);
+    return usr().dark_theme() ?
+        global_palette().get_inverse_color(InvertibleColor::textslots) :
+        global_palette().get_color(InvertibleColor::textslots) ;
 }
 
 Brush
@@ -668,7 +676,7 @@ gui_palette_qt5::reset_invertibles ()
     m_nrm_palette.add(InvertibleColor::text,      m_black,    "Text");
     m_nrm_palette.add(InvertibleColor::texttime,  m_black,    "Time Text");
     m_nrm_palette.add(InvertibleColor::textdata,  m_black,    "Data Text");
-    m_nrm_palette.add(InvertibleColor::textevent, m_black,    "Event Text");
+    m_nrm_palette.add(InvertibleColor::noteevent, m_white,    "Note Event");
     m_nrm_palette.add(InvertibleColor::textkeys,  m_black,    "Keys Text");
     m_nrm_palette.add(InvertibleColor::textnames, m_black,    "Names Text");
     m_nrm_palette.add(InvertibleColor::textslots, m_black,    "Slots Text");
@@ -702,7 +710,7 @@ gui_palette_qt5::reset_invertibles ()
     m_inv_palette.add(InvertibleColor::text,      m_white,    "Text");
     m_inv_palette.add(InvertibleColor::texttime,  m_white,    "Time Text");
     m_inv_palette.add(InvertibleColor::textdata,  m_white,    "Data Text");
-    m_inv_palette.add(InvertibleColor::textevent, m_white,    "Event Text");
+    m_inv_palette.add(InvertibleColor::noteevent, m_black,    "Note Event");
     m_inv_palette.add(InvertibleColor::textkeys,  m_white,    "Keys Text");
     m_inv_palette.add(InvertibleColor::textnames, m_white,    "Names Text");
     m_inv_palette.add(InvertibleColor::textslots, m_white,    "Slots Text");
@@ -723,7 +731,7 @@ gui_palette_qt5::reset_invertibles ()
 
 /**
  *  Gets a color, but returns a modified value via the function
- *  Gdk::Color::set_hsv(h, s, v).  This function sets the color, by specifying
+ *  Qt::Color::setHsv(h, s, v).  This function sets the color, by specifying
  *  hue, saturation, and value (brightness).
  *
  * \param index

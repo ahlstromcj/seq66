@@ -84,7 +84,8 @@ evince put it in
 # and time displays (lime on black). 'default' keeps the defaults. 'normal'
 # uses the theme color.
 #
-# 'dark-theme' specifies that are dark theme is active.
+# 'dark-theme' specifies that a dark theme is active, so that some colors
+# (e.g. grid-slot text) are inverted.
 #
 # 'window-redraw-rate' specifies the base window redraw rate for all windows.
 # From 10 to 100; default = 40 ms (25 ms for Windows).

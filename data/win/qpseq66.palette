@@ -1,7 +1,7 @@
-# Seq66 0.99.10 (and above) palette configuration file
+# Seq66 0.99.11 (and above) palette configuration file
 #
 # /home/user/.config/seq66/qpseq66.palette
-# Written on 2023-10-22 10:22:56
+# Written on 2023-10-27
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface. It must be active and
@@ -92,6 +92,14 @@ look empty with a space.
 21      "Names Brush" [ 0xFF808080 ]      "Names Brush" [ 0xFF808080 ]
 22      "Octave Line" [ 0xFF808080 ]      "Octave Line" [ 0xFF808080 ]
 23             "Text" [ 0xFF808080 ]             "Text" [ 0xFF808080 ]
+24        "Time Text" [ 0xFF000000 ]        "Time Text" [ 0xFFFFFFFF ]
+25        "Data Text" [ 0xFF000000 ]        "Data Text" [ 0xFFFFFFFF ]
+26       "Note Event" [ 0xFFFFFFFF ]       "Note Event" [ 0xFF000000 ]
+27        "Keys Text" [ 0xFF000000 ]        "Keys Text" [ 0xFFFFFFFF ]
+28       "Names Text" [ 0xFF000000 ]       "Names Text" [ 0xFFFFFFFF ]
+29       "Slots Text" [ 0xFF000000 ]       "Slots Text" [ 0xFFFFFFFF ]
+30          "Extra 1" [ 0xFF000000 ]          "Extra 1" [ 0xFFFFFFFF ]
+31          "Extra 2" [ 0xFF000000 ]          "Extra 2" [ 0xFFFFFFFF ]
 
 # This section defines brush styles to use.  The names are based on the
 # names in the Qt::BrushStyle enumeration. The supported names are:

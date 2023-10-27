@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-20
+ * \updates       2023-10-27
  * \license       GNU GPLv2 or above
  *
  *  We've added the feature of a right-click toggling between showing the main
@@ -152,14 +152,24 @@ qseqkeys::paintEvent (QPaintEvent *)
         brush.setStyle(Qt::SolidPattern);
         if (is_black_key(key))                              /* black keys   */
         {
-            brush.setColor(black_color());                  /* Qt::black    */
+            /*
+             * Inverting the keys is confusing, so alway use black.
+             * brush.setColor(black_color());
+             */
+
+            brush.setColor(Qt::black);
             painter.setPen(pen);
             painter.setBrush(brush);
             painter.drawRect(keyx, keyy + 1, key_x_6, nh_3);
         }
         else
         {
-            brush.setColor(white_color());                  /* Qt::white    */
+            /*
+             * Inverting the keys is confusing, so alway use white.
+             * brush.setColor(white_color());
+             */
+
+            brush.setColor(Qt::white);
             painter.setPen(pen);
             painter.setBrush(brush);
             painter.drawRect(keyx, keyy, sc_key_x, nh_1);
@@ -177,8 +187,8 @@ qseqkeys::paintEvent (QPaintEvent *)
         char notebuf[8];
         m_font.setBold(key == m_key);                       /* octave label */
         painter.setFont(m_font);
-        pen.setColor(Qt::black);
-        pen.setStyle(Qt::SolidLine);
+        pen.setColor(text_keys_paint());                    /* Qt::black)   */
+        // pen.setStyle(Qt::SolidLine);
         painter.setPen(pen);
         switch (m_show_key_names)
         {

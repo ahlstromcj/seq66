@@ -193,7 +193,7 @@ QPushButton::pressed
 
 QLineEdit
 {
-	background-color: #10b0b0;
+	background-color: #0aa0c0;
 	color: #000000;
 	border-style: solid;
 	border-color: #141414;
@@ -203,7 +203,7 @@ QLineEdit
 
 QLineEdit:read-only
 {
-	background-color: #808080;
+	background-color: #0880a0;
 	color: #000000;
 	border-style: solid;
 	border-color: #141414;

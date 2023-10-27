@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-20
+ * \updates       2023-10-27
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -266,7 +266,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 if (! is_pitchbend())
                 {
                     QString val = digits;
-                    pen.setColor(fore_color());
+                    pen.setColor(text_data_paint());    /* fore_color())    */
                     painter.setPen(pen);
                     x_offset += 6;
                     painter.drawText(x_offset, y_offset,      val.at(0));
@@ -289,7 +289,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 else if (its_close)
                     pen.setColor(near_paint()); /* near_color()?    */
                 else
-                    pen.setColor(fore_color());
+                    pen.setColor(text_data_paint());    /* fore_color())    */
 
                 painter.setBrush(brush);
                 painter.setPen(pen);

@@ -201,6 +201,7 @@ private slots:
     void slot_long_buss_names_click ();
     void slot_pair_buss_names_click ();
     void slot_lock_main_window_click ();
+    void slot_dark_theme_click ();
     void slot_swap_coordinates_click ();
     void slot_bold_grid_slots_click();
     void slot_follow_progress_click();

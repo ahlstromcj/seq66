@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-10-16
+ * \updates       2023-10-27
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -766,7 +766,8 @@ usrfile::write ()
 "# and time displays (lime on black). 'default' keeps the defaults. 'normal'\n"
 "# uses the theme color.\n"
 "#\n"
-"# 'dark-theme' specifies that are dark theme is active.\n"
+"# 'dark-theme' specifies that a dark theme is active, so that some colors\n"
+"# (e.g. grid-slot text) are inverted.\n"
 "#\n"
 "# 'window-redraw-rate' specifies the base window redraw rate for all windows.\n"
 "# From 10 to 100; default = 40 ms (25 ms for Windows).\n"

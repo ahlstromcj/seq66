@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2023-10-26
+ * \updates       2023-10-27
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -226,6 +226,11 @@ public:
 
     const Color & get_color (InvertibleColor index) const;
 
+    const Color & get_inverse_color (InvertibleColor index) const
+    {
+        return m_inv_palette.get_color(index);
+    }
+
     /**
      * \param index
      *      Provides the color index into the palette.
@@ -358,7 +363,7 @@ extern Color octave_paint ();
 extern Color text_paint ();
 extern Color text_time_paint ();
 extern Color text_data_paint ();
-extern Color text_event_paint ();
+extern Color note_event_paint ();
 extern Color text_keys_paint ();
 extern Color text_names_paint ();
 extern Color text_slots_paint ();

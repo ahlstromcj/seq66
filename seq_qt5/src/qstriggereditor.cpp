@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-20
+ * \updates       2023-10-27
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -219,7 +219,7 @@ qstriggereditor::paintEvent (QPaintEvent * qpep)
             else if (cev->is_program_change())
                 brush.setColor(drum_color());       /* ! */
             else
-                brush.setColor(back_color());       /* Qt::white            */
+                brush.setColor(note_event_paint()); /* back_color(), white  */
 
             painter.setBrush(brush);                /* draw event highlight */
             painter.drawRect(x, y, qc_eventevent_x - 1, qc_eventevent_y - 1);

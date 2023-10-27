@@ -133,7 +133,7 @@ enum class InvertibleColor
     text,               /**< Replaces "black" (foreground) for text items.  */
     texttime,           /**< Used for the text of time-lines.               */
     textdata,           /**< Used for the text of data panes.               */
-    textevent,          /**< Used for the text of the event pane.           */
+    noteevent,          /**< Used for the note brush of the event pane.     */
     textkeys,           /**< Used for the text of the keys pane.            */
     textnames,          /**< Used for the text of perf names pane.          */
     textslots,          /**< Used for the text of the grid/pattern slots.   */

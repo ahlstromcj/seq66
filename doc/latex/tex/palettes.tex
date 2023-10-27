@@ -75,10 +75,21 @@
 
    The first section is the "Pattern" palette; the second section is the
    "Ui" palette, which includes the inverse palette as well; and the third
-   section defines brushes for drawing the interiors of some elements..
+   section defines brushes for drawing the interiors of some elements.
 
 \subsubsection{Palettes Setup / Pattern}
 \label{subsubsec:palettes_setup_pattern}
+
+   The pattern palette is meant for changing the color of the progress
+   area of the grid slot.
+   This coloring helps in locating a pattern in the grid at a glance.
+   The color selected for a pattern is also shown in the Song editor;
+   both the name of the pattern and any triggers associated with the pattern
+   are painted in the same color.
+
+   Each color is numbered. When a color is applied to the pattern,
+   that color number is stored in a SeqSpec in the pattern, and saved
+   in the MIDI file.
 
    The following shows the pattern palette, with some entries elided for
    brevity:
@@ -103,15 +114,25 @@ project.
    right are the foreground colors, which are chosen for contrast with the
    background.  The colors are in \texttt{\#AARRGGB} format, with the "\#"
    replaced by "0x" because "\#" starts a comment in \textsl{Seq66}
-   configuration files.  Note that all the alpha values are "FF" (opqque); we
+   configuration files.  Note that all the alpha values are "FF" (opaque); we
    have not yet experimented with changing them.
    Lastly, only 32 entries are accepted.
 
 \subsubsection{Palettes Setup / Ui and Inverse Ui}
 \label{subsubsec:palettes_setup_ui}
 
-   The following shows the pattern palette, with some entries elided for
-   brevity:
+   The "UI palette" applies to other elements drawn by \textsl{Seq66}:
+   foreground lines, background paint that can differ between various
+   backgrounds, text colors that can differ between slot, time-panels,
+   the data panel, and the Song editor's name panel.
+   
+   If the user has chosen a particular Qt theme or has applied a
+   style-sheet, a palette can be created to match.
+   There are a couple of style-sheet/palette pairs in the
+   \texttt{data/samples} directory.
+
+   The following shows the pattern and song palette,
+   with some entries elided for brevity:
 
    \begin{verbatim}
       [ui-palette]
@@ -121,20 +142,19 @@ project.
        3        "Selection" [ 0xFFFFA500 ]   "Selection" [ 0xFFFF00FF ]
        4             "Drum" [ 0xFFFF0000 ]        "Drum" [ 0xFF000080 ]
              ...            ...       ...        ...       ...
-      20       "Keys Brush" [ 0xFFA08070 ]  "Keys Brush" [ 0xFF808080 ]
-      21      "Names Brush" [ 0xFFA08070 ] "Names Brush" [ 0xFF808080 ]
-      22      "Octave Line" [ 0xFF808080 ] "Octave Line" [ 0xFFFFFFFF ]
-      23             "Text" [ 0xFF000000 ]        "Text" [ 0xFF000000 ]
+      29       "Slots Text" [ 0xFF000000 ]  "Slots Text" [ 0xFFFFFFFF ]
+      30          "Extra 1" [ 0xFF000000 ]     "Extra 1" [ 0xFFFFFFFF ]
+      31          "Extra 2" [ 0xFF000000 ]     "Extra 2" [ 0xFFFFFFFF ]
    \end{verbatim}
 
    Here, the names are feature names, not color names.  The first color is the
-   normal color, and the second color is the inverse color.  Only 24 entries
-   are accepted. (We might expand this further in the future.)
+   normal color, and the second color is the inverse color.  Only 32 entries
+   are supported. The numbers have no meaning except to order the colors.
 
 \subsubsection{Palettes Setup / Brushes}
 \label{subsubsec:palettes_setup_brushes}
 
-   The last palette is small, allowing the fill-pattern of a few pattern-editor
+   The last "palette" is small, allowing the fill-pattern of a few pattern-editor
    items to be changed.
 
    \begin{verbatim}
