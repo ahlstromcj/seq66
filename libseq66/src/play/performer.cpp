@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-10-15
+ * \updates       2023-10-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -256,11 +256,11 @@
 #include "os/timing.hpp"                /* seq66::microsleep(), microtime() */
 #include "util/filefunctions.hpp"       /* seq66::filename_base(), etc.     */
 
-/**
- *  Flags code to improve (we hope) the behavior of lighting.
+/*
+ *  TENTATIVE. I think there's a bug in handling playlists.
  */
 
-#define SEQ66_CONTROL_OUT_UPDATES
+#define USE_SIGNALLED_CHANGES_FIX
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -2472,10 +2472,8 @@ performer::inner_start ()
             cv().signal();                      /* signal we are running    */
             send_onoff_event(midicontrolout::uiaction::play, true);
             send_onoff_event(midicontrolout::uiaction::panic, false);
-#if defined SEQ66_CONTROL_OUT_UPDATES
             send_onoff_event(midicontrolout::uiaction::pause, false);
             send_onoff_event(midicontrolout::uiaction::stop, false);
-#endif
         }
     }
 }
@@ -2504,10 +2502,8 @@ performer::inner_stop (bool midiclock)
     m_usemidiclock = midiclock;
     send_onoff_event(midicontrolout::uiaction::stop, true);
     send_onoff_event(midicontrolout::uiaction::panic, true);
-#if defined SEQ66_CONTROL_OUT_UPDATES
     send_onoff_event(midicontrolout::uiaction::pause, false);
     send_onoff_event(midicontrolout::uiaction::play, false);
-#endif
 }
 
 int
@@ -2517,20 +2513,16 @@ performer::increment_slot_shift () // const
         clear_slot_shift();
 
     if (slot_shift() > 0)
-#if defined SEQ66_CONTROL_OUT_UPDATES
         send_onoff_event(midicontrolout::uiaction::slot_shift, true);
-#endif
 
     return slot_shift();
 }
 
 void
-performer::clear_slot_shift () // const
+performer::clear_slot_shift ()
 {
-    m_slot_shift = 0;               /* mutable */
-#if defined SEQ66_CONTROL_OUT_UPDATES
-        send_onoff_event(midicontrolout::uiaction::slot_shift, false);
-#endif
+    m_slot_shift = 0;
+    send_onoff_event(midicontrolout::uiaction::slot_shift, false);
 }
 
 /**
@@ -5223,10 +5215,8 @@ performer::auto_pause ()
         pause_playing();
         send_onoff_event(midicontrolout::uiaction::play, false);
         send_onoff_event(midicontrolout::uiaction::panic, false);
-#if defined SEQ66_CONTROL_OUT_UPDATES
         send_onoff_event(midicontrolout::uiaction::stop, false);
         send_onoff_event(midicontrolout::uiaction::pause, true);
-#endif
     }
     else
     {
@@ -5234,10 +5224,8 @@ performer::auto_pause ()
         isplaying = true;
         send_onoff_event(midicontrolout::uiaction::play, true);
         send_onoff_event(midicontrolout::uiaction::panic, false);
-#if defined SEQ66_CONTROL_OUT_UPDATES
         send_onoff_event(midicontrolout::uiaction::stop, false);
         send_onoff_event(midicontrolout::uiaction::pause, false);
-#endif
     }
     is_pattern_playing(isplaying);
 }
@@ -5263,12 +5251,11 @@ performer::auto_stop (bool rewind)
 
         /*
          * Is problematic because metronome count-in calls auto_stop().
-         * (void) finish_recorder();
+         *
+         *      (void) finish_recorder();
          */
     }
-#if defined SEQ66_CONTROL_OUT_UPDATES
     send_onoff_event(midicontrolout::uiaction::pause, false);
-#endif
 }
 
 /**
@@ -6895,9 +6882,7 @@ performer::song_recording (bool on, bool atstart)
         else
             mapper().song_recording_stop(pad().js_current_tick);
 
-#if defined SEQ66_CONTROL_OUT_UPDATES
         send_onoff_event(midicontrolout::uiaction::song_record, on);
-#endif
     }
 }
 
@@ -8600,7 +8585,9 @@ performer::automation_playlist
     if (! inverse)
     {
         if (a == automation::action::toggle)            /* select-by-value  */
+        {
             result = open_select_list_by_midi(d1);
+        }
         else if (a == automation::action::on)           /* select-next      */
         {
             if (signalled_changes())
@@ -8772,50 +8759,73 @@ performer::playlist_auto_play (bool on)
         m_play_list->auto_play(on);
 }
 
+/**
+ *  Opens the next playlist after calling auto_stop(), which disengages
+ *  play-list auto-play.
+ *
+ *  TODO: One thing doesn't make sense... why not do the next-song-mode stuff
+ *  even if headless.
+ *
+ * \param opensong
+ *      Indicates to open the first song in the next list.  Passed to
+ *      playlist::open_next_list().  Also, if true, and if not headless (no
+ *      signalled changes), then next_song_mode() is called to unmute all
+ *      tracks if the song does not have triggers and set the live/song mode
+ *      appropriately.
+ *
+ * \param loading
+ *      Passed to playlist::open_next_list().
+ *
+ * \return
+ *      Returns true if open_next_list() succeeds.
+ */
+
 bool
 performer::open_next_list (bool opensong, bool loading)
 {
-    bool result;
     auto_stop(true);
-    if (signalled_changes())
-    {
-        result = m_play_list->open_next_list(opensong, loading);
-    }
-    else
-    {
-        result = m_play_list->open_next_list(opensong, loading);
-        if (result)
-        {
-            if (opensong)
-                next_song_mode();
 
-            notify_song_action(false);
-        }
-    }
+    bool result = m_play_list->open_next_list(opensong, loading);
+    if (result)
+        handle_list_change(opensong);
+
     return result;
 }
+
+/**
+ *  Why the lack of a loading boolean parameter????
+ */
 
 bool
 performer::open_previous_list (bool opensong)
 {
-    bool result;
     auto_stop(true);
-    if (signalled_changes())
-    {
-        result = m_play_list->open_previous_list(opensong);
-    }
-    else
-    {
-        result = m_play_list->open_previous_list(opensong);
-        if (result)
-        {
-            if (opensong)
-                next_song_mode();
 
-            notify_song_action(false);
-        }
-    }
+    bool result = m_play_list->open_previous_list(opensong);
+    if (result)
+        handle_list_change(opensong);
+
     return result;
+}
+
+void
+performer::handle_list_change (bool opensong)
+{
+#if defined USE_SIGNALLED_CHANGES_FIX
+    if (opensong)
+        next_song_mode();
+
+    if (signalled_changes())
+        notify_song_action(false);
+#else
+    if (! signalled_changes())
+    {
+        if (opensong)
+            next_song_mode();
+
+        notify_song_action(false);
+    }
+#endif
 }
 
 bool

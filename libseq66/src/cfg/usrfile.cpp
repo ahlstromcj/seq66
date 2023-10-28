@@ -555,8 +555,10 @@ usrfile::parse_daemonization (bool & startdaemon, std::string & logfile)
         std::string fname = get_variable(file, tag, "log");
         bool gotlog = ! fname.empty();
         if (gotlog)
+        {
             fname = strip_quotes(fname);    /* set this side-effect         */
-
+            logfile = fname;                /* return this side-effect      */
+        }
         usr().option_logfile(fname);        /* set the 'usr' flag as well   */
         usr().option_use_logfile(gotlog);   /* an easy flag to use, man!    */
     }

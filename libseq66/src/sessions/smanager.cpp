@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-10-19
+ * \updates       2023-10-28
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -152,6 +152,31 @@ reroute_to_log (const std::string & filepath)
 }
 
 /**
+ *  A static function to be called in main() (that is, early in the life
+ *  of the application), so that this information can be changed later from
+ *  the command-line. Helps to regularize the handling of the GUI versus
+ *  CLI versions of the application.
+ *
+ *  Note that ./configure sets the client name to seq66. But it is probably
+ *  better to distinguish qseq66 from seq66cli.
+ */
+
+void
+smanager::app_info (const std::string arg0, bool is_cli)
+{
+    set_app_name(SEQ66_APP_NAME);               /* set at ./configure time  */
+    if (is_cli)
+    {
+        seq66::usr().app_is_headless(true);     /* conflated with cli       */
+        seq66::set_app_path(arg0);              /* log for future usage     */
+        set_app_cli(true);                      /* the default is false     */
+        set_app_type(SEQ66_APP_TYPE);           /* e.g. "qt5" vs "cli"      */
+        set_client_name("seq66cli");            /* change from configure    */
+        rc().set_config_files("seq66cli");      /* set 'rc', 'usr' names    */
+    }
+}
+
+/**
  *  The first thing is to set the various settings defaults, and then read
  *  the 'usr' and 'rc' configuration files, in that order.  The last thing
  *  is to override any other settings via the command-line parameters.
@@ -182,17 +207,22 @@ smanager::main_settings (int argc, char * argv [])
     bool result = true;                         /* false --> EXIT_FAILURE   */
     std::string parentname = get_parent_process_name();
     bool in_nsm = contains(parentname, s_nsm_name); /* this is tentative!   */
-    if (seq_app_cli())
-    {
-        set_app_name("seq66cli");
-        set_app_type("cli");
-        set_client_name("seq66cli");
-        rc().set_config_files("seq66cli");
-    }
-    else
-        set_app_name(SEQ66_APP_NAME);           /* "qseq66" by default      */
 
-    set_arg_0(argv[0]);                         /* how it got started       */
+    /*
+     *  Call app_info() above in main() instead of this.
+     *
+     *  if (seq_app_cli())
+     *  {
+     *      set_app_name("seq66cli");
+     *      set_app_type("cli");
+     *      set_client_name("seq66cli");
+     *      rc().set_config_files("seq66cli");
+     *  }
+     *  else
+     *      set_app_name(SEQ66_APP_NAME);
+     *
+     *  set_arg_0(argv[0]);
+     */
 
     /**
      * Set up objects specific to the GUI for the performer.  Parse command-line
@@ -824,6 +854,10 @@ smanager::internal_error_check (std::string & errmsg) const
     return result;
 }
 
+/**
+ *  Shouldn't we be using the 'usr' log-file name???
+ */
+
 void
 smanager::error_handling ()
 {
@@ -831,7 +865,7 @@ smanager::error_handling ()
     if (internal_error_check(errmsg))
         show_error("Session error.", errmsg);
 
-    std::string path = seq66::rc().config_filespec("seq66.log");
+    std::string path = seq66::rc().config_filespec(seq_default_logfile_name());
 
 #if defined SEQ66_PORTMIDI_SUPPORT
     const char * pmerrmsg = pm_log_buffer();    /* guaranteed to be valid   */
@@ -1036,7 +1070,7 @@ smanager::create_configuration
         }
         else
         {
-            usr().option_logfile("seq66.log");
+            usr().option_logfile(seq_default_logfile_name());
             usr().option_use_logfile(true);
             reroute_to_log(usr().option_logfile());
             result = make_directory_path(mainpath);

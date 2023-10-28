@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2023-08-29
+ * \updates       2023-10-28
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -223,7 +223,7 @@ seq_pane_focus ()
 /**
  *  Returns the name of the application.  We could continue to use the macro
  *  SEQ66_APP_NAME, but we might eventually want to make this name
- *  configurable.  Not too likely, but possible.
+ *  configurable. Done!
  */
 
 const std::string &
@@ -248,6 +248,19 @@ bool
 seq_app_cli ()
 {
     return s_app_cli;
+}
+
+const std::string &
+seq_default_logfile_name ()
+{
+    static std::string s_logfile_base_name = seq_app_name();
+    static bool s_initialized = false;
+    if (! s_initialized)
+    {
+        s_logfile_base_name += ".log";
+        s_initialized = true;
+    }
+    return s_logfile_base_name;
 }
 
 const std::string &
@@ -584,14 +597,16 @@ seq_build_details ()
 #if defined SEQ66_NSM_SUPPORT
         << "NSM (Non Session Manager)\n"
 #endif
+#if defined SEQ66_SHOW_FEATURES_TMI
         <<
             "\n"
             "Chord generator, LFO, trigger transpose, tap BPM, song recording "
             "pattern coloring, pause, save time-sig/tempo, "
             "event editor, follow-progress, play-lists, mute-groups.\n"
+#endif
         <<
             "\n"
-            "Some options can be enabled/disabled via the configure script,"
+            "Some options can be enabled via ./configure,"
             " seq66_features.h, or build-specific seq66-config.h files in"
             " include/qt/* for qmake portmidi and rtmidi builds."
         << std::endl

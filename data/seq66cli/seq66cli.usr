@@ -1,21 +1,18 @@
-# Seq66 0.94.1 (and above) user ('usr') configuration file
+# Seq66 0.99.11 user ('usr') configuration file
 #
 # /home/ahlstrom/.config/seq66/seq66cli.usr
-# Written 2021-06-28 10:05:55
+# Written 2023-10-28 13:51:23
 #
-# This is a Seq66 'usr' file. Edit it and place it in the
-# $HOME/.config/seq66 directory. It allows one to apply an alias
-# (alternate name) to each MIDI bus, MIDI channel, and MIDI control
-# control code, per channel. It has additional options not present in
-# in Seq24, and supports DOS INI-style variable setting.
+# 'usr' file. Edit it and place it in ~/.config/seq66. It allows naming each
+# MIDI bus/port, channel, and control code.
 
 [Seq66]
 
 config-type = "usr"
-version = 5
+version = 11
 
-# The [comments] section lets one document this file.  Lines starting
-# with '#' and '[', or that are empty end the comment.
+# [comments] holds user documentation for this file. The first empty, hash-
+# commented, or tag line ends the comment.
 
 [comments]
 
@@ -23,24 +20,20 @@ Add your comment block here
 
 # [user-midi-bus-definitions]
 #
-# 1. Define your instruments and their control-code names, if they
-#    have them.
-# 2. Define a MIDI bus, its name, and what instruments are on which
-#    channel.
+# 1. Define instruments and their control-code names, as applicable.
+# 2. Define MIDI busses, names, and the instruments on each channel.
 #
-# In the following MIDI buss definitions, channels are counted from
-# 0 to 15, not 1 to 16.  Instruments not set here are set to -1 and
-# are GM (General MIDI). These replacement MIDI buss labels are shown
-# in MIDI Clocks, MIDI Inputs, and in the Pattern Editor buss and
-# channel drop-downs. To disable the entries, set the counts to 0.
+# Channels are counted from 0-15, not 1-16. Instruments not set here are set
+# to -1 and are GM (General MIDI). These labels are shown in MIDI Clocks,
+# Inputs, the pattern editor buss, channel, and event drop-downs. To disable
+# entries, set counts to 0.
 
 [user-midi-bus-definitions]
 
 0     # number of user-defined MIDI busses
 
-# In the following MIDI instrument definitions, active controller
-# numbers (i.e. supported by the instrument) are paired with
-# the (optional) name of the controller supported.
+# In these MIDI instrument definitions, active (supported by the instrument)
+# controller numbers are paired with the (optional) name of the controller.
 
 [user-instrument-definitions]
 
@@ -48,103 +41,125 @@ Add your comment block here
 
 # [user-interface-settings]
 #
-# Specifies the configuration of some user-interface elements.  Many
-# items were rendered obsolete and removed in version 5 of this file.
-# The main grid-style is now Qt buttons. To use a flat style, use
-# Qt themes/style-sheets.
+# Configures some user-interface elements.  Obsolete ones were removed in
+# version 5 of this file. Also see [user-ui-tweaks]. The grid holds Qt push-
+# buttons. For styling, use Qt themes/style-sheets.
+#
+# 'swap-coordinates' swaps numbering so pattern numbers vary fastest by column
+# instead of rows. This setting applies to the live grid, mute-group buttons,
+# and set-buttons.
 #
 # 'mainwnd-rows' and 'mainwnd-columns' (option '-o sets=RxC') specify
-# rows/columns in the main grid. R ranges from 4 to 8, C from 8 to 12.
-# Values other than 4x8 have not been tested, use at your own risk.
+# rows/columns in the main grid. R ranges from 4 to 8, C from 4 to 12.
+# Values other than 4x8 have not been tested thoroughly.
 #
-# 'mainwnd-spacing' specifies spacing in the main window. It ranges
-# from 2 (default) to 16.
+# 'mainwnd-spacing' is for grid buttons; from 0 to 16, default = 2.
 #
-# 'default-zoom' specifies initial zoom for the piano rolls. Ranges
-# from 1 to 512; defaults to 2. Larger PPQNs require larger zoom to
-# look good in the editors.  Seq66 adapts the zoom to the PPQN
-# if 'default-zoom' zoom is set to 0. The unit of zoon is ticks/pixel.
+# 'default-zoom' is the initial zoom for piano rolls. From 1 to 512, default
+# = 2. Larger PPQNs require larger zoom to look good. Seq66 adapts the zoom to
+# the PPQN if set to 0. The unit of zoom is ticks/pixel.
 #
-# 'global-seq-feature' specifies if the key, scale, and background
-# pattern are to be applied globally to all patterns, or separately
-# to each. These three values are stored in the MIDI file, either in
-# the global SeqSpec section, or in each track.
+# 'global-seq-feature' applies the key, scale, and background pattern to all
+# patterns versus separately to each.  If all, these values are stored in the
+# MIDI file in the global SeqSpec versus in each track.
 #
-#   false: Each pattern has its own key/scale/background.
-#   true:  Apply these settings globally to all patterns.
+# 'progress-bar-thick specifies a thicker progress bar.  Default is 2 pixels,
+# 1 pixel if set to false. Also affects the slot box border and the boldness
+# of the slot font.
 #
-# 'progress-bar-thick specifies a thicker progress bar.  Default is 1
-# pixel; thick is 2 pixels. Set it to true to enable the feature
+# 'follow-progress specifies the default for following progress in the piano
+# rolls. Each window has a button to toggle following progess
 #
-# 'inverse-colors' (option -K/--inverse) specifies use of an inverse
-# color palette. Palettes are for Seq66 drawing areas, not for the
-# Qt theme. Normal/inverse palettes are changed via a 'palette' file.
+# 'inverse-colors' (option -K/--inverse) specifies use of an inverse color
+# palette. Palettes are for Seq66 drawing areas, not for Qt widgets.
+# Normal/inverse palettes can be reconfigured via a 'palette' file.
 #
-# 'window-redraw-rate' specifies the base window redraw rate for all
-# windows. The default is 40 ms (25 ms for Windows).
+# 'time-fg-color' and 'time-bg-color' override the default colors for ticks
+# and time displays (lime on black). 'default' keeps the defaults. 'normal'
+# uses the theme color.
 #
-# Window-scale (option '-o scale=m.n[xp.q]') specifies scaling the
-# main window at startup. Defaults to 1.0 x 1.0. If between 0.5 and
-# 3.0, it changes the size of the main window proportionately.
+# 'dark-theme' specifies that a dark theme is active, so that some colors
+# (e.g. grid-slot text) are inverted.
+#
+# 'window-redraw-rate' specifies the base window redraw rate for all windows.
+# From 10 to 100; default = 40 ms (25 ms for Windows).
+#
+# Window-scale (option '-o scale=m.n[xp.q]') specifies scaling the main
+# window at startup. Defaults to 1.0 x 1.0. If between 0.5 and 3.0, it
+# changes the size of the main window proportionately.
+#
+# 'enable-learn-confirmation' can be set to false to disable the prompt that
+# the mute-group learn action succeeded. Can be annoying.
 
 [user-interface-settings]
 
+swap-coordinates = false
 mainwnd-rows = 4
 mainwnd-columns = 8
 mainwnd-spacing = 2
 default-zoom = 2
 global-seq-feature = true
 progress-bar-thick = true
+follow-progress = true
 inverse-colors = false
+time-fg-color = "default"
+time-bg-color = "default"
+dark-theme = false
 window-redraw-rate = 40
 window-scale = 1
 window-scale-y = 1
+enable-learn-confirmation = true
 
-# [user-midi-ppqn]
-#
-# Seq66 separates the file PPQN from the Seq66 PPQN the user wants
-# to use. 'default-ppqn' specifies the PPQN to use by default. The
-# default is 192, but can range from 32 to 19200. 'use-file-ppqn'
-# (recommended) indicates to use the file PPQN.
+# Seq66 separates file PPQN from the Seq66 PPQN. 'default-ppqn' specifies the
+# Seq66 PPQN, from 32 to 19200, default = 192. 'use-file-ppqn' (recommended)
+# indicates to use file PPQN.
 
 [user-midi-ppqn]
 
 default-ppqn = 192
-use-file-ppqn = false
+use-file-ppqn = true
+
+# This section specifies the default values to use to jitter the MIDI event
+# time-stamps and randomize event amplitudes (e.g. velocity for notes). The
+# range of jitter is 1/j times the current snap value.
+
+[user-randomization]
+
+jitter-divisor = 8
+amplitude = 8
 
 # [user-midi-settings]
 #
-# Specifies MIDI-specific variables. -1 means the value won't be used.
+# Specifies MIDI-specific variables. -1 means the value isn't used.
 #
-# 'beats-per-bar':      default = 4      range = 1 to 32.
-# 'beats-per-minute':   default = 120.0  range = 2.0 to 600.0.
-# 'beat-width':         default = 4      range = 1 to 32.
-# 'buss-override':      default = -1     range = -1 to 48.
-# 'velocity-override':  default = -1     range = -1 to 127.
-# 'bpm-precision':      default = 0      range = 0 to 2.
-# 'bpm-step-increment': default = 1.0    range = 0.01 to 25.0.
-# 'bpm-page-increment': default = 1.0    range = 0.01 to 25.0.
-# 'bpm-minimum':        default = 0.0    range = 127.0
-# 'bpm-maximum':        default = 0.0    range = 127.0
+#  Item                 Default   Range
+# 'convert-to-smf-1':   true      true/false.
+# 'beats-per-bar':      4         1 to 32.
+# 'beats-per-minute':   120.0     2.0 to 600.0.
+# 'beat-width':         4         1 to 32.
+# 'buss-override':     -1 (none) -1 to 48.
+# 'velocity-override': -1 (Free) -1 to 127.
+# 'bpm-precision':      0         0 to 2.
+# 'bpm-step-increment': 1.0       0.01 to 25.0.
+# 'bpm-page-increment': 1.0       0.01 to 25.0.
+# 'bpm-minimum':        0.0       127.0
+# 'bpm-maximum':        0.0       127.0
 #
-# A buss-override overrides the output port for all patterns, for
-# testing or convenience.  Do not save the MIDI file afterwards
-# unless wanting to overwrite all the buss values!
-#
-# The velocity override when adding notes in the pattern editor is set
-# via the 'Vol' button.  -1 ('Free'), preserves incoming velocity.
-#
-# Precision of the BPM spinner and MIDI control of BPM is 0, 1, or 2.
-# The step increment affects the beats/minute spinner and MIDI control
-# of BPM.  For 1 decimal point, 0.1 is good.  For 2 decimal points,
-# 0.01 is good, but one might want something faster, like 0.05.
-# Set the page increment larger than the step increment; it is used
-# with the Page-Up/Page-Down keys in the BPM spinner. The BPM
-# minimum and maximum set the range in tempo graphing; defaults to 0.0
-# to 127.0. Decrease this range for a magnified view of tempo.
+# 'convert-to-smf-1' controls if SMF 0 files are split into SMF 1 when read.
+# 'buss-override' sets the output port for all patterns, for testing, etc.
+# This value will be saved if you save the MIDI file!!!
+# 'velocity-override' controls adding notes in the pattern editor; see the
+# 'Vol' button. -1 ('Free'), preserves incoming velocity.
+# 'bpm-precision' (spinner and MIDI control) is 0, 1, or 2.
+# 'bpm-step-increment' affects the spinner and MIDI control. For 1 decimal,
+# 0.1 is good. For 2, 0.01 is good, 0.05 is faster. Set 'bpm-page-increment'
+# larger than the step-increment; used with the Page-Up/Page-Down keys in the
+# spinner. BPM minimum/maximum sets the range in tempo graphing; defaults to
+# 0.0 to 127.0. Decrease it for a magnified view of tempo.
 
 [user-midi-settings]
 
+convert-to-smf-1 = true
 beats-per-bar = 4
 beats-per-minute = 120
 beat-width = 4
@@ -153,84 +168,104 @@ velocity-override = -1
 bpm-precision = 0
 bpm-step-increment = 1
 bpm-page-increment = 10
-bpm-minimum = 0
-bpm-maximum = 127
+bpm-minimum = 2
+bpm-maximum = 600
 
 # [user-options]
 #
-# These settings specify values set via the -o or --option switch,
-# which helps expand the number of options supported.
-# The 'daemonize' option is used in seq66cli to indicate that the
-# application should be gracefully run as a service.
-# The 'log' value specifies a log-file that replaces output to
-# standard output/error.  For no log-file, use "".  This option
-# also works from the command line: '-o log=filename.log'. The name
-# here is used for the no-name '-o log' option.
+# These settings specify some -o or --option switch values.  'daemonize' in
+# seq66cli indicates that it should run as a service. 'log' specifies a log-
+# file redirecting output from standard output/error.  If no path in the name,
+# the log is stored in the configuration directory. For no log-file, use
+# "none" or "".  On the command line: '-o log=filename.log'.
 
 [user-options]
 
-daemonize = true
-log = ""
+daemonize = false
+log = "/home/ahlstrom/.config/seq66/seq66cli.log"
+pdf-viewer = ""
+browser = ""
 
 # [user-ui-tweaks]
 #
-# The key-height value specifies the initial height (before vertical
-# zoom) of the keys in the pattern editor.  Defaults to 10 pixels,
-# ranges from 6 to 32.
+# key-height specifies the initial height (before vertical zoom) of pattern
+# editor keys.  Defaults to 10 pixels, ranges from 6 to 32.
 #
-# The note-resume option, if active, causes any notes in progress
-# to be resumed when the pattern is toggled back on.
+# key-view specifies the default for showing labels for each key:
+# 'octave-letters' (default), 'even_letters', 'all-letters',
+# 'even-numbers', and 'all-numbers'.
 #
-# If specified, a style-sheet (e.g. 'qseq66.qss') is applied at
-# startup.  Normally just a base-name, it can contain a file-path
-# to provide a style usable in many other applications.
+# note-resume causes notes-in-progress to resume when the pattern toggles on.
 #
-# A fingerprint is a condensation of the note events in a long track,
-# to reduce the amount of drawing in the grid buttons. Ranges from 32
-# (the default) to 128. Set to 0 to not use a fingerprint.
+# If specified, a style-sheet (e.g. 'qseq66.qss') is applied at startup.
+# Normally just a base-name, it can contain a file-path to provide a style
+# usable in many other applications.
 #
-# The progress-box width and height settings change the size of the
-# progress box in the live-loop grid buttons.  Width ranges from 0.50
-# to 1.0; the height from 0.10 to 0.50.  If either is 0, then the box
-# isn't drawn.  If either is 'default', defaults are used.
+# A fingerprint is a condensation of note events in a long track, to reduce
+# the time drawing the pattern in the buttons. Ranges from 32 (default) to
+# 128. 0 = don't use a fingerprint.
+#
+# progress-box-width and -height settings change the scaled size of the
+# progress box in the live-grid buttons.  Width ranges from 0.50 to 1.0, and
+# the height from 0.10 to 1.0.  If either is 'default', defaults (0.8 x 0.3)
+# are used.  progress-box-shown controls if the boxes are shown at all.
+#
+# progress-note-min and progress-note-max set the progress-box note range so
+# that notes aren't centered in the box, but shown at their position by pitch.
+#
+# lock-main-window prevents the accidental change of size of the main
+# window.
 
 [user-ui-tweaks]
 
 key-height = 10
+key-view = octave-letters
 note-resume = false
+style-sheet-active = false
 style-sheet = ""
 fingerprint-size = 32
-progress-box-width = 0
-progress-box-height = 0
+progress-box-width = 0.8
+progress-box-height = 0.3
+progress-box-shown = true
+progress-note-min = 0
+progress-note-max = 127
+lock-main-window = false
 
 # [user-session]
 #
-# Specifies the session manager to use, if any. The 'session' value
-# is set to 'none' (default), 'nsm' (Non Session Manager), or 'lash'
-# (LASH, not yet supported).  'url' can be set to the value set by
-# nsmd when run outside of the NSM user-interface. Set 'url' only if
-# running nsmd standalone; use a matching --osc-port number.
+# The session manager to use, if any. 'session' is 'none' (default), 'nsm'
+# (Non/New Session Manager), or 'jack'. 'url' can be set to the value set by
+# nsmd when run by command-line. Set 'url' if running nsmd stand-alone; use
+# the --osc-port number. Seq66 detects if started in NSM. The visibility flag
+# is used only by NSM to restore visibility.
 
 [user-session]
 
 session = none
 url = ""
+visibility = true
 
 # [new-pattern-editor]
 #
-# Contains setup values for play/recording when a new pattern is
-# opened. A new pattern means that the loop has the default name
-# 'Untitled' and no events. These values save time during a live
-# recording session. Note that the valid values for record-style are
-# 'merge' (default), 'overwrite', 'expand', and 'one-shot'.
+# Settings for play/record for a new pattern. A new pattern is 'Untitled'
+# and has no events. These settings save time in live recording. Valid
+# record-style values: 'merge' (overdub), 'overwrite', 'expand', 'one-shot',
+# and 'one-shot-reset'. 'wrap-around' allows recorded notes to wrap to the
+# pattern start. 'escape-pattern' allows the Esc key to close the pattern
+# editor if not playing or in paint mode. Currently 'notemap' and quantizing
+# are mutually exclusive.
 
 [new-pattern-editor]
 
+escape-pattern = false
 armed = false
 thru = false
 record = false
+tighten = false
 qrecord = false
+notemap = false
 record-style = merge
+wrap-around = false
 
 # End of /home/ahlstrom/.config/seq66/seq66cli.usr
 #

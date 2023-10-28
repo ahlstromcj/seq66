@@ -570,7 +570,7 @@ playlist::open_current_song ()
 bool
 playlist::open_next_list (bool opensong, bool loading)
 {
-    bool result = false;                // true;
+    bool result = false;
     if (active() || loading)
     {
         result = next_list(true);      /* select the next list, first song */
@@ -583,7 +583,7 @@ playlist::open_next_list (bool opensong, bool loading)
 bool
 playlist::open_previous_list (bool opensong)
 {
-    bool result = false;                // true;
+    bool result = false;
     if (active())
     {
         result = previous_list(true);  /* select the prev. list, first song */

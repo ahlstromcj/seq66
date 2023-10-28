@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-10-18
+ * \updates       2023-10-28
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -701,7 +701,7 @@ cmdlineopts::parse_rc_file
     }
     else
     {
-        file_message("Cannot read", filespec);
+        file_error("Cannot read", filespec);
         rc().auto_rc_save(true);
         rc().create_config_names();
     }
@@ -730,7 +730,7 @@ cmdlineopts::get_usr_file ()
     }
     else
     {
-        file_message("Cannot read", rcn);
+        file_error("Cannot read", rcn);
         rc().auto_rc_save(true);
     }
     return result;
@@ -757,7 +757,7 @@ cmdlineopts::parse_usr_file
     }
     else
     {
-        file_message("Cannot read", filespec);
+        file_error("Cannot read", filespec);
         rc().auto_rc_save(true);
         rc().auto_usr_save(true);
     }

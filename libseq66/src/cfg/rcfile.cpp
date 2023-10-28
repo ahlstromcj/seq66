@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-10-08
+ * \updates       2023-10-28
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -657,7 +657,7 @@ rcfile::parse ()
                 else
                 {
                     if (! rc_ref().append_recent_file(rfilename))
-                        file_message("Cannot read recent file", rfilename);
+                        file_error("Cannot read recent file", rfilename);
                 }
                 if (! next_data_line(file))
                     break;

@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-10-27
+2019-04-13 to 2023-10-28
 
 Misc:
 
@@ -14,13 +14,13 @@ Misc:
     -   Seq66cli
         -   "[seq66] Standard I/P rerouted to /dev/null".
         -   The --version and --help options do not work.
+        -   Potential issues in play-list handling with signalled-changes.
+    -   Test play-list and auto-next-play in GUI and CLI.
     -   Session / Song Path is not updated when a new file is saved.
     -   In the Windows build batch file, improve the messaging and copy the
         7z bundle to release as the installer is.
     -   Maybe at first start, query the use about using a log file, if started
         in the console?
-    -   Add the live-grid slot pop-up (or part of it) to qperfnames, and then
-        uncomment its documentation.
     -   Add a feature to start playback when the first note comes
         into a pattern when recording is set. [Turns out to be quite tricky!]
 

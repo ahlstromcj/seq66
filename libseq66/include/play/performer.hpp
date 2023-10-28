@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-10-15
+ * \updates       2023-10-28
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1437,6 +1437,7 @@ public:
     bool open_next_list (bool opensong = true, bool loading = false);
     bool open_previous_list (bool opensong = true);
     bool open_select_song_by_index (int index, bool opensong = true);
+    void handle_list_change (bool opensong);
     bool open_select_song_by_midi (int ctrl, bool opensong = true);
     bool open_current_song ();
     bool open_next_song (bool opensong = true);

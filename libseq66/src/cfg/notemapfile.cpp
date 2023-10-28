@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2023-03-23
+ * \updates       2023-10-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -223,8 +223,9 @@ notemapfile::write_stream (std::ofstream & file)
     write_seq66_header(file, "drums", version());
     write_comment(file, mapper().comments_block().text());
     file <<
+"\n"
 "# Drum/note-mapping configuration for Seq66, stored in the HOME configuration\n"
-"# directory. To use this file, add this file-name to '[note-mapper]' section of\n"
+"# directory. To use this file, add its name to the '[note-mapper]' section of\n"
 "# the 'rc' file. There's no user-interface for this file. The main values are:\n"
 "#\n"
 "#   map-type: drum, patch, or multi; indicates the mapping to do.\n"

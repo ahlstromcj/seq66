@@ -1,41 +1,43 @@
-# Seq66 0.94.1 (and above) mute-groups configuration file
+# Seq66 0.99.11 mute-groups configuration file
 #
 # /home/ahlstrom/.config/seq66/seq66cli.mutes
-# Written 2021-06-28 10:05:55
+# Written 2023-10-28 13:51:23
 #
-# This file replaces the [mute-group] section of the 'rc' file,
-# making it easier to manage multiple sets of mute groups.
+# Used in the [mute-group-file] section of the 'rc' file, making it easier to
+# multiple mute groups. To use this file, specify it in [mute-group-file] file
+# and set 'active = true'.
 
 [Seq66]
 
 config-type = "mutes"
 version = 0
 
-# The [comments] section documents this file.  Lines starting with
-# '#', '[', or that have no characters end the comment.
+# [comments] holds user documentation for this file. The first empty, hash-
+# commented, or tag line ends the comment.
+
 [comments]
 
 Add your comment block here
 
-# The 'mutes' file holds the global mute-groups configuration. It is
-# is stored separately for flexibility, always in the configuration
-# directory.  To use this file, specify it in the [mute-group-file]
-# tag in the 'rc' file and set 'active' to true.
+# load-mute-groups: Set to 'none' or 'mutes' to load from the 'mutes' file,
+# 'midi' to load from the song, or 'both' to try to read from 'mutes' first,
+# then the 'midi' file.
 #
-# load-mute-groups: set to 'none', or 'mutes' to load only from the
-# 'mutes' file, 'midi' to load from the song, or 'both' to try to
-# to read from the 'mutes' first, then the 'midi' if empty.
+# save-mutes-to: 'both' writes mutes to the 'mutes' and MIDI file; 'midi'
+# writes only to the MIDI file; and the mutes only to the 'mutes' file.
 #
-# save-mutes-to: 'both' writes the mutes values to both the mutes and
-# the MIDI file; 'midi' writes only to the MIDI file; and the 'mutes'
-# only to the mutes file.
+# strip-empty: If true, all-zero mute-groups are not written to the MIDI file.
 #
-# mute-group-rows and mute-group-columns: Specifies the size of the
-# grid.  For now, keep these values at 4 and 8.
+# groups-format: 'binary' means write mutes as 0/1; 'hex' means write them as
+# hexadecimal numbers (e.g. 0xff), useful for larger set sizes.
 #
-# groups-format: 'binary' means write mutes as 0 or 1; 'hex' means to
-# write them as hexadecimal numbers (e.g. 0xff), which is useful for
-# larger set sizes.
+# mute-group-selected: If 0 to 31, and mutes are available from this file
+# or from the MIDI file, then this mute-group is applied at startup; useful in
+# restoring a session. Set to -1 to disable.
+#
+# toggle-active-only: When a group is toggled off, all patterns, even those
+# outside the mute-group, are muted.  With this flag, only patterns in the
+# mute-group are muted. Patterns unmuted directly by the user remain unmuted.
 #
 # mute-group-selected: if 0 to 31, and mutes are available either from
 # this file or from the MIDI file, then the mute-group is applied at
@@ -48,54 +50,52 @@ Add your comment block here
 
 [mute-group-flags]
 
-load-mute-groups = both
-save-mutes-to = both
-mute-group-rows = 4
-mute-group-columns = 8
+load-mute-groups = midi
+save-mutes-to = midi
+strip-empty = false
 mute-group-selected = -1
 groups-format = binary
 toggle-active-only = false
 
 [mute-groups]
 
-# All mute-group values are saved in this 'mutes' file, even if they
-# all are zero; but if all are zero, they can be stripped out of the
-# MIDI file by the strip-empty-mutes functionality. If a hex number
-# is found, each number represents a bit mask, rather than a single
-# bit.
+# We save mute-group values in the 'mutes' file, even if all zeroes. They can
+# be stripped out of the MIDI file by 'strip-empty-mutes'. Hex values indicate
+# a bit-mask, not a single bit. A quoted group name can be placed at the end
+# of the line.
 
- 0 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
- 1 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
- 2 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
- 3 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
- 4 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
- 5 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
- 6 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
- 7 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
- 8 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
- 9 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-10 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-11 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-12 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-13 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-14 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-15 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-16 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-17 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-18 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-19 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-20 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-21 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-22 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-23 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-24 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-25 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-26 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-27 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-28 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-29 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-30 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-31 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 0 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 0"
+ 1 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 1"
+ 2 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 2"
+ 3 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 3"
+ 4 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 4"
+ 5 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 5"
+ 6 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 6"
+ 7 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 7"
+ 8 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 8"
+ 9 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 9"
+10 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 10"
+11 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 11"
+12 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 12"
+13 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 13"
+14 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 14"
+15 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 15"
+16 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 16"
+17 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 17"
+18 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 18"
+19 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 19"
+20 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 20"
+21 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 21"
+22 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 22"
+23 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 23"
+24 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 24"
+25 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 25"
+26 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 26"
+27 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 27"
+28 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 28"
+29 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 29"
+30 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 30"
+31 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 31"
 
 # End of /home/ahlstrom/.config/seq66/seq66cli.mutes
 #
