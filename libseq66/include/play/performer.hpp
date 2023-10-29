@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-10-28
+ * \updates       2023-10-29
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -100,6 +100,7 @@ class performer
     friend class qperfeditframe64;
     friend class qplaylistframe;
     friend class qt5nsmanager;
+    friend class qseditoptions;
     friend class qsmainwnd;
     friend class sequence;
     friend class smanager;
@@ -1169,11 +1170,15 @@ public:
      *      The setter that can falsify it, unmodify(), is private.  No one
      *      but performer and its friends should falsify this flag.
      *      For issue #90, do not use the (silly) m_needs_update flag.
+     *      If a playlist is in force, ignore changes. And some, like
+     *      mutes changes, occur just because a new file is loaded.
+     *      What a tangle!
      */
 
     void modify ()
     {
-        m_is_modified = true;
+        if (! playlist_active())
+            m_is_modified = true;
     }
 
     /*
@@ -1299,12 +1304,12 @@ public:
 
     bool playlist_auto_arm () const
     {
-        return m_play_list->auto_arm();
+        return bool(m_play_list) && m_play_list->auto_arm();
     }
 
     bool playlist_auto_play () const
     {
-        return m_play_list->auto_play();
+        return bool(m_play_list) && m_play_list->auto_play();
     }
 
     bool playlist_auto_advance () const
@@ -1436,12 +1441,13 @@ public:
 
     bool open_next_list (bool opensong = true, bool loading = false);
     bool open_previous_list (bool opensong = true);
-    bool open_select_song_by_index (int index, bool opensong = true);
     void handle_list_change (bool opensong);
+    bool open_select_song_by_index (int index, bool opensong = true);
     bool open_select_song_by_midi (int ctrl, bool opensong = true);
     bool open_current_song ();
     bool open_next_song (bool opensong = true);
     bool open_previous_song (bool opensong = true);
+    void handle_song_change (bool opensong);
 
     int next_available_song_number () const
     {

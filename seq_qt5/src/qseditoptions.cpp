@@ -3492,12 +3492,14 @@ qseditoptions::slot_playlist_active_click ()
     if (is_empty(ui->lineEditPlaylist))
     {
         ui->checkBoxActivePlaylist->setChecked(false);
+        (void) perf().playlist_activate(false);
         rc().playlist_active(false);
     }
     else
     {
         bool on = ui->checkBoxActivePlaylist->isChecked();
-        rc().playlist_active(on);
+        if (perf().playlist_activate(on))
+            rc().playlist_active(on);
     }
     modify_rc();
 }

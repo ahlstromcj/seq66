@@ -2416,7 +2416,7 @@ performer::next_song_mode ()
     {
         bool has_triggers = mapper().trigger_count() > 0;
         song_mode(has_triggers);
-        if (has_triggers)
+        if (has_triggers || playlist_auto_arm())    /* ca 2023-10-29        */
             set_song_mute(mutegroups::action::off);
     }
     else
@@ -8892,39 +8892,46 @@ performer::open_current_song ()
     return result;
 }
 
+/**
+ *  Why no auto_stop()?
+ */
+
 bool
 performer::open_next_song (bool opensong)
 {
-    bool result;
-    if (signalled_changes())
-    {
-        result = m_play_list->open_next_song(opensong);
-    }
-    else
-    {
-        result = m_play_list->open_next_song(opensong);
-        if (result)
-        {
-            if (opensong)
-                next_song_mode();
+    bool result = m_play_list->open_next_song(opensong);
+    if (result)
+        handle_song_change(opensong);
 
-            notify_song_action(false);
-        }
-    }
     return result;
 }
+
+/**
+ *  Why no auto_stop()?
+ */
 
 bool
 performer::open_previous_song (bool opensong)
 {
-    bool result;
+    bool result = m_play_list->open_previous_song(opensong);
+    if (result)
+        handle_song_change(opensong);
+
+    return result;
+}
+
+void
+performer::handle_song_change (bool opensong)
+{
+#if defined USE_SIGNALLED_CHANGES_FIX
+    if (opensong)
+        next_song_mode();
+
     if (signalled_changes())
+        notify_song_action(false);
+#else
+    if (! signalled_changes())
     {
-        result = m_play_list->open_previous_song(opensong);
-    }
-    else
-    {
-        result = m_play_list->open_previous_song(opensong);
         if (result)
         {
             if (opensong)
@@ -8933,7 +8940,7 @@ performer::open_previous_song (bool opensong)
             notify_song_action(false);
         }
     }
-    return result;
+#endif
 }
 
 bool
@@ -9095,7 +9102,7 @@ performer::open_playlist (const std::string & pl)
         result = seq66::open_playlist(*m_play_list, pl, show_on_stdout);
         if (result)
         {
-            if (rc().playlist_active())
+            if (rc().playlist_active())     /* if (playlist_active())???    */
             {
                 clear_all();                /* reset, not clear, playlist   */
             }

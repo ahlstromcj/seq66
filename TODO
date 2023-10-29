@@ -1,12 +1,18 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-10-28
+2019-04-13 to 2023-10-29
 
 Misc:
 
-    -   Test the Set Master.
+    -   Fix Kraftwerk song to use port 0.
+    -   Why is the cbflitfm.mid tune so SLOW? The BPM is 72.
+        The main dropdown shows 192 PPQN; the main PPQN edit shows 96.
+    -   Similar with qufrency.mid, viceuk.mid.
+    -   Why are longhair.mid, stdemo3.mid, wallstsm.mid (in beginning)
+        so FAST?
     -   Test Import / Import and Export Project Configuration, Playlist....
     -   Make sure the grid-mode clear and double operations work properly.
+    -   Test the Set Master.
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recording measures
