@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-10-12
+ * \updates       2023-10-30
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -754,9 +754,11 @@ private:
      *  Indicates if the application is running headless.  That is, from the
      *  seq66cli command-line application/daemon.  We can do things when
      *  headless without having to worry about signalling Qt.
+     *
+     *  This is now covered by calling seq66::set_app_cli(true) in main().
+     *
+     *      bool m_app_is_headless;
      */
-
-    bool m_app_is_headless;
 
     /**
      *  Indicates if the application should be daemonized.  All options that
@@ -1572,10 +1574,14 @@ public:
         return c_max_zoom;
     }
 
-    bool app_is_headless () const
-    {
-        return m_app_is_headless;
-    }
+    /**
+     *  No longer used.
+     *
+     *  bool app_is_headless () const
+     *  {
+     *      return m_app_is_headless;
+     *  }
+     */
 
     bool option_daemonize () const
     {
@@ -1948,10 +1954,14 @@ public:         // used in main application module and the usrfile class
 
     void window_redraw_rate (int ms);
 
-    void app_is_headless (bool flag)
-    {
-        m_app_is_headless = flag;
-    }
+    /**
+     *  No longer used.
+     *
+     *  void app_is_headless (bool flag)
+     *  {
+     *      m_app_is_headless = flag;
+     *  }
+     */
 
     void option_daemonize (bool flag, bool setup = false);
     void option_use_logfile (bool flag);

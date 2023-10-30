@@ -93,7 +93,9 @@ namespace seq66
  *  contrib/code), which was based on Kepler34's EditFrame class.
  */
 
-class qseqeditframe64 final : public qseqframe, protected performer::callbacks
+class qseqeditframe64 final :
+    public qseqframe,
+    protected performer::callbacks
 {
     friend class qlfoframe;
     friend class qpatternfix;
@@ -111,8 +113,8 @@ class qseqeditframe64 final : public qseqframe, protected performer::callbacks
 private:
 
     /**
-     *  Enumerates the events we support for editing.  Note that tempo is a meta
-     *  event and must be handled different.
+     *  Enumerates the events we support for editing.  Note that tempo is a
+     *  meta event and must be handled different.
      */
 
     enum class event_index

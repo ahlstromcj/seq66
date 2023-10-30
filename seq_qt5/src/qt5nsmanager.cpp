@@ -25,11 +25,10 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2023-10-19
+ * \updates       2023-10-29
  * \license       GNU GPLv2 or above
  *
- *  Duty now for the future!
- *
+ *  Duty now for the future! Join the Smart Patrol!
  */
 
 #include <QApplication>                 /* QApplication etc.                */
@@ -422,6 +421,7 @@ qt5nsmanager::show_error
             if (rc().quiet())
             {
                 smanager::show_message(tag, msg);
+                perf()->clear_port_map_error();             /* keep going!  */
             }
             else
             {

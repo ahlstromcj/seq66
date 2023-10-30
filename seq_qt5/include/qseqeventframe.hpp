@@ -63,7 +63,9 @@ namespace seq66
 {
     class qseventslots;
 
-class qseqeventframe final : public QFrame, protected performer::callbacks
+class qseqeventframe final :
+    public QFrame,
+    protected performer::callbacks
 {
     friend class qseventslots;
 

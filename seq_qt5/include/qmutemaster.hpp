@@ -73,7 +73,9 @@ namespace seq66
  *  playscreen and showing, in brief form, the contents of each set.
  */
 
-class qmutemaster final : public QFrame, protected performer::callbacks
+class qmutemaster final :
+    public QFrame,
+    protected performer::callbacks
 {
     friend class qsmainwnd;
     friend class qseditoptions;

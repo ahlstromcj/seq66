@@ -24,7 +24,7 @@
  * \library       seq66rtcli application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-02-09
- * \updates       2023-10-28
+ * \updates       2023-10-30
  * \license       GNU GPLv2 or above
  *
  *  This application is seq66 without a GUI, control must be done via MIDI.
@@ -111,7 +111,11 @@ main (int argc, char * argv [])
 #if defined USE_NEW_CODE
     seq66::smanager::app_info(argv[0], true);
 #else
-    seq66::usr().app_is_headless(true);
+
+    /*
+     * No longer used: seq66::usr().app_is_headless(true);
+     */
+
     seq66::set_app_cli(true);                   /* used in smanager         */
     seq66::set_app_name("seq66cli");            /* also done in smanager!!  */
 #endif

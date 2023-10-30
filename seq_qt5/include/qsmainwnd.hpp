@@ -107,7 +107,9 @@ namespace seq66
  * The main window of Kepler34... er, I mean Seq66.
  */
 
-class qsmainwnd final : public QMainWindow, protected performer::callbacks
+class qsmainwnd final :
+    public QMainWindow,
+    protected performer::callbacks
 {
     friend class qmutemaster;
     friend class qplaylistframe;

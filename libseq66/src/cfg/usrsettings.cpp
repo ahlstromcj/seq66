@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2023-10-11
+ * \updates       2023-10-30
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -382,7 +382,9 @@ usrsettings::usrsettings () :
     m_max_sequence              (seq::maximum()),
     m_mainwnd_x                 (c_default_window_width),   /* 780 */
     m_mainwnd_y                 (c_default_window_height),  /* 412 */
-    m_app_is_headless           (false),
+
+    /* m_app_is_headless        (false),    */
+
     m_user_option_daemonize     (false),
     m_user_save_daemonize       (false),
     m_user_use_logfile          (false),
@@ -485,11 +487,15 @@ usrsettings::set_defaults ()
      *  m_seqs_in_set
      *  m_gmute_tracks
      *  m_max_sequence
+     *
+     * No longer used:
+     *
+     *  m_app_is_headless
      */
 
     m_mainwnd_x = c_default_window_width;
     m_mainwnd_y = c_default_window_height;
-    m_app_is_headless = false;
+
     m_user_option_daemonize = false;
     m_user_save_daemonize = false;
     m_user_use_logfile = false;

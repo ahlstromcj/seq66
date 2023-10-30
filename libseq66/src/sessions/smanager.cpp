@@ -167,7 +167,12 @@ smanager::app_info (const std::string arg0, bool is_cli)
     set_app_name(SEQ66_APP_NAME);               /* set at ./configure time  */
     if (is_cli)
     {
-        seq66::usr().app_is_headless(true);     /* conflated with cli       */
+        /*
+         * See the CLI main() routine instead.
+         *
+         * seq66::usr().app_is_headless(true);  // conflated with cli
+         */
+
         seq66::set_app_path(arg0);              /* log for future usage     */
         set_app_cli(true);                      /* the default is false     */
         set_app_type(SEQ66_APP_TYPE);           /* e.g. "qt5" vs "cli"      */

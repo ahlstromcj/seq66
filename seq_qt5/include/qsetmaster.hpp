@@ -76,7 +76,9 @@ namespace seq66
  *  playscreen and showing, in brief form, the contents of each set.
  */
 
-class qsetmaster final : public QFrame, protected performer::callbacks
+class qsetmaster final :
+    public QFrame,
+    protected performer::callbacks
 {
 
 private:

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-10-28
+ * \updates       2023-10-30
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -412,7 +412,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_have_redo             (false),
     m_redo_vect             (),
     m_notify                (),
-    m_signalled_changes     (! usr().app_is_headless()),
+    m_signalled_changes     (! seq_app_cli()),  /* !usr().app_is_headless() */
     m_seq_edit_pending      (false),
     m_event_edit_pending    (false),
     m_record_toggle_pending (false),
@@ -2283,6 +2283,10 @@ performer::set_ppqn (int p)
             m_one_measure = m_fast_ticks = 0;
             (void) jack_set_ppqn(p);
             m_master_bus->set_ppqn(p);
+            notify_resolution_change                    /* ca 2023-10-30    */
+            (
+                ppqn(), get_beats_per_minute(), change::no
+            );
         }
         else
         {
@@ -8570,6 +8574,12 @@ performer::automation_top
  *  Implements playlist control.  If \a inverse is true, nothing is done.  Note
  *  that currently the GUI may hardwire the usage of the arrow keys for this
  *  functionality.
+ *
+ *  Tricky:
+ *
+ *      For the GUI, we need to handle the arrow keys and the automation in
+ *      the same way, so the notify_song_action() call does it. For the CLI,
+ *      we do the work here.
  */
 
 bool
@@ -8579,7 +8589,7 @@ performer::automation_playlist
     int index, bool inverse
 )
 {
-    bool result = false;
+    bool result = true;
     std::string name = auto_name(automation::slot::playlist);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
@@ -8591,20 +8601,14 @@ performer::automation_playlist
         else if (a == automation::action::on)           /* select-next      */
         {
             if (signalled_changes())
-            {
                 notify_song_action(true, playlist::action::next_list);
-                result = true;
-            }
             else
                 result = open_next_list();
         }
         else if (a == automation::action::off)          /* select-previous  */
         {
             if (signalled_changes())
-            {
                 notify_song_action(true, playlist::action::previous_list);
-                result = true;
-            }
             else
                 result = open_previous_list();
         }
@@ -9191,6 +9195,12 @@ performer::save_playlist (const std::string & pl)
  *  Implements playlist control.  If \a inverse is true, nothing is done.
  *  Note that currently the GUI may hardwire the usage of the arrow keys for
  *  this functionality.
+ *
+ *  Tricky:
+ *
+ *      For the GUI, we need to handle the arrow keys and the automation in
+ *      the same way, so the notify_song_action() call does it. For the CLI,
+ *      we do the work here.
  */
 
 bool
@@ -9206,24 +9216,20 @@ performer::automation_playlist_song
     if (! inverse)
     {
         if (a == automation::action::toggle)            /* select-by-value  */
+        {
             result = open_select_song_by_midi(d1);
+        }
         else if (a == automation::action::on)           /* select-next      */
         {
             if (signalled_changes())
-            {
                 notify_song_action(true, playlist::action::next_song);
-                result = true;
-            }
             else
                 result = open_next_song();
         }
         else if (a == automation::action::off)          /* select-previous  */
         {
             if (signalled_changes())
-            {
                 notify_song_action(true, playlist::action::previous_song);
-                result = true;
-            }
             else
                 result = open_previous_song();
         }

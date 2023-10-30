@@ -73,7 +73,9 @@ namespace seq66
  *  The protected inheritance could be moved to qslivebase, maybe.
  */
 
-class qslivegrid final : public qslivebase, protected performer::callbacks
+class qslivegrid final :
+    public qslivebase,
+    protected performer::callbacks
 {
     friend class qsmainwnd;
     friend class qliveframeex;

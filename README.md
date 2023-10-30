@@ -1,4 +1,4 @@
-# README for Seq66 0.99.10 2023-10-27
+# README for Seq66 0.99.10 2023-10-29
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -87,6 +87,9 @@ Windows, and using a conventional source tarball.
         *   Fixed errors specifying style-sheet, palette, and mutes in
             Preferences / Session.  Also enhanced this tab to indicate
             exit is needed.
+        *   Fixing various playlist errors:
+            -   PPQN setting issue causing slow/fast playback.
+        *   Fixed app exiting unceremoniously if "quiet" is set.
     *   Version 0.99.10:
         *   Issue #117 Option to close pattern windows with esc key. Must
             be enabled via a 'usr' option first.
