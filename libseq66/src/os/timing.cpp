@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2022-03-02
+ * \updates       2023-10-31
  * \license       GNU GPLv2 or above
  *
  *  Provides support for cross-platform time-related functions.
@@ -350,8 +350,24 @@ millitime ()
 #if defined SEQ66_PLATFORM_LINUX
 
 /**
- * In Linux, sets the thread priority for the calling thread, either the
- * performer input thread or output thread.
+ *  In Linux, sets the thread priority for the calling thread, either the
+ *  performer input thread or output thread.
+ *
+ *  Investigate to see if another scheduler is better than SCHED_FIFO. Also,
+ *  under JACK, see if setting the priority high mitigates the playback issue
+ *  at large frame sizes. Also take note of other apps usages:
+ *
+ *  -   RtMidi: changed pthread attribute to SCHED_OTHER (from SCHED_RR) to
+ *      avoid thread problem when realtime cababilities are not enabled.
+ *      Also see SCHED_RR in RtAudio.cpp.
+ *  -   PortMidi (ptlinux.c): If running as superuser, use setpriority()
+ *      to renice thread to -20. One could also set the timer thread to a
+ *      real-time priority (SCHED_FIFO and SCHED_RR), but this is
+ *      dangerous.... if (geteuid() == 0) setpriority(PRIO_PROCESS, 0, -20);
+ *  -   Also see the schedule settings in contrib/code/ttymidi.c.
+ *
+ *  Do we also need to call pthread_attr_setschedpolicy(SCHED_FIFO)?
+ *  Do we need negative params to use other scheduling methods?
  *
  * \param p
  *      This is the desired priority of the thread, ranging from 1 (low), to
@@ -366,6 +382,11 @@ set_thread_priority (std::thread & t, int p)
 {
     int minp = sched_get_priority_min(SCHED_FIFO);
     int maxp = sched_get_priority_max(SCHED_FIFO);
+    if (minp == (-1) || maxp == (-1))
+    {
+        error_message("Cannot get scheduler priority values");
+        return false;
+    }
     if (p >= minp && p <= maxp)
     {
         struct sched_param schp;
@@ -384,7 +405,7 @@ set_thread_priority (std::thread & t, int p)
         snprintf
         (
             temp, sizeof temp,
-            "Priority %d outside of range %d-%d", p, minp, maxp
+            "Priority error: %d outside of range %d-%d", p, minp, maxp
         );
         error_message(temp);
         return false;

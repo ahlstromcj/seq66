@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-10-30
+ * \updates       2023-10-31
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -291,8 +291,8 @@ static const int c_thread_priority = 1;
  *  buzzing.  So after we stop the current tune, we delay a little bit to
  *  allow JACK playback to exit.
  *
- *  1. TEST WITH JACK.
- *  2. MAKE A CONFIGURATION ITEM?
+ *  Actually also an issue with ALSA, finding null events or deleted sequences in
+ *  the middle of play().
  */
 
 static const int c_delay_start = 1000;
@@ -2870,7 +2870,7 @@ performer::log_current_tempo ()
 screenset::number
 performer::set_playing_screenset (screenset::number setno)
 {
-    bool ok = m_io_active;                          /* setno != current     */
+    bool ok = ! done();
     if (ok)
         ok = mapper().set_playing_screenset(setno);
 
@@ -3342,7 +3342,7 @@ performer::launch (int ppqn)
                 bussbyte truebus = true_output_bus(namedbus);
                 m_midi_control_out.true_buss(truebus);
             }
-            m_io_active = true;
+            m_io_active = true;                     /* set done()           */
             launch_input_thread();
             launch_output_thread();
             midi_control_out().send_macro(midimacros::startup);
@@ -3700,13 +3700,18 @@ performer::launch_output_thread ()
             }
             else
             {
-                errprint
+                warn_message
                 (
-                    "output thread: couldn't set scheduler to FIFO, "
+                    "output: couldn't set scheduler priority, "
                     "need root priviledges."
                 );
-                pthread_exit(0);
-                m_out_thread_launched = false;
+
+                /*
+                 * We don't need to exit. Let the app limp along.
+                 *
+                 *      pthread_exit(0);
+                 *      m_out_thread_launched = false;
+                 */
             }
         }
     }
@@ -3735,13 +3740,19 @@ performer::launch_input_thread ()
             }
             else
             {
-                errprint
+                warn_message
                 (
-                    "input thread: couldn't set scheduler to FIFO, "
+                    "input: couldn't set scheduler priority, "
                     "need root priviledges."
                 );
-                pthread_exit(0);
-                m_in_thread_launched = false;
+
+                /*
+                 * We don't need to exit. Let the app limp along.
+                 *
+                 *
+                 *      pthread_exit(0);
+                 *      m_in_thread_launched = false;
+                 */
             }
         }
     }
@@ -4364,7 +4375,7 @@ performer::output_func ()
         return;
     }
     show_cpu();
-    while (m_io_active)                     /* this variable is now atomic  */
+    while (! done())                        /* the variable is atomic       */
     {
         cv().wait();                        /* lock mutex, predicate wait   */
         if (done())                         /* if stopping, kill the thread */
@@ -4597,6 +4608,17 @@ performer::output_func ()
         m_master_bus->stop();
     }
     (void) set_timer_services(false);
+}
+
+/**
+ *  Trying to prevent seqfaults when stopping playback and starting the next
+ *  song, as in play-lists.
+ */
+
+void
+performer::is_pattern_playing (bool flag)
+{
+    m_is_pattern_playing = flag;
 }
 
 /**
@@ -5265,7 +5287,7 @@ performer::auto_stop (bool rewind)
 /**
  *  If the play-list auto-play feature is engaged, then restart playback.
  *  This also implies auto-arming, currently enforced in the user-interface.
- *  But auto-marming is done in start_playing(),
+ *  But auto-arming is done in start_playing(),
  */
 
 bool
@@ -5283,12 +5305,21 @@ performer::auto_play_start ()
 
 /**
  *  auto_stop() disengages auto-play. Instead we just stop with rewind.
+ *
+ *  Here's an issue: we can stopy and go to the next song in the play-list
+ *  when in song mode. But non-Seq66 MIDI files do not support song mode.
+ *  And we should be able to get a decent max-extent even without triggers,
+ *  at least for imported songs.
  */
 
 bool
 performer::auto_play_stop (midipulse tick)
 {
+#if defined USE_OLD_CODE
     bool result = m_max_extent > 0 && tick >= m_max_extent && song_mode();
+#else
+    bool result = m_max_extent > 0 && tick >= m_max_extent;
+#endif
     if (result)
     {
         if (playlist_active())
@@ -8903,6 +8934,8 @@ performer::open_current_song ()
 bool
 performer::open_next_song (bool opensong)
 {
+    auto_stop(true);
+
     bool result = m_play_list->open_next_song(opensong);
     if (result)
         handle_song_change(opensong);
@@ -8917,6 +8950,8 @@ performer::open_next_song (bool opensong)
 bool
 performer::open_previous_song (bool opensong)
 {
+    auto_stop(true);
+
     bool result = m_play_list->open_previous_song(opensong);
     if (result)
         handle_song_change(opensong);
@@ -8933,6 +8968,8 @@ performer::handle_song_change (bool opensong)
 
     if (signalled_changes())
         notify_song_action(false);
+
+    start_playing();        /* ca 2023-10-31 */
 #else
     if (! signalled_changes())
     {
@@ -9180,7 +9217,7 @@ performer::save_playlist (const std::string & pl)
     }
     else
     {
-        errprint("null playlist pointer");
+        error_message("null playlist pointer");
     }
     return result;
 }

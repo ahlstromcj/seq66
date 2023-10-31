@@ -1771,10 +1771,7 @@ public:
         return m_is_pattern_playing;
     }
 
-    void is_pattern_playing (bool flag)
-    {
-        m_is_pattern_playing = flag;
-    }
+    void is_pattern_playing (bool flag);                /* now more complex */
 
     bool is_pattern_paused () const
     {

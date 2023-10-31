@@ -1551,6 +1551,16 @@ sequence::play
         auto e = m_events.begin();
         while (e != m_events.end())
         {
+#if defined USE_NULL_EVENT_DETECTION
+
+            /*
+             * This doesn't solve the problem of hiccups when moving to the
+             * next song in the playlist.
+             */
+
+            if (is_nullptr(e))
+                return;
+#endif
             event & er = eventlist::dref(e);
             midipulse ts = er.timestamp();
             midipulse stamp = ts + offset_base;

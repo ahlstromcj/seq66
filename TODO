@@ -1,9 +1,10 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-10-30
+2019-04-13 to 2023-10-31
 
 Misc:
 
+    -   See the new notes in timing module: set_thread_priority()!!!
     -   Test Import / Import and Export Project Configuration, Playlist....
     -   Make sure the grid-mode clear and double operations work properly.
     -   Test the Set Master.
