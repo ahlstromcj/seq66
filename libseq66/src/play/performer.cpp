@@ -6433,7 +6433,7 @@ performer::print_parameters
     int d0, int d1, int index, bool inverse
 )
 {
-    if (rc().verbose())
+    if (rc().investigate())
     {
         std::ostringstream os;
         os << tag << " '" << opcontrol::action_name(a) << "'; "

@@ -24,7 +24,7 @@
  * \library       seq66rtcli application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-02-09
- * \updates       2023-10-30
+ * \updates       2023-10-31
  * \license       GNU GPLv2 or above
  *
  *  This application is seq66 without a GUI, control must be done via MIDI.
@@ -66,6 +66,10 @@
  *  The last thing is to override any other settings via the command-line
  *  parameters.
  *
+ *  If --verbose is use on the command line, then this application will
+ *  ignore daemonization and the log file, and show everything to the console.
+ *  Useful in seeing a lot of stuff, live.
+ *
  * Daemon support:
  *
  *  Apart from the usual daemon stuff, we need to handle the following issues:
@@ -101,8 +105,8 @@ int
 main (int argc, char * argv [])
 {
     int exit_status = EXIT_SUCCESS;             /* EXIT_FAILURE might occur */
-    bool success = true;
     bool ishelp = seq66::cmdlineopts::help_check(argc, argv);
+    bool isverbose = seq66::cmdlineopts::verbose_check(argc, argv);
 
 #if defined SEQ66_PLATFORM_LINUX
     mode_t usermask = 0;                        /* used in un-daemonization */
@@ -130,41 +134,50 @@ main (int argc, char * argv [])
             std::string logfile;
             std::string appname = seq66::seq_app_name();
             seq66::rc().set_config_files(appname);
-            (void) seq66::cmdlineopts::parse_daemonization
-            (
-                startdaemon, logfile            /* two side-effects         */
-            );
-            if (startdaemon)
+            if (! isverbose)
             {
-                int flags = d_flags_seq66cli;   /* see daemonize.hpp        */
-                seq66::set_app_type("daemon");
-                seq66::set_app_name("seq66daemon");
-                warnprint("Forking to background...");
-
-                daemonization rc = seq66::daemonize
+                (void) seq66::cmdlineopts::parse_daemonization
                 (
-                    usermask, appname, flags, "."
+                    startdaemon, logfile            /* two side-effects     */
                 );
-                if (rc == daemonization::parent)
+                if (startdaemon)
                 {
-                    seq66::session_message("Parent succeeds, exits...");
-                    exit(EXIT_SUCCESS);
+                    int flags = d_flags_seq66cli;   /* see daemonize.hpp    */
+                    seq66::set_app_type("daemon");
+                    seq66::set_app_name("seq66daemon");
+                    warnprint("Forking to background...");
+
+                    daemonization rc = seq66::daemonize
+                    (
+                        usermask, appname, flags, "."
+                    );
+                    if (rc == daemonization::parent)
+                    {
+                        seq66::session_message("Parent succeeds, exits...");
+                        exit(EXIT_SUCCESS);
+                    }
+                    else if (rc == daemonization::failure)
+                    {
+                        seq66::session_message("Parent fails, exits...");
+                        exit(EXIT_FAILURE);
+                    }
+                    seq66::session_message("Child continues normally...");
                 }
-                else if (rc == daemonization::failure)
-                {
-                    seq66::session_message("Parent fails, exits...");
-                    exit(EXIT_FAILURE);
-                }
-                seq66::session_message("Child continues normally...");
             }
 #endif
-            std::string destination = logfile.empty() ? "/dev/null" : logfile ;
-            (void) seq66::reroute_stdio(logfile);
+            if (isverbose)
+            {
+                /*
+                 * If not falsified here, done in smanager::main_settings().
+                 */
+
+                seq66::usr().option_use_logfile(false);
+            }
         }
     }
 
     seq66::clinsmanager sm;
-    success = sm.create(argc, argv);
+    bool success = sm.create(argc, argv);
     if (success)
     {
         if (seq66::usr().save_daemonize())

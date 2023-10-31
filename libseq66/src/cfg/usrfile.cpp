@@ -526,7 +526,8 @@ usrfile::parse ()
 
 /**
  *  Parses a "usr" file, but only for options important to start
- *  the daemonization process.
+ *  the daemonization process: 'daemonization' and 'log'. Called by
+ *  cmdlineopts::parse_daemonization() if we're not in verbose() mode.
  *
  * \param [out] startdaemon
  *      Set to true if the function succeed and [user-options] daemonize is

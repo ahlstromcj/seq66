@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-09-30
-% \update      2023-03-27
+% \update      2023-10-31
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -214,23 +214,60 @@
    There is a play-list option to automatically unmute the sets when a new song
    is selected.  If set, then the first song should be ready to play.
    If it plays, and the play-list seems to work (as indicated by the console
-   output and the proper playback), then run \texttt{seq66cli} as a daemon:
+   output and the proper playback), then set up to run \texttt{seq66cli}
+   as a daemon:
 
    \begin{verbatim}
-      $ seq66cli --buss 2 --verbose -o daemonize --playlist data/sample.playlist
+      $ seq66cli -o daemonize
    \end{verbatim}
 
-   The keyboard controls and sound output should work.
-   However, at present the daemon doesn't get the proper settings, so that is
-   something to work on for version 0.95.
-   For now, create a shortcut to run the application in the background.
+   Then it is good to solidify the setup by editing the 'rc' and 'usr' files.
+
+%  The keyboard controls and sound output should work.
+%  However, at present the daemon doesn't get the proper settings, so that is
+%  something to work on for version 0.95.
+   One can create a shortcut to run the application in the background (i.e. not
+   as a daemon..
    In a \textsl{Fluxbox} menu:
 
    \begin{verbatim}
    [exec] (Seq66 Headless) {/usr/bin/seq66cli --jack-midi --jack-master --bus 6}
    \end{verbatim}
 
-   For a much more sophisticated setup, see \sectionref{sec:launchpad_mini}.
+   For a sophisticated control setup, see \sectionref{sec:launchpad_mini}.
+   For a much more complete setup:
+
+   \begin{enumber}
+      \item Run the seq66cli program and hit \texttt{Ctrl-C} to exit.
+      \item Verify that there are a number of \texttt{seq66cli.*}
+         files in the \texttt{~/.config/seq66} directory.
+         There will also be a log-file to examine to see if all is good.
+      \item In \texttt{seq66cli.rc}:
+      \begin{enumber}
+         \item Verify that \texttt{[usr-file]}
+            is active and specifies \texttt{seq66cli.usr}.
+         \item Activate a \texttt{[midi-control-file]} that supports
+            MIDI control and MIDI status display for your setup.
+            Otherwise, the program will be nearly impossible to use.
+         \item If you have mutes, playlist, and note-mapper (drums) files to 
+             use, specify them and activate them.
+         \item Verify the ports and port-mapping are appropriate for
+            both your setup and for the songs to be created or played.
+         \item Verify that the JACK settings are correct (or set up to use
+            ALSA).
+      \end{enumber}
+      \item In \texttt{seq66cli.usr}:
+      \begin{enumber}
+         \item Verify that the \texttt{[usr-midi-ppqn]} settings are
+            as desired.
+         \item Modify the \texttt{[user-options]} settings as desired.
+         \item Set daemonize if desired. Might consider installing
+            \texttt{seq66cli} as a service.
+            We don't yet provide any real help for that use case.
+         \item Change the log-file name if desired, or change it to "" to
+            send output to /dev/null.
+      \end{enumber}
+   \end{enumber}
 
 \subsection{Seq66 Headless Stopping}
 \label{subsec:headless_stopping}

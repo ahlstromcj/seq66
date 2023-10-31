@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-10-28
+ * \updates       2023-10-31
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -318,6 +318,9 @@ smanager::main_settings (int argc, char * argv [])
             }
             if (result)
             {
+                bool uselog = ! (seq_app_cli() && rc().verbose()) &&
+                    usr().option_use_logfile();
+
                 (void) cmdlineopts::parse_o_options(argc, argv);
 
                 /*
@@ -327,17 +330,17 @@ smanager::main_settings (int argc, char * argv [])
                  * These same settings are made in the cmdlineopts module.
                  */
 
-                std::string logfile = usr().option_logfile();
-                if (usr().option_use_logfile())
-                    reroute_to_log(logfile);
+                if (uselog)
+                {
+                    std::string logfile = usr().option_logfile();
+                    if (logfile.empty())
+                        logfile = "/dev/null";          /* Windows Mingw ok? */
 
+                    reroute_to_log(logfile);
+                }
                 m_midi_filename.clear();
                 if (optionindex > 0 && optionindex < argc) /* MIDI filename? */
                 {
-                    /**
-                     * DO WE NEED THIS CODE???
-                     */
-
                     std::string fname = argv[optionindex];
                     std::string errmsg;
                     if (file_readable(fname))

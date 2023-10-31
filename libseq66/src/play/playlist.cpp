@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2023-07-13
+ * \updates       2023-10-31
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -1743,6 +1743,7 @@ playlist::reorder_song_list (song_list & sl)
 void
 playlist::show_list (const play_list_t & pl) const
 {
+#if defined USE_OLD_CODE
     std::cout
         << "    Playlist MIDI #" << pl.ls_midi_number
         << ", slot " << pl.ls_index
@@ -1752,6 +1753,21 @@ playlist::show_list (const play_list_t & pl) const
         << " " << pl.ls_song_count << " songs"
         << std::endl
         ;
+#else
+    char temp[80];
+    (void) snprintf
+    (
+        temp, sizeof temp, "Playlist MIDI #%d, slot %d: '%s'",
+        int(pl.ls_midi_number), int(pl.ls_index), pl.ls_list_name.c_str()
+    );
+    info_message(temp);
+    (void) snprintf
+    (
+        temp, sizeof temp, "%s, %d songs",
+        pl.ls_file_directory.c_str(), int(pl.ls_song_count)
+    );
+    info_message(temp);
+#endif
 }
 
 /**
@@ -1766,13 +1782,23 @@ playlist::show_list (const play_list_t & pl) const
 void
 playlist::show_song (const song_spec_t & s) const
 {
+#if defined USE_OLD_CODE
     std::cout
         << "    Song MIDI #" << s.ss_midi_number << ", slot " << s.ss_index
         << ": " /* << s.ss_song_directory */ << s.ss_filename
         << std::endl
         ;
+#else
+    char temp[80];
+    (void) snprintf
+    (
+        temp, sizeof temp,
+        "Song MIDI #%d, slot %d: '%s'",
+        int(s.ss_midi_number), int(s.ss_index), s.ss_filename.c_str()
+    );
+    info_message(temp);
+#endif
 }
-
 
 /**
  *  Performs a simple dump of the playlists, mostly for troubleshooting.

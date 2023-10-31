@@ -413,9 +413,9 @@ reroute_stdio_to_dev_null ()
             }
         }
         if (result)
-            warnprint("Standard I/O rerouted to /dev/null");
+            warnprint("Standard I/O rerouted to " DEV_NULL);
         else
-            file_error("Failed to reroute standard I/O", "/dev/null");
+            file_error("Failed to reroute standard I/O", DEV_NULL);
     }
     return result;
 }

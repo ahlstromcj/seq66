@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-10-28
+ * \updates       2023-10-31
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -466,6 +466,28 @@ cmdlineopts::kill_check (int argc, char * argv [])
     }
     return result;
 }
+
+/**
+ *  Checks for the verbosity options.
+ */
+
+
+bool
+cmdlineopts::verbose_check (int argc, char * argv [])
+{
+    bool result = false;
+    for ( ; argc > 1; --argc)
+    {
+        std::string arg = argv[argc - 1];
+        if ((arg == "-v") || (arg == "--verbose"))
+        {
+            result = true;
+            break;
+        }
+    }
+    return result;
+}
+
 
 /**
  *  Checks the putative command-line arguments for any of the new "options"

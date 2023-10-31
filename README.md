@@ -92,6 +92,10 @@ Windows, and using a conventional source tarball.
             -   Segfaults due to not stopping playback before loading
                 the next song.
         *   Fixed app exiting unceremoniously if "quiet" is set.
+        *   Replaced some verbose() checks with investigate() checks to cut
+            down on console output. In the CLI, --verbose now shows
+            playlist actions on the console (it prevent daemonization and
+            logging to a file).
     *   Version 0.99.10:
         *   Issue #117 Option to close pattern windows with esc key. Must
             be enabled via a 'usr' option first.

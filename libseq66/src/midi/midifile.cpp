@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-10-26
+ * \updates       2023-10-31
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1067,7 +1067,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
         if (scaled())
             ppqn_ratio(double(ppqn()) / double(file_ppqn()));
     }
-    if (rc().verbose())
+    if (rc().investigate())
     {
         if (! is_null_buss(buss_override))
         {

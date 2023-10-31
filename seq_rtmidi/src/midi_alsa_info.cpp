@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2023-09-20
+ * \updates       2023-10-31
  * \license       See above.
  *
  *  API information found at:
@@ -594,7 +594,7 @@ midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
 bool
 midi_alsa_info::show_event (snd_seq_event_t * ev, const char * tag)
 {
-    if (rc().verbose())
+    if (rc().investigate())
     {
         int c = int(ev->source.client);
         int p = int(ev->source.port);
