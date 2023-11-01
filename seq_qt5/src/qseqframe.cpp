@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2023-09-09
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
  *  Seq66 (Qt version) has two different pattern editor frames to
@@ -206,22 +206,22 @@ qseqframe::set_zoom (int z)
 }
 
 bool
-qseqframe::reset_zoom ()
+qseqframe::reset_zoom (int ppq)
 {
-    bool result = qeditbase::reset_zoom();
+    bool result = qeditbase::reset_zoom(ppq);
     if (result)
     {
         if (not_nullptr(m_seqroll))
-            m_seqroll->reset_zoom();
+            m_seqroll->reset_zoom(ppq);
 
         if (not_nullptr(m_seqtime))
-            m_seqtime->reset_zoom();
+            m_seqtime->reset_zoom(ppq);
 
         if (not_nullptr(m_seqdata))
-            m_seqdata->reset_zoom();
+            m_seqdata->reset_zoom(ppq);
 
         if (not_nullptr(m_seqevent))
-            m_seqevent->reset_zoom();
+            m_seqevent->reset_zoom(ppq);
     }
     return result;
 }

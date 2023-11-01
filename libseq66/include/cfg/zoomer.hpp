@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2023-09-12
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -140,7 +140,7 @@ public:
     bool zoom_out ();
     bool set_zoom (int z);
     bool set_zoom_by_index (int i);
-    bool reset_zoom ();
+    bool reset_zoom (int ppq = 0);
 
     bool change_zoom (bool in)
     {

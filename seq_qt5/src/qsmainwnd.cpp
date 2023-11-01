@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-17
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1803,7 +1803,10 @@ qsmainwnd::open_file (const std::string & fn)
         {
             redo_live_frame();
             if (not_nullptr(m_song_frame64))
+            {
                 m_song_frame64->update_sizes();
+                m_song_frame64->reset_zoom();
+            }
 
             if (not_nullptr(m_perfedit))
                 m_perfedit->update_sizes();

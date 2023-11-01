@@ -650,13 +650,7 @@ screenset::max_timestamp () const
                     result = t;
             }
             else
-            {
-                errprintf
-                (
-                    "screenset::max_timestamp(): active null pointer seq %d\n",
-                    seqno
-                );
-            }
+                errprintf("max_timestamp(): nullptr seq %d\n", seqno);
         }
         ++seqno;
     }

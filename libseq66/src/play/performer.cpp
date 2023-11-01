@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-10-31
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2797,11 +2797,7 @@ performer::update_tap_bpm ()
     else if (m_current_beats >= 1)
     {
         int diffms = ms - m_base_time_ms;
-        if (diffms > 0)
-            bpm = m_current_beats * 60000.0 / diffms;
-        else
-            bpm = m_bpm;                        /* where do we set this?    */
-
+        bpm = diffms > 0 ? (m_current_beats * 60000.0 / diffms) : m_bpm ;;
         m_last_time_ms = ms;
     }
     ++m_current_beats;
@@ -3047,7 +3043,7 @@ performer::clear_song ()
     bool result = ! mapper().any_in_edit() && ! m_is_busy;
     if (result)
     {
-        m_is_busy = true;
+        m_is_busy = true;               /* { */
         reset_sequences();
         rc().clear_midi_filename();
         set_have_undo(false);
@@ -3055,7 +3051,7 @@ performer::clear_song ()
         set_have_redo(false);
         m_redo_vect.clear();
         mapper().reset();               /* clears and recreates empty set   */
-        m_is_busy = false;
+        m_is_busy = false;              /* } */
         unmodify();                     /* new, we start afresh             */
         set_tick(0);                    /* force a "rewind"                 */
         pad().set_current_tick(0);      /* another necessary rewind         */
@@ -3353,9 +3349,9 @@ performer::launch (int ppqn)
             if (any_ports_unavailable())
             {
                 std::string msg =
-                    "Some ports now missing. "
-                    "Remap if that is fine. "
-                    "OK preserves this map. "
+                    "Some ports missing. "
+                    "Remap if that's fine. "
+                    "OK preserves the map. "
                     "Exit to edit the 'rc' file directly. "
                     "Suppress this message in Preferences / Display."
                     ;

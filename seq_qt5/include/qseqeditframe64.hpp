@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-10-12
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -179,7 +179,7 @@ private:        /* qbase and qseqframe overrides    */
     virtual bool zoom_in () override;
     virtual bool zoom_out () override;
     virtual bool set_zoom (int z) override;
-    virtual bool reset_zoom () override;
+    virtual bool reset_zoom (int ppq = 0) override;
     virtual void update_draw_geometry () override;
 
 protected:      /* QWidget overrides                */

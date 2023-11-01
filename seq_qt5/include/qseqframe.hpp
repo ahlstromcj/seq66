@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2023-09-09
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
  *  Provides an abstract base class so that both the old and the new Qt
@@ -115,7 +115,7 @@ public:
     virtual bool zoom_in () override;
     virtual bool zoom_out () override;
     virtual bool set_zoom (int z) override;
-    virtual bool reset_zoom () override;
+    virtual bool reset_zoom (int ppq = 0) override;
     virtual void set_dirty () override;
 
 private:

@@ -25,9 +25,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2023-09-29
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
+ *  The Song Editor allows the musician to layout the play-back of the
+ *  patterns already created using the Pattern editor.
  */
 
 #include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
@@ -426,6 +428,7 @@ qperfeditframe64::qperfeditframe64
         ui->btnDuration, SIGNAL(clicked(bool)),
         this, SLOT(slot_duration(bool))
     );
+    m_perfroll->setFocus();
 }
 
 qperfeditframe64::~qperfeditframe64 ()
@@ -641,10 +644,11 @@ qperfeditframe64::set_zoom (int z)
 bool
 qperfeditframe64::reset_zoom ()
 {
+    int ppq = perf().ppqn();
     int zprevious = m_perfroll->zoom();
-    bool result = m_perftime->reset_zoom();
+    bool result = m_perftime->reset_zoom(ppq);
     if (result)
-        result = m_perfroll->reset_zoom();
+        result = m_perfroll->reset_zoom(ppq);
 
     if (result)
         adjust_for_zoom(zprevious);

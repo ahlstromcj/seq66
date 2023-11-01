@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-20
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -306,9 +306,9 @@ qperfroll::zoom_out ()
 }
 
 bool
-qperfroll::reset_zoom ()
+qperfroll::reset_zoom (int ppq)
 {
-    bool result = qperfbase::reset_zoom();
+    bool result = qperfbase::reset_zoom(ppq);
     if (result)
         set_dirty();
 
@@ -1120,7 +1120,6 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         painter.setBrush(gradbrush);
                         pen.setColor(fore_color());     /* use box color    */
                         painter.setPen(pen);
-//                      painter.drawRect(x + 1, y + 1, w - 2, h - 1);
                         painter.drawRect(x + 1, y + 3, w - 2, h - 1);
                     }
                     else
@@ -1149,7 +1148,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     painter.drawRect(x + 1, y + 2, cbw, cbw);
                     painter.drawRect                    /* grab handle R    */
                     (
-                        xmax - cbw - 1, y + h - cbw, cbw, cbw
+                        xmax - cbw - 1, y + h - cbw + 2, cbw, cbw
                     );
                     pen.setColor(fore_color());
                     pen.setWidth(1);

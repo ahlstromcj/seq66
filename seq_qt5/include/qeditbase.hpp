@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2023-10-19
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -640,9 +640,9 @@ public:
         return m_zoomer.set_zoom(z);
     }
 
-    virtual bool reset_zoom ()
+    virtual bool reset_zoom (int ppq = 0)
     {
-        return m_zoomer.reset_zoom();
+        return m_zoomer.reset_zoom(ppq);
     }
 
     virtual bool check_dirty () const override;

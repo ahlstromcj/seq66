@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-10-14
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1035,6 +1035,7 @@ qseqeditframe64::qseqeditframe64
     update_midi_buttons();
     set_initialized();
     cb_perf().enregister(this);                             /* notification */
+    m_seqroll->setFocus();
     m_timer = qt_timer(this, "qseqeditframe64", 2, SLOT(conditional_update()));
 }
 
@@ -3237,10 +3238,10 @@ qseqeditframe64::set_zoom (int z)
 }
 
 bool
-qseqeditframe64::reset_zoom ()
+qseqeditframe64::reset_zoom (int ppq)
 {
     int zprevious = qseqframe::zoom();
-    bool result = qseqframe::reset_zoom();
+    bool result = qseqframe::reset_zoom(ppq);
     if (result)
         adjust_for_zoom(zprevious);
 
@@ -3273,7 +3274,7 @@ qseqeditframe64::reset_v_zoom ()
 void
 qseqeditframe64::slot_reset_zoom ()
 {
-    (void) reset_zoom();
+    (void) reset_zoom();        /* TODO? */
 }
 
 /**

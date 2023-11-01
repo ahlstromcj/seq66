@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-10
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -95,7 +95,7 @@ public:
     bool reset_v_zoom ();
     virtual bool zoom_in () override;
     virtual bool zoom_out () override;
-    virtual bool reset_zoom () override;
+    virtual bool reset_zoom (int ppq = 0) override;
 
     const Color & backseq_color () const
     {

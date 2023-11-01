@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-20
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -237,9 +237,9 @@ qseqroll::zoom_out ()
  */
 
 bool
-qseqroll::reset_zoom ()
+qseqroll::reset_zoom (int ppq)
 {
-    bool result = qseqbase::reset_zoom();
+    bool result = qseqbase::reset_zoom(ppq);
     if (result)
         set_dirty();
 

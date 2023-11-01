@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-10-26
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -77,6 +77,17 @@ namespace seq66
 
 static const int c_song_record_incr = 16;
 static const int c_maxbeats         = 0xFFFF;
+
+/**
+ *  The c_handlesize value is an internal variable for handle size.  Note
+ *  that, with the default PPQN of 192, a sixteenth note (a typical snap
+ *  value) is 48 pulses (ticks), so that a sixteenth note is broken into equal
+ *  left, center, and right sides.  However, for a PPQN of, say, 960, 16
+ *  pulses is 5 times smaller in width.  We really need to scale the handle
+ *  size.
+ */
+
+static const midipulse c_handlesize = 16;
 
 /**
  *  Static members for validating scale factors in pattern compression and
@@ -1232,7 +1243,7 @@ int
 sequence::calculate_measures (bool reset) const
 {
     midipulse um = unit_measure(reset);
-    return 1 + (get_length() - 1) / um;
+    return um > 0 ? (1 + (get_length() - 1) / um) : 1 ;
 }
 
 /**
@@ -6870,12 +6881,7 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
 
 /**
  *  Actually, useful mainly for the user-interface, this function calculates
- *  the size of the left and right handles of a note.  The s_handlesize value
- *  is n internal variable for handle size.  Note that, with the default PPQN
- *  of 192, a sixteenth note (a typical snap value) is 48 pulses (ticks), so
- *  that a sixteenth note is broken into equal left, center, and right sides.
- *  However, for a PPQN of, say, 960, 16 pulses is 5 times smaller in width.
- *  We really need to scale the handle size.
+ *  the size of the left and right handles of a note.
  *
  * \param start
  *      The starting tick of the note event.
@@ -6891,8 +6897,7 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
 midipulse
 sequence::handle_size (midipulse start, midipulse finish)
 {
-    static const midipulse s_handlesize = 16;
-    midipulse result = s_handlesize * m_ppqn / usr().base_ppqn();
+    midipulse result = c_handlesize * m_ppqn / usr().base_ppqn();
     midipulse notelength = finish - start;
     if (notelength < result / 3)
         result = notelength / 3;

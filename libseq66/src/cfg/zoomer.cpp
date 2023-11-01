@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2023-09-12
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -146,8 +146,11 @@ zoomer::set_zoom_by_index (int i)
 }
 
 bool
-zoomer::reset_zoom ()
+zoomer::reset_zoom (int ppq)
 {
+    if (ppq != 0)
+        m_ppqn = ppq;
+
     return initialize();
 }
 
