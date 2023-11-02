@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2023-10-30
+ * \updates       2023-11-02
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -399,8 +399,10 @@ usrsettings::usrsettings () :
     m_user_ui_key_height        (c_def_key_height),
     m_user_ui_key_view          (showkeys::octave_letters),
     m_user_ui_seqedit_in_tab    (true),
+#if defined USE_USR_STYLE_SHEET
     m_user_ui_style_active      (false),
     m_user_ui_style_sheet       (""),
+#endif
     m_resume_note_ons           (false),
     m_fingerprint_size          (c_fingerprint_size),
     m_progress_box_width        (c_progress_box_width),
@@ -505,8 +507,10 @@ usrsettings::set_defaults ()
     m_user_ui_key_height = c_def_key_height;
     m_user_ui_key_view = showkeys::octave_letters;
     m_user_ui_seqedit_in_tab = true;
+#if defined USE_USR_STYLE_SHEET
     m_user_ui_style_active = false;
     m_user_ui_style_sheet = "";
+#endif
     m_resume_note_ons = false;
     m_fingerprint_size = c_fingerprint_size;
     m_progress_box_width = c_progress_box_width;

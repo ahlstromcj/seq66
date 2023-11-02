@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-10-28
+ * \updates       2023-11-02
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -84,7 +84,7 @@ static const std::string c_interaction_method_descs[3] =
 namespace seq66
 {
 
-static const int s_rc_file_version = 2;
+static const int s_rc_file_version = 3;
 
 /**
  *  Principal constructor.
@@ -95,6 +95,7 @@ static const int s_rc_file_version = 2;
  *      1:  2021-05-16. More modern JACK configuration settings.
  *      2:  2021-06-04. Transition to get-variable for booleans and integers,
  *                      finished on 2021-06-07.
+ *      3:  2023-11-02. Moved style-sheets from 'usr' to 'rc'.
  *
  * \param rcs
  *      The source/destination for the configuration information.
@@ -231,7 +232,7 @@ rcfile::parse ()
     std::string pfname;
     bool active = get_file_status(file, tag, pfname);
     rc_ref().mute_group_file_active(active);
-    rc_ref().mute_group_filename(pfname);       /* [[/]path/] basename.ext  */
+    rc_ref().mute_group_filename(pfname);               /* base name        */
     fullpath = rc_ref().mute_group_filespec();
     file_message("Reading mutes", fullpath);
 
@@ -242,16 +243,21 @@ rcfile::parse ()
     tag = "[usr-file]";
     active = get_file_status(file, tag, pfname);
     rc_ref().user_file_active(active);
-    rc_ref().user_filename(pfname);                     /* base name    */
+    rc_ref().user_filename(pfname);                     /* base name        */
 
     tag = "[palette-file]";
     active = get_file_status(file, tag, pfname);
     rc_ref().palette_active(active);
-    rc_ref().palette_filename(pfname);                  /* base name    */
+    rc_ref().palette_filename(pfname);                  /* base name        */
+
+    tag = "[style-sheet-file]";
+    active = get_file_status(file, tag, pfname);
+    rc_ref().style_sheet_active(active);
+    rc_ref().style_sheet_filename(pfname);              /* base name        */
 
     /*
      * JACK transport settings are currently accessed only via the rcsetting's
-     * rc() accessor function.  Also note that these setting must occur in the
+     * rc() accessor function.  Also note that these settings must occur in the
      * given order in the 'rc' file: (1) Transport; (2) Master; (3)
      * Master-conditional.  Otherwise the coordination of these settings gets
      * messed up.
@@ -469,17 +475,11 @@ rcfile::parse ()
 
     tag = "[midi-control-file]";
     if (file_version_number() < s_rc_file_version)
-    {
         (void) version_error_message("rc", file_version_number());
-    }
-    else
-    {
-        std::string pfname;
-        bool active = get_file_status(file, tag, pfname);
-        rc_ref().midi_control_active(active);
-        rc_ref().midi_control_filename(pfname);             /* base name    */
-    }
 
+    active = get_file_status(file, tag, pfname);
+    rc_ref().midi_control_active(active);
+    rc_ref().midi_control_filename(pfname);             /* base name    */
     fullpath = rc_ref().midi_control_filespec();
     file_message("Reading ctrl", fullpath);
 
@@ -854,6 +854,23 @@ rcfile::write ()
     (
         file, "[palette-file]",
         rc_ref().palette_filename(), rc_ref().palette_active()
+    );
+
+    /*
+     * New section for style-sheet file, moved from the 'usr' file.
+     *
+     * Might want to enforce having the style-sheet in the "home" directory.
+     */
+
+    file << "\n"
+"# If specified, a style-sheet (e.g. 'qseq66.qss') is applied at startup.\n"
+"# This file must be located in Seq66's \"home\" directory now.\n"
+"# Note that style-sheet specification has been moved from the 'usr' file.\n"
+        ;
+    write_file_status
+    (
+        file, "[style-sheet-file]",
+        rc_ref().style_sheet_filename(), rc_ref().style_sheet_active()
     );
 
     /*

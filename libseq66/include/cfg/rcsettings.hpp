@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-10-26
+ * \updates       2023-11-02
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -479,6 +479,23 @@ private:
      */
 
     std::string m_palette_filename;
+
+    /**
+     *  Indicates if the style-sheet will be used. Move from 'usr' to the 'rc'
+     *  file.
+     */
+
+    bool m_style_sheet_active;
+
+    /**
+     *  Provides the name of an optional Qt style-sheet, located in the active
+     *  Seq66 configuration directory.  By default, this name is empty and not
+     *  used.  It present, it contains the base name of the sheet (e.g.
+     *  "qseq66.qss".  It can also contain a path, in order to support a
+     *  universal style-sheet. Move from 'usr' to the 'rc' file.
+     */
+
+    std::string m_style_sheet_filename;
 
     /**
      *  Holds the application name, e.g. "seq66", "qpseq66", "qrseq66",
@@ -1139,7 +1156,20 @@ public:
         return m_palette_active;
     }
 
-    const std::string & playlist_filename () const;
+    bool style_sheet_active () const
+    {
+        return m_style_sheet_active;
+    }
+
+    const std::string & style_sheet_filename () const
+    {
+        return m_style_sheet_filename;
+    }
+
+    const std::string & playlist_filename () const
+    {
+        return m_playlist_filename;
+    }
 
     const std::string & midi_base_directory () const
     {
@@ -1430,6 +1460,11 @@ public:
         m_palette_active = flag;
     }
 
+    void style_sheet_active (bool flag)
+    {
+        m_style_sheet_active = flag;
+    }
+
     void  midi_base_directory (const std::string & mbd)
     {
         m_playlist_midi_base = mbd;
@@ -1492,6 +1527,7 @@ public:
     void user_filename (const std::string & value);
     void notemap_filename (const std::string & value);
     void palette_filename (const std::string & value);
+    void style_sheet_filename (const std::string & value);
     void create_config_names (const std::string & base = "");
     void set_save_list (bool state);
     void disable_save_list ();

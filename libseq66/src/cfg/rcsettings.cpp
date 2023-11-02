@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-10-23
+ * \updates       2023-11-02
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -130,6 +130,8 @@ rcsettings::rcsettings () :
     m_notemap_filename          (seq_config_name()),    /* updated in body  */
     m_palette_active            (false),
     m_palette_filename          (seq_config_name()),    /* updated in body  */
+    m_style_sheet_active        (false),
+    m_style_sheet_filename      (seq_config_name()),
     m_application_name          (seq_app_name()),
     m_tempo_track_number        (0),
     m_recent_files              (),
@@ -147,6 +149,7 @@ rcsettings::rcsettings () :
     m_playlist_filename += ".playlist";
     m_notemap_filename += ".drums";
     m_palette_filename += ".palette";
+    m_style_sheet_filename += ".qss";
     set_config_files(seq_config_name());                /* ca 2023-05-11    */
 }
 
@@ -239,6 +242,8 @@ rcsettings::set_defaults ()
     m_notemap_filename = seq_config_name();
     m_palette_active = false;
     m_palette_filename = seq_config_name();
+    m_style_sheet_active = false;
+    m_style_sheet_filename = seq_config_name();
     m_config_filename += ".rc";
     m_user_filename += ".usr";
     m_midi_control_filename += ".ctrl";
@@ -246,6 +251,7 @@ rcsettings::set_defaults ()
     m_playlist_filename += ".playlist";
     m_notemap_filename += ".drums";
     m_palette_filename += ".palette";
+    m_style_sheet_filename += ".qss";
 
     /*
      * const: m_application_name = seq_app_name();
@@ -844,7 +850,7 @@ rcsettings::palette_filespec () const
 std::string
 rcsettings::style_sheet_filespec () const
 {
-    return filespec_helper(usr().style_sheet());
+    return filespec_helper(style_sheet_filename());
 }
 
 /**
@@ -1270,12 +1276,6 @@ rcsettings::playlist_filename_checked (const std::string & value)
     return result;
 }
 
-const std::string &
-rcsettings::playlist_filename () const
-{
-    return m_playlist_filename;
-}
-
 /**
  *  Clears the play-list file-name and flags that the play-list is not active.
  *
@@ -1345,6 +1345,14 @@ rcsettings::palette_filename (const std::string & value)
     m_palette_filename = filename_base_fix(value, ".palette");
     if (value.empty())
         palette_active(false);
+}
+
+void
+rcsettings::style_sheet_filename (const std::string & value)
+{
+    m_style_sheet_filename = filename_base_fix(value, ".qss");
+    if (value.empty())
+        style_sheet_active(false);
 }
 
 void

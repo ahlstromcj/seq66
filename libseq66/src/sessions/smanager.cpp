@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-10-31
+ * \updates       2023-11-02
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -1070,8 +1070,14 @@ smanager::create_configuration
                 }
                 else
                 {
+                    /*
+                     * In some cases we might require rc to be rewritten.
+                     */
+
+                    bool r = rc().auto_rc_save();       /* 'rc' save?       */
                     bool u = rc().auto_usr_save();      /* --user-save?     */
-                    rc().set_save_list(false);          /* save them all    */
+                    rc().set_save_list(false);          /* clear them all   */
+                    rc().auto_rc_save(r);               /* restore it       */
                     rc().auto_usr_save(u);              /* restore it       */
                 }
             }

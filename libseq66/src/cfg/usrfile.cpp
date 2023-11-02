@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-10-27
+ * \updates       2023-11-02
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -50,7 +50,7 @@ namespace seq66
 
 static const int s_usr_legacy = 5;
 static const int s_usr_smf_1 = 8;
-static const int s_usr_file_version = 11;       /* from 10 on 2023-10-12    */
+static const int s_usr_file_version = 12;
 
 /**
  *  Principal constructor.
@@ -67,6 +67,7 @@ static const int s_usr_file_version = 11;       /* from 10 on 2023-10-12    */
  *      9:  2021-10-26: Added "swap-coordinates".
  *     10:  2022-07-21: Added "pattern-box-shown" (issue #78).
  *     11:  2023-10-12: Added more new-pattern options (e.g. notemap)
+ *     12:  2023-11-02: Moved style-sheets to the 'rc' file.
  *
  * \param name
  *      Provides the full file path specification to the configuration file.
@@ -462,6 +463,12 @@ usrfile::parse ()
         bool flag = get_boolean(file, tag, "note-resume");
         usr().resume_note_ons(flag);
 
+#if defined USE_USR_STYLE_SHEET
+
+        /*
+         * Moved to the 'rc' file for consistency and ease of import/export.
+         */
+
         flag = get_boolean(file, tag, "style-sheet-active");
         usr().style_sheet_active(flag);
 
@@ -469,6 +476,27 @@ usrfile::parse ()
         usr().style_sheet(strip_quotes(s));
         if (s.empty())
             usr().style_sheet_active(false);
+
+#else
+
+        s = get_variable(file, tag, "style-sheet");
+        if (! is_questionable_string(s))
+        {
+            rc().style_sheet_filename(strip_quotes(s));
+            if (s.empty())
+            {
+                rc().style_sheet_active(false);
+            }
+            else
+            {
+                flag = get_boolean(file, tag, "style-sheet-active");
+                rc().style_sheet_active(flag);
+            }
+            rc().auto_usr_save(true);
+            rc().auto_rc_save(true);
+        }
+
+#endif
 
         int v = get_integer(file, tag, "fingerprint-size");
         usr().fingerprint_size(v);
@@ -732,9 +760,12 @@ usrfile::write ()
     file << "\n"
 "# [user-interface-settings]\n"
 "#\n"
-"# Configures some user-interface elements.  Obsolete ones were removed in\n"
-"# version 5 of this file. Also see [user-ui-tweaks]. The grid holds Qt push-\n"
-"# buttons. For styling, use Qt themes/style-sheets.\n"
+"# Configures some user-interface items. Also see [user-ui-tweaks].\n"
+#if defined USE_USR_STYLE_SHEET
+"# For window styling, use Qt themes/style-sheets.\n"
+#else
+"# For window styling, use Qt style-sheets as specified in the 'rc' file.\n"
+#endif
 "#\n"
 "# 'swap-coordinates' swaps numbering so pattern numbers vary fastest by column\n"
 "# instead of rows. This setting applies to the live grid, mute-group buttons,\n"
@@ -925,9 +956,14 @@ usrfile::write ()
 "#\n"
 "# note-resume causes notes-in-progress to resume when the pattern toggles on.\n"
 "#\n"
+#if defined USE_USR_STYLE_SHEET
 "# If specified, a style-sheet (e.g. 'qseq66.qss') is applied at startup.\n"
 "# Normally just a base-name, it can contain a file-path to provide a style\n"
 "# usable in many other applications.\n"
+#else
+"# Note that style-sheet specification has been moved to the 'rc' file with\n"
+"# all the rest of the files.\n"
+#endif
 "#\n"
 "# A fingerprint is a condensation of note events in a long track, to reduce\n"
 "# the time drawing the pattern in the buttons. Ranges from 32 (default) to\n"
@@ -950,8 +986,10 @@ usrfile::write ()
     write_integer(file, "key-height", usr().key_height());
     write_string(file, "key-view", usr().key_view_string());
     write_boolean(file, "note-resume", usr().resume_note_ons());
+#if defined USE_USR_STYLE_SHEET
     write_boolean(file, "style-sheet-active", usr().style_sheet_active());
     write_string(file, "style-sheet", usr().style_sheet(), true);
+#endif
     write_integer(file, "fingerprint-size", usr().fingerprint_size());
     if (usr().progress_box_width() <= 0.0)
         file << "progress-box-width = default\n";

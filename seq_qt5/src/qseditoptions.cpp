@@ -2597,9 +2597,10 @@ qseditoptions::sync_rc ()
      * ui->checkBoxSaveStyleSheet->hide();
      */
 
-    filespec = rc().filespec_helper(usr().style_sheet());
+//  filespec = rc().filespec_helper(usr().style_sheet());
+    filespec = rc().style_sheet_filespec();
     ui->checkBoxSaveStyleSheet->setChecked(false);
-    ui->checkBoxActiveStyleSheet->setChecked(usr().style_sheet_active());
+    ui->checkBoxActiveStyleSheet->setChecked(rc().style_sheet_active());
     tooltip_for_filename(ui->lineEditStyleSheet, filespec);
 
     bool outportmap = output_port_map().active();
@@ -3679,13 +3680,13 @@ qseditoptions::slot_load_drums_filename ()
 {
     if (load_file_name(ui->lineEditDrums, "drums"))
     {
-        QString qtqss = ui->lineEditDrums->text();
-        std::string qss = qtqss.toStdString();
-        usr().style_sheet(qss);
-        if (! qss.empty())
+        QString qtdrum = ui->lineEditDrums->text();
+        std::string drum = qtdrum.toStdString();
+        rc().notemap_filename(drum);
+        if (! drum.empty())
         {
             ui->checkBoxActiveDrums->setChecked(true);
-            usr().style_sheet_active(true);
+            rc().notemap_active(true);
         }
         modify_rc();
     }
@@ -3697,17 +3698,17 @@ qseditoptions::slot_stylesheet_active_click ()
     if (is_empty(ui->lineEditStyleSheet))
     {
         ui->checkBoxActiveStyleSheet->setChecked(false);
-        usr().style_sheet_active(false);
+        rc().style_sheet_active(false);
         exit_required();
     }
     else
     {
         bool on = ui->checkBoxActiveStyleSheet->isChecked();
-        usr().style_sheet_active(on);
+        rc().style_sheet_active(on);
         if (! on)
             exit_required();
     }
-    modify_usr();
+    modify_rc();
 }
 
 /**
@@ -3720,14 +3721,14 @@ qseditoptions::slot_stylesheet_filename ()
 {
     const QString qs = ui->lineEditStyleSheet->text();
     std::string text = qs.toStdString();
-    if (text != usr().style_sheet())
+    if (text != rc().style_sheet_filename())
     {
-        usr().style_sheet(text);
+        rc().style_sheet_filename(text);
         if (text.empty())
         {
             ui->checkBoxActiveStyleSheet->setChecked(false);
             ui->lineEditStyleSheet->setToolTip("No file");
-            usr().style_sheet_active(false);
+            rc().style_sheet_active(false);
         }
         else
         {
@@ -3735,7 +3736,7 @@ qseditoptions::slot_stylesheet_filename ()
             tooltip_for_filename(ui->lineEditStyleSheet, text);
         }
         exit_required();
-        modify_usr();                       /* 'usr' sets the style-sheet   */
+        modify_rc();                        /* 'rc' now sets style-sheet    */
     }
 }
 
@@ -3746,18 +3747,18 @@ qseditoptions::slot_load_stylesheet_filename ()
     {
         QString qtqss = ui->lineEditStyleSheet->text();
         std::string qss = qtqss.toStdString();
-        usr().style_sheet(qss);
+        rc().style_sheet_filename(qss);
         if (! qss.empty())
         {
             ui->checkBoxActiveStyleSheet->setChecked(true);
-            usr().style_sheet_active(true);
+            rc().style_sheet_active(true);
         }
 
         /*
          * exit_required();                 // why not required?
          */
 
-        modify_usr();
+        modify_rc();
     }
 }
 

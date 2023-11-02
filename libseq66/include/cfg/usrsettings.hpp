@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-10-30
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -832,6 +832,8 @@ private:
 
     bool m_user_ui_seqedit_in_tab;
 
+#if defined USE_USR_STYLE_SHEET
+
     /**
      *  Indicates if the style-sheet will be used.
      */
@@ -847,6 +849,8 @@ private:
      */
 
     std::string m_user_ui_style_sheet;
+
+#endif
 
     /**
      *  Indicates to resume notes that are "in progress" upon a sequence
@@ -1633,6 +1637,8 @@ public:
 
     std::string key_view_string () const;
 
+#if defined USE_USR_STYLE_SHEET
+
     bool style_sheet_active () const
     {
         return m_user_ui_style_active;
@@ -1642,6 +1648,8 @@ public:
     {
         return m_user_ui_style_sheet;
     }
+
+#endif
 
     bool resume_note_ons () const
     {
@@ -1990,6 +1998,8 @@ public:         // used in main application module and the usrfile class
 
     void key_view (const std::string & view);
 
+#if defined USE_USR_STYLE_SHEET
+
     void style_sheet_active (bool flag)
     {
         m_user_ui_style_active = flag;
@@ -1999,6 +2009,8 @@ public:         // used in main application module and the usrfile class
     {
         m_user_ui_style_sheet = s;
     }
+
+#endif
 
     void resume_note_ons (bool f)
     {

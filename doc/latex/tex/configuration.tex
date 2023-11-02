@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2023-10-31
+% \update      2023-11-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -38,12 +38,14 @@
          been moved to a separate file for flexibility.
       \item \textbf{'drums' File}.  This file supports remapping percussion
          notes from older drum machines to General MIDI.
-      \item \textbf{'palette' File}. This new file allows replacing the default
-         piano-roll, time, data, and events drawing to be tailored.
       \item \textbf{'playlist' File}. This new file specifies a file that
          contains one or more playlists and MIDI controls for them.
+      \item \textbf{'palette' File}. This new file allows replacing the default
+         piano-roll, time, data, and events drawing to be tailored separately
+         from the Qt theme.
       \item \textbf{'qss' File}.  Qt style-sheets can now tailor the appearance
-      of theme-drawn elements (e.g. the pattern-grid buttons and text controls).
+         of Qt theme-drawn elements
+         (e.g. the pattern-grid buttons and text controls).
    \end{itemize}
 
    After the first run and exit of \textsl{Seq66},
@@ -62,8 +64,8 @@
 
    The palette file is not automatically generated.  It can be saved from the
    \textbf{Edit / Preferences / Display} tab.
-   The style-sheet file can be specified in the 'usr' file's "user UI tweaks"
-   section.
+   The style-sheet file can be specified in the 'rc' file's
+   \texttt{[style-sheet-file]} section.
    There are also some 'keymap' files.  They are not yet used, but may become a
    feature of \textsl{Seq66} in the future.
    For \textsl{Microsoft Windows}, the default base name of the files is
@@ -74,7 +76,7 @@
    \end{verbatim}
 
    When running \textsl{Seq66} from the \textsl{Non Session Manager}
-   (see \sectionref{sec:sessions}),
+   (Linux-only, see \sectionref{sec:sessions}),
    the configuration directory is automatically set to something like
 
    \begin{verbatim}
@@ -628,6 +630,69 @@
    There is a button to save the current/default
    palette for later modification in the \textbf{Edit / Preferences / Display}
    tab.
+
+\subsubsection{'rc' File / Style Sheet}
+\label{subsubsec:configuration_rc_style_sheet}
+
+   \index{style sheet}
+   The \texttt{[style-sheet-file]} option, if active and non-empty,
+   causes a user-designed style-sheet to be applied.
+   This is useful in expanding the tab-sizes,
+   making disabled text easier to read in some Qt themes, or
+   fixing some minor faults in the current Qt theme.
+   See \texttt{data/samples/textfix.qss} for an example.
+   The style sheet file is assumed to reside in the normal \textsl{Seq66}
+   configuration directory.
+%  However, it can have a path component so that the same style sheet
+%  can be used by many applications more readily.
+   Here is an example using the style sheet file
+   \texttt{data/samples/qseq66.qss}:
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{main-window/main-window-stylesheet.png}
+   \caption{Seq66 View with a Minimal Style-Sheet Applied}
+   \label{fig:view_with_style_sheet_applied}
+\end{figure}
+
+   Note the blue text fields. Also note the larger tabs, which could be useful
+   on a touch-screen.
+   There is a full-scale dark theme stored in
+   \texttt{data/win/dark-theme.qss}.
+   One might want to save and tweak the 'palette' file to match.
+
+   The following is a more comprehensive example using
+   the \texttt{incrypt-66.qss} style-sheet to control
+   the appearance of \textsl{Qt}-drawn items, plus
+   the \texttt{incrypt-66.palette} file to alter the colors
+   of the drawn elements (grids and live/song backgrounds)
+   that are not subject to style-sheet alterations.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.50]{misc/incrypt-66.png}
+   \caption{Enhanced "Incrypt" Style-Sheet}
+   \label{fig:view_with_enhanced_incrypt_style_sheet}
+\end{figure}
+
+   The following shows the \textbf{Song} tab and a sample
+   \textbf{Preferences} tab using the same style-sheet and palette.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.50]{misc/incrypt-66-2.png}
+   \caption{Enhanced "Incrypt" Style-Sheet Part 2}
+   \label{fig:view_with_enhanced_incrypt_style_sheet_2}
+\end{figure}
+
+   The thing to note here is that we must limit the width of combo-boxes so
+   that all elements in a horizontal bar can be seen.
+   This has the unfortunate side-effect of showing only part of long
+   port names (e.g. "Midi Throug" in the figure above).
+
+   Another interesting style-sheet in \texttt{data/samples} is
+   \texttt{perstfix-66.qss} and its palette file, which is a nice blue theme.
+   No need to show it here; try it.
 
 \subsubsection{'rc' File / Note Mapper}
 \label{subsubsec:configuration_rc_note_mapper}
@@ -1647,7 +1712,6 @@
       [user-ui-tweaks]
       key-height = 10
       note-resume = false
-      style-sheet = "qseq66.qss"    # optional, can include a path
       fingerprint-size = 128
       progress-box-width = 0.8
       progress-box-height = 0.4
@@ -1656,6 +1720,8 @@
       progress-note-max = 100
       lock-main-window = true
    \end{verbatim}
+
+%     style-sheet = "qseq66.qss"    # optional, can include a path
 
    \index{key height}
    The \texttt{key-height} option
@@ -1678,63 +1744,8 @@
    The \texttt{note-resume} option, if active, causes any notes in progress
    to be resumed when the pattern is toggled back on.
 
-   \index{style sheet}
-   The \texttt{style-sheet} option, if non-empty, causes a user-designed
-   style-sheet to be applied.  This is useful in expanding the tab-sizes,
-   or making disabled text easier to read in some Qt themes.
-   See \texttt{data/samples/textfix.qss} for an example.
-   The style sheet file is assumed to reside in the normal \textsl{Seq66}
-   configuration directory.
-   However, it can have a path component so that the same style sheet
-   can be used by many applications more readily.
-   Here is an example using the style sheet file
-   \texttt{data/samples/qseq66.qss}:
-
-\begin{figure}[H]
-   \centering 
-   \includegraphics[scale=0.75]{main-window/main-window-stylesheet.png}
-   \caption{Seq66 View with a Minimal Style-Sheet Applied}
-   \label{fig:view_with_style_sheet_applied}
-\end{figure}
-
-   Note the blue text fields. Also note the larger tabs, which could be useful
-   on a touch-screen.
-   There is a full-scale dark theme stored in
-   \texttt{data/win/dark-theme.qss}.
-   One might want to save and tweak the 'palette' file to match.
-
-   The following is a more comprehensive example using
-   the \texttt{incrypt-66.qss} style-sheet to control
-   the appearance of \textsl{Qt}-drawn items, plus
-   the \texttt{incrypt-66.palette} file to alter the colors
-   of the drawn elements (grids and live/song backgrounds)
-   that are not subject to style-sheet alterations.
-
-\begin{figure}[H]
-   \centering 
-   \includegraphics[scale=0.50]{misc/incrypt-66.png}
-   \caption{Enhanced "Incrypt" Style-Sheet}
-   \label{fig:view_with_enhanced_incrypt_style_sheet}
-\end{figure}
-
-   The following shows the \textbf{Song} tab and a sample
-   \textbf{Preferences} tab using the same style-sheet and palette.
-
-\begin{figure}[H]
-   \centering 
-   \includegraphics[scale=0.50]{misc/incrypt-66-2.png}
-   \caption{Enhanced "Incrypt" Style-Sheet Part 2}
-   \label{fig:view_with_enhanced_incrypt_style_sheet_2}
-\end{figure}
-
-   The thing to note here is that we must limit the width of combo-boxes so
-   that all elements in a horizontal bar can be seen.
-   This has the unfortunate side-effect of showing only part of long
-   port names (e.g. "Midi Throug" in the figure above).
-
-   Another interesting style-sheet in \texttt{data/samples} is
-   \texttt{perstfix-66.qss} and its palette file, which is a nice blue theme.
-   No need to show it here; try it.
+   Note: the style-sheet option has been moved to the 'rc' file.
+   See \sectionref{subsubsec:configuration_rc_style_sheet}.
 
    \index{fingerprint}
    The \texttt{fingerprint} option provides a way to reduce the amount of

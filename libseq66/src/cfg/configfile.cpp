@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-10-28
+ * \updates       2023-11-02
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -213,8 +213,8 @@ configfile::make_error_message
     if (! additional.empty())
         msg += additional;
 
-    error_message(msg);                 /* log to the console       */
-    append_error_message(msg);          /* append to message string */
+    warn_message(msg);                          /* log to the console       */
+    append_error_message(msg);                  /* append to message string */
     return false;
 }
 
@@ -225,7 +225,7 @@ configfile::version_error_message (const std::string & configtype, int vnumber)
     msg += configtype;
     msg += "' file version ";
     msg += std::to_string(vnumber);
-    msg += " is too old. Please upgrade.\n";
+    msg += " is too old; will upgrade.\n";
     return make_error_message("Version error", msg);
 }
 
@@ -361,9 +361,10 @@ configfile::next_data_line (std::ifstream & file, bool strip)
  *
  * \return
  *      If the "variablename = value" clause is found, then the the value that
- *      is read is returned.  Otherwise, an empty string is returned, which
- *      might be an error, or signify a default value.  If the name is
- *      surrounded by single or double quotes, these are trimmed.
+ *      is read is returned.  Otherwise, an questionable-string is returned,
+ *      which is an error, while an empty string might signify a default value.
+ *      If the name is surrounded by single or double quotes, these are
+ *      trimmed.
  */
 
 std::string
@@ -375,7 +376,7 @@ configfile::get_variable
     int position
 )
 {
-    std::string result;
+    std::string result = questionable_string(); /* used when tag is missing */
     for
     (
         bool done = ! line_after(file, tag, position);
@@ -477,6 +478,10 @@ configfile::extract_variable
     return result;
 }
 
+/**
+ *  This function cannot detect a missing value.
+ */
+
 bool
 configfile::get_boolean
 (
@@ -525,6 +530,10 @@ configfile::write_boolean
     file << name << " = " << bool_to_string(status) << "\n";
 }
 
+/**
+ *  This function cannot detect a missing value.
+ */
+
 int
 configfile::get_integer
 (
@@ -536,7 +545,7 @@ configfile::get_integer
 {
     std::string value = get_variable(file, tag, variablename, position);
     int result = sm_int_missing;
-    if (! value.empty())
+    if (! is_missing_string(value))                     /* ! value.empty()  */
         result = value == "default" ? sm_int_default : string_to_int(value) ;
 
     return result;
@@ -557,6 +566,10 @@ configfile::write_integer
         file << name << " = " << value << "\n";
 }
 
+/**
+ *  This function cannot detect a missing value.
+ */
+
 float
 configfile::get_float
 (
@@ -568,10 +581,11 @@ configfile::get_float
 {
     std::string value = get_variable(file, tag, variablename, position);
     float result = sm_float_missing;
-    if (! value.empty())
+    if (! is_missing_string(value))                     /* ! value.empty()  */
+    {
         result = value == "default" ?
             sm_float_default : float(string_to_double(value)) ;
-
+    }
     return result;
 }
 
@@ -636,7 +650,7 @@ configfile::get_file_status
 {
     bool result = get_boolean(file, tag, "active", position);
     filename = strip_quotes(get_variable(file, tag, "name", position));
-    if (filename.empty())
+    if (is_missing_string(filename))                /* filename.empty()     */
     {
         result = false;
     }

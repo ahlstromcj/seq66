@@ -1,4 +1,4 @@
-# README for Seq66 0.99.10 2023-11-01
+# README for Seq66 0.99.10 2023-11-02
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -98,6 +98,9 @@ Windows, and using a conventional source tarball.
             down on console output. In the CLI, --verbose now shows
             playlist actions on the console (it prevent daemonization and
             logging to a file).
+        *   Moved the style-sheet options from the 'usr' file to the 'rc'
+            file with all the rest of the file specifications. The upgrade
+            is automatic.
     *   Version 0.99.10:
         *   Issue #117 Option to close pattern windows with esc key. Must
             be enabled via a 'usr' option first.

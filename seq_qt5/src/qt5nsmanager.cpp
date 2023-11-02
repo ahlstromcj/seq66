@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2023-10-29
+ * \updates       2023-11-02
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future! Join the Smart Patrol!
@@ -241,7 +241,7 @@ qt5nsmanager::create_window ()
         if (! themename.empty())
             file_message("Icon theme", themename);
 
-        if (usr().style_sheet_active())
+        if (rc().style_sheet_active())
         {
             std::string ssname = rc().style_sheet_filespec();
             if (! ssname.empty())
