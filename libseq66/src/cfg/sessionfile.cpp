@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-12-29
- * \updates       2023-03-31
+ * \updates       2023-11-03
  * \license       GNU GPLv2 or above
  *
  *  This file is a read-only file created manually by the user in order
@@ -35,7 +35,7 @@
  *  specifies the home configuration directory, the client-name, the base
  *  name of the configration files to use, and the name of a log file.
  *
- *  It's main parameter is rc().inspection_tag(), which specifies the section
+ *  It's main parameter is rc().session_tag(), which specifies the section
  *  of the session.rc file to use.  See the --inspect or -I option.
  *
  *  See "data/samples/session.rc" for a documented example.
@@ -118,33 +118,33 @@ sessionfile::parse ()
         if (! s.empty())
         {
             rc_ref().full_config_directory(s);
-            file_message("Set home config to", rc_ref().home_config_directory());
+            file_message
+            (
+                "\"Home\" directory", rc_ref().home_config_directory()
+            );
             if (make_directory_path(rc_ref().home_config_directory()))
                 result = true;
             else
-                errprint("Could not create that directory");
+                error_message("Could not find/create that directory");
         }
-        s = get_variable(file, tag, "config");
-        if (! s.empty())
+        if (result)
         {
-            result = true;
-            rc_ref().set_config_files(s);
-        }
-        s = get_variable(file, tag, "client-name");
-        if (! s.empty())
-        {
-            result = true;
-            set_client_name(s);
-        }
-        s = get_variable(file, tag, "log");
-        if (! s.empty())
-        {
-            result = true;
-            usr().option_logfile(s);
+            s = get_variable(file, tag, "config");
+            if (! s.empty())
+                rc_ref().set_config_files(s);
+
+            s = get_variable(file, tag, "client-name");
+            if (! s.empty())
+                set_client_name(s);
+
+            s = get_variable(file, tag, "log");
+            if (! s.empty())
+                usr().option_logfile(s);
         }
 
         /*
-         * [comments] is not parsed in this read-only file.
+         * [comments] is not parsed in this read-only file. Only the user
+         * will modify the sessions file.
          */
 
     }

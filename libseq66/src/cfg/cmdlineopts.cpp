@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-10-31
+ * \updates       2023-11-03
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -66,12 +66,12 @@ namespace seq66
 
 /**
  *  Provides a return value for parse_command_line_options() that indicates a
- *  help-related option was specified.  Also include are values that
+ *  help-related option was specified.  Also included are values that
  *  getopt_long(3) returns when an issue is encountered.
  */
 
 static const int c_null_option = 99999;
-static const int c_missing_arg = ':';
+static const int c_missing_arg = ':';       /* only if ':' starts optstring */
 static const int c_bad_option  = '?';
 
 /**
@@ -87,56 +87,71 @@ cmdlineopts::versiontext = seq_version_text();
  *  A structure for command parsing that provides the long forms of
  *  command-line arguments, and associates them with their respective
  *  short form.  Note the terminating null structure.
+ *
+ *  Qualifiers from getopt_long(3):
+ *
+ *      -   no_argument = 0
+ *      -   required_argument = 1
+ *      -   optional_argument = 2
  */
 
 struct option
 cmdlineopts::s_long_options [] =
 {
-    {"help",                0, 0, 'h'},
-    {"version",             0, 0, 'V'},
-    {"verbose",             0, 0, 'v'},
-    {"inspect",             required_argument, 0, 'I'},
-    {"investigate",         0, 0, 'i'},
+    {"help",                no_argument,       0, 'h'},
+    {"version",             no_argument,       0, 'V'},
+    {"verbose",             no_argument,       0, 'v'},
+#if USE_INSPECT_OPTION_FOR_SESSIONS
+    {"inspect",             required_argument, 0, 'I'}, /* duplicate of 'S' */
+#endif
+    {"investigate",         no_argument,       0, 'i'},
     {"home",                required_argument, 0, 'H'},
 #if defined SEQ66_NSM_SUPPORT
-    {"no-nsm",              0, 0, 'T'},
-    {"nsm",                 0, 0, 'n'},
+    {"no-nsm",              no_argument,       0, 'T'},
+    {"nsm",                 no_argument,       0, 'n'},
 #endif
     {"bus",                 required_argument, 0, 'b'},
     {"buss",                required_argument, 0, 'B'},
     {"client-name",         required_argument, 0, 'l'},
     {"ppqn",                required_argument, 0, 'q'},
-    {"show-midi",           0, 0, 's'},
-    {"show-keys",           0, 0, 'k'},
-    {"inverse",             0, 0, 'K'},
-    {"priority",            0, 0, 'p'},
+    {"show-midi",           no_argument,       0, 's'},
+    {"show-keys",           no_argument,       0, 'k'},
+    {"inverse",             no_argument,       0, 'K'},
+    {"priority",            no_argument,       0, 'p'},
     {"interaction-method",  required_argument, 0, 'x'},
     {"playlist",            required_argument, 0, 'X'},
     {"jack-start-mode",     required_argument, 0, 'M'},
 #if defined SEQ66_JACK_SUPPORT
-    {"jack-transport",      0, 0, 'j'},
-    {"jack-slave",          0, 0, 'S'},
-    {"no-jack-transport",   0, 0, 'g'},
-    {"jack-master",         0, 0, 'J'},
-    {"jack-master-cond",    0, 0, 'C'},
+    {"jack-transport",      no_argument,       0, 'j'}, /* implies Slave    */
+
+    /*
+     * We need -S for "session-tag" selection.
+     *
+     * {"jack-slave",       no_argument,       0, 'S'},
+     */
+
+    {"no-jack-transport",   no_argument,       0, 'g'},
+    {"jack-master",         no_argument,       0, 'J'},
+    {"jack-master-cond",    no_argument,       0, 'C'},
 #if defined SEQ66_JACK_SESSION
     {"jack-session",        required_argument, 0, 'U'},
 #endif
-    {"no-jack-midi",        0, 0, 'N'},
-    {"jack-midi",           0, 0, 't'},
-    {"jack",                0, 0, '1'},         /* the same as --jack-midi  */
-    {"no-jack-connect",     0, 0, 'w'},
-    {"jack-connect",        0, 0, 'W'},
+    {"no-jack-midi",        no_argument,       0, 'N'},
+    {"jack-midi",           no_argument,       0, 't'},
+    {"jack",                no_argument,       0, '1'}, /* = --jack-midi    */
+    {"no-jack-connect",     no_argument,       0, 'w'},
+    {"jack-connect",        no_argument,       0, 'W'},
 #endif
-    {"manual-ports",        0, 0, 'm'},
-    {"auto-ports",          0, 0, 'a'},
-    {"reveal-ports",        0, 0, 'r'},
-    {"hide-ports",          0, 0, 'R'},
-    {"alsa",                0, 0, 'A'},
-    {"pass-sysex",          0, 0, 'P'},
-    {"user-save",           0, 0, 'u'},
-    {"record-by-channel",   0, 0, 'd'},
-    {"legacy-record",       0, 0, 'D'},
+    {"manual-ports",        no_argument,       0, 'm'},
+    {"auto-ports",          no_argument,       0, 'a'},
+    {"reveal-ports",        no_argument,       0, 'r'},
+    {"hide-ports",          no_argument,       0, 'R'},
+    {"alsa",                no_argument,       0, 'A'},
+    {"pass-sysex",          no_argument,       0, 'P'},
+    {"user-save",           no_argument,       0, 'u'},
+    {"record-by-channel",   no_argument,       0, 'd'},
+    {"legacy-record",       no_argument,       0, 'D'},
+    {"session-tag",         required_argument, 0, 'S'}, /* new 2023-11-03   */
     {"config",              required_argument, 0, 'c'},
     {"rc",                  required_argument, 0, 'f'},
     {"usr",                 required_argument, 0, 'F'},
@@ -149,8 +164,8 @@ cmdlineopts::s_long_options [] =
      */
 
     {"locale",              required_argument, 0, 'L'},
-    {"User",                0, 0, 'Z'},
-    {"Native",              0, 0, 'z'},
+    {"User",                no_argument,       0, 'Z'},
+    {"Native",              no_argument,       0, 'z'},
 
     /*
      * New app-specific options, for easier expansion.  The -o/--option
@@ -158,7 +173,7 @@ cmdlineopts::s_long_options [] =
      * can disable detection of a MIDI file-name argument.
      */
 
-    {"option",              0, 0, 'o'},                 /* expansion!       */
+    {"option",              no_argument,       0, 'o'}, /* expansion!       */
     {0, 0, 0, 0}                                        /* terminator       */
 };
 
@@ -174,8 +189,11 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         0123456789#@AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz
-        xx       xx xx::x:xx  :: x:x:xxxxx::xxxx *xx :xxxxxxx:xxxx::  aa
+        xx       xx xx::x:xx  :: x:x xxxxx::xxxx *xx :xx:xxxx:xxxx::  aa
 \endverbatim
+ *
+ *  The I (inspect) options has been replaced by the S (session) option
+ *  to increase the usefulness of the sessions.rc file.
  *
  *  Note that 'o' options arguments cannot be included here due to issues
  *  involving parse_o_options(), but 'o' is *reserved* here, without the
@@ -194,15 +212,15 @@ cmdlineopts::s_long_options [] =
  *      the test-of-the-day and try to unearth difficult-to-find issues.
  */
 
-#if defined SEQ66_JACK_SUPPORT      // how to handle no SEQ66_NSM_SUPPORT?
+#if defined SEQ66_JACK_SUPPORT      // how to handle no SEQ66_NSM_SUPPORT (n)?
 #define CMD_OPTS \
-    "09#AaB:b:Cc:DdF:f:gH:hI:iJjKkL:l:M:mNnoPpq:RrSsTtU:uVvWwX:x:Zz#"
+    "01#AaB:b:Cc:DdF:f:gH:hiJjKkL:l:M:mNnoPpq:RrS:sTtU:uVvWwX:x:Zz" // "I:" gone
 #else
 #define CMD_OPTS \
-    "0#AaB:b:c:DdF:f:H:hI:iKkL:l:M:mnoPpq:RrsTuVvX:x:Zz#"
+    "0#AaB:b:c:DdF:f:H:hI:iKkL:l:M:mnoPpq:RrS:sTuVvX:x:Zz#"
 #endif
 
-const std::string cmdlineopts::s_arg_list = CMD_OPTS;
+const std::string cmdlineopts::s_optstring = CMD_OPTS;
 
 /**
  *  Provides help text.
@@ -261,8 +279,7 @@ static const std::string s_help_2 =
 "   -K, --inverse           Inverse/night color scheme for seq/perf editors.\n"
 "   -M, --jack-start-mode m ALSA or JACK play modes: live; song; auto.\n"
 #if defined SEQ66_JACK_SUPPORT
-"   -S, --jack-slave        Synchronize to JACK transport as Slave.\n"
-"   -j, --jack-transport    Same as --jack-slave.\n"
+"   -j, --jack-transport    Synchronize to JACK transport as Slave.\n"
 "   -g, --no-jack-transport Turn off JACK transport.\n"
 "   -J, --jack-master       Set up as JACK Master. Also sets -j.\n"
 "   -C, --jack-master-cond  Fail if there's already a JACK Master; sets -j.\n"
@@ -294,6 +311,7 @@ static const std::string s_help_3 =
 "   -F, --usr filename       An alternate 'usr' file.  Same rules as for --rc.\n"
 "   -c, --config basename    Change base name of the 'rc' and 'usr' files. The\n"
 "                            extension is stripped. ['qseq66' is default].\n"
+"   -S, --session name       Select alternate configuration from sessions.rc..\n"
 "   -L, --locale lname       Set global locale, if installed on the system.\n"
 "   -i, --investigate        Turn on various trouble-shooting code.\n"
 "   -o, --option optoken     Provides app-specific options for expansion.\n"
@@ -926,27 +944,37 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
     int option_index = 0;                   /* getopt_long index storage    */
     std::string optionval;                  /* used only with -o options    */
     std::string optionname;                 /* ditto                        */
+    /*
+     * opterr = 0;                          // suppress error messages      //
+     */
     optind = 1;                             /* reset global for (re)scan    */
     for (;;)                                /* scan all arguments           */
     {
         int c = getopt_long
         (
             argc, argv,
-            s_arg_list.c_str(),             /* e.g. "Crb:q:Li:jM:pU:Vx:..." */
+            s_optstring.c_str(),            /* e.g. "Crb:q:Li:jM:pU:Vx:..." */
             s_long_options, &option_index
         );
-        if (c == c_missing_arg)             /* missing argument indicator   */
+#if defined SEQ66_PLATFORM_DEBUG
+        printf
+        (
+            "Code '%c', Long '%s' Index %d\n",
+            char(c), argv[optind-1], option_index
+        );
+#endif
+        if (c == c_missing_arg || c == c_bad_option)
         {
-            errprint("Option missing an argument");
+            char tmp[32];
+            snprintf(tmp, sizeof tmp, "'%s'", argv[optind-1]);
+            error_message("Bad option encountered", tmp);
             return (-1);
         }
-        else if (c == c_bad_option)
+        else if (c == (-1))                                         /* done */
         {
-            errprint("Non-existent option");
-            return (-1);
-        }
-        else if (c == (-1))
+            printf("NO MORE OPTIONS...\n");
             break;
+        }
 
         std::string soptarg;
         if (not_nullptr(optarg))
@@ -960,6 +988,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
 #if defined SEQ66_JACK_SUPPORT
         case '1':                   /* added for consistency with --alsa    */
+        case 't':
             rc().with_jack_midi(true);
             break;
 #endif
@@ -1030,9 +1059,11 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             result = c_null_option;
             break;
 
+#if USE_INSPECT_OPTION_FOR_SESSIONS
         case 'I':
             rc().inspection_tag(soptarg);   /* see smanager and sessionfile */
             break;
+#endif
 
         case 'i':
             rc().investigate(true);
@@ -1045,7 +1076,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             rc().with_jack_master_cond(false);
             break;
 
-        case 'j':                               /* -j and -S are the same   */
+        case 'j':
             rc().with_jack_transport(true);
             rc().with_jack_master(false);
             rc().with_jack_master_cond(false);
@@ -1120,13 +1151,17 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             rc().reveal_ports(true);
             break;
 
-#if defined SEQ66_JACK_SUPPORT
+#if defined SEQ66_JACK_SUPPORT_OBSOLETE         /* need S for "session-tag" */
         case 'S':                               /* -j and -S are the same   */
             rc().with_jack_transport(true);
             rc().with_jack_master(false);
             rc().with_jack_master_cond(false);
             break;
 #endif
+
+        case 'S':                               /* replaces 'I'             */
+            rc().session_tag(soptarg);
+            break;
 
         case 's':
             rc().show_midi(true);
@@ -1138,7 +1173,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 #endif
 
-#if defined SEQ66_JACK_SUPPORT
+#if defined SEQ66_JACK_SUPPORT_NOT_MOVED_TO_ABOVE
         case 't':
             rc().with_jack_midi(true);
             break;

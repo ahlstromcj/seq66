@@ -249,7 +249,7 @@ private:
     bool m_verbose;                 /**< Console message showing setting.   */
     bool m_quiet;                   /**< Disables startup error prompts.    */
     bool m_investigate;             /**< An option for the test of the day. */
-    std::string m_inspection_tag;   /**< A sessionfile tag to set a test.   */
+    std::string m_session_tag;      /**< Picks an alternate configuration.  */
 
     /**
      *  A replacement for m_auto_option_save and all "save" options except for
@@ -689,14 +689,21 @@ public:
         return false;
     }
 
+#if 0
     const std::string & inspection_tag () const
     {
-        return m_inspection_tag;
+        return m_session_tag;
+    }
+#endif
+
+    const std::string & session_tag () const
+    {
+        return m_session_tag;
     }
 
-    bool inspecting () const
+    bool alt_session () const
     {
-        return ! m_inspection_tag.empty();
+        return ! m_session_tag.empty();
     }
 
     bool auto_options_save () const;
@@ -1282,9 +1289,9 @@ public:
             m_clock_mod = clockmod;
     }
 
-    void inspection_tag (const std::string & t)
+    void session_tag (const std::string & t)
     {
-        m_inspection_tag = t;
+        m_session_tag = t;
     }
 
     void quiet (bool flag)

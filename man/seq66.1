@@ -1,4 +1,4 @@
-.TH Seq66 "May 2023" "Version 0.99.5" "Seq66 Manual Page"
+.TH Seq66 "November 2023" "Version 0.99.10" "Seq66 Manual Page"
 
 .SH NAME
 Seq66 (qseq66) - Real-time live MIDI loop sequencer refactored from
@@ -188,13 +188,9 @@ The following options will not be shown by --help if the application is
 not compiled for JACK support.
 
 .TP 8
-.B \-j, \-\-jack-slave
+.B \-j, \-\-jack-transport
 Seq66 will sync to JACK transport, as "slave".
 Note that JACK transport is separate from native JACK MIDI support.
-
-.TP 8
-.B \-j, \-\-jack-transport
-The older version of setting up as transport "slave". Deprecated.
 
 .TP 8
 .B \-g, \-\-no-jack-transport
@@ -264,15 +260,25 @@ Use a different "usr" configuration file.  It must be a file in the user's
 $HOME/.config/seq66 directory or the directory specified by the --home
 option.  The '.usr' extension is added if
 no extension is present in the filename.
+
 .TP 8
 .B \-c, \-\-config basename
 Use a different configuration file base name for the 'rc' and 'usr' files.
 For example, one can specify a full configuration for "testing", for "jack",
 or for "alsa".
+
+.TP 8
+.B \-S, \-\-select-session tag
+Look into sessions.rc or session.rc in the "home" configuration directory
+to load an alternate "session". This file specifies an alternate "home"
+configuration directory, an alternate 'rc' file-name, and an alternate
+log file. This option is useful for testing or for changing the setup.
+
 .TP 8
 .B \-L, \-\-locale localename
 Set a different locale for running seq66. If the current locale uses the
 comma as a decimal point, then try --locale en_US.UTF-8 (for example).
+
 .TP 8
 .B \-o, \-\-option opvalue
 Provides additional options, including the no-GUI version of

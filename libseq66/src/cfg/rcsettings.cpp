@@ -73,7 +73,7 @@ rcsettings::rcsettings () :
     m_verbose                   (false),
     m_quiet                     (false),
     m_investigate               (false),
-    m_inspection_tag            (),
+    m_session_tag               (),
     m_save_list                 (),         /* std::map<string, bool>   */
     m_save_old_triggers         (false),
     m_save_old_mutes            (false),
@@ -186,7 +186,7 @@ rcsettings::set_defaults ()
     m_verbose                   = false;
     m_quiet                     = false;
     m_investigate               = false;
-    m_inspection_tag.clear();
+    m_session_tag.clear();
     m_save_old_triggers         = false;
     m_save_old_mutes            = false;
     m_allow_mod4_mode           = false;

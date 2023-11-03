@@ -27,7 +27,7 @@
  *
  * \author  Chris Ahlstrom
  * \date    2015-11-20
- * \updates 2023-10-31
+ * \updates 2023-11-03
  * \version $Revision$
  *
  *    Also see the filefunctions.cpp and strfunctions modules.
@@ -64,7 +64,7 @@ private:
 
     static const std::string versiontext;
     static struct option s_long_options [];
-    static const std::string s_arg_list;
+    static const std::string s_optstring;
 
 public:
 

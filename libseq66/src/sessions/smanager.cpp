@@ -275,16 +275,23 @@ smanager::main_settings (int argc, char * argv [])
         {
             int optionindex = (-1);
             bool sessionmodified = false;
-            if (rc().inspecting())
+            if (rc().alt_session())
             {
+                /*
+                 * The name 'sessions.rc' is a bit more accurate.
+                 */
+
                 std::string sessionfilename =
-                    rc().make_config_filespec("session.rc");
+                    rc().make_config_filespec("sessions.rc");
+
+                if (! file_readable(sessionfilename))
+                    sessionfilename = rc().make_config_filespec("session.rc");
 
                 if (file_readable(sessionfilename))
                 {
                     sessionfile sf
                     (
-                        sessionfilename, rc().inspection_tag(), rc()
+                        sessionfilename, rc().session_tag(), rc()
                     );
                     sessionmodified = sf.parse();
                 }

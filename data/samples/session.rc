@@ -1,4 +1,4 @@
-# Seq66 0.98.2 session 'rc' configuration file
+# Seq66 0.99.10 session 'rc' configuration file
 #
 # /home/user/.config/seq66/session.rc
 # Written 2021-12-31 00:00:00
@@ -19,16 +19,24 @@
 config-type = "session"
 version = 0
 
+[normal]
+
+home = "~/.config/seq66/"
+client-name = "seq66"
+config = "qseq66"
+log = "seq66.log"
+
+
 [test]
 
-home = "~/.config/seq66/test"
+home = "~/.config/seq66/test/"
 client-name = "seq66test"
 config = "x66"
 log = "test.log"
 
 [4x4]
 
-home = "~/Home/ca/mls/git/seq66/contrib/tests/4x4"
+home = "~/Home/ca/mls/git/seq66/contrib/tests/4x4/"
 client-name = "seq664x4"
 config = "qseq66"
 log = "4x4.log"
@@ -36,7 +44,8 @@ log = "4x4.log"
 [comments]
 
 This file is meant to change the configuration directory or files for a Seq66
-session.  It is a read-only file meant mostly for test situations.
+session.  It is a read-only file (in Seq66) meant for test situations or
+for selection one of many setups..
 
 # End of /home/user/.config/seq66/session.rc
 #
