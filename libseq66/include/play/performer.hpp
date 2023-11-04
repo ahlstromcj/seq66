@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-10-29
+ * \updates       2023-11-03
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1234,17 +1234,17 @@ public:
 
     int playlist_count () const
     {
-        return m_play_list->list_count();
+        return bool(m_play_list) ? m_play_list->list_count() : 0 ;
     }
 
     int song_count () const
     {
-        return m_play_list->song_count();
+        return bool(m_play_list) ? m_play_list->song_count() : 0 ;
     }
 
     bool playlist_reset (int listindex = 0)
     {
-        return m_play_list->reset_list(listindex);
+        return bool(m_play_list) ? m_play_list->reset_list(listindex) : false ;
     }
 
     bool open_note_mapper (const std::string & notefile);
@@ -1262,39 +1262,45 @@ public:
 
     bool remove_playlist ()
     {
-        return m_play_list->reset_list(true);
+        return bool(m_play_list) ? m_play_list->reset_list(true) : false ;
     }
 
     void playlist_show ()
     {
-        m_play_list->show();
+        if (bool(m_play_list))
+            m_play_list->show();
     }
 
     void playlist_test ()
     {
-        m_play_list->test();
+        if (bool(m_play_list))
+            m_play_list->test();
     }
 
     std::string playlist_filename () const
     {
-        return m_play_list->file_name();
+        return bool(m_play_list) ?
+            m_play_list->file_name() : std::string("") ;
     }
 
     void playlist_filename (const std::string & name);
 
     std::string playlist_midi_base () const
     {
-        return m_play_list->midi_base_directory();
+        return bool(m_play_list) ?
+            m_play_list->midi_base_directory() : std::string("") ;
     }
 
     int playlist_midi_number () const
     {
-        return m_play_list->list_midi_number();
+        return bool(m_play_list) ?
+            m_play_list->list_midi_number() : 0 ;
     }
 
     std::string playlist_name () const
     {
-        return m_play_list->list_name();
+        return bool(m_play_list) ?
+            m_play_list->list_name() : std::string("") ;
     }
 
     bool playlist_active () const
@@ -1314,74 +1320,86 @@ public:
 
     bool playlist_auto_advance () const
     {
-        return m_play_list->auto_advance();
+        return bool(m_play_list) && m_play_list->auto_advance();
     }
 
     void playlist_auto_advance (bool on)
     {
-        m_play_list->auto_advance(on);
+        if (bool(m_play_list))
+            m_play_list->auto_advance(on);
     }
 
     bool playlist_loaded () const
     {
-        return m_play_list->loaded();
+        return bool(m_play_list) ? m_play_list->loaded() : false ;
     }
 
     void playlist_loaded (bool on)
     {
-        m_play_list->loaded(on);
+        if (bool(m_play_list))
+            m_play_list->loaded(on);
     }
 
     const std::string & playlist_error_message () const
     {
-        return m_play_list->error_message();
+        static std::string s_null_playlist{"Null playlist"};
+        return bool(m_play_list) ?
+            m_play_list->error_message() : s_null_playlist ;
     }
 
     std::string file_directory () const
     {
-        return m_play_list->file_directory();
+        return bool(m_play_list) ?
+            m_play_list->file_directory() : std::string("") ;
     }
 
     std::string song_directory () const
     {
-        return m_play_list->song_directory();
+        return bool(m_play_list) ?
+            m_play_list->song_directory() : std::string("") ;
     }
 
     bool is_own_song_directory () const
     {
-        return m_play_list->is_own_song_directory();
+        return bool(m_play_list) ?
+            m_play_list->is_own_song_directory() : false ;
     }
 
     std::string song_filename () const
     {
-        return m_play_list->song_filename();
+        return bool(m_play_list) ?
+            m_play_list->song_filename() : std::string("") ;
     }
 
     std::string song_filepath () const
     {
-        return m_play_list->song_filepath();
+        return bool(m_play_list) ?
+            m_play_list->song_filepath() : std::string("") ;
     }
 
     int song_midi_number () const
     {
-        return m_play_list->song_midi_number();
+        return bool(m_play_list) ? m_play_list->song_midi_number() : 0 ;
     }
 
     std::string playlist_song () const
     {
-        return m_play_list->current_song();
+        return bool(m_play_list) ?
+            m_play_list->current_song() : std::string("") ;
     }
 
     std::string playlist_song_basename () const;
 
     bool open_select_list_by_index (int index, bool opensong = true)
     {
-        return m_play_list->open_select_list(index, opensong);
+        return bool(m_play_list) ?
+            m_play_list->open_select_list(index, opensong) : false ;
     }
 
     bool open_select_list_by_midi (int ctrl, bool opensong = true)
     {
-        return m_play_list->select_list_by_midi(ctrl, opensong);
+        return bool(m_play_list) ?
+            m_play_list->select_list_by_midi(ctrl, opensong) : false ;
     }
 
     bool add_list

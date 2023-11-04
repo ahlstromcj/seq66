@@ -956,13 +956,6 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             s_optstring.c_str(),            /* e.g. "Crb:q:Li:jM:pU:Vx:..." */
             s_long_options, &option_index
         );
-#if defined SEQ66_PLATFORM_DEBUG
-        printf
-        (
-            "Code '%c', Long '%s' Index %d\n",
-            char(c), argv[optind-1], option_index
-        );
-#endif
         if (c == c_missing_arg || c == c_bad_option)
         {
             char tmp[32];
@@ -972,7 +965,6 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         }
         else if (c == (-1))                                         /* done */
         {
-            printf("NO MORE OPTIONS...\n");
             break;
         }
 

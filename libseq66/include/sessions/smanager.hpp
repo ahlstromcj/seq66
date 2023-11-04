@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2023-10-28
+ * \updates       2023-11-04
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -109,6 +109,13 @@ private:
      */
 
     bool m_last_dirty_status;
+
+    /**
+     *  Handles the situation where we set up rerouting to a
+     *  sessions.rc-specified log file. No need to reroute twice.
+     */
+
+    mutable bool m_rerouted;
 
     /**
      *  Holds the current error message.  Mutable because it is not part of
@@ -295,6 +302,7 @@ protected:
         m_is_help = flag;
     }
 
+    void reroute_to_log (const std::string & filepath) const;
     void append_error_message
     (
         const std::string & message,

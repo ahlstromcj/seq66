@@ -1,9 +1,10 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-11-01
+2019-04-13 to 2023-11-04
 
 Misc:
 
+    -   Sessions.rc [test] still reroutes messages to qseq66.log.
     -   Test Import / Import and Export Project Configuration, Playlist....
         -   Import did not grab the 'ctrl' file, though it got 'playlist'.
             Also check for palette and qss import. 

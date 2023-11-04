@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-11-02
+ * \updates       2023-11-04
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -113,6 +113,7 @@ smanager::smanager (const std::string & caps) :
     m_midi_filename         (),
     m_is_help               (false),
     m_last_dirty_status     (false),
+    m_rerouted              (false),
     m_extant_errmsg         (),
     m_extant_msg_active     (false)
 {
@@ -137,8 +138,8 @@ smanager::~smanager ()
  *  (about a megabyte).
  */
 
-static void
-reroute_to_log (const std::string & filepath)
+void
+smanager::reroute_to_log (const std::string & filepath) const
 {
     static const size_t s_limit = 1048576;
     size_t sz = file_size(filepath);
@@ -149,6 +150,7 @@ reroute_to_log (const std::string & filepath)
     }
     session_message("Rerouting console messages", filepath);
     (void) reroute_stdio(filepath);
+    m_rerouted = true;
 }
 
 /**
@@ -294,6 +296,22 @@ smanager::main_settings (int argc, char * argv [])
                         sessionfilename, rc().session_tag(), rc()
                     );
                     sessionmodified = sf.parse();
+                    if (! sessionmodified)
+                    {
+                        /*
+                         * The session tag is not found. It seems best
+                         * to just bug out. The GUI will still appear in
+                         * order to show the error message.
+                         */
+
+                        std::string msg = "Session tag [";
+                        msg += rc().session_tag();
+                        msg += "] in ";
+                        msg += sessionfilename;
+                        msg += " not found.\nExit and try again.";
+                        append_error_message(msg);
+                        return false;
+                    }
                 }
             }
 
@@ -877,9 +895,8 @@ void
 smanager::error_handling ()
 {
     std::string errmsg;
-    if (internal_error_check(errmsg))
-        show_error("Session error.", errmsg);
-
+    bool internal_error = internal_error_check(errmsg);
+    bool session_error = error_active();
     std::string path = seq66::rc().config_filespec(seq_default_logfile_name());
 
 #if defined SEQ66_PORTMIDI_SUPPORT
@@ -887,6 +904,14 @@ smanager::error_handling ()
     errmsg += "\n";
     errmsg += std::string(pmerrmsg);
 #endif
+
+    if (session_error)
+        errmsg += error_message();
+
+    if (internal_error)
+        show_error("Internal error.", errmsg);
+    else if (session_error)
+        show_error("Session error.", errmsg);
 
     (void) seq66::file_append_log(path, errmsg);
 }
@@ -1091,9 +1116,12 @@ smanager::create_configuration
         }
         else
         {
-            usr().option_logfile(seq_default_logfile_name());
-            usr().option_use_logfile(true);
-            reroute_to_log(usr().option_logfile());
+            if (! m_rerouted)
+            {
+                usr().option_logfile(seq_default_logfile_name());
+                // usr().option_use_logfile(true);
+                reroute_to_log(usr().option_logfile());
+            }
             result = make_directory_path(mainpath);
             if (result)
             {

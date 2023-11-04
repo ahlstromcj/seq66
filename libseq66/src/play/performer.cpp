@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-01
+ * \updates       2023-11-03
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -8862,20 +8862,23 @@ performer::handle_list_change (bool opensong)
 bool
 performer::open_select_song_by_index (int index, bool opensong)
 {
-    bool result;
-    if (signalled_changes())
+    bool result = bool(m_play_list);
+    if (result)
     {
-        result = m_play_list->open_select_song(index, opensong);
-    }
-    else
-    {
-        result = m_play_list->open_select_song(index, opensong);
-        if (result)
+        if (signalled_changes())
         {
-            if (opensong)
-                next_song_mode();
+            result = m_play_list->open_select_song(index, opensong);
+        }
+        else
+        {
+            result = m_play_list->open_select_song(index, opensong);
+            if (result)
+            {
+                if (opensong)
+                    next_song_mode();
 
-            notify_song_action(false);
+                notify_song_action(false);
+            }
         }
     }
     return result;
@@ -8884,20 +8887,23 @@ performer::open_select_song_by_index (int index, bool opensong)
 bool
 performer::open_select_song_by_midi (int ctrl, bool opensong)
 {
-    bool result;
-    if (signalled_changes())
+    bool result = bool(m_play_list);
+    if (result)
     {
-        result = m_play_list->open_select_song_by_midi(ctrl, opensong);
-    }
-    else
-    {
-        result = m_play_list->open_select_song_by_midi(ctrl, opensong);
-        if (result)
+        if (signalled_changes())
         {
-            if (opensong)
-                next_song_mode();
+            result = m_play_list->open_select_song_by_midi(ctrl, opensong);
+        }
+        else
+        {
+            result = m_play_list->open_select_song_by_midi(ctrl, opensong);
+            if (result)
+            {
+                if (opensong)
+                    next_song_mode();
 
-            notify_song_action(false);
+                notify_song_action(false);
+            }
         }
     }
     return result;
@@ -8910,9 +8916,11 @@ performer::open_select_song_by_midi (int ctrl, bool opensong)
 bool
 performer::open_current_song ()
 {
-    bool result = m_play_list->open_current_song();
+    bool result = bool(m_play_list);
     if (result)
     {
+        result = m_play_list->open_current_song();
+
         /*
          * Nothing else to do?
          *
@@ -8932,10 +8940,13 @@ performer::open_next_song (bool opensong)
 {
     auto_stop(true);
 
-    bool result = m_play_list->open_next_song(opensong);
+    bool result = bool(m_play_list);
     if (result)
-        handle_song_change(opensong);
-
+    {
+        result = m_play_list->open_next_song(opensong);
+        if (result)
+            handle_song_change(opensong);
+    }
     return result;
 }
 
@@ -8948,10 +8959,13 @@ performer::open_previous_song (bool opensong)
 {
     auto_stop(true);
 
-    bool result = m_play_list->open_previous_song(opensong);
+    bool result = bool(m_play_list);
     if (result)
-        handle_song_change(opensong);
-
+    {
+        result = m_play_list->open_previous_song(opensong);
+        if (result)
+            handle_song_change(opensong);
+    }
     return result;
 }
 

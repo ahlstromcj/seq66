@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-12-29
- * \updates       2023-11-03
+ * \updates       2023-11-04
  * \license       GNU GPLv2 or above
  *
  *  This file is a read-only file created manually by the user in order
@@ -115,9 +115,21 @@ sessionfile::parse ()
     {
         std::string tag = tag_name();
         std::string s = get_variable(file, tag, "home");
-        if (! s.empty())
+        if (! is_missing_string(s))
         {
-            rc_ref().full_config_directory(s);
+            /*
+             * If the user supplies a full path as the "home" value, we
+             * just set that. Otherwise, append it to the default "home"
+             * directory.
+             *
+             * rc_ref().full_config_directory(s);
+             */
+
+            if (name_has_path(s))
+                rc_ref().home_config_directory(s);
+            else
+                s = pathname_concatenate(rc_ref().home_config_directory(), s);
+
             file_message
             (
                 "\"Home\" directory", rc_ref().home_config_directory()
@@ -130,15 +142,15 @@ sessionfile::parse ()
         if (result)
         {
             s = get_variable(file, tag, "config");
-            if (! s.empty())
+            if (! is_missing_string(s))
                 rc_ref().set_config_files(s);
 
             s = get_variable(file, tag, "client-name");
-            if (! s.empty())
+            if (! is_missing_string(s))
                 set_client_name(s);
 
             s = get_variable(file, tag, "log");
-            if (! s.empty())
+            if (! is_missing_string(s))
                 usr().option_logfile(s);
         }
 

@@ -1616,6 +1616,7 @@ usrsettings::option_logfile (const std::string & logfile)
     if (logfile.empty())
     {
         m_user_option_logfile.clear();
+        m_user_option_logfile = false;
     }
     else
     {
