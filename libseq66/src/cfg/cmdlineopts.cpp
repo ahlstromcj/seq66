@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-11-03
+ * \updates       2023-11-04
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -309,6 +309,7 @@ static const std::string s_help_3 =
 "   -f, --rc filename        An alternate 'rc' file in $HOME/.config/seq66 or\n"
 "                            the --home directory. '.rc' extension enforced.\n"
 "   -F, --usr filename       An alternate 'usr' file.  Same rules as for --rc.\n"
+"   -S, --session-tag S      Select a setup from those in sessions.rc.\n"
 "   -c, --config basename    Change base name of the 'rc' and 'usr' files. The\n"
 "                            extension is stripped. ['qseq66' is default].\n"
 "   -S, --session name       Select alternate configuration from sessions.rc..\n"

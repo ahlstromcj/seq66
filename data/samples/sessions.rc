@@ -1,7 +1,7 @@
 # Seq66 0.99.10 session 'rc' configuration file
 #
-# /home/user/.config/seq66/session.rc
-# Written 2021-12-31 00:00:00
+# /home/user/.config/seq66/sessions.rc
+# Written 2023-11-04 00:00:00
 #
 # This file holds the redirection of the main configuration for Seq66.
 # Here are the options supported:
@@ -26,13 +26,12 @@ client-name = "seq66"
 config = "qseq66"
 log = "seq66.log"
 
-
 [test]
 
 home = "~/.config/seq66/test/"
-client-name = "seq66test"
-config = "x66"
-log = "test.log"
+client-name = "test66"
+config = "test66"
+log = "test66.log"
 
 [4x4]
 

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2023-11-02
+% \update      2023-11-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -308,17 +308,6 @@
 
       \configref{usr}{user-session}{session}
 
-   \optionline{-H}{-{}-home [directory]}
-      Change the "home" configuration directory from \texttt{\$HOME.config/seq66}
-      The configuration files are loaded from or saved to the specified directory.
-      If the directory is a full path (such as 
-      \texttt{\textasciitilde/test/import}), then
-      the directory is used as is.
-      If the directory is a simple directory (such as \texttt{test}
-      or \texttt{test/import}), then it
-      is placed in the normal "home" configuration directory and is used
-      to contain the configuration.
-
    \optionline{-s}{-{}-show-midi}
       Dumps incoming MIDI to the screen.
 
@@ -424,16 +413,16 @@
 
       \configref{rc}{auto-option-save}{auto-save-rc}
 
-   \optionline{-f}{-{}-rc filename}
-      Use a different 'rc' configuration file.
-      It must be a file in the user's \texttt{\$HOME/.config/seq66}
-      directory or the directory specified by the \texttt{-{}-home} option.
-      The \texttt{.rc} extension is added if necessary.
-
-   \optionline{-F}{-{}-usr filename}
-      Use a different 'usr' configuration file.  Similar to the \texttt{-{}-rc}
-      option. But note that this can be controlled in the 'rc' file as
-      well.
+   \optionline{-H}{-{}-home [directory]}
+      Change the "home" configuration directory from \texttt{\$HOME.config/seq66}
+      The configuration files are loaded from or saved to the specified directory.
+      If the directory is a full path (such as 
+      \texttt{\textasciitilde/test/import}), then
+      the directory is used as is.
+      If the directory is a simple directory (such as \texttt{test}
+      or \texttt{test/import}), then it
+      is placed in the normal "home" configuration directory and is used
+      to contain the configuration.
 
    \optionline{-c}{-{}-config basename}
       Use a different configuration file base name for the 'rc' and 'usr'
@@ -445,6 +434,23 @@
       But note that recent versions of \textsl{Seq66} use the 'rc' file
       to control the names and active state of all the other configuration
       files.
+
+   \optionline{-f}{-{}-rc filename}
+      Use a different 'rc' configuration file.
+      It must be a file in the user's \texttt{\$HOME/.config/seq66}
+      directory or the directory specified by the \texttt{-{}-home} option.
+      The \texttt{.rc} extension is added if necessary.
+
+   \optionline{-F}{-{}-usr filename}
+      Use a different 'usr' configuration file.  Similar to the \texttt{-{}-rc}
+      option. But note that this can be controlled in the 'rc' file as
+      well.
+
+   \optionline{-S}{-{}-session-tag section}
+      Use one of the sections present in
+      \texttt{\$HOME/.config/seq66/sessions.rc}
+      to set up an alternate configuration.
+      For details, see \sectionref{subsec:sessions_sessions_rc}.
 
    \optionline{-L}{-{}-locale localename}
       Set a different locale for running \textsl{Seq66}.

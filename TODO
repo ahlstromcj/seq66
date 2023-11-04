@@ -4,7 +4,7 @@ Chris Ahlstrom
 
 Misc:
 
-    -   Sessions.rc [test] still reroutes messages to qseq66.log.
+    -   Document --session-tag in Tex and man pages and help.
     -   Test Import / Import and Export Project Configuration, Playlist....
         -   Import did not grab the 'ctrl' file, though it got 'playlist'.
             Also check for palette and qss import. 

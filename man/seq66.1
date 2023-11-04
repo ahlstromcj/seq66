@@ -1,4 +1,4 @@
-.TH Seq66 "November 2023" "Version 0.99.10" "Seq66 Manual Page"
+.TH Seq66 "November 2023" "Version 0.99.11" "Seq66 Manual Page"
 
 .SH NAME
 Seq66 (qseq66) - Real-time live MIDI loop sequencer refactored from
@@ -268,11 +268,12 @@ For example, one can specify a full configuration for "testing", for "jack",
 or for "alsa".
 
 .TP 8
-.B \-S, \-\-select-session tag
+.B \-S, \-\-session-tag tag
 Look into sessions.rc or session.rc in the "home" configuration directory
 to load an alternate "session". This file specifies an alternate "home"
-configuration directory, an alternate 'rc' file-name, and an alternate
-log file. This option is useful for testing or for changing the setup.
+configuration directory, an alternate 'rc' file-name, an alternate
+MIDI client ID, and an alternate log file.
+This option is useful for testing or for changing the setup.
 
 .TP 8
 .B \-L, \-\-locale localename
