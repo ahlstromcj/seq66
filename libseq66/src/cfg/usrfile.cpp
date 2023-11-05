@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-11-02
+ * \updates       2023-11-05
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -407,8 +407,16 @@ usrfile::parse ()
     if (gotlog)
         fname = strip_quotes(fname);
 
-    usr().option_logfile(fname);
-    usr().option_use_logfile(gotlog);
+    /*
+     * In running a "session" from sessions.rc, don't use the 'usr' setting
+     * for log-file.
+     */
+
+    if (! rc().alt_session())
+    {
+        usr().option_logfile(fname);
+        usr().option_use_logfile(gotlog);
+    }
     fname = get_variable(file, tag, "pdf-viewer");
     if (fname.empty())
     {
@@ -581,15 +589,23 @@ usrfile::parse_daemonization (bool & startdaemon, std::string & logfile)
         startdaemon = flag;                 /* set this side-effect         */
         usr().option_daemonize(flag);       /* set the 'usr' flag as well   */
 
-        std::string fname = get_variable(file, tag, "log");
-        bool gotlog = ! fname.empty();
-        if (gotlog)
+        /*
+         * In running a "session" from sessions.rc, don't use the 'usr' setting
+         * for log-file.
+         */
+
+        if (! rc().alt_session())
         {
-            fname = strip_quotes(fname);    /* set this side-effect         */
-            logfile = fname;                /* return this side-effect      */
+            std::string fname = get_variable(file, tag, "log");
+            bool gotlog = ! fname.empty();
+            if (gotlog)
+            {
+                fname = strip_quotes(fname);    /* set this side-effect     */
+                logfile = fname;                /* return this side-effect  */
+            }
+            usr().option_logfile(fname);        /* set 'usr' flag as well   */
+            usr().option_use_logfile(gotlog);   /* easy flag to use, man!   */
         }
-        usr().option_logfile(fname);        /* set the 'usr' flag as well   */
-        usr().option_use_logfile(gotlog);   /* an easy flag to use, man!    */
     }
     else
     {

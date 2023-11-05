@@ -689,13 +689,6 @@ public:
         return false;
     }
 
-#if 0
-    const std::string & inspection_tag () const
-    {
-        return m_session_tag;
-    }
-#endif
-
     const std::string & session_tag () const
     {
         return m_session_tag;

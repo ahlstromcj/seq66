@@ -1,7 +1,7 @@
-# Seq66 0.98.3 user ('usr') configuration file
+# Seq66 0.99.11 user ('usr') configuration file
 #
 # /home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4/qseq66.usr
-# Written 2022-01-02 09:44:46
+# Written 2023-11-05 09:21:19
 #
 # 'usr' file. Edit it and place it in ~/.config/seq66. It allows naming each
 # MIDI bus/port, channel, and control code.
@@ -9,7 +9,7 @@
 [Seq66]
 
 config-type = "usr"
-version = 9
+version = 12
 
 # [comments] holds user documentation for this file. The first empty, hash-
 # commented, or tag line ends the comment.
@@ -18,7 +18,7 @@ version = 9
 
 This file is part of the 4x4 test. It sets the 4x4 arrangement.
  
-#
+
 # [user-midi-bus-definitions]
 #
 # 1. Define instruments and their control-code names, as applicable.
@@ -42,9 +42,8 @@ This file is part of the 4x4 test. It sets the 4x4 arrangement.
 
 # [user-interface-settings]
 #
-# Configures some user-interface elements.  Obsolete ones were removed in
-# version 5 of this file. Also see [user-ui-tweaks]. The grid holds Qt push-
-# buttons. For styling, use Qt themes/style-sheets.
+# Configures some user-interface items. Also see [user-ui-tweaks].
+# For window styling, use Qt style-sheets as specified in the 'rc' file.
 #
 # 'swap-coordinates' swaps numbering so pattern numbers vary fastest by column
 # instead of rows. This setting applies to the live grid, mute-group buttons,
@@ -60,19 +59,27 @@ This file is part of the 4x4 test. It sets the 4x4 arrangement.
 # = 2. Larger PPQNs require larger zoom to look good. Seq66 adapts the zoom to
 # the PPQN if set to 0. The unit of zoom is ticks/pixel.
 #
-# 'global-seq-feature' specifies if the key, scale, and background pattern are
-# are applied to all patterns, or separately to each.  These values are stored
-# in the MIDI file in the global SeqSpec (if true) or in each track.
+# 'global-seq-feature' applies the key, scale, and background pattern to all
+# patterns versus separately to each.  If all, these values are stored in the
+# MIDI file in the global SeqSpec versus in each track.
 #
-# 'progress-bar-thick specifies a thicker progress bar.  Default is 1 pixel;
-# thick is 2 pixels if set to true. Also makes the progress box border
-# border 2 pixels, and the slot font bold.
+# 'progress-bar-thick specifies a thicker progress bar.  Default is 2 pixels,
+# 1 pixel if set to false. Also affects the slot box border and the boldness
+# of the slot font.
+#
+# 'follow-progress specifies the default for following progress in the piano
+# rolls. Each window has a button to toggle following progess
 #
 # 'inverse-colors' (option -K/--inverse) specifies use of an inverse color
 # palette. Palettes are for Seq66 drawing areas, not for Qt widgets.
 # Normal/inverse palettes can be reconfigured via a 'palette' file.
 #
-# 'dark-theme' specifies that are dark theme is active.
+# 'time-fg-color' and 'time-bg-color' override the default colors for ticks
+# and time displays (lime on black). 'default' keeps the defaults. 'normal'
+# uses the theme color.
+#
+# 'dark-theme' specifies that a dark theme is active, so that some colors
+# (e.g. grid-slot text) are inverted.
 #
 # 'window-redraw-rate' specifies the base window redraw rate for all windows.
 # From 10 to 100; default = 40 ms (25 ms for Windows).
@@ -80,6 +87,9 @@ This file is part of the 4x4 test. It sets the 4x4 arrangement.
 # Window-scale (option '-o scale=m.n[xp.q]') specifies scaling the main
 # window at startup. Defaults to 1.0 x 1.0. If between 0.5 and 3.0, it
 # changes the size of the main window proportionately.
+#
+# 'enable-learn-confirmation' can be set to false to disable the prompt that
+# the mute-group learn action succeeded. Can be annoying.
 
 [user-interface-settings]
 
@@ -90,11 +100,15 @@ mainwnd-spacing = 2
 default-zoom = 2
 global-seq-feature = true
 progress-bar-thick = false
+follow-progress = false
 inverse-colors = false
+time-fg-color = "?"
+time-bg-color = "?"
 dark-theme = false
 window-redraw-rate = 40
 window-scale = 1
 window-scale-y = 1
+enable-learn-confirmation = false
 
 # Seq66 separates file PPQN from the Seq66 PPQN. 'default-ppqn' specifies the
 # Seq66 PPQN, from 32 to 19200, default = 192. 'use-file-ppqn' (recommended)
@@ -104,6 +118,15 @@ window-scale-y = 1
 
 default-ppqn = 192
 use-file-ppqn = true
+
+# This section specifies the default values to use to jitter the MIDI event
+# time-stamps and randomize event amplitudes (e.g. velocity for notes). The
+# range of jitter is 1/j times the current snap value.
+
+[user-randomization]
+
+jitter-divisor = 8
+amplitude = 8
 
 # [user-midi-settings]
 #
@@ -123,18 +146,16 @@ use-file-ppqn = true
 # 'bpm-maximum':        0.0       127.0
 #
 # 'convert-to-smf-1' controls if SMF 0 files are split into SMF 1 when read.
-# 'buss-override' sets the output port for all patterns, for testing etc.
-# Don't save the MIDI file unless you want to save the buss value!
-#
-# 'velocity-override' when adding notes in the pattern editor is set via the
-# 'Vol' button.  -1 ('Free'), preserves incoming velocity.
-#
+# 'buss-override' sets the output port for all patterns, for testing, etc.
+# This value will be saved if you save the MIDI file!!!
+# 'velocity-override' controls adding notes in the pattern editor; see the
+# 'Vol' button. -1 ('Free'), preserves incoming velocity.
 # 'bpm-precision' (spinner and MIDI control) is 0, 1, or 2.
 # 'bpm-step-increment' affects the spinner and MIDI control. For 1 decimal,
 # 0.1 is good. For 2, 0.01 is good, 0.05 is faster. Set 'bpm-page-increment'
 # larger than the step-increment; used with the Page-Up/Page-Down keys in the
 # spinner. BPM minimum/maximum sets the range in tempo graphing; defaults to
-0.0 to 127.0. Decrease it for a magnified view of tempo.
+# 0.0 to 127.0. Decrease it for a magnified view of tempo.
 
 [user-midi-settings]
 
@@ -152,16 +173,18 @@ bpm-maximum = 600
 
 # [user-options]
 #
-# These settings specify -o or --option switch values.  'daemonize' is used
-# in seq66cli to indicate the application should run as a service. 'log'
-# specifies a log-file that gets output to standard output/error.  For no
-# log-file, use "".  This option also works from the command line:
-# '-o log=filename.log'. The name here is the default name.
+# These settings specify some -o or --option switch values.  'daemonize' in
+# seq66cli indicates that it should run as a service. 'log' specifies a log-
+# file redirecting output from standard output/error.  If no path in the name,
+# the log is stored in the configuration directory. For no log-file, use
+# "none" or "".  On the command line: '-o log=filename.log'.
 
 [user-options]
 
 daemonize = false
 log = "/home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4/4x4.log"
+pdf-viewer = "?"
+browser = "?"
 
 # [user-ui-tweaks]
 #
@@ -174,18 +197,17 @@ log = "/home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4/4x4.log"
 #
 # note-resume causes notes-in-progress to resume when the pattern toggles on.
 #
-# If specified, a style-sheet (e.g. 'qseq66.qss') is applied at startup.
-# Normally just a base-name, it can contain a file-path to provide a style
-# usable in many other applications.
+# Note that style-sheet specification has been moved to the 'rc' file with
+# all the rest of the files.
 #
 # A fingerprint is a condensation of note events in a long track, to reduce
 # the time drawing the pattern in the buttons. Ranges from 32 (default) to
 # 128. 0 = don't use a fingerprint.
 #
-# progress-box width and height settings change the scaled size of the
-# progress box in the live-loop grid buttons.  Width ranges from 0.50 to 1.0;
-# the height from 0.10 to 0.50.  If either is 0, then the box isn't drawn.
-# If either is 'default', defaults are used.
+# progress-box-width and -height settings change the scaled size of the
+# progress box in the live-grid buttons.  Width ranges from 0.50 to 1.0, and
+# the height from 0.10 to 1.0.  If either is 'default', defaults (0.8 x 0.3)
+# are used.  progress-box-shown controls if the boxes are shown at all.
 #
 # progress-note-min and progress-note-max set the progress-box note range so
 # that notes aren't centered in the box, but shown at their position by pitch.
@@ -198,11 +220,10 @@ log = "/home/ahlstrom/Home/ca/mls/git/seq66/contrib/tests/4x4/4x4.log"
 key-height = 10
 key-view = octave-letters
 note-resume = false
-style-sheet-active = true
-style-sheet = "darkfix.qss"
 fingerprint-size = 32
 progress-box-width = 0.8
 progress-box-height = 0.4
+progress-box-shown = false
 progress-note-min = 0
 progress-note-max = 127
 lock-main-window = false
@@ -211,9 +232,9 @@ lock-main-window = false
 #
 # The session manager to use, if any. 'session' is 'none' (default), 'nsm'
 # (Non/New Session Manager), or 'jack'. 'url' can be set to the value set by
-# nsmd when run by command-line. Set 'url' only if running nsmd stand-alone;
-# use the --osc-port number. Seq66 detects if started in NSM, though. The
-# visibility flag is used only by NSM to restore visibility.
+# nsmd when run by command-line. Set 'url' if running nsmd stand-alone; use
+# the --osc-port number. Seq66 detects if started in NSM. The visibility flag
+# is used only by NSM to restore visibility.
 
 [user-session]
 
@@ -223,19 +244,23 @@ visibility = true
 
 # [new-pattern-editor]
 #
-# Setup values for play/recording when a new pattern is opened. A new pattern
-# means that the loop has the default name 'Untitled' and no events. These
-# values save time during a live recording session. The valid values for
-# record-style are 'merge' (default), 'overwrite', 'expand', and 'one-shot'.
-# 'wrap-around', if true, allows recorded notes to wrap around to the
-# pattern start.
+# Settings for play/record for a new pattern. A new pattern is 'Untitled'
+# and has no events. These settings save time in live recording. Valid
+# record-style values: 'merge' (overdub), 'overwrite', 'expand', 'one-shot',
+# and 'one-shot-reset'. 'wrap-around' allows recorded notes to wrap to the
+# pattern start. 'escape-pattern' allows the Esc key to close the pattern
+# editor if not playing or in paint mode. Currently 'notemap' and quantizing
+# are mutually exclusive.
 
 [new-pattern-editor]
 
+escape-pattern = false
 armed = false
 thru = false
 record = false
+tighten = false
 qrecord = false
+notemap = false
 record-style = merge
 wrap-around = false
 

@@ -1,19 +1,14 @@
 TO DO for Seq66 0.99.10
 Chris Ahlstrom
-2019-04-13 to 2023-11-04
+2019-04-13 to 2023-11-05
 
 Misc:
 
-    -   Document --session-tag in Tex and man pages and help.
-    -   Test Import / Import and Export Project Configuration, Playlist....
-        -   Import did not grab the 'ctrl' file, though it got 'playlist'.
-            Also check for palette and qss import. 
-        -   Get familiar with session.rc usage again.
     -   Make sure the grid-mode clear and double operations work properly.
     -   Test the Set Master.
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
-    -   Make sure metronome buttons etc. still work. Recording measures
+    -   Make sure metronome buttons etc. still work. Recorded measures
         not saved.
     -   Session / Song Path is not updated when a new file is saved.
     -   In the Windows build batch file, improve the messaging and copy the
@@ -21,9 +16,6 @@ Misc:
     -   See the new notes in timing module: set_thread_priority()!!!
     -   Add a feature to start playback when the first note comes
         into a pattern when recording is set. [Turns out to be quite tricky!]
-    -   Load the 1920 version of Peter Gunn and Song Editor looks wrong.
-        Have to zoom in 3 times. But seems to happen only in playlist context.
-        Loaded on its own, the perfroll looks fine.
 
 Mutes:
 

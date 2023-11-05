@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2023-11-02
+ * \updates       2023-11-05
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future! Join the Smart Patrol!
@@ -210,12 +210,22 @@ qt5nsmanager::create_window ()
                         clid += rc().jack_session();    /* UUID alone   */
                     }
                 }
+                else                                    /* 2023-11-05   */
                 {
+                    if (rc().alt_session())
+                    {
+                        std::string tag = "[";
+                        tag += rc().session_tag();
+                        tag += "]";
+                        session_manager_name(tag);
+                    }
+#if 0   // this seems wwrong, test it!!!
                     if (have_uuid)
                     {
                         clid += "/";
                         clid += rc().jack_session();    /* UUID alone   */
                     }
+#endif
                 }
             }
             m_window->session_manager(manager_name());

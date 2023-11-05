@@ -13,11 +13,19 @@
 #   -   'config'. Changes the base name of the configuration.  It is the same
 #       as the --config option.
 #   -   'log'.  Sets up a log file. Similar to --option log=x.y.
+#       This option overrides the "log" option in the 'usr' file.
 
 [Seq66]
 
 config-type = "session"
 version = 0
+
+[comments]
+
+This file is meant to change the configuration directory or files for a Seq66
+session.  It is a read-only file (in Seq66) meant for test situations or
+for selection one of many setups. The user is responsible for the management
+of this file, using a text editor.
 
 [normal]
 
@@ -33,18 +41,19 @@ client-name = "test66"
 config = "test66"
 log = "test66.log"
 
+[test-export]
+
+home = "~/.config/seq66/test2/"
+client-name = "test2"
+config = "test66"
+log = ""
+
 [4x4]
 
 home = "~/Home/ca/mls/git/seq66/contrib/tests/4x4/"
 client-name = "seq664x4"
 config = "qseq66"
 log = "4x4.log"
-
-[comments]
-
-This file is meant to change the configuration directory or files for a Seq66
-session.  It is a read-only file (in Seq66) meant for test situations or
-for selection one of many setups..
 
 # End of /home/user/.config/seq66/session.rc
 #

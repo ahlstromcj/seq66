@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-12-29
- * \updates       2023-11-04
+ * \updates       2023-11-05
  * \license       GNU GPLv2 or above
  *
  *  This file is a read-only file created manually by the user in order
@@ -150,7 +150,9 @@ sessionfile::parse ()
                 set_client_name(s);
 
             s = get_variable(file, tag, "log");
-            if (! is_missing_string(s))
+            if (is_missing_string(s))                   /* empty, "", or ?  */
+                usr().option_logfile("");
+            else
                 usr().option_logfile(s);
         }
 

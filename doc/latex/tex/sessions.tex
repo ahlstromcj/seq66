@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2023-10-25
+% \update      2023-11-05
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -845,6 +845,9 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    If the specified session tag does not exist in \texttt{sessions.rc},
    then a message is shown; the user should exit \textbf{Seq66} immediately
    and fix \texttt{sessions.rc}.
+
+   Note that the \texttt{log} option overrides the log-file setting
+   present in the 'usr' file. Use \texttt{log = ""} to see console output.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

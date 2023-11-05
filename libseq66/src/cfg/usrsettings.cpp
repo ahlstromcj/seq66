@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2023-11-02
+ * \updates       2023-11-05
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -1613,10 +1613,10 @@ usrsettings::bpm_page_increment (midibpm increment)
 void
 usrsettings::option_logfile (const std::string & logfile)
 {
-    if (logfile.empty())
+    if (is_empty_string(logfile))
     {
         m_user_option_logfile.clear();
-        m_user_option_logfile = false;
+        m_user_use_logfile = false;
     }
     else
     {
@@ -1636,8 +1636,8 @@ usrsettings::option_logfile (const std::string & logfile)
             newlogfile = file_extension_set(newlogfile, ".log");
 
         m_user_option_logfile = newlogfile;
+        m_user_use_logfile = true;
     }
-    m_user_use_logfile = ! logfile.empty();
     set_option_bit(option_log);
 }
 
