@@ -712,7 +712,7 @@ the current set.  Modifies the song.</string>
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="hLayoutBottom_1" stretch="1,20,1,0,1,1,1,0,1">
+     <layout class="QHBoxLayout" name="hLayoutBottom_1" stretch="1,20,0,0,1,0,1,1,1,0,1">
       <item>
        <widget class="QLabel" name="setNameLabel">
         <property name="minimumSize">
@@ -744,21 +744,21 @@ the current set.  Modifies the song.</string>
        <widget class="QLineEdit" name="txtBankName">
         <property name="minimumSize">
          <size>
-          <width>280</width>
+          <width>240</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>1800</width>
+          <width>240</width>
           <height>28</height>
          </size>
         </property>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
+          <weight>50</weight>
+          <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
@@ -771,6 +771,38 @@ the current set.</string>
         </property>
         <property name="maxLength">
          <number>128</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Mute-group name</string>
+        </property>
+        <property name="text">
+         <string>MG</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="txtMuteName">
+        <property name="minimumSize">
+         <size>
+          <width>108</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>0: Group #1</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -884,8 +916,8 @@ no matter what sets-mode is in force. </string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
+          <weight>50</weight>
+          <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
@@ -905,6 +937,12 @@ or active external live frame.</string>
           <width>56</width>
           <height>28</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
         </property>
         <property name="toolTip">
          <string>Immediately make set 0 active.</string>
@@ -961,8 +999,8 @@ or active external live frame.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
+          <weight>50</weight>
+          <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
@@ -1499,8 +1537,8 @@ resets to 0.</string>
           <property name="font">
            <font>
             <pointsize>12</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
+            <weight>50</weight>
+            <bold>false</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
           </property>

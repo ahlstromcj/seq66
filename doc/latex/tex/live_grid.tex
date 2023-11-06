@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-10-24
+% \update      2023-11-06
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -581,6 +581,7 @@
    Also called the "L" button.
    Sets up to learn the current set of active patterns ("mute group") into a
    mute-group.
+   The default keystroke to control this button is lower-case "L".
    When in group-learn mode, the \texttt{Shift} key cannot be hit, so the
    group-learn mode automatically converts the keys to their shifted versions.
    This feature known as \textsl{shift-lock} or \textsl{auto-shift}.
@@ -589,7 +590,8 @@
 
    After pressing the "L" button, the user can then press a keystroke, which is
    automatically shifted, and the pattern set is saved, and can be recalled by
-   that button (shifted) later.  It can be saved in a 'mutes' file, as part of
+   pressing that button, shifted, later.
+   It can be saved in a 'mutes' file, as part of
    the MIDI tune, or in both places.
 
    \textsl{Example}:
@@ -597,7 +599,7 @@
    and then press the "s" key.  These pattern statuses are saved and can be
    recalled later by the "S" ("s"-shifted) key.
 
-   By default, the \texttt{el} (lower-case "l") key also sets this function,
+   By default, the \texttt{el} (lower-case "L") key also sets this function,
    and there is a MIDI-control slot available for it, as well as a
    MIDI-announcement slot.
    In addition to that, one can also press
@@ -616,7 +618,8 @@
    \textsl{Seq66} starts up.
    This is useful with the loading of the most-recent MIDI file (which is also
    a feature of \textsl{Seq66}.
-   Also see \sectionref{sec:mutes_master}.
+   Also see the section about the "mute master" tab,
+   \sectionref{sec:mutes_master}.
 
 \subsubsection{Developer Test}
 \label{subsubsec:introduction_developer_test_button}

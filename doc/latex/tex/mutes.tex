@@ -6,12 +6,11 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-01-13
-% \update      2023-10-08
+% \update      2023-11-06
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
-%     Provides a discussion of the MIDI GUI mutes that Seq66
-%     supports.
+%     Provides a discussion of the MIDI GUI mutes that Seq66 supports.
 %
 %-------------------------------------------------------------------------------
 
@@ -19,8 +18,12 @@
 \label{sec:mutes_master}
 
    The \textbf{Mutes} tab provides a global view of all the mute-groups
-   in a \textsl{Seq66} MIDI file or global configuration, and perform
-   some manipulation of mute-groups.
+   in a \textsl{Seq66} MIDI file or global configuration.
+   It also provides for manipulation of mute-groups, to supplement
+   what can be done via the live grid..
+
+\subsection{Mute Group}
+\label{sec:mutes_mute_group}
 
    A mute-group
    (see \sectionref{subsubsec:concepts_terms_group})
@@ -39,6 +42,7 @@
    \begin{enumerate}
       \item Arming all of the desired patterns in the set.
       \item Clicking the \textbf{Learn} ("L") button.
+         See \sectionref{subsubsec:introduction_mute_group_learn_button}.
       \item Clicking the keystroke, which is the shifted version
          of the hot-key to arm/mute the pattern corresponding to
          the mute-group number..
@@ -55,16 +59,28 @@
    \sectionref{subsubsec:introduction_mute_group_learn_button}, and
    \sectionref{subsubsec:concepts_terms_group}.
 
+\subsection{Mute Master Tab}
+\label{sec:mutes_mute_master_tab}
+
+   By themselves, mute groups are not easy to see except by activating
+   each mute-group.
+   The mute-master (\textbf{Mutes} tab provides a way to view
+   them more systematically, as well as assigning names to them.
+
+% TODO: provide a way in the Live Grid, if room allows, to show the
+% mute-group name of the activated mutes.
+
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.50]{tabs/mutes/mute-master-tab-3.png}
-   \caption{Mutes Tab}
+   \caption{Mute Master Tab}
    \label{fig:mutes_master_tab}
 \end{figure}
 
    This diagram shows the \textbf{Mutes} tab after some mute-groups have been
    created.  Mute-groups can be created in the main window's patterns panel,
-   but it is difficult to know what each group consists of.  This tab make it
+   but it is difficult to know what each group comprises.
+   This tab makes it
    easy to see the layout of the mute-groups, and also allows for some editing
    and live control of the mute-groups.
 
@@ -72,9 +88,15 @@
    shows that buttons are checkable; other themes often do not show that status.
    Annoying.
 
+\subsection{Mute-Groups Table}
+\label{sec:mutes_mute_groups_table}
+
+   The most important user-interface element is the table at the right.
+   Here, one can select a mute-group for editing and control.
+
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
-   \itempar{Group Table}{mutes!table}
+   \itempar{Mute-Groups Table}{mutes!table}
    At the right is a table that shows the assigned mute-group keys and
    some information about them:
 
@@ -97,11 +119,17 @@
       \end{itemize}
 
    Only the group-name column of This table is editable.
-   The user can \texttt{qseq66.mutes} with a text editor, or
-   edit \texttt{qseq66.ctrl} to modify the the hot-keys or MIDI
-   controls.
-   Click on the desired group, and then click on the group button, perhaps
-   twice, to be able to add pattern mute states via the pattern buttons,
+   The user can also edit \texttt{qseq66.mutes} with a text editor, or
+   edit \texttt{qseq66.ctrl} to modify the the hot-keys or MIDI controls.
+
+   Click on the desired group.
+
+\subsection{Mute-Groups Buttons}
+\label{sec:mutes_mute_groups_buttons}
+
+   Once a mute-group has been selected, its mute-group button is activated.
+   Click on the group button (perhaps twice), to be able to add pattern
+   mute states via the pattern buttons,
    as an alternative to group-learn.
 
    \itempar{Mute-Groups}{mutes!groups}
@@ -124,8 +152,16 @@
    enables all of the
    buttons in the \textbf{Group Patterns} grid.
 
+   Also, if the \textbf{Triggers} button has been activated,
+   then these buttons can activate mute-groups, as if
+   activated in the live grid.
+
+\subsection{Group-Patterns Buttons}
+\label{sec:mutes_mute_group_patterns_guttons}
+
    \itempar{Group Patterns}{mutes!patterns}
-   Once this grid is enabled, each button can be clicked to add a pattern to
+   Once this grid is enabled by clicking on a mute-groups button,
+   each button here can be clicked to add a pattern to
    the mute-group, or remove a pattern from the mute-group.
 
 %  \itempar{Update Group}{mutes!update group}
@@ -135,6 +171,9 @@
 %  where it can later be saved when \textsl{Seq66}
 %  exits, or when the \textbf{Save All} button is clicked.
 
+\subsection{Other Controls}
+\label{sec:mutes_mute_other_controls}
+
    \itempar{Mutes File}{mutes!mutes file}
    The mutes-file read-only field
    shows the base-name of a file into which one can save the
@@ -143,7 +182,7 @@
    \textbf{Edit / Preferences / Session / .mutes}.
 
    \itempar{Save File}{mutes!save file}
-   This button saves all of the mute-groups to a selected 'mutes' file.
+   This button saves all of the mute-groups to the specified 'mutes' file.
    It is enabled when any change has been made to a mute-group
    or to the check-boxes.
 %  and has been registered by pressing the \textbf{Update Group} button.
@@ -152,13 +191,15 @@
    the path is stripped;
    \textsl{Seq66} must not write configuration information outside of
    the session configuration directory.
+
 %  The file is saved, but is not made official in the
 %  'rc' file; one must edit the 'rc' file to use the new 'mutes' file.
 %  We might provide a button for that function at some point.
 
    \itempar{Load File}{mutes!load file}
 
-   TODO
+   This button brings up a dialog to select an external mutes file.
+   
 
    \itempar{Read/Write Format}{mutes!read/write format}
    This section provides the following features, which still need some work:

@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2023-10-25
+dnl \update        2023-11-06
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -323,6 +323,21 @@ AC_ARG_ENABLE(nsm,
   [ac_nsm=$enableval],
   [ac_nsm=yes])
 
+dnl Check for now-required LIBLO library, needed only for NSM support.
+
+if test "$ac_nsm" != "no"; then
+    PKG_CHECK_MODULES([LIBLO], [liblo], [ac_liblo="yes"], [ac_liblo="no"])
+    if test "x$ac_liblo" = "xyes"; then
+        AC_DEFINE(LIBLO_SUPPORT, 1, [Define if LIBLO library is available])
+        AC_SUBST(LIBLO_CFLAGS)
+        AC_SUBST(LIBLO_LIBS)
+        AC_MSG_RESULT([LIBLO support for NSM enabled]);
+    else
+        AC_MSG_ERROR([LIBLO dev package not found, required for NSM])
+        ac_nsm="no"
+    fi
+fi
+
 dnl Check for NSM support.
 
 NSM_CFLAGS=
@@ -341,19 +356,6 @@ fi
 AC_SUBST(NSM_CFLAGS)
 AC_SUBST(NSM_LIBS)
 AC_SUBST(NSM_DEPS)
-
-dnl Check for now-required LIBLO library, needed for NSM support.
-
-PKG_CHECK_MODULES([LIBLO], [liblo], [ac_liblo="yes"], [ac_liblo="no"])
-if test "x$ac_liblo" = "xyes"; then
-    AC_DEFINE(LIBLO_SUPPORT, 1, [Define if LIBLO library is available])
-    AC_SUBST(LIBLO_CFLAGS)
-    AC_SUBST(LIBLO_LIBS)
-    AC_MSG_RESULT([LIBLO support enabled]);
-else
-    AC_MSG_ERROR([LIBLO library not found, LibOSC dev package required])
-    ac_nsm="no"
-fi
 
 dnl Can enable oth "CLI" and "rtmidi/qtsupport". The CLI version ignores
 dnl the macros and fills in its values with functions from the
@@ -484,7 +486,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2023-10-25"
+#define VERSION_DATE_SHORT "2023-11-06"
 #define API_VERSION "0.99"
 #define VERSION "0.99.11"
 

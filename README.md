@@ -1,16 +1,16 @@
-# README for Seq66 0.99.10 2023-11-03
+# README for Seq66 0.99.11 2023-11-06
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
-aware piano-roll; song layout for creative composition; and control/status
-via MIDI automation for live performance.  Mute-groups enable/disable multiple
-patterns at once.  Supports the Non/New Session Manager; can also run headless.
-Works in a space as small as 450x340 pixels (if window decoration removed).
-It does not support audio samples, just MIDI.
+aware piano-roll; song layout for creative composition; control/status via MIDI
+automation for live performance.  Mute-groups enable/disable sets of patterns.
+Supports the Non/New Session Manager; can also run headless.  Works in a space
+as small as 450x340 pixels (if window decoration removed).  It does not support
+audio samples, just MIDI.
 
-__Seq66__ A major refactoring of Sequencer64/Kepler34/Seq24 with modern C++
-and new features.  Linux and Windows users can build this application from
-source code.  See the extensive INSTALL file.  Includes a comprehensive PDF
+__Seq66__ A major refactoring of Sequencer64/Kepler34/Seq24 with modern C++ and
+new features.  Linux and Windows users can build this application from source
+code.  See the extensive INSTALL file.  Includes a comprehensive PDF
 user-manual.
 
 Support sites (still in progress):
@@ -27,6 +27,7 @@ The release now includes an installer for the 64-bit Windows version of Seq66.
 ##  User interface
 
     *   Qt 5 (cross-platform).  Loop-button gird. Qt style-sheet support.
+    *   Drag-and-drop a MIDI file onto the main grid to load it.
     *   Tabs and external windows for patterns, sets, mute-groups, song
         layout, event-editing, play-lists, and session information.
     *   Low-frequency oscillator (LFO) to modify continuous controller
@@ -103,6 +104,7 @@ Windows, and using a conventional source tarball.
             is automatic.
         *   Replaced the --inspect option with --session-tag to allow easy
             changing to another setup specified in sessions.rc.
+        *   Added mute-group label to main window.
     *   Version 0.99.10:
         *   Issue #117 Option to close pattern windows with esc key. Must
             be enabled via a 'usr' option first.

@@ -688,11 +688,11 @@ XMKMF
 ALSA_TOPOLOGY_LIBS
 ALSA_LIBS
 ALSA_CFLAGS
-LIBLO_LIBS
-LIBLO_CFLAGS
 NSM_DEPS
 NSM_LIBS
 NSM_CFLAGS
+LIBLO_LIBS
+LIBLO_CFLAGS
 MIDI_PORT_REFRESH
 JACK_LIBS
 JACK_CFLAGS
@@ -16678,29 +16678,7 @@ fi
 
 
 
-NSM_CFLAGS=
-NSM_LIBS=
-NSM_DEPS=
-
 if test "$ac_nsm" != "no"; then
-
-$as_echo "#define NSM_SUPPORT 1" >>confdefs.h
-
-    NSM_CFLAGS="-I ../libsessions/include"
-    NSM_LIBS="-llo -L../libsessions/src/.libs/ -lsessions"
-    NSM_DEPS="../libsessions/src/.libs/libsessions.la"
-
-$as_echo "#define NSM_SUPPORT 1" >>confdefs.h
-
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: Sessions/NSM support enabled" >&5
-$as_echo "Sessions/NSM support enabled" >&6; };
-fi
-
-
-
-
-
-
 
 pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for liblo" >&5
@@ -16772,18 +16750,42 @@ else
 $as_echo "yes" >&6; }
 	ac_liblo="yes"
 fi
-if test "x$ac_liblo" = "xyes"; then
+    if test "x$ac_liblo" = "xyes"; then
 
 $as_echo "#define LIBLO_SUPPORT 1" >>confdefs.h
 
 
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: LIBLO support enabled" >&5
-$as_echo "LIBLO support enabled" >&6; };
-else
-    as_fn_error $? "LIBLO library not found, LibOSC dev package required" "$LINENO" 5
-    ac_nsm="no"
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: LIBLO support for NSM enabled" >&5
+$as_echo "LIBLO support for NSM enabled" >&6; };
+    else
+        as_fn_error $? "LIBLO dev package not found, required for NSM" "$LINENO" 5
+        ac_nsm="no"
+    fi
 fi
+
+
+NSM_CFLAGS=
+NSM_LIBS=
+NSM_DEPS=
+
+if test "$ac_nsm" != "no"; then
+
+$as_echo "#define NSM_SUPPORT 1" >>confdefs.h
+
+    NSM_CFLAGS="-I ../libsessions/include"
+    NSM_LIBS="-llo -L../libsessions/src/.libs/ -lsessions"
+    NSM_DEPS="../libsessions/src/.libs/libsessions.la"
+
+$as_echo "#define NSM_SUPPORT 1" >>confdefs.h
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: Sessions/NSM support enabled" >&5
+$as_echo "Sessions/NSM support enabled" >&6; };
+fi
+
+
+
+
 
 
 # Check whether --enable-both was given.

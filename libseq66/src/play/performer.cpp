@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-03
+ * \updates       2023-11-06
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -7515,8 +7515,10 @@ performer::apply_mutes (mutegroup::number group)
     mutegroup::number oldgroup = mutes().group_selected();
     bool result = mapper().apply_mutes(group);
     if (result)
+    {
         send_mutes_events(group, oldgroup);
-
+        notify_mutes_change(group, change::no);       /* ca 2023-11-06 */
+    }
     return result;
 }
 
@@ -7525,9 +7527,23 @@ performer::unapply_mutes (mutegroup::number group)
 {
     bool result = mapper().unapply_mutes(group);
     if (result)
+    {
         midi_control_out().send_mutes_event(group, midicontrolout::action_off);
-
+        notify_mutes_change(group, change::no);       /* ca 2023-11-06 */
+    }
     return result;
+}
+
+/**
+ *  Does a learn-action if in group-learn mode, followed by
+ *  mute_group_tracks.
+ */
+
+void
+performer::select_and_mute_group (mutegroup::number mg)
+{
+    mapper().select_and_mute_group(mg);
+    notify_mutes_change(mg, change::no);       /* ca 2023-11-06 */
 }
 
 bool
@@ -7539,6 +7555,7 @@ performer::toggle_mutes (mutegroup::number group)
     {
         mutegroup::number newgroup = mutes().group_selected();
         send_mutes_events(newgroup, oldgroup);
+        notify_mutes_change(newgroup, change::no);       /* ca 2023-11-06 */
     }
     return result;
 }
@@ -7552,6 +7569,7 @@ performer::toggle_active_mutes (mutegroup::number group)
     {
         mutegroup::number newgroup = mutes().group_selected();
         send_mutes_events(newgroup, oldgroup);
+        notify_mutes_change(group, change::no);          /* ca 2023-11-06 */
     }
     return result;
 }

@@ -1,11 +1,14 @@
-TO DO for Seq66 0.99.10
+TO DO for Seq66 0.99.11
 Chris Ahlstrom
-2019-04-13 to 2023-11-05
+2019-04-13 to 2023-11-06
 
 Misc:
 
+    -   Look into a build without NSM and liblo support, again.
+    -   Make sure Launchpad control/display still works.
+    -   Mute-master modifications are not setting MIDI modify flag.
+    -   Test and fix the Set Master, it is very broken.
     -   Make sure the grid-mode clear and double operations work properly.
-    -   Test the Set Master.
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recorded measures
@@ -27,10 +30,8 @@ Mutes:
 
 Playlists:
 
-    -   Consider adding a configurable play-list auto-advance delay value.
-    -   Why is the first play-list song file double loaded?
-    -   How to force ports to 0 when errors happen, and save the file.
-    -   Set all contrib/midi and data/midi MIDI files to use port 0.
+    -   Consider adding a configurable play-list auto-advance delay value?
+    -   Set all contrib/midi and data/midi MIDI files to use port 0?
 
 From Testing:
 

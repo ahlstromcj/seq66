@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-01
+ * \updates       2023-11-06
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -900,6 +900,12 @@ qsmainwnd::qsmainwnd
         this, SIGNAL(signal_song_action(int)),
         this, SLOT(update_song_action(int))
     );
+
+    /*
+     * Mute-group name.
+     */
+
+    ui->txtMuteName->setText("None");
 
     /*
      *  The MIDI file is now opened and read in the performer before the
@@ -4342,6 +4348,22 @@ qsmainwnd::update_set_change (int setno)
         if (not_nullptr(m_song_frame64))
             m_song_frame64->update_sizes();
     }
+}
+
+bool
+qsmainwnd::on_mutes_change (mutegroup::number group, performer::change mod)
+{
+    bool result = ! mutegroup::none(group);
+    if (result)
+    {
+        bool ok = mod != performer::change::max;
+        if (ok)
+        {
+            std::string text = cb_perf().group_name(group);
+            ui->txtMuteName->setText(qt(text));
+        }
+    }
+    return result;
 }
 
 bool

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-11-03
+ * \updates       2023-11-06
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1119,7 +1119,7 @@ public:
     void unregister (callbacks * pfcb);
     void notify_automation_change (automation::slot s);
     void notify_set_change (screenset::number setno, change mod = change::yes);
-    void notify_mutes_change (screenset::number setno, change mod = change::yes);
+    void notify_mutes_change (mutegroup::number setno, change mod = change::yes);
     void notify_sequence_change (seq::number seqno, change mod = change::yes);
     void notify_ui_change (seq::number seqno, change mod = change::yes);
     void notify_trigger_change (seq::number seqno, change mod = change::yes);
@@ -2595,15 +2595,7 @@ public:
         group_learn(! is_group_learn());
     }
 
-    /**
-     *  Does a learn-action if in group-learn mode, followed by
-     *  mute_group_tracks.
-     */
-
-    void select_and_mute_group (mutegroup::number mg)
-    {
-        mapper().select_and_mute_group(mg);
-    }
+    void select_and_mute_group (mutegroup::number mg);
 
     int count_mutes (mutegroup::number group)
     {
@@ -3448,9 +3440,13 @@ public:                                 /* access functions for the containers *
         return mutes().count();
     }
 
-    const std::string & group_name (mutegroup::number group) const
+    std::string group_name (mutegroup::number group) const
     {
-        return mutes().group_name(group);
+        std::string name{"None"};
+        if (group != mutegroup::unassigned())
+            name = mutes().group_name(group);
+
+        return name;
     }
 
     bool group_name (mutegroup::number gmute, const std::string & n);

@@ -192,6 +192,7 @@ qslivegrid::qslivegrid
         ui->buttonMetronome->hide();
         ui->buttonBackgroundRecord->hide();
         ui->comboGridMode->hide();
+
     }
     else
     {
