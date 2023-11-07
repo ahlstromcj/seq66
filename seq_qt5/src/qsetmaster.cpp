@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-07
+ * \updates       2023-11-07
  * \license       GNU GPLv2 or above
  *
  *  The set-master controls the existence and usage of all sets.  For control
@@ -176,10 +176,24 @@ qsetmaster::setup_table ()
 {
     QStringList columns;
     columns << "Set #" << "Seqs" << "Set Name";
+
+    /*
+     * This advice is bs. The actual answer is to set the horizontal header to
+     * be visible.
+     *
+     *  ui->m_set_table->insertColumn(0), and 1 and 2;;
+     */
+
     ui->m_set_table->setHorizontalHeaderLabels(columns);
     ui->m_set_table->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->m_set_table->setSelectionMode(QAbstractItemView::SingleSelection);
-    set_column_widths(ui->m_set_table->width() + c_table_fix);
+
+    /*
+     * ui->m_set_table->setSelectionMode(QAbstractItemView::SingleSelection);
+     */
+
+    int w = ui->m_set_table->width();
+    set_column_widths(w + c_table_fix);
+
     const int rows = ui->m_set_table->rowCount();
     for (int r = 0; r < rows; ++r)
         ui->m_set_table->setRowHeight(r, c_table_row_height);
@@ -272,8 +286,13 @@ qsetmaster::cell (screenset::number row, column_id col)
     QTableWidgetItem * result = ui->m_set_table->item(row, column);
     if (is_nullptr(result))
     {
-        result = new QTableWidgetItem;
-        ui->m_set_table->setItem(row, column, result);
+        result = new (std::nothrow) QTableWidgetItem;
+        if (not_nullptr(result))
+        {
+            ui->m_set_table->setItem(row, column, result);
+            if (col != column_id::set_name)
+                result->setFlags(result->flags() ^ Qt::ItemIsEditable);
+        }
     }
     return result;
 }

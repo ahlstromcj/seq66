@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.11
 Chris Ahlstrom
-2019-04-13 to 2023-11-06
+2019-04-13 to 2023-11-07
 
 Misc:
 
@@ -17,6 +17,7 @@ Misc:
     -   In the Windows build batch file, improve the messaging and copy the
         7z bundle to release as the installer is.
     -   See the new notes in timing module: set_thread_priority()!!!
+        Also review the notes for pthreads in performer!
     -   Add a feature to start playback when the first note comes
         into a pattern when recording is set. [Turns out to be quite tricky!]
 

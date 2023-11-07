@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-06
+ * \updates       2023-11-07
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -52,15 +52,15 @@
  *
  *      m_playing_screen is used in:
  *
- *      -   select_group_mute().  Sets the selected mute group number and stores
- *          the mute group if learn is active.  Used in midifile, optionsfile,
- *          and userfile.
+ *      -   select_group_mute().  Sets the selected mute group number and
+ *          stores the mute group if learn is active.  Used in midifile,
+ *          optionsfile, and userfile.
  *      -   select_mute_group(). Almost the same in a stilted way, but also
  *          saves the state of the mute group in a small set array, "tracks
  *          mute".  Used indirectly in mainwnd to "activate" the desired
  *          mute-group.
- *      -   mute_group_tracks(). If in group mode, sets the sequences according
- *          to the state in "tracks mute".
+ *      -   mute_group_tracks(). If in group mode, sets the sequences
+ *          according to the state in "tracks mute".
  *      -   set_playing_screenset(). Sets "tracks mute" per the current
  *          playing screen.  Changes the playing screen to the current screen
  *          set, then calls mute_group_tracks().  Called by MIDI control
@@ -88,15 +88,15 @@
  * MIDI CLOCK Support:
  *
  *    MIDI beat clock (MIDI timing clock or MIDI clock) is a clock signal that
- *    is broadcast via MIDI to ensure that several MIDI-enabled devices such as
- *    a synthesizer or music sequencer stay in synchronization.  MIDI beat clock
- *    is tempo-dependent. Clock events are sent at a rate of 24 times every
- *    quarter note. Those pulses maintain a synchronized tempo for synthesizers
- *    with BPM-dependent voices, and for arpeggiator synchronization. Location
- *    information is specified using the Song Position Pointer (SPP) although
- *    many simple MIDI devices ignore this message.  Because of limitations in
- *    MIDI and synthesizers, devices driven by MIDI beat clock are often subject
- *    to clock drift.
+ *    is broadcast via MIDI to ensure that several MIDI-enabled devices such
+ *    as a synthesizer or music sequencer stay in synchronization.  MIDI beat
+ *    clock is tempo-dependent. Clock events are sent at a rate of 24 times
+ *    every quarter note. Those pulses maintain a synchronized tempo for
+ *    synthesizers with BPM-dependent voices, and for arpeggiator
+ *    synchronization. Location information is specified using the Song
+ *    Position Pointer (SPP) although many simple MIDI devices ignore this
+ *    message.  Because of limitations in MIDI and synthesizers, devices
+ *    driven by MIDI beat clock are often subject to clock drift.
  *
  *    On output:
  *
@@ -8707,6 +8707,7 @@ performer::read_midi_file
     bool result = seq66::read_midi_file(*this, fn, ppqn(), errmsg, addtorecent);
     if (result)
     {
+        mutegroup::number mg = mutegroup::unassigned();         /* not 0    */
         metrosettings & ms = rc().metro_settings();
         ms.beats_per_bar(get_beats_per_bar());
         ms.beat_width(get_beat_width());
@@ -8714,7 +8715,7 @@ performer::read_midi_file
         m_max_extent = get_max_extent();        /* analyze current file     */
         set_tick(0);                            /* enforce beginning        */
         announce_mutes();                       /* cannot forget this one!  */
-        notify_mutes_change(0, change::no);
+        notify_mutes_change(mg, change::no);
     }
     return result;
 }

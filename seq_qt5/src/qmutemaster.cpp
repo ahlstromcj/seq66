@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-10-09
+ * \updates       2023-11-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -277,11 +277,6 @@ qmutemaster::qmutemaster
         ui->m_check_toggle_active, SIGNAL(stateChanged(int)),
         this, SLOT(slot_toggle_active())
     );
-    connect
-    (
-        ui->m_group_table, SIGNAL(cellChanged(int, int)),
-        this, SLOT(slot_cell_changed(int, int))
-    );
 
     handle_group_button(0, 0);          /* guaranteed to be present         */
     handle_group_change(0);             /* select the first group           */
@@ -390,19 +385,38 @@ void
 qmutemaster::setup_table ()
 {
     QStringList columns;
-    int w = ui->m_group_table->width();
     columns << "Group" << "Active" << "Key" << "Group Name";
+
+    /*
+     * This advice is bs. The actual answer is to set the horizontal header to be
+     * visible.
+     *
+     * ui->m_group_table->insertColumn(0);
+     * ui->m_group_table->insertColumn(1);
+     * ui->m_group_table->insertColumn(2);
+     * ui->m_group_table->insertColumn(3);
+     */
+
     ui->m_group_table->setHorizontalHeaderLabels(columns);
     ui->m_group_table->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+    int w = ui->m_group_table->width();
+    set_column_widths(w - c_table_fix);
+
+    const int rows = ui->m_group_table->rowCount();
+    for (int r = 0; r < rows; ++r)
+        ui->m_group_table->setRowHeight(r, c_table_row_height);
+
     connect
     (
         ui->m_group_table, SIGNAL(currentCellChanged(int, int, int, int)),
         this, SLOT(slot_table_click(int, int, int, int))
     );
-    set_column_widths(w - c_table_fix);
-    const int rows = ui->m_group_table->rowCount();
-    for (int r = 0; r < rows; ++r)
-        ui->m_group_table->setRowHeight(r, c_table_row_height);
+    connect
+    (
+        ui->m_group_table, SIGNAL(cellChanged(int, int)),
+        this, SLOT(slot_cell_changed(int, int))
+    );
 }
 
 /**
@@ -1011,7 +1025,9 @@ qmutemaster::handle_group_change (int groupno)
  *  Handles mute-group changes from other dialogs.  These changes involve only
  *  the adding/subtracting of patterns to an old or a new group.
  *
- *  Don't think we need to call modify_mutes() here....
+ *  Don't think we need to call modify_mutes() here.... But it gets modified
+ *  anyway by initialize table. That should not be done unless it is a real
+ *  change.
  */
 
 bool
@@ -1023,7 +1039,9 @@ qmutemaster::on_mutes_change (mutegroup::number group, performer::change mod)
         bool ok = mod != performer::change::max;
         if (ok)
         {
-            result = initialize_table();
+            if (mod == performer::change::yes)          /* ca 2023-11-07    */
+                result = initialize_table();
+
             if (result)
             {
                 update_group_buttons(enabling::enable);

@@ -62,7 +62,6 @@
           <property name="font">
            <font>
             <family>DejaVu Sans</family>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -121,7 +120,6 @@
         <property name="font">
          <font>
           <family>DejaVu Sans</family>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -171,7 +169,6 @@
           <property name="font">
            <font>
             <family>DejaVu Sans</family>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -250,7 +247,6 @@ Edit / Preferences / Session / .mutes.</string>
           <property name="font">
            <font>
             <family>DejaVu Sans</family>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -417,7 +413,7 @@ do not save them to the MIDI file.</string>
          <number>4</number>
         </property>
         <attribute name="horizontalHeaderVisible">
-         <bool>false</bool>
+         <bool>true</bool>
         </attribute>
         <attribute name="verticalHeaderVisible">
          <bool>false</bool>
