@@ -1201,12 +1201,12 @@ public:
 
     std::string sets_to_string () const
     {
-        return master().sets_to_string();
+        return set_master().sets_to_string();
     }
 
     void show_patterns () const
     {
-        master().show();
+        set_master().show();
     }
 
     bool read_midi_file
@@ -1487,54 +1487,54 @@ public:
     bool repitch_all (const std::string & nmapfile, seq::ref s);
     bool repitch_selected (const std::string & nmapfile, seq::ref s);
 
-    setmapper & mapper ()
+    setmapper & set_mapper ()
     {
         return m_set_mapper;
     }
 
-    const setmapper & mapper () const
+    const setmapper & set_mapper () const
     {
         return m_set_mapper;
     }
 
-    setmaster & master ()
+    setmaster & set_master ()
     {
         return m_set_master;
     }
 
-    const setmaster & master () const
+    const setmaster & set_master () const
     {
         return m_set_master;
     }
 
     int screenset_count () const
     {
-        return master().screenset_count();
+        return set_master().screenset_count();
     }
 
     int highest_set () const
     {
-        return master().highest_set();
+        return set_master().highest_set();
     }
 
     int screenset_max () const
     {
-        return master().screenset_max();
+        return set_master().screenset_max();
     }
 
     int screenset_index (screenset::number setno) const
     {
-        return master().screenset_index(setno);
+        return set_master().screenset_index(setno);
     }
 
     int screenset_size () const
     {
-        return mapper().screenset_size();
+        return set_mapper().screenset_size();
     }
 
     int sequences_in_sets () const
     {
-        return mapper().sequences_in_sets();
+        return set_mapper().sequences_in_sets();
     }
 
     int ppqn () const;
@@ -1561,12 +1561,12 @@ public:
 
     int rows () const
     {
-        return mapper().rows();
+        return set_mapper().rows();
     }
 
     int columns () const
     {
-        return mapper().columns();
+        return set_mapper().columns();
     }
 
     int mute_rows () const
@@ -1586,7 +1586,7 @@ public:
 
     screenset::number master_grid_to_set (int row, int column) const
     {
-        return master().grid_to_set(row, column);
+        return set_master().grid_to_set(row, column);
     }
 
     bool master_index_to_grid
@@ -1594,17 +1594,17 @@ public:
         screenset::number setno, int & row, int & column
     )
     {
-        return master().index_to_grid(setno, row, column);
+        return set_master().index_to_grid(setno, row, column);
     }
 
     bool master_inside_set (int row, int column) const
     {
-        return master().inside_set(row, column);
+        return set_master().inside_set(row, column);
     }
 
     seq::number grid_to_seq (int row, int column) const
     {
-        return mapper().grid_to_seq(row, column);
+        return set_mapper().grid_to_seq(row, column);
     }
 
     seq::number grid_to_seq
@@ -1613,7 +1613,7 @@ public:
         int row, int column
     ) const
     {
-        return mapper().grid_to_seq(setno, row, column);
+        return set_mapper().grid_to_seq(setno, row, column);
     }
 
     bool seq_to_grid
@@ -1623,17 +1623,17 @@ public:
         bool global = false
     ) const
     {
-        return mapper().seq_to_grid(seqno, row, column, global);
+        return set_mapper().seq_to_grid(seqno, row, column, global);
     }
 
     bool index_to_grid (seq::number seqno, int & row, int & column) const
     {
-        return mapper().index_to_grid(seqno, row, column);
+        return set_mapper().index_to_grid(seqno, row, column);
     }
 
     int grid_to_index (int row, int column) const
     {
-        return int(mapper().grid_to_index(row, column));
+        return int(set_mapper().grid_to_index(row, column));
     }
 
     /**
@@ -1645,17 +1645,17 @@ public:
 
     int sequence_count () const
     {
-        return mapper().sequence_count();
+        return set_mapper().sequence_count();
     }
 
     seq::number sequence_high () const
     {
-        return mapper().sequence_high();
+        return set_mapper().sequence_high();
     }
 
     seq::number sequence_max () const
     {
-        return mapper().sequence_max();
+        return set_mapper().sequence_max();
     }
 
     int get_beats_per_bar () const
@@ -2233,7 +2233,7 @@ public:
 
     bool is_seq_in_edit (int seqno) const
     {
-        return mapper().is_seq_in_edit(seqno);
+        return set_mapper().is_seq_in_edit(seqno);
     }
 
     /**
@@ -2257,7 +2257,7 @@ public:
 
     void unqueue_sequences (int hotseq)
     {
-        mapper().unqueue(hotseq);
+        set_mapper().unqueue(hotseq);
     }
 
     bool panic ();                                      /* from kepler43    */
@@ -2279,7 +2279,7 @@ public:
 
     void set_last_ticks (midipulse tick)
     {
-        mapper().set_last_ticks(tick);
+        set_mapper().set_last_ticks(tick);
     }
 
     midipulse get_left_tick () const
@@ -2340,26 +2340,26 @@ public:
 
     bool is_seq_active (seq::number seqno) const
     {
-        return mapper().is_seq_active(seqno);
+        return set_mapper().is_seq_active(seqno);
     }
 
     bool is_seq_recording (seq::number seqno) const
     {
-        return mapper().is_seq_recording(seqno);
+        return set_mapper().is_seq_recording(seqno);
     }
 
     bool is_metronome (seq::number seqno) const;
 
     seq::number first_seq () const
     {
-        return mapper().first_seq();
+        return set_mapper().first_seq();
     }
 
 public:
 
     void apply_song_transpose ()
     {
-        mapper().apply_song_transpose();
+        set_mapper().apply_song_transpose();
     }
 
     /**
@@ -2481,7 +2481,7 @@ public:
 
     void mute_all_tracks (bool flag = true)
     {
-        mapper().mute_all_tracks(flag);
+        set_mapper().mute_all_tracks(flag);
     }
 
     /**
@@ -2494,7 +2494,7 @@ public:
 
     void toggle_all_tracks ()
     {
-        mapper().toggle();
+        set_mapper().toggle();
     }
 
     void set_song_mute (mutegroups::action op);
@@ -2513,7 +2513,7 @@ public:
     void toggle_playing_tracks ()
     {
         if (! song_mode())
-            mapper().toggle_playing_tracks();
+            set_mapper().toggle_playing_tracks();
     }
 
     bool any_group_unmutes () const
@@ -2572,7 +2572,7 @@ public:
 
     void save_queued (int repseq)
     {
-        mapper().save_queued(repseq);
+        set_mapper().save_queued(repseq);
     }
 
 public:
@@ -2647,17 +2647,17 @@ public:
 
     screenset::number playscreen_number () const
     {
-        return mapper().playscreen_number();    // not in setmaster purview!
+        return set_mapper().playscreen_number();    // not in setmaster purview!
     }
 
     seq::number playscreen_offset () const
     {
-        return mapper().playscreen_offset();
+        return set_mapper().playscreen_offset();
     }
 
     int playscreen_active_count () const
     {
-        return mapper().playscreen_active_count();
+        return set_mapper().playscreen_active_count();
     }
 
     /**
@@ -2704,7 +2704,7 @@ public:
 
     seq::pointer loop (seq::number seqno)
     {
-        return mapper().loop(seqno);
+        return set_mapper().loop(seqno);
     }
 
     /**
@@ -2713,12 +2713,12 @@ public:
 
     const seq::pointer loop (seq::number seqno) const
     {
-        return mapper().loop(seqno);
+        return set_mapper().loop(seqno);
     }
 
     void off_sequences ()
     {
-        mapper().off_sequences();
+        set_mapper().off_sequences();
     }
 
     std::string automation_key (automation::slot s);
@@ -2860,12 +2860,12 @@ public:
 
     midipulse get_max_timestamp () const
     {
-        return mapper().max_timestamp();
+        return set_mapper().max_timestamp();
     }
 
     midipulse get_max_trigger () const
     {
-        return mapper().max_trigger();
+        return set_mapper().max_trigger();
     }
 
     midipulse get_max_extent () const;
@@ -2886,7 +2886,7 @@ public:
 
     bool is_exportable (seq::number seqno) const
     {
-        return mapper().is_exportable(seqno);
+        return set_mapper().is_exportable(seqno);
     }
 
     /**
@@ -2904,22 +2904,22 @@ public:
 
     bool is_dirty_main (seq::number seqno) const
     {
-        return mapper().is_dirty_main(seqno);
+        return set_mapper().is_dirty_main(seqno);
     }
 
     bool is_dirty_edit (seq::number seqno) const
     {
-        return mapper().is_dirty_edit(seqno);
+        return set_mapper().is_dirty_edit(seqno);
     }
 
     bool is_dirty_perf (seq::number seqno) const
     {
-        return mapper().is_dirty_perf(seqno);
+        return set_mapper().is_dirty_perf(seqno);
     }
 
     bool is_dirty_names (seq::number seqno) const
     {
-        return mapper().is_dirty_names(seqno);
+        return set_mapper().is_dirty_names(seqno);
     }
 
     void send_onoff_event (midicontrolout::uiaction a, bool on);
@@ -2991,17 +2991,17 @@ public:
         bool use_set_offset = true
     )
     {
-        return mapper().exec_slot_function(p, use_set_offset);
+        return set_mapper().exec_slot_function(p, use_set_offset);
     }
 
     bool exec_set_function (screenset::sethandler s)
     {
-        return mapper().exec_set_function(s);
+        return set_mapper().exec_set_function(s);
     }
 
     bool exec_set_function (screenset::sethandler s, screenset::slothandler p)
     {
-        return mapper().exec_set_function(s, p);
+        return set_mapper().exec_set_function(s, p);
     }
 
     screenset::number set_playing_screenset (screenset::number setno);
@@ -3057,7 +3057,7 @@ public:
         midipulse tickstart, midipulse tickfinish
     )
     {
-        mapper().select_triggers_in_range
+        set_mapper().select_triggers_in_range
         (
             seqlow, seqhigh, tickstart, tickfinish
         );
@@ -3065,7 +3065,7 @@ public:
 
     void unselect_all_triggers ()
     {
-        mapper().unselect_triggers();
+        set_mapper().unselect_triggers();
     }
 
 public:
@@ -3088,7 +3088,7 @@ public:
 
     int color (seq::number seqno) const
     {
-        return mapper().color(seqno);
+        return set_mapper().color(seqno);
     }
 
     bool set_color (seq::number seqno, int c);
@@ -3179,12 +3179,12 @@ public:         /* GUI-support functions */
 
     std::string current_screenset_name () const
     {
-        return mapper().name();
+        return set_mapper().name();
     }
 
     bool is_screenset_valid (screenset::number setno) const
     {
-        return master().is_screenset_valid(setno);
+        return set_master().is_screenset_valid(setno);
     }
 
     /**
@@ -3200,7 +3200,7 @@ public:         /* GUI-support functions */
 
     bool is_screenset_active (screenset::number setno)
     {
-        return mapper().is_screenset_active(setno);
+        return set_mapper().is_screenset_active(setno);
     }
 
     /**
@@ -3215,12 +3215,12 @@ public:         /* GUI-support functions */
 
     bool is_screenset_available (screenset::number setno)
     {
-        return mapper().is_screenset_available(setno);
+        return set_mapper().is_screenset_available(setno);
     }
 
     void screenset_name (const std::string & note)
     {
-        mapper().name(note);
+        set_mapper().name(note);
     }
 
     void screenset_name
@@ -3232,12 +3232,12 @@ public:         /* GUI-support functions */
 
     std::string set_name (screenset::number setno) const
     {
-        return mapper().name(setno);
+        return set_mapper().name(setno);
     }
 
     bool seq_in_playing_screen (int seq)
     {
-        return mapper().seq_in_playscreen(seq);
+        return set_mapper().seq_in_playscreen(seq);
     }
 
     void song_recording (bool on, bool atstart = false);
@@ -3343,7 +3343,7 @@ private:
 
     void copy_triggers ()
     {
-        mapper().copy_triggers(m_left_tick, m_right_tick);
+        set_mapper().copy_triggers(m_left_tick, m_right_tick);
     }
 
     bool move_triggers (bool direction);
@@ -3512,17 +3512,17 @@ private:
 
     void clear_snapshot ()
     {
-        mapper().clear_snapshot();
+        set_mapper().clear_snapshot();
     }
 
     void save_snapshot ()
     {
-        mapper().save_snapshot();
+        set_mapper().save_snapshot();
     }
 
     void restore_snapshot ()
     {
-        mapper().restore_snapshot();
+        set_mapper().restore_snapshot();
     }
 
     void is_running (bool flag)

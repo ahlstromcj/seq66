@@ -1,11 +1,9 @@
 TO DO for Seq66 0.99.11
 Chris Ahlstrom
-2019-04-13 to 2023-11-07
+2019-04-13 to 2023-11-08
 
 Misc:
 
-    -   Look into a build without NSM and liblo support, again.
-    -   Make sure Launchpad control/display still works.
     -   Mute-master modifications are not setting MIDI modify flag.
     -   Test and fix the Set Master, it is very broken.
     -   Make sure the grid-mode clear and double operations work properly.

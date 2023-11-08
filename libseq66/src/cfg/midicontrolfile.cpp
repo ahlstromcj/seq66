@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2023-08-12
+ * \updates       2023-11-08
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -575,8 +575,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         /* Non-sequence (automation) actions */
 
         bool newtriples = file_version_number() > 3;
-        ok = true;
-        if (newtriples)
+        if (ok && newtriples)
         {
             ok = read_triples(file, mco, midicontrolout::uiaction::panic);
             if (ok)
@@ -641,9 +640,8 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                 else
                     ok = mco.make_macro_defaults();
 
-                ok = get_boolean(file, tag, "active", 0, true);
                 if (ok)
-                    ok = rc_ref().midi_control_active();/* ca 2022-08-08    */
+                    ok = rc_ref().midi_control_active();
 
                 mco.macros_active(ok);
             }

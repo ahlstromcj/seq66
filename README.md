@@ -1,4 +1,4 @@
-# README for Seq66 0.99.11 2023-11-06
+# README for Seq66 0.99.11 2023-11-08
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -94,6 +94,7 @@ Windows, and using a conventional source tarball.
                 the next song or basing calculations on missing values..
         *   Fixed app exiting unceremoniously if "quiet" is set.
         *   Fixed minor issue in Song zoom with 1920 PPQN.
+        *   Fixed odd bug breaking MIDI-control-out (display).
         *   Focus is now set immediately to the seqroll and perfroll.
         *   Replaced some verbose() checks with investigate() checks to cut
             down on console output. In the CLI, --verbose now shows

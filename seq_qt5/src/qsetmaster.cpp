@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-07
+ * \updates       2023-11-08
  * \license       GNU GPLv2 or above
  *
  *  The set-master controls the existence and usage of all sets.  For control
@@ -74,10 +74,6 @@ namespace seq66
  * \param p
  *      Provides the performer object to use for interacting with this frame.
  *
- * \param embedded
- *      If true, this frame is embedded in a tab-layout, and should never be
- *      closed.
- *
  * \param mainparent
  *      Provides the parent window, which will call this frame up and also
  *      needs to be notified if it goes away.
@@ -90,8 +86,7 @@ namespace seq66
 
 qsetmaster::qsetmaster
 (
-    performer & p,
-    bool embedded,
+    performer & p,                  /* bool embedded, */
     qsmainwnd * mainparent,
     QWidget * parent
 ) :
@@ -106,8 +101,10 @@ qsetmaster::qsetmaster
     m_current_row           (seq::unassigned()),
     m_current_row_count     (cb_perf().screenset_count()),
     m_needs_update          (true),
-    m_table_initializing    (true),
-    m_is_permanent          (embedded)
+    m_table_initializing    (true)
+    /*
+     * m_is_permanent       (embedded)
+     */
 {
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

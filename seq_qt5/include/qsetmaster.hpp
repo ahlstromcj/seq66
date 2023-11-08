@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-11
- * \updates       2021-11-11
+ * \updates       2023-11-08
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing screen-sets and sequences, and
@@ -104,8 +104,7 @@ public:
 
     qsetmaster
     (
-        performer & p,
-        bool embedded,
+        performer & p,                  /* bool embedded, */
         qsmainwnd * mainparent,
         QWidget * parent = nullptr
     );
@@ -261,9 +260,11 @@ private:
 
     /**
      *  Indicates that this view is embedded in a frame, and thus permanent.
+     *  Commented out because we no longer support an external setmaster
+     *  frame.
+     *
+     * bool m_is_permanent;
      */
-
-    bool m_is_permanent;
 
 };
 

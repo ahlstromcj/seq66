@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-06
+ * \updates       2023-11-08
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -2767,9 +2767,10 @@ qsmainwnd::load_event_editor (int seqid)
 void
 qsmainwnd::load_set_master ()
 {
-    qsetmaster * qsm = new (std::nothrow)
-        qsetmaster(cb_perf(), true, this, ui->SetMasterTab);
-
+    qsetmaster * qsm = new (std::nothrow) qsetmaster
+    (
+        cb_perf(), this, ui->SetMasterTab
+    );
     if (not_nullptr(qsm))
     {
         ui->SetsTabLayout->addWidget(qsm);
@@ -2780,9 +2781,10 @@ qsmainwnd::load_set_master ()
 void
 qsmainwnd::load_mute_master ()
 {
-    qmutemaster * qsm = new (std::nothrow)
-        qmutemaster(cb_perf(), this, ui->MuteMasterTab);
-
+    qmutemaster * qsm = new (std::nothrow) qmutemaster
+    (
+        cb_perf(), this, ui->MuteMasterTab
+    );
     if (not_nullptr(qsm))
     {
         ui->MutesTabLayout->addWidget(qsm);

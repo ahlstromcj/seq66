@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-07
+ * \updates       2023-11-08
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -338,7 +338,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_mute_groups           ("Mute groups", rows, columns),     /* mutes()  */
     m_operations            ("Performer ops"),
     m_set_master            (rows, columns),    /* 32 row x column sets     */
-    m_set_mapper                                /* accessed via mapper()    */
+    m_set_mapper                                /* access via set_mapper()  */
     (
         m_set_master, m_mute_groups, rows, columns
     ),
@@ -599,7 +599,7 @@ void
 performer::unmodify ()
 {
     m_is_modified = false;
-    mapper().unmodify_all_sequences();
+    set_mapper().unmodify_all_sequences();
 }
 
 /**
@@ -619,7 +619,7 @@ performer::modified () const
 #endif
     }
     else
-        result = mapper().any_modified_sequences();
+        result = set_mapper().any_modified_sequences();
 
     return result;
 }
@@ -1298,7 +1298,7 @@ performer::ui_set_input (bussbyte bus, bool active)
             result = ipm.set(bus, active);
 
         set_input(bus, active);
-        mapper().set_dirty();
+        set_mapper().set_dirty();
         rc().auto_rc_save(true);                /* force the save of 'rc'   */
     }
     return result;
@@ -1405,7 +1405,7 @@ performer::ui_set_clock (bussbyte bus, e_clock clocktype)
             result = opm.set(bus, clocktype);
 
         set_clock(bus, clocktype);
-        mapper().set_dirty();
+        set_mapper().set_dirty();
         rc().auto_rc_save(true);                /* force the save of 'rc'   */
     }
     return result;
@@ -1665,7 +1665,7 @@ performer::client_id_string () const
 bool
 performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
 {
-    bool result = mapper().install_sequence(s, seqno);
+    bool result = set_mapper().install_sequence(s, seqno);
     if (result)
     {
         s->set_parent(this);                    /* also sets a lot of stuff */
@@ -1677,9 +1677,9 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
              */
 
             if (is_running())
-                result = mapper().add_to_play_set(play_set(), s);
+                result = set_mapper().add_to_play_set(play_set(), s);
             else
-                result = mapper().fill_play_set(play_set());
+                result = set_mapper().fill_play_set(play_set());
         }
         else if (rc().is_setsmode_allsets())
         {
@@ -1688,7 +1688,7 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
              * changing the current set.
              */
 
-            result = mapper().add_to_play_set(play_set(), s);
+            result = set_mapper().add_to_play_set(play_set(), s);
         }
 
         /*
@@ -1725,22 +1725,22 @@ const seq::pointer
 performer::get_sequence (seq::number seqno) const
 {
     if (sequence::is_normal(seqno))
-        return mapper().loop(seqno);
+        return loop(seqno);
     else if (sequence::is_metronome(seqno))
         return m_metronome;
 
-    return mapper().loop(seqno);
+    return loop(seqno);
 }
 
 seq::pointer
 performer::get_sequence (seq::number seqno)
 {
     if (sequence::is_normal(seqno))
-        return mapper().loop(seqno);
+        return loop(seqno);
     else if (sequence::is_metronome(seqno))
         return m_metronome;
 
-    return mapper().loop(seqno);
+    return loop(seqno);
 }
 
 /**
@@ -2107,7 +2107,7 @@ performer::double_sequence (seq::number seqno)
 bool
 performer::remove_sequence (seq::number seqno)
 {
-    bool result = mapper().remove_sequence(seqno);
+    bool result = set_mapper().remove_sequence(seqno);
     if (result)
     {
         seq::number buttonno = seqno - playscreen_offset();
@@ -2347,7 +2347,7 @@ performer::change_ppqn (int p)
     bool result = set_ppqn(p);                  /* performer & master bus   */
     if (result)
     {
-        mapper().exec_set_function
+        set_mapper().exec_set_function
         (
             [p] (seq::pointer sp, seq::number /*sn*/)
             {
@@ -2396,7 +2396,7 @@ performer::ui_change_set_bus (int buss)
                 append_error_message("set bus on null sequence");
         }
 
-        screenset::number setno = mapper().playscreen_number();
+        screenset::number setno = playscreen_number();
         notify_set_change(setno, change::yes);
     }
     return result;
@@ -2418,7 +2418,7 @@ performer::next_song_mode ()
     (void) set_playing_screenset(screenset::number(0));
     if (rc().song_start_auto())                     /* detect live vs song  */
     {
-        bool has_triggers = mapper().trigger_count() > 0;
+        bool has_triggers = set_mapper().trigger_count() > 0;
         song_mode(has_triggers);
         if (has_triggers || playlist_auto_arm())    /* ca 2023-10-29        */
             set_song_mute(mutegroups::action::off);
@@ -2552,7 +2552,7 @@ performer::screenset_name
     bool is_load_modification
 )
 {
-    bool changed = mapper().name(sn, name);
+    bool changed = set_mapper().name(sn, name);
     if (changed)
     {
         change mod = is_load_modification ? change::no : change::yes ;
@@ -2595,7 +2595,7 @@ performer::needs_update (seq::number seqno) const
             else
             {
                 if (seqno == seq::all())
-                    result = mapper().needs_update();       /* check all    */
+                    result = set_mapper().needs_update();   /* check all    */
                 else
                     result = is_dirty_main(seqno);          /* check one    */
             }
@@ -2858,9 +2858,10 @@ performer::log_current_tempo ()
 }
 
 /**
- *  Also calls mapper().set_playscreen(), and notifies any performer::callbacks
- *  subscribers. Note that the setsmode values of normal and autoarm indicate
- *  to clear the play-set before adding the next set to it.
+ *  Also calls set_mapper().set_playscreen(), and notifies any
+ *  performer::callbacks subscribers. Note that the setsmode values of normal
+ *  and autoarm indicate to clear the play-set before adding the next set to
+ *  it.
  */
 
 screenset::number
@@ -2868,14 +2869,14 @@ performer::set_playing_screenset (screenset::number setno)
 {
     bool ok = ! done();
     if (ok)
-        ok = mapper().set_playing_screenset(setno);
+        ok = set_mapper().set_playing_screenset(setno);
 
     if (ok)
     {
         bool clearit = rc().is_setsmode_clear();    /* remove all patterns? */
         announce_exit(false);                       /* blank the device     */
         unset_queued_replace();                     /* clear queueing       */
-        mapper().fill_play_set(play_set(), clearit);
+        set_mapper().fill_play_set(play_set(), clearit);
         if (rc().is_setsmode_autoarm())
         {
             set_song_mute(mutegroups::action::off); /* unmute them all      */
@@ -2892,7 +2893,7 @@ performer::set_playing_screenset (screenset::number setno)
         announce_playscreen();                      /* inform control-out   */
         notify_set_change(setno, change::signal);   /* change::no           */
     }
-    return mapper().playscreen_number();
+    return playscreen_number();
 }
 
 /**
@@ -2906,7 +2907,7 @@ performer::reset_playset ()
 {
     announce_exit(false);                           /* blank the device     */
     unset_queued_replace();                         /* clear queueing       */
-    mapper().fill_play_set(play_set(), true);       /* true: clear it first */
+    set_mapper().fill_play_set(play_set(), true);       /* true: clear it first */
     if (rc().is_setsmode_autoarm())
         set_song_mute(mutegroups::action::off);     /* unmute them all      */
 
@@ -2940,7 +2941,7 @@ performer::paste_playscreen (screenset::number destination)
 
     if (result)
     {
-        result = mapper().copy_screenset(m_screenset_to_copy, destination);
+        result = set_mapper().copy_screenset(m_screenset_to_copy, destination);
         if (result)
             notify_set_change(destination, change::yes);
     }
@@ -2957,7 +2958,7 @@ performer::paste_playscreen (screenset::number destination)
 bool
 performer::remove_set (screenset::number setno)
 {
-    bool result = mapper().remove_set(setno);
+    bool result = set_mapper().remove_set(setno);
     if (result)
         notify_set_change(setno, change::removed);
 
@@ -2972,7 +2973,7 @@ performer::remove_set (screenset::number setno)
 bool
 performer::swap_sets (seq::number set0, seq::number set1)
 {
-    bool result = mapper().swap_sets(set0, set1);
+    bool result = set_mapper().swap_sets(set0, set1);
     if (result)
     {
         notify_set_change(set0);
@@ -3040,7 +3041,7 @@ performer::clear_all (bool /* clearplaylist */ )
 bool
 performer::clear_song ()
 {
-    bool result = ! mapper().any_in_edit() && ! m_is_busy;
+    bool result = ! set_mapper().any_in_edit() && ! m_is_busy;
     if (result)
     {
         m_is_busy = true;               /* { */
@@ -3050,7 +3051,7 @@ performer::clear_song ()
         m_undo_vect.clear();
         set_have_redo(false);
         m_redo_vect.clear();
-        mapper().reset();               /* clears and recreates empty set   */
+        set_mapper().reset();               /* clears and recreates empty set   */
         m_is_busy = false;              /* } */
         unmodify();                     /* new, we start afresh             */
         set_tick(0);                    /* force a "rewind"                 */
@@ -3072,7 +3073,7 @@ performer::clear_song ()
  *  We did it.  Note that std::shared_ptr does not support operator::->*, so
  *  we have to get() the pointer.
  *
- *  Another option is to call mapper().reset_sequences(pause, playback_mode()).
+ *  Another option is to call set_mapper().reset_sequences(pause, playback_mode()).
  *  This would result in a call to screenset::reset_sequences(), which does
  *  the same thing but also checks the sequence for being active.  Is it worth
  *  it?
@@ -3575,7 +3576,7 @@ performer::announce_pattern (seq::number seqno)
     seq::pointer s = get_sequence(seqno);
     bool result = bool(s);
     if (result)
-        result = announce_sequence(s, mapper().seq_to_offset(*s));
+        result = announce_sequence(s, set_mapper().seq_to_offset(*s));
 
     return result;
 }
@@ -3595,7 +3596,7 @@ performer::set_beats_per_measure (int bpm, bool user_change)
     if (result)
     {
         set_beats_per_bar(bpm);             /* also sets in jack_assistant  */
-        mapper().exec_set_function
+        set_mapper().exec_set_function
         (
             [bpm, user_change] (seq::pointer sp, seq::number /*sn*/)
             {
@@ -3627,7 +3628,7 @@ performer::set_beat_width (int bw, bool user_change)
     if (result)
     {
         set_beat_length(bw);            /* also sets in jack_assistant  */
-        mapper().exec_set_function
+        set_mapper().exec_set_function
         (
             [bw, user_change] (seq::pointer sp, seq::number /*sn*/)
             {
@@ -3992,7 +3993,7 @@ performer::set_right_tick_seq (midipulse tick, midipulse snap)
 /*
  * Old code:
  *
- *      bool result = mapper().color(seqno, c); if (result) modify();
+ *      bool result = set_mapper().color(seqno, c); if (result) modify();
  */
 
 bool
@@ -5385,7 +5386,7 @@ performer::play_all_sets (midipulse tick)
     {
         set_tick(tick);
         sequence::playback songmode = song_start_mode();
-        mapper().play_all_sets(tick, songmode, resume_note_ons());
+        set_mapper().play_all_sets(tick, songmode, resume_note_ons());
         m_master_bus->flush();                          /* flush MIDI buss  */
     }
 }
@@ -5534,7 +5535,7 @@ performer::convert_to_smf_0 (bool remove_old)
 void
 performer::all_notes_off ()
 {
-    mapper().all_notes_off();
+    set_mapper().all_notes_off();
     if (m_master_bus)
         m_master_bus->flush();                      /* flush MIDI buss  */
 }
@@ -5550,7 +5551,7 @@ performer::panic ()
     bool result = bool(m_master_bus);
     stop_playing();
     inner_stop();                                   /* force inner stop     */
-    mapper().panic();
+    set_mapper().panic();
     if (result)
     {
         /*
@@ -5757,7 +5758,7 @@ performer::get_max_extent () const
 {
     midipulse timelen = get_max_timestamp();
     midipulse triglen = get_max_trigger();
-    midipulse result = mapper().max_extent();
+    midipulse result = set_mapper().max_extent();
     if (triglen > result)
         result = triglen;
 
@@ -6228,7 +6229,7 @@ performer::move_triggers
 bool
 performer::move_triggers (bool direction)
 {
-    bool result = mapper().move_triggers(m_left_tick, m_right_tick, direction);
+    bool result = set_mapper().move_triggers(m_left_tick, m_right_tick, direction);
     if (result)
         notify_trigger_change(seq::all());
 
@@ -6307,7 +6308,7 @@ performer::push_trigger_undo (int track)
     m_undo_vect.push_back(track);                       /* stazed   */
     if (track == seq::all())
     {
-        mapper().push_trigger_undo();
+        set_mapper().push_trigger_undo();
     }
     else
     {
@@ -6340,7 +6341,7 @@ performer::pop_trigger_undo ()
         m_redo_vect.push_back(track);
         if (track == seq::all())
         {
-            mapper().pop_trigger_undo();
+            set_mapper().pop_trigger_undo();
         }
         else
         {
@@ -6368,7 +6369,7 @@ performer::pop_trigger_redo ()
         m_undo_vect.push_back(track);
         if (track == seq::all())
         {
-            mapper().pop_trigger_redo();
+            set_mapper().pop_trigger_redo();
         }
         else
         {
@@ -6786,7 +6787,7 @@ performer::sequence_playing_toggle (seq::number seqno)
          * For issue #89, sequence::toggle_playing() already announces the
          * sequence change, so don't do it here.
          *
-         * announce_sequence(s, mapper().seq_to_offset(*s));
+         * announce_sequence(s, set_mapper().seq_to_offset(*s));
          */
 
         /*
@@ -6862,7 +6863,7 @@ performer::replace_for_solo (seq::number seqno)
         );
         off_sequences();
         s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
-        announce_sequence(s, mapper().seq_to_offset(*s));
+        announce_sequence(s, set_mapper().seq_to_offset(*s));
     }
     return result;
 }
@@ -6904,14 +6905,14 @@ performer::song_recording (bool on, bool atstart)
         {
             if (atstart)
             {
-                mapper().song_recording_start               /* issue #44    */
+                set_mapper().song_recording_start               /* issue #44    */
                 (
                     pad().js_current_tick, song_record_snap()
                 );
             }
         }
         else
-            mapper().song_recording_stop(pad().js_current_tick);
+            set_mapper().song_recording_stop(pad().js_current_tick);
 
         send_onoff_event(midicontrolout::uiaction::song_record, on);
     }
@@ -6942,7 +6943,7 @@ performer::toggle_other_names (seq::number seqno, bool isshiftkey)
     if (result)
     {
         if (isshiftkey)
-            mapper().toggle_song_mute();
+            set_mapper().toggle_song_mute();
         else
         {
             /*
@@ -6955,7 +6956,7 @@ performer::toggle_other_names (seq::number seqno, bool isshiftkey)
              *      result = sequence_playing_toggle(seqno);
              */
 
-            mapper().toggle_song_mute(seqno);
+            set_mapper().toggle_song_mute(seqno);
         }
     }
     return result;
@@ -6976,7 +6977,7 @@ bool
 performer::sequence_playing_change (seq::number seqno, bool on)
 {
     bool qinprogress = midi_control_in().is_queue();
-    mapper().sequence_playscreen_change(seqno, on, qinprogress);
+    set_mapper().sequence_playscreen_change(seqno, on, qinprogress);
     return true;
 }
 
@@ -7460,7 +7461,7 @@ performer::set_mutes
     bool result = bits != original;
     if (result)
     {
-        result = mapper().set_mutes(gmute, bits);
+        result = set_mapper().set_mutes(gmute, bits);
         if (result)
         {
             change c = mutes().group_save_to_midi() ?
@@ -7513,7 +7514,7 @@ bool
 performer::apply_mutes (mutegroup::number group)
 {
     mutegroup::number oldgroup = mutes().group_selected();
-    bool result = mapper().apply_mutes(group);
+    bool result = set_mapper().apply_mutes(group);
     if (result)
     {
         send_mutes_events(group, oldgroup);
@@ -7525,7 +7526,7 @@ performer::apply_mutes (mutegroup::number group)
 bool
 performer::unapply_mutes (mutegroup::number group)
 {
-    bool result = mapper().unapply_mutes(group);
+    bool result = set_mapper().unapply_mutes(group);
     if (result)
     {
         midi_control_out().send_mutes_event(group, midicontrolout::action_off);
@@ -7542,7 +7543,7 @@ performer::unapply_mutes (mutegroup::number group)
 void
 performer::select_and_mute_group (mutegroup::number mg)
 {
-    mapper().select_and_mute_group(mg);
+    set_mapper().select_and_mute_group(mg);
     notify_mutes_change(mg, change::no);       /* ca 2023-11-06 */
 }
 
@@ -7550,7 +7551,7 @@ bool
 performer::toggle_mutes (mutegroup::number group)
 {
     mutegroup::number oldgroup = mutes().group_selected();
-    bool result = mapper().toggle_mutes(group);
+    bool result = set_mapper().toggle_mutes(group);
     if (result)
     {
         mutegroup::number newgroup = mutes().group_selected();
@@ -7564,7 +7565,7 @@ bool
 performer::toggle_active_mutes (mutegroup::number group)
 {
     mutegroup::number oldgroup = mutes().group_selected();
-    bool result = mapper().toggle_active_mutes(group);
+    bool result = set_mapper().toggle_active_mutes(group);
     if (result)
     {
         mutegroup::number newgroup = mutes().group_selected();
@@ -7586,7 +7587,7 @@ performer::apply_session_mutes ()
     if (result)
     {
         if (rc().song_start_auto())                 /* detect live vs song  */
-            result = mapper().trigger_count() == 0; /* triggers = song mode */
+            result = set_mapper().trigger_count() == 0; /* triggers = song mode */
         else
             result = ! rc().song_start_mode();      /* don't use in "song"  */
 
@@ -7599,7 +7600,7 @@ performer::apply_session_mutes ()
 bool
 performer::learn_mutes (mutegroup::number group)
 {
-    bool result = mapper().learn_mutes(true, group);    /* true == learn    */
+    bool result = set_mapper().learn_mutes(true, group);    /* true == learn    */
     if (result)
     {
         change c = mutes().group_save_to_midi() ?
@@ -7699,7 +7700,7 @@ performer::loop_control
      * We need to enforce a rule to use the playscreen offset when needed.
      */
 
-    seq::number seqno = mapper().play_seq(loopnumber);
+    seq::number seqno = set_mapper().play_seq(loopnumber);
     bool result = seqno >= 0;
     if (result && ! inverse)
     {
@@ -8185,11 +8186,11 @@ performer::automation_gmute
     if (opcontrol::allowed(d0, inverse))
     {
         if (a == automation::action::toggle)
-            mapper().toggle_group_mode();
+            set_mapper().toggle_group_mode();
         else if (a == automation::action::on)
-            mapper().group_mode(true);
+            set_mapper().group_mode(true);
         else if (a == automation::action::off)
-            mapper().group_mode(false);
+            set_mapper().group_mode(false);
     }
     return true;
 }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-11-02
+ * \updates       2023-11-08
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -831,7 +831,7 @@ rcfile::write ()
     write_string(file, "base-directory", mbasedir, true);
 
     file << "\n"
-"# Provides a flag and file-name for note-mapping. '\"\"' means no 'drums' file.\n"
+"# Provides a flag and file-name for note-maps. '\"\"' means no 'drums' file.\n"
 "# This file is used when the user invokes the note-conversion operation in\n"
 "# the pattern editor of a transposable pattern. Make the pattern temporarily\n"
 "# transposable to allow this operation.\n"
@@ -846,7 +846,7 @@ rcfile::write ()
      */
 
     file << "\n"
-"# Provides a flag and a file-name to allow modifying the palette using the file\n"
+"# Provides a flag and file-name to allow modifying the palette using the file\n"
 "# specified. Use '\"\"' to indicate no 'palette' file. If none or not active,\n"
 "# the internal palette is used.\n"
        ;
@@ -864,8 +864,8 @@ rcfile::write ()
 
     file << "\n"
 "# If specified, a style-sheet (e.g. 'qseq66.qss') is applied at startup.\n"
-"# This file must be located in Seq66's \"home\" directory now.\n"
-"# Note that style-sheet specification has been moved from the 'usr' file.\n"
+"# This file must be located in Seq66's \"home\" directory. Copy if needed.\n"
+"# Note that style-sheet specification has been removed from the 'usr' file.\n"
         ;
     write_file_status
     (
@@ -878,8 +878,8 @@ rcfile::write ()
      */
 
     file << "\n"
-"# Defines features of MIDI meta-event handling. Tempo events occur in the first\n"
-"# track (pattern 0), but one can move tempo elsewhere. It changes where tempo\n"
+"# Defines features of MIDI meta-event handling. Tempo events are in the first\n"
+"# track (pattern 0), but one can use them elsewhere. It changes where tempo\n"
 "# events are recorded. The default is 0, the maximum is 1023. A pattern must\n"
 "# exist at this number.\n"
 "\n[midi-meta-events]\n\n"
