@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2023-11-09
+ * \updates       2023-11-10
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -44,13 +44,9 @@
 #include "play/seq.hpp"                 /* seq66::seq extension class       */
 
 /**
- *  EXPERIMENTAL.
- *
  *  We now think it is better to have all 32 possible sets in place, and
  *  change add_set() to allow insertion of existing set-numbers.
  */
-
-#define USE_ALL_32_SET_SLOTS_IN_SETMASTER
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -269,7 +265,7 @@ public:
     screenset () = delete;
     screenset
     (
-        number setnum   = sm_number_none,
+        number setnum,  //   = sm_number_none,
         int rows        = c_default_rows,
         int columns     = c_default_columns
     );

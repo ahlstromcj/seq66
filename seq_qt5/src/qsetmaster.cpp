@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-09
+ * \updates       2023-11-10
  * \license       GNU GPLv2 or above
  *
  *  The set-master controls the existence and usage of all sets.  For control
@@ -362,8 +362,13 @@ qsetmaster::slot_table_click_ex
     if (rows > 0 && row >= 0 && row < rows)
     {
         current_row(row);
-        ui->m_button_down->setEnabled(true);
-        ui->m_button_up->setEnabled(true);
+
+        // TEMPORARY COMMENTING
+        if (rc().investigate())
+        {
+            ui->m_button_down->setEnabled(true);
+            ui->m_button_up->setEnabled(true);
+        }
         ui->m_button_delete->setEnabled(row > 0);
     }
 }
@@ -538,6 +543,9 @@ qsetmaster::move_helper (int oldrow, int newrow)
 /**
  *  Handles the "Delete" button.  We do not allow deleting of set 0.  This
  *  causes too many issues.
+ *
+ *  We're going to make this just clear the screenset, by replacing it with a
+ *  new (empty) screenset.
  */
 
 void
@@ -570,7 +578,9 @@ qsetmaster::slot_delete ()
 }
 
 /**
- *  Handles set changes from other dialogs.
+ *  Handles set changes from other dialogs. We have a quandary: now
+ *  we don't necessarily change the current row, even when "removing"
+ *  (actually just clearing now) a screenset..
  */
 
 bool
@@ -585,6 +595,11 @@ qsetmaster::on_set_change (screenset::number setno, performer::change modtype)
             m_current_set = setno;
 
         (void) initialize_table();      /* redraw the set-list (set-table)  */
+        set_needs_update();             /* cause set-buttons to redraw      */
+    }
+    else
+    {
+        result = initialize_table();    /* redraw the set-list (set-table)  */
         set_needs_update();             /* cause set-buttons to redraw      */
     }
     return result;

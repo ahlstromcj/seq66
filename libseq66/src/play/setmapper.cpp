@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2023-10-05
+ * \updates       2023-11-10
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -814,17 +814,7 @@ setmapper::copy_triggers
 bool
 setmapper::remove_set (screenset::number setno)
 {
-    bool result = false;
-    if (setno > 0)
-    {
-        setmaster::container::size_type count = sets().erase(setno);
-        if (setno == m_playscreen)
-            result = set_playscreen(0);
-
-        if (result)
-            result = count > 0;
-    }
-    return result;
+    return master().remove_set(setno);
 }
 
 /*

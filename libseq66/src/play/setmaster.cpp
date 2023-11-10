@@ -77,9 +77,8 @@ setmaster::setmaster (int setrows, int setcolumns) :
 bool
 setmaster::reset ()
 {
-    clear();
-#if defined USE_ALL_32_SET_SLOTS_IN_SETMASTER
     bool result = false;
+    clear();
     for (int i = 0; i < Size(); ++i)
     {
         auto setp = add_set(screenset::number(i));
@@ -92,13 +91,6 @@ setmaster::reset ()
         auto setp = add_set(screenset::limit());    /* create the dummy set */
         result = setp != m_container.end();
     }
-#else
-    auto setp = add_set(0);
-    bool result = setp != m_container.end();
-    if (result)
-        (void) add_set(screenset::limit());         /* create the dummy set */
-#endif
-
     return result;
 }
 
@@ -187,8 +179,7 @@ setmaster::index_to_grid (screenset::number setno, int & row, int & column)
  *  compiler deletes these functions!  Then, calling std::make_pair() results
  *  in very mysterious error messages.
  *
- *  If USE_ALL_32_SET_SLOTS_IN_SETMASTER is defined, we remove any existing
- *  set at the given set number, and add a new one.
+ *  If remove any existing set at the given set number, and add a new one.
  *
  *  Auto types:
  *
@@ -199,10 +190,9 @@ setmaster::index_to_grid (screenset::number setno, int & row, int & column)
 setmaster::container::iterator
 setmaster::add_set (screenset::number setno)
 {
-    screenset newset(setno, m_screenset_rows, m_screenset_columns);
-#if defined USE_ALL_32_SET_SLOTS_IN_SETMASTER
     (void) m_container.erase(setno);            /* remove the existing item */
-#endif
+
+    screenset newset(setno, m_screenset_rows, m_screenset_columns);
     auto setpair = std::make_pair(setno, newset);
     auto resultpair = m_container.insert(setpair);
     if (resultpair.second)
@@ -211,6 +201,29 @@ setmaster::add_set (screenset::number setno)
             m_highest_set = setno;
     }
     return resultpair.first;
+}
+
+/**
+ *  Removes a set, replacing it with an empty screenset.
+ *  This basically just clears the set, and should (must check) remove
+ *  it's sequences.
+ */
+
+bool
+setmaster::remove_set (screenset::number setno)
+{
+    auto item = find_by_value(setno);
+    bool result = item != m_container.end();
+    if (result)
+    {
+        (void) m_container.erase(item);
+
+        screenset newset(setno, m_screenset_rows, m_screenset_columns);
+        auto setpair = std::make_pair(setno, newset);
+        auto resultpair = m_container.insert(setpair);
+        result = resultpair.second;
+    }
+    return result;
 }
 
 screenset &
@@ -340,22 +353,9 @@ setmaster::exec_set_function (screenset::slothandler p)
  */
 
 setmaster::container::iterator
-setmaster::find_by_value (screenset::number setno) // const
+setmaster::find_by_value (screenset::number setno)
 {
-#if defined USE_ALL_32_SET_SLOTS_IN_SETMASTER
     return m_container.find(setno);
-#else
-    auto result = m_container.end();
-    for (auto it = m_container.begin(); it != m_container.end(); ++it)
-    {
-        if (it->second.set_number() == setno)
-        {
-            result = it;
-            break;
-        }
-    }
-    return result;
-#endif
 }
 
 /**
@@ -377,12 +377,10 @@ setmaster::swap_sets (screenset::number set0, screenset::number set1)
     bool result = item0 != m_container.end() && item1 != m_container.end();
     if (result)
     {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         printf("BEFORE swap\n");
         show(true, 8);
 #endif
-
-#if defined USE_ALL_32_SET_SLOTS_IN_SETMASTER
         screenset copy0{item0->second};
         screenset copy1{item1->second};
         copy0.change_set_number(set1);              /* also changes seq #s  */
@@ -399,13 +397,7 @@ setmaster::swap_sets (screenset::number set0, screenset::number set1)
             resultpair = m_container.insert(setpair);
             result = resultpair.second;
         }
-#else
-        std::swap(item0->second, item1->second);
-        item0->second.change_set_number(set1);      /* also changes seq #s  */
-        item1->second.change_set_number(set0);      /* also changes seq #s  */
-#endif
-
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         printf("AFTER swap\n");
         show(true, 8);
 #endif

@@ -5,8 +5,10 @@ Chris Ahlstrom
 Misc:
 
     -   Mute-master modifications are not setting MIDI modify flag.
-    -   Test the Set Master Up, Down, and Delete buttons. Want a
-        Clear button too?
+    -   Test the Set Master Up, Down, and Delete buttons. 
+        Disabled Up and Down because need to investigate a crash when
+        qsmainwnd::on_set_change() is called.
+        File / New does not clear the Set Master.
     -   Make sure the grid-mode clear and double operations work properly.
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.

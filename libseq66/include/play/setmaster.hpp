@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2021-11-09
+ * \updates       2021-11-10
  * \license       GNU GPLv2 or above
  *
  *  The setmaster class is meant to encapsulate the sets and their layout,
@@ -267,13 +267,8 @@ private:
 
     bool reset ();
     container::iterator add_set (screenset::number setno);
-    container::iterator find_by_value (screenset::number setno);    // const
-
-    bool remove_set (screenset::number setno)
-    {
-        container::size_type count = m_container.erase(setno);
-        return count > 0;
-    }
+    container::iterator find_by_value (screenset::number setno);
+    bool remove_set (screenset::number setno);
 
     /**
      *  Clamps a screenset number to the range of 0 to one less than
