@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-10-31
+ * \updates       2023-11-09
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -3415,7 +3415,7 @@ read_midi_file
                 rc().add_recent_file(fn);       /* Oli Kester's Kepler34!   */
             }
             p.announce_playscreen();            /* tell MIDI control out    */
-            file_message("Read MIDI file", fn);
+            file_message("Read", fn);
         }
         else
         {

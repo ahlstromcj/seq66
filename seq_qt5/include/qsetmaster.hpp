@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-11
- * \updates       2023-11-08
+ * \updates       2023-11-09
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing screen-sets and sequences, and
@@ -139,11 +139,7 @@ private:
         return result;
     }
 
-    void set_needs_update ()
-    {
-        m_needs_update = true;
-    }
-
+    void set_needs_update ();       /* used for GUI updates and file mods   */
     void create_set_buttons ();
     void handle_set (int setno);
     void delete_set (int setno);

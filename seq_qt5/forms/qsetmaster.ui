@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>845</width>
-    <height>382</height>
+    <height>428</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,7 +31,7 @@
      <x>10</x>
      <y>10</y>
      <width>778</width>
-     <height>364</height>
+     <height>412</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
@@ -46,7 +46,7 @@
       <property name="minimumSize">
        <size>
         <width>400</width>
-        <height>200</height>
+        <height>248</height>
        </size>
       </property>
       <property name="maximumSize">
@@ -54,6 +54,12 @@
         <width>400</width>
         <height>340</height>
        </size>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
       </property>
       <property name="alternatingRowColors">
        <bool>true</bool>
@@ -69,6 +75,12 @@
       </attribute>
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>18</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>21</number>
       </attribute>
       <row/>
       <row/>

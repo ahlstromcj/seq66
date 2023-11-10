@@ -101,10 +101,10 @@ seq::activate (sequence * s, number seqno)
 }
 
 /**
- *  Sets or unsets the active state of the given pattern/sequence number.
- *  If setting it active, the sequence::seq_number() setter is called. It won't
- *  modify the sequence's internal copy of the sequence number if it has already
- *  been set.
+ *  Sets or unsets the active state of the given pattern/sequence number.  If
+ *  setting it active, the sequence::seq_number() setter is called. It won't
+ *  modify the sequence's internal copy of the sequence number if it has
+ *  already been set.
  *
  * \param seqno
  *      Provides the prospective sequence number.

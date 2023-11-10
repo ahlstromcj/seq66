@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>895</width>
-    <height>433</height>
+    <height>435</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -992,7 +992,7 @@ the configured MIDI control comes in.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>8</x>
@@ -1122,13 +1122,13 @@ Read-only.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>680</x>
      <y>344</y>
      <width>137</width>
-     <height>65</height>
+     <height>69</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
@@ -1155,7 +1155,7 @@ Song layout.</string>
     <item row="1" column="0">
      <widget class="QLabel" name="label_Auto_Blank_1">
       <property name="text">
-       <string> </string>
+       <string/>
       </property>
      </widget>
     </item>
@@ -1174,7 +1174,7 @@ also load the next song and keep going!)</string>
     <item row="2" column="0" rowspan="2">
      <widget class="QLabel" name="label_Auto_Blank_2">
       <property name="text">
-       <string> </string>
+       <string/>
       </property>
      </widget>
     </item>

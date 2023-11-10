@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-08
+ * \updates       2023-11-10
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -5316,6 +5316,8 @@ performer::auto_play_stop (midipulse tick)
     bool result = m_max_extent > 0 && tick >= m_max_extent && song_mode();
 #else
     bool result = m_max_extent > 0 && tick >= m_max_extent;
+    if (result)
+        result = playlist_active();
 #endif
     if (result)
     {

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-10-05
+ * \updates       2022-11-09
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -80,7 +80,7 @@ screenset::screenset (screenset::number setnum, int rows, int columns) :
     m_set_number        (setnum),
     m_set_offset        (m_set_number * m_set_size),
     m_set_maximum       (m_set_offset + m_set_size),
-    m_set_name          (usable() ? "New" : ""),
+    m_set_name          (usable() ? "New" : "Empty"),
     m_is_playscreen     (false),
     m_sequence_high     (0)
 {
@@ -97,12 +97,33 @@ screenset::screenset (screenset::number setnum, int rows, int columns) :
 void
 screenset::change_set_number (screenset::number setno)
 {
-    int seqno = setno * m_set_size;
+    int seq_offset = setno * m_set_size;
     m_set_number = setno;
-    m_set_offset = seqno;
+    m_set_offset = seq_offset;
     m_set_maximum = m_set_offset + m_set_size;
+
+#if defined SEQ66_PLATFORM_DEBUG
+    printf("Set %d, offset %d, max %d\n", setno, seq_offset, m_set_maximum);
+#endif
+
+#if defined USE_ALL_32_SET_SLOTS_IN_SETMASTER
+    for (auto & s : m_container)            /* renumber all the sequences   */
+    {
+        seq::number oldno = s.seq_number();
+        if (oldno != seq::unassigned())     /* inactive sequence?           */
+        {
+            s.change_seq_number(seq_offset);
+#if defined SEQ66_PLATFORM_DEBUG
+            seq::number newno = s.seq_number();
+            printf("  Seq #%d --> seq #%d\n", oldno, newno);
+#endif
+        }
+        ++seq_offset;
+    }
+#else
     for (auto & s : m_container)            /* renumber all the sequences   */
         s.change_seq_number(seqno++);       /* works only if seq is active  */
+#endif
 }
 
 void
@@ -1381,15 +1402,20 @@ screenset::learn_bits (midibooleans & bits)
 }
 
 std::string
-screenset::to_string (bool showseqs) const
+screenset::to_string (bool showseqs, int limit) const
 {
     std::ostringstream result;
     int index = 0;
     result << "Set " << set_number() << " ('" << name() << "')" << std::endl;
     if (showseqs)
     {
+        int counter = 0;
         for (auto & s : m_container)
+        {
             result << s.to_string(index++);
+            if (++counter == limit)
+                break;
+        }
     }
     return result.str();
 }

@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2023-04-24
+ * \updates       2023-11-09
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -42,6 +42,15 @@
 #include <vector>                       /* std::vector<>                    */
 
 #include "play/seq.hpp"                 /* seq66::seq extension class       */
+
+/**
+ *  EXPERIMENTAL.
+ *
+ *  We now think it is better to have all 32 possible sets in place, and
+ *  change add_set() to allow insertion of existing set-numbers.
+ */
+
+#define USE_ALL_32_SET_SLOTS_IN_SETMASTER
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -167,7 +176,7 @@ private:
 
     /**
      *  Indicates that no set number has been assigned.  All valid set numbers
-     *  are greater than 0.  See the unassigned() function.
+     *  are greater than or equal to 0.  See the unassigned() function.
      */
 
     static const int sm_number_none = (-1);
@@ -566,7 +575,7 @@ private:
     void unqueue (seq::number hotseq);
     void clear ();
     void initialize (int rows, int columns);
-    std::string to_string (bool showseqs = true) const;
+    std::string to_string (bool showseqs = true, int limit = 0) const;
     void show (bool showseqs = true) const;
     void play (midipulse tick, sequence::playback mode, bool resumenoteons);
     bool color (seq::number seqno, int c);

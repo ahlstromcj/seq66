@@ -1,4 +1,4 @@
-# README for Seq66 0.99.11 2023-11-08
+# README for Seq66 0.99.11 2023-11-10
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -92,6 +92,7 @@ Windows, and using a conventional source tarball.
             -   PPQN setting issue causing slow/fast playback.
             -   Segfaults due to not stopping playback before loading
                 the next song or basing calculations on missing values..
+        *   Fixing the botch of the Set Master tab.
         *   Fixed app exiting unceremoniously if "quiet" is set.
         *   Fixed minor issue in Song zoom with 1920 PPQN.
         *   Fixed odd bug breaking MIDI-control-out (display).

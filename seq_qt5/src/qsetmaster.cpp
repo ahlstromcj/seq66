@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-08
+ * \updates       2023-11-09
  * \license       GNU GPLv2 or above
  *
  *  The set-master controls the existence and usage of all sets.  For control
@@ -55,11 +55,17 @@
 #endif
 
 /**
+ *  For correcting the width of the set table.  Otherwise clicking on the
+ *  set-name obscures the first column. Weird.
+ */
+
+static const int c_set_table_fix    = -12;
+
+/**
  *  Specifies the current hardwired value for set_row_heights().
  */
 
 static const int c_table_row_height = 18;
-static const int c_table_fix        = 48;
 
 /*
  * Don't document the namespace.
@@ -188,12 +194,12 @@ qsetmaster::setup_table ()
      * ui->m_set_table->setSelectionMode(QAbstractItemView::SingleSelection);
      */
 
-    int w = ui->m_set_table->width();
-    set_column_widths(w + c_table_fix);
-
     const int rows = ui->m_set_table->rowCount();
     for (int r = 0; r < rows; ++r)
         ui->m_set_table->setRowHeight(r, c_table_row_height);
+
+    int w = ui->m_set_table->width();
+    set_column_widths(w + c_set_table_fix);
 
     connect
     (
@@ -215,9 +221,9 @@ qsetmaster::setup_table ()
 void
 qsetmaster::set_column_widths (int total_width)
 {
-    ui->m_set_table->setColumnWidth(0, int(0.15f * total_width));
-    ui->m_set_table->setColumnWidth(1, int(0.15f * total_width));
-    ui->m_set_table->setColumnWidth(2, int(0.70f * total_width));
+    ui->m_set_table->setColumnWidth(0, int(0.10f * total_width));
+    ui->m_set_table->setColumnWidth(1, int(0.10f * total_width));
+    ui->m_set_table->setColumnWidth(2, int(0.80f * total_width));
 }
 
 void
@@ -235,19 +241,26 @@ qsetmaster::initialize_table ()
 {
     bool result = false;
     m_table_initializing = true;
-    int rows = cb_perf().screenset_count();
-    ui->m_set_table->clearContents();
+    int rows = setmaster::Size();   /* cb_perf().screenset_count()  */
     if (rows > 0)
     {
-        screenset::sethandler setfunc =
-        (
-            std::bind
+        ui->m_set_table->clearContents();
+        for (int r = 0; r < rows; ++r)
+            ui->m_set_table->setRowHeight(r, c_table_row_height);
+
+        int active = cb_perf().screenset_count();
+        if (active > 0)
+        {
+            screenset::sethandler setfunc =
             (
-                &qsetmaster::set_line, this,
-                std::placeholders::_1, std::placeholders::_2
-            )
-        );
-        (void) cb_perf().exec_set_function(setfunc);
+                std::bind
+                (
+                    &qsetmaster::set_line, this,
+                    std::placeholders::_1, std::placeholders::_2
+                )
+            );
+            (void) cb_perf().exec_set_function(setfunc);
+        }
     }
     m_table_initializing = false;
     return result;
@@ -301,10 +314,10 @@ qsetmaster::set_line (screenset & sset, screenset::number row)
     QTableWidgetItem * qtip = cell(row, column_id::set_number);
     if (not_nullptr(qtip))
     {
-        int setno = int(sset.set_number());
+        int setno = int(row);                   // int(sset.set_number());
         std::string setnostr = std::to_string(setno);
         qtip->setText(qt(setnostr));
-        qtip = cell(row, column_id::set_name);  // CLEARS sset.name() !!!!
+        qtip = cell(row, column_id::set_name);  // clears sset.name()!
         if (not_nullptr(qtip))
         {
             const std::string & setname = sset.name();
@@ -320,6 +333,18 @@ qsetmaster::set_line (screenset & sset, screenset::number row)
         }
     }
     return result;
+}
+
+/**
+ *  Indicates that the MIDI file needs to be updated (saved) and
+ *  the GUI needs to be refreshed.
+ */
+
+void
+qsetmaster::set_needs_update ()
+{
+    m_needs_update = true;
+    m_main_window->enable_save();
 }
 
 /**
