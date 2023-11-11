@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-10
+ * \updates       2023-11-11
  * \license       GNU GPLv2 or above
  *
  *  The set-master controls the existence and usage of all sets.  For control
@@ -119,7 +119,6 @@ qsetmaster::qsetmaster
         ui->m_set_name_text, SIGNAL(textEdited(const QString &)),
         this, SLOT(slot_set_name())
     );
-
     ui->m_button_down->setEnabled(false);
     ui->m_button_up->setEnabled(false);
     ui->m_button_delete->setEnabled(false);
@@ -362,13 +361,8 @@ qsetmaster::slot_table_click_ex
     if (rows > 0 && row >= 0 && row < rows)
     {
         current_row(row);
-
-        // TEMPORARY COMMENTING
-        if (rc().investigate())
-        {
-            ui->m_button_down->setEnabled(true);
-            ui->m_button_up->setEnabled(true);
-        }
+        ui->m_button_down->setEnabled(true);
+        ui->m_button_up->setEnabled(true);
         ui->m_button_delete->setEnabled(row > 0);
     }
 }
@@ -457,10 +451,14 @@ qsetmaster::handle_set (int setno)
 
         /*
          *  Highlight the current set in the list.  Find the row based on set
-         *  number.
+         *  number. Also show its patterns.
          */
 
         ui->m_set_table->selectRow(cb_perf().screenset_index(setno));
+        ui->m_set_contents_text->setPlainText
+        (
+            qt(cb_perf().set_to_string(setno))
+        );
         set_needs_update();
     }
 }
@@ -564,7 +562,11 @@ qsetmaster::slot_delete ()
                 int setno = string_to_int(snstr);
                 if (setno > 0)
                 {
-                    if (cb_perf().remove_set(setno))
+                    /*
+                     * if (cb_perf().remove_set(setno))
+                     */
+
+                    if (cb_perf().clear_set(setno))
                     {
                         if (setno == m_current_set)
                             m_current_set = seq::unassigned();

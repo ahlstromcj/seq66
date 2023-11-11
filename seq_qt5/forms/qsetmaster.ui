@@ -146,7 +146,7 @@
          <string>Show a condensed list of sets and their patterns.</string>
         </property>
         <property name="text">
-         <string>Show All Set Tracks</string>
+         <string>Show Sets Tracks</string>
         </property>
        </widget>
       </item>
@@ -196,10 +196,10 @@
       <item row="2" column="3">
        <widget class="QPushButton" name="m_button_delete">
         <property name="toolTip">
-         <string>Deletes the selected set. No undo! Careful!</string>
+         <string>Clears the selected set. No undo! Careful!</string>
         </property>
         <property name="text">
-         <string>Delete Selected Set</string>
+         <string>Clear Selected Set</string>
         </property>
        </widget>
       </item>

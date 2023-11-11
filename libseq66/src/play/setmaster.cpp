@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2023-11-10
+ * \updates       2023-11-11
  * \license       GNU GPLv2 or above
  *
  *  Implements setmaster.  The difference between the setmaster and setmapper
@@ -226,6 +226,28 @@ setmaster::remove_set (screenset::number setno)
     return result;
 }
 
+/**
+ *  Clears a set in place, effectively deleting it.
+ */
+
+bool
+setmaster::clear_set (screenset::number setno)
+{
+    auto item = find_by_value(setno);
+    bool result = item != m_container.end();
+    if (result)
+    {
+        item->second.clear();
+        (void) item->second.name("");
+    }
+    return result;
+}
+
+/**
+ *  Returns a reference to a screen, if found. Otherise, a reference to an
+ *  unusable dummy is returned.
+ */
+
 screenset &
 setmaster::screen (screenset::number setno)
 {
@@ -343,13 +365,6 @@ setmaster::exec_set_function (screenset::slothandler p)
  *  Does a brute-force lookup of the given set number, obtained by screenset
  *  :: set_number().  We must use the long form of the for loop here, as far
  *  as we can tell.
- *
- *  ca 2023-11-09 Why the heck not just use std::map::find()?
- *
- *  We could also do a find() on the map and return a dummy screenset, but
- *  the setmaster::swap_sets() function requires this brute-force lookup.
- *
- *  ca 2023-11-09 Not true!
  */
 
 setmaster::container::iterator
@@ -365,9 +380,14 @@ setmaster::find_by_value (screenset::number setno)
  *      longer a correspondence between the key and the actual set-number
  *      value.
  *
- * TODO: copy the screensets, delete them, then reinsert them with their new
- * keys.
+ *      Also, the old method would lead to a core dump when the
+ *      qsmainwnd::on_set_change() function would get called. Valgrind was
+ *      no help in figuring this out.
+ *
+ *      The new method changes the pair of sets in place, and seems to work.
  */
+
+#if defined USE_OLD_CODE
 
 bool
 setmaster::swap_sets (screenset::number set0, screenset::number set1)
@@ -377,10 +397,6 @@ setmaster::swap_sets (screenset::number set0, screenset::number set1)
     bool result = item0 != m_container.end() && item1 != m_container.end();
     if (result)
     {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("BEFORE swap\n");
-        show(true, 8);
-#endif
         screenset copy0{item0->second};
         screenset copy1{item1->second};
         copy0.change_set_number(set1);              /* also changes seq #s  */
@@ -397,12 +413,36 @@ setmaster::swap_sets (screenset::number set0, screenset::number set1)
             resultpair = m_container.insert(setpair);
             result = resultpair.second;
         }
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("AFTER swap\n");
-        show(true, 8);
-#endif
     }
     return result;
+}
+
+#else
+
+bool
+setmaster::swap_sets (screenset::number set0, screenset::number set1)
+{
+    screenset & copy0 = screen(set0);
+    screenset & copy1 = screen(set1);
+    bool result = copy0.usable() && copy1.usable();
+    if (result)
+    {
+        screenset tempsrc = screen(set0);
+        copy0.change_set_number(set1);              /* also changes seq #s  */
+        copy1.change_set_number(set0);              /* also changes seq #s  */
+        copy0.copy_patterns(copy1);
+        copy1.copy_patterns(tempsrc);
+    }
+    return result;
+}
+
+#endif
+
+std::string
+setmaster::set_to_string (screenset::number setno) const
+{
+    const screenset & sc = screen(setno);
+    return sc.to_string();
 }
 
 std::string

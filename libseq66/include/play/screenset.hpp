@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2023-11-10
+ * \updates       2023-11-11
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence

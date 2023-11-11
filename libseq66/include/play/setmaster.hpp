@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2021-11-10
+ * \updates       2021-11-11
  * \license       GNU GPLv2 or above
  *
  *  The setmaster class is meant to encapsulate the sets and their layout,
@@ -181,6 +181,7 @@ public:
         return m_swap_coordinates;
     }
 
+    std::string set_to_string (screenset::number setno) const;
     std::string sets_to_string (bool showseqs = true, int limit = 0) const;
     void show (bool showseqs = true, int limit = 0) const;
 
@@ -269,6 +270,7 @@ private:
     container::iterator add_set (screenset::number setno);
     container::iterator find_by_value (screenset::number setno);
     bool remove_set (screenset::number setno);
+    bool clear_set (screenset::number setno);
 
     /**
      *  Clamps a screenset number to the range of 0 to one less than

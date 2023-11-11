@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2023-10-05
+ * \updates       2023-11-11
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -856,7 +856,13 @@ public:
 
     bool is_screenset_available (screenset::number setno) const
     {
-        return master().is_screenset_available(setno);
+        /*
+         * Now all 32 slots have a screenset, but inactive vs. active.
+         *
+         * return master().is_screenset_available(setno);
+         */
+
+         return master().is_screenset_active(setno);
     }
 
     /**
@@ -938,7 +944,15 @@ private:
         return master().find_by_value(setno);
     }
 
-    bool remove_set (screenset::number setno);
+    bool remove_set (screenset::number setno)
+    {
+        return master().remove_set(setno);
+    }
+
+    bool clear_set (screenset::number setno)
+    {
+        return master().clear_set(setno);
+    }
 
     mutegroup::number clamp_group (mutegroup::number group) const
     {

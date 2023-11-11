@@ -80,7 +80,7 @@ screenset::screenset (screenset::number setnum, int rows, int columns) :
     m_set_number        (setnum),
     m_set_offset        (m_set_number * m_set_size),
     m_set_maximum       (m_set_offset + m_set_size),
-    m_set_name          ("Empty"),          /* usable() ? "New" : "Empty"   */
+    m_set_name          ("empty"),          /* usable() ? "New" : "Empty"   */
     m_is_playscreen     (false),
     m_sequence_high     (0)
 {
@@ -488,7 +488,14 @@ screenset::copy_patterns (const screenset & source)
     if (result)
     {
         m_set_name = source.m_set_name;
-        m_set_name += " copy";
+
+        /*
+         * Too goofy when moving a set up or down, since our method now
+         * uses copy_patterns() for the prevention of segfaults.
+         *
+         * m_set_name += "'";
+         */
+
         clear();                /* clear our sequences, init the container  */
         int srci = int(source.offset());
         int destend = int(offset()) + set_size();

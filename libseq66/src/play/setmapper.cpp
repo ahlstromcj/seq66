@@ -214,11 +214,11 @@ setmapper::copy_screenset (screenset::number srcset, screenset::number destset)
     screenset & dest = master().screen(destset);
     bool result = src.usable() && dest.usable();
     if (result)
+    {
         result = dest.copy_patterns(src);
-
-    if (result)
-        recount_sequences();
-
+        if (result)
+            recount_sequences();
+    }
     return result;
 }
 
@@ -809,12 +809,6 @@ setmapper::copy_triggers
                 setiterator->second.copy_triggers(lefttick, distance, seqno);
         }
     }
-}
-
-bool
-setmapper::remove_set (screenset::number setno)
-{
-    return master().remove_set(setno);
 }
 
 /*

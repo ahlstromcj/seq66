@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-11-06
+ * \updates       2023-11-11
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1199,6 +1199,11 @@ public:
     bool get_settings (const rcsettings & rcs, const usrsettings & usrs);
     bool put_settings (rcsettings & rcs, usrsettings & usrs);
 
+    std::string set_to_string (screenset::number setno) const
+    {
+        return set_master().set_to_string(setno);
+    }
+
     std::string sets_to_string () const
     {
         return set_master().sets_to_string();
@@ -2224,6 +2229,7 @@ public:
     bool finish_move (seq::number seqno);
     bool fix_sequence (seq::number seqno, fixparameters & params);
     bool remove_set (screenset::number setno);
+    bool clear_set (screenset::number setno);
     bool swap_sets (seq::number set0, seq::number set1);
 
     bool can_paste () const
@@ -3205,6 +3211,7 @@ public:         /* GUI-support functions */
 
     /**
      *  Tests to see if the screen-set is available... does it exist?
+     *  Is it usable() [i.e. not a dummy screenset]?
      *
      * \param setno
      *      The number of the screen-set to check, re 0.

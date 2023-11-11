@@ -1,15 +1,12 @@
 TO DO for Seq66 0.99.11
 Chris Ahlstrom
-2019-04-13 to 2023-11-10
+2019-04-13 to 2023-11-11
 
 Misc:
 
     -   Mute-master modifications are not setting MIDI modify flag.
-    -   Test the Set Master Up, Down, and Delete buttons. 
-        Disabled Up and Down because need to investigate a crash when
-        qsmainwnd::on_set_change() is called.
-        File / New does not clear the Set Master.
     -   Make sure the grid-mode clear and double operations work properly.
+    -   Adding a pattern to an empty set does not show up in Set Master.
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recorded measures

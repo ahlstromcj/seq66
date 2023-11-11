@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-10
+ * \updates       2023-11-11
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2959,6 +2959,23 @@ bool
 performer::remove_set (screenset::number setno)
 {
     bool result = set_mapper().remove_set(setno);
+    if (result)
+        notify_set_change(setno, change::removed);
+
+    return result;
+}
+
+/**
+ *  Clears the given screenset, then notifies all subscribers.
+ *
+ * \return
+ *      Returns true if the set was found (and cleared).
+ */
+
+bool
+performer::clear_set (screenset::number setno)
+{
+    bool result = set_mapper().clear_set(setno);
     if (result)
         notify_set_change(setno, change::removed);
 
