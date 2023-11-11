@@ -2653,7 +2653,7 @@ public:
 
     screenset::number playscreen_number () const
     {
-        return set_mapper().playscreen_number();    // not in setmaster purview!
+        return set_mapper().playscreen_number();
     }
 
     seq::number playscreen_offset () const

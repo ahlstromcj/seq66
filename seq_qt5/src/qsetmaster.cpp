@@ -107,6 +107,7 @@ qsetmaster::qsetmaster
     m_current_row           (seq::unassigned()),
     m_current_row_count     (cb_perf().screenset_count()),
     m_needs_update          (true),
+    m_trigger_mode          (false),
     m_table_initializing    (true)
     /*
      * m_is_permanent       (embedded)
@@ -209,6 +210,19 @@ qsetmaster::setup_table ()
     (
         ui->m_set_table, SIGNAL(cellChanged(int, int)),
         this, SLOT(slot_cell_changed(int, int))
+    );
+    ui->m_button_toggle_trigger_mode->setCheckable(true);
+    ui->m_button_toggle_trigger_mode->setChecked(false);
+    connect
+    (
+        ui->m_button_toggle_trigger_mode, SIGNAL(clicked()),
+        this, SLOT(slot_toggle_trigger_mode())
+    );
+    ui->m_button_set_0->setEnabled(false);
+    connect
+    (
+        ui->m_button_set_0, SIGNAL(clicked()),
+        this, SLOT(slot_set_0())
     );
 }
 
@@ -364,6 +378,8 @@ qsetmaster::slot_table_click_ex
         ui->m_button_down->setEnabled(true);
         ui->m_button_up->setEnabled(true);
         ui->m_button_delete->setEnabled(row > 0);
+        ui->m_set_number_text->setText(qt(std::to_string(row)));
+        ui->m_set_name_text->setText(qt(cb_perf().set_name(row)));
     }
 }
 
@@ -387,6 +403,20 @@ qsetmaster::slot_cell_changed (int row, int column)
             }
         }
     }
+}
+
+void
+qsetmaster::slot_toggle_trigger_mode ()
+{
+    m_trigger_mode = ! m_trigger_mode;
+    ui->m_button_set_0->setEnabled(m_trigger_mode);
+}
+
+void
+qsetmaster::slot_set_0 ()
+{
+    if (m_trigger_mode)
+        m_main_window->slot_set_home();
 }
 
 void
@@ -459,6 +489,15 @@ qsetmaster::handle_set (int setno)
         (
             qt(cb_perf().set_to_string(setno))
         );
+
+        /*
+         *  If trigger-mode is active, then update the playscreen to that
+         *  screenset.
+         */
+
+        if (m_trigger_mode)
+            m_main_window->update_bank(setno);
+
         set_needs_update();
     }
 }

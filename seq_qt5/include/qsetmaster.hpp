@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-11
- * \updates       2023-11-09
+ * \updates       2023-11-11
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing screen-sets and sequences, and
@@ -188,6 +188,8 @@ private slots:
         int row, int /*column*/, int /*prevrow*/, int /*prevcolumn*/
     );
     void slot_cell_changed (int row, int column);
+    void slot_toggle_trigger_mode ();
+    void slot_set_0 ();
 
 private:
 
@@ -247,6 +249,12 @@ private:
      */
 
     mutable bool m_needs_update;
+
+    /**
+     *  Enables using the buttons to select the playing screenset.
+     */
+
+    bool m_trigger_mode;
 
     /**
      *  EXPERIMENT

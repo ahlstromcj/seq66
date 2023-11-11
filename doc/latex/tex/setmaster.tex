@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-01-13
-% \update      2020-03-12
+% \update      2023-11-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -20,7 +20,10 @@
 
    The \textbf{Set Master} is a way to get a global view of all the screensets
    in a \textsl{Seq66} MIDI file, and to be able to do some simple operations
-   (movement, naming, etc.) with the sets.  It is still a work in progress.
+   (movement, naming, etc.) with the sets.
+   In the latest version of \textsl{Seq66}, there are always 32 sets.
+   This simplifies the handling of sets.
+   Some sets may be empty.
 
 \begin{figure}[H]
    \centering 
@@ -30,40 +33,63 @@
 \end{figure}
 
    The operations that can be done consist of viewing the sets, making a
-   screenset active, rearranging the sets, removing sets, and getting a survey of
-   the contents of the sets.
+   screenset active, rearranging the sets, clearing sets, and getting a survey
+   of the contents of the sets.
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Sets Grid}{set master!grid}
-   The set grid is (presumably) always 4 x 8.  Like the mute-groups, there's not
+   The set grid is always 4 x 8.  Like the mute-groups, there's not
    a lot of benefit supporting more sets.  The reader may wish to email us
    arguing for a different point of view.
    \index{play screen}
-   This grid shows the sets that are
-   present in the MIDI file, and allows one to choose which set is currently
+   This grid shows the non-empty sets that are present in the MIDI file,
+   represented by enabled buttons.
+   With \textbf{Triggers} mode set, this  allows one to choose which set
+   is currently
    active (i.e. which is the "play screen").
    Click on it and it is active.
    Also remember that keystrokes (\texttt{[} and \texttt{]} by default)
+   in the main window can move the playscreen to the previous or next set.
  
    \itempar{Set List}{set master!list}
-   The table at the right shows the set numbers, how many patterns/sequences are
-   in each set, and the set name.  Eventually the set name will be editable.
+   The table at the right shows the set numbers, how many patterns/sequences
+   are in each set, and the set name.  The set name is editable once it is
+   double-clicked.
 
    \itempar{Set Number/Name Fields}{set master!number/name}
+   Currently just shows the number and name of the selected set.
    Eventually, these fields will be editable.
 
-   \itempar{Set Up/Down Buttons}{set master!up/down buttons}
-   These buttons allow the user to move the sets up and down.
+   \itempar{Up/Down Buttons}{set master!up/down buttons}
+   These buttons allow the user to move the selected set up and down
+   in the list.
 
-   \itempar{Show All Set Tracks}{set master!show all set tracks}
-   Clicking this button lists all the sets and their tracks in the edit box at
-   the left. This functionality is provisional.
+   \itempar{Show Set Info}{set master!show set info}
+   Clicking this button lists all the sets and their tracks in the
+   read-only edit box at the left.
 
-   \itempar{Delete Selected Set}{set master!delete selected set}
-   Clicking this button deletes the set selected in the table above it.
-   Note that the 0th set cannot be deleted.
+   \itempar{Clear Set}{set master!clear set}
+   Clicking this button deletes the patterns from the 
+   set selected in the table.
+   Note that the 0th set cannot be cleared.
+   Would one ever want to do that?
    In \textsl{Seq66}, there must always be a set 0.
+
+   \itempar{Triggers}{set master!set triggers}
+   This checkable button toggles the action done by clicking a button
+   in the set grid.
+   If checked, then clicking an active set button will make that
+   set active during playback.
+   That effect depends on whether the sets are configured to auto-arm when
+   selected, or not.
+   If not checked, then clicking an active set button merely summarizes the
+   patterns in the set, in the text field below the set grid.
+
+   \itempar{Set 0}{set master!set 0}
+   If trigger mode is in effect, clicking this button makes
+   set 0 active.
+   An alternative to clicking on grid button 0.
 
 \subsection{Set Handling}
 \label{subsec:setmaster_handling}

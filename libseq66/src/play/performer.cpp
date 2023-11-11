@@ -2010,13 +2010,15 @@ performer::new_sequence (sequence * seqptr, seq::number seqno)
             result = not_nullptr(s);
             if (result)
             {
-                int finalseq = s->seq_number();
+                seq::number finalseq = s->seq_number();
+                screenset::number setno = set_mapper().seq_set(seqno);
                 s->set_dirty();
 #if defined SEQ66_ROUTE_EVENTS_BY_BUSS
                 m_route_by_buss = sequence_lookup_setup();
 #endif
                 announce_sequence(s, finalseq);         /* issue #112       */
                 notify_sequence_change(finalseq, change::recreate);
+                notify_set_change(setno, change::yes);
             }
         }
     }

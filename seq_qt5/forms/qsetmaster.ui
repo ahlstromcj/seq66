@@ -51,7 +51,7 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>400</width>
+        <width>448</width>
         <height>340</height>
        </size>
       </property>
@@ -146,17 +146,17 @@
          <string>Show a condensed list of sets and their patterns.</string>
         </property>
         <property name="text">
-         <string>Show Sets Tracks</string>
+         <string>Show Set Info</string>
         </property>
        </widget>
       </item>
       <item row="1" column="2">
-       <widget class="QPushButton" name="m_button_down">
+       <widget class="QPushButton" name="m_button_toggle_trigger_mode">
         <property name="toolTip">
          <string>Move the selected set down in the list.</string>
         </property>
         <property name="text">
-         <string>Set Down</string>
+         <string>Triggers</string>
         </property>
        </widget>
       </item>
@@ -174,20 +174,27 @@
        </spacer>
       </item>
       <item row="1" column="3">
-       <widget class="QPushButton" name="m_button_up">
+       <widget class="QPushButton" name="m_button_set_0">
         <property name="toolTip">
          <string>Move the selected set up in the list.</string>
         </property>
         <property name="text">
-         <string>Set Up</string>
+         <string>Set 0</string>
         </property>
        </widget>
       </item>
       <item row="0" column="2">
-       <widget class="QLineEdit" name="m_set_number_text"/>
+       <widget class="QLineEdit" name="m_set_number_text">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
       <item row="0" column="3">
        <widget class="QLineEdit" name="m_set_name_text">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="readOnly">
          <bool>true</bool>
         </property>
@@ -199,7 +206,7 @@
          <string>Clears the selected set. No undo! Careful!</string>
         </property>
         <property name="text">
-         <string>Clear Selected Set</string>
+         <string>Clear Set</string>
         </property>
        </widget>
       </item>
@@ -217,9 +224,9 @@
        </spacer>
       </item>
       <item row="1" column="1">
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="m_button_down">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="minimumSize">
          <size>
@@ -228,14 +235,14 @@
          </size>
         </property>
         <property name="text">
-         <string/>
+         <string>Down</string>
         </property>
        </widget>
       </item>
       <item row="1" column="4">
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="m_button_up">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="minimumSize">
          <size>
@@ -244,7 +251,7 @@
          </size>
         </property>
         <property name="text">
-         <string/>
+         <string>Up</string>
         </property>
        </widget>
       </item>
@@ -275,10 +282,10 @@
   <tabstop>m_set_contents_text</tabstop>
   <tabstop>m_set_number_text</tabstop>
   <tabstop>m_set_name_text</tabstop>
-  <tabstop>pushButton</tabstop>
   <tabstop>m_button_down</tabstop>
+  <tabstop>m_button_toggle_trigger_mode</tabstop>
+  <tabstop>m_button_set_0</tabstop>
   <tabstop>m_button_up</tabstop>
-  <tabstop>pushButton_2</tabstop>
   <tabstop>m_button_show</tabstop>
   <tabstop>m_button_delete</tabstop>
  </tabstops>
