@@ -277,13 +277,6 @@ namespace seq66
 static const int c_thread_trigger_width_us = 4 * 1000;
 
 /**
- *  This high-priority value is used if the --priorit option is specified.
- *  Needs more testing, we really haven't needed it yet.
- */
-
-static const int c_thread_priority = 1;
-
-/**
  *  When operating a playlist, especially from a headless seq66cli run, and
  *  with JACK transport active, the change from a playing tune to the next
  *  tune would really jack up JACK, crashing the app (corrupted double-linked
@@ -3693,11 +3686,12 @@ performer::launch_output_thread ()
         m_out_thread_launched = true;
         if (rc().priority())                        /* Not in MinGW RCB     */
         {
-            bool ok = set_thread_priority(m_out_thread, c_thread_priority);
+            int p = rc().thread_priority();
+            bool ok = set_thread_priority(m_out_thread, p);
             if (ok)
             {
 #if defined SEQ66_PLATFORM_LINUX
-                warn_message("Output priority elevated");
+                warn_message("Output priority", std::to_string(p));
 #endif
             }
             else
@@ -3733,11 +3727,12 @@ performer::launch_input_thread ()
         m_in_thread_launched = true;
         if (rc().priority())                        /* Not in MinGW RCB     */
         {
-            bool ok = set_thread_priority(m_in_thread, c_thread_priority);
+            int p = rc().thread_priority();
+            bool ok = set_thread_priority(m_in_thread, p);
             if (ok)
             {
 #if defined SEQ66_PLATFORM_LINUX
-                warn_message("Input priority elevated");
+                warn_message("Input priority", std::to_string(p));
 #endif
             }
             else

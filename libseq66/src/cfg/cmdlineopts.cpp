@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-11-04
+ * \updates       2023-11-12
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -117,7 +117,7 @@ cmdlineopts::s_long_options [] =
     {"show-midi",           no_argument,       0, 's'},
     {"show-keys",           no_argument,       0, 'k'},
     {"inverse",             no_argument,       0, 'K'},
-    {"priority",            no_argument,       0, 'p'},
+    {"priority",            optional_argument, 0, 'p'},
     {"interaction-method",  required_argument, 0, 'x'},
     {"playlist",            required_argument, 0, 'X'},
     {"jack-start-mode",     required_argument, 0, 'M'},
@@ -189,7 +189,7 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         0123456789#@AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz
-        xx       xx xx::x:xx  :: x:x xxxxx::xxxx *xx :xx:xxxx:xxxx::  aa
+        xx       xx xx::x:xx  :: x:x xxxxx::xxxx *x: :xx:xxxx:xxxx::  aa
 \endverbatim
  *
  *  The I (inspect) options has been replaced by the S (session) option
@@ -214,7 +214,7 @@ cmdlineopts::s_long_options [] =
 
 #if defined SEQ66_JACK_SUPPORT      // how to handle no SEQ66_NSM_SUPPORT (n)?
 #define CMD_OPTS \
-    "01#AaB:b:Cc:DdF:f:gH:hiJjKkL:l:M:mNnoPpq:RrS:sTtU:uVvWwX:x:Zz" // "I:" gone
+    "01#AaB:b:Cc:DdF:f:gH:hiJjKkL:l:M:mNnoPp::q:RrS:sTtU:uVvWwX:x:Zz"
 #else
 #define CMD_OPTS \
     "0#AaB:b:c:DdF:f:H:hI:iKkL:l:M:mnoPpq:RrS:sTuVvX:x:Zz#"
@@ -258,7 +258,7 @@ static const std::string s_help_1b =
 "                           session manager.\n"
 "   -q, --ppqn qn           Specify default PPQN to replace 192. The MIDI file\n"
 "                           can specify its own PPQN.\n"
-"   -p, --priority          Run high priority, FIFO scheduler (needs root).\n"
+"   -p=pri, --priority=pri  High priority I/O (needs root); pri is optional.\n"
 "   -P, --pass-sysex        Passes incoming SysEx messages to all outputs.\n"
 "                           Not yet fully implemented.\n"
 "   -s, --show-midi         Dump incoming MIDI events to the console.\n"
@@ -1130,6 +1130,10 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'p':
             rc().priority(true);
+            if (soptarg.empty())
+                rc().thread_priority(0);
+            else
+                rc().thread_priority(string_to_int(soptarg, 0));    // FIXME
             break;
 
         case 'q':

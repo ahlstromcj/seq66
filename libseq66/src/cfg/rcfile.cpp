@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-11-08
+ * \updates       2023-11-12
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -203,19 +203,27 @@ rcfile::parse ()
      * rc_ref().verbose(verby);
      */
 
-    bool verby = get_boolean(file, "[Seq66]", "quiet");
+    std::string tag = "[Seq66]";
+    bool verby = get_boolean(file, tag, "quiet");
     rc_ref().quiet(verby);
     std::string s = parse_version(file);
     if (s.empty() || file_version_old(file))
         rc_ref().auto_rc_save(true);
 
-    s = get_variable(file, "[Seq66]", "sets-mode");
+    s = get_variable(file, tag, "sets-mode");
     rc_ref().sets_mode(s);
-    s = get_variable(file, "[Seq66]", "port-naming");
+    s = get_variable(file, tag, "port-naming");
     rc_ref().port_naming(s);
 
-    bool initem = get_boolean(file, "[Seq66]", "init-disabled-ports");
+    bool initem = get_boolean(file, tag, "init-disabled-ports");
     rc_ref().init_disabled_ports(initem);
+
+    int priority = get_integer(file, tag, "priority", 0);
+    if (priority > 0)
+    {
+        rc().priority(true);
+        rc().thread_priority(priority);
+    }
 
     /*
      * [comments] Header comments (hash-tag lead) are skipped during parsing.
@@ -227,9 +235,10 @@ rcfile::parse ()
         rc_ref().comments_block().set(s);
 
     bool ok = true;                                     /* start hopefully! */
-    std::string tag = "[mute-group-file]";
     std::string fullpath;
     std::string pfname;
+    tag = "[mute-group-file]";
+
     bool active = get_file_status(file, tag, pfname);
     rc_ref().mute_group_file_active(active);
     rc_ref().mute_group_filename(pfname);               /* base name        */
@@ -746,6 +755,8 @@ rcfile::write ()
 "# is shown. If port-mapping is active (now the default), this does not apply.\n"
 "#\n"
 "# 'init-disabled-ports' is experimental. It tries live toggle of port state.\n"
+"# 'priority' is experimental. It is meant to increase the priority of the I/O\n"
+"# threads. It requires Seq66 to be run as root, or be installed as setuid 0.\n"
         ;
 
     write_seq66_header(file, "rc", version());
@@ -754,6 +765,7 @@ rcfile::write ()
     write_string(file, "sets-mode", rc_ref().sets_mode_string());
     write_string(file, "port-naming", rc_ref().port_naming_string());
     write_boolean(file, "init-disabled-ports", rc_ref().init_disabled_ports());
+    write_integer(file, "priority", rc_ref().thread_priority());
 
     /*
      * [comments]

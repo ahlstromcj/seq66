@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-11-02
+ * \updates       2023-11-12
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -54,6 +54,13 @@
 
 namespace seq66
 {
+
+/**
+ *  This high-priority value is used if the --priority option is specified.
+ *  Needs more testing, we really haven't needed it yet.
+ */
+
+static const int c_thread_priority = 10;
 
 /**
  *  These control sizes.  We'll try changing them and see what happens.
@@ -265,6 +272,7 @@ private:
     bool m_allow_click_edit;        /**< Allow double-click edit pattern.   */
     bool m_show_midi;               /**< Show MIDI events to console.       */
     bool m_priority;                /**< Run at high priority (Linux only). */
+    int m_thread_priority;          /**< The desired priority (Linux only). */
     bool m_pass_sysex;              /**< Pass SysEx to outputs, not ready.  */
     bool m_with_jack_transport;     /**< Enable synchrony with JACK.        */
     bool m_with_jack_master;        /**< Serve as a JACK transport Master.  */
@@ -786,6 +794,11 @@ public:
     bool priority () const
     {
         return m_priority;
+    }
+
+    int thread_priority () const
+    {
+        return m_thread_priority;
     }
 
     bool pass_sysex () const
@@ -1364,6 +1377,14 @@ public:
     void priority (bool flag)
     {
         m_priority = flag;
+    }
+
+    void thread_priority (int p)
+    {
+        if (p == 0)
+            p = c_thread_priority;
+
+        m_thread_priority = p;
     }
 
     void pass_sysex (bool flag)

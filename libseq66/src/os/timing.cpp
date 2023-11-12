@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2023-10-31
+ * \updates       2023-11-12
  * \license       GNU GPLv2 or above
  *
  *  Provides support for cross-platform time-related functions.
@@ -380,8 +380,9 @@ millitime ()
 bool
 set_thread_priority (std::thread & t, int p)
 {
-    int minp = sched_get_priority_min(SCHED_FIFO);
-    int maxp = sched_get_priority_max(SCHED_FIFO);
+    const int policy = SCHED_FIFO;
+    int minp = sched_get_priority_min(policy);
+    int maxp = sched_get_priority_max(policy);
     if (minp == (-1) || maxp == (-1))
     {
         error_message("Cannot get scheduler priority values");
@@ -393,9 +394,9 @@ set_thread_priority (std::thread & t, int p)
         memset(&schp, 0, sizeof(sched_param));
         schp.sched_priority = p;                /* Linux range: 1 to 99 */
 #if defined SEQ66_PLATFORM_PTHREADS
-        int rc = pthread_setschedparam(t.native_handle(), SCHED_FIFO, &schp);
+        int rc = pthread_setschedparam(t.native_handle(), policy, &schp);
 #else
-        int rc = sched_setscheduler(t.native_handle(), SCHED_FIFO, &schp);
+        int rc = sched_setscheduler(t.native_handle(), policy, &schp);
 #endif
         return rc == 0;
     }

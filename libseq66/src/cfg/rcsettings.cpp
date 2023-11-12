@@ -82,6 +82,7 @@ rcsettings::rcsettings () :
     m_allow_click_edit          (true),
     m_show_midi                 (false),
     m_priority                  (false),
+    m_thread_priority           (c_thread_priority),
     m_pass_sysex                (false),
     m_with_jack_transport       (false),
     m_with_jack_master          (false),
@@ -194,6 +195,7 @@ rcsettings::set_defaults ()
     m_allow_click_edit          = true;
     m_show_midi                 = false;
     m_priority                  = false;
+    m_thread_priority           = c_thread_priority;
     m_pass_sysex                = false;
     m_with_jack_transport       = false;
     m_with_jack_master          = false;

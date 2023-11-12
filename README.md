@@ -98,6 +98,7 @@ Windows, and using a conventional source tarball.
         *   Fixed odd bug breaking MIDI-control-out (display).
         *   Can now paste a pattern into a new or other loaded MIDI file.
         *   Also improved copy/paste for screen-sets in the same way.
+        *   Improved the handling of the --priority option.
         *   Focus is now set immediately to the seqroll and perfroll.
         *   Replaced some verbose() checks with investigate() checks to cut
             down on console output. In the CLI, --verbose now shows
