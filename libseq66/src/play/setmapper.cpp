@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2023-11-10
+ * \updates       2023-11-12
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -124,6 +124,7 @@ setmapper::setmapper
     ),
     m_sequence_high         (seq::unassigned()),
     m_edit_sequence         (seq::unassigned()),
+    m_set_clipboard         (seq::unassigned(), rows, columns),
     m_playscreen            (seq::unassigned()),
     m_playscreen_pointer    (nullptr),
     m_tracks_mute_state     (m_set_size, false)
@@ -215,6 +216,39 @@ setmapper::copy_screenset (screenset::number srcset, screenset::number destset)
     bool result = src.usable() && dest.usable();
     if (result)
     {
+        result = dest.copy_patterns(src);
+        if (result)
+            recount_sequences();
+    }
+    return result;
+}
+
+bool
+setmapper::save_screenset (screenset::number srcset)
+{
+    const screenset & src = master().screen(srcset);
+    bool result = src.usable();
+    if (result)
+    {
+        screenset & dest = m_set_clipboard;
+        dest.change_set_number(0);                  /* make a guarantee     */
+        result = dest.copy_patterns(src);           /* also sets the name   */
+        if (result)
+        {
+            // anything to do?
+        }
+    }
+    return result;
+}
+
+bool
+setmapper::paste_screenset (screenset::number destset)
+{
+    const screenset & src = m_set_clipboard;
+    bool result = src.usable();
+    if (result)
+    {
+        screenset & dest = master().screen(destset);
         result = dest.copy_patterns(src);
         if (result)
             recount_sequences();

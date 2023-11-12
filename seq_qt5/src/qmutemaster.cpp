@@ -361,8 +361,8 @@ qmutemaster::slot_clear_all_mutes ()
     if (cb_perf().clear_mutes())
     {
         modify_mutes();
-        update_group_buttons();         /* see conditional_update() */
-        update_pattern_buttons();       /* ditto                    */
+        update_group_buttons();                 /* see conditional_update() */
+        update_pattern_buttons();               /* ditto                    */
     }
 }
 
@@ -1258,7 +1258,9 @@ qmutemaster::handle_pattern_button (int row, int column)
         if (ok)
         {
             ui->m_button_save->setEnabled(true);
-            modify_mutes_file(true);
+//          if (m_to_midi_active)
+            if (m_to_mutes_active)
+                modify_mutes_file(true);
         }
 #endif
     }
@@ -1315,6 +1317,9 @@ qmutemaster::modify_mutes ()
 
         if (m_to_midi_active)
             modify_midi();
+
+        if (m_to_mutes_active)
+            modify_mutes_file(true);
     }
 }
 

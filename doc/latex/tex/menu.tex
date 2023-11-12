@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-10-25
+% \update      2023-11-12
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -441,18 +441,22 @@
 
    \itempar{Copy Current Set}{edit!copy set}
    \index{copy set}
-   This item marks the current set for the copying of all its patterns to
-   another set.
+   This item marks the current set (i.e. the play-set)
+   for the copying of all its patterns to another set.
    After clicking this menu entry, one can move to another set to paste it,
    using the following menu entry.
 
    \itempar{Paste To Current Set}{edit!paste set}
    \index{paste set}
-   If a set has been marked for the copying of all its patterns to
-   another set, then this menu item is enabled.
+   Once a set has been copied into the internal set clipboard,
+   then this menu item is enabled.
    Move to the desired set (whether empty or note), and then
    click this menu item.
-   All of the patterns in the original set are pasted into the current set.
+   All of the patterns in the original set are pasted into the current set,
+   \textsl{overwriting all patterns} already in the set.
+   Also note that the set clipboard can be pasted after a
+   \textbf{File / New} or \textbf{File / Open},
+   to copy it to another file.
 
 \subsubsection{Menu / Edit / Preferences}
 \label{subsubsec:menu_edit_preferences}

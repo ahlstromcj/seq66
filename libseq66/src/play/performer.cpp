@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-11
+ * \updates       2023-11-12
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -328,7 +328,9 @@ performer::performer (int ppqn, int rows, int columns) :
     m_current_seqno         (seq::unassigned()),
     m_moving_seq            (),
     m_seq_clipboard         (),
-    m_screenset_to_copy     (screenset::unassigned()),
+    /*
+     * m_screenset_to_copy  (screenset::unassigned()),
+     */
     m_clocks                (),                 /* vector wrapper class     */
     m_inputs                (),                 /* vector wrapper class     */
     m_port_map_error        (false),
@@ -2909,7 +2911,7 @@ performer::reset_playset ()
 {
     announce_exit(false);                           /* blank the device     */
     unset_queued_replace();                         /* clear queueing       */
-    set_mapper().fill_play_set(play_set(), true);       /* true: clear it first */
+    set_mapper().fill_play_set(play_set(), true);   /* true: clear it first */
     if (rc().is_setsmode_autoarm())
         set_song_mute(mutegroups::action::off);     /* unmute them all      */
 
@@ -2920,33 +2922,17 @@ bool
 performer::copy_playscreen ()
 {
     screenset::number pscreen = playscreen_number();
-    bool result = pscreen != screenset::unassigned();
-    if (result)
-        m_screenset_to_copy = pscreen;
-
-    /*
-     * TODO:  what else is needed? Check out automation::slot::play_ss.
-     */
-
-    return result;
+    return set_mapper().save_screenset(pscreen);
 }
 
 bool
-performer::paste_playscreen (screenset::number destination)
+performer::paste_to_playscreen ()
 {
-    bool result = m_screenset_to_copy != screenset::unassigned();
+    screenset::number pscreen = playscreen_number();
+    bool result = set_mapper().paste_screenset(pscreen);
     if (result)
-        result = destination != screenset::unassigned();
+        notify_set_change(pscreen, change::yes);
 
-    if (result)
-        result = destination != m_screenset_to_copy;
-
-    if (result)
-    {
-        result = set_mapper().copy_screenset(m_screenset_to_copy, destination);
-        if (result)
-            notify_set_change(destination, change::yes);
-    }
     return result;
 }
 
@@ -10079,7 +10065,7 @@ performer::automation_paste_set
     print_parameters(name, a, d0, d1, index, inverse);
     if (automation::actionable(a) && ! inverse)
     {
-        result = paste_playscreen(0);       /* TODO: provide a destination */
+        result = paste_to_playscreen();
         notify_automation_change(automation::slot::mod_paste_set);
     }
     return result;

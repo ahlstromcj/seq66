@@ -6,7 +6,6 @@ Misc:
 
     -   Mute-master modifications are not setting MIDI modify flag.
     -   Make sure the grid-mode clear and double operations work properly.
-    -   Add live selection to the Set Master.
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recorded measures

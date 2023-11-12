@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-11-11
+ * \updates       2023-11-12
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -514,10 +514,11 @@ private:
     sequence m_seq_clipboard;
 
     /**
-     *  Set to screenset::unassigned() at first.
+     *  Set to screenset::unassigned() at first. Moved to setmapper for better
+     *  handling.
+     *
+     * screenset::number m_screenset_to_copy;
      */
-
-    screenset::number m_screenset_to_copy;
 
 private:                            /* key, midi, and op container section  */
 
@@ -2649,7 +2650,7 @@ public:
     screenset::number decrement_screenset (int amount = 1);
     screenset::number increment_screenset (int amount = 1);
     bool copy_playscreen ();
-    bool paste_playscreen (screenset::number destination);
+    bool paste_to_playscreen ();
 
     screenset::number playscreen_number () const
     {

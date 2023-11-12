@@ -265,7 +265,7 @@ public:
     screenset () = delete;
     screenset
     (
-        number setnum,  //   = sm_number_none,
+        number setnum,
         int rows        = c_default_rows,
         int columns     = c_default_columns
     );

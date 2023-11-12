@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-11-10
+ * \updates       2022-11-12
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -507,7 +507,7 @@ screenset::copy_patterns (const screenset & source)
                 sequence * d = new (std::nothrow) sequence();
                 if (not_nullptr(d))
                 {
-                    d->partial_assign(*s);
+                    d->partial_assign(*s, true);    /* to clipboard, no mod */
                     add(d, desti);
                 }
             }

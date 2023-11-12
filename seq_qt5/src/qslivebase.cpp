@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2022-10-10
+ * \updates       2023-11-12
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the old mainwid class.
@@ -91,7 +91,7 @@ qslivebase::qslivebase
     m_button_down       (false),
     m_moving            (false),
     m_adding_new        (false),
-    m_can_paste         (false),
+    m_can_paste         (perf().can_paste()),               /* 2023-11-12   */
     m_has_focus         (false),
     m_is_external       (is_nullptr(parent)),
     m_needs_update      (false)

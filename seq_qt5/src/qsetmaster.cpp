@@ -59,7 +59,7 @@
  *  set-name obscures the first column. Weird.
  */
 
-static const int c_set_table_fix    = -12;
+static const int c_set_table_fix    = 24;   // 0; // -12;
 
 /**
  *  Specifies the current hardwired value for set_row_heights().
@@ -234,9 +234,9 @@ qsetmaster::setup_table ()
 void
 qsetmaster::set_column_widths (int total_width)
 {
-    ui->m_set_table->setColumnWidth(0, int(0.10f * total_width));
-    ui->m_set_table->setColumnWidth(1, int(0.10f * total_width));
-    ui->m_set_table->setColumnWidth(2, int(0.80f * total_width));
+    ui->m_set_table->setColumnWidth(0, int(0.15f * total_width));
+    ui->m_set_table->setColumnWidth(1, int(0.15f * total_width));
+    ui->m_set_table->setColumnWidth(2, int(0.70f * total_width));
 }
 
 void

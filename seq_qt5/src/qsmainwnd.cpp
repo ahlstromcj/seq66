@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-08
+ * \updates       2023-11-12
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -4002,21 +4002,22 @@ qsmainwnd::set_song_mute_toggle ()
 void
 qsmainwnd::set_playscreen_copy ()
 {
-    if (cb_perf().copy_playscreen())
-        ui->actionPasteToCurrentSet->setEnabled(true);
+    bool ok = cb_perf().copy_playscreen();
+    ui->actionPasteToCurrentSet->setEnabled(ok);
 }
+
+/**
+ *  We want to allow multiple pastes of the same screenset. It will also
+ *  persist between MIDI files during a run.
+ *
+ *  if (cb_perf().paste_playscreen(cb_perf().playscreen_number()))
+ *      ui->actionPasteToCurrentSet->setEnabled(false);
+ */
 
 void
 qsmainwnd::set_playscreen_paste ()
 {
-    (void) cb_perf().paste_playscreen(cb_perf().playscreen_number());
-
-    /*
-     * We want to allow multiple pastes of the same screenset.
-     *
-     *  if (cb_perf().paste_playscreen(cb_perf().playscreen_number()))
-     *      ui->actionPasteToCurrentSet->setEnabled(false);
-     */
+    (void) cb_perf().paste_to_playscreen();
 }
 
 /**

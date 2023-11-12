@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2023-11-11
+ * \updates       2023-11-12
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -130,6 +130,15 @@ private:
      */
 
     seq::number m_edit_sequence;
+
+    /**
+     *  Provides a place to save the screenset for later copying into another
+     *  screenset. This screenset has a set-number of -1, until it is in use,
+     *  when it has a set-number of 0, but is outside the normal set of
+     *  screensets, and is accessible only through a copy/paste mechanism.
+     */
+
+    screenset m_set_clipboard;
 
     /**
      *  Indicates which set is now in view and available for playback.  We
@@ -821,6 +830,8 @@ public:
     bool set_playscreen (screenset::number setno);
     bool set_playing_screenset (screenset::number setno);
     bool copy_screenset (screenset::number srcset, screenset::number destset);
+    bool save_screenset (screenset::number srcset);
+    bool paste_screenset (screenset::number destset);
 
     /*
      *  Encapsulates some calls used in mainwnd.
