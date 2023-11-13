@@ -474,6 +474,7 @@ qsetmaster::handle_set (int setno)
 {
     if (setno != m_current_set)
     {
+        bool firstset = m_current_set == (-1);  // unassigned()
         cb_perf().set_playing_screenset(setno);
         ui->m_set_number_text->setText(qt(std::to_string(setno)));
         ui->m_set_name_text->setText(qt(cb_perf().set_name(setno)));
@@ -498,7 +499,8 @@ qsetmaster::handle_set (int setno)
         if (m_trigger_mode)
             m_main_window->update_bank(setno);
 
-        set_needs_update();
+        if (! firstset)
+            set_needs_update();
     }
 }
 

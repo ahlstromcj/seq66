@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-12
+ * \updates       2023-11-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -2019,7 +2019,12 @@ qsmainwnd::conditional_update ()
     std::string b = "#";
     b += std::to_string(active_screenset);
     b += " / ";
-    b += std::to_string(cb_perf().screenset_count());
+
+    /*
+     * b += std::to_string(cb_perf().screenset_count());
+     */
+
+    b += std::to_string(cb_perf().screenset_active_count());
     ui->entry_active_set->setText(qt(b));
     if (ui->button_keep_queue->isChecked() != cb_perf().is_keep_queue())
         ui->button_keep_queue->setChecked(cb_perf().is_keep_queue());

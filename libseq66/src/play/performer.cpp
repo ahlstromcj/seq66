@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-12
+ * \updates       2023-11-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2062,7 +2062,7 @@ performer::clear_sequence (seq::number seqno)
     const seq::pointer s = get_sequence(seqno);
     bool result = bool(s);
     if (result)
-        s->clear_events();
+        result = s->clear_events();         /* ultimately calls modify()    */
 
     return result;
 }
@@ -2077,7 +2077,7 @@ performer::double_sequence (seq::number seqno)
     const seq::pointer s = get_sequence(seqno);
     bool result = bool(s);
     if (result)
-        s->double_length();
+        result = s->double_length();        /* ultimately calls modify()    */
 
     return result;
 }
@@ -3347,16 +3347,21 @@ performer::launch (int ppqn)
             (void) set_playing_screenset(screenset::number(0));
             if (any_ports_unavailable())
             {
-                std::string msg =
-                    "Some ports missing. "
-                    "Remap if that's fine. "
-                    "OK preserves the map. "
-                    "Exit to edit the 'rc' file directly. "
-                    "Suppress this message in Preferences / Display."
-                    ;
+                static bool s_already_added = false;
+                if (! s_already_added)
+                {
+                    std::string msg =
+                        "Some ports missing. "
+                        "Remap if that's fine. "
+                        "OK preserves the map. "
+                        "Exit to edit the 'rc' file directly. "
+                        "Suppress this message in Preferences / Display."
+                        ;
 
-                m_port_map_error = true;            /* mutable boolean      */
-                append_error_message(msg);
+                    m_port_map_error = true;        /* mutable boolean      */
+                    append_error_message(msg);
+                    s_already_added = true;
+                }
             }
         }
         if (! result)
@@ -3395,13 +3400,13 @@ performer::sequence_lookup_setup ()
             {
                 if (! seqi->is_metro_seq())
                 {
-                    bussbyte b = seqi->true_in_bus();           /* CAREFUL!     */
+                    bussbyte b = seqi->true_in_bus();
                     if (b < buscount)
                     {
                         sequence * original = m_buss_patterns[b];
                         if (is_nullptr(original))
                         {
-                            m_buss_patterns[b] = seqi.get();    /* raw pointer  */
+                            m_buss_patterns[b] = seqi.get();
                             result = true;
                         }
                     }
@@ -5374,7 +5379,7 @@ performer::play (midipulse tick)
                 if (seqi)
                     seqi->play_queue(tick, songmode, resume_note_ons());
                 else
-                    append_error_message("play() on null sequence");
+                    append_error_message("play on null sequence");
             }
             m_master_bus->flush();                      /* flush MIDI buss  */
         }
@@ -6851,6 +6856,10 @@ performer::sequence_playing_toggle (seq::number seqno)
     return result;
 }
 
+/**
+ *  Needs some work!
+ */
+
 bool
 performer::replace_for_solo (seq::number seqno)
 {
@@ -7770,7 +7779,7 @@ performer::loop_control
                 }
                 else if (gm == gridmode::thru)
                 {
-                    result = set_thru(seqno, false, true);  /* true --> toggle  */
+                    result = set_thru(seqno, false, true); /* true = toggle */
                 }
                 else if (gm == gridmode::solo)
                 {
@@ -7787,7 +7796,7 @@ performer::loop_control
             }
             else
             {
-                toggler flag = toggler::off;            /* i.e. "false"     */
+                toggler flag = toggler::off;                /* i.e. "false" */
                 seq::pointer seqp = get_sequence(seqno);
                 bool result = bool(seqp);
                 if (result)
@@ -9204,7 +9213,7 @@ performer::open_playlist (const std::string & pl)
         }
     }
     else
-        append_error_message("Could not create playlist object");
+        append_error_message("Could not create playlist");
 
     return result;
 }

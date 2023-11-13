@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-11-09
+ * \updates       2023-11-13
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -905,14 +905,15 @@ smanager::error_handling ()
     errmsg += std::string(pmerrmsg);
 #endif
 
-    if (session_error)
-        errmsg += error_message();
-
     if (internal_error)
+    {
         show_error("Internal error.", errmsg);
+    }
     else if (session_error)
+    {
+        errmsg += error_message();
         show_error("Session error.", errmsg);
-
+    }
     (void) seq66::file_append_log(path, errmsg);
 }
 

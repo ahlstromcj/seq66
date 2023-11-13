@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-11-12
+ * \updates       2022-11-13
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -241,7 +241,7 @@ screenset::active_count () const
         }
         ++seqno;
     }
-    ++m_sequence_high;                          /* increment for for-loops  */
+    ++m_sequence_high;                          /* one more than high index */
     return result;
 }
 

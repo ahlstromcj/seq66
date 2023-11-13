@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2023-11-11
+ * \updates       2023-11-13
  * \license       GNU GPLv2 or above
  *
  *  Implements setmaster.  The difference between the setmaster and setmapper
@@ -260,6 +260,18 @@ setmaster::screen (screenset::number setno) const
 {
     auto sp = m_container.find(setno);          /* look it up in the map    */
     return sp != m_container.end() ? sp->second : dummy_screenset();
+}
+
+int
+setmaster::screenset_active_count () const
+{
+    int result = 0;
+    for (auto & sset : m_container)                 /* screenset reference  */
+    {
+        if (sset.second.active_count() > 0)
+            ++result;
+    }
+    return result;
 }
 
 bool

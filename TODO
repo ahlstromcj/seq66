@@ -1,13 +1,18 @@
 TO DO for Seq66 0.99.11
 Chris Ahlstrom
-2019-04-13 to 2023-11-11
+2019-04-13 to 2023-11-13
 
 Misc:
 
-    -   Mute-master modifications are not setting MIDI modify flag.
-    -   Make sure the grid-mode clear and double operations work properly.
+    -   Grid-mode options:
+        -   Solo does not quite work after the first pattern clicked.
+            It works fine under the debugger, but does not always turn
+            of the previously-soloed pattern normally.
+            Also, what should be the effect of clicking again on a soloed
+            pattern.
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
+        Should record mode show up as orange?
     -   Make sure metronome buttons etc. still work. Recorded measures
         not saved.
     -   Session / Song Path is not updated when a new file is saved.

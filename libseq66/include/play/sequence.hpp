@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-10-13
+ * \updates       2023-11-13
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1296,7 +1296,7 @@ public:
         bool verify = true
     );
 
-    void set_measures (int measures, bool user_change = false);
+    bool set_measures (int measures, bool user_change = false);
     bool apply_length (int bpb, int ppqn, int bw, int measures = 0);
     bool extend_length ();
     bool double_length ();
@@ -1829,12 +1829,7 @@ public:
     void stop (bool song_mode = false);     /* playback::live vs song   */
     void pause (bool song_mode = false);    /* playback::live vs song   */
     void reset_draw_trigger_marker ();
-
-    void clear_events ()
-    {
-        m_events.clear();
-    }
-
+    bool clear_events ();
     void draw_lock () const;
     void draw_unlock () const;
 

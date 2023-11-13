@@ -200,10 +200,8 @@ qloopbutton::qloopbutton
     make_active();
     make_checkable();
     set_checked(m_is_checked);
-//  text_color(text_slots_paint());     /* text_color(foreground_paint())   */
 
     int c = loop() ? loop()->color() : palette_to_int(PaletteColor::none) ;
-//  pen_color(get_pen_color(PaletteColor(c)));
     if (c != palette_to_int(PaletteColor::black))
         back_color(get_color_fix(PaletteColor(c)));
 }

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2021-11-11
+ * \updates       2021-11-13
  * \license       GNU GPLv2 or above
  *
  *  The setmaster class is meant to encapsulate the sets and their layout,
@@ -211,6 +211,8 @@ public:
     {
         return int(m_container.size()) - 1;     /* ignore the dummy set */
     }
+
+    int screenset_active_count () const;
 
     int highest_set () const
     {

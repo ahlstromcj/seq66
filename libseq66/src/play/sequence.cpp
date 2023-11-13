@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-11-01
+ * \updates       2023-11-13
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -530,6 +530,18 @@ sequence::empty_coloring ()
 {
     if (event_count() == 0)
         (void) set_color(palette_to_int(PaletteColor::yellow));
+}
+
+bool
+sequence::clear_events ()
+{
+    automutex locker(m_mutex);
+    bool result = ! m_events.empty();
+    m_events.clear();
+    if (result)
+        modify();                                   /* have pending changes */
+
+    return result;
 }
 
 /**
@@ -1182,12 +1194,19 @@ sequence::unit_measure (bool reset) const
     return m_unit_measure;
 }
 
-void
+/**
+ *  Changed this from a void to a boolean. Most usages still do not use the
+ *  return value.  A fix for the double_length() function.
+ */
+
+bool
 sequence::set_measures (int measures, bool user_change)
 {
     bool modded = set_length(measures * unit_measure(true));
     if (modded && user_change)
         modify();
+
+    return modded;
 }
 
 /**
@@ -5823,6 +5842,7 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
 bool
 sequence::apply_length (int bpb, int ppq, int bw, int measures)
 {
+    bool result = false;
     if (bpb == 0)
         bpb = get_beats_per_bar();
     else
@@ -5844,13 +5864,17 @@ sequence::apply_length (int bpb, int ppq, int bw, int measures)
         measures = get_measures(0);         /* calculate the current bars   */
     }
     else
-        set_measures(measures);
+        result = set_measures(measures);    /* calls set_length()           */
 
-    bool result = set_length(seq66::measures_to_ticks(bpb, ppq, bw, measures));
+    /*
+     * Given the above, the following call does not do anything.
+     * Leave it in for now to avoid breaking other code.
+     */
+
+    (void) set_length(seq66::measures_to_ticks(bpb, ppq, bw, measures));
     if (result)
-    {
         (void) unit_measure(true);          /* for progress and redrawing   */
-    }
+
     return result;
 }
 
@@ -5881,6 +5905,10 @@ sequence::extend_length ()
     return result;
 }
 
+/**
+ *  Doubles the length of the pattern. This is always a modification.
+ */
+
 bool
 sequence::double_length ()
 {
@@ -5891,6 +5919,8 @@ sequence::double_length ()
     {
         m *= 2;
         result = apply_length(m);
+        if (result)
+            modify();                               /* have pending changes */
     }
     return result;
 }

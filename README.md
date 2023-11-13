@@ -1,4 +1,4 @@
-# README for Seq66 0.99.11 2023-11-12
+# README for Seq66 0.99.11 2023-11-13
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -85,31 +85,33 @@ Windows, and using a conventional source tarball.
 
     *   Version 0.99.11:
         *   Added 8 more ui-palette entries, total of 32. Probably enough.
-        *   Fixed errors specifying style-sheet, palette, and mutes in
-            Preferences / Session.  Also enhanced this tab to indicate
-            exit is needed.
+        *   Moved style-sheet options from 'usr' to the 'rc' file. Upgrade
+            is automatic.
+        *   Fixed errors setting style-sheet, palette, and mutes in
+            Preferences / Session.  Enhanced this tab to indicate when
+            exit (as opposed to internal restart) is needed.
+        *   Added mute-group label to main window.
         *   Fixing various playlist errors:
             -   PPQN setting issue causing slow/fast playback.
             -   Segfaults due to not stopping playback before loading
                 the next song or basing calculations on missing values.
         *   Fixing the botch of the Set Master tab.
-        *   Fixed app exiting unceremoniously if "quiet" is set.
-        *   Fixed minor issue in Song zoom with 1920 PPQN.
-        *   Fixed odd bug breaking MIDI-control-out (display).
-        *   Can now paste a pattern into a new or other loaded MIDI file.
-        *   Also improved copy/paste for screen-sets in the same way.
-        *   Improved the handling of the --priority option.
+        *   Embarassing fixes:
+            *   More fixes in Mutes tab, including raising the modify flag.
+            *   Fixed app exiting unceremoniously if "quiet" is set.
+            *   Fixed minor issue in Song zoom with 1920 PPQN.
+            *   Fixed odd bug breaking MIDI-control-out (display).
+            *   Prevent long redundant start-up error messages.
+        *   Can now paste a pattern into a new or another loaded MIDI file.
+        *   Improved copy/paste for screen-sets in the same way.
+        *   Added optional paramater to the --priority option.
         *   Focus is now set immediately to the seqroll and perfroll.
         *   Replaced some verbose() checks with investigate() checks to cut
             down on console output. In the CLI, --verbose now shows
-            playlist actions on the console (it prevent daemonization and
-            logging to a file).
-        *   Moved the style-sheet options from the 'usr' file to the 'rc'
-            file with all the rest of the file specifications. The upgrade
-            is automatic.
+            playlist actions on the console and prevents daemonization and
+            logging to a file.
         *   Replaced the --inspect option with --session-tag to allow easy
             changing to another setup specified in sessions.rc.
-        *   Added mute-group label to main window.
     *   Version 0.99.10:
         *   Issue #117 Option to close pattern windows with esc key. Must
             be enabled via a 'usr' option first.

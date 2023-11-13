@@ -38,6 +38,7 @@
      <property name="font">
       <font>
        <pointsize>11</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -45,7 +46,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>7</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -66,6 +67,7 @@
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -90,6 +92,7 @@
         <property name="font">
          <font>
           <pointsize>11</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -211,6 +214,7 @@
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -262,6 +266,7 @@
         <font>
          <family>DejaVu Sans</family>
          <pointsize>11</pointsize>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -274,7 +279,7 @@
         <rect>
          <x>10</x>
          <y>40</y>
-         <width>591</width>
+         <width>605</width>
          <height>273</height>
         </rect>
        </property>
@@ -301,7 +306,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>589</width>
+          <width>603</width>
           <height>271</height>
          </rect>
         </property>
@@ -319,6 +324,7 @@
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -338,6 +344,7 @@
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -367,6 +374,7 @@
           <property name="font">
            <font>
             <pointsize>11</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -397,6 +405,7 @@
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -437,6 +446,7 @@
           <property name="font">
            <font>
             <pointsize>11</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -453,6 +463,7 @@
           <property name="font">
            <font>
             <pointsize>11</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -523,6 +534,7 @@ Each port number can be found by name-lookup.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -547,6 +559,7 @@ Each port number can be found by name-lookup.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -675,6 +688,7 @@ slot by channel number (0 to 15).</string>
         <font>
          <family>DejaVu Sans</family>
          <pointsize>11</pointsize>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -742,6 +756,7 @@ slot by channel number (0 to 15).</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -771,13 +786,14 @@ slot by channel number (0 to 15).</string>
         <rect>
          <x>10</x>
          <y>252</y>
-         <width>577</width>
+         <width>589</width>
          <height>237</height>
         </rect>
        </property>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -1421,6 +1437,7 @@ Range: 0.5 to 3.0</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -1441,6 +1458,7 @@ Range: 0.5 to 3.0</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1460,6 +1478,7 @@ Range: 0.5 to 3.0</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1502,6 +1521,7 @@ Range: 0.5 to 3.0</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1521,6 +1541,7 @@ Range: 0.5 to 3.0</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1771,6 +1792,7 @@ connects to the MIDI I/O ports it finds.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1790,6 +1812,7 @@ connects to the MIDI I/O ports it finds.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -1859,6 +1882,7 @@ in the Song Editor.</string>
          <property name="font">
           <font>
            <pointsize>11</pointsize>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1870,13 +1894,14 @@ in the Song Editor.</string>
            <rect>
             <x>24</x>
             <y>32</y>
-            <width>569</width>
+            <width>500</width>
             <height>23</height>
            </rect>
           </property>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1893,13 +1918,14 @@ playback resumes.</string>
            <rect>
             <x>24</x>
             <y>56</y>
-            <width>569</width>
+            <width>500</width>
             <height>23</height>
            </rect>
           </property>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1917,13 +1943,14 @@ the default PPQN.</string>
            <rect>
             <x>24</x>
             <y>80</y>
-            <width>573</width>
+            <width>500</width>
             <height>22</height>
            </rect>
           </property>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1945,6 +1972,7 @@ the default PPQN.</string>
           <font>
            <family>Sans</family>
            <pointsize>11</pointsize>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -2017,6 +2045,7 @@ Seq66 exits.</string>
          <property name="font">
           <font>
            <pointsize>11</pointsize>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -2028,13 +2057,14 @@ Seq66 exits.</string>
            <rect>
             <x>24</x>
             <y>24</y>
-            <width>565</width>
+            <width>500</width>
             <height>23</height>
            </rect>
           </property>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2047,13 +2077,14 @@ Seq66 exits.</string>
            <rect>
             <x>24</x>
             <y>48</y>
-            <width>565</width>
+            <width>500</width>
             <height>23</height>
            </rect>
           </property>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2066,13 +2097,14 @@ Seq66 exits.</string>
            <rect>
             <x>24</x>
             <y>72</y>
-            <width>565</width>
+            <width>500</width>
             <height>23</height>
            </rect>
           </property>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2085,13 +2117,14 @@ Seq66 exits.</string>
            <rect>
             <x>24</x>
             <y>96</y>
-            <width>565</width>
+            <width>500</width>
             <height>23</height>
            </rect>
           </property>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2118,6 +2151,7 @@ Seq66 exits.</string>
          <property name="font">
           <font>
            <pointsize>11</pointsize>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -2129,13 +2163,14 @@ Seq66 exits.</string>
            <rect>
             <x>24</x>
             <y>24</y>
-            <width>557</width>
+            <width>500</width>
             <height>23</height>
            </rect>
           </property>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2148,13 +2183,14 @@ Seq66 exits.</string>
            <rect>
             <x>24</x>
             <y>48</y>
-            <width>557</width>
+            <width>500</width>
             <height>23</height>
            </rect>
           </property>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2167,13 +2203,14 @@ Seq66 exits.</string>
            <rect>
             <x>24</x>
             <y>72</y>
-            <width>557</width>
+            <width>500</width>
             <height>23</height>
            </rect>
           </property>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2220,6 +2257,7 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -2235,6 +2273,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2251,6 +2290,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2274,6 +2314,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2290,6 +2331,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2349,6 +2391,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2365,6 +2408,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2378,6 +2422,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2391,6 +2436,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2413,6 +2459,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2435,6 +2482,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2457,6 +2505,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2514,6 +2563,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2543,6 +2593,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2585,6 +2636,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2637,6 +2689,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2666,6 +2719,7 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2714,6 +2768,7 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -2952,6 +3007,7 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -2971,6 +3027,7 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -2990,6 +3047,7 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -3014,6 +3072,7 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -3071,6 +3130,7 @@ Seq66 exits.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -3091,6 +3151,7 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -3116,6 +3177,7 @@ For many changes, restart is required.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -3346,6 +3408,7 @@ For many changes, restart is required.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3366,6 +3429,7 @@ For many changes, restart is required.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3464,6 +3528,7 @@ For many changes, restart is required.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3532,6 +3597,7 @@ path added to this name is stripped.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3552,6 +3618,7 @@ path added to this name is stripped.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3572,6 +3639,7 @@ path added to this name is stripped.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
+          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3653,6 +3721,7 @@ path added to this name is stripped.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -3802,6 +3871,7 @@ path added to this name is stripped.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -3822,6 +3892,7 @@ path added to this name is stripped.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
+         <weight>75</weight>
          <italic>true</italic>
          <bold>true</bold>
         </font>

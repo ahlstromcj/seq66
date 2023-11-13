@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-11-07
+ * \updates       2023-11-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -1258,9 +1258,11 @@ qmutemaster::handle_pattern_button (int row, int column)
         if (ok)
         {
             ui->m_button_save->setEnabled(true);
-//          if (m_to_midi_active)
             if (m_to_mutes_active)
                 modify_mutes_file(true);
+
+            if (m_to_midi_active)
+                modify_midi();
         }
 #endif
     }
