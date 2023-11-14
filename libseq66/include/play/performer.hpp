@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-11-13
+ * \updates       2023-11-14
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2732,9 +2732,9 @@ public:
         return set_mapper().loop(seqno);
     }
 
-    void off_sequences ()
+    void off_sequences (seq::number seqno = seq::unassigned())
     {
-        set_mapper().off_sequences();
+        set_mapper().off_sequences(seqno);
     }
 
     std::string automation_key (automation::slot s);

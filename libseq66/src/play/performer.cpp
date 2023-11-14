@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-13
+ * \updates       2023-11-14
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -6176,13 +6176,10 @@ performer::paste_or_split_trigger (seq::number seqno, midipulse tick)
         bool state = s->get_trigger_state(tick);
         push_trigger_undo(seqno);
         if (state)
-        {
             result = s->split_trigger(tick, trigger::splitpoint::exact);
-        }
         else
-        {
             result = s->paste_trigger(tick);
-        }
+
         if (result)
             notify_trigger_change(seqno);
     }
@@ -6780,14 +6777,19 @@ performer::sequence_playing_toggle (seq::number seqno)
         {
             if (is_replace)
             {
+#if defined USE_OLD_CODE
                 (void) set_ctrl_status
                 (
                     automation::action::off,
                     automation::ctrlstatus::replace
                 );
-                off_sequences();
+                off_sequences();                    /* use new seqno param? */
+#else
+                replace_for_solo(seqno);
+#endif
             }
-            s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
+            else
+                s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
         }
 
         /*
@@ -6857,7 +6859,8 @@ performer::sequence_playing_toggle (seq::number seqno)
 }
 
 /**
- *  Needs some work!
+ *  Needs some work! Using the grid-mode for solo, a weird bug. Works when
+ *  paused here in the debugger, but not in real time.
  */
 
 bool
@@ -6867,13 +6870,44 @@ performer::replace_for_solo (seq::number seqno)
     bool result = bool(s);
     if (result)
     {
+#if defined USE_PLAY_SET_STORAGE_FOR_SOLO
+
+        /*
+         * Not yet sure we need this. We might only have to call restore_snaphot()!!!
+         */
+
+        if (setchange)
+        {
+            m_play_set_storage.clear();
+        }
+        else
+        {
+            result = set_mapper().fill_play_set(m_play_set_storage);
+        }
+        if (result)
+        {
+            (void) set_ctrl_status
+            (
+                automation::action::off,
+                automation::ctrlstatus::replace
+            );
+            if (s->muted())
+                s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
+
+            off_sequences(seqno);
+        }
+#else
         (void) set_ctrl_status
         (
             automation::action::off,
             automation::ctrlstatus::replace
         );
-        off_sequences();
-        s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
+        if (s->muted())
+            s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
+
+        off_sequences(seqno);
+#endif
+        notify_trigger_change(seq::all(), change::no);
         announce_sequence(s, set_mapper().seq_to_offset(*s));
     }
     return result;
@@ -7756,43 +7790,25 @@ performer::loop_control
                 }
                 else if (gm == gridmode::mutes)
                 {
-                    result = toggle_mutes
-                    (
-                        static_cast<mutegroup::number>(seqno)
-                    );
+                    mutegroup::number mg = static_cast<mutegroup::number>(seqno);
+                    result = toggle_mutes(mg);
                 }
                 else if (gm == gridmode::copy)
-                {
                     result = copy_sequence(seqno);
-                }
                 else if (gm == gridmode::paste)
-                {
                     result = paste_sequence(seqno);
-                }
                 else if (gm == gridmode::clear)
-                {
                     result = clear_sequence(seqno);
-                }
                 else if (gm == gridmode::remove)
-                {
                     result = remove_sequence(seqno);
-                }
                 else if (gm == gridmode::thru)
-                {
                     result = set_thru(seqno, false, true); /* true = toggle */
-                }
                 else if (gm == gridmode::solo)
-                {
                     result = replace_for_solo(seqno);   /* is this valid?   */
-                }
                 else if (gm == gridmode::cut)
-                {
                     result = cut_sequence(seqno);
-                }
                 else if (gm == gridmode::double_length)
-                {
                     result = double_sequence(seqno);
-                }
             }
             else
             {

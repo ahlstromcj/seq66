@@ -4320,7 +4320,7 @@ qsmainwnd::on_trigger_change (seq::number seqno)
     bool result = not_nullptr(m_live_frame);
     if (result)
     {
-        m_live_frame->refresh(seqno);
+        m_live_frame->refresh(seqno);   /* this calls on_trigger_change()!  */
         enable_save(cb_perf().modified());
     }
     return result;

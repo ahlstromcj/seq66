@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-11-13
+ * \updates       2023-11-14
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1341,6 +1341,11 @@ public:
     bool armed () const
     {
         return m_armed;
+    }
+
+    bool muted () const
+    {
+        return ! m_armed;
     }
 
     bool sequence_playing_toggle ();

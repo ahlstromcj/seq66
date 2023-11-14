@@ -3304,11 +3304,11 @@ sequence::fix_pattern (fixparameters & params)
         push_undo();
         if (params.fp_align_left)
         {
-            params.fp_align_left = m_events.align_left();    /* realigned?   */
+            params.fp_align_left = m_events.align_left();       /* realigned?   */
             if (params.fp_align_left)
                 tempefx = bit_set(tempefx, fixeffect::shifted);
             else
-                result = false;                             /* op failed    */
+                result = false;                                 /* op failed    */
         }
         if (params.fp_reverse || params.fp_reverse_in_place)
         {

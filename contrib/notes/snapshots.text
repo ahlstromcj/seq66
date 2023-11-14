@@ -1,0 +1,82 @@
+Snapshot and Other Storage Objects
+Chris Ahlstrom
+2023-11-14 to 2023-11-14
+
+This file reviews how various pattern scenarios are saved.
+
+A.  Pattern Clipboards
+
+1.  Whole-pattern. This is an internal sequence owned by performer. Filled by
+    calls to sequence::partial_assign(). Used for
+    copy/cut/paste/merge/channelize.
+
+2.  Event-list. This is a static eventlist owned by sequence. Used in
+    copy_selected(), paste_selected(), merge_events(),
+
+B.  set_ctrl_status() [seq snapshot storage]:
+
+    Handles the following, enumeration value in automation::ctrlstatus:
+
+        -   replace
+        -   snapshot
+        -   queue
+        -   keep_queue
+        -   oneshot
+        -   learn
+
+1.  Automation functions in performer. The enumeration values are from
+    automation::slot. The default key mappings are set in the keycontainer
+    class.
+
+    - automation_replace():     mod_replace     (Key_Home)
+    - automation_snapshot():    mod_snapshot    (Ins)
+    - automation_queue():       mod_queue       (o)
+    - automation_solo():        solo            (BS)    queue + replace
+    - automation_oneshot():     oneshot         (|)
+    - automation_keep_queue():  keep_queue      (\)
+
+    -   All it does is add/remove this status to/from midicontrolin
+        and call display_ctrl_status().
+
+2.  set_ctrl_status (action a, ctrlstatus::snapshot)
+
+    -   Calls either save_snapshot() or restore_snapshot(). These calls
+        proceed from performer to setmapper to screenset to seq.
+        Each active sequence (seq) saves/restores the armed() value to/from a
+        snapshot_status value. [(Inactive patterns always save false -- is
+        it worth optimizing them out?]
+
+        [Also used separately is clear_snapshot().]
+
+3.  set_ctrl_status (action a, ctrlstatus::queue || keepqueue)
+
+    -   Does not do anything yet for an on action.
+    -   For an off action, calls unset_queued_replace().
+        Clears the queued-replace (queued solo???) and queue.
+        Clears the snapshot [clear_snapshot].
+    -   Removes the status from midicontrolin.
+    -   Also see performer::sequence_playing_toggle(), set_playing_screenset(),
+        and reset_playset().
+
+4.  set_ctrl_status (action a, ctrlstatus::queue || replace [i.e. solo])
+
+    -   See above.
+
+5.  set_ctrl_status (action a, ctrlstatus::replace)
+6.  set_ctrl_status (action a, ctrlstatus::oneshot)
+7.  set_ctrl_status (action a, ctrlstatus::learn)
+
+    -   All these do is add/remove the status to/from midicontrolin
+        and call display_ctrl_status().
+
+C.  Metronome
+
+D.  Play-set. The playset is an object that hold a list of screensets and
+    an array of pointers to all the sequences that need to be playing.
+    Most often this is merely the patterns in the grid showing in the main
+    window, but it can be augumented with patterns from other screenset via
+    configuration options.
+
+E.  More?
+
+# vim: sw=4 ts=4 wm=8 et ft=rc

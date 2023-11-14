@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-11-13
+ * \updates       2022-11-14
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -422,13 +422,28 @@ screenset::clamp (seq::number seqno) const
     return seqno;
 }
 
+/**
+ *  Updated to skip an soloed sequence to try to get around a weird error
+ *  where soloing only works with small numbers of patterns in a screenset or
+ *  when paused under the debugger.
+ *
+ * \param seqno
+ *      If not equal to the default, seq::unassigned(), this sequence is
+ *      set to be soloed, so it won't be turned off.
+ */
+
 void
-screenset::off_sequences ()
+screenset::off_sequences (seq::number seqno)
 {
+    bool solo = seqno != seq::unassigned();
     for (auto & s : m_container)
     {
         if (s.active())
-            s.loop()->set_armed(false);
+        {
+            bool disarm = ! solo || (s.seq_number() != seqno);
+            if (disarm)
+                s.loop()->set_armed(false);
+        }
     }
 }
 

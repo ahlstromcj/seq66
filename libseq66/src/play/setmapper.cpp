@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2023-11-12
+ * \updates       2023-11-14
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -390,6 +390,21 @@ setmapper::unmodify_all_sequences ()
 {
     for (auto & sset : sets())                      /* screenset reference  */
         sset.second.unmodify_all_sequences();
+}
+
+/**
+ * \param seqno
+ *      If not seq::unassigned(), this pattern is to be soloed.
+ */
+
+void
+setmapper::off_sequences (seq::number seqno)
+{
+    for (auto & sset : sets())
+    {
+        if (sset.second.active())
+            sset.second.off_sequences(seqno);
+    }
 }
 
 /**

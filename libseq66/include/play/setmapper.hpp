@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2023-11-12
+ * \updates       2023-11-14
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -488,11 +488,7 @@ private:
         screen(seqno).activate(seqno, seqnum, flag);
     }
 
-    void off_sequences ()
-    {
-        for (auto & sset : sets())
-            sset.second.off_sequences();
-    }
+    void off_sequences (seq::number seqno = seq::unassigned());
 
     /**
      *  Calls sequence::song_recording_start(m_current_tick) for all
