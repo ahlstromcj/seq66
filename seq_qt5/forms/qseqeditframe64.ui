@@ -101,7 +101,7 @@
             <x>0</x>
             <y>0</y>
             <width>38</width>
-            <height>162</height>
+            <height>160</height>
            </rect>
           </property>
          </widget>
@@ -166,7 +166,7 @@
           <x>0</x>
           <y>0</y>
           <width>729</width>
-          <height>174</height>
+          <height>172</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -436,7 +436,6 @@ to note events. [ c for selected notes ]</string>
          </property>
          <property name="font">
           <font>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -520,6 +519,12 @@ to note events. [ c for selected notes ]</string>
          <width>80</width>
          <height>28</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <italic>false</italic>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="toolTip">
         <string>Quantize the selected notes. [ q r t ]</string>
@@ -1428,7 +1433,6 @@ or a velocity to force upon input.</string>
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1471,7 +1475,6 @@ or a velocity to force upon input.</string>
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <italic>false</italic>
          <bold>true</bold>
         </font>

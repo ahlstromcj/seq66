@@ -98,7 +98,6 @@ B:B:T and H:M:S format.</string>
          <font>
           <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <italic>false</italic>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
@@ -327,7 +326,6 @@ the current set.  Modifies the song.</string>
          <font>
           <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -379,7 +377,6 @@ the current set.  Modifies the song.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -463,7 +460,6 @@ the current set.  Modifies the song.</string>
       <property name="font">
        <font>
         <pointsize>11</pointsize>
-        <weight>75</weight>
         <bold>true</bold>
         <stylestrategy>PreferDefault</stylestrategy>
        </font>
@@ -478,7 +474,7 @@ the current set.  Modifies the song.</string>
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="movable">
        <bool>false</bool>
@@ -730,7 +726,6 @@ the current set.  Modifies the song.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -757,7 +752,6 @@ the current set.  Modifies the song.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>50</weight>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -778,8 +772,9 @@ the current set.</string>
        <widget class="QLabel" name="label">
         <property name="font">
          <font>
-          <weight>75</weight>
+          <pointsize>12</pointsize>
           <bold>true</bold>
+          <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
         <property name="toolTip">
@@ -826,7 +821,6 @@ the current set.</string>
         <property name="font">
          <font>
           <pointsize>9</pointsize>
-          <weight>50</weight>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -857,6 +851,13 @@ during playback.</string>
           <height>28</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <bold>true</bold>
+          <stylestrategy>PreferDefault</stylestrategy>
+         </font>
+        </property>
         <property name="toolTip">
          <string>Resets the play-set to the current set,
 no matter what sets-mode is in force. </string>
@@ -883,7 +884,6 @@ no matter what sets-mode is in force. </string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -916,7 +916,6 @@ no matter what sets-mode is in force. </string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>50</weight>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -940,8 +939,9 @@ or active external live frame.</string>
         </property>
         <property name="font">
          <font>
-          <weight>75</weight>
+          <pointsize>12</pointsize>
           <bold>true</bold>
+          <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
         <property name="toolTip">
@@ -969,7 +969,6 @@ or active external live frame.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -999,7 +998,6 @@ or active external live frame.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>50</weight>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1251,7 +1249,6 @@ at start of playback.</string>
           <property name="font">
            <font>
             <pointsize>12</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1331,6 +1328,13 @@ in the Shift of that key.</string>
           <height>16777215</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <bold>true</bold>
+          <stylestrategy>PreferDefault</stylestrategy>
+         </font>
+        </property>
         <property name="toolTip">
          <string>Click to toggle the mute status of
 all tracks.</string>
@@ -1395,6 +1399,13 @@ all tracks.</string>
           <height>28</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <bold>true</bold>
+          <stylestrategy>PreferDefault</stylestrategy>
+         </font>
+        </property>
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
         </property>
@@ -1436,7 +1447,6 @@ Editor triggers.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1477,6 +1487,13 @@ Editor triggers.</string>
             <height>28</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <bold>true</bold>
+            <stylestrategy>PreferDefault</stylestrategy>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Tap in time to set beats/minute (BPM).
 After 5 seconds of no taps, the counter
@@ -1504,7 +1521,6 @@ resets to 0.</string>
           <property name="font">
            <font>
             <pointsize>12</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1537,7 +1553,6 @@ resets to 0.</string>
           <property name="font">
            <font>
             <pointsize>12</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1575,13 +1590,12 @@ beats/minute.</string>
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <pointsize>11</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
      <stylestrategy>PreferDefault</stylestrategy>
     </font>

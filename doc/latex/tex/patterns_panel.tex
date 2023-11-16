@@ -562,6 +562,7 @@
    This section recapitulates all the clicks and keys that perform actions
    in the Pattern windows.  Some additional clicks and keys are noted here
    as well.
+   Also refer to \sectionref{sec:kbd_mouse_actions}.
 
 \paragraph{Pattern Keys}
 \label{paragraph:patterns_pattern_keys}
@@ -629,21 +630,20 @@
    \index{keys!alt}
    \index{keys!snapshot}
    \textbf{Snapshot}.
-   When a snapshot key is pressed, the state of the patterns
-   (armed versus unarmed) is saved.  While the
-   snapshot is in force, one can then change the state of the patterns
-   (using the keyboard or MIDI controls, \textsl{not} the mouse)
-   to change how the song plays.  When the snapshot mode is exited, the
+   When a snapshot key is pressed (and released) the state of the patterns
+   (armed versus unarmed) is saved.
+   While the snapshot is in force, one can then change the state of the patterns
+   (using keyboard, mouse, or MIDI controls) to change how the song plays.
+   When the snapshot mode is exited, the
    original saved state of the patterns is restored.
 
    Unlike in \textsl{Seq24}, the \texttt{Alt} keys are not used.
-   In addition, the snapshot key acts like a toggle... no need to hold it down.
-   Lastly, there is only one snapshot key slot.
-   Our preference is to use something that does not trigger desktop
-   commands, perhaps "\texttt{F11}" or "\texttt{F12}", or one of the keys in
-   the keypad.
-   Configured in the 'ctrl' file
-   \texttt{[automation-control]} section.
+   In addition, the snapshot key acts like a \textsl{toggle}...
+   no need to hold it down.
+%  Lastly, there is only one snapshot key slot.
+   Our preference is to use something that does not trigger desktop/window
+   commands; the default key is \texttt{Ins}.
+   Configured in the 'ctrl' file \texttt{[automation-control]} section.
 
    \index{keys!right ctrl}
    \index{keys!queue}

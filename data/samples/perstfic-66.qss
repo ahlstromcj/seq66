@@ -165,12 +165,13 @@ QLabel
 }
 
 /*-----QPushButton-----*/
+
 QPushButton
 {
 	background-color: qlineargradient(spread:pad, x1:1, y1:0, x2:1, y2:1, stop:0 rgba(42, 95, 113, 255),stop:1 rgba(12, 53, 97, 255));
 	color: #fff;
-	border: 0px;
-	border-radius: 5px;
+	border: 2px;
+	border-radius: 15px;
 	padding: 5px;
 }
 
@@ -178,14 +179,17 @@ QPushButton::hover
 {
 	background-color: qlineargradient(spread:pad, x1:1, y1:0, x2:1, y2:1, stop:0 rgba(167, 214, 50, 255),stop:1 rgba(98, 169, 67, 255));
 	color: #fff;
+	border: 2px;
+	border-radius: 15px;
+	padding: 5px;
 }
 
 QPushButton::pressed
 {
 	background-color: qlineargradient(spread:pad, x1:1, y1:0, x2:1, y2:1, stop:0 rgba(147, 194, 30, 255),stop:1 rgba(78, 149, 47, 255));
 	color: #fff;
-	border: 0px;
-	border-radius: 5px;
+	border: 2px;
+	border-radius: 20px;
 	padding: 5px;
 }
 

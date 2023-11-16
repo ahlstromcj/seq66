@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-14
+ * \updates       2023-11-16
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -321,6 +321,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_current_seqno         (seq::unassigned()),
     m_moving_seq            (),
     m_seq_clipboard         (),
+    m_solo_seqno            (seq::unassigned()),
     /*
      * m_screenset_to_copy  (screenset::unassigned()),
      */
@@ -337,8 +338,7 @@ performer::performer (int ppqn, int rows, int columns) :
     (
         m_set_master, m_mute_groups, rows, columns
     ),
-    m_queued_replace_slot   (-1),               /* REFACTOR                 */
-    m_no_queued_solo        (-1),               /* constant                 */
+    m_queued_replace_slot   (seq::unassigned()),
     m_transpose             (0),
     m_out_thread            (),
     m_in_thread             (),
@@ -2577,7 +2577,7 @@ performer::needs_update (seq::number seqno) const
     bool result = false;
     if (m_is_busy)
     {
-        (void) warn_message("performer busy!");
+        warn_message("performer busy!");
     }
     else
     {
@@ -6443,7 +6443,7 @@ performer::print_parameters
             << "index = " << index << "; "
             << "inv = " << inverse
             ;
-        (void) info_message(os.str());
+        info_message(os.str());
     }
 }
 
@@ -6514,9 +6514,13 @@ performer::set_ctrl_status
     if (on && midi_control_in().is_set(status))
         on = false;
 
+    bool savesnap = midi_control_in().is_snapshot(status);
+    if (! savesnap)
+        savesnap = midi_control_in().is_replace(status);
+
     if (on)
     {
-        if (midi_control_in().is_snapshot(status))
+        if (savesnap)
             save_snapshot();
 
         /*
@@ -6530,11 +6534,10 @@ performer::set_ctrl_status
         bool q = midi_control_in().is_keep_queue(status) ||
             midi_control_in().is_queue(status);
 
-        if (midi_control_in().is_snapshot(status))
-            restore_snapshot();
-
         if (q)
             unset_queued_replace();
+        else if (savesnap)
+            restore_snapshot();
 
         midi_control_in().remove_status(status);
     }
@@ -6639,17 +6642,17 @@ performer::send_onoff_play_states (midicontrolout::uiaction a)
  *  the queue mode; we shall see if this disrupts any user's workflow.
  *
  * \param clearbits
- *      If true (the default), then clear the queue and replace status bits.  If
- *      the user is simply replacing the current replace pattern with another
- *      pattern, we pass false for this parameter.
+ *      If true (the default), then clear the queue and replace status bits.
+ *      If the user is simply replacing the current replace pattern with
+ *      another pattern, we pass false for this parameter.
  */
 
 void
 performer::unset_queued_replace (bool clearbits)
 {
-    if (m_queued_replace_slot != m_no_queued_solo)
+    if (m_queued_replace_slot != seq::unassigned())
     {
-        m_queued_replace_slot = m_no_queued_solo;
+        m_queued_replace_slot = seq::unassigned();
         clear_snapshot();
         if (clearbits)
             midi_control_in().remove_queued_replace();
@@ -6749,29 +6752,25 @@ performer::sequence_playing_toggle (seq::number seqno)
         {
             s->toggle_one_shot();                   /* why not just turn on */
         }
-        else if (is_queue || is_keep_q)
+        else if (is_replace && (is_queue || is_keep_q))
         {
-            if (is_replace)                         /* not in Seq32         */
+            if (m_queued_replace_slot != seq::unassigned())
             {
-                if (m_queued_replace_slot != m_no_queued_solo)
+                if (seqno != m_queued_replace_slot)
                 {
-                    if (seqno != m_queued_replace_slot)
-                    {
-                        unset_queued_replace(false);    /* don't clear bits */
-                        save_queued(seqno);
-                    }
-                }
-                else
-                {
+                    unset_queued_replace(false);    /* don't clear bits */
                     save_queued(seqno);
                 }
-                unqueue_sequences(seqno);
-                m_queued_replace_slot = seqno;
             }
             else
-            {
-                s->toggle_queued();
-            }
+                save_queued(seqno);
+
+            unqueue_sequences(seqno);
+            m_queued_replace_slot = seqno;
+        }
+        else if (is_queue)
+        {
+            s->toggle_queued();
         }
         else
         {
@@ -6785,11 +6784,17 @@ performer::sequence_playing_toggle (seq::number seqno)
                 );
                 off_sequences();                    /* use new seqno param? */
 #else
-                replace_for_solo(seqno);
+                /*
+                 * Not to be used here; requires Solo grid-mode.
+                 *
+                 * replace_for_solo(seqno, true);
+                 */
+
+                unset_queued_replace();
+                off_sequences();
 #endif
             }
-            else
-                s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
+            s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
         }
 
         /*
@@ -6861,52 +6866,45 @@ performer::sequence_playing_toggle (seq::number seqno)
 /**
  *  Needs some work! Using the grid-mode for solo, a weird bug. Works when
  *  paused here in the debugger, but not in real time.
+ *
+ *  This mode can only be turned off by selecting another grid-mode.
  */
 
 bool
-performer::replace_for_solo (seq::number seqno)
+performer::replace_for_solo (seq::number seqno, bool queued)
 {
     seq::pointer s = get_sequence(seqno);
     bool result = bool(s);
     if (result)
     {
-#if defined USE_PLAY_SET_STORAGE_FOR_SOLO
-
-        /*
-         * Not yet sure we need this. We might only have to call restore_snaphot()!!!
-         */
-
-        if (setchange)
+        automation::ctrlstatus cs = automation::ctrlstatus::replace;
+        if (queued)
         {
-            m_play_set_storage.clear();
+            cs = automation::ctrlstatus::queue | automation::ctrlstatus::replace;
         }
-        else
-        {
-            result = set_mapper().fill_play_set(m_play_set_storage);
-        }
-        if (result)
-        {
-            (void) set_ctrl_status
-            (
-                automation::action::off,
-                automation::ctrlstatus::replace
-            );
-            if (s->muted())
-                s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
 
-            off_sequences(seqno);
-        }
-#else
-        (void) set_ctrl_status
-        (
-            automation::action::off,
-            automation::ctrlstatus::replace
-        );
-        if (s->muted())
-            s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
+        {
+            if (seqno == m_solo_seqno)              /* user toggle of slot  */
+            {
+                (void) set_ctrl_status              /* restores snapshot    */
+                (
+                    automation::action::off, cs
+                );
+                m_solo_seqno = seq::unassigned();   /* clear_snapshot()     */
+            }
+            else
+            {
+                (void) set_ctrl_status              /* saves snapshot       */
+                (
+                    automation::action::on, cs
+                );
+                if (s->muted())
+                    s->toggle_playing(get_tick(), resume_note_ons());
 
-        off_sequences(seqno);
-#endif
+                off_sequences(seqno);               /* off all but seqno    */
+                m_solo_seqno = seqno;
+            }
+        }
         notify_trigger_change(seq::all(), change::no);
         announce_sequence(s, set_mapper().seq_to_offset(*s));
     }
@@ -7804,7 +7802,7 @@ performer::loop_control
                 else if (gm == gridmode::thru)
                     result = set_thru(seqno, false, true); /* true = toggle */
                 else if (gm == gridmode::solo)
-                    result = replace_for_solo(seqno);   /* is this valid?   */
+                    result = replace_for_solo(seqno);
                 else if (gm == gridmode::cut)
                     result = cut_sequence(seqno);
                 else if (gm == gridmode::double_length)
@@ -8149,7 +8147,15 @@ performer::automation_replace
     std::string name = auto_name(automation::slot::mod_replace);
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
-        return set_ctrl_status(a, automation::ctrlstatus::replace);
+    {
+#if defined SEQ66_PLATFORM_DEBUG
+        printf("Automation replace function for queued solo\n");
+#endif
+        automation::ctrlstatus s =
+            automation::ctrlstatus::queue | automation::ctrlstatus::replace;
+
+        return set_ctrl_status(a, s);
+    }
     else
         return true;                    /* pretend the key release worked   */
 }
@@ -8370,8 +8376,9 @@ performer::automation_solo
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
     {
-        automation::ctrlstatus c =
-            automation::ctrlstatus::queue | automation::ctrlstatus::replace;
+        automation::ctrlstatus c = automation::ctrlstatus::replace;
+
+        /// automation::ctrlstatus::queue | automation::ctrlstatus::replace;
 
         if (a == automation::action::toggle)
             result = toggle_ctrl_status(c);

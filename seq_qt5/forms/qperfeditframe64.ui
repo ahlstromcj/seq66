@@ -513,6 +513,11 @@ to leave ]</string>
            <height>28</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="toolTip">
           <string>Set &quot;song record&quot; snap. An added
 trigger snaps to the length of the pattern
@@ -787,6 +792,11 @@ for more editing room.</string>
          <width>80</width>
          <height>28</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="toolTip">
         <string>Resets Trigger Transpose to 0.</string>

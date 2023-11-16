@@ -1,14 +1,24 @@
 TO DO for Seq66 0.99.11
 Chris Ahlstrom
-2019-04-13 to 2023-11-14
+2019-04-13 to 2023-11-16
 
 Misc:
 
     -   Grid-mode options:
-        -   Solo issue was just a refresh issue, solved by calling
-            notify_trigger_change().
-            What should be the effect of clicking again on a soloed
-            pattern.
+        -   Now can click again to undo the solo. But doing two more
+            solos in a row clears the first non-soloed snapshot. Hmmm.
+        -   Needs to be made a queued solo; how to handle
+            mod_replace (Key_Home) and mod_snapshot (Ins)
+        -   Progress on plain Replace...
+        -   Document all the grid options and keystrokes.
+    -   Contrary to Seq24:
+        -   Grid-Solo-Click currently acts like Alt-Left-Click.
+        -   Shift-Left-Click opens the corresponding external live grid.
+        -   Ctrl-Left-Click wants to create a new pattern.
+        -   Right-Ctrl-Left-Click does NOT do a queue action.
+        -   Holding Alt is supposed to save the current snapshot, and then
+            restore it when lifted.
+        -   Holding Ctrl-Alt is supposed to ... cannot tell from SEQ24 doc.
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recorded measures

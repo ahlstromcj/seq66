@@ -48,6 +48,8 @@
 
 :set guifont=Terminus\ 12
 :set guioptions-=T
+:set guioptions-=r
+:set guioptions-=L
 
 " :set columns=168
 

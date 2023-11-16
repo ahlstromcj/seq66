@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-04-07
-% \update      2023-09-12
+% \update      2023-11-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -19,8 +19,10 @@
 
    This section presents some tables summarizing keyboard and mouse actions
    available in \textsl{Seq66}.
-   It does not cover mute keys and group keys, which are well
-   described in the keyboard options for the main window.
+   The mute keys and group keys are also well
+   described in the keyboard options for the main window
+   (\sectionref{subsubsec:patterns_pattern_keys_and_clicks}).
+
    It does not cover the "fruity" mouse actions, as this mode of mouse-handling
    is not supported in \textsl{Seq66}.
 
@@ -36,7 +38,8 @@
    which window has the keyboard/mouse focus.
    \index{keys!qt}
    For a possibly more up-to-date list, see the
-   \textbf{Hardwired Keys} tab in the
+   \textbf{Automation Defaults} and
+   \textbf{Hardwired Keys} tabs in the
    \texttt{control\_keys.ods} spreadsheet which is installed
    in the installed shared-data directory
    (e.g. \texttt{/usr/share/doc/seq66-0.99}).
@@ -89,8 +92,8 @@
    \texttt{[keyboard-control]}.
    We won't attempt to cover every key-control item,
    just the categories.  Some items might be discussed in other parts
-   of this manual. Remember that most keys have been consolidated with
-   the MIDI controls.
+   of this manual.
+   Remember that most keys have been consolidated with the MIDI controls.
    Also remember that the 'ctrl' file contains comments and an orderly layout
    to make it easier to understand and to edit.
 
@@ -98,6 +101,7 @@
    An additional key definition is shown for the pause key.
    By default, the pause key is the period
    ("\texttt{.}."), but that can be changed in the 'ctrl' file.
+   In the piano rolls it is a hard-wired keystroke.
 
    \index{pattern edit}
    A goal of \textsl{Seq66} is being able to edit a pattern using mainly the
@@ -126,8 +130,9 @@
    \index{snapshot}
    \index{keys!snapshot}
    A \textbf{snapshot} is a briefly-preserved state of the patterns.
-   One can press a snapshot key, change the state of the patterns for live
-   playback, and then release the snapshot key to revert to the state when
+   One can press (and release) the snapshot key,
+   change the state of the patterns for live
+   playback, and then press the snapshot key again to revert to the state when
    the snapshot key was first pressed.
    The default key is the \texttt{Ins} key.
 

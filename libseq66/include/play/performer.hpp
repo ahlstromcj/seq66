@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-11-14
+ * \updates       2023-11-16
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -505,13 +505,20 @@ private:
 
     /**
      *  From the liveframe/grid classes, these values make performer the boss
-     *  of pattern cut-and-paste.
+     *  of pattern cut-and-paste from the grid-slot popup menu.
      */
 
     seq::number m_old_seqno;
     seq::number m_current_seqno;
     sequence m_moving_seq;
     sequence m_seq_clipboard;
+
+    /**
+     *  Indicates that a snapshot has been stored. It is cleared (currently)
+     *  when a soloed pattern is clicked again.
+     */
+
+    seq::number m_solo_seqno;
 
     /**
      *  Set to screenset::unassigned() at first. Moved to setmapper for better
@@ -594,14 +601,7 @@ private:                            /* key, midi, and op container section  */
      *  when queue mode is exited.  See the m_no_queued_solo value.
      */
 
-    int m_queued_replace_slot;
-
-    /**
-     *  This value is used to indicated that the queued-replace (queued-solo)
-     *  feature is reset and not in force.
-     */
-
-    const int m_no_queued_solo;
+    seq::number m_queued_replace_slot;
 
     /**
      *  Holds the global MIDI transposition value.
@@ -2444,7 +2444,7 @@ public:
     void unset_queued_replace (bool clearbits = true);
     bool sequence_playing_toggle (seq::number seqno);
     bool sequence_playing_change (seq::number seqno, bool on);
-    bool replace_for_solo (seq::number seqno);
+    bool replace_for_solo (seq::number seqno, bool queued = false);
     void set_keep_queue (bool activate);
 
     bool is_keep_queue () const

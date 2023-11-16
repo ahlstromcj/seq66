@@ -1,4 +1,4 @@
-# README for Seq66 0.99.11 2023-11-13
+# README for Seq66 0.99.11 2023-11-15
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -102,6 +102,8 @@ Windows, and using a conventional source tarball.
             *   Fixed minor issue in Song zoom with 1920 PPQN.
             *   Fixed odd bug breaking MIDI-control-out (display).
             *   Prevent long redundant start-up error messages.
+            *   Fixed solo feature. Should unsolo before starting another
+                solo.
         *   Can now paste a pattern into a new or another loaded MIDI file.
         *   Improved copy/paste for screen-sets in the same way.
         *   Added optional paramater to the --priority option.
