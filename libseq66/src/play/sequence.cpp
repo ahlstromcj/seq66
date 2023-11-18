@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-11-13
+ * \updates       2023-11-18
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -5990,8 +5990,7 @@ sequence::set_armed (bool p)
             off_playing_notes();
 
         set_dirty();
-        m_queued = false;
-        m_one_shot = false;
+        m_queued = m_one_shot = false;
         perf()->announce_pattern(seq_number());     /* for issue #89        */
 #if defined SEQ66_PLATFORM_DEBUG_TMI
         printf("seq %d: playing %s\n", int(seq_number()), p ? "on" : "off");
@@ -6884,7 +6883,7 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
     {
         play(get_queued_tick() - 1, playbackmode, resumenoteons);
         (void) toggle_playing(tick, resumenoteons);
-        (void) perf()->set_ctrl_status
+        (void) perf()->set_ctrl_status      /* what about keep_queue?   */
         (
             automation::action::off, automation::ctrlstatus::queue
         );
@@ -6900,13 +6899,9 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
         );
     }
     if (is_metro_seq())
-    {
         live_play(tick);
-    }
     else
-    {
         play(tick, playbackmode, resumenoteons);
-    }
 }
 
 /**

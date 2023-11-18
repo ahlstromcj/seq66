@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-08-13
+ * \updates       2023-11-18
  * \license       GNU GPLv2 or above
  *
  * MIDI control container:
@@ -215,7 +215,7 @@ midicontrolin::status_string () const
     std::string result;
     if (is_solo())
         result = "Solo";
-    else if (is_keep_queue())
+    else if (is_keep_queue())               /* check this before is_queue() */
         result = "Keep Q";
     else if (is_queue())
         result = "Queued";

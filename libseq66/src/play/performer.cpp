@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-16
+ * \updates       2023-11-18
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -6479,7 +6479,9 @@ performer::set_keep_queue (bool activate)
     automation::action a = activate ?
         automation::action::on : automation::action::off;
 
-    (void) set_ctrl_status(a, automation::ctrlstatus::keep_queue);
+    // (void) set_ctrl_status(a, automation::ctrlstatus::keep_queue);
+
+    (void) set_ctrl_status(a, automation::ctrlstatus::queue);
 }
 
 /**
@@ -6514,13 +6516,12 @@ performer::set_ctrl_status
     if (on && midi_control_in().is_set(status))
         on = false;
 
-    bool savesnap = midi_control_in().is_snapshot(status);
-    if (! savesnap)
-        savesnap = midi_control_in().is_replace(status);
+    bool snap = midi_control_in().is_snapshot(status) ||
+        midi_control_in().is_replace(status);
 
     if (on)
     {
-        if (savesnap)
+        if (snap)
             save_snapshot();
 
         /*
@@ -6528,18 +6529,31 @@ performer::set_ctrl_status
          */
 
         midi_control_in().add_status(status);
+        if (midi_control_in().is_keep_queue(status))
+            midi_control_in().add_status(automation::ctrlstatus::queue);
     }
     else
     {
-        bool q = midi_control_in().is_keep_queue(status) ||
-            midi_control_in().is_queue(status);
+        bool q = midi_control_in().is_queue(status);
+        bool k = midi_control_in().is_keep_queue(status);
+        if (k)
+        {
+            midi_control_in().remove_status(automation::ctrlstatus::queue);
+            midi_control_in().remove_status(automation::ctrlstatus::keep_queue);
+        }
+        else if (q)
+        {
+            if (! midi_control_in().is_keep_queue())
+            {
+                midi_control_in().remove_status(automation::ctrlstatus::queue);
+                unset_queued_replace();
+            }
+        }
+        else
+            midi_control_in().remove_status(status);
 
-        if (q)
-            unset_queued_replace();
-        else if (savesnap)
+        if (snap)
             restore_snapshot();
-
-        midi_control_in().remove_status(status);
     }
     display_ctrl_status(status, on);
     return true;
@@ -6763,7 +6777,7 @@ performer::sequence_playing_toggle (seq::number seqno)
                 }
             }
             else
-                save_queued(seqno);
+                save_queued(seqno);     /* not current s'set??? */
 
             unqueue_sequences(seqno);
             m_queued_replace_slot = seqno;
@@ -6929,7 +6943,7 @@ performer::toggle_song_start_mode ()
  * Hmmmm, this stops recording on all patterns, but does not start it.
  * Re issue #44.
  *
- * song_recording_stop();      // stops recording on all sequences
+ * song_recording_stop() stops recording on all sequences.
  *
  * \param on
  *      If true, turn song-recording on, otherwise turn it off.
@@ -8377,9 +8391,6 @@ performer::automation_solo
     if (opcontrol::allowed(d0, inverse))
     {
         automation::ctrlstatus c = automation::ctrlstatus::replace;
-
-        /// automation::ctrlstatus::queue | automation::ctrlstatus::replace;
-
         if (a == automation::action::toggle)
             result = toggle_ctrl_status(c);
         else
@@ -9492,9 +9503,13 @@ performer::automation_keep_queue
     if (opcontrol::allowed(d0, inverse))
     {
         if (a == automation::action::toggle)
+        {
             return toggle_ctrl_status(automation::ctrlstatus::keep_queue);
+        }
         else
+        {
             return set_ctrl_status(a, automation::ctrlstatus::keep_queue);
+        }
     }
     else
         return true;
@@ -9659,7 +9674,11 @@ performer::automation_toggle_jack
 }
 
 /**
- *  Not sure we really need this one.`
+ *  Not sure we really need this one. However, now that we have the
+ *  button to hide the menu and the bottom rows, this might be
+ *  useful.
+ *
+ *  TODO
  */
 
 bool
@@ -9930,7 +9949,7 @@ performer::automation_grid_mode
 }
 
 /**
- *  This merely set the kind of alteration to employ once recording
+ *  This merely sets the kind of alteration to employ once recording
  *  is set.
  */
 
@@ -9938,11 +9957,7 @@ void
 performer::set_grid_quant (alteration q)
 {
     if (q < alteration::max)
-    {
         m_alter_recording = q;
-
-        // notify_automation_change(automation::slot::grid_loop);
-    }
 }
 
 bool

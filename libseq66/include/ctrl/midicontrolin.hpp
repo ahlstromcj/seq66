@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-12-02
+ * \updates       2023-11-18
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of midicontrol objects keyed by a key ordinal
@@ -193,7 +193,7 @@ public:
 
     bool is_replace () const
     {
-        return bit_test_and(m_control_status, automation::ctrlstatus::replace);
+        return is_replace(m_control_status);
     }
 
     bool is_replace (automation::ctrlstatus status) const
@@ -203,7 +203,7 @@ public:
 
     bool is_snapshot () const
     {
-        return bit_test_and(m_control_status, automation::ctrlstatus::snapshot);
+        return is_snapshot(m_control_status);
     }
 
     bool is_snapshot (automation::ctrlstatus status) const
@@ -213,7 +213,7 @@ public:
 
     bool is_queue () const
     {
-        return bit_test_and(m_control_status, automation::ctrlstatus::queue);
+        return is_queue(m_control_status);
     }
 
     bool is_queue (automation::ctrlstatus status) const
@@ -223,10 +223,7 @@ public:
 
     bool is_keep_queue () const
     {
-        return bit_test_and
-        (
-            m_control_status, automation::ctrlstatus::keep_queue
-        );
+        return is_keep_queue(m_control_status);
     }
 
     bool is_keep_queue (automation::ctrlstatus status) const
@@ -236,7 +233,7 @@ public:
 
     bool is_oneshot () const
     {
-        return bit_test_and(m_control_status, automation::ctrlstatus::oneshot);
+        return is_oneshot(m_control_status);
     }
 
     bool is_oneshot (automation::ctrlstatus status) const
