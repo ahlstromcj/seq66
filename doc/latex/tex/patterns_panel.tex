@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-11-12
+% \update      2023-11-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -143,6 +143,8 @@
    the title of the pattern, the number of measures in the pattern, and
    indicate if the pattern has a loop-count (indicated by a
    \textbf{+} sign.
+   In addition, if the pattern has an input buss set, that number
+   appears before the measures number; they're separated by a colon.
    A \textsl{right-click} over a pattern button brings up a fairly extensive
    popup menu.
    Also see \sectionref{subsubsec:patterns_pattern_filled}.
@@ -414,7 +416,7 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.65]{main-window/slot-inputt-buss.png}
-   \caption{Input Bus Popup Menu (as of 0.99.9)}
+   \caption{Input Bus Popup Menu}
    \label{fig:slot_input_bus}
 \end{figure}
 
@@ -450,6 +452,9 @@
          and use a MIDI device that has \textsl{not} been assigned as
          a pattern's input buss.
    \end{itemize}
+
+   One final note... the input buss setting overrides the record-by-channel
+   setting.
    
 \subsubsection{Pattern}
 \label{subsubsec:patterns_pattern_filled}

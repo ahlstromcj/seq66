@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-11-09
+ * \updates       2023-11-20
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1630,7 +1630,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 sequence *
 midifile::create_sequence (performer & p)
 {
-    sequence * result = new sequence(ppqn());
+    sequence * result = new (std::nothrow) sequence(ppqn());
     if (not_nullptr(result))
     {
         mastermidibus * masterbus = p.master_bus();

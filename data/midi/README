@@ -1,9 +1,18 @@
-Data/Midi Directory for Seq66 0.94.0
+Data/Midi Directory for Seq66 0.99.11
 Chris Ahlstrom
-2021-04-14 to 2021-05-20
+2021-04-14 to 2023-11-22
 
-This directory contains sample MIDI files to be installed for
-instructional purposes.
+This directory contains sample MIDI files to be installed for instructional
+purposes and for detecting issues in loading files.
+
+    16-blank-patterns.midi
+
+        This file is useful when using the record-by-channel option.
+        Make a copy of it, load it, and use this option for recording.
+        The record-by-channel option requires that the destination
+        sequences for channels present in the input are already created.
+        This file also include a 17th pattern that is "free"... it does
+        not impose a channel number on the output.
 
     b4uacufm.mid
     b4uacuse-gm-patchless.midi
@@ -60,5 +69,12 @@ instructional purposes.
 
         This MIDI file is another, simpler and short reconstruction, as
         described in the text file.
+
+    FM and PSS-790 directories
+
+        These files support testing the installed play-list functionality.
+        These tunes are old and currently do not support General MIDI.
+        One of these days we will remap them or at least add more
+        appropriate program/patch changes.
 
 # vim: sw=4 ts=4 wm=8 et ft=sh

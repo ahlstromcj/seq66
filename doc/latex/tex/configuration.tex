@@ -796,7 +796,17 @@
       record-by-channel = false
    \end{verbatim}
 
-   The record-flag should be in the 'usr' file;
+   The record-by-channel flag, if true, causes recording to route
+   events to the first recording pattern that has an output channel
+   matching the event's MIDI channel.
+   To use this feature, the user must provide an existing pattern,
+   set its output channel as desired, and enable recording for that pattern.
+   To facilitate this operation, a MIDI file
+   \texttt{data/midi/16-blank-patterns.midi}
+   is provided, with output channels already set.
+   Make a copy of it and start with that copy.
+
+   The record-by-channel flag should probably be in the 'usr' file;
    something to rectify later.
 
 \subsubsection{'rc' File / MIDI-Meta-Events Section}

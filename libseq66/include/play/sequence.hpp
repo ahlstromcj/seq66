@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-11-14
+ * \updates       2023-11-21
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -405,20 +405,21 @@ private:
 
     /**
      *  A new feature for recording, based on a "stazed" feature.  If true
-     *  (not yet the default), then the seqedit window will record only MIDI
-     *  events that match its channel.  The old behavior is preserved if this
-     *  variable is set to false.
+     *  (not the default), then Seq66 will record only MIDI events that match
+     *  its output channel.  The old behavior is preserved if this variable is
+     *  set to false.
      */
 
     bool m_channel_match;
 
     /**
-     *  Contains the global MIDI channel for this sequence.  However, if this
-     *  value is null_channel() (0x80), then this sequence is a multi-chanel
-     *  track, and has no single channel, or represents a track who's recorded
-     *  channels we do not want to replace.  Please note that this is the
-     *  output channel.  However, if set to a valid channel, then that channel
-     *  will be forced on notes created via painting in the seqroll.
+     *  Contains the global MIDI output channel for this sequence.  However,
+     *  if this value is null_channel() (0x80), then this sequence is a
+     *  multi-chanel track, and has no single channel, or represents a track
+     *  who's recorded channels we do not want to replace.  Please note that
+     *  this is the output channel.  However, if set to a valid channel, then
+     *  that channel will be forced on notes created via painting in the
+     *  seqroll.
      */
 
     midibyte m_midi_channel;            /* pattern's global MIDI channel    */
@@ -1297,13 +1298,17 @@ public:
     );
 
     bool set_measures (int measures, bool user_change = false);
-    bool apply_length (int bpb, int ppqn, int bw, int measures = 0);
+    bool apply_length
+    (
+        int bpb, int ppqn, int bw,
+        int measures = 0, bool user_change = false
+    );
     bool extend_length ();
     bool double_length ();
 
-    bool apply_length (int meas = 0)
+    bool apply_length (int meas = 0, bool user_change = false)
     {
-        return apply_length(0, 0, 0, meas);
+        return apply_length(0, 0, 0, meas, user_change);
     }
 
     midipulse get_length () const
@@ -1715,6 +1720,11 @@ public:
         return m_true_in_bus;
     }
 
+    bool has_in_bus () const
+    {
+        return is_good_buss(m_true_in_bus);
+    }
+
     bool set_master_midi_bus (const mastermidibus * mmb);
     bool set_midi_bus (bussbyte mb, bool user_change = false);
     bool set_midi_channel (midibyte ch, bool user_change = false);
@@ -1911,10 +1921,9 @@ public:
     midipulse progress_value () const;
 
     /**
-     * \getter m_channel_match
-     *      The master bus needs to know if the match feature is truly in
-     *      force, otherwise it must pass the incoming events to all recording
-     *      sequences.  Compare this function to channels_match().
+     *  The master bus needs to know if the match feature is truly in force,
+     *  otherwise it must pass the incoming events to all recording sequences.
+     *  Compare this function to channels_match().
      */
 
     bool channel_match () const
@@ -2072,6 +2081,11 @@ private:
     void song_record_tick (midipulse t)
     {
         m_song_record_tick = t;
+    }
+
+    void channel_match (bool flag)
+    {
+        m_channel_match = flag;
     }
 
 };          // class sequence

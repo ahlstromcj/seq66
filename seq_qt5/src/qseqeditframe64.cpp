@@ -1533,9 +1533,9 @@ qseqeditframe64::conditional_update ()
          *  Question: how can the expansion work here without constantly
          *  increasing the length before the end of the measures is reached???
          *  We have moved this operation out of the user-interface and into
-         * sequence::stream_event()
+         *  sequence::stream_event()
          *
-         * set_measures(track().get_measures() + 1);
+         *      set_measures(track().get_measures() + 1);
          */
 
         follow_progress(expandrec);             /* keep up with progress    */
@@ -1876,25 +1876,10 @@ qseqeditframe64::set_measures (int m, qbase::status qs)
         }
         else
         {
-            bool ok = m > 0;
-
-#if defined DO_NOT_DISABLE_FOR_ISSUE_107
-
-            /*
-             * The check for the pattern playing causes issue #107, and
-             * we're not sure why this check was put here in the first place.
-             */
-
-            if (ok)
-                ok = ! perf().is_pattern_playing()  /* ca 2022-08-20        */
-#endif
-            if (ok)
+            if (track().apply_length(m, true))      /* always a user change */
             {
-                if (track().apply_length(m))
-                {
-                    m_measures = m;
-                    set_track_change();             /* to solve issue #90   */
-                }
+                m_measures = m;
+                set_track_change();                 /* to solve issue #90   */
             }
         }
     }
@@ -2081,6 +2066,8 @@ qseqeditframe64::text_measures (const QString & text)
     }
 }
 
+#if defined USE_COMBO_BUTTON_TO_CYLE_MEASURES       // kept only for posterity
+
 /**
  *  When the measures-length button is pushed, we go to the next length
  *  entry in the combo-box, wrapping around when the end is reached.
@@ -2097,6 +2084,8 @@ qseqeditframe64::next_measures ()
     int m = measures_list().ctoi(index);
     set_measures(m);
 }
+
+#endif
 
 /**
  *  Passes the transpose status to the sequence object.

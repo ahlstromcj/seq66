@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2023-11-15
+ * \updates       2023-11-21
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -309,6 +309,7 @@ qloopbutton::initialize_text ()
         int bpb = int(loop()->get_beats_per_bar());
         int bw = int(loop()->get_beat_width());
         int sn = loop()->seq_number();
+        int trx = rx;
         int lflags = Qt::AlignLeft | Qt::AlignVCenter;
         int rflags = Qt::AlignRight | Qt::AlignVCenter;
         std::string lengthstr = std::to_string(loop()->get_measures());
@@ -342,9 +343,16 @@ qloopbutton::initialize_text ()
         else if (loop()->loop_count_max() > 0)
             lengthstr += "+";
 
+        if (loop()->has_in_bus())
+        {
+            std::string inbus = std::to_string(int(loop()->seq_midi_in_bus()));
+            inbus += ":";
+            lengthstr = inbus + lengthstr;
+            trx -= 2;                       /* * fontsize */
+        }
         m_top_left.set(lx, ty, lw, bh, lflags, loop()->name());
         if (! horiz_compressed())
-            m_top_right.set(rx, ty, rw, bh, rflags, lengthstr);
+            m_top_right.set(trx, ty, rw, bh, rflags, lengthstr);
 
         m_bottom_left.set(lx, by, lw, bh, lflags, lowerleft);
         m_bottom_right.set(rx, by, rw, bh, rflags, hotkey);

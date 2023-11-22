@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-10-26
+ * \updates       2023-11-20
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1754,6 +1754,7 @@ qslivegrid::popup_menu ()
             }
             else
             {
+                editevents->setEnabled(true);
                 connect
                 (
                     editevents, SIGNAL(triggered(bool)),

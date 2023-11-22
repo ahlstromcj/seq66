@@ -1486,7 +1486,7 @@ qsmainwnd::load_into_session (const std::string & selectedfile)
 void
 qsmainwnd::select_and_load_file ()
 {
-    std::string selectedfile;
+    std::string selectedfile = rc().last_used_dir();    /* ca 2023-11-22    */
     if (show_open_file_dialog(selectedfile))
     {
         if (open_file(selectedfile))

@@ -1,4 +1,4 @@
-# README for Seq66 0.99.11 2023-11-18
+# README for Seq66 0.99.11 2023-11-22
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -85,18 +85,20 @@ Windows, and using a conventional source tarball.
 
     *   Version 0.99.11:
         *   Added 8 more ui-palette entries, total of 32. Probably enough.
+        *   Add display of a pattern input bus (if present) in the grid
+            slot. It is shown just before the pattern length at top right.
         *   Moved style-sheet options from 'usr' to the 'rc' file. Upgrade
             is automatic.
         *   Fixed errors setting style-sheet, palette, and mutes in
             Preferences / Session.  Enhanced this tab to indicate when
             exit (as opposed to internal restart) is needed.
-        *   Added mute-group label to main window.
+        *   Added mute-group label ("MG") to main window.
         *   Fixing various playlist errors:
             -   PPQN setting issue causing slow/fast playback.
             -   Segfaults due to not stopping playback before loading
                 the next song or basing calculations on missing values.
-        *   Fixing the botch of the Set Master tab.
         *   Embarassing fixes:
+            *   Fixing the massive botch of the Set Master tab.
             *   More fixes in Mutes tab, including raising the modify flag.
             *   Fixed app exiting unceremoniously if "quiet" is set.
             *   Fixed minor issue in Song zoom with 1920 PPQN.
@@ -105,7 +107,11 @@ Windows, and using a conventional source tarball.
             *   Fixed solo feature. Should unsolo before starting another
                 solo.
             *   Fixed queue and keep-queue.
+            *   Fixed not saving the record-by-channel setting.
+            *   Fixed not modifying the song when pattern measures is changed.
         *   Can now paste a pattern into a new or another loaded MIDI file.
+        *   When loading a MIDI file, the file dialog defaults to the
+            last-used directory.
         *   Improved copy/paste for screen-sets in the same way.
         *   Added optional paramater to the --priority option.
         *   Focus is now set immediately to the seqroll and perfroll.

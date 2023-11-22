@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-11-18
+ * \updates       2023-11-22
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -970,7 +970,7 @@ sequence::push_undo (bool hold)
 void
 sequence::set_have_undo ()
 {
-    m_have_undo = m_events_undo.size() > 0;     // if (m_have_undo) modify();
+    m_have_undo = m_events_undo.size() > 0;
 }
 
 /**
@@ -989,7 +989,7 @@ void
 sequence::pop_undo ()
 {
     automutex locker(m_mutex);
-    if (! m_events_undo.empty())                // stazed: m_list_undo
+    if (! m_events_undo.empty())
     {
         m_events_redo.push(m_events);
         m_events = m_events_undo.top();
@@ -997,8 +997,8 @@ sequence::pop_undo ()
         verify_and_link();
         unselect();
     }
-    set_have_undo();                            // stazed
-    set_have_redo();                            // stazed
+    set_have_undo();
+    set_have_redo();
 }
 
 /**
@@ -1022,8 +1022,8 @@ sequence::pop_redo ()
         verify_and_link();
         unselect();
     }
-    set_have_undo();                            // stazed
-    set_have_redo();                            // stazed
+    set_have_undo();
+    set_have_redo();
 }
 
 /**
@@ -1036,7 +1036,7 @@ void
 sequence::push_trigger_undo ()
 {
     automutex locker(m_mutex);
-    m_triggers.push_undo(); // todo:  see how stazed's sequence function works
+    m_triggers.push_undo();
 }
 
 /**
@@ -1815,7 +1815,7 @@ sequence::remove (event::buffer::iterator evi)
         if (er.is_note_off() && m_playing_notes[er.get_note()] > 0)
         {
             master_bus()->play_and_flush(m_true_bus, &er, midi_channel(er));
-            --m_playing_notes[er.get_note()];                   // ugh
+            --m_playing_notes[er.get_note()];
         }
         if (m_events.remove(evi))
             modify();
@@ -3355,9 +3355,9 @@ sequence::fix_pattern (fixparameters & params)
                         measures = int(newmeasures);
                 }
                 (void) apply_length(measures);
-                if (newscalefactor > 1.00)                              // 1.0
+                if (newscalefactor > 1.00)
                     tempefx = bit_set(tempefx, fixeffect::expanded);
-                else if (newscalefactor < 1.00)                         // 1.0
+                else if (newscalefactor < 1.00)
                     tempefx = bit_set(tempefx, fixeffect::shrunk);
             }
 
@@ -4057,10 +4057,10 @@ sequence::check_loop_reset ()
  *  If MIDI Thru is enabled, the event is also put on the buss.
  *
  *  This function supports rejecting events if the channel doesn't match that
- *  of the sequence.  We do it here for comprehensive event support.  Also make
- *  sure the event-channel is preserved before this function is called, and also
- *  need to make sure that the channel is appended on both playback and in
- *  saving of the MIDI file.
+ *  of the sequence.  We do it here for comprehensive event support.  Also
+ *  make sure the event-channel is preserved before this function is called,
+ *  and also need to make sure that the channel is appended on both playback
+ *  and in saving of the MIDI file.
  *
  *  If in overwrite loop-record mode, any events after reset should clear the
  *  old items from the previous pass through the loop.
@@ -4073,14 +4073,10 @@ sequence::check_loop_reset ()
  *  the velocity to the preserve-velocity (-1).
  *
  *  If the pattern is not playing, this function supports the step-edit
- *  (auto-step) feature, where we are entering notes without playback occurring,
- *  so we set the generic default note length and volume to the snap.  For
- *  Note Ons, this isgnores the actual Note Off and synthesizes a matching
- *  Note Off.
- *
- * \todo
- *      When we feel like debugging, we will replace the global is-playing
- *      call with the parent performer's is-running call.
+ *  (auto-step) feature, where we are entering notes without playback
+ *  occurring, so we set the generic default note length and volume to the
+ *  snap.  For Note Ons, this isgnores the actual Note Off and synthesizes a
+ *  matching Note Off.
  *
  * \threadsafe
  *
@@ -4088,10 +4084,10 @@ sequence::check_loop_reset ()
  *      Provides the event to stream.
  *
  * \return
- *      Returns true if the event's channel matched that of this sequence,
- *      and the channel-matching feature was set to true.  Also returns true
- *      if we're not using channel-matching.  A return value of true means
- *      the event should be saved.
+ *      Returns true if the event's channel matched that of this sequence, and
+ *      the channel-matching feature was set to true.  Also returns true if
+ *      we're not using channel-matching.  A return value of true means the
+ *      event should be saved.
  */
 
 bool
@@ -5837,10 +5833,21 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
  *      Provides the number of measures the sequence should cover, obtained
  *      from the user-interface. Defaults to 0, which means we calculate the
  *      current measures.
+ *
+ * \param user_change
+ *      If true, this is a modification, not an initialization. The default
+ *      is false.
+ *
+ * \return
+ *      Returns true if the modification was initiated by the user.
  */
 
 bool
-sequence::apply_length (int bpb, int ppq, int bw, int measures)
+sequence::apply_length
+(
+    int bpb, int ppq, int bw,
+    int measures, bool user_change
+)
 {
     bool result = false;
     if (bpb == 0)
@@ -5864,7 +5871,7 @@ sequence::apply_length (int bpb, int ppq, int bw, int measures)
         measures = get_measures(0);         /* calculate the current bars   */
     }
     else
-        result = set_measures(measures);    /* calls set_length()           */
+        result = set_measures(measures, user_change);   /* and set_length() */
 
     /*
      * Given the above, the following call does not do anything.
@@ -6017,12 +6024,6 @@ sequence::set_armed (bool p)
  *  changed.  It is called by set_recording().  We probably need to explicitly
  *  turn off all playing notes; not sure yet.
  *
- *  Like performer::set_sequence_input(), but it uses the internal recording
- *  status directly, rather than getting it from seqedit.
- *
- *  Do we need a quantized recording version, or is setting the
- *  quantized-recording flag sufficient?
- *
  *  Except if already Thru and trying to turn recording (input) off, set input
  *  on here no matter what, because even if m_thru, input could have been
  *  replaced in another sequence.
@@ -6056,9 +6057,16 @@ sequence::set_recording (toggler flag)
     {
         m_recording = recordon;
         m_notes_on = 0;                 /* reset the step-edit note counter */
-        if (! recordon)
+        if (recordon)
+        {
+            if (rc().filter_by_channel())
+                channel_match(true);
+        }
+        else
+        {
             m_alter_recording = alteration::none;
-
+            channel_match(false);
+        }
         set_dirty();
         notify_trigger();
     }

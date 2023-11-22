@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-27
+ * \updates       2023-11-20
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -3912,6 +3912,7 @@ qseditoptions::slot_record_by_channel ()
 {
     bool on = ui->checkBoxRecordByChannel->isChecked();
     rc().filter_by_channel(on);
+    perf().filter_by_channel(on);               /* ca 2023-11-20    */
     modify_rc();
 }
 

@@ -1,9 +1,22 @@
 TO DO for Seq66 0.99.11
 Chris Ahlstrom
-2019-04-13 to 2023-11-18
+2019-04-13 to 2023-11-21
 
 Misc:
 
+    -   Record by channel:
+        -   Create pattern 0 and 9, set record on both, play. Got this:
+            ./nptl/pthread_mutex_lock.c:117: __pthread_mutex_lock: Assertion
+            'mutex->__data.__owner == 0' failed. Not duplicated in gdb.
+        -   Notes from both channel are recorded into all patterns that are
+            set for record.
+        -   Document the recording process and options as in recording.text.
+        -   Test buss-routing under JACK and PortMIDI; seq66_features.h has
+            comment claiming they do not work, which makes no sense.
+            Also in qslivegrid: "Currently doesn't work with Seq66's
+            ALSA implementation."
+        -   Need a way to make more visible the channel filtering option
+            in the main window.
     -   Grid-mode options:
         -   Now can click again to undo the solo. But doing two more
             solos in a row clears the first non-soloed snapshot. Hmmm.

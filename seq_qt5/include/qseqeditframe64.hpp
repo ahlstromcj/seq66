@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-11-01
+ * \updates       2023-11-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -271,7 +271,9 @@ private slots:
     void reset_beats_per_bar ();
     void reset_beat_width ();
     void text_measures (const QString & text);
-    void next_measures ();
+#if defined USE_COMBO_BUTTON_TO_CYLE_MEASURES       // kept only for posterity
+     void next_measures ();
+#endif
     void reset_measures ();
     void transpose (bool ischecked);
     void update_chord (int index);

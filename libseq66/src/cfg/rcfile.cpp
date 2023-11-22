@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-11-12
+ * \updates       2023-11-20
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -1182,8 +1182,8 @@ rcfile::write ()
     write_boolean(file, "jack-use-offset", rc_ref().jack_use_offset());
     write_integer(file, "jack-buffer-size", rc_ref().jack_buffer_size());
     file << "\n"
-"# 'auto-save-rc' sets automatic saving of the  'rc' and other files. If set,\n"
-"# many command-line settings are saved to configuration files.\n"
+"# 'auto-save-rc' sets automatic saving of the  'rc' and other files. If set\n"
+"# (true if changes were made in Preferences), settings are saved.\n"
 "#\n"
 "# 'old-triggers' saves triggers in a format compatible with Seq24. Otherwise,\n"
 "# triggers are saved with an additional 'transpose' setting. The old-mutes\n"
