@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-27
+ * \updates       2023-11-22
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -333,6 +333,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 d1 -= s_circle_d;
                 snprintf(digits, sizeof digits, "%3d", d0);
                 brush.setColor(selected ? sel_color() : drum_color()); /* ! */
+                painter.setBrush(brush);
                 painter.setPen(pen);
                 painter.drawEllipse
                 (

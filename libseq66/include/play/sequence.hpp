@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-11-21
+ * \updates       2023-11-22
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -191,7 +191,9 @@ public:
         linked,         /**< Used for drawing linked notes.             */
         note_on,        /**< For starting the drawing of a note.        */
         note_off,       /**< For finishing the drawing of a note.       */
-        tempo           /**< For drawing tempo meta events.             */
+        tempo,          /**< For drawing tempo meta events.             */
+        program,        /**< For drawing program change (patch) events. */
+        max
     };
 
     /**

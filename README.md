@@ -85,7 +85,7 @@ Windows, and using a conventional source tarball.
 
     *   Version 0.99.11:
         *   Added 8 more ui-palette entries, total of 32. Probably enough.
-        *   Add display of a pattern input bus (if present) in the grid
+        *   Added display of a pattern input bus (if present) in the grid
             slot. It is shown just before the pattern length at top right.
         *   Moved style-sheet options from 'usr' to the 'rc' file. Upgrade
             is automatic.
@@ -107,7 +107,8 @@ Windows, and using a conventional source tarball.
             *   Fixed solo feature. Should unsolo before starting another
                 solo.
             *   Fixed queue and keep-queue.
-            *   Fixed not saving the record-by-channel setting.
+            *   Fixed not saving record-by-channel. Fixed record-by-channel.
+                Added a pre-made MIDI file to use with record-by-channel.
             *   Fixed not modifying the song when pattern measures is changed.
         *   Can now paste a pattern into a new or another loaded MIDI file.
         *   When loading a MIDI file, the file dialog defaults to the
@@ -121,6 +122,7 @@ Windows, and using a conventional source tarball.
             logging to a file.
         *   Replaced the --inspect option with --session-tag to allow easy
             changing to another setup specified in sessions.rc.
+        *   Added showing program changes in slot button.
     *   Version 0.99.10:
         *   Issue #117 Option to close pattern windows with esc key. Must
             be enabled via a 'usr' option first.

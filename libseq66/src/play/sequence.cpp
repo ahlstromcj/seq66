@@ -5283,7 +5283,7 @@ sequence::get_note_info
     bool islinked = drawevent.is_linked();
     niout.ni_tick_finish    = 0;
     niout.ni_tick_start     = drawevent.timestamp();
-    niout.ni_note           = drawevent.get_note();
+    niout.ni_note           = drawevent.get_note();             /* ie. d0() */
     niout.ni_selected       = drawevent.is_selected();
     niout.ni_velocity       = drawevent.note_velocity();
     if (isnoteon)
@@ -5325,6 +5325,11 @@ sequence::get_note_info
          */
 
         return draw::tempo;
+    }
+    else if (drawevent.is_program_change())
+    {
+        niout.ni_tick_finish = niout.ni_tick_start; // drawevent.timestamp()
+        return draw::program;
     }
     return draw::none;
 }
