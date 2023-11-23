@@ -5317,13 +5317,7 @@ performer::auto_play_start ()
 bool
 performer::auto_play_stop (midipulse tick)
 {
-#if defined USE_OLD_CODE
-    bool result = m_max_extent > 0 && tick >= m_max_extent && song_mode();
-#else
     bool result = m_max_extent > 0 && tick >= m_max_extent;
-    if (result)
-        result = playlist_active();
-#endif
     if (result)
     {
         if (playlist_active())

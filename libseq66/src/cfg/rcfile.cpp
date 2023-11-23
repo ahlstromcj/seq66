@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-11-20
+ * \updates       2023-11-22
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -243,7 +243,7 @@ rcfile::parse ()
     rc_ref().mute_group_file_active(active);
     rc_ref().mute_group_filename(pfname);               /* base name        */
     fullpath = rc_ref().mute_group_filespec();
-    file_message("Reading mutes", fullpath);
+    file_message("Read mutes", fullpath);
 
     /*
      *  See get_usr_file() below.
@@ -490,7 +490,7 @@ rcfile::parse ()
     rc_ref().midi_control_active(active);
     rc_ref().midi_control_filename(pfname);             /* base name    */
     fullpath = rc_ref().midi_control_filespec();
-    file_message("Reading ctrl", fullpath);
+    file_message("Read ctrl", fullpath);
 
     int ticks = 64;
     bool recordbychannel = false;

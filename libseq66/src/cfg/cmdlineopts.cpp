@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-11-12
+ * \updates       2023-11-22
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -732,7 +732,7 @@ cmdlineopts::parse_rc_file
     if (file_readable(filespec))
     {
         rcfile options(filespec, rc());
-        file_message("Reading rc", filespec);
+        file_message("Read rc", filespec);
         result = options.parse();
         if (! result)
         {
@@ -764,7 +764,7 @@ cmdlineopts::get_usr_file ()
     if (result)
     {
         rcfile options(rcn, rc());
-        file_message("Reading rc to get 'usr' file", rcn);
+        file_message("Read rc to get 'usr' file", rcn);
         result = options.get_usr_file();
         if (! result)
             file_error("Getting 'usr' file failed", rcn);
@@ -788,7 +788,7 @@ cmdlineopts::parse_usr_file
     if (file_readable(filespec))
     {
         usrfile ufile(filespec, rc());
-        file_message("Reading usr", filespec);
+        file_message("Read usr", filespec);
         result = ufile.parse();
         if (! result)
         {

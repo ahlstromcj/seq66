@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-11-22
+ * \updates       2023-11-23
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -5481,7 +5481,9 @@ sequence::get_next_event_match
         bool ok = drawevent.match_status(status);
         if (ok && ismeta)
         {
-            ok = drawevent.channel() == cc;     /* avoids redundant check   */
+            if (! event::is_meta_text_msg(status)) /* do all text the same  */
+                ok = drawevent.channel() == cc; /* avoids redundant check   */
+
             if (ok)
                 return true;                    /* must ++evi after call    */
         }
@@ -5510,13 +5512,14 @@ sequence::get_next_event_match
  *
  * \param metamsg
  *      Provides the type of Meta message. In Seq66, this value is stored
- *      in the "channel" member.
+ *      in the "channel" member. A special case is EVENT_META_TEXT_EVENT,
+ *      which covers a number of different textual meta messages.
  *
  * \param [out] evi
  *      An iterator return value for the next event found.  The caller might
- *      want to check it.  Do not use this iterator if
- *      false is returned!  The caller must increment it for the next call, just
- *      as for get_next_event() or get_next_event_match().
+ *      want to check it.  Do not use this iterator if false is returned!  The
+ *      caller must increment it for the next call, just as for
+ *      get_next_event() or get_next_event_match().
  *
  * \param start
  *      Provides the starting point for the search.  Events before this tick
@@ -5524,10 +5527,10 @@ sequence::get_next_event_match
  *
  * \param range
  *      Provides how far to look for a time signature. The default is
- *      c_null_midipulse, which means just detect the first Meta event
- *      no matter how deep into the pattern. Another useful value is the
- *      snap() value from the seqedit. In that case the event time must be
- *      within \a start + \a range ticks.
+ *      c_null_midipulse, which means just detect the first Meta event no
+ *      matter how deep into the pattern. Another useful value is the snap()
+ *      value from the seqedit. In that case the event time must be within
+ *      \a start + \a range ticks.
  *
  * \return
  *      Returns true if the Meta event was detected before the range limit was
@@ -5555,7 +5558,11 @@ sequence::get_next_meta_match
         const event & drawevent = eventlist::cdref(evi);
         if (drawevent.is_meta())
         {
-            if (drawevent.channel() == metamsg)
+            bool match = metamsg == EVENT_META_TEXT_EVENT ?
+                event::is_meta_text_msg(drawevent.channel()) :
+                drawevent.channel() == metamsg ;
+
+            if (match)
             {
                 midipulse tick = evi->timestamp();
                 if (tick >= start)

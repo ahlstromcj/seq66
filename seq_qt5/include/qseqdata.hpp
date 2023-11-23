@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-09-09
+ * \updates       2023-11-22
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -83,7 +83,9 @@ public:
         tempo,
         time_signature,
         program_change,
-        pitchbend
+        pitchbend,
+        text,
+        max
     };
 
     Q_OBJECT
@@ -122,6 +124,11 @@ public:
     bool is_pitchbend () const
     {
         return m_data_type == type::pitchbend;
+    }
+
+    bool is_text () const
+    {
+        return m_data_type == type::text;
     }
 
     midibyte status () const

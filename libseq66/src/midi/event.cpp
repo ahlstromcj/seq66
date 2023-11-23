@@ -783,8 +783,7 @@ event::set_meta_status (midibyte metatype)
  * \return
  *      Returns the text if valid, otherwise returns an empty string.
  *
- *      Note
- *      that the text is in "midi-bytes" format, where characters greater
+ *      Note that the text is in "midi-bytes" format, where characters greater
  *      than 127 are encodes as a hex value, "\xx".
  */
 

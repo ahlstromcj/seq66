@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2023-07-14
+ * \updates       2023-11-22
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -210,7 +210,7 @@ playlistfile::parse ()
     bool result = file.is_open();
     if (result)
     {
-        file_message("Reading playlist", name());
+        file_message("Read playlist", name());
         file.seekg(0, std::ios::beg);                   /* seek to start    */
         play_list().clear();
         (void) parse_version(file);

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2023-10-28
+ * \updates       2023-11-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -178,7 +178,7 @@ notemapfile::parse ()
     bool result = ! name().empty() && file.is_open();
     if (result)
     {
-        file_message("Reading drums", name());
+        file_message("Read drums", name());
         result = parse_stream(file);
     }
     else

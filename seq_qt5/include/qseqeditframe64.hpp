@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-11-21
+ * \updates       2023-11-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -113,8 +113,9 @@ class qseqeditframe64 final :
 private:
 
     /**
-     *  Enumerates the events we support for editing.  Note that tempo is a
-     *  meta event and must be handled different.
+     *  Enumerates the events we support for editing.  Note that tempo and
+     *  time-signature are meta events and must be handled differently.
+     *  And text covers a number of difference meta text events.
      */
 
     enum class event_index
@@ -127,7 +128,8 @@ private:
         channel_pressure,
         pitch_wheel,
         tempo,
-        time_signature
+        time_signature,
+        text
     };
 
 public:

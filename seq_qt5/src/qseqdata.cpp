@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-22
+ * \updates       2023-11-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -76,7 +76,14 @@ namespace seq66
  *  pattern editor into a tab.
  */
 
-static const int sc_dataarea_y = 128;
+static const int sc_dataarea_y      = 128;
+
+/**
+ *  Base font size in points, and the y increment to use to avoid text overwrite.
+ */
+
+static const int sc_font_size       = 8;
+static const int sc_font_spacing    = 12;
 
 /*
  * Tweaks.
@@ -121,7 +128,7 @@ qseqdata::qseqdata
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     setMouseTracking(true);                     /* no click needed          */
-    m_font.setPointSize(8);
+    m_font.setPointSize(sc_font_size);
     m_font.setBold(true);
 #if defined SEQ66_PLATFORM_DEBUG_TMI
     set_initialized();
@@ -216,6 +223,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     char digits[4];
     midipulse start_tick = pix_to_tix(r.x());
     midipulse end_tick = start_tick + pix_to_tix(r.width());
+    int text_y = sc_font_spacing;
     track().draw_lock();
     for (auto cev = track().cbegin(); ! track().cend(cev); ++cev)
     {
@@ -343,6 +351,17 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 painter.drawText(x_offset + 6, d1 + 6, digits);
                 brush.setColor(grey_color());
                 painter.setBrush(brush);
+            }
+            else if (is_text() && cev->is_meta_text())
+            {
+                std::string text = cev->get_text();
+                painter.drawText(x_offset + 6, text_y, qt(text));
+                if (text.length() > 16)
+                {
+                    text_y += sc_font_spacing;
+                    if (text_y > m_dataarea_y)
+                        text_y = sc_font_spacing;
+                }
             }
         }
     }
@@ -697,6 +716,12 @@ qseqdata::set_data_type (midibyte status, midibyte control)
         m_data_type = type::pitchbend;
         m_status = status;
         m_cc = 0;
+    }
+    else if (event::is_meta_text_msg(status))
+    {
+        m_data_type = type::text;
+        m_status = EVENT_MIDI_META;                             /* tricky   */
+        m_cc = status;
     }
     else
     {

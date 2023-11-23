@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-11-20
+ * \updates       2023-11-22
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -425,7 +425,7 @@ qslivegrid::create_loop_buttons ()
     int fw = ui->frame->width();
     int fh = ui->frame->height();
     m_slot_w = (fw - m_space_cols - 1) / columns() - sc_button_padding;
-    m_slot_h = (fh - m_space_rows - 1) / rows() - sc_button_padding;
+    m_slot_h = (fh - m_space_rows - 1) / rows() - sc_button_padding - 1;
     for (int row = 0; row < rows(); ++row)
         ui->loopGridLayout->setRowMinimumHeight(row, m_slot_h + spacing());
 

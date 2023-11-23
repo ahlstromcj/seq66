@@ -246,6 +246,16 @@ qsessionframe::slot_track_number (int trk)
             }
             else
             {
+
+                // `
+                // `
+                // `
+                // `
+                // `
+                // TODO: collect all the text event.
+                //
+                //
+                //
                 size_t remainder = c_meta_text_limit - trkinfo.size();
                 std::string rem = int_to_string(int(remainder));
                 midipulse ts = e.timestamp();

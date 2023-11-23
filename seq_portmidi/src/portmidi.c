@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-06-28
+ * \updates     2023-11-22
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:

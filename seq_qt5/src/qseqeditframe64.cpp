@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-11-01
+ * \updates       2023-11-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -252,7 +252,8 @@ s_event_items [] =
     { "Channel Pressure",   EVENT_CHANNEL_PRESSURE      },
     { "Pitch Wheel",        EVENT_PITCH_WHEEL           },
     { "Tempo",              EVENT_META_SET_TEMPO        },      /* special  */
-    { "Time Signature",     EVENT_META_TIME_SIGNATURE   }       /* ditto    */
+    { "Time Signature",     EVENT_META_TIME_SIGNATURE   },      /* ditto    */
+    { "Text",               EVENT_META_TEXT_EVENT       }       /* tricky   */
 };
 
 /**
@@ -2854,13 +2855,19 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
     {
         m_seqevent->set_data_type(status, control);
         m_seqdata->set_data_type(status, control);
-        ui->m_entry_data->setText("Tempo");
+        ui->m_entry_data->setText("Tempo");          // s_event_items[i].epp_name
     }
     else if (event::is_time_signature_status(status))
     {
         m_seqevent->set_data_type(status, control);
         m_seqdata->set_data_type(status, control);
-        ui->m_entry_data->setText("Time Signature");
+        ui->m_entry_data->setText("Time Signature"); // s_event_items[i].epp_name
+    }
+    else if (event::is_meta_text_msg(status))
+    {
+        m_seqevent->set_data_type(status, control);
+        m_seqdata->set_data_type(status, control);
+        ui->m_entry_data->setText("Text");           // s_event_items[i].epp_name
     }
     else
     {
@@ -3519,6 +3526,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     bool pitch_wheel = false;
     bool tempo = false;
     bool timesig = false;
+    bool text = false;
     midibyte status = 0, cc = 0;
     memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
     for (auto cev = track().cbegin(); ! track().cend(cev); ++cev)
@@ -3559,6 +3567,10 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
         cev = track().cbegin();                     /* start over!          */
         if (track().get_next_meta_match(EVENT_META_TIME_SIGNATURE, cev))
             timesig = true;
+
+        cev = track().cbegin();                     /* start over!          */
+        if (track().get_next_meta_match(EVENT_META_TEXT_EVENT, cev))
+            text = true;
     }
     if (not_nullptr(m_events_popup))
         delete m_events_popup;
@@ -3581,6 +3593,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     set_event_entry(m_events_popup, pitch_wheel, event_index::pitch_wheel);
     set_event_entry(m_events_popup, tempo, event_index::tempo);
     set_event_entry(m_events_popup, timesig, event_index::time_signature);
+    set_event_entry(m_events_popup, text, event_index::text);
     m_events_popup->addSeparator();
 
     /**
@@ -3683,6 +3696,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     bool pitch_wheel = false;
     bool tempo = false;
     bool timesig = false;
+    bool text = false;
     bool any_events = false;
     midibyte status = 0, cc = 0;
     memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
@@ -3718,6 +3732,10 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
         cev = track().cbegin();                     /* start over!          */
         if (track().get_next_meta_match(EVENT_META_TIME_SIGNATURE, cev))
             timesig = any_events = true;
+
+        cev = track().cbegin();                     /* start over!          */
+        if (track().get_next_meta_match(EVENT_META_TEXT_EVENT, cev))
+            text = any_events = true;
     }
     if (not_nullptr(m_minidata_popup))
         delete m_minidata_popup;
@@ -3740,6 +3758,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     set_event_entry(m_minidata_popup, pitch_wheel, event_index::pitch_wheel);
     set_event_entry(m_minidata_popup, tempo, event_index::tempo);
     set_event_entry(m_minidata_popup, timesig, event_index::time_signature);
+    set_event_entry(m_minidata_popup, text, event_index::text);
     if (any_events)
         m_minidata_popup->addSeparator();
 

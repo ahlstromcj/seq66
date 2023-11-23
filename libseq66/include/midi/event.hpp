@@ -1442,6 +1442,10 @@ public:
         return is_meta_msg(m_status);
     }
 
+    /**
+     *  Note that here the channel represents the actual Meta message.
+     */
+
     bool is_meta_text () const
     {
         return is_meta() && is_meta_text_msg(m_channel);

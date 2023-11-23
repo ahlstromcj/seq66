@@ -182,7 +182,7 @@ palettefile::parse ()
     bool result = ! name().empty() && file.is_open();
     if (result)
     {
-        file_message("Reading palette", name());
+        file_message("Read palette", name());
         result = parse_stream(file);
     }
     else
