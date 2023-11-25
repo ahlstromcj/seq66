@@ -777,7 +777,7 @@ midicontrolfile::write ()
         result = container_to_stanzas(rc_ref().midi_control_in());
         if (result)
         {
-            file_message("Writing ctrl", name());
+            file_message("Write ctrl", name());
             result = write_stream(file);
             if (! result)
                 file_error("Write fail", name());

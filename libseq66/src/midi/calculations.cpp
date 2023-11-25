@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2023-09-26
+ * \updates       2023-11-24
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -91,12 +91,19 @@ namespace seq66
 {
 
 /**
- *  This value represent the smallest horizontal unit in a Sequencer66 grid.
+ *  This value represent the smallest horizontal unit in a Seq66 grid.
  *  It is the number of pixels in the smallest increment between vertical
  *  lines in the grid.  For a zoom of 2, this number gets doubled.
+ *  A better value would be 8. we think. Let's experiment.
  */
 
+#undef   SEQ66_8_PIXELS_PER_SUBSTEP      /* EXPERIMENTAL */
+
+#if defined SEQ66_8_PIXELS_PER_SUBSTEP
+static const int c_pixels_per_substep = 8;
+#else
 static const int c_pixels_per_substep = 6;
+#endif
 
 /**
  *  This value represents the fundamental and default beats-per-bar.
@@ -960,7 +967,7 @@ log2_of_power_of_2 (int tsd)
  *  unit is a "note-step", which is inside a note.  Each note contains PPQN
  *  ticks.
  *
- *  Current status at PPQN = 192, Base pixels = 6:
+ *  Current status at PPQN = 192, Base pixels (c_pixels_per_substep)= 6:
  *
 \verbatim
     Zoom    Note-steps  Substeps   Substeps/Note (#SS)
@@ -979,6 +986,12 @@ log2_of_power_of_2 (int tsd)
  *
  *      PPSS = (PPQN * Zoom * Base Pixels) / Base PPQN
  *
+ *  In units:
+ *
+ *      pulses      pulses     pulses     pixel         qn
+ *     --------- = -------- * -------- * --------- * --------
+ *      substep       qn       pixel      substep     pulses
+ *
  *  Currently the Base values are hardwired (see usrsettings).  The base
  *  pixels value is c_pixels_per_substep = 6, and the base PPQN is
  *  usr().base_ppqn() = 192.  The numerator of this equation is well within
@@ -989,16 +1002,18 @@ log2_of_power_of_2 (int tsd)
  *
  * \param zoom
  *      Provides the current zoom value.  Defaults to 1, but is normally
- *      another value.
+ *      another value. The zoom value is the number of pulses per pixel.
+ *      Thus, zooming in (making the horizontal grid segments wider)
+ *      yields fewer pulses per pixel.
  *
  * \return
  *      The result of the above equation is returned.
  */
 
 int
-pulses_per_substep (midipulse ppqn, int zoom)
+pulses_per_substep (midipulse ppq, int zoom)
 {
-    return int((ppqn * zoom * c_pixels_per_substep) / usr().base_ppqn());
+    return int((ppq * zoom * c_pixels_per_substep) / usr().base_ppqn());
 }
 
 /**
@@ -1018,9 +1033,9 @@ pulses_per_substep (midipulse ppqn, int zoom)
  */
 
 int
-pulses_per_pixel (midipulse ppqn, int zoom)
+pulses_per_pixel (midipulse ppq, int zoom)
 {
-    midipulse result = (ppqn * zoom) / usr().base_ppqn();
+    midipulse result = (ppq * zoom) / usr().base_ppqn();
     if (result == 0)
         result = 1;
 
@@ -1441,7 +1456,7 @@ unit_truncation (double angle)
  *  The re-mapping equations is y = mx + b, where the y-intercept is easily
  *  seen to be b = Emin, and the slope is m = Emax - Emin = range.
  *
- *  For a reverse exponential, we simply negate the exponent
+ *  For a reverse exponential, we simply negate the exponent.
  */
 
 double

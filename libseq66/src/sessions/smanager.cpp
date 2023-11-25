@@ -1471,20 +1471,20 @@ smanager::export_session_configuration
                     {
                         std::string destpalette = rc().palette_filespec();
                         std::string destqss = rc().style_sheet_filespec();
-                        file_message("Writing palette", destpalette);
+                        file_message("Write palette", destpalette);
                         result = file_copy(srcpalette, destpalette);
                         if (result)
                         {
-                            file_message("Writing qss", destpalette);
+                            file_message("Write qss", destpalette);
                             result = file_copy(srcqss, destqss);
                         }
                     }
                 }
                 if (! result)
-                    file_error("Usr export failed", destpath);
+                    file_error("usr export failed", destpath);
             }
             else
-                file_error("Rc export failed", destpath);
+                file_error("rc export failed", destpath);
 
             rc().home_config_directory(sourcedir);
             rc().config_filename(sourcebase);

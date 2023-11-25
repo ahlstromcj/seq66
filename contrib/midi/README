@@ -1,6 +1,6 @@
 MIDI Sample and Test Files
 Chris Ahlstrom
-2015-09-11 to 2021-12-13
+2015-09-11 to 2023-11-25
 
 This directory contains contributed MIDI files for examples and testing.
 Also see the test files from the midicvt as described in
@@ -8,6 +8,11 @@ midicvt-test-files.txt; we found a few bugs to fix, and potential features
 to add, by loading them into Seq66.  Some of these files have been
 resaved with the new features.  For example, see the various versions of
 the "example1" file.
+
+   16-blank-patterns.midi:
+
+      A sample file to copy and record into when using the record-by-channel
+      option to record from an unknown device.
 
    1Bar.midi:
 
@@ -83,6 +88,13 @@ the "example1" file.
    
       A file that resets all MIDI channels.
 
+   Carpet_of_the_Sun_karaoke_meta_text.mid:
+
+      This tune had a PPQN of 120, and did not display properly in the
+      pattern editor. The problem is it sets up a ticks/step of 7.5, which
+      gets truncated to 7.  No easy way to fix, so just converted it
+      to 192 PPQN.
+
    CountryStrum.midi:
 
       This file is the CountryStrum.mid SMF 0 file imported into
@@ -98,8 +110,11 @@ the "example1" file.
 
       A version more like the original.
 
+There are many other files, used for testing fixes, that are not documented
+here.
+
 Also see the "data/midi" directory which contains some MIDI/WRK files that get
-installed.  Also see the Sequencer64 project for a lot more sample files
-and test files.
+installed along with Seq66. Also see the Sequencer64 project for a lot more
+sample files and test files.
 
 # vim: sw=3 ts=3 wm=8 et ft=sh

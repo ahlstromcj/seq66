@@ -1196,6 +1196,8 @@
    Also known as the "events pane" or "events editor".
    The narrow (a few pixels high) events strip shows discrete events,
    such as \texttt{Note On} and \texttt{Note Off}.
+   The events that are shown are selectable in the \textbf{Event} category
+   selector and the "Selector for Existing Data"" drop-downs at bottom left.
    \index{event strip}
    These and other events appear
    as small squares in the event strip, along with a black vertical bar
@@ -1209,7 +1211,8 @@
    \textsl{We currently recommend being careful of editing or selecting events
    in that pane (feel free to disobey), because
    \textbf{more work is needed}}.
-   Note events should not be inserted in the event strip; it is too easy to
+   Note On and Note Off events should not be inserted in the event strip;
+   it is too easy to
    screw up.  In fact, selection and editing is disabled for
    \textbf{Note On}, \textbf{Note Off}, and \textbf{Aftertouch}.
 
@@ -1296,14 +1299,20 @@
 \subsection{Data Pane}
 \label{subsec:pattern_editor_data_view}
 
-   Now on to the \textbf{Data Pane} itself,
-   also known as the "data panel".
+   Now on to the \textbf{Data Pane} itself, also known as the "data panel".
+   The events that are shown in this pane
+   are selectable in the \textbf{Event} category
+   selector and the "Selector for Existing Data"" drop-downs at bottom left.
    \index{data pane}
    \textbf{Modify Event Data} offers a way to
    alter the event data values.
    Many different events can be altered in the data pane:
    Note On and Note Off velocities, program changes, aftertouch, channel
    pressure, pitch wheel, and tempo.
+   Text events are also displayed (useful in karaoke), but they cannot be
+   edited in this pane
+   (instead see the \textbf{Session} tab's \textbf{Song Info} controls and
+   the \textbf{Event Editor}.).
 
    The events values for the currently selected category of events are shown
    in this window as vertical lines of a height proportional to the value,

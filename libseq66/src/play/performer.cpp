@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-18
+ * \updates       2023-11-24
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -559,28 +559,29 @@ performer::set_track_info (const std::string & s, seq::number trk)
  */
 
 event
-performer::get_track_info (seq::number trk, bool nextmatch)
+performer::get_track_info_event (seq::number trk, bool nextmatch)
 {
-    static event s_null_result{0, 0, 0};
+    static event s_null_event{0, 0, 0};
     seq::pointer seqp = get_sequence(trk);
-    bool result = bool(seqp);
-    if (result)
+    bool ok = bool(seqp);
+    if (ok)
     {
         event metatext(0, EVENT_MIDI_META, 0);  /* tricky, d0 = 0           */
         metatext.set_channel(EVENT_META_TEXT_EVENT);
         return seqp->find_event(metatext, nextmatch);
     }
     else
-        return s_null_result;
+        return s_null_event;
 }
 
 void
-performer::song_info (const std::string & s)
+performer::song_info (const std::string & s, seq::number trk)
 {
     if (s != m_song_info)
     {
-        (void) set_track_info(s, 0);
-        m_song_info = s;
+        (void) set_track_info(s, trk);
+        if (trk == 0)
+            m_song_info = s;
     }
 }
 
@@ -588,6 +589,31 @@ std::string
 performer::song_info () const
 {
     return midi_bytes_to_string(m_song_info);
+}
+
+std::string
+performer::get_all_track_text (seq::number trk)
+{
+    static event s_null_result{0, 0, 0};
+    std::string result;
+    seq::pointer seqp = get_sequence(trk);
+    bool ok = bool(seqp);
+    if (ok)
+    {
+        auto cev = seqp->cbegin();
+        for (;;)
+        {
+            if (seqp->get_next_meta_match(EVENT_META_TEXT_EVENT, cev))
+            {
+                result += cev->get_text();
+                result += "; ";
+                ++cev;
+            }
+            else
+                break;
+        }
+    }
+    return result;
 }
 
 void

@@ -718,7 +718,7 @@ rcfile::write ()
     bool ok = file.is_open();
     if (ok)
     {
-        file_message("Writing rc", name());
+        file_message("Write rc", name());
     }
     else
     {

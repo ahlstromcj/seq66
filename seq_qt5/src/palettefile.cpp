@@ -320,7 +320,7 @@ palettefile::write ()
     bool result = ! name().empty() && file.is_open();
     if (result)
     {
-        file_message("Writing palette", name());
+        file_message("Write palette", name());
         result = write_stream(file);
         file.close();
     }

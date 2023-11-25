@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2023-10-16
+ * \updates       2023-11-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -220,7 +220,7 @@ qsessionframe::slot_save_info ()
     (
         qtex.toStdString(), c_meta_text_limit
     );
-    perf().song_info(text);
+    perf().song_info(text, m_current_track);
     ui->pushButtonSaveInfo->setEnabled(false);
 }
 
@@ -237,8 +237,17 @@ qsessionframe::slot_track_number (int trk)
         else
         {
             bool nextmatch = false;
-            seq66::event e = perf().get_track_info(trk, nextmatch);
-            std::string trkinfo = e.get_text();
+            seq66::event e;
+            std::string trkinfo;
+            if (trk == 0)
+            {
+                e = perf().get_track_info_event(trk, nextmatch);
+                trkinfo = e.get_text();
+            }
+            else
+            {
+                trkinfo = perf().get_all_track_text(trk);
+            }
             if (trkinfo.empty())
             {
                 ui->plainTextSongInfo->document()->setPlainText("*No text*");
@@ -246,20 +255,8 @@ qsessionframe::slot_track_number (int trk)
             }
             else
             {
-
-                // `
-                // `
-                // `
-                // `
-                // `
-                // TODO: collect all the text event.
-                //
-                //
-                //
                 size_t remainder = c_meta_text_limit - trkinfo.size();
                 std::string rem = int_to_string(int(remainder));
-                midipulse ts = e.timestamp();
-                std::string tstr = long_to_string(long(ts));
                 ui->plainTextSongInfo->document()->setPlainText(qt(trkinfo));
                 ui->labelCharactersRemaining->setText(qt(rem));
                 ui->pushButtonSaveInfo->setEnabled(false);
@@ -271,7 +268,7 @@ qsessionframe::slot_track_number (int trk)
 }
 
 /*
- * New song-info edit control and the characters-remaining label..
+ * New song-info edit control and the characters-remaining label.
  * Tricky, when getting the song info from the performer, it is already
  * in normal string format.
  *

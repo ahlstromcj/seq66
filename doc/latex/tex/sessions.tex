@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2023-11-05
+% \update      2023-11-24
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -643,14 +643,18 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          editing of "song info".
          The song info is merely the first Meta Text event, if any,
          found in pattern 0.
-         The pattern number can be changed if desired.
+         The pattern number can be changed if desired, to show text in other
+         patterns..
          This field can be edited with information such as date, composer,
-         playback notes, etc. up to about 1024 ASCII characters.
+         playback notes, etc. up to about 32000 ASCII characters.
          Extended ASCII characters are encoded as three hexadecimal
          bytes: "\\xx".
          When the \textbf{Save Info} button is clicked, the meta text
-         is copied to the first pattern, thus modifying the file, which
+         is copied to the selected pattern, thus modifying the file, which
          can then be saved.
+         For tracks (such as a karaoke lyric track) with many text events,
+         they are all shown, separated by semi-colons.
+         Don't try to edit such data, except in the \textsl{Event Editor}.
    \end{itemize}
 
    Note that there are many implementations of NSM clients:

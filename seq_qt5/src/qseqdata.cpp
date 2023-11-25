@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-23
+ * \updates       2023-11-24
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -77,13 +77,16 @@ namespace seq66
  */
 
 static const int sc_dataarea_y      = 128;
+static const int sc_dataarea_y_sub  = 32;       // 25
 
 /**
  *  Base font size in points, and the y increment to use to avoid text overwrite.
  */
 
-static const int sc_font_size       = 8;
-static const int sc_font_spacing    = 12;
+static const int sc_font_size       = 10;       // 8;
+static const int sc_text_spacing    = sc_font_size + 4;
+static const int sc_1               = sc_font_size + 1;
+static const int sc_2               = sc_1 * 2;
 
 /*
  * Tweaks.
@@ -223,7 +226,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     char digits[4];
     midipulse start_tick = pix_to_tix(r.x());
     midipulse end_tick = start_tick + pix_to_tix(r.width());
-    int text_y = sc_font_spacing;
+    int text_y = sc_text_spacing;
     track().draw_lock();
     for (auto cev = track().cbegin(); ! track().cend(cev); ++cev)
     {
@@ -237,7 +240,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             bool selected = cev->is_selected();
             int event_x = tix_to_pix(tick) + m_keyboard_padding_x;
             int x_offset = event_x + s_x_data_fix;
-            int y_offset = m_dataarea_y - 25;
+            int y_offset = m_dataarea_y - sc_dataarea_y_sub;
             midibyte d0, d1;
             cev->get_data(d0, d1);
 
@@ -277,9 +280,9 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                     pen.setColor(text_data_paint());    /* fore_color())    */
                     painter.setPen(pen);
                     x_offset += 6;
-                    painter.drawText(x_offset, y_offset,      val.at(0));
-                    painter.drawText(x_offset, y_offset +  9, val.at(1));
-                    painter.drawText(x_offset, y_offset + 18, val.at(2));
+                    painter.drawText(x_offset, y_offset,        val.at(0));
+                    painter.drawText(x_offset, y_offset + sc_1, val.at(1));
+                    painter.drawText(x_offset, y_offset + sc_2, val.at(2));
                 }
             }
             else if (is_tempo() && cev->is_tempo())
@@ -306,7 +309,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                     event_x - s_handle_r, d1 - s_handle_r,
                     s_handle_d, s_handle_d
                 );
-                painter.drawText(x_offset + 12, d1 + 4, digits);
+                painter.drawText(x_offset + sc_text_spacing, d1 + 4, digits);
                 brush.setColor(grey_color());
                 painter.setBrush(brush);
             }
@@ -358,16 +361,16 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 painter.drawText(x_offset + 6, text_y, qt(text));
                 if (text.length() > 16)
                 {
-                    text_y += sc_font_spacing;
+                    text_y += sc_text_spacing;
                     if (text_y > m_dataarea_y)
-                        text_y = sc_font_spacing;
+                        text_y = sc_text_spacing;
                 }
             }
         }
     }
     if (is_time_signature())                    /* ca 2023-07-02 redundant  */
     {
-        const int y_offset = 12;                /* m_dataarea_y - 25;       */
+        const int y_offset = sc_text_spacing;   /* m_dataarea_y - 25;       */
         int count = track().time_signature_count();
         for (int tscount = 0; tscount < count; ++tscount)
         {

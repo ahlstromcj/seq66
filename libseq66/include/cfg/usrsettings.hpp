@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-11-01
+ * \updates       2023-11-25
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -91,6 +91,14 @@ const int c_min_zoom = 1;
 const int c_max_zoom = 512;
 
 /**
+ *  Permanent storage for the baseline, default PPQN used by Seq24.
+ *  This value is necessary in order to keep user-interface elements
+ *  stable when different PPQNs are used.
+ */
+
+const int c_base_ppqn = 192;            /* enshrined in SeqXX history   */
+
+/**
  *  This value indicates to use the default value of PPQN and ignore (to some
  *  extent) what value is specified in the MIDI file.  Note that the default
  *  default PPQN is given by the global ppqn (192) or, if the "--ppqn qn"
@@ -109,14 +117,6 @@ const int c_use_default_ppqn = (-1);
  */
 
 const int c_use_file_ppqn = 0;
-
-/**
- *  Permanent storage for the baseline, default PPQN used by Seq24.
- *  This value is necessary in order to keep user-interface elements
- *  stable when different PPQNs are used.
- */
-
-const int c_base_ppqn = 192;            /* enshrined in SeqXX history   */
 
 /**
  *  Provides settings for tempo recording.  Currently not used, though the

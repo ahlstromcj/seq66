@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-27
+ * \updates       2023-11-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -45,6 +45,12 @@
 namespace seq66
 {
 
+/**
+ *  Base font size in points.
+ */
+
+static const int sc_font_size    = 10;       // 8;
+
 /*
  *  Marker/label tweaks. The presence of these corrections means we need to
  *  coordinate between GUI elements better :-(. Also note we increased the font
@@ -57,13 +63,13 @@ static const int s_timesig_fix   =  8;  /* time-sig offset from seqroll (18)*/
 static const int s_L_timesig_fix =  8;  /* time-sig offset from "L" marker  */
 static const int s_o_fix         =  0;  /* adjust position of "o" mark (6)  */
 static const int s_LR_box_y      = 10;
-static const int s_LR_box_w      =  8;
+static const int s_LR_box_w      = sc_font_size;    //  8;
 static const int s_LR_box_h      = 24;
-static const int s_END_fix       = 24;  /* adjust position of "END" box (18)*/
-static const int s_END_box_w     = 24;
+static const int s_END_fix       = 26;  /* adjust position of "END" box (18)*/
+static const int s_END_box_w     = 27;
 static const int s_END_box_h     = 24;
-static const int s_END_y         = 19;  /* keep the same as s_text_y        */
-static const int s_text_y        = 19;
+static const int s_END_y         = 20;  /* keep the same as s_text_y        */
+static const int s_text_y        = 20;
 static const int s_ts_text_y     = 19;
 
 /**
@@ -76,9 +82,9 @@ qseqtime::qseqtime
     sequence & s,
     qseqeditframe64 * frame,
     int zoom,
-    QWidget * parent /* QScrollArea */
+    QWidget * /* parent // QScrollArea */
 ) :
-    QWidget         (parent),
+    QWidget         (frame),    /* ca 2023-11-24  TEMP COMMENTED (parent),  */
     qseqbase        (p, s, frame, zoom, c_default_snap),
     m_timer         (nullptr),
     m_font          (),
@@ -86,9 +92,10 @@ qseqtime::qseqtime
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_font.setBold(true);
-    m_font.setPointSize(8);
+    m_font.setPointSize(sc_font_size);
     setMouseTracking(true);         /* track mouse movement without a click */
-    m_timer = qt_timer(this, "qseqtime", 2, SLOT(conditional_update()));
+    set_snap(track().snap());       /* TRIAL CODE */
+    m_timer = qt_timer(this, "qseqtime", 4, SLOT(conditional_update()));    // 2
 }
 
 /**
@@ -146,60 +153,59 @@ qseqtime::paintEvent (QPaintEvent * qpep)
     draw_markers(painter);
 }
 
+/**
+ * Code fixed to make sure the whole rectangle is filled with vertical
+ * bars.  See qseqroll for more notes.
+ *
+ *  midipulse endtick = ts.sig_end_tick != 0 ?
+ *      ts.sig_end_tick : pix_to_tix(r.x() + r.width());
+ *
+ *  Vertical line at each measure; number each measure.
+ */
+
 void
 qseqtime::draw_grid (QPainter & painter, const QRect & r)
 {
     QBrush brush(Qt::lightGray, Qt::SolidPattern);
     QPen pen(Qt::black);
     int count = track().time_signature_count();
+    midipulse ppmeas = midipulse(default_pulses_per_measure(perf().ppqn()));
+    midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
+    midipulse ticks_per_four = ticks_per_step * 4;
+    midipulse endtick = pix_to_tix(r.x() + r.width());
+    int sizeheight = size().height();
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    QPen testpen(Qt::magenta);
+    int testpix = tix_to_pix(428);
+    painter.setPen(testpen);
+    painter.drawText(testpix, 13, "X");
+#endif
     for (int tscount = 0; tscount < count; ++tscount)
     {
-        /*
-         * See TODO for a crash error in a certain situation!
-         */
-
         const sequence::timesig & ts = track().get_time_signature(tscount);
         if (ts.sig_beat_width == 0)
             break;
 
         int bpbar = ts.sig_beats_per_bar;
         int bwidth = ts.sig_beat_width;
-        int measures_per_line = zoom() * bwidth * bpbar * 2;
-        int sizeheight = size().height();
-        midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
-        midipulse ticks_per_four = ticks_per_step * 4;
-        midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
+        midipulse ticks_per_beat = ppmeas / bwidth;
         midipulse ticks_per_bar = bpbar * ticks_per_beat;
-
-        /*
-         * Code fixed to make sure the whole rectangle is fill with vertical
-         * bars.  See qseqroll for more notes.
-         *
-         *  midipulse endtick = ts.sig_end_tick != 0 ?
-         *      ts.sig_end_tick : pix_to_tix(r.x() + r.width());
-         */
-
         midipulse starttick = ts.sig_start_tick;
-        midipulse endtick = pix_to_tix(r.x() + r.width());
-        if (measures_per_line <= 0)
-            measures_per_line = 1;
+        starttick -= starttick % ticks_per_step;
+        if ((bwidth % 2) != 0)
+            ticks_per_step = zoom();
 
         for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
         {
             int x_offset = xoffset(tick) - scroll_offset_x() + s_x_tick_fix;
-
-            /*
-             * Vertical line at each measure; number each measure.
-             */
-
+            int penwidth = 1;
+            enum Qt::PenStyle penstyle = Qt::SolidLine;
+            Color c = beat_color();
             if (tick % ticks_per_bar == 0)          /* thick solid line bar */
             {
                 char bar[32];
                 int measure = track().measure_number(tick);
-                pen.setWidth(2);                    /* two pixels           */
-                pen.setStyle(Qt::SolidLine);
-                painter.setPen(pen);
-                painter.drawLine(x_offset, 0, x_offset, sizeheight);
+                penwidth = 2;
                 snprintf(bar, sizeof bar, "%d", measure);
 
                 QString qbar(bar);
@@ -209,28 +215,21 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
             }
             else if (tick % ticks_per_beat == 0)    /* light on every beat  */
             {
-                pen.setWidth(1);                    /* back to one pixel    */
-                pen.setStyle(Qt::SolidLine);
-                pen.setColor(beat_color());         /* Qt::black            */
-                painter.setPen(pen);
-                painter.drawLine(x_offset, 0, x_offset, sizeheight);
+                // absorbed below
             }
-            else if (tick % (ticks_per_four) == 0)
+            else if (tick % ticks_per_four == 0)
             {
-                pen.setWidth(1);                    /* back to one pixel    */
-                pen.setStyle(Qt::SolidLine);
-                pen.setColor(beat_color());         /* Qt::black            */
-                painter.setPen(pen);
-                painter.drawLine(x_offset, 0, x_offset, sizeheight);
+                // absorbed below
             }
             else                                    /* new 2023-06-21       */
             {
-                pen.setWidth(1);                    /* back to one pixel    */
-                pen.setStyle(Qt::DotLine);
-                pen.setColor(beat_color());         /* Qt::black            */
-                painter.setPen(pen);
-                painter.drawLine(x_offset, 0, x_offset, sizeheight);
+                penstyle = Qt::DotLine;
             }
+            pen.setColor(c);
+            pen.setWidth(penwidth);
+            pen.setStyle(penstyle);
+            painter.setPen(pen);
+            painter.drawLine(x_offset, 0, x_offset, sizeheight);
         }
     }
 }
@@ -277,7 +276,7 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
     }
     pen.setColor(Qt::black);
     painter.setPen(pen);
-    painter.drawRect(end, s_LR_box_y, s_END_box_w, s_END_box_h);
+    painter.drawRect(end - 1, s_LR_box_y, s_END_box_w, s_END_box_h);
     pen.setColor(Qt::white);
     painter.setPen(pen);
     painter.drawText(end + 1, s_END_y, "END");
@@ -289,10 +288,10 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
             pen.setColor(Qt::black);
             painter.setBrush(brush);
             painter.setPen(pen);
-            painter.drawRect(right, s_LR_box_y, s_LR_box_w, s_LR_box_h);
+            painter.drawRect(right - 1, s_LR_box_y, s_LR_box_w, s_LR_box_h);
             pen.setColor(Qt::white);                            // white text
             painter.setPen(pen);
-            painter.drawText(right + 2, s_text_y, "R");
+            painter.drawText(right, s_text_y, "R");
         }
     }
 

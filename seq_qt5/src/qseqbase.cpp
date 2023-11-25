@@ -157,7 +157,7 @@ qseqbase::convert_tn (midipulse ticks, int note, int & x, int & y)
 {
     if (note >= 0 && note <= c_note_max)
     {
-        x = ticks * usr().base_ppqn() / ppqn() / zoom(); // x = ticks / zoom();
+        x = ticks * usr().base_ppqn() / ppqn() / zoom();
         y = m_total_height - ((note + 1) * m_unit_height) - 1;
     }
     else

@@ -330,7 +330,7 @@ mutegroupsfile::write ()
     bool result = file.is_open();
     if (result)
     {
-        file_message("Writing mutes", name());
+        file_message("Write mutes", name());
         result = write_stream(file);
         file.close();
     }

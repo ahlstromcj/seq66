@@ -171,9 +171,9 @@ legal_scale (int s)
  */
 
 const int c_chord_number    = 40;
-const int c_chord_size      = 6;
+const int c_chord_size      =  6;
 const int c_interval_size   = 15;
-const int c_harmonic_size   = 8;
+const int c_harmonic_size   =  8;
 
 /**
  *  Provides a short vector containing the chord values in each chord's

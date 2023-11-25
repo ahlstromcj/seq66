@@ -1351,6 +1351,15 @@ or a velocity to force upon input.</string>
        <property name="frameShadow">
         <enum>QFrame::Sunken</enum>
        </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="sizeAdjustPolicy">
+        <enum>QAbstractScrollArea::AdjustToContents</enum>
+       </property>
        <property name="widgetResizable">
         <bool>true</bool>
        </property>
@@ -1359,7 +1368,7 @@ or a velocity to force upon input.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>708</width>
+          <width>722</width>
           <height>28</height>
          </rect>
         </property>

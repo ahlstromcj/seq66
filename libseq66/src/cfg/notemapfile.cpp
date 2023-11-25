@@ -286,7 +286,7 @@ notemapfile::write ()
     bool result = ! name().empty() && file.is_open();
     if (result)
     {
-        file_message("Writing drums", name());
+        file_message("Write drums", name());
         result = write_stream(file);
         file.close();
     }

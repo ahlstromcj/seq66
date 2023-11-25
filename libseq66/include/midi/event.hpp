@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-23
+ * \updates       2023-11-24
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -223,10 +223,13 @@ const midibyte EVENT_META_SEQSPEC        = 0x7Fu;
 
 /**
  *  Provides a sanity-check limit for the number of bytes in a MIDI Meta Text
- *  message and similar messages. Might be better larger, but....
+ *  message and similar messages. Might be better larger, but.... Well, now
+ *  that we're handling meta text  message, we'll make this a bit larger than
+ *  1024. This value is also used in the main Session tab to limit the
+ *  amount of text in the song info edit field.
  */
 
-const size_t c_meta_text_limit           = 1024;    // for sanity only
+const size_t c_meta_text_limit           = 32767;   // for sanity...
 
 /**
  *  As a "type" (overloaded on channel) value for a Meta event, 0xFF indicates

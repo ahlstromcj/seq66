@@ -1,4 +1,4 @@
-# README for Seq66 0.99.11 2023-11-23
+# README for Seq66 0.99.11 2023-11-25
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -94,7 +94,10 @@ Windows, and using a conventional source tarball.
             exit (as opposed to internal restart) is needed.
         *   Added mute-group label ("MG") to main window.
         *   Fixing various playlist errors:
-            -   PPQN setting issue causing slow/fast playback.
+            -   PPQN setting issue causing slow/fast playback. Cannot
+                display 120 PPQN well, fix too intrusive. Converted
+                contrib/midi/Carpet_of_the_Sun_karaoke_meta_text.mid
+                from 120 to 192 PPQN.
             -   Segfaults due to not stopping playback before loading
                 the next song or basing calculations on missing values.
         *   Embarassing fixes:
@@ -124,7 +127,8 @@ Windows, and using a conventional source tarball.
         *   Replaced the --inspect option with --session-tag to allow easy
             changing to another setup specified in sessions.rc.
         *   Added showing program changes in slot button.
-        *   Added showing text events in the data pane.
+        *   Added showing text events in the data pane and all text events
+            in the main Session tab. Fixed its Save Info button.
     *   Version 0.99.10:
         *   Issue #117 Option to close pattern windows with esc key. Must
             be enabled via a 'usr' option first.

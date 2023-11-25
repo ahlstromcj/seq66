@@ -455,7 +455,7 @@ playlistfile::write ()
     bool result = ! name().empty() && file.is_open();
     if (result)
     {
-        file_message("Writing playlist", name());
+        file_message("Write playlist", name());
     }
     else
     {

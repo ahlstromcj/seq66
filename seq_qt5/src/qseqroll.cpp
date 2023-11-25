@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-22
+ * \updates       2023-11-25
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -524,6 +524,15 @@ qseqroll::call_draw_notes (QPainter & painter, const QRect & view)
  *  background.  This code needs to be put into a function.
  *
  *  For odd beat widths, use 1 as ticks_per_substep.
+ *
+ *  If the time-sig is further along, it won't work. We do make sure there
+ *  is a time-sig at the beginning, if nothing else. Also, the time-sig ends
+ *  at the end of the pattern, but we generally need to paint beyond that
+ *  point.
+ *
+ *      midipulse starttick = pix_to_tix(r.x()); // the old way
+ *      midipulse tsendtick = ts.sig_end_tick != 0 ?
+ *          ts.sig_end_tick : pix_to_tix(r.x() + r.width());
  */
 
 void
@@ -569,6 +578,20 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     }
 
     int count = track().time_signature_count();
+    midipulse ppmeas = midipulse(default_pulses_per_measure(perf().ppqn()));
+    midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
+    midipulse endtick = pix_to_tix(r.x() + r.width());
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    QPen testpen(Qt::magenta);
+    int testpix = tix_to_pix(428);
+    painter.setPen(testpen);
+    painter.drawText(testpix,  0, "X");
+    painter.drawText(testpix, 64, "X");
+    painter.drawText(testpix, 128, "X");
+    painter.drawText(testpix, 256, "X");
+    painter.drawText(testpix, 512, "X");
+    painter.drawText(testpix, 1024, "X");
+#endif
     for (int tscount = 0; tscount < count; ++tscount)
     {
         const sequence::timesig & ts = track().get_time_signature(tscount);
@@ -577,23 +600,9 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
 
         int bpbar = ts.sig_beats_per_bar;
         int bwidth = ts.sig_beat_width;
-        midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
+        midipulse ticks_per_beat = ppmeas / bwidth;
         midipulse ticks_per_bar = bpbar * ticks_per_beat;
-        midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
-
-        /*
-         * If the time-sig is further along, it won't work.  We do make
-         * sure there is a time-sig at the beginning, if nothing else.
-         * Also, the time-sig ends at the end of the pattern, but we
-         * generally need to paint beyond that point
-         *
-         *  midipulse starttick = pix_to_tix(r.x()); // the old way
-         *  midipulse tsendtick = ts.sig_end_tick != 0 ?
-         *      ts.sig_end_tick : pix_to_tix(r.x() + r.width());
-         */
-
         midipulse starttick = ts.sig_start_tick;
-        midipulse endtick = pix_to_tix(r.x() + r.width());
         starttick -= starttick % ticks_per_step;
         if ((bwidth % 2) != 0)
             ticks_per_step = zoom();
@@ -605,13 +614,12 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
             enum Qt::PenStyle penstyle = Qt::SolidLine;
             if (tick % ticks_per_bar == 0)          /* solid line every bar */
             {
-                pen.setColor(beat_paint());         /* fore_color()         */
+                pen.setColor(beat_paint());
                 penwidth = 2;
             }
             else if (tick % ticks_per_beat == 0)    /* light on every beat  */
             {
                 pen.setColor(beat_color());
-                penwidth = 1;
             }
             else
             {

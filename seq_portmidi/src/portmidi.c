@@ -925,11 +925,11 @@ Pm_GetErrorText (PmError errnum)
         break;
 
     case pmWriteToInput:
-        msg = "Writing to input device";
+        msg = "Write to input device";
         break;
 
     case pmReadFromOutput:
-        msg = "Reading from output device";
+        msg = "Read from output device";
         break;
 
     case pmErrOther:

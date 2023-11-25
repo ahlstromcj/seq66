@@ -211,9 +211,9 @@ extern std::string pulses_to_time_string
 );
 extern std::string pulses_to_time_string
 (
-    midipulse pulses, midibpm bpm, int ppqn, bool showus = true
+    midipulse pulses, midibpm bp, int ppq, bool showus = true
 );
-extern int pulses_to_hours (midipulse pulses, midibpm bpm, int ppqn);
+extern int pulses_to_hours (midipulse pulses, midibpm bp, int ppq);
 extern midipulse measurestring_to_pulses
 (
     const std::string & measures,
@@ -228,7 +228,7 @@ extern midi_measures string_to_measures (const std::string & bbt);
 extern midipulse timestring_to_pulses
 (
     const std::string & timestring,
-    int bpm, int ppqn
+    int bpm, int ppq
 );
 extern midipulse string_to_pulses
 (
@@ -249,7 +249,7 @@ extern midibpm tempo_us_from_bytes (const midibyte tt[3]);
 extern bool tempo_us_to_bytes (midibyte t[3], midibpm tempo_us);
 extern midibyte tempo_to_note_value (midibpm tempo);
 extern midibpm note_value_to_tempo (midibyte tempo);
-extern midibpm fix_tempo (midibpm bpm);
+extern midibpm fix_tempo (midibpm bp);
 extern unsigned short combine_bytes (midibyte b0, midibyte b1);
 extern midibpm note_value_to_tempo (midibyte note);
 extern midipulse rescale_tick (midipulse tick, int newppqn, int oldppqn);
@@ -258,7 +258,7 @@ extern midipulse rescale_tick (midipulse tick, int newppqn, int oldppqn);
  *  Converts tempo (e.g. 120 beats/minute) to microseconds.
  *  This function is the inverse of bpm_from_tempo_us().
  *
- * \param bpm
+ * \param bp
  *      The value of beats-per-minute.  If this value is 0, we'll get an
  *      arithmetic exception.
  *
@@ -268,9 +268,9 @@ extern midipulse rescale_tick (midipulse tick, int newppqn, int oldppqn);
  */
 
 inline double
-tempo_us_from_bpm (midibpm bpm)
+tempo_us_from_bpm (midibpm bp)
 {
-    return bpm > 0.009999999 ? (60000000.0 / bpm) : 0.0 ;
+    return bp > 0.009999999 ? (60000000.0 / bp) : 0.0 ;
 }
 
 /**
@@ -320,11 +320,11 @@ bpm_from_bytes (midibyte t[3])
              BPM * PPQN
 \endverbatim
  *
- * \param bpm
+ * \param bp
  *      Provides the beats-per-minute value.  No sanity check is made.  If
  *      this value is 0, we'll get an arithmetic exception.
  *
- * \param ppqn
+ * \param ppq
  *      Provides the pulses-per-quarter-note value.  No sanity check is
  *      made.  If this value is 0, we'll get an arithmetic exception.
  *
@@ -334,15 +334,15 @@ bpm_from_bytes (midibyte t[3])
  */
 
 inline double
-pulse_length_us (midibpm bpm, int ppqn)
+pulse_length_us (midibpm bp, int ppq)
 {
     /*
      * Let's use the original notation for now.
      *
-     * return 60000000.0 / double(bpm * ppqn);
+     * return 60000000.0 / double(bpm * ppq);
      */
 
-    return 60000000.0 / ppqn / bpm;
+    return 60000000.0 / ppq / bp;
 }
 
 /**
@@ -367,10 +367,10 @@ pulse_length_us (midibpm bpm, int ppqn)
  * \param us
  *      The number of microseconds in the delta time.
  *
- * \param bpm
+ * \param bp
  *      Provides the beats-per-minute value, otherwise known as the "tempo".
  *
- * \param ppqn
+ * \param ppq
  *      Provides the pulses-per-quarter-note value, otherwise known as the
  *      "division".
  *
@@ -379,9 +379,9 @@ pulse_length_us (midibpm bpm, int ppqn)
  */
 
 inline double
-delta_time_us_to_ticks (unsigned long us, midibpm bpm, int ppqn)
+delta_time_us_to_ticks (unsigned long us, midibpm bp, int ppq)
 {
-    return double(bpm * ppqn * (us / 60000000.0f));
+    return double(bp * ppq * (us / 60000000.0f));
 }
 
 /**
@@ -391,15 +391,15 @@ delta_time_us_to_ticks (unsigned long us, midibpm bpm, int ppqn)
  *  Please note that terms "ticks" and "pulses" are equivalent, and refer to
  *  the "pulses" in "pulses per quarter note".
  *
- *  Old:  60000000.0 * double(delta_ticks) / (double(bpm) * double(ppqn));
+ *  Old:  60000000.0 * double(delta_ticks) / (double(bp) * double(ppq));
  *
  * \param delta_ticks
  *      The number of ticks or "clocks".
  *
- * \param bpm
+ * \param bp
  *      Provides the beats-per-minute value, otherwise known as the "tempo".
  *
- * \param ppqn
+ * \param ppq
  *      Provides the pulses-per-quarter-note value, otherwise known as the
  *      "division".
  *
@@ -408,9 +408,9 @@ delta_time_us_to_ticks (unsigned long us, midibpm bpm, int ppqn)
  */
 
 inline double
-ticks_to_delta_time_us (midipulse delta_ticks, midibpm bpm, int ppqn)
+ticks_to_delta_time_us (midipulse delta_ticks, midibpm bp, int ppq)
 {
-    return double(delta_ticks) * pulse_length_us(bpm, ppqn);
+    return double(delta_ticks) * pulse_length_us(bp, ppq);
 }
 
 /**
@@ -423,10 +423,10 @@ ticks_to_delta_time_us (midipulse delta_ticks, midibpm bpm, int ppqn)
  *  (crotchet).
  *
  *  Unlike MIDI timecode, the MIDI beat clock is tempo-dependent. Clock events
- *  are sent at a rate of 24 ppqn (pulses per quarter note). Those pulses are
+ *  are sent at a rate of 24 ppq (pulses per quarter note). Those pulses are
  *  used to maintain a synchronized tempo for synthesizers that have
- *  BPM-dependent voices and also for arpeggiator synchronization.
- *  The following value represents the standard MIDI clock rate in
+ *  BPM-dependent voices and also for arpeggiator synchronization.  The
+ *  following value represents the standard MIDI clock rate in
  *  beats-per-quarter-note.
  */
 
@@ -437,52 +437,52 @@ midi_clock_beats_per_qn ()
 }
 
 /**
- *  A simple calculation to convert PPQN to MIDI clock ticks, which are emitting
- *  24 times per quarter note.
+ *  A simple calculation to convert PPQN to MIDI clock ticks, which are
+ *  emitting 24 times per quarter note.
  *
- * \param ppqn
+ * \param ppq
  *      The number of pulses per quarter note.  For example, the default value
  *      for Seq24 is 192.
  *
  * \return
- *      The integer value of ppqn / 24 [MIDI clock PPQN] is returned.
+ *      The integer value of ppq / 24 [MIDI clock PPQN] is returned.
  */
 
 inline int
-clock_ticks_from_ppqn (int ppqn)
+clock_ticks_from_ppqn (int ppq)
 {
-    return ppqn / midi_clock_beats_per_qn();
+    return ppq / midi_clock_beats_per_qn();
 }
 
 /**
  *  A simple calculation to convert PPQN to MIDI clock ticks.  The same as
  *  clock_ticks_from_ppqn(), but returned as a double float.
  *
- * \param ppqn
+ * \param ppq
  *      The number of pulses per quarter note.
  *
  * \return
- *      The double value of ppqn / 24 [midi_clock_beats_per_qn] is returned.
+ *      The double value of ppq / 24 [midi_clock_beats_per_qn] is returned.
  */
 
 inline double
-double_ticks_from_ppqn (int ppqn)
+double_ticks_from_ppqn (int ppq)
 {
-    return ppqn / double(midi_clock_beats_per_qn());
+    return ppq / double(midi_clock_beats_per_qn());
 }
 
 /**
  *  Calculates the pulses per measure.  This calculation is extremely simple,
- *  and it provides an important constraint to pulse (ticks) calculations:
- *  the default number of pulses in a measure is always 4 times the PPQN value,
+ *  and it provides an important constraint to pulse (ticks) calculations: the
+ *  default number of pulses in a measure is always 4 times the PPQN value,
  *  regardless of the time signature.  The number pulses in a 7/8 measure is
  *  *not* the same as in a 4/4 measure.
  */
 
 inline int
-default_pulses_per_measure (int ppqn)
+default_pulses_per_measure (int ppq)
 {
-    return 4 * ppqn;
+    return 4 * ppq;
 }
 
 /**
@@ -491,9 +491,9 @@ default_pulses_per_measure (int ppqn)
  */
 
 inline int
-pulses_per_beat (int ppqn, int beatwidth)
+pulses_per_beat (int ppq, int beatwidth)
 {
-    return 4 * ppqn / beatwidth;
+    return 4 * ppq / beatwidth;
 }
 
 /**
@@ -525,7 +525,7 @@ pulses_per_beat (int ppqn, int beatwidth)
  * \param bpb
  *      The B value in the equation, beats/measure or beats/bar.
  *
- * \param ppqn
+ * \param ppq
  *      The P value in the equation, pulses/qn.
  *
  * \param bw
@@ -543,9 +543,9 @@ pulses_per_beat (int ppqn, int beatwidth)
  */
 
 inline midipulse
-measures_to_ticks (int bpb, int ppqn, int bw, int measures = 1)
+measures_to_ticks (int bpb, int ppq, int bw, int measures = 1)
 {
-    return (bw > 0) ? midipulse(4 * ppqn * measures * bpb / bw) : 0 ;
+    return (bw > 0) ? midipulse(4 * ppq * measures * bpb / bw) : 0 ;
 }
 
 /**
@@ -587,8 +587,8 @@ ticks_to_beats (midipulse p, int P, int B, int W)
  *  Free functions in the seq66 namespace.
  */
 
-extern int pulses_per_substep (midipulse ppqn, int zoom = 1);
-extern int pulses_per_pixel (midipulse ppqn, int zoom = 1);
+extern int pulses_per_substep (midipulse ppq, int zoom = 1);
+extern int pulses_per_pixel (midipulse ppq, int zoom = 1);
 extern double wave_func (double angle, waveform wavetype);
 extern double unit_truncation (double angle);
 extern double exp_normalize (double angle, bool negate = false);
