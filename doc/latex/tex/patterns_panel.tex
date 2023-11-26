@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-11-21
+% \update      2023-11-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -843,29 +843,31 @@
    It is always available, stored as a hidden automatically-generated
    pattern.
 
-\paragraph{Background Recording}
+\paragraph{Count-in Recording}
 \label{paragraph:patterns_background_recording}
 
-   \index{background recording}
-   Also shown in the figure is a \textbf{Background Recording} button.
+   \index{count-in recording}
+   Also shown in the figure is a \textbf{Count-In Recording} button.
    This feature still has a few
    minor issues to work out, but it works.
+   It is not \textbf{background recording}, which involves a
+   thread continuously recording in the background.  Some day.
 
    The recorder has a number of configurable items.
    See \sectionref{subsubsec:configuration_rc_background_recording}.
-   Background recording needs to be enabled in the configuration.
-   Otherwise, the background-recording button is disabled.
+   Count-in recording needs to be enabled in the configuration.
+   Otherwise, the count-in-recording button is disabled.
 
-   When enabled, press the background-recording button.  Now all events on the
+   When enabled, press the count-in-recording button.  Now all events on the
    given input buss will be recorded, even if playback is not started.
    Better to start playback after enabling recording!
 
    Once one is satisfied with the recording, stop playback, then
-   click the background-recording button again.
+   click the count-in-recording button again.
    If any events have been recorded, then they are pasted into a new pattern in
    the next available pattern slot.
    There, they can be edited or deleted.
-   Note that the background pattern is muted while recording.
+   Note that the count-in pattern is muted while recording.
    We will change how it works based on user feedback.
 
 \paragraph{Pattern Loop-Record Modes}

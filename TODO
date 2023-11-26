@@ -1,11 +1,9 @@
 TO DO for Seq66 0.99.11
 Chris Ahlstrom
-2019-04-13 to 2023-11-25
+2019-04-13 to 2023-11-26
 
 Misc:
 
-    -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
-        Too difficult to fix at this time; converted it to 192.
     -   Test triplet note step recording and display.
     -   Record by channel:
         -   Document the recording process and options as in recording.text.
@@ -13,8 +11,6 @@ Misc:
             comment claiming they do not work, which makes no sense.
             Also in qslivegrid: "Currently doesn't work with Seq66's
             ALSA implementation."
-        -   Need a way to make more visible the channel filtering option
-            in the main window.
         -   What about handling of non-channel events?
     -   Grid-mode options:
         -   Now can click again to undo the solo. But doing two more
@@ -31,7 +27,6 @@ Misc:
         -   Holding Alt is supposed to save the current snapshot, and then
             restore it when lifted.
         -   Holding Ctrl-Alt is supposed to ... cannot tell from SEQ24 doc.
-    -   Implement the menu_mode automation.
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recorded measures
@@ -42,9 +37,12 @@ Misc:
     -   See the new notes in timing module: set_thread_priority()!!!
         Also review the notes for pthreads in performer!
         Add code (in jack) to keep track of ticks and see if priority
-        can reduce the latency.
+        can reduce the latency. This code can be DEBUG-enabled in
+        midi_jack.cpp.
     -   Add a feature to start playback when the first note comes
         into a pattern when recording is set. [Turns out to be quite tricky!]
+    -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
+        Too difficult to fix at this time; converted it to 192.
 
 Mutes:
 

@@ -1,4 +1,4 @@
-# README for Seq66 0.99.11 2023-11-25
+# README for Seq66 0.99.11 2023-11-26
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -112,6 +112,7 @@ Windows, and using a conventional source tarball.
             *   Fixed queue and keep-queue.
             *   Fixed not saving record-by-channel. Fixed record-by-channel.
                 Added a pre-made MIDI file to use with record-by-channel.
+            *   Added a way to toggle recording of more than pattern at once.
             *   Fixed not modifying the song when pattern measures is changed.
             *   Fixed breakage of stopping song play at the end of song.
         *   Can now paste a pattern into a new or another loaded MIDI file.
@@ -129,6 +130,9 @@ Windows, and using a conventional source tarball.
         *   Added showing program changes in slot button.
         *   Added showing text events in the data pane and all text events
             in the main Session tab. Fixed its Save Info button.
+        *   Implemented the "menu-mode" automation. It duplicates the function
+            of the hide/show button, to toggle between hiding some of the main
+            window controls and the main menu, and showing them.
     *   Version 0.99.10:
         *   Issue #117 Option to close pattern windows with esc key. Must
             be enabled via a 'usr' option first.

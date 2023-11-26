@@ -1,0 +1,101 @@
+%-------------------------------------------------------------------------------
+% seq66 recording
+%-------------------------------------------------------------------------------
+%
+% \file        seq66 recording.tex
+% \library     Documents
+% \author      Chris Ahlstrom
+% \date        2023-11-25
+% \update      2023-11-25
+% \version     $Revision$
+% \license     $XPC_GPL_LICENSE$
+%
+%     Provides a discussion of the MIDI GUI recording that Seq66
+%     supports.
+%
+%-------------------------------------------------------------------------------
+
+\section{Seq66 Recording In Depth}
+\label{sec:recording}
+
+   Recording in \textsl{Seq66} has been greatly enhanced recently.
+   This section walks the user through some scenarios.
+   Before getting started, note that recording can be done during count-in via
+   the metronome feature.
+   See \sectionref{paragraph:menu_edit_preferences_metronom_options}.
+
+\subsection{Recording Scenarios}}
+\label{sec:recording_scenarios}
+
+   The following recording scenarios are available:
+
+   \begin{itemize}
+      \item \textbf{Standard Recording}.
+         This provides the normal method of recording. Open a pattern in a
+         window and enable recording.
+      \item \textbf{Record-by-Channel}.
+         In this mode, one enables recording in patterns numbered from 0 to 15
+         (channels 1 to 16) with output channels set from 0 to 15.
+         Incoming events are analyze for their channel and are recording into
+         the corresponding pattern.
+      \item \textbf{Route-by-Bus}.
+         In this mode, any pattern that specifies a specific input buss
+         can be enabled for recording.
+         Incoming events are routed to the first pattern that has an input
+         buss matching the buss on which the event was recorded.
+   \end{itemize}
+
+\subsubsection{Standard Recording}
+\label{subsubsec:recording_standard_recording}
+
+\subsubsection{Record-By-Channel}
+\label{subsubsec:recording_record_by_channel}
+
+   Record-by-channel can be enabled in
+   \textbf{Edit / Preferences / MIDI Input / Record input into patterns by
+   channel}, which is an 'rc' file option.
+
+   It works by routing events to the first pattern that has specified an 
+   output (not input) channel that matches the channel (if applicable) of
+   the incoming MIDI event.
+   The patterns applicable are entered into a list of patterns with specified
+   output channels
+
+   For convenience, there is a MIDI file installed, called
+   \textbf{16-blank-patterns}, which specifies all the output channels.
+   It can be copied and used for the first recording from a device
+   with numerous channels.
+
+   TODO
+
+   Note that the route-by-buss option, described below, supercedes this
+   option.
+
+\subsubsection{Route-By-Buss}
+\label{subsubsec:recording_route_by_buss}
+
+   Route-by-buss is enabled whenever a pattern in a song specifies an
+   input buss.
+   If it is enabled, it supercedes the
+   \textbf{record-by-channel} option.
+
+   When route-by-bus is enabled, and internal container is populated with
+   all the patterns in the current play-set that specify an input buss.
+   This container is rebuilt when a sequence is added or removed.
+   It is stored in the \texttt{c\_midiinbus} SeqSpec in the song.
+
+   If route-by-bus is enabled, a sequence with an input bus that matches the
+   buss associated with the incoming event is looked up, and input is
+   streamed to it.
+
+\subsection{Recording Modes}
+\label{sec:recording_modes}
+
+   Recording can also transform (alter) the incoming events.
+
+   TO DO
+
+
+%-------------------------------------------------------------------------------
+% vim: ts=3 sw=3 et ft=tex
+%-------------------------------------------------------------------------------

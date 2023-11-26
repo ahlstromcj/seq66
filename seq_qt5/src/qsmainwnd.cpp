@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-13
+ * \updates       2023-11-26
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -144,6 +144,17 @@
 #include "pixmaps/song_rec_off.xpm"
 #include "pixmaps/song_rec_on.xpm"      /* #include "pixmaps/song_rec.xpm" */
 #include "pixmaps/stop.xpm"
+
+#undef  SEQ66_USE_RECORD_EX_BUTTON      /* STILL IN PROGRESS */
+#if defined SEQ66_USE_RECORD_EX_BUTTON
+#include "pixmaps/rec_ex_buss.xpm"      /* green    */
+#include "pixmaps/rec_ex_channel.xpm"   /* yellow   */
+#include "pixmaps/rec_ex_normal.xpm"    /* red      */
+#endif
+
+/**
+ *  This is an option, on by default, in libseq66/include/seq66_features.h.
+ */
 
 #if defined SEQ66_USE_SHOW_HIDE_BUTTON
 #include "pixmaps/hide.xpm"
@@ -706,6 +717,29 @@ qsmainwnd::qsmainwnd
     );
 
     /*
+     * New Record button to select the current pattern for recording,
+     * all input-bussed patterns, or all patterns that have an output channel
+     * in force.
+     */
+
+    connect
+    (
+        ui->btnRecordEx, SIGNAL(clicked(bool)),
+        this, SLOT(recording_ex(bool))
+    );
+#if defined SEQ66_USE_RECORD_EX_BUTTON
+    ui->btnRecordEx->setEnabled(true);
+    if (cb_perf().route_by_buss())
+        qt_set_icon(rec_ex_buss_xpm, ui->btnRecordEx);
+    else if (cb_perf().filter_by_channel())
+        qt_set_icon(rec_ex_channel_xpm, ui->btnRecordEx);
+    else
+        qt_set_icon(rec_ex_normal_xpm, ui->btnRecordEx);
+#else
+    qt_set_icon(song_rec_off_xpm, ui->btnRecordEx);
+#endif
+
+    /*
      * Record-Song button. What about the song_rec_off_xpm file?
      */
 
@@ -1241,6 +1275,33 @@ qsmainwnd::toggle_loop ()
 {
     bool looping = ! cb_perf().looping();
     set_loop(looping);
+}
+
+/**
+ *  New, depends on mode of recording.  If neither route-by-buss or
+ *  route-by-channel is enabled, then the recording status of the performer's
+ *  current sequence (if any) is toggled.
+ */
+
+void
+qsmainwnd::recording_ex (bool record)
+{
+    if (cb_perf().route_by_buss())
+    {
+        // TODO
+    }
+    else if (cb_perf().filter_by_channel())
+    {
+        // TODO
+    }
+    else
+    {
+        bool ok = cb_perf().set_recording_flip();
+        if (! ok)
+        {
+            // todo?
+        }
+    }
 }
 
 /**
@@ -4272,13 +4333,22 @@ bool
 qsmainwnd::on_automation_change (automation::slot s)
 {
     bool result = not_nullptr(m_live_frame);
+    if (s == automation::slot::mod_bbt_hms)
+    {
+        toggle_time_format(true);
+    }
+    else if (s == automation::slot::mod_LR_loop)
+    {
+        toggle_loop();
+    }
+    else if (s == automation::slot::menu_mode)
+    {
+        bool hide = ! ui->btnShowHide->isChecked();
+        ui->btnShowHide->setChecked(hide);
+        slot_show_hide();
+    }
     if (result)
         m_live_frame->set_needs_update();           /* brute force          */
-
-    if (s == automation::slot::mod_bbt_hms)
-        toggle_time_format(true);
-    else if (s == automation::slot::mod_LR_loop)
-        toggle_loop();
 
     return result;
 }

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-11-22
+ * \updates       2023-11-26
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -945,7 +945,12 @@ void
 qslivegrid::mousePressEvent (QMouseEvent * event)
 {
     m_current_seq = seq_id_from_xy(event->x(), event->y());
-    if (m_current_seq != seq::unassigned())
+
+    bool ok = m_current_seq != seq::unassigned();
+    if (ok)
+        ok = perf().set_current_sequence(m_current_seq);
+
+    if (ok)
     {
         if (event->button() == Qt::LeftButton)
         {

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-06
+ * \updates       2023-11-26
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -457,6 +457,7 @@ private slots:
     void stop_playing ();
     void set_song_mode (bool song_mode);
     void song_recording (bool record);
+    void recording_ex (bool record);
     void panic ();
     void update_bpm (double bpm);
     void edit_bpm ();

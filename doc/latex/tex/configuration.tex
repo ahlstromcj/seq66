@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2023-11-04
+% \update      2023-11-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1061,10 +1061,10 @@
    the recorder).
    See \sectionref{paragraph:menu_edit_preferences_metronom_options}.
 
-\subsubsection{'rc' File / Background Recording}
+\subsubsection{'rc' File / Count-In Recording}
 \label{subsubsec:configuration_rc_background_recording}
 
-   Background recording allows recording to be made without having to create a
+   Count-in recording allows recording to be made without having to create a
    pattern and turn on recording.
    It is useful when using a metronome and count-in measures.
    The following settings activate this feature
@@ -1078,7 +1078,8 @@
       recording-measures = 0
    \end{verbatim}
 
-   The \texttt{count-in-recording} setting enables/disables background recording.
+   The \texttt{count-in-recording} setting enables/disables count-in
+   recording.
    The \texttt{recording-buss} setting specifies the input buss/port.
    That buss \textsl{must be enabled} (in the 'rc' file).
    The \texttt{recording-measures} sets the number of measures to record.
@@ -1087,7 +1088,7 @@
    We might adjust that feaure per user feedback.
    If \texttt{recording-measures} is set to 0, then the
    \textsl{expanding} mode of recording is used, where
-   the background-recording sequence gets longer and longers
+   the count-in-recording sequence gets longer and longers
    as playback and playing continues.
 
 \subsubsection{'rc' File / Interaction Method}
@@ -1699,8 +1700,9 @@
    it.  If this option is in force, then the only way to affect
    \texttt{seq66cli} is to send a signal (e.g. SIGKILL) to it, or use
    MIDI control.
-   However, currently we have issue with this option, so one should run
-   \texttt{seq66cli} in the background from a console or from a desktop shortcut.
+   One can also run \textsl{Seq66}
+   \texttt{seq66cli} in the background from a console or
+   from a desktop shortcut.
 
    The log-file, if specified, is written to the same directory as the 'usr'
    file, the \textsl{Seq66} configuration directory.

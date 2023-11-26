@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>806</width>
+    <width>750</width>
     <height>486</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>778</width>
+    <width>700</width>
     <height>458</height>
    </size>
   </property>
@@ -101,7 +101,7 @@
             <x>0</x>
             <y>0</y>
             <width>38</width>
-            <height>160</height>
+            <height>162</height>
            </rect>
           </property>
          </widget>
@@ -165,8 +165,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>729</width>
-          <height>172</height>
+          <width>673</width>
+          <height>174</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -333,7 +333,7 @@ to note events. [ c for selected notes ]</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>718</width>
+          <width>668</width>
           <height>126</height>
          </rect>
         </property>
@@ -349,13 +349,13 @@ to note events. [ c for selected notes ]</string>
          </property>
          <property name="minimumSize">
           <size>
-           <width>16</width>
+           <width>10</width>
            <height>28</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>16</width>
+           <width>10</width>
            <height>28</height>
           </size>
          </property>
@@ -380,7 +380,13 @@ to note events. [ c for selected notes ]</string>
          </property>
          <property name="minimumSize">
           <size>
-           <width>16</width>
+           <width>10</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>10</width>
            <height>28</height>
           </size>
          </property>
@@ -399,13 +405,13 @@ to note events. [ c for selected notes ]</string>
          </property>
          <property name="minimumSize">
           <size>
-           <width>16</width>
+           <width>10</width>
            <height>28</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>16</width>
+           <width>10</width>
            <height>28</height>
           </size>
          </property>
@@ -424,13 +430,13 @@ to note events. [ c for selected notes ]</string>
          </property>
          <property name="minimumSize">
           <size>
-           <width>16</width>
+           <width>10</width>
            <height>28</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>16</width>
+           <width>10</width>
            <height>28</height>
           </size>
          </property>
@@ -924,13 +930,13 @@ zooms in [ z 0 Z ].</string>
       <widget class="QPushButton" name="m_button_data">
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>28</width>
          <height>28</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>128</width>
+         <width>28</width>
          <height>28</height>
         </size>
        </property>
@@ -949,13 +955,13 @@ zooms in [ z 0 Z ].</string>
        </property>
        <property name="minimumSize">
         <size>
-         <width>220</width>
+         <width>148</width>
          <height>28</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>480</width>
+         <width>164</width>
          <height>28</height>
         </size>
        </property>
@@ -1030,13 +1036,13 @@ zooms in [ z 0 Z ].</string>
       <widget class="QSpinBox" name="m_spin_loop_count">
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>28</width>
          <height>28</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>128</width>
+         <width>64</width>
          <height>28</height>
         </size>
        </property>
@@ -1061,7 +1067,7 @@ Values up to 999 are supported by this control.</string>
        </property>
        <property name="maximumSize">
         <size>
-         <width>128</width>
+         <width>72</width>
          <height>28</height>
         </size>
        </property>
@@ -1083,13 +1089,13 @@ Values up to 999 are supported by this control.</string>
       <widget class="QPushButton" name="m_toggle_thru">
        <property name="minimumSize">
         <size>
-         <width>72</width>
+         <width>64</width>
          <height>28</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>200</width>
+         <width>96</width>
          <height>28</height>
         </size>
        </property>
@@ -1117,7 +1123,7 @@ Values up to 999 are supported by this control.</string>
        </property>
        <property name="maximumSize">
         <size>
-         <width>128</width>
+         <width>72</width>
          <height>28</height>
         </size>
        </property>
@@ -1148,7 +1154,7 @@ Values up to 999 are supported by this control.</string>
        </property>
        <property name="maximumSize">
         <size>
-         <width>128</width>
+         <width>72</width>
          <height>28</height>
         </size>
        </property>
@@ -1179,7 +1185,7 @@ Values up to 999 are supported by this control.</string>
        </property>
        <property name="maximumSize">
         <size>
-         <width>128</width>
+         <width>116</width>
          <height>28</height>
         </size>
        </property>
@@ -1204,7 +1210,7 @@ Oneshot recording of a pattern.</string>
        </property>
        <property name="maximumSize">
         <size>
-         <width>128</width>
+         <width>48</width>
          <height>28</height>
         </size>
        </property>
@@ -1226,7 +1232,7 @@ Oneshot recording of a pattern.</string>
        </property>
        <property name="maximumSize">
         <size>
-         <width>128</width>
+         <width>64</width>
          <height>28</height>
         </size>
        </property>
@@ -1368,7 +1374,7 @@ or a velocity to force upon input.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>722</width>
+          <width>666</width>
           <height>28</height>
          </rect>
         </property>
@@ -1918,7 +1924,7 @@ in the piano roll. [ p x ]
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>720</width>
+          <width>664</width>
           <height>22</height>
          </rect>
         </property>
@@ -1931,6 +1937,12 @@ in the piano roll. [ p x ]
         <widget class="QPushButton" name="spacer_button_2">
          <property name="enabled">
           <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>16</width>
+           <height>24</height>
+          </size>
          </property>
          <property name="maximumSize">
           <size>

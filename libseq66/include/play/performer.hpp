@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-11-24
+ * \updates       2023-11-26
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1778,10 +1778,20 @@ public:
             master_bus()->filter_by_channel(flag);
     }
 
+    bool filter_by_channel () const
+    {
+        return m_filter_by_channel;
+    }
+
 #if defined SEQ66_ROUTE_EVENTS_BY_BUSS
 
     bool sequence_lookup_setup ();
     sequence * sequence_lookup (const event & ev);
+
+    bool route_by_buss () const
+    {
+        return m_route_by_buss;
+    }
 
 #endif
 
@@ -2181,6 +2191,7 @@ public:
     bool set_recording (seq::number seqno, toggler flag);
     bool set_recording (seq::ref s, toggler flag);
     bool set_recording (seq::ref s, alteration q, toggler flag);
+    bool set_recording_flip ();
     bool set_recording_flip (seq::ref s);
     bool set_thru (seq::ref s, bool active, bool toggle);
 
@@ -3141,6 +3152,7 @@ public:
 
     const seq::pointer get_sequence (seq::number seqno) const;
     seq::pointer get_sequence (seq::number seqno);
+    bool set_current_sequence(seq::number seqno);
 
 public:         /* GUI-support functions */
 

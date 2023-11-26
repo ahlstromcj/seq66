@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-11-23
+ * \updates       2023-11-26
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -257,6 +257,9 @@ s_event_items [] =
 };
 
 /**
+ *
+ *  Note that a shorter window has a QTabWidget as a parent, while the normal
+ *  window has a qsmainwnd (QMainWindow) as a parent.
  *
  * \param p
  *      Provides the performer object to use for interacting with this
@@ -505,6 +508,14 @@ qseqeditframe64::qseqeditframe64
      */
 
     bool can_transpose = track().transposable();
+
+    /*
+     * Hide some vertically- and horizontally-oriented widgets to fit in a
+     * tighter space.
+     *
+     *      resize(880, height());      // does not work here
+     */
+
     if (shorter)
     {
         ui->m_toggle_drum->hide();      /* ui->m_toggle_transpose->hide()   */
@@ -512,6 +523,7 @@ qseqeditframe64::qseqeditframe64
         ui->spacer_button_4->hide();
         ui->spacer_button_5->hide();
         ui->m_button_loop->hide();
+        ui->m_button_lfo->hide();
     }
     else
     {
@@ -892,16 +904,19 @@ qseqeditframe64::qseqeditframe64
         this, SLOT(data())
     );
 
-    /*
-     * LFO Button.
-     */
+    if (! shorter)
+    {
+        /*
+         * LFO Button.
+         */
 
-     ui->m_button_lfo->setEnabled(true);
-     connect
-     (
-        ui->m_button_lfo, SIGNAL(clicked(bool)),
-        this, SLOT(show_lfo_frame())
-     );
+        ui->m_button_lfo->setEnabled(true);
+        connect
+        (
+            ui->m_button_lfo, SIGNAL(clicked(bool)),
+            this, SLOT(show_lfo_frame())
+        );
+    }
 
      /*
       * Loop-count Spin Box.

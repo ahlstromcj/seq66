@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-24
+ * \updates       2023-11-26
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1762,6 +1762,21 @@ performer::get_sequence (seq::number seqno)
         return m_metronome;
 
     return loop(seqno);
+}
+
+/**
+ *  Meant to record the last pattern touched by the mouse or a hot-key.
+ *
+ *  STILL IN PROGRESS
+ */
+
+bool
+performer::set_current_sequence (seq::number seqno)
+{
+    const seq::pointer s = get_sequence(seqno);
+    bool result = not_nullptr(s);
+    m_current_seqno = result ? seqno : seq::unassigned() ;
+    return result;
 }
 
 /**
@@ -4154,6 +4169,20 @@ performer::set_recording (seq::ref s, alteration q, toggler flag)
     if (result)
         set_needs_update();
 
+    return result;
+}
+
+bool
+performer::set_recording_flip ()
+{
+    bool result = m_current_seqno != seq::unassigned();
+    if (result)
+    {
+        seq::pointer sp = get_sequence(m_current_seqno);
+        result = bool(sp);
+        if (result)
+            result = set_recording_flip(*sp);
+    }
     return result;
 }
 
@@ -7808,6 +7837,7 @@ performer::loop_control
         }
         else
         {
+            (void) set_current_sequence(seqno);
             if (usr().no_grid_record())
             {
                 gridmode gm = usr().grid_mode();
@@ -9713,7 +9743,7 @@ performer::automation_menu_mode
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
-        // TODO???
+        notify_automation_change(automation::slot::menu_mode);  /* toggle */
     }
     return result;
 }
