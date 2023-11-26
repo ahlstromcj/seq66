@@ -145,7 +145,7 @@
 #include "pixmaps/song_rec_on.xpm"      /* #include "pixmaps/song_rec.xpm" */
 #include "pixmaps/stop.xpm"
 
-#undef  SEQ66_USE_RECORD_EX_BUTTON      /* STILL IN PROGRESS */
+#define SEQ66_USE_RECORD_EX_BUTTON      /* STILL IN PROGRESS */
 #if defined SEQ66_USE_RECORD_EX_BUTTON
 #include "pixmaps/rec_ex_buss.xpm"      /* green    */
 #include "pixmaps/rec_ex_channel.xpm"   /* yellow   */
@@ -736,7 +736,7 @@ qsmainwnd::qsmainwnd
     else
         qt_set_icon(rec_ex_normal_xpm, ui->btnRecordEx);
 #else
-    qt_set_icon(song_rec_off_xpm, ui->btnRecordEx);
+    ui->btnRecordEx->hide(); // qt_set_icon(song_rec_off_xpm, ui->btnRecordEx);
 #endif
 
     /*
@@ -1286,21 +1286,10 @@ qsmainwnd::toggle_loop ()
 void
 qsmainwnd::recording_ex (bool record)
 {
-    if (cb_perf().route_by_buss())
+    bool ok = cb_perf().set_recording_ex(record);
+    if (! ok)
     {
-        // TODO
-    }
-    else if (cb_perf().filter_by_channel())
-    {
-        // TODO
-    }
-    else
-    {
-        bool ok = cb_perf().set_recording_flip();
-        if (! ok)
-        {
-            // todo?
-        }
+        // todo?
     }
 }
 

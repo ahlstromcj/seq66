@@ -4140,7 +4140,8 @@ performer::set_sequence_name (seq::ref s, const std::string & name)
  *      Provides the current status of the Record button.
  *
  * \param toggle
- *      If true, toggle the record status.
+ *      If set to toggler::flip, toggle the record status. Otherwise, turn it
+ *      on or off.
  *
  * \param s
  *      The sequence that the seqedit window represents.  This pointer is
@@ -4148,9 +4149,9 @@ performer::set_sequence_name (seq::ref s, const std::string & name)
  */
 
 bool
-performer::set_recording (seq::ref s, toggler flag)
+performer::set_recording (seq::ref s, toggler t)
 {
-    bool result = s.set_recording(flag);
+    bool result = s.set_recording(t);
     if (result)
         set_needs_update();
 
@@ -4163,9 +4164,9 @@ performer::set_recording (seq::ref s, toggler flag)
  */
 
 bool
-performer::set_recording (seq::ref s, alteration q, toggler flag)
+performer::set_recording (seq::ref s, alteration q, toggler t)
 {
-    bool result = s.set_recording(q, flag);
+    bool result = s.set_recording(q, t);
     if (result)
         set_needs_update();
 
@@ -4209,6 +4210,57 @@ performer::set_recording_flip (seq::ref s)
 
     if (result)
         set_needs_update();
+
+    return result;
+}
+
+/**
+ *  Toggles recording for all patterns in the play-set that specify an input
+ *  buss.
+ */
+
+bool
+performer::set_recording_buss_flip ()
+{
+    bool result = false;
+    for (auto seqi : play_set().seq_container())
+    {
+        if (seqi->has_in_bus())
+        {
+            result = set_recording(*seqi, toggler::flip);
+            if (! result)
+                break;
+        }
+    }
+    return result;
+}
+
+bool
+performer::set_recording_chan_flip ()
+{
+    bool result = false;
+    for (auto seqi : play_set().seq_container())
+    {
+        if (! seqi->free_channel())
+        {
+            result = set_recording(*seqi, toggler::flip);
+            if (! result)
+                break;
+        }
+    }
+    return result;
+}
+
+bool
+performer::set_recording_ex (bool /*record*/)
+{
+    bool result = false;
+    if (route_by_buss())
+        result = set_recording_buss_flip();
+    else if (filter_by_channel())
+        result = set_recording_chan_flip();
+    else
+        result = set_recording_flip();
 
     return result;
 }

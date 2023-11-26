@@ -64,6 +64,7 @@ The release now includes an installer for the 64-bit Windows version of Seq66.
     *   Supports configurable PPQN from 32 to 19200 (default is 192).
     *   Transposable triggers to re-use patterns more comprehensively.
     *   Song import/export from/to stock MIDI (SMF 0 or 1).
+    *   Highly configurable MIDI-based metronome.
     *   Improved non-U.S. keyboard support.
     *   Many demonstration and test MIDI files.
     *   See **Recent Changes** below, and the **NEWS** file.

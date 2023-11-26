@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-11-13
+ * \updates       2023-11-26
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -586,7 +586,7 @@ smanager::open_midi_file (const std::string & fname)
             infomsg += std::to_string(perf()->ppqn());
             info_message(infomsg);
             (void) perf()->apply_session_mutes();
-            file_message("Opened", result);
+            file_message("Open", result);
             midi_filename(result);                          /* side-effect  */
             rc().playlist_active(false);                    /* disable it   */
         }
@@ -942,8 +942,8 @@ smanager::error_handling ()
  *      -   open_note_mapper()
  *      -   open_midi_file() if specified on command-line; otherwise
  *      -   Open most-recent file if that option is enabled:
- *          Get full path to the most recently-opened or imported file.  What if
- *          smanager::open_midi_file() has already been called via the
+ *          Get full path to the most recently-opened or imported file.  What
+ *          if smanager::open_midi_file() has already been called via the
  *          command-line? Then skip this step.
  *      -   create_window()
  *      -   run(), done in main()

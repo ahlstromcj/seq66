@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-11-12
+ * \updates       2023-11-26
  * \license       GNU GPLv2 or above
  *
  */
@@ -810,9 +810,9 @@ qmutemaster::load_mutegroups (const std::string & mutefile)
 {
     bool result = cb_perf().open_mutegroups(mutefile);
     if (result)
-        file_message("Opened mute-groups", mutefile);
+        file_message("Open mute-groups", mutefile);
     else
-        file_error("Opened failed", mutefile);
+        file_error("Open failed", mutefile);
 
     return result;
 }

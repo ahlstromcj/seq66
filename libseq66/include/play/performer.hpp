@@ -2193,6 +2193,9 @@ public:
     bool set_recording (seq::ref s, alteration q, toggler flag);
     bool set_recording_flip ();
     bool set_recording_flip (seq::ref s);
+    bool set_recording_ex (bool record);
+    bool set_recording_buss_flip ();            // could be made private
+    bool set_recording_chan_flip ();            // could be made private
     bool set_thru (seq::ref s, bool active, bool toggle);
 
 #if defined USE_SONG_BOX_SELECT
