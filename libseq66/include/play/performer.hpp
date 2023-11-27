@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-11-26
+ * \updates       2023-11-27
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -827,20 +827,20 @@ private:                            /* key, midi, and op container section  */
     /**
      *  Provides storage for this "rc" configuration option so that the
      *  performer can set it in the master buss once that has been created.
-     */
-
-    bool m_filter_by_channel;
-
-#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
-
-    /**
      *  If true, we can try to route events by their buss number. We have
      *  a flag for quick checking to see if the bus/sequence vector is
      *  usable. Note that filtering by channel and routing by buss are
      *  incompatible with each other.
      */
 
-    bool m_route_by_buss;
+    bool m_record_by_buss;
+
+    /**
+     *  Provides storage for this "rc" configuration option so that the
+     *  performer can set it in the master buss once that has been created.
+     */
+
+    bool m_record_by_channel;
 
     /**
      *  Provides a mapping of input busses to patterns. Treated like an array
@@ -849,8 +849,6 @@ private:                            /* key, midi, and op container section  */
      */
 
     std::vector<sequence *> m_buss_patterns;
-
-#endif
 
     /**
      *  Holds the "one measure's worth" of pulses (ticks), which is normally
@@ -1771,29 +1769,30 @@ public:
         return master_bus() ? master_bus()->client_id() : (-1) ;
     }
 
-    void filter_by_channel (bool flag)
+    void record_by_channel (bool flag)
     {
-        m_filter_by_channel = flag;
+        m_record_by_channel = flag;
         if (master_bus())
-            master_bus()->filter_by_channel(flag);
+            master_bus()->record_by_channel(flag);
     }
 
-    bool filter_by_channel () const
+    bool record_by_channel () const
     {
-        return m_filter_by_channel;
+        return m_record_by_channel;
     }
 
-#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
+    void record_by_buss (bool flag)
+    {
+        m_record_by_buss = flag;
+    }
+
+    bool record_by_buss () const
+    {
+        return m_record_by_buss;
+    }
 
     bool sequence_lookup_setup ();
     sequence * sequence_lookup (const event & ev);
-
-    bool route_by_buss () const
-    {
-        return m_route_by_buss;
-    }
-
-#endif
 
     /*
      *  Used in synchronizing starting/stopping playback and in coordination

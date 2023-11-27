@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-09-21
+ * \updates       2023-11-27
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -64,15 +64,6 @@
  */
 
 #define SEQ66_USE_SHOW_HIDE_BUTTON
-
-/**
- *  Route events by the buss on which the event came in on.
- *  Does not work with Seq66's current JACK implementation or with Windows.
- */
-
-#if defined SEQ66_JACK_SUPPORT || defined SEQ66_PORTMIDI_SUPPORT
-#define SEQ66_ROUTE_EVENTS_BY_BUSS
-#endif
 
 /**
  *  Make port-mapping the default.

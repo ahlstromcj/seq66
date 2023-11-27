@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-27
+ * \updates       2023-11-27
  * \license       GNU GPLv2 or above
  */
 
@@ -257,6 +257,7 @@ private slots:
     void slot_tempo_track ();
     void slot_tempo_track_set ();
     void slot_buss_override ();
+    void slot_record_by_buss ();
     void slot_record_by_channel ();
     void slot_virtual_ports ();
     void slot_enable_virtual_ports ();

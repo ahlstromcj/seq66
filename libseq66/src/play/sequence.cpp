@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-11-23
+ * \updates       2023-11-27
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -6071,7 +6071,7 @@ sequence::set_recording (toggler flag)
         m_notes_on = 0;                 /* reset the step-edit note counter */
         if (recordon)
         {
-            if (rc().filter_by_channel())
+            if (rc().record_by_channel())
                 channel_match(true);
         }
         else

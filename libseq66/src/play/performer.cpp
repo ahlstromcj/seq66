@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-26
+ * \updates       2023-11-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -369,11 +369,9 @@ performer::performer (int ppqn, int rows, int columns) :
     m_32nds_per_quarter     (0),
     m_us_per_quarter_note   (0),
     m_master_bus            (),                 /* this is a shared pointer */
-    m_filter_by_channel     (false),
-#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
-    m_route_by_buss         (false),
+    m_record_by_buss        (false),
+    m_record_by_channel     (false),
     m_buss_patterns         (),
-#endif
     m_one_measure           (0),
     m_fast_ticks            (0),
     m_left_tick             (0),
@@ -849,7 +847,8 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
     if (! rc().song_start_auto())                   /* detect live vs song  */
         song_start_mode(rcs.get_song_start_mode()); /* force the mode       */
 
-    filter_by_channel(rcs.filter_by_channel());
+    record_by_buss(rcs.record_by_buss());
+    record_by_channel(rcs.record_by_channel());
     m_resume_note_ons = usrs.resume_note_ons();
     return result;
 }
@@ -901,7 +900,8 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
         const std::string & mgf = rc().mute_group_filespec();
         (void) save_mutegroups(mgf);
     }
-    rcs.filter_by_channel(m_filter_by_channel);
+    rcs.record_by_buss(m_record_by_buss);
+    rcs.record_by_channel(m_record_by_channel);
     usrs.resume_note_ons(m_resume_note_ons);
 
     /*
@@ -2049,9 +2049,7 @@ performer::new_sequence (sequence * seqptr, seq::number seqno)
                 seq::number finalseq = s->seq_number();
                 screenset::number setno = set_mapper().seq_set(seqno);
                 s->set_dirty();
-#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
-                m_route_by_buss = sequence_lookup_setup();
-#endif
+                record_by_buss(sequence_lookup_setup());
                 announce_sequence(s, finalseq);         /* issue #112       */
                 notify_sequence_change(finalseq, change::recreate);
                 notify_set_change(setno, change::yes);
@@ -2150,9 +2148,7 @@ performer::remove_sequence (seq::number seqno)
     {
         seq::number buttonno = seqno - playscreen_offset();
         send_seq_event(buttonno, midicontrolout::seqaction::removed);
-#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
-        m_route_by_buss = sequence_lookup_setup();
-#endif
+        record_by_buss(sequence_lookup_setup());
         notify_sequence_change(seqno, change::recreate);
         modify();
     }
@@ -2925,9 +2921,7 @@ performer::set_playing_screenset (screenset::number setno)
              * Nothing to do?
              */
         }
-#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
-        m_route_by_buss = sequence_lookup_setup();
-#endif
+        record_by_buss(sequence_lookup_setup());
         announce_playscreen();                      /* inform control-out   */
         notify_set_change(setno, change::signal);   /* change::no           */
     }
@@ -3275,7 +3269,7 @@ performer::create_master_bus ()
             if (m_master_bus)
             {
                 mastermidibus * mmb = m_master_bus.get();
-                mmb->filter_by_channel(m_filter_by_channel);
+                mmb->record_by_channel(m_record_by_channel);
                 mmb->set_port_statuses(m_clocks, m_inputs);
                 midi_control_out().set_master_bus(mmb);
                 result = true;
@@ -3411,8 +3405,6 @@ performer::launch (int ppqn)
     return result;
 }
 
-#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
-
 /**
  *  Iterate through the current set of patterns (in the playset only!) to find
  *  those that might specify an input buss. Only one pattern can grab ahold of
@@ -3470,8 +3462,6 @@ performer::sequence_lookup (const event & ev)
 
     return result;
 }
-
-#endif  // defined SEQ66_ROUTE_EVENTS_BY_BUSS
 
 /**
  *  Announces the current mute states of the now-current play-screen.  This
@@ -4255,9 +4245,9 @@ bool
 performer::set_recording_ex (bool /*record*/)
 {
     bool result = false;
-    if (route_by_buss())
+    if (record_by_buss())
         result = set_recording_buss_flip();
-    else if (filter_by_channel())
+    else if (record_by_channel())
         result = set_recording_chan_flip();
     else
         result = set_recording_flip();
@@ -4822,9 +4812,7 @@ performer::poll_cycle ()
                         {
                             ev.set_timestamp(get_tick());
 
-#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
-
-                            if (m_route_by_buss)
+                            if (record_by_buss())
                             {
                                 sequence * sp = sequence_lookup(ev);
                                 if (is_nullptr(sp))
@@ -4832,16 +4820,10 @@ performer::poll_cycle ()
 
                                 sp->stream_event(ev);
                             }
-                            else if (m_filter_by_channel)
+                            else if (record_by_channel())
                                 m_master_bus->dump_midi_input(ev);
                             else
                                 m_master_bus->get_sequence()->stream_event(ev);
-#else
-                            if (m_filter_by_channel)
-                                m_master_bus->dump_midi_input(ev);
-                            else
-                                m_master_bus->get_sequence()->stream_event(ev);
-#endif
                         }
                     }
                     else

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2023-09-20
+ * \updates       2023-11-27
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -77,7 +77,7 @@ mastermidibase::mastermidibase
     m_beats_per_minute  (bpm),          /* beats per minute                 */
     m_dumping_input     (false),
     m_vector_sequence   (),             /* stazed feature                   */
-    m_filter_by_channel (false),        /* set based on configuration       */
+    m_record_by_channel (false),        /* set based on configuration       */
     m_seq               (nullptr),
     m_mutex             ()
 {
@@ -874,7 +874,7 @@ mastermidibase::set_sequence_input (bool state, sequence * seq)
 {
     automutex locker(m_mutex);
     bool result = not_nullptr(seq);
-    if (m_filter_by_channel)
+    if (m_record_by_channel)
     {
         if (result)
         {
@@ -921,7 +921,7 @@ mastermidibase::set_sequence_input (bool state, sequence * seq)
  *  This function augments the recording functionality by looking for a
  *  sequence that has a matching channel number, logging the event to that
  *  sequence, and then immediately exiting.  It should be called only if
- *  m_filter_by_channel is set.
+ *  m_record_by_channel is set.
  *
  *  If we have more than one sequence recording, and the channel-match feature
  *  [the sequence::channels_match() function] is disabled, then only the first

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-11-26
+ * \updates       2023-11-27
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1899,8 +1899,6 @@ qslivegrid::popup_menu ()
         mastermidibus * mmb = perf().master_bus();
         if (not_nullptr(mmb))
         {
-#if defined SEQ66_ROUTE_EVENTS_BY_BUSS
-
             /**
              *  Input buss menu. It is optional. The default is "Free",
              *  which means the mastermidibus uses the active current
@@ -1955,7 +1953,6 @@ qslivegrid::popup_menu ()
             m_popup->addMenu(menuinbuss);
 
             }   /* if (rc().with_jack_midi()) */
-#endif
 
             /**
              *  Output buss menu
@@ -1986,9 +1983,6 @@ qslivegrid::popup_menu ()
                         a->setEnabled(false);
                 }
             }
-#if ! defined SEQ66_ROUTE_EVENTS_BY_BUSS
-            m_popup->addSeparator();
-#endif
             m_popup->addMenu(menubuss);
 
             /**

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-11-22
+ * \updates       2023-11-27
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -493,12 +493,14 @@ rcfile::parse ()
     file_message("Read ctrl", fullpath);
 
     int ticks = 64;
-    bool recordbychannel = false;
     tag = "[midi-clock-mod-ticks]";
     ticks = get_integer(file, tag, "ticks");
-    recordbychannel = get_boolean(file, tag, "record-by-channel");
     rc_ref().set_clock_mod(ticks);
-    rc_ref().filter_by_channel(recordbychannel);
+
+    bool recordby = get_boolean(file, tag, "record-by-buss");
+    rc_ref().record_by_buss(recordby);
+    recordby = get_boolean(file, tag, "record-by-channel");
+    rc_ref().record_by_channel(recordby);
 
     int track = 0;
     tag = "[midi-meta-events]";
@@ -1017,14 +1019,16 @@ rcfile::write ()
 
     file << "\n"
 "# 'ticks' provides the Song Position (16th notes) at which clocking begins if\n"
-"# the bus is set to MIDI Clock Mod setting. 'record-by-channel' allows the\n"
-"# master MIDI bus to record/filter incoming MIDI data by channel, adding each\n"
-"# new MIDI event to the pattern that is set to that channel. Option adopted\n"
+"# the bus is set to MIDI Clock Mod setting. 'record-by-buss' routes MIDI\n"
+"# events to the first pattern specifying that input buss. 'record-by-channel'\n"
+"# sets to record incoming MIDI data to patterns with an output channel, each\n"
+"# MIDI event sent to the first pattern set to that channel. Option adopted\n"
 "# from the Seq32 project at GitHub.\n"
 "\n[midi-clock-mod-ticks]\n\n"
        ;
     write_integer(file, "ticks", midibus::get_clock_mod());
-    write_boolean(file, "record-by-channel", rc_ref().filter_by_channel());
+    write_boolean(file, "record-by-buss", rc_ref().record_by_buss());
+    write_boolean(file, "record-by-channel", rc_ref().record_by_channel());
 
     /*
      * Reveal ports

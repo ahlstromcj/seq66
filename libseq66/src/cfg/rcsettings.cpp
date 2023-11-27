@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-11-02
+ * \updates       2023-11-27
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -60,12 +60,12 @@ namespace seq66
 
 rcsettings::rcsettings () :
     basesettings                (),
-    m_clocks                    (),         /* vector wrapper class     */
-    m_inputs                    (),         /* vector wrapper class     */
+    m_clocks                    (),         /* vector wrapper class         */
+    m_inputs                    (),         /* vector wrapper class         */
     m_metro_settings            (),
     m_mute_group_save           (mutegroups::saving::midi),
     m_keycontainer              ("rc"),
-    m_drop_empty_in_controls    (false),    /* the legacy value         */
+    m_drop_empty_in_controls    (false),    /* the legacy value             */
     m_midi_control_buss         (null_buss()),
     m_midi_control_in           ("rc"),
     m_midi_control_out          ("rc"),
@@ -74,7 +74,7 @@ rcsettings::rcsettings () :
     m_quiet                     (false),
     m_investigate               (false),
     m_session_tag               (),
-    m_save_list                 (),         /* std::map<string, bool>   */
+    m_save_list                 (),         /* std::map<string, bool>       */
     m_save_old_triggers         (false),
     m_save_old_mutes            (false),
     m_allow_mod4_mode           (false),
@@ -82,7 +82,7 @@ rcsettings::rcsettings () :
     m_allow_click_edit          (true),
     m_show_midi                 (false),
     m_priority                  (false),
-    m_thread_priority           (c_thread_priority),
+    m_thread_priority           (0),        /* c_thread_priority            */
     m_pass_sysex                (false),
     m_with_jack_transport       (false),
     m_with_jack_master          (false),
@@ -195,7 +195,7 @@ rcsettings::set_defaults ()
     m_allow_click_edit          = true;
     m_show_midi                 = false;
     m_priority                  = false;
-    m_thread_priority           = c_thread_priority;
+    m_thread_priority           = 0;        /* c_thread_priority            */
     m_pass_sysex                = false;
     m_with_jack_transport       = false;
     m_with_jack_master          = false;

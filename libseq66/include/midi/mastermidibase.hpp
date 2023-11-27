@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2023-06-28
+ * \updates       2023-11-27
  * \license       GNU GPLv2 or above
  *
  *  The mastermidibase module is the base-class version of the mastermidibus
@@ -154,7 +154,7 @@ protected:
      *  data to the sequence that has the channel it is meant for.
      */
 
-    bool m_filter_by_channel;
+    bool m_record_by_channel;
 
     /**
      *  Points to the sequence object.  Set in set_sequence_input().  See that
@@ -210,14 +210,14 @@ public:
         return m_inbus_array.count();
     }
 
-    bool filter_by_channel () const
+    bool record_by_channel () const
     {
-        return m_filter_by_channel;
+        return m_record_by_channel;
     }
 
-    void filter_by_channel (bool flag)
+    void record_by_channel (bool flag)
     {
-        m_filter_by_channel = flag;
+        m_record_by_channel = flag;
     }
 
     midibpm get_beats_per_minute () const

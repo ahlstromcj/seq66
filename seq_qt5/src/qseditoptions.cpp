@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-20
+ * \updates       2023-11-27
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -456,6 +456,12 @@ qseditoptions::setup_tab_midi_input ()
     /*
      * I/O Port Boolean options.
      */
+
+    connect
+    (
+        ui->checkBoxRecordByBuss, SIGNAL(clicked(bool)),
+        this, SLOT(slot_record_by_buss())
+    );
 
     connect
     (
@@ -2612,7 +2618,13 @@ qseditoptions::sync_rc ()
     ui->lineEditOutputCount->setText(qt(value));
     value = std::to_string(rc().manual_in_port_count());
     ui->lineEditInputCount->setText(qt(value));
-    ui->checkBoxRecordByChannel->setChecked(rc().filter_by_channel());
+
+    bool bybuss = rc().record_by_buss();
+    ui->checkBoxRecordByBuss->setChecked(bybuss);
+    if (bybuss)
+        ui->checkBoxRecordByChannel->setChecked(false);
+    else
+        ui->checkBoxRecordByChannel->setChecked(rc().record_by_channel());
 }
 
 void
@@ -3908,11 +3920,26 @@ qseditoptions::slot_tempo_track_set ()
 }
 
 void
+qseditoptions::slot_record_by_buss ()
+{
+    bool on = ui->checkBoxRecordByBuss->isChecked();
+    rc().record_by_buss(on);
+    perf().record_by_buss(on);
+    if (on)
+        ui->checkBoxRecordByChannel->setChecked(false);
+
+    modify_rc();
+}
+
+void
 qseditoptions::slot_record_by_channel ()
 {
     bool on = ui->checkBoxRecordByChannel->isChecked();
-    rc().filter_by_channel(on);
-    perf().filter_by_channel(on);               /* ca 2023-11-20    */
+    rc().record_by_channel(on);
+    perf().record_by_channel(on);
+    if (on)
+        ui->checkBoxRecordByBuss->setChecked(false);
+
     modify_rc();
 }
 

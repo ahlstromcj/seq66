@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-11-12
+ * \updates       2023-11-27
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -284,7 +284,8 @@ private:
     int m_jack_buffer_size;         /**< The desired power-of-2 size, or 0. */
     sequence::playback m_song_start_mode; /**< Song mode versus Live mode.  */
     bool m_song_start_is_auto;      /**< True if "auto" read from 'rc'.     */
-    bool m_filter_by_channel;       /**< Record only sequence channel data. */
+    bool m_record_by_buss;          /**< Record into sequence w/input-buss. */
+    bool m_record_by_channel;       /**< Record into sequence with channel. */
     bool m_manual_ports;            /**< [manual-ports] setting.            */
     bool m_manual_auto_enable;      /**< [manual-port] auto-enable.         */
     int m_manual_port_count;        /**< [manual-ports] output port count.  */
@@ -944,9 +945,14 @@ public:
         );
     }
 
-    bool filter_by_channel () const
+    bool record_by_buss () const
     {
-        return m_filter_by_channel;
+        return m_record_by_buss;
+    }
+
+    bool record_by_channel () const
+    {
+        return m_record_by_channel;
     }
 
     bool manual_ports () const
@@ -1400,9 +1406,14 @@ public:
 
     void song_start_mode_by_string (const std::string & s);
 
-    void filter_by_channel (bool flag)
+    void record_by_buss (bool flag)
     {
-        m_filter_by_channel = flag;
+        m_record_by_buss = flag;
+    }
+
+    void record_by_channel (bool flag)
+    {
+        m_record_by_channel = flag;
     }
 
     void manual_ports (bool flag)

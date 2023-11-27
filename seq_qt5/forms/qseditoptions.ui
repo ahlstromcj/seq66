@@ -38,7 +38,6 @@
      <property name="font">
       <font>
        <pointsize>11</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -46,7 +45,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -67,7 +66,6 @@
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -92,7 +90,6 @@
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -214,7 +211,6 @@
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -266,7 +262,6 @@
         <font>
          <family>DejaVu Sans</family>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -324,7 +319,6 @@
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -344,7 +338,6 @@
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -374,7 +367,6 @@
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -405,7 +397,6 @@
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -446,7 +437,6 @@
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -463,7 +453,6 @@
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -528,13 +517,12 @@ Each port number can be found by name-lookup.</string>
          <x>10</x>
          <y>368</y>
          <width>591</width>
-         <height>149</height>
+         <height>171</height>
         </rect>
        </property>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -559,7 +547,6 @@ Each port number can be found by name-lookup.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -573,34 +560,29 @@ Each port number can be found by name-lookup.</string>
           <x>20</x>
           <y>40</y>
           <width>571</width>
-          <height>100</height>
+          <height>129</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_9">
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="QCheckBox" name="checkBoxVirtualPorts">
            <property name="text">
             <string>Use virtual (manual) I/O ports</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="label_outputs">
-           <property name="maximumSize">
-            <size>
-             <width>96</width>
-             <height>16777215</height>
-            </size>
+         <item row="0" column="0" colspan="3">
+          <widget class="QCheckBox" name="checkBoxRecordByChannel">
+           <property name="toolTip">
+            <string>If checked, incoming data routes to the pattern
+slot by channel number (0 to 15).</string>
            </property>
            <property name="text">
-            <string>Outputs</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <string>Record into patterns by channel</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
+         <item row="2" column="2">
           <widget class="QLineEdit" name="lineEditOutputCount">
            <property name="maximumSize">
             <size>
@@ -622,8 +604,8 @@ Each port number can be found by name-lookup.</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="3">
-          <widget class="QLabel" name="label_inputs">
+         <item row="2" column="1">
+          <widget class="QLabel" name="label_outputs">
            <property name="maximumSize">
             <size>
              <width>96</width>
@@ -631,14 +613,14 @@ Each port number can be found by name-lookup.</string>
             </size>
            </property>
            <property name="text">
-            <string>Inputs</string>
+            <string>Outputs</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
-         <item row="1" column="4">
+         <item row="2" column="4">
           <widget class="QLineEdit" name="lineEditInputCount">
            <property name="maximumSize">
             <size>
@@ -654,21 +636,38 @@ Each port number can be found by name-lookup.</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="0" colspan="2">
+         <item row="3" column="0" colspan="2">
           <widget class="QCheckBox" name="checkBoxAutoEnableVirtual">
            <property name="text">
             <string>Auto-enable virtual ports</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="0" colspan="3">
-          <widget class="QCheckBox" name="checkBoxRecordByChannel">
-           <property name="toolTip">
-            <string>If checked, incoming data routes to the pattern
-slot by channel number (0 to 15).</string>
+         <item row="2" column="3">
+          <widget class="QLabel" name="label_inputs">
+           <property name="maximumSize">
+            <size>
+             <width>96</width>
+             <height>16777215</height>
+            </size>
            </property>
            <property name="text">
-            <string>Record input into patterns by channel</string>
+            <string>Inputs</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="3">
+          <widget class="QCheckBox" name="checkBoxRecordByBuss">
+           <property name="toolTip">
+            <string>If checked, incoming data routes to the pattern
+slot by bus/port number. Overrides input by
+channel.</string>
+           </property>
+           <property name="text">
+            <string>Record into patterns by bus</string>
            </property>
           </widget>
          </item>
@@ -688,7 +687,6 @@ slot by channel number (0 to 15).</string>
         <font>
          <family>DejaVu Sans</family>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -756,7 +754,6 @@ slot by channel number (0 to 15).</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -793,7 +790,6 @@ slot by channel number (0 to 15).</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -1437,7 +1433,6 @@ Range: 0.5 to 3.0</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -1458,7 +1453,6 @@ Range: 0.5 to 3.0</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1478,7 +1472,6 @@ Range: 0.5 to 3.0</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1521,7 +1514,6 @@ Range: 0.5 to 3.0</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1541,7 +1533,6 @@ Range: 0.5 to 3.0</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1792,7 +1783,6 @@ connects to the MIDI I/O ports it finds.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -1812,7 +1802,6 @@ connects to the MIDI I/O ports it finds.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -1882,7 +1871,6 @@ in the Song Editor.</string>
          <property name="font">
           <font>
            <pointsize>11</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1901,7 +1889,6 @@ in the Song Editor.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1925,7 +1912,6 @@ playback resumes.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1950,7 +1936,6 @@ the default PPQN.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1972,7 +1957,6 @@ the default PPQN.</string>
           <font>
            <family>Sans</family>
            <pointsize>11</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -2045,7 +2029,6 @@ Seq66 exits.</string>
          <property name="font">
           <font>
            <pointsize>11</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -2064,7 +2047,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2084,7 +2066,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2104,7 +2085,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2124,7 +2104,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2151,7 +2130,6 @@ Seq66 exits.</string>
          <property name="font">
           <font>
            <pointsize>11</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -2170,7 +2148,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2190,7 +2167,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2210,7 +2186,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2257,7 +2232,6 @@ Seq66 exits.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -2273,7 +2247,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2290,7 +2263,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2314,7 +2286,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2331,7 +2302,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2391,7 +2361,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2408,7 +2377,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2422,7 +2390,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2436,7 +2403,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2459,7 +2425,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2482,7 +2447,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2505,7 +2469,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2563,7 +2526,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2593,7 +2555,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2636,7 +2597,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2689,7 +2649,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2719,7 +2678,6 @@ Seq66 exits.</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -2768,7 +2726,6 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -3007,7 +2964,6 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -3027,7 +2983,6 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -3047,7 +3002,6 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -3072,7 +3026,6 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -3130,7 +3083,6 @@ Seq66 exits.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -3151,7 +3103,6 @@ Seq66 exits.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -3177,7 +3128,6 @@ For many changes, restart is required.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -3408,7 +3358,6 @@ For many changes, restart is required.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3429,7 +3378,6 @@ For many changes, restart is required.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3528,7 +3476,6 @@ For many changes, restart is required.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3597,7 +3544,6 @@ path added to this name is stripped.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3618,7 +3564,6 @@ path added to this name is stripped.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3639,7 +3584,6 @@ path added to this name is stripped.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>50</weight>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3721,7 +3665,6 @@ path added to this name is stripped.</string>
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -3871,7 +3814,6 @@ path added to this name is stripped.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>50</weight>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -3892,7 +3834,6 @@ path added to this name is stripped.</string>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <italic>true</italic>
          <bold>true</bold>
         </font>

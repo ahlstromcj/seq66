@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-11-22
+ * \updates       2023-11-27
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -1021,11 +1021,11 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case 'D':                           /* --legacy-record              */
-            rc().filter_by_channel(false);
+            rc().record_by_channel(false);
             break;
 
         case 'd':                           /* --record-by-channel          */
-            rc().filter_by_channel(true);
+            rc().record_by_channel(true);
             break;
 
         case 'F':                           /* --usr                        */
@@ -1131,9 +1131,9 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         case 'p':
             rc().priority(true);
             if (soptarg.empty())
-                rc().thread_priority(0);
+                rc().thread_priority(0);    /* c_thread_priority)           */
             else
-                rc().thread_priority(string_to_int(soptarg, 0));    // FIXME
+                rc().thread_priority(string_to_int(soptarg, 0));
             break;
 
         case 'q':

@@ -25,6 +25,8 @@
 # is shown. If port-mapping is active (now the default), this does not apply.
 #
 # 'init-disabled-ports' is experimental. It tries live toggle of port state.
+# 'priority' is experimental. It is meant to increase the priority of the I/O
+# threads. It requires Seq66 to be run as root, or be installed as setuid 0.
 
 [Seq66]
 
@@ -35,6 +37,7 @@ verbose = false
 sets-mode = normal
 port-naming = short
 init-disabled-ports = false
+priority = 10
 
 # [comments] holds user documentation for this file. The first empty, hash-
 # commented, or tag line ends the comment.
@@ -104,8 +107,17 @@ name = "qseq66.drums"
 active = false
 name = "qseq66.palette"
 
-# Defines features of MIDI meta-event handling. Tempo events occur in the first
-# track (pattern 0), but one can move tempo elsewhere. It changes where tempo
+# If specified, a style-sheet (e.g. 'qseq66.qss') is applied at startup.
+# This file must be located in Seq66's "home" directory. Copy if needed.
+# Note that style-sheet specification has been removed from the 'usr' file.
+
+[style-sheet-file]
+
+active = false
+name = "perstfic-66-2.qss"
+
+# Defines features of MIDI meta-event handling. Tempo events are in the first
+# track (pattern 0), but one can use them elsewhere. It changes where tempo
 # events are recorded. The default is 0, the maximum is 1023. A pattern must
 # exist at this number.
 
@@ -115,8 +127,8 @@ tempo-track = 0
 
 # Set to true to create virtual ALSA/JACK I/O ports and not auto-connect
 # to other clients. It allows up to 48 output or input ports (defaults to 8
-# and 4). Set to false to auto-connect Seq66 to the existing ALSA/JACK MIDI
-# ports.
+# and 4). Keep it false to auto-connect Seq66 to real ALSA/JACK MIDI ports.
+# Set 'auto-enable' to enable all virtual ports automatically.
 
 [manual-ports]
 
@@ -128,7 +140,7 @@ input-port-count = 4
 # These MIDI ports are for input and control. JACK's view: these are
 # 'playback' devices. The first number is the bus, the second number is the
 # input status, disabled (0) or enabled (1). The item in quotes is the full
-# input bus name.
+# input bus name. The type of port depends on the 'virtual-ports' setting.
 
 [midi-input]
 
@@ -233,6 +245,7 @@ input-port-count = 4
 [midi-clock-mod-ticks]
 
 ticks = 64
+record-by-buss = false
 record-by-channel = false
 
 # Set to true to have Seq66 ignore port names defined in the 'usr' file. Use
