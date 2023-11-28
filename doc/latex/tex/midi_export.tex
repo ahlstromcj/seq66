@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-10-20
-% \update      2023-10-25
+% \update      2023-11-28
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -68,11 +68,13 @@
 \subsubsection{Import Project Configuration}
 \label{subsubsec:midi_export_file_import_project}
 
-   This operation allows one to copy all of the \texttt{qseq66.*} configuration
-   files from one directory to another.  It is most useful when
+   This operation allows one to import all of the \texttt{qseq66.*}
+   configuration files from a given directory into the current run of
+   \textsl{Seq66}..
+   It is most useful when
    importing a configuration into a new \textsl{NSM} session.
    \index{restart!automatic}
-   Once the files are copy, \textsl{Seq66} is automatically restarted,
+   Once the files are copied, \textsl{Seq66} is automatically restarted,
    in order to load the new configuration.  Be careful!
 
    Note that the names of the configuration files being impported should
@@ -120,6 +122,14 @@
    Also note that exporting a song or an SMF 0 file require that the song
    be exportable (see the next section).
    Exporting to a regular MIDI does not have this requirement.
+
+\subsubsection{Export Project Configuration}
+\label{subsubsec:midi_export_configuration_export}
+
+   This option allows the various \texttt{qseq66.*} configuration
+   files to be copied to another directory.
+   This feature is useful for creating an alternate configuration or
+   for backup of the current configuration.
 
 \subsubsection{Export Song}
 \label{subsubsec:midi_export_song_export}

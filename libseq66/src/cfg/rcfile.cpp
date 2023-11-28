@@ -497,6 +497,11 @@ rcfile::parse ()
     ticks = get_integer(file, tag, "ticks");
     rc_ref().set_clock_mod(ticks);
 
+    /*
+     * Note that record-by-buss supercedes record-by-channel. They cannot both
+     * be true.
+     */
+
     bool recordby = get_boolean(file, tag, "record-by-buss");
     rc_ref().record_by_buss(recordby);
     recordby = get_boolean(file, tag, "record-by-channel");
@@ -1020,10 +1025,9 @@ rcfile::write ()
     file << "\n"
 "# 'ticks' provides the Song Position (16th notes) at which clocking begins if\n"
 "# the bus is set to MIDI Clock Mod setting. 'record-by-buss' routes MIDI\n"
-"# events to the first pattern specifying that input buss. 'record-by-channel'\n"
-"# sets to record incoming MIDI data to patterns with an output channel, each\n"
-"# MIDI event sent to the first pattern set to that channel. Option adopted\n"
-"# from the Seq32 project at GitHub.\n"
+"# events to the first pattern set to that input buss. 'record-by-channel',\n"
+"# if the buss is not set, routes events to patterns with an output channel\n"
+"# matching the MIDI event channel. Option adopted from the Seq32 project.\n"
 "\n[midi-clock-mod-ticks]\n\n"
        ;
     write_integer(file, "ticks", midibus::get_clock_mod());

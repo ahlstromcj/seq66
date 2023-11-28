@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-11-27
+ * \updates       2023-11-27
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -191,6 +191,14 @@
 #include "os/timing.hpp"                /* seq66::microsleep()              */
 
 /**
+ *  Define for checking JACK/rtmidi latency.
+ */
+
+// #if defined SEQ66_PLATFORM_DEBUG    // _TMI
+#define SEQ66_SHOW_TIMING
+// #endif
+
+/**
  *  Delimits the size of the JACK ringbuffer. Related to issue #100, when
  *  we play the Sequencer64 MIDI tune "b4uacuse-stress.midi", we can fail to
  *  write to the ringbuffer.  So we've doubled the size. Without timestamps,
@@ -319,8 +327,10 @@ jack_process_rtmidi_input (jack_nframes_t framect, void * arg)
             }
             jackdata->jack_lasttime(jtime);
 
-            midi_message message(delta_jtime);      /* issue #100           */
+            // bussbyte b = 0;                      /* TODO TODO TODO       */
             size_t eventsize = jmevent.size;
+            midi_message message(delta_jtime);      /* issue #100           */
+            // message.input_buss(b);               /* ca 2023-11-28 ok?    */
             for (size_t i = 0; i < eventsize; ++i)
                 message.push(jmevent.buffer[i]);
 
@@ -353,7 +363,7 @@ jack_process_rtmidi_input (jack_nframes_t framect, void * arg)
     return 0;
 }
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_SHOW_TIMING
 
 static void
 message_time (bool sent, const midi_message & msg)
@@ -419,7 +429,7 @@ jack_get_event_data
         static bool s_use_offset = midi_jack_data::use_offset();
         const midi_message & msg = buffmsg->front();
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_SHOW_TIMING
         static unsigned s_last_msg_number = 0;
         unsigned msgno = msg.msg_number();
         if (msgno < s_last_msg_number)
@@ -1253,7 +1263,7 @@ midi_jack::api_play (const event * e24, midibyte channel)
     {
         if (send_message(message))
         {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_SHOW_TIMING
             message_time(true, message);
 #endif
         }
@@ -1892,6 +1902,7 @@ midi_in_jack::api_get_midi_event (event * inev)
         (
             mm.timestamp(), mm.event_bytes(), mm.event_count()
         );
+        inev->set_input_bus(mm.input_buss());   // but busarry::get_midi_event()!
         if (result)
         {
             /*

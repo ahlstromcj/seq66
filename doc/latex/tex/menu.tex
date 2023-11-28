@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-11-12
+% \update      2023-11-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -846,13 +846,25 @@
    Currenty it has only one setting, for recording input into patterns by the
    channel in each event.
 
-   \itempar{Input/Output Recording}{record!by channel}
+   \itempar{Record-by-Bus}{record!by bus}
+   \index{input by buss}
+   \textbf{Record into patterns by buss}
+   causes MIDI input from multiple busses to be distributed to
+   each sequence according to MIDI input buss number.
+
+   \itempar{Record-by-Channel}{record!by channel}
    \index{input by channel}
-   \textbf{Record input into patterns by channel}
+   \textbf{Record into patterns by channel}
    causes MIDI input with multiple channels to be distributed to
-   each sequence according to MIDI channel number.
-   When disabled, the normal recording behavior dumps all data into the current
-   sequence, regardless of channel.
+   each sequence according to MIDI output channel number.
+
+   Only one of these record-by options can be enabled at the same time.
+   The record-by-buss option takes precedence.
+
+   When these options are disabled,
+   the normal recording behavior dumps all data into the current
+   sequence, regardless of channel or buss.
+   See \sectionref{sec:recording}, which describes recording in more detail.
 
    \itempar{Input/Output Virtual Ports}{ports!virtual}
    \textbf{Use virtual (manual) I/O ports}

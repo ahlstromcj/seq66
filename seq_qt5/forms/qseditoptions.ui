@@ -572,13 +572,13 @@ Each port number can be found by name-lookup.</string>
           </widget>
          </item>
          <item row="0" column="0" colspan="3">
-          <widget class="QCheckBox" name="checkBoxRecordByChannel">
+          <widget class="QCheckBox" name="checkBoxRecordByBuss">
            <property name="toolTip">
             <string>If checked, incoming data routes to the pattern
 slot by channel number (0 to 15).</string>
            </property>
            <property name="text">
-            <string>Record into patterns by channel</string>
+            <string>Record into patterns by bus (overrides channel)</string>
            </property>
           </widget>
          </item>
@@ -660,14 +660,14 @@ slot by channel number (0 to 15).</string>
           </widget>
          </item>
          <item row="1" column="0" colspan="3">
-          <widget class="QCheckBox" name="checkBoxRecordByBuss">
+          <widget class="QCheckBox" name="checkBoxRecordByChannel">
            <property name="toolTip">
             <string>If checked, incoming data routes to the pattern
 slot by bus/port number. Overrides input by
 channel.</string>
            </property>
            <property name="text">
-            <string>Record into patterns by bus</string>
+            <string>Record into patterns by channel</string>
            </property>
           </widget>
          </item>
@@ -3865,7 +3865,7 @@ path added to this name is stripped.</string>
   <tabstop>lineEditTempoTrack</tabstop>
   <tabstop>lineEditClientId</tabstop>
   <tabstop>clocksScrollArea</tabstop>
-  <tabstop>checkBoxRecordByChannel</tabstop>
+  <tabstop>checkBoxRecordByBuss</tabstop>
   <tabstop>inputsScrollArea</tabstop>
   <tabstop>btnJackConnect</tabstop>
   <tabstop>btnJackDisconnect</tabstop>

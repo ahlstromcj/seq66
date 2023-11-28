@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2023-11-27
+ * \updates       2023-11-28
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -77,7 +77,8 @@ mastermidibase::mastermidibase
     m_beats_per_minute  (bpm),          /* beats per minute                 */
     m_dumping_input     (false),
     m_vector_sequence   (),             /* stazed feature                   */
-    m_record_by_channel (false),        /* set based on configuration       */
+    m_record_by_buss    (false),        /* set based on configuration       */
+    m_record_by_channel (false),        /* ditto, but mutually exclusive    */
     m_seq               (nullptr),
     m_mutex             ()
 {
@@ -846,6 +847,10 @@ mastermidibase::port_exit (int client, int port)
  *  The portmidi version only sets m_seq and m_dumping_input, but it seems
  *  like all the code below would apply to any mastermidibus.
  *
+ *  What if m_seq is already set? Do we want to undo that one and set the
+ *  new one (which requires being able to remove the red recording circle),
+ *  or just ignore the new click? The latter is easier.
+ *
  * Usages:
  *
  *  -   portmidi mastermidibus::api_init()
@@ -874,7 +879,11 @@ mastermidibase::set_sequence_input (bool state, sequence * seq)
 {
     automutex locker(m_mutex);
     bool result = not_nullptr(seq);
-    if (m_record_by_channel)
+    if (m_record_by_buss)
+    {
+        m_dumping_input = state;
+    }
+    else if (m_record_by_channel)
     {
         if (result)
         {
@@ -911,8 +920,23 @@ mastermidibase::set_sequence_input (bool state, sequence * seq)
     }
     else
     {
-        m_dumping_input = state;
-        m_seq = state ? seq : nullptr ;
+        if (state)
+        {
+            if (not_nullptr(m_seq))
+            {
+                result = false;         /* We already got one! Is very nice */
+            }
+            else
+            {
+                m_dumping_input = state;
+                m_seq = seq;
+            }
+        }
+        else
+        {
+            m_dumping_input = false;
+            m_seq = nullptr;
+        }
     }
     return result;
 }

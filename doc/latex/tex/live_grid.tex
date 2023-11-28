@@ -461,6 +461,7 @@
       \item \textbf{Stop}
       \item \textbf{Pause}
       \item \textbf{Play}
+      \item \textbf{Record} (not yet shown in the figure)
       \item \textbf{L/R Loop}
       \item \textbf{Live Song Record}
       \item \textbf{Keep Queue}
@@ -519,6 +520,30 @@
    available for it.
    This key is also hardwired to toggle playback in the pattern editor and the
    song editor.
+
+\subsubsection{Record}
+\label{subsubsec:introduction_record_button}
+
+   This new button turns on recording for the various kinds of recording
+   described in \sectionref{sec:recording}.
+   Its color indicates the record-by feature in force:
+
+   \begin{itemize}
+      \item \textbf{Red}.
+         This color indicates the normal recording mode, which toggles only a
+         single pattern for recording.
+      \item \textbf{Yellow}.
+         This color indicates the record-by-channel recording mode,
+         which toggles, for recording, all patterns that have an
+         output channel set.
+      \item \textbf{Green}.
+         This color indicates the record-by-buss recording mode,
+         which toggles, for recording, all patterns that have an
+         input bus set.
+   \end{itemize}
+
+   These modes are selected in the 'rc' file as described in
+   \sectionref{subsubsec:configuration_rc_midi_cmt}.
 
 \subsubsection{L/R Loop}
 \label{subsubsec:introduction_loop_button}

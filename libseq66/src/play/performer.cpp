@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-27
+ * \updates       2023-11-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -3269,6 +3269,7 @@ performer::create_master_bus ()
             if (m_master_bus)
             {
                 mastermidibus * mmb = m_master_bus.get();
+                mmb->record_by_buss(m_record_by_buss);
                 mmb->record_by_channel(m_record_by_channel);
                 mmb->set_port_statuses(m_clocks, m_inputs);
                 midi_control_out().set_master_bus(mmb);
@@ -3424,24 +3425,17 @@ performer::sequence_lookup_setup ()
     {
         size_t buscount = master_bus()->get_num_in_buses();
         m_buss_patterns.clear();
-        for (size_t b = 0; b < buscount; ++b)
-            m_buss_patterns.push_back(nullptr);
-
         for (auto seqi : play_set().seq_container())
         {
-            if (seqi)
+            if (seqi)                       /* redundant? no matter here    */
             {
-                if (! seqi->is_metro_seq())
+                if (seqi->has_in_bus())     /* ! seqi->is_metro_seq()       */
                 {
                     bussbyte b = seqi->true_in_bus();
                     if (b < buscount)
                     {
-                        sequence * original = m_buss_patterns[b];
-                        if (is_nullptr(original))
-                        {
-                            m_buss_patterns[b] = seqi.get();
-                            result = true;
-                        }
+                        m_buss_patterns.push_back(seqi.get());
+                        result = true;
                     }
                 }
             }
@@ -3456,10 +3450,21 @@ sequence *
 performer::sequence_lookup (const event & ev)
 {
     sequence * result = nullptr;
+#if defined USE_OLD_CODE
     size_t b = size_t(ev.input_bus());
     if (b < m_buss_patterns.size())
         result = m_buss_patterns[b];
-
+#else
+    bussbyte b = ev.input_bus();
+    for (auto seqi : m_buss_patterns)
+    {
+        if (b == seqi->true_in_bus())
+        {
+            result = seqi;
+            break;
+        }
+    }
+#endif
     return result;
 }
 
@@ -4811,14 +4816,16 @@ performer::poll_cycle ()
                         else
                         {
                             ev.set_timestamp(get_tick());
-
                             if (record_by_buss())
                             {
                                 sequence * sp = sequence_lookup(ev);
                                 if (is_nullptr(sp))
                                     sp = m_master_bus->get_sequence();
 
-                                sp->stream_event(ev);
+                                if (not_nullptr(sp))
+                                    sp->stream_event(ev);
+                                else
+                                    warn_message("no recording pattern");
                             }
                             else if (record_by_channel())
                                 m_master_bus->dump_midi_input(ev);
@@ -5401,22 +5408,34 @@ performer::auto_play_start ()
  *  when in song mode. But non-Seq66 MIDI files do not support song mode.
  *  And we should be able to get a decent max-extent even without triggers,
  *  at least for imported songs.
+ *
+ * \return
+ *      Returns true if stopping is needed.
  */
 
 bool
 performer::auto_play_stop (midipulse tick)
 {
-    bool result = m_max_extent > 0 && tick >= m_max_extent;
-    if (result)
+    bool result = false;
+    if (m_max_extent > 0 && tick >= m_max_extent)
     {
         if (playlist_active())
-            result = m_play_list->auto_advance_engaged();
-
-        if (result)
         {
-            stop_playing(true);
-            if (playlist_active())
-                (void) clear_song();        /* get ready for the next song  */
+            result = m_play_list->auto_advance_engaged();
+            if (result)
+            {
+                stop_playing(true);
+                if (playlist_active())
+                    (void) clear_song();        /* get ready for the next song  */
+            }
+        }
+        else
+        {
+            if (song_mode())
+            {
+                stop_playing(true);
+                result = true;
+            }
         }
     }
     return result;

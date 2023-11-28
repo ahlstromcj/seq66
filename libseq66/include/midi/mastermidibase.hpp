@@ -150,6 +150,13 @@ protected:
     std::vector<sequence *> m_vector_sequence;
 
     /**
+     *  If true, incoming data to the sequence that has the buss it is meant
+     *  for.
+     */
+
+    bool m_record_by_buss;
+
+    /**
      *  If true, the m_vector_sequence container is used to divert incoming
      *  data to the sequence that has the channel it is meant for.
      */
@@ -208,6 +215,16 @@ public:
     int get_num_in_buses () const
     {
         return m_inbus_array.count();
+    }
+
+    bool record_by_buss () const
+    {
+        return m_record_by_buss;
+    }
+
+    void record_by_buss (bool flag)
+    {
+        m_record_by_buss = flag;
     }
 
     bool record_by_channel () const

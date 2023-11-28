@@ -1902,57 +1902,58 @@ qslivegrid::popup_menu ()
             /**
              *  Input buss menu. It is optional. The default is "Free",
              *  which means the mastermidibus uses the active current
-             *  pattern for input. Currently doesn't work with Seq66's
-             *  ALSA implementation.
+             *  pattern for input.
              */
 
             if (rc().sequence_lookup_support())
             {
+                QMenu * menuinbuss = new_qmenu("Input Bus");
+                const inputslist & ipm = input_port_map();
+                int inbuses = ipm.active() ?
+                    ipm.count() : mmb->get_num_in_buses() ;
 
-            QMenu * menuinbuss = new_qmenu("Input Bus");
-            const inputslist & ipm = input_port_map();
-            int inbuses = ipm.active() ?
-                ipm.count() : mmb->get_num_in_buses() ;
+                /*
+                 * bussbyte midi_in_bus = s->seq_midi_in_bus();
+                 */
 
-            bussbyte midi_in_bus = s->seq_midi_in_bus();   /* true_in_bus() */
-            for (int bus = 0; bus < inbuses; ++bus)
-            {
-                bool active;
-                std::string busname;
-                if (perf().ui_get_input(bussbyte(bus), active, busname))
+                bussbyte midi_in_bus = s->true_in_bus();
+                for (int bus = 0; bus < inbuses; ++bus)
                 {
-                    QAction * a = new_qaction(busname, menuinbuss);
-                    a->setCheckable(true);
-                    if (midi_in_bus == bussbyte(bus))
-                        a->setChecked(true);
+                    bool active;
+                    std::string busname;
+                    if (perf().ui_get_input(bussbyte(bus), active, busname))
+                    {
+                        QAction * a = new_qaction(busname, menuinbuss);
+                        a->setCheckable(true);
+                        if (midi_in_bus == bussbyte(bus))
+                            a->setChecked(true);
 
-                    connect
-                    (
-                        a, &QAction::triggered,
-                        [this, bus] { set_midi_in_bus(bus); }
-                    );
-                    menuinbuss->addAction(a);
-                    if (! active)
-                        a->setEnabled(false);
+                        connect
+                        (
+                            a, &QAction::triggered,
+                            [this, bus] { set_midi_in_bus(bus); }
+                        );
+                        menuinbuss->addAction(a);
+                        if (! active)
+                            a->setEnabled(false);
+                    }
                 }
-            }
 
-            QAction * f = new_qaction("Free", menuinbuss);
-            bussbyte nullbuss = null_buss();
-            f->setCheckable(true);
-            if (is_null_buss(midi_in_bus))
-                f->setChecked(true);
+                QAction * f = new_qaction("Free", menuinbuss);
+                bussbyte nullbuss = null_buss();
+                f->setCheckable(true);
+                if (is_null_buss(midi_in_bus))
+                    f->setChecked(true);
 
-            connect
-            (
-                f, &QAction::triggered,
-                [this, nullbuss] { set_midi_in_bus(nullbuss); }
-            );
-            menuinbuss->addAction(f);
-            m_popup->addSeparator();
-            m_popup->addMenu(menuinbuss);
-
-            }   /* if (rc().with_jack_midi()) */
+                connect
+                (
+                    f, &QAction::triggered,
+                    [this, nullbuss] { set_midi_in_bus(nullbuss); }
+                );
+                menuinbuss->addAction(f);
+                m_popup->addSeparator();
+                m_popup->addMenu(menuinbuss);
+            }                               /* if (rc().with_jack_midi())   */
 
             /**
              *  Output buss menu

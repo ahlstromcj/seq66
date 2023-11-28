@@ -91,7 +91,7 @@ midi_jack_data::~midi_jack_data ()
 }
 
 /**
- *  Emobdies the calculation of the pulse factor reasoned out in the
+ *  Embodies the calculation of the pulse factor reasoned out in the
  *  frame_offset() function below.
  *
  * TODO:

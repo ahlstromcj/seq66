@@ -1,4 +1,4 @@
-# README for Seq66 0.99.11 2023-11-26
+# README for Seq66 0.99.11 2023-11-28
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -113,6 +113,7 @@ Windows, and using a conventional source tarball.
             *   Fixed queue and keep-queue.
             *   Fixed not saving record-by-channel. Fixed record-by-channel.
                 Added a pre-made MIDI file to use with record-by-channel.
+            *   Added a record-by-buss feature.
             *   Added a way to toggle recording of more than pattern at once.
             *   Fixed not modifying the song when pattern measures is changed.
             *   Fixed breakage of stopping song play at the end of song.

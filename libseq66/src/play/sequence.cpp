@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-11-27
+ * \updates       2023-11-28
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -6067,18 +6067,17 @@ sequence::set_recording (toggler flag)
     bool result = master_bus()->set_sequence_input(recordon, this);
     if (result)
     {
+        channel_match(false);
         m_recording = recordon;
         m_notes_on = 0;                 /* reset the step-edit note counter */
         if (recordon)
         {
-            if (rc().record_by_channel())
+            if (! rc().record_by_buss() && rc().record_by_channel())
                 channel_match(true);
         }
         else
-        {
             m_alter_recording = alteration::none;
-            channel_match(false);
-        }
+
         set_dirty();
         notify_trigger();
     }

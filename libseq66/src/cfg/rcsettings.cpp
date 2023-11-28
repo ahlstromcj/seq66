@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-11-27
+ * \updates       2023-11-28
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -98,6 +98,8 @@ rcsettings::rcsettings () :
     m_jack_buffer_size          (0),
     m_song_start_mode           (sequence::playback::automatic),
     m_song_start_is_auto        (true),
+    m_record_by_buss            (false),
+    m_record_by_channel         (false),
     m_manual_ports              (false),
     m_manual_auto_enable        (false),
     m_manual_port_count         (c_output_buss_default),
@@ -211,6 +213,8 @@ rcsettings::set_defaults ()
     m_jack_buffer_size          = 0;
     m_song_start_mode           = sequence::playback::automatic;
     m_song_start_is_auto        = true;
+    m_record_by_buss            = false;
+    m_record_by_channel         = false;
     m_manual_ports              = false;
     m_manual_auto_enable        = false;
     m_manual_port_count         = c_output_buss_default;
@@ -441,6 +445,28 @@ rcsettings::song_start_mode_by_string (const std::string & s)
         m_song_start_mode = sequence::playback::automatic;
         m_song_start_is_auto = true;
     }
+}
+
+/**
+ *  The record-by settings are loaded from the 'rc' file at startup.
+ *  See sequence_lookup_support() as well.
+ */
+
+void
+rcsettings::record_by_buss (bool flag)
+{
+    m_record_by_buss = flag;
+    if (flag)
+        m_record_by_channel = false;
+}
+
+void
+rcsettings::record_by_channel (bool flag)
+{
+    if (record_by_buss())
+        m_record_by_channel = false;
+    else
+        m_record_by_channel = flag;
 }
 
 /**
@@ -1436,7 +1462,11 @@ rcsettings::port_naming_string (portname v) const
 bool
 rcsettings::sequence_lookup_support () const
 {
-    return with_jack_midi() || with_alsa_midi() || with_port_midi();
+    bool result = record_by_channel();
+    if (result)
+        result =  with_jack_midi() || with_alsa_midi() || with_port_midi();
+
+    return result;
 }
 
 }           // namespace seq66

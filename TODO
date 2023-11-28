@@ -1,16 +1,13 @@
 TO DO for Seq66 0.99.11
 Chris Ahlstrom
-2019-04-13 to 2023-11-26
+2019-04-13 to 2023-11-28
 
 Misc:
 
+    -   Clarify uses of nominal in bus vs true in bus.
     -   Test triplet note step recording and display.
     -   Record by channel:
-        -   Document the recording process and options as in recording.text.
-        -   Test buss-routing under JACK and PortMIDI; seq66_features.h has
-            comment claiming they do not work, which makes no sense.
-            Also in qslivegrid: "Currently doesn't work with Seq66's
-            ALSA implementation."
+        -   Test buss-routing under JACK and PortMIDI.
         -   What about handling of non-channel events?
         -   Add option (rc) to disable multi-pattern record toggling.
     -   Grid-mode options:

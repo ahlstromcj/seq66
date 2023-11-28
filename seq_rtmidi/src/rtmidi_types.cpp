@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-01
- * \updates       2022-10-18
+ * \updates       2023-11-27
  * \license       See above.
  *
  *  Provides some basic types for the (heavily-factored) rtmidi library, very
@@ -47,7 +47,7 @@ namespace seq66
  * class midi_message
  */
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_SHOW_TIMING
 unsigned midi_message::sm_msg_number = 0;
 #endif
 
@@ -60,11 +60,12 @@ unsigned midi_message::sm_msg_number = 0;
  */
 
 midi_message::midi_message (midipulse ts) :
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_SHOW_TIMING
     m_msg_number    (sm_msg_number++),
 #endif
     m_bytes         (),
-    m_timestamp     (ts)
+    m_timestamp     (ts),
+    m_input_buss    (null_buss())
 {
     // No code
 }
@@ -81,11 +82,12 @@ midi_message::midi_message (midipulse ts) :
  */
 
 midi_message::midi_message (const midibyte * mbs, std::size_t sz) :
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_SHOW_TIMING
     m_msg_number    (sm_msg_number++),
 #endif
     m_bytes         (),
-    m_timestamp     (0)
+    m_timestamp     (0),
+    m_input_buss    (null_buss())
 {
     for (std::size_t i = 0; i < sz; ++i)
         m_bytes.push_back(*mbs++);
@@ -100,7 +102,7 @@ std::string
 midi_message::to_string () const
 {
     unsigned long ts = (unsigned long)(timestamp());    /* pulse or frame   */
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_SHOW_TIMING
     std::string result = "Event #";
     result += std::to_string(msg_number());
     result += " @ ";

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-11-27
+ * \updates       2023-11-28
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -1405,16 +1405,8 @@ public:
     }
 
     void song_start_mode_by_string (const std::string & s);
-
-    void record_by_buss (bool flag)
-    {
-        m_record_by_buss = flag;
-    }
-
-    void record_by_channel (bool flag)
-    {
-        m_record_by_channel = flag;
-    }
+    void record_by_buss (bool flag);
+    void record_by_channel (bool flag);
 
     void manual_ports (bool flag)
     {

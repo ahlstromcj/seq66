@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2022-11-01
+ * \updates       2023-11-27
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -49,6 +49,14 @@
  */
 
 #define SEQ66_RTMIDI_VERSION "2.1.1"        /* the revision at fork time    */
+
+/**
+ *  Define for checking JACK/rtmidi latency.
+ */
+
+// #if defined SEQ66_PLATFORM_DEBUG    // _TMI
+#define SEQ66_SHOW_TIMING
+// #endif
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -153,7 +161,7 @@ public:
 
 private:
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_SHOW_TIMING
 
     /**
      *  Provide a static counter to keep track of events. Currently needed for
@@ -183,6 +191,14 @@ private:
      */
 
     midipulse m_timestamp;
+
+    /**
+     *  Holds the ID number of the input MIDI buss on which the message
+     *  was received. Note that this is an index number. Starts out
+     *  as a null-buss value.
+     */
+
+    bussbyte m_input_buss;
 
 public:
 
@@ -214,11 +230,13 @@ public:
         return m_bytes.data();
     }
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_SHOW_TIMING
+
     unsigned msg_number () const
     {
         return m_msg_number;
     }
+
 #endif
 
     bool empty () const
@@ -244,6 +262,16 @@ public:
     void timestamp (midipulse t)
     {
         m_timestamp = t;
+    }
+
+    bussbyte input_buss () const
+    {
+        return m_input_buss;
+    }
+
+    void input_buss (bussbyte b)
+    {
+        m_input_buss = b;
     }
 
     midibyte status () const
