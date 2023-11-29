@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-11-22
+ * \updates       2023-11-29
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -789,6 +789,13 @@ private:
     midipulse m_snap_tick;
 
     /**
+     *  The size of adding an auto-step (step-edit) note in units of pulses
+     *  (ticks).  It starts out as the value m_ppqn / 4.
+     */
+
+    midipulse m_step_edit_note_length;
+
+    /**
      *  Provides the number of beats per bar used in this sequence.  Defaults
      *  to 4.  Used by the sequence editor to mark things in correct time on
      *  the user-interface.
@@ -1473,7 +1480,13 @@ public:
         return m_snap_tick;
     }
 
+    midipulse step_edit_note_length () const    /* auto-step/step-edit      */
+    {
+        return m_step_edit_note_length;
+    }
+
     void snap (int st);
+    void step_edit_note_length (int len);
     void off_one_shot ();
     void song_recording_start (midipulse tick, bool snap = true);
     void song_recording_stop (midipulse tick);

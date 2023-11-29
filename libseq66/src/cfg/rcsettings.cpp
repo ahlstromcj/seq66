@@ -1462,7 +1462,7 @@ rcsettings::port_naming_string (portname v) const
 bool
 rcsettings::sequence_lookup_support () const
 {
-    bool result = record_by_channel();
+    bool result = record_by_buss();  // record_by_channel();
     if (result)
         result =  with_jack_midi() || with_alsa_midi() || with_port_midi();
 

@@ -8,7 +8,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2022-09-25
-# \update         2023-04-12
+# \update         2023-11-28
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -57,13 +57,14 @@ JCTL_DEVICE="hw:CODEC"  # see "cat /proc/asound/cards"
 JCTL_RATE="48000"
 JCTL_LATENCY="2"
 JCTL_PERIOD="256"      # for TESTING
+JCTL_A2JMIDID="no"
 
 if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
 
    cat << E_O_F
-Usage v. 2023-04-09:
+Usage v. 2023-11-28:
 
-   jackctl [--start] [options]    Start with the usual parameters (TBD).
+   jackctl [ --start ] [ options ]     Start with the usual parameters:
 
 Options:
 
@@ -75,6 +76,7 @@ Options:
                Frame rate:   $JCTL_RATE
                Nperiods:     $JCTL_LATENCY
                Frame period: $JCTL_PERIOD frames
+               A2jmidid:     $JCTL_A2JMIDID
 
    --list      List the drivers and the ALSA/JACK parameters.
    --start     Start the JACK server.
@@ -83,6 +85,7 @@ Options:
    --period F  Change the period of the JACK server, and restart it.
    --nperiod P Change ALSA period (playback latency, 2 or 3).
    --rate R    Change the "sample rate".
+   --a2j       Also start/stop a2jmidid.
    --help      Show this message.
 
 Getting tired of qjackctl and jackdbus wrestling with each other on
@@ -134,6 +137,11 @@ else
             JCTL_LATENCY="$1"
             ;;
 
+         --a2j | a2j)
+
+            JCTL_A2JMIDID="yes"
+            ;;
+
          *)
             echo "? Unsupported option; --help for more information"
             exit 1
@@ -152,21 +160,31 @@ if [ "$JCTL_OPERATION" == "list" ] ; then
    cat /proc/asound/cards | grep "^[ 0-9][0-9]"
    echo "Selecting ALSA (seq). Available parameters:"
    jack_control ds $JCTL_DRIVER
-   jack_control dp | grep "ALSA\|rate\:\|period\:\|nperiods\:"
+#  jack_control dp | grep "ALSA\|rate\:\|period\:\|nperiods\:"
+   jack_control dp | grep "ALSA\|rate:\|period:\|nperiods:"
 
 elif [ "$JCTL_OPERATION" == "stop" ] ; then
 
    jack_control stop
+   if [ "$JCTL_A2JMIDID" == "yes" ] ; then
+      killall -9 a2jmidid
+   fi
 
 elif [ "$JCTL_OPERATION" == "kill" ] ; then
 
    jack_control stop
    jack_control exit
+   if [ "$JCTL_A2JMIDID" == "yes" ] ; then
+      killall -9 a2jmidid
+   fi
 
 elif [ "$JCTL_OPERATION" == "start" ] ; then
 
    jack_control start
    jack_lsp --aliases
+   if [ "$JCTL_A2JMIDID" == "yes" ] ; then
+      a2jmidid --export-hw &
+   fi
 
 elif [ "$JCTL_OPERATION" == "setperiod" ] ; then
 
@@ -174,7 +192,7 @@ elif [ "$JCTL_OPERATION" == "setperiod" ] ; then
    jack_control stop
    jack_control dps period $JCTL_PERIOD
    jack_control start
-   jack_control dp | grep "ALSA\|rate\:\|period\:\|nperiods\:"
+   jack_control dp | grep "ALSA\|rate:\|period:\|nperiods:"
 
 elif [ "$JCTL_OPERATION" == "setrate" ] ; then
 
@@ -182,7 +200,7 @@ elif [ "$JCTL_OPERATION" == "setrate" ] ; then
    jack_control stop
    jack_control dps rate $JCTL_RATE
    jack_control start
-   jack_control dp | grep "ALSA\|rate\:\|period\:\|nperiods\:"
+   jack_control dp | grep "ALSA\|rate:\|period:\|nperiods:"
 
 elif [ "$JCTL_OPERATION" == "setdefaults" ] ; then
 
@@ -193,7 +211,7 @@ elif [ "$JCTL_OPERATION" == "setdefaults" ] ; then
    jack_control dps nperiods $JCTL_LATENCY
    jack_control dps period $JCTL_PERIOD
    jack_control start
-   jack_control dp | grep "ALSA\|rate\:\|period\:\|nperiods\:"
+   jack_control dp | grep "ALSA\|rate:\|period:\|nperiods:"
 
 fi
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-11-28
+ * \updates       2023-11-29
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -209,8 +209,9 @@ sequence::sequence (int ppqn) :
     m_length                    (4 * midipulse(m_ppqn)),  /* 1 bar of ticks */
     m_measures                  (0),
     m_snap_tick                 (int(m_ppqn) / 4),
-    m_time_beats_per_measure    (0),                /* ca 2023-06-13 */
-    m_time_beat_width           (0),                /* ca 2023-06-13 */
+    m_step_edit_note_length     (int(m_ppqn) / 4),
+    m_time_beats_per_measure    (0),
+    m_time_beat_width           (0),
     m_clocks_per_metronome      (24),
     m_32nds_per_quarter         (8),
     m_us_per_quarter_note       (tempo_us_from_bpm(usr().bpm_default())),
@@ -372,6 +373,7 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
         m_seq_edit_mode             = rhs.m_seq_edit_mode;
         m_length                    = rhs.m_length;
         m_snap_tick                 = rhs.m_snap_tick;
+        m_step_edit_note_length     = rhs.m_step_edit_note_length;
         m_time_beats_per_measure    = rhs.m_time_beats_per_measure;
         m_time_beat_width           = rhs.m_time_beat_width;
         m_clocks_per_metronome      = rhs.m_clocks_per_metronome;
@@ -6199,7 +6201,14 @@ void
 sequence::snap (int st)
 {
     automutex locker(m_mutex);
-    m_snap_tick = st;
+    m_snap_tick = midipulse(st);
+}
+
+void
+sequence::step_edit_note_length (int len)
+{
+    automutex locker(m_mutex);
+    m_step_edit_note_length = midipulse(len);
 }
 
 void

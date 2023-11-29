@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-08-21
+ * \updates       2023-11-29
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -54,6 +54,18 @@
 
 namespace seq66
 {
+
+/**
+ *  This enumeration provides manifest constants for the event categories
+ */
+
+using category = enum
+{
+    channel_message = 0,
+    system_message,
+    meta_event,
+    seqspec_event
+};
 
 /**
  *  For correcting the width of the event table.  It tries to account for the
@@ -190,7 +202,7 @@ qseqeventframe::qseqeventframe
     ui->button_blank->setEnabled(false);            /* not yet in use   */
 
     /*
-     * The (new) "Category combo-box.
+     * The (new) "Category" combo-box.
      */
 
     populate_category_combo();
@@ -540,11 +552,11 @@ qseqeventframe::slot_event_category (int index)
 {
     switch (index)
     {
-    case 0:     populate_status_combo();            break;
-    case 1:     populate_system_combo();            break;
-    case 2:     populate_meta_combo();              break;
-    case 3:     populate_seqspec_combo();           break;
-    default:                                        break;
+    case channel_message:   populate_status_combo();    break;
+    case system_message:    populate_system_combo();    break;
+    case meta_event:        populate_meta_combo();      break;
+    case seqspec_event:     populate_seqspec_combo();   break;
+    default:                                            break;
     }
 }
 
@@ -774,6 +786,9 @@ qseqeventframe::set_event_category (const std::string & c)
 {
     QString category = qt(c);       /* ui->label_category->setText(qt(c))   */
     ui->combo_ev_category->setCurrentText(category);
+
+    int index = ui->combo_ev_category->currentIndex();
+    slot_event_category(index);
 }
 
 /**

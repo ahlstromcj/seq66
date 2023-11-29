@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-11-26
+ * \updates       2023-11-29
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -3070,12 +3070,12 @@ qseqeditframe64::set_snap (midipulse s)
     if (s > 0 && s != m_snap)
     {
         m_snap = int(s);
+        track().snap(s);                        /* set it for pattern       */
         if (not_nullptr(m_seqroll))
             m_seqroll->set_snap(s);
 
-        track().snap(s);
         if (not_nullptr(m_seqevent))
-            m_seqevent->set_snap(s);        /* qstriggereditor  */
+            m_seqevent->set_snap(s);            /* qstriggereditor          */
 
         if (not_nullptr(m_seqtime))
             m_seqtime->set_snap(s);
@@ -3140,6 +3140,7 @@ qseqeditframe64::set_note_length (int notelength)
 
     m_note_length = notelength;
     sm_initial_note_length = notelength;
+    track().step_edit_note_length(notelength);  /* set it for pattern       */
     if (not_nullptr(m_seqroll))
         m_seqroll->set_note_length(notelength);
 }
