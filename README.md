@@ -121,7 +121,7 @@ Windows, and using a conventional source tarball.
             *   Fixed not applying note-length setting to step-edit.
         *   Can now paste a pattern into a new or another loaded MIDI file.
         *   When loading a MIDI file, the file dialog defaults to the
-            last-used directory.
+            last-used directory. Fixes made to this feature.
         *   Improved copy/paste for screen-sets in the same way.
         *   Added optional paramater to the --priority option.
         *   Focus is now set immediately to the seqroll and perfroll.

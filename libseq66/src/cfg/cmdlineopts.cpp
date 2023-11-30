@@ -1154,11 +1154,11 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             rc().with_jack_master(false);
             rc().with_jack_master_cond(false);
             break;
-#endif
-
+#else
         case 'S':                               /* replaces 'I'             */
             rc().session_tag(soptarg);
             break;
+#endif
 
         case 's':
             rc().show_midi(true);

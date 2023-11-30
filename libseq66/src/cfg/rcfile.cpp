@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-11-27
+ * \updates       2023-11-30
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -166,9 +166,7 @@ rcfile::rcfile (const std::string & name, rcsettings & rcs) :
  *  [last-used-dir]
  *
  *      This section simply holds the last path-name that was used to read or
- *      write a MIDI file.  We still need to add a check for a valid path, and
- *      currently the path must start with a "/", so it is not suitable for
- *      Windows.
+ *      write a MIDI file.
  *
  *  [interaction-method] (obsolete)
  *
@@ -600,7 +598,7 @@ rcfile::parse ()
     tag = "[playlist]";
     active = get_file_status(file, tag, pfname);
     rc_ref().playlist_active(active);
-    rc_ref().playlist_filename(pfname);                 /* base name    */
+    rc_ref().playlist_filename(pfname);                 /* base name        */
     pfname = get_variable(file, tag, "base-directory");
     if (! is_missing_string(pfname))
     {
@@ -1204,8 +1202,8 @@ rcfile::write ()
 
     std::string lud = rc_ref().last_used_dir();
     file << "\n"
-        "# Specifies the last-used/currently-active directory.\n"
-        "\n[last-used-dir]\n\n"
+"# Specifies the last directory used for save/open of MIDI files.\n"
+"\n[last-used-dir]\n\n"
         ;
     write_string(file, noname, rc_ref().last_used_dir(), true);
 
@@ -1215,8 +1213,8 @@ rcfile::write ()
 
     int count = rc_ref().recent_file_count();
     file << "\n"
-"# The most recently-loaded MIDI files. 'full-paths' = true means to show the\n"
-"# full file-path in the menu. The most recent file (top of list) can be loaded\n"
+"# The most recently-loaded MIDI files. 'full-paths' means to show the full\n"
+"# file-path in the menu. The most recent file (top of list) can be loaded\n"
 "# via 'load-most-recent' at startup.\n"
 "\n[recent-files]\n\n"
         ;

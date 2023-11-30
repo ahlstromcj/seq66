@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-11-28
+ * \updates       2023-11-30
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -1082,6 +1082,7 @@ rcsettings::last_used_dir (const std::string & value, bool userchange)
         m_last_used_dir = empty_string();           /* "" from strfunctions */
     else
     {
+#if defined USE_OLD_CODE
         std::string last = get_full_path(value);    /* might end up empty   */
         if (last != m_last_used_dir)                /* new directory?       */
         {
@@ -1089,6 +1090,15 @@ rcsettings::last_used_dir (const std::string & value, bool userchange)
             if (userchange)
                 auto_rc_save(true);                 /* need to write it     */
         }
+#else
+        std::string last = filename_path(value);    /* might end up empty   */
+        if (last != m_last_used_dir)                /* new directory?       */
+        {
+            m_last_used_dir = last;
+            if (userchange)
+                auto_rc_save(true);                 /* need to write it     */
+        }
+#endif
     }
 }
 

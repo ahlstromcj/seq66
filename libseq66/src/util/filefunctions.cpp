@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-09-21
+ * \updates       2023-11-30
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1903,11 +1903,31 @@ file_base_set (const std::string & fullpath, const std::string & newbase)
 }
 
 /**
+ *  Uses filename_split to extract only the path in of the file
+ *  specification.
+ *
+ * \param fullpath
+ *      The full file-specification from which to extract.
+ *
+ * \return
+ *      Returns the path, if any.
+ */
+
+std::string
+filename_path (const std::string & fullpath)
+{
+    std::string result;
+    std::string base;
+    (void) filename_split(fullpath, result, base);
+    return result;
+}
+
+/**
  *  Uses filename_split to extract only the base part of the file
  *  specification ("xxxx.yyy").
  *
  * \param fullpath
- *      The path name from which to extract.
+ *      The full file-specification from which to extract.
  *
  * \param noext
  *      If set to true (the default is false), then the extenstion (".yyy") is

@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-09-21
+ * \updates       2023-11-30
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -166,6 +166,7 @@ extern std::string file_base_set
     const std::string & fullpath,
     const std::string & newbase
 );
+extern std::string filename_path (const std::string & fullpath);
 extern std::string filename_base
 (
     const std::string & fullpath,

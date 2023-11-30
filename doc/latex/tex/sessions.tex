@@ -826,13 +826,15 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 
    If this is the first time this command has been run, the
    home directory is created.
+   (At present, though, the initial configuration files are not
+   created until \textsl{Seq66} exits.)
    \textsl{Seq66} runs with a MIDI client-name of
    \texttt{test66}.
    The base-name of each configuration file
-   is \texttt{test66} (so we have, for example, \texttt{test66.rc)}.
+   is \texttt{test66} (so we have, for example, \texttt{test66.rc}).
    The log file will be
    \texttt{~/.config/seq66/test/test66.log}.
-   (If no log file is wanted, then set it to \texttt{""}.)
+   (If no log file is wanted, then set it to \texttt{""} later.)
 
    At the end of the run, all of the configuration files are
    saved in 

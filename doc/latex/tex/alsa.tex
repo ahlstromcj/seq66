@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-06-16
-% \update      2023-09-21
+% \update      2023-11-30
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -129,6 +129,30 @@
 \label{subsec:alsa_testing}
 
    This section describes some trouble-shooting that can be done with ALSA.
+
+\subsubsection{ALSA / Trouble-Shooting / ALSA Breakage}
+\label{subsubsec:alsa_testing_alsa_breakage}
+
+   We have seen ALSA MIDI support break, perhaps due to a system update, on
+   \textsl{Arch Linux}..
+   The first symptom is a prompt when \textsl{Seq66} starts:
+
+   \begin{verbatim}
+      Internal error. Creating master bus maps failed; check MIDI drivers
+   \end{verbatim}
+
+   One can verify that it is not a \textsl{Seq66} issue by running
+   \texttt{aplaymidi} or \texttt{arecordmidi}:
+
+   \begin{verbatim}
+      $ aplaymidi -l
+      ALSA lib seq_hw.c:529:(snd_seq_hw_open) open /dev/snd/seq failed: No
+      such device
+      Cannot open sequencer - No such device
+   \end{verbatim}
+
+   If the command \texttt{modprobe snd\_seq} run as \texttt{root} does
+   not work, a reboot will.
 
 \subsubsection{ALSA / Trouble-Shooting / MIDI Clock}
 \label{subsubsec:alsa_testing_midi_clock}

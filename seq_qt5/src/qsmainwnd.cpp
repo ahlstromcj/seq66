@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-27
+ * \updates       2023-11-30
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1509,7 +1509,7 @@ qsmainwnd::load_into_session (const std::string & selectedfile)
 
             std::string mfilename = rc().midi_filename();
             song_path(mfilename);
-            last_used_dir(rc().last_used_dir());
+            last_used_dir(rc().last_used_dir());        /* hope this is set */
 
             std::string msg = save_file(mfilename, false) ?
                 "Saved: " : "Failed to save: ";
@@ -2419,8 +2419,15 @@ qsmainwnd::save_file (const std::string & fname, bool updatemenu)
             result = write_midi_file(cb_perf(), filename, errmsg);
             if (result)
             {
+                std::string path = filename_path(filename);
+                if (! path.empty())
+                {
+                    last_used_dir(path);
+                    rc().last_used_dir(path);
+                }
                 enable_save(false);             /* disable "File / Save"    */
                 update_all_editors_titles(false);
+                song_path(filename);
                 if (updatemenu)                 /* or ! use_nsm()           */
                     update_recent_files_menu(); /* add the recent file-name */
             }

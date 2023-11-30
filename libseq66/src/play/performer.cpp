@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-28
+ * \updates       2023-11-30
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2049,7 +2049,7 @@ performer::new_sequence (sequence * seqptr, seq::number seqno)
                 seq::number finalseq = s->seq_number();
                 screenset::number setno = set_mapper().seq_set(seqno);
                 s->set_dirty();
-                record_by_buss(sequence_lookup_setup());
+                record_by_buss(sequence_inbus_setup());
                 announce_sequence(s, finalseq);         /* issue #112       */
                 notify_sequence_change(finalseq, change::recreate);
                 notify_set_change(setno, change::yes);
@@ -2148,7 +2148,7 @@ performer::remove_sequence (seq::number seqno)
     {
         seq::number buttonno = seqno - playscreen_offset();
         send_seq_event(buttonno, midicontrolout::seqaction::removed);
-        record_by_buss(sequence_lookup_setup());
+        record_by_buss(sequence_inbus_setup());
         notify_sequence_change(seqno, change::recreate);
         modify();
     }
@@ -2921,7 +2921,7 @@ performer::set_playing_screenset (screenset::number setno)
              * Nothing to do?
              */
         }
-        record_by_buss(sequence_lookup_setup());
+        record_by_buss(sequence_inbus_setup());
         announce_playscreen();                      /* inform control-out   */
         notify_set_change(setno, change::signal);   /* change::no           */
     }
@@ -3418,7 +3418,7 @@ performer::launch (int ppqn)
  */
 
 bool
-performer::sequence_lookup_setup ()
+performer::sequence_inbus_setup ()
 {
     bool result = false;
     if (rc().sequence_lookup_support())     /* is it available on platform? */
@@ -3427,27 +3427,34 @@ performer::sequence_lookup_setup ()
         m_buss_patterns.clear();
         for (auto seqi : play_set().seq_container())
         {
-            if (seqi)                       /* redundant? no matter here    */
-            {
+//          if (seqi)                       /* redundant? no matter here    */
+//          {
                 if (seqi->has_in_bus())     /* ! seqi->is_metro_seq()       */
                 {
                     bussbyte b = seqi->true_in_bus();
                     if (b < buscount)
                     {
+                        char temp[64];
                         m_buss_patterns.push_back(seqi.get());
                         result = true;
+                        snprintf
+                        (
+                            temp, sizeof temp, "Added pattern %d, input bus %d",
+                            int(seqi->seq_number()), int(b)
+                        );
+                        status_message(temp);
                     }
                 }
-            }
-            else
-                append_error_message("set bus on null sequence");
+//          }
+//          else
+//              append_error_message("set bus on null sequence");
         }
     }
     return result;
 }
 
 sequence *
-performer::sequence_lookup (const event & ev)
+performer::sequence_inbus_lookup (const event & ev)
 {
     sequence * result = nullptr;
 #if defined USE_OLD_CODE
@@ -4065,8 +4072,10 @@ performer::set_midi_in_bus (seq::number seqno, int buss)
     seq::pointer s = get_sequence(seqno);
     bool result = bool(s);
     if (result)
+    {
         result = s->set_midi_in_bus(buss, true);        /* a user change    */
-
+        record_by_buss(sequence_inbus_setup());
+    }
     return result;
 }
 
@@ -4818,7 +4827,7 @@ performer::poll_cycle ()
                             ev.set_timestamp(get_tick());
                             if (record_by_buss())
                             {
-                                sequence * sp = sequence_lookup(ev);
+                                sequence * sp = sequence_inbus_lookup(ev);
                                 if (is_nullptr(sp))
                                     sp = m_master_bus->get_sequence();
 
@@ -4828,9 +4837,18 @@ performer::poll_cycle ()
                                     warn_message("no recording pattern");
                             }
                             else if (record_by_channel())
+                            {
                                 m_master_bus->dump_midi_input(ev);
+                            }
                             else
-                                m_master_bus->get_sequence()->stream_event(ev);
+                            {
+                                sequence * sp = m_master_bus->get_sequence();
+                                if (not_nullptr(sp))
+                                    m_master_bus->get_sequence()->
+                                        stream_event(ev);
+                                else
+                                    error_message("no active pattern");
+                            }
                         }
                     }
                     else

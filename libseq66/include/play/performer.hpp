@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-11-27
+ * \updates       2023-11-30
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1791,8 +1791,8 @@ public:
         return m_record_by_buss;
     }
 
-    bool sequence_lookup_setup ();
-    sequence * sequence_lookup (const event & ev);
+    bool sequence_inbus_setup ();
+    sequence * sequence_inbus_lookup (const event & ev);
 
     /*
      *  Used in synchronizing starting/stopping playback and in coordination

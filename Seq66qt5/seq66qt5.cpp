@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2023-05-25
+ * \updates       2023-11-30
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -37,6 +37,7 @@
 #include "seq66_features.hpp"           /* seq66::set_app_path()            */
 #include "qt5nsmanager.hpp"             /* an seq66::smanager for Qt 5      */
 #include "os/daemonize.hpp"             /* seq66::session_close(), etc.     */
+#include "os/timing.hpp"                /* seq66::millisleep()              */
 
 #undef  SEQ66_LOCALE_SUPPORT
 #undef  SEQ66_TRANSLATOR_SUPPORT
@@ -46,6 +47,13 @@
 #if defined USE_RING_BUFFER_TEST        /* requires a debug build           */
 #include "util/ring_buffer.hpp"
 #endif
+
+/**
+ *  Let's give time for the existing connections to go away, since it
+ *  seems sometimes new port settings do not work.
+ */
+
+static const int sc_sleep_time_ms = 250;
 
 /**
  *  The standard C/C++ entry point to this application.  The first thing is to
@@ -147,6 +155,7 @@ main (int argc, char * argv [])
             }
             if (seq66::session_restart())
             {
+                seq66::millisleep(sc_sleep_time_ms);
                 seq66::session_message("Reloading session");
                 seq66::signal_end_restart();
             }
