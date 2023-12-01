@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-11-30
+ * \updates       2023-12-01
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1379,15 +1379,14 @@ performer::true_output_bus (bussbyte nominalbuss) const
             e_clock clockvalue;                     /* not used here        */
             std::string busname;                    /* this is what we want */
             (void) ui_get_clock(nominalbuss, clockvalue, busname, false);
+            if (busname.empty())
+                busname = "<unnamed>";
 
             std::string msg = "Unavailable output bus ";
             msg += std::to_string(unsigned(nominalbuss));
-            if (! busname.empty())
-            {
-                msg += " \"";
-                msg += busname;
-                msg += "\"";
-            }
+            msg += " \"";
+            msg += busname;
+            msg += "\"";
             msg +=
                 ". Check assigned ports in files: song, rc, ctrl, "
                 "usr buss-override, MIDI & Metronome tabs, and "
@@ -1698,18 +1697,21 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
              */
 
             if (is_running())
-                result = set_mapper().add_to_play_set(play_set(), s);
+                result = add_to_play_set(s);
             else
-                result = set_mapper().fill_play_set(play_set());
+                result = fill_play_set();
         }
         else if (rc().is_setsmode_allsets())
         {
             /*
              * This code covers only allsets; the additive mode is in play when
              * changing the current set.
+             *
+             *      result = set_mapper().add_to_play_set(play_set(), s);
              */
 
-            result = set_mapper().add_to_play_set(play_set(), s);
+            result = add_to_play_set(s);
+
         }
 
         /*
@@ -1719,6 +1721,26 @@ performer::install_sequence (sequence * s, seq::number & seqno, bool fileload)
         if (! fileload)
             modify();
     }
+    return result;
+}
+
+bool
+performer::add_to_play_set (sequence * s)
+{
+    bool result = set_mapper().add_to_play_set(play_set(), s);
+    if (result)
+        record_by_buss(sequence_inbus_setup());
+
+    return result;
+}
+
+bool
+performer::fill_play_set (bool clearit)
+{
+    bool result = set_mapper().fill_play_set(play_set(), clearit);
+    if (result)
+        record_by_buss(sequence_inbus_setup());
+
     return result;
 }
 
@@ -1804,7 +1826,7 @@ performer::install_metronome ()
     {
         result = m_metronome->initialize(this);     /* add events and arm   */
         if (result)
-            result = play_set().add(m_metronome);
+            result = play_set().add(m_metronome);   /* not set-mapped       */
         else
             m_metronome.reset();
     }
@@ -2404,8 +2426,8 @@ performer::change_ppqn (int p)
 }
 
 /**
- *  Goes through all the sequences in the current play-set, updating the buss
- *  to the same (global) buss number.
+ *  Goes through all the sequences in the current play-set, updating the
+ *  output buss to the same (global) buss number.
  *
  * \param buss
  *      Provides the number of the buss to be set.  Note that this buss number
@@ -2910,7 +2932,7 @@ performer::set_playing_screenset (screenset::number setno)
         bool clearit = rc().is_setsmode_clear();    /* remove all patterns? */
         announce_exit(false);                       /* blank the device     */
         unset_queued_replace();                     /* clear queueing       */
-        set_mapper().fill_play_set(play_set(), clearit);
+        (void) fill_play_set(clearit);
         if (rc().is_setsmode_autoarm())
         {
             set_song_mute(mutegroups::action::off); /* unmute them all      */
@@ -2921,7 +2943,13 @@ performer::set_playing_screenset (screenset::number setno)
              * Nothing to do?
              */
         }
-        record_by_buss(sequence_inbus_setup());
+
+        /*
+         * Now done in fill_play_set().
+         *
+         *  record_by_buss(sequence_inbus_setup());
+         */
+
         announce_playscreen();                      /* inform control-out   */
         notify_set_change(setno, change::signal);   /* change::no           */
     }
@@ -2939,7 +2967,7 @@ performer::reset_playset ()
 {
     announce_exit(false);                           /* blank the device     */
     unset_queued_replace();                         /* clear queueing       */
-    set_mapper().fill_play_set(play_set(), true);   /* true: clear it first */
+    (void) fill_play_set();                         /* true: clear it first */
     if (rc().is_setsmode_autoarm())
         set_song_mute(mutegroups::action::off);     /* unmute them all      */
 
@@ -3055,6 +3083,7 @@ performer::clear_all (bool /* clearplaylist */ )
     if (result)
     {
         play_set().clear();                     /* dump active patterns     */
+        sequence_inbus_clear();
 
 #if defined WE_REALLY_NEED_TO_RESET_PLAYLIST
         m_is_busy = true;
@@ -3412,46 +3441,68 @@ performer::launch (int ppqn)
  *  an input buss.  All current busses are present in this vector, but some
  *  might have a null pointer.
  *
- *  This function should be called whenever the buss setup changes, or
- *  whenever a pattern (except for the semi-hidden metronome pattern) is added
- *  or removed.  Might also need to be updated when the playset changes.
+ *  This function should be called whenever the buss setup changes, a pattern
+ *  pattern is added or removed, or when its input buss is set. Might also
+ *  need to be updated when the playset changes.
  */
 
 bool
 performer::sequence_inbus_setup ()
 {
     bool result = false;
-    if (rc().sequence_lookup_support())     /* is it available on platform? */
+    if (rc().sequence_lookup_support())
     {
-        size_t buscount = master_bus()->get_num_in_buses();
+        /*
+         * We have to assume that there may be gaps in the busses, and sometimes
+         * we open a file on a new system that does not have as many busses,
+         * and the result is a mystery to the user.  We can handle this situation
+         * more robustly later.
+         *
+         *      size_t buscount = master_bus()->get_num_in_buses();
+         */
+
         m_buss_patterns.clear();
         for (auto seqi : play_set().seq_container())
         {
-//          if (seqi)                       /* redundant? no matter here    */
-//          {
-                if (seqi->has_in_bus())     /* ! seqi->is_metro_seq()       */
+            if (seqi->has_in_bus())
+            {
+                bussbyte b = seqi->true_in_bus();
+                if (! is_null_buss(b))              /* b < buscount */
                 {
-                    bussbyte b = seqi->true_in_bus();
-                    if (b < buscount)
-                    {
-                        char temp[64];
-                        m_buss_patterns.push_back(seqi.get());
-                        result = true;
-                        snprintf
-                        (
-                            temp, sizeof temp, "Added pattern %d, input bus %d",
-                            int(seqi->seq_number()), int(b)
-                        );
-                        status_message(temp);
-                    }
+                    m_buss_patterns.push_back(seqi.get());
+                    result = true;
+
+#if defined SEQ66_PLATFORM_DEBUG
+                    char temp[64];
+                    snprintf
+                    (
+                        temp, sizeof temp, "Added pattern %d, input bus %d",
+                        int(seqi->seq_number()), int(b)
+                    );
+                    status_message(temp);
+#endif
                 }
-//          }
-//          else
-//              append_error_message("set bus on null sequence");
+            }
         }
     }
     return result;
 }
+
+/**
+ *  Clears the in-buss setup. Does not affect the 'rc' setting.
+ */
+
+void
+performer::sequence_inbus_clear ()
+{
+    m_buss_patterns.clear();
+    record_by_buss(false);
+}
+
+/**
+ *  Looks for the first matching input-buss in the list of patterns that
+ *  have an input bus set.
+ */
 
 sequence *
 performer::sequence_inbus_lookup (const event & ev)

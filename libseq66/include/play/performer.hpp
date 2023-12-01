@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-11-30
+ * \updates       2023-12-01
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1231,6 +1231,9 @@ public:
         return m_metronome_count_in ? m_play_set_storage : m_play_set ;
     }
 
+    bool add_to_play_set (sequence * s);
+    bool fill_play_set (bool clearit = true);
+
     /*
      * Start of playlist accessors.  Playlist functionality.  Note that we
      * ensure that a playlist object exists, even if empty.  Saves a lot of
@@ -1792,6 +1795,7 @@ public:
     }
 
     bool sequence_inbus_setup ();
+    void sequence_inbus_clear ();
     sequence * sequence_inbus_lookup (const event & ev);
 
     /*

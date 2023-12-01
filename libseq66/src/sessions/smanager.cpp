@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-11-26
+ * \updates       2023-12-01
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -277,6 +277,19 @@ smanager::main_settings (int argc, char * argv [])
         {
             int optionindex = (-1);
             bool sessionmodified = false;
+
+            /*
+             * Check for a session, either defined by the environment variable
+             * "SEQ66_SESSION_TAG" or by the "--session-tag tag" option. The
+             * latter can override the first.
+             */
+
+            if (! rc().alt_session())
+            {
+                std::string sesstag = cmdlineopts::env_session_tag();
+                if (! sesstag.empty())
+                    rc().session_tag(sesstag);
+            }
             if (rc().alt_session())
             {
                 /*
@@ -286,15 +299,10 @@ smanager::main_settings (int argc, char * argv [])
                 std::string sessionfilename =
                     rc().make_config_filespec("sessions.rc");
 
-                if (! file_readable(sessionfilename))
-                    sessionfilename = rc().make_config_filespec("session.rc");
-
                 if (file_readable(sessionfilename))
                 {
-                    sessionfile sf
-                    (
-                        sessionfilename, rc().session_tag(), rc()
-                    );
+                    std::string sesstag = rc().session_tag();
+                    sessionfile sf(sessionfilename, sesstag, rc());
                     sessionmodified = sf.parse();
                     if (! sessionmodified)
                     {

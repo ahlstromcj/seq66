@@ -1,4 +1,4 @@
-# README for Seq66 0.99.11 2023-11-29
+# README for Seq66 0.99.11 2023-12-01
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -130,7 +130,8 @@ Windows, and using a conventional source tarball.
             playlist actions on the console and prevents daemonization and
             logging to a file.
         *   Replaced the --inspect option with --session-tag to allow easy
-            changing to another setup specified in sessions.rc.
+            changing to another setup specified in sessions.rc. Also added
+            the SEQ66_SESSION_TAG environment variable.
         *   Added showing program changes in slot button.
         *   Added showing text events in the data pane and all text events
             in the main Session tab. Fixed its Save Info button.

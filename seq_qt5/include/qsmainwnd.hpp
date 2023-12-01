@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-26
+ * \updates       2023-12-01
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -270,6 +270,7 @@ private:
     );
     std::string project_folder_prompt (const std::string & prompt);
     void update_play_status ();
+    void update_record_by_status ();
     void update_window_title (const std::string & fn = "");
     void update_recent_files_menu ();
     void create_action_connections ();

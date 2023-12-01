@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-11-27
+ * \updates       2023-12-01
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -1256,6 +1256,22 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         }
 #endif
     }
+    return result;
+}
+
+/**
+ *  Environment variables specific to Seq66.
+ */
+
+std::string
+cmdlineopts::env_session_tag ()
+{
+    static std::string s_session_variable = "SEQ66_SESSION_TAG";
+    char * env = std::getenv(s_session_variable.c_str());
+    std::string result;
+    if (not_nullptr(env))
+        result = std::string(env);
+
     return result;
 }
 

@@ -817,11 +817,14 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
        log = "test66.log"
    \end{verbatim}
 
+   \index{--session-tag}
+   \index{session-tag}
    This section is accessed using the \texttt{-S} or
    \texttt{--session-tag} option, as shown here:
 
    \begin{verbatim}
        $ qseq66 --session-tag test
+       $ qseq66 -S test
    \end{verbatim}
 
    If this is the first time this command has been run, the
@@ -854,6 +857,18 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 
    Note that the \texttt{log} option overrides the log-file setting
    present in the 'usr' file. Use \texttt{log = ""} to see console output.
+
+   Lastly, an environment variable can be used to set a session-tag that
+   will be used for quite awhile.
+   It can be exported in a \texttt{bash} script, a profile,
+   or set on the command-line (which is more difficult that using the
+   option):
+   \index{SEQ66\_SESSION\_TAG}
+
+   \begin{verbatim}
+       $ SEQ66_SESSION_TAG="test" qseq66
+   \end{verbatim}
+
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

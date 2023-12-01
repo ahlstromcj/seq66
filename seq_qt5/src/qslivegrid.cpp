@@ -934,7 +934,7 @@ qslivegrid::seq_id_from_xy (int click_x, int click_y)
  *      button number times the size of a screenset.  A bit tricky.
  *
  *  One issue is that a double-click yields a mouse-press and an
- *  mouse-double-click event, in that order.  We log the current state of
+ *  mouse-double-click event, in that order. We log the current state of
  *  the pattern so that we can restore it in the double-click handler.
  *
  * \param event
@@ -947,9 +947,7 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
     m_current_seq = seq_id_from_xy(event->x(), event->y());
 
     bool ok = m_current_seq != seq::unassigned();
-    if (ok)
-        ok = perf().set_current_sequence(m_current_seq);
-
+    bool nonblankslot = perf().set_current_sequence(m_current_seq);
     if (ok)
     {
         if (event->button() == Qt::LeftButton)
@@ -968,7 +966,8 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
                  * Not sure that this really works. Needs investigation.
                  */
 
-                (void) perf().replace_for_solo(m_current_seq);
+                if (nonblankslot)
+                    (void) perf().replace_for_solo(m_current_seq);
             }
             else
             {
@@ -976,7 +975,7 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
                 m_button_down = true;
             }
         }
-        if (event->button() == Qt::RightButton)
+        else if (event->button() == Qt::RightButton)
         {
             if (event->modifiers() & Qt::ControlModifier)
                 new_sequence();

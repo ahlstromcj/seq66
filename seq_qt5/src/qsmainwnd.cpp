@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-30
+ * \updates       2023-12-01
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -727,17 +727,7 @@ qsmainwnd::qsmainwnd
         ui->btnRecordEx, SIGNAL(clicked(bool)),
         this, SLOT(recording_ex(bool))
     );
-#if defined SEQ66_USE_RECORD_EX_BUTTON
-    ui->btnRecordEx->setEnabled(true);
-    if (cb_perf().record_by_buss())
-        qt_set_icon(rec_ex_buss_xpm, ui->btnRecordEx);
-    else if (cb_perf().record_by_channel())
-        qt_set_icon(rec_ex_channel_xpm, ui->btnRecordEx);
-    else
-        qt_set_icon(rec_ex_normal_xpm, ui->btnRecordEx);
-#else
-    ui->btnRecordEx->hide(); // qt_set_icon(song_rec_off_xpm, ui->btnRecordEx);
-#endif
+    update_record_by_status();
 
     /*
      * Record-Song button. What about the song_rec_off_xpm file?
@@ -1256,6 +1246,22 @@ qsmainwnd::update_play_status ()
             ui->btnPlay->setChecked(false);
         }
     }
+}
+
+void
+qsmainwnd::update_record_by_status ()
+{
+#if defined SEQ66_USE_RECORD_EX_BUTTON
+    ui->btnRecordEx->setEnabled(true);
+    if (cb_perf().record_by_buss())
+        qt_set_icon(rec_ex_buss_xpm, ui->btnRecordEx);
+    else if (cb_perf().record_by_channel())
+        qt_set_icon(rec_ex_channel_xpm, ui->btnRecordEx);
+    else
+        qt_set_icon(rec_ex_normal_xpm, ui->btnRecordEx);
+#else
+    ui->btnRecordEx->hide(); // qt_set_icon(song_rec_off_xpm, ui->btnRecordEx);
+#endif
 }
 
 /**
@@ -4374,6 +4380,7 @@ qsmainwnd::on_sequence_change (seq::number seqno, performer::change ctype)
         for (auto ip : m_open_live_frames)
             ip.second->update_sequence(seqno, redo);
 
+        update_record_by_status();
         if (domod)
             enable_save(cb_perf().modified());
     }
