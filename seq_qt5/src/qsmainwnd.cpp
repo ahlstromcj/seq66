@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-12-01
+ * \updates       2023-12-02
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1252,15 +1252,23 @@ void
 qsmainwnd::update_record_by_status ()
 {
 #if defined SEQ66_USE_RECORD_EX_BUTTON
-    ui->btnRecordEx->setEnabled(true);
     if (cb_perf().record_by_buss())
+    {
         qt_set_icon(rec_ex_buss_xpm, ui->btnRecordEx);
+        ui->btnRecordEx->setEnabled(true);
+    }
     else if (cb_perf().record_by_channel())
+    {
         qt_set_icon(rec_ex_channel_xpm, ui->btnRecordEx);
+        ui->btnRecordEx->setEnabled(true);
+    }
     else
+    {
         qt_set_icon(rec_ex_normal_xpm, ui->btnRecordEx);
+        ui->btnRecordEx->setEnabled(cb_perf().have_current_seq());
+    }
 #else
-    ui->btnRecordEx->hide(); // qt_set_icon(song_rec_off_xpm, ui->btnRecordEx);
+    ui->btnRecordEx->hide();
 #endif
 }
 

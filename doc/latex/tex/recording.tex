@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2023-11-25
-% \update      2023-11-28
+% \update      2023-12-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -20,8 +20,8 @@
 
    Recording in \textsl{Seq66} has been greatly enhanced.
    Multiple patterns can be recorded at once, with events
-   routed to particular patterns based on either the buss number the event came
-   in on, or the channel number.
+   routed to particular patterns based on the buss number the event came
+   in on, or its channel number.
    Additional ways to toggle recording have been added.
    Additional recording alterations have been added, such as on-the-fly note
    mapping.
@@ -87,6 +87,8 @@
 
    Again, remember that, with standard recording, only one pattern can
    accept events.
+   Also note that this mode should be used if one
+   expects to record SysEx events, which have no channel.
 
 \subsubsection{Route-By-Buss}
 \label{subsubsec:recording_route_by_buss}

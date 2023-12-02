@@ -1,15 +1,9 @@
 TO DO for Seq66 0.99.11
 Chris Ahlstrom
-2019-04-13 to 2023-12-01
+2019-04-13 to 2023-12-03
 
 Misc:
 
-    -   Clarify uses of nominal in bus vs true in bus.
-    -   Record by channel:
-        -   What about handling of non-channel events? Probably better to
-            use that standard record mode.
-    -   Record by buss does not work in a second created pattern, even if
-        the first is deleted. Fixed, but needs a retest.
     -   Grid-mode options:
         -   Now can click again to undo the solo. But doing two more
             solos in a row clears the first non-soloed snapshot. Hmmm.
@@ -21,9 +15,11 @@ Misc:
         MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recorded measures
         not saved.
-    -   Session / Song Path is not updated when a new file is saved.
     -   In the Windows build batch file, improve the messaging and copy the
         7z bundle to release as the installer is.
+    -   In Song roll, in Windows,time digits are a tad to big and need to
+        moved down a pixel, when bold. Also due to theme, though.
+    -   The Hide button gets focus automatically and it should not.
     -   See the new notes in timing module: set_thread_priority()!!!
         Also review the notes for pthreads in performer!
         Add code (in jack) to keep track of ticks and see if priority
@@ -57,17 +53,13 @@ From Testing:
     Can we distinguish note-insertion from movement snap, to avoid the
     "L"-then-snap-then-move samba?
 
-    File errors:
+    File errors (fixed!), but odd issues (w/qsynth):
 
-    Offset ~0x8 of 0x4f35 bytes (8/20277): 
-       Invalid MIDI header chunk detected. Bad value 0xc010bb36.
-       [seq66] Play-list: Open failed: song
-           '/usr/local/share/seq66-0.99/midi/FM/judyblue.mid'
+       '/usr/local/share/seq66-0.99/midi/FM/judyblue.mid' plays, but some
+       notes are blipped out. Try with another player.
 
-    Offset ~0x8 of 0x5c1c bytes (8/23580): 
-       Invalid MIDI header chunk detected. Bad value 0x0.
-       [seq66] Play-list: Open failed: song
-           '/usr/local/share/seq66-0.99/midi/FM/longhair.mid'
+       '/usr/local/share/seq66-0.99/midi/FM/longhair.mid' plays just fine
+       mostly, some glitches.
 
 Awaiting complaints/issue-reports:
 

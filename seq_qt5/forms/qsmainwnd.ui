@@ -1183,7 +1183,7 @@ input-buss patterns, or all channel patterns.</string>
            <string>Rec</string>
           </property>
           <property name="checkable">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
         </item>

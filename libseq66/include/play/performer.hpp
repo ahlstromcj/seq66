@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-12-01
+ * \updates       2023-12-02
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3159,6 +3159,11 @@ public:
     const seq::pointer get_sequence (seq::number seqno) const;
     seq::pointer get_sequence (seq::number seqno);
     bool set_current_sequence(seq::number seqno);
+
+    bool have_current_seq () const
+    {
+        return m_current_seqno != seq::unassigned();
+    }
 
 public:         /* GUI-support functions */
 

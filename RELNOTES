@@ -1,8 +1,55 @@
-Release Notes for Seq66 v. 0.99.10 2023-10-27
+Release Notes for Seq66 v. 0.99.11 2023-12-03
 
-- The usual raft of humiliating bug-fixes:
-    - Fixed and enhanced Edit / Preferences / Session tab.
-    - MANY other undocumented minor fixes.
-- More to come...
+-   Added 8 more ui-palette entries, total of 32.
+-   Added display of the pattern input bus (if present) in the grid
+    slot.
+-   Moved style-sheet options from 'usr' to the 'rc' file.
+-   Fixed errors setting style-sheet, palette, and mutes in
+    Preferences / Session.  Enhanced this tab to indicate when
+    exit (vice internal restart) is needed.
+-   Added mute-group label ("MG") to main window.
+-   Fixing various playlist errors:
+    -   PPQN setting issue causing slow/fast playback. Cannot
+        display 120 PPQN well, fix too intrusive at this time.
+    -   Segfaults due to not stopping playback before loading
+        the next song, or basing calculations on missing values.
+-   Embarassing fixes:
+    -   The massive botch of the Set Master tab.
+    -   More Mutes tab fixes, including raising modify flag.
+    -   App exiting unceremoniously if "quiet" is set.
+    -   Issue in Song zoom with 1920 PPQN.
+    -   Odd bug breaking MIDI-control-out (display).
+    -   Preventing long redundant start-up error messages.
+    -   Solo feature. Unsolo before starting another solo.
+    -   Queue and keep-queue.
+    -   Not saving record-by-channel. Fixed record-by-channel.
+    -   Not modifying the song when pattern measures is changed.
+    -   Breakage of stopping song play at the end of song.
+    -   Bug in event-editor initialization.
+    -   Not applying note-length setting to step-edit.
+-   Added a pre-made MIDI file to use with record-by-channel.
+-   Added ways to toggle recording of multiple patterns.
+-   Added a record-by-buss feature.
+-   Can now paste a pattern into a new or another loaded MIDI file.
+-   When loading a MIDI file, the file dialog defaults to the
+    last-used directory. Fixes made to this feature.
+-   Improved copy/paste for screen-sets.
+-   Added optional parameter to --priority option.
+-   Focus is now set immediately to the seqroll and perfroll.
+-   Replaced some verbose() checks with investigate() checks to cut
+    down on console output. In the CLI, --verbose now shows
+    playlist actions on the console and prevents daemonization and
+    logging to a file.
+-   Replaced the --inspect option with --session-tag to allow easy
+    changing to another setup specified in sessions.rc. Also added
+    the SEQ66_SESSION_TAG environment variable.
+-   Added showing program changes in slot button.
+-   Added showing text events in the data pane and all text events
+    in the main Session tab. Fixed its Save Info button.
+-   Implemented "menu-mode" automation. It duplicates the function
+    of the hide/show button, to toggle between hiding some main
+    window controls and the main menu, and showing them.
+
+See README.md for more details.
 
 # vim: sw=4 ts=4 wm=15 et ft=sh

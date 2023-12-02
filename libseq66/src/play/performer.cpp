@@ -1788,8 +1788,6 @@ performer::get_sequence (seq::number seqno)
 
 /**
  *  Meant to record the last pattern touched by the mouse or a hot-key.
- *
- *  STILL IN PROGRESS
  */
 
 bool
