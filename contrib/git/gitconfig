@@ -30,10 +30,10 @@
 [color "status"]
     added = green bold
     changed = red bold
-    untracked = magenta
+    untracked = magenta bold
 
 [color "branch"]
-    remote = yellow
+    remote = yellow bold
 
 [pull]
 	rebase = false

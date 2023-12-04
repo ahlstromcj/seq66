@@ -4913,13 +4913,19 @@ performer::poll_cycle ()
 
                                 if (not_nullptr(sp))
                                     sp->stream_event(ev);
+#if defined SEQ66_PLATFORM_DEBUG
                                 else
                                     warn_message("no buss-recording pattern");
+#endif
                             }
                             else if (record_by_channel())
                             {
+#if defined SEQ66_PLATFORM_DEBUG
                                 if (! m_master_bus->dump_midi_input(ev))
                                     warn_message("no matching channel");
+#else
+                                (void)m_master_bus->dump_midi_input(ev);
+#endif
                             }
                             else
                             {

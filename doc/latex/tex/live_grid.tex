@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-11-06
+% \update      2023-12-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -236,7 +236,7 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=1.0]{main-window/main-window-tiny.png}
-   \caption{Main Window Tiny (Full Size)}
+   \caption{Main Window Tiny (shown full size)}
    \label{fig:main_window_tiny}
 \end{figure}
 
@@ -365,6 +365,7 @@
 
    \begin{itemize}
       \item \textbf{Set Name}
+      \item \textbf{MG}
       \item \textbf{Underrun Indicator}
       \item \textbf{Set Reset ("!")}
       \item \textbf{Active Set Indicator}
@@ -373,10 +374,16 @@
    \end{itemize}
 
 \subsubsection{Set Name}
-\label{subsubsec:introduction_set_name}
+\label{subsubsec:introduction_mg}
 
    This text field shows the name of the current set, and also allows editing
    the set name.
+
+\subsubsection{MG}
+\label{subsubsec:introduction_set_name}
+
+   This text field shows the name of the current mute-group, if one is
+   in force. Currently not shown in the figure above.
 
 \subsubsection{Underrun Indicator}
 \label{subsubsec:introduction_underrun_indicator}
@@ -544,6 +551,7 @@
 
    These modes are selected in the 'rc' file as described in
    \sectionref{subsubsec:configuration_rc_midi_cmt}.
+   They are mutually exclusive.
 
 \subsubsection{L/R Loop}
 \label{subsubsec:introduction_loop_button}

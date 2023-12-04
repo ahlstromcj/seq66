@@ -151,7 +151,7 @@
          <item row="0" column="2">
           <widget class="QLabel" name="label_clock_precision">
            <property name="text">
-            <string>BPM Precision</string>
+            <string>BPM precision</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1060,7 +1060,7 @@ anyway.</string>
          <item row="6" column="1">
           <widget class="QCheckBox" name="checkBoxFollowProgress">
            <property name="text">
-            <string>Follow Progress by Default</string>
+            <string>Follow progress by default</string>
            </property>
           </widget>
          </item>
@@ -1072,7 +1072,7 @@ Applies a couple of color tweaks, such as
 using inverse font color for slots.</string>
            </property>
            <property name="text">
-            <string>Tweak Color for Dark Theme</string>
+            <string>Tweak color for dark theme</string>
            </property>
           </widget>
          </item>
@@ -2473,7 +2473,7 @@ Seq66 exits.</string>
              </font>
             </property>
             <property name="text">
-             <string>Length Fraction</string>
+             <string>Length fraction</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -2530,7 +2530,7 @@ Seq66 exits.</string>
              </font>
             </property>
             <property name="text">
-             <string>Metro Buss</string>
+             <string>Metro buss</string>
             </property>
            </widget>
           </item>
@@ -2601,7 +2601,7 @@ Seq66 exits.</string>
              </font>
             </property>
             <property name="text">
-             <string>Record Buss</string>
+             <string>Record buss</string>
             </property>
            </widget>
           </item>
@@ -2653,7 +2653,7 @@ Seq66 exits.</string>
              </font>
             </property>
             <property name="text">
-             <string>Thru Buss</string>
+             <string>Thru buss</string>
             </property>
            </widget>
           </item>
@@ -2948,7 +2948,7 @@ Seq66 exits.</string>
          </rect>
         </property>
         <property name="text">
-         <string>Escape Can Close Pattern Editor</string>
+         <string>Escape can close pattern editor</string>
         </property>
        </widget>
       </widget>

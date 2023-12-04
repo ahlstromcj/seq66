@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-11-28
+% \update      2023-12-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -61,7 +61,7 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.35]{main-window/main-windows.png}
-   \caption*{A Sampling of Seq66 Windows}
+   \caption*{Various Seq66 Windows}
 \end{figure}
 
 \clearpage                             % moves Contents to next page
@@ -85,7 +85,7 @@
 \section{Introduction}
 \label{sec:introduction}
 
-   Seq66 is a reboot of \textsl{Seq24} and a rewrite of
+   Seq66 is a complete reboot of \textsl{Seq24} and a rewrite of
    \textsl{Sequencer64}.
    The following projects support \textsl{Seq66} and its documentation (see
    the \textbf{Help} menu):
@@ -115,6 +115,7 @@
    play-lists, and automation control.
    It supports the \textsl{Non/New Session Manager},
    has a metronome function,
+   multiple input port recording,
    a modifiable color and brush palette,
    and Qt style-sheets.
    Be prepared to note some significant differences
@@ -155,7 +156,7 @@
          palette files;
          Qt style-sheets for control of colors and fonts for many
          user-interface items.
-         A Qt linear-gradient is the default style for painting the
+         A Qt linear-gradient default style for painting the
          progress boxes, notes, and triggers.
       \item Improved the \textbf{song editor} for laying out patterns;
          includes transposable triggers;
@@ -163,12 +164,14 @@
       \item The \textbf{mutes editor} tab, improves mutes handling and control.
       \item A \textbf{playlist editor} tab with improved flexibility.
       \item A \textbf{sets editor} tab.
-      \item A \textbf{events editor} tab to fix minor event issues and add meta text
-         events.
+      \item A \textbf{events editor} tab.
+         To trouble-shoot and fix minor event issues and add meta text events.
       \item A \textbf{session} tab (and Edit / Preference pages) to see that
          \textsl{Seq66} is running in the desired environment and configuation.
       \item \textbf{Non Session Manager} support. The sessions tab shows the
          locations of configuration files for the session.
+      \item \textbf{MIDI control/display automation}.
+         Control by "launchpad" devices, and display of statuses.
       \item Repartitioning of \textbf{configuration files} into separate files
          for flexibility; added a \textbf{color palette} file,
          Qt \textbf{style-sheets} (\texttt{*.qss});
@@ -177,7 +180,7 @@
       \item Improved \textbf{alternate} keyboard layout support.
       \item \textbf{Mapping} of port names to a consistent set of port numbers.
       \item Providing for \textbf{routing of MIDI input} events to
-         patterns based on port number.
+         patterns based on port number or output-channel number.
       \item \textbf{Export songs} in SMF 0 and 1 formats.
       \item \textbf{Internals}:
          More efficient lookups for using control maps and lambda functions.
@@ -214,7 +217,8 @@
       \item \textbf{Qmake-based Install}.
          Optional on Linux, mandatory for Windows.
       \item \textbf{Arch Linux}.
-         There is a nice, but outdated, \textsl{AUR} package (\cite{AUR}).
+         There is a nice \textsl{AUR} package and some
+         other packages noted at (\cite{repositories}).
    \end{itemize}
 
    The \texttt{INSTALL} file included with the source code and

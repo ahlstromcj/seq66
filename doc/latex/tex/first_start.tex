@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-10-16
+% \update      2023-12-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -25,7 +25,10 @@
    tested.
    Another aspect to look into is interactions with
    PulseAudio-pw.
-   On Windows, \textsl{Seq66} uses the MultiMedia API.
+   On Windows, \textsl{Seq66} uses the \textsl{MultiMedia API} with a wrapper
+   that is our modified version of \textsl{PortMIDI} \cite{portmidi}.
+   Theoretically that library should support
+   \textsl{Mac OSX}, but we have no Mac to build and test with.
    This manual assumes that one is running \textsl{Seq66} on Linux, for the
    most part.
    But see \sectionref{sec:windows}.
@@ -41,8 +44,12 @@
    Start \textsl{Seq66}, verify that it comes up, and then exit it
    immediately.
    This first start creates the configuration files in
-   \texttt{/home/user/.config/seq66/} (Linux) or
-   \texttt{C:/Users/your\_user\_name/AppData/Local/seq66} (Windows).
+
+   \begin{verbatim}
+      /home/user/.config/seq66/}                      (Linux)
+      C:/Users/your\_user\_name/AppData/Local/seq66}  (Windows)
+   \end{verbatim}
+
    If a session manager (e.g. \textsl{NSM})
    is used, the configuration directory is determined by
    the session manager, and is also called a "session" directory..
@@ -69,7 +76,8 @@
    On our system, the synthesizer (\textsl{Yoshimi}) comes up on MIDI buss 5.
    (On \textsl{Windows}, buss 0 is the "MIDI Mapper", while buss 1 is the
    built-in wavetable synthesizer, which is normally under control of buss 0.)
-   The \texttt{-{}-buss} option remaps all events to the desired buss:
+   The \texttt{-{}-buss} option remaps all events to the desired buss for
+   the current run:
 
    \begin{verbatim}
       $ qseq66 --alsa --buss 5 /usr/share/seq66/midi/b4uacuse-gm-patchless.midi

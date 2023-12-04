@@ -1,819 +1,1057 @@
 NEWS for Seq66 0.99.11
 Chris Ahlstrom
-2015-07-10 to 2023-10-26
+2015-07-10 to 2023-12-04
 
-This file collects major changes that are older and clutter up
-the README.md file.  This file should be called "OLD NEWS".
+# Changelog
 
-    -   Version 0.99.9:
-        -   Added an "Input Bus Routing" feature, where each pattern can be
-            set to receive events from a given input buss. Selectable from
-            the grid-slot popup menu.
-        -   Fixed nasty segfault opening new file while Editor tab open.
-        -   Fixed bug: port-mapping Remap and Restart did not work due to
-            timing.
-        -   Fixed bug in detecting Note-related messages.
-        -   Fixed error in "quiet" startup that would cause immediate exit.
-        -   Related to issue #115: Added ability to select a line in the data
-            pane and grab a handle to change its value.
-        -   Refactored and extended zoom support, added it to event and data
-            panes.
-        -   Adding more seqroll keystokes (and HTML help). Enabled Esc to
-            exit paint mode if not playing.
-        -   Added live-note mapping (needs testing!), refactoring set-record
-            code.
-        -   Implemented automation for BBT/HMS toggling, FF/Rewind, Undo/Redo,
-            Play-set Copy/Paste, and Record Toggle.
-        -   Added a build-time option to add a show/hide button in the
-            main window to allow making the window to take up much less space.
-        -   Added HTML help files to data/share/doc/info, other documentation
-            upgrades.
-    -   Version 0.99.8:
-        -   Issue #112: A new pattern now displays in the MIDI controller.
-        -   Issue #114: Adding display of shortcut keys to tool tips.
-        -   Added a Pattern tab to Edit / Preferences for new-pattern settings
-            and jitter/randomization.
-        -   Added automation for the main window Loop L/R button.
-        -   Fixed seqroll drawing errors introduced in adding time-sig support.
-        -   Fixed incomplete data-pane refresh in scrolling with arrow-keys.
-        -   Fixed not setting up SIGINT, which prevented a proper shutdown.
-        -   Fixed a couple corrupted data/midi/FM/*.mid files.
-        -   Changing playlist setting enables Session Restart button.
-        -   Removed coloring of record-style and -mode buttons. Added coloring
-            of event-editor "Store" button to denote saving is needed.
-        -   Refactoring quantization alterations for future upgrades. Added
-            an option to jitter the notes in the seqroll.
-        -   Enforced that configuration files are stored in the "home"
-            directory.
-        -   The usual raft of humiliating bug-fixes. A small sample: Updating
-            the event list when recording stops; fixing record button in pattern
-            editor; fixing note-selection refresh; and about a dozen more.
-    -   Version 0.99.7:
-        -   Issue #110 follow-ons:
-            Cannot save tempo (BPM) in Windows when
-            changed from main window. Caused by mixing a long and size_t,
-            which messed up in the Windows build.
-        -   Issue #111 follow-ons:
-            -   Fixed initial time-signature drawing in data pane.
-            -   Fixed errors in inserting a time-signature. Added a pulse
-                calculator that iterates through time-signatures.
-        -   Fixed an important port-translation bug in output port-mapping.
-        -   Recent Files is disabled if there are none.
-        -   Revamped the Playlist tab, as it was confusing and very buggy.
-        -   Added Windows key-mapping to fix processing "native virtual" keys,
-            such as the arrow keys. Also fixes issue #102.
-        -   Added auto-play and auto-advance to play-lists.
-        -   Fixed bug in rcsettings::make_config_filespec().
-    -   Version 0.99.6:
-        -   Issue #3 follow-ons:
-            -   Added a qscrollslave to allow QScrollArea to allow the pattern
-                editor panes to remain in sync with the seqroll when using the
-                hjkl, arrow, and page keys.
-        -   Issue #110 follow-ons:
-            -   Addition of Start menu entries for Windows.
-            -   Fixed access to the tutorial and manual. Refactored access
-                to manual and tutorial for robustness.
-            -   Added data/readme files and doc/tutorial files accidentally
-                left out of NSIS installer.
-            -   Fixed the saving of modified tempo changes.
-            -   Fixed event::is_desired(), which affected changing note
-                velocities in the pattern editor's data pane.  Improved
-                velocity-change undo.
-            -   Fixed an error preventing changing the "background" pattern.
-            -   Fixed issues with port-mapping and the Windows MIDI Mapper.
-            -   Issue: Building 32-bit (Windows XP) version on 64-bit Windows.
-                On 64-bit Windows, this seems to require building a 32-bit
-                version of the Qt toolset. Ugh.
-        -   Issue #111: Adding support, as much as possible, for editing,
-            storing, and displaying time signature in the pattern and event
-            editors.
-            -   The first time-signature in a pattern becomes the main
-                time signature of the pattern. (Also stored as a c_timesig
-                SeqSpec).
-            -   The data pane shows a time-signature as a simple fraction.
-            -   Changing the time signature if at time 0 is automatic.
-            -   Time signatures at later times can be logged by setting the
-                current time with a click in the top half of the time line,
-                changing the beats and beat width, then clicking a time-sig log
-                button.
-            -   Time-signatures with a beat width that are not a power of 2
-                do not add an event, but are saved as the c_timesig SeqSpec
-                value.
-            -   Provisional feature: we properly draw the piano roll, time line,
-                event pane vertical lines as time-signature changes.
-                Currently compiled in via a macro (see INSTALL).
-            -   Fixed event filtering in the event (qstriggereditor) pane.
-            -   Fixed time-signature editing in the event editor, and the
-                B:B:T to pulses calculation.
-        -   Enhanced port-mapping to prompt the user about issues and
-            allow for an immediate remap-and-restart. A ton of fixes!
-        -   Added 'o' keystroke to seqroll to toggle recording ('r' already
-            used to randomize notes).
-        -   Added a "quiet" option to not show startup message prompts.
-        -   Enhanced the Edit / Preferences dialog.
-        -   At first start, a log-file is now automatically created. If it
-            gets larger than a megabyte, then it is deleted to start over.
-        -   Fixed bug writing pattern-dump files from event editor.
-        -   Improved modification detection and display in the pattern editor.
-        -   Added the pattern port number to the song summary output.
-        -   Updated alsa.m4 to avoid obsolete AC_TRY_COMPILE warning. Old
-            version stored in contrib/scripts.
-    -   Version 0.99.5:
-        -   Greatly enhanced the event editor tab and the events that can
-            be view and modified.
-        -   Made port-mapping the default. At first startup the map
-            exactly matches the existing ports; the user can edit this setup
-            in the 'rc' file or the Preferences dialog.
-        -   Eliminated "missing ctrl" message at first startup.
-        -   Fixed port ID setting in midibus, and adding output flag in
-            midi_alsa_info.
-        -   Issue #110 Windows: Fixed compiler errors and added scripting to
-            build NSIS-based install without leaving Windows, if desired.
-        -   Internal refactoring to regularize handling of the session/config
-            directory between Linux and Windows.
-        -   Fixed portmidi bugs in Linux and Windows, enhanced device naming.
-        -   Showing disabled/unavailable MIDI devices as grayed in various
-            dropdowns.
-        -   Rearranged the Seq66 man pages more sensibly.
-    -   Version 0.99.4:
-        -   Issue #3: The scroll wheel is enabled in the piano rolls (only).
-        -   Issue #48: For a new NSM session configuration, disable "JACK"
-            port auto-connect.
-        -   Issue #108.  Fixed trying to remove Event tab after deleting it.
-        -   Issue #109.  Fixed the application of channels to the various
-            export operations.
-        -   Fixed minor-but-annoying bug in reporting trying map a "null" buss.
-        -   Improved state-appearance of Stop, Pause, and Play buttons.
-        -   Fixed issue opening a non-standard-length pattern in its window.
-        -   Fixed note events not getting linked after recording.
-        -   Fixed drawing of wrap-around notes with linear gradient, and fixed
-            handling of note wrap-around when set to false.
-        -   Fixed refresh of Mute and Session tabs when loading a MIDI file.
-        -   Added seqmenu entry for toggling recording of a pattern.
-        -   Added the ability to use the first Text message as "song info".
-        -   Seq66 now prevents opening the event editor if recording is in
-            progress. Cannot update event editor live with new events.
-    -   Version 0.99.3:
-        -   Issue #107.  The basic fix is made. Still need to rehabilitate
-            the Expand-pattern functionality.
-        -   Issue #40.  Improved NSM handling:
-            -   Seq66 detects nsmd as the parent process early in startup.
-            -   Close ("X") button disabled and hidden.  Xcfe4 "close window"
-                action works, though, as does response to a SIGTERM from nsmd.
-            -   Handling "config" subdirectory improved.
-            -   The --nsm option is now for debugging only, simulating running
-                under NSM.
-        -   Automation fixes:
-            -   Fixed processing grid keystrokes twice.
-            -   Renamed record-mode and grid-model control labels.
-            -   Fixed accident disabling of grid-mode controls.
-            -   Making MIDI control-out handling more reasonable.
-            -   Added some LaunchPad Mini macros.
-        -   Added reading/writing/displaying Meta text events such as Text
-            and Cue Point.
-        -   Fixed broken "recent-files" features (by forcing 'rc' save).
-        -   Improvements made to playlist handling. It wasn't displaying
-            the BPM of the next tune.  Still have issue with the BPM spinbox
-            not causing a file modification. Editing the BPM works.
-        -   Improvements and important fixes to mute-group and its MIDI
-            control still in progress.
-        -   Fixed the daemonization and log-file functionality.
-        -   Revisited the recmutex implementation.
-        -   Weird error where ALSA not found! We now avoid a crash, but
-            qseq66 currently exits with only console messages.
-    -   Version 0.99.2:
-        -   Issue #103.  Some improvements to pattern loop-count.
-        -   Pull request #106. User phuel added checkmarks for active buss and
-            channel in grid-slot menu.
-        -   Fixed background sequence not displaying when running with
-            linear-gradient brush.
-        -   Fixes to brushes and making the linear gradient (notes and triggers)
-            a default run-time option.  See the 'palette' file.
-        -   Other minor fixes and documentation updates, including the manual,
-            as per issue #104.
-    -   Version 0.99.1:
-        -   Issue #44. Revisited to fix related additional issues. Can now
-            toggle a pattern's song record in perfnames. Record button:
-            Ctrl disables snap, Shift enables record at playback start.
-            Still minor issues.
-        -   Issue #93. Revisited to fix related open pattern-editor issues.
-        -   Issue #100. Partly mitigated. Added a custom ringbuffer for MIDI
-            message objects to replace JACK's ringbuffer. Adapted work from
-            the ttymidi.c module.  Also added configuration to
-            calculate the sample offset.
-        -   Various fixes:
-            -   Fixed partial breakage of pattern-merge function.
-            -   Fixed odd breakage of ALSA playback in release mode.
-            -   Fixed Stop button when another Master has started playback.
-            -   Shift-click on Stop button rewinds JACK transport when running
-                as JACK Slave.
-            -   Display of some JACK server settings in Edit / Preferences.
-            -   Fixed handling of Ctrl vs non-Ctrl zoom keys in perfroll.
-            -   The pernames panel now matches the layout of a grid button
-                better.  Other cosmetic changes.
-            -   Event-dump now prompts for a text-file name.
-        -   Added linear-gradient compile-time option (seq_features.h) for
-            displaying notes and triggers. Enabled by default, edit to disable.
-            Does not seem to add noticeable overhead.
-    -   Version 0.99.0:
-        -   Issue #44. Record live sequence changes functionality beefed up
-            to handle recording without snapping.
-        -   Issue #54. Updated the ax_have_qt_min.m4 file to detect
-            qmake-qt5, etc.
-        -   Issue #78 revisited. Pattern-box sizes would become 0 and the
-            progress boxes disappear. Now the 'usr' show option is boolean
-            ("pattern-boxes-shown", default = true), and the sizes are kept
-            within reasonable limits.  Also added a "--locale" option so that
-            the user can, for example, set the Seq66 global locale to
-            "en_US.UTF-8".
-        -   Issue #82 allows buttons and fields to expand better.
-            Fixed for main window and the song & pattern editors only.
-        -   Issue #89 fixed. The MIDI control display not quite reflecting the
-            status of each pattern, especially during queuing.
-        -   Issue #90 improvements. Save was not always enabled. Surely some
-            issues remain.  Also, in some cases there is no way to "unmodify".
-        -   Issue #93 fixed. The window of a deleted pattern now closes.
-        -   Issue #94. Long song in song editor could not be scrolled to the
-            right.  Added more padding and a button to expand the grid when
-            when desired. For the pattern editor, the workaround is to increase
-            the "length" in the pattern editor.
-        -   Issue #97. Investigate/resolve differences from Seq24.
-            -   Pattern editor fixes.
-            -   Added paste box when pasting notes, an oversight from the Seq24
-                reboot.
-            -   Added Ctrl-Left/Right to move the progress bar in the pattern
-                editor. (Left/Right scrolls the piano roll.)
-        -   Issue #98. Feature requests (metronome and background recording).
-            -   Added an initial metronome facility and 'rc' configuration.
-            -   Metronome count-in added.
-            -   Background automatic recording added.
-        -   Various fixes:
-            -   Muted pattern slots show a short progress bar, to aid in the
-                timing of queuing.
-            -   Improved the handling of the MIDI 'ctrl' file and control
-                states upon a restart.
-            -   Tightened up pattern arming/disarming processing.
-            -   Implemented left/right arrow keys to move the selected trigger
-                in the song editor. Ctrl moves multiple triggers. Moving a
-                trigger past END moves END.
-            -   Fixed error in painting tempo events in triggers (perfroll).
-            -   Improved keystroke movement of "L"/"R" markers in song and
-                pattern editor time bars.
-            -   The global time signature is now applied to new patterns.
-            -   Added a try-catch to showing the locale.
-            -   Ctrl-Z removes all mouse-painted notes at once (like Seq24).
-                Single-note removal is macroed out.
-            -   Error in parsing "--option sets=RxC" fixed.
-            -   Improved the handling of grid font sizes re window size.
-            -   Fixed the response to incoming MIDI Continue.
-            -   PPQN != 192 : handle snapping when adding notes; bugs in
-                perfroll and perftime.
-            -   Implement clear-events and double-length grid modes.
-    -   Version 0.98.10:
-        -   Revisited issue #83, improved GUI editing of control/display
-            automation.
-        -   Fixes for issue #87: segfault due to mute-group on larger set-sizes,
-            inability to modify some usr options in Edit / Preferences, and
-            related bugs found during these fixes. Made performer the owner of
-            mutegroups.
-        -   Fixes for issue #88: 4/16 pattern not shown/played properly until
-            opened in editor.
-        -   Fixed minor issue with port-naming, port-lists.
-        -   Many tweaks to documentation, vim files, midibytes....
-    -   Version 0.98.9.1:
-        -   Added files needed for ./configure.
-        -   Documentation and tutorial updates.
-    -   Version 0.98.9:
-        -   Fixed nasty issue #85 which was recreating the slot buttons, and
-            in a different thread, leading to a seqfault.
-        -   Fixed issue: Preference / MIDI Input port check did not change
-            Apply state.
-        -   Fixed mute/record/thru state display between live grid and a
-            pattern editor.
-        -   Updated/cleaned the tutorial.
-    -   Version 0.98.8:
-        -   Fixed issue #84, now able to build Qt and CLI version in one pass.
-            Also fixed out-of-source builds and removed function call tracing.
-            Streamlined the bootstrap script; it was always "configuring".
-        -   Changed the Apply button from Edit / Preferences to a Restart
-            button.  Further tightening of change detection.
-        -   Moved midibyte/midiboolean functions from strfunctions to midibytes
-            and mutegroup. Much header-file cleanup. Do a --full-clean!
-        -   Added Ctrl-Home and Ctrl-End support to the song editor.
-        -   Added an initial HTML tutorial and commands to access it.  Add
-            shellexecute module to replace the ill-performing QDesktopServices.
-        -   Important configure.ac/Makefile.am upgrades.
-    -   Version 0.98.7:
-        -   Fixed issue #80 where some MIDI controls were getting recorded.
-        -   Fixed issue #81, adding <stdexcept> to code catching
-            std::invalid_argument.
-        -   Fixed issue #83 where parsing 'rc' port lines failed with a
-            port name having a trailing space. Also fixed short-port-name
-            detection.
-        -   Added a "Pattern Fix" dialog to allow a whole pattern to be shifted,
-            quantized, and changed in length all at once. Useful for fixing a
-            badly played pattern or scaling the duration.
-        -   Fixed the issue of leftover child windows of qseqeditframe64.
-        -   Removed odd beat-widths from time signature dropdowns.  Can
-            still enter odd values manually, but unsupported by MIDI format.
-        -   Refactored drop-down lists to use the settings module.
-        -   Tightend string_to_xxx() functions and replaced the std::stoxxx()
-            functions to avoid throwing exceptions.
-        -   Trying to get rolls, time, data, and event panes to line up no
-            matter what the Qt theme is. Difficult.
-        -   Tightening the setting/clearing of performer modification re
-            sequence changes to reduce unnecessary prompts to save, flag
-            modification via the asterisk change marker, and enable/disable the
-            File / Save option in the correct way.
-        -   Tightened the saving of WRK and MIDI files.
-        -   Major refactoring to replace seq::pointers with seq::refs in many
-            places.
-        -   Updated the bootstrap script to make 'release' the default, and
-            fixed the portmidi automake build process for Linux.
-    -   Version 0.98.6:
-        -   Revisited issue #41 to make sure "Quit" is "Hide" under NSM. Also
-            fixed issue with the "newtune.midi" default name.
-        -   Fixed a minor bug involving setting input aliases.
-        -   Fixed bug with setting last-used-directory to "".
-        -   Fixed handling of Live/Song mode in performer and in 'rc' saving.
-        -   Fixed stupid seqedit bug for selecting beats/bar.
-        -   Disabling/enabling JACK input and output on the fly in Preferences
-            works, as long as they had been enabled at startup.
-        -   Added Preferences options to toggle the double-click edit feature
-            and select the Live/Song/Auto mode.  Added Apply/Reset buttons.
-        -   Removed long-unused "rtmidi callback" code and other disabled code.
-        -   Got user-manual screenshots up-to-date.
-        -   Upgraded and fixed file-name splitting and rebuilding.
-        -   Modify flag now set when painting notes in seqroll.
-        -   Improved appearance of Loop/Record/Quantize buttons in main grid.
-        -   Improved modification detection of sequences and main window.
-        -   Refactored global SeqSpecs for better robustness, fewer surprises.
-        -   Added a file-changed check before restarting the application.
-        -   More code/macro cleanup.
-    -   Version 0.98.5:
-        -   Added locking for the event-drawing loops to prevent segfaults.
-            Active only when recording; prevents iterator invalidation.
-        -   Added an underrun indicator to the main window.
-        -   The client name ("seq66") is no longer shown, nor saved in the 'rc'
-            file. Easier to use multiple Seq66's with the --client-name option.
-        -   Updating Dia diagram, finding and fixing issues and dead code.
-        -   Added global internal check for both portmaps being active.
-        -   Fixed bad slot connection for import_midi_into_session().
-        -   Bad command-line options now cause an exit. This includes JACK
-            options when Seq66 is built without JACK support.
-        -   Improve the coherence of JACK-less builds. Some related NSM tweaks.
-        -   Adding JACK access functions for the future. Improved internal
-            port initialization code. Removed some non-useful rtmidi code.
-        -   Adding the ability to disable/enable input and output on the fly in
-            the MIDI Clock and Input tabs.  Still in progress, though.
-    -   Version 0.98.4:
-        -   Fixed bug in recording-type selector in seqedit. Added a one-shot
-            reset option.
-        -   Fixed some metadata problems as per issue #75.
-        -   Fixed an issue with the H:M:S display being changed by changing the
-            beat-width, a bug going back to Seq24's JACK transport support.
-        -   MIDI API refactoring for the future; detecting JACK port
-            registration.
-    -   Version 0.98.3.1:
-        -   Revisited issue #45. Doh!
-        -   Cleaned up the Makefiles, fixed minor issues.
-    -   Version 0.98.3:
-        -   Fixed issue #76.  Fixed broken MIDI Start handling. Added setting
-            the tempo via a tempo event.  Still thinking about MMC.
-        -   Fixed old bug in showing note events; they were filtered by the
-            pattern-configured channel!
-        -   Tweaks to style-sheet handling.
-        -   Fixed misuses of msgprintf(). Other minor bug fixes.
-        -   In a new NSM session, do not load the most-recent MIDI file, even
-            if specified in the imported configuration.  Also, no longer do an
-            automatic import of the home configuration to the NSM configuration.
-            Instead, use the "File / Import / Import Project" menu entry.
-            See the user manual for how this works.
-        -   Added a "File / Import / Import Playlist" command.
-            See the user manual for how this works.
-        -   Made virtual port names in ALSA more consistent. Also create the
-            ports (in JACK, too) even if disabled.  Still experimental.
-        -   Added Preferences item for the BPM Precision setting.
-        -   Added contrib/code/ametro.c to provide ALSA test for MIDI clocking.
-        -   Added GNU -finstrument-functions support, but too problematic.
-    -   Version 0.98.2:
-        -   Fixed issue #74, where -1 for "no buss-override" was being converted
-            to 0.
-        -   Added detection of missing system ports when mapping ports.
-        -   Song duration label is now a button to select time versus measures.
-        -   Removed useless flags for loading keystroke and MIDI controls.
-        -   Avoid applying mute-group 0 if song has triggers and song-mode is
-            'auto'.
-        -   Fixes to log-file handling.
-        -   Added "Blank" for disabling keystrokes in the 'ctrl' file.
-    -   Version 0.98.1:
-        -   Work on creating an NSIS installer for a 64-bit Windows build.
-        -   Fixed a stupid segfault bug with the --help option.  Doh!
-        -   Changed some extended automation keys (for grid modes).
-        -   Minor fixes: (1) Set to set 0 when opening a MIDI file; (2) Expand a
-            pattern when merging a longer one into it; (3) fixed pattern access
-            in sets > 0; (4) fixed an error in string tokenization.
-        -   Fixes for port-mapping and naming; if present, the user sets the
-            status of the port-map, which is copied to the matching port.
-        -   Fixes in song-editor set-names display.
-        -   Removed unused module qskeymaps.
-    -   Version 0.98.0:
-        -   Fixed issue #41 "Hide Seq66 on closing window" via a "visibility"
-            automation command and by fixing the response to "hide/show"
-            messages from NSM. Note that the NSM API permits the "Quit" command
-            to exit the application. Also see the comments at issue #64 "NSM: UI
-            show up after restarting the app".
-        -   Fixed issue #73 "Compile error because of jack_get_version_string"
-            by detecting the presence of this function in configure.ac.
-        -   Truly fixed high CPU usage in Windows version of the condition
-            variable "wait".  Replaced pthread implementation with C++'s
-            condition_variable.
-        -   Added "MIDI macros" to the 'ctrl' file.  Can send SysEx or other
-            messages from a drop-down list; automatic startup and exit messages.
-            More to come.
-        -   Added a feature to extract JACK port aliases and show them
-            to the user so that the system port can be associated with a named
-            device (e.g. "Launchpad-Mini").
-        -   Added api_sysex() overrides, at last.
-        -   Added Preference items for MIDI control I/O.
-        -   Improved the display of the MIDI file-name in title and live grid.
-        -   Improving grid-mode functionality, adding more automation controls,
-            in progress.
-    -   Version 0.97.3:
-        -   Added pattern-recording indicator to live-grid slots.
-        -   Replace useless "Record" automation command with a "Loop Mode"
-            command to move between normal loop mode in the Live grid to various
-            record-toggling modes:  Overdub (merge), Overwrite, Expand, and
-            One-shot.
-        -   Also refactored the quantize control to move through states of
-        -   normal, quantize, and tighten.
-        -   Refactored MIDI control for possible future usage of the D1 event
-            value.
-        -   Fixes to external live grid handling.
-        -   Fixed the display of loop status changed via MIDI control.
-        -   Fixed and updated the Windows build.  Mitigated high CPU usage
-            when not (!) playing; fixed a bug in microsleep() for Windows.
-    -   Version 0.97.2.1:
-        -   Fixed odd breakage of loop-control hot-keys. Doh!
-    -   Version 0.97.2:
-        -   Issue #57: Increased width of option fields for wider fonts.
-        -   Issue #58: Indicate if NSM is running in Preferences / Sessions and
-            disable other session selections at that point.
-        -   Issue #59: Spelling error(s) fixed.
-        -   Issue #60: Added 'rc' option to disable JACK port auto connect in
-            normal mode.  Also present in Preferences / JACK.
-        -   Issue #61: Rearranged console output to show the app name, in color.
-            Also turns off color if redirected to a file.
-        -   Issue #63: Initial work on rotating numbering of patterns, sets, and
-            mutes, so that numbers vary faster by column than by row.
-        -   Issue #64: Fix a bug in optional GUI, testing with Agordejo (NSM).
-        -   Added textfix.qss to make disabled text easier to read in themes.
-        -   Improved the saving/restoring of Edit / Preferences.
-        -   Added option "Bold Grid Slots" to make the progress bar and progress
-            border thick, and the slot font bold.
-        -   Added the ability to reload the configuration via a button press
-            that restarts the application.
-        -   More streamlining of configuration writing.
-        -   No longer show the grid slot progress bar moving in muted tracks.
-        -   Mute-group names now stored in the 'mutes' file.  Also able to edit
-            them in the Mutes tab.  Also fixed botched mutes-in-MIDI-file
-            handling.
-        -   Removed dead-code from the event-editor frame.
-        -   Changing behavior of external live frames for more flexibility.
-    -   Version 0.97.1:
-        -   Fixed a bad bug in displaying Notes in the data & event panels in
-            the pattern editor, caused by premature ... optimization.
-            per issue #61.
-        -   Added working tempo-track code to Edit / Preferences / MIDI Clock.
-        -   Added exponential ramping of Event Panel events to the pattern LFO
-            dialog.
-        -   Added the ability to move selected Event Panel events using the
-            Left/Right arrow keys.
-        -   Improved the handling of sets and external live grids.
-        -   Updated documentation extensively. Optimized some images.
-        -   Stopped bootstrap --full-clean from removing Makefile.in files.
-    -   Version 0.97.0:
-        -   Added limited vertical zoom to the song editor (performance roll).
-            Still has vertical scroll issues.
-        -   Added more Preferences settings, enabled some that were not yet
-            implemented.  Upgraded the handling of the configuration files.
-            By default, the 'rc' file is always saved, in case ports change.
-        -   Added option "wrap-around" (for notes) to the 'usr' file.
-        -   Added option "lock-main-window" to the 'usr' file to prevent
-            resizing the window.
-        -   Added code to show unlinked note events on the seqroll, the "u"
-            key to remove them, and the "=" key to relink them.
-        -   Added more build information to --version and Help / Build Info.
-        -   Fixed drawing slot-button borders, drawn with no pattern color now.
-        -   Got auto-scaling of the slot button font working.
-        -   Implemented the Help / About links as per issue #21.
-        -   Added OpenSUSE INSTALL notes from the sivecj/Seq66 fork.
-        -   Improved the display and editing of tempo events, especially in the
-            pattern editor. Also tightened handling of status values.
-        -   Can now copy/paste a pattern from one MIDI file to another.
-        -   Fixed minor bug in Import dialog handling.
-        -   Refactoring for SMF 0 reading and export.
-        -   Minor fix to flag changed tune (an asterisk).
-    -   Version 0.96.3:
-        -   Added ability to modify Note On and Note Off at the same time in the
-            event editor. Fixed and updated event::get_rank().
-        -   Fixed output port-map issue with lookup of "FLUID Synth". Removed
-            the random ID number; search the port name via containment, not
-            equality.
-        -   Usage of the JACK Session API restored, though "deprecated".
-            Removed all traces of LASH support. Added a configuration tab
-            for allowing session management via JACK or NSM.
-        -   Added an automation control for "save session".
-    -   Version 0.96.2:
-        -   Fixed issue #55, where the MIDI control channel was being stripped
-            when using JACK.  Many other channel-handling improvements.
-        -   Fixed a related issue: null (status = 0) control events were sent.
-        -   Fixed a bug in "portmidi" MIDI input handling where only the last
-            device events would be processed.
-        -   Improved pause/continue support with JACK transport.
-        -   Fixed 'rc' allow-click-edit feature.
-        -   Made the buss-override settings act more consistently.
-        -   Fixed the drawing of preview keys in virtual keyboard.
-        -   Fixed setting the modify flag when opening existing pattern.
-        -   Added settings interface for the "set mode" of playback.
-        -   Added selection of notes and event by channel.
-    -   Version 0.96.1:
-        -   Restored drag and drop of patterns in the Live frame.
-        -   Added the ability to copy all patterns in one set to another set.
-        -   Fixed song-start-mode handling when "auto" is specified.
-        -   Added "Control" and "Program" (GM) drop-downs in the event editor.
-        -   Now display full path names in the recent file list to distinguish
-            files better.  An 'rc' config item.
-        -   Added a few configuration options to Edit / Preferences.
-        -   Added 'usr' options to change the vertical offset of notes in the
-            progress-box of each pattern button, and to provide default labeling
-            of the piano keys.
-        -   Tweaked the drawing of notes and drum notes.
-        -   More work on set-handling.
-        -   Fixed panic-button disabling Launchpad display output. However,
-            if pressed before exit, the lights remain on and there is a slit
-            delay in exiting the session (in ALSA; works fine in JACK).
-    -   Version 0.96.0:
-        -   Adding code to control the visibility of the main window; added
-            a "Visibility" MIDI control option, and support for the
-            "optional-gui" flag of the Non Session Manager.
-        -   Fixed harmonic transposition settings.
-        -   Fixed bug that drew fingerprint at top of button; and another bug
-            that disabled showing the pattern if fingerprinting was disabled.
-        -   Can now read MIDI files that are readable, but not writable, and
-            disable File / Save as needed.
-        -   Added hjkl arrow keys to seqroll and perfroll. Why? We have a
-            Microsoft Arc keyboard with all the arrows on one small button.
-        -   Fixed the Mixolydian mode scale. Oops.
-        -   The pattern editor time, roll, data, and event frames line up.
-        -   Fixed error reading mute-groups; small fixes to configuration files.
-        -   Work on fitting pattern-editor in tab.
-        -   Work on mitigating weird hang in QApplication destructor.
-    -   Version 0.95.1:
-        -   Added 'auto' option to song-start-mode setting.
-        -   Added missing harmonic-transposition option to the pattern editor.
-        -   Fixed issues with some of the file-dialogs.
-        -   Fixed issues with editing keystrokes being passed from the tabbed
-            editors to the main window (and the live frame).
-        -   Improved arrow-key handling in seqroll.
-        -   Removed PortMidi Java configuration parsing code.
-        -   Important fixes to NSM sessions.
-        -   Added 'one-shot' option the the 'usr' file record-style setting.
-        -   Improved support for making the user-interface smaller; 4x4 sets.
-        -   Added the "enigmatic" scale.
-        -   Fixes to handling of musical key, scale, and background pattern.
-        -   Finalized the scale-finder code (Ctrl-K in the pattern editor
-            piano roll.)
-        -   Updated libtool support, now seq66cli is under 200K in size.
-        -   Removed QtWidget directory from qclocklayout #includes for issue
-            #54.  Also added error-message and about to the Qt m4 file.
-    -   Version 0.95.0:
-        -   Updated almost all settings to use "name = variable" convention
-            to improve readability.  This will change the format of config-files
-            slightly upon exit.
-        -   Fixes made to the sample Launchpad Mini 'ctrl' files.  Also added a
-            "Quit" command, especially useful in a headless run.
-        -   Added 8 "Alt" MIDI Control Out values to support special cases
-            not covered by the concrete set of control-out values.
-        -   Major cleanup and neatening of header files.
-        -   Minor bugs and regressions fixed along the way.
-        -   Loop-edit key will create a new sequence if slot is empty.
-        -   Patterns empty of playable events no longer show unnecessary
-            progress bars.
-        -   The estimated duration of a tune is shown in the Song tab, based
-            on pattern lengths and song triggers.
-    -   Version 0.94.0:
-        -   Major improvements to the stability of MIDI control of playlists.
-        -   Added Phrygian scale thanks to user WinkoErades.
-        -   Update the 'rc' file for a simpler specification of JACK MIDI and
-            JACK transport.
-        -   Removed the old-style live frame; use themes and style-sheets to
-            create the old look if you like it.
-        -   Removed a lot of debugging material of no use now.
-        -   Fixed (mostly) a weird bug causing the application to hang
-            on exit when set as JACK Master.  Pretty damn weird.
-        -   Improving support for non-default PPQNs.
-        -   Patterns can now be copied and merged into a new pattern to combine
-            (for example) separate percussion tracks.
-        -   Fixed error in playlist::verify() adding an empty list.
-        -   Improving the handling of headless seq66cli; added a "quit"
-            automation function for MIDI-only use.
-        -   Fixed some issues with reading Cakewalk WRK files.
-    -   Version 0.93.2:
-        -   Changed the mute-group format inside the MIDI file to use a much
-            less disk space (about 3K less).  Can be set in the 'rc' file to
-            write the old format.
-        -   Minor tweaks to the transposed-trigger functionality.  Can be set in
-            the 'rc' file to write the old format.
-        -   Removed the code for the essentially unused Seqtool application.
-        -   Removed the now unnecessary old-style qseqeditframe.
-        -   Add 'usr' tweaks options to change the size of the live-grid
-            progress boxes, or eliminate them completely.
-        -   Refactored keymaps for better progress on issue #47, using native
-            key-codes. Added a spreadsheet listing the supported names of the
-            keys.  Laid the groundwork for a 'keys' mapping file.
-        -   Removed excess spurious events when Seq66 shuts down under JACK.
-        -   Implemented the control-toggling of "follow JACK transport".
-        -   Fixed a bug in the pattern editor that created unnecessary empty
-            screen-sets.
-        -   Further fixes and flexibility for handling mute-groups.
-        -   Fixed the installation of libseq66 and libsession library header
-            files in "make install" to preserve their base subdirectories.
-            (The other libraries currently do not use base subdirectories.)
-    -   Version 0.93.1:
-        -   Work in progress on issue #47; added a keyboard-layout option to the
-            'ctrl' file to disable auto-shift and tweak the internal key-map for
-            some keyboards.  Added an "AZERTY" 'ctrl' file to the installation.
-        -   Improved group-learn key control.
-        -   Fixed issue #49, mute-group issues, plus a bug in saving mutes to
-            the MIDI file.  Added a couple more flags to the 'mutes' file.
-        -   Fixed issue #50, made the slot text color the same as the label
-            color, and provided a "secret" default color that will cause the
-            text to match the theme.  This can be overridden by a palette file.
-        -   Fixed issue #51 (show-stopper!), where playback with JACK transport
-            enable was extremely erratic on some platforms.
-        -   Add clearing of the performer "play-set" for "File / New" to
-            prevent the previous song from being playable. :-D
-        -   Activate usage of (larger) seqedit frame in the "Edit" tab via
-            a 'usr' option.  Adapted the size to better fit, but the user still
-            needs to increase vertical dimension slightly to see the bottom
-            buttons.  Will eventually eliminate the old version of the tabbed
-            Edit frame.
-        -   Fixed a bug in drawing notes as a new one is recorded; needed to
-            "verify-and-link".
-        -   Added a loop-count for live playback of a pattern.  0 means normal
-            infinite looping; 1 means "one-shot"; and higher numbers will work.
-            Stored with the pattern in the MIDI file.
-    -   Version 0.93.0:
-        -   Added a transpose value to song editor triggers to support shifting
-            patterns automatically during Song play.  Added an 'rc' option to
-            save MIDI files using the original triggers.
-        -   Improved the song editor vertical scrollbar, it adjusts to the
-            number of actual sets.
-        -   Added the L/R marker feature to the external pattern editor, and
-            Song mode is no longer required to use it.  This makes it easier
-            to explore a long pattern for extracting to a short pattern loop.
-        -   Added more perfroll snap options, including one to force Seq24
-            behavior.
-        -   Make the perf-names now also show the pattern color. They highlight
-            as the mouse moves over the pattern rows, useful for long songs.
-        -   Fixed playback of ultra-long patterns due to not sleeping in the
-            output loop (forgot to convert milliseconds to microseconds).
-        -   Fixed vertical zoom in the pattern editor.
-        -   Fixed a bad bug in writing Meta and SeqSpec data-lengths greater
-            than 127.
-        -   Enhanced the event editor to work with channel-less tracks.
-        -   Added channel and bus menus to the grid-button popup menu.
-    -   Version 0.92.2:
-        -   Added a Qt "style-sheet" configuration it to the 'usr' file. It
-            can be used to alter the appearance of the application beyond what
-            a palette can do.  A sample 'qss' file is provided.
-        -   Fixed PPQN modification, added user-interface and 'usr'
-            configuration to change the default PPQN from 192.
-        -   Fixed many issues with changing the time signature.
-        -   Fixed creation of new configuration files.
-        -   Fixed port-mapping for MIDI output, control, and status display.
-        -   Removed the external set-master; use the set-master tab.
-        -   Tightened meta-events and set-handling.
-        -   More fixes to Song recording; added a Snap button for it.
-        -   Fixed the rendering of the beat indicator and pattern fonts.
-        -   Updated the man pages and the documentation.
-    -   Version 0.92.1:
-        -   Fixed issue #42 by adding scrollbars to I/O lists in Preferences
-            when there are many ports on the system; also increased port
-            limits to 48 ports.
-        -   Fixed issues with iterating through MIDI events in the
-            user-interfaces.
-        -   Big fixes to Song recording. More to do?
-        -   Added an experimental one-shot auto-step step-edit feature for
-            recording (for example) drumbeats from MIDI devices.
-        -   Fixed bug in parsing Fluidsynth port names.
-        -   Improved handling of MIDI I/O control of Seq66.  Added more
-            automation-display events, more testing.
-        -   Updated documentation, including a ODF spreadsheet for the MIDI
-            control configuration of the Launchpad Mini.
-    -   Version 0.92.0:
-        -   Fixed issue #34: "seq66 does not follow jack_transport tempo changes"
-        -   Fixed issues with applying 'usr' buss and instrument names to the
-            pattern-editor menus.
-        -   Fixing serious issues with the event editor. Now deletes both
-            linked notes.
-        -   Added mute-group-out to show mutegroups on Launchpad Mini buttons.
-        -   Tightened up mute-group handling, configuration file handling,
-            play-list handling, and MIDI display device handling.
-        -   Stream-line the format of the 'ctrl' file by removing columns for
-            the values of "enabled" and "channel".  Will detect older formats
-            and fix them.
-        -   A PDF user manual is now provided in the doc directory, installed
-            to /usr/local/share/doc/seq66-0.92 with "make install".
-    -   Version 0.91.6:
-        -   Massively updated the Mutes tab.
-        -   More documentation.
-        -   More fixes to the song editor.
-        -   Added more files to the creation setup at the first run of Seq66.
-    -   Version 0.91.5:
-        -   Added vertical zoom to the pattern editor (V keys and buttons).
-        -   Added more control over the coloring of notes.
-        -   Still improving the port-mapper feature.
-        -   Added quotes to file-paths in the 'rc' configuration file.
-        -   Many fixes to seqedit, perfedit.  Way too many to mention them
-            all.  Changed the 4/4 and length selections to be editable.
-        -   Getting serious about rewriting the user manual in this project.
-    -   Version 0.91.4:
-        -   Improved port naming and provide an option for short or long port
-            names.
-        -   Improved safety in NSM sessions.
-        -   Major refactoring the color handling.  Colors have changed!!!
-    -   Version 0.91.3:
-        -   Added check to not apply last mute-group if in Song mode.
-        -   Provisional support for playing multiple sets at once and for
-            auto-arming the selected set when loaded.
-        -   Added a configurable number for virtual MIDI input/output ports.
-        -   Provides an option to for multiple-set playback and auto-arming
-            of a newly-selected set.
-        -   Fixed bug in string-to-int conversion uncovered by automatic
-            mute-group restore.
-        -   Refactoring port naming and I/O lists.
-        -   Minor play-list fixes.
-    -   Version 0.91.2:
-        -   Fix developer bug causing playlists to not load properly.
-        -   Fix crash when 'rc' file specifies empty mutes and ctrl files.
-    -   Version 0.91.1:
-        -   More fixes for mute-group (mutes) handling.
-        -   Ability to save the last-active mute-group for restoring on startup.
-        -   Added a button to toggle insert mode in pattern and song editors.
-        -   Robustness enhancement to NSM support.
-    -   Version 0.91.0:
-        -   Non Session Manager support essentially complete.  The
-            refactoring to do this was massive.
-        -   All too many bug fixes and minor improvements.
-        -   Added --copy-dt-needed-entries to qseq66 Makefile.am to fix
-            linkage errors that cropped up in debug builds.
-        -   Got the CLI version building, needs a lot of testing.
-        -   Playlist editing from the user-interface much improved.
-    -   Version 0.90.6:
-        -   Fixed issue #19 where recording notes caused a segfault.
-    -   Version 0.90.5:
-        -   More refactoring to improve Windows builds and fix deadlocks and
-            playback on a default Windows 10 install.
-        -   Added code to implement Song/Live and JACK Transport key toggles.
-        -   MIDI control improved for control and for status display by
-            devices like the Launchpad Mini, using new "ctrl" files.
-        -   Fixes:
-            -   Fixed a bug using millitime() instead of microtime().
-            -   Issue #13, data and event/trigger panes not reflecting event
-                changes.  Change handling improved in general with more
-                performer callbacks.
-            -   The data pane was some pixels off in the tabbed edit-frame.
-            -   Fix a lot of issue with using sets and an 8x8 Seq66 grid.
-        -   Improved error-handling and reporting.
-    -   Version 0.90.4:
-        -   Some refactoring to improve Windows builds.
-    -   Version 0.90.3:
-        -   Added signal handling (e.g. for nsm-proxy) from user falkTX.
-            Used in the CLI and Qt versions to trigger file save and
-            application exit.
-        -   Added code to define the engine used and the exact "uname a-" of the
-            operating system on which the build was done, for the --version
-            option.
-        -   Fixed issue #5 to save/restore note-on resumes and get them
-            working in Live mode and Song mode.
-        -   Fixed issues with perfoll and grid-button rendering, synch between
-            button and seqedit mute status, growing notes in the seqroll, and
-            more.
-        -   Added writing of blank [midi-control-out] section.
-        -   Fixed flickering when muting/unmuting patterns via keystrokes.
-    -   Version 0.90.2:
-        -   Lots of code cleanup.
-        -   Added truncation of BPM to precision in "usr" file.
-        -   Fixed at bug in handling running status; backported to Seq64.
-    -   Version 0.90.1:
-        -   A raft of bug fixes and user-interface improvements.
-        -   Many tweaks to try to make the performer and the user-interface even
-            faster.
-    -   Version 0.90.0:
-        -   The application and documentation are now (barely) suitable for
-            public consumption, after residing on a server (a Toshiba laptop) at
-            home for months.
+## [Unreleased]
+
+    To do
+
+### Added
+### Fixed
+### Changed
+### Removed
+
+## [0.99.11] - 2023-12-04
+
+### Added
+
+- Added 8 more ui-palette entries, total of 32. Probably enough.
+- Added display of a pattern input bus (if present) in the grid
+  slot. It is shown just before the pattern length at top right.
+- Added mute-group label ("MG") to main window.
+- Added a pre-made MIDI file to use with record-by-channel.
+- Added a record-by-buss feature.
+- Added a way to toggle recording of more than pattern at once.
+- Can now paste a pattern into a new or another loaded MIDI file.
+- Added optional paramater to the --priority option.
+- Added showing program changes in slot button.
+- Added showing text events in the data pane and all text events
+  in the main Session tab. Fixed its Save Info button.
+- Implemented the "menu-mode" automation. It duplicates the function
+  of the hide/show button, to toggle between hiding some of the main
+  window controls and the main menu, and showing them.
+
+### Fixed
+  
+- Issue #123 "Would it be possible to have NEWS structured like a changelog"
+- Fixed errors setting style-sheet, palette, and mutes in
+  Preferences / Session.  Enhanced this tab to indicate when
+  exit (as opposed to internal restart) is needed.
+- Fixing various playlist errors:
+  - PPQN setting issue causing slow/fast playback. Cannot
+    display 120 PPQN well, fix too intrusive. Converted
+    contrib/midi/Carpet_of_the_Sun_karaoke_meta_text.mid
+    from 120 to 192 PPQN.
+  - Segfaults due to not stopping playback before loading
+    the next song or basing calculations on missing values.
+- Fixing the massive botch of the Set Master tab.
+- More fixes in Mutes tab, including raising the modify flag.
+- Fixed app exiting unceremoniously if "quiet" is set.
+- Fixed minor issue in Song zoom with 1920 PPQN.
+- Fixed odd bug breaking MIDI-control-out (display).
+- Prevent long redundant start-up error messages.
+- Fixed solo feature. Should unsolo before starting another
+  solo.
+- Fixed queue and keep-queue.
+- Fixed not saving record-by-channel. Fixed record-by-channel.
+- Prevent long redundant start-up error messages.
+- Fixed solo feature. Should unsolo before starting another
+  solo.
+- Fixed queue and keep-queue.
+- Fixed not saving record-by-channel. Fixed record-by-channel.
+- Fixed not modifying the song when pattern measures is changed.
+- Fixed breakage of stopping song play at the end of song.
+- Fixed bug in event-editor initialization.
+- Fixed not applying note-length setting to step-edit.
+
+### Changed
+
+- Moved style-sheet options from 'usr' to the 'rc' file. Upgrade
+  is automatic.
+- Improved copy/paste for screen-sets in the same way.
+- When loading a MIDI file, the file dialog defaults to the
+  last-used directory. Fixes made to this feature.
+- Focus is now set immediately to the seqroll and perfroll.
+- Replaced some verbose() checks with investigate() checks to cut
+  down on console output. In the CLI, --verbose now shows
+  playlist actions on the console and prevents daemonization and
+  logging to a file.
+- Replaced the --inspect option with --session-tag to allow easy
+  changing to another setup specified in sessions.rc. Also added
+  the SEQ66_SESSION_TAG environment variable.
+
+### Removed
+
+- No removals.
+
+## [0.99.10] - 2023-10-25
+
+### Added
+
+- Added drag-and-drop of one MIDI file onto the Live grid.
+- Added the export of most project configuration files to another
+  directory.
+- Multiple tempo events can be drawn in a line in the data pane.
+  They can be dragged up and down in the data pane.
+- If configured for double-click, can now open or create a pattern
+  by double-clicking in the song editor(s).
+- Added a new "grid mode" to allow toggling mutes by clicking
+  in the Live Grid.  The default group-selection keystroke is "_".
+- Added feature to scroll automatically in time and note value
+  to show the first notes in a pattern.
+- Added more UI palette items for more non-Qt color control.
+  Modified the inverse color palette slightly. Added checkmark
+  for the active pattern color in its popup menu.
+
+### Fixed
+
+- Issue #117 Option to close pattern windows with esc key. Must
+  be enabled via a 'usr' option first.
+- Issue #118 Make virtual ports ports enabled by default.
+- Issue #119 "Quantized Record Active does not work" fixed.
+  Note-mapping also fixed with this issue.
+- Fixed an egregious error in drawing notes in drum mode.
+- Fixed error in moving notes at PPQN != 192.
+- Restored missing table header in Mutes tab.
+
+### Changed
+
+- Improved modification detection in the data pane.
+- Many improvements and fixes to the Mutes tab.
+- Made 'rc' file-name handling more robust.
+- Tweaked the main time display to work better with high PPQN.
+- The live-grid record-mode and alteration statuses are now applied
+  when the pattern editor is opened. The "Record toggle" popup
+  menu entry and MIDI control also support this functionality.
+- Tightened the file-name/activity handling in Session preferences.
+
+### Removed
+
+## [0.99.9] - 2023-09-24
+
+- Added an "Input Bus Routing" feature, where each pattern can be
+  set to receive events from a given input buss. Selectable from
+  the grid-slot popup menu.
+- Fixed nasty segfault opening new file while Editor tab open.
+- Fixed bug: port-mapping Remap and Restart did not work due to
+  timing.
+- Fixed bug in detecting Note-related messages.
+- Fixed error in "quiet" startup that would cause immediate exit.
+- Related to issue #115: Added ability to select a line in the data
+  pane and grab a handle to change its value.
+- Refactored and extended zoom support, added it to event and data
+  panes.
+- Adding more seqroll keystokes (and HTML help). Enabled Esc to
+  exit paint mode if not playing.
+- Added live-note mapping (needs testing!), refactoring set-record
+  code.
+- Implemented automation for BBT/HMS toggling, FF/Rewind, Undo/Redo,
+  Play-set Copy/Paste, and Record Toggle.
+- Added a build-time option to add a show/hide button in the
+  main window to allow making the window to take up much less space.
+- Added HTML help files to data/share/doc/info, other documentation
+  upgrades.
+
+## [0.99.8] - 2023-08-27
+
+- Issue #112: A new pattern now displays in the MIDI controller.
+- Issue #114: Adding display of shortcut keys to tool tips.
+- Added a Pattern tab to Edit / Preferences for new-pattern settings
+  and jitter/randomization.
+- Added automation for the main window Loop L/R button.
+- Fixed seqroll drawing errors introduced in adding time-sig support.
+- Fixed incomplete data-pane refresh in scrolling with arrow-keys.
+- Fixed not setting up SIGINT, which prevented a proper shutdown.
+- Fixed a couple corrupted data/midi/FM/*.mid files.
+- Changing playlist setting enables Session Restart button.
+- Removed coloring of record-style and -mode buttons. Added coloring
+  of event-editor "Store" button to denote saving is needed.
+- Refactoring quantization alterations for future upgrades. Added
+  an option to jitter the notes in the seqroll.
+- Enforced that configuration files are stored in the "home"
+  directory.
+- The usual raft of humiliating bug-fixes. A small sample: Updating
+  the event list when recording stops; fixing record button in pattern
+  editor; fixing note-selection refresh; and about a dozen more.
+
+## [0.99.7] - 2023-07-19
+
+- Issue #110 follow-ons:
+  Cannot save tempo (BPM) in Windows when
+  changed from main window. Caused by mixing a long and size_t,
+  which messed up in the Windows build.
+- Issue #111 follow-ons:
+  - Fixed initial time-signature drawing in data pane.
+  - Fixed errors in inserting a time-signature. Added a pulse
+    calculator that iterates through time-signatures.
+- Fixed an important port-translation bug in output port-mapping.
+- Recent Files is disabled if there are none.
+- Revamped the Playlist tab, as it was confusing and very buggy.
+- Added Windows key-mapping to fix processing "native virtual" keys,
+  such as the arrow keys. Also fixes issue #102.
+- Added auto-play and auto-advance to play-lists.
+- Fixed bug in rcsettings::make_config_filespec().
+
+## [0.99.6] - 2023-07-01
+
+- Issue #3 follow-ons:
+  - Added a qscrollslave to allow QScrollArea to allow the pattern
+    editor panes to remain in sync with the seqroll when using the
+    hjkl, arrow, and page keys.
+- Issue #110 follow-ons:
+  - Addition of Start menu entries for Windows.
+  - Fixed access to the tutorial and manual. Refactored access
+    to manual and tutorial for robustness.
+  - Added data/readme files and doc/tutorial files accidentally
+    left out of NSIS installer.
+  - Fixed the saving of modified tempo changes.
+  - Fixed event::is_desired(), which affected changing note
+    velocities in the pattern editor's data pane.  Improved
+    velocity-change undo.
+  - Fixed an error preventing changing the "background" pattern.
+  - Fixed issues with port-mapping and the Windows MIDI Mapper.
+  - Issue: Building 32-bit (Windows XP) version on 64-bit Windows.
+    On 64-bit Windows, this seems to require building a 32-bit
+    version of the Qt toolset. Ugh.
+- Issue #111: Adding support, as much as possible, for editing,
+  storing, and displaying time signature in the pattern and event
+  editors.
+  - The first time-signature in a pattern becomes the main
+    time signature of the pattern. (Also stored as a c_timesig
+    SeqSpec).
+  - The data pane shows a time-signature as a simple fraction.
+  - Changing the time signature if at time 0 is automatic.
+  - Time signatures at later times can be logged by setting the
+    current time with a click in the top half of the time line,
+    changing the beats and beat width, then clicking a time-sig log
+    button.
+  - Time-signatures with a beat width that are not a power of 2
+    do not add an event, but are saved as the c_timesig SeqSpec
+    value.
+  - Provisional feature: we properly draw the piano roll, time line,
+    event pane vertical lines as time-signature changes.
+    Currently compiled in via a macro (see INSTALL).
+  - Fixed event filtering in the event (qstriggereditor) pane.
+  - Fixed time-signature editing in the event editor, and the
+    B:B:T to pulses calculation.
+- Enhanced port-mapping to prompt the user about issues and
+  allow for an immediate remap-and-restart. A ton of fixes!
+- Added 'o' keystroke to seqroll to toggle recording ('r' already
+  used to randomize notes).
+- Added a "quiet" option to not show startup message prompts.
+- Enhanced the Edit / Preferences dialog.
+- At first start, a log-file is now automatically created. If it
+  gets larger than a megabyte, then it is deleted to start over.
+- Fixed bug writing pattern-dump files from event editor.
+- Improved modification detection and display in the pattern editor.
+- Added the pattern port number to the song summary output.
+- Updated alsa.m4 to avoid obsolete AC_TRY_COMPILE warning. Old
+  version stored in contrib/scripts.
+
+## [0.99.5] - 2023-05-20
+
+- Greatly enhanced the event editor tab and the events that can
+  be view and modified.
+- Made port-mapping the default. At first startup the map
+  exactly matches the existing ports; the user can edit this setup
+  in the 'rc' file or the Preferences dialog.
+- Eliminated "missing ctrl" message at first startup.
+- Fixed port ID setting in midibus, and adding output flag in
+  midi_alsa_info.
+- Issue #110 Windows: Fixed compiler errors and added scripting to
+  build NSIS-based install without leaving Windows, if desired.
+- Internal refactoring to regularize handling of the session/config
+  directory between Linux and Windows.
+- Fixed portmidi bugs in Linux and Windows, enhanced device naming.
+- Showing disabled/unavailable MIDI devices as grayed in various
+  dropdowns.
+- Rearranged the Seq66 man pages more sensibly.
+
+## [0.99.4] - 2023-04-30
+
+- Issue #3: The scroll wheel is enabled in the piano rolls (only).
+- Issue #48: For a new NSM session configuration, disable "JACK"
+  port auto-connect.
+- Issue #108.  Fixed trying to remove Event tab after deleting it.
+- Issue #109.  Fixed the application of channels to the various
+  export operations.
+- Fixed minor-but-annoying bug in reporting trying map a "null" buss.
+- Improved state-appearance of Stop, Pause, and Play buttons.
+- Fixed issue opening a non-standard-length pattern in its window.
+- Fixed note events not getting linked after recording.
+- Fixed drawing of wrap-around notes with linear gradient, and fixed
+  handling of note wrap-around when set to false.
+- Fixed refresh of Mute and Session tabs when loading a MIDI file.
+- Added seqmenu entry for toggling recording of a pattern.
+- Added the ability to use the first Text message as "song info".
+- Seq66 now prevents opening the event editor if recording is in
+  progress. Cannot update event editor live with new events.
+
+## [0.99.3] - 2023-04-19
+
+- Issue #107.  The basic fix is made. Still need to rehabilitate
+  the Expand-pattern functionality.
+- Issue #40.  Improved NSM handling:
+  - Seq66 detects nsmd as the parent process early in startup.
+  - Close ("X") button disabled and hidden.  Xcfe4 "close window"
+    action works, though, as does response to a SIGTERM from nsmd.
+  - Handling "config" subdirectory improved.
+  - The --nsm option is now for debugging only, simulating running
+    under NSM.
+- Automation fixes:
+  - Fixed processing grid keystrokes twice.
+  - Renamed record-mode and grid-model control labels.
+  - Fixed accident disabling of grid-mode controls.
+  - Making MIDI control-out handling more reasonable.
+  - Added some LaunchPad Mini macros.
+- Added reading/writing/displaying Meta text events such as Text
+  and Cue Point.
+- Fixed broken "recent-files" features (by forcing 'rc' save).
+- Improvements made to playlist handling. It wasn't displaying
+  the BPM of the next tune.  Still have issue with the BPM spinbox
+  not causing a file modification. Editing the BPM works.
+- Improvements and important fixes to mute-group and its MIDI
+  control still in progress.
+- Fixed the daemonization and log-file functionality.
+- Revisited the recmutex implementation.
+- Weird error where ALSA not found! We now avoid a crash, but
+  qseq66 currently exits with only console messages.
+
+## [0.99.2] - 2023-03-04
+
+- Issue #103.  Some improvements to pattern loop-count.
+- Pull request #106. User phuel added checkmarks for active buss and
+  channel in grid-slot menu.
+- Fixed background sequence not displaying when running with
+  linear-gradient brush.
+- Fixes to brushes and making the linear gradient (notes and triggers)
+  a default run-time option.  See the 'palette' file.
+- Other minor fixes and documentation updates, including the manual,
+  as per issue #104.
+
+## [0.99.1] - 2022-11-27
+
+- Issue #44. Revisited to fix related additional issues. Can now
+  toggle a pattern's song record in perfnames. Record button:
+  Ctrl disables snap, Shift enables record at playback start.
+  Still minor issues.
+- Issue #93. Revisited to fix related open pattern-editor issues.
+- Issue #100. Partly mitigated. Added a custom ringbuffer for MIDI
+  message objects to replace JACK's ringbuffer. Adapted work from
+  the ttymidi.c module.  Also added configuration to
+  calculate the sample offset.
+- Various fixes:
+  - Fixed partial breakage of pattern-merge function.
+  - Fixed odd breakage of ALSA playback in release mode.
+  - Fixed Stop button when another Master has started playback.
+  - Shift-click on Stop button rewinds JACK transport when running
+    as JACK Slave.
+  - Display of some JACK server settings in Edit / Preferences.
+  - Fixed handling of Ctrl vs non-Ctrl zoom keys in perfroll.
+  - The pernames panel now matches the layout of a grid button
+    better.  Other cosmetic changes.
+  - Event-dump now prompts for a text-file name.
+- Added linear-gradient compile-time option (seq_features.h) for
+  displaying notes and triggers. Enabled by default, edit to disable.
+  Does not seem to add noticeable overhead.
+
+## [0.99.0] - 2022-09-03
+
+- Issue #44. Record live sequence changes functionality beefed up
+  to handle recording without snapping.
+- Issue #54. Updated the ax_have_qt_min.m4 file to detect
+  qmake-qt5, etc.
+- Issue #78 revisited. Pattern-box sizes would become 0 and the
+  progress boxes disappear. Now the 'usr' show option is boolean
+  ("pattern-boxes-shown", default = true), and the sizes are kept
+  within reasonable limits.  Also added a "--locale" option so that
+  the user can, for example, set the Seq66 global locale to
+  "en_US.UTF-8".
+- Issue #82 allows buttons and fields to expand better.
+  Fixed for main window and the song & pattern editors only.
+- Issue #89 fixed. The MIDI control display not quite reflecting the
+  status of each pattern, especially during queuing.
+- Issue #90 improvements. Save was not always enabled. Surely some
+  issues remain.  Also, in some cases there is no way to "unmodify".
+- Issue #93 fixed. The window of a deleted pattern now closes.
+- Issue #94. Long song in song editor could not be scrolled to the
+  right.  Added more padding and a button to expand the grid when
+  when desired. For the pattern editor, the workaround is to increase
+  the "length" in the pattern editor.
+- Issue #97. Investigate/resolve differences from Seq24.
+  - Pattern editor fixes.
+  - Added paste box when pasting notes, an oversight from the Seq24
+    reboot.
+  - Added Ctrl-Left/Right to move the progress bar in the pattern
+    editor. (Left/Right scrolls the piano roll.)
+- Issue #98. Feature requests (metronome and background recording).
+  - Added an initial metronome facility and 'rc' configuration.
+  - Metronome count-in added.
+  - Background automatic recording added.
+- Various fixes:
+  - Muted pattern slots show a short progress bar, to aid in the
+    timing of queuing.
+  - Improved the handling of the MIDI 'ctrl' file and control
+    states upon a restart.
+  - Tightened up pattern arming/disarming processing.
+  - Implemented left/right arrow keys to move the selected trigger
+    in the song editor. Ctrl moves multiple triggers. Moving a
+    trigger past END moves END.
+  - Fixed error in painting tempo events in triggers (perfroll).
+  - Improved keystroke movement of "L"/"R" markers in song and
+    pattern editor time bars.
+  - The global time signature is now applied to new patterns.
+  - Added a try-catch to showing the locale.
+  - Ctrl-Z removes all mouse-painted notes at once (like Seq24).
+    Single-note removal is macroed out.
+  - Error in parsing "--option sets=RxC" fixed.
+  - Improved the handling of grid font sizes re window size.
+  - Fixed the response to incoming MIDI Continue.
+  - PPQN != 192 : handle snapping when adding notes; bugs in
+    perfroll and perftime.
+  - Implement clear-events and double-length grid modes.
+
+## [0.98.10] - 2022-07-18 
+
+- Revisited issue #83, improved GUI editing of control/display
+  automation.
+- Fixes for issue #87: segfault due to mute-group on larger set-sizes,
+  inability to modify some usr options in Edit / Preferences, and
+  related bugs found during these fixes. Made performer the owner of
+  mutegroups.
+- Fixes for issue #88: 4/16 pattern not shown/played properly until
+  opened in editor.
+- Fixed minor issue with port-naming, port-lists.
+- Many tweaks to documentation, vim files, midibytes....
+
+## [0.98.9.1] - 2022-06-01
+
+- Added files needed for ./configure.
+- Documentation and tutorial updates.
+
+## [0.98.9] - 2022-05-29
+
+- Fixed nasty issue #85 which was recreating the slot buttons, and
+  in a different thread, leading to a seqfault.
+- Fixed issue: Preference / MIDI Input port check did not change
+  Apply state.
+- Fixed mute/record/thru state display between live grid and a
+  pattern editor.
+- Updated/cleaned the tutorial.
+
+## [0.98.8] - 2022-05-23
+
+- Fixed issue #84, now able to build Qt and CLI version in one pass.
+  Also fixed out-of-source builds and removed function call tracing.
+  Streamlined the bootstrap script; it was always "configuring".
+- Changed the Apply button from Edit / Preferences to a Restart
+  button.  Further tightening of change detection.
+- Moved midibyte/midiboolean functions from strfunctions to midibytes
+  and mutegroup. Much header-file cleanup. Do a --full-clean!
+- Added Ctrl-Home and Ctrl-End support to the song editor.
+- Added an initial HTML tutorial and commands to access it.  Add
+  shellexecute module to replace the ill-performing QDesktopServices.
+- Important configure.ac/Makefile.am upgrades.
+
+## [0.98.7] - 2022-05-08
+
+- Fixed issue #80 where some MIDI controls were getting recorded.
+- Fixed issue #81, adding <stdexcept> to code catching
+  std::invalid_argument.
+- Fixed issue #83 where parsing 'rc' port lines failed with a
+  port name having a trailing space. Also fixed short-port-name
+  detection.
+- Added a "Pattern Fix" dialog to allow a whole pattern to be shifted,
+  quantized, and changed in length all at once. Useful for fixing a
+  badly played pattern or scaling the duration.
+- Fixed the issue of leftover child windows of qseqeditframe64.
+- Removed odd beat-widths from time signature dropdowns.  Can
+  still enter odd values manually, but unsupported by MIDI format.
+- Refactored drop-down lists to use the settings module.
+- Tightend string_to_xxx() functions and replaced the std::stoxxx()
+  functions to avoid throwing exceptions.
+- Trying to get rolls, time, data, and event panes to line up no
+  matter what the Qt theme is. Difficult.
+- Tightening the setting/clearing of performer modification re
+  sequence changes to reduce unnecessary prompts to save, flag
+  modification via the asterisk change marker, and enable/disable the
+  File / Save option in the correct way.
+- Tightened the saving of WRK and MIDI files.
+- Major refactoring to replace seq::pointers with seq::refs in many
+  places.
+- Updated the bootstrap script to make 'release' the default, and
+  fixed the portmidi automake build process for Linux.
+
+## [0.98.6] - 2022-04-09
+
+- Revisited issue #41 to make sure "Quit" is "Hide" under NSM. Also
+  fixed issue with the "newtune.midi" default name.
+- Fixed a minor bug involving setting input aliases.
+- Fixed bug with setting last-used-directory to "".
+- Fixed handling of Live/Song mode in performer and in 'rc' saving.
+- Fixed stupid seqedit bug for selecting beats/bar.
+- Disabling/enabling JACK input and output on the fly in Preferences
+  works, as long as they had been enabled at startup.
+- Added Preferences options to toggle the double-click edit feature
+  and select the Live/Song/Auto mode.  Added Apply/Reset buttons.
+- Removed long-unused "rtmidi callback" code and other disabled code.
+- Got user-manual screenshots up-to-date.
+- Upgraded and fixed file-name splitting and rebuilding.
+- Modify flag now set when painting notes in seqroll.
+- Improved appearance of Loop/Record/Quantize buttons in main grid.
+- Improved modification detection of sequences and main window.
+- Refactored global SeqSpecs for better robustness, fewer surprises.
+- Added a file-changed check before restarting the application.
+- More code/macro cleanup.
+
+## [0.98.5] - 2022-03-07
+
+- Added locking for the event-drawing loops to prevent segfaults.
+  Active only when recording; prevents iterator invalidation.
+- Added an underrun indicator to the main window.
+- The client name ("seq66") is no longer shown, nor saved in the 'rc'
+  file. Easier to use multiple Seq66's with the --client-name option.
+- Updating Dia diagram, finding and fixing issues and dead code.
+- Added global internal check for both portmaps being active.
+- Fixed bad slot connection for import_midi_into_session().
+- Bad command-line options now cause an exit. This includes JACK
+  options when Seq66 is built without JACK support.
+- Improve the coherence of JACK-less builds. Some related NSM tweaks.
+- Adding JACK access functions for the future. Improved internal
+  port initialization code. Removed some non-useful rtmidi code.
+- Adding the ability to disable/enable input and output on the fly in
+  the MIDI Clock and Input tabs.  Still in progress, though.
+
+## [0.98.4] - 2022-02-12
+
+- Fixed bug in recording-type selector in seqedit. Added a one-shot
+  reset option.
+- Fixed some metadata problems as per issue #75.
+- Fixed an issue with the H:M:S display being changed by changing the
+  beat-width, a bug going back to Seq24's JACK transport support.
+- MIDI API refactoring for the future; detecting JACK port
+  registration.
+
+## [0.98.3.1] - 2022-01-24 
+
+- Revisited issue #45. Doh!
+- Cleaned up the Makefiles, fixed minor issues.
+
+## [0.98.3] - 2022-01-23
+
+- Fixed issue #76.  Fixed broken MIDI Start handling. Added setting
+  the tempo via a tempo event.  Still thinking about MMC.
+- Fixed old bug in showing note events; they were filtered by the
+  pattern-configured channel!
+- Tweaks to style-sheet handling.
+- Fixed misuses of msgprintf(). Other minor bug fixes.
+- In a new NSM session, do not load the most-recent MIDI file, even
+  if specified in the imported configuration.  Also, no longer do an
+  automatic import of the home configuration to the NSM configuration.
+  Instead, use the "File / Import / Import Project" menu entry.
+  See the user manual for how this works.
+- Added a "File / Import / Import Playlist" command.
+  See the user manual for how this works.
+- Made virtual port names in ALSA more consistent. Also create the
+  ports (in JACK, too) even if disabled.  Still experimental.
+- Added Preferences item for the BPM Precision setting.
+- Added contrib/code/ametro.c to provide ALSA test for MIDI clocking.
+- Added GNU -finstrument-functions support, but too problematic.
+
+## [0.98.2] - 2022-01-01 
+
+- Fixed issue #74, where -1 for "no buss-override" was being converted
+  to 0.
+- Added detection of missing system ports when mapping ports.
+- Song duration label is now a button to select time versus measures.
+- Removed useless flags for loading keystroke and MIDI controls.
+- Avoid applying mute-group 0 if song has triggers and song-mode is
+  'auto'.
+- Fixes to log-file handling.
+- Added "Blank" for disabling keystrokes in the 'ctrl' file.
+
+## [0.98.1] - 2021-12-26
+
+- Work on creating an NSIS installer for a 64-bit Windows build.
+- Fixed a stupid segfault bug with the --help option.  Doh!
+- Changed some extended automation keys (for grid modes).
+- Minor fixes: (1) Set to set 0 when opening a MIDI file; (2) Expand a
+  pattern when merging a longer one into it; (3) fixed pattern access
+  in sets > 0; (4) fixed an error in string tokenization.
+- Fixes for port-mapping and naming; if present, the user sets the
+  status of the port-map, which is copied to the matching port.
+- Fixes in song-editor set-names display.
+- Removed unused module qskeymaps.
+
+## [0.98.0] - 2021-12-11
+
+- Fixed issue #41 "Hide Seq66 on closing window" via a "visibility"
+  automation command and by fixing the response to "hide/show"
+  messages from NSM. Note that the NSM API permits the "Quit" command
+  to exit the application. Also see the comments at issue #64 "NSM: UI
+  show up after restarting the app".
+- Fixed issue #73 "Compile error because of jack_get_version_string"
+  by detecting the presence of this function in configure.ac.
+- Truly fixed high CPU usage in Windows version of the condition
+  variable "wait".  Replaced pthread implementation with C++'s
+  condition_variable.
+- Added "MIDI macros" to the 'ctrl' file.  Can send SysEx or other
+  messages from a drop-down list; automatic startup and exit messages.
+  More to come.
+- Added a feature to extract JACK port aliases and show them
+  to the user so that the system port can be associated with a named
+  device (e.g. "Launchpad-Mini").
+- Added api_sysex() overrides, at last.
+- Added Preference items for MIDI control I/O.
+- Improved the display of the MIDI file-name in title and live grid.
+- Improving grid-mode functionality, adding more automation controls,
+  in progress.
+
+## [0.97.3] - 2021-11-26
+
+- Added pattern-recording indicator to live-grid slots.
+- Replace useless "Record" automation command with a "Loop Mode"
+  command to move between normal loop mode in the Live grid to various
+  record-toggling modes:  Overdub (merge), Overwrite, Expand, and
+  One-shot.
+- Also refactored the quantize control to move through states of
+- normal, quantize, and tighten.
+- Refactored MIDI control for possible future usage of the D1 event
+  value.
+- Fixes to external live grid handling.
+- Fixed the display of loop status changed via MIDI control.
+- Fixed and updated the Windows build.  Mitigated high CPU usage
+  when not (!) playing; fixed a bug in microsleep() for Windows.
+
+## [0.97.2.1] - 2021-11-12 
+
+- Fixed odd breakage of loop-control hot-keys. Doh!
+
+## [0.97.2] - 2021-11-11
+
+- Issue #57: Increased width of option fields for wider fonts.
+- Issue #58: Indicate if NSM is running in Preferences / Sessions and
+  disable other session selections at that point.
+- Issue #59: Spelling error(s) fixed.
+- Issue #60: Added 'rc' option to disable JACK port auto connect in
+  normal mode.  Also present in Preferences / JACK.
+- Issue #61: Rearranged console output to show the app name, in color.
+  Also turns off color if redirected to a file.
+- Issue #63: Initial work on rotating numbering of patterns, sets, and
+  mutes, so that numbers vary faster by column than by row.
+- Issue #64: Fix a bug in optional GUI, testing with Agordejo (NSM).
+- Added textfix.qss to make disabled text easier to read in themes.
+- Improved the saving/restoring of Edit / Preferences.
+- Added option "Bold Grid Slots" to make the progress bar and progress
+  border thick, and the slot font bold.
+- Added the ability to reload the configuration via a button press
+  that restarts the application.
+- More streamlining of configuration writing.
+- No longer show the grid slot progress bar moving in muted tracks.
+- Mute-group names now stored in the 'mutes' file.  Also able to edit
+  them in the Mutes tab.  Also fixed botched mutes-in-MIDI-file
+  handling.
+- Removed dead-code from the event-editor frame.
+- Changing behavior of external live frames for more flexibility.
+
+## [0.97.1] - 2021-10-20
+
+- Fixed a bad bug in displaying Notes in the data & event panels in
+  the pattern editor, caused by premature ... optimization.
+  per issue #61.
+- Added working tempo-track code to Edit / Preferences / MIDI Clock.
+- Added exponential ramping of Event Panel events to the pattern LFO
+  dialog.
+- Added the ability to move selected Event Panel events using the
+  Left/Right arrow keys.
+- Improved the handling of sets and external live grids.
+- Updated documentation extensively. Optimized some images.
+- Stopped bootstrap --full-clean from removing Makefile.in files.
+
+## [0.97.0] - 2021-10-12
+
+- Added limited vertical zoom to the song editor (performance roll).
+  Still has vertical scroll issues.
+- Added more Preferences settings, enabled some that were not yet
+  implemented.  Upgraded the handling of the configuration files.
+  By default, the 'rc' file is always saved, in case ports change.
+- Added option "wrap-around" (for notes) to the 'usr' file.
+- Added option "lock-main-window" to the 'usr' file to prevent
+  resizing the window.
+- Added code to show unlinked note events on the seqroll, the "u"
+  key to remove them, and the "=" key to relink them.
+- Added more build information to --version and Help / Build Info.
+- Fixed drawing slot-button borders, drawn with no pattern color now.
+- Got auto-scaling of the slot button font working.
+- Implemented the Help / About links as per issue #21.
+- Added OpenSUSE INSTALL notes from the sivecj/Seq66 fork.
+- Improved the display and editing of tempo events, especially in the
+  pattern editor. Also tightened handling of status values.
+- Can now copy/paste a pattern from one MIDI file to another.
+- Fixed minor bug in Import dialog handling.
+- Refactoring for SMF 0 reading and export.
+- Minor fix to flag changed tune (an asterisk).
+
+## [0.96.3] - 2021-09-10 
+
+- Added ability to modify Note On and Note Off at the same time in the
+  event editor. Fixed and updated event::get_rank().
+- Fixed output port-map issue with lookup of "FLUID Synth". Removed
+  the random ID number; search the port name via containment, not
+  equality.
+- Usage of the JACK Session API restored, though "deprecated".
+  Removed all traces of LASH support. Added a configuration tab
+  for allowing session management via JACK or NSM.
+- Added an automation control for "save session".
+
+## [0.96.2] - 2021-08-15
+
+- Fixed issue #55, where the MIDI control channel was being stripped
+  when using JACK.  Many other channel-handling improvements.
+- Fixed a related issue: null (status = 0) control events were sent.
+- Fixed a bug in "portmidi" MIDI input handling where only the last
+  device events would be processed.
+- Improved pause/continue support with JACK transport.
+- Fixed 'rc' allow-click-edit feature.
+- Made the buss-override settings act more consistently.
+- Fixed the drawing of preview keys in virtual keyboard.
+- Fixed setting the modify flag when opening existing pattern.
+- Added settings interface for the "set mode" of playback.
+- Added selection of notes and event by channel.
+
+## [0.96.1] - 2021-08-01
+
+- Restored drag and drop of patterns in the Live frame.
+- Added the ability to copy all patterns in one set to another set.
+- Fixed song-start-mode handling when "auto" is specified.
+- Added "Control" and "Program" (GM) drop-downs in the event editor.
+- Now display full path names in the recent file list to distinguish
+  files better.  An 'rc' config item.
+- Added a few configuration options to Edit / Preferences.
+- Added 'usr' options to change the vertical offset of notes in the
+  progress-box of each pattern button, and to provide default labeling
+  of the piano keys.
+- Tweaked the drawing of notes and drum notes.
+- More work on set-handling.
+- Fixed panic-button disabling Launchpad display output. However,
+  if pressed before exit, the lights remain on and there is a slit
+  delay in exiting the session (in ALSA; works fine in JACK).
+
+## [0.96.0] - 2021-07-17
+
+- Adding code to control the visibility of the main window; added
+  a "Visibility" MIDI control option, and support for the
+  "optional-gui" flag of the Non Session Manager.
+- Fixed harmonic transposition settings.
+- Fixed bug that drew fingerprint at top of button; and another bug
+  that disabled showing the pattern if fingerprinting was disabled.
+- Can now read MIDI files that are readable, but not writable, and
+  disable File / Save as needed.
+- Added hjkl arrow keys to seqroll and perfroll. Why? We have a
+  Microsoft Arc keyboard with all the arrows on one small button.
+- Fixed the Mixolydian mode scale. Oops.
+- The pattern editor time, roll, data, and event frames line up.
+- Fixed error reading mute-groups; small fixes to configuration files.
+- Work on fitting pattern-editor in tab.
+- Work on mitigating weird hang in QApplication destructor.
+
+## [0.95.1] - 2021-07-06
+
+- Added 'auto' option to song-start-mode setting.
+- Added missing harmonic-transposition option to the pattern editor.
+- Fixed issues with some of the file-dialogs.
+- Fixed issues with editing keystrokes being passed from the tabbed
+  editors to the main window (and the live frame).
+- Improved arrow-key handling in seqroll.
+- Removed PortMidi Java configuration parsing code.
+- Important fixes to NSM sessions.
+- Added 'one-shot' option the the 'usr' file record-style setting.
+- Improved support for making the user-interface smaller; 4x4 sets.
+- Added the "enigmatic" scale.
+- Fixes to handling of musical key, scale, and background pattern.
+- Finalized the scale-finder code (Ctrl-K in the pattern editor
+  piano roll.)
+- Updated libtool support, now seq66cli is under 200K in size.
+- Removed QtWidget directory from qclocklayout #includes for issue
+  #54.  Also added error-message and about to the Qt m4 file.
+
+## [0.95.0] - 2021-06-19
+
+- Updated almost all settings to use "name = variable" convention
+  to improve readability.  This will change the format of config-files
+  slightly upon exit.
+- Fixes made to the sample Launchpad Mini 'ctrl' files.  Also added a
+  "Quit" command, especially useful in a headless run.
+- Added 8 "Alt" MIDI Control Out values to support special cases
+  not covered by the concrete set of control-out values.
+- Major cleanup and neatening of header files.
+- Minor bugs and regressions fixed along the way.
+- Loop-edit key will create a new sequence if slot is empty.
+- Patterns empty of playable events no longer show unnecessary
+  progress bars.
+- The estimated duration of a tune is shown in the Song tab, based
+  on pattern lengths and song triggers.
+
+## [0.94.0] - 2021-05-28
+
+- Major improvements to the stability of MIDI control of playlists.
+- Added Phrygian scale thanks to user WinkoErades.
+- Update the 'rc' file for a simpler specification of JACK MIDI and
+  JACK transport.
+- Removed the old-style live frame; use themes and style-sheets to
+  create the old look if you like it.
+- Removed a lot of debugging material of no use now.
+- Fixed (mostly) a weird bug causing the application to hang
+  on exit when set as JACK Master.  Pretty damn weird.
+- Improving support for non-default PPQNs.
+- Patterns can now be copied and merged into a new pattern to combine
+  (for example) separate percussion tracks.
+- Fixed error in playlist::verify() adding an empty list.
+- Improving the handling of headless seq66cli; added a "quit"
+  automation function for MIDI-only use.
+- Fixed some issues with reading Cakewalk WRK files.
+
+## [0.93.2] - 2021-05-14
+
+- Changed the mute-group format inside the MIDI file to use a much
+  less disk space (about 3K less).  Can be set in the 'rc' file to
+  write the old format.
+- Minor tweaks to the transposed-trigger functionality.  Can be set in
+  the 'rc' file to write the old format.
+- Removed the code for the essentially unused Seqtool application.
+- Removed the now unnecessary old-style qseqeditframe.
+- Add 'usr' tweaks options to change the size of the live-grid
+  progress boxes, or eliminate them completely.
+- Refactored keymaps for better progress on issue #47, using native
+  key-codes. Added a spreadsheet listing the supported names of the
+  keys.  Laid the groundwork for a 'keys' mapping file.
+- Removed excess spurious events when Seq66 shuts down under JACK.
+- Implemented the control-toggling of "follow JACK transport".
+- Fixed a bug in the pattern editor that created unnecessary empty
+  screen-sets.
+- Further fixes and flexibility for handling mute-groups.
+- Fixed the installation of libseq66 and libsession library header
+  files in "make install" to preserve their base subdirectories.
+  (The other libraries currently do not use base subdirectories.)
+
+## [0.93.1] - 2021-05-03
+
+- Work in progress on issue #47; added a keyboard-layout option to the
+  'ctrl' file to disable auto-shift and tweak the internal key-map for
+  some keyboards.  Added an "AZERTY" 'ctrl' file to the installation.
+- Improved group-learn key control.
+- Fixed issue #49, mute-group issues, plus a bug in saving mutes to
+  the MIDI file.  Added a couple more flags to the 'mutes' file.
+- Fixed issue #50, made the slot text color the same as the label
+  color, and provided a "secret" default color that will cause the
+  text to match the theme.  This can be overridden by a palette file.
+- Fixed issue #51 (show-stopper!), where playback with JACK transport
+  enable was extremely erratic on some platforms.
+- Add clearing of the performer "play-set" for "File / New" to
+  prevent the previous song from being playable. :-D
+- Activate usage of (larger) seqedit frame in the "Edit" tab via
+  a 'usr' option.  Adapted the size to better fit, but the user still
+  needs to increase vertical dimension slightly to see the bottom
+  buttons.  Will eventually eliminate the old version of the tabbed
+  Edit frame.
+- Fixed a bug in drawing notes as a new one is recorded; needed to
+  "verify-and-link".
+- Added a loop-count for live playback of a pattern.  0 means normal
+  infinite looping; 1 means "one-shot"; and higher numbers will work.
+  Stored with the pattern in the MIDI file.
+
+## [0.93.0] - 2021-04-16
+
+- Added a transpose value to song editor triggers to support shifting
+  patterns automatically during Song play.  Added an 'rc' option to
+  save MIDI files using the original triggers.
+- Improved the song editor vertical scrollbar, it adjusts to the
+  number of actual sets.
+- Added the L/R marker feature to the external pattern editor, and
+  Song mode is no longer required to use it.  This makes it easier
+  to explore a long pattern for extracting to a short pattern loop.
+- Added more perfroll snap options, including one to force Seq24
+  behavior.
+- Make the perf-names now also show the pattern color. They highlight
+  as the mouse moves over the pattern rows, useful for long songs.
+- Fixed playback of ultra-long patterns due to not sleeping in the
+  output loop (forgot to convert milliseconds to microseconds).
+- Fixed vertical zoom in the pattern editor.
+- Fixed a bad bug in writing Meta and SeqSpec data-lengths greater
+  than 127.
+- Enhanced the event editor to work with channel-less tracks.
+- Added channel and bus menus to the grid-button popup menu.
+
+## [0.92.2] - 2021-03-27
+
+- Added a Qt "style-sheet" configuration it to the 'usr' file. It
+  can be used to alter the appearance of the application beyond what
+  a palette can do.  A sample 'qss' file is provided.
+- Fixed PPQN modification, added user-interface and 'usr'
+  configuration to change the default PPQN from 192.
+- Fixed many issues with changing the time signature.
+- Fixed creation of new configuration files.
+- Fixed port-mapping for MIDI output, control, and status display.
+- Removed the external set-master; use the set-master tab.
+- Tightened meta-events and set-handling.
+- More fixes to Song recording; added a Snap button for it.
+- Fixed the rendering of the beat indicator and pattern fonts.
+- Updated the man pages and the documentation.
+
+## [0.92.1] - 2021-03-07
+
+- Fixed issue #42 by adding scrollbars to I/O lists in Preferences
+  when there are many ports on the system; also increased port
+  limits to 48 ports.
+- Fixed issues with iterating through MIDI events in the
+  user-interfaces.
+- Big fixes to Song recording. More to do?
+- Added an experimental one-shot auto-step step-edit feature for
+  recording (for example) drumbeats from MIDI devices.
+- Fixed bug in parsing Fluidsynth port names.
+- Improved handling of MIDI I/O control of Seq66.  Added more
+  automation-display events, more testing.
+- Updated documentation, including a ODF spreadsheet for the MIDI
+  control configuration of the Launchpad Mini.
+
+## [0.92.0] - 2021-02-13
+
+- Fixed issue #34: "seq66 does not follow jack_transport tempo changes"
+- Fixed issues with applying 'usr' buss and instrument names to the
+  pattern-editor menus.
+- Fixing serious issues with the event editor. Now deletes both
+  linked notes.
+- Added mute-group-out to show mutegroups on Launchpad Mini buttons.
+- Tightened up mute-group handling, configuration file handling,
+  play-list handling, and MIDI display device handling.
+- Stream-line the format of the 'ctrl' file by removing columns for
+  the values of "enabled" and "channel".  Will detect older formats
+  and fix them.
+- A PDF user manual is now provided in the doc directory, installed
+  to /usr/local/share/doc/seq66-0.92 with "make install".
+
+## [0.91.6] - unknown
+
+- Massively updated the Mutes tab.
+- More documentation.
+- More fixes to the song editor.
+- Added more files to the creation setup at the first run of Seq66.
+
+## [0.91.5] - 2021-01-10
+
+- Added vertical zoom to the pattern editor (V keys and buttons).
+- Added more control over the coloring of notes.
+- Still improving the port-mapper feature.
+- Added quotes to file-paths in the 'rc' configuration file.
+- Many fixes to seqedit, perfedit.  Way too many to mention them
+  all.  Changed the 4/4 and length selections to be editable.
+- Getting serious about rewriting the user manual in this project.
+
+## [0.91.4] - unknown
+
+- Improved port naming and provide an option for short or long port
+  names.
+- Improved safety in NSM sessions.
+- Major refactoring the color handling.  Colors have changed!!!
+
+## [0.91.3] - 2020-12-16
+
+- Added check to not apply last mute-group if in Song mode.
+- Provisional support for playing multiple sets at once and for
+  auto-arming the selected set when loaded.
+- Added a configurable number for virtual MIDI input/output ports.
+- Provides an option to for multiple-set playback and auto-arming
+  of a newly-selected set.
+- Fixed bug in string-to-int conversion uncovered by automatic
+  mute-group restore.
+- Refactoring port naming and I/O lists.
+- Minor play-list fixes.
+
+## [0.91.2] - 2020-11-30
+
+- Fix developer bug causing playlists to not load properly.
+- Fix crash when 'rc' file specifies empty mutes and ctrl files.
+
+## [0.91.1] - 2020-11-28
+
+- More fixes for mute-group (mutes) handling.
+- Ability to save the last-active mute-group for restoring on startup.
+- Added a button to toggle insert mode in pattern and song editors.
+- Robustness enhancement to NSM support.
+
+## [0.91.0] - 2020-11-21
+
+- Non Session Manager support essentially complete.  The
+  refactoring to do this was massive.
+- All too many bug fixes and minor improvements.
+- Added --copy-dt-needed-entries to qseq66 Makefile.am to fix
+  linkage errors that cropped up in debug builds.
+- Got the CLI version building, needs a lot of testing.
+- Playlist editing from the user-interface much improved.
+
+## [0.90.6] - 2020-09-26
+
+- Fixed issue #19 where recording notes caused a segfault.
+
+## [0.90.5] - 2020-08-15
+
+- More refactoring to improve Windows builds and fix deadlocks and
+  playback on a default Windows 10 install.
+- Added code to implement Song/Live and JACK Transport key toggles.
+- MIDI control improved for control and for status display by
+  devices like the Launchpad Mini, using new "ctrl" files.
+- Fixes:
+  - Fixed a bug using millitime() instead of microtime().
+  - Issue #13, data and event/trigger panes not reflecting event
+    changes.  Change handling improved in general with more
+    performer callbacks.
+  - The data pane was some pixels off in the tabbed edit-frame.
+  - Fix a lot of issue with using sets and an 8x8 Seq66 grid.
+- Improved error-handling and reporting.
+
+## [0.90.4] - unknown
+
+- Some refactoring to improve Windows builds.
+
+## [0.90.3] - 2020-07-05
+
+- Added signal handling (e.g. for nsm-proxy) from user falkTX.
+  Used in the CLI and Qt versions to trigger file save and
+  application exit.
+- Added code to define the engine used and the exact "uname a-" of the
+  operating system on which the build was done, for the --version
+  option.
+- Fixed issue #5 to save/restore note-on resumes and get them
+  working in Live mode and Song mode.
+- Fixed issues with perfoll and grid-button rendering, synch between
+  button and seqedit mute status, growing notes in the seqroll, and
+  more.
+- Added writing of blank [midi-control-out] section.
+- Fixed flickering when muting/unmuting patterns via keystrokes.
+
+## [0.90.2] - unknown
+
+- Lots of code cleanup.
+- Added truncation of BPM to precision in "usr" file.
+- Fixed at bug in handling running status; backported to Seq64.
+
+## [0.90.1] - 2019-10-20
+
+- A raft of bug fixes and user-interface improvements.
+- Many tweaks to try to make the performer and the user-interface even
+  faster.
+
+## [0.90.0] - 2019-09-10
+
+- The application and documentation are now (barely) suitable for
+  public consumption, after residing on a server (a Toshiba laptop) at
+  home for months.
+
+### Added
+### Fixed
+### Changed
+### Removed
 
 # vim: sw=4 ts=4 wm=4 et ft=markdown
