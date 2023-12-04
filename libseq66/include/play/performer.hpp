@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-12-02
+ * \updates       2023-12-04
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1787,6 +1787,8 @@ public:
     void record_by_buss (bool flag)
     {
         m_record_by_buss = flag;
+        if (master_bus())
+            master_bus()->record_by_buss(flag);
     }
 
     bool record_by_buss () const

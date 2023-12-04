@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2023-11-25
-% \update      2023-12-02
+% \update      2023-12-03
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -41,8 +41,11 @@
       \item \textbf{Standard Recording}.
          This provides the normal method of recording. Open a pattern in a
          window and enable recording.
+         The last slot selected for recording receives the events.
+         Events are received from all enabled MIDI input ports.
          In this mode the record-button at the bottom of the main window
          is red.
+         The slot popup-menu does not provide for setting an input buss.
       \item \textbf{Route-by-Bus}.
          In this mode, any pattern that specifies a specific input buss
          can be enabled for recording.
@@ -63,7 +66,7 @@
 \label{subsubsec:recording_standard_recording}
 
    Standard recording allows the enabling of recording in a single pattern.
-   It requires that the other two modes be turned off.
+   It \textsl{requires} that the other two modes be turned off.
    Once a pattern is set to record, no other pattern can be set to record until
    the original pattern is set to not record.
    The single recording pattern gets all events from any MIDI
@@ -94,11 +97,12 @@
 \label{subsubsec:recording_route_by_buss}
 
    Route-by-buss is enabled whenever a pattern in a song specifies an
-   input buss and
+   input buss \textsl{and}
    \textbf{Edit / Preferences / MIDI Input / Record into patterns by
    bus} is checked. It is an 'rc' file option.
    If it is enabled, it supercedes the
-   \textbf{record-by-channel} option.
+   \textbf{record-by-channel} option and
+   disables that standard recording mode described above.
 
    When route-by-bus is enabled, an internal container is populated with
    all the patterns in the current play-set that specify an input buss.

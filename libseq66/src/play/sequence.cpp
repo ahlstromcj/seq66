@@ -1545,7 +1545,7 @@ sequence::play
 
         if (song_recording())                       /* song-record triggers */
         {
-            (void) m_parent->calculate_snap(tick);  /* issue #44 redux      */
+            (void) perf()->calculate_snap(tick);  /* issue #44 redux      */
 
             bool added = grow_trigger(song_record_tick(), tick);
             if (added)
@@ -1570,7 +1570,7 @@ sequence::play
             if (times_played >= loop_count_max())
             {
                 if (is_metro_seq())                 /* count-in is complete */
-                    m_parent->finish_count_in();
+                    perf()->finish_count_in();
 
                 return;
             }
@@ -1691,7 +1691,7 @@ sequence::live_play (midipulse tick)
             if (times_played >= loop_count_max())
             {
                 if (is_metro_seq())                 /* count-in is complete */
-                    m_parent->finish_count_in();
+                    perf()->finish_count_in();
 
                 return;
             }
@@ -6074,7 +6074,7 @@ sequence::set_recording (toggler flag)
         m_notes_on = 0;                 /* reset the step-edit note counter */
         if (recordon)
         {
-            if (! rc().record_by_buss() && rc().record_by_channel())
+            if (! perf()->record_by_buss() && perf()->record_by_channel())
                 channel_match(true);
         }
         else
@@ -6424,7 +6424,7 @@ sequence::put_event_on_bus (const event & ev)
     if (! skip)
     {
         event evout;
-        evout.prep_for_send(m_parent->get_tick(), ev);      /* issue #100   */
+        evout.prep_for_send(perf()->get_tick(), ev);      /* issue #100   */
         master_bus()->play_and_flush(m_true_bus, &evout, midi_channel(ev));
     }
 }
@@ -6866,10 +6866,10 @@ sequence::set_parent (performer * p)
         if (bw == 0)
             bw = p->get_beat_width();
 
-        midipulse ppnote = 4 * get_ppqn() / bw; // get_beat_width();
-        midipulse barlength = ppnote * bpb;     // get_beats_per_bar();
+        midipulse ppnote = 4 * get_ppqn() / bw; /* get_beat_width();        */
+        midipulse barlength = ppnote * bpb;     /* get_beats_per_bar();     */
         bussbyte buss_override = usr().midi_buss_override();
-        m_parent = p;
+        m_parent = p;                           /* perf() is the accessor   */
         set_master_midi_bus(p->master_bus());
         sort_events();                      /* sort the events now          */
         set_length();                       /* final verify_and_link()      */
@@ -7015,7 +7015,7 @@ sequence::song_recording_start (midipulse tick, bool snap)
     song_recording(true);
     song_recording_snap(snap);
     if (snap)
-        (void) m_parent->calculate_snap(tick);      /* issue #44 redux  */
+        (void) perf()->calculate_snap(tick);      /* issue #44 redux  */
 
     song_record_tick(tick);                         /* snapped or not   */
     add_trigger(tick, c_song_record_incr);
@@ -7049,7 +7049,7 @@ sequence::song_recording_start (midipulse tick, bool snap)
 void
 sequence::song_recording_stop (midipulse tick)
 {
-    (void) m_parent->calculate_snap(tick);      /* issue #44 redux  */
+    (void) perf()->calculate_snap(tick);      /* issue #44 redux  */
     grow_trigger(song_record_tick(), tick, 1);
     if (song_recording_snap())
         off_from_snap(true);

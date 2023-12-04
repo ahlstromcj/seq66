@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2023-11-28
+ * \updates       2023-12-03
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -957,9 +957,10 @@ mastermidibase::set_sequence_input (bool state, sequence * seq)
  *      copy?)
  */
 
-void
+bool
 mastermidibase::dump_midi_input (event ev)
 {
+    bool result = false;
     size_t sz = m_vector_sequence.size();
     for (size_t i = 0; i < sz; ++i)
     {
@@ -977,9 +978,13 @@ mastermidibase::dump_midi_input (event ev)
              */
 
             if (m_vector_sequence[i]->channel_match())
+            {
+                result = true;
                 break;
+            }
         }
     }
+    return result;
 }
 
 }           // namespace seq66

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2023-11-27
+ * \updates       2023-12-03
  * \license       See above.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -54,9 +54,9 @@
  *  Define for checking JACK/rtmidi latency.
  */
 
-// #if defined SEQ66_PLATFORM_DEBUG    // _TMI
+#if defined SEQ66_PLATFORM_DEBUG    // _TMI
 #define SEQ66_SHOW_TIMING
-// #endif
+#endif
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -176,6 +176,13 @@ private:
 
     unsigned m_msg_number;
 
+    /**
+     *  Holds the "send time" of the message, for testing. In JACK, the
+     *  values is typed as jack_time_t, and is in microseconds.
+     */
+
+    uint64_t m_msg_send_time;
+
 #endif
 
     /**
@@ -235,6 +242,16 @@ public:
     unsigned msg_number () const
     {
         return m_msg_number;
+    }
+
+    uint64_t msg_send_time () const
+    {
+        return m_msg_send_time;
+    }
+
+    void msg_send_time (uint64_t t)
+    {
+        m_msg_send_time = t;
     }
 
 #endif

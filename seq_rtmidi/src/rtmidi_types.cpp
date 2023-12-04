@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-01
- * \updates       2023-11-27
+ * \updates       2023-12-03
  * \license       See above.
  *
  *  Provides some basic types for the (heavily-factored) rtmidi library, very
@@ -62,6 +62,7 @@ unsigned midi_message::sm_msg_number = 0;
 midi_message::midi_message (midipulse ts) :
 #if defined SEQ66_SHOW_TIMING
     m_msg_number    (sm_msg_number++),
+    m_msg_send_time (0),
 #endif
     m_bytes         (),
     m_timestamp     (ts),

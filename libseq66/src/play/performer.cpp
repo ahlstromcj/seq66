@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-12-01
+ * \updates       2023-12-04
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -900,7 +900,14 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
         const std::string & mgf = rc().mute_group_filespec();
         (void) save_mutegroups(mgf);
     }
-    rcs.record_by_buss(m_record_by_buss);
+
+    /*
+     * We don't want to disable the user's desires here just because
+     * the conditions weren't met by the loaded song.
+     *
+     *      rcs.record_by_buss(m_record_by_buss);
+     */
+
     rcs.record_by_channel(m_record_by_channel);
     usrs.resume_note_ons(m_resume_note_ons);
 
@@ -1788,6 +1795,8 @@ performer::get_sequence (seq::number seqno)
 
 /**
  *  Meant to record the last pattern touched by the mouse or a hot-key.
+ *  However, if recording is on for the current sequence, we do not set
+ *  the new sequence, to avoid mystery to the user.
  */
 
 bool
@@ -1795,7 +1804,18 @@ performer::set_current_sequence (seq::number seqno)
 {
     const seq::pointer s = get_sequence(seqno);
     bool result = not_nullptr(s);
-    m_current_seqno = result ? seqno : seq::unassigned() ;
+    if (result)
+    {
+        const seq::pointer sold = get_sequence(m_current_seqno);
+        if (sold && ! sold->recording())
+        {
+            m_old_seqno = m_current_seqno;
+            m_current_seqno = seqno;
+        }
+    }
+    else
+        m_current_seqno = seq::unassigned();
+
     return result;
 }
 
@@ -3442,6 +3462,11 @@ performer::launch (int ppqn)
  *  This function should be called whenever the buss setup changes, a pattern
  *  pattern is added or removed, or when its input buss is set. Might also
  *  need to be updated when the playset changes.
+ *
+ * \return
+ *      Returns true if record-by-buss was true and if any patterns with an
+ *      input buss set were found. As a side-effect, performer ::
+ *      record_by_buss() is set to the result.
  */
 
 bool
@@ -3451,10 +3476,10 @@ performer::sequence_inbus_setup ()
     if (rc().sequence_lookup_support())
     {
         /*
-         * We have to assume that there may be gaps in the busses, and sometimes
-         * we open a file on a new system that does not have as many busses,
-         * and the result is a mystery to the user.  We can handle this situation
-         * more robustly later.
+         * We have to assume that there may be gaps in the busses, and
+         * sometimes we open a file on a new system that does not have as many
+         * busses, and the result is a mystery to the user.  We can handle
+         * this situation more robustly later.
          *
          *      size_t buscount = master_bus()->get_num_in_buses();
          */
@@ -3482,6 +3507,7 @@ performer::sequence_inbus_setup ()
                 }
             }
         }
+        record_by_buss(result);
     }
     return result;
 }
@@ -4877,26 +4903,33 @@ performer::poll_cycle ()
                             if (record_by_buss())
                             {
                                 sequence * sp = sequence_inbus_lookup(ev);
-                                if (is_nullptr(sp))
-                                    sp = m_master_bus->get_sequence();
+
+                                /*
+                                 * mastermidibase::m_seq is not ever set here.
+                                 *
+                                 * if (is_nullptr(sp))
+                                 *    sp = m_master_bus->get_sequence();
+                                 */
 
                                 if (not_nullptr(sp))
                                     sp->stream_event(ev);
                                 else
-                                    warn_message("no recording pattern");
+                                    warn_message("no buss-recording pattern");
                             }
                             else if (record_by_channel())
                             {
-                                m_master_bus->dump_midi_input(ev);
+                                if (! m_master_bus->dump_midi_input(ev))
+                                    warn_message("no matching channel");
                             }
                             else
                             {
                                 sequence * sp = m_master_bus->get_sequence();
                                 if (not_nullptr(sp))
-                                    m_master_bus->get_sequence()->
-                                        stream_event(ev);
+                                    sp->stream_event(ev);
+#if defined SEQ66_PLATFORM_DEBUG
                                 else
                                     error_message("no active pattern");
+#endif
                             }
                         }
                     }

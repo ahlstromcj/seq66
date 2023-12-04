@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2023-11-27
+ * \updates       2023-12-03
  * \license       GNU GPLv2 or above
  *
  *  The mastermidibase module is the base-class version of the mastermidibus
@@ -275,7 +275,7 @@ public:
     void print () const;
     void flush ();
     void panic (int displaybuss = c_bussbyte_max);          /* kepler34 func  */
-    void dump_midi_input (event in);                        /* seq32 function */
+    bool dump_midi_input (event in);                        /* seq32 function */
     std::string get_midi_bus_name (bussbyte bus, midibase::io iotype) const;
 
     void set_midi_alias
