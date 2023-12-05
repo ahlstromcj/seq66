@@ -4,8 +4,8 @@ Chris Ahlstrom
 
 Misc:
 
-    -   If record-buss active, still need to process non-inbuss pattern
-        if no inbusses specified.
+    -   longhair.mid load error: Offset ~0x8 of 0x5c1c bytes (8/23580):
+        Invalid MIDI header chunk detected. Bad value 0x0.
     -   Grid-mode options:
         -   Now can click again to undo the solo. But doing two more
             solos in a row clears the first non-soloed snapshot. Hmmm.

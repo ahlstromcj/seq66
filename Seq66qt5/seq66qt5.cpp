@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2023-11-30
+ * \updates       2023-12-05
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -39,10 +39,20 @@
 #include "os/daemonize.hpp"             /* seq66::session_close(), etc.     */
 #include "os/timing.hpp"                /* seq66::millisleep()              */
 
-#undef  SEQ66_LOCALE_SUPPORT
-#undef  SEQ66_TRANSLATOR_SUPPORT
-
+#undef  SEQ66_LOCALE_SUPPORT            /* using --locale instead           */
+#undef  SEQ66_TRANSLATOR_SUPPORT        /* we're not ready for this at all  */
 #undef  USE_RING_BUFFER_TEST            /* enable to check ring_buffer ops  */
+
+/*
+ * Without the QCoreApplication::setSetuidAllow() call, the application dumps
+ * core if setuid root in the install. However, This yields this message many
+ * many times when run as setuid root; "QCommonStyle::drawComplexControl:
+ * Control 1 not handled" Not sure what is up with that. The result is
+ * that the user interface is flat and cramped! In any case, Qt warns not
+ * to use setuid root because Qt has "a large attack surface" :-D.
+ */
+
+#undef  SEQ66_SETUID_SUPPORT            /* Qt aborts with setuid otherwise  */
 
 #if defined USE_RING_BUFFER_TEST        /* requires a debug build           */
 #include "util/ring_buffer.hpp"
@@ -84,6 +94,10 @@ static const int sc_sleep_time_ms = 250;
 int
 main (int argc, char * argv [])
 {
+#if defined SEQ66_SETUID_SUPPORT
+    QApplication::setSetuidAllowed(true);
+#endif
+
     QApplication app(argc, argv);           /* main application object      */
 #if defined USE_NEW_CODE
     seq66::smanager::app_info(argv[0], true);
