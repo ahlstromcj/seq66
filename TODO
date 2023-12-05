@@ -1,11 +1,9 @@
 TO DO for Seq66 0.99.11
 Chris Ahlstrom
-2019-04-13 to 2023-12-03
+2019-04-13 to 2023-12-05
 
 Misc:
 
-    -   longhair.mid load error: Offset ~0x8 of 0x5c1c bytes (8/23580):
-        Invalid MIDI header chunk detected. Bad value 0x0.
     -   Grid-mode options:
         -   Now can click again to undo the solo. But doing two more
             solos in a row clears the first non-soloed snapshot. Hmmm.

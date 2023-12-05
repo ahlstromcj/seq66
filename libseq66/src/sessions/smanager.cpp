@@ -594,7 +594,11 @@ smanager::open_midi_file (const std::string & fname)
             infomsg += std::to_string(perf()->ppqn());
             info_message(infomsg);
             (void) perf()->apply_session_mutes();
-            file_message("Open", result);
+
+            /*
+             * Redundant: file_message("Open", result);
+             */
+
             midi_filename(result);                          /* side-effect  */
             rc().playlist_active(false);                    /* disable it   */
         }

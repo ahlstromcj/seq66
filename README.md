@@ -1,4 +1,4 @@
-# README for Seq66 0.99.11 2023-12-04
+# README for Seq66 0.99.11 2023-12-05
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -85,6 +85,7 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     As per Issue #123 "Would it be possible to have NEWS structured like
-    a changelog", the recent changes appear at the top of the NEWS file.
+    a changelog", the recent changes now appear at the top of the NEWS file.
+    Also see RELNOTES.
 
 // vim: sw=4 ts=4 wm=2 et ft=markdown
