@@ -67,7 +67,7 @@ The release now includes an installer for the 64-bit Windows version of Seq66.
     *   Highly configurable MIDI-based metronome.
     *   Improved non-U.S. keyboard support.
     *   Many demonstration and test MIDI files.
-    *   See **Recent Changes** below, and the **NEWS** file.
+    *   See the **NEWS** file or **RELNOTES**.
 
 ##  Internal
 
