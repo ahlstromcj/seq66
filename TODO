@@ -1,12 +1,10 @@
 TO DO for Seq66 0.99.11
 Chris Ahlstrom
-2019-04-13 to 2023-12-05
+2019-04-13 to 2023-12-06
 
 Misc:
 
     -   Grid-mode options:
-        -   Now can click again to undo the solo. But doing two more
-            solos in a row clears the first non-soloed snapshot. Hmmm.
         -   Needs to be made a queued solo; how to handle
             mod_replace (Key_Home) and mod_snapshot (Ins)
         -   Progress on plain Replace...
@@ -60,6 +58,9 @@ From Testing:
 
        '/usr/local/share/seq66-0.99/midi/FM/longhair.mid' plays just fine
        mostly, some glitches.
+
+    The 'usr' time-color settings do not seem to work. Actually, it does
+    work, but not with the Qt gtk styling.
 
 Awaiting complaints/issue-reports:
 
