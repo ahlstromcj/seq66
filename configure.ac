@@ -37,9 +37,12 @@ AX_PREFIX_CONFIG_H([include/seq66-config.h], [seq66])
 
 dnl gcc/g++ configuration.
 
-AC_PROG_CC([gcc])
-AC_PROG_CXX([g++])
-AC_PROG_CXXCPP([cpp])
+dnl AC_PROG_CC([gcc])
+dnl AC_PROG_CXX([g++])
+dnl AC_PROG_CXXCPP([cpp])
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_CXXCPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MKDIR_P

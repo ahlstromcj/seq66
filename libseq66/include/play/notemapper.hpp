@@ -30,7 +30,7 @@
  * \library       libmidipp
  * \author        Chris Ahlstrom
  * \date          2014-04-24
- * \updates       2023-09-01
+ * \updates       2023-12-06
  * \version       $Revision$
  * \license       GNU GPL
  *
@@ -115,9 +115,12 @@ private:
         /**
          *  Indicates if this is a reversed pair.  This boolean is needed to
          *  determine whether the dev-note or the gm-note is the key value.
+         *
+         *  For issue #124, clang deletes the assignment operator, so we
+         *  get rid of the consts.
          */
 
-        const bool m_is_reverse;
+        /* const */ bool m_is_reverse;
 
         /**
          *  The incoming note number from a non-GM compliant device.  This
@@ -125,7 +128,7 @@ private:
          *  array.
          */
 
-        const int m_dev_value;
+        /* const */ int m_dev_value;
 
         /**
          *    The integer value to which the incoming (key) value is to be
@@ -133,13 +136,13 @@ private:
          *    device.
          */
 
-        const int m_gm_value;
+        /* const */ int m_gm_value;
 
         /**
          *  The name of the key as represented by the non-GM device.
          */
 
-        const std::string m_dev_name;
+        /* const */ std::string m_dev_name;
 
         /**
          *    The name of the GM drum note or patch that is replacing the
@@ -148,7 +151,7 @@ private:
          *    device's sound.
          */
 
-        const std::string m_gm_name;
+        /* const */ std::string m_gm_name;
 
         /**
          *    The number of times this particular mapping was performed in the

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-11-05
+ * \updates       2023-12-06
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -188,7 +188,7 @@ usrfile::parse ()
                 msgprintf
                 (
                     msglevel::error, "Error adding %s (line = '%s')",
-                    label, scanline()
+                    label.c_str(), scanline()           /* see issue #124   */
                 );
             }
         }
@@ -249,10 +249,15 @@ usrfile::parse ()
         }
         else
         {
+            /*
+             * clang says "error: member reference base type 'const char *'
+             * is not a structure or union." See issue #124.
+             */
+
             msgprintf
             (
                 msglevel::error, "Error adding %s (line = '%s')",
-                label, scanline()
+                label.c_str(), scanline()
             );
         }
     }

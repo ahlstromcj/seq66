@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2023-11-25
+ * \updates       2023-12-06
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -237,6 +237,14 @@ static const int c_default_redraw_ms = 40;
 #endif
 
 /**
+ *  Constants for the main window, etc. The c_seqchars_x and c_seqchars_y
+ *  constants help define the "seqarea" size.  These look like the number
+ *  of characters per line and the number of lines of characters, in a
+ *  pattern/sequence box.
+ *
+ *      static const int c_seqchars_x = 15;
+ *      static const int c_seqchars_y =  5;
+ *
  *  These control sizes.  We'll try changing them and see what happens.
  *  Increasing these value spreads out the pattern grids a little bit and
  *  makes the Patterns panel slightly bigger.  Seems like it would be
@@ -247,29 +255,19 @@ static const int c_default_redraw_ms = 40;
  *  the character width (x) and height (y) in pixels.  Thus, these values
  *  would be dependent on the font chosen.  But that, currently, is
  *  hard-wired.
- */
-
-static const int c_text_x =  6;            /* doesn't include inner padding */
-static const int c_text_y = 12;            /* does include inner padding    */
-
-/**
- *  Constants for the main window, etc. The c_seqchars_x and c_seqchars_y
- *  constants help define the "seqarea" size.  These look like the number
- *  of characters per line and the number of lines of characters, in a
- *  pattern/sequence box.
- */
-
-static const int c_seqchars_x = 15;
-static const int c_seqchars_y =  5;
-
-/**
+ *
+ *      static const int c_text_x =  6;    // doesn't include inner padding
+ *      static const int c_text_y = 12;    // does include inner padding
+ *
  *  The c_seqarea_x and c_seqarea_y constants are derived from the width
  *  and heights of the default character set, and the number of characters
  *  in width, and the number of lines, in a pattern/sequence box.
+ *
+ *  Clang reveals they are not used.
+ *
+ *      static const int c_seqarea_x = c_text_x * c_seqchars_x;
+ *      static const int c_seqarea_y = c_text_y * c_seqchars_y;
  */
-
-static const int c_seqarea_x = c_text_x * c_seqchars_x;
-static const int c_seqarea_y = c_text_y * c_seqchars_y;
 
 /**
  *  These control sizes.  We'll try changing them and see what happens.

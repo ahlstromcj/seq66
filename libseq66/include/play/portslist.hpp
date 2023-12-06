@@ -85,7 +85,7 @@ public:
         on                              /**< Activate the list.             */
     };
 
-protected:
+public:
 
     /**
      *  Provides a port name and the input or output values.  Note that the
@@ -108,6 +108,8 @@ protected:
         int io_client_number;       /**< The system client number.          */
         int io_port_number;         /**< The system port number.            */
     };
+
+protected:
 
     /**
      *  The container type for io information.  Replaces std::vector<io>.

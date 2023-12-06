@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.99.9 and above
+INSTALL for Seq66 v. 0.99.12 and above
 Chris Ahlstrom
-2015-09-10 to 2023-09-21
+2015-09-10 to 2023-12-06
 
 Getting Seq66 requires building the code or going to
 "sequencer64-packages/seq66" on GitHub to get an installation package.  The
@@ -87,6 +87,20 @@ Bootstrap Install:
     Study the "bootstrap" script to understand how it uses autoheader,
     automake, libtool, and other standard Linux build tools.  This build
     results in the "qseq66" executable.
+
+Clang Compiler:
+
+    If one has the GNU compilers installed, one can still install Clang
+    and use it for the build.
+
+    Assuming the configure script is up-to-date, and either the base clang or
+    a specific version (e.g. clang-16) is installed, then the next command can
+    be used for the base clang, or the second for a specific version:
+
+        $ CC=clang CXX=clang++ ./configure                  - or -
+        $ CC=clang-16 CXX=clang++-16 ./configure
+        $ make &> make.log
+        $ sudo make install
 
 Qt and Command-Line Merged Build:
 

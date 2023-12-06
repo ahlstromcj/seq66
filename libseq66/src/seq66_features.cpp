@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2023-10-28
+ * \updates       2023-12-06
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -547,9 +547,13 @@ seq_build_details ()
     result
         << "Built " << __DATE__ << " " << __TIME__ "\n"
         << "C++ version " << std::to_string(__cplusplus) << "\n"
+#if defined __clang__
+        << "Clang C++ " << __clang_version__ << "\n"
+#else
 #if defined SEQ66_PLATFORM_GNU
         << "GNU C++ " << __GNUC__ << "." << __GNUC_MINOR__
         << "." << __GNUC_PATCHLEVEL__ << "\n"
+#endif
 #endif
         << "Executable: " << seq_app_name() << " (" << seq_app_path() << ")\n"
         << "Interface: " << seq_app_type() << "\n"

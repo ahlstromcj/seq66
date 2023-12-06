@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2023-10-19
+ * \updates       2023-12-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -342,12 +342,12 @@ mutegroupsfile::write ()
 }
 
 /**
- *  The default long format for writing mute groups.
+ *  The default long format for writing mute groups. No longer needed.
+ *
+ *      static const char * const sg_scanf_fmt_1 =
+ *        "%d [ %d %d %d %d %d %d %d %d ] [ %d %d %d %d %d %d %d %d ] "
+ *        " [ %d %d %d %d %d %d %d %d ] [ %d %d %d %d %d %d %d %d ]" ;
  */
-
-static const char * const sg_scanf_fmt_1 =
-    "%d [ %d %d %d %d %d %d %d %d ] [ %d %d %d %d %d %d %d %d ] "
-      " [ %d %d %d %d %d %d %d %d ] [ %d %d %d %d %d %d %d %d ]";
 
 /**
  *  Writes the [mute-group] section to the given file stream.  This can also

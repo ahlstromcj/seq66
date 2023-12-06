@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-09-02
+ * \updates       2023-12-06
  * \license       GNU GPLv2 or above
  */
 
@@ -127,9 +127,10 @@ arrow_down ()
 /**
  *  Indicates the start of section where expansion/foreign characters can be
  *  placed.  Covers the ordinals from 0xe0 to 0xfe (31 characters).
+ *  Not yet used, as revealed by clang-12.
+ *
+ *      static const int s_expansion_start = 0xe0;
  */
-
-static const int s_expansion_start = 0xe0;
 
 /**
  *  Provides a data type for key name/value pairs.

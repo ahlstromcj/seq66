@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2022-06-28
+ * \updates       2023-12-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -99,9 +99,13 @@ private:
      *  of row x column.  It is important to note the the size of the group is
      *  constant throughout its lifetime (and the lifetime of the
      *  application).
+     *
+     *  For issue #124, we have removed the const from some member declarations
+     *  so that the default constructor etc. are not deleted. Thanks to clang
+     *  for uncovering that.
      */
 
-    const int m_group_size;
+    /* const */ int m_group_size;
 
     /**
      *  Holds a set of boolean values in a 1-D vector, but can be virtually
@@ -119,7 +123,7 @@ private:
      *  mute-group.
      */
 
-    const int m_rows;
+    /* const */ int m_rows;
 
     /**
      *  Indicates the number of virtual columns in a screen-set (bank), which
@@ -129,7 +133,7 @@ private:
      *  per set or mute-group.
      */
 
-    const int m_columns;
+    /* const */ int m_columns;
 
     /**
      *  Experimental option to swap rows and columns.  See the function
@@ -153,7 +157,7 @@ private:
      *  saves a calculation.
      */
 
-    const int m_group_offset;
+    /* const */ int m_group_offset;
 
 public:
 
