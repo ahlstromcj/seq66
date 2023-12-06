@@ -1759,7 +1759,7 @@ usrsettings::time_colors_css () const
         (void) snprintf
         (
             tempcss, sizeof tempcss,
-            "color:%s;background-color:%s",
+            "color:%s; background-color:%s",
             time_fg_color().c_str(), time_bg_color().c_str()
         );
         result = std::string(tempcss);

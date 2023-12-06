@@ -1,5 +1,466 @@
+2023-12-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* LICENSE, NEWS, README.md, RELNOTES, VERSION, configure,
+	configure.ac, data/license.text, data/readme.text,
+	data/readme.windows, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h: Set up for next version.
+
+2023-12-05  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md: Release Notes for Seq66 v. 0.99.11 2023-12-05 -   Added 8 more ui-palette entries, total of 32.  -   Added display of the pattern input bus (if present) in the grid     slot.  -   Moved style-sheet options from 'usr' to the 'rc' file.  -   Fixed errors setting style-sheet, palette, and mutes file in     Preferences / Session. Now indicates when exit is needed.  -   Added mute-group label ("MG") to main window.  -   Fixing various playlist errors:     -   PPQN setting issue causing slow/fast playback. Cannot         display 120 PPQN well, fix too intrusive at this time.      -   Segfaults due to not stopping playback before loading         the next song, or basing calculations on missing values.  -   Embarassing fixes:     -   The massive botch of the Set Master tab.      -   More Mutes tab fixes, including raising modify flag.      -   App exiting unceremoniously if "quiet" is set.      -   Issue in Song zoom with 1920 PPQN.      -   Odd bug breaking MIDI-control-out (display).      -   Preventing long redundant start-up error messages.      -   Solo feature. Unsolo before starting another solo.      -   Queue and keep-queue.      -   Not saving record-by-channel. Fixed record-by-channel.      -   Not modifying the song when pattern measures is changed.      -   Breakage of stopping song play at the end of song.      -   Bug in event-editor initialization.      -   Not applying note-length setting to step-edit.  -   Added a pre-made MIDI file to use with record-by-channel.  -   Added ways to toggle recording of multiple patterns.  -   Added a record-by-buss feature.  -   Can now paste a pattern into a new or another loaded MIDI file.  -   When loading a MIDI file, the file dialog defaults to the     last-used directory. Fixes made to this feature.  -   Improved copy/paste for screen-sets.  -   Added optional parameter to --priority option.  -   Focus is now set immediately to seqroll and perfroll.  -   --verbose now shows playlist actions on the console and prevents     daemonization and logging to a file.  -   Replaced the --inspect option with --session-tag for easy     selection of another setup specified in sessions.rc. Also added     the SEQ66_SESSION_TAG environment variable.  -   Added showing program changes in slot button.  -   Added showing text events in the data pane and all text events     in the main Session tab. Fixed its Save Info button.  -   Implemented "menu-mode" automation. It duplicates the function     of the hide/show button, to toggle between hiding some main     window controls and the main menu, and showing them.  See NEWS for more details.
+	* FDL.txt, GPL.txt, LGPL.txt, LICENSE, README.md, RELNOTES, TODO,
+	VERSION, configure.ac, data/readme.text, data/readme.windows,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/src/cfg/playlistfile.cpp,
+	libseq66/src/sessions/smanager.cpp, nsis/Seq66Constants.nsh,
+	nsis/build_release_package.bat, seq_qt5/forms/qslivegrid.ui,
+	seq_qt5/forms/qsmainwnd.ui: Ready for next version, more for issue
+	#123.
+	* Seq66qt5/seq66qt5.cpp, TODO: Trying setuid root code, no go.
+
+2023-12-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* LICENSE, NEWS, README.md, contrib/git/gitconfig,
+	doc/latex/tex/first_start.tex, doc/latex/tex/live_grid.tex,
+	doc/latex/tex/references.tex, doc/latex/tex/seq66-user-manual.tex,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qseditoptions.ui: 
+	Fixes to issue #122 and issue #123 and tweaks to Preferences labels
+	and documentation.
+	* TODO, doc/latex/tex/recording.tex,
+	libseq66/include/midi/mastermidibase.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_rtmidi/include/rtmidi_types.hpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/rtmidi_types.cpp: Refinements to JACK latency checks
+	and record-by handling.
+
+2023-12-02  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* RELNOTES, TODO, VERSION, configure.ac, data/license.text,
+	data/readme.text, data/readme.windows, doc/latex/tex/recording.tex,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat,
+	seq_qt5/forms/qsmainwnd.ui, seq_qt5/src/qsmainwnd.cpp: Getting near
+	to the next release.
+
+2023-12-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, doc/latex/tex/sessions.tex,
+	libseq66/include/cfg/cmdlineopts.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp, man/seq66.1,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Add SEQ66_SESSION_TAG env variable,
+	enhanced inbus processing and display.
+
+2023-11-30  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, Seq66qt5/seq66qt5.cpp, TODO, doc/latex/tex/alsa.tex,
+	doc/latex/tex/configuration.tex, doc/latex/tex/sessions.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/util/filefunctions.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/util/filefunctions.cpp, seq_qt5/src/qsmainwnd.cpp: 
+	Fixed last-used-dir, in-bus recording, more to fix though.
+
+2023-11-29  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, contrib/scripts/jackctl,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqeventframe.cpp: 
+	Fixed event editor init bug, applying note length in step edit.
+
+2023-11-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, doc/latex/tex/configuration.tex,
+	doc/latex/tex/live_grid.tex, doc/latex/tex/menu.tex,
+	doc/latex/tex/midi_export.tex, doc/latex/tex/recording.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/mastermidibase.hpp,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/src/qslivegrid.cpp,
+	seq_rtmidi/include/rtmidi_types.hpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_data.cpp, seq_rtmidi/src/rtmidi_types.cpp: 
+	Record-by-buss/channel fixed, documented, and re-enabled some code
+	for JACK latency testing.
+
+2023-11-27  ahlstrom <ahlstromcj@gmail.com>
+
+	* data/linux/qseq66.rc, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/mastermidibase.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/seq66_features.h,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Added setting for record-by-buss.
+	* README.md, TODO, libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/src/qmutemaster.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Multi-pattern record toggling works.
+	* README.md, TODO, doc/latex/tex/configuration.tex,
+	doc/latex/tex/first_start.tex, doc/latex/tex/patterns_panel.tex,
+	doc/latex/tex/recording.tex, doc/latex/tex/setmaster.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, resources/pixmaps/rec_ex_buss.xpm,
+	resources/pixmaps/rec_ex_channel.xpm,
+	resources/pixmaps/rec_ex_normal.xpm,
+	seq_qt5/forms/qseqeditframe64.ui, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Added
+	menu-mode automation and start of multi-pattern record toggling.
+
+2023-11-25  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, contrib/midi/README,
+	doc/latex/tex/pattern_editor.tex, doc/latex/tex/sessions.tex,
+	libseq66/include/cfg/scales.hpp,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/cfg/mutegroupsfile.cpp,
+	libseq66/src/cfg/notemapfile.cpp,
+	libseq66/src/cfg/playlistfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/usrfile.cpp, libseq66/src/cfg/usrsettings.cpp,
+	libseq66/src/midi/calculations.cpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_portmidi/src/portmidi.c,
+	seq_qt5/forms/qseqeditframe64.ui, seq_qt5/src/palettefile.cpp,
+	seq_qt5/src/qseqbase.cpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qseqtime.cpp,
+	seq_qt5/src/qsessionframe.cpp: Fallout from an attempt to display
+	files with 120 PPQN.
+
+2023-11-23  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/midi/event.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/notemapfile.cpp,
+	libseq66/src/cfg/playlistfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/midi/event.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_portmidi/src/portmidi.c,
+	seq_qt5/forms/qsessionframe.ui, seq_qt5/include/qseqdata.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/src/palettefile.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qsessionframe.cpp, seq_qt5/src/qslivegrid.cpp: Added
+	showing all meta text events in the data pane.
+
+2023-11-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/play/sequence.hpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqroll.cpp: Added Mini Play
+	spreadsheet and showing Program Change events in the grid slot.
+	* : Updated 16-patterns MIDI file.
+	* README.md, TODO, data/midi/README,
+	doc/latex/tex/configuration.tex, doc/latex/tex/patterns_panel.tex,
+	libseq66/include/play/sequence.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qsappinfo.ui, seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Display input bus in slot, fixed
+	record-by-channel, fixed measure-count modify, open-file defaults to
+	last-used folder.
+
+2023-11-18  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/ctrl/midicontrolin.hpp,
+	libseq66/src/ctrl/midicontrolin.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp: 
+	Keep queue now works.
+
+2023-11-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, contrib/gvim.rc, contrib/notes/snapshots.text,
+	data/samples/perstfic-66.palette, data/samples/perstfic-66.qss,
+	doc/latex/tex/kbd_mouse.tex, doc/latex/tex/patterns_panel.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qperfeditframe64.ui,
+	seq_qt5/forms/qseqeditframe64.ui, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/src/qloopbutton.cpp: More progress on grid Solo and on plain
+	Replace.
+
+2023-11-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, contrib/notes/snapshots.text,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/setmapper.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixed grid-solo partly, need to restore
+	patterns and fix one-shot solo/replace.
+
+2023-11-13  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/setmaster.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/setmaster.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qmutemaster.cpp,
+	seq_qt5/src/qsetmaster.cpp, seq_qt5/src/qsmainwnd.cpp: Tweak display
+	of active set count, fixed clear/double mod bugs, redundant port
+	msgs, mutes mod bug, set mod bug.
+
+2023-11-12  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/os/timing.cpp,
+	libseq66/src/play/performer.cpp: Beefing up the priority option.
+	* README.md, TODO, doc/latex/tex/menu.tex,
+	doc/latex/tex/patterns_panel.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/setmapper.cpp, seq_qt5/forms/qmutemaster.ui,
+	seq_qt5/src/qmutemaster.cpp, seq_qt5/src/qsetmaster.cpp,
+	seq_qt5/src/qslivebase.cpp, seq_qt5/src/qsmainwnd.cpp: Enhanced
+	copy/paste of patterns and screensets.
+
+2023-11-11  ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, doc/latex/tex/setmaster.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qsetmaster.ui,
+	seq_qt5/include/qsetmaster.hpp, seq_qt5/src/qsetmaster.cpp: Set
+	Master almost complete and documented.
+	* TODO, libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/include/play/setmaster.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/setmapper.cpp, libseq66/src/play/setmaster.cpp,
+	seq_qt5/forms/qsetmaster.ui, seq_qt5/src/qsetmaster.cpp: Got Set
+	Master working with different approach, more refinements needed.
+
+2023-11-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/play/screenset.hpp,
+	libseq66/include/play/setmaster.hpp,
+	libseq66/src/play/screenset.cpp, libseq66/src/play/setmapper.cpp,
+	libseq66/src/play/setmaster.cpp, seq_qt5/src/qsetmaster.cpp: Nope,
+	they now crash, Up/Down enabled only with --investigate option.
+	* README.md, TODO, libseq66/include/play/screenset.hpp,
+	libseq66/include/play/setmaster.hpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/screenset.cpp, libseq66/src/play/seq.cpp,
+	libseq66/src/play/setmaster.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	seq_qt5/forms/qplaylistframe.ui, seq_qt5/forms/qsetmaster.ui,
+	seq_qt5/include/qsetmaster.hpp, seq_qt5/src/qsetmaster.cpp: Fixed
+	set-master up/down movement.
+
+2023-11-08  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/include/qsetmaster.hpp,
+	seq_qt5/src/qsetmaster.cpp, seq_qt5/src/qsmainwnd.cpp: Renamed a
+	couple performer accessors, removed code for external set-master,
+	fixed bug in reading MIDI display-output controls.
+
+2023-11-07  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/src/play/performer.cpp,
+	seq_qt5/forms/qmutemaster.ui, seq_qt5/forms/qsetmaster.ui,
+	seq_qt5/src/qmutemaster.cpp, seq_qt5/src/qsetmaster.cpp: Fixed
+	incorrect modifying of tune by selecting a mute group and fixed
+	uneditable setmaster table.
+
+2023-11-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, configure, configure.ac,
+	doc/latex/tex/live_grid.tex, doc/latex/tex/mutes.tex,
+	include/config.h.in, libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qslivegrid.ui,
+	seq_qt5/forms/qsmainwnd.ui, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Fixed NSM/OSC
+	handling in configure.ac, added display of mute-group to main
+	window.
+
+2023-11-05  ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, contrib/tests/4x4/qseq66.rc, contrib/tests/4x4/qseq66.usr,
+	data/samples/sessions.rc, doc/latex/tex/sessions.tex,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/src/cfg/sessionfile.cpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/cfg/usrsettings.cpp, seq_qt5/src/qt5nsmanager.cpp: 
+	Sessions.rc testing part 2.
+
+2023-11-04  ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, data/samples/{session.rc => sessions.rc},
+	doc/latex/tex/configuration.tex, doc/latex/tex/sessions.tex,
+	libseq66/src/cfg/cmdlineopts.cpp, man/seq66.1: Documented
+	--session-tag, some testing.
+	* TODO, libseq66/include/play/performer.hpp,
+	libseq66/include/sessions/smanager.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/sessionfile.cpp,
+	libseq66/src/cfg/usrsettings.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp: Sessions.rc testing part 1.
+
+2023-11-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, data/samples/session.rc,
+	libseq66/include/cfg/cmdlineopts.hpp,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/cfg/sessionfile.cpp,
+	libseq66/src/sessions/smanager.cpp, man/seq66.1, man/seq66cli.1,
+	man/sequencer66.1: Added -S/--session-tag option to command-line.
+
+2023-11-02  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, doc/latex/tex/configuration.tex,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/src/cfg/configfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/cfg/usrsettings.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: Moved style-sheet options to 'rc'
+	file.
+
+2023-11-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, libseq66/include/cfg/zoomer.hpp,
+	libseq66/src/cfg/zoomer.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/screenset.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qeditbase.hpp, seq_qt5/include/qperfroll.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qseqframe.hpp,
+	seq_qt5/include/qseqroll.hpp, seq_qt5/src/qperfeditframe64.cpp,
+	seq_qt5/src/qperfroll.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqframe.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixed playlist seqfault and zoom/ppqn
+	issues.
+
+2023-10-31  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, Seq66cli/seq66rtcli.cpp,
+	doc/latex/tex/configuration.tex, doc/latex/tex/headless.tex,
+	libseq66/include/cfg/cmdlineopts.hpp,
+	libseq66/include/os/daemonize.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/os/daemonize.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/playlist.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	seq_rtmidi/src/midi_alsa_info.cpp: Added support for showing
+	playlist actions in the CLI using --verbose.
+	* README.md, TODO, libseq66/include/play/performer.hpp,
+	libseq66/src/os/timing.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp: Fixed seqfault in select next
+	playlist song for both GUI and CLI.
+
+2023-10-30  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, Seq66cli/seq66rtcli.cpp, TODO, include/config.h.in,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/src/cfg/usrsettings.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/qmutemaster.hpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qseqeventframe.hpp, seq_qt5/include/qsetmaster.hpp,
+	seq_qt5/include/qslivegrid.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qt5nsmanager.cpp: Autoplay working in GUI and CLI.
+
+2023-10-29  ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, seq_qt5/src/qseditoptions.cpp: Some
+	fixes to playlist handling.
+
+2023-10-28  ahlstrom <ahlstromcj@gmail.com>
+
+	* Seq66cli/seq66rtcli.cpp, Seq66qt5/seq66qt5.cpp, TODO,
+	data/samples/GM_DD-11.drums, data/samples/ca_midi.playlist,
+	data/seq66cli/seq66cli.ctrl, data/seq66cli/seq66cli.drums,
+	data/seq66cli/seq66cli.mutes, data/seq66cli/seq66cli.playlist,
+	data/seq66cli/seq66cli.rc, data/seq66cli/seq66cli.usr,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/seq66_features.hpp,
+	libseq66/include/sessions/smanager.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/configfile.cpp,
+	libseq66/src/cfg/notemapfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/usrfile.cpp, libseq66/src/os/daemonize.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/playlist.cpp,
+	libseq66/src/seq66_features.cpp, libseq66/src/sessions/smanager.cpp: 
+	Fixes for seq66cli and preparation for playlist testing of it.
+
+2023-10-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, data/linux/qseq66-alt-gray.palette,
+	data/linux/qseq66-default.palette, data/linux/qseq66-gray.palette,
+	data/linux/qseq66.palette, data/linux/qseq66.usr,
+	data/samples/incrypt-66.palette, data/samples/perstfic-66.palette,
+	data/samples/perstfic-66.qss, data/samples/qseq66-sample.palette,
+	data/win/qpseq66.palette, doc/latex/tex/configuration.tex,
+	doc/latex/tex/palettes.tex, doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/util/palette.hpp, libseq66/src/cfg/usrfile.cpp,
+	seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/gui_palette_qt5.hpp,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/gui_palette_qt5.cpp,
+	seq_qt5/src/qperfnames.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqkeys.cpp,
+	seq_qt5/src/qseqtime.cpp, seq_qt5/src/qslotbutton.cpp,
+	seq_qt5/src/qstriggereditor.cpp: Many palette and palette-usage
+	improvements.
+	* README.md, RELNOTES, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/util/palette.hpp, libseq66/src/cfg/rcsettings.cpp,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/src/palettefile.cpp, seq_qt5/src/qperftime.cpp,
+	seq_qt5/src/qseditoptions.cpp: Fixed and enhanced the session
+	preferences tab.
+
+2023-10-26  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, configure, data/samples/incrypt-66.palette,
+	data/samples/perstfic-66.palette, data/samples/perstfic-66.qss,
+	libseq66/include/util/palette.hpp,
+	libseq66/src/midi/midi_splitter.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/gui_palette_qt5.hpp,
+	seq_qt5/src/gui_palette_qt5.cpp, seq_qt5/src/palettefile.cpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qperfnames.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qslotbutton.cpp: Expanded
+	the palette by 8 more, may need to rename a couple for better usage.
+	* NEWS, README.md, VERSION, configure.ac,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/util/palette.hpp,
+	seq_qt5/include/gui_palette_qt5.hpp,
+	seq_qt5/src/gui_palette_qt5.cpp: Version bump and palette expansion
+	redux.
+
 2023-10-25  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* README.md: Minor README update.
+	* README.md: Release Notes for Seq66 v. 0.99.10 2023-10-25 - The usual raft of humiliating bug-fixes:     - Issue #117 Option to close pattern windows with esc key if       enabled via a 'usr' option.      - Issue #118 Made virtual ports ports enabled via an option.      - Issue #119 "Quantized Record Active does not work" fixed.        Live note/drum-mapping also fixed.      - Fixed an egregious error in drawing notes in drum mode.      - Fixed error in moving notes at PPQN != 192.      - Fixed bug preventing a song with triggers stopping playback       at end of song. Fixes related to playlist-handling.      - MANY other undocumented minor fixes.  - Implemented drag-and-drop of one MIDI file onto the Live grid.  - Added the export of most project configuration files to another   directory.  - Multiple tempo events can be drawn in a line in the data pane and   can be dragged up and down to change the tempo value.  - If double-click enabled, can open/create a pattern in the song   editor.  - Many improvements and fixes to the Mutes tab.  - Added a "grid mode" to toggle mutes by clicking in the Live Grid.    The new default mute-group-selection mode keystroke is "_".  - Opening the pattern editor reflects the recording mode and live   pattern alteration selection (e.g. quantization).  - The main time display works better with high PPQN.  - Now scrolls automatically in time and note value to show the first   notes in a pattern.  - Live-grid record-mode and alteration are applied when active
+	  pattern is opened for edit.  - Added more Qt style-sheets and UI palette items for more color   control.  - Tightened the file-name handling in Session preferences.  Also see the NEWS, README.md, and TODO files.
+	* ChangeLog, doc/latex/tex/midi_export.tex: Version 0.99.10 pending.
 	* README.md, RELNOTES, TODO, VERSION, configure.ac,
 	data/license.text, data/readme.text, data/readme.windows,
 	doc/latex/tex/song_editor.tex, include/config.h.in,
