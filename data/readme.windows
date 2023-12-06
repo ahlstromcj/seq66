@@ -1,24 +1,24 @@
-readme.windows for Seq66 0.99.11
+readme.windows for Seq66 0.99.12
 Chris Ahlstrom
-2018-05-13 to 2023-12-05
+2018-05-13 to 2023-12-06
 
 This README file tells you how to run the native Windows implmentation of
 seq66, an executable named qpseq66.exe.  It provides some notes on Seq66 and
 Windows.  We mostly use Windows 10; some features might differ in Windows 7 or
 Windows 2012 Server. Note that Seq66 is a 64-bit application for Windows.
 
-Release 0.99.9 fixes known issues and adds other work as noted in
-readme.text.
+This release fixes known issues and adds other work as noted in NEWS and
+RELNOTES.
 
-There will eventually be a portable ZIP package for qpseq66; an NSIS-based
-installer is available (replace "0.99" with the latest version number)
-as part of the latest GitHub release. An example:
+There is a portable 7z  package for qpseq66; an NSIS-based installer is
+available (replace "0.99" with the latest version number) as part of the
+latest GitHub release. An example:
 
     https://github.com/ahlstromcj/seq66/releases/download/0.99.8/seq66_setup_x64-0.99.8.exe
 
 For documentation (PDF user manual), see https://github.com/ahlstromcj/seq66/doc
 or the install directory. Or use the Help menu to access the tutorial and user
-mandual. Some minor features are missing from the Windows version, such as
+manual. Some minor features are missing from the Windows version, such as
 virtual ports. Sample configuration files are provided.
 
 Why the name qpseq66.exe instead of seq66.exe? The "q" stands for the Qt user
