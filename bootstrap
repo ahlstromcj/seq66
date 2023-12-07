@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2022-05-23
+# \update         2023-12-06
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -36,7 +36,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2022-05-23"
+export SEQ66_SCRIPT_EDIT_DATE="2022-12-06"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.9"
 
@@ -66,6 +66,7 @@ checkdir libseq66
 #  Option settings
 #------------------------------------------------------------------------------
 
+DOAUTOCONF_ONLY="no"
 DOBOOTSTRAP="yes"
 DOCONFIGURE="no"
 DONSM="yes"
@@ -106,6 +107,7 @@ and creates the 'configure' script.  It can super-clean the project, removing
 all generated files and directories.  It provides options to save trouble
 passing long options to the configure script for some canned setups.
 
+ --autoconf          Just create the autoconf/automake setup and exit.
  --clean             Delete the usual derived files from the project.
  --full-clean        Delete all derived and configure-related files.  The
                      bootstrap script will need to be run again.
@@ -151,6 +153,12 @@ if [ $# -ge 1 ] ; then
    while [ "$1" != "" ] ; do
 
       case "$1" in
+
+         --autoconf)
+
+            DOAUTOCONF_ONLY="yes"
+            DOCONFIGURE="no"
+            ;;
 
          --no-bootstrap | -nb)
             DOBOOTSTRAP="no"
@@ -491,6 +499,11 @@ E_O_F
 # Automake seems to need this one, but doesn't provide it!
 
    cp contrib/mkinstalldirs-1.10 aux-files/mkinstalldirs
+
+   if [ $DOAUTOCONF_ONLY == "yes" ] ; then
+      echo "Autoconf is set up, exiting..."
+      exit 0
+   fi
 
 # At this point, remove files which always need to be regenerated.
 # Right now, this is done with the --clean option.

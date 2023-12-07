@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-06-28
+ * \updates       2023-12-05
  * \license       GNU GPLv2 or above
  *
  *  This midibus module is the Windows (PortMidi) version of the midibus
@@ -107,7 +107,7 @@ protected:
     virtual int api_poll_for_midi () override;
     virtual bool api_init_in () override;
     virtual bool api_init_out () override;
-    virtual void api_continue_from (midipulse tick, midipulse beats);
+    virtual void api_continue_from (midipulse tick, midipulse beats) override;
     virtual void api_start () override;
     virtual void api_stop () override;
     virtual void api_clock (midipulse tick) override;

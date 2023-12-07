@@ -1,0 +1,29 @@
+#!/bin/bash
+#------------------------------------------------------------------------------
+##
+# \file        configure-clang
+# \library     bin
+# \author      Chris Ahlstrom
+# \date        2023-12-06 to 2023-12-06
+# \version     $Revision$
+# \license     GNU GPLv2 or above
+#
+# This script tries to set up got building Seq66 with clang.
+#
+#------------------------------------------------------------------------------
+
+export CC=clang
+export CXX=clang++
+export RANLIB=llvm-ranlib
+export CFLAGS=" -flto -std=gnu99 "
+export LDFLAGS=" -flto -fuse-ld=gold "
+# export QMAKESPEC="linux-clang"
+export QMAKESPEC="linux-llvm"
+./configure
+
+#******************************************************************************
+# qbuild (Seq66)
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 wm=4 et ft=sh
+#------------------------------------------------------------------------------
+

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-09-16
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -98,13 +98,13 @@ namespace seq66
  */
 
 event::event () :
-    m_input_buss    (null_buss()),          /* 0xFF                 */
+    m_input_buss    (null_buss()),              /* 0xFF                     */
     m_timestamp     (0),
-    m_status        (EVENT_NOTE_OFF),       /* note-off, channel 0  */
-    m_channel       (null_channel()),       /* 0x80                 */
-    m_data          (),                     /* a two-element array  */
-    m_sysex         (),                     /* an std::vector       */
-    m_linked        (nullptr),
+    m_status        (EVENT_NOTE_OFF),           /* note-off, channel 0      */
+    m_channel       (null_channel()),           /* 0x80                     */
+    m_data          (),                         /* a two-element array      */
+    m_sysex         (),                         /* an std::vector           */
+    m_linked        (),                         /* uninit'd iterator #124   */
     m_has_link      (false),
     m_selected      (false),
     m_marked        (false),
@@ -139,7 +139,7 @@ event::event (midipulse tstamp, midibyte status, midibyte d0, midibyte d1) :
     m_channel       (mask_channel(status)),
     m_data          (),                     /* two-element array, midibytes */
     m_sysex         (),                     /* an std::vector of midibytes  */
-    m_linked        (nullptr),
+    m_linked        (),                     /* removed nullptr issue #124   */
     m_has_link      (false),
     m_selected      (false),
     m_marked        (false),
@@ -159,7 +159,7 @@ event::event (midipulse tstamp, midibpm tempo) :
     m_channel       (EVENT_META_SET_TEMPO),
     m_data          (),                     /* two-element array, midibytes */
     m_sysex         (),                     /* an std::vector of midibytes  */
-    m_linked        (nullptr),
+    m_linked        (),                     /* removed nullptr issue #124   */
     m_has_link      (false),
     m_selected      (false),
     m_marked        (false),
@@ -186,7 +186,7 @@ event::event
     m_channel       (channel),
     m_data          (),                     /* two-element array, midibytes */
     m_sysex         (),                     /* an std::vector of midibytes  */
-    m_linked        (nullptr),
+    m_linked        (),                     /* removed nullptr issue #124   */
     m_has_link      (false),
     m_selected      (false),
     m_marked        (false),

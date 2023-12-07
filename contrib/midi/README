@@ -1,6 +1,6 @@
 MIDI Sample and Test Files
 Chris Ahlstrom
-2015-09-11 to 2023-11-25
+2015-09-11 to 2023-12-07
 
 This directory contains contributed MIDI files for examples and testing.
 Also see the test files from the midicvt as described in
@@ -109,6 +109,19 @@ the "example1" file.
    route66.midi:
 
       A version more like the original.
+
+   trilogy.mid:
+
+      A file found that yields unexpected data:
+
+        Offset ~0xae18 of 0x16872 bytes (44568/92274):
+           Unsupported MIDI event. Bad value 0x56.
+        Unexpected meta type 0x2f offset ~0xaee7
+        Unexpected meta type 0x2f offset ~0xaf82
+        Unexpected meta type 0x2f offset ~0xca35
+        Unexpected meta type 0x2f offset ~0x149e4
+        Unexpected meta type 0x2f offset ~0x167df
+        Unexpected meta type 0x2f offset ~0x16822
 
 There are many other files, used for testing fixes, that are not documented
 here.

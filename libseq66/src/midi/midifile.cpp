@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-11-30
+ * \updates       2023-12-06
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1542,11 +1542,9 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             --m_pos;                    /* put byte back    */
                             len = read_varinum();       /* sysex            */
 #if defined SEQ66_USE_SYSEX_PROCESSING
-                            int bcount = 0;
-                            while (len--)
+                            while (len-- > 0)
                             {
                                 midibyte b = read_byte();
-                                ++bcount;
                                 if (! e.append_sysex_byte(b)) /* end byte?  */
                                     break;
                             }

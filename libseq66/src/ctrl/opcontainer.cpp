@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2022-05-16
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -85,7 +85,7 @@ opcontainer::add (const midioperation & op)
     automation::slot opnumber = op.number();
     if
     (
-        opnumber != automation::slot::max ||
+        opnumber != automation::slot::max &&        // || re issue #124
         opnumber != automation::slot::automation
     )
     {
