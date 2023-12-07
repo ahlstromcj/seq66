@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-19
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -47,10 +47,10 @@ namespace seq66
 
 /**
  *  We need to square this away.  This should be the configurable usr()
- *  key-height.
+ *  key-height. But it is not used, and we already have made it configurable.
+ *
+ *      static const int c_key_y =  8;
  */
-
-static const int c_key_y =  8;
 
 /**
  *  Primary constructor

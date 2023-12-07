@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-06
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -729,6 +729,8 @@ midifile::grab_input_stream (const std::string & tag)
  *      messages properly for a MIDI file.  Instead of a varinum length value,
  *      they are followed by extended IDs (0x7D, 0x7E, or 0x7F).
  *
+ *      THE ABOVE IS WRONG!
+ *
  *      We've covered some of those cases by disabling access to m_data if the
  *      position passes the size of the file, but we want try to bypass these
  *      odd cases properly.  So we look ahead for one of these special values.
@@ -1106,6 +1108,11 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                 status = m_data[m_pos];             /* current event byte   */
                 if (event::is_status(status))       /* is there a 0x80 bit? */
                 {
+                    /*
+                     * For SysEx, the skip is undone. For meta events, the
+                     * correct event type is obtained anyway.
+                     */
+
                     skip(1);                                /* get to d0    */
                     if (event::is_system_common_msg(status))
                         runningstatus = 0;                  /* clear it     */
@@ -1222,6 +1229,11 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             break;
 
                         case EVENT_META_END_OF_TRACK:   /* FF 2F 00         */
+
+                            /*
+                             * This is an optional event according to the MIDI
+                             * specification.
+                             */
 
                             s.set_length(currenttime, false);
                             s.zero_markers();
@@ -1525,39 +1537,23 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     }
                     else if (status == EVENT_MIDI_SYSEX)    /* 0xF0 */
                     {
-                        /*
-                         * Some files do not properly encode SysEx messages;
-                         * see the function banner for notes.
-                         */
-
-                        midibyte check = read_byte();
-                        if (is_sysex_special_id(check))
-                        {
-                            /*
-                             * TMI: "SysEx ID byte = 7D to 7F");
-                             */
-                        }
-                        else                            /* handle normally  */
-                        {
-                            --m_pos;                    /* put byte back    */
-                            len = read_varinum();       /* sysex            */
 #if defined SEQ66_USE_SYSEX_PROCESSING
-                            while (len-- > 0)
-                            {
-                                midibyte b = read_byte();
-                                if (! e.append_sysex_byte(b)) /* end byte?  */
-                                    break;
-                            }
-                            skip(len);                  /* eat it           */
-#else
-                            skip(len);                  /* eat it           */
-                            if (m_data[m_pos-1] != 0xF7)
-                            {
-                                std::string m = "SysEx terminator F7 not found";
-                                (void) set_error_dump(m);
-                            }
-#endif
+                        midishort mfg_id;
+                        midibyte id = read_byte();
+                        if (id == 0)
+                            mfg_id = read_short();
+                        else
+                            mfg_id = midishort(id);
+
+                        (void) mfg_id;              /* later, store it? */
+                        back_up(2);                 /* back to F0       */
+                        for (;;)
+                        {
+                            midibyte b = read_byte();
+                            if (! e.append_sysex_byte(b))   /* F7 byte? */
+                                break;
                         }
+#endif
                     }
                     else
                     {
@@ -1717,6 +1713,13 @@ midifile::parse_seqspec_header (int file_size)
             {
                 (void) read_varinum();          /* prop section length      */
                 result = read_long();           /* control tag              */
+            }
+            else if (type == EVENT_META_END_OF_TRACK)
+            {
+                msgprintf
+                (
+                    msglevel::warn, "End-of-track, offset ~0x%lx", long(m_pos)
+                );
             }
             else
             {

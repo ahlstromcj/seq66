@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2023-11-01
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -616,7 +616,7 @@ public:
 
 public:
 
-    virtual bool change_ppqn (int ppq);
+    virtual bool change_ppqn (int ppq) override;
 
     /**
      *  Make the view cover less horizontal length.  The lowest zoom possible

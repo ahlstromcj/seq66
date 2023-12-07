@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2023-02-27
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -201,7 +201,6 @@ private:
 
     bool m_text_initialized;
     bool m_draw_text;
-    bool m_draw_background;
     textbox m_top_left;
     textbox m_top_right;
     textbox m_bottom_left;

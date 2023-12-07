@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-11-27
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -2009,7 +2009,7 @@ qslivegrid::popup_menu ()
                     connect
                     (
                         a, &QAction::triggered,
-                        [this, buss, channel] { set_midi_channel(channel); }
+                        [this, /*buss,*/ channel] { set_midi_channel(channel); }
                     );
                     a->setCheckable(true);                  /* issue #106   */
                     a->setChecked(s->midi_channel() == channel);
@@ -2021,7 +2021,7 @@ qslivegrid::popup_menu ()
                     connect
                     (
                         a, &QAction::triggered,
-                        [this, buss, channel] { set_midi_channel(channel); }
+                        [this, /*buss,*/ channel] { set_midi_channel(channel); }
                     );
                     a->setCheckable(true);                  /* issue #106   */
                     a->setChecked(s->midi_channel() == channel);

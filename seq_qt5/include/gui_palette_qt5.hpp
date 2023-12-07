@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2023-10-27
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -159,8 +159,8 @@ private:
 public:
 
     gui_palette_qt5 (const std::string & filename = "");
-    gui_palette_qt5 (const gui_palette_qt5 &) = default;
-    gui_palette_qt5 & operator = (const gui_palette_qt5 &) = default;
+    gui_palette_qt5 (const gui_palette_qt5 &) = delete;
+    gui_palette_qt5 & operator = (const gui_palette_qt5 &) = delete;
     virtual ~gui_palette_qt5 ();
 
     static Color calculate_inverse (const Color & c);

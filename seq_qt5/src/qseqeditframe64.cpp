@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-11-29
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -201,10 +201,10 @@ int qseqeditframe64::sm_initial_chord        = 0;
 /**
  *  To reduce the amount of written code, we use the following count to cover
  *  beats/measure ranging from 1 to 16, plus an additional value of 32.  The user
- *  can always manually edit odd beats/measure values.
+ *  can always manually edit odd beats/measure values. Unused.
+ *
+ *      static const int s_beat_measure_count   = 16;
  */
-
-static const int s_beat_measure_count   = 16;
 
 /**
  *  These static items are used to fill in and select the proper zoom values for

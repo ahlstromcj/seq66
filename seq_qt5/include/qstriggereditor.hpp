@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-31
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -146,12 +146,13 @@ public slots:
 
 private:
 
+    virtual void set_adding (bool adding) override;
+
     void x_to_w (int x1, int x2, int & x, int & w);
     void start_paste ();
     void convert_x (int x, midipulse & tick);
     void convert_t (midipulse ticks, int & x);
     void drop_event (midipulse tick);
-    void set_adding (bool adding);
     bool movement_key_press (int key);
     void move_selected_events (midipulse dt);
 

@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2021-11-29
+ * \updates       2021-12-07
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -140,7 +140,8 @@ public:     // session client method overrides
 
 public:         // Other virtual functions
 
-    virtual bool open_session (); // prospective helper a la qtractorMainForm
+    virtual bool open_session () override; // helper a la qtractorMainForm
+
     virtual void session_manager_name (const std::string & mgrname);
     virtual void session_manager_path (const std::string & pathname);
     virtual void session_display_name (const std::string & dispname);

@@ -907,7 +907,9 @@ event::append_meta_data (midibyte metatype, const midibytes & data)
  *      event.
  *
  * \return
- *      Returns true if the event is not a SysEx-end event.
+ *      Returns true if the event is not a SysEx-end event. The EOX ($F7)
+ *      status byte can be replaced with any other status byte except for
+ *      a Real-Time message, but this probably never is done.
  */
 
 bool

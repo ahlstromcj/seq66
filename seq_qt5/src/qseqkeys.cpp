@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-27
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  *  We've added the feature of a right-click toggling between showing the main
@@ -54,10 +54,13 @@ class performer;
 
 /**
  *  The width and thickness of the keys drawn on the GUI.
+ *
+ *  Unused:
+ *
+ *      static const int sc_key_y =  8;
  */
 
 static const int sc_key_x = 22;
-static const int sc_key_y =  8;
 
 /**
  *  The dimensions and offset of the virtual keyboard at the left of the piano

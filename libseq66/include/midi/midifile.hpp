@@ -449,12 +449,15 @@ protected:
      *
      * \return
      *      Returns true if the byte is SysEx special ID.
+     *
+     * THIS FUNCTION IS WRONG, BOGUS!!!
+     *
+     *  bool is_sysex_special_id (midibyte ch)
+     *  {
+     *      return ch >= 0x7D && ch <= 0x7F;
+     *  }
+     *
      */
-
-    bool is_sysex_special_id (midibyte ch)
-    {
-        return ch >= 0x7D && ch <= 0x7F;
-    }
 
 };          // class midifile
 

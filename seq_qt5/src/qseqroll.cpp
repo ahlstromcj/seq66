@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-25
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -66,9 +66,12 @@ namespace seq66
 
 /**
  *  Default value for randomization.  Currently the only value supported.
+ *
+ * Unused:
+ *
+ *      static const int c_randomize_range  = 4;    // randomize range in ticks
  */
 
-static const int c_randomize_range  = 4;        /* randomize range in ticks */
 static const int c_border_width     = 2;
 static const int c_pen_width        = 1;
 

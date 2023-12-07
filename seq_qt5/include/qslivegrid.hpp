@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-08-29
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  *
@@ -164,6 +164,8 @@ private:                                // overrides of event handlers
 
 private:
 
+    virtual bool recreate_all_slots () override;
+
     seq::number seq_id_from_xy (int click_x, int click_y);
     qslotbutton * create_one_button (seq::number seqno);
     qslotbutton * button (int row, int column);
@@ -174,7 +176,6 @@ private:
     bool delete_slot (int row, int column);
     bool delete_slot (seq::number seqno);
     bool delete_all_slots ();
-    bool recreate_all_slots ();
     bool refresh_all_slots ();
     bool modify_slot (qslotbutton * newslot, int row, int column);
     void button_toggle_enabled (seq::number seqno);

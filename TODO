@@ -37,6 +37,13 @@ Misc:
 		[seq66] Unexpected meta type 0x2f offset ~0x167df
 		[seq66] Unexpected meta type 0x2f offset ~0x16822
 		[seq66] Read: '/home/ahlstrom/Downloads/Trilogy.mid'
+        Also make sure SysEx messages in first track are being stored.
+        Write a module to show SysEx (and optionally store them as
+        a macro.
+        Also handle meta-midi-port message tracks, and add them as
+        patterns if they also have trkname messages.
+        Also test with the Dixie04.mid file, as our SysEx reading was
+        wrong!!!!
 
 Mutes:
 

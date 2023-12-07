@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-12-02
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -185,20 +185,25 @@ const std::string s_default_tune = "newtune.midi";
  *  Manifest constant to indicate the location of each main-window tab.
  */
 
-static const int Tab_Live               =  0;
-static const int Tab_Song               =  1;
-static const int Tab_Editor             =  2;
-static const int Tab_Events             =  3;
-static const int Tab_Playlist           =  4;
-static const int Tab_Set_Master         =  5;
-static const int Tab_Mute_Master        =  6;
-static const int Tab_Session            =  7;
+enum tabs_t
+{
+    Tab_Live        =  0,
+    Tab_Song        =  1,
+    Tab_Editor      =  2,
+    Tab_Events      =  3,
+    Tab_Playlist    =  4,
+    Tab_Set_Master  =  5,
+    Tab_Mute_Master =  6,
+    Tab_Session     =  7
+};
 
 /**
  *  Manifest constants for the beat-measure and beat-length combo-boxes.
+ *
+ *  Unused:
+ *
+ *      static const int s_beat_measure_count   = 16;
  */
-
-static const int s_beat_measure_count   = 16;
 
 /**
  *  Given a display coordinate, looks up the screen and returns its geometry.

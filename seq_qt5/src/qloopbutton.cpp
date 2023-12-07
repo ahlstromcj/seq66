@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2023-11-22
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -185,7 +185,6 @@ qloopbutton::qloopbutton
     m_text_font             (),
     m_text_initialized      (false),
     m_draw_text             (true),
-    m_draw_background       (true),
     m_top_left              (),
     m_top_right             (),
     m_bottom_left           (),

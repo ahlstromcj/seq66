@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-01
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -135,7 +135,7 @@ public slots:
 
 private:
 
-    virtual void set_adding (bool adding);
+    virtual void set_adding (bool adding) override;
 
     qperfeditframe64 * frame64 ()
     {

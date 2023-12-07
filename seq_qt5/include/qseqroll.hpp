@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-01
+ * \updates       2023-12-07
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -155,13 +155,14 @@ private:        // overrides for painting, mouse/keyboard events, & size hints
 
 private:
 
+    virtual void set_adding (bool a_adding) override;
+
 #if defined USE_GROW_SELECTED_NOTES_FUNCTION
     void grow_selected_notes (int dx);
 #endif
 
     void move_selected_notes (int dx, int dy);
     void snap_y (int & y);
-    void set_adding (bool a_adding);
     void start_paste();
     void draw_grid (QPainter & painter, const QRect & r);
     void draw_notes (QPainter & painter, const QRect & r, bool background);
