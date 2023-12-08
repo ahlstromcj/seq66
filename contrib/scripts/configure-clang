@@ -4,7 +4,7 @@
 # \file        configure-clang
 # \library     bin
 # \author      Chris Ahlstrom
-# \date        2023-12-06 to 2023-12-06
+# \date        2023-12-06 to 2023-12-08
 # \version     $Revision$
 # \license     GNU GPLv2 or above
 #
@@ -12,14 +12,15 @@
 #
 #------------------------------------------------------------------------------
 
-export CC=clang
-export CXX=clang++
-export RANLIB=llvm-ranlib
-export CFLAGS=" -flto -std=gnu99 "
-export LDFLAGS=" -flto -fuse-ld=gold "
+# export CFLAGS=" -flto -std=gnu99 "
+# export LDFLAGS=" -flto -fuse-ld=gold "
+# export RANLIB=llvm-ranlib
+# export QMAKESPEC="linux-llvm"
 # export QMAKESPEC="linux-clang"
-export QMAKESPEC="linux-llvm"
-./configure
+
+CLANGVER=-12
+
+CC="clang$CLANGVER" CXX="clang++$CLANGVER" ./configure $*
 
 #******************************************************************************
 # qbuild (Seq66)

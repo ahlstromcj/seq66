@@ -25,23 +25,23 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2022-05-15
+ * \updates       2023-12-08
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
  *
  *  Elements of a MIDI buss:
  *
- *      -   Client.  This is the application:  seq66, seq66portmidi, or
+ *      -   Client. This is the application: seq66, seq66portmidi, or
  *          seq66rtmidi.
- *      -   Buss.   This is the main MIDI item, such as MIDI Through (14)
+ *      -   Buss. This is the main MIDI item, such as MIDI Through (14)
  *          or TiMidity (128).  The buss numbers are provided by the system.
  *          Currently, the buss name is empty.
- *      -   Port.  This is one of the items provided by the buss, and the
+ *      -   Port. This is one of the items provided by the buss, and the
  *          number usually starts at 0.  The port numbers are provided by the
- *          system.  Currently, the port name includes the buss name as
+ *          system. Currently, the port name includes the buss name as
  *          provided by the system, as a single unit.
- *      -   Index.  This number is the order of the input or output MIDI
+ *      -   Index. This number is the order of the input or output MIDI
  *          device as enumerated by the system lookup code, and always starts
  *          at 0.
  */
@@ -156,10 +156,11 @@ midibase::midibase
     midibpm bpm,
     io iotype,
     port porttype,
-    const std::string & portalias       // new for version 0.98.0
+    const std::string & portalias
 ) :
     m_bus_index         (index),
-    m_bus_id            (bus_id == (-1) ? 0 : bus_id),  /* uninited midi_info */
+    m_client_id         (-1),                           /* ca 2023-12-08      */
+    m_bus_id            (bus_id == (-1) ? 0 : bus_id),  /* uninit'd midi_info */
     m_port_id           (port_id),
     m_clock_type        (e_clock::off),
     m_io_active         (false),

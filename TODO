@@ -10,6 +10,8 @@ Misc:
             #define LO_TT_IMMEDIATE ((lo_timetag){0U,1U}) in lo_osc_types.h.
         -   clang-16: warning: optimization flag '-fno-fat-lto-objects'
             is not supported [-Wignored-optimization-argument]
+    -   PortMidi autoconf build: segfault in release mode. For seq66cli,
+        mastermidibus_pm.h not found in main module.
     -   Grid-mode options:
         -   Needs to be made a queued solo; how to handle
             mod_replace (Key_Home) and mod_snapshot (Ins)

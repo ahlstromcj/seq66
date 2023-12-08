@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-19
- * \updates       2022-09-21
+ * \updates       2023-12-08
  * \license       GNU GPLv2 or above
  *
  *  A lock-free ring buffer.
@@ -124,7 +124,7 @@ class ring_test
 
 public:
 
-    using cref = const ring_buffer<ring_test>::reference;
+    using cref = /* const */ ring_buffer<ring_test>::reference;
 
 private:
 

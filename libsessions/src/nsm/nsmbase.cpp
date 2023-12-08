@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2023-03-31
+ * \updates       2023-12-08
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -95,10 +95,21 @@
  *
  * CLANG and LO_TT_IMMEDIATE:
  *
- *      warning: compound literals are a C99-specific feature [-Wc99-extensions]
+ *      Warning: compound literals are a C99-specific feature [-Wc99-extensions]
+ *      This is due to using, in lo_osc_types.h:
  *
- *      #define LO_TT_IMMEDIATE ((lo_timetag){0U,1U}) in lo_osc_types.h.
+ *      #define LO_TT_IMMEDIATE ((lo_timetag){0U,1U})
+ *
+ *      versus "lo_timetag lo_get_tt_immediate();" as LO_TT_IMMEDIATE
  */
+
+#if defined __clang__
+#include "lo/lo_osc_types.h"
+static lo_timetag s_lo_timetag = { 0, 1 };
+#define LO_TT_IMMEDIATE_2   s_lo_timetag
+#else
+#define LO_TT_IMMEDIATE_2   LO_TT_IMMEDIATE
+#endif
 
 #undef  SHOW_CLIENT_DATA_TYPE           /* for development purposes only    */
 
@@ -461,7 +472,7 @@ nsmbase::progress (float percent)
         {
             lo_send_from                    /* "/nsm/client/progress" "f"   */
             (
-                m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+                m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
                 message.c_str(), pattern.c_str(), percent
             );
             nsm::outgoing_msg(message, pattern, std::to_string(percent));
@@ -489,7 +500,7 @@ nsmbase::is_dirty ()
         {
             lo_send_from                    /* "/nsm/client/is_dirty" ""    */
             (
-                m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+                m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
                 message.c_str(), pattern.c_str()
             );
         }
@@ -539,7 +550,7 @@ nsmbase::message (int priority, const std::string & mesg)
         {
             lo_send_from                    /* "/nsm/client/message" "is"   */
             (
-                m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+                m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
                 message.c_str(), pattern.c_str(),
                 priority, mesg.c_str()
             );
@@ -608,7 +619,7 @@ nsmbase::send_nsm_reply
             {
                 rc = lo_send_from
                 (
-                    m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+                    m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
                     message.c_str(), pattern.c_str(),
                     path.c_str(), replymsg.c_str()
                 );
@@ -621,7 +632,7 @@ nsmbase::send_nsm_reply
             {
                 rc = lo_send_from
                 (
-                    m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+                    m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
                     message.c_str(), pattern.c_str(), path.c_str(),
                     static_cast<int>(errorcode), replymsg.c_str()
                 );
@@ -670,7 +681,7 @@ nsmbase::send_announcement
         int pid = int(getpid());
         int rc = lo_send_from           /* "/nsm/server/announce" "sssiii"  */
         (
-            m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+            m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
             message.c_str(), pattern.c_str(), packagename, caps, app,
             NSM_API_VERSION_MAJOR, NSM_API_VERSION_MINOR, pid
         );
@@ -885,7 +896,7 @@ nsmbase::send
 {
     int rcode = lo_send_from            /* e.g. "/nsm/client/is_clean" ""   */
     (
-        m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+        m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
         message.c_str(), pattern.c_str()
     );
     bool result = rcode != (-1);
@@ -928,7 +939,7 @@ nsmbase::send_from_client
         {
             rcode = lo_send_from        /* e.g. "/nsm/client/is_clean" ""   */
             (
-                m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+                m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
                 message.c_str(), pattern.c_str(),
                 s1.c_str(), s2.c_str()
             );
@@ -937,7 +948,7 @@ nsmbase::send_from_client
         {
             rcode = lo_send_from
             (
-                m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+                m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
                 message.c_str(), pattern.c_str(),
                 s1.c_str(), s2.c_str(), s3.c_str()
             );
