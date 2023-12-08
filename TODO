@@ -1,9 +1,15 @@
-TO DO for Seq66 0.99.11
+TO DO for Seq66 0.99.12
 Chris Ahlstrom
-2019-04-13 to 2023-12-07
+2019-04-13 to 2023-12-08
 
 Misc:
 
+    -   Clang-16:
+        -   CLANG and LO_TT_IMMEDIATE: warning: compound literals are a
+            C99-specific feature [-Wc99-extensions]. See
+            #define LO_TT_IMMEDIATE ((lo_timetag){0U,1U}) in lo_osc_types.h.
+        -   clang-16: warning: optimization flag '-fno-fat-lto-objects'
+            is not supported [-Wignored-optimization-argument]
     -   Grid-mode options:
         -   Needs to be made a queued solo; how to handle
             mod_replace (Key_Home) and mod_snapshot (Ins)

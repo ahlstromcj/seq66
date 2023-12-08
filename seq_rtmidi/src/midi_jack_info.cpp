@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-10-13
+ * \updates       2023-12-08
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
@@ -398,7 +398,7 @@ midi_jack_info::get_all_port_info
                 std::string fullname = inports[count];
                 std::string clientname;
                 std::string portname;
-                std::string alias = get_port_alias(fullname);
+                std::string alias = get_port_alias_by_name(fullname);
                 if (alias == fullname)
                     alias.clear();
 
@@ -461,7 +461,7 @@ midi_jack_info::get_all_port_info
                 std::string fullname = outports[count];
                 std::string clientname;
                 std::string portname;
-                std::string alias = get_port_alias(fullname);
+                std::string alias = get_port_alias_by_name(fullname);
                 if (alias == fullname)
                     alias.clear();
 
@@ -528,7 +528,7 @@ midi_jack_info::get_all_port_info
  */
 
 std::string
-midi_jack_info::get_port_alias (const std::string & name)
+midi_jack_info::get_port_alias_by_name (const std::string & name)
 {
     bool is_system_port = contains(name, "system:");        /* brittle code */
     std::string result;

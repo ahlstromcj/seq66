@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2022-09-06
+ * \updates       2023-12-08
  * \license       See above.
  *
  *    We need to have a way to get all of the JACK information of
@@ -176,7 +176,7 @@ private:
         midi_port_info & outports
     ) override;
 
-    std::string get_port_alias (const std::string & name);
+    std::string get_port_alias_by_name (const std::string & name);
 
     /**
      * \getter m_jack_client

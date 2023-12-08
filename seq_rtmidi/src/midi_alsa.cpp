@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2022-08-05
+ * \updates       2023-12-08
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -483,10 +483,13 @@ midi_alsa::api_connect ()
  *  by Qtractor code. Also in Qtractor, the same snd_midi_event_t object is
  *  used over and over, rather than being recreated/destroyed for every
  *  event-play by snd_midi_event_new() and snd_midi_event_free().
+ *
+ * Unused:
+ *
+ *      static const size_t s_sysex_size_max = 512; // Hydrogen uses 32 w/input
  */
 
 static const size_t s_event_size_max =  10;
-static const size_t s_sysex_size_max = 512; /* Hydrogen uses 32 for input!  */
 
 /**
  *  This play() function takes a native event, encodes it to an ALSA MIDI

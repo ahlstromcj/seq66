@@ -6,12 +6,14 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2017-09-05
-# \update      2022-05-04
+# \update      2023-12-08
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
 # 		This module provides an Automake makefile for the seq66qt5 C/C++
 # 		application.
+#
+# To do: Account for usage of CLANG/LLVM in the linker flags as noted below.
 #
 #------------------------------------------------------------------------------
 
@@ -192,6 +194,13 @@ bin_PROGRAMS = $(MIDIAPP)
 #
 #  https://flameeyes.blog/2010/11/26/
 #     it-s-not-all-gold-that-shines-why-underlinking-is-a-bad-thing/
+#
+#  Clang-16 and LLVM:
+#
+#     For the build to work (with libpng), we had to use
+#
+#        qseq66_LDFLAGS =
+#        qpseq66_LDFLAGS =
 #
 #----------------------------------------------------------------------------
  

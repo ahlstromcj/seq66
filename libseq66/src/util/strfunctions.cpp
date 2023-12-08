@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-10-23
+ * \updates       2023-12-08
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -642,7 +642,11 @@ midi_bytes_to_string (const std::string & s)
     {
         std::string result;
         bool slashed = false;
-        int sum = 0;
+
+        /*
+         * int sum = 0;
+         */
+
         int hexcount = 0;
         for (const auto c : s)
         {
@@ -653,7 +657,11 @@ midi_bytes_to_string (const std::string & s)
                 {
                     ++hexcount;
                     if (hexcount == 1)
-                        sum += value * 16;
+                    {
+                        /*
+                         * sum += value * 16;
+                         */
+                    }
                     else if (hexcount == 2)
                     {
                         result.push_back(c);
@@ -1498,7 +1506,10 @@ hanging_word_wrap
     std::string result;
     if (! source.empty())
     {
-        int line = 0;                       /* the first line   */
+        /*
+         * int line = 0;                       // the first line   //
+         */
+
         size_t linelen = leftmargin;
         std::string padding(leftmargin, ' ');
         tokenization words = tokenize(source, SEQ66_WHITE_CHARS);
@@ -1510,7 +1521,10 @@ hanging_word_wrap
                 result += "\n";
                 result += padding;
                 linelen = leftmargin;
-                ++line;
+
+                /*
+                 * ++line;
+                 */
             }
             w = " " + w;
             result += w;

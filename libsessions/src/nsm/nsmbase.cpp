@@ -92,6 +92,12 @@
  *      New tool that implements the /nsm/gui/xxx OSC endpoint to receive more
  *      details about the session which allow it to give a view of the current
  *      session.
+ *
+ * CLANG and LO_TT_IMMEDIATE:
+ *
+ *      warning: compound literals are a C99-specific feature [-Wc99-extensions]
+ *
+ *      #define LO_TT_IMMEDIATE ((lo_timetag){0U,1U}) in lo_osc_types.h.
  */
 
 #undef  SHOW_CLIENT_DATA_TYPE           /* for development purposes only    */
