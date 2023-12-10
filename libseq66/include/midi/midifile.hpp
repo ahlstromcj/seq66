@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-07-06
+ * \updates       2023-12-10
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -47,6 +47,7 @@
 #include <list>
 #include <vector>
 
+#include "cfg/rcsettings.hpp"           /* enum class rsaction              */
 #include "midi/midibytes.hpp"           /* midishort, midibyte, etc.        */
 #include "midi/midi_splitter.hpp"       /* seq66::midi_splitter             */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
@@ -135,6 +136,12 @@ private:
      */
 
     bool m_disable_reported;
+
+    /**
+     *  Holds the value for how to handle mistakes in running status.
+     */
+
+    rsaction m_running_status_action;
 
     /**
      *  Holds the position in the MIDI file.  This is at least a 31-bit

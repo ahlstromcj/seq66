@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-06-20
+ * \updates       2023-12-09
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support

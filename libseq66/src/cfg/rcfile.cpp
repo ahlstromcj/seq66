@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-11-30
+ * \updates       2023-12-10
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -504,6 +504,13 @@ rcfile::parse ()
     rc_ref().record_by_buss(recordby);
     recordby = get_boolean(file, tag, "record-by-channel");
     rc_ref().record_by_channel(recordby);
+
+    tag = "[midi-file-tweaks]";
+    pfname = get_variable(file, tag, "running-status-action");
+    if (pfname.empty())
+        rc_ref().auto_rc_save(true);
+    else
+        rc_ref().running_status_action(pfname);
 
     int track = 0;
     tag = "[midi-meta-events]";
@@ -1031,6 +1038,24 @@ rcfile::write ()
     write_integer(file, "ticks", midibus::get_clock_mod());
     write_boolean(file, "record-by-buss", rc_ref().record_by_buss());
     write_boolean(file, "record-by-channel", rc_ref().record_by_channel());
+
+    /*
+     * Running-status action
+     */
+
+    file << "\n"
+"# This section defines tweaks to the reading or writing of MIDI files.\n"
+"# Indicates how to handle MIDI files with incorrect running status. Default\n"
+"# is 'recover', which tries to recover the running status when a data byte\n"
+"# is encountered; 'skip' ignores the rest of the bytes in the track;\n"
+"# 'proceed' keeps going; 'abort' just exits the parsing, which is the old\n"
+"# and undesirable behavior. Try each option with the 'trilogy.mid' file.\n"
+"\n[midi-file-tweaks]\n\n"
+    ;
+    write_string
+    (
+        file, "running-status-action", rc_ref().running_status_action_name()
+    );
 
     /*
      * Reveal ports

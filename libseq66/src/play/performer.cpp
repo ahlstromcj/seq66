@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-12-04
+ * \updates       2023-12-10
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -329,10 +329,10 @@ performer::performer (int ppqn, int rows, int columns) :
     m_inputs                (),                 /* vector wrapper class     */
     m_port_map_error        (false),
     m_key_controls          ("Key controls"),
-    m_midi_control_in       ("Perf ctrl in"),
-    m_midi_control_out      ("Perf ctrl out"),
+    m_midi_control_in       ("Performer ctrl in"),
+    m_midi_control_out      ("Performer ctrl out"),
     m_mute_groups           ("Mute groups", rows, columns),     /* mutes()  */
-    m_operations            ("Performer ops"),
+    m_operations            ("Performer operations"),
     m_set_master            (rows, columns),    /* 32 row x column sets     */
     m_set_mapper                                /* access via set_mapper()  */
     (
@@ -479,7 +479,7 @@ performer::append_error_message (const std::string & msg) const
     std::string newmsg = msg;
     m_error_pending = true;                         /* a mutable boolean    */
     if (newmsg.empty())
-        newmsg = "Performer error";
+        newmsg = "performer error";
 
     if (! m_error_messages.empty())
     {
@@ -492,14 +492,14 @@ performer::append_error_message (const std::string & msg) const
             m_error_messages += " ";
             m_error_messages += newmsg;
             s_old_msgs.push_back(newmsg);
-            seq66::error_message("Performer", newmsg);
+            seq66::error_message("performer", newmsg);
         }
     }
     else
     {
         m_error_messages = newmsg;
         s_old_msgs.push_back(newmsg);
-        seq66::error_message("Performer", newmsg);
+        seq66::error_message("performer", newmsg);
     }
 }
 

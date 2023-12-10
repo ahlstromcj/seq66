@@ -1,6 +1,15 @@
-Release Notes for Seq66 v. 0.99.12 2023-12-06
+Release Notes for Seq66 v. 0.99.12 2023-12-10
 
--   To do.
+-   Clang support.
+    -   Using clang-12 and clang-16 to find errors and warnings
+        that g++ did not detect, re issue #124.
+    -   Modifying configure.ac and make-files to support this
+        compiler.
+-   Fixing the processing of SysEx and Meta events.
+    -   Reading and writing in the MIDI file.
+    -   Display SysEx and text in the event editor.
+    -   Added choice to skip, recover, or abort from bad running
+        status in MIDI files. The the trilogy.mid contributed file.
 
 See NEWS for more details.
 

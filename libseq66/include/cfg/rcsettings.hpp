@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-11-28
+ * \updates       2023-12-10
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -141,6 +141,31 @@ enum class timebase
     slave,
     master,
     conditional
+};
+
+/**
+ *  We need to offer some options for handling running-status issues in
+ *  some MIDI files.  See the midifile class.
+ *
+ * \var recover
+ *      Try to recover the running-status value.
+ *
+ * \var skip
+ *      Skip the rest of the track.
+ *
+ * \var proceed
+ *      Allow running status errors to cascade.
+ *
+ * \var abort
+ *      Stop processing the rest of the tracks.
+ */
+
+enum class rsaction
+{
+    recover,    /* Try to recover the running-status value.                 */
+    skip,       /* Skip the rest of the track.                              */
+    proceed,    /* Allow running status errors to cascade.                  */
+    abort       /* Stop processing the rest of the tracks.                  */
 };
 
 /**
@@ -314,6 +339,12 @@ private:
      */
 
     std::string m_midi_filepath;
+
+    /**
+     *  Indicates what to do with running-status irregularities.
+     */
+
+    rsaction m_running_status_action;
 
     /**
      *  Holds the JACK UUID value that makes this JACK connection unique.
@@ -1066,6 +1097,14 @@ public:
     void midi_filepath (const std::string & value)
     {
         m_midi_filepath = value;
+    }
+
+    void running_status_action (const std::string & value);
+    std::string running_status_action_name () const;
+
+    rsaction running_status_action () const
+    {
+        return m_running_status_action;
     }
 
     const std::string & jack_session () const

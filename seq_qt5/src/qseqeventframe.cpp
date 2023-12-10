@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-11-29
+ * \updates       2023-12-09
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -530,6 +530,10 @@ qseqeventframe::slot_midi_channel (int /*index*/)
 }
 
 /**
+ *  Called when the user clicks a row. The following is disabled as
+ *  it is always called near the end of the process so that the text
+ *  does not show up.
+ *
  *  Here, we clear the text.  It will be filled in either by selecting
  *  a Meta event in the table, or by the user preparing to insert a new
  *  Meta event.  Note that clearing the text inserts the placeholder
@@ -539,7 +543,9 @@ qseqeventframe::slot_midi_channel (int /*index*/)
 void
 qseqeventframe::slot_event_name (int /*index*/)
 {
-    ui->plainTextEdit->clear();
+    /*
+     * ui->plainTextEdit->clear();
+     */
 }
 
 /**
@@ -863,7 +869,6 @@ void
 qseqeventframe::set_event_plaintext (const std::string & t)
 {
     std::string temp = string_to_midi_bytes(t); // TODO
-
     QString text = qt(temp);
     populate_meta_combo();
     ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
@@ -874,7 +879,6 @@ void
 qseqeventframe::set_event_system (const std::string & t)
 {
     std::string temp = string_to_midi_bytes(t); // TODO
-
     QString text = qt(temp);                           // convert to hex bytes?
     populate_system_combo();
     ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
@@ -937,19 +941,14 @@ qseqeventframe::set_event_line
     if (not_nullptr(qtip))
     {
         qtip->setText(qt(evtimestamp));
-
         qtip = cell(row, column_id::eventname);
         qtip->setText(qt(evname));
-
         qtip = cell(row, column_id::channel);
         qtip->setText(qt(evchannel));
-
         qtip = cell(row, column_id::data_0);
         qtip->setText(qt(evdata0));
-
         qtip = cell(row, column_id::data_1);
         qtip->setText(qt(evdata1));
-
         qtip = cell(row, column_id::link);
         qtip->setText(qt(linktime));
     }

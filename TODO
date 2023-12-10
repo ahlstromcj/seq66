@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.12
 Chris Ahlstrom
-2019-04-13 to 2023-12-08
+2019-04-13 to 2023-12-10
 
 Misc:
 
@@ -35,23 +35,12 @@ Misc:
         into a pattern when recording is set. [Turns out to be quite tricky!]
     -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
         Too difficult to fix at this time; converted it to 192.
-    -   trilogy.mid errors:
-		[seq66] Offset ~0xae18 of 0x16872 bytes (44568/92274): 
-		   Unsupported MIDI event. Bad value 0x56.
-		[seq66] Unexpected meta type 0x2f offset ~0xaee7
-		[seq66] Unexpected meta type 0x2f offset ~0xaf82
-		[seq66] Unexpected meta type 0x2f offset ~0xca35
-		[seq66] Unexpected meta type 0x2f offset ~0x149e4
-		[seq66] Unexpected meta type 0x2f offset ~0x167df
-		[seq66] Unexpected meta type 0x2f offset ~0x16822
-		[seq66] Read: '/home/ahlstrom/Downloads/Trilogy.mid'
-        Also make sure SysEx messages in first track are being stored.
-        Write a module to show SysEx (and optionally store them as
-        a macro.
-        Also handle meta-midi-port message tracks, and add them as
-        patterns if they also have trkname messages.
-        Also test with the Dixie04.mid file, as our SysEx reading was
-        wrong!!!!
+    -   trilogy.mid errors basically fixed with new 'rc' work-around.
+        -   Write a module to show SysEx (and optionally store them as
+            a macro).
+        -   Test with the Dixie04.mid file -- it hangs at end of file.
+            wrong!!!! Also test with 2rock.mid.
+        -   Improve the output of text events in the slot_dump() function.
 
 Mutes:
 

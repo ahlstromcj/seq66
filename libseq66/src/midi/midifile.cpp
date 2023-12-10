@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-07
+ * \updates       2023-12-10
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -277,6 +277,7 @@ midifile::midifile
     m_error_message             (),
     m_error_is_fatal            (false),
     m_disable_reported          (false),
+    m_running_status_action     (rc().running_status_action()),
     m_pos                       (0),
     m_name                      (name),
     m_data                      (),
@@ -487,9 +488,9 @@ midifile::read_meta_data (sequence & s, event & e, midibyte metatype, size_t len
         for (int i = 0; i < int(len); ++i)
             bt.push_back(read_byte());
 
-        bool ok = e.append_meta_data(metatype, bt);
-        if (ok)
-            s.append_event(e);
+        result = e.append_meta_data(metatype, bt);
+        if (result)
+            result = s.append_event(e);
     }
     return result;
 }
@@ -1084,13 +1085,17 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
         midilong TrackLength = read_long();         /* get track length     */
         if (ID == c_mtrk_tag)                       /* magic number 'MTrk'  */
         {
+            int evcount = 0;                        /* for sanity checking  */
             bool timesig_set = false;               /* first time-sig wins  */
+            bool error_reported = false;            /* for handling message */
             midipulse runningtime = 0;              /* reset time           */
             midipulse currenttime = 0;              /* adjusted by PPQN     */
             midishort seqnum = c_midishort_max;     /* either read or set   */
             midibyte status = 0;
-            midibyte runningstatus = 0;
             midilong seqspec = 0;                   /* sequencer-specific   */
+            midibyte last_runningstatus = 0;        /* EXPERIMENTAL         */
+            bool skip_to_end = false;               /* EXPERIMENTAL         */
+            midibyte runningstatus = 0;
             bool done = false;                      /* done for each track  */
             sequence * sp = create_sequence(p);     /* create new sequence  */
             if (is_nullptr(sp))
@@ -1115,11 +1120,17 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                     skip(1);                                /* get to d0    */
                     if (event::is_system_common_msg(status))
+                    {
                         runningstatus = 0;                  /* clear it     */
+                    }
                     else if (! event::is_realtime_msg(status))
+                    {
                         runningstatus = status;             /* log status   */
+                        if (m_running_status_action == rsaction::recover)
+                            last_runningstatus = status;    /* EXPERIMENTAL */
+                    }
                 }
-                else
+                else                                /* there's no 0x80 bit  */
                 {
                     /*
                      * Handle data values. If in running status, set that as
@@ -1127,8 +1138,18 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                      * not running status, is this an error?
                      */
 
+                    if (skip_to_end)                /* EXPERIMENTAL */
+                        continue;
+
                     if (runningstatus > 0)      /* running status in force? */
+                    {
                         status = runningstatus; /* yes, use running status  */
+                    }
+                    else if (last_runningstatus > 0)
+                    {
+                        runningstatus = last_runningstatus;
+                        status = runningstatus;
+                    }
                 }
                 e.set_status_keep_channel(status);  /* set status, channel  */
 
@@ -1166,7 +1187,9 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                      * channel for the whole sequence here.
                      */
 
-                    s.append_event(e);                  /* does not sort    */
+                    if (s.append_event(e))              /* does not sort    */
+                        ++evcount;
+
                     tentative_channel = channel;        /* log MIDI channel */
                     if (is_smf0)
                         m_smf0_splitter.increment(channel); /* count chan.  */
@@ -1183,7 +1206,9 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                      * after we read them all.
                      */
 
-                    s.append_event(e);                  /* does not sort    */
+                    if (s.append_event(e))              /* does not sort    */
+                        ++evcount;
+
                     tentative_channel = channel;
                     if (is_smf0)
                         m_smf0_splitter.increment(channel); /* count chan.  */
@@ -1269,7 +1294,10 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                                     bool ok = e.append_meta_data(mtype, bt, 3);
                                     if (ok)
-                                        s.append_event(e);
+                                    {
+                                        if (s.append_event(e))
+                                            ++evcount;
+                                    }
                                 }
                             }
                             else
@@ -1281,7 +1309,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             if (! checklen(len, mtype))
                                 return false;
 
-                            if ((len == 4) && ! timesig_set)
+                            if (len == 4)
                             {
                                 int bpb = int(read_byte());         // nn
                                 int logbase2 = int(read_byte());    // dd
@@ -1314,19 +1342,15 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 bool ok = e.append_meta_data(mtype, bt, 4);
                                 if (ok)
                                 {
-                                    /*
-                                     * Consolidate the settings for
-                                     * integrity's sake.
-                                     *
-                                     * s.set_beats_per_bar(bpb);
-                                     * s.set_beat_width(bw);
-                                     */
-
-                                    s.set_time_signature(bpb, bw);
-                                    s.clocks_per_metronome(cc);
-                                    s.set_32nds_per_quarter(bb);
-                                    s.append_event(e);
-                                    timesig_set = true;
+                                    if (! timesig_set)
+                                    {
+                                        s.clocks_per_metronome(cc);
+                                        s.set_32nds_per_quarter(bb);
+                                        s.set_time_signature(bpb, bw);
+                                        timesig_set = true;
+                                    }
+                                    if (s.append_event(e))
+                                        ++evcount;
                                 }
                             }
                             else
@@ -1343,7 +1367,10 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                                 bool ok = e.append_meta_data(mtype, bt, 2);
                                 if (ok)
-                                    s.append_event(e);
+                                {
+                                    if (s.append_event(e))
+                                        ++evcount;
+                                }
                             }
                             else
                                 skip(len);              /* eat it           */
@@ -1500,16 +1527,19 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 bool ok = e.append_meta_data(mtype, mt, count);
                                 if (ok)
                                 {
-                                    s.append_event(e);
-                                    bool get_song_info =
-                                        track == 0 &&
-                                        mtype == EVENT_META_TEXT_EVENT &&
-                                        ! got_song_info;
-
-                                    if (get_song_info)
+                                    if (s.append_event(e))
                                     {
-                                        got_song_info = true;
-                                        p.song_info(e.get_text());
+                                        bool get_song_info =
+                                            track == 0 &&
+                                            mtype == EVENT_META_TEXT_EVENT &&
+                                            ! got_song_info;
+
+                                        if (get_song_info)
+                                        {
+                                            got_song_info = true;
+                                            p.song_info(e.get_text());
+                                        }
+                                        ++evcount;
                                     }
                                 }
                             }
@@ -1522,7 +1552,16 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                         case EVENT_META_MIDI_PORT:      /* FF 21 01 pp      */
                         case EVENT_META_SMPTE_OFFSET:   /* FF 54 03 t t t   */
 
-                            (void) read_meta_data(s, e, mtype, len);
+                            /*
+                             * The first two events are obsolete, the SMPTE is
+                             * not supported. But we append them anyway to
+                             * preserve, somewhat, the original file.
+                             * read_meta_data() appends the event.
+                             */
+
+                            if (read_meta_data(s, e, mtype, len))
+                                ++evcount;
+
                             break;
 
                         default:
@@ -1545,14 +1584,16 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                         else
                             mfg_id = midishort(id);
 
-                        (void) mfg_id;              /* later, store it? */
-                        back_up(2);                 /* back to F0       */
+                        (void) mfg_id;                  /* later, store it? */
+                        back_up(2);                     /* back to F0       */
                         for (;;)
                         {
                             midibyte b = read_byte();
                             if (! e.append_sysex_byte(b))   /* F7 byte? */
                                 break;
                         }
+                        if (s.append_event(e))          /* ca 2023-12-09    */
+                            ++evcount;
 #endif
                     }
                     else
@@ -1566,20 +1607,37 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                 default:
 
-                    /*
-                     * Some files (e.g. 2rock.mid, which has "00 24 40"
-                     * hanging out there all alone at offset 0xba) have junk
-                     * in them.
-                     */
+                    if (! error_reported)
+                    {
+                        /*
+                         * Some files (e.g. 2rock.mid, which has "00 24 40"
+                         * hanging out there all alone at offset 0xba) have
+                         * junk in them. Others (trilogy.mid) try to use
+                         * running status after a SysEx event.
+                         */
 
-                    (void) set_error_dump
-                    (
-                        "Unsupported MIDI event", midilong(status)
-                    );
-                    return true;        /* allow further processing */
+                        std::string msg = "Unsupport MIDI event";
+                        if (m_running_status_action == rsaction::skip)
+                        {
+                            char temp[64];
+                            snprintf
+                            (
+                                temp, sizeof temp,
+                                "skipping to end of track %d", track
+                            );
+                            msg += "; ";
+                            msg += temp;
+                            skip_to_end = true;
+                        }
+                        (void) set_error_dump(msg, midilong(status));
+                        if (m_running_status_action == rsaction::abort)
+                            return true;    /* don't process more tracks    */
+                        else
+                            error_reported = true;
+                    }
                     break;
                 }
-            }                          /* while not done loading Trk chunk */
+            }                               /* while loading Trk chunks  */
 
             /*
              * Sequence has been filled, add it to the performance or SMF 0
@@ -1650,6 +1708,9 @@ midifile::finalize_sequence
 )
 {
     int preferred_seqnum = seqnum + screenset * p.screenset_size();
+    if (rc().investigate())
+        s.show_events();
+
     return p.install_sequence(&s, preferred_seqnum, true);
 }
 
@@ -3301,8 +3362,13 @@ midifile::set_error_dump (const std::string & msg)
     char temp[80];
     snprintf
     (
-        temp, sizeof temp, "Offset ~0x%zx of 0x%zx bytes (%zu/%zu): ",
-        m_pos, m_file_size, m_pos, m_file_size
+        temp, sizeof temp, "Offset ~0x%zx of 0x%zx bytes: ", m_pos, m_file_size
+        /*
+         * Too much:
+         *
+         * "Offset ~0x%zx of 0x%zx bytes (%zu/%zu): ",
+         * m_pos, m_file_size, m_pos, m_file_size
+         */
     );
     std::string result = temp;
     result += "\n";

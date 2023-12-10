@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-11-30
+ * \updates       2023-12-10
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -112,6 +112,7 @@ rcsettings::rcsettings () :
     m_port_naming               (portname::brief),
     m_midi_filename             (),
     m_midi_filepath             (),
+    m_running_status_action     (rsaction::recover),
     m_jack_session_uuid         (),
     m_jack_session_active       (false),
     m_last_used_dir             (),                     /* double_quotes()  */
@@ -227,6 +228,7 @@ rcsettings::set_defaults ()
     m_port_naming               = portname::brief;
     m_midi_filename.clear();
     m_midi_filepath.clear();
+    m_running_status_action     = rsaction::recover;
     m_jack_session_uuid.clear();
     m_jack_session_active       = false;
     m_last_used_dir.clear();                /* double_quotes()              */
@@ -1060,6 +1062,37 @@ rcsettings::jack_session (const std::string & uuid)
 
     if (clear_uuid)
         m_jack_session_uuid.clear();
+}
+
+/**
+ *  Sets the method to use for handling running status errors.
+ */
+
+void
+rcsettings::running_status_action (const std::string & v)
+{
+    if (v == "skip")
+        m_running_status_action = rsaction::skip;
+    else if (v == "proceed")
+        m_running_status_action = rsaction::proceed;
+    else if (v == "abort")
+        m_running_status_action = rsaction::abort;
+    else
+        m_running_status_action = rsaction::recover;
+}
+
+std::string
+rcsettings::running_status_action_name () const
+{
+    std::string result = "recover";
+    if (m_running_status_action == rsaction::skip)
+        result = "skip";
+    else if (m_running_status_action == rsaction::proceed)
+        result = "proceed";
+    else if (m_running_status_action == rsaction::abort)
+        result = "abort";
+
+    return result;
 }
 
 /**

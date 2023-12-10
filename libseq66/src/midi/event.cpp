@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-07
+ * \updates       2023-12-09
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -1128,6 +1128,9 @@ event::rescale (int newppqn, int oldppqn)
  *  the ranking, the more upfront an item comes in the sort order, given the
  *  same time-stamp.
  *
+ *  We also now consider SysEx and Meta event. Meta comes first, SysEx comes
+ *  last.
+ *
  * Note:
  *      We could add the channel number as part of the ranking. Sound?
  *
@@ -1139,38 +1142,48 @@ int
 event::get_rank () const
 {
     int result;
-    int eventcode = mask_status(m_status);  /* strip off channel nybble     */
-    switch (eventcode)
+    if (is_sysex())
     {
-    case EVENT_NOTE_OFF:
-        result = 0x2000 + get_note();
-        break;
-
-    case EVENT_NOTE_ON:
-        result = 0x1000 + get_note();
-        break;
-
-    case EVENT_AFTERTOUCH:
-    case EVENT_CHANNEL_PRESSURE:
-    case EVENT_PITCH_WHEEL:
-        result = 0x0050;
-        break;
-
-    case EVENT_CONTROL_CHANGE:
-        result = 0x0020;
-        break;
-
-    case EVENT_PROGRAM_CHANGE:
-        result = 0x0010;
-        break;
-
-    default:
-        result = 0;
-        break;
+        result = 0x3000;
     }
-    if (result != 0)
-        result += mask_channel(m_status) << 8;
+    else if (is_meta())
+    {
+        result = 0x0030;
+    }
+    else
+    {
+        int eventcode = mask_status(m_status);  /* strip off channel nybble */
+        switch (eventcode)
+        {
+        case EVENT_NOTE_OFF:
+            result = 0x2000 + get_note();
+            break;
 
+        case EVENT_NOTE_ON:
+            result = 0x1000 + get_note();
+            break;
+
+        case EVENT_AFTERTOUCH:
+        case EVENT_CHANNEL_PRESSURE:
+        case EVENT_PITCH_WHEEL:
+            result = 0x0500;
+            break;
+
+        case EVENT_CONTROL_CHANGE:
+            result = 0x0200;
+            break;
+
+        case EVENT_PROGRAM_CHANGE:
+            result = 0x0100;
+            break;
+
+        default:
+            result = 0;
+            break;
+        }
+        if (result != 0)
+            result += mask_channel(m_status) << 8;
+    }
     return result;
 }
 
