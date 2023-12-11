@@ -21,7 +21,7 @@
 # \library    	seq66cli application
 # \author     	Chris Ahlstrom
 # \date       	2017-04-07
-# \update      2021-09-03
+# \update      2023-12-11
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -108,7 +108,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = seq66cli$(EXEEXT)
+bin_PROGRAMS = $(am__EXEEXT_1)
 subdir = Seq66cli
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/alsa.m4 \
@@ -126,11 +126,14 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/aux-files/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+@BUILD_RTMIDI_FALSE@am__EXEEXT_1 = seq66clip$(EXEEXT)
+@BUILD_RTMIDI_TRUE@am__EXEEXT_1 = seq66cli$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_seq66cli_OBJECTS = seq66rtcli.$(OBJEXT)
 seq66cli_OBJECTS = $(am_seq66cli_OBJECTS)
 am__DEPENDENCIES_1 =
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -138,6 +141,11 @@ am__v_lt_1 =
 seq66cli_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(seq66cli_LDFLAGS) $(LDFLAGS) -o $@
+am_seq66clip_OBJECTS = seq66rtcli.$(OBJEXT)
+seq66clip_OBJECTS = $(am_seq66clip_OBJECTS)
+seq66clip_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(seq66clip_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -173,8 +181,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(seq66cli_SOURCES)
-DIST_SOURCES = $(seq66cli_SOURCES)
+SOURCES = $(seq66cli_SOURCES) $(seq66clip_SOURCES)
+DIST_SOURCES = $(seq66cli_SOURCES) $(seq66clip_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -430,6 +438,8 @@ CLEANFILES = *.gc*
 libseq66dir = $(builddir)/libseq66/src/.libs
 libsessionsdir = $(builddir)/libsessions/src/.libs
 libseq_rtmididir = $(builddir)/seq_rtmidi/src/.libs
+libseq_portmididir = $(builddir)/seq_portmidi/src/.libs
+@BUILD_RTMIDI_FALSE@MIDIHDR = $(top_srcdir)/seq_portmidi/include
 
 #******************************************************************************
 # AM_CPPFLAGS [formerly "INCLUDES"]
@@ -441,10 +451,17 @@ libseq_rtmididir = $(builddir)/seq_rtmidi/src/.libs
 #   -I$(top_srcdir)/seq_gtkmm2/include \
 #
 #------------------------------------------------------------------------------
+@BUILD_RTMIDI_TRUE@MIDIHDR = $(top_srcdir)/seq_rtmidi/include
+@BUILD_RTMIDI_FALSE@MIDILIB = -L$(libseq_portmididir) -lseq_portmidi
+@BUILD_RTMIDI_TRUE@MIDILIB = -L$(libseq_rtmididir) -lseq_rtmidi
+@BUILD_RTMIDI_FALSE@MIDIDEP = $(libseq_portmididir)/libseq_portmidi.la
+@BUILD_RTMIDI_TRUE@MIDIDEP = $(libseq_rtmididir)/libseq_rtmidi.la
+@BUILD_RTMIDI_FALSE@MIDIAPP = seq66clip
+@BUILD_RTMIDI_TRUE@MIDIAPP = seq66cli
 AM_CXXFLAGS = \
  -I$(top_srcdir)/libseq66/include \
  -I$(top_srcdir)/libsessions/include \
- -I$(top_srcdir)/seq_rtmidi/include \
+ -I$(MIDIHDR) \
  $(JACK_CFLAGS) \
  $(LIBLO_CFLAGS) \
  $(NSM_CFLAGS)
@@ -480,7 +497,7 @@ libraries = \
  -L$(libsessionsdir) -lsessions \
  -L$(libseq66dir) -lseq66 \
  -L$(libsessionsdir) -lsessions \
- -L$(libseq_rtmididir) -lseq_rtmidi
+ $(MIDILIB)
 
 
 #****************************************************************************
@@ -493,7 +510,7 @@ libraries = \
 #  $(libseq_gtkmm2dir)/libseq_gtkmm2.la \
 #----------------------------------------------------------------------------
 dependencies = \
- $(libseq_rtmididir)/libseq_rtmidi.la \
+ $(MIDIDEP) \
  $(libsessionsdir)/libsessions.la \
  $(libseq66dir)/libseq66.la
 
@@ -505,6 +522,10 @@ seq66cli_SOURCES = seq66rtcli.cpp
 seq66cli_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
 seq66cli_LDFLAGS = -Wl,--copy-dt-needed-entries
 seq66cli_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(AM_LDFLAGS)
+seq66clip_SOURCES = seq66rtcli.cpp
+seq66clip_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
+seq66clip_LDFLAGS = -Wl,--copy-dt-needed-entries
+seq66clip_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(AM_LDFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -591,6 +612,10 @@ clean-binPROGRAMS:
 seq66cli$(EXEEXT): $(seq66cli_OBJECTS) $(seq66cli_DEPENDENCIES) $(EXTRA_seq66cli_DEPENDENCIES) 
 	@rm -f seq66cli$(EXEEXT)
 	$(AM_V_CXXLD)$(seq66cli_LINK) $(seq66cli_OBJECTS) $(seq66cli_LDADD) $(LIBS)
+
+seq66clip$(EXEEXT): $(seq66clip_OBJECTS) $(seq66clip_DEPENDENCIES) $(EXTRA_seq66clip_DEPENDENCIES) 
+	@rm -f seq66clip$(EXEEXT)
+	$(AM_V_CXXLD)$(seq66clip_LINK) $(seq66clip_OBJECTS) $(seq66clip_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

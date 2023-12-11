@@ -1027,8 +1027,98 @@
 
    If the meta event status value is 0xF0, it is called a "System-exclusive",
    or "SysEx" event.
-   \textsl{Seq66} has some code in place to store these messages, but the
-   data is currently not actually stored or used.
+   \textsl{Seq66} does store these messages, but there are complications
+   to be dealt with.
+   Sysex events can be encoded in the following ways:
+
+   \begin{itemize}
+      \item \textbf{Single SysEx Message}.
+      \item \textbf{Continuation Events}.
+      \item \textbf{Escape Sequence}.
+   \end{itemize}
+
+\paragraph{Single SysEx Message}
+\label{paragraph:patterns_single_sysex_message}
+
+   A SysEx message that is \textsl{sent to a device} is not quite the 
+   same as a SysEx message that is \textsl{encoded in a MIDI file}.
+   SysEx messages encoded in a MIDI file
+   are preceded by a variable-length delta time, the byte F0,
+   a variable-length length value, and the message, and a terminating F7,
+   which \textsl{must} be present, and is counted in the length value.
+   In the following example, the first line is the actual SysEx message
+   (a General MIDI Enable message),
+   and the second line is its encoding in a MIDI file, ignoring the preceding
+   delta time:
+
+   \begin{verbatim}
+      F0 7E 00 09 01 F7
+      F0 05 7E 00 09 01 F7
+   \end{verbatim}
+
+\paragraph{Continuation Events}
+\label{paragraph:patterns_continuation_events}
+
+   Some equipment needs the SysEx to be split into smaller chunks for
+   processing.
+   This could be accomplished with a number of smaller single-SysEx messages,
+   but some manufacturers treat SysEx as if it supported running status (it
+   does not).
+   So the first message starts with F0, the next messages have only the SysEx
+   data, and the last message ends with F7.
+   However, when encoding in the MIDI file, each sub-packet begins with
+   an F7.
+   In between are the delta times to use to delay the sub-packets when sending
+   to a slow device.
+   An unencoded message with 3 packets is shown,
+   with a bar for a separator for this discussion:
+
+   \begin{verbatim}
+      F0 43 12 00 | 43 12 00 43 12 00 | 43 12 00 F7
+   \end{verbatim}
+
+   Encoded with a 200-tick delta time (\texttt{81 48}) between each message,
+   the F7 being used as a \textsl{continuation} byte, with length values:
+
+   \begin{verbatim}
+      F0 03 43 12 00
+      81 48 F7 06 43 12 00 43 12 00
+      81 48 F7 04 43 12 00 F7
+   \end{verbatim}
+
+   Note the F7 at the beginning of packets after the first one, adn
+   the F7 at the end of the last one.
+
+\paragraph{Escape Sequence}
+\label{paragraph:patterns_escape_sequence}
+
+   An escape sequence is not SysEx, but it does use the F7 byte.
+   It is used for encoding arbitrary bytes for message such as Song Select.
+   The first line shows such a message, and the second how it would be encoded.
+
+   \begin{verbatim}
+      F3 01
+      F7 02 F3 01
+   \end{verbatim}
+
+   So how to figure out what F7 means?
+   Its interpretation is as follows:
+
+   \begin{itemize}
+      \item An F0 without a terminal F7 is a Casio-style multi-packet message,
+         and a flag (call it \texttt{multi})
+         should be raised to indicate this status.
+      \item If F7 is encountered while \texttt{multi} is set,
+         it is a continuation.
+      \item If this continuation ends with F7, it is the last packet and
+         \texttt{multi} should be cleared.
+      \item If F7 is encountered while \texttt{multi} is \textsl{not} set,
+         then the event is an escape sequence.
+   \end{itemize}
+
+\paragraph{Seq66 SysEx Handling}
+\label{paragraph:patterns_pattern_keys}
+
    Although there is some
    infrastructure to support storing the SysEx event within a sequence, the
    SysEx information is simply skipped.  \textsl{Seq66} warns if the

@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.99.12 and above
 Chris Ahlstrom
-2015-09-10 to 2023-12-06
+2015-09-10 to 2023-12-11
 
 Getting Seq66 requires building the code or going to
 "sequencer64-packages/seq66" on GitHub to get an installation package.  The
@@ -18,12 +18,13 @@ instructions below.  Different versions of the program can be built:
         when installing QtCreator.  See "Qmake-based Install" below.
     -   seq66cli.  A headless version of Seq66, which can run from the
         console or as a daemon, controlled via MIDI and playlists.
+    -   seq66clip. The seq66cli app with "portmidi" instead of "rtmidi".
 
-    We provide a Windows installer in the "sequencer64-packages" project in
-    GitHub, in the "seq66" subdirectory.  It is also fairly easy to build the
-    Windows version using QtCreator/qmake.  See the DOS batch script
-    "nsis/build_release_package.bat"; it not only builds it using qmake and
-    mingw, but also describes how to create Windows packages.
+    We provide a Windows installer (an EXE) in the GitHub release area.  It is
+    also fairly easy to build the Windows version using QtCreator/qmake.  See
+    the DOS batch script "nsis/build_release_package.bat"; it not only builds
+    it using qmake and mingw, but also describes how to create Windows
+    packages.
 
 Below are sections for various ways of installing this project by building
 from source code:
@@ -179,8 +180,9 @@ Advanced Steps:
 
        1. Seq66qt5/qseq66:      ./bootstrap -er
        2. Seq66cli/seq66cli:    ./bootstrap -er -cli
-       3. qpseq66 Linux:        Qmake/qbuild/Qtcreator in shadow directory
-       4. qpseq66 Windows:      Qmake/Qtcreator/build_release_package.bat
+       3. Seq66cli/seq66clip:   ./bootstrap -er -cli -pm
+       4. qpseq66 Linux:        Qmake/qbuild/Qtcreator in shadow directory
+       5. qpseq66 Windows:      Qmake/Qtcreator/build_release_package.bat
 
        For the first two: from the top project directory, run one of the
        commands above (they auto-configure) or run the following commands,

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-12-07
+ * \updates       2023-12-11
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1179,14 +1179,13 @@ qsmainwnd::make_perf_frame_in_tab ()
 }
 
 /**
- *  Calls performer::stop_key() and unchecks the Play button.
+ *  Helper to keep buttons in sync.
  */
 
 void
-qsmainwnd::stop_playing ()
+qsmainwnd::stop (bool rewind)
 {
-    Qt::KeyboardModifiers qkm = QGuiApplication::keyboardModifiers();
-    if (qkm & Qt::ShiftModifier)
+    if (rewind)
         cb_perf().auto_stop(true);                          /* rewind to 0  */
     else
         cb_perf().auto_stop();
@@ -1196,13 +1195,27 @@ qsmainwnd::stop_playing ()
 }
 
 /**
+ *  Calls performer::stop_key() and unchecks the Play button.
+ */
+
+void
+qsmainwnd::stop_playing ()
+{
+    Qt::KeyboardModifiers qkm = QGuiApplication::keyboardModifiers();
+    bool rewind = (qkm & Qt::ShiftModifier) != 0;
+    stop(rewind);
+}
+
+/**
  *  Implements the pause button.
  */
 
 void
 qsmainwnd::pause_playing ()
 {
-    cb_perf().auto_pause();             /* update_play_status() */
+    //// TRIAL: use stop()
+    //// cb_perf().auto_pause();             /* update_play_status() */
+    stop();
 }
 
 /**
@@ -1582,7 +1595,7 @@ qsmainwnd::show_open_file_dialog (std::string & selectedfile)
     {
         result = show_open_midi_file_dialog(this, selectedfile);
         if (result)
-            stop_playing();
+            stop();
     }
     return result;
 }
@@ -2271,6 +2284,7 @@ qsmainwnd::new_file ()
          * rc().clear_midi_filename();              // no file in force yet //
          */
 
+        stop();                                     /* ca 2023-12-11        */
         enable_save(false);                         /* no save until change */
         redo_live_frame();
         remove_all_editors();
@@ -4039,7 +4053,7 @@ qsmainwnd::clear_mute_groups ()
         {
             enable_save();
             if (cb_perf().is_pattern_playing())
-                stop_playing();
+                stop();
         }
     }
 }

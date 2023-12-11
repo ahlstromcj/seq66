@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-10-24
+ * \updates       2023-12-11
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -845,7 +845,7 @@ show_file_dialog
         if (saving && ext.empty() && ! extension.empty())
             selectedfile = file_extension_set(selectedfile, extension);
 
-        file_message(saving ? "Saving" : "Opening", selectedfile);
+        file_message(saving ? "Save" : "Open", selectedfile);
     }
     return result;
 }

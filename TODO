@@ -21,24 +21,16 @@ Misc:
         MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recorded measures
         not saved.
-    -   In the Windows build batch file, improve the messaging and copy the
-        7z bundle to release as the installer is.
-    -   In Song roll, in Windows,time digits are a tad to big and need to
-        moved down a pixel, when bold. Also due to theme, though.
     -   The Hide button gets focus automatically and it should not.
-    -   See the new notes in timing module: set_thread_priority()!!!
-        Also review the notes for pthreads in performer!
-        Add code (in jack) to keep track of ticks and see if priority
-        can reduce the latency. This code can be DEBUG-enabled in
-        midi_jack.cpp.
-    -   Add a feature to start playback when the first note comes
-        into a pattern when recording is set. [Turns out to be quite tricky!]
-    -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
-        Too difficult to fix at this time; converted it to 192.
+    -   Opening a MIDI file should stop playback.
+    -   Show time-sigs in grid slot?
     -   trilogy.mid errors basically fixed with new 'rc' work-around.
         -   Write a module to show SysEx (and optionally store them as
             a macro).
         -   Improve the output of text events in the slot_dump() function.
+        -   Handle F7 SysEx continuation messages.
+    -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
+        Too difficult to fix at this time; converted it to 192.
 
 Mutes:
 

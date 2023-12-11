@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-11-27
+ * \updates       2023-12-11
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -102,7 +102,6 @@
  *  portmidi repository, not coded there.
  */
 
-#define SEQ66_USE_SYSEX_PROCESSING
 #undef  SEQ66_PORTMIDI_SYSEX_PROCESSING
 
 /**

@@ -6,7 +6,7 @@
 # \library    	seq66cli application
 # \author     	Chris Ahlstrom
 # \date       	2017-04-07
-# \update      2021-09-03
+# \update      2023-12-11
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -77,6 +77,7 @@ builddir = @abs_top_builddir@
 libseq66dir = $(builddir)/libseq66/src/.libs
 libsessionsdir = $(builddir)/libsessions/src/.libs
 libseq_rtmididir = $(builddir)/seq_rtmidi/src/.libs
+libseq_portmididir = $(builddir)/seq_portmidi/src/.libs
 
 #******************************************************************************
 # AM_CPPFLAGS [formerly "INCLUDES"]
@@ -89,10 +90,22 @@ libseq_rtmididir = $(builddir)/seq_rtmidi/src/.libs
 #
 #------------------------------------------------------------------------------
 
+if BUILD_RTMIDI
+MIDIHDR = $(top_srcdir)/seq_rtmidi/include
+MIDILIB = -L$(libseq_rtmididir) -lseq_rtmidi
+MIDIDEP = $(libseq_rtmididir)/libseq_rtmidi.la
+MIDIAPP = seq66cli
+else
+MIDIHDR = $(top_srcdir)/seq_portmidi/include
+MIDILIB = -L$(libseq_portmididir) -lseq_portmidi
+MIDIDEP = $(libseq_portmididir)/libseq_portmidi.la
+MIDIAPP = seq66clip
+endif
+
 AM_CXXFLAGS = \
  -I$(top_srcdir)/libseq66/include \
  -I$(top_srcdir)/libsessions/include \
- -I$(top_srcdir)/seq_rtmidi/include \
+ -I$(MIDIHDR) \
  $(JACK_CFLAGS) \
  $(LIBLO_CFLAGS) \
  $(NSM_CFLAGS)
@@ -129,7 +142,7 @@ libraries = \
  -L$(libsessionsdir) -lsessions \
  -L$(libseq66dir) -lseq66 \
  -L$(libsessionsdir) -lsessions \
- -L$(libseq_rtmididir) -lseq_rtmidi
+ $(MIDILIB)
 
 #****************************************************************************
 # Project-specific dependency files
@@ -142,7 +155,7 @@ libraries = \
 #----------------------------------------------------------------------------
 
 dependencies = \
- $(libseq_rtmididir)/libseq_rtmidi.la \
+ $(MIDIDEP) \
  $(libsessionsdir)/libsessions.la \
  $(libseq66dir)/libseq66.la
 
@@ -150,7 +163,7 @@ dependencies = \
 # The programs to build
 #------------------------------------------------------------------------------
 
-bin_PROGRAMS = seq66cli
+bin_PROGRAMS = $(MIDIAPP)
 
 #******************************************************************************
 # seq66cli
@@ -160,6 +173,11 @@ seq66cli_SOURCES = seq66rtcli.cpp
 seq66cli_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
 seq66cli_LDFLAGS = -Wl,--copy-dt-needed-entries
 seq66cli_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(AM_LDFLAGS)
+
+seq66clip_SOURCES = seq66rtcli.cpp
+seq66clip_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
+seq66clip_LDFLAGS = -Wl,--copy-dt-needed-entries
+seq66clip_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(AM_LDFLAGS)
 
 #******************************************************************************
 #  distclean

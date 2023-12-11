@@ -11,6 +11,8 @@ Release Notes for Seq66 v. 0.99.12 2023-12-11
     -   Added new 'rc' option to skip, recover, or abort from bad running
         status in MIDI files. See the trilogy.mid contributed file.
     -   Now handling unterminated SysEx messages (Dixie04.mid).
+-   Fixed issue with  building the command-line version with "portmidi"
+    (seq66clip).
 
 See NEWS for more details.
 

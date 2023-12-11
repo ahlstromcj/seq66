@@ -225,11 +225,6 @@ protected:                              // performer callbacks
     ) override;
     virtual bool on_song_action (bool signal, playlist::action) override;
 
-private:                                // overrides of event handlers
-
-    virtual void keyPressEvent (QKeyEvent * event) override;
-    virtual void keyReleaseEvent (QKeyEvent *) override;
-
 protected:
 
     bool report_message
@@ -237,8 +232,10 @@ protected:
         const std::string & msg, bool good, bool showcancel = true
     );
 
-private:
+private:                                // overrides of event handlers
 
+    virtual void keyPressEvent (QKeyEvent * event) override;
+    virtual void keyReleaseEvent (QKeyEvent *) override;
     virtual void closeEvent (QCloseEvent *) override;
     virtual void changeEvent (QEvent *) override;
     virtual void resizeEvent (QResizeEvent *) override;
@@ -298,6 +295,7 @@ private:
     bool save_mutes_dialog (const std::string & basename = "");
     void update_tap (midibpm bpm);
     bool set_ppqn_combo ();
+    void stop (bool rewind = false);
 
 private:
 

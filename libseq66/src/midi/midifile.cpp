@@ -496,6 +496,48 @@ midifile::read_meta_data (sequence & s, event & e, midibyte metatype, size_t len
 }
 
 /**
+ *  This function handles data that occurs after the "F0 len" sequence and
+ *  until (inclusive) the terminating F7 is encountered. The data is stored
+ *  in unencoded format, which means that the F0 is restored to the beginning of
+ *  the data bytes and there is no length value.
+ *
+ *  We now check for unterminated SysEx messages as found in Dixie04.mid.
+ *  We still need to handle F7 as continuation and escape values.
+ */
+
+bool
+midifile::read_sysex_data (sequence & s, event & e, size_t len)
+{
+    bool result = len > 0;
+    if (result)
+    {
+        e.reset_sysex();                                /* clear m_sysex    */
+        if (e.append_sysex_byte(EVENT_MIDI_SYSEX))      /* start w/F0 byte  */
+        {
+            for (size_t i = 0; i < len; ++i)
+            {
+                if (at_end())
+                {
+                    e.append_sysex_byte(EVENT_MIDI_SYSEX_END);
+                    break;
+                }
+                else
+                {
+                    midibyte b = read_byte();
+                    if (! e.append_sysex_byte(b))       /* premature F7?    */
+                        break;
+                }
+            }
+            if (result)
+                result = s.append_event(e);
+        }
+        else
+            result = false;
+    }
+    return result;
+}
+
+/**
  *  A overload function to simplify reading midi_control data from the MIDI
  *  file.  It uses a standard string object instead of a buffer.
  *
@@ -1574,36 +1616,11 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             break;
                         }
                     }
-                    else if (status == EVENT_MIDI_SYSEX)    /* 0xF0 */
+                    else if (status == EVENT_MIDI_SYSEX)    /* 0xF0 len syx */
                     {
-#if defined SEQ66_USE_SYSEX_PROCESSING
-
-                        /*
-                         * We now check for unterminated SysEx messages as
-                         * found in Dixie04.mid.
-                         */
-
-                        midishort mfg_id;
-                        midibyte id = read_byte();
-                        if (id == 0)
-                            mfg_id = read_short();
-                        else
-                            mfg_id = midishort(id);
-
-                        (void) mfg_id;                  /* later, store it? */
-                        back_up(2);                     /* back to F0       */
-                        for (;;)
-                        {
-                            if (at_end())
-                                break;
-
-                            midibyte b = read_byte();
-                            if (! e.append_sysex_byte(b))   /* F7 byte? */
-                                break;
-                        }
-                        if (s.append_event(e))          /* ca 2023-12-09    */
+                        len = read_varinum();
+                        if (read_sysex_data(s, e, len))
                             ++evcount;
-#endif
                     }
                     else
                     {
@@ -1646,6 +1663,8 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     }
                     break;
                 }
+                if (at_end())
+                    done = true;
             }                               /* while loading Trk chunks  */
 
             /*
@@ -1656,19 +1675,26 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
              * order in the file are used as defaults."
              */
 
-            if (seqnum == c_midishort_max)
-                seqnum = track;
-
-            if (seqnum < c_prop_seq_number)
+            if (at_end())
             {
-                s.set_midi_channel(tentative_channel);
-                if (! is_null_buss(buss_override))
-                    (void) s.set_midi_bus(buss_override);
+                break;
+            }
+            else
+            {
+                if (seqnum == c_midishort_max)
+                    seqnum = track;
 
-                if (is_smf0)
-                    (void) m_smf0_splitter.log_main_sequence(s, seqnum);
-                else
-                    finalize_sequence(p, s, seqnum, screenset);
+                if (seqnum < c_prop_seq_number)
+                {
+                    s.set_midi_channel(tentative_channel);
+                    if (! is_null_buss(buss_override))
+                        (void) s.set_midi_bus(buss_override);
+
+                    if (is_smf0)
+                        (void) m_smf0_splitter.log_main_sequence(s, seqnum);
+                    else
+                        finalize_sequence(p, s, seqnum, screenset);
+                }
             }
         }
         else
