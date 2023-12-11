@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.12 2023-12-10
+Release Notes for Seq66 v. 0.99.12 2023-12-11
 
 -   Clang support.
     -   Using clang-12 and clang-16 to find errors and warnings
@@ -6,10 +6,11 @@ Release Notes for Seq66 v. 0.99.12 2023-12-10
     -   Modifying configure.ac and make-files to support this
         compiler.
 -   Fixing the processing of SysEx and Meta events.
-    -   Reading and writing in the MIDI file.
+    -   Reading and writing in the MIDI file upgraded.
     -   Display SysEx and text in the event editor.
-    -   Added choice to skip, recover, or abort from bad running
-        status in MIDI files. The the trilogy.mid contributed file.
+    -   Added new 'rc' option to skip, recover, or abort from bad running
+        status in MIDI files. See the trilogy.mid contributed file.
+    -   Now handling unterminated SysEx messages (Dixie04.mid).
 
 See NEWS for more details.
 

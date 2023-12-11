@@ -257,7 +257,7 @@
 #include "util/filefunctions.hpp"       /* seq66::filename_base(), etc.     */
 
 /*
- *  TENTATIVE. I think there's a bug in handling playlists.
+ *  I think there's a bug in handling playlists.
  */
 
 #define USE_SIGNALLED_CHANGES_FIX
@@ -8967,6 +8967,9 @@ performer::read_midi_file
         ms.beats_per_bar(get_beats_per_bar());
         ms.beat_width(get_beat_width());
         next_song_mode();
+        if (! errmsg.empty())
+            append_error_message(errmsg);       /* actually not an error    */
+
         m_max_extent = get_max_extent();        /* analyze current file     */
         set_tick(0);                            /* enforce beginning        */
         announce_mutes();                       /* cannot forget this one!  */

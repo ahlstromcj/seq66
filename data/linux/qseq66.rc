@@ -1,7 +1,7 @@
 # Seq66 0.99.6 main ('rc') configuration file
 #
 # /home/user/.config/seq66/qseq66.rc
-# Written 2023-06-27 11:35:11
+# Written 2023-12-10 11:13:55
 #
 # This file holds the main configuration for Seq66. It no longer follows the
 # format of the seq24rc configuration file.
@@ -31,7 +31,7 @@
 [Seq66]
 
 config-type = "rc"
-version = 2
+version = 3
 quiet = false
 verbose = false
 sets-mode = normal
@@ -247,6 +247,17 @@ input-port-count = 4
 ticks = 64
 record-by-buss = false
 record-by-channel = false
+
+# This section defines tweaks to the reading or writing of MIDI files.
+# Indicates how to handle MIDI files with incorrect running status. Default
+# is 'recover', which tries to recover the running status when a data byte
+# is encountered; 'skip' ignores the rest of the bytes in the track;
+# 'proceed' keeps going; 'abort' just exits the parsing, which is the old
+# and undesirable behavior. Try each option with the 'trilogy.mid' file.
+
+[midi-file-tweaks]
+
+running-status-action = recover
 
 # Set to true to have Seq66 ignore port names defined in the 'usr' file. Use
 # this option to to see the system ports as detected by ALSA/JACK.

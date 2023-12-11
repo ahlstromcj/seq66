@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.12
 Chris Ahlstrom
-2019-04-13 to 2023-12-10
+2019-04-13 to 2023-12-11
 
 Misc:
 
@@ -38,8 +38,6 @@ Misc:
     -   trilogy.mid errors basically fixed with new 'rc' work-around.
         -   Write a module to show SysEx (and optionally store them as
             a macro).
-        -   Test with the Dixie04.mid file -- it hangs at end of file.
-            wrong!!!! Also test with 2rock.mid.
         -   Improve the output of text events in the slot_dump() function.
 
 Mutes:

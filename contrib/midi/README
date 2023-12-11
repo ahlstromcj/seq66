@@ -1,6 +1,6 @@
 MIDI Sample and Test Files
 Chris Ahlstrom
-2015-09-11 to 2023-12-07
+2015-09-11 to 2023-12-11
 
 This directory contains contributed MIDI files for examples and testing.
 Also see the test files from the midicvt as described in
@@ -48,6 +48,14 @@ the "example1" file.
    click_4_4.midi:
    
       Holds a click-track for use with the Seq24-session script.
+
+   Dixie04.mid:
+
+      This file, from Sequencer64, contains a large number of F0 7F SysEx
+      events. SysEx messages start with F0 and end with F7.  Universal
+      Real Time SysEx messages start with F0, followed by 7F, then include
+      other fields before the terminating F7. More importantly, it appears
+      to have an unterminated SysEx event starting at 0x53DF.
 
    mutes-long.midi:
 

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2023-11-30
+% \update      2023-12-10
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -818,6 +818,46 @@
    work.
 
    The record-by flags should probably be in the 'usr' file.
+
+\subsubsection{'rc' File / MIDI File Tweaks}
+\label{subsubsec:configuration_rc_midi_file_tweaks}
+
+   This section provides some modifications to how MIDI events are handled,
+   specifically, at present, in regard to the failures of handling running
+   status.
+
+   \begin{verbatim}
+      [midi-file-tweaks]
+      running-status-action = recover
+   \end{verbatim}
+
+   The options available are:
+
+   \begin{itemize}
+      \item \textbf{recover}. Tries to recover the running status when a data
+         byte is encountered. The previous running status byte is saved, and
+         then used when a data byte is encountered.
+         This option allows the MIDI file parsing for the track to continue,
+         and then the rest of the tracks are processed.
+      \item \textbf{skip} ignores the rest of the bytes in the track, and
+         allows the rest of the tracks to be processed.
+         The main difference between this option and \textbf{recover} is
+         that the former allows \textsl{Seq66 SeqSpec} events to be created.
+      \item \textbf{proceed} keeps going in spite of errors, reporting them.
+         Try it with \texttt{contrib/midi/trilogy.mid} to see what messages
+         appear in the console and what patterns actually get loaded.
+      \item \textbf{abort} just exits the parsing, which is the old
+         and undesirable behavior.
+         It causes patterns to be dropped.
+   \end{itemize}
+
+   Try each option with the \texttt{trilogy.mid} file, in which running
+   status is started, only to be ended by the 0xF0 SysEx event.
+   But then the events after the SysEx event still require running-status
+   to be in effect.
+
+   This section is not yet accessible from an
+   \textbf{Edit / Preferences} tab.
 
 \subsubsection{'rc' File / MIDI-Meta-Events Section}
 \label{subsubsec:configuration_rc_midi_meta_events}

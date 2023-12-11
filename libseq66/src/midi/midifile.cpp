@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-10
+ * \updates       2023-12-11
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -344,7 +344,7 @@ midifile::read_byte ()
         return m_data[m_pos++];
     }
     else if (! m_disable_reported)
-        (void) set_error_dump("'End-of-file', further MIDI reading disabled");
+        (void) set_error_dump("'End-of-file', aborting MIDI reading");
 
     return 0;
 }
@@ -1577,6 +1577,12 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     else if (status == EVENT_MIDI_SYSEX)    /* 0xF0 */
                     {
 #if defined SEQ66_USE_SYSEX_PROCESSING
+
+                        /*
+                         * We now check for unterminated SysEx messages as
+                         * found in Dixie04.mid.
+                         */
+
                         midishort mfg_id;
                         midibyte id = read_byte();
                         if (id == 0)
@@ -1588,6 +1594,9 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                         back_up(2);                     /* back to F0       */
                         for (;;)
                         {
+                            if (at_end())
+                                break;
+
                             midibyte b = read_byte();
                             if (! e.append_sysex_byte(b))   /* F7 byte? */
                                 break;
@@ -1616,7 +1625,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                          * running status after a SysEx event.
                          */
 
-                        std::string msg = "Unsupport MIDI event";
+                        std::string msg = "Bad MIDI event";
                         if (m_running_status_action == rsaction::skip)
                         {
                             char temp[64];
@@ -3486,6 +3495,8 @@ read_midi_file
             }
             p.announce_playscreen();            /* tell MIDI control out    */
             file_message("Read", fn);
+            if (! f->error_message().empty())   /* actually a warning here  */
+                errmsg = f->error_message();
         }
         else
         {
