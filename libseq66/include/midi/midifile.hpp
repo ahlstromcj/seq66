@@ -373,8 +373,17 @@ protected:
     bool read_byte_array (midistring & b, size_t len);
     bool read_string (std::string & b, size_t len);
     bool read_meta_data (sequence & s, event & e, midibyte metatype, size_t len);
-    bool read_sysex_data (sequence & s, event & e, size_t len);
+    int read_sysex_data
+    (
+        sequence & s, event & e,
+        size_t len, bool continuation = false
+    );
     void read_gap (size_t sz);
+
+    midibyte peek () const
+    {
+        return m_data[m_pos];
+    }
 
     void skip (size_t sz)                       /* compare to read_gap()    */
     {

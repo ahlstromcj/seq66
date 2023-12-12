@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2023-09-17
+ * \updates       2023-12-12
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -298,12 +298,19 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
 }
 
 /**
- *  Adds the bytes of a SysEx or Meta MIDI event.
+ *  Adds the bytes of a SysEx or Meta MIDI event. This function was using
+ *  put() to write a single count byte, but add_varinum() must be used for
+ *  this value.
  *
- * ca 2023-04-28:
+ *  -   Meta:                   delta FF type len bytes
+ *  -   SysEx:
+ *      -   Single:             delta F0 len bytes F7
+ *      -   Continuation:       delta F0 len bytes ; delta F7 len bytes ; ...
+ *                              delta F7 len bytes F7
+ *      -   Escape sequence:    TODO
  *
- *  This function was using put() to write a single count byte, but
- *  add_varinum() must be used for this value.
+ *  The SysEx continuation messages are stored as separate events. The only
+ *  difference in writing them is the status byte.
  *
  * \param e
  *      Provides the MIDI event to add.  The caller must ensure that this is
@@ -316,15 +323,23 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
 void
 midi_vector_base::add_ex_event (const event & e, midipulse deltatime)
 {
+    int count = e.sysex_size();                 /* applies for meta, too    */
     add_varinum(midilong(deltatime));           /* encode delta_time        */
     put(e.get_status());                        /* indicates SysEx/Meta     */
-    if (e.is_meta())
+    if (e.is_sysex())
+    {
+        --count;                                /* ignore 1st byte (F0/F7)  */
+        add_varinum(midilong(count));
+        for (int i = 0; i < count; ++i)
+            put(e.get_sysex(i + 1));
+    }
+    else if (e.is_meta())
+    {
         put(e.channel());                       /* indicates meta type      */
-
-    int count = e.sysex_size();                 /* applies for meta, too    */
-    add_varinum(midilong(count));               /* using put() was wrong!   */
-    for (int i = 0; i < count; ++i)
-        put(e.get_sysex(i));
+        add_varinum(midilong(count));           /* using put() was wrong!   */
+        for (int i = 0; i < count; ++i)
+            put(e.get_sysex(i));
+    }
 }
 
 /**
@@ -375,7 +390,7 @@ midi_vector_base::fill_seq_name (const std::string & name)
         put(midibyte(name[i]));
 }
 
-#if defined SEQ66_USE_FILL_META_TEXT
+#if defined SEQ66_USE_FILL_META_TEXT                // undefined
 
 /**
  *  ca 2023-04-27
@@ -411,7 +426,7 @@ midi_vector_base::fill_meta_track_end (midipulse deltatime)
     put_meta(EVENT_META_END_OF_TRACK, 0, deltatime);    /* no data to add   */
 }
 
-#if defined SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
+#if defined SEQ66_USE_FILL_TIME_SIG_AND_TEMPO           // undefined
 
 /**
  *  Combines the two functions fill_tempo() and fill_time_signature().  This

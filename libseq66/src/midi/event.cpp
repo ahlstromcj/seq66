@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-09
+ * \updates       2023-12-11
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -900,7 +900,9 @@ event::append_meta_data (midibyte metatype, const midibytes & data)
 }
 
 /**
- *  An overload for logging SYSEX data byte-by-byte.
+ *  An overload for logging SYSEX data byte-by-byte. If the byte is F7
+ *  and no bytes have been pushed, then this is an EVENT_MIDI_SYSEX_CONTINUE
+ *  and starts the SysEx, rather than ending it.
  *
  * \param data
  *      A single MIDI byte of data, assumed to be part of a SYSEX message
@@ -915,8 +917,9 @@ event::append_meta_data (midibyte metatype, const midibytes & data)
 bool
 event::append_sysex_byte (midibyte data)
 {
+    bool firstbyte = m_sysex.empty();
     m_sysex.push_back(data);
-    return data != EVENT_MIDI_SYSEX_END;
+    return firstbyte || data != EVENT_MIDI_SYSEX_END;
 }
 
 /**

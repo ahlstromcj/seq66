@@ -502,17 +502,25 @@ midifile::read_meta_data (sequence & s, event & e, midibyte metatype, size_t len
  *  the data bytes and there is no length value.
  *
  *  We now check for unterminated SysEx messages as found in Dixie04.mid.
- *  We still need to handle F7 as continuation and escape values.
+ *  We handle F7 as continuation, but not yet escape values.
  */
 
-bool
-midifile::read_sysex_data (sequence & s, event & e, size_t len)
+int
+midifile::read_sysex_data
+(
+    sequence & s, event & e, size_t len, bool continuation
+)
 {
-    bool result = len > 0;
-    if (result)
+    int result = 0;
+    if (len > 0)
     {
         e.reset_sysex();                                /* clear m_sysex    */
-        if (e.append_sysex_byte(EVENT_MIDI_SYSEX))      /* start w/F0 byte  */
+
+        bool started = continuation ?
+            e.append_sysex_byte(EVENT_MIDI_SYSEX_CONTINUE) :    /* 0xF7     */
+            e.append_sysex_byte(EVENT_MIDI_SYSEX) ;             /* 0xF0     */
+
+        if (started)
         {
             for (size_t i = 0; i < len; ++i)
             {
@@ -524,7 +532,7 @@ midifile::read_sysex_data (sequence & s, event & e, size_t len)
                 else
                 {
                     midibyte b = read_byte();
-                    if (! e.append_sysex_byte(b))       /* premature F7?    */
+                    if (! e.append_sysex_byte(b))       /* not F7?          */
                         break;
                 }
             }
@@ -1622,6 +1630,12 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                         if (read_sysex_data(s, e, len))
                             ++evcount;
                     }
+                    else if (status == EVENT_MIDI_SYSEX_END) /* 0xF7 contin */
+                    {
+                        len = read_varinum();
+                        if (read_sysex_data(s, e, len))
+                            ++evcount;
+                    }
                     else
                     {
                         (void) set_error_dump
@@ -2648,7 +2662,7 @@ midifile::write_header (int numtracks, int smfformat)
     return numtracks > 0;
 }
 
-#if defined SEQ66_USE_WRITE_START_TEMPO
+#if defined SEQ66_USE_WRITE_START_TEMPO     // undefined
 
 /**
  *  Writes the initial or only tempo, occurring at the beginning of a MIDI
@@ -2669,7 +2683,7 @@ midifile::write_start_tempo (midibpm start_tempo)
 
 #endif  // SEQ66_USE_WRITE_START_TEMPO
 
-#if defined SEQ66_USE_WRITE_TIME_SIG
+#if defined SEQ66_USE_WRITE_TIME_SIG        // undefined
 
 /**
  *  Writes the main time signature, in a more simplistic manner than

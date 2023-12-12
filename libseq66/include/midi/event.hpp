@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-11-24
+ * \updates       2023-12-11
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -766,9 +766,14 @@ public:
         return m == EVENT_META_TIME_SIGNATURE;
     }
 
+    /**
+     *  Handles the SysEx start or continue bytes.
+     */
+
     static bool is_sysex_msg (midibyte m)
     {
-        return m == EVENT_MIDI_SYSEX;
+        return m == EVENT_MIDI_SYSEX ||
+            EVENT_MIDI_SYSEX_CONTINUE;          /* 0xF7 as SysEx Continue   */
     }
 
     /**
@@ -1416,7 +1421,7 @@ public:
 
     bool is_sysex () const
     {
-        return m_status == EVENT_MIDI_SYSEX;
+        return is_sysex_msg(m_status);  /* m_status == EVENT_MIDI_SYSEX */
     }
 
     bool below_sysex () const

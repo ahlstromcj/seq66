@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.12
 Chris Ahlstrom
-2019-04-13 to 2023-12-11
+2019-04-13 to 2023-12-12
 
 Misc:
 
@@ -28,7 +28,7 @@ Misc:
         -   Write a module to show SysEx (and optionally store them as
             a macro).
         -   Improve the output of text events in the slot_dump() function.
-        -   Handle F7 SysEx continuation messages.
+        -   Test F7 SysEx continuation messages.
     -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
         Too difficult to fix at this time; converted it to 192.
 
