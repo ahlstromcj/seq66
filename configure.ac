@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2023-12-06
+dnl \update        2023-12-13
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -40,12 +40,53 @@ dnl gcc/g++ configuration.
 dnl AC_PROG_CC([gcc])
 dnl AC_PROG_CXX([g++])
 dnl AC_PROG_CXXCPP([cpp])
-AC_PROG_CC
-AC_PROG_CXX
-AC_PROG_CXXCPP
-AC_PROG_INSTALL
-AC_PROG_LN_S
-AC_PROG_MKDIR_P
+dnl
+dnl AC_PROG_CC
+dnl AC_PROG_CXX
+dnl AC_PROG_CXXCPP
+dnl AC_PROG_INSTALL
+dnl AC_PROG_LN_S
+dnl AC_PROG_MKDIR_P
+
+AC_PROG_CC(gcc clang llvm-gcc)
+AC_PROG_CXX(g++ clang++ llvm-g++)
+AC_PROG_CPP()
+AC_PROG_CXXCPP()
+
+dnl NEW NEW NEW
+dnl Important: see
+dnl
+dnl    https://android.googlesource.com/toolchain/llvm/+/release_34/
+dnl		   autoconf/configure.ac
+dnl
+dnl If CXX is Clang, check that it can find and parse C++ standard library
+dnl headers.  Note that space between 'include' and '(' is required.
+dnl There's a broken regex in aclocal that otherwise will think that we call
+dnl m4's include dnl builtin.
+
+if test "$CXX" = "clang++" ; then
+   AC_MSG_CHECKING([whether clang works])
+   AC_LANG_PUSH([C++])
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <limits>
+#if __has_include (<cxxabi.h>)
+#include <cxxabi.h>
+#endif
+#if __has_include (<unwind.h>)
+#include <unwind.h>
+#endif
+]])],
+[
+   AC_MSG_RESULT([yes])
+],
+[
+   AC_MSG_RESULT([no])
+   AC_MSG_ERROR([Selected compiler could not find/parse C++ standard headers.  Rerun with CC=c-compiler CXX=c++-compiler ./configure ...])
+])
+   AC_LANG_POP([C++])
+fi
+dnl NEW NEW NEW
+
+dnl AC_PROG_CXXCPP()
 
 dnl 5.c. Mingw support.  Missing, qmake support is more reliable at
 dnl present.
@@ -489,7 +530,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2023-12-06"
+#define VERSION_DATE_SHORT "2023-12-13"
 #define API_VERSION "0.99"
 #define VERSION "0.99.12"
 

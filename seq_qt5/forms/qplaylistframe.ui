@@ -1122,7 +1122,7 @@ Read-only.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="optionLayoutWidget">
    <property name="geometry">
     <rect>
      <x>680</x>

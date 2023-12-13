@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.12 2023-12-12
+Release Notes for Seq66 v. 0.99.12 2023-12-13
 
 -   Improving clang support.
     -   Using clang-12 and clang-16 to find errors and warnings
@@ -13,6 +13,7 @@ Release Notes for Seq66 v. 0.99.12 2023-12-12
     -   Handle unterminated SysEx messages (Dixie04.mid).
 -   Fixed issue with  building the command-line version with "portmidi"
     (seq66clip).
+-   Fixed a bug in --option log=file.
 
 See NEWS for more details.
 

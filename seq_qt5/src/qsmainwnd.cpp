@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-12-11
+ * \updates       2023-12-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -456,7 +456,7 @@ qsmainwnd::qsmainwnd
     if (not_nullptr(m_live_frame))
     {
         ui->LiveTabLayout->addWidget(m_live_frame);
-        m_live_frame->setFocus();
+        // m_live_frame->setFocus();
     }
     m_playlist_frame = new (std::nothrow) qplaylistframe
     (
@@ -687,6 +687,7 @@ qsmainwnd::qsmainwnd
     tooltip_with_keystroke(ui->btnPlay, keyname);
     connect(ui->btnPlay, SIGNAL(clicked(bool)), this, SLOT(start_playing()));
     qt_set_icon(play2_xpm, ui->btnPlay);
+    ui->btnPlay->setFocus();
 
     /*
      * L/R Loop button (and Text Underrun button hiding). While working issue
@@ -1204,18 +1205,17 @@ qsmainwnd::stop_playing ()
     Qt::KeyboardModifiers qkm = QGuiApplication::keyboardModifiers();
     bool rewind = (qkm & Qt::ShiftModifier) != 0;
     stop(rewind);
+    ui->btnPlay->setFocus();
 }
 
 /**
- *  Implements the pause button.
+ *  Implements the pause button. Using stop() breaks the pause function.
  */
 
 void
 qsmainwnd::pause_playing ()
 {
-    //// TRIAL: use stop()
-    //// cb_perf().auto_pause();             /* update_play_status() */
-    stop();
+    cb_perf().auto_pause();             /* update_play_status() */
 }
 
 /**
@@ -1228,6 +1228,7 @@ qsmainwnd::start_playing ()
     cb_perf().auto_play();
     ui->btnPause->setChecked(false);    /* force off */
     ui->btnStop->setChecked(false);     /* force off */
+    ui->btnStop->setFocus();
 }
 
 /**
@@ -1994,7 +1995,7 @@ qsmainwnd::redo_live_frame ()
             this, SLOT(load_live_frame(int))
         );
         m_live_frame->show();
-        m_live_frame->setFocus();
+        // m_live_frame->setFocus();
 
         /*
          * This is not necessary.  And it causes copies painter errors

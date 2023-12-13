@@ -237,7 +237,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="sliderLayoutWidget">
    <property name="geometry">
     <rect>
      <x>4</x>
@@ -289,7 +289,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="valueLayoutWidget">
    <property name="geometry">
     <rect>
      <x>28</x>

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-12-01
+ * \updates       2023-12-13
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -77,11 +77,11 @@ static const int c_bad_option  = '?';
 /**
  *  Sets up the "hardwired" version text for Seq66.  This value
  *  ultimately comes from the configure.ac script, and available in the
- *  seq66_features module.
+ *  seq66_features module. Static.
  */
 
 const std::string
-cmdlineopts::versiontext = seq_version_text();
+cmdlineopts::s_versiontext = seq_version_text();
 
 /**
  *  A structure for command parsing that provides the long forms of
@@ -93,6 +93,8 @@ cmdlineopts::versiontext = seq_version_text();
  *      -   no_argument = 0
  *      -   required_argument = 1
  *      -   optional_argument = 2
+ *
+ *  Static.
  */
 
 struct option
@@ -210,6 +212,8 @@ cmdlineopts::s_long_options [] =
  *
  *      The -i/--investigate option is used on the command line), to turn on
  *      the test-of-the-day and try to unearth difficult-to-find issues.
+ *
+ * Static.
  */
 
 #if defined SEQ66_JACK_SUPPORT      // how to handle no SEQ66_NSM_SUPPORT (n)?
@@ -221,6 +225,20 @@ cmdlineopts::s_long_options [] =
 #endif
 
 const std::string cmdlineopts::s_optstring = CMD_OPTS;
+
+/**
+ *  Indicates that there are no command-line options present. An attempt to
+ *  prevent scanning and reading files twice. Note that a MIDI file-name is
+ *  not counted as an option. Note that there are no options if optind is
+ *  equal to 1.
+ */
+
+bool cmdlineopts::s_no_cmd_line_options = false;
+
+bool cmdlineopts::cmd_line_options ()
+{
+    return ! s_no_cmd_line_options;
+}
 
 /**
  *  Provides help text.
@@ -945,9 +963,11 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
     int option_index = 0;                   /* getopt_long index storage    */
     std::string optionval;                  /* used only with -o options    */
     std::string optionname;                 /* ditto                        */
+
     /*
      * opterr = 0;                          // suppress error messages      //
      */
+
     optind = 1;                             /* reset global for (re)scan    */
     for (;;)                                /* scan all arguments           */
     {
@@ -1187,7 +1207,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case 'V':
-            std::cout << versiontext << seq_build_details();
+            std::cout << s_versiontext << seq_build_details();
             result = c_null_option;
             break;
 
@@ -1256,6 +1276,9 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         }
 #endif
     }
+    if (optind == 1)
+        cmdlineopts::s_no_cmd_line_options = true;
+
     return result;
 }
 

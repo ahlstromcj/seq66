@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-12-01
+ * \updates       2023-12-13
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -251,6 +251,10 @@ smanager::main_settings (int argc, char * argv [])
         bool ishelp = cmdlineopts::help_check(argc, argv);
         if (ishelp)
         {
+            /*
+             * ca 2023-12-13 Why do this?
+             */
+
             (void) cmdlineopts::parse_command_line_options(argc, argv);
             is_help(true);
             result = false;
@@ -341,20 +345,34 @@ smanager::main_settings (int argc, char * argv [])
             {
                 std::string errmessage;             /* just in case!        */
                 result = cmdlineopts::parse_options_files(errmessage);
-                if (! result)
+                if (result)
+                {
+                    if (argc > 1)
+                    {
+                        optionindex = cmdlineopts::parse_command_line_options
+                        (
+                            argc, argv
+                        );
+                        result = optionindex >= 0;
+                    }
+                }
+                else
                 {
                     errprint(errmessage);
                     append_error_message(errmessage); /* raises the message */
                 }
-                optionindex = cmdlineopts::parse_command_line_options(argc, argv);
-                result = optionindex >= 0;
             }
             if (result)
             {
+                /*
+                 * The 'usr' file might not specify a log-file. Check again
+                 * here.
+                 */
+
+                (void) cmdlineopts::parse_o_options(argc, argv);
                 bool uselog = ! (seq_app_cli() && rc().verbose()) &&
                     usr().option_use_logfile();
 
-                (void) cmdlineopts::parse_o_options(argc, argv);
 
                 /*
                  * The user migh specify -o options that are also set up in
@@ -1132,7 +1150,6 @@ smanager::create_configuration
             if (! m_rerouted)
             {
                 usr().option_logfile(seq_default_logfile_name());
-                // usr().option_use_logfile(true);
                 reroute_to_log(usr().option_logfile());
             }
             result = make_directory_path(mainpath);

@@ -27,12 +27,15 @@
  *
  * \author  Chris Ahlstrom
  * \date    2015-11-20
- * \updates 2023-12-01
+ * \updates 2023-12-13
  * \version $Revision$
  *
  *    Also see the filefunctions.cpp and strfunctions modules.
  *    These modules together simplify the main() module considerably, which
  *    will be useful when we have more than one "Seq66" application.
+ *
+ *    Note that this module handles command-line options AND the main
+ *    options files ('rc' and 'usr').
  */
 
 #include <string>
@@ -62,9 +65,10 @@ class cmdlineopts
 
 private:
 
-    static const std::string versiontext;
+    static const std::string s_versiontext;
     static struct option s_long_options [];
     static const std::string s_optstring;
+    static bool s_no_cmd_line_options;
 
 public:
 
@@ -79,6 +83,7 @@ public:
     cmdlineopts & operator = (cmdlineopts &&) = default;
     ~cmdlineopts () = default;
 
+    static bool cmd_line_options ();
     static bool help_check (int argc, char * argv []);
     static bool kill_check (int argc, char * argv []);
     static bool verbose_check (int argc, char * argv []);
