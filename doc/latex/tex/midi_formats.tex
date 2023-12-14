@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2023-12-12
+% \update      2023-12-14
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1115,9 +1115,9 @@
       \item \textbf{0x7F}.
          Represents a non-realtime system exclusive message.
          All MIDI devices can respond to it, immediately.
-         \textsl{Seq66} uses the SysEx real-time message to support
-         SeqSpecs.
-         See \sectionref{paragraph:midi_format_seq66_seqspecs}.
+% WRONZg \textsl{Seq66} uses the SysEx real-time message to support
+%        SeqSpecs.
+%        See \sectionref{paragraph:midi_format_seq66_seqspecs}.
    \end{itemize}
 
    For more information on these events, see
@@ -1196,7 +1196,7 @@
 \label{paragraph:patterns_escape_sequence}
 
    An escape sequence is not SysEx, but it does use the F7 byte.
-   It is used for encoding arbitrary bytes for message such as Song Select.
+   It is used for encoding arbitrary bytes for messages such as Song Select.
    The first line shows such a message, and the second how it would be encoded.
 
    \begin{verbatim}
@@ -1229,9 +1229,25 @@
    wild-card for "all devices").
 
    \begin{verbatim}
-      F7 7E channel subid data bytes F7
-      F7 7F channel subid data bytes F7
+      F7 7E channel subid data bytes F7      (non-realtime)
+      F7 7F channel subid data bytes F7      (realtime)
    \end{verbatim}
+
+   If \texttt{channel} is F7, this is a global broadcast that all devices
+   should heed.
+   The \texttt{subid} could be something like "01 00" for a long-form
+   (full frame) time-code message.
+
+%  F0 7E id 01                      Channel Pressure (Aftertouch)
+%  F0 7E id 01                      or Sample Dump Header???
+%  F0 7E id 02                      Polyphonic Key Pressure (Aftertouch)
+%  F0 7E id 02                      or Sample Data Packet???
+%  F0 7E id 03                      Controller (Control Change)
+%  F0 7E id 03                      or Sample Dump Request???
+%  F0 7E id 09 nn F7                GM System Enable / Disable (01 / 00)
+%  F0 7F 00                         ???
+%  F0 7F id 01 01 hh mm ss ff F7    MIDI Full Frame
+%  F0 7F id 04 01 mm nn F7          MIDI Master Volume (vs Controller Volume)
 
    A detailed description is beyond the scope of this document.
    Some messages supported by these messages are the
@@ -1240,6 +1256,15 @@
    and the \textsl{General MIDI System Enable/Disable}
    messages.
 
+   An interesting subset of these messages is \textsl{MIDI Show Control}
+   (MSC):
+
+   \begin{verbatim}
+      F7 7F deviceid 02 commandformat command data F7      (MSC)
+   \end{verbatim}
+
+   See \cite{msc}.
+   Some simple controls can be included in the 'ctrl' file's set of macros.
 
 \paragraph{Seq66 SysEx Handling}
 \label{paragraph:midi_format_seq66_sysex_handling}
@@ -1260,7 +1285,10 @@
    \end{verbatim}
 
    The "manid" is a manufacturer's identifier. 0x41 is Roland, 0x24 is
-   Hohner. The "devid" is the device identifier (e.g. 0x10 for Roland devices).
+   Hohner. 0x00 is used for adding two more codes to greatly expand the ID
+   list. 0x7E is used to denote a non-realtime message, and 0x7F denotes
+   a realtime message.
+   The "devid" is the device identifier (e.g. 0x10 for Roland devices).
    The "devid" indicates which devices will accept the SysEx message.
    The "modelid" is the model identifier (0x42 for most GS synths).
    The "direction" is 0x12 for sending information or 0x11 for requesting

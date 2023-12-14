@@ -1,6 +1,6 @@
 MIDI Sample and Test Files
 Chris Ahlstrom
-2015-09-11 to 2023-12-11
+2015-09-11 to 2023-12-14
 
 This directory contains contributed MIDI files for examples and testing.
 Also see the test files from the midicvt as described in
@@ -55,7 +55,14 @@ the "example1" file.
       events. SysEx messages start with F0 and end with F7.  Universal
       Real Time SysEx messages start with F0, followed by 7F, then include
       other fields before the terminating F7. More importantly, it appears
-      to have an unterminated SysEx event starting at 0x53DF.
+      to have an unterminated SysEx event starting at 0x53DF. Also, the
+      MThd header specifies 14 tracks, but there are only 4 MTrk chunks
+      according to midicvt. This is wrong; a binary edit shows 14 MTrks.
+      Seq66 (and QTractor) loads only 12 tracks. Another peculiarity of this
+      file is that the sequence 9D 7D (F0 7F 00) x 5 occurs 10 times, and
+      there are many other F0 F7 nn sequences followed immediately by an
+      F0! We can ignore these without storing them, but is that the best
+      way to handle them? What do they mean?
 
    mutes-long.midi:
 

@@ -37,13 +37,6 @@ AX_PREFIX_CONFIG_H([include/seq66-config.h], [seq66])
 
 dnl gcc/g++ configuration.
 
-dnl AC_PROG_CC([gcc])
-dnl AC_PROG_CXX([g++])
-dnl AC_PROG_CXXCPP([cpp])
-dnl
-dnl AC_PROG_CC
-dnl AC_PROG_CXX
-dnl AC_PROG_CXXCPP
 dnl AC_PROG_INSTALL
 dnl AC_PROG_LN_S
 dnl AC_PROG_MKDIR_P
@@ -62,12 +55,15 @@ dnl
 dnl If CXX is Clang, check that it can find and parse C++ standard library
 dnl headers.  Note that space between 'include' and '(' is required.
 dnl There's a broken regex in aclocal that otherwise will think that we call
-dnl m4's include dnl builtin.
+dnl m4's include builtin. The linker flags are used with gcc, but not
+dnl clang.
+
+LINKER_FLAGS_ADD = "-Wl,--copy-dt-needed-entries"
 
 if test "$CXX" = "clang++" ; then
-   AC_MSG_CHECKING([whether clang works])
-   AC_LANG_PUSH([C++])
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <limits>
+    AC_MSG_CHECKING([whether clang works])
+    AC_LANG_PUSH([C++])
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <limits>
 #if __has_include (<cxxabi.h>)
 #include <cxxabi.h>
 #endif
@@ -76,7 +72,9 @@ if test "$CXX" = "clang++" ; then
 #endif
 ]])],
 [
-   AC_MSG_RESULT([yes])
+    AC_MSG_RESULT([yes])
+    AC_DEFINE(CLANG_SUPPORT, 1, [Define if CLANG is active])
+    LINKER_FLAGS_ADD = ""
 ],
 [
    AC_MSG_RESULT([no])
@@ -289,7 +287,8 @@ AC_ARG_ENABLE(jack,
     [jack=yes])
 
 dnl JACK session support is now deprecated (circa 2020-10-26), but still the
-dnl default for this option is 'no'.  JACK recommends using NSM instead!
+dnl default for this option is 'yes'. JACK recommends using NSM instead! But
+dnl Seq66 will support it for awhile yet.
 
 AC_ARG_ENABLE(jack-session,
     [AS_HELP_STRING(--disable-jack-session, [Disable JACK session support])],

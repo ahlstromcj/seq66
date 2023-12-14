@@ -4,6 +4,7 @@ Chris Ahlstrom
 
 Misc:
 
+    -   Do not parse files twice if no options given on command line.
     -   Clang-16:
         -   CLANG and LO_TT_IMMEDIATE: warning: compound literals are a
             C99-specific feature [-Wc99-extensions]. See

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-11
+ * \updates       2023-12-14
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -503,16 +503,25 @@ midifile::read_meta_data (sequence & s, event & e, midibyte metatype, size_t len
  *
  *  We now check for unterminated SysEx messages as found in Dixie04.mid.
  *  We handle F7 as continuation, but not yet escape values.
+ *
+ *  F0: In Dixie04.mid, we find ten instances of the sequence
+ *
+ *      9D 7D (F0 7F 00) x 5 repeats
+ *
+ *      As an EXPERIMENT, we peek ahead for an F0 and abort if we find one.
+ *      The result does not change the patterns, but does strip out sequences
+ *      like F0 7F nn that have a following F0. 
  */
 
-int
+bool
 midifile::read_sysex_data
 (
-    sequence & s, event & e, size_t len, bool continuation
+    sequence & s, event & e,
+    size_t len, bool continuation
 )
 {
-    int result = 0;
-    if (len > 0)
+    bool result = len > 0;
+    if (result)
     {
         e.reset_sysex();                                /* clear m_sysex    */
 
@@ -531,9 +540,28 @@ midifile::read_sysex_data
                 }
                 else
                 {
+                    /*
+                     * See the "F0" note in the banner.
+                     */
+
+#if defined USE_EXPERIMENTAL_CODE
+                    midibyte p = peek();
+                    if (p != EVENT_MIDI_SYSEX)
+                    {
+                        midibyte b = read_byte();
+                        if (! e.append_sysex_byte(b))       /* not F7?          */
+                            break;
+                    }
+                    else
+                    {
+                        result = false;
+                        break;
+                    }
+#else
                     midibyte b = read_byte();
                     if (! e.append_sysex_byte(b))       /* not F7?          */
                         break;
+#endif
                 }
             }
             if (result)
@@ -1633,7 +1661,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     else if (status == EVENT_MIDI_SYSEX_END) /* 0xF7 contin */
                     {
                         len = read_varinum();
-                        if (read_sysex_data(s, e, len))
+                        if (read_sysex_data(s, e, len, true))
                             ++evcount;
                     }
                     else

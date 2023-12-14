@@ -6,7 +6,7 @@
 # \library    	seq66cli application
 # \author     	Chris Ahlstrom
 # \date       	2017-04-07
-# \update      2023-12-11
+# \update      2023-12-13
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -167,16 +167,19 @@ bin_PROGRAMS = $(MIDIAPP)
 
 #******************************************************************************
 # seq66cli
+#
+# seq66cli_LDFLAGS = -Wl,--copy-dt-needed-entries
+#
 #----------------------------------------------------------------------------
 
 seq66cli_SOURCES = seq66rtcli.cpp
 seq66cli_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
-seq66cli_LDFLAGS = -Wl,--copy-dt-needed-entries
+seq66cli_LDFLAGS = $(LINKER_FLAGS_ADD)
 seq66cli_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(AM_LDFLAGS)
 
 seq66clip_SOURCES = seq66rtcli.cpp
 seq66clip_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
-seq66clip_LDFLAGS = -Wl,--copy-dt-needed-entries
+seq66clip_LDFLAGS = $(LINKER_FLAGS_ADD)
 seq66clip_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(AM_LDFLAGS)
 
 #******************************************************************************

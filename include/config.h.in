@@ -27,6 +27,9 @@
 /* Name of the UI of the application */
 #undef APP_TYPE
 
+/* Define if CLANG is active */
+#undef CLANG_SUPPORT
+
 /* "Name to display as client/port" */
 #undef CLIENT_NAME
 

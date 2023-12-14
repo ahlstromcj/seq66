@@ -4705,10 +4705,12 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+LINKER_FLAGS_ADD = "-Wl,--copy-dt-needed-entries"
+
 if test "$CXX" = "clang++" ; then
-   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether clang works" >&5
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether clang works" >&5
 $as_echo_n "checking whether clang works... " >&6; }
-   ac_ext=cpp
+    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
@@ -4735,8 +4737,12 @@ main ()
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"; then :
 
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
+
+$as_echo "#define CLANG_SUPPORT 1" >>confdefs.h
+
+    LINKER_FLAGS_ADD = ""
 
 else
 
