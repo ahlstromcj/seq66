@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2017-09-05
-# \update      2023-12-13
+# \update      2023-12-15
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -42,6 +42,8 @@ CLEANFILES = *.gc*
 
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@
+
+# LINKER_FLAGS = @ LINKER_FLAGS @
 
 #******************************************************************************
 # Install directories
@@ -206,12 +208,12 @@ bin_PROGRAMS = $(MIDIAPP)
  
 qseq66_SOURCES = seq66qt5.cpp
 qseq66_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
-qseq66_LDFLAGS = $(LINKER_FLAGS_ADD)
+qseq66_LDFLAGS = $(LINKER_FLAGS)
 qseq66_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(AM_LDFLAGS)
  
 qpseq66_SOURCES = seq66qt5.cpp
 qpseq66_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
-qpseq66_LDFLAGS = $(LINKER_FLAGS_ADD)
+qpseq66_LDFLAGS = $(LINKER_FLAGS)
 qpseq66_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(AM_LDFLAGS)
 
 #******************************************************************************

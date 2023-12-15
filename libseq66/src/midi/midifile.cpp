@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-14
+ * \updates       2023-12-15
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -102,6 +102,24 @@
 
 namespace seq66
 {
+
+/**
+ *  F0:
+ *
+ *  In Dixie04.mid, we find instances of the sequences
+ *
+ *      9D 7D F0 7F 00 F0
+ *      F0 7F nn F0
+ *
+ *  We have found not information on these sequences. They are not legal, and
+ *  the 7F is misinterpreted as a bogus length of 127.
+ *
+ *  As an EXPERIMENT, we peek ahead for an F0 and abort if we find one.  The
+ *  result does not change the patterns, but does strip out sequences like F0
+ *  7F nn that "end" with an F0.
+ */
+
+#undef  SEQ66_IGNORE_F0_F7_NN_F0
 
 /**
  *  Minimal MIDI file size.  Just used for a sanity check.
@@ -503,14 +521,6 @@ midifile::read_meta_data (sequence & s, event & e, midibyte metatype, size_t len
  *
  *  We now check for unterminated SysEx messages as found in Dixie04.mid.
  *  We handle F7 as continuation, but not yet escape values.
- *
- *  F0: In Dixie04.mid, we find ten instances of the sequence
- *
- *      9D 7D (F0 7F 00) x 5 repeats
- *
- *      As an EXPERIMENT, we peek ahead for an F0 and abort if we find one.
- *      The result does not change the patterns, but does strip out sequences
- *      like F0 7F nn that have a following F0. 
  */
 
 bool
@@ -541,25 +551,26 @@ midifile::read_sysex_data
                 else
                 {
                     /*
-                     * See the "F0" note in the banner.
+                     * See the "F0" note in the banner at the top of this
+                     * module.
                      */
 
-#if defined USE_EXPERIMENTAL_CODE
-                    midibyte p = peek();
-                    if (p != EVENT_MIDI_SYSEX)
+#if defined SEQ66_IGNORE_F0_F7_NN_F0
+                    midibyte p = peek(1);                   /* peek ahead 1 */
+                    if (p != EVENT_MIDI_SYSEX)              /* F0!!!        */
                     {
                         midibyte b = read_byte();
-                        if (! e.append_sysex_byte(b))       /* not F7?          */
+                        if (! e.append_sysex_byte(b))       /* not F7?      */
                             break;
                     }
                     else
                     {
                         result = false;
-                        break;
+                        break;                              /* preserve 0   */
                     }
 #else
                     midibyte b = read_byte();
-                    if (! e.append_sysex_byte(b))       /* not F7?          */
+                    if (! e.append_sysex_byte(b))           /* not F7?      */
                         break;
 #endif
                 }
@@ -3439,7 +3450,8 @@ midifile::set_error_dump (const std::string & msg)
     char temp[80];
     snprintf
     (
-        temp, sizeof temp, "Offset ~0x%zx of 0x%zx bytes: ", m_pos, m_file_size
+        temp, sizeof temp, "Offset 0x%zx of 0x%zx bytes: ", m_pos, m_file_size
+
         /*
          * Too much:
          *

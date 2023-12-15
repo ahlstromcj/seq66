@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2023-12-13
+dnl \update        2023-12-15
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -46,7 +46,6 @@ AC_PROG_CXX(g++ clang++ llvm-g++)
 AC_PROG_CPP()
 AC_PROG_CXXCPP()
 
-dnl NEW NEW NEW
 dnl Important: see
 dnl
 dnl    https://android.googlesource.com/toolchain/llvm/+/release_34/
@@ -58,7 +57,7 @@ dnl There's a broken regex in aclocal that otherwise will think that we call
 dnl m4's include builtin. The linker flags are used with gcc, but not
 dnl clang.
 
-LINKER_FLAGS_ADD = "-Wl,--copy-dt-needed-entries"
+linker_flag="-Wl,--copy-dt-needed-entries"
 
 if test "$CXX" = "clang++" ; then
     AC_MSG_CHECKING([whether clang works])
@@ -73,18 +72,18 @@ if test "$CXX" = "clang++" ; then
 ]])],
 [
     AC_MSG_RESULT([yes])
-    AC_DEFINE(CLANG_SUPPORT, 1, [Define if CLANG is active])
-    LINKER_FLAGS_ADD = ""
+    AC_DEFINE(CLANG_SUPPORT, 1, [Define if clang is active])
+    linker_flag=""
 ],
 [
    AC_MSG_RESULT([no])
-   AC_MSG_ERROR([Selected compiler could not find/parse C++ standard headers.  Rerun with CC=c-compiler CXX=c++-compiler ./configure ...])
+   AC_MSG_ERROR([Compiler could not find/parse C++ headers. Use CC=c-compiler CXX=c++-compiler ./configure ...])
 ])
    AC_LANG_POP([C++])
 fi
-dnl NEW NEW NEW
 
-dnl AC_PROG_CXXCPP()
+LINKER_FLAGS=$linker_flag
+AC_SUBST([LINKER_FLAGS])
 
 dnl 5.c. Mingw support.  Missing, qmake support is more reliable at
 dnl present.
@@ -112,7 +111,7 @@ dnl    name of the client application for display, and the version.
 
 PACKAGE="seq66"
 AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
-AC_SUBST(PACKAGE)
+AC_SUBST([PACKAGE])
 
 AC_DEFINE(APP_TYPE, ["qt5"], "Type of the Seq66 executable, qt/cli")
 AC_DEFINE(APP_ENGINE, ["rtmidi"], "Seq66 MIDI engine, rtmidi/portmidi")
@@ -221,7 +220,8 @@ AC_SUBST(seq66pixdir)
 dnl 4. Get external flags, if any.
 
 CFLAGS="${CFLAGS}"
-ac_cflags="${CFLAGS}"
+
+dnl ac_cflags="${CFLAGS}"
 
 dnl Check for header files.  Added more to support daemonization.
 
@@ -392,7 +392,6 @@ if test "$ac_nsm" != "no"; then
     NSM_CFLAGS="-I ../libsessions/include"
     NSM_LIBS="-llo -L../libsessions/src/.libs/ -lsessions"
     NSM_DEPS="../libsessions/src/.libs/libsessions.la"
-    AC_DEFINE(NSM_SUPPORT, 1, [Define to enable NSM])
     AC_MSG_RESULT([Sessions/NSM support enabled]);
 fi
 
@@ -529,7 +528,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2023-12-13"
+#define VERSION_DATE_SHORT "2023-12-15"
 #define API_VERSION "0.99"
 #define VERSION "0.99.12"
 

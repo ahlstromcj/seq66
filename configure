@@ -743,6 +743,7 @@ SEQ66_API_PATCH
 SEQ66_API_MINOR
 SEQ66_API_MAJOR
 SEQ66_SUITE_NAME
+LINKER_FLAGS
 CXXCPP
 CPP
 am__fastdepCXX_FALSE
@@ -4705,7 +4706,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-LINKER_FLAGS_ADD = "-Wl,--copy-dt-needed-entries"
+linker_flag="-Wl,--copy-dt-needed-entries"
 
 if test "$CXX" = "clang++" ; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether clang works" >&5
@@ -4742,13 +4743,13 @@ $as_echo "yes" >&6; }
 
 $as_echo "#define CLANG_SUPPORT 1" >>confdefs.h
 
-    LINKER_FLAGS_ADD = ""
+    linker_flag=""
 
 else
 
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-   as_fn_error $? "Selected compiler could not find/parse C++ standard headers.  Rerun with CC=c-compiler CXX=c++-compiler ./configure ..." "$LINENO" 5
+   as_fn_error $? "Compiler could not find/parse C++ headers. Use CC=c-compiler CXX=c++-compiler ./configure ..." "$LINENO" 5
 
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
@@ -4759,6 +4760,8 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 fi
+
+LINKER_FLAGS=$linker_flag
 
 
 
@@ -8936,10 +8939,6 @@ _lt_linker_boilerplate=`cat conftest.err`
 $RM -r conftest*
 
 
-## CAVEAT EMPTOR:
-## There is no encapsulation within the following macros, do not change
-## the running order or otherwise move them around unless you know exactly
-## what you are doing...
 if test -n "$compiler"; then
 
 lt_prog_compiler_no_builtin_flag=
@@ -16101,7 +16100,7 @@ seq66pixdir="${datadir}/pixmaps/seq66-${SEQ66_API_VERSION}"
 
 
 CFLAGS="${CFLAGS}"
-ac_cflags="${CFLAGS}"
+
 
 
 
@@ -16831,9 +16830,6 @@ $as_echo "#define NSM_SUPPORT 1" >>confdefs.h
     NSM_CFLAGS="-I ../libsessions/include"
     NSM_LIBS="-llo -L../libsessions/src/.libs/ -lsessions"
     NSM_DEPS="../libsessions/src/.libs/libsessions.la"
-
-$as_echo "#define NSM_SUPPORT 1" >>confdefs.h
-
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: Sessions/NSM support enabled" >&5
 $as_echo "Sessions/NSM support enabled" >&6; };
 fi

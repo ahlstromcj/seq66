@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2023-12-14
+% \update      2023-12-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1105,19 +1105,19 @@
    manufacturer IDs.  Currently \textsl{Seq66} does not try to interpret the
    manufacturer ID.
 
-   There are two addition special ID codes that are \textsl{not}
+   There are three additional special ID codes that are \textsl{not}
    manufacturer-specific:
 
    \begin{itemize}
+      \item \textbf{0x7D}.
+         Used for private non-commercial purposes only.
+         It has no standard format.
       \item \textbf{0x7E}.
          Represents a non-realtime system exclusive message.
          All MIDI devices can respond to it, although not immediately.
       \item \textbf{0x7F}.
          Represents a non-realtime system exclusive message.
          All MIDI devices can respond to it, immediately.
-% WRONZg \textsl{Seq66} uses the SysEx real-time message to support
-%        SeqSpecs.
-%        See \sectionref{paragraph:midi_format_seq66_seqspecs}.
    \end{itemize}
 
    For more information on these events, see
@@ -1125,11 +1125,12 @@
 
    Now, when encoded for storage in a MIDI file, the format of the bare message
    (first line) is padded so that it starts with a delta time, and includes the
-   length of the SysEx including the final F7:
+   length (a variable-length quantity) of the SysEx including the final F7, but
+   excluding the F0 and the length bytes.:
 
    \begin{verbatim}
-     F0 ID sysex data bytes F7
-     delta F0 len ID sysex data bytes F7
+     F0 ID sysex data bytes F7               (message)
+     delta F0 len ID sysex data bytes F7     (encoded)
    \end{verbatim}
 
    SysEx events can be encoded in the following ways:
@@ -1155,8 +1156,8 @@
    delta time:
 
    \begin{verbatim}
-      F0 7E 00 09 01 F7
-      F0 05 7E 00 09 01 F7
+      F0 7E 00 09 01 F7          (message)
+      F0 05 7E 00 09 01 F7       (encoded)
    \end{verbatim}
 
 \paragraph{Continuation Events}
@@ -1184,12 +1185,14 @@
    the F7 being used as a \textsl{continuation} byte, with length values:
 
    \begin{verbatim}
-      F0 03 43 12 00
+      00 F0 03 43 12 00
       81 48 F7 06 43 12 00 43 12 00
       81 48 F7 04 43 12 00 F7
    \end{verbatim}
 
-   Note the F7 at the beginning of packets after the first one, adn
+   Since the first message is not terminated by F7 within the specified
+   length, the next two F7s indicate a continuation.
+   Note the F7 at the beginning of packets after the first one, and
    the F7 at the end of the last one.
 
 \paragraph{Escape Sequence}
@@ -1204,11 +1207,14 @@
       F7 02 F3 01
    \end{verbatim}
 
+   The format is \texttt{F7 len <all bytes to be transmitted>}.
+
    So how to figure out what F7 means?
    Its interpretation is as follows:
 
    \begin{itemize}
-      \item An F0 without a terminal F7 is a Casio-style multi-packet message,
+      \item An F0 without a terminal F7 within the specified length
+         is a Casio-style multi-packet message,
          and a flag (call it \texttt{multi})
          should be raised to indicate this status.
       \item If F7 is encountered while \texttt{multi} is set,
@@ -1229,13 +1235,15 @@
    wild-card for "all devices").
 
    \begin{verbatim}
-      F7 7E channel subid data bytes F7      (non-realtime)
-      F7 7F channel subid data bytes F7      (realtime)
+      F7 7E channel subid1 subid2 data bytes F7      (non-realtime)
+      F7 7F channel subid1 subid2 data bytes F7      (realtime)
    \end{verbatim}
 
-   If \texttt{channel} is F7, this is a global broadcast that all devices
+   If \texttt{channel} is a device ID.
+   If its value is F7, this is a global broadcast that all devices
    should heed.
-   The \texttt{subid} could be something like "01 00" for a long-form
+   The \texttt{subid1} and \texttt{subid2}
+   could be something like "01 00" for a long-form
    (full frame) time-code message.
 
 %  F0 7E id 01                      Channel Pressure (Aftertouch)

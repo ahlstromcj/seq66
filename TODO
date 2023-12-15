@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.12
 Chris Ahlstrom
-2019-04-13 to 2023-12-12
+2019-04-13 to 2023-12-15
 
 Misc:
 
@@ -30,6 +30,7 @@ Misc:
             a macro).
         -   Improve the output of text events in the slot_dump() function.
         -   Test F7 SysEx continuation messages.
+        -   Dixie04.mid has proven to be quite intractable.
     -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
         Too difficult to fix at this time; converted it to 192.
 

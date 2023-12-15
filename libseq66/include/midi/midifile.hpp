@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-14
+ * \updates       2023-12-15
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -380,9 +380,9 @@ protected:
     );
     void read_gap (size_t sz);
 
-    midibyte peek () const
+    midibyte peek (size_t ahead = 0) const
     {
-        return m_data[m_pos];
+        return m_data[m_pos + ahead];
     }
 
     void skip (size_t sz)                       /* compare to read_gap()    */
