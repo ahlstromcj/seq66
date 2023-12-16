@@ -4,7 +4,6 @@ Chris Ahlstrom
 
 Misc:
 
-    -   Do not parse files twice if no options given on command line.
     -   Clang-16:
         -   CLANG and LO_TT_IMMEDIATE: warning: compound literals are a
             C99-specific feature [-Wc99-extensions]. See
@@ -31,6 +30,8 @@ Misc:
         -   Improve the output of text events in the slot_dump() function.
         -   Test F7 SysEx continuation messages.
         -   Dixie04.mid has proven to be quite intractable.
+        -   Consider an option to remove all SysEx from a pattern or
+            tune.
     -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
         Too difficult to fix at this time; converted it to 192.
 

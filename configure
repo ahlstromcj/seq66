@@ -4706,7 +4706,8 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-linker_flag="-Wl,--copy-dt-needed-entries"
+ac_linker_flag="-Wl,--copy-dt-needed-entries"
+ac_clang_active="no"
 
 if test "$CXX" = "clang++" ; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether clang works" >&5
@@ -4743,7 +4744,8 @@ $as_echo "yes" >&6; }
 
 $as_echo "#define CLANG_SUPPORT 1" >>confdefs.h
 
-    linker_flag=""
+    ac_linker_flag=""
+    ac_clang_active="yes"
 
 else
 
@@ -4761,19 +4763,19 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 fi
 
-LINKER_FLAGS=$linker_flag
+LINKER_FLAGS=$ac_linker_flag
 
 
 
 
-build_docs="no"
-build_portmidi="no"
-build_qtmidi="yes"
-build_rtcli="no"
-build_rtmidi="yes"
-build_sessions="yes"
-build_testing="no"
-need_qt="yes"
+ac_build_docs="no"
+ac_build_portmidi="no"
+ac_build_qtmidi="yes"
+ac_build_rtcli="no"
+ac_build_rtmidi="yes"
+ac_build_sessions="yes"
+ac_build_testing="no"
+ac_need_qt="yes"
 
 
 
@@ -4793,12 +4795,12 @@ $as_echo "#define APP_TYPE \"qt5\"" >>confdefs.h
 
 $as_echo "#define APP_ENGINE \"rtmidi\"" >>confdefs.h
 
-build_os="'$(uname -srm)'"
+ac_build_os="'$(uname -srm)'"
 
 
 
 cat >>confdefs.h <<_ACEOF
-#define APP_BUILD_OS "$build_os"
+#define APP_BUILD_OS "$ac_build_os"
 _ACEOF
 
 
@@ -8939,6 +8941,10 @@ _lt_linker_boilerplate=`cat conftest.err`
 $RM -r conftest*
 
 
+## CAVEAT EMPTOR:
+## There is no encapsulation within the following macros, do not change
+## the running order or otherwise move them around unless you know exactly
+## what you are doing...
 if test -n "$compiler"; then
 
 lt_prog_compiler_no_builtin_flag=
@@ -16102,10 +16108,6 @@ seq66pixdir="${datadir}/pixmaps/seq66-${SEQ66_API_VERSION}"
 CFLAGS="${CFLAGS}"
 
 
-
-
-
-
 for ac_header in getopt.h string.h limits.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
@@ -16298,20 +16300,20 @@ fi
   test -n "$DOXYGEN" && break
 done
 
-if test -z "$DOXYGEN"; then
+if test -z "$DOXYGEN" ; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Doxygen not found, no developer docs will be built" >&5
 $as_echo "$as_me: WARNING: Doxygen not found, no developer docs will be built" >&2;}
 else
     # Check whether --enable-docs was given.
 if test "${enable_docs+set}" = set; then :
-  enableval=$enable_docs; build_docs=$enableval
+  enableval=$enable_docs; ac_build_docs=$enableval
 else
-  build_docs=no
+  ac_build_docs=no
 fi
 
 fi
 
-if test "x$build_docs" = "xyes" ; then
+if test "$ac_build_docs" = "yes" ; then
     for ac_prog in latex
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
@@ -16354,15 +16356,15 @@ fi
   test -n "$LATEX" && break
 done
 
-    if test -z "$LATEX"; then
+    if test -z "$LATEX" ; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: LaTeX not found, no docs will be built" >&5
 $as_echo "$as_me: WARNING: LaTeX not found, no docs will be built" >&2;}
-        build_docs=no
+        ac_build_docs=no
     fi
 fi
 
 
-if test "x$mingw" = "xyes" ; then
+if test "$mingw" = "yes" ; then
    X_CFLAGS=""
    X_LIBS=""
 fi
@@ -16394,7 +16396,7 @@ else
 fi
 
 
-if test "$jack" != "no"; then
+if test "$jack" != "no" ; then
 
 
 
@@ -16586,13 +16588,13 @@ else
 $as_echo "yes" >&6; }
 	jack_found="yes"
 fi
-    if test "$jack_found" = "yes"; then
+    if test "$jack_found" = "yes" ; then
 
 $as_echo "#define JACK_SUPPORT 1" >>confdefs.h
 
 
 
-        if test "$jack_session" != "no"; then
+        if test "$jack_session" != "no" ; then
             ac_fn_c_check_header_mongrel "$LINENO" "jack/session.h" "ac_cv_header_jack_session_h" "$ac_includes_default"
 if test "x$ac_cv_header_jack_session_h" = xyes; then :
   jack_session_found="yes"
@@ -16601,7 +16603,7 @@ else
 fi
 
 
-            if test "$jack_session_found" = "yes"; then
+            if test "$jack_session_found" = "yes" ; then
 
 $as_echo "#define JACK_SESSION 1" >>confdefs.h
 
@@ -16666,7 +16668,7 @@ else
   jack_get_version="no"
 fi
 
-        if test "$jack_get_version" = "yes"; then
+        if test "$jack_get_version" = "yes" ; then
 
 $as_echo "#define JACK_GET_VERSION_STRING 1" >>confdefs.h
 
@@ -16674,7 +16676,7 @@ $as_echo "#define JACK_GET_VERSION_STRING 1" >>confdefs.h
 $as_echo "JACK jack_get_version_string available" >&6; };
         fi
 
-        if test "$jack_metadata" = "yes"; then
+        if test "$jack_metadata" = "yes" ; then
             ac_fn_c_check_header_mongrel "$LINENO" "jack/metadata.h" "ac_cv_header_jack_metadata_h" "$ac_includes_default"
 if test "x$ac_cv_header_jack_metadata_h" = xyes; then :
   jack_metadata="yes"
@@ -16683,7 +16685,7 @@ else
 fi
 
 
-            if test "$jack_metadata" == "yes"; then
+            if test "$jack_metadata" = "yes" ; then
 
 $as_echo "#define JACK_METADATA 1" >>confdefs.h
 
@@ -16709,7 +16711,7 @@ else
 fi
 
 
-if test "$ac_refresh" != "no"; then
+if test "$ac_refresh" != "no" ; then
 
 $as_echo "#define MIDI_PORT_REFRESH 1" >>confdefs.h
 
@@ -16732,7 +16734,7 @@ fi
 
 
 
-if test "$ac_nsm" != "no"; then
+if test "$ac_nsm" != "no" ; then
 
 pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for liblo" >&5
@@ -16804,7 +16806,7 @@ else
 $as_echo "yes" >&6; }
 	ac_liblo="yes"
 fi
-    if test "x$ac_liblo" = "xyes"; then
+    if test "$ac_liblo" = "yes" ; then
 
 $as_echo "#define LIBLO_SUPPORT 1" >>confdefs.h
 
@@ -16823,7 +16825,7 @@ NSM_CFLAGS=
 NSM_LIBS=
 NSM_DEPS=
 
-if test "$ac_nsm" != "no"; then
+if test "$ac_nsm" != "no" ; then
 
 $as_echo "#define NSM_SUPPORT 1" >>confdefs.h
 
@@ -16847,12 +16849,12 @@ else
 fi
 
 
-if test "$both" != "no"; then
+if test "$both" != "no" ; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: rtmidi Qt and command-line builds enabled" >&5
 $as_echo "rtmidi Qt and command-line builds enabled" >&6; };
-    if test "x$mingw" != "xyes" ; then
-        build_rtcli="yes"
-        build_qtmidi="yes"
+    if test "$mingw" != "yes" ; then
+        ac_build_rtcli="yes"
+        ac_build_qtmidi="yes"
         alsa_save_CFLAGS="$CFLAGS"
 alsa_save_LDFLAGS="$LDFLAGS"
 alsa_save_LIBS="$LIBS"
@@ -17286,8 +17288,8 @@ else
 fi
 
 
-if test "$rtmidi" != "no" -o "$both" != "no"; then
-    build_rtmidi="yes"
+if test "$rtmidi" != "no" -o "$both" != "no" ; then
+    ac_build_rtmidi="yes"
 
 $as_echo "#define APP_NAME \"qseq66\"" >>confdefs.h
 
@@ -17737,7 +17739,7 @@ else
 fi
 
 
-if test "$cli" != "no"; then
+if test "$cli" != "no" ; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: rtmidi command-line build enabled" >&5
 $as_echo "rtmidi command-line build enabled" >&6; };
 
@@ -17758,9 +17760,9 @@ $as_echo "#define CONFIG_NAME \"seq66cli\"" >>confdefs.h
 
 $as_echo "#define ICON_NAME \"qseq66\"" >>confdefs.h
 
-    if test "x$mingw" != "xyes" ; then
-        build_rtcli="yes"
-        build_qtmidi="no"
+    if test "$mingw" != "yes" ; then
+        ac_build_rtcli="yes"
+        ac_build_qtmidi="no"
 
 $as_echo "#define RTMIDI_SUPPORT 1" >>confdefs.h
 
@@ -18186,7 +18188,7 @@ $as_echo "$ALSA_TOPOLOGY_LIBS" >&6; }
 
 
     fi
-    need_qt="no"
+    ac_need_qt="no"
     ac_qtmidi="no"
 
 else
@@ -18203,8 +18205,8 @@ fi
 fi
 
 
-if test "$ac_qtmidi" != "no"; then
-    build_qtmidi="yes"
+if test "$ac_qtmidi" != "no" ; then
+    ac_build_qtmidi="yes"
 
 $as_echo "#define APP_NAME \"qseq66\"" >>confdefs.h
 
@@ -18641,6 +18643,7 @@ $as_echo "$ALSA_TOPOLOGY_LIBS" >&6; }
 
 
 
+if test "$ac_clang_active" = "yes" ; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for X" >&5
 $as_echo_n "checking for X... " >&6; }
 
@@ -19472,6 +19475,156 @@ $as_echo "$have_qt" >&6; }
 
 
 
+
+else
+
+
+
+
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Qt" >&5
+$as_echo_n "checking for Qt... " >&6; }
+
+  # From serial 19 to handle issue #54.
+  #
+  # openSUSE leap 15.3 installs qmake-qt5, not qmake, for example.
+  # Store the full name (like qmake-qt5) into am_have_qt_qmexe
+  # and the specifier (like -qt5 or empty) into am_have_qt_qmexe_suff.
+
+  for ac_prog in qmake qmake-qt6 qmake-qt5
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_am_have_qt_qmexe+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$am_have_qt_qmexe"; then
+  ac_cv_prog_am_have_qt_qmexe="$am_have_qt_qmexe" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_am_have_qt_qmexe="$ac_prog"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+am_have_qt_qmexe=$ac_cv_prog_am_have_qt_qmexe
+if test -n "$am_have_qt_qmexe"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $am_have_qt_qmexe" >&5
+$as_echo "$am_have_qt_qmexe" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  test -n "$am_have_qt_qmexe" && break
+done
+
+  am_have_qt_qmexe_suff=`echo $am_have_qt_qmexe | cut -b 6-`
+  # If we have Qt5 or later in the path, we're golden
+  ver=`$am_have_qt_qmexe --version | grep -o "Qt version ."`
+
+  if test "$ver" ">" "Qt version 4"; then
+    have_qt=yes
+    # This pro file dumps qmake's variables, but it only works on Qt 5 or later
+    am_have_qt_dir=`mktemp -d`
+    am_have_qt_pro="$am_have_qt_dir/test.pro"
+    am_have_qt_makefile="$am_have_qt_dir/Makefile"
+    # http://qt-project.org/doc/qt-5/qmake-variable-reference.html#qt
+    cat > $am_have_qt_pro << EOF
+win32 {
+    CONFIG -= debug_and_release
+    CONFIG += release
+}
+qtHaveModule(core):              QT += core
+qtHaveModule(gui):               QT += gui
+qtHaveModule(widgets):           QT += widgets
+
+
+percent.target = %
+percent.commands = @echo -n "\$(\$(@))\ "
+QMAKE_EXTRA_TARGETS += percent
+EOF
+    $am_have_qt_qmexe $am_have_qt_pro -o $am_have_qt_makefile
+
+    # Get Qt version from qmake
+
+    QT_CXXFLAGS=`cd $am_have_qt_dir; make -s -f $am_have_qt_makefile CXXFLAGS INCPATH`
+    QT_LIBS=`cd $am_have_qt_dir; make -s -f $am_have_qt_makefile LIBS`
+    rm $am_have_qt_pro $am_have_qt_makefile
+    rmdir $am_have_qt_dir
+
+    # Look for specific tools in $PATH
+
+    QT_MOC=`which moc$am_have_qt_qmexe_suff`
+    QT_UIC=`which uic$am_have_qt_qmexe_suff`
+    QT_RCC=`which rcc$am_have_qt_qmexe_suff`
+    QT_LRELEASE=`which lrelease$am_have_qt_qmexe_suff`
+    QT_LUPDATE=`which lupdate$am_have_qt_qmexe_suff`
+
+    # Get Qt version from qmake
+
+    QT_DIR=`$am_have_qt_qmexe --version | grep -o -E /.+`
+
+    # All variables are defined, report the result
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_qt:
+    QT_CXXFLAGS=$QT_CXXFLAGS
+    QT_DIR=$QT_DIR
+    QT_LIBS=$QT_LIBS
+    QT_UIC=$QT_UIC
+    QT_MOC=$QT_MOC
+    QT_RCC=$QT_RCC
+    QT_LRELEASE=$QT_LRELEASE
+    QT_LUPDATE=$QT_LUPDATE" >&5
+$as_echo "$have_qt:
+    QT_CXXFLAGS=$QT_CXXFLAGS
+    QT_DIR=$QT_DIR
+    QT_LIBS=$QT_LIBS
+    QT_UIC=$QT_UIC
+    QT_MOC=$QT_MOC
+    QT_RCC=$QT_RCC
+    QT_LRELEASE=$QT_LRELEASE
+    QT_LUPDATE=$QT_LUPDATE" >&6; }
+  else
+
+    # Qt was not found
+
+    have_qt=no
+    QT_CXXFLAGS=
+    QT_DIR=
+    QT_LIBS=
+    QT_UIC=
+    QT_MOC=
+    QT_RCC=
+    QT_LRELEASE=
+    QT_LUPDATE=
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_qt" >&5
+$as_echo "$have_qt" >&6; }
+    as_fn_error $? "qmake/Qt not found... is any qmake on your system?" "$LINENO" 5
+  fi
+
+
+
+
+
+
+
+
+
   #### Being paranoid:
   if test x"$have_qt" = xyes; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking correct functioning of Qt installation" >&5
@@ -19568,6 +19721,7 @@ $as_echo "$ax_cv_qt_test_result" >&6; }
           ax_qt_main.$ac_ext ax_qt_main.o ax_qt_main
   fi
 
+fi
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: qt user-interface build enabled" >&5
 $as_echo "qt user-interface build enabled" >&6; };
 fi
@@ -19581,9 +19735,9 @@ else
 fi
 
 
-if test "$portmidi" != "no"; then
-    build_portmidi="yes"
-    build_rtmidi="no"
+if test "$portmidi" != "no" ; then
+    ac_build_portmidi="yes"
+    ac_build_rtmidi="no"
 
 $as_echo "#define PORTMIDI_SUPPORT 1" >>confdefs.h
 
@@ -20032,7 +20186,7 @@ fi
 
 
 
- if test "$build_docs" = "yes"; then
+ if test "$ac_build_docs" = "yes"; then
   BUILD_DOCS_TRUE=
   BUILD_DOCS_FALSE='#'
 else
@@ -20040,7 +20194,7 @@ else
   BUILD_DOCS_FALSE=
 fi
 
- if test "$build_portmidi" = "yes"; then
+ if test "$ac_build_portmidi" = "yes"; then
   BUILD_PORTMIDI_TRUE=
   BUILD_PORTMIDI_FALSE='#'
 else
@@ -20048,7 +20202,7 @@ else
   BUILD_PORTMIDI_FALSE=
 fi
 
- if test "$build_qtmidi" = "yes"; then
+ if test "$ac_build_qtmidi" = "yes"; then
   BUILD_QTMIDI_TRUE=
   BUILD_QTMIDI_FALSE='#'
 else
@@ -20056,7 +20210,7 @@ else
   BUILD_QTMIDI_FALSE=
 fi
 
- if test "$build_rtcli" = "yes"; then
+ if test "$ac_build_rtcli" = "yes"; then
   BUILD_RTCLI_TRUE=
   BUILD_RTCLI_FALSE='#'
 else
@@ -20064,7 +20218,7 @@ else
   BUILD_RTCLI_FALSE=
 fi
 
- if test "$build_rtmidi" = "yes"; then
+ if test "$ac_build_rtmidi" = "yes"; then
   BUILD_RTMIDI_TRUE=
   BUILD_RTMIDI_FALSE='#'
 else
@@ -20072,7 +20226,7 @@ else
   BUILD_RTMIDI_FALSE=
 fi
 
- if test "$build_sessions" = "yes"; then
+ if test "$ac_build_sessions" = "yes"; then
   BUILD_SESSIONS_TRUE=
   BUILD_SESSIONS_FALSE='#'
 else
@@ -20295,9 +20449,11 @@ WARNINGS_DISABLED="-Wno-unused-parameter -Wno-non-virtual-dtor"
 
 VERBCFLAGS=""
 
+ac_gnuwin="yes"
+
 case "$host_os" in
     *cygwin*)
-        gnuwin=yes
+        ac_gnuwin="yes"
 
 
 
@@ -21025,7 +21181,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
         ;;
 
     *mingw*)
-        gnuwin=yes
+        ac_gnuwin="yes"
         { $as_echo "$as_me:${as_lineno-$LINENO}: Setting up MingW pthreads support" >&5
 $as_echo "$as_me: Setting up MingW pthreads support" >&6;}
         CFLAGS="$CFLAGS -mthreads -pthread "
@@ -21770,11 +21926,16 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 esac
 
 
+if test "$ac_clang_active" = "yes" ; then
+CFLAGS="$CFLAGS $COMMONFLAGS -Wignored-optimization-argument"
+else
 CFLAGS="$CFLAGS $COMMONFLAGS"
+fi
+
 CXXFLAGS="$CFLAGS -std=gnu++1y -pipe -Wno-variadic-macros -Wno-deprecated-declarations"
 LDFLAGS="$LDFLAGS $PROLDFLAGS"
 
- if test x$gnuwin = xyes; then
+ if test "$ac_gnuwin" = "yes"; then
   GNU_WIN_TRUE=
   GNU_WIN_FALSE='#'
 else

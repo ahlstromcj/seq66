@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.99.12 and above
 Chris Ahlstrom
-2015-09-10 to 2023-12-11
+2015-09-10 to 2023-12-15
 
 Getting Seq66 requires building the code or going to
 "sequencer64-packages/seq66" on GitHub to get an installation package.  The
@@ -98,10 +98,12 @@ Clang Compiler:
     a specific version (e.g. clang-16) is installed, then the next command can
     be used for the base clang, or the second for a specific version:
 
-        $ CC=clang CXX=clang++ ./configure                  - or -
-        $ CC=clang-16 CXX=clang++-16 ./configure
+        $ CC=clang CXX=clang++ ./configure
         $ make &> make.log
         $ sudo make install
+
+    One might need to make symbolic links to the desired versions of these
+    compiler, for example clang-16 and clang++-16.
 
 Qt and Command-Line Merged Build:
 

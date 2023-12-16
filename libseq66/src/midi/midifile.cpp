@@ -1161,11 +1161,11 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
     }
     if (rc().investigate())
     {
+        infoprintf("Track count %d", int(track_count));
         if (! is_null_buss(buss_override))
         {
             infoprintf("Buss override %d", int(buss_override));
         }
-        infoprintf("Track count %d", int(track_count));
     }
     for (midishort track = 0; track < track_count; ++track)
     {
@@ -1743,6 +1743,16 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     if (! is_null_buss(buss_override))
                         (void) s.set_midi_bus(buss_override);
 
+                    if (rc().verbose())
+                    {
+                        char temp[64];
+                        snprintf
+                        (
+                            temp, sizeof temp, "%d events in track  %d",
+                            evcount, track
+                        );
+                        info_message(temp);
+                    }
                     if (is_smf0)
                         (void) m_smf0_splitter.log_main_sequence(s, seqnum);
                     else

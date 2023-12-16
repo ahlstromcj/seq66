@@ -4,23 +4,33 @@
 # \file        configure-clang
 # \library     bin
 # \author      Chris Ahlstrom
-# \date        2023-12-06 to 2023-12-08
+# \date        2023-12-06 to 2023-12-16
 # \version     $Revision$
 # \license     GNU GPLv2 or above
 #
 # This script tries to set up got building Seq66 with clang.
 #
 #------------------------------------------------------------------------------
-
+#
 # export CFLAGS=" -flto -std=gnu99 "
 # export LDFLAGS=" -flto -fuse-ld=gold "
 # export RANLIB=llvm-ranlib
 # export QMAKESPEC="linux-llvm"
 # export QMAKESPEC="linux-clang"
+#
+# It's better to use the generic names, even the user must add soft-links to
+# the desired version.
+#
+# CLANGVER=
+# CC="clang$CLANGVER" CXX="clang++$CLANGVER" ./configure $*
 
-CLANGVER=-12
+CC=clang CXX=clang++ ./configure $*
 
-CC="clang$CLANGVER" CXX="clang++$CLANGVER" ./configure $*
+if [ $? != 0 ] ; then
+   echo "CC=clang CXX=clang++ ./configure $* failed"
+else
+   echo "CC=clang CXX=clang++ ./configure $* is complete"
+fi
 
 #******************************************************************************
 # qbuild (Seq66)
