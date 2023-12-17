@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-15
+ * \updates       2023-12-17
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -435,7 +435,9 @@ protected:
     bool write_seqspec_track (performer & p);
     long varinum_size (long len) const;
     long prop_item_size (long datalen) const;
+    bool track_error (const std::string & context, int track);
     bool set_error (const std::string & msg);
+    bool append_error (const std::string & msg);
     bool set_error_dump (const std::string & msg);
     bool set_error_dump (const std::string & msg, unsigned long p);
 

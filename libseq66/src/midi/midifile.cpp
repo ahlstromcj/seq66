@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-15
+ * \updates       2023-12-17
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -362,7 +362,7 @@ midifile::read_byte ()
         return m_data[m_pos++];
     }
     else if (! m_disable_reported)
-        (void) set_error_dump("'End-of-file', aborting MIDI reading");
+        (void) set_error_dump("End-of-file; aborting reading");
 
     return 0;
 }
@@ -690,7 +690,7 @@ midifile::read_gap (size_t sz)
         {
             p = m_file_size - 1;
             if (! m_disable_reported)
-                (void) set_error_dump("'End-of-file', MIDI reading disabled");
+                (void) set_error_dump("End-of-file; reading disabled");
         }
         m_pos = p;
     }
@@ -724,7 +724,7 @@ midifile::grab_input_stream (const std::string & tag)
     m_file_size = file_size(m_name);
     if (m_name.empty() || m_file_size == 0)
     {
-        return set_error("Bad MIDI file");
+        return set_error("No MIDI file or data.");
     }
 
     std::ifstream file(m_name, std::ios::in | std::ios::binary | std::ios::ate);
@@ -745,7 +745,7 @@ midifile::grab_input_stream (const std::string & tag)
 #endif
         if (m_file_size < c_minimum_midi_file_size)
         {
-            result = set_error("File too small");
+            result = set_error("File too small.");
         }
         else
         {
@@ -757,7 +757,7 @@ midifile::grab_input_stream (const std::string & tag)
             }
             catch (const std::bad_alloc & ex)
             {
-                result = set_error("MIDI file stream memory allocation failed");
+                result = set_error("File stream memory allocation failed.");
             }
             file.close();
         }
@@ -939,7 +939,7 @@ midifile::parse_smf_0 (performer & p, int screenset)
                 p.smf_format(1);                    /* converted to SMF 1   */
             }
             else
-                result = set_error("No SMF 0 track found, bad MIDI file");
+                result = append_error("SMF 0 split failed.");
         }
     }
     else if (result)
@@ -1313,7 +1313,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                         {
                         case EVENT_META_SEQ_NUMBER:     /* FF 00 02 ss      */
 
-                            if (! checklen(len, mtype))
+                            if (! checklen(len, mtype)) /* might log error  */
                                 return false;
 
                             seqnum = read_short();
@@ -1695,20 +1695,8 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                          * running status after a SysEx event.
                          */
 
-                        std::string msg = "Bad MIDI event";
-                        if (m_running_status_action == rsaction::skip)
-                        {
-                            char temp[64];
-                            snprintf
-                            (
-                                temp, sizeof temp,
-                                "skipping to end of track %d", track
-                            );
-                            msg += "; ";
-                            msg += temp;
-                            skip_to_end = true;
-                        }
-                        (void) set_error_dump(msg, midilong(status));
+                        std::string msg = "Bad event";
+                        skip_to_end = track_error(msg, track);
                         if (m_running_status_action == rsaction::abort)
                             return true;    /* don't process more tracks    */
                         else
@@ -1717,8 +1705,8 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     break;
                 }
                 if (at_end())
-                    done = true;
-            }                               /* while loading Trk chunks  */
+                    break;
+            }                               /* while loading Trk chunks     */
 
             /*
              * Sequence has been filled, add it to the performance or SMF 0
@@ -1728,47 +1716,48 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
              * order in the file are used as defaults."
              */
 
-            if (at_end())
+            if (at_end() && ! done)         /* done == end-of-track found   */
             {
-                break;
+                std::string msg = "Premature end-of-file";
+                (void) track_error(msg, track);
+                if (m_running_status_action == rsaction::abort)
+                    break;
             }
-            else
+            if (seqnum == c_midishort_max)
+                seqnum = track;
+
+            if (seqnum < c_prop_seq_number)
             {
-                if (seqnum == c_midishort_max)
-                    seqnum = track;
+                s.set_midi_channel(tentative_channel);
+                if (! is_null_buss(buss_override))
+                    (void) s.set_midi_bus(buss_override);
 
-                if (seqnum < c_prop_seq_number)
+                if (rc().verbose())
                 {
-                    s.set_midi_channel(tentative_channel);
-                    if (! is_null_buss(buss_override))
-                        (void) s.set_midi_bus(buss_override);
-
-                    if (rc().verbose())
-                    {
-                        char temp[64];
-                        snprintf
-                        (
-                            temp, sizeof temp, "%d events in track  %d",
-                            evcount, track
-                        );
-                        info_message(temp);
-                    }
-                    if (is_smf0)
-                        (void) m_smf0_splitter.log_main_sequence(s, seqnum);
-                    else
-                        finalize_sequence(p, s, seqnum, screenset);
+                    char temp[64];
+                    snprintf
+                    (
+                        temp, sizeof temp, "%d events in track  %d",
+                        evcount, track
+                    );
+                    info_message(temp);
                 }
+                if (is_smf0)
+                    (void) m_smf0_splitter.log_main_sequence(s, seqnum);
+                else
+                    finalize_sequence(p, s, seqnum, screenset);
             }
         }
         else
         {
             if (track > 0)                              /* non-fatal later  */
             {
-                (void) set_error_dump("Unknown MIDI track ID, skipping...", ID);
+                (void) set_error_dump("Bad track ID", ID);
+                break;
             }
             else                                        /* fatal in 1st one */
             {
-                result = set_error_dump("First track unsupported track ID", ID);
+                result = set_error_dump("First track has bad ID", ID);
                 break;
             }
             skip(TrackLength);
@@ -1973,11 +1962,11 @@ midifile::parse_seqspec_track (performer & p, int file_size)
                 m_error_is_fatal = false;
                 result = set_error_dump
                 (
-                    "No sequence number in SeqSpec, extra data"
+                    "No track number in SeqSpec, extra data"
                 );
             }
             else
-                result = set_error("Unexpected sequence number in SeqSpec");
+                result = append_error("Unexpected track number in SeqSpec.");
         }
     }
     else
@@ -3421,6 +3410,25 @@ midifile::write_track_end ()
 }
 
 /**
+ *  Common code for track-reading errors.
+ */
+
+bool
+midifile::track_error (const std::string & context, int track)
+{
+    bool skip = m_running_status_action == rsaction::skip;
+    std::string msg = context;
+    char temp[80];
+    snprintf(temp, sizeof temp, " track %d", track);
+    msg += temp;
+    if (skip)
+        msg += " Skipping to end-of-track";
+
+    (void) set_error_dump(msg);
+    return skip;
+}
+
+/**
  *  A new function that just sets the fatal-error status and the error message.
  *
  * \param msg
@@ -3435,6 +3443,16 @@ bool
 midifile::set_error (const std::string & msg)
 {
     m_error_message = msg;
+    errprint(msg.c_str());
+    m_error_is_fatal = true;
+    return false;
+}
+
+bool
+midifile::append_error (const std::string & msg)
+{
+    m_error_message += ". ";
+    m_error_message += msg;
     errprint(msg.c_str());
     m_error_is_fatal = true;
     return false;
@@ -3460,19 +3478,12 @@ midifile::set_error_dump (const std::string & msg)
     char temp[80];
     snprintf
     (
-        temp, sizeof temp, "Offset 0x%zx of 0x%zx bytes: ", m_pos, m_file_size
-
-        /*
-         * Too much:
-         *
-         * "Offset ~0x%zx of 0x%zx bytes (%zu/%zu): ",
-         * m_pos, m_file_size, m_pos, m_file_size
-         */
+        temp, sizeof temp, "byte 0x%02x at 0x%zx of 0x%zx",
+        unsigned(m_data[m_pos]), m_pos, m_file_size
     );
-    std::string result = temp;
-    result += "\n";
-    result += "   ";
-    result += msg;
+    std::string result = msg;
+    result += ": ";
+    result += temp;
     msgprintf(msglevel::error, "%s", result.c_str());
     m_error_message = result;
     m_error_is_fatal = true;

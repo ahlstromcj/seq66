@@ -1,17 +1,9 @@
 TO DO for Seq66 0.99.12
 Chris Ahlstrom
-2019-04-13 to 2023-12-15
+2019-04-13 to 2023-12-17
 
 Misc:
 
-    -   Clang-16:
-        -   CLANG and LO_TT_IMMEDIATE: warning: compound literals are a
-            C99-specific feature [-Wc99-extensions]. See
-            #define LO_TT_IMMEDIATE ((lo_timetag){0U,1U}) in lo_osc_types.h.
-        -   clang-16: warning: optimization flag '-fno-fat-lto-objects'
-            is not supported [-Wignored-optimization-argument]
-    -   PortMidi autoconf build: segfault in release mode. For seq66cli,
-        mastermidibus_pm.h not found in main module.
     -   Grid-mode options:
         -   Needs to be made a queued solo; how to handle
             mod_replace (Key_Home) and mod_snapshot (Ins)
@@ -21,19 +13,22 @@ Misc:
         MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recorded measures
         not saved.
-    -   The Hide button gets focus automatically and it should not.
-    -   Opening a MIDI file should stop playback.
-    -   Show time-sigs in grid slot?
     -   trilogy.mid errors basically fixed with new 'rc' work-around.
         -   Write a module to show SysEx (and optionally store them as
             a macro).
         -   Improve the output of text events in the slot_dump() function.
         -   Test F7 SysEx continuation messages.
-        -   Dixie04.mid has proven to be quite intractable.
         -   Consider an option to remove all SysEx from a pattern or
-            tune.
+            tune or ignore it on reading.
     -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
         Too difficult to fix at this time; converted it to 192.
+    -   Clang-16:
+        -   clang-16: warning: optimization flag '-fno-fat-lto-objects'
+            is not supported [-Wignored-optimization-argument]. That
+            flag does not prevent this warning. Ignoring it for now.
+    -   PortMidi autoconf build: segfault in release mode. For seq66cli,
+        mastermidibus_pm.h not found in main module.
+    -   Show time-sigs in grid slot?
 
 Mutes:
 
