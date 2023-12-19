@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2023-12-06
+ * \updates       2023-12-18
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -59,19 +59,24 @@ namespace seq66
  */
 
 #if defined SEQ66_PLATFORM_WINDOWS
-static std::string s_app_build_os    = "Windows 10";    /* FIXME */
+static std::string s_app_build_os    = "Windows 10";    /* FIXME    */
 static std::string s_app_build_issue = "Microsoft Windows";
 #endif
 
 #if defined SEQ66_PLATFORM_MACOSX
-static std::string s_app_build_os    = "MacOSX";        /* FIXME */
+static std::string s_app_build_os    = "MacOSX";        /* FIXME    */
 static std::string s_app_build_issue = "Apple MacOSX";
 #endif
 
-#if defined SEQ66_PLATFORM_UNIX
+#if defined SEQ66_PLATFORM_UNIX                         /* Linux?   */
 static std::string s_app_build_os    = SEQ66_APP_BUILD_OS;
+#if defined SEQ66_PLATFORM_FREEBSD
+static std::string s_app_build_issue = "FreeBSD";       /* FIXME    */
+#else
 static std::string s_app_build_issue = SEQ66_APP_BUILD_ISSUE;
 #endif
+#endif
+
 
 static std::string s_pane_focus;
 static std::string s_alsa_version;

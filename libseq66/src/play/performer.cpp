@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-12-10
+ * \updates       2023-12-18
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -6686,9 +6686,9 @@ performer::set_keep_queue (bool activate)
 {
     automation::action a = activate ?
         automation::action::on : automation::action::off;
-
-    // (void) set_ctrl_status(a, automation::ctrlstatus::keep_queue);
-
+#if defined SEQ66_PLATFORM_DEBUG
+    printf("set_keep_queue(%s)\n", activate ? "on" : "off");
+#endif
     (void) set_ctrl_status(a, automation::ctrlstatus::queue);
 }
 
@@ -7086,9 +7086,7 @@ performer::sequence_playing_toggle (seq::number seqno)
 }
 
 /**
- *  Needs some work! Using the grid-mode for solo, a weird bug. Works when
- *  paused here in the debugger, but not in real time.
- *
+ *  Needs some work! Using the grid-mode for solo.
  *  This mode can only be turned off by selecting another grid-mode.
  */
 
@@ -7102,30 +7100,28 @@ performer::replace_for_solo (seq::number seqno, bool queued)
         automation::ctrlstatus cs = automation::ctrlstatus::replace;
         if (queued)
         {
-            cs = automation::ctrlstatus::queue | automation::ctrlstatus::replace;
+            cs = automation::ctrlstatus::queue |
+                automation::ctrlstatus::replace;
         }
-
+        if (seqno == m_solo_seqno)              /* user toggle of slot  */
         {
-            if (seqno == m_solo_seqno)              /* user toggle of slot  */
-            {
-                (void) set_ctrl_status              /* restores snapshot    */
-                (
-                    automation::action::off, cs
-                );
-                m_solo_seqno = seq::unassigned();   /* clear_snapshot()     */
-            }
-            else
-            {
-                (void) set_ctrl_status              /* saves snapshot       */
-                (
-                    automation::action::on, cs
-                );
-                if (s->muted())
-                    s->toggle_playing(get_tick(), resume_note_ons());
+            (void) set_ctrl_status              /* restores snapshot    */
+            (
+                automation::action::off, cs
+            );
+            m_solo_seqno = seq::unassigned();   /* clear_snapshot()     */
+        }
+        else
+        {
+            (void) set_ctrl_status              /* saves snapshot       */
+            (
+                automation::action::on, cs
+            );
+            if (s->muted())
+                s->toggle_playing(get_tick(), resume_note_ons());
 
-                off_sequences(seqno);               /* off all but seqno    */
-                m_solo_seqno = seqno;
-            }
+            off_sequences(seqno);               /* off all but seqno    */
+            m_solo_seqno = seqno;
         }
         notify_trigger_change(seq::all(), change::no);
         announce_sequence(s, set_mapper().seq_to_offset(*s));
@@ -8023,9 +8019,9 @@ performer::loop_control
                 else if (gm == gridmode::remove)
                     result = remove_sequence(seqno);
                 else if (gm == gridmode::thru)
-                    result = set_thru(seqno, false, true); /* true = toggle */
+                    result = set_thru(seqno, false, true);  /* true=toggle  */
                 else if (gm == gridmode::solo)
-                    result = replace_for_solo(seqno);
+                    result = replace_for_solo(seqno, true); /* 2023-12-17   */
                 else if (gm == gridmode::cut)
                     result = cut_sequence(seqno);
                 else if (gm == gridmode::double_length)
@@ -10080,11 +10076,25 @@ performer::set_grid_mode (gridmode gm)
 {
     if (gm < gridmode::max)
     {
+#if defined SOLO_KEEP_QUEUE
+        gridmode oldmode = usr().grid_mode();
+#endif
         usr().grid_mode(gm);
         if (gm != gridmode::record)
         {
             usr().record_mode(alteration::none);
             usr().grid_record_style(recordstyle::merge);
+#if defined SOLO_KEEP_QUEUE
+            if (gm == gridmode::solo)                   /* ca 2023-12-18    */
+            {
+                set_keep_queue(true);
+            }
+            else if (oldmode == gridmode::solo)
+            {
+                set_keep_queue(false);
+            }
+#else
+#endif
         }
         notify_automation_change(automation::slot::grid_loop);
     }

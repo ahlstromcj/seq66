@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.99.12 and above
 Chris Ahlstrom
-2015-09-10 to 2023-12-15
+2015-09-10 to 2023-12-18
 
 Getting Seq66 requires building the code or going to
 "sequencer64-packages/seq66" on GitHub to get an installation package.  The
@@ -104,6 +104,18 @@ Clang Compiler:
 
     One might need to make symbolic links to the desired versions of these
     compiler, for example clang-16 and clang++-16.
+
+FreeBSD:
+
+    Although one user reported that "./configure" worked fine, on a FreeBSD
+    virtual machine, we first had to install autoconf, automake, pkgconf, and
+    gmake. Also had to edit the generated libtool script to change
+    the version from 2.4.7 to 2.4.6 to fool the build. The command needed to
+    configure was the following, including the command to make the code.
+
+    $ ./configure --with-alsa-prefix=/usr/local/lib
+            --with-alsa-inc-prefix=/usr/local/include
+    $ sh -c 'gmake >make.log 2>&1'
 
 Qt and Command-Line Merged Build:
 

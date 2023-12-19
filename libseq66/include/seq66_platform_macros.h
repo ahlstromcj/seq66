@@ -29,10 +29,10 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-11
+ * \updates       2023-12-18
  * \license       GNU GPLv2 or above
  *
- *  Copyright (C) 2013-2021 Chris Ahlstrom <ahlstromcj@gmail.com>
+ *  Copyright (C) 2013-2023 Chris Ahlstrom <ahlstromcj@gmail.com>
  *
  *  We need a uniform way to specify OS and compiler features without
  *  littering the code with macros from disparate compilers.  Put all
@@ -51,6 +51,7 @@
  *    -  Platform macros (in the absense of Windows, Linux macros):
  *       -  SEQ66_PLATFORM_WINDOWS
  *       -  SEQ66_PLATFORM_LINUX
+ *       -  SEQ66_PLATFORM_FREEBSD
  *       -  SEQ66_PLATFORM_MACOSX
  *       -  SEQ66_PLATFORM_UNIX
  *    -  Architecture size macros:
@@ -99,8 +100,10 @@
  *    conformance, many defined it to 1.  Ancient news!
  */
 
+#undef SEQ66_MING_OR_WINDOWS
 #undef SEQ66_PLATFORM_WINDOWS
 #undef SEQ66_PLATFORM_LINUX
+#undef SEQ66_PLATFORM_FREEBSD
 #undef SEQ66_PLATFORM_MACOSX
 #undef SEQ66_PLATFORM_UNIX
 #undef SEQ66_PLATFORM_32_BIT
@@ -108,7 +111,6 @@
 #undef SEQ66_PLATFORM_DEBUG
 #undef SEQ66_PLATFORM_RELEASE
 #undef SEQ66_PLATFORM_MSVC
-#undef SEQ66_MING_OR_WINDOWS
 #undef SEQ66_PLATFORM_GNU
 #undef SEQ66_PLATFORM_XSI
 #undef SEQ66_PLATFORM_MINGW
@@ -139,9 +141,17 @@
 #endif
 
 /**
+ *  FreeBSD macros.
+ */
+
+#if defined __FreeBSD__
+#define SEQ66_PLATFORM_FREEBSD
+#define SEQ66_PLATFORM_UNIX
+#endif
+
+/**
  *  Provides a "Linux" macro, in case the environment doesn't provide it.
- *  This macro is defined if not already defined and XXXXXX is
- *  encountered.
+ *  This macro is defined if not already defined.
  */
 
 #if defined Linux                      /* defined by nar-maven-plugin       */
@@ -154,15 +164,7 @@
 #endif
 
 #if defined SEQ66_PLATFORM_LINUX
-
-#if ! defined POSIX
-#define POSIX                          /* defined for legacy code purposes  */
-#endif
-
 #define SEQ66_PLATFORM_UNIX
-#define SEQ66_PLATFORM_POSIX_API
-#define SEQ66_PLATFORM_PTHREADS
-
 #endif                                 /* SEQ66_PLATFORM_LINUX              */
 
 /**
@@ -182,6 +184,14 @@
 
 #if defined SEQ66_PLATFORM_MACOSX
 #define SEQ66_PLATFORM_UNIX
+#endif
+
+#if defined SEQ66_PLATFORM_UNIX
+#define SEQ66_PLATFORM_POSIX_API
+#define SEQ66_PLATFORM_PTHREADS
+#if ! defined POSIX
+#define POSIX                          /* defined for legacy code purposes  */
+#endif
 #endif
 
 /**

@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2023-12-16
+dnl \update        2023-12-18
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -20,7 +20,7 @@ dnl
 dnl ---------------------------------------------------------------------------
 
 AC_PREREQ([2.69])
-AC_REVISION($Revision: 0.96$)
+AC_REVISION($Revision: 0.99$)
 AC_INIT([Seq66],[0.99.12],[ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])
 AC_CONFIG_MACRO_DIR([m4])
@@ -122,6 +122,8 @@ ac_build_os="'$(uname -srm)'"
 dnl Get the value of /etc/issue.net and remove new lines. Note that
 dnl the CLIENT_NAME macro is always "seq66" and is used as part of
 dnl the installation sub-directories.
+dnl
+dnl Is there a way to do this for FreeBSD??? For now see seq66_features.cpp.
 
 AC_DEFINE_UNQUOTED(APP_BUILD_OS, ["$ac_build_os"], "OS/kernel where build was done")
 AC_DEFINE_UNQUOTED(
@@ -532,7 +534,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2023-12-16"
+#define VERSION_DATE_SHORT "2023-12-18"
 #define API_VERSION "0.99"
 #define VERSION "0.99.12"
 

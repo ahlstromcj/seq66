@@ -1,4 +1,4 @@
-`configure' configures Seq66 0.98.10 to adapt to many kinds of systems.
+`configure' configures Seq66 0.99.12 to adapt to many kinds of systems.
 
 Usage: ./configure [OPTION]... [VAR=VALUE]...
 
@@ -88,10 +88,11 @@ Optional Features:
   --enable-port-refresh   Enable JACK port refresh support
   --disable-nsm           Disable NSM support
   --enable-both           Enable Qt and command-line builds
+  --enable-alsatopology   Force to use the Alsa topology library
   --disable-alsatest      Do not try to compile and run a test Alsa program
   --disable-rtmidi        Disable rtmidi MIDI engine
-  --disable-qt            Disable Qt5 user-interface
   --enable-cli            Enable rtmidi command-line build
+  --disable-qt            Disable Qt5 user-interface
   --enable-portmidi       Enable portmidi build)
   --enable-coverage=(no/yes) Turn on a test-coverage build (default=no)
   --enable-profile=(no/yes/gprof/prof) Turn on profiling builds (default=no, yes=gprof)
@@ -111,7 +112,8 @@ Optional Packages:
   --with-sysroot[=DIR]    Search for dependent libraries within DIR (or the
                           compiler's sysroot if not specified).
   --with-alsa-prefix=PFX  Prefix where Alsa library is installed(optional)
-  --with-alsa-inc-prefix=PFX  Prefix where include libraries are (optional)
+  --with-alsa-inc-prefix=PFX
+                          Prefix where include libraries are (optional)
   --with-x                use the X Window System
 
 Some influential environment variables:
@@ -124,10 +126,10 @@ Some influential environment variables:
               you have headers in a nonstandard directory <include dir>
   CXX         C++ compiler command
   CXXFLAGS    C++ compiler flags
+  CPP         C preprocessor
   CXXCPP      C++ preprocessor
   LT_SYS_LIBRARY_PATH
               User-defined run-time library search path.
-  CPP         C preprocessor
   PKG_CONFIG  path to pkg-config utility
   PKG_CONFIG_PATH
               directories to add to pkg-config's search path

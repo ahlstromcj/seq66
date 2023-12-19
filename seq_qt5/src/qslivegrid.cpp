@@ -303,9 +303,9 @@ qslivegrid::set_grid_mode ()
  *  Populate the combo box from grid_loop, grid_record, and, as implemented
  *  more automation::slot::grid_xxxxx values up to grid_double.
  *
- * ca 2023-09-30
- *  Added a new grid mode, grid_mutes, which is in proper order in the gridmode
- *  enumeration, but implemented by an automation slot replacing reserved_46.
+ *  Added a new grid mode, grid_mutes, which is in proper order in the
+ *  gridmode enumeration, but implemented by an automation slot replacing
+ *  reserved_46.
  */
 
 void
