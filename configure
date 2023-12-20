@@ -21932,7 +21932,7 @@ else
 CFLAGS="$CFLAGS $COMMONFLAGS"
 fi
 
-CXXFLAGS="$CFLAGS -std=gnu++1y -pipe -Wno-variadic-macros -Wno-deprecated-declarations"
+CXXFLAGS="$CFLAGS -std=c++14 -pipe -Wno-variadic-macros -Wno-deprecated-declarations"
 LDFLAGS="$LDFLAGS $PROLDFLAGS"
 
  if test "$ac_gnuwin" = "yes"; then

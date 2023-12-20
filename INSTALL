@@ -112,6 +112,8 @@ FreeBSD:
     gmake. Also had to edit the generated libtool script to change
     the version from 2.4.7 to 2.4.6 to fool the build. The command needed to
     configure was the following, including the command to make the code.
+    Also need to figure out why a "stopped" message appears in the
+    root generated Makefile, which breaks the build.
 
     $ ./configure --with-alsa-prefix=/usr/local/lib
             --with-alsa-inc-prefix=/usr/local/include

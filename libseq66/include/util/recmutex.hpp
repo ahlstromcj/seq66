@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-03-09
+ * \updates       2023-12-30
  * \license       GNU GPLv2 or above
  *
  *  This recursive mutex is implemented in pthreads due to difficulties we had
@@ -65,6 +65,8 @@
  *  in a single module, perhaps.  We also use pthread_mutex_t rather than the
  *  C++ mutex, as noted above.
  */
+
+#include "seq66_platform_macros.h"      /* pick the compiler and platform   */
 
 #include <pthread.h>
 
@@ -104,6 +106,16 @@ private:
 
     static native sm_global_mutex;
 
+#if defined SEQ66_PLATFORM_FREEBSD
+
+    /**
+     *  Needed for setting up a recursive mutex.
+     */
+
+    pthread_mutexattr_t m_mutex_attributes;
+
+#endif
+
     /**
      *  Provides a mutex lock usable by a single module or class.
      *  However, this mutex ends up being a copy of the static
@@ -136,7 +148,9 @@ public:
 
 private:
 
+#if defined USE_GLOBAL_MUTEX
     static void init_global_mutex ();
+#endif
     void init ();
     void destroy ();
 

@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2023-10-28
+ * \updates       2023-12-30
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -88,7 +88,7 @@
 #include "util/basic_macros.hpp"        /* errprint()                       */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path() etc.      */
 
-#if defined SEQ66_PLATFORM_LINUX
+#if defined SEQ66_PLATFORM_UNIX         /* it's not just LINUX, dude!       */
 
 #include <fcntl.h>                      /* O_RDWR flag                      */
 #include <signal.h>                     /* struct sigaction                 */
@@ -598,7 +598,7 @@ signal_end_restart ()
  * --------------------------------------------------------------------------
  */
 
-#if defined SEQ66_PLATFORM_LINUX
+#if defined SEQ66_PLATFORM_UNIX         // LINUX
 
 /**
  *  Provides a basic session handler, called upon receipt of a POSIX signal.
@@ -827,7 +827,7 @@ get_parent_process_name ()
     return std::string("None");
 }
 
-#endif  // defined SEQ66_PLATFORM_LINUX
+#endif  // defined SEQ66_PLATFORM_UNIX
 
 }           // namespace seq66
 

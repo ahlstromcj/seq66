@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-09-02
+ * \updates       2023-12-20
  * \license       GNU GPLv2 or above
  *
  *  By segregating trigger support into its own module, the sequence class is
@@ -141,7 +141,7 @@ public:
      *      Returns true if m_tick_start is less than rhs's.
      */
 
-    bool operator < (const trigger & rhs)
+    bool operator < (const trigger & rhs) const
     {
         return m_tick_start < rhs.m_tick_start;
     }

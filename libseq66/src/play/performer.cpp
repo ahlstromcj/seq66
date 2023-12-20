@@ -7139,6 +7139,7 @@ performer::toggle_song_start_mode ()
     if (song_mode())
         (void) unapply_mutes(mutes().null_mute_group());
 
+    set_needs_update();         /* ca 2023-12-19 */
     infoprint(live_mode() ? "Live Mode" : "Song Mode");
     return m_song_start_mode;
 }

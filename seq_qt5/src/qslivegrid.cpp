@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-12-07
+ * \updates       2023-12-20
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -397,6 +397,11 @@ qslivegrid::conditional_update ()
     sequence_key_check();
     if (perf().needs_update() || check_needs_update())
     {
+        int index = usr().grid_mode_code(gridmode::solo);
+        enable_combobox_item
+        (
+            ui->comboGridMode, index, ! perf().song_mode()
+        );
         show_grid_record_style();
         show_record_mode();
         show_grid_mode();

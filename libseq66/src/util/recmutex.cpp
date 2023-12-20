@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-03-09
+ * \updates       2023-12-20
  * \license       GNU GPLv2 or above
  *
  *  Seq66 needs a mutex for sequencer operations. We have finally, after a
@@ -32,27 +32,38 @@
  *  std::mutex, decided to stick with the old pthreads implementation for now.
  */
 
-#include "seq66_platform_macros.h"      /* pick the compiler and platform   */
 #include "util/recmutex.hpp"            /* seq66::recmutex                  */
+
+/**
+ *  FreeBSD prthreads is different from the others.
+ */
+
+#if defined SEQ66_PLATFORM_FREEBSD
+
+    /* TODO */
+
+#else
+
+#define SEQ66_USE_MUTEX_INITIALIZER
+
+#if defined SEQ66_PLATFORM_MING_OR_WINDOWS
 
 /**
  *  Using the init()/destroy() paradigm with an automutex seems to hang
  *  things up, so we define this macro to do it the old way.
- */
-
-#define SEQ66_USE_MUTEX_INITIALIZER
-
-/**
+ *
  *  The MingW compiler (at least on Windows) and the Microsoft Visual Studio
  *  compiler do not support the pthread PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP
- *  macro.
  */
 
-#if defined SEQ66_PLATFORM_MING_OR_WINDOWS
 #define MUTEX_INITIALIZER   PTHREAD_RECURSIVE_MUTEX_INITIALIZER
+
 #else
+
 #define MUTEX_INITIALIZER   PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP
 #endif
+
+#endif      // FreeBSD
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -66,6 +77,8 @@ namespace seq66
  */
 
 recmutex::native recmutex::sm_global_mutex;
+
+#if defined USE_GLOBAL_MUTEX
 
 /**
  *  We need a static flag to guarantee that the static native mutex object
@@ -83,13 +96,21 @@ recmutex::init_global_mutex ()
     }
 }
 
+#endif
+
 /**
  *  Constructor for recmutex.
  */
 
-recmutex::recmutex () : m_mutex_lock () /* uninitialized pthread_mutex_t    */
+recmutex::recmutex () :
+#if defined SEQ66_PLATFORM_FREEBSD
+    m_mutex_attributes  (),             /* uninit'd pthread_mutexattr_t     */
+#endif
+    m_mutex_lock        ()              /* uninitialized pthread_mutex_t    */
 {
+#if defined USE_GLOBAL_MUTEX
     init_global_mutex();                /* might not need global mutex, tho */
+#endif
     init();                             /* m_mutex_lock = MUTEX_INITIALIZER */
 }
 
@@ -105,7 +126,7 @@ recmutex::~recmutex ()
 void
 recmutex::lock () const
 {
-    pthread_mutex_lock(&m_mutex_lock);
+    (void) pthread_mutex_lock(&m_mutex_lock);
 }
 
 /**
@@ -115,11 +136,57 @@ recmutex::lock () const
 void
 recmutex::unlock () const
 {
-    pthread_mutex_unlock(&m_mutex_lock);
+    (void) pthread_mutex_unlock(&m_mutex_lock);
 }
 
 /**
- *  Unlocks the recmutex.
+ *  FreeBSD prthreads is different from the others.
+ */
+
+#if defined SEQ66_PLATFORM_FREEBSD
+
+void
+recmutex::init ()
+{
+    pthread_mutexattr_t m_mutex_attributes;
+    int rc = pthread_mutexattr_init(&m_mutex_attributes);
+    if (rc == 0)
+    {
+        rc = pthread_mutexattr_settype
+        (
+            &m_mutex_attributes, PTHREAD_MUTEX_RECURSIVE
+        );
+        if (rc == 0)
+        {
+            rc = pthread_mutex_init(&m_mutex_lock, &m_mutex_attributes);
+        }
+    }
+    if (rc != 0)
+    {
+        /* TODO */
+    }
+}
+
+void
+recmutex::destroy ()
+{
+    int rc = pthread_mutex_unlock(&m_mutex_lock);
+    if (rc == 0)
+    {
+        rc = pthread_mutex_destroy(&m_mutex_lock, NULL);
+        if (rc == 0)
+            rc = pthread_mutexattr_destroy(&m_mutex_attributes);
+    }
+    if (rc != 0)
+    {
+        /* TODO */
+    }
+}
+
+#else
+
+/**
+ *  Initializes the recmutex.
  *
  *  From https://pages.cs.wisc.edu/~remzi/OSTEP/
  *      "Operating Systems: Three Easy Pieces":
@@ -159,6 +226,8 @@ recmutex::destroy ()
     pthread_mutex_unlock(&m_mutex_lock);
 #endif
 }
+
+#endif      // FreeBSD
 
 }           // namespace seq66
 
