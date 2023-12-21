@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.99.12 and above
 Chris Ahlstrom
-2015-09-10 to 2023-12-18
+2015-09-10 to 2023-12-21
 
 Getting Seq66 requires building the code or going to
 "sequencer64-packages/seq66" on GitHub to get an installation package.  The
@@ -107,13 +107,25 @@ Clang Compiler:
 
 FreeBSD:
 
+    Make sure that the following are installed (check with "pkg info"):
+
+    - alsa-lib, -plugins, and perhaps -utils.
+    - autoconf, autoconf-archive (look into autocong-switch)
+    - automake
+    - gmake
+    - jackit
+    - libtool
+    - liblo
+    - pkgconf
+    - qt5
+
     Although one user reported that "./configure" worked fine, on a FreeBSD
     virtual machine, we first had to install autoconf, automake, pkgconf, and
     gmake. Also had to edit the generated libtool script to change
     the version from 2.4.7 to 2.4.6 to fool the build. The command needed to
     configure was the following, including the command to make the code.
     Also need to figure out why a "stopped" message appears in the
-    root generated Makefile, which breaks the build.
+    generated Makefiles, which breaks the build.
 
     $ ./configure --with-alsa-prefix=/usr/local/lib
             --with-alsa-inc-prefix=/usr/local/include

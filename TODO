@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.12
 Chris Ahlstrom
-2019-04-13 to 2023-12-17
+2019-04-13 to 2023-12-21
 
 Misc:
 
@@ -19,15 +19,17 @@ Misc:
         -   Improve the output of text events in the slot_dump() function.
         -   Test F7 SysEx continuation messages.
         -   Consider an option to remove all SysEx from a pattern or
-            tune or ignore it on reading.
+            tune or ignore it on reading, saving, output.
     -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
         Too difficult to fix at this time; converted it to 192.
     -   Clang-16:
         -   clang-16: warning: optimization flag '-fno-fat-lto-objects'
             is not supported [-Wignored-optimization-argument]. That
             flag does not prevent this warning. Ignoring it for now.
-    -   PortMidi autoconf build: segfault in release mode. For seq66cli,
-        mastermidibus_pm.h not found in main module.
+        -   Getting the build to succeeds is in progress. Need to install
+            jackit in FreeBSD. Latest error: in gui_palette_q5.hpp,
+            QBrush header not found.
+    -   PortMidi autoconf build: segfault in release mode.
     -   Show time-sigs in grid slot?
 
 Mutes:

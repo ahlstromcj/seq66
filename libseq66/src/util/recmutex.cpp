@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-20
+ * \updates       2023-12-21
  * \license       GNU GPLv2 or above
  *
  *  Seq66 needs a mutex for sequencer operations. We have finally, after a
@@ -173,7 +173,7 @@ recmutex::destroy ()
     int rc = pthread_mutex_unlock(&m_mutex_lock);
     if (rc == 0)
     {
-        rc = pthread_mutex_destroy(&m_mutex_lock, NULL);
+        rc = pthread_mutex_destroy(&m_mutex_lock);
         if (rc == 0)
             rc = pthread_mutexattr_destroy(&m_mutex_attributes);
     }
