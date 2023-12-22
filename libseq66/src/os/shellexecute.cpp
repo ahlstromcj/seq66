@@ -21,7 +21,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-05-19
- * \updates       2023-06-05
+ * \updates       2023-12-22
  * \license       GNU GPLv2 or above
  *
  *  Provides support for cross-platform time-related functions.
@@ -120,7 +120,7 @@ open_local_url (const std::string & url)
     return open_url(url);
 }
 
-#if defined SEQ66_PLATFORM_LINUX
+#if defined SEQ66_PLATFORM_UNIX         // LINUX
 
 bool
 open_document (const std::string & documentpath)

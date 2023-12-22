@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-12-18
+ * \updates       2023-12-22
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -3813,9 +3813,7 @@ performer::launch_output_thread ()
             bool ok = set_thread_priority(m_out_thread, p);
             if (ok)
             {
-#if defined SEQ66_PLATFORM_LINUX
                 warn_message("Output priority", std::to_string(p));
-#endif
             }
             else
             {
@@ -3854,9 +3852,7 @@ performer::launch_input_thread ()
             bool ok = set_thread_priority(m_in_thread, p);
             if (ok)
             {
-#if defined SEQ66_PLATFORM_LINUX
                 warn_message("Input priority", std::to_string(p));
-#endif
             }
             else
             {
@@ -6603,7 +6599,7 @@ performer::pop_trigger_redo ()
 void
 performer::show_cpu ()
 {
-#if defined SEQ66_PLATFORM_LINUX
+#if defined SEQ66_PLATFORM_UNIX // LINUX
     if (rc().verbose())
         infoprintf("Output function on CPU #%d", sched_getcpu());
 #endif
@@ -8349,7 +8345,12 @@ performer::automation_ss_dn
 }
 
 /**
- *  Implements mod_replace.  For MIDI control, there should be no support for
+ *  Implements mod_replace. This action permanently replaces all unmuted
+ *  patterns with the pattern selected after this function is engaged.
+ *  The replacement is queue. At the beginning of the next repeat, the
+ *  select pattern is on, and all others are off.
+ *
+ *  For MIDI control, there should be no support for
  *  toggle, but we're not sure how to implement this feature.
  *
  *  For keystrokes, the user-interface's key-press callback should set the

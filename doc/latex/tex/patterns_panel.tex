@@ -701,18 +701,23 @@
    This hot-key can be changed in the 'ctrl' file.
 
    \index{keys!replace}
-   The "replace" hot-key sets a form of muting/unmuting.
+   The "replace" automation key/control sets a form of muting/unmuting.
    When the "replace" hot-key is
-   pressed, then pressing a pattern's hot-key,
+   pressed, and then a pattern's hot-key is pressed,
    that sequence is unmuted, and all of the other sequences are muted.
-   "Replace" is a form of "solo".
+   "Replace" is a form of "solo" where the unmuted patterns cannot be
+   restored.
    "Replace" is also implemented via MIDI control,
    where the MIDI control can be activated, but then the user has to select
    the desired sequence.  
 
-   \index{queue!replace}
+   \begin{comment}
+
+   FIX THE FOLLOWING!!!
+
    \index{queue!solo}
-   \textsl{Seq66} provides an extension to the replace/solo functionality
+%  \textsl{Seq66} provides an extension to the replace/solo functionality
+   \textsl{Seq66} intends to provide an extension to the replace functionality
    that is called "queued-replace" or "queued-solo".  In this feature, when
    the "keep queue" function is activated, the replace function is queued so
    that it does not occur until the next time the patterns loop.
@@ -743,6 +748,8 @@
          One needs to clear the queue mode in order to select another pattern
          to solo.
    \end{enumerate}
+
+   \end{comment}
 
    Before pressing the "keep queue" key, patterns 33 ("\textbf{q}")
    and 34 ("\textbf{a}") are

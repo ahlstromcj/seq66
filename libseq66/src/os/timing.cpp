@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2023-11-12
+ * \updates       2023-12-22
  * \license       GNU GPLv2 or above
  *
  *  Provides support for cross-platform time-related functions.
@@ -30,7 +30,7 @@
 #include "util/basic_macros.hpp"        /* error_message()                  */
 #include "os/timing.hpp"                /* seq66::microsleep(), etc.        */
 
-#if defined SEQ66_PLATFORM_LINUX
+#if defined SEQ66_PLATFORM_UNIX         // _LINUX
 
 #include <errno.h>                      /* error numbers                    */
 #include <pthread.h>                    /* pthread_setschedparam()          */
@@ -111,7 +111,7 @@ millisleep (int ms)
     bool result = ms >= 0;
     if (result)
     {
-#if defined SEQ66_PLATFORM_LINUX
+#if defined SEQ66_PLATFORM_UNIX         // _LINUX
         result = microsleep(ms * 1000);
 #elif defined SEQ66_PLATFORM_UNIX
         struct timeval tv;
@@ -126,7 +126,7 @@ millisleep (int ms)
     return result;
 }
 
-#if defined SEQ66_PLATFORM_LINUX
+#if defined SEQ66_PLATFORM_UNIX         // _LINUX
 
 /**
  *  Sleeps for the given number of microseconds. nanosleep() is a Linux
@@ -222,7 +222,7 @@ microsleep (int us)
  * --------------------------------------------------------------------------
  */
 
-#if defined SEQ66_PLATFORM_LINUX
+#if defined SEQ66_PLATFORM_UNIX         // _LINUX
 
 void
 thread_yield ()
@@ -246,7 +246,7 @@ thread_yield ()
  * --------------------------------------------------------------------------
  */
 
-#if defined SEQ66_PLATFORM_LINUX
+#if defined SEQ66_PLATFORM_UNIX         // _LINUX
 
 /**
  *  Gets the current system time in microseconds.
@@ -347,7 +347,7 @@ millitime ()
  * --------------------------------------------------------------------------
  */
 
-#if defined SEQ66_PLATFORM_LINUX
+#if defined SEQ66_PLATFORM_UNIX             // LINUX
 
 /**
  *  In Linux, sets the thread priority for the calling thread, either the
@@ -479,7 +479,7 @@ set_timer_services (bool on)
     return mmr == TIMERR_NOERROR;
 }
 
-#endif      // SEQ66_PLATFORM_LINUX, SEQ66_PLATFORM_WINDOWS
+#endif      // SEQ66_PLATFORM_UNIX, SEQ66_PLATFORM_WINDOWS
 
 }           // namespace seq66
 
