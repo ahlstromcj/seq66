@@ -7116,6 +7116,10 @@ performer::replace_for_solo (seq::number seqno, bool queued)
             if (s->muted())
                 s->toggle_playing(get_tick(), resume_note_ons());
 
+            /*
+             * TODO: how can we wait until queuing is complete?
+             */
+
             off_sequences(seqno);               /* off all but seqno    */
             m_solo_seqno = seqno;
         }

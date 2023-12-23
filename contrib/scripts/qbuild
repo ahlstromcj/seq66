@@ -32,7 +32,7 @@ if [ "$1" == "--help" ] ; then
 
    cat << E_O_F
 The qbuild script makes it easier to remember how to build Qt shadow builds for
-Seq66, to generate either qpseq66 (portmidi) or qrseq66 (rtmidi).  The default
+Seq66, to generate either qpseq66 (portmidi) or qseq66 (rtmidi).  The default
 is to build 'qpseq66' for release.  The build can be modified by adding the
 flags 'debug' and 'rtmidi'.
 

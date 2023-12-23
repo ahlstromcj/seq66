@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-12-07
+ * \updates       2023-12-22
  * \license       GNU GPLv2 or above
  *
  *
@@ -192,6 +192,7 @@ private:
     void show_grid_mode ();
     void populate_grid_mode ();
     void set_grid_mode ();
+    void enable_solo (bool enable);
     void update_state ();                               /* ca 2023-04-26    */
 
 signals:

@@ -1384,7 +1384,7 @@ bool
 smanager::import_into_session
 (
     const std::string & sourcepath,
-    const std::string & sourcebase              /* e.g. qrseq66.rc */
+    const std::string & sourcebase              /* e.g. qseq66.rc  */
 )
 {
     bool result = ! sourcepath.empty() && ! sourcebase.empty();

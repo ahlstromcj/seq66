@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2023-06-12
+# \update      2023-12-23
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -34,7 +34,7 @@ CONFIG(debug, debug|release) {
 }
 
 contains (CONFIG, rtmidi) {
-   TARGET = qrseq66
+   TARGET = qseq66
    MIDILIB = rtmidi
    DEFINES += "SEQ66_MIDILIB=rtmidi"
    DEFINES += "SEQ66_RTMIDI_SUPPORT=1"

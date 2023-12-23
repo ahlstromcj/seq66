@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-12-20
+ * \updates       2023-12-22
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -299,6 +299,13 @@ qslivegrid::set_grid_mode ()
     ui->comboGridMode->setCurrentIndex(gcode);
 }
 
+void
+qslivegrid::enable_solo (bool enable)
+{
+    int index = usr().grid_mode_code(gridmode::solo);
+    enable_combobox_item(ui->comboGridMode, index, enable);
+}
+
 /**
  *  Populate the combo box from grid_loop, grid_record, and, as implemented
  *  more automation::slot::grid_xxxxx values up to grid_double.
@@ -397,11 +404,7 @@ qslivegrid::conditional_update ()
     sequence_key_check();
     if (perf().needs_update() || check_needs_update())
     {
-        int index = usr().grid_mode_code(gridmode::solo);
-        enable_combobox_item
-        (
-            ui->comboGridMode, index, ! perf().song_mode()
-        );
+        enable_solo(! perf().song_mode());
         show_grid_record_style();
         show_record_mode();
         show_grid_mode();

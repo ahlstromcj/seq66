@@ -3,7 +3,7 @@
 #------------------------------------------------------------------------------
 ##
 # \file        libsessions.pro
-# \library     qseq66 and qrseq66 application
+# \library     qseq66 application
 # \author      Chris Ahlstrom
 # \date        2020-03-24
 # \update      2020-09-03

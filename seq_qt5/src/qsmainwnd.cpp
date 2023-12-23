@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-12-13
+ * \updates       2023-12-22
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -456,7 +456,6 @@ qsmainwnd::qsmainwnd
     if (not_nullptr(m_live_frame))
     {
         ui->LiveTabLayout->addWidget(m_live_frame);
-        // m_live_frame->setFocus();
     }
     m_playlist_frame = new (std::nothrow) qplaylistframe
     (
@@ -1398,6 +1397,8 @@ qsmainwnd::set_song_mode (bool /*songmode*/)
         song_recording(false);
     }
     show_song_mode(playmode);
+    if (not_nullptr(m_live_frame))
+        m_live_frame->enable_solo(! playmode);
 }
 
 bool
@@ -1995,7 +1996,6 @@ qsmainwnd::redo_live_frame ()
             this, SLOT(load_live_frame(int))
         );
         m_live_frame->show();
-        // m_live_frame->setFocus();
 
         /*
          * This is not necessary.  And it causes copies painter errors

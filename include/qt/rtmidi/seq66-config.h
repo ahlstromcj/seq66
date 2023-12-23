@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-31
- * \updates       2023-12-06
+ * \updates       2023-12-23
  * \license       GNU GPLv2 or above
  *
  *  Qt Rtmidi Linux and Windows versions, hardwired for use with
@@ -122,7 +122,7 @@
 #endif
 
 #if ! defined SEQ66_APP_NAME
-#define SEQ66_APP_NAME "qrseq66"
+#define SEQ66_APP_NAME "qseq66"
 #endif
 
 #if ! defined SEQ66_APP_TYPE
@@ -156,7 +156,7 @@
  */
 
 #if ! defined SEQ66_CONFIG_NAME
-#define SEQ66_CONFIG_NAME "qrseq66"
+#define SEQ66_CONFIG_NAME "qseq66"
 #endif
 
 #if ! defined SEQ66_ICON_NAME

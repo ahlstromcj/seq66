@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-12-01
+ * \updates       2023-12-22
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -97,7 +97,6 @@ namespace seq66
     class qseqeventframe;
     class qsessionframe;
     class qsetmaster;
-    class qslivebase;
     class qslivegrid;
     class qsmaintime;
     class smanager;
@@ -115,7 +114,6 @@ class qsmainwnd final :
     friend class qplaylistframe;
     friend class qsessionframe;
     friend class qsetmaster;
-    friend class qslivebase;
     friend class qslivegrid;
     friend class qt5nsmanager;
 
@@ -317,7 +315,7 @@ private:
     qt5nsmanager * m_session_mgr;           /* LATER: unique_ptr()? */
     int m_initial_width;
     int m_initial_height;
-    qslivebase * m_live_frame;
+    qslivegrid * m_live_frame;
     qperfeditex * m_perfedit;
     qperfeditframe64 * m_song_frame64;
     qseqframe * m_edit_frame;

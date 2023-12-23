@@ -538,11 +538,11 @@ private:
     std::string m_style_sheet_filename;
 
     /**
-     *  Holds the application name, e.g. "seq66", "qpseq66", "qrseq66",
-     *  "seq66cli", or, most commonly, "qseq66".  This is a constant, set to
-     *  SEQ66_APP_NAME, but obtained via the seq_app_name() function.  Do not
-     *  confuse it with the client name, which defaults to "seq66" no matter
-     *  what the application name.
+     *  Holds the application name, e.g. "seq66", "qpseq66", "seq66cli", or,
+     *  most commonly, "qseq66".  This is a constant, set to SEQ66_APP_NAME,
+     *  but obtained via the seq_app_name() function.  Do not confuse it with
+     *  the client name, which defaults to "seq66" no matter what the
+     *  application name.
      */
 
     std::string m_application_name;
