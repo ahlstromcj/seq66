@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.12
 Chris Ahlstrom
-2019-04-13 to 2023-12-21
+2019-04-13 to 2023-12-24
 
 Misc:
 
@@ -26,10 +26,10 @@ Misc:
         -   clang-16: warning: optimization flag '-fno-fat-lto-objects'
             is not supported [-Wignored-optimization-argument]. That
             flag does not prevent this warning. Ignoring it for now.
-        -   Getting the build to succeeds is in progress. Need to install
-            jackit in FreeBSD. Latest error: in gui_palette_q5.hpp,
-            QBrush header not found.
-    -   PortMidi autoconf build: segfault in release mode.
+        -   The automake build fails because QT_CXXFLAGS and QT_LIBS are
+            empty, not sure why.
+        -   The qbuild.sh build succeeds, but execution yields an
+            error likely due to some dependency of libxcb missing.
     -   Show time-sigs in grid slot?
 
 Mutes:

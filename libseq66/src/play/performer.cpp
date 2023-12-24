@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-12-22
+ * \updates       2023-12-24
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -838,7 +838,6 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
         m_midi_control_in.add_blank_controls(m_key_controls);
 
     m_midi_control_out = rcs.midi_control_out();
-
     if (rc().mute_group_file_active())
     {
         const std::string & mgf = rc().mute_group_filespec();
@@ -3362,9 +3361,14 @@ performer::launch (int ppqn)
     bool result = create_master_bus();      /* calls set_port_statuses()    */
     if (result)
     {
-        (void) init_jack_transport();
+        if (init_jack_transport())
+            debug_message("jack transport active");
+
         m_master_bus->init(ppqn, m_bpm);    /* calls api_init() per API     */
+        debug_message("bus API init'd");
         result = activate();
+        if (result)
+            debug_message("master bus active");
 
         /*
          * Get and store the clocks and inputs created (disabled or not)
@@ -3384,6 +3388,8 @@ performer::launch (int ppqn)
         m_master_bus->get_port_statuses(m_clocks, m_inputs);
         if (result || allow_unavailable_devices)
         {
+            debug_message("master bus set up");
+
 #if defined SEQ66_USE_DEFAULT_PORT_MAPPING
             if (! rc().portmaps_present())  /* don't mung existing port-map */
             {
@@ -3807,6 +3813,7 @@ performer::launch_output_thread ()
     {
         m_out_thread = std::thread(&performer::output_func, this);
         m_out_thread_launched = true;
+        debug_message("output thread launched");
         if (rc().priority())                        /* Not in MinGW RCB     */
         {
             int p = rc().thread_priority();
@@ -3846,6 +3853,7 @@ performer::launch_input_thread ()
     {
         m_in_thread = std::thread(&performer::input_func, this);
         m_in_thread_launched = true;
+        debug_message("input thread launched");
         if (rc().priority())                        /* Not in MinGW RCB     */
         {
             int p = rc().thread_priority();

@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-11-22
+ * \updates     2023-12-24
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:
@@ -632,7 +632,7 @@ pm_add_device
     int client, int port
 )
 {
-    char temp[64];
+    char temp[80];
     int ismapper = not_nullptr(strstrcase(name, "mapper"));
     const int index = pm_descriptor_index;
     if (index >= pm_descriptor_max)
@@ -682,7 +682,7 @@ pm_add_device
     ++pm_descriptor_index;
     snprintf
     (
-        temp, sizeof temp, "PortMidi [%d]: %s %s:%s added",
+        temp, sizeof temp - 1, "PortMidi [%d]: %s %s:%s added",
         index, (input ? "Input" : "Output"), interf, name
     );
     infoprint(temp);

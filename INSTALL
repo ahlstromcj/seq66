@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.99.12 and above
 Chris Ahlstrom
-2015-09-10 to 2023-12-21
+2015-09-10 to 2023-12-24
 
 Getting Seq66 requires building the code or going to
 "sequencer64-packages/seq66" on GitHub to get an installation package.  The
@@ -119,6 +119,15 @@ FreeBSD:
     - pkgconf
     - qt5
 
+    Currently having issues with Qt in the GNU automake instructions below.
+    So do the following instead:
+
+        -   Make a shadow directory in the parent of the seq66 directory.
+        -   Change to it.
+        -   Run the new qbuild.sh script. It uses "sh" as the shell for
+            portability.
+        -   Read the make.log file for success or failure..
+
     Although one user reported that "./configure" worked fine, on a FreeBSD
     virtual machine, we first had to install autoconf, automake, pkgconf, and
     gmake. Also had to edit the generated libtool script to change
@@ -130,6 +139,8 @@ FreeBSD:
     $ ./configure --with-alsa-prefix=/usr/local/lib
             --with-alsa-inc-prefix=/usr/local/include
     $ sh -c 'gmake >make.log 2>&1'
+
+    A raft of other issues have occurred with this method.
 
 Qt and Command-Line Merged Build:
 
@@ -209,7 +220,7 @@ Advanced Steps:
        1. Seq66qt5/qseq66:      ./bootstrap -er
        2. Seq66cli/seq66cli:    ./bootstrap -er -cli
        3. Seq66cli/seq66clip:   ./bootstrap -er -cli -pm
-       4. qpseq66 Linux:        Qmake/qbuild/Qtcreator in shadow directory
+       4. qpseq66 Linux:        Qmake/qbuild.sh/Qtcreator in shadow directory
        5. qpseq66 Windows:      Qmake/Qtcreator/build_release_package.bat
 
        For the first two: from the top project directory, run one of the
@@ -371,8 +382,9 @@ Qmake-based Install:
         $ qmake -makefile -recursive "CONFIG += rtmidi" ../seq66/seq66.pro
         $ qmake -makefile -recursive "CONFIG += debug rtmidi" ../seq66/seq66.pro
 
-    Followed by the "make" operation. See the "contrib/scripts/qbuild" Bash
-    script for an automation of this process.
+    Followed by the "make" operation. See the "contrib/scripts/qbuild.sh"
+    shell script (which replaces the qbuild Bash script) for an automation
+    of this process.
 
 Windows:
 

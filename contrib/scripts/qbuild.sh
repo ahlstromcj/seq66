@@ -4,7 +4,7 @@
 # \file        qbuild.sh
 # \library     bin
 # \author      Chris Ahlstrom
-# \date        2023-12-23 to 2023-12-23
+# \date        2023-12-23 to 2023-12-24
 # \version     $Revision$
 # \license     GNU GPLv2 or above
 #
@@ -24,6 +24,7 @@ MAKEOPTIONS="-j 8"
 MAKELOG="make.log"
 QOPTIONS="-makefile -recursive -Wall"
 PROJFILE="../seq66/seq66.pro"
+PROJFILE2="seq66.pro"
 
 #******************************************************************************
 #  Help
@@ -32,10 +33,10 @@ PROJFILE="../seq66/seq66.pro"
 if test "$1" = "--help" -o "$1" = "help" ; then
 
    cat << E_O_F
-The qbuild script makes it easier to build Qt shadow builds for Seq66, to
-generate either qpseq66 (portmidi) or qseq66 (rtmidi). The default is to
-build 'qseq66' as a release uisng the rtmidi engine. The build can be
-modified by adding the flags 'debug' or 'portmidi'.
+This script makes it easy to build Qt shadow builds for Seq66, to generate
+either qpseq66 (portmidi) or qseq66 (rtmidi). The default is to build 'qseq66'
+as a release uisng the rtmidi engine. The build can be modified by adding the
+flags 'debug' or 'portmidi' (which generates 'qpseq66').
 
     cd ..                        (parent directory of seq66)
     mkdir shadow-rtmidi          (if not already made)
@@ -45,10 +46,9 @@ modified by adding the flags 'debug' or 'portmidi'.
     vi make.log
 
 This script must be run from a shadow directory. The build output is written
-to make.log.  Other options are '--help' and '--dry-run'.
-Please note that, if any Qt 'pro' file in the project has changed, one should
-first remove all files from the shadow directory (CAUTION!!!) before
-rebuilding. Options:
+to make.log.  Other options are '--help' and '--dry-run'.  Note that, if any
+Qt 'pro' file in the project has changed, one should first remove all files
+from the shadow directory (CAUTION!!!) before rebuilding. Options:
 
    --help         Show this help text.
    --cpus n       Use n cores. The default is 8.
@@ -56,6 +56,7 @@ rebuilding. Options:
    --debug        Enable a debug build.
    --portmidi     Build using Seq66's internal portmidi engine.
    --rtmidi       Build using Seq66's internal rtmidi engine [default].
+
 E_O_F
    exit 1
 fi
@@ -101,16 +102,18 @@ fi
 
 if test "$DOBUILD" = "yes" ; then
    rm -f $MAKELOG
-   date >$MAKELOG
+   date > $MAKELOG
    echo " " >> $MAKELOG 2>&1
    echo "  $QMAKER $QOPTIONS \""CONFIG += $BUILDTYPE $ENGINE\"" $PROJFILE" >> $MAKELOG 2>&1
    echo " " >> $MAKELOG
+   echo "  $QMAKER $QOPTIONS \""CONFIG += $BUILDTYPE $ENGINE\"" $PROJFILE2..."
    $QMAKER $QOPTIONS "CONFIG += $BUILDTYPE $ENGINE" $PROJFILE >> $MAKELOG 2>&1
    echo " " >> $MAKELOG
    echo "  $MAKER $MAKEOPTIONS > $MAKELOG" >> $MAKELOG 2>&1
    echo " " >> $MAKELOG
-   $MAKER $MAKEOPTIONS >> $MAKELOG
-   echo "Read $MAKELOG for build details."
+   echo "  $MAKER $MAKEOPTIONS > $MAKELOG ..."
+   $MAKER $MAKEOPTIONS >> $MAKELOG 2>&1
+   echo "Read $MAKELOG for build errors or warnings."
 else
    echo "Commands to be run:"
    echo "  rm -f $MAKELOG"

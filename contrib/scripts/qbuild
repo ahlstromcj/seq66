@@ -4,7 +4,7 @@
 # \file        qbuild
 # \library     bin
 # \author      Chris Ahlstrom
-# \date        2020-09-27 to 2021-06-25
+# \date        2020-09-27 to 2023-12-24
 # \version     $Revision$
 # \license     GNU GPLv2 or above
 #
@@ -44,10 +44,8 @@ flags 'debug' and 'rtmidi'.
     vi make.log
 
 This must be run from a shadow directory.  The build output is written to
-make.log.  Other options are '--help' and '--dry-run'.
-
-Please note that, if any Qt 'pro' file in the project has changed, you should
-first remove all files from the shadow directory.  CAUTION!!!
+make.log.  Other options are '--help' and '--dry-run'.  Please note that this
+script is Bash-specific and *deprecated*. Use the qbuild.sh script instead.
 E_O_F
    exit 1
 fi
