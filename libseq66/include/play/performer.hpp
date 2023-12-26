@@ -2465,6 +2465,7 @@ public:
     bool sequence_playing_toggle (seq::number seqno);
     bool sequence_playing_change (seq::number seqno, bool on);
     bool replace_for_solo (seq::number seqno, bool queued = false);
+    bool set_solo (seq::number seqno);
     void set_keep_queue (bool activate);
 
     bool is_keep_queue () const

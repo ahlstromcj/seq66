@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-12-24
+ * \updates       2023-12-25
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -6734,12 +6734,15 @@ performer::set_ctrl_status
     if (on)
     {
         if (snap)
+        {
+#if defined SEQ66_PLATFORM_DEBUG
+            msgprintf
+            (
+                msglevel::debug, "Snapshot; solo seq %d", int(m_solo_seqno)
+            );
+#endif
             save_snapshot();
-
-        /*
-         * Anything to do for solo (queue + replace)?
-         */
-
+        }
         midi_control_in().add_status(status);
         if (midi_control_in().is_keep_queue(status))
             midi_control_in().add_status(automation::ctrlstatus::queue);
@@ -6765,7 +6768,15 @@ performer::set_ctrl_status
             midi_control_in().remove_status(status);
 
         if (snap)
+        {
+#if defined SEQ66_PLATFORM_DEBUG
+            msgprintf
+            (
+                msglevel::debug, "Restore; solo seq %d", int(m_solo_seqno)
+            );
+#endif
             restore_snapshot();
+        }
     }
     display_ctrl_status(status, on);
     return true;
@@ -7109,14 +7120,21 @@ performer::replace_for_solo (seq::number seqno, bool queued)
         }
         if (seqno == m_solo_seqno)              /* user toggle of slot  */
         {
+#if defined SEQ66_PLATFORM_DEBUG
+            msgprintf(msglevel::debug, "Pattern %d solo cleared", seqno);
+#endif
             (void) set_ctrl_status              /* restores snapshot    */
             (
                 automation::action::off, cs
             );
             m_solo_seqno = seq::unassigned();   /* clear_snapshot()     */
+
         }
         else
         {
+#if defined SEQ66_PLATFORM_DEBUG
+            msgprintf(msglevel::debug, "Pattern %d soloed", seqno);
+#endif
             (void) set_ctrl_status              /* saves snapshot       */
             (
                 automation::action::on, cs
@@ -7929,6 +7947,25 @@ performer::record_mode (alteration rm)
 }
 
 /**
+ *  EXPERIMENTAL.
+ *  Called first when setting up a pattern for a queued solo.
+ */
+
+bool
+performer::set_solo (seq::number seqno)
+{
+    seq::pointer s = get_sequence(seqno);
+    bool result = bool(s);
+    if (s)
+    {
+        bool soloed = s->get_soloed();
+        s->set_soloed(! soloed);
+        s->toggle_queued();
+    }
+    return result;
+}
+
+/**
  *  Provides the pattern-control function... hot-keys that toggle the patterns
  *  in the current set.
  *
@@ -8030,7 +8067,19 @@ performer::loop_control
                 else if (gm == gridmode::thru)
                     result = set_thru(seqno, false, true);  /* true=toggle  */
                 else if (gm == gridmode::solo)
-                    result = replace_for_solo(seqno, true); /* 2023-12-17   */
+                {
+#if defined SEQ66_SUPPORT_QUEUED_SOLO
+                    seq::pointer s = get_sequence(seqno);
+                    if (s)
+                    {
+                        bool soloed = s->get_soloed();
+                        s->set_soloed(! soloed);
+                        s->toggle_queued();
+                    }
+#else
+                    result = replace_for_solo(seqno, true);
+#endif
+                }
                 else if (gm == gridmode::cut)
                     result = cut_sequence(seqno);
                 else if (gm == gridmode::double_length)
