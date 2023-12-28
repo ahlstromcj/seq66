@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.12 2023-12-24
+Release Notes for Seq66 v. 0.99.12 2023-12-28
 
 -   Fixed clang support and FreeBSD builds.
     -   Using clang-12 and clang-16 to find errors and warnings
@@ -17,6 +17,7 @@ Release Notes for Seq66 v. 0.99.12 2023-12-24
 -   Fixed issue with building the command-line version with "portmidi"
     (seq66clip).
 -   Fixed bugs in --option log=file.
+-   Fixed Q button not working to set keep-queue status.
 -   Fixed a one-character buffer overflow in portmidi.c.
 
 See NEWS for more details.

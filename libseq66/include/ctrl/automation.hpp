@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2023-09-19
+ * \updates       2023-12-28
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -487,6 +487,12 @@ operator ~ (ctrlstatus rhs)
     return static_cast<ctrlstatus>(~ static_cast<int>(rhs));
 }
 
+inline ctrlstatus
+add_queue (ctrlstatus cs)
+{
+    return cs | ctrlstatus::queue;
+}
+
 /**
  *  For complex statuses (more than one bit set), this function returns true
  *  if there is any "on" bit in either of the two statuses.  More useful if
@@ -554,6 +560,16 @@ inline int
 current_slot_count ()
 {
     return static_cast<int>(automation::slot::max);
+}
+
+/*
+ *  Free-functions for actions.
+ */
+
+inline automation::action
+automation_action (bool flag)
+{
+    return flag ? automation::action::on : automation::action::off ;
 }
 
 }               // namespace seq66

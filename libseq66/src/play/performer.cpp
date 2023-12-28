@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-12-25
+ * \updates       2023-12-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -6688,12 +6688,8 @@ performer::set_midi_control_out ()
 void
 performer::set_keep_queue (bool activate)
 {
-    automation::action a = activate ?
-        automation::action::on : automation::action::off;
-#if defined SEQ66_PLATFORM_DEBUG
-    printf("set_keep_queue(%s)\n", activate ? "on" : "off");
-#endif
-    (void) set_ctrl_status(a, automation::ctrlstatus::queue);
+    automation::action a = automation_action(activate);
+    (void) set_ctrl_status(a, automation::ctrlstatus::keep_queue);
 }
 
 /**
@@ -6721,36 +6717,29 @@ bool
 performer::set_ctrl_status
 (
     automation::action a,
-    automation::ctrlstatus status
+    automation::ctrlstatus cs
 )
 {
     bool on = a == automation::action::on || a == automation::action::toggle;
-    if (on && midi_control_in().is_set(status))
+    if (on && midi_control_in().is_set(cs))
         on = false;
 
-    bool snap = midi_control_in().is_snapshot(status) ||
-        midi_control_in().is_replace(status);
+    bool snap = midi_control_in().is_snapshot(cs) ||
+        midi_control_in().is_replace(cs);
 
     if (on)
     {
         if (snap)
-        {
-#if defined SEQ66_PLATFORM_DEBUG
-            msgprintf
-            (
-                msglevel::debug, "Snapshot; solo seq %d", int(m_solo_seqno)
-            );
-#endif
             save_snapshot();
-        }
-        midi_control_in().add_status(status);
-        if (midi_control_in().is_keep_queue(status))
+
+        midi_control_in().add_status(cs);
+        if (midi_control_in().is_keep_queue(cs))
             midi_control_in().add_status(automation::ctrlstatus::queue);
     }
     else
     {
-        bool q = midi_control_in().is_queue(status);
-        bool k = midi_control_in().is_keep_queue(status);
+        bool q = midi_control_in().is_queue(cs);
+        bool k = midi_control_in().is_keep_queue(cs);
         if (k)
         {
             midi_control_in().remove_status(automation::ctrlstatus::queue);
@@ -6765,20 +6754,12 @@ performer::set_ctrl_status
             }
         }
         else
-            midi_control_in().remove_status(status);
+            midi_control_in().remove_status(cs);
 
         if (snap)
-        {
-#if defined SEQ66_PLATFORM_DEBUG
-            msgprintf
-            (
-                msglevel::debug, "Restore; solo seq %d", int(m_solo_seqno)
-            );
-#endif
             restore_snapshot();
-        }
     }
-    display_ctrl_status(status, on);
+    display_ctrl_status(cs, on);
     return true;
 }
 
@@ -7013,23 +6994,8 @@ performer::sequence_playing_toggle (seq::number seqno)
         {
             if (is_replace)
             {
-#if defined USE_OLD_CODE
-                (void) set_ctrl_status
-                (
-                    automation::action::off,
-                    automation::ctrlstatus::replace
-                );
-                off_sequences();                    /* use new seqno param? */
-#else
-                /*
-                 * Not to be used here; requires Solo grid-mode.
-                 *
-                 * replace_for_solo(seqno, true);
-                 */
-
                 unset_queued_replace();
                 off_sequences();
-#endif
             }
             s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
         }
@@ -7114,10 +7080,8 @@ performer::replace_for_solo (seq::number seqno, bool queued)
     {
         automation::ctrlstatus cs = automation::ctrlstatus::replace;
         if (queued)
-        {
-            cs = automation::ctrlstatus::queue |
-                automation::ctrlstatus::replace;
-        }
+            cs = add_queue(cs);
+
         if (seqno == m_solo_seqno)              /* user toggle of slot  */
         {
 #if defined SEQ66_PLATFORM_DEBUG
@@ -8430,13 +8394,8 @@ performer::automation_replace
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
     {
-#if defined SEQ66_PLATFORM_DEBUG
-        printf("Automation replace function for queued solo\n");
-#endif
-        automation::ctrlstatus s =
-            automation::ctrlstatus::queue | automation::ctrlstatus::replace;
-
-        return set_ctrl_status(a, s);
+        automation::ctrlstatus cs = add_queue(automation::ctrlstatus::replace);
+        return set_ctrl_status(a, cs);
     }
     else
         return true;                    /* pretend the key release worked   */
@@ -8658,11 +8617,11 @@ performer::automation_solo
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
     {
-        automation::ctrlstatus c = automation::ctrlstatus::replace;
+        automation::ctrlstatus cs = automation::ctrlstatus::replace;
         if (a == automation::action::toggle)
-            result = toggle_ctrl_status(c);
+            result = toggle_ctrl_status(cs);
         else
-            result = set_ctrl_status(a, c);
+            result = set_ctrl_status(a, cs);
     }
     return result;
 }
@@ -9773,14 +9732,11 @@ performer::automation_keep_queue
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
     {
+        automation::ctrlstatus cs = automation::ctrlstatus::keep_queue;
         if (a == automation::action::toggle)
-        {
-            return toggle_ctrl_status(automation::ctrlstatus::keep_queue);
-        }
+            return toggle_ctrl_status(cs);
         else
-        {
-            return set_ctrl_status(a, automation::ctrlstatus::keep_queue);
-        }
+            return set_ctrl_status(a, cs);
     }
     else
         return true;
@@ -10139,7 +10095,7 @@ performer::set_grid_mode (gridmode gm)
 {
     if (gm < gridmode::max)
     {
-#if defined SOLO_KEEP_QUEUE
+#if defined SOLO_KEEP_QUEUE                             // undefined
         gridmode oldmode = usr().grid_mode();
 #endif
         usr().grid_mode(gm);
@@ -10147,7 +10103,7 @@ performer::set_grid_mode (gridmode gm)
         {
             usr().record_mode(alteration::none);
             usr().grid_record_style(recordstyle::merge);
-#if defined SOLO_KEEP_QUEUE
+#if defined SOLO_KEEP_QUEUE                             // undefined
             if (gm == gridmode::solo)                   /* ca 2023-12-18    */
             {
                 set_keep_queue(true);
