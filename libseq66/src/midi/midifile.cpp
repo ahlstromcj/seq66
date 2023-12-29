@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-17
+ * \updates       2023-12-29
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -3478,13 +3478,20 @@ midifile::set_error_dump (const std::string & msg)
     char temp[80];
     snprintf
     (
-        temp, sizeof temp, "byte 0x%02x at 0x%zx of 0x%zx",
-        unsigned(m_data[m_pos]), m_pos, m_file_size
+        /*
+         *  temp, sizeof temp, "0x%02x at 0x%zx/0x%zx",
+         *  unsigned(m_data[m_pos]), m_pos, m_file_size
+         */
+        temp, sizeof temp, "at 0x%zx/0x%zx", m_pos, m_file_size
     );
     std::string result = msg;
     result += ": ";
     result += temp;
-    msgprintf(msglevel::error, "%s", result.c_str());
+
+    /*
+     * msgprintf(msglevel::error, "%s", result.c_str());
+     */
+
     m_error_message = result;
     m_error_is_fatal = true;
     m_disable_reported = true;
@@ -3509,7 +3516,7 @@ bool
 midifile::set_error_dump (const std::string & msg, unsigned long value)
 {
     char temp[64];
-    snprintf(temp, sizeof temp, ". Bad value 0x%lx.", value);
+    snprintf(temp, sizeof temp, ". Bad value 0x%lx", value);
     std::string result = msg;
     result += temp;
     return set_error_dump(result);

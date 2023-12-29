@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-06-16
+ * \updates       2023-12-29
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -1021,12 +1021,15 @@ editable_event::analyze ()
     }
     else if (is_system_msg(status))
     {
-        if (is_meta_msg(status))    // CHANNEL set to metatype?????
+        if (is_meta_msg(status))
         {
+            char tmp[32];
+            int ch = int(channel());
+            snprintf(tmp, sizeof tmp, "0x%02x", ch);
             midibyte metatype = get_meta_status();  /* stored in channel!   */
             category(subgroup::meta_event);
             m_name_status = value_to_name(metatype, subgroup::meta_event);
-            m_name_channel.clear();                 /* will not be output   */
+            m_name_channel = std::string(tmp);
             m_name_data = ex_data_string();
         }
         else
@@ -1084,16 +1087,33 @@ editable_event::ex_data_string () const
             result += tmp;
         }
     }
+    else if (is_meta_text())
+    {
+        std::string data;
+        int limit = sysex_size();               /* the length of the text   */
+        if (limit > 25)
+            limit = 25;                         /* we have space limits     */
+
+        result += "'";
+        for (int i = 0; i < limit; ++i)
+        {
+            result += get_sysex(i);
+        }
+        if (sysex_size() > limit)
+            result += "...'";
+        else
+            result += "'";
+    }
     else
     {
         std::string data;
-        int limit = sysex_size();
-        if (limit > 4)
-            limit = 4;                          /* we have space limits     */
+        int limit = sysex_size();               /* number of SysEx bytes    */
+        if (limit > 9)
+            limit = 9;                          /* we have space limits     */
 
         for (int i = 0; i < limit; ++i)
         {
-            snprintf(tmp, sizeof tmp, "%2X ", get_sysex(i));
+            snprintf(tmp, sizeof tmp, "%02X ", get_sysex(i));
             result += tmp;
         }
         if (sysex_size() > limit)

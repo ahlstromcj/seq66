@@ -1,6 +1,6 @@
 MIDI Sample and Test Files
 Chris Ahlstrom
-2015-09-11 to 2023-12-14
+2015-09-11 to 2023-12-29
 
 This directory contains contributed MIDI files for examples and testing.
 Also see the test files from the midicvt as described in
@@ -45,9 +45,22 @@ the "example1" file.
          3. All empty patterns.
          4. Two empty patterns.
 
+   Carpet_of_the_Sun_karaoke_meta_text.mid:
+
+      This tune had a PPQN of 120, and did not display properly in the
+      pattern editor. The problem is it sets up a ticks/step of 7.5, which
+      gets truncated to 7.  No easy way to fix, so just converted it
+      to 192 PPQN.
+
    click_4_4.midi:
    
       Holds a click-track for use with the Seq24-session script.
+
+   CountryStrum.midi:
+
+      This file is the CountryStrum.mid SMF 0 file imported into
+      Sequencer64, with the SMF 0 track removed, and all the sequences
+      moved over to the leftmost position in the main window.
 
    Dixie04.mid:
 
@@ -102,19 +115,6 @@ the "example1" file.
    reset.mid:
    
       A file that resets all MIDI channels.
-
-   Carpet_of_the_Sun_karaoke_meta_text.mid:
-
-      This tune had a PPQN of 120, and did not display properly in the
-      pattern editor. The problem is it sets up a ticks/step of 7.5, which
-      gets truncated to 7.  No easy way to fix, so just converted it
-      to 192 PPQN.
-
-   CountryStrum.midi:
-
-      This file is the CountryStrum.mid SMF 0 file imported into
-      Sequencer64, with the SMF 0 track removed, and all the sequences
-      moved over to the leftmost position in the main window.
 
    NR_Route_66.midi:
 

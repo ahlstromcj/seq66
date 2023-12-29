@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.12
 Chris Ahlstrom
-2019-04-13 to 2023-12-28
+2019-04-13 to 2023-12-29
 
 Misc:
 
@@ -13,7 +13,7 @@ Misc:
     -   trilogy.mid errors basically fixed with new 'rc' work-around.
         -   Write a module to show SysEx (and optionally store them as
             a macro).
-        -   Improve the output of text events in the slot_dump() function.
+            Note that the dump APPENDS to an existing file.
         -   Test F7 SysEx continuation messages.
         -   Consider an option to remove all SysEx from a pattern or
             tune or ignore it on reading, saving, output.

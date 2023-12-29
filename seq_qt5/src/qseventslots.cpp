@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-12-09
+ * \updates       2023-12-29
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -344,20 +344,28 @@ qseventslots::event_to_string
     int index, bool usehex
 ) const
 {
-    std::string data_0;
-    std::string data_1;
-    std::string linktime;
+    char line[132];
     if (ev.is_ex_data())
     {
-        data_0 = ev.ex_data_string();
-        data_1 = "None";
-        linktime = "None";
+        std::string data_0 = ev.ex_data_string();
+        snprintf
+        (
+            line, sizeof line,
+            "%4d %6ld %s %12s %-5s %-30s  0x%04x\n",
+            index, long(ev.timestamp()), ev.timestamp_string().c_str(),
+            ev.status_string().c_str(), ev.channel_string().c_str(),
+            data_0.c_str(), ev.get_rank()
+        );
     }
     else
     {
+        std::string data_0;
+        std::string data_1;
+        std::string linktime;
         const char * fmt = usehex ? "0x%02x" : "%5d";
         char tmp[32];
         midibyte d0, d1;
+        midibyte rawstatus = ev.get_status();
         ev.get_data(d0, d1);
         snprintf(tmp, sizeof tmp, fmt, int(d0));
         data_0 = tmp;
@@ -370,20 +378,16 @@ qseventslots::event_to_string
         }
         else
             linktime = "None";
-    }
-    char line[132];
-    midibyte rawstatus = ev.get_status();
-    if (ev.is_meta())
-        rawstatus = ev.get_meta_status();
 
-    snprintf
-    (
-        line, sizeof line,
-        "%4d %6ld %s %12s 0x%02x Ch %2s %5s %5s %12s 0x%04x\n",
-        index, long(ev.timestamp()), ev.timestamp_string().c_str(),
-        ev.status_string().c_str(), rawstatus, ev.channel_string().c_str(),
-        data_0.c_str(), data_1.c_str(), linktime.c_str(), ev.get_rank()
-    );
+        snprintf
+        (
+            line, sizeof line,
+            "%4d %6ld %s %12s 0x%02x Ch %2s %5s %5s %12s   0x%04x\n",
+            index, long(ev.timestamp()), ev.timestamp_string().c_str(),
+            ev.status_string().c_str(), rawstatus, ev.channel_string().c_str(),
+            data_0.c_str(), data_1.c_str(), linktime.c_str(), ev.get_rank()
+        );
+    }
     return std::string(line);
 }
 

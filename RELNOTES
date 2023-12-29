@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.12 2023-12-28
+Release Notes for Seq66 v. 0.99.12 2023-12-29
 
 -   Fixed clang support and FreeBSD builds.
     -   Using clang-12 and clang-16 to find errors and warnings
@@ -11,14 +11,17 @@ Release Notes for Seq66 v. 0.99.12 2023-12-28
 -   Fixed the processing of SysEx and Meta events.
     -   Reading and writing in the MIDI file upgraded.
     -   Display SysEx and text in the event editor.
-    -   Added new 'rc' option to skip, recover, or abort from bad running
-        status in MIDI files. See the trilogy.mid contributed file.
+    -   Added new 'rc' option to skip, recover, or abort from bad
+        running status in MIDI files. See the trilogy.mid contributed
+        file.
     -   Handle unterminated SysEx messages (Dixie04.mid).
 -   Fixed issue with building the command-line version with "portmidi"
     (seq66clip).
 -   Fixed bugs in --option log=file.
 -   Fixed Q button not working to set keep-queue status.
--   Fixed a one-character buffer overflow in portmidi.c.
+-   Fixed a one-character buffer overflow in portmidi.c. Thanks,
+    valgrind!
+-   Upgraded the Event editor Dump output.
 
 See NEWS for more details.
 

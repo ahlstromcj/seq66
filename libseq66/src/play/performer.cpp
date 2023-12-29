@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-12-28
+ * \updates       2023-12-29
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -479,7 +479,7 @@ performer::append_error_message (const std::string & msg) const
     std::string newmsg = msg;
     m_error_pending = true;                         /* a mutable boolean    */
     if (newmsg.empty())
-        newmsg = "performer error";
+        newmsg = "Performer error";
 
     if (! m_error_messages.empty())
     {
@@ -492,14 +492,14 @@ performer::append_error_message (const std::string & msg) const
             m_error_messages += " ";
             m_error_messages += newmsg;
             s_old_msgs.push_back(newmsg);
-            seq66::error_message("performer", newmsg);
+            seq66::error_message("Performer", newmsg);
         }
     }
     else
     {
         m_error_messages = newmsg;
         s_old_msgs.push_back(newmsg);
-        seq66::error_message("performer", newmsg);
+        seq66::error_message("Performer", newmsg);
     }
 }
 
@@ -3813,7 +3813,7 @@ performer::launch_output_thread ()
     {
         m_out_thread = std::thread(&performer::output_func, this);
         m_out_thread_launched = true;
-        debug_message("output thread launched");
+        debug_message("Output thread launched");
         if (rc().priority())                        /* Not in MinGW RCB     */
         {
             int p = rc().thread_priority();
@@ -3826,8 +3826,7 @@ performer::launch_output_thread ()
             {
                 warn_message
                 (
-                    "output: couldn't set scheduler priority, "
-                    "need root priviledges."
+                    "Output: couldn't set priority; need root priviledges."
                 );
 
                 /*
@@ -3853,7 +3852,7 @@ performer::launch_input_thread ()
     {
         m_in_thread = std::thread(&performer::input_func, this);
         m_in_thread_launched = true;
-        debug_message("input thread launched");
+        debug_message("Input thread launched");
         if (rc().priority())                        /* Not in MinGW RCB     */
         {
             int p = rc().thread_priority();
@@ -3866,13 +3865,11 @@ performer::launch_input_thread ()
             {
                 warn_message
                 (
-                    "input: couldn't set scheduler priority, "
-                    "need root priviledges."
+                    "Input: couldn't set priority; need root priviledges."
                 );
 
                 /*
                  * We don't need to exit. Let the app limp along.
-                 *
                  *
                  *      pthread_exit(0);
                  *      m_in_thread_launched = false;
@@ -7245,7 +7242,7 @@ performer::sequence_playing_change (seq::number seqno, bool on)
 void
 performer::clear_seq_edits ()
 {
-    m_seq_edit_pending = m_event_edit_pending;
+    m_seq_edit_pending = m_event_edit_pending = false;
     m_pending_loop = seq::unassigned();
 }
 
