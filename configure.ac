@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2023-12-20
+dnl \update        2023-12-29
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -534,7 +534,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2023-12-20"
+#define VERSION_DATE_SHORT "2023-12-29"
 #define API_VERSION "0.99"
 #define VERSION "0.99.12"
 

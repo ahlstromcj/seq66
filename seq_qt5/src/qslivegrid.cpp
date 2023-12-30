@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-12-22
+ * \updates       2023-12-30
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -186,6 +186,7 @@ qslivegrid::qslivegrid
             ui->buttonActivate, SIGNAL(clicked(bool)),
             this, SLOT(slot_activate_bank(bool))
         );
+        ui->labelArmMode->hide();
         ui->labelPlaylistSong->hide();
         ui->buttonLoopMode->hide();
         ui->buttonRecordMode->hide();
@@ -199,6 +200,7 @@ qslivegrid::qslivegrid
         ui->setNameLabel->hide();
         ui->txtBankName->hide();
         ui->buttonActivate->hide();
+        ui->labelArmMode->hide();
         ui->buttonLoopMode->setEnabled(true);
         ui->buttonRecordMode->setEnabled(true);
         qt_set_icon(metro_xpm, ui->buttonMetronome);
@@ -393,6 +395,15 @@ qslivegrid::set_playlist_name (const std::string & plname, bool modified)
  *
  *  Actually, we need a way to update only the loop slots in the grid layout,
  *  and only update the progress area.
+ *
+ * TODO: unhide and show if the following are active:
+ *
+ *  -   One-shot
+ *  -   Solo
+ *  -   Replace
+ *  -   Queue
+ *  -   Keep queue
+ *  -   Snapshot (snapshot stored)
  */
 
 void
@@ -408,6 +419,15 @@ qslivegrid::conditional_update ()
         show_grid_record_style();
         show_record_mode();
         show_grid_mode();
+        if (perf().has_ctrl_status())
+        {
+            QString ctrlstatus(qt(perf().ctrl_status_string()));
+            ui->labelArmMode->show();
+            ui->labelArmMode->setText(ctrlstatus);
+        }
+        else
+            ui->labelArmMode->hide();
+
         update_state();
     }
 }
@@ -2081,6 +2101,7 @@ bool
 qslivegrid::on_trigger_change (seq::number /* seqno */)
 {
     update_state();
+    set_needs_update();
     return true;
 }
 

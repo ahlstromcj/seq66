@@ -214,17 +214,17 @@ midicontrolin::status_string () const
 {
     std::string result;
     if (is_solo())
-        result = "Solo";
+        result = "Solo";                    /* solo is a queued replace     */
     else if (is_keep_queue())               /* check this before is_queue() */
         result = "Keep Q";
     else if (is_queue())
-        result = "Queued";
+        result = "Queue";
     else if (is_replace())
         result = "Replace";
     else if (is_snapshot())
         result = "Snapshot";
     else if (is_oneshot())
-        result = "One-shot";
+        result = "Oneshot";
     else if (is_learn())
         result = "Learn";
 

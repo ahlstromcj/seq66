@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2023-11-08
+ * \updates       2023-12-30
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -890,6 +890,9 @@ midicontrolfile::write_midi_control (std::ofstream & file)
 "# To use a control as a toggle, define only the Toggle stanza. For the control\n"
 "# to act only while held, define the On and Off stanzas with appropriate\n"
 "# statuses for press-and-release.\n"
+"#\n"
+"# Warning: the 'BS' key is actually the Ctrl-H key, and NOT the Backspace key.\n"
+"# The Backspace key is called 'BkSpace' in the Seq66 key-map.\n"
         ;
 
         /*

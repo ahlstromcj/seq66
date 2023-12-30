@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-12-29
+ * \updates       2023-12-30
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -6735,20 +6735,23 @@ performer::set_ctrl_status
     }
     else
     {
-        bool q = midi_control_in().is_queue(cs);
-        bool k = midi_control_in().is_keep_queue(cs);
+        bool k = midi_control_in().is_keep_queue(cs);   /* keep-queue only  */
+        bool q = midi_control_in().is_queue(cs);        /* queue present    */
+        bool s = midi_control_in().is_solo(cs);         /* queued replace   */
         if (k)
         {
             midi_control_in().remove_status(automation::ctrlstatus::queue);
             midi_control_in().remove_status(automation::ctrlstatus::keep_queue);
         }
+        else if (s)
+        {
+            midi_control_in().remove_status(automation::ctrlstatus::queue);
+            midi_control_in().remove_status(automation::ctrlstatus::replace);
+        }
         else if (q)
         {
-            if (! midi_control_in().is_keep_queue())
-            {
-                midi_control_in().remove_status(automation::ctrlstatus::queue);
-                unset_queued_replace();
-            }
+            midi_control_in().remove_status(automation::ctrlstatus::queue);
+            unset_queued_replace();
         }
         else
             midi_control_in().remove_status(cs);
@@ -6756,6 +6759,7 @@ performer::set_ctrl_status
         if (snap)
             restore_snapshot();
     }
+    notify_trigger_change(seq::unassigned(), change::no);
     display_ctrl_status(cs, on);
     return true;
 }
@@ -8391,7 +8395,7 @@ performer::automation_replace
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
     {
-        automation::ctrlstatus cs = add_queue(automation::ctrlstatus::replace);
+        automation::ctrlstatus cs = automation::ctrlstatus::replace;
         return set_ctrl_status(a, cs);
     }
     else
@@ -8614,7 +8618,7 @@ performer::automation_solo
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
     {
-        automation::ctrlstatus cs = automation::ctrlstatus::replace;
+        automation::ctrlstatus cs = add_queue(automation::ctrlstatus::replace);
         if (a == automation::action::toggle)
             result = toggle_ctrl_status(cs);
         else

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-12-04
+ * \updates       2023-12-29
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3468,6 +3468,11 @@ public:                                 /* access functions for the containers *
     automation::ctrlstatus ctrl_status () const
     {
         return midi_control_in().status();
+    }
+
+    bool has_ctrl_status () const
+    {
+        return midi_control_in().is_status();
     }
 
     std::string ctrl_status_string () const
