@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-11-18
+ * \updates       2024-01-01
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of midicontrol objects keyed by a key ordinal
@@ -269,6 +269,11 @@ public:
     void remove_status (automation::ctrlstatus status)
     {
         m_control_status &= ~status;
+    }
+
+    void clear_status ()
+    {
+        m_control_status = automation::ctrlstatus::none;
     }
 
     void remove_queued_replace ()

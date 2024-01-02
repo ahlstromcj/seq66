@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-12-29
+ * \updates       2024-01-02
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -514,18 +514,20 @@ private:
     sequence m_seq_clipboard;
 
     /**
+     *  A value not equal to -1 (it ranges from 0 to 31) indicates we're now
+     *  using the saved screen-set state to control the queue-replace
+     *  (queue-solo) status of sequence toggling.  This value is set to -1
+     *  when queue mode is exited.
+     */
+
+    seq::number m_queued_replace_slot;
+
+    /**
      *  Indicates that a snapshot has been stored. It is cleared (currently)
      *  when a soloed pattern is clicked again.
      */
 
     seq::number m_solo_seqno;
-
-    /**
-     *  Set to screenset::unassigned() at first. Moved to setmapper for better
-     *  handling.
-     *
-     * screenset::number m_screenset_to_copy;
-     */
 
 private:                            /* key, midi, and op container section  */
 
@@ -593,15 +595,6 @@ private:                            /* key, midi, and op container section  */
      */
 
     setmapper m_set_mapper;
-
-    /**
-     *  A value not equal to -1 (it ranges from 0 to 31) indicates we're now
-     *  using the saved screen-set state to control the queue-replace
-     *  (queue-solo) status of sequence toggling.  This value is set to -1
-     *  when queue mode is exited.  See the m_no_queued_solo value.
-     */
-
-    seq::number m_queued_replace_slot;
 
     /**
      *  Holds the global MIDI transposition value.

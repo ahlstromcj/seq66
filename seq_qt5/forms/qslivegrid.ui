@@ -182,6 +182,12 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+         <italic>true</italic>
+        </font>
+       </property>
        <property name="text">
         <string>Normal</string>
        </property>

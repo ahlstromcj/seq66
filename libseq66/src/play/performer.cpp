@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2023-12-30
+ * \updates       2024-01-02
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -321,10 +321,8 @@ performer::performer (int ppqn, int rows, int columns) :
     m_current_seqno         (seq::unassigned()),
     m_moving_seq            (),
     m_seq_clipboard         (),
+    m_queued_replace_slot   (seq::unassigned()),
     m_solo_seqno            (seq::unassigned()),
-    /*
-     * m_screenset_to_copy  (screenset::unassigned()),
-     */
     m_clocks                (),                 /* vector wrapper class     */
     m_inputs                (),                 /* vector wrapper class     */
     m_port_map_error        (false),
@@ -338,7 +336,6 @@ performer::performer (int ppqn, int rows, int columns) :
     (
         m_set_master, m_mute_groups, rows, columns
     ),
-    m_queued_replace_slot   (seq::unassigned()),
     m_transpose             (0),
     m_out_thread            (),
     m_in_thread             (),
@@ -631,13 +628,7 @@ bool
 performer::modified () const
 {
     bool result = m_is_modified;
-    if (result)
-    {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("Modified\n");
-#endif
-    }
-    else
+    if (! result)
         result = set_mapper().any_modified_sequences();
 
     return result;
@@ -3189,11 +3180,9 @@ performer::repitch (event & ev) const
     {
         midibyte incoming = ev.d0();
         midibyte outgoing = m_note_mapper->fast_convert(incoming);
-
-#if defined SEQ66_PLATFORM_DEBUG
         if (rc().investigate())
             printf("Note %d in --> %d out\n", incoming, outgoing);
-#endif
+
         ev.d0(outgoing);
     }
 }
@@ -6737,25 +6726,34 @@ performer::set_ctrl_status
     {
         bool k = midi_control_in().is_keep_queue(cs);   /* keep-queue only  */
         bool q = midi_control_in().is_queue(cs);        /* queue present    */
+//      bool r = midi_control_in().is_replace(cs);      /* replace          */
         bool s = midi_control_in().is_solo(cs);         /* queued replace   */
         if (k)
         {
-            midi_control_in().remove_status(automation::ctrlstatus::queue);
-            midi_control_in().remove_status(automation::ctrlstatus::keep_queue);
+            midi_control_in().clear_status();
         }
         else if (s)
         {
-            midi_control_in().remove_status(automation::ctrlstatus::queue);
-            midi_control_in().remove_status(automation::ctrlstatus::replace);
+            midi_control_in().clear_status();
         }
         else if (q)
         {
-            midi_control_in().remove_status(automation::ctrlstatus::queue);
-            unset_queued_replace();
+            if (! midi_control_in().is_keep_queue())    /* keep q current? */
+            {
+                midi_control_in().clear_status();
+//              midi_control_in().remove_status(automation::ctrlstatus::queue);
+            }
         }
+//      else if (r)
+//      {
+//          midi_control_in().clear_status();
+//          midi_control_in().remove_status(automation::ctrlstatus::replace);
+//      }
         else
-            midi_control_in().remove_status(cs);
-
+        {
+            midi_control_in().clear_status();
+//          midi_control_in().remove_status(cs);
+        }
         if (snap)
             restore_snapshot();
     }
@@ -6948,7 +6946,7 @@ performer::group_learn_complete (const keystroke & k, bool good)
  *
  *  One-shots are allowed only if we are not playing this sequence.
  *
- * \param seq
+ * \param seqno
  *      The sequence number of the sequence to be potentially toggled.
  *      This value must be a valid and active sequence number. If in
  *      queued-replace mode, and if this pattern number is different from the
@@ -6969,7 +6967,7 @@ performer::sequence_playing_toggle (seq::number seqno)
         bool is_oneshot = midi_control_in().is_oneshot();
         if (is_oneshot && ! s->armed())
         {
-            s->toggle_one_shot();                   /* why not just turn on */
+            s->toggle_one_shot();
         }
         else if (is_replace && (is_queue || is_keep_q))
         {
@@ -7395,13 +7393,14 @@ performer::midi_control_keystroke (const keystroke & k)
                     bool ok = mop.call(a, d0, d1, index, invert);
                     if (! ok)
                     {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                        printf
-                        (
-                            "Action %d: code %d, d0 %d, d1 %d ignored\n",
-                            index, static_cast<int>(a), d0, d1
-                        );
-#endif
+                        if (rc().investigate())
+                        {
+                            printf
+                            (
+                                "Action %d: code %d, d0 %d, d1 %d ignored\n",
+                                index, static_cast<int>(a), d0, d1
+                            );
+                        }
                     }
                 }
 
@@ -7912,7 +7911,6 @@ performer::record_mode (alteration rm)
 }
 
 /**
- *  EXPERIMENTAL.
  *  Called first when setting up a pattern for a queued solo.
  */
 
@@ -7926,6 +7924,7 @@ performer::set_solo (seq::number seqno)
         bool soloed = s->get_soloed();
         s->set_soloed(! soloed);
         s->toggle_queued();
+        m_solo_seqno = s->get_soloed() ? seqno : seq::unassigned() ;
     }
     return result;
 }
@@ -8033,14 +8032,8 @@ performer::loop_control
                     result = set_thru(seqno, false, true);  /* true=toggle  */
                 else if (gm == gridmode::solo)
                 {
-#if defined SEQ66_SUPPORT_QUEUED_SOLO
-                    seq::pointer s = get_sequence(seqno);
-                    if (s)
-                    {
-                        bool soloed = s->get_soloed();
-                        s->set_soloed(! soloed);
-                        s->toggle_queued();
-                    }
+#if defined SEQ66_SUPPORT_QUEUED_SOLO                       // undefined
+                    result = set_solo(seqno);
 #else
                     result = replace_for_solo(seqno, true);
 #endif
@@ -8391,15 +8384,15 @@ performer::automation_replace
     int index, bool inverse
 )
 {
+    bool result = true;
     std::string name = auto_name(automation::slot::mod_replace);
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
     {
         automation::ctrlstatus cs = automation::ctrlstatus::replace;
-        return set_ctrl_status(a, cs);
+        result = set_ctrl_status(a, cs);
     }
-    else
-        return true;                    /* pretend the key release worked   */
+    return result;
 }
 
 /**
@@ -8619,9 +8612,11 @@ performer::automation_solo
     if (opcontrol::allowed(d0, inverse))
     {
         automation::ctrlstatus cs = add_queue(automation::ctrlstatus::replace);
+#if defined USE_TOGGLE_CTRL_STATUS
         if (a == automation::action::toggle)
             result = toggle_ctrl_status(cs);
         else
+#endif
             result = set_ctrl_status(a, cs);
     }
     return result;

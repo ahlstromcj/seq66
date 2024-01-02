@@ -6913,7 +6913,7 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
     {
         play(get_queued_tick() - 1, playbackmode, resumenoteons);
         (void) toggle_playing(tick, resumenoteons);
-#if defined SEQ66_SUPPORT_QUEUED_SOLO
+#if defined SEQ66_SUPPORT_QUEUED_SOLO       // undefined
         if (get_soloed())
         {
             (void) perf()->replace_for_solo(seq_number(), true);
@@ -6921,11 +6921,13 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
         else
         {
 #endif
+            if (get_soloed())               // TRIAL CODE
+
             (void) perf()->set_ctrl_status      /* what about keep_queue?   */
             (
                 automation::action::off, automation::ctrlstatus::queue
             );
-#if defined SEQ66_SUPPORT_QUEUED_SOLO
+#if defined SEQ66_SUPPORT_QUEUED_SOLO       // undefined
         }
 #endif
     }

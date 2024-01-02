@@ -436,7 +436,7 @@ pkginclude_HEADERS = \
  qportwidget.hpp \
  qsabout.hpp \
  qsappinfo.hpp \
-qsbuildinfo.hpp \
+ qsbuildinfo.hpp \
  qscrollmaster.h \
  qscrollslave.h \
  qseditoptions.hpp \

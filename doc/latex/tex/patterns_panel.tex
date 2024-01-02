@@ -705,18 +705,20 @@
    When the "replace" hot-key is
    pressed, and then a pattern's hot-key is pressed,
    that sequence is unmuted, and all of the other sequences are muted.
-   "Replace" is a form of "solo" where the unmuted patterns cannot be
-   restored.
+   Other patterns can be clicked to be armed; when the "replace" control
+   is clicked again, the original patterns armed before the first "replace"
+   click are restored.
    "Replace" is also implemented via MIDI control,
    where the MIDI control can be activated, but then the user has to select
    the desired sequence.  
 
    \begin{comment}
 
-   FIX THE FOLLOWING!!!
-
    \index{queue!solo}
+% TODO
 %  \textsl{Seq66} provides an extension to the replace/solo functionality
+
+
    \textsl{Seq66} intends to provide an extension to the replace functionality
    that is called "queued-replace" or "queued-solo".  In this feature, when
    the "keep queue" function is activated, the replace function is queued so
