@@ -2603,7 +2603,6 @@ qseditoptions::sync_rc ()
      * ui->checkBoxSaveStyleSheet->hide();
      */
 
-//  filespec = rc().filespec_helper(usr().style_sheet());
     filespec = rc().style_sheet_filespec();
     ui->checkBoxSaveStyleSheet->setChecked(false);
     ui->checkBoxActiveStyleSheet->setChecked(rc().style_sheet_active());

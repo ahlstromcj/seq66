@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2023-09-30
+ * \updates       2024-01-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -459,7 +459,7 @@ keycontainer::keys_automation ()
         { "Home",      automation::action::on      }, //  9 play_ss
         { ".",         automation::action::toggle  }, // 10 playback (pause)
         { "P",         automation::action::on      }, // 11 song_record
-        { "BS",        automation::action::on      }, // 12 solo
+        { "BkSpace",   automation::action::on      }, // 12 solo
         { "LF",        automation::action::on      }, // 13 thru
         { "PageUp",    automation::action::on      }, // 14 bpm_page_up
         { "PageDn",    automation::action::on      }, // 15 bpm_page_dn

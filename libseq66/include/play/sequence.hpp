@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2023-12-25
+ * \updates       2024-01-03
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -552,11 +552,15 @@ private:
 
     bool m_queued;
 
+#if defined SEQ66_SUPPORT_QUEUED_SOLO
+
     /**
      *  True if this pattern is flagged for being soloed.
      */
 
     bool m_soloed;
+
+#endif
 
     /**
      *  A member from the Kepler34 project to indicate we are in one-shot mode
@@ -1394,6 +1398,8 @@ public:
         return get_queued() && (get_queued_tick() <= tick);
     }
 
+#if defined SEQ66_SUPPORT_QUEUED_SOLO
+
     bool get_soloed () const
     {
         return m_soloed;
@@ -1403,6 +1409,8 @@ public:
     {
         m_soloed = flag;
     }
+
+#endif
 
     bool set_recording_style (recordstyle rs);
 

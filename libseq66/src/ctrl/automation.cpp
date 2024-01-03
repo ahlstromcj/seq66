@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2023-09-30
+ * \updates       2024-01-03
  * \license       GNU GPLv2 or above
  *
  *  Currently, there is no code in this file.
@@ -218,6 +218,38 @@ actionable (action a)
     return (a == action::on || a == action::toggle);
 }
 
+/**
+ *  Lists the bits set in a control-status value.
+ */
+
+std::string
+ctrlstatus_to_string (ctrlstatus cs)
+{
+    std::string result;
+    if (bit_test_and(cs, ctrlstatus::replace))
+        result += "replace ";
+
+    if (bit_test_and(cs, ctrlstatus::snapshot))
+        result += "snapshot ";
+
+    if (bit_test_and(cs, ctrlstatus::queue))
+        result += "queue ";
+
+    if (bit_test_and(cs, ctrlstatus::keep_queue))
+        result += "keep queue ";
+
+    if (bit_test_and(cs, ctrlstatus::oneshot))
+        result += "oneshot ";
+
+    if (bit_test_and(cs, ctrlstatus::learn))
+        result += "learn ";
+
+    if (result.empty())
+        result = "none";
+
+    return result;
+}
+
 /*
  *  This code is currently unused.  We currently don't need to lookup by a
  *  slots string name, and use performer::print_parameters() on a
@@ -398,7 +430,7 @@ string_to_slot (const std::string & s)
     return result;
 }
 
-#endif  // defined SEQ66_USE_SLOT_STRING_CONVERSIONS
+#endif      // defined SEQ66_USE_SLOT_STRING_CONVERSIONS
 
 }           // namespace automation
 

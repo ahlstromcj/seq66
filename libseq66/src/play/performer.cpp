@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2024-01-02
+ * \updates       2024-01-03
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -322,7 +322,9 @@ performer::performer (int ppqn, int rows, int columns) :
     m_moving_seq            (),
     m_seq_clipboard         (),
     m_queued_replace_slot   (seq::unassigned()),
+#if defined SEQ66_SUPPORT_QUEUED_SOLO
     m_solo_seqno            (seq::unassigned()),
+#endif
     m_clocks                (),                 /* vector wrapper class     */
     m_inputs                (),                 /* vector wrapper class     */
     m_port_map_error        (false),
@@ -6726,7 +6728,6 @@ performer::set_ctrl_status
     {
         bool k = midi_control_in().is_keep_queue(cs);   /* keep-queue only  */
         bool q = midi_control_in().is_queue(cs);        /* queue present    */
-//      bool r = midi_control_in().is_replace(cs);      /* replace          */
         bool s = midi_control_in().is_solo(cs);         /* queued replace   */
         if (k)
         {
@@ -6741,18 +6742,11 @@ performer::set_ctrl_status
             if (! midi_control_in().is_keep_queue())    /* keep q current? */
             {
                 midi_control_in().clear_status();
-//              midi_control_in().remove_status(automation::ctrlstatus::queue);
             }
         }
-//      else if (r)
-//      {
-//          midi_control_in().clear_status();
-//          midi_control_in().remove_status(automation::ctrlstatus::replace);
-//      }
         else
         {
             midi_control_in().clear_status();
-//          midi_control_in().remove_status(cs);
         }
         if (snap)
             restore_snapshot();
@@ -6962,25 +6956,22 @@ performer::sequence_playing_toggle (seq::number seqno)
     if (result)
     {
         bool is_queue = midi_control_in().is_queue();
-        bool is_keep_q = midi_control_in().is_keep_queue();
         bool is_replace = midi_control_in().is_replace();
         bool is_oneshot = midi_control_in().is_oneshot();
+        bool is_solo = midi_control_in().is_solo();     /* queued replace   */
         if (is_oneshot && ! s->armed())
         {
             s->toggle_one_shot();
         }
-        else if (is_replace && (is_queue || is_keep_q))
+        else if (is_solo)
         {
             if (m_queued_replace_slot != seq::unassigned())
             {
                 if (seqno != m_queued_replace_slot)
-                {
-                    unset_queued_replace(false);    /* don't clear bits */
                     save_queued(seqno);
-                }
             }
             else
-                save_queued(seqno);     /* not current s'set??? */
+                save_queued(seqno);                     /* not current set? */
 
             unqueue_sequences(seqno);
             m_queued_replace_slot = seqno;
@@ -7910,6 +7901,8 @@ performer::record_mode (alteration rm)
     notify_automation_change(automation::slot::quan_record);
 }
 
+#if defined SEQ66_SUPPORT_QUEUED_SOLO
+
 /**
  *  Called first when setting up a pattern for a queued solo.
  */
@@ -7923,11 +7916,12 @@ performer::set_solo (seq::number seqno)
     {
         bool soloed = s->get_soloed();
         s->set_soloed(! soloed);
-        s->toggle_queued();
         m_solo_seqno = s->get_soloed() ? seqno : seq::unassigned() ;
     }
     return result;
 }
+
+#endif
 
 /**
  *  Provides the pattern-control function... hot-keys that toggle the patterns
@@ -8406,12 +8400,25 @@ performer::automation_snapshot
     int index, bool inverse
 )
 {
+    bool result = true;
     std::string name = auto_name(automation::slot::mod_snapshot);
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
-        return set_ctrl_status(a, automation::ctrlstatus::snapshot);
-    else
-        return true;                    /* pretend the key release worked   */
+    {
+        /*
+         * EXPERIMENTAL. Add queuing.  Currently this queues only the
+         * click pattern; it does not queue the restored snapshot.
+         * For now we do not implement the queuing.
+         *
+         * automation::ctrlstatus cs =
+         *      add_queue(automation::ctrlstatus::snapshot);
+         */
+
+        automation::ctrlstatus cs = automation::ctrlstatus::snapshot;
+        result = set_ctrl_status(a, cs);
+    }
+
+    return result;
 }
 
 /**

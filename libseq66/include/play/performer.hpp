@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2024-01-02
+ * \updates       2024-01-03
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2458,12 +2458,19 @@ public:
     bool sequence_playing_toggle (seq::number seqno);
     bool sequence_playing_change (seq::number seqno, bool on);
     bool replace_for_solo (seq::number seqno, bool queued = false);
+#if defined SEQ66_SUPPORT_QUEUED_SOLO
     bool set_solo (seq::number seqno);
+#endif
     void set_keep_queue (bool activate);
 
     bool is_keep_queue () const
     {
         return midi_control_in().is_keep_queue();
+    }
+
+    bool is_solo () const
+    {
+        return midi_control_in().is_solo();
     }
 
     /*

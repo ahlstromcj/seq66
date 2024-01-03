@@ -1,12 +1,6 @@
-
-// #include <iostream>
-// #include <exception>
-// #include <cassert>
-
 #include <initializer_list>
 #include <stdexcept>
 #include <vector>
-
 
 template <class TYPE>
 class ring_buffer

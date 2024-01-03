@@ -945,7 +945,6 @@ qseqroll::draw_drum_notes
 
     int unitheight = unit_height();
     int unitdecr = unit_height() - 2;
-//  int noteheight = unit_height() - 2;      // + 1;
     s->draw_lock();
     for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
@@ -1735,7 +1734,7 @@ qseqroll::move_selected_notes (int dx, int dy)
 {
     if (paste())
     {
-        //// move_selection_box(dx, dy);
+        /* move_selection_box(dx, dy); */
     }
     else
     {
