@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-01-03
+ * \updates       2024-01-04
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -178,9 +178,6 @@ sequence::sequence (int ppqn) :
     m_alter_recording           (alteration::none),
     m_thru                      (false),
     m_queued                    (false),
-#if defined SEQ66_SUPPORT_QUEUED_SOLO
-    m_soloed                    (false),
-#endif
     m_one_shot                  (false),
     m_one_shot_tick             (0),
     m_step_count                (0),
@@ -6915,23 +6912,12 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
     {
         play(get_queued_tick() - 1, playbackmode, resumenoteons);
         (void) toggle_playing(tick, resumenoteons);
-#if defined SEQ66_SUPPORT_QUEUED_SOLO       // undefined
-        if (get_soloed())
+        if (! perf()->is_solo())
         {
-            (void) perf()->replace_for_solo(seq_number(), true);
+            automation::action a = automation::action::off;
+            automation::ctrlstatus cs = automation::ctrlstatus::queue;
+            (void) perf()->set_ctrl_status(a, cs);
         }
-        else
-        {
-#endif
-            if (! perf()->is_solo())
-            {
-                automation::action a = automation::action::off;
-                automation::ctrlstatus cs = automation::ctrlstatus::queue;
-                (void) perf()->set_ctrl_status(a, cs);
-            }
-#if defined SEQ66_SUPPORT_QUEUED_SOLO       // undefined
-        }
-#endif
     }
     if (check_one_shot_tick(tick))
     {

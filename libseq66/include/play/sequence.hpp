@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2024-01-03
+ * \updates       2024-01-04
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -48,12 +48,6 @@
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
-
-/**
- *  EXPERIMENTAL.
- */
-
-#undef SEQ66_SUPPORT_QUEUED_SOLO
 
 /**
  *  Provides an integer value for color that matches PaletteColor::none.  That
@@ -551,16 +545,6 @@ private:
      */
 
     bool m_queued;
-
-#if defined SEQ66_SUPPORT_QUEUED_SOLO
-
-    /**
-     *  True if this pattern is flagged for being soloed.
-     */
-
-    bool m_soloed;
-
-#endif
 
     /**
      *  A member from the Kepler34 project to indicate we are in one-shot mode
@@ -1397,20 +1381,6 @@ public:
     {
         return get_queued() && (get_queued_tick() <= tick);
     }
-
-#if defined SEQ66_SUPPORT_QUEUED_SOLO
-
-    bool get_soloed () const
-    {
-        return m_soloed;
-    }
-
-    void set_soloed (bool flag)
-    {
-        m_soloed = flag;
-    }
-
-#endif
 
     bool set_recording_style (recordstyle rs);
 

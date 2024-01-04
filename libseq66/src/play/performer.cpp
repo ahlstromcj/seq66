@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2024-01-03
+ * \updates       2024-01-04
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -257,12 +257,6 @@
 #include "util/filefunctions.hpp"       /* seq66::filename_base(), etc.     */
 
 /*
- *  I think there's a bug in handling playlists.
- */
-
-#define USE_SIGNALLED_CHANGES_FIX
-
-/*
  *  Do not document a namespace; it breaks Doxygen.
  */
 
@@ -322,9 +316,6 @@ performer::performer (int ppqn, int rows, int columns) :
     m_moving_seq            (),
     m_seq_clipboard         (),
     m_queued_replace_slot   (seq::unassigned()),
-#if defined SEQ66_SUPPORT_QUEUED_SOLO
-    m_solo_seqno            (seq::unassigned()),
-#endif
     m_clocks                (),                 /* vector wrapper class     */
     m_inputs                (),                 /* vector wrapper class     */
     m_port_map_error        (false),
@@ -7901,28 +7892,6 @@ performer::record_mode (alteration rm)
     notify_automation_change(automation::slot::quan_record);
 }
 
-#if defined SEQ66_SUPPORT_QUEUED_SOLO
-
-/**
- *  Called first when setting up a pattern for a queued solo.
- */
-
-bool
-performer::set_solo (seq::number seqno)
-{
-    seq::pointer s = get_sequence(seqno);
-    bool result = bool(s);
-    if (s)
-    {
-        bool soloed = s->get_soloed();
-        s->set_soloed(! soloed);
-        m_solo_seqno = s->get_soloed() ? seqno : seq::unassigned() ;
-    }
-    return result;
-}
-
-#endif
-
 /**
  *  Provides the pattern-control function... hot-keys that toggle the patterns
  *  in the current set.
@@ -8025,13 +7994,7 @@ performer::loop_control
                 else if (gm == gridmode::thru)
                     result = set_thru(seqno, false, true);  /* true=toggle  */
                 else if (gm == gridmode::solo)
-                {
-#if defined SEQ66_SUPPORT_QUEUED_SOLO                       // undefined
-                    result = set_solo(seqno);
-#else
-                    result = replace_for_solo(seqno, true);
-#endif
-                }
+                    (void) sequence_playing_change(seqno, true);
                 else if (gm == gridmode::cut)
                     result = cut_sequence(seqno);
                 else if (gm == gridmode::double_length)
@@ -8619,12 +8582,7 @@ performer::automation_solo
     if (opcontrol::allowed(d0, inverse))
     {
         automation::ctrlstatus cs = add_queue(automation::ctrlstatus::replace);
-#if defined USE_TOGGLE_CTRL_STATUS
-        if (a == automation::action::toggle)
-            result = toggle_ctrl_status(cs);
-        else
-#endif
-            result = set_ctrl_status(a, cs);
+        result = set_ctrl_status(a, cs);
     }
     return result;
 }
@@ -9140,21 +9098,11 @@ performer::open_previous_list (bool opensong)
 void
 performer::handle_list_change (bool opensong)
 {
-#if defined USE_SIGNALLED_CHANGES_FIX
     if (opensong)
         next_song_mode();
 
     if (signalled_changes())
         notify_song_action(false);
-#else
-    if (! signalled_changes())
-    {
-        if (opensong)
-            next_song_mode();
-
-        notify_song_action(false);
-    }
-#endif
 }
 
 bool
@@ -9270,26 +9218,13 @@ performer::open_previous_song (bool opensong)
 void
 performer::handle_song_change (bool opensong)
 {
-#if defined USE_SIGNALLED_CHANGES_FIX
     if (opensong)
         next_song_mode();
 
     if (signalled_changes())
         notify_song_action(false);
 
-    start_playing();        /* ca 2023-10-31 */
-#else
-    if (! signalled_changes())
-    {
-        if (result)
-        {
-            if (opensong)
-                next_song_mode();
-
-            notify_song_action(false);
-        }
-    }
-#endif
+    start_playing();
 }
 
 bool
@@ -10098,25 +10033,18 @@ performer::set_grid_mode (gridmode gm)
 {
     if (gm < gridmode::max)
     {
-#if defined SOLO_KEEP_QUEUE                             // undefined
-        gridmode oldmode = usr().grid_mode();
-#endif
         usr().grid_mode(gm);
         if (gm != gridmode::record)
         {
             usr().record_mode(alteration::none);
             usr().grid_record_style(recordstyle::merge);
-#if defined SOLO_KEEP_QUEUE                             // undefined
-            if (gm == gridmode::solo)                   /* ca 2023-12-18    */
-            {
-                set_keep_queue(true);
-            }
-            else if (oldmode == gridmode::solo)
-            {
-                set_keep_queue(false);
-            }
-#else
-#endif
+            automation::ctrlstatus cs =
+                add_queue(automation::ctrlstatus::replace);
+
+            if (gm == gridmode::solo)
+                (void) set_ctrl_status(automation::action::on, cs);
+            else
+                (void) set_ctrl_status(automation::action::off, cs);
         }
         notify_automation_change(automation::slot::grid_loop);
     }
