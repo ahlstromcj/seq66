@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2020-07-23
+ * \updates     2024-01-05
  * \license     GNU GPLv2 or above
  *
  * Implementation Notes (by Mark Nelson):
@@ -197,7 +197,7 @@ Pt_Start (int resolution, PtCallback * callback, void * userData)
 PtError
 Pt_Stop (void)
 {
-    pt_callback_proc_id++;
+    ++pt_callback_proc_id;
     if (pt_thread_created)
     {
         pthread_join(pt_thread_pid, NULL);
@@ -208,13 +208,13 @@ Pt_Stop (void)
 }
 
 int
-Pt_Started ()
+Pt_Started (void)
 {
     return time_started_flag;
 }
 
 PtTimestamp
-Pt_Time ()
+Pt_Time (void)
 {
     long seconds, milliseconds;
     struct timeb now;

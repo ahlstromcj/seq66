@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2018-04-11
+ * \updates     2024-01-05
  * \license     GNU GPLv2 or above
  */
 
@@ -39,7 +39,7 @@ static long time_offset = 0;
 static int time_started_flag = FALSE;
 static long time_resolution;
 static MMRESULT timer_id;
-static PtCallback *time_callback;
+static PtCallback * time_callback;
 
 void CALLBACK
 winmm_time_callback
@@ -76,7 +76,7 @@ Pt_Start (int resolution, PtCallback * callback, void * userData)
 }
 
 PMEXPORT PtError
-Pt_Stop ()
+Pt_Stop (void)
 {
     if (! time_started_flag)
         return ptAlreadyStopped;
@@ -93,13 +93,13 @@ Pt_Stop ()
 }
 
 PMEXPORT int
-Pt_Started ()
+Pt_Started (void)
 {
     return time_started_flag;
 }
 
 PMEXPORT PtTimestamp
-Pt_Time ()
+Pt_Time (void)
 {
     return timeGetTime() - time_offset;
 }

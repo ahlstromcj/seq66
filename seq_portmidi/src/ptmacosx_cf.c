@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2018-05-14
- * \updates     2018-05-14
+ * \updates     2024-01-05
  * \license     GNU GPLv2 or above
  */
 
@@ -55,13 +55,15 @@ typedef struct
 } PtThreadParams;
 
 
-void Pt_CFTimerCallback(CFRunLoopTimerRef timer, void * info)
+void
+Pt_CFTimerCallback (CFRunLoopTimerRef timer, void * info)
 {
     PtThreadParams *params = (PtThreadParams*)info;
     (*params->callback)(Pt_Time(), params->userData);
 }
 
-static void* Pt_Thread(void *p)
+static void *
+Pt_Thread (void * p)
 {
     CFTimeInterval timerInterval;
     CFRunLoopTimerContext timerContext;
@@ -120,7 +122,7 @@ static void* Pt_Thread(void *p)
 }
 
 PtError
-Pt_Start (int resolution, PtCallback *callback, void *userData)
+Pt_Start (int resolution, PtCallback * callback, void * userData)
 {
     printf("Pt_Start() called\n");
     if (time_started_flag)      /* make sure we're not already playing */
@@ -151,7 +153,8 @@ Pt_Start (int resolution, PtCallback *callback, void *userData)
     }
 }
 
-PtError Pt_Stop()
+PtError
+Pt_Stop (void)
 {
     printf("Pt_Stop called\n");
     CFRunLoopStop(timerRunLoop);
@@ -159,18 +162,21 @@ PtError Pt_Stop()
     return ptNoError;
 }
 
-int Pt_Started()
+int
+Pt_Started (void)
 {
     return time_started_flag;
 }
 
-PtTimestamp Pt_Time()
+PtTimestamp
+Pt_Time (void)
 {
     CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
     return (PtTimestamp)((now - startTime) * 1000.0);
 }
 
-void Pt_Sleep(int32_t duration)
+void
+Pt_Sleep (int32_t duration)
 {
     usleep(duration * 1000);
 }

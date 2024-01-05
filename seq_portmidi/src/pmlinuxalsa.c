@@ -325,7 +325,7 @@ alsa_write_byte (PmInternal * midi, midibyte_t byte, PmTimestamp timestamp)
             /* compute relative time of event = timestamp - now + latency */
 
             PmTimestamp now = midi->time_proc ?
-                midi->time_proc(midi->time_info) : Pt_Time(NULL) ;
+                midi->time_proc(midi->time_info) : Pt_Time() ;
 
             /*
              * if timestamp is zero, send immediately.

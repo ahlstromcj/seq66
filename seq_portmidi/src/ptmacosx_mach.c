@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2018-05-14
- * \updates     2018-05-14
+ * \updates     2024-01-05
  * \license     GNU GPLv2 or above
  */
 
@@ -113,43 +113,50 @@ Pt_CallbackProc (void * p)
     return NULL;
 }
 
-PtError Pt_Start(int resolution, PtCallback *callback, void *userData)
+PtError
+Pt_Start (int resolution, PtCallback * callback, void * userData)
 {
     if (time_started_flag) return ptAlreadyStarted;
     start_time = AudioGetCurrentHostTime();
     if (callback)
     {
         int res;
-        pt_callback_parameters *parms;
+        pt_callback_parameters * parms = (pt_callback_parameters *)
+            malloc(sizeof(pt_callback_parameters));
 
-        parms = (pt_callback_parameters *) malloc(sizeof(pt_callback_parameters));
-        if (!parms) return ptInsufficientMemory;
+        if (! parms)
+            return ptInsufficientMemory;
+
         parms->id = pt_callback_proc_id;
         parms->resolution = resolution;
         parms->callback = callback;
         parms->userData = userData;
         res = pthread_create(&pt_thread_pid, NULL, Pt_CallbackProc, parms);
-        if (res != 0) return ptHostError;
+        if (res != 0)
+            return ptHostError;
     }
     time_started_flag = TRUE;
     return ptNoError;
 }
 
-PtError Pt_Stop()
+PtError
+Pt_Stop (void)
 {
     /* printf("Pt_Stop called\n"); */
-    pt_callback_proc_id++;
+    ++pt_callback_proc_id;
     pthread_join(pt_thread_pid, NULL);
     time_started_flag = FALSE;
     return ptNoError;
 }
 
-int Pt_Started()
+int
+Pt_Started (void)
 {
     return time_started_flag;
 }
 
-PtTimestamp Pt_Time()
+PtTimestamp
+Pt_Time (void)
 {
     UInt64 clock_time, nsec_time;
     clock_time = AudioGetCurrentHostTime() - start_time;
@@ -157,7 +164,8 @@ PtTimestamp Pt_Time()
     return (PtTimestamp)(nsec_time / NSEC_PER_MSEC);
 }
 
-void Pt_Sleep(int32_t duration)
+void
+Pt_Sleep (int32_t duration)
 {
     usleep(duration * 1000);
 }

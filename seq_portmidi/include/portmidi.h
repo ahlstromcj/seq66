@@ -30,7 +30,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-06-02
+ * \updates     2024-01-05
  * \license     GNU GPLv2 or above
  *
  * Copyright (c) 1999-2000 Ross Bencina and Phil Burk
@@ -299,7 +299,7 @@ PMEXPORT void Pm_set_hosterror_text (const char * msg);
 PMEXPORT const char * Pm_hosterror_text (void);
 PMEXPORT char * Pm_hosterror_text_mutable (void);
 PMEXPORT void Pm_set_hosterror (int flag);
-PMEXPORT int Pm_hosterror ();
+PMEXPORT int Pm_hosterror (void);
 
 PMEXPORT const char * Pm_error_message (void);
 PMEXPORT int Pm_device_opened (int deviceid);

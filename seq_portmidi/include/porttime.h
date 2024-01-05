@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2019-04-11
+ * \updates     2024-01-05
  * \license     GNU GPLv2 or above
  *
  * change log for porttime:
@@ -100,19 +100,19 @@ PMEXPORT PtError Pt_Start
  *  Upon success, returns ptNoError. See PtError for other values.
  */
 
-PMEXPORT PtError Pt_Stop ();
+PMEXPORT PtError Pt_Stop (void);
 
 /**
  *  Pt_Started() returns true iff the timer is running.
  */
 
-PMEXPORT int Pt_Started ();
+PMEXPORT int Pt_Started (void);
 
 /**
  *  Pt_Time() returns the current time in ms.
  */
 
-PMEXPORT PtTimestamp Pt_Time ();
+PMEXPORT PtTimestamp Pt_Time (void);
 
 /**
  *  Pt_Sleep() pauses, allowing other threads to run.
