@@ -1810,7 +1810,13 @@ Pm_OpenOutput
         if (! Pt_Started())
             Pt_Start(1, 0, 0);
 
-        /* time_get does not take a parameter, so coerce */
+        /*
+         * time_get does not take a parameter, so coerce. But...
+         *
+         *  warning: cast between incompatible function types from
+         *  ‘PtTimestamp (*)(void)’ [int (*)(void)} to ‘PmTimestamp *
+         *  (*)(void *)’
+         */
 
         midi->time_proc = (PmTimeProcPtr) Pt_Time;
     }

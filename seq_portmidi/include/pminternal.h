@@ -185,7 +185,9 @@ typedef struct
 } PmDeviceInfo;
 
 /**
- *  A type definition for a timer callback.
+ *  A type definition for a timer callback. This has the issue that the
+ *  PmTimeProcPtr function type has a void pointer parameter, while Pt_Time()
+ *  does not.
  */
 
 typedef PmTimestamp (* PmTimeProcPtr) (void * time_info);
