@@ -6,7 +6,7 @@
 # \library    	qpseq66 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2023-05-13
+# \update      2024-01-07
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -49,9 +49,14 @@ HEADERS += \
  include/porttime.h
 
 # Linux
+#
+# Added a flag to avoid a warning about casting between function types at
+# line 1821 of portmidi.c.
 
 unix:!macx {
-   HEADERS += include/pmlinux.h include/pmlinuxalsa.h 
+ HEADERS += include/pmlinux.h include/pmlinuxalsa.h 
+ DEFINES -= _UNICODE
+ QMAKE_CFLAGS_WARN_ON += -Wno-cast-function-type
 }
 
 # Mac OSX
@@ -66,7 +71,7 @@ windows {
  HEADERS += include/pmerrmm.h include/pmwinmm.h
  DEFINES -= UNICODE
  DEFINES -= _UNICODE
- QMAKE_CFLAGS_WARN_ON += -Wno-unused-parameter
+ QMAKE_CFLAGS_WARN_ON += -Wno-unused-parameter -Wno-cast-function-type
 }
 
 # Common

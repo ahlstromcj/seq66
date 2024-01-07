@@ -21,7 +21,7 @@
 # \library    	libseq_portmidi library
 # \author     	Chris Ahlstrom
 # \date       	2015-09-11
-# \update      2022-05-19
+# \update      2024-01-06
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -494,6 +494,7 @@ version = $(SEQ66_LIBTOOL_VERSION)
 # Compiler and linker flags (later, PortMidi)
 #------------------------------------------------------------------------------
 AM_CFLAGS = \
+ -Wno-cast-function-type \
  -I../include \
  -I$(top_srcdir)/include \
  -I$(top_srcdir)/libseq66/include
