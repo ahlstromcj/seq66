@@ -436,10 +436,9 @@ keycontainer::automation_default_key_name (int index)
  *
  *  Default keystrokes still available (around 24 of them):
  *
- *      " ( ) + 9 : > ? L O ) _ p { } DEL Del Tab BkTab BkSpace
+ *      " ( ) + 9 : > ? L O ) _ p { } DEL Del Tab BkTab BS
  *      End KP_End KP_Del KP_PageUp, KP_PageFn KP_. KP_/
- *      KP_Left, Right, Up, Down ?
- *      Return ? Enter ?
+ *      KP_Left, _Right, _Up, _Down ? Return ? Enter ?
  */
 
 const keycontainer::defaults &

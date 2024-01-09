@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2023-10-24
+ * \updates       2024-01-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -102,6 +102,11 @@ extern QTimer * qt_timer
     const char * slotname
 );
 extern void enable_combobox_item (QComboBox * box, int index, bool enabled);
+extern void set_combobox_item
+(
+    QComboBox * box, int index,
+    const std::string & text
+);
 extern bool fill_combobox
 (
     QComboBox * box,

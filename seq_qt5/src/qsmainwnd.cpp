@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-12-22
+ * \updates       2024-01-09
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1397,8 +1397,13 @@ qsmainwnd::set_song_mode (bool /*songmode*/)
         song_recording(false);
     }
     show_song_mode(playmode);
-    if (not_nullptr(m_live_frame))
-        m_live_frame->enable_solo(! playmode);
+
+    /*
+     * Disabled. See the comments in qslivegrid.
+     *
+     *  if (not_nullptr(m_live_frame))
+     *      m_live_frame->enable_solo(! playmode);
+     */
 }
 
 bool

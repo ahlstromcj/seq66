@@ -58,9 +58,10 @@
    
    The first section is \tableref{table:key_defaults_ctrl_keys}.
    Because of potential conflicts with user-interface keys, we do
-   not recommend configuring them.  However, we do use some of them for controls
-   that are not yet effective. And, go ahead a try them if you want.  The user
-   rules!
+   not recommend configuring them.
+   However, we do use some of them for controls
+   that are not yet effective. And, go ahead a try them if you want.
+   The user rules!
 
    \begin{table}[htb!]
       \centering
@@ -76,9 +77,9 @@
         None               & (X)  &  0x05   & "ENQ"        & Ctrl \\
         None               & (X)  &  0x06   & "ACK"        & Ctrl \\
         None               & (X)  &  0x07   & "BEL"        & Ctrl \\
-        Solo               & (!)  &  0x08   & "BS"         & Ctrl \\
+        None               & (!)  &  0x08   & "BS"         & Ctrl \\
         None               & (X)  &  0x09   & "HT"         & Ctrl \\
-        Thru               & (!)  &  0x0a   & "LF"         & Ctrl \\
+        None               & (!)  &  0x0a   & "LF"         & Ctrl \\
         None               & (X)  &  0x0b   & "VT"         & Ctrl \\
         None               & (X)  &  0x0c   & "FF"         & Ctrl \\
         None               & (X)  &  0x0d   & "CR"         & Ctrl \\
@@ -244,8 +245,8 @@
 
    The next section is \tableref{table:key_defaults_extended_keys_1}.
    Some of these keys (Esc and the arrow keys) are
-   hardwired ("*").
-   We are not sure what will happen if you try to redefine them.
+   hardwired, as indicated by an asterisk ("*").
+   Do not redefine them.
    Also note the keys with hexadecimal number names (e.g. \texttt{0x88}).
    These are keys that we have not yet found mapped to a keystroke
    by the \textsl{Qt} keystroke system.
@@ -261,7 +262,7 @@
         Stop *             & (H)  &  0x80   & "Esc"        & none \\
         None               & (A)  &  0x81   & "Tab"        & none \\
         None               & (A)  &  0x82   & "BkTab"      & Shift \\
-        None               & (A)  &  0x83   & "BkSpace"    & none \\
+        Solo               & (A)  &  0x83   & "BkSpace"    & none \\
         None               & (?)  &  0x84   & "Return"     & none \\
         None               & (?)  &  0x85   & "Enter"      & Keypad \\
         Snapshot           & (D)  &  0x86   & "Ins"        & none \\

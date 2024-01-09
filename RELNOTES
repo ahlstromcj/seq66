@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.12 2023-12-29
+Release Notes for Seq66 v. 0.99.12 2024-01-09
 
 -   Fixed clang support and FreeBSD builds.
     -   Using clang-12 and clang-16 to find errors and warnings
@@ -22,6 +22,7 @@ Release Notes for Seq66 v. 0.99.12 2023-12-29
 -   Fixed a one-character buffer overflow in portmidi.c. Thanks,
     valgrind!
 -   Upgraded the Event editor Dump output.
+-   Disabled the grid-solo option as redundant.
 
 See NEWS for more details.
 

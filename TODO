@@ -1,33 +1,19 @@
 TO DO for Seq66 0.99.12
 Chris Ahlstrom
-2019-04-13 to 2023-12-29
+2019-04-13 to 2024-01-09
 
 Misc:
 
-    - We need to provide some indication that a snapshot is held; a new
-      text field squeezed it to show Snapshot, Replace, etc?.
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recorded measures
         not saved.
-    -   trilogy.mid errors basically fixed with new 'rc' work-around.
-        -   Write a module to show SysEx (and optionally store them as
-            a macro).
-            Note that the dump APPENDS to an existing file.
-        -   Test F7 SysEx continuation messages.
-        -   Consider an option to remove all SysEx from a pattern or
-            tune or ignore it on reading, saving, output.
     -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
         Too difficult to fix at this time; converted it to 192.
     -   Clang-16:
-        -   clang-16: warning: optimization flag '-fno-fat-lto-objects'
-            is not supported [-Wignored-optimization-argument]. That
-            flag does not prevent this warning. Ignoring it for now.
-        -   The automake build fails because QT_CXXFLAGS and QT_LIBS are
-            empty, not sure why.
         -   The qbuild.sh build succeeds, but execution yields an
             error likely due to some dependency of libxcb missing.
-    -   Show time-sigs in grid slot?
+    -   Show time-sig events in grid slot?
 
 Mutes:
 

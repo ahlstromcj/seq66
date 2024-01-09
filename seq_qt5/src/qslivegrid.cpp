@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2023-12-30
+ * \updates       2024-01-09
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -266,10 +266,16 @@ qslivegrid::qslivegrid
     );
 
     /*
-     * Trial for drag-n-drop.
+     * Drag-n-drop support. Much easier than I thought!
      */
 
     setAcceptDrops(true);
+
+    /*
+     * Redundant, so disabled.
+     */
+
+    enable_solo(false);
 
     /*
      * Register to be notified by the performer.
@@ -306,6 +312,12 @@ qslivegrid::enable_solo (bool enable)
 {
     int index = usr().grid_mode_code(gridmode::solo);
     enable_combobox_item(ui->comboGridMode, index, enable);
+
+#if THIS_CODE_WORKS
+    std::string recordcolor{"<font color=\"red\">RECORD</font>"};
+    index = usr().grid_mode_code(gridmode::record);
+    set_combobox_item(ui->comboGridMode, index, recordcolor);
+#endif
 }
 
 /**
@@ -415,7 +427,14 @@ qslivegrid::conditional_update ()
     sequence_key_check();
     if (perf().needs_update() || check_needs_update())
     {
-        enable_solo(! perf().song_mode());
+        /*
+         * Going to get rid of Solo, since it can offer no functionality
+         * not already offered by automation::slot::solo. Also disabled
+         * in qsmainwnd::set_song_mode().
+         *
+         *      enable_solo(! perf().song_mode());
+         */
+
         show_grid_record_style();
         show_record_mode();
         show_grid_mode();
@@ -1599,18 +1618,6 @@ qslivegrid::show_grid_record_style ()
         button->setEnabled(true);
         button->update();
     }
-#else
-#if defined USE_THIS_CODE   // we want it to affect even if not in RECORD mode
-    static bool s_uninitialized = true;
-    QPushButton * button = ui->buttonLoopMode;
-    if (s_uninitialized)
-    {
-        s_uninitialized = false;
-        button->setEnabled(false);
-    }
-    else
-        button->setEnabled(! usr().no_grid_record());
-#endif
 #endif
 
     ui->buttonLoopMode->setText(qt(usr().grid_record_style_label()));
@@ -1657,18 +1664,6 @@ qslivegrid::show_record_mode ()
         button->setEnabled(true);
         button->update();
     }
-#else
-#if defined USE_THIS_CODE   // we want it to affect even if not in RECORD mode
-    static bool s_uninitialized = true;
-    QPushButton * button = ui->buttonRecordMode;
-    if (s_uninitialized)
-    {
-        s_uninitialized = false;
-        button->setEnabled(false);
-    }
-    else
-        button->setEnabled(! usr().no_grid_record());
-#endif
 #endif
 
     ui->buttonRecordMode->setText(qt(usr().record_mode_label()));
