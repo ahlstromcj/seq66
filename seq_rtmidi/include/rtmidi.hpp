@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-03-13
+ * \updates       2024-01-13
  * \license       See above.
  *
  *  The big difference between this class (seq66::rtmidi) and
@@ -37,7 +37,6 @@
 
 #include <string>
 
-#include "seq66_rtmidi_features.h"          /* defines what's implemented   */
 #include "midi_api.hpp"                     /* seq66::midi[_in][_out]_api   */
 #include "rtmidi_types.hpp"                 /* seq66::rtmidi_api etc.       */
 #include "rtmidi_info.hpp"                  /* seq66::rtmidi_info           */
@@ -311,10 +310,7 @@ public:
 
 protected:
 
-    void openmidi_api
-    (
-        rtmidi_api api, rtmidi_info & info // , int index = SEQ66_NO_INDEX
-    );
+    void openmidi_api (rtmidi_api api, rtmidi_info & info);
 
 };          // class rtmidi_out
 

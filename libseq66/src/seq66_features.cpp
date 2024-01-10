@@ -582,10 +582,6 @@ seq_build_details ()
     if (! s_qt_version.empty())
         result << "GUI: Qt v. " << s_qt_version << "\n";
 
-#if defined SEQ66_RTMIDI_SUPPORT_REDUNDANT_INFO
-    result << "Native JACK/ALSA (rtmidi)\n";
-#endif
-
     if (! s_alsa_version.empty())
         result << "ALSA v. " << s_alsa_version << "\n";
 

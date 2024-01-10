@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.12
 Chris Ahlstrom
-2019-04-13 to 2024-01-09
+2019-04-13 to 2024-01-10
 
 Misc:
 
@@ -367,11 +367,9 @@ MIDI version 2 considerations::
 Version 2 features:
 
     -   Use Meson/Ninja as the build system.
-    -   Support for Clang?
     -   Support for multiple languages in user-messages.
     -   Allow for building without JACK dev files installed.  Weak JACK
         support.  Seq66 dependence on the JACK ringbuffer is an issue here.
-    -   Record to patterns by buss number (a la channel number).
     -   Port refresh in ALSA and JACK at a minimum.
     -   JACK port groups and order.
     -   Add option to start JACK if not running.

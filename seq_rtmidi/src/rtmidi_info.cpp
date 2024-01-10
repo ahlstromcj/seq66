@@ -97,10 +97,6 @@ rtmidi_info::get_compiled_api (rtmidi_api_list & apis)
      */
 
 #if defined SEQ66_BUILD_UNIX_JACK
-    /*
-     * if (rc().with_jack_midi())                 // hmmmmm //
-     */
-
     apis.push_back(rtmidi_api::jack);
 #endif
 

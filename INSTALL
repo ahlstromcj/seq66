@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.99.12 and above
 Chris Ahlstrom
-2015-09-10 to 2023-12-24
+2015-09-10 to 2024-01-13
 
 Getting Seq66 requires building the code or going to
 "sequencer64-packages/seq66" on GitHub to get an installation package.  The
@@ -107,17 +107,31 @@ Clang Compiler:
 
 FreeBSD:
 
-    Make sure that the following are installed (check with "pkg info"):
+    Make sure that the following packages are installed (check with
+    "pkg info"):
 
-    - alsa-lib, -plugins, and perhaps -utils.
-    - autoconf, autoconf-archive (look into autocong-switch)
-    - automake
-    - gmake
-    - jackit
-    - libtool
-    - liblo
-    - pkgconf
-    - qt5
+    - For GNU automake:
+        - autoconf
+        - autoconf-archive
+        - autoconf-switch
+        - automake
+        - gmake
+        - libtool
+        - pkgconf
+    - Qt 5:
+        - qt5
+    - ALSA
+        - alsa-lib
+        - alsa-seq-server
+        - alsa-plugins
+        - alsa-utils (perhaps)
+        - a2jmidid
+    - JACK
+        - jackit
+        - jack-example-tools (for jack_lsp, etc.)
+    - liblo for OSC and NSM support
+    - Other utilities:
+      - usbutils
 
     Currently having issues with Qt in the GNU automake instructions below.
     So do the following instead:

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2023-04-20
+ * \updates       2024-01-13
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.
@@ -42,6 +42,7 @@
 #include "cfg/settings.hpp"             /* seq66::rc().with_jack_...()      */
 #include "rtmidi.hpp"                   /* seq66::rtmidi, etc.              */
 #include "rtmidi_info.hpp"              /* seq66::rtmidi_info, etc.         */
+#include "seq66_rtmidi_features.h"      /* selects the usable APIs          */
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
 
 #if defined SEQ66_JACK_SUPPORT
@@ -425,8 +426,7 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
         }
         else if (api == rtmidi_api::jack)
         {
-#if defined SEQ66_BUILD_UNIX_JACK
-#if defined SEQ66_JACK_SUPPORT
+#if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
             midi_out_jack * mojp = new (std::nothrow) midi_out_jack
             (
                 parent_bus(), midiinfo
@@ -436,7 +436,6 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
                 set_api(mojp);
                 got_an_api = true;
             }
-#endif
 #endif
         }
         else if (api == rtmidi_api::alsa)
