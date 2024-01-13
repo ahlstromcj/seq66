@@ -28,6 +28,6 @@ Release Notes for Seq66 v. 0.99.12 2024-01-13
 -   Upgraded the Event editor Dump output.
 -   Disabled the grid-solo option as redundant.
 
-See NEWS for more details.
+See NEWS for more details, and ChangeLog.
 
 # vim: sw=4 ts=4 wm=15 et ft=sh
