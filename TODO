@@ -1,6 +1,15 @@
 TO DO for Seq66 0.99.12
 Chris Ahlstrom
-2019-04-13 to 2024-01-10
+2019-04-13 to 2024-01-13
+
+Build:
+
+    -   Add "make install" support to qbuild.sh.
+    -   Figure out these compiler warnings on the Arch Linux box:
+
+        /usr/include/qt/QtCore/qnamespace.h:360:10: warning: type
+        ‘Qt::WidgetAttribute’ violates the C++ One Definition Rule [-Wodr]
+        360 |     enum WidgetAttribute {
 
 Misc:
 
@@ -10,9 +19,6 @@ Misc:
         not saved.
     -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
         Too difficult to fix at this time; converted it to 192.
-    -   Clang-16:
-        -   The qbuild.sh build succeeds, but execution yields an
-            error likely due to some dependency of libxcb missing.
     -   Show time-sig events in grid slot?
 
 Mutes:

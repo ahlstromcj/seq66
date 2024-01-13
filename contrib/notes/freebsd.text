@@ -1,0 +1,99 @@
+Notes on FreeBSD and Its Issues
+Chris Ahlstrom
+2024-01-13 to 2024-01-13
+
+FreeBSD comes with issues regarding ALSA and JACK.
+
+This file describes various things one needs to tackle to get Seq66
+running on FreeBSD Release 13.  Also see the FreeBSD section of the INSTALL file.
+We are still working through issues; once resolved, the corrective actions
+will be included in the Seq66 User Manual.
+
+Make sure that the following packages are installed (check with
+"pkg info"):
+
+- For GNU automake (currently has serious issues):
+    - autoconf
+    - autoconf-archive
+    - autoconf-switch
+    - automake
+    - gmake
+    - libtool
+    - pkgconf
+- Qt 5:
+    - qt5; one might have to run "pkg upgrade" to make sure that Qt5 will
+      run properly in Seq66.
+    - qmake
+- ALSA
+    - alsa-lib
+    - alsa-seq-server; run "kldload cuse" before running this server. All
+      as root.
+    - alsa-plugins
+    - alsa-utils
+    - a2jmidid
+- JACK
+    - jackit
+    - jack_umidi
+    - jack-example-tools (for jack_lsp, etc.)
+- liblo for OSC and NSM support
+- Other utilities:
+  - usbutils
+
+Because of the issues noted below, we use qmake in lieu of automake via
+the qbuild.sh script found in contrib/scripts:
+
+    $ qbuild.sh
+    $ vi make.log
+
+This builds the rtmidi-based internal Seq66 MIDI engine. This supports
+JACK and ALSA, with the former working better.  The portmidi-based
+internal MIDI engine also uses ALSA; ALSA is a little more problematic
+than JACK. We have work to do!
+
+If using qjackctl to set up JACK, select the "oss" engine in that
+application. ALSA/MIDI is explicitly NOT SUPPORTED by that application, as
+noted in its Help / About.
+
+Consider setting the following in /etc/rc.conf:
+
+    jackd_enable="YES"
+    jackd_user = "ate" ???
+    jackd_rtprio="YES"
+    jackd_args="-R -doss -r48000 -p1024 -n3 -w16 --capture /dev/dspN
+        --playback /dev/dspN"
+
+We did not have to do this to get Seq66 to play to Qsynth using JACK.
+Sew66 in FreeBSD running JACK will show software MIDI ports like
+jack-keyboard and qsynth.
+
+However, we do not see any USB MIDI devices, even though snd_uaudio is
+loaded.
+
+Automake Issues:
+
+Currently having issues with Qt in the GNU automake instructions below.
+So do the following instead:
+
+    -   Make a shadow directory in the parent of the seq66 directory.
+    -   Change to it.
+    -   Run the new qbuild.sh script. It uses "sh" as the shell for
+        portability.
+    -   Read the make.log file for success or failure.
+
+Although one user reported that "./configure" worked fine, on FreeBSD
+we had issues, even with the following commands:
+
+    $ ./configure --with-alsa-prefix=/usr/local/lib
+            --with-alsa-inc-prefix=/usr/local/include
+
+or
+
+    $ ./configure --disable-alsatext
+    $ sh -c 'gmake >make.log 2>&1'
+
+A raft of other issues have occurred with this method. For example,
+the QT_CXXFLAGS and QT_LIBS macros are empty! This causes spurious
+notes about "stopped in /tmp/xxxx" to be written to the generated
+Makefiles.
+
+# vim: sw=4 ts=4 wm=8 et ft=sh

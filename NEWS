@@ -1,17 +1,37 @@
-NEWS for Seq66 0.99.12 (unreleased)
+NEWS for Seq66 0.99.12
 Chris Ahlstrom
-2015-07-10 to 2023-12-06
+2015-07-10 to 2024-01-13
 
 # Changelog
 
-## [Unreleased]
-
-    To do
+## [0.99.12] - 2024-01-13
 
 ### Added
+
+- Clang compiler support.
+- Provisional build process for FreeBSD.
+- Added an autogen.sh script to reconfigure without using bash.
+- Added 'rc' option to skip, recover, or abort from bad running
+  status in MIDI files (trilogy.mid).
+
 ### Fixed
+
+- Errors and warnings revealed by Clang.
+- The reading, processing, writing, and display of SysEx and Meta
+  events. Now handle unterminated SysEx messages (Dixie04.mid).
+- Issue with building the command-line "portmidi" version.
+- A one-character buffer overflow in portmidi.c.
+- Bugs in --option log=file.
+- Q button not working to set keep-queue status.
+- Queued-solo functionality improved.
+
 ### Changed
+
+- Upgraded the Event editor Dump output.
+
 ### Removed
+
+- Disabled the grid-solo option as redundant. Will repurpose later.
 
 ## [0.99.11] - 2023-12-04
 
@@ -35,7 +55,8 @@ Chris Ahlstrom
 
 ### Fixed
   
-- Issue #123 "Would it be possible to have NEWS structured like a changelog"
+- Issue #123 "Would it be possible to have NEWS structured like a
+  changelog"
 - Fixed errors setting style-sheet, palette, and mutes in
   Preferences / Session.  Enhanced this tab to indicate when
   exit (as opposed to internal restart) is needed.
@@ -1048,6 +1069,10 @@ Chris Ahlstrom
 - The application and documentation are now (barely) suitable for
   public consumption, after residing on a server (a Toshiba laptop) at
   home for months.
+
+## [Unreleased]
+
+    To do
 
 ### Added
 ### Fixed

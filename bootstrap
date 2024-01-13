@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2023-12-06
+# \update         2024-01-12
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -36,16 +36,16 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2022-12-06"
+export SEQ66_BOOTSTRAP_EDIT_DATE="2024-01-12"
 export SEQ66_LIBRARY_API_VERSION="0.99"
-export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.9"
+export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.12"
 
 #******************************************************************************
 #  Version info
 #------------------------------------------------------------------------------
 
 if [ "$1" == "--version" ] || [ "$1" == "-v" ] ; then
-   echo "Seq66 version $SEQ66_LIBRARY_VERSION $SEQ66_SCRIPT_EDIT_DATE"
+   echo "Seq66 version $SEQ66_LIBRARY_VERSION $SEQ66_BOOTSTRAP_EDIT_DATE"
    exit 0
 fi
 
@@ -100,7 +100,7 @@ EXTRAFLAGS=""
 if [ "$1" == "--help" ] ; then
 
    cat << E_O_F
-Usage: ./bootstrap [options]    ($SEQ66_LIBRARY_VERSION-$SEQ66_SCRIPT_EDIT_DATE)
+Usage: ./bootstrap [options]    ($SEQ66_LIBRARY_VERSION-$SEQ66_BOOTSTRAP_EDIT_DATE)
 
 'bootstrap' sets up GNU automake and libtool support for the Seq66 project
 and creates the 'configure' script.  It can super-clean the project, removing

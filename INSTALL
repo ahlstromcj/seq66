@@ -107,54 +107,13 @@ Clang Compiler:
 
 FreeBSD:
 
-    Make sure that the following packages are installed (check with
-    "pkg info"):
+    While FreeBSD can build Seq66, there are some issues that need to be
+    addressed. See contrib/notes/freebsd.text for complete information.
+    The recommended method of building Seq66 is discussed there. Basically,
+    after making sure all dependencies are installed, run the qbuild.sh script
+    and set up for usage of JACK. This advice is volatile.
 
-    - For GNU automake:
-        - autoconf
-        - autoconf-archive
-        - autoconf-switch
-        - automake
-        - gmake
-        - libtool
-        - pkgconf
-    - Qt 5:
-        - qt5
-    - ALSA
-        - alsa-lib
-        - alsa-seq-server
-        - alsa-plugins
-        - alsa-utils (perhaps)
-        - a2jmidid
-    - JACK
-        - jackit
-        - jack-example-tools (for jack_lsp, etc.)
-    - liblo for OSC and NSM support
-    - Other utilities:
-      - usbutils
-
-    Currently having issues with Qt in the GNU automake instructions below.
-    So do the following instead:
-
-        -   Make a shadow directory in the parent of the seq66 directory.
-        -   Change to it.
-        -   Run the new qbuild.sh script. It uses "sh" as the shell for
-            portability.
-        -   Read the make.log file for success or failure..
-
-    Although one user reported that "./configure" worked fine, on a FreeBSD
-    virtual machine, we first had to install autoconf, automake, pkgconf, and
-    gmake. Also had to edit the generated libtool script to change
-    the version from 2.4.7 to 2.4.6 to fool the build. The command needed to
-    configure was the following, including the command to make the code.
-    Also need to figure out why a "stopped" message appears in the
-    generated Makefiles, which breaks the build.
-
-    $ ./configure --with-alsa-prefix=/usr/local/lib
-            --with-alsa-inc-prefix=/usr/local/include
-    $ sh -c 'gmake >make.log 2>&1'
-
-    A raft of other issues have occurred with this method.
+    See the discussion in contrib/notes/freebsd.text.
 
 Qt and Command-Line Merged Build:
 
