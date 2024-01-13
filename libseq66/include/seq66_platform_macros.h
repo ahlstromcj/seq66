@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-18
+ * \updates       2024-01-13
  * \license       GNU GPLv2 or above
  *
  *  Copyright (C) 2013-2023 Chris Ahlstrom <ahlstromcj@gmail.com>
@@ -101,24 +101,25 @@
  */
 
 #undef SEQ66_MING_OR_WINDOWS
-#undef SEQ66_PLATFORM_WINDOWS
-#undef SEQ66_PLATFORM_LINUX
-#undef SEQ66_PLATFORM_FREEBSD
-#undef SEQ66_PLATFORM_MACOSX
-#undef SEQ66_PLATFORM_UNIX
 #undef SEQ66_PLATFORM_32_BIT
 #undef SEQ66_PLATFORM_64_BIT
-#undef SEQ66_PLATFORM_DEBUG
-#undef SEQ66_PLATFORM_RELEASE
-#undef SEQ66_PLATFORM_MSVC
-#undef SEQ66_PLATFORM_GNU
-#undef SEQ66_PLATFORM_XSI
-#undef SEQ66_PLATFORM_MINGW
-#undef SEQ66_PLATFORM_CYGWIN
-#undef SEQ66_PLATFORM_POSIX_API
+#undef SEQ66_PLATFORM_CLANG
 #undef SEQ66_PLATFORM_CPP_11
 #undef SEQ66_PLATFORM_CPP_14
 #undef SEQ66_PLATFORM_CPP_17
+#undef SEQ66_PLATFORM_CYGWIN
+#undef SEQ66_PLATFORM_DEBUG
+#undef SEQ66_PLATFORM_FREEBSD
+#undef SEQ66_PLATFORM_GNU
+#undef SEQ66_PLATFORM_LINUX
+#undef SEQ66_PLATFORM_MACOSX
+#undef SEQ66_PLATFORM_MINGW
+#undef SEQ66_PLATFORM_MSVC
+#undef SEQ66_PLATFORM_POSIX_API
+#undef SEQ66_PLATFORM_RELEASE
+#undef SEQ66_PLATFORM_UNIX
+#undef SEQ66_PLATFORM_WINDOWS
+#undef SEQ66_PLATFORM_XSI
 
 /**
  *  Provides a "Windows" macro, in case the environment doesn't provide
@@ -277,11 +278,16 @@
  *  Provides macros that indicate if Microsoft C/C++ versus GNU are being
  *  used.  THe compiler being used normally provides test macros for itself.
  *
+ *      -  SEQ66_PLATFORM_CLANG (replaces clang)
  *      -  SEQ66_PLATFORM_MSVC (replaces _MSC_VER)
  *      -  SEQ66_PLATFORM_GNU (replaces __GNUC__)
  *      -  SEQ66_PLATFORM_MINGW (replaces __MINGW32__)
  *      -  SEQ66_PLATFORM_CYGWIN
  */
+
+#if defined __clang__
+#define SEQ66_PLATFORM_CLANG
+#endif
 
 #if defined _MSC_VER
 #define SEQ66_PLATFORM_MSVC

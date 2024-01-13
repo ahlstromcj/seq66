@@ -4804,9 +4804,12 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
+
+
 cat >>confdefs.h <<_ACEOF
-#define APP_BUILD_ISSUE "Ubuntu 20.04.6 LTS"
+#define APP_BUILD_ISSUE "GNU/Linux"
 _ACEOF
+
 
 
 $as_echo "#define CLIENT_NAME \"seq66\"" >>confdefs.h
@@ -16105,7 +16108,9 @@ seq66pixdir="${datadir}/pixmaps/seq66-${SEQ66_API_VERSION}"
 
 
 
-CFLAGS="${CFLAGS}"
+CFLAGS="${CFLAGS} -I/usr/local/include "
+CXXFLAGS="${CXXFLAGS} -I/usr/local/include "
+LDFLAGS="${LDFLAGS} -L/usr/local/lib "
 
 
 for ac_header in getopt.h string.h limits.h
@@ -19409,6 +19414,7 @@ percent.commands = @echo -n "\$(\$(@))\ "
 QMAKE_EXTRA_TARGETS += percent
 EOF
     $am_have_qt_qmexe $am_have_qt_pro -o $am_have_qt_makefile
+    echo "QT TEST Makefile = $am_have_qt_makefile"
 
     # Get Qt version from qmake
 

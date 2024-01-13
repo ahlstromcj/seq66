@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2024-01-05
+ * \updates     2024-01-13
  * \license     GNU GPLv2 or above
  *
  * Implementation Notes (by Mark Nelson):
@@ -57,10 +57,24 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/resource.h>
-#include <sys/timeb.h>
 #include <pthread.h>
 
 #include "porttime.h"
+
+/*
+ * The ftime(2) system call structure -- deprecated. But since it is used
+ * only internally in the module to transfer parts of the time, we define
+ * a partial replacement here. The following from timeb are not needed:
+ *
+ *   short    timezone;         // minutes west of CUT
+ *   short    dstflag;          // DST == non-zero
+ */
+
+struct timeb_simple
+{
+    time_t time;                /* seconds since the Epoch          */
+    unsigned short millitm;     /* + milliseconds since the Epoch   */
+};
 
 /*
  * REDUNDANT
@@ -70,7 +84,7 @@
 #define FALSE       0
 
 static int time_started_flag = FALSE;
-static struct timeb time_offset = { 0, 0, 0, 0 };
+static struct timeb_simple time_offset = { 0, 0 };
 static pthread_t pt_thread_pid;
 static int pt_thread_created = FALSE;
 
@@ -96,18 +110,10 @@ static int pt_callback_proc_id = 0;
 /**
  *  The ftime() function, which returns he current tim in seconds and
  *  milliseconds since the Epoch, is deprecated in favor or clock_gettime(2).
- *
- *      struct timeb time_offset =
- *      {
- *          0, // time
- *          0, // millitm
- *          0, // timezone
- *          0  // dstflag
- *      };
  */
 
 void
-Pt_ftime (struct timeb * tp)
+Pt_ftime (struct timeb_simple * tp)
 {
     struct timespec temptime;
     int rc = clock_gettime(CLOCK_REALTIME_COARSE, &temptime);
@@ -121,8 +127,6 @@ Pt_ftime (struct timeb * tp)
         tp->time = 0;
         tp->millitm = 0;
     }
-    tp->timezone = 0;
-    tp->dstflag = 0;
 }
 
 /**
@@ -217,7 +221,7 @@ PtTimestamp
 Pt_Time (void)
 {
     long seconds, milliseconds;
-    struct timeb now;
+    struct timeb_simple now;
     Pt_ftime(&now);                                     // ftime(&now);
     seconds = now.time - time_offset.time;
     milliseconds = now.millitm - time_offset.millitm;

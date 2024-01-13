@@ -235,7 +235,9 @@ AC_SUBST(seq66pixdir)
 
 dnl 4. Get external flags, if any.
 
-CFLAGS="${CFLAGS}"
+CFLAGS="${CFLAGS} -I/usr/local/include "
+CXXFLAGS="${CXXFLAGS} -I/usr/local/include "
+LDFLAGS="${LDFLAGS} -L/usr/local/lib "
 
 dnl Check for header files.  Added more to support daemonization.
 dnl

@@ -59,6 +59,7 @@ percent.commands = @echo -n "\$(\$(@))\ "
 QMAKE_EXTRA_TARGETS += percent
 EOF
     $am_have_qt_qmexe $am_have_qt_pro -o $am_have_qt_makefile
+    echo "QT TEST Makefile = $am_have_qt_makefile"
 
     # Get Qt version from qmake
 
