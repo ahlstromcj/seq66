@@ -1,5 +1,310 @@
+2024-01-13  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure, configure.ac, include/config.h.in,
+	libseq66/include/seq66_platform_macros.h,
+	libseq66/src/util/filefunctions.cpp, m4/ax_have_qt_clang.m4,
+	seq_portmidi/src/ptlinux.c: More clang-related work and configure
+	updates.
+	* INSTALL, NEWS, README.md, RELNOTES, TODO, autogen.sh, bootstrap,
+	configure.ac, contrib/notes/freebsd.text: Added autogen.sh and
+	freebsd notes.
+
+2024-01-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, TODO, data/license.text, data/readme.text,
+	data/readme.windows, libseq66/src/seq66_features.cpp,
+	nsis/Seq66Constants.nsh, nsis/Seq66Setup.nsi,
+	nsis/build_release_package.bat, seq_rtmidi/include/rtmidi.hpp,
+	seq_rtmidi/include/seq66_rtmidi_features.h,
+	seq_rtmidi/src/rtmidi.cpp, seq_rtmidi/src/rtmidi_info.cpp: Date
+	bumps and updates for FreeBSD, in progress.
+
+2024-01-09  ahlstrom <ahlstromcj@gmail.com>
+
+	* RELNOTES, TODO, doc/latex/tex/defaultkeys.tex,
+	doc/latex/tex/patterns_panel.tex,
+	libseq66/src/ctrl/keycontainer.cpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5_helpers.cpp: Disabled
+	Solo dropdown entry, changed Solo key default.
+
+2024-01-07  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_portmidi/seq_portmidi.pro, seq_portmidi/src/Makefile.am,
+	seq_portmidi/src/Makefile.in: Disabled gcc warning about function
+	cast in portmidi code.
+
+2024-01-06  ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_portmidi/include/pminternal.h, seq_portmidi/src/portmidi.c: 
+	Added notes about gcc warning for cast of Pt_Timer() function.
+
+2024-01-05  ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_portmidi/include/portmidi.h, seq_portmidi/include/porttime.h,
+	seq_portmidi/src/pmlinuxalsa.c, seq_portmidi/src/ptlinux.c,
+	seq_portmidi/src/ptmacosx_cf.c, seq_portmidi/src/ptmacosx_mach.c,
+	seq_portmidi/src/ptwinmm.c: Fixed some errors and warning in
+	portmidi under clang.
+	* Makefile.in: Makefile.in redux.
+
+2024-01-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.in: Solo makefile.
+	* doc/latex/tex/patterns_panel.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp: The
+	ctrlstatus operations now work, at last.
+
+2024-01-03  ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/code/ring_buffer.hpp,
+	libseq66/include/ctrl/automation.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/ctrl/automation.cpp,
+	libseq66/src/ctrl/keycontainer.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qseqroll.cpp: Still more
+	tweaking of replace/solo/queue/keep-queue mode.
+
+2024-01-02  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/tests/4x4/qseq66-lp-mini-4x4.ctrl,
+	contrib/tests/4x4/qseq66.ctrl, data/linux/qseq66-lp-mini-8x8.ctrl,
+	data/linux/qseq66-lp-mini-alt.ctrl,
+	data/linux/qseq66-lp-mini-swapped.ctrl,
+	data/linux/qseq66-lp-mini.ctrl, data/linux/qseq66-swapped.ctrl,
+	data/linux/qseq66.ctrl, data/samples/nanomap.ctrl,
+	data/seq66cli/seq66cli.ctrl, data/win/qpseq66.ctrl,
+	doc/latex/tex/patterns_panel.tex, include/config.h.in,
+	libseq66/include/ctrl/midicontrolin.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qslivegrid.ui, seq_qt5/include/Makefile.in: More work
+	on solo, ctrl keystrokes.
+
+2023-12-30  ahlstrom <ahlstromcj@gmail.com>
+
+	* VERSION, configure.ac, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/ctrl/midicontrolin.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qslivegrid.ui,
+	seq_qt5/src/qslivegrid.cpp: Solo is queued-replace, ctrl statuses
+	displayed in main window.
+
+2023-12-29  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* RELNOTES, TODO, contrib/midi/README,
+	libseq66/src/midi/editable_event.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/src/qseventslots.cpp: Updated sysex/text display and MIDI
+	file error messages.
+
+2023-12-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* RELNOTES, TODO, libseq66/include/ctrl/automation.hpp,
+	libseq66/src/play/performer.cpp: Fixed bug in keep-queue, tightening
+	related code.
+
+2023-12-26  ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp: 
+	Interim check-in against new solo branch.
+
+2023-12-24  ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, RELNOTES, TODO, contrib/scripts/qbuild,
+	contrib/scripts/qbuild.sh, libseq66/src/play/performer.cpp,
+	seq_portmidi/src/portmidi.c: Fixed portmidi.c buffer overflow.
+
+2023-12-23  ahlstrom <ahlstromcj@gmail.com>
+
+	* RELNOTES, Seq66qt5/Seq66qt5.pro, contrib/scripts/qbuild,
+	contrib/scripts/qbuild.sh, contrib/scripts/qtests,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp, libsessions/libsessions.pro,
+	seq_qt5/include/Makefile.am, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Giving up on automake for FreeBSD, added
+	new qbuild.sh script to build using qmake, which works, but qseq66
+	has a Qt xcb plugin issue.
+
+2023-12-22  ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/patterns_panel.tex,
+	libseq66/src/os/shellexecute.cpp, libseq66/src/os/timing.cpp,
+	libseq66/src/play/performer.cpp: Change some LINUX macroing to UNIX
+	macroing for FreeBSD.
+
+2023-12-21  ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, TODO, libseq66/src/util/recmutex.cpp: Fixed recmutex
+	build in FreeBSD, now QBrush is not found.
+
+2023-12-20  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, configure, configure.ac,
+	contrib/notes/clang-macros-freebsd.text, include/config.h.in,
+	libseq66/include/play/triggers.hpp,
+	libseq66/include/util/recmutex.hpp, libseq66/src/os/daemonize.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/util/recmutex.cpp,
+	seq_qt5/src/qslivegrid.cpp: More progress on issue #124 FreeBSD.
+
+2023-12-19  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, configure, configure.ac, configure.help,
+	include/config.h.in, libseq66/include/seq66_platform_macros.h,
+	libseq66/src/play/performer.cpp, libseq66/src/seq66_features.cpp,
+	seq_qt5/src/qslivegrid.cpp: Added better detection of FreeBSD for
+	issue #124.
+
+2023-12-17  ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/midi/midifile.hpp,
+	libseq66/src/midi/midifile.cpp: Fixed nagging little errors in
+	parsing MIDI files.
+
+2023-12-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, Makefile.in, Seq66cli/Makefile.in, Seq66qt5/Makefile.in,
+	TODO, configure, configure.ac, contrib/scripts/configure-clang,
+	data/Makefile.in, doc/Makefile.in, doc/latex/Makefile.in,
+	doc/latex/tex/Makefile.in, include/config.h.in,
+	libseq66/Makefile.in, libseq66/include/Makefile.in,
+	libseq66/src/Makefile.in, libseq66/src/midi/midifile.cpp,
+	libsessions/Makefile.in, libsessions/include/Makefile.in,
+	libsessions/src/Makefile.in, m4/Makefile.in, man/Makefile.in,
+	resources/pixmaps/Makefile.in, seq_portmidi/Makefile.in,
+	seq_portmidi/include/Makefile.in, seq_portmidi/src/Makefile.in,
+	seq_qt5/Makefile.in, seq_qt5/forms/Makefile.in,
+	seq_qt5/include/Makefile.in, seq_qt5/src/Makefile.in,
+	seq_rtmidi/Makefile.in, seq_rtmidi/include/Makefile.in,
+	seq_rtmidi/src/Makefile.in: Still more fixes to the configure
+	script.
+
+2023-12-15  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.in, Seq66cli/Makefile.in, Seq66qt5/Makefile.am,
+	Seq66qt5/Makefile.in, TODO, configure, configure.ac,
+	data/Makefile.in, doc/Makefile.in, doc/latex/Makefile.in,
+	doc/latex/tex/Makefile.in, doc/latex/tex/midi_formats.tex,
+	include/config.h.in, libseq66/Makefile.in,
+	libseq66/include/Makefile.in, libseq66/include/midi/midifile.hpp,
+	libseq66/src/Makefile.in, libseq66/src/midi/midifile.cpp,
+	libsessions/Makefile.in, libsessions/include/Makefile.in,
+	libsessions/src/Makefile.in, m4/Makefile.in, man/Makefile.in,
+	resources/pixmaps/Makefile.in, seq_portmidi/Makefile.in,
+	seq_portmidi/include/Makefile.in, seq_portmidi/src/Makefile.in,
+	seq_qt5/Makefile.in, seq_qt5/forms/Makefile.in,
+	seq_qt5/include/Makefile.in, seq_qt5/src/Makefile.in,
+	seq_rtmidi/Makefile.in, seq_rtmidi/include/Makefile.in,
+	seq_rtmidi/src/Makefile.in: Updated configure.ac to handle linker
+	differences between gcc/g++ and clang/clang++ for issue #124.
+
+2023-12-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, Seq66cli/Makefile.am, Seq66cli/Makefile.in,
+	Seq66qt5/Makefile.am, Seq66qt5/Makefile.in, TODO, configure,
+	configure.ac, contrib/midi/README, doc/latex/tex/midi_formats.tex,
+	doc/latex/tex/references.tex, include/config.h.in,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/midi/midifile.hpp, libseq66/src/midi/midifile.cpp: 
+	Wrestling with oddities in Dixie04.mid.
+
+2023-12-13  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* RELNOTES, configure, configure.ac, include/config.h.in,
+	libseq66/include/cfg/cmdlineopts.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/forms/qlfoframe.ui,
+	seq_qt5/forms/qplaylistframe.ui, seq_qt5/src/qsmainwnd.cpp: 
+	Configure.ac to support LLVM/clang, fixed a couple command-line
+	option bugs.
+
+2023-12-12  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* RELNOTES, TODO, doc/latex/tex/midi_formats.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/midi/midifile.hpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/midi_vector.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/midi/midifile.cpp: More fixes to SysEx
+	handling/documentation.
+
+2023-12-11  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, RELNOTES, Seq66cli/Makefile.am, Seq66cli/Makefile.in,
+	TODO, doc/dox/doxy-common.cfg, doc/latex/tex/meta_events.tex,
+	doc/latex/tex/midi_formats.tex, libseq66/include/midi/midifile.hpp,
+	libseq66/include/seq66_features.h, libseq66/src/midi/midifile.cpp,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qt5_helpers.cpp: Fixing some SysEx misunderstandings.
+	* RELNOTES, TODO, contrib/midi/README, data/linux/qseq66.rc,
+	doc/latex/tex/configuration.tex,
+	libseq66/include/midi/midifile.hpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/play/performer.cpp: Added running-status and SysEx
+	fixes.
+
+2023-12-10  ahlstrom <ahlstromcj@gmail.com>
+
+	* RELNOTES, TODO, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/midifile.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/src/qseqeventframe.cpp, seq_qt5/src/qseventslots.cpp: Added
+	option to recover from running-status errors.
+
+2023-12-08  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Seq66qt5/Makefile.in, TODO, contrib/scripts/configure-clang,
+	libseq66/src/midi/midibase.cpp, libseq66/src/util/ring_buffer.cpp,
+	libsessions/src/nsm/nsmbase.cpp: More fixing warnings, also liblo
+	clang tweak.
+	* Seq66qt5/Makefile.am, TODO, libseq66/src/util/strfunctions.cpp,
+	libsessions/src/nsm/nsmbase.cpp, m4/ax_have_qt_clang.m4,
+	seq_rtmidi/include/midi_jack_info.hpp,
+	seq_rtmidi/src/midi_alsa.cpp, seq_rtmidi/src/midi_jack_info.cpp: 
+	Notes and warning fixes for clang-16 build.
+
+2023-12-07  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/midi/midifile.hpp,
+	libseq66/src/midi/event.cpp, libseq66/src/midi/midifile.cpp,
+	libsessions/include/nsm/nsmclient.hpp,
+	seq_qt5/include/gui_palette_qt5.hpp, seq_qt5/include/qeditbase.hpp,
+	seq_qt5/include/qloopbutton.hpp, seq_qt5/include/qperfroll.hpp,
+	seq_qt5/include/qseqroll.hpp, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/include/qstriggereditor.hpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qperfroll.cpp, seq_qt5/src/qseqbase.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqkeys.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixing sysex in progress, clang-12 found
+	more warnings re issue #124.
+	* TODO, bootstrap, contrib/midi/README,
+	contrib/scripts/configure-clang, libseq66/src/ctrl/opcontainer.cpp,
+	libseq66/src/midi/event.cpp, libseq66/src/midi/midifile.cpp,
+	seq_portmidi/include/midibus_pm.hpp: Fixed more errors/warnings
+	uncovered by clang-16 for ussue #124.
+
 2023-12-06  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* : commit cebd4eac4e22cbd8c5e96d5f2f741bf8512382dc Author: Chris
+	Ahlstrom <ahlstromcj@gmail.com> Date:   Wed Dec 6 11:30:34 2023
+	-0500
+
+2023-12-06  ahlstrom <ahlstromcj@gmail.com>
+
+	* ChangeLog, TODO, doc/latex/tex/patterns_panel.tex,
+	libseq66/src/cfg/usrsettings.cpp: Safety check-in of minor changes.
 	* LICENSE, NEWS, README.md, RELNOTES, VERSION, configure,
 	configure.ac, data/license.text, data/readme.text,
 	data/readme.windows, include/config.h.in,
