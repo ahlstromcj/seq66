@@ -1,32 +1,6 @@
-Release Notes for Seq66 v. 0.99.12 2024-01-13
+Release Notes for Seq66 v. 0.99.13 2024-01-14
 
--   Fixed clang support and FreeBSD builds.
-    -   Using clang-12 and clang-16 to find errors and warnings
-        that g++ did not detect, re issue #124.
-    -   Modifying configure.ac and make-files to support this
-        compiler. However, it does not define QT_CXXFLAGS and
-        QT_LIBS in FreeBSD. Therefore...
-    -   ... Added a qbuild.sh script to replace the old qbuild (bash)
-        script and to be used instead of autotools in FreeBSD.
-    -   Seq66 builds and runs, but currently detects only software
-        MIDI ports running under JACK.
--   Added an autogen.sh script to use with basic UNIX shells like
-    dash.
--   Fixed the processing of SysEx and Meta events.
-    -   Reading and writing in the MIDI file upgraded.
-    -   Display SysEx and text in the event editor.
-    -   Added new 'rc' option to skip, recover, or abort from bad
-        running status in MIDI files. See the trilogy.mid contributed
-        file.
-    -   Handle unterminated SysEx messages (Dixie04.mid).
--   Fixed issue with building the command-line version with "portmidi".
--   Fixed a one-character buffer overflow in portmidi.c. Thanks,
-    valgrind!
--   Fixed bugs in --option log=file.
--   Fixed Q button not working to set keep-queue status.
--   Fixed queued-solo functionality.
--   Upgraded the Event editor Dump output.
--   Disabled the grid-solo option as redundant.
+-   Fixed ...
 
 See NEWS for more details, and ChangeLog.
 

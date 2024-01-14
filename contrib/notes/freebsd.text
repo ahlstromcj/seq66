@@ -67,7 +67,52 @@ Sew66 in FreeBSD running JACK will show software MIDI ports like
 jack-keyboard and qsynth.
 
 However, we do not see any USB MIDI devices, even though snd_uaudio is
-loaded.
+loaded. Perhaps this is needed:
+
+    $ jackd -r -d oss -r44100 -n2 -w16 -C/dev/dsp1.5 -P/dev/dsp1.6 &
+    $ sleep 1
+    $ jack_umidi -d /dev/umidi0.0 -B &
+
+    This apparently converts the umidi device to a TCP-based JACK
+    instance. Loopback: "dd if=/dev/umidi0.0 of=/dev/umidi0.0 bs=1"
+
+USB Devices:
+
+    usbconfig -u 0 -a 3 ...
+
+    snd_uaudio apparently works in Ubuntu as well. Something to look into.
+    Read snd_uaudio(4) on FreeBSD.
+
+Hmmm:
+
+    $ fluidsynth /usr/local/share/generaluser-gs/GeneralUser_GS.sf2 &
+    $ midicat -d -q midi/0 -q midithru/0 
+
+To try:
+
+    Verify that the midi controller works: 
+
+        #  ln -sf /dev/umidi*.0 /dev/midi
+        $  fluidsynth -m oss -a oss path_to/some.sf2.
+
+        Verify sound when operating the controller, which shows that
+        the USB MIDI messages appear on /dev/midi.
+
+    ALSA:
+
+        $ ls /dev/*midi*
+        # alsa-seq-server -d /dev/umidi1.0
+        $ ls /dev/*seq*
+        /dev/sequencer0
+
+        Note that umidi is read/write with raw MIDI.
+
+    playumidi:
+
+        "playumidi" is a MIDI file player for USB MIDI devices on FreeBSD.
+        It can control the FreeBSD-umidi devices (/dev/umidi*.*) via the
+        "uaudio" driver, not needing the "/dev/sequencer" device or other
+        software for listening to a MIDI file.
 
 Automake Issues:
 

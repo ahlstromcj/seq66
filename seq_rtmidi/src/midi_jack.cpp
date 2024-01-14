@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2023-12-03
+ * \updates       2024-01-13
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -485,7 +485,7 @@ jack_get_event_data
         }
         else
         {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_SHOW_TIMING
             char value[c_async_safe_utoa_size];
             char text[c_async_safe_utoa_size + 32];
             std::strcpy(text, "Event ");

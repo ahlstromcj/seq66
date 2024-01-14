@@ -54,7 +54,7 @@
  *  Define for checking JACK/rtmidi latency.
  */
 
-#if defined SEQ66_PLATFORM_DEBUG    // _TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
 #define SEQ66_SHOW_TIMING
 #endif
 
