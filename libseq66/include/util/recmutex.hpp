@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-30
+ * \updates       2024-01-16
  * \license       GNU GPLv2 or above
  *
  *  This recursive mutex is implemented in pthreads due to difficulties we had
@@ -92,7 +92,9 @@ public:
     /**
      *  Sets the native type of recursive mutex in use.  We declare it here,
      *  rather than in the impl classes, because it needs to be exposed for
-     *  the use of automutex.
+     *  the use of automutex. The pthread_mutex_t type is a union of a structure
+     *  and a byte array. The structure contains a lock integer, a count, an
+     *  owner integer, and some other values.
      */
 
     using native = pthread_mutex_t;
@@ -127,12 +129,11 @@ private:
 public:
 
     recmutex ();
-    recmutex (recmutex &&) = default;
-    recmutex (const recmutex &) = delete;
-    recmutex & operator = (recmutex &&) = default;
-    recmutex & operator = (const recmutex &) = delete;
-
-    ~recmutex ();       //  = default;
+    recmutex (recmutex &&) = delete;                    /* default; */
+    recmutex (const recmutex &);                        /* delete;  */
+    recmutex & operator = (recmutex &&) = delete;       /* default; */
+    recmutex & operator = (const recmutex &);           /* delete;  */
+    ~recmutex ();                                       /* default; */
 
     void lock () const;
     void unlock () const;

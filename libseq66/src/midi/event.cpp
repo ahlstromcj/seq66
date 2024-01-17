@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-11
+ * \updates       2024-01-16
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -110,7 +110,6 @@ event::event () :
     m_marked        (false),
     m_painted       (false)
 {
-    m_data[0] = m_data[1] = 0;
 }
 
 /**

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-05-16
+ * \updates       2024-01-16
  * \license       GNU GPLv2 or above
  *
  *  This module defines the class seq66::condition_var, which provides a common
@@ -96,11 +96,11 @@ private:
 public:
 
     condition ();
+    condition (condition &&) = delete;          /* default; */
+    condition (const condition &);              /* delete;  */
+    condition & operator = (condition &&) = delete;
+    condition & operator = (const condition &); /* delete;  */
     ~condition ();
-    condition (condition &&) = default;
-    condition (const condition &) = delete;
-    condition & operator = (condition &&);
-    condition & operator = (const condition &) = delete;
 
     void lock () const
     {
@@ -151,6 +151,7 @@ public:
 
     synchronizer ();
     synchronizer (const synchronizer &) = delete;
+    synchronizer & operator = (synchronizer &&) = delete;
     synchronizer & operator = (const synchronizer &) = delete;
     virtual ~synchronizer () = default;
 

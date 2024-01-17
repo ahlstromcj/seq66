@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-21
+ * \updates       2024-01-16
  * \license       GNU GPLv2 or above
  *
  *  Seq66 needs a mutex for sequencer operations. We have finally, after a
@@ -35,7 +35,11 @@
 #include "util/recmutex.hpp"            /* seq66::recmutex                  */
 
 /**
- *  FreeBSD prthreads is different from the others.
+ *  FreeBSD pthreads is different from the others.
+ *
+ *  Using pthread_mutex_init() and pthread_mutex_destroy() seems to hang
+ *  up automutex usage.  The mutex gets destroyed in the first thread in
+ *  which it goes out of scope.`
  */
 
 #if defined SEQ66_PLATFORM_FREEBSD
@@ -54,6 +58,10 @@
  *
  *  The MingW compiler (at least on Windows) and the Microsoft Visual Studio
  *  compiler do not support the pthread PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP
+ *  macro.
+ *
+ *  Currently, we do not use the CRITICAL_SECTION or alternate threads API.
+ *  Kept here for reference
  */
 
 #define MUTEX_INITIALIZER   PTHREAD_RECURSIVE_MUTEX_INITIALIZER
@@ -114,6 +122,38 @@ recmutex::recmutex () :
     init();                             /* m_mutex_lock = MUTEX_INITIALIZER */
 }
 
+/**
+ *  Copy constructor. It doesn't make any sense to copy a mutex (and, in fact,
+ *  std::mutex is Noncopyable and Nonmoveable.
+ *
+ *  However, there are objects that use a mutex and should still be copyable.
+ *  So rather than defining a default copy constructor or deleting it, we
+ *  make one that creates a new mutex. We do not need to call the static
+ *  function init_global_mutex().  We could call it, but nothing would happen.
+ */
+
+recmutex::recmutex (const recmutex & /* rhs */ ) : m_mutex_lock ()
+{
+    init();
+}
+
+/**
+ *  Similarly, we want to support the principal assignment operator.
+ */
+
+recmutex &
+recmutex::operator = (const recmutex & rhs)
+{
+    if (this != & rhs)
+    {
+#if defined USE_GLOBAL_MUTEX
+        init_global_mutex();
+#endif
+        init();
+    }
+    return *this;
+}
+
 recmutex::~recmutex ()
 {
     destroy();
@@ -148,7 +188,6 @@ recmutex::unlock () const
 void
 recmutex::init ()
 {
-    pthread_mutexattr_t m_mutex_attributes;
     int rc = pthread_mutexattr_init(&m_mutex_attributes);
     if (rc == 0)
     {

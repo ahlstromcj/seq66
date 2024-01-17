@@ -25,7 +25,7 @@
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
- *  Copyright (C) 2005-2023 by Chris Ahlstrom
+ *  Copyright (C) 2005-2024 by Chris Ahlstrom
  *
  *  Provides a function to make it easy to run an application as a (Linux)
  *  daemon.  There are large differences between POSIX daemons and Win32

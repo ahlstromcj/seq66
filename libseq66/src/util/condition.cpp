@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-12-10
+ * \updates       2024-01-16
  * \license       GNU GPLv2 or above
  *
  *  2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
@@ -149,13 +149,34 @@ namespace seq66
 
 condition::condition () :
     m_mutex_lock    (),
-    p_imple         (std::make_unique<impl>(m_mutex_lock))
+    p_imple         (std::make_unique<condition::impl>(m_mutex_lock))
 {
     // Empty body
 }
 
-condition::~condition () = default;
-condition & condition::operator = (condition &&) = default;
+condition::condition (const condition & /* rhs */) :
+    m_mutex_lock    (),
+    p_imple         (std::make_unique<condition::impl>(m_mutex_lock))
+{
+    // Empty body
+}
+
+condition &
+condition::operator = (const condition & rhs)
+{
+    if (this != & rhs)
+    {
+        m_mutex_lock = rhs.m_mutex_lock;
+        p_imple.reset(std::make_unique<condition::impl>(m_mutex_lock).get());
+    }
+    return *this;
+}
+
+condition::~condition ()
+{
+    // No code needed at this time, we think
+}
+
 
 void
 condition::signal ()

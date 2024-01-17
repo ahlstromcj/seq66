@@ -27,7 +27,7 @@
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
- *    Copyright (C) 2005-2020 by Chris Ahlstrom
+ *    Copyright (C) 2005-2024 by Chris Ahlstrom
  *
  *    This module provides functions for timing and increasing thread
  *    priority.
