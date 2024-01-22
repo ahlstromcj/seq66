@@ -4,7 +4,7 @@
 "
 "  Language:      C
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-08-04 to 2023-03-19
+"  Last Change:   2006-08-04 to 2024-01-21
 "  Project:       XPC Suite library project
 "  License:       None.  Use it in any manner whatsover, and don't blame me.
 "  Usage:
@@ -42,7 +42,6 @@
 
 syn keyword XPCC errno errprintfunc infoprintfunc warnprintfunc
 syn keyword XPCC strerrprintfunc strerrorprintfunc strerrnoprintfunc
-
 syn keyword XPCC atomic_int_t bool_to_string bool_to_code debugprint_func
 syn keyword XPCC EXTERN_C_DEC EXTERN_C_END find_data_t
 syn keyword XPCC find_function_t find_type_t ftw_function_t

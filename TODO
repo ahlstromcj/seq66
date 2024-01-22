@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.13
 Chris Ahlstrom
-2019-04-13 to 2024-01-16
+2019-04-13 to 2024-01-22
 
 Build:
 
@@ -10,9 +10,6 @@ Build:
         /usr/include/qt/QtCore/qnamespace.h:360:10: warning: type
         ‘Qt::WidgetAttribute’ violates the C++ One Definition Rule [-Wodr]
         360 |     enum WidgetAttribute {
-
-    -   Look into copy constructors and assignment operators that should
-        be deleted due to reference member, atomic<bool>, and ???
 
 Misc:
 

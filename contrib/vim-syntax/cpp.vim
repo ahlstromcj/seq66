@@ -4,7 +4,7 @@
 "
 "  Language:      C/C++
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-09-04 to 2023-07-21
+"  Last Change:   2006-09-04 to 2024-01-21
 "  Project:       XPC Suite library project
 "  Usage:
 "
@@ -61,8 +61,9 @@ syn keyword cTodo contained pure singleton virtual
 " Our type definitions that are basically standard C++
 "------------------------------------------------------------------------------
 
-syn keyword cType array atomic auto_ptr bad_alloc begin c_str cbegin cend
-syn keyword cType clear const_iterator
+syn keyword cType aggregation alias containment dependency inherits nested
+syn keyword cType array atomic auto_ptr bad_alloc begin c_str
+syn keyword cType cbegin cend clear const_iterator
 syn keyword cType const_reverse_iterator cbegin cend rbegin rend
 syn keyword cType difference_type iterator_category pointer
 syn keyword cType empty end erase exception find first fstream future
