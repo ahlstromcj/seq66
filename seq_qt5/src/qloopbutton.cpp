@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2023-12-07
+ * \updates       2024-02-22
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -64,6 +64,8 @@
  *  text.  It doesn't work with some GTK themes.  Use Qt style sheets or a
  *  'palette' file instead.  The background border can look garish, too.
  */
+
+static bool s_elliptical_progress_box = false;
 
 /**
  *  Alpha values for various states, not yet members, not yet configurable.
@@ -194,6 +196,7 @@ qloopbutton::qloopbutton
     m_use_gradient          (gui_use_gradient_brush())
 {
     sm_draw_progress_box = usr().progress_box_shown();
+    s_elliptical_progress_box = usr().progress_box_elliptical();
     m_text_font.setBold(usr().progress_bar_thick());
     m_text_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     make_active();
@@ -780,7 +783,8 @@ qloopbutton::draw_progress_box (QPainter & painter)
         pen.setStyle(Qt::SolidLine);
     }
     pen.setWidth(penwidth);
-    if (use_gradient())
+
+    if (use_gradient() && ! s_elliptical_progress_box)
     {
         QLinearGradient grad
         (
@@ -790,22 +794,50 @@ qloopbutton::draw_progress_box (QPainter & painter)
         grad.setColorAt(0.01, backcolor.darker());
         grad.setColorAt(0.5, backcolor.lighter());
         grad.setColorAt(0.99, backcolor.darker());
-        painter.fillRect
-        (
-            m_progress_box.x(), m_progress_box.y(),
-            m_progress_box.w(), m_progress_box.h(), grad
-        );
+#if 0
+        The gradient does not work here. Odd?
+
+        if (s_elliptical_progress_box)
+        {
+            painter.drawEllipse
+            (
+                m_progress_box.x(), m_progress_box.y(),
+                m_progress_box.w(), m_progress_box.h()
+            );
+        }
+        else
+        {
+#endif
+            painter.fillRect
+            (
+                m_progress_box.x(), m_progress_box.y(),
+                m_progress_box.w(), m_progress_box.h(), grad
+            );
+#if 0
+        }
+#endif
     }
     else
     {
         brush.setColor(backcolor);
         painter.setPen(pen);
         painter.setBrush(brush);
-        painter.drawRect
-        (
-            m_progress_box.x(), m_progress_box.y(),
-            m_progress_box.w(), m_progress_box.h()
-        );
+        if (s_elliptical_progress_box)
+        {
+            painter.drawEllipse
+            (
+                m_progress_box.x(), m_progress_box.y(),
+                m_progress_box.w(), m_progress_box.h()
+            );
+        }
+        else
+        {
+            painter.drawRect
+            (
+                m_progress_box.x(), m_progress_box.y(),
+                m_progress_box.w(), m_progress_box.h()
+            );
+        }
     }
 }
 

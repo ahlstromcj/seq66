@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2023-12-06
+ * \updates       2024-02-22
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -336,6 +336,7 @@ usrsettings::usrsettings () :
     m_seqedit_key               (c_key_of_C),
     m_seqedit_bgsequence        (seq::limit()),
     m_progress_bar_thick        (true),
+    m_progress_box_elliptical   (false),
     m_follow_progress           (true),
     m_inverse_colors            (false),
     m_time_fg_color             ("default"),
@@ -456,6 +457,7 @@ usrsettings::set_defaults ()
     m_seqedit_key = c_key_of_C;
     m_seqedit_bgsequence = seq::limit();
     m_progress_bar_thick = true;
+    m_progress_box_elliptical = false;
     m_follow_progress = true;
     m_inverse_colors = false;
     m_time_fg_color = "default";

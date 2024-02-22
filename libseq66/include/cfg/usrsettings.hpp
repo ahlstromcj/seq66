@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-11-25
+ * \updates       2024-02-22
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -454,6 +454,13 @@ private:
      */
 
     bool m_progress_bar_thick;
+
+    /**
+     *  Instead of a rectangular progress box, use an elliptical one.
+     *  An interesting look.
+     */
+
+    bool m_progress_box_elliptical;
 
     /**
      *  For the pattern and song windows, set the default status of
@@ -1376,6 +1383,11 @@ public:
         return m_progress_bar_thick;
     }
 
+    bool progress_box_elliptical () const
+    {
+        return m_progress_box_elliptical;
+    }
+
     bool follow_progress () const
     {
         return m_follow_progress;
@@ -1920,6 +1932,11 @@ public:         // used in main application module and the usrfile class
     void progress_bar_thick (bool flag)
     {
         m_progress_bar_thick = flag;
+    }
+
+    void progress_box_elliptical (bool flag)
+    {
+        m_progress_box_elliptical = flag;
     }
 
     void follow_progress (bool flag)

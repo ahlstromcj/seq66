@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-12-06
+ * \updates       2024-02-22
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -294,6 +294,8 @@ usrfile::parse ()
         usr().global_seq_feature(flag);
         flag = get_boolean(file, tag, "progress-bar-thick");
         usr().progress_bar_thick(flag);
+        flag = get_boolean(file, tag, "progress-box-elliptical");
+        usr().progress_box_elliptical(flag);
         flag = get_boolean(file, tag, "follow-progress");
         usr().follow_progress(flag);
         flag = get_boolean(file, tag, "inverse-colors");
@@ -808,7 +810,7 @@ usrfile::write ()
 "#\n"
 "# 'progress-bar-thick specifies a thicker progress bar.  Default is 2 pixels,\n"
 "# 1 pixel if set to false. Also affects the slot box border and the boldness\n"
-"# of the slot font.\n"
+"# of the slot font. 'progress-box-elliptical creates an elliptical box.\n"
 "#\n"
 "# 'follow-progress specifies the default for following progress in the piano\n"
 "# rolls. Each window has a button to toggle following progess\n"
@@ -842,6 +844,10 @@ usrfile::write ()
     write_integer(file, "default-zoom", usr().zoom());
     write_boolean(file, "global-seq-feature", usr().global_seq_feature());
     write_boolean(file, "progress-bar-thick", usr().progress_bar_thick());
+    write_boolean
+    (
+        file, "progress-box-elliptical", usr().progress_box_elliptical()
+    );
     write_boolean(file, "follow-progress", usr().follow_progress());
     write_boolean(file, "inverse-colors", usr().inverse_colors());
     write_string(file, "time-fg-color", usr().time_fg_color(true), true);
