@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2023-10-27
+ * \updates       2024-02-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -286,7 +286,7 @@ palettefile::write_stream (std::ofstream & file)
         "#    lineargradient, radialgradient, and conicalgradient.\n"
         "#\n"
         "# For 'empty', best to just use 'solid' (try others and see why).\n"
-        "# For 'note', use 'solid' or the default, 'lineargradient'. These\n"
+        "# For 'note', use only 'solid' or the default, 'lineargradient'. These\n"
         "# also apply to the progress box and triggers.\n"
         "\n"
         "[brushes]\n"

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-02-22
+ * \updates       2024-02-23
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -48,9 +48,9 @@
 namespace seq66
 {
 
-static const int s_usr_legacy = 5;
-static const int s_usr_smf_1 = 8;
-static const int s_usr_file_version = 12;
+static const int s_usr_legacy       =  5;
+static const int s_usr_smf_1        =  8;
+static const int s_usr_file_version = 13;
 
 /**
  *  Principal constructor.
@@ -61,13 +61,13 @@ static const int s_usr_file_version = 12;
  *      4:  2021-05-15. Disabled using grid-style and grid-brackets settings.
  *      5:  2021-06-08. Transition to get-variable for booleans/integers.
  *      6:  2021-07-26. Added progress-note-min and progress-note-max.
- *      7:  2021-09-20. Added "style-sheet-active" and "lock-main-window"
- *          flags.
+ *      7:  2021-09-20. Added "style-sheet-active" & "lock-main-window" flags.
  *      8:  2021-10-06: Added "convert-to-smf-1".
  *      9:  2021-10-26: Added "swap-coordinates".
  *     10:  2022-07-21: Added "pattern-box-shown" (issue #78).
  *     11:  2023-10-12: Added more new-pattern options (e.g. notemap)
  *     12:  2023-11-02: Moved style-sheets to the 'rc' file.
+ *     13:  2024-02-23: Added elliptical progress-box option.
  *
  * \param name
  *      Provides the full file path specification to the configuration file.
@@ -810,7 +810,7 @@ usrfile::write ()
 "#\n"
 "# 'progress-bar-thick specifies a thicker progress bar.  Default is 2 pixels,\n"
 "# 1 pixel if set to false. Also affects the slot box border and the boldness\n"
-"# of the slot font. 'progress-box-elliptical creates an elliptical box.\n"
+"# of the slot font. 'progress-box-elliptical' creates an elliptical box.\n"
 "#\n"
 "# 'follow-progress specifies the default for following progress in the piano\n"
 "# rolls. Each window has a button to toggle following progess\n"

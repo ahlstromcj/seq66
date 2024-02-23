@@ -1,6 +1,6 @@
-Release Notes for Seq66 v. 0.99.13 2024-01-14
+Release Notes for Seq66 v. 0.99.13 2024-02-23
 
--   Fixed ...
+-   Added a 'usr' option for elliptical progress boxes.
 
 See NEWS for more details, and ChangeLog.
 

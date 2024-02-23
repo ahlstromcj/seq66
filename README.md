@@ -1,4 +1,4 @@
-# README for Seq66 0.99.13 2024-01-14
+# README for Seq66 0.99.13 2024-02-23
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -87,8 +87,7 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
-    As per Issue #123 "Would it be possible to have NEWS structured like
-    a changelog", the recent changes now appear at the top of the NEWS file.
+    Added a 'usr' option to show an elliptical progress box, as eye candy.
     Also see RELNOTES.
 
 // vim: sw=4 ts=4 wm=2 et ft=markdown

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2024-02-22
+ * \updates       2024-02-23
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -65,7 +65,7 @@
  *  'palette' file instead.  The background border can look garish, too.
  */
 
-static bool s_elliptical_progress_box = false;
+static bool s_elliptical_prog_box   = false;
 
 /**
  *  Alpha values for various states, not yet members, not yet configurable.
@@ -196,7 +196,7 @@ qloopbutton::qloopbutton
     m_use_gradient          (gui_use_gradient_brush())
 {
     sm_draw_progress_box = usr().progress_box_shown();
-    s_elliptical_progress_box = usr().progress_box_elliptical();
+    s_elliptical_prog_box = usr().progress_box_elliptical();
     m_text_font.setBold(usr().progress_bar_thick());
     m_text_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     make_active();
@@ -770,21 +770,21 @@ qloopbutton::draw_progress_box (QPainter & painter)
         backcolor.setAlpha(s_alpha_queued);
         pen.setStyle(Qt::SolidLine);
     }
-    else if (loop()->one_shot())                   /* one-shot queued      */
+    else if (loop()->one_shot())                    /* one-shot queued      */
     {
         backcolor = Qt::black;
         backcolor.setAlpha(s_alpha_oneshot);
         pen.setColor(Qt::darkGray);
         pen.setStyle(Qt::DotLine);
     }
-    else                                           /* unarmed, muted       */
+    else                                            /* unarmed, muted       */
     {
         backcolor.setAlpha(s_alpha_muted);
         pen.setStyle(Qt::SolidLine);
     }
     pen.setWidth(penwidth);
 
-    if (use_gradient() && ! s_elliptical_progress_box)
+    if (use_gradient())
     {
         QLinearGradient grad
         (
@@ -794,11 +794,16 @@ qloopbutton::draw_progress_box (QPainter & painter)
         grad.setColorAt(0.01, backcolor.darker());
         grad.setColorAt(0.5, backcolor.lighter());
         grad.setColorAt(0.99, backcolor.darker());
-#if 0
-        The gradient does not work here. Odd?
-
-        if (s_elliptical_progress_box)
+        if (s_elliptical_prog_box)
         {
+#if defined USE_THIS_CODE                           /* needs more thought   */
+            QRadialGradient grad
+            (
+                m_progress_box.x(), m_progress_box.y(),
+                m_progress_box.x(), m_progress_box.y() + m_progress_box.h()
+            );
+#endif
+            painter.setBrush(QBrush(grad));
             painter.drawEllipse
             (
                 m_progress_box.x(), m_progress_box.y(),
@@ -807,22 +812,19 @@ qloopbutton::draw_progress_box (QPainter & painter)
         }
         else
         {
-#endif
             painter.fillRect
             (
                 m_progress_box.x(), m_progress_box.y(),
                 m_progress_box.w(), m_progress_box.h(), grad
             );
-#if 0
         }
-#endif
     }
     else
     {
         brush.setColor(backcolor);
         painter.setPen(pen);
         painter.setBrush(brush);
-        if (s_elliptical_progress_box)
+        if (s_elliptical_prog_box)
         {
             painter.drawEllipse
             (
