@@ -4,7 +4,7 @@
 "
 "  Language:      C/C++
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-09-04 to 2024-01-21
+"  Last Change:   2006-09-04 to 2024-03-02
 "  Project:       XPC Suite library project
 "  Usage:
 "
@@ -34,11 +34,12 @@
 " Our type definitions for new classes and types added by the XPCC++ library
 "------------------------------------------------------------------------------
 
-syn keyword XPCC midibytes midistring midi_message seq64 seq66 tokenization
+syn keyword XPCC midibytes midistring midi_message phraselist seq64 seq66
+syn keyword XPCC tokenization
 syn keyword XPCC boolean booleans bpm buffer byte bytes bytestring ppqn pulse
 syn keyword XPCC audio container ctrl meta seqspec status tag ulong ushort
 syn keyword XPCC api api_list cfg cfg66 cli audio rtaudio
-syn keyword XPCC midi rtl rtmidi rtl66
+syn keyword XPCC midi po rtl rtmidi rtl66
 syn keyword XPCC seq seq66 session util xpc xpc66
 syn keyword XPCC action clock clocking e_clock jack transport synch
 syn keyword XPCC recmutex automutex
@@ -66,9 +67,9 @@ syn keyword cType array atomic auto_ptr bad_alloc begin c_str
 syn keyword cType cbegin cend clear const_iterator
 syn keyword cType const_reverse_iterator cbegin cend rbegin rend
 syn keyword cType difference_type iterator_category pointer
-syn keyword cType empty end erase exception find first fstream future
+syn keyword cType empty end erase exception find first forward_list fstream future
 syn keyword cType ifstream insert istream istringstream iterator
-syn keyword cType length list make_pair map multimap
+syn keyword cType length list make_pair map multimap unordered_map
 syn keyword cType ofstream ostream ostringstream pair promise reverse_iterator
 syn keyword cType reference const_reference
 syn keyword cType second set shared_ptr size size_type stack std string
