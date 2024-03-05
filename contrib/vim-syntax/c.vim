@@ -209,6 +209,12 @@ syn keyword cConstant WSAENETDOWN WSAEINPROGRESS WSAEADDRNOTAVAIL
 syn keyword cConstant WSAECONNREFUSED WSAENETUNREACH
 
 "------------------------------------------------------------------------------
+" C errno values (will expand later)
+"------------------------------------------------------------------------------
+
+syn keyword ERR E2BIG EBADF EINVAL EILSEQ ENOENT
+
+"------------------------------------------------------------------------------
 " XPCC socket error codes
 "------------------------------------------------------------------------------
 

@@ -4,7 +4,7 @@
 "
 "  Language:      C/C++
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-09-04 to 2024-03-02
+"  Last Change:   2006-09-04 to 2024-03-05
 "  Project:       XPC Suite library project
 "  Usage:
 "
@@ -66,7 +66,7 @@ syn keyword cType aggregation alias containment dependency inherits nested
 syn keyword cType array atomic auto_ptr bad_alloc begin c_str
 syn keyword cType cbegin cend clear const_iterator
 syn keyword cType const_reverse_iterator cbegin cend rbegin rend
-syn keyword cType difference_type iterator_category pointer
+syn keyword cType deque difference_type iterator_category pointer queue
 syn keyword cType empty end erase exception find first forward_list fstream future
 syn keyword cType ifstream insert istream istringstream iterator
 syn keyword cType length list make_pair map multimap unordered_map
