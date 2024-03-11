@@ -423,7 +423,8 @@
  */
 
 #if ! defined SEQ66_PLATFORM_DEBUG
-#if defined DEBUG || _DEBUG || _DEBUG_ || __DEBUG || __DEBUG__
+#if defined DEBUG || defined _DEBUG || defined _DEBUG_ || \
+ defined __DEBUG || defined __DEBUG__
 #define SEQ66_PLATFORM_DEBUG
 #endif
 #endif
