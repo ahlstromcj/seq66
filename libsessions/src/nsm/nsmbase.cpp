@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2023-12-08
+ * \updates       2024-03-11
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -882,7 +882,15 @@ nsmbase::add_server_method (nsm::tag t, lo_method_handler h)
     {
         const char * m = message.c_str();
         const char * p = pattern.c_str();
-        (void) lo_server_add_method(m_lo_server_thread, m, p, h, this);
+
+        /*
+         * All of a sudden in Arch Linux this call fails to build; it still
+         * builds in an older Ubuntu.``
+         *
+         * (void) lo_server_add_method(m_lo_server_thread, m, p, h, this);
+         */
+
+        (void) lo_server_add_method(m_lo_server, m, p, h, this);
         nsm::outgoing_msg(message, pattern, "Server method added");
     }
 }
