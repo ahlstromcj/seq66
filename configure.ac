@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2024-01-14
+dnl \update        2024-03-12
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -548,7 +548,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2024-01-14"
+#define VERSION_DATE_SHORT "2024-03-12"
 #define API_VERSION "0.99"
 #define VERSION "0.99.13"
 
@@ -621,13 +621,13 @@ esac
 dnl Note the c++14 option.  Also note that PROLDFLAGS comes from xpc_debug.m4.
 dnl Trying out gnu++14 or gnu++1y (they don't work) instead, to see if we can
 dnl eliminate the problem of debug linkage on some of our laptops.
-dnl The warning disabling for clang does not prevent "clang-16: warning:
+dnl The warning disabling for clang does prevents the "clang-16: warning:
 dnl optimization flag '-fno-fat-lto-objects' is not supported".
 dnl Finally, after getting an std::sort() error in the triggers class under
 dnl clang-16.0.6, we will force C++14.
 
 if test "$ac_clang_active" = "yes" ; then
-CFLAGS="$CFLAGS $COMMONFLAGS -Wignored-optimization-argument"
+CFLAGS="$CFLAGS $COMMONFLAGS -Wno-ignored-optimization-argument"
 else
 CFLAGS="$CFLAGS $COMMONFLAGS"
 fi

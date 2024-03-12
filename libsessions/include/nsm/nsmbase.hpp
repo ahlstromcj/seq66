@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2023-03-29
+ * \updates       2024-03-12
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -261,7 +261,9 @@ protected:
     bool lo_is_valid () const;
     void nsm_debug (const std::string & tag);
     void add_client_method (nsm::tag t, lo_method_handler h);
+#if defined SEQ66_NSM_ADD_SERVER_METHOD
     void add_server_method (nsm::tag t, lo_method_handler h);
+#endif
     bool send_announcement
     (
         const std::string & appname,

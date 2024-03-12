@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2024-01-13
+ * \updates       2024-03-12
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1200,7 +1200,11 @@ make_directory (const std::string & pathname)
         static struct stat st =
         {
 #if defined SEQ66_PLATFORM_CLANG
+#if defined SEQ66_PLATFORM_FREEBSD              /* __clang_major__<17 ? */
             0, 0, 0, 0, 0, 0, 0, 0, 0, { 0, 0 } /* Clang/FreeBSD        */
+#else
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0     /* and more for Linux!  */
+#endif
 #else
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0     /* and more for Linux!  */
 #endif
