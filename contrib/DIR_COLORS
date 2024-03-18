@@ -5,7 +5,7 @@
 # \file            DIR_COLORS
 # \author          Chris Ahlstrom
 # \date            2008-02-26
-# \updates         2022-12-14
+# \updates         2024-03-18
 # \version         $Revision$
 # \license         $XPC_SUITE_GPL_LICENSE$
 #
@@ -437,6 +437,7 @@ EXEC 01;32
 .user 01;33
 .usr 01;33
 .vim 01;33
+.wrap 01;33
 
 # Audio wave formats (white)
 
