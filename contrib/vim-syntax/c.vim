@@ -4,7 +4,7 @@
 "
 "  Language:      C
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-08-04 to 2024-01-21
+"  Last Change:   2006-08-04 to 2024-03-23
 "  Project:       XPC Suite library project
 "  License:       None.  Use it in any manner whatsover, and don't blame me.
 "  Usage:
@@ -106,7 +106,7 @@ syn keyword XPCC midippqn midipulse midishort miditag midibpm jacktick
 " GNU keywords.
 "------------------------------------------------------------------------------
 
-syn keyword cType __int64
+syn keyword cType byte word doubleword __int64
 syn keyword cType caddr_t u_char u_short u_int u_long quad_t u_quad_t
 syn keyword cType mode_t off_t pid_t uid_t socklen_t wchar_t
 syn keyword cType pollfd timeval timespec
