@@ -5,7 +5,7 @@
 # \file            DIR_COLORS
 # \author          Chris Ahlstrom
 # \date            2008-02-26
-# \updates         2024-03-18
+# \updates         2024-03-24
 # \version         $Revision$
 # \license         $XPC_SUITE_GPL_LICENSE$
 #
@@ -135,10 +135,11 @@ EXEC 01;32
 
 # Internationalization files from GNU (black-on-white)
 
-.gmo 01;30;47
-.mo 01;30;47
-.po 01;30;47
-.pot 01;30;47
+.gmo 07;30;47
+.mo 07;30;47
+.po 07;30;47
+.pot 07;30;47
+.qm 07;30;47
 
 # List any file extensions like '.gz' or '.tar' that you would like ls
 # to colorize below. Put the extension, a space, and the color init string.
@@ -532,7 +533,6 @@ EXEC 01;32
 .idb 00;34
 .idx 00;34
 .map 00;34
-.mo 00;34
 .moc 00;34
 .ncb 00;34
 .o 00;34
