@@ -63,7 +63,7 @@ Consider setting the following in /etc/rc.conf:
         --playback /dev/dspN"
 
 We did not have to do this to get Seq66 to play to Qsynth using JACK.
-Sew66 in FreeBSD running JACK will show software MIDI ports like
+Seq66 in FreeBSD running JACK will show software MIDI ports like
 jack-keyboard and qsynth.
 
 However, we do not see any USB MIDI devices, even though snd_uaudio is
@@ -141,4 +141,4 @@ the QT_CXXFLAGS and QT_LIBS macros are empty! This causes spurious
 notes about "stopped in /tmp/xxxx" to be written to the generated
 Makefiles.
 
-# vim: sw=4 ts=4 wm=8 et ft=sh
+# vim: sw=4 ts=4 wm=8 et ft=rc
