@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2020-03-30
+# \update      2024-04-29
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -83,6 +83,18 @@ DEPENDPATH += \
 # Works in Linux with "CONFIG += debug".
 
 unix {
+
+ isEmpty(PREFIX) { PREFIX = /usr/local }
+ isEmpty(BINDIR) { BINDIR = $${PREFIX}/bin }
+ isEmpty(DATADIR) { DATADIR = $${PREFIX}/share }
+
+ #DEFINES += DATADIR=\"$${DATADIR}\"
+
+ # make install
+
+ INSTALLS += target
+
+# desktop icon appdata icon_scalable mimeinfo mimetypes mimetypes_scalable
  PRE_TARGETDEPS += \
   $$OUT_PWD/../libseq66/libseq66.a \ 
   $$OUT_PWD/../seq_portmidi/libseq_portmidi.a \ 

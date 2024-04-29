@@ -1,10 +1,10 @@
 TO DO for Seq66 0.99.13
 Chris Ahlstrom
-2019-04-13 to 2024-01-22
+2019-04-13 to 2024-04-29
 
 Build:
 
-    -   Add "make install" support to qbuild.sh.
+    -   Add "make install" support to qbuild.sh. In progress.
     -   Figure out these compiler warnings on the Arch Linux box:
 
         /usr/include/qt/QtCore/qnamespace.h:360:10: warning: type

@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2023-12-23
+# \update      2024-04-29
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -15,6 +15,9 @@
 # file here.
 #
 # Important: This project file is designed only for Qt 5 (and above?).
+#
+# target.path = /usr/local/bin/
+# INSTALLS += target
 #
 #------------------------------------------------------------------------------
 
@@ -127,7 +130,45 @@ PRE_TARGETDEPS += $$OUT_PWD/../libsessions/libsessions.a \
 }
 
 unix {
-PRE_TARGETDEPS += \
+
+ isEmpty(PREFIX) { PREFIX = /usr/local }
+ isEmpty(BINDIR) { BINDIR = $${PREFIX}/bin }
+ isEmpty(DATADIR) { DATADIR = $${PREFIX}/share }
+
+ #DEFINES += DATADIR=\"$${DATADIR}\"
+
+ # make install
+
+ INSTALLS += target
+
+# desktop icon appdata icon_scalable mimeinfo mimetypes mimetypes_scalable
+
+ target.path = $${BINDIR}
+
+## TO DO.
+##
+ desktop.path = $${DATADIR}/applications
+ desktop.files += ../data/share/applications/seq66.desktop
+#   icon.path = $${DATADIR}/icons/hicolor/32x32/apps
+#   icon.files += images/$${NAME}.png
+#   icon_scalable.path = $${DATADIR}/icons/hicolor/scalable/apps
+#   icon_scalable.files += images/$${NAME}.svg
+#   appdata.path = $${DATADIR}/metainfo
+#   appdata.files += appdata/$${NAME}.appdata.xml
+#   mimeinfo.path = $${DATADIR}/mime/packages
+#   mimeinfo.files += mimetypes/$${NAME}.xml
+#   mimetypes.path = $${DATADIR}/icons/hicolor/32x32/mimetypes
+#   mimetypes.files += \
+#       mimetypes/application-x-$${NAME}-session.png \
+#       mimetypes/application-x-$${NAME}-template.png \
+#       mimetypes/application-x-$${NAME}-archive.png
+#   mimetypes_scalable.path = $${DATADIR}/icons/hicolor/scalable/mimetypes
+#   mimetypes_scalable.files += \
+#       mimetypes/application-x-$${NAME}-session.svg \
+#       mimetypes/application-x-$${NAME}-template.svg \
+#       mimetypes/application-x-$${NAME}-archive.svg
+
+ PRE_TARGETDEPS += \
   $$OUT_PWD/../libseq66/libseq66.a \ 
   $$OUT_PWD/../seq_$${MIDILIB}/libseq_$${MIDILIB}.a \ 
   $$OUT_PWD/../seq_qt5/libseq_qt5.a
