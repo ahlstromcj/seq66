@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2024-01-04
+ * \updates       2024-04-30
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -152,7 +152,6 @@ public:
     {
         no,             /**< Do not set the modify-flag.                    */
         yes,            /**< Do set the modify-flag.                        */
-        undo,           /**< Unset the modify-flag????                      */
         recreate,       /**< Recreate the user-interface(s).                */
         removed,        /**< Change was a removal; more specific than yes.  */
         signal,         /**< Could alter the UI from a different thread.    */
