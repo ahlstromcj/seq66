@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-29
+ * \updates       2024-05-19
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -3399,11 +3399,15 @@ midifile::read_seq_number ()
 
 /**
  *  Writes out the end-of-track marker.
+ *
+ *  ca 2024-05-19
+ *  We were not writing the delta time.
  */
 
 void
 midifile::write_track_end ()
 {
+    write_byte(0);                                  /* delta time           */
     write_byte(EVENT_MIDI_META);                    /* 0xFF meta tag        */
     write_byte(EVENT_META_END_OF_TRACK);            /* 0x2F                 */
     write_byte(0);                                  /* no data              */
