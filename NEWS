@@ -1,6 +1,6 @@
-NEWS for Seq66 0.99.12
+NEWS for Seq66 0.99.13
 Chris Ahlstrom
-2015-07-10 to 2024-02-23
+2015-07-10 to 2024-05-20
 
 # Changelog
 
@@ -11,10 +11,21 @@ Chris Ahlstrom
 ### Added
 
 - Added 'progress-box-elliptical' to the 'usr' file.
+  It is a 'usr' option to show an elliptical progress box.
 
 ### Fixed
+
+- Fixed the writing and byte-counting of the end-of track event.
+  Saved Seq66 MIDI files will be one byte longer.
+
 ### Changed
+
+- Change the Tempo Track setting slightly in Edit / Preferences
+  for clarity.
+
 ### Removed
+
+- Nothing removed.
 
 ## [0.99.12] - 2024-01-13
 

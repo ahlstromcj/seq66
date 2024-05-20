@@ -96,7 +96,6 @@ const midilong c_trig_transpose = 0x24240020; /**< Triggers with transpose. */
 
 class midi_vector_base
 {
-    //  friend class midifile;
 
 private:
 

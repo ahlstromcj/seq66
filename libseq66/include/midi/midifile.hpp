@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-05-14
+ * \updates       2024-05-20
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -452,12 +452,13 @@ protected:
     }
 
     /**
-     *  Returns the size of a track-end event, which is always 3 bytes.
+     *  Returns the size of a track-end event, which is always 4 bytes:
+     *  00 FF 2f 00
      */
 
     long track_end_size () const
     {
-        return 3;
+        return 4;                   /* ca 2024-05-20: it was 3; */
     }
 
     /**
