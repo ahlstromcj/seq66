@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-05-19
+ * \updates       2024-05-20
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -2637,7 +2637,7 @@ midifile::write_varinum (midilong v)
  *      0.
  */
 
-long
+int
 midifile::varinum_size (long len) const
 {
     int result = 0;
@@ -2825,7 +2825,7 @@ midifile::write_track (const midi_vector & lst)
  *      bytes, length byes, the control tag, and the data-length itself.
  */
 
-long
+int
 midifile::prop_item_size (long data_length) const
 {
     long result = 0;

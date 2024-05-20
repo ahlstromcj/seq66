@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-27
+ * \updates       2024-05-20
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -170,12 +170,12 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     connect
     (
         ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Ok),
-        SIGNAL(clicked(bool)), this, SLOT(okay())
+        SIGNAL(clicked()), this, SLOT(okay())
     );
     connect
     (
         ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Cancel),
-        SIGNAL(clicked(bool)), this, SLOT(cancel())
+        SIGNAL(clicked()), this, SLOT(cancel())
     );
 
     /*
@@ -330,6 +330,10 @@ qseditoptions::setup_tab_midi_clock ()
         this, SLOT(slot_clock_start_modulo(int))
     );
     ui->lineEditTempoTrack->setEnabled(true);
+    ui->lineEditTempoTrack->setReadOnly(false);
+
+    std::string tn = std::to_string(rc().tempo_track_number());
+    ui->lineEditTempoTrack->setText(qt(tn));
     connect
     (
         ui->lineEditTempoTrack, SIGNAL(editingFinished()),
@@ -3867,19 +3871,9 @@ qseditoptions::slot_tempo_track ()
     QString text = ui->lineEditTempoTrack->text();
     std::string t = text.toStdString();
     if (t.empty())
-    {
         ui->pushButtonTempoTrack->setEnabled(false);
-    }
     else
-    {
-        int track = string_to_int(t);
-        bool ok = track >= 0 && track < seq::maximum();
-        if (ok)
-        {
-            ui->pushButtonTempoTrack->setEnabled(true);
-            modify_rc();
-        }
-    }
+        ui->pushButtonTempoTrack->setEnabled(true);
 }
 
 void
@@ -3912,9 +3906,23 @@ qseditoptions::slot_tempo_track_set ()
     std::string t = text.toStdString();
     if (! t.empty())
     {
-        int track = string_to_int(t);
-        rc().tempo_track_number(track);
-        modify_rc();
+        int ttrack = string_to_int(t);
+        bool ok = ttrack >= 0 && ttrack < seq::maximum();
+        if (ok)
+        {
+            rc().tempo_track_number(ttrack);
+            ui->pushButtonTempoTrack->setEnabled(false);
+            modify_rc();
+
+            /*
+             * new ca 2024-05-20
+             * Whether the new tempo track exists, it will be logged
+             * in the last (Seqspec) track of the song.
+             */
+
+            m_perf.modify();
+            m_perf.notify_sequence_change(ttrack);
+        }
     }
 }
 
