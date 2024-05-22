@@ -1,9 +1,12 @@
 TO DO for Seq66 0.99.13
 Chris Ahlstrom
-2019-04-13 to 2024-04-29
+2019-04-13 to 2024-05-22
 
 Build:
 
+    -   Make sure meta events are never sent via MIDI. What we see is
+        that is_ex_data() events are skipped. We now allow SysEx to be
+        sent, but we need a test file for it.
     -   Add "make install" support to qbuild.sh. In progress.
     -   Figure out these compiler warnings on the Arch Linux box:
 

@@ -27,6 +27,7 @@ Chris Ahlstrom
 - Added more robust handling of the Seq66 SeqSpec track. This is the final
   track in an Seq66 MIDI file, and is not counted. But some applications
   might count it as a track when saving the MIDI file.
+- In sequence::play() we now put SysEx events on the output bus.
 
 ### Removed
 

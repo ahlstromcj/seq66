@@ -1611,9 +1611,15 @@ sequence::play
                     {
                         perf()->set_beats_per_minute(er.tempo());
                     }
-                    else if (! er.is_ex_data())
+                    else
                     {
-                        put_event_on_bus(er);       /* frame still going    */
+                        if (er.is_ex_data())
+                        {
+                            if (er.is_sysex())          /* EXPERIMENTAL     */
+                                put_event_on_bus(er);   /* ca 2024-05-22    */
+                        }
+                        else
+                            put_event_on_bus(er);   /* frame still going    */
                     }
                 }
             }
