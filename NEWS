@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.13
 Chris Ahlstrom
-2015-07-10 to 2024-05-20
+2015-07-10 to 2024-05-22
 
 # Changelog
 
@@ -16,12 +16,17 @@ Chris Ahlstrom
 ### Fixed
 
 - Fixed the writing and byte-counting of the end-of track event.
-  Saved Seq66 MIDI files will be one byte longer.
+  This adds 1 byte to the size of a Se66 MIDI file.
+- Fixed the counting of the size of empty note strings. Empty notes
+  alway have a two-byte (short) note length of 0.
 
 ### Changed
 
-- Change the Tempo Track setting slightly in Edit / Preferences
+- Changed the Tempo Track setting fields slightly in Edit / Preferences
   for clarity.
+- Added more robust handling of the Seq66 SeqSpec track. This is the final
+  track in an Seq66 MIDI file, and is not counted. But some applications
+  might count it as a track when saving the MIDI file.
 
 ### Removed
 

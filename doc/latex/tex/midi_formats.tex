@@ -6,12 +6,12 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2023-12-15
+% \update      2024-05-22
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
-%     Provides a discussion of the MIDI message formats and how they are handled,
-%     including the last, special track of an Seq24/Seq66 MIDI file.
+%     Provides a discussion of the MIDI message formats and how they are
+%     handled, including the last, special track of an Seq24/Seq66 MIDI file.
 %
 %-------------------------------------------------------------------------------
 
@@ -108,15 +108,23 @@
    palette color assigned to that track.
 
    \index{SeqSpec}
-   In \textsl{Seq24}, some these events are placed at the end of the song,
+   In \textsl{Seq24} and \textsl{Seq66},
+   some these events are placed at the end of the song in the last pattern,
    and some are included in each pattern.
    Most MIDI applications handle this situation
    fine, but some (e.g. midicvt) do not.  \textsl{Seq66} makes
    sure to wrap each data item in the 0xFF 0x7F wrapper.
 
-   Also, the last three items above (key, scale, and background sequence) can
-   also be stored (by \textsl{Seq66}) with a particular sequence/track,
-   as well as at the end of the song.  Not sure if this bit of extra
+   Note that the last track of a \textsl{Seq66} MIDI file contains
+   only SeqSpec events, which are not counted as a pattern (track) and
+   are not included in the track count.
+   Other MIDI applications might count this track when saving a
+   \textsl{Seq66} MIDI file, so \textsl{Seq66} must account for that.
+
+   The \textsl{Seq66} SeqSpecs for Key, SCALe, and Background Sequence)
+   can also be stored with a particular sequence/track,
+   as well as at the end of the song.
+   Not sure if this bit of extra
    flexibility is useful, but it is there.
 
    \begin{verbatim}
@@ -181,10 +189,10 @@
          \texttt{c\_midibus}         & Track         & 5                 & \texttt{0x24240001 buss} \\
          \texttt{c\_midichannel}     & Track         & 5                 & \texttt{0x24240002 channel} \\
          \texttt{c\_midiclocks}      & Unused        & 4+count           & \texttt{0x24240003 count:L bussclocks} \\
-         \texttt{c\_triggers}        & TBD           & 0                 & \texttt{0x24240004 (see c\_triggers\_ex)} \\
-         \texttt{c\_notes}           & TBD           & 2+variable        & \texttt{0x24240005 setcount strings...} \\
+         \texttt{c\_triggers}        &               & 0                 & \texttt{0x24240004 (see c\_triggers\_ex)} \\
+         \texttt{c\_notes}           &               & 2+variable        & \texttt{0x24240005 setcount strings...} \\
          \texttt{c\_timesig}         & Track         & 6                 & \texttt{0x24240006 bpb bw} \\
-         \texttt{c\_bpmtag}          & TBD           & 8                 & \texttt{0x24240007 bpm:L } \\
+         \texttt{c\_bpmtag}          &               & 8                 & \texttt{0x24240007 bpm:L } \\
          \texttt{c\_triggers\_ex}    & Track         & 4+triggercount*12 & \texttt{0x24240008 triggers...} \\
          \texttt{c\_mutegroups}      & Global        & 4+4*groups+4*seqs & \texttt{0x24240009 groups:S seqs:S data...} \\
          \texttt{c\_gap\_A}          & Unused        & 4                 & \texttt{0x2424000A} \\
@@ -193,7 +201,7 @@
          \texttt{c\_gap\_D}          & Unused        & 4                 & \texttt{0x2424000D} \\
          \texttt{c\_gap\_E}          & Unused        & 4                 & \texttt{0x2424000E} \\
          \texttt{c\_gap\_F}          & Unused        & 4                 & \texttt{0x2424000F} \\
-         \texttt{c\_midictrl}        & TBD           & 4+8*ctrls         & \texttt{0x24240010 ctrls data...} \\
+         \texttt{c\_midictrl}        & Unused        & 4+8*ctrls         & \texttt{0x24240010 ctrls data...} \\
          \texttt{c\_musickey}        & Both          & 5                 & \texttt{0x24240011 key} \\
          \texttt{c\_musicscale}      & Both          & 5                 & \texttt{0x24240012 scale} \\
          \texttt{c\_backsequence}    & Both          & 8                 & \texttt{0x24240013 seqnumber:L} \\
@@ -202,13 +210,13 @@
          \texttt{c\_perf\_bw}        & Global        & 0                 & \texttt{0x24240016 bw:L} \\
          \texttt{c\_tempo\_map}      & Seq32         & 0                 & \texttt{0x24240017} \\
          \texttt{c\_midiinbus}       & Track         & 5                 & \texttt{0x24240018} \\
-         \texttt{c\_reserved\_2}     & TBD           & 0                 & \texttt{0x24240019} \\
+         \texttt{c\_reserved\_2}     & Unused        & 0                 & \texttt{0x24240019} \\
          \texttt{c\_tempo\_track}    & Global        & 8                 & \texttt{0x2424001A track:L} \\
          \texttt{c\_seq\_color}      & Track         & 5                 & \texttt{0x2424001B color} \\
          \texttt{c\_seq\_edit\_mode} & Kepler34      & 0                 & \texttt{0x2424001C} \\
          \texttt{c\_seq\_loopcount}  & Track         & 6                 & \texttt{0x2424001D 00 00} \\
-         \texttt{c\_reserved\_3}     & TBD           & 0                 & \texttt{0x2424001E} \\
-         \texttt{c\_reserved\_4}     & TBD           & 0                 & \texttt{0x2424001F} \\
+         \texttt{c\_reserved\_3}     & Unused        & 0                 & \texttt{0x2424001E} \\
+         \texttt{c\_reserved\_4}     & Unused        & 0                 & \texttt{0x2424001F} \\
          \texttt{c\_trig\_transpose} & Track     & 4+triggercount*(12+1) & \texttt{0x24240020 triggers...} \\
       \end{tabular}
    \end{table}

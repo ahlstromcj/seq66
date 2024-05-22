@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-12-10
+ * \updates       2024-05-21
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -745,8 +745,8 @@ rcfile::write ()
     std::string noname;
     write_date(file, "main ('rc')");
     file <<
-"# This file holds the main configuration for Seq66. It no longer follows the\n"
-"# format of the seq24rc configuration file.\n"
+"# This file holds the main configuration for Seq66. It diverges greatly from\n"
+"# the of the seq24rc configuration file.\n"
 "#\n"
 "# 'version' is set by Seq66; it is used to detect older configuration files,\n"
 "# which are upgraded to the new version when saved.\n"
@@ -767,8 +767,9 @@ rcfile::write ()
 "# is shown. If port-mapping is active (now the default), this does not apply.\n"
 "#\n"
 "# 'init-disabled-ports' is experimental. It tries live toggle of port state.\n"
-"# 'priority' is experimental. It is meant to increase the priority of the I/O\n"
-"# threads. It requires Seq66 to be run as root, or be installed as setuid 0.\n"
+"#\n"
+"# 'priority' greater than 0 is meant to increase the priority of the I/O\n"
+"# threads. It needs Seq66 to run as root, or be installed as setuid 0.\n"
         ;
 
     write_seq66_header(file, "rc", version());

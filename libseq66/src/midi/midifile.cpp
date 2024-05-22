@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-05-20
+ * \updates       2024-05-21
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1170,6 +1170,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
     for (midishort track = 0; track < track_count; ++track)
     {
         midibyte tentative_channel = null_channel();
+        size_t track_position = m_pos;              /* save for SeqSpec'ing */
         midilong ID = read_long();                  /* get track marker     */
         midilong TrackLength = read_long();         /* get track length     */
         if (ID == c_mtrk_tag)                       /* magic number 'MTrk'  */
@@ -1316,7 +1317,23 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             if (! checklen(len, mtype)) /* might log error  */
                                 return false;
 
+                            /*
+                             * If this number is the highly unlikely value of
+                             * 0x3fff, then we assume this track is the Seq66
+                             * SeqSpec track, the last track in the song. So
+                             * we delete the sequence and exit so that that
+                             * last track can be processed. The reason this
+                             * can happen is if a MIDI app saves the SeqSpec
+                             * track unaltered.
+                             */
+
                             seqnum = read_short();
+                            if (seqnum == c_prop_seq_number)    /* 0x3ffff  */
+                            {
+                                delete sp;              /* remove pattern   */
+                                m_pos = track_position;
+                                return true;            /* fake it          */
+                            }
                             break;
 
                         case EVENT_META_TRACK_NAME:     /* FF 03 len text   */
