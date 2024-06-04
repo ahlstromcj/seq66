@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2023-12-08
+ * \updates       2024-06-04
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -679,12 +679,16 @@ midibase::show_bus_values ()
         const char * sport = is_system_port() ? "system" : "device" ;
         printf
         (
+            "client id:         %d\n"
+            "bus id:            %d\n"
+            "port id:           %d\n"
             "display name:      %s\n"
             "connect name:      %s\n"
             "bus : port name:   %s : %s\n"
             "bus type:          %s %s %s\n"
             "clock & enabling:  %d & %s\n"
             ,
+            client_id(), bus_id(), port_id(),
             display_name().c_str(), connect_name().c_str(),
             m_bus_name.c_str(), m_port_name.c_str(),
             vport, iport, sport,

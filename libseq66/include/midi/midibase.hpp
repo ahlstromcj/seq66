@@ -40,6 +40,8 @@
 #include "util/automutex.hpp"           /* seq66::recmutex recursive mutex  */
 #include "util/basic_macros.h"          /* not_nullptr() macro              */
 
+#define SEQ66_SHOW_BUS_VALUES           /* ca 2024-06-04 for investigation  */
+
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */

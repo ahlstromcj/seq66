@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-02-16
+ * \updates       2024-06-04
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -228,6 +228,9 @@ mastermidibus::make_normal_bus (int bus, midibase::io iotype)
     );
     if (not_nullptr(m))
     {
+#if defined SEQ66_SHOW_BUS_VALUES
+        m->show_bus_values();
+#endif
         set_midi_alias(bus, iotype, m->port_alias());
         if (iotype == midibase::io::input)
             m_inbus_array.add(m, input(bus));
