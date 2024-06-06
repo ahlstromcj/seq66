@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-06-16
-% \update      2023-11-30
+% \update      2024-06-06
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -19,7 +19,8 @@
 
    This section describes some details concerning the ALSA support of
    \textsl{Seq66}.
-   Currently, it just includes some tricks that might be useful.
+   Currently, it just includes some tricks that might be useful, plus some
+   clarification.
 
 \subsection{ALSA / Through Ports}
 \label{subsec:alsa_through_ports}
@@ -41,6 +42,9 @@
      . . .
    \end{verbatim}
 
+   Note that "14:0" consists of the ALSA client ID, 14, and the port ID of the
+   Midi Through pseudo-device, 0.
+
    \index{linux!system MIDI Thru}
    \index{MIDI Thru}
    One minor issue with the system MIDI Thru port is that, if it and another
@@ -59,7 +63,7 @@
 
    \begin{verbatim}
       $ /sbin/modinfo snd-seq-dummy
-      filename:    /lib/modules/5.7.0-1-amd64/kernel/sound/core/seq/snd-seq-dummy.ko
+      filename:    /lib/modules/5.7-amd64/kernel/sound/core/seq/snd-seq-dummy.ko
       alias:       snd-seq-client-14
       description: ALSA sequencer MIDI-through client
       author:      Takashi Iwai <tiwai@suse.de>
@@ -72,8 +76,10 @@
    to add a line to change the number
    of Thru ports.  We use the '\#' prompt to indicate root access or usage of
    \texttt{sudo}.
-   Save it.  No need to reboot, just remove and reinsert the module with the
-   "mod" commands:
+   Save it.
+   No need to reboot, this \textsl{Linux}.
+   just remove and reinsert the module with the
+   "mod" commands, as root:
 
    \begin{verbatim}
       # vi /etc/modprobe.d/alsa-base.conf
@@ -94,6 +100,7 @@
 
    This will, of course, throw off the \textsl{Seq66} port numbering, unless
    one has implemented port-mapping (\sectionref{sec:port_mapping}).
+   (But remember that using virtual ports will disable port-mapping.)
 
 \subsection{ALSA / Virtual MIDI Devices}
 \label{subsec:alsa_virtual_midi_devices}

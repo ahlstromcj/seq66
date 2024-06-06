@@ -916,10 +916,11 @@ rcfile::write ()
      */
 
     file << "\n"
-"# Set to true to create virtual ALSA/JACK I/O ports and not auto-connect\n"
-"# to other clients. It allows up to 48 output or input ports (defaults to 8\n"
-"# and 4). Keep it false to auto-connect Seq66 to real ALSA/JACK MIDI ports.\n"
-"# Set 'auto-enable' to enable all virtual ports automatically.\n"
+"# Set to true to create virtual ALSA/JACK I/O ports and not auto-connect to\n"
+"# other clients. Allows up to 48 output or input ports (defaults to 8 and 4).\n"
+"# If true, it disables port-mapping. Keep it false to auto-connect Seq66 to\n"
+"# real ALSA/JACK MIDI ports and preserve port-mapping. Set 'auto-enable' to\n"
+"# enable all virtual ports automatically.\n"
 "\n[manual-ports]\n\n"
         ;
     write_boolean(file, "virtual-ports", rc_ref().manual_ports());

@@ -232,9 +232,6 @@ mastermidibus::make_normal_bus (int bus, midibase::io iotype)
     );
     if (not_nullptr(m))
     {
-#if defined SEQ66_SHOW_BUS_VALUES
-        m->show_bus_values();
-#endif
         set_midi_alias(bus, iotype, m->port_alias());
         if (iotype == midibase::io::input)
             m_inbus_array.add(m, input(bus));

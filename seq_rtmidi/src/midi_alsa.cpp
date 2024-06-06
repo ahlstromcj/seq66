@@ -174,6 +174,9 @@ midi_alsa::midi_alsa (midibus & parentbus, midi_info & masterinfo) :
 {
     set_client_id(m_local_addr_client);
     set_name(SEQ66_CLIENT_NAME, bus_name(), port_name());
+#if defined SEQ66_SHOW_BUS_VALUES
+    parentbus.show_bus_values();
+#endif
 }
 
 /**
@@ -357,10 +360,10 @@ bool
 midi_alsa::api_init_out_sub ()
 {
     static unsigned s_port_caps =
-        SND_SEQ_PORT_CAP_READ | SND_SEQ_PORT_CAP_SUBS_READ,
+        SND_SEQ_PORT_CAP_READ | SND_SEQ_PORT_CAP_SUBS_READ ;
 
     static unsigned s_port_types =
-        SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION
+        SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION ;
 
     std::string portname = port_name();
     if (portname.empty())

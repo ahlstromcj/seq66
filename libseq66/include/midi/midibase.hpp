@@ -40,7 +40,7 @@
 #include "util/automutex.hpp"           /* seq66::recmutex recursive mutex  */
 #include "util/basic_macros.h"          /* not_nullptr() macro              */
 
-#define SEQ66_SHOW_BUS_VALUES           /* ca 2024-06-04 for investigation  */
+#undef  SEQ66_SHOW_BUS_VALUES           /* ca 2024-06-04 for investigation  */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -114,22 +114,27 @@ private:
 
     /**
      *  The buss ID of the Seq66 application as determined by the ALSA
-     *  subsystem.  It is set in the midi_alsa constructor.
+     *  subsystem.  It is set in the midi_alsa constructor. If there are
+     *  no other MIDI *applications* running this value will end up being
+     *  129.
      *
-     *  For JACK, this is currently set to the same value as the buss ID.
+     *  For JACK, this is currently set to the same value as the buss ID of
+     *  Seq66.
      */
 
     int m_client_id;
 
     /**
-     *  The buss ID of the midibase object.  For example, on one system the
-     *  IDs are 14 (MIDI Through), 128 (TiMidity), and 129 (Yoshimi).
+     *  The buss ID of the midibase object represents *other* MIDI devices and
+     *  applications (besides Seq66) present at Seq66 startup.  For example,
+     *  on one system the IDs are 14 (MIDI Through), 20 (LaunchPad Mini), 128
+     *  (TiMidity), and 129 (Yoshimi).
      */
 
     int m_bus_id;
 
     /**
-     *  The port ID of the midibase object.
+     *  The port ID of the midibase object. Numbering startes at 0.
      */
 
     int m_port_id;
