@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-02-23
+ * \updates       2024-06-06
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -812,8 +812,8 @@ usrfile::write ()
 "# 1 pixel if set to false. Also affects the slot box border and the boldness\n"
 "# of the slot font. 'progress-box-elliptical' creates an elliptical box.\n"
 "#\n"
-"# 'follow-progress specifies the default for following progress in the piano\n"
-"# rolls. Each window has a button to toggle following progess\n"
+"# 'follow-progress' sets the default for following progress in the piano\n"
+"# rolls. Each window has a button to toggle following progess.\n"
 "#\n"
 "# 'inverse-colors' (option -K/--inverse) specifies use of an inverse color\n"
 "# palette. Palettes are for Seq66 drawing areas, not for Qt widgets.\n"

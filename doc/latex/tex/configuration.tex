@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2024-02-23
+% \update      2024-06-06
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -558,9 +558,7 @@
 
    \index{port-naming}
    The \texttt{port-naming} option determines how much detail is shown in
-   port names as shown in the user-interface.  It does not apply if
-   port-mapping (\sectionref{sec:port_mapping}) is active (and note that
-   port-mapping is now the default).
+   port names as shown in the user-interface.
    Port-naming values are:
 
    \begin{itemize}
@@ -579,6 +577,11 @@
 
    For \textsl{Windows} (the "portmidi" build),
    the 'long' option works better.
+
+   Important: Note that port-naming setting are ignored if
+   port-mapping (\sectionref{sec:port_mapping}) is enabled. Note that
+   port-mapping is now the default.
+   The names used in port-mapping are shown as is.
 
 \subsubsection{'rc' File / MIDI Control}
 \label{subsubsec:configuration_rc_midi_control}

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-05-21
+ * \updates       2024-06-06
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -762,11 +762,11 @@ rcfile::write ()
 "# armed when moving to the next set. 'all-sets' arms all sets at once.\n"
 "#\n"
 "# 'port-naming': 'short', 'pair', or 'long'. If 'short', the device name is\n"
-"# shown. If it  is generic, the client name is added for clarity. If 'pair',\n"
+"# shown; but if generic, the client name is added for clarity. If 'pair',\n"
 "# the client:port number is prepended. If 'long', the full set of name items\n"
 "# is shown. If port-mapping is active (now the default), this does not apply.\n"
 "#\n"
-"# 'init-disabled-ports' is experimental. It tries live toggle of port state.\n"
+"# 'init-disabled-ports' does not yet work. It tries live toggle of port state.\n"
 "#\n"
 "# 'priority' greater than 0 is meant to increase the priority of the I/O\n"
 "# threads. It needs Seq66 to run as root, or be installed as setuid 0.\n"

@@ -57,7 +57,7 @@ static const size_t c_max_name_length = 40;    /* 32 */
  *  the words "clock" or "port" for the MIDI output port represented by this
  *  widget.  Here are the jobs we have to do:
  *
- *      -#    Get the label for the port and set it.
+ *      -#  Get the label for the port and set it.
  *      -#  Add the tooltips for the clock radio-buttons.
  *      -#  Add the clock radio-buttons to m_horizlayout_clocklive.
  *        -#    Connect to the radio-button slots:
@@ -78,7 +78,7 @@ qclocklayout::qclocklayout (QWidget * parent, performer & p, int bus) :
     m_rbutton_clockonmod        (nullptr),
     m_rbutton_group             (nullptr)
 {
-    setup_ui();
+    setup_ui();                         /* defined below, not in .h/.hpp    */
     connect
     (
         m_rbutton_group, SIGNAL(buttonClicked(int)),

@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.13
 Chris Ahlstrom
-2019-04-13 to 2024-06-04
+2019-04-13 to 2024-06-06
 
 Build:
 
@@ -16,7 +16,6 @@ Build:
 
 Misc:
 
-    -   Long port names and showing client:port seem both to be broken.
     -   Client ID in midibase is not used in ALSA or JACK... always -1.
         Get rid of it.
     -   Document the insert mode to add non-note events in the event and
@@ -28,6 +27,8 @@ Misc:
     -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
         Too difficult to fix at this time; converted it to 192.
     -   Show time-sig events in grid slot?
+    -   Why does ALSA "seq66:131" appear in Edit / Preferences / MIDI Clock /
+        ID/UUID but not in the lists output by aconnect?
 
 Mutes:
 
