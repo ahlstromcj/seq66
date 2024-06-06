@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.13
 Chris Ahlstrom
-2015-07-10 to 2024-05-22
+2015-07-10 to 2024-06-06
 
 # Changelog
 
@@ -12,6 +12,7 @@ Chris Ahlstrom
 
 - Added 'progress-box-elliptical' to the 'usr' file.
   It is a 'usr' option to show an elliptical progress box.
+- New license files adhering to GitHub conventions.
 
 ### Fixed
 
@@ -31,7 +32,7 @@ Chris Ahlstrom
 
 ### Removed
 
-- Nothing removed.
+- Removed LICENSE and the licensing text files it refers to.
 
 ## [0.99.12] - 2024-01-13
 

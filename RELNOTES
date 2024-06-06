@@ -1,7 +1,8 @@
-Release Notes for Seq66 v. 0.99.13 2024-05-20
+Release Notes for Seq66 v. 0.99.13 2024-06-06
 
 -   Added a 'usr' option for elliptical progress boxes.
 -   Fixed the writing and byte-counting of the end-of track event.
+-   Updated the licensing files for GitHub detectability.
 
 See NEWS for more details, and ChangeLog.
 
