@@ -788,6 +788,12 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
          *      result = build_output_port_map(m_clocks);
          */
     }
+
+    /*
+     * If using virtual (manual) ports, then we disable the input and output
+     * port maps.
+     */
+
     if (rcs.manual_ports())
     {
         inputslist & ipm = input_port_map();

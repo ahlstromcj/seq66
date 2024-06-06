@@ -178,7 +178,9 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
             {
                 midibus * m = make_normal_bus(bus, iodirection);
                 if (not_nullptr(m))
+                {
                     midi_master().add_bus(m);               /* rtmidi_info  */
+                }
             }
             iodirection = swap_io ? midibase::io::input : midibase::io::output ;
             midi_master().midi_mode(midibase::io::output);    /* ugh! mode! */
@@ -188,7 +190,9 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
             {
                 midibus * m = make_normal_bus(bus, iodirection);
                 if (not_nullptr(m))
+                {
                     midi_master().add_bus(m);               /* rtmidi_info  */
+                }
             }
         }
     }

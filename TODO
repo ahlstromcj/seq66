@@ -6,7 +6,7 @@ Build:
 
     -   Make sure meta events are never sent via MIDI. What we see is
         that is_ex_data() events are skipped. We now allow SysEx to be
-        sent, but we need a test file for it.
+        sent, but we need a test file for it. Can improve this slightly.
     -   Add "make install" support to qbuild.sh. In progress.
     -   Figure out these compiler warnings on the Arch Linux box:
 
@@ -27,8 +27,6 @@ Misc:
     -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
         Too difficult to fix at this time; converted it to 192.
     -   Show time-sig events in grid slot?
-    -   Why does ALSA "seq66:131" appear in Edit / Preferences / MIDI Clock /
-        ID/UUID but not in the lists output by aconnect?
 
 Mutes:
 

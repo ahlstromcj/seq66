@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2023-12-08
+ * \updates       2024-06-06
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -206,14 +206,16 @@ midi_alsa::~midi_alsa ()
 bool
 midi_alsa::api_init_out ()
 {
-    static unsigned s_caps = SND_SEQ_PORT_CAP_NO_EXPORT | SND_SEQ_PORT_CAP_READ;
-    static unsigned s_apps = SND_SEQ_PORT_TYPE_MIDI_GENERIC |
-        SND_SEQ_PORT_TYPE_APPLICATION;
+    static unsigned s_port_caps =
+        SND_SEQ_PORT_CAP_NO_EXPORT | SND_SEQ_PORT_CAP_READ ;
+
+    static unsigned s_port_types =
+        SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION ;
 
     std::string busname = parent_bus().bus_name();
     int rcode = snd_seq_create_simple_port                 /* create ports     */
     (
-        m_seq, busname.c_str(), s_caps, s_apps
+        m_seq, busname.c_str(), s_port_caps, s_port_types
     );
     if (rcode < 0)
     {
@@ -261,12 +263,16 @@ midi_alsa::api_init_out ()
 bool
 midi_alsa::api_init_in ()
 {
+    static unsigned s_port_caps =
+        SND_SEQ_PORT_CAP_NO_EXPORT | SND_SEQ_PORT_CAP_WRITE ;
+
+    static unsigned s_port_types =
+        SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION ;
+
     std::string portname = parent_bus().port_name();
     int rcode = snd_seq_create_simple_port
     (
-        m_seq, portname.c_str(),
-        SND_SEQ_PORT_CAP_NO_EXPORT | SND_SEQ_PORT_CAP_WRITE,
-        SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION
+        m_seq, portname.c_str(), s_port_caps, s_port_types
     );
     if (rcode < 0)
     {
@@ -350,15 +356,19 @@ midi_alsa::set_virtual_name (int portid, const std::string & portname)
 bool
 midi_alsa::api_init_out_sub ()
 {
+    static unsigned s_port_caps =
+        SND_SEQ_PORT_CAP_READ | SND_SEQ_PORT_CAP_SUBS_READ,
+
+    static unsigned s_port_types =
+        SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION
+
     std::string portname = port_name();
     if (portname.empty())
         portname = rc().app_client_name() + " out";
 
     int result = snd_seq_create_simple_port             /* create ports */
     (
-        m_seq, portname.c_str(),
-        SND_SEQ_PORT_CAP_READ | SND_SEQ_PORT_CAP_SUBS_READ,
-        SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION
+        m_seq, portname.c_str(), s_port_caps, s_port_types
     );
     m_local_addr_port = result;
     if (result < 0)
@@ -375,7 +385,16 @@ midi_alsa::api_init_out_sub ()
 }
 
 /**
- *  Initialize the output in a different way?
+ *  Initialize the output in a different way. This creates a "virtual"
+ *  (i.e. "manual") input port. The meanings of the CAP flags are:
+ *
+ *      SND_SEQ_PORT_CAP_WRITE
+ *
+ *          The (input) port can be written to by other clientsh.
+ *
+ *      SND_SEQ_PORT_CAP_SUBS_WRITE
+ *
+ *          Subscription to the input port is allowed.
  *
  * \return
  *      Returns true unless setting up the ALSA port failed in some way.
@@ -384,15 +403,19 @@ midi_alsa::api_init_out_sub ()
 bool
 midi_alsa::api_init_in_sub ()
 {
+    static unsigned s_port_caps =
+        SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE ;
+
+    static unsigned s_port_types =
+        SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION ;
+
     std::string portname = port_name();
     if (portname.empty())
         portname = rc().app_client_name() + " midi in";
 
     int result = snd_seq_create_simple_port             /* create ports */
     (
-        m_seq, portname.c_str(),
-        SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE,
-        SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION
+        m_seq, portname.c_str(), s_port_caps, s_port_types
     );
     m_local_addr_port = result;
     if (result < 0)

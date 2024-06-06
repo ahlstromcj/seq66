@@ -259,8 +259,9 @@
    \optionline{-m}{-{}-manual-ports}
       \textsl{Seq66} won't attach the system's existing ALSA or JACK MIDI ports.
       Instead, it will create is own set of \textsl{virtual}
-      input and output busses/ports.  The default number of port is 1 for input,
+      input and output busses/ports.  The default number of ports is 1 for input,
       and 16 for output, but these values can be changed in the 'rc' file.
+      Manual ports disable port-mapping.
 
       \configref{rc}{manual-ports}{flag for manual/virtual ports}
 
@@ -938,6 +939,7 @@
          running in native JACK mode, to support
          virtual JACK ports that can be connected manually (e.g. in the
          \textsl{QJackCtl} application.)
+      \item Manual ports disable port-mapping.
    \end{enumerate}
 
    \index{[manual-ports]}
