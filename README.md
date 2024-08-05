@@ -1,4 +1,4 @@
-# README for Seq66 0.99.13 2024-06-06
+# README.md for Seq66 0.99.13 2024-08-05
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -21,6 +21,8 @@ Support sites (still in progress):
 The release now includes an installer for the 64-bit Windows version of Seq66.
 Also included is initial work on getting Seq66 to build and run in FreeBSD using
 the Clang compiler.
+
+See NEWS for updates.
 
 ![Alt text](doc/latex/images/main-window/main-windows-perstfic.png?raw=true "Seq66")
 

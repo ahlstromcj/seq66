@@ -1,12 +1,14 @@
 NEWS for Seq66 0.99.13
 Chris Ahlstrom
-2015-07-10 to 2024-06-06
+2015-07-10 to 2024-08-05
 
 # Changelog
 
-## [Unreleased]
+## [0.99.13] - 2024-08-05
 
-    To do
+    This release is minor, a couple of lesser feature and some fixes.
+    No release files are provided, no Windows installer. We've been
+    working on another project, and it is time to move forward here.
 
 ### Added
 
