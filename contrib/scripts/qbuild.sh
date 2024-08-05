@@ -4,7 +4,7 @@
 # \file        qbuild.sh
 # \library     bin
 # \author      Chris Ahlstrom
-# \date        2023-12-23 to 2023-12-24
+# \date        2023-12-23 to 2023-08-05
 # \version     $Revision$
 # \license     GNU GPLv2 or above
 #
@@ -42,7 +42,7 @@ flags 'debug' or 'portmidi' (which generates 'qpseq66').
     mkdir shadow-rtmidi          (if not already made)
     cd shadow-rtmidi
     rm -rf *                     (removed old junk; CAREFUL!)
-    qbuild-dash                  (could add 'debug rtmidi', etc.)
+    qbuild.sh                    (could add 'debug rtmidi', etc.)
     vi make.log
 
 This script must be run from a shadow directory. The build output is written
@@ -123,7 +123,7 @@ else
 fi
 
 #******************************************************************************
-# qbuild (Seq66)
+# qbuild.sh (Seq66)
 #------------------------------------------------------------------------------
 # vim: ts=3 sw=3 wm=4 et ft=sh
 #------------------------------------------------------------------------------

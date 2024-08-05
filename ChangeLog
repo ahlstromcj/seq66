@@ -1,3 +1,152 @@
+2024-08-05  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES: News updates.
+
+2024-06-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* LICENSE.LGPL: Dang forgot the LGPL license.
+	* GPL.txt, LGPL.txt, LICENSE, FDL.txt => LICENSE.FDL, NEWS,
+	README.md, RELNOTES: More upgrading of the licensing files.
+	* LICENSE.GPL, doc/latex/tex/alsa.tex,
+	libseq66/include/midi/midibase.hpp, libseq66/src/cfg/rcfile.cpp,
+	seq_rtmidi/src/mastermidibus.cpp, seq_rtmidi/src/midi_alsa.cpp: 
+	Fixed build issue, added LICENSE.GPL.
+	* TODO, doc/latex/tex/configuration.tex,
+	libseq66/src/play/performer.cpp, seq_rtmidi/src/mastermidibus.cpp,
+	seq_rtmidi/src/midi_alsa.cpp: Documenting virtual ports and
+	port-mapping better.
+	* TODO, doc/latex/tex/configuration.tex,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/cfg/usrfile.cpp,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/src/qclocklayout.cpp: Tweaks
+	to make it obvious about port-mapping/naming.
+
+2024-06-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/midi/midibase.hpp,
+	libseq66/src/midi/midibase.cpp, seq_rtmidi/src/mastermidibus.cpp: 
+	Beefed up verbose port display, should remove client_id() as
+	bus_id() is right.
+
+2024-05-25  ahlstrom <ahlstromcj@gmail.com>
+
+	* : Updated the simpleblast MIDI files.
+
+2024-05-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, libseq66/src/play/sequence.cpp: Fixed some data/midi
+	files, added check to output sysex, in progress.
+	* NEWS, doc/latex/tex/midi_formats.tex,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/midi/midifile.cpp: Added
+	handling of Seq66 SeqSpec track when another app saved it as a
+	counted track.
+
+2024-05-21  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* : Added special test file 1Bar_2_tracks.midi.
+
+2024-05-20  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES,
+	libseq66/include/midi/midi_vector_base.hpp,
+	libseq66/include/midi/midifile.hpp: Fixed track-length calculation,
+	updated Kraftwerk tune.
+	* libseq66/include/midi/midifile.hpp,
+	libseq66/src/midi/midifile.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/src/qseditoptions.cpp: Fixed tempo-track change
+	notification, fixed 1Bar tune.
+	* libseq66/src/midi/midifile.cpp, seq_qt5/forms/qseditoptions.ui: 
+	Tentative fix of error writing SeqSpec end-of-track.
+
+2024-05-16  ahlstrom <ahlstromcj@gmail.com>
+
+	* : Updated 1Bar.midi file.
+
+2024-05-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp: Interim.
+
+2024-04-29  ahlstrom <ahlstromcj@gmail.com>
+
+	* Seq66cli/Seq66cli.pro, Seq66qt5/Seq66qt5.pro, TODO: Adding qmake
+	install support in progress.
+
+2024-04-26  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/notes/freebsd.text, doc/latex/tex/references.tex: 
+	Documentation updates.
+
+2024-03-24  ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/DIR_COLORS, contrib/vim-syntax/cpp.vim: More etc and vim
+	coloring updates.
+
+2024-03-23  ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/vim-syntax/c.vim: Added word and byte to c.vim.
+
+2024-03-18  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure, contrib/DIR_COLORS, include/config.h.in: Minor
+	configure and DIR_COLORS update.
+
+2024-03-12  ahlstrom <ahlstromcj@gmail.com>
+
+	* configure.ac, libseq66/src/util/filefunctions.cpp,
+	libsessions/include/nsm/nsmbase.hpp,
+	libsessions/src/nsm/nsmbase.cpp: Fixed liblo warnings, clang 17
+	errors/warnings.
+
+2024-03-11  ahlstrom <ahlstromcj@gmail.com>
+
+	* libsessions/src/nsm/nsmbase.cpp: Fixed OSC liblo call error in
+	Arch Linux, needs testing.
+	* libseq66/include/seq66_platform_macros.h: Fixed
+	SEQ66_PLATFORM_DEBUG definition.
+
+2024-03-05  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/vim-syntax/c.vim, contrib/vim-syntax/cpp.vim,
+	contrib/vim-syntax/syncolor.vim: Updated cpp.vim and added
+	syncolor.vim.
+
+2024-03-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/vim-syntax/cpp.vim: cpp.vim and git.odt changes.
+
+2024-02-23  ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES, VERSION,
+	doc/latex/tex/configuration.tex, libseq66/src/cfg/usrfile.cpp,
+	seq_qt5/src/palettefile.cpp, seq_qt5/src/qloopbutton.cpp: Refined
+	and documented elliptical progress box.
+
+2024-02-22  ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/cfg/usrsettings.hpp,
+	libseq66/src/cfg/usrfile.cpp, libseq66/src/cfg/usrsettings.cpp,
+	seq_qt5/src/qloopbutton.cpp: Added progress-box-elliptical option.
+	* TODO, contrib/vim-syntax/c.vim, contrib/vim-syntax/cpp.vim: Added
+	keywords to C/C++ Vim syntax.
+
+2024-01-17  ahlstrom <ahlstromcj@gmail.com>
+
+	* LICENSE, TODO, data/license.text, distros/debian/copyright,
+	libseq66/include/os/daemonize.hpp, libseq66/include/os/timing.hpp,
+	libseq66/include/seq66_platform_macros.h,
+	libseq66/include/util/condition.hpp,
+	libseq66/include/util/recmutex.hpp, libseq66/src/midi/event.cpp,
+	libseq66/src/os/daemonize.cpp, libseq66/src/util/condition.cpp,
+	libseq66/src/util/recmutex.cpp: Backporting some clang-related
+	fixes.
+
+2024-01-14  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, RELNOTES, VERSION, configure.ac,
+	contrib/notes/freebsd.text, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	seq_rtmidi/include/rtmidi_types.hpp, seq_rtmidi/src/midi_jack.cpp: 
+	Version bump and additional freebsd notes.
+
 2024-01-13  Chris Ahlstrom <ahlstromcj@gmail.com>
 
 	* configure, configure.ac, include/config.h.in,
