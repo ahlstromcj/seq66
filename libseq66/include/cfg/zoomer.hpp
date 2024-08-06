@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2023-11-01
+ * \updates       2024-08-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -81,6 +81,25 @@ class zoomer
     const int m_initial_zoom;
 
     /**
+     *  Horizontal zoom setting.  This is the ratio between pixels and MIDI
+     *  ticks, written "pixels:ticks".   As ticks increases, the effect is to
+     *  zoom out, making the beats look shorter.  The default zoom is 2 for
+     *  the normal PPQN of 192.
+     *
+     *  Provides the zoom values, as given by the zoom_items() and
+     *  expanded_zoom_items() functions in the settings module.
+     *
+     *  The value of zoom is the same as the number of ticks per pixels on
+     *  the piano roll.
+     *
+     *  ca 2024-08-06 v 0.99.14
+     *  Moved here to avoid warning about m_zoom unitialized as detected by
+     *  g++ 14.2.1 on Arch Linux.
+     */
+
+    int m_zoom;
+
+    /**
      *  X scaling.  Allows the caller to adjust the overall zoom. A
      *  constant.
      */
@@ -114,23 +133,9 @@ class zoomer
 
     int m_zoom_expansion;
 
-    /**
-     *  Horizontal zoom setting.  This is the ratio between pixels and MIDI
-     *  ticks, written "pixels:ticks".   As ticks increases, the effect is to
-     *  zoom out, making the beats look shorter.  The default zoom is 2 for
-     *  the normal PPQN of 192.
-     *
-     *  Provides the zoom values, as given by the zoom_items() and
-     *  expanded_zoom_items() functions in the settings module.
-     *
-     *  The value of zoom is the same as the number of ticks per pixels on
-     *  the piano roll.
-     */
-
-    int m_zoom;
-
 public:
 
+    zoomer ();
     zoomer (int ppq, int initialzoom, int scalex = 1);
     ~zoomer () = default;
 

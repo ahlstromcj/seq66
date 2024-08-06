@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.14
 Chris Ahlstrom
-2019-04-13 to 2024-08-05
+2019-04-13 to 2024-08-06
 
 Build:
 
@@ -16,10 +16,12 @@ Build:
 
 Misc:
 
+    -   Add "can Escape" to the external song editor.
+    -   In the Kraftwerk tune, start play. Turn on a loop by clicking
+        on it. Another click will not turn it off! Could not duplicate.
+    -   poll_for_midi() should check that the port is enabled.
     -   Client ID in midibase is not used in ALSA or JACK... always -1.
         Get rid of it.
-    -   Document the insert mode to add non-note events in the event and
-        data pane.
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recorded measures

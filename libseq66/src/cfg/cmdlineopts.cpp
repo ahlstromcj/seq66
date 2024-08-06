@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-12-13
+ * \updates       2024-07-11
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -320,21 +320,21 @@ static const std::string s_help_2 =
  */
 
 static const std::string s_help_3 =
-"   -0, --smf-0              Don't convert SMF 0 files to SMF 1 upon reading.\n"
-"   -u, --user-save          Force the save  of 'usr' settings.\n"
-"   -H, --home dir           Directory for configuration. $HOME/.config/seq66\n"
-"                            by default. If not a full path, it is appended.\n"
-"   -f, --rc filename        An alternate 'rc' file in $HOME/.config/seq66 or\n"
-"                            the --home directory. '.rc' extension enforced.\n"
-"   -F, --usr filename       An alternate 'usr' file.  Same rules as for --rc.\n"
-"   -S, --session-tag S      Select a setup from those in sessions.rc.\n"
-"   -c, --config basename    Change base name of the 'rc' and 'usr' files. The\n"
-"                            extension is stripped. ['qseq66' is default].\n"
-"   -S, --session name       Select alternate configuration from sessions.rc..\n"
-"   -L, --locale lname       Set global locale, if installed on the system.\n"
-"   -i, --investigate        Turn on various trouble-shooting code.\n"
-"   -o, --option optoken     Provides app-specific options for expansion.\n"
-"                            Options supported are:\n\n"
+"   -0, --smf-0             Don't convert SMF 0 files to SMF 1 upon reading.\n"
+"   -u, --user-save         Force the save  of 'usr' settings.\n"
+"   -H, --home dir          Directory for configuration. $HOME/.config/seq66\n"
+"                           by default. If not a full path, it is appended.\n"
+"   -f, --rc filename       An alternate 'rc' file in $HOME/.config/seq66 or\n"
+"                           the --home directory. '.rc' extension enforced.\n"
+"   -F, --usr filename      An alternate 'usr' file.  Same rules as for --rc.\n"
+"   -S, --session-tag S     Select a setup from those in sessions.rc.\n"
+"   -c, --config basename   Change base name of the 'rc' and 'usr' files. The\n"
+"                           extension is stripped. ['qseq66' is default].\n"
+"   -S, --session name      Select alternate configuration from sessions.rc..\n"
+"   -L, --locale lname      Set global locale, if installed on the system.\n"
+"   -i, --investigate       Turn on various trouble-shooting code.\n"
+"   -o, --option optoken    Provides app-specific options for expansion.\n"
+"                           Options supported are:\n\n"
     ;
 
 /**
@@ -356,7 +356,7 @@ static const std::string s_help_4b =
 "      virtual=o,i   Like --manual-ports, except that the count of output and\n"
 "                    input ports are specified. Defaults are 8 & 4.\n"
 "\n"
-" seq66cli:\n"
+" seq66cli:\n\n"
 "      daemonize     Sets this application up to fork to the background.\n"
 "      no-daemonize  Or not. These options do not apply to Windows. If given,\n"
 "                    the application writes these options to the 'usr' file\n"

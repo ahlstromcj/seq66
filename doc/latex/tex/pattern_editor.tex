@@ -1219,23 +1219,32 @@
    \index{events!insert}
    Other event types (including tempo) can be inserted via the event strip.
    To do that, first select the kind of event to insert using the
-   \textbf{Event} button in the bottom panel.
-   Then place the mouse cursor in the event strip.
-   Right-click to make the drawing cursor appear at the exact spot where the
-   event must go.  While holding the right button, click the left button.
-   A small square for the event will appear. Or click-drag to insert a number
-   of events, each at a snap value.
+   \textbf{Event} button in the bottom panel; this process won't work
+   for Note events.
+   Then place the mouse cursor in the event strip and click to give it
+   focus.
+   Do one of the following:
 
-   One can also left-click in that section,
-   \index{keys!p}
-   then hit the \texttt{p} key to go into "paint" mode,
-   \index{keys!x}
-   and hit the \texttt{x} key to escape that mode.
-   Note that the "finger" button \textsl{does not} apply to the event panel (it
-   applies only to the piano-roll).
-   Should one want more of the same event, continue to hold both buttons and
-   drag the mouse.  One event should appear at each beat (16th note) position
-   that is crossed.
+   \begin{itemize}
+      \item Right-click to make the drawing cursor appear at
+         the exact spot where the event must go.  While holding the right
+         button, click the left button.
+         A small square for the event will appear.
+         Or click-drag to insert a
+         series of events, each at a snap value.
+      \item Press \texttt{i} (insert) or \texttt{p} (paint).
+         to make the drawing cursor appear.
+         Then click the left button or drag to paint as above.
+   \end{end}
+
+   Drawing mode can be exited by releasing the right mouse button or
+   by pressing \texttt{Esc} or \texttt{x} (exit).
+
+   \textsl{Note: we might, in the future, repurpose \texttt{p} and
+   \texttt{x} for more obvious operations.}
+
+   Note that the "finger" button \textsl{does not} apply to the event panel;
+   it applies only to inserting notes in the piano-roll.
 
    \textsl{Be careful}
    when using smaller snap values (1/32, 1/64, etc.) to insert events.

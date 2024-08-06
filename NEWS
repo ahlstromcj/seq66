@@ -1,12 +1,17 @@
 NEWS for Seq66 0.99.14
 Chris Ahlstrom
-2015-07-10 to 2024-08-05
+2015-07-10 to 2024-08-06
 
 # Changelog
 
 ## [0.99.14]
 
     To do.
+
+### Fixed
+
+- In the zoomer class, rearranged members to avoid a warning (error)
+  from g++ v. 14.2.1 about zoom being uninitialized in the constructor.
 
 ## [0.99.13] - 2024-08-05
 

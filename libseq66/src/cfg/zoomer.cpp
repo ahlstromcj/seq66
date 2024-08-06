@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2023-11-01
+ * \updates       2024-08-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -40,17 +40,33 @@ namespace seq66
 {
 
 /**
+ *  Default constructor.
+ */
+
+zoomer::zoomer () :
+    m_ppqn                  (192),
+    m_initial_zoom          (2),
+    m_zoom                  (2),
+    m_scale                 (1),
+    m_scale_zoom            (2),
+    m_zoom_index            (0),
+    m_zoom_expansion        (1)
+{
+    initialize();
+}
+
+/**
  *  Principal constructor.
  */
 
 zoomer::zoomer (int ppq, int initialzoom, int scalex) :
     m_ppqn                  (ppq),
     m_initial_zoom          (initialzoom),
+    m_zoom                  (initialzoom),
     m_scale                 (scalex > 4 ? scalex / 4 : 1),
     m_scale_zoom            (m_scale * zoom()),     /* see change_ppqn()    */
     m_zoom_index            (0),
-    m_zoom_expansion        (1),
-    m_zoom                  (0)
+    m_zoom_expansion        (1)
 {
     initialize();
 }
