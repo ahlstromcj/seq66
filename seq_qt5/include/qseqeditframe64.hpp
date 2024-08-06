@@ -136,7 +136,9 @@ public:
 
     qseqeditframe64
     (
-        performer & p, sequence & s, QWidget * parent,
+        performer & p,
+        sequence & s,
+        QWidget * parent,
         bool shorter = false
     );
     virtual ~qseqeditframe64 ();

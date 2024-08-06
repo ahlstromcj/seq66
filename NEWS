@@ -8,6 +8,12 @@ Chris Ahlstrom
 
     To do.
 
+### Added
+
+- Added the use of the Esc key to close the external song editor window
+  if not playing and not in adding mode. Similar to the fix made to
+  the pattern editor for issue #117.
+
 ### Fixed
 
 - In the zoomer class, rearranged members to avoid a warning (error)

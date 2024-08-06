@@ -2,33 +2,32 @@ TO DO for Seq66 0.99.14
 Chris Ahlstrom
 2019-04-13 to 2024-08-06
 
-Build:
+Priority:
 
-    -   Make sure meta events are never sent via MIDI. What we see is
-        that is_ex_data() events are skipped. We now allow SysEx to be
-        sent, but we need a test file for it. Can improve this slightly.
-    -   Add "make install" support to qbuild.sh. In progress.
-    -   Figure out these compiler warnings on the Arch Linux box:
-
-        /usr/include/qt/QtCore/qnamespace.h:360:10: warning: type
-        ‘Qt::WidgetAttribute’ violates the C++ One Definition Rule [-Wodr]
-        360 |     enum WidgetAttribute {
-
-Misc:
-
-    -   Add "can Escape" to the external song editor.
-    -   In the Kraftwerk tune, start play. Turn on a loop by clicking
-        on it. Another click will not turn it off! Could not duplicate.
-    -   poll_for_midi() should check that the port is enabled.
-    -   Client ID in midibase is not used in ALSA or JACK... always -1.
-        Get rid of it.
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recorded measures
         not saved.
     -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
         Too difficult to fix at this time; converted it to 192.
-    -   Show time-sig events in grid slot?
+    -   poll_for_midi() should check that the port is enabled. Works for ALSA.
+    -   Make sure meta events are never sent via MIDI. What we see is
+        that is_ex_data() events are skipped. We now allow SysEx to be
+        sent, but we need a test file for it. Can improve this slightly.
+    -   Add "make install" support to qbuild.sh. In progress.
+    -   When zooming, try to keep the same viewport in view.  Got this working
+        for horizontal seqroll and perfroll, but not for vertical (refactoring
+        needed).  Try to center vertically on notes in the viewport.
+    -   Make it center on notes if not visible.
+
+    -   Can we distinguish note-insertion from movement snap, to avoid the
+        "L"-then-snap-then-move samba?
+    -   #97 Seq24 differences
+    -   #102 How can I use mutes?
+    -   #103 One-shot (repetitions != 0) patterns do not play
+    -   #111 Time signature changes does not get saved on .midi file
+    -   #112 Send midi-control-out message when New Pattern is created in GUI
+    -   #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
 
 Mutes:
 
@@ -45,53 +44,19 @@ Playlists:
 
 From Testing:
 
-    When zooming, try to keep the same viewport in view.  Got this working
-    for horizontal seqroll and perfroll, but not for vertical (refactoring
-    needed).  Try to center vertically on notes in the viewport.
-    Make it center on notes if not visible.
 
-    Can we distinguish note-insertion from movement snap, to avoid the
-    "L"-then-snap-then-move samba?
-
-    File errors (fixed!), but odd issues (w/qsynth):
-
+    -   File errors (fixed!), but odd issues (w/qsynth):
        '/usr/local/share/seq66-0.99/midi/FM/judyblue.mid' plays, but some
        notes are blipped out. Try with another player.
-
        '/usr/local/share/seq66-0.99/midi/FM/longhair.mid' plays just fine
        mostly, some glitches.
+    -   The 'usr' time-color settings do not seem to work. Actually, it does
+        work, but not with the Qt gtk styling.
 
-    The 'usr' time-color settings do not seem to work. Actually, it does
-    work, but not with the Qt gtk styling.
-
-Awaiting complaints/issue-reports:
-
-    -   Contrary to Seq24:
-        -   Grid-Solo-Click currently acts like Alt-Left-Click.
-        -   Shift-Left-Click opens the corresponding external live grid.
-        -   Ctrl-Left-Click wants to create a new pattern.
-        -   Right-Ctrl-Left-Click does NOT do a queue action.
-        -   Holding Alt is supposed to save the current snapshot, and then
-            restore it when lifted.
-        -   Holding Ctrl-Alt is supposed to ... cannot tell from SEQ24 doc.
-
-Pending Macros:
-
-    SEQ66_SHOW_TEMPO_IN_PIANO_ROLL: leave code in place just in case.
-    SEQ66_USE_JACK_SYNC_CALLBACK (saved only for reference).
-    USE_C_MILLISLEEP (related to high CPU in Windows/portmidi builds).
-    USE_SONG_BOX_SELECT (this will require a lot of work to perfect).
-    USE_UNICODE_SUPPORT (used only in Cakewalk WRK file support).
-    USE_ACTIVE_SENSE_AND_RESET (handled in JACK, but not ALSA or portmidi).
-    USE_SEQUENCE_REMOVE_EVENTS (no code uses this function yet).
-    USE_ADJUST_DATA_HANDLE (no code uses this function yet).
-    USE_INTERSECT_FUNCTIONS (could be used for trigger lookup at some point).
-    USE_TIMEBASE_MASTER (functionality from Hydrogen, not used).
 
 Ongoing efforts:
 
     -   Verify setmapper/setmaster for odd set sizes.
-    -   Perfect the "background recording" feature.
     -   Why does velocity change in data pane not work when starting from the
         left in barrage.midi? The Kepler34 "relative change" feature. This
         feature is macroed out for now. Perhaps should make it a Ctrl-Click or
@@ -124,9 +89,6 @@ ISSUES:
     STATUS: Partially fixed.  One can now trigger manually
     in the perfnames pane, but there are still issues to resolve.
 
-#46 JACK port groups / order?
-    STATUS: Probably a future feature (version 2).
-
 #52 Community / discussion place?
     STATUS: Partly supported now by using github.io, but much more to be done.
 
@@ -155,10 +117,10 @@ ISSUES:
     set up a control that cycles through the options or set up a control that
     instantly activates a specific mode.
 
-    STATUS: Partly fulfilled.
-
     Can we leverage continuous controllers (CC) to support modifying synth
     parameters through input automation? See the new "macro" facility.
+
+    STATUS: Partly fulfilled.
 
 #68 MIDI controller initialization step
     STATUS: Closed, some follow-on suggestions:
@@ -200,23 +162,20 @@ ISSUES:
 #76 MIDI Tempo Sync & Real Time Messages Not Behaving As Expected When SEQ66 is a MIDI Slave
     STATUS: Some fix(es) made, needs more testing.
 
-#90 seq66 does not recognize some changes for the save entry in the file menu.
-    STATUS: Ongoing improvements.
-    Fix pattern is DONE, but needs a way to allow user to back out more easily.
-    LFO: Reset needs to undo modify, if no modification already in place.
-
 #95 Velocity screen does not fully refresh when scrolling left or right.
     STATUS: Still need to duplicate.
-
-#96 MIDI learn (and wizard) for creating controller maps?
-    STATUS: If we do this, it will be a separate application.  A lot of
-    potential issues in getting this right.
-    STATUS: Will push off to version 2
 
 #97 Investigate/resolve differences from Seq24.
     Seq24: Input from a keyboard when not playing advances like one-shot
     mode, but does not stop when looped back as in Seq66.
-    STATUS: Fixed.
+    STATUS: Fixed.  More:
+    -   Grid-Solo-Click currently acts like Alt-Left-Click.
+    -   Shift-Left-Click opens the corresponding external live grid.
+    -   Ctrl-Left-Click wants to create a new pattern.
+    -   Right-Ctrl-Left-Click does NOT do a queue action.
+    -   Holding Alt is supposed to save the current snapshot, and then
+        restore it when lifted.
+    -   Holding Ctrl-Alt is supposed to ... cannot tell from SEQ24 doc.
 
 #100 Seq66's MIDI timing completely falls apart at JACK buffer sizer larger than 128.
     STATUS: Added a timestamp to each message in the JACK
@@ -280,8 +239,7 @@ ISSUES:
 
 #111 Time signature changes does not get saved on .midi file
      
-    STATUS: In progress. See README.md for things done so far.
-
+    STATUS: In progress.
         -   Ctrl-Z in pattern editor works, but does not restore original
             view until pattern is reopened. Not sure why, it should work.
         -   Verify measure-count changes upon time-sig. In timesigs.midi,
@@ -306,7 +264,7 @@ ISSUES:
 
 #114 [feature request] Include keyboard shortcut in setToolTip function?
 
-    STATUS: Nearly finished with this one. Also fixing some automation
+    STATUS: Finished with this one. Also fixing some automation
             errors found during this task.
 
 #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
@@ -328,10 +286,6 @@ ISSUES:
 
     STATUS: Cannot duplicate.
 
-#117 Option to close pattern windows with esc key?
-
-    STATUS: Done, not yet official.
-
 #118 When enabling virtual ports, make those new ports enabled by default?
     Currently one has to tick the box to enable and enter the number of output
     and input ports, restart seq66, and then tick all the input port
@@ -346,34 +300,25 @@ ISSUES:
 
     STATUS: Fixed in the portfix branch. An embarrassing misstep!
 
-To close as fixed (and remove from TODO):
-
-    24 Release notes in release tag message?
-    63 Option to rotate pattern numbers?
-    79 NSM: starts always with a blank pattern
-    93 The window of a deleted pattern remains open
-    97 Seq24 differences
-
 To close as pushed off to version 2:
 
      1 JACK Metadata MIDINAM support
+    46 JACK port groups and order.
     62 PipeWire compatibility
     68 MIDI controller initialization step
     77 For building without JACK
     82 Tabs do not scale to window
+    90 More consistent support for undo / redo / unmodify.
     96 MIDI Learn/Wizard as separate (?) app
 
 MIDI version 2 considerations::
 
-    ALSA:
-
+ALSA:
     -   When toggling a virtual input port, another port with the same
         number gets created.  Looks like this bug has been around for awhile.
         It also yields an ALSA unsubscribe error when disabling an input.
     -   Use const char * snd_asoundlib_version () to get the ALSA version.
-
-    JACK:
-
+JACK:
     -   Pulseaudio gone, so now the USB devices (without a2jmidid running)
         show up as "0:n system:midi_playback_n+1 'Device name'" (similar
         for 'playback') and qsynth as "1:4 qsynth:midi_00". True even if
@@ -381,14 +326,17 @@ MIDI version 2 considerations::
 
 Version 2 features:
 
+    -   #100 Seq66's MIDI timing completely falls apart at JACK buffer sizes
+        larger than 128. Added a timestamp to each message in the JACK, more to
+        refactor
     -   Use Meson/Ninja as the build system.
     -   Support for multiple languages in user-messages.
     -   Allow for building without JACK dev files installed.  Weak JACK
         support.  Seq66 dependence on the JACK ringbuffer is an issue here.
     -   Port refresh in ALSA and JACK at a minimum.
-    -   JACK port groups and order.
+    -   #46 JACK port groups and order.
     -   Add option to start JACK if not running.
-    -   MIDI Learn.  Separate app?
+    -   #96 MIDI learn (and wizard) for creating controller maps. Separate app?
     -   Pipewire support.
     -   Live note mapping?
     -   Abletone Link support?
@@ -399,7 +347,7 @@ Version 2 features:
     -   Make main menu hide-able.
     -   Allow multiple instances of seq66.
     -   Allow multiple tunes to be loaded in seq66.
-    -   More consistent support for undo / redo / unmodify.
+    -   #90 More consistent support for undo / redo / unmodify.
     -   Add console output for every user action.
     -   Add scripting language?
     -   Clean up kruft in setmapper/screenset.
@@ -416,5 +364,6 @@ Version 2 features:
         -   BPM display minimum and maximum
     -   Windows build and installer. 32-bit installer cannot work!
     -   Drag and drop MIDI files onto seq66 (see sequencer64 issue #137)
+    -   Perfect the "background recording" feature.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

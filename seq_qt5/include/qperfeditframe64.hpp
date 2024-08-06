@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2023-10-15
+ * \updates       2024-08-06
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll),
@@ -78,9 +78,19 @@ private:
 
 public:
 
-    qperfeditframe64 (performer & p, QWidget * parent, bool isexternal = false);
+    qperfeditframe64
+    (
+        performer & p,
+        QWidget * parent,
+        bool isexternal = false
+    );
 
     virtual ~qperfeditframe64 ();
+
+    bool is_external () const
+    {
+        return m_is_external;
+    }
 
     int get_beat_width () const
     {

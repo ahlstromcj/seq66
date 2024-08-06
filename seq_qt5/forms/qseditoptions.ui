@@ -2922,7 +2922,7 @@ Seq66 exits.</string>
          </rect>
         </property>
         <property name="text">
-         <string>Esc key in piano roll closes pattern editor</string>
+         <string>Esc key in piano roll closes external editors</string>
         </property>
        </widget>
       </widget>
