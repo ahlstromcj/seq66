@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2024-04-29
+# \update      2024-08-07
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -15,9 +15,6 @@
 # file here.
 #
 # Important: This project file is designed only for Qt 5 (and above?).
-#
-# target.path = /usr/local/bin/
-# INSTALLS += target
 #
 #------------------------------------------------------------------------------
 
@@ -137,18 +134,21 @@ unix {
 
  #DEFINES += DATADIR=\"$${DATADIR}\"
 
- # make install
+# make install
 
- INSTALLS += target
+# target.path = /usr/local/bin/
+# target.files += xxxxx
+
+target.path = $${BINDIR}
+target.CONFIG = no_check_exist executable
 
 # desktop icon appdata icon_scalable mimeinfo mimetypes mimetypes_scalable
 
- target.path = $${BINDIR}
 
 ## TO DO.
 ##
- desktop.path = $${DATADIR}/applications
- desktop.files += ../data/share/applications/seq66.desktop
+desktop.path = $${DATADIR}/applications
+desktop.files += ../data/share/applications/seq66.desktop
 #   icon.path = $${DATADIR}/icons/hicolor/32x32/apps
 #   icon.files += images/$${NAME}.png
 #   icon_scalable.path = $${DATADIR}/icons/hicolor/scalable/apps
@@ -173,6 +173,8 @@ unix {
   $$OUT_PWD/../seq_$${MIDILIB}/libseq_$${MIDILIB}.a \ 
   $$OUT_PWD/../seq_qt5/libseq_qt5.a
 }
+
+INSTALLS += target
 
 # Note the inclusion of liblo (OSC library).
 # We may consider adding:  /usr/include/lash-1.0 and -llash
