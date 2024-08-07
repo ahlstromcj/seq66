@@ -306,6 +306,9 @@ qseqroll::note_height () const
 /**
  *  Override.
  *
+ *  Issue 2024-09-07: If PPQN == 120, then pulses_per_substep() returns 7.5
+ *  truncated. This (in part) screws up the display.
+ *
  * \param v
  *      The value of the scrollbar in pixels.
  */

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2024-06-06
+% \update      2024-08-07
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -299,7 +299,7 @@
       this name, e.g. using something like \textsl{seq66.nXYZT}.
 
    \optionline{-q}{-{}-ppqn [ppqn]}
-      Supports modifying the PPQN value of Seq66, which is
+      Supports modifying the PPQN value of \textsl{Seq66}; it
       defaults to a value of 192.  This setting
       is written into the MIDI file when it is saved.
       The PPQN value can range from 32 to 19200, or
@@ -1623,6 +1623,24 @@
       default-ppqn = 192
       use-file-ppqn = true
    \end{verbatim}
+
+   The PPQN can be set to any value, but it is best to use the values
+   in the \textsl{Seq66} PPQN dropdown:
+
+   \begin{verbatim}
+      32 48 96 192 240 384 768 960 1920 2400 3840 7680 9600 19200
+   \end{verbatim}
+
+   (Perhaps we should add 480?)
+
+   There's probably no need to go above 960, but one can try it anyway and see
+   if the computer can keep up. Even the default, 192, is likely to be enough.
+
+   One might find a MIDI tune with a PPQN not in the usual set, such as
+   120. In this case, \textsl{Seq66} does not display that properly.
+   This is a difficult issue to fix at present. If not an issue, one
+   can change the PPQN in the main window PPQN dropdown, and save the
+   file (after making a backup, of course).
 
 \subsubsection{'usr' File / User Randomization}
 \label{subsubsec:usr_file_user_randomization}

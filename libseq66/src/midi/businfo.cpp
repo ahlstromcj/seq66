@@ -779,7 +779,7 @@ busarray::poll_for_midi ()
     int result = 0;
     for (auto & bi : m_container)               /* vector of businfo copies */
     {
-        result = bi.bus()->poll_for_midi();
+        result = bi.bus()->poll_for_midi();     /* works if I/O active      */
         if (result > 0)
             break;
     }

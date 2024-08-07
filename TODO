@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.14
 Chris Ahlstrom
-2019-04-13 to 2024-08-06
+2019-04-13 to 2024-08-07
 
 Priority:
 
@@ -8,9 +8,6 @@ Priority:
         MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recorded measures
         not saved.
-    -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
-        Too difficult to fix at this time; converted it to 192.
-    -   poll_for_midi() should check that the port is enabled. Works for ALSA.
     -   Make sure meta events are never sent via MIDI. What we see is
         that is_ex_data() events are skipped. We now allow SysEx to be
         sent, but we need a test file for it. Can improve this slightly.
@@ -19,7 +16,6 @@ Priority:
         for horizontal seqroll and perfroll, but not for vertical (refactoring
         needed).  Try to center vertically on notes in the viewport.
     -   Make it center on notes if not visible.
-
     -   Can we distinguish note-insertion from movement snap, to avoid the
         "L"-then-snap-then-move samba?
     -   #97 Seq24 differences
@@ -44,7 +40,6 @@ Playlists:
 
 From Testing:
 
-
     -   File errors (fixed!), but odd issues (w/qsynth):
        '/usr/local/share/seq66-0.99/midi/FM/judyblue.mid' plays, but some
        notes are blipped out. Try with another player.
@@ -52,6 +47,14 @@ From Testing:
        mostly, some glitches.
     -   The 'usr' time-color settings do not seem to work. Actually, it does
         work, but not with the Qt gtk styling.
+    -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
+        Too difficult to fix at this time; converted it to 192.
+        In the calculations module, rigorize default_pulses_per_measure()
+        and pulses_per_beat() to adjust for B/W not equal to 4.
+        Also, with ppqn = 120, pulses_per_substep() yields 7.5 truncates
+        to 7. Should this function return a double?  No, instead recommend
+        that the user convert to 192 PPQN or one of the other supported
+        settings, then save, and reopen. Test alternate time signatures.
 
 
 Ongoing efforts:
@@ -329,6 +332,7 @@ Version 2 features:
     -   #100 Seq66's MIDI timing completely falls apart at JACK buffer sizes
         larger than 128. Added a timestamp to each message in the JACK, more to
         refactor
+    -   Round-robin support for MIDI input.
     -   Use Meson/Ninja as the build system.
     -   Support for multiple languages in user-messages.
     -   Allow for building without JACK dev files installed.  Weak JACK

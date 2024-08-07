@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-09-13
+ * \updates       2024-08-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -229,7 +229,7 @@ metro::initialize (performer * p)
         int bpb = settings().beats_per_bar();       /* get_beats_per_bar()  */
         int bw = settings().beat_width();           /* get_beat_width()     */
         midibyte channel = settings().channel();    /* seq_midi_channel()   */
-        int increment = pulses_per_beat(ppq, bw);
+        int increment = pulses_per_beat(ppq, bpb, bw);
         if (settings().initialize(increment))
         {
             /*
@@ -350,8 +350,9 @@ recorder::initialize (performer * p)
     if (result)
     {
         int ppq = p->ppqn();                        /* p->get_ppqn()        */
+        int bpb = settings().beats_per_bar();       /* get_beats_per_bar()  */
         int bw = settings().beat_width();           /* get_beat_width()     */
-        int increment = pulses_per_beat(ppq, bw);
+        int increment = pulses_per_beat(ppq, bpb, bw);
         if (settings().initialize(increment))
         {
             bool unmute = usr().new_pattern_armed();

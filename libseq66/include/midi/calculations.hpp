@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2023-09-08
+ * \updates       2024-09-07
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -491,9 +491,9 @@ default_pulses_per_measure (int ppq)
  */
 
 inline int
-pulses_per_beat (int ppq, int beatwidth)
+pulses_per_beat (int ppq, int beatspm = 4, int beatwidth = 4)
 {
-    return 4 * ppq / beatwidth;
+    return beatspm * ppq / beatwidth;
 }
 
 /**

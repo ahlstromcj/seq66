@@ -653,11 +653,11 @@ midi_measures_to_pulses
         double beats_per_bar = double(seqparms.beats_per_measure());
         double beat_width = double(seqparms.beat_width());
         double qn_per_beat = double(c_qn_beats) / beat_width;        /* 4/W */
-        double pulses_per_beat = qn_per_beat * ppq;
-        double pulses_per_meas = m * pulses_per_beat * beats_per_bar;
-        double pulses = m * pulses_per_meas;
-        pulses += b * pulses_per_beat;
-        result = midipulse(pulses);
+        double ticks_per_beat = qn_per_beat * ppq;
+        double ticks_per_meas = m * ticks_per_beat * beats_per_bar;
+        double ticks = m * ticks_per_meas;
+        ticks += b * ticks_per_beat;
+        result = midipulse(ticks);
         result += measures.divisions();
     }
     else

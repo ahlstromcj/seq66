@@ -718,16 +718,14 @@ mastermidibase::print () const
 }
 
 /**
- *  Initiate a poll() on the existing poll descriptors.
- *  This base-class implementation could be made identical to
- *  portmidi's poll_for_midi() function, maybe.  But currently it is better
- *  just call the implementation-specific API function.
+ *  Initiate a poll() on the existing poll descriptors.  This base-class
+ *  implementation could be made identical to portmidi's poll_for_midi()
+ *  function, maybe.  But currently it is better just call the
+ *  implementation-specific API function.
  *
- * \warning
- *      Do we need to use a mutex lock? No! It causes a deadlock!!!
+ * \warning Do we need to use a mutex lock? No! It causes a deadlock!!!
  *
- * \return
- *      Returns the result of the poll, or 0 if the API is not supported.
+ * \return Returns the result of the poll, or 0 if the API is not supported.
  */
 
 int
