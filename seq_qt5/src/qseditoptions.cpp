@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-05-20
+ * \updates       2024-08-08
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -647,6 +647,12 @@ qseditoptions::setup_tab_display ()
     (
         ui->checkBoxBoldGridSlots, SIGNAL(clicked(bool)),
         this, SLOT(slot_bold_grid_slots_click())
+    );
+    ui->checkBoxElliptical->setChecked(usr().progress_box_elliptical());
+    connect
+    (
+        ui->checkBoxElliptical, SIGNAL(clicked(bool)),
+        this, SLOT(slot_elliptical_click())
     );
     ui->checkBoxFollowProgress->setChecked(usr().follow_progress());
     connect
@@ -3232,7 +3238,15 @@ qseditoptions::slot_bold_grid_slots_click ()
 }
 
 void
-qseditoptions::slot_follow_progress_click()
+qseditoptions::slot_elliptical_click ()
+{
+    bool on = ui->checkBoxElliptical->isChecked();
+    usr().progress_box_elliptical(on);
+    modify_usr();
+}
+
+void
+qseditoptions::slot_follow_progress_click ()
 {
     bool on = ui->checkBoxFollowProgress->isChecked();
     usr().follow_progress(on);

@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.14
 Chris Ahlstrom
-2015-07-10 to 2024-08-06
+2015-07-10 to 2024-08-08
 
 # Changelog
 
@@ -13,6 +13,8 @@ Chris Ahlstrom
 - Added the use of the Esc key to close the external song editor window
   if not playing and not in adding mode. Similar to the fix made to
   the pattern editor for issue #117.
+- Added the elliptical progress-box option to Preferences / Display.
+- Replaced the --session-tag option with --session.
 
 ### Fixed
 

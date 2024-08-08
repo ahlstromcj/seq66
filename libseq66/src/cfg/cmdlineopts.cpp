@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2024-07-11
+ * \updates       2024-08-08
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -127,7 +127,7 @@ cmdlineopts::s_long_options [] =
     {"jack-transport",      no_argument,       0, 'j'}, /* implies Slave    */
 
     /*
-     * We need -S for "session-tag" selection.
+     * We need -S for "session" selection.
      *
      * {"jack-slave",       no_argument,       0, 'S'},
      */
@@ -153,7 +153,7 @@ cmdlineopts::s_long_options [] =
     {"user-save",           no_argument,       0, 'u'},
     {"record-by-channel",   no_argument,       0, 'd'},
     {"legacy-record",       no_argument,       0, 'D'},
-    {"session-tag",         required_argument, 0, 'S'}, /* new 2023-11-03   */
+    {"session",             required_argument, 0, 'S'}, /* ca 2024-08-08    */
     {"config",              required_argument, 0, 'c'},
     {"rc",                  required_argument, 0, 'f'},
     {"usr",                 required_argument, 0, 'F'},
@@ -327,10 +327,9 @@ static const std::string s_help_3 =
 "   -f, --rc filename       An alternate 'rc' file in $HOME/.config/seq66 or\n"
 "                           the --home directory. '.rc' extension enforced.\n"
 "   -F, --usr filename      An alternate 'usr' file.  Same rules as for --rc.\n"
-"   -S, --session-tag S     Select a setup from those in sessions.rc.\n"
 "   -c, --config basename   Change base name of the 'rc' and 'usr' files. The\n"
 "                           extension is stripped. ['qseq66' is default].\n"
-"   -S, --session name      Select alternate configuration from sessions.rc..\n"
+"   -S, --session name      Select alternate configuration from sessions.rc.\n"
 "   -L, --locale lname      Set global locale, if installed on the system.\n"
 "   -i, --investigate       Turn on various trouble-shooting code.\n"
 "   -o, --option optoken    Provides app-specific options for expansion.\n"
@@ -338,7 +337,7 @@ static const std::string s_help_3 =
     ;
 
 /**
- *  Still still more more help text.
+ *  Still still still more more help text.
  */
 
 static const std::string s_help_4a =
@@ -1168,7 +1167,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             rc().reveal_ports(true);
             break;
 
-#if defined SEQ66_JACK_SUPPORT_OBSOLETE         /* need S for "session-tag" */
+#if defined SEQ66_JACK_SUPPORT_OBSOLETE         /* need S for "session"     */
         case 'S':                               /* -j and -S are the same   */
             rc().with_jack_transport(true);
             rc().with_jack_master(false);

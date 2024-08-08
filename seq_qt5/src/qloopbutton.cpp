@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2024-02-23
+ * \updates       2024-08-08
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -803,6 +803,7 @@ qloopbutton::draw_progress_box (QPainter & painter)
                 m_progress_box.x(), m_progress_box.y() + m_progress_box.h()
             );
 #endif
+            painter.setPen(Qt::NoPen);
             painter.setBrush(QBrush(grad));
             painter.drawEllipse
             (

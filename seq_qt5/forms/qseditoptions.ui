@@ -1069,6 +1069,17 @@ using inverse font color for slots.</string>
            </property>
           </widget>
          </item>
+         <item row="5" column="1">
+          <widget class="QCheckBox" name="checkBoxElliptical">
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] progress-box-elliptical
+If set, the grid slot progress boxes are ellipses.</string>
+           </property>
+           <property name="text">
+            <string>Elliptical progess box</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </widget>
