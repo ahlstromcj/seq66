@@ -518,7 +518,7 @@ sequence::loop_count_max (int m, bool user_change)
 
     }
     if (result)
-        modify();                               /* have pending changes */
+        modify();                                   /* have pending changes */
 
     return result;
 }
@@ -540,10 +540,11 @@ sequence::clear_events ()
 {
     automutex locker(m_mutex);
     bool result = ! m_events.empty();
-    m_events.clear();
     if (result)
+    {
+        m_events.clear();
         modify();                                   /* have pending changes */
-
+    }
     return result;
 }
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2023-10-11
+ * \updates       2024-08-15
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -318,7 +318,7 @@ rec_style_items ()
 {
     static const tokenization s_rec_style_items
     {
-        "Merge", "Overwrite", "Expand", "Oneshot", "Oneshot Reset"
+        "Overdub", "Overwrite", "Expand", "One-shot", "1-shot Clear"
     };
     return s_rec_style_items;
 }

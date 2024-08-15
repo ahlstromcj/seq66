@@ -137,6 +137,8 @@ enum class recordtempo
  *  select one of these recording modes. These correspond to automation
  *  slots record_overdub (merge), record_overwrite, record_expand, and
  *  record_oneshot.
+ *
+ *  Note that we show the label "Overdub" now for recordstyle::merge.
  */
 
 enum class recordstyle

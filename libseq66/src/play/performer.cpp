@@ -9968,7 +9968,7 @@ performer::automation_record_toggle
 void
 performer::set_record_style (recordstyle rs)
 {
-    if (rs < recordstyle::max)
+    if (rs < recordstyle::oneshot_reset)    /* recordstyle::max */
     {
         usr().grid_record_style(rs);
         notify_automation_change(automation::slot::record_style);

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-12-07
+ * \updates       2024-08-15
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1323,6 +1323,8 @@ qseqeditframe64::on_automation_change (automation::slot s)
         undo();
     else if (s == automation::slot::mod_redo)
         redo();
+    else if (s == automation::slot::record_style)           /* issue #128   */
+        update_record_type(usr().grid_record_code());
 
     return true;
 }
@@ -1348,7 +1350,7 @@ qseqeditframe64::setup_record_styles ()
     int lroneshot = usr().grid_record_code(recordstyle::oneshot);
     int lrreset = usr().grid_record_code(recordstyle::oneshot_reset);
     const tokenization & items = rec_style_items();            // settings
-    ui->m_combo_rec_type->insertItem(lrmerge,   qt(items[0])); // "Merge"
+    ui->m_combo_rec_type->insertItem(lrmerge,   qt(items[0])); // "Overdub"
     ui->m_combo_rec_type->insertItem(lrreplace, qt(items[1])); // "Overwrite"
     ui->m_combo_rec_type->insertItem(lrexpand,  qt(items[2])); // "Expand"
     ui->m_combo_rec_type->insertItem(lroneshot, qt(items[3])); // "One-shot"
@@ -4057,18 +4059,33 @@ qseqeditframe64::slot_thru_change (bool ischecked)
 void
 qseqeditframe64::update_record_type (int index)
 {
-    int lroneshot = usr().grid_record_code(recordstyle::oneshot);
-    int lrreset = usr().grid_record_code(recordstyle::oneshot_reset);
-    bool ok = track().update_recording(index);
-    enable_combobox_item(ui->m_combo_rec_type, lrreset, index == lroneshot);
-    if (index == lrreset)                               /* oneshot reset    */
+    recordstyle newstyle = usr().grid_record_style(index);
+    if (newstyle != m_last_record_style)            /* see issue #128       */
     {
-        if (m_last_record_style == recordstyle::oneshot)
-            ui->m_combo_rec_type->setCurrentIndex(lroneshot);
+        int lroneshot = usr().grid_record_code(recordstyle::oneshot);
+        int lrreset = usr().grid_record_code(recordstyle::oneshot_reset);
+        bool ok = track().update_recording(index);
+        if (ok)
+        {
+            enable_combobox_item
+            (
+                ui->m_combo_rec_type, lrreset, index == lroneshot
+            );
+            if (index == lrreset)                   /* oneshot reset        */
+            {
+                if (m_last_record_style == recordstyle::oneshot)
+                {
+                    ui->m_combo_rec_type->setCurrentIndex(lroneshot);
+                    newstyle = recordstyle::oneshot;
+                    index = lroneshot;
+                }
+            }
+            m_last_record_style = newstyle; // usr().grid_record_style(index);
+            ui->m_combo_rec_type->setCurrentIndex(index);
+            perf().set_record_style(newstyle);
+            set_dirty();                            /* see issue #90        */
+        }
     }
-    m_last_record_style = usr().grid_record_style(index);
-    if (ok)
-        set_dirty();                            /* modified for issue #90   */
 }
 
 void

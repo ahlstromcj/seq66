@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.14
 Chris Ahlstrom
-2015-07-10 to 2024-08-08
+2015-07-10 to 2024-08-15
 
 # Changelog
 
@@ -20,6 +20,13 @@ Chris Ahlstrom
 
 - In the zoomer class, rearranged members to avoid a warning (error)
   from g++ v. 14.2.1 about zoom being uninitialized in the constructor.
+- issue #128 "Recording type for loop button not working". Fixes the
+  issue in both directions.
+
+### Changed
+
+- Standardized on "Overdub" for the pattern-window merge functionality.
+  See issue #128.
 
 ## [0.99.13] - 2024-08-05
 

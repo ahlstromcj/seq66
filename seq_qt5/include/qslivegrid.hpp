@@ -140,6 +140,7 @@ private:                            // overrides of qslivebase functions
 private:        /* performer::callback overrides    */
 
     virtual bool on_trigger_change (seq::number seqno) override;
+    virtual bool on_automation_change (automation::slot s) override;
 
 private:                                // overrides of event handlers
 
