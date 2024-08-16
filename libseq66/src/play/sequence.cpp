@@ -6062,6 +6062,12 @@ sequence::set_armed (bool p)
  *  This function sets only the status of recording, regardless of alteration
  *  type.  And, if recording get turned off, the alteration type is set
  *  to alteration::none.
+ *
+ * Issue #129:
+ *
+ *      The mastermidibus::set_sequence_input() call ignores turning on
+ *      alterations when an inputing sequence has already been selected.
+ *      Fixed in mastermidibase.
  */
 
 bool

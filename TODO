@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.14
 Chris Ahlstrom
-2019-04-13 to 2024-08-07
+2019-04-13 to 2024-08-15
 
 Priority:
 
@@ -302,6 +302,18 @@ ISSUES:
     Ctrl-A then q)
 
     STATUS: Fixed in the portfix branch. An embarrassing misstep!
+
+#128 Recording type for loop button not working (Issue
+    The button on the main page for recording styles Overdub, Overwrite,
+    Expand and One Shot does not change the property of the pattern. The drop
+    down menu in the pattern window works fine, although Overdub is called
+    Merge here, which is not ideal.
+
+#129 Quantized Record Button problem 
+    There is a button in the pattern window to turn on Quantized Record.  If
+    the Record Active button to the left of it is set to on then this button
+    does not  work. If the Record Active button is off then the Quantized
+    Record button turns on both buttons without issue.
 
 To close as pushed off to version 2:
 
