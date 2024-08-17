@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2023-12-03
+ * \updates       2024-08-16
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -863,20 +863,22 @@ mastermidibase::port_exit (int client, int port)
  *      as used in seqedit, can represent the state of the thru button or the
  *      record button.
  *
- * \param seq
+ * \param seqp
  *      Provides the sequence pointer to be logged as the mastermidibase's
  *      current sequence.  Can also be used to set a null pointer, to disable
- *      the sequence setting.
+ *      the sequence setting. For issue #129, if we're asking again to make
+ *      a sequence the inputing sequence (i.e. to add quantization recording),
+ *      we accept the seqp if it matches m_seq.
  *
  * \return
  *      Returns true if the sequence pointer is not null.
  */
 
 bool
-mastermidibase::set_sequence_input (bool state, sequence * seq)
+mastermidibase::set_sequence_input (bool state, sequence * seqp)
 {
     automutex locker(m_mutex);
-    bool result = not_nullptr(seq);
+    bool result = not_nullptr(seqp);
     if (m_record_by_buss)
     {
         m_dumping_input = state;
@@ -890,20 +892,20 @@ mastermidibase::set_sequence_input (bool state, sequence * seq)
                 bool have_seq_already = false;
                 for (size_t i = 0; i < m_vector_sequence.size(); ++i)
                 {
-                    if (m_vector_sequence[i] == seq)
+                    if (m_vector_sequence[i] == seqp)
                     {
                         have_seq_already = true;
                         break;
                     }
                 }
                 if (! have_seq_already)
-                    m_vector_sequence.push_back(seq);
+                    m_vector_sequence.push_back(seqp);
             }
             else                        /* remove sequence if already in    */
             {
                 for (size_t i = 0; i < m_vector_sequence.size(); ++i)
                 {
-                    if (m_vector_sequence[i] == seq)
+                    if (m_vector_sequence[i] == seqp)
                     {
                         m_vector_sequence.erase(m_vector_sequence.begin() + i);
                         break;
@@ -922,12 +924,13 @@ mastermidibase::set_sequence_input (bool state, sequence * seq)
         {
             if (not_nullptr(m_seq))
             {
-                result = false;         /* We already got one! Is very nice */
+                if (seqp != m_seq)
+                    result = false;     /* We already got one! Is very nice */
             }
             else
             {
                 m_dumping_input = state;
-                m_seq = seq;
+                m_seq = seqp;
             }
         }
         else
