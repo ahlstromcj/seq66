@@ -1,0 +1,328 @@
+!******************************************************************************
+! Xdefaults (~/.Xdefaults)
+!------------------------------------------------------------------------------
+!
+!  Maintainer:    Chris Ahlstrom
+!  Last Change:   2011-10-18 to 2024-08-16
+!  Project:       Portable Configuration
+!  License:       None.  Use it in any manner whatsover, and don't blame me.
+!  Usage:
+!
+!     Also see the following for getting internationalization (unicode fonts)
+!     to work:
+!
+!           http://www.gentoo.org/doc/en/utf-8.xml
+!
+!     To use this file, simply copy it to your home directory in this
+!     manner:
+!
+!        cp Xdefaults.rc ~/.Xdefaults
+!
+!------------------------------------------------------------------------------
+
+! ------------ Resource name "urxvt" -------------------------------------
+
+urxvt.geometry : 82x56
+
+! Transparency without a compositing manager.
+! Shading ranges from darkest (0) to no shading (100) to lightest (200).
+! Blur radius is in pixels.
+!
+! urxvt.transparent : true
+! urxvt.tintColor : #142020
+! urxvt.shading : 110
+! urxvt.blurRadius : 8
+
+urxvt.transparent : false
+
+! Transparency under compositing manager
+
+! urxvt.depth  : 32
+! urxvt.background  : rgba:0000/0000/0000/aaaa
+! urxvt*background: #000000
+! urxvt*foreground: #ffffff
+! urxvt*background  : #142020
+! urxvt*foreground  : #ffdfaf
+
+urxvt.background : #000000
+urxvt*foreground : #20ff20
+urxvt*borderLess : false
+
+! Colors for man pages
+
+urxvt.colorIT : #87af5f
+urxvt.colorBD : #00a0a0
+urxvt.colorUL : #00a000
+
+! Colors for scroll-bar
+
+urxvt.scrollBar : false
+urxvt.scrollColor : #808080
+urxvt.troughColor : #202020
+
+! Fading of text, in percent
+!
+! urxvt.fading : 50
+! urxvt.fadeColor : #142020
+
+! Colors.  Gnome-terminal and Mrxvt varieties supplied.
+
+! black
+
+urxvt.color0  : #000000
+urxvt.color8  : #555555
+
+! red
+
+urxvt.color1  : #AA0000
+urxvt.color9  : #FF5555
+
+! green
+
+urxvt.color2  : #00AA00
+urxvt.color10 : #55FF55
+
+! yellow
+
+urxvt.color3  : #AA5500
+urxvt.color11 : #FFFF55
+
+! blue
+
+urxvt.color4  : #0000AA
+urxvt.color12 : #5555FF
+
+! magenta
+
+urxvt.color5  : #AA00AA
+urxvt.color13 : #FF55FF
+
+! cyan
+
+urxvt.color6  : #00AAAA
+urxvt.color14 : #55FFFF
+
+! white
+
+urxvt.color7  : #AAAAAA
+urxvt.color15 : #FFFFFF
+
+! urxvt*font: xft:Arimo:pixelsize=12
+! urxvt*boldFont: xft:Arimo:pixelsize=12
+! urxvt*font: xft:Droid-Sans:pixelsize=12
+! urxvt*boldFont: xft:Droid-Sans:pixelsize=12
+! urxvt*font: xft:Monospace:pixelsize=12:antialias=false
+! urxvt*font: xft:Anonymous Pro:pixelsize=16:antialias=true
+! urxvt*boldFont: xft:Monospace:pixelsize=14
+
+urxvt*font: terminus-16
+
+! urxvt*letterSpace: -1
+! urxvt.perl-ext-common : default,matcher
+! urxvt.perl-ext-common: default,tabbed
+! urxvt.urlLauncher     : firefox
+! urxvt.matcher.button  : 1
+! urxvt.tabbed.tabbar-fg : 3
+! urxvt.tabbed.tabbar-bg : 0
+! urxvt.tabbed.tab-fg :    0
+! urxvt.tabbed.tab-bg :    1
+
+! ------------ Resource name "emrxvt" -------------------------------------
+!
+! Using this resource name with urxvt makes it closely match the appearance
+! of my old mrxvt setup. Smaller.
+
+emrxvt.geometry : 82x44
+emrxvt.saveLines : 8192
+emrxvt.pointerBlank : true
+
+! Transparency without a compositing manager.
+!
+! Shading ranges from darkest (0) to no shading (100) to lightest (200).
+! The tintColor is such that black (#000000) deeply shades the background,
+! while white (#ffffff) very lightly shades it, preserving the colors.
+! Blur radius is in pixels.
+
+emrxvt.transparent : true
+emrxvt.tintColor : #ffffff
+emrxvt.shading : 20
+emrxvt.blurRadius : 8
+
+! Transparency under compositing manager
+
+emrxvt.depth  : 32
+emrxvt.background  : rgba:0000/0000/0000/aaaa
+
+emrxvt*borderLess:false
+
+emrxvt*background  : #142020
+emrxvt*foreground  : #ffdfaf
+
+! Borders
+
+emrxvt*internalBorder : 1
+emrxvt*externalBorder : 1
+
+! Cursor settings
+
+emrxvt*cursorBlink : true
+emrxvt*cursorColor : #00ff00
+emrxvt*cursorColor2 : #0000ff
+
+! Colors for man pages
+
+emrxvt.colorIT : #87af5f
+emrxvt.colorBD : #00a0a0
+emrxvt.colorUL : #00a000
+
+! Colors for scroll-bar
+
+emrxvt*scrollBar : false
+emrxvt*scrollstyle : rxvt
+emrxvt*scrollBar_floating : true
+emrxvt*borderColor : #808080
+emrxvt*scrollColor : #80d080
+emrxvt*troughColor : #208020
+
+emrxvt*font: xft:Monospace:pixelsize=12
+
+! emrxvt*font: xft:Anonymous Pro:pixelsize=15:antialias=true
+! emxvt*letterSpace: -1
+! Uncomment the following if you do not want BOLD text to be used.
+! Allowing bold text makes some file types in 'ls' bold, and some
+! keywords in C (under vim) bold.  If you do not like bold file/directory
+! names in 'ls', then modify /etc/DIR_COLORS as the preferred method.
+!
+! emrxvt*boldFont: xft:Monospace:pixelsize=14
+!
+! Fading of text, in percent
+!
+! Does not seem to have any effect.  Oh, needs the afterimage and fading
+! options to be enabled when compiling on Gentoo.
+
+emrxvt.fading : 20
+emrxvt.fadeColor : #142020
+
+! Colors.  Gnome-terminal and Mrxvt varieties supplied.
+
+! black
+
+emrxvt.color0  : #101010
+emrxvt.color8  : #303030
+
+! red
+
+emrxvt.color1  : #ef0000
+emrxvt.color9  : #ff0000
+
+! green
+
+emrxvt.color2  : #00a000
+emrxvt.color10 : #00f000
+
+! yellow
+
+emrxvt.color3  : #909000
+emrxvt.color11 : #c0c000
+
+! blue
+
+emrxvt.color4  : #0000ff
+emrxvt.color12 : #0000ff
+
+! magenta
+
+emrxvt.color5  : #ef00ef
+emrxvt.color13 : #a000a0
+
+! cyan
+
+emrxvt.color6  : #00c0c0
+emrxvt.color14 : #00c0c0
+
+! white
+
+emrxvt.color7  : #b0b0b0
+emrxvt.color15 : #e0e0e0
+
+! emrxvt.perl-ext-common : default,matcher
+
+! Tabs
+!
+! This is junk, therefore I am adopting GNU screen instead.
+!
+! emrxvt.perl-ext-common : tabbed
+! emrxvt.tabbed.tabbar-fg : 5
+! emrxvt.tabbed.tabbar-bg : 0
+! emrxvt.tabbed.tab-fg :    14
+! emrxvt.tabbed.tab-bg :    1
+! emrxvt.autohide:  no
+! emrxvt.new-button:  no
+! emrxvt.urlLauncher     : firefox
+! emrxvt.matcher.button  : 1
+
+! ------------ Resource name "XTerm" -------------------------------------
+
+XTerm*geometry : 82x44
+XTerm*scrollBar : false
+XTerm*internalBorder : 6
+
+XTerm*cursorBlink : true
+XTerm*cursorColor : #00ff00
+XTerm*cursorColor2 : #0000ff
+
+# XTerm*background  : #142020
+# XTerm*foreground  : #ffdfaf
+
+XTerm*background  : #0a1010
+XTerm*foreground  : #ffdfaf
+
+! Colors.  Gnome-terminal and Mrxvt varieties supplied.
+
+! black
+
+XTerm*color0  : #000000
+XTerm*color8  : #555555
+
+! red
+
+XTerm*color1  : #CC0000
+XTerm*color9  : #FF5555
+
+! green
+
+XTerm*color2  : #00CC00
+XTerm*color10 : #55FF55
+
+! yellow
+
+XTerm*color3  : #CC5500
+XTerm*color11 : #FFFF55
+
+! blue
+
+XTerm*color4  : #0000CC
+XTerm*color12 : #5555FF
+
+! magenta
+
+XTerm*color5  : #CC00CC
+XTerm*color13 : #FF55FF
+
+! cyan
+
+XTerm*color6  : #00CCCC
+XTerm*color14 : #55FFFF
+
+! white
+
+XTerm*color7  : #CCCCCC
+XTerm*color15 : #FFFFFF
+
+XTerm*faceName: Anonymous Pro:pixelsize=16
+
+!------------------------------------------------------------------------------
+! End of .Xdefaults
+!------------------------------------------------------------------------------
+! vim: ts=3 noet ft=xdefaults syntax=xdefaults
+!------------------------------------------------------------------------------

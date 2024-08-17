@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-08-15
+ * \updates       2024-08-16
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1355,6 +1355,7 @@ qseqeditframe64::setup_record_styles ()
     ui->m_combo_rec_type->insertItem(lrexpand,  qt(items[2])); // "Expand"
     ui->m_combo_rec_type->insertItem(lroneshot, qt(items[3])); // "One-shot"
     ui->m_combo_rec_type->insertItem(lrreset,   qt(items[4])); // "1-shot reset"
+    enable_combobox_item(ui->m_combo_rec_type, lrreset, false);
     if (track().is_new_pattern())
     {
         int npc = usr().new_pattern_record_code();
