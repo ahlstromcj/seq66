@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-10-09
+% \update      2024-08-17
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -73,6 +73,7 @@
    Press or release the right mouse button, or press
    \texttt{x} to "eXit" or "eXscape" from paint mode.
    \texttt{Esc} also exits paint mode if the pattern is not playing.
+   If not in paint mode, then the window is closed, just like a dialog box.
    Another option is to press the "finger" button to toggle between note-entry
    and note-selection.
    Third, notes are drawn only with the length selected by the "notes" button
@@ -735,8 +736,10 @@
    starts and stops playback, rewinding to the beginning when stopped.
    The \texttt{.} (period) key starts and pauses playback, without
    rewinding.
-   The \texttt{Esc} key stops playback, exits "paint" mode, and
-   can be enabled to close the pattern editor.
+   The first \texttt{Esc} key stops playback;
+   the second \texttt{Esc} key exits "paint" mode; and
+   the third \texttt{Esc} key closes the pattern editor \textsl{if}
+   the 'usr' \texttt{[new-pattern-editor] escape-pattern} option is set.
    This functionality is similar to that of the main window, but
    these keys are not reconfigurable in the piano roll.
 

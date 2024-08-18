@@ -1272,17 +1272,17 @@ qsmainwnd::update_record_by_status ()
 #if defined SEQ66_USE_RECORD_EX_BUTTON
     if (cb_perf().record_by_buss())
     {
-        qt_set_icon(rec_ex_buss_xpm, ui->btnRecordEx);
+        qt_set_icon(rec_ex_buss_xpm, ui->btnRecordEx);      /* green    */
         ui->btnRecordEx->setEnabled(true);
     }
     else if (cb_perf().record_by_channel())
     {
-        qt_set_icon(rec_ex_channel_xpm, ui->btnRecordEx);
+        qt_set_icon(rec_ex_channel_xpm, ui->btnRecordEx);   /* yellow   */
         ui->btnRecordEx->setEnabled(true);
     }
     else
     {
-        qt_set_icon(rec_ex_normal_xpm, ui->btnRecordEx);
+        qt_set_icon(rec_ex_normal_xpm, ui->btnRecordEx);    /* red      */
         ui->btnRecordEx->setEnabled(cb_perf().have_current_seq());
     }
 #else

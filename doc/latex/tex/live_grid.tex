@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-12-04
+% \update      2024-08-18
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -18,7 +18,8 @@
 \label{sec:live_grid}
 
    For our walk-through of the main window, the following figure
-   shows it using blue labels for reference.
+   shows it using blue labels for reference. It is out-of date, missing
+   the new Record button to the right of the Play/Pause button.
 
 \begin{figure}[H]
    \centering 
@@ -534,14 +535,18 @@
 \subsubsection{Record}
 \label{subsubsec:introduction_record_button}
 
-   This new button turns on recording for the various kinds of recording
+   This button turns on recording for the various kinds of recording
    described in \sectionref{sec:recording}.
    Its color indicates the record-by feature in force:
 
    \begin{itemize}
+      \item \textbf{Grey}.
+         No pattern is selected, so this button is non-functional.
       \item \textbf{Red}.
          This color indicates the normal recording mode, which toggles only a
          single pattern for recording.
+         This button is enabled and colored red only if a pattern is
+         selected in the grid.
       \item \textbf{Yellow}.
          This color indicates the record-by-channel recording mode,
          which toggles, for recording, all patterns that have an
@@ -549,7 +554,12 @@
       \item \textbf{Green}.
          This color indicates the record-by-buss recording mode,
          which toggles, for recording, all patterns that have an
-         input bus set.
+         input bus set. This button is green only if there is at least
+         one such pattern.
+         A pattern can be assigned an input buss via its right-click
+         menu, but only if
+         \textbf{Edit / Preferences / MIDI Input / Record into patterns by bus}
+         is enabled.
    \end{itemize}
 
    These modes are selected in the 'rc' file as described in

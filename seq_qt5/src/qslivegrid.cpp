@@ -1950,6 +1950,10 @@ qslivegrid::popup_menu ()
                         if (midi_in_bus == bussbyte(bus))
                             a->setChecked(true);
 
+                        /*
+                         * see qslivebase::set_midi_in_buss().
+                         */
+
                         connect
                         (
                             a, &QAction::triggered,

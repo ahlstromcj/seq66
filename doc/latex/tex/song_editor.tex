@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-10-25
+% \update      2024-08-17
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -119,7 +119,7 @@
 %  \itempar{Stop}{song editor!stop}
 %  Stops the playback of the song.
 %  \index{keys!esc (stop)}
-%  The keystroke for stopping playback is the \texttt{Escape} character.
+%  The keystroke for stopping playback is the \texttt{Esc} character.
 %  It can be configured to be another character (such as \texttt{Space}, which
 %  would make the space-bar toggle the playback status).
 
@@ -134,8 +134,11 @@
    The \texttt{Space} character also toggles playback.
    This character also rewinds the song to the beginning when stopping.
 
-   Another keystroke for stopping playback is the \texttt{Escape} character.
+   Another keystroke for stopping playback is the \texttt{Esc} character.
    This character also rewinds the song to the beginning when stopping.
+   (It also can exit paint mode, and,
+   \textsl{if} the 'usr' \texttt{[new-pattern-editor] escape-pattern}
+   option is set, will close an external song-editor window.
 
    \index{keys!period (pause)}
    The keystroke for pausing playback is the \texttt{Period} character.

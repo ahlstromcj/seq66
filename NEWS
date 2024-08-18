@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.14
 Chris Ahlstrom
-2015-07-10 to 2024-08-15
+2015-07-10 to 2024-08-18
 
 # Changelog
 
@@ -22,11 +22,15 @@ Chris Ahlstrom
   from g++ v. 14.2.1 about zoom being uninitialized in the constructor.
 - issue #128 "Recording type for loop button not working". Fixes the
   issue in both directions.
+- issue #128 "Quantized Record Button problem" fixed by allowing
+  the existing sequence recording status to be modified with an alteration.
+- Tightened up the handling of selecting a pattern's input buss.
 
 ### Changed
 
 - Standardized on "Overdub" for the pattern-window merge functionality.
   See issue #128.
+- Updating the PDF documentation based on issue fixes and other fixes.
 
 ## [0.99.13] - 2024-08-05
 

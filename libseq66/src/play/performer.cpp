@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2024-01-04
+ * \updates       2024-08-18
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -895,8 +895,11 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
      * the conditions weren't met by the loaded song.
      *
      *      rcs.record_by_buss(m_record_by_buss);
+     *
+     * No, we need to be consistent.
      */
 
+    rcs.record_by_buss(m_record_by_buss);       /* ca 2024-08-18    */
     rcs.record_by_channel(m_record_by_channel);
     usrs.resume_note_ons(m_resume_note_ons);
 
@@ -3486,8 +3489,11 @@ performer::sequence_inbus_setup ()
                 bussbyte b = seqi->true_in_bus();
                 if (! is_null_buss(b))              /* b < buscount */
                 {
+                    int seqno = int(seqi->seq_number());
                     m_buss_patterns.push_back(seqi.get());
                     result = true;
+                    record_by_buss(result);
+                    notify_sequence_change(seqno, change::recreate); /* new */
 
 #if defined SEQ66_PLATFORM_DEBUG
                     char temp[64];

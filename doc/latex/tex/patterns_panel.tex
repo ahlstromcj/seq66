@@ -1217,6 +1217,7 @@
       \item \textbf{Panic!}
       \item \textbf{Stop}
       \item \textbf{Play and Pause}
+      \item \textbf{Record}
       \item \textbf{Loop}
       \item \textbf{Song Record}
 %     \item \textbf{Song Record Snap}
@@ -1250,6 +1251,16 @@
    \index{pause}
    The Pause button toggles playback without rewinding the song.
    A Pause key (by default, the period) is also defined.
+
+   \itempar{Record}{patterns!record}
+   This button is normally disabled.
+   Recording is enabled as desired for only one pattern in this mode.
+   When record-by-channel is set, this button is yellow.
+   This mode allows events to be redirected to the sequence whose number is the
+   channel number (0-15) of the event.
+   When record-by-buss is set, this button is red.
+   This mode allows events to be redirected to the sequence whose number is the
+   buss number (0-15) of the event.
 
    \itempar{Loop}{pattern!loop}
    If this button is active, then the playback will loop
