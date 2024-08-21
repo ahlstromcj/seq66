@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-11-23
+ * \updates       2024-08-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -142,6 +142,8 @@ public:
         bool shorter = false
     );
     virtual ~qseqeditframe64 ();
+
+    void get_position (int & x, int & y);
 
     void initialize_panels ();
     void set_editor_mode (sequence::editmode mode);
@@ -303,6 +305,7 @@ private slots:
     void transpose_notes ();
     void transpose_harmonic ();
     void remap_notes ();
+    void tooltip_mode (bool ischecked);
     void note_entry (bool ischecked);
 
     /*
@@ -395,11 +398,20 @@ private:
     Ui::qseqeditframe64 * ui;
 
     /**
-     *  In progress, wanting modify the parent's title bar if the parent
-     *  is a qseqeditex object.
+     *  We want to support holding this frame in a qseqeditex window, to
+     *  be able modify the parent's title bar and get position information.
+     *  is a qseqeditex object. If null, then this frame is embedded in the
+     *  main window.
      */
 
     qseqeditex * m_qseqeditex_frame;
+
+    /**
+     *  This item is not null if this frame is embedded in the main window.
+     *  It is actually the Edit tab widget.
+     */
+
+    QWidget * m_edit_tab_widget;
 
     /**
      *  Indicates to compress this window vertically, for use in the Edit tab.

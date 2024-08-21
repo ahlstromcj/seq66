@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-01-04
+ * \updates       2024-08-20
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3944,6 +3944,29 @@ sequence::find_event (const event & e, bool nextmatch)
         m_events.find_next_match(e) : m_events.find_first_match(e) ;
 
     return evi != m_events.end() ?  *evi : s_null_result ;
+}
+
+sequence::note_info
+sequence::find_note (midipulse tick, int note)
+{
+    bool found = false;
+    note_info result;
+    for (auto cev = cbegin(); ! cend(cev); ++cev)
+    {
+        draw status = get_note_info(result, cev);
+        if (status == draw::linked || status == draw::note_on)
+        {
+            found = tick >= result.start() &&
+                tick < result.finish() && result.note() == note;
+
+            if (found || result.start() > tick)
+                break;
+        }
+    }
+    if (! found)
+        result.ni_note = (-1);
+
+    return result;
 }
 
 bool

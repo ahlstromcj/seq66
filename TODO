@@ -1,9 +1,46 @@
 TO DO for Seq66 0.99.14
 Chris Ahlstrom
-2019-04-13 to 2024-08-15
+2019-04-13 to 2024-08-21
 
-Priority:
+Mutes:
 
+    -   Mutes via MIDI control, in Learn mode, do not raise the modify
+        asterisk. Why not???
+    -   If inactive, set "Mute File" setting to "not enabled".
+    -   Consider showing, as a run-time toggle, the mute hot-keys, rather
+        than the mute number, in the mute-master buttons.
+
+Playlists:
+
+    -   Consider adding a configurable play-list auto-advance delay value?
+    -   Set all contrib/midi and data/midi MIDI files to use port 0?
+
+From Testing:
+
+    -   Add an option fix notes by shortening them a few ticks.
+    -   File errors (fixed!), but odd issues (w/qsynth):
+       '/usr/local/share/seq66-0.99/midi/FM/judyblue.mid' plays, but some
+       notes are blipped out. Try with another player.
+       '/usr/local/share/seq66-0.99/midi/FM/longhair.mid' plays just fine
+       mostly, some glitches.
+    -   The 'usr' time-color settings do not seem to work. Actually, it does
+        work, but not with the Qt gtk styling. Document this issue.
+    -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
+        Too difficult to fix at this time; converted it to 192.
+        In the calculations module, rigorize default_pulses_per_measure()
+        and pulses_per_beat() to adjust for B/W not equal to 4.
+        Also, with ppqn = 120, pulses_per_substep() yields 7.5 truncates
+        to 7. Should this function return a double?  No, instead recommend
+        that the user convert to 192 PPQN or one of the other supported
+        settings, then save, and reopen. Test alternate time signatures.
+
+Ongoing efforts:
+
+    -   Verify setmapper/setmaster for odd set sizes.
+    -   Why does velocity change in data pane not work when starting from the
+        left in barrage.midi? The Kepler34 "relative change" feature. This
+        feature is macroed out for now. Perhaps should make it a Ctrl-Click or
+        something to start it in addition to "would select".
     -   Fix and test new record/quantize handling, and verify that
         MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recorded measures
@@ -24,46 +61,6 @@ Priority:
     -   #111 Time signature changes does not get saved on .midi file
     -   #112 Send midi-control-out message when New Pattern is created in GUI
     -   #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
-
-Mutes:
-
-    -   Mutes via MIDI control, in Learn mode, do not raise the modify
-        asterisk. Why not???
-    -   If inactive, set "Mute File" setting to "not enabled".
-    -   Consider showing, as a run-time toggle, the mute hot-keys, rather
-        than the mute number, in the mute-master buttons.
-
-Playlists:
-
-    -   Consider adding a configurable play-list auto-advance delay value?
-    -   Set all contrib/midi and data/midi MIDI files to use port 0?
-
-From Testing:
-
-    -   File errors (fixed!), but odd issues (w/qsynth):
-       '/usr/local/share/seq66-0.99/midi/FM/judyblue.mid' plays, but some
-       notes are blipped out. Try with another player.
-       '/usr/local/share/seq66-0.99/midi/FM/longhair.mid' plays just fine
-       mostly, some glitches.
-    -   The 'usr' time-color settings do not seem to work. Actually, it does
-        work, but not with the Qt gtk styling.
-    -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
-        Too difficult to fix at this time; converted it to 192.
-        In the calculations module, rigorize default_pulses_per_measure()
-        and pulses_per_beat() to adjust for B/W not equal to 4.
-        Also, with ppqn = 120, pulses_per_substep() yields 7.5 truncates
-        to 7. Should this function return a double?  No, instead recommend
-        that the user convert to 192 PPQN or one of the other supported
-        settings, then save, and reopen. Test alternate time signatures.
-
-
-Ongoing efforts:
-
-    -   Verify setmapper/setmaster for odd set sizes.
-    -   Why does velocity change in data pane not work when starting from the
-        left in barrage.midi? The Kepler34 "relative change" feature. This
-        feature is macroed out for now. Perhaps should make it a Ctrl-Click or
-        something to start it in addition to "would select".
 
 ISSUES:
 

@@ -108,7 +108,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="spacer_button_0">
+        <widget class="QPushButton" name="tooltip_button">
          <property name="minimumSize">
           <size>
            <width>48</width>
@@ -121,11 +121,14 @@
            <height>10</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>Toggle the display of note tool-tips.</string>
+         </property>
          <property name="text">
           <string/>
          </property>
          <property name="flat">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -442,6 +445,7 @@ to note events. [ c for selected notes ]</string>
          </property>
          <property name="font">
           <font>
+           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -528,6 +532,7 @@ to note events. [ c for selected notes ]</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <italic>false</italic>
          <bold>true</bold>
         </font>
@@ -1448,6 +1453,7 @@ or a velocity to force upon input.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1490,6 +1496,7 @@ or a velocity to force upon input.</string>
        </property>
        <property name="font">
         <font>
+         <weight>75</weight>
          <italic>false</italic>
          <bold>true</bold>
         </font>

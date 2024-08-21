@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2024-01-04
+ * \updates       2024-08-20
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -210,6 +210,9 @@ public:
     /**
      *  A structure that holds note information, used, for example, in
      *  sequence::get_next_note().
+     *
+     *  If the note is invalid (as might happen in searches), then the
+     *  note value is (-1).
      */
 
     class note_info
@@ -229,7 +232,7 @@ public:
         note_info () :
             ni_tick_start   (0),
             ni_tick_finish  (0),
-            ni_note         (0),
+            ni_note         (0),    /* we could initialize this to (-1)     */
             ni_velocity     (0),
             ni_selected     (false)
             {
@@ -254,6 +257,11 @@ public:
        int note () const
        {
            return ni_note;
+       }
+
+       bool valid () const
+       {
+           return note() >= 0;
        }
 
        int velocity () const
@@ -1642,6 +1650,7 @@ public:
     bool append_event (const event & er);
     void sort_events ();
     event find_event (const event & e, bool nextmatch = false);
+    note_info find_note (midipulse tick, int note);
     bool remove_duplicate_events (midipulse tick, int note = (-1));
     void notify_change (bool userchange = true);
     void notify_trigger ();

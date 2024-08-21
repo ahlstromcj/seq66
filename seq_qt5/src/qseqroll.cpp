@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-12-07
+ * \updates       2024-08-21
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -34,11 +34,13 @@
 
 #include <QApplication>                 /* QApplication keyboardModifiers() */
 #include <QFrame>                       /* base class for seqedit frame(s)  */
+#include <QLabel>                       /* used as a tool-tip for notes     */
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPen>
 #include <QTimer>
+
 
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
@@ -101,6 +103,8 @@ qseqroll::qseqroll
     m_pos                   (0),
     m_chord                 (0),
     m_key                   (0),
+    m_show_note_info        (false),
+    m_note_tooltip          (nullptr),
     m_note_length           (p.ppqn() * 4 / 16),
     m_note_off_margin       (2),
     m_background_sequence   (seq::unassigned()),
@@ -131,6 +135,11 @@ qseqroll::qseqroll
     m_font.setPointSize(6);                         /* 8 is too obtrusive   */
     set_snap(track().snap());
     show();
+
+#if 0
+    setToolTip("Tempory test");
+#endif
+
     m_timer = qt_timer(this, "qseqroll", 1, SLOT(conditional_update()));
 }
 
@@ -1315,10 +1324,15 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
     midipulse tick;
     convert_xy(0, current_y(), tick, note);
     m_seqkeys_wid->preview_key(note);
+    if (m_show_note_info)
+        show_note_tooltip(current_x(), current_y());
+
     if (select_action())
     {
         if (drop_action())
             (void) snap_current_x();
+
+        set_dirty();
     }
     if (painting())
     {
@@ -1327,8 +1341,8 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
             convert_xy(current_x(), current_y(), tick, note);
             (void) add_painted_note(tick, note);
         }
+        set_dirty();
     }
-    set_dirty();
 }
 
 bool
@@ -1962,6 +1976,55 @@ qseqroll::follow_progress ()
 {
     if (not_nullptr(frame64()))
         frame64()->follow_progress();
+}
+
+/**
+ *  Creates a label to show the note information. We cannot get the
+ *  generic_tooltip() function to work properly.
+ *
+ *  The odd thing is that the font is bold in the main window, but
+ *  regular in the external window.
+ */
+
+void
+qseqroll::show_note_tooltip (int mx, int my)
+{
+    int note;
+    midipulse tick;
+    convert_xy(mx, my, tick, note);
+    sequence::note_info ni = track().find_note(tick, note);
+    if (ni.valid())
+    {
+        std::string s = perf().pulses_to_measure_string(ni.start());
+        std::string f = perf().pulses_to_measure_string(ni.finish());
+        std::string temp = "#";
+        temp += std::to_string(ni.note());
+        temp += ": ";
+        temp += s;
+        temp += "-";
+        temp += f;
+        temp += " Vel ";
+        temp += std::to_string(ni.velocity());
+#if defined SHOW_GENERIC_TOOLTIPS
+        generic_tooltip(this, temp, mx, my);
+#else
+        if (not_nullptr(m_note_tooltip))
+            delete m_note_tooltip;
+
+        m_note_tooltip = new QLabel(qt(temp), this);
+        m_note_tooltip->show();
+        m_note_tooltip->move(mx, my - note_height() - 3);
+#endif
+    }
+    else
+    {
+#if defined SHOW_GENERIC_TOOLTIPS
+        generic_tooltip(this, "", mx, my);
+#else
+        delete m_note_tooltip;
+        m_note_tooltip = nullptr;
+#endif
+    }
 }
 
 }           // namespace seq66

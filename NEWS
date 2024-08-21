@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.14
 Chris Ahlstrom
-2015-07-10 to 2024-08-18
+2015-07-10 to 2024-08-21
 
 # Changelog
 
@@ -14,7 +14,8 @@ Chris Ahlstrom
   if not playing and not in adding mode. Similar to the fix made to
   the pattern editor for issue #117.
 - Added the elliptical progress-box option to Preferences / Display.
-- Replaced the --session-tag option with --session.
+- In the pattern editor, a tiny unlabelled button toggles the
+  showing of note information when the mouse hovers over a note.
 
 ### Fixed
 
@@ -31,6 +32,7 @@ Chris Ahlstrom
 - Standardized on "Overdub" for the pattern-window merge functionality.
   See issue #128.
 - Updating the PDF documentation based on issue fixes and other fixes.
+- Replaced the --session-tag option with --session.
 
 ## [0.99.13] - 2024-08-05
 

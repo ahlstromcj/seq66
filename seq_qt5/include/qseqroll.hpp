@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-12-07
+ * \updates       2024-08-21
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -47,6 +47,7 @@
  * Forward references
  */
 
+class QLabel;
 class QMessageBox;
 class QTimer;
 
@@ -138,6 +139,7 @@ private:
     void set_scale (int scale);
     void set_background_sequence (bool state, int seq);
     void analyze_seq_notes ();
+    void show_note_tooltip (int mx, int my);
     int note_off_length () const;
     bool add_painted_note (midipulse tick, int note);
     bool zoom_key_press (bool shifted, int key);
@@ -160,6 +162,11 @@ private:
 #if defined USE_GROW_SELECTED_NOTES_FUNCTION
     void grow_selected_notes (int dx);
 #endif
+
+    void set_tooltip_mode (bool ischecked)
+    {
+        m_show_note_info = ischecked;
+    }
 
     void move_selected_notes (int dx, int dy);
     void snap_y (int & y);
@@ -233,6 +240,19 @@ private:
      */
 
     int m_key;
+
+    /**
+     *  If true (the default is false), this will allow hovering to show
+     *  the values for a note in a tooltip.
+     */
+
+    bool m_show_note_info;
+
+    /**
+     *  The label that serves as a tooltip.
+     */
+
+    QLabel * m_note_tooltip;
 
     /**
      *  Holds the note length in force for this sequence.  Used in the

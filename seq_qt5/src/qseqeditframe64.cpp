@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-08-16
+ * \updates       2024-08-21
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -270,7 +270,7 @@ s_event_items [] =
  *
  * \param parent
  *      Provides the parent window/widget for this container window.  Defaults
- *      to null. Normally a pointer to a qseditex fram or the qsmainwnd's
+ *      to null. Normally a pointer to a qseditex frame or the qsmainwnd's
  *      EditTab is passed in this parameter.  If the former, we want to be
  *      able to change it's title.
  *
@@ -290,7 +290,8 @@ qseqeditframe64::qseqeditframe64
     qseqframe               (p, s, parent),
     performer::callbacks    (p),
     ui                      (new Ui::qseqeditframe64),
-    m_qseqeditex_frame      (nullptr),              /* TBD              */
+    m_qseqeditex_frame      (nullptr),
+    m_edit_tab_widget       (nullptr),
     m_short_version         (shorter),              /* short_version()  */
     m_is_looping            (false),
     m_lfo_wnd               (nullptr),
@@ -333,7 +334,18 @@ qseqeditframe64::qseqeditframe64
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);             /* part of issue #4     */
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    if (! shorter)
+    if (shorter)
+    {
+        /*
+         * Currently this seems to have position 0, 0, which does not work
+         * for showing note tooltips.
+         */
+
+#if defined SHOW_GENERIC_TOOLTIPS
+        m_edit_tab_widget = parent;
+#endif
+    }
+    else
         m_qseqeditex_frame = dynamic_cast<qseqeditex *>(parent);
 
     /*
@@ -864,6 +876,18 @@ qseqeditframe64::qseqeditframe64
     (
         ui->btnKeyVZoomOut, SIGNAL(clicked(bool)),
         this, SLOT(v_zoom_out())
+    );
+
+    /*
+     * Tool-tip mode
+     */
+
+    ui->tooltip_button->setCheckable(true);
+    ui->tooltip_button->setChecked(false);
+    connect
+    (
+        ui->tooltip_button, SIGNAL(toggled(bool)),
+        this, SLOT(tooltip_mode (bool))
     );
 
     /*
@@ -1417,6 +1441,29 @@ qseqeditframe64::setup_alterations ()
         }
         q_record_change(alt, t);
     }
+}
+
+void
+qseqeditframe64::get_position (int & x, int & y)
+{
+    if (not_nullptr(m_qseqeditex_frame))
+    {
+        x = m_qseqeditex_frame->x();
+        y = m_qseqeditex_frame->x();
+    }
+#if defined SHOW_GENERIC_TOOLTIPS
+    else if (not_nullptr(m_edit_tab_widget))
+    {
+        x = m_edit_tab_widget->x();
+        y = m_edit_tab_widget->y();
+    }
+#else
+    else
+    {
+        x = 0;
+        y = 0;
+    }
+#endif
 }
 
 /**
@@ -2763,7 +2810,19 @@ qseqeditframe64::popup_sequence_menu ()
 }
 
 /**
- *  Passes the transpose status to the sequence object.
+ *  Pass the status of showing note tooltips to the seqroll
+ *  object.
+ */
+
+void
+qseqeditframe64::tooltip_mode (bool ischecked)
+{
+    if (not_nullptr(m_seqroll))
+        m_seqroll->set_tooltip_mode(ischecked);
+}
+
+/**
+ *  Passes the transpose status to the seqroll object.
  */
 
 void

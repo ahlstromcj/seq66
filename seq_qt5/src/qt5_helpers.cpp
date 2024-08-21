@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2024-01-09
+ * \updates       2024-08-20
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -72,6 +72,7 @@
 #include <QSpinBox>
 #include <QStandardItemModel>
 #include <QTimer>
+#include <QToolTip>
 
 #include "cfg/settings.hpp"             /* seq66::rc().home_config_dir...() */
 #include "util/filefunctions.hpp"       /* seq66 file-name manipulations    */
@@ -1044,6 +1045,25 @@ tooltip_for_filename
         lineedit->setToolTipDuration(duration);
         lineedit->setText(basename);
     }
+}
+
+/**
+ *  A generic tooltip, meant for use in canvas such as a piano roll.
+ */
+
+void
+generic_tooltip
+(
+    QWidget * widget,
+    const std::string & tiptext,
+    int x, int y,
+    int msduration
+)
+{
+    QPoint p{x, y};
+    QString qtip{qt(tiptext)};
+    QRect qr{};
+    QToolTip::showText(p, qtip, widget, qr, msduration);
 }
 
 /**

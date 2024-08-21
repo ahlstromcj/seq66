@@ -28,13 +28,20 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2024-08-16
+ * \updates       2024-08-20
  * \license       GNU GPLv2 or above
  *
  */
 
 #include "ctrl/keymap.hpp"              /* seq66::qt_modkey_ordinal()       */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke wrapper class   */
+
+/*
+ *  Currently disabled because it's nearly impossible to get the absolute
+ *  position of the mouse correct with multiple monitors.
+ */
+
+#undef SHOW_GENERIC_TOOLTIPS
 
 class QAction;
 class QComboBox;
@@ -175,6 +182,19 @@ extern void tooltip_for_filename
     const std::string & filespec,
     int duration = -1
 );
+
+#if defined SHOW_GENERIC_TOOLTIPS
+
+extern void generic_tooltip
+(
+    QWidget * widget,
+    const std::string & tiptext,
+    int x, int y,
+    int msduration = -1
+);
+
+#endif
+
 extern bool is_empty (const QLineEdit * lineedit);
 
 }               // namespace seq66
