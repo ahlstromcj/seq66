@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-08-21
+ * \updates       2024-08-22
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -34,13 +34,14 @@
 
 #include <QApplication>                 /* QApplication keyboardModifiers() */
 #include <QFrame>                       /* base class for seqedit frame(s)  */
-#include <QLabel>                       /* used as a tool-tip for notes     */
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPen>
 #include <QTimer>
 
+#include <QLabel>                       /* used as a tool-tip for notes     */
+#include <QPalette>                     /* for recoloring the tool-tip      */
 
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
@@ -48,6 +49,7 @@
 #include "qseqkeys.hpp"                 /* seq66::qseqkeys class            */
 #include "qseqroll.hpp"                 /* seq66::qseqroll class            */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
+
 
 /**
  *  We've had an issue where adding wrapped-but-truncated notes would
@@ -2012,8 +2014,19 @@ qseqroll::show_note_tooltip (int mx, int my)
             delete m_note_tooltip;
 
         m_note_tooltip = new QLabel(qt(temp), this);
+
+        /*
+         *  Using the existing style might render the text the same color
+         *  as the background, so we need to set the colors as per our
+         *  Seq66 palette.
+         */
+
+        QPalette & p = const_cast<QPalette &>(m_note_tooltip->palette());
+        p.setColor(m_note_tooltip->backgroundRole(), back_color());
+        p.setColor(m_note_tooltip->foregroundRole(), fore_color());
+        m_note_tooltip->setPalette(p);
         m_note_tooltip->show();
-        m_note_tooltip->move(mx, my - note_height() - 3);
+        m_note_tooltip->move(mx + 3, my - note_height() - 3);
 #endif
     }
     else
