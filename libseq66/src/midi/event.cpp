@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-01-16
+ * \updates       2024-08-22
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -78,6 +78,18 @@
 #include "midi/event.hpp"               /* seq66::event class               */
 #include "midi/calculations.hpp"        /* seq66::rescale_tick()            */
 #include "util/basic_macros.hpp"        /* helpful debugging/build macros   */
+
+/*
+ *  As noted elsewhere, the song judyblue.mid does not play all notes.
+ *  This happens when the Note Off for a preceding note follows
+ *  a Note On for the same note number, and these two events have the
+ *  same time-stamp.
+ *
+ *  Enabling this macro gives Note Offs priority over Note Ons with the
+ *  same time-stamp, and seems to fix the problem.
+ */
+
+#define SEQ66_PRIORITIZE_NOTE_OFF
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -1157,6 +1169,15 @@ event::get_rank () const
         int eventcode = mask_status(m_status);  /* strip off channel nybble */
         switch (eventcode)
         {
+#if defined SEQ66_PRIORITIZE_NOTE_OFF           /* EXPERIMENTAL reversal    */
+        case EVENT_NOTE_ON:
+            result = 0x2000 + get_note();
+            break;
+
+        case EVENT_NOTE_OFF:
+            result = 0x1000 + get_note();
+            break;
+#else
         case EVENT_NOTE_OFF:
             result = 0x2000 + get_note();
             break;
@@ -1164,6 +1185,7 @@ event::get_rank () const
         case EVENT_NOTE_ON:
             result = 0x1000 + get_note();
             break;
+#endif
 
         case EVENT_AFTERTOUCH:
         case EVENT_CHANNEL_PRESSURE:

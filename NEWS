@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.14
 Chris Ahlstrom
-2015-07-10 to 2024-08-21
+2015-07-10 to 2024-08-22
 
 # Changelog
 
@@ -33,6 +33,9 @@ Chris Ahlstrom
   See issue #128.
 - Updating the PDF documentation based on issue fixes and other fixes.
 - Replaced the --session-tag option with --session.
+- Changed the sort order of events so that Note Offs get priority over
+  Note Ons with the same time-stamp. Prevents playback errors in
+  the tune judyblue.mid. Enabled via macro SEQ66\_PRIORITIZE\_NOTE\_OFF.
 
 ## [0.99.13] - 2024-08-05
 

@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.14
 Chris Ahlstrom
-2019-04-13 to 2024-08-21
+2019-04-13 to 2024-08-22
 
 Mutes:
 
@@ -17,12 +17,9 @@ Playlists:
 
 From Testing:
 
-    -   Add an option fix notes by shortening them a few ticks.
-    -   File errors (fixed!), but odd issues (w/qsynth):
-       '/usr/local/share/seq66-0.99/midi/FM/judyblue.mid' plays, but some
-       notes are blipped out. Try with another player.
-       '/usr/local/share/seq66-0.99/midi/FM/longhair.mid' plays just fine
-       mostly, some glitches.
+    -   Add an option to fix notes by shortening them a few ticks? Not
+        really needed with macro SEQ66_PRIORITIZE_NOTE_OFF enabled in
+        event.cpp.
     -   The 'usr' time-color settings do not seem to work. Actually, it does
         work, but not with the Qt gtk styling. Document this issue.
     -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
