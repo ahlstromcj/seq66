@@ -1417,6 +1417,8 @@ get_current_directory ()
  *  It uses the Linux function realpath(3), which returns the canonicalized
  *  absolute path-name.  For Windows, the function _fullpath() is used.
  *
+ * TODO: make sure both Win/Lin calls get the result freed after use.
+ *
  * \param path
  *      Provides the path, which may be relative.
  *
@@ -1430,27 +1432,32 @@ get_full_path (const std::string & path)
     std::string result;                         /* default empty result     */
     if (file_name_good(path))
     {
+        char * resolved_path;
 #if defined SEQ66_PLATFORM_WINDOWS              /* _MSVC not defined in Qt  */
-        char * resolved_path = NULL;            /* what a relic!            */
-        char temp[256];
-        resolved_path = _fullpath(temp, path.c_str(), 256);
-        if (not_NULL(resolved_path))
-            result = resolved_path;
+        resolved_path = _fullpath(NULL, path.c_str(), S_MAX_PATH);
 #else
-        char * resolved_path = NULL;            /* what a relic!            */
         resolved_path = realpath(path.c_str(), NULL);
+#endif
         if (not_NULL(resolved_path))
         {
             result = resolved_path;
             free(resolved_path);
         }
-#endif
+        else
+        {
+            /*
+             *  In Linux we could call string_errno(errno ).
+             */
+
+            file_message("real path error", path);
+        }
     }
     return result;
 }
 
 /**
- *  Returns the UNIX path separator.
+ *  Returns the UNIX path separator, no matter the platform.
+ *  See os_path_slash() below.
  */
 
 char

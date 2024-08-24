@@ -1,12 +1,10 @@
 NEWS for Seq66 0.99.14
 Chris Ahlstrom
-2015-07-10 to 2024-08-22
+2015-07-10 to 2024-08-24
 
-# Changelog
+# Change Log
 
 ## [0.99.14]
-
-    To do.
 
 ### Added
 
@@ -16,14 +14,16 @@ Chris Ahlstrom
 - Added the elliptical progress-box option to Preferences / Display.
 - In the pattern editor, a tiny unlabelled button toggles the
   showing of note information when the mouse hovers over a note.
+- Added a note-tooltip option. Click the unlabelled button at the left of the
+  horizontal scroll-bar. Then hovering over a note shows some note information.
 
 ### Fixed
 
 - In the zoomer class, rearranged members to avoid a warning (error)
   from g++ v. 14.2.1 about zoom being uninitialized in the constructor.
-- issue #128 "Recording type for loop button not working". Fixes the
-  issue in both directions.
-- issue #128 "Quantized Record Button problem" fixed by allowing
+- Issue #128 "Recording type for loop button not working". Fixes the
+  Issue in both directions.
+- Issue #129 "Quantized Record Button problem" fixed by allowing
   the existing sequence recording status to be modified with an alteration.
 - Tightened up the handling of selecting a pattern's input buss.
 
@@ -31,9 +31,9 @@ Chris Ahlstrom
 
 - Standardized on "Overdub" for the pattern-window merge functionality.
   See issue #128.
-- Updating the PDF documentation based on issue fixes and other fixes.
+- Updated the PDF documentation based on issue fixes and other fixes.
 - Replaced the --session-tag option with --session.
-- Changed the sort order of events so that Note Offs get priority over
+- Changed the sort order of MIDI events so that Note Offs get priority over
   Note Ons with the same time-stamp. Prevents playback errors in
   the tune judyblue.mid. Enabled via macro SEQ66\_PRIORITIZE\_NOTE\_OFF.
 

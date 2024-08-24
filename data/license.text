@@ -1,6 +1,8 @@
-Seq66 Licensing 0.99.12
+Seq66 Licensing 0.99.14
 Chris Ahlstrom
-2015-09-10 to 2024-01-13
+2015-09-10 to 2024-08-24
+
+Also see the new LICENSE.* files in the root of the source-code directory.
 
 Applications:
 
@@ -10,22 +12,21 @@ Applications:
 
    Copyright (C) 2015-2024 by Chris Ahlstrom
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or (at
-   your option) any later version.
+   This program is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 3 of the License, or (at your option)
+   any later version.
 
-   This program is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
+   This program is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+   more details.
 
-   You should have received a copy of the GNU General Public License along
-   with this program; if not, write to the
+   You should have received a copy of the GNU General Public License along with
+   this program; if not, write to the
   
-       Free Software Foundation, Inc.
-       51 Franklin Street, Fifth Floor
-       Boston, MA 02110-1301, USA.
+       Free Software Foundation, Inc.  51 Franklin Street, Fifth Floor Boston,
+       MA 02110-1301, USA.
 
    The text of the GNU GPL version 3 license can also be found here:
 
@@ -36,15 +37,15 @@ Libraries:
    The Seq66 library license is the GNU LGPLv3. For each library (libseq66,
    libsessions, seq_portmidi, seq_qt5, and seq_rtmidi):
 
-   This library is free software; you can redistribute it and/or modify
-   it under the terms of the GNU Lesser General Public License as published
-   by the Free Software Foundation; either version 2 of the License, or (at
-   your option) any later version.
+   This library is free software; you can redistribute it and/or modify it
+   under the terms of the GNU Lesser General Public License as published by the
+   Free Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
 
-   This library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Lesser Public License for more details.
+   This library is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License
+   for more details.
 
    You should have received a copy of the GNU Lesser General Public License
    along with this library; if not, write to the address noted above.
@@ -58,17 +59,17 @@ Documentation:
    The Seq66 documentation license is the GNU FDLv1.3.
 
    This documentation is free documentation; you can redistribute it and/or
-   modify it under the terms of the GNU Free Documentation License as
-   published by the Free Software Foundation; either version 1.3 of the
-   License, or (at your option) any later version.
+   modify it under the terms of the GNU Free Documentation License as published
+   by the Free Software Foundation; either version 1.3 of the License, or (at
+   your option) any later version.
 
    This documentation is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Free
-   Documentation License for more details.
+   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+   or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Free Documentation License
+   for more details.
 
-   You should have received a copy of the GNU Free Documentation License
-   along with this documentation; if not, write to the address noted above.
+   You should have received a copy of the GNU Free Documentation License along
+   with this documentation; if not, write to the address noted above.
   
    The text of the GNU FDL version 1.3 license can also be found here:
 

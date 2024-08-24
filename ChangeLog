@@ -1,5 +1,115 @@
+2024-08-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, libseq66/src/midi/event.cpp: Changed event::get_rank()
+	to give Note Offs a higher priority to fix potential playback
+	issues.
+	* doc/latex/tex/pattern_editor.tex, seq_qt5/include/qseqroll.hpp,
+	seq_qt5/src/qseqroll.cpp: Add palette coloring to note tooltips.
+
+2024-08-21  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, libseq66/include/play/sequence.hpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qseqroll.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qt5_helpers.cpp: Added
+	note-info tooltips.
+
+2024-08-18  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, doc/latex/tex/live_grid.tex,
+	doc/latex/tex/pattern_editor.tex, doc/latex/tex/patterns_panel.tex,
+	doc/latex/tex/recording.tex, doc/latex/tex/song_editor.tex,
+	libseq66/src/play/performer.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Tightened record-button handling in
+	live-grid.
+
+2024-08-17  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* : commit a5e0dd7193e37e0625c7237a75f054fda47b510e Author: Chris
+	Ahlstrom <ahlstromcj@gmail.com> Date:   Sat Aug 17 08:57:52 2024
+	-0400
+
+2024-08-16  ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/include/qt5_helpers.hpp,
+	seq_qt5/src/qseqeditframe64.cpp: Provisional fix to issue #129 where
+	quantization will not set if recording is already set.
+
+2024-08-15  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, doc/latex/tex/pattern_editor.tex,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/src/cfg/settings.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qslivegrid.cpp: Interim
+	check-in issue #128, one-shot reset.
+
+2024-08-08  ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, libseq66/src/cfg/cmdlineopts.cpp,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qseditoptions.cpp: Upgraded
+	support for elliptical progress boxes.
+
+2024-08-07  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.in, Seq66cli/Makefile.in, Seq66qt5/Makefile.in,
+	Seq66qt5/Seq66qt5.pro, configure, data/Makefile.in,
+	doc/Makefile.in, doc/latex/Makefile.in, doc/latex/tex/Makefile.in,
+	include/config.h.in, libseq66/Makefile.in,
+	libseq66/include/Makefile.in, libseq66/src/Makefile.in,
+	libsessions/Makefile.in, libsessions/include/Makefile.in,
+	libsessions/src/Makefile.in, m4/Makefile.in, man/Makefile.in,
+	resources/pixmaps/Makefile.in, seq_portmidi/Makefile.in,
+	seq_portmidi/include/Makefile.in, seq_portmidi/src/Makefile.in,
+	seq_qt5/Makefile.in, seq_qt5/forms/Makefile.in,
+	seq_qt5/include/Makefile.in, seq_qt5/src/Makefile.in,
+	seq_rtmidi/Makefile.in, seq_rtmidi/include/Makefile.in,
+	seq_rtmidi/src/Makefile.in: Makefiles for v. 0.99.14.
+	* TODO, doc/latex/tex/configuration.tex,
+	doc/latex/tex/live_grid.tex, doc/latex/tex/menu.tex,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/src/midi/businfo.cpp, libseq66/src/midi/calculations.cpp,
+	libseq66/src/midi/mastermidibase.cpp, libseq66/src/play/metro.cpp,
+	seq_qt5/src/qseqroll.cpp: Fixes and documentation concerning PPQN.
+
+2024-08-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/qperfeditframe64.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/src/qperfroll.cpp: Add
+	Esc-exit to external song editor.
+	* NEWS, TODO, doc/latex/tex/pattern_editor.tex,
+	libseq66/include/cfg/zoomer.hpp, libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/zoomer.cpp, seq_qt5/forms/qseditoptions.ui: Fixed
+	naughty compiler warning in zoomer class.
+
 2024-08-05  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* NEWS, README.md, RELNOTES, TODO, VERSION, configure.ac,
+	doc/latex/tex/seq66-user-manual.tex,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h: Version bump in portfix to
+	0.99.14.
+	* ChangeLog, Makefile.in, RELNOTES, Seq66cli/Makefile.in,
+	Seq66qt5/Makefile.in, configure, configure.ac,
+	contrib/scripts/{qbuild => qbuild-bash}, contrib/scripts/qbuild.sh,
+	data/Makefile.in, doc/Makefile.in, doc/latex/Makefile.in,
+	doc/latex/tex/Makefile.in, doc/latex/tex/seq66-user-manual.tex,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/Makefile.in,
+	libseq66/include/Makefile.in, libseq66/src/Makefile.in,
+	libsessions/Makefile.in, libsessions/include/Makefile.in,
+	libsessions/src/Makefile.in, m4/Makefile.in, man/Makefile.in,
+	resources/pixmaps/Makefile.in, seq_portmidi/Makefile.in,
+	seq_portmidi/include/Makefile.in, seq_portmidi/src/Makefile.in,
+	seq_qt5/Makefile.in, seq_qt5/forms/Makefile.in,
+	seq_qt5/include/Makefile.in, seq_qt5/src/Makefile.in,
+	seq_rtmidi/Makefile.in, seq_rtmidi/include/Makefile.in,
+	seq_rtmidi/src/Makefile.in: Release Notes for Seq66 v. 0.99.13
+	2024-08-05 -   Added a 'usr' option for elliptical progress boxes.  -   Fixed the writing and byte-counting of the end-of track event.  -   Updated the licensing files for GitHub detectability.  -   See NEWS and ChangeLog for more details. This is an     quick-release since other projects have taken our time.
 	* NEWS, README.md, RELNOTES: News updates.
 
 2024-06-06  Chris Ahlstrom <ahlstromcj@gmail.com>

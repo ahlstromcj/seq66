@@ -1,25 +1,10 @@
 TO DO for Seq66 0.99.14
 Chris Ahlstrom
-2019-04-13 to 2024-08-22
-
-Mutes:
-
-    -   Mutes via MIDI control, in Learn mode, do not raise the modify
-        asterisk. Why not???
-    -   If inactive, set "Mute File" setting to "not enabled".
-    -   Consider showing, as a run-time toggle, the mute hot-keys, rather
-        than the mute number, in the mute-master buttons.
-
-Playlists:
-
-    -   Consider adding a configurable play-list auto-advance delay value?
-    -   Set all contrib/midi and data/midi MIDI files to use port 0?
+2019-04-13 to 2024-08-24
 
 From Testing:
 
-    -   Add an option to fix notes by shortening them a few ticks? Not
-        really needed with macro SEQ66_PRIORITIZE_NOTE_OFF enabled in
-        event.cpp.
+    -   Get the 16-in-busses.midi file configured and working.
     -   The 'usr' time-color settings do not seem to work. Actually, it does
         work, but not with the Qt gtk styling. Document this issue.
     -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
@@ -30,6 +15,14 @@ From Testing:
         to 7. Should this function return a double?  No, instead recommend
         that the user convert to 192 PPQN or one of the other supported
         settings, then save, and reopen. Test alternate time signatures.
+    -   Add an option to fix notes by shortening them a few ticks? Not
+        really needed with macro SEQ66_PRIORITIZE_NOTE_OFF enabled in
+        event.cpp.
+
+Playlists:
+
+    -   Consider adding a configurable play-list auto-advance delay value?
+    -   Set all contrib/midi and data/midi MIDI files to use port 0?
 
 Ongoing efforts:
 
@@ -54,7 +47,6 @@ Ongoing efforts:
         "L"-then-snap-then-move samba?
     -   #97 Seq24 differences
     -   #102 How can I use mutes?
-    -   #103 One-shot (repetitions != 0) patterns do not play
     -   #111 Time signature changes does not get saved on .midi file
     -   #112 Send midi-control-out message when New Pattern is created in GUI
     -   #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
@@ -199,12 +191,14 @@ ISSUES:
 #103 One-shot (repetitions != 0) patterns do not play
     This feature works, but requires the pattern to be armed before
     playback begins, either in Live or Song mode.  Should we make the loop
-    auto-arm, or make this an option somehow?
+    auto-arm, or make this an option somehow? No.   
+    STATUS: Closed.
 
 #104 Really confusing usage
     This requires some improvements to the LaTeX documentation and the HTML
     tutorial.  One issue is Pipewire, which is unsupported; the user system
-    employs pulseaudio-pw.
+    employs pulseaudio-pw. Pushed off to version 2.
+    STATUS: Closed.
 
 #107 Can't increase clip length while transport is running
     Somehow disabled this feature on 2022-08-20, with no note why.

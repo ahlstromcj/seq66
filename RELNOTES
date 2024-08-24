@@ -1,6 +1,16 @@
-Release Notes for Seq66 v. 0.99.14 2024-08-05
+Release Notes for Seq66 v. 0.99.14 2024-08-24
 
--   To do.
+A minor release for fixes and a couple of small new features.
+
+-   Issue #128 "Recording type for loop button not working" fixed.
+-   Issue #129 "Quantized Record Button problem" fixed.
+-   Changed the sort order of MIDI events to give Note Offs get priority over
+    Note Ons with the same time-stamp.
+-   Added the use of the Esc key to close the external song editor window.
+-   Added an elliptical progress-box option for eye-candy.
+-   Added a note-tooltip option and a button to toggle this option.
+-   Replaced --session-tag with --session.
+-   Updated the PDF documentation.
 -   See NEWS and ChangeLog for more details.
 
 # vim: sw=4 ts=4 wm=15 et ft=sh

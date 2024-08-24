@@ -543,7 +543,7 @@ remove this filename.</string>
    <property name="toolTip">
     <string>This text is stored as Meta Text in the first track.
 It can include any comments desired, including
-author and dates. The size limit is 1024 characters.</string>
+author and dates.</string>
    </property>
   </widget>
   <widget class="QLabel" name="labelTrackInfo">

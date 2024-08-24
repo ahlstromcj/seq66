@@ -1,11 +1,11 @@
 # ROADMAP for a Possible Seq66 v. 2
 
 Chris Ahlstrom
-2022-05-11 to 2022-06-21
+2022-05-11 to 2022-08-24
 
 This file is simply some thoughts about the future of __Seq66__ and
 a version 2...  if we decide to keep updating this project until Ahlstrom
-croaks. :-D
+croaks. :-D Also see the bottom of the TODO file.
 
 # Topics
 
