@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2024-01-13
+:: \update      2024-08-24
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -102,14 +102,18 @@
 ::             "..\seq66\nsis\build_release_package.bat".
 ::          d. Or cd to the seq66\nsis directory and try
 ::             "build_release_package.bat > build.log 2>&1"
+::             This redirection of output is optional. A make.log is
+::             created anyway.
 ::       6. The result is a file such as "qpseq66-release-package-x64-0.90.1.7z".
 ::          It is found in seq66/../seq66-release-32/Seq66qt5.  Also, a
 ::          log file is made in seq66/../seq66-release-32/make.log,
 ::          which can be checked for build warnings and errors. If you cannot
 ::          find these files, search for 'seq66-release-32'.
-::       7. In Linux (have not tried NSIS in Windows yet), copy this 7z file
-::          to the root 'seq66' directory.  If the directory 'seq66/release'
-::          exists, remove the 'release' directory as shown in the next step.
+::       7. In Linux, one can copy this 7z file to the root 'seq66' directory.
+::          However, if NSIS is installed in Windows, the NSIS executable
+::          package is built by the script in seq66/release. Otherwise,
+::          If the directory 'seq66/release' exists, remove the 'release'
+::          directory as shown in the next step.
 ::       8. Use 7zip to extract this file; it will unpack the contents into
 ::          the directory called 'release' ('seq66/release'), which contains
 ::          qpseq66.exe, DLL files, data, etc. Then move the 7z file out of
@@ -124,6 +128,8 @@
 ::
 ::          seq66/nsis $ makensis Seq66Setup.nsi
 ::
+::          However, if NSIS is installed in Windows, the NSIS executable
+::          package is built by the script and resides in seq66/release.
 ::      10. The installer is seq66/release/seq66_setup_0.90.1.exe, and it is
 ::          in the 'release' directory.  Move it out of this directory to a
 ::          safe place for transport. For example, assuming the current
@@ -134,9 +140,7 @@
 ::          seq66/release $ mv seq66_setup_0.90.1.exe\
 ::              ../../seq66/packages/... TO DO !!!
 ::
-::          Note: the setup files are now part of the GitHub releases of
-::                Seq66.
-::
+::          Note: setup files are now part of the GitHub releases of Seq66.
 ::      11. Make a portable Zip package:
 ::
 ::          $ mv release/ qpseq66
@@ -171,8 +175,8 @@
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.99.12
-set PROJECT_DATE=2024-01-13
+set PROJECT_VERSION=0.99.14
+set PROJECT_DATE=2024-08-24
 set PROJECT_DRIVE=C:
 
 :: Set the bits of the project, either 64 or 32. Also define WIN64 versus
