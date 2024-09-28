@@ -92,7 +92,6 @@ class zoomer
      *  The value of zoom is the same as the number of ticks per pixels on
      *  the piano roll.
      *
-     *  ca 2024-08-06 v 0.99.14
      *  Moved here to avoid warning about m_zoom unitialized as detected by
      *  g++ 14.2.1 on Arch Linux.
      */

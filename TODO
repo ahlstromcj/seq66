@@ -1,4 +1,4 @@
-TO DO for Seq66 0.99.14
+TO DO for Seq66 0.99.15
 Chris Ahlstrom
 2019-04-13 to 2024-08-24
 
@@ -45,8 +45,6 @@ Ongoing efforts:
     -   Make it center on notes if not visible.
     -   Can we distinguish note-insertion from movement snap, to avoid the
         "L"-then-snap-then-move samba?
-    -   #97 Seq24 differences
-    -   #102 How can I use mutes?
     -   #111 Time signature changes does not get saved on .midi file
     -   #112 Send midi-control-out message when New Pattern is created in GUI
     -   #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
