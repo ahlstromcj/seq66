@@ -27,8 +27,7 @@
      <widget class="QLabel" name="label_playlist_file">
       <property name="font">
        <font>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
+        <pointsize>11</pointsize>
         <bold>true</bold>
        </font>
       </property>
@@ -73,7 +72,7 @@ Click &quot;Load List&quot; to select a playlist file.</string>
     <rect>
      <x>6</x>
      <y>30</y>
-     <width>817</width>
+     <width>829</width>
      <height>309</height>
     </rect>
    </property>
@@ -123,6 +122,7 @@ name in the edit control to the left.</string>
         </property>
         <property name="font">
          <font>
+          <pointsize>11</pointsize>
           <italic>true</italic>
          </font>
         </property>
@@ -151,6 +151,11 @@ name in the edit control to the left.</string>
           <width>340</width>
           <height>24</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
         </property>
         <property name="toolTip">
          <string>The base directory for the play-list selected
@@ -186,6 +191,7 @@ the file.</string>
         </property>
         <property name="font">
          <font>
+          <pointsize>11</pointsize>
           <italic>true</italic>
          </font>
         </property>
@@ -207,6 +213,11 @@ the file.</string>
           <width>16777215</width>
           <height>24</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
         </property>
         <property name="toolTip">
          <string>Provides the ordering and control number
@@ -235,6 +246,11 @@ for this play-list, when added. Ranges from
           <height>24</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>000</string>
         </property>
@@ -244,6 +260,7 @@ for this play-list, when added. Ranges from
        <widget class="QLabel" name="labelCurrentSong">
         <property name="font">
          <font>
+          <pointsize>11</pointsize>
           <italic>true</italic>
          </font>
         </property>
@@ -262,8 +279,7 @@ for this play-list, when added. Ranges from
         </property>
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
+          <pointsize>11</pointsize>
           <bold>true</bold>
          </font>
         </property>
@@ -282,8 +298,7 @@ for this play-list, when added. Ranges from
         </property>
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
+          <pointsize>11</pointsize>
           <bold>true</bold>
          </font>
         </property>
@@ -306,6 +321,11 @@ for this play-list, when added. Ranges from
           <height>24</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>000</string>
         </property>
@@ -327,6 +347,11 @@ for this play-list, when added. Ranges from
           <width>228</width>
           <height>24</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
         </property>
         <property name="toolTip">
          <string>Name of the currently-selected play-list section.
@@ -357,6 +382,11 @@ Edit to enable &quot;Add List&quot; and &quot;Modify List&quot;.</string>
           <height>24</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
         <property name="toolTip">
          <string>Directory where the selected
 song is stored. Use the &quot;Load Song&quot; button
@@ -386,6 +416,11 @@ to select an existing song.</string>
           <width>208</width>
           <height>24</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
         </property>
         <property name="toolTip">
          <string>Base file-name of the currently selected song. 
@@ -418,6 +453,7 @@ Read-only.  Use the Load Song button to modify this entry.</string>
         </property>
         <property name="font">
          <font>
+          <pointsize>11</pointsize>
           <italic>true</italic>
          </font>
         </property>
@@ -449,6 +485,11 @@ Read-only.  Use the Load Song button to modify this entry.</string>
           <width>64</width>
           <height>24</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
         </property>
         <property name="toolTip">
          <string>Provides the ordering and control number
@@ -590,6 +631,11 @@ add it to the song table.</string>
           <height>16777215</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
         <property name="toolTip">
          <string>Shows existing play-lists read from the play-list file.</string>
         </property>
@@ -674,6 +720,11 @@ add it to the song table.</string>
             <height>25</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Opens a dialog to set a directory and play-list file.</string>
           </property>
@@ -698,6 +749,11 @@ add it to the song table.</string>
             <width>76</width>
             <height>25</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
           </property>
           <property name="toolTip">
            <string>Creates a new play-list file.</string>
@@ -724,6 +780,11 @@ add it to the song table.</string>
             <height>25</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Update the current list with the 3 editable fields above.</string>
           </property>
@@ -745,6 +806,11 @@ add it to the song table.</string>
             <width>76</width>
             <height>25</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
           </property>
           <property name="toolTip">
            <string>To do: Removes the selected playlist from this play-list set.</string>
@@ -771,6 +837,11 @@ add it to the song table.</string>
             <height>25</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Saves the current state of the play-lists file, including song
 information.</string>
@@ -795,6 +866,11 @@ information.</string>
           <width>310</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
         </property>
         <property name="toolTip">
          <string>Shows MIDI tunes in the currently-selected play-list.</string>
@@ -871,6 +947,11 @@ information.</string>
             <height>25</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Opens a file dialog to select a MIDI song to add to the current
 play-list; the Directory and Current values above are updated
@@ -899,6 +980,11 @@ imported.</string>
             <height>25</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Adds the song information specified above
 to the current play-list section; it is easier
@@ -926,6 +1012,11 @@ to use &quot;Load Song&quot;.</string>
             <height>25</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Modifies the information about the currently-selected song
 in the 3 entry fields above.</string>
@@ -952,6 +1043,11 @@ in the 3 entry fields above.</string>
             <height>25</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Removes the current song from the current play-list;
 the song itself is not deleted.</string>
@@ -974,6 +1070,11 @@ the song itself is not deleted.</string>
             <width>76</width>
             <height>40</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
           </property>
           <property name="toolTip">
            <string>If checked, the loaded play-list file is active.  The lists and 
@@ -1020,8 +1121,7 @@ the configured MIDI control comes in.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
+          <pointsize>11</pointsize>
           <bold>true</bold>
          </font>
         </property>
@@ -1046,6 +1146,11 @@ the configured MIDI control comes in.</string>
           <width>16777215</width>
           <height>24</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
         </property>
         <property name="toolTip">
          <string>Base directory holding all files in all playlists.
@@ -1079,8 +1184,7 @@ Read-only.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
+          <pointsize>11</pointsize>
           <bold>true</bold>
          </font>
         </property>
@@ -1106,6 +1210,11 @@ Read-only.</string>
           <height>24</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
         <property name="toolTip">
          <string>Full path to the currently-selected song.
 Read-only.</string>
@@ -1127,13 +1236,18 @@ Read-only.</string>
     <rect>
      <x>680</x>
      <y>344</y>
-     <width>137</width>
-     <height>69</height>
+     <width>145</width>
+     <height>89</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
      <widget class="QLabel" name="label_Auto">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
       <property name="text">
        <string>Auto:</string>
       </property>
@@ -1141,6 +1255,11 @@ Read-only.</string>
     </item>
     <item row="0" column="1">
      <widget class="QCheckBox" name="checkBoxAutoArm">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
       <property name="toolTip">
        <string>If checked, moving to the next song
 automatically arms (unmutes) all
@@ -1161,6 +1280,11 @@ Song layout.</string>
     </item>
     <item row="1" column="1" rowspan="2">
      <widget class="QCheckBox" name="checkBoxAutoPlay">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
       <property name="toolTip">
        <string>If checked, the next selected song starts
 playing automatically. (Perhaps it should
@@ -1180,6 +1304,11 @@ also load the next song and keep going!)</string>
     </item>
     <item row="3" column="1">
      <widget class="QCheckBox" name="checkBoxAutoAdvance">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
       <property name="toolTip">
        <string>If checked, auto-arm and auto-play are also
 enabled, and once Play is pressed, the

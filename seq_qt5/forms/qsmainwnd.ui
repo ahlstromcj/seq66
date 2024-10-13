@@ -96,9 +96,7 @@ B:B:T and H:M:S format.</string>
         </property>
         <property name="font">
          <font>
-          <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <italic>false</italic>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
@@ -325,9 +323,7 @@ the current set.  Modifies the song.</string>
         </property>
         <property name="font">
          <font>
-          <family>DejaVu Sans</family>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -379,7 +375,6 @@ the current set.  Modifies the song.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -463,7 +458,6 @@ the current set.  Modifies the song.</string>
       <property name="font">
        <font>
         <pointsize>11</pointsize>
-        <weight>75</weight>
         <bold>true</bold>
         <stylestrategy>PreferDefault</stylestrategy>
        </font>
@@ -478,7 +472,7 @@ the current set.  Modifies the song.</string>
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>6</number>
       </property>
       <property name="movable">
        <bool>false</bool>
@@ -730,7 +724,6 @@ the current set.  Modifies the song.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -757,7 +750,6 @@ the current set.  Modifies the song.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>50</weight>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -779,7 +771,6 @@ the current set.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -828,7 +819,6 @@ the current set.</string>
         <property name="font">
          <font>
           <pointsize>9</pointsize>
-          <weight>50</weight>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -862,7 +852,6 @@ during playback.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -895,7 +884,6 @@ during playback.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>50</weight>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -929,7 +917,6 @@ or active external live frame.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -954,7 +941,6 @@ no matter what sets-mode is in force. </string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -983,8 +969,7 @@ no matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
-          <weight>75</weight>
+          <pointsize>11</pointsize>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1014,7 +999,6 @@ no matter what sets-mode is in force. </string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>50</weight>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1295,7 +1279,6 @@ at start of playback.</string>
           <property name="font">
            <font>
             <pointsize>12</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1378,7 +1361,6 @@ in the Shift of that key.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1450,7 +1432,6 @@ all tracks.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1496,7 +1477,6 @@ Editor triggers.</string>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1540,7 +1520,6 @@ Editor triggers.</string>
           <property name="font">
            <font>
             <pointsize>12</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1571,8 +1550,7 @@ resets to 0.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
-            <weight>75</weight>
+            <pointsize>11</pointsize>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1605,7 +1583,6 @@ resets to 0.</string>
           <property name="font">
            <font>
             <pointsize>12</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1649,7 +1626,6 @@ beats/minute.</string>
    <property name="font">
     <font>
      <pointsize>11</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
      <stylestrategy>PreferDefault</stylestrategy>
     </font>

@@ -1,8 +1,8 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2024-08-05"
+#define VERSION_DATE_SHORT "2024-08-25"
 #define API_VERSION "0.99"
-#define VERSION "0.99.14"
+#define VERSION "0.99.15"
 
 
 
@@ -64,17 +64,14 @@
 /* Define to 1 if you have the <jack/jack.h> header file. */
 #undef HAVE_JACK_JACK_H
 
-/* Define to 1 if you have the `asound' library (-lasound). */
+/* Define to 1 if you have the 'asound' library (-lasound). */
 #undef HAVE_LIBASOUND
 
-/* Define to 1 if you have the `atopology' library (-latopology). */
+/* Define to 1 if you have the 'atopology' library (-latopology). */
 #undef HAVE_LIBATOPOLOGY
 
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
-
-/* Define to 1 if you have the <memory.h> header file. */
-#undef HAVE_MEMORY_H
 
 /* Define if you have POSIX threads libraries and header files. */
 #undef HAVE_PTHREAD
@@ -185,7 +182,9 @@
 /* Indicates that rtmidi is enabled */
 #undef RTMIDI_SUPPORT
 
-/* Define to 1 if you have the ANSI C header files. */
+/* Define to 1 if all of the C89 standard headers exist (not just the ones
+   required in a freestanding environment). This macro is provided for
+   backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
 
 /* Version number of package */
@@ -197,7 +196,7 @@
 /* gnu source */
 #undef _GNU_SOURCE
 
-/* Define to empty if `const' does not conform to ANSI C. */
+/* Define to empty if 'const' does not conform to ANSI C. */
 #undef const
 
 #if defined SEQ66_PORTMIDI_SUPPORT

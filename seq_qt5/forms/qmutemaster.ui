@@ -30,7 +30,7 @@
     <rect>
      <x>9</x>
      <y>9</y>
-     <width>823</width>
+     <width>844</width>
      <height>391</height>
     </rect>
    </property>
@@ -61,7 +61,8 @@
           </property>
           <property name="font">
            <font>
-            <family>DejaVu Sans</family>
+            <pointsize>11</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -80,11 +81,12 @@
           </property>
           <property name="font">
            <font>
+            <pointsize>11</pointsize>
             <italic>true</italic>
            </font>
           </property>
           <property name="text">
-           <string>Click group row to show group layout </string>
+           <string>Click group row to show its layout </string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -119,7 +121,8 @@
         </property>
         <property name="font">
          <font>
-          <family>DejaVu Sans</family>
+          <pointsize>11</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -168,7 +171,8 @@
           </property>
           <property name="font">
            <font>
-            <family>DejaVu Sans</family>
+            <pointsize>11</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -246,7 +250,8 @@ Edit / Preferences / Session / .mutes.</string>
          <widget class="QLabel" name="label_2">
           <property name="font">
            <font>
-            <family>DejaVu Sans</family>
+            <pointsize>11</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -260,6 +265,11 @@ and Format</string>
          <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="2">
            <widget class="QCheckBox" name="m_check_to_midi">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
             <property name="toolTip">
              <string>Mute-groups are saved in the MIDI file.</string>
             </property>
@@ -270,6 +280,11 @@ and Format</string>
           </item>
           <item row="1" column="2">
            <widget class="QCheckBox" name="m_check_to_mutes">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
             <property name="toolTip">
              <string>Mute-groups are saved to the
 &quot;mutes&quot; file at exit.</string>
@@ -286,6 +301,11 @@ and Format</string>
               <width>80</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
             </property>
             <property name="toolTip">
              <string>Mute statuses are saved as hexadecimal (e.g. 0xFF).
@@ -304,6 +324,11 @@ Useful if set-size is larger than 4 x 8.</string>
               <height>16777215</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
             <property name="toolTip">
              <string>Mute statuses are saved as stanzas of 1's
 and 0's. Default setting.</string>
@@ -315,6 +340,11 @@ and 0's. Default setting.</string>
           </item>
           <item row="0" column="0">
            <widget class="QCheckBox" name="m_check_from_midi">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
             <property name="toolTip">
              <string>If checked, read mute-groups from the MIDI
 file. Takes precedence over the 'mutes' file.</string>
@@ -326,6 +356,11 @@ file. Takes precedence over the 'mutes' file.</string>
           </item>
           <item row="1" column="0">
            <widget class="QCheckBox" name="m_check_from_mutes">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
             <property name="toolTip">
              <string>If checked, the mute-groups are read from
 a common 'mutes' file. Superceded by
@@ -350,6 +385,11 @@ a common 'mutes' file. Superceded by
             <height>16777215</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="toolTip">
            <string>If checked, toggling a mute-group changes only patterns
 specified in that group; patterns armed by the user stay on.
@@ -367,6 +407,11 @@ Legacy behavior toggles mute-group and armed patterns.</string>
             <width>170</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
           </property>
           <property name="toolTip">
            <string>If there are no non-zero mute-group values,
@@ -402,6 +447,11 @@ do not save them to the MIDI file.</string>
           <width>400</width>
           <height>340</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
         </property>
         <property name="alternatingRowColors">
          <bool>true</bool>
@@ -475,6 +525,11 @@ do not save them to the MIDI file.</string>
             <height>16777215</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="toolTip">
            <string>When active, the mute-group button here
 can toggle the mute-groups.</string>
@@ -491,6 +546,11 @@ can toggle the mute-groups.</string>
             <width>96</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
           </property>
           <property name="toolTip">
            <string>Removes all mute-groups from the mute-group setup.</string>
@@ -536,6 +596,11 @@ can toggle the mute-groups.</string>
             <height>16777215</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Saves mute groups to a file in the session
 configuration.</string>
@@ -552,6 +617,11 @@ configuration.</string>
             <width>96</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
           </property>
           <property name="toolTip">
            <string>Present a dialog to load a 'mutes' file.</string>

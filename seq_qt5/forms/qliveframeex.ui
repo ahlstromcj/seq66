@@ -16,6 +16,11 @@
     <height>280</height>
    </size>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>11</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Live Grid</string>
   </property>

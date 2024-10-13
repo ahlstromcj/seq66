@@ -113,6 +113,7 @@
        </property>
        <property name="font">
         <font>
+         <pointsize>11</pointsize>
          <bold>true</bold>
         </font>
        </property>
@@ -156,6 +157,11 @@
          <width>800</width>
          <height>28</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
        </property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
@@ -207,6 +213,11 @@
          <height>28</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="toolTip">
         <string>Activates/deactivates background recording.</string>
        </property>
@@ -237,6 +248,11 @@
          <width>164</width>
          <height>28</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
        </property>
        <property name="toolTip">
         <string>Loads and activates/deactivates the metronome.</string>
@@ -269,6 +285,11 @@
          <height>28</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="toolTip">
         <string>Determines the function of each slot, normally just loop control.</string>
        </property>
@@ -290,6 +311,11 @@
          <width>164</width>
          <height>28</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
        </property>
        <property name="toolTip">
         <string>Makes this the active set.</string>
@@ -313,6 +339,11 @@
          <height>28</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="toolTip">
         <string>Cycles through recording styles.</string>
        </property>
@@ -334,6 +365,11 @@
          <width>164</width>
          <height>28</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
        </property>
        <property name="toolTip">
         <string>Cycles through quantized recording modes.</string>
