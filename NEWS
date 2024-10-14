@@ -1,12 +1,22 @@
 NEWS for Seq66 0.99.15
 Chris Ahlstrom
-2015-07-10 to 2024-08-25
+2015-07-10 to 2024-10-14
 
 # Change Log
 
 ## [0.99.15]
 
-TBD
+### Added
+
+- Added edit fields and buttons for selecting a non-default browser
+  and PDF viewer to the Preference's Session tab.
+
+### Fixed
+
+- Some font handling in the various tabs and windows.
+- The file-selection dialog(s) when no file-extension is used.
+- An error in getting the name of the mutes file in the Preference's
+  Session tab.
 
 ## [0.99.14]
 

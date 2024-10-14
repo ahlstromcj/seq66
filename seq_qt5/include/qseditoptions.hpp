@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-08-08
+ * \updates       2024-10-14
  * \license       GNU GPLv2 or above
  */
 
@@ -242,6 +242,10 @@ private slots:
     void slot_stylesheet_active_click ();
     void slot_stylesheet_filename ();
     void slot_load_stylesheet_filename ();
+    void slot_browser_executable ();
+    void slot_load_browser_executable ();
+    void slot_pdf_executable ();
+    void slot_load_pdf_viewer_executable ();
     void slot_palette_save_now_click ();
 #if defined SEQ66_CAN_SAVE_PALETTE
     void slot_palette_save_click ();

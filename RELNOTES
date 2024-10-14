@@ -1,8 +1,10 @@
-Release Notes for Seq66 v. 0.99.15 2024-08-25
+Release Notes for Seq66 v. 0.99.15 2024-10-14
 
 A minor release for fixes and a couple of small new features.
 
 -   Updated the PDF documentation.
+-   Added edit fields for browser and PDF viewer.
+-   Fixed some font handling in the various tabs and windows.
 -   See NEWS and ChangeLog for more details.
 
 # vim: sw=4 ts=4 wm=15 et ft=sh

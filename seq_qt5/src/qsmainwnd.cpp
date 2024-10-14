@@ -1484,8 +1484,8 @@ qsmainwnd::slot_summary_save ()
 void
 qsmainwnd::slot_tutorial ()
 {
-#if defined USE_QDESKTOPSERVICES
-    QString link = qt(tutpath);             /* "http://www.google.com" */
+#if defined USE_QDESKTOPSERVICES            /* currently undefined      */
+    QString link = qt(tutpath);             /* "http://www.google.com"  */
     QDesktopServices::openUrl(QUrl(link));
 #else
     (void) open_tutorial();
@@ -1499,7 +1499,7 @@ qsmainwnd::slot_tutorial ()
 void
 qsmainwnd::slot_user_manual ()
 {
-#if defined USE_QDESKTOPSERVICES
+#if defined USE_QDESKTOPSERVICES            /* currently undefined      */
     QString link = qt(docpath);
     QDesktopServices::openUrl(QUrl::fromLocalFile(link));
 #else

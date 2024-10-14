@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-08-08
+ * \updates       2024-10-14
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1996,6 +1996,41 @@ qseditoptions::setup_tab_session ()
     );
 
     /*
+     * Viewers.
+     */
+
+    std::string viewer = usr().user_browser();
+    if (viewer.empty())
+        viewer = "Default";
+
+    ui->lineEditBrowser->setText(qt(viewer));
+    connect
+    (
+        ui->lineEditBrowser, SIGNAL(editingFinished()),
+        this, SLOT(slot_browser_executable())
+    );
+    connect
+    (
+        ui->pushButtonSetBrowser, SIGNAL(clicked(bool)),
+        this, SLOT(slot_load_browser_executable())
+    );
+    viewer = usr().user_pdf_viewer();
+    if (viewer.empty())
+        viewer = "Default";
+
+    ui->lineEditPdfViewer->setText(qt(viewer));
+    connect
+    (
+        ui->lineEditPdfViewer, SIGNAL(editingFinished()),
+        this, SLOT(slot_pdf_executable())
+    );
+    connect
+    (
+        ui->pushButtonSetPdfViewer, SIGNAL(clicked(bool)),
+        this, SLOT(slot_load_pdf_viewer_executable())
+    );
+
+    /*
      * This items is shown when certain files are changed.
      */
 
@@ -2989,15 +3024,13 @@ qseditoptions::slot_fingerprint_size ()
  *  for the style-sheet, which can have a full path and is also specified
  *  in the 'usr' file.
  *
- *  \param prompt
- *      If true, use a file dialog to get the filename.
- *
  * \param lineedit
  *      The QLineEdit that must be updated with the new base-name and the
  *      full filespec tooltip.
  *
  * \param fileextension
  *      The desired file-extension for filtering in the file dialog.
+ *      If empty, all files will be shown in the dialog.
  *
  * \return
  *      Returns true if the path/file selection succeeded.
@@ -3493,7 +3526,7 @@ qseditoptions::slot_load_mutes_filename ()
 {
     if (load_file_name(ui->lineEditMutes, "mutes"))
     {
-        const QString qs = ui->lineEditPalette->text();
+        const QString qs = ui->lineEditMutes->text();   /* ca 2024-10-14    */
         std::string text = qs.toStdString();
         rc().mute_group_filename(text);
         modify_rc();
@@ -3788,6 +3821,68 @@ qseditoptions::slot_load_stylesheet_filename ()
          */
 
         modify_rc();
+    }
+}
+
+void
+qseditoptions::slot_browser_executable ()
+{
+    QString qviewer = ui->lineEditBrowser->text();
+    std::string viewer = qviewer.toStdString();
+    if (viewer != usr().user_browser())
+    {
+        /*
+         * viewer = strip_quotes(viewer);
+         */
+
+        usr().user_browser(viewer);         /* we could check existence     */
+        modify_usr();
+    }
+}
+
+void
+qseditoptions::slot_load_browser_executable ()
+{
+    if (load_file_name(ui->lineEditBrowser, ""))
+    {
+        const QString qs = ui->lineEditBrowser->text();
+        std::string viewer = qs.toStdString();
+        if (viewer != usr().user_browser())
+        {
+            usr().user_browser(viewer);
+            modify_usr();
+        }
+    }
+}
+
+void
+qseditoptions::slot_pdf_executable ()
+{
+    QString qviewer = ui->lineEditPdfViewer->text();
+    std::string viewer = qviewer.toStdString();
+    if (viewer != usr().user_pdf_viewer())
+    {
+        /*
+         * viewer = strip_quotes(viewer);
+         */
+
+        usr().user_pdf_viewer(viewer);      /* we could check existence     */
+        modify_usr();
+    }
+}
+
+void
+qseditoptions::slot_load_pdf_viewer_executable ()
+{
+    if (load_file_name(ui->lineEditPdfViewer, ""))
+    {
+        const QString qs = ui->lineEditPdfViewer->text();
+        std::string viewer = qs.toStdString();
+        if (viewer != usr().user_pdf_viewer())
+        {
+            usr().user_pdf_viewer(viewer);
+            modify_usr();
+        }
     }
 }
 

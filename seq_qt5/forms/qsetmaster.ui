@@ -133,6 +133,10 @@
         <height>156</height>
        </size>
       </property>
+      <property name="toolTip">
+       <string>Shows the number and name of each pattern
+in the screen-set.</string>
+      </property>
       <property name="readOnly">
        <bool>true</bool>
       </property>

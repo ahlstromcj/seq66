@@ -1,4 +1,4 @@
-# README.md for Seq66 0.99.15 2024-08-25
+# README.md for Seq66 0.99.15 2024-10-14
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -94,6 +94,8 @@ Windows, and using a conventional source tarball.
         Seq66 MIDI files will be one byte longer.
     *   Updated the licensing files to conform to GitHub so that they
         are detected by GitHub.
+    *   Fixed some font handling and added edit fields for browser and PDF
+        viewer.
     *   Also see RELNOTES.
 
 // vim: sw=4 ts=4 wm=2 et ft=markdown

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2024-08-20
+ * \updates       2024-10-14
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -50,7 +50,7 @@
  *      -   show_text_file_dialog()
  *      -   show_file_dialog()
  *      -   show_folder_dialog()
- (      -   show_file_select_dialog()
+ *      -   show_file_select_dialog()
  */
 
 #include <QAction>
@@ -876,7 +876,7 @@ show_file_dialog
  *      The owner of this dialog.
  *
  * \param extension
- *      The file-extension of interest. If empty, 'rc' is used.
+ *      The file-extension of interest. If empty, all files are shown.
  *
  * \param [inout] selecteddir
  *      The initial path and the final selected path. This is the starting
@@ -900,13 +900,20 @@ show_file_select_dialog
 {
     std::string selection;
     std::string caption = "Select a File";
-    std::string ext = extension.empty() ? "*" : extension;
-    std::string filter = capitalize(extension);
-    filter += " (*.";
-    filter += tolower(extension);
-    filter += ")";
-    if (! extension.empty())
+    std::string ext;
+    std::string filter;
+    if (extension.empty())
+    {
+        filter = "All files (*)";
+    }
+    else
+    {
+        filter = capitalize(extension);
+        filter += " (*.";
+        filter += tolower(extension);
+        filter += ")";
         filter += ";;All files (*)";
+    }
 
     bool result = show_file_dialog
     (

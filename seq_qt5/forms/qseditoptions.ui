@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>7</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -1800,38 +1800,6 @@ beat, normally PPQN/10.</string>
         </layout>
        </widget>
       </widget>
-      <widget class="QPushButton" name="btnJackConnect">
-       <property name="geometry">
-        <rect>
-         <x>372</x>
-         <y>300</y>
-         <width>224</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string/>
-       </property>
-       <property name="text">
-        <string>JACK Transport Co&amp;nnect</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="btnJackDisconnect">
-       <property name="geometry">
-        <rect>
-         <x>372</x>
-         <y>340</y>
-         <width>224</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string/>
-       </property>
-       <property name="text">
-        <string>JACK Transport &amp;Disconnect</string>
-       </property>
-      </widget>
       <widget class="QWidget" name="layoutWidgetJackTransport">
        <property name="geometry">
         <rect>
@@ -1997,6 +1965,12 @@ setting of Start mode)</string>
           <property name="enabled">
            <bool>false</bool>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <bold>false</bold>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Play MIDI in Live Mode:  each pattern plays in an endless loop.</string>
           </property>
@@ -2010,12 +1984,69 @@ setting of Start mode)</string>
           <property name="enabled">
            <bool>false</bool>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <bold>false</bold>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Play MIDI in Song Mode: playback controlled by the layout
 in the Song Editor.</string>
           </property>
           <property name="text">
            <string>&amp;Song mode</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>380</x>
+         <y>268</y>
+         <width>129</width>
+         <height>121</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QLabel" name="label_25">
+          <property name="text">
+           <string>JACK Transport</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnJackConnect">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="toolTip">
+           <string/>
+          </property>
+          <property name="text">
+           <string>Co&amp;nnect</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnJackDisconnect">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="toolTip">
+           <string/>
+          </property>
+          <property name="text">
+           <string>&amp;Disconnect</string>
           </property>
          </widget>
         </item>
@@ -2029,365 +2060,385 @@ in the Song Editor.</string>
       <attribute name="title">
        <string>&amp;Play</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QGroupBox" name="group_flags">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>120</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="title">
-          <string>Flags</string>
-         </property>
-         <widget class="QCheckBox" name="chkNoteResume">
-          <property name="geometry">
-           <rect>
-            <x>24</x>
-            <y>32</y>
-            <width>500</width>
-            <height>23</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="toolTip">
-           <string>Unfinished notes are turned back on when
+      <widget class="QGroupBox" name="group_flags">
+       <property name="geometry">
+        <rect>
+         <x>9</x>
+         <y>9</y>
+         <width>710</width>
+         <height>125</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>120</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="title">
+        <string>Flags</string>
+       </property>
+       <widget class="QCheckBox" name="chkNoteResume">
+        <property name="geometry">
+         <rect>
+          <x>24</x>
+          <y>32</y>
+          <width>500</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Unfinished notes are turned back on when
 playback resumes.</string>
-          </property>
-          <property name="text">
-           <string>&amp;Resume Note Ons at start/stop or sequence toggle</string>
-          </property>
-         </widget>
-         <widget class="QCheckBox" name="chkUseFilesPPQN">
-          <property name="geometry">
-           <rect>
-            <x>24</x>
-            <y>56</y>
-            <width>500</width>
-            <height>23</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="toolTip">
-           <string>The PPQN of the MIDI file loaded overrides the
+        </property>
+        <property name="text">
+         <string>&amp;Resume Note Ons at start/stop or sequence toggle</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="chkUseFilesPPQN">
+        <property name="geometry">
+         <rect>
+          <x>24</x>
+          <y>56</y>
+          <width>500</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>The PPQN of the MIDI file loaded overrides the
 default PPQN.  Otherwise, the file PPQN scales to
 the default PPQN.</string>
-          </property>
-          <property name="text">
-           <string>Use File's PPQN for pre-existing files (recommended)</string>
-          </property>
-         </widget>
-         <widget class="QCheckBox" name="chkSongRecordSnap">
-          <property name="geometry">
-           <rect>
-            <x>24</x>
-            <y>80</y>
-            <width>500</width>
-            <height>22</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Song-record snap</string>
-          </property>
-         </widget>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QLabel" name="label_ppqn">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>120</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Sans</family>
-             <pointsize>11</pointsize>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>PPQN </string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="combo_box_ppqn">
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>Changes the default PPQN from 192 to another value.
+        </property>
+        <property name="text">
+         <string>Use File's PPQN for pre-existing files (recommended)</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="chkSongRecordSnap">
+        <property name="geometry">
+         <rect>
+          <x>24</x>
+          <y>80</y>
+          <width>500</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Song-record snap</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="group_setsmode">
+       <property name="geometry">
+        <rect>
+         <x>9</x>
+         <y>180</y>
+         <width>710</width>
+         <height>132</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>132</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="title">
+        <string>Sets Mode</string>
+       </property>
+       <widget class="QRadioButton" name="radio_setsmode_normal">
+        <property name="geometry">
+         <rect>
+          <x>24</x>
+          <y>24</y>
+          <width>500</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Normal. Only the active set (&quot;play-screen&quot;) can be armed.</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="radio_setsmode_autoarm">
+        <property name="geometry">
+         <rect>
+          <x>24</x>
+          <y>48</y>
+          <width>500</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Auto-Arm. When moving to the ne&amp;xt set, it automatically arms.</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="radio_setsmode_additive">
+        <property name="geometry">
+         <rect>
+          <x>24</x>
+          <y>72</y>
+          <width>500</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Additive. As each sets is activated, the others keep playing.</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="radio_setsmode_allsets">
+        <property name="geometry">
+         <rect>
+          <x>24</x>
+          <y>96</y>
+          <width>500</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>All Sets.  All sets can play at the same time.</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="group_startmode">
+       <property name="geometry">
+        <rect>
+         <x>9</x>
+         <y>330</y>
+         <width>710</width>
+         <height>125</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>108</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="title">
+        <string>Song Start Mode</string>
+       </property>
+       <widget class="QRadioButton" name="radio_startmode_live">
+        <property name="geometry">
+         <rect>
+          <x>24</x>
+          <y>24</y>
+          <width>500</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Li&amp;ve. Musician controls arming/muting.</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="radio_startmode_song">
+        <property name="geometry">
+         <rect>
+          <x>24</x>
+          <y>48</y>
+          <width>500</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Song. Song-editor layout controls arming/muting.</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="radio_startmode_auto">
+        <property name="geometry">
+         <rect>
+          <x>24</x>
+          <y>72</y>
+          <width>500</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Auto. Song mode is used if a song-editor layout exists.</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QLabel" name="label_ppqn">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>141</y>
+         <width>47</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>120</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Sans</family>
+         <pointsize>11</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>PPQN </string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_ppqn_2">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>141</y>
+         <width>460</width>
+         <height>18</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>460</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Default Seq66 PPQN for new or converted files</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="combo_box_ppqn">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>141</y>
+         <width>100</width>
+         <height>26</height>
+        </rect>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Changes the default PPQN from 192 to another value.
 This new default value is saved in the 'usr' file when
 Seq66 exits.</string>
-           </property>
-           <property name="editable">
-            <bool>true</bool>
-           </property>
-           <property name="currentText">
-            <string>9600</string>
-           </property>
-           <property name="maxCount">
-            <number>32</number>
-           </property>
-           <property name="insertPolicy">
-            <enum>QComboBox::NoInsert</enum>
-           </property>
-           <property name="frame">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_ppqn_2">
-           <property name="minimumSize">
-            <size>
-             <width>460</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Default Seq66 PPQN for new or converted files</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="group_setsmode">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>132</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="title">
-          <string>Sets Mode</string>
-         </property>
-         <widget class="QRadioButton" name="radio_setsmode_normal">
-          <property name="geometry">
-           <rect>
-            <x>24</x>
-            <y>24</y>
-            <width>500</width>
-            <height>23</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Normal. Only the active set (&quot;play-screen&quot;) can be armed.</string>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="radio_setsmode_autoarm">
-          <property name="geometry">
-           <rect>
-            <x>24</x>
-            <y>48</y>
-            <width>500</width>
-            <height>23</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Auto-Arm. When moving to the ne&amp;xt set, it automatically arms.</string>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="radio_setsmode_additive">
-          <property name="geometry">
-           <rect>
-            <x>24</x>
-            <y>72</y>
-            <width>500</width>
-            <height>23</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Additive. As each sets is activated, the others keep playing.</string>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="radio_setsmode_allsets">
-          <property name="geometry">
-           <rect>
-            <x>24</x>
-            <y>96</y>
-            <width>500</width>
-            <height>23</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>All Sets.  All sets can play at the same time.</string>
-          </property>
-         </widget>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="group_startmode">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>108</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="title">
-          <string>Song Start Mode</string>
-         </property>
-         <widget class="QRadioButton" name="radio_startmode_live">
-          <property name="geometry">
-           <rect>
-            <x>24</x>
-            <y>24</y>
-            <width>500</width>
-            <height>23</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Li&amp;ve. Musician controls arming/muting.</string>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="radio_startmode_song">
-          <property name="geometry">
-           <rect>
-            <x>24</x>
-            <y>48</y>
-            <width>500</width>
-            <height>23</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Song. Song-editor layout controls arming/muting.</string>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="radio_startmode_auto">
-          <property name="geometry">
-           <rect>
-            <x>24</x>
-            <y>72</y>
-            <width>500</width>
-            <height>23</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Auto. Song mode is used if a song-editor layout exists.</string>
-          </property>
-         </widget>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
+       </property>
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+       <property name="currentText">
+        <string>9600</string>
+       </property>
+       <property name="maxCount">
+        <number>32</number>
+       </property>
+       <property name="insertPolicy">
+        <enum>QComboBox::NoInsert</enum>
+       </property>
+       <property name="frame">
+        <bool>true</bool>
+       </property>
+      </widget>
      </widget>
      <widget class="QWidget" name="tabMetronome">
       <attribute name="title">
@@ -3014,20 +3065,10 @@ Seq66 exits.</string>
           <x>16</x>
           <y>40</y>
           <width>259</width>
-          <height>70</height>
+          <height>88</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_6">
-         <item row="0" column="0">
-          <widget class="QLabel" name="labelJitter">
-           <property name="text">
-            <string>Jitter 1/</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="1">
           <widget class="QSpinBox" name="spinBoxJitter">
            <property name="minimumSize">
@@ -3047,20 +3088,6 @@ Seq66 exits.</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="2">
-          <widget class="QLabel" name="labelJitter2">
-           <property name="text">
-            <string>of Snap</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="labelAmplitude">
-           <property name="text">
-            <string>Amplitude</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="1">
           <widget class="QSpinBox" name="spinBoxAmplitude">
            <property name="minimumSize">
@@ -3077,10 +3104,61 @@ Seq66 exits.</string>
            </property>
           </widget>
          </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelJitter">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Jitter 1/</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
          <item row="1" column="2">
           <widget class="QLabel" name="labelMidiUnits">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>false</bold>
+            </font>
+           </property>
            <property name="text">
             <string>in MIDI units</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="labelJitter2">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>of Snap</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelAmplitude">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Amplitude</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -3107,6 +3185,12 @@ Seq66 exits.</string>
           <width>371</width>
           <height>28</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
         </property>
         <property name="text">
          <string>Esc key in piano roll closes external editors</string>
@@ -3181,7 +3265,7 @@ Seq66 exits.</string>
          <x>8</x>
          <y>8</y>
          <width>301</width>
-         <height>145</height>
+         <height>131</height>
         </rect>
        </property>
        <property name="font">
@@ -3328,6 +3412,12 @@ For many changes, restart is required.</string>
           <height>23</height>
          </rect>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
         <property name="text">
          <string>.rc</string>
         </property>
@@ -3344,6 +3434,12 @@ For many changes, restart is required.</string>
           <height>23</height>
          </rect>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
         <property name="text">
          <string>.usr</string>
         </property>
@@ -3357,6 +3453,12 @@ For many changes, restart is required.</string>
           <height>23</height>
          </rect>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
         <property name="text">
          <string>.mutes</string>
         </property>
@@ -3369,6 +3471,12 @@ For many changes, restart is required.</string>
           <width>96</width>
           <height>23</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
         </property>
         <property name="text">
          <string>.playlist</string>
@@ -3386,6 +3494,12 @@ For many changes, restart is required.</string>
           <height>23</height>
          </rect>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
         <property name="text">
          <string>.ctrl</string>
         </property>
@@ -3401,6 +3515,12 @@ For many changes, restart is required.</string>
           <width>96</width>
           <height>23</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
         </property>
         <property name="text">
          <string>.drums*</string>
@@ -3518,7 +3638,7 @@ For many changes, restart is required.</string>
          <font>
           <pointsize>11</pointsize>
           <italic>true</italic>
-          <bold>false</bold>
+          <bold>true</bold>
          </font>
         </property>
         <property name="text">
@@ -3538,7 +3658,7 @@ For many changes, restart is required.</string>
          <font>
           <pointsize>11</pointsize>
           <italic>true</italic>
-          <bold>false</bold>
+          <bold>true</bold>
          </font>
         </property>
         <property name="text">
@@ -3628,7 +3748,7 @@ For many changes, restart is required.</string>
          <rect>
           <x>144</x>
           <y>36</y>
-          <width>113</width>
+          <width>141</width>
           <height>17</height>
          </rect>
         </property>
@@ -3636,7 +3756,7 @@ For many changes, restart is required.</string>
          <font>
           <pointsize>11</pointsize>
           <italic>true</italic>
-          <bold>false</bold>
+          <bold>true</bold>
          </font>
         </property>
         <property name="text">
@@ -3687,6 +3807,12 @@ path added to this name is stripped.</string>
           <height>23</height>
          </rect>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
         <property name="text">
          <string>.palette*</string>
         </property>
@@ -3704,7 +3830,7 @@ path added to this name is stripped.</string>
          <font>
           <pointsize>11</pointsize>
           <italic>true</italic>
-          <bold>false</bold>
+          <bold>true</bold>
          </font>
         </property>
         <property name="text">
@@ -3724,7 +3850,7 @@ path added to this name is stripped.</string>
          <font>
           <pointsize>11</pointsize>
           <italic>true</italic>
-          <bold>false</bold>
+          <bold>true</bold>
          </font>
         </property>
         <property name="text">
@@ -3736,7 +3862,7 @@ path added to this name is stripped.</string>
          <rect>
           <x>482</x>
           <y>36</y>
-          <width>113</width>
+          <width>141</width>
           <height>17</height>
          </rect>
         </property>
@@ -3744,7 +3870,7 @@ path added to this name is stripped.</string>
          <font>
           <pointsize>11</pointsize>
           <italic>true</italic>
-          <bold>false</bold>
+          <bold>true</bold>
          </font>
         </property>
         <property name="text">
@@ -3779,6 +3905,12 @@ path added to this name is stripped.</string>
           <height>23</height>
          </rect>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
         <property name="text">
          <string>.qss*</string>
         </property>
@@ -3804,6 +3936,12 @@ path added to this name is stripped.</string>
           <width>131</width>
           <height>28</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
         </property>
         <property name="toolTip">
          <string/>
@@ -3935,58 +4073,64 @@ path added to this name is stripped.</string>
          <string>...</string>
         </property>
        </widget>
-      </widget>
-      <widget class="QPushButton" name="pushButtonReload">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>450</y>
-         <width>129</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>56</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Restarts the whole application, reloading any changed settings.</string>
-       </property>
-       <property name="text">
-        <string>Restart Session</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_cannot_alter">
-       <property name="geometry">
-        <rect>
-         <x>210</x>
-         <y>450</y>
-         <width>481</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-         <italic>true</italic>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>* Cannot alter data for these files in Seq66. Text-edit them.</string>
-       </property>
+       <widget class="QLabel" name="label_cannot_alter">
+        <property name="geometry">
+         <rect>
+          <x>210</x>
+          <y>2</y>
+          <width>481</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <italic>true</italic>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>* Cannot alter data for these files in Seq66. Text-edit them.</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonReload">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>490</x>
+          <y>190</y>
+          <width>129</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>56</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Restarts the whole application, reloading any changed settings.</string>
+        </property>
+        <property name="text">
+         <string>Restart Session</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QLabel" name="label_exit_required">
        <property name="geometry">
         <rect>
-         <x>60</x>
-         <y>490</y>
-         <width>631</width>
+         <x>0</x>
+         <y>440</y>
+         <width>671</width>
          <height>22</height>
         </rect>
        </property>
@@ -3998,7 +4142,106 @@ path added to this name is stripped.</string>
         </font>
        </property>
        <property name="text">
-        <string>The changes just made require a complete exit and re-run. Save your work first.</string>
+        <string>* The changes made require a complete exit and re-run. Save your work first.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_3">
+       <property name="geometry">
+        <rect>
+         <x>19</x>
+         <y>466</y>
+         <width>101</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Browser</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_24">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>494</y>
+         <width>101</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>PDF Viewer</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEditBrowser">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>465</y>
+         <width>491</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>Specifies an alternate browser executable such as
+/usr/bin/evince. The complete path is not needed if in one's
+PATH.
+</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEditPdfViewer">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>495</y>
+         <width>491</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>Specifies an alternate PDF viewer such as
+C:/Users/user/AppData/Local/Apps/Evince-2.32.0.145/bin/evince.exe
+or /usr/bin/zathura.
+</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButtonSetBrowser">
+       <property name="geometry">
+        <rect>
+         <x>639</x>
+         <y>468</y>
+         <width>28</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>Click to open a file dialog to set the browser.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButtonSetPdfViewer">
+       <property name="geometry">
+        <rect>
+         <x>639</x>
+         <y>499</y>
+         <width>28</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>Click to open a file dialog to set the PDF viewer.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
        </property>
       </widget>
      </widget>
