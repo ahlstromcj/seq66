@@ -58,7 +58,7 @@
    If this palette file is active, it is loaded, changing all of the palettes,
    and thus the coloring of \textsl{Seq66}.
    In \sectionref{subsec:palettes_theming}, some weird behavior with
-   the \texttt{qt5ct} configuration application and non-Qt-based window managers
+   the \textsl{qt5ct} configuration application and non-Qt-based window managers
    is discussed.
 
 \subsection{Palettes Setup}
@@ -190,13 +190,19 @@ project.
 \subsection{Theming}
 \label{subsec:palettes_theming}
 
+\subsubsection{Qt5ct}
+\label{subsubsec:palettes_theming_qt5ct}
+
+   The \textsl{qt5ct} configuration application can be used to select installed
+   \textsl{Qt5} themes.
+
    When using a non-Qt-based window manager or desktop manager, such as our
    favorite, \textsl{Fluxbox}, in conjunction with \textsl{GTK+} themes,
    there can be issues on some \textsl{Linux} distros.
 
    First, if using a Gtk theme setter (e.g. \textsl{gtk-chtheme}
    or \textsl{lxappearance}),
-   one wants to
+   one needs to
    use \textsl{qt5ct} to set Qt to work with Gtk themes.
    For this to work well, use this setting in the \texttt{.bashrc} or
    \texttt{.profile} file:
@@ -230,6 +236,22 @@ project.
 
    Also see the style-sheet discussion in
    \sectionref{sec:configuration}.
+
+\subsubsection{Kvantum}
+\label{subsubsec:palettes_theming_kvantum}
+
+   The \textsl{Kvantum} theming engine uses SVG to draw theme elements.
+   It has a number interesting themes. Once installed,
+   the \texttt{kvantum} and
+   the \texttt{kvantum-dark}
+   styles can be selected in \textsl{qt5ct}.
+
+   These styles provide a number of themes that can be
+   accessed via the \textsl{kvantummanager} application.
+   Some nice \textsl{Kvantum} themes are \texttt{KvCurves},
+   \texttt{KvCyan},
+   \texttt{KvOxygen}, and
+   \texttt{KvYaru}.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

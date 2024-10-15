@@ -1,0 +1,17 @@
+# /usr/bin/cgdb
+#
+# The configuration for the cgdb debugger front end.
+#
+# Copy this file to ~/.cgdb/cgdbrc in order to use it.
+#
+
+# :set arrowstyle=long
+# :set arrowstyle=highlight
+# :set autosourcereload
+
+:set tabstop=4
+:highlight SelectedLineNR cterm=bold,reverse
+# :set wso=vertical
+:set wso=horizontal
+
+# :set pagination off

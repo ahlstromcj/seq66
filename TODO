@@ -1,16 +1,14 @@
 TO DO for Seq66 0.99.15
 Chris Ahlstrom
-2019-04-13 to 2024-10-14
+2019-04-13 to 2024-10-15
 
 From Testing:
 
-    -   Add editable browser/pdf-viewer info.
     -   Investigate possible issue with seq::to_string() in judyblue.mid.
-    -   Add browser/viewer settings to Preferences.
-    -   Weird font on MIDI Input list!
     -   Update one-shot process documentation to indicate it is on the pattern
         editor. Fix any issues found.
-    -   Find and fix all font issues.
+    -   Get new screen shots for Preference: Session, Display, JACK, MIDI
+        Input. Check all dialogs/tabs using Crux.
     -   Get the 16-in-busses.midi file configured and working.
     -   The 'usr' time-color settings do not seem to work. Actually, it does
         work, but not with the Qt gtk styling. Document this issue.

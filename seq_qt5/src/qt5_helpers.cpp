@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2024-10-14
+ * \updates       2024-10-15
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -727,6 +727,23 @@ show_text_file_dialog (QWidget * parent, std::string & selectedfile)
     (
         parent, selectedfile, "Save text file",
         "Text (*.txt *.text);;All (*)", SavingFile, NormalFile, ".text"
+    );
+}
+
+bool
+show_exe_file_dialog (QWidget * parent, std::string & selectedfile)
+{
+#if defined SEQ66_PLATFORM_WINDOWS
+    std::string ext = ".exe";
+    std::string filter = "Executables (*.exe);;All (*)";
+#else
+    std::string ext = "";
+    std::string filter = "Executables (*);;All (*)";
+#endif
+    return show_file_dialog
+    (
+        parent, selectedfile, "Open executable file",
+        filter, OpeningFile, NormalFile, ext
     );
 }
 

@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.15
 Chris Ahlstrom
-2015-07-10 to 2024-10-14
+2015-07-10 to 2024-10-15
 
 # Change Log
 
@@ -9,7 +9,7 @@ Chris Ahlstrom
 ### Added
 
 - Added edit fields and buttons for selecting a non-default browser
-  and PDF viewer to the Preference's Session tab.
+  or PDF viewer to the Preference's Session tab.
 
 ### Fixed
 

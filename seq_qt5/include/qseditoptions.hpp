@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-10-14
+ * \updates       2024-10-15
  * \license       GNU GPLv2 or above
  */
 
@@ -135,7 +135,11 @@ private:
         QLineEdit * lineedit,
         const std::string & fileextension
     );
-
+    bool load_executable_name
+    (
+        QLineEdit * lineedit,
+        const std::string & fname
+    );
     bool reload_needed () const
     {
         return m_reload_needed;

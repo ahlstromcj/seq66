@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-10-14
+ * \updates       2024-10-15
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -3058,6 +3058,28 @@ qseditoptions::load_file_name
 }
 
 /**
+ *  Opens a dialog to look for executables, starting with the filename
+ *  provided.
+ */
+
+bool
+qseditoptions::load_executable_name
+(
+    QLineEdit * lineedit,
+    const std::string & fname
+)
+{
+    std::string ncfname = fname;
+    bool result = show_exe_file_dialog(lineedit, ncfname);
+    if (result)
+    {
+        tooltip_for_filename(lineedit, ncfname);
+        lineedit->setText(qt(ncfname));
+    }
+    return result;
+}
+
+/**
  *  The user can edit the filename instead of pressing the "..." button
  *  to get the name from the dialog. If a path is provided, it is stripped
  *  and the "home" configuration directory is used.
@@ -3843,7 +3865,8 @@ qseditoptions::slot_browser_executable ()
 void
 qseditoptions::slot_load_browser_executable ()
 {
-    if (load_file_name(ui->lineEditBrowser, ""))
+    std::string current = usr().user_browser();
+    if (load_executable_name(ui->lineEditBrowser, current))
     {
         const QString qs = ui->lineEditBrowser->text();
         std::string viewer = qs.toStdString();
@@ -3874,7 +3897,7 @@ qseditoptions::slot_pdf_executable ()
 void
 qseditoptions::slot_load_pdf_viewer_executable ()
 {
-    if (load_file_name(ui->lineEditPdfViewer, ""))
+    if (load_executable_name(ui->lineEditPdfViewer, ""))
     {
         const QString qs = ui->lineEditPdfViewer->text();
         std::string viewer = qs.toStdString();

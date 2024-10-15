@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>7</number>
+      <number>6</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -606,6 +606,9 @@ slot by channel number (0 to 15).</string>
            <property name="text">
             <string>Outputs</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="2" column="4">
@@ -641,6 +644,9 @@ slot by channel number (0 to 15).</string>
            </property>
            <property name="text">
             <string>Inputs</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -1563,8 +1569,8 @@ Range: 0.5 to 3.0</string>
         <rect>
          <x>10</x>
          <y>10</y>
-         <width>601</width>
-         <height>251</height>
+         <width>611</width>
+         <height>241</height>
         </rect>
        </property>
        <property name="title">
@@ -1629,6 +1635,9 @@ Range: 0.5 to 3.0</string>
            <property name="text">
             <string>Frame rate</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="0" column="1">
@@ -1658,6 +1667,9 @@ Range: 0.5 to 3.0</string>
            </property>
            <property name="text">
             <string>Period size</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -1691,6 +1703,9 @@ JACK process callbacks.</string>
            <property name="text">
             <string>N periods</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="2" column="1">
@@ -1723,6 +1738,9 @@ callbacks.</string>
            <property name="text">
             <string>JACK ticks/beat</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="3" column="1">
@@ -1753,6 +1771,9 @@ beat, normally PPQN/10.</string>
            <property name="text">
             <string>Beats/minute</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="4" column="1">
@@ -1781,6 +1802,9 @@ beat, normally PPQN/10.</string>
            </property>
            <property name="text">
             <string>Period override</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -1898,9 +1922,9 @@ connects to the MIDI I/O ports it finds.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>268</y>
+         <y>259</y>
          <width>349</width>
-         <height>129</height>
+         <height>131</height>
         </rect>
        </property>
        <property name="title">
@@ -2001,13 +2025,13 @@ in the Song Editor.</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
-         <x>380</x>
+         <x>370</x>
          <y>268</y>
-         <width>129</width>
-         <height>121</height>
+         <width>211</width>
+         <height>101</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -2051,6 +2075,19 @@ in the Song Editor.</string>
          </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="geometry">
+        <rect>
+         <x>369</x>
+         <y>259</y>
+         <width>251</width>
+         <height>131</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
       </widget>
      </widget>
      <widget class="QWidget" name="tabPlayOptions">
@@ -2465,6 +2502,9 @@ Seq66 exits.</string>
           <property name="text">
            <string>Time Signature</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
          </widget>
         </item>
         <item>
@@ -2479,6 +2519,9 @@ Seq66 exits.</string>
             </property>
             <property name="text">
              <string>Beats/bar</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -2495,6 +2538,9 @@ Seq66 exits.</string>
             </property>
             <property name="text">
              <string>Beat width</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -2597,6 +2643,9 @@ Seq66 exits.</string>
             <property name="text">
              <string>Output Specs</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
            </widget>
           </item>
           <item row="0" column="1">
@@ -2636,6 +2685,9 @@ Seq66 exits.</string>
             <property name="text">
              <string>Patch</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
            </widget>
           </item>
           <item row="1" column="1">
@@ -2654,6 +2706,9 @@ Seq66 exits.</string>
             </property>
             <property name="text">
              <string>Note</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -2674,6 +2729,9 @@ Seq66 exits.</string>
             <property name="text">
              <string>Velocity</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
            </widget>
           </item>
           <item row="3" column="1">
@@ -2692,6 +2750,9 @@ Seq66 exits.</string>
             </property>
             <property name="text">
              <string>Length fraction</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -2776,6 +2837,9 @@ Seq66 exits.</string>
             <property name="text">
              <string>Channel</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
            </widget>
           </item>
           <item>
@@ -2836,7 +2900,7 @@ Seq66 exits.</string>
           <item>
            <spacer name="horizontalSpacer">
             <property name="orientation">
-             <enum>Qt::Vertical</enum>
+             <enum>Qt::Horizontal</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -2896,6 +2960,9 @@ Seq66 exits.</string>
             <property name="text">
              <string>Channel</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
            </widget>
           </item>
           <item>
@@ -2929,7 +2996,7 @@ Seq66 exits.</string>
          <x>24</x>
          <y>32</y>
          <width>217</width>
-         <height>349</height>
+         <height>341</height>
         </rect>
        </property>
        <property name="font">
@@ -2969,8 +3036,8 @@ Seq66 exits.</string>
        <widget class="QLabel" name="labelRecordStyle">
         <property name="geometry">
          <rect>
-          <x>16</x>
-          <y>280</y>
+          <x>18</x>
+          <y>274</y>
           <width>181</width>
           <height>16</height>
          </rect>
@@ -2983,6 +3050,9 @@ Seq66 exits.</string>
         </property>
         <property name="text">
          <string>Record Loop Style</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
        <widget class="QWidget" name="layoutWidgetRecordStyle">
@@ -3168,8 +3238,8 @@ Seq66 exits.</string>
       <widget class="QGroupBox" name="groupBoxUsrOptions">
        <property name="geometry">
         <rect>
-         <x>270</x>
-         <y>180</y>
+         <x>271</x>
+         <y>168</y>
          <width>401</width>
          <height>89</height>
         </rect>
@@ -3181,7 +3251,7 @@ Seq66 exits.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>36</y>
+          <y>30</y>
           <width>371</width>
           <height>28</height>
          </rect>
@@ -3201,7 +3271,7 @@ Seq66 exits.</string>
        <property name="geometry">
         <rect>
          <x>28</x>
-         <y>36</y>
+         <y>40</y>
          <width>191</width>
          <height>18</height>
         </rect>
@@ -3220,7 +3290,7 @@ Seq66 exits.</string>
        <property name="geometry">
         <rect>
          <x>280</x>
-         <y>36</y>
+         <y>40</y>
          <width>171</width>
          <height>18</height>
         </rect>
@@ -3239,7 +3309,7 @@ Seq66 exits.</string>
        <property name="geometry">
         <rect>
          <x>280</x>
-         <y>184</y>
+         <y>172</y>
          <width>261</width>
          <height>18</height>
         </rect>

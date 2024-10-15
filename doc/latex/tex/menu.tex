@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2023-11-27
+% \update      2024-10-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1495,6 +1495,9 @@
    \label{fig:midi_session_options_tab}
 \end{figure}
 
+   This dialog has a couple of new items, to allow changing the web browser and
+   PDF view to use.  See below.
+
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Session}{edit!session}
@@ -1549,10 +1552,26 @@
    stored in the \textsl{Seq66} configuration directory.
    (See \sectionref{sec:palettes}.)
 
-   \itempar{Save Current Palette}{palette}
+   \itempar{Store Palette}{palette}
    Normally, there is no palette file.  Pushing this button creates one, which
    can then be modified and configured as the palette-file to use in the 'rc'
    file.
+
+   \itempar{Browser}{browser}
+   This field is text-editable, and can also be changed by using the button
+   next to it to select a browser executable to use in the
+   \textbf{Help / Tutorial} menu entry. If all possible browsers are available
+   via one's \texttt{PATH}, then the simple name of the application
+   (including \texttt{.exe} if running \textsl{Windows}) can simply be typed
+   in. Otherwise, type in the complete path or use the button to bring up
+   a file dialog.
+
+   If one erases the file name, the default browser for the system will be
+   used the next time \textsl{Seq66} is restarted.
+
+   \itempar{PDF Viewer}{PDF viewer}
+   This field is similar to the browser field, but specifies an alternate
+   viewing application for PDFs.
 
 \subsection{Menu / Help}
 \label{subsec:menu_help}
