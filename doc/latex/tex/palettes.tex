@@ -190,6 +190,11 @@ project.
 \subsection{Theming}
 \label{subsec:palettes_theming}
 
+   Theming for a mix of \textsl{Qt} and \textsl{Gtk-N} applications can be a
+   bit tricky.
+   The \textsl{qt5ct} application helps in obtaining nicely rendered
+   widgets, though some combinations have visibility issues.
+
 \subsubsection{Qt5ct}
 \label{subsubsec:palettes_theming_qt5ct}
 
@@ -211,6 +216,7 @@ project.
       export QT_QPA_PLATFORMTHEME=gtk2
    \end{verbatim}
 
+   Otherwise some GUI elements might be difficult to see.
    If not, use the following setting:
 
    \begin{verbatim}

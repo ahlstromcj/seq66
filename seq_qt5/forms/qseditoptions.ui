@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>6</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -63,9 +63,9 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>430</y>
+         <y>422</y>
          <width>601</width>
-         <height>81</height>
+         <height>71</height>
         </rect>
        </property>
        <property name="font">
@@ -103,7 +103,7 @@
         <property name="geometry">
          <rect>
           <x>11</x>
-          <y>50</y>
+          <y>30</y>
           <width>571</width>
           <height>31</height>
          </rect>
@@ -213,8 +213,8 @@
       <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>8</x>
-         <y>516</y>
+         <x>30</x>
+         <y>520</y>
          <width>181</width>
          <height>17</height>
         </rect>
@@ -235,8 +235,8 @@
        </property>
        <property name="geometry">
         <rect>
-         <x>196</x>
-         <y>512</y>
+         <x>220</x>
+         <y>510</y>
          <width>185</width>
          <height>28</height>
         </rect>
@@ -282,7 +282,7 @@
          <x>10</x>
          <y>40</y>
          <width>701</width>
-         <height>273</height>
+         <height>241</height>
         </rect>
        </property>
        <property name="font">
@@ -312,7 +312,7 @@
           <x>0</x>
           <y>0</y>
           <width>701</width>
-          <height>273</height>
+          <height>241</height>
          </rect>
         </property>
        </widget>
@@ -320,7 +320,7 @@
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>400</x>
+         <x>420</x>
          <y>12</y>
          <width>121</width>
          <height>17</height>
@@ -340,7 +340,7 @@
        <property name="geometry">
         <rect>
          <x>28</x>
-         <y>388</y>
+         <y>370</y>
          <width>573</width>
          <height>45</height>
         </rect>
@@ -375,7 +375,7 @@
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>320</y>
+         <y>300</y>
          <width>569</width>
          <height>70</height>
         </rect>
@@ -494,6 +494,42 @@ Each port number can be found by name-lookup.</string>
         </item>
        </layout>
       </widget>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>290</y>
+         <width>601</width>
+         <height>131</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_10">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>496</y>
+         <width>601</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
+      </widget>
+      <zorder>groupBoxMetaEvents</zorder>
+      <zorder>groupBox_2</zorder>
+      <zorder>groupBox_10</zorder>
+      <zorder>label</zorder>
+      <zorder>lineEditClientId</zorder>
+      <zorder>portsClocksLabel</zorder>
+      <zorder>clocksScrollArea</zorder>
+      <zorder>label_2</zorder>
+      <zorder>horizontalLayoutWidget_2</zorder>
+      <zorder>layoutWidgetCtrlOut</zorder>
      </widget>
      <widget class="QWidget" name="tabMidiInput">
       <property name="toolTip">
@@ -506,9 +542,9 @@ Each port number can be found by name-lookup.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>368</y>
-         <width>591</width>
-         <height>171</height>
+         <y>388</y>
+         <width>611</width>
+         <height>161</height>
         </rect>
        </property>
        <property name="font">
@@ -549,9 +585,9 @@ Each port number can be found by name-lookup.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>40</y>
+          <y>38</y>
           <width>571</width>
-          <height>129</height>
+          <height>118</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_9">
@@ -687,10 +723,10 @@ channel.</string>
       <widget class="QScrollArea" name="inputsScrollArea">
        <property name="geometry">
         <rect>
-         <x>16</x>
+         <x>6</x>
          <y>32</y>
-         <width>681</width>
-         <height>281</height>
+         <width>691</width>
+         <height>251</height>
         </rect>
        </property>
        <property name="font">
@@ -719,8 +755,8 @@ channel.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>681</width>
-          <height>281</height>
+          <width>691</width>
+          <height>251</height>
          </rect>
         </property>
        </widget>
@@ -728,7 +764,7 @@ channel.</string>
       <widget class="QWidget" name="horizontalLayoutWidget">
        <property name="geometry">
         <rect>
-         <x>16</x>
+         <x>32</x>
          <y>316</y>
          <width>585</width>
          <height>49</height>
@@ -760,6 +796,24 @@ channel.</string>
         </item>
        </layout>
       </widget>
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>299</y>
+         <width>611</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
+      </widget>
+      <zorder>groupBox_3</zorder>
+      <zorder>groupBoxInputOptions</zorder>
+      <zorder>inputBussesLabel</zorder>
+      <zorder>inputsScrollArea</zorder>
+      <zorder>horizontalLayoutWidget</zorder>
      </widget>
      <widget class="QWidget" name="tabDisplay">
       <property name="toolTip">
@@ -772,9 +826,9 @@ channel.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>252</y>
+         <y>232</y>
          <width>589</width>
-         <height>237</height>
+         <height>251</height>
         </rect>
        </property>
        <property name="font">
@@ -799,8 +853,8 @@ channel.</string>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="3" column="0">
-          <widget class="QCheckBox" name="checkBoxLongBussNames">
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="checkBoxQuiet">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -814,80 +868,16 @@ channel.</string>
             </size>
            </property>
            <property name="toolTip">
-            <string>rc: [Seq66] port-naming = long</string>
+            <string>Enable to suppress error prompts at startup.
+Useful if the prompts are going to be ignored
+anyway.</string>
            </property>
            <property name="text">
-            <string>Long port/buss names *</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QCheckBox" name="checkBoxSwapCoordinates">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>usr: [user-interface-settings] swap-coordinates</string>
-           </property>
-           <property name="text">
-            <string>Swap grid coordinates (be aware!)</string>
+            <string>Suppress startup error messages</string>
            </property>
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QCheckBox" name="checkBoxShowFullRecentPaths">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>rc: [recent-files] full-paths</string>
-           </property>
-           <property name="text">
-            <string>Show full path of recent files</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QCheckBox" name="checkBoxLockMainWindow">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>usr: [user-ui-tweaks] lock-main-window</string>
-           </property>
-           <property name="text">
-            <string>Lock main window</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
           <widget class="QCheckBox" name="checkBoxLoadMostRecent">
            <property name="minimumSize">
             <size>
@@ -909,7 +899,218 @@ channel.</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="0">
+         <item row="5" column="1">
+          <widget class="QCheckBox" name="checkBoxDarkTheme">
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] dark-theme
+Applies a couple of color tweaks, such as
+using inverse font color for slots.</string>
+           </property>
+           <property name="text">
+            <string>Tweak color for dark theme</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QCheckBox" name="checkBoxPairBussNames">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>rc: [Seq66] port-naming = pair</string>
+           </property>
+           <property name="text">
+            <string>Client:port buss names *</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="checkBoxShowFullRecentPaths">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>rc: [recent-files] full-paths</string>
+           </property>
+           <property name="text">
+            <string>Show full path of recent files</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QCheckBox" name="checkBoxElliptical">
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] progress-box-elliptical
+If set, the grid slot progress boxes are ellipses.</string>
+           </property>
+           <property name="text">
+            <string>Elliptical progess box</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QCheckBox" name="checkBoxLockMainWindow">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>usr: [user-ui-tweaks] lock-main-window</string>
+           </property>
+           <property name="text">
+            <string>Lock main window</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QCheckBox" name="checkBoxLongBussNames">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>rc: [Seq66] port-naming = long</string>
+           </property>
+           <property name="text">
+            <string>Long port/buss names *</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QCheckBox" name="checkBoxBoldGridSlots">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] progress-bar-thick</string>
+           </property>
+           <property name="text">
+            <string>Bold grid slot font/box</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QCheckBox" name="checkBoxDoubleClickEdit">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>rc: [interaction-method] double-click-edit</string>
+           </property>
+           <property name="text">
+            <string>Double click for pattern editor</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QCheckBox" name="checkBoxFollowProgress">
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] follow-progress
+Sets the default setting for the follow-progress
+button in the piano rolls.</string>
+           </property>
+           <property name="text">
+            <string>Follow progress by default</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QCheckBox" name="checkBoxSwapCoordinates">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] swap-coordinates</string>
+           </property>
+           <property name="text">
+            <string>Swap grid coordinates (be aware!)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QCheckBox" name="checkBoxGlobalSeqFeature">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] global-seq-feature</string>
+           </property>
+           <property name="text">
+            <string>Global background/scale/key</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
           <widget class="QCheckBox" name="checkBoxVerbose">
            <property name="enabled">
             <bool>false</bool>
@@ -935,150 +1136,16 @@ Always set to false at exit.</string>
            </property>
           </widget>
          </item>
-         <item row="6" column="0">
-          <widget class="QCheckBox" name="checkBoxBoldGridSlots">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>usr: [user-interface-settings] progress-bar-thick</string>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>true</bold>
+            </font>
            </property>
            <property name="text">
-            <string>Bold grid slot font/box</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QCheckBox" name="checkBoxPairBussNames">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>rc: [Seq66] port-naming = pair</string>
-           </property>
-           <property name="text">
-            <string>Client:port buss names *</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QCheckBox" name="checkBoxGlobalSeqFeature">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>usr: [user-interface-settings] global-seq-feature</string>
-           </property>
-           <property name="text">
-            <string>Global background/scale/key</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QCheckBox" name="checkBoxDoubleClickEdit">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>rc: [interaction-method] double-click-edit</string>
-           </property>
-           <property name="text">
-            <string>Double click for pattern editor</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QCheckBox" name="checkBoxQuiet">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>Enable to suppress error prompts at startup.
-Useful if the prompts are going to be ignored
-anyway.</string>
-           </property>
-           <property name="text">
-            <string>Suppress startup error messages</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="QCheckBox" name="checkBoxFollowProgress">
-           <property name="toolTip">
-            <string>usr: [user-interface-settings] follow-progress
-Sets the default setting for the follow-progress
-button in the piano rolls.</string>
-           </property>
-           <property name="text">
-            <string>Follow progress by default</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QCheckBox" name="checkBoxDarkTheme">
-           <property name="toolTip">
-            <string>usr: [user-interface-settings] dark-theme
-Applies a couple of color tweaks, such as
-using inverse font color for slots.</string>
-           </property>
-           <property name="text">
-            <string>Tweak color for dark theme</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QCheckBox" name="checkBoxElliptical">
-           <property name="toolTip">
-            <string>usr: [user-interface-settings] progress-box-elliptical
-If set, the grid slot progress boxes are ellipses.</string>
-           </property>
-           <property name="text">
-            <string>Elliptical progess box</string>
+            <string>UI Boolean Options</string>
            </property>
           </widget>
          </item>
@@ -1517,30 +1584,11 @@ Range: 0.5 to 3.0</string>
         <string>User UI Tweaks</string>
        </property>
       </widget>
-      <widget class="QLabel" name="label_7">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>228</y>
-         <width>157</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>UI Boolean Options</string>
-       </property>
-      </widget>
       <widget class="QLabel" name="label_19">
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>510</y>
+         <y>490</y>
          <width>551</width>
          <height>22</height>
         </rect>
@@ -1556,6 +1604,25 @@ Range: 0.5 to 3.0</string>
         <string>* Ignored if port-mapping (the default) is enabled</string>
        </property>
       </widget>
+      <widget class="QGroupBox" name="groupBox_4">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>591</width>
+         <height>211</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
+      </widget>
+      <zorder>groupBox_4</zorder>
+      <zorder>groupBoxBooleanOptions</zorder>
+      <zorder>layoutWidgetGuiOptions</zorder>
+      <zorder>labelRestartNeeded</zorder>
+      <zorder>label_6</zorder>
+      <zorder>label_19</zorder>
      </widget>
      <widget class="QWidget" name="tabJackSync">
       <property name="toolTip">
@@ -1924,7 +1991,7 @@ connects to the MIDI I/O ports it finds.</string>
          <x>10</x>
          <y>259</y>
          <width>349</width>
-         <height>131</height>
+         <height>151</height>
         </rect>
        </property>
        <property name="title">
@@ -1937,7 +2004,7 @@ connects to the MIDI I/O ports it finds.</string>
         <property name="geometry">
          <rect>
           <x>8</x>
-          <y>20</y>
+          <y>10</y>
           <width>291</width>
           <height>17</height>
          </rect>
@@ -1978,7 +2045,7 @@ setting of Start mode)</string>
        <property name="geometry">
         <rect>
          <x>31</x>
-         <y>324</y>
+         <y>300</y>
          <width>141</width>
          <height>64</height>
         </rect>
@@ -2028,10 +2095,10 @@ in the Song Editor.</string>
       <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
-         <x>370</x>
-         <y>268</y>
+         <x>380</x>
+         <y>270</y>
          <width>211</width>
-         <height>101</height>
+         <height>121</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -2039,6 +2106,9 @@ in the Song Editor.</string>
          <widget class="QLabel" name="label_25">
           <property name="text">
            <string>JACK Transport</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -2074,21 +2144,40 @@ in the Song Editor.</string>
           </property>
          </widget>
         </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </widget>
       <widget class="QGroupBox" name="groupBox">
        <property name="geometry">
         <rect>
-         <x>369</x>
-         <y>259</y>
+         <x>370</x>
+         <y>260</y>
          <width>251</width>
-         <height>131</height>
+         <height>151</height>
         </rect>
        </property>
        <property name="title">
         <string/>
        </property>
       </widget>
+      <zorder>groupBox</zorder>
+      <zorder>r_group_jack_transport</zorder>
+      <zorder>layoutWidgetJackTransport</zorder>
+      <zorder>r_group_jack_start</zorder>
+      <zorder>layoutWidgetJack</zorder>
+      <zorder>layoutWidget</zorder>
      </widget>
      <widget class="QWidget" name="tabPlayOptions">
       <property name="toolTip">
@@ -2102,7 +2191,7 @@ in the Song Editor.</string>
         <rect>
          <x>9</x>
          <y>9</y>
-         <width>710</width>
+         <width>701</width>
          <height>125</height>
         </rect>
        </property>
@@ -2192,8 +2281,8 @@ the default PPQN.</string>
        <property name="geometry">
         <rect>
          <x>9</x>
-         <y>180</y>
-         <width>710</width>
+         <y>190</y>
+         <width>701</width>
          <height>132</height>
         </rect>
        </property>
@@ -2294,7 +2383,7 @@ the default PPQN.</string>
         <rect>
          <x>9</x>
          <y>330</y>
-         <width>710</width>
+         <width>701</width>
          <height>125</height>
         </rect>
        </property>
@@ -2380,9 +2469,9 @@ the default PPQN.</string>
       <widget class="QLabel" name="label_ppqn">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>141</y>
-         <width>47</width>
+         <x>20</x>
+         <y>150</y>
+         <width>61</width>
          <height>21</height>
         </rect>
        </property>
@@ -2400,7 +2489,6 @@ the default PPQN.</string>
        </property>
        <property name="font">
         <font>
-         <family>Sans</family>
          <pointsize>11</pointsize>
          <bold>true</bold>
         </font>
@@ -2408,12 +2496,15 @@ the default PPQN.</string>
        <property name="text">
         <string>PPQN </string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
       </widget>
       <widget class="QLabel" name="label_ppqn_2">
        <property name="geometry">
         <rect>
-         <x>200</x>
-         <y>141</y>
+         <x>220</x>
+         <y>155</y>
          <width>460</width>
          <height>18</height>
         </rect>
@@ -2443,8 +2534,8 @@ the default PPQN.</string>
       <widget class="QComboBox" name="combo_box_ppqn">
        <property name="geometry">
         <rect>
-         <x>80</x>
-         <y>141</y>
+         <x>100</x>
+         <y>150</y>
          <width>100</width>
          <height>26</height>
         </rect>
@@ -2476,6 +2567,33 @@ Seq66 exits.</string>
         <bool>true</bool>
        </property>
       </widget>
+      <widget class="QGroupBox" name="groupBox_5">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>140</y>
+         <width>701</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>aakar</family>
+         <pointsize>11</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
+      </widget>
+      <zorder>groupBox_5</zorder>
+      <zorder>group_flags</zorder>
+      <zorder>group_setsmode</zorder>
+      <zorder>group_startmode</zorder>
+      <zorder>label_ppqn</zorder>
+      <zorder>label_ppqn_2</zorder>
+      <zorder>combo_box_ppqn</zorder>
      </widget>
      <widget class="QWidget" name="tabMetronome">
       <attribute name="title">
@@ -2485,7 +2603,7 @@ Seq66 exits.</string>
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>28</y>
+         <y>20</y>
          <width>203</width>
          <height>200</height>
         </rect>
@@ -2509,25 +2627,6 @@ Seq66 exits.</string>
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout_3" columnstretch="6,2">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_metro_bpb">
-            <property name="font">
-             <font>
-              <pointsize>11</pointsize>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Beats/bar</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="lineedit_metro_beats_per_bar"/>
-          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_metro_beat_width">
             <property name="font">
@@ -2544,8 +2643,40 @@ Seq66 exits.</string>
             </property>
            </widget>
           </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineedit_metro_beats_per_bar"/>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_metro_bpb">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Beats/bar</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="lineedit_metro_beat_width"/>
+          </item>
+          <item row="2" column="0">
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </item>
@@ -2618,7 +2749,7 @@ Seq66 exits.</string>
        <property name="geometry">
         <rect>
          <x>222</x>
-         <y>28</y>
+         <y>20</y>
          <width>325</width>
          <height>201</height>
         </rect>
@@ -2765,6 +2896,19 @@ Seq66 exits.</string>
          </layout>
         </item>
         <item>
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <widget class="QPushButton" name="button_metro_reload">
           <property name="minimumSize">
            <size>
@@ -2783,7 +2927,7 @@ Seq66 exits.</string>
        <property name="geometry">
         <rect>
          <x>21</x>
-         <y>241</y>
+         <y>260</y>
          <width>521</width>
          <height>105</height>
         </rect>
@@ -2985,6 +3129,37 @@ Seq66 exits.</string>
         </item>
        </layout>
       </widget>
+      <widget class="QGroupBox" name="groupBox_6">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>571</width>
+         <height>231</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_7">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>250</y>
+         <width>571</width>
+         <height>121</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
+      </widget>
+      <zorder>groupBox_7</zorder>
+      <zorder>groupBox_6</zorder>
+      <zorder>metroLayoutWidget</zorder>
+      <zorder>metroLayoutWidget2</zorder>
+      <zorder>layoutWidgetMetro</zorder>
      </widget>
      <widget class="QWidget" name="tabPattern">
       <attribute name="title">
@@ -3011,7 +3186,7 @@ Seq66 exits.</string>
        <widget class="QComboBox" name="comboBoxRecordStyle">
         <property name="geometry">
          <rect>
-          <x>36</x>
+          <x>30</x>
           <y>300</y>
           <width>161</width>
           <height>28</height>
@@ -3036,7 +3211,7 @@ Seq66 exits.</string>
        <widget class="QLabel" name="labelRecordStyle">
         <property name="geometry">
          <rect>
-          <x>18</x>
+          <x>8</x>
           <y>274</y>
           <width>181</width>
           <height>16</height>
@@ -3052,7 +3227,7 @@ Seq66 exits.</string>
          <string>Record Loop Style</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignCenter</set>
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
        </widget>
        <widget class="QWidget" name="layoutWidgetRecordStyle">
@@ -3120,7 +3295,7 @@ Seq66 exits.</string>
       <widget class="QGroupBox" name="groupBoxRandomization">
        <property name="geometry">
         <rect>
-         <x>272</x>
+         <x>250</x>
          <y>32</y>
          <width>401</width>
          <height>131</height>
@@ -3238,7 +3413,7 @@ Seq66 exits.</string>
       <widget class="QGroupBox" name="groupBoxUsrOptions">
        <property name="geometry">
         <rect>
-         <x>271</x>
+         <x>250</x>
          <y>168</y>
          <width>401</width>
          <height>89</height>
@@ -3251,7 +3426,7 @@ Seq66 exits.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>30</y>
+          <y>40</y>
           <width>371</width>
           <height>28</height>
          </rect>
@@ -3270,7 +3445,7 @@ Seq66 exits.</string>
       <widget class="QLabel" name="label_21">
        <property name="geometry">
         <rect>
-         <x>28</x>
+         <x>30</x>
          <y>40</y>
          <width>191</width>
          <height>18</height>
@@ -3289,7 +3464,7 @@ Seq66 exits.</string>
       <widget class="QLabel" name="label_22">
        <property name="geometry">
         <rect>
-         <x>280</x>
+         <x>260</x>
          <y>40</y>
          <width>171</width>
          <height>18</height>
@@ -3308,8 +3483,8 @@ Seq66 exits.</string>
       <widget class="QLabel" name="label_23">
        <property name="geometry">
         <rect>
-         <x>280</x>
-         <y>172</y>
+         <x>260</x>
+         <y>180</y>
          <width>261</width>
          <height>18</height>
         </rect>
@@ -3412,7 +3587,7 @@ Seq66 exits.</string>
          <x>336</x>
          <y>10</y>
          <width>341</width>
-         <height>189</height>
+         <height>141</height>
         </rect>
        </property>
        <property name="font">
@@ -3427,9 +3602,7 @@ Seq66 exits.</string>
 NSM session.  The check-mark causes Seq66
 to run as if in NSM, for debugging. JACK 
 session management occurs only if checked, 
-even if Seq66 is run by it. 
-
-For many changes, restart is required.</string>
+even if Seq66 is run by it.</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_nsm_url">
@@ -4146,9 +4319,9 @@ path added to this name is stripped.</string>
        <widget class="QLabel" name="label_cannot_alter">
         <property name="geometry">
          <rect>
-          <x>210</x>
-          <y>2</y>
-          <width>481</width>
+          <x>200</x>
+          <y>7</y>
+          <width>471</width>
           <height>22</height>
          </rect>
         </property>
@@ -4198,10 +4371,10 @@ path added to this name is stripped.</string>
       <widget class="QLabel" name="label_exit_required">
        <property name="geometry">
         <rect>
-         <x>0</x>
-         <y>440</y>
-         <width>671</width>
-         <height>22</height>
+         <x>330</x>
+         <y>160</y>
+         <width>341</width>
+         <height>31</height>
         </rect>
        </property>
        <property name="font">
@@ -4212,7 +4385,8 @@ path added to this name is stripped.</string>
         </font>
        </property>
        <property name="text">
-        <string>* The changes made require a complete exit and re-run. Save your work first.</string>
+        <string>* The changes made require a complete
+   exit and re-run. Save your work first.</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -4221,8 +4395,8 @@ path added to this name is stripped.</string>
       <widget class="QLabel" name="label_3">
        <property name="geometry">
         <rect>
-         <x>19</x>
-         <y>466</y>
+         <x>10</x>
+         <y>450</y>
          <width>101</width>
          <height>22</height>
         </rect>
@@ -4238,7 +4412,7 @@ path added to this name is stripped.</string>
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>494</y>
+         <y>485</y>
          <width>101</width>
          <height>22</height>
         </rect>
@@ -4254,7 +4428,7 @@ path added to this name is stripped.</string>
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>465</y>
+         <y>456</y>
          <width>491</width>
          <height>28</height>
         </rect>
@@ -4270,7 +4444,7 @@ PATH.
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>495</y>
+         <y>486</y>
          <width>491</width>
          <height>28</height>
         </rect>
@@ -4286,7 +4460,7 @@ or /usr/bin/zathura.
        <property name="geometry">
         <rect>
          <x>639</x>
-         <y>468</y>
+         <y>459</y>
          <width>28</width>
          <height>24</height>
         </rect>
@@ -4302,7 +4476,7 @@ or /usr/bin/zathura.
        <property name="geometry">
         <rect>
          <x>639</x>
-         <y>499</y>
+         <y>490</y>
          <width>28</width>
          <height>24</height>
         </rect>
@@ -4314,6 +4488,46 @@ or /usr/bin/zathura.
         <string>...</string>
        </property>
       </widget>
+      <widget class="QGroupBox" name="groupBox_8">
+       <property name="geometry">
+        <rect>
+         <x>8</x>
+         <y>139</y>
+         <width>301</width>
+         <height>71</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_9">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>440</y>
+         <width>671</width>
+         <height>91</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
+      </widget>
+      <zorder>groupBox_8</zorder>
+      <zorder>group_session</zorder>
+      <zorder>label_session</zorder>
+      <zorder>label_nsm_url</zorder>
+      <zorder>lineEditNsmUrl</zorder>
+      <zorder>groupBoxSaveAtExit</zorder>
+      <zorder>label_exit_required</zorder>
+      <zorder>label_3</zorder>
+      <zorder>label_24</zorder>
+      <zorder>lineEditBrowser</zorder>
+      <zorder>lineEditPdfViewer</zorder>
+      <zorder>pushButtonSetBrowser</zorder>
+      <zorder>pushButtonSetPdfViewer</zorder>
+      <zorder>groupBox_9</zorder>
      </widget>
     </widget>
    </item>
