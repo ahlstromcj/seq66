@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.15
 Chris Ahlstrom
-2015-07-10 to 2024-10-15
+2015-07-10 to 2024-10-19
 
 # Change Log
 
@@ -14,9 +14,15 @@ Chris Ahlstrom
 ### Fixed
 
 - Some font handling in the various tabs and windows.
+- Cleaned up the configuration dialogs.
 - The file-selection dialog(s) when no file-extension is used.
 - An error in getting the name of the mutes file in the Preference's
   Session tab.
+
+### Changed
+
+- Updating configure.ac to disable, and not allow enabling, of JACK,
+  NSM, and liblo (OSC) if libraries not installed.
 
 ## [0.99.14]
 

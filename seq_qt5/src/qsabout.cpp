@@ -65,7 +65,6 @@ qsabout::qsabout (QWidget * parent) : QDialog (parent), ui (new Ui::qsabout)
     std::string vertag = seq_version_text();
     ui->topLabel->setText(qt(apptag));
     ui->versionLabel->setText(qt(vertag));
-
     ui->label_filter24_seq24->setOpenExternalLinks(true);
     ui->label_github_seq66->setOpenExternalLinks(true);
     ui->label_github_seq32->setOpenExternalLinks(true);

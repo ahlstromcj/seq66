@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-01-13
+ * \updates       2024-10-19
  * \license       GNU GPLv2 or above
  *
  *  Copyright (C) 2013-2024 Chris Ahlstrom <ahlstromcj@gmail.com>
@@ -66,7 +66,8 @@
  *       -  SEQ66_PLATFORM_XSI
  *       -  SEQ66_PLATFORM_MINGW
  *       -  SEQ66_PLATFORM_MING_OR_WINDOWS
- *       -  SEQ66_PLATFORM_CYGWIN
+ *       -  SEQ66_PLATFORM_MING_OR_UNIX
+ *       -  SEQ66_PLATFORM_CYGWIN etc.
  *    -  API:
  *       -  SEQ66_PLATFORM_POSIX_API (alternative to POSIX)
  *    -  Language:
@@ -100,7 +101,6 @@
  *    conformance, many defined it to 1.  Ancient news!
  */
 
-#undef SEQ66_MING_OR_WINDOWS
 #undef SEQ66_PLATFORM_32_BIT
 #undef SEQ66_PLATFORM_64_BIT
 #undef SEQ66_PLATFORM_CLANG
@@ -111,14 +111,21 @@
 #undef SEQ66_PLATFORM_DEBUG
 #undef SEQ66_PLATFORM_FREEBSD
 #undef SEQ66_PLATFORM_GNU
+#undef SEQ66_PLATFORM_IPHONE_OS
 #undef SEQ66_PLATFORM_LINUX
 #undef SEQ66_PLATFORM_MACOSX
 #undef SEQ66_PLATFORM_MINGW
+#undef SEQ66_PLATFORM_MING_OR_UNIX
+#undef SEQ66_PLATFORM_MING_OR_WINDOWS
 #undef SEQ66_PLATFORM_MSVC
 #undef SEQ66_PLATFORM_POSIX_API
 #undef SEQ66_PLATFORM_RELEASE
 #undef SEQ66_PLATFORM_UNIX
+#undef SEQ66_PLATFORM_WIN32_STRICT
 #undef SEQ66_PLATFORM_WINDOWS
+#undef SEQ66_PLATFORM_WINDOWS_32
+#undef SEQ66_PLATFORM_WINDOWS_64
+#undef SEQ66_PLATFORM_WINDOWS_UNICODE
 #undef SEQ66_PLATFORM_XSI
 
 /**
@@ -130,15 +137,35 @@
 #if defined Windows                     /* defined by nar-maven-plugin      */
 #define SEQ66_PLATFORM_WINDOWS
 #else
-#if defined _WIN32 || defined _WIN64    /* defined by Microsoft compiler    */
+
+#if defined _WIN32                      /* defined by Microsoft compiler    */
+#define SEQ66_PLATFORM_WINDOWS_32
 #define SEQ66_PLATFORM_WINDOWS
 #define Windows
+#define SEQ66_PLATFORM_32_BIT
 #else
-#if defined WIN32 || defined WIN64      /* defined by Mingw compiler        */
+#if defined WIN32                       /* defined by Mingw compiler        */
+#define SEQ66_PLATFORM_WINDOWS_32
 #define SEQ66_PLATFORM_WINDOWS
 #define Windows
+#define SEQ66_PLATFORM_32_BIT
 #endif
 #endif
+
+#if defined _WIN64                      /* defined by Microsoft compiler    */
+#define SEQ66_PLATFORM_WINDOWS_64
+#define SEQ66_PLATFORM_WINDOWS
+#define Windows
+#define SEQ66_PLATFORM_64_BIT
+#else
+#if defined WIN64                       /* defined by Mingw compiler        */
+#define SEQ66_PLATFORM_WINDOWS_64
+#define SEQ66_PLATFORM_WINDOWS
+#define Windows
+#define SEQ66_PLATFORM_64_BIT
+#endif
+#endif
+
 #endif
 
 /**
@@ -147,6 +174,7 @@
 
 #if defined __FreeBSD__
 #define SEQ66_PLATFORM_FREEBSD
+#define SEQ66_PLATFORM_PTHREADS
 #define SEQ66_PLATFORM_UNIX
 #endif
 
@@ -165,6 +193,13 @@
 #endif
 
 #if defined SEQ66_PLATFORM_LINUX
+
+#if ! defined POSIX
+#define POSIX                          /* defined for legacy code purposes  */
+#endif
+
+#define SEQ66_PLATFORM_POSIX_API
+#define SEQ66_PLATFORM_PTHREADS
 #define SEQ66_PLATFORM_UNIX
 #endif                                 /* SEQ66_PLATFORM_LINUX              */
 
@@ -309,9 +344,35 @@
 
 #endif
 
-#if defined __MINGW32__ || defined __MINGW64__
+/*
+ * SEQ66_PLATFORM_WIN32_STRICT replaces checks for WIN32 with CYGWIN not
+ * defined.
+ */
+
+#if defined __CYGWIN__
+#if defined __CYGWIN32__
+#define SEQ66_PLATFORM_CYGWIN
+#define SEQ66_PLATFORM_WINDOWS_32
+#elif defined __CYGWIN64__
+#endif
+#define SEQ66_PLATFORM_CYGWIN
+#define SEQ66_PLATFORM_WINDOWS_64
+#else
+#if defined SEQ66_PLATFORM_WINDOWS_32
+#define SEQ66_PLATFORM_WIN32_STRICT
+#endif
+#endif
+
+#if defined __MINGW32__
 #define SEQ66_PLATFORM_MINGW
 #define SEQ66_PLATFORM_WINDOWS
+#define SEQ66_PLATFORM_WINDOWS_32
+#endif
+
+#if defined __MINGW64__
+#define SEQ66_PLATFORM_MINGW
+#define SEQ66_PLATFORM_WINDOWS
+#define SEQ66_PLATFORM_WINDOWS_64
 #endif
 
 #if defined SEQ66_PLATFORM_WINDOWS
@@ -326,11 +387,11 @@
 #define _WIN32_WINNT        0x0500
 #endif
 
-#endif  // defined SEQ66_PLATFORM_WINDOWS
-
-#if defined __CYGWIN32__
-#define SEQ66_PLATFORM_CYGWIN
+#if defined UNICODE || defined _UNICODE
+#define SEQ66_PLATFORM_WINDOWS_UNICODE
 #endif
+
+#endif  // defined SEQ66_PLATFORM_WINDOWS
 
 /**
  *  Provides a way to flag unused parameters at each "usage", without disabling

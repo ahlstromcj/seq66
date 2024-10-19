@@ -6,10 +6,10 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
 #ifndef SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2022-09-04"
+#define SEQ66_VERSION_DATE_SHORT "2024-10-19"
 #endif
 #ifndef SEQ66_VERSION
-#define SEQ66_VERSION "0.99.1"
+#define SEQ66_VERSION "0.99.15"
 #endif
 
 
@@ -255,7 +255,7 @@
 
 /* Define to the full name and version of this package. */
 #ifndef SEQ66_PACKAGE_STRING
-#define SEQ66_PACKAGE_STRING "Seq66 0.99.1"
+#define SEQ66_PACKAGE_STRING "Seq66 0.99.15"
 #endif
 
 /* Define to the one symbol short name of this package. */
@@ -270,7 +270,7 @@
 
 /* Define to the version of this package. */
 #ifndef SEQ66_PACKAGE_VERSION
-#define SEQ66_PACKAGE_VERSION "0.99.1"
+#define SEQ66_PACKAGE_VERSION "0.99.15"
 #endif
 
 /* Indicates if portmidi is enabled */
@@ -297,7 +297,7 @@
 
 /* Version number of package */
 #ifndef SEQ66_VERSION
-#define SEQ66_VERSION "0.99.1"
+#define SEQ66_VERSION "0.99.15"
 #endif
 
 /* Define to 1 if the X Window System is missing or not being used. */
@@ -319,7 +319,5 @@
 #/**/undef/**/ SEQ66_RTMIDI_SUPPORT
 #endif
 
-
- 
 /* once: _INCLUDE_SEQ___CONFIG_H */
 #endif

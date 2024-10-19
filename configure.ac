@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2024-08-25
+dnl \update        2024-10-19
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -295,32 +295,31 @@ if test "$mingw" = "yes" ; then
    X_LIBS=""
 fi
 
-dnl JACK support
-
-AC_ARG_ENABLE(jack,
-    [AS_HELP_STRING(--disable-jack, [Disable JACK support])],
-    [jack=$enableval],
-    [jack=yes])
-
+dnl JACK support, plus session and metadata support.
 dnl JACK session support is now deprecated (circa 2020-10-26), but still the
 dnl default for this option is 'yes'. JACK recommends using NSM instead! But
 dnl Seq66 will support it for awhile yet.
-
-AC_ARG_ENABLE(jack-session,
-    [AS_HELP_STRING(--disable-jack-session, [Disable JACK session support])],
-    [jack_session=$enableval],
-    [jack_session=yes])
-
 dnl JACK metadata, seems to work, so now enabled by default.
 
-AC_ARG_ENABLE(jack-metadata,
-    [AS_HELP_STRING(--disable-jack-metadata, [Disable JACK metadata support])],
-    [jack_metadata=$enableval],
-    [jack_metadata=yes])
+PKG_CHECK_MODULES(JACK, jack >= 0.90.0, jack_found="yes", jack_found="no")
+if test "$jack_found" = "yes" ; then
 
-if test "$jack" != "no" ; then
-    PKG_CHECK_MODULES(JACK, jack >= 0.90.0, jack_found="yes", jack_found="no")
-    if test "$jack_found" = "yes" ; then
+    AC_ARG_ENABLE(jack,
+        [AS_HELP_STRING(--disable-jack, [Disable JACK support])],
+        [jack=$enableval],
+        [jack=yes])
+
+    AC_ARG_ENABLE(jack-session,
+        [AS_HELP_STRING(--disable-jack-session, [Disable JACK session])],
+        [jack_session=$enableval],
+        [jack_session=yes])
+
+    AC_ARG_ENABLE(jack-metadata,
+        [AS_HELP_STRING(--disable-jack-metadata, [Disable JACK metadata])],
+        [jack_metadata=$enableval],
+        [jack_metadata=yes])
+
+    if test "$jack" != "no" ; then
         AC_DEFINE(JACK_SUPPORT, 1, [Define to enable JACK driver])
         AC_SUBST(JACK_CFLAGS)
         AC_SUBST(JACK_LIBS)
@@ -350,11 +349,9 @@ if test "$jack" != "no" ; then
                 AC_MSG_RESULT([JACK metadata support enabled]);
             fi
         fi
-    else
-        AC_MSG_WARN([No JACK library, disabling JACK])
     fi
 else
-    AC_MSG_NOTICE([JACK disabled in the configuration]);
+    AC_MSG_WARN([No JACK library, disabling JACK])
 fi
 
 dnl Port-refresh support.  Far from ready for prime-time, but added for
@@ -376,39 +373,36 @@ AC_SUBST(MIDI_PORT_REFRESH)
 
 dnl LASH support has been deleted, this time for good.  We will support only
 dnl JACK Session and NSM.  Enable NSM support.  Now ready for prime time!
-
-AC_ARG_ENABLE(nsm,
-  AS_HELP_STRING([--disable-nsm], [Disable NSM support]),
-  [ac_nsm=$enableval],
-  [ac_nsm=yes])
-
 dnl Check for now-required LIBLO library, needed only for NSM support.
-
-if test "$ac_nsm" != "no" ; then
-    PKG_CHECK_MODULES([LIBLO], [liblo], [ac_liblo="yes"], [ac_liblo="no"])
-    if test "$ac_liblo" = "yes" ; then
-        AC_DEFINE(LIBLO_SUPPORT, 1, [Define if LIBLO library is available])
-        AC_SUBST(LIBLO_CFLAGS)
-        AC_SUBST(LIBLO_LIBS)
-        AC_MSG_RESULT([LIBLO support for NSM enabled]);
-    else
-        AC_MSG_ERROR([LIBLO dev package not found, required for NSM])
-        ac_nsm="no"
-    fi
-fi
-
-dnl Check for NSM support.
 
 NSM_CFLAGS=
 NSM_LIBS=
 NSM_DEPS=
 
-if test "$ac_nsm" != "no" ; then
-    AC_DEFINE(NSM_SUPPORT, 1, [Define if NSM support is available])
-    NSM_CFLAGS="-I ../libsessions/include"
-    NSM_LIBS="-llo -L../libsessions/src/.libs/ -lsessions"
-    NSM_DEPS="../libsessions/src/.libs/libsessions.la"
-    AC_MSG_RESULT([Sessions/NSM support enabled]);
+PKG_CHECK_MODULES([LIBLO], [liblo], [ac_liblo="yes"], [ac_liblo="no"])
+if test "$ac_liblo" = "yes" ; then
+
+    AC_ARG_ENABLE(nsm,
+      AS_HELP_STRING([--disable-nsm], [Disable NSM support]),
+      [ac_nsm=$enableval],
+      [ac_nsm=yes])
+
+    AC_DEFINE(LIBLO_SUPPORT, 1, [Define if LIBLO library is available])
+    AC_SUBST(LIBLO_CFLAGS)
+    AC_SUBST(LIBLO_LIBS)
+    AC_MSG_RESULT([LIBLO support for NSM enabled]);
+
+    if test "$ac_nsm" != "no" ; then
+        AC_DEFINE(NSM_SUPPORT, 1, [Define if NSM support is available])
+        NSM_CFLAGS="-I ../libsessions/include"
+        NSM_LIBS="-llo -L../libsessions/src/.libs/ -lsessions"
+        NSM_DEPS="../libsessions/src/.libs/libsessions.la"
+        AC_MSG_RESULT([Sessions/NSM support enabled]);
+    fi
+
+else
+    AC_MSG_ERROR([LIBLO dev package not found, required for NSM])
+    ac_nsm="no"
 fi
 
 AC_SUBST(NSM_CFLAGS)
@@ -548,7 +542,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2024-08-25"
+#define VERSION_DATE_SHORT "2024-10-19"
 #define API_VERSION "0.99"
 #define VERSION "0.99.15"
 
