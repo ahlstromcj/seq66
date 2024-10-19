@@ -401,7 +401,7 @@ if test "$ac_liblo" = "yes" ; then
     fi
 
 else
-    AC_MSG_ERROR([LIBLO dev package not found, required for NSM])
+    AC_MSG_WARN([LIBLO dev package not found, required for NSM])
     ac_nsm="no"
 fi
 
