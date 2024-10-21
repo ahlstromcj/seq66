@@ -1,10 +1,10 @@
 TO DO for Seq66 0.99.15
 Chris Ahlstrom
-2019-04-13 to 2024-10-17
+2019-04-13 to 2024-10-21
 
 From Testing:
 
-    -   Investigate possible issue with seq::to_string() in judyblue.mid.
+    -   Consider an option to start JACK if not already running.
     -   Update one-shot process documentation to indicate it is on the pattern
         editor. Fix any issues found.
     -   Get the 16-in-busses.midi file configured and working.

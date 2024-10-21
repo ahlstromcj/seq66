@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2024-10-19
+dnl \update        2024-10-21
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -19,7 +19,7 @@ dnl   INSTALL file.
 dnl
 dnl ---------------------------------------------------------------------------
 
-AC_PREREQ([2.69])
+AC_PREREQ([2.72])
 AC_REVISION($Revision: 0.99$)
 AC_INIT([Seq66],[0.99.15],[ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])
@@ -35,11 +35,7 @@ dnl avoiding naming conflicts in macros.
 
 AX_PREFIX_CONFIG_H([include/seq66-config.h], [seq66])
 
-dnl gcc/g++ configuration.
-
-dnl AC_PROG_INSTALL
-dnl AC_PROG_LN_S
-dnl AC_PROG_MKDIR_P
+dnl c/c++ configuration.
 
 AC_PROG_CC(gcc clang llvm-gcc)
 AC_PROG_CXX(g++ clang++ llvm-g++)
@@ -78,10 +74,10 @@ if test "$CXX" = "clang++" ; then
     ac_clang_active="yes"
 ],
 [
-   AC_MSG_RESULT([no])
-   AC_MSG_ERROR([Compiler could not find/parse C++ headers. Use CC=c-compiler CXX=c++-compiler ./configure ...])
+    AC_MSG_RESULT([no])
+    AC_MSG_ERROR([Compiler could not parse C++ headers. Use CC=c-compiler CXX=c++-compiler ./configure ...])
 ])
-   AC_LANG_POP([C++])
+    AC_LANG_POP([C++])
 fi
 
 LINKER_FLAGS=$ac_linker_flag
@@ -94,16 +90,32 @@ dnl Note that the BUILD_XXXX macros "merely" select which subdirectories we
 dnl descend into during the build.
 
 ac_build_docs="no"
+ac_build_windows="no"
 ac_build_portmidi="no"
 ac_build_qtmidi="yes"
 ac_build_rtcli="no"
 ac_build_rtmidi="yes"
 ac_build_sessions="yes"
 ac_build_testing="no"
-ac_need_qt="yes"
+ac_build_qt="yes"
+
+dnl Test for CYGWIN/MSYS2; this macro is marked as obsolete, though:
+dnl AC_CYGWIN. Instead, see AC_CANONICAL_HOST at the top of this file.
+dnl It uses the host_os variable.
+
+case $host_os in
+    *cygwin* | *msys* | windows*) ac_build_windows="yes";;
+	* ) ac_build_windows="no";;
+esac
+
+if test "$ac_build_windows" = "yes" ; then
+    ac_build_portmidi="yes"
+    ac_build_rtmidi="no"
+    ac_build_sessions="no"
+fi
 
 dnl Windows build not supported.  qmake and mingw are used for Windows code.
-
+dnl But we are trying to change that.
 dnl New for autoconf 2.60, prevents spurious datarootdir warnings.
 
 AC_DEFUN([AC_DATAROOTDIR_CHECKED])
@@ -138,9 +150,9 @@ dnl
 dnl Let's try a more universal method.
 
 AC_DEFINE_UNQUOTED(
-   APP_BUILD_ISSUE,
-   "[m4_normalize(esyscmd([uname -o]))]",
-   "Operating system of build")
+    APP_BUILD_ISSUE,
+    "[m4_normalize(esyscmd([uname -o]))]",
+    "Operating system of build")
 
 AC_DEFINE(CLIENT_NAME, ["seq66"], "Name to display as client/port")
 
@@ -275,15 +287,16 @@ if test -z "$DOXYGEN" ; then
 else
     AC_ARG_ENABLE(docs,
         [AS_HELP_STRING(--enable-docs, [Enable developer document support])],
-        [ac_build_docs=$enableval],
-        [ac_build_docs=no])
-fi
-
-if test "$ac_build_docs" = "yes" ; then
-    AC_CHECK_PROGS([LATEX], [latex])
-    if test -z "$LATEX" ; then
-        AC_MSG_WARN([LaTeX not found, no docs will be built])
-        ac_build_docs=no
+        [docs=$enableval],
+        [docs=no])
+    if test "$docs" != no ; then
+        ac_build_docs="yes"
+        AC_MSG_RESULT([Doxygen document build enabled])
+        AC_CHECK_PROGS([LATEX], [latex])
+        if test -z "$LATEX" ; then
+            AC_MSG_WARN([LaTeX not found, no docs will be built])
+            ac_build_docs="no"
+        fi
     fi
 fi
 
@@ -302,7 +315,7 @@ dnl Seq66 will support it for awhile yet.
 dnl JACK metadata, seems to work, so now enabled by default.
 
 PKG_CHECK_MODULES(JACK, jack >= 0.90.0, jack_found="yes", jack_found="no")
-if test "$jack_found" = "yes" ; then
+if test "$jack_found" = "yes" -a "$ac_build_windows" = "no" ; then
 
     AC_ARG_ENABLE(jack,
         [AS_HELP_STRING(--disable-jack, [Disable JACK support])],
@@ -357,12 +370,12 @@ fi
 dnl Port-refresh support.  Far from ready for prime-time, but added for
 dnl exploration and testing.  Disabled by default.
 
-AC_ARG_ENABLE(refresh,
+AC_ARG_ENABLE(port-refresh,
     [AS_HELP_STRING(--enable-port-refresh, [Enable JACK port refresh support])],
-    [ac_refresh=$enableval],
-    [ac_refresh=no])
+    [port_refresh=$enableval],
+    [port_refresh=no])
 
-if test "$ac_refresh" != "no" ; then
+if test "$port_refresh" != "no" ; then
     AC_DEFINE(MIDI_PORT_REFRESH, 1, [Define to enable JACK port refresh])
     AC_MSG_RESULT([JACK port refresh test code enabled])
 else
@@ -384,15 +397,15 @@ if test "$ac_liblo" = "yes" ; then
 
     AC_ARG_ENABLE(nsm,
       AS_HELP_STRING([--disable-nsm], [Disable NSM support]),
-      [ac_nsm=$enableval],
-      [ac_nsm=yes])
+      [nsm=$enableval],
+      [nsm=yes])
 
     AC_DEFINE(LIBLO_SUPPORT, 1, [Define if LIBLO library is available])
     AC_SUBST(LIBLO_CFLAGS)
     AC_SUBST(LIBLO_LIBS)
     AC_MSG_RESULT([LIBLO support for NSM enabled]);
 
-    if test "$ac_nsm" != "no" ; then
+    if test "$nsm" != "no" ; then
         AC_DEFINE(NSM_SUPPORT, 1, [Define if NSM support is available])
         NSM_CFLAGS="-I ../libsessions/include"
         NSM_LIBS="-llo -L../libsessions/src/.libs/ -lsessions"
@@ -401,8 +414,7 @@ if test "$ac_liblo" = "yes" ; then
     fi
 
 else
-    AC_MSG_ERROR([LIBLO dev package not found, required for NSM])
-    ac_nsm="no"
+    AC_MSG_WARN([LIBLO dev package not found, required for NSM])
 fi
 
 AC_SUBST(NSM_CFLAGS)
@@ -419,7 +431,7 @@ AC_ARG_ENABLE(both,
     [both=no])
 
 if test "$both" != "no" ; then
-    AC_MSG_RESULT([rtmidi Qt and command-line builds enabled]);
+    AC_MSG_RESULT([Both rtmidi Qt and command-line builds enabled]);
     if test "$mingw" != "yes" ; then
         ac_build_rtcli="yes"
         ac_build_qtmidi="yes"
@@ -429,20 +441,24 @@ fi
 
 dnl "rtmidi" support.  This is now the default build for Seq66.
 
-AC_ARG_ENABLE(rtmidi,
-    [AS_HELP_STRING(--disable-rtmidi, [Disable rtmidi MIDI engine])],
-    [rtmidi=$enableval],
-    [rtmidi=yes])
+if test "$ac_build_windows" = "no" ; then
 
-if test "$rtmidi" != "no" -o "$both" != "no" ; then
-    ac_build_rtmidi="yes"
-    AC_DEFINE(APP_NAME, ["qseq66"], [Names the JACK/ALSA version of application])
-    AC_DEFINE(APP_ENGINE, ["rtmidi"], [Names the MIDI engine of the application])
-    AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration file name])
-    AC_DEFINE(ICON_NAME, ["qseq66"], [Canonical icon name for Freedesktop])
-    AC_DEFINE(RTMIDI_SUPPORT, 1, [Indicates the rtmidi engine is enabled])
-    AM_PATH_ALSA(0.9.0)
-    AC_MSG_RESULT([rtmidi engine build enabled]);
+    AC_ARG_ENABLE(rtmidi,
+        [AS_HELP_STRING(--disable-rtmidi, [Disable rtmidi MIDI engine])],
+        [rtmidi=$enableval],
+        [rtmidi=yes])
+
+    if test "$rtmidi" != "no" -o "$both" != "no" ; then
+        ac_build_rtmidi="yes"
+        AC_DEFINE(APP_NAME, ["qseq66"], [Names the JACK/ALSA version of application])
+        AC_DEFINE(APP_ENGINE, ["rtmidi"], [Names the MIDI engine of the application])
+        AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration file name])
+        AC_DEFINE(ICON_NAME, ["qseq66"], [Canonical icon name for Freedesktop])
+        AC_DEFINE(RTMIDI_SUPPORT, 1, [Indicates the rtmidi engine is enabled])
+        AM_PATH_ALSA(0.9.0)
+        AC_MSG_RESULT([rtmidi engine build enabled]);
+    fi
+
 fi
 
 dnl "CLI" or "Command-line" support.
@@ -466,8 +482,7 @@ if test "$cli" != "no" ; then
         AC_DEFINE(RTMIDI_SUPPORT, 1, [Indicates that rtmidi is enabled])
         AM_PATH_ALSA(0.9.0)
     fi
-    ac_need_qt="no"
-    ac_qtmidi="no"
+    ac_build_qt="no"
 
 else
 
@@ -476,22 +491,22 @@ dnl application if not built for the headless mode.
 
 AC_ARG_ENABLE(qt,
     [AS_HELP_STRING(--disable-qt, [Disable Qt5 user-interface])],
-    [ac_qtmidi=$enableval],
-    [ac_qtmidi=yes])
-
+    [ac_build_qt=$enableval],
+    [ac_build_qt=yes])
 fi
 
 dnl Will set the default to yes later.  Will need to distinguish between rtmidi
 dnl and portmidi builds.
 
-if test "$ac_qtmidi" != "no" ; then
-    ac_build_qtmidi="yes"
+if test "$ac_build_qt" != "no" ; then
     AC_DEFINE(APP_NAME, ["qseq66"], [Name of the Qt/rtmidi application])
     AC_DEFINE(APP_ENGINE, ["rtmidi"], [Name of the MIDI engine])
     AC_DEFINE(APP_TYPE, ["qt5"], [Name of the UI of the application])
     AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration base file name])
     AC_DEFINE(ICON_NAME, ["qseq66"], [Canonical icon name for Freedesktop])
-    AM_PATH_ALSA(0.9.0)
+    if test "$ac_build_windows" != "yes" ; then
+        AM_PATH_ALSA(0.9.0)
+    fi
 if test "$ac_clang_active" = "yes" ; then
     AX_HAVE_QT_CLANG
 else
@@ -501,7 +516,8 @@ fi
 fi
 
 dnl portmidi support.  Deprecated for Linux, but we still build it, for
-dnl testing purposes. It needs the ALSA libraries to work.
+dnl testing purposes. It needs the ALSA libraries to work, in Linux, but
+dnl in Windows it uses the Windows MultiMedia API.
 
 AC_ARG_ENABLE(portmidi,
     [AS_HELP_STRING(--enable-portmidi, [Enable portmidi build)])],
@@ -538,11 +554,11 @@ AM_CONDITIONAL([BUILD_SESSIONS], [test "$ac_build_sessions" = "yes"])
 
 dnl 6.0  Top portion of the config.h/seq66-config.h header files.  The
 dnl      seq66-config.h header file has "SEQ66_" prepended to these
-dnl      automatically for us.
+dnl      macros automatically.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2024-10-19"
+#define VERSION_DATE_SHORT "2024-10-21"
 #define API_VERSION "0.99"
 #define VERSION "0.99.15"
 
