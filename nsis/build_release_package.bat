@@ -1,4 +1,4 @@
-@echo off
+REM REM @echo off
 :: **************************************************************************
 :: Seq66 Windows Build-Release Package
 :: --------------------------------------------------------------------------
@@ -40,7 +40,7 @@
 ::       1. Runs in Windows only.
 ::       2. Requires QtCreator to be installed, and configured to provide
 ::          the 32/64-bit Mingw tools, including mingw32-make.exe (there is
-::          no mingw64-make.exe, but the mingw730_32 and mingw730_64
+::          no mingw64-make.exe, but the mingw810_32 and mingw810_64
 ::          directories both have a binary by the name), and qmake.exe. 
 ::          The PATH must include the path to both executables. See "Path
 ::          Additions" below.  We have not tried the Microsoft C++ compiler
@@ -50,20 +50,21 @@
 ::
 :: Path Additions:
 ::
-::       QTVERSION=5.12.9
+::       QTVERSION=5.15.2
 ::
-::       1. C:\Qt\Qt5.12.9\5.12.9\mingw73_32\bin    (or 64-bit)
-::       2. C:\Qt\Qt5.12.9\Tools\mingw73_32\bin     (ditto)
-::       3. C:\Program Files\NSIS\bin               (if NSIS installed on Win)
-::       4. C:\Program File\Git\usr\bin etc.        (if Git Bash installed)
+::       1. C:\Qt\Qt5.15.2\mingw81_32\bin           (or 64-bit)
+::       2. C:\Qt\Tools\mingw810_32\bin             (ditto)
+::       3. C:\Program Files (x86)\NSIS\Bin         (if NSIS installed on Win)
+::       4. C:\Program Files\Git\mingw64\bin        (GNU commands like "xz")
+::       5. C:\Program Files\Git\usr\bin            (has only git and shells)
 ::
 ::      Depending on the versions some things will be different.
 ::
 ::       a. For earlier versions of Qt, might need to remove "Qt" from the
 ::          "Qt5.12.9" subdirectories.
-::       b. Might also need to change the "73" version number in "mingw73_32"
+::       b. Might also need to change the "81" version number in "mingw81_32"
 ::          in the paths.
-::       c. Can also change to 64-bit:  "mingw73_64".  In this case warnings or
+::       c. Can also change to 64-bit:  "mingw81_64".  In this case warnings or
 ::          errors might be exposed in the Windows PortMidi C files, though
 ::          we check both builds.
 ::
@@ -106,7 +107,7 @@
 ::             created anyway.
 ::       6. The result is a file such as "qpseq66-release-package-x64-0.90.1.7z".
 ::          It is found in seq66/../seq66-release-32/Seq66qt5.  Also, a
-::          log file is made in seq66/../seq66-release-32/make.log,
+::          log file is made in seq66/make.log,
 ::          which can be checked for build warnings and errors. If you cannot
 ::          find these files, search for 'seq66-release-32'.
 ::       7. In Linux, one can copy this 7z file to the root 'seq66' directory.
@@ -186,34 +187,36 @@ set PROJECT_DRIVE=C:
 :: set PROJECT_BITS=64
 
 set PROJECT_BITS=64
-set QTVERSION=5.12.9
-set QTPATH=C:\Qt\Qt%QTVERSION%\%QTVERSION%
-set QMAKE=%QTPATH%\mingw73_%PROJECT_BITS%\bin\qmake.exe
+set QTVERSION=5.15.2
+set MINGVERSION=mingw81
+set TOOLVERSION=mingw810
+set QTPATH=C:\Qt\%QTVERSION%
+set QMAKE=%QTPATH%\%MINGVERSION%_%PROJECT_BITS%\bin\qmake.exe
 set QMAKEOPTS=-makefile -recursive
-set MAKEPATH=C:\Qt\Qt%QTVERSION%\Tools\mingw730_%PROJECT_BITS%\bin
 
-:: set MINGMAKE=mingw32-make
-:: set MINGMAKE=%MING64MAKE%
-:: if %PROJECT_BITS%==32 set MINGMAKE=%MING32MAKE%
+:: Old:
+:: set MAKEPATH=C:\Qt\Qt%QTVERSION%\Tools\%TOOLVERSION%_%PROJECT_BITS%\bin
 
+set MAKEPATH=C:\Qt\Tools\%TOOLVERSION%_%PROJECT_BITS%\bin
 set MINGMAKE=%MAKEPATH%\mingw32-make
 
 :: This is where the seq66 and the shadow build directories reside. Adjust
 :: them for your setup.
 
-set PROJECT_BASE=\Users\Chris\Documents\Home
+set PROJECT_BASE=\Users\%USERNAME%\Documents\git
 set NSIS_PLATFORM=Windows
 
-:: No need to change the following. PROJECT_REL_ROOT is relative to the
-:: Qt shadow build directory that is created in PROJECT_BASE.
+:: PROJECT_REL_ROOT is relative to the Qt shadow build directory created
+:: in PROJECT_BASE.
 
 set PROJECT_NAME=seq66
 set PROJECT_TREE=%PROJECT_DRIVE%%PROJECT_BASE%\%PROJECT_NAME%
 set PROJECT_REL_ROOT=..\seq66
 set PROJECT_PRO=seq66.pro
 set PROJECT_7ZIP=qpseq66-release-package-x%PROJECT_BITS%-%PROJECT_VERSION%.7z
-set SHADOW_DIR=seq66-release-%PROJECT_BITS%
+set SHADOW_DIR=..\seq66-release-%PROJECT_BITS%
 set APP_DIR=Seq66qt5
+set LOG=..\seq66\make.log
 set RELEASE_DIR=%APP_DIR%\release
 set AUX_DIR=data
 set DOC_DIR=data\share\doc
@@ -224,53 +227,53 @@ set INFO_DIR=data\share\doc\info
 
 set CONFIG_SET="CONFIG += release WIN%PROJECT_BITS%"
 
-:: Set the current drive (normally C:)
+:: Set the current drive (normally C:). Then change to the user's git
+:: directory + seq66. We now put the make.log file there instead of the
+:: shadow directory.
 
 %PROJECT_DRIVE%
-
-:: cd \Users\Chris\Documents\Home and show it for comfort
-
-cd %PROJECT_BASE%
-cd
+cd %PROJECT_BASE%\%PROJECT_NAME%
+echo Starting the build for this project directory: > make.log 2>&1
+cd >> make.log 2>&1
 del /S /Q %SHADOW_DIR%\*.* > NUL
-echo Recreating Qt shadow directory %SHADOW_DIR% ...
+echo Recreating Qt shadow directory %SHADOW_DIR% ... >> make.log 2>&1
 rmdir %SHADOW_DIR%
 mkdir %SHADOW_DIR%
 
 :: Make sure the supplementary batch files are in the shadow directory.
 
-echo Copying %PROJECT_TREE%\nsis\winddeploybruteforce.bat to %SHADOW_DIR%
-copy %PROJECT_TREE%\nsis\winddeploybruteforce.bat %SHADOW_DIR%
 cd %SHADOW_DIR%
 set > environment.log
-
-:: qmake -makefile -recursive "CONFIG += release" ..\seq66\seq66.pro
-::
-:: Note that "if ERRORLEVEL n" means "if ERRORLEVEL >= n".  Tricky.
-
-cd
-echo %QMAKE% %QMAKEOPTS% %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO%
-echo %MINGMAKE% (output to make.log)
+cd >> %LOG% 2>&1
 
 :: TODO: add "-spec win32-g++" for 32 bit and ??? for 64-bit
 
-%QMAKE% %QMAKEOPTS% %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO% > make.log 2>&1
-%MINGMAKE% >> make.log 2>&1
-if ERRORLEVEL 1 goto builderror
+echo %QMAKE% %QMAKEOPTS% %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO% >> %LOG% 2>&1
+%QMAKE% %QMAKEOPTS% %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO% >> %LOG% 2>&1
+echo %MINGMAKE% with output to make.log >> %LOG% 2>&1
+%MINGMAKE% >> %LOG% 2>&1
 
-if %PROJECT_BITS%==64 goto windep64
-call winddeploybruteforce %QTVERSION% mingw73_32 %RELEASEDIR%
+PAUSE
+
+if %ERRORLEVEL% NEQ 0 goto builderror
+
+echo Compiling and linking succeeded >> %LOG% 2>&1
+
+if %PROJECT_BITS% EQU 64 goto windep64
+echo Running brute-force windeploy ... >> %LOG% 2>&1
+call ..\seq66\nsis\winddeploybruteforce %QTVERSION% %MINGVERSION%_32 %RELEASEDIR%
 goto makerels
 
 :: windeployqt Seq66qt5\release
 
 :windep64
 
-echo Creating deployment area via windeployqt %RELEASE_DIR%
+echo Creating deployment area via windeployqt %RELEASE_DIR% >> %LOG% 2>&1
 windeployqt %RELEASE_DIR%
 
 :makerels
 
+echo Creating data directories in %RELEASE_DIR% >> %LOG% 2>&1
 echo mkdir %RELEASE_DIR%\%AUX_DIR%
 echo mkdir %RELEASE_DIR%\%DOC_DIR%
 echo mkdir %RELEASE_DIR%\%TUTORIAL_DIR%
@@ -317,58 +320,60 @@ xcopy %PROJECT_REL_ROOT%\%DOC_DIR%\info\*.* %RELEASE_DIR%\%INFO_DIR% /f /s /e /y
 :: pushd Seq66qt5
 :: 7z a -r qppseq66-nsis-ready-package-DATE.7z release\*
 
-echo The build DLLs and EXE are in %SHADOW_DIR%\%RELEASE_DIR%
+echo The build DLLs and EXE are in %SHADOW_DIR%\%RELEASE_DIR% >> %LOG% 2>&1
 pushd %APP_DIR%
-echo Making 7zip package in %APP_DIR%...
+echo Making 7zip package in %APP_DIR%... >> %LOG% 2>&1
 cd
-echo 7z a -r %PROJECT_7ZIP% release\*
+echo 7z a -r %PROJECT_7ZIP% release\* >> %LOG% 2>&1
 del *.o
 7z a -r %PROJECT_7ZIP% release\*
 popd
 
 :: Test for a properly set up NSIS on Windows.
 
+echo Testing for Windows NSIS (makensis) ... >> %LOG% 2>&1
 makensis /version
-if ERRORLEVEL 0 goto nsisexists
+if %ERRORLEVEL% NEQ 0 goto nsisexists
 
+echo NSIS "makensis" for Windows not found, skipping it... >> %LOG% 2>&1
 set NSIS_PLATFORM=Linux
 
 :: Here we are seq66-release-64 (or 32).
 
 :nsisexists
 
-if NOT %NSIS_PLATFORM%==Windows goto skipnsis
+if NOT %NSIS_PLATFORM% EQU Windows goto skipnsis
 
-echo Copying the 7zip package to the project tree...
+echo Copying the 7zip package to the project tree... >> %LOG% 2>&1
 del /S /Q %PROJECT_TREE%\release\*.* > NUL
 copy %APP_DIR%\%PROJECT_7ZIP% %PROJECT_TREE%
 cd %PROJECT_TREE%
-echo Unpacking the 7zip package, %PROJECT_7ZIP% ...
+echo Unpacking the 7zip package, %PROJECT_7ZIP% ... >> %LOG% 2>&1
 7z x %PROJECT_7ZIP%
-echo Building a Windows installer using NSIS...
+echo Building a Windows installer using NSIS... >> %LOG% 2>&1
 cd %PROJECT_TREE%
 pushd nsis
 makensis Seq66Setup.nsi
-echo If makensis succeeded, the installer is located in
-echo %PROJECT_TREE%\release, named like "seq66_setup_VERSION.exe".
+echo If makensis succeeded, the installer is located in >> %LOG% 2>&1
+echo %PROJECT_TREE%\release, named like "seq66_setup_VERSION.exe". >> %LOG% 2>&1
 popd
 goto done
 
 :builderror
 
-echo %MINGMAKE% failed, aborting! Check make.log for errors.
+echo %MINGMAKE% failed, aborting! Check %LOG% for errors. >> %LOG% 2>&1
 goto ender
 
 :skipnsis
 
-echo The NSIS installer builder is not installed on this Window computer.
-echo In Linux, copy the %PROJECT_7ZIP% file to the project root ("seq66")
-echo and extract that file. The contents go into the "release" directory.
-echo Change to the "nsis" directory and run "makensis Seq66Setup.nsi".
+echo The NSIS installer builder is not installed on this Window computer. >> %LOG% 2>&1
+echo In Linux, copy the %PROJECT_7ZIP% file to the project root ("seq66") >> %LOG% 2>&1
+echo and extract that file. The contents go into the "release" directory. >> %LOG% 2>&1
+echo Change to the "nsis" directory and run "makensis Seq66Setup.nsi". >> %LOG% 2>&1
 
 :done
 
-echo Build products are in %RELEASE_DIR%.
+echo Build products are in %RELEASE_DIR%. >> %LOG% 2>&1
 
 :ender
 
