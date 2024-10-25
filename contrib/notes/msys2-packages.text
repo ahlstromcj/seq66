@@ -1,0 +1,16 @@
+Package to Install for an MSYS2 Build
+Chris Ahlstrom
+2024-10-25
+
+    pacman -Syuu
+    pacman -S base-devel git wget p7zip
+    pacman -S mingw-w64-x86_64-toolchain
+    pacman -S mingw-w64-x86_64-qt5-tools
+    pacman -S mingw-w64-x86_64-qt5
+    pacman -S mingw-w64-x86_64-autotools
+    pacman -S automake-wrapper
+    pacman -S mingw-w64-x86_64-qmake
+    pacman -S mingw-w64-x86_64-qt5-base
+    pacman -S mingw-w64-x86_64-gcc
+
+# vim: sw=4 ts=4 wm=4 et ft=rc

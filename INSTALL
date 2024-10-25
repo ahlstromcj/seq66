@@ -1,11 +1,11 @@
-INSTALL for Seq66 v. 0.99.12 and above
+INSTALL for Seq66 v. 0.99.15 and above
 Chris Ahlstrom
-2015-09-10 to 2024-01-13
+2015-09-10 to 2024-10-25
 
-Getting Seq66 requires building the code or going to
-"sequencer64-packages/seq66" on GitHub to get an installation package.  The
-bootstrap setup is primarily aimed at developers, but is easy to use with the
-instructions below.  Different versions of the program can be built:
+Getting Seq66 requires building the code or going to "ahlstromcj/seq66" on
+GitHub to get an installation package or a Windows release executable.
+The bootstrap setup is primarily aimed at developers, but is easy to use
+with the instructions below.  Different versions of the program can be built:
 
     -   qseq66.  The "rtmidi" engine version, with a Qt5 user-interface a la
         Kepler34.  Native ALSA, JACK MIDI and JACK transport; fall-back to
@@ -36,6 +36,7 @@ from source code:
         -   Pipe Option:
         -   Debugging:
     -   Qmake-based Install (Linux and Windows)
+    -   MSYS2 Install (Windows only, and NOT YET READY)
 
 Linux Distro Package (seq66):
 
@@ -172,6 +173,19 @@ Fedora:
 
     $ sudo dnf install qt5-qtbase qt5-qtbase-devel qt5-linguist \
             jack-audio-connection-kit-devel liblo-devel alsa-lib-devel
+
+MSYS2:
+
+    Uses the bootstrap script noted for Linux. It requires the installation
+    of the toolchain, libtool, qt5-base, all prefixed by either
+    "mingw-w64-x86_64-" (preferred) or "mingw-w64-i686-".  See
+    contrib/notes/msys2-packages.text for the complete list.
+    
+    Also, edit the .bashrc file to add the following line:
+
+        export PATH=/mingw64/bin:$PATH
+
+    Close the terminal window and open a new one to set the PATH.
 
 Advanced Steps:
 
