@@ -255,11 +255,13 @@ echo %MINGMAKE% with output to make.log >> %LOG% 2>&1
 
 PAUSE
 
-if %ERRORLEVEL% NEQ 0 goto builderror
+:: if %ERRORLEVEL% NEQ 0 goto builderror
+
+if ERRORLEVEL 1 goto builderror
 
 echo Compiling and linking succeeded >> %LOG% 2>&1
 
-if %PROJECT_BITS% EQU 64 goto windep64
+if %PROJECT_BITS% == 64 goto windep64
 echo Running brute-force windeploy ... >> %LOG% 2>&1
 call ..\seq66\nsis\winddeploybruteforce %QTVERSION% %MINGVERSION%_32 %RELEASEDIR%
 goto makerels
@@ -331,9 +333,9 @@ popd
 
 :: Test for a properly set up NSIS on Windows.
 
-echo Testing for Windows NSIS (makensis) ... >> %LOG% 2>&1
+echo Testing for Windows NSIS/makensis ... >> %LOG% 2>&1
 makensis /version
-if %ERRORLEVEL% NEQ 0 goto nsisexists
+if ERRORLEVEL 0 goto nsisexists
 
 echo NSIS "makensis" for Windows not found, skipping it... >> %LOG% 2>&1
 set NSIS_PLATFORM=Linux
@@ -342,7 +344,7 @@ set NSIS_PLATFORM=Linux
 
 :nsisexists
 
-if NOT %NSIS_PLATFORM% EQU Windows goto skipnsis
+if NOT %NSIS_PLATFORM% == Windows goto skipnsis
 
 echo Copying the 7zip package to the project tree... >> %LOG% 2>&1
 del /S /Q %PROJECT_TREE%\release\*.* > NUL
