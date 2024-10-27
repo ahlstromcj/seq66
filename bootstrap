@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2024-10-25
+# \update         2024-10-27
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -36,7 +36,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_BOOTSTRAP_EDIT_DATE="2024-10-25"
+export SEQ66_BOOTSTRAP_EDIT_DATE="2024-10-27"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.15"
 
@@ -279,7 +279,7 @@ if [ $# -ge 1 ] ; then
             ;;
 
          *)
-            echo "? Unsupported bootstrap option; --help for more information"
+            echo "? Unsupported bootstrap option $1; --help for more information"
             exit $EXIT_ERROR_NO_SUCH_OPTION
             ;;
 

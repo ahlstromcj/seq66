@@ -1,11 +1,9 @@
 TO DO for Seq66 0.99.15
 Chris Ahlstrom
-2019-04-13 to 2024-10-21
+2019-04-13 to 2024-10-27
 
 From Testing:
 
-    -   If a MIDI file sets the input buss on a pattern, it is marked modified
-        as soon as loaded.
     -   Update one-shot process documentation to indicate it is on the pattern
         editor. Fix any issues found.
     -   Get the 16-in-busses.midi file configured and working.

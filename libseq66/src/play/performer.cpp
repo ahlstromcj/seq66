@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2024-08-18
+ * \updates       2024-10-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1728,7 +1728,7 @@ performer::add_to_play_set (sequence * s)
 {
     bool result = set_mapper().add_to_play_set(play_set(), s);
     if (result)
-        record_by_buss(sequence_inbus_setup());
+        record_by_buss(sequence_inbus_setup());             /* not a change */
 
     return result;
 }
@@ -1738,7 +1738,7 @@ performer::fill_play_set (bool clearit)
 {
     bool result = set_mapper().fill_play_set(play_set(), clearit);
     if (result)
-        record_by_buss(sequence_inbus_setup());
+        record_by_buss(sequence_inbus_setup());             /* not a change */
 
     return result;
 }
@@ -2081,7 +2081,7 @@ performer::new_sequence (sequence * seqptr, seq::number seqno)
                 seq::number finalseq = s->seq_number();
                 screenset::number setno = set_mapper().seq_set(seqno);
                 s->set_dirty();
-                record_by_buss(sequence_inbus_setup());
+                record_by_buss(sequence_inbus_setup(true));
                 announce_sequence(s, finalseq);         /* issue #112       */
                 notify_sequence_change(finalseq, change::recreate);
                 notify_set_change(setno, change::yes);
@@ -2180,7 +2180,7 @@ performer::remove_sequence (seq::number seqno)
     {
         seq::number buttonno = seqno - playscreen_offset();
         send_seq_event(buttonno, midicontrolout::seqaction::removed);
-        record_by_buss(sequence_inbus_setup());
+        record_by_buss(sequence_inbus_setup(true));
         notify_sequence_change(seqno, change::recreate);
         modify();
     }
@@ -2953,13 +2953,6 @@ performer::set_playing_screenset (screenset::number setno)
              * Nothing to do?
              */
         }
-
-        /*
-         * Now done in fill_play_set().
-         *
-         *  record_by_buss(sequence_inbus_setup());
-         */
-
         announce_playscreen();                      /* inform control-out   */
         notify_set_change(setno, change::signal);   /* change::no           */
     }
@@ -3460,6 +3453,11 @@ performer::launch (int ppqn)
  *  pattern is added or removed, or when its input buss is set. Might also
  *  need to be updated when the playset changes.
  *
+ * \param changed
+ *      If true (the default is false), then the setup is due to the user
+ *      selecting the input bus. Otherwise (such as when reading a MIDI
+ *      file), do not raise the modified flag.
+ *
  * \return
  *      Returns true if record-by-buss was true and if any patterns with an
  *      input buss set were found. As a side-effect, performer ::
@@ -3467,7 +3465,7 @@ performer::launch (int ppqn)
  */
 
 bool
-performer::sequence_inbus_setup ()
+performer::sequence_inbus_setup (bool changed)
 {
     bool result = false;
     if (rc().sequence_lookup_support())
@@ -3489,13 +3487,14 @@ performer::sequence_inbus_setup ()
                 bussbyte b = seqi->true_in_bus();
                 if (! is_null_buss(b))              /* b < buscount */
                 {
+                    change mod = changed ? change::recreate : change::no ;
                     int seqno = int(seqi->seq_number());
                     m_buss_patterns.push_back(seqi.get());
                     result = true;
                     record_by_buss(result);
-                    notify_sequence_change(seqno, change::recreate); /* new */
+                    notify_sequence_change(seqno, mod);
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                     char temp[64];
                     snprintf
                     (
@@ -4144,7 +4143,7 @@ performer::set_midi_in_bus (seq::number seqno, int buss)
     if (result)
     {
         result = s->set_midi_in_bus(buss, true);        /* a user change    */
-        record_by_buss(sequence_inbus_setup());
+        record_by_buss(sequence_inbus_setup(true));     /* ditto            */
     }
     return result;
 }
