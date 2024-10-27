@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2024-08-15
+ * \updates       2024-10-26
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1929,7 +1929,7 @@ qslivegrid::popup_menu ()
 
             if (rc().sequence_lookup_support())
             {
-                QMenu * menuinbuss = new_qmenu("Input Bus");
+                QMenu * menuinbuss = new_qmenu("Input bus");
                 const inputslist & ipm = input_port_map();
                 int inbuses = ipm.active() ?
                     ipm.count() : mmb->get_num_in_buses() ;
@@ -1985,7 +1985,7 @@ qslivegrid::popup_menu ()
              *  Output buss menu
              */
 
-            QMenu * menubuss = new_qmenu("Output Bus");
+            QMenu * menubuss = new_qmenu("Output bus");
             const clockslist & opm = output_port_map();
             int buses = opm.active() ?
                 opm.count() : mmb->get_num_out_buses() ;
@@ -2016,7 +2016,7 @@ qslivegrid::popup_menu ()
              *  Channel menu
              */
 
-            QMenu * menuchan = new_qmenu("Output Channel");
+            QMenu * menuchan = new_qmenu("Output channel");
             int buss = s->true_bus();
             for (int channel = 0; channel <= c_midichannel_max; ++channel)
             {

@@ -92,7 +92,7 @@ M4DIR="m4"
 #  autotools build support is still in progress.
 #------------------------------------------------------------------------------
 
-if [ "$MSYS2_PATH" != "" ] ; then
+if [ "$MSYS2_PATH" == "" ] ; then
    echo "Assuming a Linux environment..."
    DORTMIDI="yes"
    DOJACK="yes"

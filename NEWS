@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.15
 Chris Ahlstrom
-2015-07-10 to 2024-10-19
+2015-07-10 to 2024-10-26
 
 # Change Log
 
@@ -23,6 +23,8 @@ Chris Ahlstrom
 
 - Updating configure.ac to disable, and not allow enabling, of JACK,
   NSM, and liblo (OSC) if libraries not installed.
+- Progress made getting a build to work in MSYS2. Not yet ready.
+- Built on Windows 11 with a update to Qt 5.15.2 and mingw 8.10.
 
 ## [0.99.14]
 

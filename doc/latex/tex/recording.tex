@@ -45,14 +45,20 @@
          Events are received from all enabled MIDI input ports.
          In this mode the record-button at the bottom of the main window
          is red.
-         The slot popup-menu does not provide for setting an input buss.
-      \item \textbf{Route-by-Bus}.
+         The slot popup-menu does not provide for setting an input buss
+         in this mode.
+      \item \textbf{Record-by-Bus}.
          In this mode, any pattern that specifies a specific input buss
          can be enabled for recording.
          Incoming events are routed to the first pattern that has an input
          buss matching the buss on which the event was recorded.
          In this mode the record-button at the bottom of the main window
          is green.
+         To designate a recording buss, first go to
+         \textbf{Edit / Preferences / MIDI Input} and enable
+         \textbf{Record into patterns by bus}.
+         The right-click on the pattern and select an
+         \textbf{Input bus}
       \item \textbf{Record-by-Channel}.
          In this mode, one enables recording in patterns numbered from 0 to 15
          (channels 1 to 16) with output channels set from 0 to 15.
@@ -61,6 +67,8 @@
          In this mode the record-button at the bottom of the main window
          is yellow.
    \end{itemize}
+
+   The "Record-by" options above are mutually exclusive.
 
 \subsubsection{Standard Recording}
 \label{subsubsec:recording_standard_recording}

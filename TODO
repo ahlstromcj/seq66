@@ -4,12 +4,14 @@ Chris Ahlstrom
 
 From Testing:
 
-    -   Consider an option to start JACK if not already running.
+    -   If a MIDI file sets the input buss on a pattern, it is marked modified
+        as soon as loaded.
     -   Update one-shot process documentation to indicate it is on the pattern
         editor. Fix any issues found.
     -   Get the 16-in-busses.midi file configured and working.
+    -   Finish getting Windows builds in MSYS2 to work.
     -   The 'usr' time-color settings do not seem to work. Actually, it does
-        work, but not with the Qt gtk styling. Document this issue.
+        work, but not with the Qt gtk2 styling. Document this issue.
     -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
         Too difficult to fix at this time; converted it to 192.
         In the calculations module, rigorize default_pulses_per_measure()

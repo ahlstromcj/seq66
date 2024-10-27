@@ -807,9 +807,16 @@
    The record-by-channel flag, if true, causes recording to route
    events to the first recording pattern that has an output channel
    matching the event's MIDI channel.
-   To use these features, the user must provide an existing pattern,
-   set its input buss or its output channel as desired,
-   and enable recording for that pattern.
+   These two options can be set in the \textbf{Edit / Preferences / MIDI Input}
+   tab.
+   To use these features, the user must
+
+   \begin{enumber}
+      \item Provide an existing pattern.
+      \item Set its input buss or its output channel as desired.
+      \item Enable recording for that pattern.
+   \end{enumber}
+
    To facilitate this operation, a MIDI file
    \texttt{data/midi/16-blank-patterns.midi}
    is provided, with output channels already set.
