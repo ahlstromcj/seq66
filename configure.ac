@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2024-10-26
+dnl \update        2024-10-28
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -507,11 +507,15 @@ if test "$ac_build_qt" != "no" ; then
     if test "$ac_build_windows" != "yes" ; then
         AM_PATH_ALSA(0.9.0)
     fi
-if test "$ac_clang_active" = "yes" ; then
-    AX_HAVE_QT_CLANG
-else
-    AX_HAVE_QT_MIN
-fi
+    if test "$ac_build_windows" = "yes" ; then
+        AX_HAVE_QT
+    else
+        if test "$ac_clang_active" = "yes" ; then
+            AX_HAVE_QT_CLANG
+        else
+            AX_HAVE_QT_MIN
+        fi
+    fi
     AC_MSG_RESULT([qt user-interface build enabled]);
 fi
 

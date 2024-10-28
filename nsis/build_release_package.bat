@@ -1,4 +1,4 @@
-REM REM @echo off
+@echo off
 :: **************************************************************************
 :: Seq66 Windows Build-Release Package
 :: --------------------------------------------------------------------------
@@ -7,7 +7,7 @@ REM REM @echo off
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2024-10-25
+:: \update      2024-10-28
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -252,8 +252,6 @@ echo %QMAKE% %QMAKEOPTS% %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO% >> %LOG% 
 %QMAKE% %QMAKEOPTS% %CONFIG_SET% %PROJECT_REL_ROOT%\%PROJECT_PRO% >> %LOG% 2>&1
 echo %MINGMAKE% with output to make.log >> %LOG% 2>&1
 %MINGMAKE% >> %LOG% 2>&1
-
-PAUSE
 
 :: if %ERRORLEVEL% NEQ 0 goto builderror
 
