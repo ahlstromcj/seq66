@@ -1,3 +1,135 @@
+2024-10-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure.ac, m4/ax_have_qt.m4, nsis/build_release_package.bat: 
+	Still working on MSYS2 build, conflicting Qt locations between Win
+	Qt install and Msys2 Qt install.
+
+2024-10-27  ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, TODO, bootstrap, libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp: Fixed modify flag when loading MIDI
+	file with sequence having an input buss specified.
+	* NEWS, README.md, TODO, VERSION, bootstrap, configure.ac,
+	data/share/doc/tutorial/introduction.html,
+	doc/latex/tex/configuration.tex, doc/latex/tex/patterns_panel.tex,
+	doc/latex/tex/recording.tex, doc/latex/tex/seq66-user-manual.tex,
+	include/config.h.in, seq_qt5/src/qslivegrid.cpp: Moving pending new
+	work to non-master branch for safety.
+
+2024-10-25  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, bootstrap, contrib/notes/msys2-packages.text: More work
+	on getting MSYS2 build to work.
+	* nsis/build_release_package.bat: Tweaking errorlevel checks in
+	Windows batch build.
+
+2024-10-23  ahlstromcj <ahlstromcj@gmail.com>
+
+	* nsis/build_release_package.bat: Got Windows batch file mostly
+	working.
+	* data/readme.text, data/readme.windows, nsis/README,
+	nsis/Seq66Constants.nsh, nsis/Seq66Setup.nsi,
+	nsis/build_release_package.bat: Setting up for Windows 11 test.
+
+2024-10-21  Chris <ahlstromcj@gmail.com>
+
+	* : Merge conflict fixed.
+
+2024-10-19  ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.in, NEWS, RELNOTES, Seq66cli/Makefile.in,
+	Seq66qt5/Makefile.in, TODO, VERSION, aux-files/compile,
+	aux-files/depcomp, aux-files/ltmain.sh, aux-files/missing,
+	configure, configure.ac, data/Makefile.in, doc/Makefile.in,
+	doc/latex/Makefile.in, doc/latex/tex/Makefile.in,
+	include/cli/seq66-config.h, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/Makefile.in,
+	libseq66/include/Makefile.in,
+	libseq66/include/seq66_platform_macros.h, libseq66/src/Makefile.in,
+	libsessions/Makefile.in, libsessions/include/Makefile.in,
+	libsessions/src/Makefile.in, m4/Makefile.in, man/Makefile.in,
+	resources/pixmaps/Makefile.in, seq_portmidi/Makefile.in,
+	seq_portmidi/include/Makefile.in, seq_portmidi/src/Makefile.in,
+	seq_qt5/Makefile.in, seq_qt5/forms/Makefile.in,
+	seq_qt5/include/Makefile.in, seq_qt5/src/Makefile.in,
+	seq_qt5/src/qsabout.cpp, seq_rtmidi/Makefile.in,
+	seq_rtmidi/include/Makefile.in, seq_rtmidi/src/Makefile.in: 
+	Rearranged configure.ac to avoid enabling JACK and liblo (NSM) if
+	not installed.
+	* configure.ac, contrib/scripts/qbuildwin.sh: Tweaking to try to get
+	an msys2 build.
+
+2024-10-16  Chris <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/menu.tex, doc/latex/tex/palettes.tex,
+	seq_qt5/forms/qseditoptions.ui: Completely updated the Edit /
+	Preference screenshots.
+
+2024-10-15  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, contrib/gdb/cgdbrc, contrib/gdb/dot-gdbinit,
+	doc/latex/tex/menu.tex, doc/latex/tex/palettes.tex,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qt5_helpers.cpp: Added browser/pdf settings buttons,
+	fixed more GUI ugliness.
+
+2024-10-14  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES, TODO, contrib/DIR_COLORS,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/forms/qsetmaster.ui,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5_helpers.cpp: Added a
+	Preference / Session setting to specify / select the browser and PDF
+	viewer for Help.
+
+2024-10-13  Chris <ahlstromcj@gmail.com>
+
+	* Makefile.in, Seq66cli/Makefile.in, Seq66qt5/Makefile.in, TODO,
+	aux-files/compile, aux-files/depcomp, aux-files/ltmain.sh,
+	aux-files/missing, configure, data/Makefile.in, doc/Makefile.in,
+	doc/latex/Makefile.in, doc/latex/tex/Makefile.in,
+	doc/latex/tex/kbd_mouse.tex, doc/latex/tex/midi_formats.tex,
+	doc/latex/tex/pattern_editor.tex, include/config.h.in,
+	libseq66/Makefile.in, libseq66/include/Makefile.in,
+	libseq66/src/Makefile.in, libsessions/Makefile.in,
+	libsessions/include/Makefile.in, libsessions/src/Makefile.in,
+	m4/Makefile.in, man/Makefile.in, resources/pixmaps/Makefile.in,
+	seq_portmidi/Makefile.in, seq_portmidi/include/Makefile.in,
+	seq_portmidi/src/Makefile.in, seq_qt5/Makefile.in,
+	seq_qt5/forms/Makefile.in, seq_qt5/forms/qliveframeex.ui,
+	seq_qt5/forms/qmutemaster.ui, seq_qt5/forms/qplaylistframe.ui,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/forms/qsessionframe.ui,
+	seq_qt5/forms/qslivegrid.ui, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/include/Makefile.in, seq_qt5/src/Makefile.in,
+	seq_rtmidi/Makefile.in, seq_rtmidi/include/Makefile.in,
+	seq_rtmidi/src/Makefile.in: New makefiles, and documentation/GUI
+	updates.
+
+2024-09-28  ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES, TODO, VERSION, configure.ac,
+	data/license.text, data/readme.text, data/readme.windows,
+	doc/latex/tex/seq66-user-manual.tex,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/include/cfg/zoomer.hpp,
+	nsis/Seq66Constants.nsh, nsis/Seq66Setup.nsi,
+	nsis/build_release_package.bat: Prep for 0.99.15 wip.
+
+2024-08-24  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* nsis/Seq66Constants.nsh, nsis/Seq66Setup.nsi,
+	nsis/build_release_package.bat: Updated Windows build files.
+
+2024-08-24  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* ChangeLog, NEWS, README.md, RELNOTES, ROADMAP.md, TODO,
+	data/license.text, data/readme.text, data/readme.windows,
+	doc/latex/tex/pattern_editor.tex, doc/latex/tex/recording.tex,
+	libseq66/src/util/filefunctions.cpp, seq_qt5/forms/qsessionframe.ui: 
+	Prepping for v. 0.99.14.
+
 2024-08-22  Chris Ahlstrom <ahlstromcj@gmail.com>
 
 	* NEWS, TODO, libseq66/src/midi/event.cpp: Changed event::get_rank()
