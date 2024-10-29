@@ -1,8 +1,8 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2024-10-26"
+#define VERSION_DATE_SHORT "2024-10-31"
 #define API_VERSION "0.99"
-#define VERSION "0.99.15"
+#define VERSION "0.99.16"
 
 
 

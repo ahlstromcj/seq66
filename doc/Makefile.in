@@ -112,6 +112,7 @@ host_triplet = @host@
 subdir = doc
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/alsa.m4 \
+	$(top_srcdir)/m4/ax_have_qt.m4 \
 	$(top_srcdir)/m4/ax_have_qt_clang.m4 \
 	$(top_srcdir)/m4/ax_have_qt_min.m4 \
 	$(top_srcdir)/m4/ax_prefix_config_h.m4 \
@@ -309,6 +310,7 @@ PTHREAD_CC = @PTHREAD_CC@
 PTHREAD_CFLAGS = @PTHREAD_CFLAGS@
 PTHREAD_CXX = @PTHREAD_CXX@
 PTHREAD_LIBS = @PTHREAD_LIBS@
+QMAKE = @QMAKE@
 QT_CXXFLAGS = @QT_CXXFLAGS@
 QT_DIR = @QT_DIR@
 QT_LIBS = @QT_LIBS@
@@ -345,6 +347,7 @@ ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
+ac_ct_QMAKE = @ac_ct_QMAKE@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
