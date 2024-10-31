@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2023-11-24
+% \update      2024-10-31
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -323,7 +323,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    It is then important to start \texttt{qseq66} in the normal manner again,
    and verify that everything works as expected.
 
-   We have added a command, \textbf{File / Import / Import Project}
+   We have added a command, \textbf{File / Import / Project Configuration}
    command to import the configuration files from one directory into the
    current \textsl{NSM} session configuration directory.
    This import used to be automatic, but is too surprising to an unsuspecting
@@ -338,7 +338,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    This is different from earlier behavior, where the home configuration was
    imported automatically.
    Now, the user must use the
-   \textbf{File / Import / Import Project...}
+   \textbf{File / Import / Project Configuration...}
    command.
 
    For illustration, we run \textsl{NSM} from a terminal window, which can be
@@ -697,20 +697,20 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          session.  A relative path can be included.  This name is needed
          because there is no "Save As" option when running in an \textsl{NSM}
          session.
-      \item \textbf{Import / Import Project Configuration...}
+      \item \textbf{Import / Project Configuration...}
          Imports a whole project configuration into the current NSM session.
          This functionality used to be automatic (importing the "home"
          configuration), but it is better left to the user to do.
          \index{restart!automatic}
          However, the restart of \textsl{Seq66} after this operation is
          automatic.  Be careful!
-      \item \textbf{Import / Import MIDI to Current Set...}
+      \item \textbf{Import / MIDI to Current Set...}
          This action works the same as in normal mode.
          This item allows the user to grab a MIDI file from anywhere and import
          it into the current set.
          The default directory that comes up in the
          prompt is the "last-used directory" from the session 'rc' file.
-      \item \textbf{Import / Import Playlist...}
+      \item \textbf{Import / Playlist...}
          This action works the same as in normal mode.
          The destination is the NSM session directory.
          \index{restart!automatic}
@@ -722,18 +722,18 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          Prompts the user for a MIDI file to
          be imported (copied) into the current session.  The path to the file
          is then adjusted to use the \textsl{NSM} \texttt{midi} subdirectory.
-      \item \textbf{Export / Export Song...}
+      \item \textbf{Export / Song...}
          Allows exporting the current song as a stock MIDI file, using the
          performance information (triggers) to write the MIDI data as it would
          be played in "song" mode.
          The default directory that comes up in the
          prompt is the "last-used directory" from the session 'rc' file.
-      \item \textbf{Export / Export MIDI Only...}
+      \item \textbf{Export / MIDI Only...}
          Allows exporting the current song as a stock MIDI file.
          The "proprietary" SeqSpec data is \textsl{not} written.
          The default directory that comes up in the
          prompt is the "last-used directory" from the session 'rc' file.
-      \item \textbf{Export / Export SMF 0...}
+      \item \textbf{Export / SMF 0...}
          This action works the same as in normal mode.
          It converts the destination file to SMF 0 format.
       \item \textbf{Hide}.
@@ -844,7 +844,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    \texttt{~/.config/seq66/test/}.
    These can be edited to suit the "test" configuration.
    The setup can also be created via
-   \textbf{File / Export / Project configure},
+   \textbf{File / Export / Project Configuration},
    and then be added to \texttt{sessions.rc}.
 
    The next time 

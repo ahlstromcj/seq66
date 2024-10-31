@@ -49,7 +49,7 @@ namespace seq66
  *  Base font size in points.
  */
 
-static const int sc_font_size    = 10;       // 8;
+static const int sc_font_size    = 10;
 
 /*
  *  Marker/label tweaks. The presence of these corrections means we need to
@@ -63,7 +63,7 @@ static const int s_timesig_fix   =  8;  /* time-sig offset from seqroll (18)*/
 static const int s_L_timesig_fix =  8;  /* time-sig offset from "L" marker  */
 static const int s_o_fix         =  0;  /* adjust position of "o" mark (6)  */
 static const int s_LR_box_y      = 10;
-static const int s_LR_box_w      = sc_font_size;    //  8;
+static const int s_LR_box_w      = sc_font_size;
 static const int s_LR_box_h      = 24;
 static const int s_END_fix       = 26;  /* adjust position of "END" box (18)*/
 static const int s_END_box_w     = 27;
@@ -84,7 +84,7 @@ qseqtime::qseqtime
     int zoom,
     QWidget * /* parent // QScrollArea */
 ) :
-    QWidget         (frame),    /* ca 2023-11-24  TEMP COMMENTED (parent),  */
+    QWidget         (frame),
     qseqbase        (p, s, frame, zoom, c_default_snap),
     m_timer         (nullptr),
     m_font          (),
@@ -95,7 +95,7 @@ qseqtime::qseqtime
     m_font.setPointSize(sc_font_size);
     setMouseTracking(true);         /* track mouse movement without a click */
     set_snap(track().snap());       /* TRIAL CODE */
-    m_timer = qt_timer(this, "qseqtime", 4, SLOT(conditional_update()));    // 2
+    m_timer = qt_timer(this, "qseqtime", 4, SLOT(conditional_update())); // 2
 }
 
 /**
@@ -161,6 +161,9 @@ qseqtime::paintEvent (QPaintEvent * qpep)
  *      ts.sig_end_tick : pix_to_tix(r.x() + r.width());
  *
  *  Vertical line at each measure; number each measure.
+ *
+ *  Here we could speed things up by avoiding extra calculations if
+ *  the time signature has not changed.
  */
 
 void
@@ -195,6 +198,52 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
         if ((bwidth % 2) != 0)
             ticks_per_step = zoom();
 
+#if defined USE_NEW_CODE
+        for (midipulse tick = starttick; tick < endtick; ++tick)
+        {
+            int x_offset = xoffset(tick) - scroll_offset_x() + s_x_tick_fix;
+            int penwidth = 1;
+            enum Qt::PenStyle penstyle = Qt::SolidLine;
+            Color c = beat_color();
+            if (tick % ticks_per_bar == 0)          /* thick solid line bar */
+            {
+                char bar[32];
+                int measure = track().measure_number(tick);
+                penwidth = 2;
+                snprintf(bar, sizeof bar, "%d", measure);
+
+                QString qbar(bar);
+                pen.setColor(text_time_paint());    /* Qt::black            */
+                painter.setPen(pen);
+                painter.drawText(x_offset + 3, 10, qbar);
+            }
+            else if (tick % ticks_per_beat == 0)    /* light on every beat  */
+            {
+                pen.setColor(c);
+                pen.setWidth(penwidth);
+                pen.setStyle(penstyle);
+                painter.setPen(pen);
+                painter.drawLine(x_offset, 0, x_offset, sizeheight);
+            }
+            else if (tick % ticks_per_four == 0)
+            {
+                pen.setColor(c);
+                pen.setWidth(penwidth);
+                pen.setStyle(penstyle);
+                painter.setPen(pen);
+                painter.drawLine(x_offset, 0, x_offset, sizeheight);
+            }
+            else if (tick % ticks_per_step == 0)
+            {
+                penstyle = Qt::DotLine;
+                pen.setColor(c);
+                pen.setWidth(penwidth);
+                pen.setStyle(penstyle);
+                painter.setPen(pen);
+                painter.drawLine(x_offset, 0, x_offset, sizeheight);
+            }
+        }
+#else
         for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
         {
             int x_offset = xoffset(tick) - scroll_offset_x() + s_x_tick_fix;
@@ -231,6 +280,7 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
             painter.setPen(pen);
             painter.drawLine(x_offset, 0, x_offset, sizeheight);
         }
+#endif  // USE_NEW_CODE
     }
 }
 

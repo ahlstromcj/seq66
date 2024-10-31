@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2024-10-15
+% \update      2024-10-31
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -236,7 +236,7 @@
    Lastly, various meta text events, such as \textbf{Lyric},
    can be edited and saved.
 
-\subsubsection{Menu / File / Import / Import Project Configuration}
+\subsubsection{Menu / File / Import / Project Configuration}
 \label{subsubsec:menu_file_import_project_configuration}
 
    This command is useful to grab an existing project configuration
@@ -249,19 +249,14 @@
 
    This command brings up a file dialog box. Navigate to the desired
    source directory and then select the desired 'rc' file.
-
-   If importing into an NSM session, one must use the NSM user-interface
-   (\textsl{agordejo}, \textsl{RaySession}, or \textsl{nsm-legacy-gui}
-   to \textsl{Stop} and then \textsl{Start} \textsl{Seq66}.
    This saves and rereads the configuration.
    If importing into a normal (i.e. not NSM) session, \textsl{Seq66} will
    restart itself automatically to save and reread the configuration.
    Be aware!
+   For more information, see
+   \sectionref{subsubsec:midi_export_file_import_project}.
 
-   Also note that importing a playlist is a separate operation (see
-   below).
-
-\subsubsection{Menu / File / Import / Import MIDI to Current Set}
+\subsubsection{Menu / File / Import / MIDI to Current Set}
 \label{subsubsec:menu_file_import}
 
    The \textbf{Import} menu entry imports an SMF 0
@@ -270,7 +265,7 @@
    This functionality is explained in detail in
    \sectionref{subsubsec:midi_export_file_import}.
 
-\subsubsection{Menu / File / Import / Import Playlist}
+\subsubsection{Menu / File / Import / Playlist}
 \label{subsubsec:menu_file_import_playlisMIDI to Current Sett}
 
    A user can create a playlist that accesses MIDI files anywhere in the file
@@ -285,47 +280,19 @@
 
    This command brings up a file dialog box. Navigate to the desired
    source directory and then select the desired 'playlist' file.
-   This menu entry does a lot of things; here are the steps it performs:
+   This menu entry copies the playlist file and its associated
+   MIDI files; see
+   \sectionref{subsubsec:midi_export_file_import_playlist}.
 
-   \begin{itemize}
-      \item Copies the selected playlist file into the current configuration
-         directory.  This directory is one of the following:
-         \begin{itemize}
-            \item The default "home" directory,
-               \texttt{\textasciitilde/.config/seq66}.
-            \item A "home" directory specified by the \texttt{--home} option.
-            \item The session directory created by \textsl{NSM}.
-         \end{itemize}
-         For discussion, this directory is called "HOME" or "home".
-      \item In HOME, creates a directory called \texttt{playlist/listname},
-         where "listname" is the base part of the playlist name, as in
-         \texttt{listname.playlist}.
-      \item The playlist is opened, parsed, and all of the MIDI tunes specified
-         in that file are copied into the new playlist directory, preserving
-         the directory directory structure of the original playlist.
-      \item The 'rc' file is modified to specify the new playlist,
-         specify that it is \texttt{active},
-         to specify the new \texttt{base-directory} for all of the tunes,
-         and to specify that the playlist will be saved at exit.
-      \item Lastly, if not running within NSM, \textsl{Seq66} will be
-         \index{restart!automatic}
-         \textsl{\textbf{restarted}} automatically to load the new,
-         active playlist.
-         Within NSM, the user must stop and restart \textsl{Seq66}
-         manually in the NSM user-interface..
-   \end{itemize}
-
-\subsubsection{Menu / File / Export / Export Project Configuration}
+\subsubsection{Menu / File / Export / Project Configuration}
 \label{subsubsec:menu_file_export_project}
 
    This menu entry lets the user select a destination directory.
    Then the project files from the current "home" directory are copied
    to that destination directory. Useful for backup.
+   See \sectionref{subsubsec:midi_export_configuration_export}.
 
-   At the present time, any file specified in a play-list are
-   \textsl{not} copied.
-
-\subsubsection{Menu / File / Export / Export Song as MIDI}
+\subsubsection{Menu / File / Export / Song}
 \label{subsubsec:menu_file_export_song_as_midi}
 
    Thanks to the \textsl{Seq32} project, the ability to export songs to MIDI
@@ -334,7 +301,7 @@
    This functionality is explained in detail in
    \sectionref{subsubsec:midi_export_song_export}.
 
-\subsubsection{Menu / File / Export / Export MIDI Only}
+\subsubsection{Menu / File / Export / MIDI Only}
 \label{subsubsec:menu_file_export_midi_only}
 
    Sometimes it might be useful to export only the non-vendor-specific
@@ -343,7 +310,7 @@
    This functionality is explained in detail in
    \sectionref{subsubsec:midi_export_file_export_midi_only}.
 
-\subsubsection{Menu / File / Export / Export SMF 0}
+\subsubsection{Menu / File / Export / SMF 0}
 \label{subsubsec:menu_file_export_smf_0}
 
    This feature is new since version 0.97.  It allows all tracks in the song to

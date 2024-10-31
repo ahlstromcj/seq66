@@ -1,26 +1,14 @@
-TO DO for Seq66 0.99.15
+TO DO for Seq66 0.99.16
 Chris Ahlstrom
-2019-04-13 to 2024-10-27
+2019-04-13 to 2024-10-31
 
 From Testing:
 
-    -   Update one-shot process documentation to indicate it is on the pattern
-        editor. Fix any issues found.
+    -   Setting the PPQN obscures the 32 PPQN entry in the combo box.
     -   Get the 16-in-busses.midi file configured and working.
-    -   Finish getting Windows builds in MSYS2 to work.
     -   The 'usr' time-color settings do not seem to work. Actually, it does
         work, but not with the Qt gtk2 styling. Document this issue.
-    -   The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
-        Too difficult to fix at this time; converted it to 192.
-        In the calculations module, rigorize default_pulses_per_measure()
-        and pulses_per_beat() to adjust for B/W not equal to 4.
-        Also, with ppqn = 120, pulses_per_substep() yields 7.5 truncates
-        to 7. Should this function return a double?  No, instead recommend
-        that the user convert to 192 PPQN or one of the other supported
-        settings, then save, and reopen. Test alternate time signatures.
-    -   Add an option to fix notes by shortening them a few ticks? Not
-        really needed with macro SEQ66_PRIORITIZE_NOTE_OFF enabled in
-        event.cpp.
+    -   Finish getting Windows builds in MSYS2 to work.
 
 Playlists:
 
@@ -303,6 +291,15 @@ ISSUES:
     the Record Active button to the left of it is set to on then this button
     does not  work. If the Record Active button is off then the Quantized
     Record button turns on both buttons without issue.
+
+The Carpet song has PPQN = 120 and displays weirdly in pattern editor.
+Too difficult to fix at this time; converted it to 192.
+In the calculations module, rigorize default_pulses_per_measure()
+and pulses_per_beat() to adjust for B/W not equal to 4.
+Also, with ppqn = 120, pulses_per_substep() yields 7.5 truncates
+to 7. Should this function return a double?  No, instead recommend
+that the user convert to 192 PPQN or one of the other supported
+settings, then save, and reopen. Test alternate time signatures.
 
 To close as pushed off to version 2:
 

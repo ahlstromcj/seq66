@@ -32,6 +32,26 @@
    \textbf{File / Import} menu in order to keep from cluttering the
    ever-expanding file menu.
 
+\subsubsection{Import Project Configuration}
+\label{subsubsec:midi_export_file_import_project}
+
+   This operation allows one to import all of the \texttt{qseq66.*}
+   configuration files from a given directory into the current run of
+   \textsl{Seq66}.
+   It is most useful when
+   importing a configuration into a new \textsl{NSM} session.
+   \index{restart!automatic}
+   Once the files are copied, \textsl{Seq66} is automatically restarted,
+   in order to load the new configuration.  Be careful!
+
+   Note that the names of the configuration files being impported should
+   match the canonical names.  That is, the base names should all be
+   \texttt{qseq66} (or \texttt{qpseq66} for \textsl{Windows}.)
+
+   If importing into an NSM session, one must use the NSM user-interface
+   (\textsl{agordejo}, \textsl{RaySession}, or \textsl{nsm-legacy-gui}
+   to \textsl{Stop} and then \textsl{Start} \textsl{Seq66}.
+
 \subsubsection{Import MIDI to Current Set}
 \label{subsubsec:midi_export_file_import}
 
@@ -65,45 +85,49 @@
    Finally, conversion to SMF 1 for SMF 0 files can be disabled using the
    'usr' option \texttt{[user-midi-settings] convert-to-smf-1}.
 
-\subsubsection{Import Project Configuration}
-\label{subsubsec:midi_export_file_import_project}
-
-   This operation allows one to import all of the \texttt{qseq66.*}
-   configuration files from a given directory into the current run of
-   \textsl{Seq66}..
-   It is most useful when
-   importing a configuration into a new \textsl{NSM} session.
-   \index{restart!automatic}
-   Once the files are copied, \textsl{Seq66} is automatically restarted,
-   in order to load the new configuration.  Be careful!
-
-   Note that the names of the configuration files being impported should
-   match the canonical names.  That is, the base names should all be
-   \texttt{qseq66} (or \texttt{qpseq66} for \textsl{Windows}.)
-
 \subsubsection{Import Playlist}
 \label{subsubsec:midi_export_file_import_playlist}
 
-   This operation allows one to copy a playlist
+   This operation allows one to copy a playlist and its MIDI files.
    from one directory to another.  It is most useful when
    importing a configuration into a new \textsl{NSM} session.
-   It copies the playlist file (e.g. \texttt{liveset.playlist})
-   into the destination configuration directory.
-   Then it creates a subdirectory with the name
-   \texttt{playlist/liveset} (for example).
-   It then copies all of the MIDI files that were referenced in the
-   original playlist into this new directory, preserving
-   the directory structure.
-   It then wires in and activates the new playlist in the
-   'rc' file, and sets the new base directory for the MIDI files.
-   \index{restart!automatic}
-   Lastly, it restarts \textsl{Seq66}, to load in the new playlist.
-   Be careful!
+   Here are the steps it performs:
+
+   \begin{itemize}
+      \item Copies the selected playlist file (e.g. \texttt{liveset.playlist})
+         into the current configuration directory.
+         This directory is one of the following:
+         \begin{itemize}
+            \item The default "home" directory,
+               \texttt{\textasciitilde/.config/seq66}.
+            \item A "home" directory specified by the \texttt{--home} option.
+            \item The session directory created by \textsl{NSM}.
+         \end{itemize}
+         For discussion, this directory is called "HOME" or "home".
+      \item In HOME, creates a directory called (for example)
+         \texttt{playlist/liveset},
+         where "liveset" is the base part of the playlist name, as in
+         \texttt{liveset.playlist}.
+      \item The playlist is opened, parsed, and all of the MIDI tunes specified
+         in that file are copied into the new playlist directory, preserving
+         the directory directory structure of the original playlist.
+      \item The 'rc' file is modified to specify the new playlist,
+         specify that it is \texttt{active},
+         to specify the new \texttt{base-directory} for all of the tunes,
+         and to specify that the playlist will be saved at exit.
+      \item Lastly, if not running within NSM, \textsl{Seq66} will be
+         \index{restart!automatic}
+         \textsl{\textbf{restarted}} automatically to load the new,
+         active playlist.
+         Within NSM, the user must stop and restart \textsl{Seq66}
+         manually in the NSM user-interface.
+         Be careful!
+   \end{itemize}
 
 \subsection{File / Export Menu}
 \label{subsec:midi_export_file_export_menu}
 
-   The actions for exporting files have been move to the
+   The actions for exporting files have been moved to the
    \textbf{File / Export} menu in order to keep from cluttering the
    ever-expanding file menu.
 
@@ -129,7 +153,10 @@
    This option allows the various \texttt{qseq66.*} configuration
    files to be copied to another directory.
    This feature is useful for creating an alternate configuration or
-   for backup of the current configuration.
+   for backing up the current configuration.
+
+   At the present time, any files specified in a play-list are
+   \textsl{not} copied.
 
 \subsubsection{Export Song}
 \label{subsubsec:midi_export_song_export}

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2024-08-15
+ * \updates       2024-10-31
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -40,6 +40,12 @@
 #include "os/shellexecute.hpp"          /* seq66::open_url(), open_pdf()    */
 #include "util/filefunctions.hpp"       /* seq66::find_file()               */
 #include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
+
+/*
+ * TEMPORARY EXPERIMENT: define this macro
+ */
+
+#undef  USE_PPQN_120                    /* has pattern grid display issues  */
 
 /*
  * We should probably access only the version stored on the user's Seq66
@@ -368,7 +374,7 @@ set_configuration_defaults ()
     usr().set_defaults();
 }
 
-#if defined USE_PPQN_LIST_VALUE
+#if defined USE_PPQN_LIST_VALUE         // not defined
 
 /**
  *  Available PPQN values.  The default is 192.  The first item uses the edit
@@ -392,7 +398,11 @@ ppqn_list_value (int index)
     static int s_ppqn_list [] =
     {
         0,                          /* place-holder for default PPQN    */
-        32, 48, 96, 192, 240,
+        32, 48, 96,
+#if defined USE_PPQN_120            /* has pattern grid display issues  */
+        120,
+#endif
+        192, 240,
         384, 768, 960, 1920, 2400,
         3840, 7680, 9600, 19200
     };
@@ -420,7 +430,11 @@ default_ppqns ()
 {
     static tokenization s_default_ppqn_list
     {
-        "32", "48", "96", "192", "240",
+        "32", "48", "96",
+#if defined USE_PPQN_120            /* has pattern grid display issues  */
+        "120",
+#endif
+        "192", "240",
         "384", "768", "960", "1920", "2400",
         "3840", "7680", "9600", "19200"
     };
