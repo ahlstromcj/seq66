@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-01-09
+ * \updates       2024-11-01
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -274,7 +274,8 @@ qsmainwnd::qsmainwnd
     m_session_frame         (nullptr),
     m_set_master            (nullptr),
     m_mute_master           (nullptr),
-    m_ppqn_list             (default_ppqns(), true), /* add a blank slot    */
+//  m_ppqn_list             (supported_ppqns(), true), /* add a blank slot  */
+    m_ppqn_list             (supported_ppqns()),     /* no blank slot       */
     m_beatwidth_list        (beatwidth_items()),     /* see settings module */
     m_beats_per_bar_list    (beats_per_bar_items()), /* ditto               */
     m_main_bpm              (0.0),
@@ -697,6 +698,8 @@ qsmainwnd::qsmainwnd
     {
         ui->btnLoop->hide();
         ui->txtUnderrun->hide();
+        ui->lineEditPpqn->hide();
+        status_message("GUI is 'shrunken'");
     }
     else
     {
@@ -1075,25 +1078,6 @@ qsmainwnd::enable_bus_item (int bus, bool enabled)
     enable_combobox_item(ui->cmb_global_bus, index, enabled);
 }
 
-void
-qsmainwnd::set_ppqn_text (const std::string & text)
-{
-    std::string t = text;
-    QString p = qt(t);
-    ui->lineEditPpqn->setText(p);
-}
-
-void
-qsmainwnd::set_ppqn_text (int ppq)
-{
-    std::string temp = std::to_string(ppq);
-    QString ppqntext = qt(temp);
-    ppqn_list().current(temp);
-    set_ppqn_text(temp);
-    ui->cmb_ppqn->setItemText(0, ppqntext);
-    usr().file_ppqn(ppq);
-}
-
 /**
  *  Handles closing this window by calling check(), and, if it returns false,
  *  ignoring the close event.
@@ -1406,6 +1390,29 @@ qsmainwnd::set_song_mode (bool /*songmode*/)
      */
 }
 
+void
+qsmainwnd::set_ppqn_text (const std::string & text)
+{
+    std::string t = text;
+    QString p = qt(t);
+    ui->lineEditPpqn->setText(p);
+    ppqn_list().set(text);
+}
+
+void
+qsmainwnd::set_ppqn_text (int ppq)
+{
+    if (ppqn_in_range(ppq))
+    {
+        std::string temp = std::to_string(ppq);
+        QString ppqntext = qt(temp);
+        ppqn_list().current(temp);
+        set_ppqn_text(temp);
+        ui->cmb_ppqn->setItemText(0, ppqntext);
+        usr().file_ppqn(ppq);
+    }
+}
+
 bool
 qsmainwnd::set_ppqn_combo ()
 {
@@ -1413,9 +1420,6 @@ qsmainwnd::set_ppqn_combo ()
     bool result = fill_combobox(ui->cmb_ppqn, ppqn_list(), p);
     if (result)
     {
-        if (m_shrunken)
-            ui->lineEditPpqn->hide();
-
         int ppqn = cb_perf().ppqn();
         std::string pstring = std::to_string(ppqn);
         ui->lineEditPpqn->setReadOnly(true);
@@ -1906,20 +1910,6 @@ qsmainwnd::open_file (const std::string & fn)
             if (not_nullptr(m_perfedit))
                 m_perfedit->update_sizes();
 
-#if defined SEQ66_USE_SEQEDIT_REDRAWING
-            if (not_nullptr(m_edit_frame))
-                m_edit_frame->update_draw_geometry();
-
-            for
-            (
-                auto ei = m_open_editors.begin();
-                ei != m_open_editors.end(); ++ei
-            )
-            {
-                qseqeditex * qep = ei->second;      /* save the pointer     */
-                qep->update_draw_geometry();
-            }
-#else
             /*
              * The tabbed edit frame is automatically removed if no other
              * seq-edit is open.
@@ -1927,9 +1917,6 @@ qsmainwnd::open_file (const std::string & fn)
 
             remove_all_editors();
             set_ppqn_text(cb_perf().ppqn());
-
-#endif
-
             if (! use_nsm())                    /* does this menu exist?    */
             {
                 /*
@@ -3198,10 +3185,11 @@ void
 qsmainwnd::update_ppqn_by_text (const QString & text)
 {
     std::string temp = text.toStdString();
-    if (! temp.empty())
+//  if (! temp.empty())
+    if (ppqn_list().valid(temp))
     {
         int p = string_to_int(temp);
-        if (cb_perf().change_ppqn(p))
+        if (p > 0 && cb_perf().change_ppqn(p))
         {
             set_ppqn_text(p);
             if (not_nullptr(m_song_frame64))

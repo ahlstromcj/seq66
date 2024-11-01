@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-10-15
+ * \updates       2024-11-01
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -138,7 +138,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     m_live_song_buttons     (nullptr),
     m_parent_widget         (dynamic_cast<qsmainwnd *>(parent)),
     m_perf                  (p),
-    m_ppqn_list             (default_ppqns(), true), /* add a blank slot    */
+    m_ppqn_list             (supported_ppqns(), true), /* add blank slot    */
     m_buffer_size_list      (jack_buffer_size_list()),
     m_is_initialized        (false),
     m_backup_rc             (),

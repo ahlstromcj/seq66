@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2023-11-24
+ * \updates       2024-10-31
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -98,12 +98,6 @@ namespace seq66
  */
 
 #undef   SEQ66_8_PIXELS_PER_SUBSTEP      /* EXPERIMENTAL */
-
-#if defined SEQ66_8_PIXELS_PER_SUBSTEP
-static const int c_pixels_per_substep = 8;
-#else
-static const int c_pixels_per_substep = 6;
-#endif
 
 /**
  *  This value represents the fundamental and default beats-per-bar.
@@ -967,7 +961,7 @@ log2_of_power_of_2 (int tsd)
  *  unit is a "note-step", which is inside a note.  Each note contains PPQN
  *  ticks.
  *
- *  Current status at PPQN = 192, Base pixels (c_pixels_per_substep)= 6:
+ *  Current status at PPQN = 192, Base pixels (pixels_per_substep)= 6:
  *
 \verbatim
     Zoom    Note-steps  Substeps   Substeps/Note (#SS)
@@ -993,7 +987,7 @@ log2_of_power_of_2 (int tsd)
  *      substep       qn       pixel      substep     pulses
  *
  *  Currently the Base values are hardwired (see usrsettings).  The base
- *  pixels value is c_pixels_per_substep = 6, and the base PPQN is
+ *  pixels value is pixels_per_substep = 6, and the base PPQN is
  *  usr().base_ppqn() = 192.  The numerator of this equation is well within
  *  the limit of a 32-bit integer.
  *
@@ -1013,7 +1007,19 @@ log2_of_power_of_2 (int tsd)
 int
 pulses_per_substep (midipulse ppq, int zoom)
 {
-    return int((ppq * zoom * c_pixels_per_substep) / usr().base_ppqn());
+#if defined SEQ66_8_PIXELS_PER_SUBSTEP
+    const int pixels_per_substep = 8;
+#else
+//  const int pixels_per_substep = ppq == 120 ? 7 : 6 ;
+    const int pixels_per_substep = 6;
+#endif
+    int result = int(ppq) * zoom * pixels_per_substep;
+    result /= usr().base_ppqn();
+    if ((result % 2) != 0)
+        result++;
+
+    return result;
+//  return int((ppq * zoom * pixels_per_substep) / usr().base_ppqn());
 }
 
 /**

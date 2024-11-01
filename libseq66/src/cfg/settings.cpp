@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2024-10-31
+ * \updates       2024-11-01
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -33,6 +33,7 @@
  *  completely replace.  The second part includes some convenience functions.
  */
 
+#include <algorithm>                    /* std::find()                      */
 #include <stdexcept>                    /* std::invalid_argument            */
 
 #include "seq66_features.hpp"           /* seq66::seq_app_path()            */
@@ -40,12 +41,6 @@
 #include "os/shellexecute.hpp"          /* seq66::open_url(), open_pdf()    */
 #include "util/filefunctions.hpp"       /* seq66::find_file()               */
 #include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
-
-/*
- * TEMPORARY EXPERIMENT: define this macro
- */
-
-#undef  USE_PPQN_120                    /* has pattern grid display issues  */
 
 /*
  * We should probably access only the version stored on the user's Seq66
@@ -96,6 +91,16 @@ combolist::current (const std::string & s) const
 }
 
 void
+combolist::set (const std::string & s, int index) const
+{
+    if (index < count())
+    {
+        combolist * ncthis = const_cast<combolist *>(this);
+        ncthis->m_list_items[index] = s;
+    }
+}
+
+void
 combolist::current (int v) const
 {
     if (m_use_current)
@@ -123,6 +128,18 @@ combolist::ctoi (int index) const
     if (! s.empty())
         result = string_to_int(s);
 
+    return result;
+}
+
+bool
+combolist::valid (const std::string & target) const
+{
+    bool result = false;
+    if (! target.empty())
+    {
+        auto it = std::find(m_list_items.begin(), m_list_items.end(), target);
+        result = it != m_list_items.end();
+    }
     return result;
 }
 
@@ -397,11 +414,8 @@ ppqn_list_value (int index)
 {
     static int s_ppqn_list [] =
     {
-        0,                          /* place-holder for default PPQN    */
-        32, 48, 96,
-#if defined USE_PPQN_120            /* has pattern grid display issues  */
-        120,
-#endif
+        -1,                         /* place-holder for default PPQN    */
+        32, 48, 96, 120,
         192, 240,
         384, 768, 960, 1920, 2400,
         3840, 7680, 9600, 19200
@@ -426,19 +440,17 @@ ppqn_list_value (int index)
  */
 
 const tokenization &
-default_ppqns ()
+supported_ppqns ()
 {
-    static tokenization s_default_ppqn_list
+    static tokenization s_supported_ppqn_list
     {
-        "32", "48", "96",
-#if defined USE_PPQN_120            /* has pattern grid display issues  */
-        "120",
-#endif
+        "",
+        "32", "48", "96", "120",
         "192", "240",
         "384", "768", "960", "1920", "2400",
         "3840", "7680", "9600", "19200"
     };
-    return s_default_ppqn_list;
+    return s_supported_ppqn_list;
 }
 
 /**
@@ -503,7 +515,6 @@ ppqn_in_range (int ppqn)
 {
     return usr().use_file_ppqn() || usr().is_ppqn_valid(ppqn);
 }
-
 
 /**
  *  First try the web, then the directory list. Actually, let's do it the

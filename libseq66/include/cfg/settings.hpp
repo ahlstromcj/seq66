@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2023-10-11
+ * \updates       2023-11-01
  * \license       GNU GPLv2 or above
  *
  *  A couple of universal helper functions remain as inline functions in the
@@ -86,10 +86,18 @@ public:
 
     std::string at (int index) const;
     int ctoi (int index) const;
+    bool valid (const std::string & target) const;
     int index (const std::string & target) const;
     int index (int value) const;
     void current (const std::string & s) const;     /* tricky */
     void current (int v) const;                     /* tricky */
+
+    std::string current () const
+    {
+        return m_list_items[0];
+    }
+
+    void set (const std::string & s, int index = 0) const;
 
     int count () const
     {
@@ -99,11 +107,6 @@ public:
     bool use_current () const
     {
         return m_use_current;
-    }
-
-    std::string current () const
-    {
-        return m_list_items[0];
     }
 
     void add (const std::string & s)
@@ -137,7 +140,7 @@ extern int choose_ppqn (int ppqn = (-1));           /* c_use_default_ppqn   */
 extern int ppqn_list_value (int index = (-1));
 #endif
 
-extern const tokenization & default_ppqns ();
+extern const tokenization & supported_ppqns ();
 extern const tokenization & jack_buffer_size_list ();
 extern const tokenization & measure_items ();
 extern const tokenization & beats_per_bar_items ();
