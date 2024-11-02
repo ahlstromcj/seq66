@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.16
 Chris Ahlstrom
-2015-07-10 to 2024-10-31
+2015-07-10 to 2024-11-02
 
 # Change Log
 
@@ -9,6 +9,14 @@ Chris Ahlstrom
 ### Changed
 
 - Refined documentation about the Import/Export functionality.
+
+### Fixed
+
+- Fixed the display of tunes with various PPQNs such as 120.
+
+### Added
+
+- Added 120 PPQN to the list of supported PPQNs.
 
 ## [0.99.15]
 

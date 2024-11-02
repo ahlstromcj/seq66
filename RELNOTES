@@ -1,8 +1,11 @@
-Release Notes for Seq66 v. 0.99.16 2024-10-31
+Release Notes for Seq66 v. 0.99.16 2024-11-02
 
 A minor release for fixes and a couple of small new features.
 
 -   Updated the PDF documentation.
+-   Refined documentation about the Import/Export functionality.
+-   Fixed the display of tunes with various PPQNs such as 120 in
+    the pattern editor.
 -   See NEWS and ChangeLog for more details.
 
 # vim: sw=4 ts=4 wm=15 et ft=sh

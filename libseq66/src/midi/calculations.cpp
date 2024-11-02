@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2024-10-31
+ * \updates       2024-11-02
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -89,15 +89,6 @@
 
 namespace seq66
 {
-
-/**
- *  This value represent the smallest horizontal unit in a Seq66 grid.
- *  It is the number of pixels in the smallest increment between vertical
- *  lines in the grid.  For a zoom of 2, this number gets doubled.
- *  A better value would be 8. we think. Let's experiment.
- */
-
-#undef   SEQ66_8_PIXELS_PER_SUBSTEP      /* EXPERIMENTAL */
 
 /**
  *  This value represents the fundamental and default beats-per-bar.
@@ -959,7 +950,14 @@ log2_of_power_of_2 (int tsd)
  *
  *  The smallest grid unit in the seqroll is a "sub-step".  The next largest
  *  unit is a "note-step", which is inside a note.  Each note contains PPQN
- *  ticks.
+ *  ticks.  The  pulses-per-sub-step value represent the smallest horizontal
+ *  unit in a Seq66 grid.  It is the number of pixels in the smallest
+ *  increment between vertical lines in the grid.  For a zoom of 2, this
+ *  number gets doubled.
+ *
+ *  If the value that results is odd, then the horizontal line match
+ *  calculation can fail, resulting in missing lines and missing measure
+ *  numbers. In this case, we increment the resul to make it even.
  *
  *  Current status at PPQN = 192, Base pixels (pixels_per_substep)= 6:
  *
@@ -1007,19 +1005,13 @@ log2_of_power_of_2 (int tsd)
 int
 pulses_per_substep (midipulse ppq, int zoom)
 {
-#if defined SEQ66_8_PIXELS_PER_SUBSTEP
-    const int pixels_per_substep = 8;
-#else
-//  const int pixels_per_substep = ppq == 120 ? 7 : 6 ;
     const int pixels_per_substep = 6;
-#endif
     int result = int(ppq) * zoom * pixels_per_substep;
     result /= usr().base_ppqn();
     if ((result % 2) != 0)
-        result++;
+        ++result;
 
     return result;
-//  return int((ppq * zoom * pixels_per_substep) / usr().base_ppqn());
 }
 
 /**

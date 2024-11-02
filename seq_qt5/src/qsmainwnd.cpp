@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-01
+ * \updates       2024-11-02
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -274,8 +274,7 @@ qsmainwnd::qsmainwnd
     m_session_frame         (nullptr),
     m_set_master            (nullptr),
     m_mute_master           (nullptr),
-//  m_ppqn_list             (supported_ppqns(), true), /* add a blank slot  */
-    m_ppqn_list             (supported_ppqns()),     /* no blank slot       */
+    m_ppqn_list             (supported_ppqns(), true), /* add a blank slot  */
     m_beatwidth_list        (beatwidth_items()),     /* see settings module */
     m_beats_per_bar_list    (beats_per_bar_items()), /* ditto               */
     m_main_bpm              (0.0),
@@ -1396,7 +1395,6 @@ qsmainwnd::set_ppqn_text (const std::string & text)
     std::string t = text;
     QString p = qt(t);
     ui->lineEditPpqn->setText(p);
-    ppqn_list().set(text);
 }
 
 void
@@ -1406,8 +1404,14 @@ qsmainwnd::set_ppqn_text (int ppq)
     {
         std::string temp = std::to_string(ppq);
         QString ppqntext = qt(temp);
-        ppqn_list().current(temp);
-        set_ppqn_text(temp);
+
+        /*
+         * These don't seem to be necessary.
+         *
+         * ppqn_list().current(temp);
+         * set_ppqn_text(temp);
+         */
+
         ui->cmb_ppqn->setItemText(0, ppqntext);
         usr().file_ppqn(ppq);
     }
@@ -3185,7 +3189,6 @@ void
 qsmainwnd::update_ppqn_by_text (const QString & text)
 {
     std::string temp = text.toStdString();
-//  if (! temp.empty())
     if (ppqn_list().valid(temp))
     {
         int p = string_to_int(temp);
