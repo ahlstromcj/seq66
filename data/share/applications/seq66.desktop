@@ -9,4 +9,5 @@ Type=Application
 Terminal=false
 Icon=qseq66
 Categories=Qt;AudioVideo;Audio;Midi;Music;Sequencer;X-Alsa;X-Jack;X-MIDI;
-X-NSM-capable=true
+X-NSM-Capable=true
+X-NSM-Exec=qseq66
