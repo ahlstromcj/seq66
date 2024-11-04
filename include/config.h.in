@@ -1,6 +1,6 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2024-10-31"
+#define VERSION_DATE_SHORT "2024-11-04"
 #define API_VERSION "0.99"
 #define VERSION "0.99.16"
 
@@ -9,10 +9,10 @@
 /* Seq66 API version */
 #undef API_VERSION
 
-/* "Operating system of build" */
+/* Operating system of build */
 #undef APP_BUILD_ISSUE
 
-/* "OS/kernel where build was done" */
+/* OS/kernel of build */
 #undef APP_BUILD_OS
 
 /* Indicate the CLI version */
@@ -21,19 +21,22 @@
 /* Name of the MIDI engine */
 #undef APP_ENGINE
 
-/* Name of this application */
+/* Name of the CLI application */
 #undef APP_NAME
 
-/* Name of the UI of the application */
+/* Name of the GUI/UI */
 #undef APP_TYPE
 
 /* Define if clang is active */
 #undef CLANG_SUPPORT
 
-/* "Name to display as client/port" */
+/* Client/port base name */
 #undef CLIENT_NAME
 
-/* Configuration file name */
+/* Configuration sub-directory */
+#undef CONFIG_DIR_NAME
+
+/* Configuration base file name */
 #undef CONFIG_NAME
 
 /* Define COVFLAGS=-fprofile-arcs -ftest-coverage if coverage support is
@@ -121,7 +124,7 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Canonical icon name for Freedesktop */
+/* Icon name for Freedesktop */
 #undef ICON_NAME
 
 /* Enable JACK version string */

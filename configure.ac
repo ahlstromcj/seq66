@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2024-10-28
+dnl \update        2024-11-04
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -99,6 +99,18 @@ ac_build_sessions="yes"
 ac_build_testing="no"
 ac_build_qt="yes"
 
+dnl The default names describing aspects of the application.
+
+ac_app_name="qseq66"
+ac_app_type="qt"
+ac_app_engine="rtmidi"
+ac_app_build_issue="Linux"
+ac_app_build_os="Linux"
+ac_client_name="seq66"
+ac_config_name="qseq66"
+ac_config_dir_name="seq66"
+ac_icon_name="qseq66"
+
 dnl Test for CYGWIN/MSYS2; this macro is marked as obsolete, though:
 dnl AC_CYGWIN. Instead, see AC_CANONICAL_HOST at the top of this file.
 dnl It uses the host_os variable.
@@ -129,32 +141,7 @@ AC_SUBST([PACKAGE])
 
 AC_DEFINE(APP_TYPE, ["qt5"], "Type of the Seq66 executable, qt/cli")
 AC_DEFINE(APP_ENGINE, ["rtmidi"], "Seq66 MIDI engine, rtmidi/portmidi")
-ac_build_os="'$(uname -srm)'"
-
-dnl Get the value of /etc/issue.net and remove new lines. Note that
-dnl the CLIENT_NAME macro is always "seq66" and is used as part of
-dnl the installation sub-directories.
-dnl
-dnl Is there a way to do this for FreeBSD??? For now see seq66_features.cpp.
-
-AC_DEFINE_UNQUOTED(
-    APP_BUILD_OS,
-    ["$ac_build_os"],
-    "OS/kernel where build was done")
-
-dnl AC_DEFINE_UNQUOTED(
-dnl    APP_BUILD_ISSUE,
-dnl    "[m4_normalize(esyscmd([cat /etc/issue.net]))]",
-dnl    "Distro of build")
-dnl
-dnl Let's try a more universal method.
-
-AC_DEFINE_UNQUOTED(
-    APP_BUILD_ISSUE,
-    "[m4_normalize(esyscmd([uname -o]))]",
-    "Operating system of build")
-
-AC_DEFINE(CLIENT_NAME, ["seq66"], "Name to display as client/port")
+ac_app_build_os="'$(uname -srm)'"
 
 SEQ66_SUITE_NAME="SEQ66"
 AC_SUBST([SEQ66_SUITE_NAME])
@@ -244,6 +231,15 @@ AC_SUBST(seq66datadir)
 
 seq66pixdir="${datadir}/pixmaps/seq66-${SEQ66_API_VERSION}"
 AC_SUBST(seq66pixdir)
+
+dnl Allow the user to change client/port name.
+
+AC_ARG_WITH(client,
+    [AS_HELP_STRING(--with-client, [Change name of client/port from default])],
+    [ac_client_name=$withval],
+    [])
+
+AC_DEFINE_UNQUOTED(CLIENT_NAME, ["$ac_client_name"], "Name of client/port")
 
 dnl 4. Get external flags, if any.
 
@@ -450,10 +446,6 @@ if test "$ac_build_windows" = "no" ; then
 
     if test "$rtmidi" != "no" -o "$both" != "no" ; then
         ac_build_rtmidi="yes"
-        AC_DEFINE(APP_NAME, ["qseq66"], [Names the JACK/ALSA version of application])
-        AC_DEFINE(APP_ENGINE, ["rtmidi"], [Names the MIDI engine of the application])
-        AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration file name])
-        AC_DEFINE(ICON_NAME, ["qseq66"], [Canonical icon name for Freedesktop])
         AC_DEFINE(RTMIDI_SUPPORT, 1, [Indicates the rtmidi engine is enabled])
         AM_PATH_ALSA(0.9.0)
         AC_MSG_RESULT([rtmidi engine build enabled]);
@@ -470,12 +462,10 @@ AC_ARG_ENABLE(cli,
 
 if test "$cli" != "no" ; then
     AC_MSG_RESULT([rtmidi command-line build enabled]);
-    AC_DEFINE(APP_NAME, ["seq66cli"], [Name of the CLI version of application])
     AC_DEFINE(APP_CLI, [1], [Indicate the CLI version])
-    AC_DEFINE(APP_TYPE, ["cli"], [Name of the UI])
-    AC_DEFINE(APP_ENGINE, ["rtmidi"], [Name of the MIDI engine])
-    AC_DEFINE(CONFIG_NAME, ["seq66cli"], [Configuration file name])
-    AC_DEFINE(ICON_NAME, ["qseq66"], [Canonical icon name for Freedesktop])
+    ac_app_name="seq66cli"
+    ac_app_type="cli"
+    ac_config_name="seq66cli"
     if test "$mingw" != "yes" ; then
         ac_build_rtcli="yes"
         ac_build_qtmidi="no"
@@ -499,11 +489,8 @@ dnl Will set the default to yes later.  Will need to distinguish between rtmidi
 dnl and portmidi builds.
 
 if test "$ac_build_qt" != "no" ; then
-    AC_DEFINE(APP_NAME, ["qseq66"], [Name of the Qt/rtmidi application])
-    AC_DEFINE(APP_ENGINE, ["rtmidi"], [Name of the MIDI engine])
-    AC_DEFINE(APP_TYPE, ["qt5"], [Name of the UI of the application])
-    AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration base file name])
-    AC_DEFINE(ICON_NAME, ["qseq66"], [Canonical icon name for Freedesktop])
+    ac_app_name="qseq66"
+    ac_app_type="qt"
     if test "$ac_build_windows" != "yes" ; then
         AM_PATH_ALSA(0.9.0)
     fi
@@ -531,22 +518,36 @@ AC_ARG_ENABLE(portmidi,
 if test "$portmidi" != "no" ; then
     ac_build_portmidi="yes"
     ac_build_rtmidi="no"
+    ac_app_name="seq66portmidi"
+    ac_config_name="seq66portmidi"
+
     AC_DEFINE(PORTMIDI_SUPPORT, 1, [Indicates if portmidi is enabled])
-    AC_DEFINE(APP_NAME, ["seq66portmidi"], [Name of this application])
-    AC_DEFINE(CONFIG_NAME, ["seq66portmidi"], [Configuration file name])
-    AC_DEFINE(ICON_NAME, ["qseq66"], [Canonical icon name for Freedesktop])
     AM_PATH_ALSA(0.9.0)
     AC_MSG_RESULT([Portmidi build enabled]);
 else
     AC_MSG_NOTICE([Portmidi build disabled]);
 fi
 
+AC_DEFINE_UNQUOTED(APP_NAME, ["$ac_app_name"], [Name of the CLI application])
+AC_DEFINE_UNQUOTED(APP_TYPE, ["$ac_app_type"], [Name of the GUI/UI])
+AC_DEFINE_UNQUOTED(APP_ENGINE, ["$ac_app_engine"], [Name of the MIDI engine])
+AC_DEFINE_UNQUOTED(APP_BUILD_ISSUE, "[m4_normalize(esyscmd([uname -o]))]",
+    [Operating system of build])
+AC_DEFINE_UNQUOTED(APP_BUILD_OS, ["$ac_app_build_os"], [OS/kernel of build])
+AC_DEFINE_UNQUOTED(CLIENT_NAME, ["$ac_client_name"], [Client/port base name])
+AC_DEFINE_UNQUOTED(CONFIG_NAME, ["$ac_config_name"], [Configuration base file name])
+AC_DEFINE_UNQUOTED(CONFIG_DIR_NAME, ["$ac_config_dir_name"],
+    [Configuration sub-directory])
+AC_DEFINE_UNQUOTED(ICON_NAME, ["$ac_icon_name"], [Icon name for Freedesktop])
+
 AC_SUBST(APP_NAME)
 AC_SUBST(APP_TYPE)
 AC_SUBST(APP_ENGINE)
+AC_SUBST(APP_BUILD_ISSUE)
 AC_SUBST(APP_BUILD_OS)
 AC_SUBST(CLIENT_NAME)
 AC_SUBST(CONFIG_NAME)
+AC_SUBST(CONFIG_DIR_NAME)
 AC_SUBST(ICON_NAME)
 
 AM_CONDITIONAL([BUILD_DOCS], [test "$ac_build_docs" = "yes"])
@@ -562,7 +563,7 @@ dnl      macros automatically.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2024-10-31"
+#define VERSION_DATE_SHORT "2024-11-04"
 #define API_VERSION "0.99"
 #define VERSION "0.99.16"
 

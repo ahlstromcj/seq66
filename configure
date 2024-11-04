@@ -685,9 +685,11 @@ BUILD_PORTMIDI_TRUE
 BUILD_DOCS_FALSE
 BUILD_DOCS_TRUE
 ICON_NAME
+CONFIG_DIR_NAME
 CONFIG_NAME
 CLIENT_NAME
 APP_BUILD_OS
+APP_BUILD_ISSUE
 APP_ENGINE
 APP_TYPE
 APP_NAME
@@ -882,6 +884,7 @@ with_aix_soname
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
+with_client
 enable_docs
 enable_jack
 enable_jack_session
@@ -1598,6 +1601,7 @@ Optional Packages:
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
   --with-sysroot[=DIR]    Search for dependent libraries within DIR (or the
                           compiler's sysroot if not specified).
+  --with-client           Change name of client/port from default
   --with-alsa-prefix=PFX  Prefix where Alsa library is installed(optional)
   --with-alsa-inc-prefix=PFX
                           Prefix where include libraries are (optional)
@@ -5616,6 +5620,17 @@ ac_build_testing="no"
 ac_build_qt="yes"
 
 
+ac_app_name="qseq66"
+ac_app_type="qt"
+ac_app_engine="rtmidi"
+ac_app_build_issue="Linux"
+ac_app_build_os="Linux"
+ac_client_name="seq66"
+ac_config_name="qseq66"
+ac_config_dir_name="seq66"
+ac_icon_name="qseq66"
+
+
 case $host_os in
     *cygwin* | *msys* | windows*) ac_build_windows="yes";;
 	* ) ac_build_windows="no";;
@@ -5642,21 +5657,7 @@ printf "%s\n" "#define APP_TYPE \"qt5\"" >>confdefs.h
 
 printf "%s\n" "#define APP_ENGINE \"rtmidi\"" >>confdefs.h
 
-ac_build_os="'$(uname -srm)'"
-
-
-
-printf "%s\n" "#define APP_BUILD_OS \"$ac_build_os\"" >>confdefs.h
-
-
-
-
-printf "%s\n" "#define APP_BUILD_ISSUE \"GNU/Linux\"" >>confdefs.h
-
-
-
-printf "%s\n" "#define CLIENT_NAME \"seq66\"" >>confdefs.h
-
+ac_app_build_os="'$(uname -srm)'"
 
 SEQ66_SUITE_NAME="SEQ66"
 
@@ -17341,6 +17342,19 @@ seq66pixdir="${datadir}/pixmaps/seq66-${SEQ66_API_VERSION}"
 
 
 
+
+# Check whether --with-client was given.
+if test ${with_client+y}
+then :
+  withval=$with_client; ac_client_name=$withval
+fi
+
+
+
+printf "%s\n" "#define CLIENT_NAME \"$ac_client_name\"" >>confdefs.h
+
+
+
 CFLAGS="${CFLAGS} -I/usr/local/include "
 CXXFLAGS="${CXXFLAGS} -I/usr/local/include "
 LDFLAGS="${LDFLAGS} -L/usr/local/lib "
@@ -18668,18 +18682,6 @@ fi
     if test "$rtmidi" != "no" -o "$both" != "no" ; then
         ac_build_rtmidi="yes"
 
-printf "%s\n" "#define APP_NAME \"qseq66\"" >>confdefs.h
-
-
-printf "%s\n" "#define APP_ENGINE \"rtmidi\"" >>confdefs.h
-
-
-printf "%s\n" "#define CONFIG_NAME \"qseq66\"" >>confdefs.h
-
-
-printf "%s\n" "#define ICON_NAME \"qseq66\"" >>confdefs.h
-
-
 printf "%s\n" "#define RTMIDI_SUPPORT 1" >>confdefs.h
 
         alsa_save_CFLAGS="$CFLAGS"
@@ -19167,23 +19169,11 @@ if test "$cli" != "no" ; then
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: rtmidi command-line build enabled" >&5
 printf "%s\n" "rtmidi command-line build enabled" >&6; };
 
-printf "%s\n" "#define APP_NAME \"seq66cli\"" >>confdefs.h
-
-
 printf "%s\n" "#define APP_CLI 1" >>confdefs.h
 
-
-printf "%s\n" "#define APP_TYPE \"cli\"" >>confdefs.h
-
-
-printf "%s\n" "#define APP_ENGINE \"rtmidi\"" >>confdefs.h
-
-
-printf "%s\n" "#define CONFIG_NAME \"seq66cli\"" >>confdefs.h
-
-
-printf "%s\n" "#define ICON_NAME \"qseq66\"" >>confdefs.h
-
+    ac_app_name="seq66cli"
+    ac_app_type="cli"
+    ac_config_name="seq66cli"
     if test "$mingw" != "yes" ; then
         ac_build_rtcli="yes"
         ac_build_qtmidi="no"
@@ -19673,21 +19663,8 @@ fi
 
 
 if test "$ac_build_qt" != "no" ; then
-
-printf "%s\n" "#define APP_NAME \"qseq66\"" >>confdefs.h
-
-
-printf "%s\n" "#define APP_ENGINE \"rtmidi\"" >>confdefs.h
-
-
-printf "%s\n" "#define APP_TYPE \"qt5\"" >>confdefs.h
-
-
-printf "%s\n" "#define CONFIG_NAME \"qseq66\"" >>confdefs.h
-
-
-printf "%s\n" "#define ICON_NAME \"qseq66\"" >>confdefs.h
-
+    ac_app_name="qseq66"
+    ac_app_type="qt"
     if test "$ac_build_windows" != "yes" ; then
         alsa_save_CFLAGS="$CFLAGS"
 alsa_save_LDFLAGS="$LDFLAGS"
@@ -21716,17 +21693,11 @@ fi
 if test "$portmidi" != "no" ; then
     ac_build_portmidi="yes"
     ac_build_rtmidi="no"
+    ac_app_name="seq66portmidi"
+    ac_config_name="seq66portmidi"
+
 
 printf "%s\n" "#define PORTMIDI_SUPPORT 1" >>confdefs.h
-
-
-printf "%s\n" "#define APP_NAME \"seq66portmidi\"" >>confdefs.h
-
-
-printf "%s\n" "#define CONFIG_NAME \"seq66portmidi\"" >>confdefs.h
-
-
-printf "%s\n" "#define ICON_NAME \"qseq66\"" >>confdefs.h
 
     alsa_save_CFLAGS="$CFLAGS"
 alsa_save_LDFLAGS="$LDFLAGS"
@@ -22198,6 +22169,36 @@ else
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Portmidi build disabled" >&5
 printf "%s\n" "$as_me: Portmidi build disabled" >&6;};
 fi
+
+
+printf "%s\n" "#define APP_NAME \"$ac_app_name\"" >>confdefs.h
+
+
+printf "%s\n" "#define APP_TYPE \"$ac_app_type\"" >>confdefs.h
+
+
+printf "%s\n" "#define APP_ENGINE \"$ac_app_engine\"" >>confdefs.h
+
+
+printf "%s\n" "#define APP_BUILD_ISSUE \"GNU/Linux\"" >>confdefs.h
+
+
+printf "%s\n" "#define APP_BUILD_OS \"$ac_app_build_os\"" >>confdefs.h
+
+
+printf "%s\n" "#define CLIENT_NAME \"$ac_client_name\"" >>confdefs.h
+
+
+printf "%s\n" "#define CONFIG_NAME \"$ac_config_name\"" >>confdefs.h
+
+
+printf "%s\n" "#define CONFIG_DIR_NAME \"$ac_config_dir_name\"" >>confdefs.h
+
+
+printf "%s\n" "#define ICON_NAME \"$ac_icon_name\"" >>confdefs.h
+
+
+
 
 
 

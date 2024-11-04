@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-12-10
+ * \updates       2024-11-04
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -144,7 +144,7 @@ rcsettings::rcsettings () :
     m_portmaps_present          (false),
     m_portmaps_active           (false)
 {
-    m_session_directory = user_session(seq_client_name());
+    m_session_directory = user_session(seq_config_dir_name());
     m_midi_control_in.inactive_allowed(true);
     m_config_filename += ".rc";
     m_user_filename += ".usr";
@@ -232,7 +232,7 @@ rcsettings::set_defaults ()
     m_jack_session_uuid.clear();
     m_jack_session_active       = false;
     m_last_used_dir.clear();                /* double_quotes()              */
-    m_session_directory         = user_session(seq_client_name());
+    m_session_directory         = user_session(seq_config_dir_name());
     m_config_subdirectory_set   = false;
     m_config_subdirectory.clear();
     m_config_filename           = seq_config_name();

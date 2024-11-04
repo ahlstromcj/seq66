@@ -6,13 +6,11 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
 #ifndef SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2024-10-19"
+#define SEQ66_VERSION_DATE_SHORT "2024-11-04"
 #endif
 #ifndef SEQ66_VERSION
-#define SEQ66_VERSION "0.99.15"
+#define SEQ66_VERSION "0.99.16"
 #endif
-
-
 
 /* "Distro of build" */
 #ifndef SEQ66_APP_BUILD_ISSUE
@@ -47,6 +45,11 @@
 /* "Name to display as client/port" */
 #ifndef SEQ66_CLIENT_NAME
 #define SEQ66_CLIENT_NAME "seq66"
+#endif
+
+/* Configuration sub-directory */
+#ifndef SEQ66_CONFIG_DIR_NAME
+#define SEQ66_CONFIG_DIR_NAME "seq66"
 #endif
 
 /* Configuration file name */
@@ -255,7 +258,7 @@
 
 /* Define to the full name and version of this package. */
 #ifndef SEQ66_PACKAGE_STRING
-#define SEQ66_PACKAGE_STRING "Seq66 0.99.15"
+#define SEQ66_PACKAGE_STRING "Seq66 0.99.16"
 #endif
 
 /* Define to the one symbol short name of this package. */
@@ -270,7 +273,7 @@
 
 /* Define to the version of this package. */
 #ifndef SEQ66_PACKAGE_VERSION
-#define SEQ66_PACKAGE_VERSION "0.99.15"
+#define SEQ66_PACKAGE_VERSION "0.99.16"
 #endif
 
 /* Indicates if portmidi is enabled */
@@ -297,7 +300,7 @@
 
 /* Version number of package */
 #ifndef SEQ66_VERSION
-#define SEQ66_VERSION "0.99.15"
+#define SEQ66_VERSION "0.99.16"
 #endif
 
 /* Define to 1 if the X Window System is missing or not being used. */

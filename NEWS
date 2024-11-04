@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.16
 Chris Ahlstrom
-2015-07-10 to 2024-11-02
+2015-07-10 to 2024-11-04
 
 # Change Log
 
@@ -9,6 +9,7 @@ Chris Ahlstrom
 ### Changed
 
 - Refined documentation about the Import/Export functionality.
+- Added CONFIG\_DIR\_NAME and cleaned up configure.ac.
 
 ### Fixed
 
@@ -17,6 +18,9 @@ Chris Ahlstrom
 ### Added
 
 - Added 120 PPQN to the list of supported PPQNs.
+- Added a "config directory" macro to configure.ac and seq-feature
+  functions to access it. Differentiates between client and directory
+  name.
 
 ## [0.99.15]
 

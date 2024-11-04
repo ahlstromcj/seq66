@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.99.15 and above
 Chris Ahlstrom
-2015-09-10 to 2024-10-25
+2015-09-10 to 2024-11-04
 
 Getting Seq66 requires building the code or going to "ahlstromcj/seq66" on
 GitHub to get an installation package or a Windows release executable.
@@ -66,6 +66,13 @@ Autotools Build and Install:
     then run the script "reconf", stored in "contrib/scripts/reconf".  This
     should make soft links to /usr/share/automake files in the aux-files
     directory. Then try the above commands again.
+
+    Another variation is to change the client/port name from the default,
+    which is "seq66". Add an option like the following:
+
+        $ ./configure --with-client=myseqclient
+
+    This change will show up in the MIDI I/O tabs in Edit / Preferences.
 
     Also note that the qmake executable must exist.  If it is not found,
     check for the existence of an alternate name (e.g. qmake-qt5) and

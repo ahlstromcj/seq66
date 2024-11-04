@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2023-12-18
+ * \updates       2024-11-04
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -332,6 +332,13 @@ seq_config_name ()
 }
 
 const std::string &
+seq_config_dir_name ()
+{
+    static std::string s_config_dir_name = SEQ66_CONFIG_DIR_NAME;
+    return s_config_dir_name;
+}
+
+const std::string &
 seq_icon_name ()
 {
     return s_icon_name;
@@ -489,7 +496,7 @@ seq_api_subdirectory ()
     if (s_uninitialized)
     {
         s_uninitialized = false;
-        s_subdirectory = SEQ66_CLIENT_NAME;                     /* constant */
+        s_subdirectory = SEQ66_CONFIG_DIR_NAME;                 /* constant */
         s_subdirectory += "-";
         s_subdirectory += seq_api_version();
     }
