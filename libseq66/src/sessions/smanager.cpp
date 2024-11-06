@@ -61,7 +61,7 @@
 #include "play/playlist.hpp"            /* seq66::playlist class            */
 #include "sessions/smanager.hpp"        /* seq66::smanager()                */
 #include "os/daemonize.hpp"             /* seq66::reroute_stdio(), etc.     */
-#include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
+///// #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
 #include "util/filefunctions.hpp"       /* seq66::file_readable() etc.      */
 
 #if defined SEQ66_PORTMIDI_SUPPORT
@@ -138,7 +138,7 @@ smanager::~smanager ()
  *  (about a megabyte).
  */
 
-void
+bool
 smanager::reroute_to_log (const std::string & filepath) const
 {
     static const size_t s_limit = 1048576;
@@ -149,8 +149,7 @@ smanager::reroute_to_log (const std::string & filepath) const
         session_message("Log file deleted", filepath);
     }
     session_message("Rerouting console messages", filepath);
-    (void) reroute_stdio(filepath);
-    m_rerouted = true;
+    return reroute_stdio(filepath);
 }
 
 /**
@@ -214,6 +213,10 @@ smanager::main_settings (int argc, char * argv [])
     bool result = true;                         /* false --> EXIT_FAILURE   */
     std::string parentname = get_parent_process_name();
     bool in_nsm = contains(parentname, s_nsm_name); /* this is tentative!   */
+
+#if defined SEQ66_IMMEDIATE_LOG_FILE
+    session_message("main_settings");
+#endif
 
     /*
      *  Call app_info() above in main() instead of this.
@@ -387,7 +390,7 @@ smanager::main_settings (int argc, char * argv [])
                     if (logfile.empty())
                         logfile = "/dev/null";          /* Windows Mingw ok? */
 
-                    reroute_to_log(logfile);
+                    m_rerouted = reroute_to_log(logfile);
                 }
                 m_midi_filename.clear();
                 if (optionindex > 0 && optionindex < argc) /* MIDI filename? */
@@ -481,6 +484,11 @@ smanager::create_performer ()
     int cols = usr().mainwnd_cols();
     pointer p(new (std::nothrow) performer(ppqn, rows, cols));
     result = bool(p);
+
+#if defined SEQ66_IMMEDIATE_LOG_FILE
+    session_message("main_settings");
+#endif
+
     if (result)
     {
         m_perf_pointer = std::move(p);              /* change the ownership */
@@ -637,6 +645,11 @@ smanager::open_midi_file (const std::string & fname)
 bool
 smanager::create_session (int /*argc*/, char * /*argv*/ [])
 {
+
+#if defined SEQ66_IMMEDIATE_LOG_FILE
+    session_message("create_session");
+#endif
+
     session_setup();             /* daemonize: set basic signal handlers */
     return true;
 }
@@ -663,6 +676,11 @@ smanager::create_session (int /*argc*/, char * /*argv*/ [])
 bool
 smanager::close_session (std::string & msg, bool ok)
 {
+
+#if defined SEQ66_IMMEDIATE_LOG_FILE
+    session_message("close_session");
+#endif
+
     bool result = not_nullptr(perf());
     if (result)
     {
@@ -1111,6 +1129,11 @@ smanager::create_configuration
     const std::string & midifilepath
 )
 {
+
+#if defined SEQ66_IMMEDIATE_LOG_FILE
+    session_message("create_configuration");
+#endif
+
     bool result = ! cfgfilepath.empty();
     if (result)
     {
@@ -1150,7 +1173,7 @@ smanager::create_configuration
             if (! m_rerouted)
             {
                 usr().option_logfile(seq_default_logfile_name());
-                reroute_to_log(usr().option_logfile());
+                m_rerouted = reroute_to_log(usr().option_logfile());
             }
             result = make_directory_path(mainpath);
             if (result)

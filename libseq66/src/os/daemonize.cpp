@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2023-12-30
+ * \updates       2024-11-05
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -460,50 +460,58 @@ close_stdio ()
 bool
 reroute_stdio (const std::string & logfile)
 {
+    static bool s_not_rerouted = true;
     bool result = false;
-    if (logfile.empty())                    /* route output to /dev/null    */
+    if (s_not_rerouted)
     {
-        result = reroute_stdio_to_dev_null();
-    }
-    else
-    {
-        int rc = STD_CLOSE(STDOUT_FILENO);
-        result = rc == 0;
-        if (result)
+        if (logfile.empty())                    /* route output to /dev/null    */
         {
-            int flags = O_WRONLY | O_CREAT | O_APPEND ;
-            mode_t mode = S_IWUSR | S_IRUSR | S_IWGRP | S_IRGRP ;
-            int fd = open(logfile.c_str(), flags, mode);
-            result = fd != (-1);
+            result = reroute_stdio_to_dev_null();
+        }
+        else
+        {
+            int rc = STD_CLOSE(STDOUT_FILENO);
+            result = rc == 0;
             if (result)
             {
-                int newfd = STD_DUP2(fd, STDOUT_FILENO);
-                result = STD_DUP2_SUCCESS(newfd);
+                int flags = O_WRONLY | O_CREAT | O_APPEND ;
+                mode_t mode = S_IWUSR | S_IRUSR | S_IWGRP | S_IRGRP ;
+                int fd = open(logfile.c_str(), flags, mode);
+                result = fd != (-1);
                 if (result)
                 {
-                    newfd = STD_DUP2(fd, STDERR_FILENO);
+                    int newfd = STD_DUP2(fd, STDOUT_FILENO);
                     result = STD_DUP2_SUCCESS(newfd);
                     if (result)
                     {
-                        std::string logpath = get_full_path(logfile);
-                        std::string normedpath = normalize_path(logpath);
-                        printf
-                        (
-                            "\n%s\n%s\n%s\n",
-                            seq_app_name().c_str(), normedpath.c_str(),
-                            current_date_time().c_str()
-                        );
+                        newfd = STD_DUP2(fd, STDERR_FILENO);
+                        result = STD_DUP2_SUCCESS(newfd);
+                        if (result)
+                        {
+                            std::string logpath = get_full_path(logfile);
+                            std::string normedpath = normalize_path(logpath);
+                            printf
+                            (
+                                "\n%s\n%s\n%s\n",
+                                seq_app_name().c_str(), normedpath.c_str(),
+                                current_date_time().c_str()
+                            );
+                            s_not_rerouted = false;
+                        }
+                        else
+                            file_error("Dup2 failed", "stderr");
                     }
                     else
-                        file_error("Dup2 failed", "stderr");
+                        file_error("Dup2 failed", "stdout");
                 }
-                else
-                    file_error("Dup2 failed", "stdout");
             }
+            if (! result)
+                file_error("Failed to reroute standard I/O", logfile);
         }
-        if (! result)
-            file_error("Failed to reroute standard I/O", logfile);
     }
+    else
+        result = true;                          /* simulate success         */
+
     return result;
 }
 

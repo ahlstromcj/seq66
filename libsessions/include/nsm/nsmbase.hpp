@@ -385,6 +385,24 @@ protected:
     virtual bool save_session ();
     virtual bool close_session ();
 
+private:
+
+    int send_from
+    (
+        const std::string & message,
+        const std::string & pattern,
+        const std::string & s1 = "",
+        const std::string & s2 = "",
+        const std::string & s3 = ""
+    );
+
+    /*
+     * Other message args not covered:
+     *
+     *  -   int, string
+     *  -   string, string, string, int, int, int
+     */
+
 };          // class nsmbase
 
 }           // namespace seq66

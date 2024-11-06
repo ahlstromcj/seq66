@@ -1,6 +1,6 @@
 NSM Notes for Seq66 (nsm_tendrils.txt)
 Chris Ahlstrom
-2020-03-14 to 2020-09-01
+2020-03-14 to 2024-11-06
 
 These notes are based on the NSM API text, and indicate where changes would need
 to be made when NSM support is compiled in.
@@ -139,4 +139,17 @@ Qt UI Version
         should be referenced by creating a symbolic link within the assigned
         session area.
 
+-----------------------------
+ Trouble shooting issue #131
+-----------------------------
 
+Running non-session-manager (nsm-legacy-gui) and adding a session for
+qseq66 yields two entries:
+
+   <Seq66 icon> qseq66 <stop> <empty> <SAVE> launch
+                 seq66 <stop  <GUI>   <SAVE> ready
+
+Click <stop> for qseq66 and it shows stopped, but it is still in the
+process list. Click <GUI> for seq66, and it summarily exits.
+
+The session.log file is written to ~/.

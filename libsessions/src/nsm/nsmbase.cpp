@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2024-03-12
+ * \updates       2024-11-05
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -121,10 +121,22 @@ static lo_timetag s_lo_timetag = { 0, 1 };
 #include <sys/types.h>                  /* provides the pid_t typedef       */
 #include <unistd.h>                     /* C getpid()                       */
 
-#include "cfg/settings.hpp"             /* seq66::usr() global object       */
+#include "seq66_features.hpp"           /* seq66::set_app_path()            */
+#include "cfg/settings.hpp"             /* opt: SEQ66_IMMEDIATE_LOG_FILE    */
 #include "util/basic_macros.hpp"        /* not_nullptr(), warnprint(), etc. */
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase class             */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm new message functions */
+
+/*
+ *  Define in seq66_features.hpp only for trouble-shooting, especially under a
+ *  session manager.
+ */
+
+#if defined SEQ66_IMMEDIATE_LOG_FILE
+#define FORCE_VERBOSE true
+#else
+#define FORCE_VERBOSE false
+#endif
 
 #define NSM_API_VERSION_MAJOR   1
 #define NSM_API_VERSION_MINOR   0
@@ -455,6 +467,8 @@ nsmbase::update_dirty_count (bool updatedirt)
  *
  *      /nsm/client/progress f:percent
  *
+ *  No error handling here, as the data is informational.
+ *
  * \param percent
  *      The indication of progress, ranging from 0.0 to 100.0.
  */
@@ -470,7 +484,7 @@ nsmbase::progress (float percent)
         bool ok = nsm::client_msg(nsm::tag::progress, message, pattern);
         if (ok)
         {
-            lo_send_from                    /* "/nsm/client/progress" "f"   */
+            (void) lo_send_from             /* "/nsm/client/progress" "f"   */
             (
                 m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
                 message.c_str(), pattern.c_str(), percent
@@ -498,11 +512,13 @@ nsmbase::is_dirty ()
         bool ok = nsm::client_msg(nsm::tag::dirty, message, pattern);
         if (ok)
         {
-            lo_send_from                    /* "/nsm/client/is_dirty" ""    */
-            (
-                m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
-                message.c_str(), pattern.c_str()
-            );
+            int rcode = send_from(message, pattern);
+            ok = rcode == 0;
+//          lo_send_from                    /* "/nsm/client/is_dirty" ""    */
+//          (
+//              m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
+//              message.c_str(), pattern.c_str()
+//          );
         }
     }
     return result;
@@ -617,12 +633,14 @@ nsmbase::send_nsm_reply
         {
             if (client_msg(nsm::tag::reply, message, pattern))
             {
-                rc = lo_send_from
-                (
-                    m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
-                    message.c_str(), pattern.c_str(),
-                    path.c_str(), replymsg.c_str()
-                );
+                rc = send_from(message, pattern, path, replymsg);
+
+//              rc = lo_send_from
+//              (
+//                  m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
+//                  message.c_str(), pattern.c_str(),
+//                  path.c_str(), replymsg.c_str()
+//              );
             }
             replytype = "reply";
         }
@@ -724,7 +742,6 @@ nsmbase::error (int errcode, const std::string & errmesg)
     m_path_name.clear();
     m_display_name.clear();
     m_client_id.clear();
-    // emit active(false);
 
     std::string ecm = reply_string(static_cast<nsm::error>(errcode));
     nsm::incoming_msg("Error Values", errmesg, ecm, true);
@@ -907,11 +924,7 @@ nsmbase::send
     const std::string & pattern
 )
 {
-    int rcode = lo_send_from            /* e.g. "/nsm/client/is_clean" ""   */
-    (
-        m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
-        message.c_str(), pattern.c_str()
-    );
+    int rcode = send_from(message.c_str(), pattern.c_str());
     bool result = rcode != (-1);
     if (result)
         nsm::outgoing_msg(message, pattern, "Sent");
@@ -947,7 +960,9 @@ nsmbase::send_from_client
     bool result = nsm::client_msg(t, message, pattern);
     if (result)
     {
-        int rcode;
+        int rcode = send_from(message, pattern, s1, s2, s3);
+        result = rcode != (-1);
+#if 0
         if (s3.empty())
         {
             rcode = lo_send_from        /* e.g. "/nsm/client/is_clean" ""   */
@@ -980,6 +995,79 @@ nsmbase::send_from_client
             std::string msg = "OSC message send FAILURE" + message;
             error_message(msg);
         }
+#endif
+    }
+    return result;
+}
+
+/**
+ *  A wrapper function for easier trouble-shooting. The last three arguments are
+ *  optional.
+ */
+
+int
+nsmbase::send_from
+(
+    const std::string & message,
+    const std::string & pattern,
+    const std::string & s1,
+    const std::string & s2,
+    const std::string & s3
+)
+{
+    int result = (-1);
+    if (s3.empty())
+    {
+        if (s2.empty())
+        {
+            result = lo_send_from        /* e.g. "/nsm/client/is_clean" ""  */
+            (
+                m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
+                message.c_str(), pattern.c_str(), s1.c_str()
+            );
+        }
+        else
+        {
+            if (s1.empty())
+            {
+                result = lo_send_from
+                (
+                    m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
+                    message.c_str(), pattern.c_str()
+                );
+            }
+            else
+            {
+                result = lo_send_from
+                (
+                    m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
+                    message.c_str(), pattern.c_str(),
+                    s1.c_str(), s2.c_str()
+                );
+            }
+        }
+    }
+    else
+    {
+        result = lo_send_from
+        (
+            m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
+            message.c_str(), pattern.c_str(),
+            s1.c_str(), s2.c_str(), s3.c_str()
+        );
+    }
+    if (result != (-1))
+    {
+        if (rc().verbose() || FORCE_VERBOSE)
+        {
+            std::string msg = "OSC message sent " + message + pattern;
+            session_message(msg);
+        }
+    }
+    else
+    {
+        std::string msg = "OSC message FAILURE " + message + pattern;
+        error_message(msg);
     }
     return result;
 }
@@ -1176,7 +1264,7 @@ outgoing_msg
     const std::string & data
 )
 {
-    if (rc().verbose())
+    if (rc().verbose() || FORCE_VERBOSE)
     {
         std::string text = msgsnprintf
         (

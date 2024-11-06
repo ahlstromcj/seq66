@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2023-12-05
+ * \updates       2024-11-06
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -38,6 +38,10 @@
 #include "qt5nsmanager.hpp"             /* an seq66::smanager for Qt 5      */
 #include "os/daemonize.hpp"             /* seq66::session_close(), etc.     */
 #include "os/timing.hpp"                /* seq66::millisleep()              */
+
+/*
+ *  More macros.
+ */
 
 #undef  SEQ66_LOCALE_SUPPORT            /* using --locale instead           */
 #undef  SEQ66_TRANSLATOR_SUPPORT        /* we're not ready for this at all  */
@@ -149,6 +153,11 @@ main (int argc, char * argv [])
 #endif
 
     int exit_status = EXIT_SUCCESS;                 /* versus EXIT_FAILURE  */
+
+#if defined SEQ66_IMMEDIATE_LOG_FILE
+    (void) seq66::reroute_stdio("session.log");
+#endif
+
     for (;;)
     {
         seq66::qt5nsmanager sm(app);
@@ -164,13 +173,13 @@ main (int argc, char * argv [])
 
             if (seq66::session_close())
             {
-                seq66::session_message("Closing session");
+                seq66::session_message("Closing Seq66 session");
                 break;                              /* stop infinite loop   */
             }
             if (seq66::session_restart())
             {
                 seq66::millisleep(sc_sleep_time_ms);
-                seq66::session_message("Reloading session");
+                seq66::session_message("Reloading Seq66 session");
                 seq66::signal_end_restart();
             }
             else
@@ -182,6 +191,9 @@ main (int argc, char * argv [])
             break;
         }
     }
+#if defined SEQ66_IMMEDIATE_LOG_FILE
+    (void) seq66::close_stdio();
+#endif
     return exit_status;
 }
 

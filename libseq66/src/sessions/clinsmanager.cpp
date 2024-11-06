@@ -190,6 +190,11 @@ bool
 clinsmanager::create_session (int argc, char * argv [])
 {
 #if defined SEQ66_NSM_SUPPORT
+
+#if defined SEQ66_IMMEDIATE_LOG_FILE
+    session_message("create_session");
+#endif
+
     std::string url;
     bool ok = detect_session(url);                  /* side-effect          */
     if (! ok)

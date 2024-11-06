@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2023-11-04
+ * \updates       2023-11-05
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -302,7 +302,7 @@ protected:
         m_is_help = flag;
     }
 
-    void reroute_to_log (const std::string & filepath) const;
+    bool reroute_to_log (const std::string & filepath) const;
     void append_error_message
     (
         const std::string & message,

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-11-04
+ * \updates       2023-11-05
  * \license       GNU GPLv2 or above
  *
  *    Provides some useful functions for displaying information about the
@@ -44,6 +44,15 @@
 #include <string>
 
 #include "seq66_features.h"             /* the C-compatible definitions     */
+
+/*
+ *  Define this to produce an immediate log file in the current directory.
+ *  Useful in debugging NSM support. The 'usr'-specified log-file will not
+ *  be opened. It happens too late anyway. Normally this macro should be
+ *  *undefined*.
+ */
+
+#define SEQ66_IMMEDIATE_LOG_FILE
 
 /*
  * This is the main namespace of Seq66.  Do not attempt to
