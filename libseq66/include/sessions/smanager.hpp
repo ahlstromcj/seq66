@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2023-11-05
+ * \updates       2024-11-06
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -135,7 +135,7 @@ public:
 
     smanager (const std::string & caps = "");
     smanager (const smanager &) = delete;
-    smanager & operator =(const smanager &) = delete;
+    smanager & operator = (const smanager &) = delete;
     virtual ~smanager ();
 
     static void app_info (const std::string arg0, bool is_cli = false);

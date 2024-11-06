@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2024-11-05
+ * \updates       2024-11-06
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -127,17 +127,6 @@ static lo_timetag s_lo_timetag = { 0, 1 };
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase class             */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm new message functions */
 
-/*
- *  Define in seq66_features.hpp only for trouble-shooting, especially under a
- *  session manager.
- */
-
-#if defined SEQ66_IMMEDIATE_LOG_FILE
-#define FORCE_VERBOSE true
-#else
-#define FORCE_VERBOSE false
-#endif
-
 #define NSM_API_VERSION_MAJOR   1
 #define NSM_API_VERSION_MINOR   0
 
@@ -147,6 +136,29 @@ static lo_timetag s_lo_timetag = { 0, 1 };
 
 namespace seq66
 {
+
+/*
+ *  Define in seq66_features.hpp only for trouble-shooting, especially under a
+ *  session manager.
+ */
+
+#if defined SEQ66_IMMEDIATE_LOG_FILE
+
+bool
+verbose_send ()
+{
+    return true;
+}
+
+#else
+
+bool
+verbose_send ()
+{
+    return rc().verbose();
+}
+
+#endif
 
 /**
  *  A handler for the /reply message.
@@ -1016,11 +1028,19 @@ nsmbase::send_from
 )
 {
     int result = (-1);
-    if (s3.empty())
+    if (s1.empty())
+    {
+        result = lo_send_from
+        (
+            m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
+            message.c_str(), pattern.c_str()
+        );
+    }
+    else
     {
         if (s2.empty())
         {
-            result = lo_send_from        /* e.g. "/nsm/client/is_clean" ""  */
+            result = lo_send_from
             (
                 m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
                 message.c_str(), pattern.c_str(), s1.c_str()
@@ -1028,15 +1048,7 @@ nsmbase::send_from
         }
         else
         {
-            if (s1.empty())
-            {
-                result = lo_send_from
-                (
-                    m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
-                    message.c_str(), pattern.c_str()
-                );
-            }
-            else
+            if (s3.empty())
             {
                 result = lo_send_from
                 (
@@ -1045,20 +1057,20 @@ nsmbase::send_from
                     s1.c_str(), s2.c_str()
                 );
             }
+            else
+            {
+                result = lo_send_from
+                (
+                    m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
+                    message.c_str(), pattern.c_str(),
+                    s1.c_str(), s2.c_str(), s3.c_str()
+                );
+            }
         }
-    }
-    else
-    {
-        result = lo_send_from
-        (
-            m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
-            message.c_str(), pattern.c_str(),
-            s1.c_str(), s2.c_str(), s3.c_str()
-        );
     }
     if (result != (-1))
     {
-        if (rc().verbose() || FORCE_VERBOSE)
+        if (verbose_send())
         {
             std::string msg = "OSC message sent " + message + pattern;
             session_message(msg);
@@ -1264,7 +1276,7 @@ outgoing_msg
     const std::string & data
 )
 {
-    if (rc().verbose() || FORCE_VERBOSE)
+    if (verbose_send())
     {
         std::string text = msgsnprintf
         (

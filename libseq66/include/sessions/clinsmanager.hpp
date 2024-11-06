@@ -28,7 +28,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2023-03-28
+ * \updates       2024-11-06
  * \license       GNU GPLv2 or above
  *
  *  Provides a base class that can be used to manage the command-line version
@@ -102,7 +102,9 @@ private:
 public:
 
     clinsmanager (const std::string & caps = c_cli_nsm_capabilities);
-    virtual ~clinsmanager ();
+    clinsmanager (const clinsmanager &) = delete;
+    clinsmanager & operator = (const clinsmanager &) = delete;
+    virtual ~clinsmanager () = default;
 
 #if defined SEQ66_NSM_SUPPORT
     nsmclient * nsm_client ()

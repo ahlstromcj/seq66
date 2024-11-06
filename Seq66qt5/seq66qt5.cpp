@@ -103,11 +103,7 @@ main (int argc, char * argv [])
 #endif
 
     QApplication app(argc, argv);           /* main application object      */
-#if defined USE_NEW_CODE
-    seq66::smanager::app_info(argv[0], true);
-#else
-    seq66::set_app_path(argv[0]);           /* log for future usage         */
-#endif
+    seq66::smanager::app_info(argv[0]);     /* instead of set_app_path()    */
 
 #if defined USE_RING_BUFFER_TEST && defined SEQ66_PLATFORM_DEBUG
     if (! seq66::run_ring_test())

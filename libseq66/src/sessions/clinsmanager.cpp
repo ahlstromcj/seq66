@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2023-08-29
+ * \updates       2024-11-06
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -103,11 +103,6 @@ clinsmanager::clinsmanager (const std::string & caps) :
     m_poll_period_ms    (3 * usr().window_redraw_rate())    /* in qsmainwnd */
 {
     get_and_set_build_issue();
-}
-
-clinsmanager::~clinsmanager ()
-{
-    // no code
 }
 
 /**

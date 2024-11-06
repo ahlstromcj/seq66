@@ -166,6 +166,8 @@ void
 smanager::app_info (const std::string arg0, bool is_cli)
 {
     set_app_name(SEQ66_APP_NAME);               /* set at ./configure time  */
+    set_app_path(arg0);                         /* log for future usage     */
+    set_arg_0(arg0);                            /* issue #131               */
     if (is_cli)
     {
         /*
@@ -174,7 +176,6 @@ smanager::app_info (const std::string arg0, bool is_cli)
          * seq66::usr().app_is_headless(true);  // conflated with cli
          */
 
-        seq66::set_app_path(arg0);              /* log for future usage     */
         set_app_cli(true);                      /* the default is false     */
         set_app_type(SEQ66_APP_TYPE);           /* e.g. "qt5" vs "cli"      */
         set_client_name("seq66cli");            /* change from configure    */
@@ -284,6 +285,8 @@ smanager::main_settings (int argc, char * argv [])
         {
             int optionindex = (-1);
             bool sessionmodified = false;
+            if (rc().alt_session())     // issue #131
+            {
 
             /*
              * Check for a session, either defined by the environment variable
@@ -291,6 +294,7 @@ smanager::main_settings (int argc, char * argv [])
              * latter can override the first.
              */
 
+#if 0   // commented out for issue #131
             if (! rc().alt_session())
             {
                 std::string sesstag = cmdlineopts::env_session_tag();
@@ -299,6 +303,7 @@ smanager::main_settings (int argc, char * argv [])
             }
             if (rc().alt_session())
             {
+#endif
                 /*
                  * The name 'sessions.rc' is a bit more accurate.
                  */
@@ -328,6 +333,9 @@ smanager::main_settings (int argc, char * argv [])
                         return false;
                     }
                 }
+#if 0   // comment out for issue #131
+            }
+#endif
             }
 
             /*

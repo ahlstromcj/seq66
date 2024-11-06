@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2023-11-05
+ * \updates       2023-11-06
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future! Join the Smart Patrol!
@@ -210,7 +210,9 @@ qt5nsmanager::create_window ()
                         clid += rc().jack_session();    /* UUID alone   */
                     }
                 }
+#if 0   // see version 0.99.7
                 else                                    /* 2023-11-05   */
+#endif
                 {
                     if (rc().alt_session())
                     {
@@ -219,13 +221,11 @@ qt5nsmanager::create_window ()
                         tag += "]";
                         session_manager_name(tag);
                     }
-#if 0   // this seems wwrong, test it!!!
-                    if (have_uuid)
+                    if (have_uuid)                      /* wrong ???    */
                     {
                         clid += "/";
                         clid += rc().jack_session();    /* UUID alone   */
                     }
-#endif
                 }
             }
             m_window->session_manager(manager_name());
@@ -305,6 +305,7 @@ qt5nsmanager::run ()
     if (session_setup(restart))                 /* need an early exit?      */
     {
         int exit_status = m_application.exec(); /* run main window loop     */
+        status_message("Early exit flagged by session setup");
         return exit_status == EXIT_SUCCESS;
     }
     else

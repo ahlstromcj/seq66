@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-11-05
+ * \updates       2023-11-06
  * \license       GNU GPLv2 or above
  *
  *    Provides some useful functions for displaying information about the
@@ -52,7 +52,7 @@
  *  *undefined*.
  */
 
-#define SEQ66_IMMEDIATE_LOG_FILE
+#undef SEQ66_IMMEDIATE_LOG_FILE
 
 /*
  * This is the main namespace of Seq66.  Do not attempt to

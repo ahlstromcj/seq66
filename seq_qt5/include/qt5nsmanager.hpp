@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2023-05-31
+ * \updates       2024-11-06
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -70,12 +70,15 @@ class qt5nsmanager : public QObject, public clinsmanager
 
 public:
 
+    qt5nsmanager () = delete;
     qt5nsmanager
     (
         QApplication & app,
         QObject * parent         = nullptr,
         const std::string & caps = c_qt5_nsm_capabilities
     );
+    qt5nsmanager (const qt5nsmanager &) = delete;
+    qt5nsmanager & operator = (const qt5nsmanager &) = delete;
     virtual ~qt5nsmanager ();
 
     virtual bool close_session (std::string & msg, bool ok = true) override;
