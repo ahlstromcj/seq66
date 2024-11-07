@@ -21,7 +21,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2024-11-05
+ * \updates       2024-11-07
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -456,6 +456,17 @@ close_stdio ()
 
     return result;
 }
+
+/**
+ *  Reroute stdout and stderr to the same log file. This is allowed
+ *  only once.
+ *
+ * \param logfile
+ *      Provides the full path to the log file.
+ *
+ * \return
+ *      Returns true if the rerouting worked or was already done.
+ */
 
 bool
 reroute_stdio (const std::string & logfile)

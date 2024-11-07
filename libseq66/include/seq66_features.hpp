@@ -46,15 +46,6 @@
 #include "seq66_features.h"             /* the C-compatible definitions     */
 
 /*
- *  Define this to produce an immediate log file in the current directory.
- *  Useful in debugging NSM support. The 'usr'-specified log-file will not
- *  be opened. It happens too late anyway. Normally this macro should be
- *  *undefined*.
- */
-
-#undef SEQ66_IMMEDIATE_LOG_FILE
-
-/*
  * This is the main namespace of Seq66.  Do not attempt to
  * Doxygenate the documentation here; it breaks Doxygen.
  */

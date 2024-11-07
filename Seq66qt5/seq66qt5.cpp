@@ -149,11 +149,6 @@ main (int argc, char * argv [])
 #endif
 
     int exit_status = EXIT_SUCCESS;                 /* versus EXIT_FAILURE  */
-
-#if defined SEQ66_IMMEDIATE_LOG_FILE
-    (void) seq66::reroute_stdio("session.log");
-#endif
-
     for (;;)
     {
         seq66::qt5nsmanager sm(app);
@@ -187,9 +182,6 @@ main (int argc, char * argv [])
             break;
         }
     }
-#if defined SEQ66_IMMEDIATE_LOG_FILE
-    (void) seq66::close_stdio();
-#endif
     return exit_status;
 }
 

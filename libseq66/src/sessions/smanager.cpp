@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2023-12-13
+ * \updates       2024-11-07
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -215,10 +215,6 @@ smanager::main_settings (int argc, char * argv [])
     std::string parentname = get_parent_process_name();
     bool in_nsm = contains(parentname, s_nsm_name); /* this is tentative!   */
 
-#if defined SEQ66_IMMEDIATE_LOG_FILE
-    session_message("main_settings");
-#endif
-
     /*
      *  Call app_info() above in main() instead of this.
      *
@@ -285,26 +281,13 @@ smanager::main_settings (int argc, char * argv [])
         {
             int optionindex = (-1);
             bool sessionmodified = false;
-            if (rc().alt_session())     // issue #131
+            if (rc().alt_session())     /* issue #131                       */
             {
-
-            /*
-             * Check for a session, either defined by the environment variable
-             * "SEQ66_SESSION_TAG" or by the "--session-tag tag" option. The
-             * latter can override the first.
-             */
-
-#if 0   // commented out for issue #131
-            if (! rc().alt_session())
-            {
-                std::string sesstag = cmdlineopts::env_session_tag();
-                if (! sesstag.empty())
-                    rc().session_tag(sesstag);
-            }
-            if (rc().alt_session())
-            {
-#endif
                 /*
+                 * Check for a session, either defined by the environment
+                 * variable "SEQ66_SESSION_TAG" or by the "--session-tag tag"
+                 * option. The latter can override the first.
+                 *
                  * The name 'sessions.rc' is a bit more accurate.
                  */
 
@@ -333,9 +316,12 @@ smanager::main_settings (int argc, char * argv [])
                         return false;
                     }
                 }
-#if 0   // comment out for issue #131
             }
-#endif
+            else
+            {
+                std::string sesstag = cmdlineopts::env_session_tag();
+                if (! sesstag.empty())
+                    rc().session_tag(sesstag);
             }
 
             /*
@@ -377,13 +363,15 @@ smanager::main_settings (int argc, char * argv [])
             {
                 /*
                  * The 'usr' file might not specify a log-file. Check again
-                 * here.
+                 * here. But do we really want to not do this for a verbose
+                 * CLI run?
+                 *
+                 *  bool uselog = ! (seq_app_cli() && rc().verbose()) &&
+                 *      usr().option_use_logfile();
                  */
 
                 (void) cmdlineopts::parse_o_options(argc, argv);
-                bool uselog = ! (seq_app_cli() && rc().verbose()) &&
-                    usr().option_use_logfile();
-
+                bool uselog = usr().option_use_logfile();
 
                 /*
                  * The user migh specify -o options that are also set up in
@@ -492,11 +480,6 @@ smanager::create_performer ()
     int cols = usr().mainwnd_cols();
     pointer p(new (std::nothrow) performer(ppqn, rows, cols));
     result = bool(p);
-
-#if defined SEQ66_IMMEDIATE_LOG_FILE
-    session_message("main_settings");
-#endif
-
     if (result)
     {
         m_perf_pointer = std::move(p);              /* change the ownership */
@@ -653,11 +636,6 @@ smanager::open_midi_file (const std::string & fname)
 bool
 smanager::create_session (int /*argc*/, char * /*argv*/ [])
 {
-
-#if defined SEQ66_IMMEDIATE_LOG_FILE
-    session_message("create_session");
-#endif
-
     session_setup();             /* daemonize: set basic signal handlers */
     return true;
 }
@@ -684,11 +662,6 @@ smanager::create_session (int /*argc*/, char * /*argv*/ [])
 bool
 smanager::close_session (std::string & msg, bool ok)
 {
-
-#if defined SEQ66_IMMEDIATE_LOG_FILE
-    session_message("close_session");
-#endif
-
     bool result = not_nullptr(perf());
     if (result)
     {
@@ -1137,11 +1110,6 @@ smanager::create_configuration
     const std::string & midifilepath
 )
 {
-
-#if defined SEQ66_IMMEDIATE_LOG_FILE
-    session_message("create_configuration");
-#endif
-
     bool result = ! cfgfilepath.empty();
     if (result)
     {

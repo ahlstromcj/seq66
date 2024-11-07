@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2024-11-06
+ * \updates       2024-11-07
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -121,8 +121,7 @@ static lo_timetag s_lo_timetag = { 0, 1 };
 #include <sys/types.h>                  /* provides the pid_t typedef       */
 #include <unistd.h>                     /* C getpid()                       */
 
-#include "seq66_features.hpp"           /* seq66::set_app_path()            */
-#include "cfg/settings.hpp"             /* opt: SEQ66_IMMEDIATE_LOG_FILE    */
+#include "cfg/settings.hpp"             /* rc() and usr() functions         */
 #include "util/basic_macros.hpp"        /* not_nullptr(), warnprint(), etc. */
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase class             */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm new message functions */
@@ -136,29 +135,6 @@ static lo_timetag s_lo_timetag = { 0, 1 };
 
 namespace seq66
 {
-
-/*
- *  Define in seq66_features.hpp only for trouble-shooting, especially under a
- *  session manager.
- */
-
-#if defined SEQ66_IMMEDIATE_LOG_FILE
-
-bool
-verbose_send ()
-{
-    return true;
-}
-
-#else
-
-bool
-verbose_send ()
-{
-    return rc().verbose();
-}
-
-#endif
 
 /**
  *  A handler for the /reply message.
@@ -277,10 +253,7 @@ nsmbase::start_thread ()
     {
         int rcode = lo_server_thread_start(m_lo_server_thread);
         if (rcode == 0)                                     /* successful?  */
-        {
-            if (rc().verbose())
-                session_message("OSC server thread started");
-        }
+            session_message("OSC server thread started");
         else
             error_message("OSC server thread start failed");
     }
@@ -319,18 +292,15 @@ nsmbase::initialize ()
     if (result)
     {
         const int proto = lo_address_get_protocol(m_lo_address);
-        if (rc().verbose())
+        std::string ps = "Unknown";
+        switch (proto)
         {
-            std::string ps = "Unknown";
-            switch (proto)
-            {
-                case LO_UDP:    ps = "UDP";     break;
-                case LO_TCP:    ps = "TCP";     break;
-                case LO_UNIX:   ps = "UNIX";    break;
-            }
-            ps += " OSC protocol";
-            session_message(ps);
+            case LO_UDP:    ps = "UDP";     break;
+            case LO_TCP:    ps = "TCP";     break;
+            case LO_UNIX:   ps = "UNIX";    break;
         }
+        ps += " OSC protocol";
+        session_message(ps);
         m_lo_server_thread = lo_server_thread_new_with_proto(NULL, proto, NULL);
         result = not_nullptr(m_lo_server_thread);
         if (result)
@@ -413,9 +383,7 @@ nsmbase::msg_check (int timeoutms)
         if (lo_server_wait(m_lo_server, timeoutms))
         {
             result = true;
-            if (rc().verbose())
-                session_message("NSM waiting for reply...");
-
+            session_message("NSM waiting for reply...");
             while (lo_server_recv_noblock(m_lo_server, 0))
             {
                 /* do nothing, handle the message(s) */
@@ -526,11 +494,6 @@ nsmbase::is_dirty ()
         {
             int rcode = send_from(message, pattern);
             ok = rcode == 0;
-//          lo_send_from                    /* "/nsm/client/is_dirty" ""    */
-//          (
-//              m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
-//              message.c_str(), pattern.c_str()
-//          );
         }
     }
     return result;
@@ -644,16 +607,8 @@ nsmbase::send_nsm_reply
         if (errorcode == nsm::error::ok)
         {
             if (client_msg(nsm::tag::reply, message, pattern))
-            {
                 rc = send_from(message, pattern, path, replymsg);
 
-//              rc = lo_send_from
-//              (
-//                  m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
-//                  message.c_str(), pattern.c_str(),
-//                  path.c_str(), replymsg.c_str()
-//              );
-            }
             replytype = "reply";
         }
         else
@@ -974,40 +929,6 @@ nsmbase::send_from_client
     {
         int rcode = send_from(message, pattern, s1, s2, s3);
         result = rcode != (-1);
-#if 0
-        if (s3.empty())
-        {
-            rcode = lo_send_from        /* e.g. "/nsm/client/is_clean" ""   */
-            (
-                m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
-                message.c_str(), pattern.c_str(),
-                s1.c_str(), s2.c_str()
-            );
-        }
-        else
-        {
-            rcode = lo_send_from
-            (
-                m_lo_address, m_lo_server, LO_TT_IMMEDIATE_2,
-                message.c_str(), pattern.c_str(),
-                s1.c_str(), s2.c_str(), s3.c_str()
-            );
-        }
-        result = rcode != (-1);
-        if (result)
-        {
-            if (rc().verbose())
-            {
-                std::string msg = "OSC message sent" + message;
-                session_message(msg);
-            }
-        }
-        else
-        {
-            std::string msg = "OSC message send FAILURE" + message;
-            error_message(msg);
-        }
-#endif
     }
     return result;
 }
@@ -1070,11 +991,8 @@ nsmbase::send_from
     }
     if (result != (-1))
     {
-        if (verbose_send())
-        {
-            std::string msg = "OSC message sent " + message + pattern;
-            session_message(msg);
-        }
+        std::string msg = "OSC message sent " + message + pattern;
+        session_message(msg);
     }
     else
     {
@@ -1276,15 +1194,12 @@ outgoing_msg
     const std::string & data
 )
 {
-    if (verbose_send())
-    {
-        std::string text = msgsnprintf
-        (
-            "%s-->[%s] %s",
-            message.c_str(), pattern.c_str(), data.c_str()
-        );
-        session_message(text);
-    }
+    std::string text = msgsnprintf
+    (
+        "%s-->[%s] %s",
+        message.c_str(), pattern.c_str(), data.c_str()
+    );
+    session_message(text);
 }
 
 tokenization
