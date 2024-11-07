@@ -10,3 +10,4 @@ Categories=Qt;AudioVideo;Audio;Midi;Music;Sequencer;X-Alsa;X-Jack;X-MIDI;
 Exec=qseq66
 Terminal=false
 X-NSM-Capable=true
+X-NSM-Exec=qseq66
