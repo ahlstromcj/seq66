@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-02
+ * \updates       2024-11-07
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -38,7 +38,7 @@
  *  New MIDI FIle   new_session()           Clear file/playlist, set new name.
  *  Import [Open]   import_midi_into_session()   Imports only a MIDI file.
  *  Save session    save_session()          Save MIDI and configs in session.
- *  Save As         HIDDEN                  See Export from Session.
+ *  Save As         HIDDEN                  See Export from session.
  *  Export from ... save_file_as()          Copy MIDI file outside of session.
  *  Close (hidden)  quit_session            Detach from session management.
  *
@@ -63,13 +63,11 @@
  */
 
 #include <QErrorMessage>                /* QErrorMessage                    */
-#include <QFileDialog>                  /* prompt for full MIDI file's path */
 #include <QInputDialog>                 /* prompt for NSM MIDI file-name    */
 #include <QGuiApplication>              /* used for QScreen geometry() call */
 #include <QMessageBox>                  /* QMessageBox                      */
 #include <QResizeEvent>                 /* QResizeEvent                     */
-#include <QScreen>                      /* Qscreen                          */
-#include <QTimer>                       /* QTimer                           */
+#include <QScreen>                      /* QScreen                          */
 
 #undef USE_QDESKTOPSERVICES
 #if defined USE_QDESKTOPSERVICES
@@ -1098,6 +1096,10 @@ qsmainwnd::closeEvent (QCloseEvent * event)
     if (usr().in_nsm_session())
     {
         session_message("Close event with NSM");
+        remove_all_editors();
+        remove_qperfedit();
+        remove_all_live_frames();
+        remove_set_master();
     }
     else
     {
@@ -2412,11 +2414,22 @@ qsmainwnd::save_session ()
         {
             std::string msg;
             result = session()->save_session(msg);
-            if (! result)
+            if (result)
+                enable_save_update(false);
+            else
                 show_error_box(msg);
         }
     }
     return result;
+}
+
+void
+qsmainwnd::enable_save_update (bool flag)
+{
+    enable_save(flag);                          /* disable "File / Save"    */
+    update_all_editors_titles(flag);            /* update title bars        */
+    cb_perf().unmodify();                       /* avoid saving later       */
+    m_is_title_dirty = true;
 }
 
 bool
@@ -2455,8 +2468,7 @@ qsmainwnd::save_file (const std::string & fname, bool updatemenu)
                     last_used_dir(path);
                     rc().last_used_dir(path);
                 }
-                enable_save(false);             /* disable "File / Save"    */
-                update_all_editors_titles(false);
+                enable_save_update(false);
                 song_path(filename);
                 if (updatemenu)                 /* or ! use_nsm()           */
                     update_recent_files_menu(); /* add the recent file-name */
@@ -3838,7 +3850,7 @@ qsmainwnd::connect_nsm_slots ()
      * File / New.  NSM version.
      */
 
-    ui->actionNew->setText("&New MIDI File...");
+    ui->actionNew->setText("&New MIDI file...");
     ui->actionNew->setToolTip("Clear and set a new MIDI file in session.");
     connect
     (
@@ -3847,11 +3859,11 @@ qsmainwnd::connect_nsm_slots ()
     );
 
     /*
-     * File / Open versus File / Import / Import MIDI into Session.
+     * File / Open versus File / Import / Import MIDI into session.
      */
 
     ui->actionOpen->setVisible(false);
-    ui->actionImportMIDIIntoSession->setText("&Import MIDI into Session...");
+    ui->actionImportMIDIIntoSession->setText("&Import MIDI into session...");
     ui->actionImportMIDIIntoSession->setToolTip
     (
         "Import a MIDI/Seq66 file into the current session."
@@ -3870,10 +3882,10 @@ qsmainwnd::connect_nsm_slots ()
     ui->actionOpenPlaylist->setVisible(false);
 
     /*
-     * File / Save Session.
+     * File / Save session.
      */
 
-    ui->actionSave->setText("&Save");
+    ui->actionSave->setText("&Save session");
     ui->actionSave->setToolTip
     (
         "Save current MIDI file and configuration in the session."
@@ -3891,10 +3903,10 @@ qsmainwnd::connect_nsm_slots ()
     ui->actionSave_As->setVisible(false);
 
     /*
-     * File / Export from Session
+     * File / Export from session
      */
 
-    ui->actionSave_As->setText("&Export from Session...");
+    ui->actionSave_As->setText("&Export from session...");
     ui->actionSave_As->setToolTip("Export as a Seq66 MIDI file.");
     connect
     (
@@ -3927,7 +3939,7 @@ qsmainwnd::connect_normal_slots ()
     connect(ui->actionNew, SIGNAL(triggered(bool)), this, SLOT(new_file()));
 
     /*
-     * File / Open versus File / Import / Import MIDI into Session.
+     * File / Open versus File / Import / Import MIDI into session.
      */
 
     ui->actionImportMIDIIntoSession->setVisible(false);

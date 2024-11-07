@@ -61,7 +61,6 @@
 #include "play/playlist.hpp"            /* seq66::playlist class            */
 #include "sessions/smanager.hpp"        /* seq66::smanager()                */
 #include "os/daemonize.hpp"             /* seq66::reroute_stdio(), etc.     */
-///// #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
 #include "util/filefunctions.hpp"       /* seq66::file_readable() etc.      */
 
 #if defined SEQ66_PORTMIDI_SUPPORT

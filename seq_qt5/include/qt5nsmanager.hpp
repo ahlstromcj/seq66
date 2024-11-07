@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2024-11-06
+ * \updates       2024-11-07
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -98,6 +98,13 @@ public:
     virtual void session_manager_path (const std::string & pathname) override;
     virtual void session_display_name (const std::string & dispname) override;
     virtual void session_client_id (const std::string & clid) override;
+
+    /*
+     * Version 0.99.16. Added to access main window to clear modified
+     * flag and remove editor windows.
+     */
+
+    virtual bool save_session (std::string & msg, bool ok = true) override;
 
 private:
 

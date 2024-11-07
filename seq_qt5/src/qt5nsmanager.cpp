@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2023-11-06
+ * \updates       2023-11-07
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future! Join the Smart Patrol!
@@ -272,7 +272,7 @@ qt5nsmanager::create_window ()
 /**
  *  Will do more with this later.  Currently we just call the base class.
  *  Note that the auto-palette-save() value will always be false.
- *  Saving teh palette should be a manual option, as it is never changed
+ *  Saving the palette should be a manual option, as it is never changed
  *  during run-time.
  *
  *      bool savepalette = rc().palette_active() || rc().auto_palette_save();
@@ -288,6 +288,12 @@ qt5nsmanager::close_session (std::string & msg, bool ok)
         std::string palfile = rc().palette_filespec();
         saved = save_palette(global_palette(), palfile);
     }
+
+    /*
+     * if (m_window)
+     *     m_window->remove_all_editors();
+     */
+
     bool closed = clinsmanager::close_session(msg, ok);
     return saved && closed;
 }
@@ -479,6 +485,21 @@ qt5nsmanager::session_client_id (const std::string & clid)
     clinsmanager::session_client_id(clid);
     if (m_window)
         m_window->session_client_id(clid.empty() ? "None" : clid);
+}
+
+/*
+ * Added in version 0.99.16 in order to clear the modified flag and
+ * close editor windows.
+ */
+
+bool
+qt5nsmanager::save_session (std::string & msg, bool ok)
+{
+    bool result = clinsmanager::save_session(msg, ok);
+    if (m_window && ok)
+        m_window->enable_save_update(false);
+
+   return result;
 }
 
 void
