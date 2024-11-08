@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2024-08-07
+% \update      2024-11-08
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1951,7 +1951,19 @@
 
    \textsl{Seq66} provides a way to control the
    application to some extent via a MIDI controller, such as a MIDI keyboard or
-   a MIDI pad.  The current section describes this feature;
+   a MIDI pad.
+   In addition, it defines the keystrokes used to activate various functions.
+   Although somewhat similar to the keystrokes used in \textsl{Seq24},
+   \textsl{Seq66} greatly expands the number of control items.
+   Unfortunately, there is no GUI editor of "learn" function for the
+   'ctrl' file.
+   However, it is well-documented and can be edited manually.
+
+   Also added to the 'ctrl' file are sections to define MIDI output events to
+   toggle status lights on an external device, and
+   output macros that can be defined to set up an external device.
+
+   The current section describes the 'ctrl' file;
    additional resources and ideas can be found at \url{linuxaudio.org} and
    its discussion of MIDI control with \textsl{Seq24} \cite{midicontrol}.
    Also see the tutorial section \sectionref{sec:launchpad_mini}.
@@ -1965,7 +1977,8 @@
    \texttt{control\_keys.ods} and
    \texttt{launchpad-mini.ods}.
 
-   The 'ctrl' file provides settings for keyboard control, MIDI control, and
+   The 'ctrl' file provides settings for keyboard control, MIDI input
+   control, and
    for specifying MIDI output to reflect \textsl{automation} commands in a
    device such as the \textsl{LaunchPad Mini}.  The name of this file and its
    active status are specfied in the 'rc' file as noted earlier.

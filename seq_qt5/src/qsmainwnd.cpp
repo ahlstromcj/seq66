@@ -2420,6 +2420,10 @@ qsmainwnd::save_session ()
                 show_error_box(msg);
         }
     }
+    else
+    {
+        result = save_file();
+    }
     return result;
 }
 

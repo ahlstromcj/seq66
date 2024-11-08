@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2024-10-27
+ * \updates       2024-11-08
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -8230,9 +8230,7 @@ performer::automation_bpm_up_dn
     }
     else
     {
-        if (a == automation::action::toggle)        /* for key-presses      */
-            increment_beats_per_minute();
-        else if (a == automation::action::on)
+        if (automation::actionable(a))
             increment_beats_per_minute();
         else if (a == automation::action::off)
             decrement_beats_per_minute();
@@ -8295,9 +8293,7 @@ performer::automation_ss_up_dn
     }
     else
     {
-        if (a == automation::action::toggle)        /* for key-presses      */
-            increment_screenset();
-        else if (a == automation::action::on)
+        if (automation::actionable(a))
             increment_screenset();
         else if (a == automation::action::off)
             decrement_screenset();
@@ -8650,9 +8646,7 @@ performer::automation_bpm_page_up_dn
     }
     else
     {
-        if (a == automation::action::toggle)            /* for keystroke */
-            page_increment_beats_per_minute();
-        else if (a == automation::action::on)
+        if (automation::actionable(a))
             page_increment_beats_per_minute();
         else if (a == automation::action::off)
             page_decrement_beats_per_minute();
@@ -8731,9 +8725,7 @@ performer::automation_record_style
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
-        if (a == automation::action::toggle)
-            next_grid_record_style();
-        else if (a == automation::action::on)
+        if (automation::actionable(a))
             next_grid_record_style();
         else if (a == automation::action::off)
             previous_grid_record_style();
@@ -8762,9 +8754,7 @@ performer::automation_quan_record
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
-        if (a == automation::action::toggle)
-            next_record_mode();
-        else if (a == automation::action::on)
+        if (automation::actionable(a))
             next_record_mode();
         else if (a == automation::action::off)
             previous_record_mode();
@@ -9754,7 +9744,7 @@ performer::automation_quit
 {
     std::string name = auto_name(automation::slot::quit);
     print_parameters(name, a, d0, d1, index, inverse);
-    if (a == automation::action::on && ! inverse)
+    if (automation::actionable(a) && ! inverse)
         signal_quit();
 
     return true;
@@ -9939,7 +9929,7 @@ performer::automation_save_session
 {
     std::string name = auto_name(automation::slot::save_session);
     print_parameters(name, a, d0, d1, index, inverse);
-    if (a == automation::action::on && ! inverse)
+    if (automation::actionable(a) && ! inverse)
         signal_save();                     /* actually just raises a flag  */
 
     return true;
@@ -9996,7 +9986,7 @@ performer::automation_record_style_select
 {
     bool result = true;
     std::string name = auto_name(automation::slot::record_style); /* tricky */
-    if (a == automation::action::on && ! inverse)
+    if (automation::actionable(a) && ! inverse)
     {
         automation::slot s = int_to_slot_cast(index);
         recordstyle rs;

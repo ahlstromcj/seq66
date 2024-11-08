@@ -210,6 +210,8 @@ string_to_action (const std::string & s)
 /**
  *  Some actions should work whether the user defined it as "on" or
  *  a "toggle".  For example, seee performer::automation_grid_mode().
+ *  This function is especially important because the keystrokes configured
+ *  in the 'ctrl' file are always treated like toggles.
  */
 
 bool

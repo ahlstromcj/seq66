@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.16
 Chris Ahlstrom
-2015-07-10 to 2024-11-07
+2015-07-10 to 2024-11-08
 
 # Change Log
 
@@ -9,19 +9,26 @@ Chris Ahlstrom
 ### Changed
 
 - Refined documentation about the Import/Export functionality.
-- Added CONFIG\_DIR\_NAME and cleaned up configure.ac.
+- Added CONFIG\_DIR\_NAME and cleaned up configure.ac. Updated the
+  Makefile sources.
 - Merged a fix from a pull request to update the \*.desktop files.
 
 ### Fixed
 
-- Fixed the display of tunes with various PPQNs such as 120.
+- Fixed the display of tunes with various PPQNs such as 120 in the
+  pattern editor.
 - Fixed an issue with NSM interactions introduced in version 0.99.11,
   plus other related issue:
-  - The NSM would show two clients for "qseq66" and "seq66" when adding
+  - The NSM would show two clients: "qseq66" and "seq66" when adding
     only the "qseq66" client.
   - Saving via a remote NSM Save command or by the File / Save menu
     would not clear the modified flag.
   - Closing the session would not remove any external editor windows.
+- Some automation actions need to work whether the action is "on" or
+  "toggle". Fixed these 'ctrl' actions:
+  - Save session (under NSM) or the MIDI file.
+  - Record style select.
+  - Quit.
 
 ### Added
 

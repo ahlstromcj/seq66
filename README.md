@@ -98,6 +98,9 @@ Windows, and using a conventional source tarball.
         are detected by GitHub.
     *   Fixed some font handling and added edit fields for browser and PDF
         viewer.
-    *   Also see RELNOTES.
+    *   Fixed NSM support.
+    *   Added support for 120 PPQN and fixed the display of it in the
+        pattern editor.
+    *   Also see RELNOTES and NEWS.
 
 // vim: sw=4 ts=4 wm=2 et ft=markdown

@@ -1,11 +1,31 @@
-Release Notes for Seq66 v. 0.99.16 2024-11-02
+Release Notes for Seq66 v. 0.99.16 2024-11-08
 
-A minor release for fixes and a couple of small new features.
+Fixes for NSM (session manager), build-file updates, and better PPQN
+handling.
 
--   Updated the PDF documentation.
--   Refined documentation about the Import/Export functionality.
--   Fixed the display of tunes with various PPQNs such as 120 in
-    the pattern editor.
--   See NEWS and ChangeLog for more details.
+- Merged a fix from a pull request (issue #130) to update the
+  *.desktop files.
+- Fixed issue #131 re faulty NSM interactions introduced in version
+  0.99.11, plus other related issues:
+  - NSM (agordejo or nsm-legacy-gui) would show two clients: "qseq66"
+    and "seq66" when adding only the "qseq66" client.
+  - Saving via a remote NSM Save command or by the File / Save menu
+    would not clear the modified flag.
+  - Closing the session would not remove any external editor windows.
+- Some automation actions need to work whether the action is "on" or
+  "toggle". Fixed these 'ctrl' actions:
+  - Save session (under NSM) or the MIDI file.
+  - Record style select.
+  - Quit.
+- Fixed the display of tunes with various PPQNs such as 120 in the
+  pattern editor.
+- Added 120 PPQN to the list of supported PPQNs.
+- Added CONFIG\_DIR\_NAME and cleaned up configure.ac. This macro
+  differentiates between client name and config directory name.
+  Updated the Makefile sources. Do "./bootstrap --full-clean".
+- Updated the PDF documentation re the Import/Export functionality.
+- See NEWS and ChangeLog for more details.
 
-# vim: sw=4 ts=4 wm=15 et ft=sh
+Note: No Windows installer provided for this release.
+
+# vim: sw=4 ts=4 wm=15 et ft=rc

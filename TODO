@@ -1,6 +1,10 @@
 TO DO for Seq66 0.99.16
 Chris Ahlstrom
-2019-04-13 to 2024-11-02
+2019-04-13 to 2024-11-08
+
+Hottest:
+
+    #128 Recording type for loop button not working (Issue
 
 From Testing:
 
@@ -287,11 +291,30 @@ ISSUES:
     down menu in the pattern window works fine, although Overdub is called
     Merge here, which is not ideal.
 
+    So, it is not quite as I thought. I tested it using step input and it is a
+    bit hit and miss whether it turns off the record arm at the end of the
+    loop. Mostly miss and it just overdubs. It also sometimes turns the record
+    arm off instantly.
+
+    This may or may not be related to a separate problem(s) I have found with
+    step input where it does not loop properly on any mode. Step input seems
+    to read the loop as one more step than it actually is. So on overdub the
+    extra step will appear at the beginning of the loop and the subsequent
+    loops second step will appear over the a step behind. On overwrite, it
+    will not overwrite till the second step of the loop and again the step
+    will one behind. Expand overdubs rather than expands on step input.
+
 #129 Quantized Record Button problem 
     There is a button in the pattern window to turn on Quantized Record.  If
     the Record Active button to the left of it is set to on then this button
     does not  work. If the Record Active button is off then the Quantized
     Record button turns on both buttons without issue.
+
+#131 NSM seems to get an announce from two processes
+    It looks like it announces with two processes to the NSM daemon or
+    something. 
+
+    STATUS: Fixed in the "wip" branch, will be merged at the next release.
 
 To close as pushed off to version 2:
 

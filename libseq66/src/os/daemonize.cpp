@@ -558,11 +558,8 @@ bool
 session_close ()
 {
     bool result = sg_needs_close;
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
     if (result)
         warn_message("App marked for close...");
-#endif
 
     sg_needs_close = false;
     return result;
@@ -577,10 +574,9 @@ bool
 session_save ()
 {
     bool result = sg_needs_save;
-#if defined SEQ66_PLATFORM_DEBUG
     if (result)
         warn_message("Marked for file_save...");
-#endif
+
     sg_needs_save = false;
     return result;
 }
