@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-02
+ * \updates       2024-11-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -88,13 +88,23 @@ qseqtime::qseqtime
     qseqbase        (p, s, frame, zoom, c_default_snap),
     m_timer         (nullptr),
     m_font          (),
-    m_move_L_marker (false)
+    m_move_L_marker (false),
+    m_expanding     (s.expanded_recording()),
+    m_R_marker      ()
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_font.setBold(true);
     m_font.setPointSize(sc_font_size);
     setMouseTracking(true);         /* track mouse movement without a click */
-    set_snap(track().snap());       /* TRIAL CODE */
+    set_snap(track().snap());
+    m_L_marker[0] = 'L'; m_L_marker[1] = 0;
+    m_R_marker[0] = 'R'; m_R_marker[1] = 0;
+    (void) snprintf(m_END_marker, sizeof m_END_marker, "END");
+    if (m_expanding)
+    {
+        m_END_marker[3] = '>';
+        m_END_marker[4] = 0;
+    }
     m_timer = qt_timer(this, "qseqtime", 4, SLOT(conditional_update())); // 2
 }
 
@@ -322,14 +332,14 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
         painter.drawRect(left, s_LR_box_y, s_LR_box_w, s_LR_box_h);
         pen.setColor(Qt::white);
         painter.setPen(pen);
-        painter.drawText(left + 1, s_text_y, "L");
+        painter.drawText(left + 1, s_text_y, m_L_marker);
     }
     pen.setColor(Qt::black);
     painter.setPen(pen);
     painter.drawRect(end - 1, s_LR_box_y, s_END_box_w, s_END_box_h);
     pen.setColor(Qt::white);
     painter.setPen(pen);
-    painter.drawText(end + 1, s_END_y, "END");
+    painter.drawText(end + 1, s_END_y, m_END_marker);
     if (right >= xoff_left && right <= xoff_right)
     {
         int drend = std::abs(end - right);
@@ -341,7 +351,7 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
             painter.drawRect(right - 1, s_LR_box_y, s_LR_box_w, s_LR_box_h);
             pen.setColor(Qt::white);                            // white text
             painter.setPen(pen);
-            painter.drawText(right, s_text_y, "R");
+            painter.drawText(right, s_text_y, m_R_marker);
         }
     }
 

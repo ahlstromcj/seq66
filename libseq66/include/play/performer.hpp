@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2024-10-27
+ * \updates       2024-11-10
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -696,10 +696,18 @@ private:                            /* key, midi, and op container section  */
     /**
      *  Part of a refactoring and expansion of the alterations that can be done
      *  while recording, playing, or by a manual command. See the calculations
-     *  header for the "alteration" enumeration.
+     *  header for the "alteration" enumeration. It includes quantization
+     *  and jitter.
      */
 
-    alteration m_alter_recording;
+    alteration m_record_alteration;
+
+    /**
+     *  Holds the current default recording style (overdub/merge, expand,
+     *  etc.
+     */
+
+    recordstyle m_record_style;
 
     /**
      *  Indicates to resume notes if the sequence is toggled after a Note On.
@@ -3074,6 +3082,16 @@ public:
         return m_record_snap_length;
     }
 
+    alteration record_alteration () const
+    {
+        return m_record_alteration;
+    }
+
+    recordstyle record_style () const
+    {
+        return m_record_style;
+    }
+
     bool resume_note_ons () const
     {
         return m_resume_note_ons;
@@ -3702,7 +3720,7 @@ public:
     void previous_grid_record_style ();
     void next_record_mode ();
     void previous_record_mode ();
-    void record_mode (alteration rm);
+    void set_record_mode (alteration rm);
     bool loop_control                   /* [loop-control]       */
     (
         automation::action a, int d0, int d1,

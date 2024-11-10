@@ -530,7 +530,7 @@ private:
     bool m_auto_step_reset;
 
     /**
-     *  Eliminates a bunch of booleans. The default style is merge.
+     *  Eliminates a bunch of booleans. The default style is merge (overdub).
      */
 
     recordstyle m_recording_style;

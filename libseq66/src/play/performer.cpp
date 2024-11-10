@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2024-11-08
+ * \updates       2024-11-10
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -343,7 +343,8 @@ performer::performer (int ppqn, int rows, int columns) :
     m_song_recording        (false),
     m_song_record_snap      (true),
     m_record_snap_length    (0),
-    m_alter_recording       (alteration::none),
+    m_record_alteration     (usr().record_mode()),       // alteration::none
+    m_record_style          (usr().grid_record_style()), // recordstyle::merge
     m_resume_note_ons       (usr().resume_note_ons()),
     m_ppqn                  (choose_ppqn(ppqn)),
     m_file_ppqn             (0),
@@ -4918,7 +4919,7 @@ performer::poll_cycle ()
                                 if (! m_master_bus->dump_midi_input(ev))
                                     warn_message("no matching channel");
 #else
-                                (void)m_master_bus->dump_midi_input(ev);
+                                (void) m_master_bus->dump_midi_input(ev);
 #endif
                             }
                             else
@@ -7872,6 +7873,7 @@ void
 performer::next_grid_record_style ()
 {
     (void) usr().next_grid_record_style();
+    m_record_style = usr().grid_record_style();
     notify_automation_change(automation::slot::record_style);
 }
 
@@ -7879,6 +7881,7 @@ void
 performer::previous_grid_record_style ()
 {
     (void) usr().previous_grid_record_style();
+    m_record_style = usr().grid_record_style();
     notify_automation_change(automation::slot::record_style);
 }
 
@@ -7886,6 +7889,7 @@ void
 performer::next_record_mode ()
 {
     (void) usr().next_record_mode();
+    m_record_alteration = usr().record_mode();
     notify_automation_change(automation::slot::quan_record);
 }
 
@@ -7893,13 +7897,15 @@ void
 performer::previous_record_mode ()
 {
     (void) usr().previous_record_mode();
+    m_record_alteration = usr().record_mode();
     notify_automation_change(automation::slot::quan_record);
 }
 
 void
-performer::record_mode (alteration rm)
+performer::set_record_mode (alteration rm)
 {
     (void) usr().record_mode(rm);
+    m_record_alteration = rm;
     notify_automation_change(automation::slot::quan_record);
 }
 
@@ -9966,6 +9972,7 @@ performer::set_record_style (recordstyle rs)
     if (rs < recordstyle::oneshot_reset)    /* recordstyle::max */
     {
         usr().grid_record_style(rs);
+        m_record_style = rs;
         notify_automation_change(automation::slot::record_style);
     }
 }
@@ -10130,7 +10137,7 @@ void
 performer::set_grid_quant (alteration q)
 {
     if (q < alteration::max)
-        m_alter_recording = q;
+        m_record_alteration = q;
 }
 
 bool

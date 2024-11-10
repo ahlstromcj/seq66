@@ -1647,12 +1647,14 @@
 
    \itempar{MIDI Record Toggle}{pattern editor!record midi data}
    This button routes incoming MIDI data into
-   \textsl{Seq66}, which then saves the data to its buffer, and also
+   \textsl{Seq66}, which then saves the data to the sequence, and also
    displays the new information (notes) in the piano roll view.
    Note that \textsl{Seq66}'s pattern grid can be put in various recording
    modes (e.g. overdub/merge versus overwrite) where, instead of
    muting/unmuting the patterns, it turns on recording (without opening the
    pattern editor).
+   If expand-recording is active, this button shows double arrows, the
+   second arrow indicating expandability.
 
    \itempar{MIDI Record Quantized}{pattern editor!quantized record}
    This button will causes MIDI data to be recorded, but be

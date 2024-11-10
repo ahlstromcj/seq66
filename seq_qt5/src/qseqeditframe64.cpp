@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-08-21
+ * \updates       2024-11-10
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -126,6 +126,7 @@
 #include "pixmaps/bus.xpm"
 #include "pixmaps/down.xpm"
 #include "pixmaps/drum.xpm"
+#include "pixmaps/exp_rec_on.xpm"
 #include "pixmaps/finger.xpm"
 #include "pixmaps/follow.xpm"
 #include "pixmaps/key.xpm"
@@ -1001,10 +1002,13 @@ qseqeditframe64::qseqeditframe64
 
     /*
      * MIDI Quantized Record Button. For recording, we can set red-letter
-     * icons for "Q", "T", and "N".
+     * icons for ">", "Q", "T", and "N".
      */
 
     ui->m_toggle_qrecord->setCheckable(true);
+#if defined USE_TRACK_VALUES                /* versus performer values  */
+    s.set_recording_style(p.record_style());
+#endif
     set_toggle_qrecord_button();
     connect
     (
@@ -4081,12 +4085,33 @@ qseqeditframe64::set_toggle_qrecord_button ()
     if (alter_record_active)
     {
         ui->m_toggle_qrecord->setChecked(true);
+
+#if defined USE_TRACK_VALUES                /* versus performer values  */
+        if (track().expanded_recording())
+            qt_set_icon(exp_rec_on_xpm, ui->m_toggle_record);
+        else
+            qt_set_icon(rec_on_xpm, ui->m_toggle_record);
+
         if (track().tightened_recording())
             qt_set_icon(t_rec_on_xpm, ui->m_toggle_qrecord);
         else if (track().notemapped_recording())
             qt_set_icon(n_rec_on_xpm, ui->m_toggle_qrecord);
         else
             qt_set_icon(q_rec_on_xpm, ui->m_toggle_qrecord);
+#else
+        if (perf().record_style() == recordstyle::expand)
+            qt_set_icon(exp_rec_on_xpm, ui->m_toggle_record);
+        else
+            qt_set_icon(rec_on_xpm, ui->m_toggle_record);
+
+        alteration a = perf().record_alteration();
+        if (a == alteration::tighten)
+            qt_set_icon(t_rec_on_xpm, ui->m_toggle_qrecord);
+        else if (a == alteration::notemap)
+            qt_set_icon(n_rec_on_xpm, ui->m_toggle_qrecord);
+        else
+            qt_set_icon(q_rec_on_xpm, ui->m_toggle_qrecord);
+#endif
     }
     else
         qt_set_icon(q_rec_xpm, ui->m_toggle_qrecord);

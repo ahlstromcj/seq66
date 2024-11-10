@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2024-10-26
+ * \updates       2024-11-10
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -282,7 +282,7 @@ qslivegrid::qslivegrid
      */
 
     perf().enregister(this);                                /* notification */
-    m_timer = qt_timer(this, "qslivegrid", 2, SLOT(conditional_update()));
+    m_timer = qt_timer(this, "qslivegrid", 3, SLOT(conditional_update()));
 }
 
 /**

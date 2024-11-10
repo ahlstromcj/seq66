@@ -8,6 +8,9 @@ Hottest:
 
 From Testing:
 
+    -   #128 Recording type for loop button not working. Some improvements
+        but nee to get usrfile/usrsettings/performer/qloopbutton, main
+        window, and the pattern editor in sync with alteration values.
     -   Setting the PPQN obscures the 32 PPQN entry in the combo box.
         Not important.
     -   Get the 16-in-busses.midi file configured and working.
@@ -309,6 +312,8 @@ ISSUES:
     the Record Active button to the left of it is set to on then this button
     does not  work. If the Record Active button is off then the Quantized
     Record button turns on both buttons without issue.
+
+    STATUS: Fixed.
 
 #131 NSM seems to get an announce from two processes
     It looks like it announces with two processes to the NSM daemon or

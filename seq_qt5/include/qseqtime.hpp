@@ -99,6 +99,10 @@ private:
     QTimer * m_timer;
     QFont m_font;
     bool m_move_L_marker;
+    bool m_expanding;
+    char m_L_marker[2];
+    char m_R_marker[2];
+    char m_END_marker[8];
 
 };          // class qseqtime
 

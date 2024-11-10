@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2024-08-08
+ * \updates       2024-11-10
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -617,6 +617,8 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                     font.setBold(true);
                     painter.setPen(Qt::white);          /* Qt::black        */
                     painter.setFont(font);
+                    if (loop()->expanded_recording())
+                        painter.drawText(tlx, tly, ">");
                     if (loop()->quantizing())
                         painter.drawText(tlx, tly, "Q");
                     else if (loop()->tightening())
