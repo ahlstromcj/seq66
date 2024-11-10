@@ -29,6 +29,11 @@ Chris Ahlstrom
   - Save session (under NSM) or the MIDI file.
   - Record style select.
   - Quit.
+- Fixed the following scenario: Load a song; do File / New; make a
+  pattern; then File / Save. It overwrites the previous song. The
+  fix now brings up a prompt for the name of the new file.
+- The main window now reflects the current record-loop style and
+  new-pattern option as read from the 'usr' file.
 
 ### Added
 

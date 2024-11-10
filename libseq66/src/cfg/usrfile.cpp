@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-06-06
+ * \updates       2024-11-10
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -548,15 +548,38 @@ usrfile::parse ()
     flag = get_boolean(file, tag, "record");
     usr().new_pattern_record(flag);
     flag = get_boolean(file, tag, "tighten");
+    if (flag)
+        usr().record_mode(alteration::tighten);
+
     usr().new_pattern_tighten(flag);
     flag = get_boolean(file, tag, "qrecord");
+    if (flag)
+        usr().record_mode(alteration::quantize);
+
     usr().new_pattern_qrecord(flag);
     flag = get_boolean(file, tag, "notemap");
+    if (flag)
+        usr().record_mode(alteration::notemap);
+
     usr().new_pattern_notemap(flag);
     s = get_variable(file, tag, "record-style");
     usr().new_pattern_record_style(s);
+    usr().grid_record_style(usr().new_pattern_record_style());
+
     flag = get_boolean(file, tag, "wrap-around");
     usr().new_pattern_wraparound(flag);
+
+    /*
+     * Consider:
+     *
+     *  Translate the new_pattern_x flag values to an seq66::alteration
+     *  value and pass it to usrsettings::record_mode().
+     *
+     *  To do? Add "random" and "jitter" to the new-pattern values.
+     *
+     *  Pass the usr().new_pattern_record_style() result to
+     *  usr().grid_record_code().
+     */
 
     /*
      * We have all of the data.  Close the file.

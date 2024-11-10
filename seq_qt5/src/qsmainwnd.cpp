@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-07
+ * \updates       2024-11-09
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -2276,23 +2276,12 @@ qsmainwnd::new_file ()
 {
     if (check() && cb_perf().clear_all())           /* don't clear playlist */
     {
-        /*
-         * Instead of the following, should we call performer::song()?
-         * No, clear_all does that as well.
-         *
-         * rc().clear_midi_filename();              // no file in force yet //
-         */
-
         stop();                                     /* ca 2023-12-11        */
         enable_save(false);                         /* no save until change */
         redo_live_frame();
         remove_all_editors();
         if (not_nullptr(m_song_frame64))
             m_song_frame64->set_dirty();            /* refresh empty song   */
-
-        /*
-         * TODO: consolidate
-         */
 
         (void) cb_perf().reset_mute_groups();       /* no modify() call     */
         cb_perf().song_mode(false);
@@ -2306,6 +2295,7 @@ qsmainwnd::new_file ()
 
         std::string nofile;
         song_path(nofile);
+        rc().clear_midi_filename();                 /* no file in force yet */
         m_is_title_dirty = true;
     }
 }

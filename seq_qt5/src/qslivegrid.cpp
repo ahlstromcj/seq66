@@ -210,7 +210,6 @@ qslivegrid::qslivegrid
         bool background_record = rc().metro_settings().count_in_recording();
         ui->buttonBackgroundRecord->setEnabled(background_record);
         show_grid_record_style();
-        show_record_mode();
 
         /*
          * Loop mode: merge, overwrite, one-shot, etc. Also called,
@@ -230,6 +229,7 @@ qslivegrid::qslivegrid
          */
 
         tooltip_with_keystroke(ui->buttonRecordMode, keyname);
+        show_record_mode();
         connect
         (
             ui->buttonRecordMode, SIGNAL(clicked(bool)),

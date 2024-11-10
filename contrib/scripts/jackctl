@@ -8,7 +8,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2022-09-25
-# \update         2023-11-28
+# \update         2024-11-09
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -57,17 +57,21 @@ JCTL_DEVICE="hw:CODEC"  # see "cat /proc/asound/cards"
 JCTL_RATE="48000"
 JCTL_LATENCY="2"
 JCTL_PERIOD="256"      # for TESTING
-JCTL_A2JMIDID="no"
+JCTL_A2JMIDID="yes"
 
 if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
 
    cat << E_O_F
-Usage v. 2023-11-28:
+Usage v. 2024-11-09:
 
    jackctl [ --start ] [ options ]     Start with the usual parameters:
 
 Options:
 
+   --list      List the drivers and the ALSA/JACK parameters. [Default]
+   --start     Start the JACK server.
+   --stop      Stop the JACK server.
+   --kill      Stop the JACK server and exit jackdbus.
    --set       Set the default values, shown here.  Stops, then restarts
                jackdbus. Edit this script to change the defaults:
 
@@ -78,10 +82,6 @@ Options:
                Frame period: $JCTL_PERIOD frames
                A2jmidid:     $JCTL_A2JMIDID
 
-   --list      List the drivers and the ALSA/JACK parameters.
-   --start     Start the JACK server.
-   --stop      Stop the JACK server.
-   --kill      Stop the JACK server and exit jackdbus.
    --period F  Change the period of the JACK server, and restart it.
    --nperiod P Change ALSA period (playback latency, 2 or 3).
    --rate R    Change the "sample rate".
@@ -160,7 +160,6 @@ if [ "$JCTL_OPERATION" == "list" ] ; then
    cat /proc/asound/cards | grep "^[ 0-9][0-9]"
    echo "Selecting ALSA (seq). Available parameters:"
    jack_control ds $JCTL_DRIVER
-#  jack_control dp | grep "ALSA\|rate\:\|period\:\|nperiods\:"
    jack_control dp | grep "ALSA\|rate:\|period:\|nperiods:"
 
 elif [ "$JCTL_OPERATION" == "stop" ] ; then
@@ -181,10 +180,10 @@ elif [ "$JCTL_OPERATION" == "kill" ] ; then
 elif [ "$JCTL_OPERATION" == "start" ] ; then
 
    jack_control start
-   jack_lsp --aliases
    if [ "$JCTL_A2JMIDID" == "yes" ] ; then
       a2jmidid --export-hw &
    fi
+   jack_lsp --aliases
 
 elif [ "$JCTL_OPERATION" == "setperiod" ] ; then
 
