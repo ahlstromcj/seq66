@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-10-09
+ * \updates       2024-11-11
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -59,7 +59,7 @@ eventlist::eventlist () :
     m_has_tempo             (false),
     m_has_time_signature    (false),
     m_has_key_signature     (false),
-    m_link_wraparound       (usr().new_pattern_wraparound())
+    m_link_wraparound       (usr().pattern_wraparound())
 {
     // No code needed
 }
@@ -332,7 +332,7 @@ eventlist::merge (const eventlist & el, bool presort)
  *
  * \param wrap
  *      Optionally (the default is false) wrap when relinking.  Can be used to
- *      override usr().new_pattern_wraparound().  Defaults to false.
+ *      override usr().pattern_wraparound().  Defaults to false.
  */
 
 void
@@ -436,7 +436,7 @@ eventlist::link_notes (event::iterator eon, event::iterator eoff)
  *
  * \param wrap
  *      Optionally (the default is false) wrap when relinking.  Can be used to
- *      override usr().new_pattern_wraparound().
+ *      override usr().pattern_wraparound().
  */
 
 void

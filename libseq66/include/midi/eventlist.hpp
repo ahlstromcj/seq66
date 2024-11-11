@@ -208,7 +208,7 @@ private:
     bool m_has_key_signature;
 
     /**
-     *  Stores the setting of usr().new_pattern_wraparound().  It is used in
+     *  Stores the setting of usr().pattern_wraparound().  It is used in
      *  the link_new() function.
      */
 

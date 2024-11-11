@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-11-10
+ * \updates       2024-11-11
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -542,43 +542,42 @@ usrfile::parse ()
     flag = get_boolean(file, tag, "escape-pattern");
     usr().escape_pattern(flag);
     flag = get_boolean(file, tag, "armed");
-    usr().new_pattern_armed(flag);
+    usr().pattern_armed(flag);
     flag = get_boolean(file, tag, "thru");
-    usr().new_pattern_thru(flag);
+    usr().pattern_thru(flag);
     flag = get_boolean(file, tag, "record");
-    usr().new_pattern_record(flag);
+    usr().pattern_record(flag);
     flag = get_boolean(file, tag, "tighten");
     if (flag)
         usr().record_mode(alteration::tighten);
 
-    usr().new_pattern_tighten(flag);
+    usr().pattern_tighten(flag);
     flag = get_boolean(file, tag, "qrecord");
     if (flag)
         usr().record_mode(alteration::quantize);
 
-    usr().new_pattern_qrecord(flag);
+    usr().pattern_qrecord(flag);
     flag = get_boolean(file, tag, "notemap");
     if (flag)
         usr().record_mode(alteration::notemap);
 
-    usr().new_pattern_notemap(flag);
+    usr().pattern_notemap(flag);
     s = get_variable(file, tag, "record-style");
-    usr().new_pattern_record_style(s);
-    usr().grid_record_style(usr().new_pattern_record_style());
+    usr().set_pattern_record_style(s);
 
     flag = get_boolean(file, tag, "wrap-around");
-    usr().new_pattern_wraparound(flag);
+    usr().pattern_wraparound(flag);
 
     /*
      * Consider:
      *
-     *  Translate the new_pattern_x flag values to an seq66::alteration
+     *  Translate the pattern_x flag values to an seq66::alteration
      *  value and pass it to usrsettings::record_mode().
      *
      *  To do? Add "random" and "jitter" to the new-pattern values.
      *
-     *  Pass the usr().new_pattern_record_style() result to
-     *  usr().grid_record_code().
+     *  Pass the usr().pattern_record_style() result to
+     *  usr().pattern_record_code().
      */
 
     /*
@@ -1091,14 +1090,14 @@ usrfile::write ()
 "\n[new-pattern-editor]\n\n"
         ;
     write_boolean(file, "escape-pattern", usr().escape_pattern());
-    write_boolean(file, "armed", usr().new_pattern_armed());
-    write_boolean(file, "thru", usr().new_pattern_thru());
-    write_boolean(file, "record", usr().new_pattern_record());
-    write_boolean(file, "tighten", usr().new_pattern_tighten());
-    write_boolean(file, "qrecord", usr().new_pattern_qrecord());
-    write_boolean(file, "notemap", usr().new_pattern_notemap());
-    write_string(file, "record-style", usr().new_pattern_record_string());
-    write_boolean(file, "wrap-around", usr().new_pattern_wraparound());
+    write_boolean(file, "armed", usr().pattern_armed());
+    write_boolean(file, "thru", usr().pattern_thru());
+    write_boolean(file, "record", usr().pattern_record());
+    write_boolean(file, "tighten", usr().pattern_tighten());
+    write_boolean(file, "qrecord", usr().pattern_qrecord());
+    write_boolean(file, "notemap", usr().pattern_notemap());
+    write_string(file, "record-style", usr().pattern_record_string());
+    write_boolean(file, "wrap-around", usr().pattern_wraparound());
     write_seq66_footer(file);
     file.close();
     return true;

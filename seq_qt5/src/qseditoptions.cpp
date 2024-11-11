@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-01
+ * \updates       2024-11-11
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1493,50 +1493,50 @@ qseditoptions::setup_tab_pattern ()
         ui->checkBoxEscapePattern, SIGNAL(clicked(bool)),
         this, SLOT(slot_escape_pattern())
     );
-    ui->checkBoxNewPatternArm->setChecked(usr().new_pattern_armed());
+    ui->checkBoxNewPatternArm->setChecked(usr().pattern_armed());
     connect
     (
         ui->checkBoxNewPatternArm, SIGNAL(clicked(bool)),
-        this, SLOT(slot_new_pattern_arm())
+        this, SLOT(slot_pattern_arm())
     );
-    ui->checkBoxNewPatternTighten->setChecked(usr().new_pattern_tighten());
+    ui->checkBoxNewPatternTighten->setChecked(usr().pattern_tighten());
     connect
     (
         ui->checkBoxNewPatternTighten, SIGNAL(clicked(bool)),
-        this, SLOT(slot_new_pattern_tighten())
+        this, SLOT(slot_pattern_tighten())
     );
-    ui->checkBoxNewPatternQRecord->setChecked(usr().new_pattern_qrecord());
+    ui->checkBoxNewPatternQRecord->setChecked(usr().pattern_qrecord());
     connect
     (
         ui->checkBoxNewPatternQRecord, SIGNAL(clicked(bool)),
-        this, SLOT(slot_new_pattern_qrecord())
+        this, SLOT(slot_pattern_qrecord())
     );
-    ui->checkBoxNewPatternNoteMap->setChecked(usr().new_pattern_notemap());
+    ui->checkBoxNewPatternNoteMap->setChecked(usr().pattern_notemap());
     connect
     (
         ui->checkBoxNewPatternNoteMap, SIGNAL(clicked(bool)),
-        this, SLOT(slot_new_pattern_notemap())
+        this, SLOT(slot_pattern_notemap())
     );
-    ui->checkBoxNewPatternRecord->setChecked(usr().new_pattern_record());
+    ui->checkBoxNewPatternRecord->setChecked(usr().pattern_record());
     connect
     (
         ui->checkBoxNewPatternRecord, SIGNAL(clicked(bool)),
-        this, SLOT(slot_new_pattern_record())
+        this, SLOT(slot_pattern_record())
     );
-    ui->checkBoxNewPatternThru->setChecked(usr().new_pattern_thru());
+    ui->checkBoxNewPatternThru->setChecked(usr().pattern_thru());
     connect
     (
         ui->checkBoxNewPatternThru, SIGNAL(clicked(bool)),
-        this, SLOT(slot_new_pattern_thru())
+        this, SLOT(slot_pattern_thru())
     );
     ui->checkBoxNewPatternWrapAround->setChecked
     (
-        usr().new_pattern_wraparound()
+        usr().pattern_wraparound()
     );
     connect
     (
         ui->checkBoxNewPatternWrapAround, SIGNAL(clicked(bool)),
-        this, SLOT(slot_new_pattern_wraparound())
+        this, SLOT(slot_pattern_wraparound())
     );
 
     /*
@@ -1552,7 +1552,7 @@ qseditoptions::setup_tab_pattern ()
     ui->comboBoxRecordStyle->addItem(qt(items[3]));     // "Oneshot"
     ui->comboBoxRecordStyle->addItem(qt(items[4]));     // "Oneshot Reset"
 
-    int r = usr().new_pattern_record_code();
+    int r = usr().pattern_record_code();
     ui->comboBoxRecordStyle->setCurrentIndex(r);
     connect
     (
@@ -1587,10 +1587,10 @@ qseditoptions::slot_escape_pattern ()
 }
 
 void
-qseditoptions::slot_new_pattern_arm ()
+qseditoptions::slot_pattern_arm ()
 {
     bool enable = ui->checkBoxNewPatternArm->isChecked();
-    usr().new_pattern_armed(enable);
+    usr().pattern_armed(enable);
     modify_usr();
 }
 
@@ -1601,78 +1601,78 @@ qseditoptions::slot_new_pattern_arm ()
  */
 
 void
-qseditoptions::slot_new_pattern_tighten ()
+qseditoptions::slot_pattern_tighten ()
 {
     bool enable = ui->checkBoxNewPatternTighten->isChecked();
-    usr().new_pattern_tighten(enable);
+    usr().pattern_tighten(enable);
     if (enable)
     {
         ui->checkBoxNewPatternQRecord->setChecked(false);
         ui->checkBoxNewPatternNoteMap->setChecked(false);
-        usr().new_pattern_qrecord(false);
-        usr().new_pattern_notemap(false);
+        usr().pattern_qrecord(false);
+        usr().pattern_notemap(false);
     }
     modify_usr();
 }
 
 void
-qseditoptions::slot_new_pattern_qrecord ()
+qseditoptions::slot_pattern_qrecord ()
 {
     bool enable = ui->checkBoxNewPatternQRecord->isChecked();
-    usr().new_pattern_qrecord(enable);
+    usr().pattern_qrecord(enable);
     if (enable)
     {
         ui->checkBoxNewPatternTighten->setChecked(false);
         ui->checkBoxNewPatternNoteMap->setChecked(false);
-        usr().new_pattern_tighten(false);
-        usr().new_pattern_notemap(false);
+        usr().pattern_tighten(false);
+        usr().pattern_notemap(false);
     }
     modify_usr();
 }
 
 void
-qseditoptions::slot_new_pattern_notemap ()
+qseditoptions::slot_pattern_notemap ()
 {
     bool enable = ui->checkBoxNewPatternNoteMap->isChecked();
-    usr().new_pattern_notemap(enable);
+    usr().pattern_notemap(enable);
     if (enable)
     {
         ui->checkBoxNewPatternTighten->setChecked(false);
         ui->checkBoxNewPatternQRecord->setChecked(false);
-        usr().new_pattern_tighten(false);
-        usr().new_pattern_qrecord(false);
+        usr().pattern_tighten(false);
+        usr().pattern_qrecord(false);
     }
     modify_usr();
 }
 
 void
-qseditoptions::slot_new_pattern_record ()
+qseditoptions::slot_pattern_record ()
 {
     bool enable = ui->checkBoxNewPatternRecord->isChecked();
-    usr().new_pattern_record(enable);
+    usr().pattern_record(enable);
     modify_usr();
 }
 
 void
-qseditoptions::slot_new_pattern_thru ()
+qseditoptions::slot_pattern_thru ()
 {
     bool enable = ui->checkBoxNewPatternThru->isChecked();
-    usr().new_pattern_thru(enable);
+    usr().pattern_thru(enable);
     modify_usr();
 }
 
 void
-qseditoptions::slot_new_pattern_wraparound ()
+qseditoptions::slot_pattern_wraparound ()
 {
     bool enable = ui->checkBoxNewPatternWrapAround->isChecked();
-    usr().new_pattern_wraparound(enable);
+    usr().pattern_wraparound(enable);
     modify_usr();
 }
 
 void
 qseditoptions::slot_new_record_style (int index)
 {
-    usr().new_pattern_record_style(index);
+    usr().pattern_record_style(index);
     modify_usr();
 }
 
@@ -2690,18 +2690,18 @@ qseditoptions::sync_usr ()
      */
 
     ui->checkBoxEscapePattern->setChecked(usr().escape_pattern());
-    ui->checkBoxNewPatternArm->setChecked(usr().new_pattern_armed());
-    ui->checkBoxNewPatternTighten->setChecked(usr().new_pattern_tighten());
-    ui->checkBoxNewPatternQRecord->setChecked(usr().new_pattern_qrecord());
-    ui->checkBoxNewPatternNoteMap->setChecked(usr().new_pattern_notemap());
-    ui->checkBoxNewPatternRecord->setChecked(usr().new_pattern_record());
-    ui->checkBoxNewPatternThru->setChecked(usr().new_pattern_thru());
+    ui->checkBoxNewPatternArm->setChecked(usr().pattern_armed());
+    ui->checkBoxNewPatternTighten->setChecked(usr().pattern_tighten());
+    ui->checkBoxNewPatternQRecord->setChecked(usr().pattern_qrecord());
+    ui->checkBoxNewPatternNoteMap->setChecked(usr().pattern_notemap());
+    ui->checkBoxNewPatternRecord->setChecked(usr().pattern_record());
+    ui->checkBoxNewPatternThru->setChecked(usr().pattern_thru());
     ui->checkBoxNewPatternWrapAround->setChecked
     (
-        usr().new_pattern_wraparound()
+        usr().pattern_wraparound()
     );
 
-    int r = usr().new_pattern_record_code();
+    int r = usr().pattern_record_code();
     ui->comboBoxRecordStyle->setCurrentIndex(r);
     show_session(usr().session_manager());
     set_scaling_fields();

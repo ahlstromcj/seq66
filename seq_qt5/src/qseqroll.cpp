@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-08-22
+ * \updates       2024-11-11
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -124,7 +124,7 @@ qseqroll::qseqroll
     m_keypadding_x          (c_keyboard_padding_x),
     m_v_zooming             (false),
     m_last_base_note        (-1),
-    m_link_wraparound       (usr().new_pattern_wraparound())
+    m_link_wraparound       (usr().pattern_wraparound())
 {
     setAttribute(Qt::WA_StaticContents);
     setAttribute(Qt::WA_OpaquePaintEvent);          /* no erase on repaint  */

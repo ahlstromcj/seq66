@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2024-11-10
+ * \updates       2024-11-11
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -209,7 +209,7 @@ qslivegrid::qslivegrid
 
         bool background_record = rc().metro_settings().count_in_recording();
         ui->buttonBackgroundRecord->setEnabled(background_record);
-        show_grid_record_style();
+        show_record_style();
 
         /*
          * Loop mode: merge, overwrite, one-shot, etc. Also called,
@@ -219,7 +219,7 @@ qslivegrid::qslivegrid
         connect
         (
             ui->buttonLoopMode, SIGNAL(clicked(bool)),
-            this, SLOT(slot_grid_record_style(bool))
+            this, SLOT(slot_record_style(bool))
         );
         std::string keyname =
             cb_perf().automation_key(automation::slot::record_style);
@@ -435,7 +435,7 @@ qslivegrid::conditional_update ()
          *      enable_solo(! perf().song_mode());
          */
 
-        show_grid_record_style();
+        show_record_style();
         show_record_mode();
         show_grid_mode();
         if (perf().has_ctrl_status())
@@ -1497,9 +1497,9 @@ qslivegrid::slot_activate_bank (bool /*clicked*/)
  */
 
 void
-qslivegrid::slot_grid_record_style (bool /*clicked*/)
+qslivegrid::slot_record_style (bool /*clicked*/)
 {
-    perf().next_grid_record_style();
+    perf().next_record_style();
 }
 
 /**
@@ -1581,7 +1581,7 @@ qslivegrid::slot_toggle_background_record (bool /*clicked*/)
  */
 
 void
-qslivegrid::show_grid_record_style ()
+qslivegrid::show_record_style ()
 {
 #if defined USE_BUTTON_COLORING
     static bool s_uninitialized = true;
@@ -1603,7 +1603,7 @@ qslivegrid::show_grid_record_style ()
     {
         QPalette pal = button->palette();
         QColor c;
-        switch (usr().grid_record_style())
+        switch (usr().record_style())
         {
         case recordstyle::merge:        c.setNamedColor("#FF0000");     break;
         case recordstyle::overwrite:    c.setNamedColor("#C00000");     break;
@@ -1620,7 +1620,7 @@ qslivegrid::show_grid_record_style ()
     }
 #endif
 
-    ui->buttonLoopMode->setText(qt(usr().grid_record_style_label()));
+    ui->buttonLoopMode->setText(qt(usr().pattern_record_style_label()));
 }
 
 /**

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2024-02-22
+ * \updates       2024-11-11
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -959,19 +959,19 @@ private:
      */
 
     bool m_escape_pattern;
-    bool m_new_pattern_armed;
-    bool m_new_pattern_thru;
-    bool m_new_pattern_record;
-    bool m_new_pattern_tighten;
-    bool m_new_pattern_qrecord;
-    bool m_new_pattern_notemap;
+    bool m_pattern_armed;
+    bool m_pattern_thru;
+    bool m_pattern_record;
+    bool m_pattern_tighten;
+    bool m_pattern_qrecord;
+    bool m_pattern_notemap;
 
     /**
      *  Provides the default recording style (merge, overwrite, etc.) at
      *  startup. Compare to the current recording style.
      */
 
-    recordstyle m_new_pattern_record_style;
+    recordstyle m_pattern_record_style;
 
     /**
      *  If true, allow notes that wrap-around in a pattern.  That is, the Note
@@ -979,7 +979,7 @@ private:
      *  feature is support by Stazed code, but can introduce issues.
      */
 
-    bool m_new_pattern_wraparound;
+    bool m_pattern_wraparound;
 
     /**
      *  Normal (none = no alteration), tighten, quantize, or note-map (jitter
@@ -988,16 +988,6 @@ private:
      */
 
     alteration m_record_mode;
-
-    /**
-     *  Indicates the recording style mode in use with the 'ctrl' file's
-     *  "[loop-control]" section.  The legacy and normal mode if these
-     *  keystrokes and MIDI events is the arm/disarm/mute/unmute the patterns
-     *  in the pattern grid.  The rest of the modes make the loop-control
-     *  section perform the setting of record functions for patterns.
-     */
-
-    recordstyle m_grid_record_style;
 
     /**
      *  Indicates the global selected mode for the main-window's grid.
@@ -1755,73 +1745,105 @@ public:
         return m_escape_pattern;
     }
 
-    bool new_pattern_armed () const
+    bool pattern_armed () const
     {
-        return m_new_pattern_armed;
+        return m_pattern_armed;
     }
 
-    bool new_pattern_thru () const
+    bool pattern_thru () const
     {
-        return m_new_pattern_thru;
+        return m_pattern_thru;
     }
 
-    bool new_pattern_record () const
+    bool pattern_record () const
     {
-        return m_new_pattern_record;
+        return m_pattern_record;
     }
 
-    bool new_pattern_alter_recording () const
+    bool pattern_alter_recording () const
     {
         return
         (
-            new_pattern_tighten() || new_pattern_qrecord() ||
-            new_pattern_notemap()
+            pattern_tighten() || pattern_qrecord() ||
+            pattern_notemap()
         );
     }
 
-    alteration new_pattern_alteration () const
+    alteration pattern_alteration () const
     {
-        if (new_pattern_tighten())
+        if (pattern_tighten())
             return alteration::tighten;
-        else if (new_pattern_qrecord())
+        else if (pattern_qrecord())
             return alteration::quantize;
-        else if (new_pattern_notemap())
+        else if (pattern_notemap())
             return alteration::notemap;
         else
             return alteration::none;
     }
 
-    bool new_pattern_tighten () const
+    bool pattern_tighten () const
     {
-        return m_new_pattern_tighten;
+        return m_pattern_tighten;
     }
 
-    bool new_pattern_qrecord () const
+    bool pattern_qrecord () const
     {
-        return m_new_pattern_qrecord;
+        return m_pattern_qrecord;
     }
 
-    bool new_pattern_notemap () const
+    bool pattern_notemap () const
     {
-        return m_new_pattern_notemap;
+        return m_pattern_notemap;
     }
 
-    recordstyle new_pattern_record_style () const
+    /*
+     * Record style refers to what happens to already recorded notes when the
+     * pattern wraps around.
+     */
+
+    std::string pattern_record_style_label () const;
+
+    recordstyle pattern_record_style (int rs) const
     {
-        return m_new_pattern_record_style;
+        recordstyle rscast = static_cast<recordstyle>(rs);
+        return
+            rscast >= recordstyle::merge && rscast < recordstyle::max ?
+            rscast : recordstyle::merge ;
     }
 
-    int new_pattern_record_code () const
+    recordstyle pattern_record_style () const
     {
-        return static_cast<int>(m_new_pattern_record_style);
+        return m_pattern_record_style;
     }
 
-    bool new_pattern_wraparound () const
+    void set_pattern_record_style (const std::string & style);
+    void set_pattern_record_style (int index);
+
+    void set_pattern_record_style (recordstyle style)
     {
-        return m_new_pattern_wraparound;
+        if (style < recordstyle::max)
+            m_pattern_record_style = style;     /* m_grid_record_style  */
     }
 
-    std::string new_pattern_record_string () const;
+    recordstyle next_record_style ();
+    recordstyle previous_record_style ();
+
+    int pattern_record_code (recordstyle rs) const
+    {
+        return static_cast<int>(rs);
+    }
+
+    int pattern_record_code () const
+    {
+        return pattern_record_code(pattern_record_style());
+    }
+
+    bool pattern_wraparound () const
+    {
+        return m_pattern_wraparound;
+    }
+
+    std::string pattern_record_string () const;
 
     /*
      * Record-mode options. By "record mode" is meant the alterations
@@ -1851,39 +1873,6 @@ public:
     std::string record_mode_label () const;
     alteration next_record_mode ();
     alteration previous_record_mode ();
-
-    /*
-     * Record style refers to what happens to already recorded notes when the
-     * pattern wraps around.
-     */
-
-    std::string grid_record_style_label () const;
-
-    recordstyle grid_record_style () const
-    {
-        return m_grid_record_style;
-    }
-
-    recordstyle grid_record_style (int rs) const
-    {
-        recordstyle rscast = static_cast<recordstyle>(rs);
-        return
-            rscast >= recordstyle::merge && rscast < recordstyle::max ?
-            rscast : recordstyle::merge ;
-    }
-
-    int grid_record_code (recordstyle rs) const
-    {
-        return static_cast<int>(rs);
-    }
-
-    int grid_record_code () const
-    {
-        return grid_record_code(grid_record_style());
-    }
-
-    recordstyle next_grid_record_style ();
-    recordstyle previous_grid_record_style ();
 
     /*
      * Grid mode refers to what happens when a pattern is clicked or selected
@@ -2066,55 +2055,39 @@ public:         // used in main application module and the usrfile class
         m_escape_pattern = flag;
     }
 
-    void new_pattern_armed (bool flag)
+    void pattern_armed (bool flag)
     {
-        m_new_pattern_armed = flag;
+        m_pattern_armed = flag;
     }
 
-    void new_pattern_thru (bool flag)
+    void pattern_thru (bool flag)
     {
-        m_new_pattern_thru = flag;
+        m_pattern_thru = flag;
     }
 
-    void new_pattern_record (bool flag)
+    void pattern_record (bool flag)
     {
-        m_new_pattern_record = flag;
+        m_pattern_record = flag;
     }
 
-    void new_pattern_tighten (bool flag)
+    void pattern_tighten (bool flag)
     {
-        m_new_pattern_tighten = flag;
+        m_pattern_tighten = flag;
     }
 
-    void new_pattern_qrecord (bool flag)
+    void pattern_qrecord (bool flag)
     {
-        m_new_pattern_qrecord = flag;
+        m_pattern_qrecord = flag;
     }
 
-    void new_pattern_notemap (bool flag)
+    void pattern_notemap (bool flag)
     {
-        m_new_pattern_notemap = flag;
+        m_pattern_notemap = flag;
     }
 
-    void grid_record_style (const std::string & style);
-    void new_pattern_record_style (const std::string & style);
-    void new_pattern_record_style (int index);
-
-    void grid_record_style (recordstyle style)
+    void pattern_wraparound (bool flag)
     {
-        if (style < recordstyle::max)
-            m_grid_record_style = style;
-    }
-
-    void new_pattern_record_style (recordstyle style)
-    {
-        if (style < recordstyle::max)
-            m_new_pattern_record_style = style;
-    }
-
-    void new_pattern_wraparound (bool flag)
-    {
-        m_new_pattern_wraparound = flag;
+        m_pattern_wraparound = flag;
     }
 
     void grid_mode (gridmode mode)

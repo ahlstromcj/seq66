@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2024-11-10
+ * \updates       2024-11-11
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3716,8 +3716,8 @@ public:
         return result;
     }
 
-    void next_grid_record_style ();
-    void previous_grid_record_style ();
+    void next_record_style ();
+    void previous_record_style ();
     void next_record_mode ();
     void previous_record_mode ();
     void set_record_mode (alteration rm);

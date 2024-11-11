@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2024-02-22
+ * \updates       2024-11-11
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -415,16 +415,15 @@ usrsettings::usrsettings () :
     m_in_nsm_session            (false),
     m_session_visibility        (true),
     m_escape_pattern            (false),
-    m_new_pattern_armed         (false),
-    m_new_pattern_thru          (false),
-    m_new_pattern_record        (false),
-    m_new_pattern_tighten       (false),
-    m_new_pattern_qrecord       (false),
-    m_new_pattern_notemap       (false),
-    m_new_pattern_record_style  (recordstyle::merge),
-    m_new_pattern_wraparound    (false),
+    m_pattern_armed             (false),
+    m_pattern_thru              (false),
+    m_pattern_record            (false),
+    m_pattern_tighten           (false),
+    m_pattern_qrecord           (false),
+    m_pattern_notemap           (false),
+    m_pattern_record_style      (recordstyle::merge),
+    m_pattern_wraparound        (false),
     m_record_mode               (alteration::none),
-    m_grid_record_style         (recordstyle::merge),
     m_grid_mode                 (gridmode::loop),
     m_enable_learn_confirmation (true)
 {
@@ -524,16 +523,15 @@ usrsettings::set_defaults ()
     m_in_nsm_session = false;
     m_session_visibility = true;
     m_escape_pattern = false;
-    m_new_pattern_armed = false;
-    m_new_pattern_thru = false;
-    m_new_pattern_record = false;
-    m_new_pattern_tighten = false;
-    m_new_pattern_qrecord = false;
-    m_new_pattern_notemap = false;
-    m_new_pattern_record_style = recordstyle::merge;
-    m_new_pattern_wraparound = false;
+    m_pattern_armed = false;
+    m_pattern_thru = false;
+    m_pattern_record = false;
+    m_pattern_tighten = false;
+    m_pattern_qrecord = false;
+    m_pattern_notemap = false;
+    m_pattern_record_style = recordstyle::merge;
+    m_pattern_wraparound = false;
     m_record_mode = alteration::none;
-    m_grid_record_style = recordstyle::merge;
     m_grid_mode = gridmode::loop;
     m_enable_learn_confirmation = true;
     normalize();                            /* recalculate derived values   */
@@ -577,7 +575,7 @@ usrsettings::progress_note_min_max (int vmin, int vmax)
 }
 
 void
-usrsettings::new_pattern_record_style (const std::string & style)
+usrsettings::set_pattern_record_style (const std::string & style)
 {
     recordstyle rs = recordstyle::merge;
     if (style == "overwrite")
@@ -589,14 +587,14 @@ usrsettings::new_pattern_record_style (const std::string & style)
     else if (style == "one-shot-reset")
         rs = recordstyle::oneshot_reset;
 
-    m_new_pattern_record_style = rs;
+    m_pattern_record_style = rs;
 }
 
 void
-usrsettings::new_pattern_record_style (int index)
+usrsettings::set_pattern_record_style (int index)
 {
     recordstyle rs = static_cast<recordstyle>(index);
-    m_new_pattern_record_style = rs;
+    m_pattern_record_style = rs;
 }
 
 void
@@ -612,10 +610,10 @@ usrsettings::clear_global_seq_features ()
  */
 
 std::string
-usrsettings::new_pattern_record_string () const
+usrsettings::pattern_record_string () const
 {
     std::string result;
-    switch (m_new_pattern_record_style)
+    switch (m_pattern_record_style)
     {
     case recordstyle::merge:            result = "merge";           break;
     case recordstyle::overwrite:        result = "overwrite";       break;
@@ -714,10 +712,10 @@ usrsettings::previous_record_mode ()
 }
 
 std::string
-usrsettings::grid_record_style_label () const
+usrsettings::pattern_record_style_label () const
 {
     std::string result;
-    switch (grid_record_style())
+    switch (pattern_record_style())
     {
     case recordstyle::merge:            result = "Overdub";         break;
     case recordstyle::overwrite:        result = "Overwrite";       break;
@@ -729,25 +727,11 @@ usrsettings::grid_record_style_label () const
     return result;
 }
 
-void
-usrsettings::grid_record_style (const std::string & style)
-{
-    recordstyle rs = recordstyle::merge;
-    if (style == "overwrite")
-        rs = recordstyle::overwrite;
-    else if (style == "expand")
-        rs = recordstyle::expand;
-    else if (style == "one-shot")
-        rs = recordstyle::oneshot;
-
-    m_grid_record_style = rs;
-}
-
 recordstyle
-usrsettings::next_grid_record_style ()
+usrsettings::next_record_style ()
 {
     recordstyle result;
-    switch (grid_record_style())
+    switch (pattern_record_style())
     {
     case recordstyle::merge:        result = recordstyle::overwrite;    break;
     case recordstyle::overwrite:    result = recordstyle::expand;       break;
@@ -755,15 +739,15 @@ usrsettings::next_grid_record_style ()
     case recordstyle::oneshot:      result = recordstyle::merge;        break;
     default:                        result = recordstyle::merge;        break;
     }
-    m_grid_record_style = result;
+    m_pattern_record_style = result;    /* m_grid_record_style  */
     return result;
 }
 
 recordstyle
-usrsettings::previous_grid_record_style ()
+usrsettings::previous_record_style ()
 {
     recordstyle result;
-    switch (grid_record_style())
+    switch (pattern_record_style())
     {
     case recordstyle::merge:        result = recordstyle::oneshot;      break;
     case recordstyle::overwrite:    result = recordstyle::merge;        break;
@@ -771,7 +755,7 @@ usrsettings::previous_grid_record_style ()
     case recordstyle::oneshot:      result = recordstyle::expand;       break;
     default:                        result = recordstyle::merge;        break;
     }
-    m_grid_record_style = result;
+    m_pattern_record_style = result;    /* m_grid_record_style  */
     return result;
 }
 

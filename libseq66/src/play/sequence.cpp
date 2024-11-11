@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-08-20
+ * \updates       2024-11-11
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1743,7 +1743,7 @@ sequence::live_play (midipulse tick)
  *
  * \param wrap
  *      Optionally (the default is false) wrap when relinking.  Can be used to
- *      override usr().new_pattern_wraparound().  Defaults to false.
+ *      override usr().pattern_wraparound().  Defaults to false.
  */
 
 void
@@ -7207,8 +7207,8 @@ recordstyle
 sequence::loop_record_style (int ri)
 {
     recordstyle result = recordstyle::merge;
-    int min = usr().grid_record_code(result);
-    int max = usr().grid_record_code(recordstyle::max);
+    int min = usr().pattern_record_code(result);
+    int max = usr().pattern_record_code(recordstyle::max);
     if (ri > min && ri < max)
         result = static_cast<recordstyle>(ri);
 

@@ -339,7 +339,7 @@ private:
     int m_last_base_note;
 
     /**
-     *  Stores the setting of usr().new_pattern_wraparound().  It is used in
+     *  Stores the setting of usr().pattern_wraparound().  It is used in
      *  drawing wrapped notes.
      */
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-11-10
+ * \updates       2024-11-11
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -327,7 +327,7 @@ qseqeditframe64::qseqeditframe64
     m_first_event_name      ("(no events)"),
     m_have_focus            (false),
     m_edit_mode             (perf().edit_mode(s.seq_number())),
-    m_last_record_style     (recordstyle::merge),
+    m_last_record_style     (usr().pattern_record_style()), // recordstyle::merge
     m_timer                 (nullptr)
 {
     std::string seqname = "No sequence!";
@@ -1352,7 +1352,7 @@ qseqeditframe64::on_automation_change (automation::slot s)
     else if (s == automation::slot::mod_redo)
         redo();
     else if (s == automation::slot::record_style)           /* issue #128   */
-        update_record_type(usr().grid_record_code());
+        update_record_type(usr().pattern_record_code());
 
     return true;
 }
@@ -1372,11 +1372,11 @@ qseqeditframe64::on_automation_change (automation::slot s)
 void
 qseqeditframe64::setup_record_styles ()
 {
-    int lrmerge = usr().grid_record_code(recordstyle::merge);
-    int lrreplace = usr().grid_record_code(recordstyle::overwrite);
-    int lrexpand = usr().grid_record_code(recordstyle::expand);
-    int lroneshot = usr().grid_record_code(recordstyle::oneshot);
-    int lrreset = usr().grid_record_code(recordstyle::oneshot_reset);
+    int lrmerge = usr().pattern_record_code(recordstyle::merge);
+    int lrreplace = usr().pattern_record_code(recordstyle::overwrite);
+    int lrexpand = usr().pattern_record_code(recordstyle::expand);
+    int lroneshot = usr().pattern_record_code(recordstyle::oneshot);
+    int lrreset = usr().pattern_record_code(recordstyle::oneshot_reset);
     const tokenization & items = rec_style_items();            // settings
     ui->m_combo_rec_type->insertItem(lrmerge,   qt(items[0])); // "Overdub"
     ui->m_combo_rec_type->insertItem(lrreplace, qt(items[1])); // "Overwrite"
@@ -1386,16 +1386,16 @@ qseqeditframe64::setup_record_styles ()
     enable_combobox_item(ui->m_combo_rec_type, lrreset, false);
     if (track().is_new_pattern())
     {
-        int npc = usr().new_pattern_record_code();
+        int npc = usr().pattern_record_code();
         ui->m_combo_rec_type->setCurrentIndex(npc);
-        m_last_record_style = usr().new_pattern_record_style();
+        m_last_record_style = usr().pattern_record_style();
         update_record_type(npc);
     }
     else
     {
-        int npc = usr().grid_record_code();
+        int npc = usr().pattern_record_code();
         ui->m_combo_rec_type->setCurrentIndex(npc);
-        m_last_record_style = usr().grid_record_style();
+        m_last_record_style = usr().pattern_record_style();
         update_record_type(npc);
     }
 }
@@ -1406,8 +1406,8 @@ qseqeditframe64::setup_record_styles ()
  *
  *  Indirectly handled:
  *
- *      usr().new_pattern_tighten()
- *      usr().new_pattern_notemap()
+ *      usr().pattern_tighten()
+ *      usr().pattern_notemap()
  */
 
 void
@@ -1417,20 +1417,20 @@ qseqeditframe64::setup_alterations ()
     {
         alteration alt = alteration::none;
         toggler t = toggler::off;
-        bool altered_recording = usr().new_pattern_alter_recording();
+        bool altered_recording = usr().pattern_alter_recording();
         if (altered_recording)
         {
-            alt = usr().new_pattern_alteration();
+            alt = usr().pattern_alteration();
             t = toggler::on;
         }
-        slot_play_change(usr().new_pattern_armed());    /* set track arming */
-        slot_thru_change(usr().new_pattern_thru());     /* set track thru   */
-        slot_record_change(usr().new_pattern_record()); /* set track record */
+        slot_play_change(usr().pattern_armed());    /* set track arming */
+        slot_thru_change(usr().pattern_thru());     /* set track thru   */
+        slot_record_change(usr().pattern_record()); /* set track record */
         q_record_change(alt, t);                        /* trickier         */
 
         /*
          * Move to isnewpattern check below.
-         * update_record_type(usr().new_pattern_record_code());
+         * update_record_type(usr().pattern_record_code());
          */
     }
     else
@@ -3964,7 +3964,7 @@ qseqeditframe64::update_midi_buttons ()
      * Need to be able to affect the track() alteration in this window!
      *
      *  bool alteration_active = track().is_new_pattern() ?
-     *      usr().new_pattern_alter_recording() :
+     *      usr().pattern_alter_recording() :
      *      usr().alter_recording() ;
      *
      */
@@ -4067,7 +4067,7 @@ qseqeditframe64::q_record_change (alteration mode, toggler t)
  *  editor, we want to show the setting of alteration usr().record_mode()
  *  and usr().alter_recording().
  *
- *  TODO: elsewhere show recordstyle usr().grid_record_style().
+ *  TODO: elsewhere show recordstyle usr().pattern_record_style().
  */
 
 void
@@ -4144,11 +4144,11 @@ qseqeditframe64::slot_thru_change (bool ischecked)
 void
 qseqeditframe64::update_record_type (int index)
 {
-    recordstyle newstyle = usr().grid_record_style(index);
+    recordstyle newstyle = usr().pattern_record_style(index);
     if (newstyle != m_last_record_style)            /* see issue #128       */
     {
-        int lroneshot = usr().grid_record_code(recordstyle::oneshot);
-        int lrreset = usr().grid_record_code(recordstyle::oneshot_reset);
+        int lroneshot = usr().pattern_record_code(recordstyle::oneshot);
+        int lrreset = usr().pattern_record_code(recordstyle::oneshot_reset);
         bool ok = track().update_recording(index);
         if (ok)
         {
@@ -4165,7 +4165,7 @@ qseqeditframe64::update_record_type (int index)
                     index = lroneshot;
                 }
             }
-            m_last_record_style = newstyle; // usr().grid_record_style(index);
+            m_last_record_style = newstyle; // usr().pattern_record_style(index);
             ui->m_combo_rec_type->setCurrentIndex(index);
             perf().set_record_style(newstyle);
             set_dirty();                            /* see issue #90        */

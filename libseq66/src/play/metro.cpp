@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2024-08-07
+ * \updates       2024-11-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -355,10 +355,10 @@ recorder::initialize (performer * p)
         int increment = pulses_per_beat(ppq, bpb, bw);
         if (settings().initialize(increment))
         {
-            bool unmute = usr().new_pattern_armed();
+            bool unmute = usr().pattern_armed();
             alteration alter = usr().record_mode();
-            recordstyle rs = usr().new_pattern_record_style();
-            bool usethru = usr().new_pattern_thru();
+            recordstyle rs = usr().pattern_record_style();
+            bool usethru = usr().pattern_thru();
             bussbyte outbuss = settings().thru_buss();
             midibyte channel = settings().thru_channel();
 
