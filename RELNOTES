@@ -1,8 +1,9 @@
-Release Notes for Seq66 v. 0.99.16 2024-11-10
+Release Notes for Seq66 v. 0.99.16 2024-11-14
 
 Fixes for NSM (session manager), build-file updates, and better PPQN
-handling.
+and recording handling.
 
+- Fixed issue #128 with expanded recording not working.
 - Merged a fix from a pull request (issue #130) to update the
   "*.desktop" files.
 - Fixed issue #131 re faulty NSM interactions introduced in version
@@ -23,7 +24,11 @@ handling.
 - Fixed File / New plus File Save overwriting the previous loaded
   file.
 - The main window now reflects the current record-loop style and
-  new-pattern option as read from the 'usr' file.
+  new-pattern option as read from the 'usr' file. But note:
+- Renamed [new-pattern-editor] to [pattern-editor] in the 'usr' file.
+- The Quantized Record button in the pattern editor steps through
+  None, Tighten, Quantize, Notemap, None.... Prettied-up the icons,
+  too.
 - Added CONFIG\_DIR\_NAME and cleaned up configure.ac. This macro
   differentiates between client name and config directory name.
   Updated the Makefile sources. Do "./bootstrap --full-clean".

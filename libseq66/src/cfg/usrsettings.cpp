@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2024-11-11
+ * \updates       2024-11-13
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -423,7 +423,7 @@ usrsettings::usrsettings () :
     m_pattern_notemap           (false),
     m_pattern_record_style      (recordstyle::merge),
     m_pattern_wraparound        (false),
-    m_record_mode               (alteration::none),
+    m_record_alteration               (alteration::none),
     m_grid_mode                 (gridmode::loop),
     m_enable_learn_confirmation (true)
 {
@@ -531,7 +531,7 @@ usrsettings::set_defaults ()
     m_pattern_notemap = false;
     m_pattern_record_style = recordstyle::merge;
     m_pattern_wraparound = false;
-    m_record_mode = alteration::none;
+    m_record_alteration = alteration::none;
     m_grid_mode = gridmode::loop;
     m_enable_learn_confirmation = true;
     normalize();                            /* recalculate derived values   */
@@ -638,10 +638,10 @@ usrsettings::pattern_record_string () const
  */
 
 std::string
-usrsettings::record_mode_label () const
+usrsettings::record_alteration_label () const
 {
     std::string result;
-    switch (record_mode())
+    switch (record_alteration())
     {
     case alteration::none:          result = "None";        break;
     case alteration::quantize:      result = "Quantize";    break;
@@ -663,10 +663,10 @@ usrsettings::record_mode_label () const
  */
 
 alteration
-usrsettings::next_record_mode ()
+usrsettings::next_record_alteration ()
 {
     alteration result;
-    switch (record_mode())
+    switch (record_alteration())
     {
 #if defined SEQ66_USE_ADDED_ALTERATIONS
     case alteration::none:          result = alteration::tighten;   break;
@@ -683,15 +683,15 @@ usrsettings::next_record_mode ()
 #endif
     default:                        result = alteration::none;      break;
     }
-    m_record_mode = result;
+    m_record_alteration = result;
     return result;
 }
 
 alteration
-usrsettings::previous_record_mode ()
+usrsettings::previous_record_alteration ()
 {
     alteration result;
-    switch (record_mode())
+    switch (record_alteration())
     {
 #if defined SEQ66_USE_ADDED_ALTERATIONS
     case alteration::none:          result = alteration::notemap;   break;
@@ -707,7 +707,7 @@ usrsettings::previous_record_mode ()
 #endif
     default:                        result = alteration::none;      break;
     }
-    m_record_mode = result;
+    m_record_alteration = result;
     return result;
 }
 

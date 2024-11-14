@@ -245,7 +245,7 @@ session = none
 url = ""
 visibility = true
 
-# [new-pattern-editor]
+# [pattern-editor]
 #
 # Settings for play/record for a new pattern. A new pattern is 'Untitled'
 # and has no events. These settings save time in live recording. Valid
@@ -255,7 +255,7 @@ visibility = true
 # editor if not playing or in paint mode. Currently 'notemap' and quantizing
 # are mutually exclusive.
 
-[new-pattern-editor]
+[pattern-editor]
 
 escape-pattern = false
 armed = false

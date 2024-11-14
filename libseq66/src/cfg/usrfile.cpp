@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-11-11
+ * \updates       2024-11-13
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -538,7 +538,12 @@ usrfile::parse ()
     flag = get_boolean(file, tag, "visibility", 0, true);
     usr().session_visibility(flag);
 
-    tag = "[new-pattern-editor]";
+    tag = "[pattern-editor]";
+    if (find_tag(file, tag) == (-1))
+    {
+        tag = "[new-pattern-editor]";
+        rc().auto_usr_save(true);       /* write the shorter tag at exit    */
+    }
     flag = get_boolean(file, tag, "escape-pattern");
     usr().escape_pattern(flag);
     flag = get_boolean(file, tag, "armed");
@@ -549,17 +554,17 @@ usrfile::parse ()
     usr().pattern_record(flag);
     flag = get_boolean(file, tag, "tighten");
     if (flag)
-        usr().record_mode(alteration::tighten);
+        usr().record_alteration(alteration::tighten);
 
     usr().pattern_tighten(flag);
     flag = get_boolean(file, tag, "qrecord");
     if (flag)
-        usr().record_mode(alteration::quantize);
+        usr().record_alteration(alteration::quantize);
 
     usr().pattern_qrecord(flag);
     flag = get_boolean(file, tag, "notemap");
     if (flag)
-        usr().record_mode(alteration::notemap);
+        usr().record_alteration(alteration::notemap);
 
     usr().pattern_notemap(flag);
     s = get_variable(file, tag, "record-style");
@@ -572,7 +577,7 @@ usrfile::parse ()
      * Consider:
      *
      *  Translate the pattern_x flag values to an seq66::alteration
-     *  value and pass it to usrsettings::record_mode().
+     *  value and pass it to usrsettings::record_alteration().
      *
      *  To do? Add "random" and "jitter" to the new-pattern values.
      *
@@ -1074,11 +1079,11 @@ usrfile::write ()
     write_boolean(file, "visibility", usr().session_visibility());
 
     /*
-     * [new-pattern-editor]
+     * [pattern-editor] (was [new-pattern-editor])
      */
 
     file <<
-"\n# [new-pattern-editor]\n"
+"\n# [pattern-editor]\n"
 "#\n"
 "# Settings for play/record for a new pattern. A new pattern is 'Untitled'\n"
 "# and has no events. These settings save time in live recording. Valid\n"
@@ -1087,7 +1092,7 @@ usrfile::write ()
 "# pattern start. 'escape-pattern' allows the Esc key to close the pattern\n"
 "# editor if not playing or in paint mode. Currently 'notemap' and quantizing\n"
 "# are mutually exclusive.\n"
-"\n[new-pattern-editor]\n\n"
+"\n[pattern-editor]\n\n"
         ;
     write_boolean(file, "escape-pattern", usr().escape_pattern());
     write_boolean(file, "armed", usr().pattern_armed());

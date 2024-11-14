@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2024-11-11
+ * \updates       2024-11-13
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -952,7 +952,7 @@ private:
     bool m_session_visibility;
 
     /**
-     *  [new-pattern-editor]
+     *  [pattern-editor]
      *
      *  Options for a pattern that is newly-created, plus a new option to let
      *  the Esc key close a pattern editor window.
@@ -987,7 +987,7 @@ private:
      *  Indicates if notes recorded into a sequence will be altered  or not.
      */
 
-    alteration m_record_mode;
+    alteration m_record_alteration;
 
     /**
      *  Indicates the global selected mode for the main-window's grid.
@@ -1854,25 +1854,25 @@ public:
      * Planned is a "playback mode", as well manually-applied alterations.
      */
 
-    alteration record_mode () const
+    alteration record_alteration () const
     {
-        return m_record_mode;
+        return m_record_alteration;
     }
 
-    void record_mode (alteration rm)
+    void record_alteration (alteration rm)
     {
         if (rm < alteration::max)
-            m_record_mode = rm;
+            m_record_alteration = rm;
     }
 
     bool alter_recording () const
     {
-        return m_record_mode != alteration::none;
+        return m_record_alteration != alteration::none;
     }
 
-    std::string record_mode_label () const;
-    alteration next_record_mode ();
-    alteration previous_record_mode ();
+    std::string record_alteration_label () const;
+    alteration next_record_alteration ();
+    alteration previous_record_alteration ();
 
     /*
      * Grid mode refers to what happens when a pattern is clicked or selected

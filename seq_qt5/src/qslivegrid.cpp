@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2024-11-11
+ * \updates       2024-11-13
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -193,7 +193,6 @@ qslivegrid::qslivegrid
         ui->buttonMetronome->hide();
         ui->buttonBackgroundRecord->hide();
         ui->comboGridMode->hide();
-
     }
     else
     {
@@ -229,11 +228,11 @@ qslivegrid::qslivegrid
          */
 
         tooltip_with_keystroke(ui->buttonRecordMode, keyname);
-        show_record_mode();
+        show_record_alteration();
         connect
         (
             ui->buttonRecordMode, SIGNAL(clicked(bool)),
-            this, SLOT(slot_record_mode(bool))
+            this, SLOT(slot_record_alteration(bool))
         );
         connect
         (
@@ -436,7 +435,7 @@ qslivegrid::conditional_update ()
          */
 
         show_record_style();
-        show_record_mode();
+        show_record_alteration();
         show_grid_mode();
         if (perf().has_ctrl_status())
         {
@@ -1410,7 +1409,7 @@ qslivegrid::alter_sequence (seq::number seqno)
 }
 
 /**
- *  Upgraded to apply the loope record-style and alteration specified
+ *  Upgraded to apply the loop record-style and alteration specified
  *  in the grid.
  */
 
@@ -1508,9 +1507,9 @@ qslivegrid::slot_record_style (bool /*clicked*/)
  */
 
 void
-qslivegrid::slot_record_mode (bool /*clicked*/)
+qslivegrid::slot_record_alteration (bool /*clicked*/)
 {
-    perf().next_record_mode();
+    perf().next_record_alteration();
 }
 
 void
@@ -1629,7 +1628,7 @@ qslivegrid::show_record_style ()
  */
 
 void
-qslivegrid::show_record_mode ()
+qslivegrid::show_record_alteration ()
 {
 #if defined USE_BUTTON_COLORING
     static bool s_uninitialized = true;
@@ -1651,7 +1650,7 @@ qslivegrid::show_record_mode ()
     {
         QPalette pal = button->palette();
         QColor c;
-        switch (usr().record_mode())
+        switch (usr().record_alteration())
         {
         case alteration::quantize:      c.setNamedColor("#00C0C0");     break;
         case alteration::tighten:       c.setNamedColor("#009090");     break;
@@ -1666,7 +1665,7 @@ qslivegrid::show_record_mode ()
     }
 #endif
 
-    ui->buttonRecordMode->setText(qt(usr().record_mode_label()));
+    ui->buttonRecordMode->setText(qt(usr().record_alteration_label()));
 }
 
 void

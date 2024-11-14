@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2024-08-24
+% \update      2024-11-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -739,7 +739,7 @@
    The first \texttt{Esc} key stops playback;
    the second \texttt{Esc} key exits "paint" mode; and
    the third \texttt{Esc} key closes the pattern editor \textsl{if}
-   the 'usr' \texttt{[new-pattern-editor] escape-pattern} option is set.
+   the 'usr' \texttt{[pattern-editor] escape-pattern} option is set.
    This functionality is similar to that of the main window, but
    these keys are not reconfigurable in the piano roll.
 
@@ -1657,11 +1657,33 @@
    second arrow indicating expandability.
 
    \itempar{MIDI Record Quantized}{pattern editor!quantized record}
-   This button will causes MIDI data to be recorded, but be
-   quantized on the fly before recording it.
-   The quantization is to the current snap value.
-   Quantization can be turned on globally in \textsl{Seq66}'s pattern grid
+   This button should be called "MIDI Record Altered", as it now supports
+   more than just quantization.
+   With every click, this button changes the type of alteration, cycling
+   between these changes:
+
+   \begin{enumber}
+      \item \textbf{None}.
+         No alteration of the recorded input is done.
+         The button shows as unselected.
+      \item \textbf{Tighten}.
+         The recorded input will be lightly quantized.
+      \item \textbf{Quantize}.
+         The recorded input will be fully quantized.
+         The quantization is to the current snap value.
+      \item \textbf{Notemap}.
+         If a note-map (see the 'drums' file) is loaded, the remapping of notes
+         is applied on the fly.
+   \end{enumber}
+
+   Alteration can be turned on globally in \textsl{Seq66}'s pattern grid
    as well.
+   When the pattern is opened, the alteration and recording style are
+   set for that pattern.
+
+   \textsl{Currently, changing the alteration and recording style in the grid
+   changes the open pattern as well.  We are not sure if that is a good feature
+   or not.}
 
    \itempar{Loop Record Type}{pattern editor!recording type}
    In \textsl{Seq24}, the pattern recording worked by merging new notes played

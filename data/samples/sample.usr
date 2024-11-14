@@ -796,7 +796,7 @@ progress-box-height = 0
 session = none
 url = ""
 
-# [new-pattern-editor]
+# [pattern-editor]
 #
 # This section contains the setup values for recording when a new
 # pattern is opened. For flexibility, a new pattern means only that
@@ -804,7 +804,7 @@ url = ""
 # during a live recording session. Note that the valid values for
 # record-style are 'merge', 'overwrite', and 'expand'.
 
-[new-pattern-editor]
+[pattern-editor]
 
 armed = false
 thru = false

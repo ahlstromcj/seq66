@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2024-08-20
+ * \updates       2024-11-13
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -540,7 +540,7 @@ private:
      *  the calculations module.
      */
 
-     alteration m_alter_recording;
+    alteration m_record_alteration;
 
     /**
      *  True if recording in MIDI-through mode.
@@ -1407,17 +1407,22 @@ public:
 
     bool alter_recording () const
     {
-        return /* m_recording && */ m_alter_recording != alteration::none;
+        return m_record_alteration != alteration::none;
     }
 
-    alteration record_mode () const                 /* same name as usr()   */
+    alteration record_alteration () const
     {
-        return m_alter_recording;
+        return m_record_alteration;
+    }
+
+    void record_alteration (alteration a)
+    {
+        m_record_alteration = a;
     }
 
     bool quantized_recording () const
     {
-        return m_alter_recording == alteration::quantize;
+        return m_record_alteration == alteration::quantize;
     }
 
     bool quantizing () const
@@ -1427,7 +1432,7 @@ public:
 
     bool tightened_recording () const
     {
-        return m_alter_recording == alteration::tighten;
+        return m_record_alteration == alteration::tighten;
     }
 
     bool tightening () const
@@ -1437,7 +1442,7 @@ public:
 
     bool notemapped_recording () const
     {
-        return m_alter_recording == alteration::notemap;
+        return m_record_alteration == alteration::notemap;
     }
 
     bool notemapping () const

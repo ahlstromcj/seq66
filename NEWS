@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.16
 Chris Ahlstrom
-2015-07-10 to 2024-11-08
+2015-07-10 to 2024-11-13
 
 # Change Log
 
@@ -12,12 +12,17 @@ Chris Ahlstrom
 - Added CONFIG\_DIR\_NAME and cleaned up configure.ac. Updated the
   Makefile sources.
 - Merged a fix from a pull request to update the \*.desktop files.
+- Renamed [new-pattern-editor] to [pattern-editor] in the 'usr' file.
+- The Quantized Record button in the pattern editor now goes through
+  this sequence when clicked: None, Tighten, Quantize, Notemap,
+  None.... Also prettied-up the icons.
 
 ### Fixed
 
-- Fixed the display of tunes with various PPQNs such as 120 in the
-  pattern editor.
-- Fixed an issue with NSM interactions introduced in version 0.99.11,
+- Fixed issue #128 with expanded recording not working. Also see
+  the changes to the record buttons in the pattern editor.
+- Merged a pull request for issue #130 to fix the \*.desktop files.
+- Fixed issue #131 with NSM interactions introduced in version 0.99.11,
   plus other related issue:
   - The NSM would show two clients: "qseq66" and "seq66" when adding
     only the "qseq66" client.
@@ -29,6 +34,8 @@ Chris Ahlstrom
   - Save session (under NSM) or the MIDI file.
   - Record style select.
   - Quit.
+- Fixed the display of tunes with various PPQNs such as 120 in the
+  pattern editor.
 - Fixed the following scenario: Load a song; do File / New; make a
   pattern; then File / Save. It overwrites the previous song. The
   fix now brings up a prompt for the name of the new file.

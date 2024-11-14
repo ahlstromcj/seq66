@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-11-11
+ * \updates       2024-11-14
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -327,7 +327,7 @@ qseqeditframe64::qseqeditframe64
     m_first_event_name      ("(no events)"),
     m_have_focus            (false),
     m_edit_mode             (perf().edit_mode(s.seq_number())),
-    m_last_record_style     (usr().pattern_record_style()), // recordstyle::merge
+    m_last_record_style     (usr().pattern_record_style()),
     m_timer                 (nullptr)
 {
     std::string seqname = "No sequence!";
@@ -952,16 +952,8 @@ qseqeditframe64::qseqeditframe64
     connect
     (
         ui->m_spin_loop_count, SIGNAL(valueChanged(int)),
-        this, SLOT(update_loop_count(int))
+        this, SLOT(slot_loop_count(int))
     );
-
-    /*
-     * New location. Update the buttons before any of them are connected.
-     * Hmmmmm.... Been fixed to avoid triggering slots.
-     *
-     *  update_midi_buttons();
-     */
-
 
     /*
      * Enable (unmute) Play Button. It's not the triangular play button, it's
@@ -1006,9 +998,7 @@ qseqeditframe64::qseqeditframe64
      */
 
     ui->m_toggle_qrecord->setCheckable(true);
-#if defined USE_TRACK_VALUES                /* versus performer values  */
     s.set_recording_style(p.record_style());
-#endif
     set_toggle_qrecord_button();
     connect
     (
@@ -1018,7 +1008,7 @@ qseqeditframe64::qseqeditframe64
     connect
     (
         ui->m_combo_rec_type, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(update_record_type(int))
+        this, SLOT(slot_record_style(int))
     );
 
     /*
@@ -1034,7 +1024,7 @@ qseqeditframe64::qseqeditframe64
     connect
     (
         ui->m_combo_rec_vol, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(update_recording_volume(int))
+        this, SLOT(slot_recording_volume(int))
     );
 
     /*
@@ -1352,7 +1342,7 @@ qseqeditframe64::on_automation_change (automation::slot s)
     else if (s == automation::slot::mod_redo)
         redo();
     else if (s == automation::slot::record_style)           /* issue #128   */
-        update_record_type(usr().pattern_record_code());
+        slot_record_style(usr().pattern_record_code());
 
     return true;
 }
@@ -1384,20 +1374,11 @@ qseqeditframe64::setup_record_styles ()
     ui->m_combo_rec_type->insertItem(lroneshot, qt(items[3])); // "One-shot"
     ui->m_combo_rec_type->insertItem(lrreset,   qt(items[4])); // "1-shot reset"
     enable_combobox_item(ui->m_combo_rec_type, lrreset, false);
-    if (track().is_new_pattern())
-    {
-        int npc = usr().pattern_record_code();
-        ui->m_combo_rec_type->setCurrentIndex(npc);
-        m_last_record_style = usr().pattern_record_style();
-        update_record_type(npc);
-    }
-    else
-    {
-        int npc = usr().pattern_record_code();
-        ui->m_combo_rec_type->setCurrentIndex(npc);
-        m_last_record_style = usr().pattern_record_style();
-        update_record_type(npc);
-    }
+
+    int npc = usr().pattern_record_code();
+    ui->m_combo_rec_type->setCurrentIndex(npc);
+    m_last_record_style = usr().pattern_record_style();
+    slot_record_style(npc);
 }
 
 /**
@@ -1423,14 +1404,14 @@ qseqeditframe64::setup_alterations ()
             alt = usr().pattern_alteration();
             t = toggler::on;
         }
-        slot_play_change(usr().pattern_armed());    /* set track arming */
-        slot_thru_change(usr().pattern_thru());     /* set track thru   */
-        slot_record_change(usr().pattern_record()); /* set track record */
+        slot_play_change(usr().pattern_armed());        /* set track arming */
+        slot_thru_change(usr().pattern_thru());         /* set track thru   */
+        slot_record_change(usr().pattern_record());     /* set track record */
         q_record_change(alt, t);                        /* trickier         */
 
         /*
          * Move to isnewpattern check below.
-         * update_record_type(usr().pattern_record_code());
+         * slot_record_style(usr().pattern_record_code());
          */
     }
     else
@@ -1440,7 +1421,7 @@ qseqeditframe64::setup_alterations ()
         bool altered_recording = usr().alter_recording();
         if (altered_recording)
         {
-            alt = usr().record_mode();
+            alt = usr().record_alteration();
             t = toggler::on;
         }
         q_record_change(alt, t);
@@ -4036,6 +4017,8 @@ qseqeditframe64::slot_record_change (bool ischecked)
  *  This is not necessarily the most intuitive thing to do.
  */
 
+#if defined USE_QUAN_ON_OFF_ONLY                        /* old stuff        */
+
 void
 qseqeditframe64::slot_q_record_change (bool ischecked)
 {
@@ -4043,12 +4026,28 @@ qseqeditframe64::slot_q_record_change (bool ischecked)
     alteration mode = alteration::none;
     if (ischecked)
     {
-        mode = track().record_mode();
+        mode = track().record_alteration();
         if (mode == alteration::none)
             mode = alteration::quantize;                /* legacy setting   */
     }
     q_record_change(mode, t);
 }
+
+#else
+
+void
+qseqeditframe64::slot_q_record_change (bool /* ischecked */)
+{
+    cb_perf().next_record_alteration();
+
+    alteration mode = cb_perf().record_alteration();
+    track().record_alteration(mode);
+    bool ischecked = track().alter_recording();
+    toggler t = ischecked ? toggler::on : toggler::off ;
+    q_record_change(mode, t);
+}
+
+#endif
 
 void
 qseqeditframe64::q_record_change (alteration mode, toggler t)
@@ -4064,7 +4063,7 @@ qseqeditframe64::q_record_change (alteration mode, toggler t)
 
 /**
  *  Using track().alter_recording() currently, but when first opening this
- *  editor, we want to show the setting of alteration usr().record_mode()
+ *  editor, we want to show the setting of alteration usr().record_alteration()
  *  and usr().alter_recording().
  *
  *  TODO: elsewhere show recordstyle usr().pattern_record_style().
@@ -4079,26 +4078,12 @@ qseqeditframe64::set_toggle_qrecord_button ()
     (
         qtnlabel, sizeof qtnlabel,
         alter_record_active ? s_rec_on_fmt : s_rec_off_fmt,
-        usr().record_mode_label().c_str()
+        usr().record_alteration_label().c_str()
     );
     ui->m_toggle_qrecord->setToolTip(qtnlabel);
     if (alter_record_active)
     {
         ui->m_toggle_qrecord->setChecked(true);
-
-#if defined USE_TRACK_VALUES                /* versus performer values  */
-        if (track().expanded_recording())
-            qt_set_icon(exp_rec_on_xpm, ui->m_toggle_record);
-        else
-            qt_set_icon(rec_on_xpm, ui->m_toggle_record);
-
-        if (track().tightened_recording())
-            qt_set_icon(t_rec_on_xpm, ui->m_toggle_qrecord);
-        else if (track().notemapped_recording())
-            qt_set_icon(n_rec_on_xpm, ui->m_toggle_qrecord);
-        else
-            qt_set_icon(q_rec_on_xpm, ui->m_toggle_qrecord);
-#else
         if (perf().record_style() == recordstyle::expand)
             qt_set_icon(exp_rec_on_xpm, ui->m_toggle_record);
         else
@@ -4111,7 +4096,6 @@ qseqeditframe64::set_toggle_qrecord_button ()
             qt_set_icon(n_rec_on_xpm, ui->m_toggle_qrecord);
         else
             qt_set_icon(q_rec_on_xpm, ui->m_toggle_qrecord);
-#endif
     }
     else
         qt_set_icon(q_rec_xpm, ui->m_toggle_qrecord);
@@ -4138,11 +4122,11 @@ qseqeditframe64::slot_thru_change (bool ischecked)
 
 /**
  *  If the last recording style is oneshot we can select reset. If we then
- *  select oneshot_reset, we reset the sequence and reselect oneshot.
+ *  select oneshot_reset, we reset (clear!) the sequence and reselect oneshot.
  */
 
 void
-qseqeditframe64::update_record_type (int index)
+qseqeditframe64::slot_record_style (int index)
 {
     recordstyle newstyle = usr().pattern_record_style(index);
     if (newstyle != m_last_record_style)            /* see issue #128       */
@@ -4165,16 +4149,17 @@ qseqeditframe64::update_record_type (int index)
                     index = lroneshot;
                 }
             }
-            m_last_record_style = newstyle; // usr().pattern_record_style(index);
+            m_last_record_style = newstyle;
             ui->m_combo_rec_type->setCurrentIndex(index);
             perf().set_record_style(newstyle);
+            set_toggle_qrecord_button();
             set_dirty();                            /* see issue #90        */
         }
     }
 }
 
 void
-qseqeditframe64::update_recording_volume (int index)
+qseqeditframe64::slot_recording_volume (int index)
 {
     if (index >= 0 && index < rec_vol_list().count())
     {
@@ -4188,7 +4173,7 @@ qseqeditframe64::update_recording_volume (int index)
 }
 
 void
-qseqeditframe64::update_loop_count (int value)
+qseqeditframe64::slot_loop_count (int value)
 {
     if (track().loop_count_max(value, true))    /* it is a user-change      */
         set_track_change();                     /* added for issue #90      */

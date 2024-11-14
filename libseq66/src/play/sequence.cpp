@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-11-11
+ * \updates       2024-11-14
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -175,7 +175,7 @@ sequence::sequence (int ppqn) :
     m_draw_locked               (false),
     m_auto_step_reset           (false),
     m_recording_style           (recordstyle::merge),
-    m_alter_recording           (alteration::none),
+    m_record_alteration         (alteration::none),
     m_thru                      (false),
     m_queued                    (false),
     m_one_shot                  (false),
@@ -341,7 +341,7 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
          *  m_expanded_recording
          *  m_overwrite_recording
          *  m_oneshot_recording
-         *  m_alter_recording
+         *  m_record_alteration
          *  m_thru
          *  m_queued
          *  m_soloed
@@ -4052,10 +4052,10 @@ sequence::add_event
 
 /**
  *  Handles loop/replace status on behalf of seqrolls.  This sets the
- *  loop-reset status, which is checked in the stream_event() function in this
- *  module.  This status is set when the time-stamp remainder is less than a
- *  quarter note, meaning we have just gotten back to the beginning of the
- *  loop.
+ *  loop-reset status, which is checked in the stream_event() [input]
+ *  function in this module.  This status is set when the time-stamp remainder
+ *  is less than a quarter note, meaning we have just gotten back to the
+ *  beginning of the loop.  See the call in qseqeditframe64.
  */
 
 bool
@@ -6115,7 +6115,7 @@ sequence::set_recording (toggler flag)
                 channel_match(true);
         }
         else
-            m_alter_recording = alteration::none;
+            m_record_alteration = alteration::none;
 
         set_dirty();
         notify_trigger();
@@ -6144,12 +6144,12 @@ sequence::set_recording (alteration q, toggler flag)
     bool result = true;
     if (flag == toggler::on)
     {
-        m_alter_recording = q;
+        m_record_alteration = q;
         result = set_recording(toggler::on);
     }
     else if (flag == toggler::off)
     {
-        m_alter_recording = alteration::none;
+        m_record_alteration = alteration::none;
 
         /*
          * Don't change the status of recording just because
@@ -6170,10 +6170,10 @@ sequence::set_recording (alteration q, toggler flag)
         }
         else
         {
-            if (q == m_alter_recording)
-                m_alter_recording = alteration::none;
+            if (q == m_record_alteration)
+                m_record_alteration = alteration::none;
             else
-                m_alter_recording = q;
+                m_record_alteration = q;
 
             result = set_recording(toggler::flip);
         }
@@ -7231,7 +7231,6 @@ sequence::update_recording (int index)
         case recordstyle::merge:
         case recordstyle::overwrite:
         case recordstyle::expand:
-
             auto_step_reset(false);
             break;
 

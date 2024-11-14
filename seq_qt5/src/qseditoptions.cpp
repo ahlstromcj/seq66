@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-11
+ * \updates       2024-11-12
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1557,7 +1557,7 @@ qseditoptions::setup_tab_pattern ()
     connect
     (
         ui->comboBoxRecordStyle, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(slot_new_record_style(int))
+        this, SLOT(slot_record_style(int))
     );
 
     /*
@@ -1670,7 +1670,7 @@ qseditoptions::slot_pattern_wraparound ()
 }
 
 void
-qseditoptions::slot_new_record_style (int index)
+qseditoptions::slot_record_style (int index)
 {
     usr().pattern_record_style(index);
     modify_usr();

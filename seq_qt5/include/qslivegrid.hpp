@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2024-11-11
+ * \updates       2024-11-13
  * \license       GNU GPLv2 or above
  *
  *
@@ -189,7 +189,7 @@ private:
     void popup_menu ();
     void sequence_key_check ();
     void show_record_style ();
-    void show_record_mode ();
+    void show_record_alteration ();
     void show_grid_mode ();
     void populate_grid_mode ();
     void set_grid_mode ();
@@ -220,7 +220,7 @@ private slots:
     void slot_set_bank_name ();
     void slot_activate_bank (bool clicked);
     void slot_record_style (bool clicked);
-    void slot_record_mode (bool clicked);
+    void slot_record_alteration (bool clicked);
     void slot_toggle_metronome (bool clicked);
     void slot_toggle_background_record (bool clicked);
     void slot_grid_mode (int index);

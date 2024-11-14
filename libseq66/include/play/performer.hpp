@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2024-11-11
+ * \updates       2024-11-13
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3718,9 +3718,9 @@ public:
 
     void next_record_style ();
     void previous_record_style ();
-    void next_record_mode ();
-    void previous_record_mode ();
-    void set_record_mode (alteration rm);
+    void next_record_alteration ();
+    void previous_record_alteration ();
+    void set_record_alteration (alteration rm);
     bool loop_control                   /* [loop-control]       */
     (
         automation::action a, int d0, int d1,

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-08-21
+ * \updates       2024-11-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -331,9 +331,9 @@ private slots:
     void slot_thru_change (bool ischecked);
     void slot_record_change (bool ischecked);
     void slot_q_record_change (bool ischecked);
-    void update_record_type (int index);
-    void update_recording_volume (int index);
-    void update_loop_count (int value);
+    void slot_record_style (int index);
+    void slot_recording_volume (int index);
+    void slot_loop_count (int value);
     void reset_recording_volume ();
     void slot_follow (bool ischecked);
     void v_zoom_in ();

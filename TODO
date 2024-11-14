@@ -1,16 +1,21 @@
 TO DO for Seq66 0.99.16
 Chris Ahlstrom
-2019-04-13 to 2024-11-09
+2019-04-13 to 2024-11-14
 
 Hottest:
 
-    #128 Recording type for loop button not working (Issue
+    #128 Recording type for loop button not working
 
 From Testing:
 
-    -   #128 Recording type for loop button not working. Some improvements
-        but nee to get usrfile/usrsettings/performer/qloopbutton, main
-        window, and the pattern editor in sync with alteration values.
+    -   #128 Recording type for loop button not working. Fixed, some
+        tweaks still needed:
+        -   On expand recording scroll to follow the current end of
+            the expansion.
+        -   Make sure qf64::setup_alterations() etc. get alteration etc.
+            from performer, not necessarily usr().
+        -   Make expand-recording work in auto-step/step-edit mode.
+    -   Near performer.cpp#4174, reconsider how alteration works there.
     -   Setting the PPQN obscures the 32 PPQN entry in the combo box.
         Not important.
     -   Get the 16-in-busses.midi file configured and working.
@@ -286,9 +291,9 @@ ISSUES:
     different settings...  Post processing quantize works as expected (i,e,
     Ctrl-A then q)
 
-    STATUS: Fixed in the portfix branch. An embarrassing misstep!
+    STATUS: Fixed.
 
-#128 Recording type for loop button not working (Issue
+#128 Recording type for loop button not working
     The button on the main page for recording styles Overdub, Overwrite,
     Expand and One Shot does not change the property of the pattern. The drop
     down menu in the pattern window works fine, although Overdub is called

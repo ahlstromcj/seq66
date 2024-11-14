@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2024-11-11
+ * \updates       2024-11-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -343,7 +343,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_song_recording        (false),
     m_song_record_snap      (true),
     m_record_snap_length    (0),
-    m_record_alteration     (usr().record_mode()),
+    m_record_alteration     (usr().record_alteration()),
     m_record_style          (usr().pattern_record_style()),
     m_resume_note_ons       (usr().resume_note_ons()),
     m_ppqn                  (choose_ppqn(ppqn)),
@@ -3311,7 +3311,8 @@ performer::create_master_bus ()
         {
             append_error_message
             (
-                "Creating master bus maps failed; check MIDI drivers"
+                "Creating master bus failed; check MIDI drivers or "
+                "reboot."
             );
         }
     }
@@ -4275,7 +4276,7 @@ performer::set_recording_flip (seq::ref s)
     toggler t = toggler::flip;
     bool altered_recording = usr().alter_recording();
     if (altered_recording)
-        alt = usr().record_mode();
+        alt = usr().record_alteration();
 
     recordstyle rs = usr().pattern_record_style();
     bool result = s.set_recording_style(rs);
@@ -5301,8 +5302,7 @@ performer::start_playing ()
 
     start_jack();
     start();
-    for (auto notify : m_notify)
-        (void) notify->on_automation_change(automation::slot::start);
+    notify_automation_change(automation::slot::start);
 }
 
 void
@@ -5315,8 +5315,7 @@ performer::play_count_in ()
     }
     start_jack();
     start();
-    for (auto notify : m_notify)
-        (void) notify->on_automation_change(automation::slot::start);
+    notify_automation_change(automation::slot::start);
 }
 
 /**
@@ -5389,8 +5388,7 @@ performer::stop_playing (bool rewind)
         if (rewind)
             set_tick(0);                                /* ca 2022-09-25    */
 
-        for (auto notify : m_notify)
-            (void) notify->on_automation_change(automation::slot::stop);
+        notify_automation_change(automation::slot::stop);
     }
 }
 
@@ -7886,25 +7884,25 @@ performer::previous_record_style ()
 }
 
 void
-performer::next_record_mode ()
+performer::next_record_alteration ()
 {
-    (void) usr().next_record_mode();
-    m_record_alteration = usr().record_mode();
+    (void) usr().next_record_alteration();
+    m_record_alteration = usr().record_alteration();
     notify_automation_change(automation::slot::quan_record);
 }
 
 void
-performer::previous_record_mode ()
+performer::previous_record_alteration ()
 {
-    (void) usr().previous_record_mode();
-    m_record_alteration = usr().record_mode();
+    (void) usr().previous_record_alteration();
+    m_record_alteration = usr().record_alteration();
     notify_automation_change(automation::slot::quan_record);
 }
 
 void
-performer::set_record_mode (alteration rm)
+performer::set_record_alteration (alteration rm)
 {
-    (void) usr().record_mode(rm);
+    (void) usr().record_alteration(rm);
     m_record_alteration = rm;
     notify_automation_change(automation::slot::quan_record);
 }
@@ -8029,7 +8027,10 @@ performer::loop_control
                     else if (a == automation::action::on)
                         flag = toggler::on;
 
-                    result = set_recording(*seqp, usr().record_mode(), flag);
+                    result = set_recording
+                    (
+                        *seqp, usr().record_alteration(), flag
+                    );
                 }
             }
         }
@@ -8761,9 +8762,9 @@ performer::automation_quan_record
     if (! inverse)
     {
         if (automation::actionable(a))
-            next_record_mode();
+            next_record_alteration();
         else if (a == automation::action::off)
-            previous_record_mode();
+            previous_record_alteration();
 
         notify_automation_change(automation::slot::quan_record);
     }
@@ -10044,7 +10045,7 @@ performer::set_grid_mode (gridmode gm)
         usr().grid_mode(gm);
         if (gm != gridmode::record)
         {
-            usr().record_mode(alteration::none);
+            usr().record_alteration(alteration::none);
 
             /*
              * Why do this??? [ca 2024-11-11]
