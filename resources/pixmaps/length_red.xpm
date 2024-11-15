@@ -1,8 +1,8 @@
 /* XPM */
-static const char * length_short_xpm[] = {
+static const char * length_red_xpm[] = {
 "19 11 2 1",
 " 	c None",
-".	c #000000",
+".	c #FF0000",
 "...................",
 "...................",
 "                   ",

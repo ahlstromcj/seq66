@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-11-14
+ * \updates       2024-11-15
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -131,6 +131,7 @@
 #include "pixmaps/follow.xpm"
 #include "pixmaps/key.xpm"
 #include "pixmaps/loop.xpm"
+#include "pixmaps/length_red.xpm"
 #include "pixmaps/length_short.xpm"     /* not length.xpm, it is too long   */
 #include "pixmaps/menu_empty.xpm"
 #include "pixmaps/menu_empty_inv.xpm"
@@ -390,11 +391,6 @@ qseqeditframe64::qseqeditframe64
     }
 
     setup_record_styles();
-
-    /*
-     * Might need to move this lower down in the constructor.
-     */
-
     setup_alterations();
 
     /*
@@ -704,16 +700,39 @@ qseqeditframe64::qseqeditframe64
     );
 
     /*
-     * Follow Progress Button.
+     * Follow Progress Button. If expanded recording is in force for this
+     * track, then force progress-follow.
      */
 
-    std::string keyname =
-        perf().automation_key(automation::slot::follow_transport);
-
+    bool expandrec = track().expand_recording();
+    std::string keyname = perf().automation_key
+    (
+        automation::slot::follow_transport
+    );
     tooltip_with_keystroke(ui->m_toggle_follow, keyname);
     qt_set_icon(follow_xpm, ui->m_toggle_follow);
-    ui->m_toggle_follow->setEnabled(true);
     ui->m_toggle_follow->setCheckable(true);
+    if (usr().follow_progress() || expandrec)
+    {
+        /*
+         * For issue #94, both here and in the perf-edit frame, we may need to
+         * allocate more width.  To be determined. See:
+         *
+         *      qseqroll::scroll_offset()
+         *      qperfroll::sizeHint()
+         */
+
+        int seqwidth = m_seqroll->width();
+        int scrollwidth = ui->rollScrollArea->width();
+        bool followit = expandrec || (seqwidth > scrollwidth);
+        m_seqroll->progress_follow(followit);
+        ui->m_toggle_follow->setChecked(m_seqroll->progress_follow());
+    }
+    else
+    {
+        m_seqroll->progress_follow(false);
+        ui->m_toggle_follow->setChecked(false);
+    }
 
     /*
      * Qt::NoFocus is the default focus policy.
@@ -1042,22 +1061,6 @@ qseqeditframe64::qseqeditframe64
     repopulate_usr_combos(m_edit_bus, m_edit_channel);
     set_midi_bus(m_edit_bus, qbase::status::startup);
     set_midi_channel(m_edit_channel, qbase::status::startup);  /* 0-15/0x80 */
-
-    /*
-     * For issue #94, both here and in the perf-edit frame, we may need to
-     * allocate more width.  To be determined. See:
-     *
-     *      qseqroll::scroll_offset()
-     *      qperfroll::sizeHint()
-     */
-
-    int seqwidth = m_seqroll->width();
-    int scrollwidth = ui->rollScrollArea->width();
-    if (usr().follow_progress())
-    {
-        m_seqroll->progress_follow(seqwidth > scrollwidth);
-        ui->m_toggle_follow->setChecked(m_seqroll->progress_follow());
-    }
 
     /*
      * Old location. Avoid calling setChecked(), as the Qt 5 documentation
@@ -3000,6 +3003,10 @@ qseqeditframe64::slot_follow (bool ischecked)
  *
  *      int w = m_seqroll->window_width():   781, what we set.
  *      int w = m_seqroll->width():          Dependent on seq length.
+ *
+ * \param expand
+ *      If true (the default is false), then add a measure to the pattern
+ *      while recording new notes.
  */
 
 void
@@ -3014,6 +3021,7 @@ qseqeditframe64::follow_progress (bool expand)
             midipulse prog = track().progress_value();
             int newx = tix_to_pix(prog);
             hadjust->setValue(newx);
+            qt_set_icon(length_red_xpm, ui->m_button_length);
         }
         else                                        /* use for non-recording */
         {

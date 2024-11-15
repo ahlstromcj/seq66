@@ -121,11 +121,16 @@
            <height>10</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>6</pointsize>
+          </font>
+         </property>
          <property name="toolTip">
           <string>Toggle the display of note tool-tips.</string>
          </property>
          <property name="text">
-          <string/>
+          <string>Note Tips</string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -445,7 +450,6 @@ to note events. [ c for selected notes ]</string>
          </property>
          <property name="font">
           <font>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -532,7 +536,6 @@ to note events. [ c for selected notes ]</string>
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <italic>false</italic>
          <bold>true</bold>
         </font>
@@ -1453,7 +1456,6 @@ or a velocity to force upon input.</string>
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1496,7 +1498,6 @@ or a velocity to force upon input.</string>
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <italic>false</italic>
          <bold>true</bold>
         </font>
