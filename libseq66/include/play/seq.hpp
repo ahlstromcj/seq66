@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2023-04-24
+ * \updates       2024-11-17
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -92,6 +92,9 @@ public:
      *  Provides a more descriptive alias for the sequences numbers (which
      *  range from 0 to the maximum sequence number allowed for a given run
      *  of the application.
+     *
+     *  Note that this could be a short, but for some int references
+     *  parameters in some functions.
      */
 
     using number = int;
@@ -340,6 +343,11 @@ public:
     bool active () const
     {
         return m_seq_active;
+    }
+
+    bool empty () const
+    {
+        return m_seq_active ? m_seq->empty() : true ;
     }
 
     bool recording () const

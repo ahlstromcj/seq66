@@ -47,7 +47,7 @@ Chris Ahlstrom
 ### Added
 
 - Added "Clear events" to the grid slot popup menu. It keeps the
-  pattern but removes all of its MIDI events.
+  pattern in the slot, but removes all of its MIDI events.
 - Added 120 PPQN to the list of supported PPQNs.
 - Added a "config directory" macro to configure.ac and seq-feature
   functions to access it. Differentiates between client and directory

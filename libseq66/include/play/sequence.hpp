@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2024-11-13
+ * \updates       2024-11-17
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -753,7 +753,8 @@ private:
     /**
      *  A new member so that the sequence number is carried along with the
      *  sequence.  This number is set in the performer::install_sequence()
-     *  function.
+     *  function. Also see the alias seq::number, which is not short,
+     *  but int!
      */
 
     short m_seq_number;
@@ -977,6 +978,11 @@ public:
     const eventlist & events () const
     {
         return m_events;
+    }
+
+    bool empty () const
+    {
+        return m_events.empty();
     }
 
     bool any_selected_notes () const

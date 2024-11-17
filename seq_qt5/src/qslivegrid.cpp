@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2024-11-13
+ * \updates       2024-11-17
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1466,11 +1466,8 @@ qslivegrid::delete_sequence ()
 void
 qslivegrid::clear_sequence ()
 {
-    if (qslivebase::delete_seq())
-    {
+    if (qslivebase::clear_seq())
         alter_sequence(m_current_seq);
-        can_paste(false);
-    }
 }
 
 void
@@ -1917,13 +1914,16 @@ qslivegrid::popup_menu ()
             this, SLOT(delete_sequence())
         );
 
-        QAction * actionClear = new_qaction("&Clear events", m_popup);
-        m_popup->addAction(actionClear);
-        connect
-        (
-            actionClear, SIGNAL(triggered(bool)),
-            this, SLOT(clear_sequence())
-        );
+        if (can_clear())
+        {
+            QAction * actionClear = new_qaction("&Clear events", m_popup);
+            m_popup->addAction(actionClear);
+            connect
+            (
+                actionClear, SIGNAL(triggered(bool)),
+                this, SLOT(clear_sequence())
+            );
+        }
         if (can_paste())
         {
             QAction * actionMerge = new_qaction("&Merge into pattern", m_popup);

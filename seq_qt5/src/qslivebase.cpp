@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2024-11-15
+ * \updates       2024-11-17
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the old mainwid class.
@@ -78,7 +78,7 @@ qslivebase::qslivebase
         screenset::is_unassigned(bank) ? p.playscreen_number() : bank
     ),
     m_bank_name         (),
-    m_mainwnd_spacing   (usr().mainwnd_spacing()),          /* spacing()    */
+    m_mainwnd_spacing   (usr().mainwnd_spacing()),      /* spacing()        */
     m_space_rows        (m_mainwnd_spacing * p.rows()),
     m_space_cols        (m_mainwnd_spacing * p.columns()),
     m_screenset_slots   (p.rows() * p.columns()),
@@ -86,12 +86,12 @@ qslivebase::qslivebase
     m_slot_h            (0),
     m_last_metro        (0),
     m_alpha             (0),
-    m_current_seq       (seq::unassigned()),
+    m_current_seq       (seq::unassigned()),            /* current_seq()    */
     m_source_seq        (seq::unassigned()),
     m_button_down       (false),
     m_moving            (false),
     m_adding_new        (false),
-    m_can_paste         (perf().can_paste()),               /* 2023-11-12   */
+    m_can_paste         (perf().can_paste()),
     m_has_focus         (false),
     m_is_external       (is_nullptr(parent)),
     m_needs_update      (false)

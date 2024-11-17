@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2024-11-13
+ * \updates       2024-11-17
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2379,6 +2379,11 @@ public:
         return set_mapper().is_seq_active(seqno);
     }
 
+    bool is_seq_empty (seq::number seqno) const
+    {
+        return set_mapper().is_seq_empty(seqno);
+    }
+
     bool is_seq_recording (seq::number seqno) const
     {
         return set_mapper().is_seq_recording(seqno);
@@ -2710,9 +2715,14 @@ public:
      *      Provides a reference to the desired sequence.
      */
 
-    bool highlight (seq::cref seq) const
+    bool empty (seq::cref s) const
     {
-        return seq.event_count() == 0;
+        return s.event_count() == 0;
+    }
+
+    bool highlight (seq::cref s) const
+    {
+        return empty(s);
     }
 
     /**
@@ -2722,9 +2732,9 @@ public:
      *      Provides a reference to the desired sequence.
      */
 
-    bool is_smf_0 (seq::cref seq) const
+    bool is_smf_0 (seq::cref s) const
     {
-        return seq.is_smf_0();
+        return s.is_smf_0();
     }
 
     /**

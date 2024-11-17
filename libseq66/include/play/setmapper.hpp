@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2023-11-14
+ * \updates       2023-11-17
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -467,6 +467,11 @@ private:
     bool is_seq_active (seq::number seqno) const
     {
         return screen(seqno).active(seqno);
+    }
+
+    bool is_seq_empty (seq::number seqno) const
+    {
+        return screen(seqno).empty(seqno);
     }
 
     bool is_seq_recording (seq::number seqno) const

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2024-11-15
+ * \updates       2024-11-17
  * \license       GNU GPLv2 or above
  *
  *
@@ -166,6 +166,11 @@ private:                                // overrides of event handlers
 private:
 
     virtual bool recreate_all_slots () override;
+
+    bool can_clear () const
+    {
+        return ! perf().is_seq_empty(current_seq());
+    }
 
     seq::number seq_id_from_xy (int click_x, int click_y);
     qslotbutton * create_one_button (seq::number seqno);
