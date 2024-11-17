@@ -1672,7 +1672,7 @@ qseditoptions::slot_pattern_wraparound ()
 void
 qseditoptions::slot_record_style (int index)
 {
-    usr().pattern_record_style(index);
+    usr().set_pattern_record_style(index);
     modify_usr();
 }
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2023-11-12
+ * \updates       2024-11-15
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the old mainwid class.
@@ -245,6 +245,16 @@ qslivebase::delete_seq ()
         m_parent->remove_editor(m_current_seq);
         can_paste(false);
     }
+    return result;
+}
+
+bool
+qslivebase::clear_seq ()
+{
+    bool result = perf().clear_sequence(m_current_seq);
+    if (result)
+        can_paste(false);
+
     return result;
 }
 

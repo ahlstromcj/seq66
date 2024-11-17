@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-11-14
+ * \updates       2024-11-16
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -174,8 +174,8 @@ sequence::sequence (int ppqn) :
     m_recording                 (false),
     m_draw_locked               (false),
     m_auto_step_reset           (false),
-    m_recording_style           (recordstyle::merge),
-    m_record_alteration         (alteration::none),
+    m_recording_style           (usr().pattern_record_style()),
+    m_record_alteration         (usr().record_alteration()),
     m_thru                      (false),
     m_queued                    (false),
     m_one_shot                  (false),
@@ -1201,6 +1201,13 @@ sequence::unit_measure (bool reset) const
 /**
  *  Changed this from a void to a boolean. Most usages still do not use the
  *  return value.  A fix for the double_length() function.
+ *
+ * \param measures
+ *      The number of measures to add.
+ *
+ * \param user_change
+ *      True if the change was initiated by the user, and not automatic.
+ *      The default is false.
  */
 
 bool
@@ -1211,6 +1218,14 @@ sequence::set_measures (int measures, bool user_change)
         modify();
 
     return modded;
+}
+
+int
+sequence::increment_measures ()
+{
+    int m = get_measures();
+    bool ok = set_measures(m + 1);
+    return ok ? m + 1 : m ;
 }
 
 /**
@@ -1234,17 +1249,37 @@ sequence::expand_threshold () const
 
 /**
  *  Provides the new value of the horizontal scroll bar to set when doing
- *  expanded recording.  See expand_threshold() for an issue we currently
- *  have not solved.
+ *  expanded recording.  See expand_threshold().
+ *
+ *  If the latest (recorded) note has a tick value greater than the threshold,
+ *  then the number of measures is increment.
  *
  * \return
  *      Returns the expand_threshold() minus a unit_measure() and a quarter.
+ *
+ *      return expand_threshold() - (unit_measure() + unit_measure() / 4);
+ *
+ *      This is wasteful and might be wrong. Call it "x".
  */
 
 midipulse
-sequence::progress_value () const
+sequence::expand_value ()
 {
-    return expand_threshold() - (unit_measure() + unit_measure() / 4);
+    midipulse result = get_last_tick();
+    if (result >= expand_threshold())
+    {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        int m = increment_measures();
+        printf("expanded measures = %d\n", m);
+#else
+        (void) increment_measures();
+        result = get_length();
+#endif
+    }
+    else
+        result = 0;
+
+    return result;
 }
 
 /**
@@ -5648,10 +5683,17 @@ sequence::set_last_tick (midipulse tick)
 midipulse
 sequence::get_tick () const
 {
-    if (get_length() > 0)
-        return perf()->get_tick() % get_length();
-    else
+    if (expanded_recording())
+    {
         return perf()->get_tick();
+    }
+    else
+    {
+        if (get_length() > 0)
+            return perf()->get_tick() % get_length();
+        else
+            return perf()->get_tick();
+    }
 }
 
 /**

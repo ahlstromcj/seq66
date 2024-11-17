@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2024-11-10
+ * \updates       2024-11-16
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -53,6 +53,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <cmath>                        /* std::sin(radians)                */
+#include <cstring>                      /* std::strcat()                    */
 
 #include "cfg/settings.hpp"             /* seq66::usr().scale_size(), etc.  */
 #include "gui_palette_qt5.hpp"          /* gui_pallete_qt5::Color etc.      */
@@ -599,7 +600,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             if (loop()->recording())
             {
                 int radius = usr().scale_size(s_radius_record) + 2;
-                int clx = m_top_right.m_x + m_top_right.m_w - radius - 2;
+                int clx = m_top_right.m_x + m_top_right.m_w - radius - 12;
                 int cly = m_top_right.m_y + m_top_right.m_h;
                 QPen pen2(drum_paint());
                 QBrush brush(drum_paint(), Qt::SolidPattern);
@@ -609,6 +610,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 painter.drawEllipse(clx, cly, radius, radius);
                 if (loop()->alter_recording())          /* Q, Tighten, etc. */
                 {
+                    char rlabel[4] = { 0, 0, 0, 0 };
                     int tlx = clx + usr().scale_size(2);
                     int tly = cly + radius - usr().scale_size(2);
                     int fontsize = usr().scale_font_size(s_fontsize_record);
@@ -617,14 +619,17 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                     font.setBold(true);
                     painter.setPen(Qt::white);          /* Qt::black        */
                     painter.setFont(font);
-                    if (loop()->expanded_recording())
-                        painter.drawText(tlx, tly, ">");
                     if (loop()->quantizing())
-                        painter.drawText(tlx, tly, "Q");
+                        std::strcat(rlabel, "Q ");
                     else if (loop()->tightening())
-                        painter.drawText(tlx, tly, "T");
+                        std::strcat(rlabel, "T ");
                     else if (loop()->notemapping())
-                        painter.drawText(tlx, tly, "N");
+                        std::strcat(rlabel, "N ");
+
+                    if (loop()->expanded_recording())
+                        std::strcat(rlabel, ">");
+
+                    painter.drawText(tlx, tly, rlabel);
                 }
                 painter.restore();
             }

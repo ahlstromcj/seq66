@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-11-15
+ * \updates       2024-11-16
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -328,7 +328,7 @@ qseqeditframe64::qseqeditframe64
     m_first_event_name      ("(no events)"),
     m_have_focus            (false),
     m_edit_mode             (perf().edit_mode(s.seq_number())),
-    m_last_record_style     (usr().pattern_record_style()),
+    m_last_record_style     (perf().record_style()),
     m_timer                 (nullptr)
 {
     std::string seqname = "No sequence!";
@@ -390,6 +390,7 @@ qseqeditframe64::qseqeditframe64
         );
     }
 
+    bool expandrec = track().expanded_recording();
     setup_record_styles();
     setup_alterations();
 
@@ -704,7 +705,6 @@ qseqeditframe64::qseqeditframe64
      * track, then force progress-follow.
      */
 
-    bool expandrec = track().expand_recording();
     std::string keyname = perf().automation_key
     (
         automation::slot::follow_transport
@@ -727,6 +727,7 @@ qseqeditframe64::qseqeditframe64
         bool followit = expandrec || (seqwidth > scrollwidth);
         m_seqroll->progress_follow(followit);
         ui->m_toggle_follow->setChecked(m_seqroll->progress_follow());
+        update_draw_geometry();
     }
     else
     {
@@ -1380,7 +1381,7 @@ qseqeditframe64::setup_record_styles ()
 
     int npc = usr().pattern_record_code();
     ui->m_combo_rec_type->setCurrentIndex(npc);
-    m_last_record_style = usr().pattern_record_style();
+    m_last_record_style = perf().record_style();
     slot_record_style(npc);
 }
 
@@ -1574,13 +1575,12 @@ qseqeditframe64::initialize_panels ()
 
 /**
  *  We need to set the dirty state while the sequence has been changed.
- *
  */
 
 void
 qseqeditframe64::conditional_update ()
 {
-    bool expandrec = track().expand_recording();
+    bool expandrec = track().expand_recording();        /* time to expand?  */
     if (expandrec)
     {
         /*
@@ -1592,7 +1592,7 @@ qseqeditframe64::conditional_update ()
          *      set_measures(track().get_measures() + 1);
          */
 
-        follow_progress(expandrec);             /* keep up with progress    */
+        expandrec = follow_progress(expandrec);         /* keep up with it  */
     }
     else if (not_nullptr(m_seqroll) && m_seqroll->progress_follow())
     {
@@ -1645,7 +1645,7 @@ qseqeditframe64::conditional_update ()
         m_is_looping = perf().looping();
         ui->m_button_loop->setChecked(m_is_looping);
     }
-    if (track().check_loop_reset())
+    if (track().check_loop_reset() || expandrec)
     {
         /*
          * Now we need to update the event and data panes.  The notes update
@@ -3009,44 +3009,20 @@ qseqeditframe64::slot_follow (bool ischecked)
  *      while recording new notes.
  */
 
-void
+bool
 qseqeditframe64::follow_progress (bool expand)
 {
-    int w = ui->rollScrollArea->width();
-    if (w > 0)              /* w is constant, e.g. around 742 by default    */
+    bool result = false;
+    if (track().expanded_recording())
     {
-        QScrollBar * hadjust = ui->rollScrollArea->h_scroll();
-        if (track().expanded_recording() && expand)
-        {
-            midipulse prog = track().progress_value();
-            int newx = tix_to_pix(prog);
-            hadjust->setValue(newx);
+        result = m_seqroll->follow_progress(ui->rollScrollArea, expand);
+        if (result && expand)
             qt_set_icon(length_red_xpm, ui->m_button_length);
-        }
-        else                                        /* use for non-recording */
-        {
-            midipulse progtick = track().get_last_tick();
-            int progx = tix_to_pix(progtick);
-            int page = progx / w;
-            int oldpage = m_seqroll->scroll_page();
-            bool newpage = page != oldpage;
-            if (newpage)
-            {
-                /*
-                 * Here, we need to set some kind of flag for clearing the
-                 * viewport before repainting.
-                 */
-
-                m_seqroll->scroll_page(page);
-                m_seqroll->scroll_offset(progx);
-                hadjust->setValue(progx);
-            }
-        }
     }
     else
-    {
-        errprint("qseqeditframe64::follow_progress(): 0 seqroll width!");
-    }
+        result = m_seqroll->follow_progress(ui->rollScrollArea);
+
+    return result;
 }
 
 void

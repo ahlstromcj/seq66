@@ -85,7 +85,7 @@ public:
 protected:
 
     virtual void paintEvent (QPaintEvent *) override;
-    virtual QSize sizeHint() const override;
+    virtual QSize sizeHint () const override;
 
 private:
 

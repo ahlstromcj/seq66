@@ -1464,6 +1464,16 @@ qslivegrid::delete_sequence ()
 }
 
 void
+qslivegrid::clear_sequence ()
+{
+    if (qslivebase::delete_seq())
+    {
+        alter_sequence(m_current_seq);
+        can_paste(false);
+    }
+}
+
+void
 qslivegrid::paste_sequence ()
 {
     if (qslivebase::paste_seq())
@@ -1905,6 +1915,14 @@ qslivegrid::popup_menu ()
         (
             actionDelete, SIGNAL(triggered(bool)),
             this, SLOT(delete_sequence())
+        );
+
+        QAction * actionClear = new_qaction("&Clear events", m_popup);
+        m_popup->addAction(actionClear);
+        connect
+        (
+            actionClear, SIGNAL(triggered(bool)),
+            this, SLOT(clear_sequence())
         );
         if (can_paste())
         {

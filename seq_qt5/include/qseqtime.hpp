@@ -80,7 +80,7 @@ protected:
     virtual void mouseReleaseEvent (QMouseEvent *) override;
     virtual void mouseMoveEvent (QMouseEvent *) override;
     virtual void keyPressEvent (QKeyEvent *) override;
-    virtual QSize sizeHint() const override;
+    virtual QSize sizeHint () const override;
     virtual void wheelEvent (QWheelEvent *) override;
 
 private:

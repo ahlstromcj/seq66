@@ -1,9 +1,10 @@
-Release Notes for Seq66 v. 0.99.16 2024-11-14
+Release Notes for Seq66 v. 0.99.16 2024-11-17
 
 Fixes for NSM (session manager), build-file updates, and better PPQN
 and recording handling.
 
-- Fixed issue #128 with expanded recording not working.
+- Fixed issue #128 with expanded recording not working. The expansion
+  is now continual, not waiting for a MIDI key to be struck.
 - Merged a fix from a pull request (issue #130) to update the
   "*.desktop" files.
 - Fixed issue #131 re faulty NSM interactions introduced in version
@@ -20,6 +21,7 @@ and recording handling.
   - Quit.
 - Fixed the display of tunes with various PPQNs such as 120 in the
   pattern editor.
+- Added "Clear events" to the grid slot popup menu.
 - Added 120 PPQN to the list of supported PPQNs.
 - Fixed File / New plus File Save overwriting the previous loaded
   file.
@@ -34,7 +36,5 @@ and recording handling.
   Updated the Makefile sources. Do "./bootstrap --full-clean".
 - Updated the PDF documentation re the Import/Export functionality.
 - See NEWS and ChangeLog for more details.
-
-Note: No Windows installer provided for this release.
 
 # vim: sw=4 ts=4 wm=15 et ft=rc

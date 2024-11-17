@@ -99,7 +99,7 @@ protected:          // Qt overrides
     virtual void mouseReleaseEvent (QMouseEvent *) override;
     virtual void mouseMoveEvent (QMouseEvent *) override;
     virtual void mouseDoubleClickEvent (QMouseEvent *) override;
-    virtual QSize sizeHint() const override;
+    virtual QSize sizeHint () const override;
     virtual void wheelEvent (QWheelEvent *) override;
 
 private:

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-08-22
+ * \updates       2024-11-17
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -49,6 +49,7 @@
 
 class QLabel;
 class QMessageBox;
+class qscrollmaster;
 class QTimer;
 
 /*
@@ -89,7 +90,7 @@ public:
 
     virtual ~qseqroll ();
 
-    void follow_progress ();
+    bool follow_progress (qscrollmaster * qsm, bool expand = false);
     int note_height () const;
     bool v_zoom_in ();
     bool v_zoom_out ();

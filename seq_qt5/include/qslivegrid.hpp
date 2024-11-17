@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2024-11-13
+ * \updates       2024-11-15
  * \license       GNU GPLv2 or above
  *
  *
@@ -216,6 +216,7 @@ private slots:
     void paste_sequence ();
     void merge_sequence ();
     void delete_sequence ();
+    void clear_sequence ();
     void new_live_frame ();
     void slot_set_bank_name ();
     void slot_activate_bank (bool clicked);

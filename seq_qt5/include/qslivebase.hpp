@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2022-10-09
+ * \updates       2024-11-15
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child class, qslivegride, are Sequencer66's
@@ -159,6 +159,7 @@ protected:
     bool copy_seq ();
     bool cut_seq ();
     bool delete_seq ();
+    bool clear_seq ();
     bool paste_seq ();
     bool merge_seq ();
 

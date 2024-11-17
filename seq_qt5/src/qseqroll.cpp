@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-11
+ * \updates       2024-11-17
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -34,20 +34,21 @@
 
 #include <QApplication>                 /* QApplication keyboardModifiers() */
 #include <QFrame>                       /* base class for seqedit frame(s)  */
+#include <QLabel>                       /* used as a tool-tip for notes     */
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
-#include <QPen>
-#include <QTimer>
-
-#include <QLabel>                       /* used as a tool-tip for notes     */
 #include <QPalette>                     /* for recoloring the tool-tip      */
+#include <QPen>
+#include <QScrollBar>                   /* used in scrolling for progress   */
+#include <QTimer>
 
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 #include "qseqkeys.hpp"                 /* seq66::qseqkeys class            */
 #include "qseqroll.hpp"                 /* seq66::qseqroll class            */
+#include "qscrollmaster.h"              /* used in scrolling for progress   */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
 
@@ -56,7 +57,7 @@
  *  alter the look of some other notes until the play/record was stopped.
  *  So this macro enables sequence::verify_and_link() every time.
  *  This iterates through all events, but acts only for unlinked notes,
- *  so it doesn't appear add a noticeable amount to the CPU load.
+ *  so it doesn't appear to add a noticeable amount to the CPU load.
  */
 
 #define SEQ66_ALWAYS_VERIFY_AND_LINK
@@ -137,11 +138,6 @@ qseqroll::qseqroll
     m_font.setPointSize(6);                         /* 8 is too obtrusive   */
     set_snap(track().snap());
     show();
-
-#if 0
-    setToolTip("Tempory test");
-#endif
-
     m_timer = qt_timer(this, "qseqroll", 1, SLOT(conditional_update()));
 }
 
@@ -172,8 +168,14 @@ qseqroll::conditional_update ()
         if (track().recording())
             track().verify_and_link();      /* refresh before update        */
 #endif
+#if 0
+        /*
+         * Already handled in qseqeditframe64.
+         */
+
         if (progress_follow())
             follow_progress();              /* keep up with progress        */
+#endif
 
         update();
     }
@@ -1805,6 +1807,9 @@ qseqroll::grow_selected_notes (int dx)
 QSize
 qseqroll::sizeHint () const
 {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    printf("qseqroll::sizeHint(): track length = %ld\n", track().get_length());
+#endif
     int w = frame64()->width();
     int h = total_height();
     int len = tix_to_pix(track().get_length());
@@ -1958,26 +1963,44 @@ qseqroll::analyze_seq_notes ()
 }
 
 /**
- *  Checks the position of the tick, and, if it is in a different piano-roll
- *  "page" than the last page, moves the page to the next page.
+ *  This function is called in qseqeditframe64 :: conditional_update().
  *
- *  We don't want to do any of this if the length of the sequence fits in the
- *  window, but for now it doesn't hurt; the progress bar just never meets the
- *  criterion for moving to the next page.
- *
- * \todo
- *      -   If playback is disabled (such as by a trigger), then do not update
- *          the page;
- *      -   When it comes back, make sure we're on the correct page;
- *      -   When it stops, put the window back to the beginning, even if the
- *          beginning is not defined as "0".
+ *  For expansion, here, we need to set some kind of flag for clearing the
+ *  viewport before repainting.
  */
 
-void
-qseqroll::follow_progress ()
+bool
+qseqroll::follow_progress (qscrollmaster * qsm, bool expand)
 {
-    if (not_nullptr(frame64()))
-        frame64()->follow_progress();
+    bool result = false;
+    QScrollBar * hadjust = qsm->h_scroll();
+    if (expand)
+    {
+        midipulse progtick = track().expand_value();
+        if (progtick != 0)
+        {
+            int newx = tix_to_pix(progtick);
+            hadjust->setValue(newx);
+            result = true;
+        }
+    }
+    else
+    {
+        int w = qsm->width();
+        midipulse progtick = track().get_last_tick();
+        int progx = tix_to_pix(progtick);
+        int page = progx / w;
+        int oldpage = scroll_page();
+        bool newpage = page != oldpage;
+        if (newpage)
+        {
+            scroll_page(page);
+            scroll_offset(progx);
+            hadjust->setValue(progx);
+            result = true;
+        }
+    }
+    return result;
 }
 
 /**

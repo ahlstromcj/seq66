@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-11-14
+ * \updates       2024-11-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -147,7 +147,7 @@ public:
 
     void initialize_panels ();
     void set_editor_mode (sequence::editmode mode);
-    void follow_progress (bool expand = false);
+    bool follow_progress (bool expand = false);
     void scroll_to_tick (midipulse tick);
     void scroll_to_note (int note);
 

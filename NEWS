@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.16
 Chris Ahlstrom
-2015-07-10 to 2024-11-13
+2015-07-10 to 2024-11-17
 
 # Change Log
 
@@ -19,8 +19,10 @@ Chris Ahlstrom
 
 ### Fixed
 
-- Fixed issue #128 with expanded recording not working. Also see
-  the changes to the record buttons in the pattern editor.
+- Fixed issue #128 with expanded recording not working. Note that
+  the expansion is now continual, not waiting for a MIDI key to
+  be struck. Also see the changes to the record buttons in the pattern
+  editor.
 - Merged a pull request for issue #130 to fix the \*.desktop files.
 - Fixed issue #131 with NSM interactions introduced in version 0.99.11,
   plus other related issue:
@@ -44,6 +46,8 @@ Chris Ahlstrom
 
 ### Added
 
+- Added "Clear events" to the grid slot popup menu. It keeps the
+  pattern but removes all of its MIDI events.
 - Added 120 PPQN to the list of supported PPQNs.
 - Added a "config directory" macro to configure.ac and seq-feature
   functions to access it. Differentiates between client and directory

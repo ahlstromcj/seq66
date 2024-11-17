@@ -1315,18 +1315,21 @@ public:
     );
 
     bool set_measures (int measures, bool user_change = false);
+    int increment_measures ();
+
     bool apply_length
     (
         int bpb, int ppqn, int bw,
         int measures = 0, bool user_change = false
     );
-    bool extend_length ();
-    bool double_length ();
 
     bool apply_length (int meas = 0, bool user_change = false)
     {
         return apply_length(0, 0, 0, meas, user_change);
     }
+
+    bool extend_length ();
+    bool double_length ();
 
     midipulse get_length () const
     {
@@ -1947,7 +1950,7 @@ public:
     bool copy_events (const eventlist & newevents);
     midipulse unit_measure (bool reset = false) const;
     midipulse expand_threshold () const;
-    midipulse progress_value () const;
+    midipulse expand_value ();
 
     /**
      *  The master bus needs to know if the match feature is truly in force,

@@ -25,12 +25,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-10
+ * \updates       2024-11-16
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <QResizeEvent>
+#include <cstring>                      /* std::strcat()                    */
 
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
@@ -101,10 +102,8 @@ qseqtime::qseqtime
     m_R_marker[0] = 'R'; m_R_marker[1] = 0;
     (void) snprintf(m_END_marker, sizeof m_END_marker, "END");
     if (m_expanding)
-    {
-        m_END_marker[3] = '>';
-        m_END_marker[4] = 0;
-    }
+        std::strcat(m_END_marker, ">");
+
     m_timer = qt_timer(this, "qseqtime", 4, SLOT(conditional_update())); // 2
 }
 
@@ -514,7 +513,7 @@ qseqtime::keyPressEvent (QKeyEvent * event)
 }
 
 QSize
-qseqtime::sizeHint() const
+qseqtime::sizeHint () const
 {
     int w = frame64()->width();
     int len = tix_to_pix(track().get_length());
