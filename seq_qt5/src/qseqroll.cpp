@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-17
+ * \updates       2024-11-18
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1005,9 +1005,17 @@ qseqroll::note_off_length () const
 }
 
 /**
- * Convenience wrapper for sequence::add_note() and sequence::add_chord().
- * The length parameters is obtained from the note_off_length() function.
- * This sets the note length at a little less than the snap value.
+ *  Convenience wrapper for sequence::add_note() and sequence::add_chord().
+ *  The length parameters is obtained from the note_off_length() function.
+ *  This sets the note length at a little less than the snap value.
+ *
+ *  We no longer support single-note undo of painted notes; they all get
+ *  undone.
+ *
+ *      if (m_chord > 0)
+ *          result = track().push_add_chord(m_chord, tick, n, note);
+ *      else
+ *          result = track().push_add_note(tick, n, note, true);
  *
  * \param tick
  *      The time destination of the new note, in pulses.
@@ -1015,12 +1023,8 @@ qseqroll::note_off_length () const
  * \param note
  *      The pitch destination of the new note.
  *
- * \param paint
- *      If true, repaint to be left with just the inserted event.  The
- *      default is true.  The value of false is useful in inserting a
- *      number of events and saving the repainting until last.  It is a
- *      bit tricky, as the default paint value for sequence::add_note() is
- *      false.
+ * \return
+ *      Returns true if the painting succeeded.
  */
 
 bool
@@ -1028,17 +1032,10 @@ qseqroll::add_painted_note (midipulse tick, int note)
 {
     bool result;
     int n = note_off_length();
-#if defined SEQ66_SINGLE_NOTE_UNDO
-    if (m_chord > 0)
-        result = track().push_add_chord(m_chord, tick, n, note);
-    else
-        result = track().push_add_note(tick, n, note, true /* paint */);
-#else
     if (m_chord > 0)
         result = track().add_chord(m_chord, tick, n, note);
     else
         result = track().add_painted_note(tick, n, note, true /* paint */);
-#endif
 
     if (result)
     {
@@ -1119,9 +1116,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                 );
                 if (would_select)
                 {
-#if ! defined SEQ66_SINGLE_NOTE_UNDO
-                    track().push_undo();
-#endif
+                    track().push_undo();            /* multiple-note undo   */
                     (void) add_painted_note(tick_s, note);
                 }
             }
@@ -1812,7 +1807,7 @@ qseqroll::sizeHint () const
 #endif
     int w = frame64()->width();
     int h = total_height();
-    int len = tix_to_pix(track().get_length());
+    int len = tix_to_pix(track().get_length_plus()); /* get_length());      */
     if (len < w)
         len = w;
 

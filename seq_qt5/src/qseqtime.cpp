@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-16
+ * \updates       2024-11-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -516,7 +516,7 @@ QSize
 qseqtime::sizeHint () const
 {
     int w = frame64()->width();
-    int len = tix_to_pix(track().get_length());
+    int len = tix_to_pix(track().get_length_plus()); /* get_length());      */
     if (len < w)
         len = w;
 

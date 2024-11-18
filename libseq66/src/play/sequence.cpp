@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-11-16
+ * \updates       2024-11-18
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2260,6 +2260,11 @@ sequence::select_note_events
 )
 {
     automutex locker(m_mutex);
+#if defined USE_TEST_CODE
+    if (expanded_recording())           // for painting notes; TEST CODE ONLY
+        return 0;                       // assume no note can be selected
+    else
+#endif
     return m_events.select_note_events(tick_s, note_h, tick_f, note_l, action);
 }
 
@@ -4244,13 +4249,13 @@ sequence::stream_event (event & ev)
                     {
                         if (mod_last_tick() < snap() / 2)
                         {
-                            if (m_step_count > 0)
+                            if (step_count() > 0)
                             {
                                 loop_reset(true);
-                                m_step_count = 0;
+                                clear_step_count();
                                 return false;
                             }
-                            ++m_step_count;
+                            increment_step_count();
                         }
                         m_last_tick += snap();
                     }
@@ -4273,7 +4278,7 @@ sequence::stream_event (event & ev)
                             ev.note_velocity(m_rec_vol);    /* keep veloc.  */
 
                         ev.set_timestamp(mod_last_tick());  /* loop back    */
-                        if (auto_step_reset() && m_step_count == 0)
+                        if (auto_step_reset() && step_count() == 0)
                             m_last_tick = 0;
 
                         bool ok = add_note
@@ -6844,11 +6849,11 @@ sequence::show_events () const
  *  effectively replacing all of its events.  Compare this function to the
  *  remove_all() function.  Copying the container is a lot of work, but fast.
  *  Also note that we have to recalculate the length of the sequence.
- * Another option, if we have a new sequence length value (in pulses)
- * would be to call sequence::set_length(len, adjust_triggers).  We
- * need to make sure the length is rounded up to the next quarter note.
- * Actually, should make it a full measure size!  Or do we always want to
- * preserve the pattern length no matter how many trailing events are deleted?
+ *  Another option, if we have a new sequence length value (in pulses)
+ *  would be to call sequence::set_length(len, adjust_triggers).  We
+ *  need to make sure the length is rounded up to the next quarter note.
+ *  Actually, should make it a full measure size!  Or do we always want to
+ *  preserve the pattern length no matter how many trailing events are deleted?
  *
  * \threadsafe
  *      Note that we had to consolidate the replacement of all the events in

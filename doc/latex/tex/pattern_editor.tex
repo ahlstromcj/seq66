@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2024-11-14
+% \update      2024-11-18
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -210,8 +210,21 @@
    indefinitely while the user inputs MIDI from a controller, via the
    \textbf{Expand} option of the \textbf{Loop Record Type}.
    This works in \textbf{Live} mode or \textbf{Song} mode.
+   \textsl{Note: the following is no longer true.
+   Instead, the pattern extends continually; these provides a more
+   reasonable user experinece:
    The pattern is not extended until events come in.
-   Thus, the pattern is only as long as the last measure when a note comes in.
+   Thus, the pattern is only as long as the last measure when a note comes in.}
+   Once playback starts, the progress bar moves forward.
+   Notes are recorded they are enter.
+   Once the end of the measure is neared, another
+   measure is added, whether or not more notes are struck.
+   The measure-count at the top of the editor shows the current number
+   of measure.
+   Once playback (and recording) stops, the user can either accept the
+   final length, or change the length to a lesser number.
+   If the lesser length will drop notes, a prompt will appear
+   for the user to accept or reject the length change.
 
    \itempar{Chord Types}{pattern editor!chord types}
    \index{chord generation}

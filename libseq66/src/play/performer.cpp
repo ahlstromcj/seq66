@@ -2126,6 +2126,7 @@ performer::channelize_sequence (seq::number seqno, int channel)
 
 /**
  *  Simply clears the event from the pattern.  That is all.
+ *  It does not modify the song. Be aware!
  */
 
 bool

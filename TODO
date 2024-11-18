@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.16
 Chris Ahlstrom
-2019-04-13 to 2024-11-17
+2019-04-13 to 2024-11-18
 
 Hottest:
 
@@ -10,10 +10,15 @@ From Testing:
 
     -   #128 Recording type for loop button not working. Fixed, some
         tweaks still needed:
-        -   Make sure qf64::setup_alterations() etc. get alteration etc.
-            from performer, not necessarily usr().
         -   Make expand-recording work in auto-step/step-edit mode.
-    -   Near performer.cpp#4174, reconsider how alteration works there.
+            It basically works, however in overdub sometimes the
+            second note struck after looping back doe not get recorded.
+        -   Click-drag in expand-recording stops at the end of
+            the pattern instead of expanding.
+        -   When turning off expand in the main window, need to change
+            the seqtime "END>" to "END".
+    -   In dragging notes to add them, respect the "Vel" setting and
+        use 100 if "Free" is selected.
     -   Clarify and document the pattern-editor seqroll tool-tip mode
         and how to activate it.
     -   Setting the PPQN obscures the 32 PPQN entry in the combo box.

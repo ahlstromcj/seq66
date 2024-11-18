@@ -2043,6 +2043,7 @@ eventlist::select_event_handle
     }
     else if (event::is_tempo_status(cc))
     {
+        // TODO?
     }
     for (auto & er : m_events)
     {

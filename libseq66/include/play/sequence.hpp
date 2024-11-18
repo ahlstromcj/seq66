@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2024-11-17
+ * \updates       2024-11-18
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1342,6 +1342,11 @@ public:
         return m_length;
     }
 
+    midipulse get_length_plus () const
+    {
+        return m_length + m_unit_measure / m_time_beats_per_measure;
+    }
+
     midipulse get_tick () const;
     midipulse get_last_tick () const;
     void set_last_tick (midipulse tick = c_null_midipulse);
@@ -1477,6 +1482,16 @@ public:
     bool oneshot_recording () const
     {
         return m_recording_style == recordstyle::oneshot;
+    }
+
+    void clear_step_count ()
+    {
+        m_step_count = 0;
+    }
+
+    void increment_step_count ()
+    {
+        ++m_step_count;
     }
 
     void auto_step_reset (bool flag)
