@@ -2135,8 +2135,10 @@ performer::clear_sequence (seq::number seqno)
     const seq::pointer s = get_sequence(seqno);
     bool result = bool(s);
     if (result)
+    {
         result = s->clear_events();         /* ultimately calls modify()    */
-
+        set_start_tick(0);
+    }
     return result;
 }
 
@@ -4885,7 +4887,6 @@ performer::poll_cycle ()
                 if (! is_pattern_playing())         /* ! is_running()       */
                     inner_start();                  /* start_playing()      */
 #endif
-
                 if (ev.below_sysex())                       /* below 0xF0   */
                 {
                     if (m_master_bus->is_dumping())         /* see banner   */
@@ -7873,6 +7874,9 @@ performer::next_record_style ()
 {
     (void) usr().next_record_style();
     m_record_style = usr().pattern_record_style();
+    if (m_record_style == recordstyle::oneshot_reset)
+        set_start_tick(0);
+
     notify_automation_change(automation::slot::record_style);
 }
 
@@ -7881,6 +7885,9 @@ performer::previous_record_style ()
 {
     (void) usr().previous_record_style();
     m_record_style = usr().pattern_record_style();
+    if (m_record_style == recordstyle::oneshot_reset)
+        set_start_tick(0);
+
     notify_automation_change(automation::slot::record_style);
 }
 
@@ -9975,6 +9982,9 @@ performer::set_record_style (recordstyle rs)
     {
         usr().set_pattern_record_style(rs);
         m_record_style = rs;
+        if (m_record_style == recordstyle::oneshot_reset)
+            set_start_tick(0);
+
         notify_automation_change(automation::slot::record_style);
     }
 }

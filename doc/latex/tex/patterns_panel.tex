@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2024-01-04
+% \update      2024-11-19
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1129,10 +1129,13 @@
          is enabled.
          When clicked, three things happen:
          \begin{itemize}
-            \item All the (note) events just recorded are \textsl{erased}.
             \item One-short counters/flags are \textsl{reset}.
             \item Recording is turned \textsl{back on}.
                Thus, one can easily re-do a one-shot recording.
+            \item The (note) events just recorded are \textsl{no longer
+            erased}. Instead, one can use the slot popup menu entry
+            \textbf{Clear events}.
+            This seems safer, if slightly clumsy.
          \end{itemize}
    \end{itemize}
 

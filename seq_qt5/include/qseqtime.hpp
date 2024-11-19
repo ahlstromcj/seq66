@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-08-31
+ * \updates       2024-11-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -85,6 +85,7 @@ protected:
 
 private:
 
+    void set_END_marker (bool expanding);
     void draw_grid (QPainter & painter, const QRect & r);
     void draw_markers (QPainter & painter);
 
@@ -100,6 +101,11 @@ private:
     QFont m_font;
     bool m_move_L_marker;
     bool m_expanding;
+
+    /*
+     * Currently these are only 8-bit characters.
+     */
+
     char m_L_marker[2];
     char m_R_marker[2];
     char m_END_marker[8];

@@ -1,10 +1,8 @@
 TO DO for Seq66 0.99.16
 Chris Ahlstrom
-2019-04-13 to 2024-11-18
+2019-04-13 to 2024-11-19
 
 Hottest:
-
-    #128 Recording type for loop button not working
 
 From Testing:
 
@@ -14,9 +12,19 @@ From Testing:
             It basically works, however in overdub sometimes the
             second note struck after looping back doe not get recorded.
         -   Click-drag in expand-recording stops at the end of
-            the pattern instead of expanding.
-        -   When turning off expand in the main window, need to change
-            the seqtime "END>" to "END".
+            the pattern instead of expanding. Is this an important use-case?
+        -   In pattern editor with one-shot, the error above occurs.
+        -   In one-shot recording with a device, the first note is
+            not recorded.
+        -   Clear events needs to reset the last tick to 0.
+        -   One-shot clear needs to be active, as well. Should one-shot clear
+            really clear the pattern????
+        -   One-shot recording during playback acts like overdub.
+        -   Setting one-shot (after overwrite) turns off recording.
+        -   Should Ctrl-V be anchored to top note or bottom note?
+    -   One song was loaded, the File / New still shows the previous song
+        in the title bar.
+    -   Selected port 1 with pattern editor open. It shows port 0.
     -   In dragging notes to add them, respect the "Vel" setting and
         use 100 if "Free" is selected.
     -   Clarify and document the pattern-editor seqroll tool-tip mode

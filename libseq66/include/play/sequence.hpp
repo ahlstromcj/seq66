@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2024-11-18
+ * \updates       2024-11-19
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -522,14 +522,6 @@ private:
     mutable bool m_draw_locked;
 
     /**
-     *  If true, the first incoming event in the step-edit (auto-step) part of
-     *  stream_event() will reset the starting tick to 0.  Useful when
-     *  recording a stock pattern from a drum machine.
-     */
-
-    bool m_auto_step_reset;
-
-    /**
      *  Eliminates a bunch of booleans. The default style is merge (overdub).
      */
 
@@ -573,12 +565,6 @@ private:
      */
 
     midipulse m_one_shot_tick;
-
-    /**
-     *  A counter used in the step-edit (auto-edit) feature.
-     */
-
-    int m_step_count;
 
     /**
      *  Number of times to play the pattern in Live mode.  A value of 0 means
@@ -1474,30 +1460,9 @@ public:
         return recording() && expanded_recording();
     }
 
-    bool auto_step_reset () const
-    {
-        return m_auto_step_reset;
-    }
-
     bool oneshot_recording () const
     {
         return m_recording_style == recordstyle::oneshot;
-    }
-
-    void clear_step_count ()
-    {
-        m_step_count = 0;
-    }
-
-    void increment_step_count ()
-    {
-        ++m_step_count;
-    }
-
-    void auto_step_reset (bool flag)
-    {
-        m_auto_step_reset = flag;
-        m_step_count = 0;
     }
 
     bool expand_recording () const;     /* does more checking for status    */
@@ -1541,11 +1506,6 @@ public:
     bool check_one_shot_tick (midipulse tick) const
     {
         return one_shot() && (one_shot_tick() <= tick);
-    }
-
-    int step_count () const
-    {
-        return m_step_count;
     }
 
     int loop_count_max () const

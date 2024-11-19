@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-11-18
+ * \updates       2024-11-19
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -97,6 +97,13 @@ static const midipulse c_handlesize = 16;
 static const double c_scale_min     =    0.01;
 static const double c_scale_max     =  200.00;
 static const double c_measure_max   = 1000.00;
+
+/**
+ *  The divisor for detecting when to reset auto-step.
+ *  The original value was 2. Let's try something else.
+ */
+
+static const midipulse c_reset_divisor = 4;
 
 /*
  * Member value.  A fingerprint size of 0 means to not use a fingerprint...
@@ -173,14 +180,12 @@ sequence::sequence (int ppqn) :
     m_armed                     (false),
     m_recording                 (false),
     m_draw_locked               (false),
-    m_auto_step_reset           (false),
     m_recording_style           (usr().pattern_record_style()),
     m_record_alteration         (usr().record_alteration()),
     m_thru                      (false),
     m_queued                    (false),
     m_one_shot                  (false),
     m_one_shot_tick             (0),
-    m_step_count                (0),
     m_loop_count_max            (0),
     m_off_from_snap             (false),
     m_song_playback_block       (false),
@@ -337,7 +342,6 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
          *  m_armed
          *  m_recording
          *  m_draw_locked
-         *  m_auto_step_reset
          *  m_expanded_recording
          *  m_overwrite_recording
          *  m_oneshot_recording
@@ -347,7 +351,6 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
          *  m_soloed
          *  m_one_shot
          *  m_one_shot_tick
-         *  m_step_count
          *  m_loop_count_max
          *  m_off_from_snap
          *  m_song_playback_block
@@ -4202,7 +4205,7 @@ sequence::stream_event (event & ev)
 
         if (recording())
         {
-            if (perf()->is_pattern_playing())
+            if (perf()->is_pattern_playing())           /* playhead moving  */
             {
                 if (ev.is_note_on() && m_rec_vol > usr().preserve_velocity())
                     ev.note_velocity(m_rec_vol);        /* modify incoming  */
@@ -4229,7 +4232,7 @@ sequence::stream_event (event & ev)
                 }
                 add_event(ev);                          /* locks and sorts  */
             }
-            else
+            else                                        /* use auto-step    */
             {
                 /*
                  * Supports the step-edit (auto-step) feature; see banner.
@@ -4237,27 +4240,11 @@ sequence::stream_event (event & ev)
 
                 if (ev.is_note_off())
                 {
-                    if (m_notes_on > 0)
-                        --m_notes_on;
-
-                    /*
-                     * For issue #97, don't need one-shot recording to allow
-                     * this: if (oneshot_recording() && m_notes_on == 0)
-                     */
-
-                    if (m_notes_on == 0)
+                    m_last_tick += snap();
+                    if (m_last_tick >= get_length())
                     {
-                        if (mod_last_tick() < snap() / 2)
-                        {
-                            if (step_count() > 0)
-                            {
-                                loop_reset(true);
-                                clear_step_count();
-                                return false;
-                            }
-                            increment_step_count();
-                        }
-                        m_last_tick += snap();
+                        loop_reset(true);
+                        m_last_tick = 0;
                     }
                 }
                 else if (ev.is_note_on())
@@ -4278,8 +4265,6 @@ sequence::stream_event (event & ev)
                             ev.note_velocity(m_rec_vol);    /* keep veloc.  */
 
                         ev.set_timestamp(mod_last_tick());  /* loop back    */
-                        if (auto_step_reset() && step_count() == 0)
-                            m_last_tick = 0;
 
                         bool ok = add_note
                         (
@@ -6156,6 +6141,9 @@ sequence::set_recording (toggler flag)
         channel_match(false);
         m_recording = recordon;
         m_notes_on = 0;                 /* reset the step-edit note counter */
+
+        m_last_tick = 0;                ///// EXPERIMENTAL 2024-11-19
+
         if (recordon)
         {
             if (! perf()->record_by_buss() && perf()->record_by_channel())
@@ -7278,17 +7266,18 @@ sequence::update_recording (int index)
         case recordstyle::merge:
         case recordstyle::overwrite:
         case recordstyle::expand:
-            auto_step_reset(false);
-            break;
-
         case recordstyle::oneshot:
-
-            auto_step_reset(true);
             break;
 
         case recordstyle::oneshot_reset:
 
-            clear_events();
+            /*
+             *  This might be surprising. Use the new grid slot
+             *  menu popup entry "Clear events" to do this.
+             *
+             * clear_events();
+             */
+
             m_last_tick = 0;
             set_recording(toggler::on);
             break;

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-11-16
+ * \updates       2024-11-18
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1377,11 +1377,17 @@ qseqeditframe64::setup_record_styles ()
     ui->m_combo_rec_type->insertItem(lrexpand,  qt(items[2])); // "Expand"
     ui->m_combo_rec_type->insertItem(lroneshot, qt(items[3])); // "One-shot"
     ui->m_combo_rec_type->insertItem(lrreset,   qt(items[4])); // "1-shot reset"
-    enable_combobox_item(ui->m_combo_rec_type, lrreset, false);
 
     int npc = usr().pattern_record_code();
     ui->m_combo_rec_type->setCurrentIndex(npc);
     m_last_record_style = perf().record_style();
+
+    /*
+     * TODO: work this out
+     */
+
+    bool resetenabled = m_last_record_style == recordstyle::oneshot;
+    enable_combobox_item(ui->m_combo_rec_type, lrreset, resetenabled);
     slot_record_style(npc);
 }
 
@@ -1412,11 +1418,6 @@ qseqeditframe64::setup_alterations ()
         slot_thru_change(usr().pattern_thru());         /* set track thru   */
         slot_record_change(usr().pattern_record());     /* set track record */
         q_record_change(alt, t);                        /* trickier         */
-
-        /*
-         * Move to isnewpattern check below.
-         * slot_record_style(usr().pattern_record_code());
-         */
     }
     else
     {
@@ -4134,6 +4135,7 @@ qseqeditframe64::slot_record_style (int index)
                 }
             }
             m_last_record_style = newstyle;
+            m_seqtime->set_END_marker(newstyle == recordstyle::expand);
             ui->m_combo_rec_type->setCurrentIndex(index);
             perf().set_record_style(newstyle);
             set_toggle_qrecord_button();

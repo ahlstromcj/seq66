@@ -100,10 +100,7 @@ qseqtime::qseqtime
     set_snap(track().snap());
     m_L_marker[0] = 'L'; m_L_marker[1] = 0;
     m_R_marker[0] = 'R'; m_R_marker[1] = 0;
-    (void) snprintf(m_END_marker, sizeof m_END_marker, "END");
-    if (m_expanding)
-        std::strcat(m_END_marker, ">");
-
+    set_END_marker(s.expanded_recording());
     m_timer = qt_timer(this, "qseqtime", 4, SLOT(conditional_update())); // 2
 }
 
@@ -115,6 +112,15 @@ qseqtime::~qseqtime ()
 {
     if (not_nullptr(m_timer))
         m_timer->stop();
+}
+
+void
+qseqtime::set_END_marker (bool expanding)
+{
+    m_expanding = expanding;
+    (void) snprintf(m_END_marker, sizeof m_END_marker, "END");
+    if (expanding)
+        std::strcat(m_END_marker, ">");
 }
 
 /**
