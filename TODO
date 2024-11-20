@@ -8,18 +8,10 @@ From Testing:
 
     -   #128 Recording type for loop button not working. Fixed, some
         tweaks still needed:
-        -   Make expand-recording work in auto-step/step-edit mode.
-            It basically works, however in overdub sometimes the
-            second note struck after looping back doe not get recorded.
         -   Click-drag in expand-recording stops at the end of
             the pattern instead of expanding. Is this an important use-case?
-        -   In pattern editor with one-shot, the error above occurs.
-        -   In one-shot recording with a device, the first note is
-            not recorded.
-        -   Clear events needs to reset the last tick to 0.
-        -   One-shot clear needs to be active, as well. Should one-shot clear
-            really clear the pattern????
         -   One-shot recording during playback acts like overdub.
+            Worth fixing?
         -   Setting one-shot (after overwrite) turns off recording.
         -   Should Ctrl-V be anchored to top note or bottom note?
     -   One song was loaded, the File / New still shows the previous song
