@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.16
 Chris Ahlstrom
-2019-04-13 to 2024-11-19
+2019-04-13 to 2024-11-20
 
 Hottest:
 
@@ -8,12 +8,15 @@ From Testing:
 
     -   #128 Recording type for loop button not working. Fixed, some
         tweaks still needed:
-        -   Click-drag in expand-recording stops at the end of
+        -   Click-drag notes is adding 5 notes instead of four except in the
+            last bar, with PPQN = 120 or 240.
+        -   Click-drag notes in expand-recording stops at the end of
             the pattern instead of expanding. Is this an important use-case?
         -   One-shot recording during playback acts like overdub.
             Worth fixing?
         -   Setting one-shot (after overwrite) turns off recording.
         -   Should Ctrl-V be anchored to top note or bottom note?
+            Should we put ghost notes in the selection box before pasting?
     -   One song was loaded, the File / New still shows the previous song
         in the title bar.
     -   Selected port 1 with pattern editor open. It shows port 0.

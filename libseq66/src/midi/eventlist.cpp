@@ -2188,7 +2188,8 @@ eventlist::select_note_events
     int result = 0;
     for (auto & er : m_events)
     {
-        if (er.is_note() && er.get_note() <= note_h && er.get_note() >= note_l)
+        int n = int(er.get_note());                 /* gets byte m_data[0]  */
+        if (er.is_note() && n <= note_h && n >= note_l)
         {
             midipulse stick = 0, ftick = 0;
             if (er.is_linked())
@@ -2196,13 +2197,13 @@ eventlist::select_note_events
                 event::iterator ev = er.link();
                 if (er.is_note_off())
                 {
-                    stick = ev->timestamp();    /* time of the Note On  */
-                    ftick = er.timestamp();     /* time of the Note Off */
+                    stick = ev->timestamp();        /* time of the Note On  */
+                    ftick = er.timestamp();         /* time of the Note Off */
                 }
                 else if (er.is_note_on())
                 {
-                    ftick = ev->timestamp();    /* time of the Note Off */
-                    stick = er.timestamp();     /* time of the Note On  */
+                    ftick = ev->timestamp();        /* time of the Note Off */
+                    stick = er.timestamp();         /* time of the Note On  */
                 }
 
                 /*

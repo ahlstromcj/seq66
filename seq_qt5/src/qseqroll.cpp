@@ -168,15 +168,6 @@ qseqroll::conditional_update ()
         if (track().recording())
             track().verify_and_link();      /* refresh before update        */
 #endif
-#if 0
-        /*
-         * Already handled in qseqeditframe64.
-         */
-
-        if (progress_follow())
-            follow_progress();              /* keep up with progress        */
-#endif
-
         update();
     }
 }
@@ -1114,6 +1105,9 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                 (
                     tick_s, note, tick_s, note, selmode
                 );
+                if (! would_select)     // EXPERIMENTAL 2024-11-20
+                    would_select = track().expanded_recording();
+
                 if (would_select)
                 {
                     track().push_undo();            /* multiple-note undo   */
