@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.99.15 and above
+INSTALL for Seq66 v. 0.99.16 and above
 Chris Ahlstrom
-2015-09-10 to 2024-11-04
+2015-09-10 to 2024-11-23
 
 Getting Seq66 requires building the code or going to "ahlstromcj/seq66" on
 GitHub to get an installation package or a Windows release executable.
@@ -112,6 +112,12 @@ Clang Compiler:
 
     One might need to make symbolic links to the desired versions of these
     compiler, for example clang-16 and clang++-16.
+
+    An alternative is to make sure the setup is fully cleaned, and use
+    a bootstrap option:
+
+        $ ./bootstrap --full-clean
+        $ ./bootstrap --clang [... other options]
 
 FreeBSD:
 

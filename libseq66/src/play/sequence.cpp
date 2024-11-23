@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-11-19
+ * \updates       2024-11-23
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -101,9 +101,10 @@ static const double c_measure_max   = 1000.00;
 /**
  *  The divisor for detecting when to reset auto-step.
  *  The original value was 2. Let's try something else.
+ *
+ *      static const midipulse c_reset_divisor = 4;
+ *
  */
-
-static const midipulse c_reset_divisor = 4;
 
 /*
  * Member value.  A fingerprint size of 0 means to not use a fingerprint...
@@ -1788,7 +1789,12 @@ void
 sequence::verify_and_link (bool wrap)
 {
     automutex locker(m_mutex);
-    m_events.verify_and_link(get_length(), wrap);
+#if defined STEP_EDIT_EXPAND_IS_READY
+    midipulse len = expanded_recording() ? 0 : get_length() ;
+#else
+    midipulse len = get_length();
+#endif
+    m_events.verify_and_link(len, wrap);
 }
 
 /**
@@ -3564,12 +3570,20 @@ sequence::add_painted_note
             event e(tick + len, EVENT_NOTE_OFF, midi_channel(), note, v);
             result = add_event(e);
         }
+#if defined STEP_EDIT_EXPAND_IS_READY
+        if (result && expanded_recording())
+        {
+            set_last_tick(tick + len);
+        }
+#endif
     }
+#if defined USE_THIS_CODE       // already done in add_event(), modify(true)
     if (result)
     {
         verify_and_link();
         modify();                               /* no easy way to undo this */
     }
+#endif
     return result;
 }
 

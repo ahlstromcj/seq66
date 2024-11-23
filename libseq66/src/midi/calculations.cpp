@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2024-11-02
+ * \updates       2024-11-23
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1691,29 +1691,32 @@ extract_a2j_port_name (const std::string & alias)
  *  Calculates the closest snap value.
  *
  * \param S
- *      Provides the snap value to be applied.  Ignored it it is 0.
+ *      Provides the snap value to be applied. The snap specifies the
+ *      interval between time steps. For example, a snap of 1/16th
+ *      for a PPQN of 192 and a time-signature of 4/4 is equal to
+ *      192 * 4 / 16 = 48 ticks. It is Ignored if it is not greater than
+ *      0.
  *
  * \param p
- *      Provide the value to be snapped.
+ *      Provide the value to be snapped to the closet snap value.
  *
  * \return
- *      Returns the snapped value.
+ *      Returns the snapped value. If either parameter is not greater than
+ *      0, then return 0.
  */
 
 midipulse
 closest_snap (int S, midipulse p)
 {
-    midipulse result = p;
-    if (p < 0)
-        return 0;
-
-    if (S > 0)
+    midipulse result = 0;
+    if (p > 0 && S > 0)
     {
-        midipulse Sn0 = p - (p % S);
-        midipulse Sn1 = Sn0 + S;
-        int deltalo = p - Sn0;                  /* do we need to use abs()? */
-        int deltahi = Sn1 - p;
-        result = deltalo <= deltahi ? Sn0 : Sn1 ;
+        midipulse snap = midipulse(S);
+        midipulse p0 = p - (p % snap);          /* drop down to a snap      */
+        midipulse p1 = p0 + snap;               /* go up by one snap        */
+        int deltalo = int(p - p0);              /* amount to lower snap     */
+        int deltahi = int(p1 - p);              /* amount to upper snap     */
+        result = deltalo <= deltahi ? p0 : p1 ; /* use the one closest      */
     }
     return result;
 }
@@ -1721,14 +1724,12 @@ closest_snap (int S, midipulse p)
 midipulse
 down_snap (int S, midipulse p)
 {
-    midipulse result = p;
-    if (p <= 0)
-        return 0;
-
-    if (S > 0)
+    midipulse result = 0;
+    if (p > 0 && S > 0)
     {
-        result = midipulse(p - (p % S));
-        if (p <= 0)
+        midipulse snap = midipulse(S);
+        result = midipulse(p - (p % snap));     /* drop down to a snap      */
+        if (result < 0)                         /* should never happen, tho */
             result = 0;
     }
     return result;
@@ -1737,14 +1738,12 @@ down_snap (int S, midipulse p)
 midipulse
 up_snap (int S, midipulse p)
 {
-    midipulse result = p;
-    if (p < 0)
-        return 0;
-
-    if (S > 0)
+    midipulse result = 0;
+    if (p > 0 && S > 0)
     {
-        midipulse Sn0 = p - (p % S);
-        result = Sn0 + midipulse(S);
+        midipulse snap = midipulse(S);
+        midipulse Sn0 = p - (p % snap);
+        result = Sn0 + snap;
     }
     return result;
 }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2023-12-07
+ * \updates       2024-11-23
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -134,9 +134,9 @@ protected:
     int m_padding_x;
 
     /**
-     *  The event-snap setting for the piano roll grid.  Same meaning as for the
-     *  event-bar grid.  This value is the denominator of the note size used
-     *  for the snap.
+     *  The event-snap setting for the piano roll grid.  Same meaning as for
+     *  the event-bar grid.  This value is the denominator of the note size
+     *  used for the snap.
      */
 
     int m_snap;
@@ -807,31 +807,15 @@ protected:
      * qbase::pix_to_tix().
      */
 
-    virtual midipulse pix_to_tix (int x) const
+    /* virtual */ midipulse pix_to_tix (int x) const
     {
         return m_zoomer.pix_to_tix(x);
     }
 
-    virtual int tix_to_pix (midipulse ticks) const
+    /* virtual */ int tix_to_pix (midipulse ticks) const
     {
         return m_zoomer.tix_to_pix(ticks);
     }
-
-#if 0
-
-    /*
-     * qseqtime: int right = position_pixel(righttick)
-     *
-     * m_scroll_offset is an int!
-     */
-
-    int position_pixel (midipulse tix)
-    {
-        return m_scroll_offset_x +
-            m_zoomer.tix_to_pix(tix - m_scroll_offset);
-    }
-
-#endif
 
     /*
      * qseqroll: int x_offset = xoffset(tick) - scroll_offset_x()

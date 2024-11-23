@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2024-09-07
+ * \updates       2024-11-23
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -56,6 +56,18 @@
 
 namespace seq66
 {
+
+/**
+ *  Indicates what kind of snap movement to apply in the snapped() template
+ *  function.
+ */
+
+enum class snapper
+{
+    down,
+    closest,
+    up
+};
 
 /**
  *  Provides a clear enumeration of wave types supported by the wave function.
@@ -581,6 +593,33 @@ inline int
 ticks_to_beats (midipulse p, int P, int B, int W)
 {
     return (P > 0 && B > 0.0) ? ((p * W / P / 4 ) % B) : 0 ;
+}
+
+template <typename INTTYPE>
+INTTYPE snapped (snapper snaptype, int S, INTTYPE p)
+{
+    INTTYPE result = 0;
+    if (p > 0 && S > 0)
+    {
+        INTTYPE snap = INTTYPE(S);
+        INTTYPE p0 = p - (p % snap);          /* drop down to a snap      */
+        if (snaptype == snapper::down)
+        {
+            return p0;
+        }
+        else if (snaptype == snapper::up)
+        {
+            return p0 + snap;
+        }
+        else
+        {
+            INTTYPE p1 = p0 + snap;             /* go up by one snap        */
+            int deltalo = int(p - p0);          /* amount to lower snap     */
+            int deltahi = int(p1 - p);          /* amount to upper snap     */
+            result = deltalo <= deltahi ? p0 : p1 ; /* use closest one      */
+        }
+    }
+    return result;
 }
 
 /*

@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2024-10-27
+# \update         2024-11-23
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -36,7 +36,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_BOOTSTRAP_EDIT_DATE="2024-10-27"
+export SEQ66_BOOTSTRAP_EDIT_DATE="2024-11-23"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.15"
 
@@ -84,6 +84,7 @@ DORTMIDI="no"
 DOSTATIC="no"
 DOTESTING="no"
 DOVERSION="no"
+CLANGSET=""
 LOGFILENAME=""
 M4DIR="m4"
 
@@ -124,6 +125,8 @@ passing long options to the configure script for some canned setups.
                      bootstrap script will need to be run again.
  --debug, -ed        Configure for debugging and disable shared libraries for
                      easier debugging.  Also: --enable-debug=gdb
+ --clang             Use the clang++ compiler when bootstrapping the
+                     configuration.
  --release, -er      Configure for release.  Sets up a 'silent' build as well.
                      Equivalent to --enable-release; defaults to 'release'.
  --static            Do a static release build.
@@ -195,9 +198,9 @@ if [ $# -ge 1 ] ; then
             EXTRAFLAGS+=" --disable-shared --enable-static"
             ;;
 
-         --debdebug | -dd)
-            DODEBUG="yes"
+         --clang)
             DOCONFIGURE="yes"
+            CLANGSET="CC=clang CXX=clang++"
             ;;
 
          --profile | -prof | --prof)
@@ -584,13 +587,13 @@ E_O_F
 
          if [ "$DODEBUG" == "yes" ] ; then
 
-            echo "Running './configure --enable-debug=gdb $EXTRAFLAGS'"
-            ./configure --enable-debug=gdb $EXTRAFLAGS
+            echo "Running '$CLANGSET ./configure --enable-debug=gdb $EXTRAFLAGS'"
+            env $CLANGSET ./configure --enable-debug=gdb $EXTRAFLAGS
 
          elif [ "$DORELEASE" == "yes" ] ; then
 
-            echo "Running './configure --enable-silent-rules $EXTRAFLAGS'"
-            ./configure --enable-silent-rules $EXTRAFLAGS
+            echo "Running '$CLANGSET ./configure --enable-silent-rules $EXTRAFLAGS'"
+            env $CLANGSET ./configure --enable-silent-rules $EXTRAFLAGS
             echo "Running 'make V=1' will turn on full command output."
 
          fi
@@ -602,8 +605,8 @@ E_O_F
 Run './configure' to configure Seq66 for compilation, or
 './configure --help' for configuration options.  Useful options:
 
-      --enable-debug=gdb  --enable-calls --disable-shared  --enable-silent-rules
-      --enable-rtmidi (default)  --enable-cli (no GUI)  --enable-portmidi
+      --enable-debug=gdb --enable-calls --disable-shared --enable-silent-rules
+      --enable-rtmidi (default) --enable-cli (no GUI) --enable-portmidi
       --enable-both (both Qt and CLI versions)
 
 E_O_F

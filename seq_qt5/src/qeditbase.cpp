@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2023-10-19
+ * \updates       2024-11-23
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -161,7 +161,7 @@ qeditbase::snap_current_y ()
 int
 qeditbase::horizSizeHint () const
 {
-    return int(tix_to_pix(perf().get_max_trigger())) * c_horizontal_factor;
+    return tix_to_pix(perf().get_max_trigger()) * c_horizontal_factor;
 }
 
 /**
@@ -198,10 +198,18 @@ qeditbase::change_ppqn (int p)
 void
 qeditbase::snap_x (int & x)
 {
-    int sczoom = m_zoomer.scale_zoom();
+    int sczoom = scale_zoom();
     if (sczoom > 0)
     {
-        int mod = usr().base_ppqn() * m_snap / sczoom / ppqn();
+        /*
+         * ca 2024-11-21. This is not the proper PPQN value to use.
+         * We need the actual current PPQN.
+         *
+         * int mod = usr().base_ppqn() * m_snap / sczoom / ppqn();
+         */
+
+        int pu = usr().base_ppqn();
+        int mod = pu * m_snap / sczoom / ppqn();
         if (mod <= 0)
             mod = 1;
 
@@ -228,7 +236,7 @@ qeditbase::check_dirty () const
 void
 qeditbase::convert_ts (midipulse ticks, int seq, int & x, int & y)
 {
-    x = m_zoomer.tix_to_pix(ticks);
+    x = tix_to_pix(ticks);
     y = m_total_height - ((seq + 1) * m_unit_height) - 1;
 }
 

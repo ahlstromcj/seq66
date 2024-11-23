@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-17
+ * \updates       2024-11-23
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -168,6 +168,8 @@ private:
     {
         m_show_note_info = ischecked;
     }
+
+    int snapped_x (int x);
 
     void move_selected_notes (int dx, int dy);
     void snap_y (int & y);

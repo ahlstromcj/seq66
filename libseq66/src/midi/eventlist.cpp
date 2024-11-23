@@ -432,7 +432,9 @@ eventlist::link_notes (event::iterator eon, event::iterator eoff)
  *
  * \param slength
  *      Provides the length beyond which events will be pruned. Normally the
- *      caller supplies sequence::get_length().
+ *      caller supplies sequence::get_length(). Can be set to 0 ignore
+ *      the length, as in expanded step-edit note entry. See the function
+ *      sequence::verify_and_link().
  *
  * \param wrap
  *      Optionally (the default is false) wrap when relinking.  Can be used to

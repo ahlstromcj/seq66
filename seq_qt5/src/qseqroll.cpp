@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-18
+ * \updates       2024-11-23
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -108,7 +108,7 @@ qseqroll::qseqroll
     m_key                   (0),
     m_show_note_info        (false),
     m_note_tooltip          (nullptr),
-    m_note_length           (p.ppqn() * 4 / 16),
+    m_note_length           (p.ppqn() * 4 / 16),    // TODO use snap
     m_note_off_margin       (2),
     m_background_sequence   (seq::unassigned()),
     m_draw_background_seq   (false),
@@ -679,7 +679,7 @@ qseqroll::draw_notes
 
     int unitheight = unit_height();
     int unitdecr = unit_height() - 2;
-    int noteheight = unitheight - 2;    // 3;
+    int noteheight = unitheight - 2;
     s->draw_lock();
     for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
@@ -1101,14 +1101,11 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                  * add, else add a note, length = little less than snap.
                  */
 
-                bool would_select = ! track().select_note_events
+                bool wont_select = track().select_note_events
                 (
                     tick_s, note, tick_s, note, selmode
-                );
-                if (! would_select)     // EXPERIMENTAL 2024-11-20
-                    would_select = track().expanded_recording();
-
-                if (would_select)
+                ) == 0;
+                if (wont_select)
                 {
                     track().push_undo();            /* multiple-note undo   */
                     (void) add_painted_note(tick_s, note);
@@ -1298,6 +1295,27 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
 }
 
 /**
+ *  Snaps the given x coordinate to the next snap value. Note that the
+ *  m_snap value already takes into account a PPQN different from the
+ *  base PPQN of 192. So here we only want to account for the current
+ *  zoom value. Also see the seq66::snapped<>() template function from
+ *  the midi/calculations module.
+ */
+
+int
+qseqroll::snapped_x (int x)
+{
+    int result = 0;
+    int sczoom = scale_zoom();
+    if (sczoom > 0)
+    {
+        int snap = m_snap / sczoom;
+        result = snapped<int>(snapper::up, snap, x);
+    }
+    return result;
+}
+
+/**
  *  Handles a mouse movement, including selection and note-painting.
  */
 
@@ -1329,12 +1347,13 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
     }
     if (painting())
     {
-        if (snap_current_x())
+        int x = snapped_x(current_x());
+        convert_xy(x, current_y(), tick, note);
+        if (add_painted_note(tick, note))
         {
-            convert_xy(current_x(), current_y(), tick, note);
-            (void) add_painted_note(tick, note);
+            if (track().expanded_recording())
+                frame64()->follow_progress(true);
         }
-        set_dirty();
     }
 }
 
@@ -1796,12 +1815,9 @@ qseqroll::grow_selected_notes (int dx)
 QSize
 qseqroll::sizeHint () const
 {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("qseqroll::sizeHint(): track length = %ld\n", track().get_length());
-#endif
     int w = frame64()->width();
     int h = total_height();
-    int len = tix_to_pix(track().get_length_plus()); /* get_length());      */
+    int len = tix_to_pix(track().get_length_plus()); /* was get_length())   */
     if (len < w)
         len = w;
 
