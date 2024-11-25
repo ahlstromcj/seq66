@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2024-11-19
+ * \updates       2024-11-24
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1794,15 +1794,18 @@ public:
     bool merge_events (const sequence & source);
     bool selected_box
     (
-        midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
+        midipulse & tick_s, int & note_h,
+        midipulse & tick_f, int & note_l
     );
     bool onsets_selected_box
     (
-        midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
+        midipulse & tick_s, int & note_h,
+        midipulse & tick_f, int & note_l
     );
     bool clipboard_box
     (
-        midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
+        midipulse & tick_s, int & note_h,
+        midipulse & tick_f, int & note_l
     );
     midipulse clip_timestamp (midipulse ontime, midipulse offtime);
     bool move_selected_notes (midipulse deltatick, int deltanote);

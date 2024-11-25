@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-11-23
+ * \updates       2024-11-24
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2009,7 +2009,7 @@ sequence::unpaint_all ()
 
 /**
  *  Returns the 'box' of the selected items.  Note the common-code betweem
- *  this function and clipboard_box().  Also note we could return a
+ *  this function and clipboard_box().  Also note we return a
  *  boolean indicating if the return values were filled in.
  *
  * \threadsafe
@@ -2025,6 +2025,9 @@ sequence::unpaint_all ()
  *
  * \param [out] note_l
  *      Side-effect return reference for the low note.
+ *
+ * \return
+ *      Returns true if all the values are usable.
  */
 
 bool
@@ -2035,13 +2038,12 @@ sequence::selected_box
 )
 {
     automutex locker(m_mutex);
-    bool result = false;
-    tick_s = m_maxbeats * m_ppqn;
-    tick_f = note_h = 0;
-    note_l = c_midibyte_data_max;
+    tick_s = m_maxbeats * m_ppqn;       /* the largest tick/pulse we allow  */
+    tick_f = 0;                         /* the smallest tick possible       */
+    note_l = c_midibyte_data_max;       /* the largest note value possible  */
+    note_h = (-1);                      /* the lowest, impossible note      */
     for (auto & e : m_events)
     {
-        result = true;
         if (e.is_selected())
         {
             midipulse time = e.timestamp();
@@ -2059,6 +2061,14 @@ sequence::selected_box
                 note_h = note;
         }
     }
+
+    bool result =
+    (
+        (tick_s < m_maxbeats * m_ppqn) &&
+        (tick_f > 0) &&
+        (note_l < c_midibyte_data_max) &&
+        (note_h >= 0)
+    );
     return result;
 }
 

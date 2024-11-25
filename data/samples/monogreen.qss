@@ -5,7 +5,7 @@ Copyright (c) DevSec Studio. All rights reserved.
 \library       seq66 application
 \author        Chris Ahlstrom
 \date          2023-10-18
-\updates       2024-11-20
+\updates       2024-11-23
 \license       MIT
 
 MIT License
@@ -71,7 +71,7 @@ QComboBox QAbstractItemView
     background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0 rgba(0, 0, 0, 255),stop:1 rgba(0, 48, 56, 255));
     color: #00ff00;
     selection-color: #00ff00;
-    selection-background-color: #00000;
+    selection-background-color: #000000;
 }
 
 QComboBox::drop-down
@@ -91,7 +91,7 @@ QComboBox:!editable
     color: #00ff00
     background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0.00480769 rgba(0, 0, 0, 255),stop:0.293269 rgba(6, 40, 10, 255),stop:0.514423 rgba(8, 48, 16, 255),stop:0.745192 rgba(7, 54, 14, 255),stop:1 rgba(0, 0, 0, 255));
     selection-color: #00ff00;
-    selection-background-color: #00000;
+    selection-background-color: #000000;
 }
 
 QMenu

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-09-16
- * \updates       2019-01-27
+ * \updates       2024-11-25
  * \license       GNU GPLv2 or above
  *
  *  Our version of the rectangle provides specific functionality not necessary
@@ -56,8 +56,8 @@ class rect
 
 private:
 
-    int m_x;        /**< The x coordinate of the first corner.              */
-    int m_y;        /**< The y coordinate of the first corner.              */
+    int m_x;        /**< The x coordinate of the first corner or x0.        */
+    int m_y;        /**< The y coordinate of the first corner or y0.        */
     int m_width;    /**< The width of the rectangle.                        */
     int m_height;   /**< The height of the rectangle.                       */
 
@@ -67,23 +67,25 @@ public:
     rect (int x, int y, int width, int height);
 
     void get (int & x, int & y, int & width, int & height) const;
+    void get_coordinates (int & x0, int & y0, int & x1, int & y1) const;
     void set (int x, int y, int width, int height);
+    void set_coordinates (int x0, int y0, int x1, int y1);
 
     void clear ()
     {
         m_x = m_y = m_width = m_height = 0;
     }
 
-    static void xy_to_rect (int x1, int y1, int x2, int y2, rect & r);
+    static void xy_to_rect (int x0, int y0, int x1, int y1, rect & r);
     static void xy_to_rect_get
     (
-        int x1, int y1, int x2, int y2,
+        int x0, int y0, int x1, int y1,
         int & x, int & y, int & w, int & h
     );
 
-    void xy_to_rect (int x1, int y1, int x2, int y2)
+    void xy_to_rect (int x0, int y0, int x1, int y1)
     {
-        xy_to_rect(x1, y1, x2, y2, *this);
+        xy_to_rect(x0, y0, x1, y1, *this);
     }
 
     int x () const
@@ -92,6 +94,16 @@ public:
     }
 
     void x (int v)
+    {
+        m_x = v;
+    }
+
+    int x0 () const
+    {
+        return m_x;
+    }
+
+    void x0 (int v)
     {
         m_x = v;
     }
@@ -116,6 +128,16 @@ public:
         m_y = v;
     }
 
+    int y0 () const
+    {
+        return m_y;
+    }
+
+    void y0 (int v)
+    {
+        m_y = v;
+    }
+
     /**
      *  Provides a setter that uses the parameter to increment the member.
      *  The height is assumed to be unchanged by this function.
@@ -136,6 +158,16 @@ public:
         m_width = w;
     }
 
+    int x1 () const
+    {
+        return m_x + m_width;
+    }
+
+    void x1 (int x)
+    {
+        m_width = x - m_x;
+    }
+
     void width_incr (int w)
     {
         m_width += w;
@@ -149,6 +181,16 @@ public:
     void height (int h)
     {
         m_height = h;
+    }
+
+    int y1 () const
+    {
+        return m_y + m_height;
+    }
+
+    void y1 (int h)
+    {
+        m_height = h - m_y;
     }
 
     void height_incr (int h)
@@ -184,7 +226,7 @@ private:
         return (y1 < y2) ? (y2 - y1) : (y1 - y2) ;
     }
 
-};
+};          // class rect
 
 }           // namespace seq66
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2017-09-16
- * \updates       2019-03-10
+ * \updates       2020-11-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -43,10 +43,10 @@ namespace seq66
  */
 
 rect::rect () :
-    m_x         (0),
-    m_y         (0),
-    m_width     (0),
-    m_height    (0)
+    m_x         (0),                            /* also known as x0()       */
+    m_y         (0),                            /* also known as y0()       */
+    m_width     (0),                            /* used to calculate x1()   */
+    m_height    (0)                             /* used to calculate y1()   */
 {
     // Empty body
 }
@@ -80,10 +80,10 @@ rect::rect (int x, int y, int width, int height) :
  *  Gets the rectangle values for primitive callers that don't store them as
  *  a rectangle.
  *
- * \param [out] x
+ * \param [out] x0
  *      The destination x coordinate.
  *
- * \param [out] y
+ * \param [out] y0
  *      The destination y coordinate.
  *
  * \param [out] width
@@ -100,6 +100,15 @@ rect::get (int & x, int & y, int & width, int & height) const
     y = m_y;
     width = m_width;
     height = m_height;
+}
+
+void
+rect::get_coordinates (int & x0, int & y0, int & x1, int & y1) const
+{
+    x0 = m_x;
+    y0 = m_y;
+    x1 = x0 + m_width;
+    y1 = y0 + m_height;
 }
 
 /**
@@ -127,20 +136,29 @@ rect::set (int x, int y, int width, int height)
     m_height = height;
 }
 
+void
+rect::set_coordinates (int x0, int y0, int x1, int y1)
+{
+    m_x = x0;
+    m_y = y0;
+    m_width = x1 - x0;
+    m_height = y1 - y0;
+}
+
 /**
  *  Converts rectangle corner coordinates to a rect object, which includes
  *  width and height.
  *
- * \param x1
+ * \param x0
  *      The x value of the first corner.
  *
- * \param y1
+ * \param y0
  *      The y value of the first corner.
  *
- * \param x2
+ * \param x1
  *      The x value of the second corner.
  *
- * \param y2
+ * \param y1
  *      The y value of the second corner.
  *
  * \param [out] r
@@ -148,27 +166,27 @@ rect::set (int x, int y, int width, int height)
  */
 
 void
-rect::xy_to_rect (int x1, int y1, int x2, int y2, rect & r)
+rect::xy_to_rect (int x0, int y0, int x1, int y1, rect & r)
 {
-    if (x1 < x2)
+    if (x0 < x1)
+    {
+        r.m_x = x0;
+        r.m_width = x1 - x0;
+    }
+    else
     {
         r.m_x = x1;
-        r.m_width = x2 - x1;
+        r.m_width = x0 - x1;
+    }
+    if (y0 < y1)
+    {
+        r.m_y = y0;
+        r.m_height = y1 - y0;
     }
     else
-    {
-        r.m_x = x2;
-        r.m_width = x1 - x2;
-    }
-    if (y1 < y2)
     {
         r.m_y = y1;
-        r.m_height = y2 - y1;
-    }
-    else
-    {
-        r.m_y = y2;
-        r.m_height = y1 - y2;
+        r.m_height = y0 - y1;
     }
 }
 
@@ -179,16 +197,16 @@ rect::xy_to_rect (int x1, int y1, int x2, int y2, rect & r)
  *  coordinate to use as the corner coordinate, so that the width and height
  *  are always positive.
  *
- * \param x1
+ * \param x0
  *      The x value of the first corner.
  *
- * \param y1
+ * \param y0
  *      The y value of the first corner.
  *
- * \param x2
+ * \param x1
  *      The x value of the second corner.
  *
- * \param y2
+ * \param y1
  *      The y value of the second corner.
  *
  * \param [out] x
@@ -207,29 +225,29 @@ rect::xy_to_rect (int x1, int y1, int x2, int y2, rect & r)
 void
 rect::xy_to_rect_get
 (
-    int x1, int y1, int x2, int y2,
+    int x0, int y0, int x1, int y1,
     int & x, int & y, int & w, int & h
 )
 {
-    if (x1 < x2)
+    if (x0 < x1)
+    {
+        x = x0;
+        w = x1 - x0;
+    }
+    else
     {
         x = x1;
-        w = x2 - x1;
+        w = x0 - x1;
+    }
+    if (y0 < y1)
+    {
+        y = y0;
+        h = y1 - y0;
     }
     else
-    {
-        x = x2;
-        w = x1 - x2;
-    }
-    if (y1 < y2)
     {
         y = y1;
-        h = y2 - y1;
-    }
-    else
-    {
-        y = y2;
-        h = y1 - y2;
+        h = y0 - y1;
     }
 }
 

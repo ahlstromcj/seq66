@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-23
+ * \updates       2024-11-24
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -50,7 +50,6 @@
 #include "qseqroll.hpp"                 /* seq66::qseqroll class            */
 #include "qscrollmaster.h"              /* used in scrolling for progress   */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
-
 
 /**
  *  We've had an issue where adding wrapped-but-truncated notes would
@@ -124,6 +123,9 @@ qseqroll::qseqroll
     m_note_y                (0),
     m_keypadding_x          (c_keyboard_padding_x),
     m_v_zooming             (false),
+#if defined SEQ66_DRAW_GHOST_NOTES
+    m_selection             (),
+#endif
     m_last_base_note        (-1),
     m_link_wraparound       (usr().pattern_wraparound())
 {
@@ -454,11 +456,16 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     {
         pen.setColor(Qt::gray);
         painter.setPen(pen);
+
+#if defined SEQ66_DRAW_GHOST_NOTES
+        draw_ghost_notes(painter, m_selection);
+#else
         painter.drawRect
         (
             current_x(), current_y(),
             old_rect().width(), old_rect().height()
         );
+#endif
     }
 
     int selw = selection().width();
@@ -677,9 +684,7 @@ qseqroll::draw_notes
     if (is_nullptr(s))
         return;
 
-    int unitheight = unit_height();
-    int unitdecr = unit_height() - 2;
-    int noteheight = unitheight - 2;
+    int noteheight = unit_height() - 2;     /* was "- 3"    */
     s->draw_lock();
     for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
@@ -701,7 +706,8 @@ qseqroll::draw_notes
             int in_shift = 0;
             int length_add = 0;
             m_note_x = xoffset(ni.start());
-            m_note_y = total_height() - (ni.note() * unitheight) - unitdecr;
+//          m_note_y = note_to_pix(ni.note());
+            m_note_y = total_height() - (ni.note() + 1) * unit_height() + 2;
             if (dt == sequence::draw::linked)
             {
                 if (not_wrapped)
@@ -867,6 +873,143 @@ qseqroll::draw_notes
     s->draw_unlock();
 }
 
+#if defined SEQ66_DRAW_GHOST_NOTES
+
+/**
+ *  It would be nice to include the selected notes in the selection box
+ *  when pasting.  We'll see how practical this feature is.
+ *
+ *  Originally, once Ctrl-V (paste) as hit, and empty rectangle the size
+ *  of the original selection range would appear, and the top left corner
+ *  would be the approximate location of the paste, upon the mouse release.
+ *
+ *  Now we want to get the tick range and note range of the selected notes
+ *  and map that to the smallest rectangle enclosing the notes.
+ *
+ *             (x0, y0)
+ *                 ----------________ ---------------------
+ *        n1 .....|........>|________|                     |
+ *                | ________           ________            |
+ * horizontal |   ||________|         |________|           |
+ *    pixels  |   | ^              (xi, yi)      ________  |
+ *            v   | :                           |________|<|..... n0
+ *                 -------------------------------------^--
+ *                  :     vertical pixels --->          :  (x1, y1)
+ *                  :                                   :
+ *                 t0                                  t1
+ *
+ *      -   (x0, y0) is the current (x, y) of the mouse in screen coordinates.
+ *      -   (x1, y1) is the other corner in screen coordinates.
+ *      -   (xi, yi) is the desired coordinate of note i.
+ *
+ *  Let t be ticks, n be note numbers, and x and y be pixels.
+ *
+ *  Here are the mappings:
+ *
+ *      -   t0 == tick_start  ---> x0 == current x
+ *      -   t1 == tick_finish ---> x1
+ *      -   n1 == note_high   ---> y0 == current y
+ *      -   n0 == note_low    ---> y1
+ *
+ *  We can let (x0, y0) be (0, 0) and add current (x, y) later.
+ *  Might deduct the height of the note, later, as well.
+ *
+ *           (ti - t0)(x1 - x0)
+ *     xi = -------------------- + x0
+ *               t1 - t0
+ *
+ *           (ni - n1)(y1 - y0)
+ *     yi = -------------------- + y0    Note reversal of direction.
+ *               n0 - n1
+ *
+ * \param painter
+ *      The object used for painting.
+ *
+ * \param selection
+ *      Holds the range from leftmost/highest note to rightmost/lowest
+ *      note. The selection provides
+ *
+ *          -   rect::x0() --> tick_start
+ *          -   rect::y0() --> note_high
+ *          -   rect::x1() --> tick_finish
+ *          -   rect::y1() --> note_low
+ *
+ *      (x0, y0) and (x1, y1) in units of
+ *      pixels. The 0th coordinate is (0, 0).
+ */
+
+void
+qseqroll::draw_ghost_notes
+(
+    QPainter & painter,
+    const seq66::rect & selection
+)
+{
+    int x0 = current_x();
+    int y0 = current_y();
+    int t0 = selection.x0();                        /* tick_start       */
+    int t1 = selection.x1();                        /* tick_finish      */
+    int n0 = selection.y1();                        /* note_high        */
+    int n1 = selection.y0();                        /* note_low         */
+    int wbox = tix_to_pix(midipulse(t1)) - tix_to_pix(midipulse(t0)) + 4;
+    int hbox = note_to_pix(n1) - note_to_pix(n0) + unit_height();
+    float w = float(midipulse(t1) - midipulse(t0));
+    float h = float(n1 - n0);
+    float twidthfactor = float(selection.x1() - selection.x0()) / w;
+    float nheightfactor = float(selection.y0() - selection.y1()) / h;
+
+    painter.drawRect(x0, y0, wbox, hbox);
+
+    /*
+     * Not needed:
+     *
+     *     midipulse end_tick = midipulse(selection.x1());
+     *     int note_low = selection.y1();
+     */
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    midipulse start_tick = midipulse(selection.x0());
+    int note_high = selection.y0();
+    printf
+    (
+        "Range: (%ld, %d) to (%ld, %d)\n",
+        start_tick, note_high, end_tick, note_low
+    );
+#endif
+    track().draw_lock();
+    for (auto cev = track().cbegin(); ! track().cend(cev); ++cev)
+    {
+        sequence::note_info ni;
+        sequence::draw dt = track().get_next_note(ni, cev);
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf
+        (
+            "Note: %ld to %ld, #%d)\n",
+            ni.start(), ni.finish(), ni.note()
+        );
+#endif
+        if (dt == sequence::draw::finish)
+            break;
+
+        if (ni.selected())
+        {
+            int xi = (ni.start() - t0) * twidthfactor + current_x();
+            int yi = (ni.note() - n1) * nheightfactor + current_y();
+            if (dt == sequence::draw::linked)
+            {
+                m_note_width = tix_to_pix(ni.length());
+                if (m_note_width < 1)
+                    m_note_width = 1;
+
+                painter.drawRect(xi, yi, m_note_width, unit_height() - 2);
+            }
+        }
+    }
+    track().draw_unlock();
+}
+
+#endif  // defined SEQ66_DRAW_GHOST_NOTES
+
 /*
  * Why floating point; just divide by 2.  Also, the polygon seems to be offset
  * downward by half the note height.
@@ -950,8 +1093,6 @@ qseqroll::draw_drum_notes
     if (is_nullptr(s))
         return;
 
-    int unitheight = unit_height();
-    int unitdecr = unit_height() - 2;
     s->draw_lock();
     for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
@@ -969,7 +1110,8 @@ qseqroll::draw_drum_notes
         if (start_in || linkedin)
         {
             m_note_x = xoffset(ni.start());
-            m_note_y = total_height() - (ni.note() * unitheight) - unitdecr;
+//          m_note_y = total_height() - (ni.note() * unitheight) - unitdecr;
+            m_note_y = note_to_pix(ni.note());
 
             /*
              * Orange note if selected, red for drum mode.
@@ -988,6 +1130,19 @@ qseqroll::draw_drum_notes
     }
     s->draw_unlock();
 }
+
+/**
+ *  What about n == 0?
+ */
+
+int
+qseqroll::note_to_pix (int n) const
+{
+    return total_height() - (n - 1) * unit_height() + 2;
+}
+
+// th() - n * uh() - (uh()-2)
+// th() - n * uh() - uh() + 2
 
 int
 qseqroll::note_off_length () const
@@ -1060,7 +1215,9 @@ qseqroll::mousePressEvent (QMouseEvent * event)
     if (paste())
     {
         convert_xy(snapped_x, snapped_y, tick_s, note);
-        track().paste_selected(tick_s, note);
+        if (event->button() == Qt::LeftButton)
+            track().paste_selected(tick_s, note);
+
         paste(false);
         setCursor(Qt::ArrowCursor);
         flag_dirty();
@@ -1215,7 +1372,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
     {
         if (selecting())
         {
-            midipulse tick_s, tick_f;   /* start and  end of tick window    */
+            midipulse tick_s, tick_f;   /* start and end of tick window     */
             int note_h, note_l;         /* high and low notes in window     */
             int x, y, w, h;             /* window dimensions                */
             eventlist::select selmode = eventlist::select::selecting;
@@ -1235,6 +1392,15 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             (
                 tick_s, note_h, tick_f, note_l, selmode
             );
+#if defined SEQ66_DRAW_GHOST_NOTES
+            if (track().selected_box(tick_s, note_h, tick_f, note_l))
+            {
+                m_selection.xy_to_rect
+                (
+                    int(tick_s), note_h, int(tick_f), note_l
+                );
+            }
+#endif
             if (numsel > 0)
                 flag_dirty();
         }
@@ -1355,6 +1521,8 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
                 frame64()->follow_progress(true);
         }
     }
+    if (paste())
+        flag_dirty();
 }
 
 bool

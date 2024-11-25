@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-23
+ * \updates       2024-11-25
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -42,6 +42,12 @@
 #include "cfg/scales.hpp"               /* seq66::scales enum class         */
 #include "play/sequence.hpp"            /* sequence::editmode mode          */
 #include "qseqbase.hpp"                 /* seq66::qseqbase mixin class      */
+
+#undef  SEQ66_DRAW_GHOST_NOTES          /* EXPERIMENTAL                     */
+
+#if defined SEQ66_DRAW_GHOST_NOTES
+#include "util/rect.hpp"                /* seq66::rect class                */
+#endif
 
 /*
  * Forward references
@@ -63,7 +69,7 @@ namespace seq66
     class qseqkeys;
 
 /**
- * The MIDI note grid in the sequence editor
+ * The MIDI note grid in the pattern (sequence) editor.
  */
 
 class qseqroll final : public QWidget, public qseqbase
@@ -135,6 +141,7 @@ private:
         m_note_length = len;
     }
 
+    int note_to_pix (int n) const;
     void set_chord (int chord);
     void set_key (int key);
     void set_scale (int scale);
@@ -179,8 +186,17 @@ private:
     void draw_drum_notes (QPainter & painter, const QRect & r, bool background);
     void draw_drum_note (QPainter & painter, int x, int y);
     void call_draw_notes (QPainter & painter, const QRect & view);
+
 #if defined SEQ66_SHOW_TEMPO_IN_PIANO_ROLL
     void draw_tempo (QPainter & painter, int x, int y, int velocity);
+#endif
+
+#if defined SEQ66_DRAW_GHOST_NOTES
+    void draw_ghost_notes
+    (
+        QPainter & painter,
+        const seq66::rect & selection   /* why is seq66 scoped needed???    */
+    );
 #endif
 
 private:
@@ -329,11 +345,30 @@ private:
 
     mutable midipulse m_frame_ticks;
 
-    int m_note_x;               // note drawing variables
+    int m_note_x;               // note drawing variables; can we dump 'em?
     int m_note_width;
     int m_note_y;
+
+    /**
+     *  Offset for keys.
+     */
+
     int m_keypadding_x;
     bool m_v_zooming;
+
+#if defined SEQ66_DRAW_GHOST_NOTES
+
+    /**
+     *  The ranges of the selection, needed to draw ghost notes.
+     *  The coordinates are of the form (x, y) == (ticks, pixels).
+     *  The top-left corner is (start tick, high note) and the
+     *  bottom right corner is (end tick, low note). It is anticipated
+     *  that the highest tick possible will fit within an int.
+     */
+
+    seq66::rect m_selection;
+
+#endif
 
     /**
      *  Hold the note value first grabbed when starting a move.

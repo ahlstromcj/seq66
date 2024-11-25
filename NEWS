@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.16
 Chris Ahlstrom
-2015-07-10 to 2024-11-17
+2015-07-10 to 2024-11-23
 
 # Change Log
 
@@ -16,6 +16,7 @@ Chris Ahlstrom
 - The Quantized Record button in the pattern editor now goes through
   this sequence when clicked: None, Tighten, Quantize, Notemap,
   None.... Also prettied-up the icons.
+- A right-click cancels a paste action in the pattern editor.
 
 ### Fixed
 
