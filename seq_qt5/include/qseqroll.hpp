@@ -43,7 +43,7 @@
 #include "play/sequence.hpp"            /* sequence::editmode mode          */
 #include "qseqbase.hpp"                 /* seq66::qseqbase mixin class      */
 
-#undef  SEQ66_DRAW_GHOST_NOTES          /* EXPERIMENTAL                     */
+#define SEQ66_DRAW_GHOST_NOTES          /* EXPERIMENTAL                     */
 
 #if defined SEQ66_DRAW_GHOST_NOTES
 #include "util/rect.hpp"                /* seq66::rect class                */

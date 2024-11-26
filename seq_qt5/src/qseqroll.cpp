@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-24
+ * \updates       2024-11-26
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -598,17 +598,6 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     midipulse ppmeas = midipulse(default_pulses_per_measure(perf().ppqn()));
     midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
     midipulse endtick = pix_to_tix(r.x() + r.width());
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    QPen testpen(Qt::magenta);
-    int testpix = tix_to_pix(428);
-    painter.setPen(testpen);
-    painter.drawText(testpix,  0, "X");
-    painter.drawText(testpix, 64, "X");
-    painter.drawText(testpix, 128, "X");
-    painter.drawText(testpix, 256, "X");
-    painter.drawText(testpix, 512, "X");
-    painter.drawText(testpix, 1024, "X");
-#endif
     for (int tscount = 0; tscount < count; ++tscount)
     {
         const sequence::timesig & ts = track().get_time_signature(tscount);
@@ -706,8 +695,7 @@ qseqroll::draw_notes
             int in_shift = 0;
             int length_add = 0;
             m_note_x = xoffset(ni.start());
-//          m_note_y = note_to_pix(ni.note());
-            m_note_y = total_height() - (ni.note() + 1) * unit_height() + 2;
+            m_note_y = note_to_pix(ni.note());
             if (dt == sequence::draw::linked)
             {
                 if (not_wrapped)
@@ -918,9 +906,12 @@ qseqroll::draw_notes
  *     xi = -------------------- + x0
  *               t1 - t0
  *
- *           (ni - n1)(y1 - y0)
+ *           (n1 - ni)(y1 - y0)
  *     yi = -------------------- + y0    Note reversal of direction.
  *               n0 - n1
+ *
+ *  For yi, we have to add the height of the selection box, plus a couple
+ *  of pixels for looks.
  *
  * \param painter
  *      The object used for painting.
@@ -952,49 +943,26 @@ qseqroll::draw_ghost_notes
     int n0 = selection.y1();                        /* note_high        */
     int n1 = selection.y0();                        /* note_low         */
     int wbox = tix_to_pix(midipulse(t1)) - tix_to_pix(midipulse(t0)) + 4;
-    int hbox = note_to_pix(n1) - note_to_pix(n0) + unit_height();
-    float w = float(midipulse(t1) - midipulse(t0));
-    float h = float(n1 - n0);
-    float twidthfactor = float(selection.x1() - selection.x0()) / w;
-    float nheightfactor = float(selection.y0() - selection.y1()) / h;
-
-    painter.drawRect(x0, y0, wbox, hbox);
-
-    /*
-     * Not needed:
-     *
-     *     midipulse end_tick = midipulse(selection.x1());
-     *     int note_low = selection.y1();
-     */
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    midipulse start_tick = midipulse(selection.x0());
-    int note_high = selection.y0();
-    printf
-    (
-        "Range: (%ld, %d) to (%ld, %d)\n",
-        start_tick, note_high, end_tick, note_low
-    );
-#endif
+    int h1   = note_to_pix(n1) - note_to_pix(n0);
+    int h2   = note_to_pix(n0) - note_to_pix(n1);
+    int hbox = h1 + unit_height() + 2;
+    float twidthfactor = wbox / float(t1 - t0);
+    float nheightfactor = h2  / float(n1 - n0);
+    painter.drawRect(x0, y0 + 1, wbox, hbox);
     track().draw_lock();
     for (auto cev = track().cbegin(); ! track().cend(cev); ++cev)
     {
         sequence::note_info ni;
         sequence::draw dt = track().get_next_note(ni, cev);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf
-        (
-            "Note: %ld to %ld, #%d)\n",
-            ni.start(), ni.finish(), ni.note()
-        );
-#endif
         if (dt == sequence::draw::finish)
             break;
 
         if (ni.selected())
         {
             int xi = (ni.start() - t0) * twidthfactor + current_x();
-            int yi = (ni.note() - n1) * nheightfactor + current_y();
+            int yi = hbox +
+                (n1 - ni.note() - 1) * nheightfactor + current_y() + 2;
+
             if (dt == sequence::draw::linked)
             {
                 m_note_width = tix_to_pix(ni.length());
@@ -1110,7 +1078,6 @@ qseqroll::draw_drum_notes
         if (start_in || linkedin)
         {
             m_note_x = xoffset(ni.start());
-//          m_note_y = total_height() - (ni.note() * unitheight) - unitdecr;
             m_note_y = note_to_pix(ni.note());
 
             /*
@@ -1132,17 +1099,14 @@ qseqroll::draw_drum_notes
 }
 
 /**
- *  What about n == 0?
+ *  Encapsulates a common calculation.
  */
 
 int
 qseqroll::note_to_pix (int n) const
 {
-    return total_height() - (n - 1) * unit_height() + 2;
+    return total_height() - (n + 1) * unit_height() + 2;
 }
-
-// th() - n * uh() - (uh()-2)
-// th() - n * uh() - uh() + 2
 
 int
 qseqroll::note_off_length () const

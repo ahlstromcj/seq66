@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.16 2024-11-17
+Release Notes for Seq66 v. 0.99.16 2024-11-26
 
 Fixes for NSM (session manager), build-file updates, and better PPQN
 and recording handling.
@@ -22,6 +22,7 @@ and recording handling.
 - Fixed the display of tunes with various PPQNs such as 120 in the
   pattern editor.
 - Added "Clear events" to the grid slot popup menu.
+- Enhancements to pattern-editor note copy/paste.
 - Added 120 PPQN to the list of supported PPQNs.
 - Fixed File / New plus File Save overwriting the previous loaded
   file.
