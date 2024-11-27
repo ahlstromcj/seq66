@@ -243,10 +243,13 @@ It does not change Seq66's default
 PPQN.</string>
         </property>
         <property name="editable">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="currentText">
-         <string notr="true">1920</string>
+         <string notr="true"/>
+        </property>
+        <property name="maxVisibleItems">
+         <number>20</number>
         </property>
         <property name="insertPolicy">
          <enum>QComboBox::NoInsert</enum>
@@ -273,6 +276,9 @@ PPQN.</string>
         <property name="toolTip">
          <string>Sets output bus for all patterns in
 the current set.  Modifies the song.</string>
+        </property>
+        <property name="maxVisibleItems">
+         <number>20</number>
         </property>
        </widget>
       </item>
@@ -1620,7 +1626,7 @@ beats/minute.</string>
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="font">

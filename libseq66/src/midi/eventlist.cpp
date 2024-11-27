@@ -308,7 +308,7 @@ eventlist::merge (const eventlist & el, bool presort)
 }
 
 /**
- *  Links a new event.  This function checks for a note on, then look for
+ *  Links a new event.  This function checks for a note on, then looks for
  *  its note off.  This function is provided in the eventlist because it
  *  does not depend on any external data.  Also note that any desired
  *  thread-safety must be provided by the caller.
@@ -338,11 +338,9 @@ eventlist::merge (const eventlist & el, bool presort)
 void
 eventlist::link_new (bool wrap)
 {
-    bool wrap_em = m_link_wraparound || wrap;       /* a Stazed extension   */
-    sort();                                         /* IMPORTANT!           */
     for (auto on = m_events.begin(); on != m_events.end(); ++on)
     {
-        if (on->on_linkable())
+        if (on->on_linkable())                      /* note-on, not linked  */
         {
             bool endfound = false;                  /* end-of-note flag     */
             auto off = on;                          /* point to note on     */
@@ -362,7 +360,7 @@ eventlist::link_new (bool wrap)
                 {
                     if (link_notes(on, off))
                     {
-                        if (! wrap_em)
+                        if (! wrap)
                         {
                             if (off->timestamp() < on->timestamp())
                                 off->set_timestamp(get_length() - 1);
@@ -444,8 +442,10 @@ eventlist::link_notes (event::iterator eon, event::iterator eoff)
 void
 eventlist::verify_and_link (midipulse slength, bool wrap)
 {
+    bool wrap_em = m_link_wraparound || wrap;       /* a Stazed extension   */
     clear_links();                          /* unlink and unmark all events */
-    link_new(wrap);
+    sort();                                 /* important, but be careful... */
+    link_new(wrap_em);
     if (slength > 0)
     {
         mark_out_of_range(slength);

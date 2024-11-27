@@ -1,12 +1,12 @@
 %-------------------------------------------------------------------------------
-% first_start
+% live_grid
 %-------------------------------------------------------------------------------
 %
-% \file        first_start.tex
+% \file        live_grid.tex
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2024-08-18
+% \update      2024-11-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -253,14 +253,14 @@
 
    This drop-down allows one to change the pulses-per-quarter-note (PPQN) of the
    loaded tune, and this change can then be saved, if desired, with the file.
-   As with \textsl{Seq24}, the default PPQN is 192.  This can be changed to
-   to other values:
-   \texttt{32, 48, 96, 192, 240, 384, 768, 960, 1920, 2400, 3840,
+   As with \textsl{Seq24}, the default PPQN is 192.
+   \texttt{32, 48, 96, 120, 192, 240, 384, 768, 960, 1920, 2400, 3840,
    7680, 9600, and 19200}.
-   Values, even weird ones, can be entered by typing them.
-   However, some values, such as 120, are not
-   displayed properly in the grids.
-   (Modify the file to use a supported value, if possible.)
+   The PPQN cannot be changed to to values not in this list, though.
+%  Values, even weird ones, can be entered by typing them.
+%  However, some values, such as 120, are not
+%  displayed properly in the grids.
+%  (Modify the file to use a supported value, if possible.)
    If a MIDI file is loaded, this modifies that file, rescaling all the
    pattern events and pattern triggers.
    Also see \sectionref{paragraph:menu_edit_preferences_play_options}.

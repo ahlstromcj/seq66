@@ -87,9 +87,12 @@
  *
  *  Enabling this macro gives Note Offs priority over Note Ons with the
  *  same time-stamp, and seems to fix the problem.
+ *
+ *  However, this breaks, it seems, the recording of notes of the same
+ *  note number, so that some notes end up way too long.
  */
 
-#define SEQ66_PRIORITIZE_NOTE_OFF
+#undef  SEQ66_PRIORITIZE_NOTE_OFF
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

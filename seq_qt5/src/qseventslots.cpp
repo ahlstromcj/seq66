@@ -156,6 +156,13 @@ qseventslots::load_table ()
     return result;
 }
 
+/**
+ *  Any way to easily add the link indexes or add arrows to the linked
+ *  note?
+ *
+ *      "Link-time L> <L  Rank\n"
+ */
+
 std::string
 qseventslots::events_to_string () const
 {

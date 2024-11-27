@@ -3593,7 +3593,7 @@ sequence::add_painted_note
  *  Overload for use with keyboard input.  The version above always sets
  *  channel to 0, and can repaint, and is used by the seqroll.
  *
- *  Note:  Like the version above, this code simulates a Note Off.  We will
+ *  Note: Like the version above, this code simulates a Note Off.  We will
  *  fix that AT SOME POINT.
  *
  * \param len
@@ -4302,6 +4302,8 @@ sequence::stream_event (event & ev)
 
         /*
          * We don't need to link note events until a note-off comes in.
+         * Commenting this out has no apparently effect, but we still
+         * get extra long notes. (ca 2024-11-26)
          */
 
         if (ev.is_note_off())
