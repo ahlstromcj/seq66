@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2024-11-11
+ * \updates       2024-11-27
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -373,6 +373,75 @@ eventlist::link_new (bool wrap)
         }
     }
 }
+
+#if defined SEQ66_LINK_NEWEST_NOTE_ON_RECORD
+
+/**
+ *  This function links only the latest note, and should be called
+ *  only for Note Off events. It requires the following:
+ *
+ *  -   The note is the last one appended.
+ *  -   It is a Note Off.
+ *  -   All previous notes are already linked.
+ *
+ *  The caller assumes these responsibilities.
+ *
+ *  Note that we cannot (easily) use a reverse_iterator because
+ *  the event object stores links as normal iterators. It's a real
+ *  issue to convert between reverse and forward iterators, or pointers
+ *  or references.
+ *
+ *  We could change to using the std::bidirectional_iterator once we
+ *  graduate to C++20, which won't be for some time.
+ */
+
+void
+eventlist::link_new_note ()
+{
+    if (count() > 1)
+    {
+        bool done = false;
+        for (auto off = m_events.end(); off != m_events.begin(); /* none */ )
+        {
+            --off;                                  /* can't use end() val  */
+            if (off->off_linkable())                /* note-off, not linked */
+            {
+                auto on = off;
+                while (! done)
+                {
+                    --on;
+                    if (on == m_events.begin())
+                    {
+                        done = true;
+                        break;
+                    }
+
+                    bool ok = on->on_linkable();
+                    if (ok)
+                        ok = on->channel() == off->channel();
+
+                    if (ok)
+                    {
+                        ok = on->timestamp() <= off->timestamp();
+#if defined SEQ66_PLATFORM_DEBUG
+                        if (on->timestamp == off->timestamp())
+                            printf ("Zero-length note!");
+#endif
+                    }
+                    if (ok)
+                    {
+                        (void) link_notes(on, off);
+                        done = true;
+                    }
+                }
+            }
+            if (done)
+                break;
+        }
+    }
+}
+
+#endif  // defined SEQ66_LINK_NEWEST_NOTE_ON_RECORD
 
 /**
  *  If we're in legacy merge mode for a loop, the Note Off is actually earlier

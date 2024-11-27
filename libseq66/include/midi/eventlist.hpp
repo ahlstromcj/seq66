@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2023-10-06
+ * \updates       2024-11-27
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -55,14 +55,23 @@
 /**
  *  We made some fixes for sequencer64 issue #141 to disable saving the tempo
  *  into first track. But for Seq66, we do want to be able to save the
- *  time signature of each pattern with that pattern (especially if different
- *  from the global time signature). Note that we would support only one
- *  time-signature per pattern, but unlimited tempo changes.  Also note that,
- *  unlike tempo, time-signature does not affect the playback of MIDI events.
- *  It changes how they are displayed.
+ *  time signature(s) of each pattern with that pattern (especially if
+ *  different from the global time signature). Note that we would support
+ *  only one time-signature per pattern, but unlimited tempo changes.
+ *  Also note that, unlike tempo, time-signature does not affect the playback
+ *  of MIDI events. It changes how they are displayed.
  */
 
 #undef   SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
+
+/**
+ *  EXPERIMENTAL.
+ *  When recording, instead of a complete verify_and_link(), backtrack
+ *  from the latest event if it is a Note Off, and link to the previous
+ *  Note On.
+ */
+
+#define SEQ66_LINK_NEWEST_NOTE_ON_RECORD
 
 #include <atomic>                       /* std::atomic<bool> usage          */
 
@@ -136,7 +145,8 @@ public:
 private:
 
     /**
-     *  This list holds the current pattern/sequence events.
+     *  This list holds the current pattern/sequence events. Note that
+     *  is std::vector<event>.
      */
 
     event::buffer m_events;
@@ -373,8 +383,6 @@ private:                                /* functions for friend sequence    */
      * involved data from the caller.
      */
 
-    void link_new (bool wrap = false);
-    void clear_links ();
     int note_count () const;
     bool first_notes (midipulse & ts, int & n, midipulse snap = 0) const;
 #if defined SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
@@ -406,7 +414,12 @@ private:                                /* functions for friend sequence    */
     bool randomize_selected_notes (int range);
     bool jitter_events (int snap, int jitr);
     bool jitter_notes (int snap, int jitr);
+    void link_new (bool wrap = false);
     bool link_notes (event::iterator eon, event::iterator eoff);
+#if defined SEQ66_LINK_NEWEST_NOTE_ON_RECORD
+    void link_new_note ();
+#endif
+    void clear_links ();
     void link_tempos ();
     void clear_tempo_links ();
     bool mark_selected ();

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-08-22
+ * \updates       2024-11-27
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -89,10 +89,11 @@
  *  same time-stamp, and seems to fix the problem.
  *
  *  However, this breaks, it seems, the recording of notes of the same
- *  note number, so that some notes end up way too long.
+ *  note number, so that some notes end up way too long. That's a worse
+ *  effect.
  */
 
-#undef  SEQ66_PRIORITIZE_NOTE_OFF
+#undef  SEQ66_PRIORITIZE_NOTE_OFF       /* please leave undefined           */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.16
 Chris Ahlstrom
-2015-07-10 to 2024-11-26
+2015-07-10 to 2024-11-27
 
 # Change Log
 
@@ -20,6 +20,12 @@ Chris Ahlstrom
   - The paste-selection box now shows the selected notes, for easier
     placement.
   - A right-click cancels a paste action in the pattern editor.
+- Undid a change from awhile back that broke the recording of
+  fast-keyed notes on the same MIDI key. Still need to fix the
+  occasional zero-length note.
+- Add provisional code to speed up recording. Grep for the macro
+  SEQ66\_LINK\_NEWEST\_NOTE\_ON\_RECORD. Undefine it if desired.
+- Enhanced writing pattern-dump files from the event editor.
 
 ### Fixed
 

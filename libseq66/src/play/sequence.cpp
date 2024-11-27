@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-11-26
+ * \updates       2024-11-27
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3590,8 +3590,8 @@ sequence::add_painted_note
 }
 
 /**
- *  Overload for use with keyboard input.  The version above always sets
- *  channel to 0, and can repaint, and is used by the seqroll.
+ *  Overload for use with auto-step MIDI keyboard input. The version above
+ *  always sets channel to 0, and can repaint, and is used by the seqroll.
  *
  *  Note: Like the version above, this code simulates a Note Off.  We will
  *  fix that AT SOME POINT.
@@ -4246,7 +4246,15 @@ sequence::stream_event (event & ev)
                     if (notemapping())
                         perf()->repitch(ev);
                 }
+#if defined SEQ66_LINK_NEWEST_NOTE_ON_RECORD
+                m_events.append(ev);                    /* does *not* sort  */
+                if (ev.is_note_off())                   /* later, tempo?    */
+                    m_events.link_new_note();           /* one link no sort */
+
+                modify(false);                          /* no notify call   */
+#else
                 add_event(ev);                          /* locks and sorts  */
+#endif
             }
             else                                        /* use auto-step    */
             {

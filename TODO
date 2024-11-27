@@ -4,6 +4,9 @@ Chris Ahlstrom
 
 Hottest:
 
+    -   Fast MIDI keying on same note can yield zero-length notes.
+    -   Test the link_new() process thoroughly.
+
 From Testing:
 
     -   #128 Recording type for loop button not working. Fixed, some
