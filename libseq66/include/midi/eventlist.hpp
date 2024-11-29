@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2024-11-27
+ * \updates       2024-11-28
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -68,7 +68,7 @@
  *  EXPERIMENTAL.
  *  When recording, instead of a complete verify_and_link(), backtrack
  *  from the latest event if it is a Note Off, and link to the previous
- *  Note On.
+ *  Note On with the same note value.
  */
 
 #define SEQ66_LINK_NEWEST_NOTE_ON_RECORD
@@ -183,6 +183,14 @@ private:
      */
 
     midipulse m_note_off_margin;
+
+    /**
+     *  A sort of snap value to use when a quantized note gets shrunk to
+     *  close to zero length. Set to 16 ticks in the constructor, but
+     *  can be changed by the owning sequence.
+     */
+
+    midipulse m_zero_len_correction;
 
     /**
      *  A flag to indicate if an event was added or removed.  We may need to
@@ -492,6 +500,12 @@ private:                                /* functions for friend sequence    */
         if (len > 0)
             m_length = len;
     }
+
+    void zero_len_correction (midipulse zlc)
+    {
+        m_zero_len_correction = zlc;
+    }
+
 
 };          // class eventlist
 

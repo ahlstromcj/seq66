@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-11-27
+ * \updates       2024-11-28
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -232,6 +232,7 @@ sequence::sequence (int ppqn) :
     sm_preserve_velocity = usr().preserve_velocity();
     sm_fingerprint_size = usr().fingerprint_size();
     m_events.set_length(m_length);
+    m_events.zero_len_correction(m_snap_tick / 2);
     m_triggers.set_ppqn(int(m_ppqn));
     m_triggers.set_length(m_length);
     for (auto & p : m_playing_notes)            /* no notes playing now     */
@@ -4236,6 +4237,8 @@ sequence::stream_event (event & ev)
                      * We want to quantize or tighten note-related events that
                      * comes in, This could potentially alter the note length
                      * by a couple of snaps. So what? Play better!
+                     *
+                     * Actually, it could result in zero-length notes.
                      */
 
                     if (quantizing())
@@ -6300,6 +6303,7 @@ sequence::snap (int st)
 {
     automutex locker(m_mutex);
     m_snap_tick = midipulse(st);
+    m_events.zero_len_correction(snap() / 2);
 }
 
 void

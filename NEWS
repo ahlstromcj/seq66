@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.16
 Chris Ahlstrom
-2015-07-10 to 2024-11-27
+2015-07-10 to 2024-11-28
 
 # Change Log
 
@@ -53,6 +53,7 @@ Chris Ahlstrom
   fix now brings up a prompt for the name of the new file.
 - The main window now reflects the current record-loop style and
   new-pattern option as read from the 'usr' file.
+- Fixed zero-length notes caused by quantized recording.
 
 ### Added
 

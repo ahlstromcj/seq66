@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2024-11-27
+ * \updates       2024-11-29
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -55,6 +55,7 @@ eventlist::eventlist () :
     m_action_in_progress    (false),                    /* atomic boolean   */
     m_length                (0),
     m_note_off_margin       (3),
+    m_zero_len_correction   (16),
     m_is_modified           (false),
     m_has_tempo             (false),
     m_has_time_signature    (false),
@@ -77,6 +78,7 @@ eventlist::eventlist (const eventlist & rhs) :
     m_action_in_progress    (false),                    /* atomic boolean   */
     m_length                (rhs.m_length),
     m_note_off_margin       (rhs.m_note_off_margin),
+    m_zero_len_correction   (rhs.m_zero_len_correction),
     m_is_modified           (rhs.m_is_modified),
     m_has_tempo             (rhs.m_has_tempo),
     m_has_time_signature    (rhs.m_has_time_signature),
@@ -384,12 +386,20 @@ eventlist::link_new (bool wrap)
  *  -   It is a Note Off.
  *  -   All previous notes are already linked.
  *
- *  The caller assumes these responsibilities.
+ *  The caller assumes the above responsibilities. Additional checks are made:
+ *
+ *  -   The Note On is not already linked.
+ *  -   The Note Off is on the same channel as the Note On.
+ *  -   The note value (pitch) is the same for both notes.
+ *  -   The time-stamp of the Note Off is at are after the Note On.
+ *      If right at it (due to quantization), then a zero-length
+ *      correction is made for the Note Off.
  *
  *  Note that we cannot (easily) use a reverse_iterator because
  *  the event object stores links as normal iterators. It's a real
  *  issue to convert between reverse and forward iterators, or pointers
- *  or references.
+ *  or references. Luckily, the container (std::vector) has bidirectional
+ *  iterators.
  *
  *  We could change to using the std::bidirectional_iterator once we
  *  graduate to C++20, which won't be for some time.
@@ -421,11 +431,19 @@ eventlist::link_new_note ()
                         ok = on->channel() == off->channel();
 
                     if (ok)
+                        ok = on->get_note() == off->get_note();
+
+                    if (ok)
                     {
                         ok = on->timestamp() <= off->timestamp();
+                        if (on->timestamp() == off->timestamp())
+                        {
+                            long ts = on->timestamp();
+                            ts += m_zero_len_correction;
+                            off->set_timestamp(ts);
 #if defined SEQ66_PLATFORM_DEBUG
-                        if (on->timestamp == off->timestamp())
-                            printf ("Zero-length note!");
+                            printf ("Zero-length note @%ld fixed\n", ts);
+                        }
 #endif
                     }
                     if (ok)

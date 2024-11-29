@@ -1,11 +1,8 @@
 TO DO for Seq66 0.99.16
 Chris Ahlstrom
-2019-04-13 to 2024-11-27
+2019-04-13 to 2024-11-29
 
 Hottest:
-
-    -   Fast MIDI keying on same note can yield zero-length notes.
-    -   Test the link_new() process thoroughly.
 
 From Testing:
 
@@ -19,6 +16,9 @@ From Testing:
         -   Setting one-shot (after overwrite) turns off recording.
         -   Should Ctrl-V be anchored to top note or bottom note?
             Should we put ghost notes in the selection box before pasting?
+        -   There seems to be a very slight chance of too-longth notes in
+            a chord if quantization (1/16) is on. Needs a better keyboard
+            player (not me) to test it.
     -   One song was loaded, the File / New still shows the previous song
         in the title bar.
     -   Selected port 1 with pattern editor open. It shows port 0.
