@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.16
 Chris Ahlstrom
-2015-07-10 to 2024-11-28
+2015-07-10 to 2024-11-29
 
 # Change Log
 
@@ -54,6 +54,8 @@ Chris Ahlstrom
 - The main window now reflects the current record-loop style and
   new-pattern option as read from the 'usr' file.
 - Fixed zero-length notes caused by quantized recording.
+- Fixed the pattern editor so it reflects buss and channel settings
+  made from the grid slot popup menu.
 
 ### Added
 
@@ -266,7 +268,7 @@ Chris Ahlstrom
 - If configured for double-click, can now open or create a pattern
   by double-clicking in the song editor(s).
 - Added a new "grid mode" to allow toggling mutes by clicking
-  in the Live Grid.  The default group-selection keystroke is "_".
+  in the Live Grid.  The default group-selection keystroke is "\_".
 - Added feature to scroll automatically in time and note value
   to show the first notes in a pattern.
 - Added more UI palette items for more non-Qt color control.

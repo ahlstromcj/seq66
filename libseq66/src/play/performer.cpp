@@ -4135,8 +4135,13 @@ performer::set_midi_bus (seq::number seqno, int buss)
     seq::pointer s = get_sequence(seqno);
     bool result = bool(s);
     if (result)
+    {
         result = s->set_midi_bus(buss, true);           /* a user change    */
-
+#if defined USE_THIS_CALL                               /* see sequence     */
+        if (result)
+            notify_sequence_change(seqno, change::yes);
+#endif
+    }
     return result;
 }
 
@@ -4148,7 +4153,13 @@ performer::set_midi_in_bus (seq::number seqno, int buss)
     if (result)
     {
         result = s->set_midi_in_bus(buss, true);        /* a user change    */
-        record_by_buss(sequence_inbus_setup(true));     /* ditto            */
+        if (result)
+        {
+            record_by_buss(sequence_inbus_setup(true)); /* ditto            */
+#if defined USE_THIS_CALL                               /* see sequence     */
+            notify_sequence_change(seqno, change::yes);
+#endif
+        }
     }
     return result;
 }
@@ -4181,6 +4192,10 @@ performer::set_midi_channel (seq::number seqno, int channel)
             channel = null_channel();                   /* Free             */
 
         result = s->set_midi_channel(midibyte(channel), true);  /* user ch. */
+#if defined USE_THIS_CALL                               /* see sequence     */
+        if (result)
+            notify_sequence_change(seqno, change::yes);
+#endif
     }
     return result;
 }

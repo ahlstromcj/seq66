@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-11-21
+ * \updates       2024-11-29
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1303,7 +1303,20 @@ qseqeditframe64::closeEvent (QCloseEvent * event)
 }
 
 /**
- *  This function now seems to be called. Yay!
+ *  This function now seems to be called. Yay! Note that these functions
+ *  do not take action when changing the item number from the live grid:
+ *
+ *      set_midi_bus(bus, qbase::status::edit);
+ *      set_midi_channel(channel, qbase::status::edit);
+ *
+ *  Therefore we extract the necessary functionality from them and put
+ *  it here.
+ *
+ *  The call to repopulate_usr_combos() calls these functions:
+ *
+ *      repopulate_midich_combo(buss);
+ *      repopulate_event_menu(m_edit_bus, m_edit_channel);
+ *      repopulate_mini_event_menu(m_edit_bus, m_edit_channel);
  */
 
 bool
@@ -1316,7 +1329,13 @@ qseqeditframe64::on_sequence_change
     bool result = seqno == trackno;
     if (result)
     {
-        set_dirty();                            /* modified for issue #90   */
+        int bus = track().seq_midi_bus();
+        int channel = track().midi_channel();
+        m_edit_bus = bus;
+        m_edit_channel = channel;
+        repopulate_usr_combos(bus, channel);
+        set_track_change();
+//      set_dirty();                            /* modified for issue #90   */
         update_midi_buttons();                  /* mirror current states    */
     }
     return result;
@@ -2258,12 +2277,14 @@ qseqeditframe64::reset_midi_bus ()
  *      The nominal buss value to set.  If this value changes the selected
  *      buss, then the MIDI channel popup menu is repopulated.
  *
- * \param user_change
- *      True if the user made this change, and thus has potentially modified
- *      the song.  If true, and the bus number has changed, then the MIDI
+ * \param qs
+ *      Indicates if the changes was made at startup, or by a user-edit.  Set
+ *      to qbase::status::startup in the former case, and qbase::status::edit
+ *      in the latter case.  If the user made this change, they've potentially
+ *      modified the song.  If the bus number has changed, then the MIDI
  *      channel and event menus are repopulated to reflect the new bus.  This
- *      parameter is false in the constructor because those items have not
- *      been set up at that time.
+ *      parameter is "startup" in the constructor because those items have not
+ *      been set up at that time. The default value is "edit".
  */
 
 void
@@ -2365,6 +2386,14 @@ qseqeditframe64::reset_midi_channel ()
  * \param user_change
  *      True if the user made this change, and thus has potentially modified
  *      the song.  The default is false.
+ * \param qs
+ *      Indicates if the changes was made at startup, or by a user-edit.  Set
+ *      to qbase::status::startup in the former case, and qbase::status::edit
+ *      in the latter case.  If the user made this change, they've potentially
+ *      modified the song.  If the bus number has changed, then the MIDI
+ *      channel and event menus are repopulated to reflect the new bus.  This
+ *      parameter is "startup" in the constructor because those items have not
+ *      been set up at that time. The default value is "edit".
  */
 
 void
@@ -3707,12 +3736,23 @@ qseqeditframe64::repopulate_usr_combos (int buss, int channel)
 {
     disconnect
     (
+        ui->m_combo_bus, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(update_midi_bus(int))
+    );
+    disconnect
+    (
         ui->m_combo_channel, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_midi_channel(int))
     );
+    ui->m_combo_bus->setCurrentIndex(buss);
     repopulate_midich_combo(buss);
     repopulate_event_menu(buss, channel);
     repopulate_mini_event_menu(buss, channel);
+    connect
+    (
+        ui->m_combo_bus, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(update_midi_bus(int))
+    );
     connect
     (
         ui->m_combo_channel, SIGNAL(currentIndexChanged(int)),
@@ -3921,21 +3961,11 @@ qseqeditframe64::update_midi_buttons ()
     if (! record_active)
         repopulate_usr_combos(m_edit_bus, m_edit_channel);
 
-#if defined USE_OLD_CODE
-    bool qrecord_active = track().quantized_recording();
-    ui->m_toggle_qrecord->blockSignals(true);
-    ui->m_toggle_qrecord->setChecked(qrecord_active);
-    ui->m_toggle_qrecord->setToolTip(qrecord_active ? "Active" : "Inactive");
-    qt_set_icon(qrecord_active ? q_rec_on_xpm : q_rec_xpm, ui->m_toggle_qrecord);
-    ui->m_toggle_qrecord->blockSignals(false);
-#else
     /*
      * Need to be able to affect the track() alteration in this window!
      *
      *  bool alteration_active = track().is_new_pattern() ?
-     *      usr().pattern_alter_recording() :
-     *      usr().alter_recording() ;
-     *
+     *      usr().pattern_alter_recording() : usr().alter_recording() ;
      */
 
     bool alteration_active = track().alter_recording();
@@ -3943,7 +3973,6 @@ qseqeditframe64::update_midi_buttons ()
     ui->m_toggle_qrecord->setChecked(alteration_active);
     set_toggle_qrecord_button();
     ui->m_toggle_qrecord->blockSignals(false);
-#endif
 
     bool playing = track().armed();
     ui->m_toggle_play->blockSignals(true);

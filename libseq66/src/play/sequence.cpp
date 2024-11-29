@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-11-28
+ * \updates       2024-11-29
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4104,7 +4104,7 @@ sequence::add_event
         if (result)
         {
             verify_and_link();
-            modify(true);               /* call notify_change()             */
+            modify();                   /* call notify_change()             */
         }
     }
     return result;
@@ -5777,7 +5777,9 @@ sequence::set_midi_bus (bussbyte nominalbus, bool user_change)
             if (user_change)
                 modify();                       /* no easy way to undo this */
 
+#if defined USE_THIS_CALL                       /* see sequence::modify()   */
             notify_change(user_change);         /* better than set_dirty()  */
+#endif
             set_dirty();                        /* for display updating     */
         }
     }
@@ -5810,7 +5812,9 @@ sequence::set_midi_in_bus (bussbyte nominalbus, bool user_change)
             if (user_change)
                 modify();                       /* no easy way to undo this     */
 
+#if defined USE_THIS_CALL                       /* see sequence::modify()   */
             notify_change(user_change);         /* more reliable than set dirty */
+#endif
             set_dirty();                        /* this is for display updating */
         }
     }
@@ -6046,7 +6050,7 @@ sequence::double_length ()
  *
  * \param userchange
  *      Indicates if the change was requested by a user or done in the
- *      "normal" course of operations.
+ *      "normal" course of operations. The default is true.
  */
 
 void

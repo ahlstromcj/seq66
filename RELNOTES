@@ -1,10 +1,15 @@
-Release Notes for Seq66 v. 0.99.16 2024-11-26
+Release Notes for Seq66 v. 0.99.16 2024-11-29
 
 Fixes for NSM (session manager), build-file updates, and better PPQN
-and recording handling.
+and recording handling. A lot of little issues found and fixed, too.
 
 - Fixed issue #128 with expanded recording not working. The expansion
   is now continual, not waiting for a MIDI key to be struck.
+- The main window now reflects the current record-loop style and
+  new-pattern option as read from the 'usr' file.
+- Fixed zero-length notes caused by quantized recording.
+- Fixed the pattern editor so it reflects buss and channel settings
+  made from the grid slot popup menu.
 - Merged a fix from a pull request (issue #130) to update the
   "*.desktop" files.
 - Fixed issue #131 re faulty NSM interactions introduced in version

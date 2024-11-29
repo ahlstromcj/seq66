@@ -12,25 +12,12 @@ From Testing:
             the pattern instead of expanding. Is this an important use-case?
         -   One-shot recording during playback acts like overdub.
             Worth fixing?
-        -   Overwrite step-edit recording acts like overdub.
-        -   Setting one-shot (after overwrite) turns off recording.
         -   Should Ctrl-V be anchored to top note or bottom note?
-            Should we put ghost notes in the selection box before pasting?
         -   There seems to be a very slight chance of too-longth notes in
             a chord if quantization (1/16) is on. Needs a better keyboard
             player (not me) to test it.
-    -   One song was loaded, the File / New still shows the previous song
-        in the title bar.
-    -   Selected port 1 with pattern editor open. It shows port 0.
-    -   In dragging notes to add them, respect the "Vel" setting and
-        use 100 if "Free" is selected.
-    -   Clarify and document the pattern-editor seqroll tool-tip mode
-        and how to activate it.
-    -   Setting the PPQN obscures the 32 PPQN entry in the combo box.
-        Not important.
+    -   Setting the PPQN obscures the 32 PPQN entry in the combo box. Minor.
     -   Get the 16-in-busses.midi file configured and working.
-    -   The 'usr' time-color settings do not seem to work. Actually, it does
-        work, but not with the Qt gtk2 styling. Document this issue.
     -   Finish getting Windows builds in MSYS2 to work.
 
 Playlists:

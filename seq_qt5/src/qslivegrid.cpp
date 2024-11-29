@@ -1999,7 +1999,8 @@ qslivegrid::popup_menu ()
             }                               /* if (rc().with_jack_midi())   */
 
             /**
-             *  Output buss menu
+             *  Output buss menu. See qslivebase; it calls performer ::
+             *  set_midi_buschannel
              */
 
             QMenu * menubuss = new_qmenu("Output bus");
@@ -2020,7 +2021,7 @@ qslivegrid::popup_menu ()
                     connect
                     (
                         a, &QAction::triggered,
-                        [this, bus] { set_midi_bus(bus); }
+                        [this, bus] { set_midi_bus(bus); }  /* in qslivebase */
                     );
                     menubuss->addAction(a);
                     if (disabled)
@@ -2030,7 +2031,8 @@ qslivegrid::popup_menu ()
             m_popup->addMenu(menubuss);
 
             /**
-             *  Channel menu
+             *  Channel menu. See qslivebase; it calls performer ::
+             *  set_midi_channel().
              */
 
             QMenu * menuchan = new_qmenu("Output channel");
