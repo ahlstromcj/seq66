@@ -1,8 +1,11 @@
 TO DO for Seq66 0.99.16
 Chris Ahlstrom
-2019-04-13 to 2024-11-29
+2019-04-13 to 2024-11-30
 
 Hottest:
+
+    -   Test all comboboxes.
+    -   Test and retest all previous issues in #128
 
 From Testing:
 
@@ -16,6 +19,9 @@ From Testing:
         -   There seems to be a very slight chance of too-longth notes in
             a chord if quantization (1/16) is on. Needs a better keyboard
             player (not me) to test it.
+        -   When auto-step recording in an existing pattern, the modify
+            flag "*" is not shown in the title, thought the
+            "Save/Discard/Cancel" prompt appears at exit.
     -   Setting the PPQN obscures the 32 PPQN entry in the combo box. Minor.
     -   Get the 16-in-busses.midi file configured and working.
     -   Finish getting Windows builds in MSYS2 to work.
@@ -308,6 +314,16 @@ ISSUES:
     loops second step will appear over the a step behind. On overwrite, it
     will not overwrite till the second step of the loop and again the step
     will one behind. Expand overdubs rather than expands on step input.
+
+    Update: Been testing the WIP branch. I am getting an issue with the expand
+    when recording live midi into it. When it gets to the ninth bar, it wipes
+    all the midi recorded before it except the first bar.  The same then
+    happens at bars,16, 17 and 24. Always all bars before except the first. I
+    did not go longer than that but you get the idea. With step entry,  there
+    is a pop up which warns that events will be dropped when you reach those
+    bars.  Separately, The looping with step entry is better now.
+
+    STATUS: All issues seem to be fixed, but need to be retested.
 
 #129 Quantized Record Button problem 
     There is a button in the pattern window to turn on Quantized Record.  If

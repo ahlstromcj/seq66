@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-11-16
+ * \updates       2024-11-29
  * \license       GNU GPLv2 or above
  *
  */
@@ -158,7 +158,7 @@ public:
 
 protected:
 
-    void set_track_change ();
+    void set_track_change (bool modified = true);
     void set_external_frame_title (bool modified = true);
     void adjust_for_zoom (int zprevious);
     bool zoom_key_press (bool shifted, int key);

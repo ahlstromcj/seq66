@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.16
 Chris Ahlstrom
-2015-07-10 to 2024-11-29
+2015-07-10 to 2024-11-30
 
 # Change Log
 
@@ -65,6 +65,9 @@ Chris Ahlstrom
 - Added a "config directory" macro to configure.ac and seq-feature
   functions to access it. Differentiates between client and directory
   name.
+- Added monogreen.palette, monogreen.qss, and a down.png icon. Copy
+  all to ~/.config/seq66 and modify the image url in the qss file
+  to match your setting. Will work on a qrc file soon.
 
 ## [0.99.15]
 

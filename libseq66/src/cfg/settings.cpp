@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2024-11-01
+ * \updates       2024-11-30
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -143,10 +143,18 @@ combolist::valid (const std::string & target) const
     return result;
 }
 
+/**
+ *  ca 2024-11-30
+ *  Had to update this one, after checking, to return (-1) instead of zero
+ *  to indicate an error. This change is part of issue #128, where expand-record
+ *  using auto-step tries to look up measure "9" in the seqedit measures list,
+ *  fails, returns 0, and sets the pattern length to 1, suddenly.
+ */
+
 int
 combolist::index (const std::string & target) const
 {
-    int result = 0;                         /* for failure, use first item  */
+    int result = (-1);                      /* for failure, use first item  */
     int counter = 0;
     for (const auto & s : m_list_items)
     {

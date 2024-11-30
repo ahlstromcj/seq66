@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-11-29
+ * \updates       2024-11-30
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3619,7 +3619,23 @@ sequence::add_note (midipulse len, const event & e)
     if (result)
     {
         verify_and_link();
-        modify();                                   /* added ca 2022-04-25  */
+
+        /*
+         * ca 2024-11-30. EXPERIMENTAL.
+         * Notification of step-edit note entry from a keyboard causes:
+         *
+         * QObject::setParent: Cannot set parent, new parent is in a different
+         * thread
+         *
+         * So we pass false to avoid the notification. However, this causes a
+         * delay in refreshing the notes in the pattern editor.
+         *
+         *      modify(false);
+         */
+
+        m_is_modified = true;
+        set_dirty();
+        perf()->notify_sequence_change(seq_number(), performer::change::no);
     }
     return result;
 }
@@ -6106,6 +6122,7 @@ sequence::set_armed (bool p)
         else
             off_playing_notes();
 
+        notify_change(false);                       /* ca 2024-11-29        */
         set_dirty();
         m_queued = m_one_shot = false;
         perf()->announce_pattern(seq_number());     /* for issue #89        */

@@ -1322,20 +1322,24 @@ qseqeditframe64::closeEvent (QCloseEvent * event)
 bool
 qseqeditframe64::on_sequence_change
 (
-    seq::number seqno, performer::change /* ctype */
+    seq::number seqno, performer::change ctype
 )
 {
     seq::number trackno = track().seq_number();
     bool result = seqno == trackno;
     if (result)
     {
-        int bus = track().seq_midi_bus();
-        int channel = track().midi_channel();
-        m_edit_bus = bus;
-        m_edit_channel = channel;
-        repopulate_usr_combos(bus, channel);
-        set_track_change();
-//      set_dirty();                            /* modified for issue #90   */
+        bool modification = false;
+        if (ctype == performer::change::yes)
+        {
+            int bus = track().seq_midi_bus();
+            int channel = track().midi_channel();
+            m_edit_bus = bus;
+            m_edit_channel = channel;
+            modification = true;
+            repopulate_usr_combos(bus, channel);
+        }
+        set_track_change(modification);         /* also calls set_dirty()   */
         update_midi_buttons();                  /* mirror current states    */
     }
     return result;
@@ -1621,12 +1625,13 @@ qseqeditframe64::conditional_update ()
     {
         follow_progress();
     }
-    if (m_measures != track().measures())
+    int m = track().measures();
+    if (m_measures != m)
     {
-        m_measures = track().get_measures();
+        m_measures = m;
 
-        std::string mstring = std::to_string(m_measures);
-        int lenindex = measures_list().index(m_measures);
+        std::string mstring = std::to_string(m);
+        int lenindex = measures_list().index(m);
         if (lenindex >= 0)
         {
             int curindex = ui->m_combo_length->currentIndex();
@@ -4254,16 +4259,21 @@ qseqeditframe64::set_dirty ()
  * set_dirty().  But some of the locations where that function was
  * called need to mark the sequence as modified.  This function
  * replaces set_dirty() for those places.
+ *
+ * \param modified
+ *      Normal true (and that's the default), this parameter can be set to
+ *      false for changes such as muting. See on_sequence_change().
  */
 
 void
-qseqeditframe64::set_track_change ()
+qseqeditframe64::set_track_change (bool modified)
 {
     set_dirty();
     if (is_initialized())                           /* start-up changes?    */
     {
-        set_external_frame_title();
-        track().modify(false);                      /* do not change-notify */
+        set_external_frame_title(modified);
+        if (modified)
+            track().modify(false);                  /* do not change-notify */
     }
 }
 
