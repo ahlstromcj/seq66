@@ -6,6 +6,8 @@ Hottest:
 
     -   Test all comboboxes.
     -   Test and retest all previous issues in #128
+    -   Add another usr option for thick grid drawing. Currently it
+        mirrors usr().progress_bar_thick().
 
 From Testing:
 

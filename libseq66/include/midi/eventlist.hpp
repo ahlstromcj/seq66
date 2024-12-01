@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2024-11-28
+ * \updates       2024-11-30
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -62,16 +62,19 @@
  *  of MIDI events. It changes how they are displayed.
  */
 
-#undef   SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
+#undef  SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
 
 /**
  *  EXPERIMENTAL.
+ *
  *  When recording, instead of a complete verify_and_link(), backtrack
  *  from the latest event if it is a Note Off, and link to the previous
  *  Note On with the same note value.
+ *
+ *  One issue is that this will cause issue on loop_reset() when recording.
  */
 
-#define SEQ66_LINK_NEWEST_NOTE_ON_RECORD
+#undef SEQ66_LINK_NEWEST_NOTE_ON_RECORD
 
 #include <atomic>                       /* std::atomic<bool> usage          */
 

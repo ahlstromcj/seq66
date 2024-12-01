@@ -298,7 +298,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 if (selected)
                     pen.setColor(sel_color());
                 else if (its_close)
-                    pen.setColor(near_paint()); /* near_color()?    */
+                    pen.setColor(near_paint());         /* near_color()?    */
                 else
                     pen.setColor(text_data_paint());    /* fore_color())    */
 

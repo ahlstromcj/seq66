@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-26
+ * \updates       2024-11-30
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -150,9 +150,13 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
         int x_pos = xoffset(tick) - scroll_offset_x();
         if (tick % measure_length() == 0)
         {
-            pen.setColor(beat_color());                     /* measure      */
-            pen.setWidth(2);
             pen.setStyle(Qt::SolidLine);
+            pen.setColor(beat_color());                     /* measure      */
+            if (usr().progress_bar_thick())
+                pen.setWidth(2);
+            else
+                pen.setWidth(1);
+
             painter.setPen(pen);
             painter.drawLine(x_pos, 2, x_pos, yheight);
 
@@ -174,6 +178,8 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
         {
             pen.setColor(beat_color());
             pen.setWidth(1);
+            if (! usr().progress_bar_thick())
+                pen.setStyle(Qt::DotLine);
 
             /*
              * We should match the solid line of the piano roll.

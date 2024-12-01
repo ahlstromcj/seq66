@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2023-10-27
+ * \updates       2024-12-01
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -325,6 +325,22 @@ text_slots_paint ()
         global_palette().get_color(InvertibleColor::textslots) ;
 }
 
+Color
+scale_paint ()
+{
+    return usr().dark_theme() ?
+        global_palette().get_inverse_color(InvertibleColor::scale) :
+        global_palette().get_color(InvertibleColor::scale) ;
+}
+
+Color
+extra_paint ()
+{
+    return usr().dark_theme() ?
+        global_palette().get_inverse_color(InvertibleColor::extra) :
+        global_palette().get_color(InvertibleColor::extra) ;
+}
+
 Brush
 gui_empty_brush ()
 {
@@ -437,7 +453,7 @@ gui_palette_qt5::gui_palette_qt5 (const std::string & filename) :
     m_is_inverse            (false),
     m_empty_brush           (new (std::nothrow) Brush(Qt::SolidPattern)),
     m_empty_brush_style     (Qt::SolidPattern),
-    m_note_brush            (new (std::nothrow) Brush(Qt::SolidPattern)), // *
+    m_note_brush            (new (std::nothrow) Brush(Qt::SolidPattern)),
     m_note_brush_style      (Qt::LinearGradientPattern),
     m_scale_brush           (new (std::nothrow) Brush(Qt::Dense3Pattern)),
     m_scale_brush_style     (Qt::Dense3Pattern),
@@ -680,8 +696,8 @@ gui_palette_qt5::reset_invertibles ()
     m_nrm_palette.add(InvertibleColor::textkeys,  m_black,    "Keys Text");
     m_nrm_palette.add(InvertibleColor::textnames, m_black,    "Names Text");
     m_nrm_palette.add(InvertibleColor::textslots, m_black,    "Slots Text");
-    m_nrm_palette.add(InvertibleColor::extra_01,  m_black,    "Extra 1");
-    m_nrm_palette.add(InvertibleColor::extra_02,  m_black,    "Extra 2");
+    m_nrm_palette.add(InvertibleColor::scale,     m_lt_grey,  "Scale Brush");
+    m_nrm_palette.add(InvertibleColor::extra,     m_black,    "Extra");
 
     m_inv_palette.clear();
     m_inv_palette.add(InvertibleColor::black,     m_white,    "Foreground");
@@ -714,8 +730,8 @@ gui_palette_qt5::reset_invertibles ()
     m_inv_palette.add(InvertibleColor::textkeys,  m_white,    "Keys Text");
     m_inv_palette.add(InvertibleColor::textnames, m_white,    "Names Text");
     m_inv_palette.add(InvertibleColor::textslots, m_white,    "Slots Text");
-    m_inv_palette.add(InvertibleColor::extra_01,  m_white,    "Extra 1");
-    m_inv_palette.add(InvertibleColor::extra_02,  m_white,    "Extra 2");
+    m_inv_palette.add(InvertibleColor::scale,     m_lt_grey,  "Scale Brush");
+    m_inv_palette.add(InvertibleColor::extra,     m_white,    "Extra");
 
     m_empty_brush->setColor(get_color(InvertibleColor::white));
     m_empty_brush->setStyle(m_empty_brush_style);
@@ -723,7 +739,7 @@ gui_palette_qt5::reset_invertibles ()
     if (! m_use_gradient_brush)                     /* avoid Qt warning     */
         m_note_brush->setStyle(m_note_brush_style);
 
-    m_scale_brush->setColor(get_color(InvertibleColor::lt_grey));
+    m_scale_brush->setColor(get_color(InvertibleColor::scale));
     m_scale_brush->setStyle(m_scale_brush_style);
     m_backseq_brush->setColor(get_color(InvertibleColor::backseq));
     m_backseq_brush->setStyle(m_backseq_brush_style);

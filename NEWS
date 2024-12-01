@@ -1,10 +1,14 @@
 NEWS for Seq66 0.99.16
 Chris Ahlstrom
-2015-07-10 to 2024-11-30
+2015-07-10 to 2024-12-01
 
 # Change Log
 
 ## [0.99.16]
+
+This release provides fixes to user issues and a ton of related
+fixes found while investigating the user issues. Some minor new
+features added.
 
 ### Changed
 
@@ -23,9 +27,14 @@ Chris Ahlstrom
 - Undid a change from awhile back that broke the recording of
   fast-keyed notes on the same MIDI key. Still need to fix the
   occasional zero-length note.
-- Add provisional code to speed up recording. Grep for the macro
-  SEQ66\_LINK\_NEWEST\_NOTE\_ON\_RECORD. Undefine it if desired.
+- Added provisional code to speed up recording. Grep for the macro
+  SEQ66\_LINK\_NEWEST\_NOTE\_ON\_RECORD. Has potential issues, so
+  it is undefined.
 - Enhanced writing pattern-dump files from the event editor.
+- Added access functions for "scale" (new) and "extra" colors in the
+  palette, to improve the coloring in certain Qt style-sheet usages.
+- Progress-bar-thick = false now changes how lines are drawn in the
+  song editor.
 
 ### Fixed
 

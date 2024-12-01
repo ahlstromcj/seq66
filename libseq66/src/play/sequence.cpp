@@ -1777,7 +1777,7 @@ sequence::live_play (midipulse tick)
 
 /**
  *  This function verifies state: all note-ons have a note-off, and it links
- *  note-offs with their note-ons.
+ *  note-offs with their note-ons and vice-versa.
  *
  * \threadsafe
  *
@@ -3755,9 +3755,7 @@ sequence::add_tempo (midipulse tick, midibpm tempo, bool repaint)
          */
 
          if (result)
-         {
             modify();                               /* added ca 2022-04-25  */
-         }
     }
     return result;
 }

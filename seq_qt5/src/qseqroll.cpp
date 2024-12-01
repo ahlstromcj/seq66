@@ -557,6 +557,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
 {
     int octkey = c_octave_size - m_key;             /* used three times     */
     QBrush brush(back_color());                     /* brush(Qt::NoBrush)   */
+    QBrush sbrush(scale_brush());                   /* brush(Qt::NoBrush)   */
     QPen pen(grey_color());                         /* pen(Qt::lightGray)   */
     pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
     pen.setWidth(c_border_width);                   /* border thickness     */
@@ -565,6 +566,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     painter.setPen(pen);
     painter.drawRect(r);
     pen.setWidth(c_pen_width);                          /* line thickness   */
+    sbrush.setColor(scale_paint());
 
     /*
      * Horizontal (note) lines.
@@ -586,8 +588,12 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         {
             if (! scales_policy(m_scale, modkey))       /* scales.cpp/hpp   */
             {
-                pen.setColor(fore_color());             /* Qt::lightGray    */
-                painter.setBrush(scale_brush());
+                /*
+                 * This color is only part of the scale-brush border.
+                 */
+
+                pen.setColor(scale_paint());            /* Qt::lightGray    */
+                painter.setBrush(sbrush);
                 painter.setPen(pen);
                 painter.drawRect(0, y + 1, r.width(), unit_height() - 1);
             }
@@ -730,9 +736,8 @@ qseqroll::draw_notes
                 painter.setBrush(backseq_brush());
             }
             else
-            {
                 painter.setBrush(note_brush());
-            }
+
             painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
             if (use_gradient())
             {

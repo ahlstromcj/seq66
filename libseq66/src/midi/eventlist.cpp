@@ -109,7 +109,7 @@ eventlist::operator = (const eventlist & rhs)
 }
 
 /**
- *  Provides the minimum and maximux timestamps  of the events, in MIDI pulses.
+ *  Provides the minimum and maximux timestamps of the events, in MIDI pulses.
  *  These functions get the iterator for the first or last element and returns
  *  its value. Obviously the events must already be sorted.
  *
@@ -530,7 +530,7 @@ void
 eventlist::verify_and_link (midipulse slength, bool wrap)
 {
     bool wrap_em = m_link_wraparound || wrap;       /* a Stazed extension   */
-    clear_links();                          /* unlink and unmark all events */
+    clear_links();                          /* unlink, no unmark all events */
     sort();                                 /* important, but be careful... */
     link_new(wrap_em);
     if (slength > 0)
@@ -573,7 +573,7 @@ void
 eventlist::clear_links ()
 {
     for (auto & e : m_events)
-        e.clear_links();                    /* does unmark() and unlink()   */
+        e.clear_link();                     /* does unmark() and unlink()   */
 }
 
 int

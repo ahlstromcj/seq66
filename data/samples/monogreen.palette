@@ -1,7 +1,7 @@
 # Seq66 0.99.11 (and above) palette configuration file
 #
 # /home/user/.config/seq66/green.palette
-# Written on 2021-11-20 10:30:00
+# Written on 2024-12-01 06:40:01
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface. It must be active and
@@ -17,10 +17,8 @@ version = 0
 
 [comments]
 
-This palette is meant to tweak the normal palette for the green.qss
-style-sheet. The main thing is to make the drawn text black. We probably
-need an additional "Text" ui-palette entry to replace "Foreground" for
-text.
+This palette is meant to tweak the normal palette for the monogreen.qss
+style-sheet.
 
 # [palette] affects the pattern colors selected (by number). First is
 # the color number, 0 to 31. Next is the name of the background color.
@@ -100,8 +98,8 @@ text.
 27        "Keys Text" [ 0xFF00FF00 ]        "Keys Text" [ 0xFFFFFFFF ]
 28       "Names Text" [ 0xFF00FF00 ]       "Names Text" [ 0xFFFFFFFF ]
 29       "Slots Text" [ 0xFF00FFFF ]       "Slots Text" [ 0xFFFFFFFF ]
-30          "Extra 1" [ 0xFF00FF00 ]          "Extra 1" [ 0xFFFFFFFF ]
-31          "Extra 2" [ 0xFF00FF00 ]          "Extra 2" [ 0xFFFFFFFF ]
+30      "Scale Brush" [ 0xFF808080 ]      "Scale Brush" [ 0xFFC0C0C0 ]
+31            "Extra" [ 0xFF000000 ]            "Extra" [ 0xFFFFFFFF ]
 
 # This section defines brush styles to use. The names are based on the
 # names in the Qt::BrushStyle enumeration. The names are:

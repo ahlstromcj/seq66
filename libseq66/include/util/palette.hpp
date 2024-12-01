@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-18
- * \updates       2023-10-27
+ * \updates       2024-12-01
  * \license       GNU GPLv2 or above
  *
  *  This module is inspired by MidiPerformance::getSequenceColor() in
@@ -62,7 +62,7 @@ namespace seq66
 
 enum class PaletteColor
 {
- /* Seq64 */            /* Kepler34 */
+ /* Seq66 */            /* Kepler34 */
 
     none = -1,          // indicates no color chosen, default color
     black = 0,          //  0 WHITE
@@ -137,8 +137,8 @@ enum class InvertibleColor
     textkeys,           /**< Used for the text of the keys pane.            */
     textnames,          /**< Used for the text of perf names pane.          */
     textslots,          /**< Used for the text of the grid/pattern slots.   */
-    extra_01,           /**< Reserved for expansion.                        */
-    extra_02,           /**< Reserved for expansion.                        */
+    scale,              /**< Provides the color for drawing scale notes.    */
+    extra,              /**< Reserved for expansion.                        */
     max                 /**< First illegal palette value, not in color set. */
 };
 

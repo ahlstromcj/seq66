@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-12
+ * \updates       2024-11-30
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -950,9 +950,14 @@ public:
         m_data[0] = m_data[1] = 0;
     }
 
-    void clear_links ()
+    void clear_link ()
     {
-        unmark();
+        /*
+         * Marking not used in verify_and_link() anymore.
+         *
+         * unmark();
+         */
+
         unlink();
     }
 
