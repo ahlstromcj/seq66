@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2024-11-23
+ * \updates       2024-12-02
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -103,6 +103,20 @@ private:
     const bool m_use_gradient;      /* paint notes/triggers with gradient   */
 
 protected:
+
+    /**
+     *  TIme-saving settings for pens. Based on the following functions:
+     *
+     *      -   usr().progress_bar_thick()
+     *      -   usr().progress_bar_thickness()
+     *      -   usr().gridlines_thick()
+     */
+
+    int m_progress_bar_width;           /* 1, 2, ...                        */
+    int m_measure_pen_width;            /* will be set to 2 or 1            */
+    int m_beat_pen_width;               /* almost always 1                  */
+    Qt::PenStyle m_measure_pen_style;   /* almost always Qt::SolidLine      */
+    Qt::PenStyle m_beat_pen_style;      /* Qt::DotLine or Qt::SolidLine     */
 
     /**
      *  The previous selection rectangle, used for undrawing it.  Accessed by
@@ -361,6 +375,36 @@ public:
     bool use_gradient () const
     {
         return m_use_gradient;      /* paint notes/triggers with gradient   */
+    }
+
+    int progress_bar_width () const
+    {
+        return m_progress_bar_width;
+    }
+
+    int measure_pen_width () const
+    {
+        return m_measure_pen_width;
+    }
+
+    int horizontal_pen_width () const
+    {
+        return m_measure_pen_width;
+    }
+
+    int beat_pen_width () const
+    {
+        return m_beat_pen_width;
+    }
+
+    const Qt::PenStyle & measure_pen_style () const
+    {
+        return m_measure_pen_style;
+    }
+
+    const Qt::PenStyle & beat_pen_style () const
+    {
+        return m_beat_pen_style;
     }
 
     const Color & tempo_color () const

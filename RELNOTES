@@ -1,15 +1,10 @@
-Release Notes for Seq66 v. 0.99.16 2024-11-29
+Release Notes for Seq66 v. 0.99.16 2024-12-01
 
 Fixes for NSM (session manager), build-file updates, and better PPQN
 and recording handling. A lot of little issues found and fixed, too.
 
 - Fixed issue #128 with expanded recording not working. The expansion
   is now continual, not waiting for a MIDI key to be struck.
-- The main window now reflects the current record-loop style and
-  new-pattern option as read from the 'usr' file.
-- Fixed zero-length notes caused by quantized recording.
-- Fixed the pattern editor so it reflects buss and channel settings
-  made from the grid slot popup menu.
 - Merged a fix from a pull request (issue #130) to update the
   "*.desktop" files.
 - Fixed issue #131 re faulty NSM interactions introduced in version
@@ -19,13 +14,18 @@ and recording handling. A lot of little issues found and fixed, too.
   - Saving via a remote NSM Save command or by the File / Save menu
     would not clear the modified flag.
   - Closing the session would not remove any external editor windows.
+- The main window now reflects the current record-loop style and
+  new-pattern option as read from the 'usr' file.
+- Fixed the pattern editor so it reflects buss and channel settings
+  made from the grid slot popup menu.
+- Fixed the display of tunes with various PPQNs such as 120 in the
+  pattern editor.
+- Fixed zero-length notes caused by quantized recording.
 - Some automation actions need to work whether the action is "on" or
   "toggle". Fixed these 'ctrl' actions:
   - Save session (under NSM) or the MIDI file.
   - Record style select.
   - Quit.
-- Fixed the display of tunes with various PPQNs such as 120 in the
-  pattern editor.
 - Added "Clear events" to the grid slot popup menu.
 - Enhancements to pattern-editor note copy/paste.
 - Added 120 PPQN to the list of supported PPQNs.
@@ -41,6 +41,7 @@ and recording handling. A lot of little issues found and fixed, too.
   differentiates between client name and config directory name.
   Updated the Makefile sources. Do "./bootstrap --full-clean".
 - Updated the PDF documentation re the Import/Export functionality.
-- See NEWS and ChangeLog for more details.
+- Upgraded the color palette code.
+- See NEWS and ChangeLog for full details.
 
 # vim: sw=4 ts=4 wm=15 et ft=rc

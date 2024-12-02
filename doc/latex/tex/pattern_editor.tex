@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2024-11-18
+% \update      2024-12-01
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1657,6 +1657,11 @@
    Thru function is effectively disabled.  To restore it,
    toggle the Thru off, then on, again.
    Also note that Thru will remain enabled when the pattern editor is closed.
+
+   \textsl{Warning:}
+   If Thru is active, and the output port for the pattern is the
+   same as the input port, then the struck note will be repeated
+   for as long as recording is active.
 
    \itempar{MIDI Record Toggle}{pattern editor!record midi data}
    This button routes incoming MIDI data into

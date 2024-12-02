@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-18
+ * \updates       2024-12-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -213,52 +213,6 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
         if ((bwidth % 2) != 0)
             ticks_per_step = zoom();
 
-#if defined USE_NEW_CODE
-        for (midipulse tick = starttick; tick < endtick; ++tick)
-        {
-            int x_offset = xoffset(tick) - scroll_offset_x() + s_x_tick_fix;
-            int penwidth = 1;
-            enum Qt::PenStyle penstyle = Qt::SolidLine;
-            Color c = beat_color();
-            if (tick % ticks_per_bar == 0)          /* thick solid line bar */
-            {
-                char bar[32];
-                int measure = track().measure_number(tick);
-                penwidth = 2;
-                snprintf(bar, sizeof bar, "%d", measure);
-
-                QString qbar(bar);
-                pen.setColor(text_time_paint());    /* Qt::black            */
-                painter.setPen(pen);
-                painter.drawText(x_offset + 3, 10, qbar);
-            }
-            else if (tick % ticks_per_beat == 0)    /* light on every beat  */
-            {
-                pen.setColor(c);
-                pen.setWidth(penwidth);
-                pen.setStyle(penstyle);
-                painter.setPen(pen);
-                painter.drawLine(x_offset, 0, x_offset, sizeheight);
-            }
-            else if (tick % ticks_per_four == 0)
-            {
-                pen.setColor(c);
-                pen.setWidth(penwidth);
-                pen.setStyle(penstyle);
-                painter.setPen(pen);
-                painter.drawLine(x_offset, 0, x_offset, sizeheight);
-            }
-            else if (tick % ticks_per_step == 0)
-            {
-                penstyle = Qt::DotLine;
-                pen.setColor(c);
-                pen.setWidth(penwidth);
-                pen.setStyle(penstyle);
-                painter.setPen(pen);
-                painter.drawLine(x_offset, 0, x_offset, sizeheight);
-            }
-        }
-#else
         for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
         {
             int x_offset = xoffset(tick) - scroll_offset_x() + s_x_tick_fix;
@@ -283,19 +237,17 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
             }
             else if (tick % ticks_per_four == 0)
             {
-                // absorbed below
+                penstyle = Qt::DashDotLine;
             }
-            else                                    /* new 2023-06-21       */
-            {
+            else
                 penstyle = Qt::DotLine;
-            }
+
             pen.setColor(c);
             pen.setWidth(penwidth);
             pen.setStyle(penstyle);
             painter.setPen(pen);
             painter.drawLine(x_offset, 0, x_offset, sizeheight);
         }
-#endif  // USE_NEW_CODE
     }
 }
 

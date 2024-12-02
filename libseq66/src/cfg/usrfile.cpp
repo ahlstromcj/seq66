@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-11-13
+ * \updates       2024-12-02
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -50,7 +50,7 @@ namespace seq66
 
 static const int s_usr_legacy       =  5;
 static const int s_usr_smf_1        =  8;
-static const int s_usr_file_version = 13;
+static const int s_usr_file_version = 14;
 
 /**
  *  Principal constructor.
@@ -68,6 +68,7 @@ static const int s_usr_file_version = 13;
  *     11:  2023-10-12: Added more new-pattern options (e.g. notemap)
  *     12:  2023-11-02: Moved style-sheets to the 'rc' file.
  *     13:  2024-02-23: Added elliptical progress-box option.
+ *     14:  2024-02-23: Added progress-bar-thickness and gridlines-thick.
  *
  * \param name
  *      Provides the full file path specification to the configuration file.
@@ -140,7 +141,7 @@ usrfile::parse ()
         return false;
 
     std::string temp = parse_version(file);
-    if (temp.empty() || file_version_number() < s_usr_file_version)
+    if (temp.empty() || file_version_is_old(file))
         rc().auto_usr_save(true);
 
     temp = parse_comments(file);
@@ -294,10 +295,19 @@ usrfile::parse ()
         usr().global_seq_feature(flag);
         flag = get_boolean(file, tag, "progress-bar-thick");
         usr().progress_bar_thick(flag);
+        scratch = get_integer(file, tag, "progress-bar-thickness");
+        if (scratch <= 0)
+            scratch = flag ? 2 : 1 ;        /* apply thickness or not?      */
+        else if (! flag)
+            scratch = 1;
+
+        usr().progress_bar_thickness(scratch);
         flag = get_boolean(file, tag, "progress-box-elliptical");
         usr().progress_box_elliptical(flag);
         flag = get_boolean(file, tag, "follow-progress");
         usr().follow_progress(flag);
+        flag = get_boolean(file, tag, "gridlines-thick");
+        usr().gridlines_thick(flag);
         flag = get_boolean(file, tag, "inverse-colors");
 
         std::string color = get_variable(file, tag, "time-fg-color");
@@ -546,6 +556,8 @@ usrfile::parse ()
     }
     flag = get_boolean(file, tag, "escape-pattern");
     usr().escape_pattern(flag);
+    flag = get_boolean(file, tag, "apply-to-new-only");
+    usr().pattern_new_only(flag);
     flag = get_boolean(file, tag, "armed");
     usr().pattern_armed(flag);
     flag = get_boolean(file, tag, "thru");
@@ -835,12 +847,16 @@ usrfile::write ()
 "# patterns versus separately to each.  If all, these values are stored in the\n"
 "# MIDI file in the global SeqSpec versus in each track.\n"
 "#\n"
-"# 'progress-bar-thick specifies a thicker progress bar.  Default is 2 pixels,\n"
+"# 'progress-bar-thick/ness' specifies the progress bar/box. Default = 2 pixels,\n"
 "# 1 pixel if set to false. Also affects the slot box border and the boldness\n"
 "# of the slot font. 'progress-box-elliptical' creates an elliptical box.\n"
 "#\n"
 "# 'follow-progress' sets the default for following progress in the piano\n"
 "# rolls. Each window has a button to toggle following progess.\n"
+"#\n"
+"# 'gridlines-thick', if true (the default) specifies the normal style of\n"
+"# grid-lines. If false, then lines are thinner or dotted. Useful if the lines\n"
+"# are too bright as specified by the palette.\n"
 "#\n"
 "# 'inverse-colors' (option -K/--inverse) specifies use of an inverse color\n"
 "# palette. Palettes are for Seq66 drawing areas, not for Qt widgets.\n"
@@ -871,11 +887,16 @@ usrfile::write ()
     write_integer(file, "default-zoom", usr().zoom());
     write_boolean(file, "global-seq-feature", usr().global_seq_feature());
     write_boolean(file, "progress-bar-thick", usr().progress_bar_thick());
+    write_integer
+    (
+        file, "progress-bar-thickness", usr().progress_bar_thickness()
+    );
     write_boolean
     (
         file, "progress-box-elliptical", usr().progress_box_elliptical()
     );
     write_boolean(file, "follow-progress", usr().follow_progress());
+    write_boolean(file, "gridlines-thick", usr().gridlines_thick());
     write_boolean(file, "inverse-colors", usr().inverse_colors());
     write_string(file, "time-fg-color", usr().time_fg_color(true), true);
     write_string(file, "time-bg-color", usr().time_bg_color(true), true);
@@ -1085,16 +1106,22 @@ usrfile::write ()
     file <<
 "\n# [pattern-editor]\n"
 "#\n"
-"# Settings for play/record for a new pattern. A new pattern is 'Untitled'\n"
-"# and has no events. These settings save time in live recording. Valid\n"
-"# record-style values: 'merge' (overdub), 'overwrite', 'expand', 'one-shot',\n"
-"# and 'one-shot-reset'. 'wrap-around' allows recorded notes to wrap to the\n"
-"# pattern start. 'escape-pattern' allows the Esc key to close the pattern\n"
-"# editor if not playing or in paint mode. Currently 'notemap' and quantizing\n"
+"# 'escape-pattern' allows the Esc key to close a pattern editor if not\n"
+"# playing or in paint mode. (Esc exits paint mode or stops playback.)\n"
+"#\n"
+"# 'apply-to-new-only' makes the next options work only when opening a new\n"
+"# pattern.  A new pattern is 'Untitled' and has no events.\n"
+"#\n"
+"# These settings for play/record for a pattern editor save time in live\n"
+"# recording. Valid record-style values: 'merge' (overdub), 'overwrite',\n"
+"# 'expand', and 'one-shot'. 'wrap-around' allows recorded notes to wrap\n"
+"# to the pattern beginning. Currently 'notemap' and quantizing are\n"
 "# are mutually exclusive.\n"
+"#\n"
 "\n[pattern-editor]\n\n"
         ;
     write_boolean(file, "escape-pattern", usr().escape_pattern());
+    write_boolean(file, "apply-to-new-only", usr().pattern_new_only());
     write_boolean(file, "armed", usr().pattern_armed());
     write_boolean(file, "thru", usr().pattern_thru());
     write_boolean(file, "record", usr().pattern_record());

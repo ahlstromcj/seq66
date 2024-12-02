@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-30
+ * \updates       2024-12-02
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -109,7 +109,6 @@ qperfroll::qperfroll
     m_perf_names        (seqnames),
     m_timer             (nullptr),
     m_font              ("Monospace"),
-    m_prog_thickness    (usr().progress_bar_thick() ? 2 : 1),
     m_trigger_transpose (0),
     m_tick_s            (0),
     m_tick_f            (0),
@@ -235,9 +234,11 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
     int progress_x = tix_to_pix(tick);          /* tick / scale_zoom()      */
     pen.setColor(progress_color());
     pen.setStyle(Qt::SolidLine);
-    pen.setWidth(m_prog_thickness);
+    pen.setWidth(progress_bar_width());
 
     painter.setPen(pen);
+    if (progress_x == 0)
+        progress_x = 3;
     painter.drawLine(progress_x, 1, progress_x, height() - 2);
 }
 
@@ -1013,7 +1014,7 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
     QBrush brush(back_color());                         /* Qt::NoBrush      */
     QPen pen(fore_color());                             /* Qt::black        */
     pen.setStyle(Qt::SolidLine);
-    pen.setWidth(m_prog_thickness);
+    pen.setWidth(horizontal_pen_width());
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.drawRect(0, 0, width(), height());          /* full width       */
@@ -1038,16 +1039,15 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
         int x_pos = xoffset(tick);
         if (tick % measure_length() == 0)               /* measure          */
         {
-            pen.setStyle(Qt::SolidLine);
             pen.setColor(beat_paint());                 /* fore_color()     */
-            penwidth = m_prog_thickness;
+            pen.setStyle(measure_pen_style());
+            penwidth = measure_pen_width();
         }
         else if (tick % beat_length() == 0)             /* beat             */
         {
-            penwidth = 1;
             pen.setColor(beat_color());
-            if (! usr().progress_bar_thick())
-                pen.setStyle(Qt::DotLine);
+            pen.setStyle(beat_pen_style());
+            penwidth = beat_pen_width();
         }
         pen.setWidth(penwidth);
         painter.setPen(pen);
@@ -1128,7 +1128,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                             grad.setColorAt(0.99, backcolor.darker(150));
                         }
                         pen.setStyle(Qt::SolidLine);    /* seq trigger box  */
-                        pen.setWidth(m_prog_thickness);
+                        pen.setWidth(measure_pen_width());
 
                         /*
                          * painter.fillRect(x, y, w, h + 1, grad);
@@ -1157,7 +1157,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                             brush.setColor(backcolor);
                         }
                         pen.setStyle(Qt::SolidLine);    /* seq trigger box  */
-                        pen.setWidth(m_prog_thickness);
+                        pen.setWidth(measure_pen_width());
                         brush.setStyle(Qt::SolidPattern);
                         painter.setBrush(brush);
                         painter.setPen(pen);

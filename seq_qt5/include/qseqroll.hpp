@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-25
+ * \updates       2024-12-02
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -226,13 +226,6 @@ private:
      */
 
     QTimer * m_timer;
-
-    /**
-     *  The width, in pixels, of the progress-bar/playhead.  Usually 1 or 2
-     *  pixels.
-     */
-
-    int m_progbar_width;
 
     /**
      *  Indicates the musical scale in force for this sequence.

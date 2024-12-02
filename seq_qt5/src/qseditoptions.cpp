@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-12
+ * \updates       2024-12-01
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1517,6 +1517,12 @@ qseditoptions::setup_tab_pattern ()
         ui->checkBoxNewPatternNoteMap, SIGNAL(clicked(bool)),
         this, SLOT(slot_pattern_notemap())
     );
+    ui->checkBoxNewApply->setChecked(usr().pattern_new_only());
+    connect
+    (
+        ui->checkBoxNewApply, SIGNAL(clicked(bool)),
+        this, SLOT(slot_pattern_new_only())
+    );
     ui->checkBoxNewPatternRecord->setChecked(usr().pattern_record());
     connect
     (
@@ -1641,6 +1647,18 @@ qseditoptions::slot_pattern_notemap ()
         ui->checkBoxNewPatternQRecord->setChecked(false);
         usr().pattern_tighten(false);
         usr().pattern_qrecord(false);
+    }
+    modify_usr();
+}
+
+void
+qseditoptions::slot_pattern_new_only ()
+{
+    bool enable = ui->checkBoxNewApply->isChecked();
+    usr().pattern_new_only(enable);
+    if (enable)
+    {
+        // nothing yet to do
     }
     modify_usr();
 }

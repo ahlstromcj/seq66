@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2024-11-23
+ * \updates       2024-12-02
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -89,6 +89,11 @@ qeditbase::qeditbase
     m_scale_brush           (gui_scale_brush()),
     m_backseq_brush         (gui_backseq_brush()),
     m_use_gradient          (gui_use_gradient_brush()),
+    m_progress_bar_width    (2),
+    m_measure_pen_width     (2),
+    m_beat_pen_width        (1),
+    m_measure_pen_style     (Qt::SolidLine),
+    m_beat_pen_style        (Qt::SolidLine),        /* or Qt::DotLine       */
     m_old                   (),                     /* past selection box   */
     m_selected              (),                     /* current sel box      */
     m_zoomer                (p.ppqn(), initialzoom, scalex),
@@ -124,7 +129,17 @@ qeditbase::qeditbase
     m_unit_height           (unit_height),
     m_total_height          (total_height)
 {
-    // no other code needed
+    if (usr().progress_bar_thick())
+    {
+        if (usr().progress_bar_thickness() > 1)
+            m_progress_bar_width = usr().progress_bar_thickness();
+
+    }
+    if (! usr().gridlines_thick())
+    {
+        m_measure_pen_width = 1;
+        m_beat_pen_style = Qt::DotLine;
+    }
 }
 
 bool

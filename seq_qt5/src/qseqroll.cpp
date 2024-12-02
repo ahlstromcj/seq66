@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-26
+ * \updates       2024-12-02
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -100,7 +100,6 @@ qseqroll::qseqroll
     m_backseq_color         (backseq_paint()),
     m_seqkeys_wid           (seqkeys_wid),
     m_timer                 (nullptr),
-    m_progbar_width         (usr().progress_bar_thick() ? 2 : 1),
     m_scale                 (scales::off),
     m_pos                   (0),
     m_chord                 (0),
@@ -424,7 +423,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
 
     pen.setColor(progress_color());
     pen.setStyle(Qt::SolidLine);
-    pen.setWidth(m_progbar_width);
+    pen.setWidth(progress_bar_width());
     painter.setPen(pen);
     old_progress_x(progress_x());
     progress_x(xoffset(track().get_tick()));
@@ -565,7 +564,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     painter.setBrush(brush);
     painter.setPen(pen);
     painter.drawRect(r);
-    pen.setWidth(c_pen_width);                          /* line thickness   */
+    pen.setWidth(horizontal_pen_width());
     sbrush.setColor(scale_paint());
 
     /*
@@ -603,6 +602,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     int count = track().time_signature_count();
     midipulse ppmeas = midipulse(default_pulses_per_measure(perf().ppqn()));
     midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
+//  midipulse ticks_per_four = ticks_per_step * 4;
     midipulse endtick = pix_to_tix(r.x() + r.width());
     for (int tscount = 0; tscount < count; ++tscount)
     {
@@ -626,11 +626,14 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
             enum Qt::PenStyle penstyle = Qt::SolidLine;
             if (tick % ticks_per_bar == 0)          /* solid line every bar */
             {
+                pen.setStyle(measure_pen_style());
+                penwidth = measure_pen_width();
                 pen.setColor(beat_paint());
-                penwidth = 2;
             }
             else if (tick % ticks_per_beat == 0)    /* light on every beat  */
             {
+                pen.setStyle(beat_pen_style());
+                penwidth = beat_pen_width();
                 pen.setColor(beat_color());
             }
             else

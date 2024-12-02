@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2024-11-13
+ * \updates       2024-12-01
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -336,8 +336,10 @@ usrsettings::usrsettings () :
     m_seqedit_key               (c_key_of_C),
     m_seqedit_bgsequence        (seq::limit()),
     m_progress_bar_thick        (true),
+    m_progress_bar_thickness    (2),
     m_progress_box_elliptical   (false),
     m_follow_progress           (true),
+    m_gridlines_thick           (true),
     m_inverse_colors            (false),
     m_time_fg_color             ("default"),
     m_time_bg_color             ("default"),
@@ -421,6 +423,7 @@ usrsettings::usrsettings () :
     m_pattern_tighten           (false),
     m_pattern_qrecord           (false),
     m_pattern_notemap           (false),
+    m_pattern_new_only          (false),
     m_pattern_record_style      (recordstyle::merge),
     m_pattern_wraparound        (false),
     m_record_alteration               (alteration::none),
@@ -456,8 +459,10 @@ usrsettings::set_defaults ()
     m_seqedit_key = c_key_of_C;
     m_seqedit_bgsequence = seq::limit();
     m_progress_bar_thick = true;
+    m_progress_bar_thickness = 2;
     m_progress_box_elliptical = false;
     m_follow_progress = true;
+    m_gridlines_thick = true;
     m_inverse_colors = false;
     m_time_fg_color = "default";
     m_time_bg_color = "default";
@@ -529,6 +534,7 @@ usrsettings::set_defaults ()
     m_pattern_tighten = false;
     m_pattern_qrecord = false;
     m_pattern_notemap = false;
+    m_pattern_new_only = false;
     m_pattern_record_style = recordstyle::merge;
     m_pattern_wraparound = false;
     m_record_alteration = alteration::none;

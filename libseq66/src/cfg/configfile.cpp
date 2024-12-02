@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-11-02
+ * \updates       2024-12-02
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -179,7 +179,7 @@ configfile::parse_version (std::ifstream & file)
 }
 
 bool
-configfile::file_version_old (std::ifstream & file)
+configfile::file_version_is_old (std::ifstream & file)
 {
     std::string file_version_string = parse_version(file);
     int file_version = string_to_int(file_version_string);

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2024-11-13
+ * \updates       2024-12-01
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -278,7 +278,7 @@ private:
      *      -#  mainwnd-cols
      *      -#  zoom
      *      -#  global-seq-feature
-     *      -#  progress-bar-thick
+     *      -#  progress-bar-thick (progress-bar-thickness)
      *      -#  window-redraw-rate-ms
      */
 
@@ -452,10 +452,17 @@ private:
      *  If set, makes progress bars thicker than 1 pixel... 2 pixels.
      *  It isn't useful to support anything thicker.  The default is now to
      *  use 1 pixel.  Also, this setting now applies to the progress box
-     *  itself.
+     *  itself. The default value is true.
      */
 
     bool m_progress_bar_thick;
+
+    /*
+     *  The new variable, thickness, is used regardless of the boolean
+     *  value. The default value is 2.
+     */
+
+    int m_progress_bar_thickness;
 
     /**
      *  Instead of a rectangular progress box, use an elliptical one.
@@ -470,6 +477,16 @@ private:
      */
 
     bool m_follow_progress;
+
+    /**
+     *  We now offer a way to modify the grid-lines in the piano rolls.
+     *  If true (the default), then the measure lines are thick and the
+     *  beat lines are solid. Otherwise, the measure lines are thin
+     *  and the beat lines are dotted. This option can be set to false i
+     *  the grid lines are too glaring.
+     */
+
+    bool m_gridlines_thick;
 
     /**
      *  If set, use an alternate, neo-inverse color palette.  Not all colors
@@ -965,6 +982,7 @@ private:
     bool m_pattern_tighten;
     bool m_pattern_qrecord;
     bool m_pattern_notemap;
+    bool m_pattern_new_only;
 
     /**
      *  Provides the default recording style (merge, overwrite, etc.) at
@@ -1375,9 +1393,19 @@ public:
         return m_progress_bar_thick;
     }
 
+    int progress_bar_thickness () const
+    {
+        return m_progress_bar_thickness;
+    }
+
     bool progress_box_elliptical () const
     {
         return m_progress_box_elliptical;
+    }
+
+    bool gridlines_thick () const
+    {
+        return m_gridlines_thick;
     }
 
     bool follow_progress () const
@@ -1796,6 +1824,11 @@ public:
         return m_pattern_notemap;
     }
 
+    bool pattern_new_only () const
+    {
+        return m_pattern_new_only;
+    }
+
     /*
      * Record style refers to what happens to already recorded notes when the
      * pattern wraps around.
@@ -1925,6 +1958,11 @@ public:         // used in main application module and the usrfile class
         m_progress_bar_thick = flag;
     }
 
+    void progress_bar_thickness (int t)
+    {
+        m_progress_bar_thickness = t;
+    }
+
     void progress_box_elliptical (bool flag)
     {
         m_progress_box_elliptical = flag;
@@ -1933,6 +1971,11 @@ public:         // used in main application module and the usrfile class
     void follow_progress (bool flag)
     {
         m_follow_progress = flag;
+    }
+
+    void gridlines_thick (bool flag)
+    {
+        m_gridlines_thick = flag;
     }
 
     void lock_main_window (bool flag)
@@ -2083,6 +2126,11 @@ public:         // used in main application module and the usrfile class
     void pattern_notemap (bool flag)
     {
         m_pattern_notemap = flag;
+    }
+
+    void pattern_new_only (bool flag)
+    {
+        m_pattern_new_only = flag;
     }
 
     void pattern_wraparound (bool flag)

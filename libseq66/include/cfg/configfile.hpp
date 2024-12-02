@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-08-22
+ * \updates       2024-12-02
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -209,7 +209,7 @@ public:
 
     std::string parse_comments (std::ifstream & file);
     std::string parse_version (std::ifstream & file);
-    bool file_version_old (std::ifstream & file);
+    bool file_version_is_old (std::ifstream & file);
 
     const std::string & file_extension () const
     {

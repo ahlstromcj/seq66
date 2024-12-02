@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.16
 Chris Ahlstrom
-2015-07-10 to 2024-12-01
+2015-07-10 to 2024-12-02
 
 # Change Log
 
@@ -12,71 +12,87 @@ features added.
 
 ### Changed
 
-- Refined documentation about the Import/Export functionality.
-- Added CONFIG\_DIR\_NAME and cleaned up configure.ac. Updated the
-  Makefile sources.
-- Merged a fix from a pull request to update the \*.desktop files.
-- Renamed [new-pattern-editor] to [pattern-editor] in the 'usr' file.
-- The Quantized Record button in the pattern editor now goes through
-  this sequence when clicked: None, Tighten, Quantize, Notemap,
-  None.... Also prettied-up the icons.
-- Enhancements to pattern-editor note copy/paste:
-  - The paste-selection box now shows the selected notes, for easier
-    placement.
-  - A right-click cancels a paste action in the pattern editor.
-- Undid a change from awhile back that broke the recording of
-  fast-keyed notes on the same MIDI key. Still need to fix the
-  occasional zero-length note.
-- Added provisional code to speed up recording. Grep for the macro
-  SEQ66\_LINK\_NEWEST\_NOTE\_ON\_RECORD. Has potential issues, so
-  it is undefined.
-- Enhanced writing pattern-dump files from the event editor.
-- Added access functions for "scale" (new) and "extra" colors in the
-  palette, to improve the coloring in certain Qt style-sheet usages.
-- Progress-bar-thick = false now changes how lines are drawn in the
-  song editor.
+- Documentation. Refined discussion about the about the Import/Export
+  functionality, and some of the minor additional features. Some new
+  screenshots still needed.
+- Build configuration. Added CONFIG\_DIR\_NAME and cleaned up
+  configure.ac. Updated the Makefile sources.
+- Merged a fix from a pull request (issue #130) to correct
+  the \*.desktop files.
+- Pattern editor.
+    - Renamed [new-pattern-editor] to [pattern-editor] in the 'usr'
+      file. Also added the "Apply to new only" option to Edit /
+      Preferences / Display.
+    - The Quantized Record button in the pattern editor now goes through
+      this sequence when clicked: None, Tighten, Quantize, Notemap,
+      None.... Also prettied-up the icons.
+    - Enhancements to pattern-editor note copy/paste:
+      - The paste-selection box now shows the selected notes,
+        ghosted, for easier placement.
+      - A right-click cancels a paste action in the pattern editor.
+    - Undid a change from awhile back that broke the recording of
+      fast-keyed notes on the same MIDI key. Still need to fix the
+      occasional zero-length note.
+    - Added provisional code to speed up recording. Grep for the macro
+      SEQ66\_LINK\_NEWEST\_NOTE\_ON\_RECORD. Has potential issues, so
+      it is undefined.
+- Color palette. Added access functions for "scale" (new) and "extra"
+  colors in the palette, to improve the coloring (e.g. of the bars
+  denoting notes in the scale of the pattern editor) in certain Qt
+  style-sheet usages.
+- Event editor. Enhanced writing pattern-dump files from the event
+  editor.
 
 ### Fixed
 
-- Fixed issue #128 with expanded recording not working. Note that
-  the expansion is now continual, not waiting for a MIDI key to
-  be struck. Also see the changes to the record buttons in the pattern
-  editor.
-- Merged a pull request for issue #130 to fix the \*.desktop files.
-- Fixed issue #131 with NSM interactions introduced in version 0.99.11,
-  plus other related issue:
+- Issue #128. Expanded recording not working. Note that the expansion
+  is now continual, not waiting for a MIDI key to be struck. Also see
+  the changes to the record buttons in the pattern editor.
+- Issue #130. Merged a pull request for issue #130 to fix the
+  \*.desktop files.
+- Issue #131. NSM interaction errors introduced in version 0.99.11,
+  plus other related issues:
   - The NSM would show two clients: "qseq66" and "seq66" when adding
     only the "qseq66" client.
   - Saving via a remote NSM Save command or by the File / Save menu
     would not clear the modified flag.
   - Closing the session would not remove any external editor windows.
-- Some automation actions need to work whether the action is "on" or
-  "toggle". Fixed these 'ctrl' actions:
+- Automation. Some automation actions need to work whether the action
+  is "on" or "toggle". Fixed these 'ctrl' actions:
   - Save session (under NSM) or the MIDI file.
   - Record style select.
   - Quit.
-- Fixed the display of tunes with various PPQNs such as 120 in the
-  pattern editor.
-- Fixed the following scenario: Load a song; do File / New; make a
-  pattern; then File / Save. It overwrites the previous song. The
-  fix now brings up a prompt for the name of the new file.
-- The main window now reflects the current record-loop style and
-  new-pattern option as read from the 'usr' file.
-- Fixed zero-length notes caused by quantized recording.
-- Fixed the pattern editor so it reflects buss and channel settings
-  made from the grid slot popup menu.
+- Pattern editor.
+  - Fixed the display of tunes with various PPQNs such as 120 and 240.
+  - Fixed zero-length notes caused by quantized recording.
+  - Fixed the pattern editor so it reflects buss and channel settings
+    made from the grid slot popup menu.
+- Main window.
+  - Fixed the following scenario: Load a song; do File / New; make a
+    pattern; then File / Save. It overwrites the previous song. The
+    fix now brings up a prompt for the name of the new file.
+  - The main window now reflects the current record-loop style and
+    new-pattern option as read from the 'usr' file.
 
 ### Added
 
-- Added "Clear events" to the grid slot popup menu. It keeps the
-  pattern in the slot, but removes all of its MIDI events.
-- Added 120 PPQN to the list of supported PPQNs.
-- Added a "config directory" macro to configure.ac and seq-feature
-  functions to access it. Differentiates between client and directory
-  name.
+- Main window.
+  - Added "Clear events" to the grid slot popup menu. It keeps the
+    pattern in the slot, but removes all of its MIDI events.
+  - Added 120 PPQN to the list of supported PPQNs.
+- Build configuration. Added a "config directory" macro to
+  configure.ac and seq-feature functions to access it. Differentiates
+  between client and directory name.
 - Added monogreen.palette, monogreen.qss, and a down.png icon. Copy
   all to ~/.config/seq66 and modify the image url in the qss file
-  to match your setting. Will work on a qrc file soon.
+  to match your setting. Will work on a qrc file for a future release.
+- 'usr' configuration file. Currently must edit the file to change
+  these values.
+  - progress-bar-thickness changes the width of the progress bars
+    if progress-bar-thick = true. It mainly affects the song editor.
+  - gridlines-thick paints the normal song editor grid. If false,
+    then more lines are thinner or dotted; useful if the foreground
+    color is bright. It mainly affects the song editor.
 
 ## [0.99.15]
 

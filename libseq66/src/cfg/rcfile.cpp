@@ -205,7 +205,7 @@ rcfile::parse ()
     bool verby = get_boolean(file, tag, "quiet");
     rc_ref().quiet(verby);
     std::string s = parse_version(file);
-    if (s.empty() || file_version_old(file))
+    if (s.empty() || file_version_is_old(file))
         rc_ref().auto_rc_save(true);
 
     s = get_variable(file, tag, "sets-mode");
