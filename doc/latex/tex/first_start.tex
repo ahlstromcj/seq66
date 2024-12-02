@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-12-04
+% \update      2024-12-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -46,19 +46,20 @@
    This first start creates the configuration files in
 
    \begin{verbatim}
-      /home/user/.config/seq66/}                      (Linux)
-      C:/Users/your\_user\_name/AppData/Local/seq66}  (Windows)
+      /home/user/.config/seq66/                       (Linux)
+      C:/Users/your\_user\_name/AppData/Local/seq66   (Windows)
    \end{verbatim}
 
    If a session manager (e.g. \textsl{NSM})
    is used, the configuration directory is determined by
-   the session manager, and is also called a "session" directory..
+   the session manager, and is also called a "session" directory.
    The main configuration file is
    \texttt{qseq66.rc} (Linux) or
    \texttt{qpseq66.rc} (Windows).
    The '.rc' file contains ports and port-mapping for the devices
    initially on the system.
-   It also specifies the names of a number of other configuration files.
+   It also specifies the names and active-status
+   of a number of other configuration files.
 
    Now start \textsl{Seq66} to use JACK or ALSA for MIDI.
    For USB MIDI devices on JACK, the \texttt{a2jmidid} program might
@@ -80,12 +81,18 @@
    the current run:
 
    \begin{verbatim}
-      $ qseq66 --alsa --buss 5 /usr/share/seq66/midi/b4uacuse-gm-patchless.midi
-      $ qseq66 --jack --buss 5 /usr/share/seq66/midi/b4uacuse-gm-patchless.midi
+      $ qseq66 --alsa --buss 5 \
+         /usr/local/share/seq66-0.99/midi/b4uacuse-gm-patchless.midi
+      $ qseq66 --jack --buss 5 \
+         /usr/local/share/seq66-0.99/midi/b4uacuse-gm-patchless.midi
    \end{verbatim}
 
+   Note that \texttt{/usr/local} is where the program and its data files
+   are stored, and \texttt{-0.99} is the version number.
+
    The buss-override setting can also be made via the port drop-down control
-   in the main window. It will modify the MIDI file.
+   in the main window.
+   It \textsl{will modify} the MIDI file.
    The "data" directory is a directory created upon installation of the
    application:
 
@@ -102,15 +109,15 @@
    \begin{verbatim}
       /home/username/.config/seq66/qseq66.*           (Linux)
       C:/Users/username/AppData/Local/seq66           (Windows)
-      ~/NSM Sessions/sessname/seq66.nXXXX/config      (NSM)
+      ~/NSM Sessions/sessioname/seq66.nXXXX/config    (NSM)
    \end{verbatim}
 
    The configuration files in the "home" directory
    are created after the first run of \textsl{Seq66}.
    If all is well, the "play" button will start playback and the tune sounds.
    If not, look into \textbf{Edit / Preferences} or the configuration files.
-   Don't change the configuration files while \textsl{Seq66} is running, as
-   they are generally re-saved at application exit.
+   Don't edit the configuration files while \textsl{Seq66} is running, as
+   they might be re-saved at application exit.
 
    \textbf{Bug?}
       The first-start change of input port settings might not get saved
@@ -136,6 +143,7 @@
    It will prompt for a potential remapping and restart.
    Click that button if feeling lucky, otherwise
    exit and fix the 'rc' file with a text editor.
+   Also see \sectionref{sec:port_mapping}.
 
    \textbf{Warning}:
    If one has hand-tailored the port maps to represent all possible devices one
@@ -158,6 +166,8 @@
    One way to do this is to use the "buss-override" feature
    (see \sectionref{subsubsec:introduction_sets_buss_override}),
    which affects all patterns shown on the Live grid.
+   Another way is to use port-mapping;
+   \sectionref{sec:port_mapping}.
 
 \subsection{Windows}
 \label{subsec:introduction_windows}
@@ -183,9 +193,10 @@
    if nothing else.
    We hope to get some input from
    \textsl{Windows} users, as our main usage is \textsl{Linux}
-   and we run \textsl{Windows} only in an old virtual machine.
+   and we run \textsl{Windows} only when we absolutely must, for building
+   and testing.
 
-   As for virtual ports in \textsl{Windows}, a useful too
+   As for virtual ports in \textsl{Windows}, a useful tool
    is \textsl{LoopMIDI} (\cite{loopmidi}), as noted in the section
    on \textsl{Windows}.
 

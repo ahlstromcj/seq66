@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-11-09
+ * \updates       2024-12-02
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -619,7 +619,7 @@ qsmainwnd::qsmainwnd
 
     /*
      * Provide a menu entry to toggle all tracks.  We also add a track toggle
-     * button for quicker access; it will be disabled in Song mode.
+     * button for quicker access.
      */
 
     connect
@@ -1374,7 +1374,7 @@ qsmainwnd::set_song_mode (bool /*songmode*/)
     bool playmode = cb_perf().toggle_song_mode();
     if (playmode)
     {
-        ui->btnMute->setEnabled(false);
+        ui->btnMute->setEnabled(true);  /* no longer disabled in Song mode  */
     }
     else
     {

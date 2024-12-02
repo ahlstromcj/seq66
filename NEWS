@@ -88,9 +88,9 @@ features added.
   to match your setting. Will work on a qrc file for a future release.
 - 'usr' configuration file. Currently must edit the file to change
   these values.
-  - progress-bar-thickness changes the width of the progress bars
+  - progress-bar-thickness. Changes the width of the progress bars
     if progress-bar-thick = true. It mainly affects the song editor.
-  - gridlines-thick paints the normal song editor grid. If false,
+  - gridlines-thick. Paints the normal song editor grid. If false,
     then more lines are thinner or dotted; useful if the foreground
     color is bright. It mainly affects the song editor.
 

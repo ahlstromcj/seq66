@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>6</number>
+      <number>7</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -542,7 +542,7 @@ Each port number can be found by name-lookup.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>388</y>
+         <y>370</y>
          <width>611</width>
          <height>161</height>
         </rect>
@@ -849,7 +849,7 @@ channel.</string>
           <x>8</x>
           <y>4</y>
           <width>570</width>
-          <height>234</height>
+          <height>230</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout">
@@ -3171,7 +3171,7 @@ Seq66 exits.</string>
          <x>24</x>
          <y>30</y>
          <width>217</width>
-         <height>371</height>
+         <height>361</height>
         </rect>
        </property>
        <property name="font">
@@ -3183,13 +3183,13 @@ Seq66 exits.</string>
        <property name="title">
         <string/>
        </property>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>8</x>
           <y>40</y>
           <width>191</width>
-          <height>317</height>
+          <height>301</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -3444,7 +3444,7 @@ pattern editor is opened.</string>
          </font>
         </property>
         <property name="text">
-         <string>Esc key in piano roll closes external editors</string>
+         <string>Esc key in piano roll closes external editor</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_23">
@@ -4326,8 +4326,8 @@ path added to this name is stripped.</string>
         <property name="geometry">
          <rect>
           <x>200</x>
-          <y>7</y>
-          <width>471</width>
+          <y>2</y>
+          <width>481</width>
           <height>22</height>
          </rect>
         </property>

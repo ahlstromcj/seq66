@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2024-12-01
+% \update      2024-12-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -931,7 +931,7 @@
    "note tooltips", if desired.
    The thin button, labelled in tiny text as "Note Tips"
    next to the horizontal scroll bar toggles this mode.
-   When enable, moving the mouse over a note will show its value, time range
+   When enabled, moving the mouse over a note will show its value, time range
    in units of B:B:T, and its velocity.
    This view is quicker than opening up the \textbf{Event Editor}.
    Onward!
@@ -1738,7 +1738,12 @@
          notes are being input, another measure is added to the length
          of the loop.
          This continues indefinitely, whenever any notes are
-         being played and recorded.
+         being played or recorded.
+         In this more, the record-button icon shows double arrows to indicate
+         expand-recording.
+         The length can be reduced by typing it into the length combo-box
+         at the top of the editor; if it will cut off notes, a warning will
+         occur.
          \index{recording!expand issue}
          This works best in \textbf{Live} mode.
          In \textbf{Song} mode, only one measure is added each time play is

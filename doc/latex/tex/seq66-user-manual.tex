@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2024-10-28
+% \update      2024-12-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -150,28 +150,36 @@
    \textsl{Seq66} versus \textsl{Sequencer64}.
 
    \begin{itemize}
-      \item \textbf{Qt} 5 as the standard user-interface;
-         a better live frame using Qt push-buttons;
-         the main window's size can change;
-         palette files;
-         Qt style-sheets for control of colors and fonts for many
-         user-interface items.
-         A Qt linear-gradient default style for painting the
-         progress boxes, notes, and triggers.
-      \item Drag-and-drop is supported for opening a MIDI file in
-         \textsl{Seq66}. Open a file explorer to find and load a
-         MIDI file.
-      \item Improved the \textbf{song editor} for laying out patterns;
-         includes transposable triggers;
+      \item \textbf{Qt} 5 as the standard user-interface offers many benefits:
+         \begin{itemize}
+            \item A better live frame using Qt push-buttons.
+            \item The main window's size can be change, at start up or
+               by dragging the corners.
+            \item Palette files to support the colors used for drawing
+               grid, circles, rectangles, and text.
+            \item Qt style-sheets for control of colors and fonts for many
+               user-interface items.
+            \item A Qt linear-gradient default style for painting the
+               progress boxes, notes, and triggers.
+            \item Drag-and-drop support for opening a MIDI file in
+               \textsl{Seq66}. Open a file explorer to find and load a
+               MIDI file.
+         \end{itemize}
+      \item Improved the \textbf{song editor} for laying out patterns
+         into a song.
+         It includes transposable triggers, and
          can be opened in a tab or window.
-      \item The \textbf{mutes editor} tab, improves mutes handling and control.
+      \item The \textbf{mutes editor} tab, improves mute-group handling
+         and control.
       \item A \textbf{playlist editor} tab with improved flexibility.
-      \item A \textbf{sets editor} tab.
-      \item A \textbf{events editor} tab.
-         To trouble-shoot and fix minor event issues and add meta text events.
+      \item A \textbf{sets editor} tab examine each set.
+      \item A \textbf{events editor} tab examine each event.
+         Useful to trouble-shoot and fix minor event issues and
+         add meta text events.
       \item A \textbf{session} tab (and Edit / Preference pages) to see that
          \textsl{Seq66} is running in the desired environment and configuation.
-      \item \textbf{Non Session Manager} support. The sessions tab shows the
+      \item \textbf{New/Non Session Manager} support.
+         The sessions tab shows the
          locations of configuration files for the session.
       \item \textbf{MIDI control/display automation}.
          Control by "launchpad" devices, and display of statuses.
@@ -180,8 +188,10 @@
          Qt \textbf{style-sheets} (\texttt{*.qss});
          an enhanced keystroke and \textbf{MIDI 'ctrl'} file, with
          support for displaying pattern and action statuses.
-      \item Improved \textbf{alternate} keyboard layout support.
-      \item \textbf{Mapping} of port names to a consistent set of port numbers.
+         The main file is \texttt{qseq66.rc}.
+      \item Improved \textbf{alternate} keyboard layout support, with
+         some support for international keyboards.
+      \item \textbf{Mapping} of port numbers to a consistent set of port names.
       \item Providing for \textbf{routing of MIDI input} events to
          patterns based on port number or output-channel number.
       \item \textbf{Export songs} to SMF 0 and 1 formats in various ways.

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2024-11-12
+% \update      2024-12-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -702,7 +702,10 @@
 
    Another interesting style-sheet in \texttt{data/samples} is
    \texttt{perstfix-66.qss} and its palette file, which is a nice blue theme.
-   No need to show it here; try it.
+   See the title page of this manual.
+
+   Also check out \texttt{monogreen.qss} and its palette file if you're fond
+   of the the green screen.
 
 \subsubsection{'rc' File / Note Mapper}
 \label{subsubsec:configuration_rc_note_mapper}
@@ -1571,8 +1574,10 @@
       default-zoom = 2
       global-seq-feature = true
       progress-bar-thick = true
+      progress-bar-thickness = 3
       progress-box-elliptical = false
       follow-progress = true
+      gridlines-thick = true
       inverse-colors = false
       time-fg-color = "lime"        # same as "default"
       time-bg-color = "black"       # same as "default"
@@ -1608,6 +1613,16 @@
       \item The font in the pattern slots (Live grid buttons)
          is made bold and made larger when this option is active.
    \end{enumerate}
+
+   It also activates the \texttt{progress-bar-thickness} value.
+   Try a number lik "8" just for fun.
+
+   The \texttt{gridlines-thick} option, if true, makes the song
+   editor lines look thick.
+   This can be bothersome with green lines on a dark background
+   (e.g. with \texttt{monogreen.palette} and \texttt{monogreen.qss}
+   files active); in that case, set it to false to make the lines thinner
+   or dotted.
 
    There are a number of additional user-interface options.  See the generated
    or sample 'usr' file for descriptions.  Also see the chapter on palettes.

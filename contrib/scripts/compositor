@@ -1,0 +1,98 @@
+#!/bin/bash
+##
+# \file           compositor
+# \library        Any project
+# \author         Chris Ahlstrom
+# \date           2024-10-17
+# \update         2024-12-02
+#
+# Xorg composite manager: compton older than picom.
+#
+# COMPT_EXECUTABLE="compton" or "picom"
+#
+# compton options:
+#
+#  -b = daemon
+#  -c = shadow
+#  -C = no dock shadow
+#  -G = no drag-n-drop shadow
+#  -f = fading
+#  -m = menu opacity
+#  -i = inactive opacity
+#  -e = frame opacity
+#
+# See ~/.config/picom.conf for the options. Also built from source now.
+#
+#  /usr/bin/picom --daemon --shadow --fading --inactive-opacity=0.50 \
+#     --active-opacity=0.75 --frame-opacity=0.90 --menu-opacity \
+#     --config /dev/null
+#
+#------------------------------------------------------------------------------
+
+READY="no"
+COMPOSITOR="picom"
+
+if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
+
+   echo "compositor options: --stop, --compton; default is to run picom."
+   exit 1
+
+   cat << E_O_F
+Usage v. 2024-12-02
+
+   compositor [--start] [--stop]
+
+   This script can stop $COMPOSITOR, or restart it in the same
+   as in an .xsession script.
+
+Options:
+
+   --start     Start $COMPOSITOR. This is the default action.
+   --stop      Stop $COMPOSITOR.
+   --kill      Stop $COMPOSITOR.
+   --compton   Use compton as the compositor.
+   --picom     Use picom as the compositor.
+
+   Edit the COMPOSITOR variable in the compositor script to change the
+   default compositor.
+
+E_O_F
+
+fi
+
+if [ "$1" == "--compton" ] ; then
+   COMPOSITOR="compton"
+fi
+
+if [ "$1" == "--picom" ] ; then
+   COMPOSITOR="picom"
+fi
+
+if [ "$1" == "--stop" ] || [ "$1" == "--kill" ] ; then
+
+   echo "Stopping the $COMPOSITOR compositor..." 
+   killall $COMPOSITOR &> /dev/null
+   exit 0
+
+fi
+
+if [ "$COMPOSITOR" == "compton" ] ; then
+
+      echo "Running $COMPOSITOR..."
+      /usr/bin/$COMPOSITOR -b -cCGf --active-opacity 0.95 -m 1.0 -i 0.95 -e 0.9 \
+          --no-fading-openclose --sw-opti &
+   sleep 0.25
+   exit 0
+fi
+
+if [ "$COMPOSITOR" == "picom" ] ; then
+
+   /usr/local/bin/$COMPOSITOR --daemon --log-file ~/.config/picom.log &
+   sleep 0.25
+   exit 0
+
+fi
+
+fi
+
+# vim: ts=3 sw=3 et ft=sh

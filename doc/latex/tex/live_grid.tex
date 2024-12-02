@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2024-11-27
+% \update      2024-12-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -18,8 +18,7 @@
 \label{sec:live_grid}
 
    For our walk-through of the main window, the following figure
-   shows it using blue labels for reference. It is out-of date, missing
-   the new Record button to the right of the Play/Pause button.
+   shows it using blue labels for reference.
 
 \begin{figure}[H]
    \centering 
@@ -369,10 +368,10 @@
 
    \begin{itemize}
       \item \textbf{Set Name}
-      \item \textbf{MG}
+      \item \textbf{MG} (Mute Group)
       \item \textbf{Underrun Indicator}
-      \item \textbf{Set Reset ("!")}
       \item \textbf{Active Set Indicator}
+      \item \textbf{Set Reset ("!")}
       \item \textbf{Set 0 Selector}
       \item \textbf{Set Changer}
    \end{itemize}
@@ -382,12 +381,15 @@
 
    This text field shows the name of the current set, and also allows editing
    the set name.
+   The existing sets can be seen in the \textbf{Sets} tab.
 
-\subsubsection{MG}
-\label{subsubsec:introduction_set_name}
+\subsubsection{MG (Mute Group)}
+\label{subsubsec:introduction_mute_group}
 
    This text field shows the name of the current mute-group, if one is
-   in force. Currently not shown in the figure above.
+   in force. The existing mute-groups, if any, can be seen in the
+   \textbf{Mutes} tab, or in the active 'mutes' files specified in the
+   'rc' main configuration file.
 
 \subsubsection{Underrun Indicator}
 \label{subsubsec:introduction_underrun_indicator}
@@ -401,6 +403,14 @@
    This happens because the event-list is locked during redrawing,
    when recording, to avoid problems when new notes come in.
 
+\subsubsection{Active Set Indicator}
+\label{subsubsec:introduction_active_set_indicator}
+
+   This field shows the active set number, followed by the number of existing
+   sets.
+   Note that there is always at least one set in a \textsl{Seq66}
+   tune.
+
 \subsubsection{Set Reset ("!")}
 \label{subsubsec:introduction_set_reset}
 
@@ -412,20 +422,18 @@
    at once.
    See \sectionref{subsec:configuration_rc}.
 
-\begin{comment}
-
-% The Set Master button has been removed.
-
 \subsubsection{Set Master Button}
 \label{subsubsec:introduction_set_master_button}
 
-   This button brings up an external window showing the \textbf{Set Master}
-   panel.  This panel is also available in a center tab.  It is a work in
-   progress, and doesn't have a whole lot of functionality yet.
-   It can currently show existing sets in one view, and allow
-   reordering the sets.
+   The Set Master button has been removed.
+   The external window it used to bring up has been replaced
+   by the \textbf{Set Master} tab.
 
-\end{comment}
+%  This button brings up an external window showing the
+%  panel.  This panel is also available in a center tab.  It is a work in
+%  progress, and doesn't have a whole lot of functionality yet.
+%  It can currently show existing sets in one view, and allow
+%  reordering the sets.
 
 \subsubsection{Active Set Indicator}
 \label{subsubsec:introduction_active_set_indicator}
@@ -472,7 +480,7 @@
       \item \textbf{Stop}
       \item \textbf{Pause}
       \item \textbf{Play}
-      \item \textbf{Record} (not yet shown in the figure)
+      \item \textbf{Record Button}
       \item \textbf{L/R Loop}
       \item \textbf{Live Song Record}
       \item \textbf{Keep Queue}
@@ -532,7 +540,7 @@
    This key is also hardwired to toggle playback in the pattern editor and the
    song editor.
 
-\subsubsection{Record}
+\subsubsection{Record Button}
 \label{subsubsec:introduction_record_button}
 
    This button turns on recording for the various kinds of recording
@@ -545,12 +553,14 @@
       \item \textbf{Red}.
          This color indicates the normal recording mode, which toggles only a
          single pattern for recording.
-         This button is enabled and colored red only if a pattern is
-         selected in the grid.
+         This button is enabled and colored red only if a pattern is the last
+         one selected in the grid.
       \item \textbf{Yellow}.
          This color indicates the record-by-channel recording mode,
          which toggles, for recording, all patterns that have an
          output channel set.
+         Incoming events that have a channel nybble are routed to that
+         pattern.
       \item \textbf{Green}.
          This color indicates the record-by-buss recording mode,
          which toggles, for recording, all patterns that have an
@@ -569,8 +579,8 @@
 \subsubsection{L/R Loop}
 \label{subsubsec:introduction_loop_button}
 
-   This button has been added to the main window as of version 0.93.0 of
-   \textsl{Seq66}.
+   This button has been added to the main window.
+   It also appears in the "external" version of the song editor.
    This reflects that the \textbf{L/R} loop markers in the song editor can now
    be used in the pattern editor as well.  This new feature makes it easier to
    focus in on a pattern and tinker repeatedly with the same small section.
@@ -585,12 +595,10 @@
    \textbf{L marker} and the \textbf{R marker}.
    It is a state button, and its appearance indicates when it is
    depressed, and thus active.
-   If this button is deactivated during playback, then playback
-   continues past the \textbf{R marker}.
-   Note that these markers can be placed using Left
-   and Right mouse clicks, respectively, in the time/measures ruler.
-   Also note that this button has been added to the main
-   window, and appears only in the "external" version of the song editor.
+   \textsl{If this button is deactivated during playback, then playback
+   continues past the \textbf{R marker}.}
+   Note that these markers can be placed using left
+   and right mouse clicks, respectively, in the time/measures ruler.
    Furthermore, the \textbf{L/R} markers can also be set in a pattern editor,
    where they can be used to focus in on a small section of notes.
    Lastly, this looping mechanism is also available in Live mode as well.
@@ -602,7 +610,8 @@
    That is, triggers are added to the song automatically as the musician mutes
    and unmutes patterns, and the triggers can then be
    seen as layouts in the \textsl{Song} editor.
-   By default, the \texttt{P} key operates this function.
+%  FIXME:
+%  By default, the \texttt{P} key operates this function.
 
    Using the \texttt{Ctrl} modifier while clicking this button
    turns off the recording-snap feature.
@@ -681,6 +690,9 @@
    Works the same as the
    \textbf{Edit / Toggle All Tracks} menu or the hard-wired
    \texttt{Ctrl-T} key.
+   There is also an automation control entry for it, associated by
+   default with \texttt{F8}.
+   As of version 0.99.16, it is no longer disabled in Song Mode.
 
 \subsubsection{Song Editor}
 \label{subsubsec:introduction_song_editor_button}
@@ -711,10 +723,9 @@
    Because it can be confusing, this button is disabled (not shown
    in the figure) in Song mode.
 
-   LATER:  Describe
-   \texttt{Ctrl-M},
-   \texttt{Ctrl-U}, and
-   \texttt{Ctrl-T}.
+   The \texttt{Ctrl-M}, \texttt{Ctrl-U}, and \texttt{Ctrl-T} keys,
+   as shown in the \textbf{Edit} menu, mute, unmute, and toggle
+   all patterns.
 
 \end{comment}
 
@@ -731,6 +742,7 @@
    The time display has been converted to a button, and click it will
    switch the format. So the BBT/HMS Toggle button
    \textsl{has been removed}.
+   See the top bar for the time display/button.
 
 %  Toggles the format of the current time displayed during playback. 
 %  It can be shown in B:B:T (bars:beats:ticks) or H:M:S (hours:minutes:seconds).
@@ -742,8 +754,8 @@
    tapping.  With each tap, the counter on the button increments and the BPM is
    recalculated.  Stop tapping for a few seconds to reset the counter.
    By default, the \texttt{F9} key operates this function, but it
-   STILL NEEDS WORK to show the results in the BPM control.
-   There is also a MIDI-control slot for this function.
+   There is also a MIDI-control slot for this function, and
+   \texttt{F9} is the default key for this function.
 
 \subsubsection{Beats Per Minute Control}
 \label{subsubsec:introduction_bpm_control}
