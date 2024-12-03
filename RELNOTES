@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.16 2024-12-01
+Release Notes for Seq66 v. 0.99.16 2024-12-03
 
 Fixes for NSM (session manager), build-file updates, and better PPQN
 and recording handling. A lot of little issues found and fixed, too.
@@ -40,7 +40,8 @@ and recording handling. A lot of little issues found and fixed, too.
 - Added CONFIG\_DIR\_NAME and cleaned up configure.ac. This macro
   differentiates between client name and config directory name.
   Updated the Makefile sources. Do "./bootstrap --full-clean".
-- Updated the PDF documentation re the Import/Export functionality.
+- Updated the PDF documentation re the Import/Export functionality
+  etc.
 - Upgraded the color palette code.
 - See NEWS and ChangeLog for full details.
 
