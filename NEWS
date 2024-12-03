@@ -1,8 +1,20 @@
-NEWS for Seq66 0.99.16
+NEWS for Seq66 0.99.17
 Chris Ahlstrom
 2015-07-10 to 2024-12-03
 
 # Change Log
+
+## [0.99.17]
+
+This release is in progress....
+
+### Added
+
+### Changed
+
+### Fixed
+
+### Removed
 
 ## [0.99.16]
 
@@ -1246,14 +1258,5 @@ features added.
 - The application and documentation are now (barely) suitable for
   public consumption, after residing on a server (a Toshiba laptop) at
   home for months.
-
-## [Unreleased]
-
-    To do
-
-### Added
-### Fixed
-### Changed
-### Removed
 
 # vim: sw=4 ts=4 wm=4 et ft=markdown
