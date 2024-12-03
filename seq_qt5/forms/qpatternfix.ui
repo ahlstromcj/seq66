@@ -411,7 +411,7 @@
    <property name="title">
     <string>Other Fixes</string>
    </property>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="layoutWidgetOtherFixes">
     <property name="geometry">
      <rect>
       <x>12</x>

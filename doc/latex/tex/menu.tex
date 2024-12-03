@@ -1371,20 +1371,24 @@
          is created.
       \item \textbf{Record}.
          The new pattern starts in record mode.
-      \item \textbf{Tighten Record}.
+      \item \textbf{Tighten record}.
          The new pattern starts in tightened (partly quantized) record mode.
-      \item \textbf{Quantize Record}.
+      \item \textbf{Quantize record}.
          The new pattern starts in quantized record mode.
-      \item \textbf{Note-map Record}.
+      \item \textbf{Note-map record}.
          The new pattern starts in note-mapping record mode.
          Notes are translated live via a 'drums' file, if set active
          in the 'rc' file.
-      \item \textbf{Wrap-Aound}.
+      \item \textbf{Wrap-around}.
          The new pattern will allow prolonged notes to wrap around so
          that the Note Off event precedes the Note On event in the
          pattern loop.
-      \item \textbf{Thru}.
+      \item \textbf{MIDI Thru}.
          The new pattern starts with MIDI Thru enabled.
+      \item \textbf{Apply only to new}.
+         If check-marked, then the settings are applied only to
+         newly-created patterns. Often one might not want to
+         automatically record into an existing pattern, for example.
       \item \textbf{Record Style}
          This setting sets how record mode works for the pattern.
          \begin{itemize}
@@ -1446,12 +1450,13 @@
    Still not sure what's wrong with \textsl{Seq66} randomization, 
    but it is only important if randomizing a large number of times.
 
-   The second section, not shown, is \textbf{Additional 'usr' Options}.
+   The next section is \textbf{Additional 'usr' Options}.
    It contains only one option at present,
-   \textbf{Escape Can Close Pattern Editor}.
+   \textbf{Esc key in piano roll closes external editor}.
    If set (the default is false), then the \texttt{Esc}
    key can not only stop playing and exit paint mode, but
    can also close the pattern window.
+   Be careful. It's your call.
 
 \paragraph{Menu / Edit / Preferences / Session}
 \label{paragraph:menu_edit_preferences_session}

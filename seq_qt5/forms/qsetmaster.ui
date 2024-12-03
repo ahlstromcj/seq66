@@ -25,7 +25,7 @@
   <property name="frameShadow">
    <enum>QFrame::Plain</enum>
   </property>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidgetSetMaster">
    <property name="geometry">
     <rect>
      <x>10</x>

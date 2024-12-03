@@ -185,7 +185,7 @@
     </property>
    </widget>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidgetLfo">
    <property name="geometry">
     <rect>
      <x>17</x>

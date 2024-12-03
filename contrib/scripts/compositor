@@ -4,7 +4,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2024-10-17
-# \update         2024-12-02
+# \update         2024-12-03
 #
 # Xorg composite manager: compton older than picom.
 #
@@ -38,7 +38,7 @@ if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
    exit 1
 
    cat << E_O_F
-Usage v. 2024-12-02
+Usage v. 2024-12-03
 
    compositor [--start] [--stop]
 
@@ -87,7 +87,7 @@ fi
 
 if [ "$COMPOSITOR" == "picom" ] ; then
 
-   /usr/local/bin/$COMPOSITOR --daemon --log-file ~/.config/picom.log &
+   /usr/bin/$COMPOSITOR --daemon --log-file ~/.config/picom.log &
    sleep 0.25
    exit 0
 

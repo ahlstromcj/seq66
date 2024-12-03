@@ -1093,7 +1093,7 @@ the configured MIDI control comes in.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidgetPlay">
    <property name="geometry">
     <rect>
      <x>8</x>

@@ -8,7 +8,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2022-09-25
-# \update         2024-11-09
+# \update         2024-12-03`
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -57,12 +57,12 @@ JCTL_DEVICE="hw:CODEC"  # see "cat /proc/asound/cards"
 JCTL_RATE="48000"
 JCTL_LATENCY="2"
 JCTL_PERIOD="256"      # for TESTING
-JCTL_A2JMIDID="yes"
+JCTL_A2JMIDID="no"
 
 if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
 
    cat << E_O_F
-Usage v. 2024-11-09:
+Usage v. 2024-12-03`
 
    jackctl [ --start ] [ options ]     Start with the usual parameters:
 
@@ -164,22 +164,25 @@ if [ "$JCTL_OPERATION" == "list" ] ; then
 
 elif [ "$JCTL_OPERATION" == "stop" ] ; then
 
-   jack_control stop
    if [ "$JCTL_A2JMIDID" == "yes" ] ; then
       killall -9 a2jmidid
+      sleep 1
    fi
+   jack_control stop
 
 elif [ "$JCTL_OPERATION" == "kill" ] ; then
 
-   jack_control stop
-   jack_control exit
    if [ "$JCTL_A2JMIDID" == "yes" ] ; then
       killall -9 a2jmidid
+      sleep 1
    fi
+   jack_control stop
+   jack_control exit
 
 elif [ "$JCTL_OPERATION" == "start" ] ; then
 
    jack_control start
+   sleep 2
    if [ "$JCTL_A2JMIDID" == "yes" ] ; then
       a2jmidid --export-hw &
    fi

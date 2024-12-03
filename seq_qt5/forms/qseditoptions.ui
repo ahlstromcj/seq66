@@ -2092,7 +2092,7 @@ in the Song Editor.</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidgetJackConnect">
        <property name="geometry">
         <rect>
          <x>380</x>
@@ -2177,7 +2177,7 @@ in the Song Editor.</string>
       <zorder>layoutWidgetJackTransport</zorder>
       <zorder>r_group_jack_start</zorder>
       <zorder>layoutWidgetJack</zorder>
-      <zorder>layoutWidget</zorder>
+      <zorder>layoutWidgetJackTransport</zorder>
      </widget>
      <widget class="QWidget" name="tabPlayOptions">
       <property name="toolTip">

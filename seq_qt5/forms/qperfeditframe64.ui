@@ -880,7 +880,7 @@ format.</string>
     </layout>
    </item>
   </layout>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidgetPerfedit">
    <property name="geometry">
     <rect>
      <x>0</x>
