@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.16
 Chris Ahlstrom
-2019-04-13 to 2024-12-02
+2019-04-13 to 2024-12-03
 
 Hottest:
 
@@ -23,6 +23,8 @@ From Testing:
         -   When auto-step recording in an existing pattern, the modify
             flag "*" is not shown in the title, thought the
             "Save/Discard/Cancel" prompt appears at exit.
+    -   There are some Qt warnings emitted when working with notes in the
+        pattern editor and the event editor.
     -   Setting the PPQN obscures the 32 PPQN entry in the combo box. Minor.
     -   Get the 16-in-busses.midi file configured and working.
     -   Finish getting Windows builds in MSYS2 to work.

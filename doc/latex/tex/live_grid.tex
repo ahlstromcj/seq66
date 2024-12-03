@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2024-12-02
+% \update      2024-12-03
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -32,10 +32,10 @@
    but the functionality is similar.
    \textsl{Seq66} allows resizing, and can
    be configured to start with its size scaled up or down.
-   There is also a button near the top (not shown) that can
+   There is also a button near the top left that can
    hide the menu and the bottom panels, to allow reducing the
    size of the window event further.
-   Its features, including the "look" of the application,
+   The features of the main window, including the "look" of the application,
    can be configured via the 'rc', 'usr', 'ctrl', 'drums', 'playlist', 'mutes',
    and 'palette' configuration files, via command-line options, via
    desktop themes, and via Qt ('qss') style-sheets.
@@ -403,14 +403,6 @@
    This happens because the event-list is locked during redrawing,
    when recording, to avoid problems when new notes come in.
 
-\subsubsection{Active Set Indicator}
-\label{subsubsec:introduction_active_set_indicator}
-
-   This field shows the active set number, followed by the number of existing
-   sets.
-   Note that there is always at least one set in a \textsl{Seq66}
-   tune.
-
 \subsubsection{Set Reset ("!")}
 \label{subsubsec:introduction_set_reset}
 
@@ -444,6 +436,8 @@
    The currently active set is then the
    set that has the mouse focus.  This allows for working with multiple sets
    without a lot of mouse/keyboard navigation.
+   Note that there is always at least one set in a \textsl{Seq66}
+   tune.
 
 \subsubsection{Set 0}
 \label{subsubsec:introduction_set_zero}
@@ -720,8 +714,8 @@
    \textsl{playing} tracks, reversing the
    mute status of each pattern that is playing.
    The next click will then unmute only those tracks.
-   Because it can be confusing, this button is disabled (not shown
-   in the figure) in Song mode.
+   Because it can be confusing, this button is disabled
+   in Song mode.
 
    The \texttt{Ctrl-M}, \texttt{Ctrl-U}, and \texttt{Ctrl-T} keys,
    as shown in the \textbf{Edit} menu, mute, unmute, and toggle

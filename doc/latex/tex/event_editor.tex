@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-02
-% \update      2023-09-20
+% \update      2024-12-03
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -239,15 +239,40 @@
 
    The edit fields show the values of the currently-selected event.  They allow
    changing an event, adding a new event, or deleting the currently-selected
-   event.
+   event. These have been greatly updated for user convenience in the last
+   few releases of \textsl{Seq66}.
 
    \begin{enumber}
-      \item \textbf{Event Category} (bold-faced, read-only)
-      \item \textbf{Time} (event timestamp)
-      \item \textbf{Event} (event name)
-      \item \textbf{D0} (data byte 1)
-      \item \textbf{D1} (data byte 2)
-      \item \textbf{Show data in hex format} (not shown in figure)
+      \item \textbf{Event Category}.
+         This dropdown shows what kind of event is selected, and can
+         also be used to insert specific events. The event categories are:
+         \begin{itemize}
+            \item \textbf{Channel Message}.
+            \item \textbf{System Message}.
+            \item \textbf{Meta Event}.
+            \item \textbf{SecSpec Event}.
+         \end{itemize}
+         See below for more information about supported events.
+      \item \textbf{Time}.
+         Shows the event timestamp in B:B:T notation.
+      \item \textbf{Event}.
+         This dropdown shows the event name.
+         It can also be used to select an event that is appropriate for
+         the selected event category.
+      \item \textbf{D0}.
+         Shows data byte 1, e.g. the note number for a note event.
+         It can also be edited.
+      \item \textbf{D1}.
+         Shows data byte 2, e.g. the velocity for a note event.
+         It can also be edited.
+      \item \textbf{Tick Time}.
+         If check-marked, the \textbf{Time} column in the event list
+         is shown as ticks (pulses, divisions) instead of B:B:T.
+      \item \textbf{Hex}
+         If check-marked, the \textbf{D0} and \textbf{D1} columns
+         in the event list, as well as the editable
+         \textbf{D0} and \textbf{D1} fields, as shown in hexadecimal notation.
+         For example, D0 = 67 is shown as "0x43".
    \end{enumber}
 
    \textbf{Important}: changes made in the event editor
@@ -261,21 +286,20 @@
 
    \itempar{Event Category}{event editor!event category}
    Displays the event category of the event in bold-face.
-   Currently, only channel events
-   and a couple of meta events,
-   can be handled, but someday we hope to handle the wide array of system
-   events, and perhap even system-exclusive events.
+   Currently, all channel events, most system messages
+   and many meta events can be handled,
+   even system-exclusive events.
 
    \itempar{Time}{event editor!event timestamp}
-   Displays the timestamp of the event.  Currently only the
+   Displays the timestamp of the selected event in B:B:T format.
    "measure:beat:division" format is fully supported.
    We allow editing (but not display) of the timestamp in
    pulse (divisions) format and "hour:minute:second.fraction" format, but
-   there are bugs to work out.
+   there may be bugs to work out.
 
    If one wants to delete or modify an event, this field does not need to be
-   modified.  If this field is modified, and the \textbf{Modify}
-   button is pressed, then the event will be moved.  This field can locate
+   modified. If this field is modified, and the \textbf{Modify}
+   button is pressed, then the event will be moved  This field can locate
    a new event at a specific time.  If the time is not in the current frame,
    the frame will move to the location of the new event and make it the current
    event.
@@ -349,8 +373,9 @@
    \label{fig:event_editor_system_dropdown}
 \end{figure}
 
-   At present, most of these message are not editable, but at least they can be
-   seen.
+   At present, many of these messages, especially the textual messages,
+   should be editable.
+   Report any issues.
 
    \itempar{Channel}{event editor!channel}
    This dropdown shows the channel of the current event, ranging from 1 to 16.
@@ -406,12 +431,18 @@
    selection:
 
    \begin{enumber}
-      \item \textbf{Delete} (selected event)
-      \item \textbf{Insert} (new event)
-      \item \textbf{Modify} (selected event)
-      \item \textbf{Clear} (all events)
-      \item \textbf{Save} (back to pattern)
-      \item \textbf{Dump} (dump the events to a file)
+      \item \textbf{Delete}.
+         Delete the selected event.
+      \item \textbf{Insert}.
+         Create a new event based on the data in the fields.
+      \item \textbf{Modify}.
+         Officially modify the selected event.
+      \item \textbf{Clear}.
+         Clear all events.
+      \item \textbf{Save}.
+         Save all the changes back to the pattern.
+      \item \textbf{Dump}.
+         Dump the events to a file.
    \end{enumber}
 
    Note that
