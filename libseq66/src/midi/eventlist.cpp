@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2024-11-30
+ * \updates       2024-12-04
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -52,7 +52,9 @@ eventlist::eventlist () :
     m_events                (),
     m_match_iterating       (false),
     m_match_iterator        (m_events.end()),
+#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
     m_action_in_progress    (false),                    /* atomic boolean   */
+#endif
     m_length                (0),
     m_note_off_margin       (3),
     m_zero_len_correction   (16),
@@ -75,7 +77,9 @@ eventlist::eventlist (const eventlist & rhs) :
     m_events                (rhs.m_events),
     m_match_iterating       (false),
     m_match_iterator        (m_events.end()),
+#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
     m_action_in_progress    (false),                    /* atomic boolean   */
+#endif
     m_length                (rhs.m_length),
     m_note_off_margin       (rhs.m_note_off_margin),
     m_zero_len_correction   (rhs.m_zero_len_correction),
@@ -96,7 +100,9 @@ eventlist::operator = (const eventlist & rhs)
         m_events                = rhs.m_events;
         m_match_iterating       = rhs.m_match_iterating;    /* ok? */
         m_match_iterator        = rhs.m_match_iterator;     /* ok? */
+#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
         m_action_in_progress    = false;                /* atomic boolean   */
+#endif
         m_length                = rhs.m_length;
         m_note_off_margin       = rhs.m_note_off_margin;
         m_is_modified           = rhs.m_is_modified;
@@ -242,9 +248,13 @@ eventlist::add (const event & e)
 void
 eventlist::sort ()
 {
+#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
     m_action_in_progress = true;
     std::sort(m_events.begin(), m_events.end());
     m_action_in_progress = false;
+#else
+    std::sort(m_events.begin(), m_events.end());
+#endif
 }
 
 /**
@@ -340,43 +350,56 @@ eventlist::merge (const eventlist & el, bool presort)
 void
 eventlist::link_new (bool wrap)
 {
-    for (auto on = m_events.begin(); on != m_events.end(); ++on)
+    for (auto eon = m_events.begin(); eon != m_events.end(); ++eon)
     {
-        if (on->on_linkable())                      /* note-on, not linked  */
+        if (eon->on_linkable())                     /* note-on, not linked  */
         {
             bool endfound = false;                  /* end-of-note flag     */
-            auto off = on;                          /* point to note on     */
-            ++off;                                  /* get next element     */
-            while (off != m_events.end())
+            auto eoff = eon;                        /* point to note on     */
+            ++eoff;                                 /* get next element     */
+            while (eoff != m_events.end())
             {
-                endfound = link_notes(on, off);     /* calls off_linkable() */
+                endfound = link_notes(eon, eoff);   /* calls off_linkable() */
                 if (endfound)
                     break;
 
-                ++off;
+                ++eoff;
             }
             if (! endfound)
             {
-                off = m_events.begin();
-                while (off != on)
+                eoff = m_events.begin();
+                while (eoff != eon)
                 {
-                    if (link_notes(on, off))
+                    bool wrapped = eoff->timestamp() < eon->timestamp();
+                    if (link_notes(eon, eoff))
                     {
-                        if (! wrap)
+                        if (wrapped && ! wrap)
+                            eoff->set_timestamp(get_length() - 1);
+                    }
+#if defined USE_THIS_CODE                           /* see link_notes()     */
+                    if (link_notes(eon, eoff))
+                    {
+                        bool wrapped = eoff->timestamp() < eon->timestamp();
+                        else                        /* not wrapped          */
                         {
-                            if (off->timestamp() < on->timestamp())
-                                off->set_timestamp(get_length() - 1);
+                            if (eon->timestamp() == eoff->timestamp())
+                            {
+                                long ts = eon->timestamp();
+                                ts += m_zero_len_correction;
+                                eoff->set_timestamp(ts);
+                            }
                         }
                         break;
                     }
-                    ++off;
+#endif
+                    ++eoff;
                 }
             }
         }
     }
 }
 
-#if defined SEQ66_LINK_NEWEST_NOTE_ON_RECORD
+#if defined SEQ66_LINK_NEWEST_NOTE_ON_RECORD        /* undefined            */
 
 /**
  *  This function links only the latest note, and should be called
@@ -492,6 +515,15 @@ eventlist::link_notes (event::iterator eon, event::iterator eoff)
     {
         eon->link(eoff);
         eoff->link(eon);
+        if (eon->timestamp() == eoff->timestamp())
+        {
+            long ts = eon->timestamp();
+            ts += m_zero_len_correction;
+            eoff->set_timestamp(ts);
+#if defined SEQ66_PLATFORM_DEBUG // _TMI
+            printf ("Zero-length note @%ld fixed\n", ts);
+#endif
+        }
     }
     return result;
 }
@@ -519,7 +551,7 @@ eventlist::link_notes (event::iterator eon, event::iterator eoff)
  *      Provides the length beyond which events will be pruned. Normally the
  *      caller supplies sequence::get_length(). Can be set to 0 ignore
  *      the length, as in expanded step-edit note entry. See the function
- *      sequence::verify_and_link().
+ *      sequence :: verify_and_link().
  *
  * \param wrap
  *      Optionally (the default is false) wrap when relinking.  Can be used to
@@ -556,9 +588,13 @@ eventlist::clear ()
 {
     if (! m_events.empty())
     {
+#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
         m_action_in_progress = true;          /* might not help */
         m_events.clear();
         m_action_in_progress = false;
+#else
+        m_events.clear();
+#endif
         m_is_modified = true;
     }
 }

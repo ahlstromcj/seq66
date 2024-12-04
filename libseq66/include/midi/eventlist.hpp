@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2024-11-30
+ * \updates       2024-12-04
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -76,7 +76,18 @@
 
 #undef SEQ66_LINK_NEWEST_NOTE_ON_RECORD
 
+/**
+ *  This flag is used in eventlist and sequence to supposedly protect sorting
+ *  and clearing. However, we were able to delete events, clear all events,
+ *  and even delete patterns while playback was occuring. So we don't think we
+ *  need this. Define it if problems crop up. EXPERIMENTAL.
+ */
+
+#undef  SEQ66_USE_ACTION_IN_PROGRESS_FLAG
+
+#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
 #include <atomic>                       /* std::atomic<bool> usage          */
+#endif
 
 #include "midi/event.hpp"               /* seq66::event, event::buffer      */
 
@@ -162,6 +173,8 @@ private:
     bool m_match_iterating;
     event::iterator m_match_iterator;
 
+#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
+
     /**
      *  Provides an atomic flag to raise while sorting(), which can invalidate
      *  iterators while a user-interface is accessing the event list, or while
@@ -169,6 +182,8 @@ private:
      */
 
     std::atomic<bool> m_action_in_progress;
+
+#endif
 
     /**
      *  Holds the length of the sequence holding this event-list,
@@ -353,10 +368,14 @@ public:
     void sort ();
     bool merge (const eventlist & el, bool presort = true);
 
+#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
+
     bool action_in_progress () const
     {
         return m_action_in_progress;
     }
+
+#endif
 
     /**
      *  Dereference access for list or map.
@@ -508,7 +527,6 @@ private:                                /* functions for friend sequence    */
     {
         m_zero_len_correction = zlc;
     }
-
 
 };          // class eventlist
 

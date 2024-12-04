@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-11-30
+ * \updates       2024-12-04
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -5352,8 +5352,10 @@ sequence::get_next_note
     automutex locker(m_mutex);
     while (evi != m_events.cend())
     {
+#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
         if (m_events.action_in_progress())      /* atomic boolean check     */
             return draw::finish;                /* bug out immediately      */
+#endif
 
         draw status = get_note_info(niout, evi);
         if (status != draw::none)
@@ -5518,8 +5520,10 @@ sequence::get_next_event
     bool result = evi != m_events.end();
     if (result)
     {
+#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
         if (m_events.action_in_progress())      /* atomic boolean check     */
             return false;
+#endif
 
         midibyte d1;                            /* will be ignored          */
         const event & ev = eventlist::cdref(evi);
@@ -5575,8 +5579,10 @@ sequence::get_next_event_match
     bool ismeta = event::is_meta_msg(status);
     while (evi != m_events.end())
     {
+#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
         if (m_events.action_in_progress())      /* atomic boolean check     */
             return false;                       /* bug out immediately      */
+#endif
 
         const event & drawevent = eventlist::cdref(evi);
         bool ok = drawevent.match_status(status);
@@ -5653,8 +5659,10 @@ sequence::get_next_meta_match
 
     while (evi != m_events.end())
     {
+#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
         if (m_events.action_in_progress())      /* atomic boolean check     */
             return false;                       /* bug out immediately      */
+#endif
 
         const event & drawevent = eventlist::cdref(evi);
         if (drawevent.is_meta())
