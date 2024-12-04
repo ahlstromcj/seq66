@@ -1,6 +1,6 @@
 NEWS for Seq66 0.99.17
 Chris Ahlstrom
-2015-07-10 to 2024-12-03
+2015-07-10 to 2024-12-04
 
 # Change Log
 
@@ -13,6 +13,13 @@ This release is in progress....
 ### Changed
 
 ### Fixed
+
+-   Cleaned up and upgraded the linking of recorded notes.
+-   Made ghost notes in selection box official. Also made it apply
+    to select-all and other selection operations.
+-   Fixed the removal of trailing notes after truncating a pattern
+    to a smaller number of measures. Kind of a follow-on to
+    issue #128.
 
 ### Removed
 

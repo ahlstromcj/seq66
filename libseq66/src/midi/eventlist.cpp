@@ -464,7 +464,7 @@ eventlist::link_new_note ()
                             long ts = on->timestamp();
                             ts += m_zero_len_correction;
                             off->set_timestamp(ts);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG // _TMI
                             printf ("Zero-length note @%ld fixed\n", ts);
 #endif
                         }
@@ -1795,6 +1795,53 @@ eventlist::remove_marked ()
         }
         else
             ++i;
+    }
+    if (result)
+        verify_and_link();
+
+    return result;
+}
+
+/**
+ *  Removes events on or after the given timestamp, which is normally
+ *  the beginning of a measure (though it does not have to be that).
+ *
+ *  We have to handle notes across the boundary carefully. We can either
+ *  removed both parts (On and Off) of the note, or shorten the note.
+ *  Probably the latter is better.
+ *
+ *  TO BE DETERMINED.
+ *
+ * \param limit
+ *      The time stamp at or after which events are to be remove.
+ */
+
+bool
+eventlist::remove_trailing_events (midipulse limit)
+{
+    bool result = false;
+    for (auto i = m_events.begin(); i != m_events.end(); /*++i*/)
+    {
+        if (i->timestamp() >= limit)
+        {
+            /*
+             * TODO: handled linked notes
+             */
+
+            auto t = remove(i);
+            i = t;
+            result = true;
+        }
+        else
+        {
+            if (i->is_note_on_linked())
+            {
+                auto ioff = i->link();
+                if (ioff->timestamp() >= limit)
+                    ioff->set_timestamp(limit - 1);
+            }
+            ++i;
+        }
     }
     if (result)
         verify_and_link();

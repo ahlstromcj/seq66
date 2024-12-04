@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-11-30
+ * \updates       2024-12-04
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -54,7 +54,7 @@
 
 #include "midi/midibytes.hpp"           /* seq66::midibyte alias, etc.      */
 
-#define SEQ66_STAZED_SELECT_EVENT_HANDLE    /* EXPERIMENTAL */
+#define SEQ66_STAZED_SELECT_EVENT_HANDLE
 
 /**
  *  Defines the number of data bytes in MIDI status data.
@@ -1151,6 +1151,11 @@ public:
     bool is_note_on_linked () const
     {
         return is_note_on() && is_linked();
+    }
+
+    bool is_note_off_linked () const
+    {
+        return is_note_off() && is_linked();
     }
 
     bool is_note_unlinked () const

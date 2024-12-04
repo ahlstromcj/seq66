@@ -5,10 +5,7 @@ Chris Ahlstrom
 Hottest:
 
     -   Figure out issue #132, the libasound2 issue.
-    -   In expand record, zero-length notes can occur. When reducing the
-        measures, the prompt comes up, but the notes are not removed.
-    -   Killed VMPK by accident, ended up with 2 in/outs for vmpk!
-        Actually, just minimized it, so there were two.
+    -   QObject::setParent: Cannot set parent, new parent is in a different thread
 
 From Testing:
 

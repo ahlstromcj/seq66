@@ -1965,11 +1965,7 @@ public:
         sm_clipboard.clear();                   /* shared between sequences */
     }
 
-    bool remove_selected ();
-    bool remove_marked ();                      /* a forwarding function    */
-
     static recordstyle loop_record_style (int ri);
-    bool update_recording (int index);
 
     /**
      *  Short hand for testing a draw parameter.
@@ -1989,6 +1985,11 @@ public:
     {
         return dt == sequence::draw::note_on || dt == sequence::draw::note_off;
     }
+
+    bool remove_selected ();
+    bool remove_marked ();                      /* a forwarding function    */
+    bool update_recording (int index);
+    bool remove_orphaned_events ();
 
 protected:
 
@@ -2043,7 +2044,7 @@ private:
 #endif
 
     bool remove_first_match (const event & e, midipulse starttick = 0);
-    void remove_all ();
+    bool remove_all ();
 
     /**
      *  Checks to see if the event's channel matches the sequence's nominal

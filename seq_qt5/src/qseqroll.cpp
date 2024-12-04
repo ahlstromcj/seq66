@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-02
+ * \updates       2024-12-04
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -122,9 +122,7 @@ qseqroll::qseqroll
     m_note_y                (0),
     m_keypadding_x          (c_keyboard_padding_x),
     m_v_zooming             (false),
-#if defined SEQ66_DRAW_GHOST_NOTES
     m_selection             (),
-#endif
     m_last_base_note        (-1),
     m_link_wraparound       (usr().pattern_wraparound())
 {
@@ -455,16 +453,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     {
         pen.setColor(Qt::gray);
         painter.setPen(pen);
-
-#if defined SEQ66_DRAW_GHOST_NOTES
         draw_ghost_notes(painter, m_selection);
-#else
-        painter.drawRect
-        (
-            current_x(), current_y(),
-            old_rect().width(), old_rect().height()
-        );
-#endif
     }
 
     int selw = selection().width();
@@ -602,7 +591,6 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     int count = track().time_signature_count();
     midipulse ppmeas = midipulse(default_pulses_per_measure(perf().ppqn()));
     midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
-//  midipulse ticks_per_four = ticks_per_step * 4;
     midipulse endtick = pix_to_tix(r.x() + r.width());
     for (int tscount = 0; tscount < count; ++tscount)
     {
@@ -869,8 +857,6 @@ qseqroll::draw_notes
     s->draw_unlock();
 }
 
-#if defined SEQ66_DRAW_GHOST_NOTES
-
 /**
  *  It would be nice to include the selected notes in the selection box
  *  when pasting.  We'll see how practical this feature is.
@@ -983,8 +969,6 @@ qseqroll::draw_ghost_notes
     }
     track().draw_unlock();
 }
-
-#endif  // defined SEQ66_DRAW_GHOST_NOTES
 
 /*
  * Why floating point; just divide by 2.  Also, the polygon seems to be offset
@@ -1323,6 +1307,28 @@ qseqroll::mousePressEvent (QMouseEvent * event)
     }
 }
 
+/**
+ *  This function gets fills the rectagnle m_selection with its ranges
+ *  based on the selected notes (whether selected with the mouse or via
+ *  functions such as select_all().
+ */
+
+bool
+qseqroll::get_selected_box ()
+{
+    midipulse tick_s, tick_f;           /* start and end of tick window     */
+    int note_h, note_l;                 /* high and low notes in window     */
+    bool result = track().selected_box(tick_s, note_h, tick_f, note_l);
+    if (result)
+    {
+        m_selection.xy_to_rect
+        (
+            int(tick_s), note_h, int(tick_f), note_l
+        );
+    }
+    return result;
+}
+
 void
 qseqroll::mouseReleaseEvent (QMouseEvent * event)
 {
@@ -1364,17 +1370,11 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             (
                 tick_s, note_h, tick_f, note_l, selmode
             );
-#if defined SEQ66_DRAW_GHOST_NOTES
-            if (track().selected_box(tick_s, note_h, tick_f, note_l))
-            {
-                m_selection.xy_to_rect
-                (
-                    int(tick_s), note_h, int(tick_f), note_l
-                );
-            }
-#endif
             if (numsel > 0)
+            {
+                (void) get_selected_box();
                 flag_dirty();
+            }
         }
         if (moving())
         {
@@ -1680,6 +1680,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                         done = true;
                         track().select_all();
+                        (void) get_selected_box();
                         break;
 
                     case Qt::Key_C:
@@ -1698,6 +1699,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                         done = true;
                         track().select_by_channel(frame64()->edit_channel());
+                        (void) get_selected_box();
                         break;
 
                     case Qt::Key_K:
@@ -1713,6 +1715,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                         (
                             frame64()->edit_channel()
                         );
+                        (void) get_selected_box();
                         break;
 
                     case Qt::Key_V:

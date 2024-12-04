@@ -461,6 +461,7 @@ private:                                /* functions for friend sequence    */
     event::iterator find_next_match (const event & e);
     bool remove_first_match (const event & e, midipulse starttick = 0);
     bool remove_marked ();
+    bool remove_trailing_events (midipulse limit);
     bool remove_selected ();
     void unpaint_all ();
     int count_selected_notes () const;

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-02
+ * \updates       2024-12-04
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -41,13 +41,8 @@
 
 #include "cfg/scales.hpp"               /* seq66::scales enum class         */
 #include "play/sequence.hpp"            /* sequence::editmode mode          */
-#include "qseqbase.hpp"                 /* seq66::qseqbase mixin class      */
-
-#define SEQ66_DRAW_GHOST_NOTES          /* EXPERIMENTAL                     */
-
-#if defined SEQ66_DRAW_GHOST_NOTES
 #include "util/rect.hpp"                /* seq66::rect class                */
-#endif
+#include "qseqbase.hpp"                 /* seq66::qseqbase mixin class      */
 
 /*
  * Forward references
@@ -152,6 +147,7 @@ private:
     bool add_painted_note (midipulse tick, int note);
     bool zoom_key_press (bool shifted, int key);
     bool movement_key_press (int key);
+    bool get_selected_box ();
 
 private:        // overrides for painting, mouse/keyboard events, & size hints
 
@@ -191,13 +187,11 @@ private:
     void draw_tempo (QPainter & painter, int x, int y, int velocity);
 #endif
 
-#if defined SEQ66_DRAW_GHOST_NOTES
     void draw_ghost_notes
     (
         QPainter & painter,
         const seq66::rect & selection   /* why is seq66 scoped needed???    */
     );
-#endif
 
 private:
 
@@ -349,8 +343,6 @@ private:
     int m_keypadding_x;
     bool m_v_zooming;
 
-#if defined SEQ66_DRAW_GHOST_NOTES
-
     /**
      *  The ranges of the selection, needed to draw ghost notes.
      *  The coordinates are of the form (x, y) == (ticks, pixels).
@@ -360,8 +352,6 @@ private:
      */
 
     seq66::rect m_selection;
-
-#endif
 
     /**
      *  Hold the note value first grabbed when starting a move.

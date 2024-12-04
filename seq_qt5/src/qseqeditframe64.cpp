@@ -1687,7 +1687,7 @@ qseqeditframe64::conditional_update ()
     }
 }
 
-#if defined USE_WOULD_TRUNCATE_BPB_BW
+#if defined USE_WOULD_TRUNCATE_BPB_BW           /* undefined                */
 
 /**
  *  Checks if the new time-signature results in a dropping events.
@@ -1730,7 +1730,7 @@ bool
 qseqeditframe64::would_truncate (int m)
 {
     bool result = false;                        /* no problem by default    */
-    if (m > 0 && m <= 99999)                    /* a sanity check only      */
+    if (m > 1 && m <= 99999)                    /* a sanity check only      */
     {
         midipulse max = track().get_max_timestamp();
         midipulse newlength = midipulse(track().measures_to_ticks(m));
@@ -1962,6 +1962,7 @@ qseqeditframe64::set_measures (int m, qbase::status qs)
             if (track().apply_length(m, true))      /* always a user change */
             {
                 m_measures = m;
+                track().remove_orphaned_events();
                 set_track_change();                 /* to solve issue #90   */
             }
         }

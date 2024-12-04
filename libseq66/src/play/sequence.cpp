@@ -1915,14 +1915,39 @@ sequence::remove_first_match (const event & e, midipulse starttick)
  *  Clears all events from the event container.  Also see copy_events().
  */
 
-void
+bool
 sequence::remove_all ()
 {
     automutex locker(m_mutex);
+    bool result = false;
     int count = m_events.count();
-    m_events.clear();
     if (count > 0)
-        modify();                       /* issue #90 */
+    {
+        m_events.clear();
+        count = m_events.count();
+        result = count == 0;
+        if (result)
+            modify();                       /* issue #90 */
+    }
+    return result;
+}
+
+/**
+ *  Removes any events timestamps after the last measure. See
+ *  the use of would_truncate() in qseqeditframe64.
+ */
+
+bool
+sequence::remove_orphaned_events ()
+{
+    automutex locker(m_mutex);
+    bool result = m_events.remove_trailing_events(get_length());
+    if (result)
+    {
+        if (result)
+            modify();
+    }
+    return result;
 }
 
 /**
