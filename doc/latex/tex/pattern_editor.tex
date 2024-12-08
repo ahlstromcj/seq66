@@ -369,14 +369,16 @@
          Alignment, reversing, and quantization can still be done.
       \item \textbf{Measures}.
          Allows the measures (length) of the pattern to be changed in two ways,
-         depending on how the number is entered: as a simple integer (e.g.
-         1, 1.0, 0.25),
-         or as a simple time-signature fraction (e.g. "3/4").
+         depending on how the number is entered: as a simple integer or
+         floating-point number (e.g.
+         1, 1.0, 1.75),
+         or as a simple time-signature fraction (e.g. "3/4"; the "/" is a
+         key indicator of this kind of change).
          \begin{itemize}
             \item \textbf{Measures}.
                Entering an integer or a floating-point scale factor will scale
                the pattern events,
-               and change the number of measures, if applicable.
+               and change the number of measures.
                If the measure value is less than \texttt{1.0},
                the pattern will only be compressed.
                If less than 1 measure in length, the result will be
@@ -385,6 +387,7 @@
                Entering a fraction such as \textbf{3/4} or
                \textbf{12/8} will change the time signature of the pattern
                \textbf{and} \textsl{compress it to 1 measure}.
+               This obviously works best for shorter patterns.
          \end{itemize}
       \item \textbf{Scale Factor}.
          Scales the pattern.  For example, 2.0 doubles the length, and 0.5

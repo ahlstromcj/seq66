@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2023-08-16
+ * \updates       2024-12-08
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -125,12 +125,18 @@ private slots:
      *  buttonClicked() signals.
      */
 
-    void slot_effect ();
+    void slot_effect_clear ();
     void slot_length_fix (int fixlengthid);
     void slot_measure_change ();
     void slot_scale_change ();
-    void slot_quan_change (int quanid);
+    void slot_alt_change (int altid);
+
+    void slot_tighten_change ();
+    void slot_full_change ();
     void slot_jitter_change ();
+    void slot_random_change ();
+    void slot_notemap_file ();
+
     void slot_align_change (int dummy);
     void slot_reverse_change (int dummy);
     void slot_reverse_in_place (int dummy);
@@ -157,7 +163,7 @@ private:
      * Access to radio-buttons for alteration.
      */
 
-    QButtonGroup * m_quan_group;
+    QButtonGroup * m_alt_group;
 
     /**
      *  Access to the performance controller.
@@ -212,7 +218,27 @@ private:
      *  The current way the user has selected for alteration.
      */
 
-    alteration m_quan_type;
+    alteration m_alt_type;
+
+    /**
+     *  The range of tightening to apply. Normally this is snap() / 2.
+     */
+
+    int m_tighten_range;
+
+    /**
+     *  The range of full quantization to apply. Normally this is snap().
+     */
+
+    int m_full_range;
+
+    /**
+     *  The range of amplitude randomization to apply. For control events,
+     *  this is a magnitude of the control. For notes, it is the velocity.
+     *  Program change need not apply. :-)
+     */
+
+    int m_random_range;
 
     /**
      *  The range of jitter to apply.  Here, jitter is a randomization of
@@ -221,6 +247,19 @@ private:
      */
 
     int m_jitter_range;
+
+    /**
+     *  Indicates if the note-map is to be reversed.
+     */
+
+    bool m_reverse_notemap;
+
+    /**
+     *  Holds the file-name of the notemap file, which is a '.drums' file,
+     *  but we also want to support '.notemap'.
+     */
+
+    std::string m_notemap_file;
 
     /**
      *  The current number of measures for the adjustment.  This is a double

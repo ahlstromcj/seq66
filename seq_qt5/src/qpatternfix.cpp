@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2022-08-19
+ * \updates       2024-12-08
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -38,7 +38,6 @@
  *  similar to the LFO dialog.
  *
  *  This dialog was inspired by Ahlstrom's poor playing and timing skills.
- *
  */
 
 #include <QButtonGroup>
@@ -88,26 +87,31 @@ qpatternfix::qpatternfix
     QFrame              (parent),
     ui                  (new Ui::qpatternfix),
     m_fixlength_group   (nullptr),
-    m_quan_group        (nullptr),
+    m_alt_group         (nullptr),
     m_performer         (p),
-    m_seq               (s),
-    m_backup_events     (s.events()),             /* for slot_reset() */
+    m_seq               (s),                        /* track() accessor     */
+    m_backup_events     (s.events()),               /* for slot_reset()     */
     m_backup_measures   (s.get_measures()),
     m_backup_beats      (s.get_beats_per_bar()),
     m_backup_width      (s.get_beat_width()),
     m_edit_frame        (editparent),
-    m_length_type       (lengthfix::none),
-    m_quan_type         (alteration::none),
-    m_jitter_range      (usr().jitter_range(s.get_ppqn() / 4)),
-    m_measures          (double(m_backup_measures)),
-    m_scale_factor      (1.0),
-    m_align_left        (false),
-    m_reverse           (false),
-    m_reverse_in_place  (false),
-    m_save_note_length  (true),
-    m_use_time_sig      (false),
-    m_time_sig_beats    (0),
-    m_time_sig_width    (0),
+    m_length_type       (lengthfix::none),          /* lengthfix fp_fixtype */
+    m_alt_type          (alteration::none),         /* alteration fp_...    */
+    m_tighten_range     (s.snap() / 2),
+    m_full_range        (s.snap()),
+    m_random_range      (usr().randomization_amount()),
+    m_jitter_range      (usr().jitter_range(s.get_ppqn() / 4)), /* fp_...   */
+    m_reverse_notemap   (false),
+    m_notemap_file      (rc().notemap_filename()),
+    m_measures          (double(m_backup_measures)), /* fp_measures         */
+    m_scale_factor      (1.0),                      /* fp_scale_factor      */
+    m_align_left        (false),                    /* bool fp_align_left   */
+    m_reverse           (false),                    /* bool fp_reverse      */
+    m_reverse_in_place  (false),                    /* bool fp_reverse_...  */
+    m_save_note_length  (true),                     /* bool fp_save_note... */
+    m_use_time_sig      (false),                    /* bool fp_use_time_... */
+    m_time_sig_beats    (0),                        /* int fp_beats_per_bar */
+    m_time_sig_width    (0),                        /* int fp_beat_width    */
     m_is_modified       (false),
     m_was_clean         (! s.modified())
 {
@@ -131,21 +135,28 @@ qpatternfix::initialize (bool startup)
     std::string value = std::to_string(int(track().get_length()));
     ui->label_pulses->setText(qt(value));
     value = std::to_string(int(m_measures));
-    ui->line_edit_pick->setText(qt(value));
+    ui->line_edit_measures->setText(qt(value));
     value = std::to_string(1);                          /* actually a float */
     ui->line_edit_scale->setText(qt(value));
-    ui->btn_effect_shift->setChecked(false);
-    ui->btn_effect_reverse->setChecked(false);
-    ui->btn_effect_shrink->setChecked(false);
-    ui->btn_effect_expand->setChecked(false);
-    ui->btn_effect_time_sig->setChecked(false);
-    ui->btn_effect_truncate->setChecked(false);
+    ui->btn_effect_alteration->setEnabled(false);
     ui->btn_effect_shift->setEnabled(false);
     ui->btn_effect_reverse->setEnabled(false);
     ui->btn_effect_shrink->setEnabled(false);
     ui->btn_effect_expand->setEnabled(false);
     ui->btn_effect_time_sig->setEnabled(false);
     ui->btn_effect_truncate->setEnabled(false);
+
+    /*
+     * ui->btn_effect_alteration->setChecked(false);
+     * ui->btn_effect_shift->setChecked(false);
+     * ui->btn_effect_reverse->setChecked(false);
+     * ui->btn_effect_shrink->setChecked(false);
+     * ui->btn_effect_expand->setChecked(false);
+     * ui->btn_effect_time_sig->setChecked(false);
+     * ui->btn_effect_truncate->setChecked(false);
+     */
+
+    slot_effect_clear();
     ui->btn_align_left->setChecked(false);
     ui->btn_reverse->setChecked(false);
     ui->btn_reverse_in_place->setChecked(false);
@@ -187,7 +198,7 @@ qpatternfix::initialize (bool startup)
         );
         connect
         (
-            ui->line_edit_pick, SIGNAL(editingFinished()),
+            ui->line_edit_measures, SIGNAL(editingFinished()),
             this, SLOT(slot_measure_change())
         );
         connect
@@ -198,55 +209,152 @@ qpatternfix::initialize (bool startup)
         ui->line_edit_none->hide();                     /* unused, hide it  */
 
         /*
-         * Quantization.
+         * Alteration. None, tighten, quantize, jitter, random, and notemap,
+         * all mutually exclusive.
          */
 
-        m_quan_group = new QButtonGroup(this);
+        m_alt_group = new QButtonGroup(this);
         ui->group_box_quantize->setEnabled(true);
-        m_quan_group->addButton(ui->btn_quan_none, cast(alteration::none));
-        m_quan_group->addButton
+
+        /*
+         * None
+         */
+
+        m_alt_group->addButton(ui->btn_alt_none, cast(alteration::none));
+
+        /*
+         * Tighten
+         */
+
+        m_alt_group->addButton
         (
-            ui->btn_quan_tighten, cast(alteration::tighten)
+            ui->btn_alt_tighten, cast(alteration::tighten)
         );
-        m_quan_group->addButton(ui->btn_quan_full, cast(alteration::quantize));
-        ui->btn_quan_none->setChecked(true);
-        ui->line_edit_q_none->hide();
-        ui->line_edit_q_tighten->hide();
-        ui->line_edit_q_full->hide();
+
+        /*
+         * Quantize
+         */
+
+        m_alt_group->addButton(ui->btn_alt_full, cast(alteration::quantize));
+
+        /*
+         * Jitter
+         */
+
+        m_alt_group->addButton(ui->btn_alt_jitter, cast(alteration::jitter));
+
+        /*
+         * Random
+         */
+
+        m_alt_group->addButton(ui->btn_alt_random, cast(alteration::random));
+
+        /*
+         * Note-map and Reverse Note-map
+         */
+
+        m_alt_group->addButton(ui->btn_alt_notemap, cast(alteration::notemap));
+        m_alt_group->addButton
+        (
+            ui->btn_alt_rev_notemap, cast(alteration::rev_notemap)
+        );
+
+        /*
+         * Enable, disable, or hide the corresponding group items.
+         * Currently the jitter edit value is used.
+         *
+         *  ui->line_edit_alt_jitter->hide();
+         */
+
+        ui->btn_alt_none->setChecked(true);
+        ui->line_edit_alt_none->hide();     /* reveal once code in place    */
         connect
         (
-            m_quan_group, QT5_HELPER_RADIO_SIGNAL,
-            [=](int id) { slot_quan_change(id); }       /* lambda function  */
+            m_alt_group, QT5_HELPER_RADIO_SIGNAL,
+            [=](int id) { slot_alt_change(id); }        /* lambda function  */
+        );
+
+        /*
+         * TODO: Add similar slots for Tighten, Full (quantization),
+         * Random, and maybe a button to load a note-map file.
+         *
+         *  We want to be able to change from the snap values for quantization.
+         */
+
+        value = std::to_string(m_tighten_range);
+        ui->line_edit_alt_tighten->setText(qt(value));
+        connect
+        (
+            ui->line_edit_alt_tighten, SIGNAL(editingFinished()),
+            this, SLOT(slot_tighten_change())
+        );
+        value = std::to_string(m_full_range);
+        ui->line_edit_alt_full->setText(qt(value));
+        connect
+        (
+            ui->line_edit_alt_full, SIGNAL(editingFinished()),
+            this, SLOT(slot_full_change())
+        );
+        value = std::to_string(m_random_range);
+        ui->line_edit_alt_random->setText(qt(value));
+        connect
+        (
+            ui->line_edit_alt_random, SIGNAL(editingFinished()),
+            this, SLOT(slot_random_change())
         );
         value = std::to_string(m_jitter_range);
-        ui->line_edit_q_jitter->setText(qt(value));
+        ui->line_edit_alt_jitter->setText(qt(value));
         connect
         (
-            ui->line_edit_q_jitter, SIGNAL(editingFinished()),
+            ui->line_edit_alt_jitter, SIGNAL(editingFinished()),
             this, SLOT(slot_jitter_change())
+        );
+        connect
+        (
+            ui->btn_notemap_file, SIGNAL(clicked()),
+            this, SLOT(slot_notemap_file())
         );
 
         /*
          * The "read-only" Effect group.  The slot here merely keeps them from
-         * being checked by the user.  If we make them readonly they text is
+         * being checked by the user.  If we make them readonly the text is
          * difficult to read in many Qt themes.
          */
 
         connect
         (
-            ui->btn_effect_shift, SIGNAL(clicked()), this, SLOT(slot_effect())
+            ui->btn_effect_alteration, SIGNAL(clicked()),
+            this, SLOT(slot_effect_clear())
         );
         connect
         (
-            ui->btn_effect_shrink, SIGNAL(clicked()), this, SLOT(slot_effect())
+            ui->btn_effect_shift, SIGNAL(clicked()),
+            this, SLOT(slot_effect_clear())
         );
         connect
         (
-            ui->btn_effect_expand, SIGNAL(clicked()), this, SLOT(slot_effect())
+            ui->btn_effect_reverse, SIGNAL(clicked()),
+            this, SLOT(slot_effect_clear())
         );
         connect
         (
-            ui->btn_effect_time_sig, SIGNAL(clicked()), this, SLOT(slot_effect())
+            ui->btn_effect_shrink, SIGNAL(clicked()),
+            this, SLOT(slot_effect_clear())
+        );
+        connect
+        (
+            ui->btn_effect_expand, SIGNAL(clicked()),
+            this, SLOT(slot_effect_clear())
+        );
+        connect
+        (
+            ui->btn_effect_time_sig, SIGNAL(clicked()),
+            this, SLOT(slot_effect_clear())
+        );
+        connect
+        (
+            ui->btn_effect_truncate, SIGNAL(clicked()),
+            this, SLOT(slot_effect_clear())
         );
 
         /*
@@ -292,7 +400,7 @@ qpatternfix::initialize (bool startup)
          */
 
         ui->btn_change_none->setChecked(true);
-        ui->btn_quan_none->setChecked(true);
+        ui->btn_alt_none->setChecked(true);
     }
 }
 
@@ -316,23 +424,31 @@ qpatternfix::unmodify (bool reset_fields)
     if (reset_fields)
     {
         std::string temp = std::to_string(track().get_measures());
-        ui->line_edit_pick->setText(qt(temp));
+        ui->line_edit_measures->setText(qt(temp));
         ui->line_edit_scale->setText("1.0");
-        ui->btn_effect_shift->setChecked(false);
-        ui->btn_effect_shrink->setChecked(false);
-        ui->btn_effect_expand->setChecked(false);
         ui->btn_reset->setEnabled(false);
+
+        /*
+         * ui->btn_effect_shift->setChecked(false);
+         * ui->btn_effect_shrink->setChecked(false);
+         * ui->btn_effect_expand->setChecked(false);
+         */
+
+        slot_effect_clear();
     }
     m_is_modified = false;
 }
 
 void
-qpatternfix::slot_effect ()
+qpatternfix::slot_effect_clear ()
 {
+    ui->btn_effect_alteration->setChecked(false);
     ui->btn_effect_shift->setChecked(false);
+    ui->btn_effect_reverse->setChecked(false);
     ui->btn_effect_shrink->setChecked(false);
     ui->btn_effect_expand->setChecked(false);
     ui->btn_effect_time_sig->setChecked(false);
+    ui->btn_effect_truncate->setChecked(false);
 }
 
 void
@@ -343,31 +459,47 @@ qpatternfix::slot_length_fix (int fixlengthid)
         modify();
 }
 
+/**
+ *  The user can enter either an integer measure count to set the measures
+ *  directly, or a fraction of the form x/y to scale the number of measures.
+ *  It sets the lengthfix::measures item rather than lengthfix::rescale.
+ *
+ *  Tricky: If setting integer measures, the end effect is scaling, not
+ *  truncating.
+ */
+
 void
 qpatternfix::slot_measure_change ()
 {
-    QString t = ui->line_edit_pick->text();
+    QString t = ui->line_edit_measures->text();
     std::string tc = t.toStdString();
     double m = string_to_double(tc, 1.0);
     if (sequence::valid_scale_factor(m, true))  /* applies to measures, too */
     {
         int beats, width;
-        bool is_time_sig = string_to_time_signature(tc, beats, width);
-        if (m != m_measures || is_time_sig)
+        bool is_fraction = string_to_time_signature(tc, beats, width);
+        bool different = fnotequal(m, m_measures);
+        if (different || is_fraction)
         {
             ui->btn_change_pick->setChecked(true);
             m_measures = m;
             m_length_type = lengthfix::measures;
-            m_time_sig_beats = beats;
-            m_time_sig_width = width;
-            m_use_time_sig = is_time_sig;
-            ui->btn_effect_time_sig->setChecked(is_time_sig);
-            if (is_time_sig)
-            {
-                midipulse max = track().get_max_timestamp();
-                midipulse newlength = midipulse(track().get_length() * m);
-                ui->btn_effect_truncate->setChecked(newlength < max);
-            }
+            if (beats > 0 && beats < 96)            /* just a sanity check  */
+                m_time_sig_beats = beats;           /* fraction numerator   */
+
+            if (width > 0 && width < 96)            /* just a sanity check  */
+                m_time_sig_width = width;           /* fraction denominator */
+
+            m_use_time_sig = is_fraction;
+            ui->btn_effect_time_sig->setChecked(is_fraction);
+
+            midipulse curlength = track().get_length();
+            midipulse maxlength = track().get_max_timestamp();
+            midipulse newlength = midipulse(track().unit_measure() * m);
+            bool shrunk = newlength < curlength;
+            bool reduced = newlength < maxlength;
+            ui->btn_effect_truncate->setChecked(reduced);
+            ui->btn_effect_shrink->setChecked(shrunk);
             modify();
         }
     }
@@ -398,26 +530,82 @@ qpatternfix::slot_scale_change ()
 }
 
 void
-qpatternfix::slot_quan_change (int quanid)
+qpatternfix::slot_alt_change (int quanid)
 {
-    m_quan_type = quantization_cast(quanid);
-    if (m_quan_type != alteration::none)
+    alteration quantype = quantization_cast(quanid);
+    if (m_alt_type != quantype)
+    {
+        bool not_none = quantype != alteration::none;
+        m_alt_type = quantype;
+        ui->btn_effect_alteration->setChecked(not_none);
         modify();
+    }
+}
+
+void
+qpatternfix::slot_tighten_change ()
+{
+    QString t = ui->line_edit_alt_tighten->text();
+    std::string tc = t.toStdString();
+    int m = string_to_int(tc, 0);
+    if (m > 0 && m < track().get_ppqn())        /* sanity check */
+    {
+        ui->btn_alt_tighten->setChecked(true);
+        m_tighten_range = m;
+        m_alt_type = alteration::tighten;
+        modify();
+    }
+}
+
+void
+qpatternfix::slot_full_change ()
+{
+    QString t = ui->line_edit_alt_full->text();
+    std::string tc = t.toStdString();
+    int m = string_to_int(tc, 0);
+    if (m > 0 && m < track().get_ppqn())        /* sanity check */
+    {
+        ui->btn_alt_full->setChecked(true);
+        m_full_range = m;
+        m_alt_type = alteration::quantize;
+        modify();
+    }
+}
+
+void
+qpatternfix::slot_random_change ()
+{
+    QString t = ui->line_edit_alt_random->text();
+    std::string tc = t.toStdString();
+    int m = string_to_int(tc, 0);
+    if (m > 0 && m < track().get_ppqn())        /* sanity check */
+    {
+        ui->btn_alt_random->setChecked(true);
+        m_random_range = m;
+        m_alt_type = alteration::random;
+        modify();
+    }
 }
 
 void
 qpatternfix::slot_jitter_change ()
 {
-    QString t = ui->line_edit_q_jitter->text();
+    QString t = ui->line_edit_alt_jitter->text();
     std::string tc = t.toStdString();
     int m = string_to_int(tc, 0);
     if (m > 0 && m < track().get_ppqn())        /* sanity check */
     {
-        ui->btn_quan_jitter->setChecked(true);
+        ui->btn_alt_jitter->setChecked(true);
         m_jitter_range = m;
-        m_quan_type = alteration::jitter;
+        m_alt_type = alteration::jitter;
         modify();
     }
+}
+
+void
+qpatternfix::slot_notemap_file ()
+{
+    printf("Current note-map file: '%s'\n", m_notemap_file.c_str());
 }
 
 void
@@ -492,14 +680,16 @@ qpatternfix::slot_set ()
     fixeffect efx;
     fixparameters fp =                                  /* value structure  */
     {
-        m_length_type, m_quan_type, m_jitter_range,
+        m_length_type, m_alt_type,
+        m_tighten_range, m_full_range, m_random_range, m_jitter_range,
         m_align_left, m_reverse, m_reverse_in_place,
         m_save_note_length, m_use_time_sig, m_time_sig_beats,
         m_time_sig_width, m_measures, m_scale_factor, efx
     };
-    bool success = perf().fix_sequence(track().seq_number(), fp);
+    bool success = perf().fix_pattern(track().seq_number(), fp);
     if (success)
     {
+        bool alteration = m_alt_type != alteration::none;
         bool bitshifted = bit_test(efx, fixeffect::shifted);
         bool bitreversed = bit_test(efx, fixeffect::reversed);
         bool bitshrunk = bit_test(efx, fixeffect::shrunk);
@@ -518,9 +708,10 @@ qpatternfix::slot_set ()
         else
             temp = double_to_string(m_measures);
 
-        ui->line_edit_pick->setText(qt(temp));
+        ui->line_edit_measures->setText(qt(temp));
         temp = double_to_string(m_scale_factor);
         ui->line_edit_scale->setText(qt(temp));
+        ui->btn_effect_alteration->setChecked(alteration);
         ui->btn_effect_shift->setChecked(bitshifted);
         ui->btn_effect_shrink->setChecked(bitshrunk);
         ui->btn_effect_expand->setChecked(bitexpanded);
@@ -542,8 +733,15 @@ qpatternfix::slot_reset ()
     m_time_sig_beats = m_time_sig_width = 0;
     m_scale_factor = 1.0;
     m_length_type = lengthfix::none;
-    m_quan_type = alteration::none;
+    m_alt_type = alteration::none;
+    m_tighten_range = track().snap() / 2;
+    m_full_range = track().snap();
+    m_random_range = usr().randomization_amount();
+    m_jitter_range = usr().jitter_range(track().get_ppqn() / 4);
+    m_reverse_notemap = false;
+    m_notemap_file = rc().notemap_filename();
     initialize(false);
+    slot_effect_clear();
     unmodify();                                         /* change fields    */
     set_dirty();                                        /* for redrawing    */
     if (m_was_clean)

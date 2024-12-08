@@ -1800,7 +1800,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                          * the note velocity quite naturally.
                          */
 
-                        if (track().randomize_selected_notes()) /* pushes too   */
+                        if (track().randomize_notes()) /* pushes too   */
                             done = mark_modified();
                         break;
 

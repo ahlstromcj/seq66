@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2024-11-24
+ * \updates       2024-12-08
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -87,8 +87,9 @@ using colorbyte = char;
  *      of those cases, the timestamps of all events will be adjusted
  *      accordingly.
  *
- * \var fp_quan_type
- *      Indicates if all events are to be tighted or quantized.
+ * \var fp_alter_type
+ *      Indicates how all events are to be altered, such as being tightened,
+ *      quantized, note-mapping, etc.
  *
  * \var fp_align_left
  *      Indicates if the offset of the first event or, preferably first note
@@ -139,8 +140,11 @@ using colorbyte = char;
 struct fixparameters
 {
     lengthfix fp_fix_type;
-    alteration fp_quan_type;
-    int fp_jitter;
+    alteration fp_alter_type;
+    int fp_tighten_range;
+    int fp_quantize_range;
+    int fp_random_range;
+    int fp_jitter_range;
     bool fp_align_left;
     bool fp_reverse;
     bool fp_reverse_in_place;
@@ -1833,9 +1837,9 @@ public:
     void decrement_selected (midibyte status, midibyte /*control*/);
     bool grow_selected (midipulse deltatick);
     bool stretch_selected (midipulse deltatick);
-    bool randomize_selected (midibyte status, int range = -1);
-    bool randomize_selected_notes (int range = -1);
-    bool jitter_notes (int jitter = -1);
+    bool randomize (midibyte status, int range = -1, bool all = false);
+    bool randomize_notes (int range = -1, bool all = false);
+    bool jitter_notes (int jitter = -1, bool all = false);
     bool mark_selected ();
     void unpaint_all ();
     void verify_and_link (bool wrap = false);
@@ -2022,8 +2026,8 @@ private:
         return m_parent;
     }
 
-    bool quantize_events (midibyte status, midibyte cc, int divide);
-    bool quantize_notes (int divide);
+    bool quantize_events (midibyte status, midibyte cc, int divide = 1);
+    bool quantize_notes (int divide = 1);
     bool change_ppqn (int p);
     void put_event_on_bus (const event & ev);
     void reset_loop ();

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2024-11-23
+ * \updates       2024-12-07
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -131,13 +131,14 @@ lengthfix_cast (int v)
 
 enum class alteration
 {
-    none = 0,   /**< grid_quant_none:    Not adjusting timing of pattern.   */
-    tighten,    /**< grid_quant_tighten: Adjust timing less forcefully.     */
-    quantize,   /**< grid_quant_full:    Adjust timing strictly.            */
-    jitter,     /**< grid_quant_jitter:  Randomize timing slightly.         */
-    random,     /**< grid_quant_random:  Randomize event magnitude a bit.   */
-    notemap,    /**< grid_quant_notemap: Apply a configured note-mapping.   */
-    max         /**<                     Illegal value.                     */
+    none = 0,       /**< grid_quant_none:    Not adjustment of pattern.     */
+    tighten,        /**< grid_quant_tighten: Adjust timing less halfway.    */
+    quantize,       /**< grid_quant_full:    Adjust timing strictly.        */
+    jitter,         /**< grid_quant_jitter:  Randomize timing slightly.     */
+    random,         /**< grid_quant_random:  Randomize event magnitude.     */
+    notemap,        /**< grid_quant_notemap: Apply configured note-mapping. */
+    rev_notemap,    /**< Apply the note-map in the reverser direction.      */
+    max             /**<                     Illegal value.                 */
 };
 
 inline int
@@ -643,6 +644,10 @@ extern std::string extract_a2j_port_name (const std::string & alias);
 extern midipulse closest_snap (int S, midipulse p);
 extern midipulse down_snap (int S, midipulse p);
 extern midipulse up_snap (int S, midipulse p);
+extern bool fequal (double x, double y);
+extern bool fnotequal (double x, double y);
+extern bool flessthan (double x, double y);
+extern bool fgreaterthan (double x, double y);
 
 }           // namespace seq66
 

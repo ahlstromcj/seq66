@@ -1,11 +1,29 @@
 TO DO for Seq66 0.99.17
 Chris Ahlstrom
-2019-04-13 to 2024-12-04
+2019-04-13 to 2024-12-08
 
 Hottest:
 
     -   Figure out issue #132, the libasound2 issue.
+    -   #133 Pattern Length Change Issues
     -   QObject::setParent: Cannot set parent, new parent is in a different thread
+    -   Pattern fix:
+        -   Using measures = 3/4 changes the time signature in the pattern
+            editor, but not in the time pane. Also, although END
+            is at the third beat, both time and roll leave the measure
+            a 4/4.
+        -   Add usage/processing of Quantization parameters in
+            line_edit_q_full/jitter/none/tighted.
+        -   Make sure changes raise the modified flag and asterisk indicator.
+        -   Enable / disable Set / Reset according to modification.
+        -   Flagging issues:
+            -   Large measure does not check-mark Expand.
+            -   The Other Fixes do not check-mark their effects flags.
+        -   Definitely need a new screen-shot and documentation galore.
+    -   Consider an option to Import a normal MIDI file so that a flag
+        is raised so that it will not be saved with Seq66 SeqSpecs.
+        Make it visible to be clear.
+    -   Add .notemap support, identical to .drums.
 
 From Testing:
 
@@ -201,7 +219,7 @@ ISSUES:
 #103 One-shot (repetitions != 0) patterns do not play
     This feature works, but requires the pattern to be armed before
     playback begins, either in Live or Song mode.  Should we make the loop
-    auto-arm, or make this an option somehow? No.   
+    auto-arm, or make this an option somehow? No.
     STATUS: Closed.
 
 #104 Really confusing usage
@@ -239,7 +257,7 @@ ISSUES:
             machine. A ton of refactoring and fixes for the damn MIDI Mapper.
 
 #111 Time signature changes does not get saved on .midi file
-     
+
     STATUS: In progress.
         -   Ctrl-Z in pattern editor works, but does not restore original
             view until pattern is reopened. Not sure why, it should work.
@@ -343,6 +361,32 @@ ISSUES:
     something. 
 
     STATUS: Fixed in the "wip" branch, will be merged at the next release.
+
+#133 Pattern Length Change Issues
+
+    In the pattern edit window, the reset pattern to 1 button no longer works
+    properly. It either shrinks to some bar other than 1 or just does nothing
+    at all. 
+
+    There is also a behaviour when you manually select or type the number of
+    bars and it is smaller than the amount of already existing bars with notes
+    in, the notes get deleted after a warning dialog.  This does not work when
+    the Expand mode is selected.
+
+	Steps to reproduce:
+
+	1: Create two (or more) bars with notes in, with Expand mode selected.
+	2: Shrink to one bar
+
+	These have appeared since https://github.com/ahlstromcj/seq66/issues/128 so
+	possibly connected.
+
+    A third issue which occurred before was with manually editing the amount
+    of bars with double digits. The bars refresh for each digit entered. For
+    example So if you have 16 bars and you want to shrink to 14 bars, it will
+    first shrink it to 1 bar as you type over. If the bars are full then the
+    dialog will pop up about losing notes. If you then click ok, instead of
+    cancel, you will lose anything in the latter 15 bars.
 
 To close as pushed off to version 2:
 

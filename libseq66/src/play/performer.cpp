@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2024-11-13
+ * \updates       2024-12-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2300,7 +2300,7 @@ performer::finish_move (seq::number seqno)
 }
 
 bool
-performer::fix_sequence (seq::number seqno, fixparameters & params)
+performer::fix_pattern (seq::number seqno, fixparameters & params)
 {
     bool result = false;
     seq::pointer s = get_sequence(seqno);

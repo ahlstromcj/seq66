@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-12-01
+ * \updates       2024-12-08
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2706,6 +2706,9 @@ qseqeditframe64::tighten_notes ()
 }
 
 /**
+ *  Jitter the selected notes, preceded by pushing the current events
+ *  onto the undo stack.
+ *
  *  Includes Aftertouch events.
  */
 
@@ -2720,7 +2723,7 @@ void
 qseqeditframe64::randomize_notes ()
 {
     int r = usr().randomization_amount();
-    track().randomize_selected_notes(r);
+    track().randomize_notes(r);
 }
 
 /**

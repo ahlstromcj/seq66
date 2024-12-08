@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-12-04
+ * \updates       2024-12-08
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2627,14 +2627,14 @@ sequence::grow_selected (midipulse delta)
  */
 
 bool
-sequence::randomize_selected (midibyte status, int range)
+sequence::randomize (midibyte status, int range, bool all)
 {
     automutex locker(m_mutex);
     m_events_undo.push(m_events);               /* push_undo(), no lock  */
     if (range == (-1))
         range = usr().randomization_amount();
 
-    bool result = m_events.randomize_selected(status, range);
+    bool result = m_events.randomize(status, range, all);
     if (result)
         modify();
 
@@ -2642,14 +2642,14 @@ sequence::randomize_selected (midibyte status, int range)
 }
 
 bool
-sequence::randomize_selected_notes (int range)
+sequence::randomize_notes (int range, bool all)
 {
     automutex locker(m_mutex);
     m_events_undo.push(m_events);               /* push_undo(), no lock  */
     if (range == (-1))
         range = usr().randomization_amount();
 
-    bool result = m_events.randomize_selected_notes(range);
+    bool result = m_events.randomize_notes(range, all);
     if (result)
         modify();
 
@@ -2658,13 +2658,25 @@ sequence::randomize_selected_notes (int range)
 
 /**
  *  For usage by fix_pattern() and by Tools / Timing / Jitter.
+ *  Note the snap() parameter, to avoid gross jittering.
+ *
+ * \param jitr
+ *      Provides the maximum range of the jittering in MIDI tick units.
+ *
+ * \param all
+ *      If true (the default is false), all events are jittered,
+ *      not just the selected events. The value "true" is to be
+ *      used by fix_pattern().
+ *
+ * \return
+ *      Returns true if events got jittered.
  */
 
 bool
-sequence::jitter_notes (int jitr)
+sequence::jitter_notes (int jitr, bool all)
 {
     automutex locker(m_mutex);
-    bool result = m_events.jitter_notes(snap(), jitr);
+    bool result = m_events.jitter_notes(snap(), jitr, all);
     if (result)
         modify();
 
@@ -3375,6 +3387,9 @@ sequence::trunc_measures (double measures)
  *
  *  See the documentation for the fixparameters structure in the sequence.hpp
  *  module.
+ *
+ * \return
+ *      Returns true if the fixup succeeded.
  */
 
 bool
@@ -3395,16 +3410,15 @@ sequence::fix_pattern (fixparameters & params)
         push_undo();
         if (params.fp_align_left)
         {
-            params.fp_align_left = m_events.align_left();       /* realigned?   */
+            params.fp_align_left = m_events.align_left();   /* realigned?   */
             if (params.fp_align_left)
                 tempefx = bit_set(tempefx, fixeffect::shifted);
             else
-                result = false;                                 /* op failed    */
+                result = false;                             /* op failed    */
         }
         if (params.fp_reverse || params.fp_reverse_in_place)
-        {
             result = m_events.reverse_events(params.fp_reverse_in_place);
-        }
+
         if (result)
         {
             bool fixmeasures = params.fp_fix_type == lengthfix::measures;
@@ -3412,7 +3426,15 @@ sequence::fix_pattern (fixparameters & params)
             bool timesig = params.fp_use_time_signature;
             if (fixmeasures)
             {
-                if (newmeasures != double(currentbars))
+                if (timesig)
+                {
+                    result = apply_length
+                    (
+                        params.fp_beats_per_bar, int(get_ppqn()),
+                        params.fp_beat_width, int(newmeasures)
+                    );
+                }
+                else if (newmeasures != double(currentbars))
                 {
                     newscalefactor = newmeasures / double(currentbars);
                     newmeasures = trunc_measures(newmeasures);
@@ -3421,20 +3443,13 @@ sequence::fix_pattern (fixparameters & params)
                         newscalefactor, params.fp_save_note_length
                     );
                 }
+                result = false;                             /* op not done  */
             }
             else if (fixscale)
             {
                 newlength = m_events.apply_time_factor
                 (
                     newscalefactor, params.fp_save_note_length
-                );
-            }
-            if (timesig)
-            {
-                result = apply_length
-                (
-                    params.fp_beats_per_bar, int(get_ppqn()),
-                    params.fp_beat_width, int(newmeasures)
                 );
             }
             if (newlength > 0 && newlength != currentlen)
@@ -3451,37 +3466,40 @@ sequence::fix_pattern (fixparameters & params)
                 else if (newscalefactor < 1.00)
                     tempefx = bit_set(tempefx, fixeffect::shrunk);
             }
+            switch (params.fp_alter_type)
+            {
+            case alteration::tighten:
 
-            /*
-             * These functions operate only on selected events.
-             */
+                result = m_events.quantize_all_events(params.fp_tighten_range);
+                break;
 
-            if (params.fp_quan_type == alteration::tighten)
-            {
-                result = m_events.quantize_all_events(snap(), 2);
+            case alteration::quantize:
+
+                result = m_events.quantize_all_events(params.fp_quantize_range);
+                break;
+
+            case alteration::jitter:
+
+                result = jitter_notes(params.fp_jitter_range, true);
+                break;
+
+            case alteration::random:
+
+                result = randomize_notes (params.fp_random_range, true);
+                break;
+
+            case alteration::notemap:
+
+                // WRONG:
+                // Need to get the notemapper and call
+                // repitch().
+                result = false; // TODO
+                break;
+
+            default:
+
+                break;
             }
-            else if (params.fp_quan_type == alteration::quantize)
-            {
-                result = m_events.quantize_all_events(snap(), 1);
-            }
-            if (params.fp_quan_type == alteration::jitter)
-            {
-                result = m_events.jitter_notes(snap(), params.fp_jitter);
-            }
-#if defined SEQ66_USE_ADDED_ALTERATIONS
-            if (params.fp_quan_type == alteration::random)
-            {
-                m_events.select_all();                      // TODO
-                result = m_events_randomize_selected_notes
-                (
-                    params.fp_jitter, params.fp_jitter      // FIXME
-                );
-            }
-            if (params.fp_quan_type == alteration::notemap)
-            {
-                result = m_events.jitter_notes(params.fp_jitter);   // TODO
-            }
-#endif
             if (result)
             {
                 params.fp_scale_factor = newscalefactor;
@@ -5964,7 +5982,7 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
 }
 
 /**
- *  Sets the sequence length based on the three given parameters.  There's an
+ *  Sets the sequence length based on the first four parameters.  There's an
  *  implicit "adjust-triggers = true" parameter used in this function.  Please
  *  note that there is an overload that takes only a measure number and uses
  *  the current beats/bar, PPQN, and beat-width values of this sequence.  The
@@ -7412,7 +7430,7 @@ sequence::handle_edit_action (eventlist::edit action, int var)
 
     case eventlist::edit::randomize_events:
 
-        (void) randomize_selected(m_status, var);
+        (void) randomize(m_status, var);
         break;
 
     case eventlist::edit::quantize_notes:

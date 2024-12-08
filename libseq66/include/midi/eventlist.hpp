@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2024-12-04
+ * \updates       2024-12-08
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -426,8 +426,8 @@ private:                                /* functions for friend sequence    */
         midibyte status, midibyte cc,
         int snap, int divide
     );
-    bool quantize_all_events (int snap, int divide);
-    bool quantize_notes (int snap, int divide);
+    bool quantize_all_events (int snap, int divide = 1);
+    bool quantize_notes (int snap, int divide = 1, bool all = false);
     midipulse adjust_timestamp (event & er, midipulse deltatick);
     void scale_note_off (event & noteoff, double factor);
     midipulse apply_time_factor
@@ -440,10 +440,10 @@ private:                                /* functions for friend sequence    */
     bool move_selected_notes (midipulse delta_tick, int delta_note);
     bool move_selected_events (midipulse delta_tick);
     bool align_left (bool relink = false);
-    bool randomize_selected (midibyte status, int plus_minus);
-    bool randomize_selected_notes (int range);
-    bool jitter_events (int snap, int jitr);
-    bool jitter_notes (int snap, int jitr);
+    bool randomize (midibyte status, int plus_minus, bool all = false);
+    bool randomize_notes (int range, bool all = false);
+    bool jitter_all_events (int snap, int jitr);
+    bool jitter_notes (int snap, int jitr, bool all = false);
     void link_new (bool wrap = false);
     bool link_notes (event::iterator eon, event::iterator eoff);
 #if defined SEQ66_LINK_NEWEST_NOTE_ON_RECORD

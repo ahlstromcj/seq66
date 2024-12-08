@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2024-11-21
+ * \updates       2024-12-05
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2257,7 +2257,7 @@ public:
     bool merge_sequence (seq::number seqno);
     bool move_sequence (seq::number seqno);
     bool finish_move (seq::number seqno);
-    bool fix_sequence (seq::number seqno, fixparameters & params);
+    bool fix_pattern (seq::number seqno, fixparameters & params);
     bool remove_set (screenset::number setno);
     bool clear_set (screenset::number setno);
     bool swap_sets (seq::number set0, seq::number set1);

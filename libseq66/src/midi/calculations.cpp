@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2024-11-23
+ * \updates       2024-12-05
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1747,6 +1747,72 @@ up_snap (int S, midipulse p)
     }
     return result;
 }
+
+/**
+ *  Comparison of floating-point values. We can tolerate a fairly large
+ *  epsilon value in our MIDI code.
+ *
+ *  See https://realtimecollisiondetection.net/blog/?p=89 for some gory
+ *  details.
+ *
+ *     if (Abs(x – y) <= EPSILON * Max(1.0f, Abs(x), Abs(y))
+ */
+
+static double s_epsilon = 0.0001;
+
+static double
+one_max (double a, double b)
+{
+    double result = 1.0f;
+    if (std::fabs(a) > result)
+        result = std::fabs(a);
+
+    if (std::fabs(b) > result)
+        result = std::fabs(b);
+
+    return result;
+}
+
+/**
+ *  Calculates x == y to within the epsilon, and returns true if that is so.
+ */
+
+bool
+fequal (double x, double y)
+{
+    return std::fabs(x - y) <= s_epsilon * one_max(std::fabs(x), std::fabs(y));
+}
+
+/**
+ *  Calculates x != y to within the epsilon, and returns true if that is so.
+ */
+
+bool
+fnotequal (double x, double y)
+{
+    return std::fabs(x - y) > s_epsilon * one_max(std::fabs(x), std::fabs(y));
+}
+
+/**
+ *  Calculates x < y and returns true if that is so.
+ */
+
+bool
+flessthan (double x, double y)
+{
+    return x < (y - s_epsilon * one_max(std::fabs(x), std::fabs(y)));
+}
+
+/**
+ *  Calculates x > y and returns true if that is so.
+ */
+
+bool
+fgreaterthan (double x, double y)
+{
+    return x > (y + s_epsilon * one_max(std::fabs(x), std::fabs(y)));
+}
+
 
 }       // namespace seq66
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2024-12-04
+ * \updates       2024-12-08
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -841,7 +841,7 @@ eventlist::quantize_events
             if (er.is_marked())                 /* ignore marked events     */
             {
                 er.unmark();
-                continue;
+                continue;                       /* it was a linked note     */
             }
             if (astatus == EVENT_CONTROL_CHANGE)
                 canselect = match && d0 == cc;  /* correct status and cc    */
@@ -877,7 +877,7 @@ eventlist::quantize_events
                             f->set_timestamp(ts1);
                         }
                     }
-                    f->mark();              /* mark linked note for later   */
+                    f->mark();                  /* mark linked note, ignore */
                 }
             }
         }
@@ -892,14 +892,15 @@ eventlist::quantize_events
  *  Quantizes all events, unconditionally.  No adjustment for wrapped notes
  *  is made.
  *
- * \param snap_tick
+ * \param snap
  *      Provides the maximum amount to move the events.  Actually, events are
  *      moved to the previous or next snap_tick value depend on whether they
  *      are halfway to the next one or not.
  *
  * \param divide
  *      An indicator of the amount of quantization.  The values are either
- *      1 ("quantize") or 2 ("tighten").
+ *      1 ("quantize") or 2 ("tighten"). The default value is 1, which makes
+ *      the snap parameter the quantization value.
  */
 
 bool
@@ -909,9 +910,8 @@ eventlist::quantize_all_events (int snap, int divide)
     midipulse len = get_length();
     bool tight = divide == 2;
     for (auto & er : m_events)
-    {
         result = tight ? er.tighten(snap, len) : er.quantize(snap, len) ;
-    }
+
     if (result)
         verify_and_link();                          /* sorts them again!!!  */
 
@@ -920,17 +920,28 @@ eventlist::quantize_all_events (int snap, int divide)
 
 /**
  *  Quantize/tighten all Note events, including Aftertouch.
+ *
+ * \param snap
+ *      The value to which to snap the events.
+ *
+ * \param divide
+ *      Divides the snap, e.g. in order to "tighten" rather than fully
+ *      quantize. Use set to 1 (the default) or 2.
+ *
+ * \param all
+ *      If false (the default), then only selected notes are acted on.
+ *      Otherwise, they all are.
  */
 
 bool
-eventlist::quantize_notes (int snap, int divide)
+eventlist::quantize_notes (int snap, int divide, bool all)
 {
     bool result = false;
     midipulse len = get_length();
     bool tight = divide == 2;
     for (auto & er : m_events)
     {
-        if (er.is_selected_note())
+        if (all || er.is_selected_note())
         {
             if (er.is_marked())                 /* ignore marked events     */
             {
@@ -1316,14 +1327,14 @@ eventlist::reverse_events (bool inplace, bool relink)
  */
 
 bool
-eventlist::randomize_selected (midibyte astatus, int range)
+eventlist::randomize (midibyte astatus, int range, bool all)
 {
     bool result = false;
     if (range > 0)
     {
         for (auto & e : m_events)
         {
-            if (e.is_selected_status(astatus))
+            if (all || e.is_selected_status(astatus))
             {
                 if (e.randomize(range))
                     result = true;
@@ -1335,26 +1346,30 @@ eventlist::randomize_selected (midibyte astatus, int range)
 
 /**
  *  This function randomizes a Note On or Note Off message, and more
- *  thoroughly than randomize_selected().  We want to be able to "jitter" the
+ *  thoroughly than randomize().  We want to be able to "jitter" the
  *  velocity (data byte d[1]) of the note.  The note pitch (d[0]) is not
  *  altered.
  *
  * \param range
  *      Provides the amount of velocity randomization.
  *
+ * \param all
+ *      If true (the default is false), handle all notes, not just the
+ *      selected notes.
+ *
  * \return
  *      Returns true if any event got altered.
  */
 
 bool
-eventlist::randomize_selected_notes (int range)
+eventlist::randomize_notes (int range, bool all)
 {
     bool result = false;
     if (range > 0)
     {
         for (auto & e : m_events)
         {
-            if (e.is_selected_note())               /* randomizable event?  */
+            if (all || e.is_selected_note())        /* randomizable event?  */
             {
                 if (! e.is_note_off_recorded())     /* don't ruin fake Off  */
                 {
@@ -1364,7 +1379,7 @@ eventlist::randomize_selected_notes (int range)
             }
         }
         if (result)
-            verify_and_link();                  /* sort and relink notes    */
+            verify_and_link();                      /* sort & relink notes  */
     }
     return result;
 }
@@ -1388,7 +1403,7 @@ eventlist::randomize_selected_notes (int range)
  */
 
 bool
-eventlist::jitter_events (int snap, int jitr)
+eventlist::jitter_all_events (int snap, int jitr)
 {
     bool result = false;
     if (jitr > 0)
@@ -1399,7 +1414,7 @@ eventlist::jitter_events (int snap, int jitr)
             if (e.is_marked())                  /* ignore marked events     */
             {
                 e.unmark();
-                continue;
+                continue;                       /* it was a linked note     */
             }
             if (e.jitter(snap, jitr, get_length()))
             {
@@ -1413,6 +1428,8 @@ eventlist::jitter_events (int snap, int jitr)
                      * In some cases, the linked Note Off, when quantized,
                      * will end up next to the Note On.  How to fix? If they
                      * are closer than half the snap, add the snap.
+                     *
+                     * Hmmmm, how about the zero-length correction???
                      */
 
                     event::iterator f = e.link();
@@ -1452,19 +1469,23 @@ eventlist::jitter_events (int snap, int jitr)
  * \param jitr
  *      Provides the amount of time jitter in ticks.
  *
+ * \param all
+ *      If true (the default is false), all events are jittered,
+ *      not just the selected events.
+ *
  * \return
  *      Returns true if some jittering was actually done.
  */
 
 bool
-eventlist::jitter_notes (int snap, int jitr)
+eventlist::jitter_notes (int snap, int jitr, bool all)
 {
     bool result = false;
     if (jitr > 0)
     {
         for (auto & e : m_events)
         {
-            if (e.is_selected_note())               /* ca 2023-08-20        */
+            if (all || e.is_selected_note())
             {
                 if (e.jitter(snap, jitr, get_length()))
                     result = true;
