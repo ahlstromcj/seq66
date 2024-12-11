@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-12-08
+ * \updates       2024-12-10
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3443,7 +3443,8 @@ sequence::fix_pattern (fixparameters & params)
                         newscalefactor, params.fp_save_note_length
                     );
                 }
-                result = false;                             /* op not done  */
+                else
+                    result = false;                         /* op not done  */
             }
             else if (fixscale)
             {
@@ -3470,12 +3471,18 @@ sequence::fix_pattern (fixparameters & params)
             {
             case alteration::tighten:
 
-                result = m_events.quantize_all_events(params.fp_tighten_range);
+                result = m_events.quantize_events
+                (
+                    params.fp_tighten_range, 1, true    /* all events   */
+                );
                 break;
 
             case alteration::quantize:
 
-                result = m_events.quantize_all_events(params.fp_quantize_range);
+                result = m_events.quantize_events
+                (
+                    params.fp_quantize_range, 1, true   /* all events   */
+                );
                 break;
 
             case alteration::jitter:
@@ -3490,10 +3497,11 @@ sequence::fix_pattern (fixparameters & params)
 
             case alteration::notemap:
 
-                // WRONG:
-                // Need to get the notemapper and call
-                // repitch().
-                result = false; // TODO
+                result = ! params.fp_notemap_file.empty();
+                if (result)
+                {
+                    result = perf()->repitch_all(params.fp_notemap_file, *this);
+                }
                 break;
 
             default:
@@ -6025,10 +6033,18 @@ sequence::apply_length
 )
 {
     bool result = false;
+    bool reset_L_R_markers = false;
     if (bpb == 0)
+    {
         bpb = get_beats_per_bar();
+    }
     else
+    {
+        if (bpb != get_beats_per_bar())     /* ca 2024-12-10                */
+            reset_L_R_markers = true;
+
         set_beats_per_bar(bpb);
+    }
 
     if (ppq == 0)
         ppq = int(get_ppqn());
@@ -6036,27 +6052,37 @@ sequence::apply_length
         change_ppqn(ppq);                   /* rarely changed; rescales if  */
 
     if (bw == 0)
+    {
         bw = get_beat_width();
+    }
     else
+    {
+        if (bw != get_beat_width())
+            reset_L_R_markers = true;
+
         set_beat_width(bw);
+    }
 
     if (measures == 0)                      /* added 2022-04-29             */
     {
         (void) unit_measure(true);          /* reset the unit-measure       */
         measures = get_measures(0);         /* calculate the current bars   */
+        result = set_length(seq66::measures_to_ticks(bpb, ppq, bw, measures));
     }
     else
         result = set_measures(measures, user_change);   /* and set_length() */
 
-    /*
-     * Given the above, the following call does not do anything.
-     * Leave it in for now to avoid breaking other code.
-     */
-
-    (void) set_length(seq66::measures_to_ticks(bpb, ppq, bw, measures));
     if (result)
         (void) unit_measure(true);          /* for progress and redrawing   */
 
+    if (reset_L_R_markers)
+    {
+        if (not_nullptr(perf()))
+        {
+            perf()->set_left_tick(0);       /* move L marker to the start   */
+            perf()->set_right_tick(0);      /* move R marker to measure end */
+        }
+    }
     return result;
 }
 

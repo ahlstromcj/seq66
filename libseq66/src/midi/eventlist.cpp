@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2024-12-08
+ * \updates       2024-12-09
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -889,7 +889,7 @@ eventlist::quantize_events
 }
 
 /**
- *  Quantizes all events, unconditionally.  No adjustment for wrapped notes
+ *  Quantizes events, unconditionally.  No adjustment for wrapped notes
  *  is made.
  *
  * \param snap
@@ -901,18 +901,35 @@ eventlist::quantize_events
  *      An indicator of the amount of quantization.  The values are either
  *      1 ("quantize") or 2 ("tighten"). The default value is 1, which makes
  *      the snap parameter the quantization value.
+ *
+ * \param all
+ *      If true (the default is false), then all events, not just selected
+ *      ones, are quantized.
+ *
+ * \return
+ *      Returns true if events were quantized.
  */
 
 bool
-eventlist::quantize_all_events (int snap, int divide)
+eventlist::quantize_events (int snap, int divide, bool all)
 {
     bool result = false;
-    midipulse len = get_length();
     bool tight = divide == 2;
+    bool found_note = false;
+    midipulse len = get_length();
     for (auto & er : m_events)
-        result = tight ? er.tighten(snap, len) : er.quantize(snap, len) ;
+    {
+        if (all || er.is_selected())
+        {
+            bool ok = tight ? er.tighten(snap, len) : er.quantize(snap, len) ;
+            if (ok)
+                result = true;
 
-    if (result)
+            if (er.is_note())
+                found_note = true;
+        }
+    }
+    if (result && found_note)
         verify_and_link();                          /* sorts them again!!!  */
 
     return result;
@@ -931,6 +948,9 @@ eventlist::quantize_all_events (int snap, int divide)
  * \param all
  *      If false (the default), then only selected notes are acted on.
  *      Otherwise, they all are.
+ *
+ * \return
+ *      Returns true if notes were quantized.
  */
 
 bool
@@ -1384,6 +1404,8 @@ eventlist::randomize_notes (int range, bool all)
     return result;
 }
 
+#if defined SEQ66_USE_JITTER_EVENTS
+
 /**
  *  This function jitters the timestamps of all events. If note events were
  *  jittered, then we verify-and-link.
@@ -1403,7 +1425,7 @@ eventlist::randomize_notes (int range, bool all)
  */
 
 bool
-eventlist::jitter_all_events (int snap, int jitr)
+eventlist::jitter_events (int snap, int jitr)
 {
     bool result = false;
     if (jitr > 0)
@@ -1454,6 +1476,8 @@ eventlist::jitter_all_events (int snap, int jitr)
     }
     return result;
 }
+
+#endif  // defined SEQ66_USE_JITTER_EVENTS
 
 /**
  *  This function jitters the timestamps of all note events.  If any

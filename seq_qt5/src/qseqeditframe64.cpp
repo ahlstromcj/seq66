@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-12-08
+ * \updates       2024-12-11
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -406,13 +406,14 @@ qseqeditframe64::qseqeditframe64
     ui->m_label_seqnumber->setText(labeltext);
 
     /*
-     * Sequence Title
+     * Sequence Title. Related to issue #133, we connect to editingFinished()
+     * instead.
      */
 
     ui->m_entry_name->setText(qt(seqname));
     connect
     (
-        ui->m_entry_name, SIGNAL(textChanged(const QString &)),
+        ui->m_entry_name, SIGNAL(editingFinished()),
         this, SLOT(update_seq_name())
     );
 
@@ -442,13 +443,16 @@ qseqeditframe64::qseqeditframe64
      *      ui->m_combo_bpm, SIGNAL(currentIndexChanged(int)),
      *      this, SLOT(update_beats_per_bar(int))
      *  );
+     *
+     * Related to issue #133, we need to connect the editable combo-box's
+     * line-edit.
      */
 
     qt_set_icon(down_xpm, ui->m_button_bpm);
     connect
     (
-        ui->m_combo_bpm, SIGNAL(currentTextChanged(const QString &)),
-        this, SLOT(text_beats_per_bar(const QString &))
+        ui->m_combo_bpm->lineEdit(), SIGNAL(editingFinished()),
+        this, SLOT(text_beats_per_bar())
     );
     connect
     (
@@ -464,8 +468,8 @@ qseqeditframe64::qseqeditframe64
     qt_set_icon(down_xpm, ui->m_button_bw);
     connect
     (
-        ui->m_combo_bw, SIGNAL(currentTextChanged(const QString &)),
-        this, SLOT(text_beat_width(const QString &))
+        ui->m_combo_bw->lineEdit(), SIGNAL(editingFinished()),
+        this, SLOT(text_beat_width())
     );
     connect
     (
@@ -502,13 +506,17 @@ qseqeditframe64::qseqeditframe64
      *        ui->m_combo_length, SIGNAL(currentIndexChanged(int)),
      *        this, SLOT(update_measures(int))
      *    );
+     *
+     * For issue #133, we need to connect the editable combo-box's line-edit
+     * control to the editingFinished signal, so that the number(s) being
+     * entered will not take effect until either Tab or Enter is struck.
      */
 
     qt_set_icon(length_short_xpm, ui->m_button_length);
     connect
     (
-        ui->m_combo_length, SIGNAL(currentTextChanged(const QString &)),
-        this, SLOT(text_measures(const QString &))
+        ui->m_combo_length->lineEdit(), SIGNAL(editingFinished()),
+        this, SLOT(text_measures_edit())
     );
     connect
     (
@@ -1353,7 +1361,7 @@ qseqeditframe64::on_sequence_change
 bool
 qseqeditframe64::on_trigger_change (seq::number /* seqno */)
 {
-    set_dirty();                                /* modified for issue #90   */
+    set_track_change(true);                     /* also calls set_dirty()   */
     update_midi_buttons();                      /* mirror current states    */
     return true;
 }
@@ -1855,8 +1863,9 @@ qseqeditframe64::slot_log_timesig ()
  */
 
 void
-qseqeditframe64::text_beats_per_bar (const QString & text)
+qseqeditframe64::text_beats_per_bar ()
 {
+    QString text = ui->m_combo_bpm->currentText();
     std::string temp = text.toStdString();
     if (! temp.empty())
     {
@@ -1970,15 +1979,18 @@ qseqeditframe64::set_measures (int m, qbase::status qs)
 }
 
 /**
- *  Resets the pattern-length in its combo-box.
+ *  Resets the pattern-length to 1 in its combo-box.
  */
 
 void
 qseqeditframe64::reset_measures ()
 {
-    int index = beatwidth_list().index(m_measures);
+    int index = 0;                    /* beatwidth_list().index(m_measures) */
+    m_measures = 1;
     ui->m_combo_length->setCurrentIndex(index);
-    set_track_change();                             /* to solve issue #90   */
+    set_measures(m_measures);
+//  track().remove_orphaned_events();
+//  set_track_change();                             /* to solve issue #90   */
 }
 
 /**
@@ -1994,8 +2006,9 @@ qseqeditframe64::reset_measures ()
  */
 
 void
-qseqeditframe64::text_beat_width (const QString & text)
+qseqeditframe64::text_beat_width ()
 {
+    QString text = ui->m_combo_bw->currentText();
     std::string temp = text.toStdString();
     if (! temp.empty())
     {
@@ -2128,20 +2141,10 @@ qseqeditframe64::detect_time_signature ()
     return result;
 }
 
-/**
- *  Handles updates to the pattern length.
- *
- *  void
- *  qseqeditframe64::update_measures (int index)
- *  {
- *      int m = measures_list().ctoi(index);
- *      set_measures(m);
- *  }
- */
-
 void
-qseqeditframe64::text_measures (const QString & text)
+qseqeditframe64::text_measures_edit ()
 {
+    QString text = ui->m_combo_length->currentText();
     std::string temp = text.toStdString();
     if (! temp.empty())
     {

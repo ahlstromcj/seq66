@@ -1787,13 +1787,13 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                         set_adding(true);
                         break;
 
-                    case Qt::Key_Q:                 /* quantize selected notes  */
+                    case Qt::Key_Q:             /* quantize selected notes  */
 
-                        if (track().push_quantize(EVENT_NOTE_ON, 0, 1))
+                        if (track().push_quantize_notes(1))
                             done = mark_modified();
                         break;
 
-                    case Qt::Key_R:                 /* default random == 8      */
+                    case Qt::Key_R:             /* default random == 8      */
 
                         /*
                          * No alteration setting, as the human will randomize
@@ -1804,9 +1804,9 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                             done = mark_modified();
                         break;
 
-                    case Qt::Key_T:                 /* tighten selected notes   */
+                    case Qt::Key_T:             /* tighten selected notes   */
 
-                        if (track().push_quantize(EVENT_NOTE_ON, 0, 2))
+                        if (track().push_quantize_notes(2))
                             done = mark_modified();
                         break;
 

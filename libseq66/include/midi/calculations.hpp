@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2024-12-07
+ * \updates       2024-12-10
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -520,12 +520,20 @@ pulses_per_beat (int ppq, int beatspm = 4, int beatwidth = 4)
  *  beat_width beats.  So:
  *
 \verbatim
-    p = 4 * P * m * B / W
+    p = 4 * P * M * B / W
         p == pulse count (ticks or pulses)
-        m == number of measures
+        M == number of measures
         B == beats per measure (constant)
         P == pulses per quarter-note (constant)
         W == beat width in beats per measure (constant)
+\endverbatim
+ *
+ *  Testing the units:
+ *
+\verbatim
+                4   qn      pulses     beats
+    p pulses = --- ---- x P ------ x B ----- x M bars
+                W  beat       qn        bar
 \endverbatim
  *
  *  For our "b4uacuse" MIDI file, M can be about 100 measures, B is 4,
@@ -544,7 +552,9 @@ pulses_per_beat (int ppq, int beatspm = 4, int beatwidth = 4)
  * \param bw
  *      The W value in the equation, the denominator of the time signature.
  *      If this value is 0, we'll get an arithmetic exception (crash), so we
- *      just return 0 in this case.
+ *      just return 0 in this case. The quantity 4 / W is in units of
+ *      quarter-notes/beat. So a beat-width of 8 is 1/2 qn/beat, or
+ *      an eighth note.
  *
  * \param measures
  *      The M value in the equation.  It defaults to 1, in case one desires a

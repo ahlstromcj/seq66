@@ -684,7 +684,8 @@ qpatternfix::slot_set ()
         m_tighten_range, m_full_range, m_random_range, m_jitter_range,
         m_align_left, m_reverse, m_reverse_in_place,
         m_save_note_length, m_use_time_sig, m_time_sig_beats,
-        m_time_sig_width, m_measures, m_scale_factor, efx
+        m_time_sig_width, m_measures, m_scale_factor,
+        m_notemap_file, efx
     };
     bool success = perf().fix_pattern(track().seq_number(), fp);
     if (success)

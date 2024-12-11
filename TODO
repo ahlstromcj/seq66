@@ -366,7 +366,7 @@ ISSUES:
 
     In the pattern edit window, the reset pattern to 1 button no longer works
     properly. It either shrinks to some bar other than 1 or just does nothing
-    at all. 
+    at all.  PARTLY FIXED. Does not prompt for truncating notes.
 
     There is also a behaviour when you manually select or type the number of
     bars and it is smaller than the amount of already existing bars with notes
@@ -381,11 +381,11 @@ ISSUES:
 	These have appeared since https://github.com/ahlstromcj/seq66/issues/128 so
 	possibly connected.
 
-    A third issue which occurred before was with manually editing the amount
-    of bars with double digits. The bars refresh for each digit entered. For
-    example So if you have 16 bars and you want to shrink to 14 bars, it will
-    first shrink it to 1 bar as you type over. If the bars are full then the
-    dialog will pop up about losing notes. If you then click ok, instead of
+    FIXED: A third issue which occurred before was with manually editing the
+    amount of bars with double digits. The bars refresh for each digit entered.
+    For example So if you have 16 bars and you want to shrink to 14 bars, it
+    will first shrink it to 1 bar as you type over. If the bars are full then
+    the dialog will pop up about losing notes. If you then click ok, instead of
     cancel, you will lose anything in the latter 15 bars.
 
 To close as pushed off to version 2:

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2024-12-08
+ * \updates       2024-12-09
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -77,10 +77,16 @@
 #undef SEQ66_LINK_NEWEST_NOTE_ON_RECORD
 
 /**
+ *  The jitter_events() function is currently unused, so it is macroed out.
+ */
+
+#undef SEQ66_USE_JITTER_EVENTS
+
+/**
  *  This flag is used in eventlist and sequence to supposedly protect sorting
  *  and clearing. However, we were able to delete events, clear all events,
  *  and even delete patterns while playback was occuring. So we don't think we
- *  need this. Define it if problems crop up. EXPERIMENTAL.
+ *  need this after all. Define it if problems crop up. EXPERIMENTAL.
  */
 
 #undef  SEQ66_USE_ACTION_IN_PROGRESS_FLAG
@@ -426,7 +432,7 @@ private:                                /* functions for friend sequence    */
         midibyte status, midibyte cc,
         int snap, int divide
     );
-    bool quantize_all_events (int snap, int divide = 1);
+    bool quantize_events (int snap, int divide = 1, bool all = false);
     bool quantize_notes (int snap, int divide = 1, bool all = false);
     midipulse adjust_timestamp (event & er, midipulse deltatick);
     void scale_note_off (event & noteoff, double factor);
@@ -442,7 +448,9 @@ private:                                /* functions for friend sequence    */
     bool align_left (bool relink = false);
     bool randomize (midibyte status, int plus_minus, bool all = false);
     bool randomize_notes (int range, bool all = false);
-    bool jitter_all_events (int snap, int jitr);
+#if defined SEQ66_USE_JITTER_EVENTS
+    bool jitter_events (int snap, int jitr);
+#endif
     bool jitter_notes (int snap, int jitr, bool all = false);
     void link_new (bool wrap = false);
     bool link_notes (event::iterator eon, event::iterator eoff);

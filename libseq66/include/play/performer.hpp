@@ -2303,6 +2303,14 @@ public:
     void set_left_tick (midipulse tick);
     void set_left_tick_seq (midipulse tick, midipulse snap);
 
+    void set_right_tick (midipulse tick);
+    void set_right_tick_seq (midipulse tick, midipulse snap);
+
+    midipulse get_right_tick () const
+    {
+        return m_right_tick;
+    }
+
     /**
      *  For every pattern/sequence that is active, sets the "original tick"
      *  value for the pattern.  This is really the "last tick" value, so we
@@ -2331,14 +2339,6 @@ public:
     midipulse get_start_tick () const
     {
         return m_start_tick;
-    }
-
-    void set_right_tick (midipulse tick);
-    void set_right_tick_seq (midipulse tick, midipulse snap);
-
-    midipulse get_right_tick () const
-    {
-        return m_right_tick;
     }
 
     /**

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2024-12-08
+ * \updates       2024-12-09
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -154,6 +154,7 @@ struct fixparameters
     int & fp_beat_width;
     double & fp_measures;
     double & fp_scale_factor;
+    std::string fp_notemap_file;
     fixeffect & fp_effect;
 };
 

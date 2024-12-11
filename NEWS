@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.17
 Chris Ahlstrom
-2015-07-10 to 2024-12-04
+2015-07-10 to 2024-12-11
 
 # Change Log
 
-## [0.99.17]
+## [0.99.17] - 2024-12-11
 
 This release is in progress....
 
@@ -12,18 +12,30 @@ This release is in progress....
 
 ### Changed
 
+-   Revamped and extended the functionality of the Pattern-Fix dialog.
+    As part of this, the alteration API of the event-list has been
+    updated.
+
 ### Fixed
 
+-   Issue #128 follow-on. Fixed the removal of trailing notes after
+    truncating a pattern to a smaller number of measures.
+-   Issue #133.
+    -   Pattern editor. Changed the slot connection for editable
+        combo-boxes to connect the lineEdit() accessor.
+        -   Measures (pattern length) combo-box.
+
+-   Issue #134.Added dates to the release-name line from 0.99.14 on;
+    were left off by an oversight.
 -   Cleaned up and upgraded the linking of recorded notes.
 -   Made ghost notes in selection box official. Also made it apply
     to select-all and other selection operations.
--   Fixed the removal of trailing notes after truncating a pattern
-    to a smaller number of measures. Kind of a follow-on to
-    issue #128.
+-   Fixing and normalizing the functionality of the Pattern-Fix dialog.
+-   Some minor tweaking (field size, font) of various dialogs.
 
 ### Removed
 
-## [0.99.16]
+## [0.99.16] - 2024-12-03
 
 This release provides fixes to user issues and a ton of related
 fixes found while investigating the user issues. Some minor new
@@ -113,7 +125,7 @@ features added.
     then more lines are thinner or dotted; useful if the foreground
     color is bright. It mainly affects the song editor.
 
-## [0.99.15]
+## [0.99.15] - 2024-10-28
 
 ### Added
 
@@ -135,7 +147,7 @@ features added.
 - Progress made getting a build to work in MSYS2. Not yet ready.
 - Built on Windows 11 with a update to Qt 5.15.2 and mingw 8.10.
 
-## [0.99.14]
+## [0.99.14] - 2024-08-14
 
 ### Added
 

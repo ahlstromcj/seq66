@@ -1241,6 +1241,12 @@ Range: 4 to 8. Default: 4.</string>
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <bold>false</bold>
+           </font>
+          </property>
           <property name="toolTip">
            <string>usr: [user-ui-tweaks] progress-box-width, -height</string>
           </property>
@@ -1287,6 +1293,12 @@ Range: 32 to 128, 0 disables.  Default: 32.</string>
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <bold>false</bold>
+           </font>
+          </property>
           <property name="toolTip">
            <string>usr: [user-ui-tweaks] fingerprint-size</string>
           </property>
@@ -1302,6 +1314,12 @@ Range: 32 to 128, 0 disables.  Default: 32.</string>
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <bold>false</bold>
+           </font>
           </property>
           <property name="toolTip">
            <string>usr: [user-ui-tweaks] key-height</string>
@@ -1486,6 +1504,12 @@ zoom vertically.</string>
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <bold>false</bold>
+           </font>
+          </property>
           <property name="toolTip">
            <string>usr: [user-interface-settings] mainwnd-rows, -columns</string>
           </property>
@@ -1506,6 +1530,12 @@ zoom vertically.</string>
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="labelUiScaling">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <bold>false</bold>
+           </font>
+          </property>
           <property name="toolTip">
            <string>usr: [user-interface-settings] window-scale, -y</string>
           </property>
@@ -2172,9 +2202,9 @@ in the Song Editor.</string>
         <string/>
        </property>
       </widget>
+      <zorder>layoutWidgetJackConnect</zorder>
       <zorder>groupBox</zorder>
       <zorder>r_group_jack_transport</zorder>
-      <zorder>layoutWidgetJackTransport</zorder>
       <zorder>r_group_jack_start</zorder>
       <zorder>layoutWidgetJack</zorder>
       <zorder>layoutWidgetJackTransport</zorder>
@@ -3189,7 +3219,7 @@ Seq66 exits.</string>
           <x>8</x>
           <y>40</y>
           <width>191</width>
-          <height>301</height>
+          <height>317</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_7">

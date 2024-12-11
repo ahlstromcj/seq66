@@ -2299,6 +2299,19 @@ performer::finish_move (seq::number seqno)
     return result;
 }
 
+/**
+ *  Do a fix-pattern operation on a sequence.
+ *
+ * Issue:
+ *
+ *      Using notify_trigger_change(), the pattern editor is redrawn
+ *      only when focus moves from the qpatternfix to qseqeditframe64.
+ *
+ *      With the following notification, no updates at all occur!
+ *
+ *          notify_sequence_change(seqno, change::yes);
+ */
+
 bool
 performer::fix_pattern (seq::number seqno, fixparameters & params)
 {
@@ -2308,7 +2321,7 @@ performer::fix_pattern (seq::number seqno, fixparameters & params)
     {
         result = s->fix_pattern(params);
         if (result)
-            notify_trigger_change(seqno);
+            notify_trigger_change(seqno, change::yes);
     }
     return result;
 }
@@ -6226,7 +6239,8 @@ performer::delete_trigger (seq::number seqno, midipulse tick)
 bool
 performer::transpose_trigger
 (
-    seq::number seqno, midipulse tick, int transposition)
+    seq::number seqno, midipulse tick, int transposition
+)
 {
     bool result = false;
     if (transposition != 0)

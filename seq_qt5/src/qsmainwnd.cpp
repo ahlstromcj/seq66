@@ -4425,6 +4425,7 @@ qsmainwnd::on_trigger_change (seq::number seqno)
     {
         m_live_frame->refresh(seqno);   /* this calls on_trigger_change()!  */
         enable_save(cb_perf().modified());
+        m_is_title_dirty = true;
     }
     return result;
 }
