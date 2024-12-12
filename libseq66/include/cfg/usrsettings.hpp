@@ -139,6 +139,8 @@ enum class recordtempo
  *  record_oneshot.
  *
  *  Note that we show the label "Overdub" now for recordstyle::merge.
+ *  Also, in the 'usr' file, either "merge" or "overdub" can be used
+ *  for "record-style", but now "overdub" is what gets written.
  */
 
 enum class recordstyle
@@ -985,8 +987,8 @@ private:
     bool m_pattern_new_only;
 
     /**
-     *  Provides the default recording style (merge, overwrite, etc.) at
-     *  startup. Compare to the current recording style.
+     *  Provides the default recording style (merge/overdub, overwrite, etc.)
+     *  at startup. Compare to the current recording style.
      */
 
     recordstyle m_pattern_record_style;

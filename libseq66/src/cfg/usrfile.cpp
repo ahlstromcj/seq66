@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-12-02
+ * \updates       2024-12-11
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -1113,11 +1113,10 @@ usrfile::write ()
 "# pattern.  A new pattern is 'Untitled' and has no events.\n"
 "#\n"
 "# These settings for play/record for a pattern editor save time in live\n"
-"# recording. Valid record-style values: 'merge' (overdub), 'overwrite',\n"
+"# recording. Valid record-style values: 'merge' or 'overdub', 'overwrite',\n"
 "# 'expand', and 'one-shot'. 'wrap-around' allows recorded notes to wrap\n"
 "# to the pattern beginning. Currently 'notemap' and quantizing are\n"
 "# are mutually exclusive.\n"
-"#\n"
 "\n[pattern-editor]\n\n"
         ;
     write_boolean(file, "escape-pattern", usr().escape_pattern());

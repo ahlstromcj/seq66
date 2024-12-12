@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2024-12-01
+ * \updates       2024-12-11
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -426,7 +426,7 @@ usrsettings::usrsettings () :
     m_pattern_new_only          (false),
     m_pattern_record_style      (recordstyle::merge),
     m_pattern_wraparound        (false),
-    m_record_alteration               (alteration::none),
+    m_record_alteration         (alteration::none),
     m_grid_mode                 (gridmode::loop),
     m_enable_learn_confirmation (true)
 {
@@ -583,7 +583,7 @@ usrsettings::progress_note_min_max (int vmin, int vmax)
 void
 usrsettings::set_pattern_record_style (const std::string & style)
 {
-    recordstyle rs = recordstyle::merge;
+    recordstyle rs = recordstyle::merge;    /* "overdub" or "merge" */
     if (style == "overwrite")
         rs = recordstyle::overwrite;
     else if (style == "expand")
@@ -621,7 +621,7 @@ usrsettings::pattern_record_string () const
     std::string result;
     switch (m_pattern_record_style)
     {
-    case recordstyle::merge:            result = "merge";           break;
+    case recordstyle::merge:            result = "overdub";         break;
     case recordstyle::overwrite:        result = "overwrite";       break;
     case recordstyle::expand:           result = "expand";          break;
     case recordstyle::oneshot:          result = "one-shot";        break;

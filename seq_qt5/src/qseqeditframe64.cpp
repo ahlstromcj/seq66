@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-12-11
+ * \updates       2024-12-12
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -121,10 +121,11 @@
 /*
  *  We prefer to load the pixmaps on the fly, rather than deal with those
  *  friggin' resource files.
+ *
+ * #include "pixmaps/down.xpm"          // replaced by up.xpm
  */
 
 #include "pixmaps/bus.xpm"
-#include "pixmaps/down.xpm"
 #include "pixmaps/drum.xpm"
 #include "pixmaps/exp_rec_on.xpm"
 #include "pixmaps/finger.xpm"
@@ -157,6 +158,7 @@
 #include "pixmaps/tools.xpm"
 #include "pixmaps/transpose.xpm"
 #include "pixmaps/undo.xpm"
+#include "pixmaps/up.xpm"
 #include "pixmaps/zoom.xpm"             /* zoom_in/_out combo-box           */
 #include "pixmaps/chord3-inv.xpm"
 
@@ -432,23 +434,24 @@ qseqeditframe64::qseqeditframe64
     bool got_timesig = detect_time_signature(); /* find beats/bar & width   */
     std::string bstring = std::to_string(m_beats_per_bar);
     (void) fill_combobox(ui->m_combo_bpm, beats_per_bar_list(), bstring);
-    bstring = std::to_string(m_beat_width);
-    (void) fill_combobox(ui->m_combo_bw, beatwidth_list(), bstring);
 
     /*
-     * Doesn't seem to be needed, as changing the index also changes the text.
-     *
-     *  connect
-     *  (
-     *      ui->m_combo_bpm, SIGNAL(currentIndexChanged(int)),
-     *      this, SLOT(update_beats_per_bar(int))
-     *  );
+     * Didn't seem to be needed, as changing the index also changes the text.
+     * However, now that editingFinished() is the signal, even a selection
+     * of a number requires a Tab out or an Enter key, which is not expected
+     * by the user. So this connection makes the change immediate upon
+     * selection.
      *
      * Related to issue #133, we need to connect the editable combo-box's
      * line-edit.
      */
 
-    qt_set_icon(down_xpm, ui->m_button_bpm);
+    qt_set_icon(up_xpm, ui->m_button_bpm);
+    connect
+    (
+        ui->m_combo_bpm, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(update_beats_per_bar(int))
+    );
     connect
     (
         ui->m_combo_bpm->lineEdit(), SIGNAL(editingFinished()),
@@ -465,7 +468,14 @@ qseqeditframe64::qseqeditframe64
      * the beats per measure combo-box, and set the default.
      */
 
-    qt_set_icon(down_xpm, ui->m_button_bw);
+    bstring = std::to_string(m_beat_width);
+    (void) fill_combobox(ui->m_combo_bw, beatwidth_list(), bstring);
+    qt_set_icon(up_xpm, ui->m_button_bw);
+    connect
+    (
+        ui->m_combo_bw, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(update_beat_width(int))
+    );
     connect
     (
         ui->m_combo_bw->lineEdit(), SIGNAL(editingFinished()),
@@ -499,13 +509,10 @@ qseqeditframe64::qseqeditframe64
     (void) fill_combobox(ui->m_combo_length, measures_list(), mstring);
 
     /*
-     * Doesn't seem to be needed, as changing the index also changes the text.
-     *
-     *    connect
-     *    (
-     *        ui->m_combo_length, SIGNAL(currentIndexChanged(int)),
-     *        this, SLOT(update_measures(int))
-     *    );
+     * Didn't seem to be needed, as changing the index also changes the text.
+     * But now that we're connecting to editingFinished(), we need the
+     * following connection so that length/measures selection ushers in
+     * an immediate change.
      *
      * For issue #133, we need to connect the editable combo-box's line-edit
      * control to the editingFinished signal, so that the number(s) being
@@ -513,6 +520,11 @@ qseqeditframe64::qseqeditframe64
      */
 
     qt_set_icon(length_short_xpm, ui->m_button_length);
+    connect
+    (
+        ui->m_combo_length, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(update_measures(int))
+    );
     connect
     (
         ui->m_combo_length->lineEdit(), SIGNAL(editingFinished()),
@@ -919,7 +931,7 @@ qseqeditframe64::qseqeditframe64
     connect
     (
         ui->tooltip_button, SIGNAL(toggled(bool)),
-        this, SLOT(tooltip_mode (bool))
+        this, SLOT(tooltip_mode(bool))
     );
 
     /*
@@ -1738,7 +1750,7 @@ bool
 qseqeditframe64::would_truncate (int m)
 {
     bool result = false;                        /* no problem by default    */
-    if (m > 1 && m <= 99999)                    /* a sanity check only      */
+    if (m > 0 && m <= 999999)                   /* a sanity check only      */
     {
         midipulse max = track().get_max_timestamp();
         midipulse newlength = midipulse(track().measures_to_ticks(m));
@@ -1852,22 +1864,27 @@ qseqeditframe64::slot_log_timesig ()
 
 /**
  *  Handles updates to the beats/measure for only the current sequences.
- *  See the similar function in qsmainwnd.  Not needed, it seems.
- *
- *  void
- *  qseqeditframe64::update_beats_per_bar (int index)
- *  {
- *      int bpb = beats_per_bar_list().ctoi(index);
- *      set_beats_per_bar(bpb);
- *  }
+ *  See the similar function in qsmainwnd.
  */
+
+void
+qseqeditframe64::update_beats_per_bar (int index)
+{
+    int bpb = beats_per_bar_list().ctoi(index);
+    set_beats_per_bar(bpb);
+    set_log_timesig_status(true);
+}
 
 void
 qseqeditframe64::text_beats_per_bar ()
 {
     QString text = ui->m_combo_bpm->currentText();
     std::string temp = text.toStdString();
-    if (! temp.empty())
+    if (temp.empty())
+    {
+        // no code
+    }
+    else
     {
         int bpb = string_to_int(temp);
         set_beats_per_bar(bpb);
@@ -1954,7 +1971,7 @@ qseqeditframe64::set_beats_per_bar (int bpb, qbase::status qs)
 void
 qseqeditframe64::set_measures (int m, qbase::status qs)
 {
-    if (m > 0 && m <= 99999)                        /* a sanity check only  */
+    if (m > 0 && m <= 999999)                       /* a sanity check only  */
     {
         bool reset = false;
         if (qs == qbase::status::edit)
@@ -1968,9 +1985,9 @@ qseqeditframe64::set_measures (int m, qbase::status qs)
         }
         else
         {
+            m_measures = m;
             if (track().apply_length(m, true))      /* always a user change */
             {
-                m_measures = m;
                 track().remove_orphaned_events();
                 set_track_change();                 /* to solve issue #90   */
             }
@@ -1979,38 +1996,28 @@ qseqeditframe64::set_measures (int m, qbase::status qs)
 }
 
 /**
- *  Resets the pattern-length to 1 in its combo-box.
+ *  Handles updates to the beat width for only the current sequences.
+ *  See the similar function in qsmainwnd.
  */
 
 void
-qseqeditframe64::reset_measures ()
+qseqeditframe64::update_beat_width (int index)
 {
-    int index = 0;                    /* beatwidth_list().index(m_measures) */
-    m_measures = 1;
-    ui->m_combo_length->setCurrentIndex(index);
-    set_measures(m_measures);
-//  track().remove_orphaned_events();
-//  set_track_change();                             /* to solve issue #90   */
+    int bw = beatwidth_list().ctoi(index);
+    set_beat_width(bw);
+    set_log_timesig_status(true);
 }
-
-/**
- *  Handles updates to the beat width for only the current sequences.
- *  See the similar function in qsmainwnd.
- *
- *  void
- *  qseqeditframe64::update_beat_width (int index)
- *  {
- *      int bw = beatwidth_list().ctoi(index);
- *      set_beat_width(bw);
- *  }
- */
 
 void
 qseqeditframe64::text_beat_width ()
 {
     QString text = ui->m_combo_bw->currentText();
     std::string temp = text.toStdString();
-    if (! temp.empty())
+    if (temp.empty())
+    {
+        // no code
+    }
+    else
     {
         int bw = string_to_int(temp);
         set_beat_width(bw);
@@ -2142,6 +2149,13 @@ qseqeditframe64::detect_time_signature ()
 }
 
 void
+qseqeditframe64::update_measures (int index)
+{
+    int measures = measures_list().ctoi(index);
+    set_measures(measures);
+}
+
+void
 qseqeditframe64::text_measures_edit ()
 {
     QString text = ui->m_combo_length->currentText();
@@ -2151,6 +2165,19 @@ qseqeditframe64::text_measures_edit ()
         int measures = string_to_int(temp);
         set_measures(measures);
     }
+}
+
+/**
+ *  Resets the pattern-length to 1 in its combo-box.
+ */
+
+void
+qseqeditframe64::reset_measures ()
+{
+    int index = 0;                    /* beatwidth_list().index(m_measures) */
+    m_measures = 1;
+    ui->m_combo_length->setCurrentIndex(index);
+    set_measures(m_measures);
 }
 
 #if defined USE_COMBO_BUTTON_TO_CYLE_MEASURES       // kept only for posterity
@@ -2844,8 +2871,12 @@ qseqeditframe64::popup_sequence_menu ()
 }
 
 /**
- *  Pass the status of showing note tooltips to the seqroll
- *  object.
+ *  Pass the status of showing note tooltips to the seqroll object.
+ *
+ *  If the --investigate option is present, though, we will do alternate
+ *  processing for testing/trouble-shooting. For example, we find that if
+ *  we try to test a combo-box menu, when the breakpoint is hit, that disables
+ *  the rest of the desktop, and we cannot step through the debugger.
  */
 
 void

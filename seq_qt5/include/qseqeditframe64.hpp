@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-12-11
+ * \updates       2024-12-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -37,6 +37,13 @@
 #include "cfg/settings.hpp"             /* seq66::combolist class, helpers  */
 #include "play/performer.hpp"           /* seq66::performer::callbacks      */
 #include "play/setmapper.hpp"           /* seq66::setmapper and others      */
+
+/**
+ *  Need to check before applying the change? Currently the measure length
+ *  is adjusted. Kept around "just in case".
+ */
+
+#undef  USE_WOULD_TRUNCATE_BPB_BW
 
 /**
  *  Specifies the reported final size of the main window when the larger edit
@@ -263,19 +270,13 @@ private slots:
     void slot_update_zoom (int index);
     void update_seq_name ();
     void slot_log_timesig ();
-
-    /*
-     * Not necessary:
-     *
-     *  void update_beats_per_bar (int index);
-     *  void update_beat_width (int index);
-     *  void update_measures (int index);
-     */
-
+    void update_beats_per_bar (int index);
     void text_beats_per_bar ();
+    void update_beat_width (int index);
     void text_beat_width ();
     void reset_beats_per_bar ();
     void reset_beat_width ();
+    void update_measures (int index);
     void text_measures_edit ();
 #if defined USE_COMBO_BUTTON_TO_CYLE_MEASURES       // kept only for posterity
      void next_measures ();
