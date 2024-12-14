@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2024-11-13
+ * \updates       2024-12-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -229,7 +229,7 @@ metro::initialize (performer * p)
         int bpb = settings().beats_per_bar();       /* get_beats_per_bar()  */
         int bw = settings().beat_width();           /* get_beat_width()     */
         midibyte channel = settings().channel();    /* seq_midi_channel()   */
-        int increment = pulses_per_beat(ppq, bpb, bw);
+        int increment = pulses_per_beat(ppq, bw);
         if (settings().initialize(increment))
         {
             /*
@@ -350,9 +350,8 @@ recorder::initialize (performer * p)
     if (result)
     {
         int ppq = p->ppqn();                        /* p->get_ppqn()        */
-        int bpb = settings().beats_per_bar();       /* get_beats_per_bar()  */
         int bw = settings().beat_width();           /* get_beat_width()     */
-        int increment = pulses_per_beat(ppq, bpb, bw);
+        int increment = pulses_per_beat(ppq, bw);
         if (settings().initialize(increment))
         {
             bool unmute = usr().pattern_armed();
@@ -361,15 +360,9 @@ recorder::initialize (performer * p)
             bool usethru = usr().pattern_thru();
             bussbyte outbuss = settings().thru_buss();
             midibyte channel = settings().thru_channel();
-
             armed(unmute);
             set_recording(alter, toggler::on);      /* eg. quantize...      */
             set_recording_style(rs);                /* merge, expand, etc.  */
-
-            /*
-             * Needs explaining.
-             */
-
             set_thru(usethru);
             set_midi_bus(outbuss);                  /* for playback         */
             set_midi_channel(channel);

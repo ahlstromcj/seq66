@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2024-05-22
+% \update      2024-12-12
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -44,6 +44,75 @@
 
 \subsection{Standard MIDI Format}
 \label{subsec:midi_format_smf}
+
+   A MIDI file consists of a header chunk plus a number of track chunks.
+
+\subsubsection{MIDI File Header, MThd}
+\label{subsubsec:midi_format_header}
+
+   The first thing in a MIDI file is The data of the header:
+
+   \begin{verbatim}
+      Header ID:        "MThd"         0x00: 4 bytes
+      MThd length:      6              0x04: 4 bytes
+      Format:           0, 1, or 2     0x08: 2 bytes (format 2 is rare)
+      No. of tracks:    1 or more      0x0a: 2 bytes (65535 maximum)
+      PPQN:             192            0x0c: 2 bytes (bit 15 = 0)
+   \end{verbatim}
+
+   The header ID and its length are always the values above, "MThd" and 6.
+   The formats that Seq66 supports are 0 or 1.
+   SMF 0 has only one track, while SMF 1 can
+   support an arbitary number of tracks.
+   SMF 2 is rarely used, and \textsl{Seq66} does not support it.
+   The next value is the number of tracks, 1 or more.
+   The last value in the header is the
+   PPQN value, which specifies the "pulses per quarter note", the
+   basic time-resolution of events in the MIDI file.  Common values are 96 or
+   192, but higher values are also common.
+   (The highest possible value is 0x7FFF = 32767 but the MIDI functional limit
+   is 31250, and anyway,
+   \textsl{Seq66} limits it to 19200 for performance reasons.)
+   \textsl{Seq66} and its precursor, \textsl{Seq24}, default to PPQN = 192.
+   For \textsl{Seq66}, this can be changed in the 'rc' file.
+   Any MIDI file can also be rescale to another PPQN, and saved.
+
+\subsubsection{MIDI Track, MTrk}
+\label{subsubsec:midi_format_track}
+
+   The next part of the MIDI file consists of the tracks specified in the file.
+   Each track is tagged by
+   a standard chunk marker, "MTrk".  Other markers are possible, and are to be
+   ignored, if nothing else.  Here are the values read at the beginning of a
+   track:
+
+   \begin{verbatim}
+      Track ID:      "MTrk"         4 bytes
+      Track length:  varies         4 bytes
+   \end{verbatim}
+
+   The track length is the number of bytes that need to be read in order to get
+   all of the data in the track.
+   In SMF 1 format, each track is assumed to cover a different MIDI channel,
+   but the same MIDI buss.
+   The MIDI buss \textsl{is} an important data item in the sequencer-specific
+   section of \textsl{Seq66} MIDI files, however.
+
+   \textbf{Delta time}.
+   The amount time that passes from one event to the next is the
+   \textsl{delta time}.
+   For some events, the time doesn't matter, and is set to 0.
+   This values is a
+   \textsl{variable length value}, also known as a "VLV" or a "varinum".   It
+   provides a way of encoding arbitrarily large values, a byte at a time.
+
+   \begin{verbatim}
+      Delta time:    varies         1 or more bytes
+   \end{verbatim}
+
+   The running-time accumulator is incremented by the delta-time.
+   The current time is adjusted as per the PPQN ratio, if needed, and stored with
+   each event that is read from the MIDI file.
 
 \subsubsection{Standard MIDI Format 0}
 \label{subsubsec:midi_format_smf_0_import}
@@ -1337,73 +1406,6 @@
    it applies to the processing done by \textsl{Seq66}.
    The following sub-sections describe how \textsl{Seq66}
    parses a MIDI file.
-
-\subsubsection{MIDI File Header, MThd}
-\label{subsubsec:midi_format_header}
-
-   The first thing in a MIDI file is The data of the header:
-
-   \begin{verbatim}
-      Header ID:        "MThd"         0x00: 4 bytes
-      MThd length:      6              0x04: 4 bytes
-      Format:           0, 1, or 2     0x08: 2 bytes (format 2 is rare)
-      No. of tracks:    1 or more      0x0a: 2 bytes
-      PPQN:             192            0x0c: 2 bytes (bit 15 = 0)
-   \end{verbatim}
-
-   The header ID and its length are always the values above, "MThd" and 6.
-   The formats that Seq66 supports are 0 or 1.
-   SMF 0 has only one track, while SMF 1 can
-   support an arbitary number of tracks.
-   SMF 2 is rarely used, and \textsl{Seq66} does not support it.
-   The next value is the number of tracks, 1 or more.
-   The last value in the header is the
-   PPQN value, which specifies the "pulses per quarter note", the
-   basic time-resolution of events in the MIDI file.  Common values are 96 or
-   192, but higher values are also common.
-   (The highest possible value is 0x7FFF = 32767 but the MIDI functional limit
-   is 31250, and anyway,
-   \textsl{Seq66} limits it to 19200 for performance reasons.)
-   \textsl{Seq66} and its precursor, \textsl{Seq24}, default to PPQN = 192.
-   For \textsl{Seq66}, this can be changed in the 'rc' file.
-   Any MIDI file can also be rescale to another PPQN, and saved.
-
-\subsubsection{MIDI Track, MTrk}
-\label{subsubsec:midi_format_track}
-
-   The next part of the MIDI file consists of the tracks specified in the file.
-   Each track is tagged by
-   a standard chunk marker, "MTrk".  Other markers are possible, and are to be
-   ignored, if nothing else.  Here are the values read at the beginning of a
-   track:
-
-   \begin{verbatim}
-      Track ID:      "MTrk"         4 bytes
-      Track length:  varies         4 bytes
-   \end{verbatim}
-
-   The track length is the number of bytes that need to be read in order to get
-   all of the data in the track.
-   In SMF 1 format, each track is assumed to cover a different MIDI channel,
-   but the same MIDI buss.
-   The MIDI buss \textsl{is} an important data item in the sequencer-specific
-   section of \textsl{Seq66} MIDI files, however.
-
-   \textbf{Delta time}.
-   The amount time that passes from one event to the next is the
-   \textsl{delta time}.
-   For some events, the time doesn't matter, and is set to 0.
-   This values is a
-   \textsl{variable length value}, also known as a "VLV" or a "varinum".   It
-   provides a way of encoding arbitrarily large values, a byte at a time.
-
-   \begin{verbatim}
-      Delta time:    varies         1 or more bytes
-   \end{verbatim}
-
-   The running-time accumulator is incremented by the delta-time.
-   The current time is adjusted as per the PPQN ratio, if needed, and stored with
-   each event that is read from the MIDI file.
 
 \subsubsection{Channel Events}
 \label{subsubsec:midi_format_channel_events}

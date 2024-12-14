@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-07-22
- * \updates       2023-09-09
+ * \updates       2024-12-12
  * \license       GNU GPLv2 or above
  *
  *  Provides a abstract base class so that both the old and the new Qt
@@ -63,13 +63,15 @@ public:
 
     /**
      *  We need a way to distinguish settings made at construction time versus
-     *  settings made by the user.
+     *  settings made by the user, as well as changes that ignore an attempted
+     *  user setting.
      */
 
     enum class status
     {
         startup,
-        edit
+        edit,
+        undo
     };
 
 private:

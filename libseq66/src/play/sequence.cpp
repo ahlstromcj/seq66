@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-12-10
+ * \updates       2024-12-14
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -685,9 +685,10 @@ sequence::analyze_time_signatures ()
         {
             size_t count = 0;
             double lastmeasure = 1.0;   /* always at least one measure, #1  */
+            int ppq = get_ppqn();
             for (auto & t : m_time_signatures)
             {
-                int ticksperbeat = pulses_per_beat(get_ppqn(), t.sig_beat_width);
+                int ticksperbeat = pulses_per_beat(ppq, t.sig_beat_width);
                 midipulse ender = count < (sz - 1) ?
                     m_time_signatures[count + 1].sig_start_tick : get_length() ;
 
@@ -696,7 +697,7 @@ sequence::analyze_time_signatures ()
 
                 double mcurrent = pulses_to_measures
                 (
-                    ender, get_ppqn(), t.sig_beats_per_bar, t.sig_beat_width
+                    ender, ppq, t.sig_beats_per_bar, t.sig_beat_width
                 );
                 t.sig_start_measure = lastmeasure;
                 t.sig_measures = mcurrent;
@@ -833,6 +834,7 @@ sequence::measure_number (midipulse p) const
     int count = time_signature_count();
     if (count > 0)
     {
+        int ppq = get_ppqn();
         for (int i = 0; i < count; ++i)
         {
             const timesig & t = get_time_signature(i);
@@ -844,8 +846,8 @@ sequence::measure_number (midipulse p) const
                 double mnew = t.sig_start_measure;
                 double m = pulses_to_measures
                 (
-                    duration, get_ppqn(),
-                    t.sig_beats_per_bar, t.sig_beat_width
+                    duration, ppq, t.sig_beats_per_bar,
+                    t.sig_beat_width
                 );
                 result += int(mnew + m + 0.5);      /* round up for now */
                 if (p >= p1)
@@ -6197,7 +6199,17 @@ sequence::set_armed (bool p)
         else
             off_playing_notes();
 
-        notify_change(false);                       /* ca 2024-11-29        */
+        /*
+         * This call is meant to allow the grid slot and the pattern-editor
+         * armed statuses to stay in sync. However, if colours.midi is opened
+         * and a pattern is opened, then b4uacuse.mid is selected (as
+         * a recent file) and a pattern is opened, then we go back to
+         * colours.midi, a segfault occurs due to the pattern editor
+         * being bogus. What to do???
+         *
+         *      notify_change(false);
+         */
+
         set_dirty();
         m_queued = m_one_shot = false;
         perf()->announce_pattern(seq_number());     /* for issue #89        */
@@ -6320,7 +6332,12 @@ sequence::set_recording (alteration q, toggler flag)
          */
 
         set_dirty();
-        notify_trigger();
+
+        /*
+         * notify_trigger();
+         */
+
+        notify_change(false);
     }
     else                                        /* toggler::flip            */
     {
@@ -6352,7 +6369,13 @@ sequence::set_recording_style (recordstyle rs)
         if (rs == recordstyle::overwrite)
             loop_reset(true);   /* on overwrite, always reset the sequence  */
 
-        notify_trigger();                                       /* tricky!  */
+        /*
+         * Why do this?
+         *
+         * notify_trigger();                                   // tricky!  //
+         */
+
+        notify_change(false);                                   // xxxx
     }
     return result;
 }

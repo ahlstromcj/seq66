@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2024-12-10
+ * \updates       2024-12-14
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -485,6 +485,17 @@ double_ticks_from_ppqn (int ppq)
 }
 
 /**
+ *  This provides a kind of fundamental value. See measures_to_ticks() and
+ *  midi_clock_beats_per_qn()
+ */
+
+inline double
+qn_per_beat (int bw = 4)
+{
+    return (bw > 0) ? 4.0 / double(bw) : 1.0 ;
+}
+
+/**
  *  Calculates the pulses per measure.  This calculation is extremely simple,
  *  and it provides an important constraint to pulse (ticks) calculations: the
  *  default number of pulses in a measure is always 4 times the PPQN value,
@@ -493,20 +504,25 @@ double_ticks_from_ppqn (int ppq)
  */
 
 inline int
-default_pulses_per_measure (int ppq)
+default_pulses_per_measure (int ppq, int bpb = 4)
 {
-    return 4 * ppq;
+    return ppq * bpb;
 }
 
 /**
  *  Calculates the pulses in a beat. For a 4/4 time signature, this is the
  *  same as PPQN.
+ *
+ *  Now, pulses/beat should be the same as qn/beat x pulse/qn. So we do not
+ *  need the number of beats, just the beatwidth. This is wrong:
+ *
+ *          return ppq * bpb / bw;
  */
 
 inline int
-pulses_per_beat (int ppq, int beatspm = 4, int beatwidth = 4)
+pulses_per_beat (int ppq, int bw = 4)
 {
-    return beatspm * ppq / beatwidth;
+    return (bw > 0) ? 4 * ppq / bw : ppq ;
 }
 
 /**
@@ -528,7 +544,7 @@ pulses_per_beat (int ppq, int beatspm = 4, int beatwidth = 4)
         W == beat width in beats per measure (constant)
 \endverbatim
  *
- *  Testing the units:
+ *  Testing the units to make sure they cancel out to "pulses":
  *
 \verbatim
                 4   qn      pulses     beats
@@ -541,7 +557,8 @@ pulses_per_beat (int ppq, int beatspm = 4, int beatwidth = 4)
  *  So p = 100 * 4 * 4 * 192 / 4 = 76800 ticks.
  *
  *  Note that 4 * P is a constraint encapsulated by the inline function
- *  default_pulses_per_measure().
+ *  default_pulses_per_measure() using the default value of beats.
+ *  Also note that 4 / W is calculable using qn_per_beat().
  *
  * \param bpb
  *      The B value in the equation, beats/measure or beats/bar.
@@ -568,12 +585,14 @@ pulses_per_beat (int ppq, int beatspm = 4, int beatwidth = 4)
 inline midipulse
 measures_to_ticks (int bpb, int ppq, int bw, int measures = 1)
 {
-    return (bw > 0) ? midipulse(4 * ppq * measures * bpb / bw) : 0 ;
+    return (bw > 0) ? midipulse(4 * ppq * bpb * measures / bw) : 0 ;
 }
 
 /**
  *  The inverse of measures_to_ticks(). Note that callers who want to
  *  display the measure number to a user should add 1 to it.
+ *
+ *  Compare this function to pulses_to_measures(), which returns a double.
  *
  * \param B
  *      The B value in the equation, beats/measure or beats/bar.
@@ -597,13 +616,13 @@ measures_to_ticks (int bpb, int ppq, int bw, int measures = 1)
 inline int
 ticks_to_measures (midipulse p, int P, int B, int W)
 {
-    return (P > 0 && B > 0.0) ? (p * W) / (4.0 * P * B) : 0 ;
+    return (B > 0 && P > 0.0) ? int(double(p * W) / (4.0 * P * B)) : 0 ;
 }
 
 inline int
 ticks_to_beats (midipulse p, int P, int B, int W)
 {
-    return (P > 0 && B > 0.0) ? ((p * W / P / 4 ) % B) : 0 ;
+    return (B > 0 && P > 0.0) ? ((p * W / P / 4 ) % B) : 0 ;
 }
 
 template <typename INTTYPE>
@@ -637,8 +656,8 @@ INTTYPE snapped (snapper snaptype, int S, INTTYPE p)
  *  Free functions in the seq66 namespace.
  */
 
-extern int pulses_per_substep (midipulse ppq, int zoom = 1);
-extern int pulses_per_pixel (midipulse ppq, int zoom = 1);
+extern int pulses_per_substep (midipulse ppq, int zoom = 2);
+extern int pulses_per_pixel (midipulse ppq, int zoom = 2);
 extern double wave_func (double angle, waveform wavetype);
 extern double unit_truncation (double angle);
 extern double exp_normalize (double angle, bool negate = false);

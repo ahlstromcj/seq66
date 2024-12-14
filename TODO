@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.17
 Chris Ahlstrom
-2019-04-13 to 2024-12-12
+2019-04-13 to 2024-12-13
 
 Hottest:
 
@@ -21,7 +21,14 @@ Hottest:
             -   Large measure does not check-mark Expand.
             -   The Other Fixes do not check-mark their effects flags.
         -   Definitely need a new screen-shot and documentation galore.
-    -   The seqroll for 120 PPQN is still a bit off.
+    -   Pattern editor.
+        -   The seqroll for 120 PPQN is still a bit off.
+        -   Opening a second editor in colours.midi raises the modified
+            flag!
+        -   Leaving an editor opening when loading a file can cause a
+            segfault. Fixed by not calling a performer callback.
+            But have to add polling in seqedit to check for a change in
+            arm status. 
     -   Consider an option to Import a normal MIDI file so that a flag
         is raised so that it will not be saved with Seq66 SeqSpecs.
         Make it visible to be clear.
@@ -368,7 +375,7 @@ ISSUES:
 
     In the pattern edit window, the reset pattern to 1 button no longer works
     properly. It either shrinks to some bar other than 1 or just does nothing
-    at all.  FIXED. Will prompt for truncating notes.
+    at all.  FIXED. It will prompt for truncating notes.
 
     There is also a behaviour when you manually select or type the number of
     bars and it is smaller than the amount of already existing bars with notes
@@ -382,7 +389,8 @@ ISSUES:
 
 	These have appeared since https://github.com/ahlstromcj/seq66/issues/128 so
 	possibly connected. PARTLY FIXED. After even a selection of 1, must Enter
-    or Tab out.
+    or Tab out. Not sure why, as editing-finish slots have been added to
+    the pattern editor.
 
     A third issue which occurred before was with manually editing the
     amount of bars with double digits. The bars refresh for each digit entered.
@@ -391,10 +399,12 @@ ISSUES:
     the dialog will pop up about losing notes. If you then click ok, instead of
     cancel, you will lose anything in the latter 15 bars. FIXED.
 
-    Make sure that canceling a change resets the combo-box to the previous
-    value.
+    Make sure that canceling a measure change resets the combo-box to the
+    previous value. FIXED.
 
-    There are still issues when making multiple time-signature changes.
+    There might still be issues when making multiple time-signature changes.
+
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 To close as pushed off to version 2:
 

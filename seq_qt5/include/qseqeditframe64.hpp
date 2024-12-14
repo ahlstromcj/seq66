@@ -597,6 +597,12 @@ private:
     recordstyle m_last_record_style;
 
     /**
+     * TO DO
+     */
+
+    bool m_armed_status;
+
+    /**
      *  Update timer for pass-along to the roll, event, and data classes.
      */
 

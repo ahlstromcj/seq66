@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2024-11-30
+ * \updates       2024-12-12
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -144,9 +144,8 @@ combolist::valid (const std::string & target) const
 }
 
 /**
- *  ca 2024-11-30
- *  Had to update this one, after checking, to return (-1) instead of zero
- *  to indicate an error. This change is part of issue #128, where expand-record
+ *  Had to update this one, after checking, to return (-1) instead of zero to
+ *  indicate an error. This change is part of issue #128, where expand-record
  *  using auto-step tries to look up measure "9" in the seqedit measures list,
  *  fails, returns 0, and sets the pattern length to 1, suddenly.
  */
@@ -445,6 +444,9 @@ ppqn_list_value (int index)
  *  This list is useful in the user-interface.  Also see ppqn_list_value()
  *  below for internal integer versions. Used in qsmainwnd and in
  *  qseditoptions.
+ *
+ *  ca 2024-12-12. The blank value "" was removed, as it is addable via
+ *  a constructor.
  */
 
 const tokenization &
@@ -452,7 +454,6 @@ supported_ppqns ()
 {
     static tokenization s_supported_ppqn_list
     {
-        "",
         "32", "48", "96", "120",
         "192", "240",
         "384", "768", "960", "1920", "2400",

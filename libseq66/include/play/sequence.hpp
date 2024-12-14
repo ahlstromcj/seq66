@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2024-12-09
+ * \updates       2024-12-13
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1335,7 +1335,11 @@ public:
 
     midipulse get_length_plus () const
     {
-        return m_length + m_unit_measure / m_time_beats_per_measure;
+        int bpmeas = m_time_beats_per_measure;
+        if (bpmeas == 0)
+            bpmeas = 4;
+
+        return m_length + m_unit_measure / bpmeas;
     }
 
     midipulse get_tick () const;

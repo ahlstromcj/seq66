@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.17
 Chris Ahlstrom
-2015-07-10 to 2024-12-11
+2015-07-10 to 2024-12-13
 
 # Change Log
 
-## [0.99.17] - 2024-12-11
+## [0.99.17] - 2024-12-13
 
 This release is in progress....
 
@@ -20,13 +20,26 @@ This release is in progress....
 
 -   Issue #128 follow-on. Fixed the removal of trailing notes after
     truncating a pattern to a smaller number of measures.
--   Issue #133.
-    -   Pattern editor. Changed the slot connection for editable
-        combo-boxes to connect the lineEdit() accessor.
-        -   Measures (pattern length) combo-box.
-
--   Issue #134.Added dates to the release-name line from 0.99.14 on;
+-   Issue #133 and issues found while working this.
+    -   Pattern editor.
+        -   Changed the slot connection for editable combo-boxes to connect
+            the lineEdit() accessor.
+            -   Measures (pattern length) combo-box. Also made cancelling
+                the change work correctly.
+            -   Beats-per-bar combo-box.
+            -   Beat-width combo-box.
+        -   Fixed a seqfault when opening tune with a pattern-editor already
+            up for the current tune. The side-effect is that armed status
+            will not synch between the main window and the editor.
+        -   Fixed raising the modify flag when a second pattern was opened
+            in the editor.
+        -   Fixed a potential segfault when opening a recent file with
+            a pattern currently open for editing.
+        -   Updated the drawing of the seqroll grid.
+-   Issue #134. Added dates to the release-name line from 0.99.14 on;
     were left off by an oversight.
+-   Main window. Fixed updating the PPQN when a file of different PPQN
+    is loaded.
 -   Cleaned up and upgraded the linking of recorded notes.
 -   Made ghost notes in selection box official. Also made it apply
     to select-all and other selection operations.

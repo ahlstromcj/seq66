@@ -192,12 +192,6 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
     midipulse ticks_per_four = ticks_per_step * 4;
     midipulse endtick = pix_to_tix(r.x() + r.width());
     int sizeheight = size().height();
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    QPen testpen(Qt::magenta);
-    int testpix = tix_to_pix(428);
-    painter.setPen(testpen);
-    painter.drawText(testpix, 13, "X");
-#endif
     for (int tscount = 0; tscount < count; ++tscount)
     {
         const sequence::timesig & ts = track().get_time_signature(tscount);

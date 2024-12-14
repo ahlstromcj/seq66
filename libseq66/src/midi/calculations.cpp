@@ -362,6 +362,19 @@ pulses_to_midi_measures
  *  Function used in sequence::analyze_time_signatures() to precalculate
  *  the size of each time-signature (sequence::timesig) segment.
  *
+ *  Compare this function to ticks_to_measures(), which returns an
+ *  integer. Also, in measures_to_ticks() the formula is:
+ *
+\verbatim
+            p = 4 * P * M * B / W
+\endverbatim
+ *
+ *  Solving for M:
+ *
+\verbatim
+            M = p * W / (4 * P * B)
+\endverbatim
+ *
  * \param p
  *      Provides either the time in ticks (pulses), or the duration of a
  *      timesig segment.
@@ -379,26 +392,24 @@ pulses_to_midi_measures
  *
  * \return
  *      If the parameters are valid, returns the measure count or size
- *      as a floating-point value.  The caller is responsible for any
- *      rounding.  If parameters are invalid, 0.0 is returned.
+ *      as a floating-point value. The caller is responsible for any
+ *      rounding. If parameters are invalid, 0.0 is returned.
  */
 
 double
-pulses_to_measures
-(
-    midipulse p,                                    /* time or duration     */
-    int P,                                          /* PPQN                 */
-    int B,                                          /* beats per measure    */
-    int W                                           /* beat width           */
-)
+pulses_to_measures (midipulse p, int P, int B, int W)
 {
     double result = 0.0;                            /* indicates an error   */
-    bool ok = (W > 0) && (P > 0) && (B > 0);
-    if (ok)
+    if (B > 0 && P > 0)
     {
+#if defined USE_CLUMSY_CODE
         double qnotes = double(c_qn_beats) * B / W; /* Q notes per measure  */
         double measlength = P * qnotes;             /* pulses/std measure   */
         result = p / measlength;
+#else
+        double divisor = double(c_qn_beats) * P * B;
+        return double(p) * W / divisor;
+#endif
     }
     return result;
 }
@@ -959,7 +970,7 @@ log2_of_power_of_2 (int tsd)
  *  calculation can fail, resulting in missing lines and missing measure
  *  numbers. In this case, we increment the resul to make it even.
  *
- *  Current status at PPQN = 192, Base pixels (pixels_per_substep)= 6:
+ *  Current status at PPQN = 192, Base pixels (pixels_per_substep) = 6:
  *
 \verbatim
     Zoom    Note-steps  Substeps   Substeps/Note (#SS)
@@ -993,10 +1004,11 @@ log2_of_power_of_2 (int tsd)
  *      Provides the actual PPQN used by the currently-loaded tune.
  *
  * \param zoom
- *      Provides the current zoom value.  Defaults to 1, but is normally
+ *      Provides the current zoom value.  Defaults to 2, but can be
  *      another value. The zoom value is the number of pulses per pixel.
  *      Thus, zooming in (making the horizontal grid segments wider)
- *      yields fewer pulses per pixel.
+ *      yields fewer pulses per pixel. We can zoom out further than
+ *      we can zoom in, which is just one step from the default zoom.
  *
  * \return
  *      The result of the above equation is returned.

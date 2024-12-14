@@ -589,8 +589,12 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     }
 
     int count = track().time_signature_count();
-    midipulse ppmeas = midipulse(default_pulses_per_measure(perf().ppqn()));
-    midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
+    int ppq = perf().ppqn();
+#if defined USE_OLD_CODE
+    midipulse ppmeas = midipulse(default_pulses_per_measure(ppq));
+#endif
+    midipulse ticks_per_step = pulses_per_substep(ppq, zoom());
+    midipulse ticks_per_four = ticks_per_step * 4;
     midipulse endtick = pix_to_tix(r.x() + r.width());
     for (int tscount = 0; tscount < count; ++tscount)
     {
@@ -600,7 +604,11 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
 
         int bpbar = ts.sig_beats_per_bar;
         int bwidth = ts.sig_beat_width;
+#if defined USE_OLD_CODE
         midipulse ticks_per_beat = ppmeas / bwidth;
+#else
+        midipulse ticks_per_beat = midipulse(pulses_per_beat(ppq, bwidth));
+#endif
         midipulse ticks_per_bar = bpbar * ticks_per_beat;
         midipulse starttick = ts.sig_start_tick;
         starttick -= starttick % ticks_per_step;
@@ -614,14 +622,19 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
             enum Qt::PenStyle penstyle = Qt::SolidLine;
             if (tick % ticks_per_bar == 0)          /* solid line every bar */
             {
-                pen.setStyle(measure_pen_style());
+                penstyle = measure_pen_style();
                 penwidth = measure_pen_width();
                 pen.setColor(beat_paint());
             }
             else if (tick % ticks_per_beat == 0)    /* light on every beat  */
             {
-                pen.setStyle(beat_pen_style());
+                penstyle = beat_pen_style();
                 penwidth = beat_pen_width();
+                pen.setColor(beat_color());
+            }
+            else if (tick % ticks_per_four == 0)
+            {
+                penstyle = Qt::DashDotLine;
                 pen.setColor(beat_color());
             }
             else
@@ -1961,7 +1974,7 @@ qseqroll::sizeHint () const
     int w = frame64()->width();
     int h = total_height();
     int len = tix_to_pix(track().get_length_plus()); /* was get_length())   */
-    if (len < w)
+    if (len > 0 && len < w)
         len = w;
 
     len += m_keypadding_x;                          /* c_keyboard_padding   */

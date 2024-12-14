@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-02
+ * \updates       2024-12-12
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -322,7 +322,7 @@ qsmainwnd::qsmainwnd
     setWindowIcon(icon);
 #endif
 
-#endif
+#endif  // defined SEQ66_PORTMIDI_SUPPORT
 
     int w = usr().mainwnd_x();                  /* normal, maybe scaled     */
     int h = usr().mainwnd_y();
@@ -1394,9 +1394,11 @@ qsmainwnd::set_song_mode (bool /*songmode*/)
 void
 qsmainwnd::set_ppqn_text (const std::string & text)
 {
-    std::string t = text;
-    QString p = qt(t);
-    ui->lineEditPpqn->setText(p);
+    if (! text.empty())
+    {
+        QString p = qt(text);
+        ui->lineEditPpqn->setText(p);
+    }
 }
 
 void
@@ -1406,16 +1408,9 @@ qsmainwnd::set_ppqn_text (int ppq)
     {
         std::string temp = std::to_string(ppq);
         QString ppqntext = qt(temp);
-
-        /*
-         * These don't seem to be necessary.
-         *
-         * ppqn_list().current(temp);
-         * set_ppqn_text(temp);
-         */
-
         ui->cmb_ppqn->setItemText(0, ppqntext);
         usr().file_ppqn(ppq);
+        ui->cmb_ppqn->setCurrentIndex(0);
     }
 }
 
@@ -1585,7 +1580,7 @@ qsmainwnd::load_into_session (const std::string & selectedfile)
 void
 qsmainwnd::select_and_load_file ()
 {
-    std::string selectedfile = rc().last_used_dir();    /* ca 2023-11-22    */
+    std::string selectedfile = rc().last_used_dir();
     if (show_open_file_dialog(selectedfile))
     {
         if (open_file(selectedfile))
@@ -1899,13 +1894,14 @@ qsmainwnd::open_file (const std::string & fn)
     bool result = false;
     if (check())
     {
-        std::string errmsg;
         if (not_nullptr(m_mute_master))
             m_mute_master->reset();
 
+        std::string errmsg;
         result = cb_perf().read_midi_file(fn, errmsg);
         if (result)
         {
+            remove_all_editors();                   /* moved from below     */
             redo_live_frame();
             if (not_nullptr(m_song_frame64))
             {
@@ -1919,9 +1915,10 @@ qsmainwnd::open_file (const std::string & fn)
             /*
              * The tabbed edit frame is automatically removed if no other
              * seq-edit is open.
+             *
+             *      remove_all_editors();           // moved to above       //
              */
 
-            remove_all_editors();
             set_ppqn_text(cb_perf().ppqn());
             if (! use_nsm())                    /* does this menu exist?    */
             {
@@ -3004,6 +3001,16 @@ qsmainwnd::remove_all_editors ()
 {
     remove_edit_tab_frame();
     remove_event_tab_frame();
+    remove_ex_editors();
+}
+
+/**
+ *  We need to remove editors when loading a file, as well.
+ */
+
+void
+qsmainwnd::remove_ex_editors ()
+{
     for
     (
         auto ei = m_open_editors.begin();
@@ -3515,6 +3522,10 @@ qsmainwnd::open_recent_file ()
         std::string actionfile = fname.toStdString();
         if (! actionfile.empty())
         {
+            /*
+             * remove_all_editors();               // EXPERIMENTAL
+             */
+
             if (open_file(actionfile))
             {
                 if (! usr().is_buss_override())

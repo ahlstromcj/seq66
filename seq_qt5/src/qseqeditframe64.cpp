@@ -331,6 +331,7 @@ qseqeditframe64::qseqeditframe64
     m_have_focus            (false),
     m_edit_mode             (perf().edit_mode(s.seq_number())),
     m_last_record_style     (perf().record_style()),
+    m_armed_status          (false),
     m_timer                 (nullptr)
 {
     std::string seqname = "No sequence!";
@@ -340,6 +341,8 @@ qseqeditframe64::qseqeditframe64
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     if (s.snap() > 0)
         m_snap = s.snap();
+
+    m_armed_status = track().armed();
 
     if (shorter)
     {
@@ -1649,10 +1652,9 @@ qseqeditframe64::conditional_update ()
     int m = track().measures();
     if (m_measures != m)
     {
-        m_measures = m;
-
         std::string mstring = std::to_string(m);
         int lenindex = measures_list().index(m);
+        m_measures = m;
         if (lenindex >= 0)
         {
             int curindex = ui->m_combo_length->currentIndex();
@@ -1663,10 +1665,9 @@ qseqeditframe64::conditional_update ()
     }
     if (m_beats_per_bar != track().get_beats_per_bar())
     {
-        m_beats_per_bar = track().get_beats_per_bar();
-
         std::string mstring = std::to_string(m_beats_per_bar);
         int lenindex = beats_per_bar_list().index(m_beats_per_bar);
+        m_beats_per_bar = track().get_beats_per_bar();
         if (lenindex >= 0)
         {
             int curindex = ui->m_combo_bpm->currentIndex();
@@ -1677,10 +1678,9 @@ qseqeditframe64::conditional_update ()
     }
     if (m_beat_width != track().get_beat_width())
     {
-        m_beat_width = track().get_beat_width();
-
         std::string mstring = std::to_string(m_beat_width);
         int lenindex = beatwidth_list().index(m_beat_width);
+        m_beat_width = track().get_beat_width();
         if (lenindex >= 0)
         {
             int curindex = ui->m_combo_bw->currentIndex();
@@ -1694,7 +1694,12 @@ qseqeditframe64::conditional_update ()
         m_is_looping = perf().looping();
         ui->m_button_loop->setChecked(m_is_looping);
     }
-    if (track().check_loop_reset() || expandrec)
+
+    bool armchange = m_armed_status != track().armed();
+    if (armchange)
+        m_armed_status = track().armed();
+
+    if (track().check_loop_reset() || expandrec || armchange)
     {
         /*
          * Now we need to update the event and data panes.  The notes update
@@ -1981,7 +1986,16 @@ qseqeditframe64::set_measures (int m, qbase::status qs)
         }
         if (reset)
         {
-            /* reset_measures(); simply ignore */
+            /*
+             * reset_measures(); simply ignore? No, reset to previous value.
+             */
+
+            QString text = qt(std::to_string(m_measures));
+            ui->m_combo_length->lineEdit()->setText(text);
+        }
+        else if (qs == qbase::status::undo)
+        {
+            // do nothing
         }
         else
         {
@@ -2163,7 +2177,8 @@ qseqeditframe64::text_measures_edit ()
     if (! temp.empty())
     {
         int measures = string_to_int(temp);
-        set_measures(measures);
+        if (measures != m_measures)
+            set_measures(measures);
     }
 }
 

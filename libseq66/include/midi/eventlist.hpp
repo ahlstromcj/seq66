@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2024-12-09
+ * \updates       2024-12-12
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -87,6 +87,10 @@
  *  and clearing. However, we were able to delete events, clear all events,
  *  and even delete patterns while playback was occuring. So we don't think we
  *  need this after all. Define it if problems crop up. EXPERIMENTAL.
+ *
+ *  There is sometimes a segfault when one song is opened with pattern editors
+ *  up, and then another song is loaded. So we're defining it to see if
+ *  that fixes this issue. It does not.
  */
 
 #undef  SEQ66_USE_ACTION_IN_PROGRESS_FLAG
