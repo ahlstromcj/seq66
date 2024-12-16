@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-04
+ * \updates       2024-12-16
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -319,10 +319,10 @@ qseqroll::note_height () const
 void
 qseqroll::scroll_offset (int x)
 {
-    midipulse ticks = pix_to_tix(x);
-    midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
+    midipulse ticks = z().pix_to_tix(x);
+    midipulse ticks_per_step = z().pulses_per_substep();
     m_t0 = ticks - (ticks % ticks_per_step);
-    m_frame_ticks = pix_to_tix(frame64()->width());
+    m_frame_ticks = z().pix_to_tix(frame64()->width());
     m_t1 = ticks + m_frame_ticks;
     qseqbase::scroll_offset(x);
 }
@@ -396,7 +396,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     pen.setColor(Qt::lightGray);
     painter.setPen(pen);
     painter.setFont(m_font);
-    m_frame_ticks = pix_to_tix(r.width());
+    m_frame_ticks = z().pix_to_tix(r.width());
     m_edit_mode = perf().edit_mode(track().seq_number());
 
     /*
@@ -589,13 +589,8 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     }
 
     int count = track().time_signature_count();
-    int ppq = perf().ppqn();
-#if defined USE_OLD_CODE
-    midipulse ppmeas = midipulse(default_pulses_per_measure(ppq));
-#endif
-    midipulse ticks_per_step = pulses_per_substep(ppq, zoom());
-    midipulse ticks_per_four = ticks_per_step * 4;
-    midipulse endtick = pix_to_tix(r.x() + r.width());
+    midipulse ticks_per_step = z().pulses_per_substep();
+    midipulse endtick = z().pix_to_tix(r.x() + r.width());
     for (int tscount = 0; tscount < count; ++tscount)
     {
         const sequence::timesig & ts = track().get_time_signature(tscount);
@@ -604,12 +599,9 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
 
         int bpbar = ts.sig_beats_per_bar;
         int bwidth = ts.sig_beat_width;
-#if defined USE_OLD_CODE
-        midipulse ticks_per_beat = ppmeas / bwidth;
-#else
-        midipulse ticks_per_beat = midipulse(pulses_per_beat(ppq, bwidth));
-#endif
-        midipulse ticks_per_bar = bpbar * ticks_per_beat;
+        midipulse ticks_per_four = z().pulses_per_partial_beat(bpbar, bwidth);
+        midipulse ticks_per_beat = midipulse(z().pulses_per_beat(bwidth));
+        midipulse ticks_per_bar = z().pulses_per_bar(bpbar, bwidth);
         midipulse starttick = ts.sig_start_tick;
         starttick -= starttick % ticks_per_step;
         if ((bwidth % 2) != 0)
@@ -676,8 +668,8 @@ qseqroll::draw_notes
     painter.setBrush(brush);
 
     midipulse seqlength = track().get_length();
-    midipulse start_tick = pix_to_tix(r.x());
-    midipulse end_tick = start_tick + pix_to_tix(r.width());
+    midipulse start_tick = z().pix_to_tix(r.x());
+    midipulse end_tick = start_tick + z().pix_to_tix(r.width());
     sequence * b = perf().get_sequence(m_background_sequence).get();
     sequence * s = background ? b : &track();
     if (is_nullptr(s))
@@ -710,15 +702,15 @@ qseqroll::draw_notes
             {
                 if (not_wrapped)
                 {
-                    m_note_width = tix_to_pix(ni.finish() - ni.start());
+                    m_note_width = z().tix_to_pix(ni.finish() - ni.start());
                     if (m_note_width < 1)
                         m_note_width = 1;
                 }
                 else
-                    m_note_width = tix_to_pix(seqlength - ni.start());
+                    m_note_width = z().tix_to_pix(seqlength - ni.start());
             }
             else
-                m_note_width = tix_to_pix(16);
+                m_note_width = z().tix_to_pix(16);
 
             if (dt == sequence::draw::note_on)      /* means it's unlinked  */
             {
@@ -773,7 +765,7 @@ qseqroll::draw_notes
             }
             if (m_link_wraparound && ! not_wrapped)
             {
-                int len = tix_to_pix(ni.finish()) - m_note_off_margin;
+                int len = z().tix_to_pix(ni.finish()) - m_note_off_margin;
                 if (use_gradient())
                 {
                     QLinearGradient grad
@@ -852,7 +844,7 @@ qseqroll::draw_notes
                         }
                         else
                         {
-                            int w = tix_to_pix(ni.finish()) + length_add - 3;
+                            int w = z().tix_to_pix(ni.finish()) + length_add - 3;
                             painter.drawRect
                             (
                                 x_shift, m_note_y, m_note_width, h_minus
@@ -949,7 +941,7 @@ qseqroll::draw_ghost_notes
     int t1 = selection.x1();                        /* tick_finish      */
     int n0 = selection.y1();                        /* note_high        */
     int n1 = selection.y0();                        /* note_low         */
-    int wbox = tix_to_pix(midipulse(t1)) - tix_to_pix(midipulse(t0)) + 4;
+    int wbox = z().tix_to_pix(midipulse(t1)) - z().tix_to_pix(midipulse(t0)) + 4;
     int h1   = note_to_pix(n1) - note_to_pix(n0);
     int h2   = note_to_pix(n0) - note_to_pix(n1);
     int hbox = h1 + unit_height() + 2;
@@ -1059,8 +1051,8 @@ qseqroll::draw_drum_notes
     painter.setBrush(brush);
     m_edit_mode = perf().edit_mode(track().seq_number());
 
-    midipulse start_tick = pix_to_tix(r.x());
-    midipulse end_tick = start_tick + pix_to_tix(r.width());
+    midipulse start_tick = z().pix_to_tix(r.x());
+    midipulse end_tick = start_tick + z().pix_to_tix(r.width());
     sequence * b = perf().get_sequence(m_background_sequence).get();
     sequence * s = background ? b : &track();
     if (is_nullptr(s))
@@ -1973,7 +1965,7 @@ qseqroll::sizeHint () const
 {
     int w = frame64()->width();
     int h = total_height();
-    int len = tix_to_pix(track().get_length_plus()); /* was get_length())   */
+    int len = z().tix_to_pix(track().get_length_plus()); /* was get_length())   */
     if (len > 0 && len < w)
         len = w;
 
@@ -2140,7 +2132,7 @@ qseqroll::follow_progress (qscrollmaster * qsm, bool expand)
         midipulse progtick = track().expand_value();
         if (progtick != 0)
         {
-            int newx = tix_to_pix(progtick);
+            int newx = z().tix_to_pix(progtick);
             hadjust->setValue(newx);
             result = true;
         }
@@ -2149,7 +2141,7 @@ qseqroll::follow_progress (qscrollmaster * qsm, bool expand)
     {
         int w = qsm->width();
         midipulse progtick = track().get_last_tick();
-        int progx = tix_to_pix(progtick);
+        int progx = z().tix_to_pix(progtick);
         int page = progx / w;
         int oldpage = scroll_page();
         bool newpage = page != oldpage;

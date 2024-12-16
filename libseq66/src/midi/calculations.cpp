@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2024-12-05
+ * \updates       2024-12-16
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -954,6 +954,8 @@ log2_of_power_of_2 (int tsd)
         return (-1);
 }
 
+#if defined SEQ66_USE_EXTRA_PULSE_CALCULATIONS
+
 /**
  *  This function provides the size of the smallest horizontal grid unit in
  *  units of pulses (ticks).  We need this to be able to increment grid
@@ -1052,6 +1054,8 @@ pulses_per_pixel (midipulse ppq, int zoom)
     return result;
 }
 
+#endif  // defined SEQ66_USE_EXTRA_PULSE_CALCULATIONS
+
 /**
  *  Internal function for simple calculation of a power of 2 without a lot of
  *  math.  Use for calculating the denominator of a time signature.
@@ -1077,7 +1081,66 @@ beat_power_of_2 (int logbase2)
     {
         result = 2;
         for (int c = 1; c < logbase2; ++c)
-            result *= 2;
+            result <<= 1;
+    }
+    return result;
+}
+
+/**
+ *  Calculates the previous power of 2 before a given number. Not meant to be
+ *  rigorous, just enough for MIDI usage. No numbers where a multiplication
+ *  by 2 would overflow an int.
+ *
+ *
+ * \param value
+ *      Provides the value to be rounded up to the next power of 2.
+ *
+ * \return
+ *      Returns the previous power of 2 below the given value. If already a
+ *      power of 2, it is returned as is. If the value is 0 (or less than
+ *      0), 1 is returned.
+ */
+
+int
+previous_power_of_2 (int value)
+{
+    int result = 1;
+    if (value > 1)
+    {
+        result = value >> 1;
+        result <<= 1;
+    }
+    return result;
+}
+
+/**
+ *  Calculates the next power of 2 after a given number. Not meant to be
+ *  rigorous, just enough for MIDI usage. No numbers where a multiplication
+ *  by 2 would overflow an int.
+ *
+ *
+ * \param value
+ *      Provides the value to be rounded up to the next power of 2.
+ *
+ * \return
+ *      Returns the next power of 2 above the given value. If already a
+ *      power of 2, it is returned as is. If the value is 0 (or less than
+ *      0), 1 is returned.
+ */
+
+int
+next_power_of_2 (int value)
+{
+    int result = 1;
+    if (value > 0)
+    {
+        while (result <= value)
+        {
+            if (result < value)
+                result <<= 1;
+            else
+                break;
+        }
     }
     return result;
 }

@@ -24,9 +24,37 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2024-08-06
+ * \updates       2024-12-16
  * \license       GNU GPLv2 or above
  *
+ *  Refactoring:
+ *
+ *      Originally, Seq66 started with PPQN and then derived the proper
+ *      ticks-to-pixels conversion. This has issues with PPQNs of 120
+ *      and 240 (versus 192). Let's start with the zoom (ticks per pixel)
+ *      and work toward PPQN. The following suggested zoom member functions
+ *      are similar to the like-named functions in the calculations module,
+ *      but we start from the pixel and move up, ignoring PPQN.
+ *
+ *      -   pulses_per_pixel(). This is basically the zoom value, which
+ *          starts at 2. So we don't need this function.
+ *      -   pulses_per_substep(). The sub-step vertical lines are 6 pixels.
+ *          We need to stick with that, no matter what the zoom. This function
+ *          can call pulses_per_pixel() and multiply it by 6.
+ *      -   pulses_per_quarter_beat(). Assuming it is good to use a 4th of
+ *          a beat (but what about beat-widths of 8, 16, ...? 4/x?)
+ *          pulses_per_partial_beat()? Default = factor of 4.
+ *      -   pulses_per_beat(). Default = factor of 4.
+ *      -   pulses_per_measure(). Based on beats.
+ *
+ *
+ *  Diagram:
+ *
+ *      measure
+ *        sub-step
+ *           quarter-beat
+ *                       beat     (beats)       beat            measure
+ *      ||...:...:...:...|...:...:. . . . ..:...|...:...:...:...||
  */
 
 #include "cfg/settings.hpp"             /* seq66::zoom_items()              */
@@ -180,7 +208,8 @@ zoomer::reset_zoom (int ppq)
 midipulse
 zoomer::pix_to_tix (int x) const
 {
-    midipulse result = x * pulses_per_pixel(m_ppqn, m_scale_zoom);
+//  midipulse result = x * pulses_per_pixel(m_ppqn, m_scale_zoom);
+    midipulse result = x * pulses_per_pixel();
     if (expanded_zoom())
         result /= m_zoom_expansion;
 
@@ -190,7 +219,8 @@ zoomer::pix_to_tix (int x) const
 int
 zoomer::tix_to_pix (midipulse ticks) const
 {
-    int result = ticks / pulses_per_pixel(m_ppqn, m_scale_zoom);
+//  int result = ticks / pulses_per_pixel(m_ppqn, m_scale_zoom);
+    int result = ticks / pulses_per_pixel();
     if (expanded_zoom())
         result *= m_zoom_expansion;
 
@@ -230,9 +260,7 @@ zoomer::zoom_power_of_2 (int ppqn)
     if (ppqn > usr().base_ppqn())
     {
         int zoom = result * ppqn / usr().base_ppqn();
-        zoom >>= 1;                                     /* "divide" by 2    */
-        zoom <<= 1;                                     /* "multiply" by 2  */
-        result = zoom;
+        result = next_power_of_2(zoom);
         if (result > c_maximum_zoom)
             result = c_maximum_zoom;
         else if (result == 0)

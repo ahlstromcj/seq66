@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-02
+ * \updates       2024-12-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -187,10 +187,8 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
     QBrush brush(Qt::lightGray, Qt::SolidPattern);
     QPen pen(Qt::black);
     int count = track().time_signature_count();
-    midipulse ppmeas = midipulse(default_pulses_per_measure(perf().ppqn()));
-    midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
-    midipulse ticks_per_four = ticks_per_step * 4;
-    midipulse endtick = pix_to_tix(r.x() + r.width());
+    midipulse ticks_per_step = z().pulses_per_substep();
+    midipulse endtick = z().pix_to_tix(r.x() + r.width());
     int sizeheight = size().height();
     for (int tscount = 0; tscount < count; ++tscount)
     {
@@ -200,8 +198,9 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
 
         int bpbar = ts.sig_beats_per_bar;
         int bwidth = ts.sig_beat_width;
-        midipulse ticks_per_beat = ppmeas / bwidth;
-        midipulse ticks_per_bar = bpbar * ticks_per_beat;
+        midipulse ticks_per_four = z().pulses_per_partial_beat(bpbar, bwidth);
+        midipulse ticks_per_beat = midipulse(z().pulses_per_beat(bwidth));
+        midipulse ticks_per_bar = z().pulses_per_bar(bpbar, bwidth);
         midipulse starttick = ts.sig_start_tick;
         starttick -= starttick % ticks_per_step;
         if ((bwidth % 2) != 0)
@@ -352,7 +351,7 @@ qseqtime::resizeEvent (QResizeEvent * qrep)
 void
 qseqtime::mousePressEvent (QMouseEvent * event)
 {
-    midipulse tick = pix_to_tix(event->x());
+    midipulse tick = z().pix_to_tix(event->x());
     if (snap() > 0)
         tick -= (tick % snap());
 
@@ -468,7 +467,7 @@ QSize
 qseqtime::sizeHint () const
 {
     int w = frame64()->width();
-    int len = tix_to_pix(track().get_length_plus()); /* get_length());      */
+    int len = z().tix_to_pix(track().get_length_plus()); /* get_length());      */
     if (len < w)
         len = w;
 

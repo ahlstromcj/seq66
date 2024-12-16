@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2024-08-06
+ * \updates       2024-12-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -161,6 +161,11 @@ public:
         return m_scale;
     }
 
+    int ppqn () const
+    {
+        return m_ppqn;
+    }
+
     int scale_zoom () const
     {
         return m_scale_zoom;
@@ -186,6 +191,39 @@ public:
 
     bool change_ppqn (int ppq);
     int zoom_power_of_2 (int ppq);
+
+public:     // new functions ca 2024-12-16
+
+    int pulses_per_pixel () const
+    {
+        return zoom();
+    }
+
+    int pulses_per_substep () const
+    {
+        return 6 * pulses_per_pixel();
+    }
+
+    /*
+     * return (bw > 0) ? 4 * ppqn() * bpb / bw / divisor : ppqn() ;
+     */
+
+    int pulses_per_partial_beat (int bpb = 4, int bw = 4) const
+    {
+        const int divisor = 4;
+        int div = bw * divisor;
+        return (bw > 0) ? 4 * ppqn() * bpb / div : ppqn() ;
+    }
+
+    int pulses_per_beat (int bw = 4) const
+    {
+        return (bw > 0) ? 4 * ppqn() / bw : ppqn() ;
+    }
+
+    int pulses_per_bar (int bpb = 4, int bw = 4) const
+    {
+        return (bw > 0) ? 4 * ppqn() * bpb / bw : ppqn() * bpb ;
+    }
 
 private:
 

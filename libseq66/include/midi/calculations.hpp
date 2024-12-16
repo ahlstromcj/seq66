@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2024-12-14
+ * \updates       2024-12-16
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -48,7 +48,9 @@
  *  yields, seemingly, more negative numbers than positive numbers.
  */
 
-#undef  SEQ66_USE_UNIFORM_INT_DISTRIBUTION     /* EXPERIMENTAL */
+#undef  SEQ66_USE_UNIFORM_INT_DISTRIBUTION      /* EXPERIMENTAL */
+
+#define SEQ66_USE_EXTRA_PULSE_CALCULATIONS      /* EXPERIMENTAL */
 
 /*
  * Global functions in the seq66 namespace for MIDI timing calculations.
@@ -256,6 +258,8 @@ extern int randomize_uniformly (int range, int seed = -1);
 extern bool is_power_of_2 (int value);
 extern int log2_of_power_of_2 (int tsd);
 extern int beat_power_of_2 (int logbase2);
+extern int previous_power_of_2 (int value);
+extern int next_power_of_2 (int value);
 extern int power (int base, int exponent);
 extern midibyte beat_log2 (int value);
 extern midibpm tempo_us_from_bytes (const midibyte tt[3]);
@@ -333,6 +337,9 @@ bpm_from_bytes (midibyte t[3])
              BPM * PPQN
 \endverbatim
  *
+ *  An alternate calculation is 60000000.0 / ppq / bp, but we can save
+ *  a division operation.
+ *
  * \param bp
  *      Provides the beats-per-minute value.  No sanity check is made.  If
  *      this value is 0, we'll get an arithmetic exception.
@@ -349,13 +356,7 @@ bpm_from_bytes (midibyte t[3])
 inline double
 pulse_length_us (midibpm bp, int ppq)
 {
-    /*
-     * Let's use the original notation for now.
-     *
-     * return 60000000.0 / double(bpm * ppq);
-     */
-
-    return 60000000.0 / ppq / bp;
+    return 60000000.0 / double(bp * ppq);
 }
 
 /**
@@ -496,6 +497,12 @@ qn_per_beat (int bw = 4)
 }
 
 /**
+ *  We are moving some calculations into the zoomer class.
+ */
+
+#if defined SEQ66_USE_EXTRA_PULSE_CALCULATIONS
+
+/**
  *  Calculates the pulses per measure.  This calculation is extremely simple,
  *  and it provides an important constraint to pulse (ticks) calculations: the
  *  default number of pulses in a measure is always 4 times the PPQN value,
@@ -507,6 +514,16 @@ inline int
 default_pulses_per_measure (int ppq, int bpb = 4)
 {
     return ppq * bpb;
+}
+
+/**
+ *  Factors in the number of beats in a measure.
+ */
+
+inline int
+pulses_per_measure (int ppq, int bpb = 4, int bw = 4)
+{
+    return (bw > 0) ? 4 * ppq * bpb / bw : ppq * bpb ;
 }
 
 /**
@@ -524,6 +541,26 @@ pulses_per_beat (int ppq, int bw = 4)
 {
     return (bw > 0) ? 4 * ppq / bw : ppq ;
 }
+
+/**
+ *  Calculates the number of pulses in a quarter beat, with an adjustment
+ *  for 120 and 240 PPQN.
+ */
+
+inline int
+pulses_per_quarter_beat (int ppq, int bpb = 4, int bw = 4)
+{
+    return (bw > 0) ? ppq * bpb / bw : ppq ;
+}
+
+#endif  // defined SEQ66_USE_EXTRA_PULSE_CALCULATIONS
+
+/*
+ * Defined in the cpp file.
+ *
+ *      int pulses_per_substep (midipulse ppq, int zoom)
+ *      int pulses_per_pixel (midipulse ppq, int zoom = 2)
+ */
 
 /**
  *  Calculates the length of an integral number of measures, in ticks.
@@ -656,8 +693,11 @@ INTTYPE snapped (snapper snaptype, int S, INTTYPE p)
  *  Free functions in the seq66 namespace.
  */
 
+#if defined SEQ66_USE_EXTRA_PULSE_CALCULATIONS
 extern int pulses_per_substep (midipulse ppq, int zoom = 2);
 extern int pulses_per_pixel (midipulse ppq, int zoom = 2);
+#endif
+
 extern double wave_func (double angle, waveform wavetype);
 extern double unit_truncation (double angle);
 extern double exp_normalize (double angle, bool negate = false);

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-27
+ * \updates       2024-12-16
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -144,7 +144,7 @@ QSize
 qstriggereditor::sizeHint () const
 {
     int w = frame64()->width();
-    int len = tix_to_pix(track().get_length());
+    int len = z().tix_to_pix(track().get_length());
     if (len < w)
         len = w;
 
@@ -189,9 +189,9 @@ qstriggereditor::paintEvent (QPaintEvent * qpep)
      * Draw boxes from sequence.
      */
 
-    midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
+    midipulse ticks_per_step = z().pulses_per_substep();
     midipulse starttick = scroll_offset() - (scroll_offset() % ticks_per_step);
-    midipulse endtick = pix_to_tix(width());
+    midipulse endtick = z().pix_to_tix(width());
     pen.setColor(fore_color());                     /* Qt::black            */
     pen.setStyle(Qt::SolidLine);
     brush.setStyle(Qt::SolidPattern);
@@ -259,6 +259,8 @@ qstriggereditor::draw_grid (QPainter & painter, const QRect & r)
     QBrush brush(Qt::lightGray, Qt::SolidPattern);
     QPen pen(Qt::black);
     int count = track().time_signature_count();
+    midipulse ticks_per_step = z().pulses_per_substep();
+    midipulse endtick = z().pix_to_tix(r.x() + r.width());
     for (int tscount = 0; tscount < count; ++tscount)
     {
         const sequence::timesig & ts = track().get_time_signature(tscount);
@@ -267,20 +269,9 @@ qstriggereditor::draw_grid (QPainter & painter, const QRect & r)
 
         int bpbar = ts.sig_beats_per_bar;
         int bwidth = ts.sig_beat_width;
-        midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
-        midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
-        midipulse ticks_per_bar = bpbar * ticks_per_beat;
-
-        /*
-         * Code fixed to make sure the whole rectangle is fill with vertical
-         * bars.  See qseqroll for more notes.
-         *
-         *  midipulse endtick = ts.sig_end_tick != 0 ?
-         *      ts.sig_end_tick : pix_to_tix(r.x() + r.width());
-         */
-
+        midipulse ticks_per_beat = midipulse(z().pulses_per_beat(bwidth));
+        midipulse ticks_per_bar = z().pulses_per_bar(bpbar, bwidth);
         midipulse starttick = ts.sig_start_tick;
-        midipulse endtick = pix_to_tix(r.x() + r.width());
         pen.setColor(Qt::black);
         painter.setPen(pen);
         for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
@@ -694,13 +685,13 @@ qstriggereditor::start_paste ()
 void
 qstriggereditor::convert_x (int x, midipulse & tick)
 {
-    tick = pix_to_tix(x);
+    tick = z().pix_to_tix(x);
 }
 
 void
 qstriggereditor::convert_t (midipulse ticks, int & x)
 {
-    x = tix_to_pix(ticks);
+    x = z().tix_to_pix(ticks);
 }
 
 void

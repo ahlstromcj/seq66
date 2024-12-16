@@ -457,6 +457,20 @@ public:
         return m_selected;
     }
 
+    const zoomer & z () const
+    {
+        return m_zoomer;
+    }
+
+    zoomer & z ()
+    {
+        return m_zoomer;
+    }
+
+    /*
+     * Eventually have all clients access m_zoomer directly.
+     */
+
     int zoom () const
     {
         return m_zoomer.zoom();

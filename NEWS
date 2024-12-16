@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.17
 Chris Ahlstrom
-2015-07-10 to 2024-12-13
+2015-07-10 to 2024-12-16
 
 # Change Log
 
-## [0.99.17] - 2024-12-13
+## [0.99.17] - 2024-12-16
 
 This release is in progress....
 
@@ -15,6 +15,15 @@ This release is in progress....
 -   Revamped and extended the functionality of the Pattern-Fix dialog.
     As part of this, the alteration API of the event-list has been
     updated.
+-   Refactored vertical grid-line calculations; code moved into the zoomer.
+    -   Pattern editor.
+        -   qseqroll.
+        -   qseqtime.
+        -   qstriggereditor.
+    -   Song editor. TODO.
+        -   qperftime. TODO.
+        -   qperfroll. TODO.
+    -   qeditbase. TODO. Clean up unused zoomer access functions.
 
 ### Fixed
 
