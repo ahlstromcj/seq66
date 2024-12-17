@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-02
+ * \updates       2024-12-16
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -231,7 +231,7 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
 #endif
 
     midipulse tick = perf().get_tick();         /* draw progress playhead   */
-    int progress_x = tix_to_pix(tick);          /* tick / scale_zoom()      */
+    int progress_x = z().tix_to_pix(tick);
     pen.setColor(progress_color());
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(progress_bar_width());
@@ -1030,7 +1030,7 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
      */
 
     midipulse tick0 = scroll_offset();
-    midipulse windowticks = pix_to_tix(xwidth);
+    midipulse windowticks = z().pix_to_tix(xwidth);
     midipulse tick1 = tick0 + windowticks;
     midipulse tickstep = beat_length();                 /* versus 1         */
     int penwidth = 1;
@@ -1096,7 +1096,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
             else
                 backcolor.setAlpha(c_alpha_muted);
 
-            int lenw = tix_to_pix(lens);
+            int lenw = z().tix_to_pix(lens);
             int h = track_height() - 1;
             int cbwoffset = cbw + h / 2 - 2;
             trigger trig;
@@ -1106,8 +1106,8 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
             {
                 if (trig.tick_end() > 0)
                 {
-                    int x_on = tix_to_pix(trig.tick_start());
-                    int x_off = tix_to_pix(trig.tick_end());
+                    int x_on = z().tix_to_pix(trig.tick_start());
+                    int x_off = z().tix_to_pix(trig.tick_end());
                     int w = x_off - x_on + 1;
                     int x = x_on;
                     int xmax = x_off + 1;               /* same as x + w    */
@@ -1207,7 +1207,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         painter.setPen(pen);
 
                         int cny = track_height() - 6;
-                        int marker_x = tix_to_pix(t);
+                        int marker_x = z().tix_to_pix(t);
                         for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
                         {
                             sequence::note_info ni;

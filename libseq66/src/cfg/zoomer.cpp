@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2024-12-16
+ * \updates       2024-12-17
  * \license       GNU GPLv2 or above
  *
  *  Refactoring:
@@ -208,7 +208,6 @@ zoomer::reset_zoom (int ppq)
 midipulse
 zoomer::pix_to_tix (int x) const
 {
-//  midipulse result = x * pulses_per_pixel(m_ppqn, m_scale_zoom);
     midipulse result = x * pulses_per_pixel();
     if (expanded_zoom())
         result /= m_zoom_expansion;
@@ -219,7 +218,6 @@ zoomer::pix_to_tix (int x) const
 int
 zoomer::tix_to_pix (midipulse ticks) const
 {
-//  int result = ticks / pulses_per_pixel(m_ppqn, m_scale_zoom);
     int result = ticks / pulses_per_pixel();
     if (expanded_zoom())
         result *= m_zoom_expansion;
@@ -256,7 +254,7 @@ zoomer::change_ppqn (int p)
 int
 zoomer::zoom_power_of_2 (int ppqn)
 {
-    int result = c_default_zoom;
+    int result = c_default_seq_zoom;
     if (ppqn > usr().base_ppqn())
     {
         int zoom = result * ppqn / usr().base_ppqn();

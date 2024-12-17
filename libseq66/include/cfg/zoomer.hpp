@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2024-12-16
+ * \updates       2024-12-17
  * \license       GNU GPLv2 or above
  *
  */
@@ -57,9 +57,10 @@ namespace seq66
  *  Redundantly defined in usrsettings.
  */
 
-const int c_minimum_zoom    =   1;      /* limit the amount of zoom         */
-const int c_default_zoom    =   2;      /* default snap from app limits     */
-const int c_maximum_zoom    = 512;      /* limit the amount of zoom         */
+const int c_minimum_zoom        =   1;  /* limit the amount of zoom         */
+const int c_default_seq_zoom    =   2;  /* default snap from app limits     */
+const int c_default_perf_zoom   =  16;  /* default snap from app limits     */
+const int c_maximum_zoom        = 512;  /* limit the amount of zoom         */
 
 /**
  *  This frame is the basis for editing an individual MIDI sequence.

@@ -139,7 +139,7 @@ qseqbase::get_measures ()
 void
 qseqbase::convert_xy (int x, int y, midipulse & tick, int & note)
 {
-    tick = pix_to_tix(x);
+    tick = z().pix_to_tix(x);
     note = (m_total_height - y - 2) / m_unit_height;
     if (note >= c_note_max)
         note = c_note_max;

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-04
+ * \updates       2024-12-17
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -82,7 +82,7 @@ public:
         sequence & s,
         qseqeditframe64 * parent,
         qseqkeys * seqkeys_wid,
-        int zoom                    = c_default_zoom,
+        int zoom                    = c_default_seq_zoom,
         int snap                    = c_default_snap,
         sequence::editmode mode     = sequence::editmode::note,
         int unit_height             =  1,

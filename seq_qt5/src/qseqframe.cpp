@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2023-11-01
+ * \updates       2024-12-17
  * \license       GNU GPLv2 or above
  *
  *  Seq66 (Qt version) has two different pattern editor frames to
@@ -78,7 +78,7 @@ qseqframe::qseqframe
     QWidget * parent
 ) :
     QFrame      (parent),
-    qeditbase   (p, c_default_zoom),
+    qeditbase   (p, c_default_seq_zoom),
     m_seq       (s),
     m_seqkeys   (nullptr),
     m_seqtime   (nullptr),

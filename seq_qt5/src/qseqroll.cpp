@@ -964,7 +964,7 @@ qseqroll::draw_ghost_notes
 
             if (dt == sequence::draw::linked)
             {
-                m_note_width = tix_to_pix(ni.length());
+                m_note_width = z().tix_to_pix(ni.length());
                 if (m_note_width < 1)
                     m_note_width = 1;
 

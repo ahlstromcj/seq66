@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-02
+ * \updates       2024-12-17
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -53,7 +53,8 @@ namespace seq66
  *  between GUI elements better.
  */
 
-static const int s_end_fix          = 16;   /* adjust position of "END" box */
+static const int s_L_fix            =  2;   /* adjust position of "L" box    */
+static const int s_end_fix          = 22;   /* adjust position of "END" box */
 static const int s_font_size        =  6;
 static const int s_font_size_large  =  9;
 static const int s_text_y_offset    = 22;
@@ -135,7 +136,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
      */
 
     midipulse tick0 = scroll_offset();
-    midipulse windowticks = pix_to_tix(xwidth);
+    midipulse windowticks = z().pix_to_tix(xwidth);
     midipulse tick1 = tick0 + windowticks;
     midipulse tickstep = beat_length();                     /* versus 1     */
     int measure = 0;
@@ -190,7 +191,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
     int xoff_left = scroll_offset_x();
     int xoff_right = scroll_offset_x() + xwidth;
     int end = xoffset(perf().get_max_trigger()) - s_end_fix;
-    int left = xoffset(perf().get_left_tick());
+    int left = xoffset(perf().get_left_tick()) + s_L_fix;
     int right = xoffset(perf().get_right_tick());
     int now = xoffset(perf().get_tick());
     if (! perf().is_pattern_playing() && (now != left) && (now != right))
@@ -211,11 +212,11 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
         painter.drawRect(left, yheight - 12, 7, 10);
         pen.setColor(Qt::white);
         painter.setPen(pen);
-        painter.drawText(left + 1, s_text_y_offset, "L");
+        painter.drawText(left + 2, s_text_y_offset, "L");
     }
     if (right >= xoff_left && right <= xoff_right)
     {
-        int r = right - 7;
+        int r = right - 10;
         pen.setColor(Qt::black);
         brush.setColor(Qt::black);
         painter.setBrush(brush);
@@ -231,7 +232,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
         brush.setColor(Qt::black);
         painter.setBrush(brush);
         painter.setPen(pen);
-        painter.drawRect(end - 1, yheight - 12, 16, 10);
+        painter.drawRect(end, yheight - 12, 16, 10);
         pen.setColor(Qt::white);
         painter.setPen(pen);
         painter.drawText(end - 3, s_text_y_offset, "END");
@@ -340,7 +341,7 @@ qperftime::keyPressEvent (QKeyEvent * event)
 void
 qperftime::mousePressEvent (QMouseEvent * event)
 {
-    midipulse tick = pix_to_tix(event->x());
+    midipulse tick = z().pix_to_tix(event->x());
     if (snap() > 0)
         tick -= (tick % snap());
 

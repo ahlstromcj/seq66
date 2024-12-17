@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.17
 Chris Ahlstrom
-2019-04-13 to 2024-12-13
+2019-04-13 to 2024-12-17
 
 Hottest:
 
@@ -29,6 +29,9 @@ Hottest:
             segfault. Fixed by not calling a performer callback.
             But have to add polling in seqedit to check for a change in
             arm status. 
+    -   Song editor. (FIXED)
+            -   Zoom needs to affect horizontal scroll size; expanding
+                the canvas fixes it.
     -   Consider an option to Import a normal MIDI file so that a flag
         is raised so that it will not be saved with Seq66 SeqSpecs.
         Make it visible to be clear.

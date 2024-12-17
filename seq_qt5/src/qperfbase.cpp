@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-14
- * \updates       2021-09-12
+ * \updates       2024-12-16
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -76,7 +76,7 @@ qperfbase::qperfbase
 int
 qperfbase::horizSizeHint () const
 {
-    int result = tix_to_pix(perf().get_max_extent());
+    int result = z().tix_to_pix(perf().get_max_extent());
     result = int(result * width_factor());
     return result;
 }
@@ -101,7 +101,7 @@ qperfbase::force_resize (QWidget * self)
 void
 qperfbase::convert_x (int x, midipulse & tick)
 {
-    tick = pix_to_tix(x);               /* x * m_scale_zoom + tick_offset   */
+    tick = z().pix_to_tix(x);               /* x * m_scale_zoom + tick_offset   */
 }
 
 /**
@@ -112,7 +112,7 @@ qperfbase::convert_x (int x, midipulse & tick)
 void
 qperfbase::convert_xy (int x, int y, midipulse & tick, int & seq)
 {
-    tick = pix_to_tix(x);
+    tick = z().pix_to_tix(x);
     seq = y / track_height();
     if (seq >= perf().sequence_max())
         seq = perf().sequence_max() - 1;
@@ -130,7 +130,7 @@ qperfbase::convert_ts (midipulse ticks, int seq, int & x, int & y)
 {
     if (seq >= 0)
     {
-        x = tix_to_pix(ticks);
+        x = z().tix_to_pix(ticks);
         y = m_total_height - ((seq + 1) * m_unit_height) - 1;
     }
     else

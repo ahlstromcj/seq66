@@ -50,7 +50,7 @@
 
 #undef  SEQ66_USE_UNIFORM_INT_DISTRIBUTION      /* EXPERIMENTAL */
 
-#define SEQ66_USE_EXTRA_PULSE_CALCULATIONS      /* EXPERIMENTAL */
+#undef  SEQ66_USE_EXTRA_PULSE_CALCULATIONS      /* EXPERIMENTAL */
 
 /*
  * Global functions in the seq66 namespace for MIDI timing calculations.
@@ -527,22 +527,6 @@ pulses_per_measure (int ppq, int bpb = 4, int bw = 4)
 }
 
 /**
- *  Calculates the pulses in a beat. For a 4/4 time signature, this is the
- *  same as PPQN.
- *
- *  Now, pulses/beat should be the same as qn/beat x pulse/qn. So we do not
- *  need the number of beats, just the beatwidth. This is wrong:
- *
- *          return ppq * bpb / bw;
- */
-
-inline int
-pulses_per_beat (int ppq, int bw = 4)
-{
-    return (bw > 0) ? 4 * ppq / bw : ppq ;
-}
-
-/**
  *  Calculates the number of pulses in a quarter beat, with an adjustment
  *  for 120 and 240 PPQN.
  */
@@ -554,6 +538,24 @@ pulses_per_quarter_beat (int ppq, int bpb = 4, int bw = 4)
 }
 
 #endif  // defined SEQ66_USE_EXTRA_PULSE_CALCULATIONS
+
+/**
+ *  Calculates the pulses in a beat. For a 4/4 time signature, this is the
+ *  same as PPQN.
+ *
+ *  Now, pulses/beat should be the same as qn/beat x pulse/qn. So we do not
+ *  need the number of beats, just the beatwidth. This is wrong:
+ *
+ *          return ppq * bpb / bw;
+ *
+ *  Used only in the metro class.
+ */
+
+inline int
+pulses_per_beat (int ppq, int bw = 4)
+{
+    return (bw > 0) ? 4 * ppq / bw : ppq ;
+}
 
 /*
  * Defined in the cpp file.

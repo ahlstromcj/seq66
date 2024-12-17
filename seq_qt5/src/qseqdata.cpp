@@ -126,7 +126,7 @@ qseqdata::qseqdata
     m_relative_adjust       (false),
     m_drag_handle           (false),
     m_mouse_tick            (-1),
-    m_handle_delta          (pix_to_tix(s_handle_delta)),
+    m_handle_delta          (z().pix_to_tix(s_handle_delta)),
     m_dragging              (false)
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
@@ -177,7 +177,7 @@ QSize
 qseqdata::sizeHint () const
 {
     int w = frame64()->width();
-    int len = tix_to_pix(track().get_length());
+    int len = z().tix_to_pix(track().get_length());
     if (len < w)
         len = w;
 
@@ -224,8 +224,8 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     painter.drawRect(0, 0, width() - 1, height() - 1);  /* data-box border  */
 
     char digits[4];
-    midipulse start_tick = pix_to_tix(r.x());
-    midipulse end_tick = start_tick + pix_to_tix(r.width());
+    midipulse start_tick = z().pix_to_tix(r.x());
+    midipulse end_tick = start_tick + z().pix_to_tix(r.width());
     int text_y = sc_text_spacing;
     track().draw_lock();
     for (auto cev = track().cbegin(); ! track().cend(cev); ++cev)
@@ -238,7 +238,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
         {
             bool data_event = cev->is_continuous_event();  /* can draw line */
             bool selected = cev->is_selected();
-            int event_x = tix_to_pix(tick) + m_keyboard_padding_x;
+            int event_x = z().tix_to_pix(tick) + m_keyboard_padding_x;
             int x_offset = event_x + s_x_data_fix;
             int y_offset = m_dataarea_y - sc_dataarea_y_sub;
             midibyte d0, d1;
@@ -425,8 +425,8 @@ qseqdata::mousePressEvent (QMouseEvent * event)
 {
     int mouse_x = event->x() - c_keyboard_padding_x + scroll_offset_x();
     int mouse_y = event->y();
-    midipulse tick_start = pix_to_tix(mouse_x - 8);     /* 2; never fires!  */
-    midipulse tick_finish = pix_to_tix(mouse_x + 8);    /* 2; ditto         */
+    midipulse tick_start = z().pix_to_tix(mouse_x - 8);     /* 2; never fires!  */
+    midipulse tick_finish = z().pix_to_tix(mouse_x + 8);    /* 2; ditto         */
     bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
     if (event->button() == Qt::RightButton)
     {
@@ -515,8 +515,8 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
             swap_y();
         }
 
-        midipulse tick_s = pix_to_tix(drop_x());
-        midipulse tick_f = pix_to_tix(current_x());
+        midipulse tick_s = z().pix_to_tix(drop_x());
+        midipulse tick_f = z().pix_to_tix(current_x());
         int ds = byte_value(m_dataarea_y, m_dataarea_y - drop_y());
         int df = byte_value(m_dataarea_y, m_dataarea_y - current_y() - 1);
         if (ismodded)
@@ -594,8 +594,8 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
             adj_x_min = drop_x();
             adj_y_min = drop_y();
         }
-        tick_s = pix_to_tix(adj_x_min);
-        tick_f = pix_to_tix(adj_x_max);
+        tick_s = z().pix_to_tix(adj_x_min);
+        tick_f = z().pix_to_tix(adj_x_max);
         if (ismodded)
         {
             /*
@@ -630,8 +630,8 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
     {
 #if defined SEQ66_TRACK_DATA_EDITING_MOVEMENTS
         int adjy = byte_value(m_dataarea_y, drop_y() - current_y());
-        tick_s = pix_to_tix(drop_x() - 2);
-        tick_f = pix_to_tix(drop_x() + 2);
+        tick_s = z().pix_to_tix(drop_x() - 2);
+        tick_f = z().pix_to_tix(drop_x() + 2);
         bool ok = track().change_event_data_relative
         (
             tick_s, tick_f, m_status, m_cc, adjy
@@ -655,7 +655,7 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
 #endif
     else if (! m_dragging)
     {
-        m_mouse_tick = pix_to_tix(current_x());
+        m_mouse_tick = z().pix_to_tix(current_x());
         update();                               /* force a paintEvent()     */
     }
 }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2023-11-01
+ * \updates       2024-12-17
  * \license       GNU GPLv2 or above
  *
  *  The Song Editor allows the musician to layout the play-back of the
@@ -171,7 +171,7 @@ qperfeditframe64::qperfeditframe64
 
     m_perftime = new (std::nothrow) qperftime
     (
-        m_mainperf, c_default_zoom, c_default_snap,
+        m_mainperf, c_default_perf_zoom, c_default_snap,
         this, ui->timeScrollArea
     );
     ui->timeScrollArea->setWidget(m_perftime);
@@ -180,7 +180,7 @@ qperfeditframe64::qperfeditframe64
 
     m_perfroll = new (std::nothrow) qperfroll
     (
-        m_mainperf, c_default_zoom, c_default_snap,
+        m_mainperf, c_default_perf_zoom, c_default_snap,
         m_perfnames, this, ui->rollScrollArea
     );
     ui->rollScrollArea->setWidget(m_perfroll);
@@ -253,7 +253,7 @@ qperfeditframe64::qperfeditframe64
         ui->m_toggle_follow, SIGNAL(toggled(bool)),
         this, SLOT(follow(bool))
     );
-    set_zoom(c_default_zoom);
+    set_zoom(c_default_perf_zoom);
 
     /*
      * Zoom-In and Zoom-Out buttons.
@@ -482,7 +482,7 @@ qperfeditframe64::follow_progress ()
         midipulse progtick = perf().get_tick();
         if (progtick > 0 && m_perfroll->progress_follow())
         {
-            int progx = m_perfroll->tix_to_pix(progtick);
+            int progx = m_perfroll->z().tix_to_pix(progtick);
             int page = progx / w;
             int oldpage = m_perfroll->scroll_page();
             bool newpage = page != oldpage;
@@ -501,7 +501,7 @@ qperfeditframe64::scroll_to_tick (midipulse tick)
     int w = ui->rollScrollArea->width();
     if (w > 0)              /* w is constant, e.g. around 742 by default    */
     {
-        int x = m_perfroll->tix_to_pix(tick);
+        int x = m_perfroll->z().tix_to_pix(tick);
         ui->rollScrollArea->scroll_to_x(x);
     }
 }
@@ -603,8 +603,10 @@ qperfeditframe64::zoom_in ()
         result = m_perfroll->zoom_in();
 
     if (result)
+    {
         adjust_for_zoom(zprevious);
-
+        update_sizes();
+    }
     return result;
 }
 
@@ -617,8 +619,10 @@ qperfeditframe64::zoom_out ()
         result = m_perfroll->zoom_out();
 
     if (result)
+    {
         adjust_for_zoom(zprevious);
-
+        update_sizes();
+    }
     return result;
 }
 

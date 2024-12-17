@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2024-12-02
+ * \updates       2024-12-16
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -859,23 +859,6 @@ protected:
     }
 
     /*
-     * Takes screen coordinates, give us notes/keys (to be generalized to
-     * other vertical user-interface quantities) and ticks (always the
-     * horizontal user-interface quantity).  Compare this function to
-     * qbase::pix_to_tix().
-     */
-
-    /* virtual */ midipulse pix_to_tix (int x) const
-    {
-        return m_zoomer.pix_to_tix(x);
-    }
-
-    /* virtual */ int tix_to_pix (midipulse ticks) const
-    {
-        return m_zoomer.tix_to_pix(ticks);
-    }
-
-    /*
      * qseqroll: int x_offset = xoffset(tick) - scroll_offset_x()
      */
 
@@ -931,6 +914,25 @@ protected:
     }
 
     void start_paste();
+
+private:
+
+    /*
+     * Takes screen coordinates, give us notes/keys (to be generalized to
+     * other vertical user-interface quantities) and ticks (always the
+     * horizontal user-interface quantity).  Compare this function to
+     * qbase::pix_to_tix().
+     */
+
+    /* virtual */ midipulse pix_to_tix (int x) const
+    {
+        return m_zoomer.pix_to_tix(x);
+    }
+
+    /* virtual */ int tix_to_pix (midipulse ticks) const
+    {
+        return m_zoomer.tix_to_pix(ticks);
+    }
 
 };          // class qeditbase
 

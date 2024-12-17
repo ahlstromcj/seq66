@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-14
- * \updates       2023-08-31
+ * \updates       2024-12-17
  * \license       GNU GPLv2 or above
  *
  *  This class WILL BE the base class for qseqroll, qseqdata, qtriggereditor,
@@ -101,7 +101,7 @@ public:
     qperfbase
     (
         performer & perf,
-        int zoom        = c_default_zoom,
+        int zoom        = c_default_perf_zoom,
         int snap        = c_default_snap,
         int unitheight  = 1,
         int totalheight = 1

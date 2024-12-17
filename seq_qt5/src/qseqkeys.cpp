@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-12-07
+ * \updates       2024-12-17
  * \license       GNU GPLv2 or above
  *
  *  We've added the feature of a right-click toggling between showing the main
@@ -93,7 +93,7 @@ qseqkeys::qseqkeys
     QWidget             (parent),
     qseqbase
     (
-        p, s, frame, c_default_zoom, c_default_snap,
+        p, s, frame, c_default_seq_zoom, c_default_snap,
         keyheight, keyareaheight
     ),
     m_font              (),
