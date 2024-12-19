@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2024-12-13
+ * \updates       2024-12-18
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1631,7 +1631,9 @@ public:
         midipulse tick_s, midipulse tick_f,
         int tempo_s, int tempo_f
     );
-    bool add_time_signature (midipulse tick, int beats, int width);
+    bool log_time_signature (midipulse tick, int beats, int width);
+    bool add_timesig_event (const event & e, bool main_ts = false);
+    bool add_c_timesig (int bpb, int bw, bool main_ts = false);
     bool delete_time_signature (midipulse tick);
     bool detect_time_signature
     (

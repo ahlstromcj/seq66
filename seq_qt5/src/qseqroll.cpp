@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-16
+ * \updates       2024-12-18
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -599,14 +599,12 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
 
         int bpbar = ts.sig_beats_per_bar;
         int bwidth = ts.sig_beat_width;
+        bool valid_bw = is_power_of_2(bwidth);
         midipulse ticks_per_four = z().pulses_per_partial_beat(bpbar, bwidth);
         midipulse ticks_per_beat = midipulse(z().pulses_per_beat(bwidth));
         midipulse ticks_per_bar = z().pulses_per_bar(bpbar, bwidth);
         midipulse starttick = ts.sig_start_tick;
         starttick -= starttick % ticks_per_step;
-        if ((bwidth % 2) != 0)
-            ticks_per_step = zoom();
-
         for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
         {
             int x_offset = xoffset(tick) - scroll_offset_x();
@@ -616,16 +614,22 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
             {
                 penstyle = measure_pen_style();
                 penwidth = measure_pen_width();
-                pen.setColor(beat_paint());
+                pen.setColor(beat_color());
             }
-            else if (tick % ticks_per_beat == 0)    /* light on every beat  */
+            else if (tick % ticks_per_beat == 0)    /* light line each beat */
             {
                 penstyle = beat_pen_style();
                 penwidth = beat_pen_width();
                 pen.setColor(beat_color());
             }
-            else if (tick % ticks_per_four == 0)
+            else if (tick % ticks_per_four == 0 && valid_bw)
             {
+                /*
+                 *  Adding this line is problematic if the beat-width is
+                 *  not the power-of-two that MIDI requires. Keep the
+                 *  display clean, if incomplete.
+                 */
+
                 penstyle = Qt::DashDotLine;
                 pen.setColor(beat_color());
             }
@@ -645,9 +649,9 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
 }
 
 /**
- * Draw the current pixmap frame.  Note that, if the width and height change,
- * we will have to reevaluate.  Draw the events. This currently draws all of
- * them.  Drawing all them only needs to be drawn once.
+ *  Draw the current pixmap frame.  Note that, if the width and height change,
+ *  we will have to reevaluate.  Draw the events. This currently draws all of
+ *  them.  Drawing all them only needs to be drawn once.
  */
 
 void

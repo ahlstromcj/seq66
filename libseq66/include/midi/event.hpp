@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-12-04
+ * \updates       2024-12-18
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -1084,7 +1084,7 @@ public:
 
     midibyte get_sysex (size_t i) const
     {
-        return m_sysex[i];
+        return i < m_sysex.size() ? m_sysex[i] : 0 ;
     }
 
     int sysex_size () const

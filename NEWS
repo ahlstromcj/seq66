@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.17
 Chris Ahlstrom
-2015-07-10 to 2024-12-16
+2015-07-10 to 2024-12-18
 
 # Change Log
 
-## [0.99.17] - 2024-12-16
+## [0.99.17] - 2024-12-18
 
 This release is in progress....
 
@@ -16,6 +16,11 @@ This release is in progress....
     As part of this, the alteration API of the event-list has been
     updated.
 -   Refactored vertical grid-line calculations; code moved into the zoomer.
+    For odd time-signatures (i.e. with a beat-width not a power of 2, which
+    is not allowed in MIDI but is stored in a SeqSpec event in Seq66) we
+    draw fewer lines in between bars to make a cleaner display. But do
+    not expect them to be "nice". See the 4/7 pattern in the timesigs.midi
+    file.
     -   Pattern editor.
         -   qseqroll.
         -   qseqtime.
@@ -40,13 +45,14 @@ This release is in progress....
         -   Fixed a seqfault when opening tune with a pattern-editor already
             up for the current tune. The side-effect is that armed status
             will not synch between the main window and the editor.
-        -   Fixed raising the modify flag when a second pattern was opened
-            in the editor.
+        -   Fixed raising the modify flag when a second pattern (with a
+            different time signature) was opened in the editor.
         -   Fixed a potential segfault when opening a recent file with
             a pattern currently open for editing.
         -   Updated the drawing of the seqroll grid.
 -   Issue #134. Added dates to the release-name line from 0.99.14 on;
     were left off by an oversight.
+-   Non-standard time signature handling errors.
 -   Main window. Fixed updating the PPQN when a file of different PPQN
     is loaded.
 -   Cleaned up and upgraded the linking of recorded notes.
@@ -220,6 +226,8 @@ features added.
   This adds 1 byte to the size of a Se66 MIDI file.
 - Fixed the counting of the size of empty note strings. Empty notes
   alway have a two-byte (short) note length of 0.
+- A segfault would occur when opening a pattern from a second song
+  while the pattern editor from the first song was open.
 
 ### Changed
 

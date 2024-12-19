@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-16
+ * \updates       2024-12-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -59,9 +59,10 @@ static const int sc_font_size    = 10;
  */
 
 static const int s_x_tick_fix    =  2;  /* adjusts vertical grid lines      */
-static const int s_time_fix      =  3;  /* seqtime offset from seqroll (9)  */
+static const int s_time_fix      =  1;  /* seqtime offset from seqroll (9)  */
 static const int s_timesig_fix   =  8;  /* time-sig offset from seqroll (18)*/
 static const int s_L_timesig_fix =  8;  /* time-sig offset from "L" marker  */
+static const int s_L_fix         =  3;  /* adjust position of "o" mark (6)  */
 static const int s_o_fix         =  0;  /* adjust position of "o" mark (6)  */
 static const int s_LR_box_y      = 10;
 static const int s_LR_box_w      = sc_font_size;
@@ -198,44 +199,52 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
 
         int bpbar = ts.sig_beats_per_bar;
         int bwidth = ts.sig_beat_width;
+        bool valid_bw = is_power_of_2(bwidth);
         midipulse ticks_per_four = z().pulses_per_partial_beat(bpbar, bwidth);
         midipulse ticks_per_beat = midipulse(z().pulses_per_beat(bwidth));
         midipulse ticks_per_bar = z().pulses_per_bar(bpbar, bwidth);
         midipulse starttick = ts.sig_start_tick;
         starttick -= starttick % ticks_per_step;
-        if ((bwidth % 2) != 0)
-            ticks_per_step = zoom();
-
         for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
         {
             int x_offset = xoffset(tick) - scroll_offset_x() + s_x_tick_fix;
-            int penwidth = 1;
-            enum Qt::PenStyle penstyle = Qt::SolidLine;
-            Color c = beat_color();
-            if (tick % ticks_per_bar == 0)          /* thick solid line bar */
+            int penwidth;
+            enum Qt::PenStyle penstyle;
+            if (tick % ticks_per_bar == 0)              /* thick solid line */
             {
                 char bar[32];
                 int measure = track().measure_number(tick);
-                penwidth = 2;
                 snprintf(bar, sizeof bar, "%d", measure);
 
                 QString qbar(bar);
-                pen.setColor(text_time_paint());    /* Qt::black            */
+                pen.setColor(text_time_paint());
                 painter.setPen(pen);
                 painter.drawText(x_offset + 3, 10, qbar);
+                penwidth = 2;
+                penstyle = Qt::SolidLine;
             }
-            else if (tick % ticks_per_beat == 0)    /* light on every beat  */
+            else if (tick % ticks_per_beat == 0)        /* thin every beat  */
             {
-                // absorbed below
+                penwidth = 1;
+                penstyle = Qt::SolidLine;
             }
-            else if (tick % ticks_per_four == 0)
+            else if (tick % ticks_per_four == 0 && valid_bw)
             {
+                /*
+                 *  Adding this line is problematic if the beat-width is
+                 *  not the power-of-two that MIDI requires. Keep the
+                 *  display clean, if incomplete.
+                 */
+
+                penwidth = 1;
                 penstyle = Qt::DashDotLine;
             }
             else
+            {
+                penwidth = 1;
                 penstyle = Qt::DotLine;
-
-            pen.setColor(c);
+            }
+            pen.setColor(beat_color());
             pen.setWidth(penwidth);
             pen.setStyle(penstyle);
             painter.setPen(pen);
@@ -251,7 +260,7 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
     int xoff_right = scroll_offset_x() + width();
     midipulse length = track().get_length();
     int end = xoffset(length) - s_END_fix;
-    int left = xoffset(perf().get_left_tick()) + s_time_fix;
+    int left = xoffset(perf().get_left_tick()) + s_L_fix;
     int right = xoffset(perf().get_right_tick()) + s_time_fix - s_LR_box_w;
     int now = xoffset(perf().get_tick() % length) + s_o_fix;
     QBrush brush(Qt::lightGray, Qt::SolidPattern);
@@ -282,14 +291,14 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
         painter.drawRect(left, s_LR_box_y, s_LR_box_w, s_LR_box_h);
         pen.setColor(Qt::white);
         painter.setPen(pen);
-        painter.drawText(left + 1, s_text_y, m_L_marker);
+        painter.drawText(left + 1, s_text_y, m_L_marker);       /* "L"      */
     }
     pen.setColor(Qt::black);
     painter.setPen(pen);
     painter.drawRect(end - 1, s_LR_box_y, s_END_box_w, s_END_box_h);
     pen.setColor(Qt::white);
     painter.setPen(pen);
-    painter.drawText(end + 1, s_END_y, m_END_marker);
+    painter.drawText(end + 1, s_END_y, m_END_marker);           /* "END"    */
     if (right >= xoff_left && right <= xoff_right)
     {
         int drend = std::abs(end - right);
@@ -299,9 +308,9 @@ qseqtime::draw_markers (QPainter & painter /* , const QRect & r */ )
             painter.setBrush(brush);
             painter.setPen(pen);
             painter.drawRect(right - 1, s_LR_box_y, s_LR_box_w, s_LR_box_h);
-            pen.setColor(Qt::white);                            // white text
+            pen.setColor(Qt::white);                            /* text     */
             painter.setPen(pen);
-            painter.drawText(right, s_text_y, m_R_marker);
+            painter.drawText(right, s_text_y, m_R_marker);      /* "R"      */
         }
     }
 

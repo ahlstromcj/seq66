@@ -213,7 +213,7 @@ public:     // new functions ca 2024-12-16
     {
         const int divisor = 4;
         int div = bw * divisor;
-        return (bw > 0) ? 4 * ppqn() * bpb / div : ppqn() ;
+        return (bw > 0) ? ppqn() * bpb / div : ppqn() ;
     }
 
     int pulses_per_beat (int bw = 4) const

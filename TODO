@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.17
 Chris Ahlstrom
-2019-04-13 to 2024-12-17
+2019-04-13 to 2024-12-19
 
 Hottest:
 
@@ -21,13 +21,15 @@ Hottest:
             -   Large measure does not check-mark Expand.
             -   The Other Fixes do not check-mark their effects flags.
         -   Definitely need a new screen-shot and documentation galore.
+    -   More time-signature issues.
+        -   Time-signature list not being built on MIDI file reading.
+        -   Pushing the default signature, ditto.
+        -   Opening the 3/6 pattern causes a tune modify.
+        -   Adjust "L" and "R" for time-signature change.
     -   Pattern editor.
-        -   The seqroll for 120 PPQN is still a bit off.
-        -   Opening a second editor in colours.midi raises the modified
-            flag!
         -   Leaving an editor opening when loading a file can cause a
             segfault. Fixed by not calling a performer callback.
-            But have to add polling in seqedit to check for a change in
+            But had to add polling in seqedit to check for a change in
             arm status. 
     -   Song editor. (FIXED)
             -   Zoom needs to affect horizontal scroll size; expanding

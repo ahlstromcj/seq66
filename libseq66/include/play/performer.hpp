@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2024-12-05
+ * \updates       2024-12-19
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -300,7 +300,7 @@ public:
             return false;
         }
 
-        virtual bool on_trigger_change (seq::number)
+        virtual bool on_trigger_change (seq::number, performer::change)
         {
             return false;
         }
@@ -1685,11 +1685,11 @@ public:
      * set_beats_per_measure().
      */
 
-    void set_beats_per_bar (int bpm)
+    void set_beats_per_bar (int bpb)
     {
-        m_beats_per_bar = bpm;
+        m_beats_per_bar = bpb;
 #if defined SEQ66_JACK_SUPPORT
-        m_jack_asst.set_beats_per_measure(bpm);
+        m_jack_asst.set_beats_per_measure(bpb);
 #endif
     }
 
@@ -1698,7 +1698,7 @@ public:
      *  in the main window.
      */
 
-    bool set_beats_per_measure (int bpm, bool user_change = false);
+    bool set_beats_per_measure (int bpb, bool user_change = false);
 
     int get_beat_width () const
     {
@@ -2004,7 +2004,7 @@ public:
 #endif
     }
 
-    bool jack_set_beats_per_minute (midibpm bpm, bool user_change = false);
+    bool jack_set_beats_per_minute (midibpm bp, bool user_change = false);
 
     bool jack_set_ppqn (int p)
     {

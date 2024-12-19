@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-12-17
+ * \updates       2024-12-19
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1374,11 +1374,15 @@ qseqeditframe64::on_sequence_change
  */
 
 bool
-qseqeditframe64::on_trigger_change (seq::number /* seqno */)
+qseqeditframe64::on_trigger_change (seq::number seqno, performer::change mod)
 {
-    set_track_change(true);                     /* also calls set_dirty()   */
+    seq::number trackno = track().seq_number();
+    bool result = seqno == trackno;
+    if (result && performer::callbacks::true_change(mod))
+        set_track_change(true);                 /* also calls set_dirty()   */
+
     update_midi_buttons();                      /* mirror current states    */
-    return true;
+    return result;
 }
 
 /**
@@ -1829,7 +1833,7 @@ qseqeditframe64::log_timesig (bool islogbutton)
 
     int bpb = islogbutton ? m_beats_per_bar_to_log : m_beats_per_bar ;
     int bw = islogbutton ? m_beat_width_to_log : m_beat_width ;
-    bool result = track().add_time_signature(tick, bpb, bw);
+    bool result = track().log_time_signature(tick, bpb, bw);
     if (result)
     {
         (void) track().analyze_time_signatures();
@@ -4315,7 +4319,7 @@ qseqeditframe64::set_dirty ()
  * replaces set_dirty() for those places.
  *
  * \param modified
- *      Normal true (and that's the default), this parameter can be set to
+ *      Normally true (and that's the default), this parameter can be set to
  *      false for changes such as muting. See on_sequence_change().
  */
 

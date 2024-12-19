@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-05-21
+ * \updates       2024-12-19
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -732,17 +732,6 @@ midifile::grab_input_stream (const std::string & tag)
     m_error_is_fatal = false;
     if (result)
     {
-#if defined USE_OLD_CODE
-        try
-        {
-            (void) file.seekg(0, file.end);     /* seek to the file's end   */
-            m_file_size = file.tellg();         /* get the end offset       */
-        }
-        catch (...)
-        {
-            m_file_size = 0;
-        }
-#endif
         if (m_file_size < c_minimum_midi_file_size)
         {
             result = set_error("File too small.");
@@ -1421,7 +1410,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 int logbase2 = int(read_byte());    // dd
                                 int cc = read_byte();               // cc
                                 int bb = read_byte();               // bb
-                                int bw = beat_power_of_2(logbase2);
 
 #if defined SEQ66_USE_TRACK_0_AS_GLOBAL_TIME_SIG    /* undefined */
 
@@ -1448,15 +1436,11 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 bool ok = e.append_meta_data(mtype, bt, 4);
                                 if (ok)
                                 {
-                                    if (! timesig_set)
+                                    if (s.add_timesig_event(e, ! timesig_set))
                                     {
-                                        s.clocks_per_metronome(cc);
-                                        s.set_32nds_per_quarter(bb);
-                                        s.set_time_signature(bpb, bw);
                                         timesig_set = true;
-                                    }
-                                    if (s.append_event(e))
                                         ++evcount;
+                                    }
                                 }
                             }
                             else
@@ -1518,9 +1502,9 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                                 int bpb = int(read_byte());
                                 int bw = int(read_byte());
-                                s.set_beats_per_bar(bpb);
-                                s.set_beat_width(bw);
-                                timesig_set = true;
+                                if (s.add_c_timesig(bpb, bw, ! timesig_set))
+                                    timesig_set = true;
+
                                 len -= 2;
                             }
                             else if (seqspec == c_triggers)

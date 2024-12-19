@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-12
+ * \updates       2024-12-19
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -4429,13 +4429,14 @@ qsmainwnd::on_sequence_change (seq::number seqno, performer::change ctype)
 }
 
 bool
-qsmainwnd::on_trigger_change (seq::number seqno)
+qsmainwnd::on_trigger_change (seq::number seqno, performer::change /* mod */)
 {
     bool result = not_nullptr(m_live_frame);
     if (result)
     {
-        m_live_frame->refresh(seqno);   /* this calls on_trigger_change()!  */
-        enable_save(cb_perf().modified());
+        bool save = cb_perf().modified(); /* || mod==performer::change::yes */
+        m_live_frame->refresh(seqno);     /* calls on_trigger_change() !    */
+        enable_save(save);
         m_is_title_dirty = true;
     }
     return result;

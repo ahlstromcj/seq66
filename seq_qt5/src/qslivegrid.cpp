@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2024-11-17
+ * \updates       2024-12-19
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -2116,7 +2116,11 @@ qslivegrid::popup_menu ()
  */
 
 bool
-qslivegrid::on_trigger_change (seq::number /* seqno */)
+qslivegrid::on_trigger_change
+(
+    seq::number /* seqno */,
+    performer::change /* mod */
+)
 {
     update_state();
     set_needs_update();

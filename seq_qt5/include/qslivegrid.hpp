@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2024-11-17
+ * \updates       2024-12-19
  * \license       GNU GPLv2 or above
  *
  *
@@ -139,7 +139,10 @@ private:                            // overrides of qslivebase functions
 
 private:        /* performer::callback overrides    */
 
-    virtual bool on_trigger_change (seq::number seqno) override;
+    virtual bool on_trigger_change
+    (
+        seq::number seqno, performer::change mod
+    ) override;
     virtual bool on_automation_change (automation::slot s) override;
 
 private:                                // overrides of event handlers

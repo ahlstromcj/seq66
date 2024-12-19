@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-12-14
+ * \updates       2024-12-19
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -608,11 +608,11 @@ sequence::is_playable () const
  *-------------------------------------------------------------------------*/
 
 /**
- *  Here, we count the time-signatures, if any, in the pattern.  If there
+ *  Here, we count the time-signatures, if any, in the pattern. If there
  *  are not any, then we create one representing the default beats and beat
- *  width and push it on the time-signatures stack.  Apart from this
+ *  width and push it on the time-signatures stack. Apart from this
  *  possible default one, only actual existing time-signature events are saved
- *  in the pattern.  This stack is used only in drawing in the panes of the
+ *  in the pattern. This stack is used only in drawing in the panes of the
  *  pattern editor. It is not saved with the pattern.
  *
  *  What if there is no beginning time signature, but ones deeper into the
@@ -620,7 +620,7 @@ sequence::is_playable () const
  *  tweaked later in the process unless it is the only one.
  *
  *  Note that this function assumes there are not two time-signature events
- *  at the same timestamp.  If there are, one will be ignored. Unlikely to
+ *  at the same timestamp. If there are, one will be ignored. Unlikely to
  *  be a big issue.
  *
  *  Currently the seqedit calls this function. Should the event editor
@@ -744,7 +744,7 @@ sequence::get_time_signature (size_t index) const
     {
         s_ts_dummy.sig_start_measure = s_ts_dummy.sig_measures = 0.0;
         s_ts_dummy.sig_beats_per_bar = s_ts_dummy.sig_beat_width = 0;
-        s_ts_dummy.sig_ticks_per_beat =0;
+        s_ts_dummy.sig_ticks_per_beat = 0;
         s_ts_dummy.sig_start_tick = s_ts_dummy.sig_end_tick = 0;
         s_uninitialized = false;
     }
@@ -869,7 +869,7 @@ sequence::measure_number (midipulse p) const
 
 /**
  *  Converts a "B:B:T" string to pulses, given that the analysis, if done,
- *  added time signatures.  Compare it to seq66::measurestring_to_pulses()
+ *  added time signatures. Compare it to seq66::measurestring_to_pulses()
  *  or string_to_pulses().
  *
  *  -   We have a string such as "4:l:000".
@@ -3633,13 +3633,11 @@ sequence::add_painted_note
         if (result && expanded_recording())
             set_last_tick(tick + len);
     }
-#if defined USE_THIS_CODE       // already done in add_event(), modify(true)
     if (result)
     {
         verify_and_link();
         modify();                               /* no easy way to undo this */
     }
-#endif
     return result;
 }
 
@@ -3870,6 +3868,9 @@ sequence::add_tempos
 }
 
 /**
+ *  Constructs a time-signature event and appends it to the pattern. It is
+ *  used in the pattern editor.
+ *
  *  In setting the time signature here, all we want to do is change the
  *  beats and beat width. The clocks_per_metronome() and
  *  get_32nds_per_quarter() stay the same, as they would affect the whole tune.
@@ -3878,7 +3879,7 @@ sequence::add_tempos
  */
 
 bool
-sequence::add_time_signature (midipulse tick, int beats, int bw)
+sequence::log_time_signature (midipulse tick, int beats, int bw)
 {
     automutex locker(m_mutex);
     bool result = beats > 0 && is_power_of_2(bw);
@@ -3897,10 +3898,73 @@ sequence::add_time_signature (midipulse tick, int beats, int bw)
         {
             result = append_event(e);
             if (result)
+            {
+                sort_events();
                 modify(true);
+            }
         }
     }
     return result;
+}
+
+/**
+ *  Gets the data from a time-signature event and makes some settings.
+ *  Then it adds the event. See its usage in the midifile class.
+ *  It is *not* considered a modification.
+ *
+ * Variables:
+ *
+ *      -   bpb: Provides beats/bar (i.e. beats per measure).
+ *      -   bw: Provides beat-width (i.e. denominator of the time signature).
+ *      -   cpm: Provides clocks/metronome.
+ *      -   tpq: Provides 32nds/quarter.
+ *
+ * \param e
+ *      The event, which must be a well-defined time-signature event.
+ *
+ * \param main_ts
+ *      True (the default is false) if it need to be set as the main
+ *      sequence time-signature.
+ *
+ * \return
+ *      Returns true if the event was a time-signature and was added to
+ *      the pattern.
+ */
+
+bool
+sequence::add_timesig_event (const event & e, bool main_ts)
+{
+    automutex locker(m_mutex);
+    bool result = e.is_time_signature();
+    if (result)
+    {
+        if (main_ts)
+        {
+            int bpb = e.get_sysex(0);
+            int bw = beat_power_of_2(e.get_sysex(1));
+            int cpm = e.get_sysex(2);
+            int tpq = e.get_sysex(4);
+            clocks_per_metronome(cpm);
+            set_32nds_per_quarter(tpq);
+            set_time_signature(bpb, bw);
+        }
+        result = append_event(e);
+        if (result)
+            sort_events();
+    }
+    return result;
+}
+
+bool
+sequence::add_c_timesig (int bpb, int bw, bool main_ts)
+{
+    automutex locker(m_mutex);
+    if (main_ts)
+    {
+        set_beats_per_bar(bpb);
+        set_beat_width(bw);
+    }
+    return true;
 }
 
 bool

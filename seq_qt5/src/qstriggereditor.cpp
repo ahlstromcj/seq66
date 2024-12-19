@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-16
+ * \updates       2024-12-18
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -272,8 +272,6 @@ qstriggereditor::draw_grid (QPainter & painter, const QRect & r)
         midipulse ticks_per_beat = midipulse(z().pulses_per_beat(bwidth));
         midipulse ticks_per_bar = z().pulses_per_bar(bpbar, bwidth);
         midipulse starttick = ts.sig_start_tick;
-        pen.setColor(Qt::black);
-        painter.setPen(pen);
         for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
         {
             int x_offset = xoffset(tick) - scroll_offset_x() + m_x_offset;
@@ -292,7 +290,6 @@ qstriggereditor::draw_grid (QPainter & painter, const QRect & r)
             else
             {
                 pen.setColor(step_color());     /* Qt::lightGray            */
-                pen.setStyle(Qt::DashLine);
                 int tick_snap = tick - (tick % snap());
                 if (tick == tick_snap)
                 {
@@ -300,10 +297,7 @@ qstriggereditor::draw_grid (QPainter & painter, const QRect & r)
                     pen.setColor(Qt::lightGray);
                 }
                 else
-                {
                     pen.setStyle(Qt::DashLine);
-                    pen.setColor(Qt::lightGray);
-                }
             }
             painter.setPen(pen);
             painter.drawLine(x_offset, 1, x_offset, qc_eventarea_y);

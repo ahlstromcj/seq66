@@ -920,7 +920,10 @@ randomize_uniformly (int range, int seed)
 bool
 is_power_of_2 (int b)
 {
-    return b && (! (b & (b - 1)));
+    if (b <= 0)
+        return false;
+    else
+        return (b & (b - 1)) == 0;
 }
 
 /**

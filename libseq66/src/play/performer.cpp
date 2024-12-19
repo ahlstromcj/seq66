@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2024-12-13
+ * \updates       2024-12-19
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -697,7 +697,7 @@ void
 performer::notify_trigger_change (seq::number seqno, change mod)
 {
     for (auto notify : m_notify)
-        (void) notify->on_trigger_change(seqno);
+        (void) notify->on_trigger_change(seqno, mod);
 
     if (mod == change::yes)
     {
