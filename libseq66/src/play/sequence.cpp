@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-12-19
+ * \updates       2024-12-20
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1123,6 +1123,15 @@ sequence::set_beats_per_bar (int bpb, bool user_change)
         int m = get_measures();
         if (m != m_measures)
         {
+            /*
+             * Adjust the markers so that R matches END after a time-signature
+             * change? No, the markers are a song-wide thing and the user
+             * can move "R" if desired.
+             *
+             *      midipulse E = perf()->get_length();          // END
+             *      midipulse R = perf()->get_right_tick();      // R
+             */
+
             m_measures = m;
             if (user_change)
                 modded = true;
@@ -4380,7 +4389,7 @@ sequence::stream_event (event & ev)
                     if (notemapping())
                         perf()->repitch(ev);
                 }
-#if defined SEQ66_LINK_NEWEST_NOTE_ON_RECORD
+#if defined SEQ66_LINK_NEWEST_NOTE_ON_RECORD            /* has issues :-(   */
                 m_events.append(ev);                    /* does *not* sort  */
                 if (ev.is_note_off())                   /* later, tempo?    */
                     m_events.link_new_note();           /* one link no sort */
@@ -4429,7 +4438,15 @@ sequence::stream_event (event & ev)
                             snap() - m_events.note_off_margin(), ev
                         );
                         if (ok)
-                            ++m_notes_on;
+                        {
+#if defined USE_THIS_CODE
+                            if (oneshot_recording())        /* update stuff */
+                                verify_and_link();
+                                perf()->set_needs_update();
+                            else                            /* FIXME */
+#endif
+                                ++m_notes_on;
+                        }
                     }
                 }
                 else
@@ -6342,9 +6359,7 @@ sequence::set_recording (toggler flag)
         channel_match(false);
         m_recording = recordon;
         m_notes_on = 0;                 /* reset the step-edit note counter */
-
-        m_last_tick = 0;                ///// EXPERIMENTAL 2024-11-19
-
+        m_last_tick = 0;
         if (recordon)
         {
             if (! perf()->record_by_buss() && perf()->record_by_channel())

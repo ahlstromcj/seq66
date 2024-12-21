@@ -163,7 +163,7 @@ qseqroll::conditional_update ()
     bool ok = perf().needs_update() || check_dirty();
     if (ok)
     {
-#if defined SEQ66_ALWAYS_VERIFY_AND_LINK
+#if defined SEQ66_ALWAYS_VERIFY_AND_LINK    /* defined                      */
         if (track().recording())
             track().verify_and_link();      /* refresh before update        */
 #endif

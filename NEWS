@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.17
 Chris Ahlstrom
-2015-07-10 to 2024-12-18
+2015-07-10 to 2024-12-20
 
 # Change Log
 
-## [0.99.17] - 2024-12-18
+## [0.99.17] - 2024-12-20
 
 This release is in progress....
 
@@ -48,8 +48,10 @@ This release is in progress....
         -   Fixed raising the modify flag when a second pattern (with a
             different time signature) was opened in the editor.
         -   Fixed a potential segfault when opening a recent file with
-            a pattern currently open for editing.
-        -   Updated the drawing of the seqroll grid.
+            a pattern currently open for editing.  Had to add polling to check
+            for changes in arm status. 
+        -   Upgraded the drawing of the seqroll grid.
+    -   Song editor. Time zoom now affect horizontal scroll-bar length.
 -   Issue #134. Added dates to the release-name line from 0.99.14 on;
     were left off by an oversight.
 -   Non-standard time signature handling errors.
@@ -104,9 +106,12 @@ features added.
 
 ### Fixed
 
-- Issue #128. Expanded recording not working. Note that the expansion
-  is now continual, not waiting for a MIDI key to be struck. Also see
-  the changes to the record buttons in the pattern editor.
+- Issue #128.
+  - Expanded recording.
+    - Is now working. The expansion is continual, not waiting for a
+      MIDI key to be struck. Also see the changes to the record
+      buttons in the pattern editor.
+-   Click-drag drawing of notes with "expand" set now works.
 - Issue #130. Merged a pull request for issue #130 to fix the
   \*.desktop files.
 - Issue #131. NSM interaction errors introduced in version 0.99.11,

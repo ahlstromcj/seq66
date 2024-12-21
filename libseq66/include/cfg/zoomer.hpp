@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2024-12-17
+ * \updates       2024-12-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -206,14 +206,21 @@ public:     // new functions ca 2024-12-16
     }
 
     /*
-     * return (bw > 0) ? 4 * ppqn() * bpb / bw / divisor : ppqn() ;
+     *  The old calculation was
+     *
+     *      result = ppqn() * bpb / (4 * bw)
+     *
+     *  The new calculation gives reasonable results for power-of-2
+     *  beat-widths (as mandated by MIDI)
+     *
+     *  We leave the bpb parameter in just in case we decide to
+     *  use it again. Voided to prevent warnings.
      */
 
     int pulses_per_partial_beat (int bpb = 4, int bw = 4) const
     {
-        const int divisor = 4;
-        int div = bw * divisor;
-        return (bw > 0) ? ppqn() * bpb / div : ppqn() ;
+        (void) bpb;
+        return (bw > 0) ? ppqn() / bw : ppqn() / 4 ;
     }
 
     int pulses_per_beat (int bw = 4) const

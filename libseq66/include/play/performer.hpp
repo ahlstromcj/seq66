@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2024-12-19
+ * \updates       2024-12-21
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -317,6 +317,13 @@ public:
         {
             return false;
         }
+
+#if defined USE_ON_SIGNAL_ACTION
+        virtual bool on_signal_action (bool, playlist::action)
+        {
+            return false;
+        }
+#endif
 
         performer & cb_perf ()
         {

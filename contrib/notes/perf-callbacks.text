@@ -1,0 +1,160 @@
+Summary of performer::callbacks usages
+Chris Ahlstrom
+2024-12-21 to 2024-12-21
+
+First, a summary of the performer::change values:
+
+    no.         Do not set the modify-flag.
+    yes.        Do set the modify-flag.
+    recreate.   Recreate the user-interface(s).
+    removed.    Change was a removal; more specific than yes.
+    signal.     Could alter the UI from a different thread.
+
+Possible additions:
+
+    recording.  Refresh only qseqroll and update modify flag.
+
+Callbacks index numbers:
+
+    group_learn.            Group-learn turned on.
+    group_learn_complete.   Group-learn turned off.
+    mutes_change.           Change in the mute-state.
+    set_change.             Change in the active screen-set.
+    sequence_change.        New, deleted, or pasted pattern.
+    automation_change.      A start or stop control occurred.
+    ui_change.              Indicates a user-interface action.
+    trigger_change.         A trigger changed pattern muting.
+    resolution_change.      A change in PPQN or BPM.
+    song_change.            A different MIDI tune was loaded.
+
+Callbacks:
+
+TODO: performer "notify->on" search
+
+    bool on_group_learn (bool learning)
+
+        Calls:
+
+            performer::group_learn()
+
+    bool on_group_learn_complete (const keystroke & k, bool good)
+
+        Calls:
+
+            performer::group_learn_complete()
+
+    bool on_mutes_change (mutegroup::number, performer::change)
+
+        Calls:
+
+            performer::group_learn_complete()
+            performer::set_mutes()
+            performer::clear_mutes()
+            performer::learn_mutes()            [why not on group learn?]
+            performer::apply_mutes()
+            performer::unapply_mutes()
+            performer::toggle_mutes()
+            performer::toggle_active_mutes()
+            performer::select_and_mute_group()
+            performer::read_midi_file()
+
+    bool on_set_change (screenset::number, performer::change)
+
+        Calls:
+
+            performer::new_sequence()
+            performer::ui_change_set_bus()
+            performer::screenset_name()
+
+        Responses:
+
+    bool on_sequence_change (seq::number, performer::change)
+
+        Calls:
+
+            performer::new_sequence()
+            performer::remove_sequence():       change::recreate
+            performer::merge_sequence():        change::recreate
+            performer::log_current_tempo():     [disabled]
+            performer::set_playing_screenset(): change::signal
+            performer::paste_to_playscreen():   change::yes
+            performer::remove_set():            change::removed
+            performer::clear_set():             change::removed (?)
+            performer::swap_sets():             change::???
+            performer::sequence_inbus_setup():  change::recreate, change::no
+            performer::set_midi_bus():          [disabled, see sequence]
+            performer::set_midi_in_bus():       [disabled, see sequence]
+            performer::set_midi_channel():      [disabled, see sequence]
+            performer::set_sequence_name():     change::recreate
+            performer::convert_to_smf_0():      change::recreate
+            performer::loop_control():          change::no
+
+            sequence::modify(true):             notify_change(yes, no).....
+            sequence::add_note():               perf()->notify_seq.....  (!!!)
+            sequence::add_event():              modify(true)
+            sequence::set_recording_style():    notify_change(false).....
+
+            qseqeventframe::slot_save()         change::?
+
+        Responses:
+
+    bool on_automation_change (automation::slot)
+
+        Calls:
+
+            performer::start_playing():         slot::start
+            performer::stop_playing():          slot::stop
+            performer::play_count_in():         slot::start
+            performer:: MANY MORE automation functions
+
+    bool on_ui_change (seq::number)
+
+        Calls:
+
+            performer:: NONE (!!!)
+
+    bool on_trigger_change (seq::number, performer::change)
+
+        Calls:
+
+            performer::clear_triggers():        change::???
+            performer::cut_triggers():          change::???
+            performer::delete_triggers():       change::???
+            performer::offset_triggers():       change::???
+            performer::move_triggers():         change::???
+            performer::move_triggers():         change::???, seq::all()
+#if defined USE_INTERSECT_FUNCTIONS
+            performer::intersect_triggers():    change::???
+#endif
+            performer::add_trigger():           change::???
+            performer::delete_trigger():        change::???
+            performer::transpose_trigger():     change::???
+            performer::add_or_delete_trigger(): change::???
+            performer::split_trigger():         change::???
+            performer::grow_trigger():          change::???
+            performer::move_trigger():          change::???
+            performer::paste_trigger():         change::???
+            performer::paste_or_split_trigger(): change::???
+            performer::set_ctrl_status():       change::no
+            performer::replace_for_solo():      change::no
+
+            sequence::play():                   notify_trigger(no).....
+            sequence::set_recording():          notify_trigger()
+
+    bool on_resolution_change
+
+        Calls:
+
+            performer::set_ppqn()
+            performer::change_ppqn() [of all patterns]
+            performer::jack_set_beats_per_minute()
+
+
+    bool on_song_action (bool, playlist::action)
+
+#if defined USE_ON_SIGNAL_ACTION
+    bool on_signal_action (bool, playlist::action)
+#endif
+
+
+# vim: sw=4 ts=4 wm=8 et ft=rc

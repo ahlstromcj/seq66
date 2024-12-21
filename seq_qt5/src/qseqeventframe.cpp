@@ -1327,8 +1327,7 @@ qseqeventframe::slot_save ()
         }
     }
     set_selection_multi(false);
-
-    (void) track().analyze_time_signatures();   /* ca 2023-07-03 */
+    (void) track().analyze_time_signatures();
 }
 
 void

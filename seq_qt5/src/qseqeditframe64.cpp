@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-12-19
+ * \updates       2024-12-21
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1340,6 +1340,11 @@ qseqeditframe64::closeEvent (QCloseEvent * event)
  *      repopulate_midich_combo(buss);
  *      repopulate_event_menu(m_edit_bus, m_edit_channel);
  *      repopulate_mini_event_menu(m_edit_bus, m_edit_channel);
+ *
+ *  These are needed in case the change involved adding new kinds of events
+ *  to the pattern. Also, set_track_change() will call sequence::modify(),
+ *  which is unnecessary because sequence and performer already have the
+ *  change. [ca 2024-12-21]
  */
 
 bool
@@ -1362,7 +1367,13 @@ qseqeditframe64::on_sequence_change
             modification = true;
             repopulate_usr_combos(bus, channel);
         }
-        set_track_change(modification);         /* also calls set_dirty()   */
+
+        /*
+         * set_track_change(modification);      // too much!
+         */
+
+        set_external_frame_title(modification);
+        set_dirty();
         update_midi_buttons();                  /* mirror current states    */
     }
     return result;
