@@ -1,0 +1,71 @@
+#!/bin/bash
+#
+# 2024-10-10 to 2024-12-23
+#
+#  Starts/stops mpd, ncmpcpp, and alsamixer. Key bindings can be made:
+#
+#     Super-A:  Start them all. Also creates a temp-file to flag it.
+#     Super-2:  Stop them all. Deletes the tempfile.
+#
+#  The MPD configuration is in ~/.config/mpd/mpd.conf. The setup currently
+#  supports either of these "alsa" outputs: "USB Audio CODEC" (Behringer
+#  UCA202) or "iStore Audio" (a cheap USB-to-headphone jack). We use
+#  pavucontrol to make the one we're using the default.
+#
+#  We also set up .xbindkeysrc to use keystrokes to control amixer.
+#  The device name is either "CODEC" or "Audio".
+#
+#  Note that the terminal used is currently urxvt.
+#
+
+DOSTART=yes
+DOSTOP=no
+DOMIXER=no
+DONCMPCPP=no
+
+if [ "$1" == "--stop" ] ; then
+   DOSTART="no"
+   DOSTOP="yes"
+fi
+
+if [ "$1" == "--mixer" ] ; then
+   DOSTART="no"
+   DOSTOP="no"
+   DOMIXER="yes"
+fi
+
+if [ "$1" == "--ncmpcpp" ] ; then
+   DOSTART="no"
+   DOSTOP="no"
+   DONCMPCPP="yes"
+fi
+
+if [ "$DOSTART" == "yes" ] ; then
+   if ! test -e /tmp/audio ; then
+      echo "Starting mpd, ncmpcpp, and alsamixer..."
+      systemctl --user start mpd
+      /usr/bin/urxvt -geometry 80x20+130+24 -e ncmpcpp &
+      /usr/bin/urxvt -geometry 80x20+800+24 -e alsamixer &
+      touch /tmp/audio
+   fi
+fi
+
+if [ "$DOSTOP" == "yes" ] ; then
+   echo "Stopping mpd, ncmpcpp, and alsamixer..."
+   systemctl --user stop mpd
+   killall ncmpcpp
+   killall alsamixer
+   rm -f /tmp/audio
+fi
+
+if [ "$DOIXER" == "yes" ] ; then
+   echo "Starting alsamixer..."
+   /usr/bin/urxvt -geometry 80x20+800+24 -e alsamixer &
+fi
+
+if [ "$DONCMPCPP" == "yes" ] ; then
+   echo "Starting ncmpcpp..."
+   /usr/bin/urxvt -geometry 80x20+130+24 -e ncmpcpp &
+fi
+
+# vim: ts=3 sw=3 et ft=sh

@@ -4213,7 +4213,7 @@ qseqeditframe64::slot_thru_change (bool ischecked)
 
 /**
  *  If the last recording style is oneshot we can select reset. If we then
- *  select oneshot_reset, we reset (clear!) the sequence and reselect oneshot.
+ *  select oneshot_reset, we reset the sequence and reselect oneshot.
  */
 
 void

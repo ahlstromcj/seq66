@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2024-12-19
+ * \updates       2024-12-23
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -4941,7 +4941,7 @@ performer::poll_cycle ()
                                  */
 
                                 if (not_nullptr(sp))
-                                    sp->stream_event(ev);
+                                    (void) sp->stream_event(ev);
 #if defined SEQ66_PLATFORM_DEBUG
                                 else
                                     warn_message("no buss-recording pattern");
@@ -4960,7 +4960,7 @@ performer::poll_cycle ()
                             {
                                 sequence * sp = m_master_bus->get_sequence();
                                 if (not_nullptr(sp))
-                                    sp->stream_event(ev);
+                                    (void) sp->stream_event(ev);
 #if defined SEQ66_PLATFORM_DEBUG
                                 else
                                     error_message("no active pattern");
@@ -7905,22 +7905,32 @@ void
 performer::next_record_style ()
 {
     (void) usr().next_record_style();
-    m_record_style = usr().pattern_record_style();
-    if (m_record_style == recordstyle::oneshot_reset)
-        set_start_tick(0);
+    recordstyle rs = usr().pattern_record_style();
 
-    notify_automation_change(automation::slot::record_style);
+    /*
+     * if (m_record_style == recordstyle::oneshot_reset)
+     *     set_start_tick(0);
+     *
+     * notify_automation_change(automation::slot::record_style);
+     */
+
+    set_record_style(rs);
 }
 
 void
 performer::previous_record_style ()
 {
     (void) usr().previous_record_style();
-    m_record_style = usr().pattern_record_style();
-    if (m_record_style == recordstyle::oneshot_reset)
-        set_start_tick(0);
+    recordstyle rs = usr().pattern_record_style();
 
-    notify_automation_change(automation::slot::record_style);
+    /*
+     * if (m_record_style == recordstyle::oneshot_reset)
+     *     set_start_tick(0);
+     *
+     * notify_automation_change(automation::slot::record_style);
+     */
+
+    set_record_style(rs);
 }
 
 void
@@ -10010,12 +10020,17 @@ performer::automation_record_toggle
 void
 performer::set_record_style (recordstyle rs)
 {
-    if (rs < recordstyle::oneshot_reset)    /* recordstyle::max */
+    if (rs < recordstyle::max)    /* recordstyle::oneshot_reset */
     {
         usr().set_pattern_record_style(rs);
-        m_record_style = rs;
-        if (m_record_style == recordstyle::oneshot_reset)
+        if (rs == recordstyle::oneshot_reset)
+        {
+            set_tick(0);
             set_start_tick(0);
+            m_record_style = recordstyle::oneshot;
+        }
+        else
+            m_record_style = rs;
 
         notify_automation_change(automation::slot::record_style);
     }

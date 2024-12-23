@@ -149,7 +149,7 @@ enum class recordstyle
     overwrite,          /**< Incoming events overwrite the loop.        */
     expand,             /**< Incoming events increase size of loop.     */
     oneshot,            /**< Stop when length of loop is reached.       */
-    oneshot_reset,      /**< Clear the pattern and reset last-ticks.    */
+    oneshot_reset,      /**< Reset pattern ticks & re-enable one-shot.  */
     max                 /**< Provides an illegal/length value.          */
 };
 

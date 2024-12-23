@@ -1,0 +1,261 @@
+###########################
+# xbindkeys configuration #
+###########################
+#
+# Microsoft Arc Keyboard and much more
+#
+# Chris Ahlstrom
+# 2001-01-01 to 2024-12-23
+#
+# Version: 0.2.0
+#
+# Note:  This setup requires the installation of xbindkeys, alsa-utils,
+#        mrxvt, mpc, iceweasel, and some other odds and ends
+#
+# A list of keys is in /usr/include/X11/keysym.h and in
+#     /usr/include/X11/keysymdef.h; The XK_ is not needed. 
+#
+# List of modifier (on my keyboard): 
+#
+#   Control, Shift, Mod1 (Alt), Mod2 (NumLock), 
+#   Mod3 (CapsLock), Mod4, Mod5 (Scroll). 
+#
+# Another way to specify a key is to use 'xev' and set the keycode with c:nnn
+# or the modifier with m:nnn where nnn is the keycode or the state returned by
+# xev 
+#
+# We no longer care about idiot buttons, and want to enable only buttons found
+# on most keyboards.  Some desktop environments or window managers may enable
+# them anyway.
+#
+# Symbology:
+#
+#  m:0xyy      Modifier key
+#  c:nnn       keysym value
+#
+# keystate_numlock = enable
+# keystate_scrolllock = enable
+# keystate_capslock = enable
+#
+# DISABLED.
+# Show bound keys file
+# "xbindkeys_show &"
+#    control+shift + q
+#
+# These do not work:
+#
+# export ALSAOUTPUT="CODEC"
+# export ALSAOUTPUT="Audio"
+
+# Volume Down: Microsoft Arc keyboard's volume-down button:
+
+"amixer -c Audio -- sset PCM playback 5%- > /dev/null &"
+    m:0x0 + c:122
+    NoSymbol 
+
+# Volume Up: Microsoft Arc keyboard's volume-up button:
+
+"amixer -c Audio -- sset PCM playback 5%+ > /dev/null &"
+    m:0x0 + c:123
+    NoSymbol 
+
+# Volume Down: Tux- -
+
+"amixer -c Audio -- sset PCM playback 5%- > /dev/null &"
+    m:0x40 + c:20
+    NoSymbol 
+
+# Volume Down: Ctrl-Shift- -
+
+"amixer -c PCH -- sset Master playback 5%- > /dev/null &"
+    m:0x5 + c:20
+    Control+Shift + minus 
+
+# Volume Up: Tux- = (+)
+
+"amixer -c Audio -- sset PCM playback 5%+ > /dev/null &"
+    m:0x40 + c:21
+    NoSymbol 
+
+# Volume Up: Ctrl-Shift- +
+
+"amixer -c PCH -- sset Master playback 5%+ > /dev/null &"
+    m:0x5 + c:21
+    Control+Shift + equal 
+
+# Mute/Unmute: Tux-; (Tux is the frickin' "Windows" key)
+#
+# "amixer -c Audio -- sset PCM toggle > /dev/null &"
+#    m:0x40 + c:19
+#    NoSymbol 
+
+# Mute/Unmute: Microsoft Arc keyboard's mute button, works on some other
+# keyboards as well:
+
+"amixer -c Audio -- sset PCM toggle > /dev/null &"
+    m:0x0 + c:121
+    NoSymbol 
+
+# On the Microsoft Arc keyboard, the F7 to F12 keys are accessed using an
+# "Fn" key on keys F1 to F6.  Somehow, this does not work with the Tux key
+# pressed, so we just put dummy assignments in here for now.
+#
+# gcalctool: Tux-F7 to F12
+# "gcalctool"
+#     m:0x40 + c:96
+#     NoSymbol 
+
+# Play: Tux-/
+#
+# "localhost" or "/var/run/mpd/socket"
+#
+#"mpc -h /var/run/mpd/socket play > /dev/null"
+#"mpc -h /var/run/mpd/socket stop > /dev/null"
+#"mpc -h /var/run/mpd/socket prev > /dev/null"
+#"mpc -h /var/run/mpd/socket next > /dev/null"
+
+"mpc play > /dev/null"
+    m:0x40 + c:61
+    NoSymbol 
+
+# Stop: Tux-\
+
+"mpc stop > /dev/null"
+    m:0x40 + c:51
+    NoSymbol 
+
+# Prev: Tux-[
+
+"mpc prev > /dev/null"
+    m:0x40 + c:34
+    NoSymbol 
+
+# Next: Tux-]
+
+"mpc next > /dev/null"
+    m:0x40 + c:35
+    NoSymbol 
+
+# Prev: Tux-,
+
+"mpc cdprev > /dev/null"
+    m:0x40 + c:59
+    NoSymbol 
+
+# Next: Tux-.
+
+"mpc next > /dev/null"
+    m:0x40 + c:60
+    NoSymbol 
+
+# DISABLED.  We use this key for tmux.
+# gcalctool: Tux-`
+#
+# "gcalctool"
+#   m:0x40 + c:49
+#   NoSymbol 
+
+# mpc: Tux-;
+#
+# Used elsewhere in this file.
+#
+"mpc > /dev/null"
+   m:0x40 + c:47
+   NoSymbol 
+
+# mpc: Tux-' (single-quote)
+#
+# "mpc -h /var/run/mpd/socket clear > /dev/null"
+#    m:0x40 + c:48
+#    NoSymbol 
+
+# Additional keys, currently set up in XFce.  The following settings try to
+# perform the same functions, with the same keys, in other window managers.
+
+# Desktop menu: Tux-m
+#
+# "xfdesktop --menu"
+#    m:0x40 + m
+#    NoSymbol 
+#
+# Desktop reload: Tux-z
+#
+# "xfdesktop --reload"
+#    m:0x40 + m
+#    NoSymbol 
+
+# Roxterm: Tux-r
+#
+# "TMUX= /usr/bin/roxterm --geometry=82x54 &"
+#    m:0x40 + r
+#    NoSymbol 
+
+# Browser (Firefox): Tux-b
+# HANDLED by window manager
+#
+# "/usr/bin/firefox &"
+#     m:0x40 + b
+#     NoSymbol 
+
+# Google Chrome browser: Tux-g
+# HANDLED by window manager
+# "/usr/bin/google-chrome-beta &"
+# "/usr/bin/chromium-browser --enable-plugins &"
+#
+# Chromium
+# HANDLED by window manager
+# "/usr/bin/google-chrome-beta &"
+#     m:0x40 + g
+#     NoSymbol 
+
+# Illumination of keyboard: Tux-i
+
+"/home/ahlstrom/bin/kbd-illum --toggle"
+    m:0x40 + i
+    NoSymbol 
+
+# Emulator (VirtualBox): Tux-e
+
+"/usr/bin/virtualbox &"
+    m:0x40 + e
+    NoSymbol 
+
+# HANDLED by window manager
+# Audio (gmpc): Tux-a
+# "/usr/bin/xfce4-terminal --geometry=124x24+130+60 -e /usr/bin/ncmpcpp &"
+#    m:0x40 + a
+#    NoSymbol 
+
+# HANDLED by window manager
+# Window (xfce4-terminal): Tux-w
+# "/usr/bin/xfce4-terminal --geometry 82x44 &"
+
+# HANDLED by window manager
+# "/usr/bin/Terminal --geometry 82x44 &"
+#     m:0x40 + w
+#     NoSymbol 
+
+# HANDLED by window manager
+# Tmux window (xfce4-terminal): Tux-t
+# "/usr/bin/xfce4-terminal --geometry 82x44 -e /home/ahlstrom/bin/tmux2 &"
+
+# HANDLED by window manager
+# "/usr/bin/Terminal --geometry 82x44 -e /home/ahlstrom/bin/tmux2 &"
+#     m:0x40 + t
+#     NoSymbol 
+
+# HANDLED by window manager
+# Screen lock: Tux-1 (!)
+# "/home/ahlstrom/bin/lock-desktop &"
+#   m:0x40 + c:10
+#   Mod4 + 1
+
+# HANDLED by window manager
+# Screen lock: Tux-2 (@)
+# "/home/ahlstrom/bin/lock-desktop &"
+#   m:0x40 + c:10
+#   Mod4 + 2
+
+# vim: ft=sh
+#
+# End of xbindkeys configuration

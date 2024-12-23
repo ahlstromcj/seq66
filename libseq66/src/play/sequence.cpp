@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-12-20
+ * \updates       2024-12-23
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -99,12 +99,11 @@ static const double c_scale_max     =  200.00;
 static const double c_measure_max   = 1000.00;
 
 /**
- *  The divisor for detecting when to reset auto-step.
- *  The original value was 2. Let's try something else.
- *
- *      static const midipulse c_reset_divisor = 4;
- *
+ *  The divisor for detecting when to reset auto-step. The original value
+ *  was 2. Let's try something else. Maybe 8 would work, too.
  */
+
+static const midipulse c_reset_divisor = 4;
 
 /*
  * Member value.  A fingerprint size of 0 means to not use a fingerprint...
@@ -213,6 +212,9 @@ sequence::sequence (int ppqn) :
     m_seq_color                 (c_seq_color_none),
     m_seq_edit_mode             (sequence::editmode::note),
     m_length                    (4 * midipulse(m_ppqn)),  /* 1 bar of ticks */
+#if defined USE_NEXT_BOUNDARY_FOR_ONESHOT_RECORDING
+    m_next_boundary             (0),
+#endif
     m_measures                  (0),
     m_snap_tick                 (int(m_ppqn) / 4),
     m_step_edit_note_length     (int(m_ppqn) / 4),
@@ -520,7 +522,6 @@ sequence::loop_count_max (int m, bool user_change)
         m_loop_count_max = m;
         if (user_change)
             result = true;
-
     }
     if (result)
         modify();                                   /* have pending changes */
@@ -1574,16 +1575,16 @@ sequence::play
     bool trigger_turning_off = false;       /* turn off after in-frame play */
     int trigtranspose = 0;                  /* used with c_trig_transpose   */
     midipulse start_tick = m_last_tick;     /* modified in triggers::play() */
-    midipulse length = get_length() > 0 ? get_length() : m_ppqn ;
+    midipulse len = get_length() > 0 ? get_length() : m_ppqn ;
 
     /*
      * Issue #103. This fix allows the progress bar to behave well under
      * JACK Slave transport.
      *
-     *      midipulse times_played = m_last_tick / length;
+     *      midipulse times_played = m_last_tick / len;
      */
 
-    midipulse times_played = tick / length;
+    midipulse times_played = tick / len;
     m_trigger_offset = 0;                   /* from Seq24                   */
     if (m_song_mute)
     {
@@ -1614,10 +1615,10 @@ sequence::play
     }
     if (armed())                                    /* play notes in frame  */
     {
-        midipulse offset = length - m_trigger_offset;
+        midipulse offset = len - m_trigger_offset;
         midipulse start_tick_offset = start_tick + offset;
         midipulse end_tick_offset = tick + offset;
-        midipulse offset_base = times_played * length;
+        midipulse offset_base = times_played * len;
         if (loop_count_max() > 0)
         {
             if (times_played >= loop_count_max())
@@ -1682,7 +1683,7 @@ sequence::play
             if (e == m_events.end())                /* did we hit the end ? */
             {
                 e = m_events.begin();               /* yes, start over      */
-                offset_base += length;              /* for another go at it */
+                offset_base += len;              /* for another go at it */
 
                 /*
                  * Putting this sleep here doesn't reduce the total CPU load,
@@ -1740,11 +1741,11 @@ sequence::live_play (midipulse tick)
 
     if (armed())                            /* play notes in the frame      */
     {
-        midipulse length = get_length() > 0 ? get_length() : m_ppqn ;
-        midipulse start_tick_offset = start_tick + length;
-        midipulse end_tick_offset = end_tick + length;
-        midipulse times_played = m_last_tick / length;
-        midipulse offset_base = times_played * length;
+        midipulse len = get_length() > 0 ? get_length() : m_ppqn ;
+        midipulse start_tick_offset = start_tick + len;
+        midipulse end_tick_offset = end_tick + len;
+        midipulse times_played = m_last_tick / len;
+        midipulse offset_base = times_played * len;
         if (loop_count_max() > 0)
         {
             if (times_played >= loop_count_max())
@@ -1778,7 +1779,7 @@ sequence::live_play (midipulse tick)
             if (e == m_events.end())                /* did we hit the end ? */
             {
                 e = m_events.begin();               /* yes, start over      */
-                offset_base += length;              /* for another go at it */
+                offset_base += len;                 /* for another go at it */
                 (void) microsleep(1);
             }
         }
@@ -4252,22 +4253,26 @@ sequence::add_event
 
 /**
  *  Handles loop/replace status on behalf of seqrolls.  This sets the
- *  loop-reset status, which is checked in the stream_event() [input]
- *  function in this module.  This status is set when the time-stamp remainder
- *  is less than a quarter note, meaning we have just gotten back to the
- *  beginning of the loop.  See the call in qseqeditframe64.
+ *  loop-reset status, which is checked in the stream_event() function in
+ *  this module [WRONG; it is check in qseqeditframe64].  This status is
+ *  set when the time-stamp remainder is less than a quarter note,
+ *  meaning we have just gotten back to the beginning of the loop.
+ *  See the call in qseqeditframe64.
  */
 
 bool
 sequence::check_loop_reset ()
 {
     bool result = false;
-    if (get_length() > 0)
+    midipulse ts = perf()->get_tick();
+    midipulse len = get_length();
+    if (len > 0 && ts > len)
     {
-        midipulse tstamp = perf()->get_tick() % get_length();
-        if (overwriting() && perf()->is_running())
+        midipulse tsmod = ts % len;
+        if (tsmod < (m_ppqn / c_reset_divisor))
         {
-            if (tstamp < (m_ppqn / 4))
+            bool check = overwriting();
+            if (check && perf()->is_running())
             {
                 loop_reset(true);
                 result = true;
@@ -4278,12 +4283,69 @@ sequence::check_loop_reset ()
 }
 
 /**
+ *  This function is meant to return false until a note is struck, whether before
+ *  the first end-of-pattern is reached or after that.
+ *
+ *  Special case, call only when playback is running: perf()->is_running()).
+ *
+ * \return
+ *      Returns true if one-shot is over.
+ */
+
+bool
+sequence::check_oneshot_recording ()
+{
+    bool result = false;
+    if (oneshot_recording())
+    {
+        midipulse len = get_length();
+        if (len > 0)
+        {
+#if defined USE_NEXT_BOUNDARY_FOR_ONESHOT_RECORDING
+
+            /*
+             * Issues: (1) the second note is recalculated; (2) a note off
+             * might appear outside.
+             */
+
+            midipulse ts = perf()->get_tick();
+            if (note_count() > 0)
+            {
+                if (note_count() == 1)
+                {
+                    midipulse tmod = ts % len;
+                    midipulse tbeg = ts - tmod;
+                    m_next_boundary = tbeg + len - 1;
+                }
+                else
+                    result = ts > m_next_boundary;
+            }
+#else
+            midipulse ts = perf()->get_tick();
+            if (ts >= len)
+            {
+                const int divisor = 8;                  /* too small?       */
+                midipulse tsmod = ts % len;             /* wrap-aound test  */
+                if (tsmod < (m_ppqn / divisor))
+                    result = true;
+            }
+#endif
+        }
+    }
+    return result;
+}
+
+/**
  *  Streams (records) the given event.  The event's timestamp is adjusted, if
  *  needed.  If recording:
  *
- *      -   If the pattern is playing, the event is added.
- *      -   If the pattern is playing and quantized/tightened record is in
- *          force, the note's timestamp is altered.
+ *      -   Pattern is playing.
+ *      -   Pattern is no playing.
+ *          -   If one-shot recording is in force, and the loop has reset,
+ *              return with a value of false. EXPERIMENTAL.
+ *          -   If quantized/tightened/note-mapped recording is in force,
+ *              the note timestamp or pitch value is altered.
+ *          -   If the pattern is playing, the event is added.
  *      -   If not playing, but the event is a Note On or Note Off, we add it
  *          and keep track of it.
  *
@@ -4335,10 +4397,10 @@ sequence::stream_event (event & ev)
             if (overwriting())
             {
                 loop_reset(false);
-                remove_all();                       /* vs m_events.clear()  */
+                remove_all();                   /* vs m_events.clear()      */
                 set_dirty();
             }
-            else if (oneshot_recording())
+            else if (oneshot_recording())       /* is this necessary???     */
             {
                 loop_reset(false);
                 set_recording(toggler::off);
@@ -4353,7 +4415,7 @@ sequence::stream_event (event & ev)
 
         if (expanded_recording())
         {
-            int m = get_measures(perf()->get_tick());   /* ca 2022-08-20    */
+            int m = get_measures(perf()->get_tick());
             if (m != m_measures)
                 (void) apply_length(m);
         }
@@ -4364,6 +4426,9 @@ sequence::stream_event (event & ev)
         {
             if (perf()->is_pattern_playing())           /* playhead moving  */
             {
+                if (check_oneshot_recording())
+                    return true;
+
                 if (ev.is_note_on() && m_rec_vol > usr().preserve_velocity())
                     ev.note_velocity(m_rec_vol);        /* modify incoming  */
 
@@ -5351,6 +5416,9 @@ sequence::stop (bool songmode)
         verify_and_link();
 
     set_armed(songmode ? false : state);
+#if defined USE_NEXT_BOUNDARY_FOR_ONESHOT_RECORDING
+    m_next_boundary = 0;
+#endif
 }
 
 /**
@@ -7229,9 +7297,13 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
         );
     }
     if (is_metro_seq())
+    {
         live_play(tick);
+    }
     else
+    {
         play(tick, playbackmode, resumenoteons);
+    }
 }
 
 /**
