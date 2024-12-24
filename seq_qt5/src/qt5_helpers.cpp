@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2024-10-15
+ * \updates       2024-12-24
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -573,6 +573,8 @@ new_qmenu (const std::string & text, QWidget * parent)
     }
 }
 
+#if defined SEQ66_INSTALL_SCROLL_FILTER
+
 /**
  *  To be called by the monitoring object.
  *
@@ -602,6 +604,8 @@ install_scroll_filter (QWidget * monitor, QScrollArea * target)
     }
     return result;
 }
+
+#endif
 
 /**
  *  For internal usage.

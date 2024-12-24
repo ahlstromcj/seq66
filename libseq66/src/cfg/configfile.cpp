@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-12-02
+ * \updates       2024-12-24
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -377,19 +377,22 @@ configfile::get_variable
 )
 {
     std::string result = questionable_string(); /* used when tag is missing */
-    for
-    (
-        bool done = ! line_after(file, tag, position);
-        ! done; done = ! next_data_line(file)
-    )
+    if (! tag.empty() && ! variablename.empty())
     {
-        if (! line().empty())                   /* any value in section?    */
+        for
+        (
+            bool done = ! line_after(file, tag, position);
+            ! done; done = ! next_data_line(file)
+        )
         {
-            std::string value = extract_variable(line(), variablename);
-            if (! is_questionable_string(value))
+            if (! line().empty())                   /* any value in section?    */
             {
-                result = value;
-                break;
+                std::string value = extract_variable(line(), variablename);
+                if (! is_questionable_string(value))
+                {
+                    result = value;
+                    break;
+                }
             }
         }
     }
@@ -451,7 +454,7 @@ configfile::extract_variable
         {
             bool havequotes = false;                /* Check-point 2        */
             char quotechar[2] = { 'x', 0 };
-            auto qpos = line.find_first_of("\"", epos + 1);
+            auto qpos = line.find_first_of("\"'", epos + 1);
             auto qpos2 = std::string::npos;
             if (qpos != std::string::npos)
             {

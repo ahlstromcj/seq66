@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-12-21
+ * \updates       2024-12-24
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -161,6 +161,13 @@
 #include "pixmaps/up.xpm"
 #include "pixmaps/zoom.xpm"             /* zoom_in/_out combo-box           */
 #include "pixmaps/chord3-inv.xpm"
+
+/**
+ *  Rather than repopulate combos upon any sequence change, which causes
+ *  issues, let's populate them only with the user asks for one of them.
+ */
+
+#undef  USE_LAZY_REPOPULATE_USR_COMBOS
 
 /*
  *  Do not document the name space.
@@ -351,7 +358,7 @@ qseqeditframe64::qseqeditframe64
          * for showing note tooltips.
          */
 
-#if defined SHOW_GENERIC_TOOLTIPS
+#if defined SEQ66_SHOW_GENERIC_TOOLTIPS
         m_edit_tab_widget = parent;
 #endif
     }
@@ -1365,7 +1372,9 @@ qseqeditframe64::on_sequence_change
             m_edit_bus = bus;
             m_edit_channel = channel;
             modification = true;
+#if ! defined USE_LAZY_REPOPULATE_USR_COMBOS
             repopulate_usr_combos(bus, channel);
+#endif
         }
 
         /*
@@ -1506,7 +1515,7 @@ qseqeditframe64::get_position (int & x, int & y)
         x = m_qseqeditex_frame->x();
         y = m_qseqeditex_frame->x();
     }
-#if defined SHOW_GENERIC_TOOLTIPS
+#if defined SEQ66_SHOW_GENERIC_TOOLTIPS
     else if (not_nullptr(m_edit_tab_widget))
     {
         x = m_edit_tab_widget->x();
@@ -2316,6 +2325,9 @@ qseqeditframe64::set_chord (int chord)
 void
 qseqeditframe64::update_midi_bus (int index)
 {
+#if ! defined USE_LAZY_REPOPULATE_USR_COMBOS
+    // TODO etc etc
+#endif
     set_midi_bus(index);
 }
 
@@ -2366,7 +2378,9 @@ qseqeditframe64::set_midi_bus (int bus, qbase::status qs)
         m_edit_bus = bus;
         if (user_change)
         {
+#if ! defined USE_LAZY_REPOPULATE_USR_COMBOS
             repopulate_usr_combos(m_edit_bus, m_edit_channel);
+#endif
             set_track_change();                     /* to solve issue #90   */
         }
         else
@@ -2486,7 +2500,9 @@ qseqeditframe64::set_midi_channel (int ch, qbase::status qs)
             }
             else
             {
+#if ! defined USE_LAZY_REPOPULATE_USR_COMBOS
                 repopulate_usr_combos(m_edit_bus, m_edit_channel);
+#endif
                 if (user_change)
                 {
                     repopulate_event_menu(m_edit_bus, m_edit_channel);

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2024-12-18
+% \update      2024-12-23
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1723,7 +1723,8 @@
          \index{overdub}
          \index{recording!merge}
          \index{recording!overdub}
-         This is the normal style of recording loops, where notes can
+         This is the \textsl{Seq66} standard
+         style of recording loops, where played notes will
          accumulate as the loop repeats.
 %        See \sectionref{paragraph:patterns_recording_modes}
          Note that this item used to be called "Merge".
@@ -1731,10 +1732,11 @@
          \index{overwrite}
          \index{recording!overwrite}
          When the loop starts over, and a note is pressed,
-         then the existing notes in that loop are erased,
-         and the new note is added.
+         then the existing notes in that loop are erased first,
+         then the new notes are added.
          This provides a good way of correcting major mistakes, live.
-         It will not work if adding notes while not recording.
+         It will not work if adding notes while recording is on, but
+         play is stopped..
          This mode can cause incomplete notes if one
          holds the note and releases it in the next iteration, leaving a
          partially-drawn note behind.  The workaround is to try again.
@@ -1742,16 +1744,16 @@
          \index{expand}
          \index{recording!expand}
          Expansion operates when playing and recording.
-         Once the end of the loop is near, when
-         notes are being input, another measure is added to the length
-         of the loop.
-         This continues indefinitely, whenever any notes are
-         being played or recorded.
-         In this more, the record-button icon shows double arrows to indicate
+         Once the end of the loop is near, \textsl{whether or note
+         notes are being input or not},
+         another measure is added to the length of the loop.
+         This continues indefinitely while recording and play are active.
+         In this mode, the record-button icon shows double arrows to indicate
          expand-recording.
-         The length can be reduced by typing it into the length combo-box
-         at the top of the editor; if it will cut off notes, a warning will
-         occur.
+         Once recording is done,
+         the length can be reduced by typing it into the length combo-box
+         at the top of the editor; if it will cut off recorded notes,
+         a warning will occur.
          \index{recording!expand issue}
          This works best in \textbf{Live} mode.
          In \textbf{Song} mode, only one measure is added each time play is
@@ -1761,16 +1763,39 @@
       \item \textbf{Oneshot}.
          \index{oneshot}
          \index{recording!oneshot}
-         When this option is set, with the record button on, and no pattern
-         playing, recording won't start until a note comes in, and when the
-         first note comes in, the progress bar starts at the left (time 0).
-         As each new set of notes at the same timestamp come in, the
-         notes are recorded and the current time advances by one snap value.
-         The length of each note is determined by the snap size for the spacing
-         of drawn events.
-         At the end of the pattern, recording stops automatically.
-         See the figure
-         below for a recording from a \textsl{Yamaha DD-11}.
+         There are two modes in one-shot recording:
+         when play is stopped, auto-step recording is in force; when play
+         is moving recording is normal, but stops at the end of the pattern.
+         \begin{itemize}
+            \item \textbf{Play stopped.}
+               When this option is set, with the record button on, and no
+               pattern playing, recording won't start until a note comes in,
+               no matter how many repetitions of the loop have gone by.  The
+               progress bar starts at the left (time 0).  When the first
+               note comes in, the end of the pattern is marked.  As each new
+               set of notes at the same timestamp come in, the notes are
+               recorded and the current time advances by one snap value.
+               The length of each note is determined by the snap size for
+               the spacing of drawn events.  At the end of the pattern,
+               recording stops automatically.  See the figure below for a
+               recording from a \textsl{Yamaha DD-11}.  This is a useful way
+               to record a pattern from a machine.
+            \item \textbf{Play in progress.}
+               With the patterns playing, nothing happens until the first
+               note to be recorded is struck, even if many repeats of the
+               pattern's length occurs.
+               Once the first note is struck, the end of the current loop
+               is marked.
+               The notes are recorded until the end of the current loop.
+               After that, no more recording in that pattern takes place.
+         \end{itemize}
+      \item \textbf{Oneshot Reset}.
+         \index{oneshot}
+         \index{recording!oneshot reset}
+               One-shot reset is supposed to allow another one-shot
+               recording, with the new events merged.
+               It does not work yet; it overdubs during multiple loop
+               repeats.
    \end{enumber}
 
    Remember that \textsl{Oneshot recording} is a kind of auto-step/step-edit

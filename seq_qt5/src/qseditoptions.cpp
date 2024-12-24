@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-01
+ * \updates       2024-12-24
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -3429,7 +3429,10 @@ void
 qseditoptions::slot_usr_save_click ()
 {
     bool on = ui->checkBoxSaveUsr->isChecked();
-    rc().auto_usr_save(on);
+    if (on)
+        modify_usr();
+    else
+        rc().auto_usr_save(on);
 }
 
 #if defined SEQ66_CAN_DEACTIVATE_USR

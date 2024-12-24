@@ -2187,7 +2187,7 @@ qseqroll::show_note_tooltip (int mx, int my)
         temp += f;
         temp += " Vel ";
         temp += std::to_string(ni.velocity());
-#if defined SHOW_GENERIC_TOOLTIPS
+#if defined SEQ66_SHOW_GENERIC_TOOLTIPS
         generic_tooltip(this, temp, mx, my);
 #else
         if (not_nullptr(m_note_tooltip))
@@ -2211,7 +2211,7 @@ qseqroll::show_note_tooltip (int mx, int my)
     }
     else
     {
-#if defined SHOW_GENERIC_TOOLTIPS
+#if defined SEQ66_SHOW_GENERIC_TOOLTIPS
         generic_tooltip(this, "", mx, my);
 #else
         delete m_note_tooltip;

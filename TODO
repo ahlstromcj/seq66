@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.17
 Chris Ahlstrom
-2019-04-13 to 2024-12-23
+2019-04-13 to 2024-12-24
 
 Hottest:
 
@@ -8,7 +8,8 @@ Hottest:
         tweaks still needed:
         -   One-shot recording during playback acts like overdub. It
             does not stop. FIXED. DOCUMENT it in the manual.
-            But one-shot reset then makes it act like overdub.
+            But one-shot reset then makes it act like overdub (because
+            note-count == 1 is the flag).
         -   There seems to be a very slight chance of too-longth notes in
             a chord if quantization (1/16) is on. Needs a better keyboard
             player (not me) to test it.
@@ -37,7 +38,10 @@ Hottest:
     -   When auto-step recording in an existing pattern, the modify
         flag "*" is not shown in the title, though the
         "Save/Discard/Cancel" prompt appears at exit. It works if
-        playback running while recording.
+        playback running during recording.
+    -   Test overwrite etc. in the scenario where a recording mode can
+         cause incomplete notes if one holds the note and releases it in the
+         next iteration, leaving a partially-drawn note behind.
 
 From Testing:
 

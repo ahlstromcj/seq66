@@ -1713,14 +1713,22 @@ usrsettings::shrunken () const
     return result;
 }
 
+static bool
+default_color_check (const std::string & value)
+{
+    return
+    (
+        value == "normal" || value == "default" ||
+        value == "?" || value.empty()
+    );
+}
+
 const std::string &
 usrsettings::time_fg_color (bool forusrfile) const
 {
     if (forusrfile)
         return m_time_fg_color;
-    else if (m_time_fg_color == "normal")
-        return s_time_no_color;
-    else if (m_time_fg_color == "default" || m_time_fg_color.empty())
+    else if (default_color_check(m_time_fg_color))
         return s_time_fg_color;
     else
         return m_time_fg_color;
@@ -1733,7 +1741,7 @@ usrsettings::time_bg_color (bool forusrfile) const
         return m_time_bg_color;
     else if (m_time_bg_color == "normal")
         return s_time_no_color;
-    else if (m_time_bg_color == "default" || m_time_bg_color.empty())
+    else if (default_color_check(m_time_bg_color))
         return s_time_bg_color;
     else
         return m_time_bg_color;

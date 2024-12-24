@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.17
 Chris Ahlstrom
-2015-07-10 to 2024-12-20
+2015-07-10 to 2024-12-24
 
 # Change Log
 
-## [0.99.17] - 2024-12-20
+## [0.99.17] - 2024-12-24
 
 This release is in progress....
 
@@ -32,8 +32,11 @@ This release is in progress....
 
 ### Fixed
 
--   Issue #128 follow-on. Fixed the removal of trailing notes after
-    truncating a pattern to a smaller number of measures.
+-   Issue #128 follow-on.
+    -   Fixed the removal of trailing notes after truncating a pattern to a
+        smaller number of measures.
+    -   Upgraded one-shot recording to work during playback. Still minor
+        issues; see the user manual.
 -   Issue #133 and issues found while working this.
     -   Pattern editor.
         -   Changed the slot connection for editable combo-boxes to connect
@@ -54,7 +57,8 @@ This release is in progress....
     -   Song editor. Time zoom now affect horizontal scroll-bar length.
 -   Issue #134. Added dates to the release-name line from 0.99.14 on;
     were left off by an oversight.
--   Non-standard time signature handling errors.
+-   Non-standard time signature handling errors. Note that we cannot
+    support non-power-of-2 beat-widths well in the piano-rolls.
 -   Main window. Fixed updating the PPQN when a file of different PPQN
     is loaded.
 -   Cleaned up and upgraded the linking of recorded notes.

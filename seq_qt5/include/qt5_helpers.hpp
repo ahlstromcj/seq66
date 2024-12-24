@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2024-10-15
+ * \updates       2024-12-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -41,7 +41,13 @@
  *  position of the mouse correct with multiple monitors.
  */
 
-#undef SHOW_GENERIC_TOOLTIPS
+#undef  SEQ66_SHOW_GENERIC_TOOLTIPS
+
+/**
+ *  The install_scroll_filter_function is currently unused.
+ */
+
+#undef  SEQ66_INSTALL_SCROLL_FILTER
 
 class QAction;
 class QComboBox;
@@ -125,11 +131,15 @@ extern bool fill_combobox
     const std::string & prefix  = "",
     const std::string & suffix  = ""
 );
+
+#if defined SEQ66_INSTALL_SCROLL_FILTER
+extern bool install_scroll_filter (QWidget * monitor, QScrollArea * target);
+#endif
+
 extern void set_spin_value (QSpinBox * spin, int value);
 extern QAction * new_qaction (const std::string & text, const QIcon & micon);
 extern QAction * new_qaction (const std::string & text, QObject * parent);
 extern QMenu * new_qmenu (const std::string & text, QWidget * parent = nullptr);
-extern bool install_scroll_filter (QWidget * monitor, QScrollArea * target);
 extern bool show_open_midi_file_dialog (QWidget * parent, std::string & file);
 extern bool show_import_midi_file_dialog (QWidget * parent, std::string & file);
 extern bool show_import_project_dialog
@@ -184,7 +194,7 @@ extern void tooltip_for_filename
     int duration = -1
 );
 
-#if defined SHOW_GENERIC_TOOLTIPS
+#if defined SEQ66_SHOW_GENERIC_TOOLTIPS
 
 extern void generic_tooltip
 (

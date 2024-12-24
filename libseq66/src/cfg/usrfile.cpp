@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-12-11
+ * \updates       2024-12-24
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.

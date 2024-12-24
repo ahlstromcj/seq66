@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2024-11-07
+ * \updates       2024-12-24
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -1064,8 +1064,13 @@ smanager::create (int argc, char * argv [])
         if (result)
         {
             if (perf()->error_pending())
-                append_error_message(perf()->error_messages());
+            {
+                std::string errmsgs = perf()->error_messages();
+                if (errmsgs.empty())
+                    errmsgs = "Empty error message!";
 
+                append_error_message(errmsgs);
+            }
             result = create_window();
             if (result)
             {
