@@ -1,0 +1,16 @@
+Data/Midi/FM Directory for Seq66 0.99.17
+Chris Ahlstrom
+2024-12-27 to 2024-12-27
+
+This directory contains additional MIDI files. Below we collect a few
+notes of interest about some of them.
+
+    judyblue.mid
+
+        This file has a lot of zero-length notes. When loaded into Seq66,
+        these are corrected (and a list is shown in debugging in a console
+        window). Also, all of the note-offs are represented by note-ons
+        with velocity 0. Cannot remember whether we used EditTrack or
+        Cakewalk (for DOS or for Windows) to key this one in.
+
+# vim: sw=4 ts=4 wm=8 et ft=sh

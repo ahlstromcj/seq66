@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>7</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -826,9 +826,9 @@ channel.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>232</y>
+         <y>220</y>
          <width>589</width>
-         <height>251</height>
+         <height>271</height>
         </rect>
        </property>
        <property name="font">
@@ -849,145 +849,10 @@ channel.</string>
           <x>8</x>
           <y>4</y>
           <width>570</width>
-          <height>230</height>
+          <height>260</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="1" column="1">
-          <widget class="QCheckBox" name="checkBoxQuiet">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>Enable to suppress error prompts at startup.
-Useful if the prompts are going to be ignored
-anyway.</string>
-           </property>
-           <property name="text">
-            <string>Suppress startup error messages</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QCheckBox" name="checkBoxLoadMostRecent">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>rc: [recent-files] load-most-recent</string>
-           </property>
-           <property name="text">
-            <string>Load most-recent file (startup)</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QCheckBox" name="checkBoxDarkTheme">
-           <property name="toolTip">
-            <string>usr: [user-interface-settings] dark-theme
-Applies a couple of color tweaks, such as
-using inverse font color for slots.</string>
-           </property>
-           <property name="text">
-            <string>Tweak color for dark theme</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QCheckBox" name="checkBoxPairBussNames">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>rc: [Seq66] port-naming = pair</string>
-           </property>
-           <property name="text">
-            <string>Client:port buss names *</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QCheckBox" name="checkBoxShowFullRecentPaths">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>rc: [recent-files] full-paths</string>
-           </property>
-           <property name="text">
-            <string>Show full path of recent files</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="QCheckBox" name="checkBoxElliptical">
-           <property name="toolTip">
-            <string>usr: [user-interface-settings] progress-box-elliptical
-If set, the grid slot progress boxes are ellipses.</string>
-           </property>
-           <property name="text">
-            <string>Elliptical progess box</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QCheckBox" name="checkBoxLockMainWindow">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>usr: [user-ui-tweaks] lock-main-window</string>
-           </property>
-           <property name="text">
-            <string>Lock main window</string>
-           </property>
-          </widget>
-         </item>
          <item row="4" column="0">
           <widget class="QCheckBox" name="checkBoxLongBussNames">
            <property name="minimumSize">
@@ -1007,106 +872,6 @@ If set, the grid slot progress boxes are ellipses.</string>
            </property>
            <property name="text">
             <string>Long port/buss names *</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
-          <widget class="QCheckBox" name="checkBoxBoldGridSlots">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>usr: [user-interface-settings] progress-bar-thick</string>
-           </property>
-           <property name="text">
-            <string>Bold grid slot font/box</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QCheckBox" name="checkBoxDoubleClickEdit">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>rc: [interaction-method] double-click-edit</string>
-           </property>
-           <property name="text">
-            <string>Double click for pattern editor</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
-          <widget class="QCheckBox" name="checkBoxFollowProgress">
-           <property name="toolTip">
-            <string>usr: [user-interface-settings] follow-progress
-Sets the default setting for the follow-progress
-button in the piano rolls.</string>
-           </property>
-           <property name="text">
-            <string>Follow progress by default</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
-          <widget class="QCheckBox" name="checkBoxSwapCoordinates">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>usr: [user-interface-settings] swap-coordinates</string>
-           </property>
-           <property name="text">
-            <string>Swap grid coordinates (be aware!)</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QCheckBox" name="checkBoxGlobalSeqFeature">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>usr: [user-interface-settings] global-seq-feature</string>
-           </property>
-           <property name="text">
-            <string>Global background/scale/key</string>
            </property>
           </widget>
          </item>
@@ -1136,6 +901,219 @@ Always set to false at exit.</string>
            </property>
           </widget>
          </item>
+         <item row="4" column="1">
+          <widget class="QCheckBox" name="checkBoxPairBussNames">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>rc: [Seq66] port-naming = pair</string>
+           </property>
+           <property name="text">
+            <string>Client:port buss names *</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QCheckBox" name="checkBoxGlobalSeqFeature">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] global-seq-feature</string>
+           </property>
+           <property name="text">
+            <string>Global background/scale/key</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QCheckBox" name="checkBoxDoubleClickEdit">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>rc: [interaction-method] double-click-edit</string>
+           </property>
+           <property name="text">
+            <string>Double click for pattern editor</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="checkBoxQuiet">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Enable to suppress error prompts at startup.
+Useful if the prompts are going to be ignored
+anyway.</string>
+           </property>
+           <property name="text">
+            <string>Suppress startup error messages</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QCheckBox" name="checkBoxSwapCoordinates">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] swap-coordinates</string>
+           </property>
+           <property name="text">
+            <string>Swap grid coordinates (be aware!)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QCheckBox" name="checkBoxDarkTheme">
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] dark-theme
+Applies a couple of color tweaks, such as
+using inverse font color for slots.</string>
+           </property>
+           <property name="text">
+            <string>Tweak color for dark theme</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QCheckBox" name="checkBoxElliptical">
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] progress-box-elliptical
+If set, the grid slot progress boxes are ellipses.</string>
+           </property>
+           <property name="text">
+            <string>Elliptical progess box</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="checkBoxShowFullRecentPaths">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>rc: [recent-files] full-paths</string>
+           </property>
+           <property name="text">
+            <string>Show full path of recent files</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="checkBoxLoadMostRecent">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>rc: [recent-files] load-most-recent</string>
+           </property>
+           <property name="text">
+            <string>Load most-recent file (startup)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QCheckBox" name="checkBoxFollowProgress">
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] follow-progress
+Sets the default setting for the follow-progress
+button in the piano rolls.</string>
+           </property>
+           <property name="text">
+            <string>Follow progress by default</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QCheckBox" name="checkBoxBoldGridSlots">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>usr: [user-interface-settings] progress-bar-thick</string>
+           </property>
+           <property name="text">
+            <string>Bold grid slot font/box</string>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_7">
            <property name="font">
@@ -1149,6 +1127,62 @@ Always set to false at exit.</string>
            </property>
           </widget>
          </item>
+         <item row="5" column="0">
+          <widget class="QCheckBox" name="checkBoxLockMainWindow">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>usr: [user-ui-tweaks] lock-main-window</string>
+           </property>
+           <property name="text">
+            <string>Lock main window</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QCheckBox" name="checkBox">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <italic>true</italic>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Reserved</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QCheckBox" name="checkBox_2">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <italic>true</italic>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Reserved</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </widget>
@@ -1156,7 +1190,7 @@ Always set to false at exit.</string>
        <property name="geometry">
         <rect>
          <x>16</x>
-         <y>38</y>
+         <y>30</y>
          <width>513</width>
          <height>183</height>
         </rect>
@@ -1579,14 +1613,14 @@ Range: 0.5 to 3.0</string>
        <property name="geometry">
         <rect>
          <x>240</x>
-         <y>20</y>
+         <y>10</y>
          <width>281</width>
          <height>16</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>11</pointsize>
+         <pointsize>10</pointsize>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -1599,7 +1633,7 @@ Range: 0.5 to 3.0</string>
        <property name="geometry">
         <rect>
          <x>12</x>
-         <y>20</y>
+         <y>10</y>
          <width>161</width>
          <height>17</height>
         </rect>
@@ -1625,7 +1659,7 @@ Range: 0.5 to 3.0</string>
        </property>
        <property name="font">
         <font>
-         <pointsize>11</pointsize>
+         <pointsize>10</pointsize>
          <italic>true</italic>
          <bold>false</bold>
         </font>
@@ -1638,7 +1672,7 @@ Range: 0.5 to 3.0</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>10</y>
+         <y>0</y>
          <width>591</width>
          <height>211</height>
         </rect>
@@ -2060,7 +2094,7 @@ connects to the MIDI I/O ports it finds.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
           <italic>true</italic>
           <bold>false</bold>
          </font>
@@ -3628,7 +3662,7 @@ pattern editor is opened.</string>
        </property>
        <property name="font">
         <font>
-         <pointsize>11</pointsize>
+         <pointsize>10</pointsize>
          <italic>true</italic>
          <bold>false</bold>
         </font>

@@ -1857,8 +1857,7 @@ public:
     bool jitter_notes (int jitter = -1, bool all = false);
     bool mark_selected ();
     void unpaint_all ();
-    void verify_and_link (bool wrap = false);
-    void link_new ();
+    bool verify_and_link (bool wrap = false);
     bool edge_fix ();
     bool remove_unlinked_notes ();
 

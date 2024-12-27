@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-12-19
+ * \updates       2024-12-27
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1156,7 +1156,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
             infoprintf("Buss override %d", int(buss_override));
         }
     }
-    for (midishort track = 0; track < track_count; ++track)
+    for (midishort trk = 0; trk < track_count; ++trk)
     {
         midibyte tentative_channel = null_channel();
         size_t track_position = m_pos;              /* save for SeqSpec'ing */
@@ -1182,6 +1182,9 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                 set_error_dump("MIDI file parse: sequence allocation failed");
                 return false;
             }
+            else
+                sp->seq_number(int(trk));           /* tentative number     */
+
             sequence & s = *sp;                     /* references better    */
             while (! done)                          /* get events in track  */
             {
@@ -1375,7 +1378,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 double tt = tempo_us_from_bytes(bt);
                                 if (tt > 0)
                                 {
-                                    if (track == 0)
+                                    if (trk == 0)
                                     {
                                         midibpm bpm = bpm_from_tempo_us(tt);
                                         if (! gotfirst_bpm)
@@ -1418,7 +1421,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                  * instead.
                                  */
 
-                                if (track == 0)
+                                if (trk == 0)
                                 {
                                     p.set_beats_per_bar(bpb);
                                     p.set_beat_width(bw);
@@ -1620,7 +1623,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                     if (s.append_event(e))
                                     {
                                         bool get_song_info =
-                                            track == 0 &&
+                                            trk == 0 &&
                                             mtype == EVENT_META_TEXT_EVENT &&
                                             ! got_song_info;
 
@@ -1697,7 +1700,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                          */
 
                         std::string msg = "Bad event";
-                        skip_to_end = track_error(msg, track);
+                        skip_to_end = track_error(msg, trk);
                         if (m_running_status_action == rsaction::abort)
                             return true;    /* don't process more tracks    */
                         else
@@ -1720,12 +1723,12 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
             if (at_end() && ! done)         /* done == end-of-track found   */
             {
                 std::string msg = "Premature end-of-file";
-                (void) track_error(msg, track);
+                (void) track_error(msg, trk);
                 if (m_running_status_action == rsaction::abort)
                     break;
             }
             if (seqnum == c_midishort_max)
-                seqnum = track;
+                seqnum = trk;
 
             if (seqnum < c_prop_seq_number)
             {
@@ -1739,7 +1742,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     snprintf
                     (
                         temp, sizeof temp, "%d events in track  %d",
-                        evcount, track
+                        evcount, trk
                     );
                     info_message(temp);
                 }
@@ -1751,7 +1754,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
         }
         else
         {
-            if (track > 0)                              /* non-fatal later  */
+            if (trk > 0)                              /* non-fatal later  */
             {
                 (void) set_error_dump("Bad track ID", ID);
                 break;

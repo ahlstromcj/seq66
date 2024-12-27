@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2024-12-09
+ * \updates       2024-12-27
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -345,11 +345,15 @@ eventlist::merge (const eventlist & el, bool presort)
  * \param wrap
  *      Optionally (the default is false) wrap when relinking.  Can be used to
  *      override usr().pattern_wraparound().  Defaults to false.
+ *
+ * \return
+ *      Returns true if any events were liked.
  */
 
-void
+bool
 eventlist::link_new (bool wrap)
 {
+    bool result = false;
     for (auto eon = m_events.begin(); eon != m_events.end(); ++eon)
     {
         if (eon->on_linkable())                     /* note-on, not linked  */
@@ -361,8 +365,10 @@ eventlist::link_new (bool wrap)
             {
                 endfound = link_notes(eon, eoff);   /* calls off_linkable() */
                 if (endfound)
+                {
+                    result = true;
                     break;
-
+                }
                 ++eoff;
             }
             if (! endfound)
@@ -373,6 +379,7 @@ eventlist::link_new (bool wrap)
                     bool wrapped = eoff->timestamp() < eon->timestamp();
                     if (link_notes(eon, eoff))
                     {
+                        result = true;
                         if (wrapped && ! wrap)
                             eoff->set_timestamp(get_length() - 1);
                     }
@@ -397,6 +404,7 @@ eventlist::link_new (bool wrap)
             }
         }
     }
+    return result;
 }
 
 #if defined SEQ66_LINK_NEWEST_NOTE_ON_RECORD        /* undefined            */
@@ -556,19 +564,23 @@ eventlist::link_notes (event::iterator eon, event::iterator eoff)
  * \param wrap
  *      Optionally (the default is false) wrap when relinking.  Can be used to
  *      override usr().pattern_wraparound().
+ *
+ * \return
+ *      Returns true if any
  */
 
-void
+bool
 eventlist::verify_and_link (midipulse slength, bool wrap)
 {
-    bool wrap_em = m_link_wraparound || wrap;       /* a Stazed extension   */
     clear_links();                          /* unlink, no unmark all events */
     sort();                                 /* important, but be careful... */
-    link_new(wrap_em);
+
+    bool wrap_em = m_link_wraparound || wrap;       /* a Stazed extension   */
+    bool result = link_new(wrap_em);
     if (slength > 0)
     {
-        mark_out_of_range(slength);
-        (void) remove_marked();             /* prune out-of-range events    */
+        if (mark_out_of_range(slength))
+            (void) remove_marked();         /* prune out-of-range events    */
     }
 
     /*
@@ -577,6 +589,8 @@ eventlist::verify_and_link (midipulse slength, bool wrap)
      *
      * link_tempos();
      */
+
+    return result;
 }
 
 /**
@@ -605,11 +619,19 @@ eventlist::clear ()
  *  is showing.
  */
 
-void
+bool
 eventlist::clear_links ()
 {
+    bool result = false;
     for (auto & e : m_events)
-        e.clear_link();                     /* does unmark() and unlink()   */
+    {
+        if (e.is_linked())
+        {
+            result = true;
+            e.clear_link();                 /* does unmark() and unlink()   */
+        }
+    }
+    return result;
 }
 
 int
@@ -1549,6 +1571,8 @@ eventlist::scan_meta_events ()
 
 #endif  // SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
 
+#if defined SEQ66_LINK_TEMPOS
+
 /**
  *  This function tries to link tempo events.  Native support for temp tracks
  *  is a new feature of seq66.  These links are only in one direction: forward
@@ -1561,9 +1585,10 @@ eventlist::scan_meta_events ()
  *      function safely.
  */
 
-void
+bool
 eventlist::link_tempos ()
 {
+    bool result = false;
     clear_tempo_links();
     for (auto t = m_events.begin(); t != m_events.end(); ++t)
     {
@@ -1575,6 +1600,7 @@ eventlist::link_tempos ()
             {
                 if (t2->is_tempo())
                 {
+                    result = true;
                     t->link(t2);
                     break;                  /* tempos link only one way     */
                 }
@@ -1582,6 +1608,7 @@ eventlist::link_tempos ()
             }
         }
     }
+    return result;
 }
 
 /**
@@ -1597,6 +1624,8 @@ eventlist::clear_tempo_links ()
             e.unlink();
     }
 }
+
+#endif  // defined SEQ66_LINK_TEMPOS
 
 /**
  *  Marks all selected events.
@@ -1620,28 +1649,45 @@ eventlist::mark_selected ()
     return result;
 }
 
+#if defined SEQ66_MARK_ALL
+
 /**
  *  Marks all events.  Not yet used, but might come in handy with the event
  *  editor dialog.
  */
 
-void
+bool
 eventlist::mark_all ()
 {
+    bool result = false;
     for (auto & e : m_events)
+    {
+        result = true;
         e.mark();
+    }
+    return result;
 }
 
 /**
  *  Unmarks all events.
  */
 
-void
+bool
 eventlist::unmark_all ()
 {
+    bool result = false;
     for (auto & e : m_events)
-        e.unmark();
+    {
+        if (e.is_marked())
+        {
+            result = true;
+            e.unmark();
+        }
+    }
+    return result;
 }
+
+#endif  // defined SEQ66_MARK_ALL
 
 /**
  *  Marks all events that have a time-stamp that is out of range.
@@ -1657,11 +1703,15 @@ eventlist::unmark_all ()
  *
  * \param slength
  *      Provides the length beyond which events will be pruned.
+ *
+ * \return
+ *      Returns true if any event(s) got marked.
  */
 
-void
+bool
 eventlist::mark_out_of_range (midipulse slength)
 {
+    bool result = false;
     for (auto & e : m_events)
     {
         bool prune = e.timestamp() > slength;   /* WAS ">=", SEE BANNER */
@@ -1670,11 +1720,13 @@ eventlist::mark_out_of_range (midipulse slength)
 
         if (prune)
         {
+            result = true;
             e.mark();
             if (e.is_linked())
                 e.link()->mark();
         }
     }
+    return result;
 }
 
 /**

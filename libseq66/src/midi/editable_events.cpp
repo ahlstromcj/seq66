@@ -257,7 +257,7 @@ editable_events::save_events ()
              * ca 2021-0-02 Reload in case of note changes.
              */
 
-            track().events().verify_and_link();
+            (void) track().events().verify_and_link();  /* hmmm, 0, false   */
             clear();
             result = load_events();
         }

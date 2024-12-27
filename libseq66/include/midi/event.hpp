@@ -952,13 +952,7 @@ public:
 
     void clear_link ()
     {
-        /*
-         * Marking not used in verify_and_link() anymore.
-         *
-         * unmark();
-         */
-
-        unlink();
+        unlink();                                   /* no call to unmark()  */
     }
 
     /**

@@ -163,9 +163,9 @@ qseqroll::conditional_update ()
     bool ok = perf().needs_update() || check_dirty();
     if (ok)
     {
-#if defined SEQ66_ALWAYS_VERIFY_AND_LINK    /* defined                      */
+#if defined SEQ66_ALWAYS_VERIFY_AND_LINK        /* defined                  */
         if (track().recording())
-            track().verify_and_link();      /* refresh before update        */
+            (void) track().verify_and_link();   /* refresh before update    */
 #endif
         update();
     }
@@ -1834,7 +1834,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     case Qt::Key_Equal:
 
                         set_adding(false);
-                        track().verify_and_link(true);          /* with wrap    */
+                        (void) track().verify_and_link(true);   /* w/wrap   */
                         done = true;
                         break;
                     }

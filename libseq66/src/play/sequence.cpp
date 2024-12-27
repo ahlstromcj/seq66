@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-12-23
+ * \updates       2024-12-27
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -395,7 +395,7 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
             p = 0;
 
         m_last_tick = 0;                            /* reset to tick 0      */
-        verify_and_link();                          /* NoteOn <---> NoteOff */
+        (void) verify_and_link();                   /* NoteOn <---> NoteOff */
         if (! toclipboard)
             modify();
     }
@@ -1004,7 +1004,7 @@ sequence::pop_undo ()
         m_events_redo.push(m_events);
         m_events = m_events_undo.top();
         m_events_undo.pop();
-        verify_and_link();
+        (void) verify_and_link();
         unselect();
     }
     set_have_undo();
@@ -1029,7 +1029,7 @@ sequence::pop_redo ()
         m_events_undo.push(m_events);
         m_events = m_events_redo.top();
         m_events_redo.pop();
-        verify_and_link();
+        (void) verify_and_link();
         unselect();
     }
     set_have_undo();
@@ -1796,12 +1796,16 @@ sequence::live_play (midipulse tick)
  *      override usr().pattern_wraparound().  Defaults to false.
  */
 
-void
+bool
 sequence::verify_and_link (bool wrap)
 {
     automutex locker(m_mutex);
     midipulse len = expanded_recording() ? 0 : get_length() ;
-    m_events.verify_and_link(len, wrap);
+#if defined SEQ66_PLATFORM_DEBUG
+    int sn = int(seq_number());
+    printf("#%d:\n", sn);
+#endif
+    return m_events.verify_and_link(len, wrap);
 }
 
 /**
@@ -1836,17 +1840,6 @@ sequence::remove_unlinked_notes ()
         modify();
 
     return result;
-}
-
-/**
- *  Links a new event.  Locked elsewhere, no need for automutex
- *  locker(m_mutex).
- */
-
-void
-sequence::link_new ()
-{
-    m_events.link_new();
 }
 
 #if defined USE_SEQUENCE_REMOVE_EVENTS
@@ -2842,7 +2835,7 @@ sequence::decrement_selected (midibyte astat, midibyte /*acontrol*/)
 }
 
 /**
- *  Why "change" velocity here? Why verify_and_link()?
+ *  Why "change" velocity here? Why verify_and_link()? FIXME
  */
 
 bool
@@ -2864,8 +2857,8 @@ sequence::repitch (const notemapper & nmap, bool all)
     }
     if (result && ! all)
     {
-        verify_and_link();
-        modify();
+        if (verify_and_link())
+            modify();
     }
     return result;
 }
@@ -3643,8 +3636,8 @@ sequence::add_painted_note
     }
     if (result)
     {
-        verify_and_link();
-        modify();                               /* no easy way to undo this */
+        if (verify_and_link())
+            modify();                           /* no easy way to undo this */
     }
     return result;
 }
@@ -3676,9 +3669,10 @@ sequence::add_note (midipulse len, const event & e)
         result = add_event(eoff);
     }
     if (result)
-    {
-        verify_and_link();
+        result = verify_and_link();
 
+    if (result)
+    {
         /*
          * Notification of step-edit note entry from a keyboard causes:
          *
@@ -4097,7 +4091,7 @@ sequence::add_event (const event & er)
     if (result)
     {
         if (er.is_note_off())
-            verify_and_link();          /* for proper seqroll draw; sorts   */
+            (void) verify_and_link();   /* for proper seqroll draw; sorts   */
 
         modify(false);                  /* do not call notify_change()      */
     }
@@ -4241,7 +4235,7 @@ sequence::add_event
         result = m_events.append(e);    /* (add_event(e) locks & verifies)  */
         if (result)
         {
-            verify_and_link();
+            (void) verify_and_link();   /* might be no note events to link  */
             modify();                   /* call notify_change()             */
         }
     }
@@ -4491,7 +4485,7 @@ sequence::stream_event (event & ev)
                         {
 #if defined USE_THIS_CODE
                             if (oneshot_recording())        /* update stuff */
-                                verify_and_link();
+                                (void) verify_and_link();
                                 perf()->set_needs_update();
                             else                            /* FIXME */
 #endif
@@ -4511,12 +4505,16 @@ sequence::stream_event (event & ev)
 
         /*
          * We don't need to link note events until a note-off comes in.
-         * Commenting this out has no apparently effect, but we still
+         * Commenting this out has no apparently effect, but we still can
          * get extra long notes. (ca 2024-11-26)
+         *
+         * ca 2024-12-27 Shouldn't this be verify_and_link()???
+         *
+         *      (void) m_events.link_new();
          */
 
         if (ev.is_note_off())
-            link_new();
+            (void) m_events.verify_and_link();
     }
     return result;
 }
@@ -5398,7 +5396,7 @@ sequence::stop (bool songmode)
     off_playing_notes();
     zero_markers();                         /* sets the "last-tick" value   */
     if (recording())                        /* ca 2023-04-25                */
-        verify_and_link();
+        (void) verify_and_link();
 
     set_armed(songmode ? false : state);
     m_next_boundary = 0;
@@ -5424,7 +5422,7 @@ sequence::pause (bool song_mode)
         set_armed(state);
 
     if (recording())                        /* ca 2023-04-25                */
-        verify_and_link();
+        (void) verify_and_link();
 }
 
 /**
@@ -6115,7 +6113,7 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
             m_triggers.adjust_offsets_to_length(len);
 
         if (verify)
-            verify_and_link();
+            (void) verify_and_link();
 
         if (was_playing)                        /* start up and refresh     */
             set_armed(true);
@@ -7178,7 +7176,7 @@ sequence::copy_events (const eventlist & newevents)
         if (change_length)
             set_length(len);                    /* m_length = len           */
 
-        verify_and_link();                      /* function uses m_length   */
+        (void) verify_and_link();               /* function uses m_length   */
         result = true;
     }
     modify();

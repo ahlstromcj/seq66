@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2024-12-12
+ * \updates       2024-12-27
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -427,7 +427,7 @@ private:                                /* functions for friend sequence    */
 #if defined SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
     void scan_meta_events ();
 #endif
-    void verify_and_link (midipulse slength = 0, bool wrap = false);
+    bool verify_and_link (midipulse slength = 0, bool wrap = false);
     bool edge_fix (midipulse snap, midipulse seqlength);
     bool remove_unlinked_notes ();
     bool quantize_events
@@ -455,18 +455,22 @@ private:                                /* functions for friend sequence    */
     bool jitter_events (int snap, int jitr);
 #endif
     bool jitter_notes (int snap, int jitr, bool all = false);
-    void link_new (bool wrap = false);
+    bool link_new (bool wrap = false);
     bool link_notes (event::iterator eon, event::iterator eoff);
 #if defined SEQ66_LINK_NEWEST_NOTE_ON_RECORD
     void link_new_note ();
 #endif
-    void clear_links ();
-    void link_tempos ();
+    bool clear_links ();
+#if defined SEQ66_LINK_TEMPOS
+    bool link_tempos ();
     void clear_tempo_links ();
+#endif
     bool mark_selected ();
-    void mark_out_of_range (midipulse slength);
-    void mark_all ();
-    void unmark_all ();
+    bool mark_out_of_range (midipulse slength);
+#if defined SEQ66_MARK_ALL
+    bool mark_all ();
+    bool unmark_all ();
+#endif
     bool remove_event (event & e);
     event::iterator find_first_match (const event & e, midipulse starttick = 0);
     event::iterator find_next_match (const event & e);
