@@ -193,18 +193,12 @@ qseqdata::sizeHint () const
  *  occur. For issue #3, we have enabled the scroll wheel in the piano roll
  *  [see qscrollmaster::wheelEvent()], but we disable it here. So this is a
  *  partial solution to the issue.
- *
- *  SEQ66_ENABLE_SCROLL_WHEEL_ALL currently undefined.
  */
 
 void
 qseqdata::wheelEvent (QWheelEvent * qwep)
 {
-#if defined SEQ66_ENABLE_SCROLL_WHEEL_ALL           /* see qscrollmaster.h  */
-    qwep->ignore();
-#else
     qwep->accept();
-#endif
 }
 
 /**

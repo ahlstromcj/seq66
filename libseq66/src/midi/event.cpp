@@ -93,8 +93,6 @@
  *  effect.
  */
 
-#undef  SEQ66_PRIORITIZE_NOTE_OFF       /* please leave undefined           */
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -1173,15 +1171,6 @@ event::get_rank () const
         int eventcode = mask_status(m_status);  /* strip off channel nybble */
         switch (eventcode)
         {
-#if defined SEQ66_PRIORITIZE_NOTE_OFF           /* EXPERIMENTAL reversal    */
-        case EVENT_NOTE_ON:
-            result = 0x2000 + get_note();
-            break;
-
-        case EVENT_NOTE_OFF:
-            result = 0x1000 + get_note();
-            break;
-#else
         case EVENT_NOTE_OFF:
             result = 0x2000 + get_note();
             break;
@@ -1189,7 +1178,6 @@ event::get_rank () const
         case EVENT_NOTE_ON:
             result = 0x1000 + get_note();
             break;
-#endif
 
         case EVENT_AFTERTOUCH:
         case EVENT_CHANNEL_PRESSURE:

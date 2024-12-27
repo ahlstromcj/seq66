@@ -48,9 +48,14 @@
  *  yields, seemingly, more negative numbers than positive numbers.
  */
 
-#undef  SEQ66_USE_UNIFORM_INT_DISTRIBUTION      /* EXPERIMENTAL */
+#undef  SEQ66_USE_UNIFORM_INT_DISTRIBUTION
 
-#undef  SEQ66_USE_EXTRA_PULSE_CALCULATIONS      /* EXPERIMENTAL */
+/**
+ *  Most of the "pulses-to-xxx" functions have been moved to the zoomer
+ *  class.
+ */
+
+#undef  SEQ66_USE_EXTRA_PULSE_CALCULATIONS
 
 /*
  * Global functions in the seq66 namespace for MIDI timing calculations.

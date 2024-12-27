@@ -1,21 +1,24 @@
 TO DO for Seq66 0.99.17
 Chris Ahlstrom
-2019-04-13 to 2024-12-24
+2019-04-13 to 2024-12-26
 
 Hottest:
 
     -   #128 Recording type for loop button not working. Fixed, some
         tweaks still needed:
         -   One-shot recording during playback acts like overdub. It
-            does not stop. FIXED. DOCUMENT it in the manual.
-            But one-shot reset then makes it act like overdub (because
-            note-count == 1 is the flag).
+            does not stop. FIXED.  But one-shot reset then makes it act like
+            overdub (because note-count == 1 is the flag).
         -   There seems to be a very slight chance of too-longth notes in
             a chord if quantization (1/16) is on. Needs a better keyboard
             player (not me) to test it.
+    -   Event editor:
+        -   Can we add, perhaps a tooltip or dropdown to select the desired
+            Control value (e.g. 7 for volume)?
+        -   Insert vs append for the Insert button?
     -   Pattern editor:
-        -   Can we repopulate the event popups only when they are requested?
-            That would save a number of issues.
+        -   Improve the visibilty of active/enabled buttons, event box markers,
+            etc. in dark themes like monogreen.
     -   Pattern fix:
         -   Add usage/processing of Quantization parameters in
             line_edit_q_full/jitter/none/tighted.
@@ -28,6 +31,8 @@ Hottest:
     -   Ports.
         -   Document what to do if a port you know exists is disabled.
         -   Upgrade the performer port-detection to get around this.
+    -   Loading judyblue.mid yields a bunch of "Zero-length note @xyz fixed"
+        and the main window does not show!
     -   Consider an option to Import a normal MIDI file so that a flag
         is raised so that it will not be saved with Seq66 SeqSpecs.
         Make it visible to be clear.

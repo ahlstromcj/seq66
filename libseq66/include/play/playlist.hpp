@@ -272,11 +272,10 @@ private:
     bool m_engage_auto_play;
 
     /**
-     *  EXPERIMENTAL.
-     *
      *  We are considering how to support automatically moving to the next song
      *  in the play-list when the current song finishes.  This might also
-     *  includeA moving to the next playlist, as well as automatic wrap-around.
+     *  include moving to the next playlist, as well as automatic wrap-around.
+     *  See the performer class for usage.
      */
 
     bool m_auto_advance;

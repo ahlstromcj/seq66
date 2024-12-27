@@ -8444,7 +8444,7 @@ performer::automation_snapshot
     if (opcontrol::allowed(d0, inverse))
     {
         /*
-         * EXPERIMENTAL. Add queuing.  Currently this queues only the
+         * Add queuing.  Currently this queues only the
          * click pattern; it does not queue the restored snapshot.
          * For now we do not implement the queuing.
          *

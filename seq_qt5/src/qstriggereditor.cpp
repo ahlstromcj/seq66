@@ -165,11 +165,7 @@ qstriggereditor::sizeHint () const
 void
 qstriggereditor::wheelEvent (QWheelEvent * qwep)
 {
-#if defined SEQ66_ENABLE_SCROLL_WHEEL_ALL           /* see qscrollmaster.h  */
-    qwep->ignore();
-#else
     qwep->accept();
-#endif
 }
 
 void

@@ -212,9 +212,7 @@ sequence::sequence (int ppqn) :
     m_seq_color                 (c_seq_color_none),
     m_seq_edit_mode             (sequence::editmode::note),
     m_length                    (4 * midipulse(m_ppqn)),  /* 1 bar of ticks */
-#if defined USE_NEXT_BOUNDARY_FOR_ONESHOT_RECORDING
     m_next_boundary             (0),
-#endif
     m_measures                  (0),
     m_snap_tick                 (int(m_ppqn) / 4),
     m_step_edit_note_length     (int(m_ppqn) / 4),
@@ -1668,7 +1666,7 @@ sequence::play
                     {
                         if (er.is_ex_data())
                         {
-                            if (er.is_sysex())          /* EXPERIMENTAL     */
+                            if (er.is_sysex())
                                 put_event_on_bus(er);   /* ca 2024-05-22    */
                         }
                         else
@@ -3682,7 +3680,6 @@ sequence::add_note (midipulse len, const event & e)
         verify_and_link();
 
         /*
-         * ca 2024-11-30. EXPERIMENTAL.
          * Notification of step-edit note entry from a keyboard causes:
          *
          * QObject::setParent: Cannot set parent, new parent is in a different
@@ -4301,8 +4298,6 @@ sequence::check_oneshot_recording ()
         midipulse len = get_length();
         if (len > 0)
         {
-#if defined USE_NEXT_BOUNDARY_FOR_ONESHOT_RECORDING
-
             /*
              * Issues: (1) the second note is recalculated; (2) a note off
              * might appear outside.
@@ -4320,16 +4315,6 @@ sequence::check_oneshot_recording ()
                 else
                     result = ts > m_next_boundary;
             }
-#else
-            midipulse ts = perf()->get_tick();
-            if (ts >= len)
-            {
-                const int divisor = 8;                  /* too small?       */
-                midipulse tsmod = ts % len;             /* wrap-aound test  */
-                if (tsmod < (m_ppqn / divisor))
-                    result = true;
-            }
-#endif
         }
     }
     return result;
@@ -4342,7 +4327,7 @@ sequence::check_oneshot_recording ()
  *      -   Pattern is playing.
  *      -   Pattern is no playing.
  *          -   If one-shot recording is in force, and the loop has reset,
- *              return with a value of false. EXPERIMENTAL.
+ *              return with a value of false.
  *          -   If quantized/tightened/note-mapped recording is in force,
  *              the note timestamp or pitch value is altered.
  *          -   If the pattern is playing, the event is added.
@@ -5416,9 +5401,7 @@ sequence::stop (bool songmode)
         verify_and_link();
 
     set_armed(songmode ? false : state);
-#if defined USE_NEXT_BOUNDARY_FOR_ONESHOT_RECORDING
     m_next_boundary = 0;
-#endif
 }
 
 /**

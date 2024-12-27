@@ -65,13 +65,12 @@
 #undef  SEQ66_USE_FILL_TIME_SIG_AND_TEMPO
 
 /**
- *  EXPERIMENTAL.
- *
  *  When recording, instead of a complete verify_and_link(), backtrack
  *  from the latest event if it is a Note Off, and link to the previous
  *  Note On with the same note value.
  *
- *  One issue is that this will cause issue on loop_reset() when recording.
+ *  One issue is that this will cause problems on loop_reset() when recording.
+ *  Not recommended.
  */
 
 #undef SEQ66_LINK_NEWEST_NOTE_ON_RECORD
@@ -86,7 +85,7 @@
  *  This flag is used in eventlist and sequence to supposedly protect sorting
  *  and clearing. However, we were able to delete events, clear all events,
  *  and even delete patterns while playback was occuring. So we don't think we
- *  need this after all. Define it if problems crop up. EXPERIMENTAL.
+ *  need this after all. Define it if problems crop up.
  *
  *  There is sometimes a segfault when one song is opened with pattern editors
  *  up, and then another song is loaded. So we're defining it to see if

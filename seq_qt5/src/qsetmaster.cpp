@@ -92,7 +92,7 @@ namespace seq66
 
 qsetmaster::qsetmaster
 (
-    performer & p,                  /* bool embedded, */
+    performer & p,
     qsmainwnd * mainparent,
     QWidget * parent
 ) :
@@ -109,9 +109,6 @@ qsetmaster::qsetmaster
     m_needs_update          (true),
     m_trigger_mode          (false),
     m_table_initializing    (true)
-    /*
-     * m_is_permanent       (embedded)
-     */
 {
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

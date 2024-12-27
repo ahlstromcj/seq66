@@ -3522,10 +3522,6 @@ qsmainwnd::open_recent_file ()
         std::string actionfile = fname.toStdString();
         if (! actionfile.empty())
         {
-            /*
-             * remove_all_editors();               // EXPERIMENTAL
-             */
-
             if (open_file(actionfile))
             {
                 if (! usr().is_buss_override())

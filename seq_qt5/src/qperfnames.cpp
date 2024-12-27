@@ -434,11 +434,7 @@ qperfnames::set_preview_row (int row)
 void
 qperfnames::wheelEvent (QWheelEvent * ev)
 {
-#if defined SEQ66_ENABLE_SCROLL_WHEEL_QPERFNAMES    /* see qscrollmaster.h  */
-    qwep->ignore();
-#else
     ev->accept();
-#endif
 }
 
 }           // namespace seq66
@@ -448,4 +444,3 @@ qperfnames::wheelEvent (QWheelEvent * ev)
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

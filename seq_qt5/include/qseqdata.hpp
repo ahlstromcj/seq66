@@ -35,7 +35,7 @@
  *  contains vertical lines whose height matches the value of each data event.
  *  The height of the vertical lines is editable via the mouse.
  *
- *  Another EXPERIMENT. Drawing a circular "grab handle" when an event is
+ *  Another feature. Drawing a circular "grab handle" when an event is
  *  crossed by the mouse or is selected. This is progress on the way to
  *  improving issue #115.
  */

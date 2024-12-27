@@ -36,9 +36,6 @@
 #include <QSize>
 #include <list>                         /* std::list container class        */
 
-#define SEQ66_ENABLE_SCROLL_WHEEL       /* EXPERIMENTAL for issue #3        */
-#undef SEQ66_ENABLE_SCROLL_WHEEL_ALL    /* leave this macro undefined       */
-
 /*
  *  Forward declarations.  The Qt header files are moved into the cpp file.
  */

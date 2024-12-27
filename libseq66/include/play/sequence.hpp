@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2024-12-22
+ * \updates       2024-12-27
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -48,12 +48,6 @@
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
-
-/**
- *  EXPERIMENTAL
- */
-
-#define USE_NEXT_BOUNDARY_FOR_ONESHOT_RECORDING
 
 /**
  *  Provides an integer value for color that matches PaletteColor::none.  That
@@ -778,8 +772,6 @@ private:
 
     midipulse m_length;
 
-#if defined USE_NEXT_BOUNDARY_FOR_ONESHOT_RECORDING
-
     /**
      *  Used in handling one-shot recording while playback is in progress.
      *  This value allows the user to wait a few loops before starting to play
@@ -787,8 +779,6 @@ private:
      */
 
     midipulse m_next_boundary;
-
-#endif
 
     /**
      *  Holds the last number of measures, purely for detecting changes that

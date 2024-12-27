@@ -114,9 +114,9 @@ namespace seq66
  *  We have found not information on these sequences. They are not legal, and
  *  the 7F is misinterpreted as a bogus length of 127.
  *
- *  As an EXPERIMENT, we peek ahead for an F0 and abort if we find one.  The
- *  result does not change the patterns, but does strip out sequences like F0
- *  7F nn that "end" with an F0.
+ *  We peek ahead for an F0 and abort if we find one.  The result does not
+ *  change the patterns, but does strip out sequences like F0 7F nn that "end"
+ *  with an F0.
  */
 
 #undef  SEQ66_IGNORE_F0_F7_NN_F0
@@ -1172,8 +1172,8 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
             midishort seqnum = c_midishort_max;     /* either read or set   */
             midibyte status = 0;
             midilong seqspec = 0;                   /* sequencer-specific   */
-            midibyte last_runningstatus = 0;        /* EXPERIMENTAL         */
-            bool skip_to_end = false;               /* EXPERIMENTAL         */
+            midibyte last_runningstatus = 0;
+            bool skip_to_end = false;
             midibyte runningstatus = 0;
             bool done = false;                      /* done for each track  */
             sequence * sp = create_sequence(p);     /* create new sequence  */
@@ -1206,7 +1206,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     {
                         runningstatus = status;             /* log status   */
                         if (m_running_status_action == rsaction::recover)
-                            last_runningstatus = status;    /* EXPERIMENTAL */
+                            last_runningstatus = status;
                     }
                 }
                 else                                /* there's no 0x80 bit  */
@@ -1217,7 +1217,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                      * not running status, is this an error?
                      */
 
-                    if (skip_to_end)                /* EXPERIMENTAL */
+                    if (skip_to_end)
                         continue;
 
                     if (runningstatus > 0)      /* running status in force? */

@@ -344,11 +344,7 @@ qseqkeys::convert_y (int y, int & note)
 void
 qseqkeys::wheelEvent (QWheelEvent * qwep)
 {
-#if defined SEQ66_ENABLE_SCROLL_WHEEL_ALL           /* see qscrollmaster.h  */
-    qwep->ignore();
-#else
     qwep->accept();
-#endif
 }
 
 void

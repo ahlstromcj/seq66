@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.17
 Chris Ahlstrom
-2015-07-10 to 2024-12-24
+2015-07-10 to 2024-12-26
 
 # Change Log
 
-## [0.99.17] - 2024-12-24
+## [0.99.17] - 2024-12-26
 
 This release is in progress....
 
@@ -54,6 +54,9 @@ This release is in progress....
             a pattern currently open for editing.  Had to add polling to check
             for changes in arm status. 
         -   Upgraded the drawing of the seqroll grid.
+        -   Refactored the event/buss dropdowns to be modified only when
+            the user changes setting or tries to bring up the dropdowns
+            (lazy dropdowns).
     -   Song editor. Time zoom now affect horizontal scroll-bar length.
 -   Issue #134. Added dates to the release-name line from 0.99.14 on;
     were left off by an oversight.
@@ -65,6 +68,7 @@ This release is in progress....
 -   Made ghost notes in selection box official. Also made it apply
     to select-all and other selection operations.
 -   Fixing and normalizing the functionality of the Pattern-Fix dialog.
+-   Fixed timestamp setting in opening the event editor for empty pattern.
 -   Some minor tweaking (field size, font) of various dialogs.
 
 ### Removed

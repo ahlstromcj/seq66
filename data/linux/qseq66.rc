@@ -24,9 +24,10 @@
 # the client:port number is prepended. If 'long', the full set of name items
 # is shown. If port-mapping is active (now the default), this does not apply.
 #
-# 'init-disabled-ports' is experimental. It tries live toggle of port state.
-# 'priority' is experimental. It is meant to increase the priority of the I/O
-# threads. It requires Seq66 to be run as root, or be installed as setuid 0.
+# 'init-disabled-ports' does not yet work. It tries live toggle of port state.
+#
+# 'priority' greater than 0 is meant to increase the priority of the I/O
+# threads. It needs Seq66 to run as root, or be installed as setuid 0.
 
 [Seq66]
 
@@ -105,7 +106,7 @@ name = "qseq66.drums"
 [palette-file]
 
 active = false
-name = "qseq66.palette"
+name = "monogreen.palette"
 
 # If specified, a style-sheet (e.g. 'qseq66.qss') is applied at startup.
 # This file must be located in Seq66's "home" directory. Copy if needed.
@@ -114,7 +115,7 @@ name = "qseq66.palette"
 [style-sheet-file]
 
 active = false
-name = "perstfic-66-2.qss"
+name = "monogreen.qss"
 
 # Defines features of MIDI meta-event handling. Tempo events are in the first
 # track (pattern 0), but one can use them elsewhere. It changes where tempo
@@ -125,10 +126,11 @@ name = "perstfic-66-2.qss"
 
 tempo-track = 0
 
-# Set to true to create virtual ALSA/JACK I/O ports and not auto-connect
-# to other clients. It allows up to 48 output or input ports (defaults to 8
-# and 4). Keep it false to auto-connect Seq66 to real ALSA/JACK MIDI ports.
-# Set 'auto-enable' to enable all virtual ports automatically.
+# Set to true to create virtual ALSA/JACK I/O ports and not auto-connect to
+# other clients. Allows up to 48 output or input ports (defaults to 8 and 4).
+# If true, it disables port-mapping. Keep it false to auto-connect Seq66 to
+# real ALSA/JACK MIDI ports and preserve port-mapping. Set 'auto-enable' to
+# enable all virtual ports automatically.
 
 [manual-ports]
 

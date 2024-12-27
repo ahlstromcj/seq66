@@ -126,8 +126,7 @@ midibus::~midibus ()
  *  occur.  FALSE and TRUE are just too limiting.  FALSE == pmNoError and
  *  pmNoData, and TRUE == any other value.
  *
- *  EXPERIMENTAL for Windows CPU usage. Sleep for one millisecond,
- *  not 10 microseconds.
+ *  For Windows CPU usage. Sleep for one millisecond, not 10 microseconds.
  *
  * \return
  *      Returns 0 if the polling succeeded, and 1 if it failed.

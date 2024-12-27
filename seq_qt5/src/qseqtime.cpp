@@ -160,8 +160,6 @@ qseqtime::paintEvent (QPaintEvent * qpep)
      * The ticks_per_step value needs to be figured out.  Why 6 * m_zoom?  6
      * is the number of pixels in the smallest divisions in the default
      * seqroll background.  This code needs to be put into a function.
-     *
-     * EXPERIMENTAL.  For odd beat widths, use 1 as ticks_per_substep.
      * Actually, odd beats are not allowed in MIDI.
      */
 
@@ -497,11 +495,7 @@ qseqtime::sizeHint () const
 void
 qseqtime::wheelEvent (QWheelEvent * qwep)
 {
-#if defined SEQ66_ENABLE_SCROLL_WHEEL_ALL           /* see qscrollmaster.h  */
-    qwep->ignore();
-#else
     qwep->accept();
-#endif
 }
 
 }           // namespace seq66

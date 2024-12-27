@@ -1,7 +1,7 @@
 # Seq66 0.99.9 user ('usr') configuration file
 #
-# /home/usr/.config/seq66/qseq66.usr
-# Written 2023-10-16 09:09:23
+# /home/user/.config/seq66/qseq66.usr
+# Written 2024-12-22 06:56:34
 #
 # 'usr' file. Edit it and place it in ~/.config/seq66. It allows naming each
 # MIDI bus/port, channel, and control code.
@@ -107,6 +107,9 @@ default-zoom = 2
 global-seq-feature = false
 progress-bar-thick = false
 follow-progress = false
+progress-box-elliptical = false
+follow-progress = true
+gridlines-thick = true
 inverse-colors = false
 time-fg-color = "lime"
 time-bg-color = "black"
@@ -233,8 +236,6 @@ browser = "/usr/bin/google-chrome"
 key-height = 10
 key-view = octave-letters
 note-resume = false
-style-sheet-active = false
-style-sheet = "flat-rounded.qss"
 fingerprint-size = 32
 progress-box-width = 0.8
 progress-box-height = 0.3
@@ -259,17 +260,22 @@ visibility = true
 
 # [pattern-editor]
 #
-# Settings for play/record for a new pattern. A new pattern is 'Untitled'
-# and has no events. These settings save time in live recording. Valid
-# record-style values: 'merge' (overdub), 'overwrite', 'expand', 'one-shot',
-# and 'one-shot-reset'. 'wrap-around' allows recorded notes to wrap to the
-# pattern start. 'escape-pattern' allows the Esc key to close the pattern
-# editor if not playing or in paint mode. Currently 'notemap' and quantizing
+# 'escape-pattern' allows the Esc key to close a pattern editor if not
+# playing or in paint mode. (Esc exits paint mode or stops playback.)
+#
+# 'apply-to-new-only' makes the next options work only when opening a new
+# pattern.  A new pattern is 'Untitled' and has no events.
+#
+# These settings for play/record for a pattern editor save time in live
+# recording. Valid record-style values: 'merge' or 'overdub', 'overwrite',
+# 'expand', and 'one-shot'. 'wrap-around' allows recorded notes to wrap
+# to the pattern beginning. Currently 'notemap' and quantizing are
 # are mutually exclusive.
 
 [pattern-editor]
 
 escape-pattern = false
+apply-to-new-only = false
 armed = false
 thru = false
 record = false
@@ -279,6 +285,6 @@ notemap = false
 record-style = merge
 wrap-around = false
 
-# End of /home/usr/.config/seq66/qseq66.usr
+# End of /home/user/.config/seq66/qseq66.usr
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

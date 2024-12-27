@@ -104,7 +104,7 @@ public:
 
     qsetmaster
     (
-        performer & p,                  /* bool embedded, */
+        performer & p,
         qsmainwnd * mainparent,
         QWidget * parent = nullptr
     );
@@ -257,7 +257,7 @@ private:
     bool m_trigger_mode;
 
     /**
-     *  EXPERIMENT
+     *  Prevents slots from working while the tables are built.
      */
 
     bool m_table_initializing;

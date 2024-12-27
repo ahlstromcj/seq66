@@ -423,7 +423,7 @@ qt5nsmanager::show_error
         }
         else
         {
-#if defined SEQ66_PORTMIDI_SUPPORT      // EXPERIMENTAL EXPERIMENTAL
+#if defined SEQ66_PORTMIDI_SUPPORT
             if (Pm_error_present())
             {
                 std::string pmerrmsg = std::string(Pm_error_message());

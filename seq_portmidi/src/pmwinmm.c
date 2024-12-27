@@ -1329,11 +1329,6 @@ winmm_in_callback
             );
             remaining -= amt;
             processed += amt;
-
-            /*
-             * EXPERIMENTAL
-             */
-
             if (amt == 0)
                 break;
         }

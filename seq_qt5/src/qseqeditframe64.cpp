@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-12-24
+ * \updates       2024-12-26
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -122,7 +122,7 @@
  *  We prefer to load the pixmaps on the fly, rather than deal with those
  *  friggin' resource files.
  *
- * #include "pixmaps/down.xpm"          // replaced by up.xpm
+ * #include "pixmaps/down.xpm"          // replaced by up.xpm and its inverse
  */
 
 #include "pixmaps/bus.xpm"
@@ -159,15 +159,23 @@
 #include "pixmaps/transpose.xpm"
 #include "pixmaps/undo.xpm"
 #include "pixmaps/up.xpm"
+#include "pixmaps/up_inv.xpm"
 #include "pixmaps/zoom.xpm"             /* zoom_in/_out combo-box           */
 #include "pixmaps/chord3-inv.xpm"
 
 /**
  *  Rather than repopulate combos upon any sequence change, which causes
  *  issues, let's populate them only with the user asks for one of them.
+ *  Luckily, they use a QPushButton which executes free-standing popup
+ *  menus.  The MIDI channel is a combo-box, but no new events in the
+ *  pattern requires a change there; it is filled at startup based on
+ *  optional user-channel information in the 'usr' file, or filled when
+ *  changing the MIDI buss.
+ *
+ *  So far, this seems to work; we will make it permanent at some point.
  */
 
-#undef  USE_LAZY_REPOPULATE_USR_COMBOS
+#define  USE_LAZY_REPOPULATE_USR_COMBOS
 
 /*
  *  Do not document the name space.
@@ -456,7 +464,9 @@ qseqeditframe64::qseqeditframe64
      * line-edit.
      */
 
-    qt_set_icon(up_xpm, ui->m_button_bpm);
+
+    const char ** up_pixmap = usr().dark_theme() ? up_inv_xpm : up_xpm ;
+    qt_set_icon(up_pixmap, ui->m_button_bpm);
     connect
     (
         ui->m_combo_bpm, SIGNAL(currentIndexChanged(int)),
@@ -480,7 +490,7 @@ qseqeditframe64::qseqeditframe64
 
     bstring = std::to_string(m_beat_width);
     (void) fill_combobox(ui->m_combo_bw, beatwidth_list(), bstring);
-    qt_set_icon(up_xpm, ui->m_button_bw);
+    qt_set_icon(up_pixmap, ui->m_button_bw);
     connect
     (
         ui->m_combo_bw, SIGNAL(currentIndexChanged(int)),
@@ -650,8 +660,6 @@ qseqeditframe64::qseqeditframe64
     /*
      *  MIDI buss items discovered at startup-time.  Not sure if we want to
      *  use the button to reset the buss, or increment to the next buss.
-     *  The combo-box loop could be moved to a repopulate_midibuss_combo()
-     *  function.
      */
 
     qt_set_icon(bus_xpm, ui->m_button_bus);
@@ -1092,6 +1100,16 @@ qseqeditframe64::qseqeditframe64
     ui->btn_close->hide();
 
     set_recording_volume(usr().velocity_override());
+
+    /*
+     * Set up the events, mini-events, and channel selectors based on the
+     * current buss and channel and (if activated) the 'usr' file's
+     * entries for MIDI buss and instrument definitions.
+     *
+     *  Each of the following set calls call repopulate_usr_combos() only
+     *  when the user makes a change.
+     */
+
     repopulate_usr_combos(m_edit_bus, m_edit_channel);
     set_midi_bus(m_edit_bus, qbase::status::startup);
     set_midi_channel(m_edit_channel, qbase::status::startup);  /* 0-15/0x80 */
@@ -1347,6 +1365,9 @@ qseqeditframe64::closeEvent (QCloseEvent * event)
  *      repopulate_midich_combo(buss);
  *      repopulate_event_menu(m_edit_bus, m_edit_channel);
  *      repopulate_mini_event_menu(m_edit_bus, m_edit_channel);
+ *
+ *  So, if USE_LAZY_REPOPULATE_USR_COMBOS is defined, we'd prefer
+ *  to note have that over during sequence changes.
  *
  *  These are needed in case the change involved adding new kinds of events
  *  to the pattern. Also, set_track_change() will call sequence::modify(),
@@ -2325,9 +2346,6 @@ qseqeditframe64::set_chord (int chord)
 void
 qseqeditframe64::update_midi_bus (int index)
 {
-#if ! defined USE_LAZY_REPOPULATE_USR_COMBOS
-    // TODO etc etc
-#endif
     set_midi_bus(index);
 }
 
@@ -2378,9 +2396,7 @@ qseqeditframe64::set_midi_bus (int bus, qbase::status qs)
         m_edit_bus = bus;
         if (user_change)
         {
-#if ! defined USE_LAZY_REPOPULATE_USR_COMBOS
-            repopulate_usr_combos(m_edit_bus, m_edit_channel);
-#endif
+            repopulate_usr_combos(m_edit_bus, m_edit_channel);  /* bug-fix! */
             set_track_change();                     /* to solve issue #90   */
         }
         else
@@ -2505,8 +2521,10 @@ qseqeditframe64::set_midi_channel (int ch, qbase::status qs)
 #endif
                 if (user_change)
                 {
+#if defined USE_THIS_REDUNDANT_CODE
                     repopulate_event_menu(m_edit_bus, m_edit_channel);
                     repopulate_mini_event_menu(m_edit_bus, m_edit_channel);
+#endif
                     set_track_change();             /* to solve issue #90   */
                 }
                 else
@@ -3559,11 +3577,21 @@ qseqeditframe64::set_editor_mode (sequence::editmode mode)
 
 /**
  *  Popup menu events button.
+ *
+ *  The dependencies of menus on events changes in the pattern:
+ *
+ *      -   repopulate_event_menu (buss, channel).
+ *      -   repopulate_mini_event_menu (buss, channel).
  */
 
 void
 qseqeditframe64::events ()
 {
+#if defined USE_LAZY_REPOPULATE_USR_COMBOS
+//  repopulate_usr_combos(m_edit_bus, m_edit_channel);
+    repopulate_event_menu(m_edit_bus, m_edit_channel);
+    repopulate_mini_event_menu(m_edit_bus, m_edit_channel);
+#endif
     if (not_nullptr(m_events_popup))
     {
         int w = ui->m_button_event->width() - 2;
@@ -3814,12 +3842,32 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
 void
 qseqeditframe64::data ()
 {
+#if defined USE_LAZY_REPOPULATE_USR_COMBOS
+    repopulate_mini_event_menu(m_edit_bus, m_edit_channel);
+#endif
     if (not_nullptr(m_minidata_popup))
     {
         QPoint bwh(ui->m_button_data->width()-2, ui->m_button_data->height()-2);
         m_minidata_popup->exec(ui->m_button_data->mapToGlobal(bwh));
     }
 }
+
+/**
+ *  Rebuilds the event, mini-event, and midi-channel popups and combo-boxes.
+ *  We're going to see how it works to repopulate this menu popup only
+ *  when requested, rather than when a sequence-change occurs.
+ *
+ *  The status dependencies of menus on events:
+ *
+ *      -   repopulate_event_menu (buss, channel). Depends on the events
+ *          in the pattern and the MIDI buss.
+ *      -   repopulate_mini_event_menu (buss, channel). Depends on the events
+ *          in the pattern and the MIDI buss.
+ *      -   repopulate_midich_combo (buss). Depends only on the MIDI buss.
+ *
+ *  The repopulate_usr_combos() function calls all three, and really needs
+ *  to be called only when the pattern editor is opened.
+ */
 
 void
 qseqeditframe64::repopulate_usr_combos (int buss, int channel)
@@ -3975,12 +4023,18 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
          * somehow.
          */
 
-        qt_set_icon(menu_full_xpm, ui->m_button_data);
+        if (usr().dark_theme())
+            qt_set_icon(menu_full_inv_xpm, ui->m_button_data);
+        else
+            qt_set_icon(menu_full_xpm, ui->m_button_data);
     }
     else
     {
         set_event_entry(m_minidata_popup, "(no events)", false, 0);
-        qt_set_icon(menu_empty_xpm, ui->m_button_data);
+        if (usr().dark_theme())
+            qt_set_icon(menu_empty_inv_xpm, ui->m_button_data);
+        else
+            qt_set_icon(menu_empty_xpm, ui->m_button_data);
     }
 }
 
@@ -4048,8 +4102,10 @@ qseqeditframe64::update_midi_buttons ()
     ui->m_toggle_record->setToolTip(record_active ? s_rec_on : s_rec_off);
     qt_set_icon(record_active ? rec_on_xpm : rec_xpm, ui->m_toggle_record);
     ui->m_toggle_record->blockSignals(false);
+#if ! defined USE_LAZY_REPOPULATE_USR_COMBOS
     if (! record_active)
         repopulate_usr_combos(m_edit_bus, m_edit_channel);
+#endif
 
     /*
      * Need to be able to affect the track() alteration in this window!
