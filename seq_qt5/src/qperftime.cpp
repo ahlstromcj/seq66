@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-17
+ * \updates       2024-12-28
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -53,7 +53,8 @@ namespace seq66
  *  between GUI elements better.
  */
 
-static const int s_L_fix            =  2;   /* adjust position of "L" box    */
+static const int s_time_fix         =  2;   /* adjust position of lines     */
+static const int s_L_fix            =  2;   /* adjust position of "L" box   */
 static const int s_end_fix          = 22;   /* adjust position of "END" box */
 static const int s_font_size        =  6;
 static const int s_font_size_large  =  9;
@@ -148,7 +149,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
             break;
         }
 
-        int x_pos = xoffset(tick) - scroll_offset_x();
+        int x_pos = xoffset(tick) - scroll_offset_x() - s_time_fix;
         if (tick % measure_length() == 0)
         {
             pen.setStyle(Qt::SolidLine);

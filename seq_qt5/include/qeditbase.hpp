@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2024-12-16
+ * \updates       2024-12-28
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -115,8 +115,10 @@ protected:
     int m_progress_bar_width;           /* 1, 2, ...                        */
     int m_measure_pen_width;            /* will be set to 2 or 1            */
     int m_beat_pen_width;               /* almost always 1                  */
+    int m_horiz_pen_width;              /*  1 or 2                          */
     Qt::PenStyle m_measure_pen_style;   /* almost always Qt::SolidLine      */
     Qt::PenStyle m_beat_pen_style;      /* Qt::DotLine or Qt::SolidLine     */
+    Qt::PenStyle m_four_pen_style;      /* Qt::DotLine or Qt::SolidLine     */
 
     /**
      *  The previous selection rectangle, used for undrawing it.  Accessed by
@@ -377,17 +379,17 @@ public:
         return m_use_gradient;      /* paint notes/triggers with gradient   */
     }
 
+    int horiz_pen_width () const
+    {
+        return m_horiz_pen_width;
+    }
+
     int progress_bar_width () const
     {
         return m_progress_bar_width;
     }
 
     int measure_pen_width () const
-    {
-        return m_measure_pen_width;
-    }
-
-    int horizontal_pen_width () const
     {
         return m_measure_pen_width;
     }
@@ -405,6 +407,11 @@ public:
     const Qt::PenStyle & beat_pen_style () const
     {
         return m_beat_pen_style;
+    }
+
+    const Qt::PenStyle & four_pen_style () const
+    {
+        return m_four_pen_style;
     }
 
     const Color & tempo_color () const
@@ -716,6 +723,41 @@ public:
     }
 
 protected:
+
+    void horiz_pen_width (int w)
+    {
+        m_horiz_pen_width = w;
+    }
+
+    void progress_bar_width (int w)
+    {
+        m_progress_bar_width = w;
+    }
+
+    void measure_pen_width (int w)
+    {
+        m_measure_pen_width = w;
+    }
+
+    void beat_pen_width (int w)
+    {
+        m_beat_pen_width = w;
+    }
+
+    void measure_pen_style (const Qt::PenStyle & ps)
+    {
+        m_measure_pen_style = ps;
+    }
+
+    void beat_pen_style (const Qt::PenStyle & ps)
+    {
+        m_beat_pen_style = ps;
+    }
+
+    void four_pen_style (const Qt::PenStyle & ps)
+    {
+        m_four_pen_style = ps;
+    }
 
     virtual int horizSizeHint () const;
 

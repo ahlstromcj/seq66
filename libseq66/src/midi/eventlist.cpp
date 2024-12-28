@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2024-12-27
+ * \updates       2024-12-28
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -472,7 +472,7 @@ eventlist::link_new_note ()
                             long ts = on->timestamp();
                             ts += m_zero_len_correction;
                             off->set_timestamp(ts);
-#if defined SEQ66_PLATFORM_DEBUG // _TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                             printf ("Zero-length note @%ld fixed\n", ts);
 #endif
                         }
@@ -528,7 +528,7 @@ eventlist::link_notes (event::iterator eon, event::iterator eoff)
             long ts = eon->timestamp();
             ts += m_zero_len_correction;
             eoff->set_timestamp(ts);
-#if defined SEQ66_PLATFORM_DEBUG // _TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
             printf ("Zero-length note @%ld fixed\n", ts);
 #endif
         }

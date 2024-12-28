@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-24
+ * \updates       2024-12-27
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -647,6 +647,12 @@ qseditoptions::setup_tab_display ()
     (
         ui->checkBoxBoldGridSlots, SIGNAL(clicked(bool)),
         this, SLOT(slot_bold_grid_slots_click())
+    );
+    ui->checkBoxGridlinesThick->setChecked(usr().gridlines_thick());
+    connect
+    (
+        ui->checkBoxGridlinesThick, SIGNAL(clicked(bool)),
+        this, SLOT(slot_gridlines_thick_click())
     );
     ui->checkBoxElliptical->setChecked(usr().progress_box_elliptical());
     connect
@@ -3307,6 +3313,14 @@ qseditoptions::slot_bold_grid_slots_click ()
 {
     bool on = ui->checkBoxBoldGridSlots->isChecked();
     usr().progress_bar_thick(on);
+    modify_usr();
+}
+
+void
+qseditoptions::slot_gridlines_thick_click ()
+{
+    bool on = ui->checkBoxGridlinesThick->isChecked();
+    usr().gridlines_thick(on);
     modify_usr();
 }
 

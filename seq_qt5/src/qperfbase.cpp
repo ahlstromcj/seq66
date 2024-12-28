@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-14
- * \updates       2024-12-16
+ * \updates       2024-12-28
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -36,8 +36,9 @@
 
 #include <QWidget>                      /* QWidget::resize()                */
 
+#include "cfg/settings.hpp"             /* seq66::usr()                     */
 #include "play/performer.hpp"           /* seq66::performer class           */
-#include "qperfbase.hpp"
+#include "qperfbase.hpp"                /* seq66::qperfbase class           */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -64,7 +65,15 @@ qperfbase::qperfbase
     m_track_thin    (false),
     m_track_thick   (false)
 {
-    // no code needed
+    beat_pen_style(Qt::DotLine);                /* default is SolidLine     */
+    if (usr().gridlines_thick())                /* otherise use defaults    */
+    {
+        horiz_pen_width(2);
+    }
+    else
+    {
+        measure_pen_width(1);
+    }
 }
 
 /**

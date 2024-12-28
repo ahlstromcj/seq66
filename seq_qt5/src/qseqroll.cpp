@@ -553,7 +553,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     painter.setBrush(brush);
     painter.setPen(pen);
     painter.drawRect(r);
-    pen.setWidth(horizontal_pen_width());
+    pen.setWidth(horiz_pen_width());
     sbrush.setColor(scale_paint());
 
     /*
@@ -627,10 +627,11 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
                 /*
                  *  Adding this line is problematic if the beat-width is
                  *  not the power-of-two that MIDI requires. Keep the
-                 *  display clean, if incomplete.
+                 *  display cleaner, if incomplete.
                  */
 
-                penstyle = Qt::DashDotLine;
+                penwidth = 1;
+                penstyle = four_pen_style();        /* Qt::DashDotLine      */
                 pen.setColor(beat_color());
             }
             else

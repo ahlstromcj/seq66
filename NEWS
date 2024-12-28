@@ -1,14 +1,16 @@
 NEWS for Seq66 0.99.17
 Chris Ahlstrom
-2015-07-10 to 2024-12-26
+2015-07-10 to 2024-12-28
 
 # Change Log
 
-## [0.99.17] - 2024-12-26
+## [0.99.17] - 2024-12-28
 
 This release is in progress....
 
 ### Added
+
+-   Added a "thick grid lines" checkbox to Edit / Preference / Display
 
 ### Changed
 
@@ -21,14 +23,15 @@ This release is in progress....
     draw fewer lines in between bars to make a cleaner display. But do
     not expect them to be "nice". See the 4/7 pattern in the timesigs.midi
     file.
-    -   Pattern editor.
-        -   qseqroll.
+    -   Pattern editor. Better support for thick vs. thin grid lines.
+        -   qseqroll. Upgraded the drawing of the seqroll grid.
         -   qseqtime.
         -   qstriggereditor.
-    -   Song editor. TODO.
-        -   qperftime. TODO.
-        -   qperfroll. TODO.
-    -   qeditbase. TODO. Clean up unused zoomer access functions.
+    -   Song editor. Better support for thick vs. thin grid lines.
+        -   qperftime.
+        -   qperfroll.
+    -   qeditbase. Macroed out unused zoom functions. Moved most to the
+        zoomer class.
 
 ### Fixed
 
@@ -53,11 +56,10 @@ This release is in progress....
         -   Fixed a potential segfault when opening a recent file with
             a pattern currently open for editing.  Had to add polling to check
             for changes in arm status. 
-        -   Upgraded the drawing of the seqroll grid.
         -   Refactored the event/buss dropdowns to be modified only when
             the user changes setting or tries to bring up the dropdowns
             (lazy dropdowns).
-    -   Song editor. Time zoom now affect horizontal scroll-bar length.
+    -   Song editor. Time zoom now affects horizontal scroll-bar length.
 -   Issue #134. Added dates to the release-name line from 0.99.14 on;
     were left off by an oversight.
 -   Non-standard time signature handling errors. Note that we cannot
@@ -72,6 +74,8 @@ This release is in progress....
 -   Some minor tweaking (field size, font) of various dialogs.
 
 ### Removed
+
+-   Nothing.
 
 ## [0.99.16] - 2024-12-03
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-22
+ * \updates       2024-12-28
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -122,7 +122,7 @@ qperfnames::paintEvent (QPaintEvent *)
     QPen pen(text_paint());                             /* fore_color()     */
     QBrush brush(backnames_paint(), Qt::SolidPattern);
     pen.setStyle(Qt::SolidLine);
-    pen.setWidth(2);
+    pen.setWidth(horiz_pen_width());
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.setFont(m_font);

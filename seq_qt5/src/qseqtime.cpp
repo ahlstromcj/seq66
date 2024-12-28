@@ -58,7 +58,7 @@ static const int sc_font_size    = 10;
  *  size and had to change locations and size of the boxes for the markers.
  */
 
-static const int s_x_tick_fix    =  2;  /* adjusts vertical grid lines      */
+static const int s_x_tick_fix    =  2;  /* adjusts vertical grid lines  (2) */
 static const int s_time_fix      =  1;  /* seqtime offset from seqroll (9)  */
 static const int s_timesig_fix   =  8;  /* time-sig offset from seqroll (18)*/
 static const int s_L_timesig_fix =  8;  /* time-sig offset from "L" marker  */
@@ -218,13 +218,15 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
                 pen.setColor(text_time_paint());
                 painter.setPen(pen);
                 painter.drawText(x_offset + 3, 10, qbar);
-                penwidth = 2;
-                penstyle = Qt::SolidLine;
+                penstyle = measure_pen_style();
+                penwidth = measure_pen_width();
+                pen.setColor(beat_color());
             }
             else if (tick % ticks_per_beat == 0)        /* thin every beat  */
             {
-                penwidth = 1;
-                penstyle = Qt::SolidLine;
+                penstyle = beat_pen_style();
+                penwidth = beat_pen_width();
+                pen.setColor(beat_color());
             }
             else if (tick % ticks_per_four == 0 && valid_bw)
             {
@@ -235,14 +237,15 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
                  */
 
                 penwidth = 1;
-                penstyle = Qt::DashDotLine;
+                penstyle = four_pen_style();            /* Qt::DashDotLine  */
+                pen.setColor(beat_color());
             }
             else
             {
                 penwidth = 1;
                 penstyle = Qt::DotLine;
+                pen.setColor(step_color());
             }
-            pen.setColor(beat_color());
             pen.setWidth(penwidth);
             pen.setStyle(penstyle);
             painter.setPen(pen);

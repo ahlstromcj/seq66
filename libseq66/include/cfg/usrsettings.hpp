@@ -484,8 +484,8 @@ private:
      *  We now offer a way to modify the grid-lines in the piano rolls.
      *  If true (the default), then the measure lines are thick and the
      *  beat lines are solid. Otherwise, the measure lines are thin
-     *  and the beat lines are dotted. This option can be set to false i
-     *  the grid lines are too glaring.
+     *  and the beat lines are dotted. This option can be set to false
+     *  (the default) if the grid lines are too glaring, or true.
      */
 
     bool m_gridlines_thick;

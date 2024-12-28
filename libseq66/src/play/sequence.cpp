@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-12-27
+ * \updates       2024-12-28
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1801,10 +1801,6 @@ sequence::verify_and_link (bool wrap)
 {
     automutex locker(m_mutex);
     midipulse len = expanded_recording() ? 0 : get_length() ;
-#if defined SEQ66_PLATFORM_DEBUG
-    int sn = int(seq_number());
-    printf("#%d:\n", sn);
-#endif
     return m_events.verify_and_link(len, wrap);
 }
 

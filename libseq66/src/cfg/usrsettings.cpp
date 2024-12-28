@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2024-12-11
+ * \updates       2024-12-27
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -339,7 +339,7 @@ usrsettings::usrsettings () :
     m_progress_bar_thickness    (2),
     m_progress_box_elliptical   (false),
     m_follow_progress           (true),
-    m_gridlines_thick           (true),
+    m_gridlines_thick           (false),
     m_inverse_colors            (false),
     m_time_fg_color             ("default"),
     m_time_bg_color             ("default"),
@@ -462,7 +462,7 @@ usrsettings::set_defaults ()
     m_progress_bar_thickness = 2;
     m_progress_box_elliptical = false;
     m_follow_progress = true;
-    m_gridlines_thick = true;
+    m_gridlines_thick = false;
     m_inverse_colors = false;
     m_time_fg_color = "default";
     m_time_bg_color = "default";

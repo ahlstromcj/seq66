@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.17
 Chris Ahlstrom
-2019-04-13 to 2024-12-27
+2019-04-13 to 2024-12-28
 
 Hottest:
 
@@ -23,7 +23,7 @@ Hottest:
         -   Make thin gridlines more obvious, and the default.
     -   Pattern fix:
         -   Add usage/processing of Quantization parameters in
-            line_edit_q_full/jitter/none/tighted.
+            line_edit_q_full/jitter/none/tighten.
         -   Make sure changes raise the modified flag and asterisk indicator.
         -   Enable / disable Set / Reset according to modification.
         -   Flagging issues:
@@ -45,8 +45,10 @@ Hottest:
         "Save/Discard/Cancel" prompt appears at exit. It works if
         playback running during recording.
     -   Test overwrite etc. in the scenario where a recording mode can
-         cause incomplete notes if one holds the note and releases it in the
-         next iteration, leaving a partially-drawn note behind.
+        cause incomplete notes if one holds the note and releases it in the
+        next iteration, leaving a partially-drawn note behind.
+    -   Consider adding time-bg/fg-color to the palette file, using
+        the 'usr' version otherwise.
 
 From Testing:
 

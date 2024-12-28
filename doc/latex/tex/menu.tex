@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2024-12-03
+% \update      2024-12-28
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -914,6 +914,9 @@
    \label{fig:midi_display_tab}
 \end{figure}
 
+   Note: The \textbf{Thick grid lines} option does not appear in this
+   figure.
+
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Editor Key Height}{key height}
@@ -962,19 +965,34 @@
    save some CPU time in drawing the grid.  If set to 0, the whole
    pattern is drawn, no matter how long the pattern is.
 
+   In the \textbf{UI Boolean Options} section are some more options
+   from the 'usr' file:
+
+   \begin{itemize}
+      \item Verbose console output. (Read only).
+      \item Load most-recent file (startup).
+      \item Show full path of recent files.
+      \item Long port/buss names.
+      \item Lock main window.
+      \item Swap grid coordinates.
+      \item Bold grid slot font/box.
+      \item Thick grid lines. (New).
+      \item Suppress startup error messages.
+      \item Double click for pattern editor.
+      \item Global background/scale/key.
+      \item Client:port buss names.
+      \item Tweak color for dark theme.
+      \item Elliptical progress box.
+      \item Follow progress by default.
+      \item \textsl{Reserved}. (For future expansion).
+   \end{itemize}
+
    \itempar{Verbose Console Output}{verbose}
    This boolean makes more output appear if \textsl{Seq66} is run from a
    console/terminal. It will also increase the amount of data logged to the log
    file, if activated. It is only a temporary setting, just like
    its command-line counterpart, \texttt{--verbose}; when
    \textsl{Seq66} exits, the setting remains false.
-
-   \itempar{Suppress startup error messages}{quiet}
-   Unlike the verbose setting, this one is sticky.
-   It prevents the display of error prompts at startup.
-   It is useful when the system keeps flagging the same problem,
-   it cannot be fixed, and can be ignored.
-   It is \textsl{not} the opposite of "verbose".
 
    \itempar{Load Most Recent File (startup)}{load most-recent}
    If checked, the file at the top of the \texttt{[recent-files]}
@@ -994,7 +1012,7 @@
    \itempar{Lock Main Window}{main window!lock}
    This item makes the window non-resizable after startup.
 
-   \itempar{Swap Coordinates}{grid!swap coordinates}
+   \itempar{Swap Grid Coordinates}{grid!swap coordinates}
    Normally, \textsl{Seq66} displays the pattern and mute-groups grids
    where the pattern numbers increase fastest downward.
    Some might prefer to have pattern numbers increase fastest rightward.
@@ -1007,14 +1025,14 @@
             if one want to preserve the normal layout for the pattern hot-keys
             and the mute-group hot-keys.
          \item This setting has not been rigorously tested, so be prepared for
-            some issues.
+            some issues to report.
       \end{itemize}
 
    A 'ctrl' file for the swapped setting is provided
    in \texttt{qseq66-swapped.ctrl} in the \texttt{data/linux}
    directory, but it might not be completely correct yet.
 
-   \itempar{Bold Slot Font}{grid!bold}
+   \itempar{Bold Grid Slot Font/Box}{grid!bold}
    \index{font!bold}
    \index{progress bar!thick}
    This setting makes the font in the live grid bold, and it allows
@@ -1022,6 +1040,17 @@
    rolls.
    It is the same as the \texttt{progress-bar-thick = true} option in the 'usr'
    file. See \sectionref{subsubsec:usr_file_user_interface_settings}.
+
+   \itempar{Thick Grid Lines}{grid!thick}
+   This option makes some lines in the pattern and song grid-panes
+   stand out more. Try it and see what is preferable.
+
+   \itempar{Suppress startup error messages}{quiet}
+   Unlike the verbose setting, this one is sticky.
+   It prevents the display of error prompts at startup.
+   It is useful when the system keeps flagging the same problem,
+   it cannot be fixed, and can be ignored.
+   It is \textsl{not} the opposite of "verbose".
 
    \itempar{Double click for pattern editor}{grid!bold}
    \index{double-click!pattern slot}
@@ -1039,6 +1068,20 @@
    \index{bus!naming}
    If checked the MIDI engine's "client:port" numbers are shown in the port
    listings.
+
+   \itempar{Tweak Color for Dark Theme}{theme!dark}
+   In dark themes, some interface items might be difficult to see.
+   This option replaces some icons with brighter icons.
+   Another option is to create a palette file.
+
+   \itempar{Elliptical Progress Box}{grid!elliptical}
+   This bit of eye candy merely makes the live grid slot progress box elliptical.
+   If the \textbf{Progress Boxes} width an height fractions are equal,
+   the progress box is a circle.
+
+   \itempar{Follow Progress By Default}{progress!default}
+   This item can be turned off if one does not want the pattern or song
+   editors to scroll as playback occurs.
  
 \paragraph{Menu / Edit / Preferences / JACK}
 \label{paragraph:menu_edit_preferences_jack}

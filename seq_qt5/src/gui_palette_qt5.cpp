@@ -534,6 +534,7 @@ gui_palette_qt5::calculate_inverse (const Color & c)
 
 /**
  *  Returns true if the corresponding theme color is to be used.
+ *  See the usage in qslotbutton.
  */
 
 bool

@@ -85,7 +85,7 @@ text.
 12      "Medium Line" [ 0xFF202020 ]      "Medium Line" [ 0xFF808080 ]
 13       "Heavy Line" [ 0xFF101010 ]       "Heavy Line" [ 0xFFFFFFFF ]
 14       "Light Line" [ 0xFF404040 ]       "Light Line" [ 0xFFC0C0C0 ]
-15             "Beat" [ 0xFF000000 ]             "Beat" [ 0xFFFFFFFF ]
+15             "Beat" [ 0xFF0CC0E0 ]             "Beat" [ 0xFFFFFFFF ]
 16             "Near" [ 0xFFFFFF00 ]             "Near" [ 0xFFFF00FF ]
 17       "Time Brush" [ 0xFF0AA0C0 ]       "Time Brush" [ 0xFF808080 ]
 18       "Data Brush" [ 0xFF0AA0C0 ]       "Data Brush" [ 0xFF808080 ]
