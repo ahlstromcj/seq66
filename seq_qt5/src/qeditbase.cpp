@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2024-12-28
+ * \updates       2024-12-29
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -72,16 +72,6 @@ namespace seq66
 static const float c_horizontal_factor = 1.25f;
 
 /**
- *  The list of supported expansion values.
-
-static const size_t c_zoom_expansion_size = 4;
-static const int c_zoom_expansion [c_zoom_expansion_size]
-{
-    1, 2, 4, 8
-};
- */
-
-/**
  *  Principal constructor.
  */
 
@@ -104,6 +94,7 @@ qeditbase::qeditbase
     m_note_out_color        (note_out_paint()),
     m_tempo_color           (tempo_paint()),
     m_grey_color            (grey_paint()),
+    m_extra_color           (extra_paint()),
     m_blank_brush           (gui_empty_brush()),
     m_note_brush            (gui_note_brush()),
     m_scale_brush           (gui_scale_brush()),

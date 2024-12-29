@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2024-12-28
+ * \updates       2024-12-29
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -90,6 +90,7 @@ private:
     const Color m_note_out_color;
     const Color m_tempo_color;
     const Color m_grey_color;
+    const Color m_extra_color;
 
     /**
      *  Similarly, we provide stock brushes that are configurable.  This saves
@@ -422,6 +423,11 @@ public:
     const Color & grey_color () const
     {
         return m_grey_color;
+    }
+
+    const Color & extra_color () const
+    {
+        return m_extra_color;
     }
 
     const Brush & blank_brush () const

@@ -20,10 +20,10 @@
    <string>The Mute Master</string>
   </property>
   <property name="frameShape">
-   <enum>QFrame::NoFrame</enum>
+   <enum>QFrame::Shape::NoFrame</enum>
   </property>
   <property name="frameShadow">
-   <enum>QFrame::Plain</enum>
+   <enum>QFrame::Shadow::Plain</enum>
   </property>
   <widget class="QWidget" name="layoutWidgetMuteMaster">
    <property name="geometry">
@@ -41,7 +41,7 @@
        <number>8</number>
       </property>
       <property name="sizeConstraint">
-       <enum>QLayout::SetMinimumSize</enum>
+       <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
       </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -62,7 +62,6 @@
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -89,7 +88,7 @@
            <string>Click group row to show its layout </string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -98,7 +97,7 @@
       <item>
        <layout class="QGridLayout" name="setGridLayout" rowminimumheight="0">
         <property name="sizeConstraint">
-         <enum>QLayout::SetMinAndMaxSize</enum>
+         <enum>QLayout::SizeConstraint::SetMinAndMaxSize</enum>
         </property>
         <property name="verticalSpacing">
          <number>2</number>
@@ -122,7 +121,6 @@
         <property name="font">
          <font>
           <pointsize>11</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -134,7 +132,7 @@
       <item>
        <layout class="QGridLayout" name="patternGridLayout" rowminimumheight="0">
         <property name="sizeConstraint">
-         <enum>QLayout::SetMinimumSize</enum>
+         <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
         </property>
         <property name="verticalSpacing">
          <number>2</number>
@@ -144,7 +142,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="sizeConstraint">
-         <enum>QLayout::SetMinimumSize</enum>
+         <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
         </property>
         <item>
          <widget class="QLabel" name="m_mutes_file_label">
@@ -172,7 +170,6 @@
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -180,7 +177,7 @@
            <string>Mutes File</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -212,7 +209,7 @@
 to edit this name.</string>
           </property>
           <property name="verticalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOff</enum>
+           <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
           </property>
          </widget>
         </item>
@@ -251,7 +248,6 @@ Edit / Preferences / Session / .mutes.</string>
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -454,7 +450,7 @@ do not save them to the MIDI file.</string>
          </font>
         </property>
         <property name="alternatingRowColors">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="rowCount">
          <number>32</number>

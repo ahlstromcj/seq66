@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-18
+ * \updates       2024-12-29
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -271,30 +271,27 @@ qstriggereditor::draw_grid (QPainter & painter, const QRect & r)
         for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
         {
             int x_offset = xoffset(tick) - scroll_offset_x() + m_x_offset;
-            pen.setWidth(1);
+            int penwidth = 1;
+            enum Qt::PenStyle penstyle = Qt::SolidLine;
             if (tick % ticks_per_bar == 0)      /* solid line on every beat */
             {
-                pen.setColor(fore_color());     /* Qt::black                */
-                pen.setStyle(Qt::SolidLine);
-                pen.setWidth(2);                /* two pixels               */
+                penstyle = measure_pen_style();
+                penwidth = measure_pen_width();
+                pen.setColor(beat_color());
             }
             else if (tick % ticks_per_beat == 0)
             {
-                pen.setColor(beat_color());     /* Qt::black                */
-                pen.setStyle(Qt::SolidLine);
+                penstyle = measure_pen_style();
+                penwidth = measure_pen_width();
+                pen.setColor(beat_color());
             }
-            else
+            else                                /* no ticks/four as yet     */
             {
-                pen.setColor(step_color());     /* Qt::lightGray            */
-                int tick_snap = tick - (tick % snap());
-                if (tick == tick_snap)
-                {
-                    pen.setStyle(Qt::SolidLine);
-                    pen.setColor(Qt::lightGray);
-                }
-                else
-                    pen.setStyle(Qt::DashLine);
+                pen.setColor(step_color());     /* faint step lines         */
+                penstyle = Qt::DotLine;
             }
+            pen.setWidth(penwidth);
+            pen.setStyle(penstyle);
             painter.setPen(pen);
             painter.drawLine(x_offset, 1, x_offset, qc_eventarea_y);
         }

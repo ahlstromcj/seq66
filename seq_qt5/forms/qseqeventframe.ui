@@ -26,10 +26,10 @@
    <string>Events</string>
   </property>
   <property name="frameShape">
-   <enum>QFrame::NoFrame</enum>
+   <enum>QFrame::Shape::NoFrame</enum>
   </property>
   <property name="frameShadow">
-   <enum>QFrame::Raised</enum>
+   <enum>QFrame::Shadow::Raised</enum>
   </property>
   <property name="lineWidth">
    <number>3</number>
@@ -68,16 +68,16 @@
     <string>Events in the pattern/sequence. Events can be edited only with the controls at the right.</string>
    </property>
    <property name="sizeAdjustPolicy">
-    <enum>QAbstractScrollArea::AdjustToContents</enum>
+    <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
    </property>
    <property name="alternatingRowColors">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="selectionBehavior">
-    <enum>QAbstractItemView::SelectRows</enum>
+    <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
    </property>
    <property name="gridStyle">
-    <enum>Qt::DashLine</enum>
+    <enum>Qt::PenStyle::DashLine</enum>
    </property>
    <property name="wordWrap">
     <bool>false</bool>
@@ -168,7 +168,7 @@
     <number>2</number>
    </property>
    <property name="horizontalScrollBarPolicy">
-    <enum>Qt::ScrollBarAlwaysOff</enum>
+    <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
    </property>
    <property name="placeholderText">
     <string>(Enter Meta/SysEx event text here)</string>
@@ -185,7 +185,7 @@
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <property name="sizeConstraint">
-     <enum>QLayout::SetFixedSize</enum>
+     <enum>QLayout::SizeConstraint::SetFixedSize</enum>
     </property>
     <property name="horizontalSpacing">
      <number>36</number>
@@ -363,7 +363,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
     <item>
      <layout class="QGridLayout" name="gridLayout" columnstretch="1,0">
       <property name="sizeConstraint">
-       <enum>QLayout::SetFixedSize</enum>
+       <enum>QLayout::SizeConstraint::SetFixedSize</enum>
       </property>
       <property name="horizontalSpacing">
        <number>4</number>
@@ -422,7 +422,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
          <number>17</number>
         </property>
         <property name="insertPolicy">
-         <enum>QComboBox::NoInsert</enum>
+         <enum>QComboBox::InsertPolicy::NoInsert</enum>
         </property>
         <property name="minimumContentsLength">
          <number>1</number>
@@ -453,7 +453,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
          <number>32</number>
         </property>
         <property name="insertPolicy">
-         <enum>QComboBox::NoInsert</enum>
+         <enum>QComboBox::InsertPolicy::NoInsert</enum>
         </property>
        </widget>
       </item>
@@ -554,7 +554,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
          <number>8</number>
         </property>
         <property name="insertPolicy">
-         <enum>QComboBox::NoInsert</enum>
+         <enum>QComboBox::InsertPolicy::NoInsert</enum>
         </property>
        </widget>
       </item>
@@ -581,7 +581,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
          <string>Category</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -590,7 +590,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
     <item>
      <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,0,0,0,0,0">
       <property name="sizeConstraint">
-       <enum>QLayout::SetFixedSize</enum>
+       <enum>QLayout::SizeConstraint::SetFixedSize</enum>
       </property>
       <property name="horizontalSpacing">
        <number>8</number>
@@ -640,7 +640,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
          <string>D1</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -693,7 +693,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
          <string>D0</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -737,7 +737,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
      <number>6</number>
     </property>
     <property name="sizeConstraint">
-     <enum>QLayout::SetMinimumSize</enum>
+     <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
     </property>
     <property name="rightMargin">
      <number>10</number>
@@ -765,7 +765,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <string>1024</string>
       </property>
       <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
       </property>
      </widget>
     </item>
@@ -813,7 +813,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
    </property>
    <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,0" columnstretch="1,6">
     <property name="sizeConstraint">
-     <enum>QLayout::SetFixedSize</enum>
+     <enum>QLayout::SizeConstraint::SetFixedSize</enum>
     </property>
     <property name="verticalSpacing">
      <number>2</number>
@@ -878,7 +878,7 @@ same time.</string>
        <string>Time Signature and PPQN</string>
       </property>
       <property name="alignment">
-       <set>Qt::AlignCenter</set>
+       <set>Qt::AlignmentFlag::AlignCenter</set>
       </property>
      </widget>
     </item>
@@ -928,7 +928,7 @@ same time.</string>
        <string>Measures and Events Count</string>
       </property>
       <property name="alignment">
-       <set>Qt::AlignCenter</set>
+       <set>Qt::AlignmentFlag::AlignCenter</set>
       </property>
      </widget>
     </item>

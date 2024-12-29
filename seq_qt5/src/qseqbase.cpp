@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-28
+ * \updates       2024-12-29
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -75,8 +75,12 @@ qseqbase::qseqbase
     m_move_snap_offset_x    (0)
 {
     set_snap(track().snap());
-    four_pen_style(Qt::DotLine);
-    if (usr().gridlines_thick())              /* otherise use defaults    */
+
+    /*
+     * four_pen_style(Qt::SolidLine);           // Qt::DotLine
+     */
+
+    if (usr().gridlines_thick())                /* otherise use defaults    */
         measure_pen_width(3);
 }
 
