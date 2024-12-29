@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-19
+ * \updates       2024-12-29
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1096,21 +1096,13 @@ qsmainwnd::closeEvent (QCloseEvent * event)
     if (usr().in_nsm_session())
     {
         session_message("Close event with NSM");
-        remove_all_editors();
-        remove_qperfedit();
-        remove_all_live_frames();
-        remove_set_master();
+        remove_everything();
     }
     else
     {
         session_message("Close event");
         if (check())
-        {
-            remove_all_editors();
-            remove_qperfedit();
-            remove_all_live_frames();
-            remove_set_master();
-        }
+            remove_everything();
         else
             event->ignore();
     }
@@ -2991,6 +2983,23 @@ qsmainwnd::remove_editor (int seqno)
 }
 
 /**
+ *  Centralizes removal of all windows. This is needed in case of a restart
+ *  operation with external live frames and external song editor. Some windows
+ *  were left open during a restart, causing a seqfault or other abort.
+ *
+ *  See closeEvent(), quit(), and ~qsmainwnd().
+ */
+
+void
+qsmainwnd::remove_everything ()
+{
+    remove_all_editors();
+    remove_qperfedit();
+    remove_all_live_frames();
+    remove_set_master();
+}
+
+/**
  *  Uses the standard "associative-container erase-remove idiom".  Otherwise,
  *  the current iterator is invalid, and a segfault results in the top of the
  *  for-loop.  Another option with C++11 is "ci = m_open_editors.erase(ei)".
@@ -3559,7 +3568,7 @@ qsmainwnd::quit ()
     {
         if (check())
         {
-            remove_all_editors();
+            remove_everything();                    /* remove_all_editors() */
             QCoreApplication::exit();
         }
     }

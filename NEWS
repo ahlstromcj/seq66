@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.17
 Chris Ahlstrom
-2015-07-10 to 2024-12-28
+2015-07-10 to 2024-12-29
 
 # Change Log
 
-## [0.99.17] - 2024-12-28
+## [0.99.17] - 2024-12-29
 
 This release is in progress....
 
@@ -35,6 +35,8 @@ This release is in progress....
 
 ### Fixed
 
+-   Fixed segfault when clicking the Restart button with external live
+    frame(s) or external song editor open.
 -   Issue #128 follow-on.
     -   Fixed the removal of trailing notes after truncating a pattern to a
         smaller number of measures.

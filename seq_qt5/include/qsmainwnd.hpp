@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-19
+ * \updates       2024-12-29
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -274,6 +274,7 @@ private:
     void update_recent_files_menu ();
     void create_action_connections ();
     void create_action_menu ();
+    void remove_everything ();
     void remove_all_editors ();
     void remove_ex_editors ();
     void update_all_editors_titles (bool modified);
