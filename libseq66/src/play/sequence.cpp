@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-12-28
+ * \updates       2024-12-30
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3341,21 +3341,7 @@ sequence::valid_scale_factor (double s, bool ismeasure)
 int
 sequence::trunc_measures (double measures)
 {
-    static const double s_slop = 0.01;   /* allows for a little slop */
-    int result;
-    if (measures <= (1.0 + s_slop))
-    {
-        result = 1;
-    }
-    else
-    {
-        double truncated = std::trunc(measures);
-        if ((measures - truncated) <= s_slop)
-            result = int(truncated);
-        else
-            result = int(truncated) + 1;
-    }
-    return result;
+    return int(seq66::trunc_measures(measures));
 }
 
 /**

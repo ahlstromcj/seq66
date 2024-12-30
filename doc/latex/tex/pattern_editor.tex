@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2024-12-23
+% \update      2024-12-30
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -373,10 +373,9 @@
          No length change will occur.
          Alignment, reversing, and quantization can still be done.
       \item \textbf{Measures}.
-         Allows the measures (length) of the pattern to be changed in two ways,
-         depending on how the number is entered: as a simple integer or
-         floating-point number (e.g.
-         1, 1.0, 1.75),
+         Allows the measures (length) of the pattern to be changed in three
+         ways, depending on how the number is entered: as an integer or
+         floating-point number (e.g. 1, 1.0, 1.75),
          or as a simple time-signature fraction (e.g. "3/4"; the "/" is a
          key indicator of this kind of change).
          \begin{itemize}
@@ -388,6 +387,9 @@
                the pattern will only be compressed.
                If less than 1 measure in length, the result will be
                1 measure; \textsl{Seq66} cannot allow less than 1 measure.
+               \textsl{Note that, unlike setting the measures in the pattern
+               editor itself, this measures change will \textbf{not}
+               truncate notes.}
             \item \textbf{Time Signature}.
                Entering a fraction such as \textbf{3/4} or
                \textbf{12/8} will change the time signature of the pattern
@@ -422,7 +424,7 @@
          hitting the first beat in time.
       \item \textbf{Preserve note length}
          prevents Note Offs from being scaled, which would shorten or length the
-         notes.
+         notes, and in some case might cause notes to bleed past a measure.
       \item \textbf{Reverse measures}
          reverses all of the events in the whole pattern, flipping the measures
          completely.  For example, if all the events occur near the end of the

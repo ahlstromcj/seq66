@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2024-12-08
+ * \updates       2024-12-30
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -108,7 +108,7 @@ qpatternfix::qpatternfix
     m_align_left        (false),                    /* bool fp_align_left   */
     m_reverse           (false),                    /* bool fp_reverse      */
     m_reverse_in_place  (false),                    /* bool fp_reverse_...  */
-    m_save_note_length  (true),                     /* bool fp_save_note... */
+    m_save_note_length  (false),                    /* bool fp_save_note... */
     m_use_time_sig      (false),                    /* bool fp_use_time_... */
     m_time_sig_beats    (0),                        /* int fp_beats_per_bar */
     m_time_sig_width    (0),                        /* int fp_beat_width    */
@@ -160,7 +160,7 @@ qpatternfix::initialize (bool startup)
     ui->btn_align_left->setChecked(false);
     ui->btn_reverse->setChecked(false);
     ui->btn_reverse_in_place->setChecked(false);
-    ui->btn_save_note_length->setChecked(true);
+    ui->btn_save_note_length->setChecked(false);
     ui->btn_set->setEnabled(false);
     ui->btn_reset->setEnabled(false);
     if (startup)
@@ -465,7 +465,8 @@ qpatternfix::slot_length_fix (int fixlengthid)
  *  It sets the lengthfix::measures item rather than lengthfix::rescale.
  *
  *  Tricky: If setting integer measures, the end effect is scaling, not
- *  truncating.
+ *  truncating. In fact, the only difference between measure and scale-factor
+ *  changes is minimal.
  */
 
 void
@@ -473,7 +474,7 @@ qpatternfix::slot_measure_change ()
 {
     QString t = ui->line_edit_measures->text();
     std::string tc = t.toStdString();
-    double m = string_to_double(tc, 1.0);
+    double m = string_to_double(tc, 1.0);       /* measures is a float here */
     if (sequence::valid_scale_factor(m, true))  /* applies to measures, too */
     {
         int beats, width;
@@ -482,7 +483,6 @@ qpatternfix::slot_measure_change ()
         if (different || is_fraction)
         {
             ui->btn_change_pick->setChecked(true);
-            m_measures = m;
             m_length_type = lengthfix::measures;
             if (beats > 0 && beats < 96)            /* just a sanity check  */
                 m_time_sig_beats = beats;           /* fraction numerator   */
@@ -494,13 +494,19 @@ qpatternfix::slot_measure_change ()
             ui->btn_effect_time_sig->setChecked(is_fraction);
 
             midipulse curlength = track().get_length();
-            midipulse maxlength = track().get_max_timestamp();
             midipulse newlength = midipulse(track().unit_measure() * m);
             bool shrunk = newlength < curlength;
-            bool reduced = newlength < maxlength;
-            ui->btn_effect_truncate->setChecked(reduced);
+            bool expanded = newlength > curlength;
             ui->btn_effect_shrink->setChecked(shrunk);
-            modify();
+            ui->btn_effect_expand->setChecked(expanded);
+            m_scale_factor = m / m_measures;
+            m_measures = trunc_measures(m);         /* float truncation     */
+
+            std::string scale = double_to_string(m_scale_factor, 2);
+            std::string meass = double_to_string(m_measures);
+            ui->line_edit_scale->setText(qt(scale));
+            ui->line_edit_measures->setText(qt(meass));
+            modify();                               /* indicate fix-change  */
         }
     }
     else
@@ -521,10 +527,16 @@ qpatternfix::slot_scale_change ()
     {
         ui->btn_change_scale->setChecked(true);
         m_scale_factor = v;
+        m_measures = trunc_measures(m_measures * v);
         m_length_type = lengthfix::rescale;
         m_time_sig_beats = m_time_sig_width = 0;
         m_use_time_sig = false;
         ui->btn_effect_time_sig->setChecked(false);
+
+        std::string scale = double_to_string(m_scale_factor, 2);
+        std::string meass = double_to_string(m_measures);
+        ui->line_edit_scale->setText(qt(scale));
+        ui->line_edit_measures->setText(qt(meass));
         modify();
     }
 }
@@ -730,7 +742,7 @@ qpatternfix::slot_reset ()
     track().events() = m_backup_events;                 /* restore events   */
     m_measures = double(m_backup_measures);
     m_align_left = m_use_time_sig = false;
-    m_save_note_length = true;
+    m_save_note_length = false;
     m_time_sig_beats = m_time_sig_width = 0;
     m_scale_factor = 1.0;
     m_length_type = lengthfix::none;

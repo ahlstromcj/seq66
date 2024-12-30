@@ -5,7 +5,7 @@ Copyright (c) DevSec Studio. All rights reserved.
 \library       seq66 application
 \author        Chris Ahlstrom
 \date          2023-10-18
-\updates       2024-11-29
+\updates       2024-12-30
 \license       MIT
 
 MIT License
@@ -253,6 +253,18 @@ QPushButton
     border: 0px;
     border-radius: 5px;
     padding: 5px;
+}
+
+QPushButton::default
+{
+    color: #00ff00;
+    background-color: qlineargradient(spread:pad, x1:1, y1:0, x2:1, y2:1, stop:0 rgba(167, 100, 24, 128),stop:1 rgba(98, 169, 67, 255));
+}
+
+QPushButton::disabled
+{
+    color: #00a000;
+    background-color: qlineargradient(spread:pad, x1:1, y1:0, x2:1, y2:1, stop:0 rgba(167, 100, 100, 100),stop:1 rgba(98, 170, 170, 170));
 }
 
 QPushButton::hover

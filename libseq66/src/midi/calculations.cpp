@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2024-12-16
+ * \updates       2024-12-30
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -532,6 +532,33 @@ pulses_to_hours (midipulse p, midibpm bpm, int ppqn)
     unsigned long microseconds = ticks_to_delta_time_us(p, bpm, ppqn);
     int seconds = int(microseconds / 1000000UL);
     return seconds / (60 * 60);
+}
+
+/**
+ *  Recalculates the number of measures, making sure that values less than 1.0
+ *  become 1, and that, otherwise, the measure count is either very close
+ *  (0.01) to the lower integer number, or moved up the next integer measure
+ *  value. A static function.
+ */
+
+double
+trunc_measures (double measures)
+{
+    static const double s_slop = 0.01;   /* allows for a little slop */
+    double result;
+    if (measures <= (1.0 + s_slop))
+    {
+        result = 1.0;
+    }
+    else
+    {
+        double truncated = std::trunc(measures);
+        if ((measures - truncated) <= s_slop)
+            result = double(int(truncated));
+        else
+            result = double(int(truncated)) + 1.0;
+    }
+    return result;
 }
 
 /**

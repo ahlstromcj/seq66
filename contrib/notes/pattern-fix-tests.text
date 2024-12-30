@@ -1,0 +1,210 @@
+Thorough Testing of the Pattern-Fix Dialog
+Chris Ahlstrom
+2024-11-09 to 2024-12-30
+
+The test file for pattern-fix is contrib/midi/test.midi.  We change the "Test
+Pattern" notes to a velocity of all 74 except for 127 with the first and last
+notes, and center notes of velocity 124 or 4.
+
+Length Change:
+
+    o   None.
+
+    o   Measures.
+
+        o   Integer greater.
+
+            -   Increases the measure count.
+            -   Spreads out the notes to fill the increase.
+            -   Preserves note length if checked. If not checked, the lengths
+                of the notes increase.
+            -   Have to tab out of the Measures field before clicking Set.
+            -   The pattern editor immediately shows these changes.
+            -   Reset works.
+            -   The Expand effect box is checked.
+            -   The modification indicator shows up in the pattern editor and
+                in the main window, and there will be a prompt for saving at
+                exit.
+            -   However, the Reset button does not undo the modify flag.
+
+        o   Integer lesser.
+
+            -   Decreases the measure count.
+            -   Compresses the notes to fill the smaller measure count.
+            -   Preserves note length if checked. If not checked, the lengths
+                of the notes decrease.
+            -   The Shrink effect box is checked.
+            -   If "Preserve note length" is set, the last note might bleed
+                across the end of the last measure. END shold be adjusted
+                properly as well.
+
+        o   Float greater.
+
+            -   Similar to "integer greater", but rounds up to the nearest full
+                measure.
+            -   Spreads out the notes to expand by the given factor, not the
+                final measure size.
+            -   Changes the Scale Factor to match after Set is clicked.
+            -   For scaling, best to turn off "Preserve note length".
+
+        o   Float lesser.
+
+            -   Similar to "integer lesser", but rounds up to the nearest full
+                measure.
+            -   Compresses the notes to compress by the given fraction, not
+                the final measure size.
+            -   Changes the Scale Factor to match after Set is clicked.
+            -   For scaling, best to turn off "Preserve note length".
+
+        o   "Time sig" greater.
+
+            -   6/4.
+                -   The PDF says that it should scale down to 1 measure!
+                -   Tabbing out immediately sets Shrink.
+                -   The END marker is set to 2:2:0.
+                -   BUGS galore:
+                    -   The notes do not change position.
+                    -   The seqroll bars still show 4/4.
+                    -   The seqtime still shows 4/4 and matching bars.
+
+        o   "Time sig" lesser.
+
+            -   3/4.
+                -   The PDF says that it should scale down to 1 measure!
+                -   Tabbing out immediately sets Shrink.
+                -   In sequence::apply_length(), measures goes from 2 to 3.
+                    This seems right, if we keep length but reduce the time
+                    signature.
+                -   The time-sig numerator and denominator are set correctly.
+                -   BUGS galore:
+                    -   The END marker, though is set to 3:1:0.
+                    -   The notes do not change position.
+                    -   The seqroll bars still show 4/4.
+                    -   The seqtime still shows 4/4 and matching bars.
+                    -   The Log Timesig button remains at 4/4. Clicking it
+                        royally screws up the notes and seqroll.
+            -   3/8. Identitical except the time-sig properly shows 3 and 8.
+
+            Note: changing to 3/4 in the pattern editor handles the seqroll
+                  seqtime bars and time signature properly, but it messes
+                  up the notes; it does not change the R marker position.
+                  It should not move the notes at all.
+
+    o   Scale factor.
+
+        o   Greaater than one.
+
+        o   One.
+
+        o   Less than one.
+
+    o   Other fixes.
+
+        o   Align left.
+
+            -   BUG: Enabling does not check-mark the Shift effect.
+            -   Does Set then check-mark the Shift, but only when an actual
+                shift occurs?
+
+        o   Reverse measures.
+
+            -   BUG: Enabling does not check-mark the Reverse effect.
+            -   Does Set then check-mark Reverse?
+
+        o   Reverse in place.
+
+            -   BUG: Enabling does not check-mark the Reverse effect.
+            -   Does Set then check-mark Reverse?
+
+        o   Preserve note length.  (A factor in the tests above and below.)
+
+    o   Alteration.
+
+        o   Click None and the real choices unchecks or check-marks the
+            Alteration effect.
+
+        o   None.
+
+        o   Tight Q ticks. (With various ranges.)
+
+        o   Full Q ticks. (With various ranges.)
+
+        o   Random amplitude. (With various ranges.)
+
+        o   Time/tick jitter. (With various ranges.)
+
+        o   Note-map.
+
+            o   Repitching.
+
+            o   Loading alternate note-map.
+
+            o   Rev Note-map
+
+        o   Set.
+
+        o   Reset.
+
+            o   Note that Reset will undo any changes made in the pattern
+                editor while the Pattern-Fix Editor is up.
+
+= = = = = = = = = = =
+
+What does it mean to convert a 4/4 pattern to 3/4?
+
+Original pattern:
+
+
+4 ||========== |           |           |========== ||
+- ||           |========== |           |           ||
+4 ||           |           |========== |           ||
+
+Notes left in place:
+
+3 ||========== |           |           ||========= |
+- ||           |========== |           ||          |. . . 
+4 ||           |           |========== ||          |
+
+Notes compressed:
+
+3 ||=======    |           |    =======||
+- ||        =========      |           ||
+4 ||           |      =========        ||
+
+https://music.stackexchange.com/questions/46058/any-pointers-on-how-to-convert-4-4-to-3-4
+
+Current behavior in seqframe:
+
+    track().set_beats_per_bar(bpb = 3, true)
+
+        m_time_beats_per_measure = 3 [unsigned short!]
+        get_measures() --> get_measures(0)
+            um = unit_measure() --> unchanged m_unit_measure = 768
+            len = get_length() --> 1536 (2 measures x 768 per measure)
+            measures = len / um = 2
+
+       THEREFORE, measures does not change at this point!
+
+       modify()
+
+    track().apply_length(bpb, 0, 0, user_change = false)
+
+        set_beats_per_bar(3, false) this time; no changes at all here
+        unit_measure(reset = true)
+            m_unit_measure = measures_to_ticks(measures = 1) --> 576
+        measures = get_measures(0) --> len = 1536 --> measures = 3
+        result = set_length(
+                    seq66::measures_to_ticks(3,192,4,3) --> 1728)
+            m_length = 1728
+            . . . set length for events and triggers
+
+        verify_and_link()
+
+
+Original 4 b/bar * 192 t/bar * 2 m 
+
+
+= = = = = = = = = = =
+
+Side note: ~automutex() is called before returning a value, so the value needs
+           to be a LOCAL VARIABLE
