@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-12-26
+ * \updates       2024-12-31
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -141,11 +141,13 @@
 #include "pixmaps/midi.xpm"
 #include "pixmaps/n_rec_on.xpm"
 #include "pixmaps/note_length.xpm"
+#include "pixmaps/note_length_inv.xpm"
 #include "pixmaps/play.xpm"
 #include "pixmaps/play_on.xpm"
 #include "pixmaps/q_rec.xpm"
 #include "pixmaps/q_rec_on.xpm"
 #include "pixmaps/quantize.xpm"
+#include "pixmaps/quantize_inv.xpm"
 #include "pixmaps/rec.xpm"
 #include "pixmaps/rec_on.xpm"
 #include "pixmaps/redo.xpm"
@@ -730,7 +732,11 @@ qseqeditframe64::qseqeditframe64
      */
 
     tooltip_with_keystroke(ui->m_button_undo, "q");
-    qt_set_icon(quantize_xpm, ui->m_button_quantize);
+    qt_set_icon
+    (
+        usr().dark_theme() ?
+            quantize_inv_xpm : quantize_xpm, ui->m_button_quantize
+    );
     connect
     (
         ui->m_button_quantize, &QPushButton::clicked,
@@ -822,7 +828,11 @@ qseqeditframe64::qseqeditframe64
     );
     set_snap(scaledtick);
     set_note_length(scaledtick);
-    qt_set_icon(note_length_xpm, ui->m_button_note);
+    qt_set_icon
+    (
+        usr().dark_theme() ?
+            note_length_inv_xpm : note_length_xpm, ui->m_button_note
+    );
     connect
     (
         ui->m_button_note, SIGNAL(clicked(bool)),

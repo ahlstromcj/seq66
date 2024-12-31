@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2024-12-30
+ * \updates       2024-12-31
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -482,8 +482,9 @@ qpatternfix::slot_measure_change ()
         bool different = fnotequal(m, m_measures);
         if (different || is_fraction)
         {
+            bool floater = is_floating_string(tc);
+            m_length_type = floater ? lengthfix::rescale : lengthfix::measures;
             ui->btn_change_pick->setChecked(true);
-            m_length_type = lengthfix::measures;
             if (beats > 0 && beats < 96)            /* just a sanity check  */
                 m_time_sig_beats = beats;           /* fraction numerator   */
 
