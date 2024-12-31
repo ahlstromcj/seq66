@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-10-23
+ * \updates       2024-12-30
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -127,6 +127,7 @@ extern double string_to_double
     double defalt = 0.0,
     int rounding = 0
 );
+extern bool is_floating_string (const std::string & value);
 extern std::string double_to_string(double value, int precision = 0);
 extern float string_to_float
 (

@@ -33,6 +33,7 @@
  *    project.
  */
 
+#include <algorithm>                    /* std::find_if() function          */
 #include <cctype>                       /* std::toupper() function          */
 #include <climits>                      /* INT_MAX and its ilk              */
 #include <cmath>                        /* std::floor(), std::pow()         */
@@ -713,6 +714,28 @@ string_to_bool (const std::string & s, bool defalt)
     );
 }
 
+/**
+ *  Attempt to convert a string to a pair of integers, based on the
+ *  presence of a pair delimiter.
+ *
+ * \param s
+ *      The string to parse.
+ *
+ * \param [out] v1
+ *      The first value of the pair.
+ *
+ * \param [out] v2
+ *      The second value of the pair.
+ *
+ * \param delimiter
+ *      Specifies the pair delimiter. There is no default value, but "/",
+ *      ",", ":", or even " " might be common values.
+ *
+ * \return
+ *      Returns true if the delimiter was found, and there are two numbers
+ *      to convert.
+ */
+
 bool
 string_to_int_pair
 (
@@ -768,8 +791,9 @@ string_to_time_signature (const std::string & s, int & beats, int & width)
  *      decimal.
  *
  * \return
- *      Returns the signed long integer value represented by the string.
- *      If the string is empty or has no digits, then 0.0 is returned.
+ *      Returns the double value represented by the string.
+ *      If the string is empty or has no digits, then the defalt
+ *      parameter is returned.
  */
 
 double
@@ -804,6 +828,44 @@ string_to_double (const std::string & s, double defalt, int rounding)
     }
     return result;
 }
+
+/**
+ *  Checks a string to see if it could be a floating point value.  This status
+ *  requires nothing but digits plus a comma or a decimal point.  The latter
+ *  are necessary, otherwise the string is an integer.  We trim the left/right
+ *  spaces; any space in between invalidates the check. This is not a robust
+ *  check, requiring some smarts on the caller.
+ */
+
+bool
+is_floating_string (const std::string & value)
+{
+    bool result = false;
+    std::string trimmed = trim(value);
+    if (trimmed.find_first_of(" ") == std::string::npos)
+    {
+        /*
+         * Find the first non-digit character. Then check if a non-digit
+         * character was found.
+         */
+
+        auto it = std::find_if
+        (
+            value.begin(), value.end(),
+            [] (char c) { return ! std::isdigit(c); }
+        );
+        if (it != value.end())
+        {
+            if (*it == ',' || *it == '.')
+                result = true;
+        }
+    }
+    return result;
+}
+
+/**
+ *  Converts a double value to a string with an optional precision.
+ */
 
 std::string
 double_to_string (double value, int precision)
