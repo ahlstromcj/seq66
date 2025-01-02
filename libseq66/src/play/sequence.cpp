@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-12-30
+ * \updates       2025-01-02
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3371,71 +3371,117 @@ sequence::trunc_measures (double measures)
  *          length) may end up being modified.
  *
  *  See the documentation for the fixparameters structure in the sequence.hpp
- *  module.
+ *  module. Apart from the numeric settings (and note-map file-name), the
+ *  following enumerations from the caluclations module apply:
+ *
+ *      -   lengthfix: none, measures, or rescale.
+ *          -   The effect depends on the measures number as entered by the
+ *              user. There are three choices for the measures number:
+ *              -   Strict integer. "lengthfix::measures" is used, and
+ *                  the changes yields a non-1.0 scale factor.
+ *              -   Float (i.e. with a decimal point), then
+ *                  "lengthfix::rescale" is used.
+ *                  The difference??? TBD.
+ *              -   Time signature (e.g. "3/4"). Again the setting is
+ *                  "lengthfix::measures), the scale factor is set, and
+ *                  in addition, the use-time-signature flag is set. In this
+ *                  process, the number of measures might not actually change.
+ *              Note that once specified, the number of measures is rounded
+ *              up to the nearest integral value.
+ *
+ *      -   alteration: none, quantize, jitter, etc.
+ *      -   fixeffect: none, shifted, shrunk, etc. This starts out as none.
+ *          The fix function below then sets bits according to the adjustments
+ *          actually made.
+ *
+ * \param [inout] fp
+ *      Provides input to the changes to be made, and also receives any
+ *      side-effects of the change.
  *
  * \return
  *      Returns true if the fixup succeeded.
  */
 
 bool
-sequence::fix_pattern (fixparameters & params)
+sequence::fix_pattern (fixparameters & fp)
 {
     automutex locker(m_mutex);
-    double newmeasures = params.fp_measures;
-    double newscalefactor = params.fp_scale_factor;
+    double newmeasures = fp.fp_measures;
+    double newscalefactor = fp.fp_scale_factor;
     bool result = valid_scale_factor(newscalefactor) &&
         valid_scale_factor(newmeasures, true);
 
     if (result)
     {
+        const bool userchange = true;
         int currentbars = get_measures();
         midipulse currentlen = get_length();
         midipulse newlength = 0;
         fixeffect tempefx = fixeffect::none;
         push_undo();
-        if (params.fp_align_left)
+        if (fp.fp_align_left)
         {
-            params.fp_align_left = m_events.align_left();   /* realigned?   */
-            if (params.fp_align_left)
+            fp.fp_align_left = m_events.align_left();   /* realigned?   */
+            if (fp.fp_align_left)
                 tempefx = bit_set(tempefx, fixeffect::shifted);
             else
                 result = false;                             /* op failed    */
         }
-        if (params.fp_reverse || params.fp_reverse_in_place)
-            result = m_events.reverse_events(params.fp_reverse_in_place);
+        if (fp.fp_reverse || fp.fp_reverse_in_place)
+            result = m_events.reverse_events(fp.fp_reverse_in_place);
 
         if (result)
         {
-            bool fixmeasures = params.fp_fix_type == lengthfix::measures;
-            bool fixscale = params.fp_fix_type == lengthfix::rescale;
-            bool timesig = params.fp_use_time_signature;
+            bool fixmeasures = fp.fp_fix_type == lengthfix::measures;
+            bool fixscale = fp.fp_fix_type == lengthfix::rescale;
+            bool timesig = fp.fp_use_time_signature;
+            bool doscale = newmeasures != double(currentbars);
+            if (doscale)
+            {
+                newscalefactor = newmeasures / double(currentbars);
+                newmeasures = trunc_measures(newmeasures);
+            }
+            else
+                doscale = fnotequal(newscalefactor, 1.0);
+
             if (fixmeasures)
             {
-                if (timesig)
+                if (doscale)                                /* must do 1st  */
                 {
-                    result = apply_length
-                    (
-                        params.fp_beats_per_bar, int(get_ppqn()),
-                        params.fp_beat_width, int(newmeasures)
-                    );
-                }
-                else if (newmeasures != double(currentbars))
-                {
-                    newscalefactor = newmeasures / double(currentbars);
-                    newmeasures = trunc_measures(newmeasures);
                     newlength = m_events.apply_time_factor
                     (
-                        newscalefactor, params.fp_save_note_length
+                        newscalefactor, fp.fp_save_note_length
                     );
                 }
-                else
-                    result = false;                         /* op not done  */
+                if (timesig)
+                {
+#if 0
+                    result = apply_length                   /* user change  */
+                    (
+                        fp.fp_beats_per_bar, int(get_ppqn()),
+                        fp.fp_beat_width, int(newmeasures), userchange
+                    );
+#endif
+                    /*
+                     * Work it as done in qseqeditframe64.
+                     */
+
+                    int bpb = fp.fp_beats_per_bar;
+                    set_beats_per_bar(bpb, userchange);
+                    (void) apply_length(bpb, 0, 0);
+
+                    int bw = fp.fp_beat_width;
+                    set_beat_width(bw, userchange);
+                    (void) apply_length(0, 0, bw);
+
+                    fp.fp_measures = get_measures();
+                }
             }
             else if (fixscale)
             {
                 newlength = m_events.apply_time_factor
                 (
-                    newscalefactor, params.fp_save_note_length
+                    newscalefactor, fp.fp_save_note_length
                 );
             }
             if (newlength > 0 && newlength != currentlen)
@@ -3452,13 +3498,13 @@ sequence::fix_pattern (fixparameters & params)
                 else if (newscalefactor < 1.00)
                     tempefx = bit_set(tempefx, fixeffect::shrunk);
             }
-            switch (params.fp_alter_type)
+            switch (fp.fp_alter_type)
             {
             case alteration::tighten:
 
                 result = m_events.quantize_events
                 (
-                    params.fp_tighten_range, 1, true    /* all events   */
+                    fp.fp_tighten_range, 1, true    /* all events   */
                 );
                 break;
 
@@ -3466,26 +3512,26 @@ sequence::fix_pattern (fixparameters & params)
 
                 result = m_events.quantize_events
                 (
-                    params.fp_quantize_range, 1, true   /* all events   */
+                    fp.fp_quantize_range, 1, true   /* all events   */
                 );
                 break;
 
             case alteration::jitter:
 
-                result = jitter_notes(params.fp_jitter_range, true);
+                result = jitter_notes(fp.fp_jitter_range, true);
                 break;
 
             case alteration::random:
 
-                result = randomize_notes (params.fp_random_range, true);
+                result = randomize_notes (fp.fp_random_range, true);
                 break;
 
             case alteration::notemap:
 
-                result = ! params.fp_notemap_file.empty();
+                result = ! fp.fp_notemap_file.empty();
                 if (result)
                 {
-                    result = perf()->repitch_all(params.fp_notemap_file, *this);
+                    result = perf()->repitch_all(fp.fp_notemap_file, *this);
                 }
                 break;
 
@@ -3495,9 +3541,9 @@ sequence::fix_pattern (fixparameters & params)
             }
             if (result)
             {
-                params.fp_scale_factor = newscalefactor;
-                params.fp_measures = double(get_measures());
-                params.fp_effect = tempefx;
+                fp.fp_scale_factor = newscalefactor;
+                fp.fp_measures = double(get_measures());
+                fp.fp_effect = tempefx;
             }
         }
         else
@@ -6157,7 +6203,7 @@ sequence::apply_length
         if (bpb != get_beats_per_bar())     /* ca 2024-12-10                */
             reset_L_R_markers = true;
 
-        set_beats_per_bar(bpb);
+        set_beats_per_bar(bpb, user_change);
     }
 
     if (ppq == 0)
@@ -6174,10 +6220,9 @@ sequence::apply_length
         if (bw != get_beat_width())
             reset_L_R_markers = true;
 
-        set_beat_width(bw);
+        set_beat_width(bw, user_change);
     }
-
-    if (measures == 0)                      /* added 2022-04-29             */
+    if (measures == 0)
     {
         (void) unit_measure(true);          /* reset the unit-measure       */
         measures = get_measures(0);         /* calculate the current bars   */

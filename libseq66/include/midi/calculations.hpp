@@ -112,7 +112,7 @@ waveform_cast (int v)
 
 enum class lengthfix
 {
-    none = 0,                   /**< Not adjusting pattern length.          */
+    none = 0,                   /**< Not adjusting pattern length directly. */
     measures,                   /**< The user sets the desired measures.    */
     rescale,                    /**< The user wants to rescale the pattern. */
     max                         /**< Illegal value.                         */

@@ -1984,38 +1984,22 @@ qseqeditframe64::set_beats_per_bar (int bpb, qbase::status qs)
         if (doable)
         {
             bool user_change = qs == qbase::status::edit;
-
-#if defined USE_WOULD_TRUNCATE_BPB_BW
-            bool reset = false;
-            if (user_change)
-                reset = would_truncate(bpb, m_beat_width);
-
-            if (reset)
+            if (loggable)
             {
-                /* reset_beats_per_bar();  simply ignore */
+                m_beats_per_bar_to_log = bpb;
+                set_log_timesig_text
+                (
+                    m_beats_per_bar_to_log, m_beat_width_to_log
+                );
             }
-            else
+            else                                    /* get_left_tick()  */
             {
-#endif
-                if (loggable)
-                {
-                    m_beats_per_bar_to_log = bpb;
-                    set_log_timesig_text
-                    (
-                        m_beats_per_bar_to_log, m_beat_width_to_log
-                    );
-                }
-                else                                    /* get_left_tick()  */
-                {
-                    m_beats_per_bar = m_beats_per_bar_to_log = bpb;
-                    track().set_beats_per_bar(bpb, user_change);
-                    (void) track().apply_length(bpb, 0, 0); /* no measures  */
-                    if (log_timesig(false))
-                        set_track_change();
-                }
-#if defined USE_WOULD_TRUNCATE_BPB_BW
+                m_beats_per_bar = m_beats_per_bar_to_log = bpb;
+                track().set_beats_per_bar(bpb, user_change);
+                (void) track().apply_length(bpb, 0, 0); /* no measures  */
+                if (log_timesig(false))
+                    set_track_change();
             }
-#endif
         }
     }
 }
@@ -2123,62 +2107,46 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
 
         if (doable)
         {
+            /*
+             * If not a power of 2, then just set for a c_timesig SeqSpec.
+             */
+
             bool user_change = qs == qbase::status::edit;
-
-#if defined USE_WOULD_TRUNCATE_BPB_BW
-            bool reset = false;
-            if (user_change)
-                reset = would_truncate(m_beats_per_bar, bw);
-
-            if (reset)
+            bool rational = is_power_of_2(bw);
+            if (rational)                       /* use OK'ed it         */
             {
-                /* reset_beat_width(); simply ignore */
+                if (loggable)
+                {
+                    m_beat_width_to_log = bw;
+                    set_log_timesig_text
+                    (
+                        m_beats_per_bar_to_log, m_beat_width_to_log
+                    );
+                }
+                else                             /* get_left_tick()      */
+                {
+                    m_beat_width = m_beat_width_to_log = bw;
+                    track().set_beat_width(bw, user_change);
+                    (void) track().apply_length(0, 0, bw);
+                    if (log_timesig(false))
+                        set_track_change();
+                }
             }
             else
             {
-#endif
-                /*
-                 * If not a power of 2, then just set for a c_timesig SeqSpec.
-                 */
-
-                bool rational = is_power_of_2(bw);
-                if (rational)                       /* use OK'ed it         */
+                bool allow_odd_beat_width = qt_prompt_ok
+                (
+                    "MIDI supports only powers of 2 for beat-width.",
+                    "Thus, saved as a global Seq66-specific MIDI event, "
+                    "not a time-signature event. "
+                    "Overriden by existing time-signature events."
+                );
+                if (allow_odd_beat_width)
                 {
-                    if (loggable)
-                    {
-                        m_beat_width_to_log = bw;
-                        set_log_timesig_text
-                        (
-                            m_beats_per_bar_to_log, m_beat_width_to_log
-                        );
-                    }
-                    else                             /* get_left_tick()      */
-                    {
-                        m_beat_width = m_beat_width_to_log = bw;
-                        track().set_beat_width(bw, user_change);
-                        (void) track().apply_length(0, 0, bw);
-                        if (log_timesig(false))
-                            set_track_change();
-                    }
+                    track().set_beat_width(bw, user_change);
+                    (void) track().apply_length(0, 0, bw);
                 }
-                else
-                {
-                    bool allow_odd_beat_width = qt_prompt_ok
-                    (
-                        "MIDI supports only powers of 2 for beat-width.",
-                        "Thus, saved as a global Seq66-specific MIDI event, "
-                        "not a time-signature event. "
-                        "Overriden by existing time-signature events."
-                    );
-                    if (allow_odd_beat_width)
-                    {
-                        track().set_beat_width(bw, user_change);
-                        (void) track().apply_length(0, 0, bw);
-                    }
-                }
-#if defined USE_WOULD_TRUNCATE_BPB_BW
             }
-#endif
         }
     }
 }

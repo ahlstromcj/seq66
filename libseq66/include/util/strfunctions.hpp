@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-12-30
+ * \updates       2025-01-01
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -115,6 +115,7 @@ extern bool string_to_time_signature
     const std::string & s,
     int & beats, int & width
 );
+extern std::string time_signature_string (int beats, int width);
 extern bool string_to_int_pair
 (
     const std::string & s,

@@ -78,8 +78,11 @@ class performer;
 using colorbyte = char;
 
 /**
- *  A structure for encapsulating the many parameters of sequence ::
- *  fix_pattern().  Must be created using an initializer list.
+ *  A structure for encapsulating the many input parameters of sequence ::
+ *  fix_pattern(). Also serves as an output to describe exactly what
+ *  happened with the calculations.
+ *
+ *  Must be created using an initializer list.
  *
  * \var fp_fix_type
  *      Indicates if the length of the pattern is to be affected, either by
@@ -121,20 +124,20 @@ using colorbyte = char;
  *      If fp_use_time_signature is true, then this value is assumed to be the
  *      (possibly new) beat width.
  *
- * \var [inout] fp_measures
- *      The final length of the pattern,  Ignored if the fix_type is not
+ * \var fp_measures
+ *      The final length of the pattern, Ignored if the fix_type is not
  *      lengthfix::measures, but the new bar count is returned here for
  *      display purposes.
  *
- * \var [inout] fp_scale_factor
+ * \var fp_scale_factor
  *      The factor used to change the length of the pattern,  Ignored if the
  *      fix_type is not lengthfix::rescale. Sanity checked to not too small,
  *      not too large, and not 0.  Might be changed according to process, so
  *      that the final value can be displayed.
  *
- * \var [out] fp_effect
- *      Indicate the effect(s) of the change, using the fixeffect enumeration
- *      in the calculations module.
+ * \var fp_effect
+ *      Indicates the effect(s) of the change, using the fixeffect enumeration
+ *      in the calculations module. Intended to be an output field.
  */
 
 struct fixparameters
@@ -150,12 +153,12 @@ struct fixparameters
     bool fp_reverse_in_place;
     bool fp_save_note_length;
     bool fp_use_time_signature;
-    int & fp_beats_per_bar;
-    int & fp_beat_width;
-    double & fp_measures;
-    double & fp_scale_factor;
+    int fp_beats_per_bar;
+    int fp_beat_width;
+    double fp_measures;
+    double fp_scale_factor;
     std::string fp_notemap_file;
-    fixeffect & fp_effect;
+    fixeffect fp_effect;
 };
 
 /**

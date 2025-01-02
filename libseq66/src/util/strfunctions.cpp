@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-12-08
+ * \updates       2025-01-01
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -766,6 +766,19 @@ bool
 string_to_time_signature (const std::string & s, int & beats, int & width)
 {
     return string_to_int_pair(s, beats, width, "/");
+}
+
+std::string
+time_signature_string (int beats, int width)
+{
+    std::string result;
+    if (beats > 0 && width > 0)         /* could also test for <= 32        */
+    {
+        char temp[32];
+        (void) snprintf(temp, sizeof temp, "%d/%d", beats, width);
+        result = temp;
+    }
+    return result;
 }
 
 /**

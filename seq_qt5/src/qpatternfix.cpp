@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2024-12-31
+ * \updates       2025-01-01
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -110,8 +110,8 @@ qpatternfix::qpatternfix
     m_reverse_in_place  (false),                    /* bool fp_reverse_...  */
     m_save_note_length  (false),                    /* bool fp_save_note... */
     m_use_time_sig      (false),                    /* bool fp_use_time_... */
-    m_time_sig_beats    (0),                        /* int fp_beats_per_bar */
-    m_time_sig_width    (0),                        /* int fp_beat_width    */
+    m_time_sig_beats    (s.get_beats_per_bar()),    /* int fp_beats_per_bar */
+    m_time_sig_width    (s.get_beat_width()),       /* int fp_beat_width    */
     m_is_modified       (false),
     m_was_clean         (! s.modified())
 {
@@ -467,6 +467,9 @@ qpatternfix::slot_length_fix (int fixlengthid)
  *  Tricky: If setting integer measures, the end effect is scaling, not
  *  truncating. In fact, the only difference between measure and scale-factor
  *  changes is minimal.
+ *
+ *  Tricky: A fractional measures value, such as "3/4", is converted to a
+ *  decimal number (here, "0.75") by string_to_double().
  */
 
 void
@@ -474,10 +477,11 @@ qpatternfix::slot_measure_change ()
 {
     QString t = ui->line_edit_measures->text();
     std::string tc = t.toStdString();
-    double m = string_to_double(tc, 1.0);       /* measures is a float here */
+    double m = string_to_double(tc, 4.0, 2);    /* measures is a float here */
     if (sequence::valid_scale_factor(m, true))  /* applies to measures, too */
     {
-        int beats, width;
+        int beats = m_time_sig_beats;
+        int width = m_time_sig_width;
         bool is_fraction = string_to_time_signature(tc, beats, width);
         bool different = fnotequal(m, m_measures);
         if (different || is_fraction)
@@ -485,14 +489,30 @@ qpatternfix::slot_measure_change ()
             bool floater = is_floating_string(tc);
             m_length_type = floater ? lengthfix::rescale : lengthfix::measures;
             ui->btn_change_pick->setChecked(true);
+            m_use_time_sig = is_fraction;
+            if (is_fraction)
+            {
+                std::string ts = time_signature_string
+                (
+                    m_time_sig_beats, m_time_sig_width
+                );
+                double oldts = string_to_double(ts, 1.0, 2.0);  /* m = new  */
+                m_scale_factor = m / oldts;
+//              m_measures = trunc_measures(m_scale_factor * m_measures);
+                m_measures = trunc_measures(m_measures / m_scale_factor );
+            }
+            else
+            {
+                m_scale_factor = m / m_measures;
+                m_measures = trunc_measures(m);     /* float truncation     */
+            }
             if (beats > 0 && beats < 96)            /* just a sanity check  */
                 m_time_sig_beats = beats;           /* fraction numerator   */
 
             if (width > 0 && width < 96)            /* just a sanity check  */
                 m_time_sig_width = width;           /* fraction denominator */
 
-            m_use_time_sig = is_fraction;
-            ui->btn_effect_time_sig->setChecked(is_fraction);
+            m = m_measures;
 
             midipulse curlength = track().get_length();
             midipulse newlength = midipulse(track().unit_measure() * m);
@@ -500,8 +520,7 @@ qpatternfix::slot_measure_change ()
             bool expanded = newlength > curlength;
             ui->btn_effect_shrink->setChecked(shrunk);
             ui->btn_effect_expand->setChecked(expanded);
-            m_scale_factor = m / m_measures;
-            m_measures = trunc_measures(m);         /* float truncation     */
+            ui->btn_effect_time_sig->setChecked(is_fraction);
 
             std::string scale = double_to_string(m_scale_factor, 2);
             std::string meass = double_to_string(m_measures);
@@ -684,13 +703,13 @@ qpatternfix::set_dirty ()
 {
     track().set_dirty();
     if (not_nullptr(m_edit_frame))
-        m_edit_frame->set_dirty();
+        m_edit_frame->set_track_change(true);   // m_edit_frame->set_dirty();
 }
 
 void
 qpatternfix::slot_set ()
 {
-    fixeffect efx;
+    fixeffect efx = fixeffect::none;
     fixparameters fp =                                  /* value structure  */
     {
         m_length_type, m_alt_type,
@@ -715,6 +734,11 @@ qpatternfix::slot_set ()
 
         if (m_use_time_sig)
         {
+            if (not_nullptr(m_edit_frame))
+            {
+                m_edit_frame->set_beats_per_bar(m_time_sig_beats);
+                m_edit_frame->set_beat_width(m_time_sig_width);
+            }
             temp = std::to_string(m_time_sig_beats);
             temp += "/";
             temp += std::to_string(m_time_sig_width);
