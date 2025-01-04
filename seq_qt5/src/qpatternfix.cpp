@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2025-01-01
+ * \updates       2025-01-04
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -101,8 +101,8 @@ qpatternfix::qpatternfix
     m_full_range        (s.snap()),
     m_random_range      (usr().randomization_amount()),
     m_jitter_range      (usr().jitter_range(s.get_ppqn() / 4)), /* fp_...   */
-    m_reverse_notemap   (false),
     m_notemap_file      (rc().notemap_filename()),
+    m_reverse_notemap   (false),
     m_measures          (double(m_backup_measures)), /* fp_measures         */
     m_scale_factor      (1.0),                      /* fp_scale_factor      */
     m_align_left        (false),                    /* bool fp_align_left   */
@@ -413,7 +413,8 @@ qpatternfix::modify ()
 }
 
 /**
- *  All this does is ...
+ *  All this does is ... seems a bit useless.
+ *
  *  because we don't want to force the user to have to modify anything to
  *  Set the values again.
  */
@@ -423,10 +424,10 @@ qpatternfix::unmodify (bool reset_fields)
 {
     if (reset_fields)
     {
+        ui->btn_reset->setEnabled(false);
         std::string temp = std::to_string(track().get_measures());
         ui->line_edit_measures->setText(qt(temp));
         ui->line_edit_scale->setText("1.0");
-        ui->btn_reset->setEnabled(false);
 
         /*
          * ui->btn_effect_shift->setChecked(false);
@@ -498,8 +499,7 @@ qpatternfix::slot_measure_change ()
                 );
                 double oldts = string_to_double(ts, 1.0, 2.0);  /* m = new  */
                 m_scale_factor = m / oldts;
-//              m_measures = trunc_measures(m_scale_factor * m_measures);
-                m_measures = trunc_measures(m_measures / m_scale_factor );
+                m_measures = trunc_measures(m_measures / m_scale_factor);
             }
             else
             {
@@ -717,7 +717,7 @@ qpatternfix::slot_set ()
         m_align_left, m_reverse, m_reverse_in_place,
         m_save_note_length, m_use_time_sig, m_time_sig_beats,
         m_time_sig_width, m_measures, m_scale_factor,
-        m_notemap_file, efx
+        m_notemap_file, m_reverse_notemap, efx
     };
     bool success = perf().fix_pattern(track().seq_number(), fp);
     if (success)
@@ -736,8 +736,10 @@ qpatternfix::slot_set ()
         {
             if (not_nullptr(m_edit_frame))
             {
-                m_edit_frame->set_beats_per_bar(m_time_sig_beats);
-                m_edit_frame->set_beat_width(m_time_sig_width);
+                m_edit_frame->set_bpb_and_bw
+                (
+                    m_time_sig_beats, m_time_sig_width
+                );
             }
             temp = std::to_string(m_time_sig_beats);
             temp += "/";
@@ -753,6 +755,7 @@ qpatternfix::slot_set ()
         ui->btn_effect_shift->setChecked(bitshifted);
         ui->btn_effect_shrink->setChecked(bitshrunk);
         ui->btn_effect_expand->setChecked(bitexpanded);
+        (void) track().verify_and_link();               /* refresh          */
         set_dirty();                                    /* for redrawing    */
         unmodify(false);                                /* keep fields      */
     }
@@ -761,29 +764,58 @@ qpatternfix::slot_set ()
 void
 qpatternfix::slot_reset ()
 {
-    track().set_beats_per_bar(m_backup_beats);          /* restore original */
-    track().set_beat_width(m_backup_width);             /* ditto            */
-    track().apply_length(m_backup_measures);            /* simple overload  */
     track().events() = m_backup_events;                 /* restore events   */
-    m_measures = double(m_backup_measures);
-    m_align_left = m_use_time_sig = false;
-    m_save_note_length = false;
-    m_time_sig_beats = m_time_sig_width = 0;
-    m_scale_factor = 1.0;
+    track().apply_length
+    (
+        m_backup_beats, 0, m_backup_width, m_backup_measures
+    );
+
+    /*
+     * Ordered as in the constructor initializer list.
+     */
+
     m_length_type = lengthfix::none;
     m_alt_type = alteration::none;
     m_tighten_range = track().snap() / 2;
     m_full_range = track().snap();
     m_random_range = usr().randomization_amount();
     m_jitter_range = usr().jitter_range(track().get_ppqn() / 4);
-    m_reverse_notemap = false;
     m_notemap_file = rc().notemap_filename();
+    m_reverse_notemap = false;
+    m_measures = double(m_backup_measures);
+    m_scale_factor = 1.0;
+    m_align_left = false;
+    m_reverse = false;
+    m_reverse_in_place = false;
+    m_save_note_length = false;
+    m_time_sig_beats = m_backup_beats;
+    m_time_sig_width = m_backup_width;
     initialize(false);
-    slot_effect_clear();
-    unmodify();                                         /* change fields    */
-    set_dirty();                                        /* for redrawing    */
+
+    std::string temp = std::to_string(int(track().get_length()));
+    ui->label_pulses->setText(qt(temp));
+    if (m_use_time_sig)
+    {
+        if (not_nullptr(m_edit_frame))
+        {
+            m_edit_frame->set_bpb_and_bw(m_backup_beats, m_backup_width);
+        }
+        temp = std::to_string(m_backup_beats);
+        temp += "/";
+        temp += std::to_string(m_backup_width);
+        m_use_time_sig = false;
+    }
+    else
+        temp = double_to_string(m_measures);
+
+    (void) track().verify_and_link();                   /* refresh          */
+    ui->line_edit_measures->setText(qt(temp));
+    temp = double_to_string(m_scale_factor);
+    ui->line_edit_scale->setText(qt(temp));
     if (m_was_clean)
         track().unmodify();
+
+    set_dirty();                                        /* for redrawing    */
 }
 
 void

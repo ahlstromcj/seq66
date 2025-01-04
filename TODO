@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.17
 Chris Ahlstrom
-2019-04-13 to 2025-01-02
+2019-04-13 to 2025-01-04
 
 Hottest:
 
@@ -17,6 +17,9 @@ Hottest:
             etc. in dark themes like monogreen. Does slot text change to
             match; we do not like that.
     -   Pattern fix:
+        -   Made  a function to set beats/width both at the same time; it
+            works for 3/4 but not 5/8 after that. Document that a Reset
+            is needed if you change your mind.
         -   Add usage/processing of Quantization parameters in
             line_edit_q_full/jitter/none/tighten.
         -   Make sure changes raise the modified flag and asterisk indicator.

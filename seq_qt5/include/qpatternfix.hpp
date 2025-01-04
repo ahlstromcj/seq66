@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2024-12-08
+ * \updates       2025-01-04
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -249,17 +249,17 @@ private:
     int m_jitter_range;
 
     /**
-     *  Indicates if the note-map is to be reversed.
-     */
-
-    bool m_reverse_notemap;
-
-    /**
      *  Holds the file-name of the notemap file, which is a '.drums' file,
      *  but we also want to support '.notemap'.
      */
 
     std::string m_notemap_file;
+
+    /**
+     *  If true, use reverse-mapping via the note-map file.
+     */
+
+    bool m_reverse_notemap;
 
     /**
      *  The current number of measures for the adjustment.  This is a double

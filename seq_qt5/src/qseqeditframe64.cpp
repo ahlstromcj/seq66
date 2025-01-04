@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2024-12-31
+ * \updates       2025-01-03
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2147,6 +2147,82 @@ qseqeditframe64::set_beat_width (int bw, qbase::status qs)
                     (void) track().apply_length(0, 0, bw);
                 }
             }
+        }
+    }
+}
+
+/**
+ *  This code is meant to change beats/bar and beat-width at the same
+ *  time, to avoid adding two time-signature events.
+ *
+ *  In addition, it sets the data type to Note Ons. This is meant to
+ *  work with the fix-pattern time-signature operation.
+ */
+
+void
+qseqeditframe64::set_bpb_and_bw (int bpb, int bw, qbase::status qs)
+{
+    if (usr().bpb_is_valid(bpb) && usr().bw_is_valid(bw))
+    {
+        bool loggable = perf().get_tick() > track().snap() / 2;
+        bool doable;
+        if (loggable)
+        {
+            doable = (bw != m_beat_width_to_log) ||
+                (bpb != m_beats_per_bar_to_log);
+        }
+        else
+        {
+            doable = (bpb != m_beats_per_bar) || (bw != m_beat_width);
+        }
+        if (doable)
+        {
+            /*
+             * If not a power of 2, then just set for a c_timesig SeqSpec.
+             */
+
+            bool user_change = qs == qbase::status::edit;
+            bool rational = is_power_of_2(bw);
+            if (rational)                       /* use OK'ed it         */
+            {
+                if (loggable)
+                {
+                    m_beats_per_bar_to_log = bpb;
+                    m_beat_width_to_log = bw;
+                    set_log_timesig_text
+                    (
+                        m_beats_per_bar_to_log, m_beat_width_to_log
+                    );
+                }
+                else                             /* get_left_tick()      */
+                {
+                    m_beats_per_bar = m_beats_per_bar_to_log = bpb;
+                    m_beat_width = m_beat_width_to_log = bw;
+                    track().set_beats_per_bar(bpb, user_change);
+                    track().set_beat_width(bw, user_change);
+                    (void) track().apply_length(bpb, 0, bw);
+                    if (log_timesig(false))
+                        set_track_change();
+                }
+                set_data_type(EVENT_NOTE_ON);
+            }
+#if 0   // TODO???
+            else
+            {
+                bool allow_odd_beat_width = qt_prompt_ok
+                (
+                    "MIDI supports only powers of 2 for beat-width.",
+                    "Thus, saved as a global Seq66-specific MIDI event, "
+                    "not a time-signature event. "
+                    "Overriden by existing time-signature events."
+                );
+                if (allow_odd_beat_width)
+                {
+                    track().set_beat_width(bw, user_change);
+                    (void) track().apply_length(0, 0, bw);
+                }
+            }
+#endif
         }
     }
 }

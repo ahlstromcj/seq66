@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-01-02
+ * \updates       2025-01-04
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3413,8 +3413,6 @@ sequence::fix_pattern (fixparameters & fp)
 
     if (result)
     {
-        const bool userchange = true;
-        int currentbars = get_measures();
         midipulse currentlen = get_length();
         midipulse newlength = 0;
         fixeffect tempefx = fixeffect::none;
@@ -3435,15 +3433,7 @@ sequence::fix_pattern (fixparameters & fp)
             bool fixmeasures = fp.fp_fix_type == lengthfix::measures;
             bool fixscale = fp.fp_fix_type == lengthfix::rescale;
             bool timesig = fp.fp_use_time_signature;
-            bool doscale = newmeasures != double(currentbars);
-            if (doscale)
-            {
-                newscalefactor = newmeasures / double(currentbars);
-                newmeasures = trunc_measures(newmeasures);
-            }
-            else
-                doscale = fnotequal(newscalefactor, 1.0);
-
+            bool doscale = fnotequal(newscalefactor, 1.0);
             if (fixmeasures)
             {
                 if (doscale)                                /* must do 1st  */
@@ -3455,26 +3445,11 @@ sequence::fix_pattern (fixparameters & fp)
                 }
                 if (timesig)
                 {
-#if 0
-                    result = apply_length                   /* user change  */
-                    (
-                        fp.fp_beats_per_bar, int(get_ppqn()),
-                        fp.fp_beat_width, int(newmeasures), userchange
-                    );
-#endif
                     /*
-                     * Work it as done in qseqeditframe64.
+                     * We no longer apply length or set the beats and width
+                     * here. It is done in qpatternfix::slot_set(), along
+                     * with a verify-and-link to ensure refresh.
                      */
-
-                    int bpb = fp.fp_beats_per_bar;
-                    set_beats_per_bar(bpb, userchange);
-                    (void) apply_length(bpb, 0, 0);
-
-                    int bw = fp.fp_beat_width;
-                    set_beat_width(bw, userchange);
-                    (void) apply_length(0, 0, bw);
-
-                    fp.fp_measures = get_measures();
                 }
             }
             else if (fixscale)

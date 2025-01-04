@@ -155,6 +155,7 @@ qseqroll::~qseqroll ()
  *  update() only if necessary.  See qseqbase::check_dirty().
  *
  *  bool ok = track().playing();
+ *  if (m_draw_whole_grid)
  */
 
 void
