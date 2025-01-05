@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2024-12-30
+% \update      2025-01-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -298,6 +298,10 @@
    This button quantizes the selected events as per
    the \textbf{Grid Snap} setting.
 
+% ======================================================================
+
+\subsubsection{Pattern Editor / Tools Popup}
+
    \itempar{Tools}{pattern editor!tools}
    This button brings up a nested menu of tools for modifying selected
    events and notes.
@@ -350,8 +354,23 @@
       \item \textbf{Pattern fix} allows for fixing up a new pattern
          that was recorded with some timing errors, or transforming the
          pattern in various ways.
-         See the figure below.
+         See the section below; there is a lot to explain.
    \end{enumber}
+
+\subsubsection{Pattern Editor / Tools Popup / Pattern Fix}
+
+   The pattern fix dialog provides a way for more control over the
+   modifications of a pattern.
+   It is fairly intuitive to use, with some exceptions.
+   It's complex and deserves a section of its own.
+
+   Before we start, some obvious limitations.
+   Applying a fix, then deciding to change the fix, requires
+   one to click the \textbf{Reset} before applying the next change.
+   Now, if the change does not look correct, one can close the pattern
+   editor and reopen it to see if the change took hold correctly.
+   Also, once a change is made, the modify flag (asterisk) is shown,
+   but currently a reset cannot remove that flag.
 
 \begin{figure}[H]
    \centering 
@@ -363,7 +382,6 @@
    \index{pattern-editor!fix}
    When this dialog is used, the time-stamp of \textsl{every event} in the
    pattern will be changed.
-   It is fairly intuitive to use.
    Once selected, the pattern number is shown in the title-bar and in a
    read-only text field.
    The \textbf{Length Change} selector allows for the following actions:
@@ -378,6 +396,8 @@
          floating-point number (e.g. 1, 1.0, 1.75),
          or as a simple time-signature fraction (e.g. "3/4"; the "/" is a
          key indicator of this kind of change).
+         In some ways it is similar to \textbf{Scale Factor}, described
+         below.
          \begin{itemize}
             \item \textbf{Measures}.
                Entering an integer or a floating-point scale factor will scale
@@ -462,8 +482,11 @@
    Any accidental changes can be \textbf{Reset}
    in this dialog.
    Undo in the pattern-editor itself with \texttt{Ctrl-Z} affects
+
    only MIDI events, not things like changing time-signature from the
    drop-downs.
+
+\subsubsection{Pattern Editor / Tools Popup / More Tools}
 
    \itempar{Follow Progress}{pattern editor!tools}
    This button toggles whether or not the progress bar follows

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2025-01-04
+ * \updates       2025-01-05
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -514,10 +514,18 @@ qpatternfix::slot_measure_change ()
 
             m = m_measures;
 
-            midipulse curlength = track().get_length();
-            midipulse newlength = midipulse(track().unit_measure() * m);
-            bool shrunk = newlength < curlength;
-            bool expanded = newlength > curlength;
+            /*
+             * More reliable is to use the scale factor, since measures
+             * get rounded up and match the current pattern length.
+             *
+             * midipulse curlength = track().get_length();
+             * midipulse newlength = midipulse(track().unit_measure() * m);
+             * bool shrunk = newlength < curlength;
+             * bool expanded = newlength > curlength;
+             */
+
+            bool shrunk = flessthan(m_scale_factor, 1.0);
+            bool expanded = fgreaterthan(m_scale_factor, 1.0);
             ui->btn_effect_shrink->setChecked(shrunk);
             ui->btn_effect_expand->setChecked(expanded);
             ui->btn_effect_time_sig->setChecked(is_fraction);

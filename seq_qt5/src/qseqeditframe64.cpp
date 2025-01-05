@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-01-03
+ * \updates       2025-01-05
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -185,6 +185,12 @@
 
 namespace seq66
 {
+
+/*
+ *  Secret functionality for developer usage.
+ */
+
+static const bool s_use_spacer_button_2 = true;
 
 /*
  *  We have an issue that using the new (and larger) qseqeditframe64 class in
@@ -1099,6 +1105,23 @@ qseqeditframe64::qseqeditframe64
     );
 
     /*
+     * Secret spacer button.
+     */
+
+    if (s_use_spacer_button_2 && ! shorter)
+    {
+        ui->spacer_button_2->setText("&T");
+        ui->spacer_button_2->setEnabled(true);
+        ui->spacer_button_2->setToolTip("Show the pattern-fix dialog");
+        connect
+        (
+            ui->spacer_button_2, SIGNAL(clicked()),
+            this, SLOT(slot_spacer_button_2())
+        );
+    }
+
+
+    /*
      * This little button is a workaround for Qt's lack of a signal
      * when the window manager's "X" button in the title bar of a non-main
      * window is clicked.  Doesn't work right, leaves a ghost window and
@@ -1920,6 +1943,16 @@ qseqeditframe64::slot_log_timesig ()
 
         set_track_change();
     }
+}
+
+/**
+ *  The spacer-button has developer-dependent tasks, not documented.
+ */
+
+void
+qseqeditframe64::slot_spacer_button_2 ()
+{
+    show_pattern_fix();
 }
 
 /**

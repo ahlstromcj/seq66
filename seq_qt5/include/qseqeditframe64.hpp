@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-01-03
+ * \updates       2025-01-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -273,6 +273,7 @@ private slots:
     void slot_update_zoom (int index);
     void update_seq_name ();
     void slot_log_timesig ();
+    void slot_spacer_button_2 ();
     void update_beats_per_bar (int index);
     void text_beats_per_bar ();
     void update_beat_width (int index);
