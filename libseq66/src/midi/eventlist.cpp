@@ -1154,13 +1154,13 @@ eventlist::move_selected_events (midipulse delta_tick)
 
 /**
  *  Makes the first event start at time 0. Might also change the length of
- *  the pattern.
+ *  the pattern. Hmmm???
  *
  * \param relink
- *      If true, the events are sorted and relinked.
+ *      If true (the default is false), the events are sorted and relinked.
  *
  * \return
- *      Returns true all timestamps were adjusted.Otherwise, false is
+ *      Returns true all timestamps were adjusted. Otherwise, false is
  *      returned, which means the original events should be restored.
  */
 
@@ -1171,13 +1171,13 @@ eventlist::align_left (bool relink)
     if (result)
     {
         const auto startev = m_events.begin();
-        midipulse ts = startev->timestamp();
-        result = ts > 0;
+        midipulse shift = startev->timestamp();
+        result = shift > 0;
         if (result)
         {
             for (auto & ev : m_events)
             {
-                midipulse newstamp = ev.timestamp() - ts;
+                midipulse newstamp = ev.timestamp() - shift;
                 if (newstamp >= 0)
                 {
                     ev.set_timestamp(newstamp);
@@ -1191,8 +1191,53 @@ eventlist::align_left (bool relink)
             if (result && relink)
             {
                 sort();
-                verify_and_link();
-                result = get_max_timestamp();
+                result = verify_and_link();
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ *  Makes the last event end at the end of the pattern.
+ *
+ * \param relink
+ *      If true (the default is false), the events are sorted and relinked.
+ *
+ * \return
+ *      Returns true all timestamps were adjusted. Otherwise, false is
+ *      returned, which means the original events should be restored.
+ */
+
+bool
+eventlist::align_right (bool relink)
+{
+    bool result = ! empty();
+    if (result)
+    {
+        const auto endev = m_events.rbegin();
+        midipulse endts = get_length();
+        midipulse shift = endts - endev->timestamp() - 1;
+        result = shift > 0;
+        if (result)
+        {
+            for (auto & ev : m_events)
+            {
+                midipulse newstamp = ev.timestamp() + shift;
+                if (newstamp < endts)
+                {
+                    ev.set_timestamp(newstamp);
+                }
+                else
+                {
+                    result = false;
+                    break;
+                }
+            }
+            if (result && relink)
+            {
+                sort();
+                result = verify_and_link();
             }
         }
     }

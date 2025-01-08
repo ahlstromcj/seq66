@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-01-04
+ * \updates       2025-01-08
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -940,6 +940,28 @@ sequence::time_signature_pulses (const std::string & s) const
         midi_timing mt(bpminute, bpb, bwidth, get_ppqn());
         result = seq66::string_to_pulses(s, mt);
     }
+    return result;
+}
+
+/**
+ *  Rescales the eventlist, then sets the pattern length to the result.
+ */
+
+midipulse
+sequence::apply_time_factor
+(
+    double factor,
+    bool savenotelength,
+    bool relink
+)
+{
+    midipulse result = m_events.apply_time_factor
+    (
+        factor, savenotelength, relink
+    );
+    if (result > 0)
+        (void) set_length(result);          /* triggers, verify defaults    */
+
     return result;
 }
 
@@ -3353,7 +3375,7 @@ sequence::trunc_measures (double measures)
  *      -#  If align_left is set, all events timestamps are decreased by the
  *          offset of the first event, so that the pattern starts at time 0.
  *          This will not change pattern length, note length, measures, and
- *          time signature.
+ *          time signature. The align_right setting is similar.
  *      -#  If the fix_type is lengthfix::measures:
  *          -#  The scale-factor is calculated by the desired measures divided
  *              by the pattern's current measure value.
@@ -3413,53 +3435,84 @@ sequence::fix_pattern (fixparameters & fp)
 
     if (result)
     {
+        bool doscale = fnotequal(newscalefactor, 1.0);
+        bool shrunk = flessthan(newscalefactor, 1.0);
         midipulse currentlen = get_length();
         midipulse newlength = 0;
         fixeffect tempefx = fixeffect::none;
         push_undo();
         if (fp.fp_align_left)
         {
-            fp.fp_align_left = m_events.align_left();   /* realigned?   */
+            fp.fp_align_left = m_events.align_left();       /* realigned?   */
             if (fp.fp_align_left)
                 tempefx = bit_set(tempefx, fixeffect::shifted);
             else
                 result = false;                             /* op failed    */
         }
-        if (fp.fp_reverse || fp.fp_reverse_in_place)
+        else if (fp.fp_align_right)
+        {
+            fp.fp_align_right = m_events.align_right();     /* realigned?   */
+            if (fp.fp_align_right)
+                tempefx = bit_set(tempefx, fixeffect::shifted);
+            else
+                result = false;                             /* op failed    */
+        }
+        if (result && (fp.fp_reverse || fp.fp_reverse_in_place))
+        {
             result = m_events.reverse_events(fp.fp_reverse_in_place);
-
+            if (result)
+            {
+                if (fp.fp_reverse)
+                    tempefx = bit_set(tempefx, fixeffect::reversed);
+                else
+                    tempefx = bit_set(tempefx, fixeffect::reversed_abs);
+            }
+        }
         if (result)
         {
             bool fixmeasures = fp.fp_fix_type == lengthfix::measures;
             bool fixscale = fp.fp_fix_type == lengthfix::rescale;
             bool timesig = fp.fp_use_time_signature;
-            bool doscale = fnotequal(newscalefactor, 1.0);
-            if (fixmeasures)
+            if (timesig)
             {
-                if (doscale)                                /* must do 1st  */
+                /*
+                 * We no longer apply length or set the beats and width
+                 * here. It is done in qpatternfix::slot_set(), along
+                 * with a verify-and-link to ensure refresh. We do have
+                 * to scale here, unless converting 4/4/to 8/8.
+                 */
+
+                if (doscale)
                 {
-                    newlength = m_events.apply_time_factor
+                    newlength = apply_time_factor
                     (
                         newscalefactor, fp.fp_save_note_length
                     );
+                    result = newlength > 0;
+                    if (result)
+                        tempefx = bit_set(tempefx, fixeffect::time_sig);
                 }
-                if (timesig)
+            }
+            else if (fixmeasures)
+            {
+                if (doscale)                                /* must do 1st  */
                 {
-                    /*
-                     * We no longer apply length or set the beats and width
-                     * here. It is done in qpatternfix::slot_set(), along
-                     * with a verify-and-link to ensure refresh.
-                     */
+                    newlength = apply_time_factor
+                    (
+                        newscalefactor, fp.fp_save_note_length
+                    );
+                    result = newlength > 0;
                 }
             }
             else if (fixscale)
             {
-                newlength = m_events.apply_time_factor
+                newlength = apply_time_factor
                 (
                     newscalefactor, fp.fp_save_note_length
                 );
+                result = newlength > 0;
             }
-            if (newlength > 0 && newlength != currentlen)
+            if (result && ! timesig && (newlength != currentlen))
             {
                 int measures = get_measures(newlength);
                 if (fixmeasures)
@@ -3468,10 +3521,6 @@ sequence::fix_pattern (fixparameters & fp)
                         measures = int(newmeasures);
                 }
                 (void) apply_length(measures);
-                if (newscalefactor > 1.00)
-                    tempefx = bit_set(tempefx, fixeffect::expanded);
-                else if (newscalefactor < 1.00)
-                    tempefx = bit_set(tempefx, fixeffect::shrunk);
             }
             switch (fp.fp_alter_type)
             {
@@ -3481,6 +3530,8 @@ sequence::fix_pattern (fixparameters & fp)
                 (
                     fp.fp_tighten_range, 1, true    /* all events   */
                 );
+                if (result)
+                    tempefx = bit_set(tempefx, fixeffect::alteration);
                 break;
 
             case alteration::quantize:
@@ -3489,16 +3540,22 @@ sequence::fix_pattern (fixparameters & fp)
                 (
                     fp.fp_quantize_range, 1, true   /* all events   */
                 );
+                if (result)
+                    tempefx = bit_set(tempefx, fixeffect::alteration);
                 break;
 
             case alteration::jitter:
 
                 result = jitter_notes(fp.fp_jitter_range, true);
+                if (result)
+                    tempefx = bit_set(tempefx, fixeffect::alteration);
                 break;
 
             case alteration::random:
 
                 result = randomize_notes (fp.fp_random_range, true);
+                if (result)
+                    tempefx = bit_set(tempefx, fixeffect::alteration);
                 break;
 
             case alteration::notemap:
@@ -3507,6 +3564,8 @@ sequence::fix_pattern (fixparameters & fp)
                 if (result)
                 {
                     result = perf()->repitch_all(fp.fp_notemap_file, *this);
+                    if (result)
+                        tempefx = bit_set(tempefx, fixeffect::alteration);
                 }
                 break;
 
@@ -3516,9 +3575,14 @@ sequence::fix_pattern (fixparameters & fp)
             }
             if (result)
             {
-                fp.fp_scale_factor = newscalefactor;
+                fp.fp_length = newlength;
                 fp.fp_measures = double(get_measures());
+                fp.fp_scale_factor = newscalefactor;
                 fp.fp_effect = tempefx;
+                if (shrunk)
+                    tempefx = bit_set(tempefx, fixeffect::shrunk);
+                else
+                    tempefx = bit_set(tempefx, fixeffect::expanded);
             }
         }
         else

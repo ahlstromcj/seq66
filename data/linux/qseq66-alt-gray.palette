@@ -1,7 +1,7 @@
 # Seq66 0.99.11 (and above) palette configuration file
 #
 # /home/user/.config/seq66/qseq66-alt-gray.palette
-# Written on 2023-10-27
+# Written on 2025-01-08 12:00:00
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface. It must be active and
@@ -12,19 +12,19 @@
 config-type = "palette"
 version = 0
 
-# The [comments] section can document this file.  Lines starting
-# with '#' and '[' are ignored.  Blank lines are ignored.  Show a
-# blank line by adding a space character to the line.
+# The [comments] section can document this file. Lines starting with
+# '#', '[', or that have no characters end the comment.
 
 [comments]
 
 This provides a greyscale palette where alternate patterns are distinguishable.
 
-# The first integer is the color number, ranging from 0 to 31. The
-# first string is the name of the background color.  The first
-# stanza (in square brackets) are the ARGB values for the background.
-# The second set provides the foreground color name and color.
-# The alpha values are not important here, but should be set to FF.
+# [palette] affects the pattern colors selected (by number). First is
+# the color number, 0 to 31. Next is the name of the background color.
+# The first stanza [square brackets] are the background ARGB values.
+# The second provides the foreground color name and ARGB values. The
+# alpha values should be set to FF.
+
 
 [palette]
 
@@ -97,18 +97,18 @@ This provides a greyscale palette where alternate patterns are distinguishable.
 27        "Keys Text" [ 0xFF000000 ]        "Keys Text" [ 0xFFFFFFFF ]
 28       "Names Text" [ 0xFF000000 ]       "Names Text" [ 0xFFFFFFFF ]
 29       "Slots Text" [ 0xFF000000 ]       "Slots Text" [ 0xFFFFFFFF ]
-30          "Extra 1" [ 0xFF000000 ]          "Extra 1" [ 0xFFFFFFFF ]
-31          "Extra 2" [ 0xFF000000 ]          "Extra 2" [ 0xFFFFFFFF ]
+30      "Scale Brush" [ 0xFF000000 ]      "Scale Brush" [ 0xFFFFFFFF ]
+31          "Extra"   [ 0xFF000000 ]          "Extra"   [ 0xFFFFFFFF ]
 
 # This section defines brush styles to use.  The names are based on the
-# names in the Qt::BrushStyle enumeration. The supported names are:
+# names in the Qt::BrushStyle enumeration. The names are:
 #
 #    nobrush, solid, dense1, dense2, dense3, dense4, dense5, dense6,
 #    dense7, horizontal, vertical, cross, bdiag, fdiag, diagcross,
 #    lineargradient, radialgradient, and conicalgradient.
 #
 # For 'empty', best to just use 'solid' (try others and see why).
-# For 'note', use 'solid' or the default, 'lineargradient'. These
+# For 'note', use only 'solid' or the default, 'lineargradient'. These
 # also apply to the progress box and triggers.
 
 [brushes]

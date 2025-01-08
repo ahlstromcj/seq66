@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.17
 Chris Ahlstrom
-2019-04-13 to 2025-01-05
+2019-04-13 to 2025-01-07
 
 Hottest:
 
@@ -17,12 +17,12 @@ Hottest:
             etc. in dark themes like monogreen. Does slot text change to
             match; we do not like that.
     -   Pattern fix:
+        -   4/4 at 2 measures yields 3/4 at 4 measures with the last two
+            empty.
+        -   Implement the note-mapping operation.
+        -   Set the "Truncated" bit.
         -   Add usage/processing of Quantization parameters in
             line_edit_q_full/jitter/none/tighten.
-        -   Make sure changes raise the modified flag and asterisk indicator.
-        -   Enable / disable Set / Reset according to modification.
-        -   Flagging issues:
-            -   The Other Fixes do not check-mark their effects flags.
         -   Float set to 0.5 yields 768 instead of 384.
         -   Definitely need a new screen-shot and documentation galore.
     -   Ports.

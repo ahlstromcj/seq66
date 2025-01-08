@@ -1,16 +1,18 @@
 NEWS for Seq66 0.99.17
 Chris Ahlstrom
-2015-07-10 to 2025-01-02
+2015-07-10 to 2025-01-08
 
 # Change Log
 
-## [0.99.17] - 2025-01-02
+## [0.99.17] - 2025-01-08
 
 This release is in progress....
 
 ### Added
 
 -   Added a "thick grid lines" checkbox to Edit / Preference / Display
+-   Added usage of "Extra" color for line drawing.
+-   Added "Align Right" to the Pattern Fix dialog.
 
 ### Changed
 

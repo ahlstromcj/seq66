@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2025-01-04
+ * \updates       2025-01-08
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -137,7 +137,8 @@ private slots:
     void slot_random_change ();
     void slot_notemap_file ();
 
-    void slot_align_change (int dummy);
+    void slot_align_left_change (int dummy);
+    void slot_align_right_change (int dummy);
     void slot_reverse_change (int dummy);
     void slot_reverse_in_place (int dummy);
     void slot_save_note_length (int dummy);
@@ -280,6 +281,12 @@ private:
      */
 
     bool m_align_left;
+
+    /**
+     *  Indicates if right-alignment of the pattern is specified.
+     */
+
+    bool m_align_right;
 
     /**
      *  Reverses the timestamps of event, while preserving the duration of the

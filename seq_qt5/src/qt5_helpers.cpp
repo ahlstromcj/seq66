@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2024-12-24
+ * \updates       2025-01-06
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -616,7 +616,7 @@ midi_wrk_wildcards ()
 {
     static const char * const s_wildcards =
         "MIDI/WRK (*.midi *.mid *.MID *.wrk *.WRK);;"
-        "MIDI (*.midi *.mid *.MID);;WRK (*.wrk *.WRK);;All (*)"
+        "MIDI (*.midi *.mid *.MID);;WRK (*.wrk *.WRK);;All files (*)"
         ;
     return s_wildcards;
 }
@@ -662,7 +662,7 @@ show_import_project_dialog
     std::string & selectedfile
 )
 {
-    std::string filter = "Config (*.rc);;All files(*)";
+    std::string filter = "Config (*.rc);;All files (*)";
     std::string caption = "Import Project Configuration";
     std::string selection;
     bool result = show_file_dialog
@@ -739,10 +739,10 @@ show_exe_file_dialog (QWidget * parent, std::string & selectedfile)
 {
 #if defined SEQ66_PLATFORM_WINDOWS
     std::string ext = ".exe";
-    std::string filter = "Executables (*.exe);;All (*)";
+    std::string filter = "Executables (*.exe);;All files (*)";
 #else
     std::string ext = "";
-    std::string filter = "Executables (*);;All (*)";
+    std::string filter = "Executables (*);;All files (*)";
 #endif
     return show_file_dialog
     (

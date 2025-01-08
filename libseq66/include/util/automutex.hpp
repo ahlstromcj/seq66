@@ -57,6 +57,20 @@ namespace seq66
  *  It could potentially be replaced by std::lock_guard<std::recursive_mutex> or
  *  std::lock_guard<seq66::mutex>.  However, it provides lock() and unlock()
  *  functions for extra flexibility and danger.  :-)
+ *
+ *  How to use it? An example:
+ *
+ *                  int test_func (recmutex & mut, const sequence & s)
+ *                  {
+ *  Created ----------> automutex locker(mut);
+ *  Value to return --> return s.events().count();
+ *  Destroyed ----> }
+ *
+ *  Quoting the standard (§3.7.3/3): "If a variable with automatic storage
+ *  duration has initialization or a destructor with side effects, it shall
+ *  not be destroyed before the end of its block, nor shall it be eliminated
+ *  as an optimization even if it appears to be unused." The end of the block,
+ *  for a function, is after the return statement.
  */
 
 class automutex

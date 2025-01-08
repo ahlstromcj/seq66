@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-01-04
+% \update      2025-01-06
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -401,8 +401,9 @@
          \begin{itemize}
             \item \textbf{Measures}.
                Entering an integer or a floating-point scale factor will scale
-               the pattern events,
+               the pattern events up or down,
                and change the number of measures.
+               The final number of measures is always an integer.
                If the measure value is less than \texttt{1.0},
                the pattern will only be compressed.
                If less than 1 measure in length, the result will be
@@ -410,21 +411,24 @@
                \textsl{Note that, unlike setting the measures in the pattern
                editor itself, this measures change will \textbf{not}
                truncate notes.}
+               If the number of measures is greater, then the notes will
+               be expanded.
             \item \textbf{Time Signature}.
                Entering a fraction such as \textbf{3/4} or
                \textbf{12/8} will change the time signature of the pattern
-               \textbf{and} \textsl{compress it to 1 measure}.
-               This obviously works best for shorter patterns.
+               and scale the pattern down or up appropriately.
+               This action can also change the length of the patter.
          \end{itemize}
       \item \textbf{Scale Factor}.
          Scales the pattern.  For example, 2.0 doubles the length, and 0.5
          halves the length.
+         In some ways it is similar to \textbf{Measures}, described
+         above.
          The \textbf{Measures} is changed to be enough to contain the new length,
          but only if the scale is greater than 1.0.
          One thing to be aware of is that, if the pattern is expanded, the
          new measure count depends on the location of the last event in the
-         pattern. For instance, setting the scale factor to 100 might result in
-         76 measures, not the 100 that would be set if measures was set to 100.
+         expanded pattern.
    \end{itemize}
 
    The \textbf{Quantization} selector allows for various types of

@@ -1,6 +1,6 @@
 Thorough Testing of the Pattern-Fix Dialog
 Chris Ahlstrom
-2024-11-09 to 2025-01-05
+2024-11-09 to 2025-01-08
 
 The test file for pattern-fix is contrib/midi/test.midi.  We change the "Test
 Pattern" notes to a velocity of all 74 except for 127 with the first and last
@@ -17,16 +17,20 @@ Length Change:
             -   Increases the measure count.
             -   Spreads out (upscales) the notes to fill the increase.
             -   Preserves note length if checked. If not checked, the lengths
-                of the notes increase.
+                of the notes increase proportionately.
             -   One must tab out of the Measures field before able to click
                 the Set button.
-            -   The pattern editor immediately shows these changes.
-            -   Reset works.
-            -   The Expand effect box is checked.
             -   Once Set is clicked, the modification indicator (asterisk)
                 shows up in the pattern editor and in the main window, and
                 there will be a prompt for saving at exit.
+            -   The pattern editor immediately shows these changes.
             -   However, the Reset button does not undo the modify flag.
+            -   Reset works.
+            -   The Expand effect box is checked.
+            -   L an R markers are unchanged.
+            -   END move to the end of the new pattern length.
+            -   The resultant length is shown as reduced by 3 pulses
+                (Seq66 shortens notes slightly for read-ability).
 
         o   Integer lesser.
 
@@ -36,6 +40,8 @@ Length Change:
                 of the notes decrease. For this case, preserving note length
                 is generally not desirable.
             -   The Shrink effect box is checked.
+            -   L an R markers are unchanged.
+            -   END move to the end of the new pattern length.
             -   If "Preserve note length" is set, the last note might bleed
                 across the end of the last measure. END shold be adjusted
                 properly as well.
@@ -45,7 +51,7 @@ Length Change:
             -   Similar to "integer greater", but rounds up to the nearest full
                 measure.
             -   Spreads out the notes to expand by the given factor, not the
-                final measure size. Thus, the notes don't go to the end
+                final measure size. Thus, the notes might not reach to the end
                 of the pattern.
             -   Changes the Scale Factor to match after tabbing out of the
                 field.
@@ -58,36 +64,34 @@ Length Change:
             -   Compresses the notes to compress by the given fraction, not
                 the final measure size.
             -   Changes the Scale Factor.
-            -   BUG: doesn't set Shrink, even after clicking Set.
-            -   For scaling, best to turn off "Preserve note length".
+            -   Sets Shrink.
+            -   For scaling, best to turn off "Preserve note length",
+                otherwise notes overlap.
 
         o   "Time sig" greater.
 
             -   6/4.
-                -   The PDF says that it should scale down to 1 measure!
-                -   Tabbing out immediately sets Shrink.
-                -   The END marker is set to 2:2:0.
-                -   BUGS galore:
-                    -   The notes do not change position.
-                    -   The seqroll bars still show 4/4.
-                    -   The seqtime still shows 4/4 and matching bars.
+                -   Keeps the number of measures the same, but expands
+                    the number of beats and the length of the pattern.
+                -   Tabbing out immediately sets Time Sig.
+                -   The END marker is set appropriately.
+                -   The dropdowns in the main pattern editor windows reflect
+                    the new time signature.
 
         o   "Time sig" lesser.
 
             -   3/4.
-                -   The PDF says that it should scale down to 1 measure!
-                -   Tabbing out immediately sets Shrink.
-                -   In sequence::apply_length(), measures goes from 2 to 3.
-                    This seems right, if we keep length but reduce the time
-                    signature.
+                -   Tabbing out should not set Shrink.
+                -   The pattern is scaled by 0.75.
+                -   The measures stay the same.
                 -   The time-sig numerator and denominator are set correctly.
                 -   BUGS galore:
                     -   The END marker, though is set to 3:1:0.
-                    -   The notes do not change position.
-                    -   The seqroll bars still show 4/4.
-                    -   The seqtime still shows 4/4 and matching bars.
+                        The length of the pattern stays the same.
                     -   The Log Timesig button remains at 4/4. Clicking it
                         royally screws up the notes and seqroll.
+                -   The dropdowns in the main pattern editor windows reflect
+                    the new time signature.
             -   3/8. Identitical except the time-sig properly shows 3 and 8.
 
             Note: changing to 3/4 in the pattern editor handles the seqroll
@@ -98,28 +102,28 @@ Length Change:
     o   Scale factor.
 
         o   Greaater than one.
-
         o   One.
-
         o   Less than one.
+            
+            -   Almost identical to the Measure change. Just a different
+                way to specify it.
 
-    o   Other fixes.
+    o   Other fixes. Only one fix can be done at a time.
 
-        o   Align left.
+        o   Align left and align right.
 
-            -   BUG: Enabling does not check-mark the Shift effect.
-            -   Does Set then check-mark the Shift, but only when an actual
-                shift occurs?
+            -   Set check-marks the Shift effect.
 
         o   Reverse measures.
 
-            -   BUG: Enabling does not check-mark the Reverse effect.
-            -   Does Set then check-mark Reverse?
+            -   Set reverses the whole pattern.
+            -   Set check-marks Reverse.
 
         o   Reverse in place.
 
-            -   BUG: Enabling does not check-mark the Reverse effect.
-            -   Does Set then check-mark Reverse?
+            -   Set reverses the pattern in place. That is, the last note
+                ends up at the time of the first note, and vice versa.
+            -   Set check-marks Reverse.
 
         o   Preserve note length.  (A factor in the tests above and below.)
 

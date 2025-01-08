@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2024-12-30
+ * \updates       2025-01-06
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -161,26 +161,37 @@ quantization_cast (int v)
 }
 
 /**
- *  Manifest constants for the "Effect" GroupBox in qpatternfix.
+ *  Manifest constants for the "Applied Effects" GroupBox in qpatternfix.
  */
 
 enum class fixeffect
 {
     none            = 0x00,
-    shifted         = 0x01,
-    shrunk          = 0x02,
-    expanded        = 0x04,
-    truncated       = 0x08,
-    reversed        = 0x10,
-    reversed_abs    = 0x20,             /* short for "reversed in place"    */
-    all             = 0x3F
+    alteration      = 0x01,
+    shifted         = 0x02,
+    reversed        = 0x04,
+    reversed_abs    = 0x08,             /* short for "reversed in place"    */
+    shrunk          = 0x10,
+    expanded        = 0x20,
+    time_sig        = 0x40,
+    truncated       = 0x80,
+    all             = 0xFF
 };
+
+/**
+ *  Tests that the rhs value's bit(s) is (are) set in the lhs value.
+ */
 
 inline bool
 bit_test (fixeffect lhs, fixeffect rhs)
 {
     return (static_cast<int>(lhs) & static_cast<int>(rhs)) != 0;
 }
+
+/**
+ *  Grabs the bit(s) from rhs and OR's them into lhs, and returns the
+ *  new value of lhs.
+ */
 
 inline fixeffect
 bit_set (fixeffect lhs, fixeffect rhs)

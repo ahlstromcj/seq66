@@ -449,6 +449,7 @@ private:                                /* functions for friend sequence    */
     bool move_selected_notes (midipulse delta_tick, int delta_note);
     bool move_selected_events (midipulse delta_tick);
     bool align_left (bool relink = false);
+    bool align_right (bool relink = false);
     bool randomize (midibyte status, int plus_minus, bool all = false);
     bool randomize_notes (int range, bool all = false);
 #if defined SEQ66_USE_JITTER_EVENTS

@@ -1,19 +1,19 @@
 # Seq66 0.99.11 (and above) palette configuration file
 #
 # /home/user/.config/seq66/qseq66-default.palette
-# Written on 2023-10-27
+# Written on 2025-01-08 12:00:00
 #
 # This file can be used to change the colors used by patterns
-# and in some parts of the user-interface.
+# and in some parts of the user-interface. It must be active and
+# specified in the 'rc' file.
 
 [Seq66]
 
 config-type = "palette"
 version = 0
 
-# The [comments] section can document this file.  Lines starting
-# with '#' and '[' are ignored.  Blank lines are ignored.  Show a
-# blank line by adding a space character to the line.
+# The [comments] section can document this file. Lines starting with
+# '#', '[', or that have no characters end the comment.
 
 [comments]
 
@@ -21,11 +21,11 @@ Comments added to this section are preserved.  Lines starting with
 a '#' or '[', or that are blank, are ignored.  Start lines that must
 look empty with a space.
 
-# The first integer is the color number, ranging from 0 to 31. The
-# first string is the name of the background color.  The first
-# stanza (in square brackets) are the ARGB values for the background.
-# The second set provides the foreground color name and color.
-# The alpha values are not important here, but should be set to FF.
+# [palette] affects the pattern colors selected (by number). First is
+# the color number, 0 to 31. Next is the name of the background color.
+# The first stanza [square brackets] are the background ARGB values.
+# The second provides the foreground color name and ARGB values. The
+# alpha values should be set to FF.
 
 [palette]
 
@@ -62,24 +62,24 @@ look empty with a space.
 30       "Light Grey" [ 0xFFC0C0C0 ]            "Black" [ 0xFF000000 ]
 31        "Dark Grey" [ 0xFF484848 ]            "Black" [ 0xFF000000 ]
 
-# Similar to the [palette] section, but applies to UI elements and to
-# the --inverse color option.  The first integer is the color number,
-# ranging from 0 to 12. The names are feature names, not color names.
-# The second column block is the inverse color.
+# Similar to the [palette] section, but applies to the custom-drawn
+# piano rolls and the --inverse option. The values: color number (0
+# to 31); main color feature name; main color value; inverse color
+# feature name; and the --inverse color value.
 
 [ui-palette]
 
  0       "Foreground" [ 0xFF000000 ]       "Foreground" [ 0xFFFFFFFF ]
- 1       "Background" [ 0xFFFFFFFF ]       "Background" [ 0xFF484848 ]
+ 1       "Background" [ 0xFFFFFFFF ]       "Background" [ 0xFF000000 ]
  2            "Label" [ 0xDEADBEEF ]            "Label" [ 0xFFFFFFFF ]
- 3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00FF ]
+ 3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00A5 ]
  4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF000080 ]
- 5            "Tempo" [ 0xFFFF00FF ]            "Tempo" [ 0xFFFFFF00 ]
+ 5            "Tempo" [ 0xFFFFFF00 ]            "Tempo" [ 0xFFFFFF00 ]
  6        "Note Fill" [ 0xFFFFFFFF ]        "Note Fill" [ 0xFF000000 ]
  7      "Note Border" [ 0xFF000000 ]      "Note Border" [ 0xFFFFFFFF ]
  8       "Black Keys" [ 0xFF000000 ]       "Black Keys" [ 0xFFFFFFFF ]
  9       "White Keys" [ 0xFFFFFFFF ]       "White Keys" [ 0xFF000000 ]
-10     "Progress Bar" [ 0xFFFF0000 ]     "Progress Bar" [ 0xFF000080 ]
+10     "Progress Bar" [ 0xFFFF0000 ]     "Progress Bar" [ 0xFFFF0000 ]
 11     "Back Pattern" [ 0xFF008B8B ]     "Back Pattern" [ 0xFF008B8B ]
 12      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF808080 ]
 13       "Heavy Line" [ 0xFF484848 ]       "Heavy Line" [ 0xFFFFFFFF ]
@@ -91,26 +91,26 @@ look empty with a space.
 19      "Event Brush" [ 0xFF808080 ]      "Event Brush" [ 0xFF808080 ]
 20       "Keys Brush" [ 0xFF808080 ]       "Keys Brush" [ 0xFF808080 ]
 21      "Names Brush" [ 0xFF808080 ]      "Names Brush" [ 0xFF808080 ]
-22      "Octave Line" [ 0xFF808080 ]      "Octave Line" [ 0xFF808080 ]
-23             "Text" [ 0xFF808080 ]             "Text" [ 0xFF808080 ]
+22      "Octave Line" [ 0xFF808080 ]      "Octave Line" [ 0xFFFFFFFF ]
+23             "Text" [ 0xFF000000 ]             "Text" [ 0xFFFFFFFF ]
 24        "Time Text" [ 0xFF000000 ]        "Time Text" [ 0xFFFFFFFF ]
 25        "Data Text" [ 0xFF000000 ]        "Data Text" [ 0xFFFFFFFF ]
 26       "Note Event" [ 0xFFFFFFFF ]       "Note Event" [ 0xFF000000 ]
 27        "Keys Text" [ 0xFF000000 ]        "Keys Text" [ 0xFFFFFFFF ]
 28       "Names Text" [ 0xFF000000 ]       "Names Text" [ 0xFFFFFFFF ]
 29       "Slots Text" [ 0xFF000000 ]       "Slots Text" [ 0xFFFFFFFF ]
-30          "Extra 1" [ 0xFF000000 ]          "Extra 1" [ 0xFFFFFFFF ]
-31          "Extra 2" [ 0xFF000000 ]          "Extra 2" [ 0xFFFFFFFF ]
+30      "Scale Brush" [ 0xFFC0C0C0 ]      "Scale Brush" [ 0xFFC0C0C0 ]
+31            "Extra" [ 0xFF000000 ]            "Extra" [ 0xFFFFFFFF ]
 
 # This section defines brush styles to use.  The names are based on the
-# names in the Qt::BrushStyle enumeration. The supported names are:
+# names in the Qt::BrushStyle enumeration. The names are:
 #
 #    nobrush, solid, dense1, dense2, dense3, dense4, dense5, dense6,
 #    dense7, horizontal, vertical, cross, bdiag, fdiag, diagcross,
 #    lineargradient, radialgradient, and conicalgradient.
 #
 # For 'empty', best to just use 'solid' (try others and see why).
-# For 'note', use 'solid' or the default, 'lineargradient'. These
+# For 'note', use only 'solid' or the default, 'lineargradient'. These
 # also apply to the progress box and triggers.
 
 [brushes]

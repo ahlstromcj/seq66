@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2025-01-05
+ * \updates       2025-01-08
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -106,6 +106,7 @@ qpatternfix::qpatternfix
     m_measures          (double(m_backup_measures)), /* fp_measures         */
     m_scale_factor      (1.0),                      /* fp_scale_factor      */
     m_align_left        (false),                    /* bool fp_align_left   */
+    m_align_right       (false),                    /* bool fp_align_right  */
     m_reverse           (false),                    /* bool fp_reverse      */
     m_reverse_in_place  (false),                    /* bool fp_reverse_...  */
     m_save_note_length  (false),                    /* bool fp_save_note... */
@@ -158,6 +159,7 @@ qpatternfix::initialize (bool startup)
 
     slot_effect_clear();
     ui->btn_align_left->setChecked(false);
+    ui->btn_align_right->setChecked(false);
     ui->btn_reverse->setChecked(false);
     ui->btn_reverse_in_place->setChecked(false);
     ui->btn_save_note_length->setChecked(false);
@@ -366,7 +368,12 @@ qpatternfix::initialize (bool startup)
         connect
         (
             ui->btn_align_left, SIGNAL(stateChanged(int)),
-            this, SLOT(slot_align_change(int))
+            this, SLOT(slot_align_left_change(int))
+        );
+        connect
+        (
+            ui->btn_align_right, SIGNAL(stateChanged(int)),
+            this, SLOT(slot_align_right_change(int))
         );
         connect
         (
@@ -478,7 +485,7 @@ qpatternfix::slot_measure_change ()
 {
     QString t = ui->line_edit_measures->text();
     std::string tc = t.toStdString();
-    double m = string_to_double(tc, 4.0, 2);    /* measures is a float here */
+    double m = string_to_double(tc, 4.0, 4);    /* measures is a float here */
     if (sequence::valid_scale_factor(m, true))  /* applies to measures, too */
     {
         int beats = m_time_sig_beats;
@@ -499,7 +506,15 @@ qpatternfix::slot_measure_change ()
                 );
                 double oldts = string_to_double(ts, 1.0, 2.0);  /* m = new  */
                 m_scale_factor = m / oldts;
-                m_measures = trunc_measures(m_measures / m_scale_factor);
+
+                /*
+                 *  For altering a pattern via a new time signature,
+                 *  we don't want to alter the measure in the pattern;
+                 *  it will be pure scaling up and down of the notes.
+                 */
+
+                if (! is_fraction)
+                    m_measures = trunc_measures(m_measures / m_scale_factor);
             }
             else
             {
@@ -512,11 +527,11 @@ qpatternfix::slot_measure_change ()
             if (width > 0 && width < 96)            /* just a sanity check  */
                 m_time_sig_width = width;           /* fraction denominator */
 
-            m = m_measures;
-
             /*
              * More reliable is to use the scale factor, since measures
              * get rounded up and match the current pattern length.
+             *
+             * m = m_measures;
              *
              * midipulse curlength = track().get_length();
              * midipulse newlength = midipulse(track().unit_measure() * m);
@@ -557,9 +572,20 @@ qpatternfix::slot_scale_change ()
         m_scale_factor = v;
         m_measures = trunc_measures(m_measures * v);
         m_length_type = lengthfix::rescale;
-        m_time_sig_beats = m_time_sig_width = 0;
-        m_use_time_sig = false;
+
+        /*
+         * Why do this?
+         *
+         * m_time_sig_beats = m_time_sig_width = 0;
+         * m_use_time_sig = false;
+         */
+
         ui->btn_effect_time_sig->setChecked(false);
+
+        bool shrunk = flessthan(m_scale_factor, 1.0);
+        bool expanded = fgreaterthan(m_scale_factor, 1.0);
+        ui->btn_effect_shrink->setChecked(shrunk);
+        ui->btn_effect_expand->setChecked(expanded);
 
         std::string scale = double_to_string(m_scale_factor, 2);
         std::string meass = double_to_string(m_measures);
@@ -642,20 +668,59 @@ qpatternfix::slot_jitter_change ()
     }
 }
 
+/**
+ *  Here, we need a dialog to optionally select a different note-map file.
+ */
+
 void
 qpatternfix::slot_notemap_file ()
 {
-    printf("Current note-map file: '%s'\n", m_notemap_file.c_str());
+    bool ok = show_file_dialog
+    (
+        this,
+        m_notemap_file,
+        "Select a note-map/drums file",
+        "Drums files (*.drums);;Note-map files (*.notemap);;All files (*)",
+        false, true, "*.drums"
+    );
+    if (ok)
+        printf("Current note-map file: '%s'\n", m_notemap_file.c_str());
 }
 
 void
-qpatternfix::slot_align_change (int state)
+qpatternfix::slot_align_left_change (int state)
 {
     bool is_set = state == Qt::Checked;
     bool changed = is_set != m_align_left;
     if (changed)
     {
         m_align_left = is_set;
+        ui->btn_effect_shift->setChecked(is_set);
+        if (is_set)
+        {
+            ui->btn_align_right->setChecked(false);
+            ui->btn_reverse->setChecked(false);
+            ui->btn_reverse_in_place->setChecked(false);
+        }
+        modify();
+    }
+}
+
+void
+qpatternfix::slot_align_right_change (int state)
+{
+    bool is_set = state == Qt::Checked;
+    bool changed = is_set != m_align_right;
+    if (changed)
+    {
+        m_align_right = is_set;
+        ui->btn_effect_shift->setChecked(is_set);
+        if (is_set)
+        {
+            ui->btn_align_left->setChecked(false);
+            ui->btn_reverse->setChecked(false);
+            ui->btn_reverse_in_place->setChecked(false);
+        }
         modify();
     }
 }
@@ -669,8 +734,19 @@ qpatternfix::slot_reverse_change (int state)
     {
         m_reverse = is_set;
         if (is_set)
+        {
+            m_reverse_in_place = false;
+            ui->btn_align_left->setChecked(false);
+            ui->btn_align_right->setChecked(false);
             ui->btn_reverse_in_place->setChecked(false);
-
+            ui->btn_effect_reverse->setChecked(true);
+        }
+        else
+        {
+            bool ripchecked = ui->btn_reverse_in_place->isChecked();
+            if (! ripchecked)
+                ui->btn_effect_reverse->setChecked(false);
+        }
         modify();
     }
 }
@@ -684,8 +760,19 @@ qpatternfix::slot_reverse_in_place (int state)
     {
         m_reverse_in_place = is_set;
         if (is_set)
+        {
+            m_reverse = false;
+            ui->btn_align_left->setChecked(false);
+            ui->btn_align_right->setChecked(false);
             ui->btn_reverse->setChecked(false);
-
+            ui->btn_effect_reverse->setChecked(true);
+        }
+        else
+        {
+            bool rchecked = ui->btn_reverse->isChecked();
+            if (! rchecked)
+                ui->btn_effect_reverse->setChecked(false);
+        }
         modify();
     }
 }
@@ -717,28 +804,31 @@ qpatternfix::set_dirty ()
 void
 qpatternfix::slot_set ()
 {
-    fixeffect efx = fixeffect::none;
+    midipulse len = track().get_length();
     fixparameters fp =                                  /* value structure  */
     {
-        m_length_type, m_alt_type,
+        m_length_type, m_alt_type, len,
         m_tighten_range, m_full_range, m_random_range, m_jitter_range,
-        m_align_left, m_reverse, m_reverse_in_place,
+        m_align_left, m_align_right, m_reverse, m_reverse_in_place,
         m_save_note_length, m_use_time_sig, m_time_sig_beats,
         m_time_sig_width, m_measures, m_scale_factor,
-        m_notemap_file, m_reverse_notemap, efx
+        m_notemap_file, m_reverse_notemap, fixeffect::none
     };
     bool success = perf().fix_pattern(track().seq_number(), fp);
     if (success)
     {
         bool alteration = m_alt_type != alteration::none;
-        bool bitshifted = bit_test(efx, fixeffect::shifted);
-        bool bitreversed = bit_test(efx, fixeffect::reversed);
-        bool bitshrunk = bit_test(efx, fixeffect::shrunk);
-        bool bitexpanded = bit_test(efx, fixeffect::expanded);
-        std::string temp = std::to_string(int(track().get_length()));
+        bool bitshifted = bit_test(fp.fp_effect, fixeffect::shifted);
+        bool bitreversed = bit_test(fp.fp_effect, fixeffect::reversed);
+        bool bitshrunk = bit_test(fp.fp_effect, fixeffect::shrunk);
+        bool bitexpanded = bit_test(fp.fp_effect, fixeffect::expanded);
+#if 0
+        bool bittruncated = bit_test(fp.fp_effect, fixeffect::truncated);
+#endif
+        std::string temp = std::to_string(int(fp.fp_length));
         ui->label_pulses->setText(qt(temp));
         if (! bitreversed)
-            bitreversed = bit_test(efx, fixeffect::reversed_abs);
+            bitreversed = bit_test(fp.fp_effect, fixeffect::reversed_abs);
 
         if (m_use_time_sig)
         {
@@ -763,6 +853,12 @@ qpatternfix::slot_set ()
         ui->btn_effect_shift->setChecked(bitshifted);
         ui->btn_effect_shrink->setChecked(bitshrunk);
         ui->btn_effect_expand->setChecked(bitexpanded);
+        ui->btn_effect_reverse->setChecked(bitreversed);
+
+#if 0
+        ui->btn_effect_truncate->setEnabled(false);
+#endif
+
         (void) track().verify_and_link();               /* refresh          */
         set_dirty();                                    /* for redrawing    */
         unmodify(false);                                /* keep fields      */
@@ -793,6 +889,7 @@ qpatternfix::slot_reset ()
     m_measures = double(m_backup_measures);
     m_scale_factor = 1.0;
     m_align_left = false;
+    m_align_right = false;
     m_reverse = false;
     m_reverse_in_place = false;
     m_save_note_length = false;

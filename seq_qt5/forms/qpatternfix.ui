@@ -135,7 +135,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Ticks (pulses)</string>
+       <string>Max. Tick</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
@@ -182,7 +182,7 @@
     <rect>
      <x>8</x>
      <y>56</y>
-     <width>221</width>
+     <width>261</width>
      <height>151</height>
     </rect>
    </property>
@@ -200,9 +200,9 @@
    <widget class="QWidget" name="layoutWidgetLength">
     <property name="geometry">
      <rect>
-      <x>12</x>
+      <x>9</x>
       <y>24</y>
-      <width>201</width>
+      <width>251</width>
       <height>111</height>
      </rect>
     </property>
@@ -226,7 +226,7 @@ If a fraction (e.g. 3/4), the pattern is reduced to
 one measure with the given time signature.</string>
        </property>
        <property name="text">
-        <string>&amp;Measures</string>
+        <string>&amp;Measures/Time Sig</string>
        </property>
       </widget>
      </item>
@@ -262,7 +262,11 @@ accounting for the time of the last event.</string>
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="line_edit_measures"/>
+      <widget class="QLineEdit" name="line_edit_measures">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
      </item>
      <item row="0" column="1">
       <widget class="QLineEdit" name="line_edit_none">
@@ -434,9 +438,9 @@ change.</string>
    <property name="geometry">
     <rect>
      <x>8</x>
-     <y>230</y>
+     <y>218</y>
      <width>221</width>
-     <height>171</height>
+     <height>181</height>
     </rect>
    </property>
    <property name="font">
@@ -453,7 +457,7 @@ change.</string>
       <x>12</x>
       <y>24</y>
       <width>201</width>
-      <height>132</height>
+      <height>151</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -469,6 +473,18 @@ change.</string>
        </property>
        <property name="text">
         <string>&amp;Align left</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="btn_align_right">
+       <property name="font">
+        <font>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Align right</string>
        </property>
       </widget>
      </item>
@@ -584,11 +600,17 @@ the measures.</string>
   <widget class="QGroupBox" name="group_box_quantize">
    <property name="geometry">
     <rect>
-     <x>230</x>
+     <x>270</x>
      <y>56</y>
-     <width>291</width>
-     <height>291</height>
+     <width>258</width>
+     <height>271</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <property name="font">
     <font>
@@ -598,174 +620,204 @@ the measures.</string>
    <property name="title">
     <string>Alteration</string>
    </property>
-   <widget class="QWidget" name="layoutWidgetQuan">
-    <property name="geometry">
-     <rect>
-      <x>17</x>
-      <y>24</y>
-      <width>266</width>
-      <height>246</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="gridLayout_2">
-     <item row="4" column="1">
-      <widget class="QLineEdit" name="line_edit_alt_jitter">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="toolTip">
-        <string>Plus/minus range of time jitter in ticks.</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="line_edit_alt_none">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="line_edit_alt_random">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="toolTip">
-        <string>Plus/minus range of magnitude change in MIDI units.</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="line_edit_alt_tighten">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="toolTip">
-        <string>If not blank, replaces the snap/2 value.</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QRadioButton" name="btn_alt_tighten">
-       <property name="font">
-        <font>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Do partial quantization.</string>
-       </property>
-       <property name="text">
-        <string>&amp;Tight Q ticks</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QRadioButton" name="btn_alt_random">
-       <property name="font">
-        <font>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Randomize event magnitude or note velocity.</string>
-       </property>
-       <property name="text">
-        <string>Random amplitude</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="line_edit_alt_full">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="toolTip">
-        <string>If not blank, replaces the snap value.</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QRadioButton" name="btn_alt_none">
-       <property name="font">
-        <font>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>No alteration operations will be done.</string>
-       </property>
-       <property name="text">
-        <string>None</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QRadioButton" name="btn_alt_notemap">
-       <property name="font">
-        <font>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Remap notes as per the loaded 'drum' file.</string>
-       </property>
-       <property name="text">
-        <string>Note-map</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QRadioButton" name="btn_alt_full">
-       <property name="font">
-        <font>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Fully quantization to the snap value.</string>
-       </property>
-       <property name="text">
-        <string>F&amp;ull Q ticks</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QRadioButton" name="btn_alt_jitter">
-       <property name="font">
-        <font>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Jitter the timestamps of the events.</string>
-       </property>
-       <property name="text">
-        <string>Time/tick jitter</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QRadioButton" name="btn_alt_rev_notemap">
-       <property name="font">
-        <font>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Rev Note-map</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QPushButton" name="btn_notemap_file">
-       <property name="text">
-        <string>...</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="btn_alt_none">
+        <property name="font">
+         <font>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>No alteration operations will be done.</string>
+        </property>
+        <property name="text">
+         <string>None</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="btn_alt_tighten">
+        <property name="font">
+         <font>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Do partial quantization.</string>
+        </property>
+        <property name="text">
+         <string>&amp;Tight Q ticks</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QPushButton" name="btn_notemap_file">
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="line_edit_alt_jitter">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Plus/minus range of time jitter in ticks.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QRadioButton" name="btn_alt_random">
+        <property name="font">
+         <font>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Randomize event magnitude or note velocity.</string>
+        </property>
+        <property name="text">
+         <string>Random amplitude</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="line_edit_alt_random">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Plus/minus range of magnitude change in MIDI units.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="btn_alt_full">
+        <property name="font">
+         <font>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Fully quantization to the snap value.</string>
+        </property>
+        <property name="text">
+         <string>F&amp;ull Q ticks</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QRadioButton" name="btn_alt_notemap">
+        <property name="font">
+         <font>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Remap notes as per the loaded 'drum' file.</string>
+        </property>
+        <property name="text">
+         <string>Note-map</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="line_edit_alt_none">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QRadioButton" name="btn_alt_jitter">
+        <property name="font">
+         <font>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Jitter the timestamps of the events.</string>
+        </property>
+        <property name="text">
+         <string>Time/tick jitter</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="line_edit_alt_full">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>If not blank, replaces the snap value.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QRadioButton" name="btn_alt_rev_notemap">
+        <property name="font">
+         <font>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Rev Note-map</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="line_edit_alt_tighten">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>If not blank, replaces the snap/2 value.</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
  </widget>
  <tabstops>

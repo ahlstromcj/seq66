@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-01-04
+ * \updates       2025-01-07
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -90,14 +90,17 @@ using colorbyte = char;
  *      of those cases, the timestamps of all events will be adjusted
  *      accordingly.
  *
- * \var fp_alter_type
+ w \var fp_alter_type
  *      Indicates how all events are to be altered, such as being tightened,
  *      quantized, note-mapping, etc.
  *
  * \var fp_align_left
  *      Indicates if the offset of the first event or, preferably first note
- *      event, is to be adjusted to 0, shifting all events by the same ammount
- *      of time.
+ *      event, is to be adjusted to 0, shifting all events leftward by the same
+ *      ammount of time.
+ *
+ * \var fp_align_right
+ *      The opposite of fp_align_right.
  *
  * \var fp_reverse
  *      Reverses the timestamps of event, while preserving the duration of the
@@ -144,11 +147,13 @@ struct fixparameters
 {
     lengthfix fp_fix_type;
     alteration fp_alter_type;
+    midipulse fp_length;
     int fp_tighten_range;
     int fp_quantize_range;
     int fp_random_range;
     int fp_jitter_range;
     bool fp_align_left;
+    bool fp_align_right;
     bool fp_reverse;
     bool fp_reverse_in_place;
     bool fp_save_note_length;
@@ -2028,6 +2033,13 @@ protected:
     }
 
 private:
+
+    midipulse apply_time_factor
+    (
+        double factor,
+        bool savenotelength = false,
+        bool relink = false
+    );
 
     mastermidibus * master_bus ()
     {

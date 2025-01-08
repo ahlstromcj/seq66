@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-01-05
+ * \updates       2025-01-06
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2234,6 +2234,11 @@ qseqeditframe64::set_bpb_and_bw (int bpb, int bw, qbase::status qs)
                     track().set_beats_per_bar(bpb, user_change);
                     track().set_beat_width(bw, user_change);
                     (void) track().apply_length(bpb, 0, bw);
+
+                    int bpbindex = beats_per_bar_list().index(bpb);
+                    int bwindex = beatwidth_list().index(bw);
+                    ui->m_combo_bpm->setCurrentIndex(bpbindex);
+                    ui->m_combo_bw->setCurrentIndex(bwindex);
                     if (log_timesig(false))
                         set_track_change();
                 }
@@ -3675,7 +3680,6 @@ void
 qseqeditframe64::events ()
 {
 #if defined USE_LAZY_REPOPULATE_USR_COMBOS
-//  repopulate_usr_combos(m_edit_bus, m_edit_channel);
     repopulate_event_menu(m_edit_bus, m_edit_channel);
     repopulate_mini_event_menu(m_edit_bus, m_edit_channel);
 #endif

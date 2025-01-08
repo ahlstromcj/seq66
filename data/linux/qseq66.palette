@@ -1,7 +1,7 @@
 # Seq66 0.99.11 (and above) palette configuration file
 #
-# /home/user/.config/seq66/qseq66.palette
-# Written on 2023-10-27 12:31:02
+# /home/user/.config/seq66/qseq66-default.palette
+# Written on 2025-01-08 12:00:00
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface. It must be active and
@@ -17,7 +17,9 @@ version = 0
 
 [comments]
 
-Add your comment block here
+Comments added to this section are preserved.  Lines starting with
+a '#' or '[', or that are blank, are ignored.  Start lines that must
+look empty with a space.
 
 # [palette] affects the pattern colors selected (by number). First is
 # the color number, 0 to 31. Next is the name of the background color.
@@ -97,10 +99,10 @@ Add your comment block here
 27        "Keys Text" [ 0xFF000000 ]        "Keys Text" [ 0xFFFFFFFF ]
 28       "Names Text" [ 0xFF000000 ]       "Names Text" [ 0xFFFFFFFF ]
 29       "Slots Text" [ 0xFF000000 ]       "Slots Text" [ 0xFFFFFFFF ]
-30          "Extra 1" [ 0xFF000000 ]          "Extra 1" [ 0xFFFFFFFF ]
-31          "Extra 2" [ 0xFF000000 ]          "Extra 2" [ 0xFFFFFFFF ]
+30      "Scale Brush" [ 0xFFC0C0C0 ]      "Scale Brush" [ 0xFFC0C0C0 ]
+31            "Extra" [ 0xFF000000 ]            "Extra" [ 0xFFFFFFFF ]
 
-# This section defines brush styles to use. The names are based on the
+# This section defines brush styles to use.  The names are based on the
 # names in the Qt::BrushStyle enumeration. The names are:
 #
 #    nobrush, solid, dense1, dense2, dense3, dense4, dense5, dense6,
@@ -108,7 +110,7 @@ Add your comment block here
 #    lineargradient, radialgradient, and conicalgradient.
 #
 # For 'empty', best to just use 'solid' (try others and see why).
-# For 'note', use 'solid' or the default, 'lineargradient'. These
+# For 'note', use only 'solid' or the default, 'lineargradient'. These
 # also apply to the progress box and triggers.
 
 [brushes]
@@ -118,6 +120,6 @@ note = lineargradient
 scale = dense3
 backseq = dense2
 
-# End of /home/user/.config/seq66/qseq66.palette
+# End of /home/user/.config/seq66/qseq66-default.palette
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini
