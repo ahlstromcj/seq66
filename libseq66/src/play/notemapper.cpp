@@ -24,10 +24,10 @@
  *
  *    This module provides functions for advanced MIDI/text conversions.
  *
- * \library       libmidipp
+ * \library       libseq66
  * \author        Chris Ahlstrom
  * \date          2014-04-24
- * \updates       2023-09-01
+ * \updates       2025-01-09
  * \version       $Revision$
  * \license       GNU GPL
  *
@@ -131,10 +131,13 @@ notemapper::pair::show () const
 
 /**
  *  Default constructor for the note-mapper.
+ *
+ *  The default setting of dir is direction::file.
  */
 
-notemapper::notemapper () :
+notemapper::notemapper (direction dir) :
     basesettings        ("Note Mapper"),
+    m_direction         (dir),
     m_mode              (false),
     m_map_type          (),
     m_note_minimum      (999),
@@ -146,6 +149,9 @@ notemapper::notemapper () :
     m_note_array        (),
     m_is_valid          (false)
 {
+    if (dir != direction::file)
+        map_reversed(dir == direction::reverse);
+
     for (int n = 0; n < c_notes_count; ++n)
         m_note_array[n] = midibyte(n);
 }
@@ -165,7 +171,7 @@ notemapper::add
     if (result)
     {
         auto count = m_note_map.size();
-        if (m_map_reversed)
+        if (map_reversed())
         {
             pair np(gmnote, devnote, devname, gmname, true);    /* reversed */
             auto p = std::make_pair(gmnote, np);

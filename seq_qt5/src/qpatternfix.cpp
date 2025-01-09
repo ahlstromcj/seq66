@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2025-01-08
+ * \updates       2025-01-09
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -804,6 +804,8 @@ qpatternfix::set_dirty ()
 void
 qpatternfix::slot_set ()
 {
+    m_notemap_file = rc().filespec_helper(m_notemap_file);
+
     midipulse len = track().get_length();
     fixparameters fp =                                  /* value structure  */
     {

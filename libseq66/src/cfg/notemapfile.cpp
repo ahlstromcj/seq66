@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2023-11-22
+ * \updates       2025-01-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -80,17 +80,8 @@ notemapfile::~notemapfile ()
 }
 
 /**
- *  Parse the ~/.config/seq66/seq66.rc file-stream or the
+ *  Parse the ~/.config/seq66/qseq66.drums file-stream or the
  *  ~/.config/seq66/seq66.mutes file-stream.
- *
- *  [mute-group]
- *
- *      The mute-group starts with a line that indicates up to 32 mute-groups
- *      are defined. A common value is 1024, which means there are 32 groups
- *      times 32 keys.  But this value is currently thrown away.  This value
- *      is followed by 32 lines of data, each contained 4 sets of 8 settings.
- *      See the seq66-doc project on GitHub for a much more detailed
- *      description of this section.
  */
 
 bool
@@ -112,8 +103,11 @@ notemapfile::parse_stream (std::ifstream & file)
     if (! s.empty())
         mapper().gm_channel(string_to_int(s));
 
-    bool flag = get_boolean(file, "[notemap-flags]", "reverse");
-    mapper().map_reversed(flag);
+    if (mapper().get_direction() == notemapper::direction::file)
+    {
+        bool flag = get_boolean(file, "[notemap-flags]", "reverse");
+        mapper().map_reversed(flag);
+    }
 
     int note = (-1);
     int position = find_tag(file, "[Drum ");

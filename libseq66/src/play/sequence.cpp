@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-01-08
+ * \updates       2025-01-09
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3468,7 +3468,78 @@ sequence::fix_pattern (fixparameters & fp)
                     tempefx = bit_set(tempefx, fixeffect::reversed_abs);
             }
         }
-        if (result)
+        if (fp.fp_alter_type != alteration::none)
+        {
+            switch (fp.fp_alter_type)
+            {
+            case alteration::tighten:
+
+                result = m_events.quantize_events
+                (
+                    fp.fp_tighten_range, 1, true    /* all events   */
+                );
+                if (result)
+                    tempefx = bit_set(tempefx, fixeffect::alteration);
+                break;
+
+            case alteration::quantize:
+
+                result = m_events.quantize_events
+                (
+                    fp.fp_quantize_range, 1, true   /* all events   */
+                );
+                if (result)
+                    tempefx = bit_set(tempefx, fixeffect::alteration);
+                break;
+
+            case alteration::jitter:
+
+                result = jitter_notes(fp.fp_jitter_range, true);
+                if (result)
+                    tempefx = bit_set(tempefx, fixeffect::alteration);
+                break;
+
+            case alteration::random:
+
+                result = randomize_notes (fp.fp_random_range, true);
+                if (result)
+                    tempefx = bit_set(tempefx, fixeffect::alteration);
+                break;
+
+            case alteration::notemap:
+
+                result = ! fp.fp_notemap_file.empty();
+                if (result)
+                {
+                    result = perf()->repitch_fix
+                    (
+                        fp.fp_notemap_file, *this, false    /* forward  */
+                    );
+                    if (result)
+                        tempefx = bit_set(tempefx, fixeffect::alteration);
+                }
+                break;
+
+            case alteration::rev_notemap:
+
+                result = ! fp.fp_notemap_file.empty();
+                if (result)
+                {
+                    result = perf()->repitch_fix
+                    (
+                        fp.fp_notemap_file, *this, true     /* reverse  */
+                    );
+                    if (result)
+                        tempefx = bit_set(tempefx, fixeffect::alteration);
+                }
+                break;
+
+            default:
+
+                break;
+            }
+        }
+        else if (result)
         {
             bool fixmeasures = fp.fp_fix_type == lengthfix::measures;
             bool fixscale = fp.fp_fix_type == lengthfix::rescale;
@@ -3521,57 +3592,6 @@ sequence::fix_pattern (fixparameters & fp)
                         measures = int(newmeasures);
                 }
                 (void) apply_length(measures);
-            }
-            switch (fp.fp_alter_type)
-            {
-            case alteration::tighten:
-
-                result = m_events.quantize_events
-                (
-                    fp.fp_tighten_range, 1, true    /* all events   */
-                );
-                if (result)
-                    tempefx = bit_set(tempefx, fixeffect::alteration);
-                break;
-
-            case alteration::quantize:
-
-                result = m_events.quantize_events
-                (
-                    fp.fp_quantize_range, 1, true   /* all events   */
-                );
-                if (result)
-                    tempefx = bit_set(tempefx, fixeffect::alteration);
-                break;
-
-            case alteration::jitter:
-
-                result = jitter_notes(fp.fp_jitter_range, true);
-                if (result)
-                    tempefx = bit_set(tempefx, fixeffect::alteration);
-                break;
-
-            case alteration::random:
-
-                result = randomize_notes (fp.fp_random_range, true);
-                if (result)
-                    tempefx = bit_set(tempefx, fixeffect::alteration);
-                break;
-
-            case alteration::notemap:
-
-                result = ! fp.fp_notemap_file.empty();
-                if (result)
-                {
-                    result = perf()->repitch_all(fp.fp_notemap_file, *this);
-                    if (result)
-                        tempefx = bit_set(tempefx, fixeffect::alteration);
-                }
-                break;
-
-            default:
-
-                break;
             }
             if (result)
             {

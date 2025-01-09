@@ -1,24 +1,10 @@
 TO DO for Seq66 0.99.17
 Chris Ahlstrom
-2019-04-13 to 2025-01-07
+2019-04-13 to 2025-01-08
 
 Hottest:
 
-    -   #128 Recording type for loop button not working. Fixed, some
-        tweaks still needed:
-        -   One-shot recording during playback acts like overdub. It
-            does not stop. FIXED.  But one-shot reset then makes it act like
-            overdub (because note-count == 1 is the flag).
-        -   There seems to be a very slight chance of too-longth notes in
-            a chord if quantization (1/16) is on. Needs a better keyboard
-            player (not me) to test it.
-    -   Pattern editor:
-        -   Improve the visibilty of active/enabled buttons, event box markers,
-            etc. in dark themes like monogreen. Does slot text change to
-            match; we do not like that.
     -   Pattern fix:
-        -   4/4 at 2 measures yields 3/4 at 4 measures with the last two
-            empty.
         -   Implement the note-mapping operation.
         -   Set the "Truncated" bit.
         -   Add usage/processing of Quantization parameters in
@@ -36,8 +22,16 @@ Hottest:
         "Save/Discard/Cancel" prompt appears at exit. It works if
         playback running during recording.
 
-Later?
+Next Release?
 
+    -   #128 Recording type for loop button not working. Fixed, some
+        tweaks still needed:
+        -   One-shot recording during playback acts like overdub. It
+            does not stop. FIXED.  But one-shot reset then makes it act like
+            overdub (because note-count == 1 is the flag).
+        -   There seems to be a very slight chance of too-longth notes in
+            a chord if quantization (1/16) is on. Needs a better keyboard
+            player (not me) to test it.
     -   Event editor:
         -   Can we add, perhaps a tooltip or dropdown to select the desired
             Control value (e.g. 7 for volume)?
@@ -52,15 +46,7 @@ Later?
         the 'usr' version otherwise.
     -   Add options to the palette for the line-style of the various
         grid-lines.
-
-From Testing:
-
-    -   There are some Qt warnings emitted when working with notes in the
-        pattern editor and the event editor.
-    -   Test all comboboxes.
     -   Test and retest all previous issues in #128
-    -   The seqtime bar re seqroll vertical lines do not always
-        match up.
     -   Setting the PPQN obscures the 32 PPQN entry in the combo box. Minor.
     -   Get the 16-in-busses.midi file configured and working.
     -   Finish getting Windows builds in MSYS2 to work.

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2024-12-21
+ * \updates       2025-01-09
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1501,6 +1501,7 @@ public:
     void repitch (event & ev) const;
     bool repitch_all (const std::string & nmapfile, seq::ref s);
     bool repitch_selected (const std::string & nmapfile, seq::ref s);
+    bool repitch_fix (const std::string & nmapfile, seq::ref s, bool reverse);
 
     setmapper & set_mapper ()
     {

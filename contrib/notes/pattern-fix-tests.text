@@ -142,11 +142,25 @@ Length Change:
 
         o   Time/tick jitter. (With various ranges.)
 
-        o   Note-map.
+        o   Note-map. To do:
+            
+            1.  Add an rcsettings::notemap_filespec (string basename)
+                overload to construct the name if it does not have
+                a path..
+            2.  Add qpatternfix::open_note_mapper() similar to the
+                performer version, but that opens the file and
+                creates a temporary notemapper. Or extend performer
+                to do that.
+            3.  We need a version of the above in the notemapper module.
+            3.  Pass it to sequence::fix_pattern() or sequence::repitch()
+                somehow.
 
-            o   Repitching.
+            Also need a reverse repitch flag. Also see
+            smanager::open_note_mapper() and qseframe::repitch_all().
 
             o   Loading alternate note-map.
+
+            o   Repitching.
 
             o   Rev Note-map
 

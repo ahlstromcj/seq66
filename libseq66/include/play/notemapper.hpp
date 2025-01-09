@@ -27,10 +27,10 @@
  *
  *    This module provides functions for advanced MIDI/text conversions.
  *
- * \library       libmidipp
+ * \library       libseq66
  * \author        Chris Ahlstrom
  * \date          2014-04-24
- * \updates       2023-12-06
+ * \updates       2025-01-09
  * \version       $Revision$
  * \license       GNU GPL
  *
@@ -209,6 +209,21 @@ private:
 
      };         // nested class pair
 
+ public:
+
+    /**
+     *  For note-mapping in the pattern-fix dialog, we need to be
+     *  able to override the map-direction specified in the notemap file.
+     *  The direction is used when adding note pairs to the mapping.
+     */
+
+    enum class direction
+    {
+        file,                           /**< Use the notemap file setting.  */
+        forward,                        /**< Use the most common use case.  */
+        reverse                         /**< Force the usage of reverse.    */
+    };
+
  private:
 
     /**
@@ -218,7 +233,11 @@ private:
 
     using map = std::map<int, pair>;
 
- private:
+    /**
+     *  Set in the constructor.
+     */
+
+    direction m_direction;
 
     /**
      *  Indicates if we are in drums mode.  Only true if the user specified
@@ -237,7 +256,7 @@ private:
      *       -  "patches".  The file describes program (patch) mappings, used
      *          to map old devices patch change values to General MIDI.
      *          Not yet supported.
-     *       -  "multi".  The file describes both "drums" and "patchs"
+     *       -  "multi".  The file describes both "drums" and "patches"
      *          mappings.  Not yet supported.
      *
      *    The name of this attribute in the INI file is "map-type".  Case
@@ -317,7 +336,7 @@ private:
 
  public:
 
-    notemapper ();
+    notemapper (direction dir = direction::file);
     notemapper (const notemapper &) = default;
     notemapper & operator = (const notemapper &) = default;
     ~notemapper () = default;
@@ -331,6 +350,11 @@ private:
 
     std::string to_string (int devnote) const;
     void show () const;
+
+    direction get_direction () const
+    {
+        return m_direction;
+    }
 
     bool mode () const
     {

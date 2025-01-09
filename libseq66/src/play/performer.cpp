@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-01-07
+ * \updates       2025-01-09
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -3212,6 +3212,36 @@ performer::repitch_all (const std::string & nmapfile, seq::ref s)
     if (result)
         modify();
 
+    return result;
+}
+
+/**
+ *  The caller sets it all up, so error-checking is reduced.
+ *  This function is independent of the note-map active 'rc' setting.
+ */
+
+bool
+performer::repitch_fix
+(
+    const std::string & nmapfile, seq::ref s, bool reverse
+)
+{
+    bool result = file_readable(nmapfile);
+    if (result)
+    {
+        notemapper::direction d = reverse ?
+            notemapper::direction::reverse :
+            notemapper::direction::forward ;
+
+        notemapper nmap(d);
+        notemapfile nmf(nmap, nmapfile, rc());
+        result = nmf.parse();
+        if (result)
+            result = s.repitch(nmap, true);
+
+        if (result)
+            modify();
+    }
     return result;
 }
 
