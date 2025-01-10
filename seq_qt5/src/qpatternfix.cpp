@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2025-01-09
+ * \updates       2025-01-10
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -680,8 +680,9 @@ qpatternfix::slot_notemap_file ()
         this,
         m_notemap_file,
         "Select a note-map/drums file",
-        "Drums files (*.drums);;Note-map files (*.notemap);;All files (*)",
-        false, true, "*.drums"
+        "Map files (*.drums *.notemap);;Drums (*.drums);;"
+        "Note maps (*.notemap);;All files (*)",
+        OpeningFile, NormalFile                 /* , "*.drums"          */
     );
     if (ok)
         printf("Current note-map file: '%s'\n", m_notemap_file.c_str());

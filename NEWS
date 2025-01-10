@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.17
 Chris Ahlstrom
-2015-07-10 to 2025-01-08
+2015-07-10 to 2025-01-10
 
 # Change Log
 
-## [0.99.17] - 2025-01-08
+## [0.99.17] - 2025-01-10
 
 This release is in progress....
 
@@ -66,6 +66,8 @@ This release is in progress....
     -   Song editor. Time zoom now affects horizontal scroll-bar length.
 -   Issue #134. Added dates to the release-name line from 0.99.14 on;
     were left off by an oversight.
+-   Pattern-fix editor. Somewhat revamped, many fixes made, and more testing
+    done.
 -   Non-standard time signature handling errors. Note that we cannot
     support non-power-of-2 beat-widths well in the piano-rolls.
 -   Main window. Fixed updating the PPQN when a file of different PPQN

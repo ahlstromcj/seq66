@@ -1,26 +1,10 @@
 TO DO for Seq66 0.99.17
 Chris Ahlstrom
-2019-04-13 to 2025-01-08
+2019-04-13 to 2025-01-10
 
 Hottest:
 
-    -   Pattern fix:
-        -   Implement the note-mapping operation.
-        -   Set the "Truncated" bit.
-        -   Add usage/processing of Quantization parameters in
-            line_edit_q_full/jitter/none/tighten.
-        -   Float set to 0.5 yields 768 instead of 384.
-        -   Definitely need a new screen-shot and documentation galore.
-    -   Ports.
-        -   Document what to do if a port you know exists is disabled.
-        -   Upgrade the performer port-detection to get around this.
-    -   QObject::setParent: Cannot set parent, new parent is in a different
-        thread; this happens in sequence::modify(true) when recording with
-        a pattern editor open.
-    -   When auto-step recording in an existing pattern, the modify
-        flag "*" is not shown in the title, though the
-        "Save/Discard/Cancel" prompt appears at exit. It works if
-        playback running during recording.
+    -   Time to relax and get a release 0.99.17 out.
 
 Next Release?
 
@@ -32,13 +16,25 @@ Next Release?
         -   There seems to be a very slight chance of too-longth notes in
             a chord if quantization (1/16) is on. Needs a better keyboard
             player (not me) to test it.
+    -   Pattern fix:
+        -   Set the "Truncated" bit.
+        -   Need a new screen-shot and documentation.
     -   Event editor:
         -   Can we add, perhaps a tooltip or dropdown to select the desired
             Control value (e.g. 7 for volume)?
+        -   Weird error cropped up; a Qt update issue? When clicking in
+            the event-editors event table, a message like this appears:
+            "qt.accessibility.core: Cannot create accessible child interface
+            for object:  QTableWidget(0x55eaaaf6b880, name =
+            'eventTableWidget')  index:  8".  This does not happen in
+            the table-widgets in other tabs.
     -   Consider an option to Import a normal MIDI file so that a flag
         is raised so that it will not be saved with Seq66 SeqSpecs.
         Make it visible to be clear.
     -   Add .notemap support, identical to .drums.
+    -   Ports.
+        -   Document what to do if a port you know exists is disabled.
+        -   Upgrade the performer port-detection to get around this.
     -   Test overwrite etc. in the scenario where a recording mode can
         cause incomplete notes if one holds the note and releases it in the
         next iteration, leaving a partially-drawn note behind.
@@ -51,6 +47,13 @@ Next Release?
     -   Get the 16-in-busses.midi file configured and working.
     -   Finish getting Windows builds in MSYS2 to work.
     -   Figure out issue #132, the libasound2 issue.
+    -   QObject::setParent: Cannot set parent, new parent is in a different
+        thread; this happens in sequence::modify(true) when recording with
+        a pattern editor open.
+    -   When auto-step recording in an existing pattern, the modify
+        flag "*" is not shown in the title, though the
+        "Save/Discard/Cancel" prompt appears at exit. It works if
+        playback running during recording.
 
 Playlists:
 

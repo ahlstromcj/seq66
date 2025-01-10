@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2024-11-04
+ * \updates       2025-01-10
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -1402,12 +1402,25 @@ rcsettings::mute_group_filename (const std::string & value)
         mute_group_file_active(false);
 }
 
+/**
+ *  We want to be able to use the .notemap extension as well.
+ */
+
 void
 rcsettings::notemap_filename (const std::string & value)
 {
-    m_notemap_filename = filename_base_fix(value, ".drums");
     if (value.empty())
+    {
         notemap_active(false);
+    }
+    else
+    {
+        bool has_ext = name_has_extension(value);
+        if (has_ext)
+            m_notemap_filename = value;
+        else
+            m_notemap_filename = filename_base_fix(value, ".drums");
+    }
 }
 
 void

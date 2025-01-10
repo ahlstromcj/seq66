@@ -43,18 +43,28 @@ namespace seq66
 {
 
 /**
- *    Principal constructor for the notemap class.
+ *    Principal constructor for the notemapper::pair class.
  *
- * \param value
- *    The integer value to which the incoming (key) value is to be
- *    mapped.
+ * \param devvalue
+ *      The integer value of the incoming (key) value.
+ *      This might be a non-GM device, like an old drum-pad
+ *      machine, that needs to be converted to a GM-drum value to be
+ *      properly played on modern hardware or software.
  *
- * \param keyname
- *    The name of the drum note or patch represented by the key value.
+ * \param gmvalue
+ *      The value to which the device value is to be converted.
  *
- * \param valuename
- *    The name of the drum note or patch represented by the integer
- *    value.
+ * \param devname
+ *      The name of the drum note or patch represented by the key value,
+ *      which is the the name of the drum on the non-GM input device..
+ *
+ * \param gmname
+ *      The name of the drum note or patch represented by the integer
+ *      value gmvalue.
+ *
+ * \param reverse
+ *      If true, the conversion is reversed. This value is the same for
+ *      all mapping pairs.
  */
 
 notemapper::pair::pair

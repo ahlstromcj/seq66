@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-01-06
+% \update      2025-01-10
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -361,7 +361,6 @@
 
    The pattern fix dialog provides a way for more control over the
    modifications of a pattern.
-   It is fairly intuitive to use, with some exceptions.
    It's complex and deserves a section of its own.
 
    Before we start, some obvious limitations.
@@ -384,13 +383,22 @@
    pattern will be changed.
    Once selected, the pattern number is shown in the title-bar and in a
    read-only text field.
+
+   The following sections describe the dialog.
+   For more details, go to the source-code bundle, enter the
+   \texttt{contrib/notes/} directory, and
+   examine the \texttt{pattern-fix-test.text} file.
+
+\paragraph{Pattern Fix / Length Change}
+\label{paragraph:patterns_fix_length_change}
+
    The \textbf{Length Change} selector allows for the following actions:
 
    \begin{itemize}
       \item \textbf{None}.
          No length change will occur.
          Alignment, reversing, and quantization can still be done.
-      \item \textbf{Measures}.
+      \item \textbf{Measures/Time Sig}.
          Allows the measures (length) of the pattern to be changed in three
          ways, depending on how the number is entered: as an integer or
          floating-point number (e.g. 1, 1.0, 1.75),
@@ -431,24 +439,20 @@
          expanded pattern.
    \end{itemize}
 
-   The \textbf{Quantization} selector allows for various types of
-   quantization.
-   It works the same as the \textbf{Tool} entries of the
-   same name (see \sectionref{subsec:pattern_editor_second_row}),
-   but works on \textsl{all events}, not just selected events.
-   Also included is a \textbf{Jitter} option, with a range for the jitter.
-   This option slightly randomizes the time-stamps of note events.
+\paragraph{Pattern Fix / Other Fixes}
+\label{paragraph:patterns_fix_other_fixes}
 
    \textbf{Other Fixes} provides some minor items, as follows.
 
    \begin{itemize}
       \item \textbf{Align left}
-         allows the pattern to be aligned to the left of the sequence, removing
+         allows the pattern to be aligned to the left (i.e. the beginning)
+         of the sequence, removing
          any delays.  This is useful when recording a pattern live and not quite
          hitting the first beat in time.
-      \item \textbf{Preserve note length}
-         prevents Note Offs from being scaled, which would shorten or length the
-         notes, and in some case might cause notes to bleed past a measure.
+      \item \textbf{Align right}
+         allows the pattern to be aligned to the right of the sequence;
+         the last note ends at the end of the sequence.
       \item \textbf{Reverse measures}
          reverses all of the events in the whole pattern, flipping the measures
          completely.  For example, if all the events occur near the end of the
@@ -458,16 +462,75 @@
          This is probably a more natural reversal method.
          The relative location of a cluster of notes doesn't change, but the
          notes are simply reversed in place.
+      \item \textbf{Preserve note length}
+         prevents Note Offs from being scaled, which would shorten or length the
+         notes, and in some case might cause notes to bleed past a measure.
+         When scaling down, it is usually better to leave this option off.
    \end{itemize}
 
-%  Question:  would a "pattern flip" (of the note values themselves) be useful?
+\paragraph{Pattern Fix / Alteration}
+\label{paragraph:patterns_fix_alteration}
 
-   \textbf{Effect} does not do anything except show the effect of the changes.
-   (Making it read-only might make it almost invisible in some themes.)
+   The \textbf{Alteration} selector allows for various types of
+   quantization, randomization, and note-mapping.
+
+   It works similarly to the \textbf{Tool} entries of the
+   same name (see \sectionref{subsec:pattern_editor_second_row}),
+   but works on \textsl{all events}, not just selected events.
+   Also included is a \textbf{Jitter} option, with a range for the jitter.
+   This option slightly randomizes the time-stamps of note events.
+
+   \begin{itemize}
+      \item \textbf{None}.
+      No "alteration" process is done.
+      \item \textbf{Tight Q ticks}
+         quantizes the notes by the amount shown (MIDI ticks)
+         in the text-field next to it. Normally, one wants this to be
+         half of the next value described.
+      \item \textbf{Full Q ticks}
+         quantizes the notes by the amount shown (MIDI ticks)
+         in the text-field next to it. Normally, one wants this to be
+         the size of a note, for example, a 16th note, which is 48
+         ticks by default.
+      \item \textbf{Random amplitude}
+         randomizes the velocity of note by plus-or-minus the number of units
+         specified in the text-field.
+      \item \textbf{Time/tick jitter} 
+         randomizes the timing of each note by plus-or-minus the number of
+         MIDI ticks shown in the text-field.
+         Most useful to humanize a too-rigid rhythm.
+      \item \textbf{Note-map}.
+         This feature remaps the notes according to a 
+         \texttt{.drums} or \texttt{.notemap} file (both are
+         identical in concept and layout).
+         Unlike the one-the-fly note-mapping capability (where the
+         note-map is created at the startup of the application),
+         this is a temporary note map.
+         The note-map file is read, all notes are re-mapped, and the
+         note-map goes away.
+         By default the note-map file is the one specified in the 'rc' file,
+         though it need not be active.
+         Clicking on the \texttt{...} allows one to select another file to
+         use (but only for a pattern-fix).
+         The note-map can be used to remap drum notes, or to produce
+         special note-remappings, such as inversion.
+      \item \textbf{Rev Note-map}.
+         This is the same as note-mapping, but maps in the opposite direction.
+   \end{itemize}
+
+%  Question:  would a vertical "pattern flip" (of the note values themselves)
+%  be useful?
+
+\paragraph{Pattern Fix / Applied Effects}
+\label{paragraph:patterns_fix_applied_effects}
+
+   \textbf{Applied Effects} does not do anything except show the effect of the
+   changes.  (Making it read-only might make it almost invisible in some
+   themes.)
    Note the \textbf{Truncated!} check-box.  If checked, then
    the length of the pattern has reduced enough to drop some events.
-   This only happens with the time-signature option.
-   The process followed is:
+
+   The fix process followed is:
 
    \begin{enumerate}
       \item Apply the left-alignment (if selected).
