@@ -24,7 +24,9 @@ the Clang compiler.
 
 See NEWS for updates and RELNOTES for highlights.
 
-Currnet development-in-prgoress branch: wip.
+Current development-in-progress branch: wip.
+The figure below shows Seq66 with modified palette and a style-sheet in
+force. Otherwise the application uses the current Qt theme.
 
 ![Alt text](doc/latex/images/main-window/main-windows-perstfic.png?raw=true "Seq66")
 

@@ -35,7 +35,7 @@ if test "$1" = "--help" -o "$1" = "help" ; then
    cat << E_O_F
 This script makes it easy to build Qt shadow builds for Seq66, to generate
 either qpseq66 (portmidi) or qseq66 (rtmidi). The default is to build 'qseq66'
-as a release uisng the rtmidi engine. The build can be modified by adding the
+as a release using the rtmidi engine. The build can be modified by adding the
 flags 'debug' or 'portmidi' (which generates 'qpseq66').
 
     cd ..                        (parent directory of seq66)

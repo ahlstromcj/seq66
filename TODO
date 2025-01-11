@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.17
 Chris Ahlstrom
-2019-04-13 to 2025-01-10
+2019-04-13 to 2025-01-11
 
 Hottest:
 
@@ -8,6 +8,9 @@ Hottest:
 
 Next Release?
 
+    -   Select input port 1 via the grid slot popup menu with the pattern
+        editor open. The editor does not change its selection. Same
+        for output channel.
     -   #128 Recording type for loop button not working. Fixed, some
         tweaks still needed:
         -   One-shot recording during playback now works.  But one-shot reset
@@ -27,7 +30,8 @@ Next Release?
             "qt.accessibility.core: Cannot create accessible child interface
             for object:  QTableWidget(0x55eaaaf6b880, name =
             'eventTableWidget')  index:  8".  This does not happen in
-            the table-widgets in other tabs.
+            the table-widgets in other tabs. Nor does it happen on another
+            computer.
     -   Consider an option to Import a normal MIDI file so that a flag
         is raised so that it will not be saved with Seq66 SeqSpecs.
         Make it visible to be clear.
