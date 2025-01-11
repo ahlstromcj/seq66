@@ -1,8 +1,36 @@
-Release Notes for Seq66 v. 0.99.17 2024-12-03
+Release Notes for Seq66 v. 0.99.17 2025-01-12
 
-Fixes for ...
+This release contains a large number of updates and fixes spurred
+by testing and user-reports.
 
-- Fixed ...
+Fixes for reported issues:
+
+- Issue #128. Expanded recording and related recording issues have
+  been greatly tightened, plus some follow-on issues. (See NEWS).
+- Issue #133. Pattern length change issues and issues found while
+  working this.  See TODO for a list of things fixed.
+- Issue #134. Added dates to the release-name line from 0.99.14 on.
+
+Other fixes:
+
+- Fixed a segfault when clicking the Restart button with external
+  live frame(s) or external song editor open.
+- Fixed a seqfault when opening a new tune or a recent-file with a
+  pattern-editor already up for the current tune.
+- Main window. Fixed updating the PPQN when a file of different
+  PPQN is loaded.
+
+Updates:
+
+- Majorly revamped, fixed, and tightened the "Pattern Fix" dialog.
+- Added a little more control over the lines and palette of the
+  various panes in the pattern and song editors. Also improved the
+  appearance of time signatures other than 4/4.
+- Refactored the event/buss dropdowns to be modified only when
+  the user changes setting or tries to bring up the dropdowns
+- Added ghost notes to the pattern-editor selection box and other
+  means of note selection.
+- Some minor tweaking (field size, font) of various dialogs.
 - See NEWS and ChangeLog for full details.
 
 # vim: sw=4 ts=4 wm=15 et ft=rc

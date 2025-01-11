@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.99.16 and above
+INSTALL for Seq66 v. 0.99.17 and above
 Chris Ahlstrom
-2015-09-10 to 2024-11-23
+2015-09-10 to 2025-01-10
 
 Getting Seq66 requires building the code or going to "ahlstromcj/seq66" on
 GitHub to get an installation package or a Windows release executable.
@@ -99,12 +99,13 @@ Bootstrap Install:
 
 Clang Compiler:
 
-    If one has the GNU compilers installed, one can still install Clang
+    Even if one has the GNU compilers installed, one can still install Clang
     and use it for the build.
 
     Assuming the configure script is up-to-date, and either the base clang or
-    a specific version (e.g. clang-16) is installed, then the next command can
-    be used for the base clang, or the second for a specific version:
+    a specific version (e.g. clang-16) is installed, then the configure
+    command can be used for the base clang, or the bootstrap script for a
+    specific version:
 
         $ CC=clang CXX=clang++ ./configure
         $ make &> make.log
@@ -113,7 +114,7 @@ Clang Compiler:
     One might need to make symbolic links to the desired versions of these
     compiler, for example clang-16 and clang++-16.
 
-    An alternative is to make sure the setup is fully cleaned, and use
+    The alternative is to make sure the setup is fully cleaned, and use
     a bootstrap option:
 
         $ ./bootstrap --full-clean

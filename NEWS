@@ -6,7 +6,9 @@ Chris Ahlstrom
 
 ## [0.99.17] - 2025-01-10
 
-This release is in progress....
+This release provides a rather large number of fixes, including bugs
+found while investigating user reports. Included are updated palettes
+and Qt style-sheets, and a beefed up pattern-fix dialog.
 
 ### Added
 
@@ -26,7 +28,7 @@ This release is in progress....
     not expect them to be "nice". See the 4/7 pattern in the timesigs.midi
     file.
     -   Pattern editor. Better support for thick vs. thin grid lines.
-        -   qseqroll. Upgraded the drawing of the seqroll grid.
+        -   qseqroll.
         -   qseqtime.
         -   qstriggereditor.
     -   Song editor. Better support for thick vs. thin grid lines.
@@ -81,7 +83,7 @@ This release is in progress....
 
 ### Removed
 
--   Nothing.
+-   Nothing. Maybe a few unnecessary macros.
 
 ## [0.99.16] - 2024-12-03
 

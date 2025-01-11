@@ -10,15 +10,15 @@ Next Release?
 
     -   #128 Recording type for loop button not working. Fixed, some
         tweaks still needed:
-        -   One-shot recording during playback acts like overdub. It
-            does not stop. FIXED.  But one-shot reset then makes it act like
-            overdub (because note-count == 1 is the flag).
+        -   One-shot recording during playback now works.  But one-shot reset
+            then makes it act like overdub thereafter (because note-count == 1
+            is the flag).
         -   There seems to be a very slight chance of too-longth notes in
             a chord if quantization (1/16) is on. Needs a better keyboard
             player (not me) to test it.
     -   Pattern fix:
-        -   Set the "Truncated" bit.
-        -   Need a new screen-shot and documentation.
+        -   Since scaling is now used for the Measure option,
+            remove the "Truncated" applied-effect item.
     -   Event editor:
         -   Can we add, perhaps a tooltip or dropdown to select the desired
             Control value (e.g. 7 for volume)?
@@ -31,7 +31,6 @@ Next Release?
     -   Consider an option to Import a normal MIDI file so that a flag
         is raised so that it will not be saved with Seq66 SeqSpecs.
         Make it visible to be clear.
-    -   Add .notemap support, identical to .drums.
     -   Ports.
         -   Document what to do if a port you know exists is disabled.
         -   Upgrade the performer port-detection to get around this.
@@ -54,6 +53,9 @@ Next Release?
         flag "*" is not shown in the title, though the
         "Save/Discard/Cancel" prompt appears at exit. It works if
         playback running during recording.
+    -   #111 Time signature changes does not get saved on .midi file
+    -   #112 Send midi-control-out message when New Pattern is created in GUI
+    -   #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
 
 Playlists:
 
@@ -81,9 +83,6 @@ Ongoing efforts:
     -   Make it center on notes if not visible.
     -   Can we distinguish note-insertion from movement snap, to avoid the
         "L"-then-snap-then-move samba?
-    -   #111 Time signature changes does not get saved on .midi file
-    -   #112 Send midi-control-out message when New Pattern is created in GUI
-    -   #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
 
 ISSUES:
 
