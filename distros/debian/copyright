@@ -4,7 +4,7 @@ Maintainer: Chris Ahlstrom <ahlstromcj@gmail.com>
 Source: https://github.com/ahlstromcj/seq66.git
 
 Files: ./debian/*
-Copyright: 2015-2024 Chris Ahlstrom <ahlstromcj@gmail.com>
+Copyright: 2015-2025 Chris Ahlstrom <ahlstromcj@gmail.com>
 License: GPL-2+
 
 License: GPL-2+

@@ -1727,6 +1727,13 @@ qseqeditframe64::conditional_update ()
     {
         follow_progress();
     }
+
+    /*
+     * Can we make one function to deal with a member, the track's
+     * value, and the combobox, and add to it to deal with external
+     * changes to the input channel and buss and the output channel?
+     */
+
     int m = track().measures();
     if (m_measures != m)
     {
@@ -1789,6 +1796,24 @@ qseqeditframe64::conditional_update ()
         update_midi_buttons();                  /* mirror current states    */
     }
 }
+
+#if defined USE_THIS_CODE
+
+bool
+qseqeditframe64::poll_for_change
+(
+    int newvalue,
+    int oldvalue,
+    QComboBox * qcb,
+    combolist & cl,
+)
+{
+    bool result = false;
+
+    return result;
+}
+
+#endif  // defined USE_THIS_CODE
 
 #if defined USE_WOULD_TRUNCATE_BPB_BW           /* undefined                */
 

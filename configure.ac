@@ -21,7 +21,7 @@ dnl ---------------------------------------------------------------------------
 
 AC_PREREQ([2.72])
 AC_REVISION($Revision: 0.99$)
-AC_INIT([Seq66],[0.99.17],[ahlstromcj@gmail.com])
+AC_INIT([Seq66],[0.99.18],[ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
@@ -565,7 +565,7 @@ AH_TOP(
 
 #define VERSION_DATE_SHORT "2025-01-12"
 #define API_VERSION "0.99"
-#define VERSION "0.99.17"
+#define VERSION "0.99.18"
 
 )
 

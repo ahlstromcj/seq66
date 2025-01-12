@@ -1,16 +1,12 @@
-TO DO for Seq66 0.99.17
+TO DO for Seq66 0.99.18
 Chris Ahlstrom
-2019-04-13 to 2025-01-11
+2019-04-13 to 2025-01-12
 
 Hottest:
 
-    -   Time to relax and get a release 0.99.17 out.
-
-Next Release?
-
     -   Select input port 1 via the grid slot popup menu with the pattern
         editor open. The editor does not change its selection. Same
-        for output channel.
+        for output port and output channel.
     -   #128 Recording type for loop button not working. Fixed, some
         tweaks still needed:
         -   One-shot recording during playback now works.  But one-shot reset
