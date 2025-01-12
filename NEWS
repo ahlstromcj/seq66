@@ -1,8 +1,14 @@
-NEWS for Seq66 0.99.17
+NEWS for Seq66 0.99.17.1
 Chris Ahlstrom
-2015-07-10 to 2025-01-10
+2015-07-10 to 2025-01-12
 
 # Change Log
+
+## [0.99.17.1] - 2025-01-12
+
+### Fixed
+
+-   Fixed a segfault when clicking an empty pattern on sets 1 and above.
 
 ## [0.99.17] - 2025-01-10
 

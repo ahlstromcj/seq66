@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2024-12-19
+ * \updates       2025-01-12
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -518,11 +518,14 @@ qslivegrid::clear_loop_buttons ()
     if (! m_loop_buttons.empty())
     {
         int setsize = perf().screenset_size();
-        for (int seqno = 0; seqno < setsize; ++seqno)
+        if (setsize <= int(m_loop_buttons.size()))
         {
-            qslotbutton * pb = m_loop_buttons[seqno];
-            if (not_nullptr(pb))
-                delete pb;
+            for (int seqno = 0; seqno < setsize; ++seqno)
+            {
+                qslotbutton * pb = m_loop_buttons[seqno];
+                if (not_nullptr(pb))
+                    delete pb;
+            }
         }
         m_loop_buttons.clear();
     }
@@ -718,7 +721,8 @@ qslivegrid::button (int row, int column)
     if (! m_loop_buttons.empty())
     {
         int index = perf().grid_to_index(row, column);
-        result = m_loop_buttons[index];
+        if (index < int(m_loop_buttons.size()))
+            result = m_loop_buttons[index];
     }
     return result;
 }
@@ -740,10 +744,10 @@ qslivegrid::button (int row, int column)
  */
 
 qslotbutton *
-qslivegrid::loop_button (seq::number seqno, seq::number offset)
+qslivegrid::loop_button (seq::number seqno)
 {
-    seq::number base = seqno - offset;
-    return m_loop_buttons[base];
+    seq::number sz = seq::number(m_loop_buttons.size());
+    return seqno < sz ? m_loop_buttons[seqno] : nullptr ;
 }
 
 /**
@@ -789,12 +793,18 @@ qslivegrid::delete_all_slots ()
     {
         bool failed = false;
         int setsize = perf().screenset_size();
-        for (int seqno = 0; seqno < setsize; ++seqno)
+        if (setsize <= int(m_loop_buttons.size()))
         {
-            result = delete_slot(seqno);
-            if (! result)
-                failed = true;
+            for (int seqno = 0; seqno < setsize; ++seqno)
+            {
+                result = delete_slot(seqno);
+                if (! result)
+                    failed = true;
+            }
         }
+        else
+            failed = true;
+
         if (failed)
             result = false;
     }
