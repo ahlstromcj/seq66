@@ -1,16 +1,21 @@
 NEWS for Seq66 0.99.18
 Chris Ahlstrom
-2015-07-10 to 2025-01-10
+2015-07-10 to 2025-01-12
 
 # Change Log
 
-## [0.99.18] - 2025-01-10
+## [0.99.18] - 2025-01-12
+
+Another dang seqfault!
 
 ### Added
 
 ### Changed
 
 ### Fixed
+
+-   Fixed a seqfault when pressing an empty button on a set other than
+    the first set. Also fixed in tag 0.99.17.1.
 
 ### Removed
 

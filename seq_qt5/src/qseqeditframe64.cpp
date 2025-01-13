@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-01-06
+ * \updates       2025-01-12
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -348,6 +348,7 @@ qseqeditframe64::qseqeditframe64
     m_key                   (usr().seqedit_key()),
     m_bgsequence            (0),                    /* set in ctor body     */
     m_edit_bus              (0),
+    m_edit_in_bus           (0),                    /* TODO                 */
     m_edit_channel          (0),                    /* 0-15, null           */
     m_first_event           (max_midibyte()),
     m_first_event_name      ("(no events)"),
@@ -395,6 +396,7 @@ qseqeditframe64::qseqeditframe64
     m_measures = track().get_measures();
     m_scale = track().musical_scale();
     m_edit_bus = track().seq_midi_bus();
+    m_edit_in_bus = track().seq_midi_in_bus();
     m_edit_channel = track().midi_channel();        /* 0-15, null           */
     seqname = track().name();
     loopcountmax = track().loop_count_max();
@@ -1145,6 +1147,11 @@ qseqeditframe64::qseqeditframe64
 
     repopulate_usr_combos(m_edit_bus, m_edit_channel);
     set_midi_bus(m_edit_bus, qbase::status::startup);
+
+    /*
+     * set_midi_in_bus(m_edit_bus, qbase::status::startup);
+     */
+
     set_midi_channel(m_edit_channel, qbase::status::startup);  /* 0-15/0x80 */
 
     /*
@@ -1423,18 +1430,20 @@ qseqeditframe64::on_sequence_change
         {
             int bus = track().seq_midi_bus();
             int channel = track().midi_channel();
-            m_edit_bus = bus;
-            m_edit_channel = channel;
-            modification = true;
-#if ! defined USE_LAZY_REPOPULATE_USR_COMBOS
-            repopulate_usr_combos(bus, channel);
-#endif
+            int inbus = track().seq_midi_in_bus();
+            bool slotchanged =
+                bus != m_edit_bus || channel != m_edit_channel ||
+                inbus != m_edit_in_bus;
+
+            if (slotchanged)
+            {
+                m_edit_bus = bus;
+                m_edit_channel = channel;
+                m_edit_in_bus = inbus;
+                modification = true;
+                repopulate_usr_combos(bus, channel);
+            }
         }
-
-        /*
-         * set_track_change(modification);      // too much!
-         */
-
         set_external_frame_title(modification);
         set_dirty();
         update_midi_buttons();                  /* mirror current states    */

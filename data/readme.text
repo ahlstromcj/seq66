@@ -1,8 +1,8 @@
-readme.text for Seq66 0.99.17
+readme.text for Seq66 0.99.18
 Chris Ahlstrom
 2015-09-10 to 2025-01-12
 
-Release 0.99.15 fixes known issues and issues found by the author.
+Release 0.99.18 fixes known issues and issues found by the author.
 See the NEWS and RELNOTES files for details.
 
 Seq66 is a refactoring of a reboot (sequencer64) of seq24, extending it with

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-01-05
+ * \updates       2025-01-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -560,10 +560,17 @@ private:
     int m_bgsequence;
 
     /**
-     *  Indicates what MIDI channel the data window is currently editing.
+     *  Indicates what MIDI output bus is active for this pattern.
      */
 
     bussbyte m_edit_bus;
+
+    /**
+     *  Indicates what MIDI input bus is active for this pattern.
+     *  Currently not part of the user-interface.
+     */
+
+    bussbyte m_edit_in_bus;
 
     /**
      *  Indicates what MIDI channel the data window is currently editing.

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2024-12-19
+ * \updates       2025-01-12
  * \license       GNU GPLv2 or above
  *
  *
@@ -178,7 +178,7 @@ private:
     seq::number seq_id_from_xy (int click_x, int click_y);
     qslotbutton * create_one_button (seq::number seqno);
     qslotbutton * button (int row, int column);
-    qslotbutton * loop_button (seq::number seqno, seq::number offset = 0);
+    qslotbutton * loop_button (seq::number seqno);
     bool get_slot_coordinate (int x, int y, int & row, int & column);
     bool handle_key_press (const keystroke & k);
     bool handle_key_release (const keystroke & k);
