@@ -44,6 +44,8 @@
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 #include "util/palette.hpp"             /* seq66::palette map class         */
 
+#undef  SEQ66_PROVIDE_AUTO_COLOR_INVERSION  /* experimental, investigative  */
+
 /*
  * Do not document the namespace; it breaks Doxygen.
  */
@@ -259,8 +261,13 @@ public:
         PaletteColor index, double h, double s = 0.65, double v = 1.0
     ) const;
 
+    Color invert (Color c) const;
     Color get_color_fix (PaletteColor index) const;
     Color get_color_inverse (PaletteColor index) const;
+
+#if defined SEQ66_PROVIDE_AUTO_COLOR_INVERSION
+    void fill_inverse_colors ();
+#endif
 
     void load_static_colors (bool inverse = true);
     bool is_theme_color (const Color & c) const;

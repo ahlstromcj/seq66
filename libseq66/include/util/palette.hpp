@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-18
- * \updates       2024-12-01
+ * \updates       2025-01-14
  * \license       GNU GPLv2 or above
  *
  *  This module is inspired by MidiPerformance::getSequenceColor() in
@@ -143,7 +143,8 @@ enum class InvertibleColor
 };
 
 /**
- *  A macro to simplify converting a PaletteColor to a simple integer.
+ *  Macro to simplify converting between palette color enumeration values
+ *  to a simple integer.
  */
 
 inline int
@@ -168,6 +169,7 @@ inv_palette_to_int (InvertibleColor x)
 template <typename COLOR>
 class palette
 {
+    friend class gui_palette_qt5;
 
     /**
      *  Combines the PaletteColor with a string describing the color.
@@ -181,6 +183,8 @@ class palette
         std::string ppt_color_name;
     };
 
+    using container = std::map<int, pair>;
+
 private:
 
     /**
@@ -190,7 +194,7 @@ private:
      *  std::map<PaletteColor, pair> m_container;
      */
 
-    std::map<int, pair> m_container;
+    container m_container;
 
 public:
 
@@ -227,6 +231,18 @@ public:
     int count ()
     {
         return int(m_container.size());
+    }
+
+private:
+
+    const container & entries () const
+    {
+        return m_container;
+    }
+
+    container & entries ()
+    {
+        return m_container;
     }
 
 };          // class palette

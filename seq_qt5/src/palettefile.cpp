@@ -241,12 +241,6 @@ palettefile::write_stream (std::ofstream & file)
         "# '#', '[', or that have no characters end the comment.\n\n"
         "[comments]\n\n" << mapper().comments_block().text() << "\n"
         <<
-        "# [palette] affects the pattern colors selected (by number). First is\n"
-        "# the color number, 0 to 31. Next is the name of the background color.\n"
-        "# The first stanza [square brackets] are the background ARGB values.\n"
-        "# The second provides the foreground color name and ARGB values. The\n"
-        "# alpha values should be set to FF.\n"
-        "\n"
         "# Set 'dark-theme' to true if the matching style-sheet is dark. Also\n"
         "# note the 'dark-theme' setting in the 'usr' file.\n"
         "\n"
@@ -255,6 +249,12 @@ palettefile::write_stream (std::ofstream & file)
         ;
     write_boolean(file, "dark-theme", mapper().is_dark());
     file <<
+        "\n"
+        "# [palette] affects the pattern colors selected (by number). First is\n"
+        "# the color number, 0 to 31. Next is the name of the background color.\n"
+        "# The first stanza [square brackets] are the background ARGB values.\n"
+        "# The second provides the foreground color name and ARGB values. The\n"
+        "# alpha values should be set to FF.\n"
         "\n"
         "[palette]\n"
         "\n"

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-27
+ * \updates       2025-01-14
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1997,6 +1997,16 @@ qseditoptions::setup_tab_session ()
         this, SLOT(slot_palette_save_now_click())
     );
 
+#if defined SEQ66_PROVIDE_AUTO_COLOR_INVERSION
+    connect
+    (
+        ui->pushButtonInversePalette, SIGNAL(clicked(bool)),
+        this, SLOT(slot_palette_save_inverse())
+    );
+#else
+    ui->pushButtonInversePalette->hide();
+#endif
+
     /*
      * 'qss' file.  Since this configuration is not editable while the
      * application is running, the "auto-save" check-box is read-only.
@@ -3230,6 +3240,17 @@ qseditoptions::slot_palette_save_now_click ()
             file_error("Save failed", palfile);
     }
 }
+
+#if defined SEQ66_PROVIDE_AUTO_COLOR_INVERSION
+
+void
+qseditoptions::slot_palette_save_inverse ()
+{
+    global_palette().fill_inverse_colors();
+    slot_palette_save_now_click();
+}
+
+#endif
 
 #if defined USE_VERBOSE_CHECKBOX
 
