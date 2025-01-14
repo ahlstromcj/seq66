@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2024-02-23
+ * \updates       2025-01-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -92,7 +92,14 @@ palettefile::parse_stream (std::ifstream & file)
     if (! s.empty())
         mapper().comments_block().set(s);
 
-    bool ok = line_after(file, "[palette]");
+    const std::string tag = "[hints]";
+    bool ok = line_after(file, tag);
+    if (ok)
+    {
+        bool flag = get_boolean(file, tag, "dark-theme");
+        mapper().is_dark(flag);
+    }
+    ok = line_after(file, "[palette]");
     if (ok)
     {
         int count = 0;                  /* limited to 32 palette entries    */
@@ -239,6 +246,15 @@ palettefile::write_stream (std::ofstream & file)
         "# The first stanza [square brackets] are the background ARGB values.\n"
         "# The second provides the foreground color name and ARGB values. The\n"
         "# alpha values should be set to FF.\n"
+        "\n"
+        "# Set 'dark-theme' to true if the matching style-sheet is dark. Also\n"
+        "# note the 'dark-theme' setting in the 'usr' file.\n"
+        "\n"
+        "[hints]\n"
+        "\n"
+        ;
+    write_boolean(file, "dark-theme", mapper().is_dark());
+    file <<
         "\n"
         "[palette]\n"
         "\n"

@@ -21,6 +21,10 @@ This palette is meant to tweak the normal palette for the monogreen.qss
 style-sheet. It works well with green-on-black themes and console
 windows.
 
+[hints]
+
+dark-theme = true
+
 # [palette] affects the pattern colors selected (by number). First is
 # the color number, 0 to 31. Next is the name of the background color.
 # The first stanza [square brackets] are the background ARGB values.

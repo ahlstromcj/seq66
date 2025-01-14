@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2024-12-01
+ * \updates       2025-01-14
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -134,6 +134,13 @@ private:
      */
 
     bool m_is_inverse;
+
+    /**
+     *  Provides a hint that the palette (or matching theme) is overall
+     *  "dark".
+     */
+
+    bool m_is_dark;
 
     /**
      *  Stock brushes to increase speed. As of 2023-02-26, we use
@@ -259,12 +266,23 @@ public:
     bool is_theme_color (const Color & c) const;
 
     /**
-     *  Indicates if the inverse color palette is loaded.
+     *  Indicates if the inverse color palette is loaded, and if the
+     *  use considers the matching theme to be dark.
      */
 
     bool is_inverse () const
     {
         return m_is_inverse;
+    }
+
+    bool is_dark () const
+    {
+        return m_is_dark;
+    }
+
+    void is_dark (bool flag)
+    {
+        m_is_dark = flag;
     }
 
     /**

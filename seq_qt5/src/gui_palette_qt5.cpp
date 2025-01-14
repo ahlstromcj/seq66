@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2024-12-01
+ * \updates       2025-01-14
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -451,6 +451,7 @@ gui_palette_qt5::gui_palette_qt5 (const std::string & filename) :
     m_inv_palette           (),
     m_statics_are_loaded    (false),
     m_is_inverse            (false),
+    m_is_dark               (false),
     m_empty_brush           (new (std::nothrow) Brush(Qt::SolidPattern)),
     m_empty_brush_style     (Qt::SolidPattern),
     m_note_brush            (new (std::nothrow) Brush(Qt::SolidPattern)),

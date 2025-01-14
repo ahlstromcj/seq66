@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.18
 Chris Ahlstrom
-2019-04-13 to 2025-01-12
+2019-04-13 to 2025-01-14
 
 Hottest:
 
@@ -350,7 +350,7 @@ ISSUES:
 
     STATUS: All issues seem to be fixed, but need to be retested.
 
-#129 Quantized Record Button problem 
+#129 Quantized Record Button problem
     There is a button in the pattern window to turn on Quantized Record.  If
     the Record Active button to the left of it is set to on then this button
     does not  work. If the Record Active button is off then the Quantized
@@ -360,7 +360,7 @@ ISSUES:
 
 #131 NSM seems to get an announce from two processes
     It looks like it announces with two processes to the NSM daemon or
-    something. 
+    something.
 
     STATUS: Fixed in the "wip" branch, will be merged at the next release.
 
@@ -396,6 +396,21 @@ ISSUES:
     previous value. FIXED.
 
     There might still be issues when making multiple time-signature changes.
+
+#135 Dark theme tweak issues
+
+    These are problems found when the "Tweak color for Dark theme" check box
+    is marked.
+
+    1.  Reset Pattern length to 1 button does not have inverted equivalent.
+        FIXED.
+    2.  The dotted lines are over the bar number (this is regardless of dark
+        theme but more noticeable) making it not clear to read.
+    3.  The beat lines are set to white and you cannot override this in the
+        palette file. This makes them near invisible by default because the
+        default background is white. When not in dark mode, the beat line
+        also colours the bar lines (they probably should not?) but this
+        does not happen in dark mode.
 
 = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 

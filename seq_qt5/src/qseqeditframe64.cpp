@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-01-12
+ * \updates       2025-01-14
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -134,6 +134,7 @@
 #include "pixmaps/loop.xpm"
 #include "pixmaps/length_red.xpm"
 #include "pixmaps/length_short.xpm"     /* not length.xpm, it is too long   */
+#include "pixmaps/length_short_inv.xpm"
 #include "pixmaps/menu_empty.xpm"
 #include "pixmaps/menu_empty_inv.xpm"
 #include "pixmaps/menu_full.xpm"
@@ -549,7 +550,11 @@ qseqeditframe64::qseqeditframe64
      * entered will not take effect until either Tab or Enter is struck.
      */
 
-    qt_set_icon(length_short_xpm, ui->m_button_length);
+    qt_set_icon
+    (
+        usr().dark_theme() ? length_short_inv_xpm : length_short_xpm,
+        ui->m_button_length
+    );
     connect
     (
         ui->m_combo_length, SIGNAL(currentIndexChanged(int)),
@@ -742,8 +747,8 @@ qseqeditframe64::qseqeditframe64
     tooltip_with_keystroke(ui->m_button_undo, "q");
     qt_set_icon
     (
-        usr().dark_theme() ?
-            quantize_inv_xpm : quantize_xpm, ui->m_button_quantize
+        usr().dark_theme() ? quantize_inv_xpm : quantize_xpm,
+        ui->m_button_quantize
     );
     connect
     (
@@ -838,8 +843,8 @@ qseqeditframe64::qseqeditframe64
     set_note_length(scaledtick);
     qt_set_icon
     (
-        usr().dark_theme() ?
-            note_length_inv_xpm : note_length_xpm, ui->m_button_note
+        usr().dark_theme() ? note_length_inv_xpm : note_length_xpm,
+        ui->m_button_note
     );
     connect
     (
@@ -4148,18 +4153,20 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
          * somehow.
          */
 
-        if (usr().dark_theme())
-            qt_set_icon(menu_full_inv_xpm, ui->m_button_data);
-        else
-            qt_set_icon(menu_full_xpm, ui->m_button_data);
+        qt_set_icon
+        (
+            usr().dark_theme() ? menu_full_inv_xpm : menu_full_xpm,
+            ui->m_button_data
+        );
     }
     else
     {
         set_event_entry(m_minidata_popup, "(no events)", false, 0);
-        if (usr().dark_theme())
-            qt_set_icon(menu_empty_inv_xpm, ui->m_button_data);
-        else
-            qt_set_icon(menu_empty_xpm, ui->m_button_data);
+        qt_set_icon
+        (
+            usr().dark_theme() ? menu_empty_inv_xpm : menu_empty_xpm,
+            ui->m_button_data
+        );
     }
 }
 
