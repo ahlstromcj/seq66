@@ -507,7 +507,11 @@ private:
     std::string m_time_bg_color;        /* e.g. "black" */
 
     /**
-     *  If set, adjust some items (like icons) to a dark-theme.
+     *  If set, adjust some items (mainly icons) to a dark-theme. This
+     *  setting can also be made true by the same option in an active
+     *  palette file. This setting no long applies to "ui" items, that is,
+     *  the items drawn separately from the Qt them. See the "dark-ui"
+     *  option in the GUI palette file.
      */
 
     bool m_dark_theme;

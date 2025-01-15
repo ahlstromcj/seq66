@@ -195,6 +195,7 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
         if (ts.sig_beat_width == 0)
             break;
 
+        bool skip_substep = false;
         int bpbar = ts.sig_beats_per_bar;
         int bwidth = ts.sig_beat_width;
         bool valid_bw = is_power_of_2(bwidth);
@@ -221,6 +222,7 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
                 penstyle = measure_pen_style();
                 penwidth = measure_pen_width();
                 pen.setColor(beat_color());
+                skip_substep = true;                    /* don't mess meas. */
             }
             else if (tick % ticks_per_beat == 0)        /* thin every beat  */
             {
@@ -242,14 +244,25 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
             }
             else
             {
-                penwidth = 1;
-                penstyle = Qt::DotLine;
-                pen.setColor(step_color());
+                if (skip_substep)
+                {
+                    penwidth = 0;
+                    skip_substep = false;
+                }
+                else
+                {
+                    penwidth = 1;
+                    penstyle = Qt::DotLine;
+                    pen.setColor(step_color());
+                }
             }
-            pen.setWidth(penwidth);
-            pen.setStyle(penstyle);
-            painter.setPen(pen);
-            painter.drawLine(x_offset, 0, x_offset, sizeheight);
+            if (penwidth > 0)
+            {
+                pen.setWidth(penwidth);
+                pen.setStyle(penstyle);
+                painter.setPen(pen);
+                painter.drawLine(x_offset, 0, x_offset, sizeheight);
+            }
         }
     }
 }

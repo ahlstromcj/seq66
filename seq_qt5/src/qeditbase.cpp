@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2024-12-29
+ * \updates       2025-01-15
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -81,7 +81,8 @@ qeditbase::qeditbase
     int initialzoom, int snap, int scalex,
     int padding, int unit_height, int total_height
 ) :
-    qbase                   (p),    // initialzoom),
+    qbase                   (p),
+    m_dark_ui               (is_dark_ui()),
     m_back_color            (background_paint()),
     m_fore_color            (foreground_paint()),
     m_label_color           (label_paint()),

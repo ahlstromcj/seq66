@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2025-01-14
+ * \updates       2025-01-15
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -133,6 +133,17 @@ bool
 is_theme_color (const Color & c)
 {
     return global_palette().is_theme_color(c);
+}
+
+/**
+ *  Indicates the user is specifying a Seq66-drawn user-interface that has
+ *  a dark grid background. This is separate from usr().dark_theme().
+ */
+
+bool
+is_dark_ui ()
+{
+    return global_palette().dark_ui();
 }
 
 /**
@@ -320,25 +331,37 @@ text_names_paint ()
 Color
 text_slots_paint ()
 {
-    return usr().dark_theme() ?
+#if defined USE_OLD_CODE
+    return global_palette().dark_ui() ?
         global_palette().get_inverse_color(InvertibleColor::textslots) :
         global_palette().get_color(InvertibleColor::textslots) ;
+#else
+    return global_palette().get_color(InvertibleColor::textslots);
+#endif
 }
 
 Color
 scale_paint ()
 {
-    return usr().dark_theme() ?
+#if defined USE_OLD_CODE
+    return global_palette().dark_ui() ?
         global_palette().get_inverse_color(InvertibleColor::scale) :
         global_palette().get_color(InvertibleColor::scale) ;
+#else
+    return global_palette().get_color(InvertibleColor::scale) ;
+#endif
 }
 
 Color
 extra_paint ()
 {
-    return usr().dark_theme() ?
+#if defined USE_OLD_CODE
+    return global_palette().dark_ui() ?
         global_palette().get_inverse_color(InvertibleColor::extra) :
         global_palette().get_color(InvertibleColor::extra) ;
+#else
+    return global_palette().get_color(InvertibleColor::extra) ;
+#endif
 }
 
 Brush
@@ -451,7 +474,8 @@ gui_palette_qt5::gui_palette_qt5 (const std::string & filename) :
     m_inv_palette           (),
     m_statics_are_loaded    (false),
     m_is_inverse            (false),
-    m_is_dark               (false),
+    m_dark_theme            (false),
+    m_dark_ui               (false),
     m_empty_brush           (new (std::nothrow) Brush(Qt::SolidPattern)),
     m_empty_brush_style     (Qt::SolidPattern),
     m_note_brush            (new (std::nothrow) Brush(Qt::SolidPattern)),

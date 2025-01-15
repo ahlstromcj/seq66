@@ -33,7 +33,7 @@
 #include <iomanip>                      /* std::setw()                      */
 #include <iostream>                     /* std::cout                        */
 
-#include "cfg/settings.hpp"             /* seq66::rc()                      */
+#include "cfg/settings.hpp"             /* seq66::rc(), seq66::usr()        */
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5           */
 #include "palettefile.hpp"              /* seq66::palettefile class         */
 
@@ -97,7 +97,12 @@ palettefile::parse_stream (std::ifstream & file)
     if (ok)
     {
         bool flag = get_boolean(file, tag, "dark-theme");
-        mapper().is_dark(flag);
+        mapper().dark_theme(flag);
+        if (flag)
+            usr().dark_theme(true);
+
+        flag = get_boolean(file, tag, "dark-ui");
+        mapper().dark_ui(flag);
     }
     ok = line_after(file, "[palette]");
     if (ok)
@@ -241,13 +246,15 @@ palettefile::write_stream (std::ofstream & file)
         "# '#', '[', or that have no characters end the comment.\n\n"
         "[comments]\n\n" << mapper().comments_block().text() << "\n"
         <<
-        "# Set 'dark-theme' to true if the matching style-sheet is dark. Also\n"
-        "# note the 'dark-theme' setting in the 'usr' file.\n"
+        "# Set 'dark-theme' to true if the matching style-sheet is dark. This\n"
+        "# also set the 'dark-theme' setting in the 'usr' file.\n"
+        "# Set 'dark-ui' to true if the palette background elements are dark.\n"
         "\n"
         "[hints]\n"
         "\n"
         ;
-    write_boolean(file, "dark-theme", mapper().is_dark());
+    write_boolean(file, "dark-theme", mapper().dark_theme());
+    write_boolean(file, "dark-ui", mapper().dark_ui());
     file <<
         "\n"
         "# [palette] affects the pattern colors selected (by number). First is\n"

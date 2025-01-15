@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2025-01-14
+ * \updates       2025-01-15
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -139,10 +139,17 @@ private:
 
     /**
      *  Provides a hint that the palette (or matching theme) is overall
-     *  "dark".
+     *  "dark" for the user-interface elements, which are separate from
+     *  the Qt theme.
      */
 
-    bool m_is_dark;
+    bool m_dark_theme;
+
+    /**
+     *  Provides a hint that the backgrounds of grids, etc. are dark.
+     */
+
+    bool m_dark_ui;
 
     /**
      *  Stock brushes to increase speed. As of 2023-02-26, we use
@@ -282,14 +289,24 @@ public:
         return m_is_inverse;
     }
 
-    bool is_dark () const
+    bool dark_theme () const
     {
-        return m_is_dark;
+        return m_dark_theme;
     }
 
-    void is_dark (bool flag)
+    void dark_theme (bool flag)
     {
-        m_is_dark = flag;
+        m_dark_theme = flag;
+    }
+
+    bool dark_ui () const
+    {
+        return m_dark_ui;
+    }
+
+    void dark_ui (bool flag)
+    {
+        m_dark_ui = flag;
     }
 
     /**
@@ -396,8 +413,9 @@ extern Color scale_paint ();
 extern Color extra_paint ();
 extern std::string get_color_name (PaletteColor index);
 extern std::string get_color_name_ex (PaletteColor index);
-extern bool is_theme_color (const Color & c);
 extern bool no_color (int c);
+extern bool is_theme_color (const Color & c);
+extern bool is_dark_ui ();
 extern Brush gui_empty_brush ();
 extern Brush gui_note_brush ();                 /* for notes and triggers   */
 extern bool gui_use_gradient_brush ();          /* ditto                    */

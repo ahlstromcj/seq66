@@ -1,7 +1,7 @@
 # Seq66 0.99.11 (and above) palette configuration file
 #
-# /home/user/.config/seq66/green.palette
-# Written on 2024-12-30 12:00:00
+# /home/ahlstrom/.config/seq66/monogreen.palette
+# Written on 2025-01-15 07:10:46
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface. It must be active and
@@ -21,9 +21,14 @@ This palette is meant to tweak the normal palette for the monogreen.qss
 style-sheet. It works well with green-on-black themes and console
 windows.
 
+# Set 'dark-theme' to true if the matching style-sheet is dark. This
+# also set the 'dark-theme' setting in the 'usr' file.
+# Set 'dark-ui' to true if the palette background elements are dark.
+
 [hints]
 
 dark-theme = true
+dark-ui = false
 
 # [palette] affects the pattern colors selected (by number). First is
 # the color number, 0 to 31. Next is the name of the background color.
@@ -67,36 +72,36 @@ dark-theme = true
 31        "Dark Grey" [ 0xFF484848 ]            "Black" [ 0xFF000000 ]
 
 # Similar to the [palette] section, but applies to the custom-drawn
-# piano rolls and the --inverse option. The first value is the color
-# number, from 0 to 23. The names are feature names, not color names.
-# The second column block is the inverse color.
+# piano rolls and the --inverse option. The values: color number (0
+# to 31); main color feature name; main color value; inverse color
+# feature name; and the --inverse color value.
 
 [ui-palette]
 
  0       "Foreground" [ 0xFF00FF00 ]       "Foreground" [ 0xFFFFFFFF ]
- 1       "Background" [ 0xFF000000 ]       "Background" [ 0xFF00FF00 ]
- 2            "Label" [ 0xDEADBEEF ]            "Label" [ 0xFFFFFFFF ]
- 3        "Selection" [ 0xFFCF8500 ]        "Selection" [ 0xFFFF00A5 ]
- 4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF000080 ]
- 5            "Tempo" [ 0xFFFFFF00 ]            "Tempo" [ 0xFFFFFF00 ]
- 6        "Note Fill" [ 0xFF000000 ]        "Note Fill" [ 0xFF00FF00 ]
+ 1       "Background" [ 0xFF000000 ]       "Background" [ 0xFF0000FF ]
+ 2            "Label" [ 0xFFADBEEF ]            "Label" [ 0xFFFFFFFF ]
+ 3        "Selection" [ 0xFFCF8500 ]        "Selection" [ 0xFFFFA500 ]
+ 4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF008000 ]
+ 5            "Tempo" [ 0xFFFFFF00 ]            "Tempo" [ 0xFFFF00FF ]
+ 6        "Note Fill" [ 0xFF000000 ]        "Note Fill" [ 0xFF0000FF ]
  7      "Note Border" [ 0xFF00FF00 ]      "Note Border" [ 0xFFFFFFFF ]
  8       "Black Keys" [ 0xFF00FF00 ]       "Black Keys" [ 0xFFFFFFFF ]
- 9       "White Keys" [ 0xFFFFFFFF ]       "White Keys" [ 0xFF00FF00 ]
+ 9       "White Keys" [ 0xFFFFFFFF ]       "White Keys" [ 0xFF0000FF ]
 10     "Progress Bar" [ 0xFFFF0000 ]     "Progress Bar" [ 0xFFFF0000 ]
 11     "Back Pattern" [ 0xFF008B8B ]     "Back Pattern" [ 0xFF008B8B ]
 12      "Medium Line" [ 0xFF202020 ]      "Medium Line" [ 0xFF808080 ]
 13       "Heavy Line" [ 0xFF101010 ]       "Heavy Line" [ 0xFFFFFFFF ]
 14       "Light Line" [ 0xFF404040 ]       "Light Line" [ 0xFFC0C0C0 ]
 15             "Beat" [ 0xFF00FF00 ]             "Beat" [ 0xFFFFFFFF ]
-16             "Near" [ 0xFFFFFF00 ]             "Near" [ 0xFFFF00FF ]
+16             "Near" [ 0xFFFFFF00 ]             "Near" [ 0xFFFFFF00 ]
 17       "Time Brush" [ 0xFF000000 ]       "Time Brush" [ 0xFF808080 ]
 18       "Data Brush" [ 0xFF000000 ]       "Data Brush" [ 0xFF808080 ]
 19      "Event Brush" [ 0xFF000000 ]      "Event Brush" [ 0xFF808080 ]
-20       "Keys Brush" [ 0xFF000000 ]       "Keys Brush" [ 0xFF0AC0A0 ]
+20       "Keys Brush" [ 0xFF000000 ]       "Keys Brush" [ 0xFF0AA0C0 ]
 21      "Names Brush" [ 0xFF000000 ]      "Names Brush" [ 0xFF808080 ]
 22      "Octave Line" [ 0xFF00FFFF ]      "Octave Line" [ 0xFFFFFFFF ]
-23             "Text" [ 0xFF00FF00 ]             "Text" [ 0xFFFF00FF ]
+23             "Text" [ 0xFF00FF00 ]             "Text" [ 0xFFFFFF00 ]
 24        "Time Text" [ 0xFF00FF00 ]        "Time Text" [ 0xFFFFFFFF ]
 25        "Data Text" [ 0xFF00FF00 ]        "Data Text" [ 0xFFFFFFFF ]
 26       "Note Event" [ 0xFF80FFFF ]       "Note Event" [ 0xFFFFFFFF ]
@@ -114,7 +119,7 @@ dark-theme = true
 #    lineargradient, radialgradient, and conicalgradient.
 #
 # For 'empty', best to just use 'solid' (try others and see why).
-# For 'note', use 'solid' or the default, 'lineargradient'. These
+# For 'note', use only 'solid' or the default, 'lineargradient'. These
 # also apply to the progress box and triggers.
 
 [brushes]
@@ -124,6 +129,6 @@ note = lineargradient
 scale = dense3
 backseq = dense2
 
-# End of /home/user/.config/seq66/qseq66.palette
+# End of /home/ahlstrom/.config/seq66/monogreen.palette
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

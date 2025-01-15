@@ -3,7 +3,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-03-22
- * \updates       2021-04-29
+ * \updates       2025-01-15
  * \license       Public domain
  *
  *  Provides a sample Qt style sheet for Seq66.  See
@@ -11,9 +11,13 @@
  *  https://doc.qt.io/qt-5/stylesheet-reference.html.
  *
  *  Copy this file to the Seq66 configuration directory.
- *  In the 'usr' file, section [user-ui-tweaks], specify:
+ *  In the 'rc' file, section [style-sheet-file], specify:
  *
- *      style-sheet = "qseq66.qss"
+ *      active = true
+ *      name = "qseq66.qss"
+ *
+ *  However, note that this sample is quite garish, and the changes
+ *  in buttons breaks the grid alignments in the pattern editor.
  */
 
 QTabWidget::pane /* the tab widget frame */

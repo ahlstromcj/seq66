@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2024-12-29
+ * \updates       2025-01-15
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -70,6 +70,12 @@ class qeditbase : public qbase
 {
 
 private:
+
+    /**
+     *  Indicates dark GUI backgrounds are drawn.
+     */
+
+    bool m_dark_ui;
 
     /**
      *  Colors common to the sequence and song edit panes.  We want to
@@ -324,6 +330,11 @@ public:
         int unit_height     = 1,
         int total_height    = 1
     );
+
+    bool dark_ui () const
+    {
+        return m_dark_ui;
+    }
 
     const Color & back_color () const
     {
