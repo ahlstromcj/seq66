@@ -4409,25 +4409,6 @@ path added to this name is stripped.</string>
          <string>* Cannot alter data for these files in Seq66. Text-edit them.</string>
         </property>
        </widget>
-       <widget class="QPushButton" name="pushButtonInversePalette">
-        <property name="geometry">
-         <rect>
-          <x>490</x>
-          <y>190</y>
-          <width>132</width>
-          <height>27</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Store Inverse</string>
-        </property>
-       </widget>
       </widget>
       <widget class="QLabel" name="label_exit_required">
        <property name="geometry">

@@ -1,7 +1,7 @@
 # Seq66 0.99.11 (and above) palette configuration file
 #
-# /home/user/.config/seq66/qseq66-default.palette
-# Written on 2025-01-08 12:00:00
+# /home/ahlstrom/.config/seq66/qseq66.palette
+# Written on 2025-01-15 12:13:09
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface. It must be active and
@@ -17,9 +17,17 @@ version = 0
 
 [comments]
 
-Comments added to this section are preserved.  Lines starting with
-a '#' or '[', or that are blank, are ignored.  Start lines that must
-look empty with a space.
+This palette contains the default (i.e. internal to the code)
+palette colors when no .palette file is active.
+
+# Set 'dark-theme' to true if the matching style-sheet is dark. This
+# also set the 'dark-theme' setting in the 'usr' file.
+# Set 'dark-ui' to true if the palette background elements are dark.
+
+[hints]
+
+dark-theme = false
+dark-ui = false
 
 # [palette] affects the pattern colors selected (by number). First is
 # the color number, 0 to 31. Next is the name of the background color.
@@ -102,7 +110,7 @@ look empty with a space.
 30      "Scale Brush" [ 0xFFC0C0C0 ]      "Scale Brush" [ 0xFFC0C0C0 ]
 31            "Extra" [ 0xFF000000 ]            "Extra" [ 0xFFFFFFFF ]
 
-# This section defines brush styles to use.  The names are based on the
+# This section defines brush styles to use. The names are based on the
 # names in the Qt::BrushStyle enumeration. The names are:
 #
 #    nobrush, solid, dense1, dense2, dense3, dense4, dense5, dense6,
@@ -120,6 +128,6 @@ note = lineargradient
 scale = dense3
 backseq = dense2
 
-# End of /home/user/.config/seq66/qseq66-default.palette
+# End of /home/ahlstrom/.config/seq66/qseq66.palette
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

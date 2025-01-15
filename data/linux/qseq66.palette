@@ -1,7 +1,7 @@
 # Seq66 0.99.11 (and above) palette configuration file
 #
-# /home/user/.config/seq66/qseq66-default.palette
-# Written on 2025-01-08 12:00:00
+# /home/ahlstrom/.config/seq66/qseq66.palette
+# Written on 2025-01-15 12:36:17
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface. It must be active and
@@ -17,14 +17,18 @@ version = 0
 
 [comments]
 
-Add your comment block here
+This is the default palette, processed so the the colors in the
+last color-code column are the exact inverse of the first color-code
+column. We still need to verify these values.
 
-# Set 'dark-theme' to true if the matching style-sheet is dark. Also
-# note the 'dark-theme' setting in the 'usr' file.
+# Set 'dark-theme' to true if the matching style-sheet is dark. This
+# also set the 'dark-theme' setting in the 'usr' file.
+# Set 'dark-ui' to true if the palette background elements are dark.
 
 [hints]
 
 dark-theme = false
+dark-ui = false
 
 # [palette] affects the pattern colors selected (by number). First is
 # the color number, 0 to 31. Next is the name of the background color.
@@ -35,37 +39,37 @@ dark-theme = false
 [palette]
 
  0            "Black" [ 0xFF000000 ]            "White" [ 0xFFFFFFFF ]
- 1              "Red" [ 0xFFFF0000 ]            "White" [ 0xFFFFFFFF ]
- 2            "Green" [ 0xFF008000 ]            "White" [ 0xFFFFFFFF ]
- 3           "Yellow" [ 0xFFFFFF00 ]            "Black" [ 0xFF000000 ]
- 4             "Blue" [ 0xFF0000FF ]            "White" [ 0xFFFFFFFF ]
- 5          "Magenta" [ 0xFFFF00FF ]            "White" [ 0xFFFFFFFF ]
- 6             "Cyan" [ 0xFF00FFFF ]            "Black" [ 0xFF000000 ]
+ 1              "Red" [ 0xFFFF0000 ]            "White" [ 0xFF00FFFF ]
+ 2            "Green" [ 0xFF008000 ]            "White" [ 0xFFFFFF7F ]
+ 3           "Yellow" [ 0xFFFFFF00 ]            "Black" [ 0xFF00FF00 ]
+ 4             "Blue" [ 0xFF0000FF ]            "White" [ 0xFFFF00FF ]
+ 5          "Magenta" [ 0xFFFF00FF ]            "White" [ 0xFF0000FF ]
+ 6             "Cyan" [ 0xFF00FFFF ]            "Black" [ 0xFFFF0000 ]
  7            "White" [ 0xFFFFFFFF ]            "Black" [ 0xFF000000 ]
- 8       "Dark Black" [ 0xFF2F4F4F ]            "White" [ 0xFFFFFFFF ]
- 9         "Dark Red" [ 0xFF8B0000 ]            "White" [ 0xFFFFFFFF ]
-10       "Dark Green" [ 0xFF006400 ]            "White" [ 0xFFFFFFFF ]
-11      "Dark Yellow" [ 0xFFFFFF00 ]            "Black" [ 0xFF000000 ]
-12        "Dark Blue" [ 0xFF00008B ]            "White" [ 0xFFFFFFFF ]
-13     "Dark Magenta" [ 0xFF8B008B ]            "White" [ 0xFFFFFFFF ]
-14        "Dark Cyan" [ 0xFF008B8B ]            "White" [ 0xFFFFFFFF ]
-15       "Dark White" [ 0xFF808080 ]            "White" [ 0xFFFFFFFF ]
-16           "Orange" [ 0xFFFFA500 ]            "White" [ 0xFFFFFFFF ]
-17             "Pink" [ 0xFFFFC0CB ]            "Black" [ 0xFF000000 ]
-18       "Pale Green" [ 0xFF98FB98 ]            "Black" [ 0xFF000000 ]
-19            "Khaki" [ 0xFFF0E68C ]            "Black" [ 0xFF000000 ]
-20       "Light Blue" [ 0xFFADD8E6 ]            "Black" [ 0xFF000000 ]
-21    "Light Magenta" [ 0xFFEE82EE ]            "Black" [ 0xFF000000 ]
-22        "Turquoise" [ 0xFF40E0D0 ]            "Black" [ 0xFF000000 ]
-23             "Grey" [ 0xFF808080 ]            "Black" [ 0xFF000000 ]
-24        "Dk Orange" [ 0xFFFF8C00 ]            "Black" [ 0xFF000000 ]
-25        "Dark Pink" [ 0xFFFF1493 ]            "Black" [ 0xFF000000 ]
-26        "Sea Green" [ 0xFF2E8B57 ]            "Black" [ 0xFF000000 ]
-27       "Dark Khaki" [ 0xFFBDB76B ]            "Black" [ 0xFF000000 ]
-28  "Dark Slate Blue" [ 0xFF483D8B ]            "Black" [ 0xFF000000 ]
-29      "Dark Violet" [ 0xFF9400D3 ]            "Black" [ 0xFF000000 ]
-30       "Light Grey" [ 0xFFC0C0C0 ]            "Black" [ 0xFF000000 ]
-31        "Dark Grey" [ 0xFF484848 ]            "Black" [ 0xFF000000 ]
+ 8       "Dark Black" [ 0xFF2F4F4F ]            "White" [ 0xFFD0B0B0 ]
+ 9         "Dark Red" [ 0xFF8B0000 ]            "White" [ 0xFF74FFFF ]
+10       "Dark Green" [ 0xFF006400 ]            "White" [ 0xFFFFFF9B ]
+11      "Dark Yellow" [ 0xFFFFFF00 ]            "Black" [ 0xFF00FF00 ]
+12        "Dark Blue" [ 0xFF00008B ]            "White" [ 0xFFFF74FF ]
+13     "Dark Magenta" [ 0xFF8B008B ]            "White" [ 0xFF7474FF ]
+14        "Dark Cyan" [ 0xFF008B8B ]            "White" [ 0xFFFF7474 ]
+15       "Dark White" [ 0xFF808080 ]            "White" [ 0xFF7F7F7F ]
+16           "Orange" [ 0xFFFFA500 ]            "White" [ 0xFF00FF5A ]
+17             "Pink" [ 0xFFFFC0CB ]            "Black" [ 0xFF00343F ]
+18       "Pale Green" [ 0xFF98FB98 ]            "Black" [ 0xFF676704 ]
+19            "Khaki" [ 0xFFF0E68C ]            "Black" [ 0xFF0F7319 ]
+20       "Light Blue" [ 0xFFADD8E6 ]            "Black" [ 0xFF521927 ]
+21    "Light Magenta" [ 0xFFEE82EE ]            "Black" [ 0xFF11117D ]
+22        "Turquoise" [ 0xFF40E0D0 ]            "Black" [ 0xFFBF2F1F ]
+23             "Grey" [ 0xFF808080 ]            "Black" [ 0xFF7F7F7F ]
+24        "Dk Orange" [ 0xFFFF8C00 ]            "Black" [ 0xFF00FF73 ]
+25        "Dark Pink" [ 0xFFFF1493 ]            "Black" [ 0xFF006CEB ]
+26        "Sea Green" [ 0xFF2E8B57 ]            "Black" [ 0xFFD1A874 ]
+27       "Dark Khaki" [ 0xFFBDB76B ]            "Black" [ 0xFF429448 ]
+28  "Dark Slate Blue" [ 0xFF483D8B ]            "Black" [ 0xFFB774C2 ]
+29      "Dark Violet" [ 0xFF9400D3 ]            "Black" [ 0xFF6B2CFF ]
+30       "Light Grey" [ 0xFFC0C0C0 ]            "Black" [ 0xFF3F3F3F ]
+31        "Dark Grey" [ 0xFF484848 ]            "Black" [ 0xFFB7B7B7 ]
 
 # Similar to the [palette] section, but applies to the custom-drawn
 # piano rolls and the --inverse option. The values: color number (0
@@ -76,27 +80,27 @@ dark-theme = false
 
  0       "Foreground" [ 0xFF000000 ]       "Foreground" [ 0xFFFFFFFF ]
  1       "Background" [ 0xFFFFFFFF ]       "Background" [ 0xFF000000 ]
- 2            "Label" [ 0xDEADBEEF ]            "Label" [ 0xFFFFFFFF ]
- 3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00A5 ]
- 4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF000080 ]
- 5            "Tempo" [ 0xFFFFFF00 ]            "Tempo" [ 0xFFFFFF00 ]
+ 2            "Label" [ 0xDEADBEEF ]            "Label" [ 0x00000000 ]
+ 3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFF00FF5A ]
+ 4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF00FFFF ]
+ 5            "Tempo" [ 0xFFFFFF00 ]            "Tempo" [ 0xFF00FF00 ]
  6        "Note Fill" [ 0xFFFFFFFF ]        "Note Fill" [ 0xFF000000 ]
  7      "Note Border" [ 0xFF000000 ]      "Note Border" [ 0xFFFFFFFF ]
  8       "Black Keys" [ 0xFF000000 ]       "Black Keys" [ 0xFFFFFFFF ]
  9       "White Keys" [ 0xFFFFFFFF ]       "White Keys" [ 0xFF000000 ]
-10     "Progress Bar" [ 0xFFFF0000 ]     "Progress Bar" [ 0xFFFF0000 ]
-11     "Back Pattern" [ 0xFF008B8B ]     "Back Pattern" [ 0xFF008B8B ]
-12      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF808080 ]
-13       "Heavy Line" [ 0xFF484848 ]       "Heavy Line" [ 0xFFFFFFFF ]
-14       "Light Line" [ 0xFFC0C0C0 ]       "Light Line" [ 0xFFC0C0C0 ]
+10     "Progress Bar" [ 0xFFFF0000 ]     "Progress Bar" [ 0xFF00FFFF ]
+11     "Back Pattern" [ 0xFF008B8B ]     "Back Pattern" [ 0xFFFF7474 ]
+12      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF7F7F7F ]
+13       "Heavy Line" [ 0xFF484848 ]       "Heavy Line" [ 0xFFB7B7B7 ]
+14       "Light Line" [ 0xFFC0C0C0 ]       "Light Line" [ 0xFF3F3F3F ]
 15             "Beat" [ 0xFF000000 ]             "Beat" [ 0xFFFFFFFF ]
-16             "Near" [ 0xFFFFFF00 ]             "Near" [ 0xFFFF00FF ]
-17       "Time Brush" [ 0xFF808080 ]       "Time Brush" [ 0xFF808080 ]
-18       "Data Brush" [ 0xFF808080 ]       "Data Brush" [ 0xFF808080 ]
-19      "Event Brush" [ 0xFF808080 ]      "Event Brush" [ 0xFF808080 ]
-20       "Keys Brush" [ 0xFF808080 ]       "Keys Brush" [ 0xFF808080 ]
-21      "Names Brush" [ 0xFF808080 ]      "Names Brush" [ 0xFF808080 ]
-22      "Octave Line" [ 0xFF808080 ]      "Octave Line" [ 0xFFFFFFFF ]
+16             "Near" [ 0xFFFFFF00 ]             "Near" [ 0xFF00FF00 ]
+17       "Time Brush" [ 0xFF808080 ]       "Time Brush" [ 0xFF7F7F7F ]
+18       "Data Brush" [ 0xFF808080 ]       "Data Brush" [ 0xFF7F7F7F ]
+19      "Event Brush" [ 0xFF808080 ]      "Event Brush" [ 0xFF7F7F7F ]
+20       "Keys Brush" [ 0xFF808080 ]       "Keys Brush" [ 0xFF7F7F7F ]
+21      "Names Brush" [ 0xFF808080 ]      "Names Brush" [ 0xFF7F7F7F ]
+22      "Octave Line" [ 0xFF808080 ]      "Octave Line" [ 0xFF7F7F7F ]
 23             "Text" [ 0xFF000000 ]             "Text" [ 0xFFFFFFFF ]
 24        "Time Text" [ 0xFF000000 ]        "Time Text" [ 0xFFFFFFFF ]
 25        "Data Text" [ 0xFF000000 ]        "Data Text" [ 0xFFFFFFFF ]
@@ -104,10 +108,10 @@ dark-theme = false
 27        "Keys Text" [ 0xFF000000 ]        "Keys Text" [ 0xFFFFFFFF ]
 28       "Names Text" [ 0xFF000000 ]       "Names Text" [ 0xFFFFFFFF ]
 29       "Slots Text" [ 0xFF000000 ]       "Slots Text" [ 0xFFFFFFFF ]
-30      "Scale Brush" [ 0xFFC0C0C0 ]      "Scale Brush" [ 0xFFC0C0C0 ]
+30      "Scale Brush" [ 0xFFC0C0C0 ]      "Scale Brush" [ 0xFF3F3F3F ]
 31            "Extra" [ 0xFF000000 ]            "Extra" [ 0xFFFFFFFF ]
 
-# This section defines brush styles to use.  The names are based on the
+# This section defines brush styles to use. The names are based on the
 # names in the Qt::BrushStyle enumeration. The names are:
 #
 #    nobrush, solid, dense1, dense2, dense3, dense4, dense5, dense6,
@@ -125,6 +129,6 @@ note = lineargradient
 scale = dense3
 backseq = dense2
 
-# End of /home/user/.config/seq66/qseq66-default.palette
+# End of /home/ahlstrom/.config/seq66/qseq66.palette
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

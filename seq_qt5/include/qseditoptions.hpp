@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-01-14
+ * \updates       2025-01-15
  * \license       GNU GPLv2 or above
  */
 
@@ -36,8 +36,6 @@
 #include <QDialogButtonBox>
 
 #include "cfg/settings.hpp"             /* seq66::combolist class, helpers  */
-
-#undef  SEQ66_PROVIDE_AUTO_COLOR_INVERSION  /* ALSO IN GUI_PALETTE_QT5!!!   */
 
 /*
  *  Do not document the namespace, it breaks Doxygen.
@@ -254,12 +252,7 @@ private slots:
     void slot_pdf_executable ();
     void slot_load_pdf_viewer_executable ();
     void slot_palette_save_now_click ();
-#if defined SEQ66_PROVIDE_AUTO_COLOR_INVERSION
     void slot_palette_save_inverse ();
-#endif
-#if defined SEQ66_CAN_SAVE_PALETTE
-    void slot_palette_save_click ();
-#endif
     void slot_palette_active_click ();
     void slot_palette_filename ();
     void slot_load_palette_filename ();

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-12-11
+ * \updates       2025-01-15
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -57,6 +57,12 @@
 #define STDERR_FILENO   2
 #endif
 #endif
+
+/**
+ *  We're testing how to properly invert color palettes.
+ */
+
+#undef  SEQ66_PROVIDE_AUTO_COLOR_INVERSION  /* experimental, investigative  */
 
 /**
  *  If defined, a button to show or hide the main menu bar and some
@@ -125,12 +131,6 @@
  *
  *  #undef  SEQ66_USE_AUTO_SCREENSET_QUEUE
  */
-
-/**
- *  A color option.  We prefer orange for selection boxes.
- */
-
-#undef  SEQ66_USE_BLACK_SELECTION_BOX
 
 /**
  *  An option to make the main-window time-indicator fancier by using alpha

@@ -17,9 +17,17 @@ version = 0
 
 [comments]
 
-Comments added to this section are preserved.  Lines starting with
-a '#' or '[', or that are blank, are ignored.  Start lines that must
-look empty with a space. Compare this palette to qseq66-alt-gray.palette.
+This is a complete grey palette.
+
+# Set 'dark-theme' to true if the matching style-sheet is dark. This
+# also set the 'dark-theme' setting in the 'usr' file.
+# Set 'dark-ui' to true if the palette background elements are dark.
+
+[hints]
+
+dark-theme = false
+dark-ui = false
+
 # [palette] affects the pattern colors selected (by number). First is
 # the color number, 0 to 31. Next is the name of the background color.
 # The first stanza [square brackets] are the background ARGB values.

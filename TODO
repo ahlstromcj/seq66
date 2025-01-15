@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.18
 Chris Ahlstrom
-2019-04-13 to 2025-01-14
+2019-04-13 to 2025-01-15
 
 Hottest:
 
@@ -411,6 +411,11 @@ ISSUES:
         default background is white. When not in dark mode, the beat line
         also colours the bar lines (they probably should not?) but this
         does not happen in dark mode.
+
+    4.  More color issues:
+
+        a.  Why are grid slot colors are different in the Song editor?
+        b.  Tweak the incrypt-66 palette so the four-lines are white.
 
 = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 

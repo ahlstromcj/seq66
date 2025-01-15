@@ -18,9 +18,17 @@ version = 0
 [comments]
 
 This palette is meant to tweak the normal palette for the perstfic-66.qss
-style-sheet. The main thing is to make the drawn text white. We probably
-need an additional "Text" ui-palette entry to replace "Foreground" for
-text.
+style-sheet. The main thing is to make the drawn text white. We created
+an additional "Text" ui-palette entry to replace "Foreground" for text.
+
+# Set 'dark-theme' to true if the matching style-sheet is dark. This
+# also set the 'dark-theme' setting in the 'usr' file.
+# Set 'dark-ui' to true if the palette background elements are dark.
+
+[hints]
+
+dark-theme = false
+dark-ui = false
 
 # [palette] affects the pattern colors selected (by number). First is
 # the color number, 0 to 31. Next is the name of the background color.

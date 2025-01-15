@@ -21,6 +21,15 @@ Comments added to this section are preserved.  Lines starting with
 a '#' or '[', or that are blank, are ignored.  Start lines that must
 look empty with a space.
 
+# Set 'dark-theme' to true if the matching style-sheet is dark. This
+# also set the 'dark-theme' setting in the 'usr' file.
+# Set 'dark-ui' to true if the palette background elements are dark.
+
+[hints]
+
+dark-theme = false
+dark-ui = false
+
 # The first integer is the color number, ranging from 0 to 31. The
 # first string is the name of the background color.  The first
 # stanza (in square brackets) are the ARGB values for the background.

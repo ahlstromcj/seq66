@@ -836,10 +836,13 @@ gui_palette_qt5::get_color_fix (PaletteColor index) const
  */
 
 Color
-gui_palette_qt5::invert (Color c) const
+gui_palette_qt5::invert (Color c, bool usealpha) const
 {
     int r, g, b, a;
     c.getRgb(&r, &g, &b, &a);
+    if (! usealpha)
+        a = 255;
+
     r = a - r;
     g = a - g;
     b = a - b;

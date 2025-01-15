@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-01-14
+ * \updates       2025-01-15
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1961,16 +1961,6 @@ qseditoptions::setup_tab_session ()
      * 'palette' file.
      */
 
-#if defined SEQ66_CAN_SAVE_PALETTE
-
-    connect
-    (
-        ui->checkBoxSavePalette, SIGNAL(clicked(bool)),
-        this, SLOT(slot_palette_save_click())
-    );
-
-#endif
-
     connect
     (
         ui->checkBoxActivePalette, SIGNAL(clicked(bool)),
@@ -1991,20 +1981,19 @@ qseditoptions::setup_tab_session ()
      * A 'palette' extra.  Immediate saving of the palette.
      */
 
+#if defined SEQ66_PROVIDE_AUTO_COLOR_INVERSION
+    ui->pushButtonSavePalette->setText("Store ~Palette");
+    connect
+    (
+        ui->pushButtonSavePalette, SIGNAL(clicked(bool)),
+        this, SLOT(slot_palette_save_inverse())
+    );
+#else
     connect
     (
         ui->pushButtonSavePalette, SIGNAL(clicked(bool)),
         this, SLOT(slot_palette_save_now_click())
     );
-
-#if defined SEQ66_PROVIDE_AUTO_COLOR_INVERSION
-    connect
-    (
-        ui->pushButtonInversePalette, SIGNAL(clicked(bool)),
-        this, SLOT(slot_palette_save_inverse())
-    );
-#else
-    ui->pushButtonInversePalette->hide();
 #endif
 
     /*
@@ -2660,17 +2649,6 @@ qseditoptions::sync_rc ()
     ui->checkBoxActiveDrums->setChecked(rc().notemap_active());
     tooltip_for_filename(ui->lineEditDrums, filespec);
 
-#if defined SEQ66_CAN_SAVE_PALETTE
-
-    /*
-     *  No way to edit palette in the app, through the current palette can
-     *  be written to the file via the Store Palette button.
-     */
-
-    ui->checkBoxSavePalette->setChecked(rc().auto_palette_save());
-
-#endif
-
     filespec = rc().palette_filespec();
     ui->checkBoxActivePalette->setChecked(rc().palette_active());
     tooltip_for_filename(ui->lineEditPalette, filespec);
@@ -3175,26 +3153,6 @@ qseditoptions::slot_load_palette_filename ()
     }
 }
 
-#if defined SEQ66_CAN_SAVE_PALETTE
-
-void
-qseditoptions::slot_palette_save_click ()
-{
-    if (is_empty(ui->lineEditPalette))
-    {
-        ui->checkBoxSavePalette->setChecked(false);
-        rc().auto_palette_save(false);
-    }
-    else
-    {
-        bool on = ui->checkBoxSavePalette->isChecked();
-        rc().auto_palette_save(on);
-    }
-    modify_rc();
-}
-
-#endif
-
 /**
  *  Shows an alternative way to handle an empty file-name.
  */
@@ -3241,16 +3199,14 @@ qseditoptions::slot_palette_save_now_click ()
     }
 }
 
-#if defined SEQ66_PROVIDE_AUTO_COLOR_INVERSION
-
 void
 qseditoptions::slot_palette_save_inverse ()
 {
+#if defined SEQ66_PROVIDE_AUTO_COLOR_INVERSION
     global_palette().fill_inverse_colors();
+#endif
     slot_palette_save_now_click();
 }
-
-#endif
 
 #if defined USE_VERBOSE_CHECKBOX
 
