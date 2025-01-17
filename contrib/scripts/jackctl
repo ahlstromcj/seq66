@@ -8,7 +8,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2022-09-25
-# \update         2024-12-03`
+# \update         2025-01-17
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -58,11 +58,14 @@ JCTL_RATE="48000"
 JCTL_LATENCY="2"
 JCTL_PERIOD="256"      # for TESTING
 JCTL_A2JMIDID="no"
+JCTL_SESSION="no"
+JCTL_SESSMGR="raysession"
+JCTL_SESSOPT="--session-root /home/$USER/.local/share/ray"
 
 if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
 
    cat << E_O_F
-Usage v. 2024-12-03`
+Usage v. 2025-01-17
 
    jackctl [ --start ] [ options ]     Start with the usual parameters:
 
@@ -72,6 +75,10 @@ Options:
    --start     Start the JACK server.
    --stop      Stop the JACK server.
    --kill      Stop the JACK server and exit jackdbus.
+   --session,  Also start the $JCTL_SESSMGR session manager with options
+               $JCTL_SESSOPT. The --start option is assumed.
+   --agordejo  Run the agordejo session manager. --start is assumed.
+   --ray       Run the raysession session manager. --start is assumed.
    --set       Set the default values, shown here.  Stops, then restarts
                jackdbus. Edit this script to change the defaults:
 
@@ -118,6 +125,29 @@ else
 
          --kill | kill)
             JCTL_OPERATION="kill"
+            ;;
+
+         --session | session)
+            JCTL_OPERATION="start"
+            JCTL_SESSION="yes"
+            ;;
+
+         --ray | ray)
+            JCTL_OPERATION="start"
+            JCTL_SESSION="yes"
+            JCTL_SESSMGR="raysession"
+            JCTL_SESSOPT="--session-root /home/$USER/.local/share/ray"
+            ;;
+
+         --agor | agor | --agordejo)
+            JCTL_OPERATION="start"
+            JCTL_SESSION="yes"
+            JCTL_SESSMGR="agordejo"
+            JCTL_SESSOPT="--session-root /home/$USER/.local/share/nsm"
+            ;;
+
+         --session | session)
+            JCTL_SESSION="yes"
             ;;
 
          --rate | rate)
@@ -185,6 +215,12 @@ elif [ "$JCTL_OPERATION" == "start" ] ; then
    sleep 2
    if [ "$JCTL_A2JMIDID" == "yes" ] ; then
       a2jmidid --export-hw &
+   fi
+   if [ "$JCTL_SESSION" == "yes" ] ; then
+
+# We could redirect output to /dev/null:
+
+      $JCTL_SESSMGR $JCTL_SESSOPT & 
    fi
    jack_lsp --aliases
 

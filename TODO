@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.18
 Chris Ahlstrom
-2019-04-13 to 2025-01-15
+2019-04-13 to 2025-01-17
 
 Hottest:
 
@@ -29,6 +29,7 @@ Hottest:
         is raised so that it will not be saved with Seq66 SeqSpecs.
         Make it visible to be clear.
     -   Ports.
+        -   For JACK, the port-mapped names all contain "[0]".
         -   Document what to do if a port you know exists is disabled.
         -   Upgrade the performer port-detection to get around this.
     -   Test overwrite etc. in the scenario where a recording mode can

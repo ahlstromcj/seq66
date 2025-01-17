@@ -86,7 +86,7 @@ eventlist::eventlist (const eventlist & rhs) :
     m_is_modified           (rhs.m_is_modified),
     m_has_tempo             (rhs.m_has_tempo),
     m_has_time_signature    (rhs.m_has_time_signature),
-    m_has_key_signature     (false),
+    m_has_key_signature     (rhs.m_has_key_signature),
     m_link_wraparound       (rhs.m_link_wraparound)
 {
     // no code
@@ -105,6 +105,7 @@ eventlist::operator = (const eventlist & rhs)
 #endif
         m_length                = rhs.m_length;
         m_note_off_margin       = rhs.m_note_off_margin;
+        m_zero_len_correction   = rhs.m_zero_len_correction;
         m_is_modified           = rhs.m_is_modified;
         m_has_tempo             = rhs.m_has_tempo;
         m_has_time_signature    = rhs.m_has_time_signature;
@@ -383,22 +384,6 @@ eventlist::link_new (bool wrap)
                         if (wrapped && ! wrap)
                             eoff->set_timestamp(get_length() - 1);
                     }
-#if defined USE_THIS_CODE                           /* see link_notes()     */
-                    if (link_notes(eon, eoff))
-                    {
-                        bool wrapped = eoff->timestamp() < eon->timestamp();
-                        else                        /* not wrapped          */
-                        {
-                            if (eon->timestamp() == eoff->timestamp())
-                            {
-                                long ts = eon->timestamp();
-                                ts += m_zero_len_correction;
-                                eoff->set_timestamp(ts);
-                            }
-                        }
-                        break;
-                    }
-#endif
                     ++eoff;
                 }
             }
@@ -1466,7 +1451,7 @@ eventlist::randomize_notes (int range, bool all)
             }
         }
         if (result)
-            verify_and_link();                      /* sort & relink notes  */
+            (void) verify_and_link();               /* sort & relink notes  */
     }
     return result;
 }

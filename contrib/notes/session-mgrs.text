@@ -1,0 +1,50 @@
+Notes for RaySession and Agordejo Session Managers
+Chris Ahlstrom
+2025-01-15 to 2025-01-17
+
+This document provides a brief, startup description of using raysession
+and agordejo. Both use the Non/New Session Manager (NSM) protocol, more
+or less. Descriptions of session control via signals, a JACK session,
+or NSM can be found in the *Session Management* section of the Seq66
+user manual.
+
+Note that these two session managers, raysession and agordejo, can
+be started, along with JACK, via the contrib/scripts/jackctl script.
+
+========================================================================
+ Ray Session
+========================================================================
+
+1.  Start JACK server.
+2.  RaySession includes its own implementation of the NSM server.
+3.  Run this command to use a more hidden session directory instead of
+    "~/Ray Network Sessions":
+
+    $ raysession --session-root /home/$USER/.local/share/ray &
+
+    Note: After exit, the configuration files for RaySession itself are in
+
+        /home/$USER/.config/RaySession/RaySession.conf etc.
+
+    Also, the /home/$USER/.local/share/ray/... session directories do not
+    quite follow NSM convention.
+
+4.  Use "With JACK patch memory". Ok. This yields a session with the "JACK
+    Connections" client running.
+5.  Add Seq66 (qseq66), qsynth, etc. using the "+ Application" button.
+
+    [ We see Jack Connections twice, agordejo, Qtractor, Seq66, but not
+      Qsynth.  WHY?  Can add our jackctl script, but it comes up as a
+      Ray-Hack with need to configure ]
+
+========================================================================
+ Agordejo
+========================================================================
+
+1.  Start JACK server. Might be able to do some minimal work with ALSA.
+2.  Agordejo includes an implementation of the NSM server.
+3.  No need to set --session-root; the default is
+    /home/$USER/.local/share/nsm.
+
+
+# vim: sw=4 ts=4 wm=8 et ft=sh
