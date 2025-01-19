@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2024-12-24
+ * \updates       2025-01-19
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -54,6 +54,7 @@
 #include "cfg/midicontrolfile.hpp"      /* seq66::midicontrolfile functions */
 #include "cfg/notemapfile.hpp"          /* seq66::notemapfile functions     */
 #include "cfg/playlistfile.hpp"         /* seq66::playlistfile functions    */
+#include "cfg/rcfile.hpp"               /* seq66::rcfile functions          */
 #include "cfg/sessionfile.hpp"          /* seq66::sessionfile               */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "midi/midifile.hpp"            /* seq66::write_midi_file()         */

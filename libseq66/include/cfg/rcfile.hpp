@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-03-26
+ * \updates       2025-01-19
  * \license       GNU GPLv2 or above
  *
  *  The ~/.seq66rc or ~/.config/seq66.rc files are referred to as the "rc"
@@ -73,6 +73,26 @@ public:
     bool get_usr_file ();
 
 };          // class rcfile
+
+/*
+ *  Free functions.
+ */
+
+#if defined SEQ66_KEEP_RC_FILE_LIST
+
+extern bool delete_configuration
+(
+    const std::string & path,
+    const std::string & basename
+);
+extern bool copy_configuration
+(
+    const std::string & source,
+    const std::string & basename,
+    const std::string & destination
+);
+
+#endif  // defined SEQ66_KEEP_RC_FILE_LIST
 
 }           // namespace seq66
 

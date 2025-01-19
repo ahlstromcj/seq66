@@ -1,6 +1,6 @@
 Notes for RaySession and Agordejo Session Managers
 Chris Ahlstrom
-2025-01-15 to 2025-01-17
+2025-01-15 to 2025-01-18
 
 This document provides a brief, startup description of using raysession
 and agordejo. Both use the Non/New Session Manager (NSM) protocol, more
@@ -11,13 +11,16 @@ user manual.
 Note that these two session managers, raysession and agordejo, can
 be started, along with JACK, via the contrib/scripts/jackctl script.
 
-========================================================================
- Ray Session
-========================================================================
+Also included is our steps to get a new setup without a session manager,
+and then run Seq66 with one.
 
-1.  Start JACK server.
-2.  RaySession includes its own implementation of the NSM server.
-3.  Run this command to use a more hidden session directory instead of
+=============
+ Ray Session
+=============
+
+ 1. Start JACK server.
+ 2. RaySession includes its own implementation of the NSM server.
+ 3. Run this command to use a more hidden session directory instead of
     "~/Ray Network Sessions":
 
     $ raysession --session-root /home/$USER/.local/share/ray &
@@ -29,22 +32,82 @@ be started, along with JACK, via the contrib/scripts/jackctl script.
     Also, the /home/$USER/.local/share/ray/... session directories do not
     quite follow NSM convention.
 
-4.  Use "With JACK patch memory". Ok. This yields a session with the "JACK
+ 4. Use "With JACK patch memory". Ok. This yields a session with the "JACK
     Connections" client running.
-5.  Add Seq66 (qseq66), qsynth, etc. using the "+ Application" button.
+ 5. Add Seq66 (qseq66), qsynth, etc. using the "+ Application" button.
 
     [ We see Jack Connections twice, agordejo, Qtractor, Seq66, but not
       Qsynth.  WHY?  Can add our jackctl script, but it comes up as a
       Ray-Hack with need to configure ]
 
-========================================================================
+=============
  Agordejo
-========================================================================
+=============
 
-1.  Start JACK server. Might be able to do some minimal work with ALSA.
-2.  Agordejo includes an implementation of the NSM server.
-3.  No need to set --session-root; the default is
+ 1. Start JACK server. Might be able to do some minimal work with ALSA.
+ 2. Agordejo includes an implementation of the NSM server.
+ 3. No need to set --session-root; the default is
     /home/$USER/.local/share/nsm.
+
+=============
+ First Run
+=============
+
+ 1. Make sure NO session manager is running. Make sure JACK is not
+    active.
+ 2. Remove or move aside all qseq66.* files in ~/.config/seq66.
+ 3. Plug in devices: AKAI MPK Mini Play, Korg nanoKEY2, Alesis Q25,
+    Launchpad Mini, etc.
+ 4. Start software synthesizers such as Yoshimi in ALSA mode.
+ 5. $ jackctl --start --a2j
+
+    Seq66 provides this script in contrib/scripts/jackctl.
+    This starts JACK and a2jmidi. See the script for details.
+
+ 6. Start software synthesizers such as Qsynth in JACK mode.
+ 7. Optional: start QjackCtl and option the Graph view.
+ 8. $ qseq66 --jack
+ 9. Verify the setup. See below
+10. Make the following additional settings:
+
+    1. Clock tab: enable "MIDI Ctrl Out" and select the Launchpad Mini.
+    2. Input tab: Enable all inputs except "Midi Through Port-0".
+    3. Click the "Restart Seq66!" button.
+    4. Input tab: enable "MIDI Ctrl In" and select the Launchpad Mini.
+    5. Session tab: Change the name of the 'ctrl' file to
+       "launchpad.ctrl".
+    6. Click the "Restart Seq66!" button.
+
+    Verify by stopping qseq66 and restarting it. Fix any wrong settings
+    and try again.
+11. Copy "data/linux/qseq66-lp-mini-alt.ctrl" to
+    "~/.config/seq66/launchpad.ctrl".
+12. Edit all the configuration files to see that they are correct.
+    Keep fixing and rerunning qseq66 until it all works.
+
+=============
+ Setup
+=============
+
+    Clock:
+
+        Midi Through Port-0
+        Launchpad Mini MIDI 1
+        nanoKEY2 nanoKEY2 _ CTRL
+        Q25 MIDI 1
+        MPK mini Play mk3 MIDI 1
+        a2j:yoshimi input
+        fluidsynth-midi:midi_00
+
+        x MIDI I/O Port Maps
+
+    Input:
+
+        Midi Through Port-0
+        Launchpad Mini MIDI 1
+        nanoKEY2 nanoKEY2 _ CTRL
+        Q25 MIDI 1
+        MPK mini Play mk3 MIDI 1
 
 
 # vim: sw=4 ts=4 wm=8 et ft=sh

@@ -8,7 +8,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2022-09-25
-# \update         2025-01-17
+# \update         2025-01-18
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -49,6 +49,14 @@
 #
 #        ~/.config/jack/conf.xml
 #
+# a2jmidid:
+#
+#     We ran into an issue on one of our test systems, where Seq66
+#     would show the MIDI ports with "[0]" prepended to every port
+#     name. Royally screws up port-mapping. We had to add the "-u"
+#     option to force generation of non-unique port names, which
+#     removes the ALSA client ID.
+#
 #------------------------------------------------------------------------------
 
 JCTL_OPERATION="list"
@@ -65,7 +73,7 @@ JCTL_SESSOPT="--session-root /home/$USER/.local/share/ray"
 if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
 
    cat << E_O_F
-Usage v. 2025-01-17
+Usage v. 2025-01-18
 
    jackctl [ --start ] [ options ]     Start with the usual parameters:
 
@@ -92,7 +100,8 @@ Options:
    --period F  Change the period of the JACK server, and restart it.
    --nperiod P Change ALSA period (playback latency, 2 or 3).
    --rate R    Change the "sample rate".
-   --a2j       Also start/stop a2jmidid.
+   --a2j       Also start/stop a2jmidid. Options used are --export-hw and
+               -u. The latter is needed to avoid "[0]" in port names.
    --help      Show this message.
 
 Getting tired of qjackctl and jackdbus wrestling with each other on
@@ -214,7 +223,7 @@ elif [ "$JCTL_OPERATION" == "start" ] ; then
    jack_control start
    sleep 2
    if [ "$JCTL_A2JMIDID" == "yes" ] ; then
-      a2jmidid --export-hw &
+      a2jmidid --export-hw -u &
    fi
    if [ "$JCTL_SESSION" == "yes" ] ; then
 

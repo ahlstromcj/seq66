@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-12-02
+ * \updates       2025-01-19
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -69,6 +69,8 @@ namespace seq66
 class configfile
 {
 
+#if ! defined SEQ66_KEEP_RC_FILE_LIST
+
     friend bool delete_configuration
     (
         const std::string & path,
@@ -80,6 +82,8 @@ class configfile
         const std::string & basename,
         const std::string & destination
     );
+
+#endif
 
 private:
 
@@ -474,6 +478,8 @@ protected:
  *  Free functions.
  */
 
+#if ! defined SEQ66_KEEP_RC_FILE_LIST
+
 extern bool delete_configuration
 (
     const std::string & path,
@@ -485,6 +491,9 @@ extern bool copy_configuration
     const std::string & basename,
     const std::string & destination
 );
+
+#endif  // ! defined SEQ66_KEEP_RC_FILE_LIST
+
 extern std::string get_current_date_time ();
 
 }           // namespace seq66

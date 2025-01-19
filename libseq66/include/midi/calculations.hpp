@@ -138,7 +138,7 @@ lengthfix_cast (int v)
 
 enum class alteration
 {
-    none = 0,       /**< grid_quant_none:    Not adjustment of pattern.     */
+    none = 0,       /**< grid_quant_none:    No adjustment of pattern.      */
     tighten,        /**< grid_quant_tighten: Adjust timing less halfway.    */
     quantize,       /**< grid_quant_full:    Adjust timing strictly.        */
     jitter,         /**< grid_quant_jitter:  Randomize timing slightly.     */
@@ -454,10 +454,10 @@ ticks_to_delta_time_us (midipulse delta_ticks, midibpm bp, int ppq)
  *  (crotchet).
  *
  *  Unlike MIDI timecode, the MIDI beat clock is tempo-dependent. Clock events
- *  are sent at a rate of 24 ppq (pulses per quarter note). Those pulses are
+ *  are sent at a rate of 24 PPQN (pulses per quarter note). Those pulses are
  *  used to maintain a synchronized tempo for synthesizers that have
- *  BPM-dependent voices and also for arpeggiator synchronization.  The
- *  following value represents the standard MIDI clock rate in
+ *  BPM-dependent voices and also for arpeggiator synchronization.
+ *  The following value represents the standard MIDI clock rate in
  *  beats-per-quarter-note.
  */
 

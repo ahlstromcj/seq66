@@ -1,9 +1,12 @@
 TO DO for Seq66 0.99.18
 Chris Ahlstrom
-2019-04-13 to 2025-01-17
+2019-04-13 to 2025-01-19
 
 Hottest:
 
+    -   Configuration export.
+        -   Make sure a default .notemap/.drums file is saved at first run.
+        -   Finish revamped configuration export. Add note to INSTALL.
     -   #128 Recording type for loop button not working. Fixed, some
         tweaks still needed:
         -   One-shot recording during playback now works.  But one-shot reset

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-06-06
+ * \updates       2025-01-19
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -47,6 +47,7 @@
 #include "cfg/rcfile.hpp"               /* seq66::rcfile class              */
 #include "cfg/settings.hpp"             /* seq66::rc() accessor             */
 #include "midi/midibus.hpp"             /* seq66::midibus class             */
+#include "util/filefunctions.hpp"       /* seq66::filename_base() etc.      */
 #include "util/strfunctions.hpp"        /* seq66::strip_quotes() function   */
 
 #if defined SEQ66_USE_FRUITY_CODE       /* will not be supported in seq66   */
@@ -1261,6 +1262,76 @@ rcfile::write ()
     file.close();
     return true;
 }
+
+/*
+ *  Free functions.
+ *
+ *  These new versions of the functions defined in the configfile module
+ *  work a bit differently. They use the actual configuration file
+ *  specifications in rcsettings::config_files() for the source names,
+ *  extract the base name, and, for copying, prepend the destination
+ *  directory.
+ */
+
+#if defined SEQ66_KEEP_RC_FILE_LIST
+
+bool
+delete_configuration (const std::string & path, const std::string & fname)
+{
+    bool result = ! path.empty() && ! fname.empty();
+    if (result)
+    {
+        std::string base = filename_base(fname);
+        std::string msg = "Deleting " + base + " from";
+        file_message(msg, path);
+        for (auto & fname : rc().config_files())
+        {
+            if (file_exists(fname.second))
+            {
+                if (! file_delete(fname.second))
+                    result = false;
+            }
+            else
+                result = false;
+        }
+    }
+    return result;
+}
+
+bool
+copy_configuration
+(
+    const std::string & source,         /* path only */
+    const std::string & fname,
+    const std::string & destination     /* path only */
+)
+{
+    bool result = ! source.empty() && ! fname.empty() && ! destination.empty();
+    if (result)
+    {
+        std::string base = filename_base(fname);
+        std::string destname = filename_concatenate(destination, base);
+        std::string msg = "Copying " + source + base + " to";
+        file_message(msg, destination);
+        for (auto & srcname : rc().config_files())
+        {
+            if (file_exists(srcname.second))
+            {
+                bool ok = file_copy(srcname.second, destname);
+                if (! ok)
+                {
+                    result = false;
+                    break;
+                }
+            }
+            else
+                result = false;
+        }
+    }
+    return result;
+}
+
+#endif      // defined SEQ66_KEEP_RC_FILE_LIST
 
 }           // namespace seq66
 

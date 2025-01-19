@@ -54,6 +54,7 @@
  *
  *  Export Song     export_song()           Export song merging triggers
  *  Export as MIDI  export_file_as...()     Save as regular MIDI file
+ *  Export Config:  export_project ()       Save all configuration files
  *  Import MIDI     import_midi_into_set()  Import MIDI into current set
  *  Import Project  import_project()        Import a project configuration
  *  Quit/Exit       quit()                  Normal Qt application closing

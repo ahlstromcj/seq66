@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-01-10
+ * \updates       2025-01-19
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -47,6 +47,10 @@
 #include "util/filefunctions.hpp"       /* make_directory(), etc.           */
 #include "util/strfunctions.hpp"        /* seq66::strncompare()             */
 
+#if defined SEQ66_KEEP_RC_FILE_LIST
+#include <utility>                      /* std::make_pair()                 */
+#endif
+
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -60,6 +64,9 @@ namespace seq66
 
 rcsettings::rcsettings () :
     basesettings                (),
+#if defined SEQ66_KEEP_RC_FILE_LIST
+    m_config_files              (),         /* vector of file-names         */
+#endif
     m_clocks                    (),         /* vector wrapper class         */
     m_inputs                    (),         /* vector wrapper class         */
     m_metro_settings            (),
@@ -304,6 +311,8 @@ rcsettings::set_save_list (bool state)
 /**
  *  This function is useful when importing a session into NSM. It prevents
  *  any saves when exiting the application.
+ *
+ *  What about the "session" file?
  */
 
 void
@@ -1293,8 +1302,20 @@ rcsettings::set_config_files (const std::string & value)
 void
 rcsettings::config_filename (const std::string & value)
 {
-    if (! value.empty())                /* an 'rc' file must always be used */
+    if (value.empty())                /* an 'rc' file must always be used */
+    {
+        // This should never happen
+    }
+    else
+    {
         m_config_filename = filename_base_fix(value, ".rc");
+#if defined SEQ66_KEEP_RC_FILE_LIST
+        (void) add_config_filespec
+        (
+            "rc", filespec_helper(m_config_filename)
+        );
+#endif
+    }
 }
 
 /**
@@ -1311,10 +1332,20 @@ rcsettings::config_filename (const std::string & value)
 void
 rcsettings::playlist_filename (const std::string & value)
 {
-    if (is_empty_string(value))
+    if (is_empty_string(value))         /* TODO: use this check elsewhere!! */
+    {
         clear_playlist();               /* clears file-name and active flag */
+    }
     else
+    {
         m_playlist_filename = filename_base_fix(value, ".playlist");
+#if defined SEQ66_KEEP_RC_FILE_LIST
+        (void) add_config_filespec
+        (
+            "playlist", filespec_helper(m_playlist_filename)
+        );
+#endif
+    }
 }
 
 /**
@@ -1377,8 +1408,20 @@ rcsettings::clear_playlist (bool disable)
 void
 rcsettings::user_filename (const std::string & value)
 {
-    if (! value.empty())                /* always need a 'usr' file to read */
+    if (value.empty())                  /* always need a 'usr' file to read */
+    {
+        user_file_active(false);        /* this should never happen         */
+    }
+    else
+    {
         m_user_filename = filename_base_fix(value, ".usr");
+#if defined SEQ66_KEEP_RC_FILE_LIST
+        (void) add_config_filespec
+        (
+            "usr", filespec_helper(m_user_filename)
+        );
+#endif
+    }
 }
 
 /**
@@ -1389,17 +1432,39 @@ rcsettings::user_filename (const std::string & value)
 void
 rcsettings::midi_control_filename (const std::string & value)
 {
-    m_midi_control_filename = filename_base_fix(value, ".ctrl");
     if (value.empty())
+    {
         midi_control_active(false);
+    }
+    else
+    {
+        m_midi_control_filename = filename_base_fix(value, ".ctrl");
+#if defined SEQ66_KEEP_RC_FILE_LIST
+        (void) add_config_filespec
+        (
+            "ctrl", filespec_helper(m_midi_control_filename)
+        );
+#endif
+    }
 }
 
 void
 rcsettings::mute_group_filename (const std::string & value)
 {
-    m_mute_group_filename = filename_base_fix(value, ".mutes");
     if (value.empty())
+    {
         mute_group_file_active(false);
+    }
+    else
+    {
+        m_mute_group_filename = filename_base_fix(value, ".mutes");
+#if defined SEQ66_KEEP_RC_FILE_LIST
+        (void) add_config_filespec
+        (
+            "mutes", filespec_helper(m_mute_group_filename)
+        );
+#endif
+    }
 }
 
 /**
@@ -1420,23 +1485,52 @@ rcsettings::notemap_filename (const std::string & value)
             m_notemap_filename = value;
         else
             m_notemap_filename = filename_base_fix(value, ".drums");
+
+#if defined SEQ66_KEEP_RC_FILE_LIST
+        (void) add_config_filespec
+        (
+            "drums", filespec_helper(m_notemap_filename)
+        );
+#endif
     }
 }
 
 void
 rcsettings::palette_filename (const std::string & value)
 {
-    m_palette_filename = filename_base_fix(value, ".palette");
     if (value.empty())
+    {
         palette_active(false);
+    }
+    else
+    {
+        m_palette_filename = filename_base_fix(value, ".palette");
+#if defined SEQ66_KEEP_RC_FILE_LIST
+        (void) add_config_filespec
+        (
+            "palette", filespec_helper(m_palette_filename)
+        );
+#endif
+    }
 }
 
 void
 rcsettings::style_sheet_filename (const std::string & value)
 {
-    m_style_sheet_filename = filename_base_fix(value, ".qss");
     if (value.empty())
+    {
         style_sheet_active(false);
+    }
+    else
+    {
+        m_style_sheet_filename = filename_base_fix(value, ".qss");
+#if defined SEQ66_KEEP_RC_FILE_LIST
+        (void) add_config_filespec
+        (
+            "qss", filespec_helper(m_style_sheet_filename)
+        );
+#endif
+    }
 }
 
 void
@@ -1524,6 +1618,31 @@ rcsettings::sequence_lookup_support () const
 
     return result;
 }
+
+#if defined SEQ66_KEEP_RC_FILE_LIST
+
+bool
+rcsettings::add_config_filespec
+(
+    const std::string & key,
+    const std::string & fspec
+)
+{
+    bool result = false;
+    if (! fspec.empty())
+    {
+        auto valueit = m_config_files.find(key);
+        if (valueit != m_config_files.end())
+            m_config_files.erase(valueit);
+
+        auto p = std::make_pair(key, fspec);
+        auto fi = m_config_files.insert(p);
+        result = fi.second;
+    }
+    return result;
+}
+
+#endif      // defined SEQ66_KEEP_RC_FILE_LIST
 
 }           // namespace seq66
 

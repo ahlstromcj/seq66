@@ -28,14 +28,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2023-12-10
+ * \updates       2025-01-18
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
  *  accessible from the command-line or from the 'rc' file.
  */
 
-#include <string>
+#include <string>                       /* std::string class                */
 
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 #include "cfg/recent.hpp"               /* seq66::recent class              */
@@ -47,6 +47,17 @@
 #include "play/metro.hpp"               /* seq66::metrosettings class       */
 #include "play/mutegroups.hpp"          /* map of seqq66::mutes stanzas     */
 #include "util/named_bools.hpp"         /* map of booleans keyed by strings */
+
+/**
+ *  EXPERIMENTAL.
+ *  Keep a list of the full file-specifications of each of the configureation
+ *  files that can be set up in the 'rc' file. We can eliminate the dependency
+ *  on configuration file-extensions in copying and deleting a configuration.
+ */
+
+#if defined SEQ66_KEEP_RC_FILE_LIST
+#include <map>                          /* std::map class                   */
+#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -204,6 +215,33 @@ public:
         allsets,        /**< Arm all sets at once.                          */
         max             /**< Keep this last... a size value.                */
     };
+
+#if defined SEQ66_KEEP_RC_FILE_LIST
+
+    /**
+     *  Provides a map of file-specification strings keyed by the type of
+     *  configuration file:
+     *
+     *      -   ctrl
+     *      -   drums (also covers .notemap, the same kind of configuration)
+     *      -   mutes
+     *      -   palett
+     *      -   playlist
+     *      -   qss
+     *      -   rc
+     *      -   usr
+     */
+
+    using files = std::map<std::string, std::string>;
+
+    /**
+     *  Holds a map of full file specifications, for use in copying a
+     *  configuration without caring about the file-extension.
+     */
+
+    files m_config_files;
+
+#endif
 
 private:
 
@@ -628,6 +666,21 @@ public:
     std::string palette_filespec () const;
     std::string style_sheet_filespec () const;
     virtual void set_defaults () override;
+
+#if defined SEQ66_KEEP_RC_FILE_LIST
+
+    const files & config_files () const
+    {
+        return m_config_files;
+    }
+
+    bool add_config_filespec
+    (
+        const std::string & key,
+        const std::string & fspec
+    );
+
+#endif
 
     const clockslist & clocks () const
     {

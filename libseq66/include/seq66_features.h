@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2025-01-15
+ * \updates       2025-01-19
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -57,6 +57,19 @@
 #define STDERR_FILENO   2
 #endif
 #endif
+
+/**
+ *  Trying to make configuration copying more flexible.
+ *
+ *  EXPERIMENTAL.
+ *  We want to use additional non-standard file extensions (e.g. ".notemap"
+ *  versus ".drums" when iterating through the configuration files,
+ *
+ *  Define this value to define alternates to copy_configuration() and
+ *  delete_configuration. NOT YET READY.
+ */
+
+#define SEQ66_KEEP_RC_FILE_LIST
 
 /**
  *  We're testing how to properly invert color palettes.

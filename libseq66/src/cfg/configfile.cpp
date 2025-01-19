@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-12-24
+ * \updates       2025-01-19
  * \license       GNU GPLv2 or above
  *
  *  std::streamoff is a signed integral type (usually long long) that can
@@ -987,6 +987,8 @@ configfile::set_up_ifstream (std::ifstream & instream)
  *  Free functions.
  */
 
+#if ! defined SEQ66_KEEP_RC_FILE_LIST
+
 bool
 delete_configuration (const std::string & path, const std::string & basename)
 {
@@ -1042,6 +1044,8 @@ copy_configuration
     }
     return result;
 }
+
+#endif  // ! defined SEQ66_KEEP_RC_FILE_LIST
 
 std::string
 get_current_date_time ()
