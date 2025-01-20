@@ -1,9 +1,10 @@
 TO DO for Seq66 0.99.18
 Chris Ahlstrom
-2019-04-13 to 2025-01-19
+2019-04-13 to 2025-01-20
 
 Hottest:
 
+    -   Fix JACK-to-ALSA fallback. In progress.
     -   Configuration export.
         -   Make sure a default .notemap/.drums file is saved at first run.
         -   Finish revamped configuration export. Add note to INSTALL.

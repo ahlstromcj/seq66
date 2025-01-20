@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2022-05-07
+ * \updates       2025-01-20
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of the midibus class.
@@ -163,6 +163,12 @@ midibus::~midibus ()
     }
 }
 
+bool
+midibus::good_api () const
+{
+    return not_nullptr(m_rt_midi) && m_rt_midi->have_api();
+}
+
 /**
  *  Connects to another port.  If the port is an input port, but is not
  *  configured (by the user or the "rc" configuration file), then it is not
@@ -181,7 +187,7 @@ midibus::~midibus ()
 bool
 midibus::api_connect ()
 {
-    bool result = not_nullptr(m_rt_midi);
+    bool result = good_api();
     if (result)
     {
         result = m_rt_midi->api_connect();
@@ -219,7 +225,7 @@ int
 midibus::api_poll_for_midi ()
 {
     if (port_enabled())
-        return not_nullptr(m_rt_midi) ? m_rt_midi->api_poll_for_midi() : 0 ;
+        return good_api() ? m_rt_midi->api_poll_for_midi() : 0 ;
     else
         return 0;
 }
@@ -239,7 +245,7 @@ midibus::api_get_midi_event (event * inev)
 {
     if (port_enabled())
     {
-        return not_nullptr(m_rt_midi) ?
+        return good_api() ?
             m_rt_midi->api_get_midi_event(inev) : false ;
     }
     else
@@ -312,7 +318,9 @@ midibus::api_init_in ()
         if (is_nullptr(m_rt_midi))
             m_rt_midi = new rtmidi_in(*this, master_info());
 
-        result = m_rt_midi->api_init_in();
+        result = good_api();
+        if (result)
+            result = m_rt_midi->api_init_in();
     }
     catch (const rterror & err)
     {
@@ -335,7 +343,9 @@ midibus::api_init_in_sub ()
     try
     {
         m_rt_midi = new rtmidi_in(*this, master_info());
-        result = m_rt_midi->api_init_in_sub();
+        result = good_api();
+        if (result)
+            result = m_rt_midi->api_init_in_sub();
     }
     catch (const rterror & err)
     {
@@ -351,7 +361,7 @@ midibus::api_init_in_sub ()
 bool
 midibus::api_deinit_out ()
 {
-    return not_nullptr(m_rt_midi) ? m_rt_midi->api_deinit_out() : false ;
+    return good_api() ? m_rt_midi->api_deinit_out() : false ;
 }
 
 
@@ -367,7 +377,7 @@ midibus::api_deinit_out ()
 bool
 midibus::api_deinit_in ()
 {
-    return not_nullptr(m_rt_midi) ? m_rt_midi->api_deinit_in() : false ;
+    return good_api() ? m_rt_midi->api_deinit_in() : false ;
 }
 
 /**
@@ -390,14 +400,14 @@ midibus::api_deinit_in ()
 void
 midibus::api_play (const event * e24, midibyte channel)
 {
-    if (not_nullptr(m_rt_midi))
+    if (good_api())
         m_rt_midi->api_play(e24, channel);
 }
 
 void
 midibus::api_sysex (const event * e24)
 {
-    if (not_nullptr(m_rt_midi))
+    if (good_api())
         m_rt_midi->api_sysex(e24);
 }
 
@@ -419,7 +429,7 @@ midibus::api_sysex (const event * e24)
 void
 midibus::api_continue_from (midipulse tick, midipulse beats)
 {
-    if (not_nullptr(m_rt_midi))
+    if (good_api())
         m_rt_midi->api_continue_from(tick, beats);
 }
 
@@ -431,7 +441,7 @@ midibus::api_continue_from (midipulse tick, midipulse beats)
 void
 midibus::api_start ()
 {
-    if (not_nullptr(m_rt_midi))
+    if (good_api())
         m_rt_midi->api_start();
 }
 
@@ -443,7 +453,7 @@ midibus::api_start ()
 void
 midibus::api_stop ()
 {
-    if (not_nullptr(m_rt_midi))
+    if (good_api())
         m_rt_midi->api_stop();
 }
 
@@ -458,7 +468,7 @@ midibus::api_stop ()
 void
 midibus::api_clock (midipulse tick)
 {
-    if (not_nullptr(m_rt_midi))
+    if (good_api())
         m_rt_midi->api_clock(tick);
 }
 

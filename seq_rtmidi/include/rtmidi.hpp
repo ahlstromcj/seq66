@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2024-01-13
+ * \updates       2025-01-20
  * \license       See above.
  *
  *  The big difference between this class (seq66::rtmidi) and
@@ -217,6 +217,11 @@ public:
     midi_api * get_api ()
     {
         return m_midi_api;
+    }
+
+    bool have_api () const
+    {
+        return not_nullptr(m_midi_api);
     }
 
     /*

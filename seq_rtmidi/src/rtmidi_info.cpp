@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-08
- * \updates       2023-09-20
+ * \updates       2025-01-20
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.  This class
@@ -231,14 +231,18 @@ rtmidi_info::openmidi_api
     {
         if (rc().with_jack_midi())
         {
-#if defined SEQ66_JACK_SUPPORT
-            midi_jack_info * mjip = new (std::nothrow) midi_jack_info
-            (
-                appname, ppqn, bpm
-            );
-            result = not_nullptr(mjip);
-            if (result)
-                result = set_api_info(mjip);
+#if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
+            bool ok = detect_jack();
+            if (ok)
+            {
+                midi_jack_info * mjip = new (std::nothrow) midi_jack_info
+                (
+                    appname, ppqn, bpm
+                );
+                result = not_nullptr(mjip);
+                if (result)
+                    result = set_api_info(mjip);
+            }
 #else
             result = false;
 #endif

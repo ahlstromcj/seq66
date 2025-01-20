@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.99.18 and above
 Chris Ahlstrom
-2015-09-10 to 2025-01-15
+2015-09-10 to 2025-01-20
 
 Getting Seq66 requires building the code or going to "ahlstromcj/seq66" on
 GitHub to get an installation package or a Windows release executable.
@@ -467,6 +467,8 @@ MANUALLY-DEFINED MACROS IN CODE:
         SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
         SEQ66_PORTMIDI_SYSEX_PROCESSING (undefined)
         SEQ66_USE_METRONOME_FADE (undefined)
+        SEQ66_MISSING_JACK_VIRTUAL_PORTS (undefined)
+        SEQ66_PROVIDE_AUTO_COLOR_INVERSION
 
 REPORTING ISSUES:
 

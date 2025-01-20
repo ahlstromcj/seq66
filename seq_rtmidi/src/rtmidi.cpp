@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2024-01-13
+ * \updates       2025-01-20
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.
@@ -229,14 +229,18 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
                 if (api == rtmidi_api::jack)
                 {
 #if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
-                    midi_in_jack * mijp = new (std::nothrow) midi_in_jack
-                    (
-                        parent_bus(), midiinfo
-                    );
-                    if (not_nullptr(mijp))
+                    bool ok = detect_jack();
+                    if (ok)
                     {
-                        set_api(mijp);
-                        got_an_api = true;
+                        midi_in_jack * mijp = new (std::nothrow) midi_in_jack
+                        (
+                            parent_bus(), midiinfo
+                        );
+                        if (not_nullptr(mijp))
+                        {
+                            set_api(mijp);
+                            got_an_api = true;
+                        }
                     }
 #endif
                 }
@@ -262,12 +266,19 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
         else if (api == rtmidi_api::jack)
         {
 #if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
-            midi_in_jack * mijp = new (std::nothrow) midi_in_jack
-            (
-                parent_bus(), midiinfo
-            );
-            if (not_nullptr(mijp))
-                set_api(mijp);
+            bool ok = detect_jack();
+            if (ok)
+            {
+                midi_in_jack * mijp = new (std::nothrow) midi_in_jack
+                (
+                    parent_bus(), midiinfo
+                );
+                if (not_nullptr(mijp))
+                {
+                    set_api(mijp);
+                    got_an_api = true;
+                }
+            }
 #endif
         }
         else if (api == rtmidi_api::alsa)
@@ -281,6 +292,10 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
                 set_api(miap);
 #endif
         }
+    }
+    if (! got_an_api)
+    {
+        errprintfunc("could not create an input API");
     }
 }
 
@@ -394,14 +409,18 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
                 if (api == rtmidi_api::jack)
                 {
 #if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
-                    midi_out_jack * mojp = new (std::nothrow) midi_out_jack
-                    (
-                        parent_bus(), midiinfo
-                    );
-                    if (not_nullptr(mojp))
+                    bool ok = detect_jack();
+                    if (ok)
                     {
-                        set_api(mojp);
-                        got_an_api = true;
+                        midi_out_jack * mojp = new (std::nothrow) midi_out_jack
+                        (
+                            parent_bus(), midiinfo
+                        );
+                        if (not_nullptr(mojp))
+                        {
+                            set_api(mojp);
+                            got_an_api = true;
+                        }
                     }
 #endif
                 }
@@ -427,14 +446,18 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
         else if (api == rtmidi_api::jack)
         {
 #if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
-            midi_out_jack * mojp = new (std::nothrow) midi_out_jack
-            (
-                parent_bus(), midiinfo
-            );
-            if (not_nullptr(mojp))
+            bool ok = detect_jack();
+            if (ok)
             {
-                set_api(mojp);
-                got_an_api = true;
+                midi_out_jack * mojp = new (std::nothrow) midi_out_jack
+                (
+                    parent_bus(), midiinfo
+                );
+                if (not_nullptr(mojp))
+                {
+                    set_api(mojp);
+                    got_an_api = true;
+                }
             }
 #endif
         }
@@ -455,7 +478,7 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
     }
     if (! got_an_api)
     {
-        errprintfunc("could not create an API");
+        errprintfunc("could not create an output API");
     }
 }
 

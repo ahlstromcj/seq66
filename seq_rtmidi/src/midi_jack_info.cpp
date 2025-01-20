@@ -376,6 +376,7 @@ midi_jack_info::get_all_port_info
         result = 0;
         if (is_nullptr(inports))                  /* check port validity    */
         {
+#if defined SEQ66_MISSING_JACK_VIRTUAL_PORTS
             warnprint("No JACK in-ports; making a virtual port");
             int clientnumber = 0;
             int portnumber = 0;
@@ -387,6 +388,7 @@ midi_jack_info::get_all_port_info
                 midibase::io::input, midibase::port::manual
             );
             ++result;
+#endif
         }
         else
         {
@@ -435,6 +437,7 @@ midi_jack_info::get_all_port_info
         outputports.clear();
         if (is_nullptr(outports))                  /* check port validity  */
         {
+#if defined SEQ66_MISSING_JACK_VIRTUAL_PORTS
             /*
              * Not really an error, though perhaps we want to warn about it.
              * As with the input port, we create a virtual port.
@@ -450,6 +453,7 @@ midi_jack_info::get_all_port_info
                 midibase::io::output, midibase::port::manual
             );
             ++result;
+#endif
         }
         else
         {
@@ -970,6 +974,103 @@ silence_jack_info (bool silent)
 {
     if (silent)
         ::jack_set_info_function(jack_message_bit_bucket);
+}
+
+/**
+ *  JACK detection function.  Just opens a client without activating it, then
+ *  closes it.
+ *
+ *  However, if only jackdbus is running, this function will detect JACK,
+ *  but later attempts to activate JACK and open ports will fail.
+ *
+ * falkTX wrote:
+ *
+ *      Both jackd and jackdbus implement a JACK server.
+ *
+ *      -   Jackd is started via command-line and having it running means the
+ *          jack server is also running.
+ *      -   Jackdbus is a user service that can stop/start the JACK server
+ *          dynamically.  jackd != JACK server.
+ *
+ *      Jackdbus can be always running because it doesn't imply the JACK
+ *      server is also running.  It's only there to listen for requests on the
+ *      dbus service.  If jackdbus is running the JACK server can be started
+ *      with:
+ *
+ *          $ jack_control start
+ *
+ *  If jackdbus is running both jack_client_open() and jack_activate() work.
+ *  We need a better test.
+ *
+ *  To do:  Use this function to log the JACK version information:
+ *
+ *          const char * version = ::jack_get_version_string();
+ *
+ *  Needs testing under various conditions.
+ *
+ *  This is a pared-down version of detect_jack() in the rtl66 library.
+ */
+
+bool
+detect_jack (bool forcecheck)
+{
+    bool result = false;
+    static bool s_already_checked = false;
+    static bool s_jack_was_detected = false;
+    if (forcecheck)
+    {
+        s_already_checked = false;
+        s_jack_was_detected = false;
+    }
+    if (s_already_checked)
+    {
+        return s_jack_was_detected;
+    }
+    else
+    {
+        const char * cname = "jack_detector";
+        jack_status_t status;
+        jack_status_t * ps = &status;
+        jack_options_t jopts = JackNoStartServer;
+        jack_client_t * jackman = ::jack_client_open(cname, jopts, ps);
+        if (not_nullptr(jackman))
+        {
+            int rc = ::jack_activate(jackman);
+            if (rc == 0)
+            {
+                const char ** ports = ::jack_get_ports
+                (
+                    jackman, NULL, JACK_DEFAULT_MIDI_TYPE, JackPortIsOutput
+                );
+                result = not_nullptr(ports);
+                if (result)
+                {
+                    int count = 0;
+                    while (not_nullptr(ports[count]))
+                    {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+                        printf("detected port %d: '%s'\n", count, ports[count]);
+#endif
+                        ++count;
+                    }
+
+                    result = count > 0;
+                }
+                ::jack_deactivate(jackman);
+            }
+            (void) ::jack_client_close(jackman);
+        }
+        if (result)
+        {
+            s_jack_was_detected = true;
+        }
+        else
+        {
+            warnprint("JACK not detected");
+        }
+        s_already_checked = true;
+    }
+    return result;
 }
 
 }           // namespace seq66

@@ -251,6 +251,7 @@ private:
 
 extern void silence_jack_errors (bool silent = true);
 extern void silence_jack_info (bool silent = true);
+extern bool detect_jack (bool forcecheck = false);
 
 }           // namespace seq66
 
