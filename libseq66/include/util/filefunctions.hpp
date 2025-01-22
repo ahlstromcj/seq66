@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2023-11-30
+ * \updates       2025-01-21
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use

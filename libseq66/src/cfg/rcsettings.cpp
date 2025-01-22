@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-01-19
+ * \updates       2025-01-22
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -566,7 +566,7 @@ rcsettings::home_config_directory () const
         return result;
     }
     else
-        return normalize_path(m_full_config_directory); /* ca 2023-05-11 */
+        return normalize_path(m_full_config_directory);
 }
 
 /**
@@ -1208,9 +1208,33 @@ rcsettings::set_config_directory (const std::string & value)
 {
     bool rooted = name_has_root_path(value);
     if (rooted)
-        full_config_directory(value);
+    {
+        /*
+         * Incorrect: full_config_directory(value) reads, but doesn't set
+         * home_config_directory(). So we set it here. Note that
+         * home_config_directory() normalizes the path it returns.
+         */
+
+        m_full_config_directory = value;;
+
+        std::string homedir = home_config_directory();
+        if (make_directory_path(homedir))
+        {
+            /*
+             * This setting will convert the relative session directory
+             * to a full path.
+             */
+
+            file_message("Config directory", homedir);
+            session_directory(homedir);
+        }
+        else
+            file_error("Could not create", homedir);
+    }
     else
+    {
         config_subdirectory(value);
+    }
 }
 
 /**
@@ -1218,7 +1242,7 @@ rcsettings::set_config_directory (const std::string & value)
  *
  *  Provides an alternate value to be returned by the
  *  home_config_directory() function. Please note that all configuration
- *  locates are relative to home.
+ *  locates are relative to "home".
  *
  *  This causes double concatenation. But we need to call it just
  *  once in the case where NSM has changed the default configuration

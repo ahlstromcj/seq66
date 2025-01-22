@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2024-03-12
+ * \updates       2025-01-21
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -985,6 +985,12 @@ file_copy
             }
         }
 
+        /*
+         * The destination file-specification, if the file does not already
+         * exist, will result in a warning in get_full_path() and a
+         * seeming empty string to compare against.
+         */
+
         bool ok = get_full_path(oldfile) != get_full_path(destfilespec);
         if (result && ok)
         {
@@ -1449,7 +1455,15 @@ get_full_path (const std::string & path)
              *  In Linux we could call string_errno(errno ).
              */
 
-            file_message("real path error", path);
+#if defined SEQ66_PLATFORM_POSIX_API
+            errno_t errnum = errno;
+            std::string errmsg = "Warning: ";
+            errmsg += string_errno(errnum);
+            file_message(errmsg, path);
+#else
+            file_message("realpath() error", path);
+#endif
+
         }
     }
     return result;

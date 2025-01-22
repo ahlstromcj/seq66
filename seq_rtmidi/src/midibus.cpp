@@ -163,10 +163,16 @@ midibus::~midibus ()
     }
 }
 
+/**
+ *  We want to see if we can get by without this full check:
+ *
+ *      return not_nullptr(m_rt_midi) && m_rt_midi->have_api();
+ */
+
 bool
 midibus::good_api () const
 {
-    return not_nullptr(m_rt_midi) && m_rt_midi->have_api();
+    return not_nullptr(m_rt_midi);
 }
 
 /**

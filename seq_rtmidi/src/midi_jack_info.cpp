@@ -1047,12 +1047,7 @@ detect_jack (bool forcecheck)
                 {
                     int count = 0;
                     while (not_nullptr(ports[count]))
-                    {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                        printf("detected port %d: '%s'\n", count, ports[count]);
-#endif
                         ++count;
-                    }
 
                     result = count > 0;
                 }

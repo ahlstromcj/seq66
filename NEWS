@@ -1,21 +1,49 @@
 NEWS for Seq66 0.99.18
 Chris Ahlstrom
-2015-07-10 to 2025-01-12
+2015-07-10 to 2025-01-22
 
 # Change Log
 
-## [0.99.18] - 2025-01-12
+## [0.99.18] - 2025-01-22
 
-Another dang seqfault!
+More developer-discovered issues :-(
 
 ### Added
 
+-   Added suport for raysession and agordejo to the jackctl script.
+-   Added the dark-theme and dark-ui options to the user file for handling
+    GUI elements that are otherwise difficult to see..
+-   Added an option to dump the current palette while automatically
+    inverting the --invert palette. It's the
+    SEQ66\_PROVIDE\_AUTO\_COLOR\_INVERSION macro.
+
 ### Changed
+
+-   Beefed up the jackctl script to facilitate testing.
+-   Added the "-u" option to a2jmidid in the jackctl script, to
+    avoid undesirable changes to port names.
+-   Refactored the copy-configuration and delete-configuration functions
+    to make them more robust and less dependent on file-extension.
+    Depends on the SEQ66\_KEEP\_RC\_FILE\_LIST macro.
 
 ### Fixed
 
+-   Issue #135.
+    -   Added an inverse pattern-length icon for dark themes.
+    -   Fixed the vertical lines in the time panel so as not to obscure
+        the measure numbers.
+    -   Updates the pattern-editor piano roll drawing to avoid invisible
+        vertical lines. See the dark-theme and dark-ui options too.
 -   Fixed a seqfault when pressing an empty button on a set other than
     the first set. Also fixed in tag 0.99.17.1.
+-   Fixed the JACK-to-ALSA fallback process, broken if the computer is
+    running the jackdbus daemon. Also tested were differences in
+    a2jmidid.
+-   Fixed an error in the --home command-line option that left "home"
+    as "~/.config/seq66".
+-   Refactored and fixed the Export Project Configuration menu
+    entry.
+-   Fixed the route66 bitmap.
 
 ### Removed
 

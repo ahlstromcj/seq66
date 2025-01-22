@@ -435,8 +435,8 @@ private:
      *  The full expanded path to the configuration directory.  This value is
      *  created, by default, by concatenating $HOME and ".config/seq66".
      *  However it can be reset completely by the full_config_directory()
-     *  function to what ever the user needs (e.g. for usage with the Non/New
-     *  Session Manager).
+     *  function to whatever the user needs (e.g. for usage with the Non/New
+     *  Session Manager, RaySession, and Agordejo).
      */
 
     mutable std::string m_full_config_directory;

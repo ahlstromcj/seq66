@@ -121,8 +121,6 @@ sessionfile::parse ()
              * If the user supplies a full path as the "home" value, we
              * just set that. Otherwise, append it to the default "home"
              * directory.
-             *
-             * rc_ref().full_config_directory(s);
              */
 
             if (name_has_path(s))

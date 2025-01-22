@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2024-01-13
+ * \updates       2025-01-22
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -1319,8 +1319,13 @@ midi_jack::send_message (const midi_message & message)
         size_t space = size_t(rb->read_space());
         result = space > 0 && space < c_jack_ringbuffer_size;
     }
-    if (! result)
-        printf("send_message() failed\n");
+
+    /*
+     * Redundant. We get "seq66] JACK send event failed" anyway.
+     *
+     *  if (! result)
+     *      printf("send_message() failed\n");
+     */
 
     return result;
 #else

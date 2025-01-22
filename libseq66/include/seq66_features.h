@@ -60,13 +60,10 @@
 
 /**
  *  Trying to make configuration copying more flexible.
- *
- *  EXPERIMENTAL.
  *  We want to use additional non-standard file extensions (e.g. ".notemap"
  *  versus ".drums" when iterating through the configuration files,
- *
  *  Define this value to define alternates to copy_configuration() and
- *  delete_configuration. NOT YET READY.
+ *  delete_configuration.
  */
 
 #define SEQ66_KEEP_RC_FILE_LIST

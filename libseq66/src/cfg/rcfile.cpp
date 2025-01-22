@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-01-19
+ * \updates       2025-01-22
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -1291,12 +1291,21 @@ delete_configuration (const std::string & path, const std::string & fname)
                 if (! file_delete(fname.second))
                     result = false;
             }
-            else
-                result = false;
         }
     }
     return result;
 }
+
+/**
+ * TODO:
+ *
+ *  If importing from seq66tests to .config/seq66, the list of config-files
+ *  has the destination names.
+ *
+ *  We need to construct a new list, which requires reading the source
+ *  files.
+ *
+ */
 
 bool
 copy_configuration
