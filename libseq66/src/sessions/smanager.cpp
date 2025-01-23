@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2025-01-19
+ * \updates       2025-01-23
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -60,8 +60,9 @@
 #include "midi/midifile.hpp"            /* seq66::write_midi_file()         */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/playlist.hpp"            /* seq66::playlist class            */
-#include "sessions/smanager.hpp"        /* seq66::smanager()                */
 #include "os/daemonize.hpp"             /* seq66::reroute_stdio(), etc.     */
+#include "os/shellexecute.hpp"          /* seq66::copy_directory_recursive()*/
+#include "sessions/smanager.hpp"        /* seq66::smanager()                */
 #include "util/filefunctions.hpp"       /* seq66::file_readable() etc.      */
 
 #if defined SEQ66_PORTMIDI_SUPPORT
@@ -1363,7 +1364,7 @@ smanager::make_path_names
  *
  *  Function for the main window to call. It deletes the existing
  *  configuration, copies the source configuration, then calls
- *  import_configuration_items().
+ *  reset_configuration_items().
  *
  *  When this function succeeds, we need to signal a session-reload and the
  *  make settings as done in qsmainwnd::import_project().
@@ -1406,15 +1407,25 @@ smanager::import_into_session
             result = make_path_names(destdir, cfgpath, midipath);
             if (result)
             {
+                /*
+                 * Deletes configuration files listed in rc().
+                 * This does not cover MIDI files, such as those in a
+                 * "midi" directory or in a playlist.
+                 */
+
                 result = delete_configuration(cfgpath, destbase);
                 if (result)
                 {
+#if defined SEQ66_COPY_PROJECT_BY_RC
                     result = copy_configuration(sourcepath, sourcebase, cfgpath);
+#else
+                    result = copy_directory_recursive(sourcepath, cfgpath);
+#endif
                     if (result)
                     {
-                        result = import_configuration_items
+                        result = reset_configuration_items
                         (
-                            sourcepath, sourcebase, cfgpath, midipath
+                            destdir, sourcebase, cfgpath, midipath
                         );
                     }
                 }
@@ -1561,7 +1572,7 @@ smanager::export_session_configuration
  */
 
 bool
-smanager::import_configuration_items
+smanager::reset_configuration_items
 (
     const std::string & sourcepath,
     const std::string & sourcebase,

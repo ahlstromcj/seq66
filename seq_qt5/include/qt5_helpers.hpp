@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2024-12-24
+ * \updates       2025-01-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -142,7 +142,7 @@ extern QAction * new_qaction (const std::string & text, QObject * parent);
 extern QMenu * new_qmenu (const std::string & text, QWidget * parent = nullptr);
 extern bool show_open_midi_file_dialog (QWidget * parent, std::string & file);
 extern bool show_import_midi_file_dialog (QWidget * parent, std::string & file);
-extern bool show_import_project_dialog
+extern bool show_select_project_dialog
 (
     QWidget * parent,
     std::string & selecteddir,

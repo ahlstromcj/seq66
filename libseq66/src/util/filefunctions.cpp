@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2025-01-21
+ * \updates       2025-01-23
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -594,7 +594,7 @@ file_is_directory (const std::string & filename)
  *
  *  Another option is to #include <filesystem> and call
  *  std::uintmax_t file_size (const std::filesystem::path& p), which
- *  throws (but there is a noexcept version as well.
+ *  throws (but there is a noexcept version as well).
  *
  * \param filename
  *      The name of the file. If it is a directory, this function will fail.
@@ -1490,6 +1490,16 @@ char
 os_path_slash ()
 {
     return SEQ66_PATH_SLASH_CHAR;
+}
+
+/**
+ *  Saves some code and improves readability.
+ */
+
+std::string
+unix_normalize_path (const std::string & path)
+{
+    return normalize_path(path, true, true);
 }
 
 /**

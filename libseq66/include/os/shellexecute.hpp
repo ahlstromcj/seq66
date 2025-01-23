@@ -23,7 +23,7 @@
  * \file          shellexecute.hpp
  * \author        Chris Ahlstrom
  * \date          2022-05-19
- * \updates       2022-05-29
+ * \updates       2025-01-22
  * \license       GNU GPLv2 or above
  *
  *    This module provides functions for executing commands from within
@@ -46,6 +46,11 @@ extern bool open_document (const std::string & documentpath);
 extern bool open_pdf (const std::string & pdfspec);
 extern bool open_url (const std::string & pdfspec);
 extern bool open_local_url (const std::string & pdfspec);
+extern bool copy_directory_recursive
+(
+    const std::string & sourcedir,
+    const std::string & destdir
+);
 
 }        // namespace seq66
 

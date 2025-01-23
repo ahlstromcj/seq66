@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-29
+ * \updates       2025-01-23
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -2688,12 +2688,19 @@ qsmainwnd::import_midi_into_set ()
  *  needs to be done..
  */
 
+/**
+ *  This version uses smanager::import_into_session(), which calls, among
+ *  other things, copy_configuration(), which depends on rc().config_files()
+ *  which will not have the same file-name entries as the import source
+ *  directory.
+ */
+
 void
 qsmainwnd::import_project ()
 {
     std::string selecteddir;
     std::string selectedfile;
-    bool selected = show_import_project_dialog(this, selecteddir, selectedfile);
+    bool selected = show_select_project_dialog(this, selecteddir, selectedfile);
     if (selected && not_nullptr(session()))
     {
         if (session()->import_into_session(selecteddir, selectedfile))

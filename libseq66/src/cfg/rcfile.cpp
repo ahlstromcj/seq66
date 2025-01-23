@@ -1305,6 +1305,7 @@ delete_configuration (const std::string & path, const std::string & fname)
  *  We need to construct a new list, which requires reading the source
  *  files.
  *
+ *  It might be easier just to recursively copy the whole source directory.
  */
 
 bool

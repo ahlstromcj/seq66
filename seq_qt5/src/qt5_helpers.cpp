@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2025-01-06
+ * \updates       2025-01-23
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -45,7 +45,7 @@
  *      -   new_qmenu(). Similar.
  *      -   show_open_midi_file_dialog()
  *      -   show_import_midi_file_dialog()
- *      -   show_import_project_dialog()
+ *      -   show_select_project_dialog()
  *      -   show_playlist_dialog()
  *      -   show_text_file_dialog()
  *      -   show_file_dialog()
@@ -654,8 +654,12 @@ show_import_midi_file_dialog (QWidget * parent, std::string & selectedfile)
     );
 }
 
+/**
+ *  This function allows one to select an 'rc' file.
+ */
+
 bool
-show_import_project_dialog
+show_select_project_dialog
 (
     QWidget * parent,
     std::string & selecteddir,
@@ -663,7 +667,7 @@ show_import_project_dialog
 )
 {
     std::string filter = "Config (*.rc);;All files (*)";
-    std::string caption = "Import Project Configuration";
+    std::string caption = "Select Project Configuration";
     std::string selection;
     bool result = show_file_dialog
     (
@@ -891,7 +895,7 @@ show_file_dialog
  *  To be used simply for getting file-names. It returns both the full path
  *  to the file, including the base-name, plus the base-name of the file.
  *
- *  Compare to show_import_project_dialog().
+ *  Compare to show_select_project_dialog().
  *
  * \param parent
  *      The owner of this dialog.

@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.18
 Chris Ahlstrom
-2015-07-10 to 2025-01-22
+2015-07-10 to 2025-01-23
 
 # Change Log
 
-## [0.99.18] - 2025-01-22
+## [0.99.18] - 2025-01-23
 
 More developer-discovered issues :-(
 
@@ -41,8 +41,8 @@ More developer-discovered issues :-(
     a2jmidid.
 -   Fixed an error in the --home command-line option that left "home"
     as "~/.config/seq66".
--   Refactored and fixed the Export Project Configuration menu
-    entry.
+-   Refactored and fixed the Import Project Configuration menu entry.
+-   Refactored and fixed the Export Project Configuration menu entry.
 -   Fixed the route66 bitmap.
 
 ### Removed

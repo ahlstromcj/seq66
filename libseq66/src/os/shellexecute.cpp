@@ -20,8 +20,8 @@
  * \file          shellexecute.cpp
  * \library       seq66 application
  * \author        Chris Ahlstrom
- * \date          2022-05-19
- * \updates       2023-12-22
+ * \date          2022-05-13
+ * \updates       2025-01-23
  * \license       GNU GPLv2 or above
  *
  *  Provides support for cross-platform time-related functions.
@@ -32,6 +32,7 @@
 #include "seq66_platform_macros.h"      /* detecting Linux vs Windows       */
 #include "cfg/settings.hpp"             /* for usr().use_pdf_viewer() etc.  */
 #include "os/shellexecute.hpp"          /* seq66::open_document(), etc.     */
+#include "util/filefunctions.hpp"       /* seq66::file_exists()             */
 #include "util/strfunctions.hpp"        /* seq66::widen_string()            */
 
 #if defined SEQ66_PLATFORM_WINDOWS
@@ -139,6 +140,34 @@ open_document (const std::string & documentpath)
     return result;
 }
 
+/**
+ *  Creates a command-line of the following form and executes it:
+ *
+ *      cp -r sourcedir/<asterisk> destdir/
+ *
+ *  We also check that the destdir is really a directory.
+ */
+
+bool
+copy_directory_recursive
+(
+    const std::string & sourcedir,
+    const std::string & destdir
+)
+{
+    bool result = file_exists(sourcedir) && file_is_directory(destdir);
+    if (result)
+    {
+        std::string cmdline = "cp -r ";
+        cmdline += unix_normalize_path(sourcedir);  /* end with a solidus   */
+        cmdline += "*";
+        cmdline += " ";
+        cmdline += unix_normalize_path(destdir);    /* end with a solidus   */
+        result = command_line(cmdline);
+    }
+    return result;
+}
+
 #elif defined SEQ66_PLATFORM_WINDOWS
 
 /*
@@ -206,6 +235,48 @@ open_document (const std::string & documentpath)
         result = uintptr_t(rc) > 32;
         if (! result)
             (void) file_error("Command failed", documentpath);
+    }
+    return result;
+}
+
+/**
+ *  Currently a quick-and-dirty implementation using system() rather than
+ *  nftw(). The flags for xcopy used are:
+ *
+ *      -   /s. Copy all directories and subdirectories.
+ *      -   /e. Copy directories/subdirectories, including empty ones.
+ *      -   /k. Copies the file attributes.
+ *      -   /h. Copy hidden and system files as well.
+ *      -   /i. If destination does not exist and copying more than one
+ *              file, assume the destination is a directory.
+ *      -   /q. Quiet; do no display filenames while copying.
+ *      -   /y. Suppresses prompting to confirm overwriting an existing
+ *              file.
+ *
+ *  Here is the command line:
+ *
+ *      xcopy sourcedir/<asterisk> destdir /s /e /k /h /i /q /y
+ *
+ *  Do we need to os_normalize()?
+ */
+
+bool
+copy_directory_recursive
+(
+    const std::string & sourcedir,
+    const std::string & destdir
+)
+{
+    bool result = file_exists(sourcedir) && file_is_directory(destdir);
+    if (result)
+    {
+        std::string cmdline = "xcopy ";
+        cmdline += unix_normalize_path(sourcedir);  /* end with a solidus   */
+        cmdline += " ";
+        cmdline += destdir;                         /* no solidus           */
+        cmdline += "* ";
+        cmdline += "/s /e /k /h /i /q /y";
+        result = command_line(cmdline);
     }
     return result;
 }
