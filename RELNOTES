@@ -1,17 +1,41 @@
-Release Notes for Seq66 v. 0.99.18 2025-01-12
+Release Notes for Seq66 v. 0.99.18 2025-01-25
 
-This release contains ...
+This release contains fixes for dark themes, fixes to project
+import/export, a new Help feature, and other updates.
 
 Fixes for reported issues:
 
-- xxxx
+- Issue #135.
+  - Added an inverse pattern-length icon for dark themes.
+  - Fixed the vertical lines in the time panel to obscure measure
+    numbers and to avoid invisible vertical lines.
 
 Other fixes:
 
-- xxxx
+- Fixed a seqfault when pressing an empty button on a set other than
+  the first set.
+- Fixed the JACK-to-ALSA fallback process when running the jackdbus
+  daemon.
+- Fixed an error in the --home command-line option that left "home"
+  as "~/.config/seq66".
+- Refactored and fixed the Import and ExportProject Configuration
+  menu entries.
 
 Updates:
 
-- xxxx
+- Added suport for raysession and agordejo to the jackctl script.
+  Beefed up this script to facilitate testing and port-naming.
+- Added the dark-theme and dark-ui options to the user file for
+  handling GUI elements that are otherwise difficult to see.
+- Added an option to dump the current palette while automatically
+  inverting to create the --invert palette.
+- Refactored the copy-configuration and delete-configuration
+  functions to make them more robust.
+- Updated the show_folder_dialog() function to show hidden
+  directories.
+- Added a Help / View Log function to bring up the latest log
+  text.
+
+See NEWS for more details.
 
 # vim: sw=4 ts=4 wm=15 et ft=rc

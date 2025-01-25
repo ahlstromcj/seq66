@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2025-01-06
+ * \updates       2025-01-23
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -174,8 +174,7 @@ enum class fixeffect
     shrunk          = 0x10,
     expanded        = 0x20,
     time_sig        = 0x40,
-    truncated       = 0x80,
-    all             = 0xFF
+    all             = 0x7F
 };
 
 /**

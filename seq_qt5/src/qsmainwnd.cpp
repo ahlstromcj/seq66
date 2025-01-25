@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-01-23
+ * \updates       2025-01-25
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -61,6 +61,7 @@
  *  Help            show_qsabout()          Show Help About (version info)
  *                  show_qsbuildinfo()      Show features of the build
  *                  show_qsappinfo()        Show additional features
+ *                  show_qslogview()        Show the configured log file.
  */
 
 #include <QErrorMessage>                /* QErrorMessage                    */
@@ -96,6 +97,7 @@
 #include "qplaylistframe.hpp"           /* seq66::qplaylistframe class      */
 #include "qsabout.hpp"                  /* seq66::qsabout dialog class      */
 #include "qsappinfo.hpp"                /* seq66::qsappinfo dialog class    */
+#include "qslogview.hpp"                /* seq66::qslogview dialog class    */
 #include "qsbuildinfo.hpp"              /* seq66::qsbuildinfo dialog class  */
 #include "qseditoptions.hpp"            /* seq66::qseditoptions dialog      */
 #include "qseqeditex.hpp"               /* seq66::qseqeditex container      */
@@ -270,6 +272,7 @@ qsmainwnd::qsmainwnd
     m_dialog_about          (nullptr),
     m_dialog_build_info     (nullptr),
     m_dialog_app_info       (nullptr),
+    m_dialog_log_view       (nullptr),
     m_session_frame         (nullptr),
     m_set_master            (nullptr),
     m_mute_master           (nullptr),
@@ -446,6 +449,7 @@ qsmainwnd::qsmainwnd
     );
     m_dialog_about = new (std::nothrow) qsabout(this);
     m_dialog_app_info = new (std::nothrow) qsappinfo(this);
+    m_dialog_log_view = new (std::nothrow) qslogview(this);
     m_dialog_build_info = new (std::nothrow) qsbuildinfo(this);
     make_perf_frame_in_tab();           /* create m_song_frame64 pointer    */
     m_live_frame = new (std::nothrow) qslivegrid
@@ -555,6 +559,11 @@ qsmainwnd::qsmainwnd
     (
         ui->actionAppInfo, SIGNAL(triggered(bool)),
         this, SLOT(show_qsappinfo())
+    );
+    connect
+    (
+        ui->actionLogView, SIGNAL(triggered(bool)),
+        this, SLOT(show_qslogview())
     );
     connect
     (
@@ -2243,7 +2252,7 @@ qsmainwnd::project_folder_prompt
     const std::string & prompt
 )
 {
-    std::string result; //  = file;
+    std::string result;
     bool ok = show_folder_dialog( this, result, prompt, true); /* force home */
     if (ok)
     {
@@ -2744,6 +2753,16 @@ qsmainwnd::show_qsappinfo ()
 {
     if (not_nullptr(m_dialog_app_info))
         m_dialog_app_info->show();
+}
+
+void
+qsmainwnd::show_qslogview ()
+{
+    if (not_nullptr(m_dialog_log_view))
+    {
+        m_dialog_log_view->show();
+        m_dialog_log_view->refresh();
+    }
 }
 
 /**

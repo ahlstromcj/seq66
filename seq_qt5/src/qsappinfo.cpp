@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-08-21
- * \updates       2023-09-12
+ * \updates       2025-01-25
  * \license       GNU GPLv2 or above
  *
  *  This module supports a task similar to that of the Help / Tutorial menu
@@ -143,7 +143,7 @@ qsappinfo::open_html
 void
 qsappinfo::slot_common_keys ()
 {
-    open_html("common_keys", "Common Piano Roll Keyss");
+    open_html("common_keys", "Common Piano Roll Keys");
 }
 
 void

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>713</width>
-    <height>420</height>
+    <height>455</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -45,7 +45,7 @@
     <item>
      <spacer name="horizontalSpacer">
       <property name="orientation">
-       <enum>Qt::Orientation::Horizontal</enum>
+       <enum>Qt::Horizontal</enum>
       </property>
       <property name="sizeHint" stdset="0">
        <size>
@@ -72,7 +72,7 @@
        <string>Pattern No. </string>
       </property>
       <property name="alignment">
-       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
      </widget>
     </item>
@@ -99,10 +99,10 @@
        </font>
       </property>
       <property name="frameShape">
-       <enum>QFrame::Shape::Box</enum>
+       <enum>QFrame::Box</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Shadow::Sunken</enum>
+       <enum>QFrame::Sunken</enum>
       </property>
       <property name="lineWidth">
        <number>2</number>
@@ -138,7 +138,7 @@
        <string>Max. Tick</string>
       </property>
       <property name="alignment">
-       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
      </widget>
     </item>
@@ -162,10 +162,10 @@
        </font>
       </property>
       <property name="frameShape">
-       <enum>QFrame::Shape::Box</enum>
+       <enum>QFrame::Box</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Shadow::Sunken</enum>
+       <enum>QFrame::Sunken</enum>
       </property>
       <property name="lineWidth">
        <number>2</number>
@@ -201,7 +201,7 @@
     <property name="geometry">
      <rect>
       <x>9</x>
-      <y>24</y>
+      <y>36</y>
       <width>251</width>
       <height>111</height>
      </rect>
@@ -290,7 +290,7 @@ accounting for the time of the last event.</string>
      <x>530</x>
      <y>56</y>
      <width>161</width>
-     <height>291</height>
+     <height>271</height>
     </rect>
    </property>
    <property name="font">
@@ -312,9 +312,9 @@ accounting for the time of the last event.</string>
     <property name="geometry">
      <rect>
       <x>8</x>
-      <y>24</y>
+      <y>40</y>
       <width>141</width>
-      <height>251</height>
+      <height>200</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -420,17 +420,6 @@ accounting for the time of the last event.</string>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QCheckBox" name="btn_effect_truncate">
-       <property name="toolTip">
-        <string>Notes/events will be dropped by this
-change.</string>
-       </property>
-       <property name="text">
-        <string>Truncate!</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </widget>
   </widget>
@@ -440,7 +429,7 @@ change.</string>
      <x>8</x>
      <y>218</y>
      <width>221</width>
-     <height>181</height>
+     <height>211</height>
     </rect>
    </property>
    <property name="font">
@@ -457,7 +446,7 @@ change.</string>
       <x>12</x>
       <y>24</y>
       <width>201</width>
-      <height>151</height>
+      <height>171</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -540,7 +529,7 @@ the measures.</string>
   <widget class="QWidget" name="layoutWidgetAlignLeft">
    <property name="geometry">
     <rect>
-     <x>260</x>
+     <x>280</x>
      <y>360</y>
      <width>401</width>
      <height>38</height>

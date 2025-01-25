@@ -1678,9 +1678,12 @@ beats/minute.</string>
     <addaction name="actionBuildInfo"/>
     <addaction name="actionSongSummary"/>
     <addaction name="separator"/>
+    <addaction name="separator"/>
     <addaction name="actionAppInfo"/>
     <addaction name="actionTutorial"/>
     <addaction name="actionUserManual"/>
+    <addaction name="separator"/>
+    <addaction name="actionLogView"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -1983,6 +1986,11 @@ in the same directory as the original, with the extension
   <action name="actionExportProject">
    <property name="text">
     <string>Pro&amp;ject Configuration...</string>
+   </property>
+  </action>
+  <action name="actionLogView">
+   <property name="text">
+    <string>&amp;View Log</string>
    </property>
   </action>
  </widget>

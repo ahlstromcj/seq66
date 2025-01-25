@@ -1,12 +1,9 @@
 TO DO for Seq66 0.99.18
 Chris Ahlstrom
-2019-04-13 to 2025-01-22
+2019-04-13 to 2025-01-23
 
 Backlog:
 
-    -   Pattern fix:
-        -   Since scaling is now used for the Measure option,
-            remove the "Truncated" applied-effect item.
     -   Event editor:
         -   Can we add, perhaps a tooltip or dropdown to select the desired
             Control value (e.g. 7 for volume)?
@@ -28,12 +25,7 @@ Backlog:
         next iteration, leaving a partially-drawn note behind.
     -   Consider adding time-bg/fg-color to the palette file, using
         the 'usr' version otherwise.
-    -   Add options to the palette for the line-style of the various
-        grid-lines.
-    -   Test and retest all previous issues in #128
-    -   Setting the PPQN obscures the 32 PPQN entry in the combo box. Minor.
     -   Get the 16-in-busses.midi file configured and working.
-    -   Finish getting Windows builds in MSYS2 to work.
     -   Figure out issue #132, the libasound2 issue.
     -   QObject::setParent: Cannot set parent, new parent is in a different
         thread; this happens in sequence::modify(true) when recording with
@@ -42,8 +34,6 @@ Backlog:
         flag "*" is not shown in the title, though the
         "Save/Discard/Cancel" prompt appears at exit. It works if
         playback running during recording.
-    -   #111 Time signature changes does not get saved on .midi file
-    -   #112 Send midi-control-out message when New Pattern is created in GUI
     -   #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
     -   Recording.
         -   One-shot recording during playback now works.  But one-shot reset
@@ -52,6 +42,7 @@ Backlog:
         -   There seems to be a very slight chance of too-longth notes in
             a chord if quantization (1/16) is on. Needs a better keyboard
             player (not me) to test it.
+    -   Finish getting Windows builds in MSYS2 to work.
 
 Playlists:
 

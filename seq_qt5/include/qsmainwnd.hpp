@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-29
+ * \updates       2025-01-25
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -93,14 +93,15 @@ namespace seq66
     class qsbuildinfo;
     class qseditoptions;
     class qseqeditex;
-    class qseqframe;
     class qseqeventframe;
+    class qseqframe;
     class qsessionframe;
     class qsetmaster;
     class qslivegrid;
+    class qslogview;
     class qsmaintime;
-    class smanager;
     class qt5nsmanager;
+    class smanager;
 
 /**
  * The main window of Kepler34... er, I mean Seq66.
@@ -337,6 +338,7 @@ private:
     qsabout * m_dialog_about;
     qsbuildinfo * m_dialog_build_info;
     qsappinfo * m_dialog_app_info;
+    qslogview * m_dialog_log_view;
     qsessionframe * m_session_frame;
     qsetmaster * m_set_master;
     qmutemaster * m_mute_master;
@@ -493,6 +495,7 @@ private slots:
     void show_qsabout ();
     void show_qsbuildinfo ();
     void show_qsappinfo ();
+    void show_qslogview ();
     void tabWidgetClicked (int newindex);
     void conditional_update ();             /* redraw certain GUI elements  */
     void load_editor (int seqid);

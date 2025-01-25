@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2025-01-10
+ * \updates       2025-01-23
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -145,7 +145,6 @@ qpatternfix::initialize (bool startup)
     ui->btn_effect_shrink->setEnabled(false);
     ui->btn_effect_expand->setEnabled(false);
     ui->btn_effect_time_sig->setEnabled(false);
-    ui->btn_effect_truncate->setEnabled(false);
 
     /*
      * ui->btn_effect_alteration->setChecked(false);
@@ -154,7 +153,6 @@ qpatternfix::initialize (bool startup)
      * ui->btn_effect_shrink->setChecked(false);
      * ui->btn_effect_expand->setChecked(false);
      * ui->btn_effect_time_sig->setChecked(false);
-     * ui->btn_effect_truncate->setChecked(false);
      */
 
     slot_effect_clear();
@@ -353,11 +351,6 @@ qpatternfix::initialize (bool startup)
             ui->btn_effect_time_sig, SIGNAL(clicked()),
             this, SLOT(slot_effect_clear())
         );
-        connect
-        (
-            ui->btn_effect_truncate, SIGNAL(clicked()),
-            this, SLOT(slot_effect_clear())
-        );
 
         /*
          * Other Fixes.
@@ -456,7 +449,6 @@ qpatternfix::slot_effect_clear ()
     ui->btn_effect_shrink->setChecked(false);
     ui->btn_effect_expand->setChecked(false);
     ui->btn_effect_time_sig->setChecked(false);
-    ui->btn_effect_truncate->setChecked(false);
 }
 
 void

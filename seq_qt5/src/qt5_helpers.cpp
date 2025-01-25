@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2025-01-23
+ * \updates       2025-01-25
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -78,6 +78,13 @@
 #include "util/filefunctions.hpp"       /* seq66 file-name manipulations    */
 #include "util/strfunctions.hpp"        /* seq66::toupper() and tolower     */
 #include "qt5_helpers.hpp"              /* these cool helper functions!     */
+
+/**
+ *  We need a better option than getExistingDirectory(). We need to
+ *  see hidden directories when exporting projects.
+ */
+
+#define SEQ66_SHOW_HIDDEN_DIRECTORIES
 
 /*
  * Don't document the namespace.
@@ -1000,7 +1007,25 @@ show_folder_dialog
 
     QString qprompt = qt(prompt);
     QString folder = qt(d);
-    folder = QFileDialog::getExistingDirectory(parent, qprompt, folder);
+
+#if defined SEQ66_SHOW_HIDDEN_DIRECTORIES
+    QFileDialog dialog(parent, qprompt, folder);
+    dialog.setFileMode(QFileDialog::Directory);
+    dialog.setViewMode(QFileDialog::Detail);
+    dialog.setFilter(QDir::AllDirs | QDir::Hidden | QDir::NoDotAndDotDot);
+    folder.clear();
+    if (dialog.exec())
+    {
+        QStringList fnames = dialog.selectedFiles();
+        if (! fnames.isEmpty())
+            folder = fnames.first();
+    }
+#else
+    folder = QFileDialog::getExistingDirectory
+    (
+        parent, qprompt, folder, QFileDialog::ShowDirsOnly
+    );
+#endif
     result = ! folder.isEmpty();
     if (result)
     {

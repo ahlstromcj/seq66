@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2025-01-14
+ * \updates       2025-01-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -223,7 +223,7 @@ bool
 palettefile::write_stream (std::ofstream & file)
 {
     file
-        << "# Seq66 0.99.11 (and above) palette configuration file\n"
+        << "# Seq66 0.99.17 (and above) palette configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << get_current_date_time() << "\n"
@@ -231,6 +231,9 @@ palettefile::write_stream (std::ofstream & file)
         << "# This file can be used to change the colors used by patterns\n"
         << "# and in some parts of the user-interface. It must be active and\n"
         << "# specified in the 'rc' file.\n"
+        << "\n"
+        << "# Note: colors of the time display are currently set in the\n"
+        << "# 'usr' file.\n"
         << "\n"
         ;
 

@@ -1,53 +1,60 @@
 NEWS for Seq66 0.99.18
 Chris Ahlstrom
-2015-07-10 to 2025-01-23
+2015-07-10 to 2025-01-25
 
 # Change Log
 
-## [0.99.18] - 2025-01-23
+## [0.99.18] - 2025-01-25
 
 More developer-discovered issues :-(
 
 ### Added
 
 -   Added suport for raysession and agordejo to the jackctl script.
--   Added the dark-theme and dark-ui options to the user file for handling
-    GUI elements that are otherwise difficult to see..
+-   Added the dark-theme and dark-ui options to the user file for
+    handling GUI elements that are otherwise difficult to see.
 -   Added an option to dump the current palette while automatically
-    inverting the --invert palette. It's the
+    inverting to create the --invert palette. It's activated by the
     SEQ66\_PROVIDE\_AUTO\_COLOR\_INVERSION macro.
+-   Added a Help / View Log function to bring up the latest log
+    text (if a log file is enabled).
 
 ### Changed
 
 -   Beefed up the jackctl script to facilitate testing.
 -   Added the "-u" option to a2jmidid in the jackctl script, to
     avoid undesirable changes to port names.
--   Refactored the copy-configuration and delete-configuration functions
-    to make them more robust and less dependent on file-extension.
-    Depends on the SEQ66\_KEEP\_RC\_FILE\_LIST macro.
+-   Refactored the copy-configuration and delete-configuration
+    functions to make them more robust and less dependent on
+    file-extension.  Depends on the SEQ66\_KEEP\_RC\_FILE\_LIST
+    macro.
+-   Updated the show\_folder\_dialog() function to show hidden
+    directories.
 
 ### Fixed
 
 -   Issue #135.
     -   Added an inverse pattern-length icon for dark themes.
-    -   Fixed the vertical lines in the time panel so as not to obscure
-        the measure numbers.
-    -   Updates the pattern-editor piano roll drawing to avoid invisible
-        vertical lines. See the dark-theme and dark-ui options too.
--   Fixed a seqfault when pressing an empty button on a set other than
-    the first set. Also fixed in tag 0.99.17.1.
--   Fixed the JACK-to-ALSA fallback process, broken if the computer is
-    running the jackdbus daemon. Also tested were differences in
+    -   Fixed the vertical lines in the time panel so as not to
+        obscure the measure numbers.
+    -   Updated the pattern-editor piano roll drawing to avoid
+        invisible vertical lines. See the dark-theme and dark-ui
+        options too.
+-   Fixed a seqfault when pressing an empty button on a set other
+    than the first set. Also fixed in tag 0.99.17.1.
+-   Fixed the JACK-to-ALSA fallback process, broken if the computer
+    is running the jackdbus daemon. Also tested were differences in
     a2jmidid.
--   Fixed an error in the --home command-line option that left "home"
-    as "~/.config/seq66".
--   Refactored and fixed the Import Project Configuration menu entry.
--   Refactored and fixed the Export Project Configuration menu entry.
+-   Fixed an error in the --home command-line option that left
+    "home" as "~/.config/seq66".
+-   Refactored and fixed the Import Project Configuration menu.
+-   Refactored and fixed the Export Project Configuration menu.
 -   Fixed the route66 bitmap.
 
 ### Removed
 
--   Nothing.
+-   The pattern-fix effect check-box for the "Truncate" effect,
+    which cannot occur anymore.
 
 ## [0.99.17] - 2025-01-10
 
@@ -1378,4 +1385,4 @@ features added.
   public consumption, after residing on a server (a Toshiba laptop) at
   home for months.
 
-# vim: sw=4 ts=4 wm=4 et ft=markdown
+# vim: sw=4 ts=4 wm=15 et ft=markdown

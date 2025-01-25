@@ -6,7 +6,7 @@
 # \library      libseq_qt5 library
 # \author       Chris Ahlstrom
 # \date         2018-03-09
-# \update       2023-08-21
+# \update       2025-01-25
 # \version      $Revision$
 # \license      $XPC_SUITE_GPL_LICENSE$
 #
@@ -80,6 +80,7 @@ UI_FILES = \
  qseqeventframe.ui \
  qsetmaster.ui \
  qslivegrid.ui \
+ qslogview.ui \
  qsmainwnd.ui
 
 UI_H_FILES = \
@@ -96,6 +97,7 @@ UI_H_FILES = \
  qseqeventframe.ui.h \
  qsetmaster.ui.h \
  qslivegrid.ui.h \
+ qslogview.ui.h \
  qsmainwnd.ui.h
 
 #******************************************************************************

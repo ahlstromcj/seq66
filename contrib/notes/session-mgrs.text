@@ -47,7 +47,10 @@ and then run Seq66 with one.
  1. Start JACK server. Might be able to do some minimal work with ALSA.
  2. Agordejo includes an implementation of the NSM server.
  3. No need to set --session-root; the default is
-    /home/$USER/.local/share/nsm.
+    /home/$USER/.local/share/nsm, but we can do it anyway.
+
+The next section shows how to start from scratch by running Seq66
+without a session manager and getting the basic setup to work.
 
 =============
  First Run
@@ -67,7 +70,7 @@ and then run Seq66 with one.
  6. Start software synthesizers such as Qsynth in JACK mode.
  7. Optional: start QjackCtl and option the Graph view.
  8. $ qseq66 --jack
- 9. Verify the setup. See below
+ 9. Verify the setup. See the "Setup" section below.
 10. Make the following additional settings:
 
     1. Clock tab: enable "MIDI Ctrl Out" and select the Launchpad Mini.
@@ -84,6 +87,35 @@ and then run Seq66 with one.
     "~/.config/seq66/launchpad.ctrl".
 12. Edit all the configuration files to see that they are correct.
     Keep fixing and rerunning qseq66 until it all works.
+
+=============
+ NSM Run
+=============
+
+Once all the setup issues are complete, one can run a session manager.
+We will use Agordejo here. Also, we will use the script jackctl,
+found in contrib/scripts, to set up JACK, start the a2jmidid daemon
+to expose hardware USB MIDI devices to JACK, and start the session
+manager. (It can also start up a software synthesizer, but we want
+the session manager to do that.) The steps might differ slighly depending
+on the host computer setup. The script requires that jackdbus be running
+in order to use the jack_control command. We assume the session
+configuration directory (step 1.4 below) is not yet present.
+
+    1. Run the following command (assuming jackctl is in the PATH); it
+       performs the following steps, with short sleeps to ensure startup:
+
+       $ jackctl --start --a2j --session
+
+       1.   jack_control start
+       2.   jack_control dps period 128
+       3.   a2jmidid --export-hw -u &
+       4.   agordejo --session-root /home/$USER/.local/share/nsm
+
+    2. Make sure that any MIDI applications (e.g. Qsynth) are set up for
+       JACK. Close them once set up.
+    3. 
+
 
 =============
  Setup

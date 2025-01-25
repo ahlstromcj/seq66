@@ -8,7 +8,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2022-09-25
-# \update         2025-01-22
+# \update         2025-01-24
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -85,7 +85,7 @@ JCTL_SYNTHOPT="--midi-driver jack"
 if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
 
    cat << E_O_F
-Usage v. 2025-01-22
+Usage v. 2025-01-24
 
    jackctl [ --start ] [ options ] Start jack/apps with the usual parameters
 
@@ -95,7 +95,7 @@ Options:
    --start     Start the JACK server.
    --stop      Stop the JACK server. Does not apply to --session.
    --kill      Stop the JACK server and exit jackdbus.
-   --session,  Also start the $JCTL_SESSMGR session manager with options
+   --session   Also start the $JCTL_SESSMGR session manager with options
                $JCTL_SESSOPT.
                The --start option is assumed.
    --agordejo  Run the agordejo session manager. --start is assumed.
