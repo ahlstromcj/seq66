@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-01-12
+ * \updates       2025-01-26
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1391,9 +1391,8 @@ performer::true_output_bus (bussbyte nominalbuss) const
             msg += busname;
             msg += "\"";
             msg +=
-                ". Check assigned ports in files: song, rc, ctrl, "
-                "usr buss-override, MIDI & Metronome tabs, and "
-                "Session tab file-names."
+                ". Check ports in tune, rc, ctrl, and "
+                "usr files, and MIDI I/O & Metronome tabs. "
                 ;
             m_port_map_error = true;                /* mutable boolean      */
             append_error_message(msg);
@@ -3486,10 +3485,10 @@ performer::launch (int ppqn)
                 if (! s_already_added)
                 {
                     std::string msg =
-                        "Some ports missing. "
-                        "Remap if that's fine. "
+                        "Ports missing. "
+                        "Remap if needed. "
                         "OK preserves the map. "
-                        "Exit to edit the 'rc' file directly. "
+                        "Or edit the 'rc' file itself. "
                         "Suppress this message in Preferences / Display."
                         ;
 

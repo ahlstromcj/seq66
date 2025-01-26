@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.18
 Chris Ahlstrom
-2015-07-10 to 2025-01-25
+2015-07-10 to 2025-01-26
 
 # Change Log
 
-## [0.99.18] - 2025-01-25
+## [0.99.18] - 2025-01-26
 
 More developer-discovered issues :-(
 
@@ -30,6 +30,8 @@ More developer-discovered issues :-(
     macro.
 -   Updated the show\_folder\_dialog() function to show hidden
     directories.
+-   Disabled the various "Remap"/"Restart" buttons when running
+    under an implementation of NSM.
 
 ### Fixed
 

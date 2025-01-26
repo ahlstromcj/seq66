@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2025-01-23
+ * \updates       2025-01-26
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -80,19 +80,30 @@ namespace seq66
  *  Port error message.
  */
 
-static std::string s_port_error_msg
+static const std::string s_port_error_msg
 {
-    "Check MIDI Clock & MIDI Input tabs for unavailable/missing ports. "
-    "Make sure the MIDI tune is not using such ports. "
-    "Click 'Remap and restart' or change the global output ports "
+    "Check MIDI Clock, MIDI Input, or tune for unavailable/missing ports. "
+    "Click 'Remap and restart' or change the output ports "
     "for the tune."
 };
 
-static std::string s_port_update_msg
+static const std::string s_port_error_msg_nsm
+{
+    "Check MIDI Clock, MIDI Input, or tune for unavailable/missing ports. "
+    "Recreate the port-maps and restart using the session manager."
+};
+
+static const std::string s_port_update_msg
 {
     "There are more real ports than mapped ports. "
     "Click 'Remap and restart' to recreate the maps or edit "
     "them in the 'rc' file."
+};
+
+static const std::string s_port_update_msg_nsm
+{
+    "There are more real ports than mapped ports. "
+    "Recreate the port-maps and restart using the session manager."
 };
 
 /**
@@ -907,10 +918,14 @@ smanager::internal_error_check (std::string & errmsg) const
     if (result)
     {
         if (pmerrmsg.empty())
+        {
             pmerrmsg = perf()->error_messages();
+        }
         else
-            pmerrmsg += s_port_error_msg;
-
+        {
+            pmerrmsg += usr().in_nsm_session() ?
+                s_port_error_msg_nsm : s_port_error_msg ;
+        }
         append_error_message(pmerrmsg);
         errmsg = pmerrmsg;
     }
@@ -1077,7 +1092,12 @@ smanager::create (int argc, char * argv [])
             if (result)
             {
                 if (perf()->new_ports_available())
-                    show_message("Session note.", s_port_update_msg);
+                {
+                    const std::string & msg = usr().in_nsm_session() ?
+                        s_port_update_msg_nsm : s_port_update_msg ;
+
+                    show_message("Session note.", msg);
+                }
                 else
                     error_handling();
             }

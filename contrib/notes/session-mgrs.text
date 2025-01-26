@@ -68,7 +68,13 @@ without a session manager and getting the basic setup to work.
     This starts JACK and a2jmidi. See the script for details.
 
  6. Start software synthesizers such as Qsynth in JACK mode.
- 7. Optional: start QjackCtl and option the Graph view.
+ 7. Optional: Start QjackCtl
+    1. Setup / Misc / Start JACK audio...  Disable
+    1. Setup / Misc / Stop JACK audio...   Disable
+    1. xxx
+    1. xxx
+    1. xxx
+    1. Optionally the Graph view.
  8. $ qseq66 --jack
  9. Verify the setup. See the "Setup" section below.
 10. Make the following additional settings:
@@ -77,6 +83,8 @@ without a session manager and getting the basic setup to work.
     2. Input tab: Enable all inputs except "Midi Through Port-0".
     3. Click the "Restart Seq66!" button.
     4. Input tab: enable "MIDI Ctrl In" and select the Launchpad Mini.
+    5. JACK tab: Disable "JACK auto-connect". We need the session
+       manager to set up the connections.
     5. Session tab: Change the name of the 'ctrl' file to
        "launchpad.ctrl".
     6. Click the "Restart Seq66!" button.
@@ -87,6 +95,9 @@ without a session manager and getting the basic setup to work.
     "~/.config/seq66/launchpad.ctrl".
 12. Edit all the configuration files to see that they are correct.
     Keep fixing and rerunning qseq66 until it all works.
+
+    Note that qseq66 can be run with or without the option to
+    "auto-connect" qseq66 to existing JACK ports.
 
 =============
  NSM Run
@@ -107,15 +118,22 @@ configuration directory (step 1.4 below) is not yet present.
 
        $ jackctl --start --a2j --session
 
-       1.   jack_control start
-       2.   jack_control dps period 128
-       3.   a2jmidid --export-hw -u &
-       4.   agordejo --session-root /home/$USER/.local/share/nsm
+       1. jack_control start
+       2. jack_control dps period 128
+       3. a2jmidid --export-hw -u &
+       4. agordejo --session-root /home/$USER/.local/share/nsm &
 
     2. Make sure that any MIDI applications (e.g. Qsynth) are set up for
        JACK. Close them once set up.
     3. 
 
+   xx. To close out the session:
+
+       1. Save and Close the session, then quit Agordejo. This should
+          also close qseq66 and qsynth.
+       2. Run the following command.
+
+          $ jackctl --stop --a2j
 
 =============
  Setup

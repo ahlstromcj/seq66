@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-01-15
+ * \updates       2025-01-26
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -182,12 +182,19 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
      * Apply/Reset buttons.
      */
 
-    set_text(QDialogButtonBox::Apply, "Restart Seq66!");
-    connect
-    (
-        ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Apply),
-        SIGNAL(clicked()), this, SLOT(apply())
-    );
+    if (usr().in_nsm_session())
+    {
+        set_text(QDialogButtonBox::Apply, "NSM");
+    }
+    else
+    {
+        set_text(QDialogButtonBox::Apply, "Restart Seq66!");
+        connect
+        (
+            ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Apply),
+            SIGNAL(clicked()), this, SLOT(apply())
+        );
+    }
     connect
     (
         ui->buttonBoxOptionsDialog->button(QDialogButtonBox::Reset),
@@ -2263,7 +2270,9 @@ qseditoptions::state_unchanged ()
 void
 qseditoptions::state_changed ()
 {
-    set_enabled(QDialogButtonBox::Apply, true);
+    if (! usr().in_nsm_session())
+        set_enabled(QDialogButtonBox::Apply, true);
+
     set_enabled(QDialogButtonBox::Cancel, false);
     set_enabled(QDialogButtonBox::Reset, true);
     set_enabled(QDialogButtonBox::Ok, true);
@@ -2479,6 +2488,9 @@ qseditoptions::cancel ()
  *  The Apply button now shows "Restart Seq66!" and serves to restart the whole
  *  application when clicked.
  *
+ *  This button shows "NSM" and is always disabled when running under a
+ *  session manager.
+ *
  *  Aren't the backup calls useless at this point???
  */
 
@@ -2517,6 +2529,8 @@ qseditoptions::set_text
 {
     QPushButton * button = ui->buttonBoxOptionsDialog->button(bcode);
     button->setText(qt(text));
+    if (text == "NSM")
+        button->setEnabled(false);
 }
 
 void

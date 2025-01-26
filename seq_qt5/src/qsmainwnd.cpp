@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-01-25
+ * \updates       2025-01-26
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -3811,19 +3811,22 @@ qsmainwnd::show_error_box_ex (const std::string & msgtext, bool isporterror)
             QGridLayout * lay = (QGridLayout *) m_msg_error->layout();
             lay->addItem(hspace, lay->rowCount(), 0, 1, lay->columnCount());
 
-            QAbstractButton * yes;
+            QAbstractButton * yes = nullptr;
             if (isporterror)
             {
                 (void) m_msg_error->addButton("OK", QMessageBox::NoRole);
-                yes = m_msg_error->addButton
-                (
-                    "Remap and restart", QMessageBox::YesRole
-                );
+                if (! usr().in_nsm_session())
+                {
+                    yes = m_msg_error->addButton
+                    (
+                        "Remap and restart", QMessageBox::YesRole
+                    );
+                }
                 m_msg_error->setIcon(QMessageBox::Question);
             }
             m_msg_error->setText(msg);
             m_msg_error->exec();
-            if (isporterror)
+            if (isporterror && ! usr().in_nsm_session())
             {
                 if (m_msg_error->clickedButton() == yes)
                     result = true;
