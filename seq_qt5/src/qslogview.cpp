@@ -69,6 +69,10 @@ static const std::string s_error_text
 {
     "No active log. Set it up in main Session tab."
 };
+static const std::string s_empty_text
+{
+    "No log entries yet. Strange."
+};
 
 /**
  *  Principal constructor.
@@ -94,18 +98,18 @@ qslogview::~qslogview ()
 void
 qslogview::refresh ()
 {
+    std::string text{s_error_text};
     if (usr().option_use_logfile())
     {
         std::string logfilename = usr().option_logfile();
-        std::string text = file_read_string(logfilename);
+        text = file_read_string(logfilename);
         if (text.empty())
-            text = s_error_text;
-
-        ui->textBrowser->setText(qt(text));
-
-        QScrollBar * sb = ui->textBrowser->verticalScrollBar();
-        sb->setValue(sb->maximum());
+            text = s_empty_text;
     }
+    ui->textBrowser->setText(qt(text));
+
+    QScrollBar * sb = ui->textBrowser->verticalScrollBar();
+    sb->setValue(sb->maximum());
 }
 
 void

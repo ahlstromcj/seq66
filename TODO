@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.18
 Chris Ahlstrom
-2019-04-13 to 2025-01-23
+2019-04-13 to 2025-01-25
 
 Backlog:
 
@@ -20,20 +20,11 @@ Backlog:
     -   Ports.
         -   Document what to do if a port you know exists is disabled.
         -   Upgrade the performer port-detection to get around this.
-    -   Test overwrite etc. in the scenario where a recording mode can
-        cause incomplete notes if one holds the note and releases it in the
-        next iteration, leaving a partially-drawn note behind.
-    -   Consider adding time-bg/fg-color to the palette file, using
-        the 'usr' version otherwise.
     -   Get the 16-in-busses.midi file configured and working.
     -   Figure out issue #132, the libasound2 issue.
     -   QObject::setParent: Cannot set parent, new parent is in a different
         thread; this happens in sequence::modify(true) when recording with
         a pattern editor open.
-    -   When auto-step recording in an existing pattern, the modify
-        flag "*" is not shown in the title, though the
-        "Save/Discard/Cancel" prompt appears at exit. It works if
-        playback running during recording.
     -   #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
     -   Recording.
         -   One-shot recording during playback now works.  But one-shot reset
@@ -42,6 +33,17 @@ Backlog:
         -   There seems to be a very slight chance of too-longth notes in
             a chord if quantization (1/16) is on. Needs a better keyboard
             player (not me) to test it.
+        -   Test overwrite etc. in the scenario where a recording mode can
+            cause incomplete notes if one holds the note and releases it in
+            the next iteration, leaving a partially-drawn note behind.
+        -   When auto-step recording in an existing pattern, the modify
+            flag "*" is not shown in the title, though the
+            "Save/Discard/Cancel" prompt appears at exit. It works if
+            playback running during recording.
+        -   Fix and test new record/quantize handling, and verify that
+            MIDI automation of these displays in the pattern editor.
+    -   Consider adding time-bg/fg-color to the palette file, using
+        the 'usr' version otherwise.
     -   Finish getting Windows builds in MSYS2 to work.
 
 Playlists:
@@ -56,8 +58,6 @@ Ongoing efforts:
         left in barrage.midi? The Kepler34 "relative change" feature. This
         feature is macroed out for now. Perhaps should make it a Ctrl-Click or
         something to start it in addition to "would select".
-    -   Fix and test new record/quantize handling, and verify that
-        MIDI automation of these displays in the pattern editor.
     -   Make sure metronome buttons etc. still work. Recorded measures
         not saved.
     -   Make sure meta events are never sent via MIDI. What we see is
@@ -168,7 +168,8 @@ ISSUES:
     functions to a single button.  It would also fit nicely with a Launchpad
     where apart from the grid buttons, there are "mode" buttons on the side.
 
-#76 MIDI Tempo Sync & Real Time Messages Not Behaving As Expected When SEQ66 is a MIDI Slave
+#76 MIDI Tempo Sync & Real Time Messages Not Behaving As Expected When
+    SEQ66 is a MIDI Slave
     STATUS: Some fix(es) made, needs more testing.
 
 #95 Velocity screen does not fully refresh when scrolling left or right.
@@ -186,7 +187,8 @@ ISSUES:
         restore it when lifted.
     -   Holding Ctrl-Alt is supposed to ... cannot tell from SEQ24 doc.
 
-#100 Seq66's MIDI timing completely falls apart at JACK buffer sizer larger than 128.
+#100 Seq66's MIDI timing completely falls apart at JACK buffer sizer
+    larger than 128.
     STATUS: Added a timestamp to each message in the JACK
     ringbuffer (enabled by a C macro in libseq66/include/seq_features.h).
     This addes a notable burden on process and we can get buffer overflow
@@ -260,24 +262,6 @@ ISSUES:
         -   Can we have time-signature changes shown during playback by
             modifying the combo boxes text?
 
-#112 Send midi-control-out message when New Pattern is created in GUI
-
-    When creating a new pattern with right click -> New pattern, the new
-    pattern does not show up on my control surface upon creation. The new
-    pattern is outlined in red.  The control surface does not show the newly
-    created pattern until I press the button for the pattern itself (or
-    arm/queue it by pressing w on the keyboard). Seq66 then sends Arm or Queue
-    midi signals to the control surface, depending on if the keep-queue
-    function is set (Q in the interface).
-
-    STATUS: Added an announce_sequence() call to performer::new_sequence().
-            Will test.
-
-#114 [feature request] Include keyboard shortcut in setToolTip function?
-
-    STATUS: Finished with this one. Also fixing some automation
-            errors found during this task.
-
 #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
 
     STATUS: It works for this user. As a side issue, he would like to
@@ -292,10 +276,6 @@ ISSUES:
             Using the horizontal scrollbar refreshes properly.
             Added some tricky code [flag_dirty()], as already done
             in qstriggereditor.
-
-#116 What happened to the "MIDI Ctrl Out (Display) Bus" setting?
-
-    STATUS: Cannot duplicate.
 
 #118 When enabling virtual ports, make those new ports enabled by default?
     Currently one has to tick the box to enable and enter the number of output

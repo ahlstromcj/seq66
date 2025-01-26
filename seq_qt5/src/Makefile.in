@@ -21,7 +21,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2023-08-21
+# \update      2025-01-25
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -177,8 +177,9 @@ am__objects_1 = ../include/qclocklayout.moc.lo \
 	../include/qseqkeys.moc.lo ../include/qseqroll.moc.lo \
 	../include/qseqtime.moc.lo ../include/qsessionframe.moc.lo \
 	../include/qsetmaster.moc.lo ../include/qseventslots.moc.lo \
-	../include/qslivegrid.moc.lo ../include/qsmaintime.moc.lo \
-	../include/qsmainwnd.moc.lo ../include/qstriggereditor.moc.lo \
+	../include/qslivegrid.moc.lo ../include/qslogview.moc.lo \
+	../include/qsmaintime.moc.lo ../include/qsmainwnd.moc.lo \
+	../include/qstriggereditor.moc.lo \
 	../include/qt5nsmanager.moc.lo
 am__objects_2 = $(am__objects_1)
 am_libseq_qt5_la_OBJECTS = gui_palette_qt5.lo palettefile.lo qbase.lo \
@@ -191,8 +192,8 @@ am_libseq_qt5_la_OBJECTS = gui_palette_qt5.lo palettefile.lo qbase.lo \
 	qseqeditex.lo qseqeditframe64.lo qseqeventframe.lo \
 	qseqframe.lo qseqkeys.lo qseqroll.lo qsessionframe.lo \
 	qseqtime.lo qsetmaster.lo qseventslots.lo qslivebase.lo \
-	qslivegrid.lo qslotbutton.lo qsmaintime.lo qsmainwnd.lo \
-	qstriggereditor.lo qt5_helpers.lo qt5nsmanager.lo \
+	qslivegrid.lo qslogview.lo qslotbutton.lo qsmaintime.lo \
+	qsmainwnd.lo qstriggereditor.lo qt5_helpers.lo qt5nsmanager.lo \
 	$(am__objects_2)
 libseq_qt5_la_OBJECTS = $(am_libseq_qt5_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -248,6 +249,7 @@ am__depfiles_remade = ../include/$(DEPDIR)/qclocklayout.moc.Plo \
 	../include/$(DEPDIR)/qsetmaster.moc.Plo \
 	../include/$(DEPDIR)/qseventslots.moc.Plo \
 	../include/$(DEPDIR)/qslivegrid.moc.Plo \
+	../include/$(DEPDIR)/qslogview.moc.Plo \
 	../include/$(DEPDIR)/qsmaintime.moc.Plo \
 	../include/$(DEPDIR)/qsmainwnd.moc.Plo \
 	../include/$(DEPDIR)/qstriggereditor.moc.Plo \
@@ -271,10 +273,10 @@ am__depfiles_remade = ../include/$(DEPDIR)/qclocklayout.moc.Plo \
 	./$(DEPDIR)/qseqroll.Plo ./$(DEPDIR)/qseqtime.Plo \
 	./$(DEPDIR)/qsessionframe.Plo ./$(DEPDIR)/qsetmaster.Plo \
 	./$(DEPDIR)/qseventslots.Plo ./$(DEPDIR)/qslivebase.Plo \
-	./$(DEPDIR)/qslivegrid.Plo ./$(DEPDIR)/qslotbutton.Plo \
-	./$(DEPDIR)/qsmaintime.Plo ./$(DEPDIR)/qsmainwnd.Plo \
-	./$(DEPDIR)/qstriggereditor.Plo ./$(DEPDIR)/qt5_helpers.Plo \
-	./$(DEPDIR)/qt5nsmanager.Plo
+	./$(DEPDIR)/qslivegrid.Plo ./$(DEPDIR)/qslogview.Plo \
+	./$(DEPDIR)/qslotbutton.Plo ./$(DEPDIR)/qsmaintime.Plo \
+	./$(DEPDIR)/qsmainwnd.Plo ./$(DEPDIR)/qstriggereditor.Plo \
+	./$(DEPDIR)/qt5_helpers.Plo ./$(DEPDIR)/qt5nsmanager.Plo
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -708,6 +710,7 @@ moc_qt_headers = \
  ../include/qsetmaster.hpp \
  ../include/qseventslots.hpp \
  ../include/qslivegrid.hpp \
+ ../include/qslogview.hpp \
  ../include/qsmaintime.hpp \
  ../include/qsmainwnd.hpp \
  ../include/qstriggereditor.hpp \
@@ -732,6 +735,7 @@ uic_qt_forms = \
  $(formsdir)/qsessionframe.ui \
  $(formsdir)/qsetmaster.ui \
  $(formsdir)/qslivegrid.ui \
+ $(formsdir)/qslogview.ui \
  $(formsdir)/qsmainwnd.ui
 
 uic_sources = $(uic_qt_forms:.ui=.ui.h)
@@ -780,6 +784,7 @@ libseq_qt5_la_SOURCES = \
  qseventslots.cpp \
  qslivebase.cpp \
  qslivegrid.cpp \
+ qslogview.cpp \
  qslotbutton.cpp \
  qsmaintime.cpp \
  qsmainwnd.cpp \
@@ -923,6 +928,8 @@ clean-libLTLIBRARIES:
 	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qslivegrid.moc.lo: ../include/$(am__dirstamp) \
 	../include/$(DEPDIR)/$(am__dirstamp)
+../include/qslogview.moc.lo: ../include/$(am__dirstamp) \
+	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qsmaintime.moc.lo: ../include/$(am__dirstamp) \
 	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qsmainwnd.moc.lo: ../include/$(am__dirstamp) \
@@ -973,6 +980,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qsetmaster.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qseventslots.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qslivegrid.moc.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qslogview.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qsmaintime.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qsmainwnd.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qstriggereditor.moc.Plo@am__quote@ # am--include-marker
@@ -1016,6 +1024,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qseventslots.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qslivebase.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qslivegrid.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qslogview.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qslotbutton.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qsmaintime.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qsmainwnd.Plo@am__quote@ # am--include-marker
@@ -1226,6 +1235,7 @@ distclean: distclean-am
 	-rm -f ../include/$(DEPDIR)/qsetmaster.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qseventslots.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qslivegrid.moc.Plo
+	-rm -f ../include/$(DEPDIR)/qslogview.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qsmaintime.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qsmainwnd.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qstriggereditor.moc.Plo
@@ -1269,6 +1279,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/qseventslots.Plo
 	-rm -f ./$(DEPDIR)/qslivebase.Plo
 	-rm -f ./$(DEPDIR)/qslivegrid.Plo
+	-rm -f ./$(DEPDIR)/qslogview.Plo
 	-rm -f ./$(DEPDIR)/qslotbutton.Plo
 	-rm -f ./$(DEPDIR)/qsmaintime.Plo
 	-rm -f ./$(DEPDIR)/qsmainwnd.Plo
@@ -1350,6 +1361,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ../include/$(DEPDIR)/qsetmaster.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qseventslots.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qslivegrid.moc.Plo
+	-rm -f ../include/$(DEPDIR)/qslogview.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qsmaintime.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qsmainwnd.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qstriggereditor.moc.Plo
@@ -1393,6 +1405,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/qseventslots.Plo
 	-rm -f ./$(DEPDIR)/qslivebase.Plo
 	-rm -f ./$(DEPDIR)/qslivegrid.Plo
+	-rm -f ./$(DEPDIR)/qslogview.Plo
 	-rm -f ./$(DEPDIR)/qslotbutton.Plo
 	-rm -f ./$(DEPDIR)/qsmaintime.Plo
 	-rm -f ./$(DEPDIR)/qsmainwnd.Plo
