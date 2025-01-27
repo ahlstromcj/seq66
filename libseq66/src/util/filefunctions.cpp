@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2025-01-23
+ * \updates       2025-01-27
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -49,6 +49,10 @@
 #include "util/basic_macros.hpp"        /* support and platform macros      */
 #include "util/filefunctions.hpp"       /* free functions in seq66 n'space  */
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
+
+#if defined SEQ66_HANDLE_FILE_WILDCARDS
+#include <glob.h>                       /* ::glob() to get wildcards        */
+#endif
 
 /**
  *  All file-specifications internal to Seq66 and in its configuration files
@@ -563,7 +567,7 @@ file_executable (const std::string & filename)
 bool
 file_is_directory (const std::string & filename)
 {
-    bool result = file_name_good(filename);
+    bool result = file_name_good(filename) && file_exists(filename);
     if (result)
     {
         stat_t statusbuf;
@@ -1020,8 +1024,68 @@ file_copy
 }
 
 /**
+ *  Copies a file to a given directory. Unlike file_copy(), it does not
+ *  split components. It's just a simple copy operation.
+ *
+ * \param sourcefile
+ *      Provides either a file-name in the application's current working
+ *      directory, or a full file specification to an existing file.
+ *
+ * \param path
+ *      Provides the destination directory, which is verified to exist.
+ *
+ * \return
+ *      Returns true if the file copying succeeded.
+ */
+
+bool
+file_copy_to_path
+(
+    const std::string & sourcefile,
+    const std::string & path
+)
+{
+    bool result = file_exists(sourcefile) && file_is_directory(path);
+    if (result)
+    {
+        std::FILE * input = file_open_for_read(sourcefile);
+        if (not_nullptr(input))
+        {
+            bool okinput = false;
+            bool okoutput = false;
+            std::string unusedpath;
+            std::string filebase;
+            bool ok = filename_split(sourcefile, unusedpath, filebase);
+            if (ok)
+            {
+                std::string destfilespec = filename_concatenate
+                (
+                    path, filebase
+                );
+                std::FILE * output = file_create_for_write(destfilespec);
+                if (not_nullptr(output))
+                {
+                    int ci;
+                    while ((ci = fgetc(input)) != EOF)
+                    {
+                        int co = fputc(ci, output);
+                        if (co == EOF)
+                            break;
+                    }
+                    okoutput = file_close(output, destfilespec);
+                }
+                okinput = file_close(input, sourcefile);
+                result = okinput && okoutput;
+            }
+        }
+    }
+    return result;
+}
+
+/**
  *  Appends a character buffer to a file in the configuration directory.
  *  Useful for dumping error information, such as under PortMidi in Windows.
+ *  Very similar to file_write_string()!
  *
  * \param filename
  *      Provides the full path to the file plus the file-name and
@@ -1751,7 +1815,8 @@ append_path
  *  appends the base file-name (generally in the format "base" or
  *  "base.extension") to it.
  *
- *  This function works solely using UNIX conventions, it is for internal use.
+ *  This function works solely using UNIX conventions.
+ *
  *  If desired, it can be converted to Windows conventions using
  *  os_normalize_path().
  */
@@ -2324,6 +2389,94 @@ find_file
     }
     return result;
 }
+
+#if defined SEQ66_HANDLE_FILE_WILDCARDS
+
+/**
+ *  This function uses glob(3) to obtain a list of all the files that
+ *  match the wild-path.
+ *
+ * \param wildpath
+ *      Provides a wild-card to search for. A simple one like "*.png"
+ *      will look for all PNG files in the current working directory
+ *      for the application. One with a path
+ *      (e.g. "~/.config/seq66/ *.png) will search in that directory.
+ *
+ * \param [inout] filelist
+ *      Provides a string-vector for storing the results.
+ *
+ * \param append
+ *      Normally false, this value causes the file-list to be cleared
+ *      first.  Use true to accumulate wildcard matches in the list.
+ *
+ * \return
+ *      Returns true if matches were found.
+ */
+
+bool
+get_wildcards
+(
+    const std::string & wildpath,
+    tokenization & filelist,
+    bool append
+)
+{
+    bool result = ! wildpath.empty();
+    if (result)
+    {
+        int flags = GLOB_ERR;
+#if defined SEQ66_PLATFORM_LINUX
+        flags |= GLOB_TILDE;
+#else
+        // anything?
+#endif
+        glob_t g;
+        int rc = glob(wildpath.c_str(), flags, nullptr, &g);
+        if (rc != 0)
+        {
+            result = false;
+        }
+        else
+        {
+            if (! append)
+                filelist.clear();
+
+            for (std::size_t i = 0; i < g.gl_pathc; ++i)
+                filelist.push_back(g.gl_pathv[i]);
+        }
+        globfree(&g);
+    }
+    return result;
+}
+
+/**
+ *  Copies a list of files to a directory, which must exist.
+ */
+
+bool
+file_list_copy
+(
+    const std::string & destpath,
+    const tokenization & filelist
+)
+{
+    int count = 0;
+    bool ok = file_exists(destpath);
+    if (ok)
+    {
+        for (auto & f : filelist)
+        {
+            ok = file_copy_to_path(f, destpath);
+            if (ok)
+                ++count;
+            else
+                break;
+        }
+    }
+    return count == int(filelist.size());
+}
+
+#endif      // defined SEQ66_HANDLE_FILE_WILDCARDS
 
 }           // namespace seq66
 

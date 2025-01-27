@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.18
 Chris Ahlstrom
-2015-07-10 to 2025-01-26
+2015-07-10 to 2025-01-27
 
 # Change Log
 
-## [0.99.18] - 2025-01-26
+## [0.99.18] - 2025-01-27
 
 More developer-discovered issues :-(
 
@@ -51,6 +51,8 @@ More developer-discovered issues :-(
     "home" as "~/.config/seq66".
 -   Refactored and fixed the Import Project Configuration menu.
 -   Refactored and fixed the Export Project Configuration menu.
+    It now can locate and copy any PNG files (used in some of the
+    Seq66 style-sheets). Currently Linux-only.
 -   Fixed the route66 bitmap.
 
 ### Removed

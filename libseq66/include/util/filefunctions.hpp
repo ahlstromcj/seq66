@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2025-01-23
+ * \updates       2025-01-27
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -38,6 +38,10 @@
 #include <string>                       /* std::string ubiquitous class     */
 
 #include "util/basic_macros.hpp"        /* seq6::tokenization vector        */
+
+#if defined SEQ66_PLATFORM_LINUX
+#define SEQ66_HANDLE_FILE_WILDCARDS
+#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -82,8 +86,13 @@ extern bool file_close
 extern bool file_delete (const std::string & filespec);
 extern bool file_copy
 (
-    const std::string & file,
+    const std::string & oldfile,
     const std::string & newfile
+);
+extern bool file_copy_to_path
+(
+    const std::string & sourcefile,
+    const std::string & path
 );
 extern bool file_append_log
 (
@@ -154,7 +163,7 @@ extern bool filename_split_ext
 (
     const std::string & fullpath,
     std::string & path,
-    std::string & filebare,
+    std::string & filebase,
     std::string & ext
 );
 extern std::string file_path_set
@@ -193,6 +202,20 @@ extern std::string find_file
     const tokenization & dirlist,
     const std::string & filename
 );
+
+#if defined SEQ66_HANDLE_FILE_WILDCARDS
+extern bool get_wildcards
+(
+    const std::string & wildpath,
+    tokenization & filelist,
+    bool append = false
+);
+extern bool file_list_copy
+(
+    const std::string & destpath,
+    const tokenization & filelist
+);
+#endif
 
 #endif      // SEQ66_FILEFUNCTIONS_HPP
 
