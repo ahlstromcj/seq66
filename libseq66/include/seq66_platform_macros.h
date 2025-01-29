@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-10-19
+ * \updates       2025-01-27
  * \license       GNU GPLv2 or above
  *
  *  Copyright (C) 2013-2025 Chris Ahlstrom <ahlstromcj@gmail.com>
@@ -526,6 +526,14 @@
 
 #if ! defined SEQ66_PLATFORM_POSIX_ERROR
 #define SEQ66_PLATFORM_POSIX_ERROR              (-1)
+#endif
+
+/**
+ *  Set if the platform supports an implementation of glob(3)
+ */
+
+#if defined SEQ66_PLATFORM_UNIX || defined SEQ66_PLATFORM_MINGW
+#define SEQ66_PLATFORM_GLOB
 #endif
 
 /**

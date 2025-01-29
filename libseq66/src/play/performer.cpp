@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-01-26
+ * \updates       2025-01-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -3485,10 +3485,8 @@ performer::launch (int ppqn)
                 if (! s_already_added)
                 {
                     std::string msg =
-                        "Ports missing. "
                         "Remap if needed. "
                         "OK preserves the map. "
-                        "Or edit the 'rc' file itself. "
                         "Suppress this message in Preferences / Display."
                         ;
 

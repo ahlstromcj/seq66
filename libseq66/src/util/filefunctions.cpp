@@ -2427,8 +2427,6 @@ get_wildcards
         int flags = GLOB_ERR;
 #if defined SEQ66_PLATFORM_LINUX
         flags |= GLOB_TILDE;
-#else
-        // anything?
 #endif
         glob_t g;
         int rc = glob(wildpath.c_str(), flags, nullptr, &g);

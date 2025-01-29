@@ -39,7 +39,7 @@
 
 #include "util/basic_macros.hpp"        /* seq6::tokenization vector        */
 
-#if defined SEQ66_PLATFORM_LINUX
+#if defined SEQ66_PLATFORM_GLOB
 #define SEQ66_HANDLE_FILE_WILDCARDS
 #endif
 
