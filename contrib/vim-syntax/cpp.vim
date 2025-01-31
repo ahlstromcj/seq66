@@ -4,7 +4,7 @@
 "
 "  Language:      C/C++
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-09-04 to 2024-03-23
+"  Last Change:   2006-09-04 to 2025-01-31
 "  Project:       XPC Suite library project
 "  Usage:
 "
@@ -38,12 +38,17 @@ syn keyword XPCC midibytes midistring midi_message phraselist seq64 seq66
 syn keyword XPCC tokenization
 syn keyword XPCC boolean booleans bpm buffer byte bytes bytestring ppqn pulse
 syn keyword XPCC byte word doubleword
-syn keyword XPCC audio container ctrl meta seqspec status tag ulong ushort
-syn keyword XPCC api api_list cfg cfg66 cli audio rtaudio
-syn keyword XPCC midi po rtl rtmidi rtl66
-syn keyword XPCC seq seq66 session util xpc xpc66
-syn keyword XPCC action clock clocking e_clock jack transport synch
-syn keyword XPCC recmutex automutex
+syn keyword XPCC audio buss container ctrl meta seqspec status tag ulong
+syn keyword XPCC ulonglong ushort unavailable pos mod
+syn keyword XPCC alsa api api_list audio bus bus_in bus_out busarray
+syn keyword XPCC cfg cfg66 cli disabled enabled event eventlist
+syn keyword XPCC functor iothread lib66
+syn keyword XPCC masterbus midi message po port ports ringbuffer
+syn keyword XPCC rtl rtaudio rtmidi rtmidi_engine rtmidi_in rtmidi_out rtl66
+syn keyword XPCC seq seq66 session toggle toggler track util xpc xpc66
+syn keyword XPCC action clock clocking e_clock ignore jack max none
+syn keyword XPCC input output player transport synch
+syn keyword XPCC automutex recmutex
 
 "------------------------------------------------------------------------------
 " Our type definition for inside comments
@@ -70,7 +75,7 @@ syn keyword cType const_reverse_iterator cbegin cend rbegin rend
 syn keyword cType deque difference_type iterator_category pointer queue
 syn keyword cType empty end erase exception find first forward_list fstream future
 syn keyword cType ifstream insert istream istringstream iterator
-syn keyword cType length list make_pair map multimap unordered_map
+syn keyword cType length list make_pair map multimap mutex unordered_map
 syn keyword cType ofstream ostream ostringstream pair promise reverse_iterator
 syn keyword cType reference const_reference
 syn keyword cType second set shared_ptr size size_type stack std string
@@ -82,6 +87,7 @@ syn keyword cType thread unique_ptr value_type vector wstring
 "------------------------------------------------------------------------------
 
 syn keyword cppOperator cin cout cerr dec endl hex left nothrow new npos
+syn keyword cppOperator flip number off on no yes
 syn keyword cppOperator oct right setfill setw
 
 "------------------------------------------------------------------------------
