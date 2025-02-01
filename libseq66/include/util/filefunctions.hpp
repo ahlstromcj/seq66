@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2025-01-27
+ * \updates       2025-02-01
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -210,12 +210,27 @@ extern bool get_wildcards
     tokenization & filelist,
     bool append = false
 );
+#else
+inline bool get_wildcards
+(
+    const std::string & wildpath,
+    tokenization & filelist,
+    bool append = false
+)
+{
+    (void) wildpath;
+    (void) filelist;
+    (void) append;
+    return false;
+}
+
+#endif
+
 extern bool file_list_copy
 (
     const std::string & destpath,
     const tokenization & filelist
 );
-#endif
 
 #endif      // SEQ66_FILEFUNCTIONS_HPP
 

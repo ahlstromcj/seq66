@@ -2399,8 +2399,8 @@ find_file
  * \param wildpath
  *      Provides a wild-card to search for. A simple one like "*.png"
  *      will look for all PNG files in the current working directory
- *      for the application. One with a path
- *      (e.g. "~/.config/seq66/ *.png) will search in that directory.
+ *      for the application. One with a path (for example,
+ *      "~/.config/seq66/ *.png") will search in that directory.
  *
  * \param [inout] filelist
  *      Provides a string-vector for storing the results.
@@ -2447,6 +2447,8 @@ get_wildcards
     return result;
 }
 
+#endif      // defined SEQ66_HANDLE_FILE_WILDCARDS
+
 /**
  *  Copies a list of files to a directory, which must exist.
  */
@@ -2473,8 +2475,6 @@ file_list_copy
     }
     return count == int(filelist.size());
 }
-
-#endif      // defined SEQ66_HANDLE_FILE_WILDCARDS
 
 }           // namespace seq66
 

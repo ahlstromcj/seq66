@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-01-27
+ * \updates       2025-02-01
  * \license       GNU GPLv2 or above
  *
  *  Copyright (C) 2013-2025 Chris Ahlstrom <ahlstromcj@gmail.com>
@@ -74,6 +74,8 @@
  *       -  SEQ66_PLATFORM_CPP_11
  *       -  SEQ66_PLATFORM_CPP_14
  *       -  SEQ66_PLATFORM_CPP_17
+ *    -  Other:
+ *       - SEQ66_PLATFORM_GLOB
  *
  *  http://stackoverflow.com/questions/11053960/
  *      how-are-the-cplusplus-directive-defined-in-various-compilers
@@ -110,6 +112,7 @@
 #undef SEQ66_PLATFORM_CYGWIN
 #undef SEQ66_PLATFORM_DEBUG
 #undef SEQ66_PLATFORM_FREEBSD
+#undef SEQ66_PLATFORM_GLOB
 #undef SEQ66_PLATFORM_GNU
 #undef SEQ66_PLATFORM_IPHONE_OS
 #undef SEQ66_PLATFORM_LINUX
@@ -529,10 +532,11 @@
 #endif
 
 /**
- *  Set if the platform supports an implementation of glob(3)
+ *  Set if the platform supports an implementation of glob(3).
+ *  Right now, on our Windows Mingw setup, it is not supported.
  */
 
-#if defined SEQ66_PLATFORM_UNIX || defined SEQ66_PLATFORM_MINGW
+#if defined SEQ66_PLATFORM_UNIX         // || defined SEQ66_PLATFORM_MINGW
 #define SEQ66_PLATFORM_GLOB
 #endif
 
