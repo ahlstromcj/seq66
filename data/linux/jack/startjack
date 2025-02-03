@@ -8,12 +8,16 @@
 # \library     Home/Audio
 # \author      Chris Ahlstrom
 # \date        2020-12-08
-# \update      2021-09-02
+# \update      2025-02-02
 # \version     $Revision$
 #
 #   This script provides a way to make a fast JACK setup on Linux.  See:
 #
 #         https://wiki.archlinux.org/index.php/JACK_Audio_Connection_Kit
+#
+#------------------------
+#  REPLACED BY jackctl!
+#------------------------
 #
 #   Requires the python-dbus package to be installed.  The HWPORT values
 #   available are found in /proc/asound/cards:  PCH, HDMI, NVidia, CODEC, etc.

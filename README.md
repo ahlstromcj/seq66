@@ -1,4 +1,4 @@
-# README.md for Seq66 0.99.18 2025-01-25
+# README.md for Seq66 0.99.18 2025-02-03
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord

@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2025-01-25
+:: \update      2025-02-03
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -169,15 +169,15 @@
 ::
 :: Mingw:
 ::
-:: set PROJECT_BASE=\home\chris\Home\git
+::  set PROJECT_BASE=\home\chris\Home\git
 ::
 :: NSIS_PLATFORM defaults to "Windows", but the presence of the makensis
-:: program is tested; if missing, then the value is "Linux".
+:: program on Windows is tested; if missing, then the value is "Linux".
 ::
 ::---------------------------------------------------------------------------
  
 set PROJECT_VERSION=0.99.18
-set PROJECT_DATE=2025-01-25
+set PROJECT_DATE=2025-02-03
 set PROJECT_DRIVE=C:
 
 :: Set the bits of the project, either 64 or 32. Also define WIN64 versus
@@ -366,8 +366,8 @@ goto ender
 
 :skipnsis
 
-echo The NSIS installer builder is not installed on this Window computer. >> %LOG% 2>&1
-echo In Linux, copy the %PROJECT_7ZIP% file to the project root ("seq66") >> %LOG% 2>&1
+echo The NSIS builder is not installed on this Windows computer. >> %LOG% 2>&1
+echo In Linux, copy the %PROJECT_7ZIP% file to project root ("seq66") >> %LOG% 2>&1
 echo and extract that file. The contents go into the "release" directory. >> %LOG% 2>&1
 echo Change to the "nsis" directory and run "makensis Seq66Setup.nsi". >> %LOG% 2>&1
 

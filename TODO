@@ -1,9 +1,14 @@
 TO DO for Seq66 0.99.18
 Chris Ahlstrom
-2019-04-13 to 2025-01-25
+2019-04-13 to 2025-02-02
+
+Hot:
+
+    -   Next!
 
 Backlog:
 
+    -   Add a light version of glob(3) to use with Windows.
     -   Event editor:
         -   Can we add, perhaps a tooltip or dropdown to select the desired
             Control value (e.g. 7 for volume)?
@@ -17,9 +22,6 @@ Backlog:
     -   Consider an option to Import a normal MIDI file so that a flag
         is raised so that it will not be saved with Seq66 SeqSpecs.
         Make it visible to be clear.
-    -   Ports.
-        -   Document what to do if a port you know exists is disabled.
-        -   Upgrade the performer port-detection to get around this.
     -   Get the 16-in-busses.midi file configured and working.
     -   Figure out issue #132, the libasound2 issue.
     -   QObject::setParent: Cannot set parent, new parent is in a different
@@ -44,7 +46,7 @@ Backlog:
             MIDI automation of these displays in the pattern editor.
     -   Consider adding time-bg/fg-color to the palette file, using
         the 'usr' version otherwise.
-    -   Finish getting Windows builds in MSYS2 to work.
+    -   Finish getting Windows builds in MSYS2 to work. Low priority.
 
 Playlists:
 
@@ -448,12 +450,9 @@ Version 2 features:
     -   Implement solo, FF, rewind, etc.
     -   Use std::numeric_limits instead of macros.
     -   LV2 MIDINAM support.
+    -   MIDI 2.0 support?
     -   Live note-mapping.
-    -   Pattern Options (would be a new tab):
-        -   New-pattern editor options (check-boxes)
-        -   BPM display minimum and maximum
     -   Windows build and installer. 32-bit installer cannot work!
-    -   Drag and drop MIDI files onto seq66 (see sequencer64 issue #137)
     -   Perfect the "background recording" feature.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

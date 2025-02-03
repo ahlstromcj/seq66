@@ -1,0 +1,51 @@
+#!/bin/bash
+#------------------------------------------------------------------------------
+##
+# \file        release
+# \library     bin
+# \author      Chris Ahlstrom
+# \date        2025-02-02 to 2025-02-03
+# \version     $Revision$
+# \license     GNU GPLv2 or above
+#
+#     This script provides help in remembering what to edit for a new
+#     release.
+#
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+#  Provide a sane environment, just in case it is needed.
+#------------------------------------------------------------------------------
+
+LANG=C
+export LANG
+export ReleaseEditDate="2025-02-02"
+
+echo "Calling vi(m) to edit a number of files before final wip check-in."
+vi configure.ac VERSION README.md NEWS RELNOTES \
+ include/qt/portmidi/seq66-config.h include/qt/rtmidi/seq66-config.h \
+ data/license.text data/readme.text data/readme.windows \
+ doc/latex/tex/seq66-user-manual.tex \
+ nsis/Seq66Setup.nsi nsis/Seq66Constants.nsh nsis/build_release_package.bat
+
+cat << E_O_F
+Run the following commands:
+
+   git commit -a -m "Prep for releasing wip 0.99.18 to master."
+   git checkout master
+   git merge wip
+   rm (any junk files in contrib/midi and data/midi)
+   ./bootstrap --full-clean
+   ./bootstrap -er
+   make -j 8 &> make.log
+   ./Seq66qt/qseq66 for a smoke test
+   push doc/latex
+   make
+   popd
+   sudo make install
+
+Then do the documented GitHub and Windows process.
+E_O_F
+
+
+# vim: sw=4 ts=4 wm=4 et ft=sh

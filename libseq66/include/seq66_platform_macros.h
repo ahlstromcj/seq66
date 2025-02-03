@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-02-01
+ * \updates       2025-02-02
  * \license       GNU GPLv2 or above
  *
  *  Copyright (C) 2013-2025 Chris Ahlstrom <ahlstromcj@gmail.com>
@@ -54,6 +54,10 @@
  *       -  SEQ66_PLATFORM_FREEBSD
  *       -  SEQ66_PLATFORM_MACOSX
  *       -  SEQ66_PLATFORM_UNIX
+ *       -  SEQ66_PLATFORM_FREEBSD
+ *       -  SEQ66_PLATFORM_MACOSX
+ *       -  SEQ66_PLATFORM_IPHONE_OS (to do!)
+ *       -  SEQ66_PLATFORM_UNIX
  *    -  Architecture size macros:
  *       -  SEQ66_PLATFORM_32_BIT
  *       -  SEQ66_PLATFORM_64_BIT
@@ -62,12 +66,16 @@
  *       -  SEQ66_PLATFORM_RELEASE
  *    -  Compiler:
  *       -  SEQ66_PLATFORM_MSVC (alternative to _MSC_VER)
+ *       -  SEQ66_PLATFORM_CYGWIN etc.
+ *       -  SEQ66_PLATFORM_GLOB
  *       -  SEQ66_PLATFORM_GNU
  *       -  SEQ66_PLATFORM_XSI
  *       -  SEQ66_PLATFORM_MINGW
  *       -  SEQ66_PLATFORM_MING_OR_WINDOWS
  *       -  SEQ66_PLATFORM_MING_OR_UNIX
  *       -  SEQ66_PLATFORM_CYGWIN etc.
+ *       -  SEQ66_PLATFORM_MSVC (alternative to _MSC_VER)
+ *       -  SEQ66_PLATFORM_XSI
  *    -  API:
  *       -  SEQ66_PLATFORM_POSIX_API (alternative to POSIX)
  *    -  Language:
@@ -75,7 +83,9 @@
  *       -  SEQ66_PLATFORM_CPP_14
  *       -  SEQ66_PLATFORM_CPP_17
  *    -  Other:
- *       - SEQ66_PLATFORM_GLOB
+ *       -  SEQ66_PLATFORM_POSIX_ERROR
+ *       -  SEQ66_PLATFORM_POSIX_SUCCESS
+ *       -  SEQ66_PLATFORM_GLOB
  *
  *  http://stackoverflow.com/questions/11053960/
  *      how-are-the-cplusplus-directive-defined-in-various-compilers
@@ -122,6 +132,8 @@
 #undef SEQ66_PLATFORM_MING_OR_WINDOWS
 #undef SEQ66_PLATFORM_MSVC
 #undef SEQ66_PLATFORM_POSIX_API
+#undef SEQ66_PLATFORM_POSIX_ERROR
+#undef SEQ66_PLATFORM_POSIX_SUCCESS
 #undef SEQ66_PLATFORM_RELEASE
 #undef SEQ66_PLATFORM_UNIX
 #undef SEQ66_PLATFORM_WIN32_STRICT
@@ -204,6 +216,7 @@
 #define SEQ66_PLATFORM_POSIX_API
 #define SEQ66_PLATFORM_PTHREADS
 #define SEQ66_PLATFORM_UNIX
+
 #endif                                 /* SEQ66_PLATFORM_LINUX              */
 
 /**
@@ -224,6 +237,12 @@
 #if defined SEQ66_PLATFORM_MACOSX
 #define SEQ66_PLATFORM_UNIX
 #endif
+
+/*
+ *  To do: detect the iOS platform.
+ *
+ * #define SEQ66_PLATFORM_IPHONE_OS
+ */
 
 #if defined SEQ66_PLATFORM_UNIX
 #define SEQ66_PLATFORM_POSIX_API

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2025-01-20
+ * \updates       2025-02-02
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.
@@ -289,7 +289,10 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
                 parent_bus(), midiinfo
             );
             if (not_nullptr(miap))
+            {
                 set_api(miap);
+                got_an_api = true;
+            }
 #endif
         }
     }

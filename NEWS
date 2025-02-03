@@ -1,16 +1,15 @@
 NEWS for Seq66 0.99.18
 Chris Ahlstrom
-2015-07-10 to 2025-02-01
+2015-07-10 to 2025-02-03
 
 # Change Log
 
-## [0.99.18] - 2025-02-01
+## [0.99.18] - 2025-02-03
 
 More developer-discovered issues :-(
 
 ### Added
 
--   Added suport for raysession and agordejo to the jackctl script.
 -   Added the dark-theme and dark-ui options to the user file for
     handling GUI elements that are otherwise difficult to see.
 -   Added an option to dump the current palette while automatically
@@ -21,9 +20,11 @@ More developer-discovered issues :-(
 
 ### Changed
 
--   Beefed up the jackctl script to facilitate testing.
--   Added the "-u" option to a2jmidid in the jackctl script, to
-    avoid undesirable changes to port names.
+-   contrib/scripts/jackctl.
+    -   Beefed up the jackctl script to facilitate testing.
+    -   Added the "-u" option to a2jmidid in the jackctl script, to
+        avoid undesirable changes to port names.
+    -   Added support for raysession and agordejo.
 -   Refactored the copy-configuration and delete-configuration
     functions to make them more robust and less dependent on
     file-extension.  Depends on the SEQ66\_KEEP\_RC\_FILE\_LIST
@@ -46,7 +47,7 @@ More developer-discovered issues :-(
     than the first set. Also fixed in tag 0.99.17.1.
 -   Fixed the JACK-to-ALSA fallback process, broken if the computer
     is running the jackdbus daemon. Also tested were differences in
-    a2jmidid.
+    a2jmidid between two dev computers.
 -   Fixed an error in the --home command-line option that left
     "home" as "~/.config/seq66".
 -   Refactored and fixed the Import Project Configuration menu.

@@ -8,11 +8,15 @@
 # \library     Home/Audio
 # \author      Chris Ahlstrom
 # \date        2020-12-08
-# \update      2021-09-01
+# \update      2025-02-02
 # \version     $Revision$
 #
 #   This script provides a way to make a fast JACK setup on Linux. It is a much
 #   simpler alternative to our startjack script.
+#
+#------------------------
+#  REPLACED BY jackctl!
+#------------------------
 #
 #         https://wiki.archlinux.org/index.php/JACK_Audio_Connection_Kit
 #

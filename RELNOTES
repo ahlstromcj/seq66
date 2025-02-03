@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.18 2025-01-26
+Release Notes for Seq66 v. 0.99.18 2025-02-02
 
 This release contains fixes for dark themes, fixes to project
 import/export, a new Help feature, and other updates.
@@ -25,7 +25,7 @@ Other fixes:
 
 Updates:
 
-- Added suport for raysession and agordejo to the jackctl script.
+- Added support for raysession and agordejo to the jackctl script.
   Beefed up this script to facilitate testing and port-naming.
 - Added the dark-theme and dark-ui options to the user file for
   handling GUI elements that are otherwise difficult to see.

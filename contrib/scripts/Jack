@@ -20,7 +20,7 @@
 #
 #     NOTE:
 #
-#        A BETTER alternative is data/linux/startjack, which is installed via
+#        A BETTER alternative is data/linux/jackctl, which is installed via
 #        "make install".
 #
 #-----------------------------------------------------------------------------
