@@ -62,6 +62,12 @@ More developer-discovered issues :-(
 -   The pattern-fix effect check-box for the "Truncate" effect,
     which cannot occur anymore.
 
+## [0.99.17.1] - 2025-01-12
+
+### Fixed
+
+-   Fixed a segfault when clicking an empty pattern on sets 1 and above.
+
 ## [0.99.17] - 2025-01-10
 
 This release provides a rather large number of fixes, including bugs
