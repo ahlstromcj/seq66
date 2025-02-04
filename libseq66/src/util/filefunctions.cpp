@@ -2476,6 +2476,172 @@ file_list_copy
     return count == int(filelist.size());
 }
 
+#if defined SEQ66_USE_PRIMITIVE_WILDCARD_MATCH
+
+/**
+ *  Partial replacement for glob(3), meant to be used with Windows ultimately.
+ */
+
+static int chmatch (const std::string & target, const std::string & pat);
+
+/*
+ * Wildcard matcher.
+ *
+ * https://comp.lang.c.narkive.com/ZxNTzMdM/globing-on-windows-in-c-c-language
+ *
+ * Post by Vipin
+ *
+ *  Following code works well on UNIX but there is no <glob.h> or
+ *  equivalent on windows in my opinion.
+ *
+ *  Please share the code if anybody has written already.  This took quite
+ *  a bit of getting right. The code was reviewed on comp.lang.c a
+ *  couple of months ago.
+ *
+ * Notes:
+ *
+ *      -   ? = match any character
+ *      -   * = match zero or more characters
+ *      -   [?], [*] are escapes for these characters,
+ *      -   [abc] matches a, b or c.
+ *      -   [A-Z] [0-9] [*-x], match range.
+ *      -   [[] - match '['.
+ *      -   [][abc] match ], [, a, b or c
+ *
+ * \param target
+ *      The target string to try to match.
+ *
+ * \param pattern
+ *      The pattern string to match.
+ *
+ * \return
+ *      1 if match, 0 if not.
+ */
+
+bool
+wildcard_match (const std::string & target, const std::string & pattern)
+{
+    std::string::size_type targetpos = 0;
+    std::string::size_type patternpos = 0;
+    int gobble;
+    do
+    {
+        std::string tar = target.substr(targetpos);
+        std::string pat = pattern.substr(patternpos);
+        gobble = chmatch(tar, pat);
+        patternpos += gobble;
+        ++targetpos;
+    }
+    while (gobble > 0);
+
+    if (target[targetpos] == 0 && pattern[patternpos] == 0)
+    {
+        return true;
+    }
+    else if (pattern[patternpos] == '*')
+    {
+        while (pattern[patternpos + 1] == '*')
+            ++patternpos;
+
+        if (pattern[patternpos + 1] == 0)
+            return 1;
+
+        while (target[targetpos] != 0)
+        {
+            std::string tar = target.substr(targetpos);
+            std::string pat = pattern.substr(patternpos + 1);
+            if (quickglob(tar, pat))
+                return true;
+
+            ++targetpos;
+        }
+    }
+    return false;
+}
+
+/**
+ *	Match a character.
+ *
+ *  Kenneth Brody at the URL above.
+ *
+ * Notes:
+ *
+ *      means that a * in pat will return zero
+ *
+ * \param target
+ *      The target string
+ *
+ * \param pat
+ *      The pattern string.
+ *
+ * Returns
+ *      The number of pat character matched.
+ */
+
+static int
+chmatch (const std::string & target, const std::string & pat)
+{
+    /*
+     * Treat close bracket following open bracket as a character.
+     */
+
+    std::string::size_type patpos = 0;
+    std::string::size_type ender = pat.find_first_of("]");
+    if (pat[patpos] == '[' && ender != std::string::npos)   /* not_npos(ender) */
+    {
+        if (ender == (patpos + 1))
+        {
+            /*
+             * Make "[]" with no close mismatch all.
+             */
+
+            ender = pat.find_first_of("]", 2);
+            if (ender == std::string::npos)                 /* is_npos(ender) */
+                return 0;
+        }
+
+        /*
+         * Allow [A-Z] and similar syntax.
+         */
+
+        bool fourback = (ender - patpos) == 4;
+        bool isrange = pat[2] == '-';
+        bool valid = pat[1] <= pat[3];
+        if (fourback && isrange && valid)
+        {
+            if (target[0] >= pat[1] && target[0] <= pat[3])
+                return 5;
+            else
+                return 0;
+        }
+
+        /*
+         * Search for the character list contained within brackets
+         */
+
+        std::string::size_type pos = pat.find_first_of(target[0], 1);
+        if (pos != std::string::npos && pos < ender)
+            return ender + 1;
+        else
+            return 0;
+    }
+    if (pat[0] == '?' && target[0] != 0)
+        return 1;
+
+    if (pat[0] == '*')
+        return 0;
+
+    if (target[0] == 0 || pat[0] == 0)
+        return 0;
+
+    if (target[0] == pat[0])
+        return 1;
+
+    return 0;
+}
+
+#endif      // defined SEQ66_USE_PRIMITIVE_WILDCARD_MATCH
+
 }           // namespace seq66
 
 /*

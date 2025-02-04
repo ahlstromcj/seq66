@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2025-01-01
+ * \updates       2025-02-03
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -290,17 +290,6 @@ add_quotes (const std::string & item)
             result = "\"" + item + "\"";
     }
     return result;
-}
-
-/**
- *  A simple test for std::string::npos.  Why?  I dunno, less typing for the
- *  developer.  Not used in this module, however.
- */
-
-bool
-not_npos (std::string::size_type p)
-{
-    return p != std::string::npos;
 }
 
 /**

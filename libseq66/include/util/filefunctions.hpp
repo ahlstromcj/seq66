@@ -94,6 +94,15 @@ extern bool file_copy_to_path
     const std::string & sourcefile,
     const std::string & path
 );
+
+#if defined SEQ66_USE_PRIMITIVE_WILDCARD_MATCH
+extern bool wildcard_match
+(
+    const std::string & target,
+    const std::string & pattern
+);
+#endif
+
 extern bool file_append_log
 (
     const std::string & filename,
