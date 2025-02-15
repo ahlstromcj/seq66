@@ -476,9 +476,13 @@ event::is_data_in_handle_range (midibyte target) const
         midibpm tdesired = note_value_to_tempo(target);
         result = t >= (tdesired - s_delta) && t <= (tdesired + s_delta);
     }
+    else if (is_program_change())
+    {
+        result = true;
+    }
     else
     {
-        static const midibyte s_delta = 2;                /* seq32 provision  */
+        static const midibyte s_delta = 4;                /* seq32 provision  */
         static const midibyte max = c_midibyte_value_max - s_delta;
         midibyte datum = is_one_byte() ? d0() : d1() ;
         result = target >= s_delta && target <= max;

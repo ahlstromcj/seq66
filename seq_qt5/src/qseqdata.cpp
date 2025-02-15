@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-24
+ * \updates       2025-02-15
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -329,15 +329,28 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 #endif
             else if (is_program_change() && cev->is_program_change())
             {
+#if 0
                 d1 = event_height;
                 if (d1 > height() - 6)
                     d1 = height() - 6;          /* avoid overlap w/bottom   */
                 else if (d1 < s_circle_d)
                     d1 = s_circle_d;
+#else
+                d1 = height() - cev->d0() - (s_circle_d / 2);
+                if (d1 < 4)
+                    d1 = 4;                     /* avoid overlap with top   */
+#endif
 
                 d1 -= s_circle_d;
-                snprintf(digits, sizeof digits, "%3d", d0);
+                snprintf(digits, sizeof digits, "%3d", int(cev->d0()));
                 brush.setColor(selected ? sel_color() : drum_color()); /* ! */
+                if (selected)                           /* issue #136       */
+                    pen.setColor(sel_color());
+                else if (its_close)
+                    pen.setColor(near_paint());         /* near_color()?    */
+                else
+                    pen.setColor(text_data_paint());    /* fore_color())    */
+
                 painter.setBrush(brush);
                 painter.setPen(pen);
                 painter.drawEllipse
@@ -521,10 +534,16 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
                 if (ok)
                     flag_dirty();
             }
+            else if (is_program_change())
+            {
+                /*
+                 * anything to do for issue #136?
+                 */
+            }
 
             /*
              * We could set m_line_adjust = false here, but the effect
-             * seems useful for tempo.
+             * seems useful for tempo as well as program-change.
              */
         }
         else

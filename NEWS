@@ -1,12 +1,23 @@
 NEWS for Seq66 0.99.19
 Chris Ahlstrom
-2015-07-10 to 2025-02-03
+2015-07-10 to 2025-02-15
 
 # Change Log
 
-## [0.99.19] - 2025-02-03
+## [0.99.19] - 2025-02-15
 
 To do.
+
+### Fixed
+
+-   Issue #136.
+    -   Filtered out Program events from the drum-mode piano roll.
+        -   While working this issue, the following problems
+            were found and fixed.
+            -   The saving of Program events was fixed to calculate
+                the proper time-stamp.
+            -   Program events can be moved up and down by dragging,
+                as well as by the line-dragging method.
 
 ## [0.99.18] - 2025-02-03
 

@@ -926,11 +926,17 @@ sequence::time_signature_pulses (const std::string & s) const
 
             if (got_it)
             {
-                double mcount = double(mm.measures()) - m0; /* integral?    */
-                double tpb = double(t0.sig_ticks_per_beat);
-                double bpb = double(t0.sig_beats_per_bar);
-                midipulse added = midipulse(tpb * bpb * mcount);
-                result = t0.sig_start_tick + added + mm.divisions();
+                /*
+                 * Some minor updates needed to fix inserting, e.g.,
+                 * Program events, with the proper timestamp.
+                 */
+
+                midibpm bpminute = perf()->get_beats_per_minute();
+                int bpb = t0.sig_beats_per_bar;
+                int bw = t0.sig_beat_width;
+                midi_timing mt{bpminute, bpb, bw, get_ppqn()};
+                midipulse mticks = midi_measures_to_pulses(mm, mt);
+                result = t0.sig_start_tick + mticks;
                 break;
             }
         }
@@ -945,7 +951,7 @@ sequence::time_signature_pulses (const std::string & s) const
         midibpm bpminute = perf()->get_beats_per_minute();
         int bpb = get_beats_per_bar();
         int bwidth = get_beat_width();
-        midi_timing mt(bpminute, bpb, bwidth, get_ppqn());
+        midi_timing mt{bpminute, bpb, bwidth, get_ppqn()};
         result = seq66::string_to_pulses(s, mt);
     }
     return result;
@@ -2747,8 +2753,12 @@ sequence::adjust_event_handle (midibyte astatus, midibyte adata)
             else if (er.is_program_change())
             {
                 /*
-                 * Currently handled by the line-draw mechanism.
+                 * Currently handled by the line-draw mechanism. But let's
+                 * support handle dragging as well.
                  */
+
+                er.set_data(adata);                         /* test later   */
+                modify();
             }
             else
             {

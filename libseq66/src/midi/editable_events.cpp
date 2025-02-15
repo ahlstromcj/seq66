@@ -273,11 +273,7 @@ editable_events::save_events ()
 midipulse
 editable_events::string_to_pulses (const std::string & ts_string) const
 {
-#if defined USE_OLD_CODE
-    return seq66::string_to_pulses(ts_string, timing());
-#else
     return track().time_signature_pulses(ts_string);
-#endif
 }
 
 /**

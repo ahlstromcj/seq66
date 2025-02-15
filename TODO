@@ -1,9 +1,11 @@
 TO DO for Seq66 0.99.18
 Chris Ahlstrom
-2019-04-13 to 2025-02-14
+2019-04-13 to 2025-02-15
 
 Backlog:
 
+    -   Fix insertion of Program events in pattern editor event pane
+        and in event editor.
     -   Add a light version of glob(3) to use with Windows.
     -   Event editor:
         -   Can we add, perhaps a tooltip or dropdown to select the desired

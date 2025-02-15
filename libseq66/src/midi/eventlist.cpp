@@ -2322,7 +2322,7 @@ eventlist::select_events
  *      event.
  *
  * \param data
- *      Currently represents the note value.
+ *      Currently represents the note value or d0().
  */
 
 int
@@ -2406,10 +2406,6 @@ eventlist::select_event_handle
                 }
                 else
                 {
-                    /*
-                     * Not quite right.
-                     */
-
                     if (er.is_data_in_handle_range(data))   /* checks d0()  */
                     {
                         unselect_all();

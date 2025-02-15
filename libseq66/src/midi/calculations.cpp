@@ -669,12 +669,7 @@ midi_measures_to_pulses
         double ppq = double(seqparms.ppqn());
         double beats_per_bar = double(seqparms.beats_per_measure());
         double beat_width = double(seqparms.beat_width());
-#if defined USE_OLD_CODE
-        double q_per_beat = double(c_qn_beats) / beat_width;        /* 4/W */
-        double ticks_per_beat = q_per_beat * ppq;
-#else
         double ticks_per_beat = pulses_per_beat(ppq, beat_width);
-#endif
         double ticks_per_meas = m * ticks_per_beat * beats_per_bar;
         double ticks = m * ticks_per_meas;
         ticks += b * ticks_per_beat;
