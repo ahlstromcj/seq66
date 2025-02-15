@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.18
 Chris Ahlstrom
-2019-04-13 to 2025-02-03
+2019-04-13 to 2025-02-14
 
 Backlog:
 
@@ -379,6 +379,20 @@ ISSUES:
 
         a.  Why are grid slot colors are different in the Song editor?
         b.  Tweak the incrypt-66 palette so the four-lines are white.
+
+#136 Program change shows as note in drum mode
+
+    The Program change is the only CC I have noticed that does not have a
+    way to drag up and down via a lollipop. I do not whether this is
+    connected. Anyway, to reproduce
+
+    1. Switch to drum mode
+    2. Create a program change cc
+    3. You can see a drum note on the piano roll that goes up and down with
+       the value change,
+
+    STATUS: Verified. Also another issue: use the event editor to
+    add Program changes at various time-stamps. They all end up at 0!
 
 = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 

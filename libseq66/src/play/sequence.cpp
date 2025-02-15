@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-01-09
+ * \updates       2025-02-15
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -639,6 +639,7 @@ sequence::analyze_time_signatures ()
     midipulse limit = snap() / 2;   /* allow some slop at the beginning    */
     bool found = false;
     int count = 0;
+    int ppq = get_ppqn();
     m_time_signatures.clear();
     for (auto cev = cbegin(); ! cend(cev); ++cev)
     {
@@ -656,7 +657,7 @@ sequence::analyze_time_signatures ()
             t.sig_measures = 0.0;               /* ditto                    */
             t.sig_beats_per_bar = int(cev->get_sysex(0));
             t.sig_beat_width = beat_power_of_2(int(cev->get_sysex(1)));
-            t.sig_ticks_per_beat = 0;
+            t.sig_ticks_per_beat = pulses_per_beat(ppq, t.sig_beat_width);
             t.sig_start_tick = ts;
             t.sig_end_tick = 0;                 /* tritto                   */
             m_time_signatures.push_back(t);
@@ -684,10 +685,8 @@ sequence::analyze_time_signatures ()
         {
             size_t count = 0;
             double lastmeasure = 1.0;   /* always at least one measure, #1  */
-            int ppq = get_ppqn();
             for (auto & t : m_time_signatures)
             {
-                int ticksperbeat = pulses_per_beat(ppq, t.sig_beat_width);
                 midipulse ender = count < (sz - 1) ?
                     m_time_signatures[count + 1].sig_start_tick : get_length() ;
 
@@ -700,7 +699,7 @@ sequence::analyze_time_signatures ()
                 );
                 t.sig_start_measure = lastmeasure;
                 t.sig_measures = mcurrent;
-                t.sig_ticks_per_beat = ticksperbeat;
+                t.sig_ticks_per_beat = pulses_per_beat(ppq, t.sig_beat_width);
                 lastmeasure += mcurrent;
                 ++count;
             }
@@ -717,6 +716,23 @@ sequence::analyze_time_signatures ()
 }
 
 /**
+ *  Makes the default time signature.
+ */
+
+sequence::timesig
+sequence::default_time_signature () const
+{
+    timesig t;
+    t.sig_start_measure = 0.0;
+    t.sig_measures = 0.0;
+    t.sig_beats_per_bar = m_time_beats_per_measure;
+    t.sig_beat_width = m_time_beat_width;
+    t.sig_ticks_per_beat = pulses_per_beat(get_ppqn(), m_time_beat_width);
+    t.sig_start_tick = t.sig_end_tick = 0;
+    return t;
+}
+
+/**
  *  Pushes a default time-signature based on the beats/bar and beat width set
  *  for the pattern. The extent and measure are calculated at the end of the
  *  time-signature analysis stage.
@@ -725,12 +741,7 @@ sequence::analyze_time_signatures ()
 void
 sequence::push_default_time_signature ()
 {
-    timesig t;
-    t.sig_start_measure = 0.0;
-    t.sig_measures = 0.0;
-    t.sig_beats_per_bar = m_time_beats_per_measure;
-    t.sig_beat_width = m_time_beat_width;
-    t.sig_ticks_per_beat = t.sig_start_tick = t.sig_end_tick = 0;
+    timesig t = default_time_signature();
     m_time_signatures.push_back(t);
 }
 
@@ -741,10 +752,7 @@ sequence::get_time_signature (size_t index) const
     static bool s_uninitialized = true;
     if (s_uninitialized)
     {
-        s_ts_dummy.sig_start_measure = s_ts_dummy.sig_measures = 0.0;
-        s_ts_dummy.sig_beats_per_bar = s_ts_dummy.sig_beat_width = 0;
-        s_ts_dummy.sig_ticks_per_beat = 0;
-        s_ts_dummy.sig_start_tick = s_ts_dummy.sig_end_tick = 0;
+        s_ts_dummy = default_time_signature();
         s_uninitialized = false;
     }
     return index < m_time_signatures.size() ?

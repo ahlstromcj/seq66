@@ -4,7 +4,7 @@
 "
 "  Language:      C/C++
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-09-04 to 2025-01-31
+"  Last Change:   2006-09-04 to 2025-02-15
 "  Project:       XPC Suite library project
 "  Usage:
 "
@@ -102,6 +102,9 @@ syn keyword cType my_data_t
 
 syn keyword cConstant xxxxxxx
 syn keyword cDefine SCUZZGOZIO
+syn keyword cDefine CSTR
+syn keyword cDefine STR
+syn keyword cDefine V
 
 "------------------------------------------------------------------------------
 " cpp.vim

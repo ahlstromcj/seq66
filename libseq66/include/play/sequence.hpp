@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-01-07
+ * \updates       2025-02-15
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -2070,6 +2070,7 @@ private:
         event::buffer::const_iterator & evi
     ) const;
 
+    timesig default_time_signature () const;
     void push_default_time_signature ();
 
 #if defined USE_SEQUENCE_REMOVE_EVENTS

@@ -402,14 +402,8 @@ pulses_to_measures (midipulse p, int P, int B, int W)
     double result = 0.0;                            /* indicates an error   */
     if (B > 0 && P > 0)
     {
-#if defined USE_CLUMSY_CODE
-        double qnotes = double(c_qn_beats) * B / W; /* Q notes per measure  */
-        double measlength = P * qnotes;             /* pulses/std measure   */
-        result = p / measlength;
-#else
         double divisor = double(c_qn_beats) * P * B;
         return double(p) * W / divisor;
-#endif
     }
     return result;
 }
@@ -641,7 +635,7 @@ measurestring_to_pulses
  *
  *  We should consider clamping the beats to the beat-width value as well.
  *
- *  Example: Current time-signature = 3/16. Then qn_per_beat = 4/16 = 0.25.
+ *  Example: Current time-signature = 3/16. Then q_per_beat = 4/16 = 0.25.
  *  For 1 measure and 3 beats, the pulses are p = 1 * 3 * 0.25 * PPQN. If PPQN
  *  is 192, the pulses per beat are 0.25 * PPQN = 48.
  *
@@ -675,8 +669,12 @@ midi_measures_to_pulses
         double ppq = double(seqparms.ppqn());
         double beats_per_bar = double(seqparms.beats_per_measure());
         double beat_width = double(seqparms.beat_width());
-        double qn_per_beat = double(c_qn_beats) / beat_width;        /* 4/W */
-        double ticks_per_beat = qn_per_beat * ppq;
+#if defined USE_OLD_CODE
+        double q_per_beat = double(c_qn_beats) / beat_width;        /* 4/W */
+        double ticks_per_beat = q_per_beat * ppq;
+#else
+        double ticks_per_beat = pulses_per_beat(ppq, beat_width);
+#endif
         double ticks_per_meas = m * ticks_per_beat * beats_per_bar;
         double ticks = m * ticks_per_meas;
         ticks += b * ticks_per_beat;

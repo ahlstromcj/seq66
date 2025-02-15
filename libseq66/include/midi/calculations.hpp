@@ -564,7 +564,8 @@ pulses_per_quarter_beat (int ppq, int bpb = 4, int bw = 4)
  *
  *          return ppq * bpb / bw;
  *
- *  Used only in the metro class.
+ *  Used only in the metro class. Well, also in this module and in
+ *  sequence::analyze_time_signatures(). Compare to qn_per_bear() above.
  */
 
 inline int

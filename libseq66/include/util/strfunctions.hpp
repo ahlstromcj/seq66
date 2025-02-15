@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-02-03
+ * \updates       2025-02-14
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -38,9 +38,16 @@
 
 #include "util/basic_macros.hpp"        /* seq66::tokenization container    */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
+/**
+ *  Since strings are not POD, Clang will error on them when passed to
+ *  a variadic function. We could use c_str() directly. Sigh. Let's
+ *  make a simple macro for that. We use a macro to avoid multiple definitions
+ *  of this function.
  */
+
+#define STR(x)  const_cast<char *>(x.c_str())
+#define CSTR(x) x.c_str()
+#define V(x)    x.c_str()
 
 namespace seq66
 {
