@@ -333,15 +333,17 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 #endif
             else if (is_program_change() && cev->is_program_change())
             {
+                int patch = int(cev->d0());
                 d1 = height() - cev->d0() - (s_circle_d / 2);
                 if (d1 < 4)
                     d1 = 4;                     /* avoid overlap with top   */
 
                 d1 -= s_circle_d;
 #if defined SEQ66_SHOW_GM_PROGRAM_NAME
-                std::string p = gm_program_name(cev->d0());
+                std::string p = gm_program_name(patch);
+                int ydelta = patch > 113 ? 20 : 5 ;
 #else
-                snprintf(digits, sizeof digits, "%3d", int(cev->d0()));
+                snprintf(digits, sizeof digits, "%3d", patch);
 #endif
                 brush.setColor(selected ? sel_color() : drum_color()); /* ! */
                 if (selected)                           /* issue #136       */
@@ -359,7 +361,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                     s_handle_d, s_handle_d
                 );
 #if defined SEQ66_SHOW_GM_PROGRAM_NAME
-                painter.drawText(x_offset + 12, d1 + 5, p.c_str());
+                painter.drawText(x_offset + 12, d1 + ydelta, p.c_str());
 #else
                 painter.drawText(x_offset + 6, d1 + 6, digits);
 #endif

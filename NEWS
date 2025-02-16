@@ -21,8 +21,7 @@ To do.
 -   Pressing the finger button in the pattern editor now
     also enters paint mode in the event pane. The selected event
     category can the be entered by a click, and then moved up and
-    down in the data pane. However, above 116 the names are not
-    readable.
+    down in the data pane.
 
 ### Added
 

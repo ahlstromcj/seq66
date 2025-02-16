@@ -9,7 +9,6 @@ Backlog:
         to return the legacy MIDI device patches. Add it to rcsettings and
         rcfile.  Add add_config_filespec() calls ofr "notemap" and
         "patches". See all references to SEQ66_KEEP_RC_FILE_LIST.
-    -   Fix showing Program changes in the data pane.
     -   Add a light version of glob(3) to use with Windows.
     -   Event editor:
         -   Can we add, perhaps a tooltip or dropdown to select the desired
