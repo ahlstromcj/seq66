@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.99.18 and above
+INSTALL for Seq66 v. 0.99.19 and above
 Chris Ahlstrom
-2015-09-10 to 2025-01-20
+2015-09-10 to 2025-02-15
 
 Getting Seq66 requires building the code or going to "ahlstromcj/seq66" on
 GitHub to get an installation package or a Windows release executable.
@@ -462,6 +462,7 @@ MANUALLY-DEFINED MACROS IN CODE:
         functionality, just adding it, macroed out by the following macros:
 
         SEQ66_PROVIDE_AUTO_COLOR_INVERSION  (experimental, investigative)
+        SEQ66_SHOW_GM_PROGRAM_NAME (defined by default)
         SEQ66_USE_SHOW_HIDE_BUTTON
         SEQ66_USE_DEFAULT_PORT_MAPPING
         SEQ66_USE_MIDI_MESSAGE_RINGBUFFER

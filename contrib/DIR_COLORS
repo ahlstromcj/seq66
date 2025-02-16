@@ -5,7 +5,7 @@
 # \file            DIR_COLORS
 # \author          Chris Ahlstrom
 # \date            2008-02-26
-# \updates         2024-12-07
+# \updates         2025-02-16
 # \version         $Revision$
 # \license         $XPC_SUITE_GPL_LICENSE$
 #
@@ -420,6 +420,7 @@ EXEC 01;32
 .notemap 01;33
 .opts 01;33
 .options 01;33
+.patches 01;33
 .pc 01;33
 .PL 01;33
 .palette 01;33

@@ -1,11 +1,15 @@
-TO DO for Seq66 0.99.18
+TO DO for Seq66 0.99.19
 Chris Ahlstrom
-2019-04-13 to 2025-02-15
+2019-04-13 to 2025-02-16
 
 Backlog:
 
-    -   Fix insertion of Program events in pattern editor event pane
-        and in event editor.
+    -   Break out the [Patch] directives in *.drums into a *.patches
+        file and use that to alter the gm_program_name() function
+        to return the legacy MIDI device patches. Add it to rcsettings and
+        rcfile.  Add add_config_filespec() calls ofr "notemap" and
+        "patches". See all references to SEQ66_KEEP_RC_FILE_LIST.
+    -   Fix showing Program changes in the data pane.
     -   Add a light version of glob(3) to use with Windows.
     -   Event editor:
         -   Can we add, perhaps a tooltip or dropdown to select the desired

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-02-15
+ * \updates       2025-02-16
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -39,6 +39,10 @@
 #include "qseqdata.hpp"                 /* seq66::qseqdata class            */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 #include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
+
+#if defined SEQ66_SHOW_GM_PROGRAM_NAME
+#include "midi/controllers.hpp"         /* seq66::gm_program_name           */
+#endif
 
 /*
  * The fixes for issue #90 cause a lot of redrawing during mouse movement while
@@ -329,20 +333,16 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 #endif
             else if (is_program_change() && cev->is_program_change())
             {
-#if 0
-                d1 = event_height;
-                if (d1 > height() - 6)
-                    d1 = height() - 6;          /* avoid overlap w/bottom   */
-                else if (d1 < s_circle_d)
-                    d1 = s_circle_d;
-#else
                 d1 = height() - cev->d0() - (s_circle_d / 2);
                 if (d1 < 4)
                     d1 = 4;                     /* avoid overlap with top   */
-#endif
 
                 d1 -= s_circle_d;
+#if defined SEQ66_SHOW_GM_PROGRAM_NAME
+                std::string p = gm_program_name(cev->d0());
+#else
                 snprintf(digits, sizeof digits, "%3d", int(cev->d0()));
+#endif
                 brush.setColor(selected ? sel_color() : drum_color()); /* ! */
                 if (selected)                           /* issue #136       */
                     pen.setColor(sel_color());
@@ -358,7 +358,11 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                     event_x - s_handle_r, d1 - s_handle_r,
                     s_handle_d, s_handle_d
                 );
+#if defined SEQ66_SHOW_GM_PROGRAM_NAME
+                painter.drawText(x_offset + 12, d1 + 5, p.c_str());
+#else
                 painter.drawText(x_offset + 6, d1 + 6, digits);
+#endif
                 brush.setColor(grey_color());
                 painter.setBrush(brush);
             }

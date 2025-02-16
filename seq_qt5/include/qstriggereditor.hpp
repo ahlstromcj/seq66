@@ -65,6 +65,8 @@ namespace seq66
 
 class qstriggereditor final : public QWidget, public qseqbase
 {
+    friend class qseqeditframe64;
+
     Q_OBJECT
 
 public:

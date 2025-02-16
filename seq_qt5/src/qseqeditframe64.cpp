@@ -3090,6 +3090,9 @@ qseqeditframe64::note_entry (bool ischecked)
 {
     if (not_nullptr(m_seqroll))
         m_seqroll->set_adding(ischecked);
+
+    if (not_nullptr(m_seqevent))
+        m_seqevent->set_adding(ischecked);          /* re issue #136        */
 }
 
 void

@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.19
 Chris Ahlstrom
-2015-07-10 to 2025-02-15
+2015-07-10 to 2025-02-16
 
 # Change Log
 
-## [0.99.19] - 2025-02-15
+## [0.99.19] - 2025-02-16
 
 To do.
 
@@ -18,6 +18,17 @@ To do.
                 the proper time-stamp.
             -   Program events can be moved up and down by dragging,
                 as well as by the line-dragging method.
+-   Pressing the finger button in the pattern editor now
+    also enters paint mode in the event pane. The selected event
+    category can the be entered by a click, and then moved up and
+    down in the data pane. However, above 116 the names are not
+    readable.
+
+### Added
+
+-   This macro is defined by default: SEQ66\_SHOW\_GM\_PROGRAM\_NAME
+    to show the GM patch names in the pattern editor data pane
+    instead of just the patch/program number. See seq66\_features.h.
 
 ## [0.99.18] - 2025-02-03
 

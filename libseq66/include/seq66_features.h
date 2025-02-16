@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2025-01-19
+ * \updates       2025-02-15
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -59,11 +59,18 @@
 #endif
 
 /**
- *  Trying to make configuration copying more flexible.
- *  We want to use additional non-standard file extensions (e.g. ".notemap"
- *  versus ".drums" when iterating through the configuration files,
- *  Define this value to define alternates to copy_configuration() and
- *  delete_configuration.
+ *  In the pattern editor's data pane, we can show the full GM name
+ *  of the program-change, instead of just the number. Later we can
+ *  expand this to use the note-mapper's patch settings.
+ */
+
+#define SEQ66_SHOW_GM_PROGRAM_NAME
+
+/**
+ *  Trying to make configuration copying more flexible.  We want to use
+ *  additional non-standard file extensions (e.g. ".notemap" versus ".drums"
+ *  when iterating through the configuration files, Define this value to
+ *  define alternates to copy_configuration() and delete_configuration.
  */
 
 #define SEQ66_KEEP_RC_FILE_LIST
@@ -89,9 +96,9 @@
 
 /**
  *  For issue #100, this macro enables using our new ring_buffer instead of
- *  jack_ringbuffer_t. We no longer attempt to add the timestamp to the
- *  JACK ringbuffer, even if this macro is disabled.  Too many side issues,
- *  too much code, so disabling this macro preserves the old behavior.
+ *  jack_ringbuffer_t. We no longer attempt to add the timestamp to the JACK
+ *  ringbuffer, even if this macro is disabled.  Too many side issues, too
+ *  much code, so disabling this macro preserves the old behavior.
  */
 
 #define SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
