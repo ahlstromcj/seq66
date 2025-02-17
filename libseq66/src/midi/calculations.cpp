@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2024-12-30
+ * \updates       2025-02-17
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1376,6 +1376,31 @@ fix_tempo (midibpm bpm)
             bpm /= 10.0;
     }
     return bpm;
+}
+
+/**
+ *  In order to display discrete data, such as Program/Patch values,
+ *  properly in the data pane, we need to account for the constraints
+ *  on viewability that reduce the range from 0-127 to something less,
+ *  such as 7-120, for painting.
+ *
+ * \param invalue
+ *      Provides the input value, ranging from 0 to 127.
+ *
+ * \param reduction
+ *      Provides the amount to reduce the range on both ends.
+ *      This value might be a radius in pixels, for example.
+ */
+
+int
+midi_data_adjust (int invalue, int reduction)
+{
+    const int m_min = 0;
+    const int m_max = max_midi_value();     /* 127 */
+    const int a_min = m_min + reduction;
+    const int a_max = m_max - reduction;
+    double slope = double(a_max - a_min) / double(m_max - m_min);
+    return int(slope * int(invalue) + a_min);
 }
 
 /**

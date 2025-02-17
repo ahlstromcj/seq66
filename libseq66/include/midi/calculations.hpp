@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2025-01-23
+ * \updates       2025-02-17
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -283,6 +283,7 @@ extern bool tempo_us_to_bytes (midibyte t[3], midibpm tempo_us);
 extern midibyte tempo_to_note_value (midibpm tempo);
 extern midibpm note_value_to_tempo (midibyte tempo);
 extern midibpm fix_tempo (midibpm bp);
+extern int midi_data_adjust (int invalue, int reduction);
 extern unsigned short combine_bytes (midibyte b0, midibyte b1);
 extern midibpm note_value_to_tempo (midibyte note);
 extern midipulse rescale_tick (midipulse tick, int newppqn, int oldppqn);

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-02-16
+ * \updates       2025-02-17
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -41,7 +41,7 @@
 #include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
 
 #if defined SEQ66_SHOW_GM_PROGRAM_NAME
-#include "midi/controllers.hpp"         /* seq66::gm_program_name           */
+#include "midi/patches.hpp"             /* seq66::gm_program_name()         */
 #endif
 
 /*
@@ -334,15 +334,16 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             else if (is_program_change() && cev->is_program_change())
             {
                 int patch = int(cev->d0());
-                d1 = height() - cev->d0() - (s_circle_d / 2);
+#if defined SEQ66_SHOW_GM_PROGRAM_NAME
+                std::string p = gm_program_name(patch);
+                d1 = height() - midi_data_adjust(patch, s_circle_d + 10);
+                int ydelta = 0;
+#else
+                d1 = height() - patch - (s_circle_d / 2);
                 if (d1 < 4)
                     d1 = 4;                     /* avoid overlap with top   */
 
                 d1 -= s_circle_d;
-#if defined SEQ66_SHOW_GM_PROGRAM_NAME
-                std::string p = gm_program_name(patch);
-                int ydelta = patch > 113 ? 20 : 5 ;
-#else
                 snprintf(digits, sizeof digits, "%3d", patch);
 #endif
                 brush.setColor(selected ? sel_color() : drum_color()); /* ! */

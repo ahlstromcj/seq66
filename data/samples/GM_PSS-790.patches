@@ -39,6 +39,21 @@
 #                   cases, there is no exact GM patch equivalent, so we use
 #                   a GM patch that is close enough to the device's patch.
 
+[Seq66]
+
+config-type = "patches"
+version = 0
+
+[patches-flags]
+
+#  map-type         Types of maps in this file: 'drum', 'patch', or 'multi'.
+#  gm-channel       Indicates the drum channel for GM.  Usually 10.
+#  reverse          Reverse mapping. Usually better as a command-line option.
+
+map-type = patch
+gm-channel = 10
+reverse = false
+
 [ Patch 0 ]
 
 gm-name = "Acoustic Grand Piano"
