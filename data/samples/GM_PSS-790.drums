@@ -34,309 +34,361 @@ reverse = false
 #                   the dev-note value (unless reverse mapping is activated).
 #                   Note that the actual GM drum might not match what the old
 #                   MIDI hardware put ut.
+#
 
 [Drum 35]
 
+dev-name = "Unsupported 35"
 gm-name = "Acoustic Bass Drum"
 gm-note = 35
 dev-note = 35
 
 [Drum 36]
 
+dev-name = "Bass Drum Reverb"
 gm-name = "BassDrum 1"
-gm-note = 36
 dev-note = 36
+gm-note = 36
 
 [Drum 37]
 
+dev-name = "Triangle Mute"
 gm-name = "Side Stick"
-gm-note = 37
 dev-note = 80
+gm-note = 37
 
 [Drum 38]
 
+dev-name = "Synth Snare"
 gm-name = "Acoustic Snare"
-gm-note = 38
 dev-note = 40
+gm-note = 38
 
 [Drum 39]
 
+dev-name = "Triangle Open"
 gm-name = "Hand Clap"
-gm-note = 39
 dev-note = 81
+gm-note = 39
 
 [Drum 40]
 
+dev-name = "Synth Tom Base"
 gm-name = "Electric Snare"
-gm-note = 40
 dev-note = 41
+gm-note = 40
 
 [Drum 41]
 
+dev-name = "Synth Tom Lo"
 gm-name = "Low Floor Tom"
-gm-note = 41
 dev-note = 45
+gm-note = 41
 
 [Drum 42]
 
+dev-name = "Synth Tom Mid"
 gm-name = "Closed Hi-Hat"
-gm-note = 42
 dev-note = 47
+gm-note = 42
 
 [Drum 43]
 
+dev-name = "Synth Tom Hi"
 gm-name = "High Floor Tom"
-gm-note = 43
 dev-note = 48
+gm-note = 43
 
 [Drum 44]
 
+dev-name = "Bass Drum Lo"
 gm-name = "Pedal Hi-Hat"
-gm-note = 44
 dev-note = 35
+gm-note = 44
 
 [Drum 45]
 
+dev-name = "Bass Drum Hi"
 gm-name = "Low Tom"
-gm-note = 45
 dev-note = 36
+gm-note = 45
 
 [Drum 46]
 
+dev-name = "Rim Shot 1"
 gm-name = "Open Hi-Hat"
-gm-note = 46
 dev-note = 37
+gm-note = 46
 
 [Drum 47]
 
+dev-name = "Tom Bass"
 gm-name = "Low-Mid Tom"
-gm-note = 47
 dev-note = 41
+gm-note = 47
 
 [Drum 48]
 
+dev-name = "Tom Lo"
 gm-name = "Hi-Mid Tom"
-gm-note = 48
 dev-note = 45
+gm-note = 48
 
 [Drum 49]
 
+dev-name = "Snare Hi"
 gm-name = "Crash Cymbal 1"
-gm-note = 49
 dev-note = 40
+gm-note = 49
 
 [Drum 50]
 
+dev-name = "Tom Mid"
 gm-name = "High Tom"
-gm-note = 50
 dev-note = 47
+gm-note = 50
 
 [Drum 51]
 
+dev-name = "Rim Shot 2"
 gm-name = "Ride Cymbal 1"
-gm-note = 51
 dev-note = 37
+gm-note = 51
 
 [Drum 52]
 
+dev-name = "Snare Lo"
 gm-name = "Chinese Cymbal"
-gm-note = 52
 dev-note = 38
+gm-note = 52
 
 [Drum 53]
 
+dev-name = "Tom Hi"
 gm-name = "Ride Bell"
-gm-note = 53
 dev-note = 48
+gm-note = 53
 
 [Drum 54]
 
+dev-name = "Hand Claps"
 gm-name = "Tambourine"
-gm-note = 54
 dev-note = 77
+gm-note = 54
 
 [Drum 55]
 
+dev-name = "Cowbell"
 gm-name = "Splash Cymbal"
-gm-note = 55
 dev-note = 56
+gm-note = 55
 
 [Drum 56]
 
+dev-name = "Cabasa"
 gm-name = "Cowbell"
-gm-note = 56
 dev-note = 69
+gm-note = 56
 
 [Drum 57]
 
+dev-name = "Hi Hat Closed"
 gm-name = "Crash Cymbal 2"
-gm-note = 57
 dev-note = 42
+gm-note = 57
 
 [Drum 58]
 
+dev-name = "Brash Hit"
 gm-name = "Vibraslap"
-gm-note = 58
 dev-note = 57
+gm-note = 58
 
 [Drum 59]
 
+dev-name = "Hi Hat Open"
 gm-name = "Ride Cymbal 2"
-gm-note = 59
 dev-note = 46
+gm-note = 59
 
 [Drum 60]
 
+dev-name = "Crash Cymbal"
 gm-name = "Hi Bongo"
-gm-note = 60
 dev-note = 49
+gm-note = 60
 
 [Drum 61]
 
+dev-name = "Splash Cymbal"
 gm-name = "Low Bongo"
-gm-note = 61
 dev-note = 55
+gm-note = 61
 
 [Drum 62]
 
+dev-name = "Ride Cymbal Cup"
 gm-name = "Mute Hi Conga"
-gm-note = 62
 dev-note = 51
+gm-note = 62
 
 [Drum 63]
 
+dev-name = "Ride Cymbal Edge"
 gm-name = "Open Hi Conga"
-gm-note = 63
 dev-note = 59
+gm-note = 63
 
 [Drum 64]
 
+dev-name = "Conga Lo"
 gm-name = "Low Conga"
-gm-note = 64
 dev-note = 64
+gm-note = 64
 
 [Drum 65]
 
+dev-name = "Conga Hi"
 gm-name = "High Timbale"
-gm-note = 65
 dev-note = 63
+gm-note = 65
 
 [Drum 66]
 
+dev-name = "Conga Hi Mute"
 gm-name = "Low Timbale"
-gm-note = 66
 dev-note = 62
+gm-note = 66
 
 [Drum 67]
 
+dev-name = "Bongo Lo"
 gm-name = "High Agogo"
-gm-note = 67
 dev-note = 61
+gm-note = 67
 
 [Drum 68]
 
+dev-name = "Bongo Hi"
 gm-name = "Low Agogo"
-gm-note = 68
 dev-note = 60
+gm-note = 68
 
 [Drum 69]
 
+dev-name = "Timbale Lo"
 gm-name = "Cabasa"
-gm-note = 69
 dev-note = 66
+gm-note = 69
 
 [Drum 70]
 
+dev-name = "Timbale Hi"
 gm-name = "Maracas"
-gm-note = 70
 dev-note = 65
+gm-note = 70
 
 [Drum 71]
 
+dev-name = "Tambourine"
 gm-name = "Short Whistle"
-gm-note = 71
 dev-note = 54
+gm-note = 71
 
 [Drum 72]
 
+dev-name = "Claves Lo"
 gm-name = "Long Whistle"
-gm-note = 72
 dev-note = 75
+gm-note = 72
 
 [Drum 73]
 
+dev-name = "Claves Hi"
 gm-name = "Short Guiro"
-gm-note = 73
 dev-note = 75
+gm-note = 73
 
 [Drum 74]
 
+dev-name = "Agogo Lo"
 gm-name = "Long Guiro"
-gm-note = 74
 dev-note = 68
+gm-note = 74
 
 [Drum 75]
 
+dev-name = "Agogo Hi"
 gm-name = "Claves"
-gm-note = 75
 dev-note = 67
+gm-note = 75
 
 [Drum 76]
 
+dev-name = "Cuica Lo"
 gm-name = "Hi Wood Block"
-gm-note = 76
 dev-note = 78
+gm-note = 76
 
 [Drum 77]
 
+dev-name = "Cuica Hi"
 gm-name = "Low Wood Block"
-gm-note = 77
 dev-note = 79
+gm-note = 77
 
 [Drum 78]
 
+dev-name = "Whistle"
 gm-name = "Mute Cuica"
-gm-note = 78
 dev-note = 71
+gm-note = 78
 
 [Drum 79]
 
+dev-name = "Brash Squeeze"
 gm-name = "Open Cuica"
-gm-note = 79
 dev-note = 55
+gm-note = 79
 
 [Drum 80]
 
+dev-name = "Hi Hat Foot"
 gm-name = "Mute Triangle"
-gm-note = 80
 dev-note = 44
+gm-note = 80
 
 [Drum 81]
 
+dev-name = "Snare Gated Reverb"
 gm-name = "Open Triangle"
-gm-note = 81
 dev-note = 40
+gm-note = 81
 
 [Drum 82]
 
+dev-name = "One"
 gm-name = "N/A"
-gm-note = 82
 dev-note = 45
+gm-note = 82
 
 [Drum 83]
 
+dev-name = "Two"
 gm-name = "N/A"
-gm-note = 83
 dev-note = 47
+gm-note = 83
 
 [Drum 84]
 
+dev-name = "Three"
 gm-name = "N/A"
-gm-note = 84
 dev-note = 48
+gm-note = 84
 
 [Drum 85]
 
+dev-name = "Four"
 gm-name = "N/A"
 gm-note = 85
 dev-note = 50

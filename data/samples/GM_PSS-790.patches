@@ -3,27 +3,6 @@
 #
 # midicvtpp v 0.4.0
 #
-# This file provides easy-to-use settings for remapping some MIDI events
-# so that a MIDI file for a specific device plays back in General MIDI (GM).
-# This file consists of one unnamed section and a number of named sections
-# as described below.  Note that the 'name' values can be empty, if you don't
-# want to key them in.
-#
-# The unnamed section:
-#
-#  file-style       The format of the INI file.  Values: 'sectioned' (only).
-#  setup-name       Provides a name for the setup, for information only.
-#  map-type         Types of maps in this file: 'drum', 'patch', or 'multi'.
-#  gm-channel       Indicates the drum channel for GM.  Usually 10.
-#  dev-channel      Drum channel for the device.  Some use channel 16.
-#  extract-channel  Channel to write to MIDI file.  Other channels dropped.
-#  reject-channel   Channel for events to be dropped from the new MIDI file.
-#  reverse          Reverse mapping. Usually better as a command-line option.
-#  testing          Do the latest developer test.  Command-line preferred.
-#
-# Generated mostly by 'midicvtpp --csv-patch tests/csvfiles/GM_PSS-790_Patches.csv
-#   --output patches.ini'
-#
 # The patch/program section:
 #
 #  [Patch 35].      Marks a GM patch-change section, one per program.
@@ -38,21 +17,19 @@
 #  gm-equiv         Provides the GM name for the intended replacement. In some
 #                   cases, there is no exact GM patch equivalent, so we use
 #                   a GM patch that is close enough to the device's patch.
+#
+# HOWEVER, at this time we seen no real use case for the full implementation of
+# this file... the user is not likely to need patches to be mapped on the
+# fly. What we do want to do is show the proper program name while editing.
+#
+# We keep this file around simple for references.
+#
+# Also, at some point we ought to implement MIDINAM.
 
 [Seq66]
 
 config-type = "patches"
 version = 0
-
-[patches-flags]
-
-#  map-type         Types of maps in this file: 'drum', 'patch', or 'multi'.
-#  gm-channel       Indicates the drum channel for GM.  Usually 10.
-#  reverse          Reverse mapping. Usually better as a command-line option.
-
-map-type = patch
-gm-channel = 10
-reverse = false
 
 [ Patch 0 ]
 

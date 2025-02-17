@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-01-18
+ * \updates       2025-02-17
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -226,6 +226,7 @@ public:
      *      -   drums (also covers .notemap, the same kind of configuration)
      *      -   mutes
      *      -   palett
+     *      -   patches
      *      -   playlist
      *      -   qss
      *      -   rc
@@ -544,6 +545,20 @@ private:
      */
 
     std::string m_notemap_filename;
+
+    /**
+     *  Indicates if the user wants to use the patches stored in the 'patches'
+     *  file.  This value is stored as well.
+     */
+
+    bool m_patches_active;
+
+    /**
+     *  Provides the name of a patches file to use.  This is a feature
+     *  adapted and modified from our "midicvt" project.
+     */
+
+    std::string m_patches_filename;
 
     /**
      *  Indicates if the user wants to use the palette file stored in the 'rc'
@@ -1292,6 +1307,11 @@ public:
         return m_notemap_filename;
     }
 
+    const std::string & patches_filename () const
+    {
+        return m_notemap_filename;
+    }
+
     const std::string & palette_filename () const
     {
         return m_palette_filename;
@@ -1571,6 +1591,11 @@ public:
         m_notemap_active = flag;
     }
 
+    void patches_active (bool flag)
+    {
+        m_patches_active = flag;
+    }
+
     void palette_active (bool flag)
     {
         m_palette_active = flag;
@@ -1642,6 +1667,7 @@ public:
     bool playlist_filename_checked (const std::string & value);
     void user_filename (const std::string & value);
     void notemap_filename (const std::string & value);
+    void patches_filename (const std::string & value);
     void palette_filename (const std::string & value);
     void style_sheet_filename (const std::string & value);
     void create_config_names (const std::string & base = "");

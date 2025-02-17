@@ -41,7 +41,7 @@
 #include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
 
 #if defined SEQ66_SHOW_GM_PROGRAM_NAME
-#include "midi/patches.hpp"             /* seq66::gm_program_name()         */
+#include "midi/patches.hpp"             /* seq66::program_name()            */
 #endif
 
 /*
@@ -335,9 +335,8 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             {
                 int patch = int(cev->d0());
 #if defined SEQ66_SHOW_GM_PROGRAM_NAME
-                std::string p = gm_program_name(patch);
-                d1 = height() - midi_data_adjust(patch, s_circle_d + 10);
-                int ydelta = 0;
+                std::string p = program_name(patch);
+                d1 = height() - midi_data_adjust(patch, s_circle_d + 12);
 #else
                 d1 = height() - patch - (s_circle_d / 2);
                 if (d1 < 4)
@@ -362,7 +361,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                     s_handle_d, s_handle_d
                 );
 #if defined SEQ66_SHOW_GM_PROGRAM_NAME
-                painter.drawText(x_offset + 12, d1 + ydelta, p.c_str());
+                painter.drawText(x_offset + 12, d1 + 6, p.c_str());
 #else
                 painter.drawText(x_offset + 6, d1 + 6, digits);
 #endif

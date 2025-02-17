@@ -7,7 +7,7 @@ Backlog:
     -   Break out the [Patch] directives in *.drums into a *.patches
         file and use that to alter the gm_program_name() function
         to return the legacy MIDI device patches. Add it to rcsettings and
-        rcfile.  Add add_config_filespec() calls ofr "notemap" and
+        rcfile.  Add add_config_filespec() calls for "notemap" and
         "patches". See all references to SEQ66_KEEP_RC_FILE_LIST.
     -   Add a light version of glob(3) to use with Windows.
     -   Event editor:

@@ -48,7 +48,7 @@ reverse = false
 #
 #  gm-name          GM name for the drum assigned to the input note.
 #  gm-note          Input note number, same as the section number.
-#  dev-name         The devices name for the drum.
+#  dev-name         The device's name for the drum.
 #  dev-note         GM MIDI note whose GM sound best matches the sound
 #                   of dev-name.  The gm-note value is converted to the
 #                   dev-note value (unless reverse mapping is activated).

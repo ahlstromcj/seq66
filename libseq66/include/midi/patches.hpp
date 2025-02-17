@@ -32,17 +32,89 @@
  *
  */
 
-#include <string>
+#include <map>                          /* std::map<> template class        */
+#include <string>                       /* std::string<> template class     */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
+#include "midi/midibytes.hpp"           /* seq66::midibyte type             */
 
 namespace seq66
 {
 
-extern std::string gm_program_name (int index);
-extern std::string program_name (int index);
+/*
+using patchpair = struct
+{
+    midibyte number;
+    std::string name;
+};
+ */
+
+/**
+ *  Provides a small wrapper class for an alternate mapping of patch numbers
+ *  (program numbers) to patch names.
+ */
+
+class patches
+{
+public:
+
+    using container = std::map<int, std::string>;
+
+private:
+
+    /**
+     *  A container for the up to 128 pairs of patch numbers and names.
+     *  Initially of size zero.
+     */
+
+    container m_patch_map;
+
+    /**
+     *  Indicates if the patch map is to be used in place of the built-in
+     *  GM patch list.
+     */
+
+    bool m_active;
+
+public:
+
+    patches () = default;               /* an empty, inactive map   */
+    patches (const patches &) = delete;
+    const patches & operator = (const patches &) = delete;
+
+    const container & patch_map () const
+    {
+        return m_patch_map;
+    }
+
+    void clear ()
+    {
+        m_patch_map.clear();
+        activate(false);
+    }
+
+    bool add (int patchnumber, const std::string & patchname);
+    std::string name (int patchnumber) const;
+
+    bool active () const
+    {
+        return m_active;
+    }
+
+    void activate (bool flag = true)
+    {
+        m_active = flag;
+    }
+
+};          // class patches
+
+/*
+ *  Acessor functions
+ */
+
+extern bool add_patch (int patchnumber, const std::string & patchname);
+extern std::string program_name (int patchnumber);
+extern std::string program_list ();
+extern std::string gm_program_name (int patchnumber);
 
 }           // namespace seq66
 

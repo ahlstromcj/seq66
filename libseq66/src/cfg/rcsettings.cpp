@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-01-22
+ * \updates       2025-02-17
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -33,11 +33,6 @@
  *
  * \warning
  *      No more "statistics" support.
- *
- * ca 2023-05-12:
- *
- *      A number of calls to rc() occur in this module. but that doesn't make
- *      sense. Go back to commit efc8db20 if removing them is a flub.
  */
 
 #include <algorithm>                    /* std::find()                      */
@@ -139,6 +134,8 @@ rcsettings::rcsettings () :
     m_playlist_midi_base        (),
     m_notemap_active            (false),
     m_notemap_filename          (seq_config_name()),    /* updated in body  */
+    m_patches_active            (false),
+    m_patches_filename          (seq_config_name()),    /* updated in body  */
     m_palette_active            (false),
     m_palette_filename          (seq_config_name()),    /* updated in body  */
     m_style_sheet_active        (false),
@@ -255,6 +252,8 @@ rcsettings::set_defaults ()
     m_playlist_midi_base.clear();
     m_notemap_active = false;
     m_notemap_filename = seq_config_name();
+    m_patches_active = false;
+    m_patches_filename = seq_config_name();
     m_palette_active = false;
     m_palette_filename = seq_config_name();
     m_style_sheet_active = false;
@@ -1514,6 +1513,26 @@ rcsettings::notemap_filename (const std::string & value)
         (void) add_config_filespec
         (
             "drums", filespec_helper(m_notemap_filename)
+        );
+#endif
+    }
+}
+
+void
+rcsettings::patches_filename (const std::string & value)
+{
+    if (value.empty())
+    {
+        patches_active(false);
+    }
+    else
+    {
+        m_patches_filename = filename_base_fix(value, ".patches");
+
+#if defined SEQ66_KEEP_RC_FILE_LIST
+        (void) add_config_filespec
+        (
+            "patches", filespec_helper(m_patches_filename)
         );
 #endif
     }

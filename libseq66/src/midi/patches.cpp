@@ -32,16 +32,48 @@
  */
 
 #include "midi/patches.hpp"             /* seq66::controller_name(), etc.   */
-#include "midi/midibytes.hpp"           /* seq66::midibyte type             */
 
 namespace seq66
 {
 
-using patchpair = struct
+bool
+patches::add (int patchnumber, const std::string & patchname)
 {
-    midibyte number;
-    std::string name;
-};
+    midibyte pn = midibyte(patchnumber);
+    bool result = pn < c_midibyte_data_max;
+    if (result)
+    {
+        auto p = std::make_pair(patchnumber, patchname);
+        auto r = m_patch_map.insert(p);
+        result = r.second;
+    }
+    return result;
+}
+
+std::string
+patches::name (int patchnumber) const
+{
+    std::string result = std::to_string(patchnumber);
+    auto it = m_patch_map.find(patchnumber);
+    result += " ";
+    if (it == m_patch_map.end())
+        result += "N/A";
+    else
+        result += it->second;
+
+    return result;
+}
+
+/*
+ *  A single global instance of the patches class
+ */
+
+static patches &
+non_gm_patches ()
+{
+    static patches s_non_gm_patches;
+    return s_non_gm_patches;
+}
 
 /**
  *  Provides the default names of General MIDI program changes.  Note that the
@@ -50,8 +82,12 @@ using patchpair = struct
  *  file that holds this mapping.
  */
 
-static const patchpair
-c_gm_program_names[c_midibyte_data_max] =
+/*
+ * static const patchpair
+ * c_gm_program_names [c_midibyte_data_max] =
+ */
+
+static patches::container s_gm_program_names
 {
     {   0, "Acoustic Grand Piano"                 },
     {   1, "Bright Acoustic Piano"                },
@@ -184,15 +220,63 @@ c_gm_program_names[c_midibyte_data_max] =
 };
 
 std::string
-gm_program_name (int index)
+gm_program_name (int patchnumber)
+{
+    std::string result = std::to_string(patchnumber);
+    auto it = s_gm_program_names.find(patchnumber);
+    result += " ";
+    if (it == s_gm_program_names.end())
+        result += "N/A";
+    else
+        result += it->second;
+
+    return result;
+}
+
+bool
+add_patch (int patchnumber, const std::string & patchname)
+{
+    bool result = non_gm_patches().add(patchnumber, patchname);
+    if (result)
+        non_gm_patches().activate();
+
+    return result;
+}
+
+std::string
+program_name (int patchnumber)
+{
+    return non_gm_patches().active() ?
+        non_gm_patches().name(patchnumber) : gm_program_name(patchnumber) ;
+}
+
+std::string
+program_list ()
 {
     std::string result;
-    if (index < c_midibyte_data_max)
+    const patches::container & patch_set = non_gm_patches().active() ?
+        non_gm_patches().patch_map() : s_gm_program_names ;
+
+    int count = 0;
+    for (const auto & p : patch_set)
     {
-        std::string name = c_gm_program_names[index].name;
-        result = std::to_string(index);
-        result += " ";
-        result += name;
+        std::string numb = std::to_string(count);
+        result = "[ Patch ";
+        result += numb;
+        result += " ]\n\ngm-name = \"";
+        result += gm_program_name(count);
+        result += "\"\n" "gm-patch = ";
+        result += numb;
+        result += "\ndev-name = \"";
+        result += p.second;
+        result += "\"\n\n";
+
+        /*
+         * We don't need to support a dev patch that matches the sound of a
+         * GM patch.
+         */
+
+        ++count;
     }
     return result;
 }
