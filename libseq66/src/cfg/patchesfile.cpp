@@ -89,20 +89,11 @@ patchesfile::parse_stream (std::ifstream & file)
     file.seekg(0, std::ios::beg);                   /* seek to start    */
     (void) parse_version(file);
 
-    std::string s = parse_comments(file);
-#if defined USE_THIS_CODE
-
-    /*
-     *  TODO: support comments for patches.
-     */
-
-    if (! s.empty())
-        mapper().comments_block().set(s);
-#endif
-
+    std::string patch_comments = parse_comments(file);
     int patch = (-1);
     int position = find_tag(file, "[Patch ");
     bool good = position > 0;
+    set_patches_comment(patch_comments);
     if (good)
     {
         patch = get_tag_value(line());
@@ -209,10 +200,9 @@ patchesfile::write_stream (std::ofstream & file)
      */
 
     write_seq66_header(file, "patches", version());
-//  write_comment(file, patches().comments_block().text());
-    write_comment(file, "Current comments handling not ready for patches.");
+    write_comment(file, get_patches_comment());
     file <<
-"\n"
+"\n\n"
 "# Patch-mapping configuration for Seq66, stored in the HOME configuration\n"
 "# directory. To use this file, add its name to the '[patch-file]' section of\n"
 "# the 'rc' file. There's no user-interface for this file.\n"
@@ -220,7 +210,7 @@ patchesfile::write_stream (std::ofstream & file)
     ;
 
     file <<
-"\n"
+"#\n"
 "# The patches section:\n"
 "#\n"
 "#  [Patch 5]. Provides the ordering number for the patch sections.\n"
@@ -230,14 +220,14 @@ patchesfile::write_stream (std::ofstream & file)
 "#  dev-name   The device's name for the patch.\n"
 "#  dev-patch  GM MIDI patch whose GM sound best matches the dev-name.\n"
 "#             (Not yet used).\n"
-"#\n"
+"\n"
     ;
 
     bool result = write_map_entries(file);
     if (result)
     {
         file
-            << "\n# End of " << name() << "\n#\n"
+            << "# End of " << name() << "\n#\n"
             << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
             ;
     }
@@ -296,6 +286,27 @@ patchesfile::write_map_entries (std::ofstream & file) const
         else
             file << lst << std::endl;
     }
+    return result;
+}
+
+/**
+ *
+ */
+
+bool
+save_patches (const std::string & destination)
+{
+    bool result = ! destination.empty();
+    if (result)
+    {
+        patchesfile patfile(destination, rc());
+        result = patfile.write();
+        if (! result)
+            file_error("Write failed", destination);
+    }
+    else
+        file_error("Patches file", "none");
+
     return result;
 }
 

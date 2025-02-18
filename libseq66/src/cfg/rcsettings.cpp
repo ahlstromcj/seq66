@@ -868,6 +868,16 @@ rcsettings::notemap_filespec () const
 }
 
 /**
+ *  Constructs the patches configuration filespec.
+ */
+
+std::string
+rcsettings::patches_filespec () const
+{
+    return filespec_helper(patches_filename());
+}
+
+/**
  *  Constructs the palette configuration filespec.
  */
 

@@ -36,6 +36,11 @@
 namespace seq66
 {
 
+/**
+ *  Note that the constructor and destructor are defaulted in the header
+ *  file.
+ */
+
 bool
 patches::add (int patchnumber, const std::string & patchname)
 {
@@ -53,14 +58,17 @@ patches::add (int patchnumber, const std::string & patchname)
 std::string
 patches::name (int patchnumber) const
 {
+    auto it = m_patch_map.find(patchnumber);
+    return it == m_patch_map.end() ? "N/A" : it->second ;
+}
+
+std::string
+patches::name_ex (int patchnumber) const
+{
     std::string result = std::to_string(patchnumber);
     auto it = m_patch_map.find(patchnumber);
     result += " ";
-    if (it == m_patch_map.end())
-        result += "N/A";
-    else
-        result += it->second;
-
+    result += it == m_patch_map.end() ? "N/A" : it->second;
     return result;
 }
 
@@ -219,6 +227,50 @@ static patches::container s_gm_program_names
     { 127, "Gunshot"                              }
 };
 
+/**
+ *  Adds a patch number/name pair to the non-GM map supported by the
+ *  patches class.
+ */
+
+bool
+add_patch (int patchnumber, const std::string & patchname)
+{
+    bool result = non_gm_patches().add(patchnumber, patchname);
+    if (result)
+        non_gm_patches().activate();
+
+    return result;
+}
+
+/**
+ *  Adds a comment to the non-GM patch set for the 'patches' file.
+ */
+
+void
+set_patches_comment (const std::string & c)
+{
+    if (non_gm_patches().active())
+        non_gm_patches().comments(c);
+}
+
+const std::string &
+get_patches_comment ()
+{
+    static const std::string s_gm_comment
+    {
+        "Provides the internal set of GM patches."
+    };
+    return non_gm_patches().active() ?
+        non_gm_patches().comments() : s_gm_comment ;
+}
+
+/**
+ *  Returns the patch number plus the patch name for the hard-wired GM
+ *  patch list. This function is used in displays and drop-down lists.
+ *
+ *  If the patch number isn't found, the name "N/A" is used.
+ */
+
 std::string
 gm_program_name (int patchnumber)
 {
@@ -233,38 +285,45 @@ gm_program_name (int patchnumber)
     return result;
 }
 
-bool
-add_patch (int patchnumber, const std::string & patchname)
-{
-    bool result = non_gm_patches().add(patchnumber, patchname);
-    if (result)
-        non_gm_patches().activate();
-
-    return result;
-}
+/**
+ *  This function returns the patch name and number from the user's
+ *  loaded non-GM patch list, if active. Otherwise, it returns the
+ *  patch name and number from the internal GM list.
+ */
 
 std::string
 program_name (int patchnumber)
 {
     return non_gm_patches().active() ?
-        non_gm_patches().name(patchnumber) : gm_program_name(patchnumber) ;
+        non_gm_patches().name_ex(patchnumber) : gm_program_name(patchnumber) ;
 }
+
+/**
+ *  This function creates a long string of all the patches in the 'patches'
+ *  file format.
+ *
+ *  Note that it depends on having the full 128-count of patches.
+ */
 
 std::string
 program_list ()
 {
     std::string result;
-    const patches::container & patch_set = non_gm_patches().active() ?
+    const patches::container & active_patch_set = non_gm_patches().active() ?
         non_gm_patches().patch_map() : s_gm_program_names ;
 
-    int count = 0;
-    for (const auto & p : patch_set)
+    int patchnumber = 0;
+    for (const auto & p : active_patch_set)
     {
-        std::string numb = std::to_string(count);
-        result = "[ Patch ";
+        auto it = s_gm_program_names.find(patchnumber);
+        std::string gmname = it == s_gm_program_names.end() ?
+            "N/A" : it->second ;
+
+        std::string numb = std::to_string(patchnumber);
+        result += "[ Patch ";
         result += numb;
         result += " ]\n\ngm-name = \"";
-        result += gm_program_name(count);
+        result += gmname;
         result += "\"\n" "gm-patch = ";
         result += numb;
         result += "\ndev-name = \"";
@@ -276,7 +335,7 @@ program_list ()
          * GM patch.
          */
 
-        ++count;
+        ++patchnumber;
     }
     return result;
 }

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-01-26
+ * \updates       2025-02-18
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -50,6 +50,7 @@
 
 #include <QButtonGroup>
 
+#include "cfg/patchesfile.hpp"          /* seq66::patchesfile class         */
 #include "midi/jack_assistant.hpp"      /* seq66::jack_assistant statics    */
 #include "os/daemonize.hpp"             /* seq66::signal_for_restart()      */
 #include "play/performer.hpp"           /* seq66::performer class           */
@@ -1965,6 +1966,31 @@ qseditoptions::setup_tab_session ()
     );
 
     /*
+     * 'patches' file.
+     */
+
+    connect
+    (
+        ui->checkBoxActivePatches, SIGNAL(clicked(bool)),
+        this, SLOT(slot_patches_active_click())
+    );
+    connect
+    (
+        ui->lineEditPatches, SIGNAL(editingFinished()),
+        this, SLOT(slot_patches_filename())
+    );
+    connect
+    (
+        ui->pushButtonLoadPatches, SIGNAL(clicked(bool)),
+        this, SLOT(slot_load_patches_filename())
+    );
+    connect
+    (
+        ui->pushButtonSavePatches, SIGNAL(clicked(bool)),
+        this, SLOT(slot_patches_save_now_click())
+    );
+
+    /*
      * 'palette' file.
      */
 
@@ -1982,6 +2008,11 @@ qseditoptions::setup_tab_session ()
     (
         ui->pushButtonLoadPalette, SIGNAL(clicked(bool)),
         this, SLOT(slot_load_palette_filename())
+    );
+    connect
+    (
+        ui->pushButtonSavePalette, SIGNAL(clicked(bool)),
+        this, SLOT(slot_palette_save_now_click())
     );
 
     /*
@@ -3103,6 +3134,98 @@ qseditoptions::load_executable_name
         lineedit->setText(qt(ncfname));
     }
     return result;
+}
+
+void
+qseditoptions::slot_patches_active_click ()
+{
+    bool on = ui->checkBoxActivePatches->isChecked();
+    if (rc().patches_filename().empty())
+    {
+        on = false;
+        ui->checkBoxActivePatches->setChecked(false);
+    }
+    rc().patches_active(on);
+    if (! on)
+        exit_required();
+
+    modify_rc();
+}
+
+void
+qseditoptions::slot_patches_save_now_click ()
+{
+    QString qs = ui->lineEditPatches->text();
+    std::string patfile = qs.toStdString();
+    if (! patfile.empty())
+    {
+        patfile = filename_base(patfile);
+        rc().patches_filename(patfile);
+    }
+    patfile = rc().patches_filespec();
+    if (! patfile.empty())
+    {
+        if (save_patches(patfile))
+        {
+            /*
+             * TMI: file_message("Saved", patfile);
+             *      exit_required();
+             */
+        }
+        else
+            file_error("Save failed", patfile);
+    }
+}
+
+void
+qseditoptions::slot_patches_filename ()
+{
+    const QString qs = ui->lineEditPatches->text();
+    std::string text = qs.toStdString();
+    if (text != rc().patches_filename())
+    {
+        if (text.empty())
+        {
+            rc().patches_filename(text);
+            ui->checkBoxActivePatches->setChecked(false);
+            ui->lineEditPatches->setToolTip("No file");
+        }
+        else
+        {
+            std::string pathname = text;
+            if (name_has_path(text))
+                text = filename_base(text);
+
+            rc().patches_filename(text);
+            tooltip_for_filename(ui->lineEditPatches, rc().patches_filespec());
+        }
+        exit_required();
+        modify_rc();
+
+        /*
+         * No saving the patches except via the Store Patches button.
+         *
+         * rc().auto_patches_save(true);
+         * ui->checkBoxSavePatches->setChecked(true);
+         */
+    }
+}
+
+void
+qseditoptions::slot_load_patches_filename ()
+{
+    if (load_file_name(ui->lineEditPatches, "patches"))
+    {
+        const QString qs = ui->lineEditPatches->text();
+        std::string text = qs.toStdString();
+        rc().patches_filename(text);
+        if (! text.empty())
+        {
+            ui->checkBoxActivePatches->setChecked(true);
+            rc().patches_active(true);
+        }
+        modify_rc();
+    }
 }
 
 /**

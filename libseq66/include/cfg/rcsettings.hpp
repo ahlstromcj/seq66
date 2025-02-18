@@ -678,6 +678,7 @@ public:
     std::string playlist_filespec () const;
     void clear_playlist (bool disable = false);
     std::string notemap_filespec () const;
+    std::string patches_filespec () const;
     std::string palette_filespec () const;
     std::string style_sheet_filespec () const;
     virtual void set_defaults () override;
@@ -1314,7 +1315,7 @@ public:
 
     const std::string & patches_filename () const
     {
-        return m_notemap_filename;
+        return m_patches_filename;
     }
 
     const std::string & palette_filename () const

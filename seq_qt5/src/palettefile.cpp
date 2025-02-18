@@ -419,11 +419,6 @@ save_palette
     if (result)
     {
         palettefile palfile(pal, destination, rc());
-
-        /*
-         * TMI: file_message("Palette save", destination);
-         */
-
         palfile.name(destination);
         result = palfile.write();
         if (! result)
