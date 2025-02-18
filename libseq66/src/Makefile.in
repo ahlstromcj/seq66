@@ -163,8 +163,8 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am_libseq66_la_OBJECTS = seq66_features.lo cfg/basesettings.lo \
 	cfg/cmdlineopts.lo cfg/comments.lo cfg/configfile.lo \
 	cfg/midicontrolfile.lo cfg/mutegroupsfile.lo \
-	cfg/notemapfile.lo cfg/playlistfile.lo cfg/rcfile.lo \
-	cfg/rcsettings.lo cfg/recent.lo cfg/scales.lo \
+	cfg/notemapfile.lo cfg/patchesfile.lo cfg/playlistfile.lo \
+	cfg/rcfile.lo cfg/rcsettings.lo cfg/recent.lo cfg/scales.lo \
 	cfg/sessionfile.lo cfg/settings.lo cfg/userinstrument.lo \
 	cfg/usermidibus.lo cfg/usrfile.lo cfg/usrsettings.lo \
 	cfg/zoomer.lo ctrl/automation.lo ctrl/keycontainer.lo \
@@ -217,15 +217,16 @@ am__depfiles_remade = ./$(DEPDIR)/seq66_features.Plo \
 	cfg/$(DEPDIR)/comments.Plo cfg/$(DEPDIR)/configfile.Plo \
 	cfg/$(DEPDIR)/midicontrolfile.Plo \
 	cfg/$(DEPDIR)/mutegroupsfile.Plo cfg/$(DEPDIR)/notemapfile.Plo \
-	cfg/$(DEPDIR)/playlistfile.Plo cfg/$(DEPDIR)/rcfile.Plo \
-	cfg/$(DEPDIR)/rcsettings.Plo cfg/$(DEPDIR)/recent.Plo \
-	cfg/$(DEPDIR)/scales.Plo cfg/$(DEPDIR)/sessionfile.Plo \
-	cfg/$(DEPDIR)/settings.Plo cfg/$(DEPDIR)/userinstrument.Plo \
-	cfg/$(DEPDIR)/usermidibus.Plo cfg/$(DEPDIR)/usrfile.Plo \
-	cfg/$(DEPDIR)/usrsettings.Plo cfg/$(DEPDIR)/zoomer.Plo \
-	ctrl/$(DEPDIR)/automation.Plo ctrl/$(DEPDIR)/keycontainer.Plo \
-	ctrl/$(DEPDIR)/keycontrol.Plo ctrl/$(DEPDIR)/keymap.Plo \
-	ctrl/$(DEPDIR)/keystroke.Plo ctrl/$(DEPDIR)/midicontrol.Plo \
+	cfg/$(DEPDIR)/patchesfile.Plo cfg/$(DEPDIR)/playlistfile.Plo \
+	cfg/$(DEPDIR)/rcfile.Plo cfg/$(DEPDIR)/rcsettings.Plo \
+	cfg/$(DEPDIR)/recent.Plo cfg/$(DEPDIR)/scales.Plo \
+	cfg/$(DEPDIR)/sessionfile.Plo cfg/$(DEPDIR)/settings.Plo \
+	cfg/$(DEPDIR)/userinstrument.Plo cfg/$(DEPDIR)/usermidibus.Plo \
+	cfg/$(DEPDIR)/usrfile.Plo cfg/$(DEPDIR)/usrsettings.Plo \
+	cfg/$(DEPDIR)/zoomer.Plo ctrl/$(DEPDIR)/automation.Plo \
+	ctrl/$(DEPDIR)/keycontainer.Plo ctrl/$(DEPDIR)/keycontrol.Plo \
+	ctrl/$(DEPDIR)/keymap.Plo ctrl/$(DEPDIR)/keystroke.Plo \
+	ctrl/$(DEPDIR)/midicontrol.Plo \
 	ctrl/$(DEPDIR)/midicontrolbase.Plo \
 	ctrl/$(DEPDIR)/midicontrolin.Plo \
 	ctrl/$(DEPDIR)/midicontrolout.Plo ctrl/$(DEPDIR)/midimacro.Plo \
@@ -593,6 +594,7 @@ libseq66_la_SOURCES = \
  cfg/midicontrolfile.cpp \
  cfg/mutegroupsfile.cpp \
  cfg/notemapfile.cpp \
+ cfg/patchesfile.cpp \
  cfg/playlistfile.cpp \
  cfg/rcfile.cpp \
  cfg/rcsettings.cpp \
@@ -751,6 +753,7 @@ cfg/midicontrolfile.lo: cfg/$(am__dirstamp) \
 cfg/mutegroupsfile.lo: cfg/$(am__dirstamp) \
 	cfg/$(DEPDIR)/$(am__dirstamp)
 cfg/notemapfile.lo: cfg/$(am__dirstamp) cfg/$(DEPDIR)/$(am__dirstamp)
+cfg/patchesfile.lo: cfg/$(am__dirstamp) cfg/$(DEPDIR)/$(am__dirstamp)
 cfg/playlistfile.lo: cfg/$(am__dirstamp) cfg/$(DEPDIR)/$(am__dirstamp)
 cfg/rcfile.lo: cfg/$(am__dirstamp) cfg/$(DEPDIR)/$(am__dirstamp)
 cfg/rcsettings.lo: cfg/$(am__dirstamp) cfg/$(DEPDIR)/$(am__dirstamp)
@@ -925,6 +928,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/midicontrolfile.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/mutegroupsfile.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/notemapfile.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/patchesfile.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/playlistfile.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/rcfile.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cfg/$(DEPDIR)/rcsettings.Plo@am__quote@ # am--include-marker
@@ -1195,6 +1199,7 @@ distclean: distclean-am
 	-rm -f cfg/$(DEPDIR)/midicontrolfile.Plo
 	-rm -f cfg/$(DEPDIR)/mutegroupsfile.Plo
 	-rm -f cfg/$(DEPDIR)/notemapfile.Plo
+	-rm -f cfg/$(DEPDIR)/patchesfile.Plo
 	-rm -f cfg/$(DEPDIR)/playlistfile.Plo
 	-rm -f cfg/$(DEPDIR)/rcfile.Plo
 	-rm -f cfg/$(DEPDIR)/rcsettings.Plo
@@ -1322,6 +1327,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f cfg/$(DEPDIR)/midicontrolfile.Plo
 	-rm -f cfg/$(DEPDIR)/mutegroupsfile.Plo
 	-rm -f cfg/$(DEPDIR)/notemapfile.Plo
+	-rm -f cfg/$(DEPDIR)/patchesfile.Plo
 	-rm -f cfg/$(DEPDIR)/playlistfile.Plo
 	-rm -f cfg/$(DEPDIR)/rcfile.Plo
 	-rm -f cfg/$(DEPDIR)/rcsettings.Plo

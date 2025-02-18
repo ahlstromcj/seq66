@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2020-10-20
+ * \updates       2025-02-17
  * \license       GNU GPLv2 or above
  *
  *  Provides support for a mute-groups configuration file.
@@ -37,7 +37,7 @@
 #include <fstream>                      /* std::ofstream and ifstream       */
 
 #include "cfg/configfile.hpp"           /* seq66::configfile class          */
-#include "play/patches.hpp"          /* seq66::patches                */
+#include "midi/patches.hpp"             /* seq66::patches                   */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

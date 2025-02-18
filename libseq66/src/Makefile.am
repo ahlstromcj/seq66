@@ -142,6 +142,7 @@ libseq66_la_SOURCES = \
  cfg/midicontrolfile.cpp \
  cfg/mutegroupsfile.cpp \
  cfg/notemapfile.cpp \
+ cfg/patchesfile.cpp \
  cfg/playlistfile.cpp \
  cfg/rcfile.cpp \
  cfg/rcsettings.cpp \

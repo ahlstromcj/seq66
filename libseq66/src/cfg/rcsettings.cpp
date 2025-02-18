@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-02-17
+ * \updates       2025-02-18
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -45,10 +45,6 @@
 #if defined SEQ66_KEEP_RC_FILE_LIST
 #include <utility>                      /* std::make_pair()                 */
 #endif
-
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
 
 namespace seq66
 {
@@ -156,6 +152,7 @@ rcsettings::rcsettings () :
     m_mute_group_filename += ".mutes";
     m_playlist_filename += ".playlist";
     m_notemap_filename += ".drums";
+    m_patches_filename += ".patches";
     m_palette_filename += ".palette";
     m_style_sheet_filename += ".qss";
     set_config_files(seq_config_name());                /* ca 2023-05-11    */
@@ -264,6 +261,7 @@ rcsettings::set_defaults ()
     m_mute_group_filename += ".mutes";
     m_playlist_filename += ".playlist";
     m_notemap_filename += ".drums";
+    m_patches_filename += ".patches";
     m_palette_filename += ".palette";
     m_style_sheet_filename += ".qss";
 

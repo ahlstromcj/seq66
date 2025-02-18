@@ -79,6 +79,7 @@ nobase_include_HEADERS = \
  cfg/midicontrolfile.hpp \
  cfg/mutegroupsfile.hpp \
  cfg/notemapfile.hpp \
+ cfg/patchesfile.hpp \
  cfg/playlistfile.hpp \
  cfg/rcfile.hpp \
  cfg/rcsettings.hpp \

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-02-17
+ * \updates       2025-02-18
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -225,7 +225,7 @@ public:
      *      -   ctrl
      *      -   drums (also covers .notemap, the same kind of configuration)
      *      -   mutes
-     *      -   palett
+     *      -   palette
      *      -   patches
      *      -   playlist
      *      -   qss
@@ -1273,6 +1273,11 @@ public:
     }
 
     bool notemap_active () const
+    {
+        return m_notemap_active;
+    }
+
+    bool patches_active () const
     {
         return m_notemap_active;
     }

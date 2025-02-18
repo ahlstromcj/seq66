@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2025-02-17
- * \updates       2025-02-17
+ * \updates       2025-02-18
  * \license       GNU GPLv2 or above
  *
  *  This module is code extracted from the controllers module for better

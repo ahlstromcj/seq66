@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-01-22
+ * \updates       2025-02-18
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -77,10 +77,6 @@ static const std::string c_interaction_method_descs[3] =
 };
 
 #endif // defined SEQ66_USE_FRUITY_CODE
-
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
 
 namespace seq66
 {
@@ -252,6 +248,20 @@ rcfile::parse ()
     active = get_file_status(file, tag, pfname);
     rc_ref().user_file_active(active);
     rc_ref().user_filename(pfname);                     /* base name        */
+
+    /*
+     * [note-mapper]
+     */
+
+    tag = "[note-mapper]";
+    active = get_file_status(file, tag, pfname);
+    rc_ref().notemap_active(active);
+    rc_ref().notemap_filename(pfname);                  /* base name    */
+
+    tag = "[patches-file]";
+    active = get_file_status(file, tag, pfname);
+    rc_ref().patches_active(active);
+    rc_ref().patches_filename(pfname);                  /* base name    */
 
     tag = "[palette-file]";
     active = get_file_status(file, tag, pfname);
@@ -615,15 +625,6 @@ rcfile::parse ()
     }
     rc_ref().notemap_active(false);
 
-    /*
-     * [note-mapper]
-     */
-
-    tag = "[note-mapper]";
-    active = get_file_status(file, tag, pfname);
-    rc_ref().notemap_active(active);
-    rc_ref().notemap_filename(pfname);                  /* base name    */
-
     tag = "[auto-option-save]";
     flag = get_boolean(file, tag, "auto-save-rc");
     rc_ref().auto_rc_save(flag);
@@ -866,6 +867,20 @@ rcfile::write ()
     std::string drumfile = rc_ref().notemap_filename();
     bool drumactive = rc_ref().notemap_active();
     write_file_status(file, "[note-mapper]", drumfile, drumactive);
+
+    /*
+     * New section for patches file.
+     */
+
+    file << "\n"
+"# Provides a flag and file-name to provide a list of patches for legacy\n"
+"# non-GM-compliant devices.\n"
+    ;
+    write_file_status
+    (
+        file, "[patches-file]",
+        rc_ref().patches_filename(), rc_ref().patches_active()
+    );
 
     /*
      * New section for palette file.

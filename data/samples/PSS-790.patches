@@ -1,0 +1,793 @@
+# Seq66 0.97.2 note-mapper ('drums') configuration file
+#
+# /home/user/.config/seq66/qseq66.drums
+# Written 2021-11-04 14:00:24
+#
+# This file provides a way to show the proper patches for a non-GM
+# device while editing a tune specifically for that device.
+#
+# Compare this to the GM_PSS-790.patches file, which will never be
+# supported.
+#
+#  [Patch 35].      Provides the program/patch number for the non-GM
+#                   device.
+#
+#  dev-name         Name of the device patch corresponding to the
+#                   non-gm patch number.
+#
+# At some point we ought to implement MIDINAM.
+
+[Seq66]
+
+config-type = "patches"
+version = 0
+
+[ Patch 0 ]
+
+gm-name = "Acoustic Grand Piano"
+gm-patch = 0
+dev-name = "Synth Brass 1"
+
+[ Patch 1 ]
+
+gm-name = "Bright Acoustic Piano"
+gm-patch = 1
+dev-name = "Jazz Organ 1"
+
+[ Patch 2 ]
+
+gm-name = "Electric Grand Piano"
+gm-patch = 2
+dev-name = "Pipe Organ"
+
+[ Patch 3 ]
+
+gm-name = "Honky-tonk Piano"
+gm-patch = 3
+dev-name = "Piano"
+
+[ Patch 4 ]
+
+gm-name = "Electric Piano 1"
+gm-patch = 4
+dev-name = "Harpsichord 1"
+
+[ Patch 5 ]
+
+gm-name = "Electric Piano 2"
+gm-patch = 5
+dev-name = "Electric Piano 1"
+
+[ Patch 6 ]
+
+gm-name = "Harpsichord"
+gm-patch = 6
+dev-name = "Celesta"
+
+[ Patch 7 ]
+
+gm-name = "Clavinet"
+gm-patch = 7
+dev-name = "Vibraphone"
+
+[ Patch 8 ]
+
+gm-name = "Celesta"
+gm-patch = 8
+dev-name = "Marimba"
+
+[ Patch 9 ]
+
+gm-name = "Glockenspiel"
+gm-patch = 9
+dev-name = "Steel Drum"
+
+[ Patch 10 ]
+
+gm-name = "Music Box"
+gm-patch = 10
+dev-name = "Violin 1"
+
+[ Patch 11 ]
+
+gm-name = "Vibraphone"
+gm-patch = 11
+dev-name = "Cello"
+
+[ Patch 12 ]
+
+gm-name = "Marimba"
+gm-patch = 12
+dev-name = "Jazz Guitar"
+
+[ Patch 13 ]
+
+gm-name = "Xylophone"
+gm-patch = 13
+dev-name = "Distortion Guitar"
+
+[ Patch 14 ]
+
+gm-name = "Tubular Bells"
+gm-patch = 14
+dev-name = "Wood Bass 1"
+
+[ Patch 15 ]
+
+gm-name = "Dulcimer"
+gm-patch = 15
+dev-name = "Trumpet"
+
+[ Patch 16 ]
+
+gm-name = "Drawbar Organ"
+gm-patch = 16
+dev-name = "Trombone"
+
+[ Patch 17 ]
+
+gm-name = "Percussive Organ"
+gm-patch = 17
+dev-name = "Horn"
+
+[ Patch 18 ]
+
+gm-name = "Rock Organ"
+gm-patch = 18
+dev-name = "Alto Sax"
+
+[ Patch 19 ]
+
+gm-name = "Church Organ"
+gm-patch = 19
+dev-name = "Clarinet"
+
+[ Patch 20 ]
+
+gm-name = "Reed Organ"
+gm-patch = 20
+dev-name = "Flute"
+
+[ Patch 21 ]
+
+gm-name = "Accordion"
+gm-patch = 21
+dev-name = "Bassoon"
+
+[ Patch 22 ]
+
+gm-name = "Harmonica"
+gm-patch = 22
+dev-name = "Harmonica"
+
+[ Patch 23 ]
+
+gm-name = "Tango Accordion"
+gm-patch = 23
+dev-name = "N/A"
+
+[ Patch 24 ]
+
+gm-name = "Acoustic Guitar (nylon)"
+gm-patch = 24
+dev-name = "Music Box"
+
+[ Patch 25 ]
+
+gm-name = "Acoustic Guitar (steel)"
+gm-patch = 25
+dev-name = "Honkytonk Piano"
+
+[ Patch 26 ]
+
+gm-name = "Electric Guitar (jazz)"
+gm-patch = 26
+dev-name = "N/A"
+
+[ Patch 27 ]
+
+gm-name = "Electric Guitar (clean)"
+gm-patch = 27
+dev-name = "Jazz Organ 2"
+
+[ Patch 28 ]
+
+gm-name = "Electric Guitar (muted)"
+gm-patch = 28
+dev-name = "Tremolo Organ"
+
+[ Patch 29 ]
+
+gm-name = "Overdriven Guitar"
+gm-patch = 29
+dev-name = "Full Organ"
+
+[ Patch 30 ]
+
+gm-name = "Distortion Guitar"
+gm-patch = 30
+dev-name = "Clavi"
+
+[ Patch 31 ]
+
+gm-name = "Guitar harmonics"
+gm-patch = 31
+dev-name = "Accordion"
+
+[ Patch 32 ]
+
+gm-name = "Acoustic Bass"
+gm-patch = 32
+dev-name = "Glockenspiel"
+
+[ Patch 33 ]
+
+gm-name = "Electric Bass (finger)"
+gm-patch = 33
+dev-name = "Steel Guitar"
+
+[ Patch 34 ]
+
+gm-name = "Electric Bass (pick)"
+gm-patch = 34
+dev-name = "Banjo"
+
+[ Patch 35 ]
+
+gm-name = "Fretless Bass"
+gm-patch = 35
+dev-name = "Bowed Bass"
+
+[ Patch 36 ]
+
+gm-name = "Slap Bass 1"
+gm-patch = 36
+dev-name = "Folk Guitar"
+
+[ Patch 37 ]
+
+gm-name = "Slap Bass 2"
+gm-patch = 37
+dev-name = "Harp"
+
+[ Patch 38 ]
+
+gm-name = "Synth Bass 1"
+gm-patch = 38
+dev-name = "Elec Bass"
+
+[ Patch 39 ]
+
+gm-name = "Synth Bass 2"
+gm-patch = 39
+dev-name = "Slap Bass"
+
+[ Patch 40 ]
+
+gm-name = "Violin"
+gm-patch = 40
+dev-name = "Ukulele"
+
+[ Patch 41 ]
+
+gm-name = "Viola"
+gm-patch = 41
+dev-name = "Strings 1"
+
+[ Patch 42 ]
+
+gm-name = "Cello"
+gm-patch = 42
+dev-name = "N/A"
+
+[ Patch 43 ]
+
+gm-name = "Contrabass"
+gm-patch = 43
+dev-name = "N/A"
+
+[ Patch 44 ]
+
+gm-name = "Tremolo Strings"
+gm-patch = 44
+dev-name = "Mute Trumpet"
+
+[ Patch 45 ]
+
+gm-name = "Pizzicato Strings"
+gm-patch = 45
+dev-name = "Synth Reed 1"
+
+[ Patch 46 ]
+
+gm-name = "Orchestral Harp"
+gm-patch = 46
+dev-name = "N/A"
+
+[ Patch 47 ]
+
+gm-name = "Timpani"
+gm-patch = 47
+dev-name = "Synth Flute 2"
+
+[ Patch 48 ]
+
+gm-name = "String Ensemble 1"
+gm-patch = 48
+dev-name = "N/A"
+
+[ Patch 49 ]
+
+gm-name = "String Ensemble 2"
+gm-patch = 49
+dev-name = "Reed Organ"
+
+[ Patch 50 ]
+
+gm-name = "Synth Strings 1"
+gm-patch = 50
+dev-name = "Strings 2"
+
+[ Patch 51 ]
+
+gm-name = "Synth Strings 2"
+gm-patch = 51
+dev-name = "Synth Strings 1"
+
+[ Patch 52 ]
+
+gm-name = "Choir Aahs"
+gm-patch = 52
+dev-name = "N/A"
+
+[ Patch 53 ]
+
+gm-name = "Voice Oohs"
+gm-patch = 53
+dev-name = "Harpsichord 2"
+
+[ Patch 54 ]
+
+gm-name = "Synth Voice"
+gm-patch = 54
+dev-name = "Electric Piano 2"
+
+[ Patch 55 ]
+
+gm-name = "Orchestra Hit"
+gm-patch = 55
+dev-name = "N/A"
+
+[ Patch 56 ]
+
+gm-name = "Trumpet"
+gm-patch = 56
+dev-name = "N/A"
+
+[ Patch 57 ]
+
+gm-name = "Trombone"
+gm-patch = 57
+dev-name = "N/A"
+
+[ Patch 58 ]
+
+gm-name = "Tuba"
+gm-patch = 58
+dev-name = "Synth Bass 1"
+
+[ Patch 59 ]
+
+gm-name = "Muted Trumpet"
+gm-patch = 59
+dev-name = "Xylophone"
+
+[ Patch 60 ]
+
+gm-name = "French Horn"
+gm-patch = 60
+dev-name = "Synth Piano 1"
+
+[ Patch 61 ]
+
+gm-name = "Brass Section"
+gm-patch = 61
+dev-name = "N/A"
+
+[ Patch 62 ]
+
+gm-name = "Synth Brass 1"
+gm-patch = 62
+dev-name = "N/A"
+
+[ Patch 63 ]
+
+gm-name = "Synth Brass 2"
+gm-patch = 63
+dev-name = "N/A"
+
+[ Patch 64 ]
+
+gm-name = "Soprano Sax"
+gm-patch = 64
+dev-name = "Fantasy"
+
+[ Patch 65 ]
+
+gm-name = "Alto Sax"
+gm-patch = 65
+dev-name = "Pizzicato Violin"
+
+[ Patch 66 ]
+
+gm-name = "Tenor Sax"
+gm-patch = 66
+dev-name = "Timpani"
+
+[ Patch 67 ]
+
+gm-name = "Baritone Sax"
+gm-patch = 67
+dev-name = "Violin 2"
+
+[ Patch 68 ]
+
+gm-name = "Oboe"
+gm-patch = 68
+dev-name = "Electric Guitar"
+
+[ Patch 69 ]
+
+gm-name = "English Horn"
+gm-patch = 69
+dev-name = "Tremolo Guitar"
+
+[ Patch 70 ]
+
+gm-name = "Bassoon"
+gm-patch = 70
+dev-name = "Mute Guitar"
+
+[ Patch 71 ]
+
+gm-name = "Clarinet"
+gm-patch = 71
+dev-name = "N/A"
+
+[ Patch 72 ]
+
+gm-name = "Piccolo"
+gm-patch = 72
+dev-name = "12-string Guitar"
+
+[ Patch 73 ]
+
+gm-name = "Flute"
+gm-patch = 73
+dev-name = "Gut Guitar"
+
+[ Patch 74 ]
+
+gm-name = "Recorder"
+gm-patch = 74
+dev-name = "N/A"
+
+[ Patch 75 ]
+
+gm-name = "Pan Flute"
+gm-patch = 75
+dev-name = "N/A"
+
+[ Patch 76 ]
+
+gm-name = "Blown Bottle"
+gm-patch = 76
+dev-name = "N/A"
+
+[ Patch 77 ]
+
+gm-name = "Shakuhachi"
+gm-patch = 77
+dev-name = "N/A"
+
+[ Patch 78 ]
+
+gm-name = "Whistle"
+gm-patch = 78
+dev-name = "Pizzicato Strings"
+
+[ Patch 79 ]
+
+gm-name = "Ocarina"
+gm-patch = 79
+dev-name = "Pick Bass"
+
+[ Patch 80 ]
+
+gm-name = "Lead 1 (square)"
+gm-patch = 80
+dev-name = "Fretless Bass"
+
+[ Patch 81 ]
+
+gm-name = "Lead 2 (sawtooth)"
+gm-patch = 81
+dev-name = "Wood Bass 2"
+
+[ Patch 82 ]
+
+gm-name = "Lead 3 (calliope)"
+gm-patch = 82
+dev-name = "Synth Brass 2"
+
+[ Patch 83 ]
+
+gm-name = "Lead 4 (chiff)"
+gm-patch = 83
+dev-name = "N/A"
+
+[ Patch 84 ]
+
+gm-name = "Lead 5 (charang)"
+gm-patch = 84
+dev-name = "N/A"
+
+[ Patch 85 ]
+
+gm-name = "Lead 6 (voice)"
+gm-patch = 85
+dev-name = "Synth Reed 2"
+
+[ Patch 86 ]
+
+gm-name = "Lead 7 (fifths)"
+gm-patch = 86
+dev-name = "Synth Bass 2"
+
+[ Patch 87 ]
+
+gm-name = "Lead 8 (bass + lead)"
+gm-patch = 87
+dev-name = "Flugelhorn"
+
+[ Patch 88 ]
+
+gm-name = "Pad 1 (new age)"
+gm-patch = 88
+dev-name = "Recorder"
+
+[ Patch 89 ]
+
+gm-name = "Pad 2 (warm)"
+gm-patch = 89
+dev-name = "N/A"
+
+[ Patch 90 ]
+
+gm-name = "Pad 3 (polysynth)"
+gm-patch = 90
+dev-name = "Orchestra Hit"
+
+[ Patch 91 ]
+
+gm-name = "Pad 4 (choir)"
+gm-patch = 91
+dev-name = "Samba Whistle"
+
+[ Patch 92 ]
+
+gm-name = "Pad 5 (bowed)"
+gm-patch = 92
+dev-name = "Brass Ensemble"
+
+[ Patch 93 ]
+
+gm-name = "Pad 6 (metallic)"
+gm-patch = 93
+dev-name = "Woodwind Ensemble"
+
+[ Patch 94 ]
+
+gm-name = "Pad 7 (halo)"
+gm-patch = 94
+dev-name = "Synth Chorus"
+
+[ Patch 95 ]
+
+gm-name = "Pad 8 (sweep)"
+gm-patch = 95
+dev-name = "Synth Piano 4"
+
+[ Patch 96 ]
+
+gm-name = "FX 1 (rain)"
+gm-patch = 96
+dev-name = "Chorus"
+
+[ Patch 97 ]
+
+gm-name = "FX 2 (soundtrack)"
+gm-patch = 97
+dev-name = "N/A"
+
+[ Patch 98 ]
+
+gm-name = "FX 3 (crystal)"
+gm-patch = 98
+dev-name = "N/A"
+
+[ Patch 99 ]
+
+gm-name = "FX 4 (atmosphere)"
+gm-patch = 99
+dev-name = "SINE WAVE???"
+
+[ Patch 100 ]
+
+gm-name = "FX 5 (brightness)"
+gm-patch = 100
+dev-name = "Percussions"
+
+[ Patch 101 ]
+
+gm-name = "FX 6 (goblins)"
+gm-patch = 101
+dev-name = "Soprano Sax"
+
+[ Patch 102 ]
+
+gm-name = "FX 7 (echoes)"
+gm-patch = 102
+dev-name = "Tenor Sax"
+
+[ Patch 103 ]
+
+gm-name = "FX 8 (sci-fi)"
+gm-patch = 103
+dev-name = "Piccolo"
+
+[ Patch 104 ]
+
+gm-name = "FX 1 (rain)"
+gm-patch = 104
+dev-name = "Brass Hit"
+
+[ Patch 105 ]
+
+gm-name = "FX 2 (soundtrack)"
+gm-patch = 105
+dev-name = "N/A"
+
+[ Patch 106 ]
+
+gm-name = "FX 3 (crystal)"
+gm-patch = 106
+dev-name = "N/A"
+
+[ Patch 107 ]
+
+gm-name = "FX 4 (atmosphere)"
+gm-patch = 107
+dev-name = "Mute Bass Echo"
+
+[ Patch 108 ]
+
+gm-name = "FX 5 (brightness)"
+gm-patch = 108
+dev-name = "Dist Guitar Flange"
+
+[ Patch 109 ]
+
+gm-name = "FX 6 (goblins)"
+gm-patch = 109
+dev-name = "Synth Strings 2"
+
+[ Patch 110 ]
+
+gm-name = "FX 7 (echoes)"
+gm-patch = 110
+dev-name = "Synth Piano 3"
+
+[ Patch 111 ]
+
+gm-name = "FX 8 (sci-fi)"
+gm-patch = 111
+dev-name = "Synth Pan Voice"
+
+[ Patch 112 ]
+
+gm-name = "Tinkle Bell"
+gm-patch = 112
+dev-name = "Synth Flute 1"
+
+[ Patch 113 ]
+
+gm-name = "Agogo"
+gm-patch = 113
+dev-name = "Synth Reed 3"
+
+[ Patch 114 ]
+
+gm-name = "Steel Drums"
+gm-patch = 114
+dev-name = "Mute Bass"
+
+[ Patch 115 ]
+
+gm-name = "Woodblock"
+gm-patch = 115
+dev-name = "Synth Brass 3"
+
+[ Patch 116 ]
+
+gm-name = "Taiko Drum"
+gm-patch = 116
+dev-name = "Mute Guitar Echo"
+
+[ Patch 117 ]
+
+gm-name = "Melodic Tom"
+gm-patch = 117
+dev-name = "Synth Piano 2"
+
+[ Patch 118 ]
+
+gm-name = "Synth Drum"
+gm-patch = 118
+dev-name = "Trumpet Echo"
+
+[ Patch 119 ]
+
+gm-name = "Reverse Cymbal"
+gm-patch = 119
+dev-name = "Synth Strings 3"
+
+[ Patch 120 ]
+
+gm-name = "Guitar Fret Noise"
+gm-patch = 120
+dev-name = "Mute Trumpet Echo"
+
+[ Patch 121 ]
+
+gm-name = "Breath Noise"
+gm-patch = 121
+dev-name = "Elec Guitar Flange"
+
+[ Patch 122 ]
+
+gm-name = "Seashore"
+gm-patch = 122
+dev-name = "Jazz Guitar Echo"
+
+[ Patch 123 ]
+
+gm-name = "Bird Tweet"
+gm-patch = 123
+dev-name = "Elec Guitar Echo"
+
+[ Patch 124 ]
+
+gm-name = "Telephone Ring"
+gm-patch = 124
+dev-name = "Gut Guitar Echo"
+
+[ Patch 125 ]
+
+gm-name = "Helicopter"
+gm-patch = 125
+dev-name = "N/A"
+
+[ Patch 126 ]
+
+gm-name = "Applause"
+gm-patch = 126
+dev-name = "N/A"
+
+[ Patch 127 ]
+
+gm-name = "Gunshot"
+gm-patch = 127
+dev-name = "N/A"
+
+# vim: ts=3 sw=3 et ft=dosini

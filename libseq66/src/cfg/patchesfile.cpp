@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2025-05-17
+ * \updates       2025-02-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -60,11 +60,10 @@ namespace seq66
 
 patchesfile::patchesfile
 (
-    patches & mapper,
     const std::string & filename,
     rcsettings & rcs
 ) :
-    configfile      (filename, rcs, ".drums"),
+    configfile      (filename, rcs, ".patches")
 {
     // Empty body
 }
@@ -91,64 +90,60 @@ patchesfile::parse_stream (std::ifstream & file)
     (void) parse_version(file);
 
     std::string s = parse_comments(file);
+#if defined USE_THIS_CODE
+
+    /*
+     *  TODO: support comments for patches.
+     */
+
     if (! s.empty())
         mapper().comments_block().set(s);
+#endif
 
-    s = get_variable(file, "[patches-flags]", "map-type");
-    if (! s.empty())
-        mapper().map_type(s);
-
-    s = get_variable(file, "[patches-flags]", "gm-channel");
-    if (! s.empty())
-        mapper().gm_channel(string_to_int(s));
-
-    if (mapper().get_direction() == patches::direction::file)
-    {
-        bool flag = get_boolean(file, "[patches-flags]", "reverse");
-        mapper().map_reversed(flag);
-    }
-
-    int note = (-1);
-    int position = find_tag(file, "[Drum ");
+    int patch = (-1);
+    int position = find_tag(file, "[Patch ");
     bool good = position > 0;
     if (good)
     {
-        note = get_tag_value(line());
+        patch = get_tag_value(line());
     }
-    if (note == (-1))
+    if (patch == (-1))
     {
-        errprint("No [Drum nn] tag value found");
+        errprint("No [Patch nn] tag value found");
         good = false;
     }
     if (good)
     {
-        for (int in_note = note; in_note < int(c_midibyte_data_max); ++in_note)
+        for (int inpatch = 0; inpatch < int(c_midibyte_data_max); ++inpatch)
         {
+            /*
+             * In the patches file, we currently do not use gm-name (not
+             * relevant to our simple setup) and gm-patch. We just want
+             * the patch number (0-127) and the name of the patch as
+             * defined by the legacy device, For now. Also, if there is
+             * no patch for the device at a given patch number, use "N/A",
+             * not an empty string.
+             */
+
             char tagtmp[24];
-            snprintf(tagtmp, sizeof tagtmp, "[Drum %d]", in_note);
+            snprintf(tagtmp, sizeof tagtmp, "[Patch %d]", inpatch);
             std::string tag = tagtmp;
-            std::string gmname = get_variable(file, tag, "gm-name");
-            good = ! gmname.empty();
+            std::string devname = get_variable(file, tag, "dev-name");
+            good = ! devname.empty();
             if (good)
             {
-                std::string tmp = get_variable(file, tag, "gm-note");
-                good = ! tmp.empty();
-                if (good)
-                {
-                    int gmnote = string_to_int(tmp);
-                    std::string devname = get_variable(file, tag, "dev-name");
-                    tmp = get_variable(file, tag, "dev-note");
-                    good = ! tmp.empty();
-                    if (good)
-                    {
-                        int devnote = string_to_int(tmp);
-                        good = mapper().add(devnote, gmnote, devname, gmname);
-                    }
-                }
+                (void) add_patch(inpatch, devname);
+            }
+            else
+            {
+                error_message
+                (
+                    "Missing dev-name for patch number", std::to_string(inpatch)
+                );
+                break;
             }
         }
     }
-    mapper().mode(result);
     return result;
 }
 
@@ -222,12 +217,13 @@ patchesfile::write_stream (std::ofstream & file)
 "# directory. To use this file, add its name to the '[patch-file]' section of\n"
 "# the 'rc' file. There's no user-interface for this file.\n"
 "#\n"
+    ;
 
     file <<
 "\n"
 "# The patches section:\n"
 "#\n"
-"#  [Patch 35]. Provides the ordering number for the patch sections.\n"
+"#  [Patch 5]. Provides the ordering number for the patch sections.\n"
 "#\n"
 "#  gm-name    GM name for the patch assigned to the patch number.\n"
 "#  gm-patch   Patch number, same as the section number.\n"
@@ -235,7 +231,7 @@ patchesfile::write_stream (std::ofstream & file)
 "#  dev-patch  GM MIDI patch whose GM sound best matches the dev-name.\n"
 "#             (Not yet used).\n"
 "#\n"
-        ;
+    ;
 
     bool result = write_map_entries(file);
     if (result)
@@ -294,26 +290,16 @@ patchesfile::write_map_entries (std::ofstream & file) const
     bool result = file.is_open();
     if (result)
     {
-#if defined THIS_CODE_IS_READY
-        int count = 0;
-
-        for (const auto & mapentry : m_note_mapper.list())
-        {
-            file
-                << "[Drum " << mapentry.second.dev_value() << "]" << "\n\n"
-                << mapentry.second.to_string()
-                << "\n"
-                ;
-            ++count;
-        }
-        if (count == 0)
-        {
-            file << "No patches to write\n.";
-        }
-#endif
+        std::string lst = program_list();   /* constructed in patches.cpp   */
+        if (lst.empty())
+            file << "No patches to write." << std::endl;
+        else
+            file << lst << std::endl;
     }
     return result;
 }
+
+#if 0
 
 /**
  *  This function reads the source patches file and then saves it to the new
@@ -362,6 +348,8 @@ copy_patches
 
     return result;
 }
+
+#endif      // 0
 
 }           // namespace seq66
 
