@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-05-05
+ * \updates       2025-02-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -195,6 +195,7 @@ private slots:
     void slot_event_category (int index);
     void slot_hex_data_state (int state);
     void slot_pulse_time_state (int state);
+    void slot_ev_data_0_edit (const QString &);
     void slot_meta_text_change ();
 
 private:
@@ -241,6 +242,14 @@ private:
      */
 
     bool m_initialized;
+
+    /**
+     *  Indicates if the user has selected Channel Message and either
+     *  Control or Program. We'd like to do a name lookup for these values.
+     */
+
+    bool m_in_control;
+    bool m_in_program;
 
     /**
      *  Indicates a modification is active.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2025-01-27
+ * \updates       2025-02-19
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -53,6 +53,7 @@
 #include "cfg/cmdlineopts.hpp"          /* static command-line functions    */
 #include "cfg/midicontrolfile.hpp"      /* seq66::midicontrolfile functions */
 #include "cfg/notemapfile.hpp"          /* seq66::notemapfile functions     */
+#include "cfg/patchesfile.hpp"          /* seq66::patchesfile functions     */
 #include "cfg/playlistfile.hpp"         /* seq66::playlistfile functions    */
 #include "cfg/rcfile.hpp"               /* seq66::rcfile functions          */
 #include "cfg/sessionfile.hpp"          /* seq66::sessionfile               */
@@ -589,6 +590,30 @@ smanager::open_note_mapper ()
 }
 
 /**
+ *  We don't need the performer for this action, because the patches
+ *  list affects only the user interface, not playback/recording.
+ */
+
+bool
+smanager::open_patch_file ()
+{
+    bool result = false;
+    std::string patchesname = rc().patches_filespec();
+    if (rc().patches_active() && ! patchesname.empty())
+    {
+        result = open_patches(patchesname);
+
+        /*
+         * Hmmmmmmmmmmmm
+         */
+
+        if (! result)
+            result = true;                          /* avoid early exit  */
+    }
+    return result;
+}
+
+/**
  *  Encapsulates opening the MIDI file, if specified (on the command-line).
  *
  * \return
@@ -735,6 +760,14 @@ smanager::save_session (std::string & msg, bool ok)
                 if (! cmdlineopts::write_options_files())
                     msg = "Config writes failed";
             }
+
+            /*
+             * Not able to save at exit: 'palette', 'patches', 'qss'.
+             * The first two can be saved in Edit / Preferences /
+             * Session, which dumps the read-in values or the internal
+             * values.
+             */
+
             if (rc().auto_ctrl_save())
             {
                 std::string mcfname = rc().midi_control_filespec();
@@ -1043,6 +1076,9 @@ smanager::create (int argc, char * argv [])
         ok = open_playlist();
         if (ok)
             ok = open_note_mapper();
+
+        if (ok)
+            ok = open_patch_file();
 
 #if defined USE_CRIPPLED_RUN
 

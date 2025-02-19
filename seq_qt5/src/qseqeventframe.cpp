@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-12-09
+ * \updates       2025-02-19
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -36,6 +36,7 @@
 
 #include "cfg/settings.hpp"             /* SEQ66_QMAKE_RULES indirectly     */
 #include "midi/controllers.hpp"         /* seq66::controller_name(), etc.   */
+#include "midi/patches.hpp"             /* seq66::program_name(), etc.      */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "util/filefunctions.hpp"       /* seq66::filename_split()          */
 #include "util/strfunctions.hpp"        /* seq66::string_to_midi_bytes()    */
@@ -110,6 +111,8 @@ qseqeventframe::qseqeventframe
     m_show_data_as_hex      (false),
     m_show_time_as_pulses   (false),
     m_initialized           (false),
+    m_in_control            (false),
+    m_in_program            (false),
     m_is_dirty              (false),
     m_no_channel_index      (c_midichannel_max)
 {
@@ -202,7 +205,12 @@ qseqeventframe::qseqeventframe
     ui->button_blank->setEnabled(false);            /* not yet in use   */
 
     /*
-     * The (new) "Category" combo-box.
+     * The (new) "Category" combo-box. This contains the following entries:
+     *
+     *      -   0. Channel Message
+     *      -   1. System Message
+     *      -   2. Meta Event
+     *      -   3. SeqSpec Event (disabled)
      */
 
     populate_category_combo();
@@ -252,6 +260,16 @@ qseqeventframe::qseqeventframe
     (
         ui->pulse_time_check_box, SIGNAL(stateChanged(int)),
         this, SLOT(slot_pulse_time_state(int))
+    );
+
+    /*
+     *  Experimental. Monitor the D0 field for changes via user edit.
+     */
+
+    connect
+    (
+        ui->entry_ev_data_0, SIGNAL(textEdited(QString)),
+        this, SLOT(slot_ev_data_0_edit(QString))
     );
 
     /*
@@ -383,14 +401,14 @@ qseqeventframe::populate_category_combo ()
 
 /**
  *  Populates combo_ev_name with the status values of Channel events.
+ *  See s_channel_event_names[] in  the editable_event module.
  */
 
 void
 qseqeventframe::populate_status_combo ()
 {
     ui->combo_ev_name->clear();
-    int counter = 0;
-    for ( ; /* counter value */ ; ++counter)
+    for (int counter = 0; /* counter value */ ; ++counter)
     {
         std::string name = editable_event::channel_event_name(counter);
         if (name.empty())
@@ -538,14 +556,50 @@ qseqeventframe::slot_midi_channel (int /*index*/)
  *  a Meta event in the table, or by the user preparing to insert a new
  *  Meta event.  Note that clearing the text inserts the placeholder
  *  text.
+ *
+ *  For reference during trouble shooting, here are the indices:
+ *
+ *      -   (-1). Empty string.
+ *      -   0. Note Off
+ *      -   1. Note On
+ *      -   2. Aftertouch
+ *      -   3. Control
+ *      -   4. Program
+ *      -   5. Ch Pressure
+ *      -   7. Pitchwheel
+ *
+ *  For Control and Program, we would like to show the name of the item
+ *  selected, by number, in the D0 field as data is entered.
  */
 
 void
-qseqeventframe::slot_event_name (int /*index*/)
+qseqeventframe::slot_event_name (int index)
 {
     /*
      * ui->plainTextEdit->clear();
      */
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    QString eqs = ui->combo_ev_name->currentText();
+    std::string es = eqs.toStdString();
+    printf("slot_event_name(%d) == %s\n", index, CSTR(es));
+#endif
+
+    if (index == 3)
+    {
+        m_in_control = true;
+        m_in_program = false;
+    }
+    else if (index == 4)
+    {
+        m_in_control = false;
+        m_in_program = true;
+    }
+    else
+    {
+        m_in_control = false;
+        m_in_program = false;
+    }
 }
 
 /**
@@ -610,6 +664,26 @@ qseqeventframe::slot_meta_text_change ()
      *  std::string rem = int_to_string(int(remainder));
      *  ui->labelCharactersRemaining->setText(qt(rem));
      */
+}
+
+void
+qseqeventframe::slot_ev_data_0_edit (const QString & qs)
+{
+    bool success;
+    int d0 = qs.toInt(&success, 0);     /* convert by C rules (0n, 0xn, etc */
+    if (success)
+    {
+        if (m_in_control)               // printf("Control edit %d\n", d0);
+        {
+            std::string cname = controller_name(d0);
+            ui->plainTextEdit->document()->setPlainText(qt(cname));
+        }
+        else if (m_in_program)          // printf("Program edit %d\n", d0);
+        {
+            std::string pname = program_name(d0);
+            ui->plainTextEdit->document()->setPlainText(qt(pname));
+        }
+    }
 }
 
 /**
@@ -868,7 +942,7 @@ qseqeventframe::set_event_data_1 (const std::string & d)
 void
 qseqeventframe::set_event_plaintext (const std::string & t)
 {
-    std::string temp = string_to_midi_bytes(t); // TODO
+    std::string temp = string_to_midi_bytes(t);         // TODO
     QString text = qt(temp);
     populate_meta_combo();
     ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
@@ -878,8 +952,8 @@ qseqeventframe::set_event_plaintext (const std::string & t)
 void
 qseqeventframe::set_event_system (const std::string & t)
 {
-    std::string temp = string_to_midi_bytes(t); // TODO
-    QString text = qt(temp);                           // convert to hex bytes?
+    std::string temp = string_to_midi_bytes(t);         // TODO
+    QString text = qt(temp);                            // convert to hex bytes?
     populate_system_combo();
     ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
     ui->plainTextEdit->document()->setPlainText(text);
@@ -1296,7 +1370,7 @@ qseqeventframe::slot_modify ()
 
 /**
  *  Handles saving the edited data back to the original sequence, now called
- *  "Storing"..
+ *  "Store".
  *
  *  The event list in the original sequence is cleared, and the editable
  *  events are converted to plain events, and added to the container, one by

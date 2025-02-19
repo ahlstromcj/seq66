@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2025-02-18
+ * \updates       2025-02-19
  * \license       GNU GPLv2 or above
  *
  *  Provides support for a mute-groups configuration file.
@@ -95,7 +95,13 @@ private:
  *  Free functions
  */
 
+extern bool open_patches (const std::string & source);
 extern bool save_patches (const std::string & destination);
+extern bool save_patches
+(
+    const std::string & source,
+    const std::string & destination
+);
 
 #if 0
 

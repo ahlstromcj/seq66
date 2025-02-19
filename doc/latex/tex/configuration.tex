@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2024-12-02
+% \update      2025-02-19
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -726,6 +726,29 @@
    For the usage of the note-mapper, see
    \figureref{fig:pattern_editor_oneshot_recording}, and the surrounding
    discussion.
+
+\subsubsection{'rc' File / Patches (Program Changes)}
+\label{subsubsec:configuration_rc_patches}
+
+   \begin{verbatim}
+      [patches-file]
+      active = false
+      name = "PSS-790.patches"
+   \end{verbatim}
+
+   The built-in GM patch mapping provides for showing the instrument
+   name when dragging a Program Change up or down. The patches-file
+   allows one to show the instrument names for an old pre-GM
+   MIDI synthesizer. See the file \texttt{PSS-790} in the 
+   \texttt{data/samples} directory.
+
+   The usage of these instrument names is not yet universal in the user
+   interface. More work to do.
+
+   Note that one can also assign alternate instrument names and alternate
+   controller values in the 'usr' file.
+
+   At some point we might take on the usage of the MIDINAM format.
 
 \subsubsection{'rc' File / MIDI-Clock Section}
 \label{subsec:configuration_rc_midi_clock}

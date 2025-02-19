@@ -2684,7 +2684,8 @@ qseditoptions::sync_rc ()
 #if defined SEQ66_CAN_SAVE_DRUMS
 
     /*
-     * No way to edit drums, so no need to save them.
+     * No way to edit drums, so no need to save them. This also applies
+     * to patches, palette, and style-sheets.
      */
 
     ui->checkBoxSaveDrums->setChecked(rc().auto_drums_save());  /* read-only */
@@ -2693,6 +2694,10 @@ qseditoptions::sync_rc ()
 
     ui->checkBoxActiveDrums->setChecked(rc().notemap_active());
     tooltip_for_filename(ui->lineEditDrums, filespec);
+
+    filespec = rc().patches_filespec();
+    ui->checkBoxActivePatches->setChecked(rc().patches_active());
+    tooltip_for_filename(ui->lineEditPatches, filespec);
 
     filespec = rc().palette_filespec();
     ui->checkBoxActivePalette->setChecked(rc().palette_active());

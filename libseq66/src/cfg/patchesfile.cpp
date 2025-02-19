@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2025-02-18
+ * \updates       2025-02-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -157,7 +157,7 @@ patchesfile::parse ()
     bool result = ! name().empty() && file.is_open();
     if (result)
     {
-        file_message("Read drums", name());
+        file_message("Read patches", name());
         result = parse_stream(file);
     }
     else
@@ -289,9 +289,31 @@ patchesfile::write_map_entries (std::ofstream & file) const
     return result;
 }
 
-/**
- *
- */
+bool
+open_patches (const std::string & source)
+{
+    bool result = ! source.empty();
+    if (result)
+    {
+        patchesfile patfile(source, rc());     /* add msg? */
+        result = patfile.parse();
+        if (result)
+        {
+            // Anything worth doing?
+        }
+        else
+        {
+            std::string msg = "Open failed: ";
+            msg += source;
+            (void) error_message(msg);
+        }
+    }
+    else
+    {
+        file_error("Patches file to open", "none");
+    }
+    return result;
+}
 
 bool
 save_patches (const std::string & destination)
@@ -303,6 +325,52 @@ save_patches (const std::string & destination)
         result = patfile.write();
         if (! result)
             file_error("Write failed", destination);
+    }
+    else
+        file_error("Patches file", "none");
+
+    return result;
+}
+
+/**
+ *  This function reads the source patches file and then saves it to the new
+ *  location.
+ *
+ *  \param [inout] pal
+ *      Provides the patches object.
+ *
+ *  \param source
+ *      Provides the input file name from which the patches will be filled.
+ *
+ *  \param destination
+ *      Provides the directory to which the play-list file is to be saved.
+ *
+ * \return
+ *      Returns true if the operation succeeded.
+ */
+
+bool
+save_patches
+(
+    const std::string & source,
+    const std::string & destination
+)
+{
+    bool result = ! source.empty();
+    if (result)
+    {
+        std::string msg = source + " --> " + destination;
+        patchesfile patfile(source, rc());
+
+        /*
+         * TMI: file_message("Palette save", msg);
+         */
+
+        result = patfile.parse();
+        if (result)
+            result = save_patches(destination);
+        else
+            file_error("Open failed", source);
     }
     else
         file_error("Patches file", "none");

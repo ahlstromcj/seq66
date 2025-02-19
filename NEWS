@@ -1,12 +1,10 @@
 NEWS for Seq66 0.99.19
 Chris Ahlstrom
-2015-07-10 to 2025-02-16
+2015-07-10 to 2025-02-19
 
 # Change Log
 
-## [0.99.19] - 2025-02-16
-
-To do.
+## [0.99.19] - 2025-02-19
 
 ### Fixed
 
@@ -28,6 +26,10 @@ To do.
 -   This macro is defined by default: SEQ66\_SHOW\_GM\_PROGRAM\_NAME
     to show the GM patch names in the pattern editor data pane
     instead of just the patch/program number. See seq66\_features.h.
+-   Added a new configuration file, '.patches' that can be used
+    to show non-GM device program names in lieu of the built-in
+    GM program name. Also specifiable in the Preferences / Session
+    tab.
 
 ## [0.99.18] - 2025-02-03
 

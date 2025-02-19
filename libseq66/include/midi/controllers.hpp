@@ -165,7 +165,7 @@ enum class cc
 /**
  *  Provides the default names of MIDI controllers, which a specified in the
  *  controllers.cpp module.  This array is used
- *  only by the qseqedit classes.
+ *  only by the qseqedit and qseqeventframe classes.
  *
  *  We could make this list a configuration option.  Overkill? No, it is
  *  already configuration in the 'usr' file.  So at some point we offload this

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-02-18
+ * \updates       2025-02-19
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -1280,7 +1280,7 @@ public:
 
     bool patches_active () const
     {
-        return m_notemap_active;
+        return m_patches_active;
     }
 
     bool palette_active () const
@@ -1458,15 +1458,30 @@ public:
         m_save_list.set("ctrl", flag);
     }
 
+    /*
+     * Used in smanager and set in qseditoptions.
+     */
+
     void auto_drums_save (bool flag)
     {
         m_save_list.set("drums", flag);
     }
 
+    /*
+     * Used in qt5nsmanager, but not set anywhere.
+     */
+
     void auto_palette_save (bool flag)
     {
         m_save_list.set("palette", flag);
     }
+
+    /*
+     *  void auto_palette_save (bool flag)
+     *  {
+     *      m_save_list.set("palette", flag);
+     *  }
+     */
 
     void save_old_triggers (bool flag)
     {
