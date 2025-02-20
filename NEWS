@@ -16,6 +16,8 @@ Chris Ahlstrom
                 the proper time-stamp.
             -   Program events can be moved up and down by dragging,
                 as well as by the line-dragging method.
+        -   Added display of the names of Control and Program
+            Change numbers in the event editor.
 -   Pressing the finger button in the pattern editor now
     also enters paint mode in the event pane. The selected event
     category can the be entered by a click, and then moved up and

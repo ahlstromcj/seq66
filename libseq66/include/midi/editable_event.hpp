@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2023-05-04
+ * \updates       2025-02-20
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -425,6 +425,8 @@ public:
     static std::string system_event_name (int index);
     static std::string meta_event_name (int index);
     static std::string seqspec_event_name (int index);
+
+    static int channel_event_index (const std::string & name);
 
 private:
 

@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-02-14
+ * \updates       2025-02-20
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -57,6 +57,7 @@ namespace seq66
  */
 
 const std::string SEQ66_WHITE_CHARS       = " \t\r\n\v\f";
+const std::string SEQ66_DIGIT_CHARS       = "0123456789";
 const std::string SEQ66_TRIM_CHARS        = " \t\r\n\v\f";
 const std::string SEQ66_TRIM_CHARS_QUOTES = " \t\r\n\v\f\"'";
 const std::string SEQ66_TRIM_CHARS_PATHS  = " /\\";
@@ -174,6 +175,10 @@ extern std::string int_to_string (int value);
 extern bool string_not_void (const std::string & s);
 extern bool string_is_void (const std::string & s);
 extern bool strings_match (const std::string & target, const std::string & x);
+extern bool strings_match_ex
+(
+    const std::string & target, const std::string & x
+);
 extern std::string tolower (const std::string & source);
 extern std::string toupper (const std::string & source);
 extern std::string capitalize (const std::string & source);

@@ -1,11 +1,11 @@
 TO DO for Seq66 0.99.19
 Chris Ahlstrom
-2019-04-13 to 2025-02-19
+2019-04-13 to 2025-02-20
 
 Backlog:
 
-    -   Finish making Program and Control update the meta-text-pane
-        whenever the D0 field is initialized.
+    -   The event panel if offset rightward a few (3?) pixels from the
+        piano roll when scroll to the rightmost position.
     -   Add add_config_filespec() calls for "notemap" and
         "patches". See all references to SEQ66_KEEP_RC_FILE_LIST.
     -   Add a light version of glob(3) to use with Windows.

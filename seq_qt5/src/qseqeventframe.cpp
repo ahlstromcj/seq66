@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2025-02-19
+ * \updates       2025-02-20
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -35,8 +35,8 @@
 #include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
 
 #include "cfg/settings.hpp"             /* SEQ66_QMAKE_RULES indirectly     */
-#include "midi/controllers.hpp"         /* seq66::controller_name(), etc.   */
-#include "midi/patches.hpp"             /* seq66::program_name(), etc.      */
+#include "midi/controllers.hpp"         /* seq66::controller_name() etc.    */
+#include "midi/patches.hpp"             /* seq66::program_name() etc.       */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "util/filefunctions.hpp"       /* seq66::filename_split()          */
 #include "util/strfunctions.hpp"        /* seq66::string_to_midi_bytes()    */
@@ -548,6 +548,31 @@ qseqeventframe::slot_midi_channel (int /*index*/)
 }
 
 /**
+ *  Checks the given index (from the Channel Message-enabled drop-down)
+ *  in order to set a couple of flags.
+ */
+
+void
+qseqeventframe::check_channel_msg_index (int index)
+{
+    if (index == 3)
+    {
+        m_in_control = true;
+        m_in_program = false;
+    }
+    else if (index == 4)
+    {
+        m_in_control = false;
+        m_in_program = true;
+    }
+    else
+    {
+        m_in_control = false;
+        m_in_program = false;
+    }
+}
+
+/**
  *  Called when the user clicks a row. The following is disabled as
  *  it is always called near the end of the process so that the text
  *  does not show up.
@@ -585,21 +610,7 @@ qseqeventframe::slot_event_name (int index)
     printf("slot_event_name(%d) == %s\n", index, CSTR(es));
 #endif
 
-    if (index == 3)
-    {
-        m_in_control = true;
-        m_in_program = false;
-    }
-    else if (index == 4)
-    {
-        m_in_control = false;
-        m_in_program = true;
-    }
-    else
-    {
-        m_in_control = false;
-        m_in_program = false;
-    }
+    check_channel_msg_index(index);
 }
 
 /**
@@ -648,22 +659,62 @@ qseqeventframe::slot_pulse_time_state (int state)
  *
  *  There's actually nothing to do here. And the pattern is not
  *  dirty until the Modify or Insert button is pressed.
+ *
+ *  We let the user enter any amount of text here.  We might
+ *  have a ton of SysEx bytes, for example.
+ *
+ *      set_dirty();
+ *      std::string text = string_to_midi_bytes(qtex.toStdString());
+ *      size_t remainder = c_meta_text_limit - text.size();
+ *      std::string rem = int_to_string(int(remainder));
+ *      ui->labelCharactersRemaining->setText(qt(rem));
+ *
+ * This function is called whenever the text changes. How can we
+ * manage this when editing Control or Program names (instead of Meta
+ * text or Tempo)?
  */
 
 void
 qseqeventframe::slot_meta_text_change ()
 {
+#if defined USE_THIS_CODE
+
     /*
-     * We let the user enter any amount of text here.  We might
-     * have a ton of SysEx bytes, for example.
-     *
-     *  set_dirty();
-     *
-     *  std::string text = string_to_midi_bytes(qtex.toStdString());
-     *  size_t remainder = c_meta_text_limit - text.size();
-     *  std::string rem = int_to_string(int(remainder));
-     *  ui->labelCharactersRemaining->setText(qt(rem));
+     * We wanted to be able to type in control or program names to
+     * translate them to D0 values. But this is all but unworkable.
      */
+
+    if (m_in_control)
+    {
+        std::string text = ui->plainTextEdit->toPlainText().toStdString();
+        printf("Control change %s\n", CSTR(text));
+    }
+    else if (m_in_program)
+    {
+        std::string text = ui->plainTextEdit->toPlainText().toStdString();
+        printf("Program change %s\n", CSTR(text));
+    }
+
+#endif
+}
+
+/**
+ *  Helper for slot_ev_data_0_edit() and set_event_data_0().
+ */
+
+void
+qseqeventframe::data_0_helper (int d0)
+{
+    if (m_in_control)
+    {
+        std::string cname = controller_name(d0);
+        ui->plainTextEdit->document()->setPlainText(qt(cname));
+    }
+    else if (m_in_program)              /* printf("Program edit %d\n", d0)  */
+    {
+        std::string pname = program_name(d0);
+        ui->plainTextEdit->document()->setPlainText(qt(pname));
+    }
 }
 
 void
@@ -672,18 +723,7 @@ qseqeventframe::slot_ev_data_0_edit (const QString & qs)
     bool success;
     int d0 = qs.toInt(&success, 0);     /* convert by C rules (0n, 0xn, etc */
     if (success)
-    {
-        if (m_in_control)               // printf("Control edit %d\n", d0);
-        {
-            std::string cname = controller_name(d0);
-            ui->plainTextEdit->document()->setPlainText(qt(cname));
-        }
-        else if (m_in_program)          // printf("Program edit %d\n", d0);
-        {
-            std::string pname = program_name(d0);
-            ui->plainTextEdit->document()->setPlainText(qt(pname));
-        }
-    }
+        data_0_helper(d0);              /* can provide a string for d0      */
 }
 
 /**
@@ -898,6 +938,16 @@ qseqeventframe::set_event_name (const std::string & n)
 {
     QString name = qt(n);
     ui->combo_ev_name->setCurrentText(name);
+
+    /*
+     * Need to call this because slot_event_name does not get called.
+     * Code duplicated in slot_event_name().
+     *
+     * FIXME
+     */
+
+    int index = editable_event::channel_event_index(n);
+    check_channel_msg_index(index);
 }
 
 void
@@ -910,16 +960,18 @@ qseqeventframe::set_event_channel (int channel)
 }
 
 /**
- *  Sets ui->entry_ev_data_0 to the first data byte string.
+ *  Sets ui->entry_ev_data_0 to the first data byte string. We have to call a
+ *  helper function because this setting is not treated as a user edit.
  *
- * \param d
+ * \param d0
  *      The first data byte string for the current event.
  */
 
 void
-qseqeventframe::set_event_data_0 (const std::string & d)
+qseqeventframe::set_event_data_0 (const std::string & d0)
 {
-    ui->entry_ev_data_0->setText(qt(d));
+    ui->entry_ev_data_0->setText(qt(d0));
+    data_0_helper(string_to_int(d0));
 }
 
 /**
@@ -1079,12 +1131,12 @@ qseqeventframe::set_dirty (bool flag)
     }
     if (flag)
     {
-        if (m_initialized)
-        {
+//      if (m_initialized)
+//      {
             ui->button_save->setEnabled(true);
             (void) qt_set_color("#AAAA00", ui->button_save);
             m_is_dirty = true;
-        }
+//      }
     }
     else
     {

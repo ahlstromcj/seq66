@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-12-29
+ * \updates       2025-02-20
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -337,6 +337,27 @@ editable_event::channel_event_name (int index)
 }
 
 /**
+ * The inverse of channel_event_name()
+ */
+
+int
+editable_event::channel_event_index (const std::string & name)
+{
+    int result = (-1);
+    int counter = 0;
+    while (s_channel_event_names[counter].event_value != s_end_of_table)
+    {
+        if (s_channel_event_names[counter].event_name == name)
+        {
+            result = s_channel_event_names[counter].event_index;
+            break;
+        }
+        ++counter;
+    }
+    return result;
+}
+
+/**
  *  A static member function used to fill a system-event combo-box.
  */
 
@@ -454,7 +475,8 @@ editable_event::value_to_name
 
 /**
  *  Provides a static lookup function that returns the value, if any,
- *  associated with a name string.  The string_match() function, which can
+ *  associated with a name string.  The string_match_ex() function, which can
+ *  skip spacing, numbers, and various non-letter characters, and which can
  *  match abbreviations, case-insensitively, is used to make the string
  *  comparisons.
  *
@@ -484,7 +506,7 @@ editable_event::name_to_value
         midibyte counter = 0;
         while (table[counter].event_value != s_end_of_table)
         {
-            if (strings_match(table[counter].event_name, name))
+            if (strings_match_ex(table[counter].event_name, name))
             {
                 result = table[counter].event_value;
                 break;

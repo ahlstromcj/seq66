@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2025-02-03
+ * \updates       2025-02-20
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1088,6 +1088,32 @@ strings_match (const std::string & target, const std::string & x)
                 }
             }
         }
+    }
+    return result;
+}
+
+/**
+ *  This function is strings_match(), with the added feature that it skips
+ *  leading digits and white-space before doing the match.
+ */
+
+bool
+strings_match_ex (const std::string & target, const std::string & x)
+{
+    bool result = ! target.empty();
+    if (result)
+    {
+        static const std::string s_skip_set
+        {
+            "(!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"   /* ispunct  */
+            "0123456789"                            /* digits   */
+            " \t\r\n\v\f"                           /* white    */
+        };
+        std::string::size_type pos = x.find_first_not_of(s_skip_set);
+        std::string trimmed_x = x.substr(pos);
+        result = ! trimmed_x.empty();
+        if (result)
+            result = strings_match(target, trimmed_x);
     }
     return result;
 }

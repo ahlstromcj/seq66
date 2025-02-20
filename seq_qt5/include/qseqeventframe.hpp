@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2025-02-19
+ * \updates       2025-02-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -97,6 +97,10 @@ public:
     );
     virtual ~qseqeventframe ();
 
+    /*
+     * Called only externally by qsmainwind::load_event_editor().
+     */
+
     void set_initialized ()
     {
          m_initialized = true;
@@ -149,6 +153,8 @@ private:
     bool initialize_table ();
     std::string make_seq_title ();
     std::string get_lengths ();
+    void data_0_helper (int d0);
+    void check_channel_msg_index (int index);
 
     sequence & track ()
     {

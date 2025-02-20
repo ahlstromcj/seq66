@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>713</width>
-    <height>455</height>
+    <width>674</width>
+    <height>364</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,7 +24,7 @@
     <rect>
      <x>12</x>
      <y>8</y>
-     <width>671</width>
+     <width>631</width>
      <height>38</height>
     </rect>
    </property>
@@ -45,7 +45,7 @@
     <item>
      <spacer name="horizontalSpacer">
       <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+       <enum>Qt::Orientation::Horizontal</enum>
       </property>
       <property name="sizeHint" stdset="0">
        <size>
@@ -72,7 +72,7 @@
        <string>Pattern No. </string>
       </property>
       <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
       </property>
      </widget>
     </item>
@@ -99,10 +99,10 @@
        </font>
       </property>
       <property name="frameShape">
-       <enum>QFrame::Box</enum>
+       <enum>QFrame::Shape::Box</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
+       <enum>QFrame::Shadow::Sunken</enum>
       </property>
       <property name="lineWidth">
        <number>2</number>
@@ -138,7 +138,7 @@
        <string>Max. Tick</string>
       </property>
       <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
       </property>
      </widget>
     </item>
@@ -162,10 +162,10 @@
        </font>
       </property>
       <property name="frameShape">
-       <enum>QFrame::Box</enum>
+       <enum>QFrame::Shape::Box</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
+       <enum>QFrame::Shadow::Sunken</enum>
       </property>
       <property name="lineWidth">
        <number>2</number>
@@ -183,7 +183,7 @@
      <x>8</x>
      <y>56</y>
      <width>261</width>
-     <height>151</height>
+     <height>131</height>
     </rect>
    </property>
    <property name="font">
@@ -201,9 +201,9 @@
     <property name="geometry">
      <rect>
       <x>9</x>
-      <y>36</y>
+      <y>33</y>
       <width>251</width>
-      <height>111</height>
+      <height>91</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
@@ -289,8 +289,8 @@ accounting for the time of the last event.</string>
     <rect>
      <x>530</x>
      <y>56</y>
-     <width>161</width>
-     <height>271</height>
+     <width>121</width>
+     <height>221</height>
     </rect>
    </property>
    <property name="font">
@@ -312,9 +312,9 @@ accounting for the time of the last event.</string>
     <property name="geometry">
      <rect>
       <x>8</x>
-      <y>40</y>
-      <width>141</width>
-      <height>200</height>
+      <y>35</y>
+      <width>101</width>
+      <height>181</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -427,9 +427,9 @@ accounting for the time of the last event.</string>
    <property name="geometry">
     <rect>
      <x>8</x>
-     <y>218</y>
+     <y>190</y>
      <width>221</width>
-     <height>211</height>
+     <height>161</height>
     </rect>
    </property>
    <property name="font">
@@ -446,7 +446,7 @@ accounting for the time of the last event.</string>
       <x>12</x>
       <y>24</y>
       <width>201</width>
-      <height>171</height>
+      <height>121</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -529,9 +529,9 @@ the measures.</string>
   <widget class="QWidget" name="layoutWidgetAlignLeft">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>360</y>
-     <width>401</width>
+     <x>250</x>
+     <y>310</y>
+     <width>381</width>
      <height>38</height>
     </rect>
    </property>
@@ -592,7 +592,7 @@ the measures.</string>
      <x>270</x>
      <y>56</y>
      <width>258</width>
-     <height>271</height>
+     <height>251</height>
     </rect>
    </property>
    <property name="sizePolicy">
