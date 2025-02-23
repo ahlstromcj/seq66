@@ -717,6 +717,11 @@ qseqeventframe::data_0_helper (int d0)
     }
 }
 
+/**
+ *  We could upgrade set_event_plaintext() & qseventslots::set_current_event()
+ *  to do this.
+ */
+
 void
 qseqeventframe::slot_ev_data_0_edit (const QString & qs)
 {
@@ -988,13 +993,15 @@ qseqeventframe::set_event_data_1 (const std::string & d)
 }
 
 /**
- *  TODO: handle string_to_midi_bytes() vs midi_bytes_to_string().
+ *  Also, we use data_0_helper() for program change and controller
+ *  events to display text. The rest are handled in
+ *  qseventslots::set_current_event().
  */
 
 void
 qseqeventframe::set_event_plaintext (const std::string & t)
 {
-    std::string temp = string_to_midi_bytes(t);         // TODO
+    std::string temp = string_to_midi_bytes(t);
     QString text = qt(temp);
     populate_meta_combo();
     ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
@@ -1004,7 +1011,7 @@ qseqeventframe::set_event_plaintext (const std::string & t)
 void
 qseqeventframe::set_event_system (const std::string & t)
 {
-    std::string temp = string_to_midi_bytes(t);         // TODO
+    std::string temp = string_to_midi_bytes(t);
     QString text = qt(temp);                            // convert to hex bytes?
     populate_system_combo();
     ui->channel_combo_box->setCurrentIndex(m_no_channel_index);

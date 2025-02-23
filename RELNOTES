@@ -1,42 +1,27 @@
-Release Notes for Seq66 v. 0.99.19 2025-02-03
+Release Notes for Seq66 v. 0.99.19 2025-02-21
 
-This release contains fixes for dark themes, fixes to project
-import/export, a new Help feature, and other updates.
+This release contains fixes for controller/patch handling,
+and other updates.
 
 Fixes for reported issues:
 
-- Issue #135.
-  - Added an inverse pattern-length icon for dark themes.
-  - Fixed the vertical lines in the time panel to obscure measure
-    numbers and to avoid invisible vertical lines.
+- Issue #136.
+  - Filtered out Program events from the drum-mode piano roll.
+  - Can now drag Program events up and down in the data pane.
+  - The saving of Program events now calculates the proper time-stamp.
+  - Added display of the names of Control and Program Change numbers
+    in the event editor and the data pane of the pattern editor.
 
 Other fixes:
 
-- Fixed a seqfault when pressing an empty button on a set other than
-  the first set.
-- Fixed the JACK-to-ALSA fallback process when running the jackdbus
-  daemon.
-- Fixed an error in the --home command-line option that left "home"
-  as "~/.config/seq66".
-- Refactored and fixed the Import and ExportProject Configuration
-  menu entries.
-- Disabled the various "Remap"/"Restart" buttons when running
-  under the NSM protocol.
+- Pressing the finger button in the pattern editor now also enters
+  paint mode in the event pane.
 
 Updates:
 
-- Added support for raysession and agordejo to the jackctl script.
-  Beefed up this script to facilitate testing and port-naming.
-- Added the dark-theme and dark-ui options to the user file for
-  handling GUI elements that are otherwise difficult to see.
-- Added an option to dump the current palette while automatically
-  inverting to create the --invert palette.
-- Refactored the copy-configuration and delete-configuration
-  functions to make them more robust.
-- Updated the show_folder_dialog() function to show hidden
-  directories.
-- Added a Help / View Log function to bring up the latest log
-  text.
+- Seq66 now shows the GM patch names in the pattern editor data pane.
+- Added a new configuration file, '.patches' to show non-GM device
+  program names.
 
 See NEWS for more details.
 

@@ -1,15 +1,16 @@
 NEWS for Seq66 0.99.19
 Chris Ahlstrom
-2015-07-10 to 2025-02-19
+2015-07-10 to 2025-02-21
 
 # Change Log
 
-## [0.99.19] - 2025-02-19
+## [0.99.19] - 2025-02-21
 
 ### Fixed
 
 -   Issue #136.
     -   Filtered out Program events from the drum-mode piano roll.
+    -   Can now drag Program events up and down in the data pane.
         -   While working this issue, the following problems
             were found and fixed.
             -   The saving of Program events was fixed to calculate
@@ -17,7 +18,7 @@ Chris Ahlstrom
             -   Program events can be moved up and down by dragging,
                 as well as by the line-dragging method.
         -   Added display of the names of Control and Program
-            Change numbers in the event editor.
+            Change numbers in the event editor and pattern editor..
 -   Pressing the finger button in the pattern editor now
     also enters paint mode in the event pane. The selected event
     category can the be entered by a click, and then moved up and

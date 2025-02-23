@@ -251,6 +251,11 @@ qseventslots::set_current_event
     }
     else
     {
+        /*
+         * qseqeventframe::data_0_helper() is used to display program change and
+         * controller names. We could use it here. 
+         */
+
         midibyte d0, d1;
         ev.get_data(d0, d1);
         data_0 = data_string(d0);
