@@ -3,7 +3,7 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2025-02-03
+; Updated:      2025-03-02
 ; Version:      0.99.19
 ;
 ; Usage of this Windows build script:
@@ -346,9 +346,6 @@ FunctionEnd
 Section Uninstall
 
     ExpandEnvStrings $0 %COMSPEC%
-
-;   Delete "$INSTDIR\license.text"
-;   Delete "$INSTDIR\readme.text"
 
     Delete "$INSTDIR\uninst.exe"
     RMDir /r "$INSTDIR"
