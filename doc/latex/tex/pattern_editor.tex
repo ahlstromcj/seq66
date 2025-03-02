@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-01-24
+% \update      2025-03-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1335,6 +1335,11 @@
    it is too easy to screw up.
    Selection and editing in the events pane is disabled for
    \textbf{Note On}, \textbf{Note Off}, and \textbf{Aftertouch}.
+   
+   However, when in edit mode (the finger mode), other events, when
+   selected in the event menus, can be inserted
+   by a click in the event pane.
+   Their values can be changed in the data pane.
 
    \index{events!insert}
    Other event types (including tempo) can be inserted via the event strip.
@@ -1448,7 +1453,7 @@
    \index{data!grab handle}
    topped by a circular grab handle.
    The exceptions are program changes and tempo, which are shown by small
-   circles, yellow in the case of tempo.
+   circles, red for program change and yellow for tempo.
    Also, the range of tempos in the data panel is set to match the
    \index{usr!bpm-minimum}
    \texttt{usr!bpm-minimum}
@@ -1543,9 +1548,8 @@
 
    \textbf{Program Change}
    events are shown as a small open circle with a numeric value.
-   Both Tempo and Program Change event values can be modified by dragging a
-   line as discussed above. (We're still working on select-and-drag for
-   these events.)
+   Both Tempo and Program Change event values can be modified by dragging
+   the circle representing the event.
 
 \begin{figure}[H]
    \centering 
@@ -1566,6 +1570,7 @@
    unselected.
    When present, the circular grab-handle can be clicked-and-held
    and moved up and down to change the event value.
+   This is true for tempo and program change events as well.
 
 \begin{figure}[H]
    \centering 

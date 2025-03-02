@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2025-02-03
+% \update      2025-03-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -97,7 +97,7 @@
    \end{itemize}
 
    Feel free to clone or fork it!
-   I ain't gonna live forever!
+
    If you're in a hurry to get going, proceed directly to
    \sectionref{sec:introduction_lets_go}.
 
@@ -105,7 +105,7 @@
 \label{subsec:what_is_seq66}
 
    \textsl{Seq66} is
-   a reboot of \textsl{Seq24},
+   a complete reboot of \textsl{Seq24},
    a live-looping sequencer with an interface similar to a hardware sequencer,
    refactored for newer versions of
    \textsl{C++} for faster and simpler code.
@@ -123,7 +123,7 @@
    The basics are the same, though.
 
    \textsl{Seq66} is not a synthesizer.
-   It requires a hardware or software synthesizer.
+   It requires hardware or software synthesizers.
    It does not handle audio data, just MIDI.
    It works with \textsl{ALSA}, \textsl{JACK},
    and \textsl{Windows}.
@@ -135,12 +135,12 @@
 \subsection{Seq66: Why!?}
 \label{subsec:introduction_vs_others}
 
-   The first reason to refactor \textsl{Sequencer64} is to take advantage of
-   things learned in responding to user reports.  The second reason is to use
+   \textsl{Seq66} refactors \textsl{Sequencer64} to take advantage of
+   things learned in responding to user reports;  to use
    the new code as an opportunity to add new functionality such as
-   \textsl{Non Session Manager} support.  The third reason is to tighten the
-   code by using newer features of \textsl{C++11} and later.
-   The fourth reason is to make the innumerable minor improvements that come to
+   \textsl{Non Session Manager} support; to tighten the
+   code by using newer features of \textsl{C++11} and later;
+   and to make the innumerable minor improvements that come to
    attention with time and testing.
 
 \subsection{Improvements}
