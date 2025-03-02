@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2023-09-08
+# \update      2025-03-02
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -53,6 +53,7 @@ HEADERS += include/seq66_features.h \
  include/cfg/midicontrolfile.hpp \
  include/cfg/mutegroupsfile.hpp \
  include/cfg/notemapfile.hpp \
+ include/cfg/patchesfile.hpp \
  include/cfg/playlistfile.hpp \
  include/cfg/rcfile.hpp \
  include/cfg/rcsettings.hpp \
@@ -94,6 +95,7 @@ HEADERS += include/seq66_features.h \
  include/midi/midi_splitter.hpp \
  include/midi/midi_vector_base.hpp \
  include/midi/midi_vector.hpp \
+ include/midi/patches.hpp \
  include/midi/wrkfile.hpp \
  include/play/clockslist.hpp \
  include/play/inputslist.hpp \
@@ -136,6 +138,7 @@ SOURCES += src/seq66_features.cpp \
  src/cfg/midicontrolfile.cpp \
  src/cfg/mutegroupsfile.cpp \
  src/cfg/notemapfile.cpp \
+ src/cfg/patchesfile.cpp \
  src/cfg/playlistfile.cpp \
  src/cfg/rcfile.cpp \
  src/cfg/rcsettings.cpp \
@@ -177,6 +180,7 @@ SOURCES += src/seq66_features.cpp \
  src/midi/midi_splitter.cpp \
  src/midi/midi_vector_base.cpp \
  src/midi/midi_vector.cpp \
+ src/midi/patches.cpp \
  src/midi/wrkfile.cpp \
  src/play/clockslist.cpp \
  src/play/inputslist.cpp \
