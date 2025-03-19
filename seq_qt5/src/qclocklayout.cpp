@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2023-06-25
+ * \updates       2025-03-19
  * \license       GNU GPLv2 or above
  *
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
@@ -50,7 +50,7 @@
 namespace seq66
 {
 
-static const size_t c_max_name_length = 40;    /* 32 */
+static const size_t c_max_name_length = 48;    /* 40, 32 */
 
 /**
  *  Creates a single line in the MIDI Clocks "Clock" group-box.  We will use
