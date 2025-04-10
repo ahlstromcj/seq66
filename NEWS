@@ -1,12 +1,20 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-03-02
+2015-07-10 to 2025-04-10
 
 # Change Log
 
-## [0.99.20] - 2025-03-02
+## [0.99.20] - 2025-04-10
 
-To do.
+### Added
+
+-   A timed error prompt (instead of OK/Remap and restart) when
+    running via NSM; see qsmainwnd and qt5nsmanager.
+
+### Changed
+
+-   contrib/vim-syntax/cpp.vim with added symbols like CSTR.
+-   contrib/vim.rc, changed F8 for fixing Windows quote characters.
 
 ## [0.99.19] - 2025-03-02
 

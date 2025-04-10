@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-01-26
+ * \updates       2025-04-10
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -3834,6 +3834,45 @@ qsmainwnd::show_error_box_ex (const std::string & msgtext, bool isporterror)
         }
     }
     return result;
+}
+
+/**
+ *  This varient is meant to be used in an NSM environment.
+ */
+
+bool
+qsmainwnd::show_timed_error_box
+(
+    const std::string & msgtext,
+    int timeout
+)
+{
+    if (! msgtext.empty())
+    {
+        if (not_nullptr(m_msg_error))
+            delete m_msg_error;
+
+        m_msg_error = new (std::nothrow) QMessageBox(this);
+        if (not_nullptr(m_msg_error))
+        {
+
+            /*
+             * QTimer::singleShot(timeout, m_msg_error, SLOT(hide));
+             */
+
+            QTimer timer;               /* don't use QTimer::singleShot()   */
+            timer.setSingleShot(true);
+            connect
+            (
+                &timer, &QTimer::timeout, [&] { m_msg_error->accept(); }
+            );
+            m_msg_error->setText(qt(msgtext));
+            m_msg_error->setStandardButtons(QMessageBox::NoButton);
+            timer.start(timeout);
+            m_msg_error->exec();        /* m_msg_error->show()  */
+        }
+    }
+    return false;
 }
 
 /**

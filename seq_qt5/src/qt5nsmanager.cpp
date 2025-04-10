@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2023-11-07
+ * \updates       2025-04-10
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future! Join the Smart Patrol!
@@ -353,7 +353,8 @@ qt5nsmanager::show_message
 {
     if (m_window && ! msg.empty())
     {
-        if (rc().quiet())
+        bool quiet = rc().quiet() || usr().in_nsm_session();
+        if (quiet)
         {
             smanager::show_message(tag, msg);
             perf()->clear_port_map_error();
@@ -409,7 +410,8 @@ qt5nsmanager::show_error
                 append_error_message(pmerrmsg);
             }
 #endif
-            if (rc().quiet())
+            bool quiet = rc().quiet() || usr().in_nsm_session();
+            if (quiet)
             {
                 smanager::show_message(tag, msg);
             }
@@ -442,14 +444,22 @@ qt5nsmanager::show_error
             }
             else
             {
-                bool yes = m_window->show_error_box_ex
-                (
-                    text, perf()->port_map_error()
-                );
-                if (yes)
-                    perf()->store_io_maps_and_restart();
-                else
+                if (usr().in_nsm_session())
+                {
+                    (void) m_window->show_timed_error_box(text);
                     perf()->clear_port_map_error();
+                }
+                else
+                {
+                    bool doit = m_window->show_error_box_ex
+                    (
+                        text, perf()->port_map_error()
+                    );
+                    if (doit)
+                        perf()->store_io_maps_and_restart();
+                    else
+                        perf()->clear_port_map_error();
+                }
             }
         }
     }

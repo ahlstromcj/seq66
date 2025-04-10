@@ -60,7 +60,7 @@
 # Session managers:
 #
 #     Support for raysession and agordejo is provided. We currently
-#     prefer the way agordejo work.
+#     prefer the way agordejo works.
 #
 #        JCTL_SESSMGR="raysession"
 #        JCTL_SESSOPT="--session-root /home/$USER/.local/share/ray"
@@ -116,7 +116,7 @@ Options:
    --a2j       Also start/stop a2jmidid. Options used are --export-hw and
                -u. The latter is needed to avoid "[0]" in port names on some
                systems.
-   --synth     Start the software synthesier $JCTL_SYNTHESIZER with the options
+   --synth     Start the software synthesizer $JCTL_SYNTHESIZER with options
                $JCTL_SYNTHOPT. This is useful for testing without a session
                manager.
    --all       Combines --a2j --synth. Use with --start, --stop, but not

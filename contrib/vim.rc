@@ -4,9 +4,9 @@
 "
 "  Language:      C
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@gmail.com>
-"  Last Change:   2006-08-04 to 2022-12-07
+"  Last Change:   2006-08-04 to 2025-03-22
 "  Project:       Any
-"  License:       None.  Use it in any manner whatsover, and don't blame me.
+"  License:       None.  Use it in any manner whatsoever, and don't blame me.
 "
 " Setting up for neovim:
 "
@@ -71,7 +71,7 @@
 :map <F5>  :set nopaste<CR>
 :map <F6>  :set paste<CR>
 :map <F7>  :w<CR>
-:map <F8> :let &background = ( &background == "dark" ? "light" : "dark" )<CR>
+:map <F8>  :%s/[\x91\x92]/'/g<CR> <bar> :%s/[\x93\x94]/"/g<CR>
 :map <F9>  :N<CR>
 :map <F10> :n<CR>
 :map <F11> :let &background = ( &background == "dark" ? "light" : "dark" )<CR>
