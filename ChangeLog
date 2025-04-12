@@ -1,3 +1,336 @@
+2025-04-10  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, contrib/vim-syntax/cpp.vim, contrib/vim.rc,
+	data/linux/jack/jackctl, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5nsmanager.cpp: Added a
+	timed error message-box for use with NSM.
+
+2025-03-19  Chris <ahlstromcj@gmail.com>
+
+	* seq_qt5/src/qclocklayout.cpp: Merely added 8 characters to label
+	size limit in qclocklayout.
+
+2025-03-02  ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES, TODO, VERSION, configure,
+	configure.ac, data/license.text, data/readme.text,
+	data/readme.windows, doc/latex/tex/seq66-user-manual.tex,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat: Version bump to
+	0.99.20.
+
+2025-03-02  Chris <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/pattern_editor.tex,
+	doc/latex/tex/seq66-user-manual.tex: Release Notes for Seq66 v.
+	0.99.19 2025-03-02 This release contains fixes for controller/patch handling, and other
+	updates.  Fixes for reported issues: - Issue #136.    - Filtered out Program events from the drum-mode piano roll.    - Can now drag Program events up and down in the data pane.    - The saving of Program events now calculates the proper
+	  time-stamp.  - Added display of the names of Control and Program Change numbers     in the event editor and the data pane of the pattern editor.  Other fixes: - Pressing the finger button in the pattern editor now also enters   paint mode in the event pane.  Updates: - Seq66 now shows the GM patch names in the pattern editor data
+	pane.  - Added a new configuration file, '.patches' to show non-GM device   program names.  See NEWS for more details.
+	* libseq66/libseq66.pro: Added patches and patchesfile to the Qt
+	build.
+	* NEWS, README.md, RELNOTES, VERSION, configure.ac,
+	data/license.text, data/readme.text, data/readme.windows,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat: Date-stamp
+	updates.
+
+2025-02-23  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, RELNOTES, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseventslots.cpp: Just some notes.
+
+2025-02-20  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, libseq66/include/midi/editable_event.hpp,
+	libseq66/include/util/strfunctions.hpp,
+	libseq66/src/midi/editable_event.cpp,
+	libseq66/src/util/strfunctions.cpp, seq_qt5/forms/qpatternfix.ui,
+	seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/include/qseqeventframe.hpp, seq_qt5/src/qseqeventframe.cpp: 
+	Finishes showing control and program names in event editor.
+
+2025-02-19  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, data/samples/GM.patches,
+	data/samples/PSS-790.patches, doc/latex/tex/configuration.tex,
+	libseq66/include/cfg/patchesfile.hpp,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/controllers.hpp,
+	libseq66/include/sessions/smanager.hpp,
+	libseq66/src/cfg/patchesfile.cpp, libseq66/src/midi/patches.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	seq_qt5/include/qseqeventframe.hpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qseqeventframe.cpp: Patches finished, working on D0 text
+	in event editor in progress.
+
+2025-02-18  Chris <ahlstromcj@gmail.com>
+
+	* data/samples/GM.patches, libseq66/include/cfg/patchesfile.hpp,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/patches.hpp,
+	libseq66/src/cfg/patchesfile.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/midi/patches.cpp, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/palettefile.cpp,
+	seq_qt5/src/qseditoptions.cpp: Patches file support nearly done.
+	* data/samples/PSS-790.patches, libseq66/include/Makefile.am,
+	libseq66/include/Makefile.in, libseq66/include/cfg/patchesfile.hpp,
+	libseq66/include/cfg/rcsettings.hpp, libseq66/src/Makefile.am,
+	libseq66/src/Makefile.in, libseq66/src/cfg/patchesfile.cpp,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/midi/patches.cpp, seq_qt5/forms/qseditoptions.ui: 
+	Adding GUI for the patches file.
+
+2025-02-17  Chris <ahlstromcj@gmail.com>
+
+	* TODO, data/samples/GM_DD-11.drums, data/samples/GM_PSS-790.drums,
+	data/samples/GM_PSS-790.patches, data/samples/GM_PSS-790_Multi.ini,
+	libseq66/include/cfg/patchesfile.hpp,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/patches.hpp,
+	libseq66/src/cfg/notemapfile.cpp, libseq66/src/cfg/patchesfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/midi/patches.cpp,
+	seq_qt5/src/qseqdata.cpp: Adding patches file in progress.
+	* aux-files/ltmain.sh, configure, data/samples/GM_PSS-790.patches,
+	libseq66/include/Makefile.am, libseq66/include/Makefile.in,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/include/midi/controllers.hpp,
+	libseq66/include/midi/patches.hpp, libseq66/src/Makefile.am,
+	libseq66/src/Makefile.in, libseq66/src/midi/calculations.cpp,
+	libseq66/src/midi/controllers.cpp, libseq66/src/midi/patches.cpp,
+	seq_qt5/src/qseqdata.cpp: Added further adjustments to data-pane
+	Program editing.
+
+2025-02-16  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, seq_qt5/src/qseqdata.cpp: Added adjustment for
+	high-numbered Program events in data pane.
+	* INSTALL, NEWS, TODO, contrib/DIR_COLORS,
+	data/samples/GM_PSS-790.patches, libseq66/include/seq66_features.h,
+	seq_qt5/include/qstriggereditor.hpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditframe64.cpp: Can insert event-pane items, patch
+	names show.
+
+2025-02-15  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, aux-files/ltmain.sh, configure,
+	libseq66/src/midi/calculations.cpp,
+	libseq66/src/midi/editable_events.cpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqroll.cpp: More work on
+	issue #136, including side issues.
+	* TODO, aux-files/ltmain.sh, configure, contrib/vim-syntax/cpp.vim,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/util/strfunctions.hpp,
+	libseq66/src/midi/calculations.cpp, libseq66/src/play/sequence.cpp: 
+	Fixed bug in inserting events in event editor re #136.
+
+2025-02-04  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES, VERSION, aux-files/ltmain.sh,
+	configure, configure.ac, data/license.text, data/readme.text,
+	data/readme.windows, doc/latex/tex/seq66-user-manual.tex,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/util/filefunctions.hpp,
+	libseq66/include/util/strfunctions.hpp,
+	libseq66/src/util/filefunctions.cpp,
+	libseq66/src/util/strfunctions.cpp, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat: Version bump
+	and file/strfunctions enhancements.
+
+2025-02-03  ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO: Release Notes for Seq66 v. 0.99.18 2025-02-02 This release contains fixes for dark themes, fixes to project
+	import/export, a new Help feature, and other updates.  Fixes for reported issues: - Issue #135.    - Added an inverse pattern-length icon for dark themes.    - Fixed the vertical lines in the time panel to obscure measure     numbers and to avoid invisible vertical lines.  Other fixes: - Fixed a seqfault when pressing an empty button on a set other than   the first set.  - Fixed the JACK-to-ALSA fallback process when running the jackdbus   daemon.  - Fixed an error in the --home command-line option that left "home"   as "~/.config/seq66".  - Refactored and fixed the Import and ExportProject Configuration   menu entries.  - Disabled the various "Remap"/"Restart" buttons when running   under the NSM protocol.  Updates: - Added support for raysession and agordejo to the jackctl script.    Beefed up this script to facilitate testing and port-naming.  - Added the dark-theme and dark-ui options to the user file for   handling GUI elements that are otherwise difficult to see.  - Added an option to dump the current palette while automatically   inverting to create the --invert palette.  - Refactored the copy-configuration and delete-configuration   functions to make them more robust.  - Updated the show_folder_dialog() function to show hidden   directories.  - Added a Help / View Log function to bring up the latest log   text.  See NEWS for more details.
+	* : Merge conflicts.
+	* NEWS, README.md, RELNOTES, TODO, VERSION, configure.ac,
+	contrib/scripts/Jack, contrib/scripts/conk,
+	contrib/scripts/release, data/license.text, {contrib/scripts =>
+	data/linux/jack}/jackctl, data/linux/jack/startjack,
+	data/linux/jack/startqjack, data/readme.text, data/readme.windows,
+	doc/latex/tex/seq66-user-manual.tex,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/seq66_platform_macros.h, nsis/README,
+	nsis/Seq66Constants.nsh, nsis/Seq66Setup.nsi,
+	nsis/build_release_package.bat, seq_rtmidi/src/rtmidi.cpp: Version
+	and date bump for 0.99.18
+
+2025-02-01  ahlstromcj <ahlstromcj@gmail.com>
+
+	* NEWS, libseq66/include/seq66_platform_macros.h,
+	libseq66/include/util/filefunctions.hpp,
+	libseq66/src/util/filefunctions.cpp: Fixed Windows build of
+	get_wildcard(), it just returns false.
+
+2025-01-31  Chris <ahlstromcj@gmail.com>
+
+	* contrib/vim-syntax/cpp.vim: Tweaked git doc and cpp.vim syntax
+	file.
+
+2025-01-29  Chris <ahlstromcj@gmail.com>
+
+	* libseq66/include/seq66_platform_macros.h,
+	libseq66/include/util/filefunctions.hpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/util/filefunctions.cpp: Minor updates to globbing.
+
+2025-01-27  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, libseq66/include/util/filefunctions.hpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/filefunctions.cpp: Added wild-card copying of
+	image files.
+
+2025-01-26  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, RELNOTES, contrib/notes/session-mgrs.text,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Disabled Remap and Restart when NSM is in
+	control.
+	* TODO, include/config.h.in, seq_qt5/forms/Makefile.in,
+	seq_qt5/include/Makefile.in, seq_qt5/src/Makefile.in,
+	seq_qt5/src/qslogview.cpp: Updated some Makefile.in files.
+
+2025-01-25  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES, TODO, VERSION, configure.ac,
+	contrib/notes/session-mgrs.text, contrib/scripts/jackctl,
+	data/readme.text, data/readme.windows, doc/latex/tex/menu.tex,
+	doc/latex/tex/pattern_editor.tex,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/midi/calculations.hpp, nsis/Seq66Constants.nsh,
+	nsis/build_release_package.bat, seq_qt5/forms/Makefile.am,
+	seq_qt5/forms/qpatternfix.ui, seq_qt5/forms/qslogview.ui,
+	seq_qt5/forms/qsmainwnd.ui, seq_qt5/include/Makefile.am,
+	seq_qt5/include/qslogview.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/seq_qt5.pro, seq_qt5/src/Makefile.am,
+	seq_qt5/src/palettefile.cpp, seq_qt5/src/qpatternfix.cpp,
+	seq_qt5/src/qsappinfo.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qslogview.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qt5_helpers.cpp: Upgrades to show-folder function, new
+	View Log help, import/export.
+
+2025-01-23  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, libseq66/include/os/shellexecute.hpp,
+	libseq66/include/sessions/smanager.hpp,
+	libseq66/include/util/filefunctions.hpp,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/os/shellexecute.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/filefunctions.cpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qt5_helpers.cpp: Refactored and fixed the Import Project
+	command.
+
+2025-01-22  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, contrib/scripts/jackctl, doc/latex/tex/menu.tex,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/seq66_features.h,
+	libseq66/include/util/filefunctions.hpp,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/cfg/sessionfile.cpp,
+	libseq66/src/util/filefunctions.cpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_info.cpp, seq_rtmidi/src/midibus.cpp: 
+	Update to jackctl, configuration-file list, JACK detection, still
+	need to fix configuration import.
+
+2025-01-20  Chris <ahlstromcj@gmail.com>
+
+	* INSTALL, TODO, seq_rtmidi/include/midi_jack_info.hpp,
+	seq_rtmidi/include/midibus_rm.hpp, seq_rtmidi/include/rtmidi.hpp,
+	seq_rtmidi/src/midi_jack_info.cpp, seq_rtmidi/src/midibus.cpp,
+	seq_rtmidi/src/rtmidi.cpp, seq_rtmidi/src/rtmidi_info.cpp: Fixing
+	JACK-to-ALSA fallback in progress.
+
+2025-01-19  Chris <ahlstromcj@gmail.com>
+
+	* TODO, contrib/notes/session-mgrs.text, contrib/scripts/jackctl,
+	libseq66/include/cfg/configfile.hpp,
+	libseq66/include/cfg/rcfile.hpp,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/include/seq66_features.h, libseq66/src/cfg/configfile.cpp,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/src/qsmainwnd.cpp: 
+	Interim check-in of refactored project export.
+
+2025-01-17  Chris <ahlstromcj@gmail.com>
+
+	* TODO, contrib/notes/session-mgrs.text, contrib/scripts/jackctl,
+	libseq66/src/midi/eventlist.cpp, seq_qt5/forms/qseditoptions.ui: 
+	Work for retesting session management, one bug found.
+
+2025-01-15  Chris <ahlstromcj@gmail.com>
+
+	* INSTALL, TODO, data/linux/qseq66-alt-gray.palette,
+	data/linux/qseq66-default.palette, data/linux/qseq66-gray.palette,
+	data/linux/qseq66.palette, data/samples/green.palette,
+	data/samples/incrypt-66.palette, data/samples/monogreen.palette,
+	data/samples/perstfic-66.palette,
+	data/samples/qseq66-sample.palette,
+	libseq66/include/seq66_features.h, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/gui_palette_qt5.hpp,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/gui_palette_qt5.cpp,
+	seq_qt5/src/qseditoptions.cpp: Updating palettes with dark-theme and
+	dark-ui options.
+	* data/samples/monogreen.palette, data/samples/qseq66.qss,
+	libseq66/include/cfg/usrsettings.hpp,
+	seq_qt5/include/gui_palette_qt5.hpp, seq_qt5/include/qeditbase.hpp,
+	seq_qt5/src/gui_palette_qt5.cpp, seq_qt5/src/palettefile.cpp,
+	seq_qt5/src/qeditbase.cpp, seq_qt5/src/qseqtime.cpp: Tentatively
+	fixed items 2 and 3 of issue #135.
+
+2025-01-14  Chris <ahlstromcj@gmail.com>
+
+	* data/linux/qseq66.palette, libseq66/include/util/palette.hpp,
+	seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/gui_palette_qt5.hpp,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/gui_palette_qt5.cpp,
+	seq_qt5/src/palettefile.cpp, seq_qt5/src/qseditoptions.cpp: Working
+	on inverting colors automatically.
+	* TODO, data/samples/monogreen.palette, doc/latex/tex/sessions.tex,
+	resources/pixmaps/length_short_inv.xpm,
+	seq_qt5/include/gui_palette_qt5.hpp,
+	seq_qt5/src/gui_palette_qt5.cpp, seq_qt5/src/palettefile.cpp,
+	seq_qt5/src/qseqeditframe64.cpp: Fixed item 1 of issue #135, prepped
+	for more.
+
+2025-01-13  ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, data/readme.text, libseq66/src/play/performer.cpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qslivegrid.hpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qslivegrid.cpp: Fixed route66 bitmap, refresh of pattern
+	editor port/channel, set 1+ segfault.
+
+2025-01-12  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/src/qslivegrid.cpp: Rev bump to 0.99.17.1 to fix a segfault
+	in Live grid.
+	* NEWS, README.md, RELNOTES, TODO, VERSION, configure,
+	configure.ac, distros/debian/copyright,
+	doc/latex/tex/seq66-user-manual.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/os/daemonize.hpp, libseq66/include/os/timing.hpp,
+	libseq66/include/seq66_platform_macros.h,
+	libseq66/src/os/daemonize.cpp, seq_qt5/src/qseqeditframe64.cpp: 
+	Version/date updates.
+
+2025-01-11  ahlstrom <ahlstromcj@gmail.com>
+
+	* ChangeLog: Release Notes for Seq66 v. 0.99.17 2025-01-12 This release contains a large number of updates and fixes spurred by
+	testing and user-reports.  Fixes for reported issues: - Issue #128. Expanded recording and related recording issues have   been greatly tightened, plus some follow-on issues. (See NEWS).  - Issue #133. Pattern length change issues and issues found while   working this.  See TODO for a list of things fixed.  - Issue #134. Added dates to the release-name line from 0.99.14 on.  Other fixes: - Fixed a segfault when clicking the Restart button with external   live frame(s) or external song editor open.  - Fixed a seqfault when opening a new tune or a recent-file with a   pattern-editor already up for the current tune.  - Main window. Fixed updating the PPQN when a file of different   PPQN is loaded.  Updates: - Majorly revamped, fixed, and tightened the "Pattern Fix" dialog.  - Added a little more control over the lines and palette of the   various panes in the pattern and song editors. Also improved the   appearance of time signatures other than 4/4.  - Refactored the event/buss dropdowns to be modified only when   the user changes setting or tries to bring up the dropdowns - Added ghost notes to the pattern-editor selection box and other   means of note selection.  - Some minor tweaking (field size, font) of various dialogs.  - See NEWS and ChangeLog for full details.
+
 2025-01-11  Chris <ahlstromcj@gmail.com>
 
 	* README.md, TODO, contrib/scripts/qbuild.sh,

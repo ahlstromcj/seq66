@@ -3,7 +3,7 @@
 ; File:         Seq66Constants.nsh
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2025-03-02
+; Updated:      2025-04-12
 ; Version:      0.99.20
 ;
 ;   Provides constants commonly used by the installer for Seq66 for
