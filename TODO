@@ -1,6 +1,21 @@
 TO DO for Seq66 0.99.20
 Chris Ahlstrom
-2019-04-13 to 2025-03-02
+2019-04-13 to 2025-04-15
+
+NSM:
+
+    -   Seq66 maybe be delaying responding/announcing to NSM.
+    -   When creating a session, make sure playlist is copied if active.
+    -   How to keep Seq66 up-to-date when ports are added back in a 
+        session.
+    -   Do not error on missing input bus "ALSA Announce".
+    -   See the Recording items below (*).
+    -   The selection box vertical snap is too large; also needs
+        to be more accurate/precise.
+    -   Make the NSM start-up prompt time configurable or dependent on
+        the number of words.
+    -   Everytime Edit / Preferences is opened/closed, "[seq66] NSM URL..."
+        is written to the console.
 
 Backlog:
 
