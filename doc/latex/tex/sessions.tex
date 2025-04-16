@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2025-01-13
+% \update      2025-04-16
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -230,7 +230,6 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    \index{sessions!OSC}
    \textsl{OSC} protocol (\cite{osc})
    to communicate with the session management daemon.
-
    Note that \textsl{Non Session Manager} is in a state of suspended
    development, and has been reimplemented as a \textsl{GitHub} project,
    the \textsl{New Session Manager}.
@@ -238,6 +237,33 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    The applications it manages should be installed normally (that is,
    for system-wide usage, in
    \texttt{/usr/bin/} or \texttt{/usr/local/bin}).
+   Other locations, if used, must be added to the \texttt{PATH}
+   environment variable.
+
+   The following is the recommended setup for get ready for
+   NSM usage:
+
+   \begin{itemize}
+      \item Start JACK. Important!
+         The \texttt{jackctl} script can be used
+         to start (and stop) JACK and to run \textsl{a2jmidid}.
+      \item Run \textsl{Seq66} stand-alone after installation.
+      \item Set it to use JACK for MIDI (and also for Transport,
+         if desired).
+      \item If the NSM program \textsl{jackpatch} is going to be used
+         for saving and restoring connections, make sure that
+         \textsl{Seq66}'s auto-connect feature is \textsl{disabled}.
+         Another option is to use \textsl{virtual ports} (the "manual" option
+         where the user makes the connections).
+      \item Set up all of the MIDI input and output ports desired, whether
+         hardware or software.
+      \item Run one of the following GUI applications to create a
+         new NSM session: \textsl{agordejo}; \textsl{raysession}; or
+         the legacy NSM application.
+      \item Once the session is running, verify the ports and MIDI
+         settings that have been copied from
+         \textsl{\textasciitilde/.config/seq66}.
+   \end{itemize}
 
 \subsubsection{Session Management / NSM / First Run Without NSM}
 \label{subsec:sessions_nsm_first_run_without_nsm}
@@ -320,6 +346,8 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    virtual-ports = true    # 'true' = manual (virtual) ALSA or JACK ports
 \end{verbatim}
 
+   Most of these settings can be made in \texttt{Edit / Preferences}.
+
    It is then important to start \texttt{qseq66} in the normal manner again,
    and verify that everything works as expected.
 
@@ -339,7 +367,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    imported automatically.
    Now, the user must use the
    \textbf{File / Import / Project Configuration...}
-   command.
+   command to import an existing setup..
 
    For illustration, we run \textsl{NSM} from a terminal window, which can be
    very helpful when problems occur.
@@ -406,7 +434,8 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    applications that are (eventually) running under the session.
    This is especially annoying with tiled window managers.
    In order to see the \textsl{Seq77} user-interface, click on
-   the \textbf{GUI} button in the session line shown in the \textsl{NSM} window .
+   the \textbf{GUI} button in the session line shown in the \textsl{NSM}
+   window to make \textsl{Seq66} visible.
 
    Once \textsl{Seq66} is running under \textsl{NSM},
    then click the \textbf{Save}
@@ -416,12 +445,13 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    After \textsl{Seq66} exits,
    one can see what has been created to support the session;
    the directory that \textsl{NSM}
-   creates by default is \texttt{/home/user/NSM Sessions}.
+   creates by default is \texttt{/home/user/.local/share/nsm}.
+   (It used to be \texttt{/home/user/NSM Sessions}.)
    \index{nsm!old session}
 
 \begin{verbatim}
    $ pwd
-   /home/user/NSM Sessions
+   /home/user/.local/share/nsm
    $ lstree Seq66
    Seq66/
      +-- seq66.nGJDW/
@@ -437,20 +467,12 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
      +-- session.nsm
 \end{verbatim}
 
-   \textbf{Important}: If one is running a recent "New" version of the 
+   \textbf{Reminder}: If one is running a recent "New" version of the 
    \textsl{Non Session Manager}, then the session data is not stored
    in \texttt{/home/user/NSM Sessions},
    but in
    in \texttt{/home/user/.local/share/nsm},
-   Thus the above would be located differently:
    \index{nsm!new session}
-
-\begin{verbatim}
-   $ cd ~/.local/share/nsm    # the value of $XDG_DATA_HOME
-   Seq66/
-     +-- seq66.nGJDW/
-     [ the rest is the same as above ]
-\end{verbatim}
 
    So \textsl{NSM} has created a directory with the session name we gave it:
    \texttt{Seq66}.
@@ -476,7 +498,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    \texttt{config} and \texttt{midi},
    are generated by \textsl{Seq66}
    The \texttt{config} directory is used instead of
-   \texttt{/home/user/.config/seq66}) and \texttt{midi} directory
+   \texttt{/home/user/.config/seq66}) and the \texttt{midi} directory
    contains new MIDI files, imported MIDI files,
    or MIDI files from a play-list.
    The new \texttt{config} directory
