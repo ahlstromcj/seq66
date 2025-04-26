@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-06
- * \updates       2022-06-26
+ * \updates       2025-04-25
  * \license       See above.
  *
  * Classes defined:
@@ -227,7 +227,7 @@ midi_port_info::get_port_index (int client, int port)
             break;
         }
     }
-    return bussbyte(result);
+    return result;
 }
 
 /*

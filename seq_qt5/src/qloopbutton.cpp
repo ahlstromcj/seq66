@@ -749,8 +749,8 @@ qloopbutton::draw_progress
 }
 
 /**
- *      Draws the progress box, progress bar, and and indicator for non-empty
- *      pattern slots.
+ *  Draws the progress box, progress bar, and an indicator for non-empty
+ *  pattern slots.
  */
 
 void
@@ -948,22 +948,38 @@ qloopbutton::draw_pattern (QPainter & painter)
                     painter.setBrush(brush);
                     painter.drawEllipse(sx, y, 4, 4);
                 }
-                else if (dt == sequence::draw::program)
-                {
-                    int y = y0 + yh * (n1 - ni.note()) / height;
-                    brush.setColor(drum_paint());
-                    painter.setBrush(brush);
-                    painter.drawEllipse(sx, y, 4, 4);
-                }
                 else
                 {
                     int y = y0 + yh * (n1 - ni.note()) / height;
-                    int tick_f_x = (ni.finish() * xw) / t1;
-                    if (! sequence::is_draw_note(dt) || tick_f_x <= tick_s_x)
-                        tick_f_x = tick_s_x + 1;
+                    if (dt == sequence::draw::program)
+                    {
+                        brush.setColor(drum_paint());
+                        painter.setBrush(brush);
+                        painter.drawEllipse(sx, y, 4, 4);
+                    }
+                    else if
+                    (
+                        dt == sequence::draw::controller ||
+                        dt == sequence::draw::pitchbend
+                    )
+                    {
+                        painter.drawPoint(sx, y);
+                    }
+                    else
+                    {
+                        int tick_f_x = (ni.finish() * xw) / t1;
+                        if
+                        (
+                            ! sequence::is_draw_note(dt) ||
+                            tick_f_x <= tick_s_x
+                        )
+                        {
+                            tick_f_x = tick_s_x + 1;
+                        }
 
-                    int fx = x0 + tick_f_x;            /* finish x         */
-                    painter.drawLine(sx, y, fx, y);
+                        int fx = x0 + tick_f_x;        /* finish x          */
+                        painter.drawLine(sx, y, fx, y);
+                    }
                 }
             }
             loop()->draw_unlock();

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-02-15
+ * \updates       2025-04-26
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -687,7 +687,7 @@ qseqroll::draw_notes
         if (dt == sequence::draw::finish)
             break;
 
-        if (dt == sequence::draw::tempo || dt == sequence::draw::program)
+        if (ni.non_note())
             continue;
 
         bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
@@ -1069,7 +1069,7 @@ qseqroll::draw_drum_notes
         if (dt == sequence::draw::finish)
             break;
 
-        if (dt == sequence::draw::tempo || dt == sequence::draw::program)
+        if (ni.non_note())
             continue;
 
         bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;

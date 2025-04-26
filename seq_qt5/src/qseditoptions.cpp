@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-02-18
+ * \updates       2025-04-26
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -788,6 +788,13 @@ qseditoptions::setup_tab_jack ()
         this, SLOT(slot_jack_mode(int))
     );
 
+    QString midiengine = rc().with_jack_midi() ? "JACK" : "?" ;
+    if (rc().with_alsa_midi())
+        midiengine = "ALSA";
+
+    ui->alsaJackButton->setText(midiengine);
+    ui->alsaJackButton->setStyleSheet("text-align: left;");
+
 #else
 
     ui->tabWidget->setTabToolTip
@@ -803,6 +810,10 @@ qseditoptions::setup_tab_jack ()
     ui->chkJackNative->setEnabled(false);
     ui->chkJackAutoConnect->setEnabled(false);
     ui->tabWidget->setTabEnabled(Tab_JACK, false);
+
+#if defined SEQ66_PORTMIDI_SUPPORT
+    ui->alsaJackButton->setText("PortMidi");
+#endif
 
 #endif  // defined SEQ66_JACK_SUPPORT
 }

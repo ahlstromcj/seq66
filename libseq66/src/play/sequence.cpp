@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-02-15
+ * \updates       2025-04-26
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -61,10 +61,6 @@
 #include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "util/palette.hpp"             /* seq66::palette_to_int(), colors  */
 #include "util/strfunctions.hpp"        /* bool_to_string()                 */
-
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
 
 namespace seq66
 {
@@ -5697,6 +5693,7 @@ sequence::get_note_info
         midibyte notebyte = tempo_to_note_value(bpm);
         niout.ni_note = int(notebyte);
         niout.ni_velocity = int(bpm + 0.5);
+        niout.ni_non_note = true;
 
         /*
          * Hmmmm, must check if tempo events ever have a link. No, they
@@ -5710,7 +5707,7 @@ sequence::get_note_info
             niout.ni_tick_finish = get_length();
 
         /*
-         * Tempo needs to be attained.  This is good only for drawing a
+         * Tempo needs to be retained.  This is good only for drawing a
          * horizontal tempo line; we need a way to return both a starting
          * tempo and ending tempo.  Return the latter in velocity?
          */
@@ -5719,8 +5716,19 @@ sequence::get_note_info
     }
     else if (drawevent.is_program_change())
     {
-        niout.ni_tick_finish = niout.ni_tick_start; // drawevent.timestamp()
+        niout.ni_tick_finish = niout.ni_tick_start;
+        niout.ni_non_note = true;
         return draw::program;
+    }
+    else if (drawevent.is_controller())
+    {
+        niout.ni_non_note = true;
+        return draw::controller;
+    }
+    else if (drawevent.is_pitchbend())
+    {
+        niout.ni_non_note = true;
+        return draw::pitchbend;
     }
     return draw::none;
 }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2024-06-06
+ * \updates       2025-04-24
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -558,7 +558,7 @@ midi_alsa::api_play (const event * e24, midibyte channel)
         }
         else
         {
-            errprint("ALSA out-of-memory error");
+            errprint("ALSA out-of-memory");
         }
     }
 }

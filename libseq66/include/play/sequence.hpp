@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-02-15
+ * \updates       2025-04-26
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -195,7 +195,8 @@ public:
 
     /**
      *  Provides a set of methods for drawing certain items.  These values are
-     *  used in the sequence, seqroll, perfroll, and main window classes.
+     *  used in the sequence, seqroll, perfroll, qloopbutton, and main window
+     *  classes. Also see the seq66::qseqdata::type enumeration.
      */
 
     enum class draw
@@ -207,6 +208,8 @@ public:
         note_off,       /**< For finishing the drawing of a note.       */
         tempo,          /**< For drawing tempo meta events.             */
         program,        /**< For drawing program change (patch) events. */
+        controller,     /**< For all control-change events.             */
+        pitchbend,      /**< For indicating a pitch-wheel event.        */
         max
     };
 
@@ -227,6 +230,9 @@ public:
      *
      *  If the note is invalid (as might happen in searches), then the
      *  note value is (-1).
+     *
+     *  The usage of this small class has evolved to support other
+     *  events, as indicated by the draw enumeration above.
      */
 
     class note_info
@@ -240,6 +246,7 @@ public:
         int ni_note;                /* for tempo, the location to paint it  */
         int ni_velocity;            /* for tempo, the truncated tempo value */
         bool ni_selected;
+        bool ni_non_note;           /* true for all non-note events         */
 
     public:
 
@@ -248,7 +255,8 @@ public:
             ni_tick_finish  (0),
             ni_note         (0),    /* we could initialize this to (-1)     */
             ni_velocity     (0),
-            ni_selected     (false)
+            ni_selected     (false),
+            ni_non_note     (false)
             {
                 // no code
             }
@@ -286,6 +294,11 @@ public:
        bool selected () const
        {
            return ni_selected;
+       }
+
+       bool non_note ()
+       {
+           return ni_non_note;
        }
 
        void show () const;

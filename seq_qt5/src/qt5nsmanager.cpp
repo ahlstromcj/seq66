@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2025-04-10
+ * \updates       2025-04-26
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future! Join the Smart Patrol!
@@ -311,7 +311,11 @@ qt5nsmanager::run ()
     if (session_setup(restart))                 /* need an early exit?      */
     {
         int exit_status = m_application.exec(); /* run main window loop     */
-        status_message("Early exit flagged by session setup");
+
+        /*
+         * status_message("Exit flagged in session");
+         */
+
         return exit_status == EXIT_SUCCESS;
     }
     else

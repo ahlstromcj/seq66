@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-01-14
+ * \updates       2025-04-26
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -3231,7 +3231,7 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
                 usr().controller_name(bus, channel, control) :
                 controller_name(control) ;
 
-            snprintf(type, sizeof type, "CC - %s", ccname.c_str());
+            snprintf(type, sizeof type, "CC%s", ccname.c_str());
         }
         else if (status == EVENT_PROGRAM_CHANGE)
             snprintf(type, sizeof type, "Program");

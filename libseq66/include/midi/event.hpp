@@ -1408,7 +1408,7 @@ public:
 
     /**
      *  Indicates an event that has a line-drawable data item, such as
-     *  velocity.  It is false for discrete data such as program/path number
+     *  velocity.  It is false for discrete data such as program/patch number
      *  or Meta events.
      */
 

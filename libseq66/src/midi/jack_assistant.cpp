@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2022-10-11
+ * \updates       2025-04-24
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -479,7 +479,7 @@ create_jack_client (std::string clientname, std::string uuid)
         if (not_nullptr(result) && rc().investigate())
         {
             char t[80];
-            snprintf(t, sizeof t, "client opened, UUID %s", uid);
+            snprintf(t, sizeof t, "client UUID %s opened", uid);
             (void) info_message(t);
         }
     }

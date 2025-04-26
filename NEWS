@@ -1,20 +1,23 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-04-10
+2015-07-10 to 2025-04-26
 
 # Change Log
 
-## [0.99.20] - 2025-04-10
+## [0.99.20] - 2025-04-26
 
 ### Added
 
 -   A timed error prompt (instead of OK/Remap and restart) when
     running via NSM; see qsmainwnd and qt5nsmanager.
+-   An ALSA/JACK label to JACK preferences tab, same as in mainwnd.
+-   Control/pitch events now show up in pattern-slot progress box.
 
 ### Changed
 
 -   contrib/vim-syntax/cpp.vim with added symbols like CSTR.
 -   contrib/vim.rc, changed F8 for fixing Windows quote characters.
+-   Many minor tweaks to comments and appearance.
 
 ## [0.99.19] - 2025-03-02
 

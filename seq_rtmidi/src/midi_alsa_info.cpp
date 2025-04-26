@@ -588,7 +588,7 @@ midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
  *  For debugging, we may expose the following static function for use for
  *  normal (and usually copious) incoming MIDI events.  For less common
  *  events, like port/client subscription, the debugging can be enabled by the
- *  "--verbose" command-line option.
+ *  "--investigate" command-line option.
  */
 
 bool

@@ -49,10 +49,6 @@
 #include "midi/midibytes.hpp"           /* midibyte, midipulse aliases      */
 #include "qseqbase.hpp"                 /* seq66::qseqbase mixin class      */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class performer;
@@ -74,7 +70,8 @@ public:
 
     /**
      *  Various types of MIDI data have different wrinkles to how they are
-     *  displayed. Better than a bunch of booleans!
+     *  displayed. Better than a bunch of booleans! Compare this list to
+     *  the seq66::sequence::draw type in the sequence module.
      */
 
     enum class type

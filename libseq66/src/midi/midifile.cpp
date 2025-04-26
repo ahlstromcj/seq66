@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-12-27
+ * \updates       2025-04-24
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1152,9 +1152,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
     {
         infoprintf("Track count %d", int(track_count));
         if (! is_null_buss(buss_override))
-        {
             infoprintf("Buss override %d", int(buss_override));
-        }
     }
     for (midishort trk = 0; trk < track_count; ++trk)
     {
