@@ -1261,9 +1261,12 @@ bool
 sequence::set_measures (int measures, bool user_change)
 {
     bool modded = set_length(measures * unit_measure(true));
-    if (modded && user_change)
-        modify();
-
+    if (modded)
+    {
+        m_measures = measures;
+        if (user_change)
+            modify();
+    }
     return modded;
 }
 

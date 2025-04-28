@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-29
+ * \updates       2025-04-28
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -281,8 +281,8 @@ qstriggereditor::draw_grid (QPainter & painter, const QRect & r)
             }
             else if (tick % ticks_per_beat == 0)
             {
-                penstyle = measure_pen_style();
-                penwidth = measure_pen_width();
+                penstyle = beat_pen_style();    /* not measure_pen_style()  */
+                penwidth = beat_pen_width();    /* not measure_pen_width()  */
                 pen.setColor(beat_color());
             }
             else                                /* no ticks/four as yet     */

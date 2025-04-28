@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2024-12-27
+ * \updates       2025-04-27
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -409,6 +409,7 @@ usrsettings::usrsettings () :
     m_progress_box_width        (c_progress_box_width),
     m_progress_box_height       (c_progress_box_height),
     m_progress_box_shown        (true),
+    m_progress_box_show_cc      (true),
     m_progress_note_min         (0),
     m_progress_note_max         (127),
     m_lock_main_window          (false),
@@ -520,6 +521,7 @@ usrsettings::set_defaults ()
     m_progress_box_width = c_progress_box_width;
     m_progress_box_height = c_progress_box_height;
     m_progress_box_shown = true;
+    m_progress_box_show_cc = true;
     m_progress_note_min = 0;
     m_progress_note_max = 127;
     m_lock_main_window = false;

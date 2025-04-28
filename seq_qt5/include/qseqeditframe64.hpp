@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-01-12
+ * \updates       2025-04-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -44,6 +44,14 @@
  */
 
 #undef  USE_WOULD_TRUNCATE_BPB_BW
+
+/**
+ *  Experimenting with weird issue where changing the number of measures
+ *  via the length drop-down works in the external pattern editor, but
+ *  not in the tab. The old code (circa 0.99.12) does not work, either.
+ */
+
+#undef USE_LEGACY_MEASURES_ADJUSTMENT
 
 /**
  *  Specifies the reported final size of the main window when the larger edit
@@ -280,10 +288,11 @@ private slots:
     void text_beat_width ();
     void reset_beats_per_bar ();
     void reset_beat_width ();
+#if defined USE_LEGACY_MEASURES_ADJUSTMENT
+    void text_measures (const QString & text);
+#else
     void update_measures (int index);
     void text_measures_edit ();
-#if defined USE_COMBO_BUTTON_TO_CYLE_MEASURES       // kept only for posterity
-     void next_measures ();
 #endif
     void reset_measures ();
     void transpose (bool ischecked);

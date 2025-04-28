@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.20
 Chris Ahlstrom
-2019-04-13 to 2025-04-26
+2019-04-13 to 2025-04-28
 
 Hot:
     
@@ -13,6 +13,8 @@ Hot:
     -   Control/pitch events do not show up in pattern editor data pane
         until event button is clicked ("C - 1 Modulation Wheel" shows up)
     -   Pretty up the seqroll and perfroll grids.
+    -   Make sure setting pattern length changes sequence::m_measures
+        as needed.
 
 NSM:
 
@@ -31,6 +33,7 @@ NSM:
 
 Backlog:
 
+    -   Fix the handling, drawing, and event-editor data of pitch bend.
     -   Investigate qmidictl, midicsv
     -   The event panel if offset rightward a few (3?) pixels from the
         piano roll when scroll to the rightmost position.

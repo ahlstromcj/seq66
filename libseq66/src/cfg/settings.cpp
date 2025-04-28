@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2024-12-20
+ * \updates       2025-04-28
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -271,7 +271,7 @@ zoom_items ()
 {
     static const tokenization s_zoom_list
     {
-        "1", "2", "4", "8", "16", "32", "64", "128", "256", "512"
+        "1", "2", "4", "8", "16", "32", "64", "128", "256", "512", "1024"
     };
     return s_zoom_list;
 }

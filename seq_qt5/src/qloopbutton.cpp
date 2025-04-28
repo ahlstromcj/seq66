@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2024-11-16
+ * \updates       2025-04-27
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -182,6 +182,7 @@ qloopbutton::qloopbutton
     m_note_max              (usr().progress_note_max()),
     m_seq                   (seqp),                 /* loop()               */
     m_is_checked            (loop()->armed()),
+    m_show_cc               (usr().progress_box_show_cc()),
     m_prog_thickness        (usr().progress_bar_thick() ? 2 : 1),
     m_prog_back_color       (Qt::black),
     m_prog_fore_color       (Qt::green),
@@ -963,7 +964,8 @@ qloopbutton::draw_pattern (QPainter & painter)
                         dt == sequence::draw::pitchbend
                     )
                     {
-                        painter.drawPoint(sx, y);
+                        if (m_show_cc)
+                            painter.drawPoint(sx, y);
                     }
                     else
                     {

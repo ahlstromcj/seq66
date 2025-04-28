@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-12-24
+ * \updates       2025-04-27
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -50,7 +50,7 @@ namespace seq66
 
 static const int s_usr_legacy       =  5;
 static const int s_usr_smf_1        =  8;
-static const int s_usr_file_version = 14;
+static const int s_usr_file_version = 15;
 
 /**
  *  Principal constructor.
@@ -69,6 +69,7 @@ static const int s_usr_file_version = 14;
  *     12:  2023-11-02: Moved style-sheets to the 'rc' file.
  *     13:  2024-02-23: Added elliptical progress-box option.
  *     14:  2024-02-23: Added progress-bar-thickness and gridlines-thick.
+ *     15:  2025-04-27: Added progress-box-show-cc.
  *
  * \param name
  *      Provides the full file path specification to the configuration file.
@@ -531,6 +532,12 @@ usrfile::parse ()
         usr().progress_box_size(w, h);
         flag = get_boolean(file, tag, "progress-box-shown");
         usr().progress_box_shown(flag);
+        s = get_variable(file, tag, "progress-box-show-cc");
+        if (! is_questionable_string(s))
+        {
+            flag = get_boolean(file, tag, "progress-box-show-cc");
+            usr().progress_box_show_cc(flag);
+        }
         v = get_integer(file, tag, "progress-note-min");
 
         int x = get_integer(file, tag, "progress-note-max");
@@ -1048,6 +1055,7 @@ usrfile::write ()
 "# progress box in the live-grid buttons.  Width ranges from 0.50 to 1.0, and\n"
 "# the height from 0.10 to 1.0.  If either is 'default', defaults (0.8 x 0.3)\n"
 "# are used.  progress-box-shown controls if the boxes are shown at all.\n"
+"# progress-box-show-cc enables displaying CC and pitchbend events (as dots).\n"
 "#\n"
 "# progress-note-min and progress-note-max set the progress-box note range so\n"
 "# that notes aren't centered in the box, but shown at their position by pitch.\n"
@@ -1077,6 +1085,7 @@ usrfile::write ()
         write_float(file, "progress-box-height", usr().progress_box_height());
 
     write_boolean(file, "progress-box-shown", usr().progress_box_shown());
+    write_boolean(file, "progress-box-show-cc", usr().progress_box_show_cc());
     write_integer(file, "progress-note-min", usr().progress_note_min());
     write_integer(file, "progress-note-max", usr().progress_note_max());
     write_boolean(file, "lock-main-window", usr().lock_main_window());

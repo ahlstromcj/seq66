@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2023-12-07
+ * \updates       2025-04-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -170,6 +170,12 @@ private:
      */
 
     bool m_is_checked;
+
+    /**
+     *  Holds the value of usr().progress_box_show_cc().
+     */
+
+    bool m_show_cc;
 
     /**
      *  The thickness of the vertical progress bar, either 1 or 2.

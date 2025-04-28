@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-04-26
+2015-07-10 to 2025-04-28
 
 # Change Log
 
-## [0.99.20] - 2025-04-26
+## [0.99.20] - 2025-04-28
 
 ### Added
 
@@ -12,12 +12,19 @@ Chris Ahlstrom
     running via NSM; see qsmainwnd and qt5nsmanager.
 -   An ALSA/JACK label to JACK preferences tab, same as in mainwnd.
 -   Control/pitch events now show up in pattern-slot progress box.
+    Can be disabled via 'usr' [user-ui-tweaks] progress-box-show-cc
+    = false.
 
 ### Changed
 
 -   contrib/vim-syntax/cpp.vim with added symbols like CSTR.
 -   contrib/vim.rc, changed F8 for fixing Windows quote characters.
 -   Many minor tweaks to comments and appearance.
+
+### Fixed
+
+-   Fixed weird issue with setting measures in the
+    pattern-editor-in-tab.
 
 ## [0.99.19] - 2025-03-02
 

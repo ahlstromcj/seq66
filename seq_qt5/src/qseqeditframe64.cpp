@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-04-26
+ * \updates       2025-04-28
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -368,15 +368,14 @@ qseqeditframe64::qseqeditframe64
         m_snap = s.snap();
 
     m_armed_status = track().armed();
-
-    if (shorter)
+    if (m_short_version)
     {
         /*
          * Currently this seems to have position 0, 0, which does not work
          * for showing note tooltips.
          */
 
-#if defined SEQ66_SHOW_GENERIC_TOOLTIPS
+#if defined SEQ66_SHOW_GENERIC_TOOLTIPS             /* not defined          */
         m_edit_tab_widget = parent;
 #endif
     }
@@ -555,6 +554,14 @@ qseqeditframe64::qseqeditframe64
         usr().dark_theme() ? length_short_inv_xpm : length_short_xpm,
         ui->m_button_length
     );
+
+#if defined USE_LEGACY_MEASURES_ADJUSTMENT
+    connect
+    (
+        ui->m_combo_length, SIGNAL(currentTextChanged(const QString &)),
+        this, SLOT(text_measures(const QString &))
+    );
+#else
     connect
     (
         ui->m_combo_length, SIGNAL(currentIndexChanged(int)),
@@ -565,6 +572,7 @@ qseqeditframe64::qseqeditframe64
         ui->m_combo_length->lineEdit(), SIGNAL(editingFinished()),
         this, SLOT(text_measures_edit())
     );
+#endif
     connect
     (
         ui->m_button_length, SIGNAL(clicked(bool)),
@@ -1753,7 +1761,6 @@ qseqeditframe64::conditional_update ()
     {
         std::string mstring = std::to_string(m);
         int lenindex = measures_list().index(m);
-        m_measures = m;
         if (lenindex >= 0)
         {
             int curindex = ui->m_combo_length->currentIndex();
@@ -1810,24 +1817,6 @@ qseqeditframe64::conditional_update ()
         update_midi_buttons();                  /* mirror current states    */
     }
 }
-
-#if defined USE_THIS_CODE
-
-bool
-qseqeditframe64::poll_for_change
-(
-    int newvalue,
-    int oldvalue,
-    QComboBox * qcb,
-    combolist & cl,
-)
-{
-    bool result = false;
-
-    return result;
-}
-
-#endif  // defined USE_THIS_CODE
 
 #if defined USE_WOULD_TRUNCATE_BPB_BW           /* undefined                */
 
@@ -2110,9 +2099,10 @@ qseqeditframe64::set_measures (int m, qbase::status qs)
         }
         else
         {
-            m_measures = m;
+            // m_measures = m;
             if (track().apply_length(m, true))      /* always a user change */
             {
+                m_measures = m;
                 track().remove_orphaned_events();
                 set_track_change();                 /* to solve issue #90   */
             }
@@ -2338,12 +2328,20 @@ qseqeditframe64::detect_time_signature ()
     return result;
 }
 
+#if defined USE_LEGACY_MEASURES_ADJUSTMENT
+
 void
-qseqeditframe64::update_measures (int index)
+qseqeditframe64::text_measures (const QString & text)
 {
-    int measures = measures_list().ctoi(index);
-    set_measures(measures);
+    std::string temp = text.toStdString();
+    if (! temp.empty())
+    {
+        int measures = string_to_int(temp);
+        set_measures(measures);
+    }
 }
+
+#else
 
 void
 qseqeditframe64::text_measures_edit ()
@@ -2358,6 +2356,15 @@ qseqeditframe64::text_measures_edit ()
     }
 }
 
+void
+qseqeditframe64::update_measures (int index)
+{
+    int measures = measures_list().ctoi(index);
+    set_measures(measures);
+}
+
+#endif
+
 /**
  *  Resets the pattern-length to 1 in its combo-box.
  */
@@ -2370,27 +2377,6 @@ qseqeditframe64::reset_measures ()
     ui->m_combo_length->setCurrentIndex(index);
     set_measures(m_measures);
 }
-
-#if defined USE_COMBO_BUTTON_TO_CYLE_MEASURES       // kept only for posterity
-
-/**
- *  When the measures-length button is pushed, we go to the next length
- *  entry in the combo-box, wrapping around when the end is reached.
- */
-
-void
-qseqeditframe64::next_measures ()
-{
-    int index = measures_list().index(m_measures);
-    if (++index >= measures_list().count())
-        index = 0;
-
-    ui->m_combo_length->setCurrentIndex(index);
-    int m = measures_list().ctoi(index);
-    set_measures(m);
-}
-
-#endif
 
 /**
  *  Passes the transpose status to the sequence object.

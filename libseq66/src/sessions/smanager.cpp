@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2025-02-19
+ * \updates       2025-04-27
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -970,7 +970,7 @@ smanager::error_handling ()
 
     if (internal_error)
     {
-        show_error("Internal error.", errmsg);
+        show_error("Error.", errmsg);
     }
     else if (session_error)
     {

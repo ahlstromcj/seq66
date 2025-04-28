@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2024-12-01
+ * \updates       2025-04-27
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -910,6 +910,14 @@ private:
     bool m_progress_box_shown;
 
     /**
+     *  If set (normally true), then MIDI Control Change and Pitch Wheel
+     *  events are shown as dots in the progress box, to make them easy
+     *  to see when recording.
+     */
+
+    bool m_progress_box_show_cc;
+
+    /**
      *  Lets the range (in pitch) of the progress box be tailored. If the
      *  maximum is 0, neither value is used; instead the min/max are
      *  determined separately for each sequence and the patterns are centered
@@ -1714,6 +1722,11 @@ public:
         return m_progress_box_shown;
     }
 
+    bool progress_box_show_cc () const
+    {
+        return m_progress_box_show_cc;
+    }
+
     int progress_note_min () const
     {
         return m_progress_note_min;
@@ -2082,6 +2095,11 @@ public:         // used in main application module and the usrfile class
     void progress_box_shown (bool flag)
     {
         m_progress_box_shown = flag;
+    }
+
+    void progress_box_show_cc (bool flag)
+    {
+        m_progress_box_show_cc = flag;
     }
 
     void in_nsm_session (bool f)

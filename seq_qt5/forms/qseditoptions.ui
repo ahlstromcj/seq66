@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -1489,7 +1489,7 @@ Range: 0.5 to 1.0. Default: 0.8.</string>
            <bool>true</bool>
           </property>
           <property name="text">
-           <string>X</string>
+           <string>x</string>
           </property>
          </widget>
         </item>
@@ -1532,7 +1532,7 @@ zoom vertically.</string>
         <item row="1" column="2">
          <widget class="QLabel" name="label_x">
           <property name="text">
-           <string>X</string>
+           <string>x</string>
           </property>
          </widget>
         </item>
@@ -1561,7 +1561,7 @@ zoom vertically.</string>
            <bool>true</bool>
           </property>
           <property name="text">
-           <string>X</string>
+           <string>x</string>
           </property>
          </widget>
         </item>
