@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2025-01-15
+ * \updates       2025-04-29
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -58,7 +58,8 @@ namespace seq66
 using Color = QColor;
 
 /**
- *  Provides a type for the brush object for the GUI framework.
+ *  Provides a type for the brush object for the GUI framework. These
+ *  objects are held in std::unique_ptr<>.
  */
 
 using Brush = QBrush;
@@ -68,9 +69,18 @@ using Brush = QBrush;
  *  SolidPattern, and DenseXPattern (X = 1 to 7), and these are the ones we
  *  are most interested in.  They are defined in the QtCore/qnamespace.h
  *  header file.  The maximum useful value is ConicalGradientPattern = 17.
+ *  Note that QBrush is a plain enumeration declared in qnamespace.h.
+ *  However, we create the brushes in the gui_palette_qt5 constructor.
  */
 
 using BrushStyle = Qt::BrushStyle;
+
+/**
+ *  Provides a map to pen styles.  Note that QPenStyle is a plain enumeration
+ *  declared in qnamespace.h.
+ */
+
+using PenStyle = Qt::PenStyle;
 
 /**
  *  Implements a stock palette of QColor elements.
@@ -87,6 +97,17 @@ public:
         note,       /**< Brush for drawing notes in pattern editor.         */
         scale,      /**< Brush for drawing lines denoting musical scale.    */
         backseq     /**< Brush for drawing lines denoting background seq.   */
+    };
+
+    enum class pen
+    {
+        empty,      /**< Qt::NoPen.                                         */
+        solid,      /**< The default pen is Qt::SolidLine.                  */
+        dash,       /**< Qt::DashLine.                                      */
+        dot,        /**< Qt::DotLine.                                       */
+        dashdot,    /**< Qt::DashDotLine.                                   */
+        dashdotdot, /**< Qt::DashDotDotLine.                                */
+        customdash  /**< Qt::CustomDashLine (not supported at this time).   */
     };
 
 private:
@@ -169,6 +190,15 @@ private:
      */
 
     bool m_use_gradient_brush;
+
+    /**
+     *  Stock pen enumeration values.
+     */
+
+    PenStyle m_measure_pen_style;           /* style of each bar line       */
+    PenStyle m_beat_pen_style;              /* style of each beat line      */
+    PenStyle m_four_pen_style;              /* style of each 1/4 beat line  */
+    PenStyle m_step_pen_style;              /* style of small step lines    */
 
 public:
 
@@ -346,6 +376,25 @@ public:
     {
         return m_use_gradient_brush;
     }
+
+    PenStyle get_pen (pen p);
+    pen get_pen_index (PenStyle ps);
+    std::string get_pen_name (pen p);
+    PenStyle get_pen_style (const std::string & penname);
+    bool get_pen_names
+    (
+        std::string & measurepen,
+        std::string & beatpen,
+        std::string & fourpen,
+        std::string & steppen
+    );
+    bool set_pens
+    (
+        const std::string & measurepen,
+        const std::string & beatpen,
+        const std::string & fourpen,
+        const std::string & steppen
+    );
 
 private:
 

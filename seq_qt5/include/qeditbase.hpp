@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2025-01-15
+ * \updates       2025-04-28
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -92,6 +92,7 @@ private:
     const Color m_progress_color;
     const Color m_beat_color;
     const Color m_step_color;
+    const Color m_octave_color;
     const Color m_note_in_color;
     const Color m_note_out_color;
     const Color m_tempo_color;
@@ -374,6 +375,11 @@ public:
     const Color & step_color () const
     {
         return m_step_color;
+    }
+
+    const Color & octave_color () const
+    {
+        return m_octave_color;
     }
 
     const Color & note_in_color () const

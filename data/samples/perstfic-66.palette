@@ -10,7 +10,7 @@
 [Seq66]
 
 config-type = "palette"
-version = 0
+version = 1
 
 # The [comments] section can document this file. Lines starting with
 # '#', '[', or that have no characters end the comment.
@@ -129,6 +129,22 @@ empty = solid
 note = lineargradient
 scale = dense3
 backseq = dense2
+
+# This section defines pen styles to use for vertical time lines.
+# The names are based on the names in the Qt::PenStyle enumeration.
+# They are:
+#    nopen, solid, dash, dot, dashdot, dashdotdot, customdash (which
+#    is currently not supported).
+#
+# 'measure' and 'beat' are obvious. 'fourth' is a line for the 1/4s of
+# a beat, and 'step' is the smallest unit (normally 6 pixels).
+
+[pens]
+
+measure = solid
+beat = solid
+fourth = dashdot
+step = dot
 
 # End of /home/user/.config/seq66/qseq66.palette
 #

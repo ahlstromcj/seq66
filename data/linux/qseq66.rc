@@ -99,6 +99,14 @@ base-directory = ""
 active = false
 name = "qseq66.drums"
 
+# Provides a flag and file-name to provide a list of patches for legacy
+# non-GM-compliant devices.
+
+[patches-file]
+
+active = false
+name = "PSS-790.patches"
+
 # Provides a flag and a file-name to allow modifying the palette using the file
 # specified. Use '""' to indicate no 'palette' file. If none or not active,
 # the internal palette is used.

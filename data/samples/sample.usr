@@ -660,16 +660,25 @@ This sample is adapted from:
 
 [user-interface-settings]
 
+swap-coordinates = false
 mainwnd-rows = 4
 mainwnd-columns = 8
 mainwnd-spacing = 2
 default-zoom = 2
 global-seq-feature = true
 progress-bar-thick = true
+progress-bar-thickness = 2
+progress-box-elliptical = false
+follow-progress = true
+gridlines-thick = true
 inverse-colors = false
+time-fg-color = "default"
+time-bg-color = "default"
+dark-theme = true
 window-redraw-rate = 40
 window-scale = 1
 window-scale-y = 1
+enable-learn-confirmation = true
 
 # [user-midi-ppqn]
 #
@@ -749,37 +758,52 @@ bpm-maximum = 127
 
 daemonize = false
 log = ""
+pdf-viewer = ""
+browser = ""
 
 # [user-ui-tweaks]
 #
-# The key-height value specifies the initial height (before vertical
-# zoom) of the keys in the pattern editor.  Defaults to 10 pixels,
-# ranges from 6 to 32.
+# key-height specifies the initial height (before vertical zoom) of pattern
+# editor keys.  Defaults to 10 pixels, ranges from 6 to 32.
 #
-# The note-resume option, if active, causes any notes in progress
-# to be resumed when the pattern is toggled back on.
+# key-view specifies the default for showing labels for each key:
+# 'octave-letters' (default), 'even_letters', 'all-letters',
+# 'even-numbers', and 'all-numbers'.
 #
-# If specified, a style-sheet (e.g. 'qseq66.qss') is applied at
-# startup.  Normally just a base-name, it can contain a file-path
-# to provide a style usable in many other applications.
+# note-resume causes notes-in-progress to resume when the pattern toggles on.
 #
-# A fingerprint is a condensation of the note events in a long track,
-# to reduce the amount of drawing in the grid buttons. Ranges from 32
-# (the default) to 128. Set to 0 to not use a fingerprint.
+# Note that style-sheet specification has been moved to the 'rc' file with
+# all the rest of the files.
 #
-# The progress-box width and height settings change the size of the
-# progress box in the live-loop grid buttons.  Width ranges from 0.50
-# to 1.0; the height from 0.10 to 0.50.  If either is 0, then the box
-# isn't drawn.  If either is 'default', defaults are used.
+# A fingerprint is a condensation of note events in a long track, to reduce
+# the time drawing the pattern in the buttons. Ranges from 32 (default) to
+# 128. 0 = don't use a fingerprint.
+#
+# progress-box-width and -height settings change the scaled size of the
+# progress box in the live-grid buttons.  Width ranges from 0.50 to 1.0, and
+# the height from 0.10 to 1.0.  If either is 'default', defaults (0.8 x 0.3)
+# are used.  progress-box-shown controls if the boxes are shown at all.
+# progress-box-show-cc enables displaying CC and pitchbend events (as dots).
+#
+# progress-note-min and progress-note-max set the progress-box note range so
+# that notes aren't centered in the box, but shown at their position by pitch.
+#
+# lock-main-window prevents the accidental change of size of the main
+# window.
 
 [user-ui-tweaks]
 
 key-height = 10
+key-view = octave-letters
 note-resume = false
-style-sheet = ""
 fingerprint-size = 0
 progress-box-width = 0
 progress-box-height = 0
+progress-box-shown = true
+progress-box-show-cc = true
+progress-note-min = 0
+progress-note-max = 127
+lock-main-window = false
 
 # [user-session]
 #
@@ -795,22 +819,34 @@ progress-box-height = 0
 
 session = none
 url = ""
+visibility = true
 
 # [pattern-editor]
 #
-# This section contains the setup values for recording when a new
-# pattern is opened. For flexibility, a new pattern means only that
-# the loop has the default name, 'Unititled'. These values save time
-# during a live recording session. Note that the valid values for
-# record-style are 'merge', 'overwrite', and 'expand'.
+# 'escape-pattern' allows the Esc key to close a pattern editor if not
+# playing or in paint mode. (Esc exits paint mode or stops playback.)
+#
+# 'apply-to-new-only' makes the next options work only when opening a new
+# pattern.  A new pattern is 'Untitled' and has no events.
+#
+# These settings for play/record for a pattern editor save time in live
+# recording. Valid record-style values: 'merge' or 'overdub', 'overwrite',
+# 'expand', and 'one-shot'. 'wrap-around' allows recorded notes to wrap
+# to the pattern beginning. Currently 'notemap' and quantizing are
+# are mutually exclusive.
 
 [pattern-editor]
 
+escape-pattern = true
+apply-to-new-only = false
 armed = false
 thru = false
 record = false
+tighten = false
 qrecord = false
+notemap = false
 record-style = merge
+wrap-around = false
 
 # End of /home/ahlstrom/.config/seq66/sample.usr
 #

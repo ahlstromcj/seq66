@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-04-26
+ * \updates       2025-04-28
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -567,7 +567,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         int modkey = remkeys - scroll_offset_v() + octkey;
         int y = key * unit_height() + 2;
         if ((modkey % c_octave_size) == 0)
-            pen.setColor(octave_paint());               /* fore_color()     */
+            pen.setColor(octave_color());               /* fore_color()     */
         else
             pen.setColor(step_color());
 

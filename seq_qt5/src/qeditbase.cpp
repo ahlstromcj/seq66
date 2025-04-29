@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2025-01-15
+ * \updates       2025-04-28
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -91,6 +91,7 @@ qeditbase::qeditbase
     m_progress_color        (progress_paint()),
     m_beat_color            (beat_paint()),
     m_step_color            (step_paint()),
+    m_octave_color          (octave_paint()),
     m_note_in_color         (note_in_paint()),
     m_note_out_color        (note_out_paint()),
     m_tempo_color           (tempo_paint()),

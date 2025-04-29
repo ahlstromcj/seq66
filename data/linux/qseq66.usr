@@ -240,6 +240,7 @@ fingerprint-size = 32
 progress-box-width = 0.8
 progress-box-height = 0.3
 progress-box-shown = true
+progress-box-show-cc = true
 progress-note-min = 0
 progress-note-max = 127
 lock-main-window = false

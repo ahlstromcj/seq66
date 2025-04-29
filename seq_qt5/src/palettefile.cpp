@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2025-01-24
+ * \updates       2025-04-29
  * \license       GNU GPLv2 or above
  *
  */
@@ -37,15 +37,20 @@
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5           */
 #include "palettefile.hpp"              /* seq66::palettefile class         */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 
+static const int s_usr_file_version = 1;
+
 /**
  *  Principal constructor.
+ *
+ * Versions:
+ *
+ *      0:  The initial version, plus some additions not kept track of.
+ *      1:  Added a [pens] section to allow altering the vertical grid
+ *          lines. Also affected by [user-interface-settings]
+ *          gridlines-thick = true.
  *
  * \param mapper
  *      Provides the palette reference to be acted upon.
@@ -68,7 +73,7 @@ palettefile::palettefile
     configfile      (filename, rcs, ".palette"),
     m_palettes      (mapper)
 {
-    // Empty body
+    version(s_usr_file_version);
 }
 
 /**
@@ -165,7 +170,16 @@ palettefile::parse_stream (std::ifstream & file)
         std::string snote = get_variable(file, tag, "note");
         std::string sscale = get_variable(file, tag, "scale");
         std::string sbackseq = get_variable(file, tag, "backseq");
-        (void) m_palettes.set_brushes(sempty, snote, sscale, sbackseq);
+        ok = m_palettes.set_brushes(sempty, snote, sscale, sbackseq);
+    }
+    if (ok)
+    {
+        const std::string tag = "[pens]";
+        std::string bar = get_variable(file, tag, "measure");
+        std::string beat = get_variable(file, tag, "beat");
+        std::string fourthbeat = get_variable(file, tag, "fourth");
+        std::string step = get_variable(file, tag, "step");
+        ok = m_palettes.set_pens(bar, beat, fourthbeat, step);
     }
     if (! ok)
     {
@@ -325,6 +339,34 @@ palettefile::write_stream (std::ofstream & file)
             << "note = " << snote << "\n"
             << "scale = " << sscale << "\n"
             << "backseq = " << sbackseq << "\n"
+            ;
+    }
+
+    std::string smeasure;
+    std::string sbeat;
+    std::string sfourthbeat;
+    std::string sstep;
+    file <<
+        "\n"
+        "# This section defines pen styles to use for vertical time lines.\n"
+        "# The names are based on the names in the Qt::PenStyle enumeration.\n"
+        "# They are:\n"
+        "#    nopen, solid, dash, dot, dashdot, dashdotdot, customdash (which\n"
+        "#    is currently not supported).\n"
+        "#\n"
+        "# 'measure' and 'beat' are obvious. 'fourth' is a line for the 1/4s of\n"
+        "# a beat, and 'step' is the smallest unit (normally 6 pixels).\n"
+        "\n"
+        "[pens]\n"
+        "\n"
+        ;
+    if (m_palettes.get_pen_names(smeasure, sbeat, sfourthbeat, sstep))
+    {
+        file
+            << "measure = " << smeasure << "\n"
+            << "beat = " << sbeat << "\n"
+            << "fourth = " << sfourthbeat << "\n"
+            << "step = " << sstep << "\n"
             ;
     }
     write_seq66_footer(file);

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2025-01-15
+ * \updates       2025-04-29
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -484,7 +484,11 @@ gui_palette_qt5::gui_palette_qt5 (const std::string & filename) :
     m_scale_brush_style     (Qt::Dense3Pattern),
     m_backseq_brush         (new (std::nothrow) Brush(Qt::Dense2Pattern)),
     m_backseq_brush_style   (Qt::Dense2Pattern),
-    m_use_gradient_brush    (true)
+    m_use_gradient_brush    (true),
+    m_measure_pen_style     (get_pen(pen::solid)),
+    m_beat_pen_style        (get_pen(pen::solid)),
+    m_four_pen_style        (get_pen(pen::dashdot)),
+    m_step_pen_style        (get_pen(pen::dot))
 {
     load_static_colors(usr().inverse_colors());     /* this must come first */
     reset();
@@ -1162,27 +1166,35 @@ gui_palette_qt5::fill_inverse_colors ()
  *  "Pattern" dropped off (NoBrush left as is).
  */
 
-static const std::string s_brush_names [] =
+static const std::string & brush_name (int index)
 {
-    "nobrush",
-    "solid",
-    "dense1",
-    "dense2",
-    "dense3",
-    "dense4",
-    "dense5",
-    "dense6",
-    "dense7",
-    "horizontal",
-    "vertical",
-    "cross",
-    "bdiag",
-    "fdiag",
-    "diagcross",
-    "lineargradient",
-    "radialgradient",
-    "conicalgradient"
-};
+    static const std::string s_empty;
+    static const int s_maximum
+        = static_cast<int>(Qt::ConicalGradientPattern) + 1;
+
+    static const std::string s_brush_names []
+    {
+        "nobrush",
+        "solid",
+        "dense1",
+        "dense2",
+        "dense3",
+        "dense4",
+        "dense5",
+        "dense6",
+        "dense7",
+        "horizontal",
+        "vertical",
+        "cross",
+        "bdiag",
+        "fdiag",
+        "diagcross",
+        "lineargradient",
+        "radialgradient",
+        "conicalgradient"
+    };
+    return index >= 0 && index < s_maximum ? s_brush_names[index] : s_empty ;
+}
 
 BrushStyle
 gui_palette_qt5::get_brush_style (const std::string & name) const
@@ -1197,7 +1209,7 @@ gui_palette_qt5::get_brush_style (const std::string & name) const
         int maximum = static_cast<int>(Qt::ConicalGradientPattern) + 1;
         for (int counter = 0; counter < maximum; ++counter)
         {
-            if (name == s_brush_names[counter])
+            if (name == brush_name(counter))
             {
                 result = static_cast<Qt::BrushStyle>(counter);
                 break;
@@ -1210,13 +1222,8 @@ gui_palette_qt5::get_brush_style (const std::string & name) const
 std::string
 gui_palette_qt5::get_brush_name (BrushStyle b) const
 {
-    std::string result;
-    int maximum = static_cast<int>(Qt::ConicalGradientPattern) + 1;
     int index = static_cast<int>(b);
-    if (index >= 0 && index < maximum)
-        result = s_brush_names[index];
-
-    return result;
+    return brush_name(index);
 }
 
 /**
@@ -1342,6 +1349,10 @@ gui_palette_qt5::set_brushes
             /*
              * Background sequence brush
              */
+
+            // (void) make_brush(m_backseq_brush, m_backseq_brush_style, temp);
+            // temp = get_brush_style(backseqbrush);
+            // result = temp != Qt::TexturePattern;
         }
     }
     return result;
@@ -1392,6 +1403,143 @@ gui_palette_qt5::get_brush (brush index)
         case brush::backseq:    return *m_backseq_brush;    break;
         default:                return s_dummy;             break;
     }
+    return s_dummy;
+}
+
+/**
+ *  Provides the names of the Qt::BrushStyle enumeration, with the word
+ *  "Pattern" dropped off (NoBrush left as is).
+ */
+
+static const std::string & pen_name (int index)
+{
+    static const std::string s_empty;
+    static const int s_maximum
+        = static_cast<int>(Qt::CustomDashLine) + 1;
+
+    static const std::string s_pen_names []
+    {
+        "nopen",
+        "solid",
+        "dash",
+        "dot",
+        "dashdot",
+        "dashdotdot",
+        "customdash"
+    };
+    return index >= 0 && index < s_maximum ? s_pen_names[index] : s_empty ;
+}
+
+bool
+gui_palette_qt5::get_pen_names
+(
+    std::string & measurepen,
+    std::string & beatpen,
+    std::string & fourpen,
+    std::string & steppen
+)
+{
+    pen p = get_pen_index(m_measure_pen_style);
+    measurepen = get_pen_name(p);
+    p = get_pen_index(m_beat_pen_style);
+    beatpen = get_pen_name(p);
+    p = get_pen_index(m_four_pen_style);
+    fourpen = get_pen_name(p);
+    p = get_pen_index(m_step_pen_style);
+    steppen = get_pen_name(p);
+    return true;                        /* for now */
+}
+
+PenStyle
+gui_palette_qt5::get_pen (pen index)
+{
+    static PenStyle s_dummy { Qt::NoPen };
+    switch (index)
+    {
+        case pen::empty:        return Qt::NoPen;           break;
+        case pen::solid:        return Qt::SolidLine;       break;
+        case pen::dash:         return Qt::DashLine;        break;
+        case pen::dot:          return Qt::DotLine;         break;
+        case pen::dashdot:      return Qt::DashDotLine;     break;
+        case pen::dashdotdot:   return Qt::DashDotDotLine;  break;
+        case pen::customdash:   return Qt::DashLine;        break;
+    }
+    return s_dummy;
+}
+
+gui_palette_qt5::pen
+gui_palette_qt5::get_pen_index (PenStyle ps)
+{
+    pen result = pen::empty;
+    switch (ps)
+    {
+        case Qt::NoPen:             result = pen::empty;        break;
+        case Qt::SolidLine:         result = pen::solid;        break;
+        case Qt::DashLine:          result = pen::dash;         break;
+        case Qt::DotLine:           result = pen::dot;          break;
+        case Qt::DashDotLine:       result = pen::dashdot;      break;
+        case Qt::DashDotDotLine:    result = pen::dashdotdot;   break;
+        case Qt::CustomDashLine:    result = pen::customdash;   break;
+        case Qt::MPenStyle:         result = pen::empty;        break;
+    }
+    return result;
+}
+
+/**
+ *  We could convert the pen index to an integer and look it up.
+ */
+
+PenStyle
+gui_palette_qt5::get_pen_style (const std::string & penname)
+{
+    PenStyle result = Qt::NoPen;
+    int maximum = static_cast<int>(Qt::CustomDashLine) + 1;
+    for (int counter = 0; counter < maximum; ++counter)
+    {
+        if (penname == pen_name(counter))
+        {
+            result = get_pen(static_cast<pen>(counter));
+            break;
+        }
+    }
+    return result;
+}
+
+/**
+ *  Converts a PenStyle to a pen name. We could use the method done
+ *  by get_brush_name(). Or we could convert the pen index to an
+ *  integer.
+ */
+
+std::string
+gui_palette_qt5::get_pen_name (pen p)
+{
+    int index = static_cast<int>(p);
+    return pen_name(index);
+}
+
+bool
+gui_palette_qt5::set_pens
+(
+    const std::string & measurepen,
+    const std::string & beatpen,
+    const std::string & fourpen,
+    const std::string & steppen
+)
+{
+    PenStyle ps = get_pen_style(measurepen);
+    m_measure_pen_style = ps;
+
+    ps = get_pen_style(beatpen);
+    m_beat_pen_style = ps;
+
+    ps = get_pen_style(fourpen);
+    m_four_pen_style = ps;
+
+    ps = get_pen_style(steppen);
+    m_step_pen_style = ps;
+
+    return true;        /* for now */
 }
 
 }           // namespace seq66

@@ -81,7 +81,7 @@ static const std::string c_interaction_method_descs[3] =
 namespace seq66
 {
 
-static const int s_rc_file_version = 3;
+static const int s_rc_file_version = 4;
 
 /**
  *  Principal constructor.
@@ -93,6 +93,7 @@ static const int s_rc_file_version = 3;
  *      2:  2021-06-04. Transition to get-variable for booleans and integers,
  *                      finished on 2021-06-07.
  *      3:  2023-11-02. Moved style-sheets from 'usr' to 'rc'.
+ *      4:  2025-02-18. Added [patches-file] section to the 'rc' file.
  *
  * \param rcs
  *      The source/destination for the configuration information.

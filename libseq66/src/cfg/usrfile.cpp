@@ -41,10 +41,6 @@
 #include "cfg/userinstrument.hpp"       /* seq66::userinstrument            */
 #include "util/strfunctions.hpp"        /* seq66::strip_quotes()            */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 
