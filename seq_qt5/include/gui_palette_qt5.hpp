@@ -407,6 +407,11 @@ public:
 
 private:
 
+    /*
+     * Brush handling.
+     */
+
+    const std::string & brush_name (int index) const;
     bool make_brush
     (
         BrushPtr & brush,
@@ -426,6 +431,11 @@ private:
         const Color & fg, const std::string & fgname
     );
 
+    /*
+     * Pen style handling.
+     */
+
+    const std::string & pen_name (int index) const;
     PenStyle get_pen (penstyle p);
     penstyle get_pen_index (PenStyle ps);
     std::string get_penstyle_name (penstyle p);

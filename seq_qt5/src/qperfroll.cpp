@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-28
+ * \updates       2025-04-30
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -1011,6 +1011,7 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
 {
     int xwidth = r.width();
     int yheight = r.height();
+    int linecounter = 0;
     QBrush brush(back_color());                         /* Qt::NoBrush      */
     QPen pen(fore_color());                             /* Qt::black        */
     pen.setStyle(Qt::SolidLine);
@@ -1020,8 +1021,15 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
     painter.drawRect(0, 0, width(), height());          /* full width       */
     for (int i = 0; i < height(); i += track_height())  /* horizontal lines */
     {
+        bool start_of_set = (linecounter++ % set_size()) == 0;
         int y = i + c_ycorrection;                      /* - 2 */
+        if (start_of_set)
+            pen.setWidth(horiz_pen_width() * 2);
+
+        painter.setPen(pen);
         painter.drawLine(0, y, xwidth, y);
+        if (start_of_set)
+            pen.setWidth(horiz_pen_width());
     }
 
     /*

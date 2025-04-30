@@ -331,37 +331,19 @@ text_names_paint ()
 Color
 text_slots_paint ()
 {
-#if defined USE_OLD_CODE
-    return global_palette().dark_ui() ?
-        global_palette().get_inverse_color(InvertibleColor::textslots) :
-        global_palette().get_color(InvertibleColor::textslots) ;
-#else
     return global_palette().get_color(InvertibleColor::textslots);
-#endif
 }
 
 Color
 scale_paint ()
 {
-#if defined USE_OLD_CODE
-    return global_palette().dark_ui() ?
-        global_palette().get_inverse_color(InvertibleColor::scale) :
-        global_palette().get_color(InvertibleColor::scale) ;
-#else
     return global_palette().get_color(InvertibleColor::scale) ;
-#endif
 }
 
 Color
 extra_paint ()
 {
-#if defined USE_OLD_CODE
-    return global_palette().dark_ui() ?
-        global_palette().get_inverse_color(InvertibleColor::extra) :
-        global_palette().get_color(InvertibleColor::extra) ;
-#else
     return global_palette().get_color(InvertibleColor::extra) ;
-#endif
 }
 
 Brush
@@ -417,7 +399,6 @@ gui_step_pen_style ()
 {
     return global_palette().pen_style(gui_palette_qt5::pen::step);
 }
-
 
 /**
  *  Secret color to indicate to use the corresponding theme color. Used for a
@@ -512,7 +493,7 @@ gui_palette_qt5::gui_palette_qt5 (const std::string & filename) :
     m_use_gradient_brush    (true),
     m_measure_pen_style     (get_pen(penstyle::solid)),
     m_beat_pen_style        (get_pen(penstyle::solid)),
-    m_fourth_pen_style      (get_pen(penstyle::dashdot)),
+    m_fourth_pen_style      (get_pen(penstyle::dot)),
     m_step_pen_style        (get_pen(penstyle::dot))
 {
     load_static_colors(usr().inverse_colors());     /* this must come first */
@@ -902,16 +883,7 @@ gui_palette_qt5::get_color_inverse (PaletteColor index) const
     if (index != PaletteColor::none)
     {
         Color c = m_palette.get_color(index);
-#if defined USE_OLD_CODE
-        int r, g, b, a;
-        c.getRgb(&r, &g, &b, &a);
-        r = a - r;
-        g = a - g;
-        b = a - b;
-        return Color(r, g, b, a);
-#else
         return invert(c);
-#endif
     }
     else
         return m_black;
@@ -1191,7 +1163,8 @@ gui_palette_qt5::fill_inverse_colors ()
  *  "Pattern" dropped off (NoBrush left as is).
  */
 
-static const std::string & brush_name (int index)
+const std::string &
+gui_palette_qt5::brush_name (int index) const
 {
     static const std::string s_empty;
     static const int s_maximum
@@ -1436,12 +1409,11 @@ gui_palette_qt5::get_brush (brush index)
  *  "Pattern" dropped off (NoBrush left as is).
  */
 
-static const std::string & pen_name (int index)
+const std::string &
+gui_palette_qt5::pen_name (int index) const
 {
     static const std::string s_empty;
-    static const int s_maximum
-        = static_cast<int>(Qt::CustomDashLine) + 1;
-
+    static const int s_maximum = static_cast<int>(Qt::CustomDashLine) + 1;
     static const std::string s_pen_names []
     {
         "nopen",

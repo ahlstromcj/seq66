@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>7</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -4283,7 +4283,7 @@ path added to this name is stripped.</string>
          </font>
         </property>
         <property name="toolTip">
-         <string/>
+         <string>Useful for storing updates to Seq66's palette layout.</string>
         </property>
         <property name="text">
          <string>&amp;Store Palette</string>
@@ -4504,6 +4504,9 @@ path added to this name is stripped.</string>
           <pointsize>11</pointsize>
           <bold>false</bold>
          </font>
+        </property>
+        <property name="toolTip">
+         <string>Useful for creating or copying a patches file.</string>
         </property>
         <property name="text">
          <string>Store Patches</string>

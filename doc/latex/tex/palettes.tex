@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-12-29
-% \update      2023-10-25
+% \update      2025-04-30
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -15,14 +15,18 @@
 %
 %-------------------------------------------------------------------------------
 
-\section{Palettes for Coloring}
+\section{Palettes for Color, Brushes, and Pens}
 \label{sec:palettes}
 
    Many user-interface elements in \textsl{Seq66} are drawn independently of
    the Qt theme in force, and they have their own coloring.  Also, patterns can
    be colored, and the color is stored (as a color number) in the pattern when
    the tune is saved.
-   There are four palettes:
+   It can be tricky to get a good look, especially one that matches the
+   style-sheet (if provided) or the active Qt theme.
+   These palette entries can make for a better look.
+
+   There are five palettes:
 
    \begin{itemize}
       \item \textbf{Pattern}.  This palette contains 32 color entries, and each
@@ -40,7 +44,13 @@
       \item \textbf{Brushes}.  This "palette" provides a way to specify the
          fill type for the drawing of notes, the scale (if shown) in the
          pattern editor, and the background sequence (if shown).  It allows the
-         user to select solid file, hatching, and some other fill patterns.
+         user to select solid file, hatching, linear gradient, and other
+         fill patterns.
+      \item \textbf{Pens}.  This "palette" provides a way to specify the
+         drawing of vertical lines in the pattern and song editors.
+         It supplements the 
+         \texttt{progress-bar-thick} and
+         \texttt{gridlines-thick} options in the 'usr' file.
    \end{itemize}
 
    All palettes have default values built into the application.  However, the
@@ -65,12 +75,13 @@
 \label{subsec:palettes_setup}
 
    The palette file is a standard \textsl{Seq66} configuration file with a name
-   something like \texttt{qseq66.palette}, plus three sections:
+   something like \texttt{qseq66.palette}, plus four sections:
 
    \begin{verbatim}
       [palette]
       [ui-palette]
       [brushes]
+      [pens]
    \end{verbatim}
 
    The first section is the "Pattern" palette; the second section is the
@@ -121,9 +132,9 @@ project.
 \subsubsection{Palettes Setup / Ui and Inverse Ui}
 \label{subsubsec:palettes_setup_ui}
 
-   The "UI palette" applies to other elements drawn by \textsl{Seq66}:
+   The UI palette applies to other elements drawn by \textsl{Seq66}:
    foreground lines, background paint that can differ between various
-   backgrounds, text colors that can differ between slot, time-panels,
+   backgrounds, text colors that can differ between slots, time-panels,
    the data panel, and the Song editor's name panel.
    
    If the user has chosen a particular Qt theme or has applied a
@@ -154,7 +165,7 @@ project.
 \subsubsection{Palettes Setup / Brushes}
 \label{subsubsec:palettes_setup_brushes}
 
-   The last "palette" is small, allowing the fill-pattern of a few pattern-editor
+   This "palette" is small, allowing the fill-pattern of a few pattern-editor
    items to be changed.
 
    \begin{verbatim}
@@ -168,6 +179,8 @@ project.
    On the left of the equals sign is the item than can be filled, and on the
    right side is the \textsl{Qt} brush to be used.  The defaults for most are
    solid fill.
+   The set of legal values matches the set
+   of value in the Qt::BrushStyles enumeration.
 
    The entry \texttt{empty} isn't too useful; best to leave it set to 'solid'.
    The entry \texttt{note} affects the fill of normal/selected notes.
@@ -179,12 +192,32 @@ project.
    hatching used here helps further distinguish the real notes from the
    background notes.
 
+\subsubsection{Palettes Setup / Pens}
+\label{subsubsec:palettes_setup_brushes}
+
+   The last "palette" is small, allowing the vertical grid lines
+   of a few pattern-editor
+   items to be changed.
+
+   \begin{verbatim}
+      [pens]
+      measure = solid
+      beat = solid
+      fourth = dash
+      step = dot
+   \end{verbatim}
+
+   The defaults are shown above.
+   The set of legal values matches the set
+   of value in the Qt::PenStyles enumeration.
+   Note that one value is "nopen", which makes that line invisible.
+
 \subsection{Palettes Summary}
 \label{subsec:palettes_summary}
 
    There are some obvious enhancements to this scheme, including increasing the
    number of palette items, synchronizing the palette with the current desktop
-   them semi-automatically, and providing a user interface to drag-and-drop
+   theme semi-automatically, and providing a user interface to drag-and-drop
    colors.
 
 \subsection{Theming}

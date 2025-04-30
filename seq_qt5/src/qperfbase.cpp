@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-14
- * \updates       2024-12-28
+ * \updates       2025-04-30
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -60,6 +60,7 @@ qperfbase::qperfbase
     int totalheight
 ) :
     qeditbase       (p, zoom, snap, c_perf_scale_x, 0, unitheight, totalheight),
+    m_set_size      (usr().set_size()),
     m_width_factor  (1.25f),
     m_track_height  (c_names_y),
     m_track_thin    (false),

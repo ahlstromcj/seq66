@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-28
+ * \updates       2025-04-30
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -130,6 +130,7 @@ qperfnames::paintEvent (QPaintEvent *)
     int set_y = h * set_count / 2;
     for (int y = y_s; y <= y_f; ++y)
     {
+        bool start_of_set = (y % set_size()) == 0;
         int seq_id = y;
         if (seq_id < int(perf().sequence_max()))        // or use set_count?
         {
@@ -213,7 +214,7 @@ qperfnames::paintEvent (QPaintEvent *)
                     }
                     painter.fillRect
                     (
-                        rect_x +2 , rect_y +1, rect_w -2, h - 1, grad
+                        rect_x + 2 , rect_y + 1, rect_w - 2, h - 1, grad
                     );
                     pen.setColor(fore_color());
 
@@ -223,10 +224,23 @@ qperfnames::paintEvent (QPaintEvent *)
 
                     pen.setStyle(Qt::SolidLine);
                     pen.setColor(fore_color());
-                    painter.setPen(pen);
                     brush.setStyle(Qt::NoBrush);
                     painter.setBrush(brush);
                     painter.drawRect(rect_x, rect_y, rect_w, h);
+#if defined USE_THIS_CODE
+                    if (start_of_set)
+                    {
+                        pen.setWidth(horiz_pen_width() * 2);
+                        painter.setPen(pen);
+                        painter.drawLine
+                        (
+                            rect_x + 1, rect_y + 2,
+                            rect_x + rect_w + 1, rect_y + 2
+                        );
+                        pen.setWidth(horiz_pen_width());
+                        painter.setPen(pen);
+                    }
+#endif
                 }
                 else
                 {

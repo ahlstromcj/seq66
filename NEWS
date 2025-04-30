@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-04-29
+2015-07-10 to 2025-04-30
 
 # Change Log
 
-## [0.99.20] - 2025-04-29
+## [0.99.20] - 2025-04-30
 
 ### Added
 
@@ -20,6 +20,7 @@ Chris Ahlstrom
 -   contrib/vim-syntax/cpp.vim with added symbols like CSTR.
 -   contrib/vim.rc, changed F8 for fixing Windows quote characters.
 -   Many minor tweaks to comments and appearance.
+    -   Thick line between sets in the song editor.
 
 ### Fixed
 

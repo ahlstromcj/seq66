@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.20
 Chris Ahlstrom
-2019-04-13 to 2025-04-29
+2019-04-13 to 2025-04-30
 
 Hot:
     
@@ -36,6 +36,7 @@ NSM:
 
 Backlog:
 
+    -   Add thicker line for set boundarys in perfnames and perfroll.
     -   Fix the handling, drawing, and event-editor data of pitch bend.
     -   Investigate qmidictl, midicsv
     -   The event panel if offset rightward a few (3?) pixels from the

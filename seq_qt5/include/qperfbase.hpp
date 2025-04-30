@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-14
- * \updates       2024-12-17
+ * \updates       2025-04-30
  * \license       GNU GPLv2 or above
  *
  *  This class WILL BE the base class for qseqroll, qseqdata, qtriggereditor,
@@ -69,6 +69,12 @@ class qperfbase : public qeditbase
 private:
 
     /**
+     *  Set size. Holds the 'usr' value for easy access.
+     */
+
+    int m_set_size;
+
+    /**
      *  Allows for expansion of the song-editor horizontally.  Starts out
      *  at 1.25. See qperfbase::horizSizeHint().
      */
@@ -107,6 +113,11 @@ public:
         int totalheight = 1
     );
 
+    int set_size () const
+    {
+        return m_set_size;
+    }
+
     bool track_thin () const
     {
         return m_track_thin;
@@ -136,6 +147,11 @@ protected:
 
     virtual int horizSizeHint () const override;
     void force_resize (QWidget *);
+
+    void set_size (int sz)
+    {
+        m_set_size = sz;
+    }
 
     void set_thin ()
     {
