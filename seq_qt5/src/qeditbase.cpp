@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2025-04-28
+ * \updates       2025-04-30
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -106,9 +106,17 @@ qeditbase::qeditbase
     m_measure_pen_width     (2),
     m_beat_pen_width        (1),
     m_horiz_pen_width       (1),
+#if defined USE_OLD_CODE
     m_measure_pen_style     (Qt::SolidLine),
     m_beat_pen_style        (Qt::SolidLine),        /* or Qt::DotLine       */
     m_four_pen_style        (Qt::DashDotLine),
+    m_step_pen_style        (Qt::DotLine),
+#else
+    m_measure_pen_style     (gui_measure_pen_style()),
+    m_beat_pen_style        (gui_beat_pen_style()),
+    m_four_pen_style        (gui_fourth_pen_style()),
+    m_step_pen_style        (gui_step_pen_style()),
+#endif
     m_old                   (),                     /* past selection box   */
     m_selected              (),                     /* current sel box      */
     m_zoomer                (p.ppqn(), initialzoom, scalex),

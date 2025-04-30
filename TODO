@@ -16,6 +16,8 @@ Hot:
     -   Make sure setting pattern length changes sequence::m_measures
         as needed.
     -   Update the seq66cli.usr (and other?) files to the latest.
+    -   When clicking "Store palette" is click, the save-now function
+        is called twice. How?
 
 NSM:
 

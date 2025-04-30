@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2025-04-28
+ * \updates       2025-04-30
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -126,7 +126,8 @@ protected:
     int m_horiz_pen_width;              /*  1 or 2                          */
     Qt::PenStyle m_measure_pen_style;   /* almost always Qt::SolidLine      */
     Qt::PenStyle m_beat_pen_style;      /* Qt::DotLine or Qt::SolidLine     */
-    Qt::PenStyle m_four_pen_style;      /* Qt::DotLine or Qt::SolidLine     */
+    Qt::PenStyle m_four_pen_style;      /* Qt::DashDotLine or ...           */
+    Qt::PenStyle m_step_pen_style;      /* Qt::DotLine, usually             */
 
     /**
      *  The previous selection rectangle, used for undrawing it.  Accessed by
@@ -427,9 +428,14 @@ public:
         return m_beat_pen_style;
     }
 
-    const Qt::PenStyle & four_pen_style () const
+    const Qt::PenStyle & fourth_pen_style () const
     {
         return m_four_pen_style;
+    }
+
+    const Qt::PenStyle & step_pen_style () const
+    {
+        return m_step_pen_style;
     }
 
     const Color & tempo_color () const
@@ -780,6 +786,11 @@ protected:
     void four_pen_style (const Qt::PenStyle & ps)
     {
         m_four_pen_style = ps;
+    }
+
+    void step_pen_style (const Qt::PenStyle & ps)
+    {
+        m_step_pen_style = ps;
     }
 
     virtual int horizSizeHint () const;

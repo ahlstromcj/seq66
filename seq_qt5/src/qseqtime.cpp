@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-29
+ * \updates       2025-04-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -239,7 +239,7 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
                  */
 
                 penwidth = 1;
-                penstyle = four_pen_style();            /* Qt::DashDotLine  */
+                penstyle = fourth_pen_style();          /* Qt::DashDotLine  */
                 pen.setColor(extra_color());            /* beat_color())    */
             }
             else

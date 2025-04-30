@@ -2038,11 +2038,11 @@ qseditoptions::setup_tab_session ()
         this, SLOT(slot_palette_save_inverse())
     );
 #else
-    connect
-    (
-        ui->pushButtonSavePalette, SIGNAL(clicked(bool)),
-        this, SLOT(slot_palette_save_now_click())
-    );
+//  connect
+//  (
+//      ui->pushButtonSavePalette, SIGNAL(clicked(bool)),
+//      this, SLOT(slot_palette_save_now_click())
+//  );
 #endif
 
     /*
@@ -3358,7 +3358,10 @@ qseditoptions::slot_palette_save_inverse ()
 #if defined SEQ66_PROVIDE_AUTO_COLOR_INVERSION
     global_palette().fill_inverse_colors();
 #endif
-    slot_palette_save_now_click();
+
+    /*
+     * slot_palette_save_now_click();
+     */
 }
 
 #if defined USE_VERBOSE_CHECKBOX

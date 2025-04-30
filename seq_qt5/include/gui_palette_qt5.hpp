@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2025-04-29
+ * \updates       2025-04-30
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -99,15 +99,23 @@ public:
         backseq     /**< Brush for drawing lines denoting background seq.   */
     };
 
-    enum class pen
+    enum class penstyle
     {
         empty,      /**< Qt::NoPen.                                         */
-        solid,      /**< The default pen is Qt::SolidLine.                  */
+        solid,      /**< The default penstyle is Qt::SolidLine.                  */
         dash,       /**< Qt::DashLine.                                      */
         dot,        /**< Qt::DotLine.                                       */
         dashdot,    /**< Qt::DashDotLine.                                   */
         dashdotdot, /**< Qt::DashDotDotLine.                                */
         customdash  /**< Qt::CustomDashLine (not supported at this time).   */
+    };
+
+    enum class pen
+    {
+        measure,
+        beat,
+        fourth,
+        step
     };
 
 private:
@@ -197,7 +205,7 @@ private:
 
     PenStyle m_measure_pen_style;           /* style of each bar line       */
     PenStyle m_beat_pen_style;              /* style of each beat line      */
-    PenStyle m_four_pen_style;              /* style of each 1/4 beat line  */
+    PenStyle m_fourth_pen_style;              /* style of each 1/4 beat line  */
     PenStyle m_step_pen_style;              /* style of small step lines    */
 
 public:
@@ -377,10 +385,11 @@ public:
         return m_use_gradient_brush;
     }
 
-    PenStyle get_pen (pen p);
-    pen get_pen_index (PenStyle ps);
-    std::string get_pen_name (pen p);
-    PenStyle get_pen_style (const std::string & penname);
+    /*
+     * Pen style handling.
+     */
+
+    PenStyle pen_style (pen p);
     bool get_pen_names
     (
         std::string & measurepen,
@@ -416,6 +425,11 @@ private:
         const Color & bg, const std::string & bgname,
         const Color & fg, const std::string & fgname
     );
+
+    PenStyle get_pen (penstyle p);
+    penstyle get_pen_index (PenStyle ps);
+    std::string get_penstyle_name (penstyle p);
+    PenStyle get_pen_style (const std::string & penname);
 
 };          // class gui_palette_qt5
 
@@ -468,6 +482,10 @@ extern Brush gui_note_brush ();                 /* for notes and triggers   */
 extern bool gui_use_gradient_brush ();          /* ditto                    */
 extern Brush gui_scale_brush ();
 extern Brush gui_backseq_brush ();
+extern PenStyle gui_measure_pen_style ();
+extern PenStyle gui_beat_pen_style ();
+extern PenStyle gui_fourth_pen_style ();
+extern PenStyle gui_step_pen_style ();
 
 }           // namespace seq66
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2025-04-29
+ * \updates       2025-04-30
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -394,6 +394,31 @@ gui_backseq_brush ()
     return global_palette().get_brush(gui_palette_qt5::brush::backseq);
 }
 
+PenStyle
+gui_measure_pen_style ()
+{
+    return global_palette().pen_style(gui_palette_qt5::pen::measure);
+}
+
+PenStyle
+gui_beat_pen_style ()
+{
+    return global_palette().pen_style(gui_palette_qt5::pen::beat);
+}
+
+PenStyle
+gui_fourth_pen_style ()
+{
+    return global_palette().pen_style(gui_palette_qt5::pen::fourth);
+}
+
+PenStyle
+gui_step_pen_style ()
+{
+    return global_palette().pen_style(gui_palette_qt5::pen::step);
+}
+
+
 /**
  *  Secret color to indicate to use the corresponding theme color. Used for a
  *  label-color as the default color.
@@ -485,10 +510,10 @@ gui_palette_qt5::gui_palette_qt5 (const std::string & filename) :
     m_backseq_brush         (new (std::nothrow) Brush(Qt::Dense2Pattern)),
     m_backseq_brush_style   (Qt::Dense2Pattern),
     m_use_gradient_brush    (true),
-    m_measure_pen_style     (get_pen(pen::solid)),
-    m_beat_pen_style        (get_pen(pen::solid)),
-    m_four_pen_style        (get_pen(pen::dashdot)),
-    m_step_pen_style        (get_pen(pen::dot))
+    m_measure_pen_style     (get_pen(penstyle::solid)),
+    m_beat_pen_style        (get_pen(penstyle::solid)),
+    m_fourth_pen_style      (get_pen(penstyle::dashdot)),
+    m_step_pen_style        (get_pen(penstyle::dot))
 {
     load_static_colors(usr().inverse_colors());     /* this must come first */
     reset();
@@ -1439,54 +1464,68 @@ gui_palette_qt5::get_pen_names
     std::string & steppen
 )
 {
-    pen p = get_pen_index(m_measure_pen_style);
-    measurepen = get_pen_name(p);
+    penstyle p = get_pen_index(m_measure_pen_style);
+    measurepen = get_penstyle_name(p);
     p = get_pen_index(m_beat_pen_style);
-    beatpen = get_pen_name(p);
-    p = get_pen_index(m_four_pen_style);
-    fourpen = get_pen_name(p);
+    beatpen = get_penstyle_name(p);
+    p = get_pen_index(m_fourth_pen_style);
+    fourpen = get_penstyle_name(p);
     p = get_pen_index(m_step_pen_style);
-    steppen = get_pen_name(p);
+    steppen = get_penstyle_name(p);
     return true;                        /* for now */
 }
 
 PenStyle
-gui_palette_qt5::get_pen (pen index)
+gui_palette_qt5::pen_style (pen penindex)
 {
     static PenStyle s_dummy { Qt::NoPen };
-    switch (index)
+    switch (penindex)
     {
-        case pen::empty:        return Qt::NoPen;           break;
-        case pen::solid:        return Qt::SolidLine;       break;
-        case pen::dash:         return Qt::DashLine;        break;
-        case pen::dot:          return Qt::DotLine;         break;
-        case pen::dashdot:      return Qt::DashDotLine;     break;
-        case pen::dashdotdot:   return Qt::DashDotDotLine;  break;
-        case pen::customdash:   return Qt::DashLine;        break;
+        case pen::measure:  return m_measure_pen_style; break;
+        case pen::beat:     return m_beat_pen_style; break;
+        case pen::fourth:   return m_fourth_pen_style; break;
+        case pen::step:     return m_step_pen_style; break;
     }
     return s_dummy;
 }
 
-gui_palette_qt5::pen
+PenStyle
+gui_palette_qt5::get_pen (penstyle index)
+{
+    static PenStyle s_dummy { Qt::NoPen };
+    switch (index)
+    {
+        case penstyle::empty:        return Qt::NoPen;           break;
+        case penstyle::solid:        return Qt::SolidLine;       break;
+        case penstyle::dash:         return Qt::DashLine;        break;
+        case penstyle::dot:          return Qt::DotLine;         break;
+        case penstyle::dashdot:      return Qt::DashDotLine;     break;
+        case penstyle::dashdotdot:   return Qt::DashDotDotLine;  break;
+        case penstyle::customdash:   return Qt::DashLine;        break;
+    }
+    return s_dummy;
+}
+
+gui_palette_qt5::penstyle
 gui_palette_qt5::get_pen_index (PenStyle ps)
 {
-    pen result = pen::empty;
+    penstyle result = penstyle::empty;
     switch (ps)
     {
-        case Qt::NoPen:             result = pen::empty;        break;
-        case Qt::SolidLine:         result = pen::solid;        break;
-        case Qt::DashLine:          result = pen::dash;         break;
-        case Qt::DotLine:           result = pen::dot;          break;
-        case Qt::DashDotLine:       result = pen::dashdot;      break;
-        case Qt::DashDotDotLine:    result = pen::dashdotdot;   break;
-        case Qt::CustomDashLine:    result = pen::customdash;   break;
-        case Qt::MPenStyle:         result = pen::empty;        break;
+        case Qt::NoPen:             result = penstyle::empty;        break;
+        case Qt::SolidLine:         result = penstyle::solid;        break;
+        case Qt::DashLine:          result = penstyle::dash;         break;
+        case Qt::DotLine:           result = penstyle::dot;          break;
+        case Qt::DashDotLine:       result = penstyle::dashdot;      break;
+        case Qt::DashDotDotLine:    result = penstyle::dashdotdot;   break;
+        case Qt::CustomDashLine:    result = penstyle::customdash;   break;
+        case Qt::MPenStyle:         result = penstyle::empty;        break;
     }
     return result;
 }
 
 /**
- *  We could convert the pen index to an integer and look it up.
+ *  We could convert the penstyle index to an integer and look it up.
  */
 
 PenStyle
@@ -1498,7 +1537,7 @@ gui_palette_qt5::get_pen_style (const std::string & penname)
     {
         if (penname == pen_name(counter))
         {
-            result = get_pen(static_cast<pen>(counter));
+            result = get_pen(static_cast<penstyle>(counter));
             break;
         }
     }
@@ -1506,13 +1545,13 @@ gui_palette_qt5::get_pen_style (const std::string & penname)
 }
 
 /**
- *  Converts a PenStyle to a pen name. We could use the method done
+ *  Converts a PenStyle to a penstyle name. We could use the method done
  *  by get_brush_name(). Or we could convert the pen index to an
  *  integer.
  */
 
 std::string
-gui_palette_qt5::get_pen_name (pen p)
+gui_palette_qt5::get_penstyle_name (penstyle p)
 {
     int index = static_cast<int>(p);
     return pen_name(index);
@@ -1534,7 +1573,7 @@ gui_palette_qt5::set_pens
     m_beat_pen_style = ps;
 
     ps = get_pen_style(fourpen);
-    m_four_pen_style = ps;
+    m_fourth_pen_style = ps;
 
     ps = get_pen_style(steppen);
     m_step_pen_style = ps;

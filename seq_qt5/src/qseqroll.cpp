@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-04-28
+ * \updates       2025-04-30
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -631,13 +631,13 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
                  *  display cleaner, if incomplete.
                  */
 
-                penstyle = four_pen_style();        /* Qt::DashDotLine      */
+                penstyle = fourth_pen_style();      /* Qt::DashDotLine      */
                 pen.setColor(extra_color());        /* beat_color())        */
             }
             else
             {
                 pen.setColor(step_color());         /* faint step lines     */
-                penstyle = Qt::DotLine;
+                penstyle = step_pen_style();        /* Qt::DotLine          */
             }
             pen.setWidth(penwidth);
             pen.setStyle(penstyle);

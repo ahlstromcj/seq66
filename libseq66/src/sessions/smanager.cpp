@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2025-04-27
+ * \updates       2025-04-29
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -1551,11 +1551,11 @@ smanager::export_session_configuration
                     {
                         std::string destpalette = rc().palette_filespec();
                         std::string destqss = rc().style_sheet_filespec();
-                        file_message("Write palette", destpalette);
+                        file_message("Copy palette", destpalette);
                         result = file_copy(srcpalette, destpalette);
                         if (result)
                         {
-                            file_message("Write qss", destqss);
+                            file_message("Copy qss", destqss);
                             result = file_copy(srcqss, destqss);
                         }
 #if defined SEQ66_HANDLE_FILE_WILDCARDS
@@ -1569,7 +1569,7 @@ smanager::export_session_configuration
                             bool ok = get_wildcards(wildcard, filelist);
                             if (ok)
                             {
-                                file_message("Write PNG images", "*.png");
+                                file_message("Copy PNG images", "*.png");
                                 result = file_list_copy(destpath, filelist);
                                 if (! result)
                                     file_error("PNG export failed", destpath);
