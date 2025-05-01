@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2025-02-17
+ * \updates       2025-05-01
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -709,6 +709,36 @@ INTTYPE snapped (snapper snaptype, int S, INTTYPE p)
     return result;
 }
 
+/**
+ *  The absolute pitchbend range is 0 to 16383.
+ */
+
+inline int
+pitch_value_absolute (midibyte d0, midibyte d1)
+{
+    return int(d1) * 128 + int(d0);
+}
+
+/**
+ *  Move the range to -8192 to +8191.
+ */
+
+inline int
+pitch_value (midibyte d0, midibyte d1)
+{
+    return pitch_value_absolute(d0, d1) - 8192;
+}
+
+/**
+ *  Scale to range 0 to 128 (approximately).
+ */
+
+inline int
+pitch_value_scaled (midibyte d0, midibyte d1)
+{
+    return pitch_value_absolute(d0, d1) / 128;
+}
+
 /*
  *  Free functions in the seq66 namespace.
  */
@@ -718,6 +748,10 @@ extern int pulses_per_substep (midipulse ppq, int zoom = 2);
 extern int pulses_per_pixel (midipulse ppq, int zoom = 2);
 #endif
 
+extern double pitch_value_semitones
+(
+    midibyte d0, midibyte d1, int semitone_range = 2
+);
 extern double wave_func (double angle, waveform wavetype);
 extern double unit_truncation (double angle);
 extern double exp_normalize (double angle, bool negate = false);

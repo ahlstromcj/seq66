@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-04-30
+2015-07-10 to 2025-05-01
 
 # Change Log
 
-## [0.99.20] - 2025-04-30
+## [0.99.20] - 2025-05-01
 
 ### Added
 
@@ -14,6 +14,10 @@ Chris Ahlstrom
 -   Control/pitch events now show up in pattern-slot progress box.
     Can be disabled via 'usr' [user-ui-tweaks] progress-box-show-cc
     = false.
+-   Added some horizontal dotted lines to mark the 32, 64, and 96
+    level (of items such as velocity).
+-   Added display of the pitch-bend in semitones in the event
+    editor. It currently assumes a range of +-2 semitones.
 
 ### Changed
 
@@ -28,6 +32,7 @@ Chris Ahlstrom
     pattern-editor-in-tab.
 -   Error in connecting the store-palette slot in qseditoptions
     twice.
+-   Fixed the plotting of pitchbend data.
 
 ## [0.99.19] - 2025-03-02
 

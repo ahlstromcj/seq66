@@ -867,6 +867,14 @@ is_floating_string (const std::string & value)
 
 /**
  *  Converts a double value to a string with an optional precision.
+ *
+ * \param value
+ *      The value to be converted.
+ *
+ * \param precision
+ *      The number of digits of precision. Note that this is not the
+ *      number of digits after the decimal point, but the number of
+ *      significant digits. If set to 0, no precision is used.
  */
 
 std::string
@@ -876,7 +884,7 @@ double_to_string (double value, int precision)
     if (precision == 0)
         (void) snprintf(temp, sizeof temp, "%g", value);
     else
-        (void) snprintf(temp, sizeof temp, "%*g", precision, value);
+        (void) snprintf(temp, sizeof temp, "%.*g", precision, value);
 
     return std::string(temp);
 }

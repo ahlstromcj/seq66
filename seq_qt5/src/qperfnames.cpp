@@ -121,12 +121,18 @@ qperfnames::paintEvent (QPaintEvent *)
     QPainter painter(this);
     QPen pen(text_paint());                             /* fore_color()     */
     QBrush brush(backnames_paint(), Qt::SolidPattern);
-    pen.setStyle(Qt::SolidLine);
     pen.setWidth(horiz_pen_width());
-    painter.setPen(pen);
     painter.setBrush(brush);
     painter.setFont(m_font);
-    painter.drawRect(0, 0, width(), height() - 1);      // rectangle border
+
+    /*
+     * Do we really need this?
+     *
+     *  pen.setStyle(Qt::SolidLine);
+     *  painter.setPen(pen);
+     *  painter.drawRect(0, 0, width(), height() - 1);      // rectangle border
+     */
+
     int set_y = h * set_count / 2;
     for (int y = y_s; y <= y_f; ++y)
     {
@@ -151,21 +157,9 @@ qperfnames::paintEvent (QPaintEvent *)
 
                 int text_y = rect_y + set_y;
                 QString bankss(ss);
-
-                /*
-                 * pen.setColor(fore_color());          // for bank number
-                 * pen.setColor(text_paint());          // for bank number
-                 */
-
                 pen.setColor(text_names_paint());       // for bank number
                 painter.setPen(pen);
                 painter.drawText(1, rect_y + 10, bankss);
-
-                /*
-                 * pen.setColor(Qt::black);             // bank name sideways
-                 * painter.setPen(pen);
-                 */
-
                 painter.save();                         // {
 
                 QString bank(qt(perf().set_name(bank_id)));
@@ -227,20 +221,6 @@ qperfnames::paintEvent (QPaintEvent *)
                     brush.setStyle(Qt::NoBrush);
                     painter.setBrush(brush);
                     painter.drawRect(rect_x, rect_y, rect_w, h);
-#if defined USE_THIS_CODE
-                    if (start_of_set)
-                    {
-                        pen.setWidth(horiz_pen_width() * 2);
-                        painter.setPen(pen);
-                        painter.drawLine
-                        (
-                            rect_x + 1, rect_y + 2,
-                            rect_x + rect_w + 1, rect_y + 2
-                        );
-                        pen.setWidth(horiz_pen_width());
-                        painter.setPen(pen);
-                    }
-#endif
                 }
                 else
                 {
@@ -267,12 +247,6 @@ qperfnames::paintEvent (QPaintEvent *)
                         pen.setColor(fore_color());
                     }
                 }
-
-                /*
-                 * painter.setPen(pen);
-                 * painter.setPen(text_paint());
-                 */
-
                 painter.setPen(text_names_paint());
                 painter.drawText(18, rect_y + 9, chinfo);
                 if (! track_thin())
@@ -310,10 +284,22 @@ qperfnames::paintEvent (QPaintEvent *)
             {
                 pen.setStyle(Qt::SolidLine);
                 pen.setColor(fore_color());
-                brush.setColor(backnames_paint());      /* Qt::lightGray)   */
+                brush.setColor(backnames_paint());
                 painter.setPen(pen);                    /* fill background  */
                 painter.setBrush(brush);
                 painter.drawRect(rect_x, rect_y, rect_w, h);
+            }
+            if (start_of_set)
+            {
+                pen.setWidth(horiz_pen_width() * 2);
+                painter.setPen(pen);
+                painter.drawLine
+                (
+                    rect_x, rect_y,
+                    rect_x + rect_w + 1, rect_y
+                );
+                pen.setWidth(horiz_pen_width());
+                painter.setPen(pen);
             }
         }
     }
@@ -322,7 +308,7 @@ qperfnames::paintEvent (QPaintEvent *)
 QSize
 qperfnames::sizeHint () const
 {
-int count = perf().sequences_in_sets();
+    int count = perf().sequences_in_sets();
     int height = track_height() * count;
     return QSize(c_names_x, height);
 }

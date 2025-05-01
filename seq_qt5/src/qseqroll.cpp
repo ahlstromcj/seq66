@@ -1316,7 +1316,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
 }
 
 /**
- *  This function gets fills the rectagnle m_selection with its ranges
+ *  This function gets the rectangle m_selection with its ranges
  *  based on the selected notes (whether selected with the mouse or via
  *  functions such as select_all().
  */

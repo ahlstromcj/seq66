@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2024-11-27
+ * \updates       2025-05-01
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -216,7 +216,7 @@ qseventslots::set_current_event
 (
     const editable_events::iterator ei,
     int index,
-    bool // full_redraw
+    bool /* full_redraw */
 )
 {
     int channel = null_channel();
@@ -253,7 +253,9 @@ qseventslots::set_current_event
     {
         /*
          * qseqeventframe::data_0_helper() is used to display program change and
-         * controller names. We could use it here. 
+         * controller names. We could use it here. Also note that setting
+         * the plaintext data to empty will show its place-holder text,
+         * if set.
          */
 
         midibyte d0, d1;
@@ -261,7 +263,17 @@ qseventslots::set_current_event
         data_0 = data_string(d0);
         data_1 = data_string(d1);
         channel = int(ev.channel());
-        m_parent.set_event_plaintext("");       /* no plaintext data here   */
+        if (ev.is_pitchbend())                  /* TODO: use RPN setting    */
+        {
+            double semis = pitch_value_semitones(d0, d1);
+            std::string s = double_to_string(semis, 3); /* number of digits */
+            std::string msg = "Pitch bend ";
+            msg += s;
+            msg += " semitones";
+            m_parent.set_event_plaintext(msg);
+        }
+        else
+            m_parent.set_event_plaintext("");   /* no plaintext data here   */
     }
     set_event_text
     (

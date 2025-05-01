@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2025-02-17
+ * \updates       2025-05-01
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1936,6 +1936,50 @@ fgreaterthan (double x, double y)
     return x > (y + s_epsilon * one_max(std::fabs(x), std::fabs(y)));
 }
 
+/**
+ *  Pitch bend calculations. The MIDI Pitch Bend range is depicted here:
+ *
+ *          bend down          center           bend up
+ *            0 |<----------- | 8192 | ----------->| 16384
+ *         -8192                 0                   8191
+ *
+ *      -   14 bits resolution (MSB, LSB). Value = 128 * MSB + LSB
+ *      -   Minimum: The maximum negative swing is byte values of
+ *          00, 00. Value = 0.
+ *      -   Center: The center (no effect) position is byte value of
+ *          00, 64 (0x00, 0x40). Value = 8192.
+ *      -   Maximum: The maximum positive swing is byte values of
+ *          127, 127 (0x7F, 0x7F). Value = 16384.
+ *
+ *  Pitch Bend Sensitivity is defined as Registered Parameter Number 00 00.
+ *  The MSB represents the sensitivity in semitones and the LSB
+ *  represents the sensitivity in cents. A cent is 0.01 semitones.
+ *
+ *  MIDI pitch bend data is encoded using big-endian byte order: the MSB
+ *  is transmitted or stored first, followed by the LSB. For example, a
+ *  pitch bend of 8192 (no pitch bend) is represented as two bytes:
+ *  0x40 (MSB) and 0x00 (LSB). In Seq66, the LSB is D0, and the MSB
+ *  is D1.
+ *
+ * \param d0
+ *      The LSB of the pitch-bend value.
+ *
+ * \param d1
+ *      The MSB of the pitch-bend value.
+ *
+ * \param semitone-range
+ *      The number of semitones up or down when the highest or lowest
+ *      values in the range are used. It defaults to 2 semitones up or
+ *      down.
+ */
+
+double
+pitch_value_semitones (midibyte d0, midibyte d1, int semitone_range)
+{
+    double factor = double(semitone_range) / 8192.0;
+    int value = pitch_value(d0, d1);    /* from -8192 to +8192, approx.     */
+    return factor * double(value);
+}
 
 }       // namespace seq66
 

@@ -119,13 +119,19 @@ qperftime::conditional_update ()
 void
 qperftime::paintEvent (QPaintEvent * /*qpep*/)
 {
+    if (measure_length() == 0)
+    {
+        info_message("qperftime measure-length is 0, cannot draw");
+        return;
+    }
+
     int xwidth = width();
     int yheight = height();
     QPainter painter(this);
     QBrush brush(backtime_paint(), Qt::SolidPattern);
     QPen pen(fore_color());
-    pen.setStyle(Qt::SolidLine);
-    painter.setPen(pen);
+//  pen.setStyle(Qt::SolidLine);
+//  painter.setPen(pen);
     painter.setBrush(brush);
     painter.setFont(m_font);
     painter.drawRect(0, 0, xwidth, yheight);
@@ -143,16 +149,9 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
     int measure = 0;
     for (midipulse tick = tick0; tick < tick1; tick += tickstep)
     {
-        if (measure_length() == 0)
-        {
-            info_message("qperftime measure-length is 0, cannot draw");
-            break;
-        }
-
         int x_pos = xoffset(tick) - scroll_offset_x() - s_time_fix;
         if (tick % measure_length() == 0)
         {
-            pen.setStyle(Qt::SolidLine);
             pen.setColor(beat_color());                     /* measure      */
             pen.setWidth(measure_pen_width());
             pen.setStyle(measure_pen_style());

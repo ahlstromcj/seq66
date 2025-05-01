@@ -216,6 +216,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     QPainter painter(this);
     QBrush brush(backdata_paint(), Qt::SolidPattern);
     QPen pen(Qt::black);
+    pen.setWidth(1);
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.setFont(m_font);
@@ -225,6 +226,27 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     midipulse start_tick = z().pix_to_tix(r.x());
     midipulse end_tick = start_tick + z().pix_to_tix(r.width());
     int text_y = sc_text_spacing;
+
+    /*
+     * Draw a midline.
+     */
+
+    int topline = byte_height(m_dataarea_y, 96);
+    int midline = byte_height(m_dataarea_y, 64);        // 128) / 2;
+    int botline = byte_height(m_dataarea_y, 32);
+    pen.setColor(fore_color());
+    pen.setStyle(Qt::DotLine);
+    painter.setPen(pen);
+    painter.drawLine(0, topline, width() - 1, topline);
+    painter.drawLine(0, midline, width() - 1, midline);
+    painter.drawLine(0, botline, width() - 1, botline);
+
+    /*
+     * Now draw the event data.
+     */
+
+    pen.setStyle(Qt::SolidLine);
+    pen.setWidth(2);
     track().draw_lock();
     for (auto cev = track().cbegin(); ! track().cend(cev); ++cev)
     {
@@ -243,8 +265,11 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             cev->get_data(d0, d1);
 
             int event_height = event::is_one_byte_msg(m_status) ? d0 : d1 ;
+            if (cev->is_pitchbend())
+            {
+                event_height = pitch_value_scaled(d0, d1);
+            }
             event_height = height() - byte_height(m_dataarea_y, event_height);
-            pen.setWidth(2);
 
             bool its_close = false;
             if (! selected && m_mouse_tick >= 0)
@@ -256,7 +281,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             if (data_event)
             {
                 /*
-                 * sel_paint() vs sel_color()! Why?
+                 * sel_paint() vs sel_color()! Why? Fix it.
                  */
 
                 pen.setColor(selected ? sel_paint() : fore_color());
