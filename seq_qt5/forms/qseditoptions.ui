@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>7</number>
+      <number>6</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -3512,7 +3512,7 @@ pattern editor is opened.</string>
          <x>250</x>
          <y>180</y>
          <width>401</width>
-         <height>89</height>
+         <height>111</height>
         </rect>
        </property>
        <property name="title">
@@ -3532,6 +3532,9 @@ pattern editor is opened.</string>
           <pointsize>11</pointsize>
           <bold>false</bold>
          </font>
+        </property>
+        <property name="toolTip">
+         <string>Overloads the Esc key to use as a Close key</string>
         </property>
         <property name="text">
          <string>Esc key in piano roll closes external editor</string>
@@ -3554,6 +3557,28 @@ pattern editor is opened.</string>
         </property>
         <property name="text">
          <string>Additional 'usr' Options</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxSMF0_to_1">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>70</y>
+          <width>371</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>If set, split an SMF 0 file into multiple tracks</string>
+        </property>
+        <property name="text">
+         <string>Automatic conversion of SMF 0 to SMF 1</string>
         </property>
        </widget>
       </widget>

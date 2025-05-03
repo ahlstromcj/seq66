@@ -53,7 +53,8 @@
  * Common Menu Entries:
  *
  *  Export Song     export_song()           Export song merging triggers
- *  Export as MIDI  export_file_as...()     Save as regular MIDI file
+ *  Export as MIDI  export_file_as_midi()   Save as regular SMF 1 MIDI file
+ *  Export SMF 0    export_file_as_smf_0()  Save as regular SMF 0 MIDI file
  *  Export Config:  export_project ()       Save all configuration files
  *  Import MIDI     import_midi_into_set()  Import MIDI into current set
  *  Import Project  import_project()        Import a project configuration

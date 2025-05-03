@@ -379,7 +379,7 @@ usrfile::parse ()
     {
         bool flag = get_boolean(file, tag, "convert-to-smf-1");
         std::string c = get_variable(file, tag, "convert-to-smf-1");
-        bool convert = c.empty() ?  true : flag ;
+        bool convert = c.empty() ? true : flag ;
         usr().convert_to_smf_1(convert);
 
         int scratch = get_integer(file, tag, "beats-per-bar");

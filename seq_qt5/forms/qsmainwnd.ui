@@ -151,7 +151,7 @@ B:B:T and H:M:S format.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>11</pointsize>
           <italic>true</italic>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -187,7 +187,7 @@ the MIDI tune.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>11</pointsize>
           <italic>true</italic>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -222,7 +222,7 @@ the MIDI tune.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>11</pointsize>
           <italic>true</italic>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1647,7 +1647,7 @@ beats/minute.</string>
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>28</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="font">

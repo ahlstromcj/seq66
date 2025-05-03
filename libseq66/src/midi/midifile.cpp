@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-04-24
+ * \updates       2025-05-03
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -305,6 +305,7 @@ midifile::midifile
     m_ppqn                      (ppqn),                 /* can start as 0   */
     m_file_ppqn                 (0),                    /* can change       */
     m_ppqn_ratio                (1.0),                  /* for scaled()     */
+    m_file_format               (-1),
     m_smf0_splitter             ()
 {
     // no other code needed
@@ -854,14 +855,14 @@ midifile::parse (performer & p, int screenset, bool importing)
         if (ID != c_mthd_tag && hdrlength != 6)     /* magic 'MThd'     */
             return set_error_dump("Invalid MIDI header chunk detected", ID);
 
-        midishort Format = read_short();                /* 0, 1, or 2       */
-        m_smf0_splitter.initialize();                   /* SMF 0 support    */
-        if (Format == 0)
+        midishort fmt = read_short();                   /* 0, 1, or 2       */
+        m_file_format = fmt;
+        if (fmt == 0)
         {
-            result = parse_smf_0(p, screenset);
-            p.smf_format(0);
+            m_smf0_splitter.initialize();               /* SMF 0 support    */
+            result = parse_smf_0(p, screenset);         /* p.smf_format(?)  */
         }
-        else if (Format == 1)
+        else if (fmt == 1)
         {
             result = parse_smf_1(p, screenset);
             p.smf_format(1);
@@ -871,7 +872,7 @@ midifile::parse (performer & p, int screenset, bool importing)
             m_error_is_fatal = true;
             result = set_error_dump
             (
-                "Unsupported MIDI format number", midilong(Format)
+                "Unsupported MIDI format number", midilong(fmt)
             );
         }
         if (result)
@@ -1119,15 +1120,16 @@ midifile::add_old_trigger (sequence & seq)
  *      The screen-set offset to be used when loading a sequence (track) from
  *      the file.
  *
- * \param is_smf0
- *      True if we detected that the MIDI file is in SMF 0 format.
+ * \param convert_smf0
+ *      True if we detected that the MIDI file is in SMF 0 format and we
+ *      want to convert it to SMF 1.
  *
  * \return
  *      Returns true if the parsing succeeded.
  */
 
 bool
-midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
+midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
 {
     bool result = true;
     bool got_song_info = false;
@@ -1271,7 +1273,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                         ++evcount;
 
                     tentative_channel = channel;        /* log MIDI channel */
-                    if (is_smf0)
+                    if (convert_smf0)
                         m_smf0_splitter.increment(channel); /* count chan.  */
                     break;
 
@@ -1290,7 +1292,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                         ++evcount;
 
                     tentative_channel = channel;
-                    if (is_smf0)
+                    if (convert_smf0)
                         m_smf0_splitter.increment(channel); /* count chan.  */
                     break;
 
@@ -1492,7 +1494,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 midibyte channel = read_byte();
                                 tentative_channel = channel;
                                 --len;
-                                if (is_smf0)
+                                if (convert_smf0)
                                     m_smf0_splitter.increment(channel);
                             }
                             else if (seqspec == c_timesig)
@@ -1712,7 +1714,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
             /*
              * Sequence has been filled, add it to the performance or SMF 0
-             * splitter.  If there was no sequence number embedded in the
+             * splitter. If there was no sequence number embedded in the
              * track, use the for-loop track number.  It's not fool-proof.
              * "If the ID numbers are omitted, the sequences' locations in
              * order in the file are used as defaults."
@@ -1725,8 +1727,20 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                 if (m_running_status_action == rsaction::abort)
                     break;
             }
+
+            /*
+             * The sequence number is an optional "event". If not present,
+             * then we use the track counter. Also, if the file is SMF 0,
+             * we don't want to save the track number (which alters the
+             * file, so we might need to reconsider how Seq66 works
+             * in this situation). Instead we set it to 0.
+             */
+
             if (seqnum == c_midishort_max)
                 seqnum = trk;
+
+            if (m_file_format == 0)
+                seqnum = 0;
 
             if (seqnum < c_prop_seq_number)
             {
@@ -1744,7 +1758,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     );
                     info_message(temp);
                 }
-                if (is_smf0)
+                if (convert_smf0)
                     (void) m_smf0_splitter.log_main_sequence(s, seqnum);
                 else
                     finalize_sequence(p, s, seqnum, screenset);
@@ -2694,9 +2708,10 @@ midifile::varinum_size (long len) const
 bool
 midifile::write_header (int numtracks, int smfformat)
 {
+    midishort fmt = smfformat > 0 ? 1 : 0 ;
     write_long(0x4D546864);                 /* MIDI Format 1 header MThd    */
     write_long(6);                          /* Length of the header         */
-    write_short(smfformat);                 /* MIDI Format 1 (or 0)         */
+    write_short(fmt);                       /* MIDI Format 1 (or 0)         */
     write_short(numtracks);                 /* number of tracks             */
     write_short(m_ppqn);                    /* parts per quarter note       */
     return numtracks > 0;
@@ -2859,6 +2874,10 @@ midifile::prop_item_size (long data_length) const
  *
  * \param smfformat
  *      Defaults to 1.  Can be set to 0 for writing an SMF 0 file.
+ *
+ * \param doseqspec
+ *      Defaults to true. Can be set to false for writing non-Seq66
+ *      MIDI files.
  *
  * \return
  *      Returns true if the write operations succeeded.  If false is returned,
@@ -3062,7 +3081,7 @@ midifile::write_song (performer & p)
             {
                 result = false;
                 m_error_message =
-                    "The song has more than one track; "
+                    "Song has more than one track; "
                     "it is unsuitable for saving as SMF 0."
                     ;
             }
@@ -3077,7 +3096,7 @@ midifile::write_song (performer & p)
     {
         result = false;
         m_error_message =
-            "The song has no exportable tracks; "
+            "Song has no exportable tracks; "
             "each track to export must have triggers in the song editor "
             "and be unmuted."
             ;
@@ -3649,8 +3668,9 @@ write_midi_file
     else
     {
         bool glob = usr().global_seq_feature();
+        bool doseqspec = p.smf_format() > 0;
         midifile f(fname, p.ppqn(), glob);
-        result = f.write(p);
+        result = f.write(p, doseqspec);
         if (result)
         {
             rc().midi_filename(fname);

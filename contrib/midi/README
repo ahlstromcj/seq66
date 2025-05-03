@@ -1,6 +1,6 @@
 MIDI Sample and Test Files
 Chris Ahlstrom
-2015-09-11 to 2023-12-29
+2015-09-11 to 2025-05-03
 
 This directory contains contributed MIDI files for examples and testing.
 Also see the test files from the midicvt as described in
@@ -138,6 +138,13 @@ the "example1" file.
         Unexpected meta type 0x2f offset ~0x167df
         Unexpected meta type 0x2f offset ~0x16822
 
+    world7.midi:
+
+      This file is an SMF 0 file where the track number is 9 [i.e. 10],
+      not 0 [i.e. 1]. To see it unconverted to SMF 1, turn off the
+      option Edit / Preferences / Pattern / Automatic conversion of
+      SMF 0 to SMF 1.
+   
 There are many other files, used for testing fixes, that are not documented
 here.
 

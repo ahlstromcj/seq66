@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-05-20
+ * \updates       2025-05-03
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -204,10 +204,17 @@ private:
     int m_file_ppqn;
 
     /**
-     *  Provides the ratio of the main PPQN to the file PPQN, for use with scaling.
+     *  Provides the ratio of the main PPQN to the file PPQN, for use with
+     *  scaling.
      */
 
     double m_ppqn_ratio;
+
+    /**
+     *  Holds the format of the MIDI file as read.
+     */
+
+    int m_file_format;
 
     /**
      *  Provides support for SMF 0. This object holds all of the information
@@ -337,7 +344,11 @@ protected:
 
     bool grab_input_stream (const std::string & tag);
     bool parse_smf_0 (performer & p, int screenset);
-    bool parse_smf_1 (performer & p, int screenset, bool is_smf0 = false);
+    bool parse_smf_1
+    (
+        performer & p, int screenset,
+        bool convert_smf0 = false
+    );
 
     midilong parse_seqspec_header (int file_size);
     bool parse_seqspec_track (performer & p, int file_size);

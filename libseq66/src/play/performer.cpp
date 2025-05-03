@@ -5707,17 +5707,20 @@ performer::count_exportable () const
  *          it to write_midi_file(), for one track.  The performer can store
  *          this format.
  *      -#  midifile::write_song(perf()) is called by the Song Export menu
- *          item in qsmainwnd.
- *      -#  write_header()
+ *          item in qsmainwnd. It still calls performer::count_exportable().
+ *      -#  write_header().
  *
  *  We start with slot 0, and search for the first open slot [as a side-effect
  *  of new_sequence() and install_sequence()] to put the SMF 0 data.
+ *
+ *  We no longer use count_exportable() here. Too confusing. Export all
+ *  active tracks.
  */
 
 bool
 performer::convert_to_smf_0 (bool remove_old)
 {
-    int numtracks = count_exportable();
+    int numtracks = sequence_count();           /* count_exportable()   */
     bool result = numtracks > 0;
     seq::number newslot = seq::unassigned();
     if (result)
@@ -5737,7 +5740,7 @@ performer::convert_to_smf_0 (bool remove_old)
             if (track == newslot)
                 continue;
 
-            if (is_exportable(track))
+            if (is_seq_active(track))                   /* is_exportable()  */
             {
                 const seq::pointer s = get_sequence(track);
                 bool ok = bool(s);
@@ -5751,7 +5754,11 @@ performer::convert_to_smf_0 (bool remove_old)
                     ok = channelize_sequence(track, channel);   /* ditto    */
                 }
                 if (ok)
-                    (void) merge_sequence(newslot);
+                {
+                    result = merge_sequence(newslot);
+                    if (! result)
+                        break;
+                }
             }
         }
         if (result)

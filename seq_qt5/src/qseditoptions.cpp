@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-04-26
+ * \updates       2025-05-03
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1509,7 +1509,7 @@ qseditoptions::setup_tab_pattern ()
     );
 
     /*
-     * New-pattern boolean options.
+     * Addition 'usr' boolean options.
      */
 
     ui->checkBoxEscapePattern->setChecked(usr().escape_pattern());
@@ -1518,6 +1518,17 @@ qseditoptions::setup_tab_pattern ()
         ui->checkBoxEscapePattern, SIGNAL(clicked(bool)),
         this, SLOT(slot_escape_pattern())
     );
+    ui->checkBoxSMF0_to_1->setChecked(usr().convert_to_smf_1());
+    connect
+    (
+        ui->checkBoxSMF0_to_1, SIGNAL(clicked(bool)),
+        this, SLOT(slot_convert_to_smf_1())
+    );
+
+    /*
+     * New-pattern boolean options.
+     */
+
     ui->checkBoxNewPatternArm->setChecked(usr().pattern_armed());
     connect
     (
@@ -1614,6 +1625,14 @@ qseditoptions::slot_escape_pattern ()
 {
     bool enable = ui->checkBoxEscapePattern->isChecked();
     usr().escape_pattern(enable);
+    modify_usr();
+}
+
+void
+qseditoptions::slot_convert_to_smf_1 ()
+{
+    bool enable = ui->checkBoxSMF0_to_1->isChecked();
+    usr().convert_to_smf_1(enable);
     modify_usr();
 }
 
