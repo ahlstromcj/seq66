@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.20
 Chris Ahlstrom
-2019-04-13 to 2025-05-03
+2019-04-13 to 2025-05-04
 
 Hot:
     
@@ -14,8 +14,6 @@ Hot:
     -   Update the seq66cli.usr (and other?) files to the latest.
     -   Fix SMF 0 export.
     -   When doing a Save As to SMF 0, set to SMF 1.
-    -   Deleting a pattern modifies, but does not show '*' in the
-        title bar.
 
 NSM:
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2025-01-09
+ * \updates       2025-05-04
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1123,10 +1123,14 @@ public:
 
     void enregister (callbacks * pfcb);             /* for notifications    */
     void unregister (callbacks * pfcb);
+    void notify_sequence_change (seq::number seqno, change mod = change::yes);
+    void notify_sequence_removal (seq::number seqno, change mod = change::yes);
+
+private:
+
     void notify_automation_change (automation::slot s);
     void notify_set_change (screenset::number setno, change mod = change::yes);
     void notify_mutes_change (mutegroup::number setno, change mod = change::yes);
-    void notify_sequence_change (seq::number seqno, change mod = change::yes);
     void notify_ui_change (seq::number seqno, change mod = change::yes);
     void notify_trigger_change (seq::number seqno, change mod = change::yes);
     void notify_resolution_change
@@ -1138,6 +1142,8 @@ public:
         bool signalit = true,
         playlist::action act = playlist::action::none
     );
+
+public:
 
     /**
      *  Holds the first Meta Text message, if any, in the first pattern.

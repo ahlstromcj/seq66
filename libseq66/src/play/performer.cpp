@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-05-03
+ * \updates       2025-05-04
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -680,6 +680,23 @@ performer::notify_sequence_change (seq::number seqno, change mod)
         for (auto notify : m_notify)
             (void) notify->on_sequence_change(seqno, mod);
     }
+}
+
+/**
+ *  Added for processing sequence deletion (as opposed to sequence cutting).
+ *  It removes the test for sequence existence so that notification can
+ *  occur. Called by qslivebase::delete_seq().
+ */
+
+void
+performer::notify_sequence_removal (seq::number seqno, change mod)
+{
+    bool redo = mod == change::recreate;
+    if (mod == change::yes || redo)
+        modify();
+
+    for (auto notify : m_notify)
+        (void) notify->on_sequence_change(seqno, mod);
 }
 
 /**
@@ -5722,6 +5739,9 @@ performer::convert_to_smf_0 (bool remove_old)
 {
     int numtracks = sequence_count();               /* count_exportable()   */
     bool result = numtracks > 0;
+    if (result && smf_format() == 0)
+        return true;
+
     seq::number newslot = seq::unassigned();
     if (result)
     {
