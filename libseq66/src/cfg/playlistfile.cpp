@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2023-12-05
+ * \updates       2025-05-03
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -227,6 +227,7 @@ playlistfile::parse ()
         if (file_version_number() < s_playlist_file_version)
         {
             result = version_error_message("playlist", file_version_number());
+            rc_ref().auto_playlist_save(true);
         }
         else
         {

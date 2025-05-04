@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2023-12-30
+ * \updates       2025-05-03
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -522,6 +522,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         if (file_version_number() < 2)
         {
             result = version_error_message("ctrl", file_version_number());
+            rc_ref().auto_ctrl_save(true);
         }
         else
         {
@@ -649,8 +650,10 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                 make_error_message("midi-control-out", "read-triple error");
         }
         else
+        {
             result = version_error_message("ctrl", file_version_number());
-
+            rc_ref().auto_ctrl_save(true);
+        }
         if (result)
             result = ok && ! is_error();
     }
@@ -682,6 +685,7 @@ midicontrolfile::read_triples
     int enabled, ev_on[4], ev_off[4], ev_del[4];
     if (file_version_number() < 2)
     {
+        rc_ref().auto_ctrl_save(true);
         return version_error_message("ctrl", file_version_number());
     }
     else
@@ -714,6 +718,7 @@ midicontrolfile::read_mutes_triple
 {
     if (file_version_number() < 2)
     {
+        rc_ref().auto_ctrl_save(true);
         return version_error_message("ctrl", file_version_number());
     }
     else
@@ -1235,6 +1240,7 @@ midicontrolfile::parse_control_stanza (automation::category opcat, int index)
     if (file_version_number() < 2)
     {
         result = version_error_message("ctrl", file_version_number());
+        rc_ref().auto_ctrl_save(true);
     }
     else
     {

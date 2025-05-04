@@ -20,6 +20,8 @@ Chris Ahlstrom
     editor. It currently assumes a range of +-2 semitones.
 -   Added a 'usr' option to enable/disable automatic conversion of
     an SMF 0 MIDI file to SMF 1.
+-   Some configuration files weren't setting up for saving due to
+    old versions being present.
 
 ### Changed
 

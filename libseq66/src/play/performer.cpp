@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-01-28
+ * \updates       2025-05-03
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -5720,7 +5720,7 @@ performer::count_exportable () const
 bool
 performer::convert_to_smf_0 (bool remove_old)
 {
-    int numtracks = sequence_count();           /* count_exportable()   */
+    int numtracks = sequence_count();               /* count_exportable()   */
     bool result = numtracks > 0;
     seq::number newslot = seq::unassigned();
     if (result)
@@ -9493,9 +9493,12 @@ performer::open_playlist (const std::string & pl)
                  * ca 2023-04-09.
                  * This disables saving (for example) the recent files
                  * list.  But let's fix that problem elsewhere first.
+                 * ca 2025-05-03.
+                 * This cannot be fixed elsewhere.
+                 *
+                 * rc().auto_rc_save(false);   // could be TRICKY!
                  */
 
-                rc().auto_rc_save(false);   /* could be TRICKY!             */
                 m_play_list->loaded(false); /* disable it by choice         */
             }
         }

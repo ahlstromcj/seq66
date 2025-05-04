@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-02-18
+ * \updates       2025-05-03
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -494,8 +494,10 @@ rcfile::parse ()
 
     tag = "[midi-control-file]";
     if (file_version_number() < s_rc_file_version)
+    {
         (void) version_error_message("rc", file_version_number());
-
+        rc_ref().auto_rc_save(true);
+    }
     active = get_file_status(file, tag, pfname);
     rc_ref().midi_control_active(active);
     rc_ref().midi_control_filename(pfname);             /* base name    */

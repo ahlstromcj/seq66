@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-04-27
+ * \updates       2025-05-03
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -272,6 +272,7 @@ usrfile::parse ()
     if (file_version_number() < s_usr_legacy)
     {
         (void) version_error_message("usr", file_version_number());
+        rc().auto_usr_save(true);
     }
     else
     {
@@ -374,6 +375,7 @@ usrfile::parse ()
     if (file_version_number() < s_usr_smf_1)
     {
         (void) version_error_message("usr", file_version_number());
+        rc().auto_usr_save(true);
     }
     else
     {
