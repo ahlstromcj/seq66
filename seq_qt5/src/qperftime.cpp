@@ -130,8 +130,6 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
     QPainter painter(this);
     QBrush brush(backtime_paint(), Qt::SolidPattern);
     QPen pen(fore_color());
-//  pen.setStyle(Qt::SolidLine);
-//  painter.setPen(pen);
     painter.setBrush(brush);
     painter.setFont(m_font);
     painter.drawRect(0, 0, xwidth, yheight);

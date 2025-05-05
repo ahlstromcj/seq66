@@ -1138,12 +1138,9 @@ qseqeventframe::set_dirty (bool flag)
     }
     if (flag)
     {
-//      if (m_initialized)
-//      {
-            ui->button_save->setEnabled(true);
-            (void) qt_set_color("#AAAA00", ui->button_save);
-            m_is_dirty = true;
-//      }
+        ui->button_save->setEnabled(true);
+        (void) qt_set_color("#AAAA00", ui->button_save);
+        m_is_dirty = true;
     }
     else
     {

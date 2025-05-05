@@ -191,7 +191,6 @@ qseqkeys::paintEvent (QPaintEvent *)
         m_font.setBold(key == m_key);                       /* octave label */
         painter.setFont(m_font);
         pen.setColor(text_keys_paint());                    /* Qt::black)   */
-        // pen.setStyle(Qt::SolidLine);
         painter.setPen(pen);
         switch (m_show_key_names)
         {

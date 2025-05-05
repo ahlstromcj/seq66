@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-03
+ * \updates       2025-05-05
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -2056,12 +2056,6 @@ qseditoptions::setup_tab_session ()
         ui->pushButtonSavePalette, SIGNAL(clicked(bool)),
         this, SLOT(slot_palette_save_inverse())
     );
-#else
-//  connect
-//  (
-//      ui->pushButtonSavePalette, SIGNAL(clicked(bool)),
-//      this, SLOT(slot_palette_save_now_click())
-//  );
 #endif
 
     /*

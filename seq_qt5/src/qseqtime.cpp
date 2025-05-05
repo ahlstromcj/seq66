@@ -217,8 +217,8 @@ qseqtime::draw_grid (QPainter & painter, const QRect & r)
 
                 QString qbar(bar);
                 pen.setColor(text_time_paint());
-//              painter.setPen(pen);
-//              painter.drawText(x_offset + 3, 10, qbar);
+                painter.setPen(pen);
+                painter.drawText(x_offset + 3, 10, qbar);
                 penwidth = measure_pen_width();
                 penstyle = measure_pen_style();
                 pen.setColor(beat_color());

@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-05-03
+2015-07-10 to 2025-05-05
 
 # Change Log
 
-## [0.99.20] - 2025-05-03
+## [0.99.20] - 2025-05-05
 
 ### Added
 
@@ -34,9 +34,10 @@ Chris Ahlstrom
 
 -   Fixed weird issue with setting measures in the
     pattern-editor-in-tab.
--   Error in connecting the store-palette slot in qseditoptions
+-   Error of connecting the store-palette slot in qseditoptions
     twice.
 -   Fixed the plotting of pitchbend data.
+-   Fixed the broken painting of notes with the mouse.
 
 ## [0.99.19] - 2025-03-02
 

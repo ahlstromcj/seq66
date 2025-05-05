@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-04-30
+ * \updates       2025-05-05
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -556,6 +556,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     painter.drawRect(r);
     pen.setWidth(horiz_pen_width());
     sbrush.setColor(scale_paint());
+    painter.drawLine(r.x(), 1, r.x() + r.width(), 1);
 
     /*
      * Horizontal (note) lines.
@@ -1170,7 +1171,14 @@ qseqroll::mousePressEvent (QMouseEvent * event)
 {
     midipulse tick_s, tick_f;
     int note, note_l, norm_x, norm_y, snapped_x, snapped_y;
-    snapped_x = norm_x = event->x() - m_keypadding_x;
+
+    /*
+     * The key-padding messes with snap_x(), we think.
+     *
+     *      snapped_x = norm_x = event->x() - m_keypadding_x;
+     */
+
+    snapped_x = norm_x = event->x();
     snapped_y = norm_y = event->y();
     snap_x(snapped_x);
     snap_y(snapped_y);
@@ -1477,12 +1485,14 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
     }
     (void) snap_current_y();
 
+    int x = current_x();
+    int y = current_y() + 2;
     int note;
     midipulse tick;
-    convert_xy(0, current_y(), tick, note);
+    convert_xy(0, y, tick, note);
     m_seqkeys_wid->preview_key(note);
     if (m_show_note_info)
-        show_note_tooltip(current_x(), current_y());
+        show_note_tooltip(x, y);
 
     if (select_action())
     {
@@ -1493,12 +1503,23 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
     }
     if (painting())
     {
-        int x = snapped_x(current_x());
-        convert_xy(x, current_y(), tick, note);
-        if (add_painted_note(tick, note))
+        /*
+         * This change broke note-painted during mouse movement,
+         * causing notes to be added at the next snap, not the current
+         * snap.
+         *
+         *      x = snapped_x(current_x());
+         */
+
+        if (snap_current_x())
         {
-            if (track().expanded_recording())
-                frame64()->follow_progress(true);
+            convert_xy(x, y, tick, note);
+            if (add_painted_note(tick, note))
+            {
+                set_dirty();    // TENTATIVE
+                if (track().expanded_recording())
+                    frame64()->follow_progress(true);
+            }
         }
     }
     if (paste())
@@ -1977,7 +1998,8 @@ qseqroll::sizeHint () const
 }
 
 /**
- *  Snaps the y pixel to the height of a piano key.
+ *  Snaps the y pixel to the height of a piano key. Do we want to snap upward
+ *  or downward? Let's try upward snap for awhile.
  *
  * \param [in,out] y
  *      The vertical pixel value to be snapped.
@@ -1986,7 +2008,7 @@ qseqroll::sizeHint () const
 void
 qseqroll::snap_y (int & y)
 {
-    y -= y % unit_height();
+    y -= y % unit_height();             /*  y += y % unit_height()  */
 }
 
 /**
