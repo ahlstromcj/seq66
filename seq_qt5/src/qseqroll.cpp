@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-05
+ * \updates       2025-05-06
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1173,12 +1173,16 @@ qseqroll::mousePressEvent (QMouseEvent * event)
     int note, note_l, norm_x, norm_y, snapped_x, snapped_y;
 
     /*
-     * The key-padding messes with snap_x(), we think.
+     * The key-padding messes with snap_x(), we think. Instead use
+     * the progress-bar's initial location.
      *
      *      snapped_x = norm_x = event->x() - m_keypadding_x;
      */
 
-    snapped_x = norm_x = event->x();
+    snapped_x = norm_x = event->x() - xoffset(0);
+    if (norm_x < 0)
+        return;
+
     snapped_y = norm_y = event->y();
     snap_x(snapped_x);
     snap_y(snapped_y);
@@ -1348,7 +1352,14 @@ qseqroll::get_selected_box ()
 void
 qseqroll::mouseReleaseEvent (QMouseEvent * event)
 {
-    current_x(int(event->x()) - m_keypadding_x);
+    /*
+     * The key-padding messes with snap_x(), we think. Instead use
+     * the progress-bar's initial location.
+     *
+     *      current_x(int(event->x()) - m_keypadding_x);
+     */
+
+    current_x(event->x() - xoffset(0));
     current_y(event->y());
     (void) snap_current_y();
     if (moving())
@@ -1476,7 +1487,14 @@ qseqroll::snapped_x (int x)
 void
 qseqroll::mouseMoveEvent (QMouseEvent * event)
 {
-    current_x(event->x() - m_keypadding_x);
+    /*
+     * The key-padding messes with snap_x(), we think. Instead use
+     * the progress-bar's initial location.
+     *
+     *      current_x(int(event->x()) - m_keypadding_x);
+     */
+
+    current_x(event->x() - xoffset(0));
     current_y(event->y());
     if (moving_init())
     {

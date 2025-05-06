@@ -23,8 +23,6 @@ NSM:
         session.
     -   Do not error on missing input bus "ALSA Announce".
     -   See the Recording items below (*).
-    -   The selection box vertical snap is too large; also needs
-        to be more accurate/precise.
     -   Make the NSM start-up prompt time configurable or dependent on
         the number of words.
     -   Everytime Edit / Preferences is opened/closed, "[seq66] NSM URL..."
