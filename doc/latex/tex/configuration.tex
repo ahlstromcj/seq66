@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2025-02-19
+% \update      2025-05-07
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -153,26 +153,35 @@
    comment.
 
    \begin{verbatim}
-      3    # grid_style       # obsolete, by the way
+      output-port-count = 8   # number of ports
    \end{verbatim}
 
-   We have been replacing these kinds of settings with the
-   \texttt{name = value} style described below, but there are a few places
-   where the old style persists, or is more convenient.
+   We have been replacing the original format of settings with the
+   \texttt{name = value} style shown above.
+   Some old-style settings still exist, such as the following from
+   the port and port-mapping settings in the 'rc' file:
+
+   \begin{verbatim}
+       4      # number of MIDI input (or control) buses
+       0  1   "[0] 0:1 system:ALSA Announce"
+   \end{verbatim}
 
 \subsubsection{Boolean Settings}
 \label{subsec:configuration_common_boolean_settings}
 
    Boolean settings are the same as numerical settings, but have only
-   two values: "0" or "1".
+   two values: "false" or "true".
 
    \begin{verbatim}
-      0        # flag to record incoming data by channel
+      record-by-buss = false  # route MIDI event to slot by buss number
    \end{verbatim}
 
-   We have been trying to replace these kinds of settings with the
-   \texttt{name = true/false} style described below, but there are a few places
-   where the old style persists.
+   Some old-style settings still exist, such as the following from
+   the port and port-mapping settings in the 'rc' file:
+
+   \begin{verbatim}
+       1      # map is active
+   \end{verbatim}
 
 \subsubsection{Variables}
 \label{subsec:configuration_common_variables}

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2023-11-25
-% \update      2024-08-24
+% \update      2025-05-07
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -40,7 +40,8 @@
    \begin{itemize}
       \item \textbf{Standard Recording}.
          This provides the normal method of recording. Open a pattern in a
-         window and enable recording.
+         window and enable recording, or right-click on its live-grid
+         slot and enable recording..
          The last slot selected for recording receives the events.
          Events are received from all enabled MIDI input ports.
          In this mode the record-button at the bottom of the main window
@@ -57,13 +58,14 @@
          To designate a recording buss, first go to
          \textbf{Edit / Preferences / MIDI Input} and enable
          \textbf{Record into patterns by bus}.
-         The right-click on the pattern and select an
-         \textbf{Input bus}
+         Then right-click on the pattern and select an
+         \textbf{Input bus}. (This popup menu entry only appears when
+         record-by-bus is active.)
       \item \textbf{Record-by-Channel}.
          In this mode, one enables recording in patterns numbered from 0 to 15
          (channels 1 to 16) with output channels set from 0 to 15.
          Incoming events are analyze for their channel and are recording into
-         the corresponding pattern.
+         the corresponding pattern number.
          In this mode the record-button at the bottom of the main window
          is yellow.
    \end{itemize}
@@ -84,15 +86,19 @@
    a pattern.
 
    \begin{itemize}
-      \item Open the pattern in a window or tab, and click the record
+      \item Open the pattern editor in a window or tab or click on the
+         pattern slot to record, then click the red record
          button at the bottom of the pattern editor.
-         It will turn red when enabled. The pattern will also
+         The pattern will also
          show a red circle to indicate that recording has been enabled.
       \item Right-click on the desired pattern in the grid and select
          \textbf{Record toggle} from the menu.
       \item Touch a pattern or click its hot key, then
          click the red record button at the bottom of the main window.
       \item Select the \textbf{RECORD} grid mode, then select a pattern.
+         To change the selected slot, click on the red record button
+         to disable recording, then click on the desired slot.
+         Recording is active on that slot.
          (This option is more useful in the other recording scenarios.)
    \end{itemize}
 
@@ -126,6 +132,8 @@
    In this scenario, multiple patterns can be enabled for recording,
    and output from multiple input ports are routed appropriately.
 
+   For the green record button to be enabled, at least one pattern
+   must specify an input bus.
    Clicking on the green record button at the bottom of the main window
    will turn on recording for \textsl{all}
    patterns that specify an input buss.
@@ -151,7 +159,7 @@
 
    Clicking on the yellow record button at the bottom of the main window
    will turn on recording for \textsl{all}
-   patterns that specify an input buss.
+   patterns, except for patterns that specify "Free" (i.e. no forced channel).
 
    Note that the route-by-buss option, described above, supercedes this
    option.

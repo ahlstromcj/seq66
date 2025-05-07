@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-04-26
+ * \updates       2025-05-07
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -531,7 +531,7 @@ sequence::loop_count_max (int m, bool user_change)
 void
 sequence::empty_coloring ()
 {
-    if (event_count() == 0)
+    if (event_count() == 0 && m_seq_color == c_seq_color_none)
         (void) set_color(palette_to_int(PaletteColor::yellow));
 }
 

@@ -3,7 +3,7 @@ static const char * pause_xpm[] = {
 "16 11 5 1",
 " 	c None",
 ".	c #000000",
-"+	c #F4FFC1",
+"+	c #FFFE06",
 "@	c #A1AD67",
 "#	c #6C734B",
 "  .....  .....  ",

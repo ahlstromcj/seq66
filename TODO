@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.20
 Chris Ahlstrom
-2019-04-13 to 2025-05-04
+2019-04-13 to 2025-05-07
 
 Hot:
     
@@ -12,8 +12,13 @@ Hot:
     -   Make sure setting pattern length changes sequence::m_measures
         as needed.
     -   Update the seq66cli.usr (and other?) files to the latest.
-    -   Fix SMF 0 export.
+    -   Fix SMF 0 export. Converting b4uacuse results in a pattern
+        of length one. Song versus Live conversion
     -   When doing a Save As to SMF 0, set to SMF 1.
+    -   Recording by channel (CC events) does not set the modify flag
+        asterisk.
+    -   Progress box color not showing in 16-patterns.midi. Why???
+    -   Radialgradient is hardwired. Clean up the palette brush selection.
 
 NSM:
 

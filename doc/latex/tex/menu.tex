@@ -812,17 +812,18 @@
    If port mapping is enabled (now the default),
    the nick-name of the bus is stored instead of the number.
 
-   \itempar{Input Options}{input options}
+   \itempar{Input/Output Options}{I/O options}
    \index{input options}
-   \textbf{Input Options} adds further refinements to MIDI input.
-   Currenty it has only one setting, for recording input into patterns by the
-   channel in each event.
+   \textbf{Input/Output Options} adds further refinements to MIDI input and
+   output.
+   It has the settings described below.
 
    \itempar{Record-by-Bus}{record!by bus}
    \index{input by buss}
    \textbf{Record into patterns by buss}
    causes MIDI input from multiple busses to be distributed to
    each sequence according to MIDI input buss number.
+   If set, it overrides the record-by-channel setting.
 
    \itempar{Record-by-Channel}{record!by channel}
    \index{input by channel}
@@ -840,9 +841,13 @@
 
    \itempar{Input/Output Virtual Ports}{ports!virtual}
    \textbf{Use virtual (manual) I/O ports}
+   Virtual ports are called "manual ports" because the connects
+   generally need to be made manually.
    This option
    allows for configuration of the manual-ports option from within the
    user-interace. 
+   Also included are settings for the number of manual input and output ports.
+   (In \textsl{Seq24}, 16 output and 1 input port were created.)
    Once the option is enable
    A \textsl{reload session} (see \sectionref{subsec:concepts_reload_session})
    is necessary for this option to take effect.

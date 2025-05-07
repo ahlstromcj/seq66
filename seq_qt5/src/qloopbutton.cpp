@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2025-04-27
+ * \updates       2025-05-07
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -86,7 +86,7 @@ static const int s_alpha_oneshot    =  64;       // 148;
 static const int s_fontsize_main    =  8;       // 7;
 static const int s_fontsize_large   = 10;       // for usr:progress-bar-thick
 static const int s_fontsize_record  =  8;       // 5;
-static const int s_radius_record    =  9;       // 8;
+static const int s_radius_record    =  8;       // 9, 8;
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -121,15 +121,6 @@ qloopbutton::textbox::set
     m_label = label;
 }
 
-qloopbutton::progbox::progbox () :
-    m_x (0),
-    m_y (0),
-    m_w (0),
-    m_h (0)
-{
-    // no code
-}
-
 /**
  *  Progress-box values.
  */
@@ -145,8 +136,29 @@ const int qloopbutton::sm_base_height = 12;             /* rough font hght  */
 const float qloopbutton::sm_left_width_factor = 0.70;
 const float qloopbutton::sm_right_width_factor = 0.50;
 
+qloopbutton::progbox::progbox () :
+    m_x         (0),
+    m_y         (0),
+    m_w         (0),
+    m_h         (0),
+    m_center_x  (0),
+    m_center_y  (0)
+{
+    // no code
+}
+
 /**
  * Let's do it like seq24/seq64, but not so tall, just enough to show progress.
+ *
+ * \param w
+ *      Provides the width of the progress box. It is the width of the button
+ *      and is adjusted by the user's desired width fraction, which defaults
+ *      to 0.8, but can be set to 0.5 to 1.0.
+ *
+ * \param h
+ *      Provides the height of the progress box. It is the height of the button
+ *      and is adjusted by the user's desired height fraction, which defaults
+ *      to 0.25, but can be set to 0.10 to 1.0.
  */
 
 void
@@ -156,6 +168,8 @@ qloopbutton::progbox::set (int w, int h)
     m_y = int(double(h) * (1.0 - sm_progress_h_fraction) / 2.0);
     m_w = w - 2 * m_x;
     m_h = h - 2 * m_y;
+    m_center_x = m_x + m_w / 2;
+    m_center_y = m_y + m_h / 2;
 }
 
 /**
@@ -604,11 +618,22 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 int clx = m_top_right.m_x + m_top_right.m_w - radius - 12;
                 int cly = m_top_right.m_y + m_top_right.m_h;
                 QPen pen2(drum_paint());
-                QBrush brush(drum_paint(), Qt::SolidPattern);
                 painter.save();
+                if (use_gradient())
+                {
+                    QRadialGradient rgrad(clx, cly, radius);
+                    rgrad.setColorAt(0, Qt::white);
+                    rgrad.setColorAt(1, drum_paint());
+                    painter.setBrush(QBrush(rgrad));
+                }
+                else
+                {
+                    QBrush brush(drum_paint(), Qt::SolidPattern);
+                    painter.setBrush(brush);
+                }
                 painter.setPen(pen2);
-                painter.setBrush(brush);
                 painter.drawEllipse(clx, cly, radius, radius);
+
                 if (loop()->alter_recording())          /* Q, Tighten, etc. */
                 {
                     char rlabel[4] = { 0, 0, 0, 0 };
@@ -791,26 +816,18 @@ qloopbutton::draw_progress_box (QPainter & painter)
         pen.setStyle(Qt::SolidLine);
     }
     pen.setWidth(penwidth);
-
     if (use_gradient())
     {
-        QLinearGradient grad
-        (
-            m_progress_box.x(), m_progress_box.y(),
-            m_progress_box.x(), m_progress_box.y() + m_progress_box.h()
-        );
-        grad.setColorAt(0.01, backcolor.darker());
-        grad.setColorAt(0.5, backcolor.lighter());
-        grad.setColorAt(0.99, backcolor.darker());
         if (s_elliptical_prog_box)
         {
-#if defined USE_THIS_CODE                           /* needs more thought   */
             QRadialGradient grad
             (
-                m_progress_box.x(), m_progress_box.y(),
-                m_progress_box.x(), m_progress_box.y() + m_progress_box.h()
+                m_progress_box.center_x(), m_progress_box.center_y(),
+                m_progress_box.w()
             );
-#endif
+            grad.setColorAt(0.01, backcolor.darker());
+            grad.setColorAt(0.5, backcolor.lighter());
+            grad.setColorAt(0.99, backcolor.darker());
             painter.setPen(Qt::NoPen);
             painter.setBrush(QBrush(grad));
             painter.drawEllipse
@@ -821,6 +838,15 @@ qloopbutton::draw_progress_box (QPainter & painter)
         }
         else
         {
+            QLinearGradient grad
+            (
+                m_progress_box.x(), m_progress_box.y(),
+                m_progress_box.x(), m_progress_box.y() + m_progress_box.h()
+            );
+            grad.setColorAt(0.01, backcolor.darker());
+            grad.setColorAt(0.5, backcolor.lighter());
+            grad.setColorAt(0.99, backcolor.darker());
+            painter.setBrush(QBrush(grad));
             painter.fillRect
             (
                 m_progress_box.x(), m_progress_box.y(),

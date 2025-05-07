@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-05-05
+2015-07-10 to 2025-05-07
 
 # Change Log
 
-## [0.99.20] - 2025-05-05
+## [0.99.20] - 2025-05-07
 
 ### Added
 
@@ -29,6 +29,8 @@ Chris Ahlstrom
 -   contrib/vim.rc, changed F8 for fixing Windows quote characters.
 -   Many minor tweaks to comments and appearance.
     -   Thick line between sets in the song editor.
+    -   Record indicator supports gradient brush.
+    -   A pattern with a color shows that color even if empty.
 
 ### Fixed
 

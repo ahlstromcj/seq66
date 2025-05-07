@@ -79,7 +79,12 @@ public:
 
     private:
 
-        int m_x, m_y, m_w, m_h;
+        int m_x;        /**< x coordinate in the button as per the width.   */
+        int m_y;        /**< y coordinate in the button as per the height.  */
+        int m_w;        /**< The actual width based on button and x value.  */
+        int m_h;        /**< Actual heighth based on button and y value.    */
+        int m_center_x; /**< The center of the progress box width.          */
+        int m_center_y; /**< The center of the progress box height.         */
 
     public:
 
@@ -106,6 +111,16 @@ public:
         int h () const
         {
             return m_h;
+        }
+
+        int center_x () const
+        {
+            return m_center_x;
+        }
+
+        int center_y () const
+        {
+            return m_center_y;
         }
 
     };          // nested class progbox
