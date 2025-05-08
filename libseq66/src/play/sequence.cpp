@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-05-07
+ * \updates       2025-05-08
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -7771,6 +7771,173 @@ sequence::handle_edit_action (eventlist::edit action, int var)
         break;
     }
 }
+
+#if defined SEQ66_USE_SEQUENCE_FLATTEN
+
+/**
+ *  Fills this list with an exportable track.  Following stazed, we're
+ *  consolidate the tracks at the beginning of the song, replacing the actual
+ *  track number with a counter that is incremented only if the track was
+ *  exportable.  Note that this loop is kind of an elaboration of what goes on
+ *  in the midi_vector_base :: fill() function for normal Seq66 file writing.
+ *
+ *  Exportability ensures that the sequence pointer is valid.  This function
+ *  adds all triggered events.
+ *
+ *  For each trigger in the sequence, add events to the list below; fill
+ *  one-by-one in order, creating a single long sequence.  Then set a single
+ *  trigger for the big sequence: start at zero, end at last trigger end with
+ *  snap.  We're going to reference (not copy) the triggers now, since the
+ *  write_song() function is now locked.
+ *
+ *  The we adjust the sequence length to snap to the nearest measure past the
+ *  end.  We fill the MIDI container with trigger "events", and then the
+ *  container's bytes are written.
+ *
+ *  tick_end() isn't quite a trigger length, off by 1.  Subtracting
+ *  tick_start() can really screw it up.
+ */
+
+bool
+sequence::flatten (sequence & destseq)
+{
+    bool result = is_exportable();
+    if (result)
+    {
+        midipulse last_ts = 0;
+        const auto & trigs = get_triggers();
+        for (auto & t : trigs)
+            last_ts = flatten_trigger(destseq, t, last_ts);
+
+        const trigger & ender = trigs.back();
+        midipulse seqend = ender.tick_end();
+        midipulse measticks = measures_to_ticks();
+        if (measticks > 0)
+        {
+            midipulse remainder = seqend % measticks;
+            if (remainder != (measticks - 1))
+                seqend += measticks - remainder - 1;
+        }
+    }
+    return result;
+}
+
+/**
+ *  Fills in sequence events based on the trigger and events in the sequence
+ *  associated with this snippets.
+ *
+ *  Derived from midi_vector_base::song_fill_seq_event().
+ *
+ *  This calculation needs investigation.  The number of times the pattern is
+ *  played is given by how many pattern lengths fit in the trigger length.
+ *  But the commented calculation adds to the value of 1 already assigned.
+ *  And what about triggers that are somehow of 0 size?  Let's try a different
+ *  calculation, currently the same.
+ *
+ *      int times_played = 1;
+ *      times_played += (trig.tick_end() - trig.tick_start()) / len;
+ *
+ * \param destseq
+ *      The destination for the flattened data.
+ *
+ * \param trig
+ *      The current trigger to be processed.
+ *
+ * \param prev_timestamp
+ *      The time-stamp of the previous event.
+ *
+ * \return
+ *      The next time-stamp value is returned.
+ */
+
+midipulse
+sequence::flatten_trigger
+(
+    sequence & destseq,
+    const trigger & trig,
+    midipulse prev_timestamp
+)
+{
+    midipulse len = get_length();
+    midipulse trig_offset = trig.offset() % len;
+    midipulse start_offset = trig.tick_start() % len;
+    midipulse time_offset = trig.tick_start() + trig_offset - start_offset;
+    int times_played = 1 + (trig.length() - 1) / len;
+    if (trig_offset > start_offset)                 /* offset len too far   */
+        time_offset -= len;
+
+    int note_is_used[c_notes_count];
+    for (int i = 0; i < c_notes_count; ++i)
+        note_is_used[i] = 0;                        /* initialize to off    */
+
+    for (int p = 0; p <= times_played; ++p, time_offset += len)
+    {
+        midipulse delta_time = 0;
+        for (auto e : events())                     /* use a copy of event  */
+        {
+            midipulse timestamp = e.timestamp() + time_offset;
+            if (timestamp >= trig.tick_start())     /* at/after trigger     */
+            {
+                /*
+                 * Save the note; eliminate Note Off if Note On is unused.
+                 */
+
+                if (e.is_note())                    /* includes aftertouch  */
+                {
+                    midibyte note = e.get_note();
+                    if (trig.transposed())
+                        e.transpose_note(trig.transpose());
+
+                    if (e.is_note_on())
+                    {
+                        if (timestamp <= trig.tick_end())
+                            ++note_is_used[note];   /* count the note       */
+                        else
+                            continue;               /* skip                 */
+                    }
+                    else if (e.is_note_off())
+                    {
+                        if (note_is_used[note] > 0)
+                        {
+                            /*
+                             * We have a Note On, and if past the end of
+                             * trigger, use the trigger end.
+                             */
+
+                            --note_is_used[note];   /* turn off the note    */
+                            if (timestamp > trig.tick_end())
+                                timestamp = trig.tick_end();
+                        }
+                        else
+                            continue;               /* if no Note On, skip  */
+                    }
+                }
+            }
+            else
+                continue;                           /* before trigger, skip */
+
+            /*
+             * If the event is past the trigger end, for non-notes, skip.
+             */
+
+            if (timestamp >= trig.tick_end())       /* event past trigger   */
+            {
+                if (! e.is_note())                  /* (also aftertouch)    */
+                    continue;                       /* drop the event       */
+            }
+
+            delta_time = timestamp - prev_timestamp;
+            prev_timestamp = timestamp;
+
+            // delta_time or absolute timestamp???
+            e.set_timestamp(timestamp);
+            destseq.add_event(e);                   /* does it sort???      */
+        }
+    }
+    return prev_timestamp;
+}
+
+#endif      // defined SEQ66_USE_SEQUENCE_FLATTEN
 
 }           // namespace seq66
 

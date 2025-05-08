@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-05-04
+ * \updates       2025-05-08
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2132,6 +2132,7 @@ performer::channelize_sequence (seq::number seqno, int channel)
     bool result = channel != c_midichannel_null;
     if (result)
     {
+#if defined USE_OLD_CODE
         const seq::pointer s = get_sequence(seqno);
         bool result = bool(s);
         if (result)
@@ -2139,6 +2140,11 @@ performer::channelize_sequence (seq::number seqno, int channel)
             m_seq_clipboard.partial_assign(*s, true);
             (void) m_seq_clipboard.set_channels(channel);
         }
+#else
+        result = copy_sequence(seqno);      /* partial-assign to clipboard  */
+        if (result)
+            (void) m_seq_clipboard.set_channels(channel);
+#endif
     }
     return result;
 }

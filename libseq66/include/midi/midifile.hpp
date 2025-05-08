@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-05-03
+ * \updates       2025-05-08
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -166,7 +166,7 @@ private:
      *  input buffer.
      */
 
-    std::vector<midibyte> m_data;
+    midibytes m_data;                   /* std::vector<midibyte>            */
 
     /**
      *  Provides a list of characters.  The class pushes each MIDI byte into
@@ -176,7 +176,7 @@ private:
      *  this member.  This member is an output buffer.
      */
 
-    std::list<midibyte> m_char_list;
+    midibytes m_char_list;              /* std::list<midibyte>              */
 
     /**
      *  Indicates to store the new key, scale, and background

@@ -59,11 +59,11 @@ midi_vector::midi_vector (sequence & seq) :
  *  Fills this list with an exportable track.  Following stazed, we're
  *  consolidate the tracks at the beginning of the song, replacing the actual
  *  track number with a counter that is incremented only if the track was
- *  exportable.  Note that this loop is kind of an elaboration of what goes on in
- *  the midi_vector_base :: fill() function for normal Seq66 file writing.
+ *  exportable.  Note that this loop is kind of an elaboration of what goes on
+ *  in the midi_vector_base :: fill() function for normal Seq66 file writing.
  *
- *  Exportability ensures that the sequence pointer is valid.  This function adds
- *  all triggered events.
+ *  Exportability ensures that the sequence pointer is valid.  This function
+ *  adds all triggered events.
  *
  *  For each trigger in the sequence, add events to the list below; fill
  *  one-by-one in order, creating a single long sequence.  Then set a single
@@ -75,8 +75,8 @@ midi_vector::midi_vector (sequence & seq) :
  *  end.  We fill the MIDI container with trigger "events", and then the
  *  container's bytes are written.
  *
- *  tick_end() isn't quite a trigger length, off by 1.  Subtracting tick_start()
- *  can really screw it up.
+ *  tick_end() isn't quite a trigger length, off by 1.  Subtracting
+ *  tick_start() can really screw it up.
  */
 
 bool
