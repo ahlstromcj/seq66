@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2025-02-20
+ * \updates       2025-05-09
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -48,10 +48,6 @@
 #else
 #include "forms/qseqeventframe.ui.h"
 #endif
-
-/*
- *  Do not document the name space.
- */
 
 namespace seq66
 {
@@ -168,7 +164,7 @@ qseqeventframe::qseqeventframe
      */
 
     QStringList columns;
-    columns << "Time" << "Event" << "Ch" << "D 0" << "D 1" << "Link";
+    columns << "Time" << "Event" << "Bus" << "Ch" << "D 0" << "D 1" << "Link";
     ui->eventTableWidget->setHorizontalHeaderLabels(columns);
     ui->eventTableWidget->setSelectionBehavior
     (
@@ -785,13 +781,21 @@ qseqeventframe::set_row_height (int row, int height)
 void
 qseqeventframe::set_column_widths (int total_width)
 {
-    static float s_w [6] = { 0.20f, 0.25f, 0.1f, 0.125f, 0.125f, 0.25f };
+    static float s_w [] =
+    {
+    /*
+     *  Time   Event  Bus    Ch     D0      D 1   Link
+     */
+
+        0.20f, 0.25f, 0.1f, 0.1f, 0.125f, 0.110f, 0.25f
+    };
     ui->eventTableWidget->setColumnWidth(0, int(s_w[0] * total_width));
     ui->eventTableWidget->setColumnWidth(1, int(s_w[1] * total_width));
     ui->eventTableWidget->setColumnWidth(2, int(s_w[2] * total_width));
     ui->eventTableWidget->setColumnWidth(3, int(s_w[3] * total_width));
     ui->eventTableWidget->setColumnWidth(4, int(s_w[4] * total_width));
     ui->eventTableWidget->setColumnWidth(5, int(s_w[5] * total_width));
+    ui->eventTableWidget->setColumnWidth(6, int(s_w[6] * total_width));
 }
 
 /**
@@ -1064,24 +1068,35 @@ qseqeventframe::set_event_line
     int row,
     const std::string & evtimestamp,
     const std::string & evname,
+    const std::string & busno,
     const std::string & evchannel,
     const std::string & evdata0,
     const std::string & evdata1,
     const std::string & linktime
 )
 {
+    static QBrush s_red_brush(Qt::red);
     QTableWidgetItem * qtip = cell(row, column_id::timestamp);
     if (not_nullptr(qtip))
     {
         qtip->setText(qt(evtimestamp));
+
         qtip = cell(row, column_id::eventname);
         qtip->setText(qt(evname));
+
+        qtip = cell(row, column_id::buss);
+        qtip->setText(qt(busno));
+        qtip->setForeground(s_red_brush);
+
         qtip = cell(row, column_id::channel);
         qtip->setText(qt(evchannel));
+
         qtip = cell(row, column_id::data_0);
         qtip->setText(qt(evdata0));
+
         qtip = cell(row, column_id::data_1);
         qtip->setText(qt(evdata1));
+
         qtip = cell(row, column_id::link);
         qtip->setText(qt(linktime));
     }
@@ -1094,6 +1109,11 @@ qseqeventframe::set_event_line (int row, const editable_event & ev)
     std::string linktime = ev2.timestamp_string();
     std::string evtimestamp = m_eventslots->time_string(ev.timestamp());
     std::string evname = ev.status_string();
+    int buss = int(ev.input_bus());
+    std::string busno = std::to_string(buss);
+    if (is_null_buss(buss))
+        busno = "-";
+
     std::string evchannel = ev.channel_string();
     midibyte d0, d1;
     ev.get_data(d0, d1);
@@ -1102,7 +1122,7 @@ qseqeventframe::set_event_line (int row, const editable_event & ev)
     std::string evdata1 = m_eventslots->data_string(d1);
     set_event_line
     (
-        row,  evtimestamp, evname, evchannel, evdata0, evdata1, linktime
+        row,  evtimestamp, evname, busno, evchannel, evdata0, evdata1, linktime
     );
 }
 
@@ -1333,6 +1353,7 @@ qseqeventframe::slot_insert ()
         std::string name = ui->combo_ev_name->currentText().toStdString();
         std::string d0 = ui->entry_ev_data_0->text().toStdString();
         std::string d1 = ui->entry_ev_data_1->text().toStdString();
+        std::string busno = "-";
         std::string ch = ui->channel_combo_box->currentText().toStdString();
         std::string text = ui->plainTextEdit->toPlainText().toStdString();
         text = string_to_midi_bytes(text);      /* encode for ext ASCII     */
@@ -1349,9 +1370,9 @@ qseqeventframe::slot_insert ()
             ui->eventTableWidget->insertRow(cr);
             set_row_height(cr, sc_event_row_height);
             if (text.empty())
-                set_event_line(cr, ts, name, chan, d0, d1, linktime);
+                set_event_line(cr, ts, name, busno, chan, d0, d1, linktime);
             else
-                set_event_line(cr, ts, name, chan, text, d1, linktime);
+                set_event_line(cr, ts, name, busno, chan, text, d1, linktime);
 
             ui->button_del->setEnabled(true);
             ui->button_modify->setEnabled(true);
@@ -1406,6 +1427,11 @@ qseqeventframe::slot_modify ()
         }
 
         std::string ltstr = m_eventslots->time_string(lt);
+        int buss = int(ev0.input_bus());
+        std::string busno = std::to_string(buss);
+        if (is_null_buss(buss))
+            busno = "-";
+
         m_eventslots->select_event(row0, false);
         if (reload)
         {
@@ -1415,7 +1441,7 @@ qseqeventframe::slot_modify ()
             );
         }
         set_seq_lengths(get_lengths());
-        set_event_line(row0, ts, name, chan, d0, d1, ltstr);
+        set_event_line(row0, ts, name, busno, chan, d0, d1, ltstr);
         if (reload)
             initialize_table();             /* this is very stilted, Milton */
 

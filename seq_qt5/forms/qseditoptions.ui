@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>6</number>
+      <number>7</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -3865,7 +3865,7 @@ even if Seq66 is run by it.</string>
          </font>
         </property>
         <property name="text">
-         <string>.ctrl</string>
+         <string>.ctrl +</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBoxSaveDrums">
@@ -3887,7 +3887,7 @@ even if Seq66 is run by it.</string>
          </font>
         </property>
         <property name="text">
-         <string>.drums+</string>
+         <string>.drums +</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBoxActiveRc">
@@ -4178,7 +4178,7 @@ path added to this name is stripped.</string>
          </font>
         </property>
         <property name="text">
-         <string>.palette+</string>
+         <string>.palette +</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_cfg_active_2">
@@ -4276,7 +4276,7 @@ path added to this name is stripped.</string>
          </font>
         </property>
         <property name="text">
-         <string>.qss+</string>
+         <string>.qss +</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEditStyleSheet">
@@ -4476,7 +4476,7 @@ path added to this name is stripped.</string>
          </font>
         </property>
         <property name="text">
-         <string>.patches+</string>
+         <string>.patches +</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBoxActivePatches">

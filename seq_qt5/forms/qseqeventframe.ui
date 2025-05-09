@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>884</width>
-    <height>458</height>
+    <width>850</width>
+    <height>417</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,10 +26,10 @@
    <string>Events</string>
   </property>
   <property name="frameShape">
-   <enum>QFrame::Shape::NoFrame</enum>
+   <enum>QFrame::NoFrame</enum>
   </property>
   <property name="frameShadow">
-   <enum>QFrame::Shadow::Raised</enum>
+   <enum>QFrame::Plain</enum>
   </property>
   <property name="lineWidth">
    <number>3</number>
@@ -42,7 +42,7 @@
     <rect>
      <x>9</x>
      <y>17</y>
-     <width>440</width>
+     <width>491</width>
      <height>380</height>
     </rect>
    </property>
@@ -60,7 +60,7 @@
    </property>
    <property name="maximumSize">
     <size>
-     <width>440</width>
+     <width>492</width>
      <height>999</height>
     </size>
    </property>
@@ -68,16 +68,16 @@
     <string>Events in the pattern/sequence. Events can be edited only with the controls at the right.</string>
    </property>
    <property name="sizeAdjustPolicy">
-    <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
+    <enum>QAbstractScrollArea::AdjustToContents</enum>
    </property>
    <property name="alternatingRowColors">
     <bool>false</bool>
    </property>
    <property name="selectionBehavior">
-    <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+    <enum>QAbstractItemView::SelectRows</enum>
    </property>
    <property name="gridStyle">
-    <enum>Qt::PenStyle::DashLine</enum>
+    <enum>Qt::DashLine</enum>
    </property>
    <property name="wordWrap">
     <bool>false</bool>
@@ -86,7 +86,7 @@
     <number>48</number>
    </property>
    <property name="columnCount">
-    <number>6</number>
+    <number>7</number>
    </property>
    <attribute name="verticalHeaderMinimumSectionSize">
     <number>16</number>
@@ -148,13 +148,14 @@
    <column/>
    <column/>
    <column/>
+   <column/>
   </widget>
   <widget class="QPlainTextEdit" name="plainTextEdit">
    <property name="geometry">
     <rect>
-     <x>460</x>
-     <y>272</y>
-     <width>361</width>
+     <x>510</x>
+     <y>270</y>
+     <width>311</width>
      <height>69</height>
     </rect>
    </property>
@@ -168,7 +169,7 @@
     <number>2</number>
    </property>
    <property name="horizontalScrollBarPolicy">
-    <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+    <enum>Qt::ScrollBarAlwaysOff</enum>
    </property>
    <property name="placeholderText">
     <string>(Enter Meta/SysEx event text here)</string>
@@ -177,18 +178,18 @@
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>468</x>
+     <x>520</x>
      <y>348</y>
-     <width>345</width>
+     <width>261</width>
      <height>52</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <property name="sizeConstraint">
-     <enum>QLayout::SizeConstraint::SetFixedSize</enum>
+     <enum>QLayout::SetFixedSize</enum>
     </property>
     <property name="horizontalSpacing">
-     <number>36</number>
+     <number>20</number>
     </property>
     <property name="verticalSpacing">
      <number>2</number>
@@ -353,9 +354,9 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
   <widget class="QWidget" name="vertLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>460</x>
+     <x>510</x>
      <y>107</y>
-     <width>369</width>
+     <width>321</width>
      <height>158</height>
     </rect>
    </property>
@@ -363,25 +364,22 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
     <item>
      <layout class="QGridLayout" name="gridLayout" columnstretch="1,0">
       <property name="sizeConstraint">
-       <enum>QLayout::SizeConstraint::SetFixedSize</enum>
+       <enum>QLayout::SetFixedSize</enum>
       </property>
-      <property name="horizontalSpacing">
-       <number>4</number>
-      </property>
-      <property name="verticalSpacing">
+      <property name="spacing">
        <number>2</number>
       </property>
       <item row="1" column="0">
        <widget class="QLabel" name="time_label">
         <property name="minimumSize">
          <size>
-          <width>84</width>
+          <width>72</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>80</width>
+          <width>72</width>
           <height>24</height>
          </size>
         </property>
@@ -399,13 +397,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QComboBox" name="channel_combo_box">
         <property name="minimumSize">
          <size>
-          <width>260</width>
+          <width>208</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>264</width>
+          <width>224</width>
           <height>28</height>
          </size>
         </property>
@@ -422,7 +420,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
          <number>17</number>
         </property>
         <property name="insertPolicy">
-         <enum>QComboBox::InsertPolicy::NoInsert</enum>
+         <enum>QComboBox::NoInsert</enum>
         </property>
         <property name="minimumContentsLength">
          <number>1</number>
@@ -433,13 +431,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QComboBox" name="combo_ev_name">
         <property name="minimumSize">
          <size>
-          <width>260</width>
+          <width>208</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>264</width>
+          <width>224</width>
           <height>28</height>
          </size>
         </property>
@@ -453,7 +451,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
          <number>32</number>
         </property>
         <property name="insertPolicy">
-         <enum>QComboBox::InsertPolicy::NoInsert</enum>
+         <enum>QComboBox::NoInsert</enum>
         </property>
        </widget>
       </item>
@@ -467,13 +465,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
         </property>
         <property name="minimumSize">
          <size>
-          <width>260</width>
+          <width>208</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>264</width>
+          <width>224</width>
           <height>28</height>
          </size>
         </property>
@@ -489,13 +487,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QLabel" name="channel_label">
         <property name="minimumSize">
          <size>
-          <width>84</width>
+          <width>72</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>80</width>
+          <width>72</width>
           <height>24</height>
          </size>
         </property>
@@ -513,13 +511,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QLabel" name="event_label">
         <property name="minimumSize">
          <size>
-          <width>84</width>
+          <width>72</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>80</width>
+          <width>72</width>
           <height>24</height>
          </size>
         </property>
@@ -533,42 +531,17 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QComboBox" name="combo_ev_category">
-        <property name="minimumSize">
-         <size>
-          <width>260</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>264</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="maxVisibleItems">
-         <number>8</number>
-        </property>
-        <property name="maxCount">
-         <number>8</number>
-        </property>
-        <property name="insertPolicy">
-         <enum>QComboBox::InsertPolicy::NoInsert</enum>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label_category">
         <property name="minimumSize">
          <size>
-          <width>84</width>
+          <width>72</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>80</width>
+          <width>72</width>
           <height>24</height>
          </size>
         </property>
@@ -581,7 +554,32 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
          <string>Category</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="combo_ev_category">
+        <property name="minimumSize">
+         <size>
+          <width>208</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>224</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maxVisibleItems">
+         <number>8</number>
+        </property>
+        <property name="maxCount">
+         <number>8</number>
+        </property>
+        <property name="insertPolicy">
+         <enum>QComboBox::NoInsert</enum>
         </property>
        </widget>
       </item>
@@ -590,7 +588,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
     <item>
      <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,0,0,0,0,0">
       <property name="sizeConstraint">
-       <enum>QLayout::SizeConstraint::SetFixedSize</enum>
+       <enum>QLayout::SetFixedSize</enum>
       </property>
       <property name="horizontalSpacing">
        <number>8</number>
@@ -599,13 +597,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QLineEdit" name="entry_ev_data_1">
         <property name="minimumSize">
          <size>
-          <width>48</width>
+          <width>36</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>56</width>
+          <width>40</width>
           <height>24</height>
          </size>
         </property>
@@ -621,13 +619,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QLabel" name="d1_label">
         <property name="minimumSize">
          <size>
-          <width>28</width>
+          <width>24</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>28</width>
+          <width>24</width>
           <height>24</height>
          </size>
         </property>
@@ -640,7 +638,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
          <string>D1</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -648,18 +646,18 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QCheckBox" name="pulse_time_check_box">
         <property name="minimumSize">
          <size>
-          <width>96</width>
+          <width>64</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>84</width>
+          <width>64</width>
           <height>24</height>
          </size>
         </property>
         <property name="text">
-         <string>Tick Time</string>
+         <string>Ticks</string>
         </property>
        </widget>
       </item>
@@ -674,13 +672,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QLabel" name="d0_label">
         <property name="minimumSize">
          <size>
-          <width>28</width>
+          <width>24</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>28</width>
+          <width>24</width>
           <height>24</height>
          </size>
         </property>
@@ -693,7 +691,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
          <string>D0</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -701,13 +699,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QLineEdit" name="entry_ev_data_0">
         <property name="minimumSize">
          <size>
-          <width>48</width>
+          <width>36</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>56</width>
+          <width>40</width>
           <height>24</height>
          </size>
         </property>
@@ -726,9 +724,9 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
   <widget class="QWidget" name="horizLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>460</x>
+     <x>510</x>
      <y>12</y>
-     <width>369</width>
+     <width>321</width>
      <height>32</height>
     </rect>
    </property>
@@ -737,7 +735,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
      <number>6</number>
     </property>
     <property name="sizeConstraint">
-     <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
+     <enum>QLayout::SetMinimumSize</enum>
     </property>
     <property name="rightMargin">
      <number>10</number>
@@ -746,7 +744,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
      <widget class="QLabel" name="label_seq_number">
       <property name="minimumSize">
        <size>
-        <width>48</width>
+        <width>36</width>
         <height>0</height>
        </size>
       </property>
@@ -765,7 +763,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <string>1024</string>
       </property>
       <property name="alignment">
-       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
      </widget>
     </item>
@@ -779,13 +777,13 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       </property>
       <property name="minimumSize">
        <size>
-        <width>272</width>
+        <width>248</width>
         <height>24</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>272</width>
+        <width>256</width>
         <height>24</height>
        </size>
       </property>
@@ -805,15 +803,15 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
   <widget class="QWidget" name="dataLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>460</x>
+     <x>510</x>
      <y>48</y>
-     <width>369</width>
+     <width>321</width>
      <height>58</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,0" columnstretch="1,6">
     <property name="sizeConstraint">
-     <enum>QLayout::SizeConstraint::SetFixedSize</enum>
+     <enum>QLayout::SetFixedSize</enum>
     </property>
     <property name="verticalSpacing">
      <number>2</number>
@@ -878,7 +876,7 @@ same time.</string>
        <string>Time Signature and PPQN</string>
       </property>
       <property name="alignment">
-       <set>Qt::AlignmentFlag::AlignCenter</set>
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
@@ -928,7 +926,7 @@ same time.</string>
        <string>Measures and Events Count</string>
       </property>
       <property name="alignment">
-       <set>Qt::AlignmentFlag::AlignCenter</set>
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
@@ -937,7 +935,6 @@ same time.</string>
  </widget>
  <tabstops>
   <tabstop>eventTableWidget</tabstop>
-  <tabstop>m_entry_name</tabstop>
   <tabstop>entry_ev_timestamp</tabstop>
   <tabstop>combo_ev_name</tabstop>
   <tabstop>channel_combo_box</tabstop>

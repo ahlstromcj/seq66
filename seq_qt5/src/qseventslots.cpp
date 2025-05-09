@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2025-05-01
+ * \updates       2025-05-09
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -39,10 +39,6 @@
 #include "util/strfunctions.hpp"        /* seq66::strings_match()           */
 #include "qseqeventframe.hpp"
 #include "qseventslots.hpp"
-
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
 
 namespace seq66
 {
@@ -311,6 +307,18 @@ qseventslots::set_table_event (editable_event & ev, int row)
     std::string tstring = m_show_time_as_pulses ?
         std::to_string(long(ev.timestamp())) : ev.timestamp_string() ;
 
+    int buss = int(ev.input_bus());
+    std::string busno = std::to_string(buss);
+    if (is_null_buss(buss))
+    {
+        if (m_seq.has_in_bus())
+            busno = std::to_string(int(m_seq.seq_midi_in_bus()));
+        else
+            busno = "-";
+    }
+    else
+        busno += "in";
+
     if (ev.is_meta_text())
     {
         data_0 = ev.ex_text_string();
@@ -345,7 +353,7 @@ qseventslots::set_table_event (editable_event & ev, int row)
     }
     m_parent.set_event_line
     (
-        row, tstring, ev.status_string(),
+        row, tstring, ev.status_string(), busno,
         ev.channel_string(), data_0, data_1, linktime
     );
 }

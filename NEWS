@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-05-07
+2015-07-10 to 2025-05-09
 
 # Change Log
 
-## [0.99.20] - 2025-05-07
+## [0.99.20] - 2025-05-09
 
 ### Added
 
@@ -22,6 +22,8 @@ Chris Ahlstrom
     an SMF 0 MIDI file to SMF 1.
 -   Some configuration files weren't setting up for saving due to
     old versions being present.
+-   A column in the event editor shows the bus number that the
+    event came in on. Not saved with the event, however.
 
 ### Changed
 

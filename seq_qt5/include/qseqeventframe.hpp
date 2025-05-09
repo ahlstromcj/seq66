@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2025-02-20
+ * \updates       2025-05-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -79,6 +79,7 @@ private:
     {
         timestamp,
         eventname,
+        buss,
         channel,
         data_0,
         data_1,
@@ -142,6 +143,7 @@ private:
         int row,
         const std::string & evtimestamp,
         const std::string & evname,
+        const std::string & busno,
         const std::string & evchannel,
         const std::string & evdata0,
         const std::string & evdata1,
