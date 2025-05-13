@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-05-08
+ * \updates       2025-05-12
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -172,7 +172,7 @@ sequence::sequence (int ppqn) :
     m_transposable              (true),
     m_notes_on                  (0),
     m_master_bus                (nullptr),
-    m_playing_notes             (),
+    m_playing_notes             (c_notes_count, 0),
     m_armed                     (false),
     m_recording                 (false),
     m_draw_locked               (false),
@@ -231,8 +231,9 @@ sequence::sequence (int ppqn) :
     m_events.zero_len_correction(m_snap_tick / 2);
     m_triggers.set_ppqn(int(m_ppqn));
     m_triggers.set_length(m_length);
-    for (auto & p : m_playing_notes)            /* no notes playing now     */
-        p = 0;
+
+    // for (auto & p : m_playing_notes)            /* no notes playing now     */
+    //     p = 0;
 }
 
 /**
@@ -303,9 +304,10 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
     if (this != &rhs)
     {
         automutex locker(m_mutex);
-        m_parent                    = rhs.m_parent;         /* a pointer    */
-        m_events                    = rhs.m_events;         /* container!   */
-        m_triggers                  = rhs.m_triggers;       /* 2021-07-27   */
+        m_parent                    = rhs.m_parent;             /* pointer  */
+        m_events                    = rhs.m_events;             /* vector   */
+        m_triggers                  = rhs.m_triggers;           /* vector   */
+        m_time_signatures           = rhs.m_time_signatures;    /* vector   */
 
         /*
          *  The triggers class has a parent that cannot be reassigned.
@@ -328,52 +330,56 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
         m_song_mute                 = rhs.m_song_mute;
         m_transposable              = rhs.m_transposable;
         m_notes_on                  = 0;
-        m_master_bus                = rhs.m_master_bus;     /* a pointer    */
+        m_master_bus                = rhs.m_master_bus;         /* pointer  */
         m_unit_measure              = rhs.m_unit_measure;
         m_name                      = rhs.m_name;
         m_ppqn                      = rhs.m_ppqn;
 
         /*
-         *  These values are set fine for this purpose by the constructor
-         *
-         *  m_playing_notes
-         *  m_armed
-         *  m_recording
-         *  m_draw_locked
-         *  m_expanded_recording
-         *  m_overwrite_recording
-         *  m_oneshot_recording
-         *  m_record_alteration
-         *  m_thru
-         *  m_queued
-         *  m_soloed
-         *  m_one_shot
-         *  m_one_shot_tick
-         *  m_loop_count_max
-         *  m_off_from_snap
-         *  m_song_playback_block
-         *  m_song_recording
-         *  m_song_recording_snap
-         *  m_song_record_tick
-         *  m_loop_reset
-         *  m_dirty_main
-         *  m_dirty_edit
-         *  m_dirty_perf
-         *  m_dirty_names
-         *  m_seq_in_edit
-         *  m_status
-         *  m_cc
-         *  m_last_tick
-         *  m_queued_tick
-         *  m_trigger_offset
-         *  m_maxbeats
-         *  m_seq_number
-         *  m_mutex
+         * m_playing_notes is now a vector.
          */
 
+        std::fill(m_playing_notes.begin(), m_playing_notes.end(), 0);
+
+        m_armed                     = false;
+        m_recording                 = false;
+        m_draw_locked               = false;
+        m_recording_style           = usr().pattern_record_style();
+        m_record_alteration         = usr().record_alteration();
+        m_thru                      = false;
+        m_queued                    = false;
+        m_one_shot                  = false;
+        m_one_shot_tick             = 0;
+        m_loop_count_max            = rhs.m_loop_count_max;
+        m_off_from_snap             = false;
+        m_song_playback_block       = false;
+        m_song_recording            = false;
+        m_song_recording_snap       = true;
+        m_song_record_tick          = 0;
+        m_loop_reset                = false;
+        m_unit_measure              = rhs.m_unit_measure;
+        m_dirty_main                = true;
+        m_dirty_edit                = true;
+        m_dirty_perf                = true;
+        m_dirty_names               = true;
+        m_is_modified               = false;
+        m_seq_in_edit               = false;
+        m_status                    = 0;
+        m_cc                        = 0;
+        m_name                      = rhs.m_name;
+        m_last_tick = m_queued_tick = m_trigger_offset = 0;
+
+        /*
+         * Read-only:    m_maxbeats = rhs.m_maxbeats;
+         */
+
+        m_ppqn                      = rhs.m_ppqn;
+        m_seq_number                = rhs.m_seq_number;     // ?
         m_seq_color                 = rhs.m_seq_color;
         m_seq_edit_mode             = rhs.m_seq_edit_mode;
         m_length                    = rhs.m_length;
+        m_next_boundary             = 0;
+        m_measures                  = rhs.m_measures;
         m_snap_tick                 = rhs.m_snap_tick;
         m_step_edit_note_length     = rhs.m_step_edit_note_length;
         m_time_beats_per_measure    = rhs.m_time_beats_per_measure;
@@ -387,10 +393,11 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
         m_musical_key               = rhs.m_musical_key;
         m_musical_scale             = rhs.m_musical_scale;
         m_background_sequence       = rhs.m_background_sequence;
-        for (auto & p : m_playing_notes)            /* no notes playing now */
-            p = 0;
 
-        m_last_tick = 0;                            /* reset to tick 0      */
+        /*
+         *  m_mutex
+         */
+
         (void) verify_and_link();                   /* NoteOn <---> NoteOff */
         if (! toclipboard)
             modify();
@@ -4816,6 +4823,10 @@ sequence::print_triggers () const
  * \param offset
  *      The performance offset of the trigger. Defaults to 0.
  *
+ * \param tpose
+ *      The transposition value to store with the trigger.
+ *      defaults to 0 (no transposition).
+ *
  * \param fixoffset
  *      If true, adjust the offset. Defaults to true.
  */
@@ -7772,23 +7783,20 @@ sequence::handle_edit_action (eventlist::edit action, int var)
     }
 }
 
-#if defined SEQ66_USE_SEQUENCE_FLATTEN
+#if defined SEQ66_USE_FLATTEN_PATTERN
 
 /**
- *  Fills this list with an exportable track.  Following stazed, we're
- *  consolidate the tracks at the beginning of the song, replacing the actual
- *  track number with a counter that is incremented only if the track was
- *  exportable.  Note that this loop is kind of an elaboration of what goes on
- *  in the midi_vector_base :: fill() function for normal Seq66 file writing.
- *
  *  Exportability ensures that the sequence pointer is valid.  This function
  *  adds all triggered events.
  *
  *  For each trigger in the sequence, add events to the list below; fill
- *  one-by-one in order, creating a single long sequence.  Then set a single
- *  trigger for the big sequence: start at zero, end at last trigger end with
- *  snap.  We're going to reference (not copy) the triggers now, since the
- *  write_song() function is now locked.
+ *  one-by-one in order, creating a single long sequence.
+ *
+ * Do we want to add this here?
+ *
+ *      Then set a single trigger for the big sequence: start at zero, end at
+ *      last trigger end with snap.  We're going to reference (not copy) the
+ *      triggers now.
  *
  *  The we adjust the sequence length to snap to the nearest measure past the
  *  end.  We fill the MIDI container with trigger "events", and then the
@@ -7799,7 +7807,7 @@ sequence::handle_edit_action (eventlist::edit action, int var)
  */
 
 bool
-sequence::flatten (sequence & destseq)
+sequence::flatten (sequence & destseq, bool maketrigger)
 {
     bool result = is_exportable();
     if (result)
@@ -7811,13 +7819,21 @@ sequence::flatten (sequence & destseq)
 
         const trigger & ender = trigs.back();
         midipulse seqend = ender.tick_end();
-        midipulse measticks = measures_to_ticks();
-        if (measticks > 0)
+        if (maketrigger)
         {
-            midipulse remainder = seqend % measticks;
-            if (remainder != (measticks - 1))
-                seqend += measticks - remainder - 1;
+            midipulse measticks = measures_to_ticks();  /* 1 measure length */
+            if (measticks > 0)
+            {
+                midipulse remainder = seqend % measticks;
+                if (remainder != (measticks - 1))
+                    seqend += measticks - remainder - 1;
+
+                result = destseq.add_trigger(0, seqend);
+            }
         }
+
+        int m = destseq.get_measures(seqend);
+        result = destseq.set_measures(m, true);         /* a user change    */
     }
     return result;
 }
@@ -7872,16 +7888,11 @@ sequence::flatten_trigger
 
     for (int p = 0; p <= times_played; ++p, time_offset += len)
     {
-        midipulse delta_time = 0;
         for (auto e : events())                     /* use a copy of event  */
         {
             midipulse timestamp = e.timestamp() + time_offset;
             if (timestamp >= trig.tick_start())     /* at/after trigger     */
             {
-                /*
-                 * Save the note; eliminate Note Off if Note On is unused.
-                 */
-
                 if (e.is_note())                    /* includes aftertouch  */
                 {
                     midibyte note = e.get_note();
@@ -7899,11 +7910,6 @@ sequence::flatten_trigger
                     {
                         if (note_is_used[note] > 0)
                         {
-                            /*
-                             * We have a Note On, and if past the end of
-                             * trigger, use the trigger end.
-                             */
-
                             --note_is_used[note];   /* turn off the note    */
                             if (timestamp > trig.tick_end())
                                 timestamp = trig.tick_end();
@@ -7916,28 +7922,32 @@ sequence::flatten_trigger
             else
                 continue;                           /* before trigger, skip */
 
-            /*
-             * If the event is past the trigger end, for non-notes, skip.
-             */
-
             if (timestamp >= trig.tick_end())       /* event past trigger   */
             {
                 if (! e.is_note())                  /* (also aftertouch)    */
                     continue;                       /* drop the event       */
             }
-
-            delta_time = timestamp - prev_timestamp;
             prev_timestamp = timestamp;
-
-            // delta_time or absolute timestamp???
             e.set_timestamp(timestamp);
-            destseq.add_event(e);                   /* does it sort???      */
+
+            /*
+             * This function locks the mutex, appends the event, and, if
+             * a note-off, sorts, verifies and links, which trims added notes
+             * since we've not yet increased the sequence's length value.
+             * So we do the minimum here.
+             *
+             * destseq.add_event(e);
+             */
+
+            bool ok = destseq.events().append(e);
+            if (! ok)
+                break;
         }
     }
     return prev_timestamp;
 }
 
-#endif      // defined SEQ66_USE_SEQUENCE_FLATTEN
+#endif      // defined SEQ66_USE_FLATTEN_PATTERN
 
 }           // namespace seq66
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-05-08
+ * \updates       2025-05-12
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2216,13 +2216,41 @@ performer::remove_sequence (seq::number seqno)
     return result;
 }
 
+#if defined SEQ66_USE_FLATTEN_PATTERN
+
+/**
+ *  The clipboard is the destination for the trigger-less sequence.
+ *  We have to make sure that the source sequence's properties
+ *  are copied, but we also need to remove the events and the triggers.
+ *  See sequence::partial_assign().
+ */
+
+bool
+performer::flatten_sequence (seq::number seqno)
+{
+    const seq::pointer s = get_sequence(seqno);
+    bool result = bool(s);
+    if (result)
+    {
+        m_seq_clipboard.partial_assign(*s);             /* get/reset all    */
+        m_seq_clipboard.clear_events();
+        m_seq_clipboard.clear_triggers();
+        result = s->flatten(m_seq_clipboard);
+        if (result)
+            s->partial_assign(m_seq_clipboard);         /* paste_sequence() */
+    }
+    return result;
+}
+
+#endif
+
 bool
 performer::copy_sequence (seq::number seqno)
 {
     const seq::pointer s = get_sequence(seqno);
     bool result = bool(s);
     if (result)
-        m_seq_clipboard.partial_assign(*s, true);
+        m_seq_clipboard.partial_assign(*s, true);       /* do not "modify"  */
 
     return result;
 }

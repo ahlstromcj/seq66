@@ -201,6 +201,20 @@ qslivebase::set_midi_in_bus (int b)
     (void) perf().set_midi_in_bus(m_current_seq, b);
 }
 
+#if defined SEQ66_USE_FLATTEN_PATTERN
+
+bool
+qslivebase::flatten_seq ()
+{
+    bool result = perf().flatten_sequence(m_current_seq);
+//  if (result)
+//      can_paste(true);
+
+    return result;
+}
+
+#endif
+
 bool
 qslivebase::copy_seq ()
 {

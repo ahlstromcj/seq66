@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-05-03
+ * \updates       2025-05-13
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -2872,13 +2872,6 @@ midifile::prop_item_size (long data_length) const
  *      basic MIDI sequence (which is not the same as exporting a Song, with
  *      triggers, as a MIDI sequence).
  *
- * \param smfformat
- *      Defaults to 1.  Can be set to 0 for writing an SMF 0 file.
- *
- * \param doseqspec
- *      Defaults to true. Can be set to false for writing non-Seq66
- *      MIDI files.
- *
  * \return
  *      Returns true if the write operations succeeded.  If false is returned,
  *      then m_error_message will contain a description of the error.
@@ -2891,7 +2884,7 @@ midifile::write (performer & p, bool doseqspec)
     bool result = usr().is_ppqn_valid(m_ppqn);
     m_error_message.clear();
     if (! result)
-        m_error_message = "Invalid PPQN for MIDI file to write.";
+        m_error_message = "Invalid PPQN for MIDI file.";
 
     if (result)
     {
@@ -2923,7 +2916,7 @@ midifile::write (performer & p, bool doseqspec)
                 file_message(temp, m_name);
             }
             else
-                m_error_message = "Failed to write header to MIDI file.";
+                m_error_message = "Failed to write header.";
         }
         else
             m_error_message = "No patterns/tracks to write.";
@@ -2990,7 +2983,7 @@ midifile::write (performer & p, bool doseqspec)
         }
         else
         {
-            m_error_message = "Failed to open MIDI file for writing.";
+            m_error_message = "Failed to open MIDI file to write.";
             result = false;
         }
     }
@@ -2999,6 +2992,105 @@ midifile::write (performer & p, bool doseqspec)
 
     return result;
 }
+
+#if defined SEQ66_CAN_EXPORT_A_TRACK
+
+/**
+ *  Write the whole MIDI data and Seq24 information out to the file.
+ *  Also see the write_song() function, for exporting to standard MIDI.
+ *
+ *  Seq66 sometimes reverses the order of some events, due to popping
+ *  from its container.  Not an issue, but can make a file slightly different
+ *  for no reason.
+ *
+ * \param p
+ *      Provides the object that will contain and manage the entire
+ *      performance.
+ *
+ * \param track
+ *      The sequence number of the single track to write.
+ *
+ * \return
+ *      Returns true if the write operations succeeded.  If false is returned,
+ *      then m_error_message will contain a description of the error.
+ */
+
+bool
+midifile::write_one_pattern (performer & p, int track)
+{
+    automutex locker(m_mutex);
+    int sequencehigh = p.sequence_high();
+    bool result = track >= 0 && track < sequencehigh;
+    if (result)
+        result = p.is_seq_active(track);
+
+    m_error_message.clear();
+    if (result)
+    {
+        int smfformat = p.smf_format();
+        bool result = write_header(1, smfformat);
+        if (result)
+        {
+            std::string temp = "Writing ";
+            temp += "Seq66 track ";
+            temp += std::to_string(track);
+            file_message(temp, m_name);
+        }
+        else
+            m_error_message = "Failed to write MIDI header.";
+    }
+    else
+        m_error_message = "No such pattern/track to write.";
+
+    if (result)
+    {
+        seq::pointer s = p.get_sequence(track);
+        if (s)
+        {
+            sequence & seq = *s;
+            midi_vector lst(seq);
+            lst.fill(track, p, true);
+            write_track(lst);
+        }
+    }
+    if (result)
+    {
+        result = write_seqspec_track(p);
+        if (! result)
+            m_error_message = "Could not write SeqSpec.";
+    }
+    if (result)
+    {
+        std::ofstream file
+        (
+            m_name.c_str(), std::ios::out | std::ios::binary | std::ios::trunc
+        );
+        if (file.is_open())
+        {
+            char file_buffer[c_midi_line_max];      /* enable bufferization */
+            file.rdbuf()->pubsetbuf(file_buffer, sizeof file_buffer);
+            for (auto c : m_char_list)              /* list of midibytes    */
+            {
+                char kc = char(c);
+                file.write(&kc, 1);
+                if (file.fail())
+                {
+                    m_error_message = "Error writing byte.";
+                    result = false;
+                }
+            }
+            m_char_list.clear();
+        }
+        else
+        {
+            m_error_message = "Failed to open MIDI file to write.";
+            result = false;
+        }
+    }
+    return result;
+}
+
+#endif  // defined SEQ66_CAN_EXPORT_A_TRACK
 
 /**
  *  Write the whole MIDI data and Seq24 information out to a MIDI file, writing
@@ -3144,7 +3236,7 @@ midifile::write_song (performer & p)
         }
         else
         {
-            m_error_message = "Failed to open MIDI file for export.";
+            m_error_message = "Failed to open MIDI file to export.";
             result = false;
         }
     }

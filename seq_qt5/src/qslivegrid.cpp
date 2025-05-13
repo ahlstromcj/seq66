@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2025-02-03
+ * \updates       2025-05-13
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1437,6 +1437,19 @@ qslivegrid::record_sequence ()
     }
 }
 
+#if defined SEQ66_USE_FLATTEN_PATTERN
+
+void
+qslivegrid::flatten_sequence ()
+{
+    if (qslivebase::flatten_seq())
+    {
+        // no other code needed here
+    }
+}
+
+#endif
+
 void
 qslivegrid::copy_sequence ()
 {
@@ -1810,7 +1823,7 @@ qslivegrid::popup_menu ()
          *  Color menus
          */
 
-        QMenu * menuColour = new_qmenu("Pattern &color...");
+        QMenu * menuColour = new_qmenu("&Color...");
         int firstcolor = palette_to_int(PaletteColor::none);
         int lastcolor = palette_to_int(PaletteColor::white);
         for (int c = firstcolor; c <= lastcolor; ++c)
@@ -1896,11 +1909,30 @@ qslivegrid::popup_menu ()
             this, SLOT(record_sequence())
         );
 
+#if defined SEQ66_USE_FLATTEN_PATTERN
+
+        if (s->trigger_count() > 0)
+        {
+            /**
+             *  Flatten menu
+             */
+
+            QAction * actionFlatten = new_qaction("&Flatten (triggers)", m_popup);
+            m_popup->addAction(actionFlatten);
+            connect
+            (
+                actionFlatten, SIGNAL(triggered(bool)),
+                this, SLOT(flatten_sequence())
+            );
+        }
+
+#endif
+
         /**
          *  Copy/Cut/Delete/Paste menus
          */
 
-        QAction * actionCopy = new_qaction("Cop&y pattern", m_popup);
+        QAction * actionCopy = new_qaction("Cop&y", m_popup);
         m_popup->addAction(actionCopy);
         connect
         (
@@ -1908,7 +1940,7 @@ qslivegrid::popup_menu ()
             this, SLOT(copy_sequence())
         );
 
-        QAction * actionCut = new_qaction("Cu&t pattern", m_popup);
+        QAction * actionCut = new_qaction("Cu&t", m_popup);
         m_popup->addAction(actionCut);
         connect
         (
@@ -1916,7 +1948,7 @@ qslivegrid::popup_menu ()
             this, SLOT(cut_sequence())
         );
 
-        QAction * actionDelete = new_qaction("&Delete pattern", m_popup);
+        QAction * actionDelete = new_qaction("&Delete", m_popup);
         m_popup->addAction(actionDelete);
         connect
         (
@@ -1926,7 +1958,7 @@ qslivegrid::popup_menu ()
 
         if (can_clear())
         {
-            QAction * actionClear = new_qaction("&Clear events", m_popup);
+            QAction * actionClear = new_qaction("Clear events", m_popup);
             m_popup->addAction(actionClear);
             connect
             (

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2025-05-04
+ * \updates       2025-05-14
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2265,6 +2265,9 @@ public:
     bool clear_sequence (seq::number seqno);
     bool double_sequence (seq::number seqno);
     bool remove_sequence (seq::number seqno);
+#if defined SEQ66_USE_FLATTEN_PATTERN
+    bool flatten_sequence (seq::number seqno);
+#endif
     bool copy_sequence (seq::number seqno);
     bool cut_sequence (seq::number seqno);
     bool paste_sequence (seq::number seqno);

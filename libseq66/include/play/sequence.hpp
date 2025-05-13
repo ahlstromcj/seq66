@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-05-08
+ * \updates       2025-05-12
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -53,7 +53,7 @@
  * Totally EXPERIMENTAL
  */
 
-#undef  SEQ66_USE_SEQUENCE_FLATTEN
+#define SEQ66_USE_FLATTEN_PATTERN
 
 /**
  *  Provides an integer value for color that matches PaletteColor::none.  That
@@ -392,7 +392,7 @@ private:
 
     /**
      *  This list holds the current pattern/sequence events.  It used to be
-     *  called m_list_events, but a map implementation is now available, and
+     *  called m_list_events, but another implementation is now available, and
      *  is the default.
      */
 
@@ -528,9 +528,11 @@ private:
     /**
      *  Provides a "map" for Note On events.  It is used when muting, to shut
      *  off the notes that are playing.
+     *
+     * unsigned short m_playing_notes[c_notes_count];
      */
 
-    unsigned short m_playing_notes[c_notes_count];
+    std::vector<unsigned short> m_playing_notes;
 
     /**
      *  Indicates if the sequence was playing.  This value is set at the end
@@ -2039,9 +2041,9 @@ public:
 
 private:        // for now
 
-#if defined SEQ66_USE_SEQUENCE_FLATTEN
+#if defined SEQ66_USE_FLATTEN_PATTERN
 
-    bool flatten (sequence & destseq);
+    bool flatten (sequence & destseq, bool maketrigger = true);
     midipulse flatten_trigger
     (
         sequence & destseq,

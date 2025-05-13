@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.20
 Chris Ahlstrom
-2019-04-13 to 2025-05-09
+2019-04-13 to 2025-05-13
 
 Hot:
     
@@ -35,6 +35,11 @@ NSM:
 
 Backlog:
 
+    -   Make sure song export uses transposition if present.
+    -   Export a single track as MIDI or Seq66 MIDI, including the tempo
+        and time signature.
+    -   Can we make another instance of seq66 act as a source of
+        MIDI input/output?
     -   Consider adding a Flatten entry to the pattern slot popup
         menu, at least during investigation.
     -   The event panel is offset rightward a few (3?) pixels from the

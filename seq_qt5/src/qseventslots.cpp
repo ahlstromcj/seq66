@@ -308,16 +308,16 @@ qseventslots::set_table_event (editable_event & ev, int row)
         std::to_string(long(ev.timestamp())) : ev.timestamp_string() ;
 
     int buss = int(ev.input_bus());
-    std::string busno = std::to_string(buss);
+    std::string busno;
     if (is_null_buss(buss))
     {
         if (m_seq.has_in_bus())
-            busno = std::to_string(int(m_seq.seq_midi_in_bus()));
+            busno = "<" + std::to_string(int(m_seq.seq_midi_in_bus())) + ">";
         else
             busno = "-";
     }
     else
-        busno += "in";
+        busno = std::to_string(buss);
 
     if (ev.is_meta_text())
     {

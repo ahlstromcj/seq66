@@ -1076,6 +1076,7 @@ qseqeventframe::set_event_line
 )
 {
     static QBrush s_red_brush(Qt::red);
+    static QBrush s_black_brush(Qt::black);
     QTableWidgetItem * qtip = cell(row, column_id::timestamp);
     if (not_nullptr(qtip))
     {
@@ -1086,7 +1087,10 @@ qseqeventframe::set_event_line
 
         qtip = cell(row, column_id::buss);
         qtip->setText(qt(busno));
-        qtip->setForeground(s_red_brush);
+        if (busno[0] != '<')                        /* see qseventslots     */
+            qtip->setForeground(s_black_brush);     /* the event has a bus  */
+        else
+            qtip->setForeground(s_red_brush);       /* the pattern's in bus */
 
         qtip = cell(row, column_id::channel);
         qtip->setText(qt(evchannel));
