@@ -1,13 +1,19 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-05-12
+2015-07-10 to 2025-05-14
 
 # Change Log
 
-## [0.99.20] - 2025-05-12
+## [0.99.20] - 2025-05-14
 
 ### Added
 
+-   Added features to the grid slot popup menu:
+    -   Flatten triggers. This uses the pattern triggers to
+        regenerate the notes, replacing multiple triggers with one
+        long one (needs some work yet).
+    -   Export pattern. Saves a single track to a new file, at
+        pattern number 0. (Needs some work yet).
 -   A timed error prompt (instead of OK/Remap and restart) when
     running via NSM; see qsmainwnd and qt5nsmanager.
 -   An ALSA/JACK label to JACK preferences tab, same as in mainwnd.
@@ -43,6 +49,8 @@ Chris Ahlstrom
 -   Fixed the plotting of pitchbend data.
 -   Fixed the broken painting of notes with the mouse.
 -   Enhanced sequence::partial\_assign(), adding missing members.
+-   Pasting a pattern now sets the pattern number to the slot
+    receiving the pattern.
 
 ## [0.99.19] - 2025-03-02
 

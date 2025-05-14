@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-05-13
+ * \updates       2025-05-14
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -2993,8 +2993,6 @@ midifile::write (performer & p, bool doseqspec)
     return result;
 }
 
-#if defined SEQ66_CAN_EXPORT_A_TRACK
-
 /**
  *  Write the whole MIDI data and Seq24 information out to the file.
  *  Also see the write_song() function, for exporting to standard MIDI.
@@ -3044,10 +3042,17 @@ midifile::write_one_pattern (performer & p, int track)
 
     if (result)
     {
+        /*
+         * Once we get the sequence, we need its sequence number to be
+         * zero.
+         */
+
         seq::pointer s = p.get_sequence(track);
         if (s)
         {
+            int track = 0;
             sequence & seq = *s;
+            seq.seq_number(track);
             midi_vector lst(seq);
             lst.fill(track, p, true);
             write_track(lst);
@@ -3089,8 +3094,6 @@ midifile::write_one_pattern (performer & p, int track)
     }
     return result;
 }
-
-#endif  // defined SEQ66_CAN_EXPORT_A_TRACK
 
 /**
  *  Write the whole MIDI data and Seq24 information out to a MIDI file, writing

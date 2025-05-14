@@ -2266,9 +2266,7 @@ public:
     bool double_sequence (seq::number seqno);
     bool remove_sequence (seq::number seqno);
     bool flatten_sequence (seq::number seqno);
-#if defined SEQ66_CAN_EXPORT_A_TRACK
-    bool export_sequence (seq::number seqno);
-#endif
+    bool export_sequence (seq::number seqno, const std::string & filename);
     bool copy_sequence (seq::number seqno);
     bool cut_sequence (seq::number seqno);
     bool paste_sequence (seq::number seqno);

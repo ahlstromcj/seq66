@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-05-13
+ * \updates       2025-05-14
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -51,10 +51,6 @@
 #include "midi/midibytes.hpp"           /* midishort, midibyte, etc.        */
 #include "midi/midi_splitter.hpp"       /* seq66::midi_splitter             */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
-
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
 
 namespace seq66
 {
@@ -242,10 +238,7 @@ public:
     virtual bool write (performer & p, bool doseqspec = true);
 
     bool write_song (performer & p);
-
-#if defined SEQ66_CAN_EXPORT_A_TRACK
     bool write_one_pattern (performer & p, int track);
-#endif
 
     const std::string & error_message () const
     {

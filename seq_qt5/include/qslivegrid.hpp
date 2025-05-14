@@ -41,6 +41,7 @@
 #include <vector>                       /* std::vector<>                    */
 
 #include "qslivebase.hpp"               /* seq66::qslivebase ABC            */
+#include "midi/midifile.hpp"            /* for exporting a track            */
 #include "play/screenset.hpp"           /* seq66::screenset class           */
 
 /*
@@ -214,11 +215,7 @@ signals:
 private slots:
 
     void flatten_sequence ();
-
-#if defined SEQ66_CAN_EXPORT_A_TRACK
     void export_sequence ();
-#endif
-
     void copy_sequence ();
     void cut_sequence ();
     void paste_sequence ();

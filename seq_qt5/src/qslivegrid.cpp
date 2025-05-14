@@ -75,14 +75,14 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
-#include "play/performer.hpp"           /* seq66::performer class           */
-#include "os/timing.hpp"                /* seq66::millisleep()              */
-#include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5 class     */
+#include "os/timing.hpp"                /* seq66::millisleep()              */
+#include "play/performer.hpp"           /* seq66::performer class           */
 #include "qloopbutton.hpp"              /* seq66::qloopbutton (qslotbutton) */
 #include "qslivegrid.hpp"               /* seq66::qslivegrid                */
 #include "qsmainwnd.hpp"                /* the true parent of this class    */
 #include "qt5_helpers.hpp"              /* seq66::qt_keystroke() etc.       */
+#include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
 
 #include "pixmaps/metro.xpm"            /* a metroname icon                 */
 #include "pixmaps/metro_on.xpm"         /* metroname-is-active icon         */
@@ -1446,35 +1446,25 @@ qslivegrid::flatten_sequence ()
     }
 }
 
-#if defined SEQ66_CAN_EXPORT_A_TRACK
-
 void
 qslivegrid::export_sequence ()
 {
-    std::string filename;
-    if (fname.empty())
+    std::string prompt = "Export pattern...";
+    std::string fname = rc().last_used_dir();
+    bool ok = show_file_dialog     /* qsmainwnd::midi_filename_prompt() */
+    (
+        this, fname, prompt,
+        "MIDI files (*.midi *.mid);;All files (*)",
+        SavingFile, NormalFile, ".midi"
+    );
+    if (ok)
     {
-        std::string prompt = "Export pattern...";
-        filename = midi_filename_prompt(prompt);
-        if (filename.empty())
+        if (! perf().export_sequence(current_seq(), fname))
         {
-            /*
-             * Maybe later, add some kind of warning dialog.
-             */
+            // show_error_box(perf().error_messages());
         }
-        else
-        {
-            if (! perf().export_sequence(current_seq(), filename)
-                show_error_box(f.error_message());
-        }
-    }
-    if (qslivebase::export_seq())
-    {
-        // no other code needed here
     }
 }
-
-#endif
 
 void
 qslivegrid::copy_sequence ()
@@ -1966,10 +1956,11 @@ qslivegrid::popup_menu ()
         if (s->trigger_count() > 0)
         {
             /**
-             *  Flatten menu
+             *  Flatten menu. This action consolidates the triggers into one
+             *  trigger, useful for export.
              */
 
-            QAction * actionFlatten = new_qaction("&Flatten (triggers)", m_popup);
+            QAction * actionFlatten = new_qaction("&Flatten triggers", m_popup);
             m_popup->addAction(actionFlatten);
             connect
             (
@@ -1977,22 +1968,20 @@ qslivegrid::popup_menu ()
                 this, SLOT(flatten_sequence())
             );
         }
+        if (s->event_count() > 0)
+        {
+            /**
+             *  Export menu. This action writes the track to a new file.
+             */
 
-#if defined SEQ66_CAN_EXPORT_A_TRACK
-
-        /**
-         *  Flatten menu
-         */
-
-        QAction * actionExport = new_qaction("&Export (track)", m_popup);
-        m_popup->addAction(actionExport);
-        connect
-        (
-            actionExport, SIGNAL(triggered(bool)),
-            this, SLOT(export_sequence())
-        );
-
-#endif
+            QAction * actionExport = new_qaction("&Export track", m_popup);
+            m_popup->addAction(actionExport);
+            connect
+            (
+                actionExport, SIGNAL(triggered(bool)),
+                this, SLOT(export_sequence())
+            );
+        }
 
         /**
          *  Copy/Cut/Delete/Paste menus
@@ -2187,7 +2176,7 @@ qslivegrid::popup_menu ()
     }
     else if (perf().can_paste() && can_paste())
     {
-        QAction * actionPaste = new_qaction("&Paste to pattern", m_popup);
+        QAction * actionPaste = new_qaction("&Paste", m_popup);
         m_popup->addAction(actionPaste);
         connect
         (
@@ -2195,7 +2184,7 @@ qslivegrid::popup_menu ()
             this, SLOT(paste_sequence())
         );
 
-        QAction * actionMerge = new_qaction("&Merge into pattern", m_popup);
+        QAction * actionMerge = new_qaction("&Merge", m_popup);
         m_popup->addAction(actionMerge);
         connect
         (

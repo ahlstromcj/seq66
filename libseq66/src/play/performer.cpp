@@ -2240,8 +2240,6 @@ performer::flatten_sequence (seq::number seqno)
     return result;
 }
 
-#if defined SEQ66_CAN_EXPORT_A_TRACK
-
 bool
 performer::export_sequence (seq::number seqno, const std::string & filename)
 {
@@ -2249,12 +2247,11 @@ performer::export_sequence (seq::number seqno, const std::string & filename)
     bool result = bool(s);
     if (result)
     {
-        xxx
+        midifile f(filename, ppqn());
+        result = f.write_one_pattern(*this, int(seqno));
     }
     return result;
 }
-
-#endif
 
 bool
 performer::copy_sequence (seq::number seqno)
@@ -2295,6 +2292,7 @@ performer::paste_sequence (seq::number seqno)
         {
             seq::pointer s = get_sequence(seqno);
             s->partial_assign(m_seq_clipboard);
+            s->seq_number(seqno);                   /* ca 2025-05-14        */
         }
     }
     return result;
