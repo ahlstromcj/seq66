@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-05-12
+ * \updates       2025-05-14
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -48,12 +48,6 @@
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
-
-/*
- * Totally EXPERIMENTAL
- */
-
-#define SEQ66_USE_FLATTEN_PATTERN
 
 /**
  *  Provides an integer value for color that matches PaletteColor::none.  That
@@ -2039,9 +2033,7 @@ public:
     bool update_recording (int index);
     bool remove_orphaned_events ();
 
-private:        // for now
-
-#if defined SEQ66_USE_FLATTEN_PATTERN
+private:
 
     bool flatten (sequence & destseq, bool maketrigger = true);
     midipulse flatten_trigger
@@ -2050,8 +2042,6 @@ private:        // for now
         const trigger & trig,
         midipulse prev_timestamp
     );
-
-#endif
 
 protected:
 

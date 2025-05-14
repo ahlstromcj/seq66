@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2025-05-10
+ * \updates       2025-05-14
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child class, qslivegride, are Sequencer66's
@@ -110,11 +110,6 @@ public:
         return perf().seq_to_grid(seqno, row, column, is_external());
     }
 
-    seq::number current_seq () const
-    {
-        return m_current_seq;
-    }
-
     int spacing () const
     {
         return m_mainwnd_spacing;
@@ -156,17 +151,6 @@ protected:
         return m_parent;
     }
 
-#if defined SEQ66_USE_FLATTEN_PATTERN
-    bool flatten_seq ();
-#endif
-
-    bool copy_seq ();
-    bool cut_seq ();
-    bool delete_seq ();
-    bool clear_seq ();
-    bool paste_seq ();
-    bool merge_seq ();
-
     bool can_paste () const
     {
         return m_can_paste;
@@ -175,6 +159,16 @@ protected:
     void can_paste (bool flag)
     {
         m_can_paste = flag;
+    }
+
+    seq::number current_seq () const
+    {
+        return m_current_seq;
+    }
+
+    void current_seq (seq::number n)
+    {
+        m_current_seq = n;
     }
 
     virtual void update_bank (int bank);

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-05-12
+ * \updates       2025-05-14
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -7783,8 +7783,6 @@ sequence::handle_edit_action (eventlist::edit action, int var)
     }
 }
 
-#if defined SEQ66_USE_FLATTEN_PATTERN
-
 /**
  *  Exportability ensures that the sequence pointer is valid.  This function
  *  adds all triggered events.
@@ -7946,8 +7944,6 @@ sequence::flatten_trigger
     }
     return prev_timestamp;
 }
-
-#endif      // defined SEQ66_USE_FLATTEN_PATTERN
 
 }           // namespace seq66
 

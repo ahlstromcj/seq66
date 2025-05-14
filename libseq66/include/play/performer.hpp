@@ -27,7 +27,7 @@
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
- * \date          2018-11-12
+ * \date          2018-11-13
  * \updates       2025-05-14
  * \license       GNU GPLv2 or above
  *
@@ -2265,8 +2265,9 @@ public:
     bool clear_sequence (seq::number seqno);
     bool double_sequence (seq::number seqno);
     bool remove_sequence (seq::number seqno);
-#if defined SEQ66_USE_FLATTEN_PATTERN
     bool flatten_sequence (seq::number seqno);
+#if defined SEQ66_CAN_EXPORT_A_TRACK
+    bool export_sequence (seq::number seqno);
 #endif
     bool copy_sequence (seq::number seqno);
     bool cut_sequence (seq::number seqno);

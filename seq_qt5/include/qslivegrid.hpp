@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2025-05-10
+ * \updates       2025-05-14
  * \license       GNU GPLv2 or above
  *
  *
@@ -213,19 +213,25 @@ signals:
 
 private slots:
 
-    void conditional_update ();
-    void new_sequence ();
-    void edit_sequence ();
-    void edit_sequence_ex ();
-    void edit_events ();
-    void record_sequence ();
     void flatten_sequence ();
+
+#if defined SEQ66_CAN_EXPORT_A_TRACK
+    void export_sequence ();
+#endif
+
     void copy_sequence ();
     void cut_sequence ();
     void paste_sequence ();
     void merge_sequence ();
     void delete_sequence ();
     void clear_sequence ();
+
+    void conditional_update ();
+    void new_sequence ();
+    void edit_sequence ();
+    void edit_sequence_ex ();
+    void edit_events ();
+    void record_sequence ();
     void new_live_frame ();
     void slot_set_bank_name ();
     void slot_activate_bank (bool clicked);

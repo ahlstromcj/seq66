@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2025-05-13
+ * \updates       2025-05-14
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -693,7 +693,7 @@ qslivegrid::setup_button (qslotbutton * pb)
 void
 qslivegrid::color_by_number (int i)
 {
-    qslivebase::color_by_number(i);     /* perf().color(m_current_seq, ...) */
+    qslivebase::color_by_number(i);     /* perf().color(current_seq(), ...) */
     (void) recreate_all_slots();
 }
 
@@ -977,7 +977,7 @@ qslivegrid::seq_id_from_xy (int click_x, int click_y)
 }
 
 /**
- *  Sets m_current_seq based on the position of the mouse over the live frame.
+ *  Sets current_seq() based on the position of the mouse over the live frame.
  *  For the left button:
  *
  *  -   No modifier.  The button is looked up by the position of the mouse.
@@ -1000,10 +1000,10 @@ qslivegrid::seq_id_from_xy (int click_x, int click_y)
 void
 qslivegrid::mousePressEvent (QMouseEvent * event)
 {
-    m_current_seq = seq_id_from_xy(event->x(), event->y());
+    current_seq(seq_id_from_xy(event->x(), event->y()));
 
-    bool ok = m_current_seq != seq::unassigned();
-    bool nonblankslot = perf().set_current_sequence(m_current_seq);
+    bool ok = current_seq() != seq::unassigned();
+    bool nonblankslot = perf().set_current_sequence(current_seq());
     if (ok)
     {
         if (event->button() == Qt::LeftButton)
@@ -1023,11 +1023,11 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
                  */
 
                 if (nonblankslot)
-                    (void) perf().replace_for_solo(m_current_seq);
+                    (void) perf().replace_for_solo(current_seq());
             }
             else
             {
-                button_toggle_checked(m_current_seq);
+                button_toggle_checked(current_seq());
                 m_button_down = true;
             }
         }
@@ -1065,9 +1065,9 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
 void
 qslivegrid::mouseReleaseEvent (QMouseEvent * event)
 {
-    m_current_seq = seq_id_from_xy(event->x(), event->y());
+    current_seq(seq_id_from_xy(event->x(), event->y()));
     m_button_down = false;
-    if (m_current_seq != seq::unassigned())
+    if (current_seq() != seq::unassigned())
     {
         if (event->button() == Qt::LeftButton)
         {
@@ -1076,12 +1076,12 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
                 m_moving = false;
                 button_toggle_enabled(m_source_seq);
                 m_source_seq = seq::unassigned();
-                if (perf().finish_move(m_current_seq))
+                if (perf().finish_move(current_seq()))
                     (void) recreate_all_slots();
             }
             else
             {
-                if (perf().is_seq_active(m_current_seq))
+                if (perf().is_seq_active(current_seq()))
                     m_adding_new = false;
                 else
                     m_adding_new = true;
@@ -1090,10 +1090,10 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
         else if                                     /* launch seq editor    */
         (
             event->button() == Qt::MiddleButton &&
-            perf().is_seq_active(m_current_seq)
+            perf().is_seq_active(current_seq())
         )
         {
-            emit signal_call_editor(m_current_seq);
+            emit signal_call_editor(current_seq());
         }
     }
 }
@@ -1111,13 +1111,13 @@ qslivegrid::mouseMoveEvent (QMouseEvent * event)
     seq::number seqno = seq_id_from_xy(event->x(), event->y());
     if (m_button_down)
     {
-        if (! perf().is_seq_in_edit(m_current_seq))
+        if (! perf().is_seq_in_edit(current_seq()))
         {
-            if (seqno == m_current_seq)
+            if (seqno == current_seq())
             {
                 if (seq::unassigned(m_source_seq))
                 {
-                    m_source_seq = m_current_seq;
+                    m_source_seq = current_seq();
                     button_toggle_enabled(m_source_seq);
                 }
             }
@@ -1125,7 +1125,7 @@ qslivegrid::mouseMoveEvent (QMouseEvent * event)
             {
                 if (! m_moving)
                 {
-                    if (perf().move_sequence(m_current_seq))
+                    if (perf().move_sequence(current_seq()))
                     {
                         m_moving = true;
                         update();
@@ -1149,11 +1149,11 @@ qslivegrid::mouseDoubleClickEvent (QMouseEvent * event)
         if (m_adding_new)
             new_sequence();
 
-        m_current_seq = seq_id_from_xy(event->x(), event->y());
-        if (perf().is_seq_active(m_current_seq))
-            button_toggle_checked(m_current_seq);   /* undo press-toggle    */
+        current_seq(seq_id_from_xy(event->x(), event->y()));
+        if (perf().is_seq_active(current_seq()))
+            button_toggle_checked(current_seq());   /* undo press-toggle    */
 
-        emit signal_call_editor_ex(m_current_seq);
+        emit signal_call_editor_ex(current_seq());
     }
 }
 
@@ -1217,7 +1217,7 @@ qslivegrid::new_sequence ()
              * ca 2022-09-04 An additional fix for issue #93.
              */
 
-            m_parent->remove_editor(m_current_seq);
+            parent()->remove_editor(current_seq());
         }
     }
 }
@@ -1231,7 +1231,7 @@ qslivegrid::new_sequence ()
 void
 qslivegrid::new_live_frame ()
 {
-    emit signal_live_frame(m_current_seq);
+    emit signal_live_frame(current_seq());
 }
 
 /**
@@ -1242,7 +1242,7 @@ qslivegrid::new_live_frame ()
 void
 qslivegrid::edit_sequence ()
 {
-    emit signal_call_editor(m_current_seq);
+    emit signal_call_editor(current_seq());
 }
 
 /**
@@ -1253,13 +1253,13 @@ qslivegrid::edit_sequence ()
 void
 qslivegrid::edit_sequence_ex ()
 {
-    emit signal_call_editor_ex(m_current_seq);
+    emit signal_call_editor_ex(current_seq());
 }
 
 void
 qslivegrid::edit_events ()
 {
-    emit signal_call_edit_events(m_current_seq);
+    emit signal_call_edit_events(current_seq());
 }
 
 /**
@@ -1276,7 +1276,7 @@ qslivegrid::sequence_key_check ()
         if (ok)
         {
             seq::pointer s = perf().get_sequence(seqno);
-            m_current_seq = seqno;
+            current_seq(seqno);
             if (is_nullptr(s))
                 new_sequence();
 
@@ -1288,7 +1288,7 @@ qslivegrid::sequence_key_check ()
     {
         if (ok)
         {
-            m_current_seq = seqno;
+            current_seq(seqno);
             edit_events();
             perf().clear_seq_edits();
         }
@@ -1304,13 +1304,13 @@ qslivegrid::sequence_key_check ()
 bool
 qslivegrid::handle_key_press (const keystroke & k)
 {
-    return k.is_good() ? m_parent->handle_key_press(k) : false ;
+    return k.is_good() ? parent()->handle_key_press(k) : false ;
 }
 
 bool
 qslivegrid::handle_key_release (const keystroke & k)
 {
-    return k.is_good() ? m_parent->handle_key_press(k) : false ;
+    return k.is_good() ? parent()->handle_key_press(k) : false ;
 }
 
 /**
@@ -1427,7 +1427,7 @@ void
 qslivegrid::record_sequence ()
 {
     bool ok = false;
-    seq::pointer sp = perf().get_sequence(m_current_seq);
+    seq::pointer sp = perf().get_sequence(current_seq());
     if (sp)
         ok = perf().set_recording_flip(*sp);
 
@@ -1437,12 +1437,38 @@ qslivegrid::record_sequence ()
     }
 }
 
-#if defined SEQ66_USE_FLATTEN_PATTERN
-
 void
 qslivegrid::flatten_sequence ()
 {
-    if (qslivebase::flatten_seq())
+    if (perf().flatten_sequence(current_seq()))
+    {
+        // no other code needed here
+    }
+}
+
+#if defined SEQ66_CAN_EXPORT_A_TRACK
+
+void
+qslivegrid::export_sequence ()
+{
+    std::string filename;
+    if (fname.empty())
+    {
+        std::string prompt = "Export pattern...";
+        filename = midi_filename_prompt(prompt);
+        if (filename.empty())
+        {
+            /*
+             * Maybe later, add some kind of warning dialog.
+             */
+        }
+        else
+        {
+            if (! perf().export_sequence(current_seq(), filename)
+                show_error_box(f.error_message());
+        }
+    }
+    if (qslivebase::export_seq())
     {
         // no other code needed here
     }
@@ -1453,58 +1479,87 @@ qslivegrid::flatten_sequence ()
 void
 qslivegrid::copy_sequence ()
 {
-    if (qslivebase::copy_seq())
-    {
-        // no other code needed here
-    }
+    bool ok = perf().copy_sequence(current_seq());
+    if (ok)
+        can_paste(true);
 }
 
 /**
- *  The "can-paste" flag is set by the base class.
+ *  Need a dialog warning that the editor is the reason this sequence cannot be
+ *  cut. Or delete it. For issue #93, we delete the pattern editor.
  */
 
 void
 qslivegrid::cut_sequence ()
 {
-    if (qslivebase::cut_seq())
-        alter_sequence(m_current_seq);
+    bool ok = perf().cut_sequence(current_seq());
+    if (ok)
+    {
+        can_paste(true);
+        parent()->remove_editor(current_seq());
+        alter_sequence(current_seq());
+    }
 }
 
 /**
  *  If the sequence/pattern is delete-able (valid and not being edited), then
- *  it is deleted via the performer object.  The "can-paste" flag is not set by
- *  the base class.
+ *  it is deleted via the performer object.  Note that in seq66 the
+ *  screenset::remove() function makes this check now.
+ *
+ *  For issue #93, we delete the pattern editor.
  */
 
 void
 qslivegrid::delete_sequence ()
 {
-    if (qslivebase::delete_seq())
+    bool ok = perf().remove_sequence(current_seq());
+    if (ok)
     {
-        alter_sequence(m_current_seq);
+        perf().notify_sequence_removal
+        (
+            current_seq(), performer::change::recreate
+        );
+        parent()->remove_editor(current_seq());
         can_paste(false);
+        alter_sequence(current_seq());
     }
 }
 
 void
 qslivegrid::clear_sequence ()
 {
-    if (qslivebase::clear_seq())
-        alter_sequence(m_current_seq);
+    bool ok = perf().clear_sequence(current_seq());
+    if (ok)
+    {
+        can_paste(false);
+        alter_sequence(current_seq());
+    }
 }
 
 void
 qslivegrid::paste_sequence ()
 {
-    if (qslivebase::paste_seq())
-        alter_sequence(m_current_seq);
+    bool ok = perf().can_paste() && can_paste();
+    if (ok)
+    {
+        ok = perf().paste_sequence(current_seq());
+        alter_sequence(current_seq());
+    }
+    if (! ok)
+        can_paste(false);
 }
 
 void
 qslivegrid::merge_sequence ()
 {
-    if (qslivebase::merge_seq())
-        alter_sequence(m_current_seq);
+    bool ok = perf().can_paste() && can_paste();
+    if (ok)
+    {
+        ok = perf().merge_sequence(current_seq());
+        alter_sequence(current_seq());
+    }
+    if (! ok)
+        can_paste(false);
 }
 
 void
@@ -1757,7 +1812,7 @@ qslivegrid::popup_menu ()
 
     if (! is_external())
     {
-        seq::number mcs = m_current_seq % perf().screenset_max();
+        seq::number mcs = current_seq() % perf().screenset_max();
         char temp[48];
         snprintf
         (
@@ -1771,7 +1826,7 @@ qslivegrid::popup_menu ()
             livegrid, SIGNAL(triggered(bool)),
             this, SLOT(new_live_frame())
         );
-        if (perf().is_seq_active(m_current_seq))
+        if (perf().is_seq_active(current_seq()))
         {
             QAction * editseq = new_qaction("Edit pattern in &tab", m_popup);
             m_popup->addAction(editseq);
@@ -1782,9 +1837,9 @@ qslivegrid::popup_menu ()
             );
         }
     }
-    if (perf().is_seq_active(m_current_seq))
+    if (perf().is_seq_active(current_seq()))
     {
-        seq::pointer s = perf().get_sequence(m_current_seq);
+        seq::pointer s = perf().get_sequence(current_seq());
         if (! is_external())
         {
             QAction * editseqex = new_qaction
@@ -1804,7 +1859,7 @@ qslivegrid::popup_menu ()
             );
             m_popup->addAction(editevents);
 
-            if (perf().is_seq_recording(m_current_seq))
+            if (perf().is_seq_recording(current_seq()))
             {
                 editevents->setDisabled(true);
             }
@@ -1908,9 +1963,6 @@ qslivegrid::popup_menu ()
             actionRecord, SIGNAL(triggered(bool)),
             this, SLOT(record_sequence())
         );
-
-#if defined SEQ66_USE_FLATTEN_PATTERN
-
         if (s->trigger_count() > 0)
         {
             /**
@@ -1925,6 +1977,20 @@ qslivegrid::popup_menu ()
                 this, SLOT(flatten_sequence())
             );
         }
+
+#if defined SEQ66_CAN_EXPORT_A_TRACK
+
+        /**
+         *  Flatten menu
+         */
+
+        QAction * actionExport = new_qaction("&Export (track)", m_popup);
+        m_popup->addAction(actionExport);
+        connect
+        (
+            actionExport, SIGNAL(triggered(bool)),
+            this, SLOT(export_sequence())
+        );
 
 #endif
 
