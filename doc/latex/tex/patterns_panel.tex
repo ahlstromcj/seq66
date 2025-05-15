@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2024-12-20
+% \update      2025-05-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -21,19 +21,19 @@
    where one creates a set of patterns (a "screen-set"),
    manages the configuration, controls the playback rate, adds tempo events,
    and opens the pattern, song, event, mute-groups, or playlist editors.
-   See \sectionref{sec:live_grid}.
-   The \textsl{Seq66} menu bar is discussed in \sectionref{sec:menu}.
-   Here, we describe the patterns panel.
 
    \index{Patterns Panel}
-   \index{Live Frame}
    \index{Live Grid}
-   The \textbf{Patterns Panel}, also called the \textbf{Live Frame} or
-   \textbf{Live Grid}, is the center of the
+   The \textbf{Patterns Panel}, also called the \textbf{Live Grid},
+   is the center of the
    \index{main window}
    \textbf{main window} of \textsl{Seq66}.
-   See \figureref{fig:main_screen_annotated}.
+   It is also referred to as the "Live Grid", where each pattern is
+   presented in a "slot".
+   See \figureref{fig:main_screen_annotated} and
+   \sectionref{sec:live_grid}.
 
+   \index{drag and drop}
    In addition, an external MIDI file can be dragged onto this grid,
    and dropped, to easily open a MIDI file:
 
@@ -80,19 +80,21 @@
 
    \index{screen-set}
    This group of 32 loops is called a "screen-set".
-   One can switch between sets by using the
+   One can switch between sets by using these keys to move down and up:
    \index{keys![}
    \index{keys!screenset down}
-   "\texttt{[}" and
    \index{keys!]}
    \index{keys!screenset up}
-   "\texttt{]}" keys on the keyboard, or by using
+
+   \begin{verbatim}
+      [ ]
+   \end{verbatim}
+
+   One can also use 
    the spin-widget labeled \textbf{Set}, or
    \index{keys!Home}
    \index{keys!screenset play}
    by hitting the (default) \texttt{Home} key to make it the playing screenset.
-%  or by hitting \texttt{Page-Up} or \texttt{Page-Down} with the pattern window
-%  in keyboard focus.
    There are a total of 32 sets, for a total of 1024 loops/patterns. 
    Only one screen-set can be controlled at a time, in general.
    Multiple screensets can be playing at the same time, in some configurations.
@@ -105,8 +107,6 @@
    There are some other important considerations for set-handling.
    See \sectionref{sec:setmaster}.
 
-%  The individual items noted in this figure are described in
-%  \sectionref{subsubsec:patterns_pattern_filled}, in more detail.
    Note the buttons for changing and showing the
    loop/recording modes of the grid slots and recording quantization.
    The normal arm/mute (loop) mode can be changed to other grid
@@ -119,10 +119,6 @@
    as well.
    These operations are also available as automation controls.
    See \sectionref{paragraph:configuration_midi_record_quan}.
-
-%  Observe that feature in the first figure of the next section.
-%  The two main items are the empty \textsl{pattern slot}, and the slot filled
-%  with a MIDI \textsl{pattern}.
 
 \subsubsection{Pattern Slots}
 \label{subsubsec:patterns_pattern_slot}
@@ -279,24 +275,33 @@
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.75]{tabs/live/pattern-popup-menu.png}
    \includegraphics[scale=0.75]{tabs/live/pattern-popup-menu-2.png}
    \caption{Patterns Panel Pop-up Menu}
    \label{fig:patterns_panel_popup_menu}
 \end{figure}
 
+   This layout has changed; the entries are nested to save space.
+
    \begin{enumerate}
       \item \textbf{New pattern}
-      \item \textbf{External live frame for set ...} *
-      \item \textbf{Edit pattern in tab} *
-      \item \textbf{Edit pattern in window} *
-      \item \textbf{Edit events in tab} *
-      \item \textbf{Pattern color}
+      \item \textbf{Live grid window for set ...} *
       \item \textbf{Record toggle}
-      \item \textbf{Copy pattern}
-      \item \textbf{Cut pattern}
-      \item \textbf{Delete pattern}
-      \item \textbf{Clear Events} (not shown)
+      \item \textbf{Edit}
+      \begin{enumerate}
+         \item \textbf{Edit pattern in tab} *
+         \item \textbf{Edit pattern in window} *
+         \item \textbf{Edit events in tab} *
+      \end{enumerate}
+      \item \textbf{Color}
+      \item \textbf{Track}
+      \begin{enumerate}
+         \item \textbf{Flatten triggers}
+         \item \textbf{Export}
+         \item \textbf{Copy}
+         \item \textbf{Cut}
+         \item \textbf{Delete}
+         \item \textbf{Clear events}
+      \end{enumerate}
       \item \textbf{Merge into pattern}
       \item \textbf{Input Bus}
       \item \textbf{Output Bus}
@@ -314,10 +319,27 @@
    \index{slot!double-click}
    A double-click on an empty slot can also be used.
 
-   \itempar{External Live Frame for Set}{pattern!external live frame}
+   \itempar{Live grid window for Set}{pattern!external live frame}
    This selection uses the pattern number to open the corresponding screenset
    number in an external \textbf{Live} frame.
    This allows viewing and interacting with a number of sets.
+
+   \itempar{Record Toggle}{pattern!record toggle}
+   Selecting this item toggles the recording status of the pattern.
+   If the grid record mode button shows something other than
+   \textbf{None} (e.g. \textbf{Quantize}), then that alteration is supplied.
+%  (The loop-record style is not applied at this time. TODO).
+   Note that recording can also be set in the pattern editor, or via
+   the "record" loop-mode, or by automation.
+   (The default key is \texttt{+}; click it and then select the
+   desired slot via mouse or hot-key.)
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{tabs/live/pattern-popup-menu-3.png}
+   \caption{Patterns Panel Pop-up Edit Menu}
+   \label{fig:patterns_panel_popup_edit_menu}
+\end{figure}
 
    \itempar{Edit Pattern In Tab}{pattern!edit in tab}
    Selecting this item activates the \textbf{Edit} tab and fills it with data
@@ -370,17 +392,31 @@
    32 palette colors are supported, and the palette can be modified.
    See \sectionref{sec:palettes}.
 
-   \itempar{Record Toggle}{pattern!record toggle}
-   Selecting this item toggles the recording status of the pattern.
-   If the grid record mode button shows something other than
-   \textbf{None} (e.g. \textbf{Quantize}), then that alteration is supplied.
-%  (The loop-record style is not applied at this time. TODO).
-   Note that recording can also be set in the pattern editor, or via
-   the "record" loop-mode, or by automation.
-   (The default key is \texttt{+}; click it and then select the
-   desired slot via mouse or hot-key.)
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{tabs/live/pattern-popup-menu-5.png}
+   \caption{Patterns Panel Pop-up Track Menu}
+   \label{fig:patterns_panel_popup_track_menu}
+\end{figure}
 
-   \itempar{Copy Pattern}{pattern!copy}
+   \itempar{Flatten}{pattern!flatten}
+   This item "flattens" a sequence that has triggers.
+   This means that the triggers are used to create the events without
+   the triggers, so that the track can be used in MIDI sequencers that
+   do not support \textsl{Seq66} triggers.
+   However, one trigger is created for the whole track, for potential
+   future editing in \textsl{Seq66}.
+   Other sequencers should simply ignore this trigger.
+
+   \itempar{Export}{pattern!export pattern}
+   This operation takes the current track, in whatever form it is (SMF 0, 1,
+   and with or without triggers), and writes it to a new
+   MIDI file in pattern zero (MIDI track 1).
+   This makes it easy to import the track into many different tunes.
+   (In future release, perhaps a destination track number will be
+   specifiable....)
+
+   \itempar{Copy}{pattern!copy}
    Copies the pattern underneath the mouse cursor.
    The pattern can then be pasted elsewhere in the Patterns panel.
    One can also drag-and-drop a pattern into another cell (there is no outline
@@ -389,14 +425,14 @@
    Note that there is no \texttt{Ctrl-C} key for this operation in the
    live (main) window.
 
-   \itempar{Cut Pattern}{pattern!cut}
+   \itempar{Cut}{pattern!cut}
    Cuts the pattern while copying it for later pasting.
    There is no \texttt{Ctrl-X} key for this operation.
 
-   \itempar{Delete Pattern}{pattern!delete}
+   \itempar{Delete}{pattern!delete}
    Deletes the pattern.  Currently the same as Cut!
 
-   \itempar{Clear Events}{pattern!clear}
+   \itempar{Clear events}{pattern!clear}
    This selection leaves the pattern and its specifications in place,
    but removes all events from the pattern.
 

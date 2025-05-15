@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>7</number>
+      <number>6</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -3259,7 +3259,7 @@ Seq66 exits.</string>
        <property name="geometry">
         <rect>
          <x>24</x>
-         <y>30</y>
+         <y>10</y>
          <width>217</width>
          <height>441</height>
         </rect>
@@ -3392,7 +3392,7 @@ pattern editor is opened.</string>
        <property name="geometry">
         <rect>
          <x>250</x>
-         <y>30</y>
+         <y>10</y>
          <width>401</width>
          <height>131</height>
         </rect>
@@ -3510,7 +3510,7 @@ pattern editor is opened.</string>
        <property name="geometry">
         <rect>
          <x>250</x>
-         <y>180</y>
+         <y>160</y>
          <width>401</width>
          <height>111</height>
         </rect>
@@ -3543,8 +3543,8 @@ pattern editor is opened.</string>
        <widget class="QLabel" name="label_23">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>0</y>
+          <x>10</x>
+          <y>10</y>
           <width>261</width>
           <height>18</height>
          </rect>

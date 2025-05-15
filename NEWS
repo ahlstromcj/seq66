@@ -1,19 +1,19 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-05-14
+2015-07-10 to 2025-05-15
 
 # Change Log
 
-## [0.99.20] - 2025-05-14
+## [0.99.20] - 2025-05-15
 
 ### Added
 
 -   Added features to the grid slot popup menu:
     -   Flatten triggers. This uses the pattern triggers to
         regenerate the notes, replacing multiple triggers with one
-        long one (needs some work yet).
+        long one (may need some work yet).
     -   Export pattern. Saves a single track to a new file, at
-        pattern number 0. (Needs some work yet).
+        pattern number 0. (May need some work yet).
 -   A timed error prompt (instead of OK/Remap and restart) when
     running via NSM; see qsmainwnd and qt5nsmanager.
 -   An ALSA/JACK label to JACK preferences tab, same as in mainwnd.
@@ -30,6 +30,8 @@ Chris Ahlstrom
     old versions being present.
 -   A column in the event editor shows the bus number that the
     event came in on. Not saved with the event, however.
+-   Documentation of changes and additional features in the
+    user manual.
 
 ### Changed
 

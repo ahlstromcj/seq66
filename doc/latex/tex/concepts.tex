@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2023-10-25
+% \update      2025-05-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -181,11 +181,19 @@
    A \textsl{export} in \textsl{Seq66} is a way of writing a
    song-performance to a more standard MIDI file, so that it can be played
    exactly by other sequencers.
-   An export collects all of the unmuted tracks that have
+   An export-song operation collects all of the unmuted tracks that have
    performance information (triggers) associated with them, and creates one
    larger trigger for each track, repeating the events as indicated by the
    original performance.
    MIDI can also be exported to SMF 0 format.
+
+\subsubsection{Concepts / Terms / flattening}
+\label{subsubsec:concepts_terms_flattening}
+
+   \index{flattening}
+   "Flattening" describes consolidating all of the events reproduced in a track
+   via triggers into a single monolithic track (with a single trigger) covering
+   the whole track.
 
 \subsubsection{Concepts / Terms / group, mute-group}
 \label{subsubsec:concepts_terms_group}
@@ -274,6 +282,15 @@
    \textsl{Seq66} \textsl{one-shot recording} is a way to record notes from a
    MIDI device with automatic stepping and snapping, which terminates at the
    end of the specified length of the pattern.
+
+\subsubsection{Concepts / Terms / trigger}
+\label{subsubsec:concepts_terms_trigger}
+
+   \index{trigger}
+   A "trigger" is box in the song editor that specifies the playing of
+   the whole or part of a pattern.
+   For example, a 1-measure pattern can be replicated with multiple triggers
+   to play at various times in the song.
 
 \subsection{Concepts / Sound Subsystems}
 \label{subsec:concepts_sound_subsystems}

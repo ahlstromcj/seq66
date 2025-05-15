@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2024-12-28
+% \update      2025-05-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -111,8 +111,12 @@
    \textsl{Seq66} can open \textsl{Seq66}, MIDI SMF 0, and SMF 1 files, and
    \textsl{Cakewalk} WRK files.
    If the file is an SMF 0 file, where all channels appear on one track, the
-   track is split so that each channel (0 to 15) is stored in the corresponding
+   track can be split so that each channel (0 to 15)
+   is stored in the corresponding
    pattern, and pattern 16 contains the original track.
+   This feature is enabled via
+   \textbf{Edit / Preferences / Pattern / Automatic conversion of SMF 0 to SMF
+   1} or the 'usr' setting \texttt{convert-to-smf-1 = true}.
 
    Note that a MIDI file can be drag-and-dropped from a file manager onto
    the grid to open a file.
@@ -986,7 +990,7 @@
       \item Lock main window.
       \item Swap grid coordinates.
       \item Bold grid slot font/box.
-      \item Thick grid lines. (New).
+      \item Thick grid lines.
       \item Suppress startup error messages.
       \item Double click for pattern editor.
       \item Global background/scale/key.
@@ -1562,8 +1566,7 @@
    \textbf{Configuration Files}
    shows the status of the configuration files.
    (See \sectionref{subsec:configuration_rc}).
-   The 'rc' file is always active, and normally is saved at exit (even if no
-   configuration changes occurred).
+   The 'rc' and 'usr' files are always active.
 
    The 'usr' file should also be active, but one can disable it, which is
    currently an \textsl{experimental} and \textsl{untested} option.
@@ -1575,8 +1578,14 @@
    See
    \sectionref{subsec:configuration_ctrl},
    \sectionref{subsubsec:configuration_mute_group_control},
-   \sectionref{subsec:configuration_drums}, and
-   \sectionref{sec:playlist}.
+   \sectionref{subsec:configuration_drums},
+   \sectionref{sec:mutes_master},
+   \sectionref{sec:playlist},
+   \sectionref{sec:palettes},
+   \sectionref{sec:configuration_ctrl},
+   \sectionref{sec:configuration_drums},
+   \sectionref{sec:configuration_rc_style_sheet}, and
+   \sectionref{sec:configuration_rc_style_patches}.
 
    \itempar{Palette File Base Name}{palette}
    This text edit holds the base name of a 'palette' file, which is always

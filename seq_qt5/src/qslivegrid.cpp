@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2025-05-14
+ * \updates       2025-05-15
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -105,7 +105,7 @@
 #endif
 
 /*
- * Do not document a namespace, it breaks Doxygen.
+ *  EXPERIMENTAL. Will add to seq66-config.h at some point.
  */
 
 namespace seq66
@@ -1816,22 +1816,65 @@ qslivegrid::popup_menu ()
             livegrid, SIGNAL(triggered(bool)),
             this, SLOT(new_live_frame())
         );
-        if (perf().is_seq_active(current_seq()))
-        {
-            QAction * editseq = new_qaction("Edit pattern in &tab", m_popup);
-            m_popup->addAction(editseq);
-            connect
-            (
-                editseq, SIGNAL(triggered(bool)),
-                this, SLOT(edit_sequence())
-            );
-        }
     }
+
+    QAction * actionRecord = new_qaction("&Record toggle", m_popup);
+    m_popup->addAction(actionRecord);
+    connect
+    (
+        actionRecord, SIGNAL(triggered(bool)),
+        this, SLOT(record_sequence())
+    );
     if (perf().is_seq_active(current_seq()))
     {
         seq::pointer s = perf().get_sequence(current_seq());
         if (! is_external())
         {
+#if defined SEQ66_USE_COLLAPSED_SLOT_POPUP_MENU
+            QMenu * menuEdit = new_qmenu("&Edit");
+            if (perf().is_seq_active(current_seq()))
+            {
+                QAction * editseq = new_qaction("Edit pattern in &tab", menuEdit);
+                connect
+                (
+                    editseq, SIGNAL(triggered(bool)),
+                    this, SLOT(edit_sequence())
+                );
+                menuEdit->addAction(editseq);
+            }
+
+            QAction * editseqex = new_qaction
+            (
+                "Edit pattern in &window", menuEdit
+            );
+            menuEdit->addAction(editseqex);
+            connect
+            (
+                editseqex, SIGNAL(triggered(bool)),
+                this, SLOT(edit_sequence_ex())
+            );
+
+            QAction * editevents = new_qaction
+            (
+                "Edit &events in tab", menuEdit
+            );
+            menuEdit->addAction(editevents);
+
+            if (perf().is_seq_recording(current_seq()))
+            {
+                editevents->setDisabled(true);
+            }
+            else
+            {
+                editevents->setEnabled(true);
+                connect
+                (
+                    editevents, SIGNAL(triggered(bool)),
+                    this, SLOT(edit_events())
+                );
+            }
+            m_popup->addMenu(menuEdit);
+#else
             QAction * editseqex = new_qaction
             (
                 "Edit pattern in &window", m_popup
@@ -1842,6 +1885,16 @@ qslivegrid::popup_menu ()
                 editseqex, SIGNAL(triggered(bool)),
                 this, SLOT(edit_sequence_ex())
             );
+            if (perf().is_seq_active(current_seq()))
+            {
+                QAction * editseq = new_qaction("Edit pattern in &tab", m_popup);
+                m_popup->addAction(editseq);
+                connect
+                (
+                    editseq, SIGNAL(triggered(bool)),
+                    this, SLOT(edit_sequence())
+                );
+            }
 
             QAction * editevents = new_qaction
             (
@@ -1862,6 +1915,7 @@ qslivegrid::popup_menu ()
                     this, SLOT(edit_events())
                 );
             }
+#endif
         }
 
         /**
@@ -1946,13 +2000,87 @@ qslivegrid::popup_menu ()
         menuColour->addMenu(menu4Colour);
         m_popup->addMenu(menuColour);
 
-        QAction * actionRecord = new_qaction("&Record toggle", m_popup);
-        m_popup->addAction(actionRecord);
+#if defined SEQ66_USE_COLLAPSED_SLOT_POPUP_MENU
+
+        QMenu * menuTrack = new_qmenu("&Track");
+        if (s->trigger_count() > 0)
+        {
+            /**
+             *  Flatten menu. This action consolidates the triggers into one
+             *  trigger, useful for export.
+             */
+
+            QAction * actionFlatten = new_qaction("&Flatten triggers", menuTrack);
+            menuTrack->addAction(actionFlatten);
+            connect
+            (
+                actionFlatten, SIGNAL(triggered(bool)),
+                this, SLOT(flatten_sequence())
+            );
+        }
+        if (s->event_count() > 0)
+        {
+            /**
+             *  Export menu. This action writes the track to a new file.
+             */
+
+            QAction * actionExport = new_qaction("&Export", menuTrack);
+            menuTrack->addAction(actionExport);
+            connect
+            (
+                actionExport, SIGNAL(triggered(bool)),
+                this, SLOT(export_sequence())
+            );
+        }
+
+        QAction * actionCopy = new_qaction("&Copy", menuTrack);
+        menuTrack->addAction(actionCopy);
         connect
         (
-            actionRecord, SIGNAL(triggered(bool)),
-            this, SLOT(record_sequence())
+            actionCopy, SIGNAL(triggered(bool)),
+            this, SLOT(copy_sequence())
         );
+
+        QAction * actionCut = new_qaction("Cu&t", menuTrack);
+        menuTrack->addAction(actionCut);
+        connect
+        (
+            actionCut, SIGNAL(triggered(bool)),
+            this, SLOT(cut_sequence())
+        );
+
+        QAction * actionDelete = new_qaction("&Delete", menuTrack);
+        menuTrack->addAction(actionDelete);
+        connect
+        (
+            actionDelete, SIGNAL(triggered(bool)),
+            this, SLOT(delete_sequence())
+        );
+
+        if (can_clear())
+        {
+            QAction * actionClear = new_qaction("Clear e&vents", menuTrack);
+            menuTrack->addAction(actionClear);
+            connect
+            (
+                actionClear, SIGNAL(triggered(bool)),
+                this, SLOT(clear_sequence())
+            );
+        }
+        if (can_paste())
+        {
+            QAction * actionMerge = new_qaction("&Merge into pattern", menuTrack);
+            menuTrack->addAction(actionMerge);
+            connect
+            (
+                actionMerge, SIGNAL(triggered(bool)),
+                this, SLOT(merge_sequence())
+            );
+        }
+        m_popup->addMenu(menuTrack);
+
+#else
+
         if (s->trigger_count() > 0)
         {
             /**
@@ -1974,7 +2102,7 @@ qslivegrid::popup_menu ()
              *  Export menu. This action writes the track to a new file.
              */
 
-            QAction * actionExport = new_qaction("&Export track", m_popup);
+            QAction * actionExport = new_qaction("&Export", m_popup);
             m_popup->addAction(actionExport);
             connect
             (
@@ -2031,6 +2159,8 @@ qslivegrid::popup_menu ()
                 this, SLOT(merge_sequence())
             );
         }
+
+#endif
 
         mastermidibus * mmb = perf().master_bus();
         if (not_nullptr(mmb))
