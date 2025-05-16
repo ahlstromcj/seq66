@@ -3,12 +3,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-05-10
- * \updates       2021-05-10
+ * \updates       2025-05-16
  * \license       Public domain
  *
  *  Provides a sample Qt style sheet for Seq66.  See
  *  https://doc.qt.io/archives/qt-4.8/stylesheet-examples.html and
  *  https://doc.qt.io/qt-5/stylesheet-reference.html.
+ *
+ * min-width: 20px;
  */
 
 QPushButton
@@ -20,7 +22,6 @@ QPushButton
     border-width: 2px;
     border-radius: 12;
     border-color: black;
-    min-width: 20px;
     padding: 1px;
 }
 
@@ -33,7 +34,6 @@ QPushButton:checked
     border-width: 2px;
     border-radius: 12;
     border-color: black;
-    min-width: 20px;
     padding: 1px;
 }
 

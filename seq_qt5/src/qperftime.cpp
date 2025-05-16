@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-28
+ * \updates       2025-05-16
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -230,7 +230,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
         brush.setColor(Qt::black);
         painter.setBrush(brush);
         painter.setPen(pen);
-        painter.drawRect(end, yheight - 12, 16, 10);
+        painter.drawRect(end, yheight - 12, 21, 10);
         pen.setColor(Qt::white);
         painter.setPen(pen);
         painter.drawText(end - 3, s_text_y_offset, "END");

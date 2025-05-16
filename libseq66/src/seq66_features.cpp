@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2024-11-04
+ * \updates       2025-05-16
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -567,7 +567,8 @@ seq_build_details ()
         << "." << __GNUC_PATCHLEVEL__ << "\n"
 #endif
 #endif
-        << "Executable: " << seq_app_name() << " (" << seq_app_path() << ")\n"
+        << "Executable: " << seq_app_name()
+        << " (path" << seq_app_path() << ")\n"
         << "Interface: " << seq_app_type() << "\n"
         << "Engine: " << seq_app_engine() << "\n"
         ;
@@ -607,7 +608,7 @@ seq_build_details ()
 
     result
 #if defined SEQ66_NSM_SUPPORT
-        << "NSM (Non Session Manager)\n"
+        << "NSM (Non/New Session Manager)\n"
 #endif
 #if defined SEQ66_SHOW_FEATURES_TMI
         <<
@@ -620,7 +621,8 @@ seq_build_details ()
             "\n"
             "Some options can be enabled via ./configure,"
             " seq66_features.h, or build-specific seq66-config.h files in"
-            " include/qt/* for qmake portmidi and rtmidi builds."
+            " include/qt/* for qmake portmidi and rtmidi builds. Also see"
+            " INSTALL."
         << std::endl
         ;
     return result.str();

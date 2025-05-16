@@ -271,7 +271,9 @@
 %    \label{fig:slot_record_toggle}
 % \end{figure}
 
-   The menu for a slot with a pattern is more extensive:
+   The menu for a slot with a pattern is more extensive. The following
+   figure shows an older version of the menu (which can be achieved
+   by editing a C macro as noted in the \texttt{INSTALL} file.)
 
 \begin{figure}[H]
    \centering 
@@ -280,7 +282,8 @@
    \label{fig:patterns_panel_popup_menu}
 \end{figure}
 
-   This layout has changed; the entries are nested to save space.
+   This layout has changed; the entries are nested to save space, as
+   shown below.
 
    \begin{enumerate}
       \item \textbf{New pattern}
@@ -308,7 +311,7 @@
       \item \textbf{Output Channel}
    \end{enumerate}
 
-   The first menu entry is the same as above.  However, since there is
+   The first menu entry creates a new pattern.  However, if there is
    already a pattern present in the slot, the user is prompted before erasing
    the current pattern and creating a new one.
 
@@ -333,6 +336,8 @@
    the "record" loop-mode, or by automation.
    (The default key is \texttt{+}; click it and then select the
    desired slot via mouse or hot-key.)
+
+   The following figure applies to the next three "Edit" items:
 
 \begin{figure}[H]
    \centering 
@@ -394,6 +399,15 @@
 
 \begin{figure}[H]
    \centering 
+   \includegraphics[scale=0.75]{tabs/live/pattern-popup-menu-4.png}
+   \caption{Patterns Panel Pop-up Color Menu}
+   \label{fig:patterns_panel_popup_color_menu}
+\end{figure}
+
+   The following figure applies to the next few "Track" items:
+
+\begin{figure}[H]
+   \centering 
    \includegraphics[scale=0.75]{tabs/live/pattern-popup-menu-5.png}
    \caption{Patterns Panel Pop-up Track Menu}
    \label{fig:patterns_panel_popup_track_menu}
@@ -406,7 +420,10 @@
    do not support \textsl{Seq66} triggers.
    However, one trigger is created for the whole track, for potential
    future editing in \textsl{Seq66}.
-   Other sequencers should simply ignore this trigger.
+   Other sequencers should simply ignore this sequencer-specific (SeqSpec)
+   event.
+   This operation is similar to the effect of the \textbf{Export Song}
+   function.
 
    \itempar{Export}{pattern!export pattern}
    This operation takes the current track, in whatever form it is (SMF 0, 1,
@@ -421,6 +438,7 @@
    The pattern can then be pasted elsewhere in the Patterns panel.
    One can also drag-and-drop a pattern into another cell (there is no outline
    box during the drag, unfortunately).
+   This action moves the pattern
    See \sectionref{subsubsec:patterns_pattern_slot}.
    Note that there is no \texttt{Ctrl-C} key for this operation in the
    live (main) window.
@@ -430,13 +448,20 @@
    There is no \texttt{Ctrl-X} key for this operation.
 
    \itempar{Delete}{pattern!delete}
-   Deletes the pattern.  Currently the same as Cut!
+   Deletes the pattern.
+   There is no "undo" for this operation.
 
    \itempar{Clear events}{pattern!clear}
    This selection leaves the pattern and its specifications in place,
    but removes all events from the pattern.
 
-   \itempar{Paste Pattern}{pattern!paste}
+   The following two menu items are only available if a pattern
+   has previously been copied or cut
+
+   The following two menu items are only available if a pattern
+   has previously been copied or cut.
+
+   \itempar{Paste}{pattern!paste}
    Pastes a loop or pattern that was previously copied.
    This option is shown only when
    \textsl{right-clicking} over an empty pattern.
@@ -447,7 +472,7 @@
    \textbf{File / New} or \textbf{File / Open},
    to copy it to another file.
 
-   \itempar{Merge Into Pattern}{pattern!merge}
+   \itempar{Merge}{pattern!merge}
    Like \textbf{Paste to pattern}, it pastes a
    patten that was cut or copied into the pattern slot where the mouse was
    \textsl{right-clicked}.  However, the original notes remain.  Thus, the merge
@@ -464,6 +489,19 @@
    This item allows one to select the output channel for a pattern without
    having to open the editor.
 
+   \itempar{Input Bus}{pattern!input buss}
+   \textsl{Seq66} supports an
+   \textsl{optional} input buss setting for each pattern.
+   This setting is not available in the pattern editor due to lack
+   of room, so this popup menu is the only way to get to this option.
+   And it is available only if the
+   \textbf{Edit / Preferences / MIDI Input / Record into patterns by
+   bus} option is set.
+
+   Normally, the "current" pattern, which is the one opened in
+   the pattern editor, is the only one accepting input when
+   recording is activated.
+
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.65]{main-window/slot-inputt-buss.png}
@@ -471,14 +509,7 @@
    \label{fig:slot_input_bus}
 \end{figure}
 
-   \itempar{Input Bus}{pattern!input buss}
-   \textsl{Seq66} supports an
-   \textsl{optional} input buss setting for each pattern.
-   This setting is not available in the pattern editor due to lack
-   of room, so this popup menu is the only way to get to this option.
-   Normally, the "current" pattern, which is the one opened in
-   the pattern editor, is the only one accepting input when
-   recording is activated.
+   (This figure shows the old, less nested menu.)
 
    By setting an input buss, incoming MIDI events can be routed to
    the pattern that is set to accept input from that buss.

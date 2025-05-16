@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-05-15
+2015-07-10 to 2025-05-16
 
 # Change Log
 
-## [0.99.20] - 2025-05-15
+## [0.99.20] - 2025-05-16
 
 ### Added
 
@@ -53,6 +53,9 @@ Chris Ahlstrom
 -   Enhanced sequence::partial\_assign(), adding missing members.
 -   Pasting a pattern now sets the pattern number to the slot
     receiving the pattern.
+-   Some style sheets have been tweaked to fix time/piano-roll
+    alignment issues.
+-   Other UI/keystroke fixes.
 
 ## [0.99.19] - 2025-03-02
 

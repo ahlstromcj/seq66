@@ -3,7 +3,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-03-22
- * \updates       2021-05-10
+ * \updates       2025-05-16
  * \license       Public domain
  *
  *  Provides a sample Qt style sheet for Seq66.  See
@@ -60,7 +60,7 @@ QTabBar::tab:selected
  * Make tabs extra tall for use with a touch-screen.
  */
 
-QTabBar::tab { height: 48px; width: 80px; }
+QTabBar::tab { height: 40px; width: 80px; }
 QLineEdit { background-color: cornflowerblue }
 QDoubleSpinBox { background-color: cornflowerblue }
 QSpinBox { background-color: cornflowerblue }
@@ -74,8 +74,6 @@ QPushButton
     border-width: 2px;
     border-radius: 4px;
     border-color: beige;
-    min-width: 2em;
-    padding: 2px;
 }
 QPushButton:checked
 {
@@ -86,8 +84,6 @@ QPushButton:checked
     border-width: 2px;
     border-radius: 4px;
     border-color: beige;
-    min-width: 2em;
-    padding: 2px;
 }
 
 /*

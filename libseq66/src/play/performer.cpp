@@ -1408,7 +1408,7 @@ performer::true_output_bus (bussbyte nominalbuss) const
             msg += busname;
             msg += "\"";
             msg +=
-                ". Check ports in tune, rc, ctrl, and "
+                ". Check ports in tune, rc, ctrl, & "
                 "usr files, and MIDI I/O & Metronome tabs. "
                 ;
             m_port_map_error = true;                /* mutable boolean      */

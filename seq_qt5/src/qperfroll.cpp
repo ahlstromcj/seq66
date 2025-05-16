@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-04-30
+ * \updates       2025-05-16
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -850,7 +850,12 @@ qperfroll::keyPressEvent (QKeyEvent * event)
 
                 handled = true;
                 if (not_nullptr(frame64()))
-                    frame64()->scroll_to_tick(perf().get_max_extent());
+                {
+                    midipulse mx = perf().get_max_extent() -
+                        4 * measure_length();
+
+                    frame64()->scroll_to_tick(mx);
+                }
                 break;
 
             case Qt::Key_Left:
@@ -1061,6 +1066,11 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
         painter.setPen(pen);
         painter.drawLine(x_pos, 0, x_pos, yheight);
     }
+
+    int x_pos = xoffset(perf().get_max_trigger());
+    pen.setWidth(3);
+    painter.setPen(pen);
+    painter.drawLine(x_pos, 0, x_pos, yheight);
 }
 
 void
