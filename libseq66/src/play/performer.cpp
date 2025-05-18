@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-05-14
+ * \updates       2025-05-18
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2322,6 +2322,12 @@ performer::merge_sequence (seq::number seqno)
 /**
  *  Takes the given sequence number, makes sure the sequence is active, copies
  *  it to m_moving_seq via a partial-assign, and then removes it.
+ *
+ * \param seqno
+ *      The pattern-slot number of the source pattern.
+ *
+ * \return
+ *      Returns true if all actions completed successfully.
  */
 
 bool
@@ -2338,26 +2344,38 @@ performer::move_sequence (seq::number seqno)
     return result;
 }
 
+/**
+ *  Creates a new sequence at the destination pattern-slot number or
+ *  the old sequence number.  The old sequence number is the number of
+ *  the pattern being moved by the move_sequence() function.
+ *
+ *  If the destination sequence is active, a new empty pattern is added
+ *  at the source slot. Not sure if this is reasonable, but will
+ *  not change that now.
+ *
+ * \param seqno
+ *      The pattern-slot number of the destination pattern slot.
+ *
+ * \return
+ *      Returns true if all actions completed successfully.
+ */
+
 bool
 performer::finish_move (seq::number seqno)
 {
     static seq::number s_dummy;
-    bool result = false;
-    if (! is_seq_active(seqno))
+    seq::number newslot = is_seq_active(seqno) ? m_old_seqno : seqno ;
+    bool result = new_sequence(s_dummy, newslot);
+    if (result)
     {
-        if (new_sequence(s_dummy, seqno))
+        seq::pointer s = get_sequence(seqno);
+        if (s)
         {
-            get_sequence(seqno)->partial_assign(m_moving_seq);
-            result = true;
+            s->partial_assign(m_moving_seq);
+            s->seq_number(seqno);
         }
-    }
-    else
-    {
-        if (new_sequence(s_dummy, m_old_seqno))
-        {
-            get_sequence(m_old_seqno)->partial_assign(m_moving_seq);
-            result = true;
-        }
+        else
+            result = false;
     }
     return result;
 }

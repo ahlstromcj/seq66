@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-05-14
+ * \updates       2025-05-18
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -396,9 +396,10 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
 
         /*
          *  m_mutex
+         *
+         * Not necessary: (void) verify_and_link(); // NoteOn <---> NoteOff
          */
 
-        (void) verify_and_link();                   /* NoteOn <---> NoteOff */
         if (! toclipboard)
             modify();
     }
@@ -3044,21 +3045,23 @@ bool
 sequence::merge_events (const sequence & source)
 {
     const eventlist & clipbd = source.events();
+    bool result = true;
     int bw = source.get_beat_width();
     int bpb = source.get_beats_per_bar();
     midipulse len = source.get_length();
     automutex locker(m_mutex);
+    bool same = len == get_length();                /* no change no problem */
     set_beat_width(bw);
     set_beats_per_bar(bpb);
-
-    bool result = len == get_length();              /* no change no problem */
-    if (! result)
-        result = set_length(len, false, false);
-
+    if (! same)
+    {
+        if (len > get_length())                     /* enlarge, not shrink  */
+            result = set_length(len, false, false);
+    }
     if (result)
     {
         push_undo();                                /* push undo, no lock   */
-        result = m_events.merge(clipbd);
+        result = m_events.merge(clipbd);            /* merge clipbd to here */
         if (result)
             modify();
     }

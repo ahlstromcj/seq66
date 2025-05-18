@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-05-16
+2015-07-10 to 2025-05-18
 
 # Change Log
 
-## [0.99.20] - 2025-05-16
+## [0.99.20] - 2025-05-18
 
 ### Added
 
@@ -48,6 +48,8 @@ Chris Ahlstrom
     pattern-editor-in-tab.
 -   Error of connecting the store-palette slot in qseditoptions
     twice.
+-   Fixed the export of files to SMF 0.
+-   Fixed the movement of patterns in the grid slot.
 -   Fixed the plotting of pitchbend data.
 -   Fixed the broken painting of notes with the mouse.
 -   Enhanced sequence::partial\_assign(), adding missing members.
