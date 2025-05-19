@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-04-10
+ * \updates       2025-05-19
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1082,7 +1082,13 @@ qsmainwnd::lock_main_window (bool lockit)
 void
 qsmainwnd::enable_bus_item (int bus, bool enabled)
 {
-    int index = bus + 1;
+    /*
+     * Why plus one? Changed ca 2025-05-19.
+     *
+     * int index = bus + 1;
+     */
+
+    int index = bus;
     enable_combobox_item(ui->cmb_global_bus, index, enabled);
 }
 
@@ -2216,7 +2222,8 @@ std::string
 qsmainwnd::midi_filename_prompt
 (
     const std::string & prompt,
-    const std::string & file
+    const std::string & file,
+    bool promptoverwrite
 )
 {
     std::string result = file.empty() ? rc().last_used_dir() : file ;
@@ -2224,7 +2231,7 @@ qsmainwnd::midi_filename_prompt
     (
         this, result, prompt,
         "MIDI files (*.midi *.mid);;All files (*)",
-        SavingFile, NormalFile, ".midi"
+        SavingFile, NormalFile, ".midi", promptoverwrite
     );
     if (ok)
     {
@@ -2489,7 +2496,7 @@ qsmainwnd::save_file_as ()
     if (is_wrk)
         currentfile = file_extension_set(currentfile, ".midi");
 
-    std::string filename = midi_filename_prompt(prompt, currentfile);
+    std::string filename = midi_filename_prompt(prompt, currentfile, true);
     if (filename.empty())
     {
         // no code, the user cancelled
@@ -2530,7 +2537,7 @@ qsmainwnd::export_file_as_midi (const std::string & fname)
     if (fname.empty())
     {
         std::string prompt = "Export file as standard MIDI...";
-        filename = midi_filename_prompt(prompt);
+        filename = midi_filename_prompt(prompt, "", true);
     }
     else
         filename = fname;
@@ -2622,7 +2629,7 @@ qsmainwnd::export_song (const std::string & fname)
     if (fname.empty())
     {
         std::string prompt = "Export Song...";
-        filename = midi_filename_prompt(prompt);
+        filename = midi_filename_prompt(prompt, "", true);
     }
     else
         filename = fname;
@@ -4327,18 +4334,12 @@ qsmainwnd::export_file_as_smf_0 (const std::string & fname)
     if (fname.empty())
     {
         std::string prompt = "Convert and export file as SMF 0...";
-        filename = midi_filename_prompt(prompt);
+        filename = midi_filename_prompt(prompt, "", true);
     }
     else
         filename = fname;
 
-    if (filename.empty())
-    {
-        /*
-         * Maybe later, add some kind of warning dialog.
-         */
-    }
-    else
+    if (! filename.empty())
     {
         if (cb_perf().convert_to_smf_0())
         {
@@ -4355,8 +4356,8 @@ qsmainwnd::export_file_as_smf_0 (const std::string & fname)
         else
         {
             std::string msg =
-                "Could not convert to SMF 0. Verify desired tracks are "
-                "unmuted and have song triggers."
+                "Could not convert to SMF 0. Verify tracks are active, "
+                "in Live mode, and are flattened."
                 ;
             show_error_box(msg);
         }

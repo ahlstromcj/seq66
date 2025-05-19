@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-04-10
+ * \updates       2025-05-19
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -270,7 +270,8 @@ private:
     std::string midi_filename_prompt
     (
         const std::string & prompt,
-        const std::string & filename = ""
+        const std::string & filename = "",
+        bool promptoverwrite = false
     );
     std::string project_folder_prompt (const std::string & prompt);
     void update_play_status ();

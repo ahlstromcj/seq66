@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-05-18
+ * \updates       2025-05-19
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -5802,9 +5802,10 @@ performer::convert_to_smf_0 (bool remove_old)
     int numtracks = sequence_count();               /* count_exportable()   */
     bool result = numtracks > 0;
     if (result && smf_format() == 0)
-        return true;
+        return true;                                /* already SMF 0        */
 
     seq::number newslot = seq::unassigned();
+    result = ! song_mode();                         /* must flatten first   */
     if (result)
     {
         result = new_sequence(newslot, 0);

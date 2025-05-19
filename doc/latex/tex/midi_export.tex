@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-10-20
-% \update      2025-05-15
+% \update      2025-05-19
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -14,8 +14,8 @@
 %
 %-------------------------------------------------------------------------------
 
-\section{Import/Export}
-\label{sec:midi_export}
+\section{MIDI Import/Export}
+\label{sec:midi_import_export}
 
    This section explains the details of the MIDI import and export
    functionality, accessed by the main menu as noted in sections
@@ -52,7 +52,7 @@
    (\textsl{agordejo}, \textsl{RaySession}, or \textsl{nsm-legacy-gui}
    to \textsl{Stop} and then \textsl{Start} \textsl{Seq66}.
 
-\subsubsection{Import MIDI to Current Set}
+\subsubsection{Import MIDI Into Current Set}
 \label{subsubsec:midi_export_file_import}
 
    The \textbf{File / Import / Import to Current Set} menu entry imports an SMF 0
@@ -281,10 +281,16 @@
    single-track SMF 0 file.
    As with exporting to a song
    (see \sectionref{subsubsec:midi_export_song_export}),
-   the tracks to be exported (combined into a single track) must be unmuted
-   and have layouts in the song editor.
+   the tracks to be exported (combined into a single track) must be unmuted.
+   \textsl{However}, it is not worthwhile to export a MIDI tune
+   that is in Song mode, unless all the patterns are the same length.
+   To export in Song mode, first use Song export (see
+   \label{subsubsec:midi_export_song_export}), then export the modified
+   tune to SMF 0.
+
    The \textbf{File / Export / Export SMF 0 } menu
    action removes all the existing tracks and merges them into track 0.
+   The original tune can be opened again, if desired.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

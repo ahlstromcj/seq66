@@ -1,17 +1,18 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-05-18
+2015-07-10 to 2025-05-19
 
 # Change Log
 
-## [0.99.20] - 2025-05-18
+## [0.99.20] - 2025-05-19
 
 ### Added
 
 -   Added features to the grid slot popup menu:
     -   Flatten triggers. This uses the pattern triggers to
         regenerate the notes, replacing multiple triggers with one
-        long one (may need some work yet).
+        long one (may need some work yet). Similar to Song Export,
+        but for one pattern, and no export is done.
     -   Export pattern. Saves a single track to a new file, at
         pattern number 0. (May need some work yet).
 -   A timed error prompt (instead of OK/Remap and restart) when
@@ -48,7 +49,8 @@ Chris Ahlstrom
     pattern-editor-in-tab.
 -   Error of connecting the store-palette slot in qseditoptions
     twice.
--   Fixed the export of files to SMF 0.
+-   Fixed the export of files to SMF 0. See the "MIDI
+    Import/Export" section of the user manual for provisos.
 -   Fixed the movement of patterns in the grid slot.
 -   Fixed the plotting of pitchbend data.
 -   Fixed the broken painting of notes with the mouse.
