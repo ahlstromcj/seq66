@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2025-04-29
+ * \updates       2025-05-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -324,6 +324,9 @@ palettefile::write_stream (std::ofstream & file)
         "#    nobrush, solid, dense1, dense2, dense3, dense4, dense5, dense6,\n"
         "#    dense7, horizontal, vertical, cross, bdiag, fdiag, diagcross,\n"
         "#    lineargradient, radialgradient, and conicalgradient.\n"
+        "#\n"
+        "# However, lineargradient is the only one supported, and, if set and\n"
+        "# using an elliptical progress box, it's gradient is radial.\n"
         "#\n"
         "# For 'empty', best to just use 'solid' (try others and see why).\n"
         "# For 'note', use only 'solid' or the default, 'lineargradient'. These\n"

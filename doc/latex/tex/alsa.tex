@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-06-16
-% \update      2025-04-27
+% \update      2025-05-20
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -28,12 +28,6 @@
    When running the commands \texttt{aplaymidi -l} or \texttt{arecordmidi -l},
    one sees something like the following.
    Notice that there is only one Thru port.
-   The MIDI Through port is useful for...?
-   They are virtualized hardware MIDI loopbacks that make it so
-   programs that only output to "hardware" ports can use them
-   to control and sequence other programs in an ALSA or JACK session.
-   Also see how to increase the number of ALSA MIDI Thru ports in
-   \cite{alsathru}.
 
    \begin{verbatim}
     Port    Client name                      Port name
@@ -45,11 +39,26 @@
    Note that "14:0" consists of the ALSA client ID, 14, and the port ID of the
    Midi Through pseudo-device, 0.
 
+   The MIDI Through port is useful for...?
+   The MIDI Through port is claimed to be "everything-proof". Why...?
+
+   They are virtualized hardware MIDI loopbacks that make it so
+   programs that only output to "hardware" ports can use them
+   to control and sequence other programs in an ALSA or JACK session.
+   Also see how to increase the number of ALSA MIDI Thru ports in
+   \cite{alsathru}.
+
    \index{linux!system MIDI Thru}
    \index{MIDI Thru}
    One minor issue with the system MIDI Thru port is that, if it and another
    input port (e.g. VMPK) are both enabled, then each note emitted by VMPK is
    doubled. Be aware.
+
+   Another issue is that, with a MIDI Through output port and a MIDI Through
+   input port enabled at the same time, that, when recording and playing a
+   pattern at the same time, the existing notes get sent to the Through output
+   and are received on the Through input, where they are recorded again; this
+   eventually leads to an "input FIFO overrun" message.
 
    \begin{quote}
       "ALSA always creates 1 MIDI through port. Since I work with Windows music

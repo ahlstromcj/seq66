@@ -1549,7 +1549,7 @@ sequence::toggle_queued ()
 }
 
 /**
- *  The play() function dumps notes starting from the given tick, and it
+ *  The play() function outputs notes starting from the given tick, and it
  *  pre-buffers ahead.  This function is called by the sequencer thread in
  *  performer.  The tick comes in as global tick.  It turns the sequence off
  *  after we play in this frame.
@@ -1724,7 +1724,7 @@ sequence::play
             if (e == m_events.end())                /* did we hit the end ? */
             {
                 e = m_events.begin();               /* yes, start over      */
-                offset_base += len;              /* for another go at it */
+                offset_base += len;                 /* for another go at it */
 
                 /*
                  * Putting this sleep here doesn't reduce the total CPU load,

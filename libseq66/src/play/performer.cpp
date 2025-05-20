@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-05-19
+ * \updates       2025-05-20
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -5031,7 +5031,7 @@ performer::poll_cycle ()
 #endif
                 if (ev.below_sysex())                       /* below 0xF0   */
                 {
-                    if (m_master_bus->is_dumping())         /* see banner   */
+                    if (m_master_bus->is_dumping_input())
                     {
                         if (midi_control_event(ev, true))   /* quick check  */
                         {
@@ -5722,7 +5722,9 @@ performer::play (midipulse tick)
             for (auto seqi : play_set().seq_container())
             {
                 if (seqi)
+                {
                     seqi->play_queue(tick, songmode, resume_note_ons());
+                }
                 else
                     append_error_message("play on null sequence");
             }

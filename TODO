@@ -34,7 +34,6 @@ NSM:
 
 Backlog:
 
-    -   MIDI Input: click on highest port --> "null combobox item".
     -   Radialgradient is hardwired. Clean up the palette brush selection.
     -   Update the seq66cli.usr (and other?) files to the latest.
     -   Make sure song export uses transposition if present.

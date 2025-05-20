@@ -4,7 +4,7 @@
 "
 "  Language:      C
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-08-04 to 2024-03-23
+"  Last Change:   2006-08-04 to 2025-05-20
 "  Project:       XPC Suite library project
 "  License:       None.  Use it in any manner whatsover, and don't blame me.
 "  Usage:
@@ -212,7 +212,7 @@ syn keyword cConstant WSAECONNREFUSED WSAENETUNREACH
 " C errno values (will expand later)
 "------------------------------------------------------------------------------
 
-syn keyword ERR E2BIG EBADF EINVAL EILSEQ ENOENT
+syn keyword ERR E2BIG EAGAIN EBADF EILSEQ EINVAL ENOENT ENOMEM ENOSPC
 
 "------------------------------------------------------------------------------
 " XPCC socket error codes

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2023-12-03
+ * \updates       2025-05-20
  * \license       GNU GPLv2 or above
  *
  *  The mastermidibase module is the base-class version of the mastermidibus
@@ -247,7 +247,7 @@ public:
         return m_ppqn;
     }
 
-    bool is_dumping () const
+    bool is_dumping_input () const
     {
         return m_dumping_input;
     }

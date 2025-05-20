@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2023-10-31
+ * \updates       2025-05-20
  * \license       See above.
  *
  *  API information found at:
@@ -682,6 +682,8 @@ midi_alsa_info::api_get_midi_event (event * inev)
         if (remcount == -EAGAIN)
         {
             // no input in non-blocking mode
+
+            warnprint("input EAGAIN status");           /* ca 2025-05-20    */
         }
         else if (remcount == -ENOSPC)
         {
@@ -778,6 +780,10 @@ midi_alsa_info::api_get_midi_event (event * inev)
      *  is said to block!
      */
 
+#if defined USE_EXPERIMENTAL_RESET_DECODE   // undefined, not a fix
+    snd_midi_event_reset_decode(midi_ev);
+#endif
+
     long bytes = snd_midi_event_decode(midi_ev, buffer, sizeof buffer, ev);
     if (bytes > 0)
     {
@@ -820,6 +826,21 @@ midi_alsa_info::api_get_midi_event (event * inev)
          */
 
         snd_midi_event_free(midi_ev);
+        if (bytes < 0)
+        {
+            if (bytes == -EINVAL)
+            {
+                errprint("Invalid seq event");
+            }
+            else if (bytes == -ENOENT)
+            {
+                errprint("Not a MIDI message");
+            }
+            else if (bytes == -ENOMEM)
+            {
+                errprint("MIDI message too big");
+            }
+        }
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
         errprintf("snd_midi_event_decode() returned %ld", bytes);
