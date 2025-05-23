@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-05-19
+2015-07-10 to 2025-05-23
 
 # Change Log
 
-## [0.99.20] - 2025-05-19
+## [0.99.20] - 2025-05-23
 
 ### Added
 
@@ -36,30 +36,34 @@ Chris Ahlstrom
 
 ### Changed
 
--   contrib/vim-syntax/cpp.vim with added symbols like CSTR.
--   contrib/vim.rc, changed F8 for fixing Windows quote characters.
+-   Nested editing and copy/paste menus in Edit and Track submenus.
 -   Many minor tweaks to comments and appearance.
     -   Thick line between sets in the song editor.
     -   Record indicator supports gradient brush.
     -   A pattern with a color shows that color even if empty.
+-   Coalescing common code.
+    -   qsmainwnd.
+    -   Sequence recounting after deletion or moving of patterns.
+    -   Others, did not keep track.
+-   contrib/vim-syntax/cpp.vim with added symbols like CSTR.
+-   contrib/vim.rc, changed F8 for fixing Windows quote characters.
 
 ### Fixed
 
--   Fixed weird issue with setting measures in the
-    pattern-editor-in-tab.
--   Error of connecting the store-palette slot in qseditoptions
-    twice.
--   Fixed the export of files to SMF 0. See the "MIDI
-    Import/Export" section of the user manual for provisos.
--   Fixed the movement of patterns in the grid slot.
--   Fixed the plotting of pitchbend data.
--   Fixed the broken painting of notes with the mouse.
+-   Fixed setting the modify flag (asterisk) in recording notes.
+-   Weird issue with setting measures in the pattern-editor-in-tab.
+-   Error of connecting the store-palette slot in qseditoptions twice.
+-   The export of files to SMF 0. See the "MIDI Import/Export" section
+    of the user manual for provisos.
+-   The movement of patterns in the grid slot.
+-   The plotting of pitchbend data has been made correct.
+-   The broken painting of notes with the mouse.
 -   Enhanced sequence::partial\_assign(), adding missing members.
 -   Pasting a pattern now sets the pattern number to the slot
     receiving the pattern.
 -   Some style sheets have been tweaked to fix time/piano-roll
     alignment issues.
--   Other UI/keystroke fixes.
+-   Other UI/keystroke fixes, fixes to counting sequences.
 
 ## [0.99.19] - 2025-03-02
 

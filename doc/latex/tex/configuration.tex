@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2025-05-07
+% \update      2025-05-22
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1981,6 +1981,12 @@
    the first \texttt{Esc} stops playing, the second \texttt{Esc} exits
    paint mode, and the third \texttt{Esc} closes the window.
    The use must enable this option deliberately.
+
+   The record options can be surprising. If false, and
+   one opens the pattern window for a pattern set to record, the
+   record will be turned off.
+   To solve this problem, set
+   \textbf{Edit / Preferences / Pattern / Apply only to new}.
 
    Also included is a flag to allow notes to wrap around, where the Note On
    comes near the end of the pattern, but the Note Off appears before the

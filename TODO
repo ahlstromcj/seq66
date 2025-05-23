@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.20
 Chris Ahlstrom
-2019-04-13 to 2025-05-19
+2019-04-13 to 2025-05-22
 
 Hot:
     
@@ -9,15 +9,6 @@ Hot:
         available. The same hardware configuration is working perfectly when
         using seq64, the synth is receiving the CC signals and these events
         are recorded by seq64.
-    -   Recording by channel.
-        -   Does not set the modify flag asterisk.
-        -   Load the 16 blank patterns, record on. Recording works. Arm
-            the patterns being recorded. After awhile "input FIFO overrun".
-            Note: MIDI Thru is *off*.
-    -   Progress box color not showing in 16-patterns.midi. Why???
-    -   In performer::remove_sequence() we need to adjust sequence-high.
-    -   Make sure setting pattern length changes sequence::m_measures
-        as needed.
 
 NSM:
 
@@ -25,27 +16,20 @@ NSM:
     -   When creating a session, make sure playlist is copied if active.
     -   How to keep Seq66 up-to-date when ports are added back in a 
         session.
-    -   Do not error on missing input bus "ALSA Announce".
+    -   Do not error on missing input bus "ALSA Announce" when JACK is
+        running.
+    -   Should NSM really require JACK?
     -   See the Recording items below (*).
     -   Make the NSM start-up prompt time configurable or dependent on
         the number of words.
-    -   Every time Edit / Preferences is opened/closed, "[seq66] NSM URL..."
-        is written to the console.
 
 Backlog:
 
-    -   Radialgradient is hardwired. Clean up the palette brush selection.
     -   Update the seq66cli.usr (and other?) files to the latest.
-    -   Make sure song export uses transposition if present.
     -   Can we make another instance of seq66 act as a source of
         MIDI input/output?
-    -   Consider adding a Flatten entry to the pattern slot popup
-        menu, at least during investigation.
-    -   The event panel is offset rightward a few (3?) pixels from the
-        piano roll when scrolled to the rightmost position.
-    -   Add add_config_filespec() calls for "notemap" and
-        "patches". See all references to SEQ66_KEEP_RC_FILE_LIST.
-    -   Add a light version of glob(3) to use with Windows.
+    -   Add a light version of glob(3) to use with Windows. In progress
+        in the filefunctions module.
     -   Event editor:
         -   Can we add, perhaps a tooltip or dropdown to select the desired
             Control value (e.g. 7 for volume)?

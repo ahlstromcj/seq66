@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-04-28
+ * \updates       2025-05-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2099,7 +2099,6 @@ qseqeditframe64::set_measures (int m, qbase::status qs)
         }
         else
         {
-            // m_measures = m;
             if (track().apply_length(m, true))      /* always a user change */
             {
                 m_measures = m;

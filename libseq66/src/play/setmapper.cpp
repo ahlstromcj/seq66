@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2023-11-14
+ * \updates       2025-05-21
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -584,11 +584,15 @@ setmapper::remove_sequence (seq::number seqno)
     if (! result)
     {
         result = sset.remove(seqno);        /* it exists, remove it!        */
+#if defined USE_OLD_CODE
         if (result)
         {
             if (m_sequence_count > 1)       /* allow for the dummy sequence */
                 --m_sequence_count;
         }
+#else
+        recount_sequences();                /* ca 2025-05-20                */
+#endif
     }
     return result;
 }

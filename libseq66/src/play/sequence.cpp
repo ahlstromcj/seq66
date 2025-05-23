@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-05-18
+ * \updates       2025-05-20
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4207,7 +4207,13 @@ sequence::add_event (const event & er)
         if (er.is_note_off())
             (void) verify_and_link();   /* for proper seqroll draw; sorts   */
 
-        modify(false);                  /* do not call notify_change()      */
+        /*
+         * ca 2025-05-20 Is this change safe?
+         *
+         * modify(false);  // do not call notify_change()
+         */
+
+        modify(true);
     }
     return result;
 }

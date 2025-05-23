@@ -2321,7 +2321,9 @@ performer::merge_sequence (seq::number seqno)
 
 /**
  *  Takes the given sequence number, makes sure the sequence is active, copies
- *  it to m_moving_seq via a partial-assign, and then removes it.
+ *  it to m_moving_seq via a partial-assign, and then removes it. The
+ *  remove_sequence() function calls the setmapper version, which then
+ *  recounts the sequences to get the high-sequence number, etc.
  *
  * \param seqno
  *      The pattern-slot number of the source pattern.

@@ -1346,11 +1346,11 @@ gui_palette_qt5::set_brushes
         {
             /*
              * Background sequence brush
+             *
+             * (void) make_brush(m_backseq_brush, m_backseq_brush_style, temp);
+             * temp = get_brush_style(backseqbrush);
+             * result = temp != Qt::TexturePattern;
              */
-
-            // (void) make_brush(m_backseq_brush, m_backseq_brush_style, temp);
-            // temp = get_brush_style(backseqbrush);
-            // result = temp != Qt::TexturePattern;
         }
     }
     return result;

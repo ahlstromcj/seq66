@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2025-05-15
+ * \updates       2025-05-22
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1832,17 +1832,6 @@ qslivegrid::popup_menu ()
         {
 #if defined SEQ66_USE_COLLAPSED_SLOT_POPUP_MENU
             QMenu * menuEdit = new_qmenu("&Edit");
-            if (perf().is_seq_active(current_seq()))
-            {
-                QAction * editseq = new_qaction("Edit pattern in &tab", menuEdit);
-                connect
-                (
-                    editseq, SIGNAL(triggered(bool)),
-                    this, SLOT(edit_sequence())
-                );
-                menuEdit->addAction(editseq);
-            }
-
             QAction * editseqex = new_qaction
             (
                 "Edit pattern in &window", menuEdit
@@ -1853,6 +1842,19 @@ qslivegrid::popup_menu ()
                 editseqex, SIGNAL(triggered(bool)),
                 this, SLOT(edit_sequence_ex())
             );
+            if (perf().is_seq_active(current_seq()))
+            {
+                QAction * editseq = new_qaction
+                (
+                    "Edit pattern in &tab", menuEdit
+                );
+                connect
+                (
+                    editseq, SIGNAL(triggered(bool)),
+                    this, SLOT(edit_sequence())
+                );
+                menuEdit->addAction(editseq);
+            }
 
             QAction * editevents = new_qaction
             (

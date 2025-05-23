@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-19
+ * \updates       2025-05-23
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -2797,35 +2797,35 @@ qsmainwnd::show_qslogview ()
 void
 qsmainwnd::load_editor (int seqid)
 {
+    if (make_edit_frame(seqid))
+        update();
+}
+
+bool
+qsmainwnd::make_edit_frame (int seqid)
+{
     seq::pointer s = cb_perf().get_sequence(seqid);
-    bool ok = bool(s);
-
-#if defined DISALLOW_EDITOR_CONFLICT
-    if (ok)
-    {
-        auto ei = m_open_editors.find(seqid);
-        ok = ei == m_open_editors.end();                    /* 1 editor/seq */
-    }
-#endif
-
-    if (ok)
+    bool result = bool(s);
+    if (result)
     {
         if (not_nullptr(m_edit_frame))
         {
             ui->EditTabLayout->removeWidget(m_edit_frame);  /* no ptr check */
-            delete m_edit_frame;
+            delete m_edit_frame;                            /* hmmmmmmmmmmm */
         }
         m_edit_frame = new (std::nothrow) qseqeditframe64
         (
             cb_perf(), *s, ui->EditTab, true                /* short frame  */
         );
-        if (not_nullptr(m_edit_frame))
+        result = not_nullptr(m_edit_frame);
+        if (result)
         {
             ui->EditTabLayout->addWidget(m_edit_frame);
             m_edit_frame->show();
             ui->tabWidget->setCurrentIndex(Tab_Editor);
         }
     }
+    return result;
 }
 
 void
@@ -3372,37 +3372,13 @@ qsmainwnd::tabWidgetClicked (int newindex)
             }
             if (! ignore)
             {
-                seq::pointer s = cb_perf().get_sequence(seqid);
-                if (s)
-                {
-                    /*
-                     * This code is called when first clicking on the
-                     * "Editor" tab. For the code called when selecting a
-                     * pattern to open in this tab, see load_editor() above.
-                     */
-
-                    m_edit_frame = new (std::nothrow) qseqeditframe64
-                    (
-                        cb_perf(), *s, ui->EditTab, true
-                    );
-                    if (not_nullptr(m_edit_frame))
-                    {
-                        ui->EditTabLayout->addWidget(m_edit_frame);
-                        m_edit_frame->show();
-                        update();
-                    }
-                }
+                if (make_edit_frame(seqid))
+                    update();
             }
-
-            /*
-             * Need to disable the recent files and open file
-             */
         }
         else
         {
-            /*
-             * Need to enable the recent files and open file
-             */
+            // No code
         }
     }
     isnull = is_nullptr(m_event_frame);
@@ -3454,9 +3430,10 @@ qsmainwnd::make_event_frame (int seqid)
             ui->EventTabLayout->removeWidget(m_event_frame);
             delete m_event_frame;
         }
-        m_event_frame = new (std::nothrow)
-            qseqeventframe(cb_perf(), *seqp, ui->EventTab);
-
+        m_event_frame = new (std::nothrow) qseqeventframe
+        (
+            cb_perf(), *seqp, ui->EventTab
+        );
         if (not_nullptr(m_event_frame))
         {
             ui->EventTabLayout->addWidget(m_event_frame);

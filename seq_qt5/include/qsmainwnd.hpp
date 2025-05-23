@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-19
+ * \updates       2025-05-23
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -293,6 +293,7 @@ private:
     bool handle_key_press (const keystroke & k);
     bool handle_key_release (const keystroke & k);
     void show_song_mode (bool songmode);
+    bool make_edit_frame (int seqid);
     bool make_event_frame (int seqid);
     void connect_editor_slots ();
     void connect_nsm_slots ();
