@@ -1,9 +1,10 @@
 TO DO for Seq66 0.99.20
 Chris Ahlstrom
-2019-04-13 to 2025-05-22
+2019-04-13 to 2025-05-24
 
 Hot:
     
+    -   Make sure --option virtual=2,2 works!
     -   When I try to record events using the Midi Controller UC-16, seq66 is
         refusing to work and is telling me that the output bus is not
         available. The same hardware configuration is working perfectly when
@@ -42,9 +43,6 @@ Backlog:
             computer.
     -   Get the 16-in-busses.midi file configured and working.
     -   Figure out issue #132, the libasound2 issue.
-    -   QObject::setParent: Cannot set parent, new parent is in a different
-        thread; this happens in sequence::modify(true) when recording with
-        a pattern editor open.
     -   #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
     -   Recording.
         -   One-shot recording during playback now works.  But one-shot reset
@@ -56,10 +54,6 @@ Backlog:
         -   Test overwrite etc. in the scenario where a recording mode can
             cause incomplete notes if one holds the note and releases it in
             the next iteration, leaving a partially-drawn note behind.
-        -   When auto-step recording in an existing pattern, the modify
-            flag "*" is not shown in the title, though the
-            "Save/Discard/Cancel" prompt appears at exit. It works if
-            playback running during recording.
     -   Consider adding time-bg/fg-color to the palette file, using
         the 'usr' version otherwise.
     -   Finish getting Windows builds in MSYS2 to work. Low priority.
