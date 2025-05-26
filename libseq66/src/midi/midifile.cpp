@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-05-14
+ * \updates       2025-05-25
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -3719,7 +3719,7 @@ read_midi_file
                 if (! path.empty())
                     rc().last_used_dir(path);
 
-                rc().add_recent_file(fn);       /* Oli Kester's Kepler34!   */
+                (void) rc().add_recent_file(fn); /* Oli Kester's Kepler34!  */
             }
             p.announce_playscreen();            /* tell MIDI control out    */
             file_message("Read", fn);
@@ -3770,7 +3770,7 @@ write_midi_file
         {
             rc().midi_filename(fname);
             rc().last_used_dir(fname.substr(0, fname.rfind("/") + 1));
-            rc().add_recent_file(fname);            /* rc().midi_filename() */
+            (void) rc().add_recent_file(fname);     /* rc().midi_filename() */
             file_message("Wrote MIDI file", fname);
             p.unmodify();
         }

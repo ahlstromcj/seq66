@@ -1,10 +1,10 @@
 # Seq66 0.99.11 main ('rc') configuration file
 #
-# /home/ahlstrom/.config/seq66/seq66cli.rc
-# Written 2023-10-28 13:51:23
+# /home/user/.config/seq66/seq66cli.rc
+# Written 2025-05-26 08:48:41
 #
-# This file holds the main configuration for Seq66. It no longer follows the
-# format of the seq24rc configuration file.
+# This file holds the main configuration for Seq66. It diverges greatly from
+# the of the seq24rc configuration file.
 #
 # 'version' is set by Seq66; it is used to detect older configuration files,
 # which are upgraded to the new version when saved.
@@ -20,21 +20,25 @@
 # armed when moving to the next set. 'all-sets' arms all sets at once.
 #
 # 'port-naming': 'short', 'pair', or 'long'. If 'short', the device name is
-# shown. If it  is generic, the client name is added for clarity. If 'pair',
+# shown; but if generic, the client name is added for clarity. If 'pair',
 # the client:port number is prepended. If 'long', the full set of name items
 # is shown. If port-mapping is active (now the default), this does not apply.
 #
-# 'init-disabled-ports' is experimental. It tries live toggle of port state.
+# 'init-disabled-ports' does not yet work. It tries live toggle of port state.
+#
+# 'priority' greater than 0 is meant to increase the priority of the I/O
+# threads. It needs Seq66 to run as root, or be installed as setuid 0.
 
 [Seq66]
 
 config-type = "rc"
-version = 2
+version = 4
 quiet = false
 verbose = false
 sets-mode = normal
 port-naming = short
 init-disabled-ports = false
+priority = 0
 
 # [comments] holds user documentation for this file. The first empty, hash-
 # commented, or tag line ends the comment.
@@ -96,17 +100,34 @@ base-directory = ""
 active = true
 name = "seq66cli.drums"
 
-# Provides a flag and a file-name to allow modifying the palette using the file
+# Provides a flag and file-name to provide a list of patches for legacy
+# non-GM-compliant devices.
+
+[patches-file]
+
+active = false
+name = "seq66cli.patches"
+
+# Provides a flag and file-name to allow modifying the palette using the file
 # specified. Use '""' to indicate no 'palette' file. If none or not active,
 # the internal palette is used.
 
 [palette-file]
 
 active = false
-name = ""
+name = "seq66cli.palette"
 
-# Defines features of MIDI meta-event handling. Tempo events occur in the first
-# track (pattern 0), but one can move tempo elsewhere. It changes where tempo
+# If specified, a style-sheet (e.g. 'qseq66.qss') is applied at startup.
+# This file must be located in Seq66's "home" directory. Copy if needed.
+# Note that style-sheet specification has been removed from the 'usr' file.
+
+[style-sheet-file]
+
+active = false
+name = "seq66cli.qss"
+
+# Defines features of MIDI meta-event handling. Tempo events are in the first
+# track (pattern 0), but one can use them elsewhere. It changes where tempo
 # events are recorded. The default is 0, the maximum is 1023. A pattern must
 # exist at this number.
 
@@ -114,10 +135,11 @@ name = ""
 
 tempo-track = 0
 
-# Set to true to create virtual ALSA/JACK I/O ports and not auto-connect
-# to other clients. It allows up to 48 output or input ports (defaults to 8
-# and 4). Keep it false to auto-connect Seq66 to real ALSA/JACK MIDI ports.
-# Set 'auto-enable' to enable all virtual ports automatically.
+# Set to true to create virtual ALSA/JACK I/O ports and not auto-connect to
+# other clients. Allows up to 48 output or input ports (defaults to 8 and 4).
+# If true, it disables port-mapping. Keep it false to auto-connect Seq66 to
+# real ALSA/JACK MIDI ports and preserve port-mapping. Set 'auto-enable' to
+# enable all virtual ports automatically.
 
 [manual-ports]
 
@@ -200,6 +222,17 @@ input-port-count = 4
 ticks = 64
 record-by-channel = false
 
+# This section defines tweaks to the reading or writing of MIDI files.
+# Indicates how to handle MIDI files with incorrect running status. Default
+# is 'recover', which tries to recover the running status when a data byte
+# is encountered; 'skip' ignores the rest of the bytes in the track;
+# 'proceed' keeps going; 'abort' just exits the parsing, which is the old
+# and undesirable behavior. Try each option with the 'trilogy.mid' file.
+
+[midi-file-tweaks]
+
+running-status-action = recover
+
 # Set to true to have Seq66 ignore port names defined in the 'usr' file. Use
 # this option to to see the system ports as detected by ALSA/JACK.
 
@@ -275,8 +308,8 @@ jack-auto-connect = true
 jack-use-offset = true
 jack-buffer-size = 0
 
-# 'auto-save-rc' sets automatic saving of the  'rc' and other files. If set,
-# many command-line settings are saved to configuration files.
+# 'auto-save-rc' sets automatic saving of the  'rc' and other files. If set
+# (true if changes were made in Preferences), settings are saved.
 #
 # 'old-triggers' saves triggers in a format compatible with Seq24. Otherwise,
 # triggers are saved with an additional 'transpose' setting. The old-mutes
@@ -288,14 +321,14 @@ auto-save-rc = true
 save-old-triggers = false
 save-old-mutes = false
 
-# Specifies the last-used/currently-active directory.
+# Specifies the last directory used for save/open of MIDI files.
 
 [last-used-dir]
 
 ""
 
-# The most recently-loaded MIDI files. 'full-paths' = true means to show the
-# full file-path in the menu. The most recent file (top of list) can be loaded
+# The most recently-loaded MIDI files. 'full-paths' means to show the full
+# file-path in the menu. The most recent file (top of list) can be loaded
 # via 'load-most-recent' at startup.
 
 [recent-files]
@@ -305,6 +338,6 @@ load-most-recent = true
 count = 0
 
 
-# End of /home/ahlstrom/.config/seq66/seq66cli.rc
+# End of /home/user/.config/seq66/seq66cli.rc
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

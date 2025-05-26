@@ -1291,6 +1291,20 @@ rcfile::write ()
  *  directory.
  */
 
+bool
+write_rc_file (const std::string & filebase)
+{
+    bool result = true;
+    std::string name = file_extension_set(filebase, ".rc");
+    std::string rcn = rc().config_filespec(name);
+    rcfile options(rcn, rc());
+    result = options.write();
+    if (! result)
+        file_error("Write failed", rcn);
+
+    return result;
+}
+
 #if defined SEQ66_KEEP_RC_FILE_LIST
 
 bool

@@ -1,7 +1,7 @@
-# Seq66 0.99.11 playlist configuration file
+# Seq66 0.99.20 playlist configuration file
 #
-# /home/ahlstrom/.config/seq66/seq66cli.playlist
-# Written 2023-10-28 13:51:23
+# /home/user/.config/seq66/seq66cli.playlist
+# Written 2025-05-26 08:48:41
 #
 # This file holds multiple playlists, each in a [playlist] section. Each has
 # a user-specified number for sorting and MIDI control, ranging from 0 to 127.
@@ -96,6 +96,6 @@ directory = "/usr/local/share/seq66-0.99/midi/"
 4 "If_You_Could_Read_My_Mind.mid"
 5 "b4uacuse-gm-patchless.midi"
 
-# End of /home/ahlstrom/.config/seq66/seq66cli.playlist
+# End of /home/user/.config/seq66/seq66cli.playlist
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

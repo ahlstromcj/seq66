@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2024-12-02
+% \update      2025-05-26
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -39,15 +39,15 @@
    \textsl{Seq66} does not
    support automatic handling of port changes at run-time.
    In addition, port-mapping (see \sectionref{sec:port_mapping}) is
-   enabled by default; this makes the port setup more flexible..
+   enabled by default; this makes the port setup more flexible.
 
    Start \textsl{Seq66}, verify that it comes up, and then exit it
    immediately.
-   This first start creates the configuration files in
+   This first start creates the configuration files and a log file in
 
    \begin{verbatim}
-      /home/user/.config/seq66/                       (Linux)
-      C:/Users/your\_user\_name/AppData/Local/seq66   (Windows)
+      /home/your\_user\_name/.config/seq66/              (Linux)
+      C:/Users/your\_user\_name/AppData/Local/seq66      (Windows)
    \end{verbatim}
 
    If a session manager (e.g. \textsl{NSM})
@@ -69,10 +69,10 @@
    see \sectionref{sec:windows}.
 
    For better trouble-shooting, run it via command-line in
-   a terminal window, at first and provide a MIDI file, to
+   a terminal window, at first, and provide a MIDI file, to
    see what messages might appear.
-   Also note that a log file is created; by default message will be
-   written to it.
+   Also note that a log file (e.g. \texttt{qseq66.log} is created;
+   by default most messages will be written to it.
    The port settings will depend on your system.
    On our system, the synthesizer (\textsl{Yoshimi}) comes up on MIDI buss 5.
    (On \textsl{Windows}, buss 0 is the "MIDI Mapper", while buss 1 is the
@@ -93,12 +93,12 @@
    The buss-override setting can also be made via the port drop-down control
    in the main window.
    It \textsl{will modify} the MIDI file.
-   The "data" directory is a directory created upon installation of the
-   application:
+   The "midi" directory is a directory created in the installation area,
+   along with other directories such as "samples", "win", "wrk", etc.:
 
    \begin{verbatim}
-      /usr/share/seq66-0.99/                          (Linux)
-      C:/Program Files/Seq66/data/                    (Windows)
+      /usr/share/seq66-0.99/                             (Linux)
+      C:/Program Files/Seq66/data/                       (Windows)
    \end{verbatim}
 
    It contains sample MIDI files and configuration files.
@@ -107,9 +107,10 @@
    The user configration files are stored in the user's "home" area:
 
    \begin{verbatim}
-      /home/username/.config/seq66/qseq66.*           (Linux)
-      C:/Users/username/AppData/Local/seq66           (Windows)
-      ~/NSM Sessions/sessioname/seq66.nXXXX/config    (NSM)
+      /home/username/.config/seq66/qseq66.*              (Linux)
+      C:/Users/username/AppData/Local/seq66              (Windows)
+      ~/NSM Sessions/sessioname/seq66.nXXXX/config       (NSM, legacy)
+      ~/.local/share/nsm/sessioname/seq66.nXXXX/config   (NSM, new)
    \end{verbatim}
 
    The configuration files in the "home" directory

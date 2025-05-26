@@ -1,10 +1,9 @@
 TO DO for Seq66 0.99.20
 Chris Ahlstrom
-2019-04-13 to 2025-05-24
+2019-04-13 to 2025-05-26
 
 Hot:
     
-    -   Make sure --option virtual=2,2 works!
     -   When I try to record events using the Midi Controller UC-16, seq66 is
         refusing to work and is telling me that the output bus is not
         available. The same hardware configuration is working perfectly when
@@ -17,8 +16,6 @@ NSM:
     -   When creating a session, make sure playlist is copied if active.
     -   How to keep Seq66 up-to-date when ports are added back in a 
         session.
-    -   Do not error on missing input bus "ALSA Announce" when JACK is
-        running.
     -   Should NSM really require JACK?
     -   See the Recording items below (*).
     -   Make the NSM start-up prompt time configurable or dependent on
@@ -26,9 +23,6 @@ NSM:
 
 Backlog:
 
-    -   Update the seq66cli.usr (and other?) files to the latest.
-    -   Can we make another instance of seq66 act as a source of
-        MIDI input/output?
     -   Add a light version of glob(3) to use with Windows. In progress
         in the filefunctions module.
     -   Event editor:

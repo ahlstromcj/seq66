@@ -36,7 +36,7 @@
    hide the menu and the bottom panels, to allow reducing the
    size of the window event further.
    The features of the main window, including the "look" of the application,
-   can be configured via the 'rc', 'usr', 'ctrl', 'drums', 'playlist', 'mutes',
+   can be configured via the 'rc', 'usr',
    and 'palette' configuration files, via command-line options, via
    desktop themes, and via Qt ('qss') style-sheets.
    We break the discussion into sections for the following
@@ -152,13 +152,13 @@
 
    The \textbf{Session} tab displays some aspects of the running setup of
    \textsl{Seq66}.  It displays the name of the session manager, if any, client
-   IDs, etc.  It also has a button reload the whole session after configuration
-   changes are made.
+   IDs, etc.
 
    Here, a session log file can also be specified.
-   If defined, then all messages written to the terminal when \textsl{Seq66}
+   If defined (the default),
+   then all messages written to the terminal when \textsl{Seq66}
    is run from a terminal shell are instead redirected to this file.
-   The default log file is \texttt{seq66.log} specified to use
+   The default log file is \texttt{qseq66.log} specified to use
    the "home" directory.
    This file can be cleared using the button to the right of it; however,
    messages will continue to be logged to this file until

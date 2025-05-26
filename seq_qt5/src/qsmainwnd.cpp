@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-23
+ * \updates       2025-05-25
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -2646,8 +2646,8 @@ qsmainwnd::export_song (const std::string & fname)
         bool result = f.write_song(cb_perf());
         if (result)
         {
-            rc().add_recent_file(filename);
-            update_recent_files_menu();
+            if (rc().add_recent_file(filename))
+                update_recent_files_menu();
         }
         else
             show_error_box(f.error_message());

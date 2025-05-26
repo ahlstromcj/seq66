@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-05
+ * \updates       2025-05-25
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -51,6 +51,7 @@
 #include <QButtonGroup>
 
 #include "cfg/patchesfile.hpp"          /* seq66::patchesfile class         */
+#include "cfg/rcfile.hpp"               /* seq66::rcfile class              */
 #include "midi/jack_assistant.hpp"      /* seq66::jack_assistant statics    */
 #include "os/daemonize.hpp"             /* seq66::signal_for_restart()      */
 #include "play/performer.hpp"           /* seq66::performer class           */
@@ -2680,7 +2681,7 @@ qseditoptions::sync_rc ()
 
     std::string filespec = rc().config_filespec();
     ui->checkBoxSaveRc->setChecked(rc().auto_rc_save());
-    ui->checkBoxActiveRc->setChecked(true);         /* not always active    */
+    ui->checkBoxActiveRc->setChecked(true);             /* ALWAYS active    */
     tooltip_for_filename(ui->lineEditRc, filespec);
 
     filespec = rc().user_filespec();
@@ -2699,7 +2700,7 @@ qseditoptions::sync_rc ()
     tooltip_for_filename(ui->lineEditPlaylist, filespec);
 
     filespec = rc().midi_control_filespec();
-    ui->checkBoxSaveCtrl->setChecked(rc().auto_ctrl_save());    /* read-only */
+    ui->checkBoxSaveCtrl->setChecked(rc().auto_ctrl_save());    /* readonly */
     ui->checkBoxActiveCtrl->setChecked(rc().midi_control_active());
     tooltip_for_filename(ui->lineEditCtrl, filespec);
 
@@ -3516,6 +3517,15 @@ qseditoptions::slot_rc_save_click ()
     bool on = ui->checkBoxSaveRc->isChecked();
     rc().auto_rc_save(on);
     reload_needed(true);
+
+    /*
+     * ca 2025-05-25. Save the 'rc' file immediately.
+     */
+
+    const QString qs = ui->lineEditRc->text();
+    std::string text = qs.toStdString();
+    if (write_rc_file(text))
+        rc().auto_rc_save(false);
 }
 
 #if defined USE_RC_NAME_CHANGE

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2023-11-25
-% \update      2025-05-19
+% \update      2025-05-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -184,6 +184,56 @@
    \end{itemize}
 
    These transformations can also be done after recording.
+
+\subsection{Seq66-to-Seq66 Recording}
+\label{sec:recording_seq_to_seq}
+
+   This section describes a way to have one instance of \textsl{Seq66}
+   (\texttt{qseq66}) interact with another.
+   The first \textsl{Seq66} to start runs with a different client name
+   (optional) and a different 'rc' file name (to not affect the normal
+   configuration of \textsl{Seq66}).
+   The first \textsl{Seq66} runs with virtual ports; the second
+   \textsl{Seq66} runs normally and can auto-connect to these
+   ports.
+
+   The first instance:
+
+   Run and exit to create the configuration files, then run with
+   the "virtual" option; the first number is the number of output ports
+   to make, and the second is the number of input ports to make.
+
+   \begin{verbatim}
+       $ qseq66 --client first66 --rc first66
+       $ qseq66 --client first66 --rc first66 --option virtual=2,2
+   \end{verbatim}
+
+   In the \textbf{MIDI Clock} tab should be "first66:midi out 0" and
+   "first66:midi out 1".
+   In the \textbf{MIDI Input} tab should be "first66:midi in 0" and
+   "first66:midi in 1".
+   Among the ports shown, along with plugged in hardware, are:
+
+   \begin{verbatim}
+      $ aplaymidi -l
+       Port    Client name                      Port name
+       44:0    MPK mini Play mk3                MPK mini Play mk3 MIDI 1
+      128:0    first66                          midi in 0
+      128:1    first66                          midi in 1
+      ahlstrom@mlstrycoo ~/Home/ca/mls/git/seq66
+      $ arecordmidi -l
+       Port    Client name                      Port name
+       44:0    MPK mini Play mk3                MPK mini Play mk3 MIDI 1
+      128:2    first66                          midi out 0
+      128:3    first66                          midi out 1
+   \end{verbatim}
+
+   Leave this instance running, and run a plain \texttt{qseq66} command.
+   It should show the "first66" output (clocks) and input ports.
+
+   One should now be able to pass MIDI events between the two instances.
+
+% VERIFY this at some point.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2024-08-08
+ * \updates       2025-05-25
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -350,7 +350,7 @@ static const std::string s_help_4a =
 ;
 
 static const std::string s_help_4b =
-"      scale=x.y     Scales size of main window. Range: 0.5 to 3.0.\n"
+"      scale=x,y     Scales size of main window. Range: 0.5 to 3.0.\n"
 "      mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.\n"
 "      virtual=o,i   Like --manual-ports, except that the count of output and\n"
 "                    input ports are specified. Defaults are 8 & 4.\n"
@@ -920,7 +920,15 @@ cmdlineopts::parse_o_virtual (const std::string & arg)
         out = string_to_int(arg);
         auto p = arg.find_first_of(",");
         if (p != std::string::npos)
+        {
             in = string_to_int(arg.substr(p+1));
+        }
+        else
+        {
+            p = arg.find_first_of("x");     /* if user uses "x" by habit    */
+            if (p != std::string::npos)
+                in = string_to_int(arg.substr(p+1));
+        }
     }
     rc().manual_port_count(out);
     rc().manual_in_port_count(in);
@@ -1403,9 +1411,14 @@ cmdlineopts::write_rc_file (const std::string & filebase)
     return result;
 }
 
+/**
+ * TODO: call the new write_rc_file() function in the rcfile module.
+ */
+
 bool
 cmdlineopts::alt_write_rc_file (const std::string & filebase)
 {
+#if 0
     bool result = true;
     std::string name = file_extension_set(filebase, ".rc");
     std::string rcn = rc().config_filespec(name);
@@ -1415,6 +1428,8 @@ cmdlineopts::alt_write_rc_file (const std::string & filebase)
         file_error("Write failed", rcn);
 
     return result;
+#endif
+    return write_rc_file(filebase);
 }
 
 bool

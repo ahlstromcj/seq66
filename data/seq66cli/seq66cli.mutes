@@ -1,7 +1,7 @@
-# Seq66 0.99.11 mute-groups configuration file
+# Seq66 0.99.20 mute-groups configuration file
 #
-# /home/ahlstrom/.config/seq66/seq66cli.mutes
-# Written 2023-10-28 13:51:23
+# /home/user/.config/seq66/seq66cli.mutes
+# Written 2025-05-26 08:48:41
 #
 # Used in the [mute-group-file] section of the 'rc' file, making it easier to
 # multiple mute groups. To use this file, specify it in [mute-group-file] file
@@ -97,6 +97,6 @@ toggle-active-only = false
 30 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 30"
 31 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] "Group 31"
 
-# End of /home/ahlstrom/.config/seq66/seq66cli.mutes
+# End of /home/user/.config/seq66/seq66cli.mutes
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

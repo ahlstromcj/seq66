@@ -1,6 +1,6 @@
 # Seq66 0.99.11 MIDI control configuration file
 #
-# /home/ahlstrom/.config/seq66/seq66cli.ctrl
+# /home/user/.config/seq66/seq66cli.ctrl
 # Written 2023-10-28 13:51:23
 #
 # Sets up MIDI I/O control. The format is like the 'rc' file. To use it, set it
@@ -80,6 +80,9 @@ keyboard-layout = qwerty
 # To use a control as a toggle, define only the Toggle stanza. For the control
 # to act only while held, define the On and Off stanzas with appropriate
 # statuses for press-and-release.
+#
+# Warning: the 'BS' key is actually the Ctrl-H key, and NOT the Backspace key.
+# The Backspace key is called 'BkSpace' in the Seq66 key-map.
 
 [loop-control]
 
@@ -393,6 +396,6 @@ reset = $header 0x00 $footer # fill in with device's reset command
 shutdown = $header 0x00 $footer # sent at exit, if not empty
 startup = $header 0x00 $footer # sent at start, if not empty
 
-# End of /home/ahlstrom/.config/seq66/seq66cli.ctrl
+# End of /home/user/.config/seq66/seq66cli.ctrl
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

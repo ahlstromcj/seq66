@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-01-19
+ * \updates       2025-05-25
  * \license       GNU GPLv2 or above
  *
  *  The ~/.seq66rc or ~/.config/seq66.rc files are referred to as the "rc"
@@ -77,6 +77,8 @@ public:
 /*
  *  Free functions.
  */
+
+extern bool write_rc_file (const std::string & filebase);
 
 #if defined SEQ66_KEEP_RC_FILE_LIST
 

@@ -1,7 +1,7 @@
-# Seq66 0.99.11 user ('usr') configuration file
+# Seq66 0.99.20 user ('usr') configuration file
 #
-# /home/ahlstrom/.config/seq66/seq66cli.usr
-# Written 2023-10-28 13:51:23
+# /home/usr/.config/seq66/seq66cli.usr
+# Written 2025-05-26 08:48:41
 #
 # 'usr' file. Edit it and place it in ~/.config/seq66. It allows naming each
 # MIDI bus/port, channel, and control code.
@@ -9,7 +9,7 @@
 [Seq66]
 
 config-type = "usr"
-version = 11
+version = 15
 
 # [comments] holds user documentation for this file. The first empty, hash-
 # commented, or tag line ends the comment.
@@ -41,9 +41,8 @@ Add your comment block here
 
 # [user-interface-settings]
 #
-# Configures some user-interface elements.  Obsolete ones were removed in
-# version 5 of this file. Also see [user-ui-tweaks]. The grid holds Qt push-
-# buttons. For styling, use Qt themes/style-sheets.
+# Configures some user-interface items. Also see [user-ui-tweaks].
+# For window styling, use Qt style-sheets as specified in the 'rc' file.
 #
 # 'swap-coordinates' swaps numbering so pattern numbers vary fastest by column
 # instead of rows. This setting applies to the live grid, mute-group buttons,
@@ -69,6 +68,10 @@ Add your comment block here
 #
 # 'follow-progress specifies the default for following progress in the piano
 # rolls. Each window has a button to toggle following progess
+#
+# 'gridlines-thick', if false (the default) specifies the normal style of
+# grid-lines. If true, then lines are thicker. Useful to control the lines
+# re the palette or theme.
 #
 # 'inverse-colors' (option -K/--inverse) specifies use of an inverse color
 # palette. Palettes are for Seq66 drawing areas, not for Qt widgets.
@@ -100,7 +103,10 @@ mainwnd-spacing = 2
 default-zoom = 2
 global-seq-feature = true
 progress-bar-thick = true
+progress-bar-thickness = 2
+progress-box-elliptical = false
 follow-progress = true
+gridlines-thick = false
 inverse-colors = false
 time-fg-color = "default"
 time-bg-color = "default"
@@ -182,7 +188,7 @@ bpm-maximum = 600
 [user-options]
 
 daemonize = false
-log = "/home/ahlstrom/.config/seq66/seq66cli.log"
+log = "/home/usr/.config/seq66/seq66cli.log"
 pdf-viewer = ""
 browser = ""
 
@@ -197,9 +203,8 @@ browser = ""
 #
 # note-resume causes notes-in-progress to resume when the pattern toggles on.
 #
-# If specified, a style-sheet (e.g. 'qseq66.qss') is applied at startup.
-# Normally just a base-name, it can contain a file-path to provide a style
-# usable in many other applications.
+# Note that style-sheet specification has been moved to the 'rc' file with
+# all the rest of the files.
 #
 # A fingerprint is a condensation of note events in a long track, to reduce
 # the time drawing the pattern in the buttons. Ranges from 32 (default) to
@@ -209,6 +214,7 @@ browser = ""
 # progress box in the live-grid buttons.  Width ranges from 0.50 to 1.0, and
 # the height from 0.10 to 1.0.  If either is 'default', defaults (0.8 x 0.3)
 # are used.  progress-box-shown controls if the boxes are shown at all.
+# progress-box-show-cc enables displaying CC and pitchbend events (as dots).
 #
 # progress-note-min and progress-note-max set the progress-box note range so
 # that notes aren't centered in the box, but shown at their position by pitch.
@@ -221,12 +227,11 @@ browser = ""
 key-height = 10
 key-view = octave-letters
 note-resume = false
-style-sheet-active = false
-style-sheet = ""
 fingerprint-size = 32
 progress-box-width = 0.8
 progress-box-height = 0.3
 progress-box-shown = true
+progress-box-show-cc = true
 progress-note-min = 0
 progress-note-max = 127
 lock-main-window = false
@@ -247,17 +252,22 @@ visibility = true
 
 # [pattern-editor]
 #
-# Settings for play/record for a new pattern. A new pattern is 'Untitled'
-# and has no events. These settings save time in live recording. Valid
-# record-style values: 'merge' (overdub), 'overwrite', 'expand', 'one-shot',
-# and 'one-shot-reset'. 'wrap-around' allows recorded notes to wrap to the
-# pattern start. 'escape-pattern' allows the Esc key to close the pattern
-# editor if not playing or in paint mode. Currently 'notemap' and quantizing
+# 'escape-pattern' allows the Esc key to close a pattern editor if not
+# playing or in paint mode. (Esc exits paint mode or stops playback.)
+#
+# 'apply-to-new-only' makes the next options work only when opening a new
+# pattern.  A new pattern is 'Untitled' and has no events.
+#
+# These settings for play/record for a pattern editor save time in live
+# recording. Valid record-style values: 'merge' or 'overdub', 'overwrite',
+# 'expand', and 'one-shot'. 'wrap-around' allows recorded notes to wrap
+# to the pattern beginning. Currently 'notemap' and quantizing are
 # are mutually exclusive.
 
 [pattern-editor]
 
 escape-pattern = false
+apply-to-new-only = false
 armed = false
 thru = false
 record = false
@@ -267,6 +277,6 @@ notemap = false
 record-style = merge
 wrap-around = false
 
-# End of /home/ahlstrom/.config/seq66/seq66cli.usr
+# End of /home/usr/.config/seq66/seq66cli.usr
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

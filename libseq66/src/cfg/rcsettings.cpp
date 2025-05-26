@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-02-18
+ * \updates       2025-05-25
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -967,6 +967,37 @@ rcsettings::recent_file (int index, bool shorten) const
         auto slashpos = result.find_last_of("/\\");
         if (slashpos != std::string::npos)
             result = result.substr(slashpos + 1, std::string::npos);
+    }
+    return result;
+}
+
+/**
+ * \setter m_recent_files
+ *
+ *  First makes sure the filename is not already present, and removes
+ *  the back entry from the list, if it is full (SEQ66_RECENT_FILES_MAX)
+ *  before adding it.  Now the full pathname is added.
+ *
+ * \param fname
+ *      Provides the full path to the MIDI file that is to be added to
+ *      the recent-files list.
+ *
+ * \return
+ *      Returns true if the file-name was able to be added.
+ *      If false, the file-name might already be in the list, so no need
+ *      to update the UI representing the list.
+ */
+
+bool
+rcsettings::add_recent_file (const std::string & filename)
+{
+    std::string path = get_full_path(normalize_path(filename));
+    bool result = ! m_recent_files.is_in_list(path);
+    if (result)
+    {
+        result = m_recent_files.add(filename);
+        if (result)
+            auto_rc_save(true);                 /* fix on 2023-04-09 by ca  */
     }
     return result;
 }

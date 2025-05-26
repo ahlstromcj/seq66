@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-05-23
+2015-07-10 to 2025-05-26
 
 # Change Log
 
-## [0.99.20] - 2025-05-23
+## [0.99.20] - 2025-05-26
 
 ### Added
 
@@ -45,12 +45,15 @@ Chris Ahlstrom
     -   qsmainwnd.
     -   Sequence recounting after deletion or moving of patterns.
     -   Others, did not keep track.
+-   Enhanced the recent-file handling and auto-rc-save.
 -   contrib/vim-syntax/cpp.vim with added symbols like CSTR.
 -   contrib/vim.rc, changed F8 for fixing Windows quote characters.
 
 ### Fixed
 
 -   Fixed setting the modify flag (asterisk) in recording notes.
+-   Can turn off the auto-save-rc option and preserve that setting
+    at exit.
 -   Weird issue with setting measures in the pattern-editor-in-tab.
 -   Error of connecting the store-palette slot in qseditoptions twice.
 -   The export of files to SMF 0. See the "MIDI Import/Export" section

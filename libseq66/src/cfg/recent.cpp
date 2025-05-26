@@ -89,6 +89,21 @@ recent::~recent ()
     // no code
 }
 
+bool
+recent::is_in_list (const std::string & path)
+{
+    bool result = true;
+    if (! path.empty())
+    {
+        const auto & it = std::find
+        (
+            m_recent_list.cbegin(), m_recent_list.cend(), path
+        );
+        result = it != m_recent_list.end();
+    }
+    return result;
+}
+
 /**
  *  This function is meant to be used when loading the recent-files list from
  *  a configuration file.  Unlike the add() function, this one will not pop

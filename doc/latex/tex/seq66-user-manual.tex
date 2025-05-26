@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2025-03-02
+% \update      2025-05-26
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -92,8 +92,8 @@
 
    \begin{itemize}
       \item \url{https://github.com/ahlstromcj/seq66.git}
+      \item \url{https://ahlstromcj.github.io/}
       \item \url{https://ahlstromcj/github.io/docs/seq66/seq66-user-manual.pdf}
-      \item https://ahlstromcj.github.io/
    \end{itemize}
 
    Feel free to clone or fork it!
@@ -109,6 +109,7 @@
    a live-looping sequencer with an interface similar to a hardware sequencer,
    refactored for newer versions of
    \textsl{C++} for faster and simpler code.
+   Supports the \textsl{GNU} and \textsl{Clang} compilers.
    It drops the
    \textsl{Gtkmm} user-interface in favor of \textsl{Qt 5},
    and has better handling of sets, mute-groups, sessions, configuration files,
@@ -120,7 +121,7 @@
    and Qt style-sheets.
    Be prepared to note some significant differences
    between \textsl{Seq66} and our first reboot, \textsl{Sequencer64}.
-   The basics are the same, though.
+   The basics are similar, though.
 
    \textsl{Seq66} is not a synthesizer.
    It requires hardware or software synthesizers.
@@ -153,17 +154,16 @@
       \item \textbf{Qt} 5 as the standard user-interface offers many benefits:
          \begin{itemize}
             \item A better live frame using Qt push-buttons.
-            \item The main window's size can be change, at start up or
-               by dragging the corners.
+            \item The main window's size can be changed, via start-up
+               options or by dragging the corners.
             \item Palette files to support the colors used for drawing
-               grid, circles, rectangles, and text.
+               grids, circles, rectangles, and text.
             \item Qt style-sheets for control of colors and fonts for many
                user-interface items.
             \item A Qt linear-gradient default style for painting the
                progress boxes, notes, and triggers.
             \item Drag-and-drop support for opening a MIDI file in
-               \textsl{Seq66}. Open a file explorer to find and load a
-               MIDI file.
+               \textsl{Seq66}.
          \end{itemize}
       \item Improved the \textbf{song editor} for laying out patterns
          into a song.
@@ -172,14 +172,15 @@
       \item The \textbf{mutes editor} tab, improves mute-group handling
          and control.
       \item A \textbf{playlist editor} tab with improved flexibility.
-      \item A \textbf{sets editor} tab examine each set.
+      \item A \textbf{sets editor} tab to examine each set.
       \item A \textbf{events editor} tab examine each event.
          Useful to trouble-shoot and fix minor event issues and
          add meta text events.
-      \item A \textbf{session} tab (and Edit / Preference pages) to see that
-         \textsl{Seq66} is running in the desired environment and configuation.
+      \item A \textbf{session} tab and \textbf{Edit / Preference}
+         tabs) to run \textsl{Seq66} in the desired environment
+         and configuation.
       \item \textbf{New/Non Session Manager} support.
-         The sessions tab shows the
+         The \textbf{Sessions} tabs show the
          locations of configuration files for the session.
       \item \textbf{MIDI control/display automation}.
          Control by "launchpad" devices, and display of statuses.
@@ -193,7 +194,7 @@
          some support for international keyboards.
       \item \textbf{Mapping} of port numbers to a consistent set of port names.
       \item Providing for \textbf{routing of MIDI input} events to
-         patterns based on port number or output-channel number.
+         patterns based on port number or channel number.
       \item \textbf{Export songs} to SMF 0 and 1 formats in various ways.
       \item \textbf{Internals}:
          More efficient lookups for using control maps and lambda functions.
@@ -223,10 +224,11 @@
    \begin{itemize}
       \item \textbf{Autotools Build and Install}.
          Configure, make, and install.
+         Works with \textsl{Linux} and \textsl{FreeBSD}.
       \item \textbf{Bootstrap Install}.
-         Generate autotools files and build.
+         Generate autotools files and build settings.
       \item \textbf{OpenSUSE and Fedora}.
-         Specifics for that Linux distro.
+         Specifics for those Linux distros.
       \item \textbf{Qmake-based Install}.
          Optional on Linux, mandatory for Windows.
       \item \textbf{Arch Linux}.

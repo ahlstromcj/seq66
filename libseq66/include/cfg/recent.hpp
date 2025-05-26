@@ -105,6 +105,7 @@ public:
     bool append (const std::string & item);
     bool add (const std::string & item);
     bool remove (const std::string & item);
+    bool is_in_list (const std::string & path);
 
 };          // class recent
 

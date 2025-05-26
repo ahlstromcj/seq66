@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-02-19
+ * \updates       2025-05-25
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -1193,29 +1193,7 @@ public:
 
     void last_used_dir (const std::string & value, bool userchange = true);
 
-    /**
-     * \setter m_recent_files
-     *
-     *  First makes sure the filename is not already present, and removes
-     *  the back entry from the list, if it is full (SEQ66_RECENT_FILES_MAX)
-     *  before adding it.  Now the full pathname is added.
-     *
-     * \param fname
-     *      Provides the full path to the MIDI file that is to be added to
-     *      the recent-files list.
-     *
-     * \return
-     *      Returns true if the file-name was able to be added.
-     */
-
-    bool add_recent_file (const std::string & filename)
-    {
-        bool result = m_recent_files.add(filename);
-        if (result)
-            auto_rc_save(true);                 /* fix on 2023-04-09 by ca  */
-
-        return result;
-    }
+    bool add_recent_file (const std::string & filename);
 
     bool append_recent_file (const std::string & filename)
     {
