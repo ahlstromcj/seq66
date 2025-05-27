@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-25
+ * \updates       2025-05-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -964,6 +964,12 @@ qsmainwnd::qsmainwnd
     load_session_frame();
     ui->tabWidget->setCurrentIndex(Tab_Live);
     ui->tabWidget->setTabEnabled(Tab_Events, false);    /* prevents issues  */
+
+    connect
+    (
+        ui->btnSeq66, SIGNAL(clicked(bool)),
+        this, SLOT(slot_close_externals())
+    );
 
 #if defined SEQ66_USE_SHOW_HIDE_BUTTON
 
@@ -4271,6 +4277,25 @@ qsmainwnd::slot_test ()
      * The code here depends only on what we need to investigate at
      * this time.
      */
+}
+
+/**
+ *  Clicking on the main Seq66 label (actually a push-button)
+ *  closes all open external windows (pattern editor, song editor,
+ *  and external live grid. Also performs the hide function of
+ *  the perfedit button.
+ */
+
+void
+qsmainwnd::slot_close_externals()
+{
+    remove_ex_editors();
+    remove_all_live_frames();
+    if (not_nullptr(m_perfedit))
+    {
+        if (m_perfedit->isVisible())
+            m_perfedit->hide();
+    }
 }
 
 /**

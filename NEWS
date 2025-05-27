@@ -1,13 +1,16 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-05-26
+2015-07-10 to 2025-05-27
 
 # Change Log
 
-## [0.99.20] - 2025-05-26
+## [0.99.20] - 2025-05-27
 
 ### Added
 
+-   Clicking on the Seq66 logo in the main window now closes all
+    open live grids, pattern editors, and song editor windows.
+    The tabbed version are not affected.
 -   Added features to the grid slot popup menu:
     -   Flatten triggers. This uses the pattern triggers to
         regenerate the notes, replacing multiple triggers with one

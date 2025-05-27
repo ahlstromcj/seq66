@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2025-05-15
+% \update      2025-05-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -217,6 +217,24 @@
          MIDI engine.  This is currently always the case on \textsl{Windows}.
    \end{itemize}
 
+\subsubsection{Seq66 Logo}
+\label{subsubsec:introduction_seq66_logo}
+
+   The \textsl{Seq66} logo is actually a button now.
+   When clicked it closes all of the following external windows if they are
+   open. A quick way to clear out the clutter.
+
+   \begin{itemize}
+      \item \textbf{Pattern Editors}.
+         All open pattern editors are closed.
+         The \textbf{Editor} tab is not affected.
+      \item \textbf{Live Grids}.
+         All open live grids are closed.
+      \item \textbf{Song Editor}.
+         The song editor is closed.
+         The \textbf{Song} tab is not affected.
+   \end{itemize}
+
 \subsubsection{Show/Hide Button}
 \label{subsubsec:introduction_show_hide_button}
 
@@ -279,7 +297,8 @@
    The \textsl{play-set} is the current set of patterns to be played.
    Normally, this set holds only the active patterns in the current
    play-screen.
-   However, it can also be configured to include patterns from other sets.
+   However, it can also be configured to include patterns from other sets
+   during playback.
    (See \sectionref{subsec:configuration_rc}.)
 
    The list of
@@ -305,10 +324,10 @@
 
    This drop-down changes the global beats/measure for the song.
    Along with the beat-width setting, this set of values allows
-   for a large number of different time signatures, even crazy ones.
+   for a number of different time signatures.
    \textsl{Warning}: It modifies every pattern in the song, but is not
    otherwise saved in the configuration.
-   Values: \texttt{1 to 16, 32}
+   Values: \texttt{1 to 16,32}.
 
 \subsubsection{Global Beat Width}
 \label{subsubsec:introduction_global_beat_width}
@@ -316,10 +335,12 @@
    This drop-down changes the global beat width (time-signature denominator)
    for the song.
    Along with the beats-per-measure setting, this set of values allows
-   for a large number of different time signatures.
+   for a number of different time signatures.
    \textsl{Warning}: It modifies every pattern in the song, but is not
    otherwise saved in the configuration.
-   Values: \texttt{1 to 16, 32}
+   Because MIDI encodes only beat widths that are a power of 2, the values are
+   limited.
+   Values: \texttt{1, 2, 4, 8, 16,32}
 
 \subsubsection{BBT or HMS Time Display}
 \label{subsubsec:introduction_time_display}
@@ -395,11 +416,11 @@
 \subsubsection{Underrun Indicator}
 \label{subsubsec:introduction_underrun_indicator}
 
-   This text field is empty under normal circumstances, including during
-   playback.  However, if one opens a pattern editor for a pattern with a lot
-   of events, and turns on recording for that pattern, then this field might
-   start flashing numbers, which indicate the
-   current underrun value in microseconds.  This gives an indication that
+   This text field is empty under normal circumstances.
+   However, if one opens a pattern editor for a pattern with a lot
+   of events for playback, then this field might
+   start flashing numbers, which indicate an
+    underrun value in microseconds.  This gives an indication that
    timing of playback might be off a bit, usually less than 10 milliseconds.
    This happens because the event-list is locked during redrawing,
    when recording, to avoid problems when new notes come in.
@@ -418,15 +439,9 @@
 \subsubsection{Set Master Button}
 \label{subsubsec:introduction_set_master_button}
 
-   The Set Master button has been removed.
+   \textsl{The Set Master button has been removed.
    The external window it used to bring up has been replaced
-   by the \textbf{Set Master} tab.
-
-%  This button brings up an external window showing the
-%  panel.  This panel is also available in a center tab.  It is a work in
-%  progress, and doesn't have a whole lot of functionality yet.
-%  It can currently show existing sets in one view, and allow
-%  reordering the sets.
+   by the \textbf{Set Master} tab.}
 
 \subsubsection{Active Set Indicator}
 \label{subsubsec:introduction_active_set_indicator}

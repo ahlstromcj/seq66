@@ -81,35 +81,33 @@ B:B:T and H:M:S format.</string>
        <number>6</number>
       </property>
       <item>
-       <widget class="QLabel" name="seq66Label">
+       <widget class="QPushButton" name="btnSeq66">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="minimumSize">
          <size>
-          <width>72</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>90</width>
-          <height>16777215</height>
+          <width>60</width>
+          <height>24</height>
          </size>
         </property>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <italic>false</italic>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
         <property name="toolTip">
-         <string>Seq66</string>
+         <string>Clicking on the logo will remove all external pattern
+editors and live frames (but not the external song
+editor).</string>
         </property>
         <property name="text">
-         <string notr="true">&lt;font color=&quot;#383838&quot;&gt;Seq66&lt;/font&gt;</string>
+         <string>Seq66</string>
         </property>
-        <property name="textFormat">
-         <enum>Qt::RichText</enum>
+        <property name="flat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -118,13 +116,13 @@ B:B:T and H:M:S format.</string>
         <property name="minimumSize">
          <size>
           <width>14</width>
-          <height>0</height>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>20</width>
-          <height>20</height>
+          <height>24</height>
          </size>
         </property>
         <property name="text">
@@ -252,7 +250,7 @@ or Slave mode.</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>80</width>
+          <width>92</width>
           <height>28</height>
          </size>
         </property>
@@ -319,7 +317,7 @@ the current set.  Modifies the song.</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>60</width>
+          <width>64</width>
           <height>28</height>
          </size>
         </property>
@@ -331,6 +329,9 @@ the current set.  Modifies the song.</string>
         </property>
         <property name="currentIndex">
          <number>-1</number>
+        </property>
+        <property name="maxVisibleItems">
+         <number>17</number>
         </property>
        </widget>
       </item>
@@ -379,7 +380,7 @@ the current set.  Modifies the song.</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>60</width>
+          <width>64</width>
           <height>28</height>
          </size>
         </property>
@@ -733,13 +734,13 @@ the current set.  Modifies the song.</string>
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="hLayoutBottom_1" stretch="1,20,0,0,1,1,1,0,1,0,1">
+     <layout class="QHBoxLayout" name="hLayoutBottom_1" stretch="1,20,0,0,1,1,1,0,0,0,1">
       <item>
        <widget class="QLabel" name="setNameLabel">
         <property name="minimumSize">
          <size>
           <width>76</width>
-          <height>28</height>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -765,7 +766,7 @@ the current set.  Modifies the song.</string>
         <property name="minimumSize">
          <size>
           <width>240</width>
-          <height>28</height>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -795,6 +796,18 @@ the current set.</string>
       </item>
       <item>
        <widget class="QLabel" name="label">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>28</height>
+         </size>
+        </property>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -815,7 +828,13 @@ the current set.</string>
         <property name="minimumSize">
          <size>
           <width>108</width>
-          <height>0</height>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>28</height>
          </size>
         </property>
         <property name="text">
@@ -834,13 +853,13 @@ the current set.</string>
         <property name="minimumSize">
          <size>
           <width>40</width>
-          <height>0</height>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>44</width>
-          <height>24</height>
+          <height>28</height>
          </size>
         </property>
         <property name="font">
@@ -867,7 +886,7 @@ during playback.</string>
         <property name="minimumSize">
          <size>
           <width>60</width>
-          <height>28</height>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -899,7 +918,7 @@ during playback.</string>
         <property name="minimumSize">
          <size>
           <width>56</width>
-          <height>28</height>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -928,11 +947,40 @@ or active external live frame.</string>
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="setHomeButton">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <bold>true</bold>
+          <stylestrategy>PreferDefault</stylestrategy>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Immediately make set 0 active.</string>
+        </property>
+        <property name="text">
+         <string>Set 0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="setResetButton">
         <property name="minimumSize">
          <size>
           <width>24</width>
-          <height>28</height>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -958,34 +1006,11 @@ no matter what sets-mode is in force. </string>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="setHomeButton">
-        <property name="maximumSize">
-         <size>
-          <width>56</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <bold>true</bold>
-          <stylestrategy>PreferDefault</stylestrategy>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string>Immediately make set 0 active.</string>
-        </property>
-        <property name="text">
-         <string>Set 0</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QLabel" name="setNumberLabel">
         <property name="minimumSize">
          <size>
           <width>32</width>
-          <height>28</height>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -1014,7 +1039,7 @@ no matter what sets-mode is in force. </string>
         <property name="minimumSize">
          <size>
           <width>80</width>
-          <height>28</height>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -1055,7 +1080,7 @@ no matter what sets-mode is in force. </string>
           <property name="minimumSize">
            <size>
             <width>32</width>
-            <height>28</height>
+            <height>24</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -1095,7 +1120,7 @@ no matter what sets-mode is in force. </string>
           <property name="minimumSize">
            <size>
             <width>32</width>
-            <height>28</height>
+            <height>24</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -1129,7 +1154,7 @@ no matter what sets-mode is in force. </string>
           <property name="minimumSize">
            <size>
             <width>32</width>
-            <height>28</height>
+            <height>24</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -1157,7 +1182,7 @@ no matter what sets-mode is in force. </string>
           <property name="minimumSize">
            <size>
             <width>32</width>
-            <height>28</height>
+            <height>24</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -1191,7 +1216,7 @@ no matter what sets-mode is in force. </string>
           <property name="minimumSize">
            <size>
             <width>28</width>
-            <height>28</height>
+            <height>24</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -1217,7 +1242,7 @@ input-buss patterns, or all channel patterns.</string>
           <property name="minimumSize">
            <size>
             <width>32</width>
-            <height>28</height>
+            <height>24</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -1257,7 +1282,7 @@ input-buss patterns, or all channel patterns.</string>
           <property name="minimumSize">
            <size>
             <width>28</width>
-            <height>28</height>
+            <height>24</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -1294,7 +1319,7 @@ at start of playback.</string>
           <property name="minimumSize">
            <size>
             <width>32</width>
-            <height>28</height>
+            <height>24</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -1331,7 +1356,7 @@ status.</string>
           <property name="minimumSize">
            <size>
             <width>32</width>
-            <height>28</height>
+            <height>24</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -1357,7 +1382,7 @@ in the Shift of that key.</string>
         <property name="minimumSize">
          <size>
           <width>16</width>
-          <height>28</height>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -1375,14 +1400,14 @@ in the Shift of that key.</string>
        <widget class="QPushButton" name="btnMute">
         <property name="minimumSize">
          <size>
-          <width>56</width>
-          <height>20</height>
+          <width>48</width>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>64</width>
-          <height>16777215</height>
+          <width>56</width>
+          <height>28</height>
          </size>
         </property>
         <property name="font">
@@ -1412,7 +1437,7 @@ all tracks.</string>
         <property name="minimumSize">
          <size>
           <width>40</width>
-          <height>28</height>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -1447,7 +1472,7 @@ all tracks.</string>
         <property name="minimumSize">
          <size>
           <width>40</width>
-          <height>28</height>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -1492,7 +1517,7 @@ Editor triggers.</string>
         <property name="minimumSize">
          <size>
           <width>56</width>
-          <height>28</height>
+          <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -1535,7 +1560,7 @@ Editor triggers.</string>
           <property name="minimumSize">
            <size>
             <width>36</width>
-            <height>28</height>
+            <height>24</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -1566,7 +1591,7 @@ resets to 0.</string>
           <property name="minimumSize">
            <size>
             <width>34</width>
-            <height>28</height>
+            <height>24</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -1598,7 +1623,7 @@ resets to 0.</string>
           <property name="minimumSize">
            <size>
             <width>80</width>
-            <height>28</height>
+            <height>24</height>
            </size>
           </property>
           <property name="maximumSize">
