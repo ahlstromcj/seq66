@@ -70,6 +70,7 @@ Chris Ahlstrom
 -   Some style sheets have been tweaked to fix time/piano-roll
     alignment issues.
 -   Other UI/keystroke fixes, fixes to counting sequences.
+-   Fixed resetting trigger transposition in the Song editor.
 
 ## [0.99.19] - 2025-03-02
 

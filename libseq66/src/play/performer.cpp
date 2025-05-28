@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-05-20
+ * \updates       2025-05-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -6365,6 +6365,11 @@ performer::delete_trigger (seq::number seqno, midipulse tick)
     return result;
 }
 
+/**
+ * ca 2025-05-28. Apply transposition even if 0. Needed for
+ * resetting transposition.
+ */
+
 bool
 performer::transpose_trigger
 (
@@ -6372,16 +6377,13 @@ performer::transpose_trigger
 )
 {
     bool result = false;
-    if (transposition != 0)
+    seq::pointer s = get_sequence(seqno);
+    if (s)
     {
-        seq::pointer s = get_sequence(seqno);
-        if (s)
-        {
-            push_trigger_undo(seqno);
-            result = s->transpose_trigger(tick, transposition);
-            if (result)
-                notify_trigger_change(seqno);
-        }
+        push_trigger_undo(seqno);
+        result = s->transpose_trigger(tick, transposition);
+        if (result)
+            notify_trigger_change(seqno);
     }
     return result;
 }

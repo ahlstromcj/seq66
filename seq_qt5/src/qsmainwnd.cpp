@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-27
+ * \updates       2025-05-28
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -644,8 +644,13 @@ qsmainwnd::qsmainwnd
 
     tooltip_with_keystroke(ui->btnMute, keyname);
     ui->btnMute->setCheckable(true);                /* ok? */
-    if (cb_perf().song_mode())
-        ui->btnMute->setEnabled(false);
+
+    /*
+     * Keep it enabled even in Song mode.
+     *
+     * if (cb_perf().song_mode())
+     *     ui->btnMute->setEnabled(false);
+     */
 
     connect
     (
@@ -1389,11 +1394,20 @@ qsmainwnd::set_song_mode (bool /*songmode*/)
     bool playmode = cb_perf().toggle_song_mode();
     if (playmode)
     {
-        ui->btnMute->setEnabled(true);  /* no longer disabled in Song mode  */
+        /*
+         * No longer disabled in Song mode.
+         *
+         * ui->btnMute->setEnabled(true);
+         */
     }
     else
     {
-        ui->btnMute->setEnabled(true);
+        /*
+         * Always enabled now.
+         *
+         * ui->btnMute->setEnabled(true);
+         */
+
         song_recording(false);
     }
     show_song_mode(playmode);

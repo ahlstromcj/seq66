@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.20
 Chris Ahlstrom
-2019-04-13 to 2025-05-27
+2019-04-13 to 2025-05-28
 
 Hot:
     
@@ -23,6 +23,8 @@ NSM:
 
 Backlog:
 
+    -   Song editor.
+        -   Resetting a trigger transposition to 0 does not work.
     -   Add a light version of glob(3) to use with Windows. In progress
         in the filefunctions module.
     -   Event editor:
@@ -39,6 +41,8 @@ Backlog:
     -   Figure out issue #132, the libasound2 issue.
     -   #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
     -   Recording.
+        -   Turning on record for a pattern makes the bottom record button
+            red, but turning off the record does not make it grey again.
         -   One-shot recording during playback now works.  But one-shot reset
             then makes it act like overdub thereafter (because note-count == 1
             is the flag).

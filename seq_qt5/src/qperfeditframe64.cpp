@@ -696,7 +696,7 @@ qperfeditframe64::reset_transpose ()
 }
 
 /**
- *  Handles updates to the tranposition value.  This value can be used to
+ *  Handles updates to the transposition value.  This value can be used to
  *  transpose the whole song, or just one trigger, depending on the action
  *  selected.
  */

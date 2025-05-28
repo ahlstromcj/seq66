@@ -823,7 +823,7 @@ for more editing room.</string>
        <property name="toolTip">
         <string>Transposition value for Trigger Transpose.
 Range: -60 to +60 (5 octaves each way).
-Apply it to a trigger via Shift-Right click.
+Apply it to a trigger via Shift-Left click.
 To reset, set to 0 and apply it.</string>
        </property>
       </widget>

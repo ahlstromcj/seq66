@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-05-15
+% \update      2025-05-28
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -29,9 +29,9 @@
    The \textbf{File} menu is used to save and load files in
    Standard MIDI Format 0 or 1, \textsl{Cakewalk} "WRK",
    and \textsl{Seq66} MIDI files.
-   It also supports a list of recent files, and (new with version 0.98.3)
-   sub-menus for import and export functions, which have expanded quite a bit.
-
+   It also supports a list of recent files, and
+   sub-menus for import and export functions,
+   which have expanded quite a bit.
    The \textsl{Seq66} \textbf{File} menu contains the sub-items shown below.
    The next few sub-sections discuss
    the sub-items in the \textbf{File} menu.
@@ -138,7 +138,7 @@
    each listing a number of MIDI songs.
    These playlists and songs can be
    selected by the arrow keys or by MIDI control,
-   and are displaed and editiable in the \textsl{Playlist} tab
+   and are displayed and editiable in the \textsl{Playlist} tab
    in the main window.
    See \sectionref{sec:playlist}.
 
@@ -168,7 +168,7 @@
    This list is saved in the \texttt{[recent-files]} section of the
    'rc' configuration file.
    In the 'rc' file, the full path to the file-name is stored.
-   This path is in "UNIX" format, using the forward slash, or solidus,
+   This path is in "UNIX" format, using the forward slash (solidus),
    as the path separator, even in \textsl{Windows}.
    The \texttt{full-paths} option can be set to show the full path in the
    recent-files drop-down menu.
@@ -197,6 +197,8 @@
    The \textbf{Save As} menu entry saves a song under a different name.
    It opens up the following standard file dialog, very similar to the 
    \textbf{File Open} dialog, with an additional \textbf{Name} text-edit field.
+   The exact look of the dialog depends on system Qt settings or the current
+   Qt theme.
 
 \begin{figure}[H]
    \centering 
@@ -229,7 +231,7 @@
    \textsl{Seq66} files.
 
    \index{Meta events}
-   Meta events are now partially handled by \textsl{Seq66}.
+   Meta events are now handled by \textsl{Seq66}.
    Meta events \textbf{Set Tempo}
    and \textbf{Time Signature}
    are now fully supported.
@@ -240,7 +242,7 @@
    They cannot be edited in \textsl{Seq66}, but they are not lost.
    (Channel and port meta events are
    considered \textsl{obsolete} in the MIDI standard.)
-   Lastly, various meta text events, such as \textbf{Lyric},
+   Various meta text events, such as \textbf{Lyric},
    can be edited and saved.
 
 \subsubsection{Menu / File / Import / Project Configuration}
@@ -325,9 +327,9 @@
 \subsubsection{Menu / File / Export / SMF 0}
 \label{subsubsec:menu_file_export_smf_0}
 
-   This feature is new since version 0.97.  It allows all tracks in the song to
-   be consolidated and exported in MIDI's SMF 0 format.  It follows the same
-   rules as song export.
+   This feature allows all tracks in the song to
+   be consolidated and exported in MIDI's SMF 0 format.
+   It follows rules similar to song export.
    See \sectionref{subsubsec:midi_export_file_export_smf_0}.
 
 \subsection{Menu / Edit}
@@ -355,7 +357,7 @@
    to allow viewing and tweaking MIDI I/O ports, displays options, JACK
    options, and more.
    It can also be brought up by \texttt{Ctrl-P}.
-   It is discussed in detail in a later section.
+   It is discussed in \sectionref{subsubsec:menu_edit_preferences}.
 
    \itempar{Song Editor}{edit!song editor}
    \index{performance editor}
@@ -364,7 +366,7 @@
    Note that the song editor is also available in the
    \textbf{Song} tab in the main window.
    The song/performance editor allows specifying exact numbers of loop replays;
-   this provides a canned rendition of the MIDI tune.
+   this provides a canned rendition of all the patterns in theMIDI tune.
 
    \itempar{Apply Song Transpose}{edit!song transpose}
    \index{song transpose}
@@ -375,9 +377,9 @@
    Normally, drum tracks are \textsl{not} transposable.
    For the setting of global song transpose, see
    \sectionref{sec:song_editor}.
-   Note that transpose can be enabled in the
-   in the sequence editor
-   (see \sectionref{sec:pattern_editor}).
+%  Note that transpose can be enabled in the
+%  in the sequence editor
+%  (see \sectionref{sec:pattern_editor}).
 
    \itempar{Clear Mute Groups}{edit!clear mute groups}
    \index{mute groups}

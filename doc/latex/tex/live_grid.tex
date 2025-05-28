@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2025-05-27
+% \update      2025-05-28
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -348,7 +348,8 @@
    This push-button shows the current time during playback. 
    It can be shown in BBT (bars:beats:ticks) or HMS (hours:minutes:seconds),
    which can be switched by clicking this button.
-   (The \textbf{BBT/HMS} at the bottom of the window has been removed.)
+   \textsl{The \textbf{BBT/HMS} button that was
+   at the bottom of the window has been removed.}
 
 \subsubsection{Beat Indicator}
 \label{subsubsec:introduction_beat_indicator}
@@ -446,7 +447,8 @@
 \subsubsection{Active Set Indicator}
 \label{subsubsec:introduction_active_set_indicator}
 
-   This read-only text field shows the set number of the currently active set.
+   This read-only text field shows the set number of the currently active set
+   and the total number of sets.
    One can open a number of external \textsl{Live Frames} by
    \textsl{shift-left-clicking} on pattern slots.
    The currently active set is then the
@@ -455,11 +457,10 @@
    Note that there is always at least one set in a \textsl{Seq66}
    tune.
 
-\subsubsection{Set 0}
+\subsubsection{Set 0 Selector}
 \label{subsubsec:introduction_set_zero}
 
-   This button provides a fast way to get back to set 0, without clicking the
-   mouse a bunch of times.
+   This button provides a fast way to get back to set 0.
    It is useful when creating an external live grid
    (see \sectionref{fig:multiple_live_grids}),
    which currently also sets the main grid to the same set.
@@ -469,9 +470,12 @@
 \subsubsection{Set Changer}
 \label{subsubsec:introduction_set_changer}
 
-   This spin-box allows showing a different set in the main windows.
+   This spin-box moves the main window to another set.
    This set can be modified by adding new patterns, changing its name, or
    importing other MIDI files into the current set.
+   Normally, changing the set silences the current set.
+   But there are other options for a "sets mode".
+   See \sectionref{paragraph:menu_edit_preferences_play_options}.
 
 \subsection{Main Bottom Controls, Second Row}
 \label{subsec:introduction_main_bottom_controls_2}
@@ -493,7 +497,7 @@
       \item \textbf{Record Button}
       \item \textbf{L/R Loop}
       \item \textbf{Live Song Record}
-      \item \textbf{Keep Queue}
+      \item \textbf{Keep Queue (Q)}
       \item \textbf{Mute Group Learn}
       \item \textbf{Developer Test}
       \item \textbf{Mute} (Toggle Mute Status)
@@ -563,14 +567,16 @@
       \item \textbf{Red}.
          This color indicates the normal recording mode, which toggles only a
          single pattern for recording.
-         This button is enabled and colored red only if a pattern is the last
-         one selected in the grid.
+         This button is enabled and colored red only if a pattern is
+         in recording mode.
       \item \textbf{Yellow}.
          This color indicates the record-by-channel recording mode,
          which toggles, for recording, all patterns that have an
          output channel set.
          Incoming events that have a channel nybble are routed to that
          pattern.
+         However, there must already be a pattern in that slot.
+         See \sectionref{paragraph:menu_edit_preferences_midi_input}.
       \item \textbf{Green}.
          This color indicates the record-by-buss recording mode,
          which toggles, for recording, all patterns that have an
@@ -580,6 +586,7 @@
          menu, but only if
          \textbf{Edit / Preferences / MIDI Input / Record into patterns by bus}
          is enabled.
+         See \sectionref{paragraph:menu_edit_preferences_midi_input}.
    \end{itemize}
 
    These modes are selected in the 'rc' file as described in
@@ -589,16 +596,16 @@
 \subsubsection{L/R Loop}
 \label{subsubsec:introduction_loop_button}
 
-   This button has been added to the main window.
-   It also appears in the "external" version of the song editor.
-   This reflects that the \textbf{L/R} loop markers in the song editor can now
+   This button also appears in the "external" version of the Song editor.
+   This looping mechanism is also available in Live mode as well.
+   The \textbf{L/R} loop markers in the song editor can now
    be used in the pattern editor as well.  This new feature makes it easier to
    focus in on a pattern and tinker repeatedly with the same small section.
    In addition, looping can now be done in both the Live and Song modes of
    playback.
 
    \index{loop mode}
-   Activates loop mode. When play is activated, plays the song and loop
+   It activates loop mode; when play is active, it plays the song and loops
    between the
    \index{L marker}
    \index{R marker}
@@ -611,7 +618,6 @@
    and right mouse clicks, respectively, in the time/measures ruler.
    Furthermore, the \textbf{L/R} markers can also be set in a pattern editor,
    where they can be used to focus in on a small section of notes.
-   Lastly, this looping mechanism is also available in Live mode as well.
 
 \subsubsection{Live Song Record}
 \label{subsubsec:introduction_live_record_button}
@@ -630,7 +636,7 @@
    causes recording immediately after starting playback.
    This feature is useful in avoid delay at start up.
 
-\subsubsection{Keep Queue}
+\subsubsection{Keep Queue (Q)}
 \label{subsubsec:introduction_keep_queue_button}
 
    Puts the application into a "sticky" queue mode.
@@ -677,14 +683,14 @@
    \index{keys!Home}
    By default, the \texttt{Home} key is configured for this purpose.
 
-   There is also a setting in the 'mutes' file called
-   \texttt{mute-group-selected}.  If this value is set to a value from 0 to 31,
+   There is a setting in the 'mutes' file called
+   \texttt{mute-group-selected}.
+   If this value is set to a value from 0 to 31,
    then that mute group will be automatically applied when
    \textsl{Seq66} starts up.
-   This is useful with the loading of the most-recent MIDI file (which is also
-   a feature of \textsl{Seq66}.
-   Also see the section about the "mute master" tab,
-   \sectionref{sec:mutes_master}.
+   This is useful with the loading of the most-recent MIDI file (which is
+   another feature of \textsl{Seq66}).
+   Also see \sectionref{sec:mutes_master}.
 
 \subsubsection{Developer Test}
 \label{subsubsec:introduction_developer_test_button}
@@ -695,14 +701,14 @@
 \subsubsection{Toggle Mute Status}
 \label{subsubsec:introduction_toggle_mute_status_button}
 
-   The \textbf{Mute}  button toggles the mute/armed status of all of the
+   The \textbf{Mute}
+   toggles the mute/armed status of all of the
    patterns in the current set.
    Works the same as the
-   \textbf{Edit / Toggle All Tracks} menu or the hard-wired
-   \texttt{Ctrl-T} key.
-   There is also an automation control entry for it, associated by
-   default with \texttt{F8}.
-   As of version 0.99.16, it is no longer disabled in Song Mode.
+   \textbf{Edit / Toggle All Tracks} menu, the hard-wired
+   \texttt{Ctrl-T} key, or
+   the automation control entry for it,
+   \texttt{F8} by default.
 
 \subsubsection{Song Editor}
 \label{subsubsec:introduction_song_editor_button}
@@ -749,10 +755,8 @@
 \subsubsection{BBT/HMS Toggle (removed)}
 \label{subsubsec:introduction_time_format_toggle_button}
 
-   The time display has been converted to a button, and click it will
-   switch the format. So the BBT/HMS Toggle button
-   \textsl{has been removed}.
-   See the top bar for the time display/button.
+   The BBT/HMS toggle button \textsl{has been replaced}.
+   See \sectionref{subsec:introduction_main_top_controls}.
 
 %  Toggles the format of the current time displayed during playback. 
 %  It can be shown in B:B:T (bars:beats:ticks) or H:M:S (hours:minutes:seconds).
@@ -763,9 +767,8 @@
    Tap this button with a regular beat to determine the beats-per-minute of the
    tapping.  With each tap, the counter on the button increments and the BPM is
    recalculated.  Stop tapping for a few seconds to reset the counter.
-   By default, the \texttt{F9} key operates this function, but it
-   There is also a MIDI-control slot for this function, and
-   \texttt{F9} is the default key for this function.
+   By default, the \texttt{F9} key also operates this function, and
+   there is also a MIDI-control slot for it.
 
 \subsubsection{Beats Per Minute Control}
 \label{subsubsec:introduction_bpm_control}
