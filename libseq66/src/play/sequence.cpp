@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-05-20
+ * \updates       2025-05-29
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -7062,6 +7062,7 @@ sequence::apply_song_transpose ()
                 er.transpose_note(transpose);
         }
         set_dirty();
+        modify();
     }
 }
 

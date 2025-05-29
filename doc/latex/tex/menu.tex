@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-05-28
+% \update      2025-05-29
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -373,10 +373,13 @@
    Selecting this item applies the global song transposition value to
    all sequences / patterns marked as transposable.
    This actively changes the note / pitch value of all note and aftertouch
-   events in the pattern.
-   Normally, drum tracks are \textsl{not} transposable.
-   For the setting of global song transpose, see
+   events in every pattern.
+   The change can range from -12 semitones to 12 semitones.
+   For the setting of the global song transpose value, see
    \sectionref{sec:song_editor}.
+   Normally, drum tracks are \textsl{not} transposable.
+   This can be set by clicking the "transposable" button in the
+   pattern editor.
 %  Note that transpose can be enabled in the
 %  in the sequence editor
 %  (see \sectionref{sec:pattern_editor}).
@@ -384,7 +387,7 @@
    \itempar{Clear Mute Groups}{edit!clear mute groups}
    \index{mute groups}
    A feature of \textsl{Seq66} is that the mute groups
-   are saved in both the 'rc' file \textsl{and} in the "MIDI" file.
+   can be saved in both the 'rc' file \textsl{and} in the "MIDI" file.
    This menu entry clears them. If this resulted in any mute-group sequences
    status being set to false, then the user is prompted to save the MIDI
    file, so that it will no longer have any
@@ -415,7 +418,7 @@
    \index{toggle all}
    This option toggles the mute/armed status of \textbf{all} tracks.
    It is useful mostly \textbf{Live} mode, which overrides \textbf{Song}
-   mode even if the Song Editor is focussed.
+   mode even if the Song Editor is focused.
    The hard-wired keyboard short-cut for this action is \texttt{Ctrl-T}.
 
    \itempar{Copy Current Set}{edit!copy set}
@@ -435,7 +438,7 @@
    \textsl{overwriting all patterns} already in the set.
    Also note that the set clipboard can be pasted after a
    \textbf{File / New} or \textbf{File / Open},
-   to copy it to another file.
+   to copy it into another file.
 
 \subsubsection{Menu / Edit / Preferences}
 \label{subsubsec:menu_edit_preferences}
@@ -445,10 +448,11 @@
    It allows one to set MIDI clocking, MIDI Input, display tweaks, minor
    playback options, and some JACK parameters.
 
-  Configuration items not (yet) implemented in \textbf{Preferences} are
-      incoming MIDI events to control the sequencer;
-      what keys are mapped to functions;
-      how the mouse works, and a few other.
+   Configuration items implemented in \textbf{Preferences} are
+   incoming MIDI events to control the sequencer;
+   outgoing MIDI events to light up the display on a MIDI controller;
+   what keys are mapped to functions;
+   how the mouse works, and a few others.
    The MIDI and Key controls, far more numerous than in \textsl{Seq24}, have
    been consolidated into a 'ctrl' file and are fairly easy to edit with a text
    editor.
@@ -497,6 +501,9 @@
    MIDI output busses that \textsl{Seq66} can drive.
    One needs to use a JACK or ALSA MIDI
    connection application to connect a device on each of those outputs.
+   (But \textsl{Seq66} itself can connect to another instance of
+   \textsl{Seq66}. See \sectionref{sec:recording_seq_to_seq}.
+
    The fact that the the buss names can
    start with different numbers, depending on the system setup, can complicate
    the playing of MIDI in this manner.  Also, the 'usr' configuration file can

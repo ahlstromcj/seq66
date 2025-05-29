@@ -1,76 +1,101 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-05-27
+2015-07-10 to 2025-05-29
 
 # Change Log
 
-## [0.99.20] - 2025-05-27
+## [0.99.20] - 2025-05-29
 
 ### Added
 
--   Clicking on the Seq66 logo in the main window now closes all
-    open live grids, pattern editors, and song editor windows.
-    The tabbed version are not affected.
--   Added features to the grid slot popup menu:
-    -   Flatten triggers. This uses the pattern triggers to
-        regenerate the notes, replacing multiple triggers with one
-        long one (may need some work yet). Similar to Song Export,
-        but for one pattern, and no export is done.
-    -   Export pattern. Saves a single track to a new file, at
-        pattern number 0. (May need some work yet).
--   A timed error prompt (instead of OK/Remap and restart) when
-    running via NSM; see qsmainwnd and qt5nsmanager.
--   An ALSA/JACK label to JACK preferences tab, same as in mainwnd.
--   Control/pitch events now show up in pattern-slot progress box.
-    Can be disabled via 'usr' [user-ui-tweaks] progress-box-show-cc
-    = false.
--   Added some horizontal dotted lines to mark the 32, 64, and 96
-    level (of items such as velocity).
--   Added display of the pitch-bend in semitones in the event
-    editor. It currently assumes a range of +-2 semitones.
--   Added a 'usr' option to enable/disable automatic conversion of
-    an SMF 0 MIDI file to SMF 1.
--   Some configuration files weren't setting up for saving due to
-    old versions being present.
--   A column in the event editor shows the bus number that the
-    event came in on. Not saved with the event, however.
--   Documentation of changes and additional features in the
-    user manual.
+-   Main window and grid.
+    -   Clicking on the Seq66 logo in the main window now closes all
+        open live grids, pattern editors, and song editor windows.
+        The tabbed version are not affected.
+    -   Added features to the grid slot popup menu:
+        -   Flatten triggers. This uses the pattern triggers to
+            regenerate the notes, replacing multiple triggers with one
+            long one (may need some work yet). Similar to Song Export,
+            but for one pattern, and no export is done.
+        -   Export pattern. Saves a single track to a new file, at
+            pattern number 0. (May need some work yet).
+    -   Control/pitch events now show up in pattern-slot progress box.
+        Can be disabled via 'usr' [user-ui-tweaks] progress-box-show-cc
+        = false.
+    -   A timed error prompt (instead of OK/Remap and restart) when
+        running via NSM; see qsmainwnd and qt5nsmanager.
+-   Pattern editor.
+    -   Added some horizontal dotted lines to the data pane to mark the
+        32, 64, and 96 level (of items such as velocity).
+-   Song editor. No additional functionality.
+-   Event editor.
+    -   Added display of the pitch-bend in semitones in the event
+        editor. It currently assumes a range of +-2 semitones, a
+        MIDI default.
+    -   A column in the event editor shows the bus number that the
+        event came in on. Not saved with the eevent, however.
+-   Preferences dialog.
+    -   An ALSA/JACK label to JACK preferences tab, same as in mainwnd.
+-   Import/Export
+    -   Added a 'usr' option to enable/disable automatic conversion of
+        an SMF 0 MIDI file to SMF 1.
+-   Documentation.
+    -   Changes, fixes, and additional features in the user manual.
 
 ### Changed
 
--   Nested editing and copy/paste menus in Edit and Track submenus.
--   Many minor tweaks to comments and appearance.
-    -   Thick line between sets in the song editor.
-    -   Record indicator supports gradient brush.
+-   Main window and grid.
     -   A pattern with a color shows that color even if empty.
+    -   Made the button heights uniform in all Qt styles (so far).
+-   Pattern editor.
+    -   Nested editing and copy/paste menus into Edit and Track
+        submenus.
+    -   Record indicator supports a gradient brush.
+-   Song editor.
+    -   Thick line between sets in the song editor.
+    -   Thick line at the end of a song.
+-   Event editor. No changes; see "Added".
+-   Preferences dialog.
+    -   Enhanced the recent-file handling and auto-rc-save.
+-   Many other minor tweaks to comments and appearance.
+-   Contrib files.
+    -   contrib/vim-syntax/cpp.vim with added symbols like CSTR.
+    -   contrib/vim.rc, changed F8 for fixing Windows quote characters.
 -   Coalescing common code.
     -   qsmainwnd.
     -   Sequence recounting after deletion or moving of patterns.
-    -   Others, did not keep track.
--   Enhanced the recent-file handling and auto-rc-save.
--   contrib/vim-syntax/cpp.vim with added symbols like CSTR.
--   contrib/vim.rc, changed F8 for fixing Windows quote characters.
+    -   More, did not keep track.
 
 ### Fixed
 
--   Fixed setting the modify flag (asterisk) in recording notes.
--   Can turn off the auto-save-rc option and preserve that setting
-    at exit.
--   Weird issue with setting measures in the pattern-editor-in-tab.
--   Error of connecting the store-palette slot in qseditoptions twice.
--   The export of files to SMF 0. See the "MIDI Import/Export" section
-    of the user manual for provisos.
--   The movement of patterns in the grid slot.
--   The plotting of pitchbend data has been made correct.
--   The broken painting of notes with the mouse.
--   Enhanced sequence::partial\_assign(), adding missing members.
--   Pasting a pattern now sets the pattern number to the slot
-    receiving the pattern.
--   Some style sheets have been tweaked to fix time/piano-roll
-    alignment issues.
--   Other UI/keystroke fixes, fixes to counting sequences.
--   Fixed resetting trigger transposition in the Song editor.
+-   Main window and grid.
+    -   The movement of patterns in the grid slot.
+    -   Fixed setting the modify flag (asterisk) in recording notes.
+    -   Fixed global transpose and it now sets "modify".
+    -   Other UI/keystroke fixes, fixes to counting sequences.
+-   Pattern editor.
+    -   Weird issue with setting measures in the pattern-editor-in-tab.
+    -   The plotting of pitchbend data has been made correct.
+    -   The broken painting of notes with the mouse.
+    -   Enhanced sequence::partial\_assign(), adding missing members.
+    -   Pasting a pattern now sets the pattern number to the slot
+        receiving the pattern.
+    -   Some style sheets have been tweaked to fix time/piano-roll
+        alignment issues.
+-   Song editor.
+    -   Fixed resetting trigger transposition in the Song editor.
+-   Event editor. No fixes; see "Added".
+-   Preferences dialog.
+    -   Can turn off the auto-save-rc option and preserve that setting
+        at exit.
+    -   Error of connecting the store-palette slot in qseditoptions
+        twice.
+-   Import/Export
+    -   The export of files to SMF 0. See the "MIDI Import/Export"
+        section of the user manual for provisos.
+-   Configuration files.
+    -   Some configuration files weren't setting up for saving due to
+        old versions being present.
 
 ## [0.99.19] - 2025-03-02
 

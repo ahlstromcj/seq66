@@ -23,8 +23,9 @@ NSM:
 
 Backlog:
 
-    -   Song editor.
-        -   Resetting a trigger transposition to 0 does not work.
+    -   Transpose.
+        -   Global transpose and Apply Song Transpose.  How does it to work?
+        -   It does not set modify.
     -   Add a light version of glob(3) to use with Windows. In progress
         in the filefunctions module.
     -   Event editor:

@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Date    2020-11-25
-# Updated 2022-09-26 (Pi day! No more.)
+# Updated 2025-05-29
 #
 # YOSHPATH="/usr/bin"
 #
@@ -12,30 +12,97 @@ YOSHPATH="/usr/bin"
 YOSHIMI="yoshimi"
 OPTIONS=""
 REPOPATH="Home/ca/mls/git"
-CFGPATH="$HOME/$REPOPATH/yoshimi-cookbook/sequencer64/b4uacuse"
-DOHELP="no"
+CFGPATH=""
+DEFCFGPATH="$HOME/$REPOPATH/yoshimi-cookbook/sequencer64/b4uacuse"
+DOSTATE="no"
+USECODEC="no"
+STATEFILE="yoshimi-b4uacuse-gm.state"
+STATEARG=""
 
-if [ "$1" == "latest" ] ; then
-    YOSHPATH="/usr/local/bin"
-    YOSHIMI="yoshimi-1.7.2rc1"
-    shift
+# USELATEST="no"
+
+if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
+
+   cat << E_O_F
+Usage v. 2025-05-29
+
+   ystart [ options ] Start the Yoshimi software synthesizer.
+
+Options:
+
+   --alsa           Use ALSA for both MIDI and audio.
+   --jack           Use JACK for both MIDI and audio.
+   --ja             Use JACK for MIDI and ALSA for audio.
+   --codec          Use ALSA for both, but use the CODEC device.
+   --cfgpath dir    Set the Yoshimi configuration directory.
+   --b4             Set the configuration directory to:
+        $DEFCFGPATH
+                    and use the state file $STATEFILE.
+
+Default command:
+
+    $YOSHPATH/$YOSHIMI $OPTIONS
+    
+E_O_F
+
+exit 0
+
+else
+
+   while [ "$1" != "" ] ; do
+
+      case "$1" in
+
+         --alsa)
+            OPTIONS="--alsa-midi --alsa-audio"
+            ;;
+
+         --jack)
+            OPTIONS="--jack-midi --jack-audio --autostart-jack"
+            ;;
+
+         --ja)
+            OPTIONS="--jack-midi --alsa-audio --autostart-jack"
+            ;;
+
+         --codec)
+            OPTIONS="--alsa-midi --alsa-audio=CODEC"
+            ;;
+
+         --cfgpath)
+            shift
+            CFGPATH="$1"
+            ;;
+
+         --b4)
+            shift
+            CFGPATH="$DEFCFGPATH"
+            DOSTATE="yes"
+            ;;
+
+         *)
+            echo "? Unsupported option; --help for more information"
+            exit 1
+            ;;
+
+      esac
+      shift
+
+   done
+
 fi
 
-if [ "$1" == "jack" ] ; then
-    OPTIONS="-j -J"
-elif [ "$1" == "alsa" ] ; then
-    OPTIONS="-a -A"
-elif [ "$1" == "A" ] ; then
-    OPTIONS="--alsa-midi --alsa-audio=CODEC"
-elif [ "$1" == "jA" ] ; then
-    OPTIONS="-j -A"
-elif [ "$1" == "help" ] ; then
-    echo "Options: jack alsa A jA"
-    DOHELP="yes"
-fi
+# if [ "USELATEST" == "yes" ] ; then
+#     YOSHPATH="/usr/local/bin"
+#     YOSHIMI="yoshimi-1.7.2rc1"
+#     shift
+# fi
 
-if [ "$DOHELP" == "no" ] ; then
-echo "Running $YOSHPATH/$YOSHIMI $OPTIONS --state=$CFGPATH/yoshimi-b4uacuse-gm.state"
-$YOSHPATH/$YOSHIMI $OPTIONS --state=$CFGPATH/yoshimi-b4uacuse-gm.state &
+if [ "$DOSTATE" == "yes" ] ; then
+    STATEARG="--state=$CFGPATH/$STATEFILE"
+    echo "Running $YOSHPATH/$YOSHIMI $OPTIONS $STATEARG"
+        exec $YOSHPATH/$YOSHIMI $OPTIONS --state=$STATEARG # &
+else
+    exec $YOSHPATH/$YOSHIMI $OPTIONS # &
 fi
 

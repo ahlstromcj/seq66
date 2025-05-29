@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2025-05-14
+ * \updates       2025-05-29
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -71,12 +71,13 @@ namespace seq66
 
 /*
  * Offloads from the app limits header that provide a sanity check for
- * transposition values.  Also see the tranposition functions in the trigger
- * class.
+ * transposition values.  Also see the transposition functions in the trigger
+ * class. ca 2025-05-29: Was backwards, and now we restrict them to 5
+ * octaves.
  */
 
-const int c_transpose_down_limit = c_notes_count / 2;
-const int c_transpose_up_limit = -c_transpose_down_limit;
+const int c_transpose_down_limit = -60; /* c_notes_count / 2                */
+const int c_transpose_up_limit   =  60; /* -c_transpose_down_limit          */
 
 /*
  * Forward references.
@@ -603,7 +604,9 @@ private:                            /* key, midi, and op container section  */
     setmapper m_set_mapper;
 
     /**
-     *  Holds the global MIDI transposition value.
+     *  Holds the global MIDI transposition value. Restricted to plus or minus
+     *  60, but the drop-down in the perf editor limits it to plus or minus
+     *  12.
      */
 
     int m_transpose;
@@ -2421,7 +2424,7 @@ public:
 
     /**
      * \setter m_transpose
-     *      For sanity's sake, the values are restricted to +-64.
+     *      For sanity's sake, the values are restricted to +-60.
      */
 
     void set_transpose (int t)
@@ -2888,7 +2891,7 @@ public:
     bool get_trigger_state (seq::number seqno, midipulse tick) const;
     bool add_trigger (seq::number seqno, midipulse tick, midipulse snap);
     bool delete_trigger (seq::number seqno, midipulse tick);
-    bool transpose_trigger (seq::number, midipulse droptick, int tranposition);
+    bool transpose_trigger (seq::number, midipulse droptick, int transposition);
     bool add_or_delete_trigger (seq::number seqno, midipulse tick);
     bool split_trigger
     (
