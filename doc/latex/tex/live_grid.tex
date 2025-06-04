@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2025-05-30
+% \update      2025-06-03
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -101,7 +101,7 @@
 \label{subsubsec:introduction_main_tabs_editor}
 
    The \textbf{Pattern Editor} allows for the recording and editing of
-   notes and other MDII events.
+   notes and other MIDI events.
    It can be shown in the \textbf{Editor} tab or in an
    external window.  When opened in the tab, the pattern editor is compressed
    vertically by reducing the height of the "data" area and removing some
@@ -402,6 +402,8 @@
 \subsubsection{Set Name}
 \label{subsubsec:introduction_mg}
 
+   Each of the 32 available screen-sets can be given a name by entering it
+   into this field.  This name is saved with the MIDI file.
    This text field shows the name of the current set, and also allows editing
    the set name.
    The existing sets can be seen in the \textbf{Sets} tab.
@@ -429,9 +431,10 @@
 \subsubsection{Set Reset ("!")}
 \label{subsubsec:introduction_set_reset}
 
-   This small button with an exclamation point
-   to the right of the set name is meant to clear
-   out all playing sets, and make only the current set the playing set.
+   \textsl{Seq66} has a new feature whereby multiple sets can play at once.
+   This button, an exclamation point, will reset the playback to the patterns
+   in the current set.
+   It clears all playing sets, and makes only the current set the playing set.
    This button is useful when in "all-sets" mode or when sets get added
    automatically via the "additive" mode, so that multiple sets are playing
    at once.
@@ -470,6 +473,9 @@
 \subsubsection{Set Changer}
 \label{subsubsec:introduction_set_changer}
 
+   This spin widget selects the current screen-set.  The values in this
+   field range from 0 to 31 (less if the set-size is a larger value),
+   and default to 0.
    This spin-box moves the main window to another set.
    This set can be modified by adding new patterns, changing its name, or
    importing other MIDI files into the current set.
@@ -480,6 +486,11 @@
 \subsection{Main Bottom Controls, Second Row}
 \label{subsec:introduction_main_bottom_controls_2}
 
+   The bottom panel of the main window provides ways to control the
+   overall playback of the song.
+   It has changed quite a bit over the last few
+   versions of \textsl{Seq66}.
+%  Refer to the diagram of the whole window, for now.
    Here is the second row and contents:
 
 \begin{figure}[H]
@@ -490,7 +501,7 @@
 \end{figure}
 
    \begin{itemize}
-      \item \textbf{Panic}
+      \item \textbf{Panic!}
       \item \textbf{Stop}
       \item \textbf{Pause}
       \item \textbf{Play}
@@ -519,7 +530,8 @@
 \subsubsection{Panic}
 \label{subsubsec:introduction_panic_button}
 
-   This button causes playback to stop, all patterns to mute, and flushes the
+   This button causes playback to stop, all patterns to mute, sends
+   Note Off messages for all notes, and flushes the
    MIDI buss.
    There is a keystroke control and a MIDI control
    for this automation operation, plus
@@ -528,10 +540,17 @@
 \subsubsection{Stop}
 \label{subsubsec:introduction_stop_button}
 
-   This button stops playback and rewinds to the beginning of the song.
+   This red square button stops playback and
+   rewinds to the beginning of the song.
+   \index{keys!esc (stop)}
    By default, the \texttt{Esc} key operates this function,
    and there is both a MIDI-control slot and a MIDI-announcement slot
    available for it.
+   The \texttt{Space} keystroke will do the same thing if playback is in
+   progress; it is effectively a playback toggle key.
+   This key is also
+   hardwired to pause and start playback in the pattern editor and the song
+   editor.
 
 \subsubsection{Pause}
 \label{subsubsec:introduction_pause_button}
@@ -539,14 +558,16 @@
    This button stops playback, but does not rewind to the beginning of the
    song.  It also resumes playback at the same point as the pause.  By default,
    the \texttt{Period} key operates this function, and there is a MIDI-control
-   slot and a MIDI-announcement slot available for it.  This key is also
+   slot and a MIDI-announcement slot available for it.
+   This key is also
    hardwired to pause and start playback in the pattern editor and the song
    editor.
 
 \subsubsection{Play}
 \label{subsubsec:introduction_play_button}
 
-   This button starts playback, either at the beginning or at the pause point.
+   This green triangular button starts playback, either at the
+   beginning or at the pause point.
    Also called the "start button".
    By default, the \texttt{Space} key operates this function,
    and there is both a MIDI-control slot and a MIDI-announcement slot
@@ -557,7 +578,8 @@
 \subsubsection{Record Button}
 \label{subsubsec:introduction_record_button}
 
-   This button turns on recording for the various kinds of recording
+   This red circular button is normally disabled.
+   It turns on recording for the various kinds of recording
    described in \sectionref{sec:recording}.
    Its color indicates the record-by feature in force:
 
@@ -573,6 +595,8 @@
          This color indicates the record-by-channel recording mode,
          which toggles, for recording, all patterns that have an
          output channel set.
+         This mode allows events to be redirected to the sequence
+         whose number is the channel number (0-15) of the event.
          Incoming events that have a channel nybble are routed to that
          pattern.
          However, there must already be a pattern in that slot.
@@ -582,6 +606,9 @@
          which toggles, for recording, all patterns that have an
          input bus set. This button is green only if there is at least
          one such pattern.
+         This mode allows events to be redirected to the
+         sequence whose number is the
+         buss number (0-31) of the event.
          A pattern can be assigned an input buss via its right-click
          menu, but only if
          \textbf{Edit / Preferences / MIDI Input / Record into patterns by bus}
@@ -604,6 +631,12 @@
    In addition, looping can now be done in both the Live and Song modes of
    playback.
 
+   As with the "L" and "R" markers in the pattern editor, this can
+   be placed via left and right mouse clicks.
+   Note that the "L" and "R" markers can be selected via the keyboard using
+   their respective shifted key.  Once selected, the marker can be moved left
+   or right using the left and right arrow keys.
+
    \index{loop mode}
    It activates loop mode; when play is active, it plays the song and loops
    between the
@@ -622,6 +655,15 @@
 \subsubsection{Live Song Record}
 \label{subsubsec:introduction_live_record_button}
 
+   Song-recording in \textsl{Seq66} is adopted from the
+   \textsl{Kepler34} project.
+   This feature takes live muting changes and records them as
+   triggers in the \textbf{Song Editor}.
+   The default hot-key for this function is \texttt{P}.
+   This feature does not honor queuing...
+   rather than waiting until the end of the pattern when the queuing takes
+   effect, the trigger recording starts immediately.
+
    This button causes a live playing session to be recorded to Song mode.
    That is, triggers are added to the song automatically as the musician mutes
    and unmutes patterns, and the triggers can then be
@@ -639,7 +681,11 @@
 \subsubsection{Keep Queue (Q)}
 \label{subsubsec:introduction_keep_queue_button}
 
-   Puts the application into a "sticky" queue mode.
+   This button provides a visual way to know the current
+   state of keep-queue, and is
+   activated either by clicking on it or by pressing the assigned keep-queue
+   key.
+   It puts the application into a "sticky" queue mode.
    In this mode, pressing a pattern key does not do a mute/unmute function, but
    instead turns on queuing for the selected pattern.
    By default, the \texttt{Backslash} key operates this function,
@@ -728,6 +774,8 @@
    \textbf{Song Editor} control the playback.
    By default, the \texttt{F10} key operates this function,
    There is also a MIDI automation control for this button.
+   Note that the default mode is configurable, and \textsl{Seq66} can go into
+   song mode when a loaded MIDI file has triggers, if configured to do so.
 
 \begin{comment}
    \itempar{Toggle Tracks}{pattern!toggle tracks}
@@ -742,7 +790,6 @@
    The \texttt{Ctrl-M}, \texttt{Ctrl-U}, and \texttt{Ctrl-T} keys,
    as shown in the \textbf{Edit} menu, mute, unmute, and toggle
    all patterns.
-
 \end{comment}
 
 \subsubsection{PPQN Indicator}
@@ -764,14 +811,40 @@
 \subsubsection{Tap BPM Button}
 \label{subsubsec:introduction_tap_bpm_button}
 
-   Tap this button with a regular beat to determine the beats-per-minute of the
-   tapping.  With each tap, the counter on the button increments and the BPM is
-   recalculated.  Stop tapping for a few seconds to reset the counter.
-   By default, the \texttt{F9} key also operates this function, and
+   This control is clicked in time with a tune, to set the
+   tempo based on the tempo of the clicks.  Once clicked, the label of this
+   button increments with every click, and the \textbf{BPM} field updates to
+   display the calculated tempo.  If the user stops tapping for 5 seconds, the
+   label reverts to 0, the BPM value keeps its final value, and the user can
+   try tapping the tempo again, or accept the current value.
+   Tapping can also be done using the keystroke defined
+   in the 'ctrl' file.
+   It defaults to the "\texttt{F9}" key, and
    there is also a MIDI-control slot for it.
+
+   Tap this button with a regular beat to determine the beats-per-minute of the
+   tapping.
 
 \subsubsection{Beats Per Minute Control}
 \label{subsubsec:introduction_bpm_control}
+
+   The spin widget adjusts the "beats per minute" (BPM) value.  The
+   range of this field is from 1 bpm to 600 bpm, with a default value of
+   120 bpm.
+   The following keys can also modify the BPM in small increments:
+   \index{keys!semicolon}
+   The \texttt{semicolon} reduces the BPM;
+   \index{keys!apostrophe}
+   The \texttt{apostrophe} increases the BPM.
+   Also, if one \textsl{right-clicks} on the
+   \textbf{Up} button, the BPM advances to its largest
+   supported value, and if one \textsl{right-clicks} on the
+   \textbf{Down} button, the BPM
+   advances to its lowest value.
+   MIDI control for this value is also available.
+   The precision of the BPM value can be set to 0, 1, or 2
+   decimal places, and the increment values for the step size (small)
+   or page size (large) of the BPM spinner can be configured in the 'usr' file.
 
    This control can be text-edited or spun to change the beats/minute value
    used in playing back the current song.  This value is also saved to the

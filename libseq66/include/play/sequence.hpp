@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-05-14
+ * \updates       2025-06-02
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -568,6 +568,13 @@ private:
      */
 
     bool m_thru;
+
+    /**
+     *  True if there's a popup-menu present. See how it is used in
+     *  qloopbutton.
+     */
+
+    bool m_has_popup;
 
     /**
      *  True if the events are queued.
@@ -1415,6 +1422,16 @@ public:
     bool toggle_playing ();
     bool toggle_playing (midipulse tick, bool resumenoteons);
     bool toggle_queued ();
+
+    void set_popup (bool flag)
+    {
+        m_has_popup = flag;
+    }
+
+    bool has_popup () const
+    {
+        return m_has_popup;
+    }
 
     bool get_queued () const
     {

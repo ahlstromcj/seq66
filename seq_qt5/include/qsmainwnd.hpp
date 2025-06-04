@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-27
+ * \updates       2025-05-30
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -113,6 +113,7 @@ class qsmainwnd final :
 {
     friend class qmutemaster;
     friend class qplaylistframe;
+    friend class qseditoptions;
     friend class qsessionframe;
     friend class qsetmaster;
     friend class qslivegrid;

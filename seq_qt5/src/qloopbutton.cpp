@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2025-05-07
+ * \updates       2025-06-03
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -75,8 +75,9 @@ static bool s_elliptical_prog_box   = false;
 static const int s_alpha_playing    = 255;
 static const int s_alpha_muted      = 100;
 static const int s_alpha_qsnap      = 180;
-static const int s_alpha_queued     =  64;       // 148;
-static const int s_alpha_oneshot    =  64;       // 148;
+static const int s_alpha_queued     =  64;
+static const int s_alpha_oneshot    =  64;
+static const int s_alpha_popup      =  32;
 
 /**
  *  Font and annunciator sizes.  These are for normal size, and get scaled for
@@ -295,7 +296,7 @@ qloopbutton::initialize_text ()
         int ty = dy + 2;
         int bh = usr().scale_size_y(sm_base_height);
         int rx = int(0.50 * w) + lx - dx - 1;
-        int by = int(0.85 * h) + dy - 3;
+        int by = int(0.85 * h) + dy - 4;                    /* 3 */
         int basefontsize = usr().progress_bar_thick() ?
             s_fontsize_large : s_fontsize_main ;
 
@@ -638,7 +639,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 {
                     char rlabel[4] = { 0, 0, 0, 0 };
                     int tlx = clx + usr().scale_size(2);
-                    int tly = cly + radius - usr().scale_size(2);
+                    int tly = cly + radius - usr().scale_size(2) + 2;
                     int fontsize = usr().scale_font_size(s_fontsize_record);
                     QFont font;
                     font.setPointSize(fontsize);
@@ -792,6 +793,10 @@ qloopbutton::draw_progress_box (QPainter & painter)
         backcolor.setAlpha(s_alpha_qsnap);
         pen.setColor(Qt::gray);                     /* instead of Qt::black */
         pen.setStyle(Qt::SolidLine);
+    }
+    else if (loop()->has_popup())
+    {
+        backcolor.setAlpha(s_alpha_popup);
     }
     else if (loop()->armed())                       /* armed, playing       */
     {

@@ -32,7 +32,7 @@
 [Seq66]
 
 config-type = "rc"
-version = 3
+version = 4
 quiet = false
 verbose = false
 sets-mode = normal
@@ -89,7 +89,7 @@ active = false
 name = "qseq66.playlist"
 base-directory = ""
 
-# Provides a flag and file-name for note-mapping. '""' means no 'drums' file.
+# Provides a flag and file-name for note-maps. '""' means no 'drums' file.
 # This file is used when the user invokes the note-conversion operation in
 # the pattern editor of a transposable pattern. Make the pattern temporarily
 # transposable to allow this operation.

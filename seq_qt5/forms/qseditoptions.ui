@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>6</number>
+      <number>7</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -2344,7 +2344,7 @@ default PPQN.  Otherwise, the file PPQN scales to
 the default PPQN.</string>
         </property>
         <property name="text">
-         <string>Use File's PPQN for pre-existing files (recommended)</string>
+         <string>Use file's PPQN for pre-existing files (recommended)</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="chkSongRecordSnap">
@@ -3758,7 +3758,7 @@ even if Seq66 is run by it.</string>
       <widget class="QGroupBox" name="groupBoxSaveAtExit">
        <property name="geometry">
         <rect>
-         <x>8</x>
+         <x>20</x>
          <y>210</y>
          <width>673</width>
          <height>231</height>
@@ -4671,19 +4671,6 @@ or /usr/bin/zathura.
         <string/>
        </property>
       </widget>
-      <widget class="QGroupBox" name="groupBox_9">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>440</y>
-         <width>671</width>
-         <height>91</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string/>
-       </property>
-      </widget>
       <widget class="QPushButton" name="pushButtonReload">
        <property name="enabled">
         <bool>false</bool>
@@ -4715,12 +4702,12 @@ or /usr/bin/zathura.
         <string>Restart Session</string>
        </property>
       </widget>
+      <zorder>groupBoxSaveAtExit</zorder>
       <zorder>groupBox_8</zorder>
       <zorder>group_session</zorder>
       <zorder>label_session</zorder>
       <zorder>label_nsm_url</zorder>
       <zorder>lineEditNsmUrl</zorder>
-      <zorder>groupBoxSaveAtExit</zorder>
       <zorder>label_exit_required</zorder>
       <zorder>label_3</zorder>
       <zorder>label_24</zorder>
@@ -4728,7 +4715,6 @@ or /usr/bin/zathura.
       <zorder>lineEditPdfViewer</zorder>
       <zorder>pushButtonSetBrowser</zorder>
       <zorder>pushButtonSetPdfViewer</zorder>
-      <zorder>groupBox_9</zorder>
       <zorder>pushButtonReload</zorder>
      </widget>
     </widget>

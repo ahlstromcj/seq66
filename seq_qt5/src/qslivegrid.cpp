@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2025-05-22
+ * \updates       2025-06-02
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -645,7 +645,7 @@ qslivegrid::create_one_button (seq::number seqno)
  *  This override simply calls creates the slot/loop buttons.  We have to do
  *  it here, because only here do we know the final size of the grid.  This
  *  function is called about a half-dozen times at startup, which really
- *  messages with "redraw" flags in the buttons.  We need call the internal
+ *  messes with "redraw" flags in the buttons.  We need call the internal
  *  code here just once at startup.
  */
 
@@ -1030,6 +1030,9 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
                 button_toggle_checked(current_seq());
                 m_button_down = true;
             }
+            seq::pointer s = perf().get_sequence(current_seq());
+            if (not_nullptr(s))
+                s->set_popup(false);
         }
         else if (event->button() == Qt::RightButton)
         {
@@ -1817,14 +1820,6 @@ qslivegrid::popup_menu ()
             this, SLOT(new_live_frame())
         );
     }
-
-    QAction * actionRecord = new_qaction("&Record toggle", m_popup);
-    m_popup->addAction(actionRecord);
-    connect
-    (
-        actionRecord, SIGNAL(triggered(bool)),
-        this, SLOT(record_sequence())
-    );
     if (perf().is_seq_active(current_seq()))
     {
         seq::pointer s = perf().get_sequence(current_seq());
@@ -1832,9 +1827,16 @@ qslivegrid::popup_menu ()
         {
 #if defined SEQ66_USE_COLLAPSED_SLOT_POPUP_MENU
             QMenu * menuEdit = new_qmenu("&Edit");
+            QAction * actionRecord = new_qaction("&Record toggle", m_popup);
+            m_popup->addAction(actionRecord);
+            connect
+            (
+                actionRecord, SIGNAL(triggered(bool)),
+                this, SLOT(record_sequence())
+            );
             QAction * editseqex = new_qaction
             (
-                "Edit pattern in &window", menuEdit
+                "Pattern in &window", menuEdit
             );
             menuEdit->addAction(editseqex);
             connect
@@ -1846,7 +1848,7 @@ qslivegrid::popup_menu ()
             {
                 QAction * editseq = new_qaction
                 (
-                    "Edit pattern in &tab", menuEdit
+                    "Pattern in &tab", menuEdit
                 );
                 connect
                 (
@@ -1858,7 +1860,7 @@ qslivegrid::popup_menu ()
 
             QAction * editevents = new_qaction
             (
-                "Edit &events in tab", menuEdit
+                "&Events in tab", menuEdit
             );
             menuEdit->addAction(editevents);
 
@@ -1877,6 +1879,13 @@ qslivegrid::popup_menu ()
             }
             m_popup->addMenu(menuEdit);
 #else
+            QAction * actionRecord = new_qaction("&Record toggle", m_popup);
+            m_popup->addAction(actionRecord);
+            connect
+            (
+                actionRecord, SIGNAL(triggered(bool)),
+                this, SLOT(record_sequence())
+            );
             QAction * editseqex = new_qaction
             (
                 "Edit pattern in &window", m_popup
@@ -2167,6 +2176,8 @@ qslivegrid::popup_menu ()
         mastermidibus * mmb = perf().master_bus();
         if (not_nullptr(mmb))
         {
+            s->set_popup(true);
+
             /**
              *  Input buss menu. It is optional. The default is "Free",
              *  which means the mastermidibus uses the active current
@@ -2175,7 +2186,7 @@ qslivegrid::popup_menu ()
 
             if (rc().sequence_lookup_support())
             {
-                QMenu * menuinbuss = new_qmenu("Input bus");
+                QMenu * menuinbuss = new_qmenu("&Input bus");
                 const inputslist & ipm = input_port_map();
                 int inbuses = ipm.active() ?
                     ipm.count() : mmb->get_num_in_buses() ;
@@ -2211,7 +2222,7 @@ qslivegrid::popup_menu ()
                     }
                 }
 
-                QAction * f = new_qaction("Free", menuinbuss);
+                QAction * f = new_qaction("&Free", menuinbuss);
                 bussbyte nullbuss = null_buss();
                 f->setCheckable(true);
                 if (is_null_buss(midi_in_bus))
@@ -2232,7 +2243,7 @@ qslivegrid::popup_menu ()
              *  set_midi_buschannel
              */
 
-            QMenu * menubuss = new_qmenu("Output bus");
+            QMenu * menubuss = new_qmenu("Output &bus");
             const clockslist & opm = output_port_map();
             int buses = opm.active() ?
                 opm.count() : mmb->get_num_out_buses() ;
@@ -2264,7 +2275,7 @@ qslivegrid::popup_menu ()
              *  set_midi_channel().
              */
 
-            QMenu * menuchan = new_qmenu("Output channel");
+            QMenu * menuchan = new_qmenu("Output &channel");
             int buss = s->true_bus();
             for (int channel = 0; channel <= c_midichannel_max; ++channel)
             {
@@ -2328,6 +2339,11 @@ qslivegrid::popup_menu ()
         can_paste(false);
 
     m_popup->exec(QCursor::pos());
+    if (perf().is_seq_active(current_seq()))
+    {
+        seq::pointer s = perf().get_sequence(current_seq());
+        s->set_popup(false);
+    }
 
     /*
      * This really sucks.  Without this sleep, the popup menu, after any

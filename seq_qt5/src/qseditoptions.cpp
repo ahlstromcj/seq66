@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-25
+ * \updates       2025-05-30
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1843,6 +1843,7 @@ qseditoptions::setup_tab_session ()
     );
 #else
     ui->lineEditRc->setReadOnly(true);
+    ui->lineEditRc->setEnabled(false);
     ui->pushButtonLoadRc->hide();
 #endif
 
@@ -2259,7 +2260,13 @@ qseditoptions::slot_jack_disconnect ()
 void
 qseditoptions::slot_master_cond ()
 {
-    rc().with_jack_master_cond(ui->chkJackConditional->isChecked());
+    bool use_master_cond = ui->chkJackConditional->isChecked();
+    rc().with_jack_master_cond(use_master_cond);
+    if (use_master_cond)
+    {
+        ui->chkJackMaster->setChecked(false);
+        rc().with_jack_master(false);
+    }
     modify_rc();
     sync();
 }
@@ -2267,7 +2274,13 @@ qseditoptions::slot_master_cond ()
 void
 qseditoptions::slot_time_master ()
 {
-    rc().with_jack_master(ui->chkJackMaster->isChecked());
+    bool use_time_master = ui->chkJackMaster->isChecked();
+    rc().with_jack_master(use_time_master);
+    if (use_time_master)
+    {
+        ui->chkJackConditional->setChecked(false);
+        rc().with_jack_master_cond(false);
+    }
     modify_rc();
     sync();
 }
@@ -2275,7 +2288,15 @@ qseditoptions::slot_time_master ()
 void
 qseditoptions::slot_transport_support ()
 {
-    rc().with_jack_transport(ui->chkJackTransport->isChecked());
+    bool use_jack_transport = ui->chkJackTransport->isChecked();
+    rc().with_jack_transport(use_jack_transport);
+    if (! use_jack_transport)
+    {
+        ui->chkJackConditional->setChecked(false);
+        ui->chkJackMaster->setChecked(false);
+        rc().with_jack_master_cond(false);
+        rc().with_jack_master(false);
+    }
     modify_rc();
     sync();
 }
@@ -2863,13 +2884,14 @@ void
 qseditoptions::slot_ppqn_by_text (const QString & text)
 {
     std::string temp = text.toStdString();
-    if (! temp.empty())
+    if (ppqn_list().valid(temp))
     {
         int p = string_to_int(temp);
         if (perf().change_ppqn(p))
         {
             ppqn_list().current(temp);
             m_parent_widget->set_ppqn_text(temp);
+            m_parent_widget->enable_save();
             ui->combo_box_ppqn->setItemText(0, text);
             usr().clear_option_bits();      /* see usrsettings::option_bits */
             usr().default_ppqn(p);

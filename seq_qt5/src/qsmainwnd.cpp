@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-28
+ * \updates       2025-05-31
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -3269,7 +3269,7 @@ qsmainwnd::update_ppqn_by_text (const QString & text)
     if (ppqn_list().valid(temp))
     {
         int p = string_to_int(temp);
-        if (p > 0 && cb_perf().change_ppqn(p))
+        if (cb_perf().change_ppqn(p))
         {
             set_ppqn_text(p);
             if (not_nullptr(m_song_frame64))
@@ -3565,6 +3565,9 @@ qsmainwnd::open_recent_file ()
         {
             if (open_file(actionfile))
             {
+                if (rc().add_recent_file(actionfile))   /* ca 2025-05-31    */
+                    update_recent_files_menu();
+
                 if (! usr().is_buss_override())
                     ui->cmb_global_bus->setCurrentIndex(0);
 

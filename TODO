@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.20
 Chris Ahlstrom
-2019-04-13 to 2025-05-28
+2019-04-13 to 2025-06-04
 
 Hot:
     
@@ -23,11 +23,18 @@ NSM:
 
 Backlog:
 
-    -   Transpose.
-        -   Global transpose and Apply Song Transpose.  How does it to work?
-        -   It does not set modify.
+    -   Fix the Set Handling (see user manual).
+    -   The main-window MG field does not work.
+    -   Test Edit / Preferences / Reset, Cancel, and OK.
+    -   Investigate Alt-Left-Click for perfromer::replace_for_solo();
+        also Middle-Click for edit pattern in tab..
+    -   Preferences / Pattern. Consider adding an option to randomize notes
+        around existing notes.
+    -   Draw a rectangle over the live-grid when dragging and dropping.
     -   Add a light version of glob(3) to use with Windows. In progress
         in the filefunctions module.
+    -   Add dropdowns for patch number, control values, etc. in various places
+        that currently accept only a number.
     -   Event editor:
         -   Can we add, perhaps a tooltip or dropdown to select the desired
             Control value (e.g. 7 for volume)?

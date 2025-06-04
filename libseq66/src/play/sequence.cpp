@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-05-29
+ * \updates       2025-06-02
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -179,6 +179,7 @@ sequence::sequence (int ppqn) :
     m_recording_style           (usr().pattern_record_style()),
     m_record_alteration         (usr().record_alteration()),
     m_thru                      (false),
+    m_has_popup                 (false),
     m_queued                    (false),
     m_one_shot                  (false),
     m_one_shot_tick             (0),
@@ -347,6 +348,7 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
         m_recording_style           = usr().pattern_record_style();
         m_record_alteration         = usr().record_alteration();
         m_thru                      = false;
+        m_has_popup                 = false;
         m_queued                    = false;
         m_one_shot                  = false;
         m_one_shot_tick             = 0;

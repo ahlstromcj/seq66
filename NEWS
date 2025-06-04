@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-05-29
+2015-07-10 to 2025-06-02
 
 # Change Log
 
-## [0.99.20] - 2025-05-29
+## [0.99.20] - 2025-06-02
 
 ### Added
 
@@ -24,6 +24,9 @@ Chris Ahlstrom
         = false.
     -   A timed error prompt (instead of OK/Remap and restart) when
         running via NSM; see qsmainwnd and qt5nsmanager.
+    -   Cleaned up the slot popup menu, added accelerators, and
+        lower the alpha of the button's progress box when using the
+        popup menu.
 -   Pattern editor.
     -   Added some horizontal dotted lines to the data pane to mark the
         32, 64, and 96 level (of items such as velocity).
@@ -56,7 +59,7 @@ Chris Ahlstrom
     -   Thick line at the end of a song.
 -   Event editor. No changes; see "Added".
 -   Preferences dialog.
-    -   Enhanced the recent-file handling and auto-rc-save.
+    -   Enhanced the recent-file handling re auto-rc-save.
 -   Many other minor tweaks to comments and appearance.
 -   Contrib files.
     -   contrib/vim-syntax/cpp.vim with added symbols like CSTR.
@@ -69,10 +72,13 @@ Chris Ahlstrom
 ### Fixed
 
 -   Main window and grid.
-    -   The movement of patterns in the grid slot.
+    -   Selecting a recent file now moves it to the top of the
+        list.
+    -   Fixed the drag-and-drop of patterns in the grid slot.
     -   Fixed setting the modify flag (asterisk) in recording notes.
     -   Fixed global transpose and it now sets "modify".
     -   Other UI/keystroke fixes, fixes to counting sequences.
+    -   Improved Help / Tutorial and User Manual.
 -   Pattern editor.
     -   Weird issue with setting measures in the pattern-editor-in-tab.
     -   The plotting of pitchbend data has been made correct.
@@ -90,6 +96,8 @@ Chris Ahlstrom
         at exit.
     -   Error of connecting the store-palette slot in qseditoptions
         twice.
+    -   A PPQN change here now enables the File / Save action.
+    -   The JACK transport option checkboxes are now coordinated.
 -   Import/Export
     -   The export of files to SMF 0. See the "MIDI Import/Export"
         section of the user manual for provisos.
