@@ -1,4 +1,4 @@
-%-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 % pattern_editor
 %-------------------------------------------------------------------------------
 %
@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-03-02
+% \update      2025-06-06
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -18,10 +18,10 @@
    The \textsl{Seq66} \textbf{Pattern Editor} can edit and preview a
    pattern, configure its buss, channel, transpose, musical
    scale, and many other settings.
-   A slightly modified  version of the \textbf{Pattern Editor} appears in the
-   \textbf{Edit} tab in the main window; the main window has to be expanded
-   vertically to see all of the controls.
-   The complete version can be brought up in an external window.
+   A slightly trimmed version of the \textbf{Pattern Editor} appears in the
+   \textbf{Edit} tab in the main window; some controls are hidden and the data
+   pane is vertically compressed.
+   The full version can be brought up in an external window.
 
 \begin{figure}[H]
    \centering 
@@ -54,39 +54,48 @@
    Before we describe this window, there are some things to recognize.
    First, if the pattern is empty when play is started, the progress bar will
    still move, so that the user can play a MIDI instrument and record new notes.
-   Second, to add a note with the mouse, one must press the \textsl{right}
-   mouse button (the pointer changes to a pencil) and,
-   \textsl{while holding it}, press the left mouse button.
-   Or click in the pattern editor, press the
-   \index{keys!i}
-   \index{keys!p}
-   \texttt{p} key to select the "pencil" or "paint" mode,
-   or
-   \texttt{i} key to select "insert" mode (a la vi),
-   then
+   Second, to add a note with the mouse the following options turn on painting
+   note:
+
+   \begin{itemize}
+      \item One must press \textsl{and hold} the \textsl{right}
+         mouse button (the pointer changes to a pointing finger),
+         press the left mouse button.
+      \item Click in the pattern editor, press the
+         \index{keys!i}
+         \index{keys!p}
+         \texttt{p} key to select the "pencil" or "paint" mode,
+         or
+         \texttt{i} key to select "insert" mode (a la vi),
+      \item Click on the "pointing finger" button.
+      \item 
+   \end{itemize}
+
    \index{mouse!left-click}
-   left-click to add a note or
+   Left-click to add a note or
    \index{mouse!left-click-drag}
    left-click-drag to add multiple notes as the mouse moves.
+
+   To exit the painting mode,
    \index{keys!x}
    \index{keys!Esc}
-   Press or release the right mouse button, or press
-   \texttt{x} to "eXit" or "eXscape" from paint mode.
+   press or release the right mouse button, press
+   \texttt{x} to "eXit" or "eXscape" from paint mode,
+   or click the "pointing finger" button again.
    \texttt{Esc} also exits paint mode if the pattern is not playing.
-   If not in paint mode, then the window is closed, just like a dialog box.
-   Another option is to press the "finger" button to toggle between note-entry
-   and note-selection.
-   Third, notes are drawn only with the length selected by the "notes" button
+
+   Notes are drawn only with the length selected by the "notes" button
    near the top of the pattern window.  There are tricks to
-   modifying the new notes that are described later.
+   modifying the new notes, described later.
 
    \textsl{Seq66} automatically scrolls
    horizontally through the sequence/pattern editor window when
-   playback moves the progress bar outside of the current frame of data.  This
-   feature makes it easier to follow patterns that are longer than a measure or
-   two.
+   playback moves the progress bar past the current frame of data.
+   This feature makes it easier to follow patterns that are longer than a
+   measure or two.
    One might want to print out the following figure to follow along.  There is
    a lot of functionality in this window.
+   Also, some items have changed slightly from when this diagram was made.
 
 \begin{figure}[H]
    \centering 
@@ -96,17 +105,22 @@
 \end{figure}
 
    The arrow keys can be used to move left, right, up, or down.
-
    \index{keys!vi}
    \index{keys!hjkl}
-   For \textsl{vi} users, the "h" (left), "j" (down), "k" (up), and "l" (right)
+   For \textsl{vi} users, the \texttt{h} (left), \texttt{j} (down),
+   \texttt{k} (up), and \texttt{l} (right)
    keys can be used while any pane is in focus, and they act like the arrow
    keys.
+   The \texttt{Home} and \texttt{End} keys move to the beginning and end of the
+   pattern.
+   One can page vertically in the piano roll using the
+   \index{keys!page-up} \texttt{Page Up} and 
+   \index{keys!page-down} \texttt{Page Down} keys.
 
 \subsection{Pattern Editor / First Row}
 \label{subsec:pattern_editor_first_row}
 
-   The top bar (horizontal panel) of the Pattern (sequence) Editor
+   The top bar (horizontal panel) of the Pattern (sequence) editor
    lets one change the name of
    the pattern/loop/sequence/track, the time signature of the piece, how long
    the track is, and some other configuration items.
@@ -114,7 +128,7 @@
    \begin{enumber}
       \item \textbf{Track Number}
       \item \textbf{Track Name}
-      \item \textbf{Add Time Signature Event} (see composite picture below)
+      \item \textbf{Add Time Signature Event} (not pictured)
       \item \textbf{Beats Per Bar Reset} and \textbf{Beats Per Bar}
       \item \textbf{Beat Width Reset} and \textbf{Beat Width}
       \item \textbf{Pattern Length Reset} and \textbf{Pattern Length}
@@ -133,17 +147,19 @@
    \itempar{Track Name}{pattern editor!name}
    Provides the name of the pattern.
    This name should be short and memorable.
-   It is displayed in the \textbf{Live Grid} (the \textbf{Patterns Panel}),
+   It is displayed in the \textbf{Live Grid} (the \textbf{Patterns Dialog}),
    on the top line of its pattern slot.
 
    \itempar{Add Time Signature Event}{pattern editor!time signature}
    This button is shown in the composite picture in
-   \sectionref{subsec:pattern_editor_time}, to the left of the beat
-   selector.
+   \sectionref{subsec:pattern_editor_measures_ruler},
+   to the left of the beat selector.
    When either the beats/bar or beat width values (see below) are changed,
    and the progress marker is at time 0, then the change is
    saved as a Time Signature Meta event at time 0. Additional changes there
    overwrite that event.
+   Otherwise, move the "L" marker and click this button to log another
+   time-signature.
    There are interactions between the beats/bar, beat-width, and the length (in
    measures) of the pattern.
    Generally, if both the beats/bar and beat-width are to be changed,
@@ -155,10 +171,10 @@
    \begin{enumber}
       \item Move the mouse cursor to the \textsl{top half} of the time pane;
          the cursor will change to a vertical arrow. Click at the desired time
-         and observe the red progress line.
+         and observe the red progress line and "L" marker.
       \item Change the beats-per-measure, if desired.
       \item Change the beats-width, if desired.
-      \item Clock the \textbf{Add Time Signature} button to log the
+      \item Click the \textbf{Add Time Signature} button to log the
          new time signature.
    \end{enumber}
 
@@ -183,9 +199,7 @@
    Arbitrary values up to 32 can be entered by typing the number.
    The "Reset" button resets the value to 4.
 
-   Now, although the combo-box provides only beat-widths that are the
-   MIDI-standard power of 2, the number can be edited to any number.
-   A warning prompt appears because MIDI tracks can store only time
+   Editing a non-power-of-2 beat width yields a warning prompt appears because MIDI tracks can store only time
    signatures where the beat width is a power of 2.
    If the prompt is OK'ed, then the non-standard beat-width is set,
    but it is \textsl{not added as a time-signature event}.
@@ -215,17 +229,13 @@
    indefinitely while the user inputs MIDI from a controller, via the
    \textbf{Expand} option of the \textbf{Loop Record Type}.
    This works in \textbf{Live} mode or \textbf{Song} mode.
-   \textsl{Note: the following is no longer true.
-   Instead, the pattern extends continually; these provides a more
-   reasonable user experinece:
-   The pattern is not extended until events come in.
-   Thus, the pattern is only as long as the last measure when a note comes in.}
+   The pattern extends continually with or without note entry.
    Once playback starts, the progress bar moves forward.
-   Notes are recorded they are enter.
+   Notes are recorded they are played on a MIDI controller.
    Once the end of the measure is neared, another
    measure is added, whether or not more notes are struck.
    The measure-count at the top of the editor shows the current number
-   of measure.
+   of measures.
    Once playback (and recording) stops, the user can either accept the
    final length, or change the length to a lesser number.
    If the lesser length will drop notes, a prompt will appear
@@ -238,6 +248,13 @@
    type, and extra notes are generated to create that chord.
    The \textbf{Chord Generation Reset} button is at the left of the
    \textbf{Data Pane}.
+   One can insert chords with one click.
+   (This feature comes from user "stazed"
+   and his \textsl{Seq32} project \cite{seq32}.)
+   Select the desired chord type first.
+   Once a value other than \textbf{Off} is selected,
+   drawing mode will add multiple notes representing the chord
+   created, with the clicked note value as the base of the chord.
 
    \itempar{MIDI Out Device (Buss)}{pattern editor!midi out device}
    This setting specifies a virtual MIDI output buss or a
@@ -248,13 +265,14 @@
    blank.  The user must select a valid buss from this dropdown.
 
    \itempar{MIDI Out Channel}{pattern editor!midi out channel}
-   The \textbf{Channel Selection} setting selects the MIDI output channel.
+   The drop-down selects the MIDI output channel.
    The possible values range from 1 to 16, plus \textsl{Free}, which means
    that the channels of the events are preserved, and are used as the output
    channel, a bit like an SMF 0 track.
-   The editing channel is always channel 1.
+   The editing channel is always channel 1; the selected channel is applied
+   on playback.
    If instruments are assigned in the 'usr' configuration file
-   to that device and channel, their names will be shown in the dropdown.
+   for that device and channel, their names will be shown in the dropdown.
 
    In addition, this setting determines the channel applied when painting notes
    in the piano roll.  If set to "1" or "Free" (no channel), then channel 1 is
@@ -280,6 +298,11 @@
       \item \textbf{Background Sequence}
    \end{enumber}
 
+%  \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
+
+\subsubsection{Pattern Editor / Undo/Redo}
+\label{subsubsec:pattern_editor_second_row_undo_redo}
+
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Undo}{pattern editor!undo}
@@ -294,15 +317,17 @@
    It will restore one change each time it is pressed.
    There is currently no redo key.
 
-   \itempar{Quantize Selection}{pattern editor!quantize}
+\subsubsection{Pattern Editor /  Quantize Selection}
+\label{subsubsec:pattern_editor_second_row_quantize_selection}
+
+   \index{quantize}
+   \index{pattern editor!quantize}
    This button quantizes the selected events as per
    the \textbf{Grid Snap} setting.
 
-% ======================================================================
-
 \subsubsection{Pattern Editor / Tools Popup}
+\label{subsubsec:pattern_editor_second_row_tools_popup}
 
-   \itempar{Tools}{pattern editor!tools}
    This button brings up a nested menu of tools for modifying selected
    events and notes.
 
@@ -311,256 +336,74 @@
       Selects Note Ons, Note Offs, and Aftertouch.
       In order for notes to be modified by quantization or randomization,
       they need to be selected first, otherwise some menu entries are
-      disabled..
+      disabled.
       Notes can be selected in the piano roll of via this menu.
       This menu provides two note-selection options:
          \begin{itemize}
-            \item \textbf{Select all}, selects all notes in the pattern;
-               The \index{keys!ctrl-a} \texttt{Ctrl-A} will also select
+            \item \textbf{Select all}. Selects all notes in the pattern;
+               \index{keys!ctrl-a} \texttt{Ctrl-A} will also select
                all of the events in the pattern editor.
-            \item \textbf{Invert selection}, which inverts the selection of
-               notes.
+            \item \textbf{Invert selection}. Inverts the selection of notes.
          \end{itemize}
       \item \textbf{Note timing/velocity...}. This menu
-            offers three ways to tweak the timing of the selected notes:
+            offers four ways to tweak the timing of the selected notes:
          \begin{itemize}
-            \item \textbf{Quantize}
+            \item \textbf{Quantize}.
                \index{quantize}
-               quantizes the selected notes in time, the same way as the
+               Quantizes the selected notes in time, the same way as the
                \textbf{Quantize} ("\textbf{Q}") button.
-            \item \textbf{Tighten}
+            \item \textbf{Tighten}.
                \index{tighten}
                This operation merely a less strict form of quantization.
-            \item \textbf{Jitter}
+            \item \textbf{Jitter}.
                \index{jitter}
                Jittering modifies the timing of a note by adding or subtracting
                a small random of time.
-            \item \textbf{Randomize velocity}
+            \item \textbf{Randomize velocity}.
                \index{randomize}
                This operation modifies the velocity of a note by a small
                amount.
          \end{itemize}
-      \item \textbf{Pitch transpose} allows uniform transpostion
+      \item \textbf{Pitch transpose}. Allows uniform transpostion
          regardless of the key and scale in force for the pattern.
          \index{modify pitch}
          Selecting this item entry brings up a sub-menu.
-      \item \textbf{Harmonic transpose}, which makes sure
+      \item \textbf{Harmonic transpose}. Makes sure
          that all transpositions stay on the selected scale.
          If the scale selection is \textbf{Off}, this is the same as plain
-         pitch transpose, and so is not shown.
-      \item \textbf{LFO} allows for modulating of control values with a
+         pitch transpose, and so is not enabled.
+      \item \textbf{LFO}. Allows for modulating of control values with a
          low-frequency oscillator.
          See \sectionref{subsec:pattern_editor_bottom}.
-      \item \textbf{Pattern fix} allows for fixing up a new pattern
+      \item \textbf{Pattern fix}. Allows for fixing up a new pattern
          that was recorded with some timing errors, or transforming the
          pattern in various ways.
-         See the section below; there is a lot to explain.
+      The pattern fix dialog provides a way for more control over the
+      modifications of a pattern.
+      It's complex and deserves a section of its own.
+      See \sectionref{subsec:pattern_editor_pattern_fix}.
    \end{enumber}
 
-\subsubsection{Pattern Editor / Tools Popup / Pattern Fix}
+\subsubsection{Pattern Editor / Follow Progress}
+\label{subsubsec:pattern_editor_second_row_follow_progress}
 
-   The pattern fix dialog provides a way for more control over the
-   modifications of a pattern.
-   It's complex and deserves a section of its own.
-
-   Before we start, some obvious limitations.
-   Applying a fix, then deciding to change the fix, requires
-   one to click the \textbf{Reset} before applying the next change.
-   Now, if the change does not look correct, one can close the pattern
-   editor and reopen it to see if the change took hold correctly.
-   Also, once a change is made, the modify flag (asterisk) is shown,
-   but currently a reset cannot remove that flag.
-
-\begin{figure}[H]
-   \centering 
-   \includegraphics[scale=0.65]{pattern-editor/patternfix.png}
-   \caption{Pattern Fix Dialog}
-   \label{fig:pattern_editor_pattern_fix}
-\end{figure}
-
-   \index{pattern-editor!fix}
-   When this dialog is used, the time-stamp of \textsl{every event} in the
-   pattern will be changed.
-   Once selected, the pattern number is shown in the title-bar and in a
-   read-only text field.
-
-   The following sections describe the dialog.
-   For more details, go to the source-code bundle, enter the
-   \texttt{contrib/notes/} directory, and
-   examine the \texttt{pattern-fix-test.text} file.
-
-\paragraph{Pattern Fix / Length Change}
-\label{paragraph:patterns_fix_length_change}
-
-   The \textbf{Length Change} selector allows for the following actions:
-
-   \begin{itemize}
-      \item \textbf{None}.
-         No length change will occur.
-         Alignment, reversing, and quantization can still be done.
-      \item \textbf{Measures/Time Sig}.
-         Allows the measures (length) of the pattern to be changed in three
-         ways, depending on how the number is entered: as an integer or
-         floating-point number (e.g. 1, 1.0, 1.75),
-         or as a simple time-signature fraction (e.g. "3/4"; the "/" is a
-         key indicator of this kind of change).
-         In some ways it is similar to \textbf{Scale Factor}, described
-         below.
-         \begin{itemize}
-            \item \textbf{Measures}.
-               Entering an integer or a floating-point scale factor will scale
-               the pattern events up or down,
-               and change the number of measures.
-               The final number of measures is always an integer.
-               If the measure value is less than \texttt{1.0},
-               the pattern will only be compressed.
-               If less than 1 measure in length, the result will be
-               1 measure; \textsl{Seq66} cannot allow less than 1 measure.
-               \textsl{Note that, unlike setting the measures in the pattern
-               editor itself, this measures change will \textbf{not}
-               truncate notes.}
-               If the number of measures is greater, then the notes will
-               be expanded.
-            \item \textbf{Time Signature}.
-               Entering a fraction such as \textbf{3/4} or
-               \textbf{12/8} will change the time signature of the pattern
-               and scale the pattern down or up appropriately.
-               This action can also change the length of the patter.
-         \end{itemize}
-      \item \textbf{Scale Factor}.
-         Scales the pattern.  For example, 2.0 doubles the length, and 0.5
-         halves the length.
-         In some ways it is similar to \textbf{Measures}, described
-         above.
-         The \textbf{Measures} is changed to be enough to contain the new length,
-         but only if the scale is greater than 1.0.
-         One thing to be aware of is that, if the pattern is expanded, the
-         new measure count depends on the location of the last event in the
-         expanded pattern.
-   \end{itemize}
-
-\paragraph{Pattern Fix / Other Fixes}
-\label{paragraph:patterns_fix_other_fixes}
-
-   \textbf{Other Fixes} provides some minor items, as follows.
-
-   \begin{itemize}
-      \item \textbf{Align left}
-         allows the pattern to be aligned to the left (i.e. the beginning)
-         of the sequence, removing
-         any delays.  This is useful when recording a pattern live and not quite
-         hitting the first beat in time.
-      \item \textbf{Align right}
-         allows the pattern to be aligned to the right of the sequence;
-         the last note ends at the end of the sequence.
-      \item \textbf{Reverse measures}
-         reverses all of the events in the whole pattern, flipping the measures
-         completely.  For example, if all the events occur near the end of the
-         pattern, after reversal they will all appear near the beginning of the
-         pattern.
-      \item \textbf{Reverse in place}
-         This is probably a more natural reversal method.
-         The relative location of a cluster of notes doesn't change, but the
-         notes are simply reversed in place.
-      \item \textbf{Preserve note length}
-         prevents Note Offs from being scaled, which would shorten or length the
-         notes, and in some case might cause notes to bleed past a measure.
-         When scaling down, it is usually better to leave this option off.
-   \end{itemize}
-
-\paragraph{Pattern Fix / Alteration}
-\label{paragraph:patterns_fix_alteration}
-
-   The \textbf{Alteration} selector allows for various types of
-   quantization, randomization, and note-mapping.
-
-   It works similarly to the \textbf{Tool} entries of the
-   same name (see \sectionref{subsec:pattern_editor_second_row}),
-   but works on \textsl{all events}, not just selected events.
-   Also included is a \textbf{Jitter} option, with a range for the jitter.
-   This option slightly randomizes the time-stamps of note events.
-
-   \begin{itemize}
-      \item \textbf{None}.
-      No "alteration" process is done.
-      \item \textbf{Tight Q ticks}
-         quantizes the notes by the amount shown (MIDI ticks)
-         in the text-field next to it. Normally, one wants this to be
-         half of the next value described.
-      \item \textbf{Full Q ticks}
-         quantizes the notes by the amount shown (MIDI ticks)
-         in the text-field next to it. Normally, one wants this to be
-         the size of a note, for example, a 16th note, which is 48
-         ticks by default.
-      \item \textbf{Random amplitude}
-         randomizes the velocity of note by plus-or-minus the number of units
-         specified in the text-field.
-      \item \textbf{Time/tick jitter} 
-         randomizes the timing of each note by plus-or-minus the number of
-         MIDI ticks shown in the text-field.
-         Most useful to humanize a too-rigid rhythm.
-      \item \textbf{Note-map}.
-         This feature remaps the notes according to a 
-         \texttt{.drums} or \texttt{.notemap} file (both are
-         identical in concept and layout).
-         Unlike the one-the-fly note-mapping capability (where the
-         note-map is created at the startup of the application),
-         this is a temporary note map.
-         The note-map file is read, all notes are re-mapped, and the
-         note-map goes away.
-         By default the note-map file is the one specified in the 'rc' file,
-         though it need not be active.
-         Clicking on the \texttt{...} allows one to select another file to
-         use (but only for a pattern-fix).
-         The note-map can be used to remap drum notes, or to produce
-         special note-remappings, such as inversion.
-      \item \textbf{Rev Note-map}.
-         This is the same as note-mapping, but maps in the opposite direction.
-   \end{itemize}
-
-%  Question:  would a vertical "pattern flip" (of the note values themselves)
-%  be useful?
-
-\paragraph{Pattern Fix / Applied Effects}
-\label{paragraph:patterns_fix_applied_effects}
-
-   \textbf{Applied Effects} does not do anything except show the effect of the
-   changes.  (Making it read-only might make it almost invisible in some
-   themes.) The fix process followed is:
-
-   \begin{enumerate}
-      \item Apply the left-alignment (if selected).
-      \item Modify the number of measures (if selected).
-      \item Do the scaling (if selected).
-      \item Perform the quantization/tightening (if selected).
-   \end{enumerate}
-
-   Lastly, the effect of the change is shown, if applicable.
-   Note that changing the measure in this dialog is different from
-   changing the measures in the "length" dropdown, which only changes the
-   measures.
-   Changing the measures to a large number on a pattern of 1 measure will
-   greatly expand the notes!
-
-   Any accidental changes can be \textbf{Reset}
-   in this dialog.
-   Undo in the pattern-editor itself with \texttt{Ctrl-Z} affects
-
-   only MIDI events, not things like changing time-signature from the
-   drop-downs.
-
-\subsubsection{Pattern Editor / Tools Popup / More Tools}
-
-   \itempar{Follow Progress}{pattern editor!tools}
+   \index{follow progress}
    This button toggles whether or not the progress bar follows
    progress in long patterns.  Turning off this feature is useful when
    one wants to concentrate on the current measure without the paging to
    subsequent measures that occurs with the "follow progess" feature.
 
-   \itempar{Grid Snap}{pattern editor!grid snap}
+\subsubsection{Pattern Editor / Snap Reset and Grid Snap}
+\label{subsubsec:pattern_editor_second_row_grid_snap}
+
+   \index{grid snap}
+   \index{pattern editor!grid snap}
    Grid snap selects where the notes will snap when
    \textsl{drawn} and when \textsl{moved} (but not when lengthened/shortenend).
-   That is, it selects the snap-spacing for the notes
+   That is, it selects the snap-spacing for the notes.
+   It also applies to moving selected notes horizontally with the
+   arrow keys.
+
    The following values are supported:
    \textbf{1}, \textbf{1/2}, \textbf{1/4}, \textbf{1/8},
    \textbf{1/16} (\textsl{the default value}),
@@ -570,8 +413,12 @@
    \textbf{1/48}, \textbf{1/96}, and \textbf{1/192}.
    The button to the left of this control resets it to the default value.
 
-   \itempar{Note Length}{pattern editor!note length}
-   Note length determines the duration of inserted notes.
+\subsubsection{Pattern Editor / Note Length Reset/Note Length}
+\label{subsubsec:pattern_editor_second_row_note_length}
+
+   \index{note length}
+   \index{pattern editor!note length}
+   Note length determines the duration of inserted (drawn by the mouse)notes.
    Like the \textbf{Grid Snap} values,
    the following values are supported:
    \textbf{1}, \textbf{1/2}, \textbf{1/4}, \textbf{1/8},
@@ -582,7 +429,11 @@
    \textbf{1/48}, \textbf{1/96}, and \textbf{1/192}.
    The button to the left of this control resets it to the default value.
 
-   \itempar{Zoom}{pattern editor!zoom}
+\subsubsection{Pattern Editor / Zoom Reset/Zoom}
+\label{subsubsec:pattern_editor_second_row_zoom_reset}
+
+   \index{zoom!horizontal}
+   \index{pattern editor!horizontal zoom}
    Horizontal zoom is the ratio between MIDI pixels and ticks, written as
    "pixels:ticks", where "ticks" is the "pulses" in "PPQN".
    For example, 1:4 = 4 ticks per pixel.
@@ -596,8 +447,14 @@
    increases for higher PPQN values, so that the default zoom looks sensible.
    As the right number (ticks) goes higher,
    the effect is to zoom out, and show more of the pattern.
+   The button to the left of this control resets it to the default value.
+   Zoom can also be changed via the \texttt{Z} and \texttt{Z} keys, and
+   reset by the \texttt{0}.
 
-   \itempar{Key of Sequence}{pattern editor!key}
+\subsubsection{Pattern Editor / Key Reset/Key}
+\label{subsubsec:pattern_editor_second_row_musical_key}
+
+   \index{key}{pattern editor!key}
    Selects the desired musical key for the pattern.  The following keys are
    supported:
    \textbf{C}, \textbf{C\#},
@@ -616,8 +473,8 @@
    saved in the MIDI file along with the rest of the data for the sequence.
    \textbf{However},
    a change made to the key, scale,
-   or background sequence (not to be confused with the background-recording
-   sequence) in the pattern editor can be saved in the whole song,
+   or background sequence (not to be confused with background-recording)
+   in the pattern editor can be saved in the whole song,
    so that opening another sequence
    will apply the same settings to that sequence.  This is an optional feature,
    supported as noted below.
@@ -638,14 +495,18 @@
    The global-sequence feature setting can be made in the 'usr' configuration
    file.
 
-   \itempar{Musical Scale}{pattern editor!scale}
+\subsubsection{Pattern Editor / Scale Reset/Musical Scale}
+\label{subsubsec:pattern_editor_second_row_musical_scale}
+
+   \index{scale}
+   \index{pattern editor!musical scale}
    Selects the desired background scale for the pattern; it provides a way for
    someone to key in notes that are only in that scale.
    When a scale is selected, the following features are supported:
 
    \begin{itemize}
-      \item The notes that are \textsl{not}
-         in the scale are shown as grey in the piano roll.
+      \item The note grid lines that are \textsl{not}
+         in the scale are painted grey in the piano roll.
       \item For harmonic transposition, the notes are shifted
          so that they remain in the selected scale.
       \item The exact notes that are considered "in-scale" shift according
@@ -667,6 +528,9 @@
       \item \textbf{Minor Pentatonic}
       \item \textbf{Phrygian}
       \item \textbf{Enigmatic}
+      \item \textbf{Diminished}
+      \item \textbf{Dorian}
+      \item \textbf{Mixolydian}
    \end{itemize}
 
    Please let us know of any mistakes in these scales.
@@ -688,7 +552,7 @@
    A change made to the key, scale, or background pattern in
    the pattern editor can be saved globally, so that opening another pattern
    apply the same settings to that pattern.  This is a configurable feature in
-   the 'usr' file; see "global\_seq\_feature".
+   the 'usr' file; see "global-seq-feature".
    This option allows applying the key/scale/background-sequence
    either globally (all patterns) or locally (per-pattern), with each pattern
    holding its key, scale, and background-sequence settings in
@@ -715,7 +579,11 @@
    algorithm, could be used, but it is a bit too complex
    for our needs, which are basic.
 
-   \itempar{Background Sequence}{pattern editor!background sequence}
+\subsubsection{Pattern Editor / Background Sequence}
+\label{subsubsec:pattern_editor_second_row_background_sequence}
+
+   \index{background sequence}
+   \index{pattern editor!background sequence}
    One can select another pattern to draw on the background to help with
    writing corresponding parts.
    The button brings up a small menu with values of \textbf{Off} and
@@ -734,55 +602,54 @@
    will apply the same settings to that sequence.
    This is an optional feature, as noted earlier.
 
-   \itempar{Chord Generation}{pattern editor!chord generation}
-   One can insert chords with one click.
-   (This feature comes from user "stazed"
-   and his \textsl{Seq32} project \cite{seq32}.)
-   Select the desired chord type first.
-   Once a value other than \textbf{Off} is selected,
-   drawing mode will add multiple notes representing the chord
-   created, with the clicked note value as the base of the chord.
-
 \subsection{Pattern Editor / Measures Ruler}
-\label{subsec:pattern_editor_time}
+\label{subsec:pattern_editor_measures_ruler}
 
    The measures ruler ("bar indicator", or "Time")
    consists of a \textsl{timeline} at the top and the 
    \textbf{L marker} and \textbf{R marker} items.
    The following are the elements next to and on
-   the \textbf{Time} line:
+   the \textbf{Time} line.
 
-   \begin{itemize}
-      \item \textbf{Vertical Zoom Buttons}.
-         These buttons allow the user to compress, reset, or expand the
-         piano roll vertically to a certain degree.
-         (The \texttt{v}, \texttt{V}, and \texttt{0} keys offer
-         the same functions.)
-         A more permanent change in vertical grid scaling
-         can be made by setting the \textbf{Editor Key Height} value in
-         the \textbf{Edit / Preferences / Display} tab,
-         or in the 'usr' file.
-      \item \textbf{Time Line}.
-         The \textbf{Time} (or \textbf{Measures}) bar provides an explicit
-         count of beats and bars.
-         It follows the horizontal zoom of the piano roll.
-         It also has a couple tricks, which are shown in the diagram below.
-         \begin{itemize}
-            \item \textbf{In the upper half} of the time-line,
-               the mouse pointer changes to a vertical pointer.
-               Clicking there then shows a vertical bar and a red dot; these mark
-               the starting position of playback.
-               This is useful for reviewing some notes.
-            \item \textbf{In the lower half} of the time-line,
-               the mouse pointer changes to a "finger" icon.
-               Left-clicking there then moves the "L" marker to that point.
-               Right-clicking there moves the "R" marker to that point.
-               ("R" will never precede "L", though).
-               If the \textbf{Loop} button in the main window is active, then
-               playback will loop between the "L" and "R" buttons.
-               This looping now works with both Live and Song modes.
-         \end{itemize}
-   \end{itemize}
+\subsubsection{Pattern Editor / Measures Ruler / Vertical Zoom}
+\label{subsubsec:pattern_editor_measures_ruler_vertical_zoom}
+
+   \index{vertical zoom}
+   \index{pattern editor!vertical zoom}
+   The vertical zoom buttons
+   allow the user to compress, reset, or expand the
+   piano roll vertically.
+   The \texttt{v}, \texttt{V}, and \texttt{0} keys offer
+   the same functions.
+
+   A more permanent change in vertical grid scaling
+   can be made by setting the \textbf{Editor Key Height} value in
+   the \textbf{Edit / Preferences / Display} tab,
+   or in the 'usr' file.
+
+\subsubsection{Pattern Editor / Measures Ruler / Time Bar}
+\label{subsubsec:pattern_editor_measures_ruler_time_bar}
+
+      The \textbf{Time} (or \textbf{Measures}) bar provides an explicit
+      count of beats and bars.
+      It follows the horizontal zoom of the piano roll.
+      It also has a couple tricks, which are shown in the diagram below.
+
+      \begin{itemize}
+         \item \textbf{In the upper half} of the time-line,
+            the mouse pointer changes to a vertical pointer.
+            Clicking there then shows a vertical bar and a red dot; these mark
+            the starting position of playback.
+            This is useful for reviewing some notes.
+         \item \textbf{In the lower half} of the time-line,
+            the mouse pointer changes to a "finger" icon.
+            Left-clicking there then moves the "L" marker to that point.
+            Right-clicking there moves the "R" marker to that point.
+            ("R" will never precede "L", though).
+            If the \textbf{Loop} button in the main window is active, then
+            playback will loop between the "L" and "R" buttons.
+            This looping now works with both Live and Song modes.
+      \end{itemize}
 
    The following figure shows three steps in cursor movement, and the final
    result for setting a time-signature.
@@ -856,9 +723,9 @@
    \index{keys!page-up} \texttt{Page Up} and 
    \index{keys!page-down} \texttt{Page Down} keys.
    One can go to the leftmost position using the 
-   \index{keys!ctrl-home} \texttt{Ctrl-Home} key,
+   \index{keys!ctrl-home} \texttt{Home} key,
    and to the rightmost position using the
-   \index{keys!ctrl-end} \texttt{Ctrl-End} key,
+   \index{keys!ctrl-end} \texttt{End} key,
    The mouse scroll wheel can also be used to move the panes around.
    For implementation reasons, the scroll wheel is active
    \textsl{only} in the piano roll.
@@ -1201,10 +1068,11 @@
    pasted into \textsl{other} pattern editor dialogs; that is, they can be
    pasted into other sequences.
 
-\subsubsection{Pattern Editor / Other Keys}
-\label{subsubsec:pattern_editor_other_keys}
+\subsubsection{Pattern Editor / Misc Keys}
+\label{subsubsec:pattern_editor_misc_keys}
 
-   Here are some other, less standard,` keys useful in the pattern editor piano roll:
+   Here are some other, less standard,` keys useful in the pattern editor piano
+   roll:
 
    \begin{itemize}
       \item
@@ -1310,11 +1178,10 @@
    the \textbf{V} key zooms in vertically to make the notes fatter,
    and the \textbf{0} key resets the zoom to the value of the "key height"
    setting in the 'usr' configuration file.
-   
-\subsection{Events Pane}
-\label{subsec:pattern_editor_panel}
+ 
+\subsection{Pattern Editor / Events Pane}
+\label{subsec:pattern_editor_events_pane}
 
-   Also known as the "events pane" or "events editor".
    The narrow (a few pixels high) events strip shows discrete events,
    such as \texttt{Note On} and \texttt{Note Off}.
    The events that are shown are selectable in the \textbf{Event} category
@@ -1340,6 +1207,9 @@
    selected in the event menus, can be inserted
    by a click in the event pane.
    Their values can be changed in the data pane.
+ 
+\subsubsection{Pattern Editor / Events Pane / Non-Note Events}
+\label{subsubsec:pattern_editor_events_pane_non_note_events}
 
    \index{events!insert}
    Other event types (including tempo) can be inserted via the event strip.
@@ -1388,8 +1258,15 @@
    into the next non-selected event.
    The event values can be edited via the data panel, described in the next
    section.
+ 
+\subsubsection{Pattern Editor / Events Pane / Pattern Fix Button}
+\label{subsubsec:pattern_editor_events_pane_pattern_fix}
 
-\subsection{Left Buttons}
+   A button at the far right of the events panel will
+   bring up the Pattern Fix dialog.
+   See \sectionref{subsec:pattern_editor_pattern_fix}.
+
+\subsection{Pattern Editor / Left Buttons}
 \label{subsec:pattern_editor_left_buttons}
 
    Once the events are in place, the next step is to modify the
@@ -1403,34 +1280,52 @@
       \item \textbf{Chord Generation Reset}
    \end{enumber}
 
-   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
+%   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
-   \itempar{Transpose}{pattern editor!transpose toggle}
+\subsubsection{Pattern Editor / Left Buttons / Transposable}
+\label{subsubsec:pattern_editor_left_buttons_transposable}
+
+   \index{transposable}
+   \index{pattern editor!transpose toggle}
    This button toggles the ability of the sequence to be transposed.
    If transpose is enabled for that pattern, the button will be highlighted as
    per the current desktop theme.  Patterns for drums should, in general, not
    be transposable.
+   If not set, then note-mapping cannot be applied.
 
-   \itempar{Note Map}{pattern editor!note map}
+\subsubsection{Pattern Editor / Left Buttons / Note Map}
+\label{subsubsec:pattern_editor_left_buttons_note_map}
+
+   \index{note map}
+   \index{pattern editor!note map}
    If the pattern is transposable, then this button is enabled.
-   If clicked, it applies the note-mapper to all of the notes in the pattern.
+   If clicked, it applies the note-mapper, if set to active in the
+   'rc' file, to all of the notes in the pattern.
    See \sectionref{subsec:configuration_drums}.
    It is most useful for converting percussion from older drum sets to
    General MIDI drums.  Enable transposition, apply the mapping, and then
    disable transposition to avoid transposing again (e.g. by accident).
 
-   \itempar{Drum Note Mode}{pattern editor!drum mode}
+\subsubsection{Pattern Editor / Left Buttons / Drum Mode}
+\label{subsubsec:pattern_editor_left_buttons_drum_mode}
+
+   \index{drum mode}
+   \index{pattern editor!drum mode}
    This button changes from normal note mode to drum note mode. In the drum
    mode, the notes are drawn as small red diamonds without any duration.
    They are also entered the same way.
+   This mode treats the events as having a minimal length.
    This is a feature adopted from \textsl{Kepler34}.
+
+\subsubsection{Pattern Editor / Left Buttons / Chord Generation}
+\label{subsubsec:pattern_editor_left_buttons_chord_generation}
 
    \itempar{Chord Generation}{pattern editor!chord generation}
    \index{chord generation}
    This button resets the chord-generation feature to \textbf{Off}.
    It's located by the data pane in order to save space in the first row.
 
-\subsection{Data Pane}
+\subsection{Pattern Editor / Data Pane}
 \label{subsec:pattern_editor_data_view}
 
    Now on to the \textbf{Data Pane} itself, also known as the "data panel".
@@ -1443,10 +1338,12 @@
    Many different events can be altered in the data pane:
    Note On and Note Off velocities, program changes, aftertouch, channel
    pressure, pitch wheel, and tempo.
+   \index{karaoke}
+   \index{text events}
    Text events are also displayed (useful in karaoke), but they cannot be
-   edited in this pane
-   (instead see the \textbf{Session} tab's \textbf{Song Info} controls and
-   the \textbf{Event Editor}.).
+   edited in this pane.
+   (Instead see the \textbf{Session} tab's \textbf{Song Info} controls and
+   the \textbf{Event Editor}.)
 
    The events values for the currently selected category of events are shown
    in this window as vertical lines of a height proportional to the value,
@@ -1463,6 +1360,9 @@
    settings in the 'usr' file.
    This range is for display purposes.
    See \sectionref{subsubsec:usr_file_user_midi_settings}.
+
+\subsubsection{Pattern Editor / Data Pane / Editing}
+\label{subsubsec:pattern_editor_data_view_editing}
 
    These values can be easily modified by
    \index{mouse!left-click-drag}
@@ -1484,6 +1384,9 @@
 
    Note that some events are shown as small circles instead of a line; each
    circle has the numeric value next to it.
+
+\subsubsection{Pattern Editor / Data Pane / Tempo Events}
+\label{subsubsec:pattern_editor_data_view_tempo_events}
 
    \textbf{Tempo}
    events are shown as a small yellow circle.
@@ -1545,11 +1448,19 @@
    select the events in the thin event pane, then press
    either \texttt{Delete} or \texttt{Ctrl-X}.
    They can also be deleted (slowly) in the event editor.
+   Tempo event values can be modified by dragging the circle up and
+   down.
+
+\subsubsection{Pattern Editor / Data Pane / Program/Patch Events}
+\label{subsubsec:pattern_editor_data_view_program_patch_events}
 
    \textbf{Program Change}
-   events are shown as a small open circle with a numeric value.
-   Both Tempo and Program Change event values can be modified by dragging
-   the circle representing the event.
+   events are shown as a small open circle with a numeric value and
+   the default name of the program/patch.
+   These names can be changed with a \texttt{.patches} file.
+   See \sectionref{subsubsec:configuration_rc_patches}.
+   Program Change event values can be modified by dragging
+   the circle representing the event up or down.
 
 \begin{figure}[H]
    \centering 
@@ -1558,8 +1469,8 @@
    \label{fig:pattern_editor_data_pane_program_change}
 \end{figure}
 
-   As of version 0.99.9, we have added \textsl{Seq32}-style grab-handles
-   to the Note events in the data panel.
+   \textsl{Seq66} has added \textsl{Seq32}-style grab-handles
+   to Note events in the data panel.
    They are shown only if an event is selected, or if the mouse
    is on top of the event line.
    As the mouse moves through the data panel, the grab-handles are shown
@@ -1595,7 +1506,7 @@
       \item \textbf{Event Category Selector}
       \item \textbf{Selector for Existing Data}
       \item \textbf{Selected Event Name}
-      \item \textbf{LFO Panel}
+      \item \textbf{LFO Dialog}
       \item \textbf{Live Loop Count}
       \item \textbf{Armed/Muted Toggle} (Data To MIDI Buss)
       \item \textbf{MIDI Thru Toggle}
@@ -1605,11 +1516,15 @@
       \item \textbf{Record Velocity and Reset}
    \end{enumber}
 
+\subsubsection{Pattern Editor / Bottom Row / Event Selection Menus}
+\label{subsubsec:pattern_editor_bottom_event_selection_menus}
+
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Event Category Selector}{pattern editor!event selector}
    This button brings up the following context menu, so that the user can
    select the category of events to view and edit.
+   It shows all possible MIDI event categories, including Text events.
 
 \begin{figure}[H]
    \centering 
@@ -1624,6 +1539,7 @@
    Useful in deciding if it is worth selecting the event.
 
    The sub-menus of this context menu show 128 MIDI controller messages.
+   The default names of these messages are shown.
    They also use the squares to
    indicate if there are any events of the type shown in the menu.
    These sub-menus can be modified by editing the 'usr' file:
@@ -1644,86 +1560,20 @@
    Shows the selection event, with its event number shown in hexadecimal
    notation, and the name of the event shown.
 
-   \itempar{LFO Panel}{pattern editor!LFO}
+\subsubsection{Pattern Editor / Bottom Row / LFO Button}
+\label{subsubsec:pattern_editor_bottom_lfo_button}
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
+
+   \itempar{LFO Dialog}{pattern editor!LFO}
    An LFO (low-frequency oscillator) allows data events
    to be modulated by some rudimentary wave functions.
-   By clicking on the \textbf{LFO} button or using the \texttt{Ctrl-L} key,
-   the following window appears, with a set of 4 vertical sliders:
+   See \sectionref{subsec:pattern_editor_lfo_panel}.
 
-\begin{figure}[H]
-   \centering 
-  \includegraphics[scale=0.65]{pattern-editor/lfo.png}
-   \caption{Pattern Editor LFO}
-   \label{fig:pattern_editor_bottom_lfo}
-\end{figure}
+\subsubsection{Pattern Editor / Bottom Row / Loop Control}
+\label{subsubsec:pattern_editor_bottom_loop_control}
 
-   \begin{enumber}
-      \item \textbf{Use Measures (vs Length)}.
-         The length of a waveform period can be determined by the length of the
-         pattern (2 measures as shown next to the label "LFO Data Editor") or
-         by the length of a measure. This check-box determines that.
-         In the diagram, it is checked, so the 2 measures covers four periods
-         of the sine wave.
-         Especially useful in modifying long patterns.
-      \item \textbf{DC Offset} (\textbf{D}).
-         Provides a kind of DC offset for the data value. Starts at 64, and
-         ranges from 0 to 127.
-         In the diagram above, one can see that the 0-value line for the sine
-         wave is at 64.
-      \item \textbf{Depth} (\textbf{R}).
-         Controls the depth of modulation.
-         Starts at 64, and ranges from 1 to 127.
-         The data values range from \( y = DC - R \) to \( y = DC + R\).
-         For the sine-wave shown above, the range is 0 to 128 (actually 127).
-      \item \textbf{Periods}.
-         Indicates the number of periods per pattern length.
-         For long patterns, this parameter should be set high,
-         to even show an effect.  It is also subject to an 'anti-aliasing'
-         effect, especially for short patterns.
-         Try it!
-      \item \textbf{Phase Shift} (\textbf{P}).
-         Provides the phase shift within a period of the LFO wave.
-         A value of 1 is a phase shift of 360 degrees (one whole period).
-         Thus, the data at \( P = 0 \) would look exactly the same at phase
-         \( P = 1\).
-      \item \textbf{Wave Type}.
-         Selects the kind of wave to use for the LFO:
-         \begin{enumber}
-            \item \textbf{None}.
-               This setting is useful if one wants to change only the DC
-               offset.
-            \item \textbf{Sine}.
-               Modulates via a sine wave.
-               Change the \textbf{Phase Shift} to get a cosine function.
-               If the \textbf{DC Offset} is below 64, then negative values are
-               converted to positive. As an example, setting the DC offset to 0
-               will produce the absolute value of the \texttt{sin()} function.
-            \item \textbf{Sawtooth}.
-               Provides a ramp modulation.
-            \item \textbf{Reverse Sawtooth}.
-               Provides a ramp modulation in the opposite direction.
-            \item \textbf{Triangle}.
-               Modulates via a triangle wave; somewhat similar to a sine wave.
-            \item \textbf{Exponential Rise}.
-               Provides an exponential ramp modulation.
-               This ramping is easiest to see if the DC offset is 0,
-               and the Mod range is 127.
-               Varying the \textbf{Phase Shift} with the slider
-               will move the peak of the curve left to right.
-            \item \textbf{Exponential Fall}. Provides a ramp modulation in the
-               opposite direction.
-         \end{enumber}
-         Note that one might have to change a parameter slightly to see the
-         effect of the new waveform.
-      \item \textbf{Reset Data}.
-         This button restores the initial pattern event data.  Useful when one
-         applies modulation that one ultimately does not like.
-      \item \textbf{Close}.  Closes the LFO panel.
-   \end{enumber}
-
-   In addition to the \textbf{Reset Data} button, Ctrl-Z can be applied
-   multiple times to undo changes one at a time.  Every motion of a control
-   causes a complete change.
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Live Loop Count}{pattern editor!live loop count}
    Normally, in Live mode, a pattern plays endlessly if left alone.
@@ -1939,9 +1789,11 @@
    This kind of note recording can be done in two ways:
 
    \begin{enumerate}
-      \item Left-click-drag the mouse.
-      \item Turn on recording without the pattern playing, then
-         enter notes; recording stops when the end of the length is reached.
+      \item Turn on recording without the pattern playing.
+         Then activate the MIDI device's play.
+      \item Left-click-drag the mouse to enter notes.
+         note-drawing stops when at end of the pattern.
+         But dragging back and forth will draw more notes.
    \end{enumerate}
 
    Now, the DD-11 is an old instrument from the pre-General-MIDI days.
@@ -1951,7 +1803,8 @@
 
    \begin{verbatim}
       [note-mapper]
-      "GM_DD-11.drums"
+      active = true
+      name = "GM_DD-11.drums"
    \end{verbatim}
 
    We copy the recorded pattern and paste it into another slot for safety.
@@ -1962,6 +1815,11 @@
    and save the file.
    Playing it into channel 10 of \textsl{QSynth} shows that it sounds a lot
    like the original DD-11 drums.
+
+\subsubsection{Pattern Editor / Bottom Row / Note Velocity}
+\label{subsubsec:pattern_editor_bottom_note_velocity}
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Vol}{pattern editor!vol}
    This button resets the volume (velocity)
@@ -1975,6 +1833,281 @@
    These values correspond to MIDI volume levels from 127 down to 16.
    If the \textbf{Free} item is selected, then the incoming note velocity is
    preserved.
+
+\subsection{Pattern Editor / Pattern Fix Dialog}
+\label{subsec:pattern_editor_pattern_fix}
+
+   This dialog provides for a number of overall modifications of a pattern.
+   Before we start, some obvious limitations.
+   Applying a fix, then deciding to change the fix, requires
+   one to click the \textbf{Reset} before applying the next change.
+   Now, if the change does not look correct, one can close the pattern
+   editor and reopen it to see if the change took hold correctly.
+   Also, once a change is made, the modify flag (asterisk) is shown,
+   but currently a reset cannot remove that flag.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.65]{pattern-editor/patternfix.png}
+   \caption{Pattern Fix Dialog}
+   \label{fig:pattern_editor_pattern_fix}
+\end{figure}
+
+   \index{pattern-editor!fix}
+   When this dialog is used, the time-stamp of \textsl{every event} in the
+   pattern will be changed.
+   Once selected, the pattern number is shown in the title-bar and in a
+   read-only text field.
+
+   The following sections describe the dialog.
+   For more details, go to the source-code bundle, enter the
+   \texttt{contrib/notes/} directory, and
+   examine the \texttt{pattern-fix-test.text} file.
+
+\subsubsection{Pattern Editor / Pattern Fix / Length Change}
+\label{subsubsection:patterns_fix_length_change}
+
+   The \textbf{Length Change} selector allows for the following actions:
+
+   \begin{itemize}
+      \item \textbf{None}.
+         No length change will occur.
+         Alignment, reversing, and quantization can still be done.
+      \item \textbf{Measures/Time Sig}.
+         Allows the measures (length) of the pattern to be changed in three
+         ways, depending on how the number is entered: as an integer or
+         floating-point number (e.g. 1, 1.0, 1.75),
+         or as a simple time-signature fraction (e.g. "3/4"; the "/" is a
+         key indicator of this kind of change).
+         In some ways it is similar to \textbf{Scale Factor}, described
+         below.
+         \begin{itemize}
+            \item \textbf{Measures}.
+               Entering an integer or a floating-point scale factor will scale
+               the pattern events up or down,
+               and change the number of measures.
+               The final number of measures is always an integer.
+               If the measure value is less than \texttt{1.0},
+               the pattern will only be compressed.
+               If less than 1 measure in length, the result will be
+               1 measure; \textsl{Seq66} cannot allow less than 1 measure.
+               \textsl{Note that, unlike setting the measures in the pattern
+               editor itself, this measures change will \textbf{not}
+               truncate notes.}
+               If the number of measures is greater, then the notes will
+               be expanded.
+            \item \textbf{Time Signature}.
+               Entering a fraction such as \textbf{3/4} or
+               \textbf{12/8} will change the time signature of the pattern
+               and scale the pattern down or up appropriately.
+               This action can also change the length of the pattern.
+         \end{itemize}
+      \item \textbf{Scale Factor}.
+         Scales the pattern.  For example, 2.0 doubles the length, and 0.5
+         halves the length.
+         In some ways it is similar to \textbf{Measures}, described
+         above.
+         The \textbf{Measures} is changed to be enough to contain the new length,
+         but only if the scale is greater than 1.0.
+         One thing to be aware of is that, if the pattern is expanded, the
+         new measure count depends on the location of the last event in the
+         expanded pattern.
+   \end{itemize}
+
+\subsubsection{Pattern Editor / Pattern Fix / Other Fixes}
+\label{subsubsection:patterns_fix_other_fixes}
+
+   \textbf{Other Fixes} provides some minor items, as follows.
+
+   \begin{itemize}
+      \item \textbf{Align left}.
+         Aligns the pattern to the left (i.e. the beginning)
+         of the sequence, removing any delays.
+         Useful when recording a pattern live and not quite
+         hitting the first beat in time.
+      \item \textbf{Align right}.
+         Align the pattern to the right of the sequence;
+         the last note ends at the end of the sequence.
+      \item \textbf{Reverse measures}.
+         Reverses all of the events in the whole pattern, flipping the measures
+         completely.  For example, if all the events occur near the end of the
+         pattern, after reversal they will all appear near the beginning of the
+         pattern.
+      \item \textbf{Reverse in place}.
+         This is probably a more natural reversal method.
+         The relative location of a cluster of notes doesn't change, but the
+         notes are simply reversed in place.
+      \item \textbf{Preserve note length}.
+         Prevents Note Offs from being scaled, which shortens or lengthens the
+         notes, and in some case might cause notes to bleed past a measure.
+         When scaling down, it is usually better to leave this option off.
+   \end{itemize}
+
+\subsubsection{Pattern Editor / Pattern Fix / Alteration}
+\label{subsubsection:patterns_fix_alteration}
+
+   The \textbf{Alteration} selector allows for various types of
+   quantization, randomization, and note-mapping.
+
+   It works similarly to the \textbf{Tool} entries of the
+   same name (see \sectionref{subsec:pattern_editor_second_row}),
+   but works on \textsl{all events}, not just selected events.
+   Also included is a \textbf{Jitter} option, with a range for the jitter.
+   This option slightly randomizes the time-stamps of note events.
+
+   \begin{itemize}
+      \item \textbf{None}.
+      No "alteration" process is done.
+      \item \textbf{Tight Q ticks}.
+         Quantizes the note times by the amount shown (MIDI ticks)
+         in the text-field next to it. Normally, one wants this to be
+         half of the next value described.
+      \item \textbf{Full Q ticks}.
+         Quantizes the note times by the amount shown (MIDI ticks)
+         in the text-field next to it. Normally, one wants this to be
+         the size of a note, for example, a 16th note, which is 48
+         ticks by default.
+      \item \textbf{Random amplitude}.
+         Randomizes the velocity of notes by plus-or-minus the number of units
+         specified in the text-field.
+      \item \textbf{Time/tick jitter}.
+         Randomizes the timing of each note by plus-or-minus the number of
+         MIDI ticks shown in the text-field.
+         Most useful to humanize a too-rigid rhythm.
+      \item \textbf{Note-map}.
+         Remaps the notes according to a 
+         \texttt{.drums} or \texttt{.notemap} file (both are
+         identical in concept and layout).
+         Unlike the one-the-fly note-mapping capability (where the
+         note-map is created at the startup of the application),
+         this is a temporary note map.
+         The note-map file is read, all notes are re-mapped, and the
+         note-map goes away.
+         By default the note-map file is the one specified in the 'rc' file,
+         though it need not be active for this operation.
+         Clicking on the \texttt{...} allows one to select another file to
+         use (but only for a pattern-fix).
+         The note-map can be used to remap drum notes, or to produce
+         special note-remappings, such as inversion.
+      \item \textbf{Rev Note-map}.
+         This is the same as note-mapping, but maps in the opposite direction.
+   \end{itemize}
+
+%  Question:  would a vertical "pattern flip" (of the note values themselves)
+%  be useful?
+
+\subsubsection{Pattern Editor / Pattern Fix / Applied Effects}
+\label{subsubsection:patterns_fix_applied_effects}
+
+   \textbf{Applied Effects} does not do anything except show the effect of the
+   changes. The fix process followed is:
+
+   \begin{enumerate}
+      \item Apply the left/right-alignment (if selected).
+      \item Modify the number of measures (if selected).
+      \item Do the scaling (if selected).
+      \item Perform the quantization/tightening (if selected).
+   \end{enumerate}
+
+   The presumed effect of the change is shown, if applicable.
+   Note that changing the measure in this dialog is different from
+   changing the measures in the "length" dropdown, which only changes the
+   measures.
+   Changing the measures to a large number on a pattern of 1 measure will
+   greatly expand the notes!
+
+   Any accidental changes can be \textbf{Reset}
+   in this dialog.
+   Undo in the pattern-editor itself with \texttt{Ctrl-Z} affects
+   only MIDI events, not things like the time-signature from the
+   drop-downs.
+
+\subsection{Pattern Editor / LFO Dialog}
+\label{subsec:pattern_editor_lfo_panel}
+
+   The LFO dialog allows for modulating note velocities and the control values
+   of the event type in shown in the data pane.
+   It can even modulated tempo events.
+
+   By clicking on the \textbf{LFO} button or using the \texttt{Ctrl-L} key,
+   the following window appears, with a set of 4 vertical sliders:
+
+\begin{figure}[H]
+   \centering 
+  \includegraphics[scale=0.65]{pattern-editor/lfo.png}
+   \caption{Pattern Editor LFO}
+   \label{fig:pattern_editor_bottom_lfo}
+\end{figure}
+   
+   The user-interface items function as follows.
+
+   \begin{enumber}
+      \item \textbf{Use Measures (vs Length)}.
+         The length of a waveform period can be determined by the length of the
+         pattern (2 measures as shown next to the label "LFO Data Editor") or
+         by the length of a measure. This check-box determines that.
+         In the diagram, it is checked, so the 2 measures covers four periods
+         of the sine wave.
+         Especially useful in modifying long patterns.
+      \item \textbf{DC Offset} (\textbf{D}).
+         Provides a kind of DC offset for the data value. Starts at 64, and
+         ranges from 0 to 127.
+         In the diagram above, one can see that the "0-value" line for the sine
+         wave is at 64.
+      \item \textbf{Depth} (\textbf{R}).
+         Controls the depth of modulation; i.e. the modulation range.
+         Starts at 64, and ranges from 1 to 127.
+         The data values range from \( y = DC - R \) to \( y = DC + R\).
+%        For the sine-wave shown above, the range is 0 to 128 (actually 127).
+      \item \textbf{Periods}.
+         Indicates the number of periods per pattern length.
+         For long patterns, this parameter should be set high,
+         to even show an effect.  It is also subject to an 'anti-aliasing'
+         effect, especially for short patterns.
+         Try it!
+      \item \textbf{Phase Shift} (\textbf{P}).
+         Provides the phase shift within a period of the LFO wave.
+         A value of 1 is a phase shift of 360 degrees (one whole period).
+         Thus, the data at \( P = 0 \) would look exactly the same at phase
+         \( P = 1\).
+      \item \textbf{Wave Type}.
+         Selects the kind of wave to use for the LFO:
+         \begin{enumber}
+            \item \textbf{None}.
+               This setting is useful if one wants to change only the DC
+               offset.
+            \item \textbf{Sine}.
+               Modulates via a sine wave.
+               Change the \textbf{Phase Shift} to get a cosine function.
+               If the \textbf{DC Offset} is below 64, then negative values are
+               converted to positive. As an example, setting the DC offset to 0
+               will produce the absolute value of the \texttt{sin()} function.
+            \item \textbf{Sawtooth}.
+               Provides a ramp modulation.
+            \item \textbf{Reverse Sawtooth}.
+               Provides a ramp modulation in the opposite direction.
+            \item \textbf{Triangle}.
+               Modulates via a triangle wave; somewhat similar to a sine wave.
+            \item \textbf{Exponential Rise}.
+               Provides an exponential ramp modulation.
+               This ramping is easiest to see if the DC offset is 0,
+               and the Mod range is 127.
+               Varying the \textbf{Phase Shift} with the slider
+               will move the peak of the curve left to right.
+            \item \textbf{Exponential Fall}. Provides a ramp modulation in the
+               opposite direction.
+         \end{enumber}
+         Note that one might have to change one or more parameters
+         slightly to see the effect of the new waveform.
+      \item \textbf{Reset Data}.
+         This button restores the initial pattern event data.  Useful when one
+         applies modulation that one ultimately does not like.
+      \item \textbf{Close}.  Closes the LFO panel.
+   \end{enumber}
+
+   In addition to the \textbf{Reset Data} button, Ctrl-Z can be applied
+   multiple times to undo changes one at a time.  Every motion of a control
+   causes a complete change.
 
 \subsection{Pattern Editor / Common Actions}
 \label{subsec:pattern_editor_common}

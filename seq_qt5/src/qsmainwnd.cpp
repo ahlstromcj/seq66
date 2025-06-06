@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-31
+ * \updates       2025-06-06-04
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -3764,6 +3764,7 @@ qsmainwnd::update_bank (int bankid)
 
         /*
          * Done in the call above:
+         *
          * (void) cb_perf().set_playing_screenset(m_live_frame->bank_id());
          */
 
@@ -4670,9 +4671,7 @@ qsmainwnd::changeEvent (QEvent * event)
                 screenset::number bank = m_live_frame->bank_id();
                 screenset::number setno = cb_perf().playscreen_number();
                 if (bank != setno)
-                {
                     (void) cb_perf().set_playing_screenset(bank);
-                }
             }
         }
         else

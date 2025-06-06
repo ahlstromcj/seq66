@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-05-28
+ * \updates       2025-06-04
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -3028,6 +3028,19 @@ performer::log_current_tempo ()
  *  performer::callbacks subscribers. Note that the setsmode values of normal
  *  and autoarm indicate to clear the play-set before adding the next set to
  *  it.
+ *
+ * Process:
+ *
+ *      -   setmapper::set_playing_screenset(setno)
+ *          -   setmapper::set_playscreen(setno). Sets the playscreen as the
+ *              specified set, creating it if it doesn't already exist. Sets
+ *              a member pointer to it.
+ *      -   setmapper::fill_play_set(playset &, bool clearit)
+ *          -   screenset::fill_play_set(playset &, bool clearit)
+ *              -   playset::fill(ditto). Optionally clears the playset,
+ *                  then adds the set's patterns to the playset.
+ *
+ *  If setsmode is autoarm, unmute the patterns.
  */
 
 screenset::number
@@ -3042,21 +3055,29 @@ performer::set_playing_screenset (screenset::number setno)
         bool clearit = rc().is_setsmode_clear();    /* remove all patterns? */
         announce_exit(false);                       /* blank the device     */
         unset_queued_replace();                     /* clear queueing       */
-        (void) fill_play_set(clearit);
-        if (rc().is_setsmode_autoarm())
+        ok = fill_play_set(clearit);
+        if (ok)
         {
-            set_song_mute(mutegroups::action::off); /* unmute them all      */
+            if (rc().is_setsmode_normal())
+            {
+                set_song_mute(mutegroups::action::on); /* mute them all    */
+            }
+            else if (rc().is_setsmode_autoarm())
+            {
+                set_song_mute(mutegroups::action::off); /* arm them all     */
+            }
+            else if (rc().is_setsmode_allsets())
+            {
+                /*
+                 * Nothing to do?
+                 */
+            }
+            announce_playscreen();                      /* inform ctrl-out  */
+            notify_set_change(setno, change::signal);   /* change::no       */
+            return playscreen_number();
         }
-        else if (rc().is_setsmode_allsets())
-        {
-            /*
-             * Nothing to do?
-             */
-        }
-        announce_playscreen();                      /* inform control-out   */
-        notify_set_change(setno, change::signal);   /* change::no           */
     }
-    return playscreen_number();
+    return screenset::unassigned();
 }
 
 /**
@@ -8657,11 +8678,17 @@ performer::automation_glearn
 }
 
 /**
- *  Implements play_ss.  This function saves the current state of the
- *  screenset, then sets the play-screen to it, then it seems to redundantly
- *  set the states again.  NEEDS FURTHER INVESTIGATION.
+ *  Implements play_ss, initiated by the Home key by default.
  *
- *  See automation_ss_set(), which seems to be a duplicate?
+ *  This function saves the current state of the screenset, then sets the
+ *  play-screen to it, then it seems to redundantly set the states again.
+ *
+ *  This function is called after changing the screenset. The d0 and d1
+ *  parameters are not used, as this is merely a "flag". The current
+ *  playscreen number is used. Then, no matter what the setsmode is,
+ *  the playset is unmuted.
+ *
+ *  Compare to automation_ss_set().
  */
 
 bool
@@ -8674,8 +8701,14 @@ performer::automation_play_ss
     std::string name = auto_name(automation::slot::play_ss);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
-        (void) set_playing_screenset(screenset::number(d1));
-
+    {
+        screenset::number ps = playscreen_number();
+        if (ps != screenset::unassigned())
+        {
+            (void) set_playing_screenset(ps);
+            set_song_mute(mutegroups::action::off); /* unmute them all      */
+        }
+    }
     return true;
 }
 
@@ -8869,6 +8902,12 @@ performer::automation_bpm_page_dn
 /**
  *  Sets the screen by number.  Needs to be clarified.  If \a inverse is true,
  *  nothing is done, to support keystroke-release properly.
+ *
+ *  Currently, d0 should be 0 and d1 should be the screenset number. For
+ *  example, send CC 0 (bank select) and the screenset number.
+ *
+ *  Another option would be d0 = note number = screenset number, but
+ *  we don't do that here.
  */
 
 bool
@@ -8880,7 +8919,7 @@ performer::automation_ss_set
 {
     std::string name = auto_name(automation::slot::ss_set);
     print_parameters(name, a, d0, d1, index, inverse);
-    if (! inverse)
+    if (opcontrol::allowed(d0, inverse))
         (void) set_playing_screenset(screenset::number(d1));
 
     return true;

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-06-03
+% \update      2025-06-06
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1316,6 +1316,7 @@
 
    Let's go through an example using the \texttt{Home} key (or whatever key is
    configured as the \textbf{Set Playing Screenset} key.)
+   The process here assumes that sets-mode is "normal", not "auto-arm".
 
    \begin{enumber}
       \item Load a song with more than one screen-set.
@@ -1324,7 +1325,7 @@
          set.  Note that the first set stops playing.  Also note that the
          now-current set is \textsl{not} playing.
       \item Press the \texttt{Home} key.
-         Note that the first set turns off, and the current set turns on.
+         Note that the first set remains off, and the current set turns on.
          These steps can be repeated at will.
       \item Finally, hit the \texttt{F8} (\textbf{Toggle Mutes}) key.
          Note that all tracks on all sets toggle muting each time this key is

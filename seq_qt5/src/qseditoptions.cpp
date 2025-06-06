@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-30
+ * \updates       2025-06-04
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -2197,13 +2197,13 @@ qseditoptions::slot_sets_mode (int buttonno)
 {
     rcsettings::setsmode previous = rc().sets_mode();
     if (buttonno == setsmode_button_autoarm)
-        rc().sets_mode("auto-arm");
+        rc().sets_mode(rcsettings::setsmode::autoarm);
     else if (buttonno == setsmode_button_additive)
-        rc().sets_mode("additive");
+        rc().sets_mode(rcsettings::setsmode::additive);
     else if (buttonno == setsmode_button_allsets)
-        rc().sets_mode("auto-arm");
+        rc().sets_mode(rcsettings::setsmode::allsets);
     else
-        rc().sets_mode("normal");
+        rc().sets_mode(rcsettings::setsmode::normal);
 
     if (rc().sets_mode() != previous)
         modify_rc();
@@ -2654,9 +2654,8 @@ qseditoptions::sync ()
 }
 
 /*
- *  Get all the settings from the 'rc' file and make the GUI controls match them.
- *
- *  Note that "foreach" is a Qt-specific keyword, not a C++ keyword.
+ *  Get all the settings from the 'rc' file and make the GUI controls match
+ *  them.  Note that "foreach" is a Qt-specific keyword, not a C++ keyword.
  */
 
 void

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-05-16
+% \update      2025-06-06
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -73,6 +73,7 @@
    \label{fig:song_editor_window_annotated}
 \end{figure}
 
+   This is another diagram one might want to print out for reference.
    Note the major items shown:
 
    \begin{enumber}
@@ -161,7 +162,7 @@
       \item \textbf{Redo}
       \item \textbf{Follow Progress}
       \item \textbf{Zoom Out and Zoom In}
-      \item \textbf{Toggle Section Painting}
+      \item \textbf{Toggle Section/Trigger Painting}
       \item \textbf{Record Snap}
       \item \textbf{Grid Snap}
       \item \textbf{Transpose}
@@ -171,6 +172,7 @@
       \item \textbf{L/R Expand and Copy}
       \item \textbf{Expand Song Roll} (not shown in figure)
       \item \textbf{Trigger Transpose}
+      \item \textbf{Song Duration}
    \end{enumber}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
@@ -185,6 +187,11 @@
    the \textbf{Undo} button.
    Also implemented via \texttt{Shift-Ctrl-Z}.
 
+   \itempar{Follow Progress}{song editor!follow}
+   Toggles the mode of following progress
+   for longer songs.  WHen active, the song roll pages right to keep up with
+   the progress bar.
+
    \itempar{Zoom Out and Zoom In}{song editor!zoom}
    These buttons change the horizontal zoom.
    Zoom can also be changed via the keystrokes \texttt{z}, \texttt{0},
@@ -192,19 +199,14 @@
    Vertical zoom is also supported, by buttons to the left of the time-line and
    by keystrokes, as discussed below.
 
-   \itempar{Follow Progress}{song editor!follow}
-   \textbf{Follow Progress} toggles the mode of following progress
-   for longer songs.  WHen active, the song roll pages right to keep up with
-   the progress bar.
-
-   \itempar{Toggle Section Painting}{song editor!paint}
-   \textbf{Toggle Section Painting} toggles the ability
+   \itempar{Toggle Section/Trigger Painting}{song editor!paint}
+   Toggles the ability
    to drag the mouse along the pattern's timeline to create triggers
-   to indicate when the pattern plays.
+   to indicate when the pattern will play.
    Short patterns will be duplicated one or more times as
    the mouse is dragged.
-   This mode can alsp be changed via the keystrokes \texttt{p} and
-   \texttt{x}.
+   This mode can alsp be changed via the keystrokes \texttt{p} ("paint"),
+   \texttt{i} ("insert"), \texttt{x} ("excape").and \texttt{Esc}.
 
    \itempar{Grid/Record Snap}{song editor!grid/record snap}
    The \textbf{Movement Sizing/Snap} setting,
@@ -259,10 +261,8 @@
    transposition value.
 
    \itempar{L/R Loop}{song editor!play loop}
-   This button appears in the song editor only when it is open as
-   an external window.
-   This button is present in the main window, and so is not needed
-   in the Song tab.
+   This button is also present in the main window.
+   It sets up playback to move only between the "L" and "R" markers.
    For a description of this button, see
    \sectionref{subsubsec:introduction_loop_button}.
 
@@ -313,6 +313,11 @@
    The transposition value will be saved with the trigger when the song is
    saved.
 
+   \itempar{Song Duration}{song editor!duration}
+   Shows the full duration of the song based on the longest pattern or
+   the trigger layout.
+   Toggle between H:M:S and B:B:T notation by clicking on it.
+
 \subsection{Song Editor / Measures Ruler}
 \label{subsec:song_editor_measures_ruler}
 
@@ -320,11 +325,14 @@
    The measures ruler ("bar indicator", or "Time")
    consists of a \textsl{timeline} at the top and the 
    \textbf{L marker} and \textbf{R marker} mentioned above.
+   It also includes an \textbf{END} marker to indicate the
+   end of the song.
    The \textsl{measures ruler} is the ruled and numbered section at the top
    of the arrangement panel.  It provides a place to put the left and right
    markers.  In the \textsl{Seq24} documentation, it is called the "bar
    indicator".
-   There are some hidden details (tricks) in the measures panel.
+   There are some hidden details (tricks) in the measures panel used to
+   set the markers and the current play-head position.
 
    \begin{itemize}
       \item \textbf{In the upper half} of the time-line,
@@ -383,7 +391,7 @@
    \textbf{-}, \textbf{0}, and \textbf{+},
    which are used for vertical zoom, as described below.
 
-\subsection{Song Editor / Patterns (Names) Panel}
+\subsection{Song Editor / Pattern Names Panel}
 \label{subsec:song_editor_patterns_panel}
 
    The patterns panel is at the left of the song roll.
@@ -391,7 +399,7 @@
 
    \begin{enumber}
       \item \textbf{Number}.
-         The number of the screen set.
+         The number of the screen-set.
       \item \textbf{Title}.
          \index{pattern!title}
          \index{pattern!name}
@@ -400,10 +408,12 @@
          If a color is provided for the pattern, then that color is shown.
          Also, as an editing aid, the pattern over which the mouse is hovering
          is shown in a brighter version of the color.
-      \item \textbf{Channel}.
+      \item \textbf{Measures}.
          \index{pattern!channel}
-         The channel number appears (redundantly)
+         The number of measures in the pattern appears
          at the right of the title.
+      \item \textbf{Pattern Number}.
+         The pattern number is on the left of the second line of text.
       \item \textbf{Buss-Channel}.
          \index{pattern!buss-channel}
          This pair of numbers shows the MIDI buss number used in the pattern
@@ -487,6 +497,14 @@
    subsections are inserted, deleted, shrunk, lengthened, or moved.
    Actions can be done via the mouse or keyboard.
 
+   \textbf{Warning}.
+   There is a horizontal and a vertical scrollbar for the song roll.
+   However, some patterns may hide the scrollbars or obscure them.
+   For example, the Qt "kvantum" themes replace the scrollbar
+   with just its "thumb", and show it in the roll, but only when the
+   mouse is near the bottom or right borders.
+   Weird!
+
 \subsubsection{Song Editor / Song Roll / Layout}
 \label{subsubsec:song_editor_song_roll_layout}
 
@@ -508,8 +526,8 @@
          Tempo events in the pattern are shown as very small squares.
          They can be edited in the pattern editor's data panel,
          and in the event editor.
-      \item \textbf{Pattern Access}. (Since version 0.99.10).
-         Double-clicking (if enabled in the 'rc' file) on a track
+      \item \textbf{Pattern Access}.
+         Double-click-edit (if enabled in the 'rc' file) on a track
          representing an existing pattern will bring up an external
          pattern editor windows.
          Double-clicking on an empty track will create a new pattern
@@ -522,10 +540,12 @@
          See below for more information about triggers.
       \item \textbf{Selection}.
          Clicking inside a trigger selects it.
-         Selection is denoted by an orange rectangle around the trigger
-         and a dark grey color in the trigger.
+         Selection is denoted by
+         an orange color in the trigger.
          A pattern subsection can be moved by the mouse and deleted by
          keystrokes.
+         At present, selection of more than one trigger at a time (via
+         drawing a rectangle on them) is \textsl{not supported}.
       \item \textbf{De-selection}.
          \index{song editor!section deselection}
          \textsl{Left-clicking} or \textsl{right-clicking} in
@@ -535,7 +555,8 @@
          \index{song editor!selection movement}
          If one grabs (\textsl{left-click}) inside
          the pattern or pattern subsection, that item can be moved
-         horizontally, as long as there is room.
+         horizontally via the left and right arrow keys,
+         as long as there is room.
       \item \textbf{Section Length ("handle")}.
          \index{song editor!handle}
          \index{song editor!section length}
@@ -552,9 +573,9 @@
          A \textsl{middle-click} (or \textsl{ctrl-left-click})
          inside a pattern inserts a selection position
          marker in it, breaking the pattern into two equal pieces.
-         We call each piece a \textsl{pattern subsection}.
          This division can be done over and over.
          There are also options for splitting at the nearest snap point.
+         See below.
       \item \textbf{Expansion}.
          \index{song editor!section expansion}
          Originally, all the long patterns of this sample song were continuous.
@@ -626,7 +647,7 @@
    \index{song editor!selection}
    When a pattern or a pattern subsection is
    \textsl{left-clicked} in the piano
-   roll, it is marked with a dark gray filling.
+   roll, it is marked with an orange background.
    It can then be moved horizontally if there is room, or be deleted or copied
    for later pasting.
 
@@ -652,9 +673,10 @@
 
    \begin{itemize}
       \item Enter "paint" mode.
-         The \texttt{p} key enters paint mode, where additional triggers
+         The \texttt{p} or \texttt{i} keys enter paint mode,
+         where additional triggers
          can be added by click-dragging on a pattern row.
-         The \texttt{x} key leaves this mode.
+         The \texttt{x} or \texttt{Esc} keys leave this mode.
          The "finger" button and the mouse cursor both indicate the status.
       \item Start/Pause button functionality.
          When the song roll has keyboard focus,
