@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.20
 Chris Ahlstrom
-2019-04-13 to 2025-06-06
+2019-04-13 to 2025-06-07
 
 Hot:
     
@@ -9,11 +9,20 @@ Hot:
         available. The same hardware configuration is working perfectly when
         using seq64, the synth is receiving the CC signals and these events
         are recorded by seq64.
+    -   Main window.
+        -   The BBT/HMS button tooltip appears in all kinds of other places
+            when hovering.
     -   Song editor.
         -   The scrollbar is invisible for some themes!!!
         -   Cannot move triggers with the mouse, can only change their size;
             the arrow keys are needed.
         -   Make End act like ctrl-End and vice versa.
+    -   Event editor. Open the b4uacuse patchless file and the first (0)
+        pattern in the pattern editor; a segfault occurs. CANNOT DUPLICATE.
+    -   On the Debian box, jackctl no longer runs jackd. Sometimes
+        can get qjackctl to run it.
+    -   In the Session / Song Info, do not append ';' unless it is
+        karaoke?
 
 NSM:
 
@@ -28,12 +37,13 @@ NSM:
 
 Backlog:
 
+    -   Make sure sessions.rc works as advertised; fix documentation.
     -   Add a light version of glob(3) to use with Windows. In progress
         in the filefunctions module.
     -   Add note-value randomization to Tools, Fix Pattern.
     -   Event editor:
         -   Can we add, perhaps a tooltip or dropdown to select the desired
-            Control value (e.g. 7 for volume)?
+            Control value (e.g. 7 for volume)? Same for Program?
         -   Weird error cropped up; a Qt update issue? When clicking in
             the event-editors event table, a message like this appears:
             "qt.accessibility.core: Cannot create accessible child interface
@@ -41,6 +51,7 @@ Backlog:
             'eventTableWidget')  index:  8".  This does not happen in
             the table-widgets in other tabs. Nor does it happen on another
             computer.
+        -   Fix the handling and documentation of the time-signature.
     -   Get the 16-in-busses.midi file configured and working.
     -   Figure out issue #132, the libasound2 issue.
     -   #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?

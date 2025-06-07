@@ -143,11 +143,11 @@
 
    \index{keys!period (pause)}
    The keystroke for pausing playback is the \texttt{Period} character.
-   When used, it keep the progress at the same spot as before.
+   When used, it keeps the progress at the same spot as before.
 
    Note that there are no stop, pause, and play buttons in the
    song editor.
-   They are supplied by the main window.
+   They are provided by the main window.
    The \textbf{Song} tab can be activated in the main window to
    keep the playback buttons nearby.
 
@@ -162,7 +162,7 @@
       \item \textbf{Redo}
       \item \textbf{Follow Progress}
       \item \textbf{Zoom Out and Zoom In}
-      \item \textbf{Toggle Section/Trigger Painting}
+      \item \textbf{Toggle Selection/Trigger Painting}
       \item \textbf{Record Snap}
       \item \textbf{Grid Snap}
       \item \textbf{Transpose}
@@ -192,14 +192,14 @@
    for longer songs.  WHen active, the song roll pages right to keep up with
    the progress bar.
 
-   \itempar{Zoom Out and Zoom In}{song editor!zoom}
+   \itempar{Zoom Out/Zoom In}{song editor!zoom}
    These buttons change the horizontal zoom.
    Zoom can also be changed via the keystrokes \texttt{z}, \texttt{0},
    and \texttt{Z}.
    Vertical zoom is also supported, by buttons to the left of the time-line and
    by keystrokes, as discussed below.
 
-   \itempar{Toggle Section/Trigger Painting}{song editor!paint}
+   \itempar{Toggle Selection/Trigger Painting}{song editor!paint}
    Toggles the ability
    to drag the mouse along the pattern's timeline to create triggers
    to indicate when the pattern will play.
@@ -251,14 +251,13 @@
    is a feature or a bug.
 
    \itempar{Transpose}{song editor!transpose}
-   \index{song transpose}
+   \index{global transpose}
    \textbf{Transpose} consists of two controls:
    a combo-box to select the transpose direction and amount,
    and a \textbf{TT} button to reset the transposition value to 0.
-   Transposition ranges from -60 to +60, or five octaves either way.
-   Transpostion is applied by setting the value, and then doing
-   a \texttt{Shift-left-click} on each trigger that needs that
-   transposition value.
+   Global (song) ransposition ranges from -12 to +12.
+   It can be locked in using the
+   \textbf{Edit / Apply Song Transpose} menu entry.
 
    \itempar{L/R Loop}{song editor!play loop}
    This button is also present in the main window.
@@ -299,7 +298,8 @@
    more room for triggers.
 
    \itempar{Trigger Transpose}{song editor!trigger transpose}
-   This button and spin-box support making trigger selections or segments
+   Not to be confused with song transpose,
+   this button and spin-box make trigger selections or segments
    transposable during play-back.  This feature is very useful
    for patterns that repeat many times, but are shifted in pitch at various
    points.
@@ -312,6 +312,9 @@
    indicate a non-zero transposition.
    The transposition value will be saved with the trigger when the song is
    saved.
+
+   For a good example, see the \textsl{Kraftwerk "Europe Endless"}
+   demonstration MIDI file in the \texttt{data/midi} directory.
 
    \itempar{Song Duration}{song editor!duration}
    Shows the full duration of the song based on the longest pattern or

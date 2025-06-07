@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2023-12-08
+ * \updates       2025-06-07
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
@@ -1024,7 +1024,8 @@ detect_jack (bool forcecheck)
     }
     if (s_already_checked)
     {
-        return s_jack_was_detected;
+        result = s_jack_was_detected;
+        warnprint("JACK already checked");
     }
     else
     {
@@ -1055,15 +1056,13 @@ detect_jack (bool forcecheck)
             }
             (void) ::jack_client_close(jackman);
         }
-        if (result)
-        {
-            s_jack_was_detected = true;
-        }
-        else
-        {
-            warnprint("JACK not detected");
-        }
         s_already_checked = true;
+        if (result)
+            s_jack_was_detected = true;
+    }
+    if (! result)
+    {
+        warnprint("JACK not detected");
     }
     return result;
 }

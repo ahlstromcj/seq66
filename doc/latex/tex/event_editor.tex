@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-02
-% \update      2024-12-03
+% \update      2025-06-07
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -95,8 +95,7 @@
    event editor.  It is accompanied by a vertical scroll-bar, for moving one
    line or one page at a time.
    Mouse or touchpad scrolling can be used to move up and down
-   in the event list.  This movement is even easier than reaching for the
-   scrollbars.
+   in the event list.
    Depending on the window manager theme, the currently-selected event
    is highlighted.
    (We have been trying to get this table to auto-stretch vertically when the
@@ -110,7 +109,7 @@
    Here is an example of the data line for a MIDI event:
 
    \begin{verbatim}
-      17   003:3:128 Note On   Ch 3    0x45:69 0x6b:107 003:4:96
+      17   003:3:128 Note On -- 3  69 107 003:4:96
    \end{verbatim}
 
    This line consists of the following parts:
@@ -119,8 +118,9 @@
       \item \textbf{Index Number}
       \item \textbf{Time Stamp}
       \item \textbf{Event Name}
+      \item \textbf{Bus Number} (new)
       \item \textbf{Channel Number}
-      \item \textbf{Data Bytes}
+      \item \textbf{Data Bytes D0 and D1}
       \item \textbf{Link}
    \end{enumber}
 
@@ -135,7 +135,7 @@
    \itempar{Time Stamp}{event editor!time stamp}
    Displays the time stamp of the event,
    which indicates the cumulative time of the event in the pattern.
-   It is displayed in the format of "measure:beat:divisions".
+   It is displayed in the format of "measure:beat:divisions" (e.g. B:B:T).
    The measure values start from 1, and range up to the number of measures in
    the pattern.
    The beat values start from 1, and range up to the number of beats in the
@@ -147,23 +147,29 @@
    As a shortcut, one can use the dollar sign ("\$") to represent
    PPQN-1.
    If the \textbf{Tick Time} box is checked, then the timestamps are
-   shown in units of "ticks" (MIDI pulses, sometimes called "divisions").
+   shown in units of "ticks" (MIDI pulses, also called "divisions").
 
    \itempar{Event Name}{event editor!event name}
    Displays the name of the event.
    The event name indicates what kind of MIDI event it is. 
    See \sectionref{subsec:event_editor_fields}.
 
+   \itempar{Bus Number}{event editor!bus number}
+   Shows the bus that the event came in on, or a hyphen if not applicable.
+   This value is currently not saved with the event,
+   so is of limited utility.
+
    \itempar{Channel Number}{event editor!channel number}
    Shows the channel number (for channel-events only) re 1, not 0.
    (For the user, MIDI channels always range from
    1 to 16.  Internally, they range from 0 to 15.)
 
-   \itempar{Data Bytes}{event editor!data bytes}
+   \itempar{Data Bytes D0 and D1}{event editor!data bytes}
    Shows the one or two data bytes for the event.
-   The byte is shown in two formats, hexadecimal and decimal, as in
-   \texttt{0x6b:107} ("hex:dec").
+   The byte is shown in one two formats, hexadecimal and decimal, depending
+   on the setting of the \textbf{Hex} check-box.
    For text events, a small portion of the text is shown.
+   The full text is shown in the text field below the D0 and D1 values.
 
    Note Off, Note On, and Aftertouch events requires a byte for the key (0 to
    127) and a byte for the velocity (also 0 to 127).
@@ -210,26 +216,28 @@
    Five items are shown:
 
    \begin{enumber}
-      \item \textbf{Sel Linked}. (Not yet shown)
-         If this button is checked, then selecting a Note On or Off event
-         also selects the opposite, linked note.
-         This allow for easy deletion of a complete Note pair.
       \item \textbf{Sequence Number and Name}.
          A bit redundant, as the window caption or the pattern
          also shows the pattern name.
          It can be set here or in the pattern editor.
+      \item \textbf{Sel Linked}. (Not shown in picture.)
+         If this button is checked, then selecting a Note On or Off event
+         also selects the opposite, linked note.
+         This allows for easy deletion of a complete Note pair.
+      \item \textbf{Channel Number}.
+         Shows the output channel number.
       \item \textbf{Time Signature}.
          A pattern property, shown only as a reminder.
          It can be set in the pattern editor.
-      \item \textbf{PPQN}
+      \item \textbf{PPQN}.
          Shows the "parts per quarter note", or resolution of the
          whole song.  The default PPQN of \textsl{Seq66} is 192.
-      \item \textbf{Sequence Channel}
+      \item \textbf{Sequence Channel}.
          In \textsl{Seq66}, the channel number is a property of the
          pattern.  All channel events in the pattern get routed to the same
          channel, even if somehow the event itself specifies a different
          channel.
-      \item \textbf{Sequence Count}
+      \item \textbf{Sequence Count}.
          Displays the current number of events in the pattern.
          This number changes as events are inserted or deleted.
    \end{enumber}
@@ -243,7 +251,7 @@
    few releases of \textsl{Seq66}.
 
    \begin{enumber}
-      \item \textbf{Event Category}.
+      \item \textbf{Category}.
          This dropdown shows what kind of event is selected, and can
          also be used to insert specific events. The event categories are:
          \begin{itemize}
@@ -255,6 +263,7 @@
          See below for more information about supported events.
       \item \textbf{Time}.
          Shows the event timestamp in B:B:T notation.
+         It can be edited to move an event in time.
       \item \textbf{Event}.
          This dropdown shows the event name.
          It can also be used to select an event that is appropriate for
@@ -268,11 +277,15 @@
       \item \textbf{Tick Time}.
          If check-marked, the \textbf{Time} column in the event list
          is shown as ticks (pulses, divisions) instead of B:B:T.
-      \item \textbf{Hex}
+      \item \textbf{Hex}.
          If check-marked, the \textbf{D0} and \textbf{D1} columns
          in the event list, as well as the editable
          \textbf{D0} and \textbf{D1} fields, as shown in hexadecimal notation.
          For example, D0 = 67 is shown as "0x43".
+      \item \textbf{Text}.
+         This field is for the display of certain events, such as
+         pitch data. It is also used for entering text data for various
+         text events.
    \end{enumber}
 
    \textbf{Important}: changes made in the event editor
@@ -284,28 +297,11 @@
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
-   \itempar{Event Category}{event editor!event category}
-   Displays the event category of the event in bold-face.
-   Currently, all channel events, most system messages
+   \itempar{Category}{event editor!event category}
+   Displays the event category of the event.
+   All channel events, most system messages
    and many meta events can be handled,
    even system-exclusive events.
-
-   \itempar{Time}{event editor!event timestamp}
-   Displays the timestamp of the selected event in B:B:T format.
-   "measure:beat:division" format is fully supported.
-   We allow editing (but not display) of the timestamp in
-   pulse (divisions) format and "hour:minute:second.fraction" format, but
-   there may be bugs to work out.
-
-   If one wants to delete or modify an event, this field does not need to be
-   modified. If this field is modified, and the \textbf{Modify}
-   button is pressed, then the event will be moved  This field can locate
-   a new event at a specific time.  If the time is not in the current frame,
-   the frame will move to the location of the new event and make it the current
-   event.
-
-   \itempar{Category}{event editor!event category}
-   This drop-down displays the category of the currently selected event:
 
 \begin{figure}[H]
    \centering
@@ -322,6 +318,20 @@
    parts of the user interface.
    See the table in \sectionref{subsec:midi_format_meta_format}.
 
+   \itempar{Time}{event editor!event timestamp}
+   Displays the timestamp of the selected event in B:B:T format.
+   "measure:beat:division" format is fully supported.
+   We allow editing (but not display) of the timestamp in
+   pulse (divisions) format and "hour:minute:second.fraction" format, but
+   there may be bugs to work out.
+
+   If one wants to delete or modify an event, this field does not need to be
+   modified. If this field is modified, and the \textbf{Modify}
+   button is pressed, then the event will be moved  This field can locate
+   a new event at a specific time.  If the time is not in the current frame,
+   the frame will move to the location of the new event and make it the current
+   event.
+
    \itempar{Time}{event editor!event time}
    Shows the time of the event in the format of "measure:beat:divisions" (only).
    This field can be edited to change the time of the event.
@@ -335,23 +345,29 @@
       \item \textbf{Note Off}
       \item \textbf{Note On}
       \item \textbf{Aftertouch}
-      \item \textbf{Control Change}
-      \item \textbf{Program Change}
+      \item \textbf{Control}
+      \item \textbf{Program}
       \item \textbf{Channel Pressure}
       \item \textbf{Pitch Wheel}
-      \item \textbf{Tempo}
    \end{enumber}
 
    Selecting one of these names from the dropdown changes the kind of event if
-   the event is modified.  Abbreviations and case-insensitivity can be used to
-   reduce the effort of typing.
-   Also, if \textbf{Control Change} or
-   \textbf{Program Change} are selected, then a data drop-down box is available
-   to select either the controller or
-   the instrument patch (program), and it can fill in the data values.
-   In the future, we may make these configurable, with the control-change
+   the event is modified.
+%  Abbreviations and case-insensitivity can be used to
+%  reduce the effort of typing.
+%  Also, if \textbf{Control} or
+%  \textbf{Program} are selected, then a data drop-down box is available
+%  to select either the controller or
+%  the instrument patch (program), and it can fill in the data values.
+   If \textbf{Control} or \textbf{Program} are selected,
+   then the name of item-number entered into \textbf{D0} is
+   shown in the text area.
+
+   In the future, we may make these configurable and add selection
+   drop-downs, with the control-change
    following the settings in the 'usr' file, and the program-change being made
-   from a (new) 'patch' file. Currently the programs are General MIDI.
+   from a (new) 'patches' file.
+   Currently the programs are General MIDI.
 
    If the \textbf{Meta Event} category is selected, the following events are
    shown:
@@ -388,6 +404,9 @@
    convert until a non-digit is encountered.  The data-byte value can be
    entered in decimal notation, or, if prepended with "0x", in hexadecimal
    notation.
+   For \textbf{Control} or \textbf{Program},
+   the name of item-number in \textbf{D0} is
+   shown in the text area.
 
    For a Tempo setting only this field is used; Data Byte 2 is ignored.
    Enter a Tempo value, such as "120", and then click \textbf{Insert}. The
@@ -419,6 +438,8 @@
    \textsl{Lyric},
    \textsl{Program Name}, and
    \textsl{Device Name}.
+   It also shows translated versions of the control or program numbers in
+   \textbf{D0}.
 
 %  \itempar{Delete}{event editor!delete event}
 %  Causes the selected event to be deleted.
@@ -499,8 +520,6 @@
    and the pattern is 9, then the resulting dump-file is
 
    \texttt{/home/user/miditunes/The\_Wild\_Bull-pattern-9.text}.
-
-   Good luck with this tab.  Bug reports are appreciated.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

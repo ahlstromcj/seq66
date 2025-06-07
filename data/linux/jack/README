@@ -1,10 +1,11 @@
 Installed Scripts Directory for Seq66
 Chris Ahlstrom
-2021-10-12 to 2021-10-12
+2021-10-12 to 2025-06-07
 
 This directory contains scripts that can be used with JACK and PulseAudio.
 
-startjack:      The latest attempt to script a JACK startup.
+jackctl:        The latest attempt to script a JACK startup. Recommended.
+startjack:      An older attempt to script a JACK startup.
 startqjack:     Another attempt to add scripting to QJackCtl.
 
 pulseaudio:
