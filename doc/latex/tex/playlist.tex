@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-09-15
-% \update      2023-07-14
+% \update      2025-06-09
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -44,8 +44,7 @@
    programming for the \textsl{Novation LaunchPad Mini} for
    \textsl{Seq66}.
    In the normal user-interface, play-list movement
-   can also be done manually via the four arrow keys on the computer
-   keyboard.
+   can also be done manually via the four arrow keys.
 
    The playlist file can be specified on the command-line, in
    the 'rc' file, or be loaded
@@ -195,8 +194,16 @@
 
    \index{arrow keys}
    \index{keys!arrow}
-   Note that the key assignments are actually unused here, but the four
+   Note that the F2/F3 key assignments are not working at this
+   time, but the four
    arrow keys are hard-wired for use in navigating the play-lists and songs.
+   The \texttt{Up} and The \texttt{Down} keys move to the previous or next
+   playlist.
+   The \texttt{Left} and
+   The \texttt{Right} keys move to the previous or next song in the current
+   playlist.
+   To use the arrow keys with the loaded playlist, first click on
+   the live grid in the main window to give it focus.
 
    Both lines specify setting the next playlist or song according to a 
    MIDI data value,
@@ -428,21 +435,21 @@
    song-list table.
 
    \begin{itemize}
-      \item \textbf{Load Song}.
+%     \item \textbf{Load Song}.
       \item \textbf{Add Song}.
-      \item \textbf{Modify Song}.
-      \item \textbf{Delete Song}.
+      \item \textbf{Modify}.
+      \item \textbf{Delete}.
       \item \textbf{Lists Active}.
    \end{itemize}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
-   \itempar{Load Song}{playlist editor!load song}
-   This button bring up a dialog to open a MIDI or WRK file from
-   the current song-directory or from an arbitrary directory.
-   Currently, be careful with this option; adding a file from an arbitrary
-   directory will generally prepend that directory to the MIDI file-name,
-   making the song list difficult to read.
+%  \itempar{Load Song}{playlist editor!load song}
+%  This button bring up a dialog to open a MIDI or WRK file from
+%  the current song-directory or from an arbitrary directory.
+%  Currently, be careful with this option; adding a file from an arbitrary
+%  directory will generally prepend that directory to the MIDI file-name,
+%  making the song list difficult to read.
 
    \itempar{Add Song}{playlist editor!add song}
    This button is meant to add a song already loaded in the \textbf{Live} frame
@@ -540,7 +547,7 @@
    button (labelled \textbf{...}).
 
    Click the \textbf{Create File} button.
-   A file dialog comes up; it shows the default directory
+   A file dialog shows the default directory
    \texttt{\textasciitilde/.config/seq66/}, and the default file
    \texttt{qseq66.playlist}.
    For this tutorial, type in the file-name
@@ -552,8 +559,11 @@
    Click \textbf{Save} button.
    \textsl{Seq66} attempts to load the play-list file, but it
    does not yet exist.
-   \texttt{\textasciitilde/.config/seq66/tutorial.playlist} is
-   shown in the \textbf{Playlist File} field.
+   Shown in the \textbf{Playlist File} field is
+
+   \begin{verbatim}
+      ~/.config/seq66/tutorial.playlist
+   \end{verbatim}
 
    Now click the \textbf{Song Dir} button,
    and navigate to the
@@ -595,11 +605,57 @@
 \subsubsection{Seq66 Play-Lists / Playlist Sample}
 \label{subsubsec:playlist_playlist_sample}
 
-   This section describes the sample play-list that accesses the MIDI data
-   files installed in
-   \texttt{/usr/share/seq66-0.99/midi}.
+   This section describes the sample play-list and the MIDI data
+   files it uses:
 
-   TODO
+   \begin{verbatim}
+      /usr/share/seq66-0.99/samples/ca_midi.playlist
+      /usr/share/seq66-0.99/midi
+   \end{verbatim}
+
+   The \texttt{/usr/share/} directory might be 
+   \texttt{/usr/share/local/} if installed from source code.
+   It has three play-lists.
+
+   \begin{verbatim}
+      [playlist]
+      number = 0
+      name = "Legacy Midi Files"
+      directory = "/usr/local/share/seq66-0.99/midi/FM/"
+      0 "brecluse.mid"
+      1 "carptsun.mid"
+      2 "cbflitfm.mid"
+   \end{verbatim}
+
+   and, without showing the MIDI files,
+
+   \begin{verbatim}
+      number = 1
+      name = "PSS-790 Midi Files"
+      directory = "/usr/local/share/seq66-0.99/midi/PSS-790/"
+   \end{verbatim}
+
+   and
+
+   \begin{verbatim}
+      number = 3
+      name = "Live vs Song Files"
+      directory = "/usr/local/share/seq66-0.99/midi/"
+   \end{verbatim}
+
+   Each play-list can be accessed by its number or by the "Play List"
+   automation command (default key: \texttt{F2}).
+   The MIDI control can be set up to move forward or backward, or access
+   a list by number.
+
+   Each song in the play-list can be accessed by its number or
+   by the "Play Song" automation command (default key: \texttt{F3}).
+   The MIDI control can be set up to move forward or backward, or access
+   a song by number.
+
+   See the sample \texttt{qseq66.ctrl} file's comments for the mappings.
+   Play-list items can also be controlled from the \textbf{Playlists}
+   tab.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

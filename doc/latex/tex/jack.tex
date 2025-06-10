@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-28
-% \update      2023-06-01
+% \update      2023-06-08
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -24,9 +24,12 @@
    MIDI engine for that system at this time.
    The JACK support is very loosely based on the \textsl{RtMIDI} project
    \cite{rtmidi}.
-   This mode also supports fallback to ALSA if the JACK server is not running.
-   \textsl{However}, if the \texttt{jack-dbus} is running, then a pair of virtual
-   ports are created.
+   The JACK support falls back to ALSA if the JACK server is not running.
+   \index{jack-dbus}
+   \textsl{However}, \texttt{jack-dbus} may be running, but without the
+   server active. The result is the same, a fallback to ALSA,
+   The check for JACK opens a JACK client and determines if it can be
+   activated, irregardless if any other JACK ports/clients are available.
 
    \index{jack!transport}
    To enable the JACK transport support at run-time on
@@ -42,9 +45,7 @@
 
    Note that the JACK transport options are \textsl{separate} from JACK MIDI.
    \index{jack!midi}
-   To enable JACK MIDI, the options \texttt{-t}, \texttt{-{}-jack-midi},
-   and \texttt{--jack} are available.
-   Note that the \texttt{--jack-midi} and \texttt{--jack} options both
+   The \texttt{--jack-midi} and \texttt{--jack} options both
    enable JACK MIDI.
 
    If one wants to use \textsl{Seq66} and USB devices
@@ -67,7 +68,7 @@
    \textsl{QJackCtl}, and the ports created are part of the
    "seq66" client.
 
-   \textsl{Seq66} can be configured to run without JACK transport, with JACK
+   \textsl{Seq66} can be set up to run without JACK transport, with JACK
    transport as a "slave" (i.e. "client"), as JACK master, or as JACK master if
    there is no other master detected.
    Transport clients were formerly known as "transport slaves", and that

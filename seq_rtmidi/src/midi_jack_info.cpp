@@ -1039,6 +1039,12 @@ detect_jack (bool forcecheck)
             int rc = ::jack_activate(jackman);
             if (rc == 0)
             {
+#if defined USE_JACK_GET_PORTS_CHECK
+                /*
+                 * This check is iffy because there might not be any
+                 * output ports set up at the moment.
+                 */
+
                 const char ** ports = ::jack_get_ports
                 (
                     jackman, NULL, JACK_DEFAULT_MIDI_TYPE, JackPortIsOutput
@@ -1052,6 +1058,9 @@ detect_jack (bool forcecheck)
 
                     result = count > 0;
                 }
+#else
+                result = true;
+#endif
                 ::jack_deactivate(jackman);
             }
             (void) ::jack_client_close(jackman);

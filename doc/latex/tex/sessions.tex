@@ -331,7 +331,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    \end{verbatim}
 
    Another first-time modification to consider is using virtual ports (option
-   \texttt{--manual-ports}) versus the automatic port connections
+   \texttt{-{}-manual-ports}) versus the automatic port connections
    \textsl{Seq66} normally makes.
    This setup allows the user to manually make connections between
    \textsl{Seq66} and other MIDI applications.
@@ -820,7 +820,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    \texttt{Seq66} also supports a more simplistic type of "session",
    where a whole different set of configuration files can be selected.
 
-   One can use the \texttt{--home} and \texttt{--config} options
+   One can use the \texttt{-{}-home} and \texttt{-{}-config} options
    to specify alternate locations and names for the configuration files.
    However, if one has a number of configurations
    (e.g. for different sets of equipment. playlists,
@@ -831,9 +831,9 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    It is always located in the default
    "home" directory, but can refer to directories anywhere. It can also
    specify a different MIDI client-name
-   (option \texttt{--client-name})
+   (option \texttt{-{}-client-name})
    and log-file
-   (option \texttt{--option log=filename}).
+   (option \texttt{-{}-option log=filename}).
 
    The user must manually text-edit the sessions.rc to specify tag
    sections like the following:
@@ -846,10 +846,10 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
        log = "test66.log"
    \end{verbatim}
 
-   \index{--session-tag}
+   \index{-{}-session-tag}
    \index{session-tag}
    This section is accessed using the \texttt{-S} or
-   \texttt{--session-tag} option, as shown here:
+   \texttt{-{}-session-tag} option, as shown here:
 
    \begin{verbatim}
        $ qseq66 --session-tag test
@@ -877,7 +877,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    and then be added to \texttt{sessions.rc}.
 
    The next time 
-   \texttt{qseq66 --session-tag test}
+   \texttt{qseq66 -{}-session-tag test}
    is run, the test configuration is loaded and used.
 
    If the specified session tag does not exist in \texttt{sessions.rc},

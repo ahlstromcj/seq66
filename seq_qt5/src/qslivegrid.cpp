@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2025-06-02
+ * \updates       2025-06-10
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -313,7 +313,7 @@ qslivegrid::enable_solo (bool enable)
     enable_combobox_item(ui->comboGridMode, index, enable);
 
 #if THIS_CODE_WORKS
-    std::string recordcolor{"<font color=\"red\">RECORD</font>"};
+    std::string recordcolor{"<font color=\"red\">Record</font>"};
     index = usr().grid_mode_code(gridmode::record);
     set_combobox_item(ui->comboGridMode, index, recordcolor);
 #endif
@@ -369,6 +369,7 @@ qslivegrid::show_grid_mode ()
 void
 qslivegrid::set_playlist_name (const std::string & plname, bool modified)
 {
+#if defined USE_OLD_CODE
     std::string fullname = get_full_path(plname);
     std::string path;
     std::string basename;
@@ -386,6 +387,10 @@ qslivegrid::set_playlist_name (const std::string & plname, bool modified)
         if (! ok)
             basename = fullname;
     }
+#else
+    std::string basename = shorten_file_spec(plname, 64);
+    std::string path = plname;
+#endif
     if (modified)
         basename += " *";
 

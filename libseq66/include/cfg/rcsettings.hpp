@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-05-25
+ * \updates       2025-06-10
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -49,7 +49,6 @@
 #include "util/named_bools.hpp"         /* map of booleans keyed by strings */
 
 /**
- *  EXPERIMENTAL.
  *  Keep a list of the full file-specifications of each of the configureation
  *  files that can be set up in the 'rc' file. We can eliminate the dependency
  *  on configuration file-extensions in copying and deleting a configuration.
@@ -1212,7 +1211,7 @@ public:
 
     bool load_most_recent () const
     {
-        return m_load_most_recent;
+        return m_load_most_recent && ! playlist_active();
     }
 
     bool full_recent_paths () const

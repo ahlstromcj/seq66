@@ -2204,7 +2204,7 @@ executable_full_path ()
 }
 
 /**
- *  Gets the user's $HOME (Linux) or $LOCALAPPDAT (Windows) directory from the
+ *  Gets the user's $hOME (Linux) or $LOCALAPPDAT (Windows) directory from the
  *  current environment.
  *
  * getenv("HOME"):

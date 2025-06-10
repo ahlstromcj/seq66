@@ -101,7 +101,7 @@
          \begin{itemize}
             \item The default "home" directory,
                \texttt{\textasciitilde/.config/seq66}.
-            \item A "home" directory specified by the \texttt{--home} option.
+            \item A "home" directory specified by the \texttt{-{}-home} option.
             \item The session directory created by \textsl{NSM}.
          \end{itemize}
          For discussion, this directory is called "HOME" or "home".
@@ -223,15 +223,14 @@
    
    The gaps in layouts in the song/performance data are reflected in the
    consolidated triggers.
-   Here is the before/after triggers for pattern \#0, which was
+   Here are the before/after triggers for pattern \#0, which was
    layed out with \textbf{Record Snap} \textsl{on}:
 
    \begin{verbatim}
-       BEFORE                              AFTER
-      Sequence #0 'One Bar'               Sequence #0 'One Bar'
-      Length (ticks): 768                 Length (ticks): 5375
-      trigger: 768 to 1535 at 768         trigger: 0 to 5375 at 5375
-      trigger: 3840 to 5375 at 768        
+      BEFORE: Sequence #0 'One Bar'       AFTER:  Sequence #0 'One Bar'
+              Length (ticks): 768                 Length (ticks): 5375
+              trigger: 768 to 1535 at 768         trigger: 0 to 5375 at 5375
+              trigger: 3840 to 5375 at 768        
    \end{verbatim}
 
    Note that 768, at PPQN = 192, is 4 beats (1 measure), while 5375 is 28
@@ -248,11 +247,10 @@
    layed out with \textbf{Record Snap} \textsl{off}:
 
    \begin{verbatim}
-       BEFORE                              AFTER
-      Sequence #5 'Two Bars'              Sequence #5 'Two Bars'
-      Length (ticks): 1536                Length (ticks): 6911
-      trigger: 2344 to 3879 at 1536       trigger: 0 to 6655 at 6911
-      trigger: 4944 to 6655 at 0
+      BEFORE: Sequence #5 'Two Bars'       AFTER: Sequence #5 'Two Bars'
+              Length (ticks): 1536                Length (ticks): 6911
+              trigger: 2344 to 3879 at 1536       trigger: 0 to 6655 at 6911
+              trigger: 4944 to 6655 at 0
    \end{verbatim}
 
    6655 is a little over 34.5 beats, which is what the bottom grey trigger

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Keystroke Summaries</string>
+   <string>Seq66 Log</string>
   </property>
   <widget class="QTextBrowser" name="textBrowser">
    <property name="geometry">

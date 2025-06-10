@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-16
+ * \updates       2025-06-08
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -846,16 +846,11 @@ qperfroll::keyPressEvent (QKeyEvent * event)
                     frame64()->scroll_to_tick(0);
                 break;
 
-            case Qt::Key_End:
+            case Qt::Key_End:           /* go to the bitter end of the song */
 
                 handled = true;
                 if (not_nullptr(frame64()))
-                {
-                    midipulse mx = perf().get_max_extent() -
-                        4 * measure_length();
-
-                    frame64()->scroll_to_tick(mx);
-                }
+                    frame64()->scroll_to_tick(perf().get_max_extent());
                 break;
 
             case Qt::Key_Left:
@@ -911,8 +906,13 @@ qperfroll::keyPressEvent (QKeyEvent * event)
                 else if (event->key() == Qt::Key_End)
                 {
                     handled = true;
-                    if (not_nullptr(frame64()))
-                        frame64()->scroll_to_tick(perf().get_max_extent());
+                    if (not_nullptr(frame64())) /* go to end minus a bit    */
+                    {
+                        midipulse mx = perf().get_max_extent() -
+                            4 * measure_length();
+
+                        frame64()->scroll_to_tick(mx);
+                    }
                 }
             }
         }

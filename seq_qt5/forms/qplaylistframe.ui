@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>895</width>
-    <height>435</height>
+    <width>825</width>
+    <height>423</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -72,7 +72,7 @@ Click &quot;Load List&quot; to select a playlist file.</string>
     <rect>
      <x>6</x>
      <y>30</y>
-     <width>829</width>
+     <width>811</width>
      <height>309</height>
     </rect>
    </property>
@@ -1234,10 +1234,10 @@ Read-only.</string>
   <widget class="QWidget" name="optionLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>680</x>
+     <x>634</x>
      <y>344</y>
-     <width>145</width>
-     <height>89</height>
+     <width>134</width>
+     <height>71</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
@@ -1246,6 +1246,7 @@ Read-only.</string>
       <property name="font">
        <font>
         <pointsize>11</pointsize>
+        <bold>true</bold>
        </font>
       </property>
       <property name="text">

@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-06-04
+2015-07-10 to 2025-06-10
 
 # Change Log
 
-## [0.99.20] - 2025-06-04
+## [0.99.20] - 2025-06-10
 
 ### Added
 
@@ -27,7 +27,8 @@ Chris Ahlstrom
 -   Pattern editor.
     -   Added some horizontal dotted lines to the data pane to mark the
         32, 64, and 96 level (of items such as velocity).
--   Song editor. No additional functionality.
+-   Song editor.
+    -   Added a dark vertical border at the end of a song.
 -   Event editor.
     -   Added display of the pitch-bend in semitones in the event
         editor. It currently assumes a range of +-2 semitones, a
@@ -73,6 +74,7 @@ Chris Ahlstrom
     -   Fixed setting the modify flag (asterisk) in recording notes.
     -   Fixed global transpose and it now sets "modify".
     -   Fixes to counting sequences.
+    -   Cleaned up recent-files vice playlist support.
     -   Many UI/keystroke fixes, including autmoation control
         functions such as automation\_play\_ss.
 -   Pattern editor.
@@ -86,6 +88,8 @@ Chris Ahlstrom
         alignment issues.
 -   Song editor.
     -   Fixed resetting trigger transposition in the Song editor.
+    -   Swapped End and Ctrl-End so that the former shows last
+        portion of the song.
 -   Event editor. No fixes; see "Added".
 -   Preferences dialog.
     -   Can turn off the auto-save-rc option and preserve that setting

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2025-05-25
+ * \updates       2025-06-09
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -778,7 +778,7 @@ usrsettings::grid_mode_label (gridmode gm) const
     {
     case gridmode::loop:            result = "Loop";            break;
     case gridmode::mutes:           result = "Mutes";           break;
-    case gridmode::record:          result = "RECORD";          break;
+    case gridmode::record:          result = "Record";          break;
     case gridmode::copy:            result = "Copy";            break;
     case gridmode::paste:           result = "Paste";           break;
     case gridmode::clear:           result = "Clear";           break;

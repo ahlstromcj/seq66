@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2025-05-30
+% \update      2025-06-09
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -140,7 +140,9 @@
 
    The "comments" section is also informational, but the user can edit this
    section to include information describing the purpose of the file.  For
-   example, a 'ctrl' file for a \textsl{Novation Launchpad} might describe the
+   example, a 'ctrl' file for a \textsl{Novation Launchpad}
+   (see \sectionref{sec:launchpad_mini})
+   might describe the
    purpose of this file.  The comments stop at the first blank (not even spaces)
    line.  To skip a line in the comment, put a single space character on the
    blank line.
@@ -1329,15 +1331,14 @@
    created, but it is normally not overwritten thereafter.
    The important exception is if we have updated the 'usr' file with new option
    and have incremented the version number of this file.
-   To cause it to be overwritten at exit, run \textsl{Seq66} with the
+   The update should occur automatically at exit, but if not,
+   run \textsl{Seq66} with the
    \texttt{-u} or \texttt{-{}-user-save} option:
 
    \begin{verbatim}
       $ qseq66 --user-save
    \end{verbatim}
 
-   This option is recommended when one installs a new version of
-   \textsl{Seq66}, which might add new options to the 'usr' file.
    One usually must edit the 'usr' file manually.
    There are a few items that can be tweaked in \textbf{Edit / Preferences},
    and, if modified, the user-save flag is turned on.
@@ -1588,11 +1589,9 @@
    This section, new to \textsl{Seq66}, begins with an
    "INI" group marker \texttt{[user-interface-settings]}.
 
-   It provides for a feature we will hopefully be able to complete some day:
-   the complete specificition of the appearance of the user-interface.
-   There is plenty of room to change the appearance of
-   \textsl{Seq66} already.
-   Please try the settings and see what looks good.
+   It provides additional
+   specification of the appearance of the user-interface.
+   Try the settings and see what looks good.
    Refer to either the sample file or the file generated when \textsl{Seq66}
    first runs.
 
@@ -1647,7 +1646,7 @@
    \end{enumerate}
 
    It also activates the \texttt{progress-bar-thickness} value.
-   Try a number lik "8" just for fun.
+   Try a number like "8" just for fun.
 
    The \texttt{gridlines-thick} option, if true, makes the song
    editor lines look thick.
@@ -1681,21 +1680,18 @@
       use-file-ppqn = true
    \end{verbatim}
 
-   The PPQN can be set to any value, but it is best to use the values
-   in the \textsl{Seq66} PPQN dropdown:
+   The PPQN can be set to
 
    \begin{verbatim}
-      32 48 96 192 240 384 768 960 1920 2400 3840 7680 9600 19200
+      32 48 96 120 192 240 384 768 960 1920 2400 3840 7680 9600 19200
    \end{verbatim}
-
-   (Perhaps we should add 480?)
 
    There's probably no need to go above 960, but one can try it anyway and see
    if the computer can keep up. Even the default, 192, is likely to be enough.
 
-   One might find a MIDI tune with a PPQN not in the usual set, such as
-   120. In this case, \textsl{Seq66} does not display that properly.
-   This is a difficult issue to fix at present. If not an issue, one
+   One might find a MIDI tune with a PPQN not in the usual set.
+   In this case, \textsl{Seq66} does not display that properly.
+   This is a difficult issue to fix at present. If an issue, one
    can change the PPQN in the main window PPQN dropdown, and save the
    file (after making a backup, of course).
 
@@ -1864,6 +1860,7 @@
    \begin{verbatim}
       [user-ui-tweaks]
       key-height = 10
+      key-view = octave-letters
       note-resume = false
       fingerprint-size = 128
       progress-box-width = 0.8
@@ -1883,6 +1880,11 @@
    This option is also editable in the \textbf{Preferences} dialog.
    There are vertical zoom buttons, and the \texttt{v/0/V} keystrokes to change
    this on the fly, but those changes are not saved.
+
+   \index{key view}
+   The \texttt{key-view} option determines the default lettering/numbering of the
+   keys. This can be changed during the run by right-clicking in the virtual
+   keyboard.
 
    \index{new seqedit}
    \textsl{Seq66} can present the pattern editor in the 'Edit' tab
@@ -1922,7 +1924,7 @@
 %  on the button.
 
    \index{progress box!shown}
-   If  \texttt{progress-box-shown} is false, then the progress boxes are not
+   If \texttt{progress-box-shown} is false, then the progress boxes are not
    drawn, and the pattern appears directly on the button.
 
    \index{progress-note-min}
@@ -1932,6 +1934,10 @@
    The \texttt{progress-note-min} and
    The \texttt{progress-note-max} options change the note range in the progress
    box to control where in "pitch" the notes are shown.
+
+   \index{progress-box-show-cc}
+   \texttt{progress-box-show-cc} allows 
+   the progress box to show continuous controllers as dots.
 
    \index{lock-main-window}
    The \texttt{lock-main-window} option, if true, prevents the main window from
@@ -2391,7 +2397,10 @@
 \paragraph{Automation / Mute Group ("Group Mute")}
 \label{paragraph:configuration_midi_ctrl_modgmute}
 
-   To be documented.
+   A mute group is a set of playing patterns associated with an upper-case
+   hot-key. Mute groups can be learned, stored, and then activated by
+   the appropriate hot-key.
+   See \sectionref{subsubsec:introduction_mute_group_learn_button}.
 
 \paragraph{Automation / Group Learn}
 \label{paragraph:configuration_midi_ctrl_modglean}
@@ -2415,7 +2424,11 @@
 \paragraph{Automation / Playing Set}
 \label{paragraph:configuration_playing_set}
 
-   To be documented.
+   The playing set holds all of the patterns that should be heard.
+   Normally, this is all the active patterns in the active set.
+   It saves time by not including inactive patterns.
+   It can be augmented with patterns from non-active sets using
+   the "sets-mode" option in the 'rc' file.
 
 \paragraph{Automation / Playback}
 \label{paragraph:configuration_playback}
@@ -2560,12 +2573,12 @@
 \paragraph{Automation / Record Modes and Quantization}
 \label{paragraph:configuration_midi_record_quan}
 
-   For release 0.97.3,
    \index{patterns-panel!modes}
    \index{grid modes}
-   \textbf{grid modes} have been introduced.
-   The \textbf{Record} and \textbf{Quan Record} automation controls have been
-   refactored to cycle through these modes.
+   \textbf{Grid modes} provides the ability to use the live grid and its
+   hot-keys and automation for more than just toggling patterns.
+   The \textbf{Record} and \textbf{Quan Record} automation controls
+   cycle through these modes.
    Additional automation commands provide direct access to each mode.
 
    Grid mode changes the function of the main window's patterns panel so that
@@ -2578,10 +2591,10 @@
          The normal toggling of the mute/armed status of
          a pattern the slot is clicked or activated by its hot-keys.
       \item \textbf{Mutes}.
-         Applies the given mute-group statuses when
+         Applies the given mute-group armings when
          the slot is clicked. Since the "shifted" hot-keys can also be used,
          this mode is most useful with mouse-click control.
-      \item \textbf{RECORD}.
+      \item \textbf{Record}.
          In this mode, a click on a slot or the use of its hot-key toggles
          recording for that pattern.
       \item \textbf{Copy}.
@@ -2610,7 +2623,7 @@
 
    A click or a hot-key will cause the selected function above to be applied to
    the pattern denoted by the click/key.
-   In \textbf{RECORD} mode, the following settings are enabled:
+   In \textbf{Record} mode, the following settings are enabled:
 
    \begin{itemize}
       \item \textbf{Overdub}.
@@ -2667,7 +2680,8 @@
 
    These commands toggle the display of bars:beats:ticks versus
    hours:minutes:seconds, and looping between the L/R markers.
-
+   However, they do not have usable keystrokes; the 'ctrl' file
+   needs to be modified.
    See \sectionref{paragraph:configuration_midi_loop_mode}.
 
 \paragraph{Automation / Undo and Redo}
@@ -2781,7 +2795,7 @@
 
    This section provides a way to send setup information to a MIDI device,
    such as the \textsl{Novation Launchpad Pro Mk3}.
-   There is too much involved (especially that device) to discuss in
+   There is too much involved (especially for that device) to discuss in
    detail here, but this feature can be used to put a device into
    "programmer" mode at \textsl{Seq66} startup and back into
    "normal" mode at \textsl{Seq66} shutdown.
@@ -2814,9 +2828,10 @@
    There is no limit to the number of macros that can be defined.
    To send any of them directly at any time, go to the
    \textbf{Session} tab and select a macro from the drop-down list.
+   There is no way to send them via MIDI control :-(.
 
-   There is currently no way to send them via MIDI control.
-
+% NOTE:
+%
 % For editability, the default keys are specified in another TeX file.
 
 \input{defaultkeys}
@@ -2854,7 +2869,7 @@
    \texttt{Shift} key to get the numbers on
    the numeric row of that keyboard layout.
 
-   \index{QWERTZ}.
+   \index{QWERTZ}
    \textbf{QWERTZ}.
    We do not currently supply this layout, even though we support it, since it is
    quite similar to the default \textbf{QWERTY} layout;
@@ -2935,12 +2950,14 @@
    in the playing screen set when a group is selected.
    Each set of brackets defines a group.
 
-\subsection{'drums' File}
+\subsection{'drums'/'notemap' File}
 \label{subsec:configuration_drums}
 
    The 'drums' file is based on a similar file created using the
    \texttt{midicvt} application (also available on \textsl{GitHub}.  This file
    is also referred to as the 'note-mapper' file.
+   The extension \texttt{.notemap} can be used to indicate that the mapping is
+   not for drum-sets.
 
    \begin{verbatim}
       [notemap-flags]
@@ -2966,10 +2983,28 @@
    the early days of MIDI, where each vendor provided their own peculiar layout of
    percussion sounds.
 
+\subsection{'patches' File}
+\label{subsec:configuration_patches}
+
+   This file is similar to the 'drums' file, but it remaps Program/Patch
+   names, but not the patch numbers.
+   These names are used when displaying patch events.
+   This is a section from the sample file
+   \texttt{PSS-790.patches}.
+
+   \begin{verbatim}
+      [ Patch 4 ]
+      gm-name = "Electric Piano 1"
+      gm-patch = 4
+      dev-name = "Harpsichord 1"
+   \end{verbatim}
+
 \subsection{'palette' File}
 \label{subsec:configuration_palette}
 
    This file is described in the chapter on palettes, \sectionref{sec:palettes}.
+   It can have an associated Qt style sheet file (\texttt{.qss}.
+   Also see \sectionref{subsubsec:configuration_rc_style_sheet}.
 
 \subsection{'playlist' File}
 \label{subsec:configuration_playlist}
