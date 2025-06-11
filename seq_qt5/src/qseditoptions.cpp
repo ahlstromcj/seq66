@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-04
+ * \updates       2025-06-10
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -79,11 +79,6 @@
 #else
 #include "forms/qseditoptions.ui.h"
 #endif
-
-
-/*
- *  Do not document the namespace, it breaks Doxygen.
- */
 
 namespace seq66
 {
@@ -388,11 +383,16 @@ qseditoptions::setup_tab_midi_clock ()
         ui->pushButtonStoreMap, SIGNAL(clicked(bool)),
         this, SLOT(slot_io_maps())
     );
+#if defined SEQ66_ALLOW_PORTMAP_CLEAR
     connect
     (
         ui->pushButtonRemoveMap, SIGNAL(clicked(bool)),
         this, SLOT(slot_remove_io_maps())
     );
+#else
+    ui->pushButtonRemoveMap->hide();
+#endif
+
 
     /*
      * The output and input port-map active check-boxes are both in the
@@ -2381,16 +2381,22 @@ qseditoptions::slot_io_maps ()
     {
         ui->ioPortsMappedCheck->setChecked(false);
         rc().portmaps_active(false);
+        modify_rc();
     }
 }
+
+#if defined SEQ66_ALLOW_PORTMAP_CLEAR
 
 void
 qseditoptions::slot_remove_io_maps ()
 {
     perf().clear_io_maps();                         /* sets save, inactive  */
     ui->ioPortsMappedCheck->setChecked(false);
+    rc().portmaps_active(false);
     modify_rc();
 }
+
+#endif
 
 void
 qseditoptions::slot_activate_io_maps ()

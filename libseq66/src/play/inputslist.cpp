@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2022-06-27
+ * \updates       2025-06-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -250,7 +250,7 @@ input_port_number (bussbyte b)
 bool
 build_input_port_map (const inputslist & il)
 {
-    bool result = il.not_empty();
+    bool result = ! il.empty();
     if (result)
     {
         inputslist & ipm = input_port_map();

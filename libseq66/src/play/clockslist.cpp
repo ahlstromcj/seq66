@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2022-06-27
+ * \updates       2025-06-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -273,7 +273,7 @@ output_port_number (bussbyte b)
 bool
 build_output_port_map (const clockslist & cl)
 {
-    bool result = cl.not_empty();
+    bool result = ! cl.empty();
     if (result)
     {
         clockslist & opm = output_port_map();

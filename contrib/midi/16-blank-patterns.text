@@ -1,0 +1,297 @@
+File name:      /home/ahlstrom/Home/ca/mls/git/seq66/contrib/midi/16-blank-patterns.text
+No. of sets:    32
+No. of tracks:  21
+MIDI format:    1
+PPQN:           192
+Sequence #0 'Ch 1'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 0
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #1 'Ch 2'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 1
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #2 'Ch 3'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 2
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #3 'Ch 4'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 3
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #4 'Ch 5'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 4
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #5 'Ch 6'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 5
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #6 'Ch 7'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 6
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #7 'Ch 8'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 7
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #8 'Ch 9'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 8
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #9 'Ch 10'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 9
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #10 'Ch 11'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 10
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #11 'Ch 12'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 11
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #12 'Ch 13'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 12
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #13 'Ch 14'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 13
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #14 'Ch 15'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 14
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #15 'Ch 16'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 15
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 3
+Sequence #16 'Any Channel'
+   Input port #: 255-->255
+  Output port #: 0-->0
+        Channel: 128
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 4
+Sequence #24 'Buss 1'
+   Input port #: 1-->1
+  Output port #: 0-->0
+        Channel: 0
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 1
+Sequence #25 'Buss 2'
+   Input port #: 2-->2
+  Output port #: 0-->0
+        Channel: 0
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 1
+Sequence #26 'Buss 3'
+   Input port #: 3-->3
+  Output port #: 0-->0
+        Channel: 0
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 1
+Sequence #27 'Buss 4'
+   Input port #: 4-->4
+  Output port #: 0-->0
+        Channel: 0
+          Beats: 4/4
+ Length (ticks): 768
+Events;triggers: 0; 0
+   Transposable: true
+  Key and scale: 0; 0
+          Color: 1
+Start of SeqSpecs:
+0xFF 0x7F 24240010 MIDI control = 0
+0xFF 0x7F 24240003 Track clocking = 0
+Screen-set Notes:
+0xFF 0x7F 24240005 Set notes = 32
+   Set #0: 'empty'
+   Set #1: 'empty'
+   Set #2: 'empty'
+   Set #3: 'empty'
+   Set #4: 'empty'
+   Set #5: 'empty'
+   Set #6: 'empty'
+   Set #7: 'empty'
+   Set #8: 'empty'
+   Set #9: 'empty'
+   Set #10: 'empty'
+   Set #11: 'empty'
+   Set #12: 'empty'
+   Set #13: 'empty'
+   Set #14: 'empty'
+   Set #15: 'empty'
+   Set #16: 'empty'
+   Set #17: 'empty'
+   Set #18: 'empty'
+   Set #19: 'empty'
+   Set #20: 'empty'
+   Set #21: 'empty'
+   Set #22: 'empty'
+   Set #23: 'empty'
+   Set #24: 'empty'
+   Set #25: 'empty'
+   Set #26: 'empty'
+   Set #27: 'empty'
+   Set #28: 'empty'
+   Set #29: 'empty'
+   Set #30: 'empty'
+   Set #31: 'empty'
+0xFF 0x7F 24240007 Main beats/minute = 124
+        BPM: 124
+0xFF 0x7F 24240009 Song mute group data = 32
+Mute Groups: 32 of size 32
+Mute group #0 empty
+Mute group #1 empty
+Mute group #2 empty
+Mute group #3 empty
+Mute group #4 empty
+Mute group #5 empty
+Mute group #6 empty
+Mute group #7 empty
+Mute group #8 empty
+Mute group #9 empty
+Mute group #10 empty
+Mute group #11 empty
+Mute group #12 empty
+Mute group #13 empty
+Mute group #14 empty
+Mute group #15 empty
+Mute group #16 empty
+Mute group #17 empty
+Mute group #18 empty
+Mute group #19 empty
+Mute group #20 empty
+Mute group #21 empty
+Mute group #22 empty
+Mute group #23 empty
+Mute group #24 empty
+Mute group #25 empty
+Mute group #26 empty
+Mute group #27 empty
+Mute group #28 empty
+Mute group #29 empty
+Mute group #30 empty
+Mute group #31 empty
+All mute-groups are of size 0
+Global key, scale, and background sequence:
+0xFF 0x7F 24240011 Track key = 0
+0xFF 0x7F 24240012 Track scale = 0
+0xFF 0x7F 24240013 Track background sequence = 2048
+Global beats, beat width, and tempo track:
+0xFF 0x7F 24240015 Perfedit beats/measure = 4
+0xFF 0x7F 24240016 Perfedit beat-width = 4
+0xFF 0x7F 2424001a Alternate tempo track number = 0

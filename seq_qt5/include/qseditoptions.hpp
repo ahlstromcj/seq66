@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-03
+ * \updates       2025-06-10
  * \license       GNU GPLv2 or above
  */
 
@@ -36,10 +36,6 @@
 #include <QDialogButtonBox>
 
 #include "cfg/settings.hpp"             /* seq66::combolist class, helpers  */
-
-/*
- *  Do not document the namespace, it breaks Doxygen.
- */
 
 namespace Ui
 {
@@ -49,10 +45,6 @@ namespace Ui
 class QButtonGroup;
 class QComboBox;
 class QLineEdit;
-
-/*
- *  Do not document the namespace, it breaks Doxygen.
- */
 
 namespace seq66
 {
@@ -178,7 +170,9 @@ private slots:
     void slot_jack_midi ();
     void slot_jack_auto_connect ();
     void slot_io_maps ();
+#if defined SEQ66_ALLOW_PORTMAP_CLEAR
     void slot_remove_io_maps ();
+#endif
     void slot_activate_io_maps ();
     void slot_session (int buttonno);
     void slot_nsm_url ();

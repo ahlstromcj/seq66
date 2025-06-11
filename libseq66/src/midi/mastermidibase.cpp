@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2024-08-16
+ * \updates       2025-06-10
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -499,7 +499,7 @@ mastermidibase::get_out_port_statuses (clockslist & outs)
     clockslist & opm = output_port_map();
     if (opm.active())
     {
-        if (opm.not_empty())                        /* master clocks = opm  */
+        if (! opm.empty())                          /* master clocks = opm  */
             opm.match_system_to_map(m_master_clocks);
     }
     else
@@ -514,7 +514,7 @@ mastermidibase::get_in_port_statuses (inputslist & ins)
     inputslist & ipm = input_port_map();
     if (ipm.active())
     {
-        if (ipm.not_empty())                        /* master inputs = ipm  */
+        if (! ipm.empty())                          /* master inputs = ipm  */
             ipm.match_system_to_map(m_master_inputs);
     }
     else

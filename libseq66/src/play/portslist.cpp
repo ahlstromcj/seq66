@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2023-06-25
+ * \updates       2024-06-10
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -37,11 +37,6 @@
 #include "cfg/settings.hpp"             /* seq66::rc() accessor             */
 #include "play/portslist.hpp"           /* seq66::portslist class           */
 #include "util/strfunctions.hpp"        /* seq66::strncompare()             */
-
-/*
- *  This namespace is not documented because it screws up the document
- *  processing done by Doxygen.
- */
 
 namespace seq66
 {
@@ -764,7 +759,7 @@ std::string
 portslist::port_map_list (bool isclock) const
 {
     std::string result;
-    if (not_empty())
+    if (! empty())
     {
         for (const auto & iopair : m_master_io)
         {

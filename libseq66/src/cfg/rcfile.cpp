@@ -962,7 +962,7 @@ rcfile::write ()
     file << listlines;
 
     const inputslist & inpsref = input_port_map();
-    if (inpsref.not_empty())
+    if (! inpsref.empty())
     {
         bool active = inpsref.active();
         std::string maplines = input_port_map_list();
@@ -1019,7 +1019,7 @@ rcfile::write ()
     file << listlines;
 
     const clockslist & outsref = output_port_map();
-    if (outsref.not_empty())
+    if (! outsref.empty())
     {
         bool active = outsref.active();
         std::string maplines = output_port_map_list();

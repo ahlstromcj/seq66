@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-02-13
-% \update      2025-05-30
+% \update      2025-06-10
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -70,7 +70,7 @@
    Windows has a \textbf{MIDI Mapper}.
    This is a subsystem that redirects MIDI to a specific device.
    Supposedly it was removed in Windows 8 and beyond, but it still
-   exists in Windows 10.
+   exists in Windows 10 and 11.
    However, the alleged Control Panel applet
    for the MIDI Mapper no longer exists.
 
@@ -113,8 +113,8 @@
       \item \textbf{5}. LaunchPad Mini.
    \end{itemize}
 
-   Our "portmidi" implementation opens them in the same order, but
-   numbers them sequentially:
+   The \textsl{Seq66} "portmidi" implementation opens them in
+   the same order, but numbers them sequentially:
 
    \begin{itemize}
       \item \textbf{0}. MIDI Mapper.
@@ -129,7 +129,7 @@
    code detects that the MIDI Mapper (port 0) exists, and when opening
    the wavetable synth (port 1) fails, it marks that port as
    "unavailable" and "locked", in order to ghost it in the user-interface
-   and ignore it for error reporting (otherwise every startup would bring
+   and to ignore it for error reporting (otherwise every startup would bring
    up an annoying and meaningless error message).
 
    As an aside, for MIDI input, Windows does no mapping, and there are

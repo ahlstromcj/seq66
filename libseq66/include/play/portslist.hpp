@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2023-08-22
+ * \updates       2025-06-10
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -172,14 +172,14 @@ public:
         return int(m_master_io.size());
     }
 
-    bool not_empty () const
+    bool empty () const
     {
-        return ! m_master_io.empty();
+        return m_master_io.empty();
     }
 
     bool active () const
     {
-        return m_is_active && not_empty();
+        return m_is_active && ! empty();
     }
 
     bool is_port_map () const

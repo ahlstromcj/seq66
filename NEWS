@@ -37,6 +37,8 @@ Chris Ahlstrom
         event came in on. Not saved with the eevent, however.
 -   Preferences dialog.
     -   An ALSA/JACK label to JACK preferences tab, same as in mainwnd.
+    -   The button to "Clear" the port-maps has been removed. The
+        port maps are always present, but can still be deactivated.
 -   Import/Export
     -   Added a 'usr' option to enable/disable automatic conversion of
         an SMF 0 MIDI file to SMF 1.
