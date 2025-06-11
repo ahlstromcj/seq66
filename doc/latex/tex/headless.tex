@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-09-30
-% \update      2023-10-31
+% \update      2025-06-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -22,7 +22,7 @@
    That is, \textsl{Seq66}
    can be run from the command-line, with no visible user interface.
    See the \texttt{INSTALL} file provided with the source code distribution.
-   Note the \texttt{--both} bootstrap option to build the GUI and CLI
+   Note the \texttt{-{}-both} bootstrap option to build the GUI and CLI
    versions of \textsl{Seq66} at the same time.
 
    It can also be instantiated as a Linux daemon, for totally headless usage.
@@ -97,7 +97,7 @@
    \textbf{Second}, start the desired (software) synthesizer.
    Here we use the synth \textsl{Yoshimi}, with a stock setup from the
    \textsl{Yoshimi Cookbook} project.
-   The order of starting the keyboard/pad and the synthesiser
+   The order of starting the keyboard/pad and the synthesizer
    will alter the port numbers of these items.  Best to do things in the same
    order every time... be consistent (or use the port-mapping feature
    described in \sectionref{sec:port_mapping}).
@@ -221,13 +221,13 @@
       $ seq66cli -o daemonize
    \end{verbatim}
 
-   Then it is good to solidify the setup by editing the 'rc' and 'usr' files.
-
 %  The keyboard controls and sound output should work.
 %  However, at present the daemon doesn't get the proper settings, so that is
 %  something to work on for version 0.95.
+
+   It is good to solidify the setup by editing the 'rc' and 'usr' files.
    One can create a shortcut to run the application in the background (i.e. not
-   as a daemon..
+   as a daemon).
    In a \textsl{Fluxbox} menu:
 
    \begin{verbatim}
@@ -282,7 +282,7 @@
       $ killall seq66cli
    \end{verbatim}
 
-   (Not sure if it is worth adding a "--kill" option to
+   (Not sure if it is worth adding a "-{}-kill" option to
    \textsl{seq66cli}... killall is fairly complex.)
 
 %-------------------------------------------------------------------------------

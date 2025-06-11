@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-28
-% \update      2023-06-08
+% \update      2023-06-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -20,29 +20,36 @@
    This section describes some details concerning the JACK support of
    \textsl{Seq66}.
    As with \textsl{Seq24}, \textsl{Seq66} has JACK transport support.
-   JACK supposedly works with \textsl{Windows}, but we do not provide a JACK
+   JACK works with \textsl{Windows}, but we do not provide a JACK
    MIDI engine for that system at this time.
-   The JACK support is very loosely based on the \textsl{RtMIDI} project
+   JACK support is very loosely based on the \textsl{RtMIDI} project
    \cite{rtmidi}.
    The JACK support falls back to ALSA if the JACK server is not running.
    \index{jack-dbus}
    \textsl{However}, \texttt{jack-dbus} may be running, but without the
-   server active. The result is the same, a fallback to ALSA,
+   server active. The result is the same, a fallback to ALSA.
    The check for JACK opens a JACK client and determines if it can be
-   activated, irregardless if any other JACK ports/clients are available.
+   activated, then removes that client.
 
    \index{jack!transport}
    To enable the JACK transport support at run-time on
-   \textsl{Linux}, the options
-   \texttt{-j}/\texttt{-{}-jack-transport} (deprecated, a legacy option),
-   \texttt{-S}/\texttt{-{}-jack-slave} (the new version of the transport
-   option),
-   \texttt{-J}/\texttt{-{}-jack-master},
-   and \texttt{-C}/\texttt{-{}-jack-master-cond} are available.
-   \texttt{-g}/\texttt{-{}-no-jack-transport}
-   disables JACK transport even it JACK is running.
-   Also see \sectionref{subsubsec:configuration_rc_jack_transport}.
+   \textsl{Linux}, the options are:
 
+   \begin{itemize}
+      \item \texttt{-j}/\texttt{-{}-jack-transport}. Deprecated,
+         a legacy option.
+      \item \texttt{-S}/\texttt{-{}-jack-slave}. The new version of
+         the transport option.
+      \item \texttt{-J}/\texttt{-{}-jack-master}. Unconditionally
+         tries to become a JACK transport master.
+      \item \texttt{-C}/\texttt{-{}-jack-master-cond}. Conditionally
+         tries to become a JACK transport master, falling back to
+         slave if another master exists.
+      \item \texttt{-g}/\texttt{-{}-no-jack-transport}.
+         Disables JACK transport even it JACK is running.
+   \end{itemize}
+
+   Also see \sectionref{subsubsec:configuration_rc_jack_transport}.
    Note that the JACK transport options are \textsl{separate} from JACK MIDI.
    \index{jack!midi}
    The \texttt{--jack-midi} and \texttt{--jack} options both
@@ -141,10 +148,12 @@
 \subsection{JACK / Native MIDI}
 \label{subsec:jack_native_midi}
 
-   Currently, \textsl{Seq66} will connect to a JACK
+   \textsl{Seq66} will connect to a JACK
    client automatically only at startup, where it will connect to all JACK
    clients that it finds.  If it can't find a JACK client, then it will
-   fail to register a JACK port, and cannot play.
+   fail to register a JACK port, and cannot play via JACK.
+   Note: to disable auto-connect,
+   see \sectionref{subsection:edit_preferences_jack}.
 
    The other option is to set up virtual ports using the
    \texttt{-{}-manual-ports} or \texttt{-{}-options virtual=o,i} options, and then
@@ -161,9 +170,9 @@
    If \textsl{Seq66} doesn't find JACK, it will fall back to ALSA.
 
 	\index{sticky options}
-   The JACK (\texttt{-t}) and ALSA (\texttt{-A}) options are sticky options.
-   That is, they are saved to the 'rc' configuration file at exit,
-   so one does not have to specify them in subsequent \textsl{seq66} sessions.
+   The JACK and ALSA options are sticky.
+   They are saved to the 'rc' configuration file at exit,
+   so one does not have to specify them in subsequent \textsl{Seq66} sessions.
 
 \subsubsection{JACK / MIDI Output}
 \label{subsubsec:jack_midi_output}
@@ -190,7 +199,7 @@
 	\textbf{Edit / Preferences / MIDI Clock} tab.
    If USB devices are not shown, that means
    that the \texttt{a2jmidid} is not running.
-   There is a \texttt{bash} script, \texttt{data/linux/startjack}
+   There is a \texttt{bash} script, \texttt{data/linux/jackctl}
    that will run \texttt{jack\_control} and \texttt{a2j\_control} to start JACK
    and the \texttt{a2jmidid} daemon to provide full support.
    On our current setup, it creates devices with long names (abbreviated inside
@@ -272,11 +281,11 @@
    \texttt{[jack-transport] jack-auto-connect]} setting
    (\textbf{Edit / Preferences / JACK / JACK auto-connect}.
 
-   Note that \texttt{a2jmidid --export-hardware} is roughly
+   Note that \texttt{a2jmidid -{}-export-hardware} is roughly
    equivalentto JACK started with the \texttt{-Xseq} option.
 
    To set up \textsl{JACK}, one can use the script shipped with
-   \textsl{Seq66}, \texttt{data/linus/startjack}.  It has the following
+   \textsl{Seq66}, \texttt{data/linux/startjack}.  It has the following
    requirements and dependencies:
 
    \begin{itemize}
@@ -376,7 +385,7 @@
    \textsl{seq66debug} should display a rapid stream of MIDI Clock messages.
    If not, check the setup and, if correct, report a bug!
 
-   Note that the \texttt{--jack-midi} and \texttt{--jack} options both
+   Note that the \texttt{-{}-jack-midi} and \texttt{--jack} options both
    enable JACK MIDI.
 
 \subsubsection{JACK / Trouble-Shooting / JACK Ports}

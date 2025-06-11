@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.20
 Chris Ahlstrom
-2015-07-10 to 2025-06-10
+2015-07-10 to 2025-06-12
 
 # Change Log
 
-## [0.99.20] - 2025-06-10
+## [0.99.20] - 2025-06-12
 
 ### Added
 
@@ -34,7 +34,7 @@ Chris Ahlstrom
         editor. It currently assumes a range of +-2 semitones, a
         MIDI default.
     -   A column in the event editor shows the bus number that the
-        event came in on. Not saved with the eevent, however.
+        event came in on. Not saved with the event, however.
 -   Preferences dialog.
     -   An ALSA/JACK label to JACK preferences tab, same as in mainwnd.
     -   The button to "Clear" the port-maps has been removed. The
@@ -42,6 +42,8 @@ Chris Ahlstrom
 -   Import/Export
     -   Added a 'usr' option to enable/disable automatic conversion of
         an SMF 0 MIDI file to SMF 1.
+    -   The export of files to SMF 0. See the "MIDI Import/Export"
+        section of the user manual for provisos.
 -   Documentation.
     -   Changes, fixes, and additional features in the user manual.
 
@@ -77,15 +79,18 @@ Chris Ahlstrom
     -   Fixed global transpose and it now sets "modify".
     -   Fixes to counting sequences.
     -   Cleaned up recent-files vice playlist support.
+    -   Pasting a pattern now sets the pattern number to the slot
+        receiving the pattern.
     -   Many UI/keystroke fixes, including autmoation control
         functions such as automation\_play\_ss.
+    -   Import/Export
+        -   The export of files to SMF 0. See the "MIDI Import/Export"
+            section of the user manual for provisos.
 -   Pattern editor.
     -   Weird issue with setting measures in the pattern-editor-in-tab.
     -   The plotting of pitchbend data has been made correct.
     -   The broken painting of notes with the mouse.
     -   Enhanced sequence::partial\_assign(), adding missing members.
-    -   Pasting a pattern now sets the pattern number to the slot
-        receiving the pattern.
     -   Some style sheets have been tweaked to fix time/piano-roll
         alignment issues.
 -   Song editor.
@@ -98,9 +103,6 @@ Chris Ahlstrom
         at exit.
     -   Error of connecting the store-palette slot in qseditoptions
         twice.
--   Import/Export
-    -   The export of files to SMF 0. See the "MIDI Import/Export"
-        section of the user manual for provisos.
 -   Configuration files.
     -   Some configuration files weren't setting up for saving due to
         old versions being present.

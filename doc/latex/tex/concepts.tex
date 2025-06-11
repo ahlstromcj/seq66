@@ -133,7 +133,7 @@
    \url{https://en.wikipedia.org/wiki/Busbar}) is an entity onto which
    MIDI events can be placed, in order to be heard or to affect the
    playback, or into which MIDI events can be received, for recording.
-   A \textsl{buss} is just another name for port.
+   \textsl{Buss} is just another name for port.
    \textsl{Seq66} can also perform some mapping of I/O ports
    for a more flexible studio setup.
 
@@ -178,7 +178,7 @@
 \label{subsubsec:concepts_terms_export}
 
    \index{export}
-   A \textsl{export} in \textsl{Seq66} is a way of writing a
+   An \textsl{export} in \textsl{Seq66} is a way of writing a
    song-performance to a more standard MIDI file, so that it can be played
    exactly by other sequencers.
    An export-song operation collects all of the unmuted tracks that have
@@ -199,13 +199,12 @@
 \label{subsubsec:concepts_terms_group}
 
    \index{group}
-   A \textsl{group} in \textsl{Seq66} is a
+   \index{mute-group}
+   A \textsl{mute-group} in \textsl{Seq66} is a
    set of patterns, that can arm/disarm all together.
    Every group contains all sequences in the active screen set. 
    This concept is similar to mute/unmute groups in hardware
    sequencers.
-   \index{mute-group}
-   Also known as a "mute-group".
    Mute-groups can be stored in the MIDI file or in a 'mutes' file.
    Each mute-group is associated with a keystroke or a MIDI control.
 
@@ -214,7 +213,8 @@
 
    \index{play-set}
    A \textsl{play-set} is the current set of patterns that are available for
-   playing.  Normally, this is the patterns in the current bank (play-screen),
+   playing.  Normally, this is comprised of all the active
+   the patterns in the current bank (play-screen),
    but \textsl{Seq66} can be configured
    (see \sectionref{subsec:configuration_rc})
    to include patterns from other sets.
@@ -291,6 +291,8 @@
    the whole or part of a pattern.
    For example, a 1-measure pattern can be replicated with multiple triggers
    to play at various times in the song.
+   A trigger has start and ending times, a time offset, and optional
+   transposition value.
 
 \subsection{Concepts / Sound Subsystems}
 \label{subsec:concepts_sound_subsystems}

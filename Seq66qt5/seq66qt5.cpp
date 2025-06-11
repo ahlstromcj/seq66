@@ -152,6 +152,7 @@ main (int argc, char * argv [])
     for (;;)
     {
         seq66::qt5nsmanager sm(app);
+        seq66::millisleep(sc_sleep_time_ms);        /* TRIAL CODE 2025-06-11 */
         bool result = sm.create(argc, argv);
         if (result)
         {

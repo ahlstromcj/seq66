@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-06-16
-% \update      2025-05-20
+% \update      2025-06-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -86,8 +86,8 @@
    of Thru ports.  We use the '\#' prompt to indicate root access or usage of
    \texttt{sudo}.
    Save it.
-   No need to reboot, this \textsl{Linux}.
-   just remove and reinsert the module with the
+   No need to reboot, this is \textsl{Linux}.
+   Just remove and reinsert the module with the
    "mod" commands, as root:
 
    \begin{verbatim}
@@ -125,6 +125,13 @@
    HOWTO describes all that is necessary to achieve this goal.
    \end{quote}
 
+   While \textsl{Seq66} can auto-connect (if enabled) to other software
+   such as \textsl{qsynth}) without using virtual ports, virtual MIDI
+   ports can be used to connect several other MIDI applications running on the
+   same computer, to allow one to connect standalone applications: DAWs,
+   live-coding environments (Sonic-Pi, Supercollider, Pure Data), or
+   visualization software.
+
    To use ALSA's virtual MIDI the
    \texttt{snd-card-virmidi} module must be present. 
 
@@ -138,7 +145,8 @@
    alias snd-card-1 snd-virmidi
    \end{verbatim}
 
-   More to come, such as an explanation of \texttt{aconnectgui}....
+   A small, but useful application to connect ALSA ports
+   is \texttt{aconnectgui}.
    Also see the article about ALSA and JACK MIDI \cite{midilinux}.
 
 \subsection{ALSA / Trouble-Shooting}
@@ -176,10 +184,10 @@
    MIDI clock is a signal broadcast to ensure
    several MIDI-enabled synthesizers or sequencer stay in
    synchronization. Clock events are sent at a rate of 24 pulses per quarter
-   note.  THey maintain a synchronized tempo for synthesizers
+   note.  They maintain a synchronized tempo for synthesizers
    that have BPM-dependent voices, and for arpeggiator synchronization.
 
-\paragraph{ALSA MIDI Clock Send}
+\paragraph{ALSA / Trouble-Shooting / MIDI Clock / Send}
 \label{paragraph:alsa_testing_midi_clock_send}
 
    To verify that \textsl{Seq66} sends MIDI clock, the easiest way in
@@ -197,7 +205,7 @@
    Once set up, start playback on \textsl{Seq66}.
    The result should be a never-ending stream of rapid MIDI clock messages.
 
-\paragraph{ALSA MIDI Clock Receive}
+\paragraph{ALSA / Trouble-Shooting / MIDI Clock / Receive}
 \label{paragraph:alsa_testing_midi_clock_receive}
 
    To verify that \textsl{Seq66} receives MIDI clock in ALSA, use a sequencer
