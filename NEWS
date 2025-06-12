@@ -1,8 +1,41 @@
-NEWS for Seq66 0.99.20
+NEWS for Seq66 0.99.21
 Chris Ahlstrom
 2015-07-10 to 2025-06-12
 
 # Change Log
+
+## [0.99.21] - 2025-06-12
+
+### Added
+
+-   Main window and grid.
+-   Pattern editor.
+-   Song editor.
+-   Event editor.
+-   Preferences dialog.
+-   Import/Export
+-   Documentation.
+
+### Changed
+
+-   Main window and grid.
+-   Pattern editor.
+-   Song editor.
+-   Event editor. No changes; see "Added".
+-   Preferences dialog.
+-   Contrib files.
+-   Coalescing common code.
+
+### Fixed
+
+-   Main window and grid.
+    -   The BBT/HMS button tooltip was moved from the qsmainwnd
+        widget to the button.
+-   Pattern editor.
+-   Song editor.
+-   Event editor. No fixes; see "Added".
+-   Preferences dialog.
+-   Configuration files.
 
 ## [0.99.20] - 2025-06-12
 

@@ -1,30 +1,25 @@
-# README.md for Seq66 0.99.20 2025-06-12
+# README.md for Seq66 0.99.21 2025-06-12
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
 aware piano-roll; song layout for creative composition; control/status via MIDI
-automation for live performance.  Mute-groups enable/disable sets of patterns.
-Supports the Non/New Session Manager; can also run headless.  Works in a space
-as small as 450x340 pixels (if window decoration removed).  It does not support
-audio samples, just MIDI.
+automation for live performance. Mute-groups enable/disable sets of patterns.
+Supports the Non/New Session Manager; can also run headless. Size can be
+minimized for use with a small computer like the Pi. It does not support audio
+samples, just MIDI.
 
 __Seq66__ A major refactoring of Sequencer64/Kepler34/Seq24 with modern C++ and
-new features.  Linux and Windows users can build this application from source
-code.  See the extensive INSTALL file.  Includes a comprehensive PDF
+new features. Linux and Windows users can build this application from source
+code. See the extensive INSTALL file. Includes a comprehensive PDF
 user-manual.
 
-Support sites (still in progress):
-
-    *   https://ahlstromcj.github.io/
-    *   https://github.com/ahlstromcj/ahlstromcj.github.io/wiki
-
-The release now includes an installer for the 64-bit Windows version of Seq66.
-Also included is initial work on getting Seq66 to build and run in FreeBSD using
+The release includes an installer for the 64-bit Windows version of Seq66.
+Initial work has been done on getting Seq66 to build and run in FreeBSD using
 the Clang compiler.
 
-See NEWS for updates and RELNOTES for highlights.
+See NEWS for updates and RELNOTES for the latest highlights.
+The current development-in-progress branch is "wip".
 
-Current development-in-progress branch: wip.
 The figure below shows Seq66 with modified palette and a style-sheet in
 force. Otherwise the application uses the current Qt theme.
 
@@ -34,7 +29,7 @@ force. Otherwise the application uses the current Qt theme.
 
 ##  User interface
 
-    *   Qt 5 (cross-platform).  Loop-button gird. Qt style-sheet support.
+    *   Qt 5 (cross-platform). Loop-button gird. Qt style-sheet support.
     *   Drag-and-drop a MIDI file onto the main grid to load it.
     *   Tabs and external windows for patterns, sets, mute-groups, song
         layout, event-editing, play-lists, and session information.
@@ -53,7 +48,7 @@ force. Otherwise the application uses the current Qt theme.
     *   Separates MIDI control and mute-group setting into their own files.
     *   Unified keystroke and MIDI controls in the '.ctrl' file; defines MIDI
         controls for automation/display of Seq66 status in grid controllers
-        (e.g. LaunchPad).  Sample '.ctrl' files provided for Launchpad Mini.
+        (e.g. LaunchPad). Sample '.ctrl' files provided for Launchpad Mini.
 
 ##  Non/New Session Manager
 
@@ -76,7 +71,6 @@ force. Otherwise the application uses the current Qt theme.
     *   Highly configurable MIDI-based metronome.
     *   Improved non-U.S. keyboard support.
     *   Many demonstration and test MIDI files.
-    *   See the **NEWS** file or **RELNOTES**.
 
 ##  Internal
 
@@ -84,25 +78,20 @@ force. Otherwise the application uses the current Qt theme.
     *   Additional performer callbacks to reduce polling.
     *   A ton of clean-up and refactoring.
 
-Seq66 uses a Qt 5 user-interface based on Kepler34 and the Seq66 *rtmidi*
-(Linux) and *portmidi* (Windows) engines.  MIDI devices are detected,
-inaccessible devices are ignored, with playback (e.g. to the Windows wavetable
-synth). It is built easily via *GNU Autotools*, *Qt Creator* or *qmake*, using
-*MingW*.  See the INSTALL file for build-from-source instructions for Linux or
-Windows, and using a conventional source tarball.
+Seq66 has a user-interface based on Kepler34 and the Seq66 *rtmidi* (Linux) and
+*portmidi* (Windows) engines. MIDI devices are detected, inaccessible devices
+are ignored, with playback (e.g. to the Windows wavetable synth). It is built
+easily via *GNU Autotools*, *Qt Creator* or *qmake*, using *MingW*. See the
+INSTALL file for build-from-source instructions for Linux or Windows, and using
+a conventional source tarball.
+
+Support sites (still in progress):
+
+    *   https://ahlstromcj.github.io/
+    *   https://github.com/ahlstromcj/ahlstromcj.github.io/wiki
 
 ## Recent Changes
 
-    *   Added a 'usr' option to show an elliptical progress box, as eye candy.
-    *   Fixed the writing and byte-counting of the end-of track event. Saved
-        Seq66 MIDI files will be one byte longer.
-    *   Updated the licensing files to conform to GitHub so that they
-        are detected by GitHub.
-    *   Fixed some font handling and added edit fields for browser and PDF
-        viewer.
-    *   Fixed NSM support.
-    *   Added support for 120 PPQN and fixed the display of it in the
-        pattern editor.
-    *   Also see RELNOTES and NEWS.
+    *   See the NEWS file.
 
 // vim: sw=4 ts=4 wm=2 et ft=markdown

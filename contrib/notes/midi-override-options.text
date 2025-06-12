@@ -1,0 +1,16 @@
+Potential Seq66 Options to Override by SeqSpec Data
+Chris Ahlstrom
+2025-06-12 to 2025-06-12
+
+Consider a new SeqSpec to hold, in MIDI file, options that
+need to override the 'rc' file. A MIDI file that requires ...
+
+    -   "Record by buss".
+    -   "Buss override".
+    -   "JACK transport".
+    -   "Sets mode".
+    -   Activating the metronome.
+
+But how would these options be established without a restart?
+
+# vim: sw=4 ts=4 wm=8 et ft=rc

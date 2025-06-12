@@ -1,62 +1,16 @@
-Release Notes for Seq66 v. 0.99.20 2025-06-12 "Carl Cleanup"
+Release Notes for Seq66 v. 0.99.21 2025-06-12 "Karl Kleanup"
 
-This release contains fixes for issues emailed to us, plus a
-compreshensive update to the user manual, plus a large number
-of fixes and tweaks found while updating and validating the
-user manual. Many fixes, still more to do for the next version.
+This release contains fixes for issues ...
 
 - General.
-  - Made button heights more uniform in various Qt styles.
-  - Many minor tweaks to comments and appearance.
-  - Coalesced more common code.
 - Main window and grid.
-  - The Seq66 logo now closes any external windows the user opened.
-  - The popup menu for grid slots adds option to "flatten"
-    triggers and export the track to a MIDI file.
-  - CC and pitch events now shown in the grid-slot progress box.
-  - A pattern with a color shows that color even if empty.
-  - A timed error prompt replaces the Restart startup open in NSM.
-  - Fixed the drag/drop of patterns in the grid slot.
-  - Pasting a pattern sets the pattern number to the receiving
-    slot's number.
-  - Fixed the modify flag (asterisk) in recording notes and in
-    global transpose.
-  - Cleaned up recent-files vice playlist support.
-  - Many UI/keystroke fixes, including autmoation control.
-  - Import/Export
-    - Export of files to SMF 0 fixed.
-    - New 'usr' option to enable/disable automatic conversion of
-      SMF 0 MIDI to SMF 1.
+  - Fixed the BBT/HMS button tooltip.
 - Pattern editor.
-  - Added horizontal dotted lines to the data pane to mark levels.
-  - Nested editing and copy/paste menus into Edit and Track submenus.
-  - Implement recording indicator gradient brush.
-  - Fixed setting measures in the pattern-editor-in-tab.
-  - The plotting of pitchbend data corrected.
-  - Fixed painting of notes with the mouse.
-  - Style sheets tweaked to fix time/piano-roll alignment issues.
 - Song editor.
-    - Added a dark vertical border at the end of a song.
-    - Thick horizontal lines between sets.
-    - Fixed resetting trigger transposition.
-    - Swapped End and Ctrl-End to be less surprising.
 - Event editor.
-  - Added display of the pitch-bend in semitones. Assumes a range
-    of of +-2 semitones, a MIDI default.
-  - Shows the bus number that the event came in on. Not saved.
 - Preferences dialog.
-  - An ALSA/JACK label to JACK preferences tab, same as in mainwnd.
-  - Button to "Clear" the port-maps removed.
-  - Enhanced recent-file handling and auto-rc-save.
-  - Can turn off auto-save-rc and it saves that setting at exit.
-  - Error of connecting the store-palette slot in qseditoptions
-    twice.
 - Contrib files.
-  - contrib/vim-syntax/cpp.vim with added symbols like CSTR.
-  - contrib/vim.rc, changed F8 for fixing Windows quote characters.
 - Configuration files.
-  - Some files weren't set up for saving due to old version
-    numbers.
 
 See NEWS for more details.
 

@@ -39,9 +39,7 @@
     <normaloff>:/pixmaps/logo.xpm</normaloff>:/pixmaps/logo.xpm</iconset>
   </property>
   <property name="toolTip">
-   <string>This button displays the current time during
-playback. Clicking it toggles between
-B:B:T and H:M:S format.</string>
+   <string/>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
@@ -406,6 +404,11 @@ the current set.  Modifies the song.</string>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
+        </property>
+        <property name="toolTip">
+         <string>This button displays the current time during
+playback. Clicking it toggles between
+B:B:T and H:M:S format.</string>
         </property>
         <property name="text">
          <string>008:16:0000</string>
@@ -1672,7 +1675,7 @@ beats/minute.</string>
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>26</height>
+     <height>28</height>
     </rect>
    </property>
    <property name="font">

@@ -1,6 +1,6 @@
-TO DO for Seq66 0.99.20
+TO DO for Seq66 0.99.21
 Chris Ahlstrom
-2019-04-13 to 2025-06-10
+2019-04-13 to 2025-06-12
 
 Hot:
     
@@ -10,8 +10,6 @@ Hot:
         using seq64, the synth is receiving the CC signals and these events
         are recorded by seq64.
     -   Main window.
-        -   The BBT/HMS button tooltip appears in all kinds of other places
-            when hovering.
     -   Event editor. Open the b4uacuse patchless file and the first (0)
         pattern in the pattern editor; a segfault occurs. CANNOT DUPLICATE.
     -   On the Debian box, jackctl no longer runs jackd. Sometimes
@@ -32,9 +30,6 @@ NSM:
 
 Backlog:
 
-    -   Consider a new SeqSpec to hold, in MIDI file, options that
-        need to override the 'rc' file. Example: A MIDI file that
-        requires the "record by buss" option.
     -   Automation: verify/document Solo, Reset Sets, and Song Position.
     -   Straighten out enabling, disabled, and clearing the port maps.
     -   Make sure sessions.rc works as advertised; fix documentation.
