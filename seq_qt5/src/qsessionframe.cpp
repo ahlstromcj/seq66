@@ -50,10 +50,6 @@
 #include "forms/qsessionframe.ui.h"
 #endif
 
-/*
- * Don't document the namespace.
- */
-
 namespace seq66
 {
 

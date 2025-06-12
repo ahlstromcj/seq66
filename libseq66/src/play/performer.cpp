@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-06-04
+ * \updates       2025-06-12
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -595,7 +595,7 @@ performer::get_all_track_text (seq::number trk)
             if (seqp->get_next_meta_match(EVENT_META_TEXT_EVENT, cev))
             {
                 result += cev->get_text();
-                result += "; ";
+                result += "  ";
                 ++cev;
             }
             else

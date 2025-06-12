@@ -3,19 +3,9 @@ Chris Ahlstrom
 2019-04-13 to 2025-06-12
 
 Hot:
-    
-    -   When I try to record events using the Midi Controller UC-16, seq66 is
-        refusing to work and is telling me that the output bus is not
-        available. The same hardware configuration is working perfectly when
-        using seq64, the synth is receiving the CC signals and these events
-        are recorded by seq64.
-    -   Main window.
-    -   Event editor. Open the b4uacuse patchless file and the first (0)
-        pattern in the pattern editor; a segfault occurs. CANNOT DUPLICATE.
-    -   On the Debian box, jackctl no longer runs jackd. Sometimes
-        can get qjackctl to run it.
-    -   In the Session / Song Info, do not append ';' unless it is
-        karaoke?
+
+    -   Add note-value randomization to Tools, Fix Pattern. It should
+        adhere to the active scale, if any.
 
 NSM:
 
@@ -28,14 +18,22 @@ NSM:
     -   Make the NSM start-up prompt time configurable or dependent on
         the number of words.
 
+Cannot duplicate:
+    
+    -   When I try to record events using the Midi Controller UC-16, seq66 is
+        refusing to work and is telling me that the output bus is not
+        available. The same hardware configuration is working perfectly when
+        using seq64, the synth is receiving the CC signals and these events
+        are recorded by seq64. [We do not have this unit]
+    -   Event editor. Open the b4uacuse patchless file and the first (0)
+        pattern in the pattern editor; a segfault occurs.
+
 Backlog:
 
     -   Automation: verify/document Solo, Reset Sets, and Song Position.
-    -   Straighten out enabling, disabled, and clearing the port maps.
     -   Make sure sessions.rc works as advertised; fix documentation.
     -   Add a light version of glob(3) to use with Windows. In progress
         in the filefunctions module.
-    -   Add note-value randomization to Tools, Fix Pattern.
     -   Event editor:
         -   Can we add, perhaps a tooltip or dropdown to select the desired
             Control value (e.g. 7 for volume)? Same for Program?
@@ -46,8 +44,6 @@ Backlog:
             'eventTableWidget')  index:  8".  This does not happen in
             the table-widgets in other tabs. Nor does it happen on another
             computer.
-        -   Fix the handling and documentation of the time-signature.
-    -   Get the 16-in-busses.midi file configured and working.
     -   Figure out issue #132, the libasound2 issue.
     -   #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
     -   Recording.
