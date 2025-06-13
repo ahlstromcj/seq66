@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2023-09-06
+ * \updates       2025-06-13
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of many scale interval patterns if working with
@@ -176,10 +176,60 @@ c_scales_policy [c_scales_max] [c_octave_size] =
     }
 };
 
+/**
+ *  Indicates if the given note (MIDI key) is part of the given scale.
+ *
+ *  Replaced by the alternative below.
+ *
+ * \param s
+ *      Provides the scale to be checked.
+ *
+ * \param k
+ *      Provides the key to be checked, indirectly, as it also depends
+ *      of the given key (e.g. C versus C#). Let key range from 1 to
+ *      128. Then k is given by:
+ *
+ *          128 - key + 12 - keyofpattern
+ *
+ *     where keyofpattern ranges from 0 to 11. See qseqroll::draw_grid().
+ *
+ * \return
+ *      Returns true if k is part of the given scale.
+ */
+
 bool
 scales_policy (scales s, int k)
 {
     return c_scales_policy[int(s)][(k - 1) % c_octave_size];
+}
+
+/**
+ *  Alternative.
+ *
+ * \param s
+ *      Provides the scale to be checked.
+ *
+ * \param keyofpattern
+ *      The user-selected key for the pattern, ranging from 0 to 11.
+ *      0 is the Major scale; the chromatic (off) scale is not used
+ *      in accessing the arrays.
+ *
+ * \param k
+ *      The actual MIDI key value, ranging from 0 to 127.
+ */
+
+bool
+scales_policy (scales s, int keyofpattern, int k)
+{
+    if (s == scales::chromatic)
+    {
+        return true;
+    }
+    else
+    {
+        k += c_octave_size - 1 - keyofpattern;
+        return c_scales_policy[int(s)][k % c_octave_size];
+    }
 }
 
 /**

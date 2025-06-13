@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-06-02
+ * \updates       2025-06-13
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1894,7 +1894,10 @@ public:
     bool grow_selected (midipulse deltatick);
     bool stretch_selected (midipulse deltatick);
     bool randomize (midibyte status, int range = -1, bool all = false);
-    bool randomize_notes (int range = -1, bool all = false);
+    bool randomize_note_velocities (int range = -1, bool all = false);
+#if defined SEQ66_USE_RANDOMIZE_NOTE_PITCHES
+    bool randomize_note_pitches (int range, bool all = false);
+#endif
     bool jitter_notes (int jitter = -1, bool all = false);
     bool mark_selected ();
     void unpaint_all ();

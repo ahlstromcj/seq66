@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-06
+ * \updates       2025-06-13
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -544,7 +544,6 @@ qseqroll::call_draw_notes (QPainter & painter, const QRect & view)
 void
 qseqroll::draw_grid (QPainter & painter, const QRect & r)
 {
-    int octkey = c_octave_size - m_key;             /* used three times     */
     QBrush brush(back_color());                     /* brush(Qt::NoBrush)   */
     QBrush sbrush(scale_brush());                   /* brush(Qt::NoBrush)   */
     QPen pen(grey_color());                         /* pen(Qt::lightGray)   */
@@ -559,16 +558,16 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     painter.drawLine(r.x(), 1, r.x() + r.width(), 1);
 
     /*
-     * Horizontal (note) lines.
+     * Horizontal (note) lines. Note that scroll_offset_v() is always 0
+     * and has been removed here.
      */
 
-    for (int key = 1; key <= c_notes_count; ++key)      /* each note row    */
+    for (int key = 1; key <= c_notes_count; ++key)  /* each note row        */
     {
-        int remkeys = c_notes_count - key;              /* remaining keys   */
-        int modkey = remkeys - scroll_offset_v() + octkey;
+        int modkey = c_notes_count - key;           /* actual note value    */
         int y = key * unit_height() + 2;
         if ((modkey % c_octave_size) == 0)
-            pen.setColor(octave_color());               /* fore_color()     */
+            pen.setColor(octave_color());           /* fore_color()         */
         else
             pen.setColor(step_color());
 
@@ -576,13 +575,13 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         painter.drawLine(r.x(), y, r.x() + r.width(), y);
         if (m_scale != scales::off)
         {
-            if (! scales_policy(m_scale, modkey))       /* scales.cpp/hpp   */
+            if (! scales_policy(m_scale, m_key, modkey))
             {
                 /*
                  * This color is only part of the scale-brush border.
                  */
 
-                pen.setColor(scale_paint());            /* Qt::lightGray    */
+                pen.setColor(scale_paint());        /* Qt::lightGray        */
                 painter.setBrush(sbrush);
                 painter.setPen(pen);
                 painter.drawRect(0, y + 1, r.width(), unit_height() - 1);
@@ -1844,10 +1843,11 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                         /*
                          * No alteration setting, as the human will randomize
-                         * the note velocity quite naturally.
+                         * the note velocity quite naturally. This function
+                         * pushes undo as well.
                          */
 
-                        if (track().randomize_notes()) /* pushes too   */
+                        if (track().randomize_note_velocities())
                             done = mark_modified();
                         break;
 

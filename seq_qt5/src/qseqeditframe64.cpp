@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-05-23
+ * \updates       2025-06-12
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2763,7 +2763,8 @@ qseqeditframe64::popup_tool_menu ()
         QAction * rando = new_qaction("&Randomize velocity", m_tools_popup);
         connect
         (
-            rando, SIGNAL(triggered(bool)), this, SLOT(randomize_notes())
+            rando, SIGNAL(triggered(bool)), this,
+            SLOT(randomize_note_velocities())
         );
         menutiming->addAction(rando);
 
@@ -2930,10 +2931,10 @@ qseqeditframe64::jitter_notes ()
 }
 
 void
-qseqeditframe64::randomize_notes ()
+qseqeditframe64::randomize_note_velocities ()
 {
     int r = usr().randomization_amount();
-    track().randomize_notes(r);
+    track().randomize_note_velocities(r);
 }
 
 /**

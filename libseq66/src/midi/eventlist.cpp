@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2024-12-28
+ * \updates       2025-06-13
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -1394,6 +1394,10 @@ eventlist::reverse_events (bool inplace, bool relink)
  * \param range
  *      The amount of randomization.  A positive non-zero value is enforced.
  *
+ * \param all
+ *      If true, randomize all events regardless of status value. The default
+ *      is false.
+ *
  * \return
  *      Returns true if some randomization occurred.
  */
@@ -1434,10 +1438,10 @@ eventlist::randomize (midibyte astatus, int range, bool all)
  */
 
 bool
-eventlist::randomize_notes (int range, bool all)
+eventlist::randomize_note_velocities (int range, bool all)
 {
-    bool result = false;
-    if (range > 0)
+    bool result = range > 0;
+    if (result)
     {
         for (auto & e : m_events)
         {
@@ -1450,11 +1454,107 @@ eventlist::randomize_notes (int range, bool all)
                 }
             }
         }
+
+        /*
+         * ca 2025-06-13. We're not changing the order of notes, why relink?
+         */
+#if 0
         if (result)
             (void) verify_and_link();               /* sort & relink notes  */
+#endif
     }
     return result;
 }
+
+#if defined SEQ66_USE_RANDOMIZE_NOTE_PITCHES
+
+/**
+ *  This function randomizes the pitch of a Note On/Note Off message pair.
+ *  We want it to fall within the given scale (which might be
+ *  scale::chromatic, which includes all twelve notes.)
+ *
+ *  This is a little tricky. If the randomized pitch isn't part of the
+ *  specified scale we need to go up or down a pitch value until it is.
+ *
+ * \param range
+ *      Provides the amount of velocity randomization.
+ *
+ * \param s
+ *      Provides the scale to adhere to. If equal to scale::chromatic
+ *      (also known as scale::off), no adjustment is needed.
+ *
+ * \param all
+ *      If true (the default is false), handle all notes, not just the
+ *      selected notes.
+ *
+ * \return
+ *      Returns true if any event got altered.
+ */
+
+bool
+eventlist::randomize_note_pitches
+(
+    int range, scales s, int keyofpattern, bool all
+)
+{
+    bool result = range > 0;
+    if (result)
+    {
+        for (auto & e : m_events)
+        {
+            if (all || e.is_selected_note())        /* randomizable event?  */
+            {
+#if defined SEQ66_USE_UNIFORM_INT_DISTRIBUTION
+                int delta = seq66::randomize_uniformly(range);
+#else
+                int delta = seq66::randomize(range);
+#endif
+                result = delta != 0;
+                if (result)
+                {
+                    int p = int(e.get_note());
+                    if (s == scales::off)
+                    {
+                        p += delta;
+                    }
+                    else
+                    {
+                        for (int offset = 0; ; ++offset)
+                        {
+                            int testp = p + offset;
+                            if (scales_policy(s, keyofpattern, testp))
+                            {
+                                p = testp;
+                                break;
+                            }
+                            else
+                            {
+                                testp = p - offset;
+                                if (scales_policy(s, keyofpattern, testp))
+                                {
+                                    p = testp;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (e.is_note_on_linked())
+                    {
+                        e.set_note(midibyte(p));
+                        e.link()->set_note(midibyte(p));
+                    }
+                    else
+                        e.set_note(midibyte(p));
+                }
+            }
+            else
+                continue;
+        }
+    }
+    return result;
+}
+
+#endif
 
 #if defined SEQ66_USE_JITTER_EVENTS
 

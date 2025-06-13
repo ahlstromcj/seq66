@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-05-04
+ * \updates       2025-06-13
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the Seq64 globals module.  Includes the
@@ -127,6 +127,7 @@ legal_note (int note)
 enum class scales
 {
     off,
+    chromatic = off,
     major,
     minor,                          /* Natural Minor scale                  */
     harmonic_minor,
@@ -165,6 +166,12 @@ legal_scale (int s)
     return s >= c_scales_off && s < c_scales_max;
 }
 
+inline scales
+int_to_scale (int s)
+{
+    return legal_scale(s) ? static_cast<scales>(s) : scales::off ;
+}
+
 /**
  *  Provides the number of chord values in each chord's specification
  *  array.
@@ -196,6 +203,7 @@ extern bool chord_number_valid (int number);
 extern const char * chord_name_ptr (int number);
 extern const chord_notes & chord_entry (int number);
 extern bool scales_policy (scales s, int k);
+extern bool scales_policy (scales s, int keyofpattern, int k);
 extern const int * scales_up (int scale, int key = 0);
 extern const int * scales_down (int scale, int key = 0);
 extern double midi_note_frequency (midibyte note);

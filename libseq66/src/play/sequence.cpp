@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-06-02
+ * \updates       2025-06-13
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2686,19 +2686,39 @@ sequence::randomize (midibyte status, int range, bool all)
 }
 
 bool
-sequence::randomize_notes (int range, bool all)
+sequence::randomize_note_velocities (int range, bool all)
 {
     automutex locker(m_mutex);
     m_events_undo.push(m_events);               /* push_undo(), no lock  */
     if (range == (-1))
         range = usr().randomization_amount();
 
-    bool result = m_events.randomize_notes(range, all);
+    bool result = m_events.randomize_note_velocities(range, all);
     if (result)
         modify();
 
     return result;
 }
+
+#if defined SEQ66_USE_RANDOMIZE_NOTE_PITCHES
+
+bool
+sequence::randomize_note_pitches (int range, bool all)
+{
+    automutex locker(m_mutex);
+    m_events_undo.push(m_events);               /* push_undo(), no lock     */
+    if (range == (-1))
+        range = usr().randomization_amount();   /* HMMMMMMMMMMMMMMMMMMMM    */
+
+    scales s = int_to_scale(int(m_musical_key));
+    bool result = m_events.randomize_note_pitches(range, s, all);
+    if (result)
+        modify();
+
+    return result;
+}
+
+#endif
 
 /**
  *  For usage by fix_pattern() and by Tools / Timing / Jitter.
@@ -3530,7 +3550,7 @@ sequence::fix_pattern (fixparameters & fp)
 
             case alteration::random:
 
-                result = randomize_notes (fp.fp_random_range, true);
+                result = randomize_note_velocities(fp.fp_random_range, true);
                 if (result)
                     tempefx = bit_set(tempefx, fixeffect::alteration);
                 break;
