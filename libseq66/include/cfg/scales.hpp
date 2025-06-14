@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-06-13
+ * \updates       2025-06-14
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the Seq64 globals module.  Includes the
@@ -104,6 +104,18 @@ legal_key (int k)
     return k >= c_key_of_C && k < c_octave_size;
 }
 
+inline keys
+int_to_key (int k)
+{
+    return legal_key(k) ? static_cast<keys>(k) : keys::C ;
+}
+
+inline int
+key_to_int (keys k)
+{
+    return static_cast<int>(k);
+}
+
 inline bool
 legal_note (int note)
 {
@@ -172,6 +184,12 @@ int_to_scale (int s)
     return legal_scale(s) ? static_cast<scales>(s) : scales::off ;
 }
 
+inline int
+scale_to_int (scales s)
+{
+    return static_cast<int>(s);
+}
+
 /**
  *  Provides the number of chord values in each chord's specification
  *  array.
@@ -193,9 +211,9 @@ using chord_notes = std::vector<int>;               /* all init'd to size 6 */
  *  Free functions for scales.
  */
 
-extern std::string musical_key_name (int k);
 extern std::string musical_note_name (int n);
-extern std::string musical_scale_name (int s);
+extern std::string musical_key_name (keys k);
+extern std::string musical_scale_name (scales s);
 extern const char * interval_name_ptr (int interval);
 extern bool harmonic_number_valid (int number);
 extern const char * harmonic_interval_name_ptr (int interval);
@@ -203,7 +221,7 @@ extern bool chord_number_valid (int number);
 extern const char * chord_name_ptr (int number);
 extern const chord_notes & chord_entry (int number);
 extern bool scales_policy (scales s, int k);
-extern bool scales_policy (scales s, int keyofpattern, int k);
+extern bool scales_policy (scales s, keys keyofpattern, int k);
 extern const int * scales_up (int scale, int key = 0);
 extern const int * scales_down (int scale, int key = 0);
 extern double midi_note_frequency (midibyte note);

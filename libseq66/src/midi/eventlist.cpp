@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2025-06-13
+ * \updates       2025-06-14
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -1456,7 +1456,8 @@ eventlist::randomize_note_velocities (int range, bool all)
         }
 
         /*
-         * ca 2025-06-13. We're not changing the order of notes, why relink?
+         * ca 2025-06-13. We're not changing the order or timing
+         * of notes, why relink?
          */
 #if 0
         if (result)
@@ -1465,8 +1466,6 @@ eventlist::randomize_note_velocities (int range, bool all)
     }
     return result;
 }
-
-#if defined SEQ66_USE_RANDOMIZE_NOTE_PITCHES
 
 /**
  *  This function randomizes the pitch of a Note On/Note Off message pair.
@@ -1494,56 +1493,66 @@ eventlist::randomize_note_velocities (int range, bool all)
 bool
 eventlist::randomize_note_pitches
 (
-    int range, scales s, int keyofpattern, bool all
+    int range, scales s, keys keyofpattern, bool all
 )
 {
     bool result = range > 0;
     if (result)
     {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf
+        (
+            "Key of %s, %s scale\n",
+            musical_key_name(keyofpattern).c_str(),
+            musical_scale_name(s).c_str()
+        );
+#endif
         for (auto & e : m_events)
         {
-            if (all || e.is_selected_note())        /* randomizable event?  */
+            bool ok = all ? e.is_note() : e.is_selected_note() ;
+            if (ok)                                     /* randomizable?    */
             {
 #if defined SEQ66_USE_UNIFORM_INT_DISTRIBUTION
                 int delta = seq66::randomize_uniformly(range);
 #else
                 int delta = seq66::randomize(range);
 #endif
-                result = delta != 0;
-                if (result)
+                int p = int(e.get_note());
+                if (s == scales::off)
                 {
-                    int p = int(e.get_note());
-                    if (s == scales::off)
+                    p += delta;
+                }
+                else
+                {
+                    p += delta;
+                    for (int offset = 0; ; ++offset)    /* find legal note  */
                     {
-                        p += delta;
-                    }
-                    else
-                    {
-                        for (int offset = 0; ; ++offset)
+                        int testp = p + offset;
+                        if (scales_policy(s, keyofpattern, testp))
                         {
-                            int testp = p + offset;
+                            p = testp;
+                            break;
+                        }
+                        else
+                        {
+                            testp = p - offset;
                             if (scales_policy(s, keyofpattern, testp))
                             {
                                 p = testp;
                                 break;
                             }
-                            else
-                            {
-                                testp = p - offset;
-                                if (scales_policy(s, keyofpattern, testp))
-                                {
-                                    p = testp;
-                                    break;
-                                }
-                            }
                         }
                     }
-                    if (e.is_note_on_linked())
-                    {
-                        e.set_note(midibyte(p));
+                }
+                if (e.is_note_on())
+                {
+                    e.set_note(midibyte(p));
+                    if (e.is_linked())
                         e.link()->set_note(midibyte(p));
-                    }
-                    else
+                }
+                else if (e.is_note_off())
+                {
+                    if (! e.is_linked())
                         e.set_note(midibyte(p));
                 }
             }
@@ -1553,8 +1562,6 @@ eventlist::randomize_note_pitches
     }
     return result;
 }
-
-#endif
 
 #if defined SEQ66_USE_JITTER_EVENTS
 

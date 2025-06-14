@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-13
+ * \updates       2025-06-14
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -103,7 +103,7 @@ qseqroll::qseqroll
     m_scale                 (scales::off),
     m_pos                   (0),
     m_chord                 (0),
-    m_key                   (0),
+    m_key                   (keys::C),
     m_show_note_info        (false),
     m_note_tooltip          (nullptr),
     m_note_length           (p.ppqn() * 4 / 16),    // TODO use snap
@@ -562,9 +562,18 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
      * and has been removed here.
      */
 
-    for (int key = 1; key <= c_notes_count; ++key)  /* each note row        */
+    for (int key = 0; key < c_notes_count; ++key)   /* each note row        */
     {
-        int modkey = c_notes_count - key;           /* actual note value    */
+        int modkey = c_note_max - key;              /* actual note value    */
+
+        /*
+         * This cause drawing to be one height to low on the screen.
+         * Also see the corresponding correction in the scales_policy()
+         * overload.
+         *
+         *      int y = key * unit_height() + 2;
+         */
+
         int y = key * unit_height() + 2;
         if ((modkey % c_octave_size) == 0)
             pen.setColor(octave_color());           /* fore_color()         */
@@ -2106,9 +2115,10 @@ qseqroll::set_chord (int chord)
 void
 qseqroll::set_key (int key)
 {
-    if (m_key != key)
+    keys k = int_to_key(key);
+    if (m_key != k)
     {
-        m_key = key;
+        m_key = k;
         if (is_initialized())
             set_dirty();
     }
@@ -2142,8 +2152,8 @@ qseqroll::analyze_seq_notes ()
             snprintf
             (
                 temp, sizeof temp, "Analysis %d: Key %s, Scale '%s'\n",
-                r + 1, musical_key_name(k).c_str(),
-                musical_scale_name(s).c_str()
+                r + 1, musical_key_name(int_to_key(k)).c_str(),
+                musical_scale_name(int_to_scale(s)).c_str()
             );
             message += temp;
         }

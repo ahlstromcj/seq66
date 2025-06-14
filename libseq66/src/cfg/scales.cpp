@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2025-06-13
+ * \updates       2025-06-14
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of many scale interval patterns if working with
@@ -219,16 +219,36 @@ scales_policy (scales s, int k)
  */
 
 bool
-scales_policy (scales s, int keyofpattern, int k)
+scales_policy (scales s, keys keyofpattern, int k)
 {
-    if (s == scales::chromatic)
+    if (s == scales::chromatic)         /* the same as scales::off          */
     {
         return true;
     }
     else
     {
-        k += c_octave_size - 1 - keyofpattern;
-        return c_scales_policy[int(s)][k % c_octave_size];
+        /*
+         *  int k2 = k + c_octave_size - 1 - key_to_int(keyofpattern);
+         *
+         * The minus 1 was needed because the note lines in the seqroll
+         * were drawn one unit-height down.
+         */
+
+        int k2 = k + c_octave_size - key_to_int(keyofpattern);
+        k2 %= c_octave_size;
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        bool result = c_scales_policy[int(s)][k2];
+        std::string name = musical_note_name(k);
+        printf
+        (
+            "key %d (%3s) policy[%d] = %s\n",
+            k, name.c_str(), k2, result ? "T" : "F"
+        );
+        return result;
+#else
+        return c_scales_policy[int(s)][k2];
+#endif
     }
 }
 
@@ -554,13 +574,9 @@ musical_note_name (int n)
 }
 
 std::string
-musical_key_name (int k)
+musical_key_name (keys k)
 {
-    std::string result = "Xb";
-    if (legal_key(k))
-        result = c_key_text[k];
-
-    return result;
+    return c_key_text[key_to_int(k)];
 }
 
 /**
@@ -568,10 +584,9 @@ musical_key_name (int k)
  */
 
 std::string
-musical_scale_name (int s)
+musical_scale_name (scales s)
 {
-    static const std::string
-    c_scales_text[c_scales_max] =
+    static const std::string c_scales_text[c_scales_max]
     {
         "Off (Chromatic)",
         "Major (Ionian)",
@@ -588,11 +603,7 @@ musical_scale_name (int s)
         "Dorian",
         "Mixolydian"
     };
-    std::string result = "Unsupported";
-    if (legal_scale(s))
-        result = c_scales_text[s];
-
-    return result;
+    return c_scales_text[scale_to_int(s)];
 }
 
 /**
@@ -815,7 +826,7 @@ analyze_note (midibyte note, keys & outkey, int & outoctave)
     return result;
 }
 
-#if defined USE_SHOE_ALL_COUNTS
+#if defined USE_SHOW_ALL_COUNTS
 
 static void
 show_all_counts

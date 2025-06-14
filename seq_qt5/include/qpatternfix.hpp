@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2025-01-08
+ * \updates       2025-06-14
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -130,13 +130,12 @@ private slots:
     void slot_measure_change ();
     void slot_scale_change ();
     void slot_alt_change (int altid);
-
     void slot_tighten_change ();
     void slot_full_change ();
     void slot_jitter_change ();
     void slot_random_change ();
+    void slot_random_pitch_change ();
     void slot_notemap_file ();
-
     void slot_align_left_change (int dummy);
     void slot_align_right_change (int dummy);
     void slot_reverse_change (int dummy);
@@ -240,6 +239,12 @@ private:
      */
 
     int m_random_range;
+
+    /**
+     *  The range of note randomization to apply to note events.
+     */
+
+    int m_pitch_range;
 
     /**
      *  The range of jitter to apply.  Here, jitter is a randomization of

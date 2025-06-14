@@ -1,15 +1,19 @@
 NEWS for Seq66 0.99.21
 Chris Ahlstrom
-2015-07-10 to 2025-06-13
+2015-07-10 to 2025-06-14
 
 # Change Log
 
-## [0.99.21] - 2025-06-13
+## [0.99.21] - 2025-06-14
 
 ### Added
 
 -   Main window and grid.
 -   Pattern editor.
+    -   Pattern-fix dialog.
+        -   Added parameters for randomizing note pitches according
+            to the current musical scale for the pattern.
+        -   A pitch-randomization function was add to the eventlist.
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.
@@ -33,6 +37,8 @@ Chris Ahlstrom
     -   The BBT/HMS button tooltip was moved from the qsmainwnd
         widget to the button.
 -   Pattern editor.
+    -   The drawing of scales was done incorrectly. Fixed both the
+        seqroll grid drawing and the scales\_policy() function.
 -   Song editor.
 -   Event editor. No fixes; see "Added".
 -   Preferences dialog.

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2025-06-13
+ * \updates       2025-06-14
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -80,12 +80,6 @@
  */
 
 #undef SEQ66_USE_JITTER_EVENTS
-
-/**
- *  EXPERIMENTAL for v. 0.99.21.
- */
-
-#define SEQ66_USE_RANDOMIZE_NOTE_PITCHES
 
 /**
  *  This flag is used in eventlist and sequence to supposedly protect sorting
@@ -458,12 +452,10 @@ private:                                /* functions for friend sequence    */
     bool align_right (bool relink = false);
     bool randomize (midibyte status, int plus_minus, bool all = false);
     bool randomize_note_velocities (int range, bool all = false);
-#if defined SEQ66_USE_RANDOMIZE_NOTE_PITCHES
     bool randomize_note_pitches
     (
-        int range, scales s, int keyofpattern, bool all = false
+        int range, scales s, keys keyofpattern, bool all = false
     );
-#endif
 #if defined SEQ66_USE_JITTER_EVENTS
     bool jitter_events (int snap, int jitr);
 #endif

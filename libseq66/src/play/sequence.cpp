@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-06-13
+ * \updates       2025-06-14
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2700,25 +2700,22 @@ sequence::randomize_note_velocities (int range, bool all)
     return result;
 }
 
-#if defined SEQ66_USE_RANDOMIZE_NOTE_PITCHES
-
 bool
 sequence::randomize_note_pitches (int range, bool all)
 {
     automutex locker(m_mutex);
     m_events_undo.push(m_events);               /* push_undo(), no lock     */
     if (range == (-1))
-        range = usr().randomization_amount();   /* HMMMMMMMMMMMMMMMMMMMM    */
+        range = usr().randomization_amount();
 
-    scales s = int_to_scale(int(m_musical_key));
-    bool result = m_events.randomize_note_pitches(range, s, all);
+    scales s = int_to_scale(int(m_musical_scale));
+    keys k = int_to_key(int(m_musical_key));
+    bool result = m_events.randomize_note_pitches(range, s, k, all);
     if (result)
         modify();
 
     return result;
 }
-
-#endif
 
 /**
  *  For usage by fix_pattern() and by Tools / Timing / Jitter.
@@ -3551,6 +3548,13 @@ sequence::fix_pattern (fixparameters & fp)
             case alteration::random:
 
                 result = randomize_note_velocities(fp.fp_random_range, true);
+                if (result)
+                    tempefx = bit_set(tempefx, fixeffect::alteration);
+                break;
+
+            case alteration::random_pitch:
+
+                result = randomize_note_pitches(fp.fp_pitch_range, true);
                 if (result)
                     tempefx = bit_set(tempefx, fixeffect::alteration);
                 break;

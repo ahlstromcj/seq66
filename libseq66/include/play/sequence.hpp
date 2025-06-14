@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-06-13
+ * \updates       2025-06-14
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -94,6 +94,25 @@ using colorbyte = char;
  *      Indicates how all events are to be altered, such as being tightened,
  *      quantized, note-mapping, etc.
  *
+ * \var fp_length
+ *      Indicates to set the pattern length to a specified value, in ticks.
+ *
+ * \var fp_tighten_range
+ *      Set a range for tightening (partial quantization) of the pattern's
+ *      events.
+ *
+ * \var fp_random_range
+ *      Set a range for randomization of events. Randomize velocity for notes.
+ *
+ * \var fp_pitch_range
+ *      Set a range for randomization of note-event pitches.
+ *
+ * \var fp_quantize_range
+ *      Set a range for full quantization) of the pattern's events.
+ *
+ * \var fp_jitter_range
+ *      Set a range, in MIDI ticks, for "humanizing" a pattern.
+ *
  * \var fp_align_left
  *      Indicates if the offset of the first event or, preferably first note
  *      event, is to be adjusted to 0, shifting all events leftward by the same
@@ -107,7 +126,7 @@ using colorbyte = char;
  *      notes. The new timestamp is the distance of the event from the end
  *      (length) of the pattern, which we call the "reference".
  *
- * \var fp_absolute_reverse
+ * \var fp_reverse_in_place
  *      Similar to fp_reverse, except that the last event is used as the
  *      "reference" (instead of the pattern length).
  *
@@ -138,6 +157,12 @@ using colorbyte = char;
  *      not too large, and not 0.  Might be changed according to process, so
  *      that the final value can be displayed.
  *
+ * \par fp_notemap_file
+ *      Provides the name of the note-map file to use to re-map notes.
+ *
+ * \par fp_reverse_notemap
+ *      Re-map notes in the other directions
+ *
  * \var fp_effect
  *      Indicates the effect(s) of the change, using the fixeffect enumeration
  *      in the calculations module. Intended to be an output field.
@@ -151,6 +176,7 @@ struct fixparameters
     int fp_tighten_range;
     int fp_quantize_range;
     int fp_random_range;
+    int fp_pitch_range;
     int fp_jitter_range;
     bool fp_align_left;
     bool fp_align_right;
@@ -1893,12 +1919,10 @@ public:
     void decrement_selected (midibyte status, midibyte /*control*/);
     bool grow_selected (midipulse deltatick);
     bool stretch_selected (midipulse deltatick);
-    bool randomize (midibyte status, int range = -1, bool all = false);
-    bool randomize_note_velocities (int range = -1, bool all = false);
-#if defined SEQ66_USE_RANDOMIZE_NOTE_PITCHES
-    bool randomize_note_pitches (int range, bool all = false);
-#endif
-    bool jitter_notes (int jitter = -1, bool all = false);
+    bool randomize (midibyte status, int range = (-1), bool all = false);
+    bool randomize_note_velocities (int range = (-1), bool all = false);
+    bool randomize_note_pitches (int range = (-1), bool all = false);
+    bool jitter_notes (int jitter = (-1), bool all = false);
     bool mark_selected ();
     void unpaint_all ();
     bool verify_and_link (bool wrap = false);

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-06-12
+ * \updates       2025-06-14
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -897,7 +897,7 @@ qseqeditframe64::qseqeditframe64
 
     for (int key = 0; key < c_octave_size; ++key)
     {
-        QString combo_text = qt(musical_key_name(key));
+        QString combo_text = qt(musical_key_name(int_to_key(key)));
         ui->m_combo_key->insertItem(key, combo_text);
     }
     ui->m_combo_key->setCurrentIndex(m_key);
@@ -920,7 +920,7 @@ qseqeditframe64::qseqeditframe64
     );
     for (int scale = c_scales_off; scale < c_scales_max; ++scale)
     {
-        QString combo_text = qt(musical_scale_name(scale));
+        QString combo_text = qt(musical_scale_name(int_to_scale(scale)));
         ui->m_combo_scale->insertItem(scale, combo_text);
     }
     ui->m_combo_scale->setCurrentIndex(m_scale);
@@ -1125,7 +1125,10 @@ qseqeditframe64::qseqeditframe64
 
     if (s_use_spacer_button_2 && ! shorter)
     {
-        ui->spacer_button_2->setText("&T");
+        /*
+         * ui->spacer_button_2->setText("&T");
+         */
+
         ui->spacer_button_2->setEnabled(true);
         ui->spacer_button_2->setToolTip("Show the pattern-fix dialog");
         connect

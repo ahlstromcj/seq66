@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-17
+ * \updates       2025-06-14
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -245,7 +245,7 @@ private:
      *  The current musical key selected.
      */
 
-    int m_key;
+    keys m_key;
 
     /**
      *  If true (the default is false), this will allow hovering to show

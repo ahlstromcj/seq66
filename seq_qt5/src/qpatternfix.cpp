@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2025-01-23
+ * \updates       2025-06-14
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -100,6 +100,7 @@ qpatternfix::qpatternfix
     m_tighten_range     (s.snap() / 2),
     m_full_range        (s.snap()),
     m_random_range      (usr().randomization_amount()),
+    m_pitch_range       (usr().randomization_amount()),
     m_jitter_range      (usr().jitter_range(s.get_ppqn() / 4)), /* fp_...   */
     m_notemap_file      (rc().notemap_filename()),
     m_reverse_notemap   (false),
@@ -250,6 +251,15 @@ qpatternfix::initialize (bool startup)
         m_alt_group->addButton(ui->btn_alt_random, cast(alteration::random));
 
         /*
+         * Random Note Pitch
+         */
+
+        m_alt_group->addButton
+        (
+            ui->btn_alt_random_pitch, cast(alteration::random_pitch)
+        );
+
+        /*
          * Note-map and Reverse Note-map
          */
 
@@ -301,6 +311,13 @@ qpatternfix::initialize (bool startup)
         (
             ui->line_edit_alt_random, SIGNAL(editingFinished()),
             this, SLOT(slot_random_change())
+        );
+        value = std::to_string(m_pitch_range);
+        ui->line_edit_alt_random_pitch->setText(qt(value));
+        connect
+        (
+            ui->line_edit_alt_random_pitch, SIGNAL(editingFinished()),
+            this, SLOT(slot_random_pitch_change())
         );
         value = std::to_string(m_jitter_range);
         ui->line_edit_alt_jitter->setText(qt(value));
@@ -636,11 +653,26 @@ qpatternfix::slot_random_change ()
     QString t = ui->line_edit_alt_random->text();
     std::string tc = t.toStdString();
     int m = string_to_int(tc, 0);
-    if (m > 0 && m < track().get_ppqn())        /* sanity check */
+    if (m > 0 && m < 9999)                      /* sanity check */
     {
         ui->btn_alt_random->setChecked(true);
         m_random_range = m;
         m_alt_type = alteration::random;
+        modify();
+    }
+}
+
+void
+qpatternfix::slot_random_pitch_change ()
+{
+    QString t = ui->line_edit_alt_random_pitch->text();
+    std::string tc = t.toStdString();
+    int m = string_to_int(tc, 0);
+    if (m > 0 && m < c_notes_count)
+    {
+        ui->btn_alt_random_pitch->setChecked(true);
+        m_pitch_range = m;
+        m_alt_type = alteration::random_pitch;
         modify();
     }
 }
@@ -800,10 +832,11 @@ qpatternfix::slot_set ()
     m_notemap_file = rc().filespec_helper(m_notemap_file);
 
     midipulse len = track().get_length();
-    fixparameters fp =                                  /* value structure  */
+    fixparameters fp                                    /* value structure  */
     {
         m_length_type, m_alt_type, len,
-        m_tighten_range, m_full_range, m_random_range, m_jitter_range,
+        m_tighten_range, m_full_range, m_random_range,
+        m_pitch_range, m_jitter_range,
         m_align_left, m_align_right, m_reverse, m_reverse_in_place,
         m_save_note_length, m_use_time_sig, m_time_sig_beats,
         m_time_sig_width, m_measures, m_scale_factor,

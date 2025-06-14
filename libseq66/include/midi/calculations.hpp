@@ -143,6 +143,7 @@ enum class alteration
     quantize,       /**< grid_quant_full:    Adjust timing strictly.        */
     jitter,         /**< grid_quant_jitter:  Randomize timing slightly.     */
     random,         /**< grid_quant_random:  Randomize event magnitude.     */
+    random_pitch,   /**< ------------------  Randomize note pitches.        */
     notemap,        /**< grid_quant_notemap: Apply configured note-mapping. */
     rev_notemap,    /**< Apply the note-map in the reverser direction.      */
     max             /**<                     Illegal value.                 */
