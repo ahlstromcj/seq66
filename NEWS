@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.21
 Chris Ahlstrom
-2015-07-10 to 2025-06-14
+2015-07-10 to 2025-06-15
 
 # Change Log
 
-## [0.99.21] - 2025-06-14
+## [0.99.21] - 2025-06-15
 
 ### Added
 
@@ -24,8 +24,12 @@ Chris Ahlstrom
 
 -   Main window and grid.
 -   Pattern editor.
+    -   Optimized gradient drawing using QLinearGradient members in
+        qseqroll instead of auto objects.
 -   Song editor.
--   Event editor. No changes; see "Added".
+    -   Optimized gradient drawing using QLinearGradient members in
+        qperfroll and qperfnames instead of auto objects.
+-   Event editor.
 -   Preferences dialog.
 -   Contrib files.
 -   Coalescing common code.
@@ -40,7 +44,7 @@ Chris Ahlstrom
     -   The drawing of scales was done incorrectly. Fixed both the
         seqroll grid drawing and the scales\_policy() function.
 -   Song editor.
--   Event editor. No fixes; see "Added".
+-   Event editor.
 -   Preferences dialog.
 -   Configuration files.
 

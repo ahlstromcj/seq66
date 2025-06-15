@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-02
+ * \updates       2025-06-15
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -178,6 +178,13 @@ private:
      */
 
     qperfnames * m_perf_names;
+
+    /**
+     *  Pre-allocation of gradient brushes for drawing triggers.
+     */
+
+    QLinearGradient m_back_grad;
+    QLinearGradient m_sel_grad;
 
     QTimer * m_timer;
     QFont m_font;

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-10-15
+ * \updates       2025-06-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -132,6 +132,8 @@ private:
     Color m_preview_color;                  /* will reduce its alpha value  */
     bool m_is_previewing;
     int m_preview_row;
+    QLinearGradient m_name_grad;
+    QLinearGradient m_muted_name_grad;
     bool m_use_gradient;
 
 };          // class qperfnames

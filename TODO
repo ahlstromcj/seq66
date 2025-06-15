@@ -27,7 +27,6 @@ Cannot duplicate:
 
 Backlog:
 
-    -   See if the note gradient brush can be stored once created.
     -   Automation: verify/document Solo, Reset Sets, and Song Position.
     -   Make sure sessions.rc works as advertised; fix documentation.
     -   Add a light version of glob(3) to use with Windows. In progress

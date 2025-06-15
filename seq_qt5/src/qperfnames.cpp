@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-04-30
+ * \updates       2025-06-15
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -81,6 +81,8 @@ qperfnames::qperfnames (performer & p, QWidget * parent) :
     m_preview_color     (progress_paint()),
     m_is_previewing     (false),
     m_preview_row       (-1),
+    m_name_grad         (0, 0, 0, 1),
+    m_muted_name_grad   (0, 0, 0, 1),
     m_use_gradient      (gui_use_gradient_brush())
 {
     /*
@@ -95,6 +97,16 @@ qperfnames::qperfnames (performer & p, QWidget * parent) :
     m_font.setBold(true);
     m_font.setPointSize(s_pointsize);
     m_preview_color.setAlpha(s_alpha_normal);
+    if (use_gradient())
+    {
+        m_name_grad.setCoordinateMode(QGradient::ObjectMode);
+
+        Color backcolor = grey_color();
+        m_muted_name_grad.setColorAt(0.01, backcolor.darker(150));
+        m_muted_name_grad.setColorAt(0.5, backcolor.lighter());
+        m_muted_name_grad.setColorAt(0.99, backcolor.darker(150));
+        m_muted_name_grad.setCoordinateMode(QGradient::ObjectMode);
+    }
 }
 
 /**
@@ -183,16 +195,13 @@ qperfnames::paintEvent (QPaintEvent *)
                 QString chinfo(name);
                 if (use_gradient())
                 {
-                    QLinearGradient grad
-                    (
-                        rect_x, rect_y, rect_x, rect_y + h + 1
-                    );
                     if (muted)
                     {
-                        Color backcolor = grey_color();
-                        grad.setColorAt(0.01, backcolor.darker());
-                        grad.setColorAt(0.5, backcolor.lighter());
-                        grad.setColorAt(0.99, backcolor.darker());
+                        painter.fillRect
+                        (
+                            rect_x + 2 , rect_y + 1, rect_w - 2, h - 1,
+                            m_muted_name_grad
+                        );
                     }
                     else
                     {
@@ -202,20 +211,21 @@ qperfnames::paintEvent (QPaintEvent *)
                             s_alpha_bright : s_alpha_normal ;
 
                         backcolor.setAlpha(alpha);
-                        grad.setColorAt(0.01, backcolor.darker(150));
-                        grad.setColorAt(0.5, backcolor.lighter());
-                        grad.setColorAt(0.99, backcolor.darker(150));
+                        m_name_grad.setColorAt(0.01, backcolor.darker(150));
+                        m_name_grad.setColorAt(0.5, backcolor.lighter());
+                        m_name_grad.setColorAt(0.99, backcolor.darker(150));
+                        painter.fillRect
+                        (
+                            rect_x + 2 , rect_y + 1, rect_w - 2, h - 1,
+                            m_name_grad
+                        );
                     }
-                    painter.fillRect
-                    (
-                        rect_x + 2 , rect_y + 1, rect_w - 2, h - 1, grad
-                    );
-                    pen.setColor(fore_color());
 
                     /*
-                     * 0.99.1: Draw a rectangle around the gradient.
+                     * Draw a rectangle around the gradient.
                      */
 
+                    pen.setColor(fore_color());
                     pen.setStyle(Qt::SolidLine);
                     pen.setColor(fore_color());
                     brush.setStyle(Qt::NoBrush);

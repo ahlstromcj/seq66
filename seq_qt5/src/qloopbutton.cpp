@@ -825,6 +825,10 @@ qloopbutton::draw_progress_box (QPainter & painter)
     {
         if (s_elliptical_prog_box)
         {
+            /*
+             * Probably not worth making this a member.
+             */
+
             QRadialGradient grad
             (
                 m_progress_box.center_x(), m_progress_box.center_y(),
@@ -843,6 +847,10 @@ qloopbutton::draw_progress_box (QPainter & painter)
         }
         else
         {
+            /*
+             * Probably not worth making this a member.
+             */
+
             QLinearGradient grad
             (
                 m_progress_box.x(), m_progress_box.y(),

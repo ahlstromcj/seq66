@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-14
+ * \updates       2025-06-15
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -194,6 +194,14 @@ private:
     );
 
 private:
+
+    /**
+     *  Pre-allocation of gradient brushes for drawing notes.
+     */
+
+    QLinearGradient m_note_grad;
+    QLinearGradient m_wrap_grad;
+    QLinearGradient m_sel_grad;
 
     /**
      *  Used for showing the estimated scale/key upon a Ctrl-K in the qseqroll.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-08
+ * \updates       2025-06-15
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -107,6 +107,8 @@ qperfroll::qperfroll
     ),
     m_parent_frame      (frame),                /* frame64() accessor       */
     m_perf_names        (seqnames),
+    m_back_grad         (0, 0, 0, 1),
+    m_sel_grad          (0, 0, 0, 1),
     m_timer             (nullptr),
     m_font              ("Monospace"),
     m_trigger_transpose (0),
@@ -129,6 +131,14 @@ qperfroll::qperfroll
     m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     m_font.setBold(true);
     m_font.setPointSize(s_vfont_size_normal);
+    if (use_gradient())
+    {
+        m_back_grad.setCoordinateMode(QGradient::ObjectMode);
+        m_sel_grad.setColorAt(0.01, sel_color().darker());
+        m_sel_grad.setColorAt(0.5, sel_color().lighter());
+        m_sel_grad.setColorAt(0.99, sel_color().darker());
+        m_sel_grad.setCoordinateMode(QGradient::ObjectMode);
+    }
     m_timer = qt_timer(this, "qperfroll", 2, SLOT(conditional_update()));
 }
 
@@ -1135,32 +1145,39 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         QLinearGradient grad(x, y, x, y + h + 1);
                         if (trig.selected())
                         {
-                            grad.setColorAt(0.01, sel_color().darker());
-                            grad.setColorAt(0.5, sel_color().lighter());
-                            grad.setColorAt(0.99, sel_color().darker());
+                            /*
+                             * Nothing to do.
+                             */
                         }
                         else
                         {
-                            grad.setColorAt(0.01, backcolor.darker(150));
-                            grad.setColorAt(0.5, backcolor.lighter());
-                            grad.setColorAt(0.99, backcolor.darker(150));
+                            m_back_grad.setColorAt(0.01, backcolor.darker(150));
+                            m_back_grad.setColorAt(0.5, backcolor.lighter());
+                            m_back_grad.setColorAt(0.99, backcolor.darker(150));
                         }
+                        QLinearGradient & gradref = trig.selected() ?
+                            m_sel_grad : m_back_grad ;
+
                         pen.setStyle(Qt::SolidLine);    /* seq trigger box  */
                         pen.setWidth(measure_pen_width());
-
-                        /*
-                         * painter.fillRect(x, y, w, h + 1, grad);
-                         */
-
-                        QBrush gradbrush(grad);
-                        gradbrush.setStyle(Qt::LinearGradientPattern);
-                        painter.setBrush(gradbrush);
                         pen.setColor(fore_color());     /* use box color    */
                         painter.setPen(pen);
                         if (usr().progress_bar_thick())
+                        {
+                            painter.fillRect
+                            (
+                                x + 1, y + 3, w - 2, h - 1, gradref
+                            );
                             painter.drawRect(x + 1, y + 3, w - 2, h - 1);
+                        }
                         else
+                        {
+                            painter.fillRect
+                            (
+                                x + 1, y + 2, w - 2, h - 1, gradref
+                            );
                             painter.drawRect(x + 1, y + 2, w - 2, h - 1);
+                        }
                     }
                     else
                     {
