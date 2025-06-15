@@ -1848,14 +1848,15 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.65]{pattern-editor/patternfix.png}
+   \includegraphics[scale=0.75]{pattern-editor/patternfix-randomize-pitch-setup.png}
    \caption{Pattern Fix Dialog}
    \label{fig:pattern_editor_pattern_fix}
 \end{figure}
 
    \index{pattern-editor!fix}
    When this dialog is used, the time-stamp of \textsl{every event} in the
-   pattern will be changed.
+   pattern can be changed.
+   Many other changes can be made as well.
    Once selected, the pattern number is shown in the title-bar and in a
    read-only text field.
 
@@ -1970,6 +1971,15 @@
       \item \textbf{Random amplitude}.
          Randomizes the velocity of notes by plus-or-minus the number of units
          specified in the text-field.
+      \item \textbf{Random pitch}.
+         Randomizes the pitch of notes by plus-or-minus the number of units
+         specified in the text-field.
+         The notes adhere to the musical scale set in the pattern
+         editor, including the chromatic scale, which includes all twelve
+         notes in an octave.
+         See \figureref{fig:pattern_editor_pattern_fix}, which shows
+         the setup for randomizing the pitches, plus the pattern to be
+         randomize.
       \item \textbf{Time/tick jitter}.
          Randomizes the timing of each note by plus-or-minus the number of
          MIDI ticks shown in the text-field.
@@ -1995,6 +2005,16 @@
 
 %  Question:  would a vertical "pattern flip" (of the note values themselves)
 %  be useful?
+
+   This figure shows the result of randomizing notes to adhere to a
+   Phrygian scale based on C.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{pattern-editor/patternfix-randomize-pitch-result.png}
+   \caption{Result of Pattern Fix Note Pitch Randomization}
+   \label{fig:pattern_editor_pattern_fix_pitch_randomization}
+\end{figure}
 
 \subsubsection{Pattern Editor / Pattern Fix / Applied Effects}
 \label{subsubsection:patterns_fix_applied_effects}

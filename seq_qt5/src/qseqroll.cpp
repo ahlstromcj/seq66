@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-14
+ * \updates       2025-06-15
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -688,6 +688,25 @@ qseqroll::draw_notes
         return;
 
     int noteheight = unit_height() - 2;     /* was "- 3"    */
+
+    QLinearGradient note_grad(0, 0, 0, 1);
+    note_grad.setColorAt(0.05, fore_color());
+    note_grad.setColorAt(0.5,  note_in_color());
+    note_grad.setColorAt(0.95, fore_color());
+    note_grad.setCoordinateMode(QGradient::ObjectMode);
+
+    QLinearGradient wrap_grad(0, 0, 0, 1);
+    wrap_grad.setColorAt(0.05, fore_color());
+    wrap_grad.setColorAt(0.5,  Qt::magenta);
+    wrap_grad.setColorAt(0.95, fore_color());
+    wrap_grad.setCoordinateMode(QGradient::ObjectMode);
+
+    QLinearGradient sel_grad(0, 0, 0, 1);
+    sel_grad.setColorAt(0.05, fore_color());
+    sel_grad.setColorAt(0.5,  sel_color());
+    sel_grad.setColorAt(0.95, fore_color());
+    sel_grad.setCoordinateMode(QGradient::ObjectMode);
+
     s->draw_lock();
     for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
@@ -760,18 +779,20 @@ qseqroll::draw_notes
                 }
                 else
                 {
-                    QLinearGradient grad
+#if 0
+                    QLinearGradient note_grad
                     (
                         m_note_x, m_note_y,
                         m_note_x, m_note_y + noteheight
                     );
-                    grad.setColorAt(0.05, fore_color());
-                    grad.setColorAt(0.5,  note_in_color());
-                    grad.setColorAt(0.95, fore_color());
+                    note_grad.setColorAt(0.05, fore_color());
+                    note_grad.setColorAt(0.5,  note_in_color());
+                    note_grad.setColorAt(0.95, fore_color());
+#endif
                     painter.fillRect
                     (
                         m_note_x + 1, m_note_y + 1, m_note_width - 1,
-                        noteheight - 1, grad
+                        noteheight - 1, note_grad
                     );
                 }
             }
@@ -780,18 +801,20 @@ qseqroll::draw_notes
                 int len = z().tix_to_pix(ni.finish()) - m_note_off_margin;
                 if (use_gradient())
                 {
-                    QLinearGradient grad
+#if 0
+                    QLinearGradient wrap_grad
                     (
                         m_keypadding_x, m_note_y,
                         m_keypadding_x, m_note_y + noteheight
                     );
-                    grad.setColorAt(0.05, fore_color());
-                    grad.setColorAt(0.5,  Qt::magenta);
-                    grad.setColorAt(0.95, fore_color());
+                    wrap_grad.setColorAt(0.05, fore_color());
+                    wrap_grad.setColorAt(0.5,  Qt::magenta);
+                    wrap_grad.setColorAt(0.95, fore_color());
+#endif
                     painter.fillRect
                     (
                         m_keypadding_x, m_note_y,
-                        len + 1, noteheight + 1, grad
+                        len + 1, noteheight + 1, wrap_grad
                     );
                 }
                 else
@@ -820,17 +843,19 @@ qseqroll::draw_notes
                     {
                         if (ni.selected())
                         {
-                            QLinearGradient grad
+#if 0
+                            QLinearGradient sel_grad
                             (
                                 x_shift, m_note_y, m_note_x, m_note_y + h_minus
                             );
-                            grad.setColorAt(0.01, fore_color());
-                            grad.setColorAt(0.5,  sel_color());
-                            grad.setColorAt(0.99, fore_color());
+                            sel_grad.setColorAt(0.01, fore_color());
+                            sel_grad.setColorAt(0.5,  sel_color());
+                            sel_grad.setColorAt(0.99, fore_color());
+#endif
                             painter.fillRect
                             (
                                 x_shift, m_note_y,
-                                m_note_width + length_add, h_minus, grad
+                                m_note_width + length_add, h_minus, sel_grad
                             );
                         }
                     }

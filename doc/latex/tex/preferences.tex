@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-06-01
+% \update      2025-06-14
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -592,9 +592,11 @@
    its command-line counterpart, \texttt{-{}-verbose}; when
    \textsl{Seq66} exits completely, the setting remains false.
 
-   \itempar{Load Most Recent File (startup)}{load most-recent}
+   \itempar{Load most-recent file (startup)}{load most-recent}
    If checked, the file at the top of the \texttt{[recent-files]}
    list in the 'rc' file is loaded at startup.
+   Note that this option will not work if a
+   \textsl{Seq66} play-list is active.
 
    \itempar{Show Full Path of Recent Files in Menu}{full paths}
    The full path of each file in the \texttt{[recent-files]} list
@@ -1195,6 +1197,9 @@
       \item \Sectionref{subsubsec:configuration_rc_style_sheet}.
       \item \Sectionref{subsubsec:configuration_rc_patches}.
    \end{itemize}
+
+   Note that activating a play-list file will deactivate the
+   load-most-recent file option.
 
    \itempar{Store Palette}{palette}
    Normally, there is no palette file.  Pushing this button creates one, which

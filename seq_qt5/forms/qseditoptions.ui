@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>6</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -1073,7 +1073,8 @@ If set, the grid slot progress boxes are ellipses.</string>
             </size>
            </property>
            <property name="toolTip">
-            <string>rc: [recent-files] load-most-recent</string>
+            <string>Load most-recent file at startup. Works only if there
+is no active playlist. rc: [recent-files] load-most-recent</string>
            </property>
            <property name="text">
             <string>Load most-recent file (startup)</string>
