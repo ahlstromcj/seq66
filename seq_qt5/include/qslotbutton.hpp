@@ -44,10 +44,6 @@
 #include "gui_palette_qt5.hpp"          /* seq66::Color                     */
 #include "play/seq.hpp"                 /* seq66::seq sequence-plus class   */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class performer;

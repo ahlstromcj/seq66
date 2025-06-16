@@ -89,10 +89,6 @@ static const int s_fontsize_large   = 10;       // for usr:progress-bar-thick
 static const int s_fontsize_record  =  8;       // 5;
 static const int s_radius_record    =  8;       // 9, 8;
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

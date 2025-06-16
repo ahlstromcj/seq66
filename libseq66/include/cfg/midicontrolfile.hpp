@@ -42,10 +42,6 @@
 #include "ctrl/midicontrolout.hpp"      /* seq66::midicontrolout class      */
 #include "ctrl/opcontrol.hpp"           /* seq66::optcontrol and automation */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

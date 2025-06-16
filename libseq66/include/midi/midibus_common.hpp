@@ -34,10 +34,6 @@
  *  Defines some midibus constants and the clock_e enumeration.
  */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -45,10 +45,6 @@
 #include "midi/event.hpp"               /* seq66::event class               */
 #include "midi/mastermidibus.hpp"       /* seq66::mastermidibus class       */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

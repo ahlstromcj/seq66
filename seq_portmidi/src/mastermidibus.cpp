@@ -39,10 +39,6 @@
 #include "porttime.h"                   /* Pt_Time_To_Pulses()              */
 #include "pmutil.h"                     /* Pm_Dequeue()                     */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

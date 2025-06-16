@@ -40,10 +40,6 @@
 
 #include "midi/editable_event.hpp"      /* seq66::editable_event        */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

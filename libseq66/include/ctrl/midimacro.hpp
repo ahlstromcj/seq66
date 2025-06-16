@@ -41,10 +41,6 @@
 #include "midi/midibytes.hpp"           /* seq66::midistring data type      */
 #include "util/basic_macros.hpp"        /* seq66::tokenization container    */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

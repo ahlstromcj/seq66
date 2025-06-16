@@ -33,10 +33,6 @@
 #include "midi/midi_vector.hpp"         /* seq66::midi_vector_base class    */
 #include "play/sequence.hpp"            /* seq66::sequence class            */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -57,10 +57,6 @@
 #include "util/filefunctions.hpp"       /* file_read_writable(), etc.       */
 #include "util/strfunctions.hpp"        /* string-to-numbers functions      */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

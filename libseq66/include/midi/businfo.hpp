@@ -45,10 +45,6 @@
 #include "midi/midibus_common.hpp"      /* enum class e_clock               */
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class event;

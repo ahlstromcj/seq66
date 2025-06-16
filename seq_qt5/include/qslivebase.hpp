@@ -43,10 +43,6 @@
 
 class QEvent;
 
-/*
- * Do not document a namespace, it can break Doxygen.
- */
-
 namespace seq66
 {
     class keystroke;

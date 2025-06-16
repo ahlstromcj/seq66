@@ -39,10 +39,6 @@
 #include "ctrl/keymap.hpp"              /* seq66::qt_ordinal_keyname()      */
 #include "ctrl/opcontrol.hpp"           /* seq66::opcontrol & automation    */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

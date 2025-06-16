@@ -111,10 +111,6 @@
 
 #undef  SEQ66_USE_ADDED_ALTERATIONS     /* undefined while in-progress      */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

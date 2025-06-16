@@ -39,10 +39,6 @@
 
 #define SEQ66_USE_JACK_POLLING_FLAG     /* until we reconcile ALSA/JACK     */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

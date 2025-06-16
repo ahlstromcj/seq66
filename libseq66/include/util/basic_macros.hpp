@@ -48,10 +48,6 @@
 #include "seq66_features.hpp"           /* C++ definitions, std::string     */
 #include "util/basic_macros.h"          /* C-style definitions/features     */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -42,10 +42,6 @@
 
 #include "ctrl/automation.hpp"          /* namespace seq66::automation      */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

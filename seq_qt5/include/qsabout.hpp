@@ -45,10 +45,6 @@ namespace Ui
     class qsabout;
 }
 
-/*
- * Do not document a namespace.  It breaks Doxygen.
- */
-
 namespace seq66
 {
 

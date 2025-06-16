@@ -22,10 +22,6 @@
 #include <map>                          /* std::map dictionary class        */
 #include <string>                       /* std::string class                */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

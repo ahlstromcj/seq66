@@ -96,10 +96,6 @@
 #include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
 #include "util/palette.hpp"             /* seq66::palette_to_int(), colors  */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

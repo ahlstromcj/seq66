@@ -41,10 +41,6 @@
 #include "play/songsummary.hpp"         /* seq66::songsummary               */
 #include "util/strfunctions.hpp"        /* seq66::bool_to_string()          */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -47,10 +47,6 @@
 #include "qperfnames.hpp"               /* seq66::qperfnames panel class    */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

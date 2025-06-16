@@ -55,10 +55,6 @@ namespace Ui
     class qpatternfix;
 }
 
-/*
- * Do not document a namespace.  It breaks Doxygen.
- */
-
 namespace seq66
 {
     class performer;

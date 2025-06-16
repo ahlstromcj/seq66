@@ -39,10 +39,6 @@
 #include "play/mutegroups.hpp"          /* seq66::mutegroups, etc.          */
 #include "util/strfunctions.hpp"        /* seq66::write_stanza_bits()       */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

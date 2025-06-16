@@ -39,10 +39,6 @@
 
 #include "midi/midifile.hpp"            /* seq66::midifile base class       */
 
-/*
- * Do not document a namespace, it breaks Doxygen.
- */
-
 namespace seq66
 {
     class performer;

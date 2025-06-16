@@ -44,10 +44,6 @@
 
 #include "ctrl/opcontrol.hpp"           /* seq66::opcontrol & automation    */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

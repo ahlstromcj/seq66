@@ -71,10 +71,6 @@ extern const char * JACK_METADATA_ICON_NAME;
 #undef SEQ66_JACK_SESSION
 #endif
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class performer;                    /* forward reference                */

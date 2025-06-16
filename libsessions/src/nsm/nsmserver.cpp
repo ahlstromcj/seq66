@@ -34,10 +34,6 @@
 
 #include "nsm/nsmserver.hpp"            /* seq66::nsmserver class           */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

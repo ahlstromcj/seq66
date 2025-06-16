@@ -39,10 +39,6 @@
 #include "rtmidi.hpp"                   /* RtMidi updated API header file   */
 #include "rtmidi_info.hpp"              /* seq66::rtmidi_info (new)         */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -39,10 +39,6 @@
 
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class performer;

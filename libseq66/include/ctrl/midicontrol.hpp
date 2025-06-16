@@ -46,10 +46,6 @@
 #include "ctrl/keycontrol.hpp"          /* seq66::keycontrol class          */
 #include "midi/event.hpp"               /* seq66::event class, bussbyte     */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

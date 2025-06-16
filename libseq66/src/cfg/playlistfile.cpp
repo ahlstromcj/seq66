@@ -51,10 +51,6 @@
 #include "util/filefunctions.hpp"       /* functions for file-names         */
 #include "util/strfunctions.hpp"        /* strip_quotes()                   */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

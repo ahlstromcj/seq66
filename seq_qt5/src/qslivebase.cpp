@@ -35,10 +35,6 @@
 #include "qslivebase.hpp"               /* seq66:qslivebase class, this one */
 #include "qsmainwnd.hpp"                /* the parent class of this window  */
 
-/*
- * Do not document a namespace, it breaks Doxygen.
- */
-
 namespace seq66
 {
 

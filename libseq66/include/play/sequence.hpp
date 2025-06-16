@@ -57,10 +57,6 @@
 
 const int c_seq_color_none = (-1);
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

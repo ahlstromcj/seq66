@@ -36,10 +36,6 @@
 
 #include "ctrl/midicontrolbase.hpp"     /* seq66::midicontrolbase class     */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

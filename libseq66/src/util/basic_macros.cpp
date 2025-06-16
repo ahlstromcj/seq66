@@ -51,10 +51,6 @@
 #define S_WRITE     _write              /* Microsoft's write()              */
 #endif
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

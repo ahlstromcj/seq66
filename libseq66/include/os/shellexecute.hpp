@@ -30,10 +30,6 @@
  *    the application.
  */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

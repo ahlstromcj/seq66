@@ -45,10 +45,6 @@
 #include "cfg/settings.hpp"             /* seq66::rc() accessor             */
 #include "util/filefunctions.hpp"       /* seq66::file_extension_set()      */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -39,10 +39,6 @@
 
 #include "midi/midibytes.hpp"           /* seq66::c_midichannel_max         */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

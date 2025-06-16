@@ -123,10 +123,6 @@
 
 #include "ctrl/automation.hpp"          /* seq66::automation base class     */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

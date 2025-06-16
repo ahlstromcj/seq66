@@ -35,10 +35,6 @@
 
 #include "ctrl/keycontrol.hpp"          /* seq66::keycontrol class          */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

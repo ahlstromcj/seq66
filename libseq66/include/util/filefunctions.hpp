@@ -43,10 +43,6 @@
 #define SEQ66_HANDLE_FILE_WILDCARDS
 #endif
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

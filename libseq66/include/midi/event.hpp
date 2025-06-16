@@ -93,10 +93,6 @@
 
 #define SEQ66_MIDI_DATA_BYTE_COUNT      2
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

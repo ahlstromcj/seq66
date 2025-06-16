@@ -173,10 +173,6 @@
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm message functions     */
 #include "sessions/smanager.hpp"        /* seq66::smanager virtuals         */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

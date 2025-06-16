@@ -50,10 +50,6 @@
 #include "midi/businfo.hpp"             /* seq66::businfo class             */
 #include "midi/event.hpp"               /* seq66::event class               */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

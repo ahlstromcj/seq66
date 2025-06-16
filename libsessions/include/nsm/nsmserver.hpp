@@ -19,10 +19,6 @@
 
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase base class        */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

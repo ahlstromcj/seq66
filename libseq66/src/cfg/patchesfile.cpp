@@ -36,10 +36,6 @@
 #include "cfg/patchesfile.hpp"          /* seq66::patchesfile class         */
 #include "cfg/settings.hpp"             /* seq66::rcsettings & seq66::rc()  */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

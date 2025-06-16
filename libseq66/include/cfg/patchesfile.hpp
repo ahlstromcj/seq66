@@ -39,10 +39,6 @@
 #include "cfg/configfile.hpp"           /* seq66::configfile class          */
 #include "midi/patches.hpp"             /* seq66::patches                   */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

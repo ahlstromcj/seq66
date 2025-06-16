@@ -83,10 +83,6 @@
 #include <random>                       /* std::uniform_int_distribution    */
 #endif
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

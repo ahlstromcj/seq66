@@ -34,10 +34,6 @@
 #include "qportwidget.hpp"              /* seq66::qportwidget class         */
 #include "qseditoptions.hpp"            /* seq66::qseditoptions class       */
 
-/*
- *  Do not document the namespace, it breaks Doxygen.
- */
-
 namespace seq66
 {
 

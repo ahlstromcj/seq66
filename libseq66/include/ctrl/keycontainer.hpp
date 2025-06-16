@@ -44,10 +44,6 @@
 #include "ctrl/keycontrol.hpp"          /* seq66::keycontrol                */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke                 */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

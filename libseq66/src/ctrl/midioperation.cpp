@@ -34,10 +34,6 @@
 
 #include "ctrl/midioperation.hpp"       /* seq66::midioperation class       */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

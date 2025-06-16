@@ -43,10 +43,6 @@
 #include "gui_palette_qt5.hpp"          /* gui_pallete_qt5::Color etc.      */
 #include "qseqbase.hpp"                 /* seq66::qseqbase mixin class      */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

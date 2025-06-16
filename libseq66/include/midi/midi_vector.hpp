@@ -42,10 +42,6 @@
 
 #include "midi/midi_vector_base.hpp"    /* seq66::midi_vector_base ABC      */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

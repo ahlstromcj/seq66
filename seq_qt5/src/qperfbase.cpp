@@ -40,10 +40,6 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qperfbase.hpp"                /* seq66::qperfbase class           */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

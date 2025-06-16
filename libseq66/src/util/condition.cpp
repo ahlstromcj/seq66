@@ -41,10 +41,6 @@
 
 #include "util/condition.hpp"
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 
@@ -129,10 +125,6 @@ public:
 condition::impl::variable condition::impl::sm_cond;
 
 }           // namespace seq66
-
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
 
 namespace seq66
 {

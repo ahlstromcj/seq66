@@ -70,10 +70,6 @@
 #include "cfg/settings.hpp"             /* seq66::rc().verbose()            */
 #endif
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

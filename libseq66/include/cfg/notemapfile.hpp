@@ -39,10 +39,6 @@
 #include "cfg/configfile.hpp"           /* seq66::configfile class          */
 #include "play/notemapper.hpp"          /* seq66::notemapper                */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

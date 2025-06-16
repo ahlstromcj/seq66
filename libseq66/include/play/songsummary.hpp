@@ -36,10 +36,6 @@
 
 #include "play/seq.hpp"                 /* seq66::seq pattern class         */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class performer;

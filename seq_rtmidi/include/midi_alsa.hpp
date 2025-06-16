@@ -45,10 +45,6 @@
 #error ALSA not supported in this build, fix the project configuration.
 #endif
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class event;

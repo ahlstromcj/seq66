@@ -37,10 +37,6 @@
 #include "cfg/settings.hpp"             /* seq66::usr()                     */
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -36,10 +36,6 @@
 #include "ctrl/keycontainer.hpp"        /* seq66::keycontainer class        */
 #include "util/strfunctions.hpp"        /* seq66::strcasecompare()          */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

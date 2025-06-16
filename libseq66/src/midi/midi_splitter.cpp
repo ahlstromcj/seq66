@@ -39,10 +39,6 @@
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "util/palette.hpp"             /* seq66::palette_to_int(), colors  */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

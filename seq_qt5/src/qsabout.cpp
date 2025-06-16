@@ -46,10 +46,6 @@
 #include "forms/qsabout.ui.h"
 #endif
 
-/*
- * Do not document a namespace.  It breaks Doxygen.
- */
-
 namespace seq66
 {
 

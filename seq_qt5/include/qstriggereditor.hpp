@@ -45,10 +45,6 @@
 #include "midi/midibytes.hpp"           /* seq66::midibyte, other aliases   */
 #include "qseqbase.hpp"                 /* seq66::qseqbase base class       */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class performer;

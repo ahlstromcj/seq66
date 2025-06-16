@@ -118,10 +118,6 @@
 #include "play/performer.hpp"           /* seq66::performer master class    */
 #include "play/seq.hpp"                 /* seq66::seq                       */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

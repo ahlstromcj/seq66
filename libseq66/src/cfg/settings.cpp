@@ -49,10 +49,6 @@
 
 static const bool s_netdocs_first = false;
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -129,10 +129,6 @@ static lo_timetag s_lo_timetag = { 0, 1 };
 #define NSM_API_VERSION_MAJOR   1
 #define NSM_API_VERSION_MINOR   0
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

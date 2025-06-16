@@ -40,10 +40,6 @@
 #include "midi/midibus_common.hpp"      /* enum class e_clock, etc.         */
 #include "midi/midibytes.hpp"           /* bussbyte and other types         */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

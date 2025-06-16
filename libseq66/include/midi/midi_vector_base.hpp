@@ -39,10 +39,6 @@
 
 #include "midi/midibytes.hpp"           /* seq66::midibyte                  */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class event;

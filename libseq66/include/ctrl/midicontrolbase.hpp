@@ -40,10 +40,6 @@
 
 #include "midi/midibytes.hpp"           /* seq66::bussbyte data type        */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

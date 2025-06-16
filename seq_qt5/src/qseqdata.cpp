@@ -65,10 +65,6 @@
 #define SEQ66_TRACK_DATA_EDITING_MOVEMENTS
 #undef  SEQ66_ALLOW_RELATIVE_VELOCITY_CHANGE
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

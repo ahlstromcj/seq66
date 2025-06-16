@@ -40,10 +40,6 @@
 
 #include "qeditbase.hpp"                /* seq66:qeditbase base class     */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class performer;

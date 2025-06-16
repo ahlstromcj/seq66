@@ -58,10 +58,6 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qeditbase.hpp"
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

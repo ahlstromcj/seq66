@@ -85,10 +85,6 @@ enum class daemonization
 
 const int c_daemonize_max_fd = 8192; /**< Max. file-descriptors to close.   */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

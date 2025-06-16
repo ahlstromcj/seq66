@@ -38,10 +38,6 @@
 #include "midi/midibase.hpp"            /* seq66::midibase class (new)      */
 #include "rtmidi_types.hpp"             /* midibase::port::normal           */
 
-/*
- * Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class event;

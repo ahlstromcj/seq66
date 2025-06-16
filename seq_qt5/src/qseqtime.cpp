@@ -39,10 +39,6 @@
 #include "qseqtime.hpp"                 /* seq66::qseqtime class            */
 #include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

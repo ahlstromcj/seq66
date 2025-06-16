@@ -37,10 +37,6 @@
 #include "cfg/recent.hpp"               /* recent-files container           */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -36,10 +36,6 @@
 
 #include "cfg/configfile.hpp"           /* seq66::configfile class          */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

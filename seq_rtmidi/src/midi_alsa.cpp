@@ -115,10 +115,6 @@
 #include "midi_alsa.hpp"                /* seq66::midi_alsa for ALSA        */
 #include "midi_info.hpp"                /* seq66::midi_info                 */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

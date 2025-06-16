@@ -39,10 +39,6 @@
 #include "midi/event.hpp"               /* seq66::event                     */
 #include "midi/midibytes.hpp"           /* seq66::midishort data type       */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -43,10 +43,6 @@
 #include "play/clockslist.hpp"          /* list of seq66::e_clock settings  */
 #include "play/inputslist.hpp"          /* list of boolean input settings   */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class event;

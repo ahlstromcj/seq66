@@ -47,10 +47,6 @@
 
 #include "ctrl/midicontrol.hpp"         /* seq66::midicontrol class         */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

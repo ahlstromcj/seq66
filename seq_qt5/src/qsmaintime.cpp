@@ -37,10 +37,6 @@
 #include "qsmaintime.hpp"
 #include "gui_palette_qt5.hpp"
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

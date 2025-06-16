@@ -48,10 +48,6 @@
 #include "ctrl/midimacro.hpp"           /* seq66::midimacro class           */
 #include "util/strfunctions.hpp"        /* seq66::tokenize()                */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

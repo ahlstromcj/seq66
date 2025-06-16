@@ -61,10 +61,6 @@
 
 #define SEQ66_ALWAYS_VERIFY_AND_LINK
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

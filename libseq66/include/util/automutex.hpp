@@ -41,10 +41,6 @@
 
 #include "util/recmutex.hpp"            /* seq66::recmutex wrapper class    */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

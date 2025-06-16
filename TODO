@@ -4,21 +4,8 @@ Chris Ahlstrom
 
 Hot:
 
-    -   Add Pattern Fix to grid slot popup Edit menu.
-    -   Can we implement Ctrl-C / Ctrl-V for patterns in the
-        grid?
     -   Clicking 'r' in qseqroll causes a modify!
-    -   In random.midi:
-        -   Randomizing using Random pitch = 12 alone
-            -   Yields short notes (less than a 32nd)
-            -   Keeps (shortened) the original notes.
-        -   In pattern 4, same effect, but also timings are altered!
-        -   Try adding the verify-and-link to it; it seems to work.
-        -   Open pattern 5 (randomized). Arm it. Start play.
-            The other two patterns also armed!!! This happens
-            in performer.cpp#5467 when auto_arm() is true even
-            when the playlsit is not active.
-        -   The display of pattern 7 is messed up.
+    -   In random.midi: (all bugs seem to be fixed by verify-and-link.)
 
 NSM:
 

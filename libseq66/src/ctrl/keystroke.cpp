@@ -36,10 +36,6 @@
 #include "ctrl/keymap.hpp"              /* seq66::qt_modkey_name()          */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

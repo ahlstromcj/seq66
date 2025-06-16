@@ -35,10 +35,6 @@
 #include "midi/controllers.hpp"         /* seq66::controller_name(), etc.   */
 #include "midi/midibytes.hpp"           /* seq66::midibyte type             */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -256,10 +256,6 @@
 #include "os/timing.hpp"                /* seq66::microsleep(), microtime() */
 #include "util/filefunctions.hpp"       /* seq66::filename_base(), etc.     */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

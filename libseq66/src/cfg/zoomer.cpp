@@ -60,10 +60,6 @@
 #include "cfg/settings.hpp"             /* seq66::zoom_items()              */
 #include "cfg/zoomer.hpp"               /* seq66::zoomer class              */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

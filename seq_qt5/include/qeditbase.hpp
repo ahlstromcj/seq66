@@ -40,10 +40,6 @@
 #include "gui_palette_qt5.hpp"          /* gui_pallete_qt5::Color etc.      */
 #include "qbase.hpp"                    /* seq66:qbase super base class     */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class performer;

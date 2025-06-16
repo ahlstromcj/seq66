@@ -37,10 +37,6 @@
 
 #include "qslotbutton.hpp"              /* seq66::qslotbutton base class    */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class performer;

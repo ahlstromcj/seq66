@@ -39,10 +39,6 @@
 
 #include "ctrl/keymap.hpp"              /* seq66::ctrlkey alias, etc.       */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -73,10 +73,6 @@
 #include "ctrl/midicontrolout.hpp"      /* seq66::midicontrolout class      */
 #include "play/mutegroups.hpp"          /* seq66::mutegroups::Size()        */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -41,10 +41,6 @@
 
 #include "midi/midibytes.hpp"           /* seq66::midipulse alias, etc.     */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class sequence;

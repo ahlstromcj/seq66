@@ -41,10 +41,6 @@
 #include "util/filefunctions.hpp"       /* seq66::file_exists()             */
 #include "util/strfunctions.hpp"        /* seq66::strip_quotes()            */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

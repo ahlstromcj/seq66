@@ -77,10 +77,6 @@
 #include "ctrl/keycontainer.hpp"        /* seq66::keycontainer class        */
 #include "ctrl/midicontrolin.hpp"       /* seq66::midicontrolin class       */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

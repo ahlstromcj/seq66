@@ -45,10 +45,6 @@ class QPaintEvent;
 class QMouseEvent;
 class QTimer;
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class performer;

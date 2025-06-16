@@ -51,10 +51,6 @@ using ctrlkey = unsigned char;
 
 using eventkey = unsigned;
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

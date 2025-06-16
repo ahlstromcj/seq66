@@ -33,10 +33,6 @@
 #include "play/metro.hpp"               /* seq66::metro sequence class      */
 #include "play/performer.hpp"           /* seq66::performer class functions */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

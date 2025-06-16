@@ -39,10 +39,6 @@
 #include "play/seq.hpp"                 /* seq66::seq::pointer              */
 #include "qeditbase.hpp"                /* seq66::qbase basic UI date       */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class qseqeditframe64;

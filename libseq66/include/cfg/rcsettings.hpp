@@ -58,10 +58,6 @@
 #include <map>                          /* std::map class                   */
 #endif
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

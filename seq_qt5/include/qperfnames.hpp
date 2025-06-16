@@ -37,10 +37,6 @@
 #include "qperfbase.hpp"                /* for constants and base class     */
 #include "gui_palette_qt5.hpp"          /* gui_pallete_qt5::Color etc.      */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class performer;

@@ -76,10 +76,6 @@
 
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm::tag, etc.            */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -43,10 +43,6 @@
 #include "qseqkeys.hpp"                 /* seq66::qseqkeys panel            */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

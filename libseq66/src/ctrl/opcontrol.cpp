@@ -33,10 +33,6 @@
 #include "ctrl/opcontrol.hpp"           /* seq66::opcontrol base class      */
 #include "util/basic_macros.hpp"        /* seq66::tokenization alias        */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

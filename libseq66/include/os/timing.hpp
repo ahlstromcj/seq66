@@ -37,10 +37,6 @@
 
 #include "seq66_platform_macros.h"      /* for detecting 32-bit builds      */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

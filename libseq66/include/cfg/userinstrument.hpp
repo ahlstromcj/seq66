@@ -37,10 +37,6 @@
 
 #include "util/basic_macros.hpp"        /* seq66_platform_macros.h too      */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

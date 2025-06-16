@@ -42,10 +42,6 @@
 
 #undef  SEQ66_SHOW_BUS_VALUES           /* ca 2024-06-04 for investigation  */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class event;

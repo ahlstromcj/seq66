@@ -34,10 +34,6 @@
 #include "ctrl/keymap.hpp"              /* keymap function declarations     */
 #include "util/strfunctions.hpp"        /* contains()                       */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

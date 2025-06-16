@@ -31,10 +31,6 @@
 
 #include "util/rect.hpp"                /* seq66::rect                      */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -38,10 +38,6 @@
 #include "qseqbase.hpp"                 /* seq66::qseqbase class            */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

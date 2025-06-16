@@ -37,10 +37,6 @@
 #include "midi/midibytes.hpp"           /* seq66::midi_timing, _measures    */
 #include "util/basic_macros.h"          /* not_nullptr() macro              */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -45,10 +45,6 @@
 
 #define SEQ66_NULL_EVENT_INDEX          (-1)
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class qseqeventframe;

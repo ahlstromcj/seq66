@@ -47,10 +47,6 @@
 #include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "midibus_pm.hpp"               /* seq66::midibus for PortMIDI      */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

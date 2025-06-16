@@ -63,10 +63,6 @@ namespace Ui
     class qsetmaster;
 }
 
-/*
- * Do not document a namespace.  It breaks Doxygen.
- */
-
 namespace seq66
 {
     class qsmainwnd;

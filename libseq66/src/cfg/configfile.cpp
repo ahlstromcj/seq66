@@ -55,10 +55,6 @@
 #include "util/filefunctions.hpp"       /* seq66::filename_base() etc.      */
 #include "util/strfunctions.hpp"        /* strncompare() for std::string    */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

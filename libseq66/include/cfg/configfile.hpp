@@ -41,10 +41,6 @@
 #include "util/basic_macros.hpp"        /* seq66::tokenization vector       */
 #include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class rcsettings;

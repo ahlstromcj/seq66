@@ -43,10 +43,6 @@
 #include "cfg/rcsettings.hpp"           /* seq66::rcsettings, std::string   */
 #include "cfg/usrsettings.hpp"          /* seq66::usrsettings, std::vector  */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -39,10 +39,6 @@
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

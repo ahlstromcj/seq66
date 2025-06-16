@@ -36,10 +36,6 @@
 
 #include "play/portslist.hpp"           /* seq66::portslist base class      */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

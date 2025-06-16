@@ -50,10 +50,6 @@
 #include "midi/event.hpp"               /* seq66::event (MIDI event)        */
 #include "midi/midibase.hpp"            /* seq66::midibase for ALSA         */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

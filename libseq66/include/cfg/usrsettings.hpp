@@ -66,10 +66,6 @@
 #include "cfg/usermidibus.hpp"          /* ditto                            */
 #include "midi/calculations.hpp"        /* seq66::alteration enum class     */
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 
