@@ -1,8 +1,24 @@
 TO DO for Seq66 0.99.21
 Chris Ahlstrom
-2019-04-13 to 2025-06-14
+2019-04-13 to 2025-06-15
 
 Hot:
+
+    -   Add Pattern Fix to grid slot popup Edit menu.
+    -   Can we implement Ctrl-C / Ctrl-V for patterns in the
+        grid?
+    -   Clicking 'r' in qseqroll causes a modify!
+    -   In random.midi:
+        -   Randomizing using Random pitch = 12 alone
+            -   Yields short notes (less than a 32nd)
+            -   Keeps (shortened) the original notes.
+        -   In pattern 4, same effect, but also timings are altered!
+        -   Try adding the verify-and-link to it; it seems to work.
+        -   Open pattern 5 (randomized). Arm it. Start play.
+            The other two patterns also armed!!! This happens
+            in performer.cpp#5467 when auto_arm() is true even
+            when the playlsit is not active.
+        -   The display of pattern 7 is messed up.
 
 NSM:
 
@@ -27,6 +43,8 @@ Cannot duplicate:
 
 Backlog:
 
+    -   It would be nice to be able to drag-n-drop the items in the
+        port maps to the desired positions.
     -   Automation: verify/document Solo, Reset Sets, and Song Position.
     -   Make sure sessions.rc works as advertised; fix documentation.
     -   Add a light version of glob(3) to use with Windows. In progress

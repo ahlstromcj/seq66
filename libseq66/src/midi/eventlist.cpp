@@ -348,7 +348,7 @@ eventlist::merge (const eventlist & el, bool presort)
  *      override usr().pattern_wraparound().  Defaults to false.
  *
  * \return
- *      Returns true if any events were liked.
+ *      Returns true if any events were linked.
  */
 
 bool
@@ -544,14 +544,14 @@ eventlist::link_notes (event::iterator eon, event::iterator eoff)
  *      Provides the length beyond which events will be pruned. Normally the
  *      caller supplies sequence::get_length(). Can be set to 0 ignore
  *      the length, as in expanded step-edit note entry. See the function
- *      sequence :: verify_and_link().
+ *      sequence::verify_and_link().
  *
  * \param wrap
  *      Optionally (the default is false) wrap when relinking.  Can be used to
  *      override usr().pattern_wraparound().
  *
  * \return
- *      Returns true if any
+ *      Returns true if any events were linked by linked_new().
  */
 
 bool
@@ -757,7 +757,7 @@ eventlist::edge_fix (midipulse snap, midipulse seqlength)
         }
     }
     if (result)
-        verify_and_link();                      /* sorts as well        */
+        (void) verify_and_link();                   /* sorts as well        */
 
     return result;
 }
@@ -783,7 +783,7 @@ eventlist::remove_unlinked_notes ()
             ++i;
     }
     if (result)
-        verify_and_link();                      /* sorts as well        */
+        (void) verify_and_link();                   /* sorts as well        */
 
     return result;
 }
@@ -890,7 +890,7 @@ eventlist::quantize_events
         }
     }
     if (result)
-        verify_and_link();                          /* sorts them again!!!  */
+        (void) verify_and_link();               /* sorts the events again!! */
 
     return result;
 }
@@ -937,7 +937,7 @@ eventlist::quantize_events (int snap, int divide, bool all)
         }
     }
     if (result && found_note)
-        verify_and_link();                          /* sorts them again!!!  */
+        (void) verify_and_link();                   /* sorts them again!!!  */
 
     return result;
 }
@@ -999,7 +999,7 @@ eventlist::quantize_notes (int snap, int divide, bool all)
         }
     }
     if (result)
-        verify_and_link();                      /* sorts them again!!!      */
+        (void) verify_and_link();               /* sorts them again!!!      */
 
     return result;
 }
@@ -1112,7 +1112,7 @@ eventlist::move_selected_notes (midipulse delta_tick, int delta_note)
         }
     }
     if (result)
-        verify_and_link();                          /* sort and relink      */
+        (void) verify_and_link();                   /* sort and relink      */
 
     return result;
 }
@@ -1507,6 +1507,8 @@ eventlist::randomize_note_pitches
             musical_scale_name(s).c_str()
         );
 #endif
+        result = false;
+        (void) verify_and_link();                       /* play safe & sort */
         for (auto & e : m_events)
         {
             bool ok = all ? e.is_note() : e.is_selected_note() ;
@@ -1546,19 +1548,35 @@ eventlist::randomize_note_pitches
                 }
                 if (e.is_note_on())
                 {
+                    result = true;
                     e.set_note(midibyte(p));
                     if (e.is_linked())
+                    {
                         e.link()->set_note(midibyte(p));
+                    }
+                    else
+                    {
+#if defined SEQ66_PLATFORM_DEBUG
+                        printf("Orphaned Note On in randomizing pitch\n");
+#endif
+                    }
                 }
                 else if (e.is_note_off())
                 {
                     if (! e.is_linked())
+                    {
+                        result = true;
                         e.set_note(midibyte(p));
+#if defined SEQ66_PLATFORM_DEBUG
+                        printf("Orphaned Note Off in randomizing pitch\n");
+#endif
+                    }
                 }
             }
             else
                 continue;
         }
+        (void) verify_and_link();                       /* play safe & sort */
     }
     return result;
 }

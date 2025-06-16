@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-06-12
+ * \updates       2025-06-16
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -5464,7 +5464,7 @@ performer::start_playing ()
                 seqi->resume_note_ons(get_tick());
         }
     }
-    if (m_play_list->auto_arm())
+    if (playlist_auto_arm())
         set_song_mute(mutegroups::action::off);
 
     start_jack();

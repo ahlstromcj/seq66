@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2023-07-13
+ * \updates       2025-06-16
  * \license       GNU GPLv2 or above
  *
  * \todo
@@ -349,9 +349,15 @@ public:
         m_deep_verify = flag;
     }
 
+    /*
+     * ca 2025-06-16.
+     * Check for the playlist being active as well, to avoid turning
+     * on all patterns when not using the playlist.
+     */
+
     bool auto_arm () const
     {
-        return m_auto_arm;
+        return active() && m_auto_arm;
     }
 
     void auto_arm (bool flag)
