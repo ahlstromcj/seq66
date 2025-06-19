@@ -1,17 +1,17 @@
 TO DO for Seq66 0.99.21
 Chris Ahlstrom
-2019-04-13 to 2025-06-15
+2019-04-13 to 2025-06-19
 
 Hot:
 
-    -   Clicking 'r' in qseqroll causes a modify!
     -   In random.midi: (all bugs seem to be fixed by verify-and-link.)
+    -   Issues #137 and #138.
 
 NSM:
 
     -   Seq66 maybe be delaying responding/announcing to NSM.
     -   When creating a session, make sure playlist is copied if active.
-    -   How to keep Seq66 up-to-date when ports are added back in a 
+    -   How to keep Seq66 up-to-date when ports are added back in a
         session.
     -   Should NSM really require JACK?
     -   See the Recording items below (*).
@@ -19,7 +19,7 @@ NSM:
         the number of words.
 
 Cannot duplicate:
-    
+
     -   When I try to record events using the Midi Controller UC-16, seq66 is
         refusing to work and is telling me that the output bus is not
         available. The same hardware configuration is working perfectly when
@@ -30,8 +30,6 @@ Cannot duplicate:
 
 Backlog:
 
-    -   It would be nice to be able to drag-n-drop the items in the
-        port maps to the desired positions.
     -   Automation: verify/document Solo, Reset Sets, and Song Position.
     -   Make sure sessions.rc works as advertised; fix documentation.
     -   Add a light version of glob(3) to use with Windows. In progress
@@ -419,6 +417,76 @@ ISSUES:
 
     STATUS: Verified. Also another issue: use the event editor to
     add Program changes at various time-stamps. They all end up at 0!
+
+#137 multisignature fake bug + UX suggestion
+
+	OK so initially I thought it was a bug, but it turns out it is just a UX
+    thing.
+
+	Reproduce steps
+
+	0. (optional) press play
+	1. create pattern 1
+	2. press play
+	3. create pattern 2
+	4. set signature to 3/4
+
+    > pattern 2 will stay in 4/4 eventhough the dropdown boxes will display
+    > `3` and   `4`
+
+	When pressing stop, and re-opening the editor, the dropdown boxes
+	mysteriously were reset to `4` and `4` :/
+
+    This 'bug' made me bang my head against the wall..read the docs again..try
+    various things to make the loops play with different signatures.
+
+	Cause
+
+	It turns out that signatures cannot be changed when playing.
+	However, the GUI allows changing the dropdowns (but the controls do not
+	update the data).
+
+	Solution
+	While playing, the signature dropdowns should be grayed out (and enabled once
+	pattern is no longer playing)  `<---- preferred`
+
+	Other (probably more complicated/annoying) solutions are:
+
+	* stop the transport when changing the signature
+	* refactor things to allow updating signature in realtime
+
+#138 multisignature fake bug + UX suggestion
+
+    I really like the concept of being able to export a midi-file which
+    includes `program-change + MSB + LSB bank select` for each midi-channel
+    (in the beginning  of the midi-file).  That way I can import the midi-file
+    to my multitimbral synth (MT) for perfect playback with the right
+    instruments.
+
+    The problem is that I don't know a convenient way of doing this.  Right
+    now I'm doing:
+
+    * MT:  transmits notes on midichannel 1 to seq66
+    * MT: I select the previous instrument
+    * seq66: I press 'play' and 'record' on a pattern
+    * MT: I select the next instrument (so it triggers a `program-change + MSB
+      + LSB bank select` of the desired instrument to seq66)
+    * Rinse and repeat: I do this for every (16) midichannels
+
+    Question: is there an easier way to do this?
+
+    Brainstorm
+
+    Seq66 is unique in that it treats the `.mid` file as a first-class citizen
+    for project-metadata too.  In other words, the midi-file is completely
+    selfcontained.  Here is an idea to allow creating easy selfcontained
+    multitimbral midifiles for soundfonts/hardware midi-devices:
+
+    How about each seq66 pattern would always update/save the last received
+    `program change + MSB + LSB`-values at the beginning.
+    Maybe this could be a default feature-toggle?
+    This would make the above mentioned manual steps (4x16=64) redundant.
+    Imagine the the speedy workflow.
 
 = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 

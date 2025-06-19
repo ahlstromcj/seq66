@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-12-29
-% \update      2025-06-10
+% \update      2025-06-19
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -20,28 +20,36 @@
 
    \textsl{Seq66}, like \textsl{Seq24}, bases its I/O port scheme on buss/port
    \textsl{numbers}.
-   This numbering scheme applies whether
+   This port numbering applies whether
    \textsl{ALSA}, \textsl{JACK}, or \textsl{Windows Multimedia}
    are used as the MIDI engine, and whether \textsl{Seq66} is running with
    "automatic" ports or "manual" (virtual, software-created) ports.
    These buss numbers range from 0 on upward
    based on the number of I/O MIDI ports active in the system.
-   In "automatic" (non-virtual, non-manual) mode
+   In the normal "automatic" (non-virtual, non-manual) mode
    these ports represent the hardware MIDI ports and application MIDI ports.
    In "manual" mode, these ports represent virtual MIDI ports that the user
-   can connect manually (on Linux).
+   can connect manually.
+
+   When the set of MIDI devices and applications (e.g. \textsl{Qsynth}
+   changes, and \textsl{Seq66} is restarted, this numbering changes.
+   A MIDI tune the depends on the old port numbers will not play correctly.
+   Port-mapping fixes this issue; it looks up the port number on which a
+   pattern depends, finds the device name associated with this port,
+   and looks up the actual port number by name.
 
    \textbf{Note}:
-   Port-mapping is now automatic; default MIDI I/O port-maps are
+   Port-mapping is now the default; MIDI I/O port-maps are
    created at first start, and are always active if virtual ports are not in
-   use.  Once created, one can edit the 'rc' file to rearrange the mapping as
-   desired.
-   In addition, issues with new or unavailable ports are
-   noted in warning dialogs.
-   (The startup warnings can be suppressed;
+   use.
+   Once created, one can edit the 'rc' file to rearrange the mapping as desired.
+   (There is no way to do this in the \textsl{Seq66} user interface.)
+   Issues with new or unavailable ports are
+   noted in a warning dialog at start-up.
+   (The startup warning can be suppressed;
    see \sectionref{subsection:edit_preferences_display}.)
    The user can click the \textbf{Remap and restart} button,
-   fix the loaded pattern to use existing ports, \textbf{OK} to ignore
+   fix the loaded pattern to use existing ports, click \textbf{OK} to ignore
    the warning,
    or exit, determine the existing ports using
    \texttt{aplaymidi}, \texttt{arecordmidi}, or \texttt{jack\_lsp},
@@ -66,7 +74,8 @@
    they will differ between the systems of each user.
    They can even differ when switching from ALSA to JACK, or even versions
    of these MIDI engines.
-   Better to let the user determine the port-mapping.
+   Better to let the user determine the port-mapping by editing
+   the 'rc' file.
    Mapping allows the buss number stored with a pattern to be
    remapped to another buss number based on the "nick-name"
    (or JACK alias) of the port.
@@ -90,7 +99,8 @@
 
    So, with port-mapping enabled, one can set up the tune to record and play
    MIDI using the mapped ports, and later move to another computer, modify the
-   port-maps int the 'rc' file to match, and record and play without issue.
+   port-maps in the 'rc' file to match, manually,
+   and record and play without issue.
 
    The easiest way to start port-mapping (which is now automatic) is to go to
    \textbf{Edit / Preferences / MIDI Clock}.
@@ -149,7 +159,7 @@
 \subsection{Input Port Mapping}
 \label{subsec:input_port_mapping}
 
-   The input ports are handling somewhat similarly.  Here's another
+   The input ports are also port-mapped.  Here's an
    initial system input setup:
 
    \begin{verbatim}
@@ -183,19 +193,19 @@
       5  1   "MPK mini Play mk3 MIDI 1"
    \end{verbatim}
 
-   Other than being input devices, this input map works like the output
-   (clocks) map.
    In the user interface dropdowns for input buss, if a map is active, it is
    put into the dropdown; any missing items are noted and are shown as
    disabled.
-   If the map is not active, then only the actual system input ports are shown.
+   If port-mapping is not active, then only the actual system input ports are
+   shown.
 
 \subsection{Output Port Mapping}
 \label{subsec:output_port_mapping}
 
    Assume that the system has the following set of ports.  These busses are
-   stored in the 'rc' file when \textsl{Seq66} exits.  Note the \textsl{JACK}
-   aliases shown at the right as comments.
+   stored in the 'rc' file when \textsl{Seq66} exits.
+%  Note the \textsl{JACK}
+%  aliases shown at the right as comments.
 
    \begin{verbatim}
       [midi-clock]
@@ -228,7 +238,7 @@
       4  0   "MPK mini Play mk3 MIDI 1"
    \end{verbatim}
    
-   It is simpler, showing the nick-names (or aliases) of the ports.
+   The map shows the nick-names or aliases of the ports.
    These index numbers can be used as buss numbers: they can be stored
    in a pattern, and used to direct output to a specific device.
 
@@ -236,8 +246,8 @@
    buss number, this number will not be found in the system list, so that the
    pattern will need to be remapped to an existing port.
 
-   Note that the mapping can be disabled by setting the first value to 0.  In
-   that case, \textsl{Seq66} uses buss numbers in the normal way.
+   Note that the port-mapping can be disabled by setting the first value to 0.
+   In that case, \textsl{Seq66} uses buss numbers in the normal way.
    In the user interface dropdowns for output buss, if a map is active, it is
    put into the dropdown; any missing items are noted and are shown as
    disabled.
@@ -323,7 +333,7 @@
    device, e.g. \texttt{output-buss = "Launchpad Mini"}, if port-mapping
    is active.
 
-   Perhaps tricky, but once one has set up a whole suite of I/O device maps,
+   This is tricky, but once set up,
    one can reliably use these mapped port numbers to look up the actual
    system port numbers.  For example, with the above setup, \textsl{Seq66} can
    be assured that output buss 1 will always go to the

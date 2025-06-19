@@ -475,6 +475,7 @@ private:                                /* functions for friend sequence    */
     bool remove_event (event & e);
     event::iterator find_first_match (const event & e, midipulse starttick = 0);
     event::iterator find_next_match (const event & e);
+    bool remove_time_signature (midipulse target);
     bool remove_first_match (const event & e, midipulse starttick = 0);
     bool remove_marked ();
     bool remove_trailing_events (midipulse limit);

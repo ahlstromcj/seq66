@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-06-14
+ * \updates       2025-06-19
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4093,6 +4093,48 @@ sequence::add_timesig_event (const event & e, bool main_ts)
         if (result)
             sort_events();
     }
+    return result;
+}
+
+/**
+ *  This version creates a time-signature event.  If there is an
+ *  time-signature event at the same time, it is eliminated.
+ *
+ *  Does not change the clocks/metronome and 32nds/quarter.
+ *  Is this an issue?
+ *
+ * \param bpb
+ *      Provides the beats/bar to apply.
+ *
+ * \param bw
+ *      Provides the beat-width to apply.
+ *
+ * \param t
+ *      Provides the time-stamp (divisions) at which the event
+ *      should be added.
+ *
+ * \return
+ *      Returns true if the event could be added.
+ */
+
+bool
+sequence::add_timesig_event (int bpb, int bw, midipulse t)
+{
+    automutex locker(m_mutex);
+    event e;
+    midibyte bt[4];
+    bt[0] = midibyte(bpb);
+    bt[1] = midibyte(log2_of_power_of_2(bw));           /* or beat_log2()?  */
+    bt[2] = midibyte(clocks_per_metronome());
+    bt[3] = midibyte(get_32nds_per_quarter());
+    e.set_timestamp(t);
+    e.append_meta_data(EVENT_META_TIME_SIGNATURE, bt, 4);
+    (void) m_events.remove_time_signature(t);
+
+    bool result = append_event(e);
+    if (result)
+        sort_events();
+
     return result;
 }
 

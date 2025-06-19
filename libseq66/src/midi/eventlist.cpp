@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2025-06-14
+ * \updates       2025-06-18
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -1439,6 +1439,7 @@ eventlist::randomize_note_velocities (int range, bool all)
     bool result = range > 0;
     if (result)
     {
+        result = false;                             /* ca 2025-06-18        */
         for (auto & e : m_events)
         {
             if (all || e.is_selected_note())        /* randomizable event?  */
@@ -1454,11 +1455,10 @@ eventlist::randomize_note_velocities (int range, bool all)
         /*
          * ca 2025-06-13. We're not changing the order or timing
          * of notes, why relink?
+         *
+         *    if (result)
+         *        (void) verify_and_link();         // sort & relink notes
          */
-#if 0
-        if (result)
-            (void) verify_and_link();               /* sort & relink notes  */
-#endif
     }
     return result;
 }
@@ -1983,6 +1983,32 @@ eventlist::find_next_match (const event & e)
 
     return result;
 
+}
+
+/**
+ * \param t
+ *      Provides the time at which we expect the time-signature to be.
+ */
+
+bool
+eventlist::remove_time_signature (midipulse target)
+{
+    bool result = false;
+    for (auto i = m_events.begin(); i != m_events.end(); ++i)
+    {
+        event & er = dref(i);
+        if (er.is_time_signature())
+        {
+            midipulse t = er.timestamp();
+            if (t == target)
+            {
+                (void) remove(i);
+                result = true;
+                break;
+            }
+        }
+    }
+    return result;
 }
 
 /**

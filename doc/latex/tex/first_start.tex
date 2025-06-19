@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2025-05-27
+% \update      2025-06-18
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -40,6 +40,8 @@
    support automatic handling of port changes at run-time.
    In addition, port-mapping (see \sectionref{sec:port_mapping}) is
    enabled by default; this makes the port setup more flexible.
+   However, sometimes exiting, editing the port map manually in the 'rc' file,
+   and restarting is necessary.
 
    Start \textsl{Seq66}, verify that it comes up, and then exit it
    immediately.
@@ -144,8 +146,11 @@
    click the \textbf{Make Maps} button.
    This action stores (again) the current set of MIDI devices.
    Restart \textsl{Seq66} and the new set of devices should appear.
+   Sometimes one must completely exit and the start \textsl{Seq66}.
+   If devices have been added or removed (disabled), the user
+   might need to edit the port maps directly in the 'rc' file.
 
-   \textsl{Seq66} will also detect at startup if there are unavailable
+   \textsl{Seq66} will also detect, at startup, if there are unavailable
    ports or if there are now more real MIDI ports than mapped ports.
    It will prompt for a potential remapping and restart.
    Click that button if feeling lucky, otherwise
@@ -168,7 +173,7 @@
    When opening a pre-existing \textsl{Seq66} which contains patterns with
    output port numbers that don't exist on the current system, a prompt
    will appear with option to remap-and-restart \textsl{Seq66}.
-   However, what normally needs to be done is to change the
+   Sometimes the best thing to do is change the
    port numbers to the numbers of existing ports, and then save the MIDI file.
    One way to do this is to use the "buss-override" feature
    (see \sectionref{subsubsec:introduction_sets_buss_override}),

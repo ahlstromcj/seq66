@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-05-03
+ * \updates       2025-06-19
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -46,7 +46,7 @@ namespace seq66
 
 static const int s_usr_legacy       =  5;
 static const int s_usr_smf_1        =  8;
-static const int s_usr_file_version = 15;
+static const int s_usr_file_version = 16;
 
 /**
  *  Principal constructor.
@@ -66,6 +66,7 @@ static const int s_usr_file_version = 15;
  *     13:  2024-02-23: Added elliptical progress-box option.
  *     14:  2024-02-23: Added progress-bar-thickness and gridlines-thick.
  *     15:  2025-04-27: Added progress-box-show-cc.
+ *     16:  2025-06-19: Added auto-add-time-sig.
  *
  * \param name
  *      Provides the full file path specification to the configuration file.
@@ -79,7 +80,7 @@ static const int s_usr_file_version = 15;
 usrfile::usrfile (const std::string & name, rcsettings & rcs) :
     configfile (name, rcs, ".usr")
 {
-    version(s_usr_file_version);
+    version(s_usr_file_version);        /* now at 16 */
 }
 
 /**
@@ -405,6 +406,15 @@ usrfile::parse ()
         usr().midi_bpm_minimum(midibpm(f));
         f = get_float(file, tag, "bpm-maximum");
         usr().midi_bpm_maximum(midibpm(f));
+        if (file_version_is_old(file))
+        {
+            usr().auto_add_time_sig(true);
+        }
+        else
+        {
+            flag = get_boolean(file, tag, "auto-add-time-sig");
+            usr().auto_add_time_sig(flag);
+        }
     }
 
     /*
@@ -973,6 +983,8 @@ usrfile::write ()
 "# larger than the step-increment; used with the Page-Up/Page-Down keys in the\n"
 "# spinner. BPM minimum/maximum sets the range in tempo graphing; defaults to\n"
 "# 0.0 to 127.0. Decrease it for a magnified view of tempo.\n"
+"# 'auto-add-time-sig', true by default, starts each new pattern with a time\n"
+"# signature event. New 0.99.21.\n"
 "\n[user-midi-settings]\n\n"
         ;
         write_boolean(file, "convert-to-smf-1", usr().convert_to_smf_1());
@@ -995,6 +1007,7 @@ usrfile::write ()
         write_float(file, "bpm-minimum", increment);
         increment = float(usr().midi_bpm_maximum());
         write_float(file, "bpm-maximum", increment);
+        write_boolean(file, "auto-add-time-sig", usr().auto_add_time_sig());
 
     /*
      * [user-options]

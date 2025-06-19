@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -2283,7 +2283,7 @@ in the Song Editor.</string>
          <x>9</x>
          <y>9</y>
          <width>701</width>
-         <height>125</height>
+         <height>151</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -2301,78 +2301,93 @@ in the Song Editor.</string>
        <property name="title">
         <string>Flags</string>
        </property>
-       <widget class="QCheckBox" name="chkNoteResume">
+       <widget class="QWidget" name="">
         <property name="geometry">
          <rect>
-          <x>24</x>
+          <x>20</x>
           <y>32</y>
-          <width>500</width>
-          <height>23</height>
+          <width>441</width>
+          <height>111</height>
          </rect>
         </property>
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string>Unfinished notes are turned back on when
+        <layout class="QVBoxLayout" name="verticalLayout_8">
+         <item>
+          <widget class="QCheckBox" name="chkNoteResume">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="toolTip">
+            <string>Unfinished notes are turned back on when
 playback resumes.</string>
-        </property>
-        <property name="text">
-         <string>&amp;Resume Note Ons at start/stop or sequence toggle</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="chkUseFilesPPQN">
-        <property name="geometry">
-         <rect>
-          <x>24</x>
-          <y>56</y>
-          <width>500</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string>The PPQN of the MIDI file loaded overrides the
+           </property>
+           <property name="text">
+            <string>&amp;Resume Note Ons at start/stop or sequence toggle</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chkUseFilesPPQN">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="toolTip">
+            <string>The PPQN of the MIDI file loaded overrides the
 default PPQN.  Otherwise, the file PPQN scales to
 the default PPQN.</string>
-        </property>
-        <property name="text">
-         <string>Use file's PPQN for pre-existing files (recommended)</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="chkSongRecordSnap">
-        <property name="geometry">
-         <rect>
-          <x>24</x>
-          <y>80</y>
-          <width>500</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Song-record snap</string>
-        </property>
+           </property>
+           <property name="text">
+            <string>Use file's PPQN for pre-existing files (recommended)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chkSongRecordSnap">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="toolTip">
+            <string>Employ the snap interval when recording
+song triggers.</string>
+           </property>
+           <property name="text">
+            <string>Song-record snap</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chkAddTimeSig">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="toolTip">
+            <string>Automatically add the starting time signature as
+an event in the new pattern.</string>
+           </property>
+           <property name="text">
+            <string>Automatically add starting time signature event.</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
       <widget class="QGroupBox" name="group_setsmode">
        <property name="geometry">
         <rect>
          <x>9</x>
-         <y>190</y>
+         <y>220</y>
          <width>701</width>
          <height>132</height>
         </rect>
@@ -2473,9 +2488,9 @@ the default PPQN.</string>
        <property name="geometry">
         <rect>
          <x>9</x>
-         <y>330</y>
+         <y>360</y>
          <width>701</width>
-         <height>125</height>
+         <height>111</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -2561,7 +2576,7 @@ the default PPQN.</string>
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>150</y>
+         <y>180</y>
          <width>61</width>
          <height>21</height>
         </rect>
@@ -2595,7 +2610,7 @@ the default PPQN.</string>
        <property name="geometry">
         <rect>
          <x>220</x>
-         <y>155</y>
+         <y>185</y>
          <width>460</width>
          <height>18</height>
         </rect>
@@ -2626,7 +2641,7 @@ the default PPQN.</string>
        <property name="geometry">
         <rect>
          <x>100</x>
-         <y>150</y>
+         <y>180</y>
          <width>100</width>
          <height>26</height>
         </rect>
@@ -2662,7 +2677,7 @@ Seq66 exits.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>140</y>
+         <y>170</y>
          <width>701</width>
          <height>41</height>
         </rect>

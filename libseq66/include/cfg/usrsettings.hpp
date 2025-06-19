@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-04-27
+ * \updates       2025-06-19
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -688,6 +688,13 @@ private:
      */
 
     midibpm m_bpm_page_increment;
+
+    /**
+     *  If set (which is now the default), then each new pattern automatically
+     *  gets a time signature *event* at time 0.
+     */
+
+    bool m_auto_add_time_sig;
 
     /*
      *  Values calculated from other member values in the normalize() function.
@@ -1610,6 +1617,11 @@ public:
         return m_bpm_page_increment;
     }
 
+    bool auto_add_time_sig () const
+    {
+        return m_auto_add_time_sig;
+    }
+
     int min_zoom () const
     {
         return c_min_zoom;
@@ -2170,6 +2182,11 @@ public:         // used in main application module and the usrfile class
     void bpm_precision (int precision);
     void bpm_step_increment (midibpm increment);
     void bpm_page_increment (midibpm increment);
+
+    void auto_add_time_sig (bool f)
+    {
+        m_auto_add_time_sig = f;
+    }
 
 protected:
 

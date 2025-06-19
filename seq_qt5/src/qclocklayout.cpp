@@ -231,6 +231,14 @@ qclocklayout::clock_callback_clicked (int id)
     bool enable = clocking != e_clock::disabled;
     perf().ui_set_clock(bus(), clocking);
     m_label_outputbusname->setEnabled(enable);
+
+#if 0
+    m_label_outputbusname->setStyleSheet
+    (
+        "QLabel { background-color : blue; color : yellow; }"
+    );
+#endif
+
     m_rbutton_portdisabled->setEnabled(enable);
     m_rbutton_clockoff->setEnabled(true);
     m_rbutton_clockonpos->setEnabled(enable);

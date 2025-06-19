@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-10
+ * \updates       2025-06-19
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -846,6 +846,11 @@ qseditoptions::setup_tab_play_options ()
     (
         ui->chkSongRecordSnap, SIGNAL(stateChanged(int)),
         this, SLOT(slot_song_record_snap())
+    );
+    connect
+    (
+        ui->chkAddTimeSig, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_add_time_sig())
     );
 
     /*
@@ -2813,6 +2818,7 @@ qseditoptions::sync_usr ()
     (
         usr().pattern_wraparound()
     );
+    ui->chkAddTimeSig->setChecked(usr().auto_add_time_sig());
 
     int r = usr().pattern_record_code();
     ui->comboBoxRecordStyle->setCurrentIndex(r);
@@ -2952,6 +2958,22 @@ qseditoptions::slot_song_record_snap ()
         bool snappit = ui->chkSongRecordSnap->isChecked();
         perf().song_record_snap(snappit);
         set_enabled(QDialogButtonBox::Ok, true);    /* for appearances only */
+    }
+}
+
+/**
+ *  Re issue #137 "xxxx".
+ */
+
+void
+qseditoptions::slot_add_time_sig ()
+{
+    if (m_is_initialized)
+    {
+        bool addit = ui->chkAddTimeSig->isChecked();
+        usr().auto_add_time_sig(addit);
+        set_enabled(QDialogButtonBox::Ok, true);    /* for appearances only */
+        modify_usr();
     }
 }
 

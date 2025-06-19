@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2025-06-09
+ * \updates       2025-06-19
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -368,6 +368,7 @@ usrsettings::usrsettings () :
     m_bpm_precision             (c_def_bpm_precision),
     m_bpm_step_increment        (c_def_bpm_increment),
     m_bpm_page_increment        (c_def_bpm_page_increment),
+    m_auto_add_time_sig         (true),
 
     /*
      * Calculated from other member values in the normalize() function.
@@ -482,6 +483,7 @@ usrsettings::set_defaults ()
     m_bpm_precision = c_def_bpm_precision;
     m_bpm_step_increment = c_def_bpm_increment;
     m_bpm_page_increment = c_def_bpm_page_increment;
+    m_auto_add_time_sig = true;
 
     /*
      * Calculated from other member values in the normalize() function.
