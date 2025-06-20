@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-05-25
+ * \updates       2025-06-20
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1298,6 +1298,9 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
                     {
                         midibyte mtype = read_byte();   /* get meta type    */
                         len = read_varinum();           /* if 0 catch later */
+                        if (convert_smf0)
+                            m_smf0_splitter.increment(0);   /* meta-storage */
+
                         switch (mtype)
                         {
                         case EVENT_META_SEQ_NUMBER:     /* FF 00 02 ss      */

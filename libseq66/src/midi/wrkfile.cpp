@@ -1347,16 +1347,25 @@ wrkfile::MeterChunk ()
             m_current_seq->set_beats_per_bar(num);
             m_current_seq->set_beat_width(den);
 
-            // m_current_seq->clocks_per_metronome(cpm);
-            // m_current_seq->set_32nds_per_quarter(tpq);
+            /*
+             * The default (24 and 8) are wired into the performer and
+             * sequence classes.
+             *
+             *     m_current_seq->clocks_per_metronome(cpm);
+             *     m_current_seq->set_32nds_per_quarter(tpq);
+             */
 
             if (m_track_number == 0)
             {
                 m_performer->set_beats_per_bar(num);
                 m_performer->set_beat_width(den);
 
-                // m_performer->clocks_per_metronome(cpm);
-                // m_performer->set_32nds_per_quarter(tpq);
+                /*
+                 * See above.
+                 *
+                 *     m_performer->clocks_per_metronome(cpm);
+                 *     m_performer->set_32nds_per_quarter(tpq);
+                 */
             }
         }
     }
@@ -1409,16 +1418,25 @@ wrkfile::MeterKeyChunk ()
             m_current_seq->set_beats_per_bar(num);
             m_current_seq->set_beat_width(den);
 
-            // m_current_seq.clocks_per_metronome(cpm);
-            // m_current_seq.set_32nds_per_quarter(tpq);
+            /*
+             * The default (24 and 8) are wired into the performer and
+             * sequence classes.
+             *
+             *     m_current_seq.clocks_per_metronome(cpm);
+             *     m_current_seq.set_32nds_per_quarter(tpq);
+             */
 
             if (m_track_number == 0)
             {
                 m_performer->set_beats_per_bar(num);
                 m_performer->set_beat_width(den);
 
-                // m_performer->clocks_per_metronome(cpm);
-                // m_performer->set_32nds_per_quarter(tpq);
+                /*
+                 * See above.
+                 *
+                 *     m_performer->clocks_per_metronome(cpm);
+                 *     m_performer->set_32nds_per_quarter(tpq);
+                 */
 
                 /*
                  * We should be able to handle key signature, but it is a two

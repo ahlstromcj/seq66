@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-06-19
+ * \updates       2025-06-20
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -215,8 +215,8 @@ sequence::sequence (int ppqn) :
     m_step_edit_note_length     (int(m_ppqn) / 4),
     m_time_beats_per_measure    (0),
     m_time_beat_width           (0),
-    m_clocks_per_metronome      (24),
-    m_32nds_per_quarter         (8),
+    m_clocks_per_metronome      (c_midi_clocks_per_metronome),
+    m_32nds_per_quarter         (c_midi_32nds_per_quarter),
     m_us_per_quarter_note       (tempo_us_from_bpm(usr().bpm_default())),
     m_rec_vol                   (usr().preserve_velocity()),
     m_note_on_velocity          (usr().note_on_velocity()),
@@ -4084,7 +4084,13 @@ sequence::add_timesig_event (const event & e, bool main_ts)
             int bpb = e.get_sysex(0);
             int bw = beat_power_of_2(e.get_sysex(1));
             int cpm = e.get_sysex(2);
-            int tpq = e.get_sysex(4);
+            int tpq = e.get_sysex(3);               /* was 4, oops!!        */
+            if (cpm == 0)
+                cpm = c_midi_clocks_per_metronome;  /*  24                  */
+
+            if (tpq == 0)
+                tpq = c_midi_32nds_per_quarter;     /*   8                  */
+
             clocks_per_metronome(cpm);
             set_32nds_per_quarter(tpq);
             set_time_signature(bpb, bw);

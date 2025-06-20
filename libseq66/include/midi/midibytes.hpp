@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2022-09-22
+ * \updates       2025-06-20
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -177,6 +177,14 @@ using midistring = std::basic_string<midibyte>;
  */
 
 using midibooleans = std::vector<midibool>;
+
+/**
+ *  Default settings for MIDI as per the specification.
+ */
+
+const int c_midi_clocks_per_metronome   = 24;
+const int c_midi_32nds_per_quarter      =  8;
+const int c_midi_pitch_wheel_range      =  2;       /* +/- 2 semitones      */
 
 /**
  *  We need a unique midipulse value that can be used to be indicate a bad,

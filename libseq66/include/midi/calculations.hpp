@@ -452,7 +452,7 @@ ticks_to_delta_time_us (midipulse delta_ticks, midibpm bp, int ppq)
  *  confuse it with "MIDI timecode".
  *
  *  The standard MIDI beat clock ticks every 24 times every quarter note
- *  (crotchet).
+ *  (crotchet). See midibytes.hpp 'c_midi_clocks_per_metronome'.
  *
  *  Unlike MIDI timecode, the MIDI beat clock is tempo-dependent. Clock events
  *  are sent at a rate of 24 PPQN (pulses per quarter note). Those pulses are
@@ -465,7 +465,7 @@ ticks_to_delta_time_us (midipulse delta_ticks, midibpm bp, int ppq)
 inline int
 midi_clock_beats_per_qn ()
 {
-    return 24;
+    return c_midi_clocks_per_metronome;         /* 24 */
 }
 
 /**

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-06-16
+ * \updates       2025-06-20
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -352,9 +352,9 @@ performer::performer (int ppqn, int rows, int columns) :
     m_last_time_ms          (0),
     m_beats_per_bar         (usr().midi_beats_per_bar()),
     m_beat_width            (usr().midi_beat_width()),
-    m_clocks_per_metronome  (24),
-    m_32nds_per_quarter     (0),
-    m_us_per_quarter_note   (0),
+    m_clocks_per_metronome  (c_midi_clocks_per_metronome),
+    m_32nds_per_quarter     (c_midi_32nds_per_quarter),
+    m_us_per_quarter_note   (0),                /* depends on the tempo     */
     m_master_bus            (),                 /* this is a shared pointer */
     m_record_by_buss        (false),
     m_record_by_channel     (false),

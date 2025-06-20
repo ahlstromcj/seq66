@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-24
- * \updates       2022-10-26
+ * \updates       2025-06-20
  * \license       GNU GPLv2 or above
  *
  *  We have recently updated this module to put Set Tempo events into the
@@ -49,7 +49,7 @@ namespace seq66
 
 midi_splitter::midi_splitter () :
     m_smf0_channels_count   (0),
-    m_smf0_channels         (),         /* array, initialized in parse()    */
+    m_smf0_channels         (),         /* array */
     m_smf0_main_sequence    (nullptr),
     m_smf0_seq_number       (-1)
 {
@@ -106,14 +106,14 @@ midi_splitter::increment (int channel)
  */
 
 bool
-midi_splitter::log_main_sequence (sequence & seq, int seqnum)
+midi_splitter::log_main_sequence (sequence & s, int seqnum)
 {
     bool result;
     if (is_nullptr(m_smf0_main_sequence))
     {
-        seq.sort_events();                          /* really necessary?    */
-        seq.set_color(palette_to_int(PaletteColor::cyan));
-        m_smf0_main_sequence = &seq;
+        s.sort_events();                          /* really necessary?    */
+        s.set_color(palette_to_int(PaletteColor::cyan));
+        m_smf0_main_sequence = &s;
         m_smf0_seq_number = seqnum;
         infoprint("SMF 0 main sequence logged");
         result = true;
@@ -181,6 +181,7 @@ midi_splitter::split (performer & p, int screenset, int ppqn)
                 }
             }
             m_smf0_main_sequence->set_midi_channel(null_channel());
+            m_smf0_main_sequence->set_name("Original");
             p.install_sequence(m_smf0_main_sequence, seqnum);
         }
     }

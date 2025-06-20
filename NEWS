@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.21
 Chris Ahlstrom
-2015-07-10 to 2025-06-18
+2015-07-10 to 2025-06-20
 
 # Change Log
 
-## [0.99.21] - 2025-06-18
+## [0.99.21] - 2025-06-20
 
 ### Added
 
@@ -17,7 +17,10 @@ Chris Ahlstrom
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.
--   Import/Export
+-   Import/Export.
+-   MIDI defaults. Added to midibytes.h:
+    -   c\_midi\_clocks\_per\_metronome = 24
+    -   c\_midi\_32nds\_per\_quarter = 8
 -   Documentation.
 
 ### Changed
@@ -37,6 +40,8 @@ Chris Ahlstrom
 
 ### Fixed
 
+-   SMF 0 Import. Meta events are now stored in pattern 0.
+    See it by loading contrib/midi/CountryStrum.mid.
 -   Main window and grid.
     -   The BBT/HMS button tooltip was moved from the qsmainwnd
         widget to the button itself. Doh!
@@ -52,6 +57,10 @@ Chris Ahlstrom
 -   Event editor.
 -   Preferences dialog.
 -   Configuration files.
+-   Classes.
+    -   performer. Changed default 32nds-per-quarter-note from 0 to 8.
+    -   sequence. Used the new MIDI default values and fixed an
+        index error in add\_timesig\_event(). 
 
 ## [0.99.20] - 2025-06-12
 

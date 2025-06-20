@@ -77,14 +77,16 @@
 
    Import (and opening) also handles SMF 0 MIDI files.
    It parcels out the SMF 0 data
-   into sequences/patterns for each of the 16 MIDI channels.  It also puts
-   all of the MIDI data into the 17th pattern (pattern 16), in case it is
-   needed.  Note that this slot is used no matter which screen-set one imports
-   the file into.  Bug, or feature?
+   into sequences/patterns for each of the 16 MIDI channels.
+   Meta events, having no channel, are added to pattern 0.
+   The SMF 0 import also puts
+   \textsl{all} of the MIDI data into the 17th pattern (pattern 16), in case it
+   is needed.  Note that this slot is used no matter which screen-set one
+   imports the file into.  Bug, or feature?
    Also note that, since the file information has been modified by the import,
    the user will be prompted to save the file when exiting \textsl{Seq66}.
-   Finally, conversion to SMF 1 for SMF 0 files can be disabled using the
-   'usr' option \texttt{[user-midi-settings] convert-to-smf-1}.
+   Finally, automatic conversion to SMF 1 for SMF 0 files can be disabled using
+   the 'usr' option \texttt{[user-midi-settings] convert-to-smf-1}.
 
 \subsubsection{Import Playlist}
 \label{subsubsec:midi_export_file_import_playlist}
@@ -144,8 +146,8 @@
    value.  See \sectionref{subsec:pattern_editor_first_row}, the section on
    \textbf{Channel Selection}.
 
-   Also note that exporting a song or an SMF 0 file require that the song
-   be exportable (see the next section).
+   Also note that exporting a song or an SMF 0 file requires that the song
+   be exportable (see the "Export Song" section).
    Exporting to a regular MIDI does not have this requirement.
 
 \subsubsection{Export Project Configuration}

@@ -62,7 +62,8 @@ private:
     /**
      *  Provides support for SMF 0, holds a bool value that indicates the
      *  occurrence of a given channel.  We don't have to worry about multiple
-     *  MIDI busses here, we hope.
+     *  MIDI busses here, we hope. We do need to fake a channel 0 for
+     *  non-channel events like time-signature, SysEx, other meta messages.
      */
 
     bool m_smf0_channels[16];
