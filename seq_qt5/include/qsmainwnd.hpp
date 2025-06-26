@@ -76,10 +76,6 @@ namespace Ui
     class qsmainwnd;
 }
 
-/*
- *  Do not document namespaces, it seems to break Doxygen.
- */
-
 namespace seq66
 {
     class keystroke;

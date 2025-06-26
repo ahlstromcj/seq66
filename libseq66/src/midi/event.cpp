@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-11-27
+ * \updates       2025-06-21
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -175,6 +175,26 @@ event::event (midipulse tstamp, midibpm tempo) :
     m_painted       (false)
 {
     set_tempo(tempo);                       /* fills the m_sysex vector     */
+}
+
+/**
+ *  Creates other Meta events.
+ */
+
+event::event (midipulse tstamp, midibyte metatype, const midibytes & data) :
+    m_input_buss    (null_buss()),
+    m_timestamp     (tstamp),
+    m_status        (EVENT_MIDI_META),
+    m_channel       (metatype),
+    m_data          (),                     /* two-element array, midibytes */
+    m_sysex         (),                     /* an std::vector of midibytes  */
+    m_linked        (),                     /* removed nullptr issue #124   */
+    m_has_link      (false),
+    m_selected      (false),
+    m_marked        (false),
+    m_painted       (false)
+{
+    (void) append_meta_data(metatype, data);
 }
 
 /**
@@ -860,7 +880,6 @@ event::set_text (const std::string & s)
  * \return
  *      Returns false if an error occurred, and the caller needs to stop
  *      trying to process the data.
- */
 
 bool
 event::append_meta_data (midibyte metatype, const midibyte * data, int dsize)
@@ -878,6 +897,7 @@ event::append_meta_data (midibyte metatype, const midibyte * data, int dsize)
     }
     return result;
 }
+ */
 
 /**
  *  This overload appends Meta-event data from a vector to a new buffer.
@@ -902,8 +922,14 @@ event::append_meta_data (midibyte metatype, const midibytes & data)
     if (result)
     {
         set_meta_status(metatype);
-        for (int i = 0; i < dsize; ++i)
-             m_sysex.push_back(data[i]);
+
+        /*
+         * for (int i = 0; i < dsize; ++i)
+         *     m_sysex.push_back(data[i]);
+         */
+
+        for (auto d : data)
+             m_sysex.push_back(d);
     }
     else
     {
@@ -1219,13 +1245,8 @@ event::tempo () const
 {
     midibpm result = 0.0;
     if (is_tempo() && sysex_size() == 3)
-    {
-        midibyte b[3];
-        b[0] = m_sysex[0];                  /* convert vector to array type */
-        b[1] = m_sysex[1];
-        b[2] = m_sysex[2];
-        result = bpm_from_bytes(b);
-    }
+        result = bpm_from_bytes(m_sysex);
+
     return result;
 }
 
@@ -1239,18 +1260,18 @@ bool
 event::set_tempo (midibpm tempo)
 {
     double us = tempo_us_from_bpm(tempo);
-    midibyte t[3];
+    midibytes t;
     tempo_us_to_bytes(t, midibpm(us));
-    return set_sysex(t, 3);
+    return set_sysex(t);
 }
 
 bool
-event::set_tempo (midibyte t[3])
+event::set_tempo (const midibytes & t)
 {
     double tt = tempo_us_from_bytes(t);
     bool result = tt > 0.0;
     if (result)
-        set_sysex(t, 3);
+        set_sysex(t);
 
     return result;
 }

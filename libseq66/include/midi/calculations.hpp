@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2025-05-01
+ * \updates       2025-06-21
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -36,9 +36,6 @@
  *  "utility" functions dealing with MIDI and port-related strings.  Many of
  *  the functions are defined in this header file, as inline code.
  */
-
-#include <string>
-#include <vector>
 
 #include "midi/midibytes.hpp"           /* midipulse alias and much more    */
 #include "util/basic_macros.hpp"        /* seq66::tokenization container    */
@@ -279,8 +276,8 @@ extern int previous_power_of_2 (int value);
 extern int next_power_of_2 (int value);
 extern int power (int base, int exponent);
 extern midibyte beat_log2 (int value);
-extern midibpm tempo_us_from_bytes (const midibyte tt[3]);
-extern bool tempo_us_to_bytes (midibyte t[3], midibpm tempo_us);
+extern midibpm tempo_us_from_bytes (const midibytes & tt);
+extern bool tempo_us_to_bytes (midibytes & t, midibpm tempo_us);
 extern midibyte tempo_to_note_value (midibpm tempo);
 extern midibpm note_value_to_tempo (midibyte tempo);
 extern midibpm fix_tempo (midibpm bp);
@@ -339,7 +336,7 @@ bpm_from_tempo_us (double tempous)
  */
 
 inline midibpm
-bpm_from_bytes (midibyte t[3])
+bpm_from_bytes (const midibytes & t)
 {
     return bpm_from_tempo_us(tempo_us_from_bytes(t));
 }

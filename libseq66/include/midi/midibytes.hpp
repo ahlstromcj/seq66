@@ -161,7 +161,7 @@ using microsec = uint64_t;
 using midibpm = double;
 
 /*
- *  Container types.  The next few type are common enough to warrant aliasing in
+ *  Container types.  The next few types are common enough to warrant aliasing in
  *  this file.
  */
 

@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.21
 Chris Ahlstrom
-2015-07-10 to 2025-06-20
+2015-07-10 to 2025-06-26
 
 # Change Log
 
-## [0.99.21] - 2025-06-20
+## [0.99.21] - 2025-06-26
 
 ### Added
 
@@ -40,6 +40,10 @@ Chris Ahlstrom
 
 ### Fixed
 
+-   Module midifile.
+    -   SeqSpecs with no data (length == 4) were read improperly.
+    -   Cleaned up the handling of time signature events and the
+        c\_timesig SeqSpec.
 -   SMF 0 Import. Meta events are now stored in pattern 0.
     See it by loading contrib/midi/CountryStrum.mid.
 -   Main window and grid.
@@ -47,6 +51,9 @@ Chris Ahlstrom
         widget to the button itself. Doh!
     -   The playlist code was auto-arming all patterns even when
         the playlist was not active.
+    -   Changing the main time signature now changes the time
+        signature in all patterns (except for those with a pattern
+        editor open).
 -   Pattern editor.
     -   The drawing of scales was done incorrectly. Fixed both the
         seqroll grid drawing and the scales\_policy() function.
@@ -58,6 +65,8 @@ Chris Ahlstrom
 -   Preferences dialog.
 -   Configuration files.
 -   Classes.
+    -   midifile. The earliest time-signature event, if present,
+        overrides the c\_timesig SeqSpec.
     -   performer. Changed default 32nds-per-quarter-note from 0 to 8.
     -   sequence. Used the new MIDI default values and fixed an
         index error in add\_timesig\_event(). 

@@ -46,18 +46,10 @@
 
 class QTableWidgetItem;
 
-/*
- * Do not document namespaces, it breaks Doxygen.
- */
-
 namespace Ui
 {
     class qseqeventframe;
 }
-
-/*
- * Do not document namespaces, it breaks Doxygen.
- */
 
 namespace seq66
 {
@@ -111,7 +103,7 @@ protected:
 
     virtual bool on_sequence_change
     (
-        seq::number seqno, performer::change ctype  // bool recreate
+        seq::number seqno, performer::change ctype
     ) override;
 
     /*

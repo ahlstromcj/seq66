@@ -81,10 +81,6 @@ class QIcon;
 class QMenu;
 class QWidget;
 
-/*
- * Do not document namespaces, it breaks Doxygen.
- */
-
 namespace Ui
 {
     class qseqeditframe64;

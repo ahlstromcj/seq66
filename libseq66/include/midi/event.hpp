@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2024-12-18
+ * \updates       2025-06-21
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -441,6 +441,7 @@ public:
         midibyte d1         = 0
     );
     event (midipulse tstamp, midibpm tempo);
+    event (midipulse tstamp, midibyte metatype, const midibytes & data);
     event
     (
         midipulse tstamp, midibyte notekind, midibyte channel,
@@ -1048,12 +1049,15 @@ public:
     virtual bool set_text (const std::string & s);
     virtual std::string get_text () const;
 
-    bool append_meta_data (midibyte metatype, const midibyte * data, int len);
+    /*
+     * bool append_meta_data (midibyte metatype, const midibyte * data, int len);
+     */
+
     bool append_meta_data (midibyte metatype, const midibytes & data);
     bool append_sysex_byte (midibyte data);
     bool append_sysex (const midibyte * data, int len);
     bool append_sysex (const midibytes & data);
-    bool set_sysex (const midibyte * data, int len);
+    bool set_sysex (const midibyte * data, int len); // STILL NEEDED?
     bool set_sysex (const midibytes & data);
     void set_sysex_size (int len);
 
@@ -1485,7 +1489,7 @@ public:
 
     midibpm tempo () const;
     bool set_tempo (midibpm tempo);
-    bool set_tempo (midibyte t[3]);
+    bool set_tempo (const midibytes & t);
 
     /**
      *  Indicates if the event is a Time Signature event.  See

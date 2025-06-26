@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2023-12-12
+ * \updates       2025-06-23
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -544,8 +544,8 @@ midi_vector_base::fill_proprietary ()
         put(b);                                     /* MIDI in buss number  */
     }
     put_seqspec(c_timesig, 2);                      /* Time Sig bytes b/w   */
-    put(seq().get_beats_per_bar());
-    put(seq().get_beat_width());
+    put(seq().timesig_beats_per_measure());
+    put(seq().timesig_beat_width());
     put_seqspec(c_midichannel, 1);                  /* MIDI output channel  */
     put(seq().seq_midi_channel());                  /* 0 to 15 or 0x80      */
     if (! usr().global_seq_feature())

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-04
- * \updates       2022-09-11
+ * \updates       2025-06-21
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the WRK format, see, for example:
@@ -1445,10 +1445,10 @@ wrkfile::MeterKeyChunk ()
                  */
 
                 event e;
-                midibyte bt[2];
-                bt[0] = alt;
-                bt[1] = 0;                  /* indicates a major key        */
-                bool ok = e.append_meta_data(EVENT_META_KEY_SIGNATURE, bt, 2);
+                midibytes bt;
+                bt.push_back(alt);
+                bt.push_back(0);                /* indicates a major key    */
+                bool ok = e.append_meta_data(EVENT_META_KEY_SIGNATURE, bt);
                 if (ok)
                     m_current_seq->append_event(e);
             }
@@ -1555,9 +1555,9 @@ wrkfile::TempoChunk (int factor)
         }
 
         event e;
-        midibyte bt[4];
+        midibytes bt;
         tempo_us_to_bytes(bt, tt);
-        bool ok = e.append_meta_data(EVENT_META_SET_TEMPO, bt, 3);
+        bool ok = e.append_meta_data(EVENT_META_SET_TEMPO, bt);
         if (ok)
         {
             Set_timestamp(e, time);

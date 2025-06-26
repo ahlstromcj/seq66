@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-06-20
+ * \updates       2025-06-26
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1152,6 +1152,8 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
         if (! is_null_buss(buss_override))
             infoprintf("Buss override %d", int(buss_override));
     }
+
+    bool set_main_timesig = true;                   /* first time-sig wins  */
     for (midishort trk = 0; trk < track_count; ++trk)
     {
         midibyte tentative_channel = null_channel();
@@ -1161,7 +1163,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
         if (ID == c_mtrk_tag)                       /* magic number 'MTrk'  */
         {
             int evcount = 0;                        /* for sanity checking  */
-            bool timesig_set = false;               /* first time-sig wins  */
             bool error_reported = false;            /* for handling message */
             midipulse runningtime = 0;              /* reset time           */
             midipulse currenttime = 0;              /* adjusted by PPQN     */
@@ -1369,13 +1370,13 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
 
                             if (len == 3)
                             {
-                                midibyte bt[4];         /* "Tempo events"   */
-                                bt[0] = read_byte();                /* tt   */
-                                bt[1] = read_byte();                /* tt   */
-                                bt[2] = read_byte();                /* tt   */
+                                midibytes bt;           /* "Tempo events"   */
+                                bt.push_back(read_byte());          /* tt   */
+                                bt.push_back(read_byte());          /* tt   */
+                                bt.push_back(read_byte());          /* tt   */
 
                                 double tt = tempo_us_from_bytes(bt);
-                                if (tt > 0)
+                                if (tt > 0.0)
                                 {
                                     if (trk == 0)
                                     {
@@ -1389,7 +1390,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
                                         }
                                     }
 
-                                    bool ok = e.append_meta_data(mtype, bt, 3);
+                                    bool ok = e.append_meta_data(mtype, bt);
                                     if (ok)
                                     {
                                         if (s.append_event(e))
@@ -1429,18 +1430,18 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
                                 }
 #endif
 
-                                midibyte bt[4];
-                                bt[0] = midibyte(bpb);
-                                bt[1] = midibyte(logbase2);
-                                bt[2] = midibyte(cc);
-                                bt[3] = midibyte(bb);
+                                midibytes bt;
+                                bt.push_back(midibyte(bpb));
+                                bt.push_back(midibyte(logbase2));
+                                bt.push_back(midibyte(cc));
+                                bt.push_back(midibyte(bb));
 
-                                bool ok = e.append_meta_data(mtype, bt, 4);
+                                bool ok = e.append_meta_data(mtype, bt);
                                 if (ok)
                                 {
-                                    if (s.add_timesig_event(e, ! timesig_set))
+                                    if (s.add_timesig_event(e, set_main_timesig))
                                     {
-                                        timesig_set = true;
+                                        set_main_timesig = false;
                                         ++evcount;
                                     }
                                 }
@@ -1453,11 +1454,11 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
 
                             if (len == 2)
                             {
-                                midibyte bt[2];
-                                bt[0] = read_byte();            /* #/b no.  */
-                                bt[1] = read_byte();            /* min/maj  */
+                                midibytes bt;
+                                bt.push_back(read_byte());      /* #/b no.  */
+                                bt.push_back(read_byte());      /* min/maj  */
 
-                                bool ok = e.append_meta_data(mtype, bt, 2);
+                                bool ok = e.append_meta_data(mtype, bt);
                                 if (ok)
                                 {
                                     if (s.append_event(e))
@@ -1468,12 +1469,21 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
                                 skip(len);              /* eat it           */
                             break;
 
-                        case EVENT_META_SEQSPEC:      /* FF F7 = SeqSpec    */
+                        case EVENT_META_SEQSPEC:        /* FF F7 = SeqSpec  */
 
-                            if (len > 4)              /* FF 7F len data     */
+                            /*
+                             * ca 2025-06-25.
+                             * We were assuming a Seq66 SeqSpec always
+                             * had data, and thus did not read it if only
+                             * 4 bytes. Replaced "len > 4".
+                             */
+
+                            if (len >= 4)               /* FF 7F len [data] */
                             {
                                 seqspec = read_long();
                                 len -= 4;
+                                if (len == 0)
+                                    break;
                             }
                             else if (! checklen(len, mtype))
                                 return false;
@@ -1499,14 +1509,19 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
                             else if (seqspec == c_timesig)
                             {
                                 /*
-                                 * This can override an early time-signature.
+                                 * This can override an early time-signature
+                                 * event. This doesn't make sense, now that
+                                 * we think about it. The first time-sig event
+                                 * should win. ca 2025-06-20.
                                  */
 
                                 int bpb = int(read_byte());
                                 int bw = int(read_byte());
-                                if (s.add_c_timesig(bpb, bw, ! timesig_set))
-                                    timesig_set = true;
-
+                                if (set_main_timesig)
+                                {
+                                    if (s.add_c_timesig(bpb, bw, trk == 0))
+                                        set_main_timesig = false;
+                                }
                                 len -= 2;
                             }
                             else if (seqspec == c_triggers)
@@ -1594,29 +1609,23 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
                          * Handled above: EVENT_META_TRACK_NAME
                          */
 
-                        case EVENT_META_TEXT_EVENT:      /* FF 01 len text  */
-                        case EVENT_META_COPYRIGHT:       /* FF 02 ...       */
-                        case EVENT_META_INSTRUMENT:      /* FF 04 ...       */
-                        case EVENT_META_LYRIC:           /* FF 05 ...       */
-                        case EVENT_META_MARKER:          /* FF 06 ...       */
-                        case EVENT_META_CUE_POINT:       /* FF 07 ...       */
+                        case EVENT_META_TEXT_EVENT:     /* FF 01 len text   */
+                        case EVENT_META_COPYRIGHT:      /* FF 02 ...        */
+                        case EVENT_META_INSTRUMENT:     /* FF 04 ...        */
+                        case EVENT_META_LYRIC:          /* FF 05 ...        */
+                        case EVENT_META_MARKER:         /* FF 06 ...        */
+                        case EVENT_META_CUE_POINT:      /* FF 07 ...        */
 
                             if (checklen(len, mtype))
                             {
-                                int count = 0;
-                                midibyte mt[c_meta_text_limit];
+                                midibytes mt;
                                 for (int i = 0; i < int(len); ++i)
                                 {
                                     char ch = char(read_byte());
-                                    if (count < int(c_meta_text_limit))
-                                    {
-                                        mt[count] = ch;
-                                        ++count;
-                                    }
+                                    if (i < int(c_meta_text_limit))
+                                        mt.push_back(ch);
                                 }
-                                mt[count] = '\0';
-
-                                bool ok = e.append_meta_data(mtype, mt, count);
+                                bool ok = e.append_meta_data(mtype, mt);
                                 if (ok)
                                 {
                                     if (s.append_event(e))
@@ -1757,6 +1766,18 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
                     );
                     info_message(temp);
                 }
+
+                /*
+                 * If we haven't read a time-signature event or a
+                 * c_timesig SecSpec, get the main time signature in
+                 * place now. This should be done only for the first
+                 * track; we don't want to add time signatures to the
+                 * other tracks if they don't have one.
+                 */
+
+                if (set_main_timesig && trk == 0)
+                    (void) s.set_main_time_signature();
+
                 if (convert_smf0)
                     (void) m_smf0_splitter.log_main_sequence(s, seqnum);
                 else
@@ -2014,7 +2035,7 @@ midifile::parse_seqspec_track (performer & p, int file_size)
  *
  *      c_midibus          c_timesig         c_midichannel    c_musickey *
  *      c_musicscale *     c_backsequence *  c_transpose *    c_seq_color
- *      c_seq_loopcount   c_triggers       c_triggers_ex      c_trig_transpose
+ *      c_seq_loopcount    c_triggers        c_triggers_ex    c_trig_transpose
  *
  * Global SeqSpecs handled here:
  *
@@ -2192,9 +2213,17 @@ midifile::parse_c_bpmtag (performer & p)
  *
  *      -#  Split byte count for the number of groups and the size of each
  *          group. Long, 4 bytes.
- *      -#  Group number.  Byte value.
- *      -#  Mute-group bit values, 1 byte each, and group-size of them.
- *      -#  Optional:  The mute-group name in double quotes.
+ *      -#  32 groups. Each of size roughly 43 bytes.
+ *          -#  Group number.  Byte value; 1 byte
+ *          -#  Mute-group bit values, 1 byte each, and group-size of them,
+ *              i.e 32 bytes.
+ *          -#  Optional: The mute-group name in double quotes. Roughly 10
+ *              bytes by default.
+ *      -#  1376 total size (32 x 43) roughly. This is 4096 - 1376 = 2720
+ *          bytes saved.
+ *
+ *  One sample file is 2840 bytes shorter with the new format. What are
+ *  the extra 120 bytes (roughly) that are saved?
  */
 
 bool
@@ -2271,6 +2300,14 @@ midifile::parse_c_mutegroups (performer & p)
     }
     return result;
 }
+
+/**
+ * Old format:
+ *
+ *      -#  32 groups.
+ *          -#  32 groupmutes states, each 4 bytes = 128 bytes
+ *      -# 4096 total size (32 x 128)
+ */
 
 bool
 midifile::parse_c_mutegroups_legacy

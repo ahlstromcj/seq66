@@ -3872,20 +3872,30 @@ performer::set_beats_per_measure (int bpm, bool user_change)
     bool result = bpm != m_beats_per_bar;   /* the current performer value  */
     if (result)
     {
+        int bw = m_beat_width;              /* available for lambda capture */
         set_beats_per_bar(bpm);             /* also sets in jack_assistant  */
         set_mapper().exec_set_function
         (
-            [bpm, user_change] (seq::pointer sp, seq::number /*sn*/)
+            [bpm, user_change, bw] (seq::pointer sp, seq::number /*sn*/)
             {
                 bool result = bool(sp);
                 if (result)
                 {
+#if defined UPDATE_TIME_SIGNATURE_IS_READY
+                    result = sp->update_time_signature
+                    (
+                        bpm, bw, user_change
+                    );
+#else
                     sp->set_beats_per_bar(bpm, user_change);
                     sp->set_measures(sp->get_measures(), user_change);
+#endif
                 }
                 return result;
             }
         );
+        if (! user_change)                  /* likely at startup time   */
+            unmodify();
     }
     return result;
 }
@@ -3904,20 +3914,30 @@ performer::set_beat_width (int bw, bool user_change)
     bool result = bw != m_beat_width;
     if (result)
     {
-        set_beat_length(bw);            /* also sets in jack_assistant  */
+        int bpb = m_beats_per_bar;          /* available for lambda capture */
+        set_beat_length(bw);                /* also sets in jack_assistant  */
         set_mapper().exec_set_function
         (
-            [bw, user_change] (seq::pointer sp, seq::number /*sn*/)
+            [bw, user_change, bpb] (seq::pointer sp, seq::number /*sn*/)
             {
                 bool result = bool(sp);
                 if (result)
                 {
+#if defined UPDATE_TIME_SIGNATURE_IS_READY
+                    result = sp->update_time_signature
+                    (
+                        bpb, bw, user_change
+                    );
+#else
                     sp->set_beat_width(bw, user_change);
                     sp->set_measures(sp->get_measures());
+#endif
                 }
                 return result;
             }
         );
+        if (! user_change)                  /* likely at startup time   */
+            unmodify();
     }
     return result;
 }

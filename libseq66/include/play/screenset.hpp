@@ -100,7 +100,7 @@ public:
      *  one that calls a sethandler, and then calls a slothandler on each slot
      *  in the set.
      *
-     *  A good example of a sethander is done in qsetmaster ::
+     *  A good example of a sethandler is done in qsetmaster ::
      *  initialize_table(), which binds qsetmaster :: set_line() to
      *  place-holder parameters.
      *

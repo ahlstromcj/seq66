@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2025-05-01
+ * \updates       2025-06-21
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -75,7 +75,7 @@
 #include <cstring>                      /* std::memset()                    */
 #include <ctime>                        /* std::strftime()                  */
 
-#include "cfg/settings.hpp"
+#include "cfg/settings.hpp"             /* seq66::usr()                     */
 #include "midi/calculations.hpp"        /* MIDI-related calculations        */
 #include "util/strfunctions.hpp"        /* seq66::contains(), etc.          */
 
@@ -1229,12 +1229,17 @@ beat_log2 (int value)
  */
 
 midibpm
-tempo_us_from_bytes (const midibyte tt[3])
+tempo_us_from_bytes (const midibytes & tt)
 {
-    midibpm result = midibpm(tt[0]);
-    result = (result * 256) + midibpm(tt[1]);
-    result = (result * 256) + midibpm(tt[2]);
-    return result;
+    if (tt.size() == 3)
+    {
+        midibpm result = midibpm(tt[0]);
+        result = (result * 256) + midibpm(tt[1]);
+        result = (result * 256) + midibpm(tt[2]);
+        return result;
+    }
+    else
+        return 0.0;
 }
 
 /**
@@ -1261,19 +1266,22 @@ tempo_us_from_bytes (const midibyte tt[3])
  */
 
 bool
-tempo_us_to_bytes (midibyte t[3], midibpm tempo_us)
+tempo_us_to_bytes (midibytes & t, midibpm tempo_us)
 {
     bool result = tempo_us > 0.0;
+    t.clear();
     if (result)
     {
         int temp = int(tempo_us + 0.5);
-        t[2] = midibyte(temp & 0x0000FF);
-        t[1] = midibyte((temp & 0x00FF00) >> 8);
-        t[0] = midibyte((temp & 0xFF0000) >> 16);
+        t.push_back(midibyte((temp & 0xFF0000) >> 16));
+        t.push_back(midibyte((temp & 0x00FF00) >> 8));
+        t.push_back(midibyte(temp & 0x0000FF));
     }
     else
     {
-        t[2] = t[1] = t[0] = 0;
+        t.push_back(0);
+        t.push_back(0);
+        t.push_back(0);
     }
     return result;
 }

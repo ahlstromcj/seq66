@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2022-11-14
+ * \updates       2025-06-25
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -566,6 +566,8 @@ screenset::armed (seq::number seqno, bool flag)
  *  that a slot is a place to "store" a sequence, and a slot can be empty.
  *  All slots can be drawn, but empty slots are drawn differently in general.
  *
+ *      if (s.active())                     // ca 2025-06-25
+ *
  * \param p
  *      Provides a function with parameters of seq::pointer and seq::number.
  *
@@ -583,9 +585,14 @@ screenset::exec_slot_function (slothandler p, bool use_set_offset)
     seq::number sn = use_set_offset ? offset() : 0 ;
     for (auto & s : m_container)
     {
-        result = p(s.loop(), sn++);         /* note post-increment of sn    */
-        if (! result)                       /* false only if serious        */
-            break;
+        result = p(s.loop(), sn++);     /* note post-increment of sn    */
+        if (! result)                   /* false only if serious        */
+        {
+            if (s.active())             /* ca 2025-06-25                */
+                break;
+            else
+                result = true;
+        }
     }
     return result;
 }

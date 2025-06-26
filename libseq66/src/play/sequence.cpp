@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-06-20
+ * \updates       2025-06-26
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -213,8 +213,10 @@ sequence::sequence (int ppqn) :
     m_measures                  (0),
     m_snap_tick                 (int(m_ppqn) / 4),
     m_step_edit_note_length     (int(m_ppqn) / 4),
-    m_time_beats_per_measure    (0),
-    m_time_beat_width           (0),
+    m_time_beats_per_measure    (4),
+    m_time_beat_width           (4),
+    m_timesig_beats_per_measure (0),
+    m_timesig_beat_width        (0),
     m_clocks_per_metronome      (c_midi_clocks_per_metronome),
     m_32nds_per_quarter         (c_midi_32nds_per_quarter),
     m_us_per_quarter_note       (tempo_us_from_bpm(usr().bpm_default())),
@@ -4020,33 +4022,40 @@ sequence::add_tempos
  */
 
 bool
-sequence::log_time_signature (midipulse tick, int beats, int bw)
+sequence::log_time_signature
+(
+    midipulse tick, int beats, int bw, bool user_change
+)
 {
     automutex locker(m_mutex);
     bool result = beats > 0 && is_power_of_2(bw);
     if (result)
     {
-        m_events_undo.push(m_events);               /* push_undo(), no lock */
-        event e (tick, EVENT_MIDI_META);
-        midibyte bt[4];
-        bw = beat_log2(bw);                                 /* log2(bw)     */
-        bt[0] = midibyte(beats);                            /* numerator    */
-        bt[1] = midibyte(bw);                               /* denominator  */
-        bt[2] = midibyte(clocks_per_metronome());
-        bt[3] = midibyte(get_32nds_per_quarter());
-        result = e.append_meta_data(EVENT_META_TIME_SIGNATURE, bt, 4);
-        if (result)
-        {
-            result = append_event(e);
-            if (result)
-            {
-                sort_events();
-                modify(true);
-            }
-        }
+        if (user_change)
+            m_events_undo.push(m_events);               /* push_undo(), no lock */
+
+        result = add_timesig_event(tick, beats, bw);
     }
     return result;
 }
+
+#if defined UPDATE_TIME_SIGNATURE_IS_READY
+
+bool
+sequence::update_time_signature (int bpb, int bw, bool user_change)
+{
+    set_beats_per_bar(bpb, user_change);
+    set_beat_width(bw, user_change);
+    set_measures(get_measures(), user_change);
+
+    bool ok = seq_number() == 0;
+    if (ok)
+        return log_time_signature(0, bpb, bw);
+    else
+        return true;
+}
+
+#endif      // defined UPDATE_TIME_SIGNATURE_IS_READY
 
 /**
  *  Gets the data from a time-signature event and makes some settings.
@@ -4063,9 +4072,9 @@ sequence::log_time_signature (midipulse tick, int beats, int bw)
  * \param e
  *      The event, which must be a well-defined time-signature event.
  *
- * \param main_ts
- *      True (the default is false) if it need to be set as the main
- *      sequence time-signature.
+ * \param settimesig
+ *      True (the default is false) if it needs to be set as the main
+ *      sequence time-signature via a c_timesig SeqSpec.
  *
  * \return
  *      Returns true if the event was a time-signature and was added to
@@ -4073,27 +4082,29 @@ sequence::log_time_signature (midipulse tick, int beats, int bw)
  */
 
 bool
-sequence::add_timesig_event (const event & e, bool main_ts)
+sequence::add_timesig_event (const event & e, bool settimesig)
 {
     automutex locker(m_mutex);
     bool result = e.is_time_signature();
     if (result)
     {
-        if (main_ts)
+        int bpb = e.get_sysex(0);
+        int bw = beat_power_of_2(e.get_sysex(1));
+        int cpm = e.get_sysex(2);
+        int tpq = e.get_sysex(3);               /* was 4, oops!!        */
+        if (cpm == 0)
+            cpm = c_midi_clocks_per_metronome;  /*  24                  */
+
+        if (tpq == 0)
+            tpq = c_midi_32nds_per_quarter;     /*   8                  */
+
+        if (settimesig)
         {
-            int bpb = e.get_sysex(0);
-            int bw = beat_power_of_2(e.get_sysex(1));
-            int cpm = e.get_sysex(2);
-            int tpq = e.get_sysex(3);               /* was 4, oops!!        */
-            if (cpm == 0)
-                cpm = c_midi_clocks_per_metronome;  /*  24                  */
-
-            if (tpq == 0)
-                tpq = c_midi_32nds_per_quarter;     /*   8                  */
-
             clocks_per_metronome(cpm);
             set_32nds_per_quarter(tpq);
             set_time_signature(bpb, bw);
+            m_timesig_beats_per_measure = bpb;
+            m_timesig_beat_width = bw;
         }
         result = append_event(e);
         if (result)
@@ -4103,11 +4114,107 @@ sequence::add_timesig_event (const event & e, bool main_ts)
 }
 
 /**
- *  This version creates a time-signature event.  If there is an
- *  time-signature event at the same time, it is eliminated.
+ *  This overloaded version creates a time-signature event. If there is a
+ *  time-signature event at the same time, it can be eliminated. This
+ *  function is meant to insert a time-signature specified in the
+ *  user-interface, or in setting up a new time-signature for
+ *  a MIDI pattern that does not have one.
  *
- *  Does not change the clocks/metronome and 32nds/quarter.
- *  Is this an issue?
+ *  It does not change the clocks/metronome and 32nds/quarter, and in
+ *  fact they will default to 24 and 8, respectively. Is this an issue?
+ *
+ *  This function flags a modification.
+ *
+ * \param tstamp
+ *      Provides the time-stamp (divisions, ticks) at which the event
+ *      should be added.
+ *
+ * \param bpb
+ *      Provides the beats/bar to apply. Defaults to 4.
+ *
+ * \param bw
+ *      Provides the beat-width to apply. Defaults to 4.
+ *
+ * \param replace
+ *      If true (the default), delete any existing time-signature
+ *      at that time.
+ *
+ * \return
+ *      Returns true if the event could be added.
+ */
+
+bool
+sequence::add_timesig_event
+(
+    midipulse tstamp, int bpb, int bw, bool replace
+)
+{
+    automutex locker(m_mutex);
+    midibytes bt;
+    bt.push_back(midibyte(bpb));
+    bt.push_back(midibyte(log2_of_power_of_2(bw)));     /* or beat_log2()?  */
+    bt.push_back(midibyte(clocks_per_metronome()));
+    bt.push_back(midibyte(get_32nds_per_quarter()));
+
+    event e(tstamp, EVENT_META_TIME_SIGNATURE, bt);
+    bool modification = false;
+    if (replace)
+        modification = m_events.remove_time_signature(tstamp);
+
+    bool result = append_event(e);
+    if (result)
+    {
+        if (tstamp == 0)
+            set_time_signature(bpb, bw);
+
+        sort_events();
+        if (modification)
+            modify(true);
+    }
+    return result;
+}
+
+/**
+ *  Look for a starting time-signature event. If present, make sure it
+ *  is set in the beats/bar and beat-width fields for later storage
+ *  in the c_timesig SeqSpec.
+ *
+ *  If not present, use the c_timesig-related fields to create a
+ *  time-signature event. If they are zero, devolve to 4/4.
+ */
+
+bool
+sequence::set_main_time_signature ()
+{
+    automutex locker(m_mutex);
+    bool result = false;
+    midipulse tstamp;
+    int numerator;
+    int denominator;
+    if (detect_time_signature(tstamp, numerator, denominator, 0, get_ppqn()/4))
+    {
+        m_time_beats_per_measure = m_timesig_beats_per_measure = numerator;
+        m_time_beat_width = m_timesig_beat_width = denominator;
+        result = true;
+    }
+    else
+    {
+        int bpb = m_timesig_beats_per_measure;
+        if (bpb == 0)
+            bpb = 4;
+
+        int bw = m_timesig_beat_width;
+        if (bw == 0)
+            bw = 4;
+
+        result = add_c_timesig(bpb, bw, true);
+    }
+    return result;
+}
+
+/**
+ *  Called if there is a c_timesig present *and* no time-signature event
+ *  has been encountered yet. See the midifile module/class.
  *
  * \param bpb
  *      Provides the beats/bar to apply.
@@ -4115,45 +4222,50 @@ sequence::add_timesig_event (const event & e, bool main_ts)
  * \param bw
  *      Provides the beat-width to apply.
  *
- * \param t
- *      Provides the time-stamp (divisions) at which the event
- *      should be added.
+ * \param settimesig
+ *      Set to true if the first time-signature (event or SeqSpec) has been
+ *      encountered. If true, a time-signature at time 0 is added.
  *
  * \return
- *      Returns true if the event could be added.
+ *      Returns true if the event could be added, or did not need to be
+ *      added.
  */
 
 bool
-sequence::add_timesig_event (int bpb, int bw, midipulse t)
+sequence::add_c_timesig (int bpb, int bw, bool settimesig)
 {
     automutex locker(m_mutex);
-    event e;
-    midibyte bt[4];
-    bt[0] = midibyte(bpb);
-    bt[1] = midibyte(log2_of_power_of_2(bw));           /* or beat_log2()?  */
-    bt[2] = midibyte(clocks_per_metronome());
-    bt[3] = midibyte(get_32nds_per_quarter());
-    e.set_timestamp(t);
-    e.append_meta_data(EVENT_META_TIME_SIGNATURE, bt, 4);
-    (void) m_events.remove_time_signature(t);
+    bool result = true;
+    if (bpb == 0 || bw == 0)
+    {
+        warnprint("Bad c_timesig SeqSpec");
+        if (bpb == 0)
+            bpb = 4;
 
-    bool result = append_event(e);
-    if (result)
-        sort_events();
-
-    return result;
-}
-
-bool
-sequence::add_c_timesig (int bpb, int bw, bool main_ts)
-{
-    automutex locker(m_mutex);
-    if (main_ts)
+        if (bw == 0)
+            bw = 4;
+    }
+    if (m_timesig_beats_per_measure == 0)
     {
         set_beats_per_bar(bpb);
         set_beat_width(bw);
+        m_time_beats_per_measure = bpb;
+        m_timesig_beat_width = bw;
     }
-    return true;
+    if (settimesig)
+    {
+        midibyte logbase2 = beat_log2(bw);
+        midibytes bt;
+        bt.push_back(midibyte(bpb));
+        bt.push_back(logbase2);
+        bt.push_back(0);                    /* c_midi_clocks_per_metronome) */
+        bt.push_back(0);                    /* c_midi_32nds_per_quarter)    */
+
+        midipulse tstamp = 0;       /* time of actual time-signature event  */
+        event e(tstamp, EVENT_META_TIME_SIGNATURE, bt);
+        result = add_timesig_event(e, true);
+    }
+    return result;
 }
 
 bool
@@ -4161,9 +4273,8 @@ sequence::delete_time_signature (midipulse tick)
 {
     bool result = false;
     event e(tick, EVENT_MIDI_META);
-    midibyte bt[4];
-    bt[0] = bt[1] = bt[2] = bt[3] = 0;
-    result = e.append_meta_data(EVENT_META_TIME_SIGNATURE, bt, 4);
+    midibytes bt(4);                /* bt[0] = bt[1] = bt[2] = bt[3] = 0;   */
+    result = e.append_meta_data(EVENT_META_TIME_SIGNATURE, bt);
     if (result)
         result = remove_first_match(e, tick);
 
@@ -4190,15 +4301,15 @@ sequence::delete_time_signature (midipulse tick)
  *      are ignored.  The default value is 0, the beginning of the pattern.
  *
  * \param range
- *      Provides how far to look for a time signature. The default is
- *      c_null_midipulse, which means just detect the first time-signature
- *      no matter how deep into the pattern. Another useful value is the
- *      snap() value from the seqedit. In that case the event must be
- *      with \a range ticks of .....
+ *      Provides how far to look for a time signature from the start time.
+ *      The default is c_null_midipulse, which means just detect the
+ *      first time-signature no matter how deep into the pattern.
+ *      Another useful value is the snap() value from the seqedit.
+ *      See qseqeditframe64::detect_time_signature() for an example.
  *
  * \return
  *      Returns true if a time signature was detected before the range was
- *      reached.
+ *      reached. The three return values can then be assumed valid.
  */
 
 bool
@@ -6712,7 +6823,7 @@ sequence::set_recording_style (recordstyle rs)
          * notify_trigger();                                   // tricky!  //
          */
 
-        notify_change(false);                                   // xxxx
+        notify_change(false);
     }
     return result;
 }

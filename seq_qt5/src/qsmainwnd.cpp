@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-06-04
+ * \updates       2025-06-24
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -168,10 +168,6 @@
  */
 
 #define SEQ66_ERROR_BOX_WIDTH       600
-
-/*
- * Don't document the namespace.
- */
 
 namespace seq66
 {
@@ -3320,13 +3316,13 @@ qsmainwnd::update_beat_length (int blindex)
     if (cb_perf().set_beat_width(bl, true))             /* a user change    */
     {
         enable_save();
-        if (not_nullptr(m_song_frame64))
+        if (not_nullptr(m_song_frame64))                /* qperfedit in tab */
             m_song_frame64->set_beat_width(bl);
 
-        if (not_nullptr(m_beat_ind))
+        if (not_nullptr(m_beat_ind))                    /* qsmaintime       */
             m_beat_ind->beat_width(bl);
 
-        if (not_nullptr(m_edit_frame))
+        if (not_nullptr(m_edit_frame))                  /* qseqedit in tab  */
             m_edit_frame->update_draw_geometry();
     }
 }
@@ -3348,13 +3344,13 @@ qsmainwnd::update_beats_per_measure (int bmindex)
     if (cb_perf().set_beats_per_measure(bm, true))      /* a user change    */
     {
         enable_save();
-        if (not_nullptr(m_song_frame64))
+        if (not_nullptr(m_song_frame64))                /* qperfedit in tab */
             m_song_frame64->set_beats_per_measure(bm);
 
-        if (not_nullptr(m_beat_ind))
+        if (not_nullptr(m_beat_ind))                    /* qsmaintime       */
             m_beat_ind->beats_per_measure(bm);
 
-        if (not_nullptr(m_edit_frame))
+        if (not_nullptr(m_edit_frame))                  /* qseqedit in tab  */
             m_edit_frame->update_draw_geometry();
     }
 }
@@ -4564,7 +4560,6 @@ qsmainwnd::update_set_change (int setno)
 
         bool cancopy = cb_perf().playscreen_active_count() > 0;
         ui->actionCopyCurrentSet->setEnabled(cancopy);
-
         if (not_nullptr(m_song_frame64))
             m_song_frame64->update_sizes();
     }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-06-19
+ * \updates       2025-06-26
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -48,6 +48,12 @@
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
+
+/**
+ *  EXPERIMENTAL TRIAL CODE
+ */
+
+#define UPDATE_TIME_SIGNATURE_IS_READY
 
 /**
  *  Provides an integer value for color that matches PaletteColor::none.  That
@@ -874,6 +880,17 @@ private:
     unsigned short m_time_beat_width;
 
     /**
+     *  ca 2025-06-23.
+     *  New members to use for the c_timesig SeqSpec. Rather than hold
+     *  the last time-signature that was set, this holds the first one,
+     *  or the value in a c_timesig SeqSpec. If 0, the c_timesig values
+     *  have not yet been set.
+     */
+
+    unsigned short m_timesig_beats_per_measure;
+    unsigned short m_timesig_beat_width;
+
+    /**
      *  Augments the beats/bar and beat-width with the additional values
      *  included in a Time Signature meta event.  This value provides the
      *  number of MIDI clocks between metronome clicks.  The default value of
@@ -881,7 +898,7 @@ private:
      *  our hymne.mid example.
      */
 
-    int m_clocks_per_metronome;     /* make it a short? */
+    int m_clocks_per_metronome;
 
     /**
      *  Augments the beats/bar and beat-width with the additional values
@@ -891,7 +908,7 @@ private:
      *  allow this to be changed.
      */
 
-    int m_32nds_per_quarter;        /* make it a short? */
+    int m_32nds_per_quarter;
 
     /**
      *  Augments the beats/bar and beat-width with the additional values
@@ -1261,6 +1278,16 @@ public:
     int get_beat_width () const
     {
         return int(m_time_beat_width);
+    }
+
+    int timesig_beats_per_measure () const
+    {
+        return m_timesig_beats_per_measure;
+    }
+
+    int timesig_beat_width () const
+    {
+        return m_timesig_beat_width;
     }
 
     void set_time_signature (int bpb, int bw);
@@ -1702,9 +1729,21 @@ public:
         midipulse tick_s, midipulse tick_f,
         int tempo_s, int tempo_f
     );
-    bool log_time_signature (midipulse tick, int beats, int width);
+    bool log_time_signature
+    (
+        midipulse tick, int beats, int width, bool user_change = false
+    );
+#if defined UPDATE_TIME_SIGNATURE_IS_READY
+    bool update_time_signature (int bpb, int bw, bool user_change = false);
+#endif
     bool add_timesig_event (const event & e, bool main_ts = false);
-    bool add_timesig_event (int bpb, int bw, midipulse t = 0);
+    bool add_timesig_event
+    (
+        midipulse t,
+        int bpb = 4, int bw = 4,
+        bool replace = true
+    );
+    bool set_main_time_signature ();
     bool add_c_timesig (int bpb, int bw, bool main_ts = false);
     bool delete_time_signature (midipulse tick);
     bool detect_time_signature

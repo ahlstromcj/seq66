@@ -1,10 +1,9 @@
 TO DO for Seq66 0.99.21
 Chris Ahlstrom
-2019-04-13 to 2025-06-19
+2019-04-13 to 2025-06-25
 
 Hot:
 
-    -   In random.midi: (all bugs seem to be fixed by verify-and-link.)
     -   Issues #137 and #138.
 
 NSM:
@@ -30,6 +29,10 @@ Cannot duplicate:
 
 Backlog:
 
+    -   In midicvt (separate project), the c_mutegroups SeqSpec is not
+        shown (24 24 00 09).
+    -   Consider adding the 'ctrl' file macros to an "Insert macro"
+        menu in the grid-slot popup and the event editor.
     -   Automation: verify/document Solo, Reset Sets, and Song Position.
     -   Make sure sessions.rc works as advertised; fix documentation.
     -   Add a light version of glob(3) to use with Windows. In progress
@@ -454,8 +457,20 @@ ISSUES:
 
 	* stop the transport when changing the signature
 	* refactor things to allow updating signature in realtime
+    
+    EXTRA WORK:
 
-#138 multisignature fake bug + UX suggestion
+        1. Follow up on issue #111, Time signature changes does not get
+           saved on .midi file.
+        2. Changing the Global Time Signature shows the changes in
+           the grid slots and the seqroll, but not in the pattern-editor
+           combo boxes.
+        3. Re 2, changing to 3/8, saving, and re-opening shows 4/8!
+           The actual time-signature event is 4/4!
+        4. Hmmmm, generally only the first track has a time signature
+           event. Do we need to go back to that?
+
+#138 workflow regarding multitimbral program change + MSB + LSB
 
     I really like the concept of being able to export a midi-file which
     includes `program-change + MSB + LSB bank select` for each midi-channel
@@ -487,6 +502,28 @@ ISSUES:
     Maybe this could be a default feature-toggle?
     This would make the above mentioned manual steps (4x16=64) redundant.
     Imagine the the speedy workflow.
+
+#139 LFO tool ❤
+
+    OMG I love this LFO. So easy to simulate sidechaining 'pumping' (via CC11)
+    without having to fiddle with compressor plugins ❤
+
+    One small issue (not a dealbreaker though) is that when you change the
+    wavetype,  it erases all events (used by the previous wavetype).  It would
+    be great if it would just keep events, and rewrite the values.
+
+#140 Minimum height event-handle
+
+    ![Image](https://github.com/user-attachments/assets/a61c4d72-4a98-4215-8d89-165260046667)
+
+    Many times I cannot change an event with value 0, because its too low for
+    the mouse to click/drag (see picture)
+
+    IDEA: Scrollbar in the data pane?
+    IDEA: Temporally pop up the circle, and adjust while deducting the
+          pixel offset.
+    IDEA: Open a small value dialog?
+
 
 = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 

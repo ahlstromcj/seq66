@@ -1986,8 +1986,13 @@ eventlist::find_next_match (const event & e)
 }
 
 /**
- * \param t
+ *  Do we need a time fudge-factor of a few ticks?
+ *
+ * \param target
  *      Provides the time at which we expect the time-signature to be.
+ *
+ * \return
+ *      Returns true only if the time signature was found and removed.
  */
 
 bool

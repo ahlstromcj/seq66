@@ -1173,8 +1173,6 @@ qseqeditframe64::qseqeditframe64
     /*
      * Old location. Avoid calling setChecked(), as the Qt 5 documentation
      * seems to be incorrect in saying setChecked() doesn't trigger a slot.
-     *
-     *      update_midi_buttons();
      */
 
     update_midi_buttons();

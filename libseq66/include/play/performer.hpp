@@ -34,7 +34,7 @@
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
  *  it!
  *
- * From rcsettigs.hpp:
+ * From rcsettings.hpp:
  *
  *      ctrl/keycontainer.hpp
  *      ctrl/midicontrolin.hpp
