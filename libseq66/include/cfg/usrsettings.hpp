@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-06-19
+ * \updates       2025-06-27
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -1346,12 +1346,17 @@ public:
 
     /**
      *  This special value of zoom sets the zoom according to a power of two
-     *  related to the PPQN value of the song.
+     *  related to the PPQN value of the song. Currently used only in the
+     *  seqedit frame.
+     *
+     *  The previous code is wrong:
+     *
+     *      return m_current_zoom == 0;
      */
 
     bool adapt_zoom () const
     {
-        return m_current_zoom == 0;
+        return midi_ppqn() > c_base_ppqn;
     }
 
     bool global_seq_feature () const
@@ -1553,6 +1558,8 @@ public:
     void file_ppqn (int p)
     {
         m_file_ppqn = p;
+        if (use_file_ppqn())
+            m_midi_ppqn = p;
     }
 
     int midi_beats_per_bar () const

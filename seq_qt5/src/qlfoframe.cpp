@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-15
+ * \updates       2025-06-27
  * \license       GNU GPLv2 or above
  *
  *  The LFO (low-frequency oscillator) provides a way to modulate the
@@ -55,10 +55,6 @@
 #else
 #include "forms/qlfoframe.ui.h"
 #endif
-
-/*
- * Don't document the namespace.
- */
 
 namespace seq66
 {
@@ -108,10 +104,19 @@ qlfoframe::qlfoframe
     m_phase         (s_phase_min),
     m_wave          (waveform::none),
     m_use_measure   (true),
+    m_multiply      (false),
+    m_modify_locked (false),
     m_is_modified   (false)
 {
     ui->setupUi(this);
+    connect(ui->m_button_lock, SIGNAL(clicked()), this, SLOT(lock()));
     connect(ui->m_button_reset, SIGNAL(clicked()), this, SLOT(reset()));
+
+    /*
+     * Necessary for the close button to actually work. Otherwise
+     * closeEvent() does not get called.
+     */
+
     connect(ui->m_button_close, SIGNAL(clicked()), this, SLOT(close()));
 
     /*
@@ -233,6 +238,13 @@ qlfoframe::qlfoframe
         ui->m_measures_check_box, SIGNAL(stateChanged(int)),
         this, SLOT(use_measure_clicked(int))
     );
+    ui->m_multiply_check_box->setChecked(m_multiply);
+    ui->m_multiply_check_box->setEnabled(false);        // NOT YET READY
+    connect
+    (
+        ui->m_multiply_check_box, SIGNAL(stateChanged(int)),
+        this, SLOT(multiply_clicked(int))
+    );
 
     std::string plabel = "Pattern #";
     std::string number = std::to_string(int(track().seq_number()));
@@ -321,7 +333,14 @@ void
 qlfoframe::wave_type_change (int waveid)
 {
     m_wave = waveform_cast(waveid);
-    reset();
+
+    /*
+     * For issue #139, do not reset the data when changing the waveform
+     * type. The user can always press the Reset button.
+     *
+     * reset();
+     */
+
     scale_lfo_change();
 }
 
@@ -333,15 +352,17 @@ qlfoframe::wave_type_change (int waveid)
 void
 qlfoframe::scale_lfo_change ()
 {
-    m_value = to_double(ui->m_value_slider->value());
-    m_range = to_double(ui->m_range_slider->value());
-    m_speed = to_double(ui->m_speed_slider->value());
-    m_phase = to_double(ui->m_phase_slider->value());
-    track().change_event_data_lfo
-    (
-        m_value, m_range, m_speed, m_phase, m_wave,
-        m_seqdata.status(), m_seqdata.cc(), m_use_measure
-    );
+    m_value = to_double(ui->m_value_slider->value());   /* DC offset        */
+    m_range = to_double(ui->m_range_slider->value());   /* modulation depth */
+    m_speed = to_double(ui->m_speed_slider->value());   /* periods to apply */
+    m_phase = to_double(ui->m_phase_slider->value());   /* phase            */
+
+    lfoparameters lp
+    {
+        m_value, m_range, m_speed, m_phase,
+        m_wave, m_use_measure, m_multiply
+    };
+    track().change_event_data_lfo(lp, m_seqdata.status(), m_seqdata.cc());
     m_seqdata.set_dirty();
 
     char tmp[16];
@@ -368,12 +389,37 @@ qlfoframe::use_measure_clicked (int state)
 }
 
 void
+qlfoframe::multiply_clicked (int state)
+{
+    bool usem = state == Qt::Checked;
+    if (usem != m_multiply)
+    {
+        m_multiply = usem;
+        scale_lfo_change();
+    }
+}
+
+void
+qlfoframe::lock ()
+{
+    m_backup_events = m_seq.events();                   /* lock in changes  */
+    track().set_dirty();                                /* for redrawing    */
+    m_is_modified = true;
+    m_modify_locked = true;
+}
+
+/**
+ *  Restore the original events of the pattern.
+ */
+
+void
 qlfoframe::reset ()
 {
     track().events() = m_backup_events;
     track().set_dirty();                                /* for redrawing    */
     m_seqdata.set_dirty();                              /* for redrawing    */
-    m_is_modified = false;
+    if (! m_modify_locked)
+        m_is_modified = false;
 }
 
 void

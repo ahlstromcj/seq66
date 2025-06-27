@@ -187,13 +187,13 @@ public:
 
     int xoffset (midipulse tick) const
     {
-        return tix_to_pix(tick);            //  + m_padding_x;
+        return tix_to_pix(tick);
     }
 
     bool change_ppqn (int ppq);
     int zoom_power_of_2 (int ppq);
 
-public:     // new functions ca 2024-12-16
+public:
 
     int pulses_per_pixel () const
     {

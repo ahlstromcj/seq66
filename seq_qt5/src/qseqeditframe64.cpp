@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-06-14
+ * \updates       2025-06-26
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -4172,9 +4172,24 @@ qseqeditframe64::show_lfo_frame ()
 {
     if (is_nullptr(m_lfo_wnd))
     {
-        m_lfo_wnd = new (std::nothrow) qlfoframe(perf(), track(), *m_seqdata);
-        if (not_nullptr(m_lfo_wnd))
-            m_lfo_wnd->show();
+        bool ok = track().playable_count() > 0;
+        if (ok)
+        {
+            m_lfo_wnd = new (std::nothrow)
+                qlfoframe(perf(), track(), *m_seqdata);
+
+            if (not_nullptr(m_lfo_wnd))
+                m_lfo_wnd->show();
+        }
+        else
+        {
+            qt_info_box
+            (
+                this,
+                "No playable events to modulate. "
+                "Add notes or controllers first."
+            );
+        }
     }
     else
         m_lfo_wnd->show();

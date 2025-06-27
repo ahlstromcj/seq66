@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2022-05-15
+ * \updates       2025-06-27
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -141,6 +141,8 @@ private slots:
     void speed_text_change ();
     void phase_text_change ();
     void use_measure_clicked (int state);
+    void multiply_clicked (int state);
+    void lock ();
     void reset ();
 
 private:
@@ -237,6 +239,20 @@ private:
      */
 
     bool m_use_measure;
+
+    /**
+     *  If true, rather than generating the waveform in MIDI events, use
+     *  the waveform to scale the existing events.
+     */
+
+    bool m_multiply;
+
+    /**
+     *  Indicates that the events of the pattern are irrevocably modified.
+     *  We could use an undo stack. Worth it?
+     */
+
+    bool m_modify_locked;
 
     /**
      *  Indicates the LFO modified status.

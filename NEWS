@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.21
 Chris Ahlstrom
-2015-07-10 to 2025-06-26
+2015-07-10 to 2025-06-27
 
 # Change Log
 
-## [0.99.21] - 2025-06-26
+## [0.99.21] - 2025-06-27
 
 ### Added
 
@@ -60,6 +60,8 @@ Chris Ahlstrom
     -   Fixed seqroll 'r' command (velocity randomization) to set
         the modify flag only if (selected) events are actually
         randomized.
+    -   Fixed the handling of the MIDI file PPQN to set initial
+        zoom correctly.
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.

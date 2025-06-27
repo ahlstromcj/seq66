@@ -196,6 +196,55 @@ struct fixparameters
 };
 
 /**
+ *  A structure for encapsulating the input parameters of sequence ::
+ *  change_event_data_lfo().
+ *
+ * \var lfo_dc_offset
+ *      Provides the "DC" value to be added to the waveform. Ranges from
+ *      0 to 127.
+ *
+ * \var lfo_range
+ *      Provides the range of the function, that is, its lowest value and
+ *      its highest value. Ranges from 0 to 127.
+ *
+ * \var lfo_periods
+ *      Also known as the "range". It provides the number of periods of
+ *      the waveform to apply over the given duration (which is one
+ *      measure or the whole pattern length). Ranges from 0 to 16.
+ *
+ * \var lfo_phase
+ *      The starting phase of the waveform. Vaires from 0.0 to 1.0,
+ *      which corresponds to a range of 0 to 360 degrees.
+ *
+ * \var lfo_waveform
+ *      The waveform to be applied. See "enum class waveform" in
+ *      the calculations.hpp module.
+ *
+ * \var lfo_use_measure
+ *      If true (the normal case) the duration of a period of the
+ *      waveform is one measure. If false, then the duration is
+ *      the whole pattern length.
+ *
+ * \var lfo_multiply
+ *      Normally, the y(t) value of each LFO calculation is given by
+ *      the waveform function. If set to true, then the y(t) value
+ *      is scaled from 0 to 127 to 0.0 to 1.0, and is then multiplied
+ *      by the actual data value. This allows mutiple applications of
+ *      waveform transformations.
+ */
+
+struct lfoparameters
+{
+    double lfo_dc_offset;
+    double lfo_range;
+    double lfo_periods;
+    double lfo_phase;
+    waveform lfo_waveform;
+    bool lfo_use_measure;
+    bool lfo_multiply;
+};
+
+/**
  *  The sequence class is firstly a receptable for a single track of MIDI
  *  data read from a MIDI file or edited into a pattern.  More members than
  *  you can shake a stick at.
@@ -1947,8 +1996,7 @@ public:
     );
     void change_event_data_lfo
     (
-        double dcoffset, double range, double speed, double phase,
-        waveform w, midibyte status, midibyte cc, bool usemeasure = false
+        const lfoparameters & lp, midibyte status, midibyte cc
     );
     bool fix_pattern (fixparameters & param);   /* for qpatternfix dialog   */
     void increment_selected (midibyte status, midibyte /*control*/);

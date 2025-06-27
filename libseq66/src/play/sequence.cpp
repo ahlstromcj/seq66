@@ -3292,6 +3292,9 @@ sequence::change_event_data_relative
  *  it has the desired status and not CC, or the desired status and the correct
  *  control-change number, then we will modify (set) the event.
  *
+ *  These parameters are now encapsulated in struct lfoparameters, plus
+ *  a new parameters to flag scaling existing events by the waveform values.
+ *
  * \param dcoffset
  *      Provides the base amplitude for the event data value.  Ranges from 0
  *      to 127 in increments of 0.1.  This amount is added to the result of
@@ -3328,11 +3331,17 @@ sequence::change_event_data_relative
 void
 sequence::change_event_data_lfo
 (
-    double dcoffset, double range, double speed, double phase,
-    waveform w, midibyte status, midibyte cc, bool usemeasure
+    const lfoparameters & lp, midibyte status, midibyte cc
 )
 {
     automutex locker(m_mutex);
+    waveform w = lp.lfo_waveform;
+    double dcoffset = lp.lfo_dc_offset;
+    double range = lp.lfo_range;
+    double speed = lp.lfo_periods;
+    double phase = lp.lfo_phase;
+    bool usemeasure = lp.lfo_use_measure;
+    bool multiply = lp.lfo_multiply;
     bool modified = false;
     double dlength = double(get_length());
     bool noselection = ! any_selected_events(status, cc);
@@ -3360,6 +3369,10 @@ sequence::change_event_data_lfo
             {
                 midibpm tempo = note_value_to_tempo(midibyte(newdata));
                 (void) er.set_tempo(tempo);
+            }
+            else if (er.is_pitchbend())
+            {
+                // TODO TODO
             }
             else
             {

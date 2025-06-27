@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.21
 Chris Ahlstrom
-2019-04-13 to 2025-06-25
+2019-04-13 to 2025-06-27
 
 Hot:
 
@@ -29,6 +29,10 @@ Cannot duplicate:
 
 Backlog:
 
+    -   After loading a tune with 3/8, the seqroll measures are drawn
+        expanded.
+    -   When moving notes, the note outline is way too far to the left,
+        and not long enough.
     -   In midicvt (separate project), the c_mutegroups SeqSpec is not
         shown (24 24 00 09).
     -   Consider adding the 'ctrl' file macros to an "Insert macro"
@@ -511,6 +515,11 @@ ISSUES:
     One small issue (not a dealbreaker though) is that when you change the
     wavetype,  it erases all events (used by the previous wavetype).  It would
     be great if it would just keep events, and rewrite the values.
+
+    (Also consider a way to generate data for the currently active
+    MIDI data type.)
+
+    (Add button to make the current data the reset-data.)
 
 #140 Minimum height event-handle
 
