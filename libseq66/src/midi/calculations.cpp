@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2025-06-21
+ * \updates       2025-06-28
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1983,6 +1983,37 @@ pitch_value_semitones (midibyte d0, midibyte d1, int semitone_range)
     double factor = double(semitone_range) / 8192.0;
     int value = pitch_value(d0, d1);    /* from -8192 to +8192, approx.     */
     return factor * double(value);
+}
+
+/**
+ *  Given a base pitch value (i.e. independent of the current semitone range),
+ *  provides the two bytes needed to encode the pitch-wheel event in a MIDI
+ *  file.
+ *
+ * \param pitchvalue
+ *      Provides the pitch value, which must range from 0 to 16384.
+ *      Otherwise, 0 is assumed.
+ *
+ * \param d0
+ *      The LSB of the pitch-bend value.
+ *
+ * \param d1
+ *      The MSB of the pitch-bend value.
+ */
+
+void
+pitch_bytes (int pitchvalue, midibyte & d0, midibyte & d1)
+{
+    if (pitchvalue >= 0 && pitchvalue < 16384)
+    {
+        int msbyte = pitchvalue >> 7;
+        d0 = midibyte(msbyte);
+        d1 = midibyte(pitchvalue - msbyte);
+    }
+    else
+    {
+        d0 = d1 = 0;
+    }
 }
 
 }       // namespace seq66

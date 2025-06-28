@@ -239,7 +239,6 @@ qlfoframe::qlfoframe
         this, SLOT(use_measure_clicked(int))
     );
     ui->m_multiply_check_box->setChecked(m_multiply);
-    ui->m_multiply_check_box->setEnabled(false);        // NOT YET READY
     connect
     (
         ui->m_multiply_check_box, SIGNAL(stateChanged(int)),

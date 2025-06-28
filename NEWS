@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.21
 Chris Ahlstrom
-2015-07-10 to 2025-06-27
+2015-07-10 to 2025-06-28
 
 # Change Log
 
-## [0.99.21] - 2025-06-27
+## [0.99.21] - 2025-06-28
 
 ### Added
 
@@ -14,6 +14,7 @@ Chris Ahlstrom
         -   Added parameters for randomizing note pitches according
             to the current musical scale for the pattern.
         -   A pitch-randomization function was added to the eventlist.
+            The notes adhere to the currently selected musical scale.
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.
@@ -62,6 +63,7 @@ Chris Ahlstrom
         randomized.
     -   Fixed the handling of the MIDI file PPQN to set initial
         zoom correctly.
+    -   Fixes made to pitchbend calculations and display.
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.

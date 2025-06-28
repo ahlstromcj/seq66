@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-06-26
+ * \updates       2025-06-28
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3335,7 +3335,7 @@ sequence::change_event_data_lfo
 )
 {
     automutex locker(m_mutex);
-    waveform w = lp.lfo_waveform;
+    waveform wavetype = lp.lfo_waveform;
     double dcoffset = lp.lfo_dc_offset;
     double range = lp.lfo_range;
     double speed = lp.lfo_periods;
@@ -3362,28 +3362,79 @@ sequence::change_event_data_lfo
         {
             double dtick = double(er.timestamp());
             double angle = speed * dtick / dlength + phase;
-            double value = wave_func(angle, w);
-            int newdata = int(range * value + dcoffset);
-            newdata = int(abs_midibyte_value(newdata)); /* keep at 0 to 127 */
-            if (er.is_tempo())
+            double wavevalue = wave_func(angle, wavetype);  /* -1.0 to 1.0  */
+#if defined SEQ66_PLATFORM_DEBUG
+            printf("wave_func(%6g) = %6g; ", angle, wavevalue);
+#endif
+            if (er.is_pitchbend())
             {
-                midibpm tempo = note_value_to_tempo(midibyte(newdata));
-                (void) er.set_tempo(tempo);
-            }
-            else if (er.is_pitchbend())
-            {
-                // TODO TODO
+                /*
+                 * The wave values are based on a range of 128, while
+                 * the pitch wheel is based on a range of 128 << 7.
+                 */
+
+                int pitch = 0;                      /* -8192 to +8192       */
+                midibyte d0, d1;
+                er.get_data(d0, d1);
+                range *= 128;
+                dcoffset -= 64.0;                   /* from 0-127 to -64-63 */
+                dcoffset *= 128;                    /* scale to 16384 range */
+
+#if defined SEQ66_PLATFORM_DEBUG
+                pitch = pitch_value_absolute(d0, d1);
+                printf("pitch value(%d, %d) = %d\n", d0, d1, pitch);
+#endif
+                int newpitch = int(range * wavevalue + dcoffset);
+                if (multiply)
+                {
+                    pitch = pitch_value_absolute(d0, d1);
+                    double fraction = double(newpitch) / 8192.0;
+                    pitch = int(double(pitch) * fraction);
+                    pitch_bytes(pitch, d0, d1);
+                }
+                else
+                    pitch_bytes(pitch, d0, d1);
+
+#if defined SEQ66_PLATFORM_DEBUG
+                printf("new pitch value(%d, %d) = %d\n", d0, d1, pitch);
+#endif
             }
             else
             {
-                midibyte d0, d1;
-                er.get_data(d0, d1);
-                if (event::is_one_byte_msg(status))
-                    d0 = midibyte(newdata);
-                else if (event::is_two_byte_msg(status))
-                    d1 = midibyte(newdata);
+                int newdata = int(range * wavevalue + dcoffset);
+                newdata = int(abs_midibyte_value(newdata));     /* 0 - 127  */
+                if (multiply)
+                {
+                    double factor = double(newdata) / 127.0;    /* 0 - 1.0  */
+                    double datum = event::is_one_byte_msg(status) ?
+                        double(er.d0()) : double(er.d1());
 
-                er.set_data(d0, d1);
+                    newdata = int(factor * datum);              /* round??? */
+                }
+                if (er.is_tempo())
+                {
+                    midibpm tempo = note_value_to_tempo(midibyte(newdata));
+                    (void) er.set_tempo(tempo);
+                }
+                else
+                {
+                    midibyte d0, d1;
+                    er.get_data(d0, d1);
+
+#if defined SEQ66_PLATFORM_DEBUG
+                printf("old data = %d, %d; ", d0, d1);
+#endif
+                    if (event::is_one_byte_msg(status))
+                        d0 = midibyte(newdata);
+                    else if (event::is_two_byte_msg(status))
+                        d1 = midibyte(newdata);
+
+                    er.set_data(d0, d1);
+
+#if defined SEQ66_PLATFORM_DEBUG
+                printf("new data = %d, %d\n", d0, d1);
+#endif
+                }
             }
             modified = true;
         }

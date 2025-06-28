@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2025-06-21
+ * \updates       2025-06-28
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -708,33 +708,63 @@ INTTYPE snapped (snapper snaptype, int S, INTTYPE p)
 }
 
 /**
- *  The absolute pitchbend range is 0 to 16383.
+ *  The absolute pitchbend range is 0 to 16383, which is 14 bits.
+ *
+ *  There are 2 ways to make the calculation:
+ *
+ *      int(d1) << 7 + int(d0)   AND    int(d1) * 128 + int(d0)
+ *
+ * \param d0
+ *      Provides the LSB (least significant byte) of the pitchbend value.
+ *
+ * \param d1
+ *      Provides the LSB (least significant byte) of the pitchbend value.
+ *
+ * \return
+ *      Returns the pitch value, ranging from 0 to 16383.
+ *      If either data value exceeds 127, 8192 is returned
  */
 
 inline int
 pitch_value_absolute (midibyte d0, midibyte d1)
 {
-    return int(d1) * 128 + int(d0);
+    int result = 8192;
+    if ((d0 < 128) && (d1 < 128))
+        result = (int(d1) << 7) + int(d0);
+
+    return result;
 }
 
 /**
- *  Move the range to -8192 to +8191.
+ *  Like pitch_value_absolute, but moves the range to -8192 to +8191.
+ *  This little table summarizes the results:
+ *
+\verbatim
+        d0      d1      Value   Absolute value
+    -   127     127     +8191     16383
+    -     0      64       0        8192
+    -     0       0     -8192         0
+\endverbatim
  */
 
 inline int
 pitch_value (midibyte d0, midibyte d1)
 {
-    return pitch_value_absolute(d0, d1) - 8192;
+    int pabs = pitch_value_absolute(d0, d1);
+    return pabs - 8192;
 }
 
 /**
- *  Scale to range 0 to 128 (approximately).
+ *  Scale to range 0 to 128 (approximately), where 0 is down 2 semitones
+ *  and 127 is up 2 semitones.
  */
 
 inline int
 pitch_value_scaled (midibyte d0, midibyte d1)
 {
-    return pitch_value_absolute(d0, d1) / 128;
+    int pv = pitch_value(d0, d1);
+    pv /= 128;
+    return pv + 64;
 }
 
 /*
@@ -750,6 +780,7 @@ extern double pitch_value_semitones
 (
     midibyte d0, midibyte d1, int semitone_range = 2
 );
+extern void pitch_bytes (int pitchvalue, midibyte & d0, midibyte & d1);
 extern double wave_func (double angle, waveform wavetype);
 extern double unit_truncation (double angle);
 extern double exp_normalize (double angle, bool negate = false);

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-02-17
+ * \updates       2025-06-28
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -228,13 +228,25 @@ qseqdata::paintEvent (QPaintEvent * qpep)
      */
 
     int topline = byte_height(m_dataarea_y, 96);
-    int midline = byte_height(m_dataarea_y, 64);        // 128) / 2;
+    int midline = byte_height(m_dataarea_y, 64);        /* 128 / 2 */
     int botline = byte_height(m_dataarea_y, 32);
     pen.setColor(fore_color());
     pen.setStyle(Qt::DotLine);
     painter.setPen(pen);
     painter.drawLine(0, topline, width() - 1, topline);
+    if (m_data_type == type::pitchbend)
+    {
+        pen.setWidth(2);
+        painter.setPen(pen);
+    }
+
     painter.drawLine(0, midline, width() - 1, midline);
+    if (m_data_type == type::pitchbend)
+    {
+        pen.setWidth(1);
+        painter.setPen(pen);
+    }
+
     painter.drawLine(0, botline, width() - 1, botline);
 
     /*
