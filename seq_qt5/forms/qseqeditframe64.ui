@@ -101,7 +101,7 @@
             <x>0</x>
             <y>0</y>
             <width>38</width>
-            <height>162</height>
+            <height>143</height>
            </rect>
           </property>
          </widget>
@@ -176,8 +176,8 @@ when hovering.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>673</width>
-          <height>174</height>
+          <width>671</width>
+          <height>150</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -195,6 +195,9 @@ when hovering.</string>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
       <number>6</number>
+     </property>
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMinimumSize</enum>
      </property>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -308,6 +311,25 @@ to note events. [ c for selected notes ]</string>
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="pushButton">
+         <property name="minimumSize">
+          <size>
+           <width>48</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>48</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="text">
+          <string> </string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -327,7 +349,7 @@ to note events. [ c for selected notes ]</string>
        <property name="maximumSize">
         <size>
          <width>16777215</width>
-         <height>128</height>
+         <height>156</height>
         </size>
        </property>
        <property name="frameShape">
@@ -344,8 +366,8 @@ to note events. [ c for selected notes ]</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>668</width>
-          <height>126</height>
+          <width>664</width>
+          <height>148</height>
          </rect>
         </property>
        </widget>
@@ -1391,7 +1413,7 @@ or a velocity to force upon input.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>666</width>
+          <width>662</width>
           <height>28</height>
          </rect>
         </property>
@@ -1950,8 +1972,8 @@ in the piano roll. [ p x ]
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>664</width>
-          <height>22</height>
+          <width>666</width>
+          <height>18</height>
          </rect>
         </property>
        </widget>

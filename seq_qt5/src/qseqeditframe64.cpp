@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-06-26
+ * \updates       2025-06-29
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -176,12 +176,7 @@
  *  changing the MIDI buss.
  *
  *  So far, this seems to work; we will make it permanent at some point.
- */
-
-#define  USE_LAZY_REPOPULATE_USR_COMBOS
-
-/*
- *  Do not document the name space.
+ *  Now permanent: USE_LAZY_REPOPULATE_USR_COMBOS
  */
 
 namespace seq66
@@ -196,8 +191,8 @@ static const bool s_use_spacer_button_2 = true;
 /*
  *  We have an issue that using the new (and larger) qseqeditframe64 class in
  *  the Edit tab causes the whole main window to increase in size, which
- *  stretches the Live frame's pattern slots too much vertically.  So let's
- *  try to shrink the seq-edit's piano roll to compensate.  Nope. However, we
+ *  stretches the Live frame's pattern slots too much vertically. So let's
+ *  try to shrink the seq-edit's piano roll to compensate. Nope. However, we
  *  now get around that issue by halving the height of the qseqdata pane and
  *  removing the "Map" button.
  */
@@ -1420,8 +1415,8 @@ qseqeditframe64::closeEvent (QCloseEvent * event)
  *      repopulate_event_menu(m_edit_bus, m_edit_channel);
  *      repopulate_mini_event_menu(m_edit_bus, m_edit_channel);
  *
- *  So, if USE_LAZY_REPOPULATE_USR_COMBOS is defined, we'd prefer
- *  to note have that over during sequence changes.
+ *  Since USE_LAZY_REPOPULATE_USR_COMBOS is now permanent, we'd prefer
+ *  to not have that over during sequence changes.
  *
  *  These are needed in case the change involved adding new kinds of events
  *  to the pattern. Also, set_track_change() will call sequence::modify(),
@@ -2633,9 +2628,6 @@ qseqeditframe64::set_midi_channel (int ch, qbase::status qs)
             }
             else
             {
-#if ! defined USE_LAZY_REPOPULATE_USR_COMBOS
-                repopulate_usr_combos(m_edit_bus, m_edit_channel);
-#endif
                 if (user_change)
                 {
 #if defined USE_THIS_REDUNDANT_CODE
@@ -3708,10 +3700,8 @@ qseqeditframe64::set_editor_mode (sequence::editmode mode)
 void
 qseqeditframe64::events ()
 {
-#if defined USE_LAZY_REPOPULATE_USR_COMBOS
     repopulate_event_menu(m_edit_bus, m_edit_channel);
     repopulate_mini_event_menu(m_edit_bus, m_edit_channel);
-#endif
     if (not_nullptr(m_events_popup))
     {
         int w = ui->m_button_event->width() - 2;
@@ -3962,9 +3952,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
 void
 qseqeditframe64::data ()
 {
-#if defined USE_LAZY_REPOPULATE_USR_COMBOS
     repopulate_mini_event_menu(m_edit_bus, m_edit_channel);
-#endif
     if (not_nullptr(m_minidata_popup))
     {
         QPoint bwh(ui->m_button_data->width()-2, ui->m_button_data->height()-2);
@@ -4239,10 +4227,6 @@ qseqeditframe64::update_midi_buttons ()
     ui->m_toggle_record->setToolTip(record_active ? s_rec_on : s_rec_off);
     qt_set_icon(record_active ? rec_on_xpm : rec_xpm, ui->m_toggle_record);
     ui->m_toggle_record->blockSignals(false);
-#if ! defined USE_LAZY_REPOPULATE_USR_COMBOS
-    if (! record_active)
-        repopulate_usr_combos(m_edit_bus, m_edit_channel);
-#endif
 
     /*
      * Need to be able to affect the track() alteration in this window!

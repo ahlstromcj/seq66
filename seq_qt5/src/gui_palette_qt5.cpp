@@ -78,10 +78,6 @@
 #include "util/basic_macros.hpp"        /* seq66::file_error() function     */
 #include "util/strfunctions.hpp"        /* seq66 string functions           */
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -44,10 +44,6 @@
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 #include "util/palette.hpp"             /* seq66::palette map class         */
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

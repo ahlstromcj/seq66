@@ -57,10 +57,6 @@
 #include "midi_ports.hpp"                /* seq66::midi_ports classes       */
 #endif
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

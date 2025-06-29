@@ -41,10 +41,6 @@
 #include "rterror.hpp"                  /* seq66::rterror                   */
 #include "rtmidi_types.hpp"             /* seq66::rtmidi_in_data            */
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class event;

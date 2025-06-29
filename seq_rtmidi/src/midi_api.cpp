@@ -38,10 +38,6 @@
 #include "midibus_rm.hpp"
 #include "util/basic_macros.hpp"        /* errprint() etc.                  */
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

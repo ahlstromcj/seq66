@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.21
 Chris Ahlstrom
-2019-04-13 to 2025-06-28
+2019-04-13 to 2025-06-29
 
 Hot:
 
@@ -527,12 +527,8 @@ ISSUES:
 
     Many times I cannot change an event with value 0, because its too low for
     the mouse to click/drag (see picture)
-
-    IDEA: Scrollbar in the data pane?
-    IDEA: Temporally pop up the circle, and adjust while deducting the
-          pixel offset.
-    IDEA: Open a small value dialog?
-
+    STATUS: currently increasing the height of the data pane slightly. Qt
+            makes this a pain.
 
 = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 

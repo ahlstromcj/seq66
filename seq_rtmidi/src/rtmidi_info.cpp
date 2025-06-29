@@ -46,10 +46,6 @@
 #include "midi_jack_info.hpp"
 #endif
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

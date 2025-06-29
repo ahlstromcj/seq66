@@ -39,10 +39,6 @@
 #include "midi_info.hpp"                /* seq66::midi_port_info etc.       */
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class mastermidibus;

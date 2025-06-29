@@ -38,10 +38,6 @@
 #include "midi/mastermidibase.hpp"      /* seq66::mastermidibase ABC        */
 #include "portmidi.h"                   /* PortMIDI API header file         */
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

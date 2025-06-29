@@ -47,10 +47,6 @@
 #include "midi_jack_data.hpp"           /* seq66::midi_jack_data            */
 #include "midi_jack_info.hpp"           /* seq66::midi_jack_info            */
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class midibus;

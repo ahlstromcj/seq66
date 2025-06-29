@@ -34,10 +34,6 @@
 
 #include <QtWidgets/QWidget>
 
-/*
- *  Do not document the namespace, it breaks Doxygen.
- */
-
 namespace seq66
 {
     class performer;

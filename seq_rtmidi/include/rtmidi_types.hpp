@@ -58,10 +58,6 @@
 #define SEQ66_SHOW_TIMING
 #endif
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

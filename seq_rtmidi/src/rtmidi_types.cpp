@@ -36,10 +36,6 @@
 #include "rtmidi_types.hpp"             /* seq66::rtmidi, etc.              */
 #include "util/basic_macros.hpp"        /* errprintfunc() macro, etc.       */
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

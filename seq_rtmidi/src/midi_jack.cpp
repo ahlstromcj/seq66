@@ -210,10 +210,6 @@ static const size_t c_jack_ringbuffer_size = 2048;          /* tentative    */
 static const size_t c_jack_ringbuffer_size = 32768;         /* was 16384    */
 #endif
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

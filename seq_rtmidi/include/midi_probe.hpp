@@ -36,10 +36,6 @@
 
 #include "rtmidi_info.hpp"
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

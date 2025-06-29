@@ -45,18 +45,10 @@
 
 class QCloseEvent;
 
-/*
- * Do not document the namespace.
- */
-
 namespace Ui
 {
     class qperfeditex;
 }
-
-/*
- * Do not document the namespace.
- */
 
 namespace seq66
 {

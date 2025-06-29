@@ -38,10 +38,6 @@
 #include "qseditoptions.hpp"            /* seq66::qseditoptions class       */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
-/*
- *  Do not document the namespace, it breaks Doxygen.
- */
-
 namespace seq66
 {
 

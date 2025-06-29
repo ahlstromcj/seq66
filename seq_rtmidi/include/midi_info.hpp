@@ -69,10 +69,6 @@
  * #undef  SEQ66_MIDI_PORT_REFRESH
  */
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

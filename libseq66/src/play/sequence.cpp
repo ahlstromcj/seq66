@@ -3363,7 +3363,7 @@ sequence::change_event_data_lfo
             double dtick = double(er.timestamp());
             double angle = speed * dtick / dlength + phase;
             double wavevalue = wave_func(angle, wavetype);  /* -1.0 to 1.0  */
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
             printf("wave_func(%6g) = %6g; ", angle, wavevalue);
 #endif
             if (er.is_pitchbend())
@@ -3380,7 +3380,7 @@ sequence::change_event_data_lfo
                 dcoffset -= 64.0;                   /* from 0-127 to -64-63 */
                 dcoffset *= 128;                    /* scale to 16384 range */
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                 pitch = pitch_value_absolute(d0, d1);
                 printf("pitch value(%d, %d) = %d\n", d0, d1, pitch);
 #endif
@@ -3395,7 +3395,7 @@ sequence::change_event_data_lfo
                 else
                     pitch_bytes(pitch, d0, d1);
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                 printf("new pitch value(%d, %d) = %d\n", d0, d1, pitch);
 #endif
             }
@@ -3405,7 +3405,7 @@ sequence::change_event_data_lfo
                 newdata = int(abs_midibyte_value(newdata));     /* 0 - 127  */
                 if (multiply)
                 {
-                    double factor = double(newdata) / 127.0;    /* 0 - 1.0  */
+                    double factor = double(newdata) / 128.0;    /* 0 - 1.0  */
                     double datum = event::is_one_byte_msg(status) ?
                         double(er.d0()) : double(er.d1());
 
@@ -3421,7 +3421,7 @@ sequence::change_event_data_lfo
                     midibyte d0, d1;
                     er.get_data(d0, d1);
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                 printf("old data = %d, %d; ", d0, d1);
 #endif
                     if (event::is_one_byte_msg(status))
@@ -3431,7 +3431,7 @@ sequence::change_event_data_lfo
 
                     er.set_data(d0, d1);
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                 printf("new data = %d, %d\n", d0, d1);
 #endif
                 }

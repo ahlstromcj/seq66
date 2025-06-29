@@ -49,10 +49,6 @@ class QLabel;
 class QRadioButton;
 class QSpacerItem;
 
-/*
- *  Do not document the namespace, it breaks Doxygen.
- */
-
 namespace seq66
 {
 

@@ -42,10 +42,6 @@
 #include "rtmidi.hpp"                   /* rtmidi_in and rt_midi_out        */
 #include "util/basic_macros.hpp"
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

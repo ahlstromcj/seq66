@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-28
+ * \updates       2025-06-29
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -76,14 +76,27 @@ namespace seq66
  *  pattern editor into a tab.
  */
 
-static const int sc_dataarea_y      = 128;
-static const int sc_dataarea_y_sub  = 32;       // 25
+static const int sc_dataarea_y              = 144;  // 128;
+static const int sc_dataarea_y_effective    = 128;
+static const int sc_dataarea_y_offset       =  16;
+static const int sc_dataarea_y_sub          =  48;  // 32;
+
+/**
+ *  For issue #140, made the data area 16 bytes or so higher. This function
+ *  add a y offset.
+ */
+
+static int
+data_height (int height, midibyte value)
+{
+    return byte_height(height, value) - sc_dataarea_y_offset;
+}
 
 /**
  *  Base font size in points, and the y increment to use to avoid text overwrite.
  */
 
-static const int sc_font_size       = 10;       // 8;
+static const int sc_font_size       = 10;
 static const int sc_text_spacing    = sc_font_size + 4;
 static const int sc_1               = sc_font_size + 1;
 static const int sc_2               = sc_1 * 2;
@@ -202,6 +215,16 @@ qseqdata::wheelEvent (QWheelEvent * qwep)
 }
 
 /**
+ *  Moves the bottom coordinate of the pane up a little.
+ */
+
+int
+qseqdata::bottom ()
+{
+    return height() - sc_dataarea_y_offset;
+}
+
+/**
  *  We create an iterator and use sequence::get_next_event_match().
  */
 
@@ -216,7 +239,12 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.setFont(m_font);
-    painter.drawRect(0, 0, width() - 1, height() - 1);  /* data-box border  */
+
+    /*
+     * Do we need this?
+     */
+
+    // painter.drawRect(0, 0, width() - 1, height() - 1);  /* data-box border  */
 
     char digits[4];
     midipulse start_tick = z().pix_to_tix(r.x());
@@ -224,30 +252,32 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     int text_y = sc_text_spacing;
 
     /*
-     * Draw a midline.
+     * Draw a midline and 4 quarter lines.
      */
 
-    int topline = byte_height(m_dataarea_y, 96);
-    int midline = byte_height(m_dataarea_y, 64);        /* 128 / 2 */
-    int botline = byte_height(m_dataarea_y, 32);
+    int maxline = data_height(m_dataarea_y, 128);
+    int topline = data_height(m_dataarea_y, 96);
+    int midline = data_height(m_dataarea_y, 64);        /* 128 / 2 */
+    int botline = data_height(m_dataarea_y, 32);
+    int minline = data_height(m_dataarea_y, 0);
     pen.setColor(fore_color());
     pen.setStyle(Qt::DotLine);
     painter.setPen(pen);
+    painter.drawLine(0, maxline, width() - 1, maxline);
     painter.drawLine(0, topline, width() - 1, topline);
     if (m_data_type == type::pitchbend)
     {
         pen.setWidth(2);
         painter.setPen(pen);
     }
-
     painter.drawLine(0, midline, width() - 1, midline);
     if (m_data_type == type::pitchbend)
     {
         pen.setWidth(1);
         painter.setPen(pen);
     }
-
     painter.drawLine(0, botline, width() - 1, botline);
+    painter.drawLine(0, minline, width() - 1, minline);
 
     /*
      * Now draw the event data.
@@ -274,10 +304,9 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 
             int event_height = event::is_one_byte_msg(m_status) ? d0 : d1 ;
             if (cev->is_pitchbend())
-            {
                 event_height = pitch_value_scaled(d0, d1);
-            }
-            event_height = height() - byte_height(m_dataarea_y, event_height);
+
+            event_height = height() - data_height(m_dataarea_y, event_height);
 
             bool its_close = false;
             if (! selected && m_mouse_tick >= 0)
@@ -295,7 +324,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 pen.setColor(selected ? sel_paint() : fore_color());
                 painter.setPen(pen);
                 event_x -= 3;
-                painter.drawLine(event_x, event_height, event_x, height());
+                painter.drawLine(event_x, event_height, event_x, bottom());
                 snprintf(digits, sizeof digits, "%3d", d1);
                 if (selected || its_close)
                 {
@@ -318,7 +347,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             }
             else if (is_tempo() && cev->is_tempo())
             {
-                d1 = height() - tempo_to_note_value(cev->tempo()) -
+                d1 = bottom() - tempo_to_note_value(cev->tempo()) -
                     (s_circle_d / 2);
 
                 if (d1 < 4)
@@ -369,9 +398,9 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 int patch = int(cev->d0());
 #if defined SEQ66_SHOW_GM_PROGRAM_NAME
                 std::string p = program_name(patch);
-                d1 = height() - midi_data_adjust(patch, s_circle_d + 12);
+                d1 = bottom() - midi_data_adjust(patch, s_circle_d + 12);
 #else
-                d1 = height() - patch - (s_circle_d / 2);
+                d1 = bottom() - patch - (s_circle_d / 2);
                 if (d1 < 4)
                     d1 = 4;                     /* avoid overlap with top   */
 

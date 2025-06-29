@@ -57,10 +57,6 @@
 #include "midi_alsa.hpp"
 #endif
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

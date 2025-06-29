@@ -38,10 +38,6 @@
 #include "midi/mastermidibase.hpp"      /* seq66::mastermidibase ABC        */
 #include "rtmidi_info.hpp"              /* seq66::rtmidi_info, new class    */
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

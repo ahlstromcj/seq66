@@ -53,10 +53,6 @@
 
 #undef  SEQ66_JACK_PORT_CONNECT_CALLBACK
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class mastermidibus;

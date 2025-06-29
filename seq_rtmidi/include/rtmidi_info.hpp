@@ -38,10 +38,6 @@
 #include "midi_api.hpp"                     /* seq66::midi[_in][_out]_api   */
 #include "midi_info.hpp"
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
     class mastermidibus;

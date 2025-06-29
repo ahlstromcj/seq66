@@ -81,10 +81,6 @@
 #include "midi_alsa_info.hpp"           /* seq66::midi_alsa_info            */
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 

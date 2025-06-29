@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-22
+ * \updates       2025-06-29
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -38,6 +38,10 @@
  *  Another feature. Drawing a circular "grab handle" when an event is
  *  crossed by the mouse or is selected. This is progress on the way to
  *  improving issue #115.
+ *
+ *  For issue #140, the height of the data pane is increased beyond 128
+ *  pixels, to allow better access to the grab handle for extreme data
+ *  values.
  */
 
 #include <QWidget>
@@ -102,6 +106,7 @@ public:
     virtual ~qseqdata ();
 
     void set_data_type (midibyte a_status, midibyte a_control);
+    int bottom ();
 
     bool is_tempo () const
     {
@@ -180,6 +185,7 @@ private:
 
     /**
      *  Provides a way to shrink the height of the data area. Defaults to 128.
+     *  No, now for issue #140, more like 144 or so.
      */
 
     int m_dataarea_y;

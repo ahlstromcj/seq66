@@ -54,10 +54,6 @@
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
 #include "util/strfunctions.hpp"        /* seq66::contains()                */
 
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
 namespace seq66
 {
 
