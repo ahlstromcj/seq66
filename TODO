@@ -7,6 +7,8 @@ Hot:
     -   Issues #137 to #140.
     -   When testing LFO, and exiting via the main window, the following
         dialog remains "Session: Saved: <name of MIDI file>".
+    -   Note drawing and event drawing screwed up in time when scrolled
+        completely to the right.
 
 NSM:
 
@@ -448,21 +450,27 @@ ISSUES:
     various things to make the loops play with different signatures.
 
 	Cause
-
-	It turns out that signatures cannot be changed when playing.
-	However, the GUI allows changing the dropdowns (but the controls do not
-	update the data).
+    It turns out that signatures cannot be changed when playing.  However, the
+    GUI allows changing the dropdowns (but the controls do not update the
+    data).
 
 	Solution
-	While playing, the signature dropdowns should be grayed out (and enabled once
-	pattern is no longer playing)  `<---- preferred`
+    While playing, the signature dropdowns should be grayed out (and enabled
+    once pattern is no longer playing)  `<---- preferred`. NOTE:
+    the time signatures work, but the time signature event is not added
+    until the time-signature logging button to the left is clicked.
+    This work whether the L position (progress bar) is moving or is set with a
+    click in the time pane.
 
 	Other (probably more complicated/annoying) solutions are:
 
-	* stop the transport when changing the signature
-	* refactor things to allow updating signature in realtime
+	* Stop the transport when changing the signature.
+	* Refactor things to allow updating signature in realtime [see NOTE
+      above.
     
-    EXTRA WORK:
+    STATUS: Fixed.
+
+    EXTRA WORK (STATUS: Fixed, needs more testing perhaps):
 
         1. Follow up on issue #111, Time signature changes does not get
            saved on .midi file.
@@ -516,10 +524,13 @@ ISSUES:
     wavetype,  it erases all events (used by the previous wavetype).  It would
     be great if it would just keep events, and rewrite the values.
 
-    (Also consider a way to generate data for the currently active
-    MIDI data type.)
+    STATUS: Fixed, must now click the Reset button explicitly. Also:
 
-    (Add button to make the current data the reset-data.)
+        ADDED a button to "Lock" the current events as the data to Reset with
+        that button.
+
+        ADDED a "Multiply" feature to multiply (instead of set) the current
+        data via a waveform.
 
 #140 Minimum height event-handle
 
@@ -527,8 +538,10 @@ ISSUES:
 
     Many times I cannot change an event with value 0, because its too low for
     the mouse to click/drag (see picture)
-    STATUS: currently increasing the height of the data pane slightly. Qt
-            makes this a pain.
+
+    STATUS: Increased the height of the data pane slightly. Qt
+            makes this a pain. Also added grid-lines to show the
+            range allowed for the data.
 
 = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 

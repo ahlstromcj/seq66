@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2025-06-20
+ * \updates       2025-06-29
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -640,7 +640,8 @@ inline int
 byte_height (int height, midibyte value)
 {
     const int s_max_height = 128;
-    return int(value) * height / s_max_height;
+    return height == s_max_height ?
+        int(value) : int(value) * height / s_max_height;
 }
 
 /**
@@ -653,7 +654,8 @@ inline int
 byte_value (int height, int value)
 {
     const int s_max_height = 128;
-    return s_max_height * value / height;
+    return height == s_max_height ?
+        value : s_max_height * value / height;
 }
 
 /*

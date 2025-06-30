@@ -106,7 +106,16 @@ public:
     virtual ~qseqdata ();
 
     void set_data_type (midibyte a_status, midibyte a_control);
-    int bottom ();
+    int data_y (midibyte value) const;
+
+    /**
+     *  Moves the bottom coordinate of the pane up a little.
+     */
+
+    int bottom () const
+    {
+        return data_y(0);
+    }
 
     bool is_tempo () const
     {
@@ -184,8 +193,14 @@ private:
     int m_keyboard_padding_x;
 
     /**
+     *  Indicates, for speed, that we're using half of the 128 pixel data
+     *  area.
+     */
+
+    bool m_short_dataarea;
+
+    /**
      *  Provides a way to shrink the height of the data area. Defaults to 128.
-     *  No, now for issue #140, more like 144 or so.
      */
 
     int m_dataarea_y;

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-06
- * \updates       2025-02-17
+ * \updates       2025-06-30
  * \license       GNU GPLv2 or above
  *
  *  This definition used to reside in the controllers.hpp file, but now more
@@ -46,11 +46,11 @@ using namepair = struct
 
 /**
  *  Provides the default names of MIDI controllers.  This array is used
- *  only by the seqedit class.
+ *  only by the functions below.
  */
 
-static const namepair
-c_controller_names[c_midibyte_data_max] =
+static namepair
+s_controller_names[c_midibyte_data_max] =
 {
     {   0, "Bank Select"                          },
     {   1, "Modulation Wheel "                    },
@@ -186,14 +186,21 @@ std::string
 controller_name (int index)
 {
     std::string result;
-    if (index < c_midibyte_data_max)
+    if (index >= 0 && index < c_midibyte_data_max)
     {
-        std::string name = c_controller_names[index].name;
+        std::string name = s_controller_names[index].name;
         result = std::to_string(index);
         result += " ";
         result += name;
     }
     return result;
+}
+
+void
+set_controller_name (int index, const std::string & newname)
+{
+    if (index >= 0 && index < c_midibyte_data_max)
+        s_controller_names[index].name = newname;
 }
 
 }           // namespace seq66

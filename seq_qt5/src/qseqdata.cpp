@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-29
+ * \updates       2025-06-30
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -76,21 +76,22 @@ namespace seq66
  *  pattern editor into a tab.
  */
 
-static const int sc_dataarea_y              = 144;  // 128;
+static const int sc_dataarea_y              = 156;
 static const int sc_dataarea_y_effective    = 128;
-static const int sc_dataarea_y_offset       =  16;
+static const int sc_dataarea_y_offset       =  12;
 static const int sc_dataarea_y_sub          =  48;  // 32;
 
 /**
  *  For issue #140, made the data area 16 bytes or so higher. This function
- *  add a y offset.
- */
+ *  adds a y offset.
 
 static int
 data_height (int height, midibyte value)
 {
     return byte_height(height, value) - sc_dataarea_y_offset;
 }
+ *
+ */
 
 /**
  *  Base font size in points, and the y increment to use to avoid text overwrite.
@@ -108,7 +109,7 @@ static const int sc_2               = sc_1 * 2;
 static const int s_x_data_fix   = -6;   /* adjusts x-value for the events   */
 static const int s_key_padding  = 8;    /* adjusts x for keyboard padding   */
 static const int s_circle_d     = 6;    /* diameter of tempo/prog. dots     */
-static const int s_handle_d     = 8;    /* diameter of grab handle          */
+static const int s_handle_d     = 10;   /* diameter of grab handle          */
 static const int s_handle_r     = s_handle_d / 2;   /* grab handle radius   */
 static const int s_handle_delta = 2;    /* delta of mouse-pixels            */
 
@@ -131,7 +132,11 @@ qseqdata::qseqdata
     m_timer                 (nullptr),
     m_font                  ("Monospace"),
     m_keyboard_padding_x    (s_key_padding),
-    m_dataarea_y            (height > 0 ? height : sc_dataarea_y),
+    m_short_dataarea        (height == 64),
+    m_dataarea_y
+    (
+        m_short_dataarea ? height : sc_dataarea_y_effective /* 64 or 128    */
+    ),
     m_data_type             (type::note),       /* replaces booleans        */
     m_status                (EVENT_NOTE_ON),
     m_cc                    (1),                /* modulation               */
@@ -190,12 +195,16 @@ QSize
 qseqdata::sizeHint () const
 {
     int w = frame64()->width();
+    int h = sc_dataarea_y;
     int len = z().tix_to_pix(track().get_length());
     if (len < w)
         len = w;
 
     len += c_keyboard_padding_x;
-    return QSize(len, m_dataarea_y);
+    if (m_short_dataarea)
+        h /= 2;
+
+    return QSize(len, h);
 }
 
 /**
@@ -215,13 +224,26 @@ qseqdata::wheelEvent (QWheelEvent * qwep)
 }
 
 /**
- *  Moves the bottom coordinate of the pane up a little.
+ *  First, we get the data height, which ranges from 0 to 128, where
+ *  128 is highest in the data pane. This is a y of 0 plus the offset
+ *  we use to pad the top and bottom of the pane, so that grab handles
+ *  are always visible.
+ *
+ *  We should be able to get rid of the static function data_height().
+ *
+ * \param value
+ *      Provides a data value, which must range from 0 to 127.
+ *
+ * \return
+ *      Returns the y coordinate that represents the data value.
  */
 
 int
-qseqdata::bottom ()
+qseqdata::data_y (midibyte value) const
 {
-    return height() - sc_dataarea_y_offset;
+    int result = m_dataarea_y - byte_height(m_dataarea_y, value);
+    result += sc_dataarea_y_offset;
+    return result;
 }
 
 /**
@@ -244,26 +266,56 @@ qseqdata::paintEvent (QPaintEvent * qpep)
      * Do we need this?
      */
 
-    // painter.drawRect(0, 0, width() - 1, height() - 1);  /* data-box border  */
-
     char digits[4];
     midipulse start_tick = z().pix_to_tix(r.x());
     midipulse end_tick = start_tick + z().pix_to_tix(r.width());
     int text_y = sc_text_spacing;
 
     /*
-     * Draw a midline and 4 quarter lines.
+     * Draw mid-lines and top and bottom lines.
      */
 
-    int maxline = data_height(m_dataarea_y, 128);
-    int topline = data_height(m_dataarea_y, 96);
-    int midline = data_height(m_dataarea_y, 64);        /* 128 / 2 */
-    int botline = data_height(m_dataarea_y, 32);
-    int minline = data_height(m_dataarea_y, 0);
+    int maxline = data_y(128);
+    int topline = data_y(96);
+    int midline = data_y(64);
+    int botline = data_y(32);
+    int minline = data_y(0);
+
+    /*
+     * Show line labels.  TODO: for pitchbend, show -2, -1, 0, 1, and 2.
+     */
+
+    pen.setColor(sel_color());
+    painter.setPen(pen);
+
+    if (! is_tempo())
+    {
+        const char * maxnumber = "128";
+        const char * topnumber = " 96";
+        const char * midnumber = " 64";
+        const char * botnumber = " 32";
+        const char * minnumber = "  0";
+        if (is_pitchbend())
+        {
+            maxnumber = " 2";
+            topnumber = " 1";
+            midnumber = " 0";
+            botnumber = "-1";
+            minnumber = "-2";
+        }
+        painter.drawText(0, maxline - 1, maxnumber);    /* small correction */
+        painter.drawText(0, topline, topnumber);
+        painter.drawText(0, midline, midnumber);
+        painter.drawText(0, botline, botnumber);
+        painter.drawText(0, minline, minnumber);
+    }
+
     pen.setColor(fore_color());
-    pen.setStyle(Qt::DotLine);
+    pen.setStyle(Qt::SolidLine);
     painter.setPen(pen);
     painter.drawLine(0, maxline, width() - 1, maxline);
+    pen.setStyle(Qt::DotLine);
+    painter.setPen(pen);
     painter.drawLine(0, topline, width() - 1, topline);
     if (m_data_type == type::pitchbend)
     {
@@ -277,6 +329,8 @@ qseqdata::paintEvent (QPaintEvent * qpep)
         painter.setPen(pen);
     }
     painter.drawLine(0, botline, width() - 1, botline);
+    pen.setStyle(Qt::SolidLine);
+    painter.setPen(pen);
     painter.drawLine(0, minline, width() - 1, minline);
 
     /*
@@ -306,7 +360,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             if (cev->is_pitchbend())
                 event_height = pitch_value_scaled(d0, d1);
 
-            event_height = height() - data_height(m_dataarea_y, event_height);
+            event_height = data_y(event_height);
 
             bool its_close = false;
             if (! selected && m_mouse_tick >= 0)
@@ -317,25 +371,32 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             }
             if (data_event)
             {
-                /*
-                 * sel_paint() vs sel_color()! Why? Fix it.
-                 */
-
-                pen.setColor(selected ? sel_paint() : fore_color());
+                pen.setColor(selected ? sel_color() : fore_color());
                 painter.setPen(pen);
                 event_x -= 3;
-                painter.drawLine(event_x, event_height, event_x, bottom());
-                snprintf(digits, sizeof digits, "%3d", d1);
-                if (selected || its_close)
+                if (is_pitchbend())
                 {
-                    painter.drawEllipse
-                    (
-                        event_x - s_handle_r, event_height - s_handle_r,
-                        s_handle_d, s_handle_d
-                    );
+                    /*
+                     * Draw from 64 (the middle) to the value, rather than
+                     * from 0 (the bottom) to the value.
+                     */
+
+                    int middle = data_y(64);
+                    painter.drawLine(event_x, event_height, event_x, middle);
                 }
-                if (! is_pitchbend())
+                else
                 {
+                    painter.drawLine(event_x, event_height, event_x, bottom());
+                    snprintf(digits, sizeof digits, "%3d", d1);
+                    if (selected || its_close)
+                    {
+                        painter.drawEllipse
+                        (
+                            event_x - s_handle_r, event_height - s_handle_r,
+                            s_handle_d, s_handle_d
+                        );
+                    }
+
                     QString val = digits;
                     pen.setColor(text_data_paint());    /* fore_color())    */
                     painter.setPen(pen);
@@ -522,11 +583,12 @@ qseqdata::mousePressEvent (QMouseEvent * event)
     /*
      * This value is either 0 (128) or 64 as called in qseqeditframe64's
      * constructor. If this changes, we could change the factor of 2 to
-     * sc_dataarea_y / height.
+     * sc_dataarea_y / height. A little be tricky.
      */
 
-    midibyte dataval = m_dataarea_y == sc_dataarea_y ?
-        m_dataarea_y - drop_y() : (m_dataarea_y - drop_y()) * 2 ;
+    midibyte dataval = m_dataarea_y - drop_y() + sc_dataarea_y_offset;
+    if (m_short_dataarea)
+        dataval *= 2;
 
     int count = track().select_event_handle     /* check for handle grab    */
     (

@@ -2475,6 +2475,9 @@ eventlist::select_events
  *
  * \param data
  *      Currently represents the note value or d0().
+ *
+ * \return
+ *      Returns the number of matching events in range of the data value.
  */
 
 int

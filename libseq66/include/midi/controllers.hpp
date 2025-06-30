@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-02-17
+ * \updates       2025-06-30
  * \license       GNU GPLv2 or above
  *
  *  This file used to define the array itself, but now it just declares it,
@@ -169,6 +169,10 @@ enum class cc
  */
 
 extern std::string controller_name (int index);
+extern void set_controller_name
+(
+    int index, const std::string & newname
+);
 
 }           // namespace seq66
 

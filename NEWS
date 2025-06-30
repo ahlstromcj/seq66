@@ -1,10 +1,14 @@
 NEWS for Seq66 0.99.21
 Chris Ahlstrom
-2015-07-10 to 2025-06-28
+2015-07-10 to 2025-06-30
 
 # Change Log
 
-## [0.99.21] - 2025-06-28
+## [0.99.21] - 2025-06-30
+
+    This release contains fixes for issues #137, #139, and #140.
+    It also contain a number of smaller changes discovered while
+    fixing these issues. See below.
 
 ### Added
 
@@ -15,6 +19,8 @@ Chris Ahlstrom
             to the current musical scale for the pattern.
         -   A pitch-randomization function was added to the eventlist.
             The notes adhere to the currently selected musical scale.
+        -   Added space above and below the data range and added
+            top/bottom lines and value labels. See issue #140.
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.
@@ -30,6 +36,8 @@ Chris Ahlstrom
 -   Pattern editor.
     -   Optimized gradient drawing using QLinearGradient members in
         qseqroll instead of auto objects.
+    -   Made the drawing of pitchbend data show +- pitchbend
+        better.
 -   Song editor.
     -   Optimized gradient drawing using QLinearGradient members in
         qperfroll and qperfnames instead of auto objects.
