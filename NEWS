@@ -37,7 +37,7 @@ Chris Ahlstrom
     -   Optimized gradient drawing using QLinearGradient members in
         qseqroll instead of auto objects.
     -   Made the drawing of pitchbend data show +- pitchbend
-        better.
+        better, i.e. above and below the midline pitchbend, 0.
 -   Song editor.
     -   Optimized gradient drawing using QLinearGradient members in
         qperfroll and qperfnames instead of auto objects.

@@ -1,4 +1,4 @@
--------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 % pattern_editor
 %-------------------------------------------------------------------------------
 %
@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-06-06
+% \update      2025-07-01
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -378,10 +378,10 @@
       \item \textbf{Pattern fix}. Allows for fixing up a new pattern
          that was recorded with some timing errors, or transforming the
          pattern in various ways.
-      The pattern fix dialog provides a way for more control over the
-      modifications of a pattern.
-      It's complex and deserves a section of its own.
-      See \sectionref{subsec:pattern_editor_pattern_fix}.
+         The pattern fix dialog provides a way for more control over the
+         modifications of a pattern.
+         It's complex and deserves a section of its own.
+         See \sectionref{subsec:pattern_editor_pattern_fix}.
    \end{enumber}
 
 \subsubsection{Pattern Editor / Follow Progress}
@@ -1325,6 +1325,14 @@
    This button resets the chord-generation feature to \textbf{Off}.
    It's located by the data pane in order to save space in the first row.
 
+\subsubsection{Pattern Editor / Left Buttons / Blank Button}
+\label{subsubsec:pattern_editor_left_buttons_blank_button}
+
+   In order to get the height of the data pane to enlarge, after much
+   head-banging, a button had to be added here.
+
+   It currently has no other purpose.
+
 \subsection{Pattern Editor / Data Pane}
 \label{subsec:pattern_editor_data_view}
 
@@ -1384,6 +1392,38 @@
 
    Note that some events are shown as small circles instead of a line; each
    circle has the numeric value next to it.
+
+\subsubsection{Pattern Editor / Data Pane / Pitchbend Events}
+\label{subsubsec:pattern_editor_data_view_pitchbend_events}
+
+   \textbf{Pitchbend}
+   events are shown as a vertical lines that go above and below the midline.
+   The only way to modify pitch bend events here is by dragging
+   a line.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=1.0]{pattern-editor/data-pane-pitchbend.png}
+   \caption{Data Pane Pitch Bebd}
+   \label{fig:pattern_editor_data_pane_pitchbend}
+\end{figure}
+
+   Note that this figure has some new features not represented in the
+   figures that follow.
+
+   First, the data pane has been expanded slightly vertically so that the
+   event grab handle circles can be used for dragging values near 0 or 127.
+
+   Second, top and bottom horizontal lines show the limits of the data values.
+   This includes numerical values shown at time 0. For the pitchbend value
+   range, the values range from -2 to +2 semitones.
+   \textsl{Seq66} currently does not know if an event has changed the
+   pitchbend range for a given bus/channel.
+
+   Third, a blank button at the left has been add to allow a greater
+   height of the data pane.
+   This kludge is needed because we don't completely grok the
+   vagaries of Qt layouts.
 
 \subsubsection{Pattern Editor / Data Pane / Tempo Events}
 \label{subsubsec:pattern_editor_data_view_tempo_events}
@@ -2047,14 +2087,19 @@
 
    The LFO dialog allows for modulating note velocities and the control values
    of the event type in shown in the data pane.
-   It can even modulated tempo events.
+   It can even modulate tempo and pitch-bend events.
+
+   One recent change in this dialog is that selecting an option
+   no longer resets (removes) the current changes.
+   The \textbf{Reset} button must be clicked to do this.
 
    By clicking on the \textbf{LFO} button or using the \texttt{Ctrl-L} key,
    the following window appears, with a set of 4 vertical sliders:
 
 \begin{figure}[H]
    \centering 
-  \includegraphics[scale=0.65]{pattern-editor/lfo.png}
+% \includegraphics[scale=0.65]{pattern-editor/lfo.png}
+  \includegraphics[scale=0.50]{pattern-editor/lfo-2.png}
    \caption{Pattern Editor LFO}
    \label{fig:pattern_editor_bottom_lfo}
 \end{figure}
@@ -2062,13 +2107,16 @@
    The user-interface items function as follows.
 
    \begin{enumber}
-      \item \textbf{Use Measures (vs Length)}.
+      \item \textbf{Use Measure (vs Length)}.
          The length of a waveform period can be determined by the length of the
          pattern (2 measures as shown next to the label "LFO Data Editor") or
          by the length of a measure. This check-box determines that.
-         In the diagram, it is checked, so the 2 measures covers four periods
-         of the sine wave.
          Especially useful in modifying long patterns.
+      \item \textbf{Multiply}.
+         By default, the LFO waveform replaces the existing event
+         "amplitude" values directly.
+         With this option checked, the values of the existing events
+         are \textsl{multiplied} by the waveform.
       \item \textbf{DC Offset} (\textbf{D}).
          Provides a kind of DC offset for the data value. Starts at 64, and
          ranges from 0 to 127.
@@ -2085,7 +2133,7 @@
          to even show an effect.  It is also subject to an 'anti-aliasing'
          effect, especially for short patterns.
          Try it!
-      \item \textbf{Phase Shift} (\textbf{P}).
+      \item \textbf{Phase} (\textbf{P}).
          Provides the phase shift within a period of the LFO wave.
          A value of 1 is a phase shift of 360 degrees (one whole period).
          Thus, the data at \( P = 0 \) would look exactly the same at phase
@@ -2112,16 +2160,20 @@
                Provides an exponential ramp modulation.
                This ramping is easiest to see if the DC offset is 0,
                and the Mod range is 127.
-               Varying the \textbf{Phase Shift} with the slider
+               Varying the \textbf{Phase} with the slider
                will move the peak of the curve left to right.
             \item \textbf{Exponential Fall}. Provides a ramp modulation in the
                opposite direction.
          \end{enumber}
          Note that one might have to change one or more parameters
          slightly to see the effect of the new waveform.
-      \item \textbf{Reset Data}.
-         This button restores the initial pattern event data.  Useful when one
-         applies modulation that one ultimately does not like.
+      \item \textbf{Reset}.
+         This button restores the initial pattern event data or
+         the data stored by the \textbf{Lock} button.
+         Useful when one applies modulation that one ultimately does not like.
+      \item \textbf{Lock}.
+         This button copies the current pattern changes to the backup
+         data used by the \textbf{Reset} button.
       \item \textbf{Close}.  Closes the LFO panel.
    \end{enumber}
 
