@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-02-20
+ * \updates       2025-07-20
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -95,8 +95,8 @@ s_channel_event_names [] =
     {  0, midishort(EVENT_NOTE_OFF),           "Note Off"        },  // 0x80
     {  1, midishort(EVENT_NOTE_ON),            "Note On"         },  // 0x90
     {  2, midishort(EVENT_AFTERTOUCH),         "Aftertouch"      },  // 0xA0
-    {  3, midishort(EVENT_CONTROL_CHANGE),     "Control"         },  // 0xB0
-    {  4, midishort(EVENT_PROGRAM_CHANGE),     "Program"         },  // 0xC0
+    {  3, midishort(EVENT_CONTROL_CHANGE),     "Control Change"  },  // 0xB0
+    {  4, midishort(EVENT_PROGRAM_CHANGE),     "Program Change"  },  // 0xC0
     {  5, midishort(EVENT_CHANNEL_PRESSURE),   "Ch Pressure"     },  // 0xD0
     {  6, midishort(EVENT_PITCH_WHEEL),        "Pitch Wheel"     },  // 0xE0
     { -1, s_end_of_table,                      ""                }   // end

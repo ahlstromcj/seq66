@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.21
 Chris Ahlstrom
-2019-04-13 to 2025-06-29
+2019-04-13 to 2025-07-01
 
 Hot:
 
@@ -12,7 +12,7 @@ Hot:
 
 NSM:
 
-    -   Seq66 maybe be delaying responding/announcing to NSM.
+    -   Seq66 may be delaying responding/announcing to NSM.
     -   When creating a session, make sure playlist is copied if active.
     -   How to keep Seq66 up-to-date when ports are added back in a
         session.
@@ -484,6 +484,12 @@ ISSUES:
 
 #138 workflow regarding multitimbral program change + MSB + LSB
 
+    When the transport is stopped..sending midi-notes to a pattern does record
+    it to the pattern.
+
+    However, it does not capture programchange+MSB+LSB or CC events (send from
+    my MT device)
+
     I really like the concept of being able to export a midi-file which
     includes `program-change + MSB + LSB bank select` for each midi-channel
     (in the beginning  of the midi-file).  That way I can import the midi-file
@@ -498,9 +504,23 @@ ISSUES:
     * seq66: I press 'play' and 'record' on a pattern
     * MT: I select the next instrument (so it triggers a `program-change + MSB
       + LSB bank select` of the desired instrument to seq66)
+    * seq66: profit! the values have been captured in the pattern (not ideal
+      though, the values never end up exactly in the beginning of the pattern)
+    * seq66: I have to manually move the events to beginning of the pattern
     * Rinse and repeat: I do this for every (16) midichannels
 
     Question: is there an easier way to do this?
+
+    The good news is that recording notes during stopmode, increases the
+    pattern-position for each note.
+
+    Via this exact same mechanism, NRPN data would become possible (which
+    re-uses CC 6 to send a value`).
+
+    Many midi-devices transmit NRPN data for device-specific settings, so
+    recording it (during stopstate) starting from a specific patternposition
+    would really allow exciting control without external
+    dependencies/drivers/definition-files.
 
     Brainstorm
 
@@ -514,6 +534,27 @@ ISSUES:
     Maybe this could be a default feature-toggle?
     This would make the above mentioned manual steps (4x16=64) redundant.
     Imagine the the speedy workflow.
+
+    All other (older) midi editors either lack this, or require you to create
+    (very timeconsuming) instrument-bank-definition files (which is an
+    anti-pattern imho, as they usually never exist for your preferred
+    device/soundfont/software combination).
+
+    Can we maybe allow recording midi-events in the pattern editor (during
+    stop-state?).
+
+    This would make the above mentioned ~64 manual steps redundant.  One could
+    hit record (without pressing play), receive some midi data, which would
+    (over)write the values to the current patternposition.  This more modern
+    workflow, allows hardware to augment the seq66 pattern-editor cursor.
+
+    bigger picture: synths/keyboards/grooveboxes emit program change + LSB +
+    MSB-events when switching patterns or instruments. Many of them also send
+    midi CC snapshots (reverb/chorus/delay send values) when switching
+    instruments. For example, here's my CASIO CTS-1000v synth when switching
+    an instrument:
+
+    Sends CC 0 11 + CC 32 64 + PC 96 + CC 5 20 + CC 65 0
 
 #139 LFO tool ❤
 

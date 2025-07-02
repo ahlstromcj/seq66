@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-06-28
+ * \updates       2025-07-02
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4729,7 +4729,7 @@ sequence::check_oneshot_recording ()
  * \return
  *      Returns true if the event's channel matched that of this sequence, and
  *      the channel-matching feature was set to true.  Also returns true if
- *      we're not using channel-matching.  A return value of true means the
+ *      we're not using channel-matching. A return value of true means the
  *      event should be saved.
  */
 
@@ -4827,7 +4827,7 @@ sequence::stream_event (event & ev)
                         m_last_tick = 0;
                     }
                 }
-                else if (ev.is_note_on())
+                else if (ev.is_note_on())       /* WHAT ABOUT AFTERTOUCH?   */
                 {
                     /*
                      * For issue #97, check the last time-stamp only when
@@ -4851,21 +4851,20 @@ sequence::stream_event (event & ev)
                             snap() - m_events.note_off_margin(), ev
                         );
                         if (ok)
-                        {
-#if defined USE_THIS_CODE
-                            if (oneshot_recording())        /* update stuff */
-                                (void) verify_and_link();
-                                perf()->set_needs_update();
-                            else                            /* FIXME */
-#endif
-                                ++m_notes_on;
-                        }
+                            ++m_notes_on;
                     }
                 }
                 else
                 {
-                    if (rc().verbose())
-                        ev.print();
+                    /*
+                     * Handle everything else without moving the time.
+                     *
+                     *  ev.is_controller()
+                     *  ev.is_sysex()
+                     *  ev.is_program_change()
+                     */
+
+                    (void) add_event(ev);
                 }
             }
         }
