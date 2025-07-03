@@ -1,0 +1,30 @@
+rearrange-test.text
+Chris Ahlstrom
+2025-07-03
+
+https://midi.org/community/midi-specifications/reordering-simultaneous-events
+
+    Reordering of events can be problematic. It is not recommended.
+
+    Your specific example of a Note Off and a Note One can cause a problem,
+    although not in all cases. Sometimes a synthesizer will use this order in a
+    meaningful way. For example, in Mono Mode, many synthesizers will perform a
+    legato transition if they receive a new Note On before receiving a Note Off
+    for the previous note. Another example would be a sophisticated piano, such
+    as those that use 3 key sensors, which might use that same order to
+    signify when a key is returned only half way up then restruck such that
+    the damper does not touch the string between hammer strikes. In either
+    of those examples, switching the order of events changes the response
+    of the receiver.
+
+    https://rnhart.net/midi/attachments/re-arrange-test.zip
+
+    By the way, I just did some tests by connecting MIDI player software I have
+    on my computer to MIDI monitor software MIDI-OX using a virtual MIDI cable
+    loopMIDI, then checking the message order shown in the MIDI-OX monitor
+    window. It looks like about half of the MIDI players I have move note ends
+    before note starts if they happen at the same time position in the MIDI
+    file. So some other MIDI software developers have also considered this a
+    good idea.
+
+# vim: sw=4 ts=4 wm=4 et ft=rc

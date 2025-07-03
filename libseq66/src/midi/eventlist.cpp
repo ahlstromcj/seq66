@@ -25,14 +25,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2025-06-18
+ * \updates       2025-07-03
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
  *  tempo) have been added to the container.
  */
 
-#include <algorithm>                    /* std::sort(), std::merge()        */
+#include <algorithm>                    /* std::stable_sort()               */
 
 #include "cfg/settings.hpp"             /* seq66::usr()                     */
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
@@ -48,9 +48,6 @@ eventlist::eventlist () :
     m_events                (),
     m_match_iterating       (false),
     m_match_iterator        (m_events.end()),
-#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
-    m_action_in_progress    (false),                    /* atomic boolean   */
-#endif
     m_length                (0),
     m_note_off_margin       (3),
     m_zero_len_correction   (16),
@@ -73,9 +70,6 @@ eventlist::eventlist (const eventlist & rhs) :
     m_events                (rhs.m_events),
     m_match_iterating       (false),
     m_match_iterator        (m_events.end()),
-#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
-    m_action_in_progress    (false),                    /* atomic boolean   */
-#endif
     m_length                (rhs.m_length),
     m_note_off_margin       (rhs.m_note_off_margin),
     m_zero_len_correction   (rhs.m_zero_len_correction),
@@ -96,9 +90,6 @@ eventlist::operator = (const eventlist & rhs)
         m_events                = rhs.m_events;
         m_match_iterating       = rhs.m_match_iterating;    /* ok? */
         m_match_iterator        = rhs.m_match_iterator;     /* ok? */
-#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
-        m_action_in_progress    = false;                /* atomic boolean   */
-#endif
         m_length                = rhs.m_length;
         m_note_off_margin       = rhs.m_note_off_margin;
         m_zero_len_correction   = rhs.m_zero_len_correction;
@@ -197,7 +188,7 @@ eventlist::append (const event & e)
 }
 
 /**
- *  An internal function to add events to a temporary list.  Used in
+ *  An internal function to add events to a temporary list. Used in
  *  quantization and tightening operations.
  */
 
@@ -205,7 +196,7 @@ bool
 eventlist::add (event::buffer & evlist, const event & e)
 {
     evlist.push_back(e);                        /* std::vector operation    */
-    std::sort(evlist.begin(), evlist.end());
+    std::stable_sort(evlist.begin(), evlist.end());
     return true;
 }
 
@@ -229,7 +220,7 @@ eventlist::add (const event & e)
 {
     bool result = append(e);
     if (result)
-        sort();                         /* by time-stamp and "rank" */
+        sort();
 
     return result;
 }
@@ -238,20 +229,12 @@ eventlist::add (const event & e)
  *  Sorts the event list.  For the vector, equivalent elements are not
  *  guaranteed to keep their original relative order [see
  *  std::stable_sort(), which we could try at some point].
- *
- *  This method is probably flawed.
  */
 
 void
 eventlist::sort ()
 {
-#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
-    m_action_in_progress = true;
-    std::sort(m_events.begin(), m_events.end());
-    m_action_in_progress = false;
-#else
-    std::sort(m_events.begin(), m_events.end());
-#endif
+    std::stable_sort(m_events.begin(), m_events.end());
 }
 
 /**
@@ -554,7 +537,7 @@ bool
 eventlist::verify_and_link (midipulse slength, bool wrap)
 {
     clear_links();                          /* unlink, no unmark all events */
-    sort();                                 /* important, but be careful... */
+    sort();
 
     bool wrap_em = m_link_wraparound || wrap;       /* a Stazed extension   */
     bool result = link_new(wrap_em);
@@ -583,13 +566,7 @@ eventlist::clear ()
 {
     if (! m_events.empty())
     {
-#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
-        m_action_in_progress = true;          /* might not help */
         m_events.clear();
-        m_action_in_progress = false;
-#else
-        m_events.clear();
-#endif
         m_is_modified = true;
     }
 }
@@ -3028,7 +3005,7 @@ eventlist::copy_selected (eventlist & clipbd)
                 }
             }
             if (result)
-                std::sort(clipbd.m_events.begin(), clipbd.m_events.end());
+                clipbd.sort();
         }
     }
     return result;

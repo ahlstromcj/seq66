@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2023-11-25
-% \update      2025-06-09
+% \update      2025-07-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -197,16 +197,21 @@
    \textsl{Seq66} runs normally and can auto-connect to these
    ports.
 
-   The first instance:
-
-   Run and exit to create the configuration files, then run with
+   Run the first instance with
    the "virtual" option; the first number is the number of output ports
    to make, and the second is the number of input ports to make.
 
    \begin{verbatim}
-       $ qseq66 --client first66 --rc first66
        $ qseq66 --client first66 --rc first66 --option virtual=2,2
    \end{verbatim}
+
+   Then run another \textsl{Seq66} normally:
+
+   \begin{verbatim}
+       $ qseq66
+   \end{verbatim}
+
+   Remap and restart if necessary.
 
    In the \textbf{MIDI Clock} tab should be "first66:midi out 0" and
    "first66:midi out 1".

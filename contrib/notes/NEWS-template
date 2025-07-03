@@ -1,0 +1,36 @@
+
+## [0.99.xx] - 2025-xx-xx
+
+    This release contains ...
+
+### Added
+
+-   Main window and grid.
+-   Pattern editor.
+-   Song editor.
+-   Event editor.
+-   Preferences dialog.
+-   Import/Export.
+-   Documentation.
+
+### Changed
+
+-   Main window and grid.
+-   Pattern editor.
+-   Song editor.
+-   Event editor.
+-   Preferences dialog.
+-   Contrib files.
+-   Coalescing common code.
+-   Changed the scales\_policy() function slightly.
+
+### Fixed
+
+-   Main window and grid.
+-   Pattern editor.
+-   Song editor.
+-   Event editor.
+-   Preferences dialog.
+-   Configuration files.
+
+# vim: sw=4 ts=4 wm=15 et ft=markdown

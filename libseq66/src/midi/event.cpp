@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-02
+ * \updates       2025-07-03
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -1173,11 +1173,14 @@ event::rescale (int newppqn, int oldppqn)
  *  We also now consider SysEx and Meta event. Meta comes first, SysEx comes
  *  last.
  *
- * ca 2025-07-02
+ * ca 2025-07-02, 07-03
  *
  *  Considering that bank select control values (coarse and fine) would be
  *  followed by a program change. Can they occur simultaneously?
  *  Just in case, we should give control change the higher priority.
+ *  Actually, no, because this screws up the order of bank change then
+ *  program change. So we make them equivalent, *and* we also change
+ *  to using std::stable_sort() [slower] in eventlist.
  *
  * Note:
  *      We could add the channel number as part of the ranking. Sound? No.
@@ -1218,9 +1221,6 @@ event::get_rank () const
             break;
 
         case EVENT_PROGRAM_CHANGE:
-            result = 0x0200;                    /* was 0x100                */
-            break;
-
         case EVENT_CONTROL_CHANGE:
             result = 0x0100;                    /* was 0x200                */
             break;

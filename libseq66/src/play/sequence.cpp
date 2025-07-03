@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-02
+ * \updates       2025-07-03
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4844,7 +4844,21 @@ sequence::stream_event (event & ev)
                         if (m_rec_vol != usr().preserve_velocity())
                             ev.note_velocity(m_rec_vol);    /* keep veloc.  */
 
-                        ev.set_timestamp(mod_last_tick());  /* loop back    */
+                        /*
+                         * The time-stamp is already set. We don't want
+                         * to use m_last_tick here, we want the time-stamp.
+                         * So we kludge in the timestamp. The next line
+                         * is new code, ca 2025-07-02.
+                         *
+                         * BUT THEN THE PLAYHEAD WON'T ADVANCE.
+                         *
+                        m_last_tick = ev.timestamp();
+                         */
+
+                        midipulse lasttick = mod_last_tick();
+                        perf()->set_left_tick(lasttick + snap());
+
+                        ev.set_timestamp(lasttick);         /* loop back    */
 
                         bool ok = add_note
                         (
@@ -5907,11 +5921,6 @@ sequence::get_next_note
     automutex locker(m_mutex);
     while (evi != m_events.cend())
     {
-#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
-        if (m_events.action_in_progress())      /* atomic boolean check     */
-            return draw::finish;                /* bug out immediately      */
-#endif
-
         draw status = get_note_info(niout, evi);
         if (status != draw::none)
             return status;                      /* must ++evi after call    */
@@ -6087,11 +6096,6 @@ sequence::get_next_event
     bool result = evi != m_events.end();
     if (result)
     {
-#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
-        if (m_events.action_in_progress())      /* atomic boolean check     */
-            return false;
-#endif
-
         midibyte d1;                            /* will be ignored          */
         const event & ev = eventlist::cdref(evi);
         status = ev.get_status();
@@ -6146,11 +6150,6 @@ sequence::get_next_event_match
     bool ismeta = event::is_meta_msg(status);
     while (evi != m_events.end())
     {
-#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
-        if (m_events.action_in_progress())      /* atomic boolean check     */
-            return false;                       /* bug out immediately      */
-#endif
-
         const event & drawevent = eventlist::cdref(evi);
         bool ok = drawevent.match_status(status);
         if (ok && ismeta)
@@ -6226,11 +6225,6 @@ sequence::get_next_meta_match
 
     while (evi != m_events.end())
     {
-#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
-        if (m_events.action_in_progress())      /* atomic boolean check     */
-            return false;                       /* bug out immediately      */
-#endif
-
         const event & drawevent = eventlist::cdref(evi);
         if (drawevent.is_meta())
         {

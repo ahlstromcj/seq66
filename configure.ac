@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2025-06-12
+dnl \update        2025-07-03
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -633,7 +633,7 @@ case "$host_os" in
         ;;
 esac
 
-dnl Note the c++14 option.  Also note that PROLDFLAGS comes from xpc_debug.m4.
+dnl Note the c++17 option.  Also note that PROLDFLAGS comes from xpc_debug.m4.
 dnl Trying out gnu++14 or gnu++1y (they don't work) instead, to see if we can
 dnl eliminate the problem of debug linkage on some of our laptops.
 dnl The warning disabling for clang does prevents the "clang-16: warning:
@@ -647,7 +647,7 @@ else
 CFLAGS="$CFLAGS $COMMONFLAGS"
 fi
 
-CXXFLAGS="$CFLAGS -std=c++14 -pipe -Wno-variadic-macros -Wno-deprecated-declarations"
+CXXFLAGS="$CFLAGS -std=c++17 -pipe -Wno-variadic-macros -Wno-deprecated-declarations"
 LDFLAGS="$LDFLAGS $PROLDFLAGS"
 
 AM_CONDITIONAL(GNU_WIN, test "$ac_gnuwin" = "yes")

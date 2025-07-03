@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2025-06-14
+ * \updates       2025-07-03
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -80,23 +80,6 @@
  */
 
 #undef SEQ66_USE_JITTER_EVENTS
-
-/**
- *  This flag is used in eventlist and sequence to supposedly protect sorting
- *  and clearing. However, we were able to delete events, clear all events,
- *  and even delete patterns while playback was occuring. So we don't think we
- *  need this after all. Define it if problems crop up.
- *
- *  There is sometimes a segfault when one song is opened with pattern editors
- *  up, and then another song is loaded. So we're defining it to see if
- *  that fixes this issue. It does not.
- */
-
-#undef  SEQ66_USE_ACTION_IN_PROGRESS_FLAG
-
-#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
-#include <atomic>                       /* std::atomic<bool> usage          */
-#endif
 
 #include "midi/event.hpp"               /* seq66::event, event::buffer      */
 
@@ -177,18 +160,6 @@ private:
 
     bool m_match_iterating;
     event::iterator m_match_iterator;
-
-#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
-
-    /**
-     *  Provides an atomic flag to raise while sorting(), which can invalidate
-     *  iterators while a user-interface is accessing the event list, or while
-     *  clearing the event list.
-     */
-
-    std::atomic<bool> m_action_in_progress;
-
-#endif
 
     /**
      *  Holds the length of the sequence holding this event-list,
@@ -372,15 +343,6 @@ public:
     void clear ();
     void sort ();
     bool merge (const eventlist & el, bool presort = true);
-
-#if defined SEQ66_USE_ACTION_IN_PROGRESS_FLAG
-
-    bool action_in_progress () const
-    {
-        return m_action_in_progress;
-    }
-
-#endif
 
     /**
      *  Dereference access for list or map.

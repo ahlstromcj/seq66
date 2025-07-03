@@ -1,10 +1,12 @@
 TO DO for Seq66 0.99.21
 Chris Ahlstrom
-2019-04-13 to 2025-07-01
+2019-04-13 to 2025-07-02
 
 Hot:
 
     -   Issues #137 to #140.
+    -   For auto step, allow usage of the current L marker to be the
+        starting time.
     -   When testing LFO, and exiting via the main window, the following
         dialog remains "Session: Saved: <name of MIDI file>".
     -   Note drawing and event drawing screwed up in time when scrolled

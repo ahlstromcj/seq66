@@ -1,12 +1,12 @@
 NEWS for Seq66 0.99.21
 Chris Ahlstrom
-2015-07-10 to 2025-07-02
+2015-07-10 to 2025-07-03
 
 # Change Log
 
-## [0.99.21] - 2025-07-02
+## [0.99.21] - 2025-07-03
 
-    This release contains fixes for issues #137, #139, and #140.
+    This release contains fixes for issues #137, #138, #139, and #140.
     It also contain a number of smaller changes discovered while
     fixing these issues. See below.
 
@@ -32,6 +32,10 @@ Chris Ahlstrom
 
 ### Changed
 
+-   A C++17 compiler is now required. Time to move on!
+-   Changed eventlist::sort() to use std::stable\_sort(), and
+    event::get\_rank() to make CCs and Program Changes to have the
+    same priority, as part of fixes for issue #138.
 -   Main window and grid.
 -   Pattern editor.
     -   Optimized gradient drawing using QLinearGradient members in
@@ -41,6 +45,7 @@ Chris Ahlstrom
     -   Controller events are now recorded when playback is
         stopped. Time is not incremented. (It can be changed in
         the Event editor, if needed.
+    -   Upgraded the LFO editor as per issue #139.
 -   Song editor.
     -   Optimized gradient drawing using QLinearGradient members in
         qperfroll and qperfnames instead of auto objects.
@@ -75,6 +80,7 @@ Chris Ahlstrom
     -   Fixed the handling of the MIDI file PPQN to set initial
         zoom correctly.
     -   Fixes made to pitchbend calculations and display.
+    -   Updated the time-signature handling as per issue #137.
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.
