@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-07-01
+% \update      2025-07-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -160,6 +160,8 @@
    overwrite that event.
    Otherwise, move the "L" marker and click this button to log another
    time-signature.
+   See \sectionref{subsubsec:pattern_editor_measures_ruler_time_bar}.
+
    There are interactions between the beats/bar, beat-width, and the length (in
    measures) of the pattern.
    Generally, if both the beats/bar and beat-width are to be changed,
@@ -1829,11 +1831,18 @@
    This kind of note recording can be done in two ways:
 
    \begin{enumerate}
-      \item Turn on recording without the pattern playing.
-         Then activate the MIDI device's play.
-      \item Left-click-drag the mouse to enter notes.
-         note-drawing stops when at end of the pattern.
-         But dragging back and forth will draw more notes.
+      \item Recording events via auto-step.
+      \begin{enumerate}
+         \item Turn on recording without the pattern playing.
+         \item If desired, set the "L" marker to a start time other than 0.
+         \item Activate the MIDI device's play or play some notes.
+      \end{enumerate}
+      \item Drawing events with the mouse.
+      \begin{enumerate}
+         \item Left-click-drag the mouse to enter notes.
+         \item Note-drawing stops when at end of the pattern.
+         \item Dragging back and forth will draw more notes.
+      \end{enumerate}
    \end{enumerate}
 
    Now, the DD-11 is an old instrument from the pre-General-MIDI days.

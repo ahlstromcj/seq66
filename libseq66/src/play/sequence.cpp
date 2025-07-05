@@ -4844,20 +4844,8 @@ sequence::stream_event (event & ev)
                         if (m_rec_vol != usr().preserve_velocity())
                             ev.note_velocity(m_rec_vol);    /* keep veloc.  */
 
-                        /*
-                         * The time-stamp is already set. We don't want
-                         * to use m_last_tick here, we want the time-stamp.
-                         * So we kludge in the timestamp. The next line
-                         * is new code, ca 2025-07-02.
-                         *
-                         * BUT THEN THE PLAYHEAD WON'T ADVANCE.
-                         *
-                        m_last_tick = ev.timestamp();
-                         */
-
                         midipulse lasttick = mod_last_tick();
                         perf()->set_left_tick(lasttick + snap());
-
                         ev.set_timestamp(lasttick);         /* loop back    */
 
                         bool ok = add_note

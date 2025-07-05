@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2025-05-29
+ * \updates       2025-07-05
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2316,15 +2316,22 @@ public:
     void set_tick (midipulse tick, bool dontreset = false);
     void move_tick (midipulse tick, bool dontreset = false);
     void set_left_tick (midipulse tick);
-    void set_left_tick_seq (midipulse tick, midipulse snap);
+    void set_left_tick_snap (midipulse tick, midipulse snap);
 
     void set_right_tick (midipulse tick);
-    void set_right_tick_seq (midipulse tick, midipulse snap);
+    void set_right_tick_snap (midipulse tick, midipulse snap);
 
     midipulse get_right_tick () const
     {
         return m_right_tick;
     }
+
+    /**
+     *  Sets the global left tick and the sequence-specific last tick, for
+     *  one sequence only.
+     */
+
+    void set_last_tick_seq (sequence & s, midipulse tick, midipulse snap);
 
     /**
      *  For every pattern/sequence that is active, sets the "original tick"

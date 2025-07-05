@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-05-16
+ * \updates       2025-07-04
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -343,8 +343,16 @@ qperftime::mousePressEvent (QMouseEvent * event)
             if (isctrl)
                 perf().set_tick(tick, true);            /* set_start_tick() */
             else
-                perf().set_left_tick_seq(tick, snap());
+            {
+                perf().set_left_tick_snap(tick, snap());
 
+                /*
+                 * ca 2025-07-03. Do we need this? See qseqtime ::
+                 * mousePressEvent().
+                 *
+                 * perf().set_last_ticks(get_left_tick()
+                 */
+            }
             set_dirty();
         }
         else if (event->button() == Qt::MiddleButton)   /* set start tick   */

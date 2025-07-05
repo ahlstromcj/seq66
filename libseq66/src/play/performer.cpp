@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-06-20
+ * \updates       2025-07-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -4181,7 +4181,8 @@ performer::move_tick (midipulse ticks, bool dontreset)
  *  tick, the right tick is move to one measure past the left tick.
  *
  * \todo
- *      The performer::m_one_measure member is currently hardwired to m_ppqn*4.
+ *      The performer::m_one_measure member is currently hardwired to
+ *      m_ppqn*4.
  *
  * \param tick
  *      The tick (MIDI pulse) at which to place the left tick.  If the left
@@ -4243,7 +4244,7 @@ performer::set_right_tick (midipulse tick)
 }
 
 void
-performer::set_left_tick_seq (midipulse tick, midipulse snap)
+performer::set_left_tick_snap (midipulse tick, midipulse snap)
 {
     midipulse remainder = tick % snap;
     if (remainder > (snap / 2))
@@ -4252,7 +4253,7 @@ performer::set_left_tick_seq (midipulse tick, midipulse snap)
         tick -= remainder;                      /* move down to next snap   */
 
     if (m_right_tick <= tick)
-        set_right_tick_seq(tick + 4 * snap, snap);
+        set_right_tick_snap(tick + 4 * snap, snap);
 
     m_left_tick = tick;
     set_start_tick(tick);
@@ -4264,7 +4265,7 @@ performer::set_left_tick_seq (midipulse tick, midipulse snap)
 }
 
 void
-performer::set_right_tick_seq (midipulse tick, midipulse snap)
+performer::set_right_tick_snap (midipulse tick, midipulse snap)
 {
     midipulse remainder = tick % snap;
     if (remainder > (snap / 2))
@@ -4282,6 +4283,13 @@ performer::set_right_tick_seq (midipulse tick, midipulse snap)
         else
             set_tick(m_left_tick);
     }
+}
+
+void
+performer::set_last_tick_seq (sequence & s, midipulse tick, midipulse snap)
+{
+    set_left_tick_snap(tick, snap);
+    s.set_last_tick(get_left_tick());
 }
 
 /*

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-04-30
+ * \updates       2025-07-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -380,10 +380,23 @@ qseqtime::mousePressEvent (QMouseEvent * event)
         if (event->button() == Qt::LeftButton)          /* move L/R markers */
         {
             if (isctrl)
+            {
                 perf().set_tick(tick, true);            /* set_start_tick() */
+            }
             else
-                perf().set_left_tick_seq(tick, snap());
+            {
+                /*
+                 * ca 2025-07-03. Related to issue #138, allow auto-step
+                 * to start at the selected L/playhead marker.
+                 *
+                 * Too global?
+                 *
+                 *  perf().set_left_tick_snap(tick, snap());
+                 *  perf().set_last_ticks(perf().get_left_tick());
+                 */
 
+                perf().set_last_tick_seq(track(), tick, snap());
+            }
             set_dirty();
         }
         else if (event->button() == Qt::MiddleButton)   /* set start tick   */
@@ -393,7 +406,7 @@ qseqtime::mousePressEvent (QMouseEvent * event)
         }
         else if (event->button() == Qt::RightButton)
         {
-            perf().set_right_tick_seq(tick, snap());
+            perf().set_right_tick_snap(tick, snap());
             set_dirty();
         }
     }
@@ -435,30 +448,38 @@ qseqtime::keyPressEvent (QKeyEvent * event)
         midipulse s = snap() > 0 ? snap() : 1 ;
         if (event->key() == Qt::Key_Left)
         {
-            if (m_move_L_marker)
+            if (m_move_L_marker)        /* set by Shift-L, unset by Shift-R */
             {
+                /*
+                 * perf().set_left_tick_snap(tick, snap());
+                 */
+
                 midipulse tick = perf().get_left_tick() - s;
-                perf().set_left_tick_seq(tick, snap());     /* ca 2022-08-17 */
+                perf().set_last_tick_seq(track(), tick, snap());
             }
             else
             {
                 midipulse tick = perf().get_right_tick() - s;
-                perf().set_right_tick_seq(tick, snap());    /* ca 2022-08-17 */
+                perf().set_right_tick_snap(tick, snap());
             }
             set_dirty();
             event->accept();
         }
         else if (event->key() == Qt::Key_Right)
         {
-            if (m_move_L_marker)
+            if (m_move_L_marker)        /* set by Shift-L, unset by Shift-R */
             {
+                /*
+                 * perf().set_left_tick_snap(tick, snap());
+                 */
+
                 midipulse tick = perf().get_left_tick() + s;
-                perf().set_left_tick_seq(tick, snap());     /* ca 2022-08-17 */
+                perf().set_last_tick_seq(track(), tick, snap());
             }
             else
             {
                 midipulse tick = perf().get_right_tick() + s;
-                perf().set_right_tick_seq(tick, snap());    /* ca 2022-08-17 */
+                perf().set_right_tick_snap(tick, snap());
             }
             set_dirty();
             event->accept();
