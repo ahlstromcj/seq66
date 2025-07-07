@@ -2205,10 +2205,8 @@ sequence::onsets_selected_box
 
 /**
  *  Returns the 'box' of the clipboard items.  Note the common-code betweem
- *  this function and selected_box().  Also note we could return a boolean
- *  indicating if the return values were filled in.
- *
- *  This function is called in qstriggereditor and in qseqroll.
+ *  this function and selected_box(). This function is called in
+ *  qstriggereditor and in qseqroll.
  *
  * \threadsafe
  *
@@ -2223,6 +2221,9 @@ sequence::onsets_selected_box
  *
  * \param [out] note_l
  *      Side-effect return reference for the low note.
+ *
+ * \return
+ *      Returns true if all the values are usable.
  */
 
 bool

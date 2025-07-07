@@ -976,6 +976,8 @@ log2_of_power_of_2 (int tsd)
 #if defined SEQ66_USE_EXTRA_PULSE_CALCULATIONS
 
 /**
+ *  OBSOLETE. See the zoomer class instead.
+ *
  *  This function provides the size of the smallest horizontal grid unit in
  *  units of pulses (ticks).  We need this to be able to increment grid
  *  drawing by more than one (time-wasting!) without skipping any lines.

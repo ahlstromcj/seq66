@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-29
+ * \updates       2025-07-07
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -151,8 +151,14 @@ qseqbase::convert_xy (int x, int y, midipulse & tick, int & note)
 }
 
 /**
- *  Also see pulses_per_pixel() in the calculations module. Here we are
- *  doing the inverse calculation.
+ *  Also see pulses_per_pixel() in the zoomer module. Here we are
+ *  doing the inverse calculation, sort of. Note the zoom is
+ *  ticks per pixel.
+ *
+ *  ca 2025-07-07.
+ *  Removed the PPQN elements.
+ *
+ *      x = ticks * usr().base_ppqn() / ppqn() / zoom();
  */
 
 void
@@ -160,7 +166,7 @@ qseqbase::convert_tn (midipulse ticks, int note, int & x, int & y)
 {
     if (note >= 0 && note <= c_note_max)
     {
-        x = ticks * usr().base_ppqn() / ppqn() / zoom();
+        x = ticks / zoom();
         y = m_total_height - ((note + 1) * m_unit_height) - 1;
     }
     else

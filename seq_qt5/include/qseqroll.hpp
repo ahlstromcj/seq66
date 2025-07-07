@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-15
+ * \updates       2025-07-06
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -356,6 +356,8 @@ private:
      */
 
     seq66::rect m_selection;
+    int m_sel_offset_x;
+    int m_sel_offset_y;
 
     /**
      *  Hold the note value first grabbed when starting a move.

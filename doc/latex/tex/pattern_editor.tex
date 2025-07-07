@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-07-04
+% \update      2025-07-07
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -22,6 +22,11 @@
    \textbf{Edit} tab in the main window; some controls are hidden and the data
    pane is vertically compressed.
    The full version can be brought up in an external window.
+
+   In the descriptions that follow, there is a mix of old and new
+   figures. The older figures have a flat look, while the newer figures
+   feature gradient-filled notes and circular grab handles in the data
+   paint. The following figure is older.
 
 \begin{figure}[H]
    \centering 
@@ -604,7 +609,7 @@
    will apply the same settings to that sequence.
    This is an optional feature, as noted earlier.
 
-\subsection{Pattern Editor / Measures Ruler}
+\subsection{Pattern Editor / Measures Ruler (Time)}
 \label{subsec:pattern_editor_measures_ruler}
 
    The measures ruler ("bar indicator", or "Time")
@@ -702,9 +707,9 @@
    ("event pane") just below it,
    and a taller "data pane" or "data area" just below that.
    While the pattern editor is very similar to note editors in other
-   sequencers, it is a bit different in feel.  A good mouse with at least 3
-   buttons is very helpful for editing.  Buttons and keystrokes enhance the
-   ease of editing.
+   sequencers, it is a bit different in feel.  A mouse with three
+   buttons is helpful for editing, but not necessary.
+   Buttons and keystrokes enhance the ease of editing.
 
    The piano roll shows notes, and, optionally, a background pattern or a
    scale.  Notes are shown as narrow rectanges; the background
@@ -894,7 +899,7 @@
    But, before editing, one can turn on
    \index{note!tooltips}
    "note tooltips", if desired.
-   The thin button, labelled in tiny text as "Note Tips"
+   The thin button, labelled in tiny text as "- Tips -"
    next to the horizontal scroll bar toggles this mode.
    When enabled, moving the mouse over a note will show its value, time range
    in units of B:B:T, and its velocity.
@@ -1016,6 +1021,17 @@
    desired row for the top-most note, and on the desired time location for the
    left-most note.  After pasting, be sure to verify the notes in the new
    location.
+
+   As shown in the following figure, "ghost notes" will appear as the mouse
+   is moved, to aid in the placement of the notes. This feature is used
+   for note movement and for pasting from the clipboard.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.65]{pattern-editor/moving-notes.png}
+   \caption{Note Movement and "Ghost Notes"}
+   \label{fig:pattern_editor_moving_notes}
+\end{figure}
 
    \index{warning!wrap-around notes}
    \textbf{Warning}:  Reducing or increasing the length of a note selection
@@ -1528,7 +1544,7 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=1.0]{pattern-editor/grab-handles.png}
-   \caption{Data Pane Note Grab-Handles}
+   \caption{Data Pane Circular Grab-Handles}
    \label{fig:pattern_editor_data_pane_note_grab_handles}
 \end{figure}
 

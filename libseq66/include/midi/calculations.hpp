@@ -49,7 +49,7 @@
 
 /**
  *  Most of the "pulses-to-xxx" functions have been moved to the zoomer
- *  class.
+ *  class. The definitions in the current module have issues.
  */
 
 #undef  SEQ66_USE_EXTRA_PULSE_CALCULATIONS
@@ -518,6 +518,8 @@ qn_per_beat (int bw = 4)
 #if defined SEQ66_USE_EXTRA_PULSE_CALCULATIONS
 
 /**
+ *  OBSOLETE.
+ *
  *  Calculates the pulses per measure.  This calculation is extremely simple,
  *  and it provides an important constraint to pulse (ticks) calculations: the
  *  default number of pulses in a measure is always 4 times the PPQN value,
@@ -574,7 +576,8 @@ pulses_per_beat (int ppq, int bw = 4)
 }
 
 /*
- * Defined in the cpp file.
+ * Defined in the cpp file, but they are macroed out. Kept around for your
+ * information only.
  *
  *      int pulses_per_substep (midipulse ppq, int zoom)
  *      int pulses_per_pixel (midipulse ppq, int zoom = 2)
@@ -771,7 +774,8 @@ pitch_value_scaled (midibyte d0, midibyte d1)
  *  Free functions in the seq66 namespace.
  */
 
-#if defined SEQ66_USE_EXTRA_PULSE_CALCULATIONS
+#if defined SEQ66_USE_EXTRA_PULSE_CALCULATIONS  /* OBSOLETE */
+
 extern int pulses_per_substep (midipulse ppq, int zoom = 2);
 extern int pulses_per_pixel (midipulse ppq, int zoom = 2);
 #endif

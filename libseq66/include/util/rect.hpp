@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-09-16
- * \updates       2024-11-25
+ * \updates       2025-07-07
  * \license       GNU GPLv2 or above
  *
  *  Our version of the rectangle provides specific functionality not necessary
@@ -70,6 +70,11 @@ public:
     void clear ()
     {
         m_x = m_y = m_width = m_height = 0;
+    }
+
+    bool is_empty () const
+    {
+        return m_width == 0 && m_height == 0;
     }
 
     static void xy_to_rect (int x0, int y0, int x1, int y1, rect & r);

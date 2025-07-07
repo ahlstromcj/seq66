@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-15
+ * \updates       2025-07-07
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -105,7 +105,7 @@ qseqroll::qseqroll
     m_key                   (keys::C),
     m_show_note_info        (false),
     m_note_tooltip          (nullptr),
-    m_note_length           (p.ppqn() * 4 / 16),    // TODO use snap
+    m_note_length           (p.ppqn() * 4 / 16),
     m_note_off_margin       (2),
     m_background_sequence   (seq::unassigned()),
     m_draw_background_seq   (false),
@@ -122,6 +122,8 @@ qseqroll::qseqroll
     m_keypadding_x          (c_keyboard_padding_x),
     m_v_zooming             (false),
     m_selection             (),
+    m_sel_offset_x          (0),
+    m_sel_offset_y          (0),
     m_last_base_note        (-1),
     m_link_wraparound       (usr().pattern_wraparound())
 {
@@ -466,7 +468,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     }
     else if (paste())                       /* issue #97, draw a paste box  */
     {
-        pen.setColor(Qt::gray);
+        pen.setColor(sel_color());
         painter.setPen(pen);
         draw_ghost_notes(painter, m_selection);
     }
@@ -479,7 +481,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
         int delta_y = current_y() - drop_y();
         x = selection().x() + delta_x;
         y = selection().y() + delta_y;
-        pen.setColor(Qt::black);            /* what palette color to use?   */
+        pen.setColor(sel_color());
         painter.setPen(pen);
         if (is_drum_mode())
         {
@@ -487,8 +489,13 @@ qseqroll::paintEvent (QPaintEvent * qpep)
             painter.drawRect(drumx, y + 2, selw + unit_height(), selh);
         }
         else
+        {
+#if defined USE_OLD_CODE
             painter.drawRect(x + m_keypadding_x, y + 2, selw, selh);
-
+#else
+            draw_ghost_notes(painter, m_selection); /* *not* selection()!!  */
+#endif
+        }
         old_rect().set(x, y, selw, selh);
     }
     if (growing())
@@ -702,8 +709,6 @@ qseqroll::draw_notes
         return;
 
     int noteheight = unit_height() - 2;     /* was "- 3"    */
-
-
     s->draw_lock();
     for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
@@ -868,21 +873,17 @@ qseqroll::draw_notes
 }
 
 /**
- *  It would be nice to include the selected notes in the selection box
- *  when pasting.  We'll see how practical this feature is.
- *
- *  Originally, once Ctrl-V (paste) as hit, and empty rectangle the size
+ *  Originally, once Ctrl-V (paste) as hit, an empty rectangle the size
  *  of the original selection range would appear, and the top left corner
  *  would be the approximate location of the paste, upon the mouse release.
- *
  *  Now we want to get the tick range and note range of the selected notes
  *  and map that to the smallest rectangle enclosing the notes.
  *
- *             (x0, y0)
+ *             (x0, y0) and (xo, yo)
  *                 ----------________ ---------------------
  *        n1 .....|........>|________|                     |
  *                | ________           ________            |
- * horizontal |   ||________|         |________|           |
+ * horizontal |   ||________|         |________| ni        |
  *    pixels  |   | ^              (xi, yi)      ________  |
  *            v   | :                           |________|<|..... n0
  *                 -------------------------------------^--
@@ -911,8 +912,8 @@ qseqroll::draw_notes
  *               t1 - t0
  *
  *           (n1 - ni)(y1 - y0)
- *     yi = -------------------- + y0    Note reversal of direction.
- *               n0 - n1
+ *     yi = -------------------- + y0
+ *               n1 - n0
  *
  *  For yi, we have to add the height of the selection box, plus a couple
  *  of pixels for looks.
@@ -940,36 +941,51 @@ qseqroll::draw_ghost_notes
     const seq66::rect & selection
 )
 {
-    int x0 = current_x();
-    int y0 = current_y();
-    int t0 = selection.x0();                        /* tick_start       */
-    int t1 = selection.x1();                        /* tick_finish      */
-    int n0 = selection.y1();                        /* note_high        */
-    int n1 = selection.y0();                        /* note_low         */
-    int wbox = z().tix_to_pix(midipulse(t1)) - z().tix_to_pix(midipulse(t0)) + 4;
-    int h1   = note_to_pix(n1) - note_to_pix(n0);
-    int h2   = note_to_pix(n0) - note_to_pix(n1);
-    int hbox = h1 + unit_height() + 2;
-    float twidthfactor = wbox / float(t1 - t0);
-    float nheightfactor = h2  / float(n1 - n0);
-    painter.drawRect(x0, y0 + 1, wbox, hbox);
+    int xo = current_x() - m_sel_offset_x + 6;      /* leftmost             */
+    int yo = current_y() - m_sel_offset_y;          /* top                  */
+    int t0 = selection.x0();                        /* tick_start           */
+    int t1 = selection.x1();                        /* tick_finish          */
+    int n0 = selection.y0();                        /* note_low             */
+    int n1 = selection.y1();                        /* note_high            */
+    int x0 = z().tix_to_pix(midipulse(t0));
+    int x1 = z().tix_to_pix(midipulse(t1));
+    int y0 = note_to_pix(n1);
+    int y1 = note_to_pix(n0);
+    int wbox = x1 - x0;
+    int hbox = y1 - y0;
+    int ndiff = n1 - n0;
+    if (ndiff == 0)
+        ndiff = 1;
+
+    if (hbox == 0)
+        hbox = unit_height();
+
+    float widthslope = wbox / float(t1 - t0);       /* (x1-x0) / (t1-t0)    */
+    float hieghtslope = hbox / float(ndiff);        /* (y1-y0) / (n1-n0)    */
+
+    /*
+     * ca 2025-07-06. Not really necessary to draw an outline box.
+     *
+     *      painter.drawRect(x0, y0 + 1, wbox, hbox);
+     */
+
     track().draw_lock();
     for (auto cev = track().cbegin(); ! track().cend(cev); ++cev)
     {
-        sequence::note_info ni;
-        sequence::draw dt = track().get_next_note(ni, cev);
+        sequence::note_info ninfo;
+        sequence::draw dt = track().get_next_note(ninfo, cev);
         if (dt == sequence::draw::finish)
             break;
 
-        if (ni.selected())
+        if (ninfo.selected())
         {
-            int xi = (ni.start() - t0) * twidthfactor + current_x();
-            int yi = hbox +
-                (n1 - ni.note() - 1) * nheightfactor + current_y() + 2;
-
+            int ti = int(ninfo.start());
+            int ni = ninfo.note();
+            int xi = (ti - t0) * widthslope + xo + 1;
+            int yi = (n1 - ni) * hieghtslope + yo + 4;
             if (dt == sequence::draw::linked)
             {
-                m_note_width = z().tix_to_pix(ni.length());
+                m_note_width = z().tix_to_pix(ninfo.length());
                 if (m_note_width < 1)
                     m_note_width = 1;
 
@@ -1254,10 +1270,11 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                  */
 
                 eventlist::select selmode = eventlist::select::selected;
-                bool is_selected = track().select_note_events
+                int selcount = track().select_note_events
                 (
                     tick_s, note, tick_f, note, selmode
-                ) > 0;
+                );
+                bool is_selected = selcount > 0;
                 if (is_selected)
                 {
                     if (! isctrl)
@@ -1284,6 +1301,23 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                         move_snap_offset_x(selection().x() - adj_selected_x);
                         current_x(snapped_x);
                         drop_x(snapped_x);
+
+                        /*
+                         * EXPERIMENTAL. Get pixel coordinates of selected notes.
+                         * Subtract them from the current mouse location.
+
+                        if (selcount > 1)
+                        {
+                            m_sel_offset_x = current_x() - selection().x();
+                            m_sel_offset_y = current_y() - selection().y();
+                        }
+                        else
+                            m_sel_offset_x = m_sel_offset_y = 0;
+                         *
+                         */
+
+                        m_sel_offset_x = current_x() - selection().x();
+                        m_sel_offset_y = current_y() - selection().y();
                     }
 
                     /*
@@ -1406,10 +1440,20 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
         }
         if (moving())
         {
+#if defined USE_NEW_CODE
+            /*
+             * Move the notes to the same location as the ghost-notes
+             * selection box. The ghost notes are drawn based on the
+             * current mouse (x, y) location, with the top-left corner
+             * at the current mouse location.
+             */
+#else
             /*
              * Adjust delta x for snap, convert deltas into screen
              * coordinates.  Since delta_note and delta_y are of opposite
              * sign, we flip the final result.  delta_y[0] = note[127].
+             * This code suffers from the defect that the drop location
+             * depends on where in the selection the mouse grabbed it.
              */
 
             int note;
@@ -1429,7 +1473,14 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             {
                 track().move_selected_notes(delta_tick, delta_note);
                 flag_dirty();
+
+                /*
+                 * Make the moved notes the new selection.
+                 */
+
+                (void) get_selected_box();
             }
+#endif  // USE_NEW_CODE
         }
     }
     if (lbutton || mbutton)
@@ -2072,6 +2123,9 @@ qseqroll::start_paste ()
     track().clipboard_box(tick_s, note_h, tick_f, note_l);
     convert_tn_box_to_rect(tick_s, tick_f, note_h, note_l, selection());
     selection().xy_incr(drop_x(), drop_y() - selection().y());
+
+    m_sel_offset_x = 0;
+    m_sel_offset_y = 0;
 }
 
 /**
