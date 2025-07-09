@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2023-04-10
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -376,7 +376,7 @@ public:
         return m_macro_events.names();
     }
 
-    midistring macro_bytes (const std::string & name) const
+    midibytes macro_bytes (const std::string & name) const
     {
         return m_macro_events.bytes(name);
     }

@@ -1,10 +1,12 @@
 TO DO for Seq66 0.99.21
 Chris Ahlstrom
-2019-04-13 to 2025-07-04
+2019-04-13 to 2025-07-09
 
 Hot:
 
-    -   Issues #137 to #140.
+    -   MIDI macros.  Call midimacros::make_defaults()?
+    -   Update event creation to handle real-time messages that
+        specify data.
     -   When testing LFO, and exiting via the main window, the following
         dialog remains "Session: Saved: <name of MIDI file>".
     -   Note drawing and event drawing screwed up in time when scrolled
@@ -33,13 +35,8 @@ Cannot duplicate:
 
 Backlog:
 
-    -   Do we want performer::set_left_tick() to also do set_last_ticks().
-    -   When moving notes, the note outline is way too far to the left,
-        and not long enough.
     -   In midicvt (separate project), the c_mutegroups SeqSpec is not
         shown (24 24 00 09).
-    -   Consider adding the 'ctrl' file macros to an "Insert macro"
-        menu in the grid-slot popup and the event editor.
     -   Automation: verify/document Solo, Reset Sets, and Song Position.
     -   Make sure sessions.rc works as advertised; fix documentation.
     -   Add a light version of glob(3) to use with Windows. In progress

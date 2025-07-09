@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-06-26
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1801,12 +1801,13 @@ public:
         midipulse start = 0,
         midipulse limit = c_null_midipulse
     );
-    bool add_event (const event & er);      /* another one declared below */
+    bool add_event (const event & er);
     bool add_event
     (
         midipulse tick, midibyte status,
         midibyte d0, midibyte d1, bool repaint = false
     );
+    bool add_event (midipulse tick, const midibytes & dbytes);
     bool append_event (const event & er);
     void sort_events ();
     event find_event (const event & e, bool nextmatch = false);

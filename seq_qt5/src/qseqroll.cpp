@@ -1280,6 +1280,14 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     if (! isctrl)
                     {
                         moving_init(true);          /* moving; L-click only */
+
+                        /*
+                         * ca 2025-07-07
+                         * Store the selection to show the single-note
+                         * "ghost note" while moving.
+                         */
+
+                        (void) get_selected_box();
                         flag_dirty();
                         if (is_drum_mode())
                         {

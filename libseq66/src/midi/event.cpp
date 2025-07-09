@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-03
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -730,52 +730,72 @@ event::set_note_off (int note, midibyte channel)
  *
  *  Encapsulates some common code.  This function assumes we have already set
  *  the status and data bytes.
+ *
+ * \param timestamp
+ *      The desired or actual time-stamp for the event.
+ *
+ * \param buffer
+ *      Provides a pointer to the data buffer. This can also be a pointer
+ *      to the data obtained via std::vector::data(). We use a pointer
+ *      because PortMidi is C code, not C++ code.
+ *
+ * \param count
+ *      The number of bytes in the message. If set to 0 (the default), then
+ *      the event is a basic MIDI event, not a realtime event, and we
+ *      analyze the status byte.
+ *
+ * \return
+ *      Returns true if the event data could be set. If false, the event
+ *      is a Meta event, and has to be handled elsewhere. Meta events
+ *      are never sent by devices, but they might be inserted by the Seq66
+ *      macro feature.
  */
 
 bool
 event::set_midi_event
 (
-    midipulse timestamp,
+    midipulse tstamp,
     const midibyte * buffer,
     int count
 )
 {
     bool result = true;
-    set_timestamp(timestamp);
+    midibyte eventstatus = buffer[0];
+    set_timestamp(tstamp);
     set_sysex_size(count);
     if (count == 0)             /* portmidi: analyze the event to get count */
     {
-        if (is_two_byte_msg(buffer[0]))
+        if (is_two_byte_msg(eventstatus))
             count = 3;
-        else if (is_one_byte_msg(buffer[0]))
+        else if (is_one_byte_msg(eventstatus))
             count = 2;
         else
-            count = 1;
+            count = 1;          /* 1-byte real-time MIDI event (e.g. Start  */
     }
     if (count == 3)
     {
-        set_status_keep_channel(buffer[0]);
+        set_status_keep_channel(eventstatus);
         set_data(buffer[1], buffer[2]);
         if (is_note_off_recorded())
         {
-            midibyte channel = mask_channel(buffer[0]);
-            midibyte status = EVENT_NOTE_OFF | channel;
-            set_status_keep_channel(status);
+            midibyte channel = mask_channel(eventstatus);
+            midibyte notestatus = EVENT_NOTE_OFF | channel;
+            set_status_keep_channel(notestatus);
         }
     }
     else if (count == 2)
     {
-        set_status_keep_channel(buffer[0]);
+        set_status_keep_channel(eventstatus);
         set_data(buffer[1]);
     }
     else if (count == 1)
     {
-        set_status(buffer[0]);
+        set_status(eventstatus);
         clear_data();
     }
     else
     {
-        if (buffer[0] == EVENT_MIDI_SYSEX)
+        if (eventstatus == EVENT_MIDI_SYSEX)
         {
             reset_sysex();            /* set up for sysex if needed   */
             if (! append_sysex(buffer, count))
@@ -1550,6 +1570,90 @@ create_tempo_event (midipulse tick, midibpm tempo)
     e.set_timestamp(tick);
     e.set_tempo(tempo);
     return e;
+}
+
+/**
+ *  We want to create a single event from raw bytes (not from a file), for
+ *  the purpose of inserting macros into a pattern.
+ *
+ *  The first parameter is the time-stamp.
+ *
+ *  For three byte events:
+ *
+ *       EVENT_NOTE_OFF, EVENT_NOTE_ON, EVENT_AFTERTOUCH, EVENT_CONTROL_CHANGE,
+ *       EVENT_PITCH_WHEEL;
+ *
+ *       event (midipulse tstamp, midibyte status, midibyte d0, midibyte d1) :
+ *
+ *       status = byte[0],
+ *       d0 = byte[1]
+ *       d1 = byte[2]
+ *
+ *  For two-byte events:
+ *
+ *       EVENT_PROGRAM_CHANGE, EVENT_CHANNEL_PRESSURE:
+ *
+ *       event (midipulse tstamp, midibyte status, midibyte d0, midibyte d1) :
+ *
+ *       status = byte[0],
+ *       d0 = byte[1]
+ *       d1 = 0 or default
+ *
+ *  Realtime MIDI Meta:
+ *
+ *       status = byte[0],
+ *       meta-type = byte[1]
+ *       length = varinum bytes [2 to 4]
+ *       data = length bytes
+ *
+ *  Realtime SysEx:
+ *
+ *       status = byte[0],
+ *       length = varinum bytes [1 to 3]
+ *       data = length bytes
+ *
+ *  Seq66-specific SeqSpecs are not handled.
+ *
+ *      https://www.songstuff.com/recording/article/midi-message-format/
+ */
+
+event
+create_event (midipulse tstamp, const midibytes & dbytes)
+{
+    event result;
+    bool is_set = result.set_midi_event(tstamp, dbytes.data(), dbytes.size());
+    if (! is_set)
+    {
+        midibyte eventstatus = dbytes[0];
+        switch (eventstatus)
+        {
+        case EVENT_MIDI_QUARTER_FRAME:
+
+            warnprint("Quarter frame unhandled");
+            break;
+
+        case EVENT_MIDI_SONG_POS:
+
+            warnprint("Song position unhandled");
+            break;
+
+        case EVENT_MIDI_SONG_SELECT:
+
+            warnprint("Song select unhandled");
+            break;
+
+        case EVENT_MIDI_META:
+            {
+                midibyte metatype = dbytes[1];
+                int index = 2;
+                midilong len = extract_varinum(dbytes, index);
+                result.set_meta_status(metatype);
+                (void) result.set_sysex(dbytes.data() + index, len);
+            }
+            break;
+        }
+    }
+    return result;
 }
 
 }           // namespace seq66

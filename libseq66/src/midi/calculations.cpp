@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2025-06-28
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1442,6 +1442,36 @@ combine_bytes (midibyte b0, midibyte b1)
    short_14bit <<= 7;
    short_14bit |= (unsigned short)(b0);
    return short_14bit * 48;
+}
+
+/**
+ *  Extracts a MIDI Variable-Length Value (VLV) from a byte array.
+ *  See read_varinum().
+ *
+ * \return
+ *      Returns the accumulated values as a single number.
+ */
+
+midilong
+extract_varinum (const midibytes & data, int & index)
+{
+    midilong result = 0;
+    int pos = index;
+    midibyte c = 0;
+    for ( ; index < int(data.size()); ++index)
+    {
+        c = data[index];
+        if ((c & 0x80) != 0x00)                     /* bit 7 is set         */
+        {
+            result <<= 7;                           /* shift result 7 bits  */
+            result += c & 0x7F;                     /* add bits 0-6         */
+        }
+        else
+            break;
+    }
+    result <<= 7;                                   /* bit was clear       */
+    result += c & 0x7F;
+    return result;
 }
 
 /**

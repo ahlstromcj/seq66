@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2021-12-29
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -99,7 +99,7 @@ midimacros::add (const tokenization & tokens)
 }
 
 /**
- *  Converts all the loaded macros into midistrings, expanding macro
+ *  Converts all the loaded macros into midibytes, expanding macro
  *  references where needed.  References are tokens showing the name of
  *  another macro, e.g. "$header".
  */
@@ -113,7 +113,7 @@ midimacros::expand ()
         for (auto & m : m_macros)
         {
             midimacro & mac = m.second;
-            midistring b = expand(mac);
+            midibytes b = expand(mac);
             result = ! b.empty();
             if (result)
                 mac.bytes(b);
@@ -124,10 +124,10 @@ midimacros::expand ()
     return result;
 }
 
-midistring
+midibytes
 midimacros::expand (midimacro & m)
 {
-    midistring result;
+    midibytes result;
     for (const auto & token : m.tokens())
     {
         if (token[0] == '$')
@@ -136,7 +136,12 @@ midimacros::expand (midimacro & m)
             const auto cit = m_macros.find(name);
             if (cit != m_macros.end())
             {
-                result += expand(cit->second);
+                /*
+                 * Was a midistring: result += expand(cit->second);
+                 */
+
+                midibytes xpanded = expand(cit->second);
+                result.insert(result.end(), xpanded.begin(), xpanded.end());
             }
             else
             {
@@ -146,17 +151,21 @@ midimacros::expand (midimacro & m)
         }
         else
         {
+            /*
+             * result += b;
+             */
+
             midibyte b = string_to_midibyte(token);
-            result += b;
+            result.push_back(b);
         }
     }
     return result;
 }
 
-midistring
+midibytes
 midimacros::bytes (const std::string & name) const
 {
-    midistring result;
+    midibytes result;
     const auto cit = m_macros.find(name);
     if (cit != m_macros.end())
     {

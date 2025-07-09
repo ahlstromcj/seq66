@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with refactoring by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2023-09-05
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -543,10 +543,10 @@ midicontrolout::send_macro (const std::string & name, bool flush)
 
     if (enabled)
     {
-        midistring byts = m_macro_events.bytes(name);
+        midibytes byts = m_macro_events.bytes(name);
         if (! byts.empty())
         {
-            int len = int(byts.length());
+            int len = int(byts.size());
             bussbyte tb = true_buss();
 
             /*

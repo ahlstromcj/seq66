@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2023-11-24
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -302,7 +302,7 @@ qsessionframe::populate_macro_combo ()
             }
             else
             {
-                midistring bytes = perf().macro_bytes(name);
+                midibytes bytes = perf().macro_bytes(name);
                 std::string bs = midi_bytes_string(bytes, c_macro_byte_max);
                 std::string combined = name;
                 combined += ": ";

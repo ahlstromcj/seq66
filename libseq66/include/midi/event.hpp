@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-06-21
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -49,10 +49,7 @@
  *          data.
  */
 
-#include <string>                       /* used in to_string()              */
-#include <vector>                       /* SYSEX data stored in vector      */
-
-#include "midi/midibytes.hpp"           /* seq66::midibyte alias, etc.      */
+#include "midi/midibytes.hpp"           /* seq66::midibyte, vector, etc.    */
 
 #define SEQ66_STAZED_SELECT_EVENT_HANDLE
 
@@ -862,7 +859,7 @@ public:
     (
         midipulse timestamp,
         const midibyte * buffer,
-        int count
+        int count = 0
     );
 
     /**
@@ -1381,7 +1378,7 @@ public:
 
     /**
      *  Indicates if the m_status value is a one-byte message (Program Change
-     *  or Channel Pressure.  Channel is stripped, because sometimes we keep
+     *  or Channel Pressure. Channel is stripped, because sometimes we keep
      *  the channel.
      */
 
@@ -1540,6 +1537,7 @@ private:    // used by friend eventlist
  */
 
 extern event create_tempo_event (midipulse tick, midibpm tempo);
+extern event create_event (midipulse tick, const midibytes & data);
 
 }           // namespace seq66
 

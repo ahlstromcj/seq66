@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2022-06-27
+ * \updates       2022-07-09
  * \license       GNU GPLv2 or above
  *
  *  These classes were originally structures, but now they are "constant"
@@ -134,10 +134,10 @@ midi_timing::midi_timing
  */
 
 std::string
-midi_bytes_string (const midistring & b, int limit)
+midi_bytes_string (const midibytes & b, int limit)
 {
     std::string result;
-    int count = int(b.length());
+    int count = int(b.size());
     bool no_0x = limit > 0;
     int len = count;
     if (no_0x && (limit < count))

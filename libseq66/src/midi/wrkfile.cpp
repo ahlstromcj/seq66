@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-04
- * \updates       2025-06-21
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the WRK format, see, for example:
@@ -866,7 +866,7 @@ wrkfile::NoteArray (int track, int events)
     int value = 0;
     int len = 0;
     std::string text;
-    midistring mdata;
+    midibytes mdata;
     const char * format =
         "%12s: Tr %d tick %ld event 0x%02X ch %d data %d.%d value %d dur %d\n";
 
@@ -1595,7 +1595,7 @@ wrkfile::Set_timestamp (event & e, midipulse rawtime)
 void
 wrkfile::SysexChunk ()
 {
-    midistring data;
+    midibytes data;
     int bank = read_byte();
     int len = read_16_bit();
     bool autosend = (read_byte() != 0);
@@ -1623,7 +1623,7 @@ wrkfile::SysexChunk ()
 void
 wrkfile::Sysex2Chunk ()
 {
-    midistring data;
+    midibytes data;
     int bank = read_16_bit();
     int len = read_32_bit();
     midibyte b = read_byte();
@@ -1653,7 +1653,7 @@ void
 wrkfile::NewSysexChunk ()
 {
     std::string name;
-    midistring data;
+    midibytes data;
     int bank = read_16_bit();
     int len = int(read_32_bit());
     int port = read_16_bit();
@@ -1866,7 +1866,7 @@ void
 wrkfile::VariableRecord (int max)
 {
     int datalen = max - 32;
-    midistring data;
+    midibytes data;
     std::string name = read_var_string();
     read_gap(31 - name.length());
     if (read_byte_array(data, datalen))

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-06-29
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2687,6 +2687,19 @@ qseqeditframe64::tools ()
     }
 }
 
+#if defined USE_INSERT_MACROS
+
+void
+qseqeditframe64::insert_macro (const std::string & macroname)
+{
+    midibytes mbytes = perf().macro_bytes(macroname);
+    printf("macro name: '%s'\n", macroname.c_str());
+//  midipulse tstamp = track().get_last_tick();
+//  (void) track().add_event(tstamp, bytes);
+}
+
+#endif
+
 /**
  *  Builds the Tools popup menu on the fly.
  */
@@ -2697,6 +2710,46 @@ qseqeditframe64::popup_tool_menu ()
     m_tools_popup = new_qmenu("", this);
     if (not_nullptr(m_tools_popup))
     {
+#if defined USE_INSERT_MACROS
+
+        /*
+         * Shall we look up macros by name or number? What's best for these
+         * QActions? We can get the action text via text().
+         */
+
+        QMenu * menumacros = nullptr;
+        bool macrosactive = perf().macros_active();
+        tokenization names = perf().macro_names();
+        if (macrosactive)
+            macrosactive = ! names.empty();
+
+        if (macrosactive)
+        {
+            menumacros = new_qmenu("&Insert macro", m_tools_popup);
+            if (not_nullptr(menumacros))
+            {
+                for (const auto & name : names)
+                {
+                    QAction * tmp = new_qaction(name, m_tools_popup);
+                    midibytes mbytes = perf().macro_bytes(name);
+                    bool enabled = ! mbytes.empty();
+                    tmp->setEnabled(enabled);
+                    menumacros->addAction(tmp);
+                }
+                connect
+                (
+                    menumacros, &QMenu::triggered,
+                    [this] (QAction * qact)
+                    {
+                        insert_macro(qact->text().toStdString());
+                    }
+                );
+            }
+            else
+                macrosactive = false;
+        }
+#endif
+
         QMenu * menuselect = new_qmenu("&Select notes...", m_tools_popup);
         QMenu * menutiming = new_qmenu
         (
@@ -2828,6 +2881,10 @@ qseqeditframe64::popup_tool_menu ()
                 menuharmonic->addSeparator();
             }
         }
+#if defined USE_INSERT_MACROS
+        if (macrosactive)
+            m_tools_popup->addMenu(menumacros);
+#endif
         m_tools_popup->addMenu(menuselect);
         m_tools_popup->addMenu(menutiming);
         m_tools_popup->addMenu(menupitch);

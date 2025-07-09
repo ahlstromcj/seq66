@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-03
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4610,6 +4610,13 @@ sequence::add_event
         }
     }
     return result;
+}
+
+bool
+sequence::add_event (midipulse tick, const midibytes & dbytes)
+{
+    event ev = create_event(tick, dbytes);
+    return add_event(ev);
 }
 
 /**

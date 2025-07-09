@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-04
- * \updates       2022-05-14
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the WRK format, see, for example:
@@ -108,7 +108,7 @@ private:
         midilong m_PunchOutTime; ///< Punch-out time.
         midilong m_EndAllTime;   ///< Time of latest event (incl. all tracks).
         int m_division;          ///< TODO.
-        midistring m_lastChunkData; ///< Holds the latest raw data chunk.
+        midibytes m_lastChunkData; ///< Holds the latest raw data chunk.
         std::list<RecTempo> m_tempos;   ///< Tempo data.
     };
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2021-12-04
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -38,7 +38,7 @@
  *      It is NOT a base class for midicontrol or midicontrolin!
  */
 
-#include "midi/midibytes.hpp"           /* seq66::midistring data type      */
+#include "midi/midibytes.hpp"           /* seq66::midibytes data type       */
 #include "util/basic_macros.hpp"        /* seq66::tokenization container    */
 
 namespace seq66
@@ -73,11 +73,10 @@ private:
 
     /**
      *  Provides the full list of midibytes to be sent via this macro after
-     *  expanding any macros it includes.  A midistring is a basic_string of
-     *  midibytes.
+     *  expanding any macros it includes.
      */
 
-    midistring m_bytes;
+    midibytes m_bytes;
 
     /**
      *  Is the macro good?  It is good if there is a name, if there's at least
@@ -109,7 +108,7 @@ public:
 
     std::string line () const;
 
-    const midistring & bytes () const
+    const midibytes & bytes () const
     {
         return m_bytes;
     }
@@ -128,7 +127,7 @@ private:
         m_name = n;
     }
 
-    void bytes (const midistring & b);
+    void bytes (const midibytes & b);
 
 };          // class midimacro
 

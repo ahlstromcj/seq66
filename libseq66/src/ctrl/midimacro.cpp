@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2021-11-23
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacro is of the following format:
@@ -64,7 +64,7 @@ midimacro::midimacro (const std::string & name, const std::string & values) :
 }
 
 void
-midimacro::bytes (const midistring & b)
+midimacro::bytes (const midibytes & b)
 {
     bool valid = false;
     m_bytes = b;

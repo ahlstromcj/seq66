@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2025-06-29
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -79,8 +79,7 @@ namespace seq66
 using midibyte = unsigned char;
 
 /**
- *  Provides an array-like container for midibytes. Compare it to the
- *  midistring type.
+ *  Provides an array-like container for midibytes.
  */
 
 using midibytes = std::vector<midibyte>;
@@ -167,9 +166,9 @@ using midibpm = double;
 
 /**
  *  Provides a string specialization to explicitly use unsigned characters.
+ *
+ *      using midistring = std::basic_string<midibyte>;
  */
-
-using midistring = std::basic_string<midibyte>;
 
 /**
  *  Provides a convenient way to package a number of booleans, such as
@@ -571,17 +570,24 @@ abs_midibyte_value (int b)
 }
 
 inline const midibyte *
-midi_bytes (const midistring & b)
+midi_bytes (const midibytes & b)
 {
-    return static_cast<const midibyte *>(b.data());
+//  return static_cast<const midibyte *>(b.data());
+    return b.data();
 }
+
 
 /*
  *  More free functions, not inline.
  */
 
-extern std::string midi_bytes_string (const midistring & b, int limit = 0);
+extern std::string midi_bytes_string (const midibytes & b, int limit = 0);
 extern midibyte string_to_midibyte (const std::string & s, midibyte defalt = 0);
+
+/*
+ * extern midibytes midi_bytes_from_midi_string (const midistring & b);
+ */
+
 extern midibooleans fix_midibooleans (const midibooleans & mbs, int newsz);
 
 /**

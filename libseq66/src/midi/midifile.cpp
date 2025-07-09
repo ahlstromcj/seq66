@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-06-26
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -38,7 +38,7 @@
  *  (https://github.com/ahlstromcj/midicvt, derived from midicomp, midi2text,
  *  and mf2t/t2mf) does not ignore this lack of a SeqSpec wrapper, and hence
  *  we decided to provide a new, more strict input and output format for the
- *  the "proprietary"/SeqSpec track in Seq66.
+ *  the SeqSpec (formerly misnomered as "proprietary") track in Seq66.
  *
  *  Elements written:
  *
@@ -614,10 +614,10 @@ midifile::read_string (std::string & b, size_t len)
 
 /**
  *  A overload function to simplify reading midi_control data from the MIDI
- *  file.  It uses a midistring object instead of a buffer.
+ *  file.  It uses a midibytes object instead of a buffer.
  *
  * \param b
- *      The midistring to receive the data.
+ *      The midibytes to receive the data.
  *
  * \param len
  *      The number of bytes to be read.
@@ -628,7 +628,7 @@ midifile::read_string (std::string & b, size_t len)
  */
 
 bool
-midifile::read_byte_array (midistring & b, size_t len)
+midifile::read_byte_array (midibytes & b, size_t len)
 {
     bool result = len > 0;
     b.clear();
@@ -658,12 +658,12 @@ midifile::read_varinum ()
 {
     midilong result = 0;
     midibyte c;
-    while (((c = read_byte()) & 0x80) != 0x00)      /* while bit 7 is set  */
+    while (((c = read_byte()) & 0x80) != 0x00)      /* while bit 7 is set   */
     {
-        result <<= 7;                               /* shift result 7 bits */
-        result += c & 0x7F;                         /* add bits 0-6        */
+        result <<= 7;                               /* shift result 7 bits  */
+        result += c & 0x7F;                         /* add bits 0-6         */
     }
-    result <<= 7;                                   /* bit was clear       */
+    result <<= 7;                                   /* bit was clear        */
     result += c & 0x7F;
     return result;
 }

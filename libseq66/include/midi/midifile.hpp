@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-05-14
+ * \updates       2025-07-09
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -378,7 +378,7 @@ protected:
     midibyte read_byte ();
     midilong read_varinum ();
     bool read_byte_array (midibyte * b, size_t len);
-    bool read_byte_array (midistring & b, size_t len);
+    bool read_byte_array (midibytes & b, size_t len);
     bool read_string (std::string & b, size_t len);
     bool read_meta_data (sequence & s, event & e, midibyte metatype, size_t len);
     bool read_sysex_data
