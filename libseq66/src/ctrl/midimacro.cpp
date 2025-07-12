@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2025-07-09
+ * \updates       2025-07-12
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacro is of the following format:
@@ -53,37 +53,57 @@ namespace seq66
 
 
 midimacro::midimacro (const std::string & name, const std::string & values) :
-    m_name      (name),
-    m_tokens    (),
-    m_bytes     (),
-    m_is_valid  ()
+    m_name          (name),
+    m_tokens        (),
+    m_bytes         (),
+    m_event_count   (0),
+    m_event_bytes   (),
+    m_is_valid      (false)
 {
     m_is_valid = tokenize(values);          /* the member function below    */
-    if (m_is_valid)
-        m_is_valid = ! m_tokens[0].empty();
 }
 
-void
-midimacro::bytes (const midibytes & b)
+const midibytes &
+midimacro::bytes (int index) const
 {
-    bool valid = false;
-    m_bytes = b;
-    for (auto c : b)
+    static midibytes s_dummy { 0 };
+    if (event_count() == 1 || index == (-1))
     {
-        if (c > 0)
-        {
-            valid = true;
-            break;
-        }
+        return m_bytes;
     }
-    m_is_valid = valid;
+    else
+    {
+        if (index >= 0 && index < m_event_count)
+            return m_event_bytes[index];
+        else
+            return s_dummy;
+    }
 }
+
+/**
+ *  We have added the ability to provide multiple "|"-separated events in
+ *  one macro.
+ */
 
 bool
 midimacro::tokenize (const std::string & values)
 {
+    bool result;
     m_tokens = seq66::tokenize(values);         /* from strfunctions module */
-    return m_tokens.size() > 0;
+    result = m_tokens.size() > 0;
+    if (result)
+    {
+        m_event_count = 1;
+        if (m_tokens.size() >= 3)
+        {
+            for (const auto & t : m_tokens)
+            {
+                if (t == "|")
+                    ++m_event_count;
+            }
+        }
+    }
+    return result;
 }
 
 std::string

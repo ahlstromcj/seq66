@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-07-09
+ * \updates       2025-07-11
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2687,18 +2687,29 @@ qseqeditframe64::tools ()
     }
 }
 
-#if defined USE_INSERT_MACROS
-
 void
 qseqeditframe64::insert_macro (const std::string & macroname)
 {
+#if defined USE_OLD_CODE
     midibytes mbytes = perf().macro_bytes(macroname);
-    printf("macro name: '%s'\n", macroname.c_str());
-//  midipulse tstamp = track().get_last_tick();
-//  (void) track().add_event(tstamp, bytes);
-}
-
+    midipulse tstamp = track().get_last_tick();
+    bool ok = track().add_event(tstamp, mbytes);
+#else
+    const midimacro & macro = perf().get_macro(macroname);
+    midipulse tstamp = track().get_last_tick();
+    bool ok = track().add_macro(tstamp, macro);
 #endif
+    if (ok)
+    {
+        msgprintf
+        (
+            msglevel::info, "Macro '%s' inserted at %ld",
+            macroname.c_str(), long(tstamp)
+        );
+    }
+    else
+        error_message("Could not insert macro '%s'", macroname);
+}
 
 /**
  *  Builds the Tools popup menu on the fly.
@@ -2710,8 +2721,6 @@ qseqeditframe64::popup_tool_menu ()
     m_tools_popup = new_qmenu("", this);
     if (not_nullptr(m_tools_popup))
     {
-#if defined USE_INSERT_MACROS
-
         /*
          * Shall we look up macros by name or number? What's best for these
          * QActions? We can get the action text via text().
@@ -2725,7 +2734,7 @@ qseqeditframe64::popup_tool_menu ()
 
         if (macrosactive)
         {
-            menumacros = new_qmenu("&Insert macro", m_tools_popup);
+            menumacros = new_qmenu("&Insert macro at \"L\"", m_tools_popup);
             if (not_nullptr(menumacros))
             {
                 for (const auto & name : names)
@@ -2733,6 +2742,9 @@ qseqeditframe64::popup_tool_menu ()
                     QAction * tmp = new_qaction(name, m_tools_popup);
                     midibytes mbytes = perf().macro_bytes(name);
                     bool enabled = ! mbytes.empty();
+                    if (enabled)
+                        enabled = name != "header" && name != "footer";
+
                     tmp->setEnabled(enabled);
                     menumacros->addAction(tmp);
                 }
@@ -2748,7 +2760,6 @@ qseqeditframe64::popup_tool_menu ()
             else
                 macrosactive = false;
         }
-#endif
 
         QMenu * menuselect = new_qmenu("&Select notes...", m_tools_popup);
         QMenu * menutiming = new_qmenu
@@ -2881,10 +2892,8 @@ qseqeditframe64::popup_tool_menu ()
                 menuharmonic->addSeparator();
             }
         }
-#if defined USE_INSERT_MACROS
         if (macrosactive)
             m_tools_popup->addMenu(menumacros);
-#endif
         m_tools_popup->addMenu(menuselect);
         m_tools_popup->addMenu(menutiming);
         m_tools_popup->addMenu(menupitch);

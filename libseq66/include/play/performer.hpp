@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2025-07-09
+ * \updates       2025-07-12
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3056,6 +3056,11 @@ public:
     midibytes macro_bytes (const std::string & name) const
     {
         return midi_control_out().macro_bytes(name);
+    }
+
+    const midimacro & get_macro (const std::string & name) const
+    {
+        return midi_control_out().macro(name);
     }
 
     bool exec_slot_function

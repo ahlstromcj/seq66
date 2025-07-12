@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-07-08
+ * \updates       2025-07-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -52,14 +52,6 @@
  */
 
 #undef USE_LEGACY_MEASURES_ADJUSTMENT
-
-/**
- *  EXPERIMENTAL.
- *  Enables being able to insert a macro (via an event) at the "L"
- *  marker in the pattern.
- */
-
-#define USE_INSERT_MACROS
 
 /**
  *  Specifies the reported final size of the main window when the larger edit
@@ -361,9 +353,7 @@ private slots:
 private:        /* slot helper functions        */
 
     void do_action (eventlist::edit action, int var);
-#if defined USE_INSERT_MACROS
     void insert_macro (const std::string & macroname);
-#endif
     void popup_tool_menu ();
     void popup_sequence_menu ();
     void repopulate_usr_combos (int buss, int channel);

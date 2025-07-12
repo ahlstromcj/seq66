@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-07-09
+ * \updates       2025-07-12
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -44,6 +44,7 @@
 
 #include "seq66_features.hpp"           /* various feature #defines         */
 #include "cfg/usrsettings.hpp"          /* enum class record                */
+#include "ctrl/midimacro.hpp"           /* seq66::midimacro                 */
 #include "midi/calculations.hpp"        /* seq66::lengthfix, alteration     */
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
@@ -1808,6 +1809,7 @@ public:
         midibyte d0, midibyte d1, bool repaint = false
     );
     bool add_event (midipulse tick, const midibytes & dbytes);
+    bool add_macro (midipulse tick, const midimacro & macro);
     bool append_event (const event & er);
     void sort_events ();
     event find_event (const event & e, bool nextmatch = false);

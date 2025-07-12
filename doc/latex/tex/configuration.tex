@@ -2808,6 +2808,7 @@
       footer = 0xf7
       header =0xf0 0x00 0x20 0x29 0x02 0x0e 
       reset = $shutdown
+      middlec = 0x90 0x3C 0x40 | 0x80 0x3C 0x00
       shutdown = $live-mode
       startup = $programmer-mode
       live-mode = $header 0x0e 0x00 $footer
@@ -2820,17 +2821,25 @@
    The first three are useful in other macros, while "startup" and
    "shutdown", if defined with actual data, are sent at the launch
    and shutdown, respectively, of \textsl{Seq66}.
-   Note that these macros can be re-used in other macros, to
-   increase the readability of the macros and to reduce the
-   chance for mistakes.
-   Note, too, that many devices required a device-specific
-   SysEx header to precede the command-data, and the 0xf7
-   End-of-SysEx "footer" to end the command.
 
-   There is no limit to the number of macros that can be defined.
-   To send any of them directly at any time, go to the
-   \textbf{Session} tab and select a macro from the drop-down list.
-   There is no way to send them via MIDI control :-(.
+   Features to note:
+
+   \begin{itemize}
+      \item These macros can be re-used (via the dollar sign) in other macros,
+         to increase the readability of the macros and to reduce the chance for
+         mistakes.
+      \item Many devices required a device-specific SysEx header to precede the
+         command-data, and the 0xf7 End-of-SysEx "footer" to end the command.
+      \item Do not include time deltas; they are not needed for sending.
+      \item In the "middlec" macro, the "|" separates two events, a Note On
+         followed by a Note Off.
+      \item There is no limit to the number of macros that can be defined.
+      \item To send any of them directly at any time, go to the
+         \textbf{Session} tab and select a macro from the drop-down list.
+         There is no way to send them via MIDI control :-(.
+      \item Macros can also be inserted at the current "L" marker
+         from the Tools menu of the pattern editor.
+   \edn{itemize}
 
 % NOTE:
 %

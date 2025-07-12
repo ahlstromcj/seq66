@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2025-07-09
+ * \updates       2025-07-12
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -66,7 +66,9 @@ private:
     /**
      *  This is a list of tokens making up the macro. Although it can take up
      *  extra space, it is useful to write the macro back to the configuration
-     *  file. Also see the tokenize() function in the strfunctions module.
+     *  file. It also allows putting multiple events into one macro.
+     *
+     *  Also see the tokenize() function in the strfunctions module.
      */
 
     tokenization m_tokens;
@@ -77,6 +79,20 @@ private:
      */
 
     midibytes m_bytes;
+
+    /**
+     *  The number of events in the macro. Normally just one, unless
+     *  the vertical bar ("|") occurs in the list of tokens.
+     */
+
+    int m_event_count;
+
+    /**
+     *  Provides the midibytes for each separate event in a multiple-event
+     *  macro. Populated only if the separator bar ("|") was present.
+     */
+
+    std::vector<midibytes> m_event_bytes;
 
     /**
      *  Is the macro good?  It is good if there is a name, if there's at least
@@ -108,9 +124,11 @@ public:
 
     std::string line () const;
 
-    const midibytes & bytes () const
+    const midibytes & bytes (int index = (-1)) const;
+
+    int event_count () const
     {
-        return m_bytes;
+        return m_event_count;
     }
 
     bool is_valid () const
@@ -127,7 +145,15 @@ private:
         m_name = n;
     }
 
-    void bytes (const midibytes & b);
+    void bytes (const midibytes & b)
+    {
+        m_bytes = b;
+    }
+
+    void push_bytes (const midibytes & b)
+    {
+        m_event_bytes.push_back(b);
+    }
 
 };          // class midimacro
 

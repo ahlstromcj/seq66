@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with refactoring by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2025-07-09
+ * \updates       2025-07-12
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -539,7 +539,7 @@ midicontrolout::send_macro (const std::string & name, bool flush)
 {
     bool enabled = is_enabled() && not_nullptr(m_master_bus);
     if (enabled)
-        enabled = m_macro_events.active();              /* ca 2022-08-08    */
+        enabled = m_macro_events.active();
 
     if (enabled)
     {
@@ -548,13 +548,6 @@ midicontrolout::send_macro (const std::string & name, bool flush)
         {
             int len = int(byts.size());
             bussbyte tb = true_buss();
-
-            /*
-             * This test is inadequate.
-             *
-             * if (len > 3)                                // assume sysex  //
-             */
-
             if (event::is_ex_data_msg(byts[0]))
             {
                 event ev;

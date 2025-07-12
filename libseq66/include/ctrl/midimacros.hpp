@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2022-07-09
+ * \updates       2022-07-12
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -113,6 +113,7 @@ public:
 
     bool expand ();
     midibytes bytes (const std::string & name) const;
+    const midimacro & macro (const std::string & name) const;
     std::string lines () const;
     tokenization names () const;
     std::string byte_strings () const;

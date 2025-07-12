@@ -728,6 +728,13 @@ event::set_note_off (int note, midibyte channel)
  *  instead of using stazed's set_status function with the "record" parameter.
  *  Also, we have to mask in the actual channel number.
  *
+ *  Another note: we assume SysEx data is set as one packet currently.
+ *  That is, 0xF0 data ... 0xF7. However, note that some MIDI devices send
+ *  it in a series of small packets with a time-delay in between:
+ *
+ *      -   0xF0 data ...
+ *          MORE TO COME
+ *
  *  Encapsulates some common code.  This function assumes we have already set
  *  the status and data bytes.
  *
@@ -746,9 +753,9 @@ event::set_note_off (int note, midibyte channel)
  *
  * \return
  *      Returns true if the event data could be set. If false, the event
- *      is a Meta event, and has to be handled elsewhere. Meta events
- *      are never sent by devices, but they might be inserted by the Seq66
- *      macro feature.
+ *      is not a Channel Message, and must be parsed in event::create_event().
+ *      Meta events are never sent by devices, but they might be inserted
+ *      by the Seq66 macro feature.
  */
 
 bool
@@ -759,52 +766,88 @@ event::set_midi_event
     int count
 )
 {
-    bool result = true;
     midibyte eventstatus = buffer[0];
-    set_timestamp(tstamp);
-    set_sysex_size(count);
-    if (count == 0)             /* portmidi: analyze the event to get count */
+    bool result = eventstatus < EVENT_MIDI_SYSEX;           /* < 0xf0       */
+    set_timestamp(tstamp);                  /* set_sysex_size(count) wrong  */
+    if (result)
     {
-        if (is_two_byte_msg(eventstatus))
-            count = 3;
-        else if (is_one_byte_msg(eventstatus))
-            count = 2;
-        else
-            count = 1;          /* 1-byte real-time MIDI event (e.g. Start  */
-    }
-    if (count == 3)
-    {
-        set_status_keep_channel(eventstatus);
-        set_data(buffer[1], buffer[2]);
-        if (is_note_off_recorded())
+        if (count == 0)                     /* analyze event to get count   */
         {
-            midibyte channel = mask_channel(eventstatus);
-            midibyte notestatus = EVENT_NOTE_OFF | channel;
-            set_status_keep_channel(notestatus);
+            if (is_two_byte_msg(eventstatus))
+                count = 3;
+            else if (is_one_byte_msg(eventstatus))
+                count = 2;
+            else
+                count = 1;                  /* should never happen          */
         }
-    }
-    else if (count == 2)
-    {
-        set_status_keep_channel(eventstatus);
-        set_data(buffer[1]);
-    }
-    else if (count == 1)
-    {
-        set_status(eventstatus);
-        clear_data();
+        if (count == 3)
+        {
+            set_status_keep_channel(eventstatus);
+            set_data(buffer[1], buffer[2]);
+            if (is_note_off_recorded())
+            {
+                midibyte channel = mask_channel(eventstatus);
+                midibyte notestatus = EVENT_NOTE_OFF | channel;
+                set_status_keep_channel(notestatus);
+            }
+        }
+        else if (count == 2)
+        {
+            set_status_keep_channel(eventstatus);
+            set_data(buffer[1]);
+        }
+        else if (count == 1)
+        {
+            set_status(eventstatus);
+            clear_data();
+        }
     }
     else
     {
-        if (eventstatus == EVENT_MIDI_SYSEX)
+        switch (eventstatus)
         {
-            reset_sysex();            /* set up for sysex if needed   */
-            if (! append_sysex(buffer, count))
-            {
-                errprint("event::append_sysex() failed");
-            }
+        case EVENT_MIDI_SYSEX:
+
+            reset_sysex();                  /* set up for sysex if needed   */
+            result = append_sysex(buffer, count);
+            if (! result)
+                errprint("append_sysex() failed");
+            break;
+
+        case EVENT_MIDI_QUARTER_FRAME:      /* 0xF1u:  1 data byte          */
+
+            result = true;
+            warnprint("Quarter frame unhandled");
+            break;
+
+        case EVENT_MIDI_SONG_POS:           /* 0xF2u:  2 data bytes         */
+
+            result = true;
+            warnprint("Song position unhandled");
+            break;
+
+        case EVENT_MIDI_SONG_SELECT:        /* 0xF3u:  1 data byte, unused  */
+
+            result = true;
+            warnprint("Song select unhandled");
+            break;
+
+        case EVENT_MIDI_SYSEX_END:          /* 0xF7u: SysEx End or Continue */
+
+            result = true;
+            warnprint("Unexpected SysEx End");
+            break;
+
+        case EVENT_MIDI_META:               /* 0xFF: done in create_event() */
+
+            break;
+
+        default:
+
+            set_status(eventstatus);
+            clear_data();
+            break;
         }
-        else
-            result = false;
     }
     return result;
 }
@@ -1625,32 +1668,17 @@ create_event (midipulse tstamp, const midibytes & dbytes)
     if (! is_set)
     {
         midibyte eventstatus = dbytes[0];
-        switch (eventstatus)
+        if (eventstatus == EVENT_MIDI_META)
         {
-        case EVENT_MIDI_QUARTER_FRAME:
-
-            warnprint("Quarter frame unhandled");
-            break;
-
-        case EVENT_MIDI_SONG_POS:
-
-            warnprint("Song position unhandled");
-            break;
-
-        case EVENT_MIDI_SONG_SELECT:
-
-            warnprint("Song select unhandled");
-            break;
-
-        case EVENT_MIDI_META:
-            {
-                midibyte metatype = dbytes[1];
-                int index = 2;
-                midilong len = extract_varinum(dbytes, index);
-                result.set_meta_status(metatype);
-                (void) result.set_sysex(dbytes.data() + index, len);
-            }
-            break;
+            midibyte metatype = dbytes[1];
+            int index = 2;
+            midilong len = extract_varinum(dbytes, index);
+            result.set_meta_status(metatype);
+            (void) result.set_sysex(dbytes.data() + index, len);
+        }
+        else
+        {
+            warnprint("unhandled MIDI event");
         }
     }
     return result;

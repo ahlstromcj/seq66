@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>590</width>
+    <width>662</width>
     <height>328</height>
    </rect>
   </property>
@@ -24,7 +24,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>551</width>
+     <width>621</width>
      <height>31</height>
     </rect>
    </property>
@@ -73,7 +73,7 @@
   <widget class="QGroupBox" name="m_wave_type_group">
    <property name="geometry">
     <rect>
-     <x>292</x>
+     <x>370</x>
      <y>40</y>
      <width>281</width>
      <height>271</height>
@@ -222,7 +222,7 @@ the modify flag for the MIDI tune.</string>
     <rect>
      <x>17</x>
      <y>52</y>
-     <width>241</width>
+     <width>301</width>
      <height>20</height>
     </rect>
    </property>
@@ -240,7 +240,7 @@ the modify flag for the MIDI tune.</string>
     <item>
      <widget class="QLabel" name="m_range_label">
       <property name="text">
-       <string>Depth</string>
+       <string>  Depth</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -274,7 +274,7 @@ the modify flag for the MIDI tune.</string>
     <rect>
      <x>4</x>
      <y>71</y>
-     <width>281</width>
+     <width>341</width>
      <height>191</height>
     </rect>
    </property>
@@ -326,7 +326,7 @@ the modify flag for the MIDI tune.</string>
     <rect>
      <x>28</x>
      <y>270</y>
-     <width>245</width>
+     <width>301</width>
      <height>29</height>
     </rect>
    </property>

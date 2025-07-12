@@ -159,13 +159,13 @@ const midibyte EVENT_CTRL_EXPRESSION    = 0x0Bu;
  */
 
 const midibyte EVENT_MIDI_REALTIME       = 0xF0u;   // 0xFn when masked
-const midibyte EVENT_MIDI_SYSEX          = 0xF0u;   // redundant, see below
-const midibyte EVENT_MIDI_QUARTER_FRAME  = 0xF1u;   // system common > 0 bytes
+const midibyte EVENT_MIDI_SYSEX          = 0xF0u;   // Starts a SysEx message
+const midibyte EVENT_MIDI_QUARTER_FRAME  = 0xF1u;   // 1 data byte
 const midibyte EVENT_MIDI_SONG_POS       = 0xF2u;   // 2 data bytes
-const midibyte EVENT_MIDI_SONG_SELECT    = 0xF3u;   // 1 data byte, not used
+const midibyte EVENT_MIDI_SONG_SELECT    = 0xF3u;   // 1 data byte
 const midibyte EVENT_MIDI_SONG_F4        = 0xF4u;   // undefined
 const midibyte EVENT_MIDI_SONG_F5        = 0xF5u;   // undefined
-const midibyte EVENT_MIDI_TUNE_SELECT    = 0xF6u;   // 0 data bytes, not used
+const midibyte EVENT_MIDI_TUNE_SELECT    = 0xF6u;   // 0 data bytes
 const midibyte EVENT_MIDI_SYSEX_END      = 0xF7u;   // redundant, see below
 const midibyte EVENT_MIDI_SYSEX_CONTINUE = 0xF7u;   // redundant, see below
 const midibyte EVENT_MIDI_CLOCK          = 0xF8u;   // no data bytes

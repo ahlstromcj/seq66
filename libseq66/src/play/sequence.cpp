@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-09
+ * \updates       2025-07-12
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4612,11 +4612,36 @@ sequence::add_event
     return result;
 }
 
+/**
+ *  The following two functions are meant only for the "Insert macro at L"
+ *  functionality.
+ *
+ *  The add_event() version adds a single event. The add_macro() checks
+ *  for multiple events in one macro...
+ */
+
 bool
 sequence::add_event (midipulse tick, const midibytes & dbytes)
 {
     event ev = create_event(tick, dbytes);
     return add_event(ev);
+}
+
+bool
+sequence::add_macro (midipulse tick, const midimacro & macro)
+{
+    bool result = macro.is_valid();
+    if (result)
+    {
+        for (int i = 0; i < macro.event_count(); ++i)
+        {
+            const midibytes & dbytes = macro.bytes(i);
+            result = add_event(tick, dbytes);
+            if (! result)
+                break;
+        }
+    }
+    return result;
 }
 
 /**

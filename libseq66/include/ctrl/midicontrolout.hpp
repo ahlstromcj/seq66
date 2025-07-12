@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2025-07-09
+ * \updates       2025-07-12
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -286,6 +286,7 @@ public:
     midicontrolout (const midicontrolout &) = default;
     midicontrolout & operator = (const midicontrolout &) = default;
     virtual ~midicontrolout () = default;
+
     virtual bool initialize (int buss, int rows, int columns) override;
 
     static void seqaction_range (int & minimum, int & maximum)
@@ -379,6 +380,11 @@ public:
     midibytes macro_bytes (const std::string & name) const
     {
         return m_macro_events.bytes(name);
+    }
+
+    const midimacro & macro (const std::string & name) const
+    {
+        return m_macro_events.macro(name);
     }
 
     std::string macro_byte_strings () const

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2025-07-09
+ * \updates       2025-07-12
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -124,10 +124,16 @@ midimacros::expand ()
     return result;
 }
 
+/**
+ *  Recursively expands macro variables (e.g. "$footer")
+ */
+
 midibytes
 midimacros::expand (midimacro & m)
 {
-    midibytes result;
+    midibytes result;                   /* holds all of the bytes found     */
+    midibytes temp;                     /* holds bytes of 1 event if ! N/A  */
+    bool found_events = false;
     for (const auto & token : m.tokens())
     {
         if (token[0] == '$')
@@ -149,6 +155,12 @@ midimacros::expand (midimacro & m)
                 break;
             }
         }
+        else if (token[0] == '|')
+        {
+            found_events = true;
+            m.push_bytes(temp);
+            temp.clear();
+        }
         else
         {
             /*
@@ -157,8 +169,12 @@ midimacros::expand (midimacro & m)
 
             midibyte b = string_to_midibyte(token);
             result.push_back(b);
+            temp.push_back(b);
         }
     }
+    if (found_events)
+        m.push_bytes(temp);             /* push the bytes of last event     */
+
     return result;
 }
 
@@ -174,6 +190,14 @@ midimacros::bytes (const std::string & name) const
             result = m.bytes();
     }
     return result;
+}
+
+const midimacro &
+midimacros::macro (const std::string & name) const
+{
+    static midimacro s_dummy;           /* is_valid() will return false     */
+    const auto cit = m_macros.find(name);
+    return cit != m_macros.end() ? cit->second : s_dummy ;
 }
 
 std::string
