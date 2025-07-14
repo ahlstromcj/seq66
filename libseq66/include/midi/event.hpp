@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-09
+ * \updates       2025-07-13
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -146,7 +146,7 @@ const midibyte EVENT_CTRL_EXPRESSION    = 0x0Bu;
  *      -   EVENT_MIDI_QUARTER_FRAME    = 0xF1  // and 0x0n to 0x7n
  *      -   EVENT_MIDI_SONG_POS         = 0xF2  // and 0x0 to 0x3FFF 16th note
  *      -   EVENT_MIDI_SONG_SELECT      = 0xF3  // and 0x0 to 0x7F song number
- *      -   EVENT_MIDI_TUNE_SELECT      = 0xF6  // no data, tune yourself
+ *      -   EVENT_MIDI_TUNE_REQUEST     = 0xF6  // no data, tune yourself
  *
  *  A MIDI System Exclusive (SYSEX) message starts with F0, followed
  *  by the manufacturer ID (how many? bytes), a number of data bytes, and
@@ -165,7 +165,7 @@ const midibyte EVENT_MIDI_SONG_POS       = 0xF2u;   // 2 data bytes
 const midibyte EVENT_MIDI_SONG_SELECT    = 0xF3u;   // 1 data byte
 const midibyte EVENT_MIDI_SONG_F4        = 0xF4u;   // undefined
 const midibyte EVENT_MIDI_SONG_F5        = 0xF5u;   // undefined
-const midibyte EVENT_MIDI_TUNE_SELECT    = 0xF6u;   // 0 data bytes
+const midibyte EVENT_MIDI_TUNE_REQUEST   = 0xF6u;   // 0 data bytes
 const midibyte EVENT_MIDI_SYSEX_END      = 0xF7u;   // redundant, see below
 const midibyte EVENT_MIDI_SYSEX_CONTINUE = 0xF7u;   // redundant, see below
 const midibyte EVENT_MIDI_CLOCK          = 0xF8u;   // no data bytes

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2025-04-30
+ * \updates       2025-07-14
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -243,10 +243,15 @@ qeditbase::snap_x (int & x)
          * We need the actual current PPQN.
          *
          * int mod = usr().base_ppqn() * m_snap / sczoom / ppqn();
+         *
+         * Actually, we should not have to adjust via PPQN, since
+         * zoom is already adjusted to compensate.
+         *
+         *      int pu = usr().base_ppqn();
+         *      int mod = pu * m_snap / sczoom / ppqn();
          */
 
-        int pu = usr().base_ppqn();
-        int mod = pu * m_snap / sczoom / ppqn();
+        int mod = m_snap / sczoom;
         if (mod <= 0)
             mod = 1;
 

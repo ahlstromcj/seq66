@@ -597,7 +597,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QLineEdit" name="entry_ev_data_1">
         <property name="minimumSize">
          <size>
-          <width>36</width>
+          <width>40</width>
           <height>24</height>
          </size>
         </property>
@@ -663,6 +663,12 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       </item>
       <item row="0" column="5">
        <widget class="QCheckBox" name="hex_data_check_box">
+        <property name="maximumSize">
+         <size>
+          <width>64</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="text">
          <string>Hex</string>
         </property>
@@ -699,7 +705,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        <widget class="QLineEdit" name="entry_ev_data_0">
         <property name="minimumSize">
          <size>
-          <width>36</width>
+          <width>40</width>
           <height>24</height>
          </size>
         </property>

@@ -5024,7 +5024,7 @@ performer::is_pattern_playing (bool flag)
  *      EVENT_MIDI_SONG_SELECT
  *      EVENT_MIDI_SONG_F4
  *      EVENT_MIDI_SONG_F5
- *      EVENT_MIDI_TUNE_SELECT
+ *      EVENT_MIDI_TUNE_REQUEST
  *      EVENT_MIDI_SYSEX_END
  *      EVENT_MIDI_SYSEX_CONTINUE
  *      EVENT_MIDI_SONG_F9

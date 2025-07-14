@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-07
+ * \updates       2025-07-13
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -105,7 +105,7 @@ qseqroll::qseqroll
     m_key                   (keys::C),
     m_show_note_info        (false),
     m_note_tooltip          (nullptr),
-    m_note_length           (p.ppqn() * 4 / 16),
+    m_note_length           (p.ppqn() / 4),
     m_note_off_margin       (2),
     m_background_sequence   (seq::unassigned()),
     m_draw_background_seq   (false),
@@ -1151,15 +1151,36 @@ qseqroll::note_off_length () const
  * \param note
  *      The pitch destination of the new note.
  *
+ * \param first
+ *      True if the call was made via a mouse press, rather than
+ *      mouse movement. Defaults to false.
+ *
  * \return
  *      Returns true if the painting succeeded.
  */
 
 bool
-qseqroll::add_painted_note (midipulse tick, int note)
+qseqroll::add_painted_note (midipulse tick, int note, bool first)
 {
     bool result;
     int n = note_off_length();
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    if (first)
+        printf("click ");
+    else
+        printf("move  ");
+
+    printf
+    (
+        " current x %d, tick %ld, note %d, length %d\n",
+        current_x(), tick, note, n
+    );
+#else
+    if (first)
+        track().push_undo();                /* multiple-note undo only      */
+#endif
+
+
     if (m_chord > 0)
         result = track().add_chord(m_chord, tick, n, note);
     else
@@ -1257,8 +1278,8 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                 ) == 0;
                 if (wont_select)
                 {
-                    track().push_undo();            /* multiple-note undo   */
-                    (void) add_painted_note(tick_s, note);
+                    if (add_painted_note(tick_s, note, true))
+                        set_dirty();
                 }
             }
             else                                    /* we're selecting anew */
@@ -1584,20 +1605,21 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
         /*
          * This change broke note-painted during mouse movement,
          * causing notes to be added at the next snap, not the current
-         * snap.
+         * snap:
          *
          *      x = snapped_x(current_x());
+         *
+         * However, using "if (snap_current_x())" broke drawing at
+         * PPQN > 192.
          */
 
-        if (snap_current_x())
+        x = snapped_x(x);
+        convert_xy(x, y, tick, note);
+        if (add_painted_note(tick, note))
         {
-            convert_xy(x, y, tick, note);
-            if (add_painted_note(tick, note))
-            {
-                set_dirty();    // TENTATIVE
-                if (track().expanded_recording())
-                    frame64()->follow_progress(true);
-            }
+            set_dirty();
+            if (track().expanded_recording())
+                frame64()->follow_progress(true);
         }
     }
     if (paste())

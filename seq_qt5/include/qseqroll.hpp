@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-06
+ * \updates       2025-07-13
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -140,7 +140,7 @@ private:
     void analyze_seq_notes ();
     void show_note_tooltip (int mx, int my);
     int note_off_length () const;
-    bool add_painted_note (midipulse tick, int note);
+    bool add_painted_note (midipulse tick, int note, bool first = false);
     bool zoom_key_press (bool shifted, int key);
     bool movement_key_press (int key);
     bool get_selected_box ();

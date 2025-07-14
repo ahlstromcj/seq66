@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-20
+ * \updates       2025-07-13
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -116,7 +116,7 @@ s_system_event_names [] =
     {  3, midishort(EVENT_MIDI_SONG_SELECT),   "Song Select"     },  //   .
     { -1, midishort(EVENT_MIDI_SONG_F4),       "F4"              },
     { -1, midishort(EVENT_MIDI_SONG_F5),       "F5"              },
-    {  4, midishort(EVENT_MIDI_TUNE_SELECT),   "Tune Request"    },
+    {  4, midishort(EVENT_MIDI_TUNE_REQUEST),  "Tune Request"    },
     {  5, midishort(EVENT_MIDI_SYSEX_END),     "SysEx End"       },
     {  6, midishort(EVENT_MIDI_CLOCK),         "Timing Clock"    },
     { -1, midishort(EVENT_MIDI_SONG_F9),       "F9"              },

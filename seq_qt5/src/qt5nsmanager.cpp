@@ -210,22 +210,17 @@ qt5nsmanager::create_window ()
                         clid += rc().jack_session();    /* UUID alone   */
                     }
                 }
-#if 0   // see version 0.99.7
-                else                                    /* 2023-11-05   */
-#endif
+                if (rc().alt_session())
                 {
-                    if (rc().alt_session())
-                    {
-                        std::string tag = "[";
-                        tag += rc().session_tag();
-                        tag += "]";
-                        session_manager_name(tag);
-                    }
-                    if (have_uuid)                      /* wrong ???    */
-                    {
-                        clid += "/";
-                        clid += rc().jack_session();    /* UUID alone   */
-                    }
+                    std::string tag = "[";
+                    tag += rc().session_tag();
+                    tag += "]";
+                    session_manager_name(tag);
+                }
+                if (have_uuid)                      /* wrong ???    */
+                {
+                    clid += "/";
+                    clid += rc().jack_session();    /* UUID alone   */
                 }
             }
             m_window->session_manager(manager_name());

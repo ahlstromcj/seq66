@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-09
+ * \updates       2025-07-13
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -732,10 +732,47 @@ event::set_note_off (int note, midibyte channel)
  *  That is, 0xF0 data ... 0xF7. However, note that some MIDI devices send
  *  it in a series of small packets with a time-delay in between:
  *
- *      -   0xF0 data ...
- *          MORE TO COME
+ *      -   0xF0 data ...  MORE TO COME
  *
- *  Encapsulates some common code.  This function assumes we have already set
+ *  MIDI Time Code:
+ *
+ *      MIDI Time Code (MTC) is a sub-protocol within MIDI, and is used to keep 2
+ *      devices that control some sort of timed performance (ie, maybe a
+ *      sequencer and a video deck) in sync. MTC messages are an alternative to
+ *      using MIDI Clocks and Song Position Pointer messages. MTC is essentially
+ *      SMPTE mutated for transmission over MIDI. SMPTE timing is referenced from
+ *      an absolute "time of day". On the other hand, MIDI Clocks and Song
+ *      Position Pointer are based upon musical beats from the start of a song,
+ *      played at a specific Tempo. For many (non-musical) cues, it's easier for
+ *      humans to reference time in some absolute way rather than based upon
+ *      musical beats at a certain tempo.
+ *
+ *      There are several MIDI messages which make up the MTC protocol. All
+ *      but one are specially defined SysEx messages. It is the quarter frame.
+ *
+ *  Quarter Frame (see http://midi.teragonaudio.com/tech/mtc.htm):
+ *
+ *      It has a status of 0xF1, and one subsequent data byte. It takes 8
+ *      Quarter Frame messages to convey the current SMPTE time.  For cueing
+ *      the slave to a particular start point, Quarter Frame messages are not
+ *      used. Instead, an MTC Full Frame message should be sent. The Full
+ *      Frame is a SysEx message that encodes the entire SMPTE time in
+ *      one message.
+ *
+ *  Song Position Pointer:
+ *
+ *      Song Position (SP) is the number of MIDI beats (1 beat = 6 MIDI
+ *      clocks) that have elapsed from the start of the song and is used
+ *      to begin playback of a sequence from a position other than
+ *      the beginning of the song. See the MIDI spec for more information.
+ *
+ *  Song Select:
+ *
+ *      Specifies which song or sequence is to play upon receipt of a
+ *      Start message in sequencers and drum machines capable of holding
+ *      multiple songs or sequences.
+ *
+ *  Encapsulates some common code.  This function assumes we have retrieved
  *  the status and data bytes.
  *
  * \param timestamp
@@ -804,42 +841,55 @@ event::set_midi_event
     }
     else
     {
+        result = true;
+        reset_sysex();                      /* set up for sysex if needed   */
         switch (eventstatus)
         {
         case EVENT_MIDI_SYSEX:
 
-            reset_sysex();                  /* set up for sysex if needed   */
             result = append_sysex(buffer, count);
             if (! result)
                 errprint("append_sysex() failed");
             break;
 
+        case EVENT_MIDI_META:               /* 0xFF: done in create_event() */
+
+            break;
+
+        /*
+         *  System Common Messages. Included in the default case (i.e. no
+         *  data bytes) are:
+         *
+         *      EVENT_MIDI_TUNE_REQUEST   = 0xF6u
+         *
+         *  System Realtime Messages are all in the default case:
+         *
+         *      EVENT_MIDI_CLOCK          = 0xF8u
+         *      EVENT_MIDI_START          = 0xFAu
+         *      EVENT_MIDI_CONTINUE       = 0xFBu
+         *      EVENT_MIDI_STOP           = 0xFCu
+         *      EVENT_MIDI_ACTIVE_SENSE   = 0xFEu
+         *      EVENT_MIDI_RESET          = 0xFFu
+         */
+
         case EVENT_MIDI_QUARTER_FRAME:      /* 0xF1u:  1 data byte          */
 
-            result = true;
-            warnprint("Quarter frame unhandled");
+            result = append_sysex_byte(buffer[1]);
             break;
 
         case EVENT_MIDI_SONG_POS:           /* 0xF2u:  2 data bytes         */
 
-            result = true;
-            warnprint("Song position unhandled");
+            result = append_sysex(&buffer[1], 2);
             break;
 
         case EVENT_MIDI_SONG_SELECT:        /* 0xF3u:  1 data byte, unused  */
 
-            result = true;
-            warnprint("Song select unhandled");
+            result = append_sysex_byte(buffer[1]);
             break;
 
         case EVENT_MIDI_SYSEX_END:          /* 0xF7u: SysEx End or Continue */
 
-            result = true;
             warnprint("Unexpected SysEx End");
-            break;
-
-        case EVENT_MIDI_META:               /* 0xFF: done in create_event() */
-
             break;
 
         default:

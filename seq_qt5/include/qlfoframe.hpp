@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-27
+ * \updates       2025-07-13
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -68,6 +68,9 @@ namespace seq66
 
 class qlfoframe final : public QFrame
 {
+
+friend class qseqeditframe64;
+
     Q_OBJECT
 
 public:

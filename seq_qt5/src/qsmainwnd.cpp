@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-24
+ * \updates       2025-07-14
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1442,12 +1442,12 @@ qsmainwnd::set_ppqn_text (int ppq)
 bool
 qsmainwnd::set_ppqn_combo ()
 {
-    std::string p = std::to_string(int(cb_perf().ppqn()));
+    int ppq = cb_perf().ppqn();
+    std::string p = std::to_string(ppq);
     bool result = fill_combobox(ui->cmb_ppqn, ppqn_list(), p);
     if (result)
     {
-        int ppqn = cb_perf().ppqn();
-        std::string pstring = std::to_string(ppqn);
+        std::string pstring = std::to_string(ppq);
         ui->lineEditPpqn->setReadOnly(true);
         set_ppqn_text(pstring);
         connect

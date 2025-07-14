@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-27
+ * \updates       2025-07-13
  * \license       GNU GPLv2 or above
  *
  *  The LFO (low-frequency oscillator) provides a way to modulate the
@@ -148,6 +148,7 @@ qlfoframe::qlfoframe
      * Order of calls is important here.
      */
 
+    ui->v_value_layout->setAlignment(ui->m_value_slider, Qt::AlignHCenter);
     ui->m_value_slider->setToolTip("DC offset for modulation, 0 to 127.");
     ui->m_value_slider->setMinimum(to_slider(s_value_min));
     ui->m_value_slider->setMaximum(to_slider(s_value_max));
@@ -168,6 +169,7 @@ qlfoframe::qlfoframe
      * Order of calls is important here.
      */
 
+    ui->v_range_layout->setAlignment(ui->m_range_slider, Qt::AlignHCenter);
     ui->m_range_slider->setToolTip("Controls depth of modulation, 0 to 127.");
     ui->m_range_slider->setMinimum(to_slider(s_range_min));
     ui->m_range_slider->setMaximum(to_slider(s_range_max));
@@ -189,6 +191,7 @@ qlfoframe::qlfoframe
      * tool-tip.
      */
 
+    ui->v_speed_layout->setAlignment(ui->m_speed_slider, Qt::AlignHCenter);
     ui->m_speed_slider->setToolTip
     (
         "Speed (periods): number of periods per pattern or measure.\n"
@@ -213,6 +216,7 @@ qlfoframe::qlfoframe
      * Order of calls is important here.
      */
 
+    ui->v_phase_layout->setAlignment(ui->m_phase_slider, Qt::AlignHCenter);
     ui->m_phase_slider->setToolTip
     (
         "Phase: phase shift in a beat width (quarter note). "

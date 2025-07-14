@@ -1,16 +1,31 @@
 TO DO for Seq66 0.99.21
 Chris Ahlstrom
-2019-04-13 to 2025-07-09
+2019-04-13 to 2025-07-14
 
 Hot:
 
-    -   MIDI macros.  Call midimacros::make_defaults()?
-    -   Update event creation to handle real-time messages that
-        specify data.
-    -   When testing LFO, and exiting via the main window, the following
-        dialog remains "Session: Saved: <name of MIDI file>".
+    -   Investigate:
+        -   calculations: pulses_per_substep()
+        -   calculations: pulses_per_pixel()
+        -   sequence::handle_size()
+        -   qeditbase::snap_x(), again.
+        -   rescale_tick().
+    -   PPQN issues when setting [user-midi-ppqn] default-ppqn value.
+        -   PPQN < 192.
+            -   Bad zoom, needs to be larger, like 0.25:1 instead of 1:2.
+                48 is okay with 1:1.
+            -   END goes past the first measure (for 32).
+            -   Time bar does not label all the measures (for 32).
+            -   Values divisible by 24 are generally decent.
+        -   PPQN = 2400, 9600, 19200
+            -   Time bar does not show all beat line.
+            -   END is just short of the end of the measure.
+            -   Starting zoom should be a lot lower.
+    -   The LFO multiply feature keeps reducing amplitudes, to 0.
     -   Note drawing and event drawing screwed up in time when scrolled
         completely to the right.
+
+smanager.cpp#742 write_midi_file()...
 
 NSM:
 
@@ -51,7 +66,6 @@ Backlog:
             'eventTableWidget')  index:  8".  This does not happen in
             the table-widgets in other tabs. Nor does it happen on another
             computer.
-    -   Figure out issue #132, the libasound2 issue.
     -   #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
     -   Recording.
         -   Turning on record for a pattern makes the bottom record button

@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.21
 Chris Ahlstrom
-2015-07-10 to 2025-07-12
+2015-07-10 to 2025-07-14
 
 # Change Log
 
-## [0.99.21] - 2025-07-12
+## [0.99.21] - 2025-07-14
 
     This release contains fixes for issues #137, #138, #139, and #140.
     It also contain a number of smaller changes discovered while
@@ -45,7 +45,9 @@ Chris Ahlstrom
         better, i.e. above and below the midline pitchbend, 0.
     -   Controller events are now recorded when playback is
         stopped. Time is not incremented. (It can be changed in
-        the Event editor, if needed.
+        the Event editor, if needed.)
+    -   Fixed the adding of painted notes (mostly) at PPQN other
+        than the long-standing base default, 192.
     -   Upgraded the LFO editor as per issue #139.
     -   Added an "Insert macro at L" function in the Tools popup
         menu.
@@ -89,6 +91,9 @@ Chris Ahlstrom
         zoom correctly.
     -   Fixes made to pitchbend calculations and display.
     -   Updated the time-signature handling as per issue #137.
+    -   When using LFO, saving, then exiting via the main window
+        a prompt about a needless save was removed.
+    -   Fixed qeditbase::snap\_x(); removed the PPQN ratio factor.
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.
