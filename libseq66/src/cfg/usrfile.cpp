@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-06-19
+ * \updates       2025-07-14
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -929,9 +929,9 @@ usrfile::write ()
      */
 
     file << "\n"
-"# Seq66 separates file PPQN from the Seq66 PPQN. 'default-ppqn' specifies the\n"
-"# Seq66 PPQN, from 32 to 19200, default = 192. 'use-file-ppqn' (recommended)\n"
-"# indicates to use file PPQN.\n"
+"# Seq66 separates file PPQN from the base Seq66 PPQN, 192. 'default-ppqn'\n"
+"# changes the base Seq66 PPQN from 32 (not recommended) to 19200. \n"
+"# 'use-file-ppqn' (recommended) indicates to use the file PPQN.\n"
 "\n[user-midi-ppqn]\n\n"
     ;
     write_integer(file, "default-ppqn", usr().default_ppqn());

@@ -127,7 +127,7 @@ class zoomer
      *  pitch-bend.  All it does is multiply the pixel numbers by this factor.
      *  The supported values are 1 (the same as no expansion), 2, 4, and 8.
      *  It is accessible only via the zoom buttons and zoom keys, and applies
-     *  only to the x (horizontal) direction. If set to 1, this value is not
+     *  only to the x (horizontal) direction. If set to 0, this value is not
      *  used.
      */
 

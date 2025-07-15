@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-12
+ * \updates       2025-07-14
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4104,8 +4104,6 @@ sequence::log_time_signature
     return result;
 }
 
-#if defined UPDATE_TIME_SIGNATURE_IS_READY
-
 bool
 sequence::update_time_signature (int bpb, int bw, bool user_change)
 {
@@ -4119,8 +4117,6 @@ sequence::update_time_signature (int bpb, int bw, bool user_change)
     else
         return true;
 }
-
-#endif      // defined UPDATE_TIME_SIGNATURE_IS_READY
 
 /**
  *  Gets the data from a time-signature event and makes some settings.
@@ -4301,19 +4297,38 @@ sequence::add_c_timesig (int bpb, int bw, bool settimesig)
 {
     automutex locker(m_mutex);
     bool result = true;
+    bool hardwired_bpb_bw = false;
     if (bpb == 0 || bw == 0)
     {
-        warnprint("Bad c_timesig SeqSpec");
         if (bpb == 0)
+            bpb = get_beats_per_bar();      /* from 1st time sig event      */
+
+        if (bpb == 0)
+        {
             bpb = 4;
+            hardwired_bpb_bw = true;
+        }
+        if (bw == 0)
+            bpb = get_beat_width();         /* from 1st time sig event      */
 
         if (bw == 0)
+        {
             bw = 4;
+            hardwired_bpb_bw = true;
+        }
     }
-    if (m_timesig_beats_per_measure == 0)
+    if (hardwired_bpb_bw)
     {
         set_beats_per_bar(bpb);
         set_beat_width(bw);
+    }
+    if (m_timesig_beats_per_measure == 0)
+    {
+        if (hardwired_bpb_bw)
+            warnprint("Null c_timesig SeqSpec, setting to 4/4");
+        else
+            warnprint("Null c_timesig SeqSpec, fixing");
+
         m_time_beats_per_measure = bpb;
         m_timesig_beat_width = bw;
     }

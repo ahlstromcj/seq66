@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-07-12
+ * \updates       2025-07-14
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -49,12 +49,6 @@
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
-
-/**
- *  EXPERIMENTAL TRIAL CODE
- */
-
-#define UPDATE_TIME_SIGNATURE_IS_READY
 
 /**
  *  Provides an integer value for color that matches PaletteColor::none.  That
@@ -1783,9 +1777,7 @@ public:
     (
         midipulse tick, int beats, int width, bool user_change = false
     );
-#if defined UPDATE_TIME_SIGNATURE_IS_READY
     bool update_time_signature (int bpb, int bw, bool user_change = false);
-#endif
     bool add_timesig_event (const event & e, bool main_ts = false);
     bool add_timesig_event
     (

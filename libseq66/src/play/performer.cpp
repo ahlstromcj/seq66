@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-07-05
+ * \updates       2025-07-14
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -3881,15 +3881,10 @@ performer::set_beats_per_measure (int bpm, bool user_change)
                 bool result = bool(sp);
                 if (result)
                 {
-#if defined UPDATE_TIME_SIGNATURE_IS_READY
                     result = sp->update_time_signature
                     (
                         bpm, bw, user_change
                     );
-#else
-                    sp->set_beats_per_bar(bpm, user_change);
-                    sp->set_measures(sp->get_measures(), user_change);
-#endif
                 }
                 return result;
             }
@@ -3923,15 +3918,10 @@ performer::set_beat_width (int bw, bool user_change)
                 bool result = bool(sp);
                 if (result)
                 {
-#if defined UPDATE_TIME_SIGNATURE_IS_READY
                     result = sp->update_time_signature
                     (
                         bpb, bw, user_change
                     );
-#else
-                    sp->set_beat_width(bw, user_change);
-                    sp->set_measures(sp->get_measures());
-#endif
                 }
                 return result;
             }

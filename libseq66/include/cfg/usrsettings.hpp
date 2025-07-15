@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-06-27
+ * \updates       2025-07-14
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -1356,7 +1356,7 @@ public:
 
     bool adapt_zoom () const
     {
-        return midi_ppqn() > c_base_ppqn;
+        return midi_ppqn() != c_base_ppqn;
     }
 
     bool global_seq_feature () const

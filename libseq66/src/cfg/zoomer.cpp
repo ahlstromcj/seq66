@@ -37,7 +37,7 @@
  *      but we start from the pixel and move up, ignoring PPQN.
  *
  *      -   pulses_per_pixel(). This is basically the zoom value, which
- *          starts at 2. So we don't need this function.
+ *          starts at 2.
  *      -   pulses_per_substep(). The sub-step vertical lines are 6 pixels.
  *          We need to stick with that, no matter what the zoom. This function
  *          can call pulses_per_pixel() and multiply it by 6.
@@ -205,6 +205,9 @@ midipulse
 zoomer::pix_to_tix (int x) const
 {
     midipulse result = x * pulses_per_pixel();
+    if (m_ppqn == 32)                   /* EXPERIMENTAL, special case       */
+        result = x * 0.7937;            /* 100 / 126 ~= 24 /32              */
+
     if (expanded_zoom())
         result /= m_zoom_expansion;
 
@@ -248,17 +251,22 @@ zoomer::change_ppqn (int p)
  */
 
 int
-zoomer::zoom_power_of_2 (int ppqn)
+zoomer::zoom_power_of_2 (int ppq)
 {
     int result = c_default_seq_zoom;
-    if (ppqn > usr().base_ppqn())
+    if (ppq > usr().base_ppqn())
     {
-        int zoom = result * ppqn / usr().base_ppqn();
+        int zoom = result * ppq / usr().base_ppqn();
         result = next_power_of_2(zoom);
         if (result > c_maximum_zoom)
             result = c_maximum_zoom;
         else if (result == 0)
             result = c_minimum_zoom;
+    }
+    else if (ppq < usr().base_ppqn())
+    {
+        m_zoom_expansion = 3;
+        result = c_minimum_zoom;
     }
     return result;
 }

@@ -12,15 +12,12 @@ Hot:
         -   rescale_tick().
     -   PPQN issues when setting [user-midi-ppqn] default-ppqn value.
         -   PPQN < 192.
-            -   Bad zoom, needs to be larger, like 0.25:1 instead of 1:2.
-                48 is okay with 1:1.
             -   END goes past the first measure (for 32).
             -   Time bar does not label all the measures (for 32).
             -   Values divisible by 24 are generally decent.
         -   PPQN = 2400, 9600, 19200
-            -   Time bar does not show all beat line.
+            -   Time bar does not show all beat lines.
             -   END is just short of the end of the measure.
-            -   Starting zoom should be a lot lower.
     -   The LFO multiply feature keeps reducing amplitudes, to 0.
     -   Note drawing and event drawing screwed up in time when scrolled
         completely to the right.

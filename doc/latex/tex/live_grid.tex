@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2025-06-03
+% \update      2025-07-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -274,14 +274,25 @@
    As with \textsl{Seq24}, the default PPQN is 192.
    \texttt{32, 48, 96, 120, 192, 240, 384, 768, 960, 1920, 2400, 3840,
    7680, 9600, and 19200}.
-   The PPQN cannot be changed to to values not in this list, though.
+   The PPQN cannot be changed to values not in this list.
 %  Values, even weird ones, can be entered by typing them.
 %  However, some values, such as 120, are not
 %  displayed properly in the grids.
 %  (Modify the file to use a supported value, if possible.)
-   If a MIDI file is loaded, this modifies that file, rescaling all the
-   pattern events and pattern triggers.
+   If a MIDI file is loaded, this setting can scale that file,
+   rescaling all the pattern events and pattern triggers, without
+   raising the "modified" flag.
    Also see \sectionref{subsection:edit_preferences_play_options}.
+
+   Generally, MIDI recommends PPQN that are units of 24 ticks.
+   The value 32 is included anyway, but, if selected, the
+   displays of notes and grids are incorrect.
+   We don't intend to fix this.
+   There are some display issues at 2400, 9600, and 19200 PPQN,
+   which we do intend to fix.
+
+   Also remember that the \texttt{Z} key can be used to expand zoom
+   beyond the settings in the pattern-editor zoom dropdown.
 
 \subsubsection{Buss Override for Play-set}
 \label{subsubsec:introduction_sets_buss_override}

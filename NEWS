@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.21
 Chris Ahlstrom
-2015-07-10 to 2025-07-14
+2015-07-10 to 2025-07-15
 
 # Change Log
 
-## [0.99.21] - 2025-07-14
+## [0.99.21] - 2025-07-15
 
     This release contains fixes for issues #137, #138, #139, and #140.
     It also contain a number of smaller changes discovered while
@@ -68,7 +68,8 @@ Chris Ahlstrom
 -   Module midifile.
     -   SeqSpecs with no data (length == 4) were read improperly.
     -   Cleaned up the handling of time signature events and the
-        c\_timesig SeqSpec.
+        c\_timesig SeqSpec, now set to 4/4 in files saved before
+        this fix.
 -   SMF 0 Import. Meta events are now stored in pattern 0.
     See it by loading contrib/midi/CountryStrum.mid.
 -   Main window and grid.
@@ -88,7 +89,7 @@ Chris Ahlstrom
     -   Fixed the drawing of "ghost notes" when moving or pasting
         notes.
     -   Fixed the handling of the MIDI file PPQN to set initial
-        zoom correctly.
+        zoom correctly for all supported PPQNs.
     -   Fixes made to pitchbend calculations and display.
     -   Updated the time-signature handling as per issue #137.
     -   When using LFO, saving, then exiting via the main window

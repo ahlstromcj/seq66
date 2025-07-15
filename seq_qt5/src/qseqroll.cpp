@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-13
+ * \updates       2025-07-14
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -152,6 +152,18 @@ qseqroll::qseqroll
         m_sel_grad.setColorAt(0.95, fore_color());
         m_sel_grad.setCoordinateMode(QGradient::ObjectMode);
     }
+
+    /*
+     *  A kludge to start out with a reasonable zoom. For some reason,
+     *  calling zoom_power_of_2() in qseqeditframe64 does not work.
+     */
+
+    if (p.ppqn() < 192)
+        (void) frame64()->zoom_in();
+
+    if (p.ppqn() <= 48)
+        (void) frame64()->zoom_in();
+
     show();
     m_timer = qt_timer(this, "qseqroll", 1, SLOT(conditional_update()));
 }
