@@ -531,7 +531,7 @@ qn_per_beat (int bw = 4)
 inline int
 default_pulses_per_measure (int ppq, int bpb = 4)
 {
-    return ppq * bpb;
+    return ppq * bpb;                   /* this is wrong anyway */
 }
 
 /**
@@ -613,7 +613,7 @@ pulses_per_beat (int ppq, int bw = 4)
  *
  *  For our "b4uacuse" MIDI file, M can be about 100 measures, B is 4,
  *  P can be 192 (but we want to support higher values), and W is 4.
- *  So p = 100 * 4 * 4 * 192 / 4 = 76800 ticks.
+ *  So p = 100 * 4 * 4 * 192 / 4 = 76800 ticks. (19200 = 7680000 ticks).
  *
  *  Note that 4 * P is a constraint encapsulated by the inline function
  *  default_pulses_per_measure() using the default value of beats.
@@ -779,6 +779,7 @@ pitch_value_scaled (midibyte d0, midibyte d1)
 
 extern int pulses_per_substep (midipulse ppq, int zoom = 2);
 extern int pulses_per_pixel (midipulse ppq, int zoom = 2);
+
 #endif
 
 extern double pitch_value_semitones

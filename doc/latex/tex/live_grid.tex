@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2025-07-15
+% \update      2025-07-17
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -272,16 +272,20 @@
    This drop-down allows one to change the pulses-per-quarter-note (PPQN) of the
    loaded tune, and this change can then be saved, if desired, with the file.
    As with \textsl{Seq24}, the default PPQN is 192.
-   \texttt{32, 48, 96, 120, 192, 240, 384, 768, 960, 1920, 2400, 3840,
+   \texttt{24, 48, 96, 120, 192, 240, 384, 768, 960, 1920, 2400, 3840,
    7680, 9600, and 19200}.
-   The PPQN cannot be changed to values not in this list.
+   The PPQN cannot be changed to values not in this list, but
+   if a file with a different PPQN is loaded, that will show up if
+   \textbf{Preferences / Play / Use file's PPQN...} is set.
 %  Values, even weird ones, can be entered by typing them.
 %  However, some values, such as 120, are not
 %  displayed properly in the grids.
 %  (Modify the file to use a supported value, if possible.)
    If a MIDI file is loaded, this setting can scale that file,
-   rescaling all the pattern events and pattern triggers, without
-   raising the "modified" flag.
+   rescaling all the pattern events and pattern triggers to
+   the base PPQN (set to 192 by default, but modifiable in 
+   \textbf{Preferences / Play / PPQN}), without
+   raising the "modified" flag, if specified
    Also see \sectionref{subsection:edit_preferences_play_options}.
 
    Generally, MIDI recommends PPQN that are units of 24 ticks.
@@ -290,6 +294,9 @@
    We don't intend to fix this.
    There are some display issues at 2400, 9600, and 19200 PPQN,
    which we do intend to fix.
+   960 PPQN at 120 BPM is about 2 time more accurate in timing
+   than a MIDI port can handle, so the higher values are there
+   "for fun".
 
    Also remember that the \texttt{Z} key can be used to expand zoom
    beyond the settings in the pattern-editor zoom dropdown.

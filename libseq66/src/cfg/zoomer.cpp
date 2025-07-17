@@ -55,6 +55,21 @@
  *           quarter-beat
  *                       beat     (beats)       beat            measure
  *      ||...:...:...:...|...:...:. . . . ..:...|...:...:...:...||
+ *
+ * SEQ66_USE_NEW_STYLE_GRID_DRAWING:
+ *
+ *      In this method, we replace the 6-pixel sub-step spacing with
+ *      spacing based on the time-signature, PPQN, and a sub-step/beat
+ *      count.
+ *
+ *      Instead of counting by ticks and ticks/step, we count by integers,
+ *      each value representing a sub-step. See the discussion in
+ *      contrib/notes/ppqn-and-grids.ods.
+ *
+ *      in units of ticks (pulses). Let B = beats/bar and W = beat width,
+ *      and F be the divisor to get a sub-step.
+ *
+ *      We belayed this, as it brings its own issue at other PPQNs.
  */
 
 #include "cfg/settings.hpp"             /* seq66::zoom_items()              */
@@ -274,7 +289,7 @@ zoomer::zoom_power_of_2 (int ppq)
 }           // namespace seq66
 
 /*
- * settings.cpp
+ * zoomer.cpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

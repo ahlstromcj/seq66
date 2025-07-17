@@ -2634,7 +2634,7 @@ an event in the new pattern.</string>
         </font>
        </property>
        <property name="text">
-        <string>Default Seq66 PPQN for new or converted files</string>
+        <string>Base Seq66 PPQN for new or converted files</string>
        </property>
       </widget>
       <widget class="QComboBox" name="combo_box_ppqn">
@@ -2654,8 +2654,7 @@ an event in the new pattern.</string>
        </property>
        <property name="toolTip">
         <string>Changes the default PPQN from 192 to another value.
-This new default value is saved in the 'usr' file when
-Seq66 exits.</string>
+Saved in the 'usr' file when Seq66 exits.</string>
        </property>
        <property name="editable">
         <bool>true</bool>

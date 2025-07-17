@@ -739,7 +739,7 @@ to the default value, 1/16.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Horizontal zoom level. Resets to default value, 2.</string>
+        <string>Horizontal zoom level. Resets to default value, 1:2.</string>
        </property>
        <property name="text">
         <string>Z</string>
@@ -762,7 +762,7 @@ to the default value, 1/16.</string>
        </property>
        <property name="toolTip">
         <string>Horizontal zoom in pixels:ticks, the number
-of pulses represented by 1 pixel.  A lower value
+of ticks in 1 pixel.  A lower value
 zooms in [ z 0 Z ].</string>
        </property>
       </widget>

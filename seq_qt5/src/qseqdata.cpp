@@ -309,7 +309,6 @@ qseqdata::paintEvent (QPaintEvent * qpep)
         painter.drawText(0, botline, botnumber);
         painter.drawText(0, minline, minnumber);
     }
-
     pen.setColor(fore_color());
     pen.setStyle(Qt::SolidLine);
     painter.setPen(pen);

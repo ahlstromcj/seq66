@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.21
 Chris Ahlstrom
-2015-07-10 to 2025-07-15
+2015-07-10 to 2025-07-17
 
 # Change Log
 
-## [0.99.21] - 2025-07-15
+## [0.99.21] - 2025-07-17
 
     This release contains fixes for issues #137, #138, #139, and #140.
     It also contain a number of smaller changes discovered while
@@ -48,6 +48,8 @@ Chris Ahlstrom
         the Event editor, if needed.)
     -   Fixed the adding of painted notes (mostly) at PPQN other
         than the long-standing base default, 192.
+    -   Changed the lowest PPQN from 32 to 24, for those who
+        experiment.
     -   Upgraded the LFO editor as per issue #139.
     -   Added an "Insert macro at L" function in the Tools popup
         menu.

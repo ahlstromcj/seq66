@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2025-06-19
+ * \updates       2025-07-17
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -170,7 +170,7 @@ static const midibpm c_def_bpm_page_increment =    10.0;
  *  function usrsettings::is_ppqn_valid().
  */
 
-static const int c_minimum_ppqn  =    32;
+static const int c_minimum_ppqn  =    24;   /* was 32, not a multiple of 24 */
 static const int c_maximum_ppqn  = 19200;
 
 /**

@@ -1041,6 +1041,7 @@ int
 pulses_per_substep (midipulse ppq, int zoom)
 {
     const int pixels_per_substep = 6;
+    int result = zoom * pixels_per_substep;
     int result = int(ppq) * zoom * pixels_per_substep;
     result /= usr().base_ppqn();
     if ((result % 2) != 0)
@@ -1543,23 +1544,27 @@ wave_func (double angle, waveform wavetype)
     switch (wavetype)
     {
     case waveform::sine:
+
         tmp = 2.0 * M_PI * angle;                       /* angle in radians */
         result = sin(tmp);
         break;
 
     case waveform::sawtooth:
+
         anglefixed = angle - int(angle);
         tmp = 2.0 * anglefixed;
         result = tmp - 1.0;
         break;
 
     case waveform::reverse_sawtooth:
+
         anglefixed = angle - int(angle);
         tmp = -2.0 * anglefixed;
         result = tmp + 1.0;
         break;
 
     case waveform::triangle:
+
         tmp = 2.0 * angle;
         result = (tmp - int(tmp));
         if ((int(tmp)) % 2 == 1)
@@ -1569,14 +1574,17 @@ wave_func (double angle, waveform wavetype)
         break;
 
     case waveform::exponential:
+
         result = exp_normalize(angle);
         break;
 
     case waveform::reverse_exponential:
+
         result = exp_normalize(angle, true);
         break;
 
     default:
+
         break;
     }
     return result;

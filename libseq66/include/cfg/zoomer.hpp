@@ -35,16 +35,21 @@
 
 #include "midi/midibytes.hpp"           /* seq66::midipulse, etc.           */
 
-/*
- * Do not document namespaces, it breaks Doxygen.
- */
-
 namespace seq66
 {
 
 /**
- *  FROM qseqeditbase!!! Maybe MOVE to settings!!!
+ *  We need to provide a more flexible way to draw vertical grid lines
+ *  whatever the PPQN. See the cpp file for more information.
  *
+ *  After doing a few analyses, as laid out in
+ *  contrib/notes/ppqn-and-grids.ods, we are not bothering with this.
+ *  It's just as issue-filled as the current method.
+ */
+
+#undef SEQ66_USE_NEW_STYLE_GRID_DRAWING     /* not used, FYI only           */
+
+/**
  *  The default value of the zoom indicates that one pixel represents two
  *  ticks.  However, it turns out we're going to have to support adapting the
  *  default zoom to the PPQN, in addition to allowing some extra zoom values.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2025-07-14
+ * \updates       2025-07-17
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -394,55 +394,11 @@ set_configuration_defaults ()
     usr().set_defaults();
 }
 
-#if defined USE_PPQN_LIST_VALUE         // not defined
-
 /**
- *  Available PPQN values.  The default is 192.  The first item uses the edit
- *  text for a non-standard default PPQN (like 333).  However, note that the
- *  default PPQN can be edited by the user to be any value within this range.
- *  Also note this list is wrapped in an accessor function.
- *
- * \param index
- *      Provides the index into the PPQN list.  If set to below 0, then
- *      it represents a request for the size of the list.
- *
- * \return
- *      Returns either the desired PPQN value, or the length of the list.
- *      If the index is not in the range, and is not (-1), then 0 is returned,
- *      and the result should be ignored.
- */
-
-int
-ppqn_list_value (int index)
-{
-    static int s_ppqn_list [] =
-    {
-        -1,                         /* place-holder for default PPQN    */
-        32, 48, 96, 120,
-        192, 240,
-        384, 768, 960, 1920, 2400,
-        3840, 7680, 9600, 19200
-    };
-    static const int s_count = sizeof(s_ppqn_list) / sizeof(int);
-    int result = 0;
-    s_ppqn_list[0] = usr().default_ppqn();
-    if (index >= 0 && (index < s_count))
-        result = s_ppqn_list[index];
-    else if (index == (-1))
-        result = s_count;
-
-    return result;
-}
-
-#endif  // defined USE_PPQN_LIST_VALUE
-
-/**
- *  This list is useful in the user-interface.  Also see ppqn_list_value()
- *  below for internal integer versions. Used in qsmainwnd and in
- *  qseditoptions.
- *
- *  ca 2024-12-12. The blank value "" was removed, as it is addable via
- *  a constructor.
+ *  Available PPQN values.  The default is 192.  This list is wrapped in an
+ *  accessor function.  This list is useful in the user-interface.  Used in
+ *  qsmainwnd and in qseditoptions. Note that generally PPQN values are
+ *  best when divisible by 24.
  */
 
 const tokenization &
@@ -450,7 +406,7 @@ supported_ppqns ()
 {
     static tokenization s_supported_ppqn_list
     {
-        "32", "48", "96", "120",
+        "24", "48", "96", "120",            /* "32" changed to "24"     */
         "192", "240",
         "384", "768", "960", "1920", "2400",
         "3840", "7680", "9600", "19200"

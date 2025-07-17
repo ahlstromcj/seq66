@@ -28,16 +28,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2023-11-01
+ * \updates       2025-07-17
  * \license       GNU GPLv2 or above
  *
  *  A couple of universal helper functions remain as inline functions in the
  *  module.  The rest have been moved to the calculations module.
- *
- *  Also note that this file really is a C++ header file, and should have
- *  the "hpp" file extension.  We will fix that Real Soon Now.
- *
- *  #include "util/basic_macros.hpp"    // seq66::tokenization vector
  */
 
 #include "cfg/rcsettings.hpp"           /* seq66::rcsettings, std::string   */
@@ -130,11 +125,6 @@ class usrsettings;
 extern rcsettings & rc ();
 extern usrsettings & usr ();
 extern int choose_ppqn (int ppqn = (-1));           /* c_use_default_ppqn   */
-
-#if defined USE_PPQN_LIST_VALUE
-extern int ppqn_list_value (int index = (-1));
-#endif
-
 extern const tokenization & supported_ppqns ();
 extern const tokenization & jack_buffer_size_list ();
 extern const tokenization & measure_items ();
