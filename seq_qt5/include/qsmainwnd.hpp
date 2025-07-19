@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-04
+ * \updates       2025-07-19
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -147,6 +147,7 @@ public:
     void enable_bus_item (int bus, bool enabled);
     void set_ppqn_text (const std::string & text);
     void set_ppqn_text (int ppq);
+    void reset_ppqn ();
     void lock_main_window (bool lockit);
 
     int ppqn () const

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2025-07-17
+ * \updates       2025-07-19
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -171,7 +171,7 @@ static const midibpm c_def_bpm_page_increment =    10.0;
  */
 
 static const int c_minimum_ppqn  =    24;   /* was 32, not a multiple of 24 */
-static const int c_maximum_ppqn  = 19200;
+static const int c_maximum_ppqn  = 19200;   /* way above the useful maximum */
 
 /**
  *  Velocity values.
@@ -324,7 +324,7 @@ usrsettings::usrsettings () :
     m_window_scale              (c_window_scale_default),
     m_window_scale_y            (c_window_scale_default),
     m_mainwnd_spacing           (0),
-    m_current_zoom              (2),                    /* 0 is a feature   */
+    m_base_zoom                 (2),                    /* 0 is a feature   */
     m_jitter_divisor            (8),                    /* i.e. "1/8"       */
     m_randomization_amount      (8),                    /* for 0 to 127     */
     m_global_seq_feature_save   (true),
@@ -357,7 +357,7 @@ usrsettings::usrsettings () :
     m_default_ppqn              (c_base_ppqn),
     m_midi_ppqn                 (c_base_ppqn),
     m_use_file_ppqn             (true),
-    m_file_ppqn                 (0),
+    m_file_ppqn                 (c_base_ppqn),
     m_midi_beats_per_measure    (c_def_beats_per_measure),
     m_midi_bpm_minimum          (c_min_beats_per_minute),
     m_midi_beats_per_minute     (c_def_beats_per_minute),
@@ -449,7 +449,7 @@ usrsettings::set_defaults ()
     m_window_scale = c_window_scale_default;
     m_window_scale_y = c_window_scale_default;
     m_mainwnd_spacing = c_mainwnd_spacing;
-    m_current_zoom = 2;
+    m_base_zoom = 2;
     m_jitter_divisor = 8;
     m_randomization_amount = 8;
     m_global_seq_feature_save = true;
@@ -469,10 +469,8 @@ usrsettings::set_defaults ()
     m_seqchars_x = 15;
     m_seqchars_y =  5;
     m_convert_to_smf_1 = true;
-    m_default_ppqn = c_base_ppqn;
-    m_midi_ppqn = c_base_ppqn;
+    m_default_ppqn = m_midi_ppqn = m_file_ppqn = c_base_ppqn; // reset_ppqn()
     m_use_file_ppqn = true;
-    m_file_ppqn = 0;
     m_midi_beats_per_measure = c_def_beats_per_measure;
     m_midi_bpm_minimum = c_min_beats_per_minute;
     m_midi_beats_per_minute = c_def_beats_per_minute;
@@ -1260,7 +1258,7 @@ usrsettings::mainwnd_spacing (int value)
 }
 
 /**
- * \setter m_current_zoom
+ * \setter m_base_zoom
  *      This value is not modified unless the value parameter is between 1 and
  *      512, inclusive.  The default value is 2.  Note that 0 is allowed as a
  *      special case, which allows the default zoom to be adjusted when the
@@ -1268,11 +1266,11 @@ usrsettings::mainwnd_spacing (int value)
  */
 
 void
-usrsettings::zoom (int value)
+usrsettings::base_zoom (int value)
 {
     bool ok = value >= c_min_zoom && value <= c_max_zoom;
     if (ok || value == 0)                       /* 0 == use zoom power of 2 */
-        m_current_zoom = value;
+        m_base_zoom = value;
 }
 
 /**
@@ -1293,6 +1291,17 @@ usrsettings::jitter_range (int snap)
         result = snap / m_jitter_divisor;
 
     return result;
+}
+
+/**
+ *  Resets the PPQN members to the startup state.
+ *  This function needs to be called whenever File / New is performed.
+ */
+
+void
+usrsettings::reset_ppqn ()
+{
+    m_default_ppqn = m_midi_ppqn = m_file_ppqn = c_base_ppqn;
 }
 
 void
@@ -1316,7 +1325,7 @@ usrsettings::is_ppqn_valid (int ppqn) const
 
 /**
  * \setter m_midi_ppqn
- *      This value can be set from 32 to 19200 (this upper limit will be
+ *      This value can be set from 24 to 19200 (this upper limit will be
  *      determined by what Seq66 can actually handle).  The default value is
  *      192. However, if we're using file-ppqn as per the 'usr' file, then the
  *      given value will be used even if out-of-range.

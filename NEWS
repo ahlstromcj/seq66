@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.21
 Chris Ahlstrom
-2015-07-10 to 2025-07-17
+2015-07-10 to 2025-07-19
 
 # Change Log
 
-## [0.99.21] - 2025-07-17
+## [0.99.21] - 2025-07-19
 
     This release contains fixes for issues #137, #138, #139, and #140.
     It also contain a number of smaller changes discovered while
@@ -46,10 +46,6 @@ Chris Ahlstrom
     -   Controller events are now recorded when playback is
         stopped. Time is not incremented. (It can be changed in
         the Event editor, if needed.)
-    -   Fixed the adding of painted notes (mostly) at PPQN other
-        than the long-standing base default, 192.
-    -   Changed the lowest PPQN from 32 to 24, for those who
-        experiment.
     -   Upgraded the LFO editor as per issue #139.
     -   Added an "Insert macro at L" function in the Tools popup
         menu.
@@ -90,8 +86,15 @@ Chris Ahlstrom
         randomized.
     -   Fixed the drawing of "ghost notes" when moving or pasting
         notes.
-    -   Fixed the handling of the MIDI file PPQN to set initial
-        zoom correctly for all supported PPQNs.
+    -   PPQN updates.
+        -   Fixed the adding of painted notes (mostly) at PPQN other
+            than the long-standing base default, 192.
+        -   Changed the lowest PPQN from 32 to 24, for those who
+            experiment.
+        -   Fixed File / New to reset PPQN to the default (192).
+        -   Fixed the handling of the MIDI file PPQN to set initial
+            zoom correctly for all supported PPQNs, and when "0"
+            is clicked.
     -   Fixes made to pitchbend calculations and display.
     -   Updated the time-signature handling as per issue #137.
     -   When using LFO, saving, then exiting via the main window

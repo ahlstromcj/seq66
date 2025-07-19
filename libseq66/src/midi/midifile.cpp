@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-09
+ * \updates       2025-07-19
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1136,12 +1136,14 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
     file_ppqn(int(fileppqn));                       /* original file PPQN   */
     if (usr().use_file_ppqn())
     {
-        p.file_ppqn(file_ppqn());                   /* let performer know   */
+        p.ppqn(file_ppqn());                        /* let performer know   */
+        usr().file_ppqn(file_ppqn());
         ppqn(file_ppqn());                          /* PPQN == file PPQN    */
         scaled(false);                              /* do not scale time    */
     }
     else
     {
+        p.ppqn(usr().default_ppqn());
         scaled(file_ppqn() != usr().default_ppqn());
         if (scaled())
             ppqn_ratio(double(ppqn()) / double(file_ppqn()));

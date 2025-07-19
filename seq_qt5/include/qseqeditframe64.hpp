@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-07-10
+ * \updates       2025-07-17
  * \license       GNU GPLv2 or above
  *
  */
@@ -87,8 +87,7 @@ namespace Ui
 }
 
 /*
- * Do not document namespaces, it breaks Doxygen.  Note that the forward
- * references somewhat duplicate those in qseqframe.  FIX IT!
+ * Note that the forward references somewhat duplicate those in qseqframe.
  */
 
 namespace seq66

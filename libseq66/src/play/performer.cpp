@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-07-14
+ * \updates       2025-07-19
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -291,7 +291,7 @@ static const int c_long_path_max = 56;
  *  Principal constructor.
  */
 
-performer::performer (int ppqn, int rows, int columns) :
+performer::performer (int ppq, int rows, int columns) :
     m_song_info             (),
     m_smf_format            (1),
     m_error_pending         (false),
@@ -342,8 +342,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_record_alteration     (usr().record_alteration()),
     m_record_style          (usr().pattern_record_style()),
     m_resume_note_ons       (usr().resume_note_ons()),
-    m_ppqn                  (choose_ppqn(ppqn)),
-    m_file_ppqn             (0),
+    m_ppqn                  (choose_ppqn(ppq)),
     m_bpm                   (usr().midi_beats_per_minute()),
     m_resolution_change     (true),
     m_current_beats         (0),
@@ -733,11 +732,11 @@ performer::notify_trigger_change (seq::number seqno, change mod)
  */
 
 void
-performer::notify_resolution_change (int ppqn, midibpm bpm, change mod)
+performer::notify_resolution_change (int ppq, midibpm bpm, change mod)
 {
     m_resolution_change = true;
     for (auto notify : m_notify)
-        (void) notify->on_resolution_change(ppqn, bpm, mod);
+        (void) notify->on_resolution_change(ppq, bpm, mod);
 
     if (mod == change::yes)
         modify();
@@ -1583,9 +1582,9 @@ performer::sequence_window_title (seq::cref seq) const
     int sn = seq.seq_number();
     if (is_seq_active(sn))
     {
-        int ppqn = seq.get_ppqn();
+        int ppq = seq.get_ppqn();
         char temp[32];
-        snprintf(temp, sizeof temp, " (%d ppqn)", ppqn);
+        snprintf(temp, sizeof temp, " (%d ppqn)", ppq);
         result += " #";
         result += seq.seq_number_string();
         result += " \"";
@@ -2422,29 +2421,29 @@ performer::fix_pattern (seq::number seqno, fixparameters & params)
  *  just set the "R" to 1 measure. Perhaps multiply it by 4 if the song editor
  *  is opened.
  *
- * \setter ppqn
+ * \setter m_ppqn
  *      Also sets other related members.
  *
  *      While running it is better to call change_ppqn(), in order to run
  *      though ALL patterns and user-interface objects to fix them.
  *
- * \param p
+ * \param ppq
  *      Provides a PPQN that should be different from the current value and be
  *      in the legal range of PPQN values.
  */
 
 bool
-performer::set_ppqn (int p)
+performer::set_ppqn (int ppq)
 {
-    bool result = m_ppqn != p && ppqn_in_range(p);
+    bool result = m_ppqn != ppq && ppqn_in_range(ppq);
     if (result)
     {
         if (m_master_bus)
         {
-            m_ppqn = p;
+            m_ppqn = ppq;
             m_one_measure = m_fast_ticks = 0;
-            (void) jack_set_ppqn(p);
-            m_master_bus->set_ppqn(p);
+            (void) jack_set_ppqn(ppq);
+            m_master_bus->set_ppqn(ppq);
             notify_resolution_change                    /* ca 2023-10-30    */
             (
                 ppqn(), get_beats_per_minute(), change::no
@@ -2458,7 +2457,7 @@ performer::set_ppqn (int p)
     }
     if (m_one_measure == 0)
     {
-        m_right_tick = m_one_measure = p * 4;               /* simplistic!  */
+        m_right_tick = m_one_measure = ppq * 4;             /* simplistic!  */
         m_fast_ticks = m_one_measure / 2;
     }
     return result;
@@ -2476,22 +2475,6 @@ performer::get_ppqn_from_master_bus () const
             warnprint("master PPQN != performer PPQN");
         }
         result = mbppq;
-    }
-    return result;
-}
-
-int
-performer::ppqn () const
-{
-    int result = m_ppqn;
-    if (c_use_file_ppqn)
-    {
-        int fileppq = m_file_ppqn;
-        if (fileppq != result)
-        {
-            warnprint("file PPQN != performer PPQN");
-        }
-        result = fileppq;
     }
     return result;
 }

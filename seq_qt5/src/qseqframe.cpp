@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2024-12-17
+ * \updates       2025-07-18
  * \license       GNU GPLv2 or above
  *
  *  Seq66 (Qt version) has two different pattern editor frames to
@@ -66,6 +66,10 @@ namespace seq66
  * \param s
  *      Provides the reference to the sequence represented by this seqedit.
  *
+ * \param basezoom
+ *      Provides the base or starting zoom, so that it can be reset properly
+ *      by the "0" key.
+ *
  * \param parent
  *      Provides the parent window/widget for this container window.  Defaults
  *      to null.
@@ -75,10 +79,11 @@ qseqframe::qseqframe
 (
     performer & p,
     sequence & s,
+    int basezoom,
     QWidget * parent
 ) :
     QFrame      (parent),
-    qeditbase   (p, c_default_seq_zoom),
+    qeditbase   (p, basezoom),          /* c_default_seq_zoom   */
     m_seq       (s),
     m_seqkeys   (nullptr),
     m_seqtime   (nullptr),

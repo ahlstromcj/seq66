@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2024-12-17
+ * \updates       2025-07-19
  * \license       GNU GPLv2 or above
  *
  *  Refactoring:
@@ -84,7 +84,7 @@ namespace seq66
 
 zoomer::zoomer () :
     m_ppqn                  (192),
-    m_initial_zoom          (2),
+    m_base_zoom             (2),
     m_zoom                  (2),
     m_scale                 (1),
     m_scale_zoom            (2),
@@ -100,7 +100,7 @@ zoomer::zoomer () :
 
 zoomer::zoomer (int ppq, int initialzoom, int scalex) :
     m_ppqn                  (ppq),
-    m_initial_zoom          (initialzoom),
+    m_base_zoom             (initialzoom),
     m_zoom                  (initialzoom),
     m_scale                 (scalex > 4 ? scalex / 4 : 1),
     m_scale_zoom            (m_scale * zoom()),     /* see change_ppqn()    */
@@ -113,13 +113,13 @@ zoomer::zoomer (int ppq, int initialzoom, int scalex) :
 bool
 zoomer::initialize ()
 {
-    int index = log2_of_power_of_2(m_initial_zoom);
+    int index = log2_of_power_of_2(m_base_zoom);
     bool result = index >= 0;
     if (result)
     {
         m_zoom_index = index;
         m_zoom_expansion = 0;
-        m_zoom = m_initial_zoom;
+        m_zoom = m_base_zoom;
     }
     else
     {
@@ -268,6 +268,34 @@ zoomer::change_ppqn (int p)
 int
 zoomer::zoom_power_of_2 (int ppq)
 {
+    int result = adapted_zoom(ppq);
+    if (ppq < usr().base_ppqn())
+        m_zoom_expansion = 3;
+
+    return result;
+}
+
+/*
+ *  Free function.
+ */
+
+/**
+ *  Calculates a suitable starting zoom value for the given PPQN value.  The
+ *  default starting zoom is 2, but this value is suitable only for PPQN of
+ *  192 and below.  Also, zoom currently works consistently only if it is a
+ *  power of 2.  For starters, we scale the zoom to the selected ppqn, and
+ *  then shift it each way to get a suitable power of two.
+ *
+ * \param ppqn
+ *      The ppqn of interest.
+ *
+ * \return
+ *      Returns the power of 2 appropriate for the given PPQN value.
+ */
+
+int
+adapted_zoom (int ppq)
+{
     int result = c_default_seq_zoom;
     if (ppq > usr().base_ppqn())
     {
@@ -279,10 +307,8 @@ zoomer::zoom_power_of_2 (int ppq)
             result = c_minimum_zoom;
     }
     else if (ppq < usr().base_ppqn())
-    {
-        m_zoom_expansion = 3;
         result = c_minimum_zoom;
-    }
+
     return result;
 }
 

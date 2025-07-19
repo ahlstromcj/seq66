@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-07-14
+ * \updates       2025-07-17
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -289,7 +289,7 @@ usrfile::parse ()
         int scratch = get_integer(file, tag, "mainwnd-spacing");
         usr().mainwnd_spacing(scratch);
         scratch = get_integer(file, tag, "default-zoom");
-        usr().zoom(scratch);
+        usr().base_zoom(scratch);
         flag = get_boolean(file, tag, "global-seq-feature");
         usr().global_seq_feature(flag);
         flag = get_boolean(file, tag, "progress-bar-thick");
@@ -899,7 +899,7 @@ usrfile::write ()
     write_integer(file, "mainwnd-rows", usr().mainwnd_rows());
     write_integer(file, "mainwnd-columns", usr().mainwnd_cols());
     write_integer(file, "mainwnd-spacing", usr().mainwnd_spacing());
-    write_integer(file, "default-zoom", usr().zoom());
+    write_integer(file, "default-zoom", usr().base_zoom());
     write_boolean(file, "global-seq-feature", usr().global_seq_feature());
     write_boolean(file, "progress-bar-thick", usr().progress_bar_thick());
     write_integer

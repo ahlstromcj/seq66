@@ -45,10 +45,6 @@
 
 #include "play/performer.hpp"           /* seq66::performer                 */
 
-/*
- * Do not document namespaces, it breaks Doxygen.
- */
-
 namespace seq66
 {
 

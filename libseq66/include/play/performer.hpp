@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2025-07-12
+ * \updates       2025-07-19
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -304,7 +304,7 @@ public:
 
         virtual bool on_resolution_change
         (
-            int /* ppqn */, midibpm, performer::change
+            int /* ppq */, midibpm, performer::change
         )
         {
             return false;
@@ -724,18 +724,10 @@ private:                            /* key, midi, and op container section  */
     bool m_resume_note_ons;
 
     /**
-     *  Holds the current PPQN for usage in various actions.  If 0 is the
-     *  value, then m_file_ppqn will be used.
+     *  Holds the current PPQN for usage in various actions.
      */
 
     int m_ppqn;
-
-    /**
-     *  Holds the current PPQN from a MIDI file that has been read.  It might
-     *  be 0.
-     */
-
-    int m_file_ppqn;
 
     /**
      *  Holds the current BPM (beats per minute) for later usage.
@@ -1115,7 +1107,7 @@ private:                            /* key, midi, and op container section  */
 public:
 
     performer () = delete;
-    performer (int ppqn, int rows, int columns);
+    performer (int ppq, int rows, int columns);
     ~performer ();
     performer (const performer &) = delete;
     performer & operator = (const performer &) = delete;
@@ -1134,7 +1126,7 @@ private:
     void notify_trigger_change (seq::number seqno, change mod = change::yes);
     void notify_resolution_change
     (
-        int ppqn, midibpm bpm, change mod = change::yes
+        int ppq, midibpm bpm, change mod = change::yes
     );
     void notify_song_action
     (
@@ -1567,16 +1559,14 @@ public:
         return set_mapper().sequences_in_sets();
     }
 
-    int ppqn () const;
-
-    int file_ppqn () const
+    int ppqn () const
     {
-        return m_file_ppqn;
+        return m_ppqn;
     }
 
-    void file_ppqn (int p)
+    void ppqn (int p)
     {
-        m_file_ppqn = p;
+        m_ppqn = p;
     }
 
     /**
@@ -2240,7 +2230,7 @@ public:
 
     bool clear_all (bool clearplaylist = false);
     bool clear_song ();
-    bool launch (int ppqn);
+    bool launch (int ppq);
     bool finish ();
     bool activate ();
     bool new_sequence

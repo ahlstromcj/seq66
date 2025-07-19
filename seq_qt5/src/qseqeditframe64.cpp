@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-07-13
+ * \updates       2025-07-19
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -310,7 +310,7 @@ qseqeditframe64::qseqeditframe64
     QWidget * parent,
     bool shorter
 ) :
-    qseqframe               (p, s, parent),
+    qseqframe               (p, s, adapted_zoom(p.ppqn()), parent),
     performer::callbacks    (p),
     ui                      (new Ui::qseqeditframe64),
     m_qseqeditex_frame      (nullptr),
@@ -873,7 +873,7 @@ qseqeditframe64::qseqeditframe64
         this, SLOT(slot_update_zoom(int))
     );
 
-    int zoom = usr().zoom();
+    int zoom = usr().base_zoom();
     if (usr().adapt_zoom())
         zoom = zoom_power_of_2(perf().ppqn());
 
@@ -3521,7 +3521,7 @@ qseqeditframe64::on_resolution_change
 bool
 qseqeditframe64::change_ppqn (int ppqn)
 {
-    int zoom = usr().zoom();
+    int zoom = usr().base_zoom();
     midipulse scaledtick = rescale_tick
     (
         sm_initial_snap, ppqn, usr().base_ppqn()

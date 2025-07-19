@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2025-05-14
+ * \updates       2025-07-17
  * \license       GNU GPLv2 or above
  *
  *
@@ -51,10 +51,6 @@
 class QMenu;
 class QTimer;
 class QMessageBox;
-
-/*
- * Do not document namespaces.
- */
 
 namespace Ui
 {

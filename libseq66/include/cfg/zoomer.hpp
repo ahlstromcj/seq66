@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2024-12-20
+ * \updates       2025-07-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -58,14 +58,12 @@ namespace seq66
  *  The maximum value of the zoom indicates that one pixel represents 512
  *  ticks.  The old maximum was 32, but now that we support PPQN up to 19200,
  *  we need extra entries.
- *
- *  Redundantly defined in usrsettings.
  */
 
-const int c_minimum_zoom        =   1;  /* limit the amount of zoom         */
-const int c_default_seq_zoom    =   2;  /* default snap from app limits     */
-const int c_default_perf_zoom   =  16;  /* default snap from app limits     */
-const int c_maximum_zoom        = 512;  /* limit the amount of zoom         */
+const int c_minimum_zoom        =   1;      /* limit the amount of zoom     */
+const int c_default_seq_zoom    =   2;      /* default snap from app limits */
+const int c_default_perf_zoom   =  16;      /* default snap from app limits */
+const int c_maximum_zoom        = 1024;     /* limit the amount of zoom     */
 
 /**
  *  This frame is the basis for editing an individual MIDI sequence.
@@ -84,7 +82,7 @@ class zoomer
      *  the 0 key.
      */
 
-    const int m_initial_zoom;
+    const int m_base_zoom;
 
     /**
      *  Horizontal zoom setting.  This is the ratio between pixels and MIDI
@@ -160,6 +158,11 @@ public:
     int zoom () const
     {
         return m_zoom;
+    }
+
+    int base_zoom () const
+    {
+        return m_base_zoom;
     }
 
     int scale () const
@@ -243,6 +246,12 @@ private:
     bool initialize ();
 
 };          // class zoomer
+
+/*
+ * Free function
+ */
+
+extern int adapted_zoom (int ppq);
 
 }           // namespace seq66
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-04
- * \updates       2025-07-09
+ * \updates       2025-07-19
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the WRK format, see, for example:
@@ -787,12 +787,14 @@ wrkfile::TimebaseChunk ()
     file_ppqn(int(timebase));                       /* original file PPQN   */
     if (usr().use_file_ppqn())
     {
-        m_performer->file_ppqn(file_ppqn());        /* let performer know   */
+        m_performer->ppqn(file_ppqn());             /* let performer know   */
+        usr().file_ppqn(file_ppqn());
         ppqn(file_ppqn());                          /* PPQN == file PPQN    */
         scaled(false);                              /* do not scale time    */
     }
     else
     {
+        m_performer->ppqn(usr().default_ppqn());
         scaled(file_ppqn() != usr().default_ppqn());
         if (scaled())
             ppqn_ratio(double(ppqn()) / double(file_ppqn()));

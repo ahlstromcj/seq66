@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-07-13
+ * \updates       2023-07-17
  * \license       GNU GPLv2 or above
  *
  */
@@ -44,18 +44,10 @@
 class QTableWidgetItem;
 class QTimer;
 
-/*
- * Do not document namespaces.
- */
-
 namespace Ui
 {
     class qplaylistframe;
 }
-
-/*
- * Do not document namespaces, it breaks Doxygen.
- */
 
 namespace seq66
 {

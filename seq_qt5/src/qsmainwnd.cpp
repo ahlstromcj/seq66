@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-14
+ * \updates       2025-07-19
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1439,6 +1439,19 @@ qsmainwnd::set_ppqn_text (int ppq)
     }
 }
 
+void
+qsmainwnd::reset_ppqn ()
+{
+    usr().reset_ppqn();                 /* restore startup PPQN */
+    cb_perf().ppqn(usr().midi_ppqn());
+
+    std::string pstring = std::to_string(usr().midi_ppqn());
+    set_ppqn_text(pstring);
+
+    int index = ppqn_list().index(pstring) - 1;
+    ui->cmb_ppqn->setCurrentIndex(index);
+}
+
 bool
 qsmainwnd::set_ppqn_combo ()
 {
@@ -2319,6 +2332,7 @@ qsmainwnd::new_file ()
         std::string nofile;
         song_path(nofile);
         rc().clear_midi_filename();                 /* no file in force yet */
+        reset_ppqn();                               /* restore startup PPQN */
         m_is_title_dirty = true;
     }
 }
@@ -2379,7 +2393,7 @@ qsmainwnd::new_session ()
                 cb_perf().song_mode(false);
                 m_song_mode = cb_perf().song_mode();
                 show_song_mode(m_song_mode);
-
+                reset_ppqn();                       /* restore startup PPQN */
                 if (not_nullptr(m_mute_master))
                     m_mute_master->group_needs_update();
             }

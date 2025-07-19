@@ -1,13 +1,9 @@
 TO DO for Seq66 0.99.21
 Chris Ahlstrom
-2019-04-13 to 2025-07-17
+2019-04-13 to 2025-07-19
 
 Hot:
 
-    -   In grids, 0 goes to 1:2 no matter the PPQN. Needs to go to
-        the starting zoom.
-    -   When File / New is done, the base PPQN needs to appear in
-        the main window.
     -   PPQN issues when setting [user-midi-ppqn] default-ppqn value.
         -   PPQN = 2400, 9600, 19200
             -   Time bar does not show all beat lines.

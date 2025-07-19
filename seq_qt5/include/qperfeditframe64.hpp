@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2024-08-06
+ * \updates       2025-07-17
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll),
@@ -41,18 +41,10 @@
 #include "midi/midibytes.hpp"           /* seq66::midipulse alias           */
 #include "qscrollmaster.h"              /* qscrollmaster::dir enum class    */
 
-/*
- * Do not document namespaces, it breaks Doxygen.
- */
-
 namespace Ui
 {
     class qperfeditframe64;
 }
-
-/*
- * Do not document namespaces, it breaks Doxygen.
- */
 
 namespace seq66
 {

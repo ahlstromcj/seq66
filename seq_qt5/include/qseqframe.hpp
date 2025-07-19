@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2023-11-01
+ * \updates       2025-07-17
  * \license       GNU GPLv2 or above
  *
  *  Provides an abstract base class so that both the old and the new Qt
@@ -49,18 +49,10 @@
 
 class QWidget;
 
-/*
- * Do not document namespaces, it breaks Doxygen.
- */
-
 namespace Ui
 {
     class qseqframe;
 }
-
-/*
- * Do not document namespaces, it breaks Doxygen.
- */
 
 namespace seq66
 {
@@ -87,6 +79,7 @@ public:
     (
         performer & p,
         sequence & s,
+        int basezoom,
         QWidget * parent = nullptr
     );
 

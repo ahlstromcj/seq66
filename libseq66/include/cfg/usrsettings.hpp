@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-07-14
+ * \updates       2025-07-19
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -74,6 +74,8 @@ namespace seq66
  *  redundantly defined in the qeditbase header file.  Provides the minimum
  *  zoom value, currently a constant. It represents the minimum number of
  *  pixels per tick.
+ *
+ *  Compare to c_minimum_zoom in the zoomer module.
  */
 
 const int c_min_zoom = 1;
@@ -82,9 +84,11 @@ const int c_min_zoom = 1;
  *  Provides the maximum zoom value, currently a constant.  It's value was
  *  32, but is now 512, to allow for better presentation of high PPQN
  *  valued sequences. Units are pixels per tick.
+ *
+ *  Compare to c_maximum_zoom in the zoomer module.
  */
 
-const int c_max_zoom = 512;
+const int c_max_zoom = 1024;
 
 /**
  *  Permanent storage for the baseline, default PPQN used by Seq24.
@@ -353,13 +357,13 @@ private:
 
     /**
      *  Provides the initial zoom value, in units of ticks per pixel.  The
-     *  original default value was 32 ticks per pixel, but larger PPQN values
+     *  original default value was 2 ticks per pixel, but larger PPQN values
      *  need higher values, and we will have to adapt the default zoom to the
-     *  PPQN value.  Also, the zoom can never be zero, as it can appear as the
+     *  PPQN value. Also, the zoom can never be zero, as it can appear as the
      *  divisor in scaling equations.
      */
 
-    int m_current_zoom;
+    int m_base_zoom;
 
     /**
      *  The amount of default timestamp jitter. This is the fraction of the
@@ -1314,12 +1318,12 @@ public:
     int mainwnd_x_min () const;
     int mainwnd_y_min () const;
 
-    int zoom () const
+    int base_zoom () const
     {
-        return m_current_zoom;
+        return m_base_zoom;
     }
 
-    void zoom (int value);              /* seqedit can change this one      */
+    void base_zoom (int value);             /* seqedit can change this one  */
     midipulse jitter_range (int snap);
 
     int jitter_divisor () const
@@ -1348,10 +1352,6 @@ public:
      *  This special value of zoom sets the zoom according to a power of two
      *  related to the PPQN value of the song. Currently used only in the
      *  seqedit frame.
-     *
-     *  The previous code is wrong:
-     *
-     *      return m_current_zoom == 0;
      */
 
     bool adapt_zoom () const
@@ -1521,6 +1521,8 @@ public:
     {
         m_convert_to_smf_1 = flag;
     }
+
+    void reset_ppqn ();
 
     int default_ppqn () const
     {
