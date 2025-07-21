@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2025-07-17
+ * \updates       2025-07-21
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -406,10 +406,10 @@ supported_ppqns ()
 {
     static tokenization s_supported_ppqn_list
     {
-        "24", "48", "96", "120",            /* "32" changed to "24"     */
-        "192", "240",
-        "384", "768", "960", "1920", "2400",
-        "3840", "7680", "9600", "19200"
+        "24", "32", "48", "96", "120",      /* "24" added, "32" added back  */
+        "192", "240", "384", "480", "768",  /* "480" added                  */
+        "960", "1920", "2400", "3840",
+        "7680", "9600", "19200"
     };
     return s_supported_ppqn_list;
 }
@@ -424,10 +424,10 @@ jack_buffer_size_list ()
 {
     static tokenization s_buffer_size_list
     {
-        "0",                              /* do not override the JACK server  */
-        "16",                             /* might not work on many systems   */
-        "32",                             /* might not work on some systems   */
-        "64",                             /* might not work on a few systems  */
+        "0",                                /* do not override JACK server  */
+        "16",                               /* might fail on many systems   */
+        "32",                               /* might fail on some systems   */
+        "64",                               /* might fail on a few systems  */
         "128", "256", "512",
         "1024", "2048", "4096",
         "8192"

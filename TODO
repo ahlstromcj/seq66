@@ -1,13 +1,9 @@
 TO DO for Seq66 0.99.21
 Chris Ahlstrom
-2019-04-13 to 2025-07-19
+2019-04-13 to 2025-07-21
 
 Hot:
 
-    -   PPQN issues when setting [user-midi-ppqn] default-ppqn value.
-        -   PPQN = 2400, 9600, 19200
-            -   Time bar does not show all beat lines.
-            -   END is just short of the end of the measure.
     -   The LFO multiply feature keeps reducing amplitudes, to 0.
     -   Note drawing and event drawing screwed up in time when scrolled
         completely to the right.

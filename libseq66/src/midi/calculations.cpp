@@ -1480,7 +1480,7 @@ extract_varinum (const midibytes & data, int & index)
 /**
  *  Formalizes the rescaling of ticks base on changing the PPQN.  For speed
  *  the parameters are all assumed to be valid.  The PPQN values supported
- *  explicity range from 32 to 19200.  The maximum tick value for 32-bit code
+ *  explicity range from 24 to 19200.  The maximum tick value for 32-bit code
  *  is 2147483647.  At the highest PPQN that's almost 28000 measures.  64-bit
  *  code maxes at over 9E18.
  *

@@ -850,9 +850,6 @@ qpatternfix::slot_set ()
         bool bitreversed = bit_test(fp.fp_effect, fixeffect::reversed);
         bool bitshrunk = bit_test(fp.fp_effect, fixeffect::shrunk);
         bool bitexpanded = bit_test(fp.fp_effect, fixeffect::expanded);
-#if 0
-        bool bittruncated = bit_test(fp.fp_effect, fixeffect::truncated);
-#endif
         std::string temp = std::to_string(int(fp.fp_length));
         ui->label_pulses->setText(qt(temp));
         if (! bitreversed)
@@ -882,11 +879,6 @@ qpatternfix::slot_set ()
         ui->btn_effect_shrink->setChecked(bitshrunk);
         ui->btn_effect_expand->setChecked(bitexpanded);
         ui->btn_effect_reverse->setChecked(bitreversed);
-
-#if 0
-        ui->btn_effect_truncate->setEnabled(false);
-#endif
-
         (void) track().verify_and_link();               /* refresh          */
         set_dirty();                                    /* for redrawing    */
         unmodify(false);                                /* keep fields      */

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-14
+ * \updates       2025-07-21
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -502,11 +502,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
         }
         else
         {
-#if defined USE_OLD_CODE
-            painter.drawRect(x + m_keypadding_x, y + 2, selw, selh);
-#else
             draw_ghost_notes(painter, m_selection); /* *not* selection()!!  */
-#endif
         }
         old_rect().set(x, y, selw, selh);
     }
@@ -1176,23 +1172,10 @@ qseqroll::add_painted_note (midipulse tick, int note, bool first)
 {
     bool result;
     int n = note_off_length();
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    if (first)
-        printf("click ");
-    else
-        printf("move  ");
-
-    printf
-    (
-        " current x %d, tick %ld, note %d, length %d\n",
-        current_x(), tick, note, n
-    );
-#else
     if (first)
         track().push_undo();                /* multiple-note undo only      */
-#endif
 
-
+    tick = closest_snap(snap(), tick);
     if (m_chord > 0)
         result = track().add_chord(m_chord, tick, n, note);
     else
@@ -1277,7 +1260,12 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                 painting(true);                     /* start paint job      */
                 current_x(snapped_x);
                 drop_x(snapped_x);                  /* adding, snapped x    */
-                convert_xy(drop_x(), drop_y(), tick_s, note);
+
+                /*
+                 * ca 2025-07-21. Already done above.
+                 *
+                 *      convert_xy(drop_x(), drop_y(), tick_s, note);
+                 */
 
                 /*
                  * Test if a note is already there. Fake select, if so, don't
@@ -1481,15 +1469,12 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
         }
         if (moving())
         {
-#if defined USE_NEW_CODE
             /*
              * Move the notes to the same location as the ghost-notes
              * selection box. The ghost notes are drawn based on the
              * current mouse (x, y) location, with the top-left corner
              * at the current mouse location.
-             */
-#else
-            /*
+             *
              * Adjust delta x for snap, convert deltas into screen
              * coordinates.  Since delta_note and delta_y are of opposite
              * sign, we flip the final result.  delta_y[0] = note[127].
@@ -1521,7 +1506,6 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
 
                 (void) get_selected_box();
             }
-#endif  // USE_NEW_CODE
         }
     }
     if (lbutton || mbutton)
@@ -1767,13 +1751,6 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                         if (track().set_recording(toggler::flip))
                             done = true;
                         break;
-
-#if 0
-                    case Qt::Key_Z:
-
-                        track().pop_redo();     /* does this work ???       */
-                        done = true;
-#endif
                     }
                 }
                 else if (isctrl)

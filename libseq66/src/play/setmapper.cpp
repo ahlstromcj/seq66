@@ -1239,33 +1239,6 @@ setmapper::select_and_mute_group (mutegroup::number group)
     mute_group_tracks();
 }
 
-#if 0           // unused
-
-/**
- *  Clears all the group-mute items, whether they came from the "rc" file
- *  or from the most recently-loaded Seq66 MIDI file.
- *
- * \sideeffect
- *      If true is returned, the modify flag is set, so that the user has the
- *      option to save a MIDI file that contained mute-groups that are no
- *      longer wanted.
- *
- * \return
- *      Returns true if any of the statuses changed from true to false.
- */
-
-bool
-setmapper::clear_mutes ()
-{
-    bool result = false;
-    if (m_mute_groups.clear())
-        result = true;
-
-    return result;
-}
-
-#endif
-
 std::string
 setmapper::name (screenset::number setno) const
 {

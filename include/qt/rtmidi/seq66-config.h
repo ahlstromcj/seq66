@@ -344,13 +344,7 @@
  * Define to enable JACK port refresh
  */
 
-#undef MIDI_PORT_REFRESH
-
-#if 0
-#ifndef SEQ66_MIDI_PORT_REFRESH
-#define SEQ66_MIDI_PORT_REFRESH 1
-#endif
-#endif
+#undef SEQ66_MIDI_PORT_REFRESH
 
 /*
  * Define if NSM support is available.

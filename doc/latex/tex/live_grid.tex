@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2025-07-17
+% \update      2025-07-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -272,10 +272,11 @@
    This drop-down allows one to change the pulses-per-quarter-note (PPQN) of the
    loaded tune, and this change can then be saved, if desired, with the file.
    As with \textsl{Seq24}, the default PPQN is 192.
-   \texttt{24, 48, 96, 120, 192, 240, 384, 768, 960, 1920, 2400, 3840,
+   \texttt{24, 32, 48, 96, 120, 192, 240, 384, 480, 768, 960, 1920, 2400, 3840,
    7680, 9600, and 19200}.
    The PPQN cannot be changed to values not in this list, but
-   if a file with a different PPQN is loaded, that will show up if
+   if a file with an unsupport PPQN is loaded, that will show up
+   in the PPQN box at the bottom, assuming
    \textbf{Preferences / Play / Use file's PPQN...} is set.
 %  Values, even weird ones, can be entered by typing them.
 %  However, some values, such as 120, are not

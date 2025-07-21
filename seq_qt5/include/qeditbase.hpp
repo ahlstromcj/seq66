@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2025-04-30
+ * \updates       2025-07-21
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -155,18 +155,20 @@ protected:
     int m_padding_x;
 
     /**
+     *  The permanent snap for drawing the grid, barring a change in the PPQN.
+     *  It is used to calculate the actual snap given the PPQN and the
+     *  zoom setting.
+     */
+
+    int m_grid_snap;
+
+    /**
      *  The event-snap setting for the piano roll grid.  Same meaning as for
      *  the event-bar grid.  This value is the denominator of the note size
      *  used for the snap.
      */
 
     int m_snap;
-
-    /**
-     *  The permanent snap for drawing the grid, barring a change in the PPQN.
-     */
-
-    int m_grid_snap;
 
     /**
      *  Provides the length of a beat, in ticks.
@@ -571,7 +573,8 @@ public:
     }
 
     /*
-     * This value changes only when the PPQN changes.
+     * This value changes only when the user changes the snap value.
+     * The default snap is 16 ticks.
      */
 
     int grid_snap () const
@@ -742,9 +745,11 @@ public:
         m_snap = int(snap);
     }
 
-    void set_grid_snap (midipulse snap)
+    void set_grid_snap (midipulse snap);
+
+    void reset_grid_snap ()
     {
-        m_grid_snap = int(snap);
+        set_grid_snap(c_default_snap);
     }
 
 protected:

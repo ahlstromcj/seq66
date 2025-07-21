@@ -922,11 +922,6 @@ public:
     bool toggle_mutes (mutegroup::number gmute);
     bool toggle_active_mutes (mutegroup::number gmute);
     bool learn_mutes (bool learnmode, mutegroup::number gmute);
-
-#if 0           // unused
-    bool clear_mutes ();
-#endif
-
     void select_and_mute_group (mutegroup::number group);
     void mute_group_tracks ();
     void sequence_playing_change

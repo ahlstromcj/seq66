@@ -3383,7 +3383,7 @@ qseqeditframe64::scroll_to_note (int note)
 
 /**
  *  Updates the grid-snap values and control based on the index.  The value is
- *  passed to the set_snap() function for processing.
+ *  passed to the set_snap() function for final setting.
  *
  * \param index
  *      Provides the index selected from the combo-box.
@@ -3397,7 +3397,7 @@ qseqeditframe64::update_grid_snap (int index)
         int qnfactor = perf().ppqn() * 4;
         int item = snap_list().ctoi(index);
         int v = qnfactor / item;
-        set_snap(v);
+        set_grid_snap(v);               /* set_snap(v) */
     }
 }
 

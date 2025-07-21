@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2025-07-14
+ * \updates       2025-07-21
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -102,26 +102,16 @@ qeditbase::qeditbase
     m_measure_pen_width     (2),
     m_beat_pen_width        (1),
     m_horiz_pen_width       (1),
-#if defined USE_OLD_CODE
-    m_measure_pen_style     (Qt::SolidLine),
-    m_beat_pen_style        (Qt::SolidLine),        /* or Qt::DotLine       */
-    m_four_pen_style        (Qt::DashDotLine),
-    m_step_pen_style        (Qt::DotLine),
-#else
     m_measure_pen_style     (gui_measure_pen_style()),
     m_beat_pen_style        (gui_beat_pen_style()),
     m_four_pen_style        (gui_fourth_pen_style()),
     m_step_pen_style        (gui_step_pen_style()),
-#endif
     m_old                   (),                     /* past selection box   */
     m_selected              (),                     /* current sel box      */
     m_zoomer                (p.ppqn(), initialzoom, scalex),
     m_padding_x             (padding),
-    m_snap                  (snap),
-    m_grid_snap
-    (
-        rescale_tick(snap, p.ppqn(), usr().base_ppqn())
-    ),
+    m_grid_snap             (0),                    /* set below            */
+    m_snap                  (0),                    /* calculated below     */
     m_beat_length           (p.ppqn()),             /* see change_ppqn()    */
     m_measure_length        (m_beat_length * 4),    /* see change_ppqn()    */
     m_selecting             (false),
@@ -152,16 +142,19 @@ qeditbase::qeditbase
     {
         if (usr().progress_bar_thickness() > 1)
             m_progress_bar_width = usr().progress_bar_thickness();
+    }
+    set_grid_snap(snap);
+}
 
-    }
-#if 0
-    if (usr().gridlines_thick())
-    {
-        m_measure_pen_width = 2;
-        m_beat_pen_style = Qt::DotLine;
-        m_four_pen_style = Qt::DashDotLine;
-    }
-#endif
+void
+qeditbase::set_grid_snap (midipulse snap)
+{
+    midipulse snaptick =
+    (
+        rescale_tick(snap, perf().ppqn(), usr().base_ppqn())
+    );
+    m_grid_snap = int(snap);
+    m_snap = snaptick;
 }
 
 bool
