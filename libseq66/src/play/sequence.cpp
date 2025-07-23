@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-14
+ * \updates       2025-07-23
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3296,63 +3296,100 @@ sequence::change_event_data_relative
  *  These parameters are now encapsulated in struct lfoparameters, plus
  *  a new parameters to flag scaling existing events by the waveform values.
  *
- * \param dcoffset
+ * lfo_dc_offset (DC):
  *      Provides the base amplitude for the event data value.  Ranges from 0
  *      to 127 in increments of 0.1.  This amount is added to the result of
  *      the wave_func() calculation.
  *
- * \param range
+ * lfo_range (depth, R):
  *      Provides the range for the event data value.  Ranges from 0 to
  *      127 in increments of 0.1.
  *
- * \param speed
+ * lfo_periods (speed, P):
  *      Provides the number of periods in the measure or the full length for the
  *      modifications.  Ranges from 0 to 16 in increments of 0.01.
  *
- * \param phase
- *      The phase of the event modification.  Ranges from 0 to 1 in increments
- *      of 0.01.  This represents a phase shift of 0 to 360 degrees.
+ * lfo_phase (phi):
+ *      The phase of the event modification. Ranges from 0 to 360 degrees.
  *
- * \param w
+ *      Old: Ranges from 0 to 1 in increments of 0.01. This represents a
+ *      phase shift of 0 to 360 degrees.
+ *
+ * lfo_waveform (wavetype):
  *      The wave type to apply.  See enum class wave in the calculations
  *      module.
  *
+ * lfo_use_measure:
+ *      If true, then use a measure as the length for wave periodicity, rather
+ *      than the full length of the sequence.
+ *
+ * lfo_multiply:
+ *      If true, scale the existing data using the waveform, rather than
+ *      generating data via the waveform.
+ *
  * \param status
- *      The status (event number) for the events to modify.
+ *      The status (event type) for the kind of events to be modified.
  *
  * \param cc
  *      Provides the control-change value for Control Change events that are
  *      to be modified.
  *
- * \param usemeasure
- *      If true, then use a measure as the length for wave periodicity, rather
- *      than the full length of the sequence.
+ * Mapping:
+ *
+ *  a = 0                   a = 360 degrees                     a = 360 * P
+ *  ω = 0                   ω = 2π radians                      ω = 2π * P
+ *  t = 0                   t = T ticks                         t = T
+ *      |                       |             |                       |
+ *      |-----------------------|-------...---|-----------------------|
+ *      |                       |             |                       |
+ *  x = 0                      1.O      ...  1.0                x = 1.0
+ *
+ *     ω(t)    t               2πPt
+ *    ----- = --- ===> ω(t) = -----, so the factor is 2πP/T = Wf
+ *     2πP     T                T
+ *
+ *  Note that a, ω (omega, w), and T are always increasing, while x is a
+ *  sawtooth ramp going from 0.0 to 1.0 for every period P.
  */
 
 void
 sequence::change_event_data_lfo
 (
-    const lfoparameters & lp, midibyte status, midibyte cc
+    const lfoparameters & lp,
+    midibyte status, midibyte cc
 )
 {
     automutex locker(m_mutex);
+    if (get_length() == 0)                          /* should never happen  */
+        return;
+
     waveform wavetype = lp.lfo_waveform;
-    double dcoffset = lp.lfo_dc_offset;
-    double range = lp.lfo_range;
-    double speed = lp.lfo_periods;
-    double phase = lp.lfo_phase;
-    bool usemeasure = lp.lfo_use_measure;
+    double DC = lp.lfo_dc_offset;
+    double R = lp.lfo_range;
+    double P = lp.lfo_periods;
+    double phi = lp.lfo_phase * M_PI / 180.0;       /* degrees to radians   */
+    double T = lp.lfo_use_measure ?
+        double(measures_to_ticks()) : double(get_length());
+
+    double Wf = 2.0 * M_PI * P / T;                 /* tick to radians      */
     bool multiply = lp.lfo_multiply;
     bool modified = false;
-    double dlength = double(get_length());
     bool noselection = ! any_selected_events(status, cc);
-    if (get_length() == 0)                  /* should never happen, though  */
-        dlength = double(m_ppqn);
+    m_events_undo.push(m_events);                   /* save original data   */
+    if (event::is_pitchbend_msg(status))
+    {
+        /*
+         * Data values range of 0 to 128, but pitch is a range of 1 << 7.
+         * For generating bend from existing events, we need to simply
+         * multiply the wave-function result by 8192.0. The R in this case
+         * has these meanings: 0 == no pitchbend possible; 64 == use half
+         * height; 128 == full bend.
+         */
 
-    if (usemeasure)
-        dlength = double(measures_to_ticks());
-
-    m_events_undo.push(m_events);           /* experimental, seems to work  */
+        R /= 128.0;                                 /* the range ratio      */
+        DC -= 64.0;                                 /* -64 to 64 offset     */
+        DC = 8192.0 * DC / 64.0;                    /* -8192 to +8192       */
+    }
     for (auto & er : m_events)
     {
         bool match = false;
@@ -3361,48 +3398,31 @@ sequence::change_event_data_lfo
 
         if (match)
         {
-            double dtick = double(er.timestamp());
-            double angle = speed * dtick / dlength + phase;
-            double wavevalue = wave_func(angle, wavetype);  /* -1.0 to 1.0  */
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            printf("wave_func(%6g) = %6g; ", angle, wavevalue);
-#endif
+            double t = double(er.timestamp());
+            double w = Wf * t + phi;                /* angle in radians     */
+            double v = wave_func(w, wavetype);      /* -1.0 to 1.0          */
             if (er.is_pitchbend())
             {
-                /*
-                 * The wave values are based on a range of 128, while
-                 * the pitch wheel is based on a range of 128 << 7.
-                 */
-
-                int pitch = 0;                      /* -8192 to +8192       */
+                int newpitch = int(8192.0 * R * v + DC) + 8192;
                 midibyte d0, d1;
-                er.get_data(d0, d1);
-                range *= 128;
-                dcoffset -= 64.0;                   /* from 0-127 to -64-63 */
-                dcoffset *= 128;                    /* scale to 16384 range */
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                pitch = pitch_value_absolute(d0, d1);
-                printf("pitch value(%d, %d) = %d\n", d0, d1, pitch);
-#endif
-                int newpitch = int(range * wavevalue + dcoffset);
                 if (multiply)
                 {
-                    pitch = pitch_value_absolute(d0, d1);
-                    double fraction = double(newpitch) / 8192.0;
-                    pitch = int(double(pitch) * fraction);
-                    pitch_bytes(pitch, d0, d1);
+                    er.get_data(d0, d1);
+
+                    int v = pitch_value_scaled(d0, d1);         /* 0 to 127 */
+                    newpitch *= v;
+                    pitch_data_bytes_scaled(midibyte(newpitch), d0, d1);
+                    er.set_data(d0, d1);
                 }
                 else
-                    pitch_bytes(pitch, d0, d1);
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                printf("new pitch value(%d, %d) = %d\n", d0, d1, pitch);
-#endif
+                {
+                    pitch_data_bytes(newpitch, d0, d1);
+                    er.set_data(d0, d1);
+                }
             }
             else
             {
-                int newdata = int(range * wavevalue + dcoffset);
+                int newdata = int(R * v + DC);
                 newdata = int(abs_midibyte_value(newdata));     /* 0 - 127  */
                 if (multiply)
                 {
@@ -3421,20 +3441,12 @@ sequence::change_event_data_lfo
                 {
                     midibyte d0, d1;
                     er.get_data(d0, d1);
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                printf("old data = %d, %d; ", d0, d1);
-#endif
                     if (event::is_one_byte_msg(status))
                         d0 = midibyte(newdata);
                     else if (event::is_two_byte_msg(status))
                         d1 = midibyte(newdata);
 
                     er.set_data(d0, d1);
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                printf("new data = %d, %d\n", d0, d1);
-#endif
                 }
             }
             modified = true;
@@ -4473,12 +4485,12 @@ sequence::add_event (const event & er)
             (void) verify_and_link();   /* for proper seqroll draw; sorts   */
 
         /*
-         * ca 2025-05-20 Is this change safe?
-         *
-         * modify(false);  // do not call notify_change()
+         * ca 2025-05-20, 07-22. Is this change safe? No. Do not allow it to
+         * call notify_change(), otherwise one gets a segfault when pounding
+         * the keyboard with notes and/or pitchbend. Keep it false.
          */
 
-        modify(true);
+        modify(false);
     }
     return result;
 }

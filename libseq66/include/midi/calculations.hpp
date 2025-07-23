@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2025-07-09
+ * \updates       2025-07-23
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -714,33 +714,49 @@ INTTYPE snapped (snapper snaptype, int S, INTTYPE p)
 /**
  *  The absolute pitchbend range is 0 to 16383, which is 14 bits.
  *
+ *         Bend down    Center      Bend up
+ *      0 |<-----------  8192  ----------->| 16384
+ *  -8192                 0                   8191
+ *
+ *      14 bits resolution (MSB, LSB). Value = 128 * MSB + LSB, where,
+ *      in Seq66, d0 is the LSB and d1 is the MSB.
+ *
+ *  minimum : The maximum negative swing is achieved with data bytes of
+ *            00, 00. Value = 0.
+ *
+ *  center:   The center (no effect) position is achieved with data bytes of
+ *            00, 64 (00H, 40H). Value = 8192.
+ *
+ *  maximum : The maximum positive swing is achieved with data bytes of
+ *            127, 127 (7FH, 7FH). Value = 16384.
+ *
  *  There are 2 ways to make the calculation:
  *
- *      int(d1) << 7 + int(d0)   AND    int(d1) * 128 + int(d0)
+ *      int(d1) << 7 + int(d0)   - OR -    int(d1) * 128 + int(d0)
  *
  * \param d0
  *      Provides the LSB (least significant byte) of the pitchbend value.
  *
  * \param d1
- *      Provides the LSB (least significant byte) of the pitchbend value.
+ *      Provides the MSB (most significant byte) of the pitchbend value.
  *
  * \return
  *      Returns the pitch value, ranging from 0 to 16383.
- *      If either data value exceeds 127, 8192 is returned
+ *      If either data value exceeds 127, 8192 is returned.
  */
 
 inline int
 pitch_value_absolute (midibyte d0, midibyte d1)
 {
-    int result = 8192;
-    if ((d0 < 128) && (d1 < 128))
+    int result = 8192;                      /* 8192 is the center, no bend  */
+    if ((d0 < 128) && (d1 < 128))           /* this is a sanity check       */
         result = (int(d1) << 7) + int(d0);
 
     return result;
 }
 
 /**
- *  Like pitch_value_absolute, but moves the range to -8192 to +8191.
+ *  Like pitch_value_absolute(), but moves the range to -8192 to +8191.
  *  This little table summarizes the results:
  *
 \verbatim
@@ -761,14 +777,17 @@ pitch_value (midibyte d0, midibyte d1)
 /**
  *  Scale to range 0 to 128 (approximately), where 0 is down 2 semitones
  *  and 127 is up 2 semitones.
+ *
+ *         Bend down    Center      Bend up
+ *      0 |<-----------   64   ----------->| 128
  */
 
 inline int
 pitch_value_scaled (midibyte d0, midibyte d1)
 {
-    int pv = pitch_value(d0, d1);
-    pv /= 128;
-    return pv + 64;
+    int pv = pitch_value_absolute(d0, d1);  /* ranges from 0 to 16384       */
+    pv /= 128;                              /* ranges from 0 to 128         */
+    return pv;
 }
 
 /*
@@ -786,10 +805,19 @@ extern double pitch_value_semitones
 (
     midibyte d0, midibyte d1, int semitone_range = 2
 );
-extern void pitch_bytes (int pitchvalue, midibyte & d0, midibyte & d1);
+extern void pitch_data_bytes (int pitchvalue, midibyte & d0, midibyte & d1);
+extern void pitch_data_bytes_scaled
+(
+    midibyte pitch,
+    midibyte & d0, midibyte & d1
+);
 extern double wave_func (double angle, waveform wavetype);
-extern double unit_truncation (double angle);
-extern double exp_normalize (double angle, bool negate = false);
+
+#if SEQ66_NEEDS_UNIT_TRUNCATION
+extern double unit_truncation (double omega);
+#endif
+
+extern double exp_normalize (double omega, bool negate = false);
 extern bool extract_port_names
 (
     const std::string & fullname,

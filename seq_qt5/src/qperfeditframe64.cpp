@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2024-12-17
+ * \updates       2025-07-21
  * \license       GNU GPLv2 or above
  *
  *  The Song Editor allows the musician to layout the play-back of the
@@ -169,9 +169,15 @@ qperfeditframe64::qperfeditframe64
     ui->namesScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     ui->namesScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    /*
+     *  Replace c_default_perf_zoom with a function to adapt the qperf* zooms
+     *  to the PPQN.
+     */
+
+    int perfzoom = adapted_perf_zoom(perf().ppqn());
     m_perftime = new (std::nothrow) qperftime
     (
-        m_mainperf, c_default_perf_zoom, c_default_snap,
+        m_mainperf, perfzoom, c_default_snap,
         this, ui->timeScrollArea
     );
     ui->timeScrollArea->setWidget(m_perftime);
@@ -180,7 +186,7 @@ qperfeditframe64::qperfeditframe64
 
     m_perfroll = new (std::nothrow) qperfroll
     (
-        m_mainperf, c_default_perf_zoom, c_default_snap,
+        m_mainperf, perfzoom, c_default_snap,
         m_perfnames, this, ui->rollScrollArea
     );
     ui->rollScrollArea->setWidget(m_perfroll);
@@ -253,7 +259,7 @@ qperfeditframe64::qperfeditframe64
         ui->m_toggle_follow, SIGNAL(toggled(bool)),
         this, SLOT(follow(bool))
     );
-    set_zoom(c_default_perf_zoom);
+    set_zoom(perfzoom);
 
     /*
      * Zoom-In and Zoom-Out buttons.

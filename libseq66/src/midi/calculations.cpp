@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2025-07-11
+ * \updates       2025-07-23
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1519,7 +1519,7 @@ rescale_tick (midipulse tick, int newppqn, int oldppqn)
  *  the user interface; the ratio of tick/seqlength ranges from 0 to 1; the
  *  phase ranges from 0 to 1, equivalent to 0 to 360 degrees.
  *
- * \param angle
+ * \param omega
  *      Provides the radial "angle" to be applied. Assuming that the "speed"
  *      (number of periods) is 1, then, for a one-measure pattern or
  *      a longer pattern with "Use Measures" unchecked in qlfoframe, this value
@@ -1536,51 +1536,44 @@ rescale_tick (midipulse tick, int newppqn, int oldppqn)
  */
 
 double
-wave_func (double angle, waveform wavetype)
+wave_func (double omega, waveform wavetype)
 {
     double result = 0.0;
     double tmp;
-    double anglefixed;
     switch (wavetype)
     {
     case waveform::sine:
 
-        tmp = 2.0 * M_PI * angle;                       /* angle in radians */
-        result = sin(tmp);
+        result = sin(omega);
         break;
 
     case waveform::sawtooth:
 
-        anglefixed = angle - int(angle);
-        tmp = 2.0 * anglefixed;
-        result = tmp - 1.0;
+        result = fmod(omega, 2.0 * M_PI) / (2.0 * M_PI);    /* 0.0 to 1.0   */
         break;
 
     case waveform::reverse_sawtooth:
 
-        anglefixed = angle - int(angle);
-        tmp = -2.0 * anglefixed;
-        result = tmp + 1.0;
+        result = 1.0 - fmod(omega, 2.0 * M_PI) / (2.0 * M_PI);
         break;
 
     case waveform::triangle:
 
-        tmp = 2.0 * angle;
-        result = (tmp - int(tmp));
-        if ((int(tmp)) % 2 == 1)
-            result = 1.0 - result;
-
-        result = 2.0 * result - 1.0;
+        result = fmod(omega, 2.0 * M_PI) / (2.0 * M_PI);    /* 0.0 to 1.0   */
+        result *= 2.0;                                      /* 0.0 to 2.0   */
+        result -= 1.0;                                      /* -1.0 to 1.0  */
         break;
 
     case waveform::exponential:
 
-        result = exp_normalize(angle);
+        tmp = fmod(omega, 2.0 * M_PI) / (2.0 * M_PI);       /* 0.0 to 1.0   */
+        result = exp_normalize(tmp);
         break;
 
     case waveform::reverse_exponential:
 
-        result = exp_normalize(angle, true);
+        tmp = fmod(omega, 2.0 * M_PI) / (2.0 * M_PI);       /* 0.0 to 1.0   */
+        result = exp_normalize(tmp, true);
         break;
 
     default:
@@ -1589,6 +1582,8 @@ wave_func (double angle, waveform wavetype)
     }
     return result;
 }
+
+#if SEQ66_NEEDS_UNIT_TRUNCATION
 
 /**
  *  Converts a double value to range from 0.0 to 1.0. That is, it returns the
@@ -1607,8 +1602,10 @@ unit_truncation (double angle)
     return result;
 }
 
+#endif
+
 /**
- *  This function maps midibyte values from 0 to 127 to the range of
+ *  This function maps midibyte values from 0.0 to 1.0 to the range of
  *  approximately e^(-2.436) to e^(+2.436), which is 0.884 to 11.314.
  *  These values convert nicely to a range of 11.314 / 0.0884 = 128.
  *
@@ -1633,8 +1630,7 @@ exp_normalize (double angle, bool negate)
     static const double s_exp_max = s_range / 2.0;               /* +2.42 */
     static const double s_exp_min = -s_exp_max;                  /* -2.42 */
     static const double s_scaler = exp(s_exp_min);
-    double T = unit_truncation(angle);
-    double Aprime = s_range * T + s_exp_min;
+    double Aprime = s_range * angle + s_exp_min;
     if (negate)
         Aprime = -Aprime;
 
@@ -2032,7 +2028,7 @@ pitch_value_semitones (midibyte d0, midibyte d1, int semitone_range)
  *  provides the two bytes needed to encode the pitch-wheel event in a MIDI
  *  file.
  *
- * \param pitchvalue
+ * \param pitch
  *      Provides the pitch value, which must range from 0 to 16384.
  *      Otherwise, 0 is assumed.
  *
@@ -2044,18 +2040,26 @@ pitch_value_semitones (midibyte d0, midibyte d1, int semitone_range)
  */
 
 void
-pitch_bytes (int pitchvalue, midibyte & d0, midibyte & d1)
+pitch_data_bytes (int pitch, midibyte & d0, midibyte & d1)
 {
-    if (pitchvalue >= 0 && pitchvalue < 16384)
+    if (pitch >= 0 && pitch < 16384)
     {
-        int msbyte = pitchvalue >> 7;
-        d0 = midibyte(msbyte);
-        d1 = midibyte(pitchvalue - msbyte);
+        int msbyte = pitch >> 7;            /* drop the MSB to LSB          */
+        d1 = midibyte(msbyte);              /* assign the MSB to d1         */
+        d0 = midibyte(pitch & 0xFF);        /* mask off the MSB to get LSB  */
     }
     else
     {
-        d0 = d1 = 0;
+        d1 = 64;
+        d0 = 0;
     }
+}
+
+void
+pitch_data_bytes_scaled (midibyte pitch, midibyte & d0, midibyte & d1)
+{
+    int truevalue = int(pitch) >> 7;
+    pitch_data_bytes(truevalue, d0, d1);
 }
 
 }       // namespace seq66

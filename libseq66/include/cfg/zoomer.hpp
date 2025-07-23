@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2025-07-19
+ * \updates       2025-07-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -248,10 +248,11 @@ private:
 };          // class zoomer
 
 /*
- * Free function
+ * Free functions.
  */
 
-extern int adapted_zoom (int ppq);
+extern int adapted_seq_zoom (int ppq);
+extern int adapted_perf_zoom (int ppq);
 
 }           // namespace seq66
 

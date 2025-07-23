@@ -31,11 +31,7 @@
  * \updates       2025-04-30
  * \license       GNU GPLv2 or above
  *
- *  This class WILL BE the base class for qseqroll, qseqdata, qtriggereditor,
- *  and qseqtime, the four panes of the qseqeditframe64 class or the legacy
- *  Kepler34 qseqeditframe class.
- *
- *  And maybe we can use it in the qperf* classes as well.
+ *  This class is the base class for qperfroll, qperfnames, and qperftime.
  */
 
 #include "qeditbase.hpp"                /* seq66:qeditbase base class     */

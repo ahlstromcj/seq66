@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-19
+ * \updates       2025-07-22
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1439,6 +1439,10 @@ qsmainwnd::set_ppqn_text (int ppq)
     }
 }
 
+/**
+ *  Also restores the BPM (tempo) value.
+ */
+
 void
 qsmainwnd::reset_ppqn ()
 {
@@ -1450,6 +1454,7 @@ qsmainwnd::reset_ppqn ()
 
     int index = ppqn_list().index(pstring) - 1;
     ui->cmb_ppqn->setCurrentIndex(index);
+    update_bpm(usr().midi_beats_per_minute());
 }
 
 bool

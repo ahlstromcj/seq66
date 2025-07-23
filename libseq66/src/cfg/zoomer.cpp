@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-09-08
- * \updates       2025-07-19
+ * \updates       2025-07-21
  * \license       GNU GPLv2 or above
  *
  *  Refactoring:
@@ -268,7 +268,7 @@ zoomer::change_ppqn (int p)
 int
 zoomer::zoom_power_of_2 (int ppq)
 {
-    int result = adapted_zoom(ppq);
+    int result = adapted_seq_zoom(ppq);
     if (ppq < usr().base_ppqn())
         m_zoom_expansion = 3;
 
@@ -294,9 +294,27 @@ zoomer::zoom_power_of_2 (int ppq)
  */
 
 int
-adapted_zoom (int ppq)
+adapted_seq_zoom (int ppq)
 {
     int result = c_default_seq_zoom;
+    if (ppq > usr().base_ppqn())
+    {
+        int zoom = result * ppq / usr().base_ppqn();
+        result = next_power_of_2(zoom);
+        if (result > c_maximum_zoom)
+            result = c_maximum_zoom;
+        else if (result == 0)
+            result = c_minimum_zoom;
+    }
+    else if (ppq < usr().base_ppqn())
+        result = c_minimum_zoom;
+
+    return result;
+}
+int
+adapted_perf_zoom (int ppq)
+{
+    int result = c_default_perf_zoom;
     if (ppq > usr().base_ppqn())
     {
         int zoom = result * ppq / usr().base_ppqn();

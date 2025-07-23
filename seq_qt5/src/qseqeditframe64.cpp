@@ -310,7 +310,7 @@ qseqeditframe64::qseqeditframe64
     QWidget * parent,
     bool shorter
 ) :
-    qseqframe               (p, s, adapted_zoom(p.ppqn()), parent),
+    qseqframe               (p, s, adapted_seq_zoom(p.ppqn()), parent),
     performer::callbacks    (p),
     ui                      (new Ui::qseqeditframe64),
     m_qseqeditex_frame      (nullptr),
@@ -2690,15 +2690,9 @@ qseqeditframe64::tools ()
 void
 qseqeditframe64::insert_macro (const std::string & macroname)
 {
-#if defined USE_OLD_CODE
-    midibytes mbytes = perf().macro_bytes(macroname);
-    midipulse tstamp = track().get_last_tick();
-    bool ok = track().add_event(tstamp, mbytes);
-#else
     const midimacro & macro = perf().get_macro(macroname);
     midipulse tstamp = track().get_last_tick();
     bool ok = track().add_macro(tstamp, macro);
-#endif
     if (ok)
     {
         msgprintf

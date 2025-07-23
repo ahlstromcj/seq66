@@ -572,10 +572,8 @@ abs_midibyte_value (int b)
 inline const midibyte *
 midi_bytes (const midibytes & b)
 {
-//  return static_cast<const midibyte *>(b.data());
     return b.data();
 }
-
 
 /*
  *  More free functions, not inline.

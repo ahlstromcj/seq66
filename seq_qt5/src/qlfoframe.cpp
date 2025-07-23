@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-13
+ * \updates       2025-07-22
  * \license       GNU GPLv2 or above
  *
  *  The LFO (low-frequency oscillator) provides a way to modulate the
@@ -73,7 +73,7 @@ static double s_speed_min   =   0.0;
 static double s_speed_def   =   1.0;        /* actually number of periods   */
 static double s_speed_max   =  16.0;
 static double s_phase_min   =   0.0;
-static double s_phase_max   =   1.0;
+static double s_phase_max   = 360.0;        /* was 1.0, kind of silly       */
 
 /*
  *  Signal buttonClicked(int) is overloaded in this class. To connect to this
@@ -219,12 +219,12 @@ qlfoframe::qlfoframe
     ui->v_phase_layout->setAlignment(ui->m_phase_slider, Qt::AlignHCenter);
     ui->m_phase_slider->setToolTip
     (
-        "Phase: phase shift in a beat width (quarter note). "
-        "A value of 1 is a phase shift of 360 degrees."
+        "Phase: phase shift of the LFO waveform. "
+        "Ranges from 0 to 360 degrees."
     );
-    ui->m_phase_slider->setMinimum(to_slider(s_phase_min));
-    ui->m_phase_slider->setMaximum(to_slider(s_phase_max));
-    ui->m_phase_slider->setValue(to_slider(m_phase));
+    ui->m_phase_slider->setMinimum(s_phase_min);
+    ui->m_phase_slider->setMaximum(s_phase_max);
+    ui->m_phase_slider->setValue(m_phase);
     set_value_text(m_phase, ui->m_phase_text);
     connect
     (
@@ -329,7 +329,7 @@ qlfoframe::phase_text_change ()
     bool ok;
     double v = t.toDouble(&ok);
     if (ok && (v >= s_phase_min && v <= s_phase_max))
-        ui->m_phase_slider->setValue(to_slider(v));
+        ui->m_phase_slider->setValue(v);
 }
 
 void
@@ -358,7 +358,7 @@ qlfoframe::scale_lfo_change ()
     m_value = to_double(ui->m_value_slider->value());   /* DC offset        */
     m_range = to_double(ui->m_range_slider->value());   /* modulation depth */
     m_speed = to_double(ui->m_speed_slider->value());   /* periods to apply */
-    m_phase = to_double(ui->m_phase_slider->value());   /* phase            */
+    m_phase = ui->m_phase_slider->value();              /* phase (degrees)  */
 
     lfoparameters lp
     {
@@ -398,7 +398,10 @@ qlfoframe::multiply_clicked (int state)
     if (usem != m_multiply)
     {
         m_multiply = usem;
-        scale_lfo_change();
+
+        /*
+         * Not needed for this checkbox: scale_lfo_change();
+         */
     }
 }
 
