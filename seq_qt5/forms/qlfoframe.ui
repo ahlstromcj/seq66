@@ -85,7 +85,7 @@ match the waveform.</string>
      <x>350</x>
      <y>40</y>
      <width>291</width>
-     <height>241</height>
+     <height>261</height>
     </rect>
    </property>
    <property name="font">
@@ -102,7 +102,7 @@ match the waveform.</string>
       <x>10</x>
       <y>30</y>
       <width>251</width>
-      <height>201</height>
+      <height>221</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="m_wave_layout">
@@ -199,6 +199,18 @@ match the waveform.</string>
        </property>
        <property name="text">
         <string>Exponential Fall</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="m_radio_wave_dc">
+       <property name="font">
+        <font>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>DC Only</string>
        </property>
       </widget>
      </item>

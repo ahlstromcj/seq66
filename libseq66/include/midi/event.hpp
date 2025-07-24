@@ -970,7 +970,7 @@ public:
      *      The return reference for the first byte.
      *
      * \param d1 [out]
-     *      The return reference for the first byte.
+     *      The return reference for the second byte.
      */
 
     void get_data (midibyte & d0, midibyte & d1) const

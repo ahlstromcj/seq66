@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.21
 Chris Ahlstrom
-2015-07-10 to 2025-07-23
+2015-07-10 to 2025-07-24
 
 # Change Log
 
-## [0.99.21] - 2025-07-23
+## [0.99.21] - 2025-07-24
 
     This release contains fixes for issues #137, #138, #139, and #140.
     It also contain a number of smaller changes discovered while
@@ -22,6 +22,7 @@ Chris Ahlstrom
         -   Added space above and below the data range and added
             top/bottom lines and value labels. See issue #140.
         -   Adding an Insert macros function to Tools, in progress.
+    -   LFO. Added a "DC Only" option.
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.
@@ -99,9 +100,10 @@ Chris Ahlstrom
             is clicked, in the pattern and song editors.
     -   Fixes made to pitchbend calculations and display.
     -   Updated the time-signature handling as per issue #137.
-    -   When using LFO, saving, then exiting via the main window
-        a prompt about a needless save was removed.
-    -   Fixing the LFO for operation on pitchbend.
+    -   LFO.
+        -   When using LFO, saving, then exiting via the main window
+            a prompt about a needless save was removed.
+        -   Fixing the LFO for operation on pitchbend.
     -   Fixed qeditbase::snap\_x(); removed the PPQN ratio factor.
     -   Modified adding painted notes to the closest tick snap,
         also fixes adding notes while zoomed.

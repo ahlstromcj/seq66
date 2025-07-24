@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-22
+ * \updates       2025-07-24
  * \license       GNU GPLv2 or above
  *
  *  The LFO (low-frequency oscillator) provides a way to modulate the
@@ -137,6 +137,7 @@ qlfoframe::qlfoframe
     (
         ui->m_radio_wave_revexp, cast(waveform::reverse_exponential)
     );
+    m_wave_group->addButton(ui->m_radio_wave_dc, cast(waveform::dc));
     ui->m_radio_wave_none->setChecked(true);    /* match m_wave member init */
     connect
     (
@@ -339,22 +340,33 @@ qlfoframe::wave_type_change (int waveid)
 
     /*
      * For issue #139, do not reset the data when changing the waveform
-     * type. The user can always press the Reset button.
+     * type. The user can always press the Reset button. Also, don't
+     * rescale if "None" was selected, but do reset.
      *
      * reset();
      */
 
-    scale_lfo_change();
+    if (m_wave != waveform::none)
+        scale_lfo_change();
+    else
+        reset();
 }
 
 /**
  *  Changes the scaling provided by this window.  Changes take place right
  *  away in this callback, and would require multiple undoes to fully undo.
+ *  Hence the reset() function.
+ *
+ *  If "None" is selected, this function does nothing; otherwise
+ *  it would zero out events.
  */
 
 void
 qlfoframe::scale_lfo_change ()
 {
+    if (m_wave == waveform::none)
+        return;
+
     m_value = to_double(ui->m_value_slider->value());   /* DC offset        */
     m_range = to_double(ui->m_range_slider->value());   /* modulation depth */
     m_speed = to_double(ui->m_speed_slider->value());   /* periods to apply */

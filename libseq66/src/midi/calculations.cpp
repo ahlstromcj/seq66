@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2025-07-23
+ * \updates       2025-07-24
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1576,6 +1576,11 @@ wave_func (double omega, waveform wavetype)
         result = exp_normalize(tmp, true);
         break;
 
+    case waveform::dc:
+
+        result = 1.0;
+        break;
+
     default:
 
         break;
@@ -2026,17 +2031,28 @@ pitch_value_semitones (midibyte d0, midibyte d1, int semitone_range)
 /**
  *  Given a base pitch value (i.e. independent of the current semitone range),
  *  provides the two bytes needed to encode the pitch-wheel event in a MIDI
- *  file.
+ *  file. The maximum value is 16383 = 0x3FFF, or, in bits
+ *
+ *            3    F    F    F
+ *          0011 1111 1111 1111
+ *
+ *  But we have to get 7 bits for each:
+ *
+ *                       7F
+ *          00111111-1-1111111
+ *             3 F   8    0
  *
  * \param pitch
  *      Provides the pitch value, which must range from 0 to 16384.
- *      Otherwise, 0 is assumed.
+ *      Otherwise, 8192 is assumed.
  *
- * \param d0
- *      The LSB of the pitch-bend value.
+ * \param [out] d0
+ *      The LSB of the pitch-bend value. It is obtained with a mask of
+ *      0x7F.
  *
- * \param d1
- *      The MSB of the pitch-bend value.
+ * \param [out] d1
+ *      The MSB of the pitch-bend value. It is obtained by shifting
+ *      the pitch value 7 bits.
  */
 
 void
@@ -2044,9 +2060,8 @@ pitch_data_bytes (int pitch, midibyte & d0, midibyte & d1)
 {
     if (pitch >= 0 && pitch < 16384)
     {
-        int msbyte = pitch >> 7;            /* drop the MSB to LSB          */
-        d1 = midibyte(msbyte);              /* assign the MSB to d1         */
-        d0 = midibyte(pitch & 0xFF);        /* mask off the MSB to get LSB  */
+        d1 = midibyte(pitch >> 7);          /* shift pitch to get the MSB   */
+        d0 = midibyte(pitch & 0x7F);        /* mask the LSB to get d0       */
     }
     else
     {

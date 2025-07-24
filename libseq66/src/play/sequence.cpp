@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-23
+ * \updates       2025-07-24
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3375,6 +3375,7 @@ sequence::change_event_data_lfo
     bool multiply = lp.lfo_multiply;
     bool modified = false;
     bool noselection = ! any_selected_events(status, cc);
+    bool dc_only = wavetype == waveform::dc;
     m_events_undo.push(m_events);                   /* save original data   */
     if (event::is_pitchbend_msg(status))
     {
@@ -3390,6 +3391,9 @@ sequence::change_event_data_lfo
         DC -= 64.0;                                 /* -64 to 64 offset     */
         DC = 8192.0 * DC / 64.0;                    /* -8192 to +8192       */
     }
+    if (dc_only)
+        R = 1.0;
+
     for (auto & er : m_events)
     {
         bool match = false;
@@ -3403,50 +3407,71 @@ sequence::change_event_data_lfo
             double v = wave_func(w, wavetype);      /* -1.0 to 1.0          */
             if (er.is_pitchbend())
             {
-                int newpitch = int(8192.0 * R * v + DC) + 8192;
                 midibyte d0, d1;
+                er.get_data(d0, d1);
+
+                int p = pitch_value(d0, d1);        /* -8192 to +8192       */
                 if (multiply)
                 {
-                    er.get_data(d0, d1);
-
-                    int v = pitch_value_scaled(d0, d1);         /* 0 to 127 */
-                    newpitch *= v;
-                    pitch_data_bytes_scaled(midibyte(newpitch), d0, d1);
+                    int p2 = v * p + 8192;
+                    pitch_data_bytes(p2, d0, d1);
                     er.set_data(d0, d1);
                 }
                 else
                 {
-                    pitch_data_bytes(newpitch, d0, d1);
+                    int p2 = dc_only ? p + DC : int(8192.0 * R * v + DC) ;
+                    p2 += 8192 ;
+                    pitch_data_bytes(p2, d0, d1);
                     er.set_data(d0, d1);
                 }
             }
             else
             {
-                int newdata = int(R * v + DC);
-                newdata = int(abs_midibyte_value(newdata));     /* 0 - 127  */
                 if (multiply)
                 {
-                    double factor = double(newdata) / 128.0;    /* 0 - 1.0  */
-                    double datum = event::is_one_byte_msg(status) ?
-                        double(er.d0()) : double(er.d1());
+                    if (er.is_tempo())
+                    {
+                        midibpm t = er.tempo();
+                        double t2 = t * v + DC;                 /* no R     */
+                        er.set_tempo(t2);
+                    }
+                    else
+                    {
+                        midibyte d0, d1;
+                        er.get_data(d0, d1);
 
-                    newdata = int(factor * datum);              /* round??? */
-                }
-                if (er.is_tempo())
-                {
-                    midibpm tempo = note_value_to_tempo(midibyte(newdata));
-                    (void) er.set_tempo(tempo);
+                        double datum = event::is_one_byte_msg(status) ?
+                            double(er.d0()) : double(er.d1());
+
+                        int newdata = int(datum * v + DC);      /* no R     */
+                            if (event::is_one_byte_msg(status))
+                                d0 = midibyte(newdata);
+                            else if (event::is_two_byte_msg(status))
+                                d1 = midibyte(newdata);
+
+                        er.set_data(d0, d1);
+                    }
                 }
                 else
                 {
-                    midibyte d0, d1;
-                    er.get_data(d0, d1);
-                    if (event::is_one_byte_msg(status))
-                        d0 = midibyte(newdata);
-                    else if (event::is_two_byte_msg(status))
-                        d1 = midibyte(newdata);
+                    int newdata = int(R * v + DC);
+                    newdata = int(abs_midibyte_value(newdata)); /* 0 - 127  */
+                    if (er.is_tempo())
+                    {
+                        midibpm tempo = note_value_to_tempo(midibyte(newdata));
+                        (void) er.set_tempo(tempo);
+                    }
+                    else
+                    {
+                        midibyte d0, d1;
+                        er.get_data(d0, d1);
+                        if (event::is_one_byte_msg(status))
+                            d0 = midibyte(newdata);
+                        else if (event::is_two_byte_msg(status))
+                            d1 = midibyte(newdata);
 
-                    er.set_data(d0, d1);
+                        er.set_data(d0, d1);
+                    }
                 }
             }
             modified = true;

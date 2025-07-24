@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2025-07-23
+ * \updates       2025-07-24
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -87,6 +87,7 @@ enum class waveform
     triangle,                   /**< No waveform, never used.               */
     exponential,                /**< A partial exponential rise.            */
     reverse_exponential,        /**< A partial exponential fall.            */
+    dc,                         /**< DC offset adjustment only.             */
     max                         /**< Illegal value.                         */
 };
 
