@@ -65,8 +65,8 @@
       \item \textbf{Session}
    \end{itemize}
 
-   We present brief descriptions here and links to sections with more detail.
-   All tabs are discussed in more detail, each in its own section.
+   We present brief descriptions here, with links to sections
+   discussing the tabs in detail.
 
 \subsubsection{Tabs / Live}
 \label{subsubsec:introduction_main_tabs_live}
@@ -272,29 +272,28 @@
    This drop-down allows one to change the pulses-per-quarter-note (PPQN) of the
    loaded tune, and this change can then be saved, if desired, with the file.
    As with \textsl{Seq24}, the default PPQN is 192.
-   \texttt{24, 32, 48, 96, 120, 192, 240, 384, 480, 768, 960, 1920, 2400, 3840,
-   7680, 9600, and 19200}.
+   Values: \texttt{24, 32, 48, 96, 120, 192, 240, 384, 480, 768,
+   960, 1920, 2400, 3840, 7680, 9600, and 19200}.
+
    The PPQN cannot be changed to values not in this list, but
-   if a file with an unsupport PPQN is loaded, that will show up
+   if a file with an unsupported PPQN is loaded, that will show up
    in the PPQN box at the bottom, assuming
    \textbf{Preferences / Play / Use file's PPQN...} is set.
 %  Values, even weird ones, can be entered by typing them.
 %  However, some values, such as 120, are not
 %  displayed properly in the grids.
 %  (Modify the file to use a supported value, if possible.)
-   If a MIDI file is loaded, this setting can scale that file,
-   rescaling all the pattern events and pattern triggers to
-   the base PPQN (set to 192 by default, but modifiable in 
+   If a MIDI file is loaded without that setting, the event times
+   and pattern triggers are
+   rescaled to the base PPQN (192 by default, but modifiable in 
    \textbf{Preferences / Play / PPQN}), without
-   raising the "modified" flag, if specified
+   raising the "modified" flag.
    Also see \sectionref{subsection:edit_preferences_play_options}.
 
-   Generally, MIDI recommends PPQN that are units of 24 ticks.
+   Generally, MIDI recommends PPQN that are multiples of 24 ticks.
    The value 32 is included anyway, but, if selected, the
    displays of notes and grids are incorrect.
    We don't intend to fix this.
-   There are some display issues at 2400, 9600, and 19200 PPQN,
-   which we do intend to fix.
    960 PPQN at 120 BPM is about 2 time more accurate in timing
    than a MIDI port can handle, so the higher values are there
    "for fun".
@@ -346,7 +345,7 @@
    for a number of different time signatures.
    \textsl{Warning}: It modifies every pattern in the song, but is not
    otherwise saved in the configuration.
-   Values: \texttt{1 to 16,32}.
+   Values: \texttt{1 to 16, 32}.
 
 \subsubsection{Global Beat Width}
 \label{subsubsec:introduction_global_beat_width}
@@ -359,7 +358,7 @@
    otherwise saved in the configuration.
    Because MIDI encodes only beat widths that are a power of 2, the values are
    limited.
-   Values: \texttt{1, 2, 4, 8, 16,32}
+   Values: \texttt{1, 2, 4, 8, 16, 32}
 
 \subsubsection{BBT or HMS Time Display}
 \label{subsubsec:introduction_time_display}

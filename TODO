@@ -4,6 +4,7 @@ Chris Ahlstrom
 
 Hot:
 
+    -   Straighten out "Macro execution" in the Session tab.
     -   Note drawing and event drawing screwed up in time when scrolled
         completely to the right.
 

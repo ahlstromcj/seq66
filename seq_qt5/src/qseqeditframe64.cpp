@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-07-19
+ * \updates       2025-07-25
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2718,14 +2718,18 @@ qseqeditframe64::popup_tool_menu ()
         /*
          * Shall we look up macros by name or number? What's best for these
          * QActions? We can get the action text via text().
+         *
+         * ca 2025-07-25
+         * Since we're not sending macros here, it does not matter
+         * if they're active via the 'ctrl' file. As long as macros
+         * exist, they can be used here.
+         *
+         *      bool macrosactive = perf().macros_active();
          */
 
         QMenu * menumacros = nullptr;
-        bool macrosactive = perf().macros_active();
         tokenization names = perf().macro_names();
-        if (macrosactive)
-            macrosactive = ! names.empty();
-
+        bool macrosactive = ! names.empty();
         if (macrosactive)
         {
             menumacros = new_qmenu("&Insert macro at \"L\"", m_tools_popup);

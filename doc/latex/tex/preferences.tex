@@ -837,10 +837,6 @@
    allows notes that had already started
    to be resumed when playback resumes.
 
-   \itempar{Song-record snap}{edit!song-record snap}
-   Use the song snap value to tighten up the recording
-   of song triggers.
-
    \itempar{Use file's PPQN for pre-existing files}{edit!use file ppqn}
    If checked, allows
    \textsl{Seq66} to run using the PPQN of the MIDI file rather than
@@ -848,6 +844,14 @@
    This is the recommended option for most MIDI files.
    When this option is changed, the \texttt{-{}-user-save} option is turned on
    to preserve the setting when \textsl{Seq66} exits.
+
+   \itempar{Song-record snap}{edit!song-record snap}
+   Use the song snap value to tighten up the recording
+   of song triggers.
+
+   \itempar{Automatically add starting time-signature event}{edit!timesig}
+   If checked, a time-signature event is added to the beginning of a
+   track if none is present.
 
    \itempar{PPQN}{edit!default ppqn}
    Allows the standard \textsl{Seq66} PPQN, 192 pulses/quarter-note,
@@ -890,6 +894,25 @@
    One can clear the out play-set, and set only the current set active, by
    clicking the exclamation point button to the left of the "Active" label at
    the bottom of the main windows.
+
+   \itempar{Song Start Mode}{edit!song-start mode}
+   This item determines the mode for playback.
+
+   \begin{enumerate}
+      \item \textbf{Live}.
+         The arming and muting of patterns is controlled by the musician,
+         by clicking the live grid's button, using the grid slot
+         hot keys, or a MIDI controller configured for this purpose.
+      \item \textbf{Song}.
+         The arming and muting of patterns is controlled by the
+         triggers layed out in the song editor.
+      \item \textbf{Auto}.
+         The Song mode is set if the MIDI tune contains any triggers;
+         otherwise the Live mode is set.
+   \end{enumerate}
+
+   The current mode is shown on a button at the bottom of the main window.
+   This button can be clicked to change the mode.
 
 \subsection{Edit / Preferences / Metronome Options}
 \label{subsection:edit_preferences_metronome}
@@ -1057,9 +1080,11 @@
       \item \textbf{Record Style}
          This setting sets how the record mode works for the pattern.
          \begin{itemize}
-            \item \textbf{Merge}.
+            \item \textbf{Overdub}.
+               Also known as "Merge".
                As recording and looping proceeds, new events merge with
                the existing events.
+               Events accumulate.
             \item \textbf{Overwrite}.
                When the pattern loops back to its beginning, any
                existing events are deleted.
@@ -1081,6 +1106,8 @@
    \end{itemize}
 
    \textbf{Randomization}.
+   These items set the ranges for jittering the events in time or
+   randomizing their amplitude.
    The range of randomization is based on a range parameter, and
    goes from -range to +range.
    The concept of jitter means that the time-stamps of recorded events
