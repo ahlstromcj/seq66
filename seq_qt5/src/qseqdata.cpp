@@ -375,6 +375,11 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 event_x -= 3;
                 if (is_pitchbend())
                 {
+#if defined SEQ66_DRAW_PITCHBEND_AS_DOT
+
+                    painter.drawPoint(event_x, event_height);
+
+#else
                     /*
                      * Draw from 64 (the middle) to the value, rather than
                      * from 0 (the bottom) to the value.
@@ -382,6 +387,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 
                     int middle = data_y(64);
                     painter.drawLine(event_x, event_height, event_x, middle);
+#endif
                 }
                 else
                 {

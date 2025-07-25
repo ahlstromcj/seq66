@@ -1,16 +1,87 @@
-Release Notes for Seq66 v. 0.99.21 2025-06-12 "Karl Kleanup"
+Release Notes for Seq66 v. 0.99.21 2025-07-25 "Karl Kleanup"
 
-This release contains fixes for issues ...
+This release contains fixes and updates for issues #68, #137, #138,
+#139, and #140, as well as a number of smaller changes discovered
+while fixing these issues. Some minor features added.
 
 - General.
+  - A C++17 compiler is now required. Time to move on!
 - Main window and grid.
   - Fixed the BBT/HMS button tooltip.
+  - The playlist was auto-arming all patterns even when not active.
+  - Changing the main time signature changes the time signature in
+    all patterns (except for those with a pattern editor open).
 - Pattern editor.
+  - Pattern-fix dialog.
+    - Added randomizing note pitches as per the current musical
+      scale for the pattern.
+    - Added space above and below the data range and added
+      top/bottom lines and value labels. See issue #140.
+    - Adding an Insert macros function to the pattern-editor
+      Tools menu; see issue #68.
+  - Optimized gradient drawing using QLinearGradient members in
+    qseqroll instead of auto objects.
+  - Made the drawing of pitchbend data show +- pitchbend
+    better, i.e. above and below the midline pitchbend, 0.
+    Fixes made to pitchbend calculations and display.
+  - Controller events are now recorded when playback is
+    stopped. Time is not incremented. (It can be changed in
+    the Event editor, if needed.)
+  - Added an "Insert macro at L" function in the Tools popup menu.
+  - Upgraded the MIDI control macro feature to allow multiple
+    events in each macro, separated by " | ".
+  - Changed event sorting to use a stable sort, modified event
+    ranking to make CCs and Program Changes have the same priority,
+    as part of fixes for issue #138.
+  - Modified adding painted notes to the closest tick snap,
+    also fixes adding notes while zoomed.
+  - LFO.
+    - Added a "DC Only" option.
+    - Upgraded the LFO editor as per issue #139.
+    - When using LFO, saving, then exiting via the main window
+      a prompt about a needless save was removed.
+    - Fixed the LFO for operation on pitchbend.
+  - The drawing of scales was done incorrectly. Fixed both the
+    seqroll grid drawing and the scales policy function.
+  - Fixed the seqroll 'r' command (velocity randomization) to set
+      the modify flag only if events are actually randomized.
+  -   Fixed the drawing of "ghost notes" when moving or pasting
+      notes.
+  -   PPQN updates.
+      -   Fixed the adding of painted notes (mostly) at PPQN other
+          than the long-standing base default, 192.
+      -   Changed the lowest PPQN from 32 to 24, for those who
+          experiment. Also added PPQN = 48.
+      -   Fixed File / New to reset PPQN to the default (192)
+          and the tempo to the value set in the 'usr' file.
+      -   Fixed the handling of MIDI file PPQN to set initial
+          zoom correctly for all supported PPQNs, and when "0"
+          is clicked, in the pattern and song editors.
+  -   Updated the time-signature handling as per issue #137.
 - Song editor.
+  - Fixed the editbase snap_x function.
+  - Optimized gradient drawing using QLinearGradient members in
+    qperfroll and qperfnames instead of auto objects.
 - Event editor.
 - Preferences dialog.
 - Contrib files.
 - Configuration files.
+  - Macros in libseq66/include/seq66_features.h:
+    - SEQ66_USE_COLLAPSED_SLOT_POPUP_MENU
+    - SEQ66_DRAW_PITCHBEND_AS_DOT (undefined)
+- Documentation. Updated with fixes and new features.
+- Classes.
+  - midifile class.
+    - SeqSpecs with no data were read improperly.
+    - Cleaned up the handling of time signatures and the c_timesig
+      SeqSpec. The earliest time-signature event, if present,
+      overrides the c_timesig SeqSpec.
+    - Added a time signature event at the beginning of a track.
+    - SMF 0 Import. Meta events are now stored in pattern 0.
+      Load contrib/midi/CountryStrum.mid for an example.
+  - performer. Changed default 32nds-per-quarter-note from 0 to 8.
+  - sequence. Used new MIDI default values and fixed an
+    index error in add_timesig_event(). 
 
 See NEWS for more details.
 

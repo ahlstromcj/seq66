@@ -2198,11 +2198,13 @@
                and the Mod range is 127.
                Varying the \textbf{Phase} with the slider
                will move the peak of the curve left to right.
-            \item \textbf{Exponential Fall}. Provides a ramp modulation in the
-               opposite direction.
+            \item \textbf{Exponential Fall}. Provides an exponential
+               ramp modulation in the opposite direction.
             \item \textbf{DC Only}. Sets only the DC offset of the
                existing events. Does not work with the "Multiply" option.
-               Problematic with pitch-bend events.
+               Problematic with pitch-bend events. One issue is that
+               some precision in pitch-bend is lost as one changes the DC
+               offset up and down, until clipping occurs.
          \end{enumber}
          Note that one might have to change one or more parameters
          slightly to see the effect of the new waveform.

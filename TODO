@@ -1,11 +1,9 @@
 TO DO for Seq66 0.99.21
 Chris Ahlstrom
-2019-04-13 to 2025-07-24
+2019-04-13 to 2025-07-25
 
 Hot:
 
-    -   The LFO multiply feature keeps reducing amplitudes, to 0.
-    -   Fix pitchbend alteration in the LFO.
     -   Note drawing and event drawing screwed up in time when scrolled
         completely to the right.
 
@@ -32,8 +30,6 @@ Cannot duplicate:
 
 Backlog:
 
-    -   Would pitch-bend be better shown as a graph rather than vertical
-        bars?
     -   In midicvt (separate project), the c_mutegroups SeqSpec is not
         shown (24 24 00 09).
     -   Automation: verify/document Solo, Reset Sets, and Song Position.

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2025-05-14
+ * \updates       2025-07-25
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -156,12 +156,19 @@
 
 #undef  SEQ66_USE_METRONOME_FADE
 
-/*
+/**
  *  If defined, then the right-click popup menu of each pattern editor grid
  *  slot includes more nesting, to save space.
  */
 
 #define SEQ66_USE_COLLAPSED_SLOT_POPUP_MENU
+
+/**
+ *  If defined, draw pitchbend as dots in the data pane. Looks kind of
+ *  raggy, so undefined.
+ */
+
+#undef SEQ66_DRAW_PITCHBEND_AS_DOT
 
 #endif          // SEQ66_FEATURES_H
 

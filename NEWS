@@ -7,7 +7,7 @@ Chris Ahlstrom
 ## [0.99.21] - 2025-07-24
 
     This release contains fixes for issues #137, #138, #139, and #140.
-    It also contain a number of smaller changes discovered while
+    It also contains a number of smaller changes discovered while
     fixing these issues. See below.
 
 ### Added
@@ -21,7 +21,7 @@ Chris Ahlstrom
             The notes adhere to the currently selected musical scale.
         -   Added space above and below the data range and added
             top/bottom lines and value labels. See issue #140.
-        -   Adding an Insert macros function to Tools, in progress.
+        -   Adding an Insert macros function to Tools.
     -   LFO. Added a "DC Only" option.
 -   Song editor.
 -   Event editor.
@@ -91,7 +91,7 @@ Chris Ahlstrom
         -   Fixed the adding of painted notes (mostly) at PPQN other
             than the long-standing base default, 192.
         -   Changed the lowest PPQN from 32 to 24, for those who
-            experiment. Also added PPQN = 480.
+            experiment. Also added PPQN = 48.
         -   Fixed File / New to reset PPQN to the default (192).
             It also resets the tempo to the value in the 'usr'
             file.

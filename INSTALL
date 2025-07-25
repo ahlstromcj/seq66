@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.99.20 and above
+INSTALL for Seq66 v. 0.99.21 and above
 Chris Ahlstrom
-2015-09-10 to 2025-05-14
+2015-09-10 to 2025-07-25
 
 Getting Seq66 requires building the code or going to "ahlstromcj/seq66" on
 GitHub to get an installation package or a Windows release executable.
@@ -463,7 +463,6 @@ MANUALLY-DEFINED MACROS IN CODE:
 
         SEQ66_MISSING_JACK_VIRTUAL_PORTS (undefined)
         SEQ66_PORTMIDI_SYSEX_PROCESSING (undefined)
-        SEQ66_PROVIDE_AUTO_COLOR_INVERSION
         SEQ66_PROVIDE_AUTO_COLOR_INVERSION  (experimental, investigative)
         SEQ66_SHOW_GM_PROGRAM_NAME (defined by default)
         SEQ66_USE_COLLAPSED_SLOT_POPUP_MENU
@@ -471,6 +470,7 @@ MANUALLY-DEFINED MACROS IN CODE:
         SEQ66_USE_METRONOME_FADE (undefined)
         SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
         SEQ66_USE_SHOW_HIDE_BUTTON
+        SEQ66_DRAW_PITCHBEND_AS_DOT (undefined)
 
 REPORTING ISSUES:
 

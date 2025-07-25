@@ -3,8 +3,8 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2025-06-12
-; Version:      0.99.20
+; Updated:      2025-07-25
+; Version:      0.99.21
 ;
 ; Usage of this Windows build script:
 ;
