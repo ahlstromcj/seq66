@@ -217,7 +217,7 @@ match the waveform.</string>
     </layout>
    </widget>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="buttonLayoutWidget">
    <property name="geometry">
     <rect>
      <x>350</x>
@@ -284,7 +284,7 @@ the modify flag for the MIDI tune.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="sliderLayoutWidget">
    <property name="geometry">
     <rect>
      <x>18</x>
