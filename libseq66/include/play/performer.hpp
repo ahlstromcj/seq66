@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2025-07-19
+ * \updates       2025-07-26
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3665,21 +3665,9 @@ public:
     }
 
     void clear_seq_edits ();
-
-    void toggle_seq_edit ()
-    {
-        m_seq_edit_pending = ! m_seq_edit_pending;
-    }
-
-    void toggle_event_edit ()
-    {
-        m_event_edit_pending = ! m_event_edit_pending;
-    }
-
-    void toggle_record_edit ()
-    {
-        m_record_toggle_pending = ! m_record_toggle_pending;
-    }
+    void toggle_seq_edit ();
+    void toggle_event_edit ();
+    void toggle_record_edit ();
 
     bool seq_edit_pending () const
     {

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-25
+ * \updates       2025-07-26
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -4157,6 +4157,26 @@ qseditoptions::slot_clock_start_modulo (int ticks)
 }
 
 void
+qseditoptions::midi_through_check (int index)
+{
+    std::string busname;
+    e_clock ec;
+    bool good = perf().ui_get_clock(bussbyte(index), ec, busname);
+    if (good)
+    {
+        if (contains(busname, "Midi Through"))      /* what a krufty check! */
+        {
+            qt_info_box
+            (
+                this,
+                "Warning: Using MIDI Through ports for "
+                "control/display can cause serious problems."
+            );
+        }
+    }
+}
+
+void
 qseditoptions::slot_output_bus (int index)
 {
     int oldindex = perf().midi_control_out().configured_buss();
@@ -4179,6 +4199,7 @@ qseditoptions::slot_output_bus (int index)
             perf().ui_set_clock(index, e_clock::off);           /* enabled! */
             rc().midi_control_active(true);
             reload_needed(true);
+            midi_through_check(index);
         }
         modify_ctrl();
     }
@@ -4224,6 +4245,7 @@ qseditoptions::slot_input_bus (int index)
             perf().ui_set_input(index, true);   /* auto-enable the input    */
             rc().midi_control_active(true);
             reload_needed(true);
+            midi_through_check(index);
         }
     }
     modify_ctrl();

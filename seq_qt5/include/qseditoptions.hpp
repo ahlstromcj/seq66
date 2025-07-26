@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-19
+ * \updates       2025-07-26
  * \license       GNU GPLv2 or above
  */
 
@@ -76,6 +76,7 @@ public:
 
 private:
 
+    void midi_through_check (int index);
     void setup_clock_combo_box (int buses, QComboBox * out);
     void setup_input_combo_box (int buses, QComboBox * in);
     void setup_tab_midi_clock ();

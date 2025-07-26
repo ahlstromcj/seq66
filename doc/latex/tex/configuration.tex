@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2025-07-17
+% \update      2025-07-26
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -28,7 +28,8 @@
    \begin{itemize}
       \item \textbf{Command-line Options}. Useful with desktop shortcuts.
       \item \textbf{'rc' File}. Mostly I/O port options, JACK options, recent
-         files.  Also now specifies other files to be used.
+         files.  Also now specifies other files to be used, and whether they
+         are active or not.
       \item \textbf{'usr' File}. Local names for busses and instruments,
          user-interface settings, sessions... Some options that fit either the
          GUI or the command-line application could be moved to the 'rc' file.
@@ -2053,8 +2054,8 @@
 \label{subsubsec:configuration_ctrl_midi_control_settings}
 
    \begin{verbatim}
-      /home/user/.config/seq66/qseq66.usr             (Linux)
-      C:/Users/user/AppData/Local/seq66/qpseq66.usr   (Windows)
+      /home/user/.config/seq66/qseq66.ctrl            (Linux)
+      C:/Users/user/AppData/Local/seq66/qpseq66.ctrl  (Windows)
    \end{verbatim}
 
    This file offloads the control settings from the 'rc' file, for a more
@@ -2065,7 +2066,7 @@
 
    \begin{verbatim}
       [midi-control-settings]
-      control-buss = 3              # or 0xff
+      control-buss = 3              # or 0xff, or the port-mapped name
       midi-enabled = true
       button-offset = 0
       button-rows = 4
@@ -2079,7 +2080,9 @@
          the hardware on the system. If set, then only that buss will be allowed
          to send MIDI control.  A value of 255 or 0xff means any buss can send
          MIDI control. If port-mapping is enabled, the short name (nick-name) of
-         the port can be used as will.
+         the port can be used as well.
+         \textsl{Never use the ALSAMIDI Through port for control
+         Use the actual device port.}
       \item \texttt{midi-enabled}.
          If set to "true", then the MIDI controls will be used.
          It can be set to "false", while keeping the configuration in place
@@ -2457,11 +2460,11 @@
    Meant to "solo" a given track.
    Needs testing and further work.
 
-\paragraph{Automation / Theu}
+\paragraph{Automation / Thru}
 \label{paragraph:configuration_midi_ctrl_thru}
 
    Turns on the "MIDI Thru" function of the current pattern as displayed in a
-   pattern editor.  More testing needed.
+   pattern editor.
 
 \paragraph{Automation / BPM Page Up and Page Down}
 \label{paragraph:configuration_midi_ctrl_bpmpageupdn}
@@ -2726,7 +2729,7 @@
    \begin{verbatim}
       [midi-control-out-settings]
       set-size = 32
-      output-buss = 1
+      output-buss = 1               # or 0xff, or the port-mapped name
       midi-enabled = true
       button-offset = 0
       button-rows = 8
@@ -2741,6 +2744,8 @@
          Specify the output buss to which the display device is attached. If
          port-mapping is enabled, the short name (nick-name) of the port can be
          used.
+         \textsl{Never use the ALSAMIDI Through port for control/display.
+         Use the actual device port.}
       \item \texttt{midi-enabled}.
          If set to "true", then the MIDI control outputs will be used.
          It can be set to "false", while keeping the configuration in place

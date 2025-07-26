@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-07-19
+ * \updates       2025-07-26
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -7404,13 +7404,11 @@ performer::sequence_playing_change (seq::number seqno, bool on)
     return true;
 }
 
-/*
- * Seq/Event-edit pending flag support.
- */
-
 /**
+ * Seq/Event-edit pending flag support.
+ *
  *  Sets the edit-pending flags to false, and disables the pending sequence
- *  number.
+ *  number. We moved the toggles here for debugging. Weird.
  */
 
 void
@@ -7418,6 +7416,24 @@ performer::clear_seq_edits ()
 {
     m_seq_edit_pending = m_event_edit_pending = false;
     m_pending_loop = seq::unassigned();
+}
+
+void
+performer::toggle_seq_edit ()
+{
+    m_seq_edit_pending = ! m_seq_edit_pending;
+}
+
+void
+performer::toggle_event_edit ()
+{
+    m_event_edit_pending = ! m_event_edit_pending;
+}
+
+void
+performer::toggle_record_edit ()
+{
+    m_record_toggle_pending = ! m_record_toggle_pending;
 }
 
 /*

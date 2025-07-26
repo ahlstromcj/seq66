@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-06-16
-% \update      2025-06-11
+% \update      2025-07-26
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -48,6 +48,8 @@
    Also see how to increase the number of ALSA MIDI Thru ports in
    \cite{alsathru}.
 
+   \textbf{Warnings}:
+
    \index{linux!system MIDI Thru}
    \index{MIDI Thru}
    One minor issue with the system MIDI Thru port is that, if it and another
@@ -59,6 +61,16 @@
    pattern at the same time, the existing notes get sent to the Through output
    and are received on the Through input, where they are recorded again; this
    eventually leads to an "input FIFO overrun" message.
+
+   This problem also occurs if one has set up an active 'ctrl'
+   using the MIDI Through ports for control \textsl{and}
+   display, \textsl{and} has set a non-empty \texttt{startup} macro.
+   The macro goes out the display port and is received on the control
+   port, and chaos ensues, including a likely application crash.
+
+   \index{MIDI Thru!warning}
+   \textsl{Never use the ALSAMIDI Through port for control/display.
+   Use the actual device port.}
 
    \begin{quote}
       "ALSA always creates 1 MIDI through port. Since I work with Windows music

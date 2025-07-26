@@ -333,6 +333,12 @@ qsessionframe::populate_macro_combo ()
         if (t.empty())
             ui->checkBoxMacrosActive->setEnabled(false);
     }
+
+    /*
+     * The user should not have run-time control over this.
+     */
+
+    ui->checkBoxMacrosActive->setEnabled(false);
 }
 
 void

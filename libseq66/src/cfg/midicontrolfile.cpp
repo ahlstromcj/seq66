@@ -630,7 +630,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                     ok = count > 0;
                     if (ok)
                     {
-                        (void) mco.expand_macros();
+                        ok = mco.expand_macros();
                         (void) info_message(mco.macro_byte_strings());
                     }
                 }
