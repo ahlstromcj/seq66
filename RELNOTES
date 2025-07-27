@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.21 2025-07-25 "Karl Kleanup"
+Release Notes for Seq66 v. 0.99.21 2025-07-27 "Karl Kleanup"
 
 This release contains fixes and updates for issues #68, #137, #138,
 #139, and #140, as well as a number of smaller changes discovered
@@ -64,6 +64,12 @@ while fixing these issues. Some minor features added.
     qperfroll and qperfnames instead of auto objects.
 - Event editor.
 - Preferences dialog.
+  - Fixed the enabling/disabling of entries in the control and
+    display combo-boxes based on status of control and display.
+  - Provide a warning when using ALSA "Midi Through" ports for
+    both control and display, which can lead to weird stuff.
+  - Detection of this at startup has been added. An error message
+    is posted and MIDI Control and Display disabled, for safety.
 - Contrib files.
 - Configuration files.
   - Macros in libseq66/include/seq66_features.h:

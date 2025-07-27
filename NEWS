@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.21
 Chris Ahlstrom
-2015-07-10 to 2025-07-24
+2015-07-10 to 2025-07-27
 
 # Change Log
 
-## [0.99.21] - 2025-07-24
+## [0.99.21] - 2025-07-27
 
     This release contains fixes for issues #137, #138, #139, and #140.
     It also contains a number of smaller changes discovered while
@@ -26,6 +26,10 @@ Chris Ahlstrom
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.
+    -   Detection of using ALSA's "Midi Through" ports for both
+        control added.
+    -   Detection of this at startup has been added. An error message
+        is posted and MIDI Control and Display disabled, for safety.
 -   Import/Export.
 -   MIDI defaults. Added to midibytes.h:
     -   c\_midi\_clocks\_per\_metronome = 24
@@ -64,11 +68,6 @@ Chris Ahlstrom
 
 ### Fixed
 
--   Module midifile.
-    -   SeqSpecs with no data (length == 4) were read improperly.
-    -   Cleaned up the handling of time signature events and the
-        c\_timesig SeqSpec, now set to 4/4 in files saved before
-        this fix.
 -   SMF 0 Import. Meta events are now stored in pattern 0.
     See it by loading contrib/midi/CountryStrum.mid.
 -   Main window and grid.
@@ -110,13 +109,25 @@ Chris Ahlstrom
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.
+    -   Fixed the enabling/disabling of entries in the control and
+        display combo-boxes when changing active status of control
+        and display.
+    -   A warning is provided when using a MIDI Through port for
+        both control and display, which can lead to FIFO overruns
+        and weird stuff like segfaults.
 -   Configuration files.
 -   Classes.
-    -   midifile. The earliest time-signature event, if present,
-        overrides the c\_timesig SeqSpec.
+    -   midifile.
+        -   The earliest time-signature event, if present,
+            overrides the c\_timesig SeqSpec.
+        -   SeqSpecs with no data (length == 4) were read improperly.
     -   performer. Changed default 32nds-per-quarter-note from 0 to 8.
     -   sequence. Used the new MIDI default values and fixed an
         index error in add\_timesig\_event(). 
+-   Module midifile.
+    -   Cleaned up the handling of time signature events and the
+        c\_timesig SeqSpec, now set to 4/4 in files saved before
+        this fix.
 
 ## [0.99.20] - 2025-06-12
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-26
+ * \updates       2025-07-27
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -138,6 +138,8 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     m_ppqn_list             (supported_ppqns(), true), /* add blank slot    */
     m_buffer_size_list      (jack_buffer_size_list()),
     m_is_initialized        (false),
+    m_inbus_count           (0),
+    m_outbus_count          (0),
     m_backup_rc             (),
     m_backup_usr            (),
     m_reload_needed         (false)
@@ -223,8 +225,9 @@ qseditoptions::~qseditoptions ()
  */
 
 void
-qseditoptions::setup_clock_combo_box (int buses, QComboBox * out)
+qseditoptions::setup_clock_combo_box (int buses)
 {
+    QComboBox * out = ui->comboBoxMidiOutBuss;
     out->clear();
     for (int bus = 0; bus < buses; ++bus)
     {
@@ -243,6 +246,31 @@ qseditoptions::setup_clock_combo_box (int buses, QComboBox * out)
     int buss = perf().midi_control_out().configured_buss();
     out->setCurrentIndex(buss);
     ui->checkBoxMidiOutBuss->setChecked(active);
+    m_outbus_count = buses;
+}
+
+void
+qseditoptions::refresh_clock_combo_box ()
+{
+    QComboBox * out = ui->comboBoxMidiOutBuss;
+    bool active = perf().midi_control_out().configure_enabled();
+    bool out_enabled = ui->checkBoxMidiOutBuss->isChecked();
+    int buses = m_outbus_count;
+    for (int bus = 0; bus < buses; ++bus)
+    {
+        std::string busname;
+        e_clock ec;
+        bool good = perf().ui_get_clock(bussbyte(bus), ec, busname);
+        if (good)
+        {
+            bool enabled = ec != e_clock::disabled && out_enabled;
+            enable_combobox_item(out, bus, enabled);
+        }
+    }
+
+    int buss = perf().midi_control_out().configured_buss();
+    out->setCurrentIndex(buss);
+    ui->checkBoxMidiOutBuss->setChecked(active);
 }
 
 /*
@@ -251,9 +279,10 @@ qseditoptions::setup_clock_combo_box (int buses, QComboBox * out)
  */
 
 void
-qseditoptions::setup_input_combo_box (int buses, QComboBox * in)
+qseditoptions::setup_input_combo_box (int buses)
 {
-    bool inctrlenabled = perf().midi_control_in().configure_enabled();
+    QComboBox * in = ui->comboBoxMidiInBuss;
+    bool active = perf().midi_control_in().configure_enabled();
     in->clear();
     for (int bus = 0; bus < buses; ++bus)
     {
@@ -263,13 +292,38 @@ qseditoptions::setup_input_combo_box (int buses, QComboBox * in)
         if (good)
         {
             bool enabled = ! perf().is_input_system_port(bus);
-            enabled = enabled && inctrlenabled;         /* ca 2023-09-21    */
+            enabled = enabled && active;
             in->addItem(qt(busname));
             enable_combobox_item(in, bus, enabled);
         }
     }
 
+    int buss = perf().midi_control_in().configured_buss();
+    in->setCurrentIndex(buss);
+    ui->checkBoxMidiInBuss->setChecked(active);
+    m_inbus_count = buses;
+}
+
+void
+qseditoptions::refresh_input_combo_box ()
+{
+    QComboBox * in = ui->comboBoxMidiInBuss;
     bool active = perf().midi_control_in().configure_enabled();
+    bool in_enabled = ui->checkBoxMidiInBuss->isChecked();
+    int buses = m_inbus_count;
+    for (int bus = 0; bus < buses; ++bus)
+    {
+        std::string busname;
+        bool inputing;
+        bool good = perf().ui_get_input(bussbyte(bus), inputing, busname);
+        if (good)
+        {
+            bool enabled = ! perf().is_input_system_port(bus);  /* announce */
+            enabled = enabled && in_enabled;
+            enable_combobox_item(in, bus, enabled);
+        }
+    }
+
     int buss = perf().midi_control_in().configured_buss();
     in->setCurrentIndex(buss);
     ui->checkBoxMidiInBuss->setChecked(active);
@@ -310,7 +364,7 @@ qseditoptions::setup_tab_midi_clock ()
          * Output MIDI control buss combo-box population.
          */
 
-        setup_clock_combo_box(buses, out);
+        setup_clock_combo_box(buses);
         connect
         (
             out, SIGNAL(currentIndexChanged(int)),
@@ -321,6 +375,7 @@ qseditoptions::setup_tab_midi_clock ()
             ui->checkBoxMidiOutBuss, SIGNAL(clicked(bool)),
             this, SLOT(slot_output_bus_enable())
         );
+        refresh_clock_combo_box();
     }
 
     QSpacerItem * spacer = new QSpacerItem
@@ -453,7 +508,7 @@ qseditoptions::setup_tab_midi_input ()
          * Input MIDI control buss combo-box population.
          */
 
-        setup_input_combo_box(buses, in);
+        setup_input_combo_box(buses);
         connect
         (
             in, SIGNAL(currentIndexChanged(int)),
@@ -464,6 +519,7 @@ qseditoptions::setup_tab_midi_input ()
             ui->checkBoxMidiInBuss, SIGNAL(clicked(bool)),
             this, SLOT(slot_input_bus_enable())
         );
+        refresh_input_combo_box();
     }
 
     /*
@@ -2850,15 +2906,13 @@ qseditoptions::enable_bus_item (int bus, bool enabled)
     mastermidibus * mmb = perf().master_bus();
     const clockslist & opm = output_port_map();
     bool outportmap = opm.active();
-    QComboBox * out = ui->comboBoxMidiOutBuss;
     int buses = outportmap ? opm.count() : mmb->get_num_out_buses() ;
-    setup_clock_combo_box(buses, out);
+    setup_clock_combo_box(buses);
 
     const inputslist & ipm = input_port_map();
     bool inportmap = ipm.active();
-    QComboBox * in = ui->comboBoxMidiInBuss;
     buses = inportmap ? ipm.count() : mmb->get_num_in_buses() ;
-    setup_input_combo_box(buses, in);
+    setup_input_combo_box(buses);
     reload_needed(true);                                /* immediate action */
 }
 
@@ -4157,22 +4211,18 @@ qseditoptions::slot_clock_start_modulo (int ticks)
 }
 
 void
-qseditoptions::midi_through_check (int index)
+qseditoptions::midi_through_check ()
 {
-    std::string busname;
-    e_clock ec;
-    bool good = perf().ui_get_clock(bussbyte(index), ec, busname);
-    if (good)
+    if (! perf().alsa_midi_through_check())
     {
-        if (contains(busname, "Midi Through"))      /* what a krufty check! */
-        {
-            qt_info_box
-            (
-                this,
-                "Warning: Using MIDI Through ports for "
-                "control/display can cause serious problems."
-            );
-        }
+        qt_info_box
+        (
+            this,
+            "Warning: Using MIDI Through ports for both\n"
+            "control & display/macros can cause serious problems,\n"
+            "including crashing via input overrun. Change\n"
+            "to another port."
+        );
     }
 }
 
@@ -4199,7 +4249,7 @@ qseditoptions::slot_output_bus (int index)
             perf().ui_set_clock(index, e_clock::off);           /* enabled! */
             rc().midi_control_active(true);
             reload_needed(true);
-            midi_through_check(index);
+            midi_through_check();
         }
         modify_ctrl();
     }
@@ -4229,6 +4279,15 @@ qseditoptions::slot_output_bus_enable ()
     modify_ctrl();
     perf().midi_control_out().configure_enabled(enable);
     activate_ctrl_file();
+    refresh_clock_combo_box();
+    if (enable)
+        midi_through_check();
+
+    /*
+     *  Does not work, or gets undone somehow.
+     *
+     * ui->comboBoxMidiOutBuss->setEnabled(enable);
+     */
 }
 
 void
@@ -4245,7 +4304,7 @@ qseditoptions::slot_input_bus (int index)
             perf().ui_set_input(index, true);   /* auto-enable the input    */
             rc().midi_control_active(true);
             reload_needed(true);
-            midi_through_check(index);
+            midi_through_check();
         }
     }
     modify_ctrl();
@@ -4257,6 +4316,16 @@ qseditoptions::slot_input_bus_enable ()
     bool enable = ui->checkBoxMidiInBuss->isChecked();
     modify_ctrl();
     perf().midi_control_in().configure_enabled(enable);
+    activate_ctrl_file();
+    refresh_input_combo_box();
+    if (enable)
+        midi_through_check();
+
+    /*
+     *  Does not work, or gets undone somehow.
+     *
+     * ui->comboBoxMidiInBuss->setEnabled(enable);
+     */
 }
 
 void

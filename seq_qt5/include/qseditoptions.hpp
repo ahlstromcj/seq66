@@ -76,9 +76,11 @@ public:
 
 private:
 
-    void midi_through_check (int index);
-    void setup_clock_combo_box (int buses, QComboBox * out);
-    void setup_input_combo_box (int buses, QComboBox * in);
+    void midi_through_check ();
+    void setup_clock_combo_box (int buses);
+    void refresh_clock_combo_box ();
+    void setup_input_combo_box (int buses);
+    void refresh_input_combo_box ();
     void setup_tab_midi_clock ();
     void setup_tab_midi_input ();
     void setup_tab_display ();
@@ -319,6 +321,8 @@ private:
     combolist m_ppqn_list;
     combolist m_buffer_size_list;
     bool m_is_initialized;
+    int m_inbus_count;
+    int m_outbus_count;
 
     /*
      * Backup variables for settings.

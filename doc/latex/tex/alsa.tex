@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-06-16
-% \update      2025-07-26
+% \update      2025-07-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -37,7 +37,7 @@
    \end{verbatim}
 
    Note that "14:0" consists of the ALSA client ID, 14, and the port ID of the
-   Midi Through pseudo-device, 0.
+   "Midi Through" pseudo-device, 0. Note the spelling, "Midi".
 
    The MIDI Through port is useful for...?
    The MIDI Through port is claimed to be "everything-proof". Why...?
@@ -67,10 +67,14 @@
    display, \textsl{and} has set a non-empty \texttt{startup} macro.
    The macro goes out the display port and is received on the control
    port, and chaos ensues, including a likely application crash.
+   A warning pops up if both in and out are set to a "Midi Through"
+   port.
+   If not changed, at the next startup this situation is detected and the
+   control/display sections of the 'ctrl' file are disabled.
 
    \index{MIDI Thru!warning}
-   \textsl{Never use the ALSAMIDI Through port for control/display.
-   Use the actual device port.}
+   \textsl{Never use the ALSA MIDI Through port for both control
+   and display. Use an actual device port.}
 
    \begin{quote}
       "ALSA always creates 1 MIDI through port. Since I work with Windows music

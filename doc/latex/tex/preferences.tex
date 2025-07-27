@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-07-17
+% \update      2025-07-26
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -286,6 +286,10 @@
    The device on the output buss must have a corresponding
    'ctrl' file output section properly defined.
 
+   \index{MIDI Thru!warning}
+   \textsl{Do not use the ALSA MIDI Through ports for both control
+   and display. Use an actual device port.}
+
    \itempar{Meta Events}{midi clock!meta events}
    \index{tempo-track-number}
    This section consists of the following items:
@@ -398,6 +402,10 @@
    as the value of \texttt{control-buss}.
    If port mapping is enabled (now the default),
    the nick-name of the bus is stored instead of the number.
+
+   \index{MIDI Thru!warning}
+   \textsl{Do not use the ALSA MIDI Through ports for both control
+   and display.  Use an actual device port.}
 
    \textbf{Input/Output Options}.
    \index{I/O options}

@@ -1,14 +1,8 @@
 TO DO for Seq66 0.99.21
 Chris Ahlstrom
-2019-04-13 to 2025-07-26
+2019-04-13 to 2025-07-27
 
 Hot:
-
-    -   Straighten out "Macro execution" in the Session tab.
-    -   The MIDI control/display dropdowns plus checkbox have
-        bad interaction.
-    -   Note drawing and event drawing screwed up in time when scrolled
-        completely to the right.
 
 NSM:
 
@@ -33,6 +27,9 @@ Cannot duplicate:
 
 Backlog:
 
+    -   Investigate building with Qt 6.
+    -   Note drawing and event drawing screwed up in time when scrolled
+        completely to the right.
     -   In midicvt (separate project), the c_mutegroups SeqSpec is not
         shown (24 24 00 09).
     -   Automation: verify/document Solo, Reset Sets, and Song Position.

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-07-26
+ * \updates       2025-07-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -855,6 +855,53 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
     record_by_buss(rcs.record_by_buss());
     record_by_channel(rcs.record_by_channel());
     m_resume_note_ons = usrs.resume_note_ons();
+    return result;
+}
+
+/**
+ *  If ALSA is active, checks for the presence of the usage of a MIDI
+ *  Through port for both control and display.
+ *
+ * \return
+ *      Returns true if both MIDI Throughs are not used, and hence the
+ *      control setup is safe.
+ */
+
+bool
+performer::alsa_midi_through_check ()
+{
+    bool result = true;
+    std::string outbusname;
+    e_clock ec;
+    int oldindex = midi_control_out().configured_buss();
+    bool good = rc().with_alsa_midi();
+    if (good)
+    {
+        good = midi_control_in().is_enabled();
+        if (good)
+            good = ui_get_clock(bussbyte(oldindex), ec, outbusname);
+
+        if (good)
+        {
+            bool out_is_thru = contains(outbusname, "Midi Through");
+            std::string inbusname;
+            bool inputing;
+            good = midi_control_out().is_enabled();
+            if (good)
+            {
+                oldindex = midi_control_in().configured_buss();
+                good = ui_get_input(bussbyte(oldindex), inputing, inbusname);
+                if (good)
+                {
+                    bool both = out_is_thru &&
+                        contains(inbusname, "Midi Through");
+
+                    if (both)
+                        result = false;
+                }
+            }
+        }
+    }
     return result;
 }
 
@@ -3432,7 +3479,19 @@ performer::create_master_bus ()
                 mmb->record_by_buss(m_record_by_buss);
                 mmb->record_by_channel(m_record_by_channel);
                 mmb->set_port_statuses(m_clocks, m_inputs);
-                midi_control_out().set_master_bus(mmb);
+                if (! alsa_midi_through_check())
+                {
+                    midi_control_in().is_enabled(false);
+                    midi_control_out().is_enabled(false);
+                    append_error_message
+                    (
+                        "MIDI Through ports used for both control &display. "
+                        "Disabled. Please change the Clock and Input ports."
+                    );
+                }
+                else
+                    midi_control_out().set_master_bus(mmb);
+
                 result = true;
             }
         }

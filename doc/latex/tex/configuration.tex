@@ -716,7 +716,7 @@
    The thing to note here is that we must limit the width of combo-boxes so
    that all elements in a horizontal bar can be seen.
    This has the unfortunate side-effect of showing only part of long
-   port names (e.g. "Midi Throug" in the figure above).
+   port names (e.g. "Midi Through" in the figure above).
 
    Another interesting style-sheet in \texttt{data/samples} is
    \texttt{perstfix-66.qss} and its palette file, which is a nice blue theme.
@@ -2081,8 +2081,8 @@
          to send MIDI control.  A value of 255 or 0xff means any buss can send
          MIDI control. If port-mapping is enabled, the short name (nick-name) of
          the port can be used as well.
-         \textsl{Never use the ALSAMIDI Through port for control
-         Use the actual device port.}
+         \textsl{Never use the ALSA MIDI Through port for both control
+         and display. Use an actual device port.}
       \item \texttt{midi-enabled}.
          If set to "true", then the MIDI controls will be used.
          It can be set to "false", while keeping the configuration in place
@@ -2744,8 +2744,8 @@
          Specify the output buss to which the display device is attached. If
          port-mapping is enabled, the short name (nick-name) of the port can be
          used.
-         \textsl{Never use the ALSAMIDI Through port for control/display.
-         Use the actual device port.}
+         \textsl{Never use the ALSA MIDI Through port for both control
+         and display. Use an actual device port.}
       \item \texttt{midi-enabled}.
          If set to "true", then the MIDI control outputs will be used.
          It can be set to "false", while keeping the configuration in place

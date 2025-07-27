@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2025-07-26
+ * \updates       2025-07-27
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1202,6 +1202,7 @@ public:
 
     bool get_settings (const rcsettings & rcs, const usrsettings & usrs);
     bool put_settings (rcsettings & rcs, usrsettings & usrs);
+    bool alsa_midi_through_check ();
 
     std::string set_to_string (screenset::number setno) const
     {
