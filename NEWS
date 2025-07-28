@@ -1,8 +1,38 @@
-NEWS for Seq66 0.99.21
+NEWS for Seq66 0.99.22
 Chris Ahlstrom
 2015-07-10 to 2025-07-28
 
 # Change Log
+
+## [0.99.22] - 2025-07-28
+
+### Added
+
+-   Main window and grid.
+-   Pattern editor.
+-   Song editor.
+-   Event editor.
+-   Preferences dialog.
+-   Import/Export.
+-   Documentation.
+
+### Changed
+
+-   Main window and grid.
+-   Pattern editor.
+-   Song editor.
+-   Event editor.
+-   Preferences dialog.
+
+### Fixed
+
+-   Main window and grid.
+-   Pattern editor.
+-   Song editor.
+-   Event editor.
+-   Preferences dialog.
+-   Configuration files.
+-   Classes.
 
 ## [0.99.21] - 2025-07-28
 

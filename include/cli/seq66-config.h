@@ -6,10 +6,10 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
 #ifndef SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2024-12-03"
+#define SEQ66_VERSION_DATE_SHORT "2025-07-28"
 #endif
 #ifndef SEQ66_VERSION
-#define SEQ66_VERSION "0.99.17"
+#define SEQ66_VERSION "0.99.22"
 #endif
 
 /* "Distro of build" */
