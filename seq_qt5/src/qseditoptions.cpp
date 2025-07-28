@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-27
+ * \updates       2025-07-28
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -242,7 +242,14 @@ qseditoptions::setup_clock_combo_box (int buses)
         }
     }
 
-    bool active = perf().midi_control_out().configure_enabled();
+    /*
+     *  The performer class might have disabled MIDI control/display
+     *  due to the "Midi Through" issue.
+     *
+     *      bool active = perf().midi_control_out().configure_enabled();
+     */
+
+    bool active = perf().midi_control_out().is_enabled();
     int buss = perf().midi_control_out().configured_buss();
     out->setCurrentIndex(buss);
     ui->checkBoxMidiOutBuss->setChecked(active);
@@ -282,7 +289,15 @@ void
 qseditoptions::setup_input_combo_box (int buses)
 {
     QComboBox * in = ui->comboBoxMidiInBuss;
-    bool active = perf().midi_control_in().configure_enabled();
+
+    /*
+     *  The performer class might have disabled MIDI control/display
+     *  due to the "Midi Through" issue.
+     *
+     *      bool active = perf().midi_control_in().configure_enabled();
+     */
+
+    bool active = perf().midi_control_out().is_enabled();
     in->clear();
     for (int bus = 0; bus < buses; ++bus)
     {
