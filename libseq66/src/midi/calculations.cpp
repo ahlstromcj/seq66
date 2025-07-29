@@ -1041,9 +1041,14 @@ int
 pulses_per_substep (midipulse ppq, int zoom)
 {
     const int pixels_per_substep = 6;
-    int result = zoom * pixels_per_substep;
-    int result = int(ppq) * zoom * pixels_per_substep;
-    result /= usr().base_ppqn();
+
+    /*
+     * Hmmmm, found this:
+     *
+     *      int result = zoom * pixels_per_substep;
+     */
+
+    int result = int(ppq) * zoom * pixels_per_substep / usr().base_ppqn();
     if ((result % 2) != 0)
         ++result;
 
@@ -1689,6 +1694,11 @@ wave_type_name (waveform wavetype)
     case waveform::reverse_exponential:
 
         result = "Exponential Fall";
+        break;
+
+    case waveform::dc:
+
+        result = "DC Offset";
         break;
 
     default:
