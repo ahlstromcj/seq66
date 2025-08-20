@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-13
+ * \updates       2025-08-20
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -151,7 +151,7 @@ static const editable_event::name_value_t
 s_meta_event_names [] =
 {
     { -1, 0x00, "Seq Number"            },  // FF 00 02 ss ss (16-bit)
-    {  0, 0x01, "Text Event"            },  // FF 01 len text
+    {  0, 0x01, "Text"                  },  // FF 01 len text
     {  1, 0x02, "Copyright"             },  // FF 02 len text
     {  2, 0x03, "Track Name"            },  // FF 03 len text (disabled)
     {  3, 0x04, "Instrument Name"       },  // FF 04 len text

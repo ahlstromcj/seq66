@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2025-03-19
+ * \updates       2025-08-18
  * \license       GNU GPLv2 or above
  *
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
@@ -131,7 +131,7 @@ qclocklayout::setup_ui ()
         (
             m_rbutton_portdisabled, int(e_clock::disabled)
         );
-        m_rbutton_group->addButton(m_rbutton_clockoff, int(e_clock::off));
+        m_rbutton_group->addButton(m_rbutton_clockoff, int(e_clock::none));
         m_rbutton_group->addButton(m_rbutton_clockonpos, int(e_clock::pos));
         m_rbutton_group->addButton(m_rbutton_clockonmod, int(e_clock::mod));
         m_horizlayout_clockline->addWidget(m_label_outputbusname);
@@ -183,7 +183,7 @@ qclocklayout::setup_ui ()
                 m_rbutton_clockonmod->setEnabled(true);
                 break;
 
-            case e_clock::off:
+            case e_clock::none:
 
                 m_label_outputbusname->setEnabled(true);
                 m_rbutton_clockoff->setChecked(true);

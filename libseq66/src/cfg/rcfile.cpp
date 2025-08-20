@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-05-03
+ * \updates       2025-08-18
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -446,10 +446,10 @@ rcfile::parse ()
          *      return make_error_message("midi-clock");
          *
          *  And let's use the new e_clock::disabled code instead of
-         *  e_clock::off.  LATER?
+         *  e_clock::none.  LATER?
          */
 
-        rc_ref().clocks().add(0, false, e_clock::off, "Bad clock count");
+        rc_ref().clocks().add(0, false, e_clock::none, "Bad clock count");
     }
 
     /*

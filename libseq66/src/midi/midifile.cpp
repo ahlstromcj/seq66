@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-19
+ * \updates       2025-08-01
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -218,6 +218,8 @@ is_proptag (midilong p)
     return (miditag(p) & c_prop_tag_word) == c_prop_tag_word;
 }
 
+#if defined USE_THIS_CODE
+
 /**
  *  Name of the initial text meta events (00 through 07).
  */
@@ -233,6 +235,8 @@ const std::string midifile::sm_meta_text_labels[8] =
     "Marker",
     "Cue Point"
 };
+
+#endif
 
 /**
  *  Principal constructor.
@@ -876,7 +880,13 @@ midifile::parse (performer & p, int screenset, bool importing)
             if (m_pos < m_file_size)                    /* any data left?   */
             {
                 if (! importing)
+                {
                     result = parse_seqspec_track(p, m_file_size);
+                    if (result)
+                    {
+                        // increment the track count?
+                    }
+                }
             }
             if (result && importing)
                  p.modify();                            /* modify flag      */
@@ -1781,9 +1791,20 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
                     (void) s.set_main_time_signature();
 
                 if (convert_smf0)
+                {
                     (void) m_smf0_splitter.log_main_sequence(s, seqnum);
+                }
                 else
-                    finalize_sequence(p, s, seqnum, screenset);
+                {
+                    bool success = finalize_sequence(p, s, seqnum, screenset);
+                    if (success)
+                    {
+                        if (! at_end())     /* still more data to read  */
+                        {
+                            // printf("More data!\n");
+                        }
+                    }
+                }
             }
         }
         else

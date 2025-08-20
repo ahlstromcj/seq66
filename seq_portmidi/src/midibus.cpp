@@ -265,7 +265,7 @@ midibus::api_continue_from (midipulse /* tick */, midipulse beats)
 }
 
 /**
- *  Sets the MIDI clock a-runnin', if the clock type is not e_clock::off.
+ *  Sets the MIDI clock a-runnin', if the clock type is not e_clock::none.
  *  This function is called by midibase::start().
  */
 
@@ -282,7 +282,7 @@ midibus::api_start ()
 }
 
 /**
- *  Stops the MIDI clock, if the clock-type is not e_clock::off.
+ *  Stops the MIDI clock, if the clock-type is not e_clock::none.
  *  This function is called by midibase::stop().
  */
 

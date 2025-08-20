@@ -76,7 +76,7 @@ const int c_midibus_sysex_chunk = 0x100;        // 256
  *      fails to open, we want just to ignore it. But see the unavailable
  *      status above.
  *
- * \var off
+ * \var none
  *      Corresponds to the "Off" selection in the MIDI Clock tab.  With
  *      this setting, the MIDI Clock is disabled for the buss using this
  *      setting.  Notes will still be sent that buss, of course.  Some
@@ -105,7 +105,7 @@ enum class e_clock
 {
     unavailable = -2,
     disabled    = -1,
-    off         = 0,
+    none         = 0,
     pos,
     mod,
     max

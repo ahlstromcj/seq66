@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-28
+ * \updates       2025-08-18
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -4261,7 +4261,7 @@ qseditoptions::slot_output_bus (int index)
 
             ui->checkBoxSaveCtrl->setChecked(true);
             perf().midi_control_out().configured_buss(index);
-            perf().ui_set_clock(index, e_clock::off);           /* enabled! */
+            perf().ui_set_clock(index, e_clock::none);          /* enabled! */
             rc().midi_control_active(true);
             reload_needed(true);
             midi_through_check();

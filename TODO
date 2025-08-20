@@ -1,8 +1,11 @@
-TO DO for Seq66 0.99.21
+TO DO for Seq66 0.99.22
 Chris Ahlstrom
-2019-04-13 to 2025-07-27
+2019-04-13 to 2025-07-31
 
 Hot:
+
+    -   1Bar.midi, if saved, the header indicates 1 track, and does not
+        count the last SeqSpec track.
 
 NSM:
 

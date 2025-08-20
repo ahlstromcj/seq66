@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2025-06-10
+ * \updates       2025-08-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -197,7 +197,7 @@ e_clock
 clockslist::get (bussbyte bus) const
 {
     auto it = m_master_io.find(bus);
-    return it != m_master_io.end() ? it->second.out_clock : e_clock::off ;
+    return it != m_master_io.end() ? it->second.out_clock : e_clock::none ;
 }
 
 std::string
@@ -284,7 +284,7 @@ build_output_port_map (const clockslist & cl)
             const portslist::io & item = iopair.second;
             std::string number = std::to_string(bus);
             bool available = item.io_available;
-            e_clock ec = e_clock::off;
+            e_clock ec = e_clock::none;
             if (! item.io_enabled)
                 ec = e_clock::disabled;
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2025-05-20
+ * \updates       2025-08-10
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -323,21 +323,36 @@ midi_alsa::set_virtual_name (int portid, const std::string & portname)
     if (result)
     {
         snd_seq_client_info_t * cinfo;                  /* client info      */
-        snd_seq_client_info_alloca(&cinfo);             /* will fill cinfo  */
-        snd_seq_get_client_info(m_seq, cinfo);          /* filled!          */
-
-        int cid = snd_seq_client_info_get_client(cinfo);
-        const char * cname = snd_seq_client_info_get_name(cinfo);
-        result = not_nullptr(cname);
+        snd_seq_client_info_alloca(&cinfo);             /* a macro function */
+        int r = snd_seq_get_client_info(m_seq, cinfo);  /* filled!          */
+        result = r == 0;
         if (result)
         {
-            std::string clientname = cname;
-            set_port_id(portid);
-            port_name(portname);
-            set_bus_id(cid);
-            set_name(rc().app_client_name(), clientname, portname);
-            parent_bus().set_name(rc().app_client_name(), clientname, portname);
+            int cid = snd_seq_client_info_get_client(cinfo);
+            const char * cname = snd_seq_client_info_get_name(cinfo);
+            result = not_nullptr(cname);
+            if (result)
+            {
+                std::string clientname = cname;
+                set_port_id(portid);
+                port_name(portname);
+                set_bus_id(cid);
+                set_name(rc().app_client_name(), clientname, portname);
+
+                /*
+                 * The functions above forward the calls to parent_bus().
+                 * This calls midibase::set_name(); it supports aliases
+                 * for normal ports.
+                 *
+                 *      parent_bus().set_name
+                 *      (
+                 *          rc().app_client_name(), clientname, portname
+                 *      );
+                 */
+            }
         }
+        else
+            error_message("ALSA get client info failed");
     }
     return result;
 }
@@ -712,7 +727,7 @@ midi_alsa::api_continue_from (midipulse /* tick */, midipulse beats)
 
 /**
  *  This function gets the MIDI clock a-runnin', if the clock type is not
- *  e_clock::off.  The clock-enabled status is checked in midibase::start().
+ *  e_clock::none.  The clock-enabled status is checked in midibase::start().
  */
 
 void

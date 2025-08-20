@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2024-06-10
+ * \updates       2025-08-18
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -735,7 +735,7 @@ portslist::e_clock_to_string (e_clock e) const
     switch (e)
     {
         case e_clock::disabled:     result = "Disabled";    break;
-        case e_clock::off:          result = "Off";         break;
+        case e_clock::none:         result = "Off";         break;
         case e_clock::pos:          result = "Pos";         break;
         case e_clock::mod:          result = "Mod";         break;
         default:                    result = "Unknown";     break;

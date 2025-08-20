@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2024-06-04
+ * \updates       2025-08-18
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -158,7 +158,7 @@ midibase::midibase
     m_client_id         (-1),                           /* ca 2023-12-08      */
     m_bus_id            (bus_id == (-1) ? 0 : bus_id),  /* uninit'd midi_info */
     m_port_id           (port_id),
-    m_clock_type        (e_clock::off),
+    m_clock_type        (e_clock::none),
     m_io_active         (false),
     m_unavailable       (false),
     m_ppqn              (choose_ppqn(ppqn)),
@@ -231,15 +231,15 @@ midibase::set_name
 )
 {
     char name[128];
+    std::string bname = usr().bus_name(m_bus_index);
+    bool do_output_name = is_output_port() && ! bname.empty();
     if (is_virtual_port())
     {
         /*
-         * See banner.  Let's also assign any "usr" names to the virtual ports
-         * as well.
+         * Let's also assign any "usr" names to the virtual ports as well.
          */
 
-        std::string bname = usr().bus_name(m_bus_index);
-        if (is_output_port() && ! bname.empty())
+        if (do_output_name)
         {
             snprintf
             (
@@ -261,15 +261,8 @@ midibase::set_name
     }
     else
     {
-        /*
-         * See banner.
-         *
-         * Old: std::string bname = usr().bus_name(port_id());
-         */
-
-        char alias[80];                                     /* was 128  */
-        std::string bname = usr().bus_name(m_bus_index);
-        if (is_output_port() && ! bname.empty())
+        char alias[80];                 /* virtual ports can't have aliases */
+        if (do_output_name)
         {
             snprintf
             (
@@ -283,7 +276,7 @@ midibase::set_name
             (
                 alias, sizeof alias, "%s:%s", busname.c_str(), portname.c_str()
             );
-            bus_name(busname);              // bus_name(alias);
+            bus_name(busname);
         }
         else
             snprintf(alias, sizeof alias, "%s", portname.c_str());
@@ -528,7 +521,7 @@ midibase::set_input (bool inputing)
 
 /**
  *  Initialize the clock, continuing from the given tick.  This function
- *  doesn't depend upon the MIDI API in use.  Here, e_clock::off and
+ *  doesn't depend upon the MIDI API in use.  Here, e_clock::none and
  *  e_clock::disabled have the same effect... none.
  *
  * \param tick
@@ -591,7 +584,7 @@ midibase::continue_from (midipulse tick)
 
 /**
  *  This function gets the MIDI clock a-runnin', if the clock type is not
- *  e_clock::off or e_clock::disabled.
+ *  e_clock::none or e_clock::disabled.
  */
 
 void

@@ -82,7 +82,7 @@ businfo::businfo (midibus * bus)
     m_bus           (),                 /* this is an std::shared_ptr<>     */
     m_active        (false),
     m_initialized   (false),
-    m_init_clock    (e_clock::off),     /* could end up disabled as well    */
+    m_init_clock    (e_clock::none),    /* could end up disabled as well    */
     m_init_input    (false)
 {
     m_bus.reset(bus);                   /* also see initialize()            */
@@ -223,7 +223,7 @@ businfo::print () const
     else
     {
         flags += " clock ";
-        if (init_clock() == e_clock::off)
+        if (init_clock() == e_clock::none)
             flags += "Off";
         else if (init_clock() == e_clock::pos)
             flags += "Pos";
@@ -448,10 +448,10 @@ busarray::set_clock (bussbyte bus, e_clock clocktype)
  *
  * \return
  *      Returns the clock value set for the desired buss.  If the buss is
- *      invalid, e_clock::off is returned.  If the buss is not active, we still
- *      get the existing clock value.  The theory here is that we don't want
- *      to junk the current clock value; it could alter what was read from the
- *      "rc" file.
+ *      invalid, e_clock::none is returned.  If the buss is not active, we
+ *      still get the existing clock value.  The theory here is that we don't
+ *      want to junk the current clock value; it could alter what was read
+ *      from the "rc" file.
  */
 
 e_clock
@@ -463,7 +463,7 @@ busarray::get_clock (bussbyte bus) const
         return bi.bus()->get_clock();
     }
     else
-        return e_clock::off;
+        return e_clock::none;
 }
 
 /**

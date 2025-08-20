@@ -328,7 +328,7 @@ protected:
     }
 
     /**
-     *  Checks if the data stream pointer has reached the end position
+     *  Checks if the data stream pointer has reached the end position.
      *
      * \return
      *      Returns true if the read pointer is at the end.

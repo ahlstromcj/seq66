@@ -548,7 +548,7 @@ midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
             {
                 m->is_virtual_port(false);
                 m->is_input_port(false);
-                masterbus.m_outbus_array.add(m, e_clock::off);
+                masterbus.m_outbus_array.add(m, e_clock::none);
             }
         }
         if (CAP_FULL_READ(cap) && ALSA_CLIENT_CHECK(pinfo)) /* inputs */
