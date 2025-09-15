@@ -2482,7 +2482,15 @@ performer::fix_pattern (seq::number seqno, fixparameters & params)
 bool
 performer::set_ppqn (int ppq)
 {
-    bool result = m_ppqn != ppq && ppqn_in_range(ppq);
+    /*
+     * ca 2025-09-15.
+     * This needs to be done even if the value has not changed.
+     * Somehow we set m_ppqn to the file's PPQN before we reach here,
+     * so it was unchanged, and we would not update the master bus,
+     * and so playback was the wrong speed.
+     */
+
+    bool result = ppqn_in_range(ppq);       /* && m_ppqn != ppq */
     if (result)
     {
         if (m_master_bus)

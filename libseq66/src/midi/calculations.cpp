@@ -1041,13 +1041,6 @@ int
 pulses_per_substep (midipulse ppq, int zoom)
 {
     const int pixels_per_substep = 6;
-
-    /*
-     * Hmmmm, found this:
-     *
-     *      int result = zoom * pixels_per_substep;
-     */
-
     int result = int(ppq) * zoom * pixels_per_substep / usr().base_ppqn();
     if ((result % 2) != 0)
         ++result;

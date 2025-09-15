@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.22
 Chris Ahlstrom
-2015-07-10 to 2025-07-28
+2015-07-10 to 2025-09-15
 
 # Change Log
 
-## [0.99.22] - 2025-07-28
+## [0.99.22] - 2025-09-15
 
 ### Added
 
@@ -26,6 +26,10 @@ Chris Ahlstrom
 
 ### Fixed
 
+-   performer class.
+    -   The file PPQN was set when reading the file, so later the
+        set\_ppqn() function would not inform the master bus of
+        a PPQN change (in ALSA).
 -   Main window and grid.
 -   Pattern editor.
 -   Song editor.
