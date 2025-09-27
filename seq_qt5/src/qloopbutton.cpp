@@ -193,6 +193,7 @@ qloopbutton::qloopbutton
     m_note_max              (usr().progress_note_max()),
     m_seq                   (seqp),                 /* loop()               */
     m_is_checked            (loop()->armed()),
+    m_is_flat               (false),
     m_show_cc               (usr().progress_box_show_cc()),
     m_prog_thickness        (usr().progress_bar_thick() ? 2 : 1),
     m_prog_back_color       (Qt::black),
@@ -208,6 +209,12 @@ qloopbutton::qloopbutton
     m_event_box             (),
     m_use_gradient          (gui_use_gradient_brush())
 {
+    /*
+     * Does not seem to work.
+     */
+
+    setMouseTracking(true);             /* NEW ca 2025-09-17 */
+
     sm_draw_progress_box = usr().progress_box_shown();
     s_elliptical_prog_box = usr().progress_box_elliptical();
     m_text_font.setBold(usr().progress_bar_thick());
@@ -497,6 +504,13 @@ void
 qloopbutton::set_checked (bool flag)
 {
     m_is_checked = flag;
+    setChecked(flag);
+}
+
+void
+qloopbutton::set_flat (bool flag)
+{
+    m_is_flat = flag;
     setChecked(flag);
 }
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-22
+ * \updates       2025-09-17
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -294,11 +294,10 @@ qsmainwnd::qsmainwnd
     ui->setupUi(this);
 
     /*
-     * Weird. The tool-tip for the BBT/HMS button shows in other locations.
-     * And then setting this here makes the button show this tool-tip!!!
-     *
-     * setToolTip("Main window");
+     * Does not seem to work.
      */
+
+    setMouseTracking(true);                     /* NEW ca 2025-09-17        */
 
 #if defined SEQ66_PORTMIDI_SUPPORT
 
@@ -3623,6 +3622,15 @@ qsmainwnd::quit ()
         }
     }
 }
+
+/* EXPERIMENTAL
+ *
+void
+qsmainwnd::mouseMoveEvent (QMouseEvent * // event)
+{
+    printf("qsmainwnd::mouseMoveEvent\n");
+}
+ */
 
 /**
  *  By experimenting, we see that the live frame gets all of the keystrokes.

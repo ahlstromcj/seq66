@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-08-01
+ * \updates       2025-09-18
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -305,6 +305,7 @@ midifile::midifile
     m_ppqn                      (ppqn),                 /* can start as 0   */
     m_file_ppqn                 (0),                    /* can change       */
     m_ppqn_ratio                (1.0),                  /* for scaled()     */
+    m_main_bpm                  (0.0),
     m_file_format               (-1),
     m_smf0_splitter             ()
 {
@@ -1142,7 +1143,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
     midibyte buss_override = usr().midi_buss_override();
     midishort track_count = read_short();
     midishort fileppqn = read_short();
-    bool gotfirst_bpm = false;
     file_ppqn(int(fileppqn));                       /* original file PPQN   */
     if (usr().use_file_ppqn())
     {
@@ -1393,13 +1393,13 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
                                     if (trk == 0)
                                     {
                                         midibpm bpm = bpm_from_tempo_us(tt);
-                                        if (! gotfirst_bpm)
+                                        if (m_main_bpm == 0.0)
                                         {
-                                            gotfirst_bpm = true;
+                                            m_main_bpm = bpm;
                                             p.set_beats_per_minute(bpm);
                                             p.us_per_quarter_note(int(tt));
-                                            s.us_per_quarter_note(int(tt));
                                         }
+                                        s.us_per_quarter_note(int(tt));
                                     }
 
                                     bool ok = e.append_meta_data(mtype, bt);
@@ -2204,8 +2204,8 @@ midifile::parse_c_notes (performer & p)
 
 /*
  * Should check here for a conflict between the Tempo meta event and this
- * tag's value.  NOT YET.  Also, as of 2017-03-22, we want to be able to
- * handle two decimal points of precision in BPM.  See the prop_header_loop()
+ * tag's value? No. Also, as of 2017-03-22, we want to be able to
+ * handle two decimal points of precision in BPM. See the prop_header_loop()
  * function banner for a discussion.
  */
 
@@ -2214,7 +2214,11 @@ midifile::parse_c_bpmtag (performer & p)
 {
     midilong longbpm = read_long();
     midibpm bpm = usr().unscaled_bpm(longbpm);
-    p.set_beats_per_minute(bpm);                    /* 2nd setter   */
+    if (m_main_bpm == 0.0)
+    {
+        p.set_beats_per_minute(bpm);                /* 2nd setter   */
+        m_main_bpm = bpm;
+    }
     return true;
 }
 

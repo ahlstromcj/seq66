@@ -176,6 +176,11 @@ public:
         // no code for this base class
     }
 
+    virtual void set_flat (bool /*flag*/)
+    {
+        // no code for this base class
+    }
+
     virtual bool toggle_enabled ()
     {
         return false;                   /* no functionality in base class   */

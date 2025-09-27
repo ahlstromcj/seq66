@@ -244,6 +244,10 @@ private:                                // overrides of event handlers
     virtual void changeEvent (QEvent *) override;
     virtual void resizeEvent (QResizeEvent *) override;
 
+    /* EXPERIMENTAL
+     * virtual void mouseMoveEvent (QMouseEvent *) override;
+     */
+
 private:
 
     const combolist & ppqn_list () const

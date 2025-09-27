@@ -177,10 +177,11 @@ private:
     seq::pointer m_seq;
 
     /**
-     *  Checked status.
+     *  Checked status. Flat status.
      */
 
     bool m_is_checked;
+    bool m_is_flat;
 
     /**
      *  Holds the value of usr().progress_box_show_cc().
@@ -259,6 +260,7 @@ public:
     virtual void setup () override;
     virtual void reupdate (bool all = true) override;
     virtual void set_checked (bool flag) override;
+    virtual void set_flat (bool flag) override;
     virtual bool toggle_enabled () override;
     virtual bool toggle_checked () override;
 

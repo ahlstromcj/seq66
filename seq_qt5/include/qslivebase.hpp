@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2025-05-14
+ * \updates       2029-17-14
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child class, qslivegride, are Sequencer66's
@@ -165,6 +165,16 @@ protected:
     void current_seq (seq::number n)
     {
         m_current_seq = n;
+    }
+
+    seq::number hover_seq () const
+    {
+        return m_hover_seq;
+    }
+
+    void hover_seq (seq::number n)
+    {
+        m_hover_seq = n;
     }
 
     virtual void update_bank (int bank);
@@ -344,10 +354,12 @@ protected:
 
     /**
      *  For mouse interaction, holds the current sequence/loop/pattern number
-     *  indicated by clicking in the live frame.
+     *  indicated by clicking in the live frame. The hover-seq indicates
+     *  where the mouse is regardless of clicking.
      */
 
     seq::number m_current_seq;
+    seq::number m_hover_seq;
 
     /**
      *  Holds the initial sequence number when attempting to move the sequence.

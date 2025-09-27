@@ -186,6 +186,7 @@ private:
     bool modify_slot (qslotbutton * newslot, int row, int column);
     void button_toggle_enabled (seq::number seqno);
     void button_toggle_checked (seq::number seqno);
+    void button_toggle_flat (seq::number seqno);
     void alter_sequence (seq::number seqno);
     void create_loop_buttons ();
     void clear_loop_buttons ();

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2023-12-06
+ * \updates       2025-09-17
  * \license       GNU GPLv2 or above
  */
 
@@ -118,6 +118,12 @@ ctrlkey
 arrow_down ()
 {
     return 0x95;
+}
+
+ctrlkey
+menu_key ()
+{
+    return 0xae;
 }
 
 /**

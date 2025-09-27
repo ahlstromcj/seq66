@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2025-05-14
+ * \updates       2025-09-17
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the old mainwid class.
@@ -83,6 +83,7 @@ qslivebase::qslivebase
     m_last_metro        (0),
     m_alpha             (0),
     m_current_seq       (seq::unassigned()),            /* current_seq()    */
+    m_hover_seq         (seq::unassigned()),            /* hover_seq()      */
     m_source_seq        (seq::unassigned()),
     m_button_down       (false),
     m_moving            (false),

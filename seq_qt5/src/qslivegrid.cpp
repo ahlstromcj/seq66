@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2025-06-10
+ * \updates       2025-09-17
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -161,6 +161,13 @@ qslivegrid::qslivegrid
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setFocusPolicy(Qt::StrongFocus);
     ui->setupUi(this);
+
+    /*
+     * Does not seem to work.
+     */
+
+    setMouseTracking(true);                     /* NEW ca 2025-09-17        */
+
     m_msg_box = new QMessageBox(this);
     m_msg_box->setText(tr("A pattern is present."));
     m_msg_box->setInformativeText(tr("Overwrite with a blank pattern?"));
@@ -353,7 +360,7 @@ qslivegrid::slot_grid_mode (int index)
 
 /**
  *  At some point we might add coloring to this button to show a status of
- *  reeording or not.
+ *  recording or not.
  */
 
 void
@@ -633,10 +640,19 @@ qslivegrid::create_one_button (seq::number seqno)
         std::string hotkey = perf().lookup_slot_key(seqno);
         seq::pointer pattern = perf().loop(seqno);          /* can be null  */
         if (pattern)
-            result = new qloopbutton(this, seqno, snstring, hotkey, pattern);
+        {
+            result = new (std::nothrow) qloopbutton
+            (
+                this, seqno, snstring, hotkey, pattern
+            );
+        }
         else
-            result = new qslotbutton(this, seqno, snstring, hotkey);
-
+        {
+            result = new (std::nothrow) qslotbutton
+            (
+                this, seqno, snstring, hotkey
+            );
+        }
         ui->loopGridLayout->addWidget(result, row, column);
         result->setFixedSize(btnsize);
         result->show();
@@ -739,9 +755,6 @@ qslivegrid::button (int row, int column)
  * \param seqno
  *      The number of the sequence to be looked up. This determines the row and
  *      column by a simple calculation.
- *
- * \param offset
- *      The playscreen offset, if needed.  The default is 0.
  *
  * \return
  *      Returns a pointer to a qslotbutton or qloopbutton.  Returns a null
@@ -1117,6 +1130,15 @@ void
 qslivegrid::mouseMoveEvent (QMouseEvent * event)
 {
     seq::number seqno = seq_id_from_xy(event->x(), event->y());
+    if (seqno != hover_seq())
+    {
+        if (! seq::unassigned(hover_seq()))
+        {
+            button_toggle_flat(hover_seq());
+        }
+        button_toggle_flat(seqno);
+        hover_seq(seqno);
+    }
     if (m_button_down)
     {
         if (! perf().is_seq_in_edit(current_seq()))
@@ -1198,6 +1220,21 @@ qslivegrid::button_toggle_checked (seq::number seqno)
         (
             automation::action::toggle, (-1), (-1), int(seqno), false
         );
+    }
+}
+
+void
+qslivegrid::button_toggle_flat (seq::number seqno)
+{
+    bool assigned = seqno != seq::unassigned();
+    if (assigned)
+    {
+        qslotbutton * pb = loop_button(seqno);
+        if (not_nullptr(pb))
+        {
+            bool isflat = pb->isFlat();
+            pb->setFlat(! isflat);
+        }
     }
 }
 
@@ -1312,7 +1349,13 @@ qslivegrid::sequence_key_check ()
 bool
 qslivegrid::handle_key_press (const keystroke & k)
 {
-    return k.is_good() ? parent()->handle_key_press(k) : false ;
+    if (k.is_menu())
+    {
+        popup_menu();
+        return true;
+    }
+    else
+        return k.is_good() ? parent()->handle_key_press(k) : false ;
 }
 
 bool

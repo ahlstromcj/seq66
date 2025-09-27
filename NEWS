@@ -1,19 +1,24 @@
 NEWS for Seq66 0.99.22
 Chris Ahlstrom
-2015-07-10 to 2025-09-15
+2015-07-10 to 2025-09-19
 
 # Change Log
 
-## [0.99.22] - 2025-09-15
+## [0.99.22] - 2025-09-19
 
 ### Added
 
 -   Main window and grid.
+    -   With the mouse pressed, the current slot holding the cursor
+        is drawn "flat".
+    -   Giving a grid slot "focus" and then pressing the Menu key
+        brings up the grid-slot popup menu.
 -   Pattern editor.
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.
--   Import/Export.
+-   Reading/Import/Export.
+    -   Fixed: Tempo event in track 0 does not override c\_bpmtag SeqSpec.
 -   Documentation.
 
 ### Changed
@@ -30,6 +35,8 @@ Chris Ahlstrom
     -   The file PPQN was set when reading the file, so later the
         set\_ppqn() function would not inform the master bus of
         a PPQN change (in ALSA).
+-   JACK.
+    -   Fixed detect\_jack() and added a missing call to jack\_free().
 -   Main window and grid.
 -   Pattern editor.
 -   Song editor.

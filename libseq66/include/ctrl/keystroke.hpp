@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-21
- * \updates       2020-05-05
+ * \updates       2025-09-17
  * \license       GNU GPLv2 or above
  *
  *  This class is used for encapsulating keystrokes, and is used for some Qt 5
@@ -190,6 +190,11 @@ public:
     bool is_down () const
     {
         return m_key == arrow_down();
+    }
+
+    bool is_menu () const
+    {
+        return m_key == menu_key();
     }
 
     ctrlkey key () const

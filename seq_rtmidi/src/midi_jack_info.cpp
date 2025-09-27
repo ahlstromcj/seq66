@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2025-06-07
+ * \updates       2025-09-19
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
@@ -1003,25 +1003,21 @@ silence_jack_info (bool silent)
  *          const char * version = ::jack_get_version_string();
  *
  *  Needs testing under various conditions.
- *
- *  This is a pared-down version of detect_jack() in the rtl66 library.
  */
 
 bool
 detect_jack (bool forcecheck)
 {
-    bool result = false;
     static bool s_already_checked = false;
     static bool s_jack_was_detected = false;
+    bool result = false;
     if (forcecheck)
     {
-        s_already_checked = false;
-        s_jack_was_detected = false;
+        s_already_checked = s_jack_was_detected = false;
     }
     if (s_already_checked)
     {
         result = s_jack_was_detected;
-        warnprint("JACK already checked");
     }
     else
     {
@@ -1035,15 +1031,14 @@ detect_jack (bool forcecheck)
             int rc = ::jack_activate(jackman);
             if (rc == 0)
             {
-#if defined USE_JACK_GET_PORTS_CHECK
                 /*
-                 * This check is iffy because there might not be any
-                 * output ports set up at the moment.
+                 * Rather than using JackPortIsInput or JackPortIsOutput,
+                 * we use 0 to avoid port-selection based on port flags.
                  */
 
                 const char ** ports = ::jack_get_ports
                 (
-                    jackman, NULL, JACK_DEFAULT_MIDI_TYPE, JackPortIsOutput
+                    jackman, NULL, JACK_DEFAULT_MIDI_TYPE, 0
                 );
                 result = not_nullptr(ports);
                 if (result)
@@ -1053,10 +1048,8 @@ detect_jack (bool forcecheck)
                         ++count;
 
                     result = count > 0;
+                    ::jack_free(ports);
                 }
-#else
-                result = true;
-#endif
                 ::jack_deactivate(jackman);
             }
             (void) ::jack_client_close(jackman);

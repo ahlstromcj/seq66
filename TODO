@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.22
 Chris Ahlstrom
-2019-04-13 to 2025-09-15
+2019-04-13 to 2025-09-18
 
 Hot:
 
@@ -8,10 +8,7 @@ Hot:
         -   Ports are not showing up.
         -   Remap and restart just exits.
         -   Qsynth acting goofy.
-    -   1Bar.midi, if saved, the header indicates 1 track, and does not
-        count the last SeqSpec track.
-    -   Add a key to pop up the grid-slots menu, a la the pending keys '='
-        and '-'. Available keys are "(", ")", "9", "+", "_"
+    -   Tempo event in track 0 does not override c_tempo_map SeqSpec.
 
 NSM:
 

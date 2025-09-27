@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2025-01-22
+ * \updates       2025-09-22
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -225,6 +225,62 @@ namespace seq66
  */
 
 static const size_t s_message_buffer_size = 256;
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+
+/**
+ *  For trouble-shooting.
+ */
+
+static void
+show_jack_port_status
+(
+    const std::string & title,
+    jack_client_t * clientptr,
+    jack_port_t * portptr
+)
+{
+    bool mine { ::jack_port_is_mine(clientptr, portptr) != 0 };
+    std::string whose { mine ? "mine" : "not mine" };
+    std::string longname { "unknown" };
+    std::string shortname { "unknown" };
+    std::string porttype { ::jack_port_type(portptr) };
+    const char * ln { ::jack_port_name(portptr) };
+    const char * sn { ::jack_port_short_name(portptr) };
+    if (not_nullptr(ln))
+        longname = std::string(ln);
+
+    if (not_nullptr(sn))
+        shortname = std::string(sn);
+
+    int flags = ::jack_port_flags(portptr);
+    std::string portflags { "flags" };
+    if (flags & JackPortIsInput)
+        portflags += " Input";
+
+    if (flags & JackPortIsOutput)
+        portflags += " Output";
+
+    if (flags & JackPortIsPhysical)
+        portflags += " Physical";
+
+    if (flags & JackPortCanMonitor)
+        portflags += " CanMonitor";
+
+    if (flags & JackPortIsTerminal)
+        portflags += " Terminal";
+
+    printf
+    (
+        "%s Port: %s (%s) is %s\n"
+        "%s Type: %s, %s\n"
+        ,
+        title.c_str(), shortname.c_str(), longname.c_str(), whose.c_str(),
+        title.c_str(), porttype.c_str(), portflags.c_str()
+    );
+}
+
+#endif  // defined SEQ66_PLATFORM_DEBUG_TMI
 
 /**
  *  Checks a frame offset for validity.
@@ -1524,30 +1580,18 @@ midi_jack::send_byte (midipulse tick, midibyte evbyte)
 void
 midi_jack::api_set_ppqn (int /*ppqn*/)
 {
-    // No code needed yet
+    // No code needed for JACK
 }
 
 /**
  *  Empty body for setting BPM.
  */
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-
-void
-midi_jack::api_set_beats_per_minute (midibpm bp)
-{
-    printf("midi_jack set bpm %g\n", bp);
-}
-
-#else
-
 void
 midi_jack::api_set_beats_per_minute (midibpm /* bp */)
 {
-    // No code needed yet
+    // No code needed for JACK
 }
-
-#endif
 
 /**
  *  Gets the name of the current port via jack_port_name().  This is different
@@ -1646,6 +1690,24 @@ midi_jack::connect_port
         result = ! srcportname.empty() && ! destportname.empty();
         if (result)
         {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+
+            /*
+             * The port types must be identical. The JackPortFlags
+             * of the source must include JackPortIsOutput; the
+             * destination must include JackPortIsInput.
+             */
+
+            jack_port_t * srcptr =
+                ::jack_port_by_name(client_handle(), srcportname.c_str());
+
+            jack_port_t * destptr =
+                ::jack_port_by_name(client_handle(), destportname.c_str());
+
+            show_jack_port_status("Source", client_handle(), srcptr);
+            show_jack_port_status("Destination", client_handle(), destptr);
+#endif
+
             int rc = ::jack_connect
             (
                 client_handle(), srcportname.c_str(), destportname.c_str()
@@ -1722,9 +1784,9 @@ midi_jack::register_port (midibase::io iotype, const std::string & portname)
     bool result = not_nullptr(port_handle());
     if (! result)
     {
+        bool isinput = iotype == midibase::io::input;
         unsigned long buffsize = 0;
-        unsigned long flag = iotype == midibase::io::input ?
-            JackPortIsInput : JackPortIsOutput ;
+        unsigned long flag = isinput ? JackPortIsInput : JackPortIsOutput ;
         const char * porttype = JACK_DEFAULT_MIDI_TYPE;
 
         /*
@@ -1742,6 +1804,11 @@ midi_jack::register_port (midibase::io iotype, const std::string & portname)
         );
         if (not_nullptr(p))
         {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+            std::string title = isinput ? "Input" : "Output" ;
+            show_jack_port_status(title, client_handle(), p);
+#endif
+
             port_handle(p);
             result = true;
 

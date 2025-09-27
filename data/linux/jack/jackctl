@@ -8,7 +8,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2022-09-25
-# \update         2025-01-24
+# \update         2025-09-27
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -230,6 +230,7 @@ if [ "$JCTL_OPERATION" == "list" ] ; then
    echo "Selecting ALSA (seq). Available parameters:"
    jack_control ds $JCTL_DRIVER
    jack_control dp | grep "ALSA\|rate:\|period:\|nperiods:"
+   jack_lsp --aliases
 
 elif [ "$JCTL_OPERATION" == "stop" ] ; then
 

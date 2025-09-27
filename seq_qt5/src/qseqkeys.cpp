@@ -330,10 +330,7 @@ qseqkeys::convert_y (int y, int & note)
  *  partial solution to the issue.
  *
  *  The best solution would be to pass the event along to the qscrollmaster.
- *  But this class doesn't have access to the scroll-master.  We might also
- *  try this in the constructor:
- *
- *      setMouseTracking(false);
+ *  But this class doesn't have access to the scroll-master.
  */
 
 void

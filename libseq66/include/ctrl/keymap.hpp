@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2022-05-13
+ * \updates       2025-09-17
  * \license       GNU GPLv2 or above
  *
  */
@@ -111,6 +111,7 @@ extern ctrlkey arrow_left ();
 extern ctrlkey arrow_up ();
 extern ctrlkey arrow_right ();
 extern ctrlkey arrow_down ();
+extern ctrlkey menu_key ();
 extern std::string modifier_names (unsigned kmod);
 extern unsigned modifier_code (const std::string & name);
 extern const std::string & undefined_qt_key_name ();

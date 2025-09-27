@@ -356,17 +356,23 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
     <rect>
      <x>510</x>
      <y>107</y>
-     <width>321</width>
+     <width>311</width>
      <height>158</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <layout class="QGridLayout" name="gridLayout" columnstretch="1,0">
+     <layout class="QGridLayout" name="gridLayout" columnstretch="0,0">
       <property name="sizeConstraint">
        <enum>QLayout::SetFixedSize</enum>
       </property>
-      <property name="spacing">
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="horizontalSpacing">
+       <number>0</number>
+      </property>
+      <property name="verticalSpacing">
        <number>2</number>
       </property>
       <item row="1" column="0">
@@ -425,6 +431,9 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
         <property name="minimumContentsLength">
          <number>1</number>
         </property>
+        <property name="frame">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="2" column="1">
@@ -452,6 +461,9 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
         </property>
         <property name="insertPolicy">
          <enum>QComboBox::NoInsert</enum>
+        </property>
+        <property name="frame">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -811,7 +823,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
     <rect>
      <x>510</x>
      <y>48</y>
-     <width>321</width>
+     <width>320</width>
      <height>58</height>
     </rect>
    </property>

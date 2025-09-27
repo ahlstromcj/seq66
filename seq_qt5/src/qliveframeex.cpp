@@ -19,7 +19,7 @@
 /**
  * \file          qliveframeex.cpp
  *
- *  This module declares/defines the base class for the external sequence edit
+ *  This module declares/defines the base class for the external live frame
  *  window.
  *
  * \library       seq66 application

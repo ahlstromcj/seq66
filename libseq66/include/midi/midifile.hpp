@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-09
+ * \updates       2025-09-18
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -205,6 +205,14 @@ private:
      */
 
     double m_ppqn_ratio;
+
+    /**
+     *  Holds the first beats-per-minute value found, either from a track
+     *  or from the c_bpmtag SeqSpec. If 0, there is no tempo, and
+     *  this value will be set to 120.0.
+     */
+
+    midibpm m_main_bpm;
 
     /**
      *  Holds the format of the MIDI file as read.
