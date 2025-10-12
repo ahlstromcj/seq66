@@ -1,0 +1,66 @@
+Drawing Note Bars and Disabling Off-Chord or Off-Scale Note Painting
+Chris Ahlstrom
+2025-10-12 to 2025-10-12
+
+We would like to adapt to issue #141 as noted below. Seq66 already has
+parameters for randomizing note pitches according to the current musical
+scale for the pattern, and we added a pitch-randomization function to
+the eventlist. The notes adhere to the currently selected musical scale.
+
+-   Re issue #141  Feature request: harmonySEQ-style integration /       
+    plugin pattern editors:
+
+    -   Add pattern editor grid-line coloring, similar to that for
+        scales, to reflect the current key and current chord.
+    -   Add a setting so that drawn notes can be added only
+        on the current scale.
+    -   Add a setting so that drawn notes can be added only
+        on the current chord.
+    -   Add [brushes] chord to the palette.
+    -   Related notes:
+
+        -   The user can use the following settings to achieve the
+            desired chunkiness of the drawn pattern.
+
+            -   Vertical zoom
+            -   Horizontal zoom
+            -   Note-length setting
+            -   Note snap setting
+
+        -   Could add a starting horizontal and vertical zoom
+            to the 'usr' configuration file.
+        -   Scale drawing should take priority over chord drawing...
+            or vice versa?
+
+Background sequence coloring:
+
+    If a background sequence is active and is not the current sequence,
+    then it is drawn using backseq_brush().
+
+Scale coloring:
+
+    If a scale is active, then scales_policy() is called to determine if the
+    note is part of the current key + scale combination.
+
+    If not, then the note bar is drawn using scale_paint().
+
+Chord painting:
+
+    If a chord is active, then the offset for the base note is 0,
+    and the offsets for the rest of the note are looked up in the
+    chord table. For all offsets, a note is drawn at base + offset.
+    Note that some chords have offsets >= 12.
+
+Chord note bars:  How to do it?
+
+    1. Get the "base" note from the key setting. This ranges from
+       0 (C) to 11 (B).
+    2. When drawing the horizontal lines (from 0 to 127), for each
+       note, first get the mod value of that note.
+    3. Look for that mod value in the list. If found, the bar can
+       be drawn.
+    4. If the list has a value of 12 or greater, WHAT TO DO?
+       One possibility is to deduct 12 before checking the mod
+       value.
+
+# vim: sw=4 ts=4 wm=8 et ft=sh

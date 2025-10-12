@@ -31,12 +31,14 @@ Chris Ahlstrom
 
 ### Fixed
 
--   performer class.
+-   performer.
     -   The file PPQN was set when reading the file, so later the
         set\_ppqn() function would not inform the master bus of
         a PPQN change (in ALSA).
 -   JACK.
     -   Fixed detect\_jack() and added a missing call to jack\_free().
+-   midifile.
+    -   Added storage for the first BPM value, needed by performer.
 -   Main window and grid.
 -   Pattern editor.
 -   Song editor.

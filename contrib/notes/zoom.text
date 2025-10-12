@@ -1,0 +1,148 @@
+Horizontal zoom in Seq66 is basically the number of ticks represented by one
+pixel.  It ranges from 1 to 1024 by powers of 2, and the default zoom is 2.
+For high PPQN, the zoom needs to be high so that the piano roll is not
+compressed. The notation for zoom in the GUI is "1:t", where t is the number
+of ticks per 1 pixel. That is "one pixel : t ticks".
+
+For the horizontal zoom keys, z, 0, and Z:
+
+    -   "z" zooms out, making the measures smaller, more compressed. It
+        increases the "t" (number of ticks) in a pixel.
+    -   "0" resets to the default zoom or the initial zoom for the
+        given PPQN. IT NEEDS FIXING.
+    -   "Z" zooms in, making the measures larger, more expanded. It
+        decreases "t".
+
+Resetting the zoom: Here is the current code sequence:
+
+    -   Press "0" and handle Key_0.
+    -   qseqeditframe64::reset_zoom()
+            zprevious = qseqframe::zoom() = zoomer::zoom()
+            result = qseqframe::reset_zoom(0)
+                result = qeditbase::reset_zoom(0)
+                    result = zoomer::reset_zoom(0)
+                        result = zoom::initialize()
+                            index = log2_power_of_2(m_initial_zoom = 2) !!
+                qseqroll::reset_zoom(0)
+                    result = qseqbase::reset_zoom(0)
+                        result = zoomer::reset_zoom(0) ETC.
+                qeditbase::reset_zoom(0) [for seqtime]
+                qeditbase::reset_zoom(0) [for seqdata]
+                qeditbase::reset_zoom(0) [for seqevent]
+
+            qseqeditframe64::adjust_for_zoom()
+                znew = zoom()
+                calculates dropdown index and scrolls x as needed
+
+!! Can we set this properly for adapting the zoom to the PPQN?
+
+Calls to zoomer ctor:
+
+    -   Seq66 startup: Here, the call is zoomer(2400, 16, scale=32)
+        -   qperfeditframe64 --> qperfnames; qperfbase; qeditbase
+        -   qperfeditframe64 --> qperftime; qperfbase; qeditbase
+        -   qperfeditframe64 --> qperfroll; qperfbase; qeditbase
+    -   Pattern editor window opening:
+        -   qseqeditframe64 --> qseqframe; qeditbase; zoomer(2400, 2, 0) !!
+
+            Here, qseqframe calls qeditbase with p, c_default_seq_zoom.
+            We NEED an initialzoom parameter for qseqframe! BUT DO WE?
+            The frame itself does not have zoomable elements.
+
+        -   qseqeditframe64 --> 
+                initialize_panels() --> qseqkeys; qseqbase; qeditbase;
+                    zoomer(2400, 2, 1) !!!
+
+            Here, qseqkeys calls qseqbase with c_default_seq_zoom and snap.
+            We NEED an initialzoom parameter for qseqkeys as called
+            in initialize_panels!
+
+        -   qseqeditframe64 --> 
+                initialize_panels() --> qseqtime; qseqbase; qeditbase;
+                    zoomer(2400, 2, 1) !!!
+
+            qseqtime already has a zoom parameter, but is zoom(), which
+            returns true.
+
+            We need to move adapt-zoom code to the top of initialize_panels(),
+            at least. Compare to what qperfeditframe does.
+
+            Another option is having the adapt-zoom code modify the zoom
+            of all the panels.
+
+        -   qseqeditframe64 --> 
+                initialize_panels() --> qseqroll; qseqbase; qeditbase;
+                    zoomer(2400, 2, 1) !!!
+
+            Same as qseqtime!!!
+
+        -   qseqeditframe64 --> 
+                initialize_panels() --> qseqdata; qseqbase; qeditbase;
+                    zoomer(2400, 2, 1) !!!
+
+            Same as qseqtime!!!
+
+        -   qseqeditframe64 --> 
+                initialize_panels() --> qstriggereditor; qseqbase; qeditbase;
+                    zoomer(2400, 2, 1) !!!
+
+            Same as qseqtime!!!
+
+= = =
+
+qseqeditframe64 ():     #876
+
+    int zoom = usr().zoom();
+    if (usr().adapt_zoom())
+        zoom = zoom_power_of_2(ppqn);
+
+    set_zoom(zoom);
+
+change_ppqn() has the same sequence, but also modifies snap and note length!
+
+PPQN class members:
+
+    jack:
+
+        -   set_ppqn()
+
+    masterbus:
+
+        -   set_ppqn()
+
+    midifile:
+
+        -   ppqn()
+        -   file_ppqn()
+        -   if usr().use_file_ppqn() then set performer::file_ppqn(),
+            ppqn(), and turn of PPQN scaling.
+
+    performer:
+
+        -   ppqn() returns either m_ppqn or m_file_ppqn. It should not be in
+            possession of file PPQN, let usrsettings do it.
+        -   change_ppqn(). This is fine.
+        -   file_ppqn().
+        -   jack_set_ppqn()
+        -   set_ppqn().
+
+    sequence:
+
+        -   change_ppqn(). Rescales.
+        -   m_ppqn, get_ppqn().
+
+    usrsettings:
+
+        -   c_base_ppqn = 192
+        -   c_use_default_ppqn = -1
+        -   c_use_file_ppqn = 0 [int !!!!]
+
+        -   base_ppqn()
+        -   default_ppqn()
+        -   use_default_ppqn() [int !!!!]
+        -   midi_ppqn() [either default PPQN or the file PPQN)
+        -   use_file_ppqn() [bool !!!!]
+        -   file_ppqn()
+        -   adapt_zoom () return midi_ppqn() != c_base_ppqn
+
+

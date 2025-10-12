@@ -1,0 +1,93 @@
+Summary of MIDI Messages
+Chris Ahlstrom
+2025-10-12 to 2025-10-12
+
+-   Channel Voice Messages
+
+    -   Note Off                                    0x8n
+    -   Note on                                     0x9n
+    -   Aftertouch (Polyphonic Key Pressure)        0xAn
+    -   Control Change                              0xBn
+        -   Bank Select
+        -   (and many more)
+    -   Program Change (Patch Change)               0xCn
+    -   Channel Pressure                            0xDn
+    -   Pitch Bend Change                           0xEn
+    -   Selects Channel Mode                        0xB 1xxx ?
+
+-   System Common Messages          ????            0xF0 0sss
+
+    -   MTC Quarter Frame                           0xF1
+    -   Song Select                                 0xF2
+    -   Song Position Pointer                       0xF3
+    -   Tune Request (Tune Select)                  0xF6
+    -   End Of Exclusive (EOX)                      0xF7
+
+-   System Real Time Message                        0xF0 1ttt
+
+    -   Timing Clock
+    -   Undefined (ttt = 001)
+    -   Start
+    -   Continue
+    -   Stop
+    -   Undefined (ttt = 101)
+    -   Active Sensing
+    -   System Reset
+
+-   System Exclusive Message                        0xF0
+
+    -   Non-Realtime SysEx Header                   OxF0 7E
+
+        -   Sample Data Header                      0xF0 7E id 01 ... F7
+        -   Sample Data Packet                      0xF0 7E id 02 ... F7
+        -   Sample Dump Request                     0xF0 7E id 03 ... F7
+        -   MIDI Time Code (cueing setup msgs)      0xF0 7E id 04 ... F7
+        -   Sample Dump Extensions                  0xF0 7E id 05 ... F7
+
+            -   Loop Point Transmission     0xF0 7E id 05 01 ... F7  17 bytes
+            -   Loop Points Request         0xF0 7E id 05 02 ... F7  10 bytes
+
+        -   General Information                     0xF0 7E id 06
+
+            -   Device Inquiry                      0xF0 7E id 06 01 F7
+            -   Device Inquiry Response             0xF0 7E id 06 02 ... F7
+
+        -   File Dump                               0xF0 7E id 07
+
+            -   Header                              0xF0 7E id 07 01 ... F7
+            -   Data Packet                         0xF0 7E id 07 02 ... F7
+            -   Request                             0xF0 7E id 07 03 ... F7
+
+    -   Generic Handshaking Messages                0xF0 7E id subid pp F7
+
+            -   EOF                                 0xF0 7E id 7B pp F7
+            -   WAIT                                0xF0 7E id 7C pp F7
+            -   CANCEL                              0xF0 7E id 7D pp F7
+            -   NAK                                 0xF0 7E id 7E pp F7
+            -   ACK                                 0xF0 7E id 7F pp F7
+
+        -   MIDI Tuning Standard                    0xF0 7E id 08 ... F7
+
+            -   Bulk Tuning Dump Request            0xF0 7E id 08 00 tt F7
+            -   Bulk Tuning Dump Reply              0xF0 7E id 08 01 tt ... F7
+            -   Single-note Tuning Change           0xF0 7E id 08 02 tt ... F7
+
+        -   General MIDI System (0xF0 7E id 09)
+            -   GM On                               0xF0 7E id 09 01 F7
+            -   GM Off                              0xF0 7E id 09 02 F7
+
+    -   Realtime SysEx Header (OxF0 7F)
+
+        -   Full Message                            0xF0 7F id 01 01 ... F7
+        -   Bar Marker                              0xF0 7F id 03 01 ... F7
+
+-   Meta Messages                                   0xFF type length bytes
+
+Messages that are Typically not present in a MIDI File:
+
+    -   System Realtime Messages (timing clock, start, continue, stop,
+        active sensing, and system reset).
+    -   System Common Message (MTC quarter frame, song select, song position
+        point, tune request, EOX.
+
+# vim: sw=4 ts=4 wm=8 et ft=sh

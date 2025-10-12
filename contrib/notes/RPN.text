@@ -1,0 +1,169 @@
+https://www.recordingblogs.com/wiki/midi-registered-parameter-number-rpn
+
+RPN = Registered Parameter Number.
+
+Consider a scenario in which a MIDI device receives the following two messages.
+
+0xB0 0x64 0x00          RPN, fine, pitch bend range
+0xB0 0x65 0x00          RPN, coarse, ditto
+
+Both are MIDI controller messages for channel
+0. The first message is 0x64, 
+an RPN (fine, or lower bits) controller. The
+second value is 0x65, is an RPN (coarse, or higher bits) controller.
+The last byte of the
+two messages have the value 0x00, which tells the MIDI device that
+the range of the pitch bend will change. These values have been
+registered with the International MIDI Association to carry this kind of
+information.
+
+The two messages above tell the MIDI device that the
+pitch bend range is about to change. The MIDI device should then expect data
+entry or data increment / decrement messages that will define the new pitch
+range. To make a change to the pitch range, the MIDI device should receive
+messages similar to the two messages that follow. Suppose that the MIDI device
+receives the following messages.
+
+0xB0 0x06 0x02          Data entry, coarse
+0xB0 0x26 0x03          Data entry, fine
+
+Since the MIDI device is waiting for a pitch range change, it
+interprets the third byte of each message as follows: The coarse data entry is
+0x02 -- the pitch wheel will move by +/-2 semitones. The fine data
+entry is 0x03 -- the pitch wheel will move by +/- 3 cents.
+The pitch shift can move two
+semitones and three cents down to 0x0000 or two semitones and three cents up to
+0x3FFF.
+
+According to the MIDI protocol, the MIDI device should also receive the
+following two messages.
+
+0xB0 0x64 0x7F
+0xB0 0x65 0x7F
+
+The status byte 0xB0 shows that these two messages are MIDI controller messages
+for channel 0. They carry the controller values of 0x64 and 0x65 and mean RPN
+fine and coarse controllers. They have the values 0x7F which signifies the
+end of the controller sequence.
+
+To properly use the registered parameter number (RPN) controller, a MIDI device
+must receive a sequence of messages as follows:
+
+    -   Two controller messages with 0x64 and 0x65 and
+        values that specify the RPN and define what is to follow.
+        -   The values of the third bytes of these two messages are combined
+            into a 14-bit value by dropping the most significant bit of each
+            byte.
+        -   The resulting value is registered with the International MIDI
+            Association (IMA) and describes a specific purpose of what is to
+            follow.
+    -   One or two data entry messages that specify what to do with the
+        specific controller.
+        -   Data entry messages have controller values of 0x06 and 0x26 (coarse
+            and fine).
+        -   The fine data entry message (0x26) can be omitted depending
+            on the registered parameter number defined in the two
+            controller messages above.
+        -   The values of the third bytes of the two data entry messages are
+            combined in a 14-bit value.
+        -   The 14-bit value has significance depending on the type of
+            controller being affected.
+            -   If the RPN is a pitch bend range, the value sent with the data
+                entry messages is 0x0103 (which, when split into two 7-bit
+                values, translates to 0x02 and 0x03) then the pitch bend will
+                vary +/- two semitones and three cents.
+    -   Alternative to data entry controller messages, the MIDI
+        device could also receive data button increment or data button
+        decrement messages.
+        -   These messages are MIDI controller messages with controller values
+            of 0x60 and 0x61
+        -   Instead of specifying the exact value of the controller these
+            messages increase or decrease respectively its current value.
+        -   The MIDI 1.0 specification recommends using Data Entry MSB
+            and LSB instead of Data Increment/Decrement.
+    -   Two controller messages with controller numbers 0x64 and 0x65 and with
+        values 0x7F and 0x7F signifying the end of this controller sequence.
+        These two messages are optional, but are a good practice, as if not
+        sent, the coarse and fine controller numbers would remain set forever
+        in practice and a random data entry message could have unintended
+        effects.
+
+An example using these controllers is provided below.
+
+Defined RPNs
+
+The following is a list of RPN values for the 14-bit values of the 0x64 and
+0x65 controllers that have been registered with the IMA. The preceding zeroes
+have been left off.
+
+    0x00 – Pitch bend range
+    0x01 – Fine tuning
+    0x02 – Coarse tuning
+    0x03 – Tuning program change
+    0x04 – Tuning bank select
+    0x05 – Modulation depth range
+    0x7F - End of parameter setting
+
+Pitch bend range: The pitch bend RPN sequence adjusts the range of the MIDI
+pitch wheel message. It needs both data entry (coarse and fine) messages.
+
+Fine tuning: The fine tuning RPN sequence adjusts the tuning of a channel. It
+also needs both data entry messages. If the 14-bit value of the data entry
+messages is 0x2000, then tuning is central with A = 440 Hz. The full range
+(0x0000 to 0x3FFF of the 14-bit value) means two semitones. Thus, the tuning
+can move down one semitone or up one semitone and since one semitone is equal
+to 100 cents, since the distance between the center 0x2000 and each of the
+limits (up and down) is 8192 decimal, one single step increment is 100 / 8192 =
+0.0122 (approximately) cents. The value 0x2001 for example would mean that A is
+440 Hz plus 0.0122 cents, which is A = 440.0031 Hz.
+
+Coarse tuning: The coarse tuning RPNs use only the coarse data entry message to
+tune, with 0x20 representing central tuning of A = 440 Hz and with increments
+of whole semitones (e.g., 0x21 would be a whole semitone displacement up).
+
+Tuning program and tuning bank: The tuning program change and tuning bank
+change are not widely used. It is likely that these messages select tunings
+different than the equal tempered tuning.
+
+Modulation depth range: The modulation depth range is designed to affect the
+depth of a vibrato, but neither the maximum and minimum depth nor the default
+depth is set for General MIDI. Those are left up to the manufacturer. According
+to the MIDI Manufacturer Association, the message may even affect something
+else than a vibrato.
+
+The first three registered parameter numbers above (pitch bend range, fine
+tuning, and coarse tuning) are required by General MIDI 1. The modulation depth
+range was added in General MIDI 2. The remaining two parameter numbers were
+presumably defined later.
+
+=================================================
+
+http://midi.teragonaudio.com/tutr/rpn.htm
+
+Assume the manufacturer chose 14000 (from the set 0 to 16383) for a parameter.
+
+    -   In binary, this is a 16-bit number: 0011 0110 1011 0000
+    -   Strip off the two leading zeroes:     11 0110 1011 0000
+        -   Get the next 7 bits:              11 0110 1
+        -   Prepend a 0:                     011 0110 1
+    -   This value (109 or 0x6D) is the high bits of the parameter number.
+        -   Get the last 7 bits:                       011 0000
+        -   Prepend a 0:                              0011 0000
+    -   This value (48 or 0x30) is the low bits of the parameter number.
+    -   Send the NRPN coarse controller:    0xB0 0x63 0x6D
+    -   Send the NRPN fine controller:      0xB0 0x62 0x30
+    -   Then send one or more of the following messages:
+        -   Data Entry Slider, coarse:      0xB0 0x06 0x64 (i.e. 100)
+        -   Data Button Increment:          0xB0 0x60 xxxx
+        -   Data Button Decrement:          0xB0 0x61 xxxx
+
+Cakewalk has an "Insert" menu:
+
+        Bank/patch change
+        Wave file
+        Tempo change
+        Meter/Key change
+        Series of controllers
+        Series of tempos
+
+# vim: sw=4 ts=4 wm=8 et ft=sh

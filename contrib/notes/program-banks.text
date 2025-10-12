@@ -1,0 +1,39 @@
+Chris Ahlstrom
+2025-06-10 to 2025-07-08
+
+Issue #138
+
+    How about each seq66 pattern would always update/save the last received
+    `program change + MSB + LSB`-values at the beginning.
+
+    Maybe this could be a default feature-toggle?
+
+    This would make the above mentioned manual steps (4x16=64) redundant.
+
+There are two styles of MIDI commands used to select banks CC 0 and CC 32. [1]
+Here, n is the channel number, bb is a bank number, and pp is a program/patch
+number. The symbol lsb is the least significant byte of the bank number and
+msb is the most significant byte.
+
+    0xBn 0x00 bb   +   0xCn pp
+
+    0xBn 0x00 msb  +   0xBn 0x20 lsb    +   0xCn pp
+
+These two style are synthesizer-dependent, so how to know which one to use?
+The obvious way is to have the synth sent a bank/patch change and
+see if 0xBn or 0xCn comes after the first 0xBn. Another way is to have the
+user set this for each MIDI instrument.
+    
+[1] The CCs from 0 to 13 provide coarse settings for various items, while
+    the CCs from 32 to 45 provide the "fine" settings.
+
+Perhaps a CC editor dialog is in order.  Perhaps also include NRPN
+coarse/fine and RPN coarse/fine entries as well?  However, there are too many
+CCs etc to handle this well. Instead, version 0.99.21 of Seq66 has been
+updated to make recording CCs a bit easier.
+
+MIDI event sorting now uses std::stable\_sort(), and event-ranking
+gives CC and Program Changes the same priority, to preserve the order
+of these incoming events.
+
+# vim: sw=3 ts=3 wm=8 et ft=sh nowrap
