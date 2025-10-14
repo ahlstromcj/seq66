@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-13
+ * \updates       2025-10-14
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -96,9 +96,14 @@ public:
     virtual bool zoom_out () override;
     virtual bool reset_zoom (int ppq = 0) override;
 
-    const Color & backseq_color () const
+    const Brush & backseq_brush () const
     {
-        return m_backseq_color;
+        return m_backseq_brush;
+    }
+
+    const Brush & chord_brush () const
+    {
+        return m_chord_brush;
     }
 
 protected:
@@ -207,10 +212,12 @@ private:
     QFont m_font;
 
     /**
-     *  The color (from the palette) for the background sequence.
+     *  The colors (from the palette) for the background sequence and
+     *  for showing non-chord notes.
      */
 
-    const Color m_backseq_color;
+    const Brush m_backseq_brush;
+    const Brush m_chord_brush;
 
     /**
      *  Holds a pointer to the qseqkeys pane that is associated with the
@@ -243,7 +250,7 @@ private:
      *  chord is to be created when inserting notes.
      */
 
-    int m_chord;
+    chords m_chord;
 
     /**
      *  The current musical key selected.

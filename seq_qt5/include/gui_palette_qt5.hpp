@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2025-04-30
+ * \updates       2025-10-13
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -92,13 +92,14 @@ public:
         empty,      /**< Brush for empty space, usually "no brush".         */
         note,       /**< Brush for drawing notes in pattern editor.         */
         scale,      /**< Brush for drawing lines denoting musical scale.    */
-        backseq     /**< Brush for drawing lines denoting background seq.   */
+        backseq,    /**< Brush for drawing lines denoting background seq.   */
+        chord       /**< Brush for drawing lines *not* in selected chord.   */
     };
 
     enum class penstyle
     {
         empty,      /**< Qt::NoPen.                                         */
-        solid,      /**< The default penstyle is Qt::SolidLine.                  */
+        solid,      /**< The default penstyle is Qt::SolidLine.             */
         dash,       /**< Qt::DashLine.                                      */
         dot,        /**< Qt::DotLine.                                       */
         dashdot,    /**< Qt::DashDotLine.                                   */
@@ -187,6 +188,8 @@ private:
     BrushStyle m_scale_brush_style;
     BrushPtr m_backseq_brush;
     BrushStyle m_backseq_brush_style;
+    BrushPtr m_chord_brush;
+    BrushStyle m_chord_brush_style;
 
     /**
      *  A convenience to indicate that the linear gradient pattern brush
@@ -201,7 +204,7 @@ private:
 
     PenStyle m_measure_pen_style;           /* style of each bar line       */
     PenStyle m_beat_pen_style;              /* style of each beat line      */
-    PenStyle m_fourth_pen_style;              /* style of each 1/4 beat line  */
+    PenStyle m_fourth_pen_style;            /* style of each 1/4 beat line  */
     PenStyle m_step_pen_style;              /* style of small step lines    */
 
 public:
@@ -366,14 +369,16 @@ public:
         const std::string & emptybrush,
         const std::string & notebrush,
         const std::string & scalebrush,
-        const std::string & backseqbrush
+        const std::string & backseqbrush,
+        const std::string & chordbrush
     );
     bool get_brush_names
     (
         std::string & emptybrush,
         std::string & notebrush,
         std::string & scalebrush,
-        std::string & backseqbrush
+        std::string & backseqbrush,
+        std::string & chordbrush
     );
 
     bool use_gradient_brush () const
@@ -458,6 +463,9 @@ extern Color black_key_paint ();
 extern Color white_key_paint ();
 extern Color progress_paint ();
 extern Color backseq_paint ();
+extern Brush backseq_brush ();
+extern Color chord_paint ();
+extern Brush chord_brush ();
 extern Color bar_paint ();                      /* heavy lines, dk_grey     */
 extern Color grey_paint ();                     /* medium lines, grey       */
 extern Color step_paint ();                     /* light lines, dk_grey     */
@@ -488,6 +496,7 @@ extern Brush gui_note_brush ();                 /* for notes and triggers   */
 extern bool gui_use_gradient_brush ();          /* ditto                    */
 extern Brush gui_scale_brush ();
 extern Brush gui_backseq_brush ();
+extern Brush gui_chord_brush ();
 extern PenStyle gui_measure_pen_style ();
 extern PenStyle gui_beat_pen_style ();
 extern PenStyle gui_fourth_pen_style ();

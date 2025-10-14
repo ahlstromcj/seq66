@@ -87,7 +87,7 @@
           <enum>QFrame::Raised</enum>
          </property>
          <property name="lineWidth">
-          <number>2</number>
+          <number>1</number>
          </property>
          <property name="midLineWidth">
           <number>1</number>
@@ -100,8 +100,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>38</width>
-            <height>143</height>
+            <width>42</width>
+            <height>137</height>
            </rect>
           </property>
          </widget>
@@ -112,13 +112,13 @@
          <property name="minimumSize">
           <size>
            <width>48</width>
-           <height>10</height>
+           <height>8</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>48</width>
-           <height>10</height>
+           <height>8</height>
           </size>
          </property>
          <property name="font">
@@ -133,7 +133,7 @@
 when hovering.</string>
          </property>
          <property name="text">
-          <string>~Tips~</string>
+          <string/>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -176,8 +176,8 @@ when hovering.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>671</width>
-          <height>150</height>
+          <width>673</width>
+          <height>143</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -326,7 +326,7 @@ to note events. [ c for selected notes ]</string>
           </size>
          </property>
          <property name="text">
-          <string> </string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -366,8 +366,8 @@ to note events. [ c for selected notes ]</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>664</width>
-          <height>148</height>
+          <width>668</width>
+          <height>154</height>
          </rect>
         </property>
        </widget>
@@ -1413,7 +1413,7 @@ or a velocity to force upon input.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>662</width>
+          <width>666</width>
           <height>28</height>
          </rect>
         </property>
@@ -1972,8 +1972,8 @@ in the piano roll. [ p x ]
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>666</width>
-          <height>18</height>
+          <width>664</width>
+          <height>22</height>
          </rect>
         </property>
        </widget>

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2024-12-17
+ * \updates       2025-10-14
  * \license       GNU GPLv2 or above
  *
  *  We've added the feature of a right-click toggling between showing the main
@@ -93,16 +93,16 @@ qseqkeys::qseqkeys
         keyheight, keyareaheight
     ),
     m_font              (),
-    m_show_key_names    (usr().key_view()),     /* initial default      */
-    m_key               (0),
-    m_key_y             (keyheight),            /* note_height()        */
-    m_key_area_y        (keyareaheight),        /* total_height()       */
-    m_preview_color     (progress_paint()),     /* preview_color()      */
-    m_white_key_color   (white_key_paint()),    /* white_color()        */
-    m_black_key_color   (black_key_paint()),    /* black_color()        */
-    m_is_previewing     (false),                /* previewing()         */
-    m_preview_on        (false),                /* preview_on()         */
-    m_preview_key       (sc_null_key)           /* preview_key()        */
+    m_show_key_names    (usr().key_view()),     /* initial default          */
+    m_key               (0),                    /* i.e. "C"                 */
+    m_key_y             (keyheight),            /* note_height()            */
+    m_key_area_y        (keyareaheight),        /* total_height()           */
+    m_preview_color     (progress_paint()),     /* preview_color()          */
+    m_white_key_color   (white_key_paint()),    /* white_color()            */
+    m_black_key_color   (black_key_paint()),    /* black_color()            */
+    m_is_previewing     (false),                /* previewing()             */
+    m_preview_on        (false),                /* preview_on()             */
+    m_preview_key       (sc_null_key)           /* preview_key()            */
 {
     /*
      * This policy is necessary in order to allow the vertical scrollbar to
@@ -111,7 +111,7 @@ qseqkeys::qseqkeys
 
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
     setMouseTracking(true);
-    m_font.setPointSize(8);                     /* 6, 7 are tiny        */
+    m_font.setPointSize(9);                     /* 6, 7, 8 are tiny; 10 big */
 }
 
 /*
@@ -126,7 +126,7 @@ qseqkeys::paintEvent (QPaintEvent *)
     QPen pen(Qt::black);
     QBrush brush (Qt::SolidPattern);
     const int keyx = sc_keyoffset_x + 1;
-    const int numx = 1;                                     /* was 2        */
+    const int numx = 0;                                     /* was 2 then 1 */
     int keyy = 0;
     int numy = 8;
     const int nh = note_height();
@@ -382,11 +382,15 @@ qseqkeys::reset_v_zoom ()
 void
 qseqkeys::set_key (int k)
 {
+#if defined SEQ66_SHOW_SELECTED_KEY_OCTAVE
     if (legal_key(k))
     {
         m_key = k;
         update();
     }
+#else
+    (void) k;
+#endif
 }
 
 }           // namespace seq66

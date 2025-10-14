@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2025-07-25
+ * \updates       2025-10-13
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -57,6 +57,14 @@
 #define STDERR_FILENO   2
 #endif
 #endif
+
+/**
+ *  If set, allow changing the key in the pattern editor to be
+ *  reflected in the name of the key, changing from "C" to whatever
+ *  key is selected.
+ */
+
+#undef SEQ66_SHOW_SELECTED_KEY_OCTAVE
 
 /**
  *  In the pattern editor's data pane, we can show the full GM name

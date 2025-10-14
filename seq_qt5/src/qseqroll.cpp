@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-21
+ * \updates       2025-10-14
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -96,12 +96,13 @@ qseqroll::qseqroll
     m_sel_grad              (0, 0, 0, 1),
     m_analysis_msg          (nullptr),
     m_font                  ("Monospace"),
-    m_backseq_color         (backseq_paint()),
+    m_backseq_brush         (gui_backseq_brush()),
+    m_chord_brush           (gui_chord_brush()),
     m_seqkeys_wid           (seqkeys_wid),
     m_timer                 (nullptr),
     m_scale                 (scales::off),
     m_pos                   (0),
-    m_chord                 (0),
+    m_chord                 (chords::none),
     m_key                   (keys::C),
     m_show_note_info        (false),
     m_note_tooltip          (nullptr),
@@ -573,13 +574,13 @@ qseqroll::call_draw_notes (QPainter & painter, const QRect & view)
 void
 qseqroll::draw_grid (QPainter & painter, const QRect & r)
 {
-    QBrush brush(back_color());                     /* brush(Qt::NoBrush)   */
+    QBrush bbrush(back_color());                    /* brush(Qt::NoBrush)   */
     QBrush sbrush(scale_brush());                   /* brush(Qt::NoBrush)   */
     QPen pen(grey_color());                         /* pen(Qt::lightGray)   */
     pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
     pen.setWidth(c_border_width);                   /* border thickness     */
-    painter.fillRect(r, brush);                     /* blank the viewport   */
-    painter.setBrush(brush);
+    painter.fillRect(r, bbrush);                    /* blank the viewport   */
+    painter.setBrush(bbrush);
     painter.setPen(pen);
     painter.drawRect(r);
     pen.setWidth(horiz_pen_width());
@@ -591,19 +592,19 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
      * and has been removed here.
      */
 
-    for (int key = 0; key < c_notes_count; ++key)   /* each note row        */
+    for (int note = 0; note < c_notes_count; ++note)   /* each note row        */
     {
-        int modkey = c_note_max - key;              /* actual note value    */
+        int modkey = c_note_max - note;              /* actual note value    */
 
         /*
          * This cause drawing to be one height to low on the screen.
          * Also see the corresponding correction in the scales_policy()
          * overload.
          *
-         *      int y = key * unit_height() + 2;
+         *      int y = note * unit_height() + 2;
          */
 
-        int y = key * unit_height() + 2;
+        int y = note * unit_height() + 2;
         if ((modkey % c_octave_size) == 0)
             pen.setColor(octave_color());           /* fore_color()         */
         else
@@ -615,13 +616,19 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         {
             if (! scales_policy(m_scale, m_key, modkey))
             {
-                /*
-                 * This color is only part of the scale-brush border.
-                 */
-
-                pen.setColor(scale_paint());        /* Qt::lightGray        */
-                painter.setBrush(sbrush);
-                painter.setPen(pen);
+                painter.setBrush(backseq_brush());
+                painter.drawRect(0, y + 1, r.width(), unit_height() - 1);
+            }
+        }
+        else if (m_chord != chords::none)
+        {
+            if (note_in_chord(m_chord, m_key, modkey))
+            {
+                continue;
+            }
+            else
+            {
+                painter.setBrush(chord_brush());
                 painter.drawRect(0, y + 1, r.width(), unit_height() - 1);
             }
         }
@@ -1176,8 +1183,8 @@ qseqroll::add_painted_note (midipulse tick, int note, bool first)
         track().push_undo();                /* multiple-note undo only      */
 
     tick = closest_snap(snap(), tick);
-    if (m_chord > 0)
-        result = track().add_chord(m_chord, tick, n, note);
+    if (m_chord != chords::none)
+        result = track().add_chord(static_cast<int>(m_chord), tick, n, note);
     else
         result = track().add_painted_note(tick, n, note, true /* paint */);
 
@@ -2170,9 +2177,9 @@ qseqroll::update_edit_mode (sequence::editmode mode)
 void
 qseqroll::set_chord (int chord)
 {
-    if (m_chord != chord)
+    if (chord_to_int(m_chord) != chord)
     {
-        m_chord = chord;
+        m_chord = int_to_chord(chord);
         if (is_initialized())
             set_dirty();
     }

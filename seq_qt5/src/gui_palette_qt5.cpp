@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2025-04-30
+ * \updates       2025-10-13
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -223,6 +223,12 @@ backseq_paint ()
 }
 
 Color
+chord_paint ()
+{
+    return global_palette().get_color(InvertibleColor::backseq); /* for now */
+}
+
+Color
 bar_paint ()
 {
     return global_palette().get_color(InvertibleColor::dk_grey);
@@ -372,6 +378,12 @@ gui_backseq_brush ()
     return global_palette().get_brush(gui_palette_qt5::brush::backseq);
 }
 
+Brush
+gui_chord_brush ()
+{
+    return global_palette().get_brush(gui_palette_qt5::brush::chord);
+}
+
 PenStyle
 gui_measure_pen_style ()
 {
@@ -484,8 +496,16 @@ gui_palette_qt5::gui_palette_qt5 (const std::string & filename) :
     m_note_brush_style      (Qt::LinearGradientPattern),
     m_scale_brush           (new (std::nothrow) Brush(Qt::Dense3Pattern)),
     m_scale_brush_style     (Qt::Dense3Pattern),
-    m_backseq_brush         (new (std::nothrow) Brush(Qt::Dense2Pattern)),
+    m_backseq_brush
+    (
+        new (std::nothrow) Brush(Qt::Dense2Pattern)
+    ),
     m_backseq_brush_style   (Qt::Dense2Pattern),
+    m_chord_brush
+    (
+        new (std::nothrow) Brush(Qt::BDiagPattern)
+    ),
+    m_chord_brush_style     (Qt::BDiagPattern),
     m_use_gradient_brush    (true),
     m_measure_pen_style     (get_pen(penstyle::solid)),
     m_beat_pen_style        (get_pen(penstyle::solid)),
@@ -775,6 +795,8 @@ gui_palette_qt5::reset_invertibles ()
     m_scale_brush->setStyle(m_scale_brush_style);
     m_backseq_brush->setColor(get_color(InvertibleColor::backseq));
     m_backseq_brush->setStyle(m_backseq_brush_style);
+    m_chord_brush->setColor(get_color(InvertibleColor::backseq));
+    m_chord_brush->setStyle(m_chord_brush_style);
 }
 
 /**
@@ -1303,7 +1325,8 @@ gui_palette_qt5::set_brushes
     const std::string & emptybrush,
     const std::string & notebrush,
     const std::string & scalebrush,
-    const std::string & backseqbrush
+    const std::string & backseqbrush,
+    const std::string & chordbrush
 )
 {
     BrushStyle temp = get_brush_style(emptybrush);
@@ -1342,11 +1365,21 @@ gui_palette_qt5::set_brushes
         {
             /*
              * Background sequence brush
-             *
-             * (void) make_brush(m_backseq_brush, m_backseq_brush_style, temp);
-             * temp = get_brush_style(backseqbrush);
-             * result = temp != Qt::TexturePattern;
              */
+
+            (void) make_brush(m_backseq_brush, m_backseq_brush_style, temp);
+            temp = get_brush_style(backseqbrush);
+            result = temp != Qt::TexturePattern;
+        }
+        if (result)
+        {
+            /*
+             * Chord brush
+             */
+
+            (void) make_brush(m_chord_brush, m_chord_brush_style, temp);
+            temp = get_brush_style(chordbrush);
+            result = temp != Qt::TexturePattern;
         }
     }
     return result;
@@ -1358,7 +1391,8 @@ gui_palette_qt5::get_brush_names
     std::string & emptybrush,
     std::string & notebrush,
     std::string & scalebrush,
-    std::string & backseqbrush
+    std::string & backseqbrush,
+    std::string & chordbrush
 )
 {
     bool result = true;
@@ -1382,6 +1416,11 @@ gui_palette_qt5::get_brush_names
     if (temp.empty())
         result = false;
 
+    temp = get_brush_name(m_chord_brush_style);
+    chordbrush = temp;
+    if (temp.empty())
+        result = false;
+
     return result;
 }
 
@@ -1395,6 +1434,7 @@ gui_palette_qt5::get_brush (brush index)
         case brush::note:       return *m_note_brush;       break;
         case brush::scale:      return *m_scale_brush;      break;
         case brush::backseq:    return *m_backseq_brush;    break;
+        case brush::chord:      return *m_chord_brush;      break;
         default:                return s_dummy;             break;
     }
     return s_dummy;

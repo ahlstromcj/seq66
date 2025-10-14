@@ -29,8 +29,7 @@ the eventlist. The notes adhere to the currently selected musical scale.
 
         -   Could add a starting horizontal and vertical zoom
             to the 'usr' configuration file.
-        -   Scale drawing should take priority over chord drawing...
-            or vice versa?
+        -   Scale drawing takes priority over chord drawing.
 
 Background sequence coloring:
 

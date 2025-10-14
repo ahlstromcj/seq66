@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2025-06-14
+ * \updates       2025-10-14
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of many scale interval patterns if working with
@@ -232,19 +232,7 @@ scales_policy (scales s, keys keyofpattern, int k)
 
         int k2 = k + c_octave_size - key_to_int(keyofpattern);
         k2 %= c_octave_size;
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        bool result = c_scales_policy[int(s)][k2];
-        std::string name = musical_note_name(k);
-        printf
-        (
-            "key %d (%3s) policy[%d] = %s\n",
-            k, name.c_str(), k2, result ? "T" : "F"
-        );
-        return result;
-#else
         return c_scales_policy[int(s)][k2];
-#endif
     }
 }
 
@@ -684,7 +672,7 @@ chord_number_valid (int number)
 const char *
 chord_name_ptr (int number)
 {
-    static const std::string c_chord_table_text [c_chord_number + 1] =
+    static const std::string c_chord_table_text [c_chord_number + 1]
     {
         "Chords off",   "Major",       "Majb5",      "minor",   "minb5",
         "sus2",         "sus4",        "aug",        "augsus4", "tri",
@@ -707,6 +695,9 @@ chord_name_ptr (int number)
  *  seq32 project.  These values indicate the note offsets needed for a
  *  particular kind of chord.  0 means no offset, and a -1 ends the list of
  *  note offsets for the chord.
+ *
+ *  Strictly speaking, we could just assume 0 is always present and save
+ *  a little space-time.
  */
 
 const chord_notes &
@@ -714,21 +705,21 @@ chord_entry (int number)
 {
     static const std::vector<chord_notes> s_chord_table =
     {
-        { 0, -1, 0,  0,   0,  0 },      /* Off          */
-        { 0,  4, 7, -1,   0,  0 },      /* Major        */
-        { 0,  4, 6, -1,   0,  0 },      /* Majb5        */
-        { 0,  3, 7, -1,   0,  0 },      /* minor        */
-        { 0,  3, 6, -1,   0,  0 },      /* minb5        */
-        { 0,  2, 7, -1,   0,  0 },      /* sus2         */
-        { 0,  5, 7, -1,   0,  0 },      /* sus4         */
-        { 0,  4, 8, -1,   0,  0 },      /* aug          */
-        { 0,  5, 8, -1,   0,  0 },      /* augsus4      */
-        { 0,  3, 6,  9,  -1,  0 },      /* tri          */
-        { 0,  4, 7,  9,  -1,  0 },      /* 6            */
-        { 0,  5, 7,  9,  -1,  0 },      /* 6sus4        */
-        { 0,  4, 7,  9,  14, -1 },      /* 6add9        */
-        { 0,  3, 7,  9,  -1,  0 },      /* m6           */
-        { 0,  3, 7,  9,  14, -1 },      /* m6add9       */
+        { 0, -1, 0,   0,  0,  0 },      /* Off          */
+        { 0,  4, 7,  -1,  0,  0 },      /* Major        */
+        { 0,  4, 6,  -1,  0,  0 },      /* Majb5        */
+        { 0,  3, 7,  -1,  0,  0 },      /* minor        */
+        { 0,  3, 6,  -1,  0,  0 },      /* minb5        */
+        { 0,  2, 7,  -1,  0,  0 },      /* sus2         */
+        { 0,  5, 7,  -1,  0,  0 },      /* sus4         */
+        { 0,  4, 8,  -1,  0,  0 },      /* aug          */
+        { 0,  5, 8,  -1,  0,  0 },      /* augsus4      */
+        { 0,  3, 6,   9, -1,  0 },      /* tri          */
+        { 0,  4, 7,   9, -1,  0 },      /* 6            */
+        { 0,  5, 7,   9, -1,  0 },      /* 6sus4        */
+        { 0,  4, 7,   9, 14, -1 },      /* 6add9        */
+        { 0,  3, 7,   9, -1,  0 },      /* m6           */
+        { 0,  3, 7,   9, 14, -1 },      /* m6add9       */
         { 0,  4, 7,  10, -1,  0 },      /* 7            */
         { 0,  5, 7,  10, -1,  0 },      /* 7sus4        */
         { 0,  4, 8,  10, -1,  0 },      /* 7#5          */
@@ -759,6 +750,77 @@ chord_entry (int number)
         number = 0;
 
     return s_chord_table[number];
+}
+
+std::string
+chord_intervals (chords c)
+{
+    std::string result;
+    const chord_notes & cn = chord_entry(static_cast<int>(c));
+    for (auto cnote : cn)
+    {
+        if (cnote == (-1))
+        {
+            break;
+        }
+        else
+        {
+            result += std::to_string(cnote);
+            result += " ";
+        }
+    }
+    return result;
+}
+
+/**
+ *  Given a note number and a selected chord, determines if the note is part
+ *  of that chord. The parameters are not directly checked.
+ *
+ *  We baseline ("move") a high chord note like 18 down to the range of
+ *  0 to 11, for the purpose of drawing a note bar that is not part of
+ *  the chord.
+ *
+ * \param chord
+ *      The currently selected chord (e.g. in the pattern editor).
+ *
+ * \param key
+ *      The key selected for the pattern.
+ *
+ * \param note
+ *      The value of the note, ranging from 0 to 127.
+ */
+
+bool
+note_in_chord (chords c, keys k, int note)
+{
+    bool result = false;
+    const chord_notes & cn = chord_entry(static_cast<int>(c));
+    int offset = key_to_int(k);
+    int basenote = note % c_octave_size - offset; /* e.g. key D becomes C   */
+    if (basenote < 0)
+        basenote += c_octave_size;
+
+    for (auto cnote : cn)
+    {
+        if (cnote == (-1))
+        {
+            break;
+        }
+        else
+        {
+            if (cnote > c_octave_size)          /* an adjustment needed?    */
+                cnote -= c_octave_size;
+
+            if (cnote == basenote)
+            {
+                result = true;
+                break;
+            }
+            else if (cnote > basenote)
+                break;
+        }
+    }
+    return result;
 }
 
 /**

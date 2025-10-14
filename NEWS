@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.22
 Chris Ahlstrom
-2015-07-10 to 2025-09-19
+2015-07-10 to 2025-10-14
 
 # Change Log
 
-## [0.99.22] - 2025-09-19
+## [0.99.22] - 2025-10-14
 
 ### Added
 
@@ -14,6 +14,16 @@ Chris Ahlstrom
     -   Giving a grid slot "focus" and then pressing the Menu key
         brings up the grid-slot popup menu.
 -   Pattern editor.
+    -   Now the "C" key labels are always shown no matter what the
+        selected key. Define SEQ66\_SHOW\_SELECTED\_KEY\_OCTAVE to
+        revert to the old behavior.
+    -   Showing notes in chord:
+        -   Added a new brush called "chord" to the palette file.
+        -   When a chord is active, the notes that are _not_
+            in the chord are grayed out with diagonal hash lines.
+        -   The selected key and selected chord determine the
+            actual chord represented on the pattern grid.
+
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2025-05-20
+ * \updates       2025-10-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -170,7 +170,8 @@ palettefile::parse_stream (std::ifstream & file)
         std::string snote = get_variable(file, tag, "note");
         std::string sscale = get_variable(file, tag, "scale");
         std::string sbackseq = get_variable(file, tag, "backseq");
-        ok = m_palettes.set_brushes(sempty, snote, sscale, sbackseq);
+        std::string schord = get_variable(file, tag, "chord");
+        ok = m_palettes.set_brushes(sempty, snote, sscale, sbackseq, schord);
     }
     if (ok)
     {
@@ -316,6 +317,7 @@ palettefile::write_stream (std::ofstream & file)
     std::string snote;
     std::string sscale;
     std::string sbackseq;
+    std::string schord;
     file <<
         "\n"
         "# This section defines brush styles to use. The names are based on the\n"
@@ -335,13 +337,14 @@ palettefile::write_stream (std::ofstream & file)
         "[brushes]\n"
         "\n"
         ;
-    if (m_palettes.get_brush_names(sempty, snote, sscale, sbackseq))
+    if (m_palettes.get_brush_names(sempty, snote, sscale, sbackseq, schord))
     {
         file
             << "empty = " << sempty << "\n"
             << "note = " << snote << "\n"
             << "scale = " << sscale << "\n"
             << "backseq = " << sbackseq << "\n"
+            << "chord = " << schord << "\n"
             ;
     }
 
