@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-04-28
+ * \updates       2025-10-15
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -55,8 +55,8 @@ class performer;
 static const int qc_eventarea_y     = 16;
 static const int qc_eventevent_y    = 10;
 static const int qc_eventevent_x    =  5;
-static const int s_x_tick_fix       =  5;   // 2;
-static std::string s_edit_msg{"Note events cannot be edited in the data pane."};
+static const int s_x_tick_fix       =  2;
+static std::string s_edit_msg{"Cannot edit note events in the event pane."};
 
 /**
  *  Principal constructor.
@@ -69,7 +69,7 @@ qstriggereditor::qstriggereditor
     qseqeditframe64 * frame,
     int zoom, int snap, int keyheight,
     QWidget * parent,
-    int xoffset
+    int xoffset /* 0 */
 ) :
     QWidget             (parent),
     qseqbase            (p, s, frame, zoom, snap),

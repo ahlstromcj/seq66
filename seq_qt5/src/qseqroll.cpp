@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-10-14
+ * \updates       2025-10-15
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -110,6 +110,8 @@ qseqroll::qseqroll
     m_note_off_margin       (2),
     m_background_sequence   (seq::unassigned()),
     m_draw_background_seq   (false),
+    m_show_scale_or_chords  (true),
+    m_filter_painted_notes  (false),
     m_status                (0),
     m_cc                    (0),
     m_edit_mode             (mode),
@@ -390,6 +392,22 @@ qseqroll::set_background_sequence (bool state, int seq)
     }
 }
 
+void
+qseqroll::toggle_show_scale_or_chords ()
+{
+    m_show_scale_or_chords = ! m_show_scale_or_chords;
+    if (is_initialized())
+        set_dirty();
+}
+
+void
+qseqroll::toggle_filter_painted_notes ()
+{
+    m_filter_painted_notes = ! m_filter_painted_notes;
+    if (is_initialized())
+        set_dirty();
+}
+
 /**
  *  Does anybody use this one? qseqeditframe64::on_automation_change().
  */
@@ -612,24 +630,27 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
 
         painter.setPen(pen);
         painter.drawLine(r.x(), y, r.x() + r.width(), y);
-        if (m_scale != scales::off)
+        if (show_scale_or_chords())
         {
-            if (! scales_policy(m_scale, m_key, modkey))
+            if (m_scale != scales::off)
             {
-                painter.setBrush(backseq_brush());
-                painter.drawRect(0, y + 1, r.width(), unit_height() - 1);
+                if (! scales_policy(m_scale, m_key, modkey))
+                {
+                    painter.setBrush(backseq_brush());
+                    painter.drawRect(0, y + 1, r.width(), unit_height() - 1);
+                }
             }
-        }
-        else if (m_chord != chords::none)
-        {
-            if (note_in_chord(m_chord, m_key, modkey))
+            else if (m_chord != chords::none)
             {
-                continue;
-            }
-            else
-            {
-                painter.setBrush(chord_brush());
-                painter.drawRect(0, y + 1, r.width(), unit_height() - 1);
+                if (note_in_chord(m_chord, m_key, modkey))
+                {
+                    continue;
+                }
+                else
+                {
+                    painter.setBrush(chord_brush());
+                    painter.drawRect(0, y + 1, r.width(), unit_height() - 1);
+                }
             }
         }
     }
@@ -1178,20 +1199,43 @@ bool
 qseqroll::add_painted_note (midipulse tick, int note, bool first)
 {
     bool result;
-    int n = note_off_length();
-    if (first)
-        track().push_undo();                /* multiple-note undo only      */
-
-    tick = closest_snap(snap(), tick);
-    if (m_chord != chords::none)
-        result = track().add_chord(static_cast<int>(m_chord), tick, n, note);
-    else
-        result = track().add_painted_note(tick, n, note, true /* paint */);
-
-    if (result)
+    bool canpaint = true;
+    bool scales_on = m_scale != scales::off;
+    bool chords_on = m_chord != chords::none;
+    bool filter = filter_painted_notes();
+    if (filter)
     {
-        result = mark_modified();
-        set_dirty();
+        if (scales_on)
+            canpaint = scales_policy(m_scale, m_key, note);
+        else if (chords_on)
+            canpaint = note_in_chord(m_chord, m_key, note);
+    }
+    if (canpaint)
+    {
+        int n = note_off_length();
+        if (first)
+            track().push_undo();            /* multiple-note undo only      */
+
+        tick = closest_snap(snap(), tick);
+        if (chords_on && ! filter)          /* add chords if not filtering  */
+        {
+            result = track().add_chord
+            (
+                static_cast<int>(m_chord), tick, n, note
+            );
+        }
+        else
+        {
+            result = track().add_painted_note
+            (
+                tick, n, note, true /* paint */
+            );
+        }
+        if (result)
+        {
+            result = mark_modified();
+            set_dirty();
+        }
     }
     return result;
 }

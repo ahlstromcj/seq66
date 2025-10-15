@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-07-17
+ * \updates       2025-10-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -223,6 +223,8 @@ private:
 #endif
     bool would_truncate (int measures);
     void scroll_by_step (qscrollmaster::dir d);
+    void set_show_scale_or_chords ();
+    void set_filter_painted_notes ();
     void remove_lfo_frame ();
     void remove_patternfix_frame ();
     QIcon * create_menu_image (bool state);
@@ -276,7 +278,9 @@ private slots:
     void slot_update_zoom (int index);
     void update_seq_name ();
     void slot_log_timesig ();
-    void slot_spacer_button_2 ();
+    void slot_pattern_fix ();
+    void slot_show_scale_or_chords ();
+    void slot_filter_painted_notes ();
     void update_beats_per_bar (int index);
     void text_beats_per_bar ();
     void update_beat_width (int index);

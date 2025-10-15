@@ -20,12 +20,12 @@
  * \file          qseqeditframe64.cpp
  *
  *  This module declares/defines the base class for plastering pattern /
- *  sequence data information in the data area of the pattern editor.
+ *  sequence data information in the pattern editor.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-07-25
+ * \updates       2025-10-15
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -128,6 +128,8 @@
 #include "pixmaps/bus.xpm"
 #include "pixmaps/drum.xpm"
 #include "pixmaps/exp_rec_on.xpm"
+#include "pixmaps/filter_off.xpm"
+#include "pixmaps/filter_on.xpm"
 #include "pixmaps/finger.xpm"
 #include "pixmaps/follow.xpm"
 #include "pixmaps/key.xpm"
@@ -154,6 +156,8 @@
 #include "pixmaps/redo.xpm"
 #include "pixmaps/scale.xpm"
 #include "pixmaps/sequences.xpm"
+#include "pixmaps/show_bars_off.xpm"
+#include "pixmaps/show_bars_on.xpm"
 #include "pixmaps/snap.xpm"
 #include "pixmaps/t_rec_on.xpm"
 #include "pixmaps/thru.xpm"
@@ -181,12 +185,6 @@
 
 namespace seq66
 {
-
-/*
- *  Secret functionality for developer usage.
- */
-
-static const bool s_use_spacer_button_2 = true;
 
 /*
  *  We have an issue that using the new (and larger) qseqeditframe64 class in
@@ -591,8 +589,9 @@ qseqeditframe64::qseqeditframe64
     {
         ui->m_toggle_drum->hide();      /* ui->m_toggle_transpose->hide()   */
         ui->m_map_notes->hide();
-        ui->spacer_button_4->hide();
-        ui->spacer_button_5->hide();
+        ui->btn_filter_painted_notes->hide();
+        ui->btn_show_scale_or_chords->hide();
+        ui->btn_spare_0->hide();
         ui->m_button_loop->hide();
         ui->m_button_lfo->hide();
     }
@@ -1115,24 +1114,14 @@ qseqeditframe64::qseqeditframe64
     );
 
     /*
-     * Secret spacer button.
+     * Thin pattern-fix button. Shown even if "shorter" is active.
      */
 
-    if (s_use_spacer_button_2 && ! shorter)
-    {
-        /*
-         * ui->spacer_button_2->setText("&T");
-         */
-
-        ui->spacer_button_2->setEnabled(true);
-        ui->spacer_button_2->setToolTip("Show the pattern-fix dialog");
-        connect
-        (
-            ui->spacer_button_2, SIGNAL(clicked()),
-            this, SLOT(slot_spacer_button_2())
-        );
-    }
-
+    connect
+    (
+        ui->btn_pattern_fix, SIGNAL(clicked()),
+        this, SLOT(slot_pattern_fix())
+    );
 
     /*
      * This little button is a workaround for Qt's lack of a signal
@@ -1142,8 +1131,6 @@ qseqeditframe64::qseqeditframe64
      *
      * connect(ui->btn_close, SIGNAL(clicked()), this, SLOT(close()));
      */
-
-    ui->btn_close->hide();
 
     set_recording_volume(usr().velocity_override());
 
@@ -1184,6 +1171,36 @@ qseqeditframe64::~qseqeditframe64 ()
 
     cb_perf().unregister(this);
     delete ui;
+}
+
+void
+qseqeditframe64::set_show_scale_or_chords ()
+{
+    bool active = m_seqroll->show_scale_or_chords();
+    if (! usr().dark_theme())
+    {
+        qt_set_icon
+        (
+            active ? show_bars_on_xpm : show_bars_off_xpm,
+            ui->btn_show_scale_or_chords
+        );
+    }
+    ui->btn_show_scale_or_chords->setChecked(active);
+}
+
+void
+qseqeditframe64::set_filter_painted_notes ()
+{
+    bool active = m_seqroll->filter_painted_notes();
+    if (! usr().dark_theme())
+    {
+        qt_set_icon
+        (
+            active ? filter_on_xpm : filter_off_xpm,
+            ui->btn_filter_painted_notes
+        );
+    }
+    ui->btn_filter_painted_notes->setChecked(active);
 }
 
 void
@@ -1647,6 +1664,25 @@ qseqeditframe64::initialize_panels ()
     ui->rollScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     m_seqroll->update_edit_mode(m_edit_mode);
 
+    /**
+     *  New buttons to show/hide the scale or chord bars, and
+     *  to turn on/off the painting of notes not part of the
+     *  selected scale or the selected chord.
+     */
+
+    set_show_scale_or_chords();
+    connect
+    (
+        ui->btn_show_scale_or_chords, SIGNAL(clicked()),
+        this, SLOT(slot_show_scale_or_chords())
+    );
+    set_filter_painted_notes();
+    connect
+    (
+        ui->btn_filter_painted_notes, SIGNAL(clicked()),
+        this, SLOT(slot_filter_painted_notes())
+    );
+
     /*
      * qseqdata
      */
@@ -1974,9 +2010,17 @@ qseqeditframe64::slot_log_timesig ()
  */
 
 void
-qseqeditframe64::slot_spacer_button_2 ()
+qseqeditframe64::slot_show_scale_or_chords ()
 {
-    show_pattern_fix();
+    m_seqroll->toggle_show_scale_or_chords();
+    set_show_scale_or_chords();
+}
+
+void
+qseqeditframe64::slot_filter_painted_notes ()
+{
+    m_seqroll->toggle_filter_painted_notes();
+    set_filter_painted_notes();
 }
 
 /**
@@ -4245,6 +4289,12 @@ qseqeditframe64::show_lfo_frame ()
     }
     else
         m_lfo_wnd->show();
+}
+
+void
+qseqeditframe64::slot_pattern_fix ()
+{
+    show_pattern_fix();
 }
 
 void

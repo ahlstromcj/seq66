@@ -108,6 +108,18 @@ public:
 
 protected:
 
+    bool show_scale_or_chords () const
+    {
+        return m_show_scale_or_chords;
+    }
+
+    bool filter_painted_notes () const
+    {
+        return m_filter_painted_notes;
+    }
+
+protected:
+
     virtual void set_dirty () override;
 
 private:
@@ -119,6 +131,8 @@ private:
         return qseqbase::scroll_offset();
     }
 
+    void toggle_show_scale_or_chords ();
+    void toggle_filter_painted_notes ();
     void flag_dirty ();                 /* tricky code */
     void set_redraw ();
 
@@ -298,6 +312,19 @@ private:
      */
 
     bool m_draw_background_seq;
+
+    /**
+     *  Set to true (the default) if the scale or chord is to be shown.
+     */
+
+    bool m_show_scale_or_chords;
+
+    /**
+     *  Set to true (not the default) if the scale or chord setting is
+     *  to be used to ignore painted notes not in the scale or chord.
+     */
+
+    bool m_filter_painted_notes;
 
     /**
      *  The current status/event selected in the seqedit.  Not used in seqroll
