@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-07-24
+% \update      2025-10-16
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -35,10 +35,26 @@
    \label{fig:pattern_editor_window}
 \end{figure}
 
-   This figure does not show a recent new feature: for selected event,
-   the orange data line is topped with a circular "grab handle" that can
-   be used to change the amplitude of the data (e.g. velocity) being
-   shown.
+   That figure does not show recent new feature; they are shown below:
+
+   \begin{itemize}
+      \item For selected events, the orange data line is topped with a
+         circular "grab handle" that can be used to change the amplitude of the
+         data (e.g. velocity) being shown.
+      \item Notes are, by default, shown with a gradient
+         pattern for a textured appearance.
+      \item New buttons (including buttons reserved for the future).
+      \item Lines and numbers indicating MIDI values. The data pane
+         has been expanded to allow easier dragging to the 0 and 127 
+         extremes.
+   \end{itemize}
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=1.00]{pattern-editor/pattern-edit-window-additions.png}
+   \caption{External Pattern Editor Window Additions for 0.99.22}
+   \label{fig:pattern_editor_window_additions}
+\end{figure}
   
    The \textbf{Pattern Editor} is complex, and we will discuss the external
    window only since its features are a superset of the \textbf{Edit} tab.
@@ -121,6 +137,10 @@
    One can page vertically in the piano roll using the
    \index{keys!page-up} \texttt{Page Up} and 
    \index{keys!page-down} \texttt{Page Down} keys.
+
+   Note that there are recent additions to the data view
+   (see \figureref{fig:pattern_editor_window_additions}).
+   Refer to \sectionref{subsec:pattern_editor_right_buttons}.
 
 \subsection{Pattern Editor / First Row}
 \label{subsec:pattern_editor_first_row}
@@ -250,7 +270,7 @@
 
    \itempar{Chord Types}{pattern editor!chord types}
    \index{chord generation}
-   This setting allows one to select a chord type (e.g. "major" or "minor").
+   This setting allows one to select a chord type (e.g. "Major" or "minor").
    When active, a note is treated like the base note of the selected chord
    type, and extra notes are generated to create that chord.
    The \textbf{Chord Generation Reset} button is at the left of the
@@ -1301,6 +1321,7 @@
       \item \textbf{Note Map}
       \item \textbf{Drum Note Mode}
       \item \textbf{Chord Generation Reset}
+      \item \textbf{Reserved for Expansion}
    \end{enumber}
 
 %   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
@@ -1352,9 +1373,48 @@
 \label{subsubsec:pattern_editor_left_buttons_blank_button}
 
    In order to get the height of the data pane to enlarge, after much
-   head-banging, a button had to be added here.
-
+   head-banging, a button had to be added here for padding.
    It currently has no other purpose.
+
+\subsection{Pattern Editor / Right Buttons}
+\label{subsec:pattern_editor_right_buttons}
+
+   This section describes some additional buttons as shown
+   at the top of this chapter (see
+   \figureref{fig:pattern_editor_window_additions}).
+
+   \begin{enumber}
+      \item \textbf{Toggle Scale/Chord Display}
+      \item \textbf{Toggle Scale/Chord Note Filtering}
+      \item \textbf{Reserved for Expansion (3 buttons)}
+   \end{enumber}
+
+\subsubsection{Pattern Editor / Right Buttons / Toggle Scale/Chord Display}
+\label{subsubsec:pattern_editor_left_buttons_scale_chord_display}
+
+   A new feature of \textsl{Seq66} is the ability to show the note bars
+   that \textsl{are not} in the selected chord.
+   This feature is similar to the display of the selected musical scale
+   (See \sectionref{subsubsec:pattern_editor_second_row_musical_scale}.)
+   One difference is that the display of the scale has priority over the
+   display of the chord.
+
+   This button gives the user the option to show or not show the scale or
+   chord.
+
+\subsubsection{Pattern Editor / Right Buttons / Toggle Scale/Chord Note Filtering}
+\label{subsubsec:pattern_editor_left_buttons_scale_chord_filtering}
+
+   When this button is active (checked) and a scale has been selected,
+   all notes painted into the piano roll are restricted to notes
+   in the scale.
+   Otherwise, any note value can be painted.
+
+   When this button is active and a chord has been selected,
+   the insertion of a full chord is disabled, but
+   all notes painted into the piano roll are restricted to notes
+   in the chord.
+   Otherwise, painting a note paints a chord as per previous behavior.
 
 \subsection{Pattern Editor / Data Pane}
 \label{subsec:pattern_editor_data_view}
