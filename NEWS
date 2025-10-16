@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.22
 Chris Ahlstrom
-2015-07-10 to 2025-10-14
+2015-07-10 to 2025-10-16
 
 # Change Log
 
-## [0.99.22] - 2025-10-14
+## [0.99.22] - 2025-10-16
 
 ### Added
 
@@ -17,13 +17,20 @@ Chris Ahlstrom
     -   Now the "C" key labels are always shown no matter what the
         selected key. Define SEQ66\_SHOW\_SELECTED\_KEY\_OCTAVE to
         revert to the old behavior.
-    -   Showing notes in chord:
+    -   Showing note values in scale/chord:
         -   Added a new brush called "chord" to the palette file.
         -   When a chord is active, the notes that are _not_
             in the chord are grayed out with diagonal hash lines.
-        -   The selected key and selected chord determine the
+        -   Added a button to toggle showing the scale/chord bars.
+    -   Painting notes in scale/chord:
+        -   Added a button to toggle the filtering of notes based
+            on scale/chord.
+        -   The selected key, scale, and chord determine the
             actual chord represented on the pattern grid.
-
+    -   Fixed the snap-interval setting for drawing notes.
+    -   We now store the selected chord for a pattern, if any, as a
+        new "c\_musicchord" SeqSpec. Still need to work out some
+        issues with this.
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.

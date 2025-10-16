@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2023-09-17
+ * \updates       2025-10-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -71,7 +71,7 @@ s_tag_names_container
     { c_perf_bw,        "Perfedit beat-width" },
     { c_tempo_map,      "Reserve seq32 tempo map" },
     { c_midiinbus,      "Track input bus" },
-    { c_reserved_2,     "Reserved 2" },
+    { c_musicchord,     "Track chord" },
     { c_tempo_track,    "Alternate tempo track number" },
     { c_seq_color,      "Color" },
     { c_seq_edit_mode,  "Normal/drum edit mode, not saved/used" },

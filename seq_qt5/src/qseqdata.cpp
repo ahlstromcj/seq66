@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-30
+ * \updates       2025-10-16
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -79,26 +79,16 @@ namespace seq66
 static const int sc_dataarea_y              = 156;
 static const int sc_dataarea_y_effective    = 128;
 static const int sc_dataarea_y_offset       =  12;
-static const int sc_dataarea_y_sub          =  48;  // 32;
+static const int sc_dataarea_y_sub          =  48;
 
 /**
- *  For issue #140, made the data area 16 bytes or so higher. This function
- *  adds a y offset.
-
-static int
-data_height (int height, midibyte value)
-{
-    return byte_height(height, value) - sc_dataarea_y_offset;
-}
- *
- */
-
-/**
- *  Base font size in points, and the y increment to use to avoid text overwrite.
+ *  Base font size in points, and the y increment to use to avoid text
+ *  overwrite.
  */
 
 static const int sc_font_size       = 10;
 static const int sc_text_spacing    = sc_font_size + 4;
+static const int sc_time_spacing    = sc_font_size + 18;
 static const int sc_1               = sc_font_size + 1;
 static const int sc_2               = sc_1 * 2;
 
@@ -439,26 +429,6 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 brush.setColor(grey_color());
                 painter.setBrush(brush);
             }
-#if defined USE_DRAWING_OF_TS_EVENTS
-
-            /*
-             * This is taken care of by separately drawing the logged time
-             * signatures.  That also fixes a weird/osbscure bug at first
-             * drawing.
-             */
-
-            else if (is_time_signature() && cev->is_time_signature())
-            {
-                int n = int(cev->get_sysex(0));
-                int d = beat_power_of_2(int(cev->get_sysex(1)));
-                std::string text = std::to_string(n);
-                painter.setPen(pen);
-                text += "/";
-                text += std::to_string(d);
-                y_offset = 20;
-                painter.drawText(x_offset, y_offset, qt(text));
-            }
-#endif
             else if (is_program_change() && cev->is_program_change())
             {
                 int patch = int(cev->d0());
@@ -509,9 +479,9 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             }
         }
     }
-    if (is_time_signature())                    /* ca 2023-07-02 redundant  */
+    if (is_time_signature())
     {
-        const int y_offset = sc_text_spacing;   /* m_dataarea_y - 25;       */
+        const int y_offset = sc_time_spacing;
         int count = track().time_signature_count();
         for (int tscount = 0; tscount < count; ++tscount)
         {
@@ -520,14 +490,14 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 break;
 
             midipulse start = ts.sig_start_tick;
-            int pos = xoffset(start);           // + 3;
+            int pos = xoffset(start);
             int n = ts.sig_beats_per_bar;
             int d = ts.sig_beat_width;
             std::string text = std::to_string(n);
             text += "/";
             text += std::to_string(d);
 
-            pen.setColor(Qt::white);            // pen.setColor(Qt::black);
+            pen.setColor(Qt::white);
             painter.setPen(pen);
             painter.drawText(pos, y_offset, qt(text));
         }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-24
+ * \updates       2025-10-16
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -225,6 +225,7 @@ sequence::sequence (int ppqn) :
     m_note_off_velocity         (usr().note_off_velocity()),
     m_musical_key               (usr().seqedit_key()),
     m_musical_scale             (usr().seqedit_scale()),
+    m_musical_chord             (0),
     m_background_sequence       (usr().seqedit_bgsequence()),
     m_mutex                     ()
 {
@@ -396,6 +397,7 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
         m_note_off_velocity         = rhs.m_note_off_velocity;
         m_musical_key               = rhs.m_musical_key;
         m_musical_scale             = rhs.m_musical_scale;
+        m_musical_chord             = rhs.m_musical_chord;
         m_background_sequence       = rhs.m_background_sequence;
 
         /*
@@ -460,6 +462,21 @@ sequence::musical_scale (int scale, bool user_change)
         if (change)
         {
             m_musical_scale = midibyte(scale);
+            if (user_change)
+                modify();
+        }
+    }
+}
+
+void
+sequence::musical_chord (int c, bool user_change)
+{
+    if (legal_chord(c))
+    {
+        bool change = c != m_musical_chord;
+        if (change)
+        {
+            m_musical_chord = midibyte(c);
             if (user_change)
                 modify();
         }

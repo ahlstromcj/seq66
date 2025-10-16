@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.22
 Chris Ahlstrom
-2019-04-13 to 2025-10-14
+2019-04-13 to 2025-10-16
 
 Hot:
 
@@ -9,10 +9,9 @@ Hot:
         -   Remap and restart just exits.
         -   Qsynth acting goofy.
     -   Tempo event in track 0 does not override c_tempo_map SeqSpec.
-    -   Page UP/Down in seqroll not being passed to seqkeys.
     -   Consider for issue #141:
-        -   Stored the selected key, if any, as a new "c_musicchord"
-            SeqSpec.
+        -   Stored the selected chord, if any, as a new "c_musicchord"
+            SeqSpec. Now get it to be saved and read back properly.
         -   Provide an option to show/not-show the chord bars
             (in 'usr' file?)
         -   Provide an option or button to disallow painting notes

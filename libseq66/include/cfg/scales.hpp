@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-10-14
+ * \updates       2025-10-16
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the Seq64 globals module.  Includes the
@@ -172,6 +172,10 @@ inline bool
 legal_scale (int s)
 {
     return s >= c_scales_off && s < c_scales_max;
+
+    /*
+     * return s >= scale_to_int(scales::off) && s < scale_to_int(scales::max);
+     */
 }
 
 inline scales
@@ -201,17 +205,23 @@ enum class chords
     max
 };
 
+inline chords
+int_to_chord (int c)
+{
+    return c >= 0 && c < static_cast<int>(chords::max) ?
+        static_cast<chords>(c) : chords::none ;
+}
+
 inline int
 chord_to_int (chords c)
 {
     return static_cast<int>(c);
 }
 
-inline chords
-int_to_chord (int c)
+inline bool
+legal_chord (int s)
 {
-    return c >= 0 && c < static_cast<int>(chords::max) ?
-        static_cast<chords>(c) : chords::none ;
+    return s >= chord_to_int(chords::major) && s < chord_to_int(chords::max);
 }
 
 /**

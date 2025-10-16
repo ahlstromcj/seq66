@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-07-14
+ * \updates       2025-10-16
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1005,6 +1005,12 @@ private:
      */
 
     midibyte m_musical_scale;
+
+    /**
+     *  Holds a copy of the musical chord for this sequence.
+     */
+
+    midibyte m_musical_chord;
 
     /**
      *  Holds a copy of the background sequence number for this sequence,
@@ -2087,6 +2093,11 @@ public:
         return m_musical_scale;
     }
 
+    midibyte musical_chord () const
+    {
+        return m_musical_chord;
+    }
+
     int background_sequence () const
     {
         return int(m_background_sequence);
@@ -2094,6 +2105,7 @@ public:
 
     void musical_key (int key, bool user_change = false);
     void musical_scale (int scale, bool user_change = false);
+    void musical_chord (int c, bool user_change = false);
     bool background_sequence (int bs, bool user_change = false);
     void show_events () const;
     bool copy_events (const eventlist & newevents);

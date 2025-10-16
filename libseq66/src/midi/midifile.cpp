@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-09-18
+ * \updates       2025-10-16
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1578,6 +1578,11 @@ midifile::parse_smf_1 (performer & p, int screenset, bool convert_smf0)
                                 s.musical_scale(read_byte());
                                 --len;
                             }
+                            else if (seqspec == c_musicchord)
+                            {
+                                s.musical_chord(read_byte());
+                                --len;
+                            }
                             else if (seqspec == c_backsequence)
                             {
                                 s.background_sequence(int(read_long()));
@@ -2065,7 +2070,7 @@ midifile::parse_seqspec_track (performer & p, int file_size)
  *      c_midictrl         c_midiclocks      c_notes          c_bpmtag
  *      c_mutegroups       c_musickey *      c_musicscale *
  *      c_backsequence *   c_perf_bp_mes     c_perf_bw        c_tempo_map !
- *      c_midiinbus !      c_reserved_2 !    c_tempo_track
+ *      c_midiinbus !      c_tempo_track
  *
  * Not handled:
  *
@@ -2098,6 +2103,7 @@ midifile::prop_header_loop (performer & p, int file_size)
             case c_tempo_map:
                 break;
 #endif
+            case c_musicchord:       ok = parse_c_musicchord();     break;
 
             /*
              * The following are handled in the event-read loop, or are
@@ -2400,6 +2406,20 @@ midifile::parse_c_musicscale ()
 {
     int scale = int(read_byte());
     usr().seqedit_scale(scale);
+    return true;
+}
+
+/**
+ * There is currently no "global" version of this setting.
+ * That would make no sense.
+ */
+
+bool
+midifile::parse_c_musicchord ()
+{
+    (void) read_byte();
+    // int scale = int(read_byte());
+    // usr().seqedit_scale(scale);
     return true;
 }
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-10-15
+ * \updates       2025-10-16
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1181,6 +1181,18 @@ qseqroll::note_off_length () const
  *      else
  *          result = track().push_add_note(tick, n, note, true);
  *
+ * Scenarios:
+ *
+ *      -   Normal (no scale, no chord): Just add the note.
+ *      -   Scale on
+ *          -   Ignore the chord status.
+ *          -   Filtering off: Just add the note.
+ *          -   Filtering on: If the note is on scale, add the note.
+ *      -   Chord on (scales off):
+ *          -   Filtering off: Add the chord at the base note.
+ *          -   Filtering on: If the note is part of the chord, just
+ *              add the single note.
+ *
  * \param tick
  *      The time destination of the new note, in pulses.
  *
@@ -1198,26 +1210,30 @@ qseqroll::note_off_length () const
 bool
 qseqroll::add_painted_note (midipulse tick, int note, bool first)
 {
-    bool result;
-    bool canpaint = true;
+    bool result = false;
+    bool can_paint = true;
     bool scales_on = m_scale != scales::off;
     bool chords_on = m_chord != chords::none;
     bool filter = filter_painted_notes();
     if (filter)
     {
         if (scales_on)
-            canpaint = scales_policy(m_scale, m_key, note);
+        {
+            can_paint = scales_policy(m_scale, m_key, note);
+            chords_on = false;
+        }
         else if (chords_on)
-            canpaint = note_in_chord(m_chord, m_key, note);
+            can_paint = note_in_chord(m_chord, m_key, note);
     }
-    if (canpaint)
+    if (can_paint)
     {
+        bool can_add_chords = chords_on && ! filter;
         int n = note_off_length();
         if (first)
             track().push_undo();            /* multiple-note undo only      */
 
         tick = closest_snap(snap(), tick);
-        if (chords_on && ! filter)          /* add chords if not filtering  */
+        if (can_add_chords)                 /* add chords if not filtering  */
         {
             result = track().add_chord
             (
@@ -2221,9 +2237,10 @@ qseqroll::update_edit_mode (sequence::editmode mode)
 void
 qseqroll::set_chord (int chord)
 {
-    if (chord_to_int(m_chord) != chord)
+    chords c = int_to_chord(chord);
+    if (m_chord != c)
     {
-        m_chord = int_to_chord(chord);
+        m_chord = c;
         if (is_initialized())
             set_dirty();
     }
@@ -2244,9 +2261,10 @@ qseqroll::set_key (int key)
 void
 qseqroll::set_scale (int scale)
 {
-    if (int(m_scale) != scale)
+    scales s = int_to_scale(scale);
+    if (m_scale != s)
     {
-        m_scale = static_cast<scales>(scale);
+        m_scale = s;
         if (is_initialized())
             set_dirty();
     }

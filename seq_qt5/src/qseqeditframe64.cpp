@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-10-15
+ * \updates       2025-10-16
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -592,6 +592,14 @@ qseqeditframe64::qseqeditframe64
         ui->btn_filter_painted_notes->hide();
         ui->btn_show_scale_or_chords->hide();
         ui->btn_spare_0->hide();
+        ui->btn_spare_1->hide();
+        ui->btn_spare_2->hide();
+        ui->btn_pattern_fix->hide();
+
+        /*
+         * ui->btn_spare_3->hide();
+         */
+
         ui->m_button_loop->hide();
         ui->m_button_lfo->hide();
     }
@@ -626,6 +634,16 @@ qseqeditframe64::qseqeditframe64
             this, SLOT(remap_notes())
         );
         ui->m_map_notes->setEnabled(can_transpose);
+
+        /*
+         * Thin pattern-fix button.
+         */
+
+        connect
+        (
+            ui->btn_pattern_fix, SIGNAL(clicked()),
+            this, SLOT(slot_pattern_fix())
+        );
     }
 
     /*
@@ -1111,16 +1129,6 @@ qseqeditframe64::qseqeditframe64
     (
         ui->m_combo_rec_vol, SIGNAL(currentIndexChanged(int)),
         this, SLOT(slot_recording_volume(int))
-    );
-
-    /*
-     * Thin pattern-fix button. Shown even if "shorter" is active.
-     */
-
-    connect
-    (
-        ui->btn_pattern_fix, SIGNAL(clicked()),
-        this, SLOT(slot_pattern_fix())
     );
 
     /*
@@ -2479,7 +2487,7 @@ qseqeditframe64::reset_chord ()
 }
 
 void
-qseqeditframe64::set_chord (int chord)
+qseqeditframe64::set_chord (int chord, qbase::status qs)
 {
     if (chord_number_valid(chord))
     {
@@ -2488,6 +2496,9 @@ qseqeditframe64::set_chord (int chord)
         if (not_nullptr(m_seqroll))
             m_seqroll->set_chord(chord);
 
+        bool user_change = qs == qbase::status::edit;
+        track().musical_chord(midibyte(chord), user_change);
+//      set_track_change();             /* to solve issue #90   */
         set_dirty();                    /* modified for issue #90           */
     }
 }
@@ -3440,6 +3451,7 @@ qseqeditframe64::update_grid_snap (int index)
         int item = snap_list().ctoi(index);
         int v = qnfactor / item;
         set_grid_snap(v);               /* set_snap(v) */
+        set_snap(v);                    /* pass along to sub-panes          */
     }
 }
 
@@ -3453,7 +3465,7 @@ qseqeditframe64::update_grid_snap (int index)
  *  16.
  *
  * \param s
- *      The prospective snap value to set.  It is checked only to make
+ *      The prospective snap value to set.  It is checked to make
  *      sure it is greater than 0, to avoid a numeric exception.
  */
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10
- * \updates       2023-09-17
+ * \updates       2025-10-16
  * \license       GNU GPLv2 or above
  *
  *  This class is meant to hold the bytes that represent MIDI events and other
@@ -76,7 +76,7 @@ const midilong c_perf_bp_mes    = 0x24240015; /**< Perfedit beats/measure.  */
 const midilong c_perf_bw        = 0x24240016; /**< Perfedit beat-width.     */
 const midilong c_tempo_map      = 0x24240017; /**< Reserve seq32 tempo map. */
 const midilong c_midiinbus      = 0x24240018; /**< Track's input bus.       */
-const midilong c_reserved_2     = 0x24240019; /**< Reserved for expansion.  */
+const midilong c_musicchord     = 0x24240019; /**< Reserved for expansion.  */
 const midilong c_tempo_track    = 0x2424001A; /**< Alt tempo track number.  */
 const midilong c_seq_color      = 0x2424001B; /**< Feature from Kepler34.   */
 const midilong c_seq_edit_mode  = 0x2424001C; /**< Unused, Kepler34.        */

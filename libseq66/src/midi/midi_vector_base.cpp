@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2025-06-23
+ * \updates       2025-10-16
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -73,7 +73,6 @@
             c_perf_bw     (perfedit's beat-width setting)
             c_tempo_map   (seq32's tempo map)
             c_midiinbus
-            c_reserved_2
             c_tempo_track (holds the song's particular tempo track)
 \endverbatim
  *
@@ -568,6 +567,11 @@ midi_vector_base::fill_proprietary ()
         {
             put_seqspec(c_musicscale, 1);
             put(seq().musical_scale());
+        }
+        if (seq().musical_chord() != 0)
+        {
+            put_seqspec(c_musicchord, 1);
+            put(seq().musical_chord());
         }
         if (seq::valid(seq().background_sequence()))
         {

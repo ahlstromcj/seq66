@@ -383,9 +383,9 @@ private:        /* setters and getters          */
     void set_midi_bus (int midibus, qbase::status qs = qbase::status::edit);
     void set_note_length (int nlen);
     void set_snap (midipulse s);
-    void set_chord (int chord);
     void set_key (int key, qbase::status qs = qbase::status::edit);
     void set_scale (int key, qbase::status qs = qbase::status::edit);
+    void set_chord (int chord, qbase::status qs = qbase::status::edit);
     void set_background_sequence
     (
         int seqnum,
