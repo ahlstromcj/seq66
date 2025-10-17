@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-10-16
+ * \updates       2025-10-17
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -483,13 +483,20 @@ sequence::musical_chord (int c, bool user_change)
     }
 }
 
+/**
+ *  This result is tested in qseqeditframe64::set_background_sequence()
+ *  before passing the change to the qseqroll. At the opening of
+ *  the pattern editor, the value has been already set, so we
+ *  the value anyway. Suckage.
+ */
+
 bool
 sequence::background_sequence (int bs, bool user_change)
 {
     bool result = false;
     if (seq::legal(bs))
     {
-        result = bs != m_background_sequence;
+        result = bs != m_background_sequence || ! user_change;
         if (result)
         {
             m_background_sequence = short(bs);

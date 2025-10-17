@@ -225,7 +225,7 @@ backseq_paint ()
 Color
 chord_paint ()
 {
-    return global_palette().get_color(InvertibleColor::backseq); /* for now */
+    return global_palette().get_color(InvertibleColor::backseq);
 }
 
 Color
@@ -339,13 +339,13 @@ text_slots_paint ()
 Color
 scale_paint ()
 {
-    return global_palette().get_color(InvertibleColor::scale) ;
+    return global_palette().get_color(InvertibleColor::scale);
 }
 
 Color
 extra_paint ()
 {
-    return global_palette().get_color(InvertibleColor::extra) ;
+    return global_palette().get_color(InvertibleColor::extra);
 }
 
 Brush
@@ -1348,7 +1348,7 @@ gui_palette_qt5::set_brushes
 
             m_use_gradient_brush = temp == Qt::LinearGradientPattern;
             (void) make_brush(m_note_brush, m_note_brush_style, temp);
-            temp = get_brush_style(scalebrush);
+            temp = get_brush_style(notebrush);
             result = temp != Qt::TexturePattern;
         }
         if (result)
@@ -1358,7 +1358,7 @@ gui_palette_qt5::set_brushes
              */
 
             (void) make_brush(m_scale_brush, m_scale_brush_style, temp);
-            temp = get_brush_style(backseqbrush);
+            temp = get_brush_style(scalebrush);
             result = temp != Qt::TexturePattern;
         }
         if (result)
@@ -1441,8 +1441,8 @@ gui_palette_qt5::get_brush (brush index)
 }
 
 /**
- *  Provides the names of the Qt::BrushStyle enumeration, with the word
- *  "Pattern" dropped off (NoBrush left as is).
+ *  Provides the names of the Qt lines/pen enumeration, with the word
+ *  "Pen" dropped off (NoPen left as is).
  */
 
 const std::string &

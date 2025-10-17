@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-10-16
+ * \updates       2025-10-17
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -479,6 +479,13 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             }
         }
     }
+
+#if defined SEQ55_SHOW_REDUNDANT_TIME_SIG
+    /*
+     * All time-sigs can be seen in the seqtime pane or in the
+     * event editor.
+     */
+
     if (is_time_signature())
     {
         const int y_offset = sc_time_spacing;
@@ -502,6 +509,8 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             painter.drawText(pos, y_offset, qt(text));
         }
     }
+#endif
+
     track().draw_unlock();
     if (m_line_adjust)                          /* draw edit line           */
     {

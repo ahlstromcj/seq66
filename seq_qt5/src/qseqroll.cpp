@@ -593,7 +593,6 @@ void
 qseqroll::draw_grid (QPainter & painter, const QRect & r)
 {
     QBrush bbrush(back_color());                    /* brush(Qt::NoBrush)   */
-    QBrush sbrush(scale_brush());                   /* brush(Qt::NoBrush)   */
     QPen pen(grey_color());                         /* pen(Qt::lightGray)   */
     pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
     pen.setWidth(c_border_width);                   /* border thickness     */
@@ -602,7 +601,6 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     painter.setPen(pen);
     painter.drawRect(r);
     pen.setWidth(horiz_pen_width());
-    sbrush.setColor(scale_paint());
     painter.drawLine(r.x(), 1, r.x() + r.width(), 1);
 
     /*
@@ -634,9 +632,13 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         {
             if (m_scale != scales::off)
             {
-                if (! scales_policy(m_scale, m_key, modkey))
+                if (scales_policy(m_scale, m_key, modkey))
                 {
-                    painter.setBrush(backseq_brush());
+                    continue;
+                }
+                else
+                {
+                    painter.setBrush(scale_brush());
                     painter.drawRect(0, y + 1, r.width(), unit_height() - 1);
                 }
             }

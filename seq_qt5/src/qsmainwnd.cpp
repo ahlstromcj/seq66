@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-09-17
+ * \updates       2025-10-17
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1995,6 +1995,7 @@ qsmainwnd::open_file (const std::string & fn)
                 if (yes)
                     cb_perf().store_io_maps_and_restart();
             }
+            cb_perf().unmodify();
             m_is_title_dirty = true;
         }
         else
@@ -2989,6 +2990,10 @@ qsmainwnd::load_qseqedit (int seqid)
                 ex->show();
             }
         }
+
+        /*
+         * Doesn't seem to work: else ei->second->raise();
+         */
     }
 }
 

@@ -340,7 +340,7 @@ qseqeditframe64::qseqeditframe64
     m_scale                 (0),                    /* set in ctor body     */
     m_chord                 (0),
     m_key                   (usr().seqedit_key()),
-    m_bgsequence            (0),                    /* set in ctor body     */
+    m_bgsequence            (-1),                   /* set in ctor body     */
     m_edit_bus              (0),
     m_edit_in_bus           (0),                    /* TODO                 */
     m_edit_channel          (0),                    /* 0-15, null           */
@@ -3205,8 +3205,6 @@ qseqeditframe64::update_note_entry (bool on)
  *  sequence to take on the new "initial value" as well.  A feature, but
  *  should it be optional?  Now it is, based on the setting of
  *  usr().global_seq_feature().
- *
- *  This function is similar to seqedit::set_background_sequence().
  */
 
 void
