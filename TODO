@@ -10,14 +10,10 @@ Hot:
         -   Qsynth acting goofy.
     -   Tempo event in track 0 does not override c_tempo_map SeqSpec.
     -   Consider for issue #141:
-        -   Stored the selected chord, if any, as a new "c_musicchord"
-            SeqSpec. Now get it to be saved and read back properly.
-        -   Provide an option to show/not-show the chord bars
-            (in 'usr' file?)
-        -   Provide an option or button to disallow painting notes
-            that are *not* in the selected chord.
         -   Could add a starting horizontal and vertical zoom
-            to the 'usr' configuration file.
+            to the 'usr' configuration file. Perhaps a menu entry
+            to set up scenarios such as "paint chord-specific notes
+            in patterns set to a chord".
 
 NSM:
 

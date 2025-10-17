@@ -388,6 +388,7 @@ qseqeditframe64::qseqeditframe64
     m_beat_width_to_log = m_beat_width = track().get_beat_width();
     m_measures = track().get_measures();
     m_scale = track().musical_scale();
+    m_chord = track().musical_chord();
     m_edit_bus = track().seq_midi_bus();
     m_edit_in_bus = track().seq_midi_in_bus();
     m_edit_channel = track().midi_channel();        /* 0-15, null           */
@@ -2498,8 +2499,7 @@ qseqeditframe64::set_chord (int chord, qbase::status qs)
 
         bool user_change = qs == qbase::status::edit;
         track().musical_chord(midibyte(chord), user_change);
-//      set_track_change();             /* to solve issue #90   */
-        set_dirty();                    /* modified for issue #90           */
+        set_track_change();
     }
 }
 
@@ -2684,13 +2684,7 @@ qseqeditframe64::set_midi_channel (int ch, qbase::status qs)
             else
             {
                 if (user_change)
-                {
-#if defined USE_THIS_REDUNDANT_CODE
-                    repopulate_event_menu(m_edit_bus, m_edit_channel);
-                    repopulate_mini_event_menu(m_edit_bus, m_edit_channel);
-#endif
                     set_track_change();             /* to solve issue #90   */
-                }
                 else
                     ui->m_combo_channel->setCurrentIndex(chindex);
             }
@@ -2706,7 +2700,7 @@ void
 qseqeditframe64::undo ()
 {
     track().pop_undo();
-    set_dirty();                        /* for issue #110                   */
+    set_dirty();                                    /* for issue #110       */
 }
 
 /**

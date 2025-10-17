@@ -46,8 +46,9 @@
             c_triggers (deprecated)
             c_triggers_ex (deprecated)
             c_trig_transpose (c_triggers_ex plus!)
-            c_musickey (can be in footer, as well)
+            c_musickey (can be in the global footer, as well)
             c_musicscale (ditto)
+            c_musicchord (stored only with a track)
             c_backsequence (ditto)
             c_transpose
             c_seq_color (performance colors for a sequence)
@@ -171,8 +172,8 @@ midi_vector_base::put_seqspec (midilong spec, int datalen)
 void
 midi_vector_base::add_varinum (midilong v)
 {
-    midilong buffer = v & 0x7F;                /* mask off a no-sign byte   */
-    while (v >>= 7)                            /* shift right 7 bits, test  */
+    midilong buffer = v & 0x7F;                 /* mask off a no-sign byte  */
+    while (v >>= 7)                             /* shift right 7 bits, test */
     {
         buffer <<= 8;                           /* move LSB bits to MSB     */
         buffer |= ((v & 0x7F) | 0x80);          /* add LSB and set bit 7    */
@@ -551,10 +552,10 @@ midi_vector_base::fill_proprietary ()
     {
         /**
          * New feature: save more sequence-specific values, if not saved
-         * globally.  We use a single byte for the key and scale, and a long
+         * globally. We use a single byte for the key and scale, and a long
          * for the background sequence.  We save these values only if they are
          * different from the defaults; in most cases they will have been left
-         * alone by the user.  We save per-sequence values here only if the
+         * alone by the user. We save per-sequence values here only if the
          * global-background-sequence feature is not in force.
          */
 
@@ -568,17 +569,22 @@ midi_vector_base::fill_proprietary ()
             put_seqspec(c_musicscale, 1);
             put(seq().musical_scale());
         }
-        if (seq().musical_chord() != 0)
-        {
-            put_seqspec(c_musicchord, 1);
-            put(seq().musical_chord());
-        }
         if (seq::valid(seq().background_sequence()))
         {
             put_seqspec(c_backsequence, 4);
             add_long(seq().background_sequence());
         }
     }
+    if (seq().musical_chord() != 0)
+    {
+        put_seqspec(c_musicchord, 1);
+        put(seq().musical_chord());
+    }
+
+    /**
+     *  The musical chord is not really suitable for a global setting,
+     *  so it is always saved with the track.
+     */
 
     /**
      *  Generally only drum patterns will not be transposable.

@@ -29,8 +29,8 @@ Chris Ahlstrom
             actual chord represented on the pattern grid.
     -   Fixed the snap-interval setting for drawing notes.
     -   We now store the selected chord for a pattern, if any, as a
-        new "c\_musicchord" SeqSpec. Still need to work out some
-        issues with this.
+        new "c\_musicchord" SeqSpec. It is track-specific only,
+        not global (different from the music scale and music key).
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.
