@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-10-16
+ * \updates       2025-10-20
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1047,7 +1047,7 @@ public:
 
     virtual ~sequence ();
 
-    void partial_assign (const sequence & rhs, bool toclipboard = false);
+    void partial_assign (const sequence & rhs, bool domodify = true);
 
     static short maximum ()
     {

@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.22
 Chris Ahlstrom
-2015-07-10 to 2025-10-17
+2015-07-10 to 2025-10-21
 
 # Change Log
 
-## [0.99.22] - 2025-10-17
+## [0.99.22] - 2025-10-21
 
 ### Added
 
@@ -16,6 +16,9 @@ Chris Ahlstrom
         brings up the grid-slot popup menu.
     -   Fixed an issue where loading a file with a different PPQN
         raised the modify flag.
+    -   Fixed: When dragging a pattern, modify was set before the
+        drag was completed. Also could not move another pattern into
+        the empty slot.
 -   Pattern editor.
     -   Now the "C" key labels are always shown no matter what the
         selected key. Define SEQ66\_SHOW\_SELECTED\_KEY\_OCTAVE to

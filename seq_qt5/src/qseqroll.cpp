@@ -630,6 +630,11 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         painter.drawLine(r.x(), y, r.x() + r.width(), y);
         if (show_scale_or_chords())
         {
+            /*
+             * We could display both the scale and chord, but this looks
+             * confusing. For now, keep the "else".
+             */
+
             if (m_scale != scales::off)
             {
                 if (scales_policy(m_scale, m_key, modkey))

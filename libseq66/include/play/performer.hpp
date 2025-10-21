@@ -509,11 +509,25 @@ private:
     /**
      *  From the liveframe/grid classes, these values make performer the boss
      *  of pattern cut-and-paste from the grid-slot popup menu.
+     *
+     *  The m_old_seqno member holds the current sequence number when another
+     *  sequence is clicked to change m_current_seqno.
      */
 
     seq::number m_old_seqno;
     seq::number m_current_seqno;
+
+    /**
+     *  The pattern that is being dragged to another slot.
+     */
+
     sequence m_moving_seq;
+
+    /**
+     *  A clipboard used for channelizing, flattening, cutting, copying,
+     *  pasting, and merging sequences.
+     */
+
     sequence m_seq_clipboard;
 
     /**

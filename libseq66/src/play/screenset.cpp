@@ -522,7 +522,7 @@ screenset::copy_patterns (const screenset & source)
                 sequence * d = new (std::nothrow) sequence();
                 if (not_nullptr(d))
                 {
-                    d->partial_assign(*s, true);    /* to clipboard, no mod */
+                    d->partial_assign(*s, false);   /* to clipboard, no mod */
                     add(d, desti);
                 }
             }

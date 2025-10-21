@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.22
 Chris Ahlstrom
-2019-04-13 to 2025-10-17
+2019-04-13 to 2025-10-21
 
 Hot:
 
@@ -11,6 +11,8 @@ Hot:
             in patterns set to a chord".
     -   Have a click/selection bring the pattern-editor to the front.
     -   Tempo event in track 0 does not override c_tempo_map SeqSpec.
+    -   Oddity: drag a pattern to a new slot, and when the mouse
+        hovers over the new slot, the slot number appears under it.
 
 NSM:
 

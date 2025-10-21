@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-10-17
+ * \updates       2025-10-20
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -300,10 +300,15 @@ sequence::modify (bool notifychange)
  *
  * \param rhs
  *      Provides the source of the new member values.
+ *
+ * \param domodify
+ *      Indicates if the modify flag is to be raised. It defaults to true.
+ *      It needs to set to false if the sequence is the clipboard sequence,
+ *      or if a pattern drag-and-drop is not yet finished.,
  */
 
 void
-sequence::partial_assign (const sequence & rhs, bool toclipboard)
+sequence::partial_assign (const sequence & rhs, bool domodify)
 {
     if (this != &rhs)
     {
@@ -406,7 +411,7 @@ sequence::partial_assign (const sequence & rhs, bool toclipboard)
          * Not necessary: (void) verify_and_link(); // NoteOn <---> NoteOff
          */
 
-        if (! toclipboard)
+        if (domodify)
             modify();
     }
 }

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2025-09-17
+ * \updates       2025-10-19
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -105,8 +105,10 @@
 #endif
 
 /*
- *  EXPERIMENTAL. Will add to seq66-config.h at some point.
+ *  EXPERIMENTAL.
  */
+
+#define SEQ66_TRACK_LIVE_GRID_MOVEMENT
 
 namespace seq66
 {
@@ -162,11 +164,20 @@ qslivegrid::qslivegrid
     setFocusPolicy(Qt::StrongFocus);
     ui->setupUi(this);
 
+#if defined SEQ66_TRACK_LIVE_GRID_MOVEMENT
+
     /*
-     * Does not seem to work.
+     * The next two lines of code allow the live grid to track the
+     * mouse position in the mouseMoveEvent() function. We want the
+     * Menu key (if present) to bring up the popup-menu of the slot
+     * underneath the cursor. One still has to click once to give
+     * the grid mouse focus.
      */
 
-    setMouseTracking(true);                     /* NEW ca 2025-09-17        */
+    ui->frame->setAttribute(Qt::WA_TransparentForMouseEvents);
+    setMouseTracking(true);
+
+#endif
 
     m_msg_box = new QMessageBox(this);
     m_msg_box->setText(tr("A pattern is present."));
@@ -1164,6 +1175,15 @@ qslivegrid::mouseMoveEvent (QMouseEvent * event)
             }
         }
     }
+#if defined SEQ66_TRACK_LIVE_GRID_MOVEMENT
+    else                                                /* ca 2025-10-19    */
+    {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf("x,y = %d,%d --> track #%d\n", event->x(), event->y(), seqno);
+#endif
+        current_seq(seqno);
+    }
+#endif
 }
 
 /**

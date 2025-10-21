@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-07-27
+ * \updates       2025-10-21
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -44,7 +44,7 @@
  *  Keystrokes versus MIDI controls:  MIDI can support toggle, on, and off
  *  actions.  Keystrokes can only be pressed and released. Each keystroke can
  *  be used for a toggle, which should be triggered on a press event or a
- *  release event, but not both.  A keystroke's press event can alos be used
+ *  release event, but not both.  A keystroke's press event can also be used
  *  for an on, and the release event can be used for an off.  These two modes
  *  of operation depend on the slot(s) involved.
  *
@@ -2174,19 +2174,9 @@ performer::channelize_sequence (seq::number seqno, int channel)
     bool result = channel != c_midichannel_null;
     if (result)
     {
-#if defined USE_OLD_CODE
-        const seq::pointer s = get_sequence(seqno);
-        bool result = bool(s);
-        if (result)
-        {
-            m_seq_clipboard.partial_assign(*s, true);
-            (void) m_seq_clipboard.set_channels(channel);
-        }
-#else
         result = copy_sequence(seqno);      /* partial-assign to clipboard  */
         if (result)
             (void) m_seq_clipboard.set_channels(channel);
-#endif
     }
     return result;
 }
@@ -2301,7 +2291,7 @@ performer::copy_sequence (seq::number seqno)
     const seq::pointer s = get_sequence(seqno);
     bool result = bool(s);
     if (result)
-        m_seq_clipboard.partial_assign(*s, true);       /* do not "modify"  */
+        m_seq_clipboard.partial_assign(*s, false);      /* do not "modify"  */
 
     return result;
 }
@@ -2362,10 +2352,9 @@ performer::merge_sequence (seq::number seqno)
 }
 
 /**
- *  Takes the given sequence number, makes sure the sequence is active, copies
- *  it to m_moving_seq via a partial-assign, and then removes it. The
- *  remove_sequence() function calls the setmapper version, which then
- *  recounts the sequences to get the high-sequence number, etc.
+ *  Takes the given sequence number, makes sure the sequence is active
+ *  and copies it to m_moving_seq via a partial-assign. However,
+ *  the current sequence is left in place until finish_move() is called.
  *
  * \param seqno
  *      The pattern-slot number of the source pattern.
@@ -2382,8 +2371,11 @@ performer::move_sequence (seq::number seqno)
     {
         seq::pointer s = get_sequence(seqno);
         m_old_seqno = seqno;
-        m_moving_seq.partial_assign(*s);
-        result = remove_sequence(seqno);
+        m_moving_seq.partial_assign(*s, false); /* don't modify right now   */
+    }
+    else
+    {
+        // printf("inactive move(%d), old seq = %d\n", seqno, m_old_seqno);
     }
     return result;
 }
@@ -2397,6 +2389,9 @@ performer::move_sequence (seq::number seqno)
  *  at the source slot. Not sure if this is reasonable, but will
  *  not change that now.
  *
+ *  The remove_sequence() function calls the setmapper version, which then
+ *  recounts the sequences to get the high-sequence number, etc.
+ *
  * \param seqno
  *      The pattern-slot number of the destination pattern slot.
  *
@@ -2407,21 +2402,29 @@ performer::move_sequence (seq::number seqno)
 bool
 performer::finish_move (seq::number seqno)
 {
-    static seq::number s_dummy;
-    seq::number newslot = is_seq_active(seqno) ? m_old_seqno : seqno ;
-    bool result = new_sequence(s_dummy, newslot);
-    if (result)
+    if (seqno != m_current_seqno)
     {
-        seq::pointer s = get_sequence(seqno);
-        if (s)
+        static seq::number s_dummy;
+        seq::number newslot = is_seq_active(seqno) ? m_old_seqno : seqno ;
+        bool result = new_sequence(s_dummy, newslot);
+        if (result)
         {
-            s->partial_assign(m_moving_seq);
-            s->seq_number(seqno);
+            seq::pointer s = get_sequence(seqno);
+            if (s)
+            {
+                s->partial_assign(m_moving_seq);
+                s->seq_number(seqno);
+                result = remove_sequence(m_old_seqno);
+
+                m_current_seqno = seqno;
+            }
+            else
+                result = false;
         }
-        else
-            result = false;
+        return result;
     }
-    return result;
+    else
+        return false;
 }
 
 /**
