@@ -2,19 +2,6 @@ TO DO for Seq66 0.99.22
 Chris Ahlstrom
 2019-04-13 to 2025-10-24
 
-Hot:
-
-    -   Consider for issue #141:
-        -   Could add a starting horizontal and vertical zoom
-            to the 'usr' configuration file. Perhaps a menu entry
-            to set up scenarios such as "paint chord-specific notes
-            in patterns set to a chord".
-    -   Have a click/selection bring the pattern-editor to the front.
-    -   Tempo event in track 0 does not override c_tempo_map SeqSpec.
-    -   Oddity: drag a pattern to a new slot, and when the mouse
-        hovers over the new slot, the slot number appears under it.
-    -   When changing the key, bold face the key note(s).
-
 NSM:
 
     -   Seq66 may be delaying responding/announcing to NSM.
@@ -39,6 +26,15 @@ Cannot duplicate:
 Backlog:
 
     -   Investigate building with Qt 6.
+    -   Oddity: drag a pattern to a new slot, and when the mouse
+        hovers over the new slot, the slot number appears under it.
+    -   Have a click/selection bring the pattern-editor to the front.
+    -   Tempo event in track 0 does not override c_tempo_map SeqSpec.
+    -   Consider for issue #141:
+        -   Could add a starting horizontal and vertical zoom
+            to the 'usr' configuration file. Perhaps a menu entry
+            to set up scenarios such as "paint chord-specific notes
+            in patterns set to a chord".
     -   Note drawing and event drawing screwed up in time when scrolled
         completely to the right.
     -   In midicvt (separate project), the c_mutegroups SeqSpec is not

@@ -20,9 +20,6 @@ Chris Ahlstrom
         drag was completed. Also could not move another pattern into
         the empty slot.
 -   Pattern editor.
-    -   Now the "C" key labels are always shown no matter what the
-        selected key. Define SEQ66\_SHOW\_SELECTED\_KEY\_OCTAVE to
-        revert to the old behavior.
     -   Showing note bars for scales and chords:
         -   Added a new brush called "chord" to the palette file.
             Click Edit / Preferences / Session / Store Palette.
@@ -31,6 +28,10 @@ Chris Ahlstrom
         -   Added buttons to toggle showing the scale/chord bars
             and the filtering of off-scale/off-chord notes when
             painting notes.
+        -   Normally the base note of the chosen musical key is
+            shown in the keys pane. Undefine the
+            SEQ66\_SHOW\_SELECTED\_KEY\_OCTAVE macro to keep
+            showing C.
     -   Painting notes:
         -   Changed closest-snap to down-snap to make note
             insertion more intuitive.
