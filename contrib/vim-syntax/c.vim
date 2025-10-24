@@ -4,7 +4,7 @@
 "
 "  Language:      C
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-08-04 to 2025-05-20
+"  Last Change:   2006-08-04 to 2025-10-23
 "  Project:       XPC Suite library project
 "  License:       None.  Use it in any manner whatsover, and don't blame me.
 "  Usage:
@@ -97,9 +97,10 @@ syn keyword XPCC xpc_strerrnoprint_func xpc_strerrprint_func
 syn keyword XPCC xpc_infoprint_func xpc_warnprint_func
 syn keyword XPCC safe_array_delete safe_ptr_delete safe_pointer_delete thisptr
 syn keyword XPCC set_nullptr set_posix_error set_posix_success
-syn keyword XPCC bussbyte colorbyte ctrlkey ctrlop eventkey
+syn keyword XPCC bussbyte colorbyte ctrlkey ctrlop eventkey edit jacktick
 syn keyword XPCC microsec midibool midibooleans midibyte midibyte_t midilong
-syn keyword XPCC midippqn midipulse midishort miditag midibpm jacktick
+syn keyword XPCC midimacro midippqn midipulse midishort miditag midibpm
+syn keyword XPCC select
 
 "------------------------------------------------------------------------------
 " More keywords from POSIX itself.  Includes less common C data typedefs and

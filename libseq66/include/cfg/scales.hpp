@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-10-16
+ * \updates       2025-10-22
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the Seq64 globals module.  Includes the
@@ -41,6 +41,7 @@
 #include <vector>                       /* holds the scale analyses results */
 
 #include "midi/midibytes.hpp"           /* seq66::midibytes                 */
+#include "util/basic_macros.hpp"        /* seq66::tokenization container    */
 
 namespace seq66
 {
@@ -272,6 +273,18 @@ extern bool key_signature_bytes
 (
     const std::string & keysigname,
     midibytes & keysigbytes
+);
+extern bool note_name_translation
+(
+    const std::string & notename,
+    int & notenumber,
+    int & octavenumber,
+    int & basenumber
+);
+extern bool get_pitch_range
+(
+    const tokenization & values,
+    int & lowest, int & highest
 );
 
 }           // namespace seq66

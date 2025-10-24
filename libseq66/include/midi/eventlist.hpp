@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2025-07-03
+ * \updates       2025-10-22
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -469,6 +469,7 @@ private:                                /* functions for friend sequence    */
         midipulse tick_s, int note_h,
         midipulse tick_f, int note_l, select action
     );
+    int select_notes_by_pitch (int note_h, int note_l);
     bool event_in_range
     (
         const event & e, midibyte status,

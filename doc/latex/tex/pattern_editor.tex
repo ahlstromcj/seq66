@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-10-17
+% \update      2025-10-24
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -331,7 +331,7 @@
 
 %  \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
-\subsubsection{Pattern Editor / Undo/Redo}
+\subsubsection{Pattern Editor / Second Row / Undo/Redo}
 \label{subsubsec:pattern_editor_second_row_undo_redo}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
@@ -348,7 +348,7 @@
    It will restore one change each time it is pressed.
    There is currently no redo key.
 
-\subsubsection{Pattern Editor /  Quantize Selection}
+\subsubsection{Pattern Editor /  Second Row / Quantize Selection}
 \label{subsubsec:pattern_editor_second_row_quantize_selection}
 
    \index{quantize}
@@ -356,11 +356,19 @@
    This button quantizes the selected events as per
    the \textbf{Grid Snap} setting.
 
-\subsubsection{Pattern Editor / Tools Popup}
+\subsubsection{Pattern Editor / Second Row / Tools Popup}
 \label{subsubsec:pattern_editor_second_row_tools_popup}
 
    This button brings up a nested menu of tools for modifying selected
-   events and notes.
+   events and notes. Shown below are selection options, and the
+   small dialog to select a pitch range.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=1.00]{pattern-editor/selection_options.png}
+   \caption{Pattern Editor Selection Options}
+   \label{fig:pattern_editor_window_selection_options}
+\end{figure}
 
    \begin{enumber}
       \item \textbf{Insert macro at "L"}.
@@ -376,10 +384,22 @@
       Notes can be selected in the piano roll of via this menu.
       This menu provides two note-selection options:
          \begin{itemize}
-            \item \textbf{Select all}. Selects all notes in the pattern;
+            \item \textbf{Select all}.
+               Selects all notes in the pattern;
                \index{keys!ctrl-a} \texttt{Ctrl-A} will also select
                all of the events in the pattern editor.
-            \item \textbf{Invert selection}. Inverts the selection of notes.
+            \item \textbf{Invert selection}.
+               Inverts the selection of notes.
+            \item \textbf{Select pitch range...}. 
+               Brings up a small input dialog where the user can enter a single
+               note value or a range of notes.
+               The notes can be represented by either an integer (0-127)
+               or a note name such as "C4".
+               A single value selects an octave starting at that note.
+               A range is notated as "32-64" or "A3-C\#4".
+               The range is selected and can then be cut or moved.
+               Also, an existing selection can be added to using
+               this menu entry.
          \end{itemize}
       \item \textbf{Note timing/velocity...}. This menu
             offers four ways to tweak the timing of the selected notes:
@@ -420,7 +440,7 @@
          See \sectionref{subsec:pattern_editor_pattern_fix}.
    \end{enumber}
 
-\subsubsection{Pattern Editor / Follow Progress}
+\subsubsection{Pattern Editor / Second Row / Follow Progress}
 \label{subsubsec:pattern_editor_second_row_follow_progress}
 
    \index{follow progress}
@@ -429,7 +449,7 @@
    one wants to concentrate on the current measure without the paging to
    subsequent measures that occurs with the "follow progess" feature.
 
-\subsubsection{Pattern Editor / Snap Reset and Grid Snap}
+\subsubsection{Pattern Editor / Second Row / Snap Reset and Grid Snap}
 \label{subsubsec:pattern_editor_second_row_grid_snap}
 
    \index{grid snap}
@@ -449,7 +469,7 @@
    \textbf{1/48}, \textbf{1/96}, and \textbf{1/192}.
    The button to the left of this control resets it to the default value.
 
-\subsubsection{Pattern Editor / Note Length Reset/Note Length}
+\subsubsection{Pattern Editor / Second Row / Note Length Reset/Note Length}
 \label{subsubsec:pattern_editor_second_row_note_length}
 
    \index{note length}
@@ -465,7 +485,7 @@
    \textbf{1/48}, \textbf{1/96}, and \textbf{1/192}.
    The button to the left of this control resets it to the default value.
 
-\subsubsection{Pattern Editor / Zoom Reset/Zoom}
+\subsubsection{Pattern Editor / Second Row / Zoom Reset/Zoom}
 \label{subsubsec:pattern_editor_second_row_zoom_reset}
 
    \index{zoom!horizontal}
@@ -487,7 +507,7 @@
    Zoom can also be changed via the \texttt{Z} and \texttt{Z} keys, and
    reset by the \texttt{0}.
 
-\subsubsection{Pattern Editor / Key Reset/Key}
+\subsubsection{Pattern Editor / Second Row / Key Reset/Key}
 \label{subsubsec:pattern_editor_second_row_musical_key}
 
    \index{key}{pattern editor!key}
@@ -499,8 +519,10 @@
    \textbf{G}, \textbf{G\#},
    \textbf{A}, \textbf{A\#},
    and \textbf{B}.
-   Changing the key shifts the marked note-rows
-   for the \textbf{Musical Scale} setting and indicates the base notes
+   Changing the key
+%  shifts the marked note-rows
+%  for the \textbf{Musical Scale} setting and
+   indicates the base notes
    of the key in a \textbf{bold} font.
    The small key button resets the key to \textbf{C}.
 
@@ -531,7 +553,7 @@
    The global-sequence feature setting can be made in the 'usr' configuration
    file.
 
-\subsubsection{Pattern Editor / Scale Reset/Musical Scale}
+\subsubsection{Pattern Editor / Second Row / Scale Reset/Musical Scale}
 \label{subsubsec:pattern_editor_second_row_musical_scale}
 
    \index{scale}
@@ -615,7 +637,7 @@
    algorithm, could be used, but it is a bit too complex
    for our needs, which are basic.
 
-\subsubsection{Pattern Editor / Background Sequence}
+\subsubsection{Pattern Editor / Second Row / Background Sequence}
 \label{subsubsec:pattern_editor_second_row_background_sequence}
 
    \index{background sequence}

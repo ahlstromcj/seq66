@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-10-20
+ * \updates       2025-10-22
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1919,6 +1919,7 @@ public:
         midipulse tick_s, int note_h,
         midipulse tick_f, int note_l, eventlist::select action
     );
+    int select_notes_by_pitch (int note_h, int note_l);
     int select_events
     (
         midipulse tick_s, midipulse tick_f,

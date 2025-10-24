@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-10-15
+ * \updates       2025-10-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -311,6 +311,7 @@ private slots:
     void tools ();
     void select_all_notes ();
     void inverse_note_selection ();
+    void note_pitch_selection ();
     void quantize_notes ();
     void tighten_notes ();
     void jitter_notes ();

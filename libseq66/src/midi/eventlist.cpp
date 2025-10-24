@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2025-07-03
+ * \updates       2025-10-22
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -2362,7 +2362,7 @@ eventlist::unselect_all ()
  *      The desired control-change in the selection, if the event is a
  *      control-change.
  *
- * \param action
+ * \param seltype
  *      The desired selection action.
  *
  * \return
@@ -2373,7 +2373,7 @@ int
 eventlist::select_events
 (
     midipulse tick_s, midipulse tick_f,
-    midibyte astatus, midibyte cc, select action
+    midibyte astatus, midibyte cc, select seltype
 )
 {
     int result = 0;
@@ -2383,18 +2383,18 @@ eventlist::select_events
         {
             if (er.is_desired(astatus, cc))
             {
-                if (action == select::selecting)
+                if (seltype == select::selecting)
                 {
                     er.select();
                     ++result;
                 }
-                if (action == select::select_one)
+                if (seltype == select::select_one)
                 {
                     er.select();
                     ++result;
                     break;
                 }
-                if (action == select::selected)
+                if (seltype == select::selected)
                 {
                     if (er.is_selected())
                     {
@@ -2402,25 +2402,25 @@ eventlist::select_events
                         break;
                     }
                 }
-                if (action == select::would_select)
+                if (seltype == select::would_select)
                 {
                     result = 1;
                     break;
                 }
-                if (action == select::toggle)
+                if (seltype == select::toggle)
                 {
                     if (er.is_selected())
                         er.unselect();
                     else
                         er.select();
                 }
-                if (action == select::remove)
+                if (seltype == select::remove)
                 {
                     remove_event(er);
                     ++result;
                     break;
                 }
-                if (action == select::deselect)
+                if (seltype == select::deselect)
                     er.unselect();
             }
         }
@@ -2596,7 +2596,7 @@ eventlist::select_event_handle
  * \param note_l
  *      The low note of the selection, inclusive.
  *
- * \param action
+ * \param seltype
  *      The action to perform, one of the values of the sequence::select
  *      enumeration.
  *
@@ -2609,7 +2609,7 @@ int
 eventlist::select_note_events
 (
     midipulse tick_s, int note_h,
-    midipulse tick_f, int note_l, select action
+    midipulse tick_f, int note_l, select seltype
 )
 {
     int result = 0;
@@ -2652,20 +2652,20 @@ eventlist::select_note_events
                 bool ok = tand || ((stick > ftick) && tor);
                 if (ok)
                 {
-                    if (action == select::selecting)
+                    if (seltype == select::selecting)
                     {
                         er.select();
                         ev->select();
                         ++result;
                     }
-                    if (action == select::select_one)
+                    if (seltype == select::select_one)
                     {
                         er.select();
                         ev->select();
                         ++result;
                         break;
                     }
-                    if (action == select::selected)
+                    if (seltype == select::selected)
                     {
                         if (er.is_selected())
                         {
@@ -2673,18 +2673,18 @@ eventlist::select_note_events
                             break;
                         }
                     }
-                    if (action == select::would_select)
+                    if (seltype == select::would_select)
                     {
                         result = 1;
                         break;
                     }
-                    if (action == select::deselect)
+                    if (seltype == select::deselect)
                     {
                         er.unselect();
                         ev->unselect();
                         result = 0;                 /* no break;            */
                     }
-                    if (action == select::toggle && er.is_note_on())
+                    if (seltype == select::toggle && er.is_note_on())
                     {
                         if (er.is_selected())       /* don't toggle twice   */
                         {
@@ -2698,7 +2698,7 @@ eventlist::select_note_events
                         }
                         ++result;
                     }
-                    if (action == select::remove)
+                    if (seltype == select::remove)
                     {
                         remove_event(er);
                         remove_event(*ev);
@@ -2719,18 +2719,18 @@ eventlist::select_note_events
                 stick = ftick = er.timestamp();
                 if (stick >= (tick_s - 16) && ftick <= tick_f)  /* why -16? */
                 {
-                    if (action == select::selecting)
+                    if (seltype == select::selecting)
                     {
                         er.select();
                         ++result;
                     }
-                    if (action == select::select_one)
+                    if (seltype == select::select_one)
                     {
                         er.select();
                         ++result;
                         break;
                     }
-                    if (action == select::selected)
+                    if (seltype == select::selected)
                     {
                         if (er.is_selected())
                         {
@@ -2738,17 +2738,17 @@ eventlist::select_note_events
                             break;
                         }
                     }
-                    if (action == select::would_select)
+                    if (seltype == select::would_select)
                     {
                         result = 1;
                         break;
                     }
-                    if (action == select::deselect)
+                    if (seltype == select::deselect)
                     {
                         result = 0;
                         er.unselect();
                     }
-                    if (action == select::toggle)
+                    if (seltype == select::toggle)
                     {
                         ++result;
                         if (er.is_selected())
@@ -2756,7 +2756,7 @@ eventlist::select_note_events
                         else
                             er.select();
                     }
-                    if (action == select::remove)
+                    if (seltype == select::remove)
                     {
                         remove_event(er);
                         ++result;
@@ -2767,6 +2767,27 @@ eventlist::select_note_events
         }
     }
     return result;
+}
+
+/**
+ *  This function selects notes that lie within a range of pitches,
+ *  inclusive. The time-stamps range from 0 to the end of the pattern.
+ *  Note that the parameters are ... backwards.
+ *
+ * \param note_h
+ *      The high note of the selection, inclusive.
+ *
+ * \param note_l
+ *      The low note of the selection, inclusive.
+ */
+
+int
+eventlist::select_notes_by_pitch (int note_h, int note_l)
+{
+    midipulse t0 = 0;
+    midipulse t1 = get_length();
+    select seltype = select::selecting;
+    return select_note_events(t0, note_h, t1, note_l, seltype);
 }
 
 /**

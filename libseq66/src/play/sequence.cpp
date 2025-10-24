@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-10-20
+ * \updates       2025-10-24
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2377,12 +2377,29 @@ sequence::select_note_events
 )
 {
     automutex locker(m_mutex);
-#if defined USE_TEST_CODE
-    if (expanded_recording())           // for painting notes; TEST CODE ONLY
-        return 0;                       // assume no note can be selected
-    else
-#endif
     return m_events.select_note_events(tick_s, note_h, tick_f, note_l, action);
+}
+
+/**
+ *  This function selects notes that lie within a range of pitches,
+ *  inclusive. The time-stamps range from 0 to the end of the pattern.
+ *  Note that the parameters are ... backwards.
+ *
+ * \param note_h
+ *      The high note of the selection, inclusive.
+ *
+ * \param note_l
+ *      The low note of the selection, inclusive.
+ */
+
+int
+sequence::select_notes_by_pitch (int note_h, int note_l)
+{
+    automutex locker(m_mutex);
+    midipulse t0 = 0;
+    midipulse t1 = get_length();
+    eventlist::select seltype = eventlist::select::selecting;
+    return m_events.select_note_events(t0, note_h, t1, note_l, seltype);
 }
 
 /**
@@ -3878,21 +3895,21 @@ sequence::add_painted_note
     bool repaint, int velocity
 )
 {
-    bool result = false;
-    bool ignore = false;
+    bool result { false };
+    bool ignoreit { false };
     if (repaint)                                    /* see banner above     */
     {
         automutex locker(m_mutex);
-        ignore = remove_duplicate_events(tick, note);
+        ignoreit = remove_duplicate_events(tick, note);
     }
-    if (ignore)
+    if (ignoreit)
     {
         result = true;
     }
     else
     {
-        bool hardwire = velocity == usr().preserve_velocity();
-        midibyte v = hardwire ? midibyte(m_note_on_velocity) : velocity ;
+        bool hardwire { velocity == usr().preserve_velocity() };
+        midibyte v { midibyte(hardwire ? m_note_on_velocity : velocity) };
         event e(tick, EVENT_NOTE_ON, midi_channel(), note, v);
         if (repaint)
             e.paint();
@@ -3900,7 +3917,7 @@ sequence::add_painted_note
         result = add_event(e);
         if (result)
         {
-            midibyte v = hardwire ? midibyte(m_note_off_velocity) : 0 ;
+            midibyte v { midibyte(hardwire ? m_note_off_velocity : 0) };
             event e(tick + len, EVENT_NOTE_OFF, midi_channel(), note, v);
             result = add_event(e);
         }
@@ -3909,7 +3926,7 @@ sequence::add_painted_note
     }
     if (result)
     {
-        if (verify_and_link())
+        if (verify_and_link())                  /* do it again anyway       */
             modify();                           /* no easy way to undo this */
     }
     return result;
@@ -4539,9 +4556,9 @@ sequence::add_event (const event & er)
             (void) verify_and_link();   /* for proper seqroll draw; sorts   */
 
         /*
-         * ca 2025-05-20, 07-22. Is this change safe? No. Do not allow it to
-         * call notify_change(), otherwise one gets a segfault when pounding
-         * the keyboard with notes and/or pitchbend. Keep it false.
+         * Is this change safe? No. Do not allow it to call notify_change(),
+         * otherwise one gets a segfault when pounding the keyboard with notes
+         * and/or pitchbend. Keep it false.
          */
 
         modify(false);
@@ -4612,29 +4629,66 @@ sequence::find_note (midipulse tick, int note)
     return result;
 }
 
+/**
+ *  If we add a check for note equality before setting the result flag,
+ *  the result is that moving the mouse vertically when a note is already
+ *  present at that time does not add a new note, but causes the existing
+ *  note to move vertically. So now we don't mark a matching note
+ *  for removal; we tell the caller to ignore the event and not
+ *  add it.
+ *
+ *  Also, this function is used when adding tempos as well!
+ *
+ * \param tick
+ *      The insertion time of the current note.
+ *
+ * \param note
+ *      The value of the note. Or, if equal to the default, -1, the
+ *      event is not a note.
+ *
+ * \return
+ *      Returns true if the current note should be ignored, because
+ *      there is already a matching note present.
+ */
+
 bool
 sequence::remove_duplicate_events (midipulse tick, int note)
 {
-    automutex locker(m_mutex);                  /* ca 2023-04-29    */
-    bool ignore = false;
+    automutex locker(m_mutex);
+    bool result { false };
+    bool marked { false };
     for (auto & er : m_events)
     {
-        if (er.is_painted() && er.timestamp() == tick)
+        bool evpresent { er.is_painted() && er.timestamp() == tick };
+        if (evpresent)
         {
-            if (note >= 0 && er.is_note_on())
+            if (note != (-1))
             {
-                ignore = true;
-                break;
+                bool evmatch
+                {
+                    er.is_note_on() && note == er.get_note()
+                };
+                if (evmatch)
+                {
+                    result = true;          /* ignore (don't add) the note  */
+                    break;
+                }
             }
-            er.mark();
-            if (er.is_linked())
-                er.link()->mark();
+            else                            /* not a note event, mark it    */
+            {
+                er.mark();
+                if (er.is_linked())
+                    er.link()->mark();
 
-            set_dirty();
+                marked = true;
+                set_dirty();
+            }
         }
     }
-    (void) remove_marked();
-    return ignore;
+    if (marked)
+        (void) remove_marked();
+
+    return result;
 }
 
 /**

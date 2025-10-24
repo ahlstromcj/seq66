@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-10-16
+ * \updates       2025-10-24
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2846,6 +2846,17 @@ qseqeditframe64::popup_tool_menu ()
         );
         menuselect->addAction(selectinverse);
 
+        QAction * selectpitches = new_qaction
+        (
+            "Select &pitch range...", m_tools_popup
+        );
+        connect
+        (
+            selectpitches, SIGNAL(triggered(bool)),
+            this, SLOT(note_pitch_selection())
+        );
+        menuselect->addAction(selectpitches);
+
         QAction * quantize = new_qaction("&Quantize", m_tools_popup);
         connect
         (
@@ -2981,9 +2992,9 @@ qseqeditframe64::enable_note_menus ()
 void
 qseqeditframe64::select_all_notes ()
 {
-    track().select_events(EVENT_NOTE_ON, 0);
-    track().select_events(EVENT_NOTE_OFF, 0);
-    track().select_events(EVENT_AFTERTOUCH, 0);
+    (void) track().select_events(EVENT_NOTE_ON, 0);
+    (void) track().select_events(EVENT_NOTE_OFF, 0);
+    (void) track().select_events(EVENT_AFTERTOUCH, 0);
     enable_note_menus();
     set_dirty();
 }
@@ -2995,11 +3006,51 @@ qseqeditframe64::select_all_notes ()
 void
 qseqeditframe64::inverse_note_selection ()
 {
-    track().select_events(EVENT_NOTE_ON, 0, true);
-    track().select_events(EVENT_NOTE_OFF, 0, true);
-    track().select_events(EVENT_AFTERTOUCH, 0, true);
+    (void) track().select_events(EVENT_NOTE_ON, 0, true);
+    (void) track().select_events(EVENT_NOTE_OFF, 0, true);
+    (void) track().select_events(EVENT_AFTERTOUCH, 0, true);
     enable_note_menus();
     set_dirty();
+}
+
+/**
+ *  Select notes via a range of pitches.
+ */
+
+void
+qseqeditframe64::note_pitch_selection ()
+{
+    std::string range
+    {
+        qt_get_string
+        (
+            this, "Enter Range", "Low-High Pitches", "0-127 or C4-C6"
+        )
+    };
+    if (! range.empty())
+    {
+        tokenization numbers { tokenize(range, " -") };
+#if defined USE_OLD_CODE
+        int lowest { string_to_int(numbers[0]) };
+        int highest { 127 };
+        if (numbers.size() > 1)
+            highest = string_to_int(numbers[1]);
+
+        bool ok = track().select_notes_by_pitch(highest, lowest) > 0;
+#else
+        int lowest, highest;
+        bool ok = get_pitch_range(numbers, lowest, highest);
+        if (ok)
+            ok = track().select_notes_by_pitch(highest, lowest) > 0;
+#endif
+
+        if (ok)
+        {
+            enable_note_menus();
+            set_dirty();
+        }
+    }
+
 }
 
 /**

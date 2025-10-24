@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.22
 Chris Ahlstrom
-2015-07-10 to 2025-10-21
+2015-07-10 to 2025-10-24
 
 # Change Log
 
-## [0.99.22] - 2025-10-21
+## [0.99.22] - 2025-10-24
 
 ### Added
 
@@ -23,16 +23,22 @@ Chris Ahlstrom
     -   Now the "C" key labels are always shown no matter what the
         selected key. Define SEQ66\_SHOW\_SELECTED\_KEY\_OCTAVE to
         revert to the old behavior.
-    -   Showing note values in scale/chord:
+    -   Showing note bars for scales and chords:
         -   Added a new brush called "chord" to the palette file.
+            Click Edit / Preferences / Session / Store Palette.
         -   When a chord is active, the notes that are _not_
             in the chord are grayed out with diagonal hash lines.
-        -   Added a button to toggle showing the scale/chord bars.
-    -   Painting notes in scale/chord:
-        -   Added a button to toggle the filtering of notes based
-            on scale/chord.
-        -   The selected key, scale, and chord determine the
-            actual chord represented on the pattern grid.
+        -   Added buttons to toggle showing the scale/chord bars
+            and the filtering of off-scale/off-chord notes when
+            painting notes.
+    -   Painting notes:
+        -   Changed closest-snap to down-snap to make note
+            insertion more intuitive.
+        -   In scale/chord:
+            -   Added a button to toggle the filtering of notes
+                based on scale/chord.
+            -   The selected key, scale, and chord determine the
+                actual chord represented on the pattern grid.
     -   Fixed the snap-interval setting for drawing notes.
     -   We now store the selected chord for a pattern, if any, as a
         new "c\_musicchord" SeqSpec. It is track-specific only,
@@ -41,12 +47,18 @@ Chris Ahlstrom
         data pane.
     -   Fixed a bug where the background sequence was not loaded
         into the piano roll.
+    -   Added an option to the "Tools" (hammer) menu to select
+        notes in a range of pitches. Either note numbers or note
+        names can be used. See issue #141 and the user manual.
 -   Song editor.
 -   Event editor.
 -   Preferences dialog.
 -   Reading/Import/Export.
     -   Fixed: Tempo event in track 0 does not override c\_bpmtag SeqSpec.
 -   Documentation.
+-   C++. Added -Wno-unnecessary-virtual-specifier to Clang builds
+    to avoid a dumb warning about final classes and virtual
+    functions.
 
 ### Changed
 

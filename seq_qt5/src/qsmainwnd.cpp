@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-10-17
+ * \updates       2025-10-22
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -2369,19 +2369,30 @@ qsmainwnd::new_session ()
          * We need show only the base name of the file.
          */
 
-        bool ok;
         std::string tune_name = rc().midi_filename();
         std::string path, defname;
         if (tune_name.empty())
             tune_name = s_default_tune;
 
         (void) filename_split(tune_name, path, defname);
+#if defined USE_OLD_CODE
+        bool ok;
         QString text = QInputDialog::getText
         (
             this, tr("Session MIDI File"),          /* parent and title     */
             tr("MIDI FIle Base Name"),              /* input field label    */
             QLineEdit::Normal, qt(defname), &ok
         );
+#else
+        std::string text = qt_get_string
+        (
+            this, "Session MIDI File",              /* parent and title     */
+            "MIDI FIle Base Name",                  /* input field label    */
+            defname                                 /* default text         */
+        );
+        bool ok = ! text.empty();
+
+#endif
         if (ok)
         {
             if (cb_perf().clear_all())              /* like new_file()      */
@@ -2402,13 +2413,13 @@ qsmainwnd::new_session ()
                 if (not_nullptr(m_mute_master))
                     m_mute_master->group_needs_update();
             }
-            if (text.isEmpty())
+            if (text.empty())
             {
                 file_message("Session MIDI file", "Cleared");
             }
             else
             {
-                std::string filenamebase = text.toStdString();
+                std::string filenamebase = text;
                 rc().session_midi_filename(filenamebase);
                 file_message("Session MIDI file", rc().midi_filename());
             }

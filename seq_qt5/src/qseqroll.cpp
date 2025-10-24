@@ -1239,7 +1239,13 @@ qseqroll::add_painted_note (midipulse tick, int note, bool first)
         if (first)
             track().push_undo();            /* multiple-note undo only      */
 
-        tick = closest_snap(snap(), tick);
+        /*
+         *  Using a down-snap makes the painting look and feel better.
+         *
+         *      tick = closest_snap(snap(), tick);
+         */
+
+        tick = down_snap(snap(), tick);
         if (can_add_chords)                 /* add chords if not filtering  */
         {
             result = track().add_chord
@@ -1681,9 +1687,13 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
          *
          * However, using "if (snap_current_x())" broke drawing at
          * PPQN > 192.
+         *
+         * ca 2025-10-23 Gets snapped properly in add_painted_note().
+         * Same issue as above, doh!
+         *
+         *      x = snapped_x(x);
          */
 
-        x = snapped_x(x);
         convert_xy(x, y, tick, note);
         if (add_painted_note(tick, note))
         {

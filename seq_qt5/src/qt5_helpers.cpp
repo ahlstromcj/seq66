@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2025-01-25
+ * \updates       2025-10-22
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -59,6 +59,7 @@
 #include <QErrorMessage>
 #include <QFileDialog>                  /* prompt for full MIDI file's path */
 #include <QIcon>
+#include <QInputDialog>                 /* prompt for a simple string       */
 #include <QLayout>
 #include <QLayoutItem>
 #include <QLineEdit>
@@ -326,6 +327,12 @@ qt_prompt_ok
  *  Provides an informative message box, no decision necessary.
  *
  *  Do we need to delete the message box here, or risk them accumulating?`
+ *
+ * \param self
+ *      Usually provides the "this" pointer of the calling object.
+ *
+ * \param msg
+ *      Provides the text to be shown.
  */
 
 void
@@ -344,6 +351,12 @@ qt_info_box (QWidget * self, const std::string & msg)
 /**
  *  Provides an informative error message box, no decision necessary.
  *  Qt::WA_DeleteOnClose?
+ *
+ * \param self
+ *      Usually provides the "this" pointer of the calling object.
+ *
+ * \param msg
+ *      Provides the text to be shown.
  */
 
 void
@@ -357,6 +370,44 @@ qt_error_box (QWidget * self, const std::string & msg)
         delete mbox;
     }
 }
+
+/**
+ *  Gets a string from the user. A very simple dialog.
+ *
+ * \param self
+ *      Usually provides the "this" pointer of the calling object.
+ *
+ * \param title
+ *      Provides the title of the input dialog.
+ *
+ * \param label
+ *      Provides a label for the edit line.
+ *
+ * \param text
+ *      Provides the default text to be shown in the edit line.
+ *      The default value is an empty string.
+ *
+ * \return
+ *      Returns the entered string, or an empty string if Cancel is
+ *      selected.
+ */
+
+std::string
+qt_get_string
+(
+    QWidget * self,
+    const std::string & title,
+    const std::string & label,
+    const std::string & text
+)
+{
+    QString qtext = QInputDialog::getText               /* static function  */
+    (
+        self, qt(title), qt(label), QLineEdit::Normal, qt(text)
+    );
+    return qtext.toStdString();
+}
+
 
 /**
  *  Creates a QTimer in a consistent manner.

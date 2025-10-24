@@ -1,28 +1,30 @@
-# README for Seq66 0.99.22 2025-07-28
+# README for Seq66 0.99.22 2025-10-22
 
-__Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
-pattern banks, triggers, and playlists for song management; scale and chord
-aware piano-roll; song layout for creative composition; control/status via MIDI
-automation for live performance. Mute-groups enable/disable sets of patterns.
-Supports the Non/New Session Manager; can also run headless. Size can be
-minimized for use with a small computer like the Pi. It does not support audio
-samples, just MIDI.
+__Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid
+interface; pattern banks, triggers, and playlists for song management;
+scale and chord aware piano-roll; song layout for creative
+composition; control/status via MIDI automation. and mute-groups to
+enable/disable sets of patterns. Tools for live performance and for
+composing great-sounding MIDI tracks. Supports the Non/New Session
+Manager; can also run headless and on a small computer like the Pi.
+It does not support audio samples, just MIDI.
 
-__Seq66__ A major refactoring of Sequencer64/Kepler34/Seq24 with modern C++ and
-new features. Linux and Windows users can build this application from source
-code. See the extensive INSTALL file. Includes a comprehensive PDF
-user-manual.
+__Seq66__ A major refactoring of Sequencer64/Kepler34/Seq24 with
+modern C++ and new features. Linux and Windows users can build this
+application from source code. See the extensive INSTALL file. Includes
+a comprehensive PDF user-manual.
 
 The current development-in-progress branch is "wip".
 
-The release includes an installer for the 64-bit Windows version of Seq66.
-Initial work has been done on getting Seq66 to build and run in FreeBSD using
-the Clang compiler. A C++17 capable-compiler is needed.
+The release includes an installer for the 64-bit Windows version of
+Seq66.  Initial work has been done on getting Seq66 to build and run
+in FreeBSD using the Clang compiler. A C++17 capable-compiler is
+needed.
 
 See NEWS for updates and RELNOTES for the latest highlights.
 
-The figure below shows Seq66 with modified palette and a style-sheet in
-force. Otherwise the application uses the current Qt theme.
+The figure below shows Seq66 with modified palette and a style-sheet
+in force. Otherwise the application uses the current Qt theme.
 
 ![Alt text](doc/latex/images/main-window/main-windows-perstfic.png?raw=true "Seq66")
 
@@ -70,6 +72,7 @@ force. Otherwise the application uses the current Qt theme.
     *   Transposable triggers to re-use patterns more comprehensively.
     *   Song import/export from/to stock MIDI (SMF 0 or 1).
     *   Highly configurable MIDI-based metronome.
+    *   Management of scales, keys, and chords.
     *   Improved non-U.S. keyboard support.
     *   Many demonstration and test MIDI files.
 

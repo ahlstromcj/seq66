@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2025-10-14
+ * \updates       2025-10-23
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of many scale interval patterns if working with
@@ -59,6 +59,7 @@
 \endverbatim
  */
 
+#include <cctype>                       /* std::toupper(), std::isalpha()   */
 #include <cmath>                        /* for the pow() function           */
 
 #include "cfg/scales.hpp"               /* seq66::scales declarations       */
@@ -1179,6 +1180,143 @@ key_signature_bytes
         }
         else
             result = false;
+    }
+    return result;
+}
+
+/**
+ *  Converts a note name to a note number, an octave number, and
+ *  a base number (0 to 11). Examples and results:
+ *
+ \verbatim
+ *      Name           Note-number         Octave      Base
+ *      "C" to "B"       0 to 11             -1       0 to 11
+ *      "Cx" to "Bx"    12(x+1) + base        x       0 to 11
+ *      nymbers         std::stoi()
+\endverbatim
+ *
+ * \param notename
+ *      Provides either a alphabetic note name or the MIDI note number,
+ *      in string format.
+ *
+ * \param [out] notenumber
+ *      Holds the translated note number.
+ *
+ * \param [out] octavenumber
+ *      Holds the octave number calculated from the note number.
+ *
+ * \param [out] basenumber
+ *      Holds the octave offset (0 to 11) of the note number, 0 being C,
+ *      etc.
+ *
+ * \return
+ *      Returns true if the output parameters can be used.
+ */
+
+bool
+note_name_translation
+(
+    const std::string & notename,
+    int & notenumber,
+    int & octavenumber,
+    int & basenumber
+)
+{
+    bool result { ! notename.empty() };
+    if (result)
+    {
+        int octave { -1 }, base { -1 }, nnumber { -1 };
+        if (std::isdigit(notename[0]))
+        {
+            nnumber = string_to_int(notename);
+            octave = (nnumber / c_octave_size) - 1;
+            base = nnumber % c_octave_size;
+        }
+        else
+        {
+            std::string basename { char(std::toupper(notename[0])) };
+            if (notename[1] == '#')
+                basename += "#";
+
+            std::size_t nlen { notename.length() };
+            if (std::isdigit(notename[nlen - 1]))
+            {
+                if (notename[nlen - 2] != '#')
+                    octave = notename[nlen - 1] - '0';      /* suitable     */
+            }
+
+            int counter { 0 };
+            for (auto k : c_key_text)
+            {
+                if (basename == k)
+                {
+                    base = counter;
+                    break;
+                }
+                ++counter;
+            }
+            result = base != (-1);
+        }
+        if (result)
+        {
+            octavenumber = octave;
+            basenumber = base;
+            notenumber = c_octave_size * (octave + 1) + base;
+        }
+    }
+    return result;
+}
+
+/**
+ *  Possible value entries:
+ *
+ *      -   Single number. Sets lowest = highest = value.
+ *      -   Two numbers. Sets lowest = values[0], highest = values[1]
+ *      -   Note entries starting with "A" to "G" or "a" to "g".
+ *          Convert to a note pitch and process as number(s).
+ *      -   A note letter followed by a digit. Convert the range to
+ *          the given octave.
+ *
+ *  Mixing numbers and note names not supported.
+ *
+ * \param values
+ *      A short (1 or 2 entries) vector of strings representing the
+ *      desired pitch range.
+ *
+ * \param [out] lowest
+ *      An output parameter for the lowest pitch in the range (0 to 127).
+ *
+ * \param [out] highest
+ *      An output parameter for the highest pitch in the range (0 to 127).
+ *
+ * \return
+ *      Returns if a valid range can be entered into the output parameters.
+ */
+
+bool
+get_pitch_range (const tokenization & values, int & lowest, int & highest)
+{
+    bool result { values.size() > 0 && values.size() < 3 };
+    if (result)
+        result = ! values[0].empty();
+
+    if (result)
+    {
+        int note, octave, base;
+        result = note_name_translation(values[0], note, octave, base);
+        if (result)
+        {
+            lowest = note;
+            if (values.size() == 1)
+            {
+                highest = note + c_octave_size - 1;
+            }
+            else
+            {
+                result = note_name_translation(values[1], note, octave, base);
+                highest = note;
+            }
+        }
     }
     return result;
 }

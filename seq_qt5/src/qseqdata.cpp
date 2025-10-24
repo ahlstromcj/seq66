@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-10-17
+ * \updates       2025-10-22
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -88,9 +88,12 @@ static const int sc_dataarea_y_sub          =  48;
 
 static const int sc_font_size       = 10;
 static const int sc_text_spacing    = sc_font_size + 4;
-static const int sc_time_spacing    = sc_font_size + 18;
 static const int sc_1               = sc_font_size + 1;
 static const int sc_2               = sc_1 * 2;
+
+#if defined SEQ55_SHOW_REDUNDANT_TIME_SIG
+static const int sc_time_spacing    = sc_font_size + 18;
+#endif
 
 /*
  * Tweaks.

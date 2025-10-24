@@ -974,6 +974,9 @@ string_to_unsigned (const std::string & s, unsigned defalt)
  * \param s
  *      Provides the string to convert to an integer.
  *
+ * \param defalt
+ *      Provides the fallback value, itself defaulting to 0.
+ *
  * \return
  *      Returns the integer value represented by the string.
  */

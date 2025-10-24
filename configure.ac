@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2025-07-28
+dnl \update        2025-10-22
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -640,14 +640,18 @@ dnl The warning disabling for clang does prevents the "clang-16: warning:
 dnl optimization flag '-fno-fat-lto-objects' is not supported".
 dnl Finally, after getting an std::sort() error in the triggers class under
 dnl clang-16.0.6, we will force C++14.
+dnl
+dnl Clang 21 comes up with a warning about not being able to override
+dnl virtual function in a final class.
 
 if test "$ac_clang_active" = "yes" ; then
-CFLAGS="$CFLAGS $COMMONFLAGS -Wno-ignored-optimization-argument"
+CFLAGS="$CFLAGS $COMMONFLAGS -Wno-ignored-optimization-argument "
+CXXFLAGS="$CFLAGS -std=c++17 -pipe -Wno-variadic-macros -Wno-deprecated-declarations -Wno-unnecessary-virtual-specifier"
 else
 CFLAGS="$CFLAGS $COMMONFLAGS"
+CXXFLAGS="$CFLAGS -std=c++17 -pipe -Wno-variadic-macros -Wno-deprecated-declarations"
 fi
 
-CXXFLAGS="$CFLAGS -std=c++17 -pipe -Wno-variadic-macros -Wno-deprecated-declarations"
 LDFLAGS="$LDFLAGS $PROLDFLAGS"
 
 AM_CONDITIONAL(GNU_WIN, test "$ac_gnuwin" = "yes")
