@@ -1,7 +1,7 @@
-# Seq66 0.99.11 (and above) palette configuration file
+# Seq66 0.99.22 (and above) palette configuration file
 #
 # /home/user/.config/seq66/qseq66-gray.palette
-# Written on 2025-01-08 12:00:00
+# Written on 2025-10-24 12:00:00
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface. It must be active and
@@ -126,6 +126,7 @@ empty = solid
 note = lineargradient
 scale = dense3
 backseq = dense2
+chord = bdiag
 
 # This section defines pen styles to use for vertical time lines.
 # The names are based on the names in the Qt::PenStyle enumeration.

@@ -286,7 +286,7 @@ seq_app_build_os ()
  *  And this gets locked into the configure script (somehow).
  *
  *  So now we recommend that main() call set_app_build_issue() to the
- *  c0rrect value.
+ *  correct value.
  */
 
 const std::string &

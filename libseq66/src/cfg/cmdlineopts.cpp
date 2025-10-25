@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2025-05-25
+ * \updates       2025-10-25
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -74,10 +74,19 @@ static const int c_bad_option  = '?';
  *  Sets up the "hardwired" version text for Seq66.  This value
  *  ultimately comes from the configure.ac script, and available in the
  *  seq66_features module. Static.
+ *
+ *  ca 2025-10-25
+ *  Some builds uncover an order-of-initialization issue (we think)
+ *  that leads to a segfault.
+ *
+ *      const std::string cmdlineopts::s_versiontext = seq_version_text();
  */
 
-const std::string
-cmdlineopts::s_versiontext = seq_version_text();
+const std::string cmdlineopts::s_versiontext
+{
+    SEQ66_APP_NAME " " SEQ66_VERSION " "
+    SEQ66_GIT_VERSION " " SEQ66_VERSION_DATE_SHORT "\n"
+};
 
 /**
  *  A structure for command parsing that provides the long forms of
@@ -94,7 +103,7 @@ cmdlineopts::s_versiontext = seq_version_text();
  */
 
 struct option
-cmdlineopts::s_long_options [] =
+cmdlineopts::s_long_options []
 {
     {"help",                no_argument,       0, 'h'},
     {"version",             no_argument,       0, 'V'},
@@ -240,43 +249,45 @@ bool cmdlineopts::cmd_line_options ()
  *  Provides help text.
  */
 
-static const std::string s_help_1a =
-"Options:\n"
-"   -h, --help, ?           Show this help and exit.\n"
-"   -V, --version, #        Show program version/build and exit.\n"
-"   -v, --verbose           Show more data to the console.\n"
+static const std::string s_help_1a
+{
+    "Options:\n"
+    "   -h, --help, ?           Show this help and exit.\n"
+    "   -V, --version, #        Show program version/build and exit.\n"
+    "   -v, --verbose           Show more data to the console.\n"
 #if defined SEQ66_NSM_SUPPORT
-"   -n, --nsm               Activate debugging NSM support.\n"
-"   -T, --no-nsm            Ignore NSM in 'usr' file. (Typical).\n"
+    "   -n, --nsm               Activate debugging NSM support.\n"
+    "   -T, --no-nsm            Ignore NSM in 'usr' file. (Typical).\n"
 #endif
-"   -X, --playlist filename Load playlists (from \"home\" directory).\n"
+    "   -X, --playlist filename Load playlists (from \"home\" directory).\n"
 #if ! defined SEQ66_PORTMIDI_SUPPORT
-"   -m, --manual-ports      Create virtual ports (ALSA/JACK).\n"
+    "   -m, --manual-ports      Create virtual ports (ALSA/JACK).\n"
 #endif
-"   -a, --auto-ports        Auto-Connect MIDI ports.\n"
-;
+    "   -a, --auto-ports        Auto-Connect MIDI ports.\n"
+};
 
 /**
  *  More help text.
  */
 
-static const std::string s_help_1b =
-"   -r, --reveal-ports      Don't show 'usr' definitions for port names.\n"
-"   -R, --hide-ports        Show 'usr' definitions for port names.\n"
+static const std::string s_help_1b
+{
+    "   -r, --reveal-ports      Don't show 'usr' definitions for port names.\n"
+    "   -R, --hide-ports        Show 'usr' definitions for port names.\n"
 #if ! defined SEQ66_PLATFORM_WINDOWS
-"   -A, --alsa              Use ALSA, not JACK. A sticky option.\n"
+    "   -A, --alsa              Use ALSA, not JACK. A sticky option.\n"
 #endif
-"   -b, --bus b             Global override of bus number (for testing).\n"
-"   -B, --buss b            Covers the bus/buss confusion.\n"
-"   -l, --client-name label Use label instead of 'seq66'. Overridden by a\n"
-"                           session manager.\n"
-"   -q, --ppqn qn           Specify default PPQN to replace 192. The MIDI file\n"
-"                           can specify its own PPQN.\n"
-"   -p=pri, --priority=pri  High priority I/O (needs root); pri is optional.\n"
-"   -P, --pass-sysex        Passes incoming SysEx messages to all outputs.\n"
-"                           Not yet fully implemented.\n"
-"   -s, --show-midi         Dump incoming MIDI events to the console.\n"
-;
+    "   -b, --bus b             Global override of bus number (for testing).\n"
+    "   -B, --buss b            Covers the bus/buss confusion.\n"
+    "   -l, --client-name label Use label instead of 'seq66'. Overridden by a\n"
+    "                           session manager.\n"
+    "   -q, --ppqn qn           Specify default PPQN versus 192. The MIDI file\n"
+    "                           can specify its own PPQN.\n"
+    "   -p=pri, --priority=pri  High priority I/O (needs root); pri optional.\n"
+    "   -P, --pass-sysex        Passes incoming SysEx messages to all outputs.\n"
+    "                           Not yet fully implemented.\n"
+    "   -s, --show-midi         Dump incoming MIDI events to the console.\n"
+};
 
 /*
  * This option was never used, just settable, in Seq24.  We need that letter!
@@ -288,88 +299,93 @@ static const std::string s_help_1b =
  *  Still more help text.
  */
 
-static const std::string s_help_2 =
-"   -k, --show-keys         Prints pressed key value.\n"
-"   -K, --inverse           Inverse/night color scheme for seq/perf editors.\n"
-"   -M, --jack-start-mode m ALSA or JACK play modes: live; song; auto.\n"
+static const std::string s_help_2
+{
+    "   -k, --show-keys         Prints pressed key value.\n"
+    "   -K, --inverse           Inverse color scheme for seq/perf editors.\n"
+    "   -M, --jack-start-mode m ALSA or JACK play modes: live; song; auto.\n"
 #if defined SEQ66_JACK_SUPPORT
-"   -j, --jack-transport    Synchronize to JACK transport as Slave.\n"
-"   -g, --no-jack-transport Turn off JACK transport.\n"
-"   -J, --jack-master       Set up as JACK Master. Also sets -j.\n"
-"   -C, --jack-master-cond  Fail if there's already a JACK Master; sets -j.\n"
-"   -N, --no-jack-midi      Use ALSA MIDI, even with JACK Transport. See -A.\n"
-"   -t, --jack, --jack-midi Use JACK MIDI, separately from JACK Transport.\n"
-"   -W, --jack-connect      Auto-connect to JACK ports. The default.\n"
-"   -w, --no-jack-connect   Don't connect to JACK ports. Good with NSM.\n"
+    "   -j, --jack-transport    Synchronize to JACK transport as Slave.\n"
+    "   -g, --no-jack-transport Turn off JACK transport.\n"
+    "   -J, --jack-master       Set up as JACK Master. Also sets -j.\n"
+    "   -C, --jack-master-cond  Fail if there's already a JACK Master; sets -j.\n"
+    "   -N, --no-jack-midi      Use ALSA MIDI even with JACK Transport. See -A.\n"
+    "   -t, --jack, --jack-midi Use JACK MIDI, separately from JACK Transport.\n"
+    "   -W, --jack-connect      Auto-connect to JACK ports. The default.\n"
+    "   -w, --no-jack-connect   Don't connect to JACK ports. Good with NSM.\n"
 #if defined SEQ66_JACK_SESSION
-"   -U, --jack-session uuid Set UUID for JACK session management. Use 'on' to\n"
-"                           enable it and let JACK set the UUID.\n"
+    "   -U, --jack-session uuid Set JACK session management UUID. Use 'on' to\n"
+    "                           enable it and let JACK set the UUID.\n"
 #endif
 #endif
-"   -d, --record-by-channel Divert MIDI input by channel into the patterns\n"
-"                           numbered for each channel.\n"
-"   -D, --legacy-record     Record all MIDI into the active pattern. Default.\n"
-;
+    "   -d, --record-by-channel Divert MIDI input by channel into the patterns\n"
+    "                           numbered for each channel.\n"
+    "   -D, --legacy-record     Record all MIDI into the open pattern. Default.\n"
+};
 
 /**
  *  Still still more help text.
  */
 
-static const std::string s_help_3 =
-"   -0, --smf-0             Don't convert SMF 0 files to SMF 1 upon reading.\n"
-"   -u, --user-save         Force the save  of 'usr' settings.\n"
-"   -H, --home dir          Directory for configuration. $HOME/.config/seq66\n"
-"                           by default. If not a full path, it is appended.\n"
-"   -f, --rc filename       An alternate 'rc' file in $HOME/.config/seq66 or\n"
-"                           the --home directory. '.rc' extension enforced.\n"
-"   -F, --usr filename      An alternate 'usr' file.  Same rules as for --rc.\n"
-"   -c, --config basename   Change base name of the 'rc' and 'usr' files. The\n"
-"                           extension is stripped. ['qseq66' is default].\n"
-"   -S, --session name      Select alternate configuration from sessions.rc.\n"
-"   -L, --locale lname      Set global locale, if installed on the system.\n"
-"   -i, --investigate       Turn on various trouble-shooting code.\n"
-"   -o, --option optoken    Provides app-specific options for expansion.\n"
-"                           Options supported are:\n\n"
-    ;
+static const std::string s_help_3
+{
+    "   -0, --smf-0             Don't convert SMF 0 files to SMF 1 when read.\n"
+    "   -u, --user-save         Force the save  of 'usr' settings.\n"
+    "   -H, --home dir          Directory for configuration. ~/.config/seq66\n"
+    "                           by default. If not a full path, it's appended.\n"
+    "   -f, --rc filename       An alternate 'rc' file in ~/.config/seq66 or\n"
+    "                           the --home directory. '.rc' enforced.\n"
+    "   -F, --usr filename      An alternate 'usr' file.  Same rules as --rc.\n"
+    "   -c, --config basename   Change base name of 'rc' and 'usr' files. The\n"
+    "                           extension is stripped. [Default: 'qseq66'].\n"
+    "   -S, --session name      Use alternate configuration from sessions.rc.\n"
+    "   -L, --locale lname      Set global locale, if installed on the system.\n"
+    "   -i, --investigate       Turn on various trouble-shooting code.\n"
+    "   -o, --option optoken    Provides app-specific options for expansion.\n"
+    "                           Options supported are:\n\n"
+};
 
 /**
  *  Still still still more more help text.
  */
 
-static const std::string s_help_4a =
-"      log=filename  Redirect console output to a log file in home. If no\n"
-"                    '=filename' is provided, the filename in '[user-options]'\n"
-"                    in the 'usr' file is used.\n"
-"      sets=RxC      Change set rows and columns from 4x8. R can be 4 to 12;\n"
-"                    C can be 4 to to 12. Call it the 'variset' mode. Affects\n"
-"                    mute groups, too.\n"
-;
+static const std::string s_help_4a
+{
+    "      log=filename  Redirect console output to a log file in home. If no\n"
+    "                    '=filename' is provided, the name in '[user-options]'\n"
+    "                    in the 'usr' file is used.\n"
+    "      sets=RxC      Change set rows and columns from 4x8. R = 4 to 12;\n"
+    "                    C = be 4 to 12. Call it the 'variset' mode. Affects\n"
+    "                    mute groups, too.\n"
+};
 
-static const std::string s_help_4b =
-"      scale=x,y     Scales size of main window. Range: 0.5 to 3.0.\n"
-"      mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.\n"
-"      virtual=o,i   Like --manual-ports, except that the count of output and\n"
-"                    input ports are specified. Defaults are 8 & 4.\n"
-"\n"
-" seq66cli:\n\n"
-"      daemonize     Sets this application up to fork to the background.\n"
-"      no-daemonize  Or not. These options do not apply to Windows. If given,\n"
-"                    the application writes these options to the 'usr' file\n"
-"                    and exits. Subsequent runs are thus affected. Tricky!\n"
-"\n"
-"Add '--user-save' to make these options permanent.\n"
-"\n"
-;
+static const std::string s_help_4b
+{
+    "      scale=x,y     Scales size of main window. Range: 0.5 to 3.0.\n"
+    "      mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.\n"
+    "      virtual=o,i   Like --manual-ports, except the count of output and\n"
+    "                    input ports are specified. Defaults are 8 & 4.\n"
+    "\n"
+    " seq66cli:\n\n"
+    "      daemonize     Sets this application up to fork to the background.\n"
+    "      no-daemonize  Or not. These options do not apply to Windows.\n"
+    "                    The application writes these options to 'usr'\n"
+    "                    and exits. Subsequent runs are thus affected. Tricky!\n"
+    "\n"
+    "Add '--user-save' to make these options permanent.\n"
+    "\n"
+};
 
 /**
  *  Still still still more more more help text.
  */
 
-static const std::string s_help_5 =
-"Saving a MIDI file saves the current PPQN value. No JACK options are shown if\n"
-"disabled in the build configuration. Command-line options can be sticky; many\n"
-"are saved to the 'rc' files when Seq66 exits. See the Seq66 User Manual.\n"
-;
+static const std::string s_help_5
+{
+    "A saved MIDI file gets the current PPQN value. No JACK options shown if\n"
+    "disabled in the build. Command-line options can be sticky; many\n"
+    "are saved to the 'rc' files when Seq66 exits. See the Seq66 User Manual.\n"
+};
 
 /**
  *  Outputs the help text.
@@ -423,7 +439,7 @@ cmdlineopts::get_compound_option
 )
 {
     std::string value;
-    auto eqpos = compound.find_first_of("=");
+    auto eqpos { compound.find_first_of("=") };
     if (eqpos == std::string::npos)
     {
         optionname.clear();
@@ -456,10 +472,10 @@ cmdlineopts::get_compound_option
 bool
 cmdlineopts::help_check (int argc, char * argv [])
 {
-    bool result = false;
+    bool result { false };
     for ( ; argc > 1; --argc)
     {
-        std::string arg = argv[argc - 1];
+        std::string arg { argv[argc - 1] };
         if
         (
             (arg == "-h") || (arg == "--help") ||
@@ -490,10 +506,10 @@ cmdlineopts::help_check (int argc, char * argv [])
 bool
 cmdlineopts::kill_check (int argc, char * argv [])
 {
-    bool result = argc == 2;
+    bool result { argc == 2 };
     if (result)
     {
-        std::string arg = argv[1];
+        std::string arg { argv[1] };
         result = arg == "--kill" || "kill";
     }
     return result;
@@ -507,10 +523,10 @@ cmdlineopts::kill_check (int argc, char * argv [])
 bool
 cmdlineopts::verbose_check (int argc, char * argv [])
 {
-    bool result = false;
+    bool result { false };
     for ( ; argc > 1; --argc)
     {
-        std::string arg = argv[argc - 1];
+        std::string arg { argv[argc - 1] };
         if ((arg == "-v") || (arg == "--verbose"))
         {
             result = true;
@@ -543,10 +559,10 @@ cmdlineopts::verbose_check (int argc, char * argv [])
 bool
 cmdlineopts::parse_o_options (int argc, char * argv [])
 {
-    bool result = false;
+    bool result = { false };
     if (argc > 1 && not_nullptr(argv))
     {
-        int argn = 1;
+        int argn { 1 };
         std::string arg;
         std::string optionname;
         while (argn < argc)
@@ -653,8 +669,8 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
 bool
 cmdlineopts::parse_log_option (int argc, char * argv [])
 {
-    bool result = false;
-    std::string exename = argv[0];
+    bool result { false };
+    std::string exename { argv[0] };
     if (contains(exename, "verbose"))       /* symlink to dev's program     */
     {
 #if defined SEQ66_PLATFORM_DEBUG
@@ -668,7 +684,7 @@ cmdlineopts::parse_log_option (int argc, char * argv [])
     }
     if (parse_o_options(argc, argv))
     {
-        std::string logfile = usr().option_logfile();
+        std::string logfile { usr().option_logfile() };
         if (! logfile.empty())
             result = true;
     }
@@ -724,8 +740,8 @@ cmdlineopts::parse_log_option (int argc, char * argv [])
 bool
 cmdlineopts::parse_options_files (std::string & errmessage)
 {
-    std::string rcn = rc().config_filespec();
-    bool result = parse_rc_file(rcn, errmessage);
+    std::string rcn { rc().config_filespec() };
+    bool result { parse_rc_file(rcn, errmessage) };
     if (result)
     {
         rcn = rc().user_filespec();
@@ -741,7 +757,7 @@ cmdlineopts::parse_rc_file
     std::string & errmessage
 )
 {
-    bool result = true;                         /* file_readable(filespec)  */
+    bool result { true };                       /* file_readable(filespec)  */
     if (file_readable(filespec))
     {
         rcfile options(filespec, rc());
@@ -772,8 +788,8 @@ cmdlineopts::parse_rc_file
 bool
 cmdlineopts::get_usr_file ()
 {
-    std::string rcn = rc().config_filespec();
-    bool result = file_readable(rcn);
+    std::string rcn { rc().config_filespec() };
+    bool result { file_readable(rcn) };
     if (result)
     {
         rcfile options(rcn, rc());
@@ -797,7 +813,7 @@ cmdlineopts::parse_usr_file
     std::string & errmessage
 )
 {
-    bool result = true;
+    bool result { true };
     if (file_readable(filespec))
     {
         usrfile ufile(filespec, rc());
@@ -815,7 +831,6 @@ cmdlineopts::parse_usr_file
         rc().auto_rc_save(true);
         rc().auto_usr_save(true);
     }
-
     return result;
 }
 
@@ -833,10 +848,10 @@ cmdlineopts::parse_usr_file
 bool
 cmdlineopts::parse_daemonization (bool & startdaemon, std::string & logfile)
 {
-    bool result = cmdlineopts::get_usr_file();   /* daemon values    */
+    bool result { cmdlineopts::get_usr_file() };    /* daemon values    */
     if (result)
     {
-        std::string usrn = rc().user_filespec();
+        std::string usrn { rc().user_filespec() };
         result = file_readable(usrn);
         if (result)
         {
@@ -856,14 +871,14 @@ cmdlineopts::parse_daemonization (bool & startdaemon, std::string & logfile)
 bool
 cmdlineopts::parse_o_sets (const std::string & arg)
 {
-    bool result = arg.length() >= 3;
+    bool result { arg.length() >= 3 };
     if (result)
     {
-        int rows = string_to_int(arg);
-        auto p = arg.find_first_of("x");
+        int rows { string_to_int(arg) };
+        auto p { arg.find_first_of("x") };
         if (p != std::string::npos)
         {
-            int cols = string_to_int(arg.substr(p+1));
+            int cols { string_to_int(arg.substr(p+1)) };
             usr().mainwnd_rows(rows);
             usr().mainwnd_cols(cols);
 #if defined SEQ66_USE_AUTO_SCALING
@@ -873,8 +888,8 @@ cmdlineopts::parse_o_sets (const std::string & arg)
 
             if (rows > 4)
             {
-                float scale = float(rows) / 4.0f;
-                float scaley = 1.0f;
+                float scale { float(rows) / 4.0f };
+                float scaley { 1.0f };
                 if (scale > 1.5)
                     scale = 1.0;
 
@@ -896,10 +911,10 @@ cmdlineopts::parse_o_sets (const std::string & arg)
 bool
 cmdlineopts::parse_o_mutes (const std::string & arg)
 {
-    bool result = arg == "mutes" || arg == "midi" || arg == "both";
+    bool result { arg == "mutes" || arg == "midi" || arg == "both" };
     if (result)
     {
-        mutegroups::saving v = mutegroups::string_to_group_save(arg);
+        mutegroups::saving v { mutegroups::string_to_group_save(arg) };
         if (v != mutegroups::saving::max)
             rc().mute_group_save(v);
     }
@@ -909,21 +924,22 @@ cmdlineopts::parse_o_mutes (const std::string & arg)
 bool
 cmdlineopts::parse_o_virtual (const std::string & arg)
 {
-    int out = 0, in = 0;
+    int out { 0 }, in { 0 };
     rc().manual_ports(true);
     if (! arg.empty())
     {
         out = string_to_int(arg);
-        auto p = arg.find_first_of(",");
+
+        auto p { arg.find_first_of(",") };
         if (p != std::string::npos)
         {
-            in = string_to_int(arg.substr(p+1));
+            in = string_to_int(arg.substr(p + 1));
         }
         else
         {
             p = arg.find_first_of("x");     /* if user uses "x" by habit    */
             if (p != std::string::npos)
-                in = string_to_int(arg.substr(p+1));
+                in = string_to_int(arg.substr(p + 1));
         }
     }
     rc().manual_port_count(out);
@@ -962,8 +978,8 @@ cmdlineopts::parse_o_virtual (const std::string & arg)
 int
 cmdlineopts::parse_command_line_options (int argc, char * argv [])
 {
-    int result = 0;
-    int option_index = 0;                   /* getopt_long index storage    */
+    int result { 0 };
+    int option_index { 0 };                 /* getopt_long index storage    */
     std::string optionval;                  /* used only with -o options    */
     std::string optionname;                 /* ditto                        */
 
@@ -974,12 +990,15 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
     optind = 1;                             /* reset global for (re)scan    */
     for (;;)                                /* scan all arguments           */
     {
-        int c = getopt_long
-        (
-            argc, argv,
-            s_optstring.c_str(),            /* e.g. "Crb:q:Li:jM:pU:Vx:..." */
-            s_long_options, &option_index
-        );
+        int c
+        {
+            getopt_long
+            (
+                argc, argv,
+                s_optstring.c_str(),        /* e.g. "Crb:q:Li:jM:pU:Vx:..." */
+                s_long_options, &option_index
+            )
+        };
         if (c == c_missing_arg || c == c_bad_option)
         {
             char tmp[32];
@@ -1260,8 +1279,8 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
     }
     if (result != c_null_option)
     {
-        std::size_t applen = strlen("seq66");
-        std::string appname(argv[0]);           /* "seq66", "./seq66", etc. */
+        std::size_t applen { strlen("seq66") };
+        std::string appname { argv[0] };        /* "seq66", "./seq66", etc. */
         appname = appname.substr(appname.size()-applen, applen);
         result = optind;
 #if defined SEQ66_PLATFORM_DEBUG_TMI
@@ -1292,8 +1311,8 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 std::string
 cmdlineopts::env_session_tag ()
 {
-    static std::string s_session_variable = "SEQ66_SESSION_TAG";
-    char * env = std::getenv(s_session_variable.c_str());
+    static std::string s_session_variable { "SEQ66_SESSION_TAG" };
+    char * env { std::getenv(s_session_variable.c_str()) };
     std::string result;
     if (not_nullptr(env))
         result = std::string(env);
@@ -1313,8 +1332,8 @@ cmdlineopts::show_locale ()
 {
     try
     {
-        std::locale loc {""};           /* get the user's preferred locale  */
-        std::string msg = loc.name();
+        std::locale loc { "" };         /* get the user's preferred locale  */
+        std::string msg { loc.name() };
         status_message("Locale", msg);
     }
     catch (const std::runtime_error &)
@@ -1328,21 +1347,21 @@ cmdlineopts::show_locale ()
 bool
 cmdlineopts::set_global_locale (const std::string & lname)
 {
-    bool result = ! lname.empty();
+    bool result { ! lname.empty() };
     if (result)
     {
         try
         {
-            std::locale oldlocale = std::locale::global(std::locale{lname});
+            std::locale oldlocale { std::locale::global(std::locale{lname}) };
             std::locale newlocale;      /* default ctor yields global loc.  */
-            std::string oldname = oldlocale.name();
-            std::string newname = newlocale.name();
-            std::string msg = oldname + " ---> " + newname;
+            std::string oldname { oldlocale.name() };
+            std::string newname { newlocale.name() };
+            std::string msg { oldname + " ---> " + newname };
             status_message("Locale", msg);
         }
         catch (std::runtime_error & re)
         {
-            std::string tag = "Locale '" + lname + "'";
+            std::string tag { "Locale '" + lname + "'" };
             error_message(tag, re.what());
             result = false;
         }
@@ -1375,7 +1394,7 @@ cmdlineopts::set_global_locale (const std::string & lname)
 bool
 cmdlineopts::write_options_files (const std::string & filebase)
 {
-    bool result = write_rc_file(filebase);
+    bool result { write_rc_file(filebase) };
     if (result)
         result = write_usr_file(filebase);
 
@@ -1385,7 +1404,7 @@ cmdlineopts::write_options_files (const std::string & filebase)
 bool
 cmdlineopts::write_rc_file (const std::string & filebase)
 {
-    bool result = true;
+    bool result { true };
     if (rc().auto_rc_save())
     {
         std::string rcn;
@@ -1395,7 +1414,7 @@ cmdlineopts::write_rc_file (const std::string & filebase)
         }
         else
         {
-            std::string name = file_extension_set(filebase, ".rc");
+            std::string name { file_extension_set(filebase, ".rc") };
             rcn = rc().config_filespec(name);
         }
 
@@ -1407,31 +1426,16 @@ cmdlineopts::write_rc_file (const std::string & filebase)
     return result;
 }
 
-/**
- * TODO: call the new write_rc_file() function in the rcfile module.
- */
-
 bool
 cmdlineopts::alt_write_rc_file (const std::string & filebase)
 {
-#if 0
-    bool result = true;
-    std::string name = file_extension_set(filebase, ".rc");
-    std::string rcn = rc().config_filespec(name);
-    rcfile options(rcn, rc());
-    result = options.write();
-    if (! result)
-        file_error("Write failed", rcn);
-
-    return result;
-#endif
     return write_rc_file(filebase);
 }
 
 bool
 cmdlineopts::write_usr_file (const std::string & filebase)
 {
-    bool result = true;
+    bool result { true };
     if (rc().auto_usr_save())
     {
         std::string usrn;
@@ -1441,7 +1445,7 @@ cmdlineopts::write_usr_file (const std::string & filebase)
         }
         else
         {
-            std::string name = file_extension_set(filebase, ".usr");
+            std::string name { file_extension_set(filebase, ".usr") };
             usrn = rc().user_filespec(name);
         }
 
@@ -1456,9 +1460,9 @@ cmdlineopts::write_usr_file (const std::string & filebase)
 bool
 cmdlineopts::alt_write_usr_file (const std::string & filebase)
 {
-    bool result = true;
-    std::string name = file_extension_set(filebase, ".usr");
-    std::string usrn = rc().user_filespec(name);
+    bool result { true };
+    std::string name { file_extension_set(filebase, ".usr") };
+    std::string usrn { rc().user_filespec(name) };
     usrfile userstuff(usrn, rc());
     result = userstuff.write();
     if (! result)

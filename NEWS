@@ -4,11 +4,14 @@ Chris Ahlstrom
 
 # Change Log
 
-## [0.99.22] - 2025-10-24
+## [0.99.22] - 2025-10-25
 
 ### Added
 
 -   Issue #141, partly implemented. See "Pattern editor" below.
+-   Fixed a segfault at startup on some builds on Arch Linux.
+    It seems to have been an issue of order of initialization of
+    a static string.
 -   Main window and grid.
     -   With the mouse pressed, the current slot holding the cursor
         is drawn "flat".

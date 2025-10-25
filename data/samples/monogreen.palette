@@ -1,7 +1,7 @@
-# Seq66 0.99.11 (and above) palette configuration file
+# Seq66 0.99.22 (and above) palette configuration file
 #
 # /home/ahlstrom/.config/seq66/monogreen.palette
-# Written on 2025-01-15 07:10:46
+# Written on 2025-10-24 07:10:46
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface. It must be active and
@@ -128,6 +128,7 @@ empty = solid
 note = lineargradient
 scale = dense3
 backseq = dense2
+chord = bdiag
 
 # This section defines pen styles to use for vertical time lines.
 # The names are based on the names in the Qt::PenStyle enumeration.
