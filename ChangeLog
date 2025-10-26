@@ -1,5 +1,153 @@
-2025-07-28  ahlstrom <ahlstromcj@gmail.com>
+2025-10-25  ahlstrom <ahlstromcj@gmail.com>
 
+	* NEWS, aux-files/ltmain.sh, configure,
+	data/linux/qseq66-alt-gray.palette,
+	data/linux/qseq66-default.palette, data/linux/qseq66-gray.palette,
+	data/linux/qseq66.palette, data/samples/green.palette,
+	data/samples/incrypt-66.palette, data/samples/monogreen.palette,
+	data/samples/perstfic-66.palette,
+	data/samples/qseq66-sample.palette,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/seq66_features.cpp: Updated palettes, fixed odd Arch
+	startup seqfault.
+
+2025-10-24  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, doc/latex/tex/pattern_editor.tex,
+	libseq66/include/seq66_features.h: Added git release checklist,
+	reenabled bolding the main note of a key.
+	* NEWS, README.md, TODO, aux-files/ltmain.sh, configure,
+	configure.ac, contrib/vim-syntax/c.vim,
+	doc/latex/tex/pattern_editor.tex, libseq66/include/cfg/scales.hpp,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/cfg/scales.cpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/util/strfunctions.cpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5_helpers.cpp: Finish
+	pitch-range selection, fixed note painting.
+
+2025-10-21  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qslivegrid.cpp: Tweaked sequence::partial_assign(),
+	fixed pattern drag-n-drop issues.
+
+2025-10-17  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, contrib/midi/README, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/gui_palette_qt5.cpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixed a few bugs found in the pattern
+	editor.
+	* NEWS, TODO, doc/latex/tex/pattern_editor.tex,
+	libseq66/src/midi/midi_vector_base.cpp,
+	seq_qt5/src/qseqeditframe64.cpp: Fixed the saving of the selected
+	chord of a pattern.
+
+2025-10-16  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, libseq66/include/cfg/scales.hpp,
+	libseq66/include/midi/midi_vector_base.hpp,
+	libseq66/include/midi/midifile.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/play/songsummary.cpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp: Added
+	c_musicchord seqspec, needs to be finished.
+	* aux-files/ltmain.sh, configure, doc/latex/tex/pattern_editor.tex,
+	resources/pixmaps/Makefile.in, resources/pixmaps/show_bars_off.xpm,
+	resources/pixmaps/show_bars_on.xpm: Added documentation and updated
+	build scripts.
+
+2025-10-15  Chris <ahlstromcj@gmail.com>
+
+	* resources/pixmaps/Makefile.am, resources/pixmaps/filter_off.xpm,
+	resources/pixmaps/filter_on.xpm,
+	resources/pixmaps/show_bars_off.xpm,
+	resources/pixmaps/show_bars_on.xpm,
+	seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qseqroll.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qstriggereditor.cpp: Toggling scale/chord bars works,
+	toggling scale/chord filtering works, more testing needed.
+
+2025-10-14  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, contrib/notes/scales-key-chord-handling.text,
+	libseq66/include/cfg/scales.hpp, libseq66/include/seq66_features.h,
+	libseq66/src/cfg/scales.cpp, seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/include/gui_palette_qt5.hpp, seq_qt5/include/qseqroll.hpp,
+	seq_qt5/src/gui_palette_qt5.cpp, seq_qt5/src/palettefile.cpp,
+	seq_qt5/src/qseqkeys.cpp, seq_qt5/src/qseqroll.cpp: Added drawing of
+	the selected chord to the grid.
+
+2025-10-12  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, contrib/notes/RPN.text,
+	contrib/notes/event-from-bytes.text,
+	contrib/notes/midi-messages.text, contrib/notes/program-banks.text,
+	contrib/notes/scales-key-chord-handling.text,
+	contrib/notes/zoom.text: Adding notes about scales and chords and
+	more.
+
+2025-09-27  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, data/linux/jack/jackctl,
+	libseq66/include/ctrl/keymap.hpp,
+	libseq66/include/ctrl/keystroke.hpp,
+	libseq66/include/midi/midifile.hpp, libseq66/src/ctrl/keymap.cpp,
+	libseq66/src/midi/midifile.cpp, seq_qt5/forms/qseqeventframe.ui,
+	seq_qt5/include/qloopbutton.hpp, seq_qt5/include/qslivebase.hpp,
+	seq_qt5/include/qslivegrid.hpp, seq_qt5/include/qslotbutton.hpp,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/qliveframeex.cpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qseqkeys.cpp,
+	seq_qt5/src/qslivebase.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_info.cpp: Popup menu character and some
+	clean-up.
+
+2025-09-15  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, contrib/midi/README,
+	libseq66/src/midi/calculations.cpp, libseq66/src/play/performer.cpp: 
+	Tentative fix of high-PPQN files playing slowly.
+
+2025-08-20  Chris <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/midi/midibus_common.hpp,
+	libseq66/include/midi/midifile.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/midi/businfo.cpp,
+	libseq66/src/midi/editable_event.cpp,
+	libseq66/src/midi/midibase.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/play/clockslist.cpp, libseq66/src/play/inputslist.cpp,
+	libseq66/src/play/portslist.cpp, seq_portmidi/src/midibus.cpp,
+	seq_qt5/src/qclocklayout.cpp, seq_qt5/src/qseditoptions.cpp,
+	seq_rtmidi/src/mastermidibus.cpp, seq_rtmidi/src/midi_alsa.cpp,
+	seq_rtmidi/src/midi_alsa_info.cpp, seq_rtmidi/src/midibus.cpp: Minor
+	refactoring, e_clock value changed.
+
+2025-07-29  ahlstrom <ahlstromcj@gmail.com>
+
+	* configure, include/config.h.in,
+	libseq66/src/midi/calculations.cpp: More version bump, fixed
+	double-declaration in calculations module.
+
+2025-07-28  Chris <ahlstromcj@gmail.com>
+
+	* ChangeLog, NEWS, README.md, VERSION, configure.ac,
+	data/license.text, data/readme.text, data/readme.windows,
+	include/cli/seq66-config.h, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h: Version bump for next release
+	0.99.22.
 	* NEWS, README.md, configure.ac: Release Notes for Seq66 v. 0.99.21
 	2025-07-28 "Karl Kleanup" This release contains fixes and updates for issues #68, #137, #138,
 	* seq_qt5/src/qseditoptions.cpp: New manual, tweak fix to showing

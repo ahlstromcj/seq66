@@ -1,27 +1,21 @@
 NEWS for Seq66 0.99.22
 Chris Ahlstrom
-2015-07-10 to 2025-10-24
+2015-07-10 to 2025-10-26
 
 # Change Log
 
-## [0.99.22] - 2025-10-25
+## [0.99.22] - 2025-10-26
 
 ### Added
 
--   Issue #141, partly implemented. See "Pattern editor" below.
--   Fixed a segfault at startup on some builds on Arch Linux.
-    It seems to have been an issue of order of initialization of
-    a static string.
+-   Issue #141, mostly implemented. See "Pattern editor" below.
+-   midifile.
+    -   Added storage for the first BPM value, needed by performer.
 -   Main window and grid.
     -   With the mouse pressed, the current slot holding the cursor
         is drawn "flat".
     -   Giving a grid slot "focus" and then pressing the Menu key
         brings up the grid-slot popup menu.
-    -   Fixed an issue where loading a file with a different PPQN
-        raised the modify flag.
-    -   Fixed: When dragging a pattern, modify was set before the
-        drag was completed. Also could not move another pattern into
-        the empty slot.
 -   Pattern editor.
     -   Showing note bars for scales and chords:
         -   Added a new brush called "chord" to the palette file.
@@ -35,60 +29,55 @@ Chris Ahlstrom
             shown in the keys pane. Undefine the
             SEQ66\_SHOW\_SELECTED\_KEY\_OCTAVE macro to keep
             showing C.
-    -   Painting notes:
-        -   Changed closest-snap to down-snap to make note
-            insertion more intuitive.
-        -   In scale/chord:
-            -   Added a button to toggle the filtering of notes
-                based on scale/chord.
-            -   The selected key, scale, and chord determine the
-                actual chord represented on the pattern grid.
-    -   Fixed the snap-interval setting for drawing notes.
-    -   We now store the selected chord for a pattern, if any, as a
-        new "c\_musicchord" SeqSpec. It is track-specific only,
-        not global (different from the music scale and music key).
-    -   Removed the redundant display of time signatures in the
-        data pane.
-    -   Fixed a bug where the background sequence was not loaded
-        into the piano roll.
+    -   Painting notes in scale/chord:
+        -   Added a button to toggle the filtering of notes
+            based on scale/chord.
+        -   The selected key, scale, and chord determine the
+            actual chord represented on the pattern grid.
     -   Added an option to the "Tools" (hammer) menu to select
         notes in a range of pitches. Either note numbers or note
         names can be used. See issue #141 and the user manual.
--   Song editor.
--   Event editor.
--   Preferences dialog.
--   Reading/Import/Export.
-    -   Fixed: Tempo event in track 0 does not override c\_bpmtag SeqSpec.
 -   Documentation.
--   C++. Added -Wno-unnecessary-virtual-specifier to Clang builds
-    to avoid a dumb warning about final classes and virtual
-    functions.
 
 ### Changed
 
+-   C++. Added -Wno-unnecessary-virtual-specifier to Clang builds
+    to avoid a dumb warning about final classes and virtual
+    functions.
 -   Main window and grid.
 -   Pattern editor.
--   Song editor.
--   Event editor.
--   Preferences dialog.
+    -   Changed closest-snap to down-snap to make note
+        insertion more intuitive.
+    -   Removed the redundant display of time signatures in the
+        data pane.
+    -   We now store the selected chord for a pattern, if any, as a
+        new "c\_musicchord" SeqSpec. It is track-specific only,
 
 ### Fixed
 
+-   Fixed a segfault at startup on some builds on Arch Linux.
+    It seems to have been an issue of order of initialization of
+    a static string via a static function.
 -   performer.
     -   The file PPQN was set when reading the file, so later the
         set\_ppqn() function would not inform the master bus of
         a PPQN change (in ALSA).
+    -   Fixed: the slow playback of high-PPQN files.
 -   JACK.
     -   Fixed detect\_jack() and added a missing call to jack\_free().
 -   midifile.
     -   Added storage for the first BPM value, needed by performer.
+    -   Fixed: Tempo event in track 0 does not override c\_bpmtag SeqSpec.
 -   Main window and grid.
+    -   Fixed: an issue where loading a file with a different PPQN
+        raised the modify flag.
+    -   Fixed: When dragging a pattern, modify was set before the
+        drag was completed. Also could not move another pattern into
+        the empty slot.
 -   Pattern editor.
--   Song editor.
--   Event editor.
--   Preferences dialog.
--   Configuration files.
--   Classes.
+    -   Fixed the snap-interval setting for drawing notes.
+    -   Fixed a bug where the background sequence was not loaded
+        into the piano roll.
 
 ## [0.99.21] - 2025-07-28
 

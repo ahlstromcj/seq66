@@ -1,12 +1,12 @@
-# README for Seq66 0.99.22 2025-10-22
+# README for Seq66 0.99.22 2025-10-26
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid
 interface; pattern banks, triggers, and playlists for song management;
 scale and chord aware piano-roll; song layout for creative
-composition; control/status via MIDI automation. and mute-groups to
+composition; control/status via MIDI automation, and mute-groups to
 enable/disable sets of patterns. Tools for live performance and for
 composing great-sounding MIDI tracks. Supports the Non/New Session
-Manager; can also run headless and on a small computer like the Pi.
+Manager; can run headless and on a small computer like the Pi.
 It does not support audio samples, just MIDI.
 
 __Seq66__ A major refactoring of Sequencer64/Kepler34/Seq24 with

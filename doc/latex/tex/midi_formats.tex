@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2025-07-17
+% \update      2025-10-26
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -280,6 +280,8 @@
    'ctrl' file, though \textsl{Seq66} will still read (and ignore)
    this \texttt{SeqSpec} if present.
    A \texttt{SeqSpec} named "gap" or "reserved" is not used.
+   They are due to a minor error in \textsl{Seq24} or
+   being used in \textsl{Seq32}.
    \index{SeqSpec}
    \index{SeqSpec!table}
 
@@ -313,7 +315,7 @@
          \texttt{c\_perf\_bw}        & Global        & 0                 & \texttt{0x24240016 bw:L} \\
          \texttt{c\_tempo\_map}      & Seq32         & 0                 & \texttt{0x24240017} \\
          \texttt{c\_midiinbus}       & Track         & 5                 & \texttt{0x24240018 inputbus} \\
-         \texttt{c\_reserved\_2}     & Unused        & 0                 & \texttt{0x24240019} \\
+         \texttt{c\_musicchord}      & Track         & 5                 & \texttt{0x24240019 chord} \\
          \texttt{c\_tempo\_track}    & Global        & 8                 & \texttt{0x2424001A track:L} \\
          \texttt{c\_seq\_color}      & Track         & 5                 & \texttt{0x2424001B color} \\
          \texttt{c\_seq\_edit\_mode} & Kepler34      & 0                 & \texttt{0x2424001C} \\
@@ -376,6 +378,26 @@
    the input is considered "Free".
    To be seen in the grid-slot popup menu,
    \textbf{Record into patterns by bus} must be active.
+
+\subsubsection{SeqSpec c\_musicchord}
+\label{subsubsec:midi_format_track_seqspec_musicchord}
+
+   \index{SeqSpec!c\_musicchord}
+   \begin{description}
+      \item \texttt{c\_musicchord}: the musical chord for a pattern/track.
+      \item \textsl{Length}: 5
+      \item \textsl{Format}: \texttt{0x24240019 chord}
+   \end{description}
+
+   The value of \texttt{chord} ranges from 0 ("none") to
+   39 ("mmaj7add13").
+   This item specifies the musical chord for a pattern.
+   The notes that are \textsl{not} in the musical chord are
+   hash-marked;
+   the hash-marking is affected by the \texttt{c\_musickey} setting.
+   Filtering can be turned on so that painting notes with
+   the mouse works only for notes in the chord.
+   Recording from MIDI input is not affected.
 
 \subsubsection{SeqSpec c\_midichannel}
 \label{subsubsec:midi_format_track_seqspec_midichannel}
@@ -698,6 +720,12 @@
    When provided globally, this option is stored for the duration
    of the session in the
    \texttt{seq66::usrsettings} class.
+   The notes that are \textsl{not} in the musical scale are
+   hash-marked;
+   the hash-marking is affected by the \texttt{c\_musickey} setting.
+   Filtering can be turned on so that painting notes with
+   the mouse works only for notes in the scale.
+   Recording from MIDI input is not affected.
 
 \subsubsection{SeqSpec c\_backsequence}
 \label{subsubsec:midi_format_track_seqspec_backsequence}
