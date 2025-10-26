@@ -1,3 +1,14 @@
+2025-10-26  ahlstrom <ahlstromcj@gmail.com>
+
+	* ChangeLog, NEWS, README.md, RELNOTES, VERSION, configure.ac,
+	data/license.text, data/readme.text, data/readme.windows,
+	doc/latex/tex/configuration.tex, doc/latex/tex/midi_formats.tex,
+	doc/latex/tex/patterns_panel.tex,
+	doc/latex/tex/seq66-user-manual.tex, include/config.h.in,
+	nsis/Seq66Constants.nsh, nsis/Seq66Setup.nsi,
+	nsis/build_release_package.bat: Script and manual updates for next
+	release.
+
 2025-10-25  ahlstrom <ahlstromcj@gmail.com>
 
 	* NEWS, aux-files/ltmain.sh, configure,
