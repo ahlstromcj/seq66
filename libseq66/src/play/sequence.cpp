@@ -83,30 +83,30 @@ static const int c_maxbeats         = 0xFFFF;
  *  size.
  */
 
-static const midipulse c_handlesize = 16;
+static const midipulse c_handlesize { 16 };
 
 /**
  *  Static members for validating scale factors in pattern compression and
  *  expanding.
  */
 
-static const double c_scale_min     =    0.01;
-static const double c_scale_max     =  200.00;
-static const double c_measure_max   = 1000.00;
+static const double c_scale_min     {    0.01 };
+static const double c_scale_max     {  200.00 };
+static const double c_measure_max   { 1000.00 };
 
 /**
  *  The divisor for detecting when to reset auto-step. The original value
  *  was 2. Let's try something else. Maybe 8 would work, too.
  */
 
-static const midipulse c_reset_divisor = 4;
+static const midipulse c_reset_divisor { 4 };
 
 /*
  * Member value.  A fingerprint size of 0 means to not use a fingerprint...
  * display the whole track in the progress box, no matter how long.
  */
 
-int sequence::sm_fingerprint_size   = 0;
+int sequence::sm_fingerprint_size { 0 };
 
 /*
  * Member for convenience.
@@ -118,7 +118,7 @@ short sequence::sm_preserve_velocity;
  *  Provides the default name/title for the sequence.
  */
 
-const std::string sequence::sm_default_name = "Untitled";
+const std::string sequence::sm_default_name { "Untitled" };
 
 /**
  *  A static clipboard for holding pattern/sequence events.  Being static
@@ -383,7 +383,7 @@ sequence::partial_assign (const sequence & rhs, bool domodify)
          * Read-only:    m_maxbeats = rhs.m_maxbeats;
          */
 
-        m_ppqn                      = rhs.m_ppqn;
+//      m_ppqn                      = rhs.m_ppqn;
         m_seq_number                = rhs.m_seq_number;     // ?
         m_seq_color                 = rhs.m_seq_color;
         m_seq_edit_mode             = rhs.m_seq_edit_mode;

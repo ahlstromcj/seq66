@@ -78,7 +78,7 @@ namespace seq66
  *  The minimum number of notes needed for a scale analysis.
  */
 
-static const int c_analysis_minimum = 8;
+static const int c_analysis_minimum { 8 };
 
 /**
  *  Each value in the kind of scale is denoted by a true value in these
@@ -91,7 +91,7 @@ static const int c_analysis_minimum = 8;
  *  Note that melodic minor descends in the same way as the natural minor
  *  scale, so it descends differently than it ascends.  We don't deal with
  *  that trick, at all.  In the following table, the scales all start with C,
- *  but seq66 allow other starting notes (e.g. "keys").
+ *  but seq66 allows other starting notes (e.g. "keys").
  *
 \verbatim
     Chromatic           C  C# D  D# E  F  F# G  G# A  A# B   Notes, chord
@@ -113,7 +113,7 @@ static const int c_analysis_minimum = 8;
  */
 
 static const bool
-c_scales_policy [c_scales_max] [c_octave_size] =
+c_scales_policy [c_scales_max] [c_octave_size]
 {
     {                                                   /* off = chromatic  */
         true, true, true, true, true, true,
@@ -255,8 +255,8 @@ scales_policy (scales s, keys keyofpattern, int k)
 static void
 rotate_scale_right (bool p [c_octave_size])
 {
-    int lastindex = c_octave_size - 1;
-    bool last = p[lastindex];                   /* p[11]            */
+    int lastindex { c_octave_size - 1 };
+    bool last { p[lastindex] };                 /* p[11]            */
     for (int n = lastindex; n > 0; --n)         /* p[11] to p[1]    */
         p[n] = p[n - 1];
 
@@ -266,8 +266,8 @@ rotate_scale_right (bool p [c_octave_size])
 static void
 rotate_transpose_right (int p [c_octave_size])
 {
-    int lastindex = c_octave_size - 1;
-    int last = p[lastindex];                    /* p[11]            */
+    int lastindex { c_octave_size - 1 };
+    int last { p[lastindex] };                  /* p[11]            */
     for (int n = lastindex; n > 0; --n)         /* p[11] to p[1]    */
         p[n] = p[n - 1];
 
@@ -373,7 +373,7 @@ rotate_transpose_right (int p [c_octave_size])
 const int *
 scales_up (int scale, int key)
 {
-    static const int c_scales_transpose_up [c_scales_max] [c_octave_size] =
+    static const int c_scales_transpose_up [c_scales_max] [c_octave_size]
     {
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},          /* off = chromatic  */
         { 2, 0, 2, 0, 1, 2, 0, 2, 0, 2, 0, 1},          /* major            */
@@ -496,7 +496,7 @@ scales_up (int scale, int key)
 const int *
 scales_down (int scale, int key)
 {
-    static const int c_scales_transpose_dn [c_scales_max] [c_octave_size] =
+    static const int c_scales_transpose_dn [c_scales_max] [c_octave_size]
     {
         { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, /* off = chromatic */
         { -1,  0, -2,  0, -2, -1,  0, -2,  0, -2,  0, -2}, /* major (ionian)  */
@@ -529,7 +529,7 @@ scales_down (int scale, int key)
 }
 
 static const std::string
-c_key_text[c_octave_size] =
+c_key_text[c_octave_size]
 {
     "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
 };
@@ -537,12 +537,12 @@ c_key_text[c_octave_size] =
 std::string
 musical_note_name (int n)
 {
-    std::string result = "Xb";
+    std::string result { "Xb" };
     if (legal_note(n))
     {
         char note[16];
-        int key = n % c_octave_size;
-        int octave = (n / c_octave_size) - 1;
+        int key { n % c_octave_size };
+        int octave { (n / c_octave_size) - 1 };
         if (octave >= 0)
         {
             snprintf
@@ -603,12 +603,12 @@ musical_scale_name (scales s)
 const char *
 interval_name_ptr (int interval)
 {
-    static const std::string c_interval_text [c_interval_size + 1] =
+    static const std::string c_interval_text [c_interval_size + 1]
     {
         "P1", "m2", "M2", "m3", "M3", "P4", "TT", "P5",
         "m6", "M6", "m7", "M7", "P8", "m9", "M9", "0"   /* "0" if error */
     };
-    int index = std::abs(interval);
+    int index { std::abs(interval) };
     if (index > c_interval_size)
         index = c_interval_size;
 
@@ -630,9 +630,9 @@ interval_name_ptr (int interval)
  */
 
 bool
-harmonic_number_valid (int number)
+harmonic_number_valid (int n)
 {
-    return std::abs(number) < c_harmonic_size;
+    return std::abs(n) < c_harmonic_size;
 }
 
 /**
@@ -642,11 +642,11 @@ harmonic_number_valid (int number)
 const char *
 harmonic_interval_name_ptr (int interval)
 {
-    static const std::string c_interval_text [c_harmonic_size + 1] =
+    static const std::string c_interval_text [c_harmonic_size + 1]
     {
         "I", "ii", "iii", "IV", "V", "vi", "vii", "I", "0"
     };
-    int index = std::abs(interval);
+    int index { std::abs(interval) };
     if (index > c_harmonic_size)
         index = c_harmonic_size;
 
@@ -665,13 +665,13 @@ harmonic_interval_name_ptr (int interval)
  */
 
 bool
-chord_number_valid (int number)
+chord_number_valid (int n)
 {
-    return (number >= 0) && (number < c_chord_number);
+    return (n >= 0) && (n < c_chord_number);
 }
 
 const char *
-chord_name_ptr (int number)
+chord_name_ptr (int n)
 {
     static const std::string c_chord_table_text [c_chord_number + 1]
     {
@@ -685,10 +685,10 @@ chord_name_ptr (int number)
         "m7add11",      "m7add13",     "m-Maj7", "m-Maj7add11", "m-Maj7add13",
         ""              /* terminator */
     };
-    if (! chord_number_valid(number))
-        number = c_chord_number;
+    if (! chord_number_valid(n))
+        n = c_chord_number;
 
-    return c_chord_table_text[number].c_str();
+    return c_chord_table_text[n].c_str();
 }
 
 /**
@@ -702,9 +702,9 @@ chord_name_ptr (int number)
  */
 
 const chord_notes &
-chord_entry (int number)
+chord_entry (int n)
 {
-    static const std::vector<chord_notes> s_chord_table =
+    static const std::vector<chord_notes> s_chord_table
     {
         { 0, -1, 0,   0,  0,  0 },      /* Off          */
         { 0,  4, 7,  -1,  0,  0 },      /* Major        */
@@ -747,10 +747,10 @@ chord_entry (int number)
         { 0,  3, 7,  11, 17, -1 },      /* m-Maj7add11  */
         { 0,  3, 7,  11, 21, -1 }       /* m-Maj7add13  */
     };
-    if (! chord_number_valid(number))
-        number = 0;
+    if (! chord_number_valid(n))
+        n = 0;
 
-    return s_chord_table[number];
+    return s_chord_table[n];
 }
 
 std::string
@@ -840,10 +840,10 @@ note_in_chord (chords c, keys k, int note)
 double
 midi_note_frequency (midibyte note)
 {
-    double result = 0.0;
+    double result { 0.0 };
     if (note < c_midibyte_data_max)
     {
-        double exponent = double(note) - 69.0 / 12.0;
+        double exponent { double(note) - 69.0 / 12.0 };
         result = 440.0 * pow(2.0, exponent);
     }
     return result;
@@ -875,10 +875,10 @@ midi_note_frequency (midibyte note)
 static bool
 analyze_note (midibyte note, keys & outkey, int & outoctave)
 {
-    bool result = note < c_midibyte_data_max;
+    bool result { note < c_midibyte_data_max };
     if (result)
     {
-        unsigned base_semitone = unsigned(note) % c_octave_size;
+        unsigned base_semitone { unsigned(note) % c_octave_size };
         outkey = static_cast<keys>(base_semitone);
         outoctave = unsigned(note) / c_octave_size - 1;
     }
@@ -903,7 +903,7 @@ show_all_counts
     for (int s = 0; s < c_scales_max - 1; ++s)
     {
         bool policy[c_octave_size];
-        int scale = s + 1;
+        int scale { s + 1 };
         printf("%16s: ", musical_scale_name(scale).c_str());
         for (int k = 0; k < c_octave_size; ++k)
             policy[k] = c_scales_policy[scale][k];      /* base (C) scale   */
@@ -919,7 +919,7 @@ show_all_counts
     for (int s = 0; s < c_scales_max - 1; ++s)
     {
         bool policy[c_octave_size];
-        int scale = s + 1;
+        int scale { s + 1 };
         printf("%16s: ", musical_scale_name(scale).c_str());
         for (int k = 0; k < c_octave_size; ++k)
             policy[k] = c_scales_policy[scale][k];      /* base (C) scale   */
@@ -962,24 +962,24 @@ analyze_notes
     std::vector<scales> & outscales
 )
 {
-    int result = 0;
-    bool ok = evlist.count() > 0;
+    int result { 0 };
+    bool ok { evlist.count() > 0 };
     if (ok)
     {
         int histogram[c_octave_size];
-        int highcount = 0;                  /* max count found on scale     */
-        int notecount = 0;
+        int highcount { 0 };                /* maximum count found on scale */
+        int notecount { 0 };
         for (int k = 0; k < c_octave_size; ++k)
             histogram[k] = 0;
 
         for (auto e = evlist.cbegin(); e != evlist.cend(); ++e)
         {
-            const event & er = eventlist::cdref(e);
+            const event & er { eventlist::cdref(e) };
             keys thekey;
             int theoctave;
             if (er.is_note_on())
             {
-                midibyte note = er.get_note();
+                midibyte note { er.get_note() };
                 ++notecount;
                 ok = analyze_note(note, thekey, theoctave);
                 if (ok)
@@ -1018,9 +1018,9 @@ analyze_notes
 
                 for (auto ken : keyslist)
                 {
-                    int count_in = 0;
-                    int count_out = 0;
-                    int k = static_cast<int>(ken);
+                    int count_in { 0 };
+                    int count_out { 0 };
+                    int k { static_cast<int>(ken) };
 
                     /*
                      * Here, we have the scale and it's (next) key.  For each
@@ -1053,7 +1053,7 @@ analyze_notes
             {
                 for (auto ken : keyslist)
                 {
-                    int k = static_cast<int>(ken);
+                    int k { static_cast<int>(ken) };
                     if (count_matrix[s][k][0] == highcount)
                     {
                         outscales.push_back(static_cast<scales>(s + 1));
@@ -1078,7 +1078,7 @@ using key_sig_data = struct
     std::string minor_root_note;
 };
 
-static key_sig_data s_key_sig_root_table [15] =
+static key_sig_data s_key_sig_root_table [15]
 {
     {   -7,  "Cbmaj", "Abmin"     },
     {   -6,  "Gbmaj", "Ebmin"     },
@@ -1117,8 +1117,8 @@ key_signature_string (int sfcount, bool isminor)
     std::string result;
     if (sfcount >= -7 && sfcount <= 7)
     {
-        int index = sfcount + 7;
-        const key_sig_data & ksd = s_key_sig_root_table[index];
+        int index { sfcount + 7 };
+        const key_sig_data & ksd { s_key_sig_root_table[index] };
         result = isminor ? ksd.minor_root_note : ksd.major_root_note ;
     }
     return result;
@@ -1144,13 +1144,13 @@ key_signature_bytes
     midibytes & keysigbytes
 )
 {
-    bool hasminor = contains(keysigname, "min");
-    bool hasmajor = contains(keysigname, "maj");
-    bool result = hasminor || hasmajor;
+    bool hasminor { contains(keysigname, "min") };
+    bool hasmajor { contains(keysigname, "maj") };
+    bool result { hasminor || hasmajor };
     keysigbytes.clear();
     if (result)
     {
-        int sfcount = (-99);
+        int sfcount { -99 };
         if (hasminor)
         {
             for (int i = 0; i < 15; ++i)

@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2025-10-26
+dnl \update        2025-10-27
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -21,7 +21,7 @@ dnl ---------------------------------------------------------------------------
 
 AC_PREREQ([2.72])
 AC_REVISION($Revision: 0.99$)
-AC_INIT([Seq66],[0.99.22],[ahlstromcj@gmail.com])
+AC_INIT([Seq66],[0.99.23],[ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
@@ -563,9 +563,9 @@ dnl      macros automatically.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2025-10-26"
+#define VERSION_DATE_SHORT "2025-10-27"
 #define API_VERSION "0.99"
-#define VERSION "0.99.22"
+#define VERSION "0.99.23"
 
 )
 

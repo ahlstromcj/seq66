@@ -143,26 +143,26 @@ using colorbyte = char;
  *      If fp_use_time_signature is true, then this value is assumed to be the
  *      (possibly new) beat width.
  *
- * \var fp_measures
+ * \var [inout] fp_measures
  *      The final length of the pattern, Ignored if the fix_type is not
  *      lengthfix::measures, but the new bar count is returned here for
  *      display purposes.
  *
- * \var fp_scale_factor
+ * \var [inout] fp_scale_factor
  *      The factor used to change the length of the pattern,  Ignored if the
  *      fix_type is not lengthfix::rescale. Sanity checked to not too small,
  *      not too large, and not 0.  Might be changed according to process, so
  *      that the final value can be displayed.
  *
- * \par fp_notemap_file
+ * \var fp_notemap_file
  *      Provides the name of the note-map file to use to re-map notes.
  *
- * \par fp_reverse_notemap
+ * \var fp_reverse_notemap
  *      Re-map notes in the other directions
  *
- * \var fp_effect
- *      Indicates the effect(s) of the change, using the fixeffect enumeration
- *      in the calculations module. Intended to be an output field.
+ * \var [out] fp_effect
+ *      Indicate the effect(s) of the change, using the fixeffect enumeration
+ *      in the calculations module.
  */
 
 struct fixparameters
@@ -924,7 +924,6 @@ private:
     unsigned short m_time_beat_width;
 
     /**
-     *  ca 2025-06-23.
      *  New members to use for the c_timesig SeqSpec. Rather than hold
      *  the last time-signature that was set, this holds the first one,
      *  or the value in a c_timesig SeqSpec. If 0, the c_timesig values

@@ -74,21 +74,21 @@ enum class keys
  *  equally-tempered octave.
  */
 
-const int c_octave_size = 12;
+const int c_octave_size { 12 };
 
 /**
  *  A constant for clarification of the value of zero, which, in the context
  *  of a musical key, is the default key of C.
  */
 
-const int c_key_of_C = static_cast<int>(keys::C);
+const int c_key_of_C { static_cast<int>(keys::C) };
 
 /**
  *  A constant for clarification of the value of zero, which, in the context
  *  of a musical key, is the default key of C.
  */
 
-const int c_key_of_max = static_cast<int>(keys::max);
+const int c_key_of_max { static_cast<int>(keys::max) };
 
 /**
  *  An inline function to test that an integer is a legal key-name index
@@ -157,13 +157,13 @@ enum class scales
  *  Avoids a cast in order to use scales::max as an initializer.
  */
 
-const int c_scales_off = static_cast<int>(scales::off);
+const int c_scales_off { static_cast<int>(scales::off) };
 
 /**
  *  Avoids a cast in order to use scales::max as an array size.
  */
 
-const int c_scales_max = static_cast<int>(scales::max);
+const int c_scales_max { static_cast<int>(scales::max) };
 
 /**
  *  An inline function to test that an integer in a legal scale value.
@@ -230,10 +230,10 @@ legal_chord (int s)
  *  array.
  */
 
-const int c_chord_number    = 40;
-const int c_chord_size      =  6;
-const int c_interval_size   = 15;
-const int c_harmonic_size   =  8;
+const int c_chord_number    { 40 };
+const int c_chord_size      {  6 };
+const int c_interval_size   { 15 };
+const int c_harmonic_size   {  8 };
 
 /**
  *  Provides a short vector containing the chord values in each chord's
