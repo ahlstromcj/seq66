@@ -8,7 +8,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2022-09-25
-# \update         2025-09-27
+# \update         2025-11-25
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -20,7 +20,18 @@
 #     software and its descendant modifications available to the community
 #     for all time.
 #
-#     See "jack_control --help" for a list of options.
+#     See "jack_control --help" for a list of options. The options used here
+#     are:
+#
+#        -S    Configure for short (16-bit) samples first.
+#        -d    The driver to use (here, ALSA). The second -d is then an
+#              ALSA option to set the ALSA PCM device.
+#        -R    The JACK frame rate (sample rate).
+#        -p    Number of frames between JACK process() calls; a power of 2.
+#        -n    Number of periods; the minimum is 2; 3 recommended for USB.
+#        -X    Use the raw or seq MIDI system.
+#        -D    Duplex ports except for -P...
+#        -P    Provide only playback ports.
 #
 # ALSA parameters partial list:
 #
@@ -69,6 +80,8 @@
 
 JCTL_A2JMIDID="no"
 JCTL_ALL="no"
+JCTL_DO_SIMPLE="no"
+JCTL_DO_PULSEAUDIO_FIX="no"
 JCTL_DEVICE="hw:CODEC"  # see "cat /proc/asound/cards"
 JCTL_DRIVER="alsa"
 JCTL_LATENCY="2"
@@ -81,15 +94,26 @@ JCTL_SESSOPT="--session-root /home/$USER/.local/share/nsm"
 JCTL_SYNTH="no"
 JCTL_SYNTHESIZER="qsynth"
 JCTL_SYNTHOPT="--midi-driver jack"
+JCTL_SIMPLE="/usr/bin/jackd -S -d$JCTL_DRIVER -d$JCTL_DEVICE -r$JCTL_RATE -p$JCTL_PERIOD -n$JCTL_LATENCY -Xseq -D -P$JCTL_DEVICE"
+JCTL_PULSEAUDIO_FIX="pactl set-card-profile alsa_card.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00 off"
 
 if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
 
    cat << E_O_F
-Usage v. 2025-01-24
+Usage v. 2025-11-25
 
    jackctl [ --start ] [ options ] Start jack/apps with the usual parameters
 
 Options:
+
+   --simple    Run jackd via a command-line. Edit JCTL_SIMPLE in this
+               script to suit. The command-line here is:
+
+   $JCTL_SIMPLE
+
+               Add --a2j if hard-ware devices are not shown. Make sure
+               the desired devices are not locked by pulseaudio. Use the
+               option --pafix
 
    --list      List the drivers and the ALSA/JACK parameters. [Default]
    --start     Start the JACK server.
@@ -116,9 +140,8 @@ Options:
    --a2j       Also start/stop a2jmidid. Options used are --export-hw and
                -u. The latter is needed to avoid "[0]" in port names on some
                systems.
-   --synth     Start the software synthesizer $JCTL_SYNTHESIZER with options
-               $JCTL_SYNTHOPT. This is useful for testing without a session
-               manager.
+   --synth     Start the software synthesizer $JCTL_SYNTHESIZER with option(s)
+               $JCTL_SYNTHOPT. Useful for testing without a session manager.
    --all       Combines --a2j --synth. Use with --start, --stop, but not
                --session.
    --help      Show this message.
@@ -134,6 +157,14 @@ else
    while [ "$1" != "" ] ; do
 
       case "$1" in
+
+         --simple)
+            JCTL_DO_SIMPLE="yes"
+            ;;
+
+         --pafix)
+            JCTL_DO_PULSEAUDIO_FIX="yes"
+            ;;
 
          --list | list)
             JCTL_OPERATION="list"
@@ -223,6 +254,19 @@ else
 
 fi
 
+if [ "$JCTL_DO_PULSEAUDIO_FIX" == "yes" ] ; then
+   echo $JCTL_PULSEAUDIO_FIX
+   $JCTL_PULSEAUDIO_FIX
+   JCTL_OPERATION="none"
+fi
+
+if [ "$JCTL_DO_SIMPLE" == "yes" ] ; then
+   echo $JCTL_SIMPLE
+   $JCTL_SIMPLE &
+   JCTL_OPERATION="none"
+   ps ax | grep jackd
+fi
+
 if [ "$JCTL_OPERATION" == "list" ] ; then
 
    echo "Available sound sinks:"
@@ -257,6 +301,7 @@ elif [ "$JCTL_OPERATION" == "kill" ] ; then
    fi
    jack_control stop
    jack_control exit
+   killall -9 jackd
 
 elif [ "$JCTL_OPERATION" == "start" ] ; then
 
