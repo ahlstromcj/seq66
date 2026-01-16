@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.99.21 and above
+INSTALL for Seq66 v. 0.99.23 and above
 Chris Ahlstrom
-2015-09-10 to 2025-07-25
+2015-09-10 to 2026-01-15
 
 Getting Seq66 requires building the code or going to "ahlstromcj/seq66" on
 GitHub to get an installation package or a Windows release executable.
@@ -565,6 +565,9 @@ DEPENDENCIES:
 
         -   Installing the qt5ct package (Debian/Ubuntu)
         -   Adding "export QT_QPA_PLATFORMTHEME=qt5ct" to .bashrc.
+
+        For Ubuntu Studio 25 or thereabouts, see the INSTALL4Ubuntu.md
+        document.
 
    Raspberry Pi:
 

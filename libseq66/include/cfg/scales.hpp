@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-10-22
+ * \updates       2026-01-07
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the Seq64 globals module.  Includes the
@@ -56,15 +56,20 @@ enum class keys
 {
     C,                              /*  0 */
     Csharp,                         /*  1 */
+    Dflat = Csharp,
     D,                              /*  2 */
     Dsharp,                         /*  3 */
+    Eflat = Dsharp,
     E,                              /*  4 */
     F,                              /*  5 */
     Fsharp,                         /*  6 */
+    Gflat = Fsharp,
     G,                              /*  7 */
     Gsharp,                         /*  8 */
+    Aflat = Gsharp,
     A,                              /*  9 */
     Asharp,                         /* 10 */
+    Bflat = Asharp,
     B,                              /* 11 */
     max                             /* size of set */
 };

@@ -8,7 +8,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2022-09-25
-# \update         2025-11-25
+# \update         2026-01-10
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -81,7 +81,6 @@
 JCTL_A2JMIDID="no"
 JCTL_ALL="no"
 JCTL_DO_SIMPLE="no"
-JCTL_DO_PULSEAUDIO_FIX="no"
 JCTL_DEVICE="hw:CODEC"  # see "cat /proc/asound/cards"
 JCTL_DRIVER="alsa"
 JCTL_LATENCY="2"
@@ -95,19 +94,20 @@ JCTL_SYNTH="no"
 JCTL_SYNTHESIZER="qsynth"
 JCTL_SYNTHOPT="--midi-driver jack"
 JCTL_SIMPLE="/usr/bin/jackd -S -d$JCTL_DRIVER -d$JCTL_DEVICE -r$JCTL_RATE -p$JCTL_PERIOD -n$JCTL_LATENCY -Xseq -D -P$JCTL_DEVICE"
+JCTL_DO_PULSEAUDIO_FIX="no"
 JCTL_PULSEAUDIO_FIX="pactl set-card-profile alsa_card.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00 off"
 
 if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
 
    cat << E_O_F
-Usage v. 2025-11-25
+Usage v. 2026-01-10
 
    jackctl [ --start ] [ options ] Start jack/apps with the usual parameters
 
 Options:
 
    --simple    Run jackd via a command-line. Edit JCTL_SIMPLE in this
-               script to suit. The command-line here is:
+    -s         script to suit. The command-line here is:
 
    $JCTL_SIMPLE
 
@@ -117,12 +117,15 @@ Options:
 
    --list      List the drivers and the ALSA/JACK parameters. [Default]
    --start     Start the JACK server.
+    -st
    --stop      Stop the JACK server. Does not apply to --session.
    --kill      Stop the JACK server and exit jackdbus.
+    -k
    --session   Also start the $JCTL_SESSMGR session manager with options
                $JCTL_SESSOPT.
                The --start option is assumed.
    --agordejo  Run the agordejo session manager. --start is assumed.
+    -ag
    --ray       Run the raysession session manager. --start is assumed.
    --set       Set the default values, shown here.  Stops, then restarts
                jackdbus. Edit this script to change the defaults:
@@ -158,11 +161,11 @@ else
 
       case "$1" in
 
-         --simple)
+         --simple | -s | s | simple)
             JCTL_DO_SIMPLE="yes"
             ;;
 
-         --pafix)
+         --pafix | pafix)
             JCTL_DO_PULSEAUDIO_FIX="yes"
             ;;
 
@@ -174,7 +177,7 @@ else
             JCTL_OPERATION="setdefaults"
             ;;
 
-         --start | start)
+         --start | start | st | --st)
             JCTL_OPERATION="start"
             ;;
 
@@ -182,7 +185,7 @@ else
             JCTL_OPERATION="stop"
             ;;
 
-         --kill | kill)
+         --kill | kill | k | -k)
             JCTL_OPERATION="kill"
             ;;
 
@@ -198,7 +201,7 @@ else
             JCTL_SESSOPT="--session-root /home/$USER/.local/share/ray"
             ;;
 
-         --agor | agor | --agordejo)
+         --agordejo | ag | -ag)
             JCTL_OPERATION="start"
             JCTL_SESSION="yes"
             JCTL_SESSMGR="agordejo"
