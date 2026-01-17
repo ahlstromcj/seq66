@@ -1,0 +1,107 @@
+Pipewire
+Chris Ahlstrom
+2026-01-17 to 2026-01-17
+
+How to set up to use Pipewire with Seq66 ALSA and JACK support.
+
+Possible tools to install:
+
+    pipewire
+    pipewire-docs
+    pipewire-pulse
+    pipewire-audio [Arch]
+    pipewire-audio-client-libraries [Debian, "replaces" ALSA, JACK]
+    libspa-0.2-jack
+    pipewire-alsa
+    pipewire-jack
+    pipewire-jack-client
+    wireplumber
+    wpctl
+    pw-dump
+    pwvucontrol
+    pipemixer
+    wiremax
+    helvum
+    qpwgraph
+
+    $ systemctl --user daemon-reload    # check for new service files
+    $ systemctl --user --now disable pulseaudio.service pulseaudio.socket
+    $ systemctl --user --now enable pipewire pipewire-pulse
+    $ systemctl --user --now enable wireplumber.service
+    $ systemctl --user restart wireplumber pipewire pipewire-pulse
+
+See if this command shows "Server Name: PulseAudio (on PipeWire 1.4.9)":
+
+    $ pactl info
+
+This command shows the Clients and Audio/Video devices:
+
+    $ wpctl status
+
+This command shows a long set of JSON output describing the configuration:
+
+    $ pw-dump
+
+Make it permanent:
+
+    $ systemctl --user mask pulseaudio
+
+    $ pactl info | grep '^Service Name'
+
+Running Seq66 with JACK and Pipewire:
+
+    $ pw-jack qseq66 --jack &
+
+    This command modifies LD_LIBRARY_PATH so that the application will load
+    the PipeWire implementation of JACK client libraries instead of those of
+    JACK; JACK clients are redirected to PipeWire.
+
+    If the PipeWire implementation of JACK has been installed as a system-wide
+    replacement for JACK, the system already behaves in that way; pw-jack is
+    not needed.
+
+$ ps ax|grep pipe and wire
+
+   /usr/bin/pipewire
+   /usr/bin/pipewire -c filter-chain.conf
+   /usr/bin/pipewire-pulse
+   /usr/bin/wireplumber
+
+Directories (varies by Linux version):
+
+    /usr/share/doc/pipewire/examples
+    /usr/share/pipewire
+    /usr/share/wireplumber
+    /etc/wireplumber [Arch]
+    ~/.config/wireplumber
+    ~/.local/state/wireplumber
+
+Arch Linux:
+
+    PipeWire provides an initial set of configuration files in
+    /usr/share/pipewire. Do not edit these files; package updates will
+    overwrite your changes. To configure PipeWire, copy files from
+    /usr/share/pipewire to the alternate system-wide location /etc/pipewire,
+    or to the user location ~/.config/pipewire. An equally named file in a
+    directory with a higher precedence makes the analogous files ignored.
+
+    Audio: install pipewire-audio. Depending on the type of audio clients,
+    might need to take some extra steps. May need to install additional
+    firmware for your audio device,
+
+    ALSA clients: Install pipewire-alsa (and remove pulseaudio-alsa)
+    to route all applications using the ALSA API through PipeWire. 
+
+    PulseAudio clients: Install pipewire-pulse. It replaces pulseaudio
+    and pulseaudio-bluetooth. Reboot, re-login or stop pulseaudio.service
+    and start the pipewire-pulse.service user unit to see the effect. 
+    See the reference below for the usage of pactl.
+
+    JACK clients: Install pipewire-jack for JACK support.
+
+References:
+
+    https://wiki.archlinux.org/title/PipeWire
+    https://wiki.debian.org/PipeWire
+
+# vim: sw=4 ts=4 wm=4 et ft=sh
