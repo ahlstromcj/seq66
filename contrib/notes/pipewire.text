@@ -1,6 +1,6 @@
 Pipewire
 Chris Ahlstrom
-2026-01-17 to 2026-01-17
+2026-01-17 to 2026-01-22
 
 How to set up to use Pipewire with Seq66 ALSA and JACK support.
 
@@ -99,9 +99,52 @@ Arch Linux:
 
     JACK clients: Install pipewire-jack for JACK support.
 
+rncbc from Reddit:
+
+    Q. Is there a way to cleanly switch from pipewire-jack to "just jack" ?
+       The goal here is to be able to be able to reserve my critical sound
+       interface for critical jobs when needed without crushing my CPU under
+       load when i just want to chill, without sacrificing jack's flexibility
+       when it comes to ease of use. 
+
+    A. rncbc: There's 2 options here.
+
+       a. You already trust jack for most if not all of your production:
+
+          1. Do not uninstall JACK.
+          2. Keep or install pipewire-jack as usual;
+          3. Edit and comment out all the lines in 
+             "/etc/ld.so.conf.d/pipewire-jack.conf" (or the equivalent)
+          4. While not having jackd(bus) up and running, as for actual
+             production, run "pw-jack your-jack-app"; jack-app will then
+             join the pipewire-jack graph.
+          5. Thus, one can choose between straight JACK and pipewire-jack.
+
+       b. You have no clue about JACK but want to try the various
+          "jack-apps":
+
+          1. Uninstall JACK if desired, or leave it all as is.
+          2. Install pipewire-jack or the equivalent for your distro
+             (e.g. pipewire-libjack).
+          3. All desktop and jack-apps will join the party.
+          4. You might complain that some jack-apps do not work quite
+             as they should; if so, there is always option a.
+
+At the Reddit site noted below jason_gate describes switching between
+JACK and Pipewire. The steps are summarized here:
+
+    a. Stop pipewire{.socket,.service}, pipewire-pulse{.socket,.service},
+       and wireplumber using "systemctl --user". Then, using the Arch
+       optional systemd wrapper service for JACK, start "jack@myjack.service"
+       in a similar manner.
+    b. For the opposite setup, stop jack using systemctl and start
+       pipewire using systemctl.
+
 References:
 
     https://wiki.archlinux.org/title/PipeWire
     https://wiki.debian.org/PipeWire
+    https://www.reddit.com/r/linuxaudio/comments/
+        1fi4qd1/pipewirejack_or_just_jack/
 
 # vim: sw=4 ts=4 wm=4 et ft=sh
