@@ -75,6 +75,17 @@
 #include <QTimer>
 #include <QToolTip>
 
+#include <QtConfig>                     /* #include qconfig.h               */
+
+#undef QT_VERSION_LESSER
+#undef QT_VERSION_5
+#undef QT_VERSION_6
+#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
+
+// TODO
+//
+#endif
+
 #include "cfg/settings.hpp"             /* seq66::rc().home_config_dir...() */
 #include "util/filefunctions.hpp"       /* seq66 file-name manipulations    */
 #include "util/strfunctions.hpp"        /* seq66::toupper() and tolower     */
@@ -283,8 +294,21 @@ qt (const std::string & text)
 }
 
 /**
+ *  In Qt6, x() and y() are deprecated for some reason. So we
+ *  essentially duplicate the inline code here.
+ */
+
+int
+qt_x (QInputEvent * ev)
+{
+    return qRound(ev->position.x());
+}
+
+/**
  *  Semi-recursive function to alter the visibility of all sub-items
  *  in a layout item.
+ *
+ *  Why not use a reference?
  */
 
 void

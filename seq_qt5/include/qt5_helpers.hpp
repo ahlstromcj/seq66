@@ -113,6 +113,7 @@ extern keystroke qt_keystroke
     bool testing = false
 );
 extern QString qt (const std::string & text);
+extern int qt_x (QInputEvent * ev);
 extern void qt_set_layout_visibility (QLayoutItem * item, bool visible);
 extern QTimer * qt_timer
 (
