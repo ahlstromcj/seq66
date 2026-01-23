@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-05-23
- * \updates       2023-05-24
+ * \updates       2026-01-23
  * \license       GNU GPLv2 or above
  *
  *  Compare using qscrollslave for a QScrollArea versus the method used in
@@ -88,32 +88,32 @@ is_direction_key (int key)
  */
 
 void
-qscrollslave::keyPressEvent (QKeyEvent * event)
+qscrollslave::keyPressEvent (QKeyEvent * ev)
 {
-    int key = event->key();
+    int key = ev->key();
     bool isarrow = is_direction_key(key);
     if (isarrow)
     {
-        event->accept();                            // event->ignore();
+        ev->accept();                               // ev->ignore();
         if (not_nullptr(m_master))
         {
-            QKeyEvent keyevent = *event;
-            QApplication::sendEvent(m_master, &keyevent);
+            QKeyEvent * keyevent { ev };
+            QApplication::sendEvent(m_master, keyevent);
         }
     }
     else
-        QScrollArea::keyPressEvent(event);          // event->accept();
+        QScrollArea::keyPressEvent(ev);             // ev->accept();
 }
 
 void
-qscrollslave::keyReleaseEvent (QKeyEvent * event)
+qscrollslave::keyReleaseEvent (QKeyEvent * ev)
 {
-    int key = event->key();
+    int key = ev->key();
     bool isarrow = is_direction_key(key);
     if (isarrow)
-        event->accept();                            // event->ignore();
+        ev->accept();                               // ev->ignore();
     else
-        QScrollArea::keyReleaseEvent(event);        // event->accept();
+        QScrollArea::keyReleaseEvent(ev);           // event->accept();
 }
 
 /**
@@ -126,8 +126,8 @@ qscrollslave::wheelEvent (QWheelEvent * qwep)
     qwep->accept();                                 // qwep->ignore();
     if (not_nullptr(m_master))
     {
-        QWheelEvent wheelevent = *qwep;
-        QApplication::sendEvent(m_master, &wheelevent);
+        QWheelEvent * wheelevent { qwep };
+        QApplication::sendEvent(m_master, wheelevent);
     }
 }
 

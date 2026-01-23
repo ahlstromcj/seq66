@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-04
+ * \updates       2026-01-23
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -329,16 +329,16 @@ qperftime::keyPressEvent (QKeyEvent * event)
  */
 
 void
-qperftime::mousePressEvent (QMouseEvent * event)
+qperftime::mousePressEvent (QMouseEvent * ev)
 {
-    midipulse tick = z().pix_to_tix(event->x());
+    midipulse tick = z().pix_to_tix(qt_mouse_x(ev));
     if (snap() > 0)
         tick -= (tick % snap());
 
-    if (event->y() > height() / 2)                      /* see banner note  */
+    if (qt_mouse_y(ev) > height() / 2)                      /* see banner note  */
     {
-        bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
-        if (event->button() == Qt::LeftButton)          /* move L/R markers */
+        bool isctrl = bool(ev->modifiers() & Qt::ControlModifier);
+        if (ev->button() == Qt::LeftButton)          /* move L/R markers */
         {
             if (isctrl)
                 perf().set_tick(tick, true);            /* set_start_tick() */
@@ -355,12 +355,12 @@ qperftime::mousePressEvent (QMouseEvent * event)
             }
             set_dirty();
         }
-        else if (event->button() == Qt::MiddleButton)   /* set start tick   */
+        else if (ev->button() == Qt::MiddleButton)   /* set start tick   */
         {
             perf().set_tick(tick, true);                /* set_start_tick() */
             set_dirty();
         }
-        else if (event->button() == Qt::RightButton)
+        else if (ev->button() == Qt::RightButton)
         {
             perf().set_right_tick(tick + snap());
             set_dirty();
@@ -382,11 +382,11 @@ qperftime::mouseReleaseEvent (QMouseEvent *)
 }
 
 void
-qperftime::mouseMoveEvent (QMouseEvent * event)
+qperftime::mouseMoveEvent (QMouseEvent * ev)
 {
     setCursor
     (
-        event->y() > height() / 2 ? Qt::PointingHandCursor : Qt::UpArrowCursor
+        qt_mouse_y(ev) > height() / 2 ? Qt::PointingHandCursor : Qt::UpArrowCursor
     );
 }
 

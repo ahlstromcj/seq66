@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2025-10-22
+ * \updates       2026-01-23
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -64,6 +64,7 @@
 #include <QLayoutItem>
 #include <QLineEdit>
 #include <QKeyEvent>
+#include <QMouseEvent>
 #include <QMenu>
 #include <QMessageBox>
 #include <QPalette>
@@ -74,17 +75,6 @@
 #include <QStandardItemModel>
 #include <QTimer>
 #include <QToolTip>
-
-#include <QtConfig>                     /* #include qconfig.h               */
-
-#undef QT_VERSION_LESSER
-#undef QT_VERSION_5
-#undef QT_VERSION_6
-#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
-
-// TODO
-//
-#endif
 
 #include "cfg/settings.hpp"             /* seq66::rc().home_config_dir...() */
 #include "util/filefunctions.hpp"       /* seq66 file-name manipulations    */
@@ -298,11 +288,34 @@ qt (const std::string & text)
  *  essentially duplicate the inline code here.
  */
 
+#if defined QT_VERSION_5
+
 int
-qt_x (QInputEvent * ev)
+qt_mouse_x (QMouseEvent * ev)
 {
-    return qRound(ev->position.x());
+    return ev->x();
 }
+int
+qt_mouse_y (QMouseEvent * ev)
+{
+    return ev->y();
+}
+
+#elif defined QT_VERSION_6
+
+int
+qt_mouse_x (QMouseEvent * ev)
+{
+    return qRound(ev->position().x());
+}
+
+int
+qt_mouse_y (QMouseEvent * ev)
+{
+    return qRound(ev->position().y());
+}
+
+#endif
 
 /**
  *  Semi-recursive function to alter the visibility of all sub-items
@@ -610,7 +623,7 @@ QAction *
 new_qaction (const std::string & text, const QIcon & micon)
 {
     QString mlabel(qt(text));
-#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
+#if defined QT_VERSION_L5
     QAction * result = new (std::nothrow) QAction(micon, mlabel, nullptr);
 #else
     QAction * result = new (std::nothrow) QAction(micon, mlabel);
