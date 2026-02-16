@@ -1,5 +1,5 @@
-#if ! defined SEQ66_PATCHES_HPP
-#define SEQ66_PATCHES_HPP
+#if ! defined SEQ66_DRUMS_HPP
+#define SEQ66_DRUMS_HPP
 
 /*
  *  This file is part of seq66.
@@ -20,13 +20,13 @@
  */
 
 /**
- * \file          patches.hpp
+ * \file          drums.hpp
  *
  *  This module declares the array of MIDI program names.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
- * \date          2025-02-17
+ * \date          2026-02-16
  * \updates       2026-02-16
  * \license       GNU GPLv2 or above
  *
@@ -39,13 +39,13 @@ namespace seq66
 {
 
 /**
- *  Provides a small wrapper class for an alternate mapping of patch numbers
- *  (program numbers) to patch names.
+ *  Provides a small wrapper class for an alternate mapping of drum numbers
+ *  (program numbers) to drum names.
  */
 
-class patches
+class drums
 {
-    friend std::string program_name (int patchnumber);
+    friend std::string drum_name (int drumnumber);
 
 public:
 
@@ -54,45 +54,45 @@ public:
 private:
 
     /**
-     *  A container for the up to 128 pairs of patch numbers and names.
+     *  A container for the up to 128 pairs of drum numbers and names.
      *  Initially of size zero.
      */
 
-    container m_patch_map;
+    container m_drum_map;
 
     /**
-     *  Indicates if the patch map is to be used in place of the built-in
-     *  GM patch list.
+     *  Indicates if the drum map is to be used in place of the built-in
+     *  GM drum list.
      */
 
     bool m_active;
 
     /**
-     *  Holds the [comments] for the patch file.
+     *  Holds the [comments] for the drum file.
      */
 
     std::string m_comments;
 
 public:
 
-    patches () = default;               /* an empty, inactive map   */
-    patches (const patches &) = delete;
-    const patches & operator = (const patches &) = delete;
-    ~patches () = default;
+    drums () = default;               /* an empty, inactive map   */
+    drums (const drums &) = delete;
+    const drums & operator = (const drums &) = delete;
+    ~drums () = default;
 
-    const container & patch_map () const
+    const container & drum_map () const
     {
-        return m_patch_map;
+        return m_drum_map;
     }
 
     void clear ()
     {
-        m_patch_map.clear();
+        m_drum_map.clear();
         activate(false);
     }
 
-    bool add (int patchnumber, const std::string & patchname);
-    std::string name (int patchnumber) const;
+    bool add (int drumnumber, const std::string & drumname);
+    std::string name (int drumnumber) const;
 
     const std::string & comments () const
     {
@@ -116,27 +116,27 @@ public:
 
 private:
 
-    std::string name_ex (int patchnumber) const;
+    std::string name_ex (int drumnumber) const;
 
-};          // class patches
+};          // class drums
 
 /*
  *  Acessor functions
  */
 
-extern bool add_patch (int patchnumber, const std::string & patchname);
-extern void set_patches_comment (const std::string & c);
-extern const std::string & get_patches_comment ();
-extern std::string program_name (int patchnumber);
+extern bool add_drum (int drumnumber, const std::string & drumname);
+extern void set_drums_comment (const std::string & c);
+extern const std::string & get_drums_comment ();
+extern std::string drum_name (int drumnumber);
 extern std::string program_list ();
-extern std::string gm_program_name (int patchnumber);
+extern std::string gm_program_name (int drumnumber);
 
 }           // namespace seq66
 
-#endif      // SEQ66_PATCHES_HPP
+#endif      // SEQ66_DRUMS_HPP
 
 /*
- * patches.hpp
+ * drums.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

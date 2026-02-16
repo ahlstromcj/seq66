@@ -786,7 +786,7 @@ qperfroll::keyPressEvent (QKeyEvent * ev)
         )
         {
             handled = true;
-            perf().push_trigger_undo();         /* delete selected notes    */
+            perf().push_trigger_undo();         /* delete selected trigs    */
             for (int seqid = m_seq_l; seqid <= m_seq_h; seqid++)
             {
                 if (perf().is_seq_active(seqid))
@@ -839,9 +839,9 @@ qperfroll::keyPressEvent (QKeyEvent * ev)
 
                 handled = dirty = true;
                 if (ev->modifiers() & Qt::ShiftModifier)
-                    perf().pop_trigger_redo();
+                    redo();             /* perf().pop_trigger_redo()        */
                 else
-                    perf().pop_trigger_undo();
+                    undo();             /* perf().pop_trigger_undo()        */
                 break;
 
             case Qt::Key_Home:

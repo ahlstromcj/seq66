@@ -1,13 +1,14 @@
 # Seq66 0.94.1 (and above) user ('usr') configuration file
 #
 # /home/ahlstrom/.config/seq66/sample.usr
-# Written 2021-06-13 08:36:20
+# Written 2026-02-16 08:00:00
 #
 # This is a Seq66 'usr' file. Edit it and place it in the
-# $HOME/.config/seq66 directory. It allows one to apply an alias
-# (alternate name) to each MIDI bus, MIDI channel, and MIDI control
-# control code, per channel. It has additional options not present in
-# in Seq24, and supports DOS INI-style variable setting.
+# $HOME/.config/seq66 directory. Enable it in the 'rc' file.
+# It allows one to apply an alias (alternate name) to each MIDI bus, MIDI
+# channel, and MIDI control control code, per channel. It has additional
+# options not present in in Seq24, and supports DOS INI-style variable
+# setting.
 
 [Seq66]
 
@@ -44,15 +45,15 @@ This sample is adapted from:
  
   The following 9 instruments are defined in this sample file:
  
-    0 = Waldorf Micro Q
-    1 = SuperNova
-    2 = DrumStation
-    3 = TX81Z (no CCs defined)
-    4 = WaveStation (no CCs defined)
-    5 = ESI-2000 (no CCs defined)
-    6 = ES-1 (no CCs defined)
-    7 = ER-1 (no CCs defined)
-    8 = TB-303 (no CCs defined)
+    0 = Waldorf Micro Q (128 CCs defined)
+    1 = SuperNova (128 CCs defined)
+    2 = DrumStation (92 CCs defined)
+    3 = TX81Z (5 CCs defined)
+    4 = WaveStation (4 CCs defined)
+    5 = ESI-2000 (4 CCs defined)
+    6 = ES-1 (4 CCs defined)
+    7 = ER-1 (4 CCs defined)
+    8 = TB-303 (4 CCs defined)
  
   The first bus is "2x2 A (SuperNova/Q/TX81Z/DrumStation)" with the following
   instruments defined for each set of channels:
