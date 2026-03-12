@@ -1,13 +1,15 @@
 NEWS for Seq66 0.99.22
 Chris Ahlstrom
-2015-07-10 to 2025-10-26
+2015-07-10 to 2026-03-12
 
 # Change Log
 
-## [0.99.22] - 2025-10-26
+## [0.99.22] - 2026-03-12
 
 ### Added
 
+-   Added the qchannelpopup class for future refactoring /
+    unification of channel menus.
 -   Issue #141, mostly implemented. See "Pattern editor" below.
 -   midifile.
     -   Added storage for the first BPM value, needed by performer.

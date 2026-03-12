@@ -1,6 +1,26 @@
 TO DO for Seq66 0.99.22
 Chris Ahlstrom
-2019-04-13 to 2025-10-24
+2019-04-13 to 2026-03-11
+
+    -   The buss name should be shown as a field in the event editor.
+    -   Can we fill in the buss-number column just for viewing?
+    -   Have a controller number/name dropdown just like in the Event button.
+        -   When a 'usr' file specifies alternate buss and controller names,
+            the alternate controller names are shown in all the drop-downs
+            that apply, but only the default controller names are shown in the
+            event editor.
+    -   Same for the GM or loaded Program/Patch names. Places to use
+        the loaded patch names:
+        -   DONE. Pattern editor data pane.
+        -   DONE. Event editor text-display box.
+    -   Also show channel names if provided in 'usr' file.
+
+Features:
+
+    -   *.patches file?
+    -   *.drums vs *.notemap?
+    -   *.controllers?
+    -   MIDNAM?
 
 NSM:
 

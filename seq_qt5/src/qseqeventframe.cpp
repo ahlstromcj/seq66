@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2025-05-09
+ * \updates       2026-03-12
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -62,6 +62,17 @@ using category = enum
     system_message,
     meta_event,
     seqspec_event
+};
+
+using channelmessage = enum
+{
+    note_off = 0,
+    note_on,
+    aftertouch,
+    control_change,
+    program_change,
+    channel_pressure,
+    pitch_wheel
 };
 
 /**
@@ -551,20 +562,26 @@ qseqeventframe::slot_midi_channel (int /*index*/)
 void
 qseqeventframe::check_channel_msg_index (int index)
 {
-    if (index == 3)
+    if (index == control_change)                // 3
     {
         m_in_control = true;
         m_in_program = false;
+        ui->selectButton->setText("Ctrl");
+        ui->selectButton->setEnabled(true);
     }
-    else if (index == 4)
+    else if (index == program_change)           // 4
     {
         m_in_control = false;
         m_in_program = true;
+        ui->selectButton->setText("Prog");
+        ui->selectButton->setEnabled(true);
     }
     else
     {
         m_in_control = false;
         m_in_program = false;
+        ui->selectButton->setText("Sel");
+        ui->selectButton->setEnabled(false);
     }
 }
 

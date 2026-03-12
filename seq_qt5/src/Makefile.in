@@ -21,7 +21,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2025-01-25
+# \update      2026-03-12
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -161,7 +161,8 @@ am__DEPENDENCIES_1 =
 libseq_qt5_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am__dirstamp = $(am__leading_dot)dirstamp
-am__objects_1 = ../include/qclocklayout.moc.lo \
+am__objects_1 = ../include/qchannelpopup.moc.lo \
+	../include/qclocklayout.moc.lo \
 	../include/qinputcheckbox.moc.lo ../include/qlfoframe.moc.lo \
 	../include/qliveframeex.moc.lo ../include/qloopbutton.moc.lo \
 	../include/qmutemaster.moc.lo ../include/qpatternfix.moc.lo \
@@ -183,18 +184,18 @@ am__objects_1 = ../include/qclocklayout.moc.lo \
 	../include/qt5nsmanager.moc.lo
 am__objects_2 = $(am__objects_1)
 am_libseq_qt5_la_OBJECTS = gui_palette_qt5.lo palettefile.lo qbase.lo \
-	qclocklayout.lo qeditbase.lo qinputcheckbox.lo qlfoframe.lo \
-	qliveframeex.lo qloopbutton.lo qmutemaster.lo qpatternfix.lo \
-	qperfbase.lo qperfeditex.lo qperfeditframe64.lo qperfnames.lo \
-	qperfroll.lo qperftime.lo qplaylistframe.lo qportwidget.lo \
-	qsabout.lo qsappinfo.lo qsbuildinfo.lo qscrollmaster.lo \
-	qscrollslave.lo qseditoptions.lo qseqbase.lo qseqdata.lo \
-	qseqeditex.lo qseqeditframe64.lo qseqeventframe.lo \
-	qseqframe.lo qseqkeys.lo qseqroll.lo qsessionframe.lo \
-	qseqtime.lo qsetmaster.lo qseventslots.lo qslivebase.lo \
-	qslivegrid.lo qslogview.lo qslotbutton.lo qsmaintime.lo \
-	qsmainwnd.lo qstriggereditor.lo qt5_helpers.lo qt5nsmanager.lo \
-	$(am__objects_2)
+	qchannelpopup.lo qclocklayout.lo qeditbase.lo \
+	qinputcheckbox.lo qlfoframe.lo qliveframeex.lo qloopbutton.lo \
+	qmutemaster.lo qpatternfix.lo qperfbase.lo qperfeditex.lo \
+	qperfeditframe64.lo qperfnames.lo qperfroll.lo qperftime.lo \
+	qplaylistframe.lo qportwidget.lo qsabout.lo qsappinfo.lo \
+	qsbuildinfo.lo qscrollmaster.lo qscrollslave.lo \
+	qseditoptions.lo qseqbase.lo qseqdata.lo qseqeditex.lo \
+	qseqeditframe64.lo qseqeventframe.lo qseqframe.lo qseqkeys.lo \
+	qseqroll.lo qsessionframe.lo qseqtime.lo qsetmaster.lo \
+	qseventslots.lo qslivebase.lo qslivegrid.lo qslogview.lo \
+	qslotbutton.lo qsmaintime.lo qsmainwnd.lo qstriggereditor.lo \
+	qt5_helpers.lo qt5nsmanager.lo $(am__objects_2)
 libseq_qt5_la_OBJECTS = $(am_libseq_qt5_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -219,7 +220,8 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/aux-files/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ../include/$(DEPDIR)/qclocklayout.moc.Plo \
+am__depfiles_remade = ../include/$(DEPDIR)/qchannelpopup.moc.Plo \
+	../include/$(DEPDIR)/qclocklayout.moc.Plo \
 	../include/$(DEPDIR)/qinputcheckbox.moc.Plo \
 	../include/$(DEPDIR)/qlfoframe.moc.Plo \
 	../include/$(DEPDIR)/qliveframeex.moc.Plo \
@@ -255,28 +257,29 @@ am__depfiles_remade = ../include/$(DEPDIR)/qclocklayout.moc.Plo \
 	../include/$(DEPDIR)/qstriggereditor.moc.Plo \
 	../include/$(DEPDIR)/qt5nsmanager.moc.Plo \
 	./$(DEPDIR)/gui_palette_qt5.Plo ./$(DEPDIR)/palettefile.Plo \
-	./$(DEPDIR)/qbase.Plo ./$(DEPDIR)/qclocklayout.Plo \
-	./$(DEPDIR)/qeditbase.Plo ./$(DEPDIR)/qinputcheckbox.Plo \
-	./$(DEPDIR)/qlfoframe.Plo ./$(DEPDIR)/qliveframeex.Plo \
-	./$(DEPDIR)/qloopbutton.Plo ./$(DEPDIR)/qmutemaster.Plo \
-	./$(DEPDIR)/qpatternfix.Plo ./$(DEPDIR)/qperfbase.Plo \
-	./$(DEPDIR)/qperfeditex.Plo ./$(DEPDIR)/qperfeditframe64.Plo \
-	./$(DEPDIR)/qperfnames.Plo ./$(DEPDIR)/qperfroll.Plo \
-	./$(DEPDIR)/qperftime.Plo ./$(DEPDIR)/qplaylistframe.Plo \
-	./$(DEPDIR)/qportwidget.Plo ./$(DEPDIR)/qsabout.Plo \
-	./$(DEPDIR)/qsappinfo.Plo ./$(DEPDIR)/qsbuildinfo.Plo \
-	./$(DEPDIR)/qscrollmaster.Plo ./$(DEPDIR)/qscrollslave.Plo \
-	./$(DEPDIR)/qseditoptions.Plo ./$(DEPDIR)/qseqbase.Plo \
-	./$(DEPDIR)/qseqdata.Plo ./$(DEPDIR)/qseqeditex.Plo \
-	./$(DEPDIR)/qseqeditframe64.Plo ./$(DEPDIR)/qseqeventframe.Plo \
-	./$(DEPDIR)/qseqframe.Plo ./$(DEPDIR)/qseqkeys.Plo \
-	./$(DEPDIR)/qseqroll.Plo ./$(DEPDIR)/qseqtime.Plo \
-	./$(DEPDIR)/qsessionframe.Plo ./$(DEPDIR)/qsetmaster.Plo \
-	./$(DEPDIR)/qseventslots.Plo ./$(DEPDIR)/qslivebase.Plo \
-	./$(DEPDIR)/qslivegrid.Plo ./$(DEPDIR)/qslogview.Plo \
-	./$(DEPDIR)/qslotbutton.Plo ./$(DEPDIR)/qsmaintime.Plo \
-	./$(DEPDIR)/qsmainwnd.Plo ./$(DEPDIR)/qstriggereditor.Plo \
-	./$(DEPDIR)/qt5_helpers.Plo ./$(DEPDIR)/qt5nsmanager.Plo
+	./$(DEPDIR)/qbase.Plo ./$(DEPDIR)/qchannelpopup.Plo \
+	./$(DEPDIR)/qclocklayout.Plo ./$(DEPDIR)/qeditbase.Plo \
+	./$(DEPDIR)/qinputcheckbox.Plo ./$(DEPDIR)/qlfoframe.Plo \
+	./$(DEPDIR)/qliveframeex.Plo ./$(DEPDIR)/qloopbutton.Plo \
+	./$(DEPDIR)/qmutemaster.Plo ./$(DEPDIR)/qpatternfix.Plo \
+	./$(DEPDIR)/qperfbase.Plo ./$(DEPDIR)/qperfeditex.Plo \
+	./$(DEPDIR)/qperfeditframe64.Plo ./$(DEPDIR)/qperfnames.Plo \
+	./$(DEPDIR)/qperfroll.Plo ./$(DEPDIR)/qperftime.Plo \
+	./$(DEPDIR)/qplaylistframe.Plo ./$(DEPDIR)/qportwidget.Plo \
+	./$(DEPDIR)/qsabout.Plo ./$(DEPDIR)/qsappinfo.Plo \
+	./$(DEPDIR)/qsbuildinfo.Plo ./$(DEPDIR)/qscrollmaster.Plo \
+	./$(DEPDIR)/qscrollslave.Plo ./$(DEPDIR)/qseditoptions.Plo \
+	./$(DEPDIR)/qseqbase.Plo ./$(DEPDIR)/qseqdata.Plo \
+	./$(DEPDIR)/qseqeditex.Plo ./$(DEPDIR)/qseqeditframe64.Plo \
+	./$(DEPDIR)/qseqeventframe.Plo ./$(DEPDIR)/qseqframe.Plo \
+	./$(DEPDIR)/qseqkeys.Plo ./$(DEPDIR)/qseqroll.Plo \
+	./$(DEPDIR)/qseqtime.Plo ./$(DEPDIR)/qsessionframe.Plo \
+	./$(DEPDIR)/qsetmaster.Plo ./$(DEPDIR)/qseventslots.Plo \
+	./$(DEPDIR)/qslivebase.Plo ./$(DEPDIR)/qslivegrid.Plo \
+	./$(DEPDIR)/qslogview.Plo ./$(DEPDIR)/qslotbutton.Plo \
+	./$(DEPDIR)/qsmaintime.Plo ./$(DEPDIR)/qsmainwnd.Plo \
+	./$(DEPDIR)/qstriggereditor.Plo ./$(DEPDIR)/qt5_helpers.Plo \
+	./$(DEPDIR)/qt5nsmanager.Plo
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -680,6 +683,7 @@ lib_LTLIBRARIES = libseq_qt5.la
 #
 #----------------------------------------------------------------------------
 moc_qt_headers = \
+ ../include/qchannelpopup.hpp \
  ../include/qclocklayout.hpp \
  ../include/qinputcheckbox.hpp \
  ../include/qlfoframe.hpp \
@@ -748,6 +752,7 @@ libseq_qt5_la_SOURCES = \
  gui_palette_qt5.cpp \
  palettefile.cpp \
  qbase.cpp \
+ qchannelpopup.cpp \
  qclocklayout.cpp \
  qeditbase.cpp \
  qinputcheckbox.cpp \
@@ -868,6 +873,8 @@ clean-libLTLIBRARIES:
 ../include/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) ../include/$(DEPDIR)
 	@: >>../include/$(DEPDIR)/$(am__dirstamp)
+../include/qchannelpopup.moc.lo: ../include/$(am__dirstamp) \
+	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qclocklayout.moc.lo: ../include/$(am__dirstamp) \
 	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qinputcheckbox.moc.lo: ../include/$(am__dirstamp) \
@@ -950,6 +957,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qchannelpopup.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qclocklayout.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qinputcheckbox.moc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qlfoframe.moc.Plo@am__quote@ # am--include-marker
@@ -988,6 +996,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gui_palette_qt5.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/palettefile.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qbase.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qchannelpopup.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qclocklayout.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qeditbase.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qinputcheckbox.Plo@am__quote@ # am--include-marker
@@ -1206,6 +1215,7 @@ clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
+	-rm -f ../include/$(DEPDIR)/qchannelpopup.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qclocklayout.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qinputcheckbox.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qlfoframe.moc.Plo
@@ -1244,6 +1254,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/gui_palette_qt5.Plo
 	-rm -f ./$(DEPDIR)/palettefile.Plo
 	-rm -f ./$(DEPDIR)/qbase.Plo
+	-rm -f ./$(DEPDIR)/qchannelpopup.Plo
 	-rm -f ./$(DEPDIR)/qclocklayout.Plo
 	-rm -f ./$(DEPDIR)/qeditbase.Plo
 	-rm -f ./$(DEPDIR)/qinputcheckbox.Plo
@@ -1332,6 +1343,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
+	-rm -f ../include/$(DEPDIR)/qchannelpopup.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qclocklayout.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qinputcheckbox.moc.Plo
 	-rm -f ../include/$(DEPDIR)/qlfoframe.moc.Plo
@@ -1370,6 +1382,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/gui_palette_qt5.Plo
 	-rm -f ./$(DEPDIR)/palettefile.Plo
 	-rm -f ./$(DEPDIR)/qbase.Plo
+	-rm -f ./$(DEPDIR)/qchannelpopup.Plo
 	-rm -f ./$(DEPDIR)/qclocklayout.Plo
 	-rm -f ./$(DEPDIR)/qeditbase.Plo
 	-rm -f ./$(DEPDIR)/qinputcheckbox.Plo
