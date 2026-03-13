@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.22
 Chris Ahlstrom
-2019-04-13 to 2026-03-11
+2019-04-13 to 2026-03-13
 
     -   The buss name should be shown as a field in the event editor.
     -   Can we fill in the buss-number column just for viewing?
@@ -14,6 +14,9 @@ Chris Ahlstrom
         -   DONE. Pattern editor data pane.
         -   DONE. Event editor text-display box.
     -   Also show channel names if provided in 'usr' file.
+    -   Setting channel in event editor is not reflected in the pattern
+        editor; but the channel setting is for an event, not the whole
+        track.
 
 Features:
 

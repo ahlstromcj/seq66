@@ -77,11 +77,10 @@ qchannelpopup::qchannelpopup
  */
 
 void
-qchannelpopup::set_midi_channel (int ch, bool user_change)  // qbase::status qs)
+qchannelpopup::set_midi_channel (int ch, bool userchange)  // qbase::status qs)
 {
     int initialchan { track().seq_midi_channel() };
-    // bool user_change { qs == qbase::status::edit };
-    if (ch != initialchan || ! user_change)
+    if (ch != initialchan || ! userchange)
     {
         int chindex { ch };
         midibyte channel { midibyte(ch) };
@@ -90,7 +89,7 @@ qchannelpopup::set_midi_channel (int ch, bool user_change)  // qbase::status qs)
             chindex = c_midichannel_max;                    /* "Free" */
             channel = null_channel();
         }
-        if (track().set_midi_channel(channel, user_change))
+        if (track().set_midi_channel(channel, userchange))
         {
             m_edit_channel = channel;
             if (is_null_channel(channel))
@@ -99,11 +98,16 @@ qchannelpopup::set_midi_channel (int ch, bool user_change)  // qbase::status qs)
             }
             else
             {
+#if 0
+                // WHY DOES THIS EVEN COMPILE??????
+
                 if (user_change)
                     set_track_change();             /* to solve issue #90   */
                 else
+#endif
                     channel_combo()->setCurrentIndex(chindex);
             }
+            emit signal_change_channel(channel, userchange);
         }
     }
 }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2026-01-23
+ * \updates       2026-03-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -149,11 +149,16 @@ extern void set_combobox_item
     QComboBox * box, int index,
     const std::string & text
 );
+extern bool populate_midich_combo
+(
+    QComboBox * combo,
+    int buss, int channel
+);
 extern bool fill_combobox
 (
     QComboBox * box,
     const combolist & clist,
-    std::string value           = "",
+    const std::string & value   = "",
     const std::string & prefix  = "",
     const std::string & suffix  = ""
 );

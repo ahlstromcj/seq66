@@ -1,15 +1,13 @@
 NEWS for Seq66 0.99.22
 Chris Ahlstrom
-2015-07-10 to 2026-03-12
+2015-07-10 to 2026-03-13
 
 # Change Log
 
-## [0.99.22] - 2026-03-12
+## [0.99.22] - 2026-03-13
 
 ### Added
 
--   Added the qchannelpopup class for future refactoring /
-    unification of channel menus.
 -   Issue #141, mostly implemented. See "Pattern editor" below.
 -   midifile.
     -   Added storage for the first BPM value, needed by performer.
@@ -40,6 +38,10 @@ Chris Ahlstrom
         notes in a range of pitches. Either note numbers or note
         names can be used. See issue #141 and the user manual.
 -   Documentation.
+-   Added the qchannelpopup class for future refactoring /
+    unification of channel menus, but it might never be ready.
+-   Instead, added the populate\_midich\_combo() function to the
+    qt5\_helpers module, to be used in the pattern and event editors.
 
 ### Changed
 
@@ -54,6 +56,9 @@ Chris Ahlstrom
         data pane.
     -   We now store the selected chord for a pattern, if any, as a
         new "c\_musicchord" SeqSpec. It is track-specific only,
+    -   Now uses the populate\_midich\_combo() function.
+-   Event editor.
+    -   Now uses the populate\_midich\_combo() function.
 
 ### Fixed
 

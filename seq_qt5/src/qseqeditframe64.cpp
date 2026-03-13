@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-10-24
+ * \updates       2026-03-13
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2321,23 +2321,6 @@ qseqeditframe64::set_bpb_and_bw (int bpb, int bw, qbase::status qs)
                 }
                 set_data_type(EVENT_NOTE_ON);
             }
-#if 0   // TODO???
-            else
-            {
-                bool allow_odd_beat_width = qt_prompt_ok
-                (
-                    "MIDI supports only powers of 2 for beat-width.",
-                    "Thus, saved as a global Seq66-specific MIDI event, "
-                    "not a time-signature event. "
-                    "Overriden by existing time-signature events."
-                );
-                if (allow_odd_beat_width)
-                {
-                    track().set_beat_width(bw, user_change);
-                    (void) track().apply_length(0, 0, bw);
-                }
-            }
-#endif
         }
     }
 }
@@ -2590,36 +2573,16 @@ qseqeditframe64::set_midi_bus (int bus, qbase::status qs)
 void
 qseqeditframe64::repopulate_midich_combo (int buss)
 {
-    ui->m_combo_channel->clear();
-    for (int channel = 0; channel <= c_midichannel_max; ++channel)
+    int ch { int(track().seq_midi_channel()) }; /* track().midi_channel()   */
+    if (populate_midich_combo(ui->m_combo_channel, buss, ch))
     {
-        char b[4];                                      /* 2 digits or less */
-        snprintf(b, sizeof b, "%2d", channel + 1);
-        std::string name = std::string(b);
-        std::string s = usr().instrument_name(buss, channel);
-        if (! s.empty())
-        {
-            name += " [";
-            name += s;
-            name += "]";
-        }
-        if (channel == c_midichannel_max)               /* i.e. 16          */
-        {
-            QString combo_text("Free");
-            ui->m_combo_channel->insertItem(channel, combo_text);
-        }
-        else
-        {
-            QString combo_text(qt(name));
-            ui->m_combo_channel->insertItem(channel, combo_text);
-        }
+        /*
+         * if (is_null_channel(ch))
+         *      ch = c_midichannel_max;
+         *
+         * ui->m_combo_channel->setCurrentIndex(ch);
+         */
     }
-
-    int ch = track().midi_channel();
-    if (is_null_channel(ch))
-        ch = c_midichannel_max;
-
-    ui->m_combo_channel->setCurrentIndex(ch);
 }
 
 /**
@@ -3890,12 +3853,12 @@ qseqeditframe64::create_menu_image (bool state)
 {
     if (usr().dark_theme())
     {
-        QPixmap p(state? menu_full_inv_xpm : menu_empty_inv_xpm);
+        QPixmap p(state ? menu_full_inv_xpm : menu_empty_inv_xpm);
         return new QIcon(p);
     }
     else
     {
-        QPixmap p(state? menu_full_xpm : menu_empty_xpm);
+        QPixmap p(state ? menu_full_xpm : menu_empty_xpm);
         return new QIcon(p);
     }
 }

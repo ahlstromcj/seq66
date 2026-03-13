@@ -40,18 +40,7 @@
  *  A few forward declarations.  The Qt header files are in the cpp file.
  */
 
-// class QIcon;
-// class QMenu;
-// class QWidget;
-
 class QComboBox;
-
-#if 0
-namespace Ui
-{
-    class qchannelpopup;
-}
-#endif
 
 /*
  * Note that the forward references somewhat duplicate those in qseqframe.
@@ -70,7 +59,7 @@ class sequence;
 
 class qchannelpopup : public QObject
 {
-    friend class qstriggereditor;
+    // friend class qstriggereditor;
 
     Q_OBJECT
 
@@ -127,7 +116,9 @@ private:
         track().set_dirty();
     }
 
-signals:
+signals:                            // signals cannot have an access specifier
+
+    void signal_change_channel (int chan, bool userchange);
 
 private slots:
 

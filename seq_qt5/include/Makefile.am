@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2017-09-06
-# \update      2026-03-12
+# \update      2026-03-13
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -61,13 +61,15 @@ datarootdir = @datarootdir@
 
 #******************************************************************************
 # Source files
+#
+# Moved to contrib/code: qchannelpopup.hpp \
+#
 #----------------------------------------------------------------------------
 
 pkginclude_HEADERS = \
  gui_palette_qt5.hpp \
  palettefile.hpp \
  qbase.hpp \
- qchannelpopup.hpp \
  qclocklayout.hpp \
  qeditbase.hpp \
  qinputcheckbox.hpp \
