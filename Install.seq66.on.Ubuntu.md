@@ -1,4 +1,4 @@
-Here’s a **step-by-step installation plan** to build and install **Seq66** from source on **Ubuntu Studio 25.10**. This assumes you are *installing from the GitHub repository* you linked: **https://github.com/ahlstromcj/seq66/tree/master** ([GitHub](https://github.com/ahlstromcj/seq66?utm_source=chatgpt.com "Seq66: Seq24-based live MIDI looper/editor. v. ..."))
+2026-03-14: Here’s a **step-by-step installation plan** to build and install **Seq66** from source on **Ubuntu Studio 25.10**. This assumes you are *installing from the GitHub repository* you linked: **https://github.com/ahlstromcj/seq66/tree/master** ([GitHub](https://github.com/ahlstromcj/seq66?utm_source=chatgpt.com "Seq66: Seq24-based live MIDI looper/editor. v. ..."))
 
 ## 1. Prepare Ubuntu Studio 25.10
 
@@ -148,7 +148,7 @@ Ensure your MIDI devices are connected and recognized. Ubuntu Studio’s audio t
 
 **Qt not detected**
 
-- Confirm `qtbase5-dev`, `qttools5-dev`, `qttools5-dev-tools`, and `qmake` are installed.
+- Confirm `qtbase5-dev`, `qttools5-dev`, `qttools5-dev-tools`, and `qmake` are installed. Make sure your environment sets something like "export QT\_SELECT=qt6. Forqt6, might have to set a soft-link in /usr/lib/qt6/libexec: "ln -s /usr/bin/qmake6 qmake".
     
 - Use `qtchooser -list-versions` to check available Qt versions.
     

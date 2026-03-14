@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2025-07-21
+ * \updates       2026-03-14
  * \license       GNU GPLv2 or above
  *
  *  The Song Editor allows the musician to layout the play-back of the
@@ -205,11 +205,15 @@ qperfeditframe64::qperfeditframe64
      */
 
     m_palette = new QPalette();
-#if QT_DEPRECATED_SINCE(5,13)
-    m_palette->setColor(QPalette::Background, Qt::darkGray);
-#else
+
+    /*
+     *  #if QT_DEPRECATED_SINCE(5,13)
+     *      m_palette->setColor(QPalette::Background, Qt::darkGray);
+     *  #else
+     *  #endif
+     */
+
     m_palette->setColor(QPalette::Window, Qt::darkGray);
-#endif
 
     /*
      * Undo and Redo buttons.
