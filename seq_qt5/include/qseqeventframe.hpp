@@ -314,7 +314,7 @@ private:
      *  The popup onto which submenus are tacked.
      */
 
-    QMenu * m_controls_popup;
+    QMenu * m_select_popup;
 
 };          // class qseqeventframe
 

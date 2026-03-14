@@ -100,7 +100,7 @@ qseqeventframe::qseqeventframe
     m_in_program            (false),
     m_is_dirty              (false),
     m_no_channel_index      (c_midichannel_max),
-    m_controls_popup        (nullptr)
+    m_select_popup          (nullptr)
 {
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -1660,17 +1660,14 @@ qseqeventframe::set_controller_entry
 void
 qseqeventframe::set_control_type (midibyte /* status */, midibyte control)
 {
-    /*
-    std::string statusstr { std::to_string(unsigned(status)) };
-     */
-
     std::string controlstr { std::to_string(unsigned(control)) };
     set_event_data_0(controlstr);
-    set_event_data_1("64");
-    data_0_helper(control);
+    if (m_in_control)
+        set_event_data_1("64");
+    else if (m_in_program)
+        set_event_data_1("0");
 
-    // Then make sure the free-text field reflects the name of the
-    // control, if that is not automatic.
+    data_0_helper(control);                     /* fill in the text field   */
 }
 
 /**
@@ -1682,7 +1679,7 @@ qseqeventframe::set_control_type (midibyte /* status */, midibyte control)
 void
 qseqeventframe::handle_control_popup ()
 {
-    m_controls_popup = new_qmenu("", this);
+    m_select_popup = new_qmenu("", this);
 
     /**
      *  Create the 8 sub-menus for the various ranges of controller
@@ -1705,7 +1702,7 @@ qseqeventframe::handle_control_popup ()
             b, sizeof b, "Controls %d-%d", offset, offset + itemcount - 1
         );
 
-        QMenu * menucc { new_qmenu(b, m_controls_popup) };
+        QMenu * menucc { new_qmenu(b, m_select_popup) };
         for (int item = 0; item < itemcount; ++item)
         {
             std::string cname { controller_name(offset + item) };
@@ -1719,20 +1716,60 @@ qseqeventframe::handle_control_popup ()
                 menucc, cname, EVENT_CONTROL_CHANGE, offset + item
             );
         }
-        m_controls_popup->addMenu(menucc);
+        m_select_popup->addMenu(menucc);
     }
-    if (not_nullptr(m_controls_popup))
+    if (not_nullptr(m_select_popup))
     {
         int w { ui->select_button->width() - 2 };
         int h { ui->select_button->height() - 2 };
-        m_controls_popup->exec(ui->select_button->mapToGlobal(QPoint(w, h)));
+        m_select_popup->exec(ui->select_button->mapToGlobal(QPoint(w, h)));
+
+        delete m_select_popup;
+        m_select_popup = nullptr;
     }
 }
 
 void
 qseqeventframe::handle_program_popup ()
 {
-    // Later mater
+    m_select_popup = new_qmenu("", this);
+
+    /**
+     *  Create the 8 sub-menus for the various ranges of patches,
+     *  shown 16 per sub-menu.
+     */
+
+    const int menucount {  8 };
+    const int itemcount { 16 };
+    char b[32];
+    for (int submenu = 0; submenu < menucount; ++submenu)
+    {
+        int offset { submenu * itemcount };
+        snprintf
+        (
+            b, sizeof b, "Programs %d-%d", offset, offset + itemcount - 1
+        );
+
+        QMenu * menupr { new_qmenu(b, m_select_popup) };
+        for (int item = 0; item < itemcount; ++item)
+        {
+            std::string pname { program_name(offset + item) };
+            set_controller_entry
+            (
+                menupr, pname, EVENT_PROGRAM_CHANGE, offset + item
+            );
+        }
+        m_select_popup->addMenu(menupr);
+    }
+    if (not_nullptr(m_select_popup))
+    {
+        int w { ui->select_button->width() - 2 };
+        int h { ui->select_button->height() - 2 };
+        m_select_popup->exec(ui->select_button->mapToGlobal(QPoint(w, h)));
+
+        delete m_select_popup;
+        m_select_popup = nullptr;
+    }
 }
 
 /*------------------------------------------------------------------------*/
