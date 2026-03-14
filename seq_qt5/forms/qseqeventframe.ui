@@ -150,7 +150,7 @@
    <column/>
    <column/>
   </widget>
-  <widget class="QPlainTextEdit" name="plainTextEdit">
+  <widget class="QPlainTextEdit" name="data_text_edit">
    <property name="geometry">
     <rect>
      <x>510</x>

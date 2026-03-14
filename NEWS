@@ -65,6 +65,7 @@ Chris Ahlstrom
 -   Fixed a segfault at startup on some builds on Arch Linux.
     It seems to have been an issue of order of initialization of
     a static string via a static function.
+-   Worked on some Qt6 deprecations.
 -   performer.
     -   The file PPQN was set when reading the file, so later the
         set\_ppqn() function would not inform the master bus of
