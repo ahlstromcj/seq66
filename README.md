@@ -1,4 +1,4 @@
-# README for Seq66 0.99.22 2025-10-26
+# README for Seq66 0.99.22 2026-04-15
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid
 interface; pattern banks, triggers, and playlists for song management;
@@ -17,7 +17,7 @@ a comprehensive PDF user-manual.
 The current development-in-progress branch is "wip".
 
 The release includes an installer for the 64-bit Windows version of
-Seq66.  Initial work has been done on getting Seq66 to build and run
+Seq66. Initial work has been done on getting Seq66 to build and run
 in FreeBSD using the Clang compiler. A C++17 capable-compiler is
 needed.
 
@@ -32,7 +32,8 @@ in force. Otherwise the application uses the current Qt theme.
 
 ##  User interface
 
-    *   Qt 5 (cross-platform). Loop-button gird. Qt style-sheet support.
+    *   Qt 5 or Qt 6 (cross-platform). Loop-button gird. Qt style-sheet
+        support.
     *   Drag-and-drop a MIDI file onto the main grid to load it.
     *   Tabs and external windows for patterns, sets, mute-groups, song
         layout, event-editing, play-lists, and session information.

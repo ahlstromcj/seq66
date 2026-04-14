@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.22
 Chris Ahlstrom
-2015-07-10 to 2026-03-13
+2015-07-10 to 2026-04-15
 
 # Change Log
 
-## [0.99.22] - 2026-03-13
+## [0.99.22] - 2026-04-15
 
 ### Added
 
@@ -37,6 +37,10 @@ Chris Ahlstrom
     -   Added an option to the "Tools" (hammer) menu to select
         notes in a range of pitches. Either note numbers or note
         names can be used. See issue #141 and the user manual.
+-   Event editor.
+    -   A new button for either Control or Program changes pops
+        up the menus for Control Changes set by the 'usr'
+        file and the Program Changes set by the 'patches'.
 -   Documentation.
 -   Added the qchannelpopup class for future refactoring /
     unification of channel menus, but it might never be ready.

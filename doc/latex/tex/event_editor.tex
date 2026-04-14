@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-02
-% \update      2025-06-07
+% \update      2026-04-14
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -22,7 +22,7 @@
    The default keystroke combination for this action is to use the
    \textsl{minus} key followed by the desired pattern's hot-key.
 
-   The event editor is not very sophisticated.
+   The event editor has advanced a bit since its inception.
    It is a basic editor for simple edits, viewing, and trouble-shooting.
    It is disabled if recording a pattern, to avoid refresh issues while
    recording.
@@ -41,12 +41,13 @@
 
    \begin{enumerate}
       \item It requires the user to know the details
-         about MIDI events and data values.
+         about MIDI events and data values, though now most MIDI
+         events are shown by name in various drop-down menus.
       \item For safety, it does not detect any changes made to the sequence in
          the pattern editor; we might add a refresh button.
-      \item It does not have an undo function. Just don't save!
+      \item It does not have an undo function. Instead, just don't save!
       \item It cannot mark more than one event for deletion or modification.
-         However, if one note event is deleted, the corrsponding linked note
+         However, if one note event is deleted, the corresponding linked note
          event is also deleted.
       \item There is no support for dragging and dropping of events.
    \end{enumerate}
@@ -69,6 +70,9 @@
    \label{fig:event_editor_window}
 \end{figure}
 
+
+   The figure above shows an earlier version of the event editor.
+   Additional functionality is shown later in this chapter.
    The event-editor dialog is fairly complex.
    For exposition, we break it down into a few sections:
 
@@ -216,28 +220,24 @@
    Five items are shown:
 
    \begin{enumber}
-      \item \textbf{Sequence Number and Name}.
-         A bit redundant, as the window caption or the pattern
-         also shows the pattern name.
-         It can be set here or in the pattern editor.
-      \item \textbf{Sel Linked}. (Not shown in picture.)
+      \item \textbf{Sel Linked}. (New; shown below.)
          If this button is checked, then selecting a Note On or Off event
          also selects the opposite, linked note.
          This allows for easy deletion of a complete Note pair.
-      \item \textbf{Channel Number}.
-         Shows the output channel number.
-      \item \textbf{Time Signature}.
-         A pattern property, shown only as a reminder.
-         It can be set in the pattern editor.
-      \item \textbf{PPQN}.
-         Shows the "parts per quarter note", or resolution of the
+      \item \textbf{Sequence Number and Name}.
+         Shows the number and name of the pattern.
+         The name can be edited here or in the pattern editor.
+      \item \textbf{Buss Number, Channel Number, Time Signature, PPQN}.
+         Shows the output buss number, the channel number,
+         the time signature, and
+         the "parts per quarter note", or resolution of the
          whole song.  The default PPQN of \textsl{Seq66} is 192.
-      \item \textbf{Sequence Channel}.
-         In \textsl{Seq66}, the channel number is a property of the
-         pattern.  All channel events in the pattern get routed to the same
-         channel, even if somehow the event itself specifies a different
-         channel.
-      \item \textbf{Sequence Count}.
+%     \item \textbf{Sequence Channel}.
+%        In \textsl{Seq66}, the channel number is a property of the
+%        pattern.  All channel events in the pattern get routed to the same
+%        channel, even if somehow the event itself specifies a different
+%        channel.
+      \item \textbf{Sequence Size in Measures, ticks, and events}.
          Displays the current number of events in the pattern.
          This number changes as events are inserted or deleted.
    \end{enumber}
@@ -249,6 +249,14 @@
    changing an event, adding a new event, or deleting the currently-selected
    event. These have been greatly updated for user convenience in the last
    few releases of \textsl{Seq66}.
+   The next figure shows version 0.99.22's state.
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[scale=0.65]{event-editor/event-editor-new.png}
+   \caption{Event Editor / New Arrangement}
+   \label{fig:event_editor_new_arrangement}
+\end{figure}
 
    \begin{enumber}
       \item \textbf{Category}.
@@ -268,6 +276,10 @@
          This dropdown shows the event name.
          It can also be used to select an event that is appropriate for
          the selected event category.
+      \item \textbf{Sel}.
+         This "selection" button is disabled unless either Control Change
+         or Program Change is selected.
+         See the next two figures.
       \item \textbf{D0}.
          Shows data byte 1, e.g. the note number for a note event.
          It can also be edited.
@@ -287,6 +299,38 @@
          pitch data. It is also used for entering text data for various
          text events.
    \end{enumber}
+
+   When the Control Change event is selected, the \textsl{Sel} button
+   changes to \textsl{Ctrl}, and clicking it brings up a nested drop-down
+   menu.
+   This menu shows either the default MIDI control change events,
+   or the event names as specified in the 'usr' file
+   (see \sectionref{subsec:configuration_usr}).
+   We have a tentative library for handling MIDNAM files, but
+   it's not yet suitable for integration into \textsl{Seq66}.
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[scale=0.65]{event-editor/control-change-button-dropdown.png}
+   \caption{Control Change Button Drop-Down}
+   \label{fig:event_editor_control_change_dropdown}
+\end{figure}
+
+   When the Program Change event is selected, the \textsl{Sel} button
+   changes to \textsl{Ctrl}, and clicking it brings up a nested drop-down
+   menu.
+   This menu shows either the default MIDI program change events,
+   or the event names as specified in the 'patches' file
+   (see \sectionref{subsec:configuration_patches}).
+   We have a tentative library for handling MIDNAM files, but
+   it's not yet suitable for integration into \textsl{Seq66}.
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[scale=0.65]{event-editor/program-change-button-dropdown.png}
+   \caption{Program Change Button Drop-Down}
+   \label{fig:event_editor_program_change_dropdown}
+\end{figure}
 
    \textbf{Important}: changes made in the event editor
    are \textsl{not written} to the sequence until the \textbf{Save}
