@@ -25,6 +25,7 @@
    It can be tricky to get a good look, especially one that matches the
    style-sheet (if provided) or the active Qt theme.
    These palette entries can make for a better look.
+   The palette file is somewhat self documenting and easy to edit.
 
    There are five palettes:
 
@@ -75,16 +76,27 @@
 \label{subsec:palettes_setup}
 
    The palette file is a standard \textsl{Seq66} configuration file with a name
-   something like \texttt{qseq66.palette}, plus four sections:
+   something like \texttt{qseq66.palette}, plus these sections:
 
    \begin{verbatim}
+      [Seq66]
+      [comments]
+      [hints]
       [palette]
       [ui-palette]
       [brushes]
       [pens]
    \end{verbatim}
 
-   The first section is the "Pattern" palette; the second section is the
+   The "hints" section helps adapt to dark themes and dark palettes:
+
+   \begin{verbatim}
+      [hints]
+      dark-theme = true
+      dark-ui = true
+   \end{verbatim}
+
+   The fourth section is the "Pattern" palette; the second section is the
    "Ui" palette, which includes the inverse palette as well; and the third
    section defines brushes for drawing the interiors of some elements.
 
@@ -174,6 +186,7 @@ project.
       note = lineargradient      # default
       scale = dense3
       backseq = dense2
+      chord = bdiag
    \end{verbatim}
 
    On the left of the equals sign is the item than can be filled, and on the

@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# 2026-04-01 to 2026-04-01
+#
+# Runs vim -O in a larger terminal. Under tmux, sometimes one cannot
+# get gvim to run from in a terminal.
+#
+
+/usr/bin/urxvt -geometry 164x56 -e gvim -O $1 $2  &
+
+# vim: ts=3 sw=3 et ft=sh

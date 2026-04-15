@@ -1,22 +1,15 @@
 TO DO for Seq66 0.99.22
 Chris Ahlstrom
-2019-04-13 to 2026-04-14
+2019-04-13 to 2026-04-15
 
-    -   The buss name should be shown as a field in the event editor.
     -   Can we fill in the buss-number column just for viewing?
-    -   Have a controller number/name dropdown just like in the Event button.
-        -   When a 'usr' file specifies alternate buss and controller names,
-            the alternate controller names are shown in all the drop-downs
-            that apply, but only the default controller names are shown in the
-            event editor.
-    -   Same for the GM or loaded Program/Patch names. Places to use
-        the loaded patch names:
-        -   DONE. Pattern editor data pane.
-        -   DONE. Event editor text-display box.
-    -   Also show channel names if provided in 'usr' file.
+    -   Takes up too much space:
+        -   The buss name could be shown as a field in the event editor.
+        -   Also could show channel names if provided in 'usr' file.
     -   Setting channel in event editor is not reflected in the pattern
         editor; but the channel setting is for an event, not the whole
         track.
+    -   The incrypt text and lines are black; they need to be brighter.
 
 Features:
 
@@ -48,7 +41,7 @@ Cannot duplicate:
 
 Backlog:
 
-    -   Investigate building with Qt 6.
+    -   Implement modifiable mute-group names.
     -   Oddity: drag a pattern to a new slot, and when the mouse
         hovers over the new slot, the slot number appears under it.
     -   Have a click/selection bring the pattern-editor to the front.

@@ -15,6 +15,8 @@ creating harmony more easily added.
 - Pattern editor. Extensive updates.
   - Showing note bars for scales and chords:
     - Added: a new brush called "chord" to the palette file.
+      Copy the sample palette files to ~/.config/seq66 if you
+      use them.
     - If a chord is set, notes _not_ in the chord are grayed.
     - Added: buttons to toggle the scale/chord bars and filtering
       of off-scale/off-chord painted notes.
@@ -39,6 +41,6 @@ creating harmony more easily added.
 - JACK.
   - Fixed detect\_jack() and added a missing call to jack\_free().
 
-See NEWS for more details.
+See NEWS for many more details.
 
 # vim: sw=4 ts=4 wm=15 et ft=rc
