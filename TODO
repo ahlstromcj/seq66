@@ -9,7 +9,8 @@ Chris Ahlstrom
     -   Setting channel in event editor is not reflected in the pattern
         editor; but the channel setting is for an event, not the whole
         track.
-    -   The incrypt text and lines are black; they need to be brighter.
+    -   Implement showing drum note names, similar to patch name,
+        in the various edit panes.
 
 Features:
 

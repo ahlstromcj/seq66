@@ -1,10 +1,51 @@
-NEWS for Seq66 0.99.22
+NEWS for Seq66 0.99.23
 Chris Ahlstrom
 2015-07-10 to 2026-04-15
 
 # Change Log
 
-## [0.99.22] - 2026-04-15
+## [0.99.23] - 2026-04-15
+
+This version has changes to better support Qt6, better display
+and selection of program and controller change events, and
+other minor fix-ups.
+
+### Added
+
+-   Event editor.
+    -   A new button for either Control or Program changes pops
+        up the menus for Control Changes set by the 'usr'
+        file and the Program Changes set by the 'patches' file.
+-   Added the qchannelpopup class for future refactoring /
+    unification of channel menus, but it might never be ready.
+    It is in the contrib sub-directory.
+-   Instead, added the populate\_midich\_combo() function to the
+    qt5\_helpers module, now used in the pattern and event editors.
+-   Added the drums module to provide for listings of GM drum
+    notes and to support non-GM drum notes display in the future.
+
+### Changed
+
+-   Main window and grid.
+    -   At startup, instead of setting argv[0] as app-info. set
+        QCoreApplication::applicationFilePath().
+    -   Now uses the populate\_midich\_combo() function.
+-   Event editor.
+    -   Now uses the populate\_midich\_combo() function to show
+        the control/program drop-down menus.
+-   Palettes.
+    -   Updated the incrypt-66.palette file; some colors don't
+        apply in the old version.
+-   Worked on some Qt6 deprecations.
+-   Documentation updated. Additional pictures for Event editor.
+-   Moved the LICENSE files to "licenses" sub-directory.
+
+### Fixed
+
+-   Various fixes to controller and patch naming and handling.
+-   Fixed Qt6 deprecations.
+
+## [0.99.22] - 2025-10-26
 
 ### Added
 
@@ -37,24 +78,13 @@ Chris Ahlstrom
     -   Added an option to the "Tools" (hammer) menu to select
         notes in a range of pitches. Either note numbers or note
         names can be used. See issue #141 and the user manual.
--   Event editor.
-    -   A new button for either Control or Program changes pops
-        up the menus for Control Changes set by the 'usr'
-        file and the Program Changes set by the 'patches' file.
 -   Documentation.
--   Added the qchannelpopup class for future refactoring /
-    unification of channel menus, but it might never be ready.
--   Instead, added the populate\_midich\_combo() function to the
-    qt5\_helpers module, to be used in the pattern and event editors.
 
 ### Changed
 
 -   C++. Added -Wno-unnecessary-virtual-specifier to Clang builds
     to avoid a dumb warning about final classes and virtual
     functions.
--   Main window and grid.
-    -   At startup, instead of setting argv[0] as app-info. set
-        QCoreApplication::applicationFilePath().
 -   Pattern editor.
     -   Changed closest-snap to down-snap to make note
         insertion more intuitive.
@@ -62,20 +92,12 @@ Chris Ahlstrom
         data pane.
     -   We now store the selected chord for a pattern, if any, as a
         new "c\_musicchord" SeqSpec. It is track-specific only,
-    -   Now uses the populate\_midich\_combo() function.
--   Event editor.
-    -   Now uses the populate\_midich\_combo() function to show
-        the control/program drop-down menus.
--   Palettes.
-    -   Updated the incrypt-66.palette file; some colors don't
-        apply in the old version.
 
 ### Fixed
 
 -   Fixed a segfault at startup on some builds on Arch Linux.
     It seems to have been an issue of order of initialization of
     a static string via a static function.
--   Worked on some Qt6 deprecations.
 -   performer.
     -   The file PPQN was set when reading the file, so later the
         set\_ppqn() function would not inform the master bus of

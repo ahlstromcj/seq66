@@ -1,4 +1,4 @@
-# README for Seq66 0.99.22 2026-04-15
+# README for Seq66 0.99.23 2026-04-15
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid
 interface; pattern banks, triggers, and playlists for song management;
@@ -14,7 +14,7 @@ modern C++ and new features. Linux and Windows users can build this
 application from source code. See the extensive INSTALL file. Includes
 a comprehensive PDF user-manual.
 
-The current development-in-progress branch is "wip".
+The current development-in-progress branch is "wip" or "qt6".
 
 The release includes an installer for the 64-bit Windows version of
 Seq66. Initial work has been done on getting Seq66 to build and run
