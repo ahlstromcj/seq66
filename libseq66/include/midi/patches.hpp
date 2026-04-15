@@ -22,20 +22,18 @@
 /**
  * \file          patches.hpp
  *
- *  This module declares the array of MIDI controller names.
+ *  This module declares the array of MIDI program names.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2025-02-17
- * \updates       2025-02-18
+ * \updates       2026-02-16
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <map>                          /* std::map<> template class        */
 #include <string>                       /* std::string<> template class     */
-
-#include "midi/midibytes.hpp"           /* seq66::midibyte type             */
 
 namespace seq66
 {
@@ -142,4 +140,3 @@ extern std::string gm_program_name (int patchnumber);
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

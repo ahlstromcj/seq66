@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2025-05-09
+ * \updates       2026-03-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -40,10 +40,18 @@
 #include "util/basic_macros.hpp"        /* nullptr and related macros       */
 #include "qseventslots.hpp"             /* seq66::qseventslots              */
 
+/*
+ * This does not work due to connect() issues.
+ *
+ * #include "qchannelpopup.hpp"         // seq66::qchannelpopup class       //
+ */
+
+
 /**
  *  Forward reference.
  */
 
+class QMenu;
 class QTableWidgetItem;
 
 namespace Ui
@@ -76,6 +84,33 @@ private:
         data_0,
         data_1,
         link
+    };
+
+    /**
+     *  This enumeration provides manifest constants for the event categories.
+     */
+
+    using category = enum
+    {
+        channel_message = 0,
+        system_message,
+        meta_event,
+        seqspec_event
+    };
+
+    /**
+     *  This enumeration provides manifest constants for the channel messages.
+     */
+
+    using channelmessage = enum
+    {
+        note_off = 0,
+        note_on,
+        aftertouch,
+        control_change,
+        program_change,
+        channel_pressure,
+        pitch_wheel
     };
 
     Q_OBJECT
@@ -165,12 +200,23 @@ private:
     void populate_system_combo ();
     void populate_meta_combo ();
     void populate_seqspec_combo ();
-    void populate_midich_combo ();
+    void repopulate_midich_combo ();
     std::string filename_prompt
     (
         const std::string & prompt,
         const std::string & file
     );
+
+    void handle_control_popup ();
+    void handle_program_popup ();
+    void set_controller_entry
+    (
+        QMenu * menu,
+        const std::string & text,
+        midibyte status,
+        midibyte control
+    );
+    void set_control_type (midibyte status, midibyte control);
 
 protected:                          // overrides of event handlers
 
@@ -197,6 +243,7 @@ private slots:
     void slot_pulse_time_state (int state);
     void slot_ev_data_0_edit (const QString &);
     void slot_meta_text_change ();
+    void slot_event_popup ();
 
 private:
 
@@ -262,6 +309,12 @@ private:
      */
 
     int m_no_channel_index;
+
+    /**
+     *  The popup onto which submenus are tacked.
+     */
+
+    QMenu * m_select_popup;
 
 };          // class qseqeventframe
 

@@ -21,7 +21,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2025-02-17
+# \update      2026-02-16
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -173,7 +173,7 @@ am_libseq66_la_OBJECTS = seq66_features.lo cfg/basesettings.lo \
 	ctrl/midicontrol.lo ctrl/midicontrolout.lo ctrl/midimacro.lo \
 	ctrl/midimacros.lo ctrl/midioperation.lo ctrl/opcontainer.lo \
 	ctrl/opcontrol.lo midi/businfo.lo midi/calculations.lo \
-	midi/controllers.lo midi/editable_event.lo \
+	midi/controllers.lo midi/drums.lo midi/editable_event.lo \
 	midi/editable_events.lo midi/event.lo midi/eventlist.lo \
 	midi/jack_assistant.lo midi/mastermidibase.lo midi/midibase.lo \
 	midi/midibytes.lo midi/midifile.lo midi/midi_splitter.lo \
@@ -233,7 +233,7 @@ am__depfiles_remade = ./$(DEPDIR)/seq66_features.Plo \
 	ctrl/$(DEPDIR)/midimacros.Plo ctrl/$(DEPDIR)/midioperation.Plo \
 	ctrl/$(DEPDIR)/opcontainer.Plo ctrl/$(DEPDIR)/opcontrol.Plo \
 	midi/$(DEPDIR)/businfo.Plo midi/$(DEPDIR)/calculations.Plo \
-	midi/$(DEPDIR)/controllers.Plo \
+	midi/$(DEPDIR)/controllers.Plo midi/$(DEPDIR)/drums.Plo \
 	midi/$(DEPDIR)/editable_event.Plo \
 	midi/$(DEPDIR)/editable_events.Plo midi/$(DEPDIR)/event.Plo \
 	midi/$(DEPDIR)/eventlist.Plo midi/$(DEPDIR)/jack_assistant.Plo \
@@ -624,6 +624,7 @@ libseq66_la_SOURCES = \
  midi/businfo.cpp \
  midi/calculations.cpp \
  midi/controllers.cpp \
+ midi/drums.cpp \
  midi/editable_event.cpp \
  midi/editable_events.cpp \
  midi/event.cpp \
@@ -808,6 +809,7 @@ midi/calculations.lo: midi/$(am__dirstamp) \
 	midi/$(DEPDIR)/$(am__dirstamp)
 midi/controllers.lo: midi/$(am__dirstamp) \
 	midi/$(DEPDIR)/$(am__dirstamp)
+midi/drums.lo: midi/$(am__dirstamp) midi/$(DEPDIR)/$(am__dirstamp)
 midi/editable_event.lo: midi/$(am__dirstamp) \
 	midi/$(DEPDIR)/$(am__dirstamp)
 midi/editable_events.lo: midi/$(am__dirstamp) \
@@ -958,6 +960,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/businfo.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/calculations.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/controllers.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/drums.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/editable_event.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/editable_events.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@midi/$(DEPDIR)/event.Plo@am__quote@ # am--include-marker
@@ -1230,6 +1233,7 @@ distclean: distclean-am
 	-rm -f midi/$(DEPDIR)/businfo.Plo
 	-rm -f midi/$(DEPDIR)/calculations.Plo
 	-rm -f midi/$(DEPDIR)/controllers.Plo
+	-rm -f midi/$(DEPDIR)/drums.Plo
 	-rm -f midi/$(DEPDIR)/editable_event.Plo
 	-rm -f midi/$(DEPDIR)/editable_events.Plo
 	-rm -f midi/$(DEPDIR)/event.Plo
@@ -1358,6 +1362,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f midi/$(DEPDIR)/businfo.Plo
 	-rm -f midi/$(DEPDIR)/calculations.Plo
 	-rm -f midi/$(DEPDIR)/controllers.Plo
+	-rm -f midi/$(DEPDIR)/drums.Plo
 	-rm -f midi/$(DEPDIR)/editable_event.Plo
 	-rm -f midi/$(DEPDIR)/editable_events.Plo
 	-rm -f midi/$(DEPDIR)/event.Plo

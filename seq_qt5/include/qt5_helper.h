@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-10
- * \updates       2022-04-10
+ * \updates       2026-01-23
  * \license       GNU GPLv2 or above
  *
  *  This file is meant to be included in the C++ "cpp" modules, after any
@@ -38,6 +38,24 @@
  * A macro to use in a few places, to make things a little easier.
  * Strictly macro substitution.
  */
+
+#include <QtConfig>                     /* #include "qconfig.h"             */
+
+#undef QT_VERSION_L58
+#undef QT_VERSION_5
+#undef QT_VERSION_6
+#undef QT_VERSION_7
+#undef QT5_HELPER_RADIO_SIGNAL
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
+#define QT_VERSION_L58
+#elif QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#define QT_VERSION_5
+#elif QT_VERSION < QT_VERSION_CHECK(7, 0, 0)
+#define QT_VERSION_6
+#elif QT_VERSION < QT_VERSION_CHECK(8, 0, 0)
+#define QT_VERSION_7
+#endif
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
 #define QT5_HELPER_RADIO_SIGNAL \

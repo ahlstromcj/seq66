@@ -4,7 +4,7 @@
 # \library        Any project
 # \author         Chris Ahlstrom
 # \date           2024-10-17
-# \update         2024-12-03
+# \update         2026-03-11
 #
 # Xorg composite manager: compton older than picom.
 #
@@ -38,9 +38,9 @@ if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
    exit 1
 
    cat << E_O_F
-Usage v. 2024-12-03
+Usage v. 2024-12-02
 
-   compositor [--start] [--stop]
+   compositor [--start] [--stop] [--restart]
 
    This script can stop $COMPOSITOR, or restart it in the same
    as in an .xsession script.
@@ -50,6 +50,7 @@ Options:
    --start     Start $COMPOSITOR. This is the default action.
    --stop      Stop $COMPOSITOR.
    --kill      Stop $COMPOSITOR.
+   --restart   Stop $COMPOSITOR, then restart it.
    --compton   Use compton as the compositor.
    --picom     Use picom as the compositor.
 
@@ -76,6 +77,13 @@ if [ "$1" == "--stop" ] || [ "$1" == "--kill" ] ; then
 
 fi
 
+# Stop the compositor, then fall through to restart it.
+
+if [ "$1" == "--restart" ] ; then
+   echo "Restarting the $COMPOSITOR compositor..." 
+   killall $COMPOSITOR &> /dev/null
+fi
+
 if [ "$COMPOSITOR" == "compton" ] ; then
 
       echo "Running $COMPOSITOR..."
@@ -87,7 +95,7 @@ fi
 
 if [ "$COMPOSITOR" == "picom" ] ; then
 
-   /usr/bin/$COMPOSITOR --daemon --log-file ~/.config/picom.log &
+   /usr/local/bin/$COMPOSITOR --daemon --log-file ~/.config/picom.log &
    sleep 0.25
    exit 0
 

@@ -28,13 +28,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2025-10-22
+ * \updates       2026-03-13
  * \license       GNU GPLv2 or above
  *
  */
 
 #include "ctrl/keymap.hpp"              /* seq66::qt_modkey_ordinal()       */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke wrapper class   */
+#include "qt5_helper.h"                 /* Qt versioning macros             */
 
 /*
  *  Currently disabled because it's nearly impossible to get the absolute
@@ -53,9 +54,11 @@ class QAction;
 class QComboBox;
 class QIcon;
 class QKeyEvent;
+class QInputEvent;
 class QLayoutItem;
 class QLineEdit;
 class QMenu;
+class QMouseEvent;
 class QPushButton;
 class QScrollArea;
 class QSpinBox;
@@ -113,6 +116,22 @@ extern keystroke qt_keystroke
     bool testing = false
 );
 extern QString qt (const std::string & text);
+
+/*
+ * See qt5_helper.h for these macros.
+ */
+
+#if defined QT_VERSION_L58                              /* see qt5_helper.h */
+#error Qt less than 5.8 is not supported.
+#endif
+
+extern int qt_mouse_x (QMouseEvent * ev);
+extern int qt_mouse_y (QMouseEvent * ev);
+
+#if defined QT_VERSION_7                                /* see qt5_helper.h */
+#error Qt 7 is not supported.
+#endif
+
 extern void qt_set_layout_visibility (QLayoutItem * item, bool visible);
 extern QTimer * qt_timer
 (
@@ -130,11 +149,16 @@ extern void set_combobox_item
     QComboBox * box, int index,
     const std::string & text
 );
+extern bool populate_midich_combo
+(
+    QComboBox * combo,
+    int buss, int channel
+);
 extern bool fill_combobox
 (
     QComboBox * box,
     const combolist & clist,
-    std::string value           = "",
+    const std::string & value   = "",
     const std::string & prefix  = "",
     const std::string & suffix  = ""
 );

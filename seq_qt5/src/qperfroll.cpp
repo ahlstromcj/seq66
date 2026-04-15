@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-15
+ * \updates       2026-01-23
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -355,15 +355,15 @@ qperfroll::in_selection_area (midipulse tick)
 }
 
 void
-qperfroll::mousePressEvent(QMouseEvent * event)
+qperfroll::mousePressEvent(QMouseEvent * ev)
 {
-    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
-    bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
-    bool lbutton = event->button() == Qt::LeftButton;
-    bool rbutton = event->button() == Qt::RightButton;
-    bool mbutton = event->button() == Qt::MiddleButton || (lbutton && isctrl);
-    drop_x(event->x());
-    drop_y(event->y());
+    bool isctrl = bool(ev->modifiers() & Qt::ControlModifier);
+    bool isshift = bool(ev->modifiers() & Qt::ShiftModifier);
+    bool lbutton = ev->button() == Qt::LeftButton;
+    bool rbutton = ev->button() == Qt::RightButton;
+    bool mbutton = ev->button() == Qt::MiddleButton || (lbutton && isctrl);
+    drop_x(qt_mouse_x(ev));
+    drop_y(qt_mouse_y(ev));
     convert_xy(drop_x(), drop_y(), m_drop_tick, m_drop_track);
 
     seq::pointer dropseq = perf().get_sequence(m_drop_track);
@@ -524,10 +524,10 @@ qperfroll::mousePressEvent(QMouseEvent * event)
 }
 
 void
-qperfroll::mouseReleaseEvent (QMouseEvent * event)
+qperfroll::mouseReleaseEvent (QMouseEvent * ev)
 {
-    bool lbutton = event->button() == Qt::LeftButton;
-    bool rbutton = event->button() == Qt::RightButton;
+    bool lbutton = ev->button() == Qt::LeftButton;
+    bool rbutton = ev->button() == Qt::RightButton;
     if (rbutton)
     {
         m_adding_pressed = false;
@@ -552,8 +552,8 @@ qperfroll::mouseReleaseEvent (QMouseEvent * event)
         if (m_box_select)                 /* calculate selected seqs in box */
         {
             int x, y, w, h;
-            current_x(event->x());
-            current_y(event->y());
+            current_x(qt_mouse_x(ev));
+            current_y(qt_mouse_y(ev));
             snap_current_y();
             rect::xy_to_rect_get
             (
@@ -571,11 +571,11 @@ qperfroll::mouseReleaseEvent (QMouseEvent * event)
 }
 
 void
-qperfroll::mouseMoveEvent (QMouseEvent * event)
+qperfroll::mouseMoveEvent (QMouseEvent * ev)
 {
     seq::pointer dropseq = perf().get_sequence(m_drop_track);
-    int x = event->x();
-    int y = event->y();
+    int x = qt_mouse_x(ev);
+    int y = qt_mouse_y(ev);
     int row;
     midipulse t, tick = 0;
     convert_xy(x, y, t, row);
@@ -658,8 +658,8 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
     }
     else if (m_box_select)
     {
-        current_x(event->x());
-        current_y(event->y());
+        current_x(qt_mouse_x(ev));
+        current_y(qt_mouse_y(ev));
         snap_current_y();
         convert_xy(0, current_y(), tick, m_drop_track);
     }
@@ -674,11 +674,11 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
  */
 
 void
-qperfroll::mouseDoubleClickEvent (QMouseEvent * event)
+qperfroll::mouseDoubleClickEvent (QMouseEvent * ev)
 {
     if (rc().allow_click_edit())
     {
-        int seqno = seq_id_from_xy(event->x(), event->y());
+        int seqno = seq_id_from_xy(qt_mouse_x(ev), qt_mouse_y(ev));
         bool active = perf().is_seq_active(seqno);
         emit signal_call_editor_ex(seqno, active);
     }
@@ -712,27 +712,27 @@ qperfroll::seq_id_from_xy (int click_x, int click_y)
 }
 
 void
-qperfroll::keyPressEvent (QKeyEvent * event)
+qperfroll::keyPressEvent (QKeyEvent * ev)
 {
     bool handled = false;
     bool dirty = false;
     seq::pointer dropseq = perf().get_sequence(m_drop_track);
     bool on_pattern = not_nullptr(dropseq);
-    bool isshift = event->modifiers() & Qt::ShiftModifier;
-    bool isctrl = event->modifiers() & Qt::ControlModifier;
+    bool isshift = ev->modifiers() & Qt::ShiftModifier;
+    bool isctrl = ev->modifiers() & Qt::ControlModifier;
     if (perf().is_pattern_playing())
     {
-        if (event->key() == Qt::Key_Space)
+        if (ev->key() == Qt::Key_Space)
         {
             handled = true;
             stop_playing();
         }
-        else if (event->key() == Qt::Key_Escape)
+        else if (ev->key() == Qt::Key_Escape)
         {
             handled = true;
             stop_playing();
         }
-        else if (event->key() == Qt::Key_Period)
+        else if (ev->key() == Qt::Key_Period)
         {
             handled = true;
             pause_playing();
@@ -740,12 +740,12 @@ qperfroll::keyPressEvent (QKeyEvent * event)
     }
     else
     {
-        if (event->key() == Qt::Key_Space || event->key() == Qt::Key_Period)
+        if (ev->key() == Qt::Key_Space || ev->key() == Qt::Key_Period)
         {
             handled = true;
             start_playing();
         }
-        else if (event->key() == Qt::Key_Escape)
+        else if (ev->key() == Qt::Key_Escape)
         {
             if (adding())
             {
@@ -764,29 +764,29 @@ qperfroll::keyPressEvent (QKeyEvent * event)
                 }
             }
         }
-        else if (event->key() == Qt::Key_I)
+        else if (ev->key() == Qt::Key_I)
         {
             handled = true;
             set_adding(true);
         }
-        else if (event->key() == Qt::Key_P)
+        else if (ev->key() == Qt::Key_P)
         {
             handled = true;
             set_adding(true);
         }
-        else if (event->key() == Qt::Key_X)
+        else if (ev->key() == Qt::Key_X)
         {
             handled = true;
             set_adding(false);
         }
         else if
         (
-            event->key() == Qt::Key_Delete ||
-            event->key() == Qt::Key_Backspace
+            ev->key() == Qt::Key_Delete ||
+            ev->key() == Qt::Key_Backspace
         )
         {
             handled = true;
-            perf().push_trigger_undo();         /* delete selected notes    */
+            perf().push_trigger_undo();         /* delete selected trigs    */
             for (int seqid = m_seq_l; seqid <= m_seq_h; seqid++)
             {
                 if (perf().is_seq_active(seqid))
@@ -798,16 +798,15 @@ qperfroll::keyPressEvent (QKeyEvent * event)
         }
         else if
         (
-            event->key() == Qt::Key_Left ||
-            event->key() == Qt::Key_Right
+            ev->key() == Qt::Key_Left || ev->key() == Qt::Key_Right
         )
         {
             if (on_pattern && ! isctrl)
-                handled = move_by_key(event->key() == Qt::Key_Right);
+                handled = move_by_key(ev->key() == Qt::Key_Right);
         }
         if (isctrl)
         {
-            switch (event->key())
+            switch (ev->key())
             {
             case Qt::Key_X:
 
@@ -839,10 +838,10 @@ qperfroll::keyPressEvent (QKeyEvent * event)
             case Qt::Key_Z:
 
                 handled = dirty = true;
-                if (event->modifiers() & Qt::ShiftModifier)
-                    perf().pop_trigger_redo();
+                if (ev->modifiers() & Qt::ShiftModifier)
+                    redo();             /* perf().pop_trigger_redo()        */
                 else
-                    perf().pop_trigger_undo();
+                    undo();             /* perf().pop_trigger_undo()        */
                 break;
 
             case Qt::Key_Home:
@@ -866,7 +865,7 @@ qperfroll::keyPressEvent (QKeyEvent * event)
                  * Redundant with non-Ctrl versions.
                  */
 
-                handled = move_by_key(event->key() == Qt::Key_Right, false);
+                handled = move_by_key(ev->key() == Qt::Key_Right, false);
                 break;
             }
         }
@@ -879,11 +878,11 @@ qperfroll::keyPressEvent (QKeyEvent * event)
 
             if (isshift)
             {
-                if (event->key() == Qt::Key_Z)
+                if (ev->key() == Qt::Key_Z)
                 {
                     handled = frame64()->zoom_in();
                 }
-                else if (event->key() == Qt::Key_V)
+                else if (ev->key() == Qt::Key_V)
                 {
                     handled = true;
                     v_zoom_in();
@@ -891,25 +890,25 @@ qperfroll::keyPressEvent (QKeyEvent * event)
             }
             else
             {
-                if (event->key() == Qt::Key_Z)
+                if (ev->key() == Qt::Key_Z)
                 {
                     handled = frame64()->zoom_out();
                 }
-                else if (event->key() == Qt::Key_V)
+                else if (ev->key() == Qt::Key_V)
                 {
                     handled = v_zoom_out();
                 }
-                else if (event->key() == Qt::Key_0)
+                else if (ev->key() == Qt::Key_0)
                 {
                     handled = reset_v_zoom();   /* also resets horiz zoom   */
                 }
-                else if (event->key() == Qt::Key_Home)
+                else if (ev->key() == Qt::Key_Home)
                 {
                     handled = true;
                     if (not_nullptr(frame64()))
                         frame64()->scroll_to_tick(0);
                 }
-                else if (event->key() == Qt::Key_End)
+                else if (ev->key() == Qt::Key_End)
                 {
                     handled = true;
                     if (not_nullptr(frame64())) /* go to end minus a bit    */
@@ -930,11 +929,11 @@ qperfroll::keyPressEvent (QKeyEvent * event)
             set_dirty();
     }
     else
-        QWidget::keyPressEvent(event);
+        QWidget::keyPressEvent(ev);
 }
 
 void
-qperfroll::keyReleaseEvent (QKeyEvent * /*event*/)
+qperfroll::keyReleaseEvent (QKeyEvent * /* ev */)
 {
     // no code
 }

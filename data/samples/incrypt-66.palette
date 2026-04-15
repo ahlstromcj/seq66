@@ -1,7 +1,7 @@
 # Seq66 0.99.22 (and above) palette configuration file
 #
 # /home/user/.config/seq66/incrypt-66.palette
-# Written on 2025-10-24
+# Written on 2025-04-15
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface. It must be active and
@@ -73,7 +73,7 @@ dark-ui = true
 
 # Similar to the [palette] section, but applies to the custom-drawn
 # piano rolls and the --inverse option. The first value is the color
-# number, from 0 to 23. The names are feature names, not color names.
+# number, from 0 to 31. The names are feature names, not color names.
 # The second column block is the inverse color.
 
 [ui-palette]

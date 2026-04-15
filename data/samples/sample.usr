@@ -1,13 +1,14 @@
 # Seq66 0.94.1 (and above) user ('usr') configuration file
 #
 # /home/ahlstrom/.config/seq66/sample.usr
-# Written 2021-06-13 08:36:20
+# Written 2026-02-16 08:00:00
 #
 # This is a Seq66 'usr' file. Edit it and place it in the
-# $HOME/.config/seq66 directory. It allows one to apply an alias
-# (alternate name) to each MIDI bus, MIDI channel, and MIDI control
-# control code, per channel. It has additional options not present in
-# in Seq24, and supports DOS INI-style variable setting.
+# $HOME/.config/seq66 directory. Enable it in the 'rc' file.
+# It allows one to apply an alias (alternate name) to each MIDI bus, MIDI
+# channel, and MIDI control control code, per channel. It has additional
+# options not present in in Seq24, and supports DOS INI-style variable
+# setting.
 
 [Seq66]
 
@@ -44,15 +45,15 @@ This sample is adapted from:
  
   The following 9 instruments are defined in this sample file:
  
-    0 = Waldorf Micro Q
-    1 = SuperNova
-    2 = DrumStation
-    3 = TX81Z (no CCs defined)
-    4 = WaveStation (no CCs defined)
-    5 = ESI-2000 (no CCs defined)
-    6 = ES-1 (no CCs defined)
-    7 = ER-1 (no CCs defined)
-    8 = TB-303 (no CCs defined)
+    0 = Waldorf Micro Q (128 CCs defined)
+    1 = SuperNova (128 CCs defined)
+    2 = DrumStation (92 CCs defined)
+    3 = TX81Z (5 CCs defined)
+    4 = WaveStation (4 CCs defined)
+    5 = ESI-2000 (4 CCs defined)
+    6 = ES-1 (4 CCs defined)
+    7 = ER-1 (4 CCs defined)
+    8 = TB-303 (4 CCs defined)
  
   The first bus is "2x2 A (SuperNova/Q/TX81Z/DrumStation)" with the following
   instruments defined for each set of channels:
@@ -96,16 +97,23 @@ This sample is adapted from:
 
 3     # number of user-defined MIDI busses
 
-
 [user-midi-bus-0]
 
-# Device/bus name
+# Device/bus name.  For the three MIDI busses, it's name appears
+# in (1) the main window's output-buss dropdown; (2) the right-click
+# "Output bus" menu entry; (3) the output-bus drop-down in the
+# pattern editor, and in the MIDI Clock tab of the Preferences
+# dialog. These names override the actual port name of the device,
+# if available. If port-mapping is active the shorter port-mapping
+# names are shown.
 
 "2x2 A (SuperNova/Q/TX81Z/DrumStation)"
 
 16      # number of instrument settings
 
-# Channel, instrument number, and instrument names
+# Channel, instrument number, and instrument names.
+# This list of names appears in the MIDI channel drop-down in the
+# pattern editor.
 
  0 1 "SuperNova"
  1 1 "SuperNova"
@@ -171,10 +179,12 @@ This sample is adapted from:
 
 9     # instrument list count
 
-
 [user-instrument-0]
 
-# Name of instrument
+# Name of instrument. For each instrument, the controller numbers
+# and the actual name (i.e. function) are specified. When a given
+# user-midi-bus is selected, its controller names appear in the
+# "Event" drop-down's Controllers sections.
 
 "Waldorf Micro Q"
 

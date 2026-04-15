@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2025-10-22
+ * \updates       2026-03-13
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -64,6 +64,7 @@
 #include <QLayoutItem>
 #include <QLineEdit>
 #include <QKeyEvent>
+#include <QMouseEvent>
 #include <QMenu>
 #include <QMessageBox>
 #include <QPalette>
@@ -283,8 +284,44 @@ qt (const std::string & text)
 }
 
 /**
+ *  In Qt6, x() and y() are deprecated for some reason. So we
+ *  essentially duplicate the inline code here.
+ */
+
+#if defined QT_VERSION_5
+
+int
+qt_mouse_x (QMouseEvent * ev)
+{
+    return ev->x();
+}
+int
+qt_mouse_y (QMouseEvent * ev)
+{
+    return ev->y();
+}
+
+#elif defined QT_VERSION_6
+
+int
+qt_mouse_x (QMouseEvent * ev)
+{
+    return qRound(ev->position().x());
+}
+
+int
+qt_mouse_y (QMouseEvent * ev)
+{
+    return qRound(ev->position().y());
+}
+
+#endif
+
+/**
  *  Semi-recursive function to alter the visibility of all sub-items
  *  in a layout item.
+ *
+ *  Why not use a reference?
  */
 
 void
@@ -499,8 +536,90 @@ set_combobox_item
 }
 
 /**
+ *  Populates the MIDI Channel combo-box with the number and names of each
+ *  channel.  This action is needed at startup of the seqedit window, and when
+ *  the user changes the active buss for the sequence.
+ *
+ *  When the output buss or channel are changed, we get the 16 "channels" from
+ *  the new buss's definition, get the corresponding instrument, and load its
+ *  name into this midich popup.  Then we need to go to the instrument/channel
+ *  that has been selected, and repopulate the event menu with that item's
+ *  controller values/names.
+ *
+ * \param combo
+ *      Provides the QComboBox to be filled.
+ *
+ * \param buss
+ *      The new value for the buss from which to get the [user-instrument-N]
+ *      settings in the [user-instrument-definitions] section.
+ */
+
+bool
+populate_midich_combo (QComboBox * combo, int buss, int ch)
+{
+    bool result { false };
+    tokenization chlist;
+    for (int channel = 0; channel <= c_midichannel_max; ++channel)
+    {
+        char b[4];                                      /* 2 digits or less */
+        snprintf(b, sizeof b, "%2d", channel + 1);
+        std::string name = std::string(b);
+        if (channel == c_midichannel_max)               /* i.e. 16          */
+        {
+            name = "Free";
+        }
+        else
+        {
+            std::string s = usr().instrument_name(buss, channel);
+            if (! s.empty())
+            {
+                name += " [";
+                name += s;
+                name += "]";
+            }
+        }
+        chlist.push_back(name);
+        result = true;
+    }
+    if (result)
+    {
+        combolist cl { chlist };
+        result = fill_combobox(combo, cl);
+        if (result)
+        {
+            if (is_null_channel(ch))
+                ch = c_midichannel_max;
+
+            combo->setCurrentIndex(ch);
+        }
+    }
+    return result;
+}
+
+/**
  *  Helper to fill a combo-box.  Also sets the current index, and can bracket
  *  each line-item with optional prefix and suffix text.
+ *
+ * \param box
+ *      Provides the QComboBox to be filled.
+ *
+ * \param clist
+ *      The list of combo-box string entries.
+ *
+ * \param value
+ *      A string value to tack onto each entry. The default is an
+ *      empty string.
+ *
+ * \param prefix
+ *      A string to prepend to each item in the list. The default is an
+ *      empty string.
+ *
+ * \param suffix
+ *      A string to append to each item in the list. The default is an
+ *      empty string.
+ *
+ * \return
+ *      Returns true if the list could be filled.
  */
 
 bool
@@ -508,7 +627,7 @@ fill_combobox
 (
     QComboBox * box,
     const combolist & clist,
-    std::string value,
+    const std::string & value,
     const std::string & prefix,
     const std::string & suffix
 )
@@ -586,7 +705,7 @@ QAction *
 new_qaction (const std::string & text, const QIcon & micon)
 {
     QString mlabel(qt(text));
-#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
+#if defined QT_VERSION_L5
     QAction * result = new (std::nothrow) QAction(micon, mlabel, nullptr);
 #else
     QAction * result = new (std::nothrow) QAction(micon, mlabel);

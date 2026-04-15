@@ -26,13 +26,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2025-05-09
+ * \updates       2026-03-14
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
  */
 
 #include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
+#include <QMenu>                        /* for usage with select_button     */
 
 #include "cfg/settings.hpp"             /* SEQ66_QMAKE_RULES indirectly     */
 #include "midi/controllers.hpp"         /* seq66::controller_name() etc.    */
@@ -53,29 +54,17 @@ namespace seq66
 {
 
 /**
- *  This enumeration provides manifest constants for the event categories
- */
-
-using category = enum
-{
-    channel_message = 0,
-    system_message,
-    meta_event,
-    seqspec_event
-};
-
-/**
  *  For correcting the width of the event table.  It tries to account for the
  *  width of the vertical scroll-bar, plus a bit more.
  */
 
-static const int sc_event_table_fix = 48;
+static const int sc_event_table_fix { 48 };
 
 /**
  *  Specifies the current hardwired value for set_row_heights().
  */
 
-static const int sc_event_row_height = 18;
+static const int sc_event_row_height { 18 };
 
 /**
  *
@@ -110,7 +99,8 @@ qseqeventframe::qseqeventframe
     m_in_control            (false),
     m_in_program            (false),
     m_is_dirty              (false),
-    m_no_channel_index      (c_midichannel_max)
+    m_no_channel_index      (c_midichannel_max),
+    m_select_popup          (nullptr)
 {
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -129,23 +119,24 @@ qseqeventframe::qseqeventframe
     QString seqnolabel = qt(std::to_string(int(track().seq_number())));
     ui->label_seq_number->setText(seqnolabel);
 
-    (void) track().analyze_time_signatures();   /* ca 2023-07-03 */
+    (void) track().analyze_time_signatures();
 
-    midibyte seqchan = track().seq_midi_channel();
-    std::string ts_ppqn = "Ch. ";
-    ts_ppqn += is_null_channel(seqchan) ?
-        "Free" : std::to_string(int(seqchan) + 1);
-
-    ts_ppqn += ": ";
-    ts_ppqn += std::to_string(track().get_beats_per_bar());
-    ts_ppqn += "/";
-    ts_ppqn += std::to_string(track().get_beat_width());
-    ts_ppqn += " ";
-    ts_ppqn += " PPQN ";
-    ts_ppqn += std::to_string(track().get_ppqn());
-    ts_ppqn += " ticks ";
-    ts_ppqn += std::to_string(track().get_length());
-    set_seq_time_sig_and_ppqn(ts_ppqn);
+    int b { int(track().seq_midi_bus()) };
+    int c { int(track().seq_midi_channel()) };
+    std::string buss { std::to_string(b) };
+    std::string chan
+    {
+        is_null_channel(c) ? "Free" : std::to_string(c + 1)
+    };
+    std::string bpb { std::to_string(track().get_beats_per_bar()) };
+    std::string bw { std::to_string(track().get_beat_width()) };
+    std::string ppq { std::to_string(track().get_ppqn()) };
+    std::string tsetc
+    {
+        "Bus " + buss + " Ch " + chan + ": " +
+        bpb + "/" + bw + " " + ppq + " PPQN"
+    };
+    set_seq_time_sig_and_ppqn(tsetc);
     set_seq_channel("");
     set_seq_lengths(get_lengths());
 
@@ -176,7 +167,7 @@ qseqeventframe::qseqeventframe
 
     /*
      * Doesn't make the table read-only.  We want that for now, until we can
-     * get time to modify events in-place.
+     *kj get time to modify events in-place.
      *
      * ui->eventTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
      */
@@ -236,7 +227,7 @@ qseqeventframe::qseqeventframe
      * Channel selection and (new) Event selection.
      */
 
-    populate_midich_combo();
+    repopulate_midich_combo();
     connect
     (
         ui->channel_combo_box, SIGNAL(currentIndexChanged(int)),
@@ -272,11 +263,11 @@ qseqeventframe::qseqeventframe
      *  Plain-text edit control for Meta messages involving text.
      */
 
-    ui->plainTextEdit->clear();
-    ui->plainTextEdit->setEnabled(true);
+    ui->data_text_edit->clear();
+    ui->data_text_edit->setEnabled(true);
     connect
     (
-        ui->plainTextEdit, SIGNAL(textChanged()),
+        ui->data_text_edit, SIGNAL(textChanged()),
         this, SLOT(slot_meta_text_change())
     );
 
@@ -345,6 +336,16 @@ qseqeventframe::qseqeventframe
         this, SLOT(slot_dump())
     );
     ui->button_dump->setEnabled(true);
+
+    /*
+     * Select button for control/program popup menus.
+     */
+
+    connect
+    (
+        ui->select_button, SIGNAL(clicked(bool)),
+        this, SLOT(slot_event_popup())
+    );
 
     /*
      * Load the data.
@@ -510,22 +511,19 @@ qseqeventframe::populate_seqspec_combo ()
  */
 
 void
-qseqeventframe::populate_midich_combo ()
+qseqeventframe::repopulate_midich_combo ()
 {
-    int defchannel = int(track().seq_midi_channel());
-    if (is_null_channel(defchannel))
-        defchannel = c_midichannel_max;                     /* index == 16  */
-
-    ui->channel_combo_box->clear();
-    for (int channel = 0; channel <= c_midichannel_max; ++channel)
+    int buss { int(track().seq_midi_bus()) };
+    int ch { int(track().seq_midi_channel()) }; /* track().midi_channel()   */
+    if (populate_midich_combo(ui->channel_combo_box, buss, ch))
     {
-        std::string name = channel == c_midichannel_max ?
-            "None" : std::to_string(channel + 1) ;
-
-        QString combotext(qt(name));
-        ui->channel_combo_box->insertItem(channel, combotext);
+        /*
+         * if (is_null_channel(ch))
+         *      ch = c_midichannel_max;
+         *
+         * ui->channel_combo_box->setCurrentIndex(ch);
+         */
     }
-    ui->channel_combo_box->setCurrentIndex(defchannel);
 }
 
 void
@@ -551,20 +549,26 @@ qseqeventframe::slot_midi_channel (int /*index*/)
 void
 qseqeventframe::check_channel_msg_index (int index)
 {
-    if (index == 3)
+    if (index == control_change)                // 3
     {
         m_in_control = true;
         m_in_program = false;
+        ui->select_button->setText("Ctrl");
+        ui->select_button->setEnabled(true);
     }
-    else if (index == 4)
+    else if (index == program_change)           // 4
     {
         m_in_control = false;
         m_in_program = true;
+        ui->select_button->setText("Prog");
+        ui->select_button->setEnabled(true);
     }
     else
     {
         m_in_control = false;
         m_in_program = false;
+        ui->select_button->setText("Sel");
+        ui->select_button->setEnabled(false);
     }
 }
 
@@ -597,7 +601,7 @@ void
 qseqeventframe::slot_event_name (int index)
 {
     /*
-     * ui->plainTextEdit->clear();
+     * ui->data_text_edit->clear();
      */
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
@@ -651,7 +655,7 @@ qseqeventframe::slot_pulse_time_state (int state)
  *
  *  How can we easily detect an actual meta-text change???
  *
- *      QString qtex = ui->plainTextEdit->toPlainText();
+ *      QString qtex = ui->data_text_edit->toPlainText();
  *
  *  There's actually nothing to do here. And the pattern is not
  *  dirty until the Modify or Insert button is pressed.
@@ -682,12 +686,12 @@ qseqeventframe::slot_meta_text_change ()
 
     if (m_in_control)
     {
-        std::string text = ui->plainTextEdit->toPlainText().toStdString();
+        std::string text = ui->data_text_edit->toPlainText().toStdString();
         printf("Control change %s\n", CSTR(text));
     }
     else if (m_in_program)
     {
-        std::string text = ui->plainTextEdit->toPlainText().toStdString();
+        std::string text = ui->data_text_edit->toPlainText().toStdString();
         printf("Program change %s\n", CSTR(text));
     }
 
@@ -696,6 +700,7 @@ qseqeventframe::slot_meta_text_change ()
 
 /**
  *  Helper for slot_ev_data_0_edit() and set_event_data_0().
+ *  The controller code is similar to that in handle_control_popup().
  */
 
 void
@@ -703,13 +708,23 @@ qseqeventframe::data_0_helper (int d0)
 {
     if (m_in_control)
     {
-        std::string cname = controller_name(d0);
-        ui->plainTextEdit->document()->setPlainText(qt(cname));
+        int bs { int(track().seq_midi_bus()) };
+        int ch { int(track().seq_midi_channel()) };  // no channel here
+        const usermidibus & umb { usr().bus(bs) };
+        int inst { umb.instrument(ch) };
+        const userinstrument & uin { usr().instrument(inst) };
+        std::string cname { controller_name(d0) };
+        if (uin.is_valid())
+        {
+            if (uin.controller_active(d0))
+                cname = uin.controller_name(d0);
+        }
+        ui->data_text_edit->document()->setPlainText(qt(cname));
     }
     else if (m_in_program)              /* printf("Program edit %d\n", d0)  */
     {
-        std::string pname = program_name(d0);
-        ui->plainTextEdit->document()->setPlainText(qt(pname));
+        std::string pname { program_name(d0) };
+        ui->data_text_edit->document()->setPlainText(qt(pname));
     }
 }
 
@@ -883,6 +898,11 @@ qseqeventframe::set_seq_time_sig_and_ppqn (const std::string & sig)
     ui->label_time_sig->setText(qt(sig));
 }
 
+/**
+ *  If USE_QCHANNELPOPUP_CODE is defined, this combo-box is under
+ *  the control of the qchannelpopup object.
+ */
+
 void
 qseqeventframe::set_seq_channel (const std::string & /*ch*/)
 {
@@ -959,6 +979,11 @@ qseqeventframe::set_event_name (const std::string & n)
     check_channel_msg_index(index);
 }
 
+/**
+ *  If USE_QCHANNELPOPUP_CODE is defined, this combo-box is under
+ *  the control of the qchannelpopup object.
+ */
+
 void
 qseqeventframe::set_event_channel (int channel)
 {
@@ -1000,6 +1025,9 @@ qseqeventframe::set_event_data_1 (const std::string & d)
  *  Also, we use data_0_helper() for program change and controller
  *  events to display text. The rest are handled in
  *  qseventslots::set_current_event().
+ *
+ *  If USE_QCHANNELPOPUP_CODE is defined, this combo-box is under
+ *  the control of the qchannelpopup object.
  */
 
 void
@@ -1009,7 +1037,7 @@ qseqeventframe::set_event_plaintext (const std::string & t)
     QString text = qt(temp);
     populate_meta_combo();
     ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
-    ui->plainTextEdit->document()->setPlainText(text);
+    ui->data_text_edit->document()->setPlainText(text);
 }
 
 void
@@ -1019,7 +1047,7 @@ qseqeventframe::set_event_system (const std::string & t)
     QString text = qt(temp);                            // convert to hex bytes?
     populate_system_combo();
     ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
-    ui->plainTextEdit->document()->setPlainText(text);
+    ui->data_text_edit->document()->setPlainText(text);
 }
 
 void
@@ -1028,7 +1056,7 @@ qseqeventframe::set_event_seqspec (const std::string & t)
     QString text = qt(t);                               // convert to hex bytes?
     populate_system_combo();
     ui->channel_combo_box->setCurrentIndex(m_no_channel_index);
-    ui->plainTextEdit->document()->setPlainText(text);
+    ui->data_text_edit->document()->setPlainText(text);
 }
 
 /**
@@ -1262,11 +1290,14 @@ qseqeventframe::slot_link_status ()
 std::string
 qseqeventframe::get_lengths ()
 {
-    std::string meas_events = std::to_string(m_eventslots->calculate_measures());
-    meas_events += " measures, ";
-    meas_events += std::to_string(m_eventslots->count());
-    meas_events += " events";
-    return meas_events;
+    std::string measure { std::to_string(m_eventslots->calculate_measures()) };
+    std::string tlength { std::to_string(track().get_length()) };
+    std::string evcount { std::to_string(m_eventslots->count()) };
+    std::string result
+    {
+        measure + " measure(s) " + tlength + " ticks " + evcount + " events"
+    };
+    return result;
 }
 
 /**
@@ -1346,6 +1377,9 @@ qseqeventframe::slot_delete ()
  *
  *  We have to figure out where the new event goes, its new index into
  *  the container, and add the new table row in the corresponding place.
+ *
+ *  If USE_QCHANNELPOPUP_CODE is defined, this combo-box is under
+ *  the control of the qchannelpopup object.
  */
 
 void
@@ -1359,7 +1393,7 @@ qseqeventframe::slot_insert ()
         std::string d1 = ui->entry_ev_data_1->text().toStdString();
         std::string busno = "-";
         std::string ch = ui->channel_combo_box->currentText().toStdString();
-        std::string text = ui->plainTextEdit->toPlainText().toStdString();
+        std::string text = ui->data_text_edit->toPlainText().toStdString();
         text = string_to_midi_bytes(text);      /* encode for ext ASCII     */
         std::string linktime;                   /* empty, no link time yet  */
         bool has_events = m_eventslots->insert_event
@@ -1392,6 +1426,9 @@ qseqeventframe::slot_insert ()
  *  changed, then we can simply modify the existing current event in place.
  *  Otherwise, we need to delete the old event and insert the new one.
  *  But that is done for us by eventslots::modify_current_event().
+ *
+ *  If USE_QCHANNELPOPUP_CODE is defined, this combo-box is under
+ *  the control of the qchannelpopup object.
  */
 
 void
@@ -1407,7 +1444,7 @@ qseqeventframe::slot_modify ()
         std::string d0 = ui->entry_ev_data_0->text().toStdString();
         std::string d1 = ui->entry_ev_data_1->text().toStdString();
         std::string chan = ui->channel_combo_box->currentText().toStdString();
-        std::string text = ui->plainTextEdit->toPlainText().toStdString();
+        std::string text = ui->data_text_edit->toPlainText().toStdString();
         text = string_to_midi_bytes(text);      /* encode for ext ASCII     */
 
         midipulse lt = c_null_midipulse;
@@ -1583,6 +1620,159 @@ qseqeventframe::slot_cancel ()
 {
     set_selection_multi(false);
 }
+
+/**
+ * NEW. -------------------------------------------------------------------
+ */
+
+void
+qseqeventframe::slot_event_popup ()
+{
+    if (m_in_control)
+        handle_control_popup();
+    else if (m_in_program)
+        handle_program_popup();
+}
+
+/**
+ *  Functions to create event menu entries.  The first overload handles
+ *  CC events.
+ */
+
+void
+qseqeventframe::set_controller_entry
+(
+    QMenu * menu,
+    const std::string & text,
+    midibyte status,
+    midibyte control
+)
+{
+    QAction * item = new_qaction(text, this);   // hmmmmmmmmmm
+    menu->addAction(item);
+    connect
+    (
+        item, &QAction::triggered,
+        std::bind(&qseqeventframe::set_control_type, this, status, control)
+    );
+}
+
+void
+qseqeventframe::set_control_type (midibyte /* status */, midibyte control)
+{
+    std::string controlstr { std::to_string(unsigned(control)) };
+    set_event_data_0(controlstr);
+    if (m_in_control)
+        set_event_data_1("64");
+    else if (m_in_program)
+        set_event_data_1("0");
+
+    data_0_helper(control);                     /* fill in the text field   */
+}
+
+/**
+ *  This function is similar to that used in qseqeditframe64.
+ *  However, it does not need the code to draw a used/unused square
+ *  pixmap.
+ */
+
+void
+qseqeventframe::handle_control_popup ()
+{
+    m_select_popup = new_qmenu("", this);
+
+    /**
+     *  Create the 8 sub-menus for the various ranges of controller
+     *  changes, shown 16 per sub-menu.
+     */
+
+    const int menucount {  8 };
+    const int itemcount { 16 };
+    int bs { int(track().seq_midi_bus()) };
+    int ch { int(track().seq_midi_channel()) };  // no channel here
+    const usermidibus & umb { usr().bus(bs) };
+    int inst { umb.instrument(ch) };
+    const userinstrument & uin { usr().instrument(inst) };
+    char b[32];
+    for (int submenu = 0; submenu < menucount; ++submenu)
+    {
+        int offset { submenu * itemcount };
+        snprintf
+        (
+            b, sizeof b, "Controls %d-%d", offset, offset + itemcount - 1
+        );
+
+        QMenu * menucc { new_qmenu(b, m_select_popup) };
+        for (int item = 0; item < itemcount; ++item)
+        {
+            std::string cname { controller_name(offset + item) };
+            if (uin.is_valid())
+            {
+                if (uin.controller_active(offset + item))
+                    cname = uin.controller_name(offset + item);
+            }
+            set_controller_entry
+            (
+                menucc, cname, EVENT_CONTROL_CHANGE, offset + item
+            );
+        }
+        m_select_popup->addMenu(menucc);
+    }
+    if (not_nullptr(m_select_popup))
+    {
+        int w { ui->select_button->width() - 2 };
+        int h { ui->select_button->height() - 2 };
+        m_select_popup->exec(ui->select_button->mapToGlobal(QPoint(w, h)));
+
+        delete m_select_popup;
+        m_select_popup = nullptr;
+    }
+}
+
+void
+qseqeventframe::handle_program_popup ()
+{
+    m_select_popup = new_qmenu("", this);
+
+    /**
+     *  Create the 8 sub-menus for the various ranges of patches,
+     *  shown 16 per sub-menu.
+     */
+
+    const int menucount {  8 };
+    const int itemcount { 16 };
+    char b[32];
+    for (int submenu = 0; submenu < menucount; ++submenu)
+    {
+        int offset { submenu * itemcount };
+        snprintf
+        (
+            b, sizeof b, "Programs %d-%d", offset, offset + itemcount - 1
+        );
+
+        QMenu * menupr { new_qmenu(b, m_select_popup) };
+        for (int item = 0; item < itemcount; ++item)
+        {
+            std::string pname { program_name(offset + item) };
+            set_controller_entry
+            (
+                menupr, pname, EVENT_PROGRAM_CHANGE, offset + item
+            );
+        }
+        m_select_popup->addMenu(menupr);
+    }
+    if (not_nullptr(m_select_popup))
+    {
+        int w { ui->select_button->width() - 2 };
+        int h { ui->select_button->height() - 2 };
+        m_select_popup->exec(ui->select_button->mapToGlobal(QPoint(w, h)));
+
+        delete m_select_popup;
+        m_select_popup = nullptr;
+    }
+}
+
+/*------------------------------------------------------------------------*/
 
 /*
  *  We must accept() the key-event, otherwise even key-events in the QLineEdit

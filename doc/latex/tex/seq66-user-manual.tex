@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2025-10-26
+% \update      2026-04-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -52,7 +52,7 @@
 
 \begin{document}
 
-\title{Seq66 User Manual v. 0.99.22}
+\title{Seq66 User Manual v. 0.99.23}
 \author{Chris Ahlstrom \\
    (\texttt{ahlstromcj@gmail.com})}
 \date{\today}
@@ -111,7 +111,8 @@
    \textsl{C++} for faster and simpler code.
    Supports the \textsl{GNU} and \textsl{Clang} compilers.
    It drops the
-   \textsl{Gtkmm} user-interface in favor of \textsl{Qt 5},
+   \textsl{Gtkmm} user-interface in favor of \textsl{Qt 5}
+   and \textsl{Qt 6},
    and has better handling of sets, mute-groups, sessions, configuration files,
    play-lists, and automation control.
    It supports the \textsl{Non/New Session Manager},
@@ -140,7 +141,7 @@
    things learned in responding to user reports;  to use
    the new code as an opportunity to add new functionality such as
    \textsl{Non Session Manager} support; to tighten the
-   code by using newer features of \textsl{C++11} and later;
+   code by using newer features of \textsl{C++17} and later;
    and to make the innumerable minor improvements that come to
    attention with time and testing.
 
@@ -151,7 +152,8 @@
    \textsl{Seq66} versus \textsl{Sequencer64}.
 
    \begin{itemize}
-      \item \textbf{Qt} 5 as the standard user-interface offers many benefits:
+      \item \textbf{Qt} 5 (and 6)
+         as the standard user-interface offers many benefits:
          \begin{itemize}
             \item A better live frame using Qt push-buttons.
             \item The main window's size can be changed, via start-up

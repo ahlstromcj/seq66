@@ -1,3 +1,95 @@
+2026-04-15  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, RELNOTES, Seq66qt5/seq66qt5.cpp, TODO, contrib/scripts/gvo,
+	contrib/scripts/vd, contrib/scripts/vo, data/readme.text,
+	data/readme.windows, data/samples/incrypt-66.palette,
+	data/win/qpseq66.palette, doc/latex/tex/configuration.tex,
+	doc/latex/tex/first_start.tex, doc/latex/tex/live_grid.tex,
+	doc/latex/tex/menu.tex, doc/latex/tex/palettes.tex,
+	doc/latex/tex/patterns_panel.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/src/seq66_features.cpp: Documentation, new vim scripts,
+	path to executable shown.
+
+2026-04-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES, TODO, VERSION, configure,
+	configure.ac, data/license.text, data/readme.text,
+	data/readme.windows, doc/latex/tex/event_editor.tex,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat: Updating to
+	version 0.99.22 in some files.
+
+2026-03-14  Chris <ahlstromcj@gmail.com>
+
+	* Install.seq66.on.Ubuntu.md, seq_qt5/src/qperfeditframe64.cpp: 
+	Update Ubuntu Studio instructions and fixed code to use
+	QPalette::Window.
+	* seq_qt5/include/qseqeventframe.hpp,
+	seq_qt5/src/qseqeventframe.cpp: Event editor now shows controllers
+	from 'usr' and programs from 'patches' file.
+	* Install.seq66.on.Ubuntu.md, NEWS, aux-files/ltmain.sh, configure,
+	LICENSE.FDL => licenses/LICENSE.FDL, LICENSE.GPL =>
+	licenses/LICENSE.GPL, LICENSE.LGPL => licenses/LICENSE.LGPL,
+	qt6-make.log, seq_qt5/forms/qseqeventframe.ui,
+	seq_qt5/src/qseqeventframe.cpp: Moved license files, event editor
+	displays controllers as specified in the usr file.
+
+2026-03-13  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, aux-files/ltmain.sh, configure, {seq_qt5/src =>
+	contrib/code}/qchannelpopup.cpp, {seq_qt5/include =>
+	contrib/code}/qchannelpopup.hpp, seq_qt5/forms/qseqeventframe.ui,
+	seq_qt5/include/Makefile.am, seq_qt5/include/Makefile.in,
+	seq_qt5/include/qseqeventframe.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/Makefile.am,
+	seq_qt5/src/Makefile.in, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqeventframe.cpp, seq_qt5/src/qt5_helpers.cpp: Moved
+	qchannelpopup to contrib, added populate_midich_combo(), used it in
+	event and pattern editors.
+
+2026-03-12  Chris <ahlstromcj@gmail.com>
+
+	* : commit aeab54af9c83b7a582033c9e0f848f7759a8766d Author: Chris
+	<ahlstromcj@gmail.com> Date:   Thu Mar 12 15:19:54 2026 -0400
+
+2026-02-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* aux-files/ltmain.sh, configure: Updated ltmain.sh and configure.
+	* aux-files/ltmain.sh, configure, data/samples/sample.usr,
+	libseq66/include/Makefile.am, libseq66/include/Makefile.in,
+	libseq66/include/midi/drums.hpp, libseq66/include/midi/patches.hpp,
+	libseq66/src/Makefile.am, libseq66/src/Makefile.in,
+	libseq66/src/midi/controllers.cpp, libseq66/src/midi/drums.cpp,
+	libseq66/src/midi/patches.cpp, seq_qt5/src/qperfroll.cpp: Added
+	drums module and some fixes to controllers and patches.
+
+2026-01-23  Chris <ahlstromcj@gmail.com>
+
+	* seq_qt5/include/qt5_helper.h, seq_qt5/include/qt5_helpers.hpp,
+	seq_qt5/src/qperfnames.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qperftime.cpp, seq_qt5/src/qscrollslave.cpp,
+	seq_qt5/src/qstriggereditor.cpp, seq_qt5/src/qt5_helpers.cpp: First
+	fixes of qt6 deprecations.
+
+2026-01-22  Chris <ahlstromcj@gmail.com>
+
+	* seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/qt5_helpers.cpp: 
+	Interim qt6 check-in.
+
+2026-01-22  Chris <ahlstromcj@gmail.com>
+
+	* qt6-make.log: Added qt6-make log to analyze for fixes.
+
+2025-10-26  ahlstrom <ahlstromcj@gmail.com>
+
+	* ChangeLog: Release Notes for Seq66 v. 0.99.22 2025-10-26 "Itsa
+	Been Awhile" This release contains fixes and updates for issue #141 as well as a
+	number of other issues discovered. Some new features to support
+	creating harmony more easily added.  - Issue #141, mostly implemented. See "Pattern editor" below.  - Fixed: a segfault at startup on some builds on Arch Linux.  - Main window and grid.    - When dragging the mouse, the slot under it is drawn "flat".    - Pressing the Menu key on a selected slot shows the popup menu.    - Fixed: loading a file with a different PPQN set "modify".    - Fixed: dragging a pattern set "modify" before the drag was     completed. Could not move another pattern into the empty slot.  - Pattern editor. Extensive updates.    - Showing note bars for scales and chords:     - Added: a new brush called "chord" to the palette file.      - If a chord is set, notes _not_ in the chord are grayed.      - Added: buttons to toggle the scale/chord bars and filtering       of off-scale/off-chord painted notes.      - Painting notes:       - Changed to down-snap to make note insertion nicer.        - The selected key, scale, and chord determine the         actual chord represented on the pattern grid.        - Fixed the snap-interval setting for drawing notes.      - The selected chord for a pattern, if any, is stored as a       new track-specific "c\_musicchord" SeqSpec.      - Removed display of time signatures in the data pane.      - Fixed: background sequence not loaded into the piano roll.      - Added: an option to select notes in a range of pitches.        Either note numbers or note names can be used.  - midifile.    - Added: storage for the first BPM value, needed by performer.    - Fixed: Tempo event in track 0 does not override c\_bpmtag
+	  SeqSpec.  - performer.    - Fixed: File PPQN was set when reading the file, but was not     informing the master bus of a PPQN change (in ALSA).    - Fixed: the slow playback of high-PPQN files.  - JACK.    - Fixed detect\_jack() and added a missing call to jack\_free().  See NEWS for more details.
+
 2025-10-26  ahlstrom <ahlstromcj@gmail.com>
 
 	* ChangeLog, NEWS, README.md, RELNOTES, VERSION, configure.ac,

@@ -1,44 +1,25 @@
-Release Notes for Seq66 v. 0.99.23 2025-10-27 "To do"
+Release Notes for Seq66 v. 0.99.23 2026-04-15 "What a Qt, 6!"
 
-This release contains fixes and updates for issue #141 as well as
-a number of other issues discovered. Some new features to support
-creating harmony more easily added.
+This release contains fixes and updates for Qt as well as
+a number of other issues discovered.
 
-- Issue #141, mostly implemented. See "Pattern editor" below.
-- Fixed: a segfault at startup on some builds on Arch Linux.
-- Main window and grid.
-  - When dragging the mouse, the slot under it is drawn "flat".
-  - Pressing the Menu key on a selected slot shows the popup menu.
-  - Fixed: loading a file with a different PPQN set "modify".
-  - Fixed: dragging a pattern set "modify" before the drag was
-    completed. Could not move another pattern into the empty slot.
-- Pattern editor. Extensive updates.
-  - Showing note bars for scales and chords:
-    - Added: a new brush called "chord" to the palette file.
-    - If a chord is set, notes _not_ in the chord are grayed.
-    - Added: buttons to toggle the scale/chord bars and filtering
-      of off-scale/off-chord painted notes.
-    - Painting notes:
-      - Changed to down-snap to make note insertion nicer.
-      - The selected key, scale, and chord determine the
-        actual chord represented on the pattern grid.
-      - Fixed the snap-interval setting for drawing notes.
-    - The selected chord for a pattern, if any, is stored as a
-      new track-specific "c\_musicchord" SeqSpec.
-    - Removed display of time signatures in the data pane.
-    - Fixed: background sequence not loaded into the piano roll.
-    - Added: an option to select notes in a range of pitches.
-      Either note numbers or note names can be used.
-- midifile.
-  - Added: storage for the first BPM value, needed by performer.
-  - Fixed: Tempo event in track 0 does not override c\_bpmtag SeqSpec.
-- performer.
-  - Fixed: File PPQN was set when reading the file, but was not
-    informing the master bus of a PPQN change (in ALSA).
-  - Fixed: the slow playback of high-PPQN files.
-- JACK.
-  - Fixed detect\_jack() and added a missing call to jack\_free().
+-   Main window and grid.
+  - At startup, instead of setting argv[0] as app-info, get
+    the executable's path from Qt.
+  - Now uses the populate\_midich\_combo() function.
+- Event editor.
+  - A new button for either Control or Program changes pops
+    up the menus for Control Changes and Program Changes.
+  - Various fixes to controller and patch naming and handling.
+- Added the populate\_midich\_combo() function to the
+  qt5helpers module.
+- Added the drums module for GM/non-GM drum notes.
+- Palettes.
+  - Updated the incrypt-66.palette file.
+- Fixed some Qt6 deprecations.
+- Documentation updated. Additional pictures for Event editor.
+- Moved the LICENSE files to "licenses" sub-directory.
 
-See NEWS for more details.
+See NEWS for many more details.
 
 # vim: sw=4 ts=4 wm=15 et ft=rc

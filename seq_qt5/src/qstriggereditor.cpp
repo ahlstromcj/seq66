@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-10-15
+ * \updates       2026-01-23
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -317,11 +317,11 @@ qstriggereditor::flag_dirty ()
  */
 
 void
-qstriggereditor::mousePressEvent (QMouseEvent * event)
+qstriggereditor::mousePressEvent (QMouseEvent * ev)
 {
     midipulse tick_s, tick_f, tick_w;
     convert_x(qc_eventevent_x, tick_w);
-    current_x(int(event->x()) - c_keyboard_padding_x);
+    current_x(qt_mouse_x(ev) - c_keyboard_padding_x);
     drop_x(current_x());
     old_rect().clear();             /* reset box holding dirty redraw spot */
     if (paste())
@@ -335,9 +335,9 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
     }
     else
     {
-        bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
-        bool lbutton = event->button() == Qt::LeftButton;
-        bool rbutton = event->button() == Qt::RightButton;
+        bool isctrl = bool(ev->modifiers() & Qt::ControlModifier);
+        bool lbutton = ev->button() == Qt::LeftButton;
+        bool rbutton = ev->button() == Qt::RightButton;
         if (lbutton)
         {
             convert_x(drop_x(), tick_s);        /* turn x,y in to tick/note */
@@ -424,15 +424,15 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
 }
 
 void
-qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
+qstriggereditor::mouseReleaseEvent (QMouseEvent * ev)
 {
-    current_x(int(event->x()) - c_keyboard_padding_x);
+    current_x(qt_mouse_x(ev) - c_keyboard_padding_x);
     if (moving())
         snap_current_x();
 
     int delta_x = current_x() - drop_x();
-    bool lbutton = event->button() == Qt::LeftButton;
-    bool rbutton = event->button() == Qt::RightButton;
+    bool lbutton = ev->button() == Qt::LeftButton;
+    bool rbutton = ev->button() == Qt::RightButton;
     if (lbutton)
     {
         if (selecting())
@@ -478,7 +478,7 @@ qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
 }
 
 void
-qstriggereditor::mouseMoveEvent (QMouseEvent * event)
+qstriggereditor::mouseMoveEvent (QMouseEvent * ev)
 {
     midipulse tick = 0;
     if (moving_init())
@@ -488,13 +488,13 @@ qstriggereditor::mouseMoveEvent (QMouseEvent * event)
     }
     if (select_action())                // m_selecting || m_moving || m_paste
     {
-        current_x(int(event->x()) - c_keyboard_padding_x);
+        current_x(qt_mouse_x(ev) - c_keyboard_padding_x);
         if (drop_action())              // m_moving || m_paste
             snap_current_x();
     }
     if (painting())
     {
-        current_x(int(event->x()));
+        current_x(qt_mouse_x(ev));
         snap_current_x();
         convert_x(current_x(), tick);
         drop_event(tick);
@@ -503,16 +503,16 @@ qstriggereditor::mouseMoveEvent (QMouseEvent * event)
 }
 
 void
-qstriggereditor::keyPressEvent (QKeyEvent * event)
+qstriggereditor::keyPressEvent (QKeyEvent * ev)
 {
     bool ret = false;
-    int key = event->key();
+    int key = ev->key();
     if (key == Qt::Key_Delete || key == Qt::Key_Backspace)
     {
         track().remove_selected();
         ret = mark_modified();
     }
-    if (event->modifiers() & Qt::ControlModifier)
+    if (ev->modifiers() & Qt::ControlModifier)
     {
         switch (key)
         {
@@ -533,7 +533,7 @@ qstriggereditor::keyPressEvent (QKeyEvent * event)
             break;
 
         case Qt::Key_Z: /* Undo */
-            if (event->modifiers() & Qt::ShiftModifier)
+            if (ev->modifiers() & Qt::ShiftModifier)
                 track().pop_redo();
             else
                 track().pop_undo();
@@ -573,7 +573,7 @@ qstriggereditor::keyPressEvent (QKeyEvent * event)
     if (ret)
         flag_dirty();
     else
-        QWidget::keyPressEvent(event);
+        QWidget::keyPressEvent(ev);
 }
 
 void

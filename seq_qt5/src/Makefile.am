@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2025-01-25
+# \update      2026-03-13
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -234,6 +234,8 @@ lib_LTLIBRARIES = libseq_qt5.la
 #  their constructors.  Took awhile to figure that one out; qtcreator/qmake
 #  took care of that issue, but in automake we have to do it ourselves.
 #
+#  Moved to contrib/code: qchannelpopup.hpp
+#
 #----------------------------------------------------------------------------
 
 moc_qt_headers = \
@@ -302,6 +304,9 @@ BUILT_SOURCES = $(uic_sources) $(moc_sources)
 
 #******************************************************************************
 # BUILT_SOURCES
+#
+# Moved to contrib/code: qchannelpopup.cpp
+#
 #------------------------------------------------------------------------------
 
 libseq_qt5_la_SOURCES = \

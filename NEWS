@@ -4,13 +4,46 @@ Chris Ahlstrom
 
 # Change Log
 
-## [0.99.23] - 2025-10-27
+## [0.99.23] - 2026-04-15
+
+This version has changes to better support Qt6, better display
+and selection of program and controller change events, and
+other minor fix-ups.
 
 ### Added
 
+-   Event editor.
+    -   A new button for either Control or Program changes pops
+        up the menus for Control Changes set by the 'usr'
+        file and the Program Changes set by the 'patches' file.
+-   Added the qchannelpopup class for future refactoring /
+    unification of channel menus, but it might never be ready.
+    It is in the contrib sub-directory.
+-   Instead, added the populate\_midich\_combo() function to the
+    qt5\_helpers module, now used in the pattern and event editors.
+-   Added the drums module to provide for listings of GM drum
+    notes and to support non-GM drum notes display in the future.
+
 ### Changed
 
+-   Main window and grid.
+    -   At startup, instead of setting argv[0] as app-info. set
+        QCoreApplication::applicationFilePath().
+    -   Now uses the populate\_midich\_combo() function.
+-   Event editor.
+    -   Now uses the populate\_midich\_combo() function to show
+        the control/program drop-down menus.
+-   Palettes.
+    -   Updated the incrypt-66.palette file; some colors don't
+        apply in the old version.
+-   Worked on some Qt6 deprecations.
+-   Documentation updated. Additional pictures for Event editor.
+-   Moved the LICENSE files to "licenses" sub-directory.
+
 ### Fixed
+
+-   Various fixes to controller and patch naming and handling.
+-   Fixed Qt6 deprecations.
 
 ## [0.99.22] - 2025-10-26
 
@@ -52,7 +85,6 @@ Chris Ahlstrom
 -   C++. Added -Wno-unnecessary-virtual-specifier to Clang builds
     to avoid a dumb warning about final classes and virtual
     functions.
--   Main window and grid.
 -   Pattern editor.
     -   Changed closest-snap to down-snap to make note
         insertion more intuitive.
@@ -75,7 +107,8 @@ Chris Ahlstrom
     -   Fixed detect\_jack() and added a missing call to jack\_free().
 -   midifile.
     -   Added storage for the first BPM value, needed by performer.
-    -   Fixed: Tempo event in track 0 does not override c\_bpmtag SeqSpec.
+    -   Fixed: Tempo event in track 0 does not override c\_bpmtag
+        SeqSpec.
 -   Main window and grid.
     -   Fixed: an issue where loading a file with a different PPQN
         raised the modify flag.
@@ -233,8 +266,8 @@ Chris Ahlstrom
     -   A timed error prompt (instead of OK/Remap and restart) when
         running via NSM; see qsmainwnd and qt5nsmanager.
 -   Pattern editor.
-    -   Added some horizontal dotted lines to the data pane to mark the
-        32, 64, and 96 level (of items such as velocity).
+    -   Added some horizontal dotted lines to the data pane to mark
+        the 32, 64, and 96 level (of items such as velocity).
 -   Song editor.
     -   Added a dark vertical border at the end of a song.
 -   Event editor.
@@ -407,7 +440,8 @@ More developer-discovered issues :-(
 
 ### Fixed
 
--   Fixed a segfault when clicking an empty pattern on sets 1 and above.
+-   Fixed a segfault when clicking an empty pattern on sets 1 and
+    above.
 
 ## [0.99.17] - 2025-01-10
 
@@ -426,12 +460,12 @@ and Qt style-sheets, and a beefed up pattern-fix dialog.
 -   Revamped and extended the functionality of the Pattern-Fix dialog.
     As part of this, the alteration API of the event-list has been
     updated.
--   Refactored vertical grid-line calculations; code moved into the zoomer.
-    For odd time-signatures (i.e. with a beat-width not a power of 2, which
-    is not allowed in MIDI but is stored in a SeqSpec event in Seq66) we
-    draw fewer lines in between bars to make a cleaner display. But do
-    not expect them to be "nice". See the 4/7 pattern in the timesigs.midi
-    file.
+-   Refactored vertical grid-line calculations; code moved into the
+    zoomer.  For odd time-signatures (i.e. with a beat-width not a
+    power of 2, which is not allowed in MIDI but is stored in a
+    SeqSpec event in Seq66) we draw fewer lines in between bars to
+    make a cleaner display. But do not expect them to be "nice".
+    See the 4/7 pattern in the timesigs.midi file.
     -   Pattern editor. Better support for thick vs. thin grid lines.
         -   qseqroll.
         -   qseqtime.
@@ -447,34 +481,35 @@ and Qt style-sheets, and a beefed up pattern-fix dialog.
 -   Fixed segfault when clicking the Restart button with external live
     frame(s) or external song editor open.
 -   Issue #128 follow-on.
-    -   Fixed the removal of trailing notes after truncating a pattern to a
-        smaller number of measures.
-    -   Upgraded one-shot recording to work during playback. Still minor
-        issues; see the user manual.
+    -   Fixed the removal of trailing notes after truncating a pattern
+        to a smaller number of measures.
+    -   Upgraded one-shot recording to work during playback. Still
+        minor issues; see the user manual.
 -   Issue #133 and issues found while working this.
     -   Pattern editor.
-        -   Changed the slot connection for editable combo-boxes to connect
-            the lineEdit() accessor.
-            -   Measures (pattern length) combo-box. Also made cancelling
-                the change work correctly.
+        -   Changed the slot connection for editable combo-boxes to
+            connect the lineEdit() accessor.
+            -   Measures (pattern length) combo-box. Also made
+                cancelling the change work correctly.
             -   Beats-per-bar combo-box.
             -   Beat-width combo-box.
-        -   Fixed a seqfault when opening tune with a pattern-editor already
-            up for the current tune. The side-effect is that armed status
-            will not synch between the main window and the editor.
+        -   Fixed a seqfault when opening tune with a pattern-editor
+            already up for the current tune. The side-effect is that
+            armed status will not synch between the main window and
+            the editor.
         -   Fixed raising the modify flag when a second pattern (with a
             different time signature) was opened in the editor.
         -   Fixed a potential segfault when opening a recent file with
-            a pattern currently open for editing.  Had to add polling to check
-            for changes in arm status. 
+            a pattern currently open for editing.  Had to add polling
+            to check for changes in arm status. 
         -   Refactored the event/buss dropdowns to be modified only when
             the user changes setting or tries to bring up the dropdowns
             (lazy dropdowns).
     -   Song editor. Time zoom now affects horizontal scroll-bar length.
 -   Issue #134. Added dates to the release-name line from 0.99.14 on;
     were left off by an oversight.
--   Pattern-fix editor. Somewhat revamped, many fixes made, and more testing
-    done.
+-   Pattern-fix editor. Somewhat revamped, many fixes made, and more
+    testing done.
 -   Non-standard time signature handling errors. Note that we cannot
     support non-power-of-2 beat-widths well in the piano-rolls.
 -   Main window. Fixed updating the PPQN when a file of different PPQN
@@ -483,7 +518,8 @@ and Qt style-sheets, and a beefed up pattern-fix dialog.
 -   Made ghost notes in selection box official. Also made it apply
     to select-all and other selection operations.
 -   Fixing and normalizing the functionality of the Pattern-Fix dialog.
--   Fixed timestamp setting in opening the event editor for empty pattern.
+-   Fixed timestamp setting in opening the event editor for empty
+    pattern.
 -   Some minor tweaking (field size, font) of various dialogs.
 
 ### Removed

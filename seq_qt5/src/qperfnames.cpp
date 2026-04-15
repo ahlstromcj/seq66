@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-15
+ * \updates       2026-01-23
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -334,7 +334,7 @@ qperfnames::sizeHint () const
 int
 qperfnames::convert_y (int y)
 {
-    int seqlimit = perf().sequences_in_sets();      // perf().sequence_max()
+    int seqlimit = perf().sequences_in_sets();
     int seq = y / track_height();
     if (seq >= seqlimit)
         seq = seqlimit - 1;
@@ -374,7 +374,7 @@ qperfnames::keyPressEvent (QKeyEvent * event)
 void
 qperfnames::mousePressEvent (QMouseEvent * ev)
 {
-    int y = int(ev->y());
+    int y = qt_mouse_y(ev);
     int seqno = convert_y(y);
     if (ev->button() == Qt::LeftButton)
     {
@@ -400,7 +400,7 @@ qperfnames::mouseDoubleClickEvent (QMouseEvent * ev)
 {
     if (rc().allow_click_edit())
     {
-        int seqno = convert_y(int(ev->y()));
+        int seqno = convert_y(qt_mouse_y(ev));
         bool active = perf().is_seq_active(seqno);
         emit signal_call_editor_ex(seqno, active);
         (void) perf().toggle_sequences(seqno, false);           /* krufty ! */

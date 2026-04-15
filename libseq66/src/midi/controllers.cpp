@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-06
- * \updates       2025-07-01
+ * \updates       2026-02-16
  * \license       GNU GPLv2 or above
  *
  *  This definition used to reside in the controllers.hpp file, but now more
@@ -40,7 +40,7 @@ namespace seq66
 
 using namepair = struct
 {
-    midibyte number;
+    int number;
     std::string name;
 };
 

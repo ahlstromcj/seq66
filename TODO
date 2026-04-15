@@ -1,6 +1,23 @@
 TO DO for Seq66 0.99.22
 Chris Ahlstrom
-2019-04-13 to 2025-10-24
+2019-04-13 to 2026-04-15
+
+    -   Can we fill in the buss-number column just for viewing?
+    -   Takes up too much space:
+        -   The buss name could be shown as a field in the event editor.
+        -   Also could show channel names if provided in 'usr' file.
+    -   Setting channel in event editor is not reflected in the pattern
+        editor; but the channel setting is for an event, not the whole
+        track.
+    -   Implement showing drum note names, similar to patch name,
+        in the various edit panes.
+
+Features:
+
+    -   *.patches file?
+    -   *.drums vs *.notemap?
+    -   *.controllers?
+    -   MIDNAM?
 
 NSM:
 
@@ -25,7 +42,7 @@ Cannot duplicate:
 
 Backlog:
 
-    -   Investigate building with Qt 6.
+    -   Implement modifiable mute-group names.
     -   Oddity: drag a pattern to a new slot, and when the mouse
         hovers over the new slot, the slot number appears under it.
     -   Have a click/selection bring the pattern-editor to the front.

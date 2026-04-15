@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2025-02-17
+# \update      2026-02-16
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -172,6 +172,7 @@ libseq66_la_SOURCES = \
  midi/businfo.cpp \
  midi/calculations.cpp \
  midi/controllers.cpp \
+ midi/drums.cpp \
  midi/editable_event.cpp \
  midi/editable_events.cpp \
  midi/event.cpp \

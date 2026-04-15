@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2025-02-17
+# \update      2026-02-16
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -109,6 +109,7 @@ nobase_include_HEADERS = \
  midi/businfo.hpp \
  midi/calculations.hpp \
  midi/controllers.hpp \
+ midi/drums.hpp \
  midi/editable_event.hpp \
  midi/editable_events.hpp \
  midi/event.hpp \
