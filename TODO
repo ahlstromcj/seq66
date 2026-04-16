@@ -1,6 +1,6 @@
-TO DO for Seq66 0.99.22
+TO DO for Seq66 0.99.24
 Chris Ahlstrom
-2019-04-13 to 2026-04-15
+2019-04-13 to 2026-04-16
 
     -   Can we fill in the buss-number column just for viewing?
     -   Takes up too much space:
@@ -11,6 +11,7 @@ Chris Ahlstrom
         track.
     -   Implement showing drum note names, similar to patch name,
         in the various edit panes.
+    -   Add Help About version to Build info.
 
 Features:
 

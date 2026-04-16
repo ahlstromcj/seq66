@@ -78,7 +78,7 @@
 #endif
 
 #if ! defined SEQ66_VERSION
-#define SEQ66_VERSION "0.99.23"
+#define SEQ66_VERSION "0.99.24"
 #endif
 
 #if ! defined SEQ66_GIT_VERSION

@@ -4,7 +4,7 @@
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
 ; Updated:      2026-04-15
-; Version:      0.99.23
+; Version:      0.99.24
 ;
 ;   Provides constants commonly used by the installer for Seq66 for
 ;   Windows.
@@ -31,7 +31,7 @@
 
 !define VER_MAIN_PURPOSE    "Seq66 for Windows"
 !define VER_NUMBER          "0.99"
-!define VER_REVISION        "23"
+!define VER_REVISION        "24"
 !define VER_VARIANT         "Windows"
 !define PRODUCT_VERSION     "${VER_NUMBER} ${VER_VARIANT} (rev ${VER_REVISION})"
 !define PRODUCT_PUBLISHER   "C. Ahlstrom (ahlstromcj@gmail.com)"
