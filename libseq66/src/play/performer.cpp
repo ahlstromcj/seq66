@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2025-10-21
+ * \updates       2026-04-17
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1055,7 +1055,8 @@ performer::store_io_maps ()
          * Not until user sets this flag: rc().portmaps_active(true);
          */
 
-        rc().auto_rc_save(true);
+        if (! rc().first_run_in_progress())
+            rc().auto_rc_save(true);
     }
     return result;
 }
@@ -3589,11 +3590,10 @@ performer::launch (int ppqn)
 #if defined SEQ66_USE_DEFAULT_PORT_MAPPING
             if (! rc().portmaps_present())  /* don't mung existing port-map */
             {
-                bool ok = store_io_maps();
+                bool ok = store_io_maps();  /* auto-rc-save if not 1st run  */
                 if (ok)
                 {
                     rc().portmaps_active(true);
-                    rc().auto_rc_save(true);
                     session_message("Created initial port maps");
 
                     /*

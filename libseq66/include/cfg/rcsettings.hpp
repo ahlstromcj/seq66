@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-06-10
+ * \updates       2026-04-17
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -319,9 +319,11 @@ private:
 
     /**
      *  A replacement for m_auto_option_save and all "save" options except for
-     *  MIDI files.
+     *  MIDI files. We add another flag that is set to true only when
+     *  the 'rc' file is found to not exist.
      */
 
+    bool m_first_run_in_progress;
     named_bools m_save_list;
 
     bool m_save_old_triggers;       /**< Save c_triggers_ex, no transpose.  */
@@ -801,6 +803,11 @@ public:
     bool alt_session () const
     {
         return ! m_session_tag.empty();
+    }
+
+    bool first_run_in_progress () const
+    {
+        return m_first_run_in_progress;
     }
 
     bool auto_options_save () const;
@@ -1409,6 +1416,12 @@ public:
         const std::string & sourcepath,
         const std::string & midipath
     );
+
+    void first_run_in_progress (bool flag)
+    {
+        m_first_run_in_progress = flag;
+    }
+
     void auto_rc_save (bool flag);
 
     void auto_usr_save (bool flag)

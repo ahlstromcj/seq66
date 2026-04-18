@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2025-10-24
+ * \updates       2026-04-17
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -68,11 +68,17 @@
 
 /**
  *  In the pattern editor's data pane, we can show the full GM name
- *  of the program-change, instead of just the number. Later we can
- *  expand this to use the note-mapper's patch settings.
+ *  of the program-change, instead of just the number.
  */
 
 #define SEQ66_SHOW_GM_PROGRAM_NAME
+
+/**
+ *  In the pattern editor's data pane, we can show the full GM name
+ *  of the drum-note. It gets too cramped, though.
+ */
+
+#undef SEQ66_SHOW_GM_DRUM_NAME
 
 /**
  *  Trying to make configuration copying more flexible.  We want to use

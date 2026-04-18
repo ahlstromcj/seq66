@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-10-16
+ * \updates       2026-04-18
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1242,10 +1242,24 @@ qseqroll::add_painted_note (midipulse tick, int note, bool first)
         /*
          *  Using a down-snap makes the painting look and feel better.
          *
+         *  This, however, causes issue #144. Let's try adding
+         *  half the note length to the tick. A bit disconcerting
+         *  is some cases. So now try adding 1/4 the note length.
+         *  Seems better but awful with long notes. Use snap()!
+         *
          *      tick = closest_snap(snap(), tick);
+         *      tick = down_snap(snap(), tick);
+         *      tick = down_snap(snap(), tick + m_note_length / 4);
+         *      tick = down_snap(snap(), tick + snap() / 4);
+         *
+         *  However, still an issue in drum mode, so add a whole snap().
          */
 
-        tick = down_snap(snap(), tick);
+        if (is_drum_mode())
+            tick = down_snap(snap(), tick + snap());
+        else
+            tick = down_snap(snap(), tick + snap() / 4);
+
         if (can_add_chords)                 /* add chords if not filtering  */
         {
             result = track().add_chord

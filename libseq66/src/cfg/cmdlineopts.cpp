@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2025-10-25
+ * \updates       2026-04-17
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -771,8 +771,14 @@ cmdlineopts::parse_rc_file
     }
     else
     {
+        /*
+         * We don't to force always saving permanently.
+         *
+         * rc().auto_rc_save(true);
+         */
+
         file_error("Cannot read", filespec);
-        rc().auto_rc_save(true);
+        rc().first_run_in_progress(true);
         rc().create_config_names();
     }
     return result;
@@ -800,7 +806,14 @@ cmdlineopts::get_usr_file ()
     }
     else
     {
+        /*
+         * We don't to force always saving permanently.
+         *
+         * rc().auto_rc_save(true);
+         */
+
         file_error("Cannot read", rcn);
+        rc().first_run_in_progress(true);
         rc().auto_rc_save(true);
     }
     return result;
@@ -827,8 +840,14 @@ cmdlineopts::parse_usr_file
     }
     else
     {
+        /*
+         * We don't to force always saving permanently.
+         *
+         * rc().auto_rc_save(true);
+         */
+
         file_error("Cannot read", filespec);
-        rc().auto_rc_save(true);
+        rc().first_run_in_progress(true);
         rc().auto_usr_save(true);
     }
     return result;
@@ -1405,7 +1424,7 @@ bool
 cmdlineopts::write_rc_file (const std::string & filebase)
 {
     bool result { true };
-    if (rc().auto_rc_save())
+    if (rc().auto_rc_save() || rc().first_run_in_progress())
     {
         std::string rcn;
         if (filebase.empty())
@@ -1425,6 +1444,10 @@ cmdlineopts::write_rc_file (const std::string & filebase)
     }
     return result;
 }
+
+/**
+ *  These two functions are used in smanager::export_session_configuration.
+ */
 
 bool
 cmdlineopts::alt_write_rc_file (const std::string & filebase)

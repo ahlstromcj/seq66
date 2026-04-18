@@ -200,14 +200,18 @@ private:
     void populate_grid_mode ();
     void set_grid_mode ();
     void enable_solo (bool enable);
-    void update_state ();                               /* ca 2023-04-26    */
+    void update_state ();
 
 signals:
 
-    void signal_call_editor (int seqid);        /* editor tab for pattern      */
-    void signal_call_editor_ex (int seqid);     /* editor window for pattern   */
-    void signal_call_edit_events (int seqid);   /* event tab for pattern       */
-    void signal_live_frame (int ssnum);         /* call live frame for screen# */
+    /*
+     * Hmmm, no bool parameters. Seem the connections in qsmainwnd.
+     */
+
+    void signal_call_editor (int seqid);        /* editor tab for pattern   */
+    void signal_call_editor_ex (int seqid);     /* editor window for "      */
+    void signal_call_edit_events (int seqid);   /* event tab for pattern    */
+    void signal_live_frame (int ssnum);         /* live frame for screen #  */
 
 private slots:
 

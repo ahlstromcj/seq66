@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-05-31
+ * \updates       2026-04-17
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -72,6 +72,7 @@ rcsettings::rcsettings () :
     m_quiet                     (false),
     m_investigate               (false),
     m_session_tag               (),
+    m_first_run_in_progress     (false),
     m_save_list                 (),         /* std::map<string, bool>       */
     m_save_old_triggers         (false),
     m_save_old_mutes            (false),

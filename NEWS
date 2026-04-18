@@ -1,12 +1,33 @@
 NEWS for Seq66 0.99.24
 Chris Ahlstrom
-2015-07-10 to 2026-04-16
+2015-07-10 to 2026-04-18
 
 # Change Log
 
-## [0.99.24] - 2026-04-15
+## [0.99.24] - 2026-04-18
 
-Pending.
+-   Main window.
+    -   When the "Remap & Restart" pops up, if a pattern
+        editor is open, the user clicks OK, and a different
+        tune is selected, a crash could occur on Arch. So
+        clicking OK now enables quiet mode for the restart, so
+        that the remap dialogs does not come up..  Let the user be
+        aware.
+-   Pattern editor.
+    -   Added the display of a drum-note's name when in drum
+        mode and hovering near a drum-note to modify it.
+    -   Improved the drums module/class for this addition.
+    -   Mitigated issue #144 (painted notes misplaced in time)
+        for normal notes and drum notes by added a portion of
+        snap to the location of the mouse click. If this is
+        still an issue, simply reduce the size of the snap.
+-   qseq66.rc.
+    -   Change auto-rc-save to false. Added another flag so
+        that the 'rc' file can be save at first run (no
+        existing configuration files) without saving
+        auto-rc-save=true. Auto save enabled either by
+        user setting in Edit / Preferences / Session or
+        by a relevant change in configuration at run-time.
 
 ## [0.99.23] - 2026-04-15
 

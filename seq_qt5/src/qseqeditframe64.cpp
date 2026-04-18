@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-03-13
+ * \updates       2026-04-16
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1701,6 +1701,7 @@ qseqeditframe64::initialize_panels ()
         perf(), track(), this, zoom(), m_snap, ui->dataScrollArea,
         short_version() ? 64 : 0                /* 0 means "normal height"  */
     );
+    m_seqdata->update_edit_mode(m_edit_mode);
 
     /*
      *  dataScrollArea is now a qscrollslave object.
@@ -3808,8 +3809,10 @@ qseqeditframe64::set_editor_mode (sequence::editmode mode)
         m_edit_mode = mode;
         perf().edit_mode(track().seq_number(), mode);
         if (not_nullptr(m_seqroll))
+        {
             m_seqroll->update_edit_mode(mode);
-
+            m_seqdata->update_edit_mode(mode);
+        }
         set_dirty();                    /* modified for issue #90           */
     }
 }

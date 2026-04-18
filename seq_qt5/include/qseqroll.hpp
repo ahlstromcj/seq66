@@ -207,6 +207,7 @@ private:
         QPainter & painter,
         const seq66::rect & selection   /* why is seq66 scoped needed???    */
     );
+    void update_edit_mode (sequence::editmode mode);
 
 private:
 
@@ -411,7 +412,7 @@ signals:
 public slots:
 
     void conditional_update ();
-    void update_edit_mode (sequence::editmode mode);
+//  void update_edit_mode (sequence::editmode mode);
 
 };          // class qseqroll
 

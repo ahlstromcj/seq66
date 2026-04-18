@@ -1,17 +1,28 @@
 TO DO for Seq66 0.99.24
 Chris Ahlstrom
-2019-04-13 to 2026-04-16
+2019-04-13 to 2026-04-18
 
-    -   Can we fill in the buss-number column just for viewing?
     -   Takes up too much space:
         -   The buss name could be shown as a field in the event editor.
         -   Also could show channel names if provided in 'usr' file.
-    -   Setting channel in event editor is not reflected in the pattern
-        editor; but the channel setting is for an event, not the whole
-        track.
+    -   Why do we have auto-save for the .drums file? We do not have
+        that for patches. Seq66 offers no ways to modify them, at this
+        time.
+    -   See Backlog below.
+
+Fixed:
+
+    -   Crash. Open program-test.midi, open the pattern edit,
+        recent files for b4uacuse...midi. This happens, it seems,
+        only when the ports need remapping and the prompt occurs
+        upon loading. And only on Arch Linux.
     -   Implement showing drum note names, similar to patch name,
-        in the various edit panes.
-    -   Add Help About version to Build info.
+        in the various edit panes. However, this gets cramped,
+        so disable via the macro SEQ66_SHOW_GM_DRUM_NAME.
+        But will be shown if note is manipulated in the data pane.
+    -   Have a click/selection bring the pattern-editor to the front.
+        Sort of fixed; only effective for the last-opened pattern
+        editor.
 
 Features:
 
@@ -39,14 +50,11 @@ Cannot duplicate:
         using seq64, the synth is receiving the CC signals and these events
         are recorded by seq64. [We do not have this unit]
     -   Event editor. Open the b4uacuse patchless file and the first (0)
-        pattern in the pattern editor; a segfault occurs.
+        pattern in the pattern editor; a segfault occurs. Try it on Arch.
 
 Backlog:
 
     -   Implement modifiable mute-group names.
-    -   Oddity: drag a pattern to a new slot, and when the mouse
-        hovers over the new slot, the slot number appears under it.
-    -   Have a click/selection bring the pattern-editor to the front.
     -   Tempo event in track 0 does not override c_tempo_map SeqSpec.
     -   Consider for issue #141:
         -   Could add a starting horizontal and vertical zoom
@@ -88,6 +96,8 @@ Backlog:
         the 'usr' version otherwise.
     -   Add integration with JACK dbus. Low priority.
     -   Finish getting Windows builds in MSYS2 to work. Low priority.
+    -   Oddity: drag a pattern to a new slot, and when the mouse
+        hovers over the new slot, the slot number appears under it.
 
 Playlists:
 

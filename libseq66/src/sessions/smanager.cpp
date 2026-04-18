@@ -1201,7 +1201,18 @@ smanager::create_configuration
                 if (result)
                     session_message("MIDI path", midifilepath);
             }
+
+            /*
+             * When creating the configuration files, we do not want to
+             * automatically set auto_rc_save(), so we unset it here and
+             * use the new flag. The first_run_in_progress() flag is
+             * a one-time flag during the whole lifecycle of Seq66
+             * runs.
+             */
+
             rc().set_save_list(true);                   /* save all configs */
+            rc().auto_rc_save(false);                   /* except this one  */
+            rc().first_run_in_progress(true);           /* save at exit     */
             if (usr().in_nsm_session())
             {
                 usr().session_visibility(false);        /* new session=hide */

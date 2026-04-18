@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-06-29
+ * \updates       2026-04-16
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -51,6 +51,7 @@
 #include <QPen>
 
 #include "midi/midibytes.hpp"           /* midibyte, midipulse aliases      */
+#include "play/sequence.hpp"            /* sequence::editmode mode          */
 #include "qseqbase.hpp"                 /* seq66::qseqbase mixin class      */
 
 namespace seq66
@@ -69,6 +70,7 @@ class qseqdata final :
 {
     friend class qseqroll;
     friend class qstriggereditor;
+    friend class qseqeditframe64;
 
 public:
 
@@ -117,6 +119,11 @@ public:
         return data_y(0);
     }
 
+    bool is_drum_mode () const
+    {
+        return m_edit_mode == sequence::editmode::drum;
+    }
+
     bool is_tempo () const
     {
         return m_data_type == type::tempo;
@@ -155,6 +162,7 @@ public:
 private:
 
     void flag_dirty ();                 /* tricky code */
+    void update_edit_mode (sequence::editmode mode);
 
 #if defined SEQ66_ALLOW_RELATIVE_VELOCITY_CHANGE
     void set_adjustment (midipulse tick_start, midipulse tick_finish);
@@ -211,6 +219,12 @@ private:
      */
 
     type m_data_type;
+
+    /**
+     *  Indicates the edit mode, note versus drum.
+     */
+
+    sequence::editmode m_edit_mode;
 
     /**
      * What events is the data window currently editing?

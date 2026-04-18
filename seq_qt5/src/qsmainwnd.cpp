@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-10-22
+ * \updates       2026-04-18
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1159,6 +1159,11 @@ qsmainwnd::make_perf_frame_in_tab ()
         qperfroll * pr = m_song_frame64->perf_roll();
         if (not_nullptr(pr))
         {
+            /*
+             * This does not make sense; there is no bool
+             * parameter in signal_call_editor_ex().
+             */
+
             connect         // standalone sequence editor
             (
                 pr, SIGNAL(signal_call_editor_ex(int, bool)),
@@ -3001,15 +3006,29 @@ qsmainwnd::load_qseqedit (int seqid)
                 ex->show();
             }
         }
+        else
+        {
+            /*
+             *  Try to raise the already open pattern-editor.
+             */
 
-        /*
-         * Doesn't seem to work: else ei->second->raise();
-         */
+            qseqeditex * ed { ei->second };
+            ed->setWindowState
+            (
+                (windowState() & ~Qt::WindowMinimized) | Qt::WindowActive
+            );
+#if defined SEQ66_PLATFORM_WINDOWS
+            ed->activateWindow();
+#else
+            ed->raise();
+#endif
+        }
     }
 }
 
 /**
- *  Compare to qslivegrid::new_sequence().
+ *  Compare to qslivegrid::new_sequence(). This function is called
+ *  from the song window's name column.
  */
 
 void

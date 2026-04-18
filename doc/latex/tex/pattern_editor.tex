@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-10-24
+% \update      2026-04-18
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -466,6 +466,9 @@
    \textbf{1/3}, \textbf{1/6}, \textbf{1/12}, \textbf{1/24},
    \textbf{1/48}, \textbf{1/96}, and \textbf{1/192}.
    The button to the left of this control resets it to the default value.
+
+   Note: if the note does not snap close enough to where one clicks,
+   simply reduce the snap value.
 
 \subsubsection{Pattern Editor / Second Row / Note Length Reset/Note Length}
 \label{subsubsec:pattern_editor_second_row_note_length}
@@ -1379,11 +1382,15 @@
 
    \index{drum mode}
    \index{pattern editor!drum mode}
-   This button changes from normal note mode to drum note mode. In the drum
-   mode, the notes are drawn as small red diamonds without any duration.
-   They are also entered the same way.
+   Drum mode is a feature adopted from \textsl{Kepler34}.
+   This button changes from normal note mode to drum note mode.
+   In the drum mode, the notes are drawn as small red diamonds
+   without any duration, at the beginning of the note location.
    This mode treats the events as having a minimal length.
-   This is a feature adopted from \textsl{Kepler34}.
+   This can be confusing if the selected note length is large,
+   so select a small note length.
+   If the drum notes are not placed close enough to the desired
+   location, reduce the snap size.
 
 \subsubsection{Pattern Editor / Left Buttons / Chord Generation}
 \label{subsubsec:pattern_editor_left_buttons_chord_generation}

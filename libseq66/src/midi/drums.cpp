@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-02-16
- * \updates       2026-02-16
+ * \updates       2026-04-17
  * \license       GNU GPLv2 or above
  *
  *  This module is code extracted from the controllers module for better
@@ -84,11 +84,12 @@ non_gm_drums ()
 }
 
 /**
- *  Provides the default names of General MIDI drums.  Note that the numbering
- *  starts from 0 internally.  We could add support for this kind of list in
- *  usrsettings, or the note-mapper, or in a new 'drum' configuration file
- *  that holds this mapping.
+ *  Works for GM drums, but other sets loaded might go beyond
+ *  this range. We let end() determine if the drum number is
+ *  not listed in the drum-set.
  */
+
+#if defined USE_DRUM_IS_VALID_FUNCTION
 
 /*
  * static const drumpair
@@ -97,6 +98,7 @@ non_gm_drums ()
 
 static std::size_t s_gm_drum_min { 35 };
 static std::size_t s_gm_drum_max { 81 };
+
 static bool drum_is_valid (int drumnumber)
 {
     return
@@ -105,6 +107,15 @@ static bool drum_is_valid (int drumnumber)
         std::size_t(drumnumber) <= s_gm_drum_max
     );
 }
+
+#endif
+
+/**
+ *  Provides the default names of General MIDI drums.  Note that the
+ *  numbering starts from 0 internally.  We could add support for this kind
+ *  of list in usrsettings, or the note-mapper, or in a new 'drum'
+ *  configuration file that holds this mapping.
+ */
 
 static drums::container s_gm_drum_names
 {
@@ -198,23 +209,22 @@ get_drums_comment ()
  *  Returns the drum number plus the drum name for the hard-wired GM
  *  drum list. This function is used in displays and drop-down lists.
  *
- *  If the drum number isn't found, the empty string is returned.
+ *  If the drum number isn't found, the empty string is returned? No.
+ *  If the patch number isn't found, the name "N/A" is used.
  */
 
 std::string
 gm_drum_name (int drumnumber)
 {
     std::string result;
-    if (drum_is_valid(drumnumber))
-    {
-        auto it { s_gm_drum_names.find(drumnumber) };
-        result = std::to_string(drumnumber);
-        result += " ";
-        if (it == s_gm_drum_names.end())
-            result.clear();
-        else
-            result += it->second;
-    }
+    auto it { s_gm_drum_names.find(drumnumber) };
+    result = std::to_string(drumnumber);
+    result += " ";
+    if (it == s_gm_drum_names.end())
+        result += "N/A";                            /* result.clear()   */
+    else
+        result += it->second;
+
     return result;
 }
 
@@ -228,11 +238,9 @@ std::string
 drum_name (int drumnumber)
 {
     std::string result;
-    if (drum_is_valid(drumnumber))
-    {
-        result = non_gm_drums().active() ?
-            non_gm_drums().name_ex(drumnumber) : gm_drum_name(drumnumber) ;
-    }
+    result = non_gm_drums().active() ?
+        non_gm_drums().name_ex(drumnumber) : gm_drum_name(drumnumber) ;
+
     return result;
 }
 

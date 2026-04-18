@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-02-16
- * \updates       2026-02-16
+ * \updates       2026-04-17
  * \license       GNU GPLv2 or above
  *
  */
@@ -128,8 +128,6 @@ extern bool add_drum (int drumnumber, const std::string & drumname);
 extern void set_drums_comment (const std::string & c);
 extern const std::string & get_drums_comment ();
 extern std::string drum_name (int drumnumber);
-extern std::string program_list ();
-extern std::string gm_program_name (int drumnumber);
 
 }           // namespace seq66
 

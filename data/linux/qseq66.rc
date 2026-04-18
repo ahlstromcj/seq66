@@ -1,7 +1,7 @@
 # Seq66 0.99.6 main ('rc') configuration file
 #
 # /home/user/.config/seq66/qseq66.rc
-# Written 2023-12-10 11:13:55
+# Written 2026-04-17 12:00:00
 #
 # This file holds the main configuration for Seq66. It no longer follows the
 # format of the seq24rc configuration file.
@@ -353,7 +353,7 @@ jack-buffer-size = 0
 
 [auto-option-save]
 
-auto-save-rc = true
+auto-save-rc = false
 save-old-triggers = false
 save-old-mutes = false
 

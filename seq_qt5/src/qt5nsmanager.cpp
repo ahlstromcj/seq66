@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2025-04-26
+ * \updates       2026-04-16
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future! Join the Smart Patrol!
@@ -376,7 +376,17 @@ qt5nsmanager::show_message
                 perf()->store_io_maps_and_restart();
             }
             else
+            {
+                /*
+                 * If the user clicks OK, opens a pattern editor, and then
+                 * opens another MIDI file, and this message box pops up,
+                 * a segfault can occur. So turn on the quiet option
+                 * as well. It's on the user to accept the mismatch.
+                 */
+
                 perf()->clear_port_map_error();
+                rc().quiet(true);
+            }
         }
     }
 }

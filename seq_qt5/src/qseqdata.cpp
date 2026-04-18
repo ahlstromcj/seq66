@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-10-22
+ * \updates       2026-04-17
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -35,6 +35,7 @@
  */
 
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
+#include "midi/drums.hpp"               /* seq66::drums class and functions */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qseqdata.hpp"                 /* seq66::qseqdata class            */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
@@ -81,6 +82,17 @@ static const int sc_dataarea_y_effective    = 128;
 static const int sc_dataarea_y_offset       =  12;
 static const int sc_dataarea_y_sub          =  48;
 
+/*
+ * Tweaks.
+ */
+
+static const int sc_x_data_fix   = -6;  /* adjusts x-value for the events   */
+static const int sc_key_padding  =  8;  /* adjusts x for keyboard padding   */
+static const int sc_circle_d     =  6;  /* diameter of tempo/prog. dots     */
+static const int sc_handle_d     = 10;  /* diameter of grab handle          */
+static const int sc_handle_r     = sc_handle_d / 2; /* grab handle radius   */
+static const int sc_handle_delta =  2;  /* delta of mouse-pixels            */
+
 /**
  *  Base font size in points, and the y increment to use to avoid text
  *  overwrite.
@@ -90,21 +102,11 @@ static const int sc_font_size       = 10;
 static const int sc_text_spacing    = sc_font_size + 4;
 static const int sc_1               = sc_font_size + 1;
 static const int sc_2               = sc_1 * 2;
+static const int sc_name            = sc_circle_d + 12;
 
 #if defined SEQ55_SHOW_REDUNDANT_TIME_SIG
 static const int sc_time_spacing    = sc_font_size + 18;
 #endif
-
-/*
- * Tweaks.
- */
-
-static const int s_x_data_fix   = -6;   /* adjusts x-value for the events   */
-static const int s_key_padding  = 8;    /* adjusts x for keyboard padding   */
-static const int s_circle_d     = 6;    /* diameter of tempo/prog. dots     */
-static const int s_handle_d     = 10;   /* diameter of grab handle          */
-static const int s_handle_r     = s_handle_d / 2;   /* grab handle radius   */
-static const int s_handle_delta = 2;    /* delta of mouse-pixels            */
 
 /**
  *  Principal constructor.
@@ -124,20 +126,21 @@ qseqdata::qseqdata
     performer::callbacks    (p),
     m_timer                 (nullptr),
     m_font                  ("Monospace"),
-    m_keyboard_padding_x    (s_key_padding),
+    m_keyboard_padding_x    (sc_key_padding),
     m_short_dataarea        (height == 64),
     m_dataarea_y
     (
         m_short_dataarea ? height : sc_dataarea_y_effective /* 64 or 128    */
     ),
     m_data_type             (type::note),       /* replaces booleans        */
+    m_edit_mode             (sequence::editmode::note), /* mode parameter?  */
     m_status                (EVENT_NOTE_ON),
     m_cc                    (1),                /* modulation               */
     m_line_adjust           (false),
     m_relative_adjust       (false),
     m_drag_handle           (false),
     m_mouse_tick            (-1),
-    m_handle_delta          (z().pix_to_tix(s_handle_delta)),
+    m_handle_delta          (z().pix_to_tix(sc_handle_delta)),
     m_dragging              (false)
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
@@ -254,10 +257,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.setFont(m_font);
-
-    /*
-     * Do we need this?
-     */
+    m_edit_mode = perf().edit_mode(track().seq_number());
 
     char digits[4];
     midipulse start_tick = z().pix_to_tix(r.x());
@@ -343,12 +343,13 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             bool data_event = cev->is_continuous_event();  /* can draw line */
             bool selected = cev->is_selected();
             int event_x = z().tix_to_pix(tick) + m_keyboard_padding_x;
-            int x_offset = event_x + s_x_data_fix;
+            int x_offset = event_x + sc_x_data_fix;
             int y_offset = m_dataarea_y - sc_dataarea_y_sub;
             midibyte d0, d1;
             cev->get_data(d0, d1);
 
-            int event_height = event::is_one_byte_msg(m_status) ? d0 : d1 ;
+            int event_value = event::is_one_byte_msg(m_status) ? d0 : d1 ;
+            int event_height = event_value;
             if (cev->is_pitchbend())
                 event_height = pitch_value_scaled(d0, d1);
 
@@ -390,24 +391,52 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                     {
                         painter.drawEllipse
                         (
-                            event_x - s_handle_r, event_height - s_handle_r,
-                            s_handle_d, s_handle_d
+                            event_x - sc_handle_r, event_height - sc_handle_r,
+                            sc_handle_d, sc_handle_d
                         );
+                        if (is_drum_mode())
+                        {
+                            std::string drumname { drum_name(event_value) };
+                            painter.drawText
+                            (
+                                x_offset, y_offset - sc_1, drumname.c_str()
+                            );
+                        }
                     }
 
-                    QString val = digits;
-                    pen.setColor(text_data_paint());    /* fore_color())    */
-                    painter.setPen(pen);
-                    x_offset += 6;
-                    painter.drawText(x_offset, y_offset,        val.at(0));
-                    painter.drawText(x_offset, y_offset + sc_1, val.at(1));
-                    painter.drawText(x_offset, y_offset + sc_2, val.at(2));
+#if defined SEQ66_SHOW_GM_DRUM_NAME
+
+                    /*
+                     * Enabling this code shows too many names to be readable.
+                     */
+
+                    if (is_drum_mode())
+                    {
+                        std::string drumname { drum_name(event_value) };
+                        painter.drawText
+                        (
+                            x_offset, y_offset - sc_name, drumname.c_str()
+                        );
+                    }
+                    else
+                    {
+#endif
+                        QString val = digits;
+                        pen.setColor(text_data_paint()); /* fore_color())   */
+                        painter.setPen(pen);
+                        x_offset += 6;
+                        painter.drawText(x_offset, y_offset,        val.at(0));
+                        painter.drawText(x_offset, y_offset + sc_1, val.at(1));
+                        painter.drawText(x_offset, y_offset + sc_2, val.at(2));
+                    }
+#if defined SEQ66_SHOW_GM_DRUM_NAME
                 }
+#endif
             }
             else if (is_tempo() && cev->is_tempo())
             {
                 d1 = bottom() - tempo_to_note_value(cev->tempo()) -
-                    (s_circle_d / 2);
+                    (sc_circle_d / 2);
 
                 if (d1 < 4)
                     d1 = 4;                     /* avoid overlap with top   */
@@ -425,8 +454,8 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 painter.setPen(pen);
                 painter.drawEllipse
                 (
-                    event_x - s_handle_r, d1 - s_handle_r,
-                    s_handle_d, s_handle_d
+                    event_x - sc_handle_r, d1 - sc_handle_r,
+                    sc_handle_d, sc_handle_d
                 );
                 painter.drawText(x_offset + sc_text_spacing, d1 + 4, digits);
                 brush.setColor(grey_color());
@@ -437,13 +466,13 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 int patch = int(cev->d0());
 #if defined SEQ66_SHOW_GM_PROGRAM_NAME
                 std::string p = program_name(patch);
-                d1 = bottom() - midi_data_adjust(patch, s_circle_d + 12);
+                d1 = bottom() - midi_data_adjust(patch, sc_name);
 #else
-                d1 = bottom() - patch - (s_circle_d / 2);
+                d1 = bottom() - patch - (sc_circle_d / 2);
                 if (d1 < 4)
                     d1 = 4;                     /* avoid overlap with top   */
 
-                d1 -= s_circle_d;
+                d1 -= sc_circle_d;
                 snprintf(digits, sizeof digits, "%3d", patch);
 #endif
                 brush.setColor(selected ? sel_color() : drum_color()); /* ! */
@@ -458,11 +487,11 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 painter.setPen(pen);
                 painter.drawEllipse
                 (
-                    event_x - s_handle_r, d1 - s_handle_r,
-                    s_handle_d, s_handle_d
+                    event_x - sc_handle_r, d1 - sc_handle_r,
+                    sc_handle_d, sc_handle_d
                 );
 #if defined SEQ66_SHOW_GM_PROGRAM_NAME
-                painter.drawText(x_offset + 12, d1 + 6, p.c_str());
+                painter.drawText(x_offset + 14, d1 + 4, p.c_str());
 #else
                 painter.drawText(x_offset + 6, d1 + 6, digits);
 #endif
@@ -788,6 +817,19 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
         m_mouse_tick = z().pix_to_tix(current_x());
         update();                               /* force a paintEvent()     */
     }
+}
+
+/**
+ *  Sets the drum/note mode status.
+ *
+ * \param mode
+ *      The drum or note mode status.
+ */
+
+void
+qseqdata::update_edit_mode (sequence::editmode mode)
+{
+    m_edit_mode = mode;
 }
 
 #if defined SEQ66_ALLOW_RELATIVE_VELOCITY_CHANGE
