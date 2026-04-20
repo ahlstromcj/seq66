@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-04-16
+ * \updates       2026-04-20
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -4038,13 +4038,18 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
      *  changes, shown 16 per sub-menu.
      */
 
+    const bool usehex = true;       // TESTING
     const int menucount = 8;
     const int itemcount = 16;
     char b[32];
     for (int submenu = 0; submenu < menucount; ++submenu)
     {
         int offset = submenu * itemcount;
-        snprintf(b, sizeof b, "Controls %d-%d", offset, offset + itemcount - 1);
+        const char * fmt
+        {
+            usehex ? "Controls 0x%02x-%02x" : "Controls %d-%d"
+        };
+        snprintf(b, sizeof b, fmt, offset, offset + itemcount - 1);
         QMenu * menucc = new_qmenu(b, m_events_popup);
         for (int item = 0; item < itemcount; ++item)
         {
@@ -4055,10 +4060,10 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
              * re 0.
              */
 
-            std::string cname(controller_name(offset + item));
-            const usermidibus & umb = usr().bus(buss);
-            int inst = umb.instrument(channel);
-            const userinstrument & uin = usr().instrument(inst);
+            std::string cname { controller_name(offset + item, usehex) };
+            const usermidibus & umb { usr().bus(buss) };
+            int inst { umb.instrument(channel) };
+            const userinstrument & uin { usr().instrument(inst) };
             if (uin.is_valid())                             // redundant check
             {
                 if (uin.controller_active(offset + item))
@@ -4216,7 +4221,10 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
      * Control changes are handled in submenus constructed below.
      */
 
-    set_event_entry(m_minidata_popup, program_change, event_index::program_change);
+    set_event_entry
+    (
+        m_minidata_popup, program_change, event_index::program_change
+    );
     set_event_entry
     (
         m_minidata_popup, channel_pressure, event_index::channel_pressure
@@ -4233,13 +4241,14 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
      *  the track, if any.
      */
 
+    const bool usehex = true;       // TESTING
     const int itemcount = c_midibyte_data_max;              /* 128          */
     for (int item = 0; item < itemcount; ++item)
     {
-        std::string cname(controller_name(item));
-        const usermidibus & umb = usr().bus(buss);
-        int inst = umb.instrument(channel);
-        const userinstrument & uin = usr().instrument(inst);
+        std::string cname { controller_name(item, usehex) };
+        const usermidibus & umb { usr().bus(buss) };
+        int inst { umb.instrument(channel) };
+        const userinstrument & uin { usr().instrument(inst) };
         if (uin.is_valid())                                 /* redundant    */
         {
             if (uin.controller_active(item))

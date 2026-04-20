@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-06
- * \updates       2026-02-16
+ * \updates       2026-04-20
  * \license       GNU GPLv2 or above
  *
  *  This definition used to reside in the controllers.hpp file, but now more
@@ -183,13 +183,21 @@ s_controller_names [c_midibyte_data_max] =
 };
 
 std::string
-controller_name (int index)
+controller_name (int index, bool usehex)
 {
     std::string result;
     if (index >= 0 && index < c_midibyte_data_max)
     {
         std::string name = s_controller_names[index].name;
-        result = std::to_string(index);
+        if (usehex)
+        {
+            char tmp[32];
+            (void) snprintf(tmp, sizeof tmp, "0x%02x", index);
+            result = tmp;
+        }
+        else
+            result = std::to_string(index);
+
         result += " ";
         result += name;
     }

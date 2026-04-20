@@ -1,5 +1,10 @@
+Notes on RPN
+Chris Ahlstrom
+2025-01-13 to 2026-04-20
+
 https://www.recordingblogs.com/wiki/midi-registered-parameter-number-rpn
 
+NRPN = Non-Registered Parameter Number.
 RPN = Registered Parameter Number.
 
 Consider a scenario in which a MIDI device receives the following two messages.
@@ -97,12 +102,12 @@ The following is a list of RPN values for the 14-bit values of the 0x64 and
 have been left off.
 
     0x00 – Pitch bend range
-    0x01 – Fine tuning
-    0x02 – Coarse tuning
+    0x01 – Channle Fine tuning
+    0x02 – Channle Coarse tuning
     0x03 – Tuning program change
     0x04 – Tuning bank select
     0x05 – Modulation depth range
-    0x7F - End of parameter setting
+    0x7F - End of parameter setting, RPN null, disable RPN changes.
 
 Pitch bend range: The pitch bend RPN sequence adjusts the range of the MIDI
 pitch wheel message. It needs both data entry (coarse and fine) messages.
@@ -135,6 +140,28 @@ The first three registered parameter numbers above (pitch bend range, fine
 tuning, and coarse tuning) are required by General MIDI 1. The modulation depth
 range was added in General MIDI 2. The remaining two parameter numbers were
 presumably defined later.
+
+NRPN:
+
+0xB0 0x66 0x00          NRPN, fine, pitch bend range
+0xB0 0x68 0x00          NRPN, coarse, ditto
+
+=================================================
+
+https://www.2writers.com/eddie/TutNrpn.htm
+
+    If you want to change the "pitch bend sensitivity" you would send the
+    following control change messages:
+
+        101 0   (0x67 0x00)     Coarse pitchbend range (MSB)
+        100 0   (0x66 0x00)     Fine pitchbend range (LSB)
+          6 2   (0x06 0x02)     Coarse data entry slider to set value = 2
+         38 0   (0x26 0x00)     Fine data entry slider to set value = 0
+
+    The 101 and 100 indicate that a parameter is to be changed. The 0 in
+    each indicates pitchbend. Pitch bend sensitivity is how much the
+    currently sounding notes are affected by pitch bend. (See the description
+    above.)
 
 =================================================
 

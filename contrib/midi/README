@@ -1,6 +1,6 @@
 MIDI Sample and Test Files
 Chris Ahlstrom
-2015-09-11 to 2025-10-17
+2015-09-11 to 2026-04-20
 
 This directory contains contributed MIDI files for examples and testing.
 Also see the test files from the midicvt as described in
@@ -28,6 +28,10 @@ test varying PPQN values.
       and Waveform = 1 (Sine wave).  Also added some extra notes after
       modulation, which shows that we do not handle two different velocities at
       the same time value.
+
+   24stones.mid and 2stones.mid:
+
+      These two files contain NRPN events.
 
    2Bars.midi:
 

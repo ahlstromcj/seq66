@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2023-11-26
+ * \updates       2026-04-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -422,6 +422,9 @@ qmutemaster::setup_table ()
 /**
  *  Currently, the only cell that can be changed is the "Group Name".
  *  This can modify the '.mutes' file, the MIDI file, or both.
+ *
+ *  Also need to refresh the save setting in Edit / Preferences / Session
+ *  if active (or all the time?)
  */
 
 void
@@ -1315,13 +1318,12 @@ qmutemaster::modify_mutes ()
         ui->m_button_set_mutes->setText("*");
         ui->m_button_save->setEnabled(true);
         if (m_to_mutes_active)
+        {
             rc().auto_mutes_save(true);
-
+            modify_mutes_file(true);
+        }
         if (m_to_midi_active)
             modify_midi();
-
-        if (m_to_mutes_active)
-            modify_mutes_file(true);
     }
 }
 

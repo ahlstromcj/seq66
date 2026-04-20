@@ -90,7 +90,7 @@ private:
 
     bool write_map_entries (std::ofstream & file) const;
 
-    gui_palette_qt5 & mapper ()
+    gui_palette_qt5 & palettes ()
     {
         return m_palettes;
     }

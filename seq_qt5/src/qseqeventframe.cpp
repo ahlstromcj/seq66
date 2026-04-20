@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-03-14
+ * \updates       2026-04-20
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -709,15 +709,15 @@ qseqeventframe::data_0_helper (int d0)
     if (m_in_control)
     {
         int bs { int(track().seq_midi_bus()) };
-        int ch { int(track().seq_midi_channel()) };  // no channel here
+        int ch { int(track().seq_midi_channel()) };     /* no channel here  */
         const usermidibus & umb { usr().bus(bs) };
         int inst { umb.instrument(ch) };
         const userinstrument & uin { usr().instrument(inst) };
-        std::string cname { controller_name(d0) };
+        std::string cname { controller_name(d0, m_show_data_as_hex) };
         if (uin.is_valid())
         {
             if (uin.controller_active(d0))
-                cname = uin.controller_name(d0);
+                cname = uin.controller_name(d0);        /* no hex parameter */
         }
         ui->data_text_edit->document()->setPlainText(qt(cname));
     }
@@ -1697,19 +1697,25 @@ qseqeventframe::handle_control_popup ()
     for (int submenu = 0; submenu < menucount; ++submenu)
     {
         int offset { submenu * itemcount };
-        snprintf
-        (
-            b, sizeof b, "Controls %d-%d", offset, offset + itemcount - 1
-        );
+        const char * fmt
+        {
+            m_show_data_as_hex ? "Controls 0x%02x-%02x" : "Controls %d-%d"
+        };
+        snprintf(b, sizeof b, fmt, offset, offset + itemcount - 1);
 
         QMenu * menucc { new_qmenu(b, m_select_popup) };
         for (int item = 0; item < itemcount; ++item)
         {
-            std::string cname { controller_name(offset + item) };
+            std::string cname
+            {
+                controller_name(offset + item, m_show_data_as_hex)
+            };
             if (uin.is_valid())
             {
                 if (uin.controller_active(offset + item))
-                    cname = uin.controller_name(offset + item);
+                {
+                    cname = uin.controller_name(offset + item); /* no hex   */
+                }
             }
             set_controller_entry
             (

@@ -95,19 +95,19 @@ palettefile::parse_stream (std::ifstream & file)
 
     std::string s = parse_comments(file);
     if (! s.empty())
-        mapper().comments_block().set(s);
+        palettes().comments_block().set(s);
 
     const std::string tag = "[hints]";
     bool ok = line_after(file, tag);
     if (ok)
     {
         bool flag = get_boolean(file, tag, "dark-theme");
-        mapper().dark_theme(flag);
+        palettes().dark_theme(flag);
         if (flag)
             usr().dark_theme(true);
 
         flag = get_boolean(file, tag, "dark-ui");
-        mapper().dark_ui(flag);
+        palettes().dark_ui(flag);
     }
     ok = line_after(file, "[palette]");
     if (ok)
@@ -262,7 +262,7 @@ palettefile::write_stream (std::ofstream & file)
         "version = " << version() << "\n\n"
         "# The [comments] section can document this file. Lines starting with\n"
         "# '#', '[', or that have no characters end the comment.\n\n"
-        "[comments]\n\n" << mapper().comments_block().text() << "\n"
+        "[comments]\n\n" << palettes().comments_block().text() << "\n"
         <<
         "# Set 'dark-theme' to true if the matching style-sheet is dark. This\n"
         "# also set the 'dark-theme' setting in the 'usr' file.\n"
@@ -271,8 +271,8 @@ palettefile::write_stream (std::ofstream & file)
         "[hints]\n"
         "\n"
         ;
-    write_boolean(file, "dark-theme", mapper().dark_theme());
-    write_boolean(file, "dark-ui", mapper().dark_ui());
+    write_boolean(file, "dark-theme", palettes().dark_theme());
+    write_boolean(file, "dark-ui", palettes().dark_ui());
     file <<
         "\n"
         "# [palette] affects the pattern colors selected (by number). First is\n"

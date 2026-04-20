@@ -1,13 +1,13 @@
 TO DO for Seq66 0.99.24
 Chris Ahlstrom
-2019-04-13 to 2026-04-18
+2019-04-13 to 2026-04-20
 
     -   Takes up too much space:
         -   The buss name could be shown as a field in the event editor.
         -   Also could show channel names if provided in 'usr' file.
     -   Why do we have auto-save for the .drums file? We do not have
-        that for patches. Seq66 offers no ways to modify them, at this
-        time.
+        that for patches. Seq66 offers no ways to modify them in-app
+        at this time.
     -   See Backlog below.
 
 Fixed:
@@ -54,24 +54,14 @@ Cannot duplicate:
 
 Backlog:
 
-    -   Implement modifiable mute-group names.
     -   Tempo event in track 0 does not override c_tempo_map SeqSpec.
-    -   Consider for issue #141:
-        -   Could add a starting horizontal and vertical zoom
-            to the 'usr' configuration file. Perhaps a menu entry
-            to set up scenarios such as "paint chord-specific notes
-            in patterns set to a chord".
     -   Note drawing and event drawing screwed up in time when scrolled
         completely to the right.
     -   In midicvt (separate project), the c_mutegroups SeqSpec is not
         shown (24 24 00 09).
     -   Automation: verify/document Solo, Reset Sets, and Song Position.
     -   Make sure sessions.rc works as advertised; fix documentation.
-    -   Add a light version of glob(3) to use with Windows. In progress
-        in the filefunctions module.
     -   Event editor:
-        -   Can we add, perhaps a tooltip or dropdown to select the desired
-            Control value (e.g. 7 for volume)? Same for Program?
         -   Weird error cropped up; a Qt update issue? When clicking in
             the event-editors event table, a message like this appears:
             "qt.accessibility.core: Cannot create accessible child interface
@@ -80,6 +70,9 @@ Backlog:
             the table-widgets in other tabs. Nor does it happen on another
             computer.
     -   #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
+        At present, RPN and NRPN can be selected from a list of
+        control changes in the events editor. This fills in D0, but
+        D1 has to be entered manually.
     -   Recording.
         -   Turning on record for a pattern makes the bottom record button
             red, but turning off the record does not make it grey again.
@@ -93,7 +86,7 @@ Backlog:
             cause incomplete notes if one holds the note and releases it in
             the next iteration, leaving a partially-drawn note behind.
     -   Consider adding time-bg/fg-color to the palette file, using
-        the 'usr' version otherwise.
+        the 'usr' version otherwise. Not sure we like this idea.
     -   Add integration with JACK dbus. Low priority.
     -   Finish getting Windows builds in MSYS2 to work. Low priority.
     -   Oddity: drag a pattern to a new slot, and when the mouse

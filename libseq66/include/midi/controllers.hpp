@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-06-30
+ * \updates       2026-04-20
  * \license       GNU GPLv2 or above
  *
  *  This file used to define the array itself, but now it just declares it,
@@ -104,6 +104,9 @@ enum class cc
     /*
      * 20 – 31 Undefined.
      * 32 – 63 Controllers 0 to 31, Least Significant Bit (LSB).
+     *
+     * In the below list, Off is represented by 0x00 to 0x3F (0 to 63)
+     * and On by 0x40 to 0x7F.
      */
 
     damper_pedal      =  64, /**< On/off switch that controls sustain.       */
@@ -168,7 +171,7 @@ enum class cc
  *  stuff to an as-shipped 'usr' file.
  */
 
-extern std::string controller_name (int index);
+extern std::string controller_name (int index, bool usehex = false);
 extern void set_controller_name
 (
     int index, const std::string & newname
