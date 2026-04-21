@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-04-20
+ * \updates       2026-04-21
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -132,6 +132,8 @@
 #include "pixmaps/filter_on.xpm"
 #include "pixmaps/finger.xpm"
 #include "pixmaps/follow.xpm"
+#include "pixmaps/hex_off.xpm"
+#include "pixmaps/hex_on.xpm"
 #include "pixmaps/key.xpm"
 #include "pixmaps/loop.xpm"
 #include "pixmaps/length_red.xpm"
@@ -142,6 +144,8 @@
 #include "pixmaps/menu_full.xpm"
 #include "pixmaps/menu_full_inv.xpm"
 #include "pixmaps/midi.xpm"
+#include "pixmaps/numbers_off.xpm"
+#include "pixmaps/numbers_on.xpm"
 #include "pixmaps/n_rec_on.xpm"
 #include "pixmaps/note_length.xpm"
 #include "pixmaps/note_length_inv.xpm"
@@ -351,6 +355,7 @@ qseqeditframe64::qseqeditframe64
     m_last_record_style     (perf().record_style()),
     m_armed_status          (false),
     m_show_hex_values       (false),
+    m_show_level_numbers    (true),
     m_timer                 (nullptr)
 {
     std::string seqname = "No sequence!";
@@ -595,7 +600,7 @@ qseqeditframe64::qseqeditframe64
         ui->btn_show_hex->hide();
         ui->btn_show_scale_or_chords->hide();
         ui->btn_spare_0->hide();
-        ui->btn_spare_1->hide();
+        ui->btn_level_numbers->hide();
         ui->btn_pattern_fix->hide();
         ui->m_button_loop->hide();
         ui->m_button_lfo->hide();
@@ -1687,10 +1692,27 @@ qseqeditframe64::initialize_panels ()
         ui->btn_filter_painted_notes, SIGNAL(clicked()),
         this, SLOT(slot_filter_painted_notes())
     );
+    ui->btn_show_hex->setChecked(m_show_hex_values);
+    qt_set_icon
+    (
+        m_show_hex_values ? hex_on_xpm : hex_off_xpm,
+        ui->btn_show_hex
+    );
     connect
     (
         ui->btn_show_hex, SIGNAL(clicked()),
         this, SLOT(slot_show_hex())
+    );
+    ui->btn_level_numbers->setChecked(m_show_level_numbers);
+    qt_set_icon
+    (
+        m_show_level_numbers ? numbers_on_xpm : numbers_off_xpm,
+        ui->btn_level_numbers
+    );
+    connect
+    (
+        ui->btn_level_numbers, SIGNAL(clicked()),
+        this, SLOT(slot_show_level_numbers())
     );
 
     /*
@@ -2038,6 +2060,26 @@ void
 qseqeditframe64::slot_show_hex ()
 {
     m_show_hex_values = ! m_show_hex_values;
+    m_seqdata->show_hex_values(m_show_hex_values);
+    qt_set_icon
+    (
+        m_show_hex_values ? hex_on_xpm : hex_off_xpm,
+        ui->btn_show_hex
+    );
+    set_dirty();                                    /* refreshes data pane  */
+}
+
+void
+qseqeditframe64::slot_show_level_numbers ()
+{
+    m_show_level_numbers = ! m_show_level_numbers;
+    m_seqdata->show_level_numbers(m_show_level_numbers);
+    qt_set_icon
+    (
+        m_show_level_numbers ? numbers_on_xpm : numbers_off_xpm,
+        ui->btn_level_numbers
+    );
+    set_dirty();                                    /* refreshes data pane  */
 }
 
 /**

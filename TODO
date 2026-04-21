@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.24
 Chris Ahlstrom
-2019-04-13 to 2026-04-20
+2019-04-13 to 2026-04-21
 
     -   Takes up too much space:
         -   The buss name could be shown as a field in the event editor.
@@ -8,6 +8,8 @@ Chris Ahlstrom
     -   Why do we have auto-save for the .drums file? We do not have
         that for patches. Seq66 offers no ways to modify them in-app
         at this time.
+    -   Need an option/button to run off printing the horizontal
+        line levels in the data pane.
     -   See Backlog below.
 
 Fixed:

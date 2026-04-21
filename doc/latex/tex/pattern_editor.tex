@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-04-18
+% \update      2026-04-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -35,7 +35,8 @@
    \label{fig:pattern_editor_window}
 \end{figure}
 
-   That figure does not show recent new feature; they are shown below:
+   That figure does not show recent new features; they are shown
+   in the figure below:
 
    \begin{itemize}
       \item For selected events, the orange data line is topped with a
@@ -43,7 +44,9 @@
          data (e.g. velocity) being shown.
       \item Notes are, by default, shown with a gradient
          pattern for a textured appearance.
-      \item New buttons (including buttons reserved for the future).
+      \item New buttons at the right (including a button reserved for
+         the future) to tweak some aspects of the pattern editor
+         panels.
       \item Lines and numbers indicating MIDI values. The data pane
          has been expanded to allow easier dragging to the 0 and 127 
          extremes.
@@ -52,7 +55,7 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=1.00]{pattern-editor/pattern-edit-window-additions.png}
-   \caption{External Pattern Editor Window Additions for 0.99.22}
+   \caption{External Pattern Editor Window Additions for 0.99.24}
    \label{fig:pattern_editor_window_additions}
 \end{figure}
   
@@ -67,6 +70,7 @@
       \item \textbf{Piano Roll}
       \item \textbf{Events Pane}
       \item \textbf{Left Buttons}
+      \item \textbf{Right Buttons}
       \item \textbf{Data Pane}
       \item \textbf{Bottom Row}
       \item \textbf{Common Actions}
@@ -1417,7 +1421,9 @@
    \begin{enumber}
       \item \textbf{Toggle Scale/Chord Display}
       \item \textbf{Toggle Scale/Chord Note Filtering}
-      \item \textbf{Reserved for Expansion (3 buttons)}
+      \item \textbf{Toggle Hex Number Display}
+      \item \textbf{Toggle Showing Grid Numbers Display}
+      \item \textbf{Reserved for Expansion}
    \end{enumber}
 
 \subsubsection{Pattern Editor / Right Buttons / Toggle Scale/Chord Display}
@@ -1446,6 +1452,20 @@
    all notes painted into the piano roll are restricted to notes
    in the chord.
    Otherwise, painting a note paints a chord as per previous behavior.
+
+\subsubsection{Pattern Editor / Right Buttons / Toggle Hex Number Display}
+\label{subsubsec:pattern_editor_left_buttons_hex_number_display}
+
+   When this button is active (checked), some of the values in the
+   data pane will be displayed in hexadecimal format.
+   This is most useful when controller numbers are being displayed.
+
+\subsubsection{Pattern Editor / Right Buttons / Toggle Showing Grid Numbers Display}
+\label{subsubsec:pattern_editor_left_buttons_scale_chord_filtering}
+
+   When this button is active (checked), the 5 level numbers
+   are display at the left of the data pane.
+   Toggle this button for a clearer view of numbers at the left.
 
 \subsection{Pattern Editor / Data Pane}
 \label{subsec:pattern_editor_data_view}

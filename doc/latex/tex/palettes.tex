@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-12-29
-% \update      2025-05-15
+% \update      2026-04-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -241,11 +241,14 @@ project.
    The \textsl{qt5ct} application helps in obtaining nicely rendered
    widgets, though some combinations have visibility issues.
 
-\subsubsection{Qt5ct}
+\subsubsection{Qt5ct/Qt6ct}
 \label{subsubsec:palettes_theming_qt5ct}
 
    The \textsl{qt5ct} configuration application can be used to select installed
    \textsl{Qt5} themes.
+   The \textsl{qt6ct} configuration application can also
+   be used to select installed
+   \textsl{Qt6} themes.
 
    When using a non-Qt-based window manager or desktop manager, such as our
    favorite, \textsl{Fluxbox}, in conjunction with \textsl{GTK+} themes,
@@ -263,10 +266,11 @@ project.
    \end{verbatim}
 
    Otherwise some GUI elements might be difficult to see.
-   If not, use the following setting:
+   If not, use one of the following settings:
 
    \begin{verbatim}
       export QT_QPA_PLATFORMTHEME=qt5ct
+      export QT_QPA_PLATFORMTHEME=qt6ct
    \end{verbatim}
 
    Another option is to provide an executable script like the following,
@@ -281,11 +285,9 @@ project.
    \end{verbatim}
 
    One might still encounter the issue that, with a Gtk theme, applications
-   take about 20 to 30 seconds to start up!
-
-   Another issue is that some Qt themes might upset the sizing of button or
+   can take about 20 to 30 seconds to start up on some computer setups!
+   Another issue is that some Qt themes might upset the sizing of buttons or
    text.
-
    Also see the style-sheet discussion in
    \sectionref{sec:configuration}.
 

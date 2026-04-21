@@ -17,6 +17,11 @@ not being snapped in a sensible way.
     -   Improved the drums module/class for this addition.
     -   Added the ability to show hex numbers for the standard
         MIDI controller events.
+    -   Added two small buttons:
+        -   One toggles showing certain data pane number in
+            hexadecimal versus decimal.
+        -   The other toggles showing the 5 horizontal line
+            levels, useful when the display is cluttered.
 -   Event editor.
     -   Added the ability to show hex numbers for the standard
         MIDI controller events.

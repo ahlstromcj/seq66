@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-04-20
+ * \updates       2026-04-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -282,6 +282,7 @@ private slots:
     void slot_show_scale_or_chords ();
     void slot_filter_painted_notes ();
     void slot_show_hex ();
+    void slot_show_level_numbers ();
     void update_beats_per_bar (int index);
     void text_beats_per_bar ();
     void update_beat_width (int index);
@@ -630,11 +631,19 @@ private:
     bool m_armed_status;
 
     /**
-     *  If set, show hex numbers for some display items. Defaults
-     *  to false. Can be modified by clicking the btn_show_hex button.
+     *  If set (the default is not set), show hex numbers for some display
+     *  items. Defaults to false. Can be modified by clicking the btn_show_hex
+     *  button.
      */
 
     bool m_show_hex_values;
+
+    /**
+     *  If set (the default), then the level numbers of the data pane
+     *  are shown. Sometimes they get in the way.
+     */
+
+    bool m_show_level_numbers;
 
     /**
      *  Update timer for pass-along to the roll, event, and data classes.

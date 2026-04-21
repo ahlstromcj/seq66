@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-04-17
+ * \updates       2026-04-21
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -136,6 +136,8 @@ qseqdata::qseqdata
     m_edit_mode             (sequence::editmode::note), /* mode parameter?  */
     m_status                (EVENT_NOTE_ON),
     m_cc                    (1),                /* modulation               */
+    m_show_hex_values       (false),
+    m_show_level_numbers    (true),
     m_line_adjust           (false),
     m_relative_adjust       (false),
     m_drag_handle           (false),
@@ -259,7 +261,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     painter.setFont(m_font);
     m_edit_mode = perf().edit_mode(track().seq_number());
 
-    char digits[4];
+    char digits[8];
     midipulse start_tick = z().pix_to_tix(r.x());
     midipulse end_tick = start_tick + z().pix_to_tix(r.width());
     int text_y = sc_text_spacing;
@@ -283,24 +285,35 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 
     if (! is_tempo())
     {
-        const char * maxnumber = "128";
-        const char * topnumber = " 96";
-        const char * midnumber = " 64";
-        const char * botnumber = " 32";
-        const char * minnumber = "  0";
-        if (is_pitchbend())
+        if (show_level_numbers())
         {
-            maxnumber = " 2";
-            topnumber = " 1";
-            midnumber = " 0";
-            botnumber = "-1";
-            minnumber = "-2";
+            const char * maxnumber = "128";
+            const char * topnumber = " 96";
+            const char * midnumber = " 64";
+            const char * botnumber = " 32";
+            const char * minnumber = "  0";
+            if (is_pitchbend())
+            {
+                maxnumber = " 2";
+                topnumber = " 1";
+                midnumber = " 0";
+                botnumber = "-1";
+                minnumber = "-2";
+            }
+            else if (show_hex_values())
+            {
+                maxnumber = "  0x80";
+                topnumber = "  0x60";
+                midnumber = "  0x40";
+                botnumber = "  0x20";
+                minnumber = "  0x00";
+            }
+            painter.drawText(0, maxline - 1, maxnumber); /* tiny correction */
+            painter.drawText(0, topline, topnumber);
+            painter.drawText(0, midline, midnumber);
+            painter.drawText(0, botline, botnumber);
+            painter.drawText(0, minline, minnumber);
         }
-        painter.drawText(0, maxline - 1, maxnumber);    /* small correction */
-        painter.drawText(0, topline, topnumber);
-        painter.drawText(0, midline, midnumber);
-        painter.drawText(0, botline, botnumber);
-        painter.drawText(0, minline, minnumber);
     }
     pen.setColor(fore_color());
     pen.setStyle(Qt::SolidLine);
@@ -386,7 +399,11 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 else
                 {
                     painter.drawLine(event_x, event_height, event_x, bottom());
-                    snprintf(digits, sizeof digits, "%3d", d1);
+                    if (show_hex_values())
+                        snprintf(digits, sizeof digits, "0x%02x", d1);
+                    else
+                        snprintf(digits, sizeof digits, "%3d", d1);
+
                     if (selected || its_close)
                     {
                         painter.drawEllipse
@@ -407,7 +424,8 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 #if defined SEQ66_SHOW_GM_DRUM_NAME
 
                     /*
-                     * Enabling this code shows too many names to be readable.
+                     * Enabling this code shows too many overlapping
+                     * names to be readable.
                      */
 
                     if (is_drum_mode())
@@ -425,9 +443,25 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                         pen.setColor(text_data_paint()); /* fore_color())   */
                         painter.setPen(pen);
                         x_offset += 6;
-                        painter.drawText(x_offset, y_offset,        val.at(0));
-                        painter.drawText(x_offset, y_offset + sc_1, val.at(1));
-                        painter.drawText(x_offset, y_offset + sc_2, val.at(2));
+                        if (show_hex_values())
+                        {
+                            painter.drawText(x_offset, y_offset + sc_2, val);
+                        }
+                        else
+                        {
+                            painter.drawText
+                            (
+                                x_offset, y_offset, val.at(0)
+                            );
+                            painter.drawText
+                            (
+                                x_offset, y_offset + sc_1, val.at(1)
+                            );
+                            painter.drawText
+                            (
+                                x_offset, y_offset + sc_2, val.at(2)
+                            );
+                        }
                     }
 #if defined SEQ66_SHOW_GM_DRUM_NAME
                 }

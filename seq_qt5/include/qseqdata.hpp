@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-04-16
+ * \updates       2026-04-21
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -159,6 +159,16 @@ public:
         return m_cc;
     }
 
+    bool show_hex_values () const
+    {
+        return m_show_hex_values;
+    }
+
+    bool show_level_numbers () const
+    {
+        return m_show_level_numbers;
+    }
+
 private:
 
     void flag_dirty ();                 /* tricky code */
@@ -167,6 +177,16 @@ private:
 #if defined SEQ66_ALLOW_RELATIVE_VELOCITY_CHANGE
     void set_adjustment (midipulse tick_start, midipulse tick_finish);
 #endif
+
+    void show_hex_values (bool flag)
+    {
+        m_show_hex_values = flag;
+    }
+
+    void show_level_numbers (bool flag)
+    {
+        m_show_level_numbers = flag;
+    }
 
 private:        // performer::callback overrides
 
@@ -237,6 +257,20 @@ private:
      */
 
     midibyte m_cc;
+
+    /**
+     *  If set, show hex numbers for some display items. Defaults
+     *  to false. Can be modified by clicking the btn_show_hex button.
+     */
+
+    bool m_show_hex_values;
+
+    /**
+     *  If set (the default), then the level numbers of the data pane
+     *  are shown. Sometimes they get in the way.
+     */
+
+    bool m_show_level_numbers;
 
     /**
      *  Used when dragging a new-level adjustment slope with the mouse.
