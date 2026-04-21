@@ -552,7 +552,7 @@ can toggle the mute-groups.</string>
            <string>Removes all mute-groups from the mute-group setup.</string>
           </property>
           <property name="text">
-           <string>&amp;Zeroes</string>
+           <string>&amp;Zero Out</string>
           </property>
          </widget>
         </item>

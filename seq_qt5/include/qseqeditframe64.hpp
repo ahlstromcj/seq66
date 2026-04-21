@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2025-10-22
+ * \updates       2026-04-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -281,6 +281,7 @@ private slots:
     void slot_pattern_fix ();
     void slot_show_scale_or_chords ();
     void slot_filter_painted_notes ();
+    void slot_show_hex ();
     void update_beats_per_bar (int index);
     void text_beats_per_bar ();
     void update_beat_width (int index);
@@ -622,10 +623,18 @@ private:
     recordstyle m_last_record_style;
 
     /**
-     * TO DO
+     *  Set to the armed/mute status of the sequence being edited, changed
+     *  whenever the arm status changes..
      */
 
     bool m_armed_status;
+
+    /**
+     *  If set, show hex numbers for some display items. Defaults
+     *  to false. Can be modified by clicking the btn_show_hex button.
+     */
+
+    bool m_show_hex_values;
 
     /**
      *  Update timer for pass-along to the roll, event, and data classes.

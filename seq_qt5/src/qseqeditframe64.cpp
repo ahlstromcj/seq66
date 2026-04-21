@@ -350,6 +350,7 @@ qseqeditframe64::qseqeditframe64
     m_edit_mode             (perf().edit_mode(s.seq_number())),
     m_last_record_style     (perf().record_style()),
     m_armed_status          (false),
+    m_show_hex_values       (false),
     m_timer                 (nullptr)
 {
     std::string seqname = "No sequence!";
@@ -591,16 +592,11 @@ qseqeditframe64::qseqeditframe64
         ui->m_toggle_drum->hide();      /* ui->m_toggle_transpose->hide()   */
         ui->m_map_notes->hide();
         ui->btn_filter_painted_notes->hide();
+        ui->btn_show_hex->hide();
         ui->btn_show_scale_or_chords->hide();
         ui->btn_spare_0->hide();
         ui->btn_spare_1->hide();
-        ui->btn_spare_2->hide();
         ui->btn_pattern_fix->hide();
-
-        /*
-         * ui->btn_spare_3->hide();
-         */
-
         ui->m_button_loop->hide();
         ui->m_button_lfo->hide();
     }
@@ -1691,6 +1687,11 @@ qseqeditframe64::initialize_panels ()
         ui->btn_filter_painted_notes, SIGNAL(clicked()),
         this, SLOT(slot_filter_painted_notes())
     );
+    connect
+    (
+        ui->btn_show_hex, SIGNAL(clicked()),
+        this, SLOT(slot_show_hex())
+    );
 
     /*
      * qseqdata
@@ -2031,6 +2032,12 @@ qseqeditframe64::slot_filter_painted_notes ()
 {
     m_seqroll->toggle_filter_painted_notes();
     set_filter_painted_notes();
+}
+
+void
+qseqeditframe64::slot_show_hex ()
+{
+    m_show_hex_values = ! m_show_hex_values;
 }
 
 /**
@@ -4038,7 +4045,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
      *  changes, shown 16 per sub-menu.
      */
 
-    const bool usehex = true;       // TESTING
+    const bool usehex = m_show_hex_values;
     const int menucount = 8;
     const int itemcount = 16;
     char b[32];
@@ -4241,7 +4248,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
      *  the track, if any.
      */
 
-    const bool usehex = true;       // TESTING
+    const bool usehex = m_show_hex_values;
     const int itemcount = c_midibyte_data_max;              /* 128          */
     for (int item = 0; item < itemcount; ++item)
     {

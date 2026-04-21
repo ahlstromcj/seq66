@@ -19,7 +19,6 @@
      <property name="font">
       <font>
        <pointsize>18</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -27,14 +26,14 @@
       <string>Seq66 [qseq66]</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
    </item>
    <item>
     <widget class="Line" name="separatorTop">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
     </widget>
    </item>
@@ -55,7 +54,6 @@
      <property name="font">
       <font>
        <pointsize>10</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -63,17 +61,17 @@
       <string>(replaced at run-time)</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QLabel" name="descriptionLabel">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Seq66: loop-based Linux/Windows MIDI sequencer&lt;br&gt;Licensed under the GNU General Public License v2/v3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Loop-based MIDI sequencer&lt;br&gt;Licensed under the GNU General Public License v2/v3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -86,7 +84,7 @@
       <string>&lt;a href=&quot;https://github.com/ahlstromcj/seq66&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub/ahlstromcj/seq66&lt;/span&gt;&lt;/a&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
    </item>
@@ -96,7 +94,7 @@
       <string>&lt;a href=&quot;mailto:ahlstromcj@gmail.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;ahlstromcj@gmail.com&lt;/span&gt;&lt;/a&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
    </item>
@@ -134,7 +132,7 @@
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Based on Seq24, Seq32, Sequencer64, and Kepler34 &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -147,7 +145,7 @@
       <string>&lt;a href=&quot;http://filter24.org/seq24&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Filter24.org/seq24&lt;/span&gt;&lt;/a&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
    </item>
@@ -157,7 +155,7 @@
       <string>&lt;a href=&quot;https://github.com/Stazed/seq32&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub/Stazed/Seq32&lt;/span&gt;&lt;/a&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
    </item>
@@ -167,7 +165,7 @@
       <string>&lt;a href=&quot;https://github.com/oli-kester/kepler34&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub/oli-kester/kepler34&lt;/span&gt;&lt;/a&gt;</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
    </item>

@@ -45,7 +45,7 @@
     <item>
      <spacer name="horizontalSpacer">
       <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+       <enum>Qt::Orientation::Horizontal</enum>
       </property>
       <property name="sizeHint" stdset="0">
        <size>
@@ -72,7 +72,7 @@
        <string>Pattern No. </string>
       </property>
       <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
       </property>
      </widget>
     </item>
@@ -99,10 +99,10 @@
        </font>
       </property>
       <property name="frameShape">
-       <enum>QFrame::Box</enum>
+       <enum>QFrame::Shape::Box</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
+       <enum>QFrame::Shadow::Sunken</enum>
       </property>
       <property name="lineWidth">
        <number>2</number>
@@ -138,7 +138,7 @@
        <string>Max. Tick</string>
       </property>
       <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
       </property>
      </widget>
     </item>
@@ -162,10 +162,10 @@
        </font>
       </property>
       <property name="frameShape">
-       <enum>QFrame::Box</enum>
+       <enum>QFrame::Shape::Box</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
+       <enum>QFrame::Shadow::Sunken</enum>
       </property>
       <property name="lineWidth">
        <number>2</number>
@@ -623,7 +623,7 @@ the measures.</string>
          <string>Remap notes in the opposite direction of &quot;Note-map&quot;.</string>
         </property>
         <property name="text">
-         <string>Rev Note-map</string>
+         <string>Rev. Note-map</string>
         </property>
        </widget>
       </item>
@@ -695,6 +695,9 @@ the measures.</string>
           <width>48</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Open the file dialog to select a .notemap/.drums file.</string>
         </property>
         <property name="text">
          <string>...</string>

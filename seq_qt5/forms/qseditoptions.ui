@@ -28,7 +28,7 @@
       </size>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
+      <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok|QDialogButtonBox::StandardButton::Reset</set>
      </property>
      <property name="centerButtons">
       <bool>false</bool>
@@ -187,7 +187,7 @@
             <string>BPM Precision</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -292,7 +292,7 @@
         </font>
        </property>
        <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
+        <enum>QFrame::Shape::NoFrame</enum>
        </property>
        <property name="lineWidth">
         <number>2</number>
@@ -301,7 +301,7 @@
         <number>1</number>
        </property>
        <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAsNeeded</enum>
+        <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
        </property>
        <property name="widgetResizable">
         <bool>true</bool>
@@ -643,7 +643,7 @@ slot by channel number (0 to 15).</string>
             <string>Outputs</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -682,7 +682,7 @@ slot by channel number (0 to 15).</string>
             <string>Inputs</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -736,7 +736,7 @@ channel.</string>
         </font>
        </property>
        <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
+        <enum>QFrame::Shape::NoFrame</enum>
        </property>
        <property name="lineWidth">
         <number>2</number>
@@ -745,7 +745,7 @@ channel.</string>
         <number>1</number>
        </property>
        <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAsNeeded</enum>
+        <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
        </property>
        <property name="widgetResizable">
         <bool>true</bool>
@@ -1771,7 +1771,7 @@ Range: 0.5 to 3.0</string>
             <string>Frame rate</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -1804,7 +1804,7 @@ Range: 0.5 to 3.0</string>
             <string>Period size</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -1839,7 +1839,7 @@ JACK process callbacks.</string>
             <string>N periods</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -1874,7 +1874,7 @@ callbacks.</string>
             <string>JACK ticks/beat</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -1907,7 +1907,7 @@ beat, normally PPQN/10.</string>
             <string>Beats/minute</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -1939,7 +1939,7 @@ beat, normally PPQN/10.</string>
             <string>Period override</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -2199,7 +2199,7 @@ in the Song Editor.</string>
            <string>JACK Transport</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -2238,7 +2238,7 @@ in the Song Editor.</string>
         <item>
          <spacer name="verticalSpacer">
           <property name="orientation">
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Orientation::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -2301,7 +2301,7 @@ in the Song Editor.</string>
        <property name="title">
         <string>Flags</string>
        </property>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>20</x>
@@ -2324,7 +2324,7 @@ in the Song Editor.</string>
 playback resumes.</string>
            </property>
            <property name="text">
-            <string>&amp;Resume Note Ons at start/stop or sequence toggle</string>
+            <string>&amp;Resume Note Ons at start/stop or sequence toggle.</string>
            </property>
           </widget>
          </item>
@@ -2342,7 +2342,7 @@ default PPQN.  Otherwise, the file PPQN scales to
 the default PPQN.</string>
            </property>
            <property name="text">
-            <string>Use file's PPQN for pre-existing files (recommended)</string>
+            <string>Use file's PPQN for pre-existing files (recommended).</string>
            </property>
           </widget>
          </item>
@@ -2359,7 +2359,7 @@ the default PPQN.</string>
 song triggers.</string>
            </property>
            <property name="text">
-            <string>Song-record snap</string>
+            <string>Song-record snap.</string>
            </property>
           </widget>
          </item>
@@ -2603,7 +2603,7 @@ an event in the new pattern.</string>
         <string>PPQN </string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="label_ppqn_2">
@@ -2634,7 +2634,7 @@ an event in the new pattern.</string>
         </font>
        </property>
        <property name="text">
-        <string>Base Seq66 PPQN for new or converted files</string>
+        <string>Base Seq66 PPQN for new or converted files.</string>
        </property>
       </widget>
       <widget class="QComboBox" name="combo_box_ppqn">
@@ -2666,7 +2666,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
         <number>32</number>
        </property>
        <property name="insertPolicy">
-        <enum>QComboBox::NoInsert</enum>
+        <enum>QComboBox::InsertPolicy::NoInsert</enum>
        </property>
        <property name="frame">
         <bool>true</bool>
@@ -2726,7 +2726,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
            <string>Time Signature</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -2744,7 +2744,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
              <string>Beat width</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -2763,7 +2763,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
              <string>Beats/bar</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -2773,7 +2773,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
           <item row="2" column="0">
            <spacer name="verticalSpacer_2">
             <property name="orientation">
-             <enum>Qt::Vertical</enum>
+             <enum>Qt::Orientation::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -2880,7 +2880,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
              <string>Output Specs</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignCenter</set>
+             <set>Qt::AlignmentFlag::AlignCenter</set>
             </property>
            </widget>
           </item>
@@ -2922,7 +2922,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
              <string>Patch</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -2944,7 +2944,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
              <string>Note</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -2966,7 +2966,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
              <string>Velocity</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -2988,7 +2988,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
              <string>Length fraction</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -3003,7 +3003,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
         <item>
          <spacer name="verticalSpacer_3">
           <property name="orientation">
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Orientation::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -3087,7 +3087,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
              <string>Channel</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -3149,7 +3149,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
           <item>
            <spacer name="horizontalSpacer">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -3210,7 +3210,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
              <string>Channel</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -3377,7 +3377,7 @@ pattern editor is opened.</string>
             <string>Record Loop Style</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -3480,7 +3480,7 @@ with jitter application.</string>
             <string>Jitter 1/</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -3522,7 +3522,7 @@ with jitter application.</string>
             <string>Amplitude</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -4585,7 +4585,7 @@ path added to this name is stripped.</string>
    exit and re-run. Save your work first.</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="label_3">
@@ -4601,7 +4601,7 @@ path added to this name is stripped.</string>
         <string>Browser</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="label_24">
@@ -4617,7 +4617,7 @@ path added to this name is stripped.</string>
         <string>PDF Viewer</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLineEdit" name="lineEditBrowser">

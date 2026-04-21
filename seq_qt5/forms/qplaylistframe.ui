@@ -72,7 +72,7 @@ Click &quot;Load List&quot; to select a playlist file.</string>
     <rect>
      <x>6</x>
      <y>30</y>
-     <width>811</width>
+     <width>824</width>
      <height>309</height>
     </rect>
    </property>
@@ -204,7 +204,7 @@ the file.</string>
        <widget class="QSpinBox" name="spinPlaylistNumber">
         <property name="minimumSize">
          <size>
-          <width>0</width>
+          <width>74</width>
           <height>24</height>
          </size>
         </property>
@@ -519,7 +519,7 @@ for this song, when added. Ranges from
          </size>
         </property>
         <property name="toolTip">
-         <string>Look up a *.playlist file and load it into
+         <string>Look up a .playlist file and load it into
 the play-list table.</string>
         </property>
         <property name="text">
@@ -589,6 +589,9 @@ add it to the song table.</string>
           <height>24</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Reserved for expansion</string>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -643,13 +646,13 @@ add it to the song table.</string>
          <string/>
         </property>
         <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
+         <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
         </property>
         <property name="sizeAdjustPolicy">
-         <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+         <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContentsOnFirstShow</enum>
         </property>
         <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
+         <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
         </property>
         <property name="alternatingRowColors">
          <bool>true</bool>
@@ -876,13 +879,13 @@ information.</string>
          <string>Shows MIDI tunes in the currently-selected play-list.</string>
         </property>
         <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
+         <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
         </property>
         <property name="sizeAdjustPolicy">
-         <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+         <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContentsOnFirstShow</enum>
         </property>
         <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
+         <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
         </property>
         <property name="alternatingRowColors">
          <bool>true</bool>
@@ -1237,7 +1240,7 @@ Read-only.</string>
      <x>634</x>
      <y>344</y>
      <width>134</width>
-     <height>71</height>
+     <height>83</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">

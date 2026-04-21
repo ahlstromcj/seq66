@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.24
 Chris Ahlstrom
-2015-07-10 to 2026-04-20
+2015-07-10 to 2026-04-21
 
 # Change Log
 
-## [0.99.24] - 2026-04-20
+## [0.99.24] - 2026-04-21
 
 Mitigates issue #144, where note and drum-note painting was
 not being snapped in a sensible way.
@@ -23,13 +23,15 @@ not being snapped in a sensible way.
 
 ### Changed
 
+-   Edited all forms in QtCreator to use Qt 6 namespaces.
 -   qseq66.rc.
-    -   Change auto-rc-save to false. Added another flag so
-        that the 'rc' file can be save at first run (no
-        existing configuration files) without saving
-        auto-rc-save=true. Auto save enabled either by
-        user setting in Edit / Preferences / Session or
-        by a relevant change in configuration at run-time.
+    -   Change auto-rc-save to default to false.
+    -   Added another flag so that the 'rc' file can be saved at
+        first run (no existing configuration files) without saving
+        auto-rc-save=true.
+    -   Auto save enabled either by user setting in Edit /
+        Preferences / Session or by a relevant change in
+        configuration at run-time.
 
 ### Fixed
 
