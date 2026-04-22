@@ -1184,6 +1184,13 @@ qseqeditframe64::~qseqeditframe64 ()
 }
 
 void
+qseqeditframe64::stop_timer ()
+{
+    if (not_nullptr(m_timer))
+        m_timer->stop();
+}
+
+void
 qseqeditframe64::set_show_scale_or_chords ()
 {
     bool active = m_seqroll->show_scale_or_chords();

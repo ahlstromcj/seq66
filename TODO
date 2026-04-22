@@ -1,37 +1,24 @@
 TO DO for Seq66 0.99.24
 Chris Ahlstrom
-2019-04-13 to 2026-04-21
+2019-04-13 to 2026-04-22
 
-    -   Takes up too much space:
-        -   The buss name could be shown as a field in the event editor.
-        -   Also could show channel names if provided in 'usr' file.
-    -   Why do we have auto-save for the .drums file? We do not have
-        that for patches. Seq66 offers no ways to modify them in-app
-        at this time.
-    -   Need an option/button to run off printing the horizontal
-        line levels in the data pane.
-    -   See Backlog below.
-
-Fixed:
-
-    -   Crash. Open program-test.midi, open the pattern edit,
-        recent files for b4uacuse...midi. This happens, it seems,
-        only when the ports need remapping and the prompt occurs
-        upon loading. And only on Arch Linux.
-    -   Implement showing drum note names, similar to patch name,
-        in the various edit panes. However, this gets cramped,
-        so disable via the macro SEQ66_SHOW_GM_DRUM_NAME.
-        But will be shown if note is manipulated in the data pane.
-    -   Have a click/selection bring the pattern-editor to the front.
-        Sort of fixed; only effective for the last-opened pattern
-        editor.
+    -   Fix positioning of data pane text in the various modes.
+    -   Make controller values movable in the data pane just
+        like patch values. Show the number in addition to the
+        name.
+    -   Can we alter a selected value by forwarding the arrow
+        key to the data pane for non-note events?
+    -   Segfault: Open b4uacuse patchless midi, then open the
+        pattern editor for guitar. Then open 1Bar-1920.midi when
+        channel 0 pops up as being unavailable. Similar to the
+        segfault when prompted to remap and restart. "Unavailable".
+        Partly fixed: can still occur with multiple pattern editors
+        plus a song editor window; fix the external song editor.
+    -   Issues #102, #137, #138
 
 Features:
 
-    -   *.patches file?
-    -   *.drums vs *.notemap?
-    -   *.controllers?
-    -   MIDNAM?
+    -   MIDNAM? Incorporate the xml66 and midiname projects if practical.
 
 NSM:
 
@@ -43,20 +30,16 @@ NSM:
     -   See the Recording items below (*).
     -   Make the NSM start-up prompt time configurable or dependent on
         the number of words.
-
-Cannot duplicate:
-
-    -   When I try to record events using the Midi Controller UC-16, seq66 is
-        refusing to work and is telling me that the output bus is not
-        available. The same hardware configuration is working perfectly when
-        using seq64, the synth is receiving the CC signals and these events
-        are recorded by seq64. [We do not have this unit]
-    -   Event editor. Open the b4uacuse patchless file and the first (0)
-        pattern in the pattern editor; a segfault occurs. Try it on Arch.
+    -   See the ongoing nsmd66 and nsm66 projects.
 
 Backlog:
 
-    -   Tempo event in track 0 does not override c_tempo_map SeqSpec.
+    -   Takes up too much space:
+        -   The buss name could be shown as a field in the event editor.
+        -   Also could show channel names if provided in 'usr' file.
+    -   Why do we have auto-save for the .drums file? We do not have
+        that for patches. Seq66 offers no ways to modify them in-app
+        at this time.
     -   Note drawing and event drawing screwed up in time when scrolled
         completely to the right.
     -   In midicvt (separate project), the c_mutegroups SeqSpec is not
@@ -118,6 +101,26 @@ Ongoing efforts:
     -   Make it center on notes if not visible.
     -   Can we distinguish note-insertion from movement snap, to avoid the
         "L"-then-snap-then-move samba?
+
+Cannot duplicate or will not do:
+
+    -   When I try to record events using the Midi Controller UC-16, seq66 is
+        refusing to work and is telling me that the output bus is not
+        available. The same hardware configuration is working perfectly when
+        using seq64, the synth is receiving the CC signals and these events
+        are recorded by seq64. [We do not have this unit]
+    -   Event editor. Open the b4uacuse patchless file and the first (0)
+        pattern in the pattern editor; a segfault occurs. Try it on Arch.
+    -   Tempo event in track 0 does not override c_tempo_map SeqSpec.
+        Actually, c_tempo_map is not really used.
+        USE_SEQ32_SEQSPECS      /* stazed feature not implemented */
+    -   Implement showing drum note names, similar to patch name,
+        in the various edit panes. However, this gets cramped,
+        so disable via the macro SEQ66_SHOW_GM_DRUM_NAME.
+        But will be shown if note is manipulated in the data pane.
+    -   Have a click/selection bring the pattern-editor to the front.
+        Sort of fixed; only effective for the last-opened pattern
+        editor.
 
 ISSUES:
 
@@ -216,25 +219,6 @@ ISSUES:
     functions to a single button.  It would also fit nicely with a Launchpad
     where apart from the grid buttons, there are "mode" buttons on the side.
 
-#76 MIDI Tempo Sync & Real Time Messages Not Behaving As Expected When
-    SEQ66 is a MIDI Slave
-    STATUS: Some fix(es) made, needs more testing.
-
-#95 Velocity screen does not fully refresh when scrolling left or right.
-    STATUS: Still need to duplicate.
-
-#97 Investigate/resolve differences from Seq24.
-    Seq24: Input from a keyboard when not playing advances like one-shot
-    mode, but does not stop when looped back as in Seq66.
-    STATUS: Fixed.  More:
-    -   Grid-Solo-Click currently acts like Alt-Left-Click.
-    -   Shift-Left-Click opens the corresponding external live grid.
-    -   Ctrl-Left-Click wants to create a new pattern.
-    -   Right-Ctrl-Left-Click does NOT do a queue action.
-    -   Holding Alt is supposed to save the current snapshot, and then
-        restore it when lifted.
-    -   Holding Ctrl-Alt is supposed to ... cannot tell from SEQ24 doc.
-
 #100 Seq66's MIDI timing completely falls apart at JACK buffer sizer
     larger than 128.
     STATUS: Added a timestamp to each message in the JACK
@@ -247,68 +231,6 @@ ISSUES:
     Ardour) to completely eliminate hiccups in the synchronization of
     note input and playback, due to the unavoidable lag between putting the
     note in the ringbuffer and taking it out in the JACK process callback.
-
-#102 How can I use mutes?
-    After some additional experimentation I found out that Seq66 has these
-    features too with Windows build. However I am not able to to mute patterns
-    using computer keyboard no matter what I try to do. I discovered mute tab,
-    but I don't understand what's going on here and I am pretty sure that
-    plain muting (with queue functionality) is good enough for me.
-    Muting using mouse works reasonably well.
-    I am using Windows 7 if this helps with platform specific bugs.
-    STATUS: It turns out that we needed a different key-map for Windows.
-
-#103 One-shot (repetitions != 0) patterns do not play
-    This feature works, but requires the pattern to be armed before
-    playback begins, either in Live or Song mode.  Should we make the loop
-    auto-arm, or make this an option somehow? No.
-    STATUS: Closed.
-
-#104 Really confusing usage
-    This requires some improvements to the LaTeX documentation and the HTML
-    tutorial.  One issue is Pipewire, which is unsupported; the user system
-    employs pulseaudio-pw. Pushed off to version 2.
-    STATUS: Closed.
-
-#107 Can't increase clip length while transport is running
-    Somehow disabled this feature on 2022-08-20, with no note why.
-
-    Tried recording using "Expand", and it failed in a spectacular way.  Lets
-    say I have Jack transport running for a while, so that the transport
-    indicator says 096:X:xxx. (Had it running up to 800 or so and the same
-    happens:
-
-    When arming a pattern for recording using "Expand", the pattern becomes as
-    long as the number (96 bars in this case) where I press down the keys on my
-    keyboard.  It then loops being 96 bars, until I press down a couple other
-    keys, where it again expands to whatever the transport indicates at that
-    point (for example 142:X:xxx).
-
-    When no more keys are being pressed, the pattern becomes 142 bars long,
-    until I press some more keys.  And it seems to repeat like that until I
-    press the Stop button, when it starts over on 001:X:xxx. The pattern length
-    remains the same though.
-
-    STATUS: Closed by the reporter. Undid the change and commented on it.
-            Need to investigate the second part.
-
-#110 Windows build download
-
-    STATUS: works for 64-bit builds, but 32-bit builds work only in
-            QtCreator, and too many things to do to build 32-bit on a 64-bit
-            machine. A ton of refactoring and fixes for the damn MIDI Mapper.
-
-#111 Time signature changes does not get saved on .midi file
-
-    STATUS: In progress.
-        -   Ctrl-Z in pattern editor works, but does not restore original
-            view until pattern is reopened. Not sure why, it should work.
-        -   Verify measure-count changes upon time-sig. In timesigs.midi,
-            adding a time-sig 8/16 at 4:1 yields one at 10:1 !!!
-        -   We could update the song editor to redraw sequences that
-            have time signatures; more for appearances, really.
-        -   Can we have time-signature changes shown during playback by
-            modifying the combo boxes text?
 
 #115 Accessing Non-Registered Parameter Numbers (NRPNs) possible?
 
@@ -324,20 +246,6 @@ ISSUES:
             Using the horizontal scrollbar refreshes properly.
             Added some tricky code [flag_dirty()], as already done
             in qstriggereditor.
-
-#118 When enabling virtual ports, make those new ports enabled by default?
-    Currently one has to tick the box to enable and enter the number of output
-    and input ports, restart seq66, and then tick all the input port
-    checkboxes in the list then restart seq66 again.
-
-    STATUS: Done, not yet official.
-
-#119 Quantized Record Active does not work
-    Having this button active has no effect; tried changing snap size to
-    different settings...  Post processing quantize works as expected (i,e,
-    Ctrl-A then q)
-
-    STATUS: Fixed.
 
 #128 Recording type for loop button not working
     The button on the main page for recording styles Overdub, Overwrite,
@@ -367,73 +275,6 @@ ISSUES:
     bars.  Separately, The looping with step entry is better now.
 
     STATUS: All issues seem to be fixed, but need to be retested.
-
-#129 Quantized Record Button problem
-    There is a button in the pattern window to turn on Quantized Record.  If
-    the Record Active button to the left of it is set to on then this button
-    does not  work. If the Record Active button is off then the Quantized
-    Record button turns on both buttons without issue.
-
-    STATUS: Fixed.
-
-#131 NSM seems to get an announce from two processes
-    It looks like it announces with two processes to the NSM daemon or
-    something.
-
-    STATUS: Fixed in the "wip" branch, will be merged at the next release.
-
-#133 Pattern Length Change Issues
-
-    In the pattern edit window, the reset pattern to 1 button no longer works
-    properly. It either shrinks to some bar other than 1 or just does nothing
-    at all.  FIXED. It will prompt for truncating notes.
-
-    There is also a behaviour when you manually select or type the number of
-    bars and it is smaller than the amount of already existing bars with notes
-    in, the notes get deleted after a warning dialog.  This does not work when
-    the Expand mode is selected.
-
-	Steps to reproduce:
-
-	1: Create two (or more) bars with notes in, with Expand mode selected.
-	2: Shrink to one bar
-
-	These have appeared since https://github.com/ahlstromcj/seq66/issues/128 so
-	possibly connected. PARTLY FIXED. After even a selection of 1, must Enter
-    or Tab out. Not sure why, as editing-finish slots have been added to
-    the pattern editor.
-
-    A third issue which occurred before was with manually editing the
-    amount of bars with double digits. The bars refresh for each digit entered.
-    For example So if you have 16 bars and you want to shrink to 14 bars, it
-    will first shrink it to 1 bar as you type over. If the bars are full then
-    the dialog will pop up about losing notes. If you then click ok, instead of
-    cancel, you will lose anything in the latter 15 bars. FIXED.
-
-    Make sure that canceling a measure change resets the combo-box to the
-    previous value. FIXED.
-
-    There might still be issues when making multiple time-signature changes.
-
-#135 Dark theme tweak issues
-
-    These are problems found when the "Tweak color for Dark theme" check box
-    is marked.
-
-    1.  Reset Pattern length to 1 button does not have inverted equivalent.
-        FIXED.
-    2.  The dotted lines are over the bar number (this is regardless of dark
-        theme but more noticeable) making it not clear to read.
-    3.  The beat lines are set to white and you cannot override this in the
-        palette file. This makes them near invisible by default because the
-        default background is white. When not in dark mode, the beat line
-        also colours the bar lines (they probably should not?) but this
-        does not happen in dark mode.
-
-    4.  More color issues:
-
-        a.  Why are grid slot colors are different in the Song editor?
-        b.  Tweak the incrypt-66 palette so the four-lines are white.
 
 #136 Program change shows as note in drum mode
 
@@ -577,34 +418,6 @@ ISSUES:
     an instrument:
 
     Sends CC 0 11 + CC 32 64 + PC 96 + CC 5 20 + CC 65 0
-
-#139 LFO tool ❤
-
-    OMG I love this LFO. So easy to simulate sidechaining 'pumping' (via CC11)
-    without having to fiddle with compressor plugins ❤
-
-    One small issue (not a dealbreaker though) is that when you change the
-    wavetype,  it erases all events (used by the previous wavetype).  It would
-    be great if it would just keep events, and rewrite the values.
-
-    STATUS: Fixed, must now click the Reset button explicitly. Also:
-
-        ADDED a button to "Lock" the current events as the data to Reset with
-        that button.
-
-        ADDED a "Multiply" feature to multiply (instead of set) the current
-        data via a waveform.
-
-#140 Minimum height event-handle
-
-    ![Image](https://github.com/user-attachments/assets/a61c4d72-4a98-4215-8d89-165260046667)
-
-    Many times I cannot change an event with value 0, because its too low for
-    the mouse to click/drag (see picture)
-
-    STATUS: Increased the height of the data pane slightly. Qt
-            makes this a pain. Also added grid-lines to show the
-            range allowed for the data.
 
 = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 

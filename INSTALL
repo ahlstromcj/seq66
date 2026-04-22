@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.99.23 and above
+INSTALL for Seq66 v. 0.99.24 and above
 Chris Ahlstrom
-2015-09-10 to 2026-01-15
+2015-09-10 to 2026-04-22
 
 Getting Seq66 requires building the code or going to "ahlstromcj/seq66" on
 GitHub to get an installation package or a Windows release executable.
@@ -20,8 +20,8 @@ with the instructions below.  Different versions of the program can be built:
         console or as a daemon, controlled via MIDI and playlists.
     -   seq66clip. The seq66cli app with "portmidi" instead of "rtmidi".
 
-    We provide a Windows installer (an EXE) in the GitHub release area.  It is
-    also fairly easy to build the Windows version using QtCreator/qmake.  See
+    We provide a Windows installer (an EXE) in the GitHub release area. It is
+    also fairly easy to build the Windows version using QtCreator/qmake. See
     the DOS batch script "nsis/build_release_package.bat"; it not only builds
     it using qmake and mingw, but also describes how to create Windows
     packages.
@@ -471,6 +471,7 @@ MANUALLY-DEFINED MACROS IN CODE:
         SEQ66_USE_MIDI_MESSAGE_RINGBUFFER
         SEQ66_USE_SHOW_HIDE_BUTTON
         SEQ66_DRAW_PITCHBEND_AS_DOT (undefined)
+        SEQ66_SHOW_GM_DRUM_NAME (undefined; leave undefined)
 
 REPORTING ISSUES:
 
@@ -539,8 +540,9 @@ DEPENDENCIES:
     -   g++
     -   make
     -   libtool
-    -   Qt 5.  Install qtcreator only if you want it, as it installs 650 Mb
-        worth of files.  One can just install the bare minimum:
+    -   Qt 5 or Qt 6. Install qtcreator only if you want it, as it
+        installs 650 Mb worth of files. One can just install the bare
+        minimum:
 
         -   qt5-default (Important!)
         -   qtbase5-dev (might be installed after installedin qt5-default)
@@ -566,8 +568,9 @@ DEPENDENCIES:
         -   Installing the qt5ct package (Debian/Ubuntu)
         -   Adding "export QT_QPA_PLATFORMTHEME=qt5ct" to .bashrc.
 
-        For Ubuntu Studio 25 or thereabouts, see the INSTALL4Ubuntu.md
-        document.
+        For Ubuntu Studio 25 or thereabouts, see the document
+
+            INSTALL.seq66.on.Ubuntu.md
 
    Raspberry Pi:
 

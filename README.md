@@ -1,4 +1,4 @@
-# README for Seq66 0.99.24 2026-04-15
+# README for Seq66 0.99.24 2026-04-22
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid
 interface; pattern banks, triggers, and playlists for song management;
@@ -14,7 +14,7 @@ modern C++ and new features. Linux and Windows users can build this
 application from source code. See the extensive INSTALL file. Includes
 a comprehensive PDF user-manual.
 
-The current development-in-progress branch is "wip" or "qt6".
+The current development-in-progress branch is "wip".
 
 The release includes an installer for the 64-bit Windows version of
 Seq66. Initial work has been done on getting Seq66 to build and run
@@ -34,21 +34,22 @@ in force. Otherwise the application uses the current Qt theme.
 
     *   Qt 5 or Qt 6 (cross-platform). Loop-button gird. Qt style-sheet
         support.
+    *   Colorable pattern slots; the color palette can be saved and modified.
     *   Drag-and-drop a MIDI file onto the main grid to load it.
     *   Tabs and external windows for patterns, sets, mute-groups, song
         layout, event-editing, play-lists, and session information.
     *   Low-frequency oscillator (LFO) to modify continuous controller
         and velocity values.
     *   A "fixer" for expansion/compression/alignment of note patterns.
-    *   Colorable pattern slots; the color palette can be saved and modified.
     *   Horizontal and vertical zoom in the pattern and song editors.
     *   Extremely resizable.
-    *   A headless/daemon version can be built.
+    *   A headless/daemon version can be built to use with a MIDI grid
+        controller.
 
 ##  Configuration files
 
     *   Supports configuration files: '.rc', '.usr', '.ctrl', '.mutes',
-        '.playlist', '.drums' (note-mapping), '.palette', and Qt '.qss'.
+        '.playlist', '.drums' ('.notemap'), '.palette', and Qt '.qss'.
     *   Separates MIDI control and mute-group setting into their own files.
     *   Unified keystroke and MIDI controls in the '.ctrl' file; defines MIDI
         controls for automation/display of Seq66 status in grid controllers

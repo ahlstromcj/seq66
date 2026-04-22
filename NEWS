@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.24
 Chris Ahlstrom
-2015-07-10 to 2026-04-21
+2015-07-10 to 2026-04-22
 
 # Change Log
 
-## [0.99.24] - 2026-04-21
+## [0.99.24] - 2026-04-22
 
 Mitigates issue #144, where note and drum-note painting was
 not being snapped in a sensible way.
@@ -18,10 +18,11 @@ not being snapped in a sensible way.
     -   Added the ability to show hex numbers for the standard
         MIDI controller events.
     -   Added two small buttons:
-        -   One toggles showing certain data pane number in
-            hexadecimal versus decimal.
+        -   One toggles showing certain data pane numbers in
+            hexadecimal versus decimal format.
         -   The other toggles showing the 5 horizontal line
-            levels, useful when the display is cluttered.
+            level numbers, useful when the display is cluttered
+            near the beginning.
 -   Event editor.
     -   Added the ability to show hex numbers for the standard
         MIDI controller events.
@@ -45,10 +46,13 @@ not being snapped in a sensible way.
         editor is open, the user clicks OK, and a different
         tune is selected, a crash could occur on Arch. So
         clicking OK now enables quiet mode for the restart, so
-        that the remap dialogs does not come up..  Let the user be
-        aware.
+        that the remap dialogs does not come up again.
+        Let the user be aware!
+    -   A similar issue with the "Unavailable port" message.
+        Instead of setting quiet, the better fix seems to
+        be stopping the qseqeditframe64 timer before
+        the close() call in qseqeditex.
 -   Pattern editor.
-    -   Added the display of a drum-note's name when in drum
     -   Mitigated issue #144 (painted notes misplaced in time)
         for normal notes and drum notes by added a portion of
         snap to the location of the mouse click. If this is

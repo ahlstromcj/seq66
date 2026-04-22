@@ -153,8 +153,8 @@ public:
     );
     virtual ~qseqeditframe64 ();
 
+    void stop_timer ();
     void get_position (int & x, int & y);
-
     void initialize_panels ();
     void set_editor_mode (sequence::editmode mode);
     bool follow_progress (bool expand = false);

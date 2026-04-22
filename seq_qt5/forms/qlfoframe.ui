@@ -85,7 +85,7 @@ match the waveform.</string>
      <x>350</x>
      <y>40</y>
      <width>291</width>
-     <height>261</height>
+     <height>251</height>
     </rect>
    </property>
    <property name="font">
@@ -102,7 +102,7 @@ match the waveform.</string>
       <x>10</x>
       <y>30</y>
       <width>251</width>
-      <height>221</height>
+      <height>211</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="m_wave_layout">
@@ -221,7 +221,7 @@ match the waveform.</string>
    <property name="geometry">
     <rect>
      <x>350</x>
-     <y>304</y>
+     <y>293</y>
      <width>296</width>
      <height>34</height>
     </rect>
@@ -305,7 +305,7 @@ the modify flag for the MIDI tune.</string>
          <string>DC Offset</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -327,10 +327,10 @@ the modify flag for the MIDI tune.</string>
          <string>DC offset to add to modulating waveform.</string>
         </property>
         <property name="orientation">
-         <enum>Qt::Orientation::Vertical</enum>
+         <enum>Qt::Vertical</enum>
         </property>
         <property name="tickPosition">
-         <enum>QSlider::TickPosition::NoTicks</enum>
+         <enum>QSlider::NoTicks</enum>
         </property>
        </widget>
       </item>
@@ -346,7 +346,7 @@ the modify flag for the MIDI tune.</string>
          <string>100.0</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -360,7 +360,7 @@ the modify flag for the MIDI tune.</string>
          <string>Depth</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -382,10 +382,10 @@ the modify flag for the MIDI tune.</string>
          <string>Depth of modulation.</string>
         </property>
         <property name="orientation">
-         <enum>Qt::Orientation::Vertical</enum>
+         <enum>Qt::Vertical</enum>
         </property>
         <property name="tickPosition">
-         <enum>QSlider::TickPosition::NoTicks</enum>
+         <enum>QSlider::NoTicks</enum>
         </property>
        </widget>
       </item>
@@ -401,7 +401,7 @@ the modify flag for the MIDI tune.</string>
          <string>100.0</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -415,7 +415,7 @@ the modify flag for the MIDI tune.</string>
          <string>Periods</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -437,10 +437,10 @@ the modify flag for the MIDI tune.</string>
          <string>Number of periods per pattern. Subject to anti-aliasing.</string>
         </property>
         <property name="orientation">
-         <enum>Qt::Orientation::Vertical</enum>
+         <enum>Qt::Vertical</enum>
         </property>
         <property name="tickPosition">
-         <enum>QSlider::TickPosition::NoTicks</enum>
+         <enum>QSlider::NoTicks</enum>
         </property>
        </widget>
       </item>
@@ -456,7 +456,7 @@ the modify flag for the MIDI tune.</string>
          <string>100.0</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -470,7 +470,7 @@ the modify flag for the MIDI tune.</string>
          <string>Phase</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -492,7 +492,7 @@ the modify flag for the MIDI tune.</string>
          <string>Phase of the LFO, 0 to 1 is 0 to 360 degrees.</string>
         </property>
         <property name="orientation">
-         <enum>Qt::Orientation::Vertical</enum>
+         <enum>Qt::Vertical</enum>
         </property>
         <property name="invertedAppearance">
          <bool>false</bool>
@@ -501,7 +501,7 @@ the modify flag for the MIDI tune.</string>
          <bool>false</bool>
         </property>
         <property name="tickPosition">
-         <enum>QSlider::TickPosition::NoTicks</enum>
+         <enum>QSlider::NoTicks</enum>
         </property>
        </widget>
       </item>
@@ -517,7 +517,7 @@ the modify flag for the MIDI tune.</string>
          <string>360.0</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>

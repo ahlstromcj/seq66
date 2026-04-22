@@ -1,0 +1,71 @@
+Cheat Sheet for the bvi Hex Editor
+Chris Ahlstrom
+2026-04-22 to 2026-04-22
+
+Key options:
+
+    -R          Read-only viewing.
+    -f script   Run a script with a series of "ex" commands.
+
+
+Search patterns:
+
+    .           Any character
+    []          set of characters
+    *           zero or more occurrences of previous char or set
+
+    The ^ and $ anchors cannot be used. Search explicitly:
+
+   \n           newline
+   \r           return
+   \t           tab
+   \0           binary zero
+
+   /pat, ?pat   Find ASCII pattern.         
+   \hex, #hex   Find hex string. Example:  "\24240013"
+
+Insertion and deletion can be enabled by
+
+    :set memmove
+
+Input commands:     i I A r R
+Exit input/cmd:     ESC
+Switch panes:       TAB
+Cancel command:     CTRL-C
+Command line mode:  / ? \ # !
+Exit command mode:  ESC
+Delete/rubout intr: DEL
+
+COMMAND SUMMARY:
+
+    :version            Show version info
+    <- ... ->           Arrow keys move the cursor
+    h j k l             Same as arrow keys
+    u                   Undo previous change
+    ZZ                  Exit bvi, saving changes
+    :q!                 Quit, discarding changes
+    /text               Search for text
+    ^U ^D               Scroll up or down
+
+    Numbers may be typed as a prefix to some commands:
+
+    Screen column       ⎪
+    Byte of file        G
+    Scroll amount       ^D  ^U
+    Repeat effect       Most of the rest of the commands
+
+    :w                  Write changed buffer to file
+    :w!                 Write override read-only ("forced" write)
+    :q, :q!             Quit, and discard all changes
+    :e file, :e!        Edit file, reread file, discard changes
+    :e #, :e! #         Edit the alternate file, discard changes
+    :w file, :w! file   Write current buffer to file, force overwrite
+    :sh                 Run the command as set with option "shell"
+    :!cmd               Run the command cmd from "shell", then return
+    :n                  Edit next file in the argument list
+    :f, ^G              Show current filename, modified flag,
+
+There are additional items in the bvi(1) man page, such as bit operations.
+Many stock vi commands apply in some ways, depending which pane is active.
+
+# vim: sw=3 ts=3 wm=8 et ft=sh

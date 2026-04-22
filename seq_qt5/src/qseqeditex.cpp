@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2023-06-23
+ * \updates       2026-04-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -120,12 +120,18 @@ qseqeditex::~qseqeditex()
 }
 
 /**
- *  First test the enclosed seqedit frame to close (which then should cause
+ *  First tell the enclosed seqedit frame to close (which then should cause
  *  that to tell it's LFO and Pattern-Fix windows to close.  Then
  *  tells the parent window to close (and automatically remove this container
  *  frame when the user closes it.
  *
  *  Hopefully there's no race condition here.
+ *
+ *  ca 2026-04-22:
+ *
+ *      Yes, there is, and it is hit if opening the next MIDI file will
+ *      cause a port remap or port unavailable prompt. Stopping the
+ *      update timer seems to fix it.
  */
 
 void
@@ -134,8 +140,10 @@ qseqeditex::closeEvent (QCloseEvent *)
     if (not_nullptr(m_edit_parent))
     {
         if (not_nullptr(m_edit_frame))
+        {
+            m_edit_frame->stop_timer();     /* stop the update timer now    */
             m_edit_frame->close();
-
+        }
         m_edit_parent->remove_editor(m_seq_id);
     }
 }
