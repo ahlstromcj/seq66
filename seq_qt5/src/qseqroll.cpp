@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-04-18
+ * \updates       2026-04-30
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1294,7 +1294,7 @@ qseqroll::resizeEvent (QResizeEvent * qrep)
  */
 
 void
-qseqroll::mousePressEvent (QMouseEvent * event)
+qseqroll::mousePressEvent (QMouseEvent * ev)
 {
     midipulse tick_s, tick_f;
     int note, note_l, norm_x, norm_y, snapped_x, snapped_y;
@@ -1303,14 +1303,14 @@ qseqroll::mousePressEvent (QMouseEvent * event)
      * The key-padding messes with snap_x(), we think. Instead use
      * the progress-bar's initial location.
      *
-     *      snapped_x = norm_x = event->x() - m_keypadding_x;
+     *      snapped_x = norm_x = ev->x() - m_keypadding_x;
      */
 
-    snapped_x = norm_x = event->x() - xoffset(0);
+    snapped_x = norm_x = qt_mouse_x(ev) - xoffset(0);
     if (norm_x < 0)
         return;
 
-    snapped_y = norm_y = event->y();
+    snapped_y = norm_y = qt_mouse_y(ev);
     snap_x(snapped_x);
     snap_y(snapped_y);
     current_y(snapped_y);
@@ -1318,7 +1318,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
     if (paste())
     {
         convert_xy(snapped_x, snapped_y, tick_s, note);
-        if (event->button() == Qt::LeftButton)
+        if (ev->button() == Qt::LeftButton)
             track().paste_selected(tick_s, note);
 
         paste(false);
@@ -1327,10 +1327,10 @@ qseqroll::mousePressEvent (QMouseEvent * event)
     }
     else
     {
-        bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
-        bool lbutton = event->button() == Qt::LeftButton;
-        bool rbutton = event->button() == Qt::RightButton;
-        bool mbutton = event->button() == Qt::MiddleButton ||
+        bool isctrl = bool(ev->modifiers() & Qt::ControlModifier);
+        bool lbutton = ev->button() == Qt::LeftButton;
+        bool rbutton = ev->button() == Qt::RightButton;
+        bool mbutton = ev->button() == Qt::MiddleButton ||
             (lbutton && isctrl);
 
         if (lbutton)
@@ -1508,17 +1508,17 @@ qseqroll::get_selected_box ()
 }
 
 void
-qseqroll::mouseReleaseEvent (QMouseEvent * event)
+qseqroll::mouseReleaseEvent (QMouseEvent * ev)
 {
     /*
      * The key-padding messes with snap_x(), we think. Instead use
      * the progress-bar's initial location.
      *
-     *      current_x(int(event->x()) - m_keypadding_x);
+     *      current_x(int(ev->x()) - m_keypadding_x);
      */
 
-    current_x(event->x() - xoffset(0));
-    current_y(event->y());
+    current_x(qt_mouse_x(ev) - xoffset(0));
+    current_y(qt_mouse_y(ev));
     (void) snap_current_y();
     if (moving())
         (void) snap_current_x();
@@ -1527,10 +1527,10 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
     int delta_y = current_y() - drop_y();
     midipulse delta_tick;
     int delta_note;
-    bool lbutton = event->button() == Qt::LeftButton;
-    bool rbutton = event->button() == Qt::RightButton;
-    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);   /* Ctrl */
-    bool mbutton = event->button() == Qt::MiddleButton || (lbutton && isctrl);
+    bool lbutton = ev->button() == Qt::LeftButton;
+    bool rbutton = ev->button() == Qt::RightButton;
+    bool isctrl = bool(ev->modifiers() & Qt::ControlModifier);   /* Ctrl */
+    bool mbutton = ev->button() == Qt::MiddleButton || (lbutton && isctrl);
     if (lbutton)
     {
         if (selecting())
@@ -1607,7 +1607,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
         if (growing())
         {
             convert_xy(delta_x, delta_y, delta_tick, delta_note);
-            if (event->modifiers() & Qt::ShiftModifier)
+            if (ev->modifiers() & Qt::ShiftModifier)
                 track().stretch_selected(delta_tick);
             else
                 track().grow_selected(delta_tick);
@@ -1656,17 +1656,17 @@ qseqroll::snapped_x (int x)
  */
 
 void
-qseqroll::mouseMoveEvent (QMouseEvent * event)
+qseqroll::mouseMoveEvent (QMouseEvent * ev)
 {
     /*
      * The key-padding messes with snap_x(), we think. Instead use
      * the progress-bar's initial location.
      *
-     *      current_x(int(event->x()) - m_keypadding_x);
+     *      current_x(int(ev->x()) - m_keypadding_x);
      */
 
-    current_x(event->x() - xoffset(0));
-    current_y(event->y());
+    current_x(qt_mouse_x(ev) - xoffset(0));
+    current_y(qt_mouse_y(ev));
     if (moving_init())
     {
         moving_init(false);
@@ -1768,12 +1768,12 @@ qseqroll::zoom_key_press (bool shifted, int key)
  */
 
 void
-qseqroll::keyPressEvent (QKeyEvent * event)
+qseqroll::keyPressEvent (QKeyEvent * ev)
 {
-    int key = event->key();
-    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
-    bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
-    bool ismeta = bool(event->modifiers() & Qt::MetaModifier);
+    int key = ev->key();
+    bool isctrl = bool(ev->modifiers() & Qt::ControlModifier);
+    bool isshift = bool(ev->modifiers() & Qt::ShiftModifier);
+    bool ismeta = bool(ev->modifiers() & Qt::MetaModifier);
     bool done = false;
     if (key == Qt::Key_Delete || key == Qt::Key_Backspace)
     {
@@ -2056,7 +2056,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
         flag_dirty();                           /* \tricky ca 2023-08-20    */
     }
     else
-        QWidget::keyPressEvent(event);
+        QWidget::keyPressEvent(ev);
 }
 
 bool

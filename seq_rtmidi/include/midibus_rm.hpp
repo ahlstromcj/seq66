@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2025-01-20
+ * \updates       2025-04-30
  * \license       GNU GPLv2 or above
  *
  *  This midibus module is the RtMidi version of the midibus
@@ -92,7 +92,7 @@ public:
 
     virtual ~midibus ();
 
-    virtual bool api_connect ();
+    /* virtual */ bool api_connect ();              /* cannot be overridden */
 
     bool good_api () const;
 

@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.24
 Chris Ahlstrom
-2015-07-10 to 2026-04-22
+2015-07-10 to 2026-05-01
 
 # Change Log
 
-## [0.99.24] - 2026-04-22
+## [0.99.24] - 2026-05-01
 
 Mitigates issue #144, where note and drum-note painting was
 not being snapped in a sensible way.
@@ -29,7 +29,9 @@ not being snapped in a sensible way.
 
 ### Changed
 
+-   Backed autoconf version from 2.72 to 2.71 re issue #145.
 -   Edited all forms in QtCreator to use Qt 6 namespaces.
+-   Fixed some more QMouseEvent x()/y() deprecations found by Clang
 -   qseq66.rc.
     -   Change auto-rc-save to default to false.
     -   Added another flag so that the 'rc' file can be saved at
@@ -44,14 +46,17 @@ not being snapped in a sensible way.
 -   Main window.
     -   When the "Remap & Restart" pops up, if a pattern
         editor is open, the user clicks OK, and a different
-        tune is selected, a crash could occur on Arch. So
-        clicking OK now enables quiet mode for the restart, so
+        tune is selected, a crash (segfault) could occur on Arch.
+        So clicking OK now enables quiet mode for the restart, so
         that the remap dialogs does not come up again.
         Let the user be aware!
-    -   A similar issue with the "Unavailable port" message.
+    -   A similar segfault with the "Unavailable port" message.
         Instead of setting quiet, the better fix seems to
         be stopping the qseqeditframe64 timer before
         the close() call in qseqeditex.
+    -   A similar segfault with the "LFO" dialog. Fixed by no
+        longer resetting the MIDI events when the close event
+        occurs. Holy moly.
 -   Pattern editor.
     -   Mitigated issue #144 (painted notes misplaced in time)
         for normal notes and drum notes by added a portion of

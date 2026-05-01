@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-05
+ * \updates       2026-04-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -368,16 +368,16 @@ qseqtime::resizeEvent (QResizeEvent * qrep)
  */
 
 void
-qseqtime::mousePressEvent (QMouseEvent * event)
+qseqtime::mousePressEvent (QMouseEvent * ev)
 {
-    midipulse tick = z().pix_to_tix(event->x());
+    midipulse tick = z().pix_to_tix(qt_mouse_x(ev));
     if (snap() > 0)
         tick -= (tick % snap());
 
-    if (event->y() > height() / 2)                      /* bottom half      */
+    if (qt_mouse_y(ev) > height() / 2)                  /* bottom half      */
     {
-        bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
-        if (event->button() == Qt::LeftButton)          /* move L/R markers */
+        bool isctrl = bool(ev->modifiers() & Qt::ControlModifier);
+        if (ev->button() == Qt::LeftButton)             /* move L/R markers */
         {
             if (isctrl)
             {
@@ -399,12 +399,12 @@ qseqtime::mousePressEvent (QMouseEvent * event)
             }
             set_dirty();
         }
-        else if (event->button() == Qt::MiddleButton)   /* set start tick   */
+        else if (ev->button() == Qt::MiddleButton)   /* set start tick   */
         {
             perf().set_tick(tick, true);                /* set_start_tick() */
             set_dirty();
         }
-        else if (event->button() == Qt::RightButton)
+        else if (ev->button() == Qt::RightButton)
         {
             perf().set_right_tick_snap(tick, snap());
             set_dirty();
@@ -426,27 +426,28 @@ qseqtime::mouseReleaseEvent (QMouseEvent *)
 }
 
 void
-qseqtime::mouseMoveEvent(QMouseEvent * event)
+qseqtime::mouseMoveEvent(QMouseEvent * ev)
 {
     setCursor
     (
-        event->y() > height() / 2 ? Qt::PointingHandCursor : Qt::UpArrowCursor
+        qt_mouse_y(ev) > height() / 2 ?
+            Qt::PointingHandCursor : Qt::UpArrowCursor
     );
 }
 
 void
-qseqtime::keyPressEvent (QKeyEvent * event)
+qseqtime::keyPressEvent (QKeyEvent * ev)
 {
-    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
+    bool isctrl = bool(ev->modifiers() & Qt::ControlModifier);
     if (isctrl)
     {
         /* no code yet */
     }
     else
     {
-        bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
+        bool isshift = bool(ev->modifiers() & Qt::ShiftModifier);
         midipulse s = snap() > 0 ? snap() : 1 ;
-        if (event->key() == Qt::Key_Left)
+        if (ev->key() == Qt::Key_Left)
         {
             if (m_move_L_marker)        /* set by Shift-L, unset by Shift-R */
             {
@@ -463,9 +464,9 @@ qseqtime::keyPressEvent (QKeyEvent * event)
                 perf().set_right_tick_snap(tick, snap());
             }
             set_dirty();
-            event->accept();
+            ev->accept();
         }
-        else if (event->key() == Qt::Key_Right)
+        else if (ev->key() == Qt::Key_Right)
         {
             if (m_move_L_marker)        /* set by Shift-L, unset by Shift-R */
             {
@@ -482,22 +483,22 @@ qseqtime::keyPressEvent (QKeyEvent * event)
                 perf().set_right_tick_snap(tick, snap());
             }
             set_dirty();
-            event->accept();
+            ev->accept();
         }
-        else if (event->key() == Qt::Key_L)
+        else if (ev->key() == Qt::Key_L)
         {
             if (isshift)
             {
                 m_move_L_marker = true;
-                event->accept();
+                ev->accept();
             }
         }
-        else if (event->key() == Qt::Key_R)
+        else if (ev->key() == Qt::Key_R)
         {
             if (isshift)
             {
                 m_move_L_marker = false;
-                event->accept();
+                ev->accept();
             }
         }
     }

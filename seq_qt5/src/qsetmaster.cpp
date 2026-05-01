@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2023-11-11
+ * \updates       2026-04-23
  * \license       GNU GPLv2 or above
  *
  *  The set-master controls the existence and usage of all sets.  For control
@@ -419,6 +419,13 @@ qsetmaster::slot_set_0 ()
 void
 qsetmaster::closeEvent (QCloseEvent * event)
 {
+    /*
+     * ca 2026-04-23 Let's stop the timer first.
+     */
+
+    if (not_nullptr(m_timer))
+        m_timer->stop();
+
     cb_perf().unregister(this);            /* unregister this immediately      */
     if (not_nullptr(m_main_window))
         m_main_window->remove_set_master();

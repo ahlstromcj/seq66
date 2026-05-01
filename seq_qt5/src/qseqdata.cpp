@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-04-21
+ * \updates       2026-04-30
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -607,14 +607,14 @@ qseqdata::resizeEvent (QResizeEvent * qrep)
 }
 
 void
-qseqdata::mousePressEvent (QMouseEvent * event)
+qseqdata::mousePressEvent (QMouseEvent * ev)
 {
-    int mouse_x = event->x() - c_keyboard_padding_x + scroll_offset_x();
-    int mouse_y = event->y();
-    midipulse tick_start = z().pix_to_tix(mouse_x - 8);     /* 2; never fires!  */
-    midipulse tick_finish = z().pix_to_tix(mouse_x + 8);    /* 2; ditto         */
-    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
-    if (event->button() == Qt::RightButton)
+    int mouse_x = qt_mouse_x(ev) - c_keyboard_padding_x + scroll_offset_x();
+    int mouse_y = qt_mouse_y(ev);
+    midipulse tick_start = z().pix_to_tix(mouse_x - 8);
+    midipulse tick_finish = z().pix_to_tix(mouse_x + 8);
+    bool isctrl = bool(ev->modifiers() & Qt::ControlModifier);
+    if (ev->button() == Qt::RightButton)
     {
         m_dragging = m_line_adjust = false;
         return;
@@ -687,13 +687,13 @@ qseqdata::mousePressEvent (QMouseEvent * event)
  */
 
 void
-qseqdata::mouseReleaseEvent (QMouseEvent * event)
+qseqdata::mouseReleaseEvent (QMouseEvent * ev)
 {
-    bool ismodded = bool(event->modifiers() & Qt::ControlModifier) ||
-        bool(event->modifiers() & Qt::ShiftModifier);
+    bool ismodded = bool(ev->modifiers() & Qt::ControlModifier) ||
+        bool(ev->modifiers() & Qt::ShiftModifier);
 
-    current_x(int(event->x()) - c_keyboard_padding_x + scroll_offset_x());
-    current_y(int(event->y()));
+    current_x(qt_mouse_x(ev) - c_keyboard_padding_x + scroll_offset_x());
+    current_y(qt_mouse_y(ev));
     if (m_line_adjust)
     {
         if (current_x() < drop_x())
@@ -751,17 +751,17 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
 }
 
 void
-qseqdata::mouseMoveEvent (QMouseEvent * event)
+qseqdata::mouseMoveEvent (QMouseEvent * ev)
 {
 #if defined SEQ66_TRACK_DATA_EDITING_MOVEMENTS
     midipulse tick_s, tick_f;
 #endif
 
-    bool ismodded = bool(event->modifiers() & Qt::ControlModifier) ||
-        bool(event->modifiers() & Qt::ShiftModifier);
+    bool ismodded = bool(ev->modifiers() & Qt::ControlModifier) ||
+        bool(ev->modifiers() & Qt::ShiftModifier);
 
-    current_x(int(event->x()) - c_keyboard_padding_x);
-    current_y(int(event->y()));
+    current_x(qt_mouse_x(ev) - c_keyboard_padding_x);
+    current_y(qt_mouse_y(ev));
     m_mouse_tick = -1;
     if (m_drag_handle)
     {

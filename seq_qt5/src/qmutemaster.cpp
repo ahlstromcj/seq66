@@ -624,6 +624,14 @@ void
 qmutemaster::closeEvent (QCloseEvent * event)
 {
     cb_perf().unregister(this);            /* unregister this immediately   */
+
+    /*
+     * ca 2026-04-23 Let's stop the timer first.
+     */
+
+    if (not_nullptr(m_timer))
+        m_timer->stop();
+
     event->accept();
 }
 

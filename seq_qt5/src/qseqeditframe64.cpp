@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-04-21
+ * \updates       2026-04-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1428,6 +1428,13 @@ qseqeditframe64::zoom_key_press (bool shifted, int key)
 void
 qseqeditframe64::closeEvent (QCloseEvent * event)
 {
+    /*
+     * ca 2026-04-23 Let's stop the timer first.
+     */
+
+    if (not_nullptr(m_timer))
+        m_timer->stop();
+
     remove_lfo_frame();
     remove_patternfix_frame();
     event->accept();
@@ -4790,7 +4797,14 @@ qseqeditframe64::remove_lfo_frame ()
 {
     if (not_nullptr(m_lfo_wnd))
     {
+        /*
+         * ca 2026-04-23 This can cause a segfault eventlist::operator = ()
+         * if this dialog is open when opening another MIDI file.
+         */
+
+#if defined USE_RESET_HERE
         m_lfo_wnd->reset();             /* cancel modifications             */
+#endif
         m_lfo_wnd->close();
     }
 }

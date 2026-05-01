@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-10-14
+ * \updates       2026-04-30
  * \license       GNU GPLv2 or above
  *
  *  We've added the feature of a right-click toggling between showing the main
@@ -233,18 +233,18 @@ qseqkeys::paintEvent (QPaintEvent *)
 }
 
 void
-qseqkeys::mousePressEvent (QMouseEvent * event)
+qseqkeys::mousePressEvent (QMouseEvent * ev)
 {
-    if (event->button() == Qt::LeftButton)
+    if (ev->button() == Qt::LeftButton)
     {
         int note;
-        int y = event->y();
+        int y = qt_mouse_y(ev);
         convert_y(y, note);
         preview_key(note);
         preview_on(true);
         track().play_note_on(note);
     }
-    else if (event->button() == Qt::RightButton)
+    else if (ev->button() == Qt::RightButton)
     {
         preview_key(sc_null_key);
         switch (m_show_key_names)
@@ -274,9 +274,9 @@ qseqkeys::mousePressEvent (QMouseEvent * event)
 }
 
 void
-qseqkeys::mouseReleaseEvent (QMouseEvent * event)
+qseqkeys::mouseReleaseEvent (QMouseEvent * ev)
 {
-    if (event->button() == Qt::LeftButton)
+    if (ev->button() == Qt::LeftButton)
     {
         if (previewing())
         {
@@ -292,7 +292,7 @@ qseqkeys::mouseReleaseEvent (QMouseEvent * event)
 }
 
 void
-qseqkeys::mouseMoveEvent (QMouseEvent * /* event */)
+qseqkeys::mouseMoveEvent (QMouseEvent * /* ev */)
 {
     if (previewing())
     {

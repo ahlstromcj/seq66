@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-04-18
+ * \updates       2026-04-23
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1116,6 +1116,13 @@ qsmainwnd::enable_bus_item (int bus, bool enabled)
 void
 qsmainwnd::closeEvent (QCloseEvent * event)
 {
+    /*
+     * ca 2026-04-23 Let's stop the timer first.
+     */
+
+    if (not_nullptr(m_timer))
+        m_timer->stop();
+
     if (usr().in_nsm_session())
     {
         session_message("Close event with NSM");
@@ -3189,9 +3196,7 @@ qsmainwnd::load_qperfedit (bool /*on*/)
         }
     }
     else
-    {
         hide_qperfedit();
-    }
 }
 
 /**

@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2026-04-15
+dnl \update        2026-05-01
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -17,9 +17,13 @@ dnl   Process this file with bootstrap (autoconf) to produce a configure
 dnl   script.  Run "./bootstrap --help" for more information, or read the
 dnl   INSTALL file.
 dnl
+dnl Issue: #145. Reduce the autoconf version by 1.
+dnl
+dnl AC_PREREQ([2.72])
+dnl
 dnl ---------------------------------------------------------------------------
 
-AC_PREREQ([2.72])
+AC_PREREQ([2.71])
 AC_REVISION($Revision: 0.99$)
 AC_INIT([Seq66],[0.99.24],[ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])
@@ -563,7 +567,7 @@ dnl      macros automatically.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2026-04-15"
+#define VERSION_DATE_SHORT "2026-05-01"
 #define API_VERSION "0.99"
 #define VERSION "0.99.24"
 

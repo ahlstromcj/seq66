@@ -1,23 +1,43 @@
-Release Notes for Seq66 v. 0.99.24 2026-04-15 "What a Qt, 6!"
+Release Notes for Seq66 v. 0.99.24 2026-05-01 "Mitt Igation"
 
-This release contains fixes and updates for Qt as well as
-a number of other issues discovered.
+This release contains some minor feature updates and fixes.
 
--   Main window and grid.
-  - At startup, instead of setting argv[0] as app-info, get
-    the executable's path from Qt.
-  - Now uses the populate\_midich\_combo() function.
+- Pattern editor.
+    - Added the display of a drum-note's name when in drum
+      mode and hovering near a drum-note to modify it.
+    - Added the ability to show hex numbers for the standard
+      MIDI controller events.
+    - Added two buttons, one that toggles showing certain numbers
+      between hexadecimal and decimal format, and
+      the other toggles showing level numbers to reduce
+      clutter.
 - Event editor.
-  - A new button for either Control or Program changes pops
-    up the menus for Control Changes and Program Changes.
-  - Various fixes to controller and patch naming and handling.
-- Added the populate\_midich\_combo() function to the
-  qt5helpers module.
-- Added the drums module for GM/non-GM drum notes.
-- Palettes.
-  - Updated the incrypt-66.palette file.
-- Fixed some Qt6 deprecations.
-- Documentation updated. Additional pictures for Event editor.
+    - Added the ability to show hex numbers for standard
+      MIDI controller events.
+- Backed autoconf version from 2.72 to 2.71 re issue #145.
+- Fixed some more QMouseEvent x()/y() deprecations found by Clang.
+- qseq66.rc.
+    - Change auto-rc-save to default to false.
+    - Added a flag so that the 'rc' file can be saved at
+      first run (no existing configuration files) without
+      setting auto-rc-save.
+- Main window.
+    - Fixed a random segfault when the "Remap & Restart" pops up
+      if a pattern editor is open, the user clicks OK, selects a
+      different tune is selected.
+    - A similar segfault with the "Unavailable port" message.
+      The fix is to stop the qseqeditframe64 timer before
+      the close() call.
+    - A similar segfault with the "LFO" dialog. Fixed by no
+      longer resetting the MIDI events when the close event
+      occurs.
+- Pattern editor.
+    - Mitigated issue #144 (painted notes misplaced in time)
+      for normal notes and drum notes by adjusting the
+      snap point.
+- Fixed more Qt6 deprecations. QtCreator to use Qt 6 namespaces.
+- Added a Windows installer for this release. A user request!
+- Documentation updated.
 - Moved the LICENSE files to "licenses" sub-directory.
 
 See NEWS for many more details.

@@ -1,7 +1,10 @@
 TO DO for Seq66 0.99.24
 Chris Ahlstrom
-2019-04-13 to 2026-04-22
+2019-04-13 to 2026-04-29
 
+    -   Change the build system to Meson.
+    -   Port more Qt6-deprecation fixes from the (not yet public)
+        Meson build once that works fully.
     -   Fix positioning of data pane text in the various modes.
     -   Make controller values movable in the data pane just
         like patch values. Show the number in addition to the
@@ -14,6 +17,9 @@ Chris Ahlstrom
         segfault when prompted to remap and restart. "Unavailable".
         Partly fixed: can still occur with multiple pattern editors
         plus a song editor window; fix the external song editor.
+        Test this with pattern-fix, LFO, and other dialogs!
+    -   On Arch, with many pattern editors and one song editor open,
+        loading a new file leaves the song editor open.
     -   Issues #102, #137, #138
 
 Features:

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-01-23
+ * \updates       2026-04-30
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -335,10 +335,10 @@ qperftime::mousePressEvent (QMouseEvent * ev)
     if (snap() > 0)
         tick -= (tick % snap());
 
-    if (qt_mouse_y(ev) > height() / 2)                      /* see banner note  */
+    if (qt_mouse_y(ev) > height() / 2)                  /* see banner note  */
     {
         bool isctrl = bool(ev->modifiers() & Qt::ControlModifier);
-        if (ev->button() == Qt::LeftButton)          /* move L/R markers */
+        if (ev->button() == Qt::LeftButton)             /* move L/R markers */
         {
             if (isctrl)
                 perf().set_tick(tick, true);            /* set_start_tick() */
@@ -355,7 +355,7 @@ qperftime::mousePressEvent (QMouseEvent * ev)
             }
             set_dirty();
         }
-        else if (ev->button() == Qt::MiddleButton)   /* set start tick   */
+        else if (ev->button() == Qt::MiddleButton)      /* set start tick   */
         {
             perf().set_tick(tick, true);                /* set_start_tick() */
             set_dirty();
@@ -386,7 +386,8 @@ qperftime::mouseMoveEvent (QMouseEvent * ev)
 {
     setCursor
     (
-        qt_mouse_y(ev) > height() / 2 ? Qt::PointingHandCursor : Qt::UpArrowCursor
+        qt_mouse_y(ev) > height() / 2 ?
+            Qt::PointingHandCursor : Qt::UpArrowCursor
     );
 }
 

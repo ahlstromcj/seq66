@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2022-02-16
+ * \updates       2024-04-30
  * \license       GNU GPLv2 or above
  *
  *  This mastermidibus module is the Linux (and, soon, JACK) version of the
@@ -107,7 +107,8 @@ protected:
         midi_master().api_flush();
     }
 
-    virtual void api_port_start (mastermidibus & masterbus, int bus, int port)
+    /* virtual */
+    void api_port_start (mastermidibus & masterbus, int bus, int port)
     {
         midi_master().api_port_start(masterbus, bus, port);
     }
