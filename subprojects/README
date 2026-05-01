@@ -1,0 +1,9 @@
+Seq66 Subprojects Directory
+Chris Ahlstrom
+2026-04-23 to 2026-04-23
+
+The "subprojects" directory shall support (eventually) usage of the potext
+library plus the lib66 headers-only library, as subprojects that get
+downloaded from GitHub.
+
+# vim: sw=4 ts=4 wm=8 et ft=sh

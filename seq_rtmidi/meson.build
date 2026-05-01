@@ -1,0 +1,82 @@
+#*****************************************************************************
+# meson.build (seq66)
+#-----------------------------------------------------------------------------
+##
+# \file        seq_rtmidi/meson.build
+# \library     seq66
+# \author      Chris Ahlstrom
+# \date        2026-04-25
+# \updates     2026-04-29
+# \license     $XPC_SUITE_GPL_LICENSE$
+#
+#  This file is part of the "seq66" library. See the top-level meson.build
+#  file for license information.
+#
+#-----------------------------------------------------------------------------
+
+message('Processing seq_rtmidi...')
+
+libseq_rtmidi_library = 'seq_rtmidi'
+
+subdir('include')
+subdir('src')
+
+if seq66_use_potext
+
+   seq_rtmidi_build = library(
+      libseq_rtmidi_library,
+      seq_rtmidi_sources,
+      install : false,                 # not seq66_subproj,
+      install_dir : seq66_libdir,
+      c_args : build_args,
+      cpp_args : build_args,
+      dependencies : [
+         system_depends, liblib66_library_dep,
+#        libcfg66_library_dep,
+#        libxpc66_library_dep,
+         libpotext_library_dep
+         ],
+      include_directories : [ seq66_includes ]
+      )
+
+else
+
+   seq_rtmidi_build = library(
+      libseq_rtmidi_library,
+      seq_rtmidi_sources,
+      install : false,                 # not seq66_subproj,
+      install_dir : seq66_libdir,
+      c_args : build_args,
+      cpp_args : build_args,
+      dependencies : [
+         system_depends, liblib66_library_dep
+#        libcfg66_library_dep,
+#        libxpc66_library_dep
+         ],
+      include_directories : [ seq66_includes ]
+      )
+
+endif
+
+if not seq66_subproj
+
+   pkg_mod = import('pkgconfig')
+   pkg_mod.generate(
+      seq_rtmidi_build,
+      filebase : seq66_pkgconfig_name,
+      version : seq66_pkg_version,
+      name : seq66_project_base,
+      description : seq66_pkg_description,
+      install_dir : alt_pkgconfig_libdir,
+      subdirs : seq66_dir,
+      libraries : seq_rtmidi_build,
+      url : seq66_url
+      )
+
+endif
+
+#****************************************************************************
+# meson.build (seq_rtmidi/seq66)
+#----------------------------------------------------------------------------
+# vim: ts=3 sw=3 ft=meson
+#----------------------------------------------------------------------------

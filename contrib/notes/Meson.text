@@ -1,0 +1,23 @@
+Changing the Build to Meson
+Chris Ahlstrom
+2026-05-01 to 2026-05-01
+
+Strategy:
+
+    -   Make a "Meson" branch.
+    -   Untar the latext wip-meson pack.
+    -   Get the build to work, even if source-code has to be edited
+        or directories move.  Count on git to handle that.
+    -   Get PDF build to work.
+    -   Get the install option to work.
+    -   Remove all Makefile.in and Makefile.am, and configure.
+    -   Verify the build.
+    -   Remove configure.ac, configure.help, autogen.sh.
+    -   Merge any bootstrap into work.sh, then remove or move
+        bootstrap and strap_functions, pack, packages.
+    -   After some consideration, decide whether or not to
+        remove the *.pro and *.pro.user files.
+
+    While in progress, port any code changes in wip to Meson.
+
+# vim: sw=3 ts=3 wm=8 et ft=sh

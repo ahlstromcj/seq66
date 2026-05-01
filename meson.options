@@ -1,0 +1,97 @@
+#*****************************************************************************
+# meson.options (seq66)
+#-----------------------------------------------------------------------------
+##
+# \file        meson.options
+# \library     seq66
+# \author      Chris Ahlstrom
+# \date        2026-04-23
+# \updates     2026-04-24
+# \license     $XPC_SUITE_GPL_LICENSE$
+#
+#  This file is part of the "seq66" application and libraries.
+#
+#  Options for seq66.  Still very tentative.
+#
+#-----------------------------------------------------------------------------
+
+option('enable-alsa',
+   type : 'boolean',
+   value : true,
+   description : 'Add ALSA to the MIDI API list in Linux builds'
+)
+
+option('enable-jack',
+   type : 'boolean',
+   value : true,
+   description : 'Add JACK to the MIDI API list in Linux builds'
+)
+
+option('jack-session',
+   type : 'boolean',
+   value : true,
+   description : 'Add JACK session support'
+)
+
+option('jack-transport',
+   type : 'boolean',
+   value : true,
+   description : 'Build JACK transport code'
+)
+
+option('enable-nsm',
+   type : 'boolean',
+   value : true,
+   description : 'Enable the use of NSM and liblo'
+)
+
+option('enable-tests',
+   type : 'boolean',
+   value : false,                            # TODO
+   description : 'Build the test program(s)'
+)
+
+option('enable-portmidi',
+   type : 'boolean',
+   value : false,
+   description : 'Enable the use of the PortMIDI-based engine'
+)
+
+option('enable-rtmidi',
+   type : 'boolean',
+   value : true,
+   description : 'Enable the use of the RtMIDI-based engine'
+)
+
+# Still working on getting this to work. Actually, for now we prefer
+# to use the command "./work.sh --pdf" to make the PDF. That is consistent
+# with our other '66' libraries.
+
+option('enable-docs',
+   type : 'boolean',
+   value : false,
+   description : 'Build the LaTeX documentation'
+   )
+
+#-----------------------------------------------------------------------------
+#  We do not need to append version numbers to the documents directory.
+#-----------------------------------------------------------------------------
+
+option('docdir',
+   type : 'string',
+   value : 'share/doc/cfg66',
+   description : 'Directory where Seq66 documentation is installed.',
+   yield : true
+)
+
+option('potext',
+   type : 'boolean',
+   value : false,
+   description : 'Build the linkage test program with potext_support.'
+)
+
+#****************************************************************************
+# meson.options (seq66)
+#----------------------------------------------------------------------------
+# vim: ts=3 sw=3 ft=meson
+#----------------------------------------------------------------------------

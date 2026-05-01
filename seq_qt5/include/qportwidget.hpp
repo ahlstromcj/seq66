@@ -27,12 +27,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-01-20
- * \updates       2022-01-20
+ * \updates       2026-04-26
  * \license       GNU GPLv2 or above
  *
  */
 
-#include <QtWidgets/QWidget>
+#include <QWidget>                      /* not <QtWidgets/QWidget>          */
 
 namespace seq66
 {
@@ -51,6 +51,7 @@ namespace seq66
 
 class qportwidget : public QWidget
 {
+    Q_OBJECT
 
 public:
 

@@ -52,6 +52,7 @@
 #include "forms/ui_qliveframeex.h"
 #else
 #include "forms/qliveframeex.ui.h"
+#error Meson should not detect this include
 #endif
 
 namespace seq66

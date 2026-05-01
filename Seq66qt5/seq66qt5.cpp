@@ -103,7 +103,6 @@ main (int argc, char * argv [])
 #endif
 
     QApplication app(argc, argv);           /* main application object      */
-
     QString qapppath { QCoreApplication::applicationFilePath() };
     std::string apppath { qapppath.toStdString() };
     if (apppath.empty())

@@ -1,0 +1,199 @@
+#if ! defined SEQ66_CONFIG_H
+#define SEQ66_CONFIG_H
+
+/*
+ *  This file is part of seq66.
+ *
+ *  libs66 is free software; you can redistribute it and/or modify it under
+ *  the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  libs66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with libs66; if not, write to the Free Software Foundation, Inc., 59
+ *  Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+/**
+ * \file          seq66-config.h (seq66-config.h.in)
+ *
+ *  This header file provide "HAVE" definitions based on detected C/C++
+ *  system header files.
+ *
+ * \library       seq66
+ * \author        Chris Ahlstrom
+ * \date          2026-04-23
+ * \updates       2026-04-27
+ * \license       GNU GPL v2 or above
+ *
+ *  This file is used mainly for system files and specific build options.  The
+ *  main build options (JACK, ALSA, Windows Multimedia, etc.) are detected at
+ *  build time via the platform_macros.h module.
+ *
+ *  For information on this file, see
+ *
+ *      https://mesonbuild.com/Configuration.html
+ *
+ *  These #defines will define the macro value as 1 or 0 (that is,
+ *  true or false). The proper way to test the macro is:
+ *
+ *      #if SEQ66_HAVE_SEMAPHORE_H
+ *
+ * #define SEQ66_HAVE_JACK_METADATA_H                %jack_metadata_h%
+ * #define SEQ66_HAVE_JACK_PORT_RENAME               %jack_port_rename%
+ * #define SEQ66_HAVE_JACK_GET_VERSION_STRING        %jack_get_version_string%
+ */
+
+#if ! defined SEQ66_HAVE_LIMITS_H
+
+#define SEQ66_GNU_SOURCE                @gnu_source@
+#define SEQ66_HAVE_ASSERT_H             @assert_h@
+#define SEQ66_HAVE_CTYPE_H              @ctype_h@
+#define SEQ66_HAVE_DIR_H                @dir_h@
+#define SEQ66_HAVE_ERRNO_H              @errno_h@
+#define SEQ66_HAVE_FCNTL_H              @fcntl_h@
+#define SEQ66_HAVE_GETOPT_H             @getopt_h@
+#define SEQ66_HAVE_GLOB_H               @glob_h@
+#define SEQ66_HAVE_LIMITS_H             @limits_h@
+#define SEQ66_HAVE_PTHREAD_H            @pthread_h@
+#define SEQ66_HAVE_PTHREAD_PRIO_INHERIT @pthread_h@
+#define SEQ66_HAVE_SCHED_H              @sched_h@
+#define SEQ66_HAVE_SHARE_H              @share_h@
+#define SEQ66_HAVE_SIGNAL_H             @signal_h@
+#define SEQ66_HAVE_STDINT_H             @stdint_h@
+#define SEQ66_HAVE_STDIO_H              @stdio_h@
+#define SEQ66_HAVE_STDLIB_H             @stdlib_h@
+#define SEQ66_HAVE_STRING_H             @string_h@
+#define SEQ66_HAVE_SYS_MMAN_H           @sys_mman_h@
+#define SEQ66_HAVE_SYS_STAT_H           @sys_stat_h@
+#define SEQ66_HAVE_SYS_TYPES_H          @sys_types_h@
+#define SEQ66_HAVE_SYSLOG_H             @syslog_h@
+#define SEQ66_HAVE_TIME_H               @time_h@
+#define SEQ66_HAVE_SEMAPHORE_H          @semaphore_h@
+#define SEQ66_HAVE_UNISTD_H             @unistd_h@
+
+#endif  // defined SEQ66_HAVE_LIMITS_H
+
+#define SEQ66_API_VERSION               @api_version@
+#define SEQ66_DEBUG_BUILD               @debug_build@
+#if SEQ66_DEBUG_BUILD == 1
+#define SEQ66_PLATFORM_DEBUG
+#else
+#define SEQ66_PLATFORM_RELEASE
+#endif
+
+#define SEQ66_APP_BUILD_ISSUE           @app_build_issue@
+#define SEQ66_APP_BUILD_OS              @app_build_os@
+
+/*
+ * We will always build both the GUI and CLI.
+ *
+ * Meson creates ui-h files in the Qmake manner.
+ */
+
+#define SEQ66_QMAKE_RULES               1
+#define SEQ66_APP_CLI                   1
+#define SEQ66_DBGFLAGS                  "-O0 -DDEBUG -D_DEBUG -fno-inline"
+#define SEQ66_PACKAGE_BUGREPORT         "ahlstromcj@gmail.com"
+#define SEQ66_PACKAGE_NAME              "Seq66"
+#define SEQ66_PACKAGE_URL               "TBD"
+
+/*
+ * More settings.
+ */
+
+#define SEQ66_APP_ENGINE                @app_engine@
+#define SEQ66_APP_NAME                  @app_name@
+#define SEQ66_APP_TYPE                  @app_type@
+#define SEQ66_CLIENT_NAME               @client_name@
+#define SEQ66_CONFIG_DIR_NAME           @config_dir_name@
+#define SEQ66_CONFIG_NAME               @config_name@
+#define SEQ66_VERSION_DATE_SHORT        @version_date_short@
+#define SEQ66_ICON_NAME                 @app_name@
+#define SEQ66_PACKAGE                   @client_name@
+#define SEQ66_VERSION                   @version@
+#define SEQ66_PACKAGE_STRING            SEQ66_PACKAGE_NAME " " @version@
+#define SEQ66_PACKAGE_VERSION           @version@
+#define SEQ66_GIT_VERSION               SEQ66_VERSION_DATE_SHORT
+
+#undef SEQ66_MIDI_PORT_REFRESH
+
+/*
+ *  ALSA support macros. We have to tippy-toe around because we
+ *  don't want to edit source code while porting the build process
+ *  to Meson. TODO: fix seq_rtmidi/include/midi_alsa.hpp to
+ *  use "#if defined" instead of just "#if".
+ */
+
+#define SEQ66_HAVE_ALSA                 @alsa_support@
+#if SEQ66_HAVE_ALSA
+#define SEQ66_HAVE_LIBASOUND            1   // see above
+#endif
+
+/*
+ * JACK support macros.
+ */
+
+#define SEQ66_HAVE_JACK                 @jack_support@
+#if SEQ66_HAVE_JACK
+#define SEQ66_JACK_GET_VERSION_STRING   @jack_get_version_string@
+#define SEQ66_JACK_METADATA             @jack_metadata_h@
+#define SEQ66_JACK_PORT_RENAME          @jack_port_rename@
+#define SEQ66_JACK_SESSION
+#define SEQ66_JACK_SUPPORT
+#define SEQ66_JACK_TRANSPORT
+#endif
+
+/*
+ * The LIBLO library is unavailable on Windows.  Don't know about Mac!
+ * Set if support for the New/Non Session Manager is enabled.
+ */
+
+#define SEQ66_HAVE_LIBLO                @liblo_support@
+#if SEQ66_HAVE_LIBLO
+#define SEQ66_LIBLO_SUPPORT
+#define SEQ66_NSM_SUPPORT
+#endif
+
+/*
+ * Chooses which internal MIDI engine is used, the one derived from
+ * PortMIDI (Windows/Mac) or RtMIDI (Linux).
+ *
+ * The reason for the split is the PortMIDI support was already in
+ * places, so we did not use RtMIDI for Windows/Mac.
+ */
+
+#define SEQ66_REQUESTED_PORTMIDI        @portmidi_support@
+#if SEQ66_REQUESTED_PORTMIDI
+#define SEQ66_PORTMIDI_SUPPORT
+#endif
+
+#define SEQ66_REQUESTED_RTMIDI          @rtmidi_support@
+#if SEQ66_REQUESTED_RTMIDI
+#define SEQ66_RTMIDI_SUPPORT
+#endif
+
+#define SEQ66_REQUESTED_WINDOWS         @windows_support@
+#if SEQ66_REQUESTED_WINDOWS
+#define SEQ66_WINDOWS_SUPPORT
+#endif
+
+/*
+ * For testing only.  Verify that build/include/seq66-config.h defines this
+ * macro as "False".
+ *
+ * #define SEQ66_SEQ66_HAVE_DUMMY_H      #dummy_h#    // at signs changed
+ */
+
+#endif          // SEQ66_CONFIG_H
+
+/*
+ * seq66-config.h (seq66-config.h.in)
+ *
+ * vim: sw=4 ts=4 wm=4 et ft=c
+ */
