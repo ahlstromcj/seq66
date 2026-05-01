@@ -1,5 +1,93 @@
+2026-05-01  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, RELNOTES, TODO, VERSION, aux-files/ltmain.sh, configure,
+	configure.ac, data/license.text, data/readme.text,
+	data/readme.windows, doc/latex/tex/seq66-user-manual.tex,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat,
+	seq_qt5/src/qlfoframe.cpp, seq_qt5/src/qmutemaster.cpp,
+	seq_qt5/src/qperftime.cpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqkeys.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qseqtime.cpp,
+	seq_qt5/src/qsetmaster.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_rtmidi/include/mastermidibus_rm.hpp,
+	seq_rtmidi/include/midibus_rm.hpp: Worked on issues #144 and #144,
+	mitigated segfaults.
+
+2026-04-22  Chris <ahlstromcj@gmail.com>
+
+	* INSTALL, Install.seq66.on.Ubuntu.md =>
+	INSTALL.seq66.on.Ubuntu.md, NEWS, README.md, TODO,
+	INSTALL4Ubuntu.md => contrib/notes/INSTALL4Ubuntu.md,
+	contrib/notes/bvi.text, doc/latex/tex/midi_formats.tex,
+	seq_qt5/forms/qlfoframe.ui, seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qseqeditex.cpp, seq_qt5/src/qseqeditframe64.cpp: Changed
+	INSTALL for Ub Studio, fixed 2nd restart segfault, doc updates.
+
+2026-04-21  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, doc/latex/tex/palettes.tex,
+	doc/latex/tex/pattern_editor.tex, resources/pixmaps/hex_off.xpm,
+	resources/pixmaps/hex_on.xpm, resources/pixmaps/numbers_off.xpm,
+	resources/pixmaps/numbers_on.xpm, seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/include/qseqdata.hpp, seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe64.cpp: Added
+	numbers button in pattern editor to show/hide some data pane
+	numbers.
+	* NEWS, seq_qt5/forms/qlfoframe.ui, seq_qt5/forms/qliveframeex.ui,
+	seq_qt5/forms/qmutemaster.ui, seq_qt5/forms/qpatternfix.ui,
+	seq_qt5/forms/qperfeditex.ui, seq_qt5/forms/qperfeditframe64.ui,
+	seq_qt5/forms/qplaylistframe.ui, seq_qt5/forms/qsabout.ui,
+	seq_qt5/forms/qsappinfo.ui, seq_qt5/forms/qsbuildinfo.ui,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/forms/qseqeditex.ui,
+	seq_qt5/forms/qseqeditframe64.ui, seq_qt5/forms/qseqeventframe.ui,
+	seq_qt5/forms/qsessionframe.ui, seq_qt5/forms/qsetmaster.ui,
+	seq_qt5/forms/qslivegrid.ui, seq_qt5/forms/qslogview.ui,
+	seq_qt5/forms/qsmainwnd.ui, seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qseqeditframe64.cpp: Added hex button in pattern editor,
+	touched all ui files to get new Qt6 namespaces.
+
+2026-04-20  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, contrib/midi/README, contrib/notes/RPN.text,
+	data/win/qpseq66.mutes, libseq66/include/midi/controllers.hpp,
+	libseq66/src/midi/controllers.cpp, seq_qt5/include/palettefile.hpp,
+	seq_qt5/src/palettefile.cpp, seq_qt5/src/qmutemaster.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqeventframe.cpp: A
+	couple of NRPN MIDI files added, hex display of controller event
+	numbers.
+
+2026-04-18  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, aux-files/ltmain.sh, configure, data/linux/qseq66.rc,
+	doc/latex/tex/pattern_editor.tex, include/config.h.in,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/drums.hpp, libseq66/include/seq66_features.h,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/midi/drums.cpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/include/qseqdata.hpp,
+	seq_qt5/include/qseqroll.hpp, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: Mitigated issue #144, fixed potential
+	remap crash, display of drum note names, auto-save-rc no longer
+	defaults to true.
+
+2026-04-16  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES, TODO, VERSION, configure.ac,
+	data/license.text, data/readme.text, data/readme.windows,
+	doc/latex/tex/seq66-user-manual.tex,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat: Version
+	increment to wip 0.99.24.
+
 2026-04-15  Chris <ahlstromcj@gmail.com>
 
+	* : Merged qt6-->master-->wip.
 	* NEWS, RELNOTES, Seq66qt5/seq66qt5.cpp, TODO, contrib/scripts/gvo,
 	contrib/scripts/vd, contrib/scripts/vo, data/readme.text,
 	data/readme.windows, data/samples/incrypt-66.palette,
