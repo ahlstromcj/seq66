@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2025-10-19
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -99,7 +99,7 @@
  */
 
 #if defined SEQ66_QMAKE_RULES
-#include "forms/ui_qslivegrid.h"
+#include "ui_qslivegrid.h"
 #else
 #include "forms/qslivegrid.ui.h"
 #endif

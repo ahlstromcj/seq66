@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-01-23
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -46,7 +46,7 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "util/rect.hpp"                /* seq66::rect::xy_to_rect_get()    */
 #include "gui_palette_qt5.hpp"
-#include "qperfeditframe64.hpp"
+#include "gui/qperfeditframe64.hpp"
 #include "qperfnames.hpp"
 #include "qperfroll.hpp"
 #include "qt5_helpers.hpp"              /* seq66::qt_timer()                */

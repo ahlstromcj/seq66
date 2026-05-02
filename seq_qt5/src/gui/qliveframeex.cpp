@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-16
- * \updates       2021-11-19
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  This frame holds an external "Live" window that shows the grid of buttons
@@ -49,7 +49,7 @@
  */
 
 #if defined SEQ66_QMAKE_RULES
-#include "forms/ui_qliveframeex.h"
+#include "ui_qliveframeex.h"
 #else
 #include "forms/qliveframeex.ui.h"
 #error Meson should not detect this include

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2025-08-18
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
@@ -39,8 +39,8 @@
 #include <QSpacerItem>
 
 #include "play/performer.hpp"           /* seq66::performer class           */
+#include "gui/qseditoptions.hpp"        /* seq66::qseditoptions class       */
 #include "qclocklayout.hpp"             /* seq66::qclocklayout class        */
-#include "qseditoptions.hpp"            /* seq66::qseditoptions class       */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
 namespace seq66

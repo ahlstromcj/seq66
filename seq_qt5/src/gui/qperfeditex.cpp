@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-21
- * \updates       2026-04-27
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -46,7 +46,7 @@
  */
 
 #if defined SEQ66_QMAKE_RULES           // meson or qmake build
-#include "forms/ui_qperfeditex.h"
+#include "ui_qperfeditex.h"
 #else                                   // autoconf build
 #include "forms/qperfeditex.ui.h"
 #endif

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-04-23
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  The set-master controls the existence and usage of all sets.  For control
@@ -49,7 +49,7 @@
  */
 
 #if defined SEQ66_QMAKE_RULES
-#include "forms/ui_qsetmaster.h"
+#include "ui_qsetmaster.h"
 #else
 #include "forms/qsetmaster.ui.h"
 #endif

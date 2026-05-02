@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-04-28
+# \update         2026-05-02
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -30,7 +30,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-04-28"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-02"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -252,6 +252,7 @@ fi
 PROJECTSDIR="libraries"
 
 if test $DOCLEAN = "yes" ; then
+   rm -rf build/Desktop-Debug/
    rm -rf build/doc/
    rm -rf build/doxlatex/
    rm -rf build/include/

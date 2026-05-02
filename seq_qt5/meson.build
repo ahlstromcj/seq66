@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-26
-# \updates     2026-04-29
+# \updates     2026-05-02
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -42,37 +42,126 @@ message('Processing seq_qt6...')
 libseq_qt5_library = 'seq_qt5'
 
 #-----------------------------------------------------------------------------
-# subdir('forms')
+# From 'forms', 'include', and 'src', moved to 'src/gui".
 #-----------------------------------------------------------------------------
 
 seq_ui_forms += files(
-   'forms/qlfoframe.ui',
-   'forms/qliveframeex.ui',
-   'forms/qmutemaster.ui',
-   'forms/qpatternfix.ui',
-   'forms/qperfeditex.ui',
-   'forms/qperfeditframe64.ui',
-   'forms/qplaylistframe.ui',
-   'forms/qsabout.ui',
-   'forms/qsappinfo.ui',
-   'forms/qsbuildinfo.ui',
-   'forms/qseditoptions.ui',
-   'forms/qseqeditex.ui',
-   'forms/qseqeditframe64.ui',
-   'forms/qseqeventframe.ui',
-   'forms/qsessionframe.ui',
-   'forms/qsetmaster.ui',
-   'forms/qslivegrid.ui',
-   'forms/qslogview.ui',
-   'forms/qsmainwnd.ui'
+   'src/gui/qlfoframe.ui',
+   'src/gui/qliveframeex.ui',
+   'src/gui/qmutemaster.ui',
+   'src/gui/qpatternfix.ui',
+   'src/gui/qperfeditex.ui',
+   'src/gui/qperfeditframe64.ui',
+   'src/gui/qplaylistframe.ui',
+   'src/gui/qsabout.ui',
+   'src/gui/qsappinfo.ui',
+   'src/gui/qsbuildinfo.ui',
+   'src/gui/qseditoptions.ui',
+   'src/gui/qseqeditex.ui',
+   'src/gui/qseqeditframe64.ui',
+   'src/gui/qseqeventframe.ui',
+   'src/gui/qsessionframe.ui',
+   'src/gui/qsetmaster.ui',
+   'src/gui/qslivegrid.ui',
+   'src/gui/qslogview.ui',
+   'src/gui/qsmainwnd.ui'
 )
 
-#-----------------------------------------------------------------------------
-# subdir('include')
-#-----------------------------------------------------------------------------
+#------------------------------------------------------------------
+# Headers containing Q_OBJECT and associated with a *.ui file.
+# Only such files get moc'ed.
+#------------------------------------------------------------------
+
+seq_moc_headers += files(
+   'src/gui/qlfoframe.hpp',
+   'src/gui/qliveframeex.hpp',
+   'src/gui/qmutemaster.hpp',
+   'src/gui/qpatternfix.hpp',
+   'src/gui/qperfeditex.hpp',
+   'src/gui/qperfeditframe64.hpp',
+   'src/gui/qplaylistframe.hpp',
+   'src/gui/qsabout.hpp',
+   'src/gui/qsappinfo.hpp',
+   'src/gui/qsbuildinfo.hpp',
+   'src/gui/qseditoptions.hpp',
+   'src/gui/qseqeditex.hpp',
+   'src/gui/qseqeditframe64.hpp',
+   'src/gui/qseqeventframe.hpp',
+   'src/gui/qsessionframe.hpp',
+   'src/gui/qsetmaster.hpp',
+   'src/gui/qslivegrid.hpp',
+   'src/gui/qslogview.hpp',
+   'src/gui/qsmainwnd.hpp'
+   )
+
+seq_moc_sources += files(
+   'src/gui/qlfoframe.cpp',
+   'src/gui/qliveframeex.cpp',
+   'src/gui/qmutemaster.cpp',
+   'src/gui/qpatternfix.cpp',
+   'src/gui/qperfeditex.cpp',        # see comment above
+   'src/gui/qperfeditframe64.cpp',
+   'src/gui/qplaylistframe.cpp',
+   'src/gui/qsabout.cpp',
+   'src/gui/qsappinfo.cpp',
+   'src/gui/qsbuildinfo.cpp',
+   'src/gui/qseditoptions.cpp',
+   'src/gui/qseqeditex.cpp',
+   'src/gui/qseqeditframe64.cpp',
+   'src/gui/qseqeventframe.cpp',
+   'src/gui/qsessionframe.cpp',
+   'src/gui/qsetmaster.cpp',
+   'src/gui/qslivegrid.cpp',
+   'src/gui/qslogview.cpp',
+   'src/gui/qsmainwnd.cpp'
+)
 
 #------------------------------------------------------------------
-# Regular headers
+# More header Headers containing Q_OBJECT, but no associated
+# *.ui file
+#------------------------------------------------------------------
+
+seq_q_object_headers += files(
+   'include/qclocklayout.hpp',
+   'include/qinputcheckbox.hpp',
+   'include/qperfnames.hpp',
+   'include/qperfroll.hpp',
+   'include/qperftime.hpp',
+   'include/qportwidget.hpp',
+   'include/qseqdata.hpp',
+   'include/qseqframe.hpp',
+   'include/qseqkeys.hpp',
+   'include/qseqroll.hpp',
+   'include/qseqtime.hpp',
+   'include/qsmaintime.hpp',
+   'include/qstriggereditor.hpp',
+   'include/qt5nsmanager.hpp'
+   )
+
+#------------------------------------------------------------------
+# The following modules do not have a corresponding .ui file,
+# but they need to be moc'd.
+#------------------------------------------------------------------
+
+seq_q_object_sources += files(
+   'src/qclocklayout.cpp',
+   'src/qinputcheckbox.cpp',
+   'src/qperfnames.cpp',
+   'src/qperfroll.cpp',
+   'src/qperftime.cpp',
+   'src/qportwidget.cpp',
+   'src/qseqdata.cpp',
+   'src/qseqframe.cpp',
+   'src/qseqkeys.cpp',
+   'src/qseqroll.cpp',
+   'src/qseqtime.cpp',
+   'src/qsmaintime.cpp',
+   'src/qstriggereditor.cpp',
+   'src/qt5nsmanager.cpp'
+)
+
+#------------------------------------------------------------------
+# Regular Qt headers, no Q_OBJECT
 #------------------------------------------------------------------
 
 seq_qt_headers += files(
@@ -89,64 +178,11 @@ seq_qt_headers += files(
    'include/qslivebase.hpp',
    'include/qslotbutton.hpp',
    'include/qt5_helper.h',
-   'include/qt5_helpers.hpp',
-)
-
-#-----------------------------------------------------------------------------
-# subdir('src')
-#-----------------------------------------------------------------------------
-
-#------------------------------------------------------------------
-# Moc headers.
-#
-# The first group has files contain Q_OBJECT, but do not get
-# moc'ed. Why? Each file has /no/ *.ui file.
-#
-# seq_no_moc_headers += files(
-#
-#------------------------------------------------------------------
-
-seq_qt_headers += files(
-   'include/qclocklayout.hpp',
-   'include/qinputcheckbox.hpp',
-   'include/qperfnames.hpp',
-   'include/qperfroll.hpp',
-   'include/qperftime.hpp',
-   'include/qportwidget.hpp',
-   'include/qseqdata.hpp',
-   'include/qseqframe.hpp',
-   'include/qseqkeys.hpp',
-   'include/qseqroll.hpp',
-   'include/qseqtime.hpp',
-   'include/qsmaintime.hpp',
-   'include/qstriggereditor.hpp'
-   )
-
-seq_moc_headers += files(
-   'include/qlfoframe.hpp',
-   'include/qliveframeex.hpp',
-   'include/qmutemaster.hpp',
-   'include/qpatternfix.hpp',
-   'include/qperfeditex.hpp',
-   'include/qperfeditframe64.hpp',
-   'include/qplaylistframe.hpp',
-   'include/qsabout.hpp',
-   'include/qsappinfo.hpp',
-   'include/qsbuildinfo.hpp',
-   'include/qseditoptions.hpp',
-   'include/qseqeditex.hpp',
-   'include/qseqeditframe64.hpp',
-   'include/qseqeventframe.hpp',
-   'include/qsessionframe.hpp',
-   'include/qsetmaster.hpp',
-   'include/qslivegrid.hpp',
-   'include/qslogview.hpp',
-   'include/qsmainwnd.hpp',
-   'include/qt5nsmanager.hpp'
+   'include/qt5_helpers.hpp'
 )
 
 #------------------------------------------------------------------
-# These files do not contain Q_OBJECT 
+# Regular Qt source files, no Q_OBJECT
 #------------------------------------------------------------------
 
 seq_qt_sources += files(
@@ -163,49 +199,7 @@ seq_qt_sources += files(
    'src/qslivebase.cpp',
    'src/qslotbutton.cpp',        # Derived from QPushButton
    'src/qt5_helpers.cpp',
-
-   #--------------------------------------------------------------
-   # The following modules do not have a corresponding .ui file.
-   #--------------------------------------------------------------
-
-   'src/qclocklayout.cpp',
-   'src/qinputcheckbox.cpp',
-   'src/qperfnames.cpp',
-   'src/qperfroll.cpp',
-   'src/qperftime.cpp',
-   'src/qportwidget.cpp',        # Derived from QWidget
-   'src/qseqdata.cpp',
-   'src/qseqframe.cpp',
-   'src/qseqkeys.cpp',
-   'src/qseqroll.cpp',
-   'src/qseqtime.cpp',
-   'src/qsmaintime.cpp',
-#  'src/qt5nsmanager.cpp',       # here, yields many qsmainwnd UR's
-   'src/qstriggereditor.cpp'
-)
-
-seq_moc_sources += files(
-   'src/qlfoframe.cpp',
-   'src/qliveframeex.cpp',
-   'src/qmutemaster.cpp',
-   'src/qpatternfix.cpp',
-   'src/qperfeditex.cpp',        # see comment above
-   'src/qperfeditframe64.cpp',
-   'src/qplaylistframe.cpp',
-   'src/qsabout.cpp',
-   'src/qsappinfo.cpp',
-   'src/qsbuildinfo.cpp',
-   'src/qseditoptions.cpp',
-   'src/qseqeditex.cpp',
-   'src/qseqeditframe64.cpp',
-   'src/qseqeventframe.cpp',
-   'src/qsessionframe.cpp',
-   'src/qsetmaster.cpp',
-   'src/qslivegrid.cpp',
-   'src/qslogview.cpp',
-   'src/qt5nsmanager.cpp',
-   'src/qsmainwnd.cpp'
-)
+   )
 
 #-----------------------------------------------------------------------------
 # Import the Qt[56] module, then find Qt dependencies and specific modules.
@@ -214,6 +208,9 @@ seq_moc_sources += files(
 # supported, it is recommended to use the more specific compile_moc,
 # compile_ui, and compile_resources methods. Since the former does not work,
 # let's try the latter.
+#
+# With "sources : seq_moc_sources" added to compile_moc, we get good files
+# but all *.moc are empty.
 #-----------------------------------------------------------------------------
 
 qtname = 'qt6'
@@ -224,28 +221,31 @@ qt_include_dir = qt_dep.get_variable(
    )
 message(qtname + ' headers are in: ' + qt_include_dir)
 
-moc_files = qtimport.compile_moc(
-   headers : seq_moc_headers,
-   sources : seq_moc_sources,
-   extra_args: [ ],
-   include_directories: [ seq66_includes ],
-   dependencies: qt_dep
+seq_moc_defines  = []
+seq_moc_files = qtimport.compile_moc(
+   headers : [ seq_moc_headers, seq_q_object_headers ],
+   extra_args: seq_moc_defines #,
+#  include_directories: [ seq66_includes ],
+#  dependencies: qt_dep
    )
 
-ui_files = qtimport.compile_ui(
-   sources : seq_ui_forms,
-   preserve_paths : true
+seq_ui_files = qtimport.compile_ui(
+   sources : seq_ui_forms
+#  preserve_paths : true
    )
 
+'''
 if seq66_use_potext
 
    seq_qt_build = library(
       libseq_qt5_library,
+#     [ seq_qt_sources, seq_moc_sources, moc_files, ui_files ],
       [ seq_qt_sources, moc_files, ui_files ],
       install : false,                 # not seq66_subproj,
       install_dir : seq66_libdir,
       c_args : build_args,
       cpp_args : build_args,
+      pic : true,
       dependencies : [
          system_depends, liblib66_library_dep, qt_dep,
 #        libcfg66_library_dep,
@@ -264,6 +264,7 @@ else
       install_dir : seq66_libdir,
       c_args : build_args,
       cpp_args : build_args,
+      pic : true,
       dependencies : [
          system_depends, liblib66_library_dep, qt_dep,
 #        libcfg66_library_dep,
@@ -295,6 +296,7 @@ if not seq66_subproj
       )
 
 endif
+'''
 
 #****************************************************************************
 # meson.build (seq_qt6/seq66)

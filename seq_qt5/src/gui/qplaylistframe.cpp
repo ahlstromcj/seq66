@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2023-09-07
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -44,7 +44,7 @@
 #include "qt5_helpers.hpp"              /* seq66::qt_set_icon() etc.        */
 
 #if defined SEQ66_QMAKE_RULES
-#include "forms/ui_qplaylistframe.h"
+#include "ui_qplaylistframe.h"
 #else
 #include "forms/qplaylistframe.ui.h"
 #endif

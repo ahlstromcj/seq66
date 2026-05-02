@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2025-07-09
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -45,7 +45,7 @@
  */
 
 #if defined SEQ66_QMAKE_RULES
-#include "forms/ui_qsessionframe.h"
+#include "ui_qsessionframe.h"
 #else
 #include "forms/qsessionframe.ui.h"
 #endif

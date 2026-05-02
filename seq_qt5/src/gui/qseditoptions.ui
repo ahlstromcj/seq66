@@ -2301,7 +2301,7 @@ in the Song Editor.</string>
        <property name="title">
         <string>Flags</string>
        </property>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="flagsLayoutWidget">
         <property name="geometry">
          <rect>
           <x>20</x>
@@ -3288,7 +3288,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
        <property name="title">
         <string/>
        </property>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="patternLayoutWidget">
         <property name="geometry">
          <rect>
           <x>8</x>

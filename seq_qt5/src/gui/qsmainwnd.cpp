@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-04-23
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -126,7 +126,7 @@
  */
 
 #if defined SEQ66_QMAKE_RULES
-#include "forms/ui_qsmainwnd.h"
+#include "ui_qsmainwnd.h"
 #else
 #include "forms/qsmainwnd.ui.h"         /* generated btnStop, btnPlay, etc. */
 #endif

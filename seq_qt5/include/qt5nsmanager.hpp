@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2024-11-07
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -38,8 +38,8 @@
 #include <QObject>                      /* Qt 5 QObject class               */
 #include <memory>                       /* std::unique_ptr<>                */
 
+#include "gui/qsmainwnd.hpp"            /* seq66::qsmainwnd (main window)   */
 #include "sessions/clinsmanager.hpp"    /* seq66::clinsmanager              */
-#include "qsmainwnd.hpp"                /* Qt 5 qsmainwnd main window       */
 
 /*
  * ":dirty:message:optional-gui:switch:"

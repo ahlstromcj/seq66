@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2026-04-16
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future! Join the Smart Patrol!
@@ -41,7 +41,6 @@
 #include "os/daemonize.hpp"             /* seq66::session_restart() check   */
 #include "palettefile.hpp"              /* seq66::palette_file config file  */
 #include "qt5nsmanager.hpp"             /* seq66::qt5nsmanager              */
-#include "qsmainwnd.hpp"                /* seq66::qsmainwnd (main window)   */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
 #if defined SEQ66_NSM_SUPPORT

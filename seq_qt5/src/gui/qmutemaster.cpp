@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2026-04-19
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -49,7 +49,7 @@
  */
 
 #if defined SEQ66_QMAKE_RULES
-#include "forms/ui_qmutemaster.h"
+#include "ui_qmutemaster.h"
 #else
 #include "forms/qmutemaster.ui.h"
 #endif

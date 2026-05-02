@@ -581,7 +581,7 @@ same time.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="countsLayoutWidget">
    <property name="geometry">
     <rect>
      <x>511</x>
@@ -729,7 +729,7 @@ same time.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="dLayoutWidget">
    <property name="geometry">
     <rect>
      <x>502</x>

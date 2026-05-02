@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2025-06-14
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -58,7 +58,7 @@
  */
 
 #if defined SEQ66_QMAKE_RULES
-#include "forms/ui_qpatternfix.h"
+#include "ui_qpatternfix.h"
 #else
 #include "forms/qpatternfix.ui.h"
 #endif

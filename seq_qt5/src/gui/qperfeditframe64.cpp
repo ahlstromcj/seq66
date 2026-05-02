@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2026-03-14
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  The Song Editor allows the musician to layout the play-back of the
@@ -48,7 +48,7 @@
  */
 
 #if defined SEQ66_QMAKE_RULES
-#include "forms/ui_qperfeditframe64.h"
+#include "ui_qperfeditframe64.h"
 #else
 #include "forms/qperfeditframe64.ui.h"
 #endif

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-01-23
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -38,8 +38,8 @@
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "play/sequence.hpp"            /* seq66::sequence class            */
+#include "gui/qseqeditframe64.hpp"      /* seq66::qseqeditframe64 class     */
 #include "qseqdata.hpp"                 /* seq66::qseqdata class            */
-#include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 #include "qstriggereditor.hpp"          /* seq66::qstriggereditor class     */
 #include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
 

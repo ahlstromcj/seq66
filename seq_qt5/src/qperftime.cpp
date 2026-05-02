@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-04-30
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -37,7 +37,7 @@
 
 #include "cfg/settings.hpp"
 #include "play/performer.hpp"           /* seq66::performer class           */
-#include "qperfeditframe64.hpp"
+#include "gui/qperfeditframe64.hpp"
 #include "qperftime.hpp"
 #include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
 

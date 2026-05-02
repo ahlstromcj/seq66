@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-04-30
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -45,7 +45,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
-#include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
+#include "gui/qseqeditframe64.hpp"      /* seq66::qseqeditframe64 class     */
 #include "qseqkeys.hpp"                 /* seq66::qseqkeys class            */
 #include "qseqroll.hpp"                 /* seq66::qseqroll class            */
 #include "qscrollmaster.h"              /* used in scrolling for progress   */

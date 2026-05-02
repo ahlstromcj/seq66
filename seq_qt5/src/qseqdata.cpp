@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-04-30
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -37,8 +37,8 @@
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "midi/drums.hpp"               /* seq66::drums class and functions */
 #include "play/performer.hpp"           /* seq66::performer class           */
+#include "gui/qseqeditframe64.hpp"      /* seq66::qseqeditframe64 class     */
 #include "qseqdata.hpp"                 /* seq66::qseqdata class            */
-#include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 #include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
 
 #if defined SEQ66_SHOW_GM_PROGRAM_NAME

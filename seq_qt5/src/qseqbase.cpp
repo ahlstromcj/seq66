@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-07
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -35,8 +35,8 @@
  */
 
 #include "play/performer.hpp"           /* seq66::performer class           */
+#include "gui/qseqeditframe64.hpp"      /* seq66::qseqeditframe64 class     */
 #include "qseqbase.hpp"                 /* seq66::qseqbase class            */
-#include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 
 namespace seq66
 {

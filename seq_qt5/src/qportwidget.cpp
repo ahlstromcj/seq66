@@ -24,15 +24,15 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-01-20
- * \updates       2022-01-20
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  This class represents a user-interface for output (clock) or input ports.
  */
 
 #include "play/performer.hpp"           /* seq66::performer class           */
+#include "gui/qseditoptions.hpp"        /* seq66::qseditoptions class       */
 #include "qportwidget.hpp"              /* seq66::qportwidget class         */
-#include "qseditoptions.hpp"            /* seq66::qseditoptions class       */
 
 namespace seq66
 {

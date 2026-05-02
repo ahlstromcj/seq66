@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-08-18
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -75,7 +75,7 @@
  */
 
 #if defined SEQ66_QMAKE_RULES
-#include "forms/ui_qseditoptions.h"
+#include "ui_qseditoptions.h"
 #else
 #include "forms/qseditoptions.ui.h"
 #endif

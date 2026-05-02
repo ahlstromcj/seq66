@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-04-20
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -45,7 +45,7 @@
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
 #if defined SEQ66_QMAKE_RULES
-#include "forms/ui_qseqeventframe.h"
+#include "ui_qseqeventframe.h"
 #else
 #include "forms/qseqeventframe.ui.h"
 #endif

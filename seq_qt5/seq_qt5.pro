@@ -6,7 +6,7 @@
 # \library        qpseq66 application
 # \author         Chris Ahlstrom
 # \date           2018-04-08
-# \update         2025-01-25
+# \update         2025-05-02
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -62,128 +62,132 @@ TARGET = seq_qt5
 #
 # Not UIC_DIR :-D
 
-UI_DIR = forms
+UI_DIR = src/gui
 
-FORMS += forms/qlfoframe.ui \
- forms/qliveframeex.ui \
- forms/qmutemaster.ui \
- forms/qpatternfix.ui \
- forms/qperfeditex.ui \
- forms/qperfeditframe64.ui \
- forms/qplaylistframe.ui \
- forms/qsabout.ui \
- forms/qsappinfo.ui \
- forms/qsbuildinfo.ui \
- forms/qseditoptions.ui \
- forms/qseqeditex.ui \
- forms/qseqeditframe64.ui \
- forms/qseqeventframe.ui \
- forms/qsessionframe.ui \
- forms/qsetmaster.ui \
- forms/qslivegrid.ui \
- forms/qslogview.ui \
- forms/qsmainwnd.ui
+FORMS += src/gui/qlfoframe.ui \
+ src/gui/qliveframeex.ui \
+ src/gui/qmutemaster.ui \
+ src/gui/qpatternfix.ui \
+ src/gui/qperfeditex.ui \
+ src/gui/qperfeditframe64.ui \
+ src/gui/qplaylistframe.ui \
+ src/gui/qsabout.ui \
+ src/gui/qsappinfo.ui \
+ src/gui/qsbuildinfo.ui \
+ src/gui/qseditoptions.ui \
+ src/gui/qseqeditex.ui \
+ src/gui/qseqeditframe64.ui \
+ src/gui/qseqeventframe.ui \
+ src/gui/qsessionframe.ui \
+ src/gui/qsetmaster.ui \
+ src/gui/qslivegrid.ui \
+ src/gui/qslogview.ui \
+ src/gui/qsmainwnd.ui
 
-HEADERS += include/gui_palette_qt5.hpp \
+HEADERS += src/gui/qlfoframe.hpp \
+ src/gui/qliveframeex.hpp \
+ src/gui/qmutemaster.hpp \
+ src/gui/qpatternfix.hpp \
+ src/gui/qperfeditex.hpp \
+ src/gui/qperfeditframe64.hpp \
+ src/gui/qplaylistframe.hpp \
+ src/gui/qsabout.hpp \
+ src/gui/qsappinfo.hpp \
+ src/gui/qsbuildinfo.hpp \
+ src/gui/qseditoptions.hpp \
+ src/gui/qseqeditex.hpp \
+ src/gui/qseqeditframe64.hpp \
+ src/gui/qseqeventframe.hpp \
+ src/gui/qsessionframe.hpp \
+ src/gui/qsetmaster.hpp \
+ src/gui/qslivebase.hpp \
+ src/gui/qslivegrid.hpp \
+ src/gui/qslogview.hpp \
+ src/gui/qsmainwnd.hpp \
+ include/gui_palette_qt5.hpp \
  include/palettefile.hpp \
  include/qbase.hpp \
  include/qclocklayout.hpp \
  include/qeditbase.hpp \
  include/qinputcheckbox.hpp \
- include/qlfoframe.hpp \
- include/qliveframeex.hpp \
  include/qloopbutton.hpp \
- include/qmutemaster.hpp \
- include/qpatternfix.hpp \
  include/qperfbase.hpp \
- include/qperfeditex.hpp \
- include/qperfeditframe64.hpp \
  include/qperfnames.hpp \
  include/qperfroll.hpp \
  include/qperftime.hpp \
- include/qplaylistframe.hpp \
  include/qportwidget.hpp \
- include/qsabout.hpp \
- include/qsappinfo.hpp \
- include/qsbuildinfo.hpp \
  include/qscrollmaster.h \
  include/qscrollslave.h \
- include/qseditoptions.hpp \
  include/qseqbase.hpp \
  include/qseqdata.hpp \
- include/qseqeditex.hpp \
- include/qseqeditframe64.hpp \
- include/qseqeventframe.hpp \
  include/qseqframe.hpp \
  include/qseqkeys.hpp \
  include/qseqroll.hpp \
  include/qseqtime.hpp \
- include/qsessionframe.hpp \
- include/qsetmaster.hpp \
  include/qseventslots.hpp \
- include/qslivebase.hpp \
- include/qslivegrid.hpp \
- include/qslogview.hpp \
  include/qslotbutton.hpp \
  include/qsmaintime.hpp \
- include/qsmainwnd.hpp \
  include/qstriggereditor.hpp \
  include/qt5_helper.h \
  include/qt5_helpers.hpp \
  include/qt5nsmanager.hpp
 
-SOURCES += src/gui_palette_qt5.cpp \
+SOURCES += src/gui/qlfoframe.cpp \
+ src/gui/qliveframeex.cpp \
+ src/gui_palette_qt5.cpp \
+ src/gui/qmutemaster.cpp \
+ src/gui/qpatternfix.cpp \
+ src/gui/qperfeditex.cpp \
+ src/gui/qperfeditframe64.cpp \
+ src/gui/qplaylistframe.cpp \
+ src/gui/qsabout.cpp \
+ src/gui/qsappinfo.cpp \
+ src/gui/qsbuildinfo.cpp \
+ src/gui/qseditoptions.cpp \
+ src/gui/qseqeditex.cpp \
+ src/gui/qseqeditframe64.cpp \
+ src/gui/qseqeventframe.cpp \
+ src/gui/qsessionframe.cpp \
+ src/gui/qsetmaster.cpp \
+ src/gui/qslivegrid.cpp \
+ src/gui/qslogview.cpp \
+ src/gui/qsmainwnd.cpp \
  src/palettefile.cpp \
  src/qbase.cpp \
  src/qclocklayout.cpp \
  src/qeditbase.cpp \
  src/qinputcheckbox.cpp \
- src/qlfoframe.cpp \
- src/qliveframeex.cpp \
  src/qloopbutton.cpp \
- src/qmutemaster.cpp \
- src/qpatternfix.cpp \
  src/qperfbase.cpp \
- src/qperfeditex.cpp \
- src/qperfeditframe64.cpp \
  src/qperfnames.cpp \
  src/qperfroll.cpp \
  src/qperftime.cpp \
- src/qplaylistframe.cpp \
  src/qportwidget.cpp \
- src/qsabout.cpp \
- src/qsappinfo.cpp \
- src/qsbuildinfo.cpp \
  src/qscrollmaster.cpp \
  src/qscrollslave.cpp \
- src/qseditoptions.cpp \
  src/qseqbase.cpp \
  src/qseqdata.cpp \
- src/qseqeditex.cpp \
- src/qseqeditframe64.cpp \
- src/qseqeventframe.cpp \
  src/qseqframe.cpp \
  src/qseqkeys.cpp \
  src/qseqroll.cpp \
  src/qseqtime.cpp \
- src/qsessionframe.cpp \
- src/qsetmaster.cpp \
  src/qseventslots.cpp \
  src/qslivebase.cpp \
- src/qslivegrid.cpp \
- src/qslogview.cpp \
  src/qslotbutton.cpp \
  src/qsmaintime.cpp \
- src/qsmainwnd.cpp \
  src/qstriggereditor.cpp \
  src/qt5_helpers.cpp \
  src/qt5nsmanager.cpp
 
+#------------------------------------------------------------------------------
 # The output of the uic command goes to the seq_qt5/forms directory in
 # the shadow directory, and cannot be located unless the OUT_PWD macro
-# is used to find that directory.
+# is used to find that directory. Tricky stuff.
+#------------------------------------------------------------------------------
 
 INCLUDEPATH = include \
+ src \
+ gui \
  ../include/qt/$${MIDILIB} \
  ../libseq66/include \
  ../libsessions/include \

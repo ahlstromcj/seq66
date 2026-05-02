@@ -17,22 +17,23 @@
  */
 
 /**
- * \file          qsbuildinfo.cpp
+ * \file          qsabout.cpp
  *
  *  The time bar shows markers and numbers for the measures of the song,
  *  and also depicts the left and right markers.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
- * \date          2018-05-30
- * \updates       2021-10-20
+ * \date          2018-01-01
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  */
 
-#include "cfg/cmdlineopts.hpp"          /* for build info function          */
-#include "qsbuildinfo.hpp"              /* seq66::qsbuildinfo dialog class  */
-#include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
+#include "seq66-config.h"               /* needed to check Qt environment   */
+#include "seq66_features.hpp"           /* version information functions    */
+#include "qsabout.hpp"                  /* your basic developer spoor       */
+#include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -40,33 +41,34 @@
  */
 
 #if defined SEQ66_QMAKE_RULES
-#include "forms/ui_qsbuildinfo.h"
+#include "ui_qsabout.h"
 #else
-#include "forms/qsbuildinfo.ui.h"
+#include "forms/qsabout.ui.h"
 #endif
 
 namespace seq66
 {
 
 /**
- *  Principal constructor.
+ *  Principal constructor. Now sets the links to be opened by clicking on
+ *  them.
  */
 
-qsbuildinfo::qsbuildinfo (QWidget * parent) :
-    QDialog (parent),
-    ui      (new Ui::qsbuildinfo)
+qsabout::qsabout (QWidget * parent) : QDialog (parent), ui (new Ui::qsabout)
 {
     ui->setupUi(this);
-
-    QString name(SEQ66_PACKAGE_NAME);
-    QString version(SEQ66_VERSION);
-    QString comment = qt(seq_build_details());
-    ui->buildProgramLabel->setText(name);
-    ui->buildVersionLabel->setText(version);
-    ui->buildInfoTextEdit->setPlainText(comment);
+    std::string apptag = seq_app_name() + " " + seq_version();
+    std::string vertag = seq_version_text();
+    ui->topLabel->setText(qt(apptag));
+    ui->versionLabel->setText(qt(vertag));
+    ui->label_filter24_seq24->setOpenExternalLinks(true);
+    ui->label_github_seq66->setOpenExternalLinks(true);
+    ui->label_github_seq32->setOpenExternalLinks(true);
+    ui->label_github_kepler34->setOpenExternalLinks(true);
+    ui->label_gmail_ahlstromcj->setOpenExternalLinks(true);
 }
 
-qsbuildinfo::~qsbuildinfo ()
+qsabout::~qsabout()
 {
     delete ui;
 }
@@ -74,7 +76,7 @@ qsbuildinfo::~qsbuildinfo ()
 }               // namespace seq66
 
 /*
- * qsbuildinfo.cpp
+ * qsabout.cpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-08-21
- * \updates       2025-01-25
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  This module supports a task similar to that of the Help / Tutorial menu
@@ -54,7 +54,7 @@
  */
 
 #if defined SEQ66_QMAKE_RULES
-#include "forms/ui_qsappinfo.h"
+#include "ui_qsappinfo.h"
 #else
 #include "forms/qsappinfo.ui.h"
 #endif

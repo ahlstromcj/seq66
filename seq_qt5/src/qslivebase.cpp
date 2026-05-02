@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2025-09-17
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the old mainwid class.
@@ -33,7 +33,7 @@
 #include "cfg/settings.hpp"             /* seq66::usr().mainwnd_spacing()   */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "qslivebase.hpp"               /* seq66:qslivebase class, this one */
-#include "qsmainwnd.hpp"                /* the parent class of this window  */
+#include "gui/qsmainwnd.hpp"            /* the parent class of this window  */
 
 namespace seq66
 {

@@ -32,7 +32,7 @@
 #------------------------------------------------------------------------------
 
 TEMPLATE = subdirs
-CONFIG += static link_prl ordered qtc_runnable c++14
+CONFIG += static link_prl ordered qtc_runnable c++17
 contains (CONFIG, rtmidi) {
     SUBDIRS =  libseq66 libsessions seq_rtmidi seq_qt5 Seq66qt5
     Seq66qt5.depends = libseq66 libsessions seq_rtmidi seq_qt5
@@ -47,7 +47,7 @@ message("SUBDIRS is set to: $${SUBDIRS}")
 #
 #       CONFIG += c++14 -or-  QMAKE_CXXFLAGS += -std=gnu++14
 
-QMAKE_CXXFLAGS += -std=c++14
+QMAKE_CXXFLAGS += -std=c++17
 
 # Install an application icon for Windows to use. But see Seq66qt5.pro instead.
 #

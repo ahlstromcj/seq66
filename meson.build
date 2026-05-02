@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-05-01
+# \updates     2026-05-02
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the seq66 application and library.
@@ -150,7 +150,7 @@ seq66_pkg_description = 'A Seq66 build using the Meson build system.'
 seq66_pkg_version = meson.project_version()
 seq66_version = '0.99.24'
 seq66_api_version = '0.99'
-seq66_info_date = '2026-05-01'
+seq66_info_date = '2026-05-02'
 seq66_info_build_type = get_option('buildtype')
 seq66_info_build_root = meson.project_build_root()
 seq66_info_lib_type = get_option('default_library')
@@ -211,7 +211,8 @@ seq_qt_headers = []
 seq_qt_sources = []
 seq_moc_headers = []
 seq_moc_sources = []
-seq_no_moc_headers = []
+seq_q_object_headers = []
+seq_q_object_sources = []
 seq_ui_forms = []
 seq_rtmidi_sources = []
 seq_rtmidi_headers = []
@@ -485,6 +486,7 @@ seq66_includes = include_directories('.',
    'libsessions/include',
    'seq_portmidi/include',
    'seq_qt5/include',
+   'seq_qt5/src',
    'resources'
    )
 
@@ -496,6 +498,7 @@ seq66_includes = include_directories('.',
    'libsessions/include',
    'seq_rtmidi/include',
    'seq_qt5/include',
+   'seq_qt5/src',
    'resources'
    )
 
@@ -685,11 +688,13 @@ subdir('resources')
 
 subdir('seq_qt5')
 
+'''
 seq66_qt_dep = declare_dependency(
    dependencies : [ ],
    include_directories : [ seq66_includes ],
    link_with : [ link_libraries, seq_qt_build ]
    )
+'''
 
 subdir('Seq66qt5')
 

@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2024-08-07
+# \update      2026-05-02
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -14,7 +14,7 @@
 # sources only.  You may attempt to use it for building too, by modifying this
 # file here.
 #
-# Important: This project file is designed only for Qt 5 (and above?).
+# Important: This project file is designed only for Qt 5 (and above).
 #
 #------------------------------------------------------------------------------
 
@@ -65,7 +65,8 @@ INCLUDEPATH = \
  ../libseq66/include \
  ../libsessions/include \
  ../seq_$${MIDILIB}/include \
- ../seq_qt5/include
+ ../seq_qt5/include \
+ ../seq_qt5/src
 
 # Sometimes some midifile and rect member functions cannot be found at link
 # time, and this is worse with static linkage of our internal libraries.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-04-22
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -44,7 +44,7 @@
  */
 
 #if defined SEQ66_QMAKE_RULES
-#include "forms/ui_qseqeditex.h"
+#include "ui_qseqeditex.h"
 #else
 #include "forms/qseqeditex.ui.h"
 #endif

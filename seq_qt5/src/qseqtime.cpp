@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-04-30
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -35,7 +35,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
-#include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
+#include "gui/qseqeditframe64.hpp"      /* seq66::qseqeditframe64 class     */
 #include "qseqtime.hpp"                 /* seq66::qseqtime class            */
 #include "qt5_helpers.hpp"              /* seq66::qt_timer()                */
 

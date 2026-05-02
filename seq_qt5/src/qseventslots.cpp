@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2025-05-09
+ * \updates       2026-05-02
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -37,7 +37,7 @@
 
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "util/strfunctions.hpp"        /* seq66::strings_match()           */
-#include "qseqeventframe.hpp"
+#include "gui/qseqeventframe.hpp"
 #include "qseventslots.hpp"
 
 namespace seq66
