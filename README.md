@@ -1,4 +1,4 @@
-# README for Seq66 0.99.24 2026-04-22
+# README for Seq66 0.99.25 2026-05-03
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid
 interface; pattern banks, triggers, and playlists for song management;
@@ -14,7 +14,8 @@ modern C++ and new features. Linux and Windows users can build this
 application from source code. See the extensive INSTALL file. Includes
 a comprehensive PDF user-manual.
 
-The current development-in-progress branch is "wip".
+The current development-in-progress branch is now "Meson". The
+old-style build setup is preserved in branch "autoconf."
 
 The release includes an installer for the 64-bit Windows version of
 Seq66. Initial work has been done on getting Seq66 to build and run
@@ -84,12 +85,15 @@ in force. Otherwise the application uses the current Qt theme.
     *   Additional performer callbacks to reduce polling.
     *   A ton of clean-up and refactoring.
 
-Seq66 has a user-interface based on Kepler34 and the Seq66 *rtmidi* (Linux) and
-*portmidi* (Windows) engines. MIDI devices are detected, inaccessible devices
-are ignored, with playback (e.g. to the Windows wavetable synth). It is built
-easily via *GNU Autotools*, *Qt Creator* or *qmake*, using *MingW*. See the
-INSTALL file for build-from-source instructions for Linux or Windows, and using
-a conventional source tarball.
+Seq66 has a user-interface based on Kepler34 and the Seq66 *rtmidi* (Linux)
+and *portmidi* (Windows) engines. MIDI devices are detected, inaccessible
+devices are ignored, with playback (e.g. to the Windows wavetable synth).
+It is built easily via *Meson*, *Qt Creator* or *qmake*, using *MingW*.
+
+*IMPORTANT*: *GNU Autotools* is no longer supported.
+
+The INSTALL has been streamlined, see that file for build-from-source
+instructions for Linux or Windows, and using a conventional source tarball.
 
 Support sites (still in progress):
 

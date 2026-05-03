@@ -1,8 +1,29 @@
-NEWS for Seq66 0.99.24
+NEWS for Seq66 0.99.25
 Chris Ahlstrom
-2015-07-10 to 2026-05-01
+2015-07-10 to 2026-05-03
 
 # Change Log
+
+## [0.99.25] - 2026-05-03
+
+A major refactoring of Seq66 to use Meson and qmake, while ditching
+the overly-cumbersome autoconf build. Required moving the seq\_qt5
+moc/ui-related files to the seq\_qt5/src/gui. In addition, some
+connect() calls were updated to work with either Qt5 or Qt6.
+
+### Added
+
+### Changed
+
+-   Moved user-interface modules (i.e. "cpp", "hpp", and "ui" files)
+    such as qsmainwnd and qseditoptions to seq\_qt5/src/gui.
+-   Changes for Qt6:
+    -   "No such signal QButtonGroup::buttonClicked(int)" in
+        qclocklayout.cpp and qseditoptions.cpp updated to
+        use a lambda connect() if Qt6 is in use.
+    -   Still more qt6 deprecations found and fixed.
+
+### Fixed
 
 ## [0.99.24] - 2026-05-01
 

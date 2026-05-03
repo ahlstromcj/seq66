@@ -213,7 +213,7 @@ seq_qt_sources += files(
 # but all *.moc are empty.
 #-----------------------------------------------------------------------------
 
-qtname = 'qt6'
+qtname = 'qt6'    # qtname = 'qt5'
 qtimport = import(qtname)
 qt_dep = dependency(qtname, modules : [ 'Core', 'Gui', 'Widgets' ])
 qt_include_dir = qt_dep.get_variable(

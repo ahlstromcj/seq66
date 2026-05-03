@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-05-02
+# \updates     2026-05-03
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the seq66 application and library.
@@ -114,7 +114,7 @@
 
 project('seq66',
    [ 'c', 'cpp' ],
-   version : '0.99.24',
+   version : '0.99.25',
    license : 'GPLv3',
    meson_version : '>=1.4.0',
    default_options : [
@@ -148,9 +148,9 @@ endif
 
 seq66_pkg_description = 'A Seq66 build using the Meson build system.'
 seq66_pkg_version = meson.project_version()
-seq66_version = '0.99.24'
+seq66_version = '0.99.25'
 seq66_api_version = '0.99'
-seq66_info_date = '2026-05-02'
+seq66_info_date = '2026-05-03'
 seq66_info_build_type = get_option('buildtype')
 seq66_info_build_root = meson.project_build_root()
 seq66_info_lib_type = get_option('default_library')

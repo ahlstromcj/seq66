@@ -301,7 +301,7 @@ qt_mouse_y (QMouseEvent * ev)
     return ev->y();
 }
 
-#elif defined QT_VERSION_6
+#elif defined QT_VERSION_6 || defined QT_VERSION_7
 
 int
 qt_mouse_x (QMouseEvent * ev)
