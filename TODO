@@ -1,12 +1,10 @@
 TO DO for Seq66 0.99.25
 Chris Ahlstrom
-2019-04-13 to 2026-05-03
+2019-04-13 to 2026-05-04
 
     -   Changed the build system to Meson. Bugs so far:
         -   More deprecations:
             -   JACK deprecations.
-            -   x()/y() in qslivegrid.cpp #1032, 1100, 1143, & 1202.
-                This does not happen with the autoconf build.
         -   Need to be able to choose Qt5 if Qt6 is not installed.
     -   Port more Qt6-deprecation fixes from the (not yet public)
         Meson build once that works fully.

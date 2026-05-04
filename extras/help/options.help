@@ -1,0 +1,27 @@
+Seq66 Meson Build Options
+2026-05-04 to 2026-05-04
+
+enable-alsa:       Add ALSA to the MIDI API list in Linux builds [true]
+enable-jack:       Add JACK to the MIDI API list in Linux builds [true]
+jack-session:      Add JACK session support [true]
+jack-transport:    Build JACK transport code [true]
+enable-nsm:        Enable the use of NSM and liblo [true]
+enable-tests:      Build the test program(s) [false]
+enable-portmidi:   Enable the use of the PortMIDI-based engine [false]
+enable-rtmidi:     Enable the use of the RtMIDI-based engine [true]
+enable-docs:       Build the LaTeX/PDF documentation [false]
+docdir:            Directory where Seq66 documentation is installed. [""],
+potext:            Build the linkage test program with potext_support. [false]
+
+Some built-in Meson options should be noted:
+
+buildtype:         Set to release, debug [default], minsize, etc.
+prefix:            Set to /usr, /usr/local, etc.
+
+To add one or more options, add them to a "setup" or "configure" command:
+
+   $ meson configure build -Doption-name=value ...
+
+Note that the list in meson.options might be more up-to-date. Currently
+no potext support is coded into the source files.
+

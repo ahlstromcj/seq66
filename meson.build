@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-05-03
+# \updates     2026-05-04
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the seq66 application and library.
@@ -150,7 +150,7 @@ seq66_pkg_description = 'A Seq66 build using the Meson build system.'
 seq66_pkg_version = meson.project_version()
 seq66_version = '0.99.25'
 seq66_api_version = '0.99'
-seq66_info_date = '2026-05-03'
+seq66_info_date = '2026-05-04'
 seq66_info_build_type = get_option('buildtype')
 seq66_info_build_root = meson.project_build_root()
 seq66_info_lib_type = get_option('default_library')
@@ -372,16 +372,16 @@ use_nsm_liblo = false
 
 if os_linux or os_freebsd
 
-use_alsa = get_option('enable-alsa')
-use_jack = get_option('enable-jack')
-use_jack_session = get_option('jack-session')
-use_jack_transport = get_option('jack-transport')
-use_nsm_liblo = get_option('enable-nsm')
-use_rtmidi = get_option('enable-rtmidi')
+use_alsa = get_option('alsa')
+use_jack = get_option('jack')
+use_jack_session = get_option('jacksession')
+use_jack_transport = get_option('jacktransport')
+use_nsm_liblo = get_option('nsm')
+use_rtmidi = get_option('rtmidi')
 
 endif
 
-use_portmidi = get_option('enable-portmidi')
+use_portmidi = get_option('portmidi')
 if use_portmidi
    use_rtmidi = false
 endif
@@ -597,11 +597,11 @@ endif
 if os_freebsd
 
 alsa_dep = dependency(
-   'alsa', version : '>=1.0.0', required : get_option('enable-alsa')
+   'alsa', version : '>=1.0.0', required : get_option('alsa')
    )
 
 jack_dep = dependency(
-   'jack', version : '>=1.9.0', required : get_option('enable-jack')
+   'jack', version : '>=1.9.0', required : get_option('jack')
    )
 
 threads_dep = dependency('threads', required : true)
@@ -668,7 +668,7 @@ seq66_dep = declare_dependency(
 subdir('Seq66cli')
 
 #-----------------------------------------------------------------------------
-# Make the icon pixmaps available
+# Make the icon pixmaps (header files in XPM format) available.
 #-----------------------------------------------------------------------------
 
 subdir('resources')
@@ -762,7 +762,22 @@ if not seq66_subproj
       )
 '''
 
+#-----------------------------------------------------------------------------
 # TODO: figure out where to put and install the logo
+#-----------------------------------------------------------------------------
+
+seq66_make_pdf = get_option('docs') == true
+if seq66_make_pdf
+      subdir('doc')
+endif
+
+#  subdir('data')
+#  subdir('man')
+
+   doc_install_dir = get_option('docdir')
+   if doc_install_dir == ''                  # empty is the default
+      doc_install_dir = seq66_docdir
+   endif
 
    install_data(
       files(
@@ -770,15 +785,15 @@ if not seq66_subproj
          'README.md',
          'data/share/doc/seq66-user-manual.pdf'
          ),
-      install_dir : get_option('docdir')
+      install_dir : doc_install_dir
       )
 
 '''
-   if get_option('enable-tests')
+   if get_option('tests')
       subdir('tests')
    endif
 
-   if get_option('enable-docs')
+   if get_option('docs')
       subdir('doc')
    endif
 '''
@@ -804,6 +819,7 @@ summary(
       'Build Root' : seq66_info_build_root,
       'Library Type' : seq66_info_lib_type,
       'Subproject' : seq66_subproj,
+      'Make PDF' : seq66_make_pdf,
       'PortMidi' : use_portmidi
    },
    section : 'Project'
@@ -816,6 +832,7 @@ summary(
       'bindir' : seq66_bindir,
       'libdir' : seq66_libdir,
       'datadir' : seq66_datadir,
+      'docdir' : doc_install_dir,
       'appdatadir' : seq66_datadir
    },
    section : 'Seq66 Install Directories'

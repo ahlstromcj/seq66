@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-04-24
+# \updates     2026-05-04
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" application and libraries.
@@ -15,62 +15,58 @@
 #
 #-----------------------------------------------------------------------------
 
-option('enable-alsa',
+option('alsa',
    type : 'boolean',
    value : true,
-   description : 'Add ALSA to the MIDI API list in Linux builds'
+   description : 'Add ALSA to the MIDI API list in Linux builds.'
 )
 
-option('enable-jack',
+option('jack',
    type : 'boolean',
    value : true,
-   description : 'Add JACK to the MIDI API list in Linux builds'
+   description : 'Add JACK to the MIDI API list in Linux builds.'
 )
 
-option('jack-session',
+option('jacksession',
    type : 'boolean',
    value : true,
-   description : 'Add JACK session support'
+   description : 'Add JACK session support.'
 )
 
-option('jack-transport',
+option('jacktransport',
    type : 'boolean',
    value : true,
-   description : 'Build JACK transport code'
+   description : 'Build JACK transport code.'
 )
 
-option('enable-nsm',
+option('nsm',
    type : 'boolean',
    value : true,
-   description : 'Enable the use of NSM and liblo'
+   description : 'Enable the use of NSM and liblo.'
 )
 
-option('enable-tests',
+option('tests',
    type : 'boolean',
    value : false,                            # TODO
-   description : 'Build the test program(s)'
+   description : 'Build the test program(s).'
 )
 
-option('enable-portmidi',
+option('portmidi',
    type : 'boolean',
    value : false,
-   description : 'Enable the use of the PortMIDI-based engine'
+   description : 'Enable the use of the PortMIDI-based engine.'
 )
 
-option('enable-rtmidi',
+option('rtmidi',
    type : 'boolean',
    value : true,
-   description : 'Enable the use of the RtMIDI-based engine'
+   description : 'Enable the use of the RtMIDI-based engine.'
 )
 
-# Still working on getting this to work. Actually, for now we prefer
-# to use the command "./work.sh --pdf" to make the PDF. That is consistent
-# with our other '66' libraries.
-
-option('enable-docs',
+option('docs',
    type : 'boolean',
    value : false,
-   description : 'Build the LaTeX documentation'
+   description : 'Build the LaTeX/PDF documentation.'
    )
 
 #-----------------------------------------------------------------------------
@@ -79,7 +75,7 @@ option('enable-docs',
 
 option('docdir',
    type : 'string',
-   value : 'share/doc/cfg66',
+   value : '',
    description : 'Directory where Seq66 documentation is installed.',
    yield : true
 )

@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# 2026-04-01 to 2026-05-01
+#
+# Runs a debugger in a wider terminal.
+#
+
+/usr/bin/urxvt -geometry 164x56 -e cgdb $1 &> /dev/null &
+
+# vim: ts=3 sw=3 et ft=sh

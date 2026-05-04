@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-02
+# \update         2026-05-04
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -30,7 +30,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-02"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-04"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -47,15 +47,16 @@ DOCLEAN="no"         # --clean
 DODEBUG="yes"        # --debug. This is the default Meson build.
 DODIST="no"          # --dist. Use Meson "dist" to create a package.
 DOHELP="no"          # --help. Duh!
+DOOPTHELP="no"       # --option-help. Duh!
 DOINSTALL="no"       # --install. Requires the release be built already.
 DOUNINSTALL="no"     # --uninstall. Like --install, requires sudo/root.
 DOUPDATE="no"        # --update. Force a subproject update.
 DOMAKE="yes"         # Default action after creating the build directory.
 DOREMAKE="no"        # currently UNUSED
 DOMAKEPDF="no"       # --pdf. Make the manual, always as a separate step.
-DOPOTEXT="no"
+DOPOTEXT="no"        # --potex. Use translation [NOT YET SUPPORTED].
 DOPACK="no"          # --pack. Clean and create a tar-file.
-DORELEASE="no"       # --release. as opposed to debug; also PDF is made.
+DORELEASE="no"       # --release. as opposed to debug.
 DOSTATIC="yes"       # --static
 DOVERSION="no"       # --version. Duouble duh!
 EXTRAFLAGS=""
@@ -92,6 +93,11 @@ if test $# -ge 1 ; then
 
          --help)
             DOHELP="yes"
+            DOMAKE="no"
+            ;;
+
+         --option-help)
+            DOOPTHELP="yes"
             DOMAKE="no"
             ;;
 
@@ -132,7 +138,7 @@ if test $# -ge 1 ; then
 
          --pdf)
             DOMAKEPDF="yes"
-            DOMAKE="no"
+#           DOMAKE="no"
             ;;
 
          --pack)
@@ -200,12 +206,13 @@ Usage: ./work.sh [options] ($SEQ66_LIBRARY_VERSION-$SEQ66_SCRIPT_EDIT_DATE)
 'work.sh' encapsulates some common operations involving Meson, builds,
 packing, and version information.  Only implemented options are shown here;
 there will be more to come. Some options might not work on Windows.
+Many of these commands are best used when setting up the build
+(i.e. do a --clean option first).
 
  --make or --build   Build the code in 'build'. The default operation.
  --update            Force an update of the subprojects.
  --potext            Build with Potext (light gettext) library sypport.
  --release           Build release version (Meson defaults to a debug version).
-                     Also builds the PDF documentation.
  --install           Run 'meson install' to install the library and PDF.
  --uninstall         Run 'ninja uninstall' to uninstall the library.
                      Some directories might remain; there is a error about
@@ -214,7 +221,7 @@ there will be more to come. Some options might not work on Windows.
  --portmidi          Build using the internal PortMIDI engine instead of
                      the internal RtMIDI engine.
  --clang             Rebuild the code using the Clang compilers.
- --pdf               Build just the PDF documentation and exit.
+ --pdf               Also build the PDF documentation.
  --clean             Delete the usual derived files from the project. Also
                      do "git checkout doc/seq66-dev-manual.pdf"
  --rebuild           Clean the project and build from scratch.
@@ -222,8 +229,15 @@ there will be more to come. Some options might not work on Windows.
                      into the tarball name.
  --help              Show this help text.
  --version           Show only the version information.
+ --option-help       Show the project options.
 
 E_O_F
+
+   exit 0
+
+elif test "$DOOPTHELP" = "yes" ; then
+
+   cat extras/help/options.help
    exit 0
 
 fi
@@ -236,15 +250,13 @@ if test "$DODIST" = "yes" ; then
 fi
 
 # Make the PDF, then exit if not creating a release.
+# Actually, we now descend to a subdir to create the
+# documentation.
 
+ENABLE_DOCS=""
 if test "$DOMAKEPDF" = "yes" ; then
-
-   cd doc/latex
-   ./make_pdf.sh
-   cd ../..
-   if test "$DORELEASE" = "no" ; then
-      exit 0
-   fi
+   ENABLE_DOCS="-Ddocs=true"
+   echo "Will rebuild the Seq66 User Manual...."
 fi
 
 # This removes the work products, but leaves the README intact.
@@ -388,7 +400,7 @@ if test "$DOMAKE" = "yes" ; then
       export CC=gcc
       export CXX=g++
    else
-      echo "Using the default C/C++ compilers..."
+      echo "Using the default/last-used C/C++ compilers..."
    fi
 
    echo "Making all seq66 libraries and application..."
@@ -401,7 +413,7 @@ if test "$DOMAKE" = "yes" ; then
    if test "$DOREMAKE" = "yes" ; then
       if test "$NINJA_EXISTS" = "yes" ; then
          echo "$MAKEFILE exists, reconfiguring..."
-         meson --reconfigure $POTEXTDEF $PMIDIDEF. build
+         meson setup --reconfigure $POTEXTDEF $PMIDIDEF $ENABLE_DOCS build
       fi
    fi
 
@@ -409,10 +421,10 @@ if test "$DOMAKE" = "yes" ; then
       echo "New configuration, creating $MAKEFILE, etc...."
       if test "$DODEBUG" = "yes" ; then
          meson setup --buildtype=debug --default-library=static \
-            $POTEXTDEF $PMIDIDEF build/
+            $POTEXTDEF $PMIDIDEF $ENABLE_DOCS build/
          echo "... for debugging"
       else
-         meson setup --buildtype=release $POTEXTDEF $PMIDIDEF build/
+         meson setup --buildtype=release $POTEXTDEF $PMIDIDEF $ENABLE_DOCS build/
          echo "... for release"
       fi
    fi
