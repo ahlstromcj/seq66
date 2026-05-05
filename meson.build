@@ -766,10 +766,12 @@ if not seq66_subproj
 # TODO: figure out where to put and install the logo
 #-----------------------------------------------------------------------------
 
+'''
 seq66_make_pdf = get_option('docs') == true
 if seq66_make_pdf
-      subdir('doc')
+   subdir('doc')
 endif
+'''
 
 #  subdir('data')
 #  subdir('man')
@@ -819,7 +821,7 @@ summary(
       'Build Root' : seq66_info_build_root,
       'Library Type' : seq66_info_lib_type,
       'Subproject' : seq66_subproj,
-      'Make PDF' : seq66_make_pdf,
+#     'Make PDF' : seq66_make_pdf,
       'PortMidi' : use_portmidi
    },
    section : 'Project'

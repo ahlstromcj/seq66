@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-04
+# \update         2026-05-05
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -30,7 +30,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-04"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-05"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -52,6 +52,7 @@ DOINSTALL="no"       # --install. Requires the release be built already.
 DOUNINSTALL="no"     # --uninstall. Like --install, requires sudo/root.
 DOUPDATE="no"        # --update. Force a subproject update.
 DOMAKE="yes"         # Default action after creating the build directory.
+DOSETUP="no"         # --setup. Do the setup and then exit.
 DOREMAKE="no"        # currently UNUSED
 DOMAKEPDF="no"       # --pdf. Make the manual, always as a separate step.
 DOPOTEXT="no"        # --potex. Use translation [NOT YET SUPPORTED].
@@ -88,22 +89,32 @@ if test $# -ge 1 ; then
 
          --clean)
             DOCLEAN="yes"
+            DOSETUP="no"
             DOMAKE="no"
             ;;
 
          --help)
             DOHELP="yes"
             DOMAKE="no"
+            DOSETUP="no"
             ;;
 
          --option-help)
             DOOPTHELP="yes"
             DOMAKE="no"
+            DOSETUP="no"
+            ;;
+
+         --setup)
+            DOCLEAN="yes"
+            DOMAKE="no"
+            DOSETUP="yes"
             ;;
 
          --update)
             DOUPDATE="yes"
             DOMAKE="no"
+            DOSETUP="no"
             ;;
 
          --build | --make)
@@ -124,26 +135,31 @@ if test $# -ge 1 ; then
          --install)
             DOINSTALL="yes"
             DOMAKE="no"
+            DOSETUP="no"
             ;;
 
          --uninstall)
             DOUNINSTALL="yes"
             DOMAKE="no"
+            DOSETUP="no"
             ;;
 
          --dist)
             DODIST="yes"
             DOMAKE="no"
+            DOSETUP="no"
             ;;
 
          --pdf)
             DOMAKEPDF="yes"
-#           DOMAKE="no"
+            DOMAKE="no"
+            DOSETUP="no"
             ;;
 
          --pack)
             DOCLEAN="yes"
             DOMAKE="no"
+            DOSETUP="no"
             DOPACK="yes"
             ;;
 
@@ -157,7 +173,6 @@ if test $# -ge 1 ; then
             DOMAKE="yes"
             DORELEASE="yes"
             DODEBUG="no"
-            DOMAKEPDF="yes"
             ;;
 
          --static)
@@ -210,6 +225,7 @@ Many of these commands are best used when setting up the build
 (i.e. do a --clean option first).
 
  --make or --build   Build the code in 'build'. The default operation.
+ --setup             Run 'meson setup', and that's all.
  --update            Force an update of the subprojects.
  --potext            Build with Potext (light gettext) library sypport.
  --release           Build release version (Meson defaults to a debug version).
@@ -221,7 +237,9 @@ Many of these commands are best used when setting up the build
  --portmidi          Build using the internal PortMIDI engine instead of
                      the internal RtMIDI engine.
  --clang             Rebuild the code using the Clang compilers.
- --pdf               Also build the PDF documentation.
+ --pdf               Build the PDF documentation. Currently done not by
+                     doc/latex/tex/meson.build, but by calling
+                     doc/latex/make_pdf.sh.
  --clean             Delete the usual derived files from the project. Also
                      do "git checkout doc/seq66-dev-manual.pdf"
  --rebuild           Clean the project and build from scratch.
@@ -249,14 +267,21 @@ if test "$DODIST" = "yes" ; then
 
 fi
 
-# Make the PDF, then exit if not creating a release.
-# Actually, we now descend to a subdir to create the
-# documentation.
+# Make the PDF, then exit. We might get doc/latex/tex/meson.build
+# to do this work at some point, but for now we use a script in
+# the doc/latex directory.
+#
+# ENABLE_DOCS=""
+# if test "$DOMAKEPDF" = "yes" ; then
+#    ENABLE_DOCS="-Ddocs=true"
+#    echo "Will rebuild the Seq66 User Manual...."
+# fi
 
-ENABLE_DOCS=""
 if test "$DOMAKEPDF" = "yes" ; then
-   ENABLE_DOCS="-Ddocs=true"
-   echo "Will rebuild the Seq66 User Manual...."
+   cd doc/latex
+   ./make_pdf.sh
+   cd ../..
+   exit 0
 fi
 
 # This removes the work products, but leaves the README intact.
@@ -366,9 +391,18 @@ fi
 
 if test "$DOUPDATE" = "yes" ; then
    meson subprojects update
+   exit 0
 fi
 
-if test "$DOMAKE" = "yes" ; then
+POTEXTDEF=""
+if test "$DOPOTEXT" = "yes" ; then
+   POTEXTDEF="-Dpotext=true"
+fi
+
+PMIDIDEF=""
+if test "$DOPORTMIDI" = "yes" ; then
+   PMIDIDEF="-Denable-portmidi=true"
+fi
 
 # TODO: use a separate build directory for Clang.
 #
@@ -378,30 +412,37 @@ if test "$DOMAKE" = "yes" ; then
 #
 # We could instead set up again with the --potex option.
 
-   POTEXTDEF=""
-   if test "$DOPOTEXT" = "yes" ; then
-      POTEXTDEF="-Dpotext=true"
-   fi
+if test "$DOCLANG" = "yes" ; then
 
-   PMIDIDEF=""
-   if test "$DOPORTMIDI" = "yes" ; then
-      PMIDIDEF="-Denable-portmidi=true"
-      echo "Building with the portmidi engine..."
-   else
-      echo "Building with the rtmidi engine..."
-   fi
+   echo "Using the Clang C/C++ compilers..."
+   export CC=clang
+   export CXX=clang++
 
-   if test "$DOCLANG" = "yes" ; then
-      echo "Using the Clang C/C++ compilers..."
-      export CC=clang
-      export CXX=clang++
-   elif test "$DOGNU" = "yes" ; then
-      echo "Using the GNU C/C++ compilers..."
-      export CC=gcc
-      export CXX=g++
+elif test "$DOGNU" = "yes" ; then
+
+   echo "Using the GNU C/C++ compilers..."
+   export CC=gcc
+   export CXX=g++
+
+else
+
+   echo "Using the default/last-used C/C++ compilers..."
+
+fi
+
+if test "$DOSETUP" = "yes"; then
+   if test "$DODEBUG" = "yes" ; then
+      meson setup --buildtype=debug --default-library=static \
+         $POTEXTDEF $PMIDIDEF $ENABLE_DOCS build/
+      echo "... for debugging"
    else
-      echo "Using the default/last-used C/C++ compilers..."
+      meson setup --buildtype=release $POTEXTDEF $PMIDIDEF $ENABLE_DOCS build/
+      echo "... for release"
    fi
+   exit 0
+fi
+
+if test "$DOMAKE" = "yes" ; then
 
    echo "Making all seq66 libraries and application..."
 
