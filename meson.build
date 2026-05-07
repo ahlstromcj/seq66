@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-05-04
+# \updates     2026-05-07
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the seq66 application and library.
@@ -150,14 +150,13 @@ seq66_pkg_description = 'A Seq66 build using the Meson build system.'
 seq66_pkg_version = meson.project_version()
 seq66_version = '0.99.25'
 seq66_api_version = '0.99'
-seq66_info_date = '2026-05-04'
+seq66_info_date = '2026-05-07'
 seq66_info_build_type = get_option('buildtype')
 seq66_info_build_root = meson.project_build_root()
 seq66_info_lib_type = get_option('default_library')
 seq66_info_project_root = meson.project_source_root()
 seq66_debug = get_option('buildtype').contains('debug')
 seq66_project_base = 'seq66-@0@'.format(seq66_api_version)
-seq66_pkgconfig_name = 'libseq66'
 seq66_url = 'https://github.com/ahlstromcj/seq66'
 seq66_subproj = meson.is_subproject()
 
@@ -178,7 +177,8 @@ seq66_bindir = join_paths(seq66_prefix, get_option('bindir'))
 seq66_includedir = join_paths(seq66_prefix, get_option('includedir'), seq66_dir)
 seq66_libdir = join_paths(seq66_prefix, get_option('libdir'), seq66_dir)
 seq66_datadir = join_paths(seq66_prefix, get_option('datadir'), seq66_dir)
-seq66_docdir = join_paths(seq66_prefix, seq66_datadir, 'doc', seq66_dir)
+seq66_docdir = join_paths(seq66_prefix, 'share/doc', seq66_dir)
+
 libraries_top = meson.project_source_root()
 libseq66_include_top = join_paths(libraries_top, 'include')
 
@@ -188,13 +188,14 @@ libseq66_include_top = join_paths(libraries_top, 'include')
 # wiring the expected directory here works.
 #-----------------------------------------------------------------------------
 
-alt_pkgconfig_libdir = join_paths(
-   seq66_prefix, get_option('libdir'), 'pkgconfig'
-   )
+# Not needed; we don't install the libraries.
+# alt_pkgconfig_libdir = join_paths(
+#    seq66_prefix, get_option('libdir'), 'pkgconfig'
+#    )
 
 #-----------------------------------------------------------------------------
 # libseq66_headers provides the list of all headers in the project. These are
-# currently all installable, public headers. They are set in
+# currently all non-installable, private headers. They are set in
 # include/meson.build.
 #
 # libseq66_sources provides the source-code files. They are set in
@@ -730,8 +731,20 @@ subdir('Seq66qt5')
 #-----------------------------------------------------------------------------
 # Make this library usable from the system's package manager.
 #-----------------------------------------------------------------------------
-
-install_headers(libseq66_headers, subdir : seq66_dir, preserve_path : true)
+#
+#  However, this is an application project, so we don't need to install
+#  the header files. No other project will use them. (Instead, we
+#  will eventually use the cfg66, xpc66, and rtl66 projects for Seq66v2,
+#  if it ever gets finished.)
+#
+# install_headers(
+#     libseq66_headers,
+#     subdir : seq66_dir,
+#     install_tag : 'devel',  # the default for headers
+#     preserve_path : true
+#     )
+#
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Package config
@@ -741,13 +754,15 @@ install_headers(libseq66_headers, subdir : seq66_dir, preserve_path : true)
 #  On Ubuntu, the .pc file is installed to
 #     /usr/local/lib/x86_64-linux-gnu/pkgconfig.
 #
-#  We do not need this yet, but see each subdir for the pkgconfigs.
+#  We do not need this yet, since Seq66 is an application with private
+#  libraries in use; but see each subdir for the pkgconfigs.
 #
 #-----------------------------------------------------------------------------
 
 if not seq66_subproj
 
 '''
+   seq66_pkgconfig_name = 'libseq66'
    pkg_mod = import('pkgconfig')
    pkg_mod.generate(
       libseq66_build,
@@ -763,44 +778,86 @@ if not seq66_subproj
 '''
 
 #-----------------------------------------------------------------------------
-# TODO: figure out where to put and install the logo
+# Documentation.
+#
+#  The PDF user manual is not recreated automatically. Instead,
+#  use './work.sh --pdf' when it needs to be rebuilt.
+#
+#  The doc/meson.build files have been left in place, just in case.
+#
 #-----------------------------------------------------------------------------
 
 '''
-seq66_make_pdf = get_option('docs') == true
-if seq66_make_pdf
-   subdir('doc')
+   seq66_make_pdf = get_option('docs') == true
+   if seq66_make_pdf
+      subdir('doc')
 endif
 '''
 
-#  subdir('data')
-#  subdir('man')
+#-----------------------------------------------------------------------------
+#  subdir('doc')
+#-----------------------------------------------------------------------------
 
    doc_install_dir = get_option('docdir')
    if doc_install_dir == ''                  # empty is the default
-      doc_install_dir = seq66_docdir
+      doc_install_dir = 'share/doc' / seq66_project_base
    endif
 
    install_data(
       files(
          'ChangeLog',
          'README.md',
-         'data/share/doc/seq66-user-manual.pdf'
          ),
       install_dir : doc_install_dir
       )
+
+   install_subdir(
+      'licenses',
+      install_dir : doc_install_dir
+   )
+
+#-----------------------------------------------------------------------------
+# Tests not yet supported, and generating documents is handled manually
+# (see "./work.sh --help").
+#-----------------------------------------------------------------------------
 
 '''
    if get_option('tests')
       subdir('tests')
    endif
-
    if get_option('docs')
       subdir('doc')
    endif
 '''
 
 endif
+
+#-----------------------------------------------------------------------------
+# TODO: figure out where to put and install the logo
+#-----------------------------------------------------------------------------
+
+subdir('data')
+
+#-----------------------------------------------------------------------------
+#  subdir('man')
+#
+#  No need for a meson.build fo these two
+#
+#  if os_win32
+#     seq66_install_dir = ???    # currently we still use the NSIS installer
+#  endif
+#-----------------------------------------------------------------------------
+
+   seq66_man_pages = files(
+      'man/seq66.1',
+      'man/seq66cli.1',
+      'man/sequencer66.1'
+   )
+
+   install_man(
+      seq66_man_pages,
+      install_tag : 'man'
+      )
 
 #-----------------------------------------------------------------------------
 # Info

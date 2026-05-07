@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-25
-# \updates     2026-04-29
+# \updates     2026-05-07
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -26,8 +26,7 @@ if seq66_use_potext
    seq_rtmidi_build = library(
       libseq_rtmidi_library,
       seq_rtmidi_sources,
-      install : false,                 # not seq66_subproj,
-      install_dir : seq66_libdir,
+      install : false,  # not seq66_subproj; install_dir : seq66_libdir;
       c_args : build_args,
       cpp_args : build_args,
       dependencies : [
@@ -44,8 +43,7 @@ else
    seq_rtmidi_build = library(
       libseq_rtmidi_library,
       seq_rtmidi_sources,
-      install : false,                 # not seq66_subproj,
-      install_dir : seq66_libdir,
+      install : false,  # not seq66_subproj; install_dir : seq66_libdir;
       c_args : build_args,
       cpp_args : build_args,
       dependencies : [
@@ -58,8 +56,12 @@ else
 
 endif
 
-if not seq66_subproj
+#-----------------------------------------------------------------------------
+# Since this is an internal helper library, it will not be installed.
+#-----------------------------------------------------------------------------
 
+'''
+if not seq66_subproj
    pkg_mod = import('pkgconfig')
    pkg_mod.generate(
       seq_rtmidi_build,
@@ -72,8 +74,8 @@ if not seq66_subproj
       libraries : seq_rtmidi_build,
       url : seq66_url
       )
-
 endif
+'''
 
 #****************************************************************************
 # meson.build (seq_rtmidi/seq66)

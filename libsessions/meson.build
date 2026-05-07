@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-25
-# \updates     2026-04-29
+# \updates     2026-05-07
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -26,8 +26,7 @@ if seq66_use_potext
    libsessions_build = library(
       libsessions_library,
       libsessions_sources,
-      install : false,                 # not seq66_subproj,
-      install_dir : seq66_libdir,
+      install : false,  # not seq66_subproj; install_dir : seq66_libdir;
       c_args : build_args,
       cpp_args : build_args,
       dependencies : [
@@ -44,8 +43,7 @@ else
    libsessions_build = library(
       libsessions_library,
       libsessions_sources,
-      install : false,                 # not seq66_subproj,
-      install_dir : seq66_libdir,
+      install : false,  # not seq66_subproj; install_dir : seq66_libdir;
       c_args : build_args,
       cpp_args : build_args,
       dependencies : [

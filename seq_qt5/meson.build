@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-26
-# \updates     2026-05-02
+# \updates     2026-05-07
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -234,9 +234,13 @@ seq_ui_files = qtimport.compile_ui(
 #  preserve_paths : true
    )
 
+#-----------------------------------------------------------------------------
+# Rather than struggle to get the GUI library together and working with
+# the linker, we now add the sources to the Seq66qt5 executable build.
+#-----------------------------------------------------------------------------
+
 '''
 if seq66_use_potext
-
    seq_qt_build = library(
       libseq_qt5_library,
 #     [ seq_qt_sources, seq_moc_sources, moc_files, ui_files ],
@@ -248,15 +252,11 @@ if seq66_use_potext
       pic : true,
       dependencies : [
          system_depends, liblib66_library_dep, qt_dep,
-#        libcfg66_library_dep,
-#        libxpc66_library_dep,
          libpotext_library_dep
          ],
       include_directories : [ seq66_includes ]
       )
-
 else
-
    seq_qt_build = library(
       libseq_qt5_library,
       [ seq_qt_sources, moc_files, ui_files ],
@@ -267,21 +267,18 @@ else
       pic : true,
       dependencies : [
          system_depends, liblib66_library_dep, qt_dep,
-#        libcfg66_library_dep,
-#        libxpc66_library_dep
          ],
       include_directories : [ seq66_includes ]
       )
-
-# link_args?
-# link_early_args?
-# pic?
-# prelink
-
 endif
+'''
 
+#-----------------------------------------------------------------------------
+# Since this is an internal helper library, it will not be installed.
+#-----------------------------------------------------------------------------
+
+'''
 if not seq66_subproj
-
    pkg_mod = import('pkgconfig')
    pkg_mod.generate(
       seq_qt_build,
@@ -294,7 +291,6 @@ if not seq66_subproj
       libraries : seq_qt_build,
       url : seq66_url
       )
-
 endif
 '''
 

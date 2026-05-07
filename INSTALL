@@ -1,6 +1,13 @@
-INSTALL for Seq66 v. 0.99.24 and above
+INSTALL for Seq66 v. 0.99.25 and above
 Chris Ahlstrom
-2015-09-10 to 2026-04-22
+2015-09-10 to 2026-05-07
+
+NOTE:
+
+    As of version 0.99.25, Seq66 is built using Meson instead of
+    GNU Autotools. The Qt *.pro files can still be used.
+    Also, though file still have "qt5" in the name, currently
+    Qt 6 is used by default.
 
 Getting Seq66 requires building the code or going to "ahlstromcj/seq66" on
 GitHub to get an installation package or a Windows release executable.
@@ -47,55 +54,24 @@ Linux Distro Package (seq66):
         Installed it from from KXStudio repo using Muon:
         https://kde.org/applications/en/system/org.kde.muon
 
-Autotools Build and Install:
+Meson Build and Install:
 
-    The normal install is meant for for those who do not want to install a lot
-    of extra developer packages, and want to use the standard "configure"
-    steps.  These steps build the most common version of Seq66, "qseq66" with
-    the internal "rtmidi" engine.  The "configure" script for the build
-    process means one needs to install the various "dev" dependencies.  The
-    conventional way to install applications from source code is to use the
-    source tarball and run the normal mantra:
+    While Meson and Ninja commands can be used by the user to build,
+    install, and uninstall Seq66, we provide a "work.sh" script
+    similar to the old "bootstrap" script.  Here is the life cycle
+    encapsulated.
 
-        $ contrib/scripts/reconf        # if needed (see below)
-        $ ./configure
-        $ make
-        $ sudo make install
+        $ ./work.sh --clean
+        $ ./work.sh --release
+        $ ./build/cc/Seq66qt5       [make sure it runs (the 'smoke' test)]
+        $ sudo ./work.sh --install
+          . . .
+        $ sudo ./work.sh --uninstall
 
-    If "configure" or "make" emit errors, make sure libtool is installed, and
-    then run the script "reconf", stored in "contrib/scripts/reconf".  This
-    should make soft links to /usr/share/automake files in the aux-files
-    directory. Then try the above commands again.
+    There are other options. Run the following to see them, and perhap examine
+    the commands in the script:
 
-    Another variation is to change the client/port name from the default,
-    which is "seq66". Add an option like the following:
-
-        $ ./configure --with-client=myseqclient
-
-    This change will show up in the MIDI I/O tabs in Edit / Preferences.
-
-    Also note that the qmake executable must exist.  If it is not found,
-    check for the existence of an alternate name (e.g. qmake-qt5) and
-    make a soft link to it.
-
-Bootstrap Install:
-
-    The quick install is meant for for those who do not want to install a lot
-    of extra developer packages, and want to use the standard "./configure ;
-    make ; make install" mantra.  These steps build the default version of
-    Seq66, "qseq66" with the internal "rtmidi" engine.  The "configure" script
-    for the build process means one needs to install the various "dev"
-    dependencies.  See the DEPENDENCIES section.  The build commands
-    require automake and libtool to be installed.  Grab a Seq66 tarball
-    and untar it.  Go to the "seq66" directory and run these commands:
-
-        $ ./bootstrap -er
-        $ make &> make.log
-        $ sudo make install
-
-    Study the "bootstrap" script to understand how it uses autoheader,
-    automake, libtool, and other standard Linux build tools.  This build
-    results in the "qseq66" executable.
+        $ ./work.sh --help
 
 Clang Compiler:
 
@@ -107,18 +83,8 @@ Clang Compiler:
     command can be used for the base clang, or the bootstrap script for a
     specific version:
 
-        $ CC=clang CXX=clang++ ./configure
-        $ make &> make.log
-        $ sudo make install
-
-    One might need to make symbolic links to the desired versions of these
-    compiler, for example clang-16 and clang++-16.
-
-    The alternative is to make sure the setup is fully cleaned, and use
-    a bootstrap option:
-
-        $ ./bootstrap --full-clean
-        $ ./bootstrap --clang [... other options]
+        $ ./work.sh --clean
+        $ ./work.sh --clang --release
 
 FreeBSD:
 
@@ -133,26 +99,13 @@ FreeBSD:
 Qt and Command-Line Merged Build:
 
     Per package-manager request, one can build and install both qseq66 and
-    seq66cli in one pass. Either of the following setups should work.
-
-        $ ./bootstrap --both
-
-    or
-
-        $ ./bootstrap
-        $ ./configure --enable-both
+    seq66cli in one pass. This is done by default; the files created
+    are ./build/cc/Seq66cli/seq66cli and ./build/cc/Seq66qt5/seq66qt5.
 
 Out-of-source Build:
 
-    Here is an example, assuming one just downloaded the latest code:
-
-        $ ./bootstrap --full-clean
-        $ ./bootstrap
-        $ mkdir build
-        $ cd build
-        $ ../configure --enable-both (or other options)
-        $ make -j 4 &> make.log      (check it for errors/warnings)
-        $ sudo make install          (in this example, both qseq66 & seq66cli)
+    Meson automatically (and enforces) and out-of-source build in the
+    directory ./build/cc.  See the --help option of work.sh.
 
 OpenSUSE:
 
@@ -188,6 +141,10 @@ Fedora:
     $ sudo dnf install qt5-qtbase qt5-qtbase-devel qt5-linguist \
             jack-audio-connection-kit-devel liblo-devel alsa-lib-devel
 
+Ubuntu Studio:
+
+    See INSTALL.seq66.on.Ubuntu.md.
+
 MSYS2:
 
     Uses the bootstrap script noted for Linux. It requires the installation
@@ -203,94 +160,10 @@ MSYS2:
 
 Advanced Steps:
 
-    These steps are meant for those who want to try the various versions of
-    Seq66, and do not mind installing a lot of extra developer software.
+    See "./work.sh --help".
 
-   0.  Preload any DEPENDENCIES, as listed at the end of this document.
-       However, if some are missing, the configure script will tell you,
-       or, at worst, a build error will tell you.
-
-   1.  Check-out the branch you want, if you do not want "master".  Make a
-       branch if you want to make changes.  The active branches are "master",
-       "playlist", and "qt5_reconcile".  The comand "git branch -a" will
-       show other branches not yet deleted.  See GitHub.
-
-   2.  The first thing to do is decide what version of Seq66 you want to
-       build:
-
-       1. Seq66qt5/qseq66:      ./bootstrap -er
-       2. Seq66cli/seq66cli:    ./bootstrap -er -cli
-       3. Seq66cli/seq66clip:   ./bootstrap -er -cli -pm
-       4. qpseq66 Linux:        Qmake/qbuild.sh/Qtcreator in shadow directory
-       5. qpseq66 Windows:      Qmake/Qtcreator/build_release_package.bat
-
-       For the first two: from the top project directory, run one of the
-       commands above (they auto-configure) or run the following commands,
-       which set up a release build of seq66 (native JACK, native ALSA
-       fallback).
-
-       $ ./bootstrap            (only if the configure script does not exist)
-       $ ./configure [options]
-
-       If you do not want to see a lot of output, the stock autotools
-       option "--enable-silent-rules" can be added to the ./configure command.
-       Otherwise:
-
-       $ ./bootstrap --enable-release [ -cli | -qt ]
-       $ ./bootstrap -er [ -cli | -qt ]
-
-       Note that the options in brackets are optional.  The default is
-       equivalent to "-rm -qt".
-
-       For debugging without libtool getting in the way, just run the
-       following command, which will add the --enable-debug and
-       --disable-shared options to a configure run:
-
-       $ ./bootstrap --enable-debug [ -cli | -qt ]
-       $ ./bootstrap -ed [ -cli | -qt ]
-
-       There are also configure options as described below, and conditional
-       macros in the header files.  The configure options can be supplied to
-       the ./configure command, while build macros can be defined (in the
-       code) to even further tailor the build.
-
-       To learn more, run
-
-       $ ./bootstrap --help
-
-       If there are build issues, try again after running:
-
-       $ ./bootstrap --full-clean
-
-   3.  Run the make command:
-
-       $ make &> make.log
-
-       This procedure no longer builds the documentation. If you do care about
-       programmer documentation, change to the doc/dox directory and run
-       "./make_dox reference" and "./make_dox notes".
-
-       WARNING:  "./make_dox reference" is currently BROKEN, even though
-                 no errors/warnings are shown in the Doxygen log files.
-      
-       You can add options to "make", such as "V=0" (enable silent build),
-       "V=1" (enable the normal verbose build), and "-j n" (use n processors
-       to speed up the build).
-
-   4.  To install, become root and run:
-
-       # make install
-
-       Note that we have removed the developer reference manual from the
-       automated build (see the Doxygen DEPENDENCIES below), but the existing
-       documents will still be installed.
-
-   5.  See the additional features that can be enabled, below, using 
-       build macros.
-
-   6.  Also grab the Seq66 User Manual from the "doc" directory.
-       It contains a prebuilt PDF version of the manual, as well as the
-       LaTeX and make files needed to rebuild it.
+    See the additional features that can be enabled, below, using 
+    build macros.
 
    7.  If you want to generate your own source/configure tarball for
        distributing Seq66, use the pack script:
@@ -315,21 +188,13 @@ Pipe Option:
 
 Debugging:
 
-    Normally, one can bootstrap or configure with the --enable-debug option.
-    However, on some machines (e.g. Debian Sid running gcc 9), the debug build
-    fails because it cannot find one of the library symbols.  In that case,
-    one can either use a qmake debug build or the following sequence of
-    commands:
-
-        $ ./bootstrap --full-clean
-        $ ./bootstrap
-        $ ./configure --enable-debug    [note the lack of "--disable-shared"]
-        $ make &> make.log              [verify that there are no errors]
-        $ libtool --mode=execute gdb ./Seq66qt5/qseq66
-
+    The default build (no ./work.sh options) is a debug buld.
     We use cgdb instead of gdb for debugging.
 
 Qmake-based Install:
+
+    This method is still supported. We need it for use with Qt Creator
+    and with Windows builds.
 
     A build based on QtCreator and Qmake is available, to build the project on
     Windows, though we created this build on Linux first to work out the
@@ -394,6 +259,8 @@ Windows:
     the procedure to follow.
 
 CONFIGURE OPTIONS FOR APPLICATION FEATURES:
+
+    THESE OPTIONS ARE NOT YET PORTED to work.sh. A big To Do.
 
     These options define or undefine various build macros:
 
@@ -535,11 +402,8 @@ DEPENDENCIES:
 
    Build tools:
 
-    -   automake and autoconf
-    -   autoconf-archive
-    -   g++
-    -   make
-    -   libtool
+    -   Meson and ninja
+    -   g++ or clang++
     -   Qt 5 or Qt 6. Install qtcreator only if you want it, as it
         installs 650 Mb worth of files. One can just install the bare
         minimum:
@@ -613,8 +477,11 @@ DEPENDENCIES:
             -   latexmk
             -   pdf2latex
 
-      To build the PDF user manual, change to the doc/latex directory and
-      run "make".  The PDF is found in data/share/doc.
+      To build the PDF user manual:
+
+        $ ./work.sh --pdf
+
+      The PDF is found in data/share/doc.
 
       To build the Doxygen documentation manually, change to the doc/dox
       directory and run:
@@ -626,7 +493,7 @@ DEPENDENCIES:
 
       To install the documentation to /usr/local/doc/seq66-0.90:
 
-         ./make_dox install
+         ./work.sh --install --tags TODO
       
    Debian packaging:
 
@@ -649,7 +516,7 @@ DEPENDENCIES:
    Testing (optional):
 
         -   qjackctl
-        -   hydrogen
+        -   hydrogen or qsynth
         -   klick (a command-line metronome)
         -   qtractor or other MIDI sequencers
         -   gmidimonitor or (better) midisnoop

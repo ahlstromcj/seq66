@@ -1,4 +1,4 @@
-.TH Seq66 "December 2023" "Version 0.99.11" "Seq66 Manual Page"
+.TH Seq66 "May 2026" "Version 0.99.25" "Seq66 Manual Page"
 
 .SH NAME
 Seq66 (qseq66) - Real-time live MIDI loop sequencer refactored from
@@ -17,16 +17,18 @@ Sequencer64/Seq24
 [\fIOPTIONS\fP] [\fIfilename\fP]
 
 .BR filename
-is the name of a MIDI file to be loaded at startup.
+is the name of a MIDI file to be loaded at startup. Files can
+be drag-and-dropped onto the main grid.
 
 .SH DESCRIPTION
 .PP
-\fISequencer66\fP ("Seq66") is a real-time MIDI sequencer.
+\fISeq66\fP is a real-time MIDI sequencer.
 It provides a nice interface for editing and playing MIDI 'loops'.
-It uses Qt 5 for the user interface.  It is functionally very
-similar to Sequencer64 and Seq24, but more flexible and faster.
+It uses Qt 5/6 for the user interface.  It is functionally very
+similar to Sequencer64 and Seq24, but more flexible and robust.
 The two executables are qseq66 and a command-line/daemon called
-seq66cli. The Windows version uses a variant of PortMidi, and is qpseq66.
+seq66cli. The Windows version uses a variant of PortMidi, and
+is qpseq66.
 
 .SH OPTIONS
 Seq66 accepts the following options, plus an optional name of

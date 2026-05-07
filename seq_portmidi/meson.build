@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-25
-# \updates     2026-04-29
+# \updates     2026-05-07
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -27,8 +27,7 @@ if seq66_use_potext
       libseq_portmidi_library,
       seq66_project_base,
       seq_portmidi_sources,
-      install : false,                 # not seq66_subproj,
-      install_dir : seq66_libdir,
+      install : false,  # not seq66_subproj; install_dir : seq66_libdir;
       c_args : build_args,
       cpp_args : build_args,
       dependencies : [
@@ -45,8 +44,7 @@ else
    seq_portmidi_build = library(
       libseq_portmidi_library,
       seq_portmidi_sources,
-      install : false,                 # not seq66_subproj,
-      install_dir : seq66_libdir,
+      install : false,  # not seq66_subproj; install_dir : seq66_libdir;
       c_args : build_args,
       cpp_args : build_args,
       dependencies : [
@@ -59,8 +57,12 @@ else
 
 endif
 
-if not seq66_subproj
+#-----------------------------------------------------------------------------
+# Since this is an internal helper library, it will not be installed.
+#-----------------------------------------------------------------------------
 
+'''
+if not seq66_subproj
    pkg_mod = import('pkgconfig')
    pkg_mod.generate(
       seq_portmidi_build,
@@ -73,8 +75,8 @@ if not seq66_subproj
       libraries : seq_portmidi_build,
       url : seq66_url
       )
-
 endif
+'''
 
 #****************************************************************************
 # meson.build (seq_portmidi/seq66)

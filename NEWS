@@ -1,15 +1,19 @@
 NEWS for Seq66 0.99.25
 Chris Ahlstrom
-2015-07-10 to 2026-05-03
+2015-07-10 to 2026-05-07
 
 # Change Log
 
-## [0.99.25] - 2026-05-03
+## [0.99.25] - 2026-05-07
 
 A major refactoring of Seq66 to use Meson and qmake, while ditching
-the overly-cumbersome autoconf build. Required moving the seq\_qt5
-moc/ui-related files to the seq\_qt5/src/gui. In addition, some
-connect() calls were updated to work with either Qt5 or Qt6.
+the overly-cumbersome autoconf build. Replaced bootstrap with
+work.sh to match other "66" projects. Makefiles and configure.ac,
+etc. are gone.
+
+Required moving the seq\_qt5 moc/ui-related files to the
+seq\_qt5/src/gui. In addition, some connect() calls were updated to
+work with either Qt5 or Qt6.
 
 ### Added
 
@@ -24,6 +28,10 @@ connect() calls were updated to work with either Qt5 or Qt6.
     -   Still more qt6 deprecations found and fixed.
 
 ### Fixed
+
+-   The libraries used in the build are helper libraries, internal
+    to the project, and hence pkgconfig files are not made,
+    and the libraries a not installable.
 
 ## [0.99.24] - 2026-05-01
 

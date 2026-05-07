@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-25
-# \updates     2026-04-26
+# \updates     2026-05-07
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library/application. See the top-level
@@ -18,7 +18,7 @@ seq66cli_exe = executable(
    'seq66cli',
    sources : [ 'seq66rtcli.cpp' ],
    dependencies : [ seq66_dep, liblib66_library_dep ],
-   install : false   # for now
+   install : true
    )
 
 #****************************************************************************
