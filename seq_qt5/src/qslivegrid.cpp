@@ -1027,25 +1027,25 @@ qslivegrid::seq_id_from_xy (int click_x, int click_y)
  */
 
 void
-qslivegrid::mousePressEvent (QMouseEvent * event)
+qslivegrid::mousePressEvent (QMouseEvent * ev)
 {
-    current_seq(seq_id_from_xy(event->x(), event->y()));
+    current_seq(seq_id_from_xy(qt_mouse_x(ev), qt_mouse_y(ev)));
 
     bool ok = current_seq() != seq::unassigned();
     bool nonblankslot = perf().set_current_sequence(current_seq());
     if (ok)
     {
-        if (event->button() == Qt::LeftButton)
+        if (ev->button() == Qt::LeftButton)
         {
-            if (event->modifiers() & Qt::ControlModifier)
+            if (ev->modifiers() & Qt::ControlModifier)
             {
                 new_sequence();
             }
-            else if (event->modifiers() & Qt::ShiftModifier)
+            else if (ev->modifiers() & Qt::ShiftModifier)
             {
                 new_live_frame();
             }
-            else if (event->modifiers() & Qt::AltModifier)
+            else if (ev->modifiers() & Qt::AltModifier)
             {
                 /*
                  * Not sure that this really works. Needs investigation.
@@ -1063,11 +1063,11 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
             if (not_nullptr(s))
                 s->set_popup(false);
         }
-        else if (event->button() == Qt::RightButton)
+        else if (ev->button() == Qt::RightButton)
         {
-            if (event->modifiers() & Qt::ControlModifier)
+            if (ev->modifiers() & Qt::ControlModifier)
                 new_sequence();
-            else if (event->modifiers() & Qt::ShiftModifier)
+            else if (ev->modifiers() & Qt::ShiftModifier)
                 new_live_frame();
             else
                 popup_menu();
@@ -1095,13 +1095,13 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
  */
 
 void
-qslivegrid::mouseReleaseEvent (QMouseEvent * event)
+qslivegrid::mouseReleaseEvent (QMouseEvent * ev)
 {
-    current_seq(seq_id_from_xy(event->x(), event->y()));
+    current_seq(seq_id_from_xy(qt_mouse_x(ev), qt_mouse_y(ev)));
     m_button_down = false;
     if (current_seq() != seq::unassigned())
     {
-        if (event->button() == Qt::LeftButton)
+        if (ev->button() == Qt::LeftButton)
         {
             if (m_moving)                           /* see "Moving" above   */
             {
@@ -1121,7 +1121,7 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
         }
         else if                                     /* launch seq editor    */
         (
-            event->button() == Qt::MiddleButton &&
+            ev->button() == Qt::MiddleButton &&
             perf().is_seq_active(current_seq())
         )
         {
@@ -1138,9 +1138,9 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
  */
 
 void
-qslivegrid::mouseMoveEvent (QMouseEvent * event)
+qslivegrid::mouseMoveEvent (QMouseEvent * ev)
 {
-    seq::number seqno = seq_id_from_xy(event->x(), event->y());
+    seq::number seqno = seq_id_from_xy(qt_mouse_x(ev), qt_mouse_y(ev));
     if (seqno != hover_seq())
     {
         if (! seq::unassigned(hover_seq()))
@@ -1179,7 +1179,11 @@ qslivegrid::mouseMoveEvent (QMouseEvent * event)
     else                                                /* ca 2025-10-19    */
     {
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("x,y = %d,%d --> track #%d\n", event->x(), event->y(), seqno);
+        printf
+        (
+            "x,y = %d,%d --> track #%d\n", qt_mouse_x(ev),
+            qt_mouse_y(ev), seqno
+        );
 #endif
         current_seq(seqno);
     }
@@ -1192,14 +1196,14 @@ qslivegrid::mouseMoveEvent (QMouseEvent * event)
  */
 
 void
-qslivegrid::mouseDoubleClickEvent (QMouseEvent * event)
+qslivegrid::mouseDoubleClickEvent (QMouseEvent * ev)
 {
     if (rc().allow_click_edit())
     {
         if (m_adding_new)
             new_sequence();
 
-        current_seq(seq_id_from_xy(event->x(), event->y()));
+        current_seq(seq_id_from_xy(qt_mouse_x(ev), qt_mouse_y(ev)));
         if (perf().is_seq_active(current_seq()))
             button_toggle_checked(current_seq());   /* undo press-toggle    */
 
@@ -1405,27 +1409,27 @@ qslivegrid::handle_key_release (const keystroke & k)
  */
 
 void
-qslivegrid::keyPressEvent (QKeyEvent * event)
+qslivegrid::keyPressEvent (QKeyEvent * ev)
 {
     bool show = rc().verbose();
-    keystroke k = qt_keystroke(event, keystroke::action::press, show);
+    keystroke k = qt_keystroke(ev, keystroke::action::press, show);
     bool done = handle_key_press(k);
     if (done)
         update();
     else
-        QWidget::keyPressEvent(event);
+        QWidget::keyPressEvent(ev);
 }
 
 void
-qslivegrid::keyReleaseEvent (QKeyEvent * event)
+qslivegrid::keyReleaseEvent (QKeyEvent * ev)
 {
     bool show = rc().verbose();
-    keystroke k = qt_keystroke(event, keystroke::action::release, show);
+    keystroke k = qt_keystroke(ev, keystroke::action::release, show);
     bool done = handle_key_release(k);
     if (done)
         update();
     else
-        QWidget::keyReleaseEvent(event);
+        QWidget::keyReleaseEvent(ev);
 }
 
 void
@@ -1827,10 +1831,10 @@ qslivegrid::change_event (QEvent * evp)
  */
 
 void
-qslivegrid::changeEvent (QEvent * event)
+qslivegrid::changeEvent (QEvent * ev)
 {
-    QWidget::changeEvent(event);
-    if (event->type() == QEvent::ActivationChange)
+    QWidget::changeEvent(ev);
+    if (ev->type() == QEvent::ActivationChange)
     {
         if (isActiveWindow())
         {
@@ -2453,28 +2457,28 @@ qslivegrid::on_automation_change (automation::slot /* s */)
  */
 
 void
-qslivegrid::dragEnterEvent (QDragEnterEvent * event)
+qslivegrid::dragEnterEvent (QDragEnterEvent * ev)
 {
-    if (event->mimeData()->hasUrls())
-        event->acceptProposedAction();
+    if (ev->mimeData()->hasUrls())
+        ev->acceptProposedAction();
 }
 
 void
-qslivegrid::dragMoveEvent (QDragMoveEvent * /*event*/)
+qslivegrid::dragMoveEvent (QDragMoveEvent * /*ev*/)
 {
     // no code
 }
 
 void
-qslivegrid::dragLeaveEvent (QDragLeaveEvent * /*event*/)
+qslivegrid::dragLeaveEvent (QDragLeaveEvent * /*ev*/)
 {
     // no code
 }
 
 void
-qslivegrid::dropEvent (QDropEvent * event)
+qslivegrid::dropEvent (QDropEvent * ev)
 {
-    foreach (const QUrl & url, event->mimeData()->urls())
+    foreach (const QUrl & url, ev->mimeData()->urls())
     {
         QString urlasfile = url.toLocalFile();
         std::string fname = urlasfile.toStdString();
