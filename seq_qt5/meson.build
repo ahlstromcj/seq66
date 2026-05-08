@@ -12,6 +12,10 @@
 #  This file is part of the "seq66" library. See the top-level meson.build
 #  file for license information.
 #
+#  We use a static library since we're not installing the libraries;
+#  using a shared library build causes undefined references at link
+#  time.
+#
 #  moc_headers:         Files using QOBJECT.
 #  moc_extra_arguments: [ '-DMAKE_MOC_COMPILE' ] as an example.
 #  ui_files:            Files *.ui in the forms directory.
@@ -246,7 +250,7 @@ seq_ui_files = qtimport.compile_ui(
 
 '''
 if seq66_use_potext
-   seq_qt_build = library(
+   seq_qt_build = static_library(
       libseq_qt5_library,
 #     [ seq_qt_sources, seq_moc_sources, moc_files, ui_files ],
       [ seq_qt_sources, moc_files, ui_files ],
@@ -262,7 +266,7 @@ if seq66_use_potext
       include_directories : [ seq66_includes ]
       )
 else
-   seq_qt_build = library(
+   seq_qt_build = static_library(
       libseq_qt5_library,
       [ seq_qt_sources, moc_files, ui_files ],
       install : false,                 # not seq66_subproj,

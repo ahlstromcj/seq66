@@ -6,11 +6,15 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-25
-# \updates     2026-05-07
+# \updates     2026-05-08
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
 #  file for license information.
+#
+#  We use a static library since we're not installing the libraries;
+#  using a shared library build causes undefined references at link
+#  time.
 #
 #-----------------------------------------------------------------------------
 
@@ -23,7 +27,7 @@ subdir('src')
 
 if seq66_use_potext
 
-   seq_rtmidi_build = library(
+   seq_rtmidi_build = static_library(
       libseq_rtmidi_library,
       seq_rtmidi_sources,
       install : false,  # not seq66_subproj; install_dir : seq66_libdir;
@@ -40,7 +44,7 @@ if seq66_use_potext
 
 else
 
-   seq_rtmidi_build = library(
+   seq_rtmidi_build = static_library(
       libseq_rtmidi_library,
       seq_rtmidi_sources,
       install : false,  # not seq66_subproj; install_dir : seq66_libdir;

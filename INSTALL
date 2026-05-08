@@ -63,7 +63,7 @@ Meson Build and Install:
     encapsulated.
 
         $ ./work.sh --clean
-        $ ./work.sh --release
+        $ ./work.sh                 [add the --debug option if desired   ]
         $ ./build/cc/Seq66qt5       [make sure it runs (the 'smoke' test)]
         $ sudo ./work.sh --install
           . . .
@@ -85,7 +85,7 @@ Clang Compiler:
     specific version:
 
         $ ./work.sh --clean
-        $ ./work.sh --clang --release
+        $ ./work.sh --clang
 
 FreeBSD:
 

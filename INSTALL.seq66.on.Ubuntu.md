@@ -81,18 +81,20 @@ The work.sh script can restart the whole build configuration:
 
 Note that 'work.sh' has a '--help' option.
 
-Now configure the build and make it:
+Now configure the build and make it (can add the --debug option if desired).
 
 ```bash
-    $ ./work.sh --release
+    $ ./work.sh
 ```
+This also builds the project. To just configure it, add the --setup option.
 
 You can pass optional flags if needed:
 
-- `--release` to build in release mode (debug is the default at present).
+- `--release` to build in release mode (the default).
+- `--debug` to build in debug mode.
 - `--clang` to use the Clang compilers instead of the system's default compiler.
 - `--gnu` to use the GNU compilers instead of the system's default compiler.
-- `--portmidi` to enable that code; it lacks a couple features of the normal build
+- `--portmidi` to enable that code; it lacks a couple features of the normal build.
 - `--build dir` to use a different build directory.
 - `--clean` to remove all build products.
 - `--install` to install qseq66 and seq66cli and the icons and samples.
@@ -104,10 +106,10 @@ You can pass optional flags if needed:
 
 ## 5. Build Seq66
 
-Compile the code:
+Compile the code if not done earlier:
 
 ```bash
-./work.sh --release
+./work.sh
 ```
 
 ## 6. Install

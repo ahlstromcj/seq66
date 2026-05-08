@@ -40,7 +40,7 @@ export SEQ66_LIBRARY="$SEQ66-$SEQ66_LIBRARY_API_VERSION"
 
 BASE_BUILD_DIR="build"              # 'seq66/build'
 BUILD_DIR="$BASE_BUILD_DIR/cc"      # "native" compiler (CC/CXX) build
-BUILD_TYPE="debug"
+BUILD_TYPE="release"
 EXTRAFLAGS=""
 INSTALL_LIBDIR="lib"                # "lib/x86_64-linux-gnu" on Debian
 INSTALL_PREFIX="/usr/local"         # "/usr", what about Windows?
@@ -56,7 +56,7 @@ DOPORTMIDI="no"      # --portmidi. The default is rtmidi.
 DOCLANG="no"         # --clang. Default is the native compiler.
 DOGNU="no"           # --gnu. Default is the native compiler.
 DOCLEAN="no"         # --clean
-DODEBUG="yes"        # --debug. This is the default Meson build.
+DODEBUG="no"         # --debug. This is the default Meson build.
 DODIST="no"          # --dist. Use Meson "dist" to create a package.
 DOHELP="no"          # --help. Duh!
 DOOPTHELP="no"       # --option-help. Duh!
@@ -69,8 +69,7 @@ DOREMAKE="no"        # currently UNUSED
 DOMAKEPDF="no"       # --pdf. Make the manual, always as a separate step.
 DOPOTEXT="no"        # --potext. Use translation [NOT YET SUPPORTED].
 DOPACK="no"          # --pack. Clean and create a tar-file.
-DORELEASE="no"       # --release. as opposed to debug.
-DOSTATIC="yes"       # --static
+DORELEASE="yes"      # --release. as opposed to debug.
 DOVERSION="no"       # --version. Duouble duh!
 
 #******************************************************************************
@@ -210,12 +209,6 @@ get_options () {
                DORELEASE="yes"
                DODEBUG="no"
                BUILD_TYPE="release"
-               ;;
-
-            --static)
-               DORELEASE="yes"
-               DODEBUG="no"
-               DOSTATIC="yes"
                ;;
 
             --version)
