@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-26
-# \updates     2026-05-07
+# \updates     2026-05-08
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -215,6 +215,14 @@ seq_qt_sources += files(
 
 qtname = 'qt6'    # qtname = 'qt5'
 qtimport = import(qtname)
+if not qtimport.has_tools(required : false)
+   message('Qt6 tools not found')
+   qtname = 'qt5'
+   qtimport = import(qtname)
+   if not qtimport.has_tools(required : true)
+      error('Qt5 tools not found')
+   endif
+endif
 qt_dep = dependency(qtname, modules : [ 'Core', 'Gui', 'Widgets' ])
 qt_include_dir = qt_dep.get_variable(
    pkgconfig : 'includedir', configtool : 'QT_INSTALL_HEADERS'
@@ -225,13 +233,10 @@ seq_moc_defines  = []
 seq_moc_files = qtimport.compile_moc(
    headers : [ seq_moc_headers, seq_q_object_headers ],
    extra_args: seq_moc_defines #,
-#  include_directories: [ seq66_includes ],
-#  dependencies: qt_dep
    )
 
 seq_ui_files = qtimport.compile_ui(
    sources : seq_ui_forms
-#  preserve_paths : true
    )
 
 #-----------------------------------------------------------------------------

@@ -1,13 +1,14 @@
 INSTALL for Seq66 v. 0.99.25 and above
 Chris Ahlstrom
-2015-09-10 to 2026-05-07
+2015-09-10 to 2026-05-08
 
-NOTE:
+NOTES:
 
-    As of version 0.99.25, Seq66 is built using Meson instead of
-    GNU Autotools. The Qt *.pro files can still be used.
-    Also, though file still have "qt5" in the name, currently
-    Qt 6 is used by default.
+    -   As of version 0.99.25, Seq66 is built on Linux using Meson instead of
+        GNU Autotools. The Qt *.pro files can still be used.
+        Also, though files still have "qt5" in the name, currently
+        Qt 6 is used by default.
+    -   Also see INSTALL.seq66.on.Ubuntu.md for Ubuntu Studio installs.
 
 Getting Seq66 requires building the code or going to "ahlstromcj/seq66" on
 GitHub to get an installation package or a Windows release executable.
@@ -99,13 +100,17 @@ FreeBSD:
 Qt and Command-Line Merged Build:
 
     Per package-manager request, one can build and install both qseq66 and
-    seq66cli in one pass. This is done by default; the files created
-    are ./build/cc/Seq66cli/seq66cli and ./build/cc/Seq66qt5/seq66qt5.
+    seq66cli in one pass. This is done by default in the Meson build;
+    the files created are ./build/cc/Seq66cli/seq66cli and
+    ./build/cc/Seq66qt5/seq66qt5. Both are installed by this command:
+
+        $ ./work.sh --install
 
 Out-of-source Build:
 
-    Meson automatically (and enforces) and out-of-source build in the
-    directory ./build/cc.  See the --help option of work.sh.
+    Meson automatically enforces an out-of-source build in a build
+    directory. We define it as ./build/cc by default, but as ./build/clang
+    or ./build/gcc. See the --help option of work.sh.
 
 OpenSUSE:
 
@@ -127,9 +132,6 @@ OpenSUSE:
     $ ln -s /bin/lupdate-qt5 ~/.local/bin/lupdate
     $ ln -s /bin/moc-qt5 ~/.local/bin/moc
     $ export PATH=$PATH:~/.local/bin/qt
-
-    One might need to run the "reconf" script located in contrib/scripts/reconf.
-    Otherwise ./configure drops an error.  Lastly, run ./configure and make.
 
     Also see contrib/scripts/make-qt5-links for OpenSUSE and Fedora, which
     encapsulates the commands shown above.
@@ -165,14 +167,14 @@ Advanced Steps:
     See the additional features that can be enabled, below, using 
     build macros.
 
-   7.  If you want to generate your own source/configure tarball for
-       distributing Seq66, use the pack script:
+    If you want to generate your own source/configure tarball for
+    distributing Seq66, use the pack script:
 
        ./pack --release rtmidi 0.94.6
 
-       where rtmidi is the intended default build, and 0.94.6 is the version
-       of the project.  The branch is included in the resulting tarball name;
-       the usual branch would be "master".
+    where rtmidi is the intended default build, and 0.94.6 is the version
+    of the project.  The branch is included in the resulting tarball name;
+    the usual branch would be "master".
 
 Pipe Option:
 
@@ -189,17 +191,18 @@ Pipe Option:
 Debugging:
 
     The default build (no ./work.sh options) is a debug buld.
-    We use cgdb instead of gdb for debugging.
+    We use cgdb instead of gdb for debugging. For a release build
+    and install, call
+
+        $ ./work.sh --install
 
 Qmake-based Install:
 
     This method is still supported. We need it for use with Qt Creator
     and with Windows builds.
 
-    A build based on QtCreator and Qmake is available, to build the project on
-    Windows, though we created this build on Linux first to work out the
-    numerous "gotchas" with QtCreator, QMake, and the internal Seq66
-    "architecture".
+    A build based on QtCreator and Qmake is available to build the project on
+    Window.
     
     The Qmake-based build is designed to use the local PortMidi library (by
     default), which is necessary for running Seq66 on Windows or Mac OSX.  It

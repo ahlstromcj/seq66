@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-06
+# \update         2026-05-08
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -30,7 +30,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-06"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-08"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -87,8 +87,10 @@ get_options () {
                DOMAKE="yes"
                ;;
 
-            --build | --make)
-               DOMAKE="yes"
+            --build)
+               if test "$DOCLEAN" = "no" ; then
+                  DOMAKE="yes"
+               fi
                shift
                case $1 in
                   -*)
@@ -323,21 +325,19 @@ clean_build () {
    rm -rf $BASE_BUILD_DIR/gcc/
    rm -f doc/dox/*.log
    rm -f doc/latex/*.log
+   if test "$BUILD_DIR" != "$BASE_BUILD_DIR" ; then
+      rm -rf $BUILD_DIR
+   fi
    echo "Build products removed from the seq66/$BUILD_DIR directory."
    rm -rf subprojects/liblib66/
    rm -rf subprojects/potext/
    rm -rf subprojects/libcfg66
    rm -rf subprojects/libxpc66
    echo "Subproject products removed from the subprojects directory."
-#  git checkout doc/seq66-dev-manual.pdf
+
+#  git checkout data/share/doc/seq66-dev-manual.pdf
 #  echo "Previous version of developer guide restored."
-#
-# Problematic when making a release. Just remember to do it.
-#
-#  rm -f doc/latex/*.log
-#  echo "Build products removed from the cfg66/$BUILD_DIR directory."
-#  git checkout doc/cfg66-library-guide.pdf tests/data/fooout.rc
-#  echo "Previous version of developer guide restored."
+#  Problematic when making a release. Just remember to do it.
 
 }
 

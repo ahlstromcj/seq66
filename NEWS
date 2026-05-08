@@ -33,6 +33,15 @@ work with either Qt5 or Qt6.
     to the project, and hence pkgconfig files are not made,
     and the libraries a not installable.
 
+### Removed
+
+-   The autotools install was installing the Seq66 headers and
+    libraries. The library files (a and so) were huge, it turns out.
+    Much larger than the qseq66 executable built with static
+    libraries. We don't need the headers, and the static build
+    yields a much smaller install footprint for qseq66. The headers
+    and libraries are no longer installed,
+
 ## [0.99.24] - 2026-05-01
 
 Mitigates issue #144, where note and drum-note painting was

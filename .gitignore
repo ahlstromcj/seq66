@@ -1,7 +1,7 @@
 # .gitignore for Seq66
 #
 # Chris Ahlstrom
-# Updates: 2015-09-12 to 2021-12-12
+# Updates: 2015-09-12 to 2026-05-08
 
 ~$*
 .*
@@ -49,14 +49,6 @@ Desktop.ini
 develop-eggs
 .directory
 dist
-DocProject/buildhelp/
-DocProject/Help/*.hhc
-DocProject/Help/*.hhk
-DocProject/Help/*.hhp
-DocProject/Help/html
-DocProject/Help/Html2
-DocProject/Help/*.HxC
-DocProject/Help/*.HxT
 dox-stamp
 doxygen_sqlite3.db
 *.dvi
@@ -69,7 +61,6 @@ eggs
 *.gcda
 *.gcno
 *.gcov
-Generated_Code # added for RIA/Silverlight projects
 !.gitignore
 *.glg
 *.glo
@@ -149,8 +140,6 @@ scratch/
 sdist
 Seq66cli/seq66cli
 Seq66qt5/qseq66
-Seq66rtmidi/seq66
-Session.vim
 *.sln.docstates
 *.slo
 *.snm
@@ -159,6 +148,7 @@ sql
 stamp-h1
 *.status
 stylecop.*
+subprojects/liblib66/
 *.suo
 .svn/
 .*.sw[a-z]
@@ -188,14 +178,3 @@ vgcore
 *.vrb
 *.vsp
 *.vspscc
-
-# Ignore programmer's reference manuals
-
-doc/dox/libseq66/latex/
-doc/dox/libseq66/seq66_lib_libseq66.pdf
-doc/dox/libsessions/latex/
-doc/dox/libsessions/seq66_lib_libsessions.pdf
-doc/dox/seq_portmidi/latex/
-doc/dox/seq_portmidi/seq66_lib_seq_portmidi.pdf
-doc/dox/seq_rtmidi/latex/
-doc/dox/seq_rtmidi/seq66_lib_seq_rtmidi.pdf

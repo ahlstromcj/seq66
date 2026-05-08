@@ -118,7 +118,7 @@ project('seq66',
    license : 'GPLv3',
    meson_version : '>=1.4.0',
    default_options : [
-      'cpp_std=c++17', 'warning_level=3', 'default_library=shared'
+      'cpp_std=c++17', 'warning_level=3', 'default_library=both'
       ]
    )
 

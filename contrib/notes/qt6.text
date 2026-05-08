@@ -1,0 +1,44 @@
+Setting the Qt Version
+Chris Ahlstrom
+2026-05-08 to 2026-05-08
+
+$ apt get qt6-base-dev qtchooser
+
+$ qtchooser -l
+  4
+  5
+  6
+  default
+  qt4-x86_64-linux-gnu
+  qt4
+  qt5-x86_64-linux-gnu
+  qt5
+  qt6
+
+$ qtchooser -install qt6 $(which qmake6)           [ Or 6?   ]
+
+$ cat ~/.config/qtchooser/qt6.conf
+  /usr/lib/qt6/bin
+  /usr/lib/x86_64-linux-gnu
+
+$ vi ~/.bashrc
+
+  Add the line QT_SELECT=qt6                       [ versus 5  ]
+  Then spawn a new terminal window.
+
+$ echo $QT_SELECT
+  6
+
+$ qtchooser -run-tool=qmake --version
+  QMake version 3.1
+  Using Qt version 6.9.2 in /usr/lib/x86_64-linux-gnu
+
+$ ./bootstrap --full-clean
+$ ./bootstrap -er
+  Fails!!!!
+
+Qtchooser fails to find Qt 6.1 or later due to the Qt tools having moved to the
+libexec (/usr/lib/x86_64-linux-gnu/libexec) subdirectory, and tool names being
+suffixed with only the Qt major version number e.g. qmake6.
+
+# vim: sw=4 ts=4 wm=8 et ft=sh
