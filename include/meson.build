@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-04-23
+# \updates     2026-05-08
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -20,15 +20,23 @@
 #     -  include/transport. Will contain headers related to JACK transport
 #        (and perhaps other transport like Pipewire).
 #
+#  We cannot both set the configuration macros and the git version string
+#  in the same file.
+#
 #-----------------------------------------------------------------------------
 
-# libseq66_headers += files(
-#  )
-
-configure_file(
+seq66_config_file = configure_file(
    input : 'seq66-config.h.in',
    output : 'seq66-config.h',
    configuration : cdata
+   )
+
+seq66_git_tag = vcs_tag(
+   input : 'seq66-git-version.h.in',
+   output : 'seq66-git-version.h',
+   command : [ 'git', 'describe', '--tags', '--long' ],
+   fallback : 'current',
+   replace_string : '@VCS_TAG@'
    )
 
 #****************************************************************************

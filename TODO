@@ -5,15 +5,12 @@ Chris Ahlstrom
     -   Changed the build system to Meson. Bugs so far:
         -   More deprecations:
             -   JACK deprecations.
-        -   Need to be able to choose Qt5 if Qt6 is not installed.
-        -   Add this feature to Meson:
-            version = $(SEQ66_LIBTOOL_VERSION)
-            git_version = $(shell git describe --tags --long)
-            git_branch =$(shell git branch | grep -e ^*)
-            git_info = "$(git_version) $(git_branch)"
         -   seq_portmidi: Add -Wno-cast-function-type ?
         -   Update work.sh with more bootstrap options.
-
+            --port-refresh Enables port-refresh feature for JACK.
+            --disable-jack Disables JACK support, enables rtmidi.
+            --no-metadata  Disable JACK metadata support.
+            --no-nsm       Disable Non Session Manager support.
     -   Port more Qt6-deprecation fixes from the (not yet public)
         Meson build once that works fully.
     -   Fix positioning of data pane text in the various modes.

@@ -49,6 +49,7 @@
 #include <locale>                       /* std::locale, etc.                */
 #include <string.h>                     /* strlen() <gasp!>                 */
 
+#include "seq66-git-version.h"          /* automake-generated or for qmake  */
 #include "cfg/cmdlineopts.hpp"          /* this module's header file        */
 #include "cfg/rcfile.hpp"               /* seq66::rcfile class              */
 #include "cfg/settings.hpp"             /* seq66::rc() and usr() access     */

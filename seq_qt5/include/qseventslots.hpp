@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-05-03
+ * \updates       2023-05-08
  * \license       GNU GPLv2 or above
  *
  *  This class supports the left side of the Qt 5 version of the Event Editor
@@ -198,15 +198,7 @@ private:
 public:
 
     qseventslots (performer & p, qseqeventframe & parent, sequence & s);
-
-    /**
-     *  Let's provide a do-nothing virtual destructor.
-     */
-
-    virtual ~qseventslots ()
-    {
-        // I got nothin'
-    }
+    ~qseventslots () = default;
 
     void clear ()
     {

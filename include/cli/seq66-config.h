@@ -6,10 +6,10 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
 #ifndef SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2025-07-28"
+#define SEQ66_VERSION_DATE_SHORT "2026-05-08"
 #endif
 #ifndef SEQ66_VERSION
-#define SEQ66_VERSION "0.99.22"
+#define SEQ66_VERSION "0.99.25"
 #endif
 
 /* "Distro of build" */
@@ -258,7 +258,7 @@
 
 /* Define to the full name and version of this package. */
 #ifndef SEQ66_PACKAGE_STRING
-#define SEQ66_PACKAGE_STRING "Seq66 0.99.17"
+#define SEQ66_PACKAGE_STRING "Seq66 0.99.25"
 #endif
 
 /* Define to the one symbol short name of this package. */
@@ -273,7 +273,7 @@
 
 /* Define to the version of this package. */
 #ifndef SEQ66_PACKAGE_VERSION
-#define SEQ66_PACKAGE_VERSION "0.99.17"
+#define SEQ66_PACKAGE_VERSION "0.99.25"
 #endif
 
 /* Indicates if portmidi is enabled */
@@ -281,7 +281,7 @@
 
 /* Define PROFLAGS=-pg (gprof) or -p (prof) if profile support is wanted. */
 #ifndef SEQ66_PROFLAGS
-#define SEQ66_PROFLAGS 
+#define SEQ66_PROFLAGS
 #endif
 
 /* Define to necessary symbol if this constant uses a non-standard name on

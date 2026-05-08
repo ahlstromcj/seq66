@@ -71,8 +71,9 @@ Make sure you’re on the **master** branch (default) unless you want a differen
 
 ## 4. Bootstrap and Configure
 
-The bootstrap script has been replaced by the work.sh script, which
-encapsulates a number of Meson build commands.
+The **bootstrap** script has been replaced by the **work.sh** script, which
+encapsulates a number of Meson build commands. Of course, experience Meson users can work without using this script.
+
 The work.sh script can restart the whole build configuration:
 
 ```bash
@@ -86,16 +87,16 @@ Now configure the build and make it (can add the --debug option if desired).
 ```bash
     $ ./work.sh
 ```
-This also builds the project. To just configure it, add the --setup option.
+This also builds the project. To just configure it, add the --setup option. By default, all build products are put in ./build/cc.
 
 You can pass optional flags if needed:
 
 - `--release` to build in release mode (the default).
 - `--debug` to build in debug mode.
-- `--clang` to use the Clang compilers instead of the system's default compiler.
-- `--gnu` to use the GNU compilers instead of the system's default compiler.
+- `--clang` to use the Clang compilers instead of the system's default compiler. Build products go into ./build/clang.
+- `--gnu` to use the GNU compilers instead of the system's default compiler. Build products go into ./build/gcc.
 - `--portmidi` to enable that code; it lacks a couple features of the normal build.
-- `--build dir` to use a different build directory.
+- `--build dir` to use a different build directory. If used, must be used for follow-on work.sh commands.
 - `--clean` to remove all build products.
 - `--install` to install qseq66 and seq66cli and the icons and samples.
 - `--uninstall` to uninstall the build status.

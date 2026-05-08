@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom
  * \date          2026-04-23
- * \updates       2026-04-27
+ * \updates       2026-05-08
  * \license       GNU GPL v2 or above
  *
  *  This file is used mainly for system files and specific build options.  The
@@ -119,7 +119,6 @@
 #define SEQ66_VERSION                   @version@
 #define SEQ66_PACKAGE_STRING            SEQ66_PACKAGE_NAME " " @version@
 #define SEQ66_PACKAGE_VERSION           @version@
-#define SEQ66_GIT_VERSION               SEQ66_VERSION_DATE_SHORT
 
 #undef SEQ66_MIDI_PORT_REFRESH
 
