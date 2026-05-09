@@ -49,6 +49,7 @@
 #include "cfg/settings.hpp"             /* seq66::rc() and seq66::usr()     */
 #include "midi/businfo.hpp"             /* seq66::businfo class             */
 #include "midi/event.hpp"               /* seq66::event class               */
+#include "midi/midibus.hpp"             /* seq66::midibus                   */
 
 namespace seq66
 {
@@ -73,13 +74,13 @@ namespace seq66
 
 businfo::businfo (midibus * bus)
  :
-    m_bus           (),                 /* this is an std::shared_ptr<>     */
+    m_bus           (bus),              /* this is an std::shared_ptr<>     */
     m_active        (false),
     m_initialized   (false),
     m_init_clock    (e_clock::none),    /* could end up disabled as well    */
     m_init_input    (false)
 {
-    m_bus.reset(bus);                   /* also see initialize()            */
+    // m_bus.reset(bus);                /* also see initialize()            */
 }
 
 /**
@@ -180,6 +181,71 @@ businfo::initialize ()
 }
 
 /**
+ * Accessor functions formerly inlined in the header.
+ */
+
+void
+businfo::init_clock (e_clock clocktype)
+{
+    m_init_clock = clocktype;
+    if (not_nullptr(bus()))
+        bus()->set_clock(clocktype);
+}
+
+/*
+ * When clicking on the MIDI Input item, this is not needed...  it disables
+ * the detection of a change, so that init() and deinit() do not get called.
+ *
+ * When starting up we need to honor the init-input flag if it is set, and
+ * init() the bus.  But we don't need to call deinit() at startup if it is
+ * false, since init() hasn't been called yet.
+ */
+
+void
+businfo::init_input (bool flag)
+{
+    m_init_input = flag;
+    if (not_nullptr(bus()))
+        bus()->set_io_status(flag);
+}
+
+void
+businfo::start ()
+{
+    bus()->start();
+}
+
+void
+businfo::stop ()
+{
+    bus()->stop();
+}
+
+void
+businfo::continue_from (midipulse tick)
+{
+    bus()->continue_from(tick);
+}
+
+void
+businfo::init_clock (midipulse tick)
+{
+    bus()->init_clock(tick);
+}
+
+void
+businfo::clock (midipulse tick)
+{
+    bus()->clock(tick);
+}
+
+void
+businfo::sysex (const event * ev)
+{
+    bus()->sysex(ev);
+}
+
+/**
  *  Print some information about the MIDI bus.
  */
 
@@ -242,4 +308,3 @@ businfo::print () const
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

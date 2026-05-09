@@ -33,13 +33,10 @@
  *  The busarray module defines busarray classes so that we can
  *  start avoiding arrays and explicit access to them.
  *
- *  The businfo class holds a pointer to its midibus object.
- *
  *  The busarray class holds a number of businfo classes, and two busarrays
  *  are maintained, one for input and one for output.
  */
 
-// #include <memory>                       /* std::shared_ptr<>                */
 #include <vector>                       /* for containing the bus objects   */
 
 #include "midi/businfo.hpp"             /* seq66::bussinfo                  */
@@ -47,6 +44,7 @@
 namespace seq66
 {
     class event;
+    class midibus;
 
 /**
  *  Holds a number of businfo objects.
@@ -78,96 +76,17 @@ public:
         return int(m_container.size());
     }
 
-    midibus * bus (bussbyte b)
-    {
-        return b < bussbyte(count()) ? m_container[b].bus() : nullptr ;
-    }
-
-    int client_id (bussbyte b)
-    {
-        return b < bussbyte(count()) ? m_container[b].bus()->client_id() : 0 ;
-    }
-
-    /**
-     *  Starts all of the busses; used for output busses only, but no check is
-     *  made at present.
-     */
-
-    void start ()
-    {
-        for (auto & bi : m_container)       /* vector of businfo copies     */
-            bi.start();
-    }
-
-    /**
-     *  Stops all of the busses; used for output busses only, but no check is
-     *  made at present.
-     */
-
-    void stop ()
-    {
-        for (auto & bi : m_container)       /* vector of businfo copies     */
-            bi.stop();
-    }
-
-    /**
-     *  Continues from the given tick for all of the busses; used for output
-     *  busses only.
-     *
-     * \param tick
-     *      Provides the tick value for all busses to continue from.
-     */
-
-    void continue_from (midipulse tick)
-    {
-        for (auto & bi : m_container)       /* vector of businfo copies     */
-            bi.continue_from(tick);
-    }
-
-    /**
-     *  Initializes the clocking at the given tick for all of the busses; used
-     *  for output busses only.
-     *
-     * \param tick
-     *      Provides the tick value for all busses use as the clock tick.
-     */
-
-    void init_clock (midipulse tick)
-    {
-        for (auto & bi : m_container)       /* vector of businfo copies     */
-            bi.init_clock(tick);
-    }
-
-    /**
-     *  Clocks at the given tick for all of the busses; used for output busses
-     *  only.
-     *
-     * \param tick
-     *      Provides the tick value for all busses use as the clock tick.
-     */
-
-    void clock (midipulse tick)
-    {
-        for (auto & bi : m_container)       /* vector of businfo copies     */
-            bi.clock(tick);
-    }
-
+    midibus * bus (bussbyte b);
+    int client_id (bussbyte b);
+    void start ();
+    void stop ();
+    void continue_from (midipulse tick);
+    void init_clock (midipulse tick);
+    void clock (midipulse tick);
     void play (bussbyte bus, const event * e24, midibyte channel);
     void sysex (bussbyte bus, const event * ev);
     bool set_clock (bussbyte bus, e_clock clocktype);
-
-    /**
-     *  Sets the clock type for all busses, usually the output buss.  Note that
-     *  the settings to apply are added when the add() call is made.  This is a
-     *  bit ugly.
-     */
-
-    void set_all_clocks ()
-    {
-        for (auto & bi : m_container)           /* vector of businfo copies */
-            bi.bus()->set_clock(bi.init_clock());
-    }
-
+    void set_all_clocks ();
     e_clock get_clock (bussbyte bus) const;
     std::string get_midi_bus_name (int bus) const;  /* full display name!   */
     std::string get_midi_port_name (int bus) const; /* without the client   */
@@ -175,21 +94,7 @@ public:
     void print () const;
     void port_exit (int client, int port);
     bool set_input (bussbyte bus, bool inputing);
-
-    /**
-     *  Set the status of all input busses.  There's no implementation-specific
-     *  API function here.  This function should be used only for the input
-     *  busarray, obviously.  Note that the input settings used here were
-     *  stored when the add() function was called.  They can be changed by the
-     *  user via the Options / MIDI Input tab.
-     */
-
-    void set_all_inputs ()
-    {
-        for (auto & bi : m_container)       /* vector of businfo copies     */
-            bi.bus()->set_input(bi.init_input());
-    }
-
+    void set_all_inputs ();
     bool get_input (bussbyte bus) const;
     bool is_system_port (bussbyte bus) const;
     bool is_port_unavailable (bussbyte bus) const;
@@ -211,7 +116,7 @@ extern void swap (busarray & buses0, busarray & buses1);
 #endif      // SEQ66_BUSARRAY_HPP
 
 /*
- * businfo.hpp
+ * busarray.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

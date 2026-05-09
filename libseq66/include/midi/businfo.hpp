@@ -39,15 +39,15 @@
  *  are maintained, one for input and one for output.
  */
 
-#include <memory>                       /* std::shared_ptr<>                */
+// #include <memory>                    /* std::shared_ptr<>                */
 #include <vector>                       /* for containing the bus objects   */
 
 #include "midi/midibus_common.hpp"      /* enum class e_clock               */
-#include "midi/midibus.hpp"             /* seq66::midibus                   */
 
 namespace seq66
 {
     class event;
+    class midibus;
 
 /**
  *  A new class to consolidate a number of bus-related arrays into one array.
@@ -64,9 +64,11 @@ private:
 
     /**
      *  Points to an existing midibus object.
+     *
+     *      std::shared_ptr<midibus> m_bus;
      */
 
-    std::shared_ptr<midibus> m_bus;
+    midibus * m_bus;
 
     /**
      *  Indicates if the existing bus is active.
@@ -105,18 +107,20 @@ public:
 
     void remove ()
     {
-        if (bool(m_bus))
-            m_bus.reset();
+        /*
+         * if (bool(m_bus))
+         *    m_bus.reset();
+         */
     }
 
     const midibus * bus () const
     {
-        return m_bus.get();
+        return m_bus;                   // .get();
     }
 
     midibus * bus ()
     {
-        return m_bus.get();
+        return m_bus;                   // .get();
     }
 
     bool active () const
@@ -153,62 +157,17 @@ public:
         m_active = m_initialized = false;
     }
 
-    void init_clock (e_clock clocktype)
-    {
-        m_init_clock = clocktype;
-        if (not_nullptr(bus()))
-            bus()->set_clock(clocktype);
-    }
-
-    void init_input (bool flag)
-    {
-        m_init_input = flag;
-
-        /*
-         * When clicking on the MIDI Input item, this is not needed...
-         * it disables the detection of a change, so that init() and deinit()
-         * do not get called.
-         *
-         * When starting up we need to honor the init-input flag if it is
-         * set, and init() the bus.  But we don't need to call deinit() at
-         * startup if it is false, since init() hasn't been called yet.
-         */
-
-        if (not_nullptr(bus()))
-            bus()->set_io_status(flag);
-    }
+    void init_clock (e_clock clocktype);
+    void init_input (bool flag);
 
 private:
 
-    void start ()
-    {
-        bus()->start();
-    }
-
-    void stop ()
-    {
-        bus()->stop();
-    }
-
-    void continue_from (midipulse tick)
-    {
-        bus()->continue_from(tick);
-    }
-
-    void init_clock (midipulse tick)
-    {
-        bus()->init_clock(tick);
-    }
-
-    void clock (midipulse tick)
-    {
-        bus()->clock(tick);
-    }
-
-    void sysex (const event * ev)
-    {
-        bus()->sysex(ev);
-    }
+    void start ();
+    void stop ();
+    void continue_from (midipulse tick);
+    void init_clock (midipulse tick);
+    void clock (midipulse tick);
+    void sysex (const event * ev);
 
 private:
 

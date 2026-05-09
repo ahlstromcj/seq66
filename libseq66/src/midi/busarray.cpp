@@ -36,6 +36,7 @@
 #include "cfg/settings.hpp"             /* seq66::rc() and seq66::usr()     */
 #include "midi/busarray.hpp"            /* seq66::busarray class            */
 #include "midi/event.hpp"               /* seq66::event class               */
+#include "midi/midibus.hpp"             /* seq66::midibus class             */
 
 namespace seq66
 {
@@ -367,6 +368,92 @@ busarray::get_midi_alias (int bus) const
 }
 
 /**
+ *  Accessor functions moved from the header.
+ */
+
+midibus *
+busarray::bus (bussbyte b)
+{
+    return b < bussbyte(count()) ? m_container[b].bus() : nullptr ;
+}
+
+int
+busarray::client_id (bussbyte b)
+{
+    return b < bussbyte(count()) ? m_container[b].bus()->client_id() : 0 ;
+}
+
+/**
+ *  Starts all of the busses; used for output busses only, but no check is
+ *  made at present.
+ */
+
+void
+busarray::start ()
+{
+    for (auto & bi : m_container)       /* vector of businfo copies     */
+        bi.start();
+}
+
+/**
+ *  Stops all of the busses; used for output busses only, but no check is
+ *  made at present.
+ */
+
+void
+busarray::stop ()
+{
+    for (auto & bi : m_container)       /* vector of businfo copies     */
+        bi.stop();
+}
+
+/**
+ *  Continues from the given tick for all of the busses; used for output
+ *  busses only.
+ *
+ * \param tick
+ *      Provides the tick value for all busses to continue from.
+ */
+
+void
+busarray::continue_from (midipulse tick)
+{
+    for (auto & bi : m_container)       /* vector of businfo copies     */
+        bi.continue_from(tick);
+}
+
+/**
+ *  Initializes the clocking at the given tick for all of the busses; used
+ *  for output busses only.
+ *
+ * \param tick
+ *      Provides the tick value for all busses use as the clock tick.
+ */
+
+void
+busarray::init_clock (midipulse tick)
+{
+    for (auto & bi : m_container)       /* vector of businfo copies     */
+        bi.init_clock(tick);
+}
+
+/**
+ *  Clocks at the given tick for all of the busses; used for output busses
+ *  only.
+ *
+ * \param tick
+ *      Provides the tick value for all busses use as the clock tick.
+ */
+
+void
+busarray::clock (midipulse tick)
+{
+    for (auto & bi : m_container)       /* vector of businfo copies     */
+        bi.clock(tick);
+}
+
+
+/**
  *  Print some information about the available MIDI input or output busses.
  */
 
@@ -376,6 +463,34 @@ busarray::print () const
     printf("Available busses:\n");
     for (const auto & bi : m_container)         /* vector of businfo copies */
         bi.print();
+}
+
+/**
+ *  Sets the clock type for all busses, usually the output buss.  Note that
+ *  the settings to apply are added when the add() call is made.  This is a
+ *  bit ugly.
+ */
+
+void
+busarray::set_all_clocks ()
+{
+    for (auto & bi : m_container)           /* vector of businfo copies */
+        bi.bus()->set_clock(bi.init_clock());
+}
+
+/**
+ *  Set the status of all input busses.  There's no implementation-specific
+ *  API function here.  This function should be used only for the input
+ *  busarray, obviously.  Note that the input settings used here were
+ *  stored when the add() function was called.  They can be changed by the
+ *  user via the Options / MIDI Input tab.
+ */
+
+void
+busarray::set_all_inputs ()
+{
+    for (auto & bi : m_container)       /* vector of businfo copies     */
+        bi.bus()->set_input(bi.init_input());
 }
 
 /**
@@ -671,4 +786,3 @@ swap (busarray & buses0, busarray & buses1)
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-
