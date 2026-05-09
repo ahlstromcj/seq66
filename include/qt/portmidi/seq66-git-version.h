@@ -1,0 +1,47 @@
+#if ! defined SEQ66_GIT_VERSION_H
+#define SEQ66_GIT_VERSION_H
+
+/*
+ *  This file is part of seq66.
+ *
+ *  libs66 is free software; you can redistribute it and/or modify it under
+ *  the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  libs66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with libs66; if not, write to the Free Software Foundation, Inc., 59
+ *  Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+/**
+ * \file          seq66-git-version.h (seq66-git-version.h.in)
+ *
+ *  This header file provide "HAVE" definitions based on detected C/C++
+ *  system header files.
+ *
+ * \library       seq66
+ * \author        Chris Ahlstrom
+ * \date          2026-05-08
+ * \updates       2026-05-08
+ * \license       GNU GPL v2 or above
+ *
+ *  This file is used to grab the git commit information.
+ */
+
+#if ! defined SEQ66_GIT_VERSION
+#define SEQ66_GIT_VERSION       "0.99.24-10-gb2ccf96d"
+#endif
+
+#endif          // SEQ66_GIT_VERSION_H
+
+/*
+ * seq66-git-version.h (seq66-git-version.h.in)
+ *
+ * vim: sw=4 ts=4 wm=4 et ft=c
+ */
