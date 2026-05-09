@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-21
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -66,6 +66,7 @@ qsabout::qsabout (QWidget * parent) : QDialog (parent), ui (new Ui::qsabout)
     ui->label_github_seq32->setOpenExternalLinks(true);
     ui->label_github_kepler34->setOpenExternalLinks(true);
     ui->label_gmail_ahlstromcj->setOpenExternalLinks(true);
+    connect(ui->OkButton, &QPushButton::clicked, this, &QDialog::accept);
 }
 
 qsabout::~qsabout()

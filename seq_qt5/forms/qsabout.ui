@@ -99,12 +99,12 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="extraButton">
+    <widget class="QPushButton" name="OkButton">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="text">
-      <string/>
+      <string>OK</string>
      </property>
      <property name="checkable">
       <bool>false</bool>
