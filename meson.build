@@ -300,7 +300,7 @@ cdata.set_quoted('app_build_os', app_build_os)
 
 cdata.set_quoted('app_engine', app_engine)
 cdata.set_quoted('app_name', 'qseq66')
-cdata.set_quoted('app_type', 'qt5')
+cdata.set_quoted('app_type', 'TBD')
 cdata.set_quoted('client_name', 'seq66')
 cdata.set_quoted('config_dir_name', 'seq66')
 cdata.set_quoted('config_name', 'qseq66')

@@ -196,10 +196,14 @@ get_options () {
                ;;
 
             --debug)
-               DOMAKE="yes"
+               if test "$DOCLEAN" = "no" ; then
+                  DOMAKE="yes"
+               fi
                DODEBUG="yes"
                DORELEASE="no"
                BUILD_TYPE="debug"
+               BUILD_DIR="$BASE_BUILD_DIR/debug"
+               MAKEFILE="$BUILD_DIR/build.ninja"
                ;;
 
             --release)
@@ -285,7 +289,7 @@ make_pdf () {
 }
 
 clean_build () {
-   rm -rf $BUILD_DIR/Desktop-Debug/
+   rm -rf build/Desktop-Debug/
    rm -rf $BUILD_DIR/doc/
    rm -rf $BUILD_DIR/latex/
    rm -rf $BUILD_DIR/include/

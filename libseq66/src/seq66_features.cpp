@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2026-05-08
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -570,7 +570,13 @@ seq_build_details ()
 #endif
         << "Executable: " << seq_app_name()
         << " (" << seq_app_path() << ")\n"
-        << "Interface: " << seq_app_type() << "\n"
+
+        /*
+         * This is meant to show "cli" vs "gui", but not ready.
+         *
+         * << "Interface: " << seq_app_type() << "\n"
+         */
+
         << "Engine: " << seq_app_engine() << "\n"
         ;
 

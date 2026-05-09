@@ -1,13 +1,13 @@
 INSTALL for Seq66 v. 0.99.25 and above
 Chris Ahlstrom
-2015-09-10 to 2026-05-08
+2015-09-10 to 2026-05-09
 
 NOTES:
 
-    -   As of version 0.99.25, Seq66 is built on Linux using Meson instead of
-        GNU Autotools. The Qt *.pro files can still be used.
+    -   As of version 0.99.25, Seq66 is built on Linux using Meson instead
+        of GNU Autotools. The Qt *.pro files can still be used.
         Also, though files still have "qt5" in the name, currently
-        Qt 6 is used by default.
+        Qt 6 is used by default, if available.
     -   Also see INSTALL.seq66.on.Ubuntu.md for Ubuntu Studio installs.
 
 Getting Seq66 requires building the code or going to "ahlstromcj/seq66" on
@@ -37,14 +37,17 @@ with the instructions below.  Different versions of the program can be built:
 Below are sections for various ways of installing this project by building
 from source code:
 
-    -   Linux Distro Package
-    -   Normal (automake) Install
-    -   Bootstrap Install (Quick Install)
+    -   Linux distro package if provided
+    -   Normal (meson) Install
+    -   Work.sh Install (Quick Install)
     -   Advanced Steps
         -   Pipe Option:
         -   Debugging:
     -   Qmake-based Install (Linux and Windows)
     -   MSYS2 Install (Windows only, and NOT YET READY)
+
+    One can also enable the Meson plug-in in Qt Creator and build Seq66.
+    The build products are made in build/Desktop-Debug.
 
 Linux Distro Package (seq66):
 
@@ -68,6 +71,10 @@ Meson Build and Install:
         $ sudo ./work.sh --install
           . . .
         $ sudo ./work.sh --uninstall
+
+    The default build directory is './build/cc'. For the --clang option,
+    it is './build/clang'. For --gnu or --gcc, it is './build/gcc'.
+    For --debug, it is './build/debug'.
 
     There are other options. Run the following to see them, and perhap examine
     the commands in the script:

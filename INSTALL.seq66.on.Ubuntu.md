@@ -1,7 +1,7 @@
 # INSTALL Seq66 for Ubuntu Studio
 
 Authors: WinkoErades and MQS-mark <p>
-Updated: 2026-05-08
+Updated: 2026-05-09
 
 Here’s a **step-by-step installation plan** to build and install **Seq66** from source on **Ubuntu Studio 25.10**. This assumes you are *installing from the GitHub repository* you linked: **https://github.com/ahlstromcj/seq66/tree/master** ([GitHub](https://github.com/ahlstromcj/seq66?utm_source=chatgpt.com "Seq66: Seq24-based live MIDI looper/editor. v. ..."))
 
@@ -92,7 +92,7 @@ This also builds the project. To just configure it, add the --setup option. By d
 You can pass optional flags if needed:
 
 - `--release` to build in release mode (the default).
-- `--debug` to build in debug mode.
+- `--debug` to build in debug mode. The build directory is './build/debug'.
 - `--clang` to use the Clang compilers instead of the system's default compiler. Build products go into ./build/clang.
 - `--gnu` to use the GNU compilers instead of the system's default compiler. Build products go into ./build/gcc.
 - `--portmidi` to enable that code; it lacks a couple features of the normal build.
