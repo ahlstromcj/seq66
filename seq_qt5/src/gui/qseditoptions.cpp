@@ -50,6 +50,7 @@
 
 #include <QButtonGroup>
 
+#include "seq66-config.h"               /* SEQ66_JACK_**** macros           */
 #include "cfg/patchesfile.hpp"          /* seq66::patchesfile class         */
 #include "cfg/rcfile.hpp"               /* seq66::rcfile class              */
 #include "midi/jack_assistant.hpp"      /* seq66::jack_assistant statics    */
@@ -65,7 +66,7 @@
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd master class    */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase's get_url()       */
 #endif
 
@@ -759,7 +760,7 @@ void
 qseditoptions::setup_tab_jack ()
 {
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
 
     ui->tabWidget->setTabToolTip
     (
@@ -891,11 +892,11 @@ qseditoptions::setup_tab_jack ()
     ui->chkJackAutoConnect->setEnabled(false);
     ui->tabWidget->setTabEnabled(Tab_JACK, false);
 
-#if defined SEQ66_PORTMIDI_SUPPORT
+#if SEQ66_PORTMIDI_SUPPORT
     ui->alsaJackButton->setText("PortMidi");
 #endif
 
-#endif  // defined SEQ66_JACK_SUPPORT
+#endif  // SEQ66_JACK_SUPPORT
 }
 
 /*
@@ -1926,11 +1927,11 @@ qseditoptions::setup_tab_session ()
 
 #endif
 
-#if ! defined SEQ66_JACK_SESSION
+#if ! SEQ66_JACK_SESSION
     ui->radio_session_jack->setEnabled(false);
 #endif
 
-#if ! defined SEQ66_NSM_SUPPORT
+#if ! SEQ66_NSM_SUPPORT
     ui->radio_session_nsm->setEnabled(false);
 #endif
 
@@ -2550,7 +2551,7 @@ qseditoptions::show_session (usrsettings::session sm)
     bool url_modifiable = false;
     std::string tenturl;
 
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
     tenturl = nsm::get_url();
 #else
     ui->radio_session_nsm->setChecked(false);
@@ -2559,14 +2560,14 @@ qseditoptions::show_session (usrsettings::session sm)
 
     if (tenturl.empty())
     {
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
         if (usr().want_nsm_session())
         {
             url_modifiable = true;
             tenturl = usr().session_url();
         }
 #endif
-#if defined SEQ66_JACK_SESSION
+#if SEQ66_JACK_SESSION
         if (usr().want_jack_session())
         {
             tenturl = rc().jack_session();          /* JACK session UUID    */
@@ -2580,7 +2581,7 @@ qseditoptions::show_session (usrsettings::session sm)
         ui->radio_session_none->setEnabled(false);
         ui->radio_session_jack->setChecked(false);
         ui->radio_session_jack->setEnabled(false);
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
         ui->radio_session_nsm->setChecked(true);
         ui->radio_session_nsm->setEnabled(true);
         ui->label_nsm_url->setEnabled(true);
@@ -2598,7 +2599,7 @@ qseditoptions::show_session (usrsettings::session sm)
                 break;
 
             case usrsettings::session::nsm:
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
                 ui->radio_session_nsm->setChecked(true);
                 ui->label_nsm_url->setEnabled(true);
                 ui->label_nsm_url->setText("NSM URL");
@@ -2607,7 +2608,7 @@ qseditoptions::show_session (usrsettings::session sm)
                 break;
 
             case usrsettings::session::jack:
-#if defined SEQ66_JACK_SESSION
+#if SEQ66_JACK_SESSION
                 ui->radio_session_jack->setChecked(true);
                 ui->label_nsm_url->setEnabled(true);
                 ui->label_nsm_url->setText("JACK UUID");
@@ -2807,7 +2808,7 @@ qseditoptions::sync_rc ()
     ui->chkJackMaster->setChecked(rc().with_jack_master());
     ui->chkJackConditional->setChecked(rc().with_jack_master_cond());
     ui->chkJackNative->setChecked(rc().with_jack_midi());
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
     ui->chkJackAutoConnect->setChecked(rc().jack_auto_connect());
 #else
     rc().jack_auto_connect(false);
@@ -2818,7 +2819,7 @@ qseditoptions::sync_rc ()
     show_sets_mode(rc().sets_mode());
     show_start_mode(rc().get_song_start_mode());
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
     int rbid = perf().song_mode() ? playmode_button_song : playmode_button_live ;
     foreach (QAbstractButton * button, m_live_song_buttons->buttons())
     {

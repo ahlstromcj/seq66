@@ -86,7 +86,6 @@
 #include "cfg/cmdlineopts.hpp"          /* write_options_files()            */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
-#include "os/daemonize.hpp"             /* seq66::signal_for_restart()      */
 #include "play/songsummary.hpp"         /* seq66::write_song_summary()      */
 #include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
 #include "qliveframeex.hpp"             /* seq66::qliveframeex container    */

@@ -38,7 +38,7 @@
 
 #include "seq66-config.h"
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
 
 #include <jack/jack.h>                  /* JACK (2) API                     */
 

@@ -25,13 +25,14 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2025-04-16
+ * \updates       2025-05-09
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
  *  handles non-session startup as well.
  */
 
+#include "seq66-config.h"               /* SEQ66_NSM_SUPPORT macro          */
 #include "cfg/cmdlineopts.hpp"          /* command-line functions           */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "os/daemonize.hpp"             /* seq66::session_setup(), _close() */
@@ -40,7 +41,7 @@
 #include "util/filefunctions.hpp"       /* seq66::pathname_concatenate()    */
 #include "util/strfunctions.hpp"        /* seq66::contains()                */
 
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT                   /* 1 vs 0                           */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm access functions      */
 #endif
 
@@ -96,7 +97,7 @@ get_and_set_build_issue ()
 
 clinsmanager::clinsmanager (const std::string & caps) :
     smanager            (caps),
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
     m_nsm_client        (),
 #endif
     m_nsm_active        (false),
@@ -128,7 +129,7 @@ clinsmanager::detect_session (std::string & url)
     bool result = false;
     url.clear();
 
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
     std::string tenturl = nsm::get_url();           /* a tentative URL      */
     session_message("Checking for NSM_URL");
     if (! tenturl.empty())
@@ -183,7 +184,7 @@ clinsmanager::detect_session (std::string & url)
 bool
 clinsmanager::create_session (int argc, char * argv [])
 {
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
     std::string url;
     bool ok = detect_session(url);                  /* side-effect          */
     if (! ok)
@@ -252,7 +253,7 @@ clinsmanager::create_session (int argc, char * argv [])
 bool
 clinsmanager::close_session (std::string & msg, bool ok)
 {
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
     if (usr().in_nsm_session())
     {
         warnprint("Closing NSM session");
@@ -388,7 +389,7 @@ clinsmanager::create_project
         if (result)
             result = create_configuration(argc, argv, path, cfgpath, midipath);
     }
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
     if (m_nsm_client)
         (void) m_nsm_client->open_reply(result);            /* issue #28 */
 #endif

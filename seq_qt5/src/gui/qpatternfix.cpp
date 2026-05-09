@@ -42,7 +42,6 @@
 
 #include <QButtonGroup>
 
-#include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qpatternfix.hpp"              /* seq66::qpatternfix class         */
 #include "qseqdata.hpp"                 /* seq66::qseqdata for status, CC   */

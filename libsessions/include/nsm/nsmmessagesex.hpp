@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom
  * \date          2020-08-20
- * \updates       2020-09-01
+ * \updates       2026-05-09
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -18,6 +18,10 @@
  *  of OSC paths (messages) for various purposes, as a way to keep track of
  *  them all and use them propertly.
  */
+
+#include "seq66-config.h"               /* macros for NSM/LO support        */
+
+#if SEQ66_NSM_SUPPORT
 
 #include <map>                          /* std::map dictionary class        */
 #include <string>                       /* std::string class                */
@@ -156,6 +160,8 @@ extern bool is_announce (const std::string & s = "");
 
 }           // namespace seq66
 
+#endif      // SEQ66_NSM_SUPPORT
+
 #endif      // SEQ66_NSMMESSAGESEX_HPP
 
 /*
@@ -163,4 +169,3 @@ extern bool is_announce (const std::string & s = "");
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

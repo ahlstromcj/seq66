@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2026-04-17
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -49,6 +49,7 @@
 #include <locale>                       /* std::locale, etc.                */
 #include <string.h>                     /* strlen() <gasp!>                 */
 
+#include "seq66-config.h"               /* SEQ66_JACK_**** macros           */
 #include "seq66-git-version.h"          /* automake-generated or for qmake  */
 #include "cfg/cmdlineopts.hpp"          /* this module's header file        */
 #include "cfg/rcfile.hpp"               /* seq66::rcfile class              */
@@ -114,7 +115,7 @@ cmdlineopts::s_long_options []
 #endif
     {"investigate",         no_argument,       0, 'i'},
     {"home",                required_argument, 0, 'H'},
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
     {"no-nsm",              no_argument,       0, 'T'},
     {"nsm",                 no_argument,       0, 'n'},
 #endif
@@ -129,7 +130,7 @@ cmdlineopts::s_long_options []
     {"interaction-method",  required_argument, 0, 'x'},
     {"playlist",            required_argument, 0, 'X'},
     {"jack-start-mode",     required_argument, 0, 'M'},
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
     {"jack-transport",      no_argument,       0, 'j'}, /* implies Slave    */
 
     /*
@@ -141,7 +142,7 @@ cmdlineopts::s_long_options []
     {"no-jack-transport",   no_argument,       0, 'g'},
     {"jack-master",         no_argument,       0, 'J'},
     {"jack-master-cond",    no_argument,       0, 'C'},
-#if defined SEQ66_JACK_SESSION
+#if SEQ66_JACK_SESSION
     {"jack-session",        required_argument, 0, 'U'},
 #endif
     {"no-jack-midi",        no_argument,       0, 'N'},
@@ -222,7 +223,7 @@ cmdlineopts::s_long_options []
  * Static.
  */
 
-#if defined SEQ66_JACK_SUPPORT      // how to handle no SEQ66_NSM_SUPPORT (n)?
+#if SEQ66_JACK_SUPPORT      // how to handle no SEQ66_NSM_SUPPORT (n)?
 #define CMD_OPTS \
     "01#AaB:b:Cc:DdF:f:gH:hiJjKkL:l:M:mNnoPp::q:RrS:sTtU:uVvWwX:x:Zz"
 #else
@@ -256,12 +257,12 @@ static const std::string s_help_1a
     "   -h, --help, ?           Show this help and exit.\n"
     "   -V, --version, #        Show program version/build and exit.\n"
     "   -v, --verbose           Show more data to the console.\n"
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
     "   -n, --nsm               Activate debugging NSM support.\n"
     "   -T, --no-nsm            Ignore NSM in 'usr' file. (Typical).\n"
 #endif
     "   -X, --playlist filename Load playlists (from \"home\" directory).\n"
-#if ! defined SEQ66_PORTMIDI_SUPPORT
+#if SEQ66_RTMIDI_SUPPORT
     "   -m, --manual-ports      Create virtual ports (ALSA/JACK).\n"
 #endif
     "   -a, --auto-ports        Auto-Connect MIDI ports.\n"
@@ -305,7 +306,7 @@ static const std::string s_help_2
     "   -k, --show-keys         Prints pressed key value.\n"
     "   -K, --inverse           Inverse color scheme for seq/perf editors.\n"
     "   -M, --jack-start-mode m ALSA or JACK play modes: live; song; auto.\n"
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
     "   -j, --jack-transport    Synchronize to JACK transport as Slave.\n"
     "   -g, --no-jack-transport Turn off JACK transport.\n"
     "   -J, --jack-master       Set up as JACK Master. Also sets -j.\n"
@@ -314,7 +315,7 @@ static const std::string s_help_2
     "   -t, --jack, --jack-midi Use JACK MIDI, separately from JACK Transport.\n"
     "   -W, --jack-connect      Auto-connect to JACK ports. The default.\n"
     "   -w, --no-jack-connect   Don't connect to JACK ports. Good with NSM.\n"
-#if defined SEQ66_JACK_SESSION
+#if SEQ66_JACK_SESSION
     "   -U, --jack-session uuid Set JACK session management UUID. Use 'on' to\n"
     "                           enable it and let JACK set the UUID.\n"
 #endif
@@ -1041,7 +1042,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             usr().convert_to_smf_1(false);
             break;
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         case '1':                   /* added for consistency with --alsa    */
         case 't':
             rc().with_jack_midi(true);
@@ -1070,7 +1071,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             usr().midi_buss_override(string_to_midibyte(soptarg));
             break;
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         case 'C':
             rc().with_jack_transport(true);
             rc().with_jack_master(false);
@@ -1124,7 +1125,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             rc().investigate(true);
             break;
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         case 'J':
             rc().with_jack_transport(true);
             rc().with_jack_master(true);
@@ -1167,7 +1168,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             rc().with_jack_midi(false);
             break;
 
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
         case 'n':
             usr().session_manager("nsm");       /* mostly for debugging     */
             usr().in_nsm_session();             /* definitely debugging     */
@@ -1210,23 +1211,15 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             rc().reveal_ports(true);
             break;
 
-#if defined SEQ66_JACK_SUPPORT_OBSOLETE         /* need S for "session"     */
-        case 'S':                               /* -j and -S are the same   */
-            rc().with_jack_transport(true);
-            rc().with_jack_master(false);
-            rc().with_jack_master_cond(false);
-            break;
-#else
         case 'S':                               /* replaces 'I'             */
             rc().session_tag(soptarg);
             break;
-#endif
 
         case 's':
             rc().show_midi(true);
             break;
 
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
         case 'T':
             usr().session_manager("none");
             break;
@@ -1238,7 +1231,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 #endif
 
-#if defined SEQ66_JACK_SESSION
+#if SEQ66_JACK_SESSION
         case 'U':
             rc().jack_session(soptarg);
             break;
@@ -1257,7 +1250,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             rc().verbose(true);
             break;
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
 
         case 'W':
             rc().jack_auto_connect(true);

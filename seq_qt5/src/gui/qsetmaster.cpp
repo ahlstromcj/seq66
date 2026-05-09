@@ -36,7 +36,6 @@
 #include <QTableWidgetItem>
 #include <QTimer>
 
-#include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
 #include "qsetmaster.hpp"               /* seq66::qsetmaster tab class      */

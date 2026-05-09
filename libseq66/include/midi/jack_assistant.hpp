@@ -28,22 +28,23 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2022-09-26
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
  *  still-large performer module.
  */
 
+#include "seq66-config.h"               /* SEQ66_JACK_**** macros           */
 #include "cfg/rcsettings.hpp"           /* seq66::enum class timebase       */
 #include "midi/midibytes.hpp"           /* seq66::midipulse alias           */
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
 
 #include <jack/jack.h>
 #include <jack/transport.h>
 
-#if defined SEQ66_JACK_SESSION
+#if SEQ66_JACK_SESSION
 #include <jack/session.h>
 #endif
 
@@ -52,7 +53,7 @@
  *  headers on our development system.
  */
 
-#if defined SEQ66_JACK_METADATA
+#if SEQ66_JACK_METADATA
 
 #if defined __cplusplus
 extern "C"
@@ -65,11 +66,13 @@ extern const char * JACK_METADATA_ICON_NAME;
 } /* namespace */
 #endif
 
-#endif
+#endif      // SEQ66_JACK_METADATA
 
 #else
+
 #undef SEQ66_JACK_SESSION
-#endif
+
+#endif      // SEQ66_JACK_SUPPORT
 
 namespace seq66
 {
@@ -111,7 +114,7 @@ public:
 
 };
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
 
 /**
  *  Provides an internal type to make it easier to display a specific and
@@ -144,12 +147,14 @@ class jack_assistant
     friend void jack_transport_shutdown (void * arg);
 
 #if defined SEQ66_USE_JACK_SYNC_CALLBACK
+
     friend int jack_sync_callback
     (
         jack_transport_state_t state,
         jack_position_t * pos,
         void * arg
     );
+
 #endif
 
     friend void jack_timebase_callback
@@ -161,8 +166,10 @@ class jack_assistant
         void * arg
     );
 
-#if defined SEQ66_JACK_SESSION
+#if SEQ66_JACK_SESSION
+
     friend void jack_session_callback (jack_session_event_t * ev, void * arg);
+
 #endif
 
 public:
@@ -454,8 +461,10 @@ public:
     bool init ();
     bool deinit ();
 
-#if defined SEQ66_JACK_SESSION
+#if SEQ66_JACK_SESSION
+
     void session_event (jack_session_event_t * ev);
+
 #endif
 
     bool activate ();
@@ -609,12 +618,14 @@ private:
  */
 
 #if defined SEQ66_USE_JACK_SYNC_CALLBACK
+
 extern int jack_sync_callback
 (
     jack_transport_state_t state,
     jack_position_t * pos,
     void * arg
 );
+
 #endif
 
 extern void jack_transport_shutdown (void * arg);
@@ -646,7 +657,8 @@ extern void jack_set_position
 );
 extern std::string get_jack_client_uuid (jack_client_t * jc);
 
-#if defined SEQ66_JACK_METADATA
+#if SEQ66_JACK_METADATA
+
 extern bool set_jack_client_property
 (
     jack_client_t * jc,
@@ -670,12 +682,13 @@ extern bool set_jack_port_property
     const std::string & value,
     const std::string & type = "text/plain"
 );
-#endif
+
+#endif      // SEQ66_JACK_METADATA
 
 extern void show_jack_statuses (unsigned bits);
 extern std::string jack_state_name (const jack_transport_state_t & state);
 
-#if defined SEQ66_JACK_SESSION
+#if SEQ66_JACK_SESSION
 extern void jack_session_callback (jack_session_event_t * ev, void * arg);
 #endif
 
@@ -690,4 +703,3 @@ extern void jack_session_callback (jack_session_event_t * ev, void * arg);
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom
  * \date          2026-04-23
- * \updates       2026-05-08
+ * \updates       2026-05-09
  * \license       GNU GPL v2 or above
  *
  *  This file is used mainly for system files and specific build options.  The
@@ -126,13 +126,12 @@
 /*
  *  ALSA support macros. We have to tippy-toe around because we
  *  don't want to edit source code while porting the build process
- *  to Meson. TODO: fix seq_rtmidi/include/midi_alsa.hpp to
- *  use "#if defined" instead of just "#if".
+ *  to Meson. Well, now we went ahead and edited a lot of sources.
  */
 
 #define SEQ66_HAVE_ALSA                 @alsa_support@
 #if SEQ66_HAVE_ALSA
-#define SEQ66_HAVE_LIBASOUND            1   // see above
+#define SEQ66_HAVE_LIBASOUND            @alsa_support@
 #endif
 
 /*
@@ -156,8 +155,8 @@
 
 #define SEQ66_HAVE_LIBLO                @liblo_support@
 #if SEQ66_HAVE_LIBLO
-#define SEQ66_LIBLO_SUPPORT
-#define SEQ66_NSM_SUPPORT
+#define SEQ66_LIBLO_SUPPORT             @liblo_support@
+#define SEQ66_NSM_SUPPORT               @nsm_support@
 #endif
 
 /*
@@ -170,17 +169,17 @@
 
 #define SEQ66_REQUESTED_PORTMIDI        @portmidi_support@
 #if SEQ66_REQUESTED_PORTMIDI
-#define SEQ66_PORTMIDI_SUPPORT
+#define SEQ66_PORTMIDI_SUPPORT          @portmidi_support@
 #endif
 
 #define SEQ66_REQUESTED_RTMIDI          @rtmidi_support@
 #if SEQ66_REQUESTED_RTMIDI
-#define SEQ66_RTMIDI_SUPPORT
+#define SEQ66_RTMIDI_SUPPORT            @rtmidi_support@
 #endif
 
 #define SEQ66_REQUESTED_WINDOWS         @windows_support@
 #if SEQ66_REQUESTED_WINDOWS
-#define SEQ66_WINDOWS_SUPPORT
+#define SEQ66_WINDOWS_SUPPORT           @windows_support@
 #endif
 
 /*

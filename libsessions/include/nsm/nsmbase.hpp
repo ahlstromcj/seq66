@@ -10,12 +10,16 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2024-03-12
+ * \updates       2026-05-09
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
  *  Upcoming support for the Non Session Manager.
  */
+
+#include "seq66-config.h"               /* macros for NSM/LO support        */
+
+#if SEQ66_NSM_SUPPORT
 
 #include <atomic>                       /* std::atomic<bool>                */
 #include <vector>                       /* std::vector                      */
@@ -24,7 +28,7 @@
 #include "util/basic_macros.hpp"        /* is_nullptr() & not_nullptr()     */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm::tag                  */
 
-#if defined SEQ66_LIBLO_SUPPORT
+#if SEQ66_LIBLO_SUPPORT
 #include <lo/lo.h>                      /* library for the OSC protocol     */
 #else
 #error Support for liblo required for this class, install liblo-dev
@@ -403,6 +407,8 @@ private:
 
 }           // namespace seq66
 
+#endif      // SEQ66_NSM_SUPPORT
+
 #endif      // SEQ66_NSMBASE_HPP
 
 /*
@@ -410,4 +416,3 @@ private:
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

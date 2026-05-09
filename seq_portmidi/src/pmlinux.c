@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-06-02
+ * \updates     2026-05-09
  * \license     GNU GPLv2 or above
  *
  *  This file only needs to implement pm_init(), which calls various routines
@@ -39,13 +39,13 @@
  *      pmlinuxalsa.c, which assumes all input devices are ALSA.
  */
 
-#include "seq66-config.h"
+#include "seq66-config.h"               /* SEQ66_HAVE_LIBASOUND             */
 #include "util/basic_macros.h"          /* not_nullptr() macro, etc.        */
 #include "portmidi.h"                   /* Pm_set_initialized(), etc.       */
 #include "pmutil.h"
 #include "pminternal.h"
 
-#if defined SEQ66_HAVE_LIBASOUND
+#if SEQ66_HAVE_LIBASOUND
 #include "pmlinuxalsa.h"
 #endif
 
@@ -97,4 +97,3 @@ pm_term (void)
  *
  * vim: sw=4 ts=4 wm=4 et ft=c
  */
-

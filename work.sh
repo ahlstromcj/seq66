@@ -162,7 +162,7 @@ get_options () {
 
             --portmidi)
                DOPORTMIDI="yes"
-               PMIDIDEF="-Denable-portmidi=true"
+               PMIDIDEF="-Dportmidi=true"
                ;;
 
             --potext)

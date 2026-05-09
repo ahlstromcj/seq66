@@ -38,7 +38,7 @@
 
 #include <vector>                       /* for channel-filtered recording   */
 
-#include "midi/businfo.hpp"             /* seq66::businfo & busarray        */
+#include "midi/busarray.hpp"            /* seq66::busarray                  */
 #include "midi/midibase.hpp"            /* seq66::midibase::io & recmutex   */
 #include "play/clockslist.hpp"          /* list of seq66::e_clock settings  */
 #include "play/inputslist.hpp"          /* list of boolean input settings   */
@@ -465,4 +465,3 @@ private:
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

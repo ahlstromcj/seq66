@@ -280,20 +280,20 @@ CONFIGURE OPTIONS FOR APPLICATION FEATURES:
         library.  This option enables the usage of native JACK MIDI which will
         fall back to ALSA if JACK is not running.  Builds Seq66rtmidi/seq66.
 
-    --enable-nsm
-    --disable-nsm
+    --nsm
+    --nonsm
 
         Controls the SEQ66_NSM_SUPPORT macro, which is defined by default.
         This will allow the Non Session Manager to control Seq66.
 
-    --disable-jack
+    --nojack
     
         Undefines the SEQ66_JACK_SUPPORT macro, which is otherwise defined
         by default.  This option is not viable for the "rtmidi" version of
         Seq66, which incorporates a couple of JACK modules, but is useful in
         the Windows/OSX builds.
 
-    --enable-jack-session
+    --jack-session
 
         Defines the SEQ66_JACK_SESSION macro, which is defined if JACK session
         support is defined, and the jack/session.h file is found.  Because
@@ -301,8 +301,8 @@ CONFIGURE OPTIONS FOR APPLICATION FEATURES:
         Session Manager (NSM), this option is now disabled by default.  Cannot
         be enabled in the Windows/OSX builds.
 
-    --enable-portmidi
-    --enable-rtmidi
+    --portmidi
+    --rtmidi
 
         We have gotten a few alternate implementations to work.  The normal
         build is effectively --enable-rtmidi.  The --enable-portmidi flag

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2025-09-19
+ * \updates       2026-05-09
  * \license       See above.
  *
  *  This class is meant to collect a whole bunch of JACK information about
@@ -32,13 +32,13 @@
  *  creating JACK midibus objects and midi_jack API objects.
  */
 
-#include <cstring>                      /* std::strcpy(), std::strcat()     */
-
 #include "seq66-config.h"
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
 
-#if defined SEQ66_JACK_METADATA
+#include <cstring>                      /* std::strcpy(), std::strcat()     */
+
+#if SEQ66_JACK_METADATA
 #include <jack/metadata.h>
 #include "base64_images.hpp"
 #endif
@@ -229,7 +229,7 @@ midi_jack_info::connect ()
                     error(rterror::kind::warning, m_error_string);
                 }
 
-#if defined SEQ66_JACK_METADATA
+#if SEQ66_JACK_METADATA
                 std::string n = seq_icon_name();
                 bool ok = set_jack_client_property
                 (
@@ -1074,4 +1074,3 @@ detect_jack (bool forcecheck)
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

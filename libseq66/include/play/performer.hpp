@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2025-07-27
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -48,6 +48,7 @@
 #include <vector>                       /* std::vector<>                    */
 #include <thread>                       /* std::thread                      */
 
+#include "seq66-config.h"               /* SEQ66_JACK_**** macros           */
 #include "cfg/rcsettings.hpp"           /* lots of other files, see banner  */
 #include "ctrl/opcontainer.hpp"         /* class seq66::opcontainer         */
 #include "midi/jack_assistant.hpp"      /* optional seq66::jack_assistant   */
@@ -103,7 +104,7 @@ class performer
     friend class smanager;
     friend class wrkfile;
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
 
     friend int jack_sync_callback
     (
@@ -316,10 +317,12 @@ public:
         }
 
 #if defined USE_ON_SIGNAL_ACTION
+
         virtual bool on_signal_action (bool, playlist::action)
         {
             return false;
         }
+
 #endif
 
         performer & cb_perf ()
@@ -1003,7 +1006,7 @@ private:                            /* key, midi, and op container section  */
 
     synch m_condition_var;
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
 
     /**
      *  A wrapper object for the JACK support of this application.  It
@@ -1706,7 +1709,7 @@ public:
     void set_beats_per_bar (int bpb)
     {
         m_beats_per_bar = bpb;
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         m_jack_asst.set_beats_per_measure(bpb);
 #endif
     }
@@ -1731,7 +1734,7 @@ public:
     void set_beat_length (int bl)
     {
         m_beat_width = bl;
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         m_jack_asst.set_beat_width(bl);
 #endif
     }
@@ -1861,7 +1864,7 @@ public:
         return m_jack_pad;
     }
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
     bool jack_output (jack_scratchpad & pad)
     {
         return m_jack_asst.output(pad);
@@ -1881,7 +1884,7 @@ public:
 
     bool is_jack_running () const
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         return m_jack_asst.is_running();
 #else
         return false;
@@ -1895,7 +1898,7 @@ public:
 
     bool is_jack_master () const
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         return m_jack_asst.is_running() && m_jack_asst.is_master();
 #else
         return false;
@@ -1904,7 +1907,7 @@ public:
 
     bool is_jack_slave () const
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         return m_jack_asst.is_running() && m_jack_asst.is_slave();
 #else
         return false;
@@ -1913,7 +1916,7 @@ public:
 
     bool no_jack_transport () const
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         return ! m_jack_asst.is_running() || m_jack_asst.no_transport();
 #else
         return true;
@@ -1922,7 +1925,7 @@ public:
 
     bool jack_transport_not_starting () const
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         return ! is_jack_running() || m_jack_asst.transport_not_starting();
 #else
         return true;
@@ -1935,14 +1938,14 @@ public:
 
     void start_jack ()
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         m_jack_asst.start();
 #endif
     }
 
     void stop_jack (bool rewind = false)
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         m_jack_asst.stop(rewind);
 #else
         (void) rewind;
@@ -1959,7 +1962,7 @@ public:
 
     bool init_jack_transport ()
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         return m_jack_asst.init();
 #else
         return false;
@@ -1979,14 +1982,14 @@ public:
 
     bool deinit_jack_transport ()
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         return m_jack_asst.deinit();
 #else
         return true;
 #endif
     }
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
     void position_jack (bool songmode, midipulse tick)
     {
         m_jack_asst.position(songmode, tick);
@@ -1999,14 +2002,14 @@ public:
 
     void toggle_jack_mode ()
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         m_jack_asst.toggle_jack_mode();
 #endif
     }
 
     bool get_jack_mode () const
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         return m_jack_asst.get_jack_mode();
 #else
         return false;
@@ -2015,7 +2018,7 @@ public:
 
     midipulse jack_stop_tick () const
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         return m_jack_asst.jack_stop_tick();
 #else
         return 0;
@@ -2026,7 +2029,7 @@ public:
 
     bool jack_set_ppqn (int p)
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         m_jack_asst.set_ppqn(p);
         return true;
 #else
@@ -2034,7 +2037,7 @@ public:
 #endif
     }
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
     void jack_stop_tick (midipulse tick)
     {
         m_jack_asst.jack_stop_tick(tick);
@@ -2056,7 +2059,7 @@ public:
         m_jack_tick = tick;             /* current JACK tick/pulse value    */
     }
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
     void set_follow_transport (bool flag)
     {
         m_jack_asst.set_follow_transport(flag);
@@ -2070,7 +2073,7 @@ public:
 
     bool get_follow_transport () const
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         return m_jack_asst.get_follow_transport();
 #else
         return false;
@@ -2079,7 +2082,7 @@ public:
 
     void toggle_follow_transport ()
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         m_jack_asst.toggle_follow_transport();
 #endif
     }
@@ -2090,7 +2093,7 @@ public:
 
     bool follow_progress () const
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         return m_is_running && m_jack_asst.get_follow_transport();
 #else
         return m_is_running;

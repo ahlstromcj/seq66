@@ -2,6 +2,8 @@ TO DO for Seq66 0.99.25
 Chris Ahlstrom
 2019-04-13 to 2026-05-09
 
+    -   Build broken by dependencies between businfo, midibus,
+        and mastermidibase.
     -   Changed the build system to Meson. Bugs so far:
         -   More deprecations:
             -   JACK deprecations.

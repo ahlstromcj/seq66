@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2025-02-02
+ * \updates       2026-05-09
  * \license       See above.
  *
  *  An abstract base class for realtime MIDI input/output.
@@ -39,21 +39,22 @@
  *  GitHub issue #165: enabled a build and run with no JACK support.
  */
 
+#include "seq66-config.h"               /* SEQ66_JACK_**** macros           */
 #include "cfg/settings.hpp"             /* seq66::rc().with_jack_...()      */
 #include "rtmidi.hpp"                   /* seq66::rtmidi, etc.              */
 #include "rtmidi_info.hpp"              /* seq66::rtmidi_info, etc.         */
 #include "seq66_rtmidi_features.h"      /* selects the usable APIs          */
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
 #include <jack/jack.h>                  /* jack_get_version_string()        */
 #endif
 
-#if defined SEQ66_BUILD_UNIX_JACK
+#if SEQ66_BUILD_UNIX_JACK
 #include "midi_jack.hpp"
 #endif
 
-#if defined SEQ66_BUILD_LINUX_ALSA
+#if SEQ66_BUILD_LINUX_ALSA
 #include "midi_alsa.hpp"
 #endif
 
@@ -224,7 +225,7 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
             {
                 if (api == rtmidi_api::jack)
                 {
-#if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
+#if SEQ66_BUILD_UNIX_JACK && SEQ66_JACK_SUPPORT
                     bool ok = detect_jack();
                     if (ok)
                     {
@@ -245,7 +246,7 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
             {
                 if (api == rtmidi_api::alsa)
                 {
-#if defined SEQ66_BUILD_LINUX_ALSA
+#if SEQ66_BUILD_LINUX_ALSA
                     midi_in_alsa * miap = new (std::nothrow) midi_in_alsa
                     (
                         parent_bus(), midiinfo
@@ -261,7 +262,7 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
         }
         else if (api == rtmidi_api::jack)
         {
-#if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
+#if SEQ66_BUILD_UNIX_JACK && SEQ66_JACK_SUPPORT
             bool ok = detect_jack();
             if (ok)
             {
@@ -279,7 +280,7 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
         }
         else if (api == rtmidi_api::alsa)
         {
-#if defined SEQ66_BUILD_LINUX_ALSA
+#if SEQ66_BUILD_LINUX_ALSA
             midi_in_alsa * miap = new (std::nothrow) midi_in_alsa
             (
                 parent_bus(), midiinfo
@@ -407,7 +408,7 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
             {
                 if (api == rtmidi_api::jack)
                 {
-#if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
+#if SEQ66_BUILD_UNIX_JACK && SEQ66_JACK_SUPPORT
                     bool ok = detect_jack();
                     if (ok)
                     {
@@ -428,7 +429,7 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
             {
                 if (api == rtmidi_api::alsa)
                 {
-#if defined SEQ66_BUILD_LINUX_ALSA
+#if SEQ66_BUILD_LINUX_ALSA
                     midi_out_alsa * moap = new (std::nothrow) midi_out_alsa
                     (
                         parent_bus(), midiinfo
@@ -444,7 +445,7 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
         }
         else if (api == rtmidi_api::jack)
         {
-#if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
+#if SEQ66_BUILD_UNIX_JACK && SEQ66_JACK_SUPPORT
             bool ok = detect_jack();
             if (ok)
             {
@@ -462,7 +463,7 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
         }
         else if (api == rtmidi_api::alsa)
         {
-#if defined SEQ66_BUILD_LINUX_ALSA
+#if SEQ66_BUILD_LINUX_ALSA
             midi_out_alsa * moap = new (std::nothrow) midi_out_alsa
             (
                 parent_bus(), midiinfo

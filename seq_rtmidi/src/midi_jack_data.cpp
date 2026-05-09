@@ -24,18 +24,20 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-09-13
- * \updates       2022-11-22
+ * \updates       2026-05-09
  * \license       See above.
  *
  *  GitHub issue #165: enabled a build and run with no JACK support.
  */
 
+#include "seq66-config.h"               /* macros for NSM/LO support        */
+
+#if SEQ66_JACK_SUPPORT
+
 #include <cmath>                        /* std::trunc(double) functions     */
 
 #include "midi_jack_data.hpp"           /* seq66::midi_jack_data class      */
 #include "cfg/settings.hpp"             /* seq66::rc() config accessor      */
-
-#if defined SEQ66_JACK_SUPPORT
 
 namespace seq66
 {
@@ -439,4 +441,3 @@ midi_jack_data::pulse_cycle (midipulse p, jack_nframes_t F)
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

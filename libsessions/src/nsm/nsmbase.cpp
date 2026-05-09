@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2024-11-07
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -103,13 +103,9 @@
  *      versus "lo_timetag lo_get_tt_immediate();" as LO_TT_IMMEDIATE
  */
 
-#if defined __clang__
-#include "lo/lo_osc_types.h"
-static lo_timetag s_lo_timetag = { 0, 1 };
-#define LO_TT_IMMEDIATE_2   s_lo_timetag
-#else
-#define LO_TT_IMMEDIATE_2   LO_TT_IMMEDIATE
-#endif
+#include "seq66-config.h"               /* macros for NSM/LO support        */
+
+#if SEQ66_NSM_SUPPORT
 
 #undef  SHOW_CLIENT_DATA_TYPE           /* for development purposes only    */
 
@@ -125,6 +121,14 @@ static lo_timetag s_lo_timetag = { 0, 1 };
 #include "util/basic_macros.hpp"        /* not_nullptr(), warnprint(), etc. */
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase class             */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm new message functions */
+
+#if defined __clang__
+#include "lo/lo_osc_types.h"
+static lo_timetag s_lo_timetag = { 0, 1 };
+#define LO_TT_IMMEDIATE_2   s_lo_timetag
+#else
+#define LO_TT_IMMEDIATE_2   LO_TT_IMMEDIATE
+#endif
 
 #define NSM_API_VERSION_MAJOR   1
 #define NSM_API_VERSION_MINOR   0
@@ -1241,9 +1245,10 @@ convert_lo_args (const std::string & pattern, int argc, lo_arg ** argv)
 
 }           // namespace seq66
 
+#endif      // SEQ66_NSM_SUPPORT
+
 /*
  * nsmbase.cpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

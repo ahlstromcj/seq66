@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2022-09-13
+ * \updates       2026-05-09
  * \license       See above.
  *
  *    In this refactoring, we've stripped out most of the original RtMidi
@@ -39,10 +39,11 @@
 
 #include <string>
 
+#include "seq66-config.h"               /* SEQ66_JACK_**** macros           */
 #include "seq66_features.hpp"
 #include "midi_api.hpp"
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
 
 #include "midi_jack_data.hpp"           /* seq66::midi_jack_data            */
 #include "midi_jack_info.hpp"           /* seq66::midi_jack_info            */

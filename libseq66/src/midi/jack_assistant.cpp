@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2025-04-24
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -104,15 +104,17 @@
 #include <stdio.h>
 #include <string.h>                     /* strdup() <gasp!>                 */
 
+#include "seq66-config.h"               /* SEQ66_JACK_**** macros           */
 #include "midi/jack_assistant.hpp"      /* this seq66::jack_ass class       */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "cfg/settings.hpp"             /* "rc" and "user" settings         */
 
 #define SEQ66_USE_BPMINUTE_CALCULATION  /* portfix branch 2022-02-11        */
 
-#if defined SEQ66_JACK_SESSION          /* deprecated, use Non Session Mgr. */
+#if SEQ66_JACK_SESSION                  /* deprecated, use Non Session Mgr. */
 
-#if defined SEQ66_JACK_METADATA
+#if SEQ66_JACK_METADATA
+
 #include <jack/metadata.h>
 #include <jack/uuid.h>
 
@@ -124,11 +126,11 @@
 const char * JACK_METADATA_ICON_NAME =
     "http://jackaudio.org/metadata/icon-name";
 
-#endif
+#endif      // SEQ66_JACK_METADATA
 
 #include "midi/midifile.hpp"            /* seq66::midifile class            */
 
-#endif
+#endif      // SEQ66_JACK_SESSION
 
 /*
  *  All library code in the Seq66 project is in the seq66 namespace.
@@ -137,7 +139,7 @@ const char * JACK_METADATA_ICON_NAME =
 namespace seq66
 {
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
 
 /*
  * -------------------------------------------------------------------------
@@ -587,7 +589,7 @@ std::string
 get_jack_client_uuid (jack_client_t * jc)
 {
     std::string result;
-#if defined SEQ66_JACK_SESSION          /* deprecated, use Non Session Mgr. */
+#if SEQ66_JACK_SESSION                  /* deprecated, use Non Session Mgr. */
     char * luuid = ::jack_client_get_uuid(jc);
     if (not_nullptr(luuid))
     {
@@ -612,7 +614,7 @@ get_jack_client_uuid (jack_client_t * jc)
     return result;
 }
 
-#if defined SEQ66_JACK_METADATA
+#if SEQ66_JACK_METADATA
 
 /**
  *  Need type to be "image/png;" in some of these calls.
@@ -698,7 +700,7 @@ set_jack_port_property
     return rc == 0;
 }
 
-#endif  // defined SEQ66_JACK_METADATA
+#endif  // SEQ66_JACK_METADATA
 
 /**
  *  Provides a list of JACK status bits, and a brief string to explain the
@@ -1040,7 +1042,7 @@ jack_assistant::init ()
             }
         }
 
-#if defined SEQ66_JACK_SESSION
+#if SEQ66_JACK_SESSION
         if (result && usr().want_jack_session())
         {
             int jackcode = ::jack_set_session_callback
@@ -1313,7 +1315,7 @@ jack_assistant::set_beats_per_minute (midibpm bpminute)
 void
 jack_assistant::position (bool songmode, midipulse tick)
 {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
     if (songmode)                               /* master in song mode  */
         tick = is_null_midipulse(tick) ? 0 : tick * c_jack_factor ;
     else
@@ -1505,7 +1507,7 @@ jack_sync_callback
 
 #endif  // SEQ66_USE_JACK_SYNC_CALLBACK
 
-#if defined SEQ66_JACK_SESSION          /* "deprecated" alternative to NSM  */
+#if SEQ66_JACK_SESSION                      /* deprecated alternative to NSM*/
 
 static std::string
 session_event_name (jack_session_event_t * ev)

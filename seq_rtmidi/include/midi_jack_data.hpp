@@ -33,11 +33,12 @@
  *  GitHub issue #165: enabled a build and run with no JACK support.
  */
 
+#include "seq66-config.h"               /* SEQ66_JACK_**** macros           */
 #include "util/basic_macros.h"          /* nullptr and other macros         */
 #include "midi/midibytes.hpp"           /* seq66::midibyte, other aliases   */
 #include "rtmidi_types.hpp"             /* seq66::rtmidi_in_data class      */
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
 
 #include <jack/jack.h>
 

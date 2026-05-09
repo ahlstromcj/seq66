@@ -34,7 +34,6 @@
 #include <QTableWidgetItem>
 #include <QTimer>
 
-#include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "play/performer.hpp"           /* seq66::performer class           */

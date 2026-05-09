@@ -31,7 +31,6 @@
 
 #include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
 
-#include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
 #include "os/daemonize.hpp"             /* seq66::signal_for_restart()      */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "util/strfunctions.hpp"        /* seq66::int_to_string()           */

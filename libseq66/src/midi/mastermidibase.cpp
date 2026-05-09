@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2025-06-10
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -34,6 +34,7 @@
  */
 
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
+#include "midi/busarray.hpp"            /* seq66::busarray                  */
 #include "midi/event.hpp"               /* seq66::event                     */
 #include "midi/mastermidibase.hpp"      /* seq66::mastermidibase            */
 #include "play/sequence.hpp"            /* seq66::sequence                  */

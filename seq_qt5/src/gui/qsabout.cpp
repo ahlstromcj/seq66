@@ -30,7 +30,6 @@
  *
  */
 
-#include "seq66-config.h"               /* needed to check Qt environment   */
 #include "seq66_features.hpp"           /* version information functions    */
 #include "qsabout.hpp"                  /* your basic developer spoor       */
 #include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
@@ -71,4 +70,3 @@ qsabout::~qsabout()
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

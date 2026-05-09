@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2025-09-22
+ * \updates       2026-05-09
  * \license       See above.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -166,7 +166,7 @@
 
 #include "seq66-config.h"               /* SEQ66_JACK_SUPPORT               */
 
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
 
 #include <cstring>                      /* std::strcpy(), std::strcat()     */
 #include <sstream>
@@ -496,7 +496,6 @@ jack_get_event_data
         if (s_use_offset)
         {
 #if defined USE_FULL_TTYMIDI_METHOD
-
             /*
              * Handling the "lastvalue" doesn't seem to help at all.
              */
@@ -2077,4 +2076,3 @@ midi_out_jack::~midi_out_jack ()
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

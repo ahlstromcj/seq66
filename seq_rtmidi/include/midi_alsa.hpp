@@ -35,7 +35,7 @@
  *  for both classes.
  */
 
-#include "seq66-config.h"
+#include "seq66-config.h"               /* SEQ66_HAVE_LIBASOUND             */
 #include "midi_api.hpp"
 
 #if SEQ66_HAVE_LIBASOUND

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-19
- * \updates       2024-01-10
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  For now, this header file enables only the JACK interface.  That is our
@@ -43,16 +43,16 @@
  */
 
 #if defined SEQ66_PLATFORM_LINUX || defined SEQ66_PLATFORM_FREEBSD
-#define SEQ66_BUILD_UNIX_JACK           /* supported by Linux & FreeBSD     */
-#define SEQ66_BUILD_LINUX_ALSA          /* also a wrapper for FreeBSD's OSS */
-#define SEQ66_BUILD_RTMIDI_DUMMY        /* an alternative for Linux, etc.   */
-#undef  SEQ66_AVOID_TIMESTAMPING        /* a feature of the ALSA rtmidi API */
+#define SEQ66_BUILD_UNIX_JACK       1   /* supported by Linux & FreeBSD     */
+#define SEQ66_BUILD_LINUX_ALSA      1   /* also a wrapper for FreeBSD's OSS */
+#define SEQ66_BUILD_RTMIDI_DUMMY    1   /* an alternative for Linux, etc.   */
+#undef  SEQ66_AVOID_TIMESTAMPING    1   /* a feature of the ALSA rtmidi API */
 #endif
 
 #if defined SEQ66_PLATFORM_MACOSX
-#define SEQ66_BUILD_MACOSX_CORE
-#define SEQ66_BUILD_UNIX_JACK
-#define SEQ66_BUILD_RTMIDI_DUMMY        /* an alternative for OSX, etc.     */
+#define SEQ66_BUILD_MACOSX_CORE     1
+#define SEQ66_BUILD_UNIX_JACK       1
+#define SEQ66_BUILD_RTMIDI_DUMMY    1   /* an alternative for OSX, etc.     */
 #endif
 
 #endif      // SEQ66_RTMIDI_FEATURES_H
@@ -62,4 +62,3 @@
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

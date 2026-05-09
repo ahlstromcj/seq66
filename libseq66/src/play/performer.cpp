@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-04-17
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -244,6 +244,7 @@
 #include <iostream>                     /* std::cout                        */
 #include <sstream>                      /* std::ostringstream               */
 
+#include "seq66-config.h"               /* SEQ66_JACK_**** macros           */
 #include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile            */
 #include "cfg/notemapfile.hpp"          /* seq66::notemapfile               */
 #include "cfg/playlistfile.hpp"         /* seq66::playlistfile              */
@@ -378,7 +379,7 @@ performer::performer (int ppq, int rows, int columns) :
     m_selected_seqs         (),
 #endif
     m_condition_var         (*this),            /* private access via cv()  */
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
     m_jack_asst
     (
         *this, usr().bpm_default(),             /* beats per minute         */
@@ -2889,7 +2890,7 @@ performer::jack_set_beats_per_minute (midibpm bp, bool user_change)
     bool result = bp != m_bpm && usr().bpm_is_valid(bp);
     if (result)
     {
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
         m_jack_asst.set_beats_per_minute(bp);           /* see banner note  */
 #endif
         int ppq = ppqn();                               /* was get_ppqn()   */
@@ -4675,7 +4676,7 @@ performer::set_jack_mode (bool connect)
         else
             (void) deinit_jack_transport();
     }
-#if defined SEQ66_JACK_SUPPORT
+#if SEQ66_JACK_SUPPORT
     m_jack_asst.set_jack_mode(is_jack_running());    /* seqroll keybinding  */
 #endif
 

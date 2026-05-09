@@ -10,12 +10,16 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-11
- * \updates       2020-08-20
+ * \updates       2026-05-09
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
  *  Upcoming support for the Non Session Manager.
  */
+
+#include "seq66-config.h"               /* macros for NSM/LO support        */
+
+#if SEQ66_NSM_SUPPORT
 
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase base class        */
 
@@ -95,6 +99,8 @@ public:
 extern std::unique_ptr<nsmserver> create_nsmserver ();
 
 }           // namespace seq66
+
+#endif      // SEQ66_NSM_SUPPORT
 
 #endif      // SEQ66_NSMSERVER_HPP
 

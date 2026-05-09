@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-06-02
+ * \updates     2026-05-09
  * \license     GNU GPLv2 or above
 
  *  This file needs to implement pm_init(), which calls various routines to
@@ -42,7 +42,6 @@
 #include "portmidi.h"                   /* Pm_set_initialized(), etc.       */
 #include "pmutil.h"
 #include "pmwinmm.h"
-#include "portmidi.h"
 
 /**
  *  This macro is part of Microsoft's tchar.h, but we want to use it only as

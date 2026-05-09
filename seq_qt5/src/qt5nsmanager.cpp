@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2026-05-02
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future! Join the Smart Patrol!
@@ -43,7 +43,7 @@
 #include "qt5nsmanager.hpp"             /* seq66::qt5nsmanager              */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm access functions      */
 #endif
 
@@ -153,7 +153,7 @@ qt5nsmanager::create_window ()
         if (result)
         {
             m_window.reset(qm);
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
             if (not_nullptr(nsm_client()))
             {
                 bool visible = usr().session_visibility();
@@ -411,7 +411,7 @@ qt5nsmanager::show_error
              * Consider moving this support to before this if-clause.
              */
 
-#if defined SEQ66_PORTMIDI_SUPPORT
+#if SEQ66_PORTMIDI_SUPPORT
             if (Pm_error_present())
             {
                 std::string pmerrmsg = std::string(Pm_error_message());
@@ -433,7 +433,7 @@ qt5nsmanager::show_error
         }
         else
         {
-#if defined SEQ66_PORTMIDI_SUPPORT
+#if SEQ66_PORTMIDI_SUPPORT
             if (Pm_error_present())
             {
                 std::string pmerrmsg = std::string(Pm_error_message());
@@ -525,7 +525,7 @@ qt5nsmanager::handle_show_hide (bool hide)
 {
     if (hide != m_was_hidden)
     {
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
         if (not_nullptr(nsm_client()))  /* are we under NSM control?        */
         {
             usr().session_visibility(! hide);
@@ -566,7 +566,7 @@ void
 qt5nsmanager::send_visibility (bool visible)
 {
     status_message(visible ? "GUI is showing..." : "GUI is hiding...");
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
     if (not_nullptr(nsm_client()))
         nsm_client()->send_visibility(visible);
 #endif
@@ -577,7 +577,7 @@ qt5nsmanager::set_last_dirty ()
 {
     last_dirty_status(perf()->modified());
 
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
     if (not_nullptr(nsm_client()))
         nsm_client()->dirty(last_dirty_status());
 #endif
@@ -586,7 +586,7 @@ qt5nsmanager::set_last_dirty ()
 void
 qt5nsmanager::client_show_hide ()
 {
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
     if (not_nullptr(nsm_client()))
         handle_show_hide(nsm_client()->hidden());
 #endif
@@ -595,7 +595,7 @@ qt5nsmanager::client_show_hide ()
 void
 qt5nsmanager::set_session_url ()
 {
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
     if (not_nullptr(nsm_client()))
     {
         std::string url = nsm_client()->nsm_url();

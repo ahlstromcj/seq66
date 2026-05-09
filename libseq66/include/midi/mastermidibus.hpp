@@ -28,18 +28,18 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-28
- * \updates       2019-02-09
+ * \updates       2025-05-09
  * \license       GNU GPLv2 or above
  *
  */
 
 #include "seq66-config.h"
 
-#if defined SEQ66_RTMIDI_SUPPORT
+#if SEQ66_RTMIDI_SUPPORT
 #include "mastermidibus_rm.hpp"         /* seq66::mastermidibus for RtMidi  */
-#elif defined SEQ66_PORTMIDI_SUPPORT
+#elif SEQ66_PORTMIDI_SUPPORT
 #include "mastermidibus_pm.hpp"         /* seq66::mastermidibus, PortMidi   */
-#elif defined SEQ66_WINDOWS_SUPPORT
+#elif SEQ66_WINDOWS_SUPPORT
 #include "mastermidibus_pm.hpp"         /* Windows uses PortMIDI now        */
 #else
 #include "mastermidibus_rm.hpp"         /* seq66::mastermidibus default     */
@@ -52,4 +52,3 @@
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

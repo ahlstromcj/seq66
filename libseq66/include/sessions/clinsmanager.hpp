@@ -28,7 +28,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2024-11-06
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  Provides a base class that can be used to manage the command-line version
@@ -40,9 +40,10 @@
 
 #include <memory>                       /* std::unique_ptr, shared_ptr<>    */
 
+#include "seq66-config.h"               /* SEQ66_JACK_**** macros           */
 #include "sessions/smanager.hpp"        /* seq66::smanager                  */
 
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
 #include "nsm/nsmclient.hpp"            /* seq66::nsmclient                 */
 #endif
 
@@ -74,7 +75,7 @@ class clinsmanager : public smanager
 
 private:
 
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
 
     /**
      *  The optional NSM client.  This item is not in the base class,
@@ -106,7 +107,7 @@ public:
     clinsmanager & operator = (const clinsmanager &) = delete;
     virtual ~clinsmanager () = default;
 
-#if defined SEQ66_NSM_SUPPORT
+#if SEQ66_NSM_SUPPORT
     nsmclient * nsm_client ()
     {
         return m_nsm_client.get();
