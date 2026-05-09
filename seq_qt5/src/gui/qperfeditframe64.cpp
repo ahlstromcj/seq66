@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2026-05-02
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  The Song Editor allows the musician to layout the play-back of the
@@ -41,17 +41,7 @@
 #include "qperfroll.hpp"
 #include "qperftime.hpp"
 #include "qt5_helpers.hpp"              /* seq66::qt_set_icon()             */
-
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name.
- */
-
-#if defined SEQ66_QMAKE_RULES
 #include "ui_qperfeditframe64.h"
-#else
-#include "forms/qperfeditframe64.ui.h"
-#endif
 
 /*
  *  We prefer to load the pixmaps on the fly, rather than deal with those

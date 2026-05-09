@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2023-08-21
- * \updates       2026-05-02
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  This module supports a task similar to that of the Help / Tutorial menu
@@ -47,17 +47,7 @@
 #include "cfg/settings.hpp"             /* seq66::open_share_doc_file()     */
 #include "qsappinfo.hpp"                /* seq66::qsappinfo dialog class    */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
-
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name.
- */
-
-#if defined SEQ66_QMAKE_RULES
 #include "ui_qsappinfo.h"
-#else
-#include "forms/qsappinfo.ui.h"
-#endif
 
 namespace seq66
 {

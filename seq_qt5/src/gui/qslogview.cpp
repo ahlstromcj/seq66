@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2025-01-25
- * \updates       2026-05-02
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  This module supports a task similar to that of the Help / Tutorial menu
@@ -50,17 +50,7 @@
 #include "util/filefunctions.hpp"       /* seq66::file_read_string()        */
 #include "qslogview.hpp"                /* seq66::qslogview dialog class    */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
-
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name.
- */
-
-#if defined SEQ66_QMAKE_RULES
 #include "ui_qslogview.h"
-#else
-#include "forms/qslogview.ui.h"
-#endif
 
 namespace seq66
 {

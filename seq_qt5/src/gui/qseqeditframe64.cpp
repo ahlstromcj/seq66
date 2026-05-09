@@ -106,17 +106,7 @@
 #include "qseqtime.hpp"                 /* seq66::qseqtime panel            */
 #include "qstriggereditor.hpp"          /* seq66::qstriggereditor events    */
 #include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon()       */
-
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name.
- */
-
-#if defined SEQ66_QMAKE_RULES
 #include "ui_qseqeditframe64.h"
-#else
-#include "forms/qseqeditframe64.ui.h"
-#endif
 
 /*
  *  We prefer to load the pixmaps on the fly, rather than deal with those

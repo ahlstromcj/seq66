@@ -854,10 +854,11 @@ subdir('data')
       'man/sequencer66.1'
    )
 
-   install_man(
-      seq66_man_pages,
-      install_tag : 'man'
-      )
+# This is a feature too new to Meson to use, at present, in Ubuntu Studio.
+#
+#  install_tag : 'man'
+
+   install_man(seq66_man_pages)
 
 #-----------------------------------------------------------------------------
 # Info

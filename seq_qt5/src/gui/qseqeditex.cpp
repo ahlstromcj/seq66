@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-05-02
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -37,21 +37,7 @@
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 editor    */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd master class    */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
-
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name.
- */
-
-#if defined SEQ66_QMAKE_RULES
 #include "ui_qseqeditex.h"
-#else
-#include "forms/qseqeditex.ui.h"
-#endif
-
-/*
- * Don't document the namespace.
- */
 
 namespace seq66
 {

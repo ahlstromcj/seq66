@@ -65,10 +65,6 @@ class QSpinBox;
 class QTimer;
 class QWidget;
 
-/*
- * Don't document the namespace.
- */
-
 namespace seq66
 {
 

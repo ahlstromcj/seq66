@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-05-02
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -34,17 +34,7 @@
 #include "seq66_features.hpp"           /* version information functions    */
 #include "qsabout.hpp"                  /* your basic developer spoor       */
 #include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
-
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name.
- */
-
-#if defined SEQ66_QMAKE_RULES
 #include "ui_qsabout.h"
-#else
-#include "forms/qsabout.ui.h"
-#endif
 
 namespace seq66
 {
@@ -66,6 +56,7 @@ qsabout::qsabout (QWidget * parent) : QDialog (parent), ui (new Ui::qsabout)
     ui->label_github_seq32->setOpenExternalLinks(true);
     ui->label_github_kepler34->setOpenExternalLinks(true);
     ui->label_gmail_ahlstromcj->setOpenExternalLinks(true);
+    connect(ui->OkButton, &QPushButton::clicked, this, &QDialog::accept);
 }
 
 qsabout::~qsabout()

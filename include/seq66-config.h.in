@@ -94,9 +94,10 @@
  * We will always build both the GUI and CLI.
  *
  * Meson creates ui-h files in the Qmake manner.
+ *
+ *  #define SEQ66_QMAKE_RULES           1
  */
 
-#define SEQ66_QMAKE_RULES               1
 #define SEQ66_APP_CLI                   1
 #define SEQ66_DBGFLAGS                  "-O0 -DDEBUG -D_DEBUG -fno-inline"
 #define SEQ66_PACKAGE_BUGREPORT         "ahlstromcj@gmail.com"

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2026-05-02
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -42,17 +42,7 @@
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd main window     */
 #include "qt5_helpers.hpp"              /* seq66::qt_keystroke() etc.       */
 #include "util/filefunctions.hpp"       /* seq66::name_has_path()           */
-
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name.
- */
-
-#if defined SEQ66_QMAKE_RULES
 #include "ui_qmutemaster.h"
-#else
-#include "forms/qmutemaster.ui.h"
-#endif
 
 /**
  *  Specifies the current hardwired value for set_row_heights().
@@ -61,10 +51,6 @@
 static const int c_table_row_height = 18;
 static const int c_table_fix        = 16;
 static const int c_button_size      = 26;   // 28; // 26; // 24;
-
-/*
- * Don't document the namespace.
- */
 
 namespace seq66
 {

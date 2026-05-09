@@ -88,10 +88,6 @@
 
 #define SEQ66_SHOW_HIDDEN_DIRECTORIES
 
-/*
- * Don't document the namespace.
- */
-
 namespace seq66
 {
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-16
- * \updates       2026-05-02
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  This frame holds an external "Live" window that shows the grid of buttons
@@ -34,7 +34,6 @@
 
 #include <QGridLayout>
 
-#include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "play/sequence.hpp"            /* seq66::sequence class            */
@@ -42,18 +41,7 @@
 #include "qslivegrid.hpp"               /* seq66::qslivegrid panel          */
 #include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd parent class    */
-
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name.
- */
-
-#if defined SEQ66_QMAKE_RULES
 #include "ui_qliveframeex.h"
-#else
-#include "forms/qliveframeex.ui.h"
-#error Meson should not detect this include
-#endif
 
 namespace seq66
 {

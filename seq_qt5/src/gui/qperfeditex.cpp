@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-21
- * \updates       2026-05-02
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -39,21 +39,7 @@
 #include "qperfnames.hpp"
 #include "qperfroll.hpp"
 #include "qsmainwnd.hpp"
-
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name. Also see include/seq66-config.h.in.
- */
-
-#if defined SEQ66_QMAKE_RULES           // meson or qmake build
 #include "ui_qperfeditex.h"
-#else                                   // autoconf build
-#include "forms/qperfeditex.ui.h"
-#endif
-
-/*
- * Don't document the namespace.
- */
 
 namespace seq66
 {

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-30
- * \updates       2026-05-02
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -33,17 +33,7 @@
 #include "cfg/cmdlineopts.hpp"          /* for build info function          */
 #include "qsbuildinfo.hpp"              /* seq66::qsbuildinfo dialog class  */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
-
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name.
- */
-
-#if defined SEQ66_QMAKE_RULES
 #include "ui_qsbuildinfo.h"
-#else
-#include "forms/qsbuildinfo.ui.h"
-#endif
 
 namespace seq66
 {

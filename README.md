@@ -9,13 +9,13 @@ composing great-sounding MIDI tracks. Supports the Non/New Session
 Manager; can run headless and on a small computer like the Pi.
 It does not support audio samples, just MIDI.
 
-__Seq66__ A major refactoring of Sequencer64/Kepler34/Seq24 with
+__Seq66__ Seq24/Kepler34 on steroids with
 modern C++ and new features. Linux and Windows users can build this
-application from source code. See the extensive INSTALL file. Includes
-a comprehensive PDF user-manual.
+application from source code. See the extensive INSTALL files. Includes
+a comprehensive PDF user-manual. As of this release, employs the __Meson__ build system.
 
-The current development-in-progress branch is now "Meson". The
-old-style build setup is preserved in branch "Autoconf."
+*The current development-in-progress branch is now "Meson". The
+old-style build setup is preserved in branch "Autoconf."*
 
 The release includes an installer for the 64-bit Windows version of
 Seq66. Initial work has been done on getting Seq66 to build and run
@@ -29,13 +29,13 @@ in force. Otherwise the application uses the current Qt theme.
 
 ![Alt text](doc/latex/images/main-window/main-windows-perstfic.png?raw=true "Seq66")
 
-# Major Features
+# Features
 
 ##  User interface
 
-    *   Qt 5 or Qt 6 (cross-platform). Loop-button gird. Qt style-sheet
+    *   Qt 5 or Qt 6 (cross-platform). Loop-button grid. Qt style-sheet
         support.
-    *   Colorable pattern slots; the color palette can be saved and modified.
+    *   Colorable pattern slots; the palette can be saved in a '*.palette' file.
     *   Drag-and-drop a MIDI file onto the main grid to load it.
     *   Tabs and external windows for patterns, sets, mute-groups, song
         layout, event-editing, play-lists, and session information.
@@ -94,7 +94,7 @@ devices are ignored, with playback (e.g. to the Windows wavetable synth).
 It is built on "linux" via *Meson*, *Qt Creator* or *qmake*, and on
 Windows using *MingW*.
 
-*IMPORTANT*: *GNU Autotools* is no longer supported.
+*IMPORTANT*: *GNU Autotools* is no longer supported, except in the "Autoconf" branch.
 
 The INSTALL has been streamlined, see that file for build-from-source
 instructions for Linux or Windows, and using a conventional source tarball.

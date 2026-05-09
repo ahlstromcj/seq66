@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-05-02
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  The set-master controls the existence and usage of all sets.  For control
@@ -42,17 +42,7 @@
 #include "qsetmaster.hpp"               /* seq66::qsetmaster tab class      */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd main window     */
 #include "qt5_helpers.hpp"              /* seq66::qt_keystroke() etc.       */
-
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name.
- */
-
-#if defined SEQ66_QMAKE_RULES
 #include "ui_qsetmaster.h"
-#else
-#include "forms/qsetmaster.ui.h"
-#endif
 
 /**
  *  For correcting the width of the set table.  Otherwise clicking on the
@@ -66,10 +56,6 @@ static const int c_set_table_fix    = 24;   // 0; // -12;
  */
 
 static const int c_table_row_height = 18;
-
-/*
- * Don't document the namespace.
- */
 
 namespace seq66
 {

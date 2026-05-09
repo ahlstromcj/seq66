@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2026-05-02
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -92,21 +92,7 @@
 #if defined SEQ66_PLATFORM_DEBUG
 #include "util/strfunctions.hpp"        /* seq66::pointer_to_string()       */
 #endif
-
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name.
- */
-
-#if defined SEQ66_QMAKE_RULES
 #include "ui_qslivegrid.h"
-#else
-#include "forms/qslivegrid.ui.h"
-#endif
-
-/*
- *  EXPERIMENTAL.
- */
 
 #define SEQ66_TRACK_LIVE_GRID_MOVEMENT
 

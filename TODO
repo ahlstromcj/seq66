@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.25
 Chris Ahlstrom
-2019-04-13 to 2026-05-08
+2019-04-13 to 2026-05-09
 
     -   Changed the build system to Meson. Bugs so far:
         -   More deprecations:
@@ -11,8 +11,6 @@ Chris Ahlstrom
             --disable-jack Disables JACK support, enables rtmidi.
             --no-metadata  Disable JACK metadata support.
             --no-nsm       Disable Non Session Manager support.
-    -   Port more Qt6-deprecation fixes from the (not yet public)
-        Meson build once that works fully.
     -   Fix positioning of data pane text in the various modes.
     -   Make controller values movable in the data pane just
         like patch values. Show the number in addition to the

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-05-03
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -69,16 +69,7 @@
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase's get_url()       */
 #endif
 
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name.
- */
-
-#if defined SEQ66_QMAKE_RULES
 #include "ui_qseditoptions.h"
-#else
-#include "forms/qseditoptions.ui.h"
-#endif
 
 namespace seq66
 {

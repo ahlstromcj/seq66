@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-09
- * \updates       2026-05-02
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -51,21 +51,7 @@
 #include "qt5_helper.h"                 /* QT5_HELPER_RADIO_SIGNAL macro    */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 #include "util/strfunctions.hpp"        /* seq66::string_to_double()        */
-
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name.
- */
-
-#if defined SEQ66_QMAKE_RULES
 #include "ui_qpatternfix.h"
-#else
-#include "forms/qpatternfix.ui.h"
-#endif
-
-/*
- * Don't document the namespace.
- */
 
 namespace seq66
 {

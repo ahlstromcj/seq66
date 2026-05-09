@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-05-02
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -119,17 +119,7 @@
  */
 
 #include "os/daemonize.hpp"             /* seq66::session_close(), etc.     */
-
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name.
- */
-
-#if defined SEQ66_QMAKE_RULES
 #include "ui_qsmainwnd.h"
-#else
-#include "forms/qsmainwnd.ui.h"         /* generated btnStop, btnPlay, etc. */
-#endif
 
 #if defined SEQ66_PORTMIDI_SUPPORT
 #include "icons/route66.xpm"

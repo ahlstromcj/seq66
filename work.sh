@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-08
+# \update         2026-05-09
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -30,7 +30,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-08"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-09"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -111,8 +111,6 @@ get_options () {
                DOSETUP="no"
                ;;
 
-# $ CC=clang CXX=clang++ meson setup buildclang
-
             --clang)
                DOCLANG="yes"
                echo "Using the Clang C/C++ compilers..."
@@ -122,7 +120,7 @@ get_options () {
                MAKEFILE="$BUILD_DIR/build.ninja"
                ;;
 
-            --gnu)
+            --gnu | --gcc)
                DOGNU="yes"
                echo "Using the GNU C/C++ compilers..."
                export CC=gcc
@@ -239,7 +237,7 @@ show_help () {
       cat << E_O_F
 Usage: ./work.sh [options] ($SEQ66_LIBRARY_VERSION-$SEQ66_SCRIPT_EDIT_DATE)
 
-'work.sh' encapsulates some common operations involving Meson, builds,
+'work.sh' encapsulates common operations involving Meson, builds,
 packing, and version information.  Only implemented options are shown here;
 there will be more to come. Some options might not work on Windows.
 Many of these commands are best used when setting up the build
@@ -261,7 +259,7 @@ Many of these commands are best used when setting up the build
                      the internal RtMIDI engine.
  --clang             Rebuild the code using the Clang compilers. Exports CC
                      and CXX. The build directory is 'build/clang'.
- --gnu               Use the GNU compilers (the default on Linux). Exports CC
+ --gnu, --gcc        Use the GNU compilers (the default on Linux). Exports CC
                      and CXX. The build directory is 'build/gcc'. If the
                      compiler is not specified, the build is in 'build/cc'.
  --pdf               Build the PDF documentation. Currently done not by

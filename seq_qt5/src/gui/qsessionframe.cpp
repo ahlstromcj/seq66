@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2026-05-02
+ * \updates       2026-05-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -38,17 +38,7 @@
 #include "qsessionframe.hpp"            /* seq66::qsessionframe, this class */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd                 */
 #include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
-
-/*
- *  Qt's uic application allows a different output file-name, but not sure
- *  if qmake can change the file-name.
- */
-
-#if defined SEQ66_QMAKE_RULES
 #include "ui_qsessionframe.h"
-#else
-#include "forms/qsessionframe.ui.h"
-#endif
 
 namespace seq66
 {
