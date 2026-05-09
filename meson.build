@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-05-08
+# \updates     2026-05-09
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the seq66 application and library.
@@ -150,7 +150,7 @@ seq66_pkg_description = 'A Seq66 build using the Meson build system.'
 seq66_pkg_version = meson.project_version()
 seq66_version = '0.99.25'
 seq66_api_version = '0.99'
-seq66_info_date = '2026-05-08'
+seq66_info_date = '2026-05-09'
 seq66_info_build_type = get_option('buildtype')
 seq66_info_build_root = meson.project_build_root()
 seq66_info_lib_type = get_option('default_library')
@@ -370,36 +370,50 @@ use_jack = false
 use_jack_session = false
 use_jack_transport = false
 use_nsm_liblo = false
+use_rtmidi = false
 
 if os_linux or os_freebsd
-
-use_alsa = get_option('alsa')
-use_jack = get_option('jack')
-use_jack_session = get_option('jacksession')
-use_jack_transport = get_option('jacktransport')
-use_nsm_liblo = get_option('nsm')
-use_rtmidi = get_option('rtmidi')
-
+   use_alsa = get_option('alsa')
+   use_jack = get_option('jack')
+   use_jack_session = get_option('jacksession')
+   use_jack_transport = get_option('jacktransport')
+   use_nsm_liblo = get_option('nsm')
+   use_rtmidi = get_option('rtmidi')
 endif
 
-use_portmidi = get_option('portmidi')
-if use_portmidi
+if os_win32
+   use_alsa = false
+   use_jack = false
+   use_jack_session = false
+   use_jack_transport = false
+   use_nsm_liblo = false
+   use_portmidi = true
    use_rtmidi = false
+else
+   use_portmidi = get_option('portmidi')
+   if use_portmidi
+      use_rtmidi = false
+   endif
 endif
 
 if use_jack
+   cdata.set10('jack_get_version_string',
+      cc.has_header_symbol('jack/jack.h', 'jack_get_version_string'))
 
-cdata.set10('jack_get_version_string',
-   cc.has_header_symbol('jack/jack.h', 'jack_get_version_string'))
+   cdata.set10('jack_port_rename',
+      cc.has_header_symbol('jack/jack.h', 'jack_port_rename'))
 
-cdata.set10('jack_port_rename',
-   cc.has_header_symbol('jack/jack.h', 'jack_port_rename'))
-
-cdata.set10('jack_metadata_h', cc.has_header('jack/metadata.h'))
-cdata.set10('jack_support', true)
-cdata.set10('jack_session', use_jack_session)
-cdata.set10('jack_transport', use_jack_transport)
-
+   cdata.set10('jack_metadata_h', cc.has_header('jack/metadata.h'))
+   cdata.set10('jack_support', true)
+   cdata.set10('jack_session', use_jack_session)
+   cdata.set10('jack_transport', use_jack_transport)
+else
+   cdata.set('jack_get_version_string', '"none"')
+   cdata.set10('jack_port_rename', false)
+   cdata.set10('jack_metadata_h', false)
+   cdata.set10('jack_support', false)
+   cdata.set10('jack_session', false)
+   cdata.set10('jack_transport', false)
 endif
 
 cdata.set10('alsa_support', use_alsa)

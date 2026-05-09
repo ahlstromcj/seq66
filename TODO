@@ -5,6 +5,8 @@ Chris Ahlstrom
     -   Changed the build system to Meson. Bugs so far:
         -   More deprecations:
             -   JACK deprecations.
+        -   Fix up NSM, LIBLO, and JACK macros.
+            -   Make sure JACK VERSION STRING is set in Linux.
         -   seq_portmidi: Add -Wno-cast-function-type ?
         -   Update work.sh with more bootstrap options.
             --port-refresh Enables port-refresh feature for JACK.

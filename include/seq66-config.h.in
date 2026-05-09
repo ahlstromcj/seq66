@@ -144,9 +144,9 @@
 #define SEQ66_JACK_GET_VERSION_STRING   @jack_get_version_string@
 #define SEQ66_JACK_METADATA             @jack_metadata_h@
 #define SEQ66_JACK_PORT_RENAME          @jack_port_rename@
-#define SEQ66_JACK_SESSION
-#define SEQ66_JACK_SUPPORT
-#define SEQ66_JACK_TRANSPORT
+#define SEQ66_JACK_SESSION              @jack_session@
+#define SEQ66_JACK_SUPPORT              @jack_support@
+#define SEQ66_JACK_TRANSPORT            @jack_transport@
 #endif
 
 /*
