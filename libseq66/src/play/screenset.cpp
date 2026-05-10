@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2025-06-25
+ * \updates       2026-05-10
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -1398,9 +1398,8 @@ screenset::learn_bits (midibooleans & bits)
     bool result = count() > 0;
     if (result)
     {
-        int bit = 0;
         bits.clear();
-        for (seq::number s = offset(); s != m_set_maximum; ++s, ++bit)
+        for (seq::number s = offset(); s != m_set_maximum; ++s)
         {
             seq::pointer sp = find_by_number(s);
             if (sp)

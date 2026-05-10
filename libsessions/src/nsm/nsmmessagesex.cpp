@@ -7,7 +7,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom
  * \date          2020-08-21
- * \updates       2020-08-28
+ * \updates       2026-05-10
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -75,6 +75,8 @@
  */
 
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm::tag, etc.            */
+
+#if SEQ66_NSM_SUPPORT
 
 namespace seq66
 {
@@ -383,6 +385,8 @@ is_announce (const std::string & s)
 }           // namespace nsm
 
 }           // namespace seq66
+
+#endif      // SEQ66_NSM_SUPPORT
 
 /*
 * nsmmessagesex.cpp

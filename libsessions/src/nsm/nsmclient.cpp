@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-01
- * \updates       2021-11-29
+ * \updates       2026-05-10
  * \license       GNU GPLv2 or above
  *
  *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
@@ -172,6 +172,8 @@
 #include "nsm/nsmclient.hpp"            /* seq66::nsmclient class           */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm message functions     */
 #include "sessions/smanager.hpp"        /* seq66::smanager virtuals         */
+
+#if SEQ66_NSM_SUPPORT
 
 namespace seq66
 {
@@ -753,9 +755,10 @@ create_nsmclient
 
 }           // namespace seq66
 
+#endif      // SEQ66_NSM_SUPPORT
+
 /*
  * nsmclient.cpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

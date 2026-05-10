@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2023-10-31
+ * \updates       2026-05-10
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -838,10 +838,9 @@ bool
 playlist::select_list_by_midi (int ctrl, bool selectsong)
 {
     bool result = false;
-    int count = 0;
     auto minimum = m_play_lists.begin();
     auto maximum = m_play_lists.end();
-    for (auto pci = minimum; pci != maximum; ++pci, ++count)
+    for (auto pci = minimum; pci != maximum; ++pci)
     {
         int midinumber = pci->second.ls_midi_number;
         if (midinumber == ctrl)
@@ -1371,10 +1370,9 @@ playlist::select_song_by_midi (int ctrl)
     bool result = false;
     if (m_current_list != m_play_lists.end())
     {
-        int count = 0;
         play_list_t & plist = m_current_list->second;
         song_list & slist = plist.ls_song_list;
-        for (auto sci = slist.begin(); sci != slist.end(); ++sci, ++count)
+        for (auto sci = slist.begin(); sci != slist.end(); ++sci)
         {
             int midinumber = sci->second.ss_midi_number;
             if (midinumber == ctrl)

@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-09
+# \update         2026-05-10
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -30,7 +30,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-09"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-10"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -49,28 +49,32 @@ PLATFORM="UNIX"
 PMIDIDEF=""
 POTEXTDEF=""
 TAGSTRING="pack"
+NOJACK=""               # --no-jack to disable
+NOJACKSESSION=""        # --no-jack-session to disable
+NOJACKTRANSPORT=""      # --no-jack-transport to disable
+NONSM=""                # --no-nsm to disable
 
 # Flags.
 
-DOPORTMIDI="no"      # --portmidi. The default is rtmidi.
-DOCLANG="no"         # --clang. Default is the native compiler.
-DOGNU="no"           # --gnu. Default is the native compiler.
-DOCLEAN="no"         # --clean
-DODEBUG="no"         # --debug. This is the default Meson build.
-DODIST="no"          # --dist. Use Meson "dist" to create a package.
-DOHELP="no"          # --help. Duh!
-DOOPTHELP="no"       # --option-help. Duh!
-DOINSTALL="no"       # --install. Requires the release be built already.
-DOUNINSTALL="no"     # --uninstall. Like --install, requires sudo/root.
-DOUPDATE="no"        # --update. Force a subproject update.
-DOMAKE="yes"         # Default action after creating the build directory.
-DOSETUP="no"         # --setup. Do the setup and then exit.
-DOREMAKE="no"        # currently UNUSED
-DOMAKEPDF="no"       # --pdf. Make the manual, always as a separate step.
-DOPOTEXT="no"        # --potext. Use translation [NOT YET SUPPORTED].
-DOPACK="no"          # --pack. Clean and create a tar-file.
-DORELEASE="yes"      # --release. as opposed to debug.
-DOVERSION="no"       # --version. Duouble duh!
+DOPORTMIDI="no"         # --portmidi. The default is rtmidi.
+DOCLANG="no"            # --clang. Default is the native compiler.
+DOGNU="no"              # --gnu. Default is the native compiler.
+DOCLEAN="no"            # --clean
+DODEBUG="no"            # --debug. This is the default Meson build.
+DODIST="no"             # --dist. Use Meson "dist" to create a package.
+DOHELP="no"             # --help. Duh!
+DOOPTHELP="no"          # --option-help. Duh!
+DOINSTALL="no"          # --install. Requires the release be built already.
+DOUNINSTALL="no"        # --uninstall. Like --install, requires sudo/root.
+DOUPDATE="no"           # --update. Force a subproject update.
+DOMAKE="yes"            # Default action after creating the build directory.
+DOSETUP="no"            # --setup. Do the setup and then exit.
+DOREMAKE="no"           # currently UNUSED
+DOMAKEPDF="no"          # --pdf. Make the manual, always as a separate step.
+DOPOTEXT="no"           # --potext. Use translation [NOT YET SUPPORTED].
+DOPACK="no"             # --pack. Clean and create a tar-file.
+DORELEASE="yes"         # --release. as opposed to debug.
+DOVERSION="no"          # --version. Duouble duh!
 
 #******************************************************************************
 #  Brute-force options loop
@@ -213,6 +217,23 @@ get_options () {
                BUILD_TYPE="release"
                ;;
 
+            --no-jack)
+               NOJACK="-Djack=false"
+               ;;
+
+            --no-jack-session)
+               NOJACKSESSION="-Djacksession=false"
+               ;;
+
+            --no-jack-transport)
+               NOJACKTRANSPORT="-Djacktransport=false"
+               ;;
+
+            --no-nsm)
+               NONSM="-Dnsm=false"
+               ;;
+
+
             --version)
                DOVERSION="yes"
                DOBOOTSTRAP="no"
@@ -272,6 +293,10 @@ Many of these commands are best used when setting up the build
  --clean             Delete the usual derived files from the project. Also
                      do "git checkout doc/seq66-dev-manual.pdf"
  --rebuild           Clean the project and build from scratch.
+ --no-jack           Disable the usage of JACK (in Linux).
+ --no-jack-session   Disable the usage of JACK Session.
+ --no-jack-transport Disable the usage of JACK Transport.
+ --no-nsm            Disable the usage of NSM.
  --pack [ tag ]      A simple quick packaging of the code; the tag goes
                      into the tarball name.
  --help              Show this help text.
@@ -536,7 +561,8 @@ if test "$DOUPDATE" = "yes" ; then
    exit 0
 fi
 
-MOPTS="--buildtype=$BUILD_TYPE $POTEXTDEF $PMIDIDEF $BUILD_DIR"
+MOPTS="--buildtype=$BUILD_TYPE $POTEXTDEF $PMIDIDEF $BUILD_DIR $NOJACK $NOJACKSESSION $NOJACKTRANSPORT $NONSM"
+
 if test "$DOSETUP" = "yes"; then
    if test "$DODEBUG" = "yes" ; then
       meson setup --default-library=static $MOPTS

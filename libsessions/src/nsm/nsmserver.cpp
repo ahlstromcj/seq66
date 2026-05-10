@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-11
- * \updates       2020-03-11
+ * \updates       2026-05-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -33,6 +33,8 @@
 #include <memory>                       /* std::unique_ptr<>                */
 
 #include "nsm/nsmserver.hpp"            /* seq66::nsmserver class           */
+
+#if SEQ66_NSM_SUPPORT
 
 namespace seq66
 {
@@ -61,9 +63,10 @@ create_nsmserver ()
 
 }           // namespace seq66
 
+#endif      // SEQ66_NSM_SUPPORT
+
 /*
  * nsmserver.cpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-
