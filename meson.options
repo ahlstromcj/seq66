@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-05-04
+# \updates     2026-05-10
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" application and libraries.
@@ -27,9 +27,11 @@ option('jack',
    description : 'Add JACK to the MIDI API list in Linux builds.'
 )
 
+# JACK session is DEPRECATED.
+
 option('jacksession',
    type : 'boolean',
-   value : true,
+   value : false,
    description : 'Add JACK session support.'
 )
 

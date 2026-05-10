@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-19
- * \updates       2026-05-09
+ * \updates       2026-05-10
  * \license       GNU GPLv2 or above
  *
  *  For now, this header file enables only the JACK interface.  That is our
@@ -46,7 +46,7 @@
 #define SEQ66_BUILD_UNIX_JACK       1   /* supported by Linux & FreeBSD     */
 #define SEQ66_BUILD_LINUX_ALSA      1   /* also a wrapper for FreeBSD's OSS */
 #define SEQ66_BUILD_RTMIDI_DUMMY    1   /* an alternative for Linux, etc.   */
-#undef  SEQ66_AVOID_TIMESTAMPING    1   /* a feature of the ALSA rtmidi API */
+#undef  SEQ66_AVOID_TIMESTAMPING        /* a feature of the ALSA rtmidi API */
 #endif
 
 #if defined SEQ66_PLATFORM_MACOSX

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2026-05-09
+ * \updates       2026-05-10
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -111,12 +111,10 @@
 
 #define SEQ66_USE_BPMINUTE_CALCULATION  /* portfix branch 2022-02-11        */
 
-#if SEQ66_JACK_SESSION                  /* deprecated, use Non Session Mgr. */
-
 #if SEQ66_JACK_METADATA
 
 #include <jack/metadata.h>
-#include <jack/uuid.h>
+#include <jack/uuid.h>                  /* JACK_UUID_EMPTY_INITIALIZER etc. */
 
 /**
  *  This item exists in the JACK 2 source code, but not in the installed JACK
@@ -127,10 +125,6 @@ const char * JACK_METADATA_ICON_NAME =
     "http://jackaudio.org/metadata/icon-name";
 
 #endif      // SEQ66_JACK_METADATA
-
-#include "midi/midifile.hpp"            /* seq66::midifile class            */
-
-#endif      // SEQ66_JACK_SESSION
 
 /*
  *  All library code in the Seq66 project is in the seq66 namespace.
@@ -677,6 +671,8 @@ set_jack_port_property
     return rc == 0;
 }
 
+#endif      // SEQ66_JACK_SESSION
+
 /**
  *  This version does not seem to work.
  */
@@ -699,8 +695,6 @@ set_jack_port_property
     int rc = ::jack_set_property(jc, uuid, k, v, t);    // use t == NULL?
     return rc == 0;
 }
-
-#endif  // SEQ66_JACK_METADATA
 
 /**
  *  Provides a list of JACK status bits, and a brief string to explain the
@@ -1045,6 +1039,11 @@ jack_assistant::init ()
 #if SEQ66_JACK_SESSION
         if (result && usr().want_jack_session())
         {
+             /*
+              * warning: 'jack_set_session_callback' is deprecated
+              * [-Wdeprecated-declarations]
+              */
+
             int jackcode = ::jack_set_session_callback
             (
                 m_jack_client, jack_session_callback, (void *) this
@@ -1598,6 +1597,8 @@ jack_assistant::session_event (jack_session_event_t * ev)
      * opposed to NSM) to determine where the user's data resides.
      *
      *      rc().midi_filepath(filepath);
+     *
+     * warning: 'jack_session_reply' is deprecated [-Wdeprecated-declarations]
      */
 
     if (::jack_session_reply(m_jack_client, ev) != 0)
@@ -1625,6 +1626,12 @@ jack_assistant::session_event (jack_session_event_t * ev)
         file_message("Session command", cmd);
         file_message("Session path", filepath);
     }
+
+    /*
+     * warning: 'jack_session_event_free' is deprecated
+     * [-Wdeprecated-declarations]
+     */
+
     ::jack_session_event_free(ev);
     if (quit)
         parent().signal_quit();                     /* session_close()      */

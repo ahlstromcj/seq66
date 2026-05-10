@@ -1,21 +1,21 @@
-# README for Seq66 0.99.25 2026-05-08
+# README for Seq66 0.99.25 2026-05-10
 
-__Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid
-interface; pattern banks, triggers, and playlists for song management;
-scale and chord aware piano-roll; song layout for creative
-composition; control/status via MIDI automation, and mute-groups to
-enable/disable sets of patterns. Tools for live performance and for
-composing great-sounding MIDI tracks. Supports the Non/New Session
-Manager; can run headless and on a small computer like the Pi.
-It does not support audio samples, just MIDI.
+__Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
+pattern banks, triggers, and playlists for song management; scale and chord
+aware piano-roll; song layout for creative composition; control/status via MIDI
+automation, and mute-groups to enable/disable sets of patterns. Tools for live
+performance and for composing great-sounding MIDI tracks. Supports the Non/New
+Session Manager; can run headless and on a small computer like the Pi.  It does
+not support audio samples, just MIDI.
 
 __Seq66__ Seq24/Kepler34 on steroids with
-modern C++ and new features. Linux and Windows users can build this
-application from source code. See the extensive INSTALL files. Includes
-a comprehensive PDF user-manual. As of this release, employs the __Meson__ build system.
+modern C++ and new features. Linux and Windows users can build this application
+from source code. See the extensive INSTALL files. Includes a comprehensive PDF
+user-manual. As of this release, employs the __Meson__ build system.
 
-*The current development-in-progress branch is now "Meson". The
-old-style build setup is preserved in branch "Autoconf."*
+*The current development-in-progress branch is now "Meson". Seq66 now
+builds using Meson, and supports Qt6. The old-style build setup is
+preserved in branch "Autoconf."*
 
 The release includes an installer for the 64-bit Windows version of
 Seq66. Initial work has been done on getting Seq66 to build and run
@@ -94,7 +94,8 @@ devices are ignored, with playback (e.g. to the Windows wavetable synth).
 It is built on "linux" via *Meson*, *Qt Creator* or *qmake*, and on
 Windows using *MingW*.
 
-*IMPORTANT*: *GNU Autotools* is no longer supported, except in the "Autoconf" branch.
+*IMPORTANT*: *GNU Autotools* is no longer supported, except in the "Autoconf"
+branch.
 
 The INSTALL has been streamlined, see that file for build-from-source
 instructions for Linux or Windows, and using a conventional source tarball.

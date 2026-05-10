@@ -49,10 +49,10 @@ PLATFORM="UNIX"
 PMIDIDEF=""
 POTEXTDEF=""
 TAGSTRING="pack"
-NOJACK=""               # --no-jack to disable
-NOJACKSESSION=""        # --no-jack-session to disable
-NOJACKTRANSPORT=""      # --no-jack-transport to disable
-NONSM=""                # --no-nsm to disable
+NOJACK=""                           # --no-jack to disable
+NOJACKSESSION="-Djacksession=false" # --jack-session to enable
+NOJACKTRANSPORT=""                  # --no-jack-transport to disable
+NONSM=""                            # --no-nsm to disable
 
 # Flags.
 
@@ -221,8 +221,8 @@ get_options () {
                NOJACK="-Djack=false"
                ;;
 
-            --no-jack-session)
-               NOJACKSESSION="-Djacksession=false"
+            --jack-session)
+               NOJACKSESSION="-Djacksession=true"
                ;;
 
             --no-jack-transport)
@@ -293,8 +293,8 @@ Many of these commands are best used when setting up the build
  --clean             Delete the usual derived files from the project. Also
                      do "git checkout doc/seq66-dev-manual.pdf"
  --rebuild           Clean the project and build from scratch.
+ --jack-session      Enable the usage of JACK Session, which is deprecated.
  --no-jack           Disable the usage of JACK (in Linux).
- --no-jack-session   Disable the usage of JACK Session.
  --no-jack-transport Disable the usage of JACK Transport.
  --no-nsm            Disable the usage of NSM.
  --pack [ tag ]      A simple quick packaging of the code; the tag goes

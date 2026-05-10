@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-05-09
+ * \updates       2026-05-10
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -135,13 +135,9 @@
 #include "pixmaps/song_rec_off.xpm"
 #include "pixmaps/song_rec_on.xpm"      /* #include "pixmaps/song_rec.xpm" */
 #include "pixmaps/stop.xpm"
-
-#define SEQ66_USE_RECORD_EX_BUTTON      /* STILL IN PROGRESS */
-#if defined SEQ66_USE_RECORD_EX_BUTTON
 #include "pixmaps/rec_ex_buss.xpm"      /* green    */
 #include "pixmaps/rec_ex_channel.xpm"   /* yellow   */
 #include "pixmaps/rec_ex_normal.xpm"    /* red      */
-#endif
 
 /**
  *  This is an option, on by default, in libseq66/include/seq66_features.h.
@@ -1252,7 +1248,7 @@ qsmainwnd::update_play_status ()
             ui->btnPause->setChecked(false);
             ui->btnPlay->setChecked(true);
         }
-        else if (in_pause)                           /* as opposed to stopped    */
+        else if (in_pause)                      /* as opposed to stopped    */
         {
             ui->btnStop->setChecked(false);
             ui->btnPause->setChecked(true);
@@ -1270,7 +1266,6 @@ qsmainwnd::update_play_status ()
 void
 qsmainwnd::update_record_by_status ()
 {
-#if defined SEQ66_USE_RECORD_EX_BUTTON
     if (cb_perf().record_by_buss())
     {
         qt_set_icon(rec_ex_buss_xpm, ui->btnRecordEx);      /* green    */
@@ -1286,9 +1281,6 @@ qsmainwnd::update_record_by_status ()
         qt_set_icon(rec_ex_normal_xpm, ui->btnRecordEx);    /* red      */
         ui->btnRecordEx->setEnabled(cb_perf().have_current_seq());
     }
-#else
-    ui->btnRecordEx->hide();
-#endif
 }
 
 /**
@@ -2376,15 +2368,6 @@ qsmainwnd::new_session ()
             tune_name = s_default_tune;
 
         (void) filename_split(tune_name, path, defname);
-#if defined USE_OLD_CODE
-        bool ok;
-        QString text = QInputDialog::getText
-        (
-            this, tr("Session MIDI File"),          /* parent and title     */
-            tr("MIDI FIle Base Name"),              /* input field label    */
-            QLineEdit::Normal, qt(defname), &ok
-        );
-#else
         std::string text = qt_get_string
         (
             this, "Session MIDI File",              /* parent and title     */
@@ -2392,8 +2375,6 @@ qsmainwnd::new_session ()
             defname                                 /* default text         */
         );
         bool ok = ! text.empty();
-
-#endif
         if (ok)
         {
             if (cb_perf().clear_all())              /* like new_file()      */

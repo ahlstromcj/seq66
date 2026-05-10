@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2026-05-09
+ * \updates       2026-05-10
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -373,28 +373,8 @@ qslivegrid::show_grid_mode ()
 void
 qslivegrid::set_playlist_name (const std::string & plname, bool modified)
 {
-#if defined USE_OLD_CODE
-    std::string fullname = get_full_path(plname);
-    std::string path;
-    std::string basename;
-    if (fullname.empty())
-    {
-        fullname = filename_base(plname);
-        if (fullname.empty())
-            fullname = rc().no_name();
-
-        basename = fullname;
-    }
-    else
-    {
-        bool ok = filename_split(fullname, path, basename);
-        if (! ok)
-            basename = fullname;
-    }
-#else
-    std::string basename = shorten_file_spec(plname, 64);
+    std::string basename = shorten_file_spec(plname, 52);           /* 64 */
     std::string path = plname;
-#endif
     if (modified)
         basename += " *";
 

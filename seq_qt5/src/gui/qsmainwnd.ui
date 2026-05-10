@@ -55,7 +55,7 @@
     </size>
    </property>
    <property name="layoutDirection">
-    <enum>Qt::LayoutDirection::LeftToRight</enum>
+    <enum>Qt::LeftToRight</enum>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="spacing">
@@ -92,6 +92,7 @@
         <property name="font">
          <font>
           <pointsize>12</pointsize>
+          <italic>true</italic>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -252,6 +253,12 @@ or Slave mode.</string>
           <height>28</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <stylestrategy>PreferDefault</stylestrategy>
+         </font>
+        </property>
         <property name="toolTip">
          <string>Change the PPQN value of song for
 ALL sets. This modifies the song; a
@@ -269,7 +276,7 @@ PPQN.</string>
          <number>20</number>
         </property>
         <property name="insertPolicy">
-         <enum>QComboBox::InsertPolicy::NoInsert</enum>
+         <enum>QComboBox::NoInsert</enum>
         </property>
        </widget>
       </item>
@@ -289,6 +296,12 @@ PPQN.</string>
           <width>164</width>
           <height>28</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <stylestrategy>PreferDefault</stylestrategy>
+         </font>
         </property>
         <property name="toolTip">
          <string>Sets output bus for all patterns in
@@ -319,8 +332,14 @@ the current set.  Modifies the song.</string>
           <height>28</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <stylestrategy>PreferDefault</stylestrategy>
+         </font>
+        </property>
         <property name="focusPolicy">
-         <enum>Qt::FocusPolicy::NoFocus</enum>
+         <enum>Qt::NoFocus</enum>
         </property>
         <property name="toolTip">
          <string>Global Beats Per Measure</string>
@@ -358,7 +377,7 @@ the current set.  Modifies the song.</string>
          <string>/</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -382,8 +401,14 @@ the current set.  Modifies the song.</string>
           <height>28</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <stylestrategy>PreferDefault</stylestrategy>
+         </font>
+        </property>
         <property name="focusPolicy">
-         <enum>Qt::FocusPolicy::NoFocus</enum>
+         <enum>Qt::NoFocus</enum>
         </property>
         <property name="toolTip">
          <string>Global Beat Width (length of beat)</string>
@@ -417,11 +442,20 @@ B:B:T and H:M:S format.</string>
       </item>
       <item>
        <widget class="QLabel" name="label_test">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="maximumSize">
          <size>
           <width>32</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <stylestrategy>PreferDefault</stylestrategy>
+         </font>
         </property>
         <property name="toolTip">
          <string>Test</string>
@@ -433,6 +467,9 @@ B:B:T and H:M:S format.</string>
       </item>
       <item>
        <widget class="QWidget" name="verticalWidget" native="true">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -456,7 +493,7 @@ B:B:T and H:M:S format.</string>
           <number>0</number>
          </property>
          <property name="sizeConstraint">
-          <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+          <enum>QLayout::SetMaximumSize</enum>
          </property>
          <property name="leftMargin">
           <number>0</number>
@@ -491,22 +528,22 @@ B:B:T and H:M:S format.</string>
       </property>
       <property name="font">
        <font>
-        <pointsize>11</pointsize>
+        <pointsize>10</pointsize>
         <bold>true</bold>
         <stylestrategy>PreferDefault</stylestrategy>
        </font>
       </property>
       <property name="focusPolicy">
-       <enum>Qt::FocusPolicy::TabFocus</enum>
+       <enum>Qt::TabFocus</enum>
       </property>
       <property name="layoutDirection">
-       <enum>Qt::LayoutDirection::LeftToRight</enum>
+       <enum>Qt::LeftToRight</enum>
       </property>
       <property name="tabShape">
-       <enum>QTabWidget::TabShape::Rounded</enum>
+       <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>7</number>
+       <number>3</number>
       </property>
       <property name="movable">
        <bool>false</bool>
@@ -534,7 +571,7 @@ B:B:T and H:M:S format.</string>
         <item>
          <layout class="QVBoxLayout" name="LiveTabLayout">
           <property name="sizeConstraint">
-           <enum>QLayout::SizeConstraint::SetFixedSize</enum>
+           <enum>QLayout::SetFixedSize</enum>
           </property>
           <property name="leftMargin">
            <number>0</number>
@@ -563,7 +600,7 @@ B:B:T and H:M:S format.</string>
         <item>
          <layout class="QVBoxLayout" name="SongTabLayout">
           <property name="sizeConstraint">
-           <enum>QLayout::SizeConstraint::SetFixedSize</enum>
+           <enum>QLayout::SetFixedSize</enum>
           </property>
           <property name="leftMargin">
            <number>0</number>
@@ -598,7 +635,7 @@ B:B:T and H:M:S format.</string>
         <item>
          <layout class="QVBoxLayout" name="EditTabLayout">
           <property name="sizeConstraint">
-           <enum>QLayout::SizeConstraint::SetFixedSize</enum>
+           <enum>QLayout::SetFixedSize</enum>
           </property>
           <property name="leftMargin">
            <number>0</number>
@@ -628,7 +665,7 @@ B:B:T and H:M:S format.</string>
         </property>
         <layout class="QVBoxLayout" name="EventTabLayout">
          <property name="sizeConstraint">
-          <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+          <enum>QLayout::SetMaximumSize</enum>
          </property>
         </layout>
        </widget>
@@ -654,7 +691,7 @@ B:B:T and H:M:S format.</string>
         </property>
         <layout class="QVBoxLayout" name="PlaylistTabLayout">
          <property name="sizeConstraint">
-          <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+          <enum>QLayout::SetDefaultConstraint</enum>
          </property>
         </layout>
        </widget>
@@ -680,7 +717,7 @@ B:B:T and H:M:S format.</string>
         </property>
         <layout class="QVBoxLayout" name="SetsTabLayout">
          <property name="sizeConstraint">
-          <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+          <enum>QLayout::SetDefaultConstraint</enum>
          </property>
         </layout>
        </widget>
@@ -706,7 +743,7 @@ B:B:T and H:M:S format.</string>
         </property>
         <layout class="QVBoxLayout" name="MutesTabLayout">
          <property name="sizeConstraint">
-          <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+          <enum>QLayout::SetDefaultConstraint</enum>
          </property>
         </layout>
        </widget>
@@ -732,7 +769,7 @@ B:B:T and H:M:S format.</string>
         </property>
         <layout class="QVBoxLayout" name="SessionTabLayout">
          <property name="sizeConstraint">
-          <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+          <enum>QLayout::SetDefaultConstraint</enum>
          </property>
         </layout>
        </widget>
@@ -757,7 +794,7 @@ B:B:T and H:M:S format.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>11</pointsize>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -783,7 +820,7 @@ B:B:T and H:M:S format.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>11</pointsize>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -816,7 +853,7 @@ the current set.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>11</pointsize>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -842,6 +879,12 @@ the current set.</string>
           <width>16777215</width>
           <height>28</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <stylestrategy>PreferDefault</stylestrategy>
+         </font>
         </property>
         <property name="text">
          <string>0: Group #1</string>
@@ -870,7 +913,7 @@ the current set.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>9</pointsize>
+          <pointsize>11</pointsize>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -883,7 +926,7 @@ during playback.</string>
          <string>-</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -903,7 +946,7 @@ during playback.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>11</pointsize>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -912,7 +955,7 @@ during playback.</string>
          <string>Active</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -935,7 +978,7 @@ during playback.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>11</pointsize>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -968,7 +1011,7 @@ or active external live frame.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>11</pointsize>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -997,7 +1040,7 @@ or active external live frame.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>11</pointsize>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1036,7 +1079,7 @@ no matter what sets-mode is in force. </string>
          <string>Set</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -1056,7 +1099,7 @@ no matter what sets-mode is in force. </string>
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>11</pointsize>
           <bold>false</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1095,8 +1138,14 @@ no matter what sets-mode is in force. </string>
             <height>28</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <stylestrategy>PreferDefault</stylestrategy>
+           </font>
+          </property>
           <property name="focusPolicy">
-           <enum>Qt::FocusPolicy::NoFocus</enum>
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Panic! Turns off all notes.</string>
@@ -1135,8 +1184,14 @@ no matter what sets-mode is in force. </string>
             <height>28</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <stylestrategy>PreferDefault</stylestrategy>
+           </font>
+          </property>
           <property name="focusPolicy">
-           <enum>Qt::FocusPolicy::NoFocus</enum>
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Stop playback. Shift-click rewinds transport.</string>
@@ -1169,6 +1224,12 @@ no matter what sets-mode is in force. </string>
             <height>28</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <stylestrategy>PreferDefault</stylestrategy>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Pause/continue. Preserves current location.</string>
           </property>
@@ -1197,8 +1258,14 @@ no matter what sets-mode is in force. </string>
             <height>28</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <stylestrategy>PreferDefault</stylestrategy>
+           </font>
+          </property>
           <property name="focusPolicy">
-           <enum>Qt::FocusPolicy::NoFocus</enum>
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Start/continue playback.</string>
@@ -1231,6 +1298,12 @@ no matter what sets-mode is in force. </string>
             <height>28</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <stylestrategy>PreferDefault</stylestrategy>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Activates either the &quot;current&quot; pattern, all
 input-buss patterns, or all channel patterns.</string>
@@ -1256,6 +1329,12 @@ input-buss patterns, or all channel patterns.</string>
             <width>48</width>
             <height>28</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <stylestrategy>PreferDefault</stylestrategy>
+           </font>
           </property>
           <property name="toolTip">
            <string>Activate L/R looping.</string>
@@ -1297,8 +1376,14 @@ input-buss patterns, or all channel patterns.</string>
             <height>28</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <stylestrategy>PreferDefault</stylestrategy>
+           </font>
+          </property>
           <property name="focusPolicy">
-           <enum>Qt::FocusPolicy::NoFocus</enum>
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Record live sequence changes into the
@@ -1336,7 +1421,7 @@ at start of playback.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
+            <pointsize>11</pointsize>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1371,6 +1456,12 @@ status.</string>
             <height>28</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <stylestrategy>PreferDefault</stylestrategy>
+           </font>
+          </property>
           <property name="toolTip">
            <string>Mute Group Learn. Click, then press
 a key to store the state of the sequences
@@ -1397,6 +1488,12 @@ in the Shift of that key.</string>
           <height>28</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <stylestrategy>PreferDefault</stylestrategy>
+         </font>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -1418,7 +1515,7 @@ in the Shift of that key.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>11</pointsize>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1451,6 +1548,12 @@ all tracks.</string>
           <width>48</width>
           <height>28</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <stylestrategy>PreferDefault</stylestrategy>
+         </font>
         </property>
         <property name="toolTip">
          <string>Opens the external song-editor.
@@ -1489,13 +1592,13 @@ all tracks.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>11</pointsize>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
         <property name="focusPolicy">
-         <enum>Qt::FocusPolicy::NoFocus</enum>
+         <enum>Qt::NoFocus</enum>
         </property>
         <property name="toolTip">
          <string>Toggle playback using the Song
@@ -1534,7 +1637,7 @@ Editor triggers.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>11</pointsize>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
@@ -1552,7 +1655,7 @@ Editor triggers.</string>
          <bool>true</bool>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
         <property name="readOnly">
          <bool>true</bool>
@@ -1577,7 +1680,7 @@ Editor triggers.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
+            <pointsize>11</pointsize>
             <bold>true</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
@@ -1617,7 +1720,7 @@ resets to 0.</string>
            <string>BPM</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -1640,20 +1743,20 @@ resets to 0.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
+            <pointsize>11</pointsize>
             <bold>false</bold>
             <stylestrategy>PreferDefault</stylestrategy>
            </font>
           </property>
           <property name="focusPolicy">
-           <enum>Qt::FocusPolicy::ClickFocus</enum>
+           <enum>Qt::ClickFocus</enum>
           </property>
           <property name="toolTip">
            <string>Allows the setting of the
 beats/minute.</string>
           </property>
           <property name="layoutDirection">
-           <enum>Qt::LayoutDirection::LeftToRight</enum>
+           <enum>Qt::LeftToRight</enum>
           </property>
           <property name="minimum">
            <double>2.000000000000000</double>
@@ -1678,7 +1781,7 @@ beats/minute.</string>
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>28</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="font">
@@ -1829,7 +1932,7 @@ beats/minute.</string>
     <string>Ctrl+P</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionSave">
