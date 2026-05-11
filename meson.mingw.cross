@@ -1,0 +1,111 @@
+#*****************************************************************************
+# meson.mingw.cross (seq66)
+#-----------------------------------------------------------------------------
+##
+# \file        meson.mingw.cross
+# \library     seq66
+# \author      Chris Ahlstrom
+# \date        2026-05-11
+# \updates     2026-05-11
+# \license     $XPC_SUITE_GPL_LICENSE$
+#
+#  This file is part of the "seq66" library. See the top-level meson.build
+#  file for license information.
+#
+#  See contrib/notes/Meson.text for more information.
+#
+#  In addition to installing a bunch of mingw-related build packages, also
+#  install mingw-w64-qt6-base.
+#
+#  Wine:
+#
+#     Use windeployqt in Wine; example 'windeployqt Seq66qt5/release'.
+#
+#  Arch:
+#
+#     Assuming base-devel is already installed.
+#
+#     # pacman -S mingw-w64-x86_64-toolchain
+#     # pacman -S mingw-w64-x86_64-qt6-base
+#
+#     The DLLs are usually installed in /usr/x86_64-w64-mingw32/bin/qt6/ or
+#     /usr/lib/mingw-w64-x86_64/bin/.
+#
+#  Debian:
+#
+#     The most common way to get MinGW-Qt6 packages on Debian is through the
+#     OBS (Open Build Service) repositories, specifically those maintained by
+#     the "Marten" (Martchus) community, which provide Windows-hosted Qt6
+#     packages for Linux.
+#
+#     # apt install mingw-w64-qt6-base mingw-w64-qt6-declarative
+#
+#     Natively:
+#
+#     # apt install mingw-w64 g++-mingw-w64 cmake ninja-build
+#
+#     Get the source from the Qt download page or via Git. Create a build
+#     directory and:
+#
+#
+#     $ mkdir build-mingw && cd build-mingw
+#     $ ../qt-everywhere-src-6.x.x/configure -xplatform win32-g++ \
+#        -device-option CROSS_COMPILE=x86_64-w64-mingw32-
+#     $ cmake --build . --parallel
+#     $ cmake --install .
+#
+#     MXE:
+#
+#        Clone the MXE repo and run 'make qt6-base'.
+#
+#
+#-----------------------------------------------------------------------------
+
+[constants]
+
+# compiler_path = '.\tools\gcc_compiler\bin\'
+# arch = 'ppc-freevle-eabi'
+
+[binaries]
+
+# c = compiler_path + arch + '-gcc'
+
+c = 'x86_64-w64-mingw32-gcc'
+cpp = 'x86_64-w64-mingw32-g++'
+ar = 'x86_64-w64-mingw32-ar'
+strip = 'x86_64-w64-mingw32-strip'
+windres = 'x86_64-w64-mingw32-windres'
+exe_wrapper = 'wine64'        # key step for running binaries; also 'wine'
+
+[properties]
+
+# See contrib/notes/Meson.text.
+#
+# c_stdlib = ['mylibc', 'mylibc_dep'] # Subproject name, variable name
+# c_args = ['-march=armv7-a']
+# sizeof_int = 4
+# sizeof_wchar_t = 4
+# sizeof_void* = 4
+# alignment_char = 1
+# alignment_void* = 4
+# alignment_double = 4
+# has_function_printf = true
+# sys_root = '/some/path'
+# pkg_config_libdir = '/some/path/lib/pkgconfig'
+# needs_exe_wrapper = true
+
+[host_machine]
+
+# subsystem = 'windows'
+# kernel = 'nt'
+
+system = 'windows'
+cpu_family = 'x86_64'
+cpu = 'x86_64'
+endian = 'little'
+
+#****************************************************************************
+# meson.mingw.cross
+#----------------------------------------------------------------------------
+# vim: ts=3 sw=3 ft=meson
+#----------------------------------------------------------------------------

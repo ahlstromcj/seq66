@@ -217,7 +217,7 @@ seq_qt_sources += files(
 # but all *.moc are empty.
 #-----------------------------------------------------------------------------
 
-qtname = 'qt6'    # qtname = 'qt5'
+qtname = 'qt6'                   # qtname = 'qt5'
 qtimport = import(qtname)
 if not qtimport.has_tools(required : false)
    message('Qt6 tools not found')

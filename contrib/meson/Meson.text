@@ -1,6 +1,6 @@
-Changing the Linux/Windows Builds to Meson
+Changing the Build to Meson
 Chris Ahlstrom
-2026-05-01 to 2026-05-11
+2026-05-01 to 2026-05-10
 
 Strategy:
 
@@ -25,15 +25,16 @@ Strategy:
 Windows build:
 
    <https://mesonbuild.com/Cross-compilation.html>
+   <https://mesonbuild.com/Machine-files.html>
 
-Steps for Running Meson with Wine
+Steps for Running Meson with Wine:
 
 Install Wine: Ensure Wine is installed and functional on your Linux system.
 
 Create a Cross File: Create a file (e.g., windows.ini) defining the mingw-w64
 compiler and setting Wine as the wrapper:
 
-ini
+INI-style file:
 
 [binaries]
 
@@ -42,7 +43,7 @@ cpp = 'x86_64-w64-mingw32-g++'
 ar = 'x86_64-w64-mingw32-ar'
 strip = 'x86_64-w64-mingw32-strip'
 windres = 'x86_64-w64-mingw32-windres'
-exe_wrapper = 'wine'  or 'wine64'      # Key step for running binaries
+exe_wrapper = 'wine' or 'wine64'    # Key step for running binaries
 
 [constants]                   # defines strings/lists to use in cross-file
 
@@ -50,7 +51,7 @@ prefix = 'aarch64-linux-gnu-' # see contrib/notes/cross-examples.ini
 
 [properties]
 
-c_stdlib = ['mylibc', 'mylibc_dep']    # Subproject name, variable name
+c_stdlib = ['mylibc', 'mylibc_dep'] # Subproject name, variable name
 c_args = ['-march=armv7-a']
 sizeof_int = 4
 sizeof_wchar_t = 4
@@ -75,10 +76,8 @@ Configure and Build:
 
 Run meson with the cross file:
 
-bash
-
-   meson setup builddir --cross-file windows.ini
-   meson compile -C builddir
+   $ meson setup builddir --cross-file windows.ini
+   $ meson compile -C builddir
 
 Use meson test -C builddir to execute tests under Wine.
 
@@ -87,7 +86,6 @@ Use meson test -C builddir to execute tests under Wine.
    -  'target machine' is the machine on which the compiled binary output
       will run, only meaningful if the program produces machine-specific
       output. Normally one does not need to worry about this item.
-
 
 Key Considerations WINEPATH: Since Meson 0.63.0, devenv automatically sets
 WINEPATH to include necessary DLLs.Missing Wine: If Wine is not installed,

@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-10
+# \update         2026-05-11
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -30,7 +30,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-10"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-11"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -56,25 +56,26 @@ NONSM=""                            # --no-nsm to disable
 
 # Flags.
 
-DOPORTMIDI="no"         # --portmidi. The default is rtmidi.
 DOCLANG="no"            # --clang. Default is the native compiler.
-DOGNU="no"              # --gnu. Default is the native compiler.
 DOCLEAN="no"            # --clean
+DOCROSS="no"            # --cross. Build for Windows using a cross-file.
 DODEBUG="no"            # --debug. This is the default Meson build.
 DODIST="no"             # --dist. Use Meson "dist" to create a package.
+DOGNU="no"              # --gnu. Default is the native compiler.
 DOHELP="no"             # --help. Duh!
-DOOPTHELP="no"          # --option-help. Duh!
 DOINSTALL="no"          # --install. Requires the release be built already.
+DOMAKE="yes"            # Default action after creating the build directory.
+DOMAKEPDF="no"          # --pdf. Make the manual, always as a separate step.
+DOOPTHELP="no"          # --option-help. Duh!
+DOPACK="no"             # --pack. Clean and create a tar-file.
+DOPORTMIDI="no"         # --portmidi. The default is rtmidi.
+DOPOTEXT="no"           # --potext. Use translation [NOT YET SUPPORTED].
+DORELEASE="yes"         # --release. as opposed to debug.
+DOREMAKE="no"           # currently UNUSED
+DOSETUP="no"            # --setup. Do the setup and then exit.
 DOUNINSTALL="no"        # --uninstall. Like --install, requires sudo/root.
 DOUPDATE="no"           # --update. Force a subproject update.
-DOMAKE="yes"            # Default action after creating the build directory.
-DOSETUP="no"            # --setup. Do the setup and then exit.
-DOREMAKE="no"           # currently UNUSED
-DOMAKEPDF="no"          # --pdf. Make the manual, always as a separate step.
-DOPOTEXT="no"           # --potext. Use translation [NOT YET SUPPORTED].
-DOPACK="no"             # --pack. Clean and create a tar-file.
-DORELEASE="yes"         # --release. as opposed to debug.
-DOVERSION="no"          # --version. Duouble duh!
+DOVERSION="no"          # --version. Double duh!
 
 #******************************************************************************
 #  Brute-force options loop
@@ -101,6 +102,13 @@ get_options () {
                   ;;
                esac
                BUILD_DIR="$BASE_BUILD_DIR/$1"
+               ;;
+
+            --cross)
+               DOMAKE="yes"
+               DOCROSS="yes"
+               BUILD_DIR="$BASE_BUILD_DIR/cross"
+               MAKEFILE="$BUILD_DIR/build.ninja"
                ;;
 
             --clean)
@@ -271,6 +279,7 @@ Many of these commands are best used when setting up the build
  --make              Set up and build the code in 'build'. Default operation.
  --build [dir]       Same as --make, but if given, the build directory is
                      'build/dir'. Must use the same option with --clean.
+ --cross             Set up to build a Windows executable, and build it.
  --setup             Run 'meson setup', and that's all.
  --update            Force an update of the subprojects.
  --potext            Build with Potext (light gettext) library sypport.
@@ -563,6 +572,8 @@ fi
 
 MOPTS="--buildtype=$BUILD_TYPE $POTEXTDEF $PMIDIDEF $BUILD_DIR $NOJACK $NOJACKSESSION $NOJACKTRANSPORT $NONSM"
 
+# --setup. This section does only a setup, then exits.
+
 if test "$DOSETUP" = "yes"; then
    if test "$DODEBUG" = "yes" ; then
       meson setup --default-library=static $MOPTS
@@ -573,6 +584,29 @@ if test "$DOSETUP" = "yes"; then
    fi
    exit 0
 fi
+
+# --cross. This function sets options appropriate for Windows builds,
+#          does the build, and exits.
+#
+# EXPERIMENTAL.
+#
+# Currently does not support the Potext library or a debug build.
+
+if test "$DOCROSS" = "yes" ; then
+
+   CROSSOPTS="-Dportmidi=true -Dpotext=false -Djack=false -Dnsm=false"
+   CROSSFILE="--cross-file meson.mingw.cross"
+   meson setup $BUILD_DIR --buildtype=$BUILD_TYPE $CROSSOPTS $CROSSFILE
+   meson compile -C $BUILD_DIR > make.log
+   if test $? = 0 ; then
+      echo "Cross-build in $BUILD_DIR succeeded."
+      exit 0
+   else
+      echo "Cross-build failed, check $BUILD_DIR/make.log for errors."
+      exit 1
+   fi
+fi
+
 
 if test "$DOMAKE" = "yes" ; then
    make_projects
