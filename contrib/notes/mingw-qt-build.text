@@ -1,0 +1,104 @@
+Installing MingW and Qt for Cross-Compiling on Linux
+Chris Ahlstrom
+2026-05-13 to 2026-05-13
+
+To build a MinGW Qt application on Linux, you must use *aqtinstall* to
+download the Windows-hosted prebuilt binaries and then cross-compile your
+application using a Linux-based MinGW toolchain. 
+
+While aqtinstall can download these files to your Linux machine, the binaries
+themselves are intended for Windows; you cannot run the downloaded .exe or
+.dll files natively on Linux without a compatibility layer like Wine.
+
+Steps for Targeted Build
+
+    Install (Debian):
+
+        mingw-w64
+        mingw-w64-tools
+        mingw-w64-common
+        mingw-w64-i686-dev
+        mingw-w64-x86-64-dev *
+        gcc-mingw-w64
+        gcc-mingw-w64-i686
+        gcc-mingw-w64-x86-64  
+        g++-mingw-w64-x86-64 *
+        g++-mingw-w64-x86-64-posix
+        g++-mingw-w64-x86-64-win32
+
+    Prepare Source: Download and extract the Qt6 source code.
+
+    $ pip install --user aqtinstall
+    $ pipx install aqtinstall
+
+    The latter command yields ~/.local/bin/aqt ->
+        /home/ahlstrom/.local/share/pipx/venvs/aqtinstall/bin/aqt
+
+    Read https://aqtinstall.readthedocs.io/en/latest/getting_started.html
+    
+    aqt list-qt windows desktop --arch 6.10.2  & pick win64_mingw
+    aqt list-qt windows desktop --long-modules 6.10.2 win64_mingw
+    aqt list-qt windows desktop --archives  6.10.2 win64_mingw
+
+    aqt install-qt [ --outputdir dir ] host target
+        [ Qt version | spec ] [ arch ]
+        [ --external 7z ]
+        [ --modules qtcharts ...]
+        [ --archives qtbase ... ]   # is a must have to pare down the install
+
+    host = windows
+    target = desktop
+    Qt version = 6.10.2
+    arch = win64_mingw
+
+    Archives:
+
+        qtbase provides the foundational modules and libraries essential for
+        building Qt applications across desktop and embedded platforms,
+        including Core, GUI, Widgets, and Networking
+
+    Module Dependencies: Even if you only want Widgets, qtbase includes Core
+    and Gui. Skipping other modules (-skip) is more effective than trying to
+    compile only individual components.
+
+    MinGW Setup: The Linux machine must have mingw-w64 installed and configured
+    so the xplatform win32-g++ flag works properly.
+
+    Result: The installation directory (-prefix) will contain the minimal Qt6
+    libraries for Windows, developed on Linux.
+
+==============
+
+To import a non-standard Qt installation in Meson, add the Qt bin directory to
+your PATH environment variable before running meson setup. This enables Meson
+to locate the correct qmake executable, which it uses to identify Qt
+libraries and headers.
+
+For our usage, with aqtinstall, see contrib/scripts/mingw-qt-build.sh.
+
+Steps for Non-Standard Qt Installation
+
+    Set the Path: Run your terminal with the Qt bin path prepended:
+
+        PATH=/path/to/custom/qt/bin:$PATH meson setup builddir
+
+    Alternative - pkg-config: If your custom Qt installation provides .pc
+    files, add the directory to PKG_CONFIG_PATH:
+
+        export PKG_CONFIG_PATH=/path/to/qt/lib/pkgconfig:$PKG_CONFIG_PATH
+
+    Verify: Run meson configure builddir to ensure the correct Qt version is
+    found. 
+
+    If using multiple Qt installations, use a separate build directory for
+    each to avoid conflicts, setting the PATH accordingly for each meson setup
+    command. 
+
+    qt6_dep = dependency('qt6', modules : ['Core', 'Gui', 'Widgets'])
+
+    An optional method keyword argument can be set: auto (default),
+    pkg-config, config-tool, qmake (deprecated)
+
+    Q: in executable(), what are build_rpath and install_rpath for?
+
+# vim: sw=3 ts=3 wm=8 et ft=sh
