@@ -47,6 +47,9 @@
 #           -  Qt6Core.pc and the rest of the .pc files
 #           -  Can add this path to PKG_CONFIG_PATH
 #           -  Can add this path to meson setup via --pkg-config-path
+#           -  Can add this path to meson crossfile:
+#                 [properties]
+#                 pkg_config_dir = <this path>
 #
 #        -  /opt/Qt/Qt6/6.10.2/mingw_64/include
 #           -  The <QtXyx> headers.

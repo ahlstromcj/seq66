@@ -5,7 +5,7 @@
 # \file            DIR_COLORS
 # \author          Chris Ahlstrom
 # \date            2008-02-26
-# \updates         2025-02-16
+# \updates         2026-05-13
 # \version         $Revision$
 # \license         $XPC_SUITE_GPL_LICENSE$
 #
@@ -407,6 +407,7 @@ EXEC 01;32
 .bpg 01;33
 .build 01;33
 .cfg 01;33
+.cross 01;33
 .ctrl 01;33
 .def 01;33
 .dfm 01;33

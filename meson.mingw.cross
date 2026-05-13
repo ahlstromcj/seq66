@@ -58,6 +58,20 @@
 #
 #        Clone the MXE repo and run 'make qt6-base'.
 #
+#  aqtinstall:
+#
+#     This is what we ended up using. See contrib/scripts/mingw-qt-build.sh
+#     and contrib/notes contrib/notes/mingw-qt-build.text.
+#
+#  Meson cross-compilation status functions:
+#
+#     meson.is_cross_build()
+#     meson.can_run_host_binaries()
+#     
+#     build_compiler = meson.get_compiler('c', native : true)
+#     host_compiler = meson.get_compiler('c', native : false)
+#     build_int_size = build_compiler.sizeof('int')
+#     host_int_size  = host_compiler.sizeof('int')
 #
 #-----------------------------------------------------------------------------
 
@@ -93,6 +107,8 @@ exe_wrapper = 'wine64'        # key step for running binaries; also 'wine'
 # sys_root = '/some/path'
 # pkg_config_libdir = '/some/path/lib/pkgconfig'
 # needs_exe_wrapper = true
+#
+# myvar = meson.get_external_property('sys_root')
 
 [host_machine]
 
