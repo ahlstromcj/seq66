@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-11
+# \update         2026-05-15
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -24,13 +24,16 @@
 #
 #     Also see:  https://mesonbuild.com/Creating-releases.html
 #
+#     For the values needs for the "CROSS" "PATHS", see meson.mingw.cross.
+#     We're still working the issues for this.
+#
 #------------------------------------------------------------------------------
 
 LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-11"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-15"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -41,6 +44,8 @@ export SEQ66_LIBRARY="$SEQ66-$SEQ66_LIBRARY_API_VERSION"
 BASE_BUILD_DIR="build"              # 'seq66/build'
 BUILD_DIR="$BASE_BUILD_DIR/cc"      # "native" compiler (CC/CXX) build
 BUILD_TYPE="release"
+CROSS_PATH="/opt/Qt/Qt6/6.10.1/mingw_64/bin"
+CROSS_PKG_PATH="/opt/Qt/Qt6/6.10.2/mingw_64/lib/pkgconfig"
 EXTRAFLAGS=""
 INSTALL_LIBDIR="lib"                # "lib/x86_64-linux-gnu" on Debian
 INSTALL_PREFIX="/usr/local"         # "/usr", what about Windows?
@@ -109,6 +114,9 @@ get_options () {
                DOCROSS="yes"
                BUILD_DIR="$BASE_BUILD_DIR/cross"
                MAKEFILE="$BUILD_DIR/build.ninja"
+               CROSSENVSET="PKG_CONFIG_PATH=$CROSS_PKG_PATH:$PKG_CONFIG_PATH"
+               export $CROSSENVSET
+               echo "CROSSENVSET: PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
                ;;
 
             --clean)
@@ -280,6 +288,7 @@ Many of these commands are best used when setting up the build
  --build [dir]       Same as --make, but if given, the build directory is
                      'build/dir'. Must use the same option with --clean.
  --cross             Set up to build a Windows executable, and build it.
+                     Not workable yet; see mingw-qt-build.text.
  --setup             Run 'meson setup', and that's all.
  --update            Force an update of the subprojects.
  --potext            Build with Potext (light gettext) library sypport.
@@ -323,35 +332,36 @@ make_pdf () {
 }
 
 clean_build () {
-   rm -rf build/Desktop-Debug/
-   rm -rf $BUILD_DIR/doc/
-   rm -rf $BUILD_DIR/latex/
-   rm -rf $BUILD_DIR/include/
-   rm -rf $BUILD_DIR/latex/
-   rm -rf $BUILD_DIR/subprojects/
-   rm -rf $BUILD_DIR/lib*
-   rm -rf $BUILD_DIR/meson*
-   rm -rf $BUILD_DIR/resources/
-   rm -rf $BUILD_DIR/seq_portmidi/
-   rm -rf $BUILD_DIR/seq_qt5/
-   rm -rf $BUILD_DIR/seq_rtmidi/
-   rm -rf $BUILD_DIR/Seq66cli/
-   rm -rf $BUILD_DIR/Seq66qt5/
-   rm -rf $BUILD_DIR/src/
-   rm -rf $BUILD_DIR/subprojects/
-   rm -rf $BUILD_DIR/tests/
-   rm -rf $BUILD_DIR/uninstall/
-   rm -f $BUILD_DIR/.ninja_deps
-   rm -f $BUILD_DIR/.ninja_log
-   rm -f $BUILD_DIR/*.h
-   rm -f $BUILD_DIR/*.log
-   rm -f $BUILD_DIR/*.so
-   rm -f $BUILD_DIR/compile_commands.json
-   rm -f $MAKEFILE
-   rm -rf wipe/
    rm -rf $BASE_BUILD_DIR/cc/
    rm -rf $BASE_BUILD_DIR/clang/
+   rm -rf $BASE_BUILD_DIR/cross/
    rm -rf $BASE_BUILD_DIR/gcc/
+   rm -rf $BASE_BUILD_DIR/Desktop-Debug/
+#   rm -rf $BUILD_DIR/doc/
+#   rm -rf $BUILD_DIR/latex/
+#   rm -rf $BUILD_DIR/include/
+#   rm -rf $BUILD_DIR/latex/
+#   rm -rf $BUILD_DIR/subprojects/
+#   rm -rf $BUILD_DIR/lib*
+#   rm -rf $BUILD_DIR/meson*
+#   rm -rf $BUILD_DIR/resources/
+#   rm -rf $BUILD_DIR/seq_portmidi/
+#   rm -rf $BUILD_DIR/seq_qt5/
+#   rm -rf $BUILD_DIR/seq_rtmidi/
+#   rm -rf $BUILD_DIR/Seq66cli/
+#   rm -rf $BUILD_DIR/Seq66qt5/
+#   rm -rf $BUILD_DIR/src/
+#   rm -rf $BUILD_DIR/subprojects/
+#   rm -rf $BUILD_DIR/tests/
+#   rm -rf $BUILD_DIR/uninstall/
+#   rm -f $BUILD_DIR/.ninja_deps
+#   rm -f $BUILD_DIR/.ninja_log
+#   rm -f $BUILD_DIR/*.h
+#   rm -f $BUILD_DIR/*.log
+#   rm -f $BUILD_DIR/*.so
+#   rm -f $BUILD_DIR/compile_commands.json
+   rm -f $MAKEFILE
+   rm -rf wipe/
    rm -f doc/dox/*.log
    rm -f doc/latex/*.log
    if test "$BUILD_DIR" != "$BASE_BUILD_DIR" ; then
@@ -597,16 +607,18 @@ if test "$DOCROSS" = "yes" ; then
    CROSSOPTS="-Dportmidi=true -Dpotext=false -Djack=false -Dnsm=false"
    CROSSFILE="--cross-file meson.mingw.cross"
    meson setup $BUILD_DIR --buildtype=$BUILD_TYPE $CROSSOPTS $CROSSFILE
-   meson compile -C $BUILD_DIR > make.log
+#  $ENVSET meson setup $BUILD_DIR --buildtype=$BUILD_TYPE $CROSSOPTS $CROSSFILE
    if test $? = 0 ; then
-      echo "Cross-build in $BUILD_DIR succeeded."
-      exit 0
-   else
-      echo "Cross-build failed, check $BUILD_DIR/make.log for errors."
-      exit 1
+      meson compile -C $BUILD_DIR > make.log
+      if test $? = 0 ; then
+         echo "Cross-build in $BUILD_DIR succeeded."
+         exit 0
+      else
+         echo "Cross-build failed, check $BUILD_DIR/make.log for errors."
+         exit 1
+      fi
    fi
 fi
-
 
 if test "$DOMAKE" = "yes" ; then
    make_projects

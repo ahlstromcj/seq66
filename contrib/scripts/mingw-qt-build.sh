@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-05-13
-# \update         2026-05-13
+# \update         2026-05-15
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -54,7 +54,7 @@
 #        -  /opt/Qt/Qt6/6.10.2/mingw_64/include
 #           -  The <QtXyx> headers.
 #           -  The q*.h headers.
-#           -  Can assign this directory to a varialb ein meson.build
+#           -  Can assign this directory to a variable in meson.build
 #              and add it to include_directories()
 #
 #        -  /opt/Qt/Qt6/6.10.2/mingw_64/<others>
@@ -69,7 +69,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export MINGW_SCRIPT_EDIT_DATE="2026-05-13"
+export MINGW_SCRIPT_EDIT_DATE="2026-05-15"
 OUTDIR="/opt/Qt/Qt6"
 MINGHOST="windows"
 MINGTARGET="desktop"
@@ -78,6 +78,8 @@ QTVERSION="6.10.2"
 QTMODULES="qt5compat"
 QTARCHIVES="qtbase"
 DRYRUN="" # DRYRUN="--dry-run"
+
+# TO DO: a parameter --tool-version to select a tools_mingw1310 qt.to
 
 mkdir -p $OUTDIR
 if test $? = 0 ; then
@@ -89,6 +91,23 @@ if test $? = 0 ; then
 
    aqt install-qt $DRYRUN --outputdir $OUTDIR $MINGHOST $MINGTARGET \
       $QTVERSION $ARCHITECTURE -m $QTMODULES --archives $QTARCHIVES
+
+   aqt install-tool --outputdir $OUTDIR $MINGHOST $MINGTARGET \
+      tools_mingw1310 qt.tools.win64_mingw1310
+
+   # Fix the pc files to refer to the correct prefix.
+
+   CURRENTPWD=$(pwd)
+   cd /opt/Qt/Qt6/6.10.2/mingw_64/lib/pkgconfig
+
+   sed -i \
+      -e s/\/Users\/qt\/work\/install/\/opt\/Qt\/Qt6\/6.10.2\/mingw_64/ *.pc
+
+   cd ../../bin
+
+
+   cd $(pwd)
+
 else
     echo "Failed to make $OUTDIR"
 fi

@@ -6,8 +6,12 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-05-11
-# \updates     2026-05-11
+# \updates     2026-05-15
 # \license     $XPC_SUITE_GPL_LICENSE$
+#
+# NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
+#
+#  CURRENTLY WE HAVE NOT GOT THE CROSS BUILD WORKING WITH QT.
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
 #  file for license information.
@@ -73,23 +77,95 @@
 #     build_int_size = build_compiler.sizeof('int')
 #     host_int_size  = host_compiler.sizeof('int')
 #
+#  [constants]
+#
+#  Some tokes are replace in the machine file before parsing it:
+#
+#     @GLOBAL_SOURCE_ROOT@:
+#
+#        The absolute path to the project's source tree.
+#
+#     @DIRNAME@:
+#
+#        The absolute path to the machine file's parent directory.
+#
+#  ISSUE: x86_64-linux-gnu, not the version below, is being used.
+#
+#     The problem is in your cross file, /usr/bin/pkg-config will return build
+#     machine libraries. There are 2 ways to fix that:
+#
+#     1. Some toolchains provide a pkg-config wrapper script, you could use it
+#        as pkgconfig = '/usr/bin/arm-none-eabi-pkg-config' if that exists, or
+#        if you write one. For example on my Ubuntu I have
+#        /usr/bin/x86_64-w64-mingw32-pkg-config. Those wrappers set
+#        PKG_CONFIG_LIBDIR and PKG_CONFIG_SYSROOT_DIR
+#
+#     2. Keep using /usr/bin/pkg-config in your cross file but add
+#        pkg_config_libdir='/path/to/sysroot/lib/pkgconfig' and
+#        sys_root='/path/to/sysroot' in [properties] section.
+#
+#     Fixed using 1.
+#
+#  REQUIREMENTS:
+#
+#     1. $ aqt list-qt windows desktop, then pick a Qt version, e.g. 6.10.2.
+#     2. $ aqt list-qt windows desktop --arch 6.10.2 and pick win64_mingw.
+#     3. $ aqt install-qt --outputdir /opt/Qt/Qt6 windows desktop \
+#             6.10.2 win64_mingw -m qt5compat --archives qtbase
+#
+#        The Windows Qt files can be found in /opt/Qt/Qt6/6.10.2/mingw_64
+#
+#     4. $ aqt list-tool windows desktop, then pick either the latest
+#        tools_mingwXX or tools_mingw.
+#     5. $ aqt list-tool windows desktop tools_mingw1310, and pick the most
+#        applicable.
+#     6. $ aqt install-tool --outputdir /opt/Qt/Qt6 windows desktop \
+#             tools_mingw1310 qt.tools.win64_mingw1310
+#
+#        The tools can be found in /opt/Qt/Qt6/Tools/mingw1310_64
+#
+#
 #-----------------------------------------------------------------------------
 
 [constants]
 
-# compiler_path = '.\tools\gcc_compiler\bin\'
 # arch = 'ppc-freevle-eabi'
+# compiler_path = '/usr/bin'
+
+base_qt_path = '/opt/Qt/Qt6/6.10.1/mingw_64/'
+bin_qt_path = '/opt/Qt/Qt6/6.10.1/mingw_64/bin/'
+qt_tools_path = '/opt/Qt/Qt6/Tools/mingw1310_64/'
+bin_qt_tools_path = '/opt/Qt/Qt6/Tools/mingw1310_64/bin/'
 
 [binaries]
 
 # c = compiler_path + arch + '-gcc'
-
+# c = [ 'ccache', '/usr/bin/x86_64-w64-mingw32-gcc' ]
+# cpp = [ 'ccache', '/usr/bin/x86_64-w64-mingw32-g++' ]
+#
+# This was the first try, using the normal mingw installs on Linux:
+#
 c = 'x86_64-w64-mingw32-gcc'
 cpp = 'x86_64-w64-mingw32-g++'
 ar = 'x86_64-w64-mingw32-ar'
 strip = 'x86_64-w64-mingw32-strip'
 windres = 'x86_64-w64-mingw32-windres'
-exe_wrapper = 'wine64'        # key step for running binaries; also 'wine'
+
+# Using the Tools directory. Also wrong.
+#
+# c = bin_qt_tools_path + 'gcc'
+# cpp = bin_qt_tools_path + 'g++'
+# ar = bin_qt_tools_path + 'ar'
+# strip = bin_qt_tools_path + 'strip'
+# windres = bin_qt_tools_path + 'windres'
+
+pkg-config = '/usr/bin/x86_64-w64-mingw32-pkg-config'
+exe_wrapper = 'wine64'           # key step for running binaries; also 'wine'
+moc = bin_qt_path + 'moc'        # 'moc.exe'
+rcc = bin_qt_path + 'rcc'        # 'rcc.exe'
+uic = bin_qt_path + 'uic'        # 'uic.exe'
+qmake = bin_qt_path + 'qmake'    # 'qmake.exe'
+qmake6 = bin_qt_path + 'qmake6'  # 'qmake.exe'
 
 [properties]
 
@@ -110,12 +186,15 @@ exe_wrapper = 'wine64'        # key step for running binaries; also 'wine'
 #
 # myvar = meson.get_external_property('sys_root')
 
+qt_library_dir = base_qt_path + 'lib'
+qt_pkgconfig_dir = base_qt_path + 'lib/pkgconfig'
+qt_include_dir = base_qt_path + 'include'
+
 [host_machine]
 
-# subsystem = 'windows'
-# kernel = 'nt'
-
 system = 'windows'
+subsystem = 'windows'
+kernel = 'nt'
 cpu_family = 'x86_64'
 cpu = 'x86_64'
 endian = 'little'

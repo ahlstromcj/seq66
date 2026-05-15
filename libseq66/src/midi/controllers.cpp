@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-06
- * \updates       2026-04-20
+ * \updates       2026-05-12
  * \license       GNU GPLv2 or above
  *
  *  This definition used to reside in the controllers.hpp file, but now more
@@ -47,6 +47,10 @@ using namepair = struct
 /**
  *  Provides the default names of MIDI controllers.  This array is used
  *  only by the functions below.
+ *
+ *  Also see:
+ *
+ *      https://www.paulcecchettimusic.com/full-list-of-midi-cc-numbers/
  */
 
 static namepair
@@ -84,6 +88,11 @@ s_controller_names [c_midibyte_data_max] =
     {  29, "---"                                  },
     {  30, "---"                                  },
     {  31, "---"                                  },
+
+    /*
+     * 32-63 LSB for Controllers 0-31 (rarely implemented)
+     */
+
     {  32, "Bank Select (fine)"                   },    // 0x20
     {  33, "Modulation Wheel (fine)"              },
     {  34, "Breath controller (fine)"             },
