@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2026-05-15
+ * \updates       2026-05-16
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -559,10 +559,10 @@ seq_build_details ()
 
     result
         << "Built " << __DATE__ << " "
-#if defined SEQ66_PLATFORM_WINDOWS
-        << __TIME__ "by Qmake\n"
+#if SEQ66_QMAKE_RULES
+        << __TIME__ " by Qmake\n"
 #else
-        << __TIME__ "by the Meson build system\n"
+        << __TIME__ " by the Meson build system\n"
 #endif
         << "C++ version " << std::to_string(__cplusplus) << "\n"
 #if defined __clang__

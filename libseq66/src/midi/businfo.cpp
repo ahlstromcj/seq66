@@ -56,7 +56,7 @@
  * latter is defined in a qmake build.
  */
 
-#if SEQ66_WINDOWS_SUPPORT || defined SEQ66_PLATFORM_WINDOWS
+#if SEQ66_QMAKE_RULES
 #include "midibus_pm.hpp"               /* seq66::midibus class             */
 #else
 #include "midi/midibus.hpp"             /* seq66::midibus                   */

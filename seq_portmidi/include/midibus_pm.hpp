@@ -1,6 +1,9 @@
 #if ! defined SEQ66_MIDIBUS_PM_HPP
 #define SEQ66_MIDIBUS_PM_HPP
 
+#if ! defined SEQ66_MIDIBUS_DECLARED
+#define SEQ66_MIDIBUS_DECLARED
+
 /*
  *  This file is part of seq24/seq66.
  *
@@ -131,6 +134,8 @@ protected:
 };          // class midibus (portmidi)
 
 }           // namespace seq66
+
+#endif      // defined SEQ66_MIDIBUS_DECLARED
 
 #endif      // SEQ66_MIDIBUS_PM_HPP
 

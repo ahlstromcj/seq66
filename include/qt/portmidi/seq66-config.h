@@ -1,4 +1,4 @@
-#if defined SEQ66_PORTMIDI_SUPPORT
+#if SEQ66_PORTMIDI_SUPPORT
 
 #if ! defined SEQ66_QT_MIDILIB_CONFIG
 #define SEQ66_QT_MIDILIB_CONFIG
@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2026-05-08
+ * \updates       2026-05-16
  * \license       GNU GPLv2 or above
  *
  *  Qt Portmidi Linux and Windows versions, hardwired for use with
@@ -90,7 +90,7 @@
  */
 
 #if ! defined SEQ66_QMAKE_RULES
-#define SEQ66_QMAKE_RULES
+#define SEQ66_QMAKE_RULES 1
 #endif
 
 /* "Distro where build was done" */

@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2026-05-01
+# \update      2026-05-16
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -22,7 +22,7 @@
 message($$_PRO_FILE_PWD_)
 
 TEMPLATE = lib
-CONFIG += staticlib config_prl qtc_runnable c++14
+CONFIG += staticlib config_prl qtc_runnable c++17
 TARGET = seq66
 
 # These are needed to set up seq66_platform_macros:
@@ -80,6 +80,7 @@ HEADERS += include/seq66_features.h \
  include/ctrl/midioperation.hpp \
  include/ctrl/opcontainer.hpp \
  include/ctrl/opcontrol.hpp \
+ include/midi/busarray.hpp \
  include/midi/businfo.hpp \
  include/midi/calculations.hpp \
  include/midi/controllers.hpp \
@@ -166,6 +167,7 @@ SOURCES += src/seq66_features.cpp \
  src/ctrl/midioperation.cpp \
  src/ctrl/opcontainer.cpp \
  src/ctrl/opcontrol.cpp \
+ src/midi/busarray.cpp \
  src/midi/businfo.cpp \
  src/midi/calculations.cpp \
  src/midi/controllers.cpp \
@@ -219,9 +221,12 @@ SOURCES += src/seq66_features.cpp \
 INCLUDEPATH = \
  ../include/qt/$${MIDILIB} \
  ../libsessions/include \
- ../seq_$${MIDILIB}/include \
+ ../seq_portmidi/include \
+ ../seq_rtmidi/include \
  include
 
+
+ ../seq_$${MIDILIB}/include \
 # We want to continue to use JACK session without getting a warning about
 # it being deprecated.
 

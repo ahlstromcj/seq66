@@ -6,7 +6,7 @@
 # \library        qpseq66 application
 # \author         Chris Ahlstrom
 # \date           2018-04-08
-# \update         2025-05-02
+# \update         2026-05-16
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -16,7 +16,7 @@
 #
 # Important:
 #
-#  This project file is designed only for Qt 5 (and above?).
+#  This project file is designed only for Qt 5 (and above).
 #
 # Removed:
 #
@@ -28,7 +28,7 @@ message($$_PRO_FILE_PWD_)
 
 QT += core gui widgets
 TEMPLATE = lib
-CONFIG += staticlib config_prl qtc_runnable c++14
+CONFIG += staticlib config_prl qtc_runnable c++17
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x050F00
 
 # These are needed to set up seq66_platform_macros:

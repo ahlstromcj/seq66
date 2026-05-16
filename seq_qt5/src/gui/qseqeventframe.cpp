@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-05-09
+ * \updates       2026-05-16
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -35,7 +35,7 @@
 #include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
 #include <QMenu>                        /* for usage with select_button     */
 
-#include "cfg/settings.hpp"             /* SEQ66_QMAKE_RULES indirectly     */
+#include "cfg/settings.hpp"             /* seq66::rc(), seq66::rc()         */
 #include "midi/controllers.hpp"         /* seq66::controller_name() etc.    */
 #include "midi/patches.hpp"             /* seq66::program_name() etc.       */
 #include "play/sequence.hpp"            /* seq66::sequence                  */

@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-31
- * \updates       2026-05-08
+ * \updates       2026-05-16
  * \license       GNU GPLv2 or above
  *
  *  Qt Rtmidi Linux and Windows versions, hardwired for use with
@@ -98,7 +98,7 @@
  */
 
 #if ! defined SEQ66_QMAKE_RULES
-#define SEQ66_QMAKE_RULES
+#define SEQ66_QMAKE_RULES 1
 #endif
 
 /* "Distro where build was done" */

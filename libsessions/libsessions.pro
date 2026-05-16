@@ -6,7 +6,7 @@
 # \library     qseq66 application
 # \author      Chris Ahlstrom
 # \date        2020-03-24
-# \update      2020-09-03
+# \update      2026-05-16
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -22,7 +22,7 @@
 message($$_PRO_FILE_PWD_)
 
 TEMPLATE = lib
-CONFIG += staticlib config_prl qtc_runnable c++14
+CONFIG += staticlib config_prl qtc_runnable c++17
 TARGET = sessions
 
 # These are needed to set up seq66_platform_macros:

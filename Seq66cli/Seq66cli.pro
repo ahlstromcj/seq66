@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2024-04-29
+# \update      2026-05-16
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -23,7 +23,7 @@ message($$_PRO_FILE_PWD_)
 QT += core gui widgets
 TARGET = seq66cli
 TEMPLATE += app
-CONFIG += static qtc_runnable c++14
+CONFIG += static qtc_runnable c++17
 
 # These are needed to set up seq66_platform_macros:
 

@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom
  * \date          2026-04-23
- * \updates       2026-05-09
+ * \updates       2026-05-16
  * \license       GNU GPL v2 or above
  *
  *  This file is used mainly for system files and specific build options.  The
@@ -93,11 +93,15 @@
 /*
  * We will always build both the GUI and CLI.
  *
- * Meson creates ui-h files in the Qmake manner.
+ * Meson creates ui-h files in the Qmake manner anyway, so we
+ * have gotten rid of this macro for #including UI/.H files.
+ * But we have a weird case where we need to know if qmake is the
+ * build system, otherwise incomplete type errors occur.
  *
- *  #define SEQ66_QMAKE_RULES           1
+ * We zero it here.
  */
 
+#define SEQ66_QMAKE_RULES               0
 #define SEQ66_APP_CLI                   1
 #define SEQ66_DBGFLAGS                  "-O0 -DDEBUG -D_DEBUG -fno-inline"
 #define SEQ66_PACKAGE_BUGREPORT         "ahlstromcj@gmail.com"
