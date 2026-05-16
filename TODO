@@ -8,8 +8,8 @@ Chris Ahlstrom
         -   Make sure JACK VERSION STRING is set in Linux.
         -   seq_portmidi: Add -Wno-cast-function-type ?
         -   Update work.sh with more bootstrap options. Moot at the
-            moment.
-            --port-refresh Enables port-refresh feature for JACK.
+            moment: --port-refresh Enables port-refresh feature for JACK.
+        -   Figure out how to find nsis/MesonSetup.nsi.
     -   Find the real source of the "incomplete type seq66::midibus"
         error.
     -   Fix positioning of data pane text in the various modes.

@@ -3,8 +3,8 @@
 ; File:         Seq66Constants.nsh
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2026-05-01
-; Version:      0.99.24
+; Updated:      2026-05-16
+; Version:      0.99.25
 ;
 ;   Provides constants commonly used by the installer for Seq66 for
 ;   Windows.
@@ -31,7 +31,7 @@
 
 !define VER_MAIN_PURPOSE    "Seq66 for Windows"
 !define VER_NUMBER          "0.99"
-!define VER_REVISION        "24"
+!define VER_REVISION        "25"
 !define VER_VARIANT         "Windows"
 !define PRODUCT_VERSION     "${VER_NUMBER} ${VER_VARIANT} (rev ${VER_REVISION})"
 !define PRODUCT_PUBLISHER   "C. Ahlstrom (ahlstromcj@gmail.com)"
@@ -52,7 +52,11 @@
 ; !define WINBITS           "32"
 
 ;============================================================================
-; Directory to place the installer. It's in seq66/release.
+; Directory to place the installer. It depends on the build directory
+; selected if Meson is used. The default is 'build/cc/Seq66qt5'.
+;
+; For qmake builds, it is currently '..\release'
+;
 ;============================================================================
 
 !define EXE_DIRECTORY       "..\release"

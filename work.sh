@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-15
+# \update         2026-05-16
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -33,7 +33,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-15"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-16"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -71,6 +71,7 @@ DOHELP="no"             # --help. Duh!
 DOINSTALL="no"          # --install. Requires the release be built already.
 DOMAKE="yes"            # Default action after creating the build directory.
 DOMAKEPDF="no"          # --pdf. Make the manual, always as a separate step.
+DONSIS="no"             # --nsis. Make an NSIS Windows installer.
 DOOPTHELP="no"          # --option-help. Duh!
 DOPACK="no"             # --pack. Clean and create a tar-file.
 DOPORTMIDI="no"         # --portmidi. The default is rtmidi.
@@ -176,6 +177,12 @@ get_options () {
 
             --pdf)
                DOMAKEPDF="yes"
+               DOMAKE="no"
+               DOSETUP="no"
+               ;;
+
+            --nsis)
+               DONSIS="yes"
                DOMAKE="no"
                DOSETUP="no"
                ;;
@@ -308,6 +315,8 @@ Many of these commands are best used when setting up the build
  --pdf               Build the PDF documentation. Currently done not by
                      doc/latex/tex/meson.build, but by calling
                      doc/latex/make_pdf.sh.
+ --nsis              Use NSIS to make a Windows installer. Useful only
+                     in Windows at present.
  --clean             Delete the usual derived files from the project. Also
                      do "git checkout doc/seq66-dev-manual.pdf"
  --rebuild           Clean the project and build from scratch.
@@ -618,6 +627,11 @@ if test "$DOCROSS" = "yes" ; then
          exit 1
       fi
    fi
+fi
+
+if test "$DONSIS" = "yes" ; then
+   meson compile -C $BUILD_DIR nsisinstaller
+   exit 0
 fi
 
 if test "$DOMAKE" = "yes" ; then
