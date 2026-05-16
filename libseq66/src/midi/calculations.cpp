@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2025-07-24
+ * \updates       2026-05-16
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -68,6 +68,15 @@
  *      There are additional user-interface and MIDI scaling variables in the
  *      perfroll module that we need to move here.
  */
+
+/*
+ *  Because M_PI is not part of the standard ANSI C/C++ libraries, but
+ *  rather a POSIX standard that it requires specific setup depending
+ *  on the language.  In C and C++: define _USE_MATH_DEFINES before
+ *  including the math libraries to define the macro.
+ */
+
+#define _USE_MATH_DEFINES
 
 #include <cctype>                       /* std::isspace(), std::isdigit()   */
 #include <cmath>                        /* std::floor(), std::log()         */

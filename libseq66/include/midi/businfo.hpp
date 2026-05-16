@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2026-05-09
+ * \updates       2026-05-16
  * \license       GNU GPLv2 or above
  *
  *  The businfo module defines the businfo and busarray classes so that we can
@@ -39,7 +39,6 @@
  *  are maintained, one for input and one for output.
  */
 
-// #include <memory>                    /* std::shared_ptr<>                */
 #include <vector>                       /* for containing the bus objects   */
 
 #include "midi/midibus_common.hpp"      /* enum class e_clock               */
@@ -113,6 +112,13 @@ public:
          */
     }
 
+#if defined USE_INCOMPLETE_TYPE
+
+    /*
+     * This causes seq66::midibus to be seen as an incomplete
+     * type in mingw's g++ version 8.1.0 on Windows.
+     */
+
     const midibus * bus () const
     {
         return m_bus;                   // .get();
@@ -122,6 +128,10 @@ public:
     {
         return m_bus;                   // .get();
     }
+#else
+    const midibus * bus () const;
+    midibus * bus ();
+#endif
 
     bool active () const
     {

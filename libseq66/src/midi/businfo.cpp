@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2026-05-09
+ * \updates       2026-05-16
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -49,7 +49,18 @@
 #include "cfg/settings.hpp"             /* seq66::rc() and seq66::usr()     */
 #include "midi/businfo.hpp"             /* seq66::businfo class             */
 #include "midi/event.hpp"               /* seq66::event class               */
+
+/*
+ * Weird issue with incomplete type "seq66::midibus" in the Windows
+ * build. The first macro is defined a 1 in a meson build, and the
+ * latter is defined in a qmake build.
+ */
+
+#if SEQ66_WINDOWS_SUPPORT || defined SEQ66_PLATFORM_WINDOWS
+#include "midibus_pm.hpp"               /* seq66::midibus class             */
+#else
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
+#endif
 
 namespace seq66
 {
@@ -99,6 +110,22 @@ businfo::businfo (const businfo & rhs)
     m_init_input    (rhs.m_init_input)
 {
     // no other code needed
+}
+
+/*
+ * Moved from the header to here to avoid "incomplete type" error.
+ */
+
+const midibus *
+businfo::bus () const
+{
+    return m_bus;
+}
+
+midibus *
+businfo::bus ()
+{
+    return m_bus;
 }
 
 /**

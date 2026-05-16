@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.25
 Chris Ahlstrom
-2015-07-10 to 2026-05-15
+2015-07-10 to 2026-05-16
 
 # Change Log
 
-## [0.99.25] - 2026-05-15
+## [0.99.25] - 2026-05-16
 
 A major refactoring of Seq66 to use Meson and qmake, while ditching
 the overly-cumbersome autoconf build. Replaced bootstrap with
@@ -13,7 +13,9 @@ etc. are gone.
 
 Required moving the seq\_qt5 moc/ui-related files to the
 seq\_qt5/src/gui. In addition, some connect() calls were updated to
-work with either Qt5 or Qt6.
+work with either Qt5 or Qt6. The Meson build also works in
+Windows, and, since Qt is statically linked, qseq66.exe is
+self-contained.
 
 ### Added
 

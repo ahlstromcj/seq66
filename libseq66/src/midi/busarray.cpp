@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-05-09
- * \updates       2026-05-09
+ * \updates       2026-05-16
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -36,7 +36,18 @@
 #include "cfg/settings.hpp"             /* seq66::rc() and seq66::usr()     */
 #include "midi/busarray.hpp"            /* seq66::busarray class            */
 #include "midi/event.hpp"               /* seq66::event class               */
+
+/*
+ * Weird issue with incomplete type "seq66::midibus" in the Windows
+ * build. The first macro is defined a 1 in a meson build, and the
+ * latter is defined in a qmake build.
+ */
+
+#if SEQ66_WINDOWS_SUPPORT || defined SEQ66_PLATFORM_WINDOWS
+#include "midibus_pm.hpp"               /* seq66::midibus class             */
+#else
 #include "midi/midibus.hpp"             /* seq66::midibus class             */
+#endif
 
 namespace seq66
 {
@@ -174,10 +185,16 @@ busarray::initialize ()
  */
 
 void
-busarray::play (bussbyte bus, const event * e24, midibyte channel)
+busarray::play (bussbyte bb, const event * e24, midibyte channel)
 {
-    if (bus < count() && m_container[bus].active())
-        m_container[bus].bus()->play(e24, channel);
+#if defined USE_OLD_CODE
+    if (bb < count() && m_container[bb].active())
+        m_container[bb].bus()->play(e24, channel);
+#else
+    midibus * b { bus(bb) };
+    if (not_nullptr(b))
+        b->play(e24, channel);
+#endif
 }
 
 /**
@@ -188,10 +205,16 @@ busarray::play (bussbyte bus, const event * e24, midibyte channel)
  */
 
 void
-busarray::sysex (bussbyte bus, const event * e24)
+busarray::sysex (bussbyte bb, const event * e24)
 {
+#if defined USE_OLD_CODE
     if (bus < count() && m_container[bus].active())
         m_container[bus].bus()->sysex(e24);
+#else
+    midibus * b { bus(bb) };
+    if (not_nullptr(b))
+        b->sysex(e24);
+#endif
 }
 
 /**
@@ -293,7 +316,7 @@ busarray::get_midi_bus_name (int bus) const
     if (bus < count())
     {
         const businfo & bi = m_container[bus];
-        const midibus * buss = bi.bus();
+        const midibus * buss = bi.bus();                // TODO check ptr
         e_clock current = buss->get_clock();
         if (bi.active() || current == e_clock::disabled)
         {

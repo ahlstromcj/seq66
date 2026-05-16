@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-10-24
+ * \updates       2026-05-16
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -47,6 +47,15 @@
  *      altering selected notes while recording.  We will test this at some
  *      point, and add better locking coverage if necessary.
  */
+
+/*
+ *  Because M_PI is not part of the standard ANSI C/C++ libraries, but
+ *  rather a POSIX standard that it requires specific setup depending
+ *  on the language.  In C and C++: define _USE_MATH_DEFINES before
+ *  including the math libraries to define the macro.
+ */
+
+#define _USE_MATH_DEFINES
 
 #include <cstring>                      /* std::memset()                    */
 #include <cmath>                        /* std::trunc()                     */

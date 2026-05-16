@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2026-04-17
+ * \updates       2026-05-16
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -1056,7 +1056,14 @@ rcfile::write ()
 "# matching the MIDI event channel. Option adopted from the Seq32 project.\n"
 "\n[midi-clock-mod-ticks]\n\n"
        ;
-    write_integer(file, "ticks", midibus::get_clock_mod());
+
+    /*
+     * ca 2026-05-16
+     * Changed midibus to midibase because of an incomplete type
+     * in the Windows Meson build.
+     */
+
+    write_integer(file, "ticks", midibase::get_clock_mod());
     write_boolean(file, "record-by-buss", rc_ref().record_by_buss());
     write_boolean(file, "record-by-channel", rc_ref().record_by_channel());
 

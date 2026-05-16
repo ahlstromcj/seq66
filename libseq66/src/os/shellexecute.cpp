@@ -21,7 +21,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-05-13
- * \updates       2025-05-30
+ * \updates       2026-05-16
  * \license       GNU GPLv2 or above
  *
  *  Provides support for cross-platform time-related functions.
@@ -219,15 +219,23 @@ copy_directory_recursive
 bool
 open_document (const std::string & documentpath)
 {
-    bool result = ! documentpath.empty();
+    bool result { ! documentpath.empty() };
     if (result)
     {
+#if SEQ66_WINDOWS_SUPPORT               /* Meson build in Windows           */
+        std::string op { "open" };
+        std::string path { documentpath };
+#else
         std::wstring op = widen_string("open");
         std::wstring path = widen_string(documentpath);
-        HINSTANCE rc = ::ShellExecute
-        (
-            NULL, op.c_str(), path.c_str(), NULL, NULL, SW_SHOW
-        );
+#endif
+        HINSTANCE rc
+        {
+            ::ShellExecute
+            (
+                NULL, op.c_str(), path.c_str(), NULL, NULL, SW_SHOW
+            )
+        };
         result = uintptr_t(rc) > 32;
         if (! result)
             (void) file_error("Command failed", documentpath);

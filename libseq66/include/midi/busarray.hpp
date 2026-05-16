@@ -39,7 +39,7 @@
 
 #include <vector>                       /* for containing the bus objects   */
 
-#include "midi/businfo.hpp"             /* seq66::bussinfo                  */
+#include "midi/businfo.hpp"             /* seq66::businfo                   */
 
 namespace seq66
 {
