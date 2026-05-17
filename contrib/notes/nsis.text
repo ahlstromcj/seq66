@@ -1,0 +1,87 @@
+Creating an Installer Using NSIS on Linux
+Chris Ahlstrom
+2026-05-17 to 2026-05-17
+
+Meson % ./work.sh --nsis
+
+Windows (in Git Bash):
+
+Prep:
+
+    First, in Linux, install makensis. Second, create an fstab entry
+    (such as /mnt/ntfs) to access the files in the Windows partition.
+
+    In an already installed Seq66 directory (C:/Program Files/Seq6), grab
+    only the Qt-supplied DLLs and other resources, stick them in 
+    a temporary directory (here, "wine-seq66"), and run (on Linux)
+
+        $ tar cjf qt-5.15.2-seq66-install-files.xz --directory wine-seq66/ .
+        $ cd /path/to/seq66
+        $ mkdir -p release
+        $ cd release
+        $ cp /path/to/qt-5.15.2-seq66-install-files.xz .
+        $ tar xf qt-5.15.2-seq66-install-files.xz
+        $ mv qt-5.15.2-seq66-install-files.xz ..
+        $ cd ..
+        $ tar cJf qt-5.15.2-seq66-install-files.xz release/
+        $ ls release           # to verify the Qt files layout
+
+    These steps need to be done once, or if the version of Qt used
+    changes from 5.15.2 to, say 6.8.0.
+
+    These files are not under git control, so the xz file must
+    be saved somewhere safe and copied as needed.
+
+    The generated EXE files will be obtained from build/windows/Seq66cli
+    and build/windows/Seq66qt5 and copied to 'release'. NSIS will
+    get these files from 'release', and the rest from the source
+    tree.
+
+Back in Windows:
+
+        $ cd                            # to get to your Users/me directory
+        $ cd git/seq66
+        $ git pull
+        $ ./work.sh --clean
+        $ ./work.sh --windows
+
+    If fixes needed to be made to the build, be sure to git commit and
+    push.
+    
+Back in Linux:
+
+        Let SEQ66=/mnt/ntfs/path/to/git/seq66. Also assume that
+        the Qt-files are already in the 'release' directory.
+        On our system, SEQ66=/mnt/ntfs/Users/ahlst/Documents/git/seq66/.
+
+        $ sudo mount /mnt/ntfs
+        $ cd /path/to/git/seq66
+        $ git pull                      # just to be sure
+        $ ./work.sh ; ./work.sh --pdf   # if needed
+        $ cp $SEQ66/build/windows/Seq66cli/seq66cli release
+        $ cp $SEQ66/build/windows/Seq66qt5/qseq66 release
+        $ ./work.sh --nsis
+
+        The installer is written to release/seq66_setup_x64-0.99.25.exe.
+
+    Testing:
+
+        $ wine release/seq66_setup_x64-0.99.25.exe
+        $ cd ~/.wine/drive_c/Program Files/Seq66
+        $ wine qseq66.exe
+
+Remaining (minor) issues:
+
+Unsupported format ..\resources\icons\route66.bmp
+    (macro:MUI_HEADERIMAGE_INIT:26)
+
+$ wine release/seq66_setup_x64-0.99.25.exe
+
+0024:err:environ:init_peb starting
+    L"Z:\\home\\ahlstrom\\Home\\ca\\mls\\git\\seq66\\release\\
+        seq66_setup_x64-0.99.25.exe" in experimental wow64 mode
+
+0124:err:menubuilder:InvokeShellLinker failed to extract icon from
+    L"C:\\Program Files\\Seq66\\qseq66.exe"
+
+# vim: sw=4 ts=4 wm=4 et ft=rc

@@ -1,7 +1,7 @@
 # INSTALL Seq66 for Ubuntu Studio
 
 Authors: WinkoErades and MQS-mark <p>
-Updated: 2026-05-09
+Updated: 2026-05-17
 
 Here’s a **step-by-step installation plan** to build and install **Seq66** from source on **Ubuntu Studio 25.10**. This assumes you are *installing from the GitHub repository* you linked: **https://github.com/ahlstromcj/seq66/tree/master** ([GitHub](https://github.com/ahlstromcj/seq66?utm_source=chatgpt.com "Seq66: Seq24-based live MIDI looper/editor. v. ..."))
 
@@ -72,7 +72,7 @@ Make sure you’re on the **master** branch (default) unless you want a differen
 ## 4. Bootstrap and Configure
 
 The **bootstrap** script has been replaced by the **work.sh** script, which
-encapsulates a number of Meson build commands. Of course, experience Meson users can work without using this script.
+encapsulates a number of Meson build commands. Of course, experienced Meson users can work without using this script.
 
 The work.sh script can restart the whole build configuration:
 
@@ -80,9 +80,7 @@ The work.sh script can restart the whole build configuration:
     $ ./work.sh --clean
 ```
 
-Note that 'work.sh' has a '--help' option.
-
-Now configure the build and make it (can add the --debug option if desired).
+Note that 'work.sh' has a '--help' option.  Now configure the build and make it (can add the --debug option if desired).
 
 ```bash
     $ ./work.sh
@@ -103,7 +101,7 @@ You can pass optional flags if needed:
     *(Check `./work.sh --help` for options.)*  
     Note: `Meson` will detect Qt6 if installed; Qt5 can also be used. ([GitHub](https://github.com/ahlstromcj/seq66?utm_source=chatgpt.com "Seq66: Seq24-based live MIDI looper/editor. v. ..."))
 
-📌 *Common issues*: If `./configure` fails complaining about missing files like `Makefile.in`, ensure you ran `autoreconf` first. Older seq66 sources may need that. ([GitHub](https://github.com/ahlstromcj/seq66/issues/25?utm_source=chatgpt.com "Configure fails · Issue #25 · ahlstromcj/seq66"))
+📌 *Common issues*: To do. Meson makes things easier and faster.
 
 ## 5. Build Seq66
 

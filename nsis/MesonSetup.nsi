@@ -3,41 +3,17 @@
 ; File:         MesonSetup.nsi (compare to Seq66Setup.nsi)
 ; Author:       Chris Ahlstrom
 ; Date:         2026-05-16
-; Updated:      2026-05-16
+; Updated:      2026-05-17
 ; Version:      0.99.25
 ;
 ; Usage of this Windows build script is a little different from
 ; Seq66Setup.nsi, since the 'release' directory does not come
 ; into play. Meson is used to run the 'nsisinstaller' target.
 ; Static linking is used (it creates a 4Mb qseq66 executable on
-; Linux and Windows), so we don't have to collect DLLs [i.e.
-; MingW and Qt DLLs] for packing. We don't need to use
-; a 7z package as an intermediary, though it would be useful
-; for a 'portable' package.
+; Linux and Windows). Meson uses NSIS on Linux, at least right now.
 ;
-;   (THIS NEEDS TOBE VERIFIED)
+; See extras/notes/nsis.text.
 ;
-;    -  Obtain and install the NSIS 2.46 (or above) installer from
-;       http://nsis.sourceforge.net/Download, or install it from
-;       your Linux repository via apt. It can also be installed on
-;       Windows, and the build script can detect if it is available on
-;       the PATH.
-;    -  In Windows, Check out the latest branch project from Git.
-;       (No need to use the 'pack' script).
-;    -  Run these commands:
-;           -   ./work.sh --clean
-;           -   ./work.sh
-;       The build products are creating in 'build/cc'.
-;    -  Run the command './work.sh --pdf' to get the documentation.
-;    -  Then run NSIS:
-;       -   Windows:
-;           -   We now assume that NSIS has been installed in Windows.
-;           -   Run the command './work.sh --nsis'
-;       -   Linux: The program that creates Windows installers on Linux is
-;           'makensis'.
-;           -   The actual build is done on Windows.
-;           -   We have to copy some files from Windows to Linux
-;           -   Run the command './work.sh --nsis'
 ;    -  After creation, The installer package is at
 ;       "seq66/build/cc/seq66_setup_x64-0.99.5.exe" or similar.
 ;
@@ -155,71 +131,72 @@ Section "Application" SEC_APPLIC
 
     SetOutPath "$INSTDIR"
     SetOverwrite on
-    File "..\build\cc\Seq66qt5\qseq66.exe"
+    File "..\release\qseq66.exe"
+    File "..\release\seq66cli.exe"
 
 SectionEnd
 
-;SectionGroup "Qt5 Support" SEC_QT5
-;
-;Section "Mingw DLLs" SEC_MINGW
-;
-;    SetOutPath "$INSTDIR"
-;    SetOverwrite on
-;    File "..\release\D3Dcompiler_47.dll"
-;    File "..\release\lib*.dll"
-;    File "..\release\opengl*.dll"
-;
-;SectionEnd
-;
-;Section "Qt5 Main DLLs" SEC_QTDLLS
-;
-;    SetOutPath "$INSTDIR"
-;    SetOverwrite on
-;    File "..\release\Qt*.dll"
-;
-;SectionEnd
-;
-;Section "Qt5 Icon Engine" SEC_QTICON
-;
-;    SetOutPath "$INSTDIR\iconengines"
-;    SetOverwrite on
-;    File /r "..\release\iconengines\*.*"
-;
-;SectionEnd
-;
-;Section "Qt5 Imaging" SEC_QTIMG
-;
-;    SetOutPath "$INSTDIR\imageformats"
-;    SetOverwrite on
-;    File /r "..\release\imageformats\*.*"
-;
-;SectionEnd
-;
-;Section "Qt5 Platform Support" SEC_QTPLAT
-;
-;    SetOutPath "$INSTDIR\platforms"
-;    SetOverwrite on
-;    File /r "..\release\platforms\*.*"
+SectionGroup "Qt5 Support" SEC_QT5
 
-;;SectionEnd
-;
-;Section "Qt5 Style Engine" SEC_QTSTYLE
-;
-;    SetOutPath "$INSTDIR\styles"
-;    SetOverwrite on
-;    File /r "..\release\styles\*.*"
-;
-;SectionEnd
-;
-;Section "Qt5 Translations" SEC_QTTRANS
-;
-;    SetOutPath "$INSTDIR\translations"
-;    SetOverwrite on
-;    File /r "..\release\translations\*.*"
-;
-;SectionEnd
-;
-;SectionGroupEnd
+Section "Mingw DLLs" SEC_MINGW
+
+    SetOutPath "$INSTDIR"
+    SetOverwrite on
+    File "..\release\D3Dcompiler_47.dll"
+    File "..\release\lib*.dll"
+    File "..\release\opengl*.dll"
+
+SectionEnd
+
+Section "Qt5 Main DLLs" SEC_QTDLLS
+
+    SetOutPath "$INSTDIR"
+    SetOverwrite on
+    File "..\release\Qt*.dll"
+
+SectionEnd
+
+Section "Qt5 Icon Engine" SEC_QTICON
+
+    SetOutPath "$INSTDIR\iconengines"
+    SetOverwrite on
+    File /r "..\release\iconengines\*.*"
+
+SectionEnd
+
+Section "Qt5 Imaging" SEC_QTIMG
+
+    SetOutPath "$INSTDIR\imageformats"
+    SetOverwrite on
+    File /r "..\release\imageformats\*.*"
+
+SectionEnd
+
+Section "Qt5 Platform Support" SEC_QTPLAT
+
+    SetOutPath "$INSTDIR\platforms"
+    SetOverwrite on
+    File /r "..\release\platforms\*.*"
+
+SectionEnd
+
+Section "Qt5 Style Engine" SEC_QTSTYLE
+
+    SetOutPath "$INSTDIR\styles"
+    SetOverwrite on
+    File /r "..\release\styles\*.*"
+
+SectionEnd
+
+Section "Qt5 Translations" SEC_QTTRANS
+
+    SetOutPath "$INSTDIR\translations"
+    SetOverwrite on
+    File /r "..\release\translations\*.*"
+
+SectionEnd
+
+SectionGroupEnd
 
 Section "Licensing and Sample Files" SEC_LIC
 

@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-16
+# \update         2026-05-17
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -33,7 +33,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-16"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-17"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -222,6 +222,11 @@ get_options () {
                DOSETUP="no"
                ;;
 
+            --windows)
+               BUILD_DIR="$BASE_BUILD_DIR/windows"
+               MAKEFILE="$BUILD_DIR/build.ninja"
+               ;;
+
             --debug)
                if test "$DOCLEAN" = "no" ; then
                   DOMAKE="yes"
@@ -296,6 +301,8 @@ Many of these commands are best used when setting up the build
                      'build/dir'. Must use the same option with --clean.
  --cross             Set up to build a Windows executable, and build it.
                      Not workable yet; see mingw-qt-build.text.
+ --windows           On Windows, set up 'build/windows' and build it using
+                     the mingw/Qt install. Build directory is 'build/windows'.
  --setup             Run 'meson setup', and that's all.
  --update            Force an update of the subprojects.
  --potext            Build with Potext (light gettext) library sypport.
@@ -308,15 +315,14 @@ Many of these commands are best used when setting up the build
  --portmidi          Build using the internal PortMIDI engine instead of
                      the internal RtMIDI engine.
  --clang             Rebuild the code using the Clang compilers. Exports CC
-                     and CXX. The build directory is 'build/clang'.
+                     and CXX. Build directory is 'build/clang'.
  --gnu, --gcc        Use the GNU compilers (the default on Linux). Exports CC
-                     and CXX. The build directory is 'build/gcc'. If the
+                     and CXX. Build directory is 'build/gcc'. If the
                      compiler is not specified, the build is in 'build/cc'.
  --pdf               Build the PDF documentation. Currently done not by
                      doc/latex/tex/meson.build, but by calling
                      doc/latex/make_pdf.sh.
- --nsis              Use NSIS to make a Windows installer. Useful only
-                     in Windows at present.
+ --nsis              Use NSIS to make a Windows installer on Linux.
  --clean             Delete the usual derived files from the project. Also
                      do "git checkout doc/seq66-dev-manual.pdf"
  --rebuild           Clean the project and build from scratch.
@@ -328,7 +334,9 @@ Many of these commands are best used when setting up the build
                      into the tarball name.
  --help              Show this help text.
  --version           Show only the version information.
- --option-help       Show the project options available..
+ --option-help       Show the project options available. They can be used
+                     as "-Doption=value" when using meson directly
+                     (instead of through the work.sh script).
 
 E_O_F
       exit 0

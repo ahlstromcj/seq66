@@ -8,7 +8,7 @@
 # \library    	Seq66
 # \author     	Chris Ahlstrom
 # \date       	2015-09-10
-# \update     	2020-11-25
+# \update     	2026-05-17
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -55,7 +55,7 @@ if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
 
    cat << E_O_F
 
-pack 0.9 2020-11-25
+pack 0.99 2026-05-17
 
 Usage:  ./pack [--dry-run] [--clean] [--release package] [--diffs] [tag]
 
@@ -89,11 +89,6 @@ the beautiful "./configure ; make ; make install" mantra.
 Excluded from the tarball are derived products.  Version-control-system
 directories are ignored.  This script detects the presence of a git branch, and
 incorporates the branch name into the name of the tarball.
-
-Finally, it packs up 'configure', Makefile.in files, and other necessary files.
-Do './bootstrap --full-clean' first, or './pack --clean', if you don't want
-these files and want to start from scratch and build something difference from
-the default build.
 E_O_F
 
 else
@@ -192,34 +187,21 @@ else
 # now allows tar to not include .git in the archive, saving a lot of time
 # and space.
 
+      ./work.sh --clean
       pushd ..
       if [ -d $WORKINGDIR ] ; then
 
       tar cJf $TARBALLNAME \
  --exclude-vcs \
  --exclude=".git" \
- --exclude="Seq66/seq66" \
+ --exclude=".wraplock" \
  --exclude="Seq66qt5/qseq66" \
  --exclude="Seq66cli/seq66cli" \
  --exclude="config.h" \
  --exclude="config.status" \
- --exclude="libtool" \
- --exclude="Debug" \
- --exclude="Release" \
- --exclude="debug" \
  --exclude="release" \
- --exclude="autom4te.cache" \
  --exclude="core" \
- --exclude="moc" \
- --exclude="obj" \
- --exclude="html" \
- --exclude="ipch" \
- --exclude="*stamp*" \
- --exclude="tests" \
- --exclude="out.*" \
- --exclude=".deps" \
- --exclude=".exes" \
- --exclude=".libs" \
+ --exclude="new" \
  --exclude="*.a" \
  --exclude="*.BAK" \
  --exclude="*.bak" \
@@ -228,17 +210,7 @@ else
  --exclude="*.bz2" \
  --exclude="*.deps" \
  --exclude="*.gz" \
- --exclude="*.o" \
- --exclude="*.lo" \
- --exclude="*.la" \
- --exclude="*.lib" \
  --exclude="*.log" \
- --exclude="*.obj" \
- --exclude="*.pch" \
- --exclude="*.pdb" \
- --exclude="*.Po" \
- --exclude="*.sdf" \
- --exclude="*.so" \
  --exclude="*.stash" \
  --exclude="*.swp" \
  --exclude=".*.swp" \
@@ -247,7 +219,7 @@ else
  --exclude="*.tmp" \
  --exclude="*.user" \
  --exclude="*.xz" \
- --exclude="*.testsettings" \
+ --exclude="*.zip" \
  $WORKINGDIR
          echo
       else

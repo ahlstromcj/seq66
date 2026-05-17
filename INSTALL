@@ -2,44 +2,61 @@ INSTALL for Seq66 v. 0.99.25 and above
 Chris Ahlstrom
 2015-09-10 to 2026-05-09
 
-NOTES:
+Introduction:
 
     -   As of version 0.99.25, Seq66 is built on Linux using Meson instead
-        of GNU Autotools. The Qt *.pro files can still be used.
-        Also, though files still have "qt5" in the name, currently
+        of GNU Autotools. The Qt *.pro files for the qmake build can still
+        be used.  Also, though files still have "qt5" in the name, currently
         Qt 6 is used by default, if available.
+    -   Meson can also be used for the build on Windows. New scripting
+        has been added to build the NSIS Seq66 Windows installer on
+        Linux.
+    -   The Meson cross-file, for building the Windows version on Linux,
+        does not yet work.
     -   Also see INSTALL.seq66.on.Ubuntu.md for Ubuntu Studio installs.
+
+If you are in a hurry, there are the quick steps to install Seq66,
+given that all the DEPENDENCIES described later are in place:
+
+    $ git clone https://github.com/ahlstromcj/seq66.git
+    $ cd seq66
+    $ ./work.sh
+    $ sudo ./work.sh --install
+    $ ./work.sh --clean
+    $ qseq66 &
 
 Getting Seq66 requires building the code or going to "ahlstromcj/seq66" on
 GitHub to get an installation package or a Windows release executable.
-The bootstrap setup is primarily aimed at developers, but is easy to use
+The "work.sh" setup is primarily aimed at developers, but is easy to use
 with the instructions below.  Different versions of the program can be built:
 
-    -   qseq66.  The "rtmidi" engine version, with a Qt5 user-interface a la
-        Kepler34.  Native ALSA, JACK MIDI and JACK transport; fall-back to
-        ALSA; support for Meta events (Set Tempo and Time Signature).  The
-        official version of Seq66, Linux only.
-    -   qpseq66. The same as qseq66, except that the internal "portmidi"
-        implementation is used as the MIDI engine.  Linux and Windows.  Built
-        via qmake and suitable for loading in QtCreator installed with mingw32
-        tools. To build it in Windows, specify the Mingw library and tools
-        when installing QtCreator.  See "Qmake-based Install" below.
+    -   qseq66.
+        -   Has a Qt5/Qt6 user-interface a la Kepler34.
+        -   "rtmidi" engine version: Native ALSA, JACK MIDI, and JACK
+            transport; fall-back to ALSA;
+        -   "portmidi" engine version: Linux and Windows.  Built via
+            qmake or meson, suitable for loading in QtCreator installed
+            with mingw32 tools. In Windows, specify the Mingw library
+            and tools when installing QtCreator.  See "Qmake-based Install"
+            below.
     -   seq66cli.  A headless version of Seq66, which can run from the
         console or as a daemon, controlled via MIDI and playlists.
-    -   seq66clip. The seq66cli app with "portmidi" instead of "rtmidi".
+        Can also build with "portmidi" instead of "rtmidi".
+
+    Both qseq66 and seq66cli are built at the same time.
 
     We provide a Windows installer (an EXE) in the GitHub release area. It is
-    also fairly easy to build the Windows version using QtCreator/qmake. See
-    the DOS batch script "nsis/build_release_package.bat"; it not only builds
-    it using qmake and mingw, but also describes how to create Windows
-    packages.
+    also fairly easy to build the Windows version using Meson or
+    QtCreator/qmake. See the batch script "nsis/build_release_package.bat";
+    it builds using qmake and mingw. Meson can also be used to build
+    the installer on Linux.
 
 Below are sections for various ways of installing this project by building
 from source code:
 
     -   Linux distro package if provided
-    -   Normal (meson) Install
-    -   Work.sh Install (Quick Install)
+    -   Meson Build and Install; work.sh Install (Quick Install).
+        Works on Linux and Window.
     -   Advanced Steps
         -   Pipe Option:
         -   Debugging:
@@ -74,7 +91,8 @@ Meson Build and Install:
 
     The default build directory is './build/cc'. For the --clang option,
     it is './build/clang'. For --gnu or --gcc, it is './build/gcc'.
-    For --debug, it is './build/debug'.
+    For --debug, it is './build/debug'. For --windows (on Windows)
+    it is './build/windows'.
 
     There are other options. Run the following to see them, and perhap examine
     the commands in the script:
@@ -86,12 +104,8 @@ Clang Compiler:
     Even if one has the GNU compilers installed, one can still install Clang
     and use it for the build.
 
-    Assuming the configure script is up-to-date, and either the base clang or
-    a specific version (e.g. clang-16) is installed, then the configure
-    command can be used for the base clang, or the bootstrap script for a
-    specific version:
+    Assuming that Clang is installed, simply run:
 
-        $ ./work.sh --clean
         $ ./work.sh --clang
 
 FreeBSD:
@@ -104,20 +118,11 @@ FreeBSD:
 
     See the discussion in contrib/notes/freebsd.text.
 
-Qt and Command-Line Merged Build:
-
-    Per package-manager request, one can build and install both qseq66 and
-    seq66cli in one pass. This is done by default in the Meson build;
-    the files created are ./build/cc/Seq66cli/seq66cli and
-    ./build/cc/Seq66qt5/seq66qt5. Both are installed by this command:
-
-        $ ./work.sh --install
-
 Out-of-source Build:
 
     Meson automatically enforces an out-of-source build in a build
-    directory. We define it as ./build/cc by default, but as ./build/clang
-    or ./build/gcc. See the --help option of work.sh.
+    directory. We define it as ./build/cc by default, but also as
+    ./build/clang, ./build/gcc, etc. See the --help option of work.sh.
 
 OpenSUSE:
 
@@ -154,10 +159,10 @@ Ubuntu Studio:
 
     See INSTALL.seq66.on.Ubuntu.md.
 
-MSYS2:
+MSYS2 (not yet ready):
 
-    Uses the bootstrap script noted for Linux. It requires the installation
-    of the toolchain, libtool, qt5-base, all prefixed by either
+    Uses the work.sh script noted for Linux. It requires the installation
+    of the toolchain, qt5-base, all prefixed by either
     "mingw-w64-x86_64-" (preferred) or "mingw-w64-i686-".  See
     contrib/notes/msys2-packages.text for the complete list.
     
@@ -177,10 +182,10 @@ Advanced Steps:
     If you want to generate your own source/configure tarball for
     distributing Seq66, use the pack script:
 
-       ./pack --release rtmidi 0.94.6
+       ./pack --release rtmidi 0.99.25
 
-    where rtmidi is the intended default build, and 0.94.6 is the version
-    of the project.  The branch is included in the resulting tarball name;
+    where rtmidi is the intended default build, and 0.99.25 is the version
+    of the project. The branch is included in the resulting tarball name;
     the usual branch would be "master".
 
 Pipe Option:
@@ -190,27 +195,25 @@ Pipe Option:
     on some systems where the assembler is unable to read from a pipe; the
     GNU assembler can do it.
 
+    TO DO: Revise for using Meson by adding a --pipe option.
+
         $ CFLAGS="-pipe" ./bootstrap -ed
         $ CFLAGS="-pipe" ./configure --enable-debug --disable-shared
 
-    Then do the normal make.
+    Then do the normal build.
 
 Debugging:
 
-    The default build (no ./work.sh options) is a debug buld.
-    We use cgdb instead of gdb for debugging. For a release build
-    and install, call
+    The default build (no ./work.sh options) is a release buld.
+    We use cgdb instead of gdb for debugging.
 
-        $ ./work.sh --install
+        $ ./work.sh --debug
 
 Qmake-based Install:
 
     This method is still supported. We need it for use with Qt Creator
-    and with Windows builds.
+    and as an extra option with Windows builds.
 
-    A build based on QtCreator and Qmake is available to build the project on
-    Window.
-    
     The Qmake-based build is designed to use the local PortMidi library (by
     default), which is necessary for running Seq66 on Windows or Mac OSX.  It
     can be configured to build using the local RtMidi library by adding
@@ -268,17 +271,12 @@ Windows:
     "nsis/build_release_package.bat" can be used.  See the top of that file for
     the procedure to follow.
 
+    Or the NSIS installer can be built on Linux after copying some
+    Windows build files. See contrib/notes/nsis.text.
+
 CONFIGURE OPTIONS FOR APPLICATION FEATURES:
 
-    THESE OPTIONS ARE NOT YET PORTED to work.sh. A big To Do.
-
     These options define or undefine various build macros:
-
-    --enable-rtmidi
-
-        Defines SEQ66_RTMIDI_SUPPORT to enable our heavily modified "rtmidi"
-        library.  This option enables the usage of native JACK MIDI which will
-        fall back to ALSA if JACK is not running.  Builds Seq66rtmidi/seq66.
 
     --nsm
     --nonsm
@@ -289,9 +287,13 @@ CONFIGURE OPTIONS FOR APPLICATION FEATURES:
     --nojack
     
         Undefines the SEQ66_JACK_SUPPORT macro, which is otherwise defined
-        by default.  This option is not viable for the "rtmidi" version of
+        by default.  This option disable all the other JACK options.
         Seq66, which incorporates a couple of JACK modules, but is useful in
         the Windows/OSX builds.
+
+    --no-jack-transport
+
+        Undefines the SEQ66_JACK_TRANSPORT macro.
 
     --jack-session
 
@@ -302,15 +304,10 @@ CONFIGURE OPTIONS FOR APPLICATION FEATURES:
         be enabled in the Windows/OSX builds.
 
     --portmidi
-    --rtmidi
 
         We have gotten a few alternate implementations to work.  The normal
-        build is effectively --enable-rtmidi.  The --enable-portmidi flag
-        creates a new application, seq66portmidi, that is based on using ALSA
-        on Linux via the local "PortMidi" library.
-
-        SEQ66_PORTMIDI_SUPPORT
-        SEQ66_RTMIDI_SUPPORT
+        build is effectively "rtmidi".  The --portmidi flag
+        creates a qseq66 using ALSA on Linux via the local "PortMidi" library.
 
 MANUALLY-DEFINED MACROS IN CODE:
 
@@ -356,10 +353,9 @@ REPORTING ISSUES:
    (i.e. the infamous "crash"), here is the most complete way to diagnose the
    error, if we cannot replicate it:
 
-        $ ./bootstrap --full-clean
-        $ ./bootstrap -ed
-        $ make &> make.log
-        $ gdb ./Seq66qt5/seq66
+        $ ./work.sh --clean
+        $ ./work.sh --debug
+        $ gdb ./build/cc/Seq66qt5/qseq66
         (gdb) r    [add your command-line arguments here if needed]
                    [replicate the crash]
         (gdb) bt   [does a backtrace]
@@ -455,6 +451,8 @@ DEPENDENCIES:
 
    Windows Installer:
 
+        -   makensis
+
         One can build the Windows installer under Linux (see the "nsis"
         sub-directory).  To build it on Windows, install the NSIS 3
         program, available at
@@ -470,6 +468,12 @@ DEPENDENCIES:
         -   jack_control (optional; jack-example-tools on Arch Linux)
 
    Documentation (now optional, must be built manually):
+
+      To build the PDF user manual:
+
+        $ ./work.sh --pdf
+
+      The PDF is found in data/share/doc.
 
       We have removed the automatic generation of the developer reference
       documentation.  It is a pain to deal with relative to the number of
@@ -487,12 +491,6 @@ DEPENDENCIES:
             -   latexmk
             -   pdf2latex
 
-      To build the PDF user manual:
-
-        $ ./work.sh --pdf
-
-      The PDF is found in data/share/doc.
-
       To build the Doxygen documentation manually, change to the doc/dox
       directory and run:
 
@@ -501,10 +499,6 @@ DEPENDENCIES:
 
       Currently, we do not care if this works.  Too much information.
 
-      To install the documentation to /usr/local/doc/seq66-0.90:
-
-         ./work.sh --install --tags TODO
-      
    Debian packaging:
 
       See the README file in the Debian directory.

@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.25
 Chris Ahlstrom
-2019-04-13 to 2026-05-16
+2019-04-13 to 2026-05-17
 
     -   Changed the build system to Meson. Bugs so far:
         -   More deprecations:
@@ -9,7 +9,15 @@ Chris Ahlstrom
         -   seq_portmidi: Add -Wno-cast-function-type ?
         -   Update work.sh with more bootstrap options. Moot at the
             moment: --port-refresh Enables port-refresh feature for JACK.
-        -   Figure out how to find nsis/MesonSetup.nsi.
+        -   Test the debug build (again).
+        -   Test the portmidi build (Qt and CLI) on Windows.
+        -   Test the no-JACK build.
+        -   Try the MSYS build again on Windows.
+    -   See the remaining issues in contrib/notes/nsis.text
+    -   Windows:
+        -   Install or configure qt6 in Windows to build that version.
+        -   Figure out how to do a 32-bit build.
+    -   Create a "portable" executable package, e.g. './pack --portable'.
     -   Find the real source of the "incomplete type seq66::midibus"
         error.
     -   Fix positioning of data pane text in the various modes.
