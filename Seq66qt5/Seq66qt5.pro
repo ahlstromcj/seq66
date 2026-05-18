@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2026-05-16
+# \update      2026-05-18
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -37,14 +37,18 @@ contains (CONFIG, rtmidi) {
    TARGET = qseq66
    MIDILIB = rtmidi
    DEFINES += "SEQ66_MIDILIB=rtmidi"
+   DEFINES += "SEQ66_PORTMIDI_SUPPORT=0"
    DEFINES += "SEQ66_RTMIDI_SUPPORT=1"
 } else {
    TARGET = qpseq66
    MIDILIB = portmidi
    DEFINES += "SEQ66_MIDILIB=portmidi"
    DEFINES += "SEQ66_PORTMIDI_SUPPORT=1"
+   DEFINES += "SEQ66_RTMIDI_SUPPORT=0"
    DEFINES += "MINGW_HAS_SECURE_API=1"
 }
+
+DEFINES += "SEQ66_QMAKE_RULES=1"
 
 windows {
    DEFINES += "UNICODE"

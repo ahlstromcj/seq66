@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2026-04-17
+ * \updates       2026-05-18
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -936,7 +936,7 @@ public:
 
     bool with_port_midi () const
     {
-#if defined SEQ66_PORTMIDI_SUPPORT
+#if SEQ66_PORTMIDI_SUPPORT
         return true;
 #else
         return false;

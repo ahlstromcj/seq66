@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2026-04-17
+ * \updates       2026-05-18
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -86,7 +86,7 @@ rcsettings::rcsettings () :
     m_with_jack_transport       (false),
     m_with_jack_master          (false),
     m_with_jack_master_cond     (false),
-#if defined SEQ66_RTMIDI_SUPPORT
+#if SEQ66_RTMIDI_SUPPORT                    /* what about JACK support      */
     m_with_jack_midi            (true),     /* tentative                    */
 #else
     m_with_jack_midi            (false),
@@ -205,7 +205,7 @@ rcsettings::set_defaults ()
     m_with_jack_transport       = false;
     m_with_jack_master          = false;
     m_with_jack_master_cond     = false;
-#if defined SEQ66_RTMIDI_SUPPORT
+#if SEQ66_RTMIDI_SUPPORT                    /* what about JACK support      */
     m_with_jack_midi            = true;
 #else
     m_with_jack_midi            = false;

@@ -181,4 +181,3 @@ extern std::string msgsnprintf (std::string fmt, ...);
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

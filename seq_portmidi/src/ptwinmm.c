@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2024-01-05
+ * \updates     2026-05-18
  * \license     GNU GPLv2 or above
  */
 
@@ -48,7 +48,7 @@ winmm_time_callback
     DWORD_PTR dw1, DWORD_PTR dw2
 )
 {
-    (*time_callback)(Pt_Time(), (void *) dwUser);
+    (*time_callback)(Pt_Time(NULL), (void *) dwUser);
 }
 
 PMEXPORT PtError
@@ -99,8 +99,9 @@ Pt_Started (void)
 }
 
 PMEXPORT PtTimestamp
-Pt_Time (void)
+Pt_Time (void * p)
 {
+    (void) p;
     return timeGetTime() - time_offset;
 }
 
@@ -115,4 +116,3 @@ Pt_Sleep (int32_t duration)
  *
  * vim: sw=4 ts=4 wm=4 et ft=c
  */
-

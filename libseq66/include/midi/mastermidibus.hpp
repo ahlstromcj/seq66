@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-28
- * \updates       2025-05-09
+ * \updates       2025-05-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -42,7 +42,7 @@
 #elif SEQ66_WINDOWS_SUPPORT
 #include "mastermidibus_pm.hpp"         /* Windows uses PortMIDI now        */
 #else
-#include "mastermidibus_rm.hpp"         /* seq66::mastermidibus default     */
+#error No MIDI engine is configured
 #endif
 
 #endif      // SEQ66_MASTERMIDIBUS_HPP

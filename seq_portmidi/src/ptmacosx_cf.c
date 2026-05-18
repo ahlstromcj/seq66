@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2018-05-14
- * \updates     2024-01-05
+ * \updates     2026-05-18
  * \license     GNU GPLv2 or above
  */
 
@@ -59,7 +59,7 @@ void
 Pt_CFTimerCallback (CFRunLoopTimerRef timer, void * info)
 {
     PtThreadParams *params = (PtThreadParams*)info;
-    (*params->callback)(Pt_Time(), params->userData);
+    (*params->callback)(Pt_Time(NULL), params->userData);
 }
 
 static void *
@@ -169,8 +169,10 @@ Pt_Started (void)
 }
 
 PtTimestamp
-Pt_Time (void)
+Pt_Time (void * p)
 {
+    (void) p;
+
     CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
     return (PtTimestamp)((now - startTime) * 1000.0);
 }
@@ -186,4 +188,3 @@ Pt_Sleep (int32_t duration)
  *
  * vim: sw=4 ts=4 wm=4 et ft=c
  */
-

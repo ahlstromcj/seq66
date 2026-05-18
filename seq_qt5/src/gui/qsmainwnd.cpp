@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-05-10
+ * \updates       2026-05-18
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -119,11 +119,6 @@
 
 #include "os/daemonize.hpp"             /* seq66::session_close(), etc.     */
 #include "ui_qsmainwnd.h"
-
-#if defined SEQ66_PORTMIDI_SUPPORT
-#include "icons/route66.xpm"
-#endif
-
 #include "pixmaps/learn.xpm"
 #include "pixmaps/learn2.xpm"
 #include "pixmaps/loop.xpm"
@@ -138,6 +133,10 @@
 #include "pixmaps/rec_ex_buss.xpm"      /* green    */
 #include "pixmaps/rec_ex_channel.xpm"   /* yellow   */
 #include "pixmaps/rec_ex_normal.xpm"    /* red      */
+
+#if SEQ66_PORTMIDI_SUPPORT
+#include "icons/route66.xpm"
+#endif
 
 /**
  *  This is an option, on by default, in libseq66/include/seq66_features.h.
@@ -284,7 +283,7 @@ qsmainwnd::qsmainwnd
 
     setMouseTracking(true);                     /* NEW ca 2025-09-17        */
 
-#if defined SEQ66_PORTMIDI_SUPPORT
+#if SEQ66_PORTMIDI_SUPPORT
 
     /*
      * Let's try to use a true Windows icon here to override the Linux-allowed
@@ -307,7 +306,7 @@ qsmainwnd::qsmainwnd
     setWindowIcon(icon);
 #endif
 
-#endif  // defined SEQ66_PORTMIDI_SUPPORT
+#endif  // SEQ66_PORTMIDI_SUPPORT
 
     int w = usr().mainwnd_x();                  /* normal, maybe scaled     */
     int h = usr().mainwnd_y();
@@ -1009,7 +1008,7 @@ qsmainwnd::qsmainwnd
         rc().session_midi_filename(tune_name);
     }
 
-#if defined SEQ66_PORTMIDI_SUPPORT
+#if SEQ66_PORTMIDI_SUPPORT
     ui->alsaJackButton->setText("PortMidi");
     ui->jackTransportButton->hide();
 #else

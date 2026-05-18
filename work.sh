@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-17
+# \update         2026-05-18
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -33,7 +33,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-17"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-18"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -187,9 +187,16 @@ get_options () {
                DOSETUP="no"
                ;;
 
+            --rtmidi)
+               BUILD_DIR="$BASE_BUILD_DIR/rtmidi"
+               MAKEFILE="$BUILD_DIR/build.ninja"
+               ;;
+
             --portmidi)
                DOPORTMIDI="yes"
-               PMIDIDEF="-Dportmidi=true"
+               PMIDIDEF="-Dportmidi=true -Drtmidi=false"
+               BUILD_DIR="$BASE_BUILD_DIR/portmidi"
+               MAKEFILE="$BUILD_DIR/build.ninja"
                ;;
 
             --potext)
@@ -298,11 +305,9 @@ Many of these commands are best used when setting up the build
 
  --make              Set up and build the code in 'build'. Default operation.
  --build [dir]       Same as --make, but if given, the build directory is
-                     'build/dir'. Must use the same option with --clean.
+                     'build/dir'.
  --cross             Set up to build a Windows executable, and build it.
                      Not workable yet; see mingw-qt-build.text.
- --windows           On Windows, set up 'build/windows' and build it using
-                     the mingw/Qt install. Build directory is 'build/windows'.
  --setup             Run 'meson setup', and that's all.
  --update            Force an update of the subprojects.
  --potext            Build with Potext (light gettext) library sypport.
@@ -312,8 +317,13 @@ Many of these commands are best used when setting up the build
                      Some directories might remain; there is a error about
                      one header file not being found... strange.
  --dist              Make a Meson dist package and exit.
+ --rtmidi            This flag builds in 'build/rtmidi' rather than
+                     'build/cc'. Use when trying portmidi at the same time
  --portmidi          Build using the internal PortMIDI engine instead of
-                     the internal RtMIDI engine.
+                     the internal RtMIDI engine. Builds in 'build/portmide',
+                     not 'build/cc'
+ --windows           On Windows, set up 'build/windows' and build it using
+                     the mingw/Qt install. Build directory is 'build/windows'.
  --clang             Rebuild the code using the Clang compilers. Exports CC
                      and CXX. Build directory is 'build/clang'.
  --gnu, --gcc        Use the GNU compilers (the default on Linux). Exports CC

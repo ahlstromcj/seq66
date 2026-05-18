@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2026-05-16
+ * \updates       2026-05-18
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -606,7 +606,7 @@ seq_build_details ()
         result << "ALSA v. " << s_alsa_version << "\n";
 
 #if SEQ66_PORTMIDI_SUPPORT
-    result << "PortMIDI\n";
+    result << "portmidi\n";
 #endif
 
 #if SEQ66_JACK_SUPPORT

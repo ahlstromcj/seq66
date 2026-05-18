@@ -6,7 +6,7 @@
 # \library    	qpseq66 application
 # \author     	Chris Ahlstrom
 # \date       	2020-05-29
-# \update      2026-05-16
+# \update      2026-05-18
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -35,7 +35,9 @@ CONFIG(debug, debug|release) {
 }
 
 DEFINES += "SEQ66_MIDILIB=rtmidi"
+DEFINES += "SEQ66_PORTMIDI_SUPPORT=0"
 DEFINES += "SEQ66_RTMIDI_SUPPORT=1"
+DEFINES += "SEQ66_QMAKE_RULES=1"
 
 HEADERS += \
  include/mastermidibus_rm.hpp \

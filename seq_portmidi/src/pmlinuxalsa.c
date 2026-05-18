@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-09-20
+ * \updates     2026-05-18
  * \license     GNU GPLv2 or above
  *
  * Written by:
@@ -322,10 +322,12 @@ alsa_write_byte (PmInternal * midi, midibyte_t byte, PmTimestamp timestamp)
         snd_seq_ev_set_source(&ev, desc->this_port);
         if (midi->latency > 0)
         {
-            /* compute relative time of event = timestamp - now + latency */
+            /*
+             * compute relative time of event = timestamp - now + latency
+             */
 
             PmTimestamp now = midi->time_proc ?
-                midi->time_proc(midi->time_info) : Pt_Time() ;
+                midi->time_proc(NULL /*midi->time_info*/) : Pt_Time(NULL) ;
 
             /*
              * if timestamp is zero, send immediately.
@@ -695,7 +697,7 @@ handle_event (snd_seq_event_t * ev)
 
         /* return (now - alsa_now) + alsa_timestamp */
 
-        timestamp = (*time_proc)(midi->time_info) + ev->time.tick -
+        timestamp = (*time_proc)(NULL /*midi->time_info*/) + ev->time.tick -
             snd_seq_queue_status_get_tick_time(queue_status);
     }
     pm_ev.timestamp = timestamp;

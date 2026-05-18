@@ -209,13 +209,16 @@ extern std::string find_file
 );
 
 #if defined SEQ66_HANDLE_FILE_WILDCARDS
+
 extern bool get_wildcards
 (
     const std::string & wildpath,
     tokenization & filelist,
     bool append = false
 );
+
 #else
+
 inline bool get_wildcards
 (
     const std::string & wildpath,
@@ -246,4 +249,3 @@ extern bool file_list_copy
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

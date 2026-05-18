@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-12-24
+ * \updates     2026-05-18
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:
@@ -1283,7 +1283,7 @@ Pm_Write (PortMidiStream * stream, PmEvent * buffer, int32_t length)
     }
     else
     {
-        midi->now = (*(midi->time_proc))(midi->time_info);
+        midi->now = (*(midi->time_proc))(NULL /*midi->time_info*/);
         if (midi->first_message || midi->sync_time + 100 /*ms*/ < midi->now)
         {
             midi->now = (*midi->dictionary->synchronize)(midi); /* resync */

@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2024-01-05
+ * \updates     2026-05-18
  * \license     GNU GPLv2 or above
  *
  * change log for porttime:
@@ -110,9 +110,12 @@ PMEXPORT int Pt_Started (void);
 
 /**
  *  Pt_Time() returns the current time in ms.
+ *
+ *  Let's try making it an (unused) void pointer to avoid casting
+ *  warnings.
  */
 
-PMEXPORT PtTimestamp Pt_Time (void);
+PMEXPORT PtTimestamp Pt_Time (void *);      /* Added an asterisk */
 
 /**
  *  Pt_Sleep() pauses, allowing other threads to run.

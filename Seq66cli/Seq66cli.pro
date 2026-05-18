@@ -33,6 +33,8 @@ CONFIG(debug, debug|release) {
    DEFINES += NDEBUG
 }
 
+DEFINES += "SEQ66_QMAKE_RULES=1"
+
 SOURCES += seq66cli.cpp
 
 INCLUDEPATH = \

@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2026-05-16
+# \update      2026-05-18
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -36,12 +36,16 @@ CONFIG(debug, debug|release) {
 contains (CONFIG, rtmidi) {
    MIDILIB = rtmidi
    DEFINES += "SEQ66_MIDILIB=rtmidi"
+   DEFINES += "SEQ66_PORTMIDI_SUPPORT=0"
    DEFINES += "SEQ66_RTMIDI_SUPPORT=1"
 } else {
    MIDILIB = portmidi
    DEFINES += "SEQ66_MIDILIB=portmidi"
    DEFINES += "SEQ66_PORTMIDI_SUPPORT=1"
+   DEFINES += "SEQ66_RTMIDI_SUPPORT=0"
 }
+
+DEFINES += "SEQ66_QMAKE_RULES=1"
 
 HEADERS += include/seq66_features.h \
  include/seq66_features.hpp \

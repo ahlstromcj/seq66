@@ -1,9 +1,6 @@
 #if ! defined SEQ66_MIDIBUS_PM_HPP
 #define SEQ66_MIDIBUS_PM_HPP
 
-#if ! defined SEQ66_MIDIBUS_DECLARED
-#define SEQ66_MIDIBUS_DECLARED
-
 /*
  *  This file is part of seq24/seq66.
  *
@@ -38,7 +35,7 @@
  *  class for all midibus classes.
  */
 
-#include "midi/midibase.hpp"
+#include "midi/midibase.hpp"            /* seq66::midibase class            */
 #include "portmidi.h"                   /* PortMIDI API header file         */
 
 namespace seq66
@@ -135,8 +132,6 @@ protected:
 
 }           // namespace seq66
 
-#endif      // defined SEQ66_MIDIBUS_DECLARED
-
 #endif      // SEQ66_MIDIBUS_PM_HPP
 
 /*
@@ -144,4 +139,3 @@ protected:
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

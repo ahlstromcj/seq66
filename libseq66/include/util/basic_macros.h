@@ -223,4 +223,3 @@ typedef int cbool_t;
  *
  * vim: sw=4 ts=4 wm=4 et ft=c
  */
-

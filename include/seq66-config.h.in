@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom
  * \date          2026-04-23
- * \updates       2026-05-16
+ * \updates       2026-05-18
  * \license       GNU GPL v2 or above
  *
  *  This file is used mainly for system files and specific build options.  The
@@ -92,16 +92,7 @@
 
 /*
  * We will always build both the GUI and CLI.
- *
- * Meson creates ui-h files in the Qmake manner anyway, so we
- * have gotten rid of this macro for #including UI/.H files.
- * But we have a weird case where we need to know if qmake is the
- * build system, otherwise incomplete type errors occur.
- *
- * We zero it here.
  */
-
-#define SEQ66_QMAKE_RULES               0
 #define SEQ66_APP_CLI                   1
 #define SEQ66_DBGFLAGS                  "-O0 -DDEBUG -D_DEBUG -fno-inline"
 #define SEQ66_PACKAGE_BUGREPORT         "ahlstromcj@gmail.com"
@@ -150,6 +141,13 @@
 #define SEQ66_JACK_SESSION              @jack_session@
 #define SEQ66_JACK_SUPPORT              @jack_support@
 #define SEQ66_JACK_TRANSPORT            @jack_transport@
+#else
+#define SEQ66_JACK_GET_VERSION_STRING   "none"
+#define SEQ66_JACK_METADATA             0
+#define SEQ66_JACK_PORT_RENAME          0
+#define SEQ66_JACK_SESSION              0
+#define SEQ66_JACK_SUPPORT              0
+#define SEQ66_JACK_TRANSPORT            0
 #endif
 
 /*
@@ -169,21 +167,35 @@
  *
  * The reason for the split is the PortMIDI support was already in
  * places, so we did not use RtMIDI for Windows/Mac.
+ *
+ * Meson creates ui-h files in the Qmake manner anyway, so we
+ * have gotten rid of this macro for #including UI/.H files.
+ * But we have a weird case where we need to know if qmake is the
+ * build system, otherwise incomplete type errors occur.
+ *
+ * We zero it here.
  */
+
+#define SEQ66_QMAKE_RULES               0
 
 #define SEQ66_REQUESTED_PORTMIDI        @portmidi_support@
 #if SEQ66_REQUESTED_PORTMIDI
-#define SEQ66_PORTMIDI_SUPPORT          @portmidi_support@
+#define SEQ66_PORTMIDI_SUPPORT          1
+#define SEQ66_RTMIDI_SUPPORT            0
 #endif
 
 #define SEQ66_REQUESTED_RTMIDI          @rtmidi_support@
 #if SEQ66_REQUESTED_RTMIDI
-#define SEQ66_RTMIDI_SUPPORT            @rtmidi_support@
+#define SEQ66_PORTMIDI_SUPPORT          0
+#define SEQ66_RTMIDI_SUPPORT            1
+#define SEQ66_WINDOWS_SUPPORT           0
 #endif
 
 #define SEQ66_REQUESTED_WINDOWS         @windows_support@
 #if SEQ66_REQUESTED_WINDOWS
-#define SEQ66_WINDOWS_SUPPORT           @windows_support@
+#define SEQ66_WINDOWS_SUPPORT           1
+#define SEQ66_PORTMIDI_SUPPORT          1
+#define SEQ66_RTMIDI_SUPPORT            0
 #endif
 
 /*

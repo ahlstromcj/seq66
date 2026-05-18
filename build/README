@@ -1,6 +1,6 @@
 Build Directory for the seq66 library
 Chris Ahlstrom
-2026-04-23 to 2026-04-23
+2026-04-23 to 2026-05-18
 
 This directory is where all build products will reside.  See the following
 document:
@@ -22,13 +22,24 @@ Building the library:
     If the build directory contains only this README file, then run one of
     the following command sets in the top-level project directory:
 
-    A.  $ ./work.sh
+    A.  $ ./work.sh             # options are available, use --help
     B.  $ meson . build
-        $ cd build
+        $ cd build/cc
         $ ninja &> make.log
 
     If this directory is already populated, the following is an option:
 
     $ meson --reconfigure . build
+
+    The default build directory is 'build/cc'. Some options change it
+    to one of the following:
+
+        build/clang
+        build/cross (does not work at present)
+        build/gcc
+        build/portmidi
+        build/rtmidi
+        build/windows
+        build/??? (see the --build option)
 
 # vim: sw=4 ts=4 wm=8 et ft=sh

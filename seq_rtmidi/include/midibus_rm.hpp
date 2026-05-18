@@ -1,9 +1,6 @@
 #if ! defined SEQ66_MIDIBUS_RM_HPP
 #define SEQ66_MIDIBUS_RM_HPP
 
-#if ! defined SEQ66_MIDIBUS_DECLARED
-#define SEQ66_MIDIBUS_DECLARED
-
 /*
  *  This file is part of seq66.
  *
@@ -132,8 +129,6 @@ protected:
 
 }           // namespace seq66
 
-#endif      // defined SEQ66_MIDIBUS_DECLARED
-
 #endif      // SEQ66_MIDIBUS_RM_HPP
 
 /*
@@ -141,4 +136,3 @@ protected:
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

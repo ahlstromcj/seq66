@@ -27,7 +27,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2023-06-28
+ * \updates     2026-05-18
  * \license     GNU GPLv2 or above
  *
  * Here is a guide to implementers:
@@ -187,10 +187,11 @@ typedef struct
 /**
  *  A type definition for a timer callback. This has the issue that the
  *  PmTimeProcPtr function type has a void pointer parameter, while Pt_Time()
- *  does not.
+ *  does not. We'll add a bogus void pointer parameter to Pt_Time() and
+ *  PmTimeProcPtr.
  */
 
-typedef PmTimestamp (* PmTimeProcPtr) (void * time_info);
+typedef PmTimestamp (* PmTimeProcPtr) (void *);
 
 /**
  *  Provides an obvious declaration for PortMIDI queues.

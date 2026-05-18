@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2024-01-13
+ * \updates     2026-05-18
  * \license     GNU GPLv2 or above
  *
  * Implementation Notes (by Mark Nelson):
@@ -148,14 +148,14 @@ Pt_CallbackProc (void * p)
         /* wait for a multiple of resolution ms */
 
         struct timeval timeout;
-        int delay = mytime++ * parameters->resolution - Pt_Time();
+        int delay = mytime++ * parameters->resolution - Pt_Time(NULL);
         if (delay < 0)
             delay = 0;
 
         timeout.tv_sec = 0;
         timeout.tv_usec = delay * 1000;
         select(0, NULL, NULL, NULL, &timeout);
-        (*(parameters->callback))(Pt_Time(), parameters->userData);
+        (*(parameters->callback))(Pt_Time(NULL), parameters->userData);
     }
     return NULL;
 }
@@ -218,8 +218,10 @@ Pt_Started (void)
 }
 
 PtTimestamp
-Pt_Time (void)
+Pt_Time (void * p)
 {
+    (void) p;
+
     long seconds, milliseconds;
     struct timeb_simple now;
     Pt_ftime(&now);                                     // ftime(&now);

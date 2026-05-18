@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2025-05-09
+ * \updates       2025-05-18
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -33,6 +33,7 @@
  */
 
 #include "seq66-config.h"               /* SEQ66_NSM_SUPPORT macro          */
+
 #include "cfg/cmdlineopts.hpp"          /* command-line functions           */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "os/daemonize.hpp"             /* seq66::session_setup(), _close() */
@@ -443,7 +444,7 @@ clinsmanager::show_error
 {
     if (msg.empty())
     {
-#if defined SEQ66_PORTMIDI_SUPPORT
+#if SEQ66_PORTMIDI_SUPPORT
         if (Pm_error_present())
         {
             std::string pmerrmsg = std::string(Pm_error_message());

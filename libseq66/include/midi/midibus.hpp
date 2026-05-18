@@ -1,4 +1,4 @@
-#if defined SEQ66_MIDIBUS_HPP
+#if ! defined SEQ66_MIDIBUS_HPP
 #define SEQ66_MIDIBUS_HPP
 
 /*
@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-28
- * \updates       2026-05-09
+ * \updates       2026-05-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -42,7 +42,7 @@
 #elif SEQ66_WINDOWS_SUPPORT
 #include "midibus_pm.hpp"               /* Windows uses PortMIDI now        */
 #else
-#include "midibus_rm.hpp"               /* seq66::midibus for RtMidi        */
+#error No MIDI engine is configured
 #endif
 
 #endif      // SEQ66_MIDIBUS_HPP

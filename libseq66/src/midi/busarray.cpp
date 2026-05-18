@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-05-09
- * \updates       2026-05-16
+ * \updates       2026-05-18
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -36,18 +36,7 @@
 #include "cfg/settings.hpp"             /* seq66::rc() and seq66::usr()     */
 #include "midi/busarray.hpp"            /* seq66::busarray class            */
 #include "midi/event.hpp"               /* seq66::event class               */
-
-/*
- * Weird issue with incomplete type "seq66::midibus" in the Windows
- * build. The first macro is defined a 1 in a meson build, and the
- * latter is defined in a qmake build.
- */
-
-#if SEQ66_QMAKE_RULES
-#include "midibus_pm.hpp"               /* seq66::midibus class             */
-#else
 #include "midi/midibus.hpp"             /* seq66::midibus class             */
-#endif
 
 namespace seq66
 {

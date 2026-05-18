@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2025-04-29
+ * \updates       2025-05-18
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -66,7 +66,7 @@
 #include "sessions/smanager.hpp"        /* seq66::smanager()                */
 #include "util/filefunctions.hpp"       /* seq66::file_readable() etc.      */
 
-#if defined SEQ66_PORTMIDI_SUPPORT
+#if SEQ66_PORTMIDI_SUPPORT
 #include "portmidi.h"                   /* Pm_error_present()               */
 #endif
 
@@ -908,7 +908,7 @@ smanager::internal_error_check (std::string & errmsg) const
     std::string pmerrmsg;
     errmsg.clear();
 
-#if defined SEQ66_PORTMIDI_SUPPORT
+#if SEQ66_PORTMIDI_SUPPORT
 
     /*
      * We should eventually get this code into the midibus arena for PortMidi
@@ -958,7 +958,7 @@ smanager::error_handling ()
     bool session_error = error_active();
     std::string path = seq66::rc().config_filespec(seq_default_logfile_name());
 
-#if defined SEQ66_PORTMIDI_SUPPORT
+#if SEQ66_PORTMIDI_SUPPORT
     const char * pmerrmsg = pm_log_buffer();    /* guaranteed to be valid   */
     errmsg += "\n";
     errmsg += std::string(pmerrmsg);

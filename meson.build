@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-05-09
+# \updates     2026-05-18
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the seq66 application and library.
@@ -168,6 +168,17 @@ if seq66_debug
 endif
 
 #-----------------------------------------------------------------------------
+# For tracing headers. Look out for
+#
+#     "Multiple include guards may be useful for:"
+#
+# in the make.log file.
+#-----------------------------------------------------------------------------
+#
+# add_project_arguments('-H', language : 'cpp')
+# add_project_arguments('-E', language : 'cpp')
+
+#-----------------------------------------------------------------------------
 # Easy access to directory options.
 #-----------------------------------------------------------------------------
 
@@ -235,6 +246,14 @@ app_build_issue   = 'Linux'
 app_build_os      = 'Linux'
 app_engine        = 'rtmidi'
 
+use_alsa = false
+use_jack = false
+use_jack_session = false
+use_jack_transport = false
+use_nsm_liblo = false
+use_rtmidi = false
+use_portmidi = false
+
 if host_machine.system() == 'macosx'
    os_darwin = true
    os_osx = true
@@ -250,6 +269,7 @@ elif host_machine.system() == 'windows'
    use_win32 = true
    app_build_issue = 'Windows'
    app_build_os = 'Windows'
+   app_engine = 'portmidi'
 elif host_machine.system() == 'linux'
    os_linux = true
 elif host_machine.system() == 'freebsd'
@@ -258,7 +278,33 @@ elif host_machine.system() == 'freebsd'
    app_build_os = 'FreeBSD'
 endif
 
+use_portmidi = get_option('portmidi')
+if use_portmidi
+   use_rtmidi = false
+   app_engine = 'portmidi'
+endif
+
 os_unix = not os_win32
+
+if os_linux or os_freebsd
+   use_alsa = get_option('alsa')
+   use_jack = get_option('jack')
+   use_jack_session = get_option('jacksession')
+   use_jack_transport = get_option('jacktransport')
+   use_nsm_liblo = get_option('nsm')
+   use_portmidi = get_option('portmidi')
+   if not use_portmidi
+      use_rtmidi = get_option('rtmidi')
+   endif
+elif os_win32
+   use_alsa = false
+   use_jack = false
+   use_jack_session = false
+   use_jack_transport = false
+   use_nsm_liblo = false
+   use_portmidi = true
+   use_rtmidi = false
+endif
 
 #-----------------------------------------------------------------------------
 # Used by the seq66_xxx_version() function. Currently defined in config
@@ -363,37 +409,6 @@ cdata.set10('share_h',     false)
 cdata.set10('dir_h',       false)
 cdata.set10('gnu_source',  false)
 
-endif
-
-use_alsa = false
-use_jack = false
-use_jack_session = false
-use_jack_transport = false
-use_nsm_liblo = false
-use_rtmidi = false
-
-if os_linux or os_freebsd
-   use_alsa = get_option('alsa')
-   use_jack = get_option('jack')
-   use_jack_session = get_option('jacksession')
-   use_jack_transport = get_option('jacktransport')
-   use_nsm_liblo = get_option('nsm')
-   use_rtmidi = get_option('rtmidi')
-endif
-
-if os_win32
-   use_alsa = false
-   use_jack = false
-   use_jack_session = false
-   use_jack_transport = false
-   use_nsm_liblo = false
-   use_portmidi = true
-   use_rtmidi = false
-else
-   use_portmidi = get_option('portmidi')
-   if use_portmidi
-      use_rtmidi = false
-   endif
 endif
 
 if use_jack

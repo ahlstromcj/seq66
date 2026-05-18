@@ -19,12 +19,12 @@
 /**
  * \file ptmacosx_mach.c
  *
- *      Another ortable timer implementation for Mac OS X.
+ *      Another portable timer implementation for Mac OS X.
  *
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2018-05-14
- * \updates     2024-01-05
+ * \updates     2026-05-18
  * \license     GNU GPLv2 or above
  */
 
@@ -100,13 +100,13 @@ Pt_CallbackProc (void * p)
         /* wait for a multiple of resolution ms */
 
         UInt64 wait_time;
-        int delay = mytime++ * parameters->resolution - Pt_Time();
+        int delay = mytime++ * parameters->resolution - Pt_Time(NULL);
         PtTimestamp timestamp;
         if (delay < 0) delay = 0;
         wait_time = AudioConvertNanosToHostTime((UInt64)delay * NSEC_PER_MSEC);
         wait_time += AudioGetCurrentHostTime();
         error = mach_wait_until(wait_time);
-        timestamp = Pt_Time();
+        timestamp = Pt_Time(NULL);
         (*(parameters->callback))(timestamp, parameters->userData);
     }
     free(parameters);
@@ -156,8 +156,10 @@ Pt_Started (void)
 }
 
 PtTimestamp
-Pt_Time (void)
+Pt_Time (void * p)
 {
+    (void) p;
+
     UInt64 clock_time, nsec_time;
     clock_time = AudioGetCurrentHostTime() - start_time;
     nsec_time = AudioConvertHostTimeToNanos(clock_time);
