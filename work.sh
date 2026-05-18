@@ -348,48 +348,25 @@ make_pdf () {
    cd ../..
 }
 
+# Remove all the sub-directories of ./build. All build products
+# go into a sub-directory.
+
 clean_build () {
-   rm -rf $BASE_BUILD_DIR/cc/
-   rm -rf $BASE_BUILD_DIR/clang/
-   rm -rf $BASE_BUILD_DIR/cross/
-   rm -rf $BASE_BUILD_DIR/gcc/
-   rm -rf $BASE_BUILD_DIR/Desktop-Debug/
-#   rm -rf $BUILD_DIR/doc/
-#   rm -rf $BUILD_DIR/latex/
-#   rm -rf $BUILD_DIR/include/
-#   rm -rf $BUILD_DIR/latex/
-#   rm -rf $BUILD_DIR/subprojects/
-#   rm -rf $BUILD_DIR/lib*
-#   rm -rf $BUILD_DIR/meson*
-#   rm -rf $BUILD_DIR/resources/
-#   rm -rf $BUILD_DIR/seq_portmidi/
-#   rm -rf $BUILD_DIR/seq_qt5/
-#   rm -rf $BUILD_DIR/seq_rtmidi/
-#   rm -rf $BUILD_DIR/Seq66cli/
-#   rm -rf $BUILD_DIR/Seq66qt5/
-#   rm -rf $BUILD_DIR/src/
-#   rm -rf $BUILD_DIR/subprojects/
-#   rm -rf $BUILD_DIR/tests/
-#   rm -rf $BUILD_DIR/uninstall/
-#   rm -f $BUILD_DIR/.ninja_deps
-#   rm -f $BUILD_DIR/.ninja_log
-#   rm -f $BUILD_DIR/*.h
-#   rm -f $BUILD_DIR/*.log
-#   rm -f $BUILD_DIR/*.so
-#   rm -f $BUILD_DIR/compile_commands.json
-   rm -f $MAKEFILE
-   rm -rf wipe/
+
+   for DIR in $BASE_BUILD_DIR/*/ ; do
+      echo "Deleting $DIR"
+      rm -rf $DIR
+   done
+
    rm -f doc/dox/*.log
    rm -f doc/latex/*.log
-   if test "$BUILD_DIR" != "$BASE_BUILD_DIR" ; then
-      rm -rf $BUILD_DIR
-   fi
-   echo "Build products removed from the seq66/$BUILD_DIR directory."
+   echo "Build products removed from the seq66/build sub-directories."
    rm -rf subprojects/liblib66/
-   rm -rf subprojects/potext/
-   rm -rf subprojects/libcfg66
-   rm -rf subprojects/libxpc66
-   echo "Subproject products removed from the subprojects directory."
+   rm -rf subprojects/potext/          # available, but code not prep'ed
+   rm -rf subprojects/libcfg66         # not yet in use
+   rm -rf subprojects/libxpc66         # not yet in use
+   rm -rf subprojects/librtl66         # not yet in use
+   echo "Subproject downloaded libraries removed from 'subprojects'."
 
 #  git checkout data/share/doc/seq66-dev-manual.pdf
 #  echo "Previous version of developer guide restored."

@@ -1,6 +1,6 @@
 Creating an Installer Using NSIS on Linux
 Chris Ahlstrom
-2026-05-17 to 2026-05-17
+2026-05-17 to 2026-05-18
 
 Meson % ./work.sh --nsis
 
@@ -69,19 +69,5 @@ Back in Linux:
         $ wine release/seq66_setup_x64-0.99.25.exe
         $ cd ~/.wine/drive_c/Program Files/Seq66
         $ wine qseq66.exe
-
-Remaining (minor) issues:
-
-Unsupported format ..\resources\icons\route66.bmp
-    (macro:MUI_HEADERIMAGE_INIT:26)
-
-$ wine release/seq66_setup_x64-0.99.25.exe
-
-0024:err:environ:init_peb starting
-    L"Z:\\home\\ahlstrom\\Home\\ca\\mls\\git\\seq66\\release\\
-        seq66_setup_x64-0.99.25.exe" in experimental wow64 mode
-
-0124:err:menubuilder:InvokeShellLinker failed to extract icon from
-    L"C:\\Program Files\\Seq66\\qseq66.exe"
 
 # vim: sw=4 ts=4 wm=4 et ft=rc
