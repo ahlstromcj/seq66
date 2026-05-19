@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-18
+# \update         2026-05-19
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -33,7 +33,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-18"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-19"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -44,8 +44,16 @@ export SEQ66_LIBRARY="$SEQ66-$SEQ66_LIBRARY_API_VERSION"
 BASE_BUILD_DIR="build"              # 'seq66/build'
 BUILD_DIR="$BASE_BUILD_DIR/cc"      # "native" compiler (CC/CXX) build
 BUILD_TYPE="release"
-CROSS_PATH="/opt/Qt/Qt6/6.10.1/mingw_64/bin"
-CROSS_PKG_PATH="/opt/Qt/Qt6/6.10.2/mingw_64/lib/pkgconfig"
+
+# Instead of the weak aqtinstall, let's mount the Windows partion
+# (outside of this script) and use that location.
+#
+# CROSS_PATH="/opt/Qt/Qt6/6.10.1/mingw_64/bin"
+# CROSS_PKG_PATH="/opt/Qt/Qt6/6.10.2/mingw_64/lib/pkgconfig"
+
+CROSS_PATH="/mnt/ntfs/Qt/5.15.2/mingw_64/bin"
+CROSS_PKG_PATH="/mnt/ntfs/Qt/5.15.2/mingw_64/lib/pkgconfig"
+
 EXTRAFLAGS=""
 INSTALL_LIBDIR="lib"                # "lib/x86_64-linux-gnu" on Debian
 INSTALL_PREFIX="/usr/local"         # "/usr", what about Windows?
@@ -311,7 +319,8 @@ Many of these commands are best used when setting up the build
  --setup             Run 'meson setup', and that's all.
  --update            Force an update of the subprojects.
  --potext            Build with Potext (light gettext) library sypport.
- --release           Build release version (Meson defaults to a debug version).
+ --release           Build release version (the default).
+ --debug             Build debug version. Always builds in 'build/debug'.
  --install           Run 'meson install' to install Seq66 and the PDF manual.
  --uninstall         Run 'ninja uninstall' to uninstall the library.
                      Some directories might remain; there is a error about

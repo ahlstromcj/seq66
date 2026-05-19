@@ -23,11 +23,11 @@
  * \file          timing.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2021-11-19
+ * \updates       2026-05-19
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
- *    Copyright (C) 2005-2025 by Chris Ahlstrom
+ *    Copyright (C) 2005-2026 by Chris Ahlstrom
  *
  *    This module provides functions for timing and increasing thread
  *    priority.

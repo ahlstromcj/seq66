@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2025-05-18
+ * \updates       2025-05-19
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -84,6 +84,8 @@ get_and_set_build_issue ()
 
         buildtext = temp;
     }
+    else
+        buildtext = SEQ66_APP_BUILD_ISSUE;
 
 #endif
 

@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-05-11
-# \updates     2026-05-15
+# \updates     2026-05-19
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 # NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
@@ -131,11 +131,29 @@
 
 # arch = 'ppc-freevle-eabi'
 # compiler_path = '/usr/bin'
+#
+# base_qt_path = '/opt/Qt/Qt6/6.10.1/mingw_64/'
+# bin_qt_path = '/opt/Qt/Qt6/6.10.1/mingw_64/bin/'
+# qt_tools_path = '/opt/Qt/Qt6/Tools/mingw1310_64/'
+# bin_qt_tools_path = '/opt/Qt/Qt6/Tools/mingw1310_64/bin/'
 
-base_qt_path = '/opt/Qt/Qt6/6.10.1/mingw_64/'
-bin_qt_path = '/opt/Qt/Qt6/6.10.1/mingw_64/bin/'
-qt_tools_path = '/opt/Qt/Qt6/Tools/mingw1310_64/'
-bin_qt_tools_path = '/opt/Qt/Qt6/Tools/mingw1310_64/bin/'
+# Requires: "$ sudo mount /mnt/ntfs" (on our Debian dual-boot system)
+#
+# These paths are from installing Qt Creator, IIRC.
+
+base_qt_path = '/mnt/ntfs/Qt/5.15.2/mingw81_64/'
+bin_qt_path = '/mnt/ntfs/Qt/5.15.2/mingw81_64/bin/'
+qt_tools_path = ''
+bin_qt_tools_path = ''
+
+[host_machine]
+
+system = 'windows'
+subsystem = 'windows'
+kernel = 'nt'
+cpu_family = 'x86_64'
+cpu = 'x86_64'
+endian = 'little'
 
 [binaries]
 
@@ -143,23 +161,18 @@ bin_qt_tools_path = '/opt/Qt/Qt6/Tools/mingw1310_64/bin/'
 # c = [ 'ccache', '/usr/bin/x86_64-w64-mingw32-gcc' ]
 # cpp = [ 'ccache', '/usr/bin/x86_64-w64-mingw32-g++' ]
 #
-# This was the first try, using the normal mingw installs on Linux:
+# python = '/path/to/your/windows-python/python.exe'
 #
+# This was the first try, using the normal mingw installs on Linux:
+
 c = 'x86_64-w64-mingw32-gcc'
 cpp = 'x86_64-w64-mingw32-g++'
 ar = 'x86_64-w64-mingw32-ar'
+ld = 'x86_64-w64-mingw32-ld'
+objcopy = 'x86_64-w64-mingw32-objcopy'
 strip = 'x86_64-w64-mingw32-strip'
 windres = 'x86_64-w64-mingw32-windres'
-
-# Using the Tools directory. Also wrong.
-#
-# c = bin_qt_tools_path + 'gcc'
-# cpp = bin_qt_tools_path + 'g++'
-# ar = bin_qt_tools_path + 'ar'
-# strip = bin_qt_tools_path + 'strip'
-# windres = bin_qt_tools_path + 'windres'
-
-pkg-config = '/usr/bin/x86_64-w64-mingw32-pkg-config'
+pkg-config = 'x86_64-w64-mingw32-pkg-config'
 exe_wrapper = 'wine64'           # key step for running binaries; also 'wine'
 moc = bin_qt_path + 'moc'        # 'moc.exe'
 rcc = bin_qt_path + 'rcc'        # 'rcc.exe'
@@ -173,34 +186,18 @@ qmake6 = bin_qt_path + 'qmake6'  # 'qmake.exe'
 #
 # c_stdlib = ['mylibc', 'mylibc_dep'] # Subproject name, variable name
 # c_args = ['-march=armv7-a']
-# sizeof_int = 4
-# sizeof_wchar_t = 4
-# sizeof_void* = 4
-# alignment_char = 1
-# alignment_void* = 4
-# alignment_double = 4
-# has_function_printf = true
-# sys_root = '/some/path'
 # pkg_config_libdir = '/some/path/lib/pkgconfig'
 # needs_exe_wrapper = true
-#
-# myvar = meson.get_external_property('sys_root')
 
 qt_library_dir = base_qt_path + 'lib'
 qt_pkgconfig_dir = base_qt_path + 'lib/pkgconfig'
 qt_include_dir = base_qt_path + 'include'
 
-[host_machine]
-
-system = 'windows'
-subsystem = 'windows'
-kernel = 'nt'
-cpu_family = 'x86_64'
-cpu = 'x86_64'
-endian = 'little'
+pkg_config_libdir = '/mnt/ntfs/Qt/5.15.2/mingw81_64/lib/pkgconfig/'
+qt_tools_path = ''
 
 #****************************************************************************
 # meson.mingw.cross
 #----------------------------------------------------------------------------
-# vim: ts=3 sw=3 ft=meson
+# vim: ts=3 sw=3 ft=dosini
 #----------------------------------------------------------------------------

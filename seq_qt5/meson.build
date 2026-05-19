@@ -288,7 +288,7 @@ endif
 
 '''
 if not seq66_subproj
-   pkg_mod = import('pkgconfig')
+   pkg_mod = import('pkg-config')
    pkg_mod.generate(
       seq_qt_build,
       filebase : seq66_pkgconfig_name,

@@ -1,13 +1,12 @@
 TO DO for Seq66 0.99.25
 Chris Ahlstrom
-2019-04-13 to 2026-05-18
+2019-04-13 to 2026-05-19
 
     -   Changed the build system to Meson. Bugs so far:
-        -   seq_portmidi: Add -Wno-cast-function-type ?
         -   Update work.sh with more bootstrap options. Moot at the
             moment: --port-refresh Enables port-refresh feature for JACK.
-        -   Test the portmidi build (Qt and CLI) on Windows.
-        -   Try the MSYS build again on Windows.
+        -   Try the MSYS build again on Windows. Fails at present.
+        -   The --cross build turns on RTMIDI, not WINDOWS and PORTMIDI
     -   Finish off the refactoring of Pt_Time
     -   Windows:
         -   Install or configure qt6 in Windows to build that version.

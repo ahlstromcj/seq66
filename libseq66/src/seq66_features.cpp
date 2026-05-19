@@ -78,7 +78,6 @@ static std::string s_app_build_issue = SEQ66_APP_BUILD_ISSUE;
 #endif
 #endif
 
-
 static std::string s_pane_focus;
 static std::string s_alsa_version;
 static std::string s_jack_version;

@@ -23,11 +23,11 @@
  * \file          daemonize.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2023-10-31
+ * \updates       2026-05-19
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
- *    Copyright (C) 2005-2025 by Chris Ahlstrom
+ *    Copyright (C) 2005-2026 by Chris Ahlstrom
  *
  *    This module provides a function to make it easy to run an application
  *    as a daemon.
@@ -35,6 +35,7 @@
 
 #include <string>
 
+#include <sys/types.h>                  /* typedef unsigned int mode_t      */
 #include "seq66_platform_macros.h"      /* for detecting 32-bit builds      */
 
 /*

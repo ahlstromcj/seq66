@@ -178,6 +178,15 @@
 
 #define SEQ66_QMAKE_RULES               0
 
+#define SEQ66_REQUESTED_WINDOWS         @windows_support@
+#if SEQ66_REQUESTED_WINDOWS
+
+#define SEQ66_WINDOWS_SUPPORT           1
+#define SEQ66_PORTMIDI_SUPPORT          1
+#define SEQ66_RTMIDI_SUPPORT            0
+
+#else                                   // ! SEQ66_REQUESTED_WINDOWS
+
 #define SEQ66_REQUESTED_PORTMIDI        @portmidi_support@
 #if SEQ66_REQUESTED_PORTMIDI
 #define SEQ66_PORTMIDI_SUPPORT          1
@@ -191,12 +200,7 @@
 #define SEQ66_WINDOWS_SUPPORT           0
 #endif
 
-#define SEQ66_REQUESTED_WINDOWS         @windows_support@
-#if SEQ66_REQUESTED_WINDOWS
-#define SEQ66_WINDOWS_SUPPORT           1
-#define SEQ66_PORTMIDI_SUPPORT          1
-#define SEQ66_RTMIDI_SUPPORT            0
-#endif
+#endif                                   // SEQ66_REQUESTED_WINDOWS
 
 /*
  * For testing only.  Verify that build/include/seq66-config.h defines this

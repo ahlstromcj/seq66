@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-05-08
+# \updates     2026-05-19
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -68,7 +68,7 @@ endif
 
 '''
 if not seq66_subproj
-   pkg_mod = import('pkgconfig')
+   pkg_mod = import('pkg-config')
    pkg_mod.generate(
       libseq66_build,
       filebase : seq66_pkgconfig_name,

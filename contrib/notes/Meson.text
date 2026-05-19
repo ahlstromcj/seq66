@@ -1,6 +1,6 @@
 Changing the Linux/Windows Builds to Meson
 Chris Ahlstrom
-2026-05-01 to 2026-05-11
+2026-05-01 to 2026-05-19
 
 Strategy:
 
@@ -32,8 +32,6 @@ Install Wine: Ensure Wine is installed and functional on your Linux system.
 
 Create a Cross File: Create a file (e.g., windows.ini) defining the mingw-w64
 compiler and setting Wine as the wrapper:
-
-ini
 
 [binaries]
 
@@ -75,10 +73,8 @@ Configure and Build:
 
 Run meson with the cross file:
 
-bash
-
-   meson setup builddir --cross-file windows.ini
-   meson compile -C builddir
+   $ meson setup builddir --cross-file windows.ini
+   $ meson compile -C builddir
 
 Use meson test -C builddir to execute tests under Wine.
 
@@ -87,7 +83,6 @@ Use meson test -C builddir to execute tests under Wine.
    -  'target machine' is the machine on which the compiled binary output
       will run, only meaningful if the program produces machine-specific
       output. Normally one does not need to worry about this item.
-
 
 Key Considerations WINEPATH: Since Meson 0.63.0, devenv automatically sets
 WINEPATH to include necessary DLLs.Missing Wine: If Wine is not installed,
