@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2026-05-18
+ * \updates       2026-05-19
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -60,7 +60,7 @@ namespace seq66
  */
 
 #if defined SEQ66_PLATFORM_WINDOWS
-static std::string s_app_build_os    = "Windows 10";    /* FIXME    */
+static std::string s_app_build_os    = "Windows 11";    /* FIXME    */
 static std::string s_app_build_issue = "Microsoft Windows";
 #endif
 
@@ -605,9 +605,11 @@ seq_build_details ()
     if (! s_alsa_version.empty())
         result << "ALSA v. " << s_alsa_version << "\n";
 
-#if SEQ66_PORTMIDI_SUPPORT
-    result << "portmidi\n";
-#endif
+/*
+ * #if SEQ66_PORTMIDI_SUPPORT
+ *     result << "portmidi\n";
+ * #endif
+ */
 
 #if SEQ66_JACK_SUPPORT
     result
