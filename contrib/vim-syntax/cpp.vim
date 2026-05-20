@@ -4,7 +4,7 @@
 "
 "  Language:      C/C++
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-09-04 to 2025-04-01
+"  Last Change:   2006-09-04 to 2026-05-20
 "  Project:       XPC Suite library project
 "  Usage:
 "
@@ -35,7 +35,7 @@
 "------------------------------------------------------------------------------
 
 syn keyword XPCC midibytes midistring midi_message phraselist seq64 seq66
-syn keyword XPCC tokenization
+syn keyword XPCC tokenization tokenpair tokenpairs
 syn keyword XPCC boolean booleans bpm buffer byte bytes bytestring ppqn pulse
 syn keyword XPCC byte word doubleword
 syn keyword XPCC audio buss container ctrl meta seqspec status tag ulong

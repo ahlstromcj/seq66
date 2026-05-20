@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2025-01-27
+ * \updates       2026-05-20
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -880,6 +880,83 @@ file_read_string (const std::string & file)
             }
             (void) file_close(input, file);
         }
+    }
+    return result;
+}
+
+/**
+ *  Reads a file into a vector of strings. Each element holds
+ *  one line. Comment lines (lines starting with a "#") and
+ *  empty lines are skipped. Newlines are stripped.
+ *
+ *  This function is most useful in line-oriented files with short lines.
+ *  One minor issue we ignore (for now) is if the lines are longer
+ *  than 512.
+ *
+ * \param file
+ *      Provides the name of the file to read.
+ *
+ * \param lines [out]
+ *      Provides a vector of strings to be populated. It is
+ *      not cleared; the caller should do that, if desired.
+ *
+ * \param trimlines
+ *      If true, then white-space is removed at either end of the
+ *      line. The default is false.
+ *
+ * \return
+ *      Returns true if the lines vector is not empty.
+ */
+
+bool
+file_read_lines
+(
+    const std::string & file,
+    tokenization & lines,
+    bool trimlines
+)
+{
+    bool result { file_name_good(file) };
+    if (result)
+    {
+        std::FILE * input { file_open_for_read(file) };
+        if (not_nullptr(input))
+        {
+            size_t maxim { 512 };
+            char * destination { new (std::nothrow) char [maxim] };
+            if (is_nullptr(destination))
+                return false;
+
+            for (;;)
+            {
+                ssize_t count { getline(&destination, &maxim, input) };
+                if (count == 1)                 /* empty line, "\n" only    */
+                {
+                    continue;
+                }
+                else if (count > 1)
+                {
+                    std::string tmp { destination };
+                    if (tmp[0] == '#')
+                        continue;
+                    else
+                    {
+                        tmp.pop_back();         /* remove the newline       */
+                        if (trimlines)
+                            tmp = trim(tmp);    /* trim before/after white  */
+
+                        lines.push_back(tmp);
+                    }
+                }
+                else
+                    break;                      /* done or EOF              */
+            }
+            (void) file_close(input, file);
+            delete [] destination;
+            result = ! lines.empty();
+        }
+        else
+            result = false;
     }
     return result;
 }

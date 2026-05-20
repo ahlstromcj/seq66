@@ -1,4 +1,4 @@
-# README for Seq66 0.99.25 2026-05-15
+# README for Seq66 0.99.25 2026-05-20
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -16,7 +16,8 @@ user-manual. As of this release, employs the __Meson__ build system.
 *The current development-in-progress branch is now "Meson". Seq66 now
 builds using Meson, and supports Qt6. Bootstrap and build now done via
 the work.sh script. The old-style build setup is preserved in branch
-"Autoconf."*
+"Autoconf." The lib66 library project is downloaded automatically as a
+Meson subproject.*
 
 The release includes an installer for the 64-bit Windows version of
 Seq66. Initial work has been done on getting Seq66 to build and run

@@ -234,54 +234,69 @@ build_args = []
 # This library has platform-dependent characteristics.
 #-----------------------------------------------------------------------------
 
-os_darwin   = false
-os_freebsd  = false
-os_linux    = false
-os_osx      = false
-os_unix     = false
-os_win32    = false
+app_build_issue      = 'Unknown'
+app_build_os         = 'Unknown'
+app_engine           = 'unknown'
 
-app_build_issue   = 'Unknown'
-app_build_os      = 'Unknown'
-app_engine        = 'rtmidi'
+os_darwin            = false
+os_freebsd           = false
+os_linux             = false
+os_osx               = false
+os_unix              = false
+os_win32             = false
 
-use_alsa = false
-use_jack = false
-use_jack_session = false
-use_jack_transport = false
-use_nsm_liblo = false
-use_portmidi = false
-use_rtmidi = false
-use_win32   = false
+use_alsa             = false
+use_jack             = false
+use_jack_session     = false
+use_jack_transport   = false
+use_nsm_liblo        = false
+use_portmidi         = false
+use_rtmidi           = false
+use_win32            = false
 
 use_portmidi = get_option('portmidi')
 
 if host_machine.system() == 'macosx'
-   os_darwin = true
-   os_osx = true
-   app_build_issue = 'Mac OSX'
-   app_build_os = 'OSX'
-   app_engine = 'portmidi'
+   app_build_issue   = 'Mac OSX'
+   app_build_os      = 'OSX'
+   app_engine        = 'portmidi'
+   os_darwin         = true
+   os_osx            = true
+   use_portmidi      = true
+   warning('Mac OSX supported has not been built or tested for Seq66.')
+   error('We need someone with a Mac to fix portmidi issues.')
 elif host_machine.system() == 'darwin'
-   os_darwin = true
-   os_osx = true
-   app_build_issue = 'Mac OSX'
-   app_build_os = 'OSX'
-   app_engine = 'portmidi'
-elif host_machine.system() == 'windows' or meson.is_cross_build()
-   os_win32 = true
-   use_win32 = true
-   app_build_issue = 'Windows'
-   app_build_os = 'Windows'
-   app_engine = 'portmidi'
-elif host_machine.system() == 'linux'
+   app_build_issue   = 'Mac Darwin'
+   app_build_os      = 'OSX'
+   app_engine        = 'portmidi'
+   os_darwin         = true
+   os_osx            = true
+   use_portmidi      = true
+   warning('Mac Darwin supported has not been built or tested for Seq66.')
+   error('We need someone with a Mac to fix portmidi issues.')
+elif host_machine.system() == 'windows'
+   app_build_issue   = 'Windows'
+   app_build_os      = 'Windows'
+   app_engine        = 'portmidi'
+   os_win32          = true
+   use_win32         = true
+   use_portmidi      = true
+elif host_machine.system() == 'linux'        # portmidi vs rtmidi, set below
    app_build_issue   = 'Linux'
    app_build_os      = 'Linux'
-   os_linux = true
-elif host_machine.system() == 'freebsd'
-   os_freebsd = true
-   app_build_issue = 'FreeBSD'
-   app_build_os = 'FreeBSD'
+   os_linux          = true
+elif host_machine.system() == 'freebsd'      # portmidi vs rtmidi, set below
+   app_build_issue   = 'FreeBSD'
+   app_build_os      = 'FreeBSD'
+   os_freebsd        = true
+elif meson.is_cross_build()
+   app_build_issue   = 'MingW'
+   app_build_os      = 'Windows'
+   app_engine        = 'portmidi'
+   os_win32          = true
+   use_portmidi      = true
+   use_win32         = true
+   error('Currently have not found a way to get a MingW cross-build to work.')
 endif
 
 os_unix = not os_win32
@@ -297,16 +312,9 @@ if os_linux or os_freebsd
       app_engine = 'portmidi'
       use_rtmidi = false
    else
+      app_engine = 'rtmidi'
       use_rtmidi = get_option('rtmidi')      # defaults to true
    endif
-elif os_win32
-   use_alsa = false
-   use_jack = false
-   use_jack_session = false
-   use_jack_transport = false
-   use_nsm_liblo = false
-   use_portmidi = true
-   use_rtmidi = false
 endif
 
 #-----------------------------------------------------------------------------

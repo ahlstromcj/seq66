@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2025-05-19
+ * \updates       2025-05-20
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -67,25 +67,53 @@ get_and_set_build_issue ()
      * Windows version helper functions are a mess!
      */
 
-    std::string buildtext = "Windows 64-bit";   /* no 32-bit support yet    */
+    std::string buildtext { "Windows 64-bit" }; /* no 32-bit support yet    */
 
 #else
 
-    std::string buildtext = "Unknown";          /* fallback for failure     */
-    std::string temp = file_read_string("/etc/issue");
-    if (temp.empty())
-        temp = file_read_string("/etc/issue.net");
-
-    if (! temp.empty())
+    std::string buildtext { "Unknown" };        /* fallback for failure     */
+    std::string osr { "/etc/os-release" };      /* on Linux, at least       */
+    bool success { false };
+    if (file_readable(osr))
     {
-        auto spos = temp.find_first_of("\\");
-        if (spos != std::string::npos)
-            temp = temp.substr(0, spos - 1);
-
-        buildtext = temp;
+        tokenization lines;
+        success = file_read_lines(osr, lines, true);
+        if (success)
+        {
+            tokenpairs tp { tokenize_pairs(lines, "=") };
+            success = ! tp.empty();
+            if (success)
+            {
+                std::string value { lookup_token_pair(tp, "PRETTY_NAME") };
+                success = ! value.empty();
+                if (success)
+                    buildtext = value + " release";
+            }
+        }
     }
-    else
-        buildtext = SEQ66_APP_BUILD_ISSUE;
+    if (! success)
+    {
+        std::string temp { file_read_string("/etc/issue") };
+        if (temp.empty())
+        {
+            temp = file_read_string("/etc/issue.net");
+        }
+        else if (contains(temp, "PRETTY_NAME"))
+        {
+            temp = "Linux (Arch?)";
+        }
+
+        if (! temp.empty())
+        {
+            auto spos { temp.find_first_of("\\") };
+            if (spos != std::string::npos)
+                temp = temp.substr(0, spos - 1);
+
+            buildtext = temp;
+        }
+        else
+            buildtext = SEQ66_APP_BUILD_ISSUE;
+    }
 
 #endif
 

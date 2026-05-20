@@ -43,7 +43,9 @@
  *  This module replaces Seq64's easy_macros.
  */
 
-#include <vector>                       /* std::vector                      */
+#include <map>                          /* std::map<>                       */
+#include <utility>                      /* std::pair<>                      */
+#include <vector>                       /* std::vector<>                    */
 
 #include "seq66_features.hpp"           /* C++ definitions, std::string     */
 #include "util/basic_macros.h"          /* C-style definitions/features     */
@@ -66,6 +68,20 @@ const int c_async_safe_utoa_size = 24;
  */
 
 using tokenization = std::vector<std::string>;
+
+/**
+ *  Provides a pair of strings, perhaps extracted from "name = value" pairs.
+ *  Meant to be inserted into a tokenpairs map.
+ */
+
+using tokenpair = std::pair<std::string, std::string>;
+
+/**
+ *  Provides an easy-to-search container for pairs of strings, perhaps
+ *  extracted from "name = value" pairs.
+ */
+
+using tokenpairs = std::map<std::string, std::string>;
 
 /*
  * Global functions.  The not_nullptr_assert() function is a macro in

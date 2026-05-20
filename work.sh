@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-19
+# \update         2026-05-20
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -33,7 +33,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-19"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-20"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -44,16 +44,7 @@ export SEQ66_LIBRARY="$SEQ66-$SEQ66_LIBRARY_API_VERSION"
 BASE_BUILD_DIR="build"              # 'seq66/build'
 BUILD_DIR="$BASE_BUILD_DIR/cc"      # "native" compiler (CC/CXX) build
 BUILD_TYPE="release"
-
-# Instead of the weak aqtinstall, let's mount the Windows partion
-# (outside of this script) and use that location.
-#
-# CROSS_PATH="/opt/Qt/Qt6/6.10.1/mingw_64/bin"
-# CROSS_PKG_PATH="/opt/Qt/Qt6/6.10.2/mingw_64/lib/pkgconfig"
-
-CROSS_PATH="/mnt/ntfs/Qt/5.15.2/mingw_64/bin"
-CROSS_PKG_PATH="/mnt/ntfs/Qt/5.15.2/mingw_64/lib/pkgconfig"
-
+CROSS_PKG_PATH="/usr/lib/pkgconfig" # TO DO TO DO
 EXTRAFLAGS=""
 INSTALL_LIBDIR="lib"                # "lib/x86_64-linux-gnu" on Debian
 INSTALL_PREFIX="/usr/local"         # "/usr", what about Windows?
@@ -276,7 +267,6 @@ get_options () {
                NONSM="-Dnsm=false"
                ;;
 
-
             --version)
                DOVERSION="yes"
                DOBOOTSTRAP="no"
@@ -297,17 +287,24 @@ get_options () {
    fi
 }
 
+#******************************************************************************
+#  Version info
+#------------------------------------------------------------------------------
+
 show_version () {
    echo "Seq66 version $SEQ66_LIBRARY_VERSION $SEQ66_SCRIPT_EDIT_DATE"
 }
+
+#******************************************************************************
+#  Help
+#------------------------------------------------------------------------------
 
 show_help () {
       cat << E_O_F
 Usage: ./work.sh [options] ($SEQ66_LIBRARY_VERSION-$SEQ66_SCRIPT_EDIT_DATE)
 
 'work.sh' encapsulates common operations involving Meson, builds,
-packing, and version information.  Only implemented options are shown here;
-there will be more to come. Some options might not work on Windows.
+packing, and version information.  Some options might not work on Windows.
 Many of these commands are best used when setting up the build
 (i.e. do a --clean option first).
 
@@ -356,10 +353,13 @@ Many of these commands are best used when setting up the build
  --option-help       Show the project options available. They can be used
                      as "-Doption=value" when using meson directly
                      (instead of through the work.sh script).
-
 E_O_F
       exit 0
 }
+
+#******************************************************************************
+#  PDF
+#------------------------------------------------------------------------------
 
 make_pdf () {
    cd doc/latex
@@ -367,8 +367,10 @@ make_pdf () {
    cd ../..
 }
 
+#******************************************************************************
 # Remove all the sub-directories of ./build. All build products
 # go into a sub-directory.
+#------------------------------------------------------------------------------
 
 clean_build () {
 
@@ -494,6 +496,15 @@ make_projects () {
    cd ..
 }
 
+#******************************************************************************
+# Check for root, then install. We could let meson prompt the user
+# to automatically become root. Note that there are two possible locations
+# for the library and pkgconfig to be installed on Linux:
+#
+#     -  /usr/local/lib/
+#     -  /usr/local/lib/x86_64-linux-gnu/
+#------------------------------------------------------------------------------
+
 install_project () {
    USERID=$(id -u)
    if test "$USERID" = 0 ; then
@@ -506,6 +517,16 @@ install_project () {
    fi
 }
 
+#******************************************************************************
+# Uninstallation is odd with Meson. The following does not work. And
+# the call to ninja does not remove some directories.
+#
+#     cd build
+#     meson --internal uninstall
+#     cd ..
+#
+#------------------------------------------------------------------------------
+
 uninstall_project () {
    USERID=$(id -u)
    if test "$USERID" = 0 ; then
@@ -515,7 +536,7 @@ uninstall_project () {
          rm -rf "$INSTALL_PREFIX/include/$SEQ66_LIBRARY"
          rm -rf "$INSTALL_PREFIX/$INSTALL_LIBDIR/$POTEXT_LIBRARY"
          rm -rf "$INSTALL_PREFIX/share/doc/$SEQ66"
-#        rm -rf "$INSTALL_PREFIX/man/man1/$SEQ66.1"
+         rm -rf "$INSTALL_PREFIX/man/man1/$SEQ66.1"
       fi
    else
       echo "UID $USERID. We want you as root to uninstall the seq66 library..."
@@ -533,7 +554,7 @@ get_options $*
 #------------------------------------------------------------------------------
 
 if test "$DOVERSION" = "yes" ; then
-   echo "Seq66 version $SEQ66_LIBRARY_VERSION $SEQ66_SCRIPT_EDIT_DATE"
+   show_version
    exit 0
 fi
 
@@ -560,6 +581,7 @@ if test "$DODIST" = "yes" ; then
 
 fi
 
+#******************************************************************************
 # Make the PDF, then exit. We might get doc/latex/tex/meson.build
 # to do this work at some point, but for now we use a script in
 # the doc/latex directory.
@@ -569,6 +591,7 @@ fi
 #    ENABLE_DOCS="-Ddocs=true"
 #    echo "Will rebuild the Seq66 User Manual...."
 # fi
+#------------------------------------------------------------------------------
 
 if test "$DOMAKEPDF" = "yes" ; then
    make_pdf
@@ -595,7 +618,9 @@ fi
 
 MOPTS="--buildtype=$BUILD_TYPE $POTEXTDEF $PMIDIDEF $BUILD_DIR $NOJACK $NOJACKSESSION $NOJACKTRANSPORT $NONSM"
 
+#******************************************************************************
 # --setup. This section does only a setup, then exits.
+#------------------------------------------------------------------------------
 
 if test "$DOSETUP" = "yes"; then
    if test "$DODEBUG" = "yes" ; then
@@ -608,19 +633,20 @@ if test "$DOSETUP" = "yes"; then
    exit 0
 fi
 
+#******************************************************************************
 # --cross. This function sets options appropriate for Windows builds,
 #          does the build, and exits.
 #
 # EXPERIMENTAL.
 #
 # Currently does not support the Potext library or a debug build.
+#------------------------------------------------------------------------------
 
 if test "$DOCROSS" = "yes" ; then
 
    CROSSOPTS="-Dportmidi=true -Dpotext=false -Djack=false -Dnsm=false"
    CROSSFILE="--cross-file meson.mingw.cross"
    meson setup $BUILD_DIR --buildtype=$BUILD_TYPE $CROSSOPTS $CROSSFILE
-#  $ENVSET meson setup $BUILD_DIR --buildtype=$BUILD_TYPE $CROSSOPTS $CROSSFILE
    if test $? = 0 ; then
       meson compile -C $BUILD_DIR > make.log
       if test $? = 0 ; then
@@ -643,18 +669,21 @@ if test "$DOMAKE" = "yes" ; then
    exit 0
 fi
 
+#******************************************************************************
 # Check for root, then install. We could let meson prompt the user
 # to automatically become root. Note that there are two possible locations
 # for the library and pkgconfig to be installed on Linux:
 #
 #     -  /usr/local/lib/
 #     -  /usr/local/lib/x86_64-linux-gnu/
+#------------------------------------------------------------------------------
 
 if test "$DOINSTALL" = "yes" ; then
    install_project
    exit 0
 fi
 
+#******************************************************************************
 # Uninstallation is odd with Meson. The following does not work. And
 # the call to ninja does not remove some directories.
 #
@@ -663,9 +692,7 @@ fi
 #     cd ..
 #
 # Note that there are no man pages yet.
-#
-# We could 
-
+#------------------------------------------------------------------------------
 
 if test "$DOUNINSTALL" = "yes" ; then
    uninstall_project

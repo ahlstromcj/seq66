@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2025-02-01
+ * \updates       2026-05-20
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -74,6 +74,12 @@ extern bool file_write_string
     const std::string & text
 );
 extern std::string file_read_string (const std::string & oldfile);
+extern bool file_read_lines
+(
+    const std::string & oldfile,
+    tokenization & lines,
+    bool trimlines = false
+);
 extern bool file_close
 (
     std::FILE * filehandle,

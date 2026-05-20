@@ -6,10 +6,8 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-05-11
-# \updates     2026-05-19
+# \updates     2026-05-20
 # \license     $XPC_SUITE_GPL_LICENSE$
-#
-# NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
 #
 #  CURRENTLY WE HAVE NOT GOT THE CROSS BUILD WORKING WITH QT.
 #

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2025-02-20
+ * \updates       2026-05-20
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -217,7 +217,7 @@ next_bracketed_string
  *      The string to be massaged.
  *
  * \return
- *      The string without quotes.  If it didn't have any, the string
+ *      The string without quotes. If it didn't have any, the string
  *      should be unchanged.
  */
 
@@ -1301,12 +1301,13 @@ tokenize_stanzas
 }
 
 /**
- *  Tokenizes a string containing a pair of numbers separated by either spaces
- *  or an 'x'.  Useful in grabbing dimensions.  Handles integers or basic
- *  floats.  It assumes only a single delimiter between each token:
+ *  Tokenizes a string containing a pair of numbers separated by either spaces,
+ *  an '=', an 'x', etc.. Useful in grabbing dimensions. Handles integers or
+ *  basic floats.  It assumes only a single delimiter between each token:
  *
  *      -   "1.0x2.0"
  *      -   "1.0 2.0"
+ *      -   "name = value""
  *
  *  No matter what the delimiter, spaces are trimmed from each token.
  *
@@ -1314,7 +1315,8 @@ tokenize_stanzas
  *      Provides the string to be parsed into tokens.
  *
  * \param delimiters
- *      The character(s) separating the tokens. Defaults to a Space character.
+ *      The character(s) separating the tokens. Defaults to a space
+ *      or tab character.
  *
  * \return
  *      Returns the number of tokens converted in a string vector.
@@ -1328,38 +1330,185 @@ tokenize
 )
 {
     tokenization result;
-    std::size_t previous = source.find_first_not_of(delimiters);
-    while (previous != std::string::npos)
+    if (! source.empty())
     {
-        std::size_t current = source.find_first_of(delimiters, previous);
-        if (current == std::string::npos)
+        std::size_t previous { source.find_first_not_of(delimiters) };
+        while (previous != std::string::npos)
         {
-            std::string temp = trim(source.substr(previous));
-            result.push_back(temp);
-            break;
-        }
-        else
-        {
-            std::string temp = trim(source.substr(previous, current-previous));
-            result.push_back(temp);
-            previous = source.find_first_not_of(delimiters, current);
+            std::size_t current
+            {
+                source.find_first_of(delimiters, previous)
+            };
+            if (current == std::string::npos)
+            {
+                std::string temp { trim(source.substr(previous)) };
+                result.push_back(temp);
+                break;
+            }
+            else
+            {
+                std::string temp
+                {
+                    trim(source.substr(previous, current-previous))
+                };
+                result.push_back(temp);
+                previous = source.find_first_not_of(delimiters, current);
+            }
         }
     }
     return result;
 }
 
 /**
+ *  Inserts a tokenpair into the destination map.
+ *
+ * \param destination
+ *      Provides the map into which to insert a tokenpair.
+ *
+ * \param t
+ *      Contains one (and hopefully, two) strings to be made into
+ *      the tokenpair.
+ *
+ * \return
+ *      Returns true if the insertion succeeded. The only chance of
+ *      failure would be a duplicate t[0].
+ */
+
+bool
+add_tokenpair (tokenpairs & destination, const tokenization & t)
+{
+    std::string t1 { t[0] };
+    std::string t2;
+    if (t.size() == 2)
+    {
+        t2 = t[1];                      /* t2 = strip_quotes(t2) ???        */
+    }
+
+    auto p { std::make_pair(t1, t2) };
+    auto r { destination.insert(p) };
+    return r.second;
+}
+
+/**
+ *  This function takes a tokenization vector, such as obtained by
+ *  obtained by file_read_lines().
+ *
+ *  Iterates through a vector of "lines", that is, strings that have been
+ *  trimmed and had the newlines remove. This makes for an easier
+ *  implementation.
+ *
+ *  An example of such a source string would be one returned by
+ *  this function (on Linux): s = file_read_string("/etc/os-release").
+ *
+ *      PRETTY_NAME="Debian GNU/Linux forky/sid"
+ *      NAME="Debian GNU/Linux"
+ *      VERSION_CODENAME=forky
+ *      ID=debian
+ *      HOME_URL="https://www.debian.org/"
+ *      SUPPORT_URL="https://www.debian.org/support"
+ *      BUG_REPORT_URL="https://bugs.debian.org/"
+ *
+ * \param source
+ *      Provides the string to be parsed into lines, then tokenpairs.
+ *
+ * \param delimiters
+ *      The character(s) separating the tokens. Defaults to a space or
+ *      tab character, but the caller likely wants to use an equal-sign.
+ *
+ * \return
+ *      Returns the number of tokens converted in a string vector.
+ */
+
+tokenpairs
+tokenize_pairs
+(
+    const tokenization & source,
+    const std::string & delimiters
+)
+{
+    tokenpairs result;
+    if (! source.empty())
+    {
+        for (const auto & line : source)
+        {
+            if (line.empty())
+            {
+                continue;                           /* break */
+            }
+            else
+            {
+                tokenization t
+                {
+                    tokenize_quoted(line, delimiters)
+                };
+                if (! add_tokenpair(result, t))
+                    break;
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ *  This function looks up the first string in a toke pair, and, if found
+ *  returns the second string.
+ *
+ * \param storage
+ *      The map of "key name : value" pairs to search.
+ *
+ * \param target
+ *      The first string, or "key name" to look up.
+ *
+ * \return
+ *      Returns the second string, or "value". If empty, either the target
+ *      was not found, or the "value" really was empty.
+ */
+
+std::string
+lookup_token_pair
+(
+    const tokenpairs & storage,
+    const std::string & target
+)
+{
+    std::string result;
+    if (auto srch = storage.find(target); srch != storage.end())
+        result = srch->second;
+
+    return result;
+}
+
+/**
  *  This function makes values in quotes into a single token, and it uses the
- *  space and tab to delimit tokens.  Otherwise it is like tokenize() above.
+ *  space and tab to delimit tokens.
+ *
+ *  Otherwise it is like tokenize() above.
  *  It handles only double quotes, which should match.  We don't want to watch
  *  out for apostrophes.  The quotes are stripped.
+ *
+ * \param source
+ *      Provides the string to be parsed into tokens.
+ *
+ * \param delimiters
+ *      The character(s) separating the tokens. Defaults to a space or
+ *      tab character. This means that, by default, spaces cannot appear
+ *      in a quoted string if they are to be removed. Other values, such
+ *      as "=" are more appropriate, as long as they do not appear
+ *      inside double-quotes.
+ *
+ * \return
+ *     Returns the set of unquoted tokens.
  */
 
 tokenization
-tokenize_quoted (const std::string & source)
+tokenize_quoted
+(
+    const std::string & source,
+    const std::string & delimiters
+)
 {
     tokenization result;
-    tokenization temp = tokenize(source);
+    tokenization temp = tokenize(source, delimiters);
     if (! temp.empty())
     {
         bool quotes = false;

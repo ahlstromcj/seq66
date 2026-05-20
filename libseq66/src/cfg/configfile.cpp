@@ -381,7 +381,7 @@ configfile::get_variable
             ! done; done = ! next_data_line(file)
         )
         {
-            if (! line().empty())                   /* any value in section?    */
+            if (! line().empty())               /* any value in section?    */
             {
                 std::string value = extract_variable(line(), variablename);
                 if (! is_questionable_string(value))

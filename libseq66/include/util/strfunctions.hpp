@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-02-20
+ * \updates       2026-05-20
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -197,7 +197,26 @@ extern tokenization tokenize
     const std::string & source,
     const std::string & delimiters = " \t"
 );
-extern tokenization tokenize_quoted (const std::string & source);
+extern bool add_tokenpair
+(
+    tokenpairs & destination,
+    const tokenization & t
+);
+extern tokenpairs tokenize_pairs
+(
+    const tokenization & source,
+    const std::string & delimiters = " \t"
+);
+extern std::string lookup_token_pair
+(
+    const tokenpairs & storage,
+    const std::string & target
+);
+extern tokenization tokenize_quoted
+(
+    const std::string & source,
+    const std::string & delimiters = " \t"
+);
 extern std::string simplify (const std::string & source);
 extern std::wstring widen_string (const std::string & source);
 extern std::string word_wrap

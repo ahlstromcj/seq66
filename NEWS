@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.25
 Chris Ahlstrom
-2015-07-10 to 2026-05-16
+2015-07-10 to 2026-05-20
 
 # Change Log
 
-## [0.99.25] - 2026-05-16
+## [0.99.25] - 2026-05-20
 
 A major refactoring of Seq66 to use Meson and qmake, while ditching
 the overly-cumbersome autoconf build. Replaced bootstrap with
@@ -19,12 +19,18 @@ self-contained.
 
 ### Added
 
+-   The lib66 library project is downloaded automatically as a
+    Meson subproject. It contains a few useful types and macros
+    incorporated into new code.
 -   Worked on documentation and scripts to build the Windows version
     on Linux. However, it has proven difficult to get all the Qt
     code and tools to work with Mingw.
     -   meson.mingw.cross
     -   contrib/scripts/mingw-qt-build.sh
     -   contrib/notes/mingw-qt-build.text
+-   Build info. Added file and string processing to use with the
+    file /etc/os-release (if present on the computer) to show
+    the "pretty name" of the build distro.
 
 ### Changed
 
