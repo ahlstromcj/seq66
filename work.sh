@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-20
+# \update         2026-05-21
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -33,7 +33,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-20"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-21"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -78,6 +78,7 @@ DOPOTEXT="no"           # --potext. Use translation [NOT YET SUPPORTED].
 DORELEASE="yes"         # --release. as opposed to debug.
 DOREMAKE="no"           # currently UNUSED
 DOSETUP="no"            # --setup. Do the setup and then exit.
+DOSTATIC="yes"          # Not an option for Seq66... Mandatory.
 DOUNINSTALL="no"        # --uninstall. Like --install, requires sudo/root.
 DOUPDATE="no"           # --update. Force a subproject update.
 DOVERSION="no"          # --version. Double duh!
@@ -381,7 +382,7 @@ clean_build () {
 
    rm -f doc/dox/*.log
    rm -f doc/latex/*.log
-   echo "Build products removed from the seq66/build sub-directories."
+   echo "Build products removed from the $SEQ66/build sub-directories."
    rm -rf subprojects/liblib66/
    rm -rf subprojects/potext/          # available, but code not prep'ed
    rm -rf subprojects/libcfg66         # not yet in use
@@ -447,7 +448,7 @@ make_pack () {
 }
 
 make_projects () {
-   echo "Making all seq66 libraries and application..."
+   echo "Making all $SEQ66 libraries and application..."
    NINJA_EXISTS="no"
    if test -f "$MAKEFILE" ; then
       NINJA_EXISTS="yes"
@@ -509,11 +510,11 @@ install_project () {
    USERID=$(id -u)
    if test "$USERID" = 0 ; then
       cd $BUILD_DIR
-      echo "Installing the seq66 library..."
+      echo "Installing the $SEQ66 library..."
       meson install
       cd ..
    else
-      echo "UID $USERID. We want you as root to install the seq66 library..."
+      echo "UID $USERID. We want you as root to install the $SEQ66 library..."
    fi
 }
 
@@ -530,7 +531,7 @@ install_project () {
 uninstall_project () {
    USERID=$(id -u)
    if test "$USERID" = 0 ; then
-      echo "Uninstalling the seq66 library..."
+      echo "Uninstalling the $SEQ66 library..."
       ninja -C $BUILD_DIR uninstall
       if test "$PLATFORM" = "UNIX" ; then
          rm -rf "$INSTALL_PREFIX/include/$SEQ66_LIBRARY"
@@ -539,7 +540,7 @@ uninstall_project () {
          rm -rf "$INSTALL_PREFIX/man/man1/$SEQ66.1"
       fi
    else
-      echo "UID $USERID. We want you as root to uninstall the seq66 library..."
+      echo "UID $USERID. We want you as root to uninstall the $SEQ66 library..."
    fi
 }
 
