@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-20
+# \update         2026-05-24
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -33,7 +33,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-20"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-24"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -49,6 +49,7 @@ EXTRAFLAGS=""
 INSTALL_LIBDIR="lib"                # "lib/x86_64-linux-gnu" on Debian
 INSTALL_PREFIX="/usr/local"         # "/usr", what about Windows?
 MAKEFILE="$BUILD_DIR/build.ninja"
+MAKELOG="make.log"
 PLATFORM="UNIX"
 PMIDIDEF=""
 POTEXTDEF=""
@@ -114,6 +115,7 @@ get_options () {
                DOCROSS="yes"
                BUILD_DIR="$BASE_BUILD_DIR/cross"
                MAKEFILE="$BUILD_DIR/build.ninja"
+               MAKELOG="$BUILD_DIR/make.log"
                CROSSENVSET="PKG_CONFIG_PATH=$CROSS_PKG_PATH:$PKG_CONFIG_PATH"
                export $CROSSENVSET
                echo "CROSSENVSET: PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
@@ -473,13 +475,9 @@ make_projects () {
    # present on older ninjas, so we use -v here.
    #
    # Can't add this at the end, it seems to break ninja's error detection.
-   #
-   #     echo "# vim: ft=sh" >> make.log
-   #
-   # This makes output *not* go to make.log: ninja -v &> make.log
 
    cd $BUILD_DIR
-   ninja -v > make.log
+   ninja -v > $MAKELOG
    if test $? = 0 ; then
       if test "$DODEBUG" = "yes" ; then
          echo "Debug build in $BUILD_DIR succeeded."
@@ -488,9 +486,9 @@ make_projects () {
       fi
    else
       if test "$DODEBUG" = "yes" ; then
-         echo "Debug build failed, check $BUILD_DIR/make.log for errors."
+         echo "Debug build failed, check $MAKELOG for errors."
       else
-         echo "Release build failed, check $BUILD_DIR/make.log for errors."
+         echo "Release build failed, check $MAKELOG for errors."
       fi
    fi
    cd ..
@@ -648,12 +646,12 @@ if test "$DOCROSS" = "yes" ; then
    CROSSFILE="--cross-file meson.mingw.cross"
    meson setup $BUILD_DIR --buildtype=$BUILD_TYPE $CROSSOPTS $CROSSFILE
    if test $? = 0 ; then
-      meson compile -C $BUILD_DIR > make.log
+      meson compile -C $BUILD_DIR > $MAKELOG
       if test $? = 0 ; then
          echo "Cross-build in $BUILD_DIR succeeded."
          exit 0
       else
-         echo "Cross-build failed, check $BUILD_DIR/make.log for errors."
+         echo "Cross-build failed, check $MAKELOG for errors."
          exit 1
       fi
    fi
