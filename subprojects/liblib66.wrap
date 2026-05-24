@@ -17,7 +17,6 @@
 
 [wrap-git]
 
-# url = https://github.com/ahlstromcj/lib66.git
 url = git@github.com:ahlstromcj/lib66.git
 revision = head
 depth = 1
