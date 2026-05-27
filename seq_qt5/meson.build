@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-26
-# \updates     2026-05-08
+# \updates     2026-05-27
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -233,10 +233,10 @@ qt_include_dir = qt_dep.get_variable(
    )
 message(qtname + ' headers are in: ' + qt_include_dir)
 
-seq_moc_defines  = []
+seq_moc_defines  = [ ]
 seq_moc_files = qtimport.compile_moc(
    headers : [ seq_moc_headers, seq_q_object_headers ],
-   extra_args: seq_moc_defines #,
+   extra_args : seq_moc_defines
    )
 
 seq_ui_files = qtimport.compile_ui(

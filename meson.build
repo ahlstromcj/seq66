@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-05-22
+# \updates     2026-05-27
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the seq66 application and library.
@@ -238,6 +238,7 @@ app_build_issue      = 'Unknown'
 app_build_os         = 'Unknown'
 app_engine           = 'unknown'
 
+os_cygwin            = false
 os_darwin            = false
 os_freebsd           = false
 os_linux             = false
@@ -281,6 +282,11 @@ elif host_machine.system() == 'windows'
    os_win32          = true
    use_win32         = true
    use_portmidi      = true
+elif host_machine.system() == 'cygwin'       # MSYS2 sets this
+   app_build_issue   = 'Cygwin'
+   app_build_os      = 'Cygwin'
+   app_engine        = 'portmidi'
+   os_cygwin         = true
 elif host_machine.system() == 'linux'        # portmidi vs rtmidi, set below
    app_build_issue   = 'Linux'
    app_build_os      = 'Linux'
@@ -651,7 +657,7 @@ system_depends = [ alsa_dep, jack_dep, threads_dep ]     # liblo?
 
 endif
 
-if os_win32
+if os_win32 or os_cygwin
 
 # Yields a pkg-config error
 # winmm_dep = dependency('winmm')
@@ -848,12 +854,14 @@ endif
          'ChangeLog',
          'README.md',
          ),
-      install_dir : doc_install_dir
+      install_dir : doc_install_dir,
+      install_tag : 'data'
       )
 
    install_subdir(
       'licenses',
-      install_dir : doc_install_dir
+      install_dir : doc_install_dir,
+      install_tag : 'data'
    )
 
 #-----------------------------------------------------------------------------

@@ -1,7 +1,13 @@
 TO DO for Seq66 0.99.25
 Chris Ahlstrom
-2019-04-13 to 2026-05-19
+2019-04-13 to 2026-05-27
 
+    -   In qmake on Windows:
+        -   filefunctions.cpp:932:33: error: 'getline' was not declared in this
+            scope: ssize_t count { getline(&destination, &maxim, input) };
+        -   ninja: error: '../../C:/msys64/mingw64/bin/moc', needed by
+            'Seq66qt5/qseq66.exe.p/moc_qlfoframe.cpp', missing and no
+            known rule to make it
     -   Changed the build system to Meson. Bugs so far:
         -   Update work.sh with more bootstrap options. Moot at the
             moment: --port-refresh Enables port-refresh feature for JACK.

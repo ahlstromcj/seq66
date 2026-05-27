@@ -10,14 +10,14 @@
 #
 # Errors in Git Bash on Windows. Try SSH instead.
 #
-# url = https://github.com/ahlstromcj/lib66.git
-# url = git@github.com/ahlstromcj/lib66.git
+# MSYS2:       url = https://github.com/ahlstromcj/lib66.git
+# Git Bash:    url = git@github.com/ahlstromcj/lib66.git
 #
 #----------------------------------------------------------------------------
 
 [wrap-git]
 
-url = git@github.com:ahlstromcj/lib66.git
+url = https://github.com/ahlstromcj/lib66.git
 revision = head
 depth = 1
 
