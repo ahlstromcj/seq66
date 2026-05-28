@@ -5,7 +5,7 @@ Chris Ahlstrom
     -   In qmake on Windows:
         -   ninja: error: '../../C:/msys64/mingw64/bin/moc', needed by
             'Seq66qt5/qseq66.exe.p/moc_qlfoframe.cpp', missing and no
-            known rule to make it. [moc is in C:/mingw64/bin/moc]
+            known rule to make it. [moc is in C:/msys64/mingw64/bin/moc]
             $ pacman -S mingw-w64-x86_64-qt5-tools
     -   Changed the build system to Meson. Bugs so far:
         -   Update work.sh with more bootstrap options. Moot at the

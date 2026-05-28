@@ -46,6 +46,7 @@ contains (CONFIG, rtmidi) {
 }
 
 DEFINES += "SEQ66_QMAKE_RULES=1"
+DEFINES += "SEQ66_QMAKE_RULES=1"
 
 HEADERS += include/seq66_features.h \
  include/seq66_features.hpp \

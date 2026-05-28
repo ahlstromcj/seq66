@@ -45,6 +45,7 @@ BASE_BUILD_DIR="build"              # 'seq66/build'
 BUILD_DIR="$BASE_BUILD_DIR/cc"      # "native" compiler (CC/CXX) build
 BUILD_TYPE="release"
 CROSS_PKG_PATH="/usr/lib/pkgconfig" # TO DO TO DO
+CROSSFILENAME="meson.mingw.cross"
 EXTRAFLAGS=""
 MAKEFILE="$BUILD_DIR/build.ninja"
 MAKELOG="make.log"
@@ -118,6 +119,24 @@ get_options () {
                CROSSENVSET="PKG_CONFIG_PATH=$CROSS_PKG_PATH:$PKG_CONFIG_PATH"
                export $CROSSENVSET
                echo "CROSSENVSET: PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
+               ;;
+
+            --cross-file)
+               DOMAKE="yes"
+               DOCROSS="yes"
+               BUILD_DIR="$BASE_BUILD_DIR/cross"
+               MAKEFILE="$BUILD_DIR/build.ninja"
+               MAKELOG="$BUILD_DIR/make.log"
+               CROSSENVSET="PKG_CONFIG_PATH=$CROSS_PKG_PATH:$PKG_CONFIG_PATH"
+               export $CROSSENVSET
+               echo "CROSSENVSET: PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
+               shift
+               case $1 in
+                  -*)
+                     continue
+                  ;;
+               esac
+               CROSSFILENAME="$1"
                ;;
 
             --clean)

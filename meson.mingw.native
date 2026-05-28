@@ -1,0 +1,34 @@
+#*****************************************************************************
+# meson.mingw.native (seq66)
+#-----------------------------------------------------------------------------
+##
+# \file        meson.mingw.native
+# \library     seq66
+# \author      Chris Ahlstrom
+# \date        2026-05-28
+# \updates     2026-05-28
+# \license     $XPC_SUITE_GPL_LICENSE$
+#
+#  If building a Windows executable on Linux (or similar cross-compile),
+#  Meson needs to know where the host's moc, uic, rcc, and qmake are
+#  located. Onwe must provide a --native-file alongside the --cross-file.
+#  Create a native file that points specifically to the host’s Qt tools.
+#
+#-----------------------------------------------------------------------------
+
+[constants]
+
+qt_bin_dir = '/usr/bin/'
+
+[binaries]
+
+moc = qt_bin_dir + 'moc'
+rcc = qt_bin_dir + 'rcc'
+uic = qt_bin_dir + 'uic'
+qmake = qt_bin_dir + 'qmake'
+
+#****************************************************************************
+# meson.mingw.native
+#----------------------------------------------------------------------------
+# vim: ts=3 sw=3 ft=dosini
+#----------------------------------------------------------------------------

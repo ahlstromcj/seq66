@@ -5,7 +5,7 @@
 # \file            DIR_COLORS
 # \author          Chris Ahlstrom
 # \date            2008-02-26
-# \updates         2026-05-13
+# \updates         2026-05-28
 # \version         $Revision$
 # \license         $XPC_SUITE_GPL_LICENSE$
 #
@@ -397,7 +397,10 @@ EXEC 01;32
 .s 00;36
 .sl 00;36
 
-# Project files and configuration files, thin and dark red
+# Project files and configuration files, bold bright yellow.
+#
+# Note: the meson file extension supported here are build, options,
+# cross, and native.
 
 .ac 01;33
 .am 01;33
@@ -418,6 +421,8 @@ EXEC 01;32
 .ini 01;33
 .keymap 01;33
 .mutes 01;33
+.mutes 01;33
+.native 01;33
 .notemap 01;33
 .opts 01;33
 .options 01;33
