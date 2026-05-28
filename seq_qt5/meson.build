@@ -37,7 +37,13 @@
 #
 # Windows (MingW):
 #
-#     TODO
+#     In progress, somewhat works in MSYS2, but not in Git Bash or when
+#     cross-building on Linux.
+#
+# Sub-directories:
+#
+#     Rather than using subdir() for src, include, and forms, we put
+#     all the definitions here.
 #
 #-----------------------------------------------------------------------------
 

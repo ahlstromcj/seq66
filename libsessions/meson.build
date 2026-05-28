@@ -30,7 +30,7 @@ if seq66_use_potext
    libsessions_build = static_library(
       libsessions_library,
       libsessions_sources,
-      install : false,  # not seq66_subproj; install_dir : seq66_libdir;
+      install : false,
       c_args : build_args,
       cpp_args : build_args,
       dependencies : [
@@ -47,7 +47,7 @@ else
    libsessions_build = static_library(
       libsessions_library,
       libsessions_sources,
-      install : false,  # not seq66_subproj; install_dir : seq66_libdir;
+      install : false,
       c_args : build_args,
       cpp_args : build_args,
       dependencies : [

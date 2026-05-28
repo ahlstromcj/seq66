@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-05-16
-# \updates     2026-05-17
+# \updates     2026-05-28
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -35,7 +35,7 @@
 
 message('Processing nsis...')
 
-seq66_makensis = find_program('makensis', required : true)
+seq66_makensis = find_program('makensis', required : false)
 if seq66_makensis.found()
    seq66_nsis_script = '@SOURCE_ROOT@' / 'nsis' / 'MesonSetup.nsi'
    run_target('nsisinstaller',

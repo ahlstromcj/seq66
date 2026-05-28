@@ -31,7 +31,7 @@ if seq66_use_potext
       libseq_portmidi_library,
       seq66_project_base,
       seq_portmidi_sources,
-      install : false,  # not seq66_subproj; install_dir : seq66_libdir;
+      install : false,
       c_args : build_args,
       cpp_args : build_args,
       dependencies : [
@@ -48,7 +48,7 @@ else
    seq_portmidi_build = static_library(
       libseq_portmidi_library,
       seq_portmidi_sources,
-      install : false,  # not seq66_subproj; install_dir : seq66_libdir;
+      install : false,
       c_args : build_args,
       cpp_args : build_args,
       dependencies : [

@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.99.25 and above
 Chris Ahlstrom
-2015-09-10 to 2026-05-09
+2015-09-10 to 2026-05-29
 
 Introduction:
 
@@ -10,7 +10,8 @@ Introduction:
         Qt 6 is used by default, if available.
     -   Meson can also be used for the build on Windows. New scripting
         has been added to build the NSIS Seq66 Windows installer on
-        Linux.
+        Linux. Currently, using Git Bash has issue because of the old
+        version of MingW, but using MSYS2 works.
     -   The Meson cross-file, for building the Windows version on Linux,
         does not yet work.
     -   Also see INSTALL.seq66.on.Ubuntu.md for Ubuntu Studio installs.
@@ -73,7 +74,11 @@ Linux Distro Package (seq66):
     one user installs it on a Raspberry Pi 3b+ running Raspian:
 
         Installed it from from KXStudio repo using Muon:
+
         https://kde.org/applications/en/system/org.kde.muon
+
+    For Arch Linux, see 'distros/arch/README'. Currently this is the
+    pre-Meson version, 0.99.24.
 
 Meson Build and Install:
 

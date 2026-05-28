@@ -8,14 +8,14 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-24
+# \update         2026-05-28
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
 #     The above is modified by the following to remove even the mild GPL
 #     restrictions:
 #
-#     Use this script in any manner whatsoever.  You don't even need to give
+#     Use this script in any manner whatsoever. You don't even need to give
 #     me any credit.  However, keep in mind the value of the GPL in keeping
 #     software and its descendant modifications available to the community for
 #     all time.
@@ -33,7 +33,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-24"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-28"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -46,8 +46,8 @@ BUILD_DIR="$BASE_BUILD_DIR/cc"      # "native" compiler (CC/CXX) build
 BUILD_TYPE="release"
 CROSS_PKG_PATH="/usr/lib/pkgconfig" # TO DO TO DO
 EXTRAFLAGS=""
-INSTALL_LIBDIR="lib"                # "lib/x86_64-linux-gnu" on Debian
-INSTALL_PREFIX="/usr/local"         # "/usr", what about Windows?
+# INSTALL_LIBDIR="lib"                # "lib/x86_64-linux-gnu" on Debian
+# INSTALL_PREFIX="/usr/local"         # "/usr", what about Windows?
 MAKEFILE="$BUILD_DIR/build.ninja"
 MAKELOG="make.log"
 PLATFORM="UNIX"
@@ -502,14 +502,18 @@ make_projects () {
 #
 #     -  /usr/local/lib/
 #     -  /usr/local/lib/x86_64-linux-gnu/
+#
+# What's weird is we seem to need "meson install", yet need
+# "ninja ... uninstall".
+#
 #------------------------------------------------------------------------------
 
 install_project () {
    USERID=$(id -u)
    if test "$USERID" = 0 ; then
       cd $BUILD_DIR
-      echo "Installing the $SEQ66 library..."
-      meson install
+      echo "Installing the $SEQ66 application, data, and documents..."
+      meson install                    # ninja -C $BUILD_DIR install
       cd ..
    else
       echo "UID $USERID. We want you as root to install the $SEQ66 library..."
@@ -529,14 +533,14 @@ install_project () {
 uninstall_project () {
    USERID=$(id -u)
    if test "$USERID" = 0 ; then
-      echo "Uninstalling the $SEQ66 library..."
-      ninja -C $BUILD_DIR uninstall
-      if test "$PLATFORM" = "UNIX" ; then
-         rm -rf "$INSTALL_PREFIX/include/$SEQ66_LIBRARY"
-         rm -rf "$INSTALL_PREFIX/$INSTALL_LIBDIR/$POTEXT_LIBRARY"
-         rm -rf "$INSTALL_PREFIX/share/doc/$SEQ66"
-         rm -rf "$INSTALL_PREFIX/man/man1/$SEQ66.1"
-      fi
+      echo "Uninstalling the $SEQ66 application, data, and documents..."
+      ninja -C $BUILD_DIR uninstall    # meson uninstall
+#     if test "$PLATFORM" = "UNIX" ; then
+#        rm -rf "$INSTALL_PREFIX/include/$SEQ66_LIBRARY"
+#        rm -rf "$INSTALL_PREFIX/$INSTALL_LIBDIR/$POTEXT_LIBRARY"
+#        rm -rf "$INSTALL_PREFIX/share/doc/$SEQ66"
+#        rm -rf "$INSTALL_PREFIX/man/man1/$SEQ66.1"
+#     fi
    else
       echo "UID $USERID. We want you as root to uninstall the $SEQ66 library..."
    fi

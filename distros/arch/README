@@ -1,37 +1,29 @@
 Seq66 Arch Linux Package Build
 Chris Ahlstrom
-2020-07-20 to 2021-05-01
+2020-07-20 to 2026-05-28
 
 The directory "arch/package" holds a copy of the package build files for Arch
-Linux.
+Linux, as retrieved from the Arch User Repository (AUR).
 
-TO BE DETERMINED:
+The current version of this package is 0.99.24, the last build before
+we switch to the Meson build system.
 
-	These files may be updated from the original build files via:
+After all the "Dependences" below are installed, one can descend to
+"arch/package" or do a 'git clone https://aur.archlinux.org/seq66.git'.
 
-    git subtree pull --prefix arch/package https://aur.archlinux.org/seq66-git.git master --squash
+Once in the same directory as the PKGBUILD file, then run, as a normal
+user:
 
-This README also provides some handy links to the Arch build of Seq66.
+    $ makepkg -si
 
-Package URL:
+URLs:
 
     https://aur.archlinux.org/packages/seq66-git/
-
-Arch Package Guidelines:
-
     https://wiki.archlinux.org/index.php/VCS_package_guidelines
-
-GitHub issues:
-
-    TBD
 
 Discussions:
 
     https://www.linuxmusicians.com/viewtopic.php?f=4&t=15133&p=67807#p67807
-
-Working with git subtree:
-
-    https://www.atlassian.com/git/articles/alternatives-to-git-submodule-git-subtree
 
 Dependencies:
 

@@ -31,7 +31,7 @@ if seq66_use_potext
       libseq66_library,
       libseq66_sources,
       seq66_git_tag,    # generated earlier, see seq66/include/meson.build
-      install : false,  # not seq66_subproj; install_dir : seq66_libdir;
+      install : false,
       c_args : build_args,
       cpp_args : build_args,
       dependencies : [
@@ -49,7 +49,7 @@ else
       libseq66_library,
       libseq66_sources,
       seq66_git_tag,
-      install : false,  # not seq66_subproj; install_dir : seq66_libdir;
+      install : false,
       c_args : build_args,
       cpp_args : build_args,
       dependencies : [

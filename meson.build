@@ -889,11 +889,12 @@ subdir('data')
 #-----------------------------------------------------------------------------
 #  subdir('man')
 #
-#  No need for a meson.build fo these two
+#  No need for a meson.build file for the man pages.
 #
 #  if os_win32
 #     seq66_install_dir = ???    # currently we still use the NSIS installer
 #  endif
+#
 #-----------------------------------------------------------------------------
 
    seq66_man_pages = files(
@@ -908,9 +909,7 @@ subdir('data')
 
    install_man(seq66_man_pages)
 
-### if os_win32
    subdir('nsis')
-### endif
 
 #-----------------------------------------------------------------------------
 # Info
