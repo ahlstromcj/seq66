@@ -1,0 +1,114 @@
+Meson and Qt for Cross-Compiling
+Chris Ahlstrom
+2026-05-13 to 2026-05-28
+
+Also see mingw-qt-build.text.
+
+To use an alternate Qt installation with Meson, configure your build directory
+by prepending the path to the desired qmake or pkg-config files to the PATH
+environment variable. Meson will detect this alternate installation for
+import('qt5') or dependency('qt5').
+
+Method 1: Setting PATH for qmake (Recommended)
+
+This approach tells Meson to use a specific Qt installation by pointing to its
+bin directory.
+
+    $ mkdir build_alternate
+    $ cd build_alternate
+    $ PATH=/path/to/custom/qt/bin:$PATH meson ..
+    $ ninja
+
+To use an alternate Qt installation with Meson via pkg-config, set the
+PKG_CONFIG_PATH environment variable to point to the custom Qt installation
+pkgconfig directory before running the configure command. Alternatively, use a
+native file to specify the paths, or manipulate the PATH environment variable
+to put the custom Qt bin folder first.
+
+Here is the recommended approach to force Meson to use an alternate Qt
+pkg-config setup:
+
+1. Identify the Custom pkgconfig Directory
+
+    Locate the folder containing the .pc files for your custom Qt installation
+    (e.g., /opt/qt6/lib/pkgconfig or ~/Qt/6.5/gcc_64/lib/pkgconfig).
+
+2. Configure Meson with PKG_CONFIG_PATH
+
+    Run the Meson setup command while setting the PKG_CONFIG_PATH environment
+    variable. This tells pkg-config where to look for your custom libraries.
+
+    $ PKG_CONFIG_PATH=/path/to/custom/qt/lib/pkgconfig meson setup build
+
+Alternatively, if you have a custom qmake you want to use instead of pkg-config
+for detection, you can set the PATH to find that qmake first: bash
+
+    $ PATH=/path/to/custom/qt/bin:$PATH meson setup build
+
+3. Verify in meson.build
+
+Use the dependency function to import the Qt modules. Meson will prioritize the
+paths set in PKG_CONFIG_PATH.
+
+    qt6_dep = dependency('qt6', modules: ['Core', 'Gui', 'Widgets'])
+
+Common Issues & Tips
+
+    System vs Custom: If your system has Qt installed, Meson might prefer
+    those. Setting PKG_CONFIG_PATH ensures your custom version takes
+    precedence.
+
+    Static Qt: If using a static Qt install, you may need to use qmake
+    directly, as pkg-config files might not accurately reflect all required
+    static flags, although Meson tries to support this.
+
+    Uninstalled/Custom Build: If the Qt is not "installed" via a standard
+    prefix, consider using qmake detection as a fallback in Meson if pkg-config
+    fails.
+
+    Debugging: If Meson picks up the wrong version, use meson configure build
+    -Dpkg_config_path=/path/to/custom/qt/lib/pkgconfig to fix it.
+
+====================================================================
+
+meson devenv is a command in the Meson build system that allows you to run and
+debug applications from their build directory without needing to install them
+first. It sets up a temporary environment with the necessary paths and
+variables so the system can find local libraries and executables as if they
+were already installed.
+
+Core Functionality
+
+    Environment Setup: It automatically configures critical environment
+    variables like PATH, LD_LIBRARY_PATH (Linux), DYLD_LIBRARY_PATH (macOS),
+    and GI_TYPELIB_PATH (for GObject Introspection) to point to the build
+    directory.
+ 
+    Execution: You can use it to launch an interactive shell or execute a
+    specific command within the pre-configured environment.
+
+    Cross-Compilation Support: When cross-compiling, it sets variables for the
+    host machine, such as QEMU_LD_PREFIX or WINEPATH for Windows targets,
+    allowing cross-compiled apps to run more transparently.
+
+Key Commands and Options
+
+    meson devenv -C builddir: Opens an interactive shell with the developer
+    environment active.
+
+meson devenv -C builddir <command>: Runs a specific command (like an
+application or a debugger) within the environment.
+
+--dump [<filename>]: Prints the modified environment variables instead of
+launching a shell. Since version 1.1.0, you can save this to a file or choose a
+format (like vscode) to integrate with other tools.
+
+--workdir: Sets the working directory for the command (defaults to the build
+directory
+
+Developers can manually add specific variables to this environment using the
+meson.add_devenv() function in their build files. For example:
+
+meson.add_devenv({'MY_CUSTOM_VAR': 'value'})
+
+# vim: sw=3 ts=3 wm=8 et ft=sh

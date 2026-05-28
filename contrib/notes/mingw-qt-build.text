@@ -1,12 +1,10 @@
-Installing MingW and Qt for Cross-Compiling on Linux
+Installing MingW and Qt for Cross-Compiling on Linux or MSYS2
 Chris Ahlstrom
-2026-05-13 to 2026-05-15
+2026-05-13 to 2026-05-28
 
-==================================================
+Also see meson-qt.text.
 
-STATUS:
-
-   SUSPENDED. Currently at a dead end:
+STATUS: SUSPENDED. Currently at a dead end:
 
 Detecting Qt6 tools
 Found pkg-config: YES (/usr/bin/x86_64-w64-mingw32-pkg-config) 2.5.1
@@ -50,7 +48,7 @@ $ wine uic.exe --version
 0024:err:module:import_dll Library Qt6Core.dll (which is needed by L"Z:\\opt\\Qt\\Qt6\\6.10.2\\mingw_64\\bin\\uic.exe") not found
 0024:err:module:loader_init Importing dlls for L"Z:\\opt\\Qt\\Qt6\\6.10.2\\mingw_64\\bin\\uic.exe" failed, status c0000135
 
-==================================================
+======================================================================
 
 To build a MinGW Qt application on Linux, you must use *aqtinstall* to
 download the Windows-hosted prebuilt binaries and then cross-compile your
@@ -137,7 +135,7 @@ Steps for Targeted Build
       qt.tools.win64_mingw810 [the latest we could find!]
       ...
 
-==============
+======================================================================
 
 To import a non-standard Qt installation in Meson, add the Qt bin directory to
 your PATH environment variable before running meson setup. This enables Meson
@@ -180,5 +178,48 @@ More background:
     env.append('MY_PATH', '2')
     env.prepend('MY_PATH', '0')
     env.unset()
+
+======================================================================
+
+MSYS2:
+
+Update the package database and core system:
+
+$ pacman -Syu
+
+After restarting MSYS2 if prompted, install the toolchain and Qt:
+
+$ pacman -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-qt6-base \
+    mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja
+
+Note: For Qt5, replace qt6-base with qt5-base.
+
+Optional: Install Qt Creator directly via MSYS2 if you prefer an IDE:
+
+$ pacman -S mingw-w64-x86_64-qt-creator
+
+3. Building with Qt Creator
+
+If you installed the MSYS2 version of Qt Creator, it should automatically
+detect the MSYS2 kits.
+
+Open Qt Creator from the MSYS2 environment.
+
+Go to Preferences > Kits > Qt Versions to verify it points to
+the MSYS2 qmake.exe or qtpaths.exe.
+
+Open your CMakeLists.txt or .pro file and select the detected MSYS2
+kit to build
+
+4. Running and Deployment
+
+To run your compiled .exe, you must either run it within the MSYS2 shell (which
+has the correct PATH) or deploy the required DLLs.
+
+Development:
+
+   -  Run the executable directly from the MSYS2 terminal.
+   -  Use the windeployqt tool included in your MSYS2 bin folder to copy all
+      necessary libraries into the application folder for standalone use.
 
 # vim: sw=3 ts=3 wm=8 et ft=sh

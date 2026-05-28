@@ -150,7 +150,7 @@ seq66_pkg_description = 'A Seq66 build using the Meson build system.'
 seq66_pkg_version = meson.project_version()
 seq66_version = '0.99.25'
 seq66_api_version = '0.99'
-seq66_info_date = '2026-05-22'
+seq66_info_date = '2026-05-27'
 seq66_info_build_type = get_option('buildtype')
 seq66_info_build_root = meson.project_build_root()
 seq66_info_lib_type = get_option('default_library')
@@ -295,7 +295,12 @@ elif host_machine.system() == 'freebsd'      # portmidi vs rtmidi, set below
    app_build_issue   = 'FreeBSD'
    app_build_os      = 'FreeBSD'
    os_freebsd        = true
-elif meson.is_cross_build()
+endif
+
+# Issue: MingW uses Win32 APIs, while MSYS2 uses Cygwin, which uses
+# mostly POSIX APIs.
+
+if meson.is_cross_build()
    app_build_issue   = 'MingW'
    app_build_os      = 'Windows'
    app_engine        = 'portmidi'

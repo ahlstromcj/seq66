@@ -1,0 +1,69 @@
+#*****************************************************************************
+# meson.msys.cross (seq66)
+#-----------------------------------------------------------------------------
+##
+# \file        meson.msys.cross
+# \library     seq66
+# \author      Chris Ahlstrom
+# \date        2026-05-11
+# \updates     2026-05-24
+# \license     $XPC_SUITE_GPL_LICENSE$
+#
+#  See meson.msys.cross as well. All experimental.
+#
+#  Msys2:
+#
+#     Assuming base-devel is already installed.
+#
+#     # pacman -S mingw-w64-x86_64-toolchain
+#     # pacman -S mingw-w64-x86_64-qt6-base
+#     # pacman -S mingw-w64-x86_64-qt6-tools
+#
+#-----------------------------------------------------------------------------
+
+[constants]
+
+msys_bin_path = '/c/msys64/mingw64/bin/'
+bin_qt_path = msys_bin_path + 'xxx'
+
+# prepended = 'x86_64-w64-mingw32-'
+
+[host_machine]
+
+system = 'windows'
+subsystem = 'windows'
+kernel = 'nt'
+cpu_family = 'x86_64'
+cpu = 'x86_64'
+endian = 'little'
+
+[binaries]
+
+c = msys_bin_path + 'gcc'
+cpp = msys_bin_path + 'g++'
+ar = msys_bin_path + 'ar'
+ld = msys_bin_path + 'ld'
+objcopy = msys_bin_path + 'objcopy'
+strip = msys_bin_path + 'strip'
+windres = msys_bin_path + 'windres'
+pkg-config = msys_bin_path + 'pkg-config'
+exe_wrapper = 'wine64'           # key step for running binaries; also 'wine'
+moc = bin_qt_path + 'moc'        # 'moc.exe'
+rcc = bin_qt_path + 'rcc'        # 'rcc.exe'
+uic = bin_qt_path + 'uic'        # 'uic.exe'
+qmake = bin_qt_path + 'qmake'    # 'qmake.exe'
+qmake6 = bin_qt_path + 'qmake6'  # 'qmake.exe'
+
+[properties]
+
+qt_library_dir = base_qt_path + 'lib'
+qt_pkgconfig_dir = base_qt_path + 'lib/pkgconfig'
+qt_include_dir = base_qt_path + 'include'
+pkg_config_libdir = base_qt_path + 'lib/pkgconfig' 
+qt_tools_path = ''
+
+#****************************************************************************
+# meson.msys.cross
+#----------------------------------------------------------------------------
+# vim: ts=3 sw=3 ft=dosini
+#----------------------------------------------------------------------------

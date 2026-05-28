@@ -46,8 +46,6 @@ BUILD_DIR="$BASE_BUILD_DIR/cc"      # "native" compiler (CC/CXX) build
 BUILD_TYPE="release"
 CROSS_PKG_PATH="/usr/lib/pkgconfig" # TO DO TO DO
 EXTRAFLAGS=""
-# INSTALL_LIBDIR="lib"                # "lib/x86_64-linux-gnu" on Debian
-# INSTALL_PREFIX="/usr/local"         # "/usr", what about Windows?
 MAKEFILE="$BUILD_DIR/build.ninja"
 MAKELOG="make.log"
 PLATFORM="UNIX"
@@ -535,12 +533,6 @@ uninstall_project () {
    if test "$USERID" = 0 ; then
       echo "Uninstalling the $SEQ66 application, data, and documents..."
       ninja -C $BUILD_DIR uninstall    # meson uninstall
-#     if test "$PLATFORM" = "UNIX" ; then
-#        rm -rf "$INSTALL_PREFIX/include/$SEQ66_LIBRARY"
-#        rm -rf "$INSTALL_PREFIX/$INSTALL_LIBDIR/$POTEXT_LIBRARY"
-#        rm -rf "$INSTALL_PREFIX/share/doc/$SEQ66"
-#        rm -rf "$INSTALL_PREFIX/man/man1/$SEQ66.1"
-#     fi
    else
       echo "UID $USERID. We want you as root to uninstall the $SEQ66 library..."
    fi
