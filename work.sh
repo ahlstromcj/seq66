@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-28
+# \update         2026-05-29
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -33,7 +33,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-28"
+export SEQ66_SCRIPT_EDIT_DATE="2026-05-29"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -45,7 +45,9 @@ BASE_BUILD_DIR="build"              # 'seq66/build'
 BUILD_DIR="$BASE_BUILD_DIR/cc"      # "native" compiler (CC/CXX) build
 BUILD_TYPE="release"
 CROSS_PKG_PATH="/usr/lib/pkgconfig" # TO DO TO DO
-CROSSFILENAME="meson.mingw.cross"
+CROSS_FILE_BASE="meson.mingw"
+CROSSOPTS=""
+CROSSSPEC=""                        # see the setup_cross() function
 EXTRAFLAGS=""
 MAKEFILE="$BUILD_DIR/build.ninja"
 MAKELOG="make.log"
@@ -84,6 +86,30 @@ DOUPDATE="no"           # --update. Force a subproject update.
 DOVERSION="no"          # --version. Double duh!
 
 #******************************************************************************
+#  Set up cross-build.
+#
+#  Call it as 'setup_cross $CROSS_PKG_PATH $CROSS_FILE_BASE'
+#
+#------------------------------------------------------------------------------
+
+setup_cross () {
+   local crosspath=$1
+   local basename=$2
+   local crossopt="--cross-file"
+   local nativeopt="--native-file"
+   BUILD_DIR="$BASE_BUILD_DIR/cross"
+   MAKEFILE="$BUILD_DIR/build.ninja"
+   CROSSENVSET="PKG_CONFIG_PATH=$crosspath:$PKG_CONFIG_PATH"
+
+   export $CROSSENVSET
+
+   CROSSOPTS="-Dportmidi=true -Dpotext=false -Djack=false -Dnsm=false"
+   CROSSSPEC="$crossopt $basename.cross $nativeopt $basename.native"
+   echo "CROSSENVSET: PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
+   echo "Using cross-build setup $CROSSSPEC"
+}
+
+#******************************************************************************
 #  Brute-force options loop
 #------------------------------------------------------------------------------
 
@@ -113,30 +139,13 @@ get_options () {
             --cross)
                DOMAKE="yes"
                DOCROSS="yes"
-               BUILD_DIR="$BASE_BUILD_DIR/cross"
-               MAKEFILE="$BUILD_DIR/build.ninja"
-               MAKELOG="$BUILD_DIR/make.log"
-               CROSSENVSET="PKG_CONFIG_PATH=$CROSS_PKG_PATH:$PKG_CONFIG_PATH"
-               export $CROSSENVSET
-               echo "CROSSENVSET: PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
-               ;;
-
-            --cross-file)
-               DOMAKE="yes"
-               DOCROSS="yes"
-               BUILD_DIR="$BASE_BUILD_DIR/cross"
-               MAKEFILE="$BUILD_DIR/build.ninja"
-               MAKELOG="$BUILD_DIR/make.log"
-               CROSSENVSET="PKG_CONFIG_PATH=$CROSS_PKG_PATH:$PKG_CONFIG_PATH"
-               export $CROSSENVSET
-               echo "CROSSENVSET: PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
                shift
                case $1 in
                   -*)
                      continue
                   ;;
                esac
-               CROSSFILENAME="$1"
+               CROSS_FILE_BASE="$1"
                ;;
 
             --clean)
@@ -331,8 +340,10 @@ Many of these commands are best used when setting up the build
  --make              Set up and build the code in 'build'. Default operation.
  --build [dir]       Same as --make, but if given, the build directory is
                      'build/dir'.
- --cross             Set up to build a Windows executable, and build it.
-                     Not workable yet; see mingw-qt-build.text.
+ --cross [name]      Set up to build a Windows executable, and build it.
+                     If a name is given (e.g. "meson.msys"), then
+                     the '.cross' and '.native' files with that name are
+                     used. Not workable yet; see mingw-qt-build.text.
  --setup             Run 'meson setup', and that's all.
  --update            Force an update of the subprojects.
  --potext            Build with Potext (light gettext) library sypport.
@@ -503,6 +514,8 @@ make_projects () {
          echo "Release build in $BUILD_DIR succeeded."
       fi
    else
+      echo "Current directory:"
+      pwd
       if test "$DODEBUG" = "yes" ; then
          echo "Debug build failed, check $MAKELOG for errors."
       else
@@ -654,13 +667,13 @@ fi
 # EXPERIMENTAL.
 #
 # Currently does not support the Potext library or a debug build.
+#
 #------------------------------------------------------------------------------
 
 if test "$DOCROSS" = "yes" ; then
 
-   CROSSOPTS="-Dportmidi=true -Dpotext=false -Djack=false -Dnsm=false"
-   CROSSFILE="--cross-file meson.mingw.cross"
-   meson setup $BUILD_DIR --buildtype=$BUILD_TYPE $CROSSOPTS $CROSSFILE
+   setup_cross $CROSS_PKG_PATH $CROSS_FILE_BASE
+   meson setup $BUILD_DIR --buildtype=$BUILD_TYPE $CROSSOPTS $CROSSSPEC
    if test $? = 0 ; then
       meson compile -C $BUILD_DIR > $MAKELOG
       if test $? = 0 ; then
