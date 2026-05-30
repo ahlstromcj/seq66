@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom
  * \date          2026-04-23
- * \updates       2026-05-18
+ * \updates       2026-05-29
  * \license       GNU GPL v2 or above
  *
  *  This file is used mainly for system files and specific build options.  The
@@ -49,9 +49,16 @@
  * #define SEQ66_HAVE_JACK_GET_VERSION_STRING        %jack_get_version_string%
  */
 
+#if ! defined SEQ66_VERSION
+#define SEQ66_VERSION                   @version@
+#endif
+
 #if ! defined SEQ66_HAVE_LIMITS_H
 
-#define SEQ66_GNU_SOURCE                @gnu_source@
+/*
+ * #define SEQ66_GNU_SOURCE             /gnu_source/
+ */
+
 #define SEQ66_HAVE_ASSERT_H             @assert_h@
 #define SEQ66_HAVE_CTYPE_H              @ctype_h@
 #define SEQ66_HAVE_DIR_H                @dir_h@
@@ -112,7 +119,7 @@
 #define SEQ66_VERSION_DATE_SHORT        @version_date_short@
 #define SEQ66_ICON_NAME                 @app_name@
 #define SEQ66_PACKAGE                   @client_name@
-#define SEQ66_VERSION                   @version@
+
 #define SEQ66_PACKAGE_STRING            SEQ66_PACKAGE_NAME " " @version@
 #define SEQ66_PACKAGE_VERSION           @version@
 

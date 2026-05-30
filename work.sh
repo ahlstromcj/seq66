@@ -44,7 +44,7 @@ export SEQ66_LIBRARY="$SEQ66-$SEQ66_LIBRARY_API_VERSION"
 BASE_BUILD_DIR="build"              # 'seq66/build'
 BUILD_DIR="$BASE_BUILD_DIR/cc"      # "native" compiler (CC/CXX) build
 BUILD_TYPE="release"
-CROSS_PKG_PATH="/usr/lib/pkgconfig" # TO DO TO DO
+CROSS_PKG_PATH="/usr/x86_64-w64-mingw32/lib/pkgconfig"
 CROSS_FILE_BASE="meson.mingw"
 CROSSOPTS=""
 CROSSSPEC=""                        # see the setup_cross() function
@@ -90,21 +90,21 @@ DOVERSION="no"          # --version. Double duh!
 #
 #  Call it as 'setup_cross $CROSS_PKG_PATH $CROSS_FILE_BASE'
 #
+#
+#  local nativopt="--native-file"
+#  NATIVSPEC="$nativopt $basename.native"
+#  CROSSSPEC="$crossopt $basename.cross $nativeopt $basename.native"
+#
 #------------------------------------------------------------------------------
 
 setup_cross () {
    local crosspath=$1
    local basename=$2
-   local crossopt="--cross-file"
-   local nativeopt="--native-file"
-   BUILD_DIR="$BASE_BUILD_DIR/cross"
-   MAKEFILE="$BUILD_DIR/build.ninja"
+   local crossopt="--cross-file" #  local nativeopt="--native-file"
    CROSSENVSET="PKG_CONFIG_PATH=$crosspath:$PKG_CONFIG_PATH"
-
    export $CROSSENVSET
-
    CROSSOPTS="-Dportmidi=true -Dpotext=false -Djack=false -Dnsm=false"
-   CROSSSPEC="$crossopt $basename.cross $nativeopt $basename.native"
+   CROSSSPEC="$crossopt $basename.cross"
    echo "CROSSENVSET: PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
    echo "Using cross-build setup $CROSSSPEC"
 }
@@ -121,43 +121,44 @@ get_options () {
 
             --make)
                DOMAKE="yes"
+               shift
                ;;
 
             --build)
                if test "$DOCLEAN" = "no" ; then
                   DOMAKE="yes"
                fi
-               shift
-               case $1 in
-                  -*)
-                     continue
-                  ;;
-               esac
-               BUILD_DIR="$BASE_BUILD_DIR/$1"
+               if test "$2" != ""  ; then
+                  BUILD_DIR="$BASE_BUILD_DIR/$2"
+                  shift 2
+               else
+                  shift
+               fi
                ;;
 
             --cross)
                DOMAKE="yes"
                DOCROSS="yes"
-               shift
-               case $1 in
-                  -*)
-                     continue
-                  ;;
-               esac
-               CROSS_FILE_BASE="$1"
+               if test "$2" != ""  ; then
+                  CROSS_FILE_BASE="$2"
+                  shift 2
+               else
+                  shift
+               fi
                ;;
 
             --clean)
                DOCLEAN="yes"
                DOSETUP="no"
                DOMAKE="no"
+               shift
                ;;
 
             --dist)
                DODIST="yes"
                DOMAKE="no"
                DOSETUP="no"
+               shift
                ;;
 
             --clang)
@@ -167,6 +168,7 @@ get_options () {
                export CXX=clang++
                BUILD_DIR="$BASE_BUILD_DIR/clang"
                MAKEFILE="$BUILD_DIR/build.ninja"
+               shift
                ;;
 
             --gnu | --gcc)
@@ -176,24 +178,28 @@ get_options () {
                export CXX=g++
                BUILD_DIR="$BASE_BUILD_DIR/gcc"
                MAKEFILE="$BUILD_DIR/build.ninja"
+               shift
                ;;
 
             --help)
                DOHELP="yes"
                DOMAKE="no"
                DOSETUP="no"
+               shift
                ;;
 
             --install)
                DOINSTALL="yes"
                DOMAKE="no"
                DOSETUP="no"
+               shift
                ;;
 
             --option-help)
                DOOPTHELP="yes"
                DOMAKE="no"
                DOSETUP="no"
+               shift
                ;;
 
             --pack)
@@ -201,23 +207,27 @@ get_options () {
                DOMAKE="no"
                DOSETUP="no"
                DOPACK="yes"
+               shift
                ;;
 
             --pdf)
                DOMAKEPDF="yes"
                DOMAKE="no"
                DOSETUP="no"
+               shift
                ;;
 
             --nsis)
                DONSIS="yes"
                DOMAKE="no"
                DOSETUP="no"
+               shift
                ;;
 
             --rtmidi)
                BUILD_DIR="$BASE_BUILD_DIR/rtmidi"
                MAKEFILE="$BUILD_DIR/build.ninja"
+               shift
                ;;
 
             --portmidi)
@@ -225,41 +235,48 @@ get_options () {
                PMIDIDEF="-Dportmidi=true -Drtmidi=false"
                BUILD_DIR="$BASE_BUILD_DIR/portmidi"
                MAKEFILE="$BUILD_DIR/build.ninja"
+               shift
                ;;
 
             --potext)
                DOMAKE="yes"
                DOPOTEXT="yes"
                POTEXTDEF="-Dpotext=true"
+               shift
                ;;
 
             --rebuild | --remake)
                DOREMAKE="yes"
                DOCLEAN="yes"
                DOMAKE="yes"
+               shift
                ;;
 
             --setup)
                DOCLEAN="yes"
                DOMAKE="no"
                DOSETUP="yes"
+               shift
                ;;
 
             --uninstall)
                DOUNINSTALL="yes"
                DOMAKE="no"
                DOSETUP="no"
+               shift
                ;;
 
             --update)
                DOUPDATE="yes"
                DOMAKE="no"
                DOSETUP="no"
+               shift
                ;;
 
             --windows)
                BUILD_DIR="$BASE_BUILD_DIR/windows"
                MAKEFILE="$BUILD_DIR/build.ninja"
+               shift
                ;;
 
             --debug)
@@ -271,6 +288,7 @@ get_options () {
                BUILD_TYPE="debug"
                BUILD_DIR="$BASE_BUILD_DIR/debug"
                MAKEFILE="$BUILD_DIR/build.ninja"
+               shift
                ;;
 
             --release)
@@ -278,27 +296,33 @@ get_options () {
                DORELEASE="yes"
                DODEBUG="no"
                BUILD_TYPE="release"
+               shift
                ;;
 
             --no-jack)
                NOJACK="-Djack=false"
+               shift
                ;;
 
             --jack-session)
                NOJACKSESSION="-Djacksession=true"
+               shift
                ;;
 
             --no-jack-transport)
                NOJACKTRANSPORT="-Djacktransport=false"
+               shift
                ;;
 
             --no-nsm)
                NONSM="-Dnsm=false"
+               shift
                ;;
 
             --version)
                DOVERSION="yes"
                DOBOOTSTRAP="no"
+               shift
                ;;
 
             *)
@@ -311,7 +335,7 @@ get_options () {
                ;;
 
          esac
-         shift
+#        shift
       done
    fi
 }
@@ -486,15 +510,18 @@ make_projects () {
    if test "$DOREMAKE" = "yes" ; then
       if test "$NINJA_EXISTS" = "yes" ; then
          echo "$MAKEFILE exists, reconfiguring..."
+         echo "$ meson setup --reconfigure $MOPTS"
          meson setup --reconfigure $MOPTS
       fi
    fi
    if test "$NINJA_EXISTS" = "no" ; then
       echo "New configuration, creating $MAKEFILE, etc...."
       if test "$DODEBUG" = "yes" ; then
+         echo "$ meson setup --default-library=static $MOPTS"
          meson setup --default-library=static $MOPTS
          echo "... for debugging"
       else
+         echo "$ meson setup $MOPTS"
          meson setup $MOPTS
          echo "... for release"
       fi
@@ -506,6 +533,7 @@ make_projects () {
    # Can't add this at the end, it seems to break ninja's error detection.
 
    cd $BUILD_DIR
+   echo "$ ninja -v --> $MAKELOG"
    ninja -v > $MAKELOG
    if test $? = 0 ; then
       if test "$DODEBUG" = "yes" ; then
@@ -672,9 +700,16 @@ fi
 
 if test "$DOCROSS" = "yes" ; then
 
+   BUILD_DIR="$BASE_BUILD_DIR/cross"
+   MAKEFILE="$BUILD_DIR/build.ninja"
+   MOPTS="--buildtype=$BUILD_TYPE $POTEXTDEF $PMIDIDEF $BUILD_DIR"
+   echo "$ setup_cross  $CROSS_PKG_PATH $CROSS_FILE_BASE"
    setup_cross $CROSS_PKG_PATH $CROSS_FILE_BASE
-   meson setup $BUILD_DIR --buildtype=$BUILD_TYPE $CROSSOPTS $CROSSSPEC
+   pwd
+   echo "$ meson setup $CROSSOPTS $CROSSSPEC $MOPTS"
+   meson setup $CROSSOPTS $CROSSSPEC $MOPTS
    if test $? = 0 ; then
+      echo "$ meson compile -C $BUILD_DIR --> $MAKELOG"
       meson compile -C $BUILD_DIR > $MAKELOG
       if test $? = 0 ; then
          echo "Cross-build in $BUILD_DIR succeeded."
@@ -687,6 +722,7 @@ if test "$DOCROSS" = "yes" ; then
 fi
 
 if test "$DONSIS" = "yes" ; then
+   echo "$ meson compile -C $BUILD_DIR nsisinstaller"
    meson compile -C $BUILD_DIR nsisinstaller
    exit 0
 fi
