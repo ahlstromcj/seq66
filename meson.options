@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-05-10
+# \updates     2026-06-01
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" application and libraries.
@@ -63,6 +63,18 @@ option('rtmidi',
    type : 'boolean',
    value : true,
    description : 'Enable the use of the RtMIDI-based engine.'
+)
+
+option('cli',
+   type : 'boolean',
+   value : true,
+   description : 'Enable the build of the command-line application.'
+)
+
+option('gui',
+   type : 'boolean',
+   value : true,
+   description : 'Enable the build of the Qt GUI application.'
 )
 
 option('docs',

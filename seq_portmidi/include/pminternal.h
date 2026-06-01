@@ -27,7 +27,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2026-05-18
+ * \updates     2026-06-01
  * \license     GNU GPLv2 or above
  *
  * Here is a guide to implementers:
@@ -36,9 +36,9 @@
  *  -   Add your initialization function to pm_init().  Note that your init
  *      function should never require non-standard libraries or fail in any
  *      way. If the interface is not available, simply do not call
- *      pm_add_device(). This means that non-standard libraries should try to do
- *      dynamic linking at runtime using a DLL and return without error if the
- *      DLL cannot be found or if there is any other failure.
+ *      pm_add_device(). This means that non-standard libraries should try to
+ *      do dynamic linking at runtime using a DLL and return without error if
+ *      the DLL cannot be found or if there is any other failure.
  *  -   Implement functions as indicated in pm_fns_type to open, read, write,
  *      close, etc.
  *  -   Call pm_add_device() for each input and output device, passing it a
@@ -63,15 +63,15 @@
  *  these too, so the definitions are (unfortunately) duplicated there.
  */
 
-#if defined SEQ66_PLATFORM_WINDOWS        //  WIN32
+#if defined SEQ66_PLATFORM_WINDOWS          //  WIN32
 #ifndef INT32_DEFINED
 #define INT32_DEFINED
 typedef int int32_t;
 typedef unsigned int uint32_t;
 #endif
 #else
-#include <stdint.h>                 // Linux and OS X have stdint.h
-#endif                              // SEQ66_PLATFORM_WINDOWS
+#include <stdint.h>                         // Linux and OS X have stdint.h
+#endif                                      // SEQ66_PLATFORM_WINDOWS
 
 /**
  *  Default size of buffers for SysEx transmission.
@@ -89,7 +89,7 @@ typedef unsigned int uint32_t;
  *  Any host error message will occupy less than this number of characters.
  */
 
-#define PM_HOST_ERROR_MSG_LEN           224
+#define PM_HOST_ERROR_MSG_LEN           256
 #define PM_STRING_MAX                   256
 
 #ifndef FALSE

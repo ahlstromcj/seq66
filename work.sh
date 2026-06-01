@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-05-29
+# \update         2026-06-01
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -33,7 +33,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-05-29"
+export SEQ66_SCRIPT_EDIT_DATE="2026-06-01"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -53,12 +53,14 @@ MAKEFILE="$BUILD_DIR/build.ninja"
 MAKELOG="make.log"
 PLATFORM="UNIX"
 PMIDIDEF=""
-POTEXTDEF=""
+POTEXTDEF="-Dpotext=false"
 TAGSTRING="pack"
 NOJACK=""                           # --no-jack to disable
 NOJACKSESSION="-Djacksession=false" # --jack-session to enable
 NOJACKTRANSPORT=""                  # --no-jack-transport to disable
 NONSM=""                            # --no-nsm to disable
+NOCLI=""                            # --no-cli to disable
+NOGUI=""                            # --no-gui to disable
 
 # Flags.
 
@@ -103,10 +105,10 @@ setup_cross () {
    local crossopt="--cross-file" #  local nativeopt="--native-file"
    CROSSENVSET="PKG_CONFIG_PATH=$crosspath:$PKG_CONFIG_PATH"
    export $CROSSENVSET
-   CROSSOPTS="-Dportmidi=true -Dpotext=false -Djack=false -Dnsm=false"
+   CROSSOPTS="$NOCLI $NOGUI $PMIDIDEF $POTEXTDEF -Djack=false -Dnsm=false"
    CROSSSPEC="$crossopt $basename.cross"
    echo "CROSSENVSET: PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
-   echo "Using cross-build setup $CROSSSPEC"
+   echo "Cross-build setup $CROSSSPEC"
 }
 
 #******************************************************************************
@@ -128,23 +130,31 @@ get_options () {
                if test "$DOCLEAN" = "no" ; then
                   DOMAKE="yes"
                fi
-               if test "$2" != ""  ; then
-                  BUILD_DIR="$BASE_BUILD_DIR/$2"
-                  shift 2
-               else
-                  shift
-               fi
+               case "$2" in
+                  -*)
+                     shift
+                     ;;
+
+                  *)
+                     BUILD_DIR="$BASE_BUILD_DIR/$2"
+                     shift 2
+                     ;;
+               esac
                ;;
 
             --cross)
                DOMAKE="yes"
                DOCROSS="yes"
-               if test "$2" != ""  ; then
-                  CROSS_FILE_BASE="$2"
-                  shift 2
-               else
-                  shift
-               fi
+               case "$2" in
+                  -*)
+                     shift
+                     ;;
+
+                  *)
+                     CROSS_FILE_BASE="$2"
+                     shift 2
+                     ;;
+               esac
                ;;
 
             --clean)
@@ -232,7 +242,7 @@ get_options () {
 
             --portmidi)
                DOPORTMIDI="yes"
-               PMIDIDEF="-Dportmidi=true -Drtmidi=false"
+               PMIDIDEF="-Dportmidi=true -Drtmidi=false -Djack-false"
                BUILD_DIR="$BASE_BUILD_DIR/portmidi"
                MAKEFILE="$BUILD_DIR/build.ninja"
                shift
@@ -319,6 +329,16 @@ get_options () {
                shift
                ;;
 
+            --no-cli)
+               NOCLI="-Dcli=false"
+               shift
+               ;;
+
+            --no-gui)
+               NOGUI="-Dgui=false"
+               shift
+               ;;
+
             --version)
                DOVERSION="yes"
                DOBOOTSTRAP="no"
@@ -399,8 +419,10 @@ Many of these commands are best used when setting up the build
  --rebuild           Clean the project and build from scratch.
  --jack-session      Enable the usage of JACK Session, which is deprecated.
  --no-jack           Disable the usage of JACK (in Linux).
- --no-jack-transport Disable the usage of JACK Transport.
- --no-nsm            Disable the usage of NSM.
+ --no-jack-transport Disable the usage of JACK Transport (in Linux).
+ --no-nsm            Disable the usage of NSM (in Linux).
+ --no-cli            Disable the building of the seq66cli command-line.
+ --no-gui            Disable the building of the qseq66 GUI application.
  --pack [ tag ]      A simple quick packaging of the code; the tag goes
                      into the tarball name.
  --help              Show this help text.
@@ -671,7 +693,7 @@ if test "$DOUPDATE" = "yes" ; then
    exit 0
 fi
 
-MOPTS="--buildtype=$BUILD_TYPE $POTEXTDEF $PMIDIDEF $BUILD_DIR $NOJACK $NOJACKSESSION $NOJACKTRANSPORT $NONSM"
+MOPTS="--buildtype=$BUILD_TYPE $POTEXTDEF $PMIDIDEF $BUILD_DIR $NOJACK $NOJACKSESSION $NOJACKTRANSPORT $NONSM $NOCLI $NOGUI"
 
 #******************************************************************************
 # --setup. This section does only a setup, then exits.
@@ -709,8 +731,8 @@ if test "$DOCROSS" = "yes" ; then
    echo "$ meson setup $CROSSOPTS $CROSSSPEC $MOPTS"
    meson setup $CROSSOPTS $CROSSSPEC $MOPTS
    if test $? = 0 ; then
-      echo "$ meson compile -C $BUILD_DIR --> $MAKELOG"
-      meson compile -C $BUILD_DIR > $MAKELOG
+      echo "$ meson compile -C $BUILD_DIR --> $BUILD_DIR/$MAKELOG"
+      meson compile -C $BUILD_DIR > $BUILD_DIR/$MAKELOG
       if test $? = 0 ; then
          echo "Cross-build in $BUILD_DIR succeeded."
          exit 0

@@ -1,12 +1,26 @@
 TO DO for Seq66 0.99.25
 Chris Ahlstrom
-2019-04-13 to 2026-05-27
+2019-04-13 to 2026-06-01
 
     -   In qmake on Windows:
-        -   ninja: error: '../../C:/msys64/mingw64/bin/moc', needed by
+        -   MSYS2: error: '../../C:/msys64/mingw64/bin/moc', needed by
             'Seq66qt5/qseq66.exe.p/moc_qlfoframe.cpp', missing and no
             known rule to make it. [moc is in C:/msys64/mingw64/bin/moc]
             $ pacman -S mingw-w64-x86_64-qt5-tools
+        -   MSYS $ meson compile -C build/cc nsisinstaller
+            ERROR: Build data file '...//build/cc/meson-private/build.dat'
+            references functions or classes that don't exist.
+        -   Git Bash$ meson compile -C build/cc nsisinstaller
+            Generating include/seq66-git-version.h with a custom command
+            Processing config: C:\Program Files (x86)\NSIS\nsisconf.nsh
+            Processing script file: "../../nsis/MesonSetup.nsi" (ACP)
+            File: "..\release\qseq66.exe" -> no files found.
+            Usage: File [/nonfatal] [/a] ([/r] [/x filespec [...]]
+             filespec [...] | /oname=outfile one_file_only)
+            Error in script "../../nsis/MesonSetup.nsi" on line 134
+            -- aborting creation process
+    -   Builds in Git Bash, but the MIDI Mapper/Wave synth are disabled
+        in the port dropdown, but the Mapper is enabled in Preferences.
     -   Changed the build system to Meson. Bugs so far:
         -   Update work.sh with more bootstrap options. Moot at the
             moment: --port-refresh Enables port-refresh feature for JACK.

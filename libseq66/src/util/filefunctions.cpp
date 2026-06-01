@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2026-05-28
+ * \updates       2026-06-01
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -930,11 +930,11 @@ file_read_lines
             for (;;)
             {
 #if defined SEQ66_PLATFORM_WIND0WS || defined SEQ66_PLATFORM_MINGW
-                char * p = fgets
+                /* char * p  =  */ (void) fgets
                 (
                     destination, int(maxim), input
                 );
-                ssize_t count { strlen(destination) };
+                size_t count { strlen(destination) };
 #else
                 ssize_t count { getline(&destination, &maxim, input) };
 #endif

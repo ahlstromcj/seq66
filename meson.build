@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-05-29
+# \updates     2026-06-01
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the seq66 application and library.
@@ -150,7 +150,7 @@ seq66_pkg_description = 'A Seq66 build using the Meson build system.'
 seq66_pkg_version = meson.project_version()
 seq66_version = '0.99.25'
 seq66_api_version = '0.99'
-seq66_info_date = '2026-05-29'
+seq66_info_date = '2026-06-01'
 seq66_info_build_type = get_option('buildtype')
 seq66_info_build_root = meson.project_build_root()
 seq66_info_lib_type = get_option('default_library')
@@ -245,7 +245,6 @@ os_linux             = false
 os_osx               = false
 os_unix              = false
 os_win32             = false
-
 use_alsa             = false
 use_jack             = false
 use_jack_session     = false
@@ -255,6 +254,8 @@ use_portmidi         = false
 use_rtmidi           = false
 use_win32            = false
 
+use_cli = get_option('cli')
+use_gui = get_option('gui')
 use_portmidi = get_option('portmidi')
 
 if host_machine.system() == 'macosx'
@@ -667,8 +668,9 @@ if os_win32 or os_cygwin
 # Yields a pkg-config error
 # winmm_dep = dependency('winmm')
 
+   threads_dep = dependency('threads', required : true)
    winmm_dep = cc.find_library('winmm')
-   system_depends = [ winmm_dep ]
+   system_depends = [ winmm_dep, threads_dep ]
 
 endif
 
@@ -717,13 +719,13 @@ seq66_dep = declare_dependency(
    link_with : [ link_libraries ]
    )
 
-subdir('Seq66cli')
+if use_cli
+   subdir('Seq66cli')
+endif
 
 #-----------------------------------------------------------------------------
-# Make the icon pixmaps (header files in XPM format) available.
 #-----------------------------------------------------------------------------
 
-subdir('resources')
 
 #-----------------------------------------------------------------------------
 # Creates the following items:
@@ -736,19 +738,16 @@ subdir('resources')
 #        ui files, the header files
 #     -  seq_qt_build. The library with built sources, mocs, uis, etc.
 #
+# Make the icon pixmaps (header files in XPM format) available.
+#
 #-----------------------------------------------------------------------------
 
-subdir('seq_qt5')
+if use_gui
+   subdir('resources')
+   subdir('seq_qt5')
+   subdir('Seq66qt5')
+endif
 
-'''
-seq66_qt_dep = declare_dependency(
-   dependencies : [ ],
-   include_directories : [ seq66_includes ],
-   link_with : [ link_libraries, seq_qt_build ]
-   )
-'''
-
-subdir('Seq66qt5')
 
 #-----------------------------------------------------------------------------
 # We recommemd using a recent version of meson by installing it outside the
@@ -914,7 +913,9 @@ subdir('data')
 
    install_man(seq66_man_pages)
 
+if use_gui
    subdir('nsis')
+endif
 
 #-----------------------------------------------------------------------------
 # Info
@@ -936,7 +937,9 @@ summary(
       'Library Type' : seq66_info_lib_type,
       'Subproject' : seq66_subproj,
 #     'Make PDF' : seq66_make_pdf,
-      'PortMidi' : use_portmidi
+      'PortMidi' : use_portmidi,
+      'CLI' : use_cli,
+      'GUI' : use_gui
    },
    section : 'Project'
    )

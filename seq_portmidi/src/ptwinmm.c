@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2026-05-18
+ * \updates     2026-06-01
  * \license     GNU GPLv2 or above
  */
 
@@ -48,6 +48,7 @@ winmm_time_callback
     DWORD_PTR dw1, DWORD_PTR dw2
 )
 {
+    (void) uID; (void) uMsg; (void) dw1; (void) dw2;
     (*time_callback)(Pt_Time(NULL), (void *) dwUser);
 }
 
