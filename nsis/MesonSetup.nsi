@@ -3,7 +3,7 @@
 ; File:         MesonSetup.nsi (compare to Seq66Setup.nsi)
 ; Author:       Chris Ahlstrom
 ; Date:         2026-05-16
-; Updated:      2026-05-17
+; Updated:      2026-06-02
 ; Version:      0.99.25
 ;
 ; Usage of this Windows build script is a little different from
@@ -131,8 +131,9 @@ Section "Application" SEC_APPLIC
 
     SetOutPath "$INSTDIR"
     SetOverwrite on
-    File "..\release\qseq66.exe"
-    File "..\release\seq66cli.exe"
+;   File "..\release\qseq66.exe"
+;   File "..\release\seq66cli.exe"
+    File "..\release\*.exe"
 
 SectionEnd
 

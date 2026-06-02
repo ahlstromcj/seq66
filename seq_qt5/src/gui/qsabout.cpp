@@ -25,12 +25,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-05-09
+ * \updates       2026-06-02
  * \license       GNU GPLv2 or above
  *
  */
 
 #include "seq66_features.hpp"           /* version information functions    */
+#include "cfg/settings.hpp"             /* usr().dark_mode()                */
 #include "qsabout.hpp"                  /* your basic developer spoor       */
 #include "qt5_helpers.hpp"              /* seq66::qt(), qt_set_icon() etc.  */
 #include "ui_qsabout.h"
@@ -41,17 +42,30 @@ namespace seq66
 /**
  *  Principal constructor. Now sets the links to be opened by clicking on
  *  them.
+ *
+ *  <a href="https://github.com/ahlstromcj/seq66">
+ *      <span style=" text-decoration: underline; color:#0000ff;">
+ *      GitHub/ahlstromcj/seq66</span></a>
  */
 
 qsabout::qsabout (QWidget * parent) : QDialog (parent), ui (new Ui::qsabout)
 {
     ui->setupUi(this);
-    std::string apptag = seq_app_name() + " " + seq_version();
-    std::string vertag = seq_version_text();
+    std::string apptag { seq_app_name() + " " + seq_version() };
+    std::string vertag { seq_version_text() };
     ui->topLabel->setText(qt(apptag));
     ui->versionLabel->setText(qt(vertag));
-    ui->label_filter24_seq24->setOpenExternalLinks(true);
+
+    if (usr().dark_theme())
+    {
+        (void) qlabel_change_color(ui->label_github_seq66, "#00ffff;");
+        (void) qlabel_change_color(ui->label_filter24_seq24, "#00ffff;");
+        (void) qlabel_change_color(ui->label_github_seq32, "#00ffff;");
+        (void) qlabel_change_color(ui->label_github_kepler34, "#00ffff;");
+        (void) qlabel_change_color(ui->label_gmail_ahlstromcj, "#00ffff;");
+    }
     ui->label_github_seq66->setOpenExternalLinks(true);
+    ui->label_filter24_seq24->setOpenExternalLinks(true);
     ui->label_github_seq32->setOpenExternalLinks(true);
     ui->label_github_kepler34->setOpenExternalLinks(true);
     ui->label_gmail_ahlstromcj->setOpenExternalLinks(true);

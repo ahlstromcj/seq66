@@ -2316,7 +2316,7 @@ pm_winmm_term (void)
                     char temp[PM_STRING_MAX];
                     char msg[PM_HOST_ERROR_MSG_LEN];
                     winmm_get_host_error(midi, msg, PM_HOST_ERROR_MSG_LEN);
-                    snprintf(temp, sizeof temp, "[%d] '%s'\n", i, msg);
+                    snprintf(temp, sizeof temp, "[%d] '%.250s'\n", i, msg);
                     errprint(temp);                     /* log to console   */
                     pm_log_buffer_append(temp);         /* log to buffer    */
                 }

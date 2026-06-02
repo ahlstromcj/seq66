@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-25
-# \updates     2026-05-08
+# \updates     2026-06-02
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -21,6 +21,7 @@
 message('Processing seq_portmidi...')
 
 libseq_portmidi_library = 'seq_portmidi'
+build_args += [ '-DSEQ66_MIDILIB=portmidi' ]
 
 subdir('include')
 subdir('src')
@@ -32,7 +33,7 @@ if seq66_use_potext
       seq66_project_base,
       seq_portmidi_sources,
       install : false,
-      c_args : build_args,
+      c_args : [ build_args, '-Wno-format-truncation' ],
       cpp_args : build_args,
       dependencies : [
          system_depends, liblib66_library_dep,
@@ -49,7 +50,7 @@ else
       libseq_portmidi_library,
       seq_portmidi_sources,
       install : false,
-      c_args : build_args,
+      c_args : [ build_args,'-Wno-format-truncation' ],
       cpp_args : build_args,
       dependencies : [
          system_depends, liblib66_library_dep

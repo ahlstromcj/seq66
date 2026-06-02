@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2026-03-13
+ * \updates       2026-06-02
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -60,6 +60,7 @@
 #include <QFileDialog>                  /* prompt for full MIDI file's path */
 #include <QIcon>
 #include <QInputDialog>                 /* prompt for a simple string       */
+#include <QLabel>
 #include <QLayout>
 #include <QLayoutItem>
 #include <QLineEdit>
@@ -1300,6 +1301,48 @@ is_empty (const QLineEdit * lineedit)
     const QString qs = lineedit->text();
     std::string text = qs.toStdString();
     return text.empty();
+}
+
+/**
+ *  Changes the color of the label text. Meant for usage with HTML
+ *  links only, for now.
+ *
+ * \param qlabel
+ *
+ *      The QLabel to be modified.
+ *
+ * \param newcolor
+ *
+ *      The new color to replace the "#0000ff;" in the label. It
+ *      must include the "#" and ";".`
+ *
+ * \return
+ *      Returns true if the color was found and changed.
+ */
+
+bool
+qlabel_change_color (QLabel * qlabel, const std::string & color)
+{
+    bool result { false };
+    QString qlabeltext { qlabel->text() };
+    std::string label { qlabeltext.toStdString() };
+    std::string::size_type hashpos { label.find_first_of("#") };
+    if (hashpos != std::string::npos)
+    {
+        std::string::size_type semipos
+        {
+            label.find_first_of(";", hashpos)
+        };
+        if (semipos != std::string::npos && semipos > hashpos)
+        {
+            std::size_t count { semipos - hashpos + 1 };
+            label.replace(hashpos, count, color);
+            qlabel->setTextFormat(Qt::RichText);
+            qlabel->setText(qt(label));
+            result = true;
+        }
+    }
+    return result;
 }
 
 }               // namespace seq66

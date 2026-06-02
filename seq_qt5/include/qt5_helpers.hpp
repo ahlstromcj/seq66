@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2026-03-13
+ * \updates       2026-06-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -53,8 +53,9 @@
 class QAction;
 class QComboBox;
 class QIcon;
-class QKeyEvent;
 class QInputEvent;
+class QKeyEvent;
+class QLabel;
 class QLayoutItem;
 class QLineEdit;
 class QMenu;
@@ -234,6 +235,7 @@ extern void generic_tooltip
 #endif
 
 extern bool is_empty (const QLineEdit * lineedit);
+extern bool qlabel_change_color (QLabel * qlabel, const std::string & color);
 
 }               // namespace seq66
 

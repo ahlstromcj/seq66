@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-06-01
+# \update         2026-06-02
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -33,7 +33,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-06-01"
+export SEQ66_SCRIPT_EDIT_DATE="2026-06-02"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -242,7 +242,7 @@ get_options () {
 
             --portmidi)
                DOPORTMIDI="yes"
-               PMIDIDEF="-Dportmidi=true -Drtmidi=false -Djack-false"
+               PMIDIDEF="-Dportmidi=true -Drtmidi=false -Djack=false"
                BUILD_DIR="$BASE_BUILD_DIR/portmidi"
                MAKEFILE="$BUILD_DIR/build.ninja"
                shift
@@ -693,7 +693,7 @@ if test "$DOUPDATE" = "yes" ; then
    exit 0
 fi
 
-MOPTS="--buildtype=$BUILD_TYPE $POTEXTDEF $PMIDIDEF $BUILD_DIR $NOJACK $NOJACKSESSION $NOJACKTRANSPORT $NONSM $NOCLI $NOGUI"
+MOPTS="--buildtype=$BUILD_TYPE $POTEXTDEF $PMIDIDEF $NOJACK $NOJACKSESSION $NOJACKTRANSPORT $NONSM $NOCLI $NOGUI $BUILD_DIR"
 
 #******************************************************************************
 # --setup. This section does only a setup, then exits.

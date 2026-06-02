@@ -10,10 +10,12 @@ Introduction:
         Qt 6 is used by default, if available.
     -   Meson can also be used for the build on Windows. New scripting
         has been added to build the NSIS Seq66 Windows installer on
-        Linux. Currently, using Git Bash has issue because of the old
-        version of MingW, but using MSYS2 works.
+        Linux. Git Bash and MSYS2 can be used to build Seq66 in Windows.
+        However, the qmake/batch-file build system is still in place.
     -   The Meson cross-file, for building the Windows version on Linux,
-        does not yet work.
+        does not yet work, except with the --no-gui option. We have
+        not yet found a cross-build Qt installation without some
+        show-stopper.
     -   Also see INSTALL.seq66.on.Ubuntu.md for Ubuntu Studio installs.
 
 If you are in a hurry, there are the quick steps to install Seq66,
@@ -26,16 +28,21 @@ given that all the DEPENDENCIES described later are in place:
     $ ./work.sh --clean
     $ qseq66 &
 
-Getting Seq66 requires building the code or going to "ahlstromcj/seq66" on
-GitHub to get an installation package or a Windows release executable.
-The "work.sh" setup is primarily aimed at developers, but is easy to use
-with the instructions below.  Different versions of the program can be built:
+The "work.sh" script wraps around various combinations of settings,
+meson setup calls, and compiling. See './work.sh --help'.
+
+Getting Seq66 for Windows requires building the code or going to
+"ahlstromcj/seq66" on GitHub to get an installation package or a
+Windows release executable.
+
+Different versions of the program can be built:
 
     -   qseq66.
         -   Has a Qt5/Qt6 user-interface a la Kepler34.
         -   "rtmidi" engine version: Native ALSA, JACK MIDI, and JACK
             transport; fall-back to ALSA;
-        -   "portmidi" engine version: Linux and Windows.  Built via
+    -   qpseq66.
+        -   "portmidi" engine version: Linux and Windows. Built via
             qmake or meson, suitable for loading in QtCreator installed
             with mingw32 tools. In Windows, specify the Mingw library
             and tools when installing QtCreator.  See "Qmake-based Install"
@@ -46,8 +53,8 @@ with the instructions below.  Different versions of the program can be built:
 
     Both qseq66 and seq66cli are built at the same time.
 
-    We provide a Windows installer (an EXE) in the GitHub release area. It is
-    also fairly easy to build the Windows version using Meson or
+    We provide a Windows installer (an EXE) in the GitHub release area.
+    It is possible to build the Windows version using Meson or
     QtCreator/qmake. See the batch script "nsis/build_release_package.bat";
     it builds using qmake and mingw. Meson can also be used to build
     the installer on Linux.
@@ -55,25 +62,22 @@ with the instructions below.  Different versions of the program can be built:
 Below are sections for various ways of installing this project by building
 from source code:
 
-    -   Linux distro package if provided
     -   Meson Build and Install; work.sh Install (Quick Install).
         Works on Linux and Window.
     -   Advanced Steps
-        -   Pipe Option:
-        -   Debugging:
-    -   Qmake-based Install (Linux and Windows)
-    -   MSYS2 Install (Windows only, and NOT YET READY)
+        -   Pipe Option.
+        -   Debugging.
+    -   Qmake-based Install (Linux and Windows).
+    -   Git Bash or MSYS2 Install (Windows only, very tricky to set up).
 
     One can also enable the Meson plug-in in Qt Creator and build Seq66.
     The build products are made in build/Desktop-Debug.
 
 Linux Distro Package (seq66):
 
-    Your favorite Linux distro may have put seq66 into a distro package.  For
-    example, Arch Linux and KXStudio have packages.  Here is a pointer to how
-    one user installs it on a Raspberry Pi 3b+ running Raspian:
-
-        Installed it from from KXStudio repo using Muon:
+    Some Linux distros  (Arch Linux and KXStudio) may have put Seq66
+    into a distro package. Here is a pointer to how one user installs it
+    on a Raspberry Pi 3b+ running Raspian, from KXStudio repo using Muon:
 
         https://kde.org/applications/en/system/org.kde.muon
 
@@ -99,6 +103,9 @@ Meson Build and Install:
     For --debug, it is './build/debug'. For --windows (on Windows)
     it is './build/windows'.
 
+    Note that our "lib66" GitHub project is used as a Meson "subproject";
+    if installed on the system, that library is used.
+
     There are other options. Run the following to see them, and perhap examine
     the commands in the script:
 
@@ -109,7 +116,7 @@ Clang Compiler:
     Even if one has the GNU compilers installed, one can still install Clang
     and use it for the build.
 
-    Assuming that Clang is installed, simply run:
+    Assuming that Clang is installed, simply run every time to build it:
 
         $ ./work.sh --clang
 
@@ -137,9 +144,9 @@ OpenSUSE:
     $ sudo zypper in libjack-devel liblo-devel alsa-devel libqt5-qtbase-devel \
         libqt5-linguist-devel
 
-    Next, link the binary files from Qt5 without the "-qt5" at the end. Link them
-    to your ~/.local/ directory and add the directory to the PATH only if
-    required:
+    Next, link the binary files from Qt5 without the "-qt5" at the end.
+    Link them to your ~/.local/ directory and add the directory to the
+    PATH only if required:
 
     $ mkdir -p ~/.local/bin/qt
     $ ln -s /bin/qmake-qt5 ~/.local/bin/qmake
@@ -164,7 +171,7 @@ Ubuntu Studio:
 
     See INSTALL.seq66.on.Ubuntu.md.
 
-MSYS2 (not yet ready):
+Git Bash or MSYS2 (tricky):
 
     Uses the work.sh script noted for Linux. It requires the installation
     of the toolchain, qt5-base, all prefixed by either
@@ -200,10 +207,9 @@ Pipe Option:
     on some systems where the assembler is unable to read from a pipe; the
     GNU assembler can do it.
 
-    TO DO: Revise for using Meson by adding a --pipe option.
+    TO DO: Can we revise for Meson by adding a --pipe option.
 
-        $ CFLAGS="-pipe" ./bootstrap -ed
-        $ CFLAGS="-pipe" ./configure --enable-debug --disable-shared
+        $ CFLAGS="-pipe" ./work.sh [ TODO ]
 
     Then do the normal build.
 
@@ -216,7 +222,7 @@ Debugging:
 
 Qmake-based Install:
 
-    This method is still supported. We need it for use with Qt Creator
+    This method is still supported. We use it with Qt Creator
     and as an extra option with Windows builds.
 
     The Qmake-based build is designed to use the local PortMidi library (by
@@ -284,12 +290,12 @@ CONFIGURE OPTIONS FOR APPLICATION FEATURES:
     These options define or undefine various build macros:
 
     --nsm
-    --nonsm
+    --no-nsm
 
         Controls the SEQ66_NSM_SUPPORT macro, which is defined by default.
         This will allow the Non Session Manager to control Seq66.
 
-    --nojack
+    --no-jack
     
         Undefines the SEQ66_JACK_SUPPORT macro, which is otherwise defined
         by default.  This option disable all the other JACK options.

@@ -543,7 +543,7 @@ B:B:T and H:M:S format.</string>
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>4</number>
       </property>
       <property name="movable">
        <bool>false</bool>

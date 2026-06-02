@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2026-05-18
+ * \updates     2026-06-01
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:
@@ -552,7 +552,7 @@ pm_errmsg (PmError err, int deviceid)
         char temp[PM_STRING_MAX];
         (void) snprintf
         (
-            temp, sizeof temp, "portmidi host error: [%d] '%s'\n",
+            temp, sizeof temp, "portmidi host error: [%d] '%.250s'\n",
             deviceid, pm_hosterror_text
         );
         pm_log_buffer_append(temp);

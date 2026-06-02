@@ -7,7 +7,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2026-05-08
+:: \update      2026-06-02
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -177,7 +177,7 @@
 ::---------------------------------------------------------------------------
  
 set PROJECT_VERSION=0.99.25
-set PROJECT_DATE=2026-05-08
+set PROJECT_DATE=2026-06-02
 set PROJECT_DRIVE=C:
 
 :: Set the bits of the project, either 64 or 32. Also define WIN64 versus

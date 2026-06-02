@@ -6,7 +6,7 @@
 # \library    	qpseq66 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2026-05-18
+# \update      2026-06-02
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -59,6 +59,7 @@ unix:!macx {
  HEADERS += include/pmlinux.h include/pmlinuxalsa.h 
  DEFINES -= _UNICODE
  QMAKE_CFLAGS_WARN_ON += -Wno-cast-function-type
+ QMAKE_CFLAGS_WARN_ON += -Wno-format-truncation
 }
 
 # Mac OSX
@@ -74,6 +75,7 @@ windows {
  DEFINES -= UNICODE
  DEFINES -= _UNICODE
  QMAKE_CFLAGS_WARN_ON += -Wno-unused-parameter -Wno-cast-function-type
+ QMAKE_CFLAGS_WARN_ON += -Wno-format-truncation
 }
 
 # Common

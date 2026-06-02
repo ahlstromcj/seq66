@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-26
-# \updates     2026-06-01
+# \updates     2026-06-02
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library/application. See the top-level
@@ -38,8 +38,14 @@
 #
 #-----------------------------------------------------------------------------
 
+seq66qt5_exe_name = 'qseq66'
+
+if use_portmidi
+   seq66qt5_exe_name = 'qpseq66'
+endif
+
    seq66qt5_exe = executable(
-      'qseq66',
+      seq66qt5_exe_name,
       sources : [ 'seq66qt5.cpp',
          seq_qt_sources, seq_moc_sources, seq_q_object_sources,
          seq_moc_files, seq_ui_files

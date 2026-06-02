@@ -1,4 +1,4 @@
-# README for Seq66 0.99.25 2026-05-20
+# README for Seq66 0.99.25 2026-06-02
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -25,6 +25,7 @@ in FreeBSD using the Clang compiler. A C++17 capable-compiler is
 needed.
 
 See NEWS for updates and RELNOTES for the latest highlights.
+See the two "INSTALL" files for installation.
 
 The figure below shows Seq66 with modified palette and a style-sheet
 in force. Otherwise the application uses the current Qt theme.
