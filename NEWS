@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.25
 Chris Ahlstrom
-2015-07-10 to 2026-06-02
+2015-07-10 to 2026-06-03
 
 # Change Log
 
-## [0.99.25] - 2026-06-02
+## [0.99.25] - 2026-06-03
 
 "Mesonry Opens Doors!"
 
@@ -44,7 +44,8 @@ self-contained.
 
 -   Moved user-interface modules (i.e. "cpp", "hpp", and "ui" files)
     such as qsmainwnd and qseditoptions to seq\_qt5/src/gui.
--   The button in Help / About is now an OK button.
+-   The button in Help / About is now an OK button, and the
+    version name display now shows the minor version number.
 -   Changes for Qt6:
     -   "No such signal QButtonGroup::buttonClicked(int)" in
         qclocklayout.cpp and qseditoptions.cpp updated to
@@ -55,6 +56,8 @@ self-contained.
     'meson setup ...'.
 -   About dialog. If the 'usr' dark-theme setting is enabled,
     the HTML links are a more visible color than the blue default.
+-   Updated the documentation to show the input buss number in
+    a grid slot.
 
 ### Fixed
 

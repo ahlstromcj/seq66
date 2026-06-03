@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2026-05-19
+ * \updates       2026-06-03
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -94,6 +94,7 @@ static std::string s_client_name_short = SEQ66_CLIENT_NAME;
 static std::string s_client_name_tag = "[" SEQ66_CLIENT_NAME "]";
 static std::string s_icon_name = SEQ66_ICON_NAME;           /* unchanging   */
 static std::string s_package_name = SEQ66_PACKAGE_NAME;
+static std::string s_package_version = SEQ66_PACKAGE_VERSION;
 static std::string s_session_tag = "Session";
 static std::string s_api_version = SEQ66_API_VERSION;
 static std::string s_version = SEQ66_VERSION;
@@ -507,6 +508,12 @@ const std::string &
 seq_version ()
 {
     return s_version;
+}
+
+const std::string &
+seq_package_version ()
+{
+    return s_package_version;
 }
 
 /**

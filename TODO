@@ -1,10 +1,12 @@
 TO DO for Seq66 0.99.25
 Chris Ahlstrom
-2019-04-13 to 2026-06-02
+2019-04-13 to 2026-06-03
 
-    -   Create a "portable" executable package, e.g. './pack --portable'.
-    -   Find the real source of the "incomplete type seq66::midibus"
-        error.
+    -   Slot dots:  see qloopbutton.cpp.
+        -   Red for record. Already implemented. Uses drum_paint().
+        -   Orange for record + MIDI Thru. Try the sel_color().
+        -   Yellow for just MIDI Thru. Try the near_color()
+        -   Or use explicit Qt::orange and Qt::yellow
     -   Fix positioning of data pane text in the various modes.
     -   Make controller values movable in the data pane just
         like patch values. Show the number in addition to the
@@ -22,7 +24,6 @@ Chris Ahlstrom
         loading a new file leaves the song editor open.
     -   Issues #102, #137, #138
     -   Cross build suspended; at a dead end. See mingw-qt-build.text.
-        Grrrrr.
     -   Finish off the refactoring of Pt_Time.
     -   Windows:
         -   Install or configure qt6 in Windows to build that version.

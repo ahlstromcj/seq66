@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2023-11-06
+ * \updates       2026-06-03
  * \license       GNU GPLv2 or above
  *
  *    Provides some useful functions for displaying information about the
@@ -127,6 +127,7 @@ extern const std::string & seq_package_name ();
 extern const std::string & seq_api_version ();
 extern const std::string & seq_api_subdirectory ();
 extern const std::string & seq_version ();
+extern const std::string & seq_package_version ();
 extern const std::string & seq_version_text ();
 extern std::string session_tag (const std::string & refinement = "");
 extern std::string seq_build_details ();

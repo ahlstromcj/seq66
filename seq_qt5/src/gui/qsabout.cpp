@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-06-02
+ * \updates       2026-06-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -51,7 +51,12 @@ namespace seq66
 qsabout::qsabout (QWidget * parent) : QDialog (parent), ui (new Ui::qsabout)
 {
     ui->setupUi(this);
-    std::string apptag { seq_app_name() + " " + seq_version() };
+
+    /*
+     * std::string apptag { seq_app_name() + " " + seq_version() };
+     */
+
+    std::string apptag { seq_app_name() + " " + seq_package_version() };
     std::string vertag { seq_version_text() };
     ui->topLabel->setText(qt(apptag));
     ui->versionLabel->setText(qt(vertag));

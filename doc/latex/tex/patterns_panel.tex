@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-10-26
+% \update      2026-06-03
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -513,9 +513,9 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.65]{main-window/slot-inputt-buss.png}
+   \includegraphics[scale=0.65]{main-window/slot-input-buss-menu.png}
    \caption{Input Bus Popup Menu (old style)}
-   \label{fig:slot_input_bus}
+   \label{fig:slot_input_bus_menu}
 \end{figure}
 
    By setting an input buss, incoming MIDI events can be routed to
@@ -546,6 +546,18 @@
          and use a MIDI device that has \textsl{not} been assigned as
          a pattern's input buss.
    \end{itemize}
+
+   If an input buss has been specified, then the measures length at the
+   top right changes to show the form "bus:measures".
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=1.00]{main-window/slot-with-input-buss.png}
+   \caption{Input Bus Notation}
+   \label{fig:slot_input_bus_notation}
+\end{figure}
+
+   In this figure, the string is "3:1".
 
    One final note... the input buss setting overrides the record-by-channel
    setting.
