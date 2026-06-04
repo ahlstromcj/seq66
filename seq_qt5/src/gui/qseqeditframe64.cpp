@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-05-02
+ * \updates       2026-06-04
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -161,6 +161,7 @@
 #include "pixmaps/undo.xpm"
 #include "pixmaps/up.xpm"
 #include "pixmaps/up_inv.xpm"
+#include "pixmaps/wrench.xpm"
 #include "pixmaps/zoom.xpm"             /* zoom_in/_out combo-box           */
 #include "pixmaps/chord3-inv.xpm"
 
@@ -631,6 +632,7 @@ qseqeditframe64::qseqeditframe64
          * Thin pattern-fix button.
          */
 
+        qt_set_icon(wrench_xpm, ui->btn_pattern_fix);
         connect
         (
             ui->btn_pattern_fix, SIGNAL(clicked()),
