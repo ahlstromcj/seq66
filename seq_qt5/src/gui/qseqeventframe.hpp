@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-03-13
+ * \updates       2026-06-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -244,6 +244,7 @@ private slots:
     void slot_ev_data_0_edit (const QString &);
     void slot_meta_text_change ();
     void slot_event_popup ();
+    void slot_grow ();
 
 private:
 

@@ -155,7 +155,7 @@
     <rect>
      <x>510</x>
      <y>270</y>
-     <width>311</width>
+     <width>331</width>
      <height>69</height>
     </rect>
    </property>
@@ -734,8 +734,8 @@ same time.</string>
     <rect>
      <x>502</x>
      <y>109</y>
-     <width>321</width>
-     <height>131</height>
+     <width>331</width>
+     <height>142</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -905,15 +905,19 @@ same time.</string>
      <widget class="QPushButton" name="select_button">
       <property name="minimumSize">
        <size>
-        <width>48</width>
+        <width>52</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>48</width>
+        <width>52</width>
         <height>16777215</height>
        </size>
+      </property>
+      <property name="toolTip">
+       <string>Select a controller or program change
+by name.</string>
       </property>
       <property name="text">
        <string/>
@@ -978,6 +982,72 @@ same time.</string>
       </property>
       <property name="frame">
        <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QPushButton" name="grow_button">
+      <property name="minimumSize">
+       <size>
+        <width>52</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>52</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Increase pattern size by 1 measure.</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QPushButton" name="reserved_button_1">
+      <property name="minimumSize">
+       <size>
+        <width>52</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>52</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Reserved</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QPushButton" name="reserved_button_2">
+      <property name="minimumSize">
+       <size>
+        <width>52</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>52</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Reserved</string>
+      </property>
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </item>

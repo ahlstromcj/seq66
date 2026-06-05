@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-05-16
+ * \updates       2026-06-05
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -44,6 +44,13 @@
 #include "qseqeventframe.hpp"           /* seq66::qseqeventframe            */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 #include "ui_qseqeventframe.h"
+
+/*
+ *  We prefer to load the pixmaps on the fly, rather than deal with
+ *  resource files.
+ */
+
+#include "pixmaps/grow.xpm"
 
 namespace seq66
 {
@@ -340,6 +347,17 @@ qseqeventframe::qseqeventframe
     (
         ui->select_button, SIGNAL(clicked(bool)),
         this, SLOT(slot_event_popup())
+    );
+
+    /*
+     * A button to increase the pattern size by one.
+     */
+
+    qt_set_icon(grow_xpm, ui->grow_button);
+    connect
+    (
+        ui->grow_button, SIGNAL(clicked(bool)),
+        this, SLOT(slot_grow())
     );
 
     /*
@@ -1617,7 +1635,7 @@ qseqeventframe::slot_cancel ()
 }
 
 /**
- * NEW. -------------------------------------------------------------------
+ *  Shows the appropriate popup meneu.
  */
 
 void
@@ -1627,6 +1645,17 @@ qseqeventframe::slot_event_popup ()
         handle_control_popup();
     else if (m_in_program)
         handle_program_popup();
+}
+
+/**
+ *  Adds one measure to the length. We also need to prohibit entering
+ *  events past the measure-count of the pattern.
+ */
+
+void
+qseqeventframe::slot_grow ()
+{
+    // TO DO
 }
 
 /**

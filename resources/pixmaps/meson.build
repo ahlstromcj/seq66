@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-28
-# \updates     2026-05-07
+# \updates     2026-06-05
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -34,6 +34,7 @@ pixmaps_xpm = files(
     'finger.xpm',
     'follow.xpm',
     'fruity.xpm',
+    'grow.xpm',
     'hex_off.xpm',
     'hex_on.xpm',
     'hide.xpm',
@@ -115,6 +116,7 @@ pixmaps_xpm = files(
     'undo.xpm',
     'up_inv.xpm',
     'up.xpm',
+    'wrench.xpm',
     'zoom_in.xpm',
     'zoom_out.xpm',
     'zoom.xpm',

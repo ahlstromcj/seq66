@@ -1,16 +1,17 @@
 TO DO for Seq66 0.99.25
 Chris Ahlstrom
-2019-04-13 to 2026-06-03
+2019-04-13 to 2026-06-05
 
     -   Slot dots:  see qloopbutton.cpp.
         -   Red for record. Already implemented. Uses drum_paint().
         -   Orange for record + MIDI Thru. Try the sel_color().
         -   Yellow for just MIDI Thru. Try the near_color()
         -   Or use explicit Qt::orange and Qt::yellow
-    -   Fix positioning of data pane text in the various modes.
     -   Make controller values movable in the data pane just
         like patch values. Show the number in addition to the
         name.
+    -   Events tab: adding an event past the pattern measure size
+        should be prohibited. And add a Grow button?
     -   Can we alter a selected value by forwarding the arrow
         key to the data pane for non-note events?
     -   Segfault: Open b4uacuse patchless midi, then open the

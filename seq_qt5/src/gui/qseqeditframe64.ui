@@ -328,6 +328,9 @@ to note events. [ c for selected notes ]</string>
            <height>28</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>Reserved</string>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -539,7 +542,7 @@ grid-line numbers.</string>
           </font>
          </property>
          <property name="toolTip">
-          <string>Reserved for expansion.</string>
+          <string>Reserved</string>
          </property>
          <property name="flat">
           <bool>false</bool>
