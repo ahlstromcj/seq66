@@ -102,6 +102,7 @@ qseqeventframe::qseqeventframe
     m_in_program            (false),
     m_is_dirty              (false),
     m_no_channel_index      (c_midichannel_max),
+    m_current_timestamp     (),
     m_select_popup          (nullptr)
 {
     ui->setupUi(this);
@@ -271,6 +272,19 @@ qseqeventframe::qseqeventframe
     (
         ui->data_text_edit, SIGNAL(textChanged()),
         this, SLOT(slot_meta_text_change())
+    );
+
+    /*
+     * We need to evaluate the time-stamp to make sure it is within
+     * the current length of the patter.
+     */
+
+    m_current_timestamp = pulses_to_string(0);  // ts;
+    ui->entry_ev_timestamp->setText(qt(m_current_timestamp));
+    connect
+    (
+        ui->entry_ev_timestamp, SIGNAL(editingFinished()),
+        this, SLOT(slot_timestamp_change())
     );
 
     /*
@@ -954,6 +968,28 @@ qseqeventframe::set_event_category (const std::string & c)
 }
 
 /**
+ * NEW
+ */
+
+void
+qseqeventframe::slot_timestamp_change ()
+{
+    std::string ts { ui->entry_ev_timestamp->text().toStdString() };
+    if (ts.empty())
+    {
+        ui->entry_ev_timestamp->setText(qt(m_current_timestamp));
+    }
+    else
+    {
+        midipulse p { track().timestring_to_ticks(ts) };
+        if (p >= track().get_length())
+            ui->entry_ev_timestamp->setText(qt(m_current_timestamp));
+        else
+            m_current_timestamp = ts;
+    }
+}
+
+/**
  *  Sets ui->entry_ev_timestamp to the time-stamp string.
  *
  * \param ts
@@ -963,6 +999,7 @@ qseqeventframe::set_event_category (const std::string & c)
 void
 qseqeventframe::set_event_timestamp (const std::string & ts)
 {
+    m_current_timestamp = ts;
     ui->entry_ev_timestamp->setText(qt(ts));
 }
 
@@ -1655,7 +1692,10 @@ qseqeventframe::slot_event_popup ()
 void
 qseqeventframe::slot_grow ()
 {
-    // TO DO
+    int currentm { track().get_measures() };
+    int newm { track().increment_measures() };
+    if (newm > currentm)
+        set_seq_lengths(get_lengths());
 }
 
 /**

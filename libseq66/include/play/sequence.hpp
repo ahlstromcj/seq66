@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2025-10-22
+ * \updates       2026-06-05
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1188,6 +1188,7 @@ public:
     bool current_time_signature (midipulse p, int & beats, int & beatwidth) const;
     int measure_number (midipulse p) const;
     midipulse time_signature_pulses (const std::string & s) const;
+    midipulse timestring_to_ticks (const std::string & s) const;
 
     bool is_recorder_seq () const
     {

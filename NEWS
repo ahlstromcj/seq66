@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.25
 Chris Ahlstrom
-2015-07-10 to 2026-06-03
+2015-07-10 to 2026-06-06
 
 # Change Log
 
-## [0.99.25] - 2026-06-03
+## [0.99.25] - 2026-06-06
 
 "Mesonry Opens Doors!"
 
@@ -15,9 +15,8 @@ etc. are gone.
 
 Required moving the seq\_qt5 moc/ui-related files to the
 seq\_qt5/src/gui. In addition, some connect() calls were updated to
-work with either Qt5 or Qt6. The Meson build also works in
-Windows, and, since Qt is statically linked, qseq66.exe is
-self-contained.
+work with either Qt5 or Qt6. The Meson build also works in Windows,
+and, since Qt is statically linked, qseq66.exe is self-contained.
 
 ### Added
 
@@ -30,6 +29,8 @@ self-contained.
     -   meson.mingw.cross
     -   contrib/scripts/mingw-qt-build.sh
     -   contrib/notes/mingw-qt-build.text
+-   Event editor. Added checks on timestamps plus a button to
+    increase the pattern size by one measure.
 -   Build info. Added file and string processing to use with the
     file /etc/os-release (if present on the computer) to show
     the "pretty name" of the build distro.

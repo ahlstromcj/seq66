@@ -11,7 +11,11 @@ Chris Ahlstrom
         like patch values. Show the number in addition to the
         name.
     -   Events tab: adding an event past the pattern measure size
-        should be prohibited. And add a Grow button?
+        now prohibited. Added a Grow button.
+        Would be good to allow H:M:S time format.
+        Broken: changes after the second "Grow" do not stick.
+        In calculations : midi_measures_to_pulses() #678,
+        calculation of ticks_per_meas is WRONG.
     -   Can we alter a selected value by forwarding the arrow
         key to the data pane for non-note events?
     -   Segfault: Open b4uacuse patchless midi, then open the

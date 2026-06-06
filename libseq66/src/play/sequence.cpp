@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-05-16
+ * \updates       2026-06-05
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -922,7 +922,7 @@ sequence::measure_number (midipulse p) const
 
 /**
  *  Converts a "B:B:T" string to pulses, given that the analysis, if done,
- *  added time signatures. Compare it to seq66::measurestring_to_pulses()
+ *  added time signatures. Compare it to seq66::BBT_string_to_pulses()
  *  or string_to_pulses().
  *
  *  -   We have a string such as "4:l:000".
@@ -1001,6 +1001,25 @@ sequence::time_signature_pulses (const std::string & s) const
         result = seq66::string_to_pulses(s, mt);
     }
     return result;
+}
+
+/**
+ *  Note: could make this more flexible by calling
+ *
+ *      string_to_pulses(s, mt, true (HMS) or false (BBT)
+ */
+
+midipulse
+sequence::timestring_to_ticks (const std::string & s) const
+{
+    midi_timing mt
+    (
+        perf()->get_beats_per_minute(),
+        timesig_beats_per_measure(),
+        timesig_beat_width(),
+        get_ppqn()
+    );
+    return BBT_string_to_pulses(s, mt);
 }
 
 /**
@@ -1324,7 +1343,7 @@ int
 sequence::increment_measures ()
 {
     int m = get_measures();
-    bool ok = set_measures(m + 1);
+    bool ok = set_measures(m + 1, true);        /* kind of a user-changes   */
     return ok ? m + 1 : m ;
 }
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2026-05-16
+ * \updates       2026-06-05
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -505,7 +505,7 @@ pulses_to_time_string (midipulse p, midibpm bpm, int ppqn, bool showus)
     {
         /*
          * Why the spaces?  It is inconsistent.  But see the
-         * timestring_to_pulses() function first.
+         * HMS_to_pulses() function first.
          */
 
         if (hours > 0)
@@ -576,7 +576,7 @@ trunc_measures (double measures)
  * \param measures
  *      Provides the current MIDI song time in "measures:beats:divisions"
  *      format, where divisions are the MIDI pulses in
- *      "pulses-per-quarter-note".
+ *      "pulses-per-quarter-note". Also known as "B:B:T" format.
  *
  * \param seqparms
  *      This small structure provides the beats/measure, beat-width, and PPQN
@@ -588,7 +588,7 @@ trunc_measures (double measures)
  */
 
 midipulse
-measurestring_to_pulses
+BBT_string_to_pulses
 (
     const std::string & measures,
     const midi_timing & seqparms
@@ -675,7 +675,7 @@ midi_measures_to_pulses
         double beats_per_bar = double(seqparms.beats_per_measure());
         double beat_width = double(seqparms.beat_width());
         double ticks_per_beat = pulses_per_beat(ppq, beat_width);
-        double ticks_per_meas = m * ticks_per_beat * beats_per_bar;
+        double ticks_per_meas = /* m * */ ticks_per_beat * beats_per_bar;
         double ticks = m * ticks_per_meas;
         ticks += b * ticks_per_beat;
         result = midipulse(ticks);
@@ -727,13 +727,13 @@ string_to_measures (const std::string & bbt)
  *
  * \param timestring
  *      The time value to be converted, which must be of the form
- *      "hh:mm:ss" or "hh:mm:ss.fraction".  That is, all four parts must
- *      be found.
+ *      "HH:MM:SS" or "HH:MM:SS.fraction".  That is, at least three
+ *      of the four parts must be found.
  *
- * \param bpm
+ * \param bp
  *      The beats-per-minute tempo (e.g. 120) of the current MIDI song.
  *
- * \param ppqn
+ * \param ppq
  *      The parts-per-quarter note precision (e.g. 192) of the current MIDI
  *      song.
  *
@@ -743,13 +743,14 @@ string_to_measures (const std::string & bbt)
  */
 
 midipulse
-timestring_to_pulses (const std::string & timestring, midibpm bpm, int ppqn)
+HMS_string_to_pulses (const std::string & timestring, midibpm bp, int ppq)
 {
     midipulse result = 0;
     if (! timestring.empty())
     {
         std::string sh, sm, ss, us;
-        if (extract_timing_numbers(timestring, sh, sm, ss, us) >= 4)
+        int count { extract_timing_numbers(timestring, sh, sm, ss, us) };
+        if (count >= 3)
         {
             /**
              * This conversion assumes that the fractional parts of the
@@ -762,7 +763,7 @@ timestring_to_pulses (const std::string & timestring, midibpm bpm, int ppqn)
             double secfraction = string_to_double(us, 0, 3); /* atof(us)    */
             long sec = ((hours * 60) + minutes) * 60 + seconds;
             long microseconds = 1000000 * sec + long(1000000.0 * secfraction);
-            double pulses = delta_time_us_to_ticks(microseconds, bpm, ppqn);
+            double pulses = delta_time_us_to_ticks(microseconds, bp, ppq);
             result = midipulse(pulses);
         }
     }
@@ -782,8 +783,8 @@ timestring_to_pulses (const std::string & timestring, midibpm bpm, int ppqn)
  *  If it has none of the above, it is assumed to be pulses.  Testing is not
  *  rigorous.
  *
- * measurestring_to_pulses(): Converts "B:B:T" values to pulses.
- * timestring_to_pulses(): Converts "H:M:S.f" values to pulses.
+ *      -   BBT_string_to_pulses(): Converts "B:B:T" values to pulses.
+ *      -   HMS_string_to_pulses(): Converts "H:M:S.f" values to pulses.
  *
  * \param s
  *      Provides the string to convert to pulses.
@@ -792,8 +793,9 @@ timestring_to_pulses (const std::string & timestring, midibpm bpm, int ppqn)
  *      Provides the structure needed to provide BPM and other values needed
  *      for some of the conversions done by this function.
  *
- * \param timestring
- *      If true, interpret the string as an "H:M:S" string.
+ * \param use_hms_string
+ *      If true, interpret the string as an "H:M:S" string. The default
+ *      is false.
  *
  * \return
  *      Returns the string as converted to MIDI pulses (or divisions, clocks,
@@ -805,7 +807,7 @@ string_to_pulses
 (
     const std::string & s,
     const midi_timing & mt,
-    bool timestring
+    bool use_hms_string
 )
 {
     midipulse result = 0;
@@ -817,10 +819,10 @@ string_to_pulses
     }
     else if (count > 1)
     {
-        if (timestring)
-            result = timestring_to_pulses(s, mt.beats_per_minute(), mt.ppqn());
+        if (use_hms_string)
+            result = HMS_string_to_pulses(s, mt.beats_per_minute(), mt.ppqn());
         else
-            result = measurestring_to_pulses(s, mt);
+            result = BBT_string_to_pulses(s, mt);
     }
     return result;
 }

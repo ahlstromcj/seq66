@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-06-02
+# \update         2026-06-06
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -25,7 +25,8 @@
 #     Also see:  https://mesonbuild.com/Creating-releases.html
 #
 #     For the values needs for the "CROSS" "PATHS", see meson.mingw.cross.
-#     We're still working the issues for this.
+#     We're still working the issues for this; Qt is a big sticking point.
+#     Always hitting a show-stopper with Qt and cross-builds..
 #
 #------------------------------------------------------------------------------
 
@@ -33,7 +34,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-06-02"
+export SEQ66_SCRIPT_EDIT_DATE="2026-06-06"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -596,7 +597,7 @@ install_project () {
       meson install                    # ninja -C $BUILD_DIR install
       cd ..
    else
-      echo "UID $USERID. We want you as root to install the $SEQ66 library..."
+      echo "UID $USERID. We want you as root to install $SEQ66..."
    fi
 }
 

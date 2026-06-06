@@ -1,14 +1,31 @@
-Release Notes for Seq66 v. 0.99.25 2026-05-03 "Mesonry Opens Doors!"
+Release Notes for Seq66 v. 0.99.25 2026-06-06 "Mesonry Opens Doors!"
 
-This release contains some minor feature updates and fixes.
+This release contains some minor feature updates and fixes, and a
+major refactoring of the Seq66 build to use Meson instead of GNU
+Autotools. The source code tree for the Qt GUI has been rearranged
+to separate Qt-helper code from the user-interface code.
 
+- Main window.
+  - The button in Help / About is now an OK button.
 - Pattern editor.
-    - Tbd.
-- Event editor.
+    - Added a wrench icon for the pattern-fix button.
+- Event editor. Added checks on timestamps plus a button to
+  increase the pattern size by one measure.
 - Fixed more QMouseEvent x()/y() deprecations found by the Meson
   build.
-- Main window.
-- Pattern editor.
+- Build system.
+  - Meson is used to manage the build.
+  - The lib66 library project is used as a Meson subproject.
+  - The work.sh script provides handy options to apply Meson setup
+    and compilation.
+  - The normal build is made in build/cc. Other build subdirectories
+    are clang, cross, portmidi, and debug.
+  - Windows. The build, and making the NSIS installer, are supported.
+    (The old batch-file build script still works.)
+  - Build info. Uses the /etc/os-release file if available.
+  - The CLI (seq66cli) and GUI (qseq66) are both built by default.
+  - JACK Session support is disabled by default, but can be enabled.
+  - Except for the Qt libraries, the build is a static build.
 - Documentation updated.
 
 See NEWS for many more details.

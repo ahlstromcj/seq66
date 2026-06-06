@@ -245,6 +245,7 @@ private slots:
     void slot_meta_text_change ();
     void slot_event_popup ();
     void slot_grow ();
+    void slot_timestamp_change ();
 
 private:
 
@@ -310,6 +311,12 @@ private:
      */
 
     int m_no_channel_index;
+
+    /**
+     *  Holds the current event's time-stamp for safe-keeping.
+     */
+
+    std::string m_current_timestamp;
 
     /**
      *  The popup onto which submenus are tacked.

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2025-07-24
+ * \updates       2026-06-05
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -244,7 +244,7 @@ extern std::string pulses_to_time_string
 );
 extern int pulses_to_hours (midipulse pulses, midibpm bp, int ppq);
 extern double trunc_measures (double measures);
-extern midipulse measurestring_to_pulses
+extern midipulse BBT_string_to_pulses
 (
     const std::string & measures,
     const midi_timing & seqparms
@@ -255,16 +255,16 @@ extern midipulse midi_measures_to_pulses
     const midi_timing & seqparms
 );
 extern midi_measures string_to_measures (const std::string & bbt);
-extern midipulse timestring_to_pulses
+extern midipulse HMS_string_to_pulses
 (
     const std::string & timestring,
-    int bpm, int ppq
+    midibpm bp, int ppq
 );
 extern midipulse string_to_pulses
 (
     const std::string & s,
     const midi_timing & mt,
-    bool timestring = false
+    bool use_hms_string = false
 );
 extern int randomize (int range, int seed = 0);
 #if defined SEQ66_USE_UNIFORM_INT_DISTRIBUTION
