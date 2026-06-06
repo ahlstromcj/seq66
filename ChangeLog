@@ -1,5 +1,524 @@
+2026-06-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES, TODO, VERSION,
+	contrib/notes/backports-list.text, data/license.text,
+	data/readme.text, data/readme.windows,
+	doc/latex/tex/event_editor.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/calculations.cpp, libseq66/src/play/sequence.cpp,
+	nsis/MesonSetup.nsi, nsis/build_release_package.bat,
+	seq_qt5/src/gui/qseqeventframe.cpp,
+	seq_qt5/src/gui/qseqeventframe.hpp,
+	seq_qt5/src/gui/qseqeventframe.ui, work.sh: Updating the event
+	editor or prepping for 0.99.25.
+
+2026-06-05  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, contrib/scripts/alsa.m4,
+	contrib/scripts/build_debug_code.bat, contrib/scripts/extras/gvo,
+	contrib/scripts/extras/vd, contrib/scripts/extras/vo, {contrib =>
+	extras}/meson/Meson.text, {contrib =>
+	extras}/meson/cross-examples.ini, meson.mingw.native =>
+	extras/meson/meson.mingw.native, meson.msys.native =>
+	extras/meson/meson.msys.native, {contrib/scripts/extras =>
+	extras/scripts}/compositor, {contrib/scripts/extras =>
+	extras/scripts}/conk, {contrib/scripts/extras =>
+	extras/scripts}/dot-xbindkeysrc, {contrib/scripts/extras =>
+	extras/scripts}/grayscale.sh, {contrib/scripts/extras =>
+	extras/scripts}/naming, {contrib/scripts/extras =>
+	extras/scripts}/ordercp, resources/pixmaps/grow.xpm,
+	resources/pixmaps/meson.build, seq_qt5/src/gui/qseqeditframe64.ui,
+	seq_qt5/src/gui/qseqeventframe.cpp,
+	seq_qt5/src/gui/qseqeventframe.hpp,
+	seq_qt5/src/gui/qseqeventframe.ui: Rearranging scripts, adding
+	pattern grow button in progress.
+
+2026-06-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* resources/pixmaps/wrench.xpm,
+	seq_qt5/src/gui/qseqeditframe64.cpp,
+	seq_qt5/src/gui/qseqeditframe64.ui: Added wrench icon to pattern-fix
+	button.
+
+2026-06-03  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, VERSION, doc/latex/tex/pattern_editor.tex,
+	doc/latex/tex/patterns_panel.tex,
+	libseq66/include/seq66_features.hpp,
+	libseq66/src/seq66_features.cpp, meson.build,
+	seq_qt5/src/gui/qsabout.cpp: Updated the documentation and About
+	dialog.
+
+2026-06-02  Chris <ahlstromcj@gmail.com>
+
+	* INSTALL, NEWS, README.md, Seq66qt5/meson.build, TODO,
+	data/license.text, data/readme.text, data/readme.windows,
+	nsis/MesonSetup.nsi, nsis/build_release_package.bat,
+	seq_portmidi/meson.build, seq_portmidi/seq_portmidi.pro,
+	seq_portmidi/src/pmwinmm.c, seq_portmidi/src/portmidi.c,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/gui/qplaylistframe.ui,
+	seq_qt5/src/gui/qsabout.cpp, seq_qt5/src/gui/qsbuildinfo.ui,
+	seq_qt5/src/gui/qseditoptions.ui, seq_qt5/src/gui/qsmainwnd.ui,
+	seq_qt5/src/qt5_helpers.cpp, work.sh: Fixed portmidi issues, NSIS
+	updates, Qt helper HTML label, used in Help/About.
+
+2026-06-01  Chris <ahlstromcj@gmail.com>
+
+	* Seq66cli/meson.build, Seq66qt5/meson.build, TODO,
+	libseq66/src/util/filefunctions.cpp, meson.build, meson.options,
+	seq_portmidi/include/pminternal.h, seq_portmidi/src/ptwinmm.c,
+	work.sh: Add no-cli and no-gui options for testing, fixed some
+	warnings.
+
+2026-05-30  Chris <ahlstromcj@gmail.com>
+
+	* include/seq66-config.h.in, meson.build, work.sh: More tweaking on
+	cross-build, cannot find a good mingw install for Qt.
+
+2026-05-29  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* meson.mingw.native, meson.msys.native, work.sh: More experimenting
+	with cross-builds....
+
+2026-05-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, contrib/DIR_COLORS, libseq66/libseq66.pro,
+	libseq66/src/util/filefunctions.cpp, meson.mingw.native, work.sh: 
+	Got batch build working again in Windows.
+	* .gitignore, contrib/notes/backports-list.text,
+	contrib/notes/meson-qt.text, contrib/notes/mingw-qt-build.text,
+	meson.build, meson.mingw.cross, meson.msys.cross, work.sh: More prep
+	to try to get build in Windows to work again.
+	* INSTALL, TODO, data/meson.build, distros/arch/README,
+	distros/arch/package/PKGBUILD, distros/arch/package/PKGBUILD-alt,
+	distros/arch/package/seq66-docdir.patch, libseq66/meson.build,
+	libsessions/meson.build, meson.build, nsis/meson.build,
+	seq_portmidi/meson.build, seq_qt5/forms/meson.build,
+	seq_qt5/include/meson.build, seq_qt5/meson.build,
+	seq_qt5/src/meson.build, seq_rtmidi/meson.build, work.sh: Fixed
+	install/uninstall, PKGBUILD, work.sh, and meson.build cleanup.
+
+2026-05-27  ahlstromcj <ahlstromcj@gmail.com>
+
+	* TODO, meson.build, seq_qt5/meson.build, subprojects/liblib66.wrap: 
+	Trying to fix issues in Windows, see TODO.
+
+2026-05-24  Chris <ahlstromcj@gmail.com>
+
+	* : Forgot to update work.sh.
+
+2026-05-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* meson.build, subprojects/liblib66.wrap, work.sh: Updating the
+	build scripts.
+
+2026-05-20  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, contrib/vim-syntax/cpp.vim,
+	libseq66/include/util/basic_macros.hpp,
+	libseq66/include/util/filefunctions.hpp,
+	libseq66/include/util/strfunctions.hpp,
+	libseq66/src/cfg/configfile.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/util/filefunctions.cpp,
+	libseq66/src/util/strfunctions.cpp, meson.build, meson.mingw.cross,
+	work.sh: Added tokenpairs and functions to use it to read and
+	process /etc/issue for build info.
+
+2026-05-19  Chris <ahlstromcj@gmail.com>
+
+	* TODO, contrib/notes/Meson.text, include/seq66-config.h.in,
+	libseq66/include/os/daemonize.hpp, libseq66/include/os/timing.hpp,
+	libseq66/meson.build, libseq66/src/os/daemonize.cpp,
+	libseq66/src/seq66_features.cpp,
+	libseq66/src/sessions/clinsmanager.cpp, meson.build,
+	meson.mingw.cross, seq_qt5/meson.build, work.sh: Tried to
+	cross-build using Qt on Win partion.
+	* libseq66/src/seq66_features.cpp: Updated the seq66_features
+	module.
+
+2026-05-18  Chris <ahlstromcj@gmail.com>
+
+	* .gitignore, Seq66cli/Seq66cli.pro, Seq66qt5/Seq66qt5.pro, TODO,
+	build/README, {include => contrib/scripts/autotools}/config.h.in,
+	include/seq66-config.h.in, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/mastermidibus.hpp,
+	libseq66/include/midi/midibus.hpp,
+	libseq66/include/util/basic_macros.h,
+	libseq66/include/util/basic_macros.hpp,
+	libseq66/include/util/filefunctions.hpp, libseq66/libseq66.pro,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/midi/busarray.cpp,
+	libseq66/src/midi/businfo.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/seq66_features.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp, libsessions/libsessions.pro,
+	meson.build, seq_portmidi/include/midibus_pm.hpp,
+	seq_portmidi/include/pminternal.h, seq_portmidi/include/porttime.h,
+	seq_portmidi/seq_portmidi.pro, seq_portmidi/src/pmlinuxalsa.c,
+	seq_portmidi/src/portmidi.c, seq_portmidi/src/ptlinux.c,
+	seq_portmidi/src/ptmacosx_cf.c, seq_portmidi/src/ptmacosx_mach.c,
+	seq_portmidi/src/ptwinmm.c, seq_qt5/seq_qt5.pro,
+	seq_qt5/src/gui/qsmainwnd.cpp, seq_rtmidi/include/midibus_rm.hpp,
+	seq_rtmidi/seq_rtmidi.pro, work.sh: Fixed header madness, pro files,
+	and portmidi warnings.
+	* TODO, contrib/notes/nsis.text, work.sh: Fixed route66.bmp, removed
+	dead code from work.sh.
+
+2026-05-17  Chris <ahlstromcj@gmail.com>
+
+	* INSTALL, INSTALL.seq66.on.Ubuntu.md, TODO,
+	contrib/notes/nsis.text, nsis/MesonSetup.nsi,
+	nsis/Seq66Constants.nsh, nsis/meson.build, pack, work.sh: Got the
+	Linux NSIS installer build working.
+
+2026-05-16  Chris <ahlstromcj@gmail.com>
+
+	* TODO, meson.build, nsis/MesonSetup.nsi, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/meson.build, work.sh: Added nsis installer
+	build, still needs work.
+	* Seq66cli/Seq66cli.pro, Seq66qt5/Seq66qt5.pro, TODO,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, include/seq66-config.h.in,
+	libseq66/libseq66.pro, libseq66/src/midi/busarray.cpp,
+	libseq66/src/midi/businfo.cpp, libseq66/src/seq66_features.cpp,
+	libsessions/libsessions.pro, seq_portmidi/include/midibus_pm.hpp,
+	seq_qt5/seq_qt5.pro, seq_qt5/src/gui/qseqeventframe.cpp,
+	seq_rtmidi/include/midibus_rm.hpp, seq_rtmidi/seq_rtmidi.pro: Fixed
+	pro files, qmake builds, and weird midibus header errors.
+	* NEWS, TODO, libseq66/include/midi/busarray.hpp,
+	libseq66/include/midi/businfo.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/midi/busarray.cpp, libseq66/src/midi/businfo.cpp,
+	libseq66/src/midi/calculations.cpp,
+	libseq66/src/os/shellexecute.cpp, libseq66/src/play/sequence.cpp: 
+	The Windows Meson build works, but the batch/qmake build does not
+	link.
+
+2026-05-15  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, TODO, contrib/notes/mingw-qt-build.text,
+	contrib/scripts/mingw-qt-build.sh,
+	libseq66/src/midi/controllers.cpp, libseq66/src/seq66_features.cpp,
+	meson.mingw.cross, work.sh: Giving up on cross-build, a couple of
+	code tweaks.
+
+2026-05-13  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, contrib/DIR_COLORS, contrib/scripts/README,
+	contrib/scripts/{ => autotools}/Makefile.am, contrib/scripts/{ =>
+	autotools}/autogen.sh, contrib/scripts/{ => autotools}/bootstrap,
+	contrib/scripts/{ => autotools}/configure.ac, contrib/scripts/{ =>
+	autotools}/debug, contrib/scripts/{ => autotools}/m4/alsa.m4,
+	contrib/scripts/{ => autotools}/m4/ax_cxx_compile_stdcxx.m4,
+	contrib/scripts/{ => autotools}/m4/ax_cxx_compile_stdcxx_11.m4,
+	contrib/scripts/{ => autotools}/m4/ax_have_qt.m4, contrib/scripts/{
+	=> autotools}/m4/ax_have_qt_clang.m4, contrib/scripts/{ =>
+	autotools}/m4/ax_have_qt_ex.m4, contrib/scripts/{ =>
+	autotools}/m4/ax_have_qt_min.m4, contrib/scripts/{ =>
+	autotools}/m4/ax_prefix_config_h.m4, contrib/scripts/{ =>
+	autotools}/m4/ax_prog_flex.m4, contrib/scripts/{ =>
+	autotools}/m4/ax_pthread.m4, contrib/scripts/{ =>
+	autotools}/m4/ax_require_defined.m4, contrib/scripts/{ =>
+	autotools}/m4/gcc-version.m4, contrib/scripts/{ =>
+	autotools}/m4/inttypes.m4, contrib/scripts/{ =>
+	autotools}/m4/isc-posix.m4, contrib/scripts/{ =>
+	autotools}/m4/mm-common.m4, contrib/scripts/{ =>
+	autotools}/m4/mm-warnings.m4, contrib/scripts/{ =>
+	autotools}/m4/pkg.m4, contrib/scripts/{ =>
+	autotools}/m4/seq64_mingw_dll.m4, contrib/scripts/{ =>
+	autotools}/m4/threadlib.m4, contrib/scripts/{ =>
+	autotools}/m4/win32msc.m4, contrib/scripts/{ =>
+	autotools}/m4/xpc_debug.m4, contrib/scripts/{ =>
+	autotools}/m4/xpc_doxygen.m4, contrib/scripts/{ =>
+	autotools}/m4/xpc_errorlog.m4, contrib/scripts/{ =>
+	autotools}/m4/xpc_mingw.m4, contrib/scripts/{ =>
+	autotools}/m4/xpc_nullptr.m4, contrib/scripts/{ =>
+	autotools}/m4/xpc_thisptr.m4, contrib/scripts/{ =>
+	autotools}/reconf, contrib/scripts/{ => autotools}/strap_functions,
+	contrib/scripts/configure-clang, contrib/scripts/{ =>
+	extras}/compositor, contrib/scripts/{ => extras}/conk,
+	contrib/scripts/{ => extras}/dot-xbindkeysrc, contrib/scripts/{ =>
+	extras}/grayscale.sh, contrib/scripts/{ => extras}/gvo,
+	contrib/scripts/{ => extras}/naming, contrib/scripts/{ =>
+	extras}/ordercp, contrib/scripts/{ => extras}/vd, contrib/scripts/{
+	=> extras}/vo, contrib/scripts/htmldoc,
+	contrib/scripts/make-checkout, contrib/scripts/mingw-qt-build.sh,
+	contrib/scripts/qbuild-bash, contrib/scripts/seq66.sed,
+	meson.mingw.cross: Removing and rearranging some scripts.
+	* contrib/notes/mingw-qt-build.text,
+	contrib/scripts/mingw-qt-build.sh: Discussion and script for getting
+	and using aqtinstall.
+
+2026-05-11  Chris <ahlstromcj@gmail.com>
+
+	* contrib/meson/Meson.text, contrib/meson/cross-examples.ini,
+	contrib/notes/Meson.text, meson.mingw.cross, seq_qt5/meson.build,
+	work.sh: Exploring using Meson cross-files to build Seq66.
+
+2026-05-10  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, TODO, libseq66/src/midi/jack_assistant.cpp,
+	meson.options, seq_qt5/src/gui/qslivegrid.cpp,
+	seq_qt5/src/gui/qsmainwnd.cpp, seq_qt5/src/gui/qsmainwnd.ui,
+	seq_rtmidi/include/seq66_rtmidi_features.h, work.sh: JACK session
+	disabled by default now, other tweaks.
+	* libseq66/src/play/playlist.cpp, libseq66/src/play/screenset.cpp,
+	libsessions/src/nsm/nsmclient.cpp,
+	libsessions/src/nsm/nsmmessagesex.cpp,
+	libsessions/src/nsm/nsmserver.cpp, work.sh: Fixed the build when
+	disabling JACK or NSM.
+
+2026-05-09  Chris <ahlstromcj@gmail.com>
+
+	* libseq66/include/midi/busarray.hpp,
+	libseq66/include/midi/businfo.hpp, libseq66/src/midi/busarray.cpp,
+	libseq66/src/midi/businfo.cpp: Fixed the broken header dependencies,
+	wotta pain.
+	* INSTALL, TODO, include/seq66-config.h.in,
+	libseq66/include/meson.build, libseq66/include/midi/busarray.hpp,
+	libseq66/include/midi/businfo.hpp,
+	libseq66/include/midi/jack_assistant.hpp,
+	libseq66/include/midi/mastermidibase.hpp,
+	libseq66/include/midi/mastermidibus.hpp,
+	libseq66/include/midi/midibus.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/sessions/clinsmanager.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/meson.build,
+	libseq66/src/midi/busarray.cpp, libseq66/src/midi/businfo.cpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/seq66_features.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libsessions/include/nsm/nsmbase.hpp,
+	libsessions/include/nsm/nsmclient.hpp,
+	libsessions/include/nsm/nsmmessagesex.hpp,
+	libsessions/include/nsm/nsmserver.hpp,
+	libsessions/src/nsm/nsmbase.cpp, seq_portmidi/src/pmlinux.c,
+	seq_portmidi/src/pmwin.c, seq_qt5/src/gui/qlfoframe.cpp,
+	seq_qt5/src/gui/qmutemaster.cpp, seq_qt5/src/gui/qpatternfix.cpp,
+	seq_qt5/src/gui/qsabout.cpp, seq_qt5/src/gui/qseditoptions.cpp,
+	seq_qt5/src/gui/qsessionframe.cpp, seq_qt5/src/gui/qsetmaster.cpp,
+	seq_qt5/src/gui/qsmainwnd.cpp, seq_qt5/src/qt5nsmanager.cpp,
+	seq_rtmidi/include/midi_alsa.hpp, seq_rtmidi/include/midi_jack.hpp,
+	seq_rtmidi/include/midi_jack_data.hpp,
+	seq_rtmidi/include/midi_jack_info.hpp,
+	seq_rtmidi/include/seq66_rtmidi_features.h,
+	seq_rtmidi/src/midi_jack.cpp, seq_rtmidi/src/midi_jack_data.cpp,
+	seq_rtmidi/src/midi_jack_info.cpp, seq_rtmidi/src/rtmidi.cpp,
+	seq_rtmidi/src/rtmidi_info.cpp, work.sh: Big header changes, but
+	broke the build as noted in TODO.
+	* TODO, include/seq66-config.h.in, meson.build: Windows fixes in
+	progress.
+	* INSTALL, INSTALL.seq66.on.Ubuntu.md,
+	libseq66/src/seq66_features.cpp, meson.build, work.sh: Minor fixes
+	to --clean and --debug and buildinfo.
+	* include/qt/portmidi/seq66-git-version.h,
+	include/qt/rtmidi/seq66-git-version.h: Fixed the rtmidi and portmidi
+	shadow builds.
+	* NEWS, README.md, TODO, include/seq66-config.h.in, meson.build,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/gui/qlfoframe.cpp,
+	seq_qt5/src/gui/qliveframeex.cpp, seq_qt5/src/gui/qmutemaster.cpp,
+	seq_qt5/src/gui/qpatternfix.cpp, seq_qt5/src/gui/qperfeditex.cpp,
+	seq_qt5/src/gui/qperfeditframe64.cpp,
+	seq_qt5/src/gui/qplaylistframe.cpp, seq_qt5/src/gui/qsabout.cpp,
+	seq_qt5/src/gui/qsabout.ui, seq_qt5/src/gui/qsappinfo.cpp,
+	seq_qt5/src/gui/qsbuildinfo.cpp, seq_qt5/src/gui/qseditoptions.cpp,
+	seq_qt5/src/gui/qseqeditex.cpp,
+	seq_qt5/src/gui/qseqeditframe64.cpp,
+	seq_qt5/src/gui/qseqeventframe.cpp,
+	seq_qt5/src/gui/qsessionframe.cpp, seq_qt5/src/gui/qsetmaster.cpp,
+	seq_qt5/src/gui/qslivegrid.cpp, seq_qt5/src/gui/qslogview.cpp,
+	seq_qt5/src/gui/qsmainwnd.cpp, seq_qt5/src/qt5_helpers.cpp, work.sh: 
+	Removed non-qmake ui includes from gui sources.
+
+2026-05-08  Chris <ahlstromcj@gmail.com>
+
+	* INSTALL.seq66.on.Ubuntu.md, TODO, include/cli/seq66-config.h,
+	include/meson.build, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, include/seq66-config.h.in,
+	include/seq66-git-version.h.in, libseq66/meson.build,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/seq66_features.cpp,
+	nsis/build_release_package.bat, seq_qt5/include/qseventslots.hpp: 
+	Added back git version information to Help / About.
+	* INSTALL, INSTALL.seq66.on.Ubuntu.md, libseq66/meson.build,
+	libsessions/meson.build, meson.build, seq_portmidi/meson.build,
+	seq_qt5/meson.build, seq_rtmidi/meson.build, work.sh: Changed
+	default build to release, forced the internal libraries to static.
+	* .gitignore, INSTALL, INSTALL.seq66.on.Ubuntu.md, NEWS, README.md,
+	TODO, contrib/notes/qt6.text, meson.build, seq_qt5/meson.build,
+	work.sh: Updating build, but release build fails.
+
+2026-05-07  Chris <ahlstromcj@gmail.com>
+
+	* INSTALL, Makefile.in, NEWS, Seq66cli/Makefile.am,
+	Seq66cli/Makefile.in, Seq66cli/meson.build, Seq66qt5/Makefile.am,
+	Seq66qt5/Makefile.in, Seq66qt5/meson.build, TODO,
+	aux-files/compile, aux-files/config.guess, aux-files/config.sub,
+	aux-files/depcomp, aux-files/install-sh, aux-files/ltmain.sh,
+	aux-files/missing, bootstrap.help, configure, configure.help,
+	Makefile.am => contrib/scripts/Makefile.am, autogen.sh =>
+	contrib/scripts/autogen.sh, bootstrap => contrib/scripts/bootstrap,
+	configure.ac => contrib/scripts/configure.ac, {m4 =>
+	contrib/scripts/m4}/alsa.m4, {m4 =>
+	contrib/scripts/m4}/ax_cxx_compile_stdcxx.m4, {m4 =>
+	contrib/scripts/m4}/ax_cxx_compile_stdcxx_11.m4, {m4 =>
+	contrib/scripts/m4}/ax_have_qt.m4, {m4 =>
+	contrib/scripts/m4}/ax_have_qt_clang.m4, {m4 =>
+	contrib/scripts/m4}/ax_have_qt_ex.m4, {m4 =>
+	contrib/scripts/m4}/ax_have_qt_min.m4, {m4 =>
+	contrib/scripts/m4}/ax_prefix_config_h.m4, {m4 =>
+	contrib/scripts/m4}/ax_prog_flex.m4, {m4 =>
+	contrib/scripts/m4}/ax_pthread.m4, {m4 =>
+	contrib/scripts/m4}/ax_require_defined.m4, {m4 =>
+	contrib/scripts/m4}/gcc-version.m4, {m4 =>
+	contrib/scripts/m4}/inttypes.m4, {m4 =>
+	contrib/scripts/m4}/isc-posix.m4, {m4 =>
+	contrib/scripts/m4}/mm-common.m4, {m4 =>
+	contrib/scripts/m4}/mm-warnings.m4, {m4 =>
+	contrib/scripts/m4}/pkg.m4, {m4 =>
+	contrib/scripts/m4}/seq64_mingw_dll.m4, {m4 =>
+	contrib/scripts/m4}/threadlib.m4, {m4 =>
+	contrib/scripts/m4}/win32msc.m4, {m4 =>
+	contrib/scripts/m4}/xpc_debug.m4, {m4 =>
+	contrib/scripts/m4}/xpc_doxygen.m4, {m4 =>
+	contrib/scripts/m4}/xpc_errorlog.m4, {m4 =>
+	contrib/scripts/m4}/xpc_mingw.m4, {m4 =>
+	contrib/scripts/m4}/xpc_nullptr.m4, {m4 =>
+	contrib/scripts/m4}/xpc_thisptr.m4, packages =>
+	contrib/scripts/packages, data/Makefile.am, data/Makefile.in,
+	data/meson.build, doc/Makefile.am, doc/Makefile.in,
+	doc/dox/Makefile.am, doc/latex/Makefile.am, doc/latex/Makefile.in,
+	doc/latex/tex/Makefile.am, doc/latex/tex/Makefile.in,
+	libseq66/Makefile.am, libseq66/Makefile.in,
+	libseq66/include/Makefile.am, libseq66/include/Makefile.in,
+	libseq66/meson.build, libseq66/src/Makefile.am,
+	libseq66/src/Makefile.in, libsessions/Makefile.am,
+	libsessions/Makefile.in, libsessions/include/Makefile.am,
+	libsessions/include/Makefile.in, libsessions/meson.build,
+	libsessions/src/Makefile.am, libsessions/src/Makefile.in,
+	m4/Makefile.am, m4/Makefile.in, man/Makefile.am, man/Makefile.in,
+	man/seq66.1, man/seq66cli.1, man/sequencer66.1, meson.build,
+	resources/pixmaps/Makefile.am, resources/pixmaps/Makefile.in,
+	resources/pixmaps/meson.build, seq_portmidi/Makefile.am,
+	seq_portmidi/Makefile.in, seq_portmidi/include/Makefile.am,
+	seq_portmidi/include/Makefile.in, seq_portmidi/meson.build,
+	seq_portmidi/src/Makefile.am, seq_portmidi/src/Makefile.in,
+	seq_qt5/Makefile.am, seq_qt5/Makefile.in,
+	seq_qt5/forms/Makefile.am, seq_qt5/forms/Makefile.in,
+	seq_qt5/include/Makefile.am, seq_qt5/include/Makefile.in,
+	seq_qt5/meson.build, seq_qt5/src/Makefile.am,
+	seq_qt5/src/Makefile.in, seq_rtmidi/Makefile.am,
+	seq_rtmidi/Makefile.in, seq_rtmidi/include/Makefile.am,
+	seq_rtmidi/include/Makefile.in, seq_rtmidi/meson.build,
+	seq_rtmidi/src/Makefile.am, seq_rtmidi/src/Makefile.in, work.sh: 
+	Build/install/uninstall works, removed autotools scripting.
+
+2026-05-05  Chris <ahlstromcj@gmail.com>
+
+	* doc/latex/make_pdf.sh, doc/latex/tex/configuration.tex,
+	doc/latex/tex/docs-structure.tex, doc/latex/tex/meson.build,
+	doc/latex/tex/seq66-user-manual.tex, meson.build, work.sh: Added
+	make_pdf shell script, left doc/latex/tex/meson.build in just in
+	case.
+
+2026-05-04  Chris <ahlstromcj@gmail.com>
+
+	* TODO, doc/latex/meson.build, doc/latex/tex/meson.build,
+	doc/meson.build, extras/help/options.help, extras/scripts/gvo,
+	extras/scripts/vd, extras/scripts/vdiff, extras/scripts/vo,
+	extras/scripts/vw, meson.build, meson.options, work.sh: Getting docs
+	option to work in progress.
+
+2026-05-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES, TODO, VERSION, meson.build,
+	seq_qt5/meson.build, seq_qt5/src/gui/qseditoptions.cpp,
+	seq_qt5/src/gui/qslivegrid.cpp, seq_qt5/src/qclocklayout.cpp,
+	seq_qt5/src/qt5_helpers.cpp: Fixed qt5/6 connections issues, updated
+	version.
+
+2026-05-02  Chris <ahlstromcj@gmail.com>
+
+	* Seq66qt5/Seq66qt5.pro, Seq66qt5/meson.build, TODO, meson.build,
+	seq66.pro, seq_qt5/include/qt5nsmanager.hpp, seq_qt5/meson.build,
+	seq_qt5/seq_qt5.pro, seq_qt5/src/{ => gui}/qlfoframe.cpp,
+	seq_qt5/{include => src/gui}/qlfoframe.hpp, seq_qt5/{forms =>
+	src/gui}/qlfoframe.ui, seq_qt5/src/{ => gui}/qliveframeex.cpp,
+	seq_qt5/{include => src/gui}/qliveframeex.hpp, seq_qt5/{forms =>
+	src/gui}/qliveframeex.ui, seq_qt5/src/{ => gui}/qmutemaster.cpp,
+	seq_qt5/{include => src/gui}/qmutemaster.hpp, seq_qt5/{forms =>
+	src/gui}/qmutemaster.ui, seq_qt5/src/{ => gui}/qpatternfix.cpp,
+	seq_qt5/{include => src/gui}/qpatternfix.hpp, seq_qt5/{forms =>
+	src/gui}/qpatternfix.ui, seq_qt5/src/{ => gui}/qperfeditex.cpp,
+	seq_qt5/{include => src/gui}/qperfeditex.hpp, seq_qt5/{forms =>
+	src/gui}/qperfeditex.ui, seq_qt5/src/{ =>
+	gui}/qperfeditframe64.cpp, seq_qt5/{include =>
+	src/gui}/qperfeditframe64.hpp, seq_qt5/{forms =>
+	src/gui}/qperfeditframe64.ui, seq_qt5/src/{ =>
+	gui}/qplaylistframe.cpp, seq_qt5/{include =>
+	src/gui}/qplaylistframe.hpp, seq_qt5/{forms =>
+	src/gui}/qplaylistframe.ui, seq_qt5/src/{ => gui}/qsabout.cpp,
+	seq_qt5/{include => src/gui}/qsabout.hpp, seq_qt5/{forms =>
+	src/gui}/qsabout.ui, seq_qt5/src/{ => gui}/qsappinfo.cpp,
+	seq_qt5/{include => src/gui}/qsappinfo.hpp, seq_qt5/{forms =>
+	src/gui}/qsappinfo.ui, seq_qt5/src/{ => gui}/qsbuildinfo.cpp,
+	seq_qt5/{include => src/gui}/qsbuildinfo.hpp, seq_qt5/{forms =>
+	src/gui}/qsbuildinfo.ui, seq_qt5/src/{ => gui}/qseditoptions.cpp,
+	seq_qt5/{include => src/gui}/qseditoptions.hpp, seq_qt5/{forms =>
+	src/gui}/qseditoptions.ui, seq_qt5/src/{ => gui}/qseqeditex.cpp,
+	seq_qt5/{include => src/gui}/qseqeditex.hpp, seq_qt5/{forms =>
+	src/gui}/qseqeditex.ui, seq_qt5/src/{ => gui}/qseqeditframe64.cpp,
+	seq_qt5/{include => src/gui}/qseqeditframe64.hpp, seq_qt5/{forms =>
+	src/gui}/qseqeditframe64.ui, seq_qt5/src/{ =>
+	gui}/qseqeventframe.cpp, seq_qt5/{include =>
+	src/gui}/qseqeventframe.hpp, seq_qt5/{forms =>
+	src/gui}/qseqeventframe.ui, seq_qt5/src/{ =>
+	gui}/qsessionframe.cpp, seq_qt5/{include =>
+	src/gui}/qsessionframe.hpp, seq_qt5/{forms =>
+	src/gui}/qsessionframe.ui, seq_qt5/src/{ => gui}/qsetmaster.cpp,
+	seq_qt5/{include => src/gui}/qsetmaster.hpp, seq_qt5/{forms =>
+	src/gui}/qsetmaster.ui, seq_qt5/src/{ => gui}/qslivegrid.cpp,
+	seq_qt5/{include => src/gui}/qslivegrid.hpp, seq_qt5/{forms =>
+	src/gui}/qslivegrid.ui, seq_qt5/src/{ => gui}/qslogview.cpp,
+	seq_qt5/{include => src/gui}/qslogview.hpp, seq_qt5/{forms =>
+	src/gui}/qslogview.ui, seq_qt5/src/{ => gui}/qsmainwnd.cpp,
+	seq_qt5/{include => src/gui}/qsmainwnd.hpp, seq_qt5/{forms =>
+	src/gui}/qsmainwnd.ui, seq_qt5/src/qclocklayout.cpp,
+	seq_qt5/src/qinputcheckbox.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qperftime.cpp, seq_qt5/src/qportwidget.cpp,
+	seq_qt5/src/qseqbase.cpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqkeys.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qseqtime.cpp, seq_qt5/src/qseventslots.cpp,
+	seq_qt5/src/qslivebase.cpp, seq_qt5/src/qstriggereditor.cpp,
+	seq_qt5/src/qt5nsmanager.cpp, work.sh: Reworked Qt file hierarchy,
+	got Meson build working and fixed the pro files to match.
+
 2026-05-01  Chris <ahlstromcj@gmail.com>
 
+	* Seq66cli/meson.build, Seq66qt5/meson.build,
+	Seq66qt5/seq66qt5.cpp, build/README, contrib/notes/Meson.text,
+	include/meson.build, include/seq66-config.h.in,
+	libseq66/include/meson.build, libseq66/meson.build,
+	libseq66/src/meson.build, libsessions/include/meson.build,
+	libsessions/meson.build, libsessions/src/meson.build, meson.build,
+	meson.options, resources/meson.build,
+	resources/pixmaps/meson.build, seq_portmidi/include/meson.build,
+	seq_portmidi/meson.build, seq_portmidi/src/meson.build,
+	seq_qt5/forms/meson.build, seq_qt5/include/meson.build,
+	seq_qt5/include/qportwidget.hpp, seq_qt5/meson.build,
+	seq_qt5/src/meson.build, seq_qt5/src/qliveframeex.cpp,
+	seq_qt5/src/qperfeditex.cpp, seq_rtmidi/include/meson.build,
+	seq_rtmidi/meson.build, seq_rtmidi/src/meson.build,
+	subprojects/README, subprojects/liblib66.wrap,
+	subprojects/potext.wrap, work.sh: Added Meson build files.
+	* libseq66/libseq66.pro: Added the drums module to libseq66.pro,
+	oops.
+	* ChangeLog: Release Notes for Seq66 v. 0.99.24 2026-05-01 "Mitt
+	Igation" This release contains some minor feature updates and fixes.  - Pattern editor.      - Added the display of a drum-note's name when in drum       mode and hovering near a drum-note to modify it.      - Added the ability to show hex numbers for the standard       MIDI controller events.      - Added two buttons, one that toggles showing certain numbers       between hexadecimal and decimal format, and       the other toggles showing level numbers to reduce       clutter.  - Event editor.      - Added the ability to show hex numbers for standard       MIDI controller events.  - Backed autoconf version from 2.72 to 2.71 re issue #145.  - Fixed some more QMouseEvent x()/y() deprecations found by Clang.  - qseq66.rc.      - Change auto-rc-save to default to false.      - Added a flag so that the 'rc' file can be saved at       first run (no existing configuration files) without       setting auto-rc-save.  - Main window.      - Fixed a random segfault when the "Remap & Restart" pops up       if a pattern editor is open, the user clicks OK, selects a       different tune is selected.      - A similar segfault with the "Unavailable port" message.        The fix is to stop the qseqeditframe64 timer before       the close() call.      - A similar segfault with the "LFO" dialog. Fixed by no       longer resetting the MIDI events when the close event       occurs.  - Pattern editor.      - Mitigated issue #144 (painted notes misplaced in time)       for normal notes and drum notes by adjusting the       snap point.  - Fixed more Qt6 deprecations. QtCreator to use Qt 6 namespaces.  - Added a Windows installer for this release. A user request! - Documentation updated.  - Moved the LICENSE files to "licenses" sub-directory.  See NEWS for many more details.
 	* NEWS, RELNOTES, TODO, VERSION, aux-files/ltmain.sh, configure,
 	configure.ac, data/license.text, data/readme.text,
 	data/readme.windows, doc/latex/tex/seq66-user-manual.tex,

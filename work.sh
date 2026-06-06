@@ -457,6 +457,7 @@ clean_build () {
       rm -rf $DIR
    done
 
+   rm -f build/*.log
    rm -f doc/dox/*.log
    rm -f doc/latex/*.log
    echo "Build products removed from the $SEQ66/build sub-directories."

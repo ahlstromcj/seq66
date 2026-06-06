@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2026-06-03
+ * \updates       2026-06-06
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -642,9 +642,9 @@ seq_build_details ()
 #endif
         <<
             "\n"
-            "Some options can be enabled via ./work.sh (or 'meson setup'),"
+            "One can enable some options via ./work.sh or 'meson setup',"
             " seq66_features.h, or build-specific seq66-config.h files in"
-            " include/qt/* for qmake portmidi and rtmidi builds. Also see"
+            " include/qt/* for qmake portmidi/rtmidi builds. Also see"
             " the INSTALL files."
         << std::endl
         ;
