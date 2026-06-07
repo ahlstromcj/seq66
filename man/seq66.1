@@ -1,4 +1,4 @@
-.TH Seq66 "May 2026" "Version 0.99.25" "Seq66 Manual Page"
+.TH Seq66 "June 2026" "Version 0.99.26" "Seq66 Manual Page"
 
 .SH NAME
 Seq66 (qseq66) - Real-time live MIDI loop sequencer refactored from
@@ -52,8 +52,10 @@ is not saved to the "rc" configuration file.
 
 .TP 8
 .B  \-H, \-\-home dir
-Set the directory that holds the configuration files.  It is always
-relative to the user's HOME directory:  The default is $HOME/.config/seq66.
+Set the directory that holds the configuration files. The default is
+"~/.config/seq66". If not a root path, 'dir' is appended to that.
+Otherwise, if 'dir' starts with "/" or "~/", home is changed to
+that path.
 
 .TP 8
 .B  \-X, \-\-playlist filename

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2026-06-02
+ * \updates       2026-06-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -165,9 +165,24 @@ extern bool install_scroll_filter (QWidget * monitor, QScrollArea * target);
 #endif
 
 extern void set_spin_value (QSpinBox * spin, int value);
-extern QAction * new_qaction (const std::string & text, const QIcon & micon);
-extern QAction * new_qaction (const std::string & text, QObject * parent);
-extern QMenu * new_qmenu (const std::string & text, QWidget * parent = nullptr);
+extern QAction * new_qaction
+(
+    const std::string & text,
+    const QIcon & micon,
+    int fontsize = 8            /* pt */
+);
+extern QAction * new_qaction
+(
+    const std::string & text,
+    QObject * parent,
+    int fontsize = 8            /* pt */
+);
+extern QMenu * new_qmenu
+(
+    const std::string & text,
+    QWidget * parent = nullptr,
+    int fontsize = 8            /* pt */
+);
 extern bool show_open_midi_file_dialog (QWidget * parent, std::string & file);
 extern bool show_import_midi_file_dialog (QWidget * parent, std::string & file);
 extern bool show_select_project_dialog

@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-05-16
-# \updates     2026-05-28
+# \updates     2026-06-07
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -42,8 +42,6 @@ if seq66_makensis.found()
       command : [ seq66_makensis, seq66_nsis_script ],
       depends : [ seq66cli_exe, seq66qt5_exe ]
       )
-else
-   error('Could not find makensis')
 endif
 
 #****************************************************************************

@@ -38,7 +38,7 @@
     <string>Session Path</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QTextEdit" name="sessionNameText">
@@ -71,7 +71,7 @@
     </font>
    </property>
    <property name="verticalScrollBarPolicy">
-    <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+    <enum>Qt::ScrollBarAlwaysOff</enum>
    </property>
    <property name="undoRedoEnabled">
     <bool>false</bool>
@@ -86,7 +86,7 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
@@ -115,7 +115,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string>Server URL</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QTextEdit" name="sessionUrlText">
@@ -148,7 +148,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </font>
    </property>
    <property name="verticalScrollBarPolicy">
-    <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+    <enum>Qt::ScrollBarAlwaysOff</enum>
    </property>
    <property name="undoRedoEnabled">
     <bool>false</bool>
@@ -163,7 +163,7 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
@@ -192,7 +192,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string>Session Log File</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtonReload">
@@ -261,7 +261,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </font>
    </property>
    <property name="verticalScrollBarPolicy">
-    <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+    <enum>Qt::ScrollBarAlwaysOff</enum>
    </property>
    <property name="undoRedoEnabled">
     <bool>false</bool>
@@ -276,7 +276,7 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456;&quot;&gt;Normal&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
@@ -299,7 +299,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string>Session Manager</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="displayNameLabel">
@@ -321,7 +321,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string>Config File</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="clientIdLabel">
@@ -343,7 +343,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string>Client ID/UUID</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QTextEdit" name="displayNameText">
@@ -376,7 +376,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </font>
    </property>
    <property name="verticalScrollBarPolicy">
-    <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+    <enum>Qt::ScrollBarAlwaysOff</enum>
    </property>
    <property name="undoRedoEnabled">
     <bool>false</bool>
@@ -391,7 +391,7 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
@@ -425,7 +425,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </font>
    </property>
    <property name="verticalScrollBarPolicy">
-    <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+    <enum>Qt::ScrollBarAlwaysOff</enum>
    </property>
    <property name="undoRedoEnabled">
     <bool>false</bool>
@@ -440,7 +440,7 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
@@ -484,7 +484,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <bool>true</bool>
    </property>
    <property name="cursorMoveStyle">
-    <enum>Qt::CursorMoveStyle::LogicalMoveStyle</enum>
+    <enum>Qt::LogicalMoveStyle</enum>
    </property>
   </widget>
   <widget class="QLabel" name="label">
@@ -506,7 +506,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string>Macro Execution</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QComboBox" name="macroComboBox">
@@ -533,7 +533,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string/>
    </property>
    <property name="insertPolicy">
-    <enum>QComboBox::InsertPolicy::InsertAlphabetically</enum>
+    <enum>QComboBox::InsertAlphabetically</enum>
    </property>
   </widget>
   <widget class="QCheckBox" name="checkBoxMacrosActive">
@@ -554,7 +554,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <rect>
      <x>179</x>
      <y>160</y>
-     <width>449</width>
+     <width>421</width>
      <height>28</height>
     </rect>
    </property>
@@ -661,7 +661,7 @@ author and dates.</string>
     <string>Characters remaining</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="labelCharactersRemaining">
@@ -689,7 +689,7 @@ author and dates.</string>
     <string>1024</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtonSaveInfo">
@@ -762,7 +762,7 @@ then the first one is shown.</string>
     <string>Last Directory</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QLineEdit" name="lineEditLastUsedDir">
@@ -815,7 +815,7 @@ then the first one is shown.</string>
     <string>Song Path</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="label_5">
@@ -840,11 +840,23 @@ then the first one is shown.</string>
   <widget class="QPushButton" name="pushButtonLogFileClear">
    <property name="geometry">
     <rect>
-     <x>640</x>
+     <x>603</x>
      <y>160</y>
-     <width>28</width>
+     <width>56</width>
      <height>28</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>56</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>56</width>
+     <height>16777215</height>
+    </size>
    </property>
    <property name="font">
     <font>
@@ -858,7 +870,7 @@ start it again to have it take effect. No easy
 way to undo rerouting standard I/O to file.</string>
    </property>
    <property name="text">
-    <string/>
+    <string>Clear</string>
    </property>
   </widget>
  </widget>

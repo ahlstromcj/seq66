@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2026-06-02
+ * \updates       2026-06-07
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -40,8 +40,8 @@
  *          callback given by a Qt slot-name.
  *      -   enable_combobox_item(). Handles the appearance of a combo box.
  *      -   fill_combobox(). Fills a combo box from a combolist.
- *      -   new_qaction(). Creates a menu action from text and an icon. Also
- *          could centralize internationalization.
+ *      -   new_qaction(). Creates a menu action from text and an icon.
+ *          Also sets font-size.Also could centralize internationalization.
  *      -   new_qmenu(). Similar.
  *      -   show_open_midi_file_dialog()
  *      -   show_import_midi_file_dialog()
@@ -699,7 +699,12 @@ set_spin_value (QSpinBox * spin, int value)
  */
 
 QAction *
-new_qaction (const std::string & text, const QIcon & micon)
+new_qaction
+(
+    const std::string & text,
+    const QIcon & micon,
+    int fontsize
+)
 {
     QString mlabel(qt(text));
 #if defined QT_VERSION_L5
@@ -707,6 +712,12 @@ new_qaction (const std::string & text, const QIcon & micon)
 #else
     QAction * result = new (std::nothrow) QAction(micon, mlabel);
 #endif
+    if (not_nullptr(result))
+    {
+        QFont f { result->font() };
+        f.setPointSize(fontsize);
+        result->setFont(f);
+    }
     return result;
 }
 
@@ -718,7 +729,12 @@ new_qaction (const std::string & text, const QIcon & micon)
  */
 
 QAction *
-new_qaction (const std::string & text, QObject * parent)
+new_qaction
+(
+    const std::string & text,
+    QObject * parent,
+    int fontsize
+)
 {
     if (text.empty())
     {
@@ -728,12 +744,23 @@ new_qaction (const std::string & text, QObject * parent)
     {
         QString mlabel(qt(text));
         QAction * result = new (std::nothrow) QAction(mlabel, parent);
+        if (not_nullptr(result))
+        {
+            QFont f { result->font() };
+            f.setPointSize(fontsize);
+            result->setFont(f);
+        }
         return result;
     }
 }
 
 QMenu *
-new_qmenu (const std::string & text, QWidget * parent)
+new_qmenu
+(
+    const std::string & text,
+    QWidget * parent,
+    int fontsize
+)
 {
     if (text.empty())
     {
@@ -743,6 +770,12 @@ new_qmenu (const std::string & text, QWidget * parent)
     {
         QString mlabel(qt(text));
         QMenu * result = new (std::nothrow) QMenu(mlabel, parent);
+        if (not_nullptr(result))
+        {
+            QFont f { result->font() };
+            f.setPointSize(fontsize);
+            result->setFont(f);
+        }
         return result;
     }
 }

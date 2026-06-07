@@ -737,7 +737,7 @@ midicontrolfile::write_stream (std::ofstream & file)
 {
     write_date(file, "MIDI control");
     file <<
-"# Sets up MIDI I/O control. The format is like the 'rc' file. To use it, set it\n"
+"# Sets up MIDI I/O control. The file resembles the 'rc' file. To use, set it\n"
 "# active in the 'rc' [midi-control-file] section. It adds loop, mute, &\n"
 "# automation buttons, MIDI display, new settings, and macros.\n"
     ;

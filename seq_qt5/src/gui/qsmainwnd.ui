@@ -543,7 +543,7 @@ B:B:T and H:M:S format.</string>
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>7</number>
       </property>
       <property name="movable">
        <bool>false</bool>
@@ -1796,6 +1796,11 @@ beats/minute.</string>
      <string>&amp;File</string>
     </property>
     <widget class="QMenu" name="menuExport">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
      <property name="title">
       <string>&amp;Export</string>
      </property>
@@ -1805,6 +1810,11 @@ beats/minute.</string>
      <addaction name="actionExportSMF0"/>
     </widget>
     <widget class="QMenu" name="menuImport">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
      <property name="title">
       <string>&amp;Import</string>
      </property>
@@ -1857,8 +1867,22 @@ beats/minute.</string>
     <addaction name="actionCopyCurrentSet"/>
     <addaction name="actionPasteToCurrentSet"/>
    </widget>
+   <widget class="QMenu" name="menuLearn">
+    <property name="title">
+     <string>&amp;Learn</string>
+    </property>
+    <addaction name="actionLoop_toggle"/>
+    <addaction name="actionMutes_toggle"/>
+    <addaction name="actionAutomation"/>
+    <addaction name="separator"/>
+    <addaction name="actionMute"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave_2"/>
+    <addaction name="actionReset"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuLearn"/>
    <addaction name="menuAbout"/>
   </widget>
   <action name="actionNew">
@@ -1867,6 +1891,11 @@ beats/minute.</string>
    </property>
    <property name="toolTip">
     <string>Create a new Seq66 MIDI file, clearing all song information.</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -1879,6 +1908,11 @@ beats/minute.</string>
    <property name="toolTip">
     <string>Import MIDI file into (different) bank/set.</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
    </property>
@@ -1889,6 +1923,11 @@ beats/minute.</string>
    </property>
    <property name="toolTip">
     <string>Import a configuration from another directory.</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
    </property>
    <property name="shortcut">
     <string>Ctrl+J</string>
@@ -1901,6 +1940,11 @@ beats/minute.</string>
    <property name="toolTip">
     <string>Open a MIDI or Seq66 MIDI file.</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
    </property>
@@ -1911,6 +1955,11 @@ beats/minute.</string>
    </property>
    <property name="toolTip">
     <string>Open a Seq66 playlist file.</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionRecent">
@@ -1928,6 +1977,11 @@ beats/minute.</string>
    <property name="toolTip">
     <string>Preferences/Options (still in progress).</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
    </property>
@@ -1942,6 +1996,11 @@ beats/minute.</string>
    <property name="toolTip">
     <string>Save MIDI file in Seq66 format.</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
@@ -1953,6 +2012,11 @@ beats/minute.</string>
    <property name="toolTip">
     <string>Save As a Seq66 MIDI file with a different name.</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
    </property>
@@ -1961,20 +2025,40 @@ beats/minute.</string>
    <property name="text">
     <string>&amp;Quit</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionAbout">
    <property name="text">
     <string>&amp;About...</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionBuildInfo">
    <property name="text">
     <string>&amp;Build Info...</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionAppInfo">
    <property name="text">
     <string>App &amp;Keys...</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionAbout_Qt">
@@ -1995,6 +2079,11 @@ beats/minute.</string>
     <string>Export song layout as a Seq66 MIDI file with
 triggers consolidated into a single one for each unmuted pattern.</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionExportMIDI">
    <property name="text">
@@ -2004,6 +2093,11 @@ triggers consolidated into a single one for each unmuted pattern.</string>
     <string>Export without Seq66 SeqSpecs, just MIDI events
 and messages.</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionExportSMF0">
    <property name="text">
@@ -2012,6 +2106,11 @@ and messages.</string>
    <property name="toolTip">
     <string>Convert to SMF 0 and export without Seq66 SeqSpecs.</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionSongEditor">
    <property name="text">
@@ -2019,6 +2118,11 @@ and messages.</string>
    </property>
    <property name="toolTip">
     <string>Brings up the Song Editor in an external window.</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
    </property>
    <property name="shortcut">
     <string>Ctrl+E</string>
@@ -2031,6 +2135,11 @@ and messages.</string>
    <property name="toolTip">
     <string>Transposes the transposable tracks.</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionClearMuteGroups">
    <property name="text">
@@ -2038,6 +2147,11 @@ and messages.</string>
    </property>
    <property name="toolTip">
     <string>Clears mute groups so one can start over again.</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionReloadMuteGroups">
@@ -2047,6 +2161,11 @@ and messages.</string>
    <property name="toolTip">
     <string>Reloads mute groups from the &quot;mutes&quot; file.</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionMuteAllTracks">
    <property name="text">
@@ -2054,6 +2173,11 @@ and messages.</string>
    </property>
    <property name="toolTip">
     <string>Mutes all tracks.</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
    </property>
    <property name="shortcut">
     <string>Ctrl+M</string>
@@ -2066,6 +2190,11 @@ and messages.</string>
    <property name="toolTip">
     <string>Arms all tracks in the current set.</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
    <property name="shortcut">
     <string>Ctrl+U</string>
    </property>
@@ -2076,6 +2205,11 @@ and messages.</string>
    </property>
    <property name="toolTip">
     <string>Toggles mute status of all tracks in the current set.</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
@@ -2098,10 +2232,20 @@ and messages.</string>
 in the same directory as the original, with the extension
 &quot;.text&quot;.</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionCopyCurrentSet">
    <property name="text">
     <string>C&amp;opy Current Set</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionPasteToCurrentSet">
@@ -2111,6 +2255,11 @@ in the same directory as the original, with the extension
    <property name="iconText">
     <string>P&amp;aste To Current Set</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionImportPlaylist">
    <property name="text">
@@ -2118,6 +2267,11 @@ in the same directory as the original, with the extension
    </property>
    <property name="toolTip">
     <string>Import a playlist into the session.</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
@@ -2127,25 +2281,110 @@ in the same directory as the original, with the extension
    <property name="text">
     <string>&amp;MIDI into Session</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionTutorial">
    <property name="text">
     <string>&amp;Tutorial</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionUserManual">
    <property name="text">
     <string>&amp;User Manual</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionExportProject">
    <property name="text">
     <string>Pro&amp;ject Configuration...</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionLogView">
    <property name="text">
     <string>&amp;View Log</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionLoop_toggle">
+   <property name="text">
+    <string>&amp;Loops</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionMutes_toggle">
+   <property name="text">
+    <string>&amp;Mute Groups</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionAutomation">
+   <property name="text">
+    <string>&amp;Automation</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionMute">
+   <property name="text">
+    <string>M&amp;ute</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionSave_2">
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionReset">
+   <property name="text">
+    <string>&amp;Reset</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
    </property>
   </action>
  </widget>

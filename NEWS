@@ -1,8 +1,34 @@
 NEWS for Seq66 0.99.25
 Chris Ahlstrom
-2015-07-10 to 2026-06-06
+2015-07-10 to 2026-06-07
 
 # Change Log
+
+## [0.99.26] - 2026-06-07
+
+"MIDI Learn Perhaps"
+
+Starting to work out the feasibility of MIDI Learn....
+
+### Added
+
+-   The new "font-fix.qss" style sheet can be used to correct
+    font sizes (and only font sizes).
+-   More tool-tips.
+
+### Changed
+
+-   Most of the 'qss' files have been tweaked.
+-   Updated the creation of menus and actions to specify font size.
+
+### Fixed
+
+-   A missing NSIS application ("makensis") no longer causes a build
+    error.
+
+### Removed
+
+-   TBD
 
 ## [0.99.25] - 2026-06-06
 

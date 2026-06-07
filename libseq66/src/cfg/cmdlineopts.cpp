@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2026-05-09
+ * \updates       2026-06-06
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -335,6 +335,7 @@ static const std::string s_help_3
     "   -u, --user-save         Force the save  of 'usr' settings.\n"
     "   -H, --home dir          Directory for configuration. ~/.config/seq66\n"
     "                           by default. If not a full path, it's appended.\n"
+    "                           A full path starts with '/' or '~/'.\n"
     "   -f, --rc filename       An alternate 'rc' file in ~/.config/seq66 or\n"
     "                           the --home directory. '.rc' enforced.\n"
     "   -F, --usr filename      An alternate 'usr' file.  Same rules as --rc.\n"

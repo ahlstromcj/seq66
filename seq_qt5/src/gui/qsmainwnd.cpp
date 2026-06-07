@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-05-18
+ * \updates       2026-06-07
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1028,6 +1028,11 @@ qsmainwnd::qsmainwnd
 
     if (! rc().investigate())
         ui->label_test->hide();
+
+#if SEQ66_MIDI_LEARN_SUPPORT
+#else
+    ui->menuLearn->menuAction()->setVisible(false);
+#endif
 
     show();
     show_song_mode(m_song_mode);

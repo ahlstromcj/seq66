@@ -108,6 +108,17 @@ main (int argc, char * argv [])
     if (apppath.empty())
         apppath = argv[0];
 
+#if 0
+    /*
+     *  Use the new font-fix.qss to fix the font size.
+     */
+
+    app.setStyleSheet
+    (
+        "QMenu { font-size : 10pt; } QMenu::item { font-size: 10pt; }"
+    );
+#endif
+
     seq66::smanager::app_info(apppath);     /* instead of set_app_path()    */
 
 #if defined USE_RING_BUFFER_TEST && defined SEQ66_PLATFORM_DEBUG

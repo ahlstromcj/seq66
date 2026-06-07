@@ -1,9 +1,19 @@
 TO DO for Seq66 0.99.25
 Chris Ahlstrom
-2019-04-13 to 2026-06-06
+2019-04-13 to 2026-06-07
 
+    -   Make an issue for MIDI Learn.
+    -   Should we have new global SeqSpecs:
+        -   Overrides the file setting for recording by buss.
+        -   Overrides the file setting for recording by channel.
+        -   Overrides the current settings for
+            -   Tighten record.
+            -   Quantized record.
+            -   Note-mapped record.
     -   How about a full-song channel override (except for drums on
         Ch. 10) for crippled hardware like the Akai MPK Mini Play?
+    -   More tooltips
+        -   Edit / Preferences / Metronome.
     -   Slot dots:  see qloopbutton.cpp.
         -   Red for record. Already implemented. Uses drum_paint().
         -   Orange for record + MIDI Thru. Try the sel_color().

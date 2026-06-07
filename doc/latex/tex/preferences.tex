@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-07-26
+% \update      2026-06-06
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1009,7 +1009,7 @@
    This value selects the output MIDI device to use to play the metronome.
    It \textsl{must} be enabled in the \textbf{MIDI Clock} list.
 
-   \itempar{Channel}{metronome!channel}
+   \itempar{Metro Channel}{metronome!channel}
    This value selects the channel to use to play the metronome.
 
    \itempar{Record Buss}{recorder!buss}
@@ -1030,8 +1030,10 @@
 
    We still have some more work to do to refine the metronome, the
    background recorder, and their configuration, pending user input.
-   For more information about the metronome, see
-   \sectionref{subsection:edit_preferences_metronome}.
+   Note that the background recorder only works when playing, which
+   kind of defeats the purpose at this time.
+%  For more information about the metronome, see
+%  \sectionref{subsection:edit_preferences_metronome}.
 %  For information on count-in background recording, see
 %  \sectionref{subsection:edit_preferences_background_recording}.
 
@@ -1080,12 +1082,12 @@
          pattern loop.
       \item \textbf{MIDI Thru}.
          The new pattern starts with MIDI Thru enabled.
-      \item \textbf{Apply only to new}.
+      \item \textbf{Apply only to new tracks}.
          If check-marked, then the settings are applied only to
          newly-created patterns, not to newly-opened patterns.
          Often one might not want to
          automatically record into an existing pattern, for example.
-      \item \textbf{Record Style}
+      \item \textbf{Record Loop Style}
          This setting sets how the record mode works for the pattern.
          \begin{itemize}
             \item \textbf{Overdub}.

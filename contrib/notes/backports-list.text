@@ -1,43 +1,43 @@
-libseq66/include/cfg/rcsettings.hpp
-libseq66/include/midi/calculations.hpp
-libseq66/include/midi/mastermidibus.hpp
-libseq66/include/midi/midibus.hpp
-libseq66/include/os/daemonize.hpp
-libseq66/include/os/timing.hpp
-libseq66/include/play/sequence.hpp
-libseq66/include/util/basic_macros.h
-libseq66/include/util/basic_macros.hpp
-libseq66/include/util/filefunctions.hpp
-libseq66/include/util/strfunctions.hpp
-libseq66/libseq66.pro
-libseq66/meson.build
-libseq66/src/cfg/configfile.cpp
-libseq66/src/cfg/rcsettings.cpp
-libseq66/src/midi/busarray.cpp
-libseq66/src/midi/businfo.cpp
-libseq66/src/midi/calculations.cpp
-libseq66/src/midi/mastermidibase.cpp
-libseq66/src/os/daemonize.cpp
-libseq66/src/play/sequence.cpp
-libseq66/src/seq66_features.cpp
-libseq66/src/sessions/clinsmanager.cpp
-libseq66/src/sessions/smanager.cpp
-libseq66/src/util/filefunctions.cpp
-libseq66/src/util/strfunctions.cpp
-libsessions/libsessions.pro
-seq_portmidi/include/midibus_pm.hpp
-seq_portmidi/include/pminternal.h
-seq_portmidi/include/porttime.h
-seq_portmidi/seq_portmidi.pro
-seq_portmidi/src/pmlinuxalsa.c
-seq_portmidi/src/portmidi.c
-seq_portmidi/src/ptlinux.c
-seq_portmidi/src/ptmacosx_cf.c
-seq_portmidi/src/ptmacosx_mach.c
-seq_portmidi/src/ptwinmm.c
-seq_qt5/seq_qt5.pro
-seq_qt5/src/gui/qsmainwnd.cpp
-seq_qt5/src/gui/qseqeventframe.cpp, .hpp, .ui
-seq_rtmidi/include/midibus_rm.hpp
-seq_rtmidi/seq_rtmidi.pro
-subprojects/liblib66.wrap
+        libseq66/include/cfg/rcsettings.hpp
+ *      libseq66/include/midi/calculations.hpp
+        libseq66/include/midi/mastermidibus.hpp
+        libseq66/include/midi/midibus.hpp
+        libseq66/include/os/daemonize.hpp
+        libseq66/include/os/timing.hpp
+ *      libseq66/include/play/sequence.hpp
+        libseq66/include/util/basic_macros.h
+        libseq66/include/util/basic_macros.hpp
+ *      libseq66/include/util/filefunctions.hpp
+ *      libseq66/include/util/strfunctions.hpp
+        libseq66/libseq66.pro
+        libseq66/meson.build
+        libseq66/src/cfg/configfile.cpp
+        libseq66/src/cfg/rcsettings.cpp
+        libseq66/src/midi/busarray.cpp
+        libseq66/src/midi/businfo.cpp
+ *      libseq66/src/midi/calculations.cpp
+        libseq66/src/midi/mastermidibase.cpp
+        libseq66/src/os/daemonize.cpp
+ *      libseq66/src/play/sequence.cpp
+        libseq66/src/seq66_features.cpp
+        libseq66/src/sessions/clinsmanager.cpp
+        libseq66/src/sessions/smanager.cpp
+ *      libseq66/src/util/filefunctions.cpp
+ *      libseq66/src/util/strfunctions.cpp
+        libsessions/libsessions.pro
+        seq_portmidi/include/midibus_pm.hpp
+        seq_portmidi/include/pminternal.h
+        seq_portmidi/include/porttime.h
+        seq_portmidi/seq_portmidi.pro
+        seq_portmidi/src/pmlinuxalsa.c
+        seq_portmidi/src/portmidi.c
+        seq_portmidi/src/ptlinux.c
+        seq_portmidi/src/ptmacosx_cf.c
+        seq_portmidi/src/ptmacosx_mach.c
+        seq_portmidi/src/ptwinmm.c
+        seq_qt5/seq_qt5.pro
+        seq_qt5/src/gui/qsmainwnd.cpp
+        seq_qt5/src/gui/qseqeventframe.cpp, .hpp, .ui
+        seq_rtmidi/include/midibus_rm.hpp
+        seq_rtmidi/seq_rtmidi.pro
+        subprojects/liblib66.wrap

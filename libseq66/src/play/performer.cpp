@@ -3498,7 +3498,7 @@ performer::create_master_bus ()
                     midi_control_out().is_enabled(false);
                     append_error_message
                     (
-                        "MIDI Through ports used for both control &display. "
+                        "MIDI Through ports used for both control & display. "
                         "Disabled. Please change the Clock and Input ports."
                     );
                 }

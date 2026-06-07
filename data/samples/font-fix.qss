@@ -1,0 +1,75 @@
+/*
+ * \file          font-fix.qss
+ * \library       seq66 application
+ * \author        Chris Ahlstrom
+ * \date          2026-06-07
+ * \updates       2026-06-07
+ * \license       Public domain
+ *
+ *  Activate this style sheet to fix up font-sizing issues.
+ */
+
+QMenuBar
+{
+    font-size: 12pt;
+}
+
+/* Affects the top-level menu. */
+
+QMenuBar::item
+{
+    font-size: 12pt;
+}
+
+QMenuBar::item:selected
+{
+    font-size: 12pt;
+}
+
+QMenu
+{
+    font-size: 10pt;
+}
+
+QMenu::item
+{
+    font-size: 10pt;
+}
+
+QMenu::item:selected
+{
+    font-size: 10pt;
+}
+
+QComboBox
+{
+}
+
+QLabel
+{
+    font-size: 10pt;
+}
+
+QTextEdit
+{
+    font-size: 10pt;
+}
+
+QPlainTextEdit
+{
+    font-size: 10pt;
+}
+
+QLineEdit
+{
+    font-size: 10pt;
+}
+
+QPushButton
+{
+    font-size: 10pt;
+}
+
+/*
+ * vim: sw=4 ts=4 wm=4 et ft=css
+ */

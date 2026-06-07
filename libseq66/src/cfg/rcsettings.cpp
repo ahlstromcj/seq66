@@ -1257,7 +1257,7 @@ rcsettings::set_config_directory (const std::string & value)
          * home_config_directory() normalizes the path it returns.
          */
 
-        m_full_config_directory = value;;
+        m_full_config_directory = value;
 
         std::string homedir = home_config_directory();
         if (make_directory_path(homedir))

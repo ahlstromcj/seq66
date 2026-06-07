@@ -1,9 +1,9 @@
 /*
- * \file          flat.qss
+ * \file          flat-rounded.qss
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-05-10
- * \updates       2025-05-16
+ * \updates       2026-06-07
  * \license       Public domain
  *
  *  Provides a sample Qt style sheet for Seq66.  See
