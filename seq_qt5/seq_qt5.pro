@@ -6,7 +6,7 @@
 # \library        qpseq66 application
 # \author         Chris Ahlstrom
 # \date           2018-04-08
-# \update         2026-05-18
+# \update         2026-06-08
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -68,7 +68,9 @@ TARGET = seq_qt5
 
 UI_DIR = src/gui
 
-FORMS += src/gui/qlfoframe.ui \
+FORMS += src/gui/qlearnframe.ui \
+ src/gui/qlfoframe.ui \
+ src/gui/qlearnframe.ui \
  src/gui/qliveframeex.ui \
  src/gui/qmutemaster.ui \
  src/gui/qpatternfix.ui \
@@ -88,7 +90,9 @@ FORMS += src/gui/qlfoframe.ui \
  src/gui/qslogview.ui \
  src/gui/qsmainwnd.ui
 
-HEADERS += src/gui/qlfoframe.hpp \
+HEADERS += src/gui/qlearnframe.hpp \
+ src/gui/qlfoframe.hpp \
+ src/gui/qlearnframe.hpp \
  src/gui/qliveframeex.hpp \
  src/gui/qmutemaster.hpp \
  src/gui/qpatternfix.hpp \
@@ -136,7 +140,9 @@ HEADERS += src/gui/qlfoframe.hpp \
  include/qt5_helpers.hpp \
  include/qt5nsmanager.hpp
 
-SOURCES += src/gui/qlfoframe.cpp \
+SOURCES += src/gui/qlearnframe.cpp \
+ src/gui/qlfoframe.cpp \
+ src/gui/qlearnframe.cpp \
  src/gui/qliveframeex.cpp \
  src/gui_palette_qt5.cpp \
  src/gui/qmutemaster.cpp \

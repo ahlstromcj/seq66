@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-19
+ * \updates       2026-06-08
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -97,7 +97,11 @@ namespace seq66
     class qslogview;
     class qsmaintime;
     class qt5nsmanager;
+    class qlearnframe;
+
+#if SEQ66_MIDI_LEARN_SUPPORT
     class smanager;
+#endif
 
 /**
  * The main window of Kepler34... er, I mean Seq66.
@@ -196,6 +200,10 @@ protected:
     bool recreate_all_slots ();
     bool refresh_captions ();
     bool load_into_session (const std::string & selectedfile);
+
+#if SEQ66_MIDI_LEARN_SUPPORT
+    void show_midi_learn_frame (automation::category opcat);
+#endif
 
 protected:                              // performer callbacks
 
@@ -350,6 +358,11 @@ private:
     qsessionframe * m_session_frame;
     qsetmaster * m_set_master;
     qmutemaster * m_mute_master;
+
+#if SEQ66_MIDI_LEARN_SUPPORT
+    qlearnframe * m_midi_learn_frame;
+#endif
+
     combolist m_ppqn_list;
     combolist m_beatwidth_list;
     combolist m_beats_per_bar_list;

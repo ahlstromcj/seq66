@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-06-07
+ * \updates       2026-06-08
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -88,6 +88,7 @@
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
 #include "play/songsummary.hpp"         /* seq66::write_song_summary()      */
 #include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
+#include "qlearnframe.hpp"              /* seq66::qlearnframe               */
 #include "qliveframeex.hpp"             /* seq66::qliveframeex container    */
 #include "qmutemaster.hpp"              /* shows a map of mute-groups       */
 #include "qperfeditex.hpp"              /* seq66::qperfeditex container     */
@@ -257,6 +258,9 @@ qsmainwnd::qsmainwnd
     m_session_frame         (nullptr),
     m_set_master            (nullptr),
     m_mute_master           (nullptr),
+#if SEQ66_MIDI_LEARN_SUPPORT
+    m_midi_learn_frame      (nullptr),
+#endif
     m_ppqn_list             (supported_ppqns(), true), /* add a blank slot  */
     m_beatwidth_list        (beatwidth_items()),     /* see settings module */
     m_beats_per_bar_list    (beats_per_bar_items()), /* ditto               */
@@ -418,11 +422,12 @@ qsmainwnd::qsmainwnd
         this, SLOT(toggle_time_format(bool))
     );
 
+    m_dialog_prefs = new (std::nothrow) qseditoptions(cb_perf(), this);
+
     /*
      *  Main time bar at top right.
      */
 
-    m_dialog_prefs = new (std::nothrow) qseditoptions(cb_perf(), this);
     m_beat_ind = new (std::nothrow) qsmaintime
     (
         cb_perf(), ui->verticalWidget /*this*/, 4, 4
@@ -1030,9 +1035,61 @@ qsmainwnd::qsmainwnd
         ui->label_test->hide();
 
 #if SEQ66_MIDI_LEARN_SUPPORT
+
+// CONNECT the menu actions to show_midi_learn_frame
+
+#if defined QT_VERSION_5
+
+#error Qt 5 not yet done
+
+#elif defined QT_VERSION_6 || defined QT_VERSION_7
+
+    connect
+    (
+        ui->actionLearnLoops, &QAction::triggered, this,
+        [=] ()
+        {
+            show_midi_learn_frame(automation::category::loop);
+        }
+    );
+    connect
+    (
+        ui->actionLearnMutes, &QAction::triggered, this,
+        [=] ()
+        {
+            show_midi_learn_frame(automation::category::mute_group);
+        }
+    );
+
+    connect
+    (
+        ui->actionLearnAutomation, &QAction::triggered, this,
+        [=] ()
+        {
+            show_midi_learn_frame(automation::category::automation);
+        }
+    );
+
+    /*
+     * This is the same as the "L" button.
+     */
+
+    connect
+    (
+        ui->actionMute_Learn, &QAction::triggered, this,
+        [=] ()
+        {
+            learn_toggle();
+        }
+    );
+
+#endif          // QT
+
 #else
+
     ui->menuLearn->menuAction()->setVisible(false);
-#endif
+
+#endif          // SEQ66_MIDI_LEARN_SUPPORT
 
     show();
     show_song_mode(m_song_mode);
@@ -4463,6 +4520,31 @@ qsmainwnd::report_message (const std::string & msg, bool good, bool showcancel)
     }
     return result;
 }
+
+#if SEQ66_MIDI_LEARN_SUPPORT
+
+/**
+ *  To do.
+ */
+
+void
+qsmainwnd::show_midi_learn_frame (automation::category opcat)
+{
+    if (is_nullptr(m_midi_learn_frame))
+    {
+        m_midi_learn_frame = new (std::nothrow) qlearnframe
+        (
+            cb_perf(), opcat // , this
+        );
+        m_midi_learn_frame->show();
+    }
+    else
+    {
+        m_midi_learn_frame->show();
+    }
+}
+
+#endif
 
 bool
 qsmainwnd::on_group_learn (bool learning)

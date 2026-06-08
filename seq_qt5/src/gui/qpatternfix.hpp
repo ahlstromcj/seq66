@@ -349,11 +349,10 @@ private:
 
 }           // namespace seq66
 
-#endif // SEQ66_QPATTERNFIX_HPP
+#endif      // SEQ66_QPATTERNFIX_HPP
 
 /*
  * qpatternfix.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-06-06
+# \update         2026-06-08
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -34,7 +34,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-06-06"
+export SEQ66_SCRIPT_EDIT_DATE="2026-06-08"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -415,7 +415,8 @@ Many of these commands are best used when setting up the build
                      doc/latex/tex/meson.build, but by calling
                      doc/latex/make_pdf.sh.
  --nsis              Use NSIS to make a Windows installer on Linux.
- --clean             Delete the usual derived files from the project. Also
+ --clean             Delete all subdirectories and other build products in
+                     the 'build' directory.
                      do "git checkout doc/seq66-dev-manual.pdf"
  --rebuild           Clean the project and build from scratch.
  --jack-session      Enable the usage of JACK Session, which is deprecated.
@@ -569,9 +570,9 @@ make_projects () {
       echo "Current directory:"
       pwd
       if test "$DODEBUG" = "yes" ; then
-         echo "Debug build failed, check $MAKELOG for errors."
+         echo "Debug build failed, check $BUILD_DIR/$MAKELOG for errors."
       else
-         echo "Release build failed, check $MAKELOG for errors."
+         echo "Release build failed, check $BUILD_DIR/$MAKELOG for errors."
       fi
    fi
    cd ..
