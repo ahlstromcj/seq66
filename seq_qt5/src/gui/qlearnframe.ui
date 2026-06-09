@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>497</width>
-    <height>195</height>
+    <width>524</width>
+    <height>216</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Frame</string>
   </property>
   <property name="frameShape">
-   <enum>QFrame::StyledPanel</enum>
+   <enum>QFrame::Shape::StyledPanel</enum>
   </property>
   <widget class="QLabel" name="learn_manager_label">
    <property name="geometry">
@@ -57,9 +57,9 @@
   <widget class="QLineEdit" name="current_logged_control_line_edit">
    <property name="geometry">
     <rect>
-     <x>218</x>
+     <x>240</x>
      <y>61</y>
-     <width>211</width>
+     <width>241</width>
      <height>23</height>
     </rect>
    </property>
@@ -69,15 +69,20 @@
     <rect>
      <x>10</x>
      <y>60</y>
-     <width>202</width>
-     <height>107</height>
+     <width>206</width>
+     <height>125</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="learn_grid_layout">
     <item row="1" column="0">
      <widget class="QRadioButton" name="loops_button">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
       <property name="text">
-       <string>Loops</string>
+       <string>&amp;Loops</string>
       </property>
      </widget>
     </item>
@@ -86,8 +91,13 @@
     </item>
     <item row="3" column="0">
      <widget class="QRadioButton" name="automation_button">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
       <property name="text">
-       <string>Automation</string>
+       <string>&amp;Automation</string>
       </property>
      </widget>
     </item>
@@ -96,8 +106,13 @@
     </item>
     <item row="2" column="0">
      <widget class="QRadioButton" name="mutes_button">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
       <property name="text">
-       <string>Mutes</string>
+       <string>&amp;Mutes</string>
       </property>
      </widget>
     </item>
@@ -137,56 +152,81 @@
     <rect>
      <x>218</x>
      <y>113</y>
-     <width>254</width>
-     <height>54</height>
+     <width>271</width>
+     <height>69</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QPushButton" name="clear_push_button">
+    <item row="1" column="1">
+     <widget class="QPushButton" name="cancel_push_button">
       <property name="font">
        <font>
-        <pointsize>8</pointsize>
-        <bold>false</bold>
+        <pointsize>10</pointsize>
        </font>
       </property>
       <property name="text">
-       <string>Clear</string>
+       <string>Ca&amp;ncel</string>
       </property>
      </widget>
     </item>
     <item row="0" column="1">
      <widget class="QPushButton" name="start_push_button">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
       <property name="text">
-       <string>Start</string>
+       <string>&amp;Start</string>
       </property>
      </widget>
     </item>
     <item row="0" column="2">
-     <widget class="QPushButton" name="cancel_push_button">
+     <widget class="QPushButton" name="save_push_button">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
       <property name="text">
-       <string>Cancel</string>
+       <string>Sa&amp;ve</string>
       </property>
      </widget>
     </item>
     <item row="1" column="0">
      <widget class="QPushButton" name="reset_push_button">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
       <property name="text">
-       <string>Reset</string>
+       <string>&amp;Reset</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
-     <widget class="QPushButton" name="save_push_button">
+    <item row="0" column="0">
+     <widget class="QPushButton" name="clear_push_button">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <bold>false</bold>
+       </font>
+      </property>
       <property name="text">
-       <string>Save</string>
+       <string>&amp;Clear</string>
       </property>
      </widget>
     </item>
     <item row="1" column="2">
      <widget class="QPushButton" name="ok_push_button">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
       <property name="text">
-       <string>OK</string>
+       <string>&amp;OK</string>
       </property>
      </widget>
     </item>

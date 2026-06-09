@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-08
- * \updates       2026-06-08
+ * \updates       2026-06-09
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -87,6 +87,12 @@ private:
 private slots:
 
     void slot_select_category (int buttonno);
+    void slot_cancel ();
+    void slot_start ();
+    void slot_save ();
+    void slot_reset ();
+    void slot_clear ();
+    void slot_ok ();
 
 private:
 

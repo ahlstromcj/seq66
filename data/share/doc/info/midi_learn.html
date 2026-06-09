@@ -1,0 +1,62 @@
+<html>
+<head>
+<meta name=\qrichtext\ content=\1\ />
+<meta charset=\utf-8\ />
+<style type=\text/css\>
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+</style>
+</head>
+<!-- midi_learn.html 2026-06-08 to 2026-06-08 -->
+<body>
+   <h1>MIDI Learn in Seq66</h1>
+   <p>
+      Seq66 uses three different types of MIDI Learn:
+      Loops, Mutes, and Automation.
+      The Loops and Mutes work by activating MIDI Learn
+      and then having the user click the 32 (normally) buttons
+      in order until enough have been assigned or all have been
+      assigned.
+      Automation works by clicking a user-interface item supported
+      by Seq66's controls, and then clicking the device's
+      button desired for that action.
+   </p>
+   <p>
+      The learn process starts with copying the current setup
+      to a safe container that can be used to reset to the
+      initial state.
+      If desired, the safe container is copied to a working
+      container; otherwise an empty control container is used.
+      Any changes made can then be cleared, reset, or saved
+      to a new 'ctrl' file.
+   </p>
+   <p>
+      The Learn Manager dialog provides user-interface elements
+      for selecting the Learn mode, counting events that have been
+      set to a device MIDI message, showing the currently set event,
+      and allowing to clear, reset, start the process to log control
+      event, and accept and save the controls.
+   </p>
+   <p>
+      The changes, if saved, are copied back to the performer object and take
+      effect immediately.
+   </p>
+   <h2>Loops Learn</h2>
+      The basic process is to click the <b>Start</b> button,
+      then, one after the other, click the desired buttons to
+      toggle patterns 0, 1, 2, ... 32 (or higher if configured for
+      larger grids).
+      The process stops once the maximum number of grid slots
+      are configured or <b>Reset</b>, <b>Clear</b>,
+      <b>Save</b>, <b>OK</b> are clicked. Note that <b>OK</b>
+      merely sets the "save" flag for the 'ctrl' file.
+   <h2>Mutes Learn</h2>
+      Similar to loops-learn, but applies to the buttons
+      that select a mute-group.
+   <h2>Automation Learn</h2>
+      This mode cannot step through a serial list of controls.
+      Instead, the user-interface item must be selected (i.e.
+      clicked), then the desired device control must be clicked.
+      Once clicked, the event is logged.
+</body>
+</html>

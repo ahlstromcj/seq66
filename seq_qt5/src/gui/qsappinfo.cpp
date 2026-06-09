@@ -54,15 +54,15 @@ namespace seq66
 
 static const std::string s_error_html
 {
-"<html>"
-"<head>"
-"<meta name=\"qrichtext\" content=\"1\" />"
-"<meta charset=\"utf-8\" />"
-"</head>"
-"<body>"
-"<i>Could not find the HTML file in installation directories</i>"
-"</body>"
-"</html>"
+    "<html>"
+    "<head>"
+    "<meta name=\"qrichtext\" content=\"1\" />"
+    "<meta charset=\"utf-8\" />"
+    "</head>"
+    "<body>"
+    "<i>Could not find the HTML file in installation directories</i>"
+    "</body>"
+    "</html>"
 };
 
 /**

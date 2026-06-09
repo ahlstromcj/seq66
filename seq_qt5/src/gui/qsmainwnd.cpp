@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-06-08
+ * \updates       2026-06-09
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -71,6 +71,7 @@
 #include <QMessageBox>                  /* QMessageBox                      */
 #include <QResizeEvent>                 /* QResizeEvent                     */
 #include <QScreen>                      /* QScreen                          */
+#include <QTextBrowser>                 /* QTextBrowser                     */
 
 #undef USE_QDESKTOPSERVICES
 #if defined USE_QDESKTOPSERVICES
@@ -565,6 +566,16 @@ qsmainwnd::qsmainwnd
         ui->actionUserManual, SIGNAL(triggered(bool)),
         this, SLOT(slot_user_manual())
     );
+
+#if SEQ66_MIDI_LEARN_SUPPORT
+    connect
+    (
+        ui->actionMIDILearn, SIGNAL(triggered(bool)),
+        this, SLOT(slot_midi_learn_help())
+    );
+#else
+    ui->actionMIDILearn->setVisible(false);
+#endif
 
     /*
      * Edit Menu.  First connect the preferences dialog to the main window's
@@ -1118,6 +1129,11 @@ qsmainwnd::~qsmainwnd ()
     if (not_nullptr(m_timer))
         m_timer->stop();
 
+#if SEQ66_MIDI_LEARN_SUPPORT
+    if (not_nullptr(m_midi_learn_frame))
+        m_midi_learn_frame->close();        /* just signal to close         */
+#endif
+
     cb_perf().unregister(this);
     delete ui;
 }
@@ -1605,6 +1621,55 @@ qsmainwnd::slot_user_manual ()
     QDesktopServices::openUrl(QUrl::fromLocalFile(link));
 #else
     (void) open_user_manual();
+#endif
+}
+
+/**
+ *  From qsappinfo:
+ *
+ *      open_html("midi_learn", "Seq66 MIDI Learn");
+ */
+
+void
+qsmainwnd::slot_midi_learn_help ()
+{
+#if SEQ66_MIDI_LEARN_SUPPORT
+
+    static const std::string s_error_html
+    {
+        "<html>"
+        "<head>"
+        "<meta name=\"qrichtext\" content=\"1\" />"
+        "<meta charset=\"utf-8\" />"
+        "</head>"
+        "<body><i>Could not find the MIDI Learn file</i></body>"
+        "</html>"
+    };
+    QDialog * dialog = new (std::nothrow) QDialog(this);
+    if (not_nullptr(dialog))
+    {
+        QTextBrowser * browser = new (std::nothrow) QTextBrowser();
+        if (not_nullptr(browser))
+        {
+            dialog->setWindowTitle("MIDI Learn");
+            // dialog->setFixedSize(440, 540);
+            dialog->resize(640, 540);
+
+            std::string html = open_share_doc_file("midi_learn.html", "Learn");
+            if (html.empty())
+                html = s_error_html;
+
+            browser->setHtml(qt(html));
+
+            QVBoxLayout * layout = new (std::nothrow) QVBoxLayout(dialog);
+            if (not_nullptr(layout))
+            {
+                layout->addWidget(browser);
+                dialog->setLayout(layout);
+                dialog->exec();                     /* opens in modal mode  */
+            }
+        }
+    }
 #endif
 }
 

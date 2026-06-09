@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-08
- * \updates       2026-06-08
+ * \updates       2026-06-09
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -116,6 +116,31 @@ qlearnframe::qlearnframe
 
 #endif
 
+    connect
+    (
+        ui->cancel_push_button, SIGNAL(clicked()), this, SLOT(slot_cancel())
+    );
+    connect
+    (
+        ui->start_push_button, SIGNAL(clicked()), this, SLOT(slot_start())
+    );
+    connect
+    (
+        ui->save_push_button, SIGNAL(clicked()), this, SLOT(slot_save())
+    );
+    connect
+    (
+        ui->reset_push_button, SIGNAL(clicked()), this, SLOT(slot_reset())
+    );
+    connect
+    (
+        ui->clear_push_button, SIGNAL(clicked()), this, SLOT(slot_clear())
+    );
+    connect
+    (
+        ui->ok_push_button, SIGNAL(clicked()), this, SLOT(slot_ok())
+    );
+
     // TODO: show and process the category
 }
 
@@ -140,6 +165,12 @@ qlearnframe::select_category (automation::category opcat)
 }
 
 void
+qlearnframe::handle_select_category (automation::category opcat)
+{
+    // TODO
+}
+
+void
 qlearnframe::slot_select_category (int buttonno)
 {
     automation::category opcat { automation::category::none };
@@ -155,9 +186,36 @@ qlearnframe::slot_select_category (int buttonno)
 }
 
 void
-qlearnframe::handle_select_category (automation::category opcat)
+qlearnframe::slot_cancel ()
+{
+    close();
+}
+
+void
+qlearnframe::slot_start ()
+{
+}
+
+void
+qlearnframe::slot_save ()
+{
+}
+
+void
+qlearnframe::slot_reset ()
+{
+}
+
+void
+qlearnframe::slot_clear ()
+{
+}
+
+void
+qlearnframe::slot_ok ()
 {
     // TODO
+    close();
 }
 
 }               // namespace seq66
