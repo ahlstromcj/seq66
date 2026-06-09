@@ -1129,11 +1129,6 @@ qsmainwnd::~qsmainwnd ()
     if (not_nullptr(m_timer))
         m_timer->stop();
 
-#if SEQ66_MIDI_LEARN_SUPPORT
-    if (not_nullptr(m_midi_learn_frame))
-        m_midi_learn_frame->close();        /* just signal to close         */
-#endif
-
     cb_perf().unregister(this);
     delete ui;
 }
@@ -1184,6 +1179,11 @@ qsmainwnd::closeEvent (QCloseEvent * event)
 
     if (not_nullptr(m_timer))
         m_timer->stop();
+
+#if SEQ66_MIDI_LEARN_SUPPORT
+    if (not_nullptr(m_midi_learn_frame))
+        m_midi_learn_frame->close();        /* just signal to close         */
+#endif
 
     if (usr().in_nsm_session())
     {

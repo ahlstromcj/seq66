@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>524</width>
-    <height>216</height>
+    <width>504</width>
+    <height>197</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Frame</string>
   </property>
   <property name="frameShape">
-   <enum>QFrame::Shape::StyledPanel</enum>
+   <enum>QFrame::StyledPanel</enum>
   </property>
   <widget class="QLabel" name="learn_manager_label">
    <property name="geometry">
@@ -38,8 +38,8 @@
   <widget class="QLabel" name="current_logged_control_label">
    <property name="geometry">
     <rect>
-     <x>218</x>
-     <y>37</y>
+     <x>230</x>
+     <y>53</y>
      <width>153</width>
      <height>18</height>
     </rect>
@@ -58,7 +58,7 @@
    <property name="geometry">
     <rect>
      <x>240</x>
-     <y>61</y>
+     <y>76</y>
      <width>241</width>
      <height>23</height>
     </rect>
@@ -68,7 +68,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>60</y>
+     <y>43</y>
      <width>206</width>
      <height>125</height>
     </rect>
@@ -151,9 +151,9 @@
    <property name="geometry">
     <rect>
      <x>218</x>
-     <y>113</y>
+     <y>110</y>
      <width>271</width>
-     <height>69</height>
+     <height>61</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">

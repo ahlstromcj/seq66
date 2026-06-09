@@ -79,43 +79,6 @@ qlearnframe::qlearnframe
 {
     ui->setupUi(this);
 
-    /*
-     * Create a button group to manage the mutual status of the Learn
-     * Mode buttons.
-     */
-
-    m_learn_button_group = new QButtonGroup(this);
-    m_learn_button_group->addButton
-    (
-        ui->loops_button, learn_mode_button_loops
-    );
-    m_learn_button_group->addButton
-    (
-        ui->mutes_button, learn_mode_button_mutes
-    );
-    m_learn_button_group->addButton
-    (
-        ui->automation_button, learn_mode_button_automation
-    );
-
-#if defined QT_VERSION_5
-
-    connect
-    (
-        learn_button_group, SIGNAL(buttonClicked(int)),
-        this, SLOT(slot_learn_mode(int))
-    );
-
-#elif defined QT_VERSION_6 || defined QT_VERSION_7
-
-    auto lambdafunc = [this] (QAbstractButton * abutton)
-    {
-        slot_learn_mode(learn_button_group->id(abutton));
-    };
-    connect(learn_button_group, &QButtonGroup::buttonClicked, lambdafunc);
-
-#endif
-
     connect
     (
         ui->cancel_push_button, SIGNAL(clicked()), this, SLOT(slot_cancel())
@@ -141,6 +104,47 @@ qlearnframe::qlearnframe
         ui->ok_push_button, SIGNAL(clicked()), this, SLOT(slot_ok())
     );
 
+    /*
+     * Create a button group to manage the mutual status of the Learn
+     * Mode buttons.
+     */
+
+    m_learn_button_group = new QButtonGroup(this);
+    if (not_nullptr(m_learn_button_group))
+    {
+        m_learn_button_group->addButton
+        (
+            ui->loops_button, learn_mode_button_loops
+        );
+        m_learn_button_group->addButton
+        (
+            ui->mutes_button, learn_mode_button_mutes
+        );
+        m_learn_button_group->addButton
+        (
+            ui->automation_button, learn_mode_button_automation
+        );
+        select_category(opcat);
+    }
+
+#if defined QT_VERSION_5
+
+    connect
+    (
+        learn_button_group, SIGNAL(buttonClicked(int)),
+        this, SLOT(slot_learn_mode(int))
+    );
+
+#elif defined QT_VERSION_6 || defined QT_VERSION_7
+
+    auto lambdafunc = [this] (QAbstractButton * abutton)
+    {
+        slot_learn_mode(learn_button_group->id(abutton));
+    };
+    connect(learn_button_group, &QButtonGroup::buttonClicked, lambdafunc);
+
+#endif
+
     // TODO: show and process the category
 }
 
@@ -159,8 +163,22 @@ qlearnframe::select_category (automation::category opcat)
     };
     if (ok)
     {
+        int targetid;
         m_automation_category = opcat;
+        if (opcat == automation::category::loop)
+            targetid = learn_mode_button_loops;
+        else if (opcat == automation::category::mute_group)
+            targetid = learn_mode_button_mutes;
+        else if (opcat == automation::category::automation)
+            targetid = learn_mode_button_automation;
+
+        m_learn_button_group->button(targetid)->setChecked(true);
         handle_select_category(opcat);
+
+        // Emits toggled/clicked signals
+        //
+        // m_learn_button_group->button(targetid)->click();
+
     }
 }
 

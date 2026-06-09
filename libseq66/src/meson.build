@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-05-09
+# \updates     2026-06-09
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -52,6 +52,7 @@ libseq66_sources += files(
     'ctrl/midicontrolbase.cpp',
     'ctrl/midicontrol.cpp',
     'ctrl/midicontrolout.cpp',
+    'ctrl/midilearn.cpp',
     'ctrl/midimacro.cpp',
     'ctrl/midimacros.cpp',
     'ctrl/midioperation.cpp',

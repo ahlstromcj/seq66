@@ -1,6 +1,16 @@
-INSTALL for Seq66 v. 0.99.25 and above
+INSTALL for Seq66 v. 0.99.26 and above
 Chris Ahlstrom
 2015-09-10 to 2026-05-29
+
+If you are in a hurry, there are the quick steps to install Seq66,
+given that all the DEPENDENCIES described later are in place:
+
+    $ git clone https://github.com/ahlstromcj/seq66.git
+    $ cd seq66
+    $ ./work.sh
+    $ sudo ./work.sh --install
+    $ ./work.sh --clean
+    $ qseq66 &
 
 Introduction:
 
@@ -17,16 +27,6 @@ Introduction:
         not yet found a cross-build Qt installation without some
         show-stopper.
     -   Also see INSTALL.seq66.on.Ubuntu.md for Ubuntu Studio installs.
-
-If you are in a hurry, there are the quick steps to install Seq66,
-given that all the DEPENDENCIES described later are in place:
-
-    $ git clone https://github.com/ahlstromcj/seq66.git
-    $ cd seq66
-    $ ./work.sh
-    $ sudo ./work.sh --install
-    $ ./work.sh --clean
-    $ qseq66 &
 
 The "work.sh" script wraps around various combinations of settings,
 meson setup calls, and compiling. See './work.sh --help'.

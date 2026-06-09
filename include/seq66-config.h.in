@@ -54,7 +54,7 @@
 #endif
 
 #if ! defined  SEQ66_MIDI_LEARN_SUPPORT
-#define SEQ66_MIDI_LEARN_SUPPORT        0   // FOR TESTING ONLY RIGHT NOW
+#define SEQ66_MIDI_LEARN_SUPPORT        1   // FOR TESTING ONLY RIGHT NOW
 #endif
 
 #if ! defined SEQ66_HAVE_LIMITS_H
