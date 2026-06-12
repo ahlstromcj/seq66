@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2026-05-09
+ * \updates       2026-06-11
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -58,6 +58,10 @@
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "play/setmapper.hpp"           /* seq66::seqmanager and seqstatus  */
 #include "util/condition.hpp"           /* seq66::condition/synchronizer    */
+
+#if SEQ66_MIDI_LEARN_SUPPORT
+#include "ctrl/midilearn.hpp"           /* class seq66::midilearn           */
+#endif
 
 #if defined USE_SONG_BOX_SELECT
 #include <set>                          /* std::set, arbitary selection     */
@@ -587,6 +591,18 @@ private:                            /* key, midi, and op container section  */
 
     midicontrolout m_midi_control_out;
 
+#if SEQ66_MIDI_LEARN_SUPPORT
+
+    /**
+     *  Provides support for MIDI Learn.
+     *
+     *  Probably needs to be an std::unique_ptr<>.
+     */
+
+    midilearn * m_midi_learn;
+
+#endif
+
     /**
      *  Provides a default-filled mutegroups container.  It is a copy of the
      *  data read into the global rcsettings object.
@@ -1109,6 +1125,19 @@ private:                            /* key, midi, and op container section  */
     mutable int m_slot_shift;
 
     /**
+     *  Holds the index, essentially, of the last automation function
+     *  performed. This value is useful for MIDI Learn.
+     *
+     *  It could also be useful in recording a sequence of automations,
+     *  as can currently be done when recording song triggers.
+     *
+     *  This does not count actions of loop/mute keys, which are
+     *  handled serially as a group, without clicking.
+     */
+
+    automation::slot m_last_automation_slot;
+
+    /**
      *  Indicates if the graphical user-interface is visible.  Currently
      *  applies only to the main window.  This item can be toggled by the
      *  automation::visibility automation control or by the (Non) session
@@ -1589,7 +1618,7 @@ public:
 
     /**
      *  Only a nominal value.  The mastermidibus could be considered the true
-     *  value of BPM (and PPQN).
+     *  value of BPM (and PPQN). It should be good enough for UI checks.
      */
 
     midibpm bpm () const
@@ -3030,6 +3059,32 @@ public:
     {
         return m_midi_control_out;
     }
+
+    automation::slot last_automation_slot () const
+    {
+        return m_last_automation_slot;
+    }
+
+    void last_automation_slot (automation::slot s);
+
+    void clear_automation_slot ()
+    {
+        m_last_automation_slot = automation::slot::none;
+    }
+
+#if SEQ66_MIDI_LEARN_SUPPORT
+
+    bool create_midi_learn ();
+    bool delete_midi_learn ();
+    bool save_midi_learn (const midicontrolin & mci);
+    bool learn_control (const event & ev);
+
+    midilearn * midi_learn ()
+    {
+        return m_midi_learn;
+    }
+
+#endif
 
     void set_needs_update (bool flag = true)
     {

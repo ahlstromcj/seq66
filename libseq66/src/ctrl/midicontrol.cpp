@@ -79,8 +79,8 @@ midicontrol::midicontrol () :
  *
  * \param opcategory
  *      Indicates if this keystroke is meant for pattern control, mute-group
- *      (mutes) control, or general automation control.  It's value is determine
- *      by the section-name in the "ctrl" file.
+ *      (mutes) control, or general automation control.  It's value is
+ *      determined by the section-name in the "ctrl" file.
  *
  * \param actioncode
  *      One of the values of automation::action::none,

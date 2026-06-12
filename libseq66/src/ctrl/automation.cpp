@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2024-01-03
+ * \updates       2026-06-11
  * \license       GNU GPLv2 or above
  *
  *  Currently, there is no code in this file.
@@ -252,9 +252,11 @@ ctrlstatus_to_string (ctrlstatus cs)
  *  This code is currently unused.  We currently don't need to lookup by a
  *  slots string name, and use performer::print_parameters() on a
  *  hardwired name.
+ *
+ *  Oops, now used in debugging.
  */
 
-#if defined SEQ66_USE_SLOT_STRING_CONVERSIONS
+#if defined SEQ66_PLATFORM_DEBUG
 
 using slot_pair = struct
 {
@@ -306,7 +308,7 @@ s_slotnamelist [] =
     { slot::tap_bpm,          "tap_bpm"                 },
     { slot::start,            "start"                   },
     { slot::stop,             "stop"                    },
-    { slot::reserved_29,      "reserved_29"             },
+    { slot::loop_LR,            "loop_LR"               },
     { slot::toggle_mutes,     "toggle_mutes"            },
     { slot::song_pointer,     "song_pointer"            },
 
@@ -348,7 +350,7 @@ s_slotnamelist [] =
     { slot::grid_delete,        "grid_delete"           },
     { slot::grid_thru,          "grid_thru"             },
     { slot::grid_solo,          "grid_solo"             },
-    { slot::grid_velocity,      "grid_velocity"         },
+    { slot::grid_cut,           "grid_cut"              },
     { slot::grid_double,        "grid_double"           },
 
     /*
@@ -428,7 +430,7 @@ string_to_slot (const std::string & s)
     return result;
 }
 
-#endif      // defined SEQ66_USE_SLOT_STRING_CONVERSIONS
+#endif      // defined SEQ66_PLATFORM_DEBUG
 
 }           // namespace automation
 

@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom
  * \date          2026-04-23
- * \updates       2026-06-08
+ * \updates       2026-06-11
  * \license       GNU GPL v2 or above
  *
  *  This file is used mainly for system files and specific build options.  The
@@ -53,8 +53,8 @@
 #define SEQ66_VERSION                   @version@
 #endif
 
-#if ! defined  SEQ66_MIDI_LEARN_SUPPORT
-#define SEQ66_MIDI_LEARN_SUPPORT        1   // FOR TESTING ONLY RIGHT NOW
+#if ! defined SEQ66_MIDI_LEARN_SUPPORT
+#define SEQ66_MIDI_LEARN_SUPPORT        0   // FOR TESTING ONLY RIGHT NOW
 #endif
 
 #if ! defined SEQ66_HAVE_LIMITS_H
@@ -92,6 +92,8 @@
 
 #define SEQ66_API_VERSION               @api_version@
 #define SEQ66_DEBUG_BUILD               @debug_build@
+#undef SEQ66_PLATFORM_DEBUG
+#undef SEQ66_PLATFORM_RELEASE
 #if SEQ66_DEBUG_BUILD == 1
 #define SEQ66_PLATFORM_DEBUG
 #else

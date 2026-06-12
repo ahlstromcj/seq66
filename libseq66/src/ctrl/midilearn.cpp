@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-09
- * \updates       2026-06-09
+ * \updates       2026-06-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -58,6 +58,18 @@ midilearn::midilearn
         clear();
 }
 
+/*
+ * const midicontrolin & mci { perf().midi_control_in() };
+ */
+
+void
+midilearn::clear ()
+{
+    const keycontainer & kc { perf().key_controls() };
+    m_current_controls.clear();
+    m_current_controls.add_blank_controls(kc);
+}
+
 /**
  *  Copies the original controls into the current controls.
  */
@@ -81,17 +93,30 @@ midilearn::start ()
 
 /**
  *  Copies the current controls to the performer.
+ *
+ *  A flag for saving the 'ctrl' file needs to be raised.
  */
 
 bool
 midilearn::save ()
 {
-    bool result { true };
+#if SEQ66_MIDI_LEARN_SUPPORT
+    bool result { perf().save_midi_learn(m_current_controls) };
     if (result)
     {
-        // TODO
+        // TODO ?
     }
     return result;
+#else
+    return false;
+#endif
+}
+
+bool
+midilearn::learn_control (const event & ev)
+{
+    (void) ev;
+    return false;   // TO DO
 }
 
 }           // namespace seq66

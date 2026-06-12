@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-09
- * \updates       2026-06-09
+ * \updates       2026-06-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -92,6 +92,12 @@ private:
     bool m_is_dirty { false };
 
     /**
+     *  Indicates the index of the current button in the loops or mutes grid.
+     */
+
+    int m_index { 0 };
+
+    /**
      *  Holds the current control statuses ...
      */
 
@@ -141,14 +147,12 @@ public:
         return m_is_dirty;
     }
 
-    void clear ()
-    {
-        m_current_controls.clear();
-    }
-
+    void clear ();
     void reset ();
     void start ();
     bool save ();
+
+    bool learn_control (const event & ev);
 
 private:
 

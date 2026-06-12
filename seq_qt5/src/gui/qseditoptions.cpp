@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-05-09
+ * \updates       2026-06-11
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -50,7 +50,6 @@
 
 #include <QButtonGroup>
 
-#include "seq66-config.h"               /* SEQ66_JACK_**** macros           */
 #include "cfg/patchesfile.hpp"          /* seq66::patchesfile class         */
 #include "cfg/rcfile.hpp"               /* seq66::rcfile class              */
 #include "midi/jack_assistant.hpp"      /* seq66::jack_assistant statics    */
@@ -2068,7 +2067,9 @@ qseditoptions::setup_tab_session ()
     /*
      * 'ctrl' file.  Since this configuration is not editable while the
      * application is running, the "auto-save" check-box is read-only.
+     * Unless MIDI Learn is enabled.
      */
+
 
     connect
     (
@@ -2076,12 +2077,25 @@ qseditoptions::setup_tab_session ()
         this, SLOT(slot_ctrl_active_click())
     );
 
-#if defined SEQ66_CAN_SAVE_CTRL
+#if SEQ66_MIDI_LEARN_SUPPORT
+
+    /*
+     * The old runtime syntax gave an inexplicable warning.
+     *
+     *      connect
+     *      (
+     *          ui->checkBoxSaveCtrl, SIGNAL(clicked(bool)),
+     *          this, SLOT(slot_ctrl_save_click())
+     *      );
+     *
+     * The modern syntax fails safely at compile-time if wrong.
+     * But here, it builds! And runs!
+     */
 
     connect
     (
-        ui->checkBoxSaveCtrl, SIGNAL(clicked(bool)),
-        this, SLOT(slot_ctrl_save_click())
+        ui->checkBoxSaveCtrl, &QPushButton::clicked,
+        this, &qseditoptions::slot_ctrl_save_click
     );
 
 #else
@@ -3995,7 +4009,7 @@ qseditoptions::slot_load_playlist_filename ()
         modify_rc();
 }
 
-#if defined SEQ66_CAN_SAVE_CTRL
+#if SEQ66_MIDI_LEARN_SUPPORT
 
 void
 qseditoptions::slot_ctrl_save_click ()
@@ -4009,6 +4023,11 @@ qseditoptions::slot_ctrl_save_click ()
     {
         bool on = ui->checkBoxSaveCtrl->isChecked();
         rc().auto_ctrl_save(on);
+        if (on)
+        {
+            ui->checkBoxActiveCtrl->setChecked(true);
+            rc().midi_control_active(on);
+        }
     }
     modify_rc();
 }

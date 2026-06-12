@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-06-09
+ * \updates       2026-06-12
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1277,6 +1277,7 @@ qsmainwnd::stop_playing ()
 {
     Qt::KeyboardModifiers qkm = QGuiApplication::keyboardModifiers();
     bool rewind = (qkm & Qt::ShiftModifier) != 0;
+    cb_perf().last_automation_slot(automation::slot::stop);
     stop(rewind);
     ui->btnPlay->setFocus();
 }
@@ -1289,6 +1290,7 @@ void
 qsmainwnd::pause_playing ()
 {
     cb_perf().auto_pause();             /* update_play_status() */
+    cb_perf().last_automation_slot(automation::slot::playback);
 }
 
 /**
@@ -1298,6 +1300,7 @@ qsmainwnd::pause_playing ()
 void
 qsmainwnd::start_playing ()
 {
+    cb_perf().last_automation_slot(automation::slot::start);
     cb_perf().auto_play();
     ui->btnPause->setChecked(false);    /* force off */
     ui->btnStop->setChecked(false);     /* force off */
@@ -1556,14 +1559,26 @@ qsmainwnd::set_ppqn_combo ()
 void
 qsmainwnd::update_bpm (double bp)
 {
-    midibpm bpold = m_main_bpm;     // ui->spinBpm->value() already changed!
+    /*
+     * midibpm bpold = m_main_bpm;
+     * ui->spinBpm->value() already changed!
+     */
+
+    midibpm bpold = cb_perf().get_beats_per_minute();
     if (bp != bpold)
     {
+        automation::slot s
+        {
+            bp > bpold ?
+                automation::slot::bpm_up :
+                automation::slot::bpm_dn
+        };
         if (cb_perf().set_beats_per_minute(midibpm(bp), true))
         {
             m_main_bpm = bp;
             enable_save();
         }
+        cb_perf().last_automation_slot(s);
     }
 }
 
@@ -3919,17 +3934,28 @@ qsmainwnd::update_bank (int bankid)
 {
     if (not_nullptr(m_live_frame))
     {
-        m_live_frame->update_bank(bankid);
+        int bank { int(m_live_frame->bank_id()) };
+        if (bankid != bank)
+        {
+            automation::slot s
+            {
+                bankid > bank ?
+                    automation::slot::ss_up :
+                    automation::slot::ss_dn
+            };
+            m_live_frame->update_bank(bankid);
 
-        /*
-         * Done in the call above:
-         *
-         * (void) cb_perf().set_playing_screenset(m_live_frame->bank_id());
-         */
+            /*
+             * Done in the call above:
+             *
+             * (void) cb_perf().set_playing_screenset(m_live_frame->bank_id());
+             */
 
-        std::string name = cb_perf().set_name(bankid);
-        QString newname = qt(name);
-        ui->txtBankName->setText(newname);
+            std::string name = cb_perf().set_name(bankid);
+            QString newname = qt(name);
+            ui->txtBankName->setText(newname);
+            cb_perf().last_automation_slot(s);
+        }
     }
 }
 
@@ -4379,6 +4405,7 @@ qsmainwnd::set_playscreen_paste ()
 void
 qsmainwnd::learn_toggle ()
 {
+    cb_perf().last_automation_slot(automation::slot::mod_glearn);
     cb_perf().learn_toggle();
     qt_set_icon
     (
@@ -4599,12 +4626,17 @@ qsmainwnd::show_midi_learn_frame (automation::category opcat)
     {
         m_midi_learn_frame = new (std::nothrow) qlearnframe
         (
-            cb_perf(), opcat // , this
+            cb_perf(), opcat        /* "this" embeds the frame in qsmainwnd */
         );
         m_midi_learn_frame->show();
     }
     else
     {
+        delete m_midi_learn_frame;
+        m_midi_learn_frame = new (std::nothrow) qlearnframe
+        (
+            cb_perf(), opcat        /* "this" embeds the frame in qsmainwnd */
+        );
         m_midi_learn_frame->show();
     }
 }

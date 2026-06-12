@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-05-09
+ * \updates       2026-06-12
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -319,6 +319,9 @@ performer::performer (int ppq, int rows, int columns) :
     m_key_controls          ("Key controls"),
     m_midi_control_in       ("Performer ctrl in"),
     m_midi_control_out      ("Performer ctrl out"),
+#if SEQ66_MIDI_LEARN_SUPPORT
+    m_midi_learn            (nullptr),
+#endif
     m_mute_groups           ("Mute groups", rows, columns),     /* mutes()  */
     m_operations            ("Performer operations"),
     m_set_master            (rows, columns),    /* 32 row x column sets     */
@@ -398,6 +401,7 @@ performer::performer (int ppq, int rows, int columns) :
     m_record_toggle_pending (false),
     m_pending_loop          (seq::unassigned()),
     m_slot_shift            (0),
+    m_last_automation_slot  (automation::slot::none),
     m_hidden                (false),
     m_show_hide_pending     (false)
 {
@@ -631,6 +635,17 @@ performer::notify_automation_change (automation::slot s)
         (void) notify->on_automation_change(s);
 }
 
+void
+performer::last_automation_slot (automation::slot s)
+{
+#if defined SEQ66_PLATFORM_DEBUG
+    std::string msg { slot_to_string(s) };
+    debug_message("automation slot", msg);
+#endif
+    m_last_automation_slot = s;
+    notify_automation_change(s);
+}
+
 /*
  *  Note that we need to call modify() before telling the subscribers, so that
  *  they can check the status of the performer.  This is not strictly
@@ -753,6 +768,20 @@ performer::notify_resolution_change (int ppq, midibpm bpm, change mod)
 void
 performer::notify_song_action (bool signalit, playlist::action act)
 {
+    if (act != playlist::action::none)
+    {
+        bool issong
+        {
+            act == playlist::action::next_song ||
+            act == playlist::action::previous_song
+        };
+        automation::slot s
+        {
+            issong ? automation::slot::playlist_song :
+            automation::slot::playlist
+        };
+        last_automation_slot(s);
+    }
     for (auto notify : m_notify)
         (void) notify->on_song_action(signalit, act);
 }
@@ -2927,6 +2956,7 @@ performer::decrement_beats_per_minute ()
 {
     midibpm result = get_beats_per_minute() - usr().bpm_step_increment();
     set_beats_per_minute(result, true);
+    last_automation_slot(automation::slot::bpm_dn);
     return result;
 }
 
@@ -2943,6 +2973,7 @@ performer::increment_beats_per_minute ()
 {
     midibpm result = get_beats_per_minute() + usr().bpm_step_increment();
     set_beats_per_minute(result, true);
+    last_automation_slot(automation::slot::bpm_up);
     return result;
 }
 
@@ -2962,6 +2993,7 @@ performer::page_decrement_beats_per_minute ()
 {
     midibpm result = get_beats_per_minute() - usr().bpm_page_increment();
     set_beats_per_minute(result, true);
+    last_automation_slot(automation::slot::bpm_page_dn);
     return result;
 }
 
@@ -2981,6 +3013,7 @@ performer::page_increment_beats_per_minute ()
 {
     midibpm result = get_beats_per_minute() + usr().bpm_page_increment();
     set_beats_per_minute(result, true);
+    last_automation_slot(automation::slot::bpm_page_up);
     return result;
 }
 
@@ -3519,6 +3552,54 @@ performer::create_master_bus ()
     }
     return result;
 }
+
+#if SEQ66_MIDI_LEARN_SUPPORT
+
+bool
+performer::create_midi_learn ()
+{
+    m_midi_learn = new (std::nothrow) midilearn(*this);
+
+    bool result { not_nullptr(m_midi_learn) };
+    if (result)
+    {
+        // any work to do here?
+    }
+    return result;
+}
+
+bool
+performer::delete_midi_learn ()
+{
+    bool result { not_nullptr(m_midi_learn) };
+    if (result)
+    {
+        delete m_midi_learn;
+        m_midi_learn = nullptr;
+    }
+    return result;
+}
+
+bool
+performer::save_midi_learn (const midicontrolin & mci)
+{
+    bool result { mci.count() > 0 };
+    if (result)
+    {
+        midi_control_in() = mci;
+        rc().auto_rc_save(result);
+    }
+    return result;
+}
+
+bool
+performer::learn_control (const event & ev)
+{
+    midicontrol::key k(ev);
+    const midicontrol & incoming = m_midi_control_in.control(k);
+}
+
+#endif  // SEQ66_MIDI_LEARN_SUPPORT
 
 /**
  *  Calls the MIDI buss and JACK initialization functions and the input/output
@@ -5537,7 +5618,13 @@ performer::start_playing ()
 
     start_jack();
     start();
-    notify_automation_change(automation::slot::start);
+
+    /*
+     * ca 2026-06-12
+     * notify_automation_change(automation::slot::start);
+     */
+
+    last_automation_slot(automation::slot::start);
 }
 
 void
@@ -5550,7 +5637,13 @@ performer::play_count_in ()
     }
     start_jack();
     start();
-    notify_automation_change(automation::slot::start);
+
+    /*
+     * ca 2026-06-12
+     * notify_automation_change(automation::slot::start);
+     */
+
+    last_automation_slot(automation::slot::start);
 }
 
 /**
@@ -5621,9 +5714,14 @@ performer::stop_playing (bool rewind)
         stop();
         m_dont_reset_ticks = false;
         if (rewind)
-            set_tick(0);                                /* ca 2022-09-25    */
+            set_tick(0);
 
-        notify_automation_change(automation::slot::stop);
+        /*
+         * ca 2026-06-12
+         * notify_automation_change(automation::slot::stop);
+         */
+
+        last_automation_slot(automation::slot::stop);
     }
 }
 
@@ -7719,35 +7817,51 @@ performer::midi_control_event (const event & ev, bool recording)
 
     if (result)
     {
-        midicontrol::key k(ev);
-        const midicontrol & incoming = m_midi_control_in.control(k);
-        bool good = incoming.is_usable();
-        if (good)
+#if SEQ66_MIDI_LEARN_SUPPORT
+        bool mlearn { not_nullptr(m_midi_learn) };
+#else
+        bool mlearn { false };
+#endif
+
+        if (mlearn)
         {
-            automation::slot s = incoming.slot_number();
-            const midioperation & mop = m_operations.operation(s);
-            if (mop.is_usable())
+#if SEQ66_MIDI_LEARN_SUPPORT
+            // result = true;
+#endif
+        }
+        else
+        {
+            midicontrol::key k(ev);
+            const midicontrol & incoming = m_midi_control_in.control(k);
+            bool good = incoming.is_usable();
+            if (good)
             {
-                bool process_the_action = incoming.in_range(ev.d1());
-                if (recording)
+                automation::slot s = incoming.slot_number();
+                const midioperation & mop = m_operations.operation(s);
+                if (mop.is_usable())
                 {
-                    /*
-                     * See Note above.
-                     */
+                    bool process_the_action = incoming.in_range(ev.d1());
+                    if (recording)
+                    {
+                        /*
+                         * See Note above.
+                         */
+                    }
+                    if (process_the_action)
+                    {
+                        automation::action a = incoming.action_code();
+                        bool invert = incoming.inverse_active();
+                        int d0 = incoming.d0();
+                        int d1 = incoming.d1();
+                        int index = incoming.control_code(); /* lieu of d1() */
+                        good = mop.call(a, d0, d1, index, invert);
+                    }
+                    else
+                        good = false;
                 }
-                if (process_the_action)
-                {
-                    automation::action a = incoming.action_code();
-                    bool invert = incoming.inverse_active();
-                    int d0 = incoming.d0();
-                    int d1 = incoming.d1();
-                    int index = incoming.control_code(); /* in lieu of d1() */
-                    good = mop.call(a, d0, d1, index, invert);
-                }
-                else
-                    good = false;
             }
         }
+
         /*
          *  This warning can be misleading, as often the release of a control
          *  button emits an event (e.g. Note Off) that the user has not
@@ -8145,8 +8259,11 @@ performer::next_record_style ()
      *     set_start_tick(0);
      *
      * notify_automation_change(automation::slot::record_style);
+     *
+     * ca 2026-06-12
      */
 
+    last_automation_slot(automation::slot::record_style);
     set_record_style(rs);
 }
 
@@ -8161,8 +8278,11 @@ performer::previous_record_style ()
      *     set_start_tick(0);
      *
      * notify_automation_change(automation::slot::record_style);
+     *
+     * ca 2026-06-12
      */
 
+    last_automation_slot(automation::slot::record_style);
     set_record_style(rs);
 }
 
@@ -8171,7 +8291,13 @@ performer::next_record_alteration ()
 {
     (void) usr().next_record_alteration();
     m_record_alteration = usr().record_alteration();
-    notify_automation_change(automation::slot::quan_record);
+
+    /*
+     * ca 2026-06-12
+     * notify_automation_change(automation::slot::quan_record);
+     */
+
+    last_automation_slot(automation::slot::quan_record);
 }
 
 void
@@ -8179,7 +8305,13 @@ performer::previous_record_alteration ()
 {
     (void) usr().previous_record_alteration();
     m_record_alteration = usr().record_alteration();
-    notify_automation_change(automation::slot::quan_record);
+
+    /*
+     * ca 2026-06-12
+     * notify_automation_change(automation::slot::quan_record);
+     */
+
+    last_automation_slot(automation::slot::quan_record);
 }
 
 void
@@ -8187,7 +8319,13 @@ performer::set_record_alteration (alteration rm)
 {
     (void) usr().record_alteration(rm);
     m_record_alteration = rm;
-    notify_automation_change(automation::slot::quan_record);
+
+    /*
+     * ca 2026-06-12
+     * notify_automation_change(automation::slot::quan_record);
+     */
+
+    last_automation_slot(automation::slot::quan_record);
 }
 
 /**
@@ -8430,6 +8568,7 @@ screenset::number
 performer::decrement_screenset (int amount)
 {
     screenset::number newnumber = playscreen_number() - amount;
+    last_automation_slot(automation::slot::ss_dn);
     return set_playing_screenset(newnumber);
 }
 
@@ -8437,6 +8576,7 @@ screenset::number
 performer::increment_screenset (int amount)
 {
     screenset::number newnumber = playscreen_number() + amount;
+    last_automation_slot(automation::slot::ss_up);
     return set_playing_screenset(newnumber);
 }
 
@@ -8464,6 +8604,7 @@ performer::automation_no_op
 {
     std::string name = "No-op";
     print_parameters(name, a, d0, d1, index, inverse);
+    clear_automation_slot();
     return false;
 }
 
@@ -8645,6 +8786,7 @@ performer::automation_replace
     {
         automation::ctrlstatus cs = automation::ctrlstatus::replace;
         result = set_ctrl_status(a, cs);
+        last_automation_slot(automation::slot::mod_replace);
     }
     return result;
 }
@@ -8676,6 +8818,7 @@ performer::automation_snapshot
 
         automation::ctrlstatus cs = automation::ctrlstatus::snapshot;
         result = set_ctrl_status(a, cs);
+        last_automation_slot(automation::slot::mod_snapshot);
     }
 
     return result;
@@ -8695,7 +8838,10 @@ performer::automation_queue
     std::string name = auto_name(automation::slot::mod_queue);
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
+    {
+        last_automation_slot(automation::slot::mod_queue);
         return set_ctrl_status(a, automation::ctrlstatus::queue);
+    }
     else
         return true;                    /* pretend the key release worked   */
 }
@@ -8726,6 +8872,8 @@ performer::automation_gmute
             set_mapper().group_mode(true);
         else if (a == automation::action::off)
             set_mapper().group_mode(false);
+
+        last_automation_slot(automation::slot::mod_gmute);
     }
     return true;
 }
@@ -8757,6 +8905,8 @@ performer::automation_glearn
             group_learn(true);                  /* also notifies clients    */
         else if (a == automation::action::off)
             group_learn(false);                 /* also notifies clients    */
+
+        last_automation_slot(automation::slot::mod_glearn);
     }
     return true;
 }
@@ -8791,6 +8941,7 @@ performer::automation_play_ss
         {
             (void) set_playing_screenset(ps);
             set_song_mute(mutegroups::action::off); /* unmute them all      */
+            last_automation_slot(automation::slot::play_ss);
         }
     }
     return true;
@@ -8843,6 +8994,7 @@ performer::automation_playback
         else
             auto_stop();
     }
+    last_automation_slot(automation::slot::playback);
     return true;
 }
 
@@ -8868,6 +9020,8 @@ performer::automation_song_record
             song_recording(true);
         else if (a == automation::action::off)
             song_recording(false);
+
+        last_automation_slot(automation::slot::song_record);
     }
     return true;
 }
@@ -8892,6 +9046,7 @@ performer::automation_solo
     {
         automation::ctrlstatus cs = add_queue(automation::ctrlstatus::replace);
         result = set_ctrl_status(a, cs);
+        last_automation_slot(automation::slot::solo);
     }
     return result;
 }
@@ -8918,6 +9073,8 @@ performer::automation_thru
             set_thru(seqno, true, false);                       /* on       */
         else if (a == automation::action::off)
             set_thru(seqno, false, false);                      /* off      */
+
+        last_automation_slot(automation::slot::thru);
     }
     return true;
 }
@@ -8944,6 +9101,7 @@ performer::automation_bpm_page_up_dn
                 page_decrement_beats_per_minute();
             else if (a == automation::action::off)
                 page_increment_beats_per_minute();
+
         }
     }
     else
@@ -9004,8 +9162,10 @@ performer::automation_ss_set
     std::string name = auto_name(automation::slot::ss_set);
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
+    {
         (void) set_playing_screenset(screenset::number(d1));
-
+        last_automation_slot(automation::slot::ss_set);
+    }
     return true;
 }
 
@@ -9038,6 +9198,8 @@ performer::automation_record_style
         else if (a == automation::action::off)
             previous_record_style();
 
+        last_automation_slot(automation::slot::record_style);
+
         /*
          *  Done in the functions called above:
          *
@@ -9067,7 +9229,12 @@ performer::automation_quan_record
         else if (a == automation::action::off)
             previous_record_alteration();
 
-        notify_automation_change(automation::slot::quan_record);
+        /*
+         * ca 2026-06-12
+         *  notify_automation_change(automation::slot::quan_record);
+         */
+
+        last_automation_slot(automation::slot::quan_record);
     }
     return true;
 }
@@ -9089,6 +9256,7 @@ performer::automation_reset_sets
     {
         reset_sequences();
         reset_playset();
+        last_automation_slot(automation::slot::reset_sets);
     }
     return true;
 }
@@ -9109,7 +9277,10 @@ performer::automation_oneshot
     std::string name = auto_name(automation::slot::mod_oneshot);
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
+    {
+        last_automation_slot(automation::slot::mod_oneshot);
         return set_ctrl_status(a, automation::ctrlstatus::oneshot);
+    }
     else
         return true;                    /* pretend the key release worked   */
 }
@@ -9124,6 +9295,7 @@ performer::automation_FF
     std::string name = auto_name(automation::slot::FF);
     print_parameters(name, a, d0, d1, index, inverse);
     move_tick(m_fast_ticks, true);
+    last_automation_slot(automation::slot::FF);
     return true;
 }
 
@@ -9137,6 +9309,7 @@ performer::automation_rewind
     std::string name = auto_name(automation::slot::rewind);
     print_parameters(name, a, d0, d1, index, inverse);
     move_tick(-m_fast_ticks, true);
+    last_automation_slot(automation::slot::rewind);
     return true;
 }
 
@@ -9155,6 +9328,7 @@ performer::automation_top
     std::string name = auto_name(automation::slot::top);
     print_parameters(name, a, d0, d1, index, inverse);
     move_tick(0, true);                                 /* slighly tricky   */
+    last_automation_slot(automation::slot::top);
     return true;
 }
 
@@ -9847,6 +10021,8 @@ performer::automation_tap_bpm
         midibpm bpm = update_tap_bpm();
         if (bpm != get_beats_per_minute())
             set_beats_per_minute(bpm, true);
+
+        last_automation_slot(automation::slot::tap_bpm);
     }
     return true;
 }
@@ -9873,6 +10049,7 @@ performer::automation_start
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
+        last_automation_slot(automation::slot::start);
         if (is_pattern_playing())
             auto_stop();
         else
@@ -9896,8 +10073,10 @@ performer::automation_stop
     std::string name = auto_name(automation::slot::stop);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
+    {
+        last_automation_slot(automation::slot::stop);
         auto_stop();
-
+    }
     return true;
 }
 
@@ -9914,6 +10093,7 @@ performer::automation_looping
     {
         bool loopy = looping();
         looping(! loopy);
+        last_automation_slot(automation::slot::loop_LR);
     }
     return true;
 }
@@ -9946,6 +10126,7 @@ performer::automation_toggle_mutes
         else
             set_song_mute(mutegroups::action::off);
     }
+    last_automation_slot(automation::slot::toggle_mutes);
     return true;
 }
 
@@ -9958,6 +10139,7 @@ performer::automation_song_pointer
 {
     std::string name = auto_name(automation::slot::song_pointer);
     print_parameters(name, a, d0, d1, index, inverse);
+    last_automation_slot(automation::slot::song_pointer);
 
     /*
      * TO BE DETERMINED TODO
@@ -9987,6 +10169,8 @@ performer::automation_keep_queue
             return toggle_ctrl_status(cs);
         else
             return set_ctrl_status(a, cs);
+
+        last_automation_slot(automation::slot::keep_queue);
     }
     else
         return true;
@@ -10013,6 +10197,7 @@ performer::automation_slot_shift
     {
         (void) increment_slot_shift();
         result = true;
+        last_automation_slot(automation::slot::slot_shift);
     }
     return result;
 }
@@ -10038,6 +10223,7 @@ performer::automation_mutes_clear
     {
         clear_mutes();
         result = true;
+        last_automation_slot(automation::slot::mutes_clear);
     }
     return result;
 }
@@ -10056,7 +10242,13 @@ performer::automation_quit
     std::string name = auto_name(automation::slot::quit);
     print_parameters(name, a, d0, d1, index, inverse);
     if (automation::actionable(a) && ! inverse)
+    {
+        last_automation_slot(automation::slot::quit);
+#if SEQ66_MIDI_LEARN_SUPPORT
+        if (is_nullptr(m_midi_learn))
+#endif
         signal_quit();
+    }
 
     return true;
 }
@@ -10076,8 +10268,10 @@ performer::automation_edit_pending
     std::string name = auto_name(automation::slot::pattern_edit);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
+    {
         m_seq_edit_pending = true;
-
+        last_automation_slot(automation::slot::pattern_edit);
+    }
     return true;
 }
 
@@ -10096,8 +10290,10 @@ performer::automation_event_pending
     std::string name = auto_name(automation::slot::event_edit);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
+    {
         m_event_edit_pending = true;
-
+        last_automation_slot(automation::slot::event_edit);
+    }
     return true;
 }
 
@@ -10118,8 +10314,10 @@ performer::automation_song_mode
     std::string name = auto_name(automation::slot::song_mode);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
+    {
         (void) toggle_song_start_mode();
-
+        last_automation_slot(automation::slot::song_mode);
+    }
     return true;
 }
 
@@ -10146,6 +10344,7 @@ performer::automation_toggle_jack
         toggle_jack_mode();
         mode += get_jack_mode() ? "On" : "Off" ;
         infoprint(mode);
+        last_automation_slot(automation::slot::toggle_jack);
     }
     return true;
 }
@@ -10170,7 +10369,13 @@ performer::automation_menu_mode
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
     {
-        notify_automation_change(automation::slot::menu_mode);  /* toggle */
+        /*
+         * ca 2026-06-12
+         *
+         * notify_automation_change(automation::slot::menu_mode);
+         */
+
+        last_automation_slot(automation::slot::menu_mode);      /* toggle   */
     }
     return result;
 }
@@ -10195,6 +10400,7 @@ performer::automation_follow_transport
         toggle_follow_transport();
         mode += get_follow_transport() ? "On" : "Off" ;
         infoprint(mode);
+        last_automation_slot(automation::slot::follow_transport);
     }
     return result;
 }
@@ -10210,8 +10416,10 @@ performer::automation_panic
     std::string name = auto_name(automation::slot::panic);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
+    {
         result = panic();
-
+        last_automation_slot(automation::slot::panic);
+    }
     return result;
 }
 
@@ -10226,8 +10434,10 @@ performer::automation_visibility
     std::string name = auto_name(automation::slot::visibility);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
+    {
         result = visibility(a);
-
+        last_automation_slot(automation::slot::visibility);
+    }
     return result;
 }
 
@@ -10241,8 +10451,10 @@ performer::automation_save_session
     std::string name = auto_name(automation::slot::save_session);
     print_parameters(name, a, d0, d1, index, inverse);
     if (automation::actionable(a) && ! inverse)
+    {
         signal_save();                     /* actually just raises a flag  */
-
+        last_automation_slot(automation::slot::save_session);
+    }
     return true;
 }
 
@@ -10256,10 +10468,14 @@ performer::automation_record_toggle
     std::string name = auto_name(automation::slot::record_toggle);
     print_parameters(name, a, d0, d1, index, inverse);
     if (! inverse)
+    {
         m_record_toggle_pending = true;
-
+        last_automation_slot(automation::slot::record_toggle);
+    }
     return true;
 }
+
+// xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 /**
  *  Values are in the recordstyle enumeration in the usersettings module:
@@ -10286,7 +10502,12 @@ performer::set_record_style (recordstyle rs)
         else
             m_record_style = rs;
 
-        notify_automation_change(automation::slot::record_style);
+        /*
+         * ca 2026-06-12
+         * notify_automation_change(automation::slot::record_style);
+         */
+
+        last_automation_slot(automation::slot::record_style);
     }
 }
 
@@ -10373,7 +10594,13 @@ performer::set_grid_mode (gridmode gm)
             else
                 (void) set_ctrl_status(automation::action::off, cs);
         }
-        notify_automation_change(automation::slot::grid_loop);
+
+        /*
+         * ca 2026-06-12
+         * notify_automation_change(automation::slot::grid_loop);
+         */
+
+        last_automation_slot(automation::slot::grid_loop);
     }
 }
 
@@ -10396,46 +10623,57 @@ performer::automation_grid_mode
         {
             case automation::slot::grid_mutes:
                 gm = gridmode::mutes;
+                last_automation_slot(automation::slot::grid_mutes);
                 break;
 
             case automation::slot::grid_loop:
                 gm = gridmode::loop;
+                last_automation_slot(automation::slot::grid_loop);
                 break;
 
             case automation::slot::grid_record:
                 gm = gridmode::record;
+                last_automation_slot(automation::slot::grid_record);
                 break;
 
             case automation::slot::grid_copy:
                 gm = gridmode::copy;
+                last_automation_slot(automation::slot::grid_copy);
                 break;
 
             case automation::slot::grid_paste:
                 gm = gridmode::paste;
+                last_automation_slot(automation::slot::grid_paste);
                 break;
 
             case automation::slot::grid_clear:
                 gm = gridmode::clear;
+                last_automation_slot(automation::slot::grid_clear);
                 break;
 
             case automation::slot::grid_delete:
                 gm = gridmode::remove;
+                last_automation_slot(automation::slot::grid_delete);
                 break;
 
             case automation::slot::grid_thru:
                 gm = gridmode::thru;
+                last_automation_slot(automation::slot::grid_thru);
                 break;
 
             case automation::slot::grid_solo:
                 gm = gridmode::solo;
+                last_automation_slot(automation::slot::grid_solo);
                 break;
 
             case automation::slot::grid_cut:
                 gm = gridmode::cut;
+                last_automation_slot(automation::slot::grid_cut);
                 break;
 
             case automation::slot::grid_double:
                 gm = gridmode::double_length;
+                last_automation_slot(automation::slot::grid_double);
                 break;
 
             default:
@@ -10477,26 +10715,32 @@ performer::automation_grid_quant
         {
             case automation::slot::grid_quant_none:
                 q = alteration::none;
+                last_automation_slot(automation::slot::grid_quant_none);
                 break;
 
             case automation::slot::grid_quant_tighten:  /* partial q'zation */
                 q = alteration::tighten;
+                last_automation_slot(automation::slot::grid_quant_tighten);
                 break;
 
             case automation::slot::grid_quant_full:     /* full q'zation    */
                 q = alteration::quantize;
+                last_automation_slot(automation::slot::grid_quant_full);
                 break;
 
             case automation::slot::grid_quant_jitter:   /* note time & vel. */
                 q = alteration::jitter;
+                last_automation_slot(automation::slot::grid_quant_jitter);
                 break;
 
             case automation::slot::grid_quant_random:   /* event d0 or d1   */
                 q = alteration::random;
+                last_automation_slot(automation::slot::grid_quant_random);
                 break;
 
             case automation::slot::grid_quant_notemap:  /* for expansion    */
                 q = alteration::notemap;
+                last_automation_slot(automation::slot::grid_quant_notemap);
                 break;
 
             default:
@@ -10520,7 +10764,12 @@ performer::automation_bbt_hms
     print_parameters(name, a, d0, d1, index, inverse);
     if (automation::actionable(a) && ! inverse)
     {
-        notify_automation_change(automation::slot::mod_bbt_hms);
+        /*
+         * ca 2026-06-12
+         * notify_automation_change(automation::slot::mod_bbt_hms);
+         */
+
+        last_automation_slot(automation::slot::mod_bbt_hms);
     }
     return result;
 }
@@ -10537,7 +10786,12 @@ performer::automation_LR_loop
     print_parameters(name, a, d0, d1, index, inverse);
     if (automation::actionable(a) && ! inverse)
     {
-        notify_automation_change(automation::slot::mod_LR_loop);
+        /*
+         * ca 2026-06-12
+         * notify_automation_change(automation::slot::mod_LR_loop);
+         */
+
+        last_automation_slot(automation::slot::mod_LR_loop);
     }
     return result;
 }
@@ -10554,7 +10808,12 @@ performer::automation_undo
     print_parameters(name, a, d0, d1, index, inverse);
     if (automation::actionable(a) && ! inverse)
     {
-        notify_automation_change(automation::slot::mod_undo);
+        /*
+         * ca 2026-06-12
+         * notify_automation_change(automation::slot::mod_undo);
+         */
+
+        last_automation_slot(automation::slot::mod_undo);
     }
     return result;
 }
@@ -10571,7 +10830,12 @@ performer::automation_redo
     print_parameters(name, a, d0, d1, index, inverse);
     if (automation::actionable(a) && ! inverse)
     {
-        notify_automation_change(automation::slot::mod_redo);
+        /*
+         * ca 2026-06-12
+         * notify_automation_change(automation::slot::mod_redo);
+         */
+
+        last_automation_slot(automation::slot::mod_redo);
     }
     return result;
 }
@@ -10589,7 +10853,13 @@ performer::automation_copy_set
     if (automation::actionable(a) && ! inverse)
     {
         result = copy_playscreen();
-        notify_automation_change(automation::slot::mod_copy_set);
+
+        /*
+         * ca 2026-06-12
+         * notify_automation_change(automation::slot::mod_copy_set);
+         */
+
+        last_automation_slot(automation::slot::mod_copy_set);
     }
     return result;
 }
@@ -10607,7 +10877,13 @@ performer::automation_paste_set
     if (automation::actionable(a) && ! inverse)
     {
         result = paste_to_playscreen();
-        notify_automation_change(automation::slot::mod_paste_set);
+
+        /*
+         * ca 2026-06-12
+         * notify_automation_change(automation::slot::mod_paste_set);
+         */
+
+        last_automation_slot(automation::slot::mod_paste_set);
     }
     return result;
 }
@@ -10629,22 +10905,25 @@ performer::automation_set_mode
         {
             case automation::slot::set_mode_normal:
                 rc().sets_mode(rcsettings::setsmode::normal);
+                last_automation_slot(automation::slot::set_mode_normal);
                 break;
 
             case automation::slot::set_mode_auto:
                 rc().sets_mode(rcsettings::setsmode::autoarm);
+                last_automation_slot(automation::slot::set_mode_auto);
                 break;
 
             case automation::slot::set_mode_additive:
                 rc().sets_mode(rcsettings::setsmode::additive);
+                last_automation_slot(automation::slot::set_mode_additive);
                 break;
 
             case automation::slot::set_mode_all_sets:
                 rc().sets_mode(rcsettings::setsmode::allsets);
+                last_automation_slot(automation::slot::set_mode_all_sets);
                 break;
 
             default:
-
                 break;
         }
     }

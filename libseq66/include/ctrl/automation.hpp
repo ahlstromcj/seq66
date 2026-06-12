@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2024-01-03
+ * \updates       2026-06-11
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -38,6 +38,8 @@
  */
 
 #include <string>
+
+#include "seq66-config.h"               /* SEQ66_PLATFORM_DEBUG             */
 
 namespace seq66
 {
@@ -524,7 +526,7 @@ extern action string_to_action (const std::string & s);
 extern bool actionable (action a);
 extern std::string ctrlstatus_to_string (ctrlstatus cs);
 
-#if defined SEQ66_USE_SLOT_STRING_CONVERSIONS
+#if defined SEQ66_PLATFORM_DEBUG
 extern std::string slot_to_string (slot s);
 extern slot string_to_slot (const std::string & s);
 #endif

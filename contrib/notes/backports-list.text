@@ -1,9 +1,14 @@
+        libseq66/src/cfg/midicontrolfile.cpp
         libseq66/include/cfg/rcsettings.hpp
+        libseq66/include/ctrl/automation.hpp
+        libseq66/include/ctrl/keycontainer.hpp
+        libseq66/include/ctrl/midilearn.hpp         [NEW]
  *      libseq66/include/midi/calculations.hpp
         libseq66/include/midi/mastermidibus.hpp
         libseq66/include/midi/midibus.hpp
         libseq66/include/os/daemonize.hpp
         libseq66/include/os/timing.hpp
+        libseq66/include/play/performer.hpp
  *      libseq66/include/play/sequence.hpp
         libseq66/include/util/basic_macros.h
         libseq66/include/util/basic_macros.hpp
@@ -13,11 +18,17 @@
         libseq66/meson.build
         libseq66/src/cfg/configfile.cpp
         libseq66/src/cfg/rcsettings.cpp
+        libseq66/src/ctrl/automation.hpp
+        libseq66/src/ctrl/keycontainer.cpp
+        libseq66/src/ctrl/keycontrol.cpp
+        libseq66/src/ctrl/midicontrol.cpp
+        libseq66/src/ctrl/midilearn.cpp             [NEW}
         libseq66/src/midi/busarray.cpp
         libseq66/src/midi/businfo.cpp
  *      libseq66/src/midi/calculations.cpp
         libseq66/src/midi/mastermidibase.cpp
         libseq66/src/os/daemonize.cpp
+        libseq66/src/play/performer.cpp
  *      libseq66/src/play/sequence.cpp
         libseq66/src/seq66_features.cpp
         libseq66/src/sessions/clinsmanager.cpp
@@ -41,3 +52,4 @@
         seq_rtmidi/include/midibus_rm.hpp
         seq_rtmidi/seq_rtmidi.pro
         subprojects/liblib66.wrap
+

@@ -64,8 +64,8 @@ keyboard-layout = qwerty
 # |   |      -------------- Inverse
 # |   |     |    ---------- MIDI status/event byte (eg. Note On)
 # |   |     |   |   ------- d0: Data 1 (eg. Note number)
-# |   |     |   |  |  ----- d1max: Data 2 min (eg. Note velocity)
-# |   |     |   |  | |   -- d1min: Data 2 max
+# |   |     |   |  |  ----- d1min: Data 2 min (eg. Note velocity)
+# |   |     |   |  | |   -- d1max: Data 2 max
 # |   |     |   |  | |  |
 # v   v     v   v  v v  v
 # 0 "F1"   [0 0x90 0 1 127] [0 0x00 0 0 0] [0 0x00 0 0 0]

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2026-06-06
+ * \updates       2026-06-12
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -1124,6 +1124,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'i':
             rc().investigate(true);
+            usr().option_use_logfile(false);
             break;
 
 #if SEQ66_JACK_SUPPORT

@@ -89,6 +89,12 @@ qslotbutton::qslotbutton
         QWidget tmp;
         label_color(tmp.palette().color(QPalette::ButtonText));
     }
+
+    /*
+     * Experimental. Does not work and causes appearance issues.
+     *
+     *      setStyleSheet("QPushButton { border-radius: 45px; }");
+     */
 }
 
 /**

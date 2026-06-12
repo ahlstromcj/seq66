@@ -28,13 +28,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-07-26
+ * \updates       2026-06-11
  * \license       GNU GPLv2 or above
  */
 
 #include <QDialog>
 #include <QDialogButtonBox>
 
+#include "seq66-config.h"               /* SEQ66_JACK_*, _MIDI_LEARN macros */
 #include "cfg/settings.hpp"             /* seq66::combolist class, helpers  */
 
 namespace Ui
@@ -231,7 +232,7 @@ private slots:
     void slot_playlist_filename ();
     void slot_load_playlist_filename ();
     void slot_ctrl_active_click ();
-#if defined SEQ66_CAN_SAVE_CTRL
+#if SEQ66_MIDI_LEARN_SUPPORT
     void slot_ctrl_save_click ();
 #endif
     void slot_ctrl_filename ();

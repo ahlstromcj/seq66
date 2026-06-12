@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2023-08-12
+ * \updates       2026-06-10
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of keycontrol objects keyed by a key ordinal
@@ -239,8 +239,13 @@ public:
     void show () const;
 
     static const std::string & automation_default_key_name (int index);
+    static automation::action automation_default_key_action (int index);
 
 private:
+
+    /*
+     *  Provides the key name and the key action.
+     */
 
     static const defaults & keys_automation ();
 

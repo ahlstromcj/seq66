@@ -1,10 +1,10 @@
-NEWS for Seq66 0.99.25
+NEWS for Seq66 0.99.26
 Chris Ahlstrom
-2015-07-10 to 2026-06-07
+2015-07-10 to 2026-06-12
 
 # Change Log
 
-## [0.99.26] - 2026-06-07
+## [0.99.26] - 2026-06-12
 
 "MIDI Learn Perhaps"
 
@@ -15,11 +15,15 @@ Starting to work out the feasibility of MIDI Learn....
 -   The new "font-fix.qss" style sheet can be used to correct
     font sizes (and only font sizes).
 -   More tool-tips.
+-   Control actions via keys and buttons have been added
+    in preparation for MIDI Learn.
 
 ### Changed
 
 -   Most of the 'qss' files have been tweaked.
 -   Updated the creation of menus and actions to specify font size.
+-   The --investigate option turns off the log file for easier
+    debugging.
 
 ### Fixed
 

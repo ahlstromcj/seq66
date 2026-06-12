@@ -880,8 +880,8 @@ midicontrolfile::write_midi_control (std::ofstream & file)
 "# |   |      -------------- Inverse\n"
 "# |   |     |    ---------- MIDI status/event byte (eg. Note On)\n"
 "# |   |     |   |   ------- d0: Data 1 (eg. Note number)\n"
-"# |   |     |   |  |  ----- d1max: Data 2 min (eg. Note velocity)\n"
-"# |   |     |   |  | |   -- d1min: Data 2 max\n"
+"# |   |     |   |  |  ----- d1min: Data 2 min (eg. Note velocity)\n"
+"# |   |     |   |  | |   -- d1max: Data 2 max\n"
 "# |   |     |   |  | |  |\n"
 "# v   v     v   v  v v  v\n"
 "# 0 \"F1\"   [0 0x90 0 1 127] [0 0x00 0 0 0] [0 0x00 0 0 0]\n"
@@ -1458,7 +1458,9 @@ midicontrolfile::write_buss_info
     }
     if (active)
     {
-        buss_string = add_quotes(buss_string);
+        if (nb != 0xff)
+            buss_string = add_quotes(buss_string);
+
         write_string(file, varname, buss_string);
     }
     else

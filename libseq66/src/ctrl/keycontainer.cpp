@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2024-01-02
+ * \updates       2026-06-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -426,6 +426,21 @@ keycontainer::automation_default_key_name (int index)
 }
 
 /**
+ *  Static function to get the default action of the key, toggle, on, of off.
+ */
+
+automation::action
+keycontainer::automation_default_key_action (int index)
+{
+    static automation::action s_dummy { automation::action::none };
+    const defaults & keylist = keys_automation();
+    if (index >= 0 && index < int(keylist.size()))
+        return keylist[index].kd_action;
+    else
+        return s_dummy;
+}
+
+/**
  *  Indicates the default keystroke and action status of a particular
  *  automation keystroke operation.  Matches the automation::slot enum
  *  class.
@@ -435,6 +450,8 @@ keycontainer::automation_default_key_name (int index)
  *      " ( ) + 9 : > ? L O ) _ p { } DEL Del Tab BkTab BS
  *      End KP_End KP_Del KP_PageUp, KP_PageFn KP_. KP_/
  *      KP_Left, _Right, _Up, _Down ? Return ? Enter ?
+ *
+ *  This is a static function.
  */
 
 const keycontainer::defaults &
@@ -558,10 +575,10 @@ keycontainer::keys_automation ()
  *  not initialized in time for their usage.  Odd.
  */
 
-void
-keycontainer::add_defaults ()
+static const tokenization &
+default_keys_patterns ()
 {
-    static tokenization s_keys_pattern =
+    static tokenization s_keys_patterns
     {
         "1", /*  0 */ "q", /*  1 */ "a", /*  2 */ "z", /*  3 */
         "2", /*  4 */ "w", /*  5 */ "s", /*  6 */ "x", /*  7 */
@@ -572,7 +589,13 @@ keycontainer::add_defaults ()
         "7", /* 24 */ "u", /* 25 */ "j", /* 26 */ "m", /* 27 */
         "8", /* 28 */ "i", /* 29 */ "k", /* 30 */ ",", /* 31 */
     };
-    static tokenization s_keys_mute_group =
+    return s_keys_patterns;
+}
+
+static const tokenization &
+default_keys_mute_groups ()
+{
+    static tokenization s_keys_mute_group
     {
         "!", /*  0 */ "Q", /*  1 */ "A", /*  2 */ "Z", /*  3 */
         "@", /*  4 */ "W", /*  5 */ "S", /*  6 */ "X", /*  7 */
@@ -583,7 +606,12 @@ keycontainer::add_defaults ()
         "&", /* 24 */ "U", /* 25 */ "J", /* 26 */ "M", /* 27 */
         "*", /* 28 */ "I", /* 29 */ "K", /* 30 */ "<", /* 31 */
     };
+    return s_keys_mute_group;
+}
 
+void
+keycontainer::add_defaults ()
+{
     if (m_defaults_loaded)
         return;
 
@@ -593,18 +621,19 @@ keycontainer::add_defaults ()
      *  Pattern-control keys.
      */
 
-    std::string tagprefix{"Loop "};             /* shorter than "Pattern"   */
-    for (int seq = 0; seq < int(s_keys_pattern.size()); ++seq)
+    std::string tagprefix { "Loop " };          /* shorter than "Pattern"   */
+    int patternmax { int(default_keys_patterns().size()) };
+    for (int seq = 0; seq < patternmax; ++seq)
     {
+        std::string keyname { default_keys_patterns()[seq] };
         std::string nametag = tagprefix + std::to_string(seq);
         keycontrol kc
         (
-            nametag,
-            s_keys_pattern[seq],                /* provides the key name    */
+            nametag, keyname,
             automation::category::loop,
             automation::action::toggle, automation::slot::loop, seq
         );
-        ctrlkey ordinal = qt_keyname_ordinal(s_keys_pattern[seq]);
+        ctrlkey ordinal = qt_keyname_ordinal(keyname);
         if (! add(ordinal, kc))
             break;
 
@@ -617,17 +646,19 @@ keycontainer::add_defaults ()
      */
 
     tagprefix = "Mute ";
-    for (int group = 0; group < int(s_keys_mute_group.size()); ++group)
+
+    int groupmax { int(default_keys_mute_groups().size()) };
+    for (int group = 0; group < groupmax; ++group)
     {
         std::string nametag = tagprefix + std::to_string(group);
+        std::string keyname = default_keys_mute_groups()[group];
         keycontrol kc
         (
-            nametag,
-            s_keys_mute_group[group],           /* provides the key name    */
+            nametag, keyname,
             automation::category::mute_group,
             automation::action::toggle, automation::slot::mute_group, group
         );
-        ctrlkey ordinal = qt_keyname_ordinal(s_keys_mute_group[group]);
+        ctrlkey ordinal = qt_keyname_ordinal(keyname);
         if (! add(ordinal, kc))
             break;
 

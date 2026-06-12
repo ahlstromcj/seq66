@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2025-05-18
+ * \updates       2025-06-12
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -34,17 +34,19 @@
  *
  *  The process:
  *
- *      -# Call main_settings(argc, argv).  It sets defaults, does some parsing
- *         of command-line options and files.  It saves the MIDI file-name, if
- *         provided.
- *      -# Call create_performer(). This does not launch the performer. Save
- *         the unique-pointer.
+ *      -# Call main_settings(argc, argv). It sets defaults, does some
+ *         parsing of command-line options and files. It saves the MIDI
+ *         file-name, if provided.
+ *      -# Call create_performer(). This does not launch the performer.
+ *         Save the unique-pointer.
  *      -# Call open_playlist().  It will open it, if specified and possible.
- e      -# Call open_note_mapper().  It will open it, if specified and possible.
- *      -# If the MIDI file-name is set, open it via a call to open_midi_file().
- *      -# If a user-interface is needed, create a unique-pointer to it, then
- *         show it.  This will remove any previous pointer.  The function is
- *         virtual, create_window().
+ *      -# Call open_note_mapper().  It will open it, if specified and
+ *         possible.
+ *      -# If the MIDI file-name is set, open it via a call to
+ *         open_midi_file().
+ *      -# If a user-interface is needed, create a unique-pointer to it,
+ *         then show it. This will remove any previous pointer. The
+ *         function is virtual, create_window().
  */
 
 #include <cstring>                      /* std::strlen()                    */
@@ -378,7 +380,7 @@ smanager::main_settings (int argc, char * argv [])
                  * These same settings are made in the cmdlineopts module.
                  */
 
-                if (uselog)
+                if (uselog && ! rc().investigate())
                 {
                     std::string logfile = usr().option_logfile();
                     if (logfile.empty())
@@ -1184,7 +1186,7 @@ smanager::create_configuration
         }
         else
         {
-            if (! m_rerouted)
+            if (! m_rerouted && ! rc().investigate())
             {
                 usr().option_logfile(seq_default_logfile_name());
                 m_rerouted = reroute_to_log(usr().option_logfile());

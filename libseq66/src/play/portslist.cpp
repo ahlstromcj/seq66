@@ -589,7 +589,7 @@ portslist::port_name_from_bus (bussbyte nominalbuss) const
     std::string result;
     if (is_null_buss(nominalbuss))
     {
-        result = "0xFF";
+        result = "0xff";
     }
     else
     {
